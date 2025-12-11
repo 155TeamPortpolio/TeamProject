@@ -42,11 +42,11 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	if (m_LevelTag.empty())
-	{
-		MSG_BOX("LAYER_DESC is missing : CUIObjcetBuilder ");
-		return nullptr;
-	}
+	//if (m_LevelTag.empty())
+	//{
+	//	MSG_BOX("LAYER_DESC is missing : CUIObjcetBuilder ");
+	//	return nullptr;
+	//}
 
 	//오브젝트 설명체 채우기
 	m_pObjDesc->InstanceName = instanceKey;

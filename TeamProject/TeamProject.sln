@@ -10,6 +10,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DemoProject", "DemoProject\
 		{43577242-8126-479C-B342-5538FD29851E} = {43577242-8126-479C-B342-5538FD29851E}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffectTool", "EffectTool\Default\EffectTool.vcxproj", "{F00385BD-7306-44BA-88A0-F7EAFAD723DB}"
+	ProjectSection(ProjectDependencies) = postProject
+		{43577242-8126-479C-B342-5538FD29851E} = {43577242-8126-479C-B342-5538FD29851E}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -34,6 +39,14 @@ Global
 		{0CB7B2CB-6E76-4409-8E80-7AC0DECCDB56}.Release|x64.Build.0 = Release|x64
 		{0CB7B2CB-6E76-4409-8E80-7AC0DECCDB56}.Release|x86.ActiveCfg = Release|Win32
 		{0CB7B2CB-6E76-4409-8E80-7AC0DECCDB56}.Release|x86.Build.0 = Release|Win32
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Debug|x64.ActiveCfg = Debug|x64
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Debug|x64.Build.0 = Debug|x64
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Debug|x86.Build.0 = Debug|Win32
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Release|x64.ActiveCfg = Release|x64
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Release|x64.Build.0 = Release|x64
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Release|x86.ActiveCfg = Release|Win32
+		{F00385BD-7306-44BA-88A0-F7EAFAD723DB}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
