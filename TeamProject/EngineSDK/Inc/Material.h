@@ -19,7 +19,7 @@ public:
 
 public:
     void Apply_Material(ID3D11DeviceContext* pContext, _uint Index);
-    vector<class CMaterialInstance*>& Get_Material_Instance() { return m_MaterialInstances; }
+    vector<class CMaterialInstance*>& Get_MaterialInstances() { return m_MaterialInstances; }
     class CMaterialInstance* Get_MaterialInstanceByName(const string& MaterialName);
     class CMaterialInstance* Get_MaterialInstance(_uint Index);
 

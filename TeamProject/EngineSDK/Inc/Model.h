@@ -26,8 +26,8 @@ public:
 
 public:
 	virtual MINMAX_BOX Get_LocalBoundingBox()	PURE;
-	virtual vector<MINMAX_BOX> Get_MeshBoundingBox()	PURE;
-	virtual MINMAX_BOX Get_MeshBoundingBox(_uint index)	PURE;
+	virtual vector<MINMAX_BOX> Get_MeshBoundingBoxes()	PURE;
+	virtual MINMAX_BOX Get_MeshBoundingBox(_uint meshIndex)	PURE;
 	virtual MINMAX_BOX Get_WorldBoundingBox()	PURE;
 
 public:
