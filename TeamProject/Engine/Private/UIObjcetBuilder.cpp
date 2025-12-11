@@ -17,6 +17,7 @@ CUIObjcetBuilder::CUIObjcetBuilder(const CLONE_DESC& cloneDesc)
 	else {
 		m_CloneDesc = new CLONE_DESC(cloneDesc);
 	}
+
 	Safe_AddRef(m_pGameInstance);
 	m_pObjDesc = new UI_DESC;
 }
@@ -41,12 +42,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	if (m_LevelTag.empty())
-	{
-		MSG_BOX("LAYER_DESC is missing : CUIObjcetBuilder ");
-		return nullptr;
-	}
-
 	//오브젝트 설명체 채우기
 	m_pObjDesc->InstanceName = instanceKey;
 
@@ -62,8 +57,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	////오브젝트 레이어에 삽입 ->
-
 	if(m_bPivoted)
 		instance->Align_To(m_eAnchor, m_vPivot);
 
@@ -75,16 +68,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 	return instance;
 }
 
-CUIObjcetBuilder& CUIObjcetBuilder::Add_To_Level(const string& Level)
-{
-	if (!m_pGameInstance->Get_LevelMgr()->Check_ValidateLevel(Level)) {
-		MSG_BOX("Destination Level Tag is Invalidate : CUIObjcetBuilder");
-		return *this;
-	}
-
-	m_LevelTag = Level;
-	return *this;
-}
 
 CUIObjcetBuilder& CUIObjcetBuilder::Position(const _float2 position)
 {

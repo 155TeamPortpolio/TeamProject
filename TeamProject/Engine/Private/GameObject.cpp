@@ -127,8 +127,6 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 
 void CGameObject::Post_EngineUpdate(_float dt)
 {
-	if (m_InstanceTag == "Sub")
-		int i = 0;
 	/*패킷은 용도별로 따로 만든다.*/
 	if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 

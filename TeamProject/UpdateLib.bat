@@ -13,24 +13,18 @@ REM FMOD 라이브러리 함수
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmod_vc.lib" 1
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmodL_vc.lib" 1
 
-REM PhysX 라이브러리
-call :WaitForFile "%BASE%Engine\ThirdPartyLib\PhysX\debug\PhysX_64.lib" 1
-call :WaitForFile "%BASE%Engine\ThirdPartyLib\PhysX\release\PhysX_64.lib" 1
+REM 여기서 부터 자신 프로젝트 기준으로 복사====================DemoProject부분을 자신 폴더명으로
 
 REM 실제 복사 
-xcopy /y "%BASE%Engine\Bin\Engine.dll"      "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\Bin\fmodL.dll"      "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\Bin\fmod.dll"        "%BASE%DemoProject\Bin\"
-
-xcopy /y /s /e /i "%BASE%Engine\Bin\PhysX\debug"   "%BASE%DemoProject\Bin\PhysX\debug\"
-xcopy /y /s /e /i "%BASE%Engine\Bin\PhysX\release" "%BASE%DemoProject\Bin\PhysX\release\"
-
-REM ==========================================================
-xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
-
-REM /// 엔진 셰이더(.cso) 파일을 클라이언트로 복사  ///
+xcopy /y "%BASE%Engine\Bin\Engine.dll"                                          "%BASE%DemoProject\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%DemoProject\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%DemoProject\Bin\"
 xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\"                "%BASE%DemoProject\Bin\ShaderFiles\"
 xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\"          "%BASE%DemoProject\Bin\ShaderFiles\"
+
+xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
+
+REM 여기까지==========================================================
 
 xcopy /y "%BASE%Engine\Bin\Engine.lib"                                                      "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmod_vc.lib"                             "%BASE%EngineSDK\Lib\"
@@ -39,8 +33,6 @@ xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mtd.lib"        "%BASE%EngineS
 xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mt.lib"           "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTKd.lib"                        "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTK.lib"                           "%BASE%EngineSDK\Lib\"
-xcopy /y /s /e /i "%BASE%Engine\ThirdPartyLib\PhysX\debug"   "%BASE%EngineSDK\Lib\PhysX\debug\"
-xcopy /y /s /e /i "%BASE%Engine\ThirdPartyLib\PhysX\release" "%BASE%EngineSDK\Lib\PhysX\release\"
 
 goto :eof
 
