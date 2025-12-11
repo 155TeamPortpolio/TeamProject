@@ -150,6 +150,13 @@ CLayer* CLayer::Create()
 	return new CLayer();
 }
 
+CLayer* CLayer::Create(string layerTag)
+{
+	CLayer* instance = new CLayer();
+	instance->m_LayerTag = layerTag;
+	return instance;
+}
+
 void CLayer::Free()
 {
 	__super::Free();
