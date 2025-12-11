@@ -18,6 +18,8 @@ private:
 	void ShowLevelList();
 	void ShowLayerList(const string& nowLevel);
 	void ShowObjectList();
+	void ShowUIObjectList();
+	_bool ToggleButton(const char* str_id, bool* v);
 	vector<string> ConvertObjectNameList(class CLayer* layer);
 
 private:
@@ -25,6 +27,7 @@ private:
 	_float m_fPosX = {};
 	_uint m_iSelectedLevel = {};
 	_uint m_iSelectedLayer = {};
+	_bool m_bShowUI = false;
 public:
 	static CHierarchyPanel* Create(GUI_CONTEXT* context);
 	virtual void Free();

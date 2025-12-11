@@ -39,6 +39,7 @@ HRESULT CGUISystem::Initialize(const ENGINE_DESC& engine, ID3D11Device* pDevice,
 	m_tGuiContext.pObjectManager = m_pGameInstance->Get_ObjectMgr();
 	m_tGuiContext.pCameraManager = m_pGameInstance->Get_CameraMgr();
 	m_tGuiContext.pInputDevice = m_pGameInstance->Get_InputDev();
+	m_tGuiContext.pUIManager = m_pGameInstance->Get_UIMgr();
 
 	Set_Theme();
 	Set_Panel();
