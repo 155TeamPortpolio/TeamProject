@@ -64,6 +64,10 @@ using namespace DirectX::SimpleMath;
 #include "Json_Inc/json.hpp"  
 using json = nlohmann::json;
 
+//--PhysX--//
+#include "PhysX_Inc/PxPhysicsAPI.h"
+using namespace physx;
+
 #define UNICODE
 #define _UNICODE
 
