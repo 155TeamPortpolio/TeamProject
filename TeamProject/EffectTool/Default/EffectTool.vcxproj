@@ -164,6 +164,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\public\EffectEditLevel.h" />
+    <ClInclude Include="..\public\EffectObject.h" />
     <ClInclude Include="..\Public\EffectTool_Defines.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\ToolCamera.h" />
@@ -175,6 +176,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\EffectEditLevel.cpp" />
+    <ClCompile Include="..\private\EffectObject.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\private\ToolCamera.cpp" />
     <ClCompile Include="EffectTool.cpp" />

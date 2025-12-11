@@ -19,6 +19,9 @@
     <Filter Include="02. Object\ToolCamera">
       <UniqueIdentifier>{a7d69e36-eb59-4bb5-bb9f-e64b33953271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\EffectObject">
+      <UniqueIdentifier>{1ae2124c-45a7-4b8b-9572-68b0191e8fbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -48,6 +51,9 @@
     <ClInclude Include="..\public\ToolCamera.h">
       <Filter>02. Object\ToolCamera</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EffectObject.h">
+      <Filter>02. Object\EffectObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -64,6 +70,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ToolCamera.cpp">
       <Filter>02. Object\ToolCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectObject.cpp">
+      <Filter>02. Object\EffectObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

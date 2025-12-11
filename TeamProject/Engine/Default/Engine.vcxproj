@@ -191,6 +191,8 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\public\EffectContainer.h" />
+    <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -250,6 +252,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\ObjectMgr.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
+    <ClInclude Include="..\public\PointModel.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
@@ -265,6 +268,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sphere_Collider.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
+    <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
@@ -303,6 +307,8 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\private\EffectContainer.cpp" />
+    <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -338,6 +344,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
+    <ClCompile Include="..\private\PointModel.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
@@ -353,6 +360,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sphere_Collider.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
+    <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />

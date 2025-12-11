@@ -10,6 +10,7 @@
 #include "VI_Cube.h"
 #include "VI_Terrain.h"
 #include "VI_Plane.h"
+#include "VI_Point.h"
 
 #include "Shader.h"
 #include "Material.h"
@@ -134,6 +135,9 @@ CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& buf
 		break;
 	case Engine::BUFFER_TYPE::TERRAIN:
 		buffer = CVI_Terrain::Create(m_pDevice, bufferKey, MakePath(bufferKey));
+		break;
+	case Engine::BUFFER_TYPE::BASIC_POINT:
+		buffer = CVI_Point::Create(m_pDevice, bufferKey);
 		break;
 	default:
 		break;
@@ -334,6 +338,7 @@ void CResourceMgr::Load_InitialResource()
 
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
+	m_Resources[0].m_Buffers.emplace("Engine_Default_Point", CVI_Point::Create(m_pDevice, "Engine_Default_Point"));
 
 	m_Resources[0].m_Shaders.emplace("VTX_TexPos.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_TexPos.hlsl", "VTX_TexPos.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Mesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Mesh.hlsl", "VTX_Mesh.hlsl"));
