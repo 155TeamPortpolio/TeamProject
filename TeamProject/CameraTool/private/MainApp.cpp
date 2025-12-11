@@ -14,8 +14,8 @@ void MainApp::Init()
 	desc.iWinSizeY = WinY;
 
 	game->Init_Engine(desc);
-	dev = game->Get_Device();
-	ctx = game->Get_Context();
+	device  = game->Get_Device();
+	context = game->Get_Context();
 
 	Set_Levels();
 }
