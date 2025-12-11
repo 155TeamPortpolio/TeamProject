@@ -225,6 +225,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
+    <ClInclude Include="..\Public\IPhysicsService.h" />
     <ClInclude Include="..\Public\IRayService.h" />
     <ClInclude Include="..\Public\IRenderService.h" />
     <ClInclude Include="..\Public\IResourceService.h" />
@@ -248,6 +249,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
+    <ClInclude Include="..\Public\PhysicsSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
@@ -336,6 +338,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
+    <ClCompile Include="..\Private\PhysicsSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
