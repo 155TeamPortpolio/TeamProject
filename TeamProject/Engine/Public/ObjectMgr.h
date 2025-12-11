@@ -33,6 +33,7 @@ public:
 
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
+	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };

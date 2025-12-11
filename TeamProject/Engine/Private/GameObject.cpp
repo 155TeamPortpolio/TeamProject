@@ -15,7 +15,7 @@
 #include "DebugRender.h"
 #include "InstanceModel.h"
 #include "MaterialInstance.h"
-
+#include "Layer.h"
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -232,6 +232,11 @@ const vector<CGameObject*> CGameObject::Get_Children()
 	}
 }
 
+
+LAYER_DESC CGameObject::Get_LayerDesc()
+{
+	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
+}
 
 _float4x4* CGameObject::Get_WorldMatrix()
 {
