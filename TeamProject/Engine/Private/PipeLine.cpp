@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "PipeLine.h"
 #include "GameInstance.h"
 #include "ICameraService.h"

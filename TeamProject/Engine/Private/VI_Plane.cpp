@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VI_Plane.h"
 
 CVI_Plane::CVI_Plane(const string& bufferID)

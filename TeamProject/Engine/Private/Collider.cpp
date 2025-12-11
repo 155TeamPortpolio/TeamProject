@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Collider.h"
 #include "GameInstance.h"
 #include "ICollisionService.h"

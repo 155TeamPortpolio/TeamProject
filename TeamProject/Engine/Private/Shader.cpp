@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Shader.h"
 #include "Helper_Func.h"
 #include "GUIWidget.h"

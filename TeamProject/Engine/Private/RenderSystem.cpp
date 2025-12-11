@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "RenderSystem.h"
 #include "Model.h"
 #include "GameObject.h"

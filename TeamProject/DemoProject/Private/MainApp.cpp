@@ -1,4 +1,4 @@
-#include "Demo_Defines.h"
+#include "pch.h"
 #include "Engine_Defines.h"
 #include "Engine_Service.h"
 
@@ -7,6 +7,7 @@
 #include "IResourceService.h"
 
 #include "DemoLevel.h"
+#include "DemoCamera.h"
 
 CMainApp::CMainApp()
 {

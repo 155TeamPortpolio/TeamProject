@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "SoundData.h"
 #include "FMOD_Inc/fmod.hpp"
 #include "GameInstance.h"

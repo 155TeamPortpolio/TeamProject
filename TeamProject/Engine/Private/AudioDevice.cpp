@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "AudioDevice.h"
 #include "SoundData.h"
 #include "Transform.h"

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Transform.h"
 
 CTransform::CTransform()

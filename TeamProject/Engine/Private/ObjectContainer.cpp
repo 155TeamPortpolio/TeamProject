@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "ObjectContainer.h"
 #include "GameInstance.h"
 #include "GameObject.h"

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "SkeletonFollower.h"
 #include "SkeletalModel.h"
 #include "ModelData.h"

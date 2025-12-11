@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "ModelData.h"
 #include "Mesh.h"
 #include "Skeleton.h"

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "MaterialData.h"
 #include "GameInstance.h"
 #include "IResourceService.h"
@@ -192,41 +193,85 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 	switch (eType)
 	{
 	case Engine::TEXTURE_TYPE::NONE:
-		return "";
-	case Engine::TEXTURE_TYPE::ALBEDO:
+		break;
+	case Engine::TEXTURE_TYPE::DIFFUSE:
 		return "DiffuseTexture";
-	case Engine::TEXTURE_TYPE::NORMAL:
-		return "NormalTexture";
-	case Engine::TEXTURE_TYPE::OPACITY:
-		return "OpacityTexture";
-	case Engine::TEXTURE_TYPE::EMMISION:
-		return "EmmisionTexture";
-	case Engine::TEXTURE_TYPE::ALBEDO_GRAY:
-		return "AlbedoGrayTexture";
-	case Engine::TEXTURE_TYPE::NORMAL_ORY:
-		return "NormalOryTexture";
-	case Engine::TEXTURE_TYPE::ALBEDO_ORY:
-		return "AlbedoOryTexture";
-	case Engine::TEXTURE_TYPE::EMMISION_ORY:
-		return "EmmisionOryTexture";
-	case Engine::TEXTURE_TYPE::INDEXMAP:
-		return "IndexMap";
-	case Engine::TEXTURE_TYPE::SCALEX:
-		return "ScaleX";
-	case Engine::TEXTURE_TYPE::SCALEY:
-		return "ScaleY";
-	case Engine::TEXTURE_TYPE::SCALEXY:
-		return "ScaleXY";
-	case Engine::TEXTURE_TYPE::GRADATION:
-		return "GradationTexture";
-	case Engine::TEXTURE_TYPE::GRADATION_EDGE:
-		return "GradationEdgeTexture";
-	case Engine::TEXTURE_TYPE::MIX:
-		return "MixtureTexture";
+
 	case Engine::TEXTURE_TYPE::SPECULAR:
 		return "SpecularTexture";
-	case Engine::TEXTURE_TYPE::END:
-		return "";
+
+	case Engine::TEXTURE_TYPE::AMBIENT:
+		return "AmbientTexture";
+
+	case Engine::TEXTURE_TYPE::EMISSIVE:
+		return "EmissiveTexture";
+
+	case Engine::TEXTURE_TYPE::HEIGHT:
+		return "HeightTexture";
+
+	case Engine::TEXTURE_TYPE::NORMALS:
+		return "NormalTexture";
+
+	case Engine::TEXTURE_TYPE::SHININESS:
+		return "ShinessTexture";
+
+	case Engine::TEXTURE_TYPE::OPACITY:
+		return "OpacityTexture";
+
+	case Engine::TEXTURE_TYPE::DISPLACEMENT:
+		return "DisplacementTexture";
+
+	case Engine::TEXTURE_TYPE::LIGHTMAP:
+		return "LightTexture";
+
+	case Engine::TEXTURE_TYPE::REFLECTION:
+		return "ReflectionTexture";
+
+	case Engine::TEXTURE_TYPE::BASE_COLOR:
+		return "BaseColorTexture";
+
+	case Engine::TEXTURE_TYPE::NORMAL_CAMERA:
+		return "NormalCameraTexture";
+
+	case Engine::TEXTURE_TYPE::EMISSION_COLOR:
+		return "EmmisionTexture";
+
+	case Engine::TEXTURE_TYPE::METALNESS:
+		return "MetalnessTexture";
+
+	case Engine::TEXTURE_TYPE::DIFFUSE_ROUGHNESS:
+		return "DiffuseRoughness";
+
+	case Engine::TEXTURE_TYPE::AMBIENT_OCCLUSION:
+		return "AmbientOcclusion";
+
+	case Engine::TEXTURE_TYPE::SHEEN:
+		return "SheenTexture";
+
+	case Engine::TEXTURE_TYPE::CLEARCOAT:
+		return "ClearCoatTexture";
+
+	case Engine::TEXTURE_TYPE::TRANSMISSION:
+		return "TransmissionTexture";
+
+	case Engine::TEXTURE_TYPE::MAYA_BASE:
+		return "MayaBaseTexture";
+
+	case Engine::TEXTURE_TYPE::MAYA_SPECULAR:
+		return "MayaSpecularTexture";
+
+	case Engine::TEXTURE_TYPE::MAYA_SPECULAR_COLOR:
+		return "MayaSpecularColorTexture";
+
+	case Engine::TEXTURE_TYPE::MAYA_SPECULAR_ROUGHNESS:
+		return "MayaSpecularRoughnessTexture";
+
+	case Engine::TEXTURE_TYPE::ANISOTROPY:
+		return "AnisotropyTexture";
+
+	case Engine::TEXTURE_TYPE::GLTF_METALLIC_ROUGHNESS:
+		return "GltfMetalicRoughnessTexture";
+
 	default:
 		break;
 	}

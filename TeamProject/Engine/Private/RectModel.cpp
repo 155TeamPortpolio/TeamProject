@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "RectModel.h"
 #include "VI_Rect.h"
 #include "GameInstance.h"

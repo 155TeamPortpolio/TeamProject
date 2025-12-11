@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VI_Cube.h"
 
 CVI_Cube::CVI_Cube(const string& bufferID)

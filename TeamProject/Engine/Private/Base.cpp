@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Base.h"
 
 _uint CBase::AddRef()

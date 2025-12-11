@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Bone.h"
 
 CBone::CBone()

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "BoneFollower.h"
 #include "Animator3D.h"
 #include "Transform.h"

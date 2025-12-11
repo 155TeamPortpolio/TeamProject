@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "AudioSource.h"
 #include "SoundData.h"
 #include "GameInstance.h"

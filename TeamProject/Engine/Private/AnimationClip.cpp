@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "AnimationClip.h"
 #include "Channel.h"
 

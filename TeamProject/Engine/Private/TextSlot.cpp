@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "TextSlot.h"
 #include "GameInstance.h"
 #include "IFontService.h"

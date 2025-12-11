@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "RaySystem.h"
 #include "RayReceiver.h"
 

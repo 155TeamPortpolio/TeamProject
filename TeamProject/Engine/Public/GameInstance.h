@@ -16,8 +16,6 @@ public:
 	_bool Init_Engine(const ENGINE_DESC& engine);
 	void Update_Engine(_float dt);
 	void Release_Engine();
-	HRESULT Excute_TileSystem(const TILESYSTEM_INFO& tileInfo);
-	HRESULT Excute_TileSystemByData(const string& LoadPath);
 	class CLevel* Get_CurrentLevel();
 public:
 	void Notify_LevelSet();

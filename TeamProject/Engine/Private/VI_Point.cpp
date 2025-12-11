@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VI_Point.h"
 
 CVI_Point::CVI_Point(const string& bufferID)

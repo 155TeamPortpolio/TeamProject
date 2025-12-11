@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "HierarchyPanel.h"
 #include "GUIWidget.h"
 #include "GameInstance.h"

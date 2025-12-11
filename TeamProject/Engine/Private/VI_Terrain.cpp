@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VI_Terrain.h"
 
 CVI_Terrain::CVI_Terrain(const string& imguiID)

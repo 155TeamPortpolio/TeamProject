@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "GUIWidget.h"
 
 void GUIWidget::ShowListButton(const vector<string>& vector, function<void(const string&)> callback)

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Material.h"
 #include "GameInstance.h"
 #include "IResourceService.h"

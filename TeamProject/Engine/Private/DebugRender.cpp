@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "DebugRender.h"
 #include "Model.h"
 #include "GameInstance.h"

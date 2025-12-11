@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "GameInstance.h"
 #include "Sprite2D.h"
 #include "Shader.h"

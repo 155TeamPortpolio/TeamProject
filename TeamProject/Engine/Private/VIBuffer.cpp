@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VIBuffer.h"
 
 CVIBuffer::CVIBuffer(const string& ModelKey)

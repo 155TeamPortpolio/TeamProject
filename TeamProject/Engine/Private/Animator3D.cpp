@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Animator3D.h"
 #include "AnimationClip.h"
 #include "ModelData.h"

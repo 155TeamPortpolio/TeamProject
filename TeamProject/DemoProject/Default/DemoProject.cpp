@@ -1,9 +1,9 @@
-﻿
+﻿#include "pch.h"
+
 #include "framework.h"
 #include "DemoProject.h"
 #include "MainApp.h"
 #include "GameInstance.h"
-#include "Demo_Defines.h"
 
 #define MAX_LOADSTRING 100
 

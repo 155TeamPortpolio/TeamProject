@@ -53,7 +53,6 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
 
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), BoneMatrix)).xyz;
-   Out.vTangent.xz *= -1;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
     return Out;
 }

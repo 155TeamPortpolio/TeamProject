@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "Shader.h"

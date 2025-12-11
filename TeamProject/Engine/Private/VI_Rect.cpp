@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "VI_Rect.h"
 
 CVI_Rect::CVI_Rect(const string& bufferID)

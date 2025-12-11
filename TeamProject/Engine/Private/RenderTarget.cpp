@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "RenderTarget.h"
 
 CRenderTarget::CRenderTarget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -13,6 +13,18 @@
     <Filter Include="01. Level">
       <UniqueIdentifier>{305593fa-5e25-4da2-871d-ac654c5c8899}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. DemoObject">
+      <UniqueIdentifier>{7768bd0a-28aa-407b-a740-1eba13d0c42f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoModel">
+      <UniqueIdentifier>{c8624eac-f359-4a1c-a804-34d7bda96dd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoCamera">
+      <UniqueIdentifier>{550ca545-4ee8-4e17-ab4f-b38d000f003b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. DemoObject\DemoUI">
+      <UniqueIdentifier>{13432f48-7c58-4317-9130-020d9e26b42c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -36,6 +48,15 @@
     <ClInclude Include="..\Public\DemoLevel.h">
       <Filter>01. Level</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DemoCamera.h">
+      <Filter>02. DemoObject\DemoCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoModel.h">
+      <Filter>02. DemoObject\DemoModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -46,6 +67,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\DemoLevel.cpp">
       <Filter>01. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoCamera.cpp">
+      <Filter>02. DemoObject\DemoCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoModel.cpp">
+      <Filter>02. DemoObject\DemoModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

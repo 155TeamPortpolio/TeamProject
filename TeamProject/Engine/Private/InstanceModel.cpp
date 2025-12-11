@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "InstanceModel.h"
 #include "VIBuffer.h"
 #include "Mesh.h"

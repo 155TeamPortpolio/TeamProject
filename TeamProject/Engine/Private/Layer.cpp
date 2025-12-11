@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Layer.h"
 #include "GameObject.h"
 #include "GUIWidget.h"

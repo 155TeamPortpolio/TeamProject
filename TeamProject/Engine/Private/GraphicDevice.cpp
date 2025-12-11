@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "GraphicDevice.h"
 #include "VIBuffer.h"
 #include "Shader.h"

@@ -902,6 +902,9 @@
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Engine_Defines.cpp">
+      <Filter>99. Defines</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">

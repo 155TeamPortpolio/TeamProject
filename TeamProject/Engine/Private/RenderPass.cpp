@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "RenderPass.h"
 #include "RenderSystem.h"
 #include "PipeLine.h"
@@ -168,9 +169,6 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext)
 
 	for (auto& packet : m_Packets)
 	{
-		//if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-		//	continue;
-
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;

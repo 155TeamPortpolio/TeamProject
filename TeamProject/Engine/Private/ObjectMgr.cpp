@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "ObjectMgr.h"
 #include "GameInstance.h"
 #include "ILevelService.h"

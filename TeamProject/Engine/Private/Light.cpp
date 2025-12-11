@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "Light.h"
 #include "GameInstance.h"
 #include	"ILightService.h"

@@ -6,6 +6,7 @@
 //-------------------------------------------------------------------------------------
 
 
+#include "Engine_Defines.h"
 #include "DebugDraw.h"
 
 using namespace DirectX;

@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "MaterialAnimator.h"
 #include "Material.h"
 #include "MaterialInstance.h"

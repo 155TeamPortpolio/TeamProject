@@ -33,7 +33,6 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
-    Out.vTangent.xz *= -1;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
    
     return Out;

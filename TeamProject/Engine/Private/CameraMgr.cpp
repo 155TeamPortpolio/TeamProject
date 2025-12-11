@@ -1,3 +1,4 @@
+#include "Engine_Defines.h"
 #include "CameraMgr.h"
 #include "Camera.h"
 #include "IAudioService.h"
