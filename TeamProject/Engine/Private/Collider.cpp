@@ -48,6 +48,8 @@ void CCollider::Render_GUI()
 void CCollider::Set_CompActive(_bool bActive)
 {
 	m_bActive = bActive; 
+	Set_ColliderActive(bActive);
+
 	if(bActive == false)
 		m_CollisionContext.Owner = nullptr;
 }

@@ -67,6 +67,7 @@ HRESULT CRenderSystem::Render()
 	m_pOpaquePass->Execute(m_pContext);
 	m_pInstancePass->Execute(m_pContext);
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
@@ -76,6 +77,8 @@ HRESULT CRenderSystem::Render()
 	m_pDebugPass->Execute(m_pContext);
 #endif // _DEBUG
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+
+
 	//Render_Bright();
 	/*Custrom Rendering*/
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_UI"))) return E_FAIL;
