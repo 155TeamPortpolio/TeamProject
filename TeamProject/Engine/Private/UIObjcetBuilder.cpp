@@ -42,13 +42,13 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	//¿ÀºêÁ§Æ® ¼³¸íÃ¼ Ã¤¿ì±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½Ã¼ Ã¤ï¿½ï¿½ï¿½
 	m_pObjDesc->InstanceName = instanceKey;
 
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//ÇÁ·ÎÅä ¸Å´ÏÀú¿¡¼­ °¡Á®¿À±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	CGameObject* Object = m_pGameInstance->Get_PrototypeMgr()->
 		Clone_Prototype(m_CloneDesc->OriginLevel, m_CloneDesc->protoTag, m_pObjDesc);
 	CUI_Object* instance = dynamic_cast<CUI_Object*>(Object);

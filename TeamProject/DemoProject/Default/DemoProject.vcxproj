@@ -22,6 +22,7 @@
     <ClInclude Include="..\Public\DemoCamera.h" />
     <ClInclude Include="..\Public\DemoLevel.h" />
     <ClInclude Include="..\Public\DemoModel.h" />
+    <ClInclude Include="..\Public\DemoUI.h" />
     <ClInclude Include="..\Public\Demo_Defines.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
@@ -34,6 +35,7 @@
     <ClCompile Include="..\Private\DemoCamera.cpp" />
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
+    <ClCompile Include="..\Private\DemoUI.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

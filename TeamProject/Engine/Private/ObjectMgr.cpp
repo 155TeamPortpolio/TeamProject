@@ -75,18 +75,31 @@ void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
 	auto iter = map.find(layer.LayerTag);
 	CLayer* pDestLayer = { nullptr };
 	if (iter == map.end()) {
-		pDestLayer = CLayer::Create();
+		pDestLayer = CLayer::Create(layer.LayerTag);
 		map.emplace(layer.LayerTag, pDestLayer);
 	}
 	else {
 		pDestLayer = iter->second;
 	}
-	Add_Object_Recursive(pDestLayer, object);
+	Add_Object_Recursive(pDestLayer, object,layer.LevelTag);
 }
 
 
 void CObjectMgr::Add_Object_Recursive(CLayer* pLayer, CGameObject* object)
 {
+	pLayer->Add_GameObject(object);
+	auto vector = object->Get_Children();
+
+	if (vector.empty()) return;
+
+	for (auto& pChild : object->Get_Children()) {
+		Add_Object_Recursive(pLayer, pChild);
+	}
+}
+
+void CObjectMgr::Add_Object_Recursive(CLayer* pLayer, CGameObject* object, string LevelTag)
+{
+	object->Set_Level(LevelTag);
 	pLayer->Add_GameObject(object);
 	auto vector = object->Get_Children();
 
