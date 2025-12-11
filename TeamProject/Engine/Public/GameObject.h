@@ -50,7 +50,11 @@ public:
 public:
 	void Set_Layer(class CLayer* pLayer);
 	class CLayer* Get_Layer() { return m_pLayer; };
+	void Set_Level(const string& tag) { m_LevelTag = tag; };
+	string Get_Level() { return m_LevelTag; };
 
+public:
+	LAYER_DESC Get_LayerDesc();
 public:
 	const string& Get_InstanceName() { return m_InstanceName; }
 	const _uint Get_ObjectID() { return m_ObjectID; }
@@ -78,7 +82,8 @@ protected:
 
 	CTransform* m_pTransform = { nullptr };
 	class CLayer* m_pLayer = { nullptr };
-
+	string m_LevelTag = {};
+	
 	string m_InstanceName = {};
 	string m_InstanceTag = {};
 	_bool m_isAlive = { true };

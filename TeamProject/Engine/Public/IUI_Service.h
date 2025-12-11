@@ -17,5 +17,6 @@ public:
 	virtual HRESULT Sync_To_Level() PURE;
 	virtual HRESULT Add_UIObject(class CUI_Object* object, const string& level) PURE;
 	virtual void Remove_UIObject(class CUI_Object* object)PURE;
-};
+	virtual const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag) PURE;
+	};
 NS_END
