@@ -115,6 +115,7 @@ HRESULT CSprite2D::Change_Texture(_uint index, const string& levelKey, const str
 			return E_FAIL;
 		m_pTextures[index] = pTexture;
 		Safe_AddRef(pTexture);
+		return S_OK;
 	}
 }
 
