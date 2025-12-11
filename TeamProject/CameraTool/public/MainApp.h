@@ -14,8 +14,8 @@ public:
 
 private:
 	CGameInstance*       game{};
-	ID3D11Device*        dev{};
-	ID3D11DeviceContext* ctx{};
+	ID3D11Device*        device{};
+	ID3D11DeviceContext* context{};
 
 public:
 	static MainApp* Create();
