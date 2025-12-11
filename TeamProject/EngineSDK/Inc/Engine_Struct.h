@@ -72,6 +72,7 @@ namespace Engine
 		_float4 vMtrDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		_float4 vMtrlAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 		_float4 vMtrlSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
+		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);  
 		_float fSpecularPow = { 0.1f };
 		_float3 vPadding;
 	};
