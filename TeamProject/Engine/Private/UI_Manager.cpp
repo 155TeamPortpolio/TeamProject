@@ -159,6 +159,18 @@ void CUI_Manager::Remove_UIObject(CUI_Object* object)
 	map[systemIndex] = nullptr;
 }
 
+static vector<CUI_Object*> emptyVec;
+
+const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
+{
+	auto iter = m_UIObjects.find(leveTag);
+	if (iter != m_UIObjects.end()) {
+		return iter->second;
+	}
+
+	return emptyVec;
+}
+
 
 void CUI_Manager::Sort_UI()
 {
