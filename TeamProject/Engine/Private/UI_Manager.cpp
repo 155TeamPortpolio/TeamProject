@@ -88,6 +88,7 @@ HRESULT CUI_Manager::Sync_To_Level()
 
 	for (string& name : LevelList)
 		m_UIObjects.emplace(name, UIobjects());
+	return S_OK;
 }
 
 HRESULT CUI_Manager::Add_UIObject(CUI_Object* object, const string& level)
@@ -104,6 +105,7 @@ HRESULT CUI_Manager::Add_UIObject(CUI_Object* object, const string& level)
 
 	auto& map = m_UIObjects.at(level);
 	Add_Object_Recursive(level, object);
+	return S_OK;
 }
 
 void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* object)

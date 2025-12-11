@@ -178,6 +178,8 @@ HRESULT CObjectMgr::Sync_To_Level()
 
 	for (string& name : LevelList)
 		m_Layers.emplace(name, LAYERS{});
+
+	return S_OK;
 }
 
 const unordered_map<string, class CLayer*>& CObjectMgr::Get_LevelLayer(const string& LevelTag)
