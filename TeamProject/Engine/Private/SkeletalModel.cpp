@@ -175,7 +175,7 @@ MINMAX_BOX CSkeletalModel::Get_WorldBoundingBox()
 	return wordlBox;
 }
 
-vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBox()
+vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;
 

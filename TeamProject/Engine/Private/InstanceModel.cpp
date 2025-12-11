@@ -257,7 +257,7 @@ _bool CInstanceModel::Check_Valid(_uint MeshIndex)
 	return true;
 }
 
-vector<MINMAX_BOX> CInstanceModel::Get_MeshBoundingBox()
+vector<MINMAX_BOX> CInstanceModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;
 

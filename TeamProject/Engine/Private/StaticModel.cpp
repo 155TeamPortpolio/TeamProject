@@ -110,7 +110,7 @@ MINMAX_BOX CStaticModel::Get_WorldBoundingBox()
     return wordlBox;
 }
 
-vector<MINMAX_BOX> CStaticModel::Get_MeshBoundingBox()
+vector<MINMAX_BOX> CStaticModel::Get_MeshBoundingBoxes()
 {
     vector<MINMAX_BOX> boxes;
 

@@ -113,7 +113,7 @@ MINMAX_BOX CRectModel::Get_WorldBoundingBox()
 	return wordlBox;
 }
 
-vector<MINMAX_BOX> CRectModel::Get_MeshBoundingBox()
+vector<MINMAX_BOX> CRectModel::Get_MeshBoundingBoxes()
 {
 	vector<MINMAX_BOX> boxes;
 	boxes.push_back(MINMAX_BOX{ { -0.5f, -0.5f, 0.f }, {0.5f,0.5f ,0.f} });

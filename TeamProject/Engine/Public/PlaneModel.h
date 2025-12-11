@@ -25,7 +25,7 @@ public:
 	virtual void SetDrawable(_uint Index, _bool isDraw) override;
 	virtual MINMAX_BOX Get_LocalBoundingBox()	override;
 	virtual MINMAX_BOX Get_WorldBoundingBox()	override;
-	virtual vector<MINMAX_BOX> Get_MeshBoundingBox()	override;
+	virtual vector<MINMAX_BOX> Get_MeshBoundingBoxes()	override;
 	virtual MINMAX_BOX Get_MeshBoundingBox(_uint index)	override;
 	_bool isReadyToDraw()	override { return true; };
 
