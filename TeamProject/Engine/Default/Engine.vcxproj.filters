@@ -627,6 +627,15 @@
     <Filter Include="01. Utility\04. Components\08. Collider\DebugDraw">
       <UniqueIdentifier>{776ff978-817b-4c94-bb93-09b82bc662dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect">
+      <UniqueIdentifier>{992d93af-5e0f-4489-b82e-836c6f746d16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\EffectContainer">
+      <UniqueIdentifier>{280b48f6-6391-497f-b857-0e4eefca4a29}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode">
+      <UniqueIdentifier>{a6d5c0ba-2acf-42f6-b4a1-23541fa8958d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">

@@ -56,7 +56,6 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 		m_pObjDesc = new GAMEOBJECT_DESC;
 
 	m_pObjDesc->InstanceName = instanceKey;
-
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
