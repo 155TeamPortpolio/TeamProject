@@ -130,6 +130,7 @@ HRESULT CStaticModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 {
     return m_pData->Render_Mesh(pContext, Index);
 }
+
 void CStaticModel::Render_GUI()
 {
     ImGui::SeparatorText("Animate Model");

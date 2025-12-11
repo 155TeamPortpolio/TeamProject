@@ -154,7 +154,7 @@ void CObjectContainer::Destroy_Child(_uint ChildIndex)
 		return;
 
 	CGameObject* target= m_ChildrenObjects[ChildIndex];
-
+	  
 	auto nameIter = m_ChildrensName.find(target->Get_ObjectID());
 	m_ChildrensName.erase(nameIter);
 	auto IndexIter = m_IndexByID.find(target->Get_ObjectID());
