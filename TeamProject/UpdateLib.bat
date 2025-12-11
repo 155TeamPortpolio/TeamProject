@@ -13,10 +13,17 @@ REM FMOD 라이브러리 함수
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmod_vc.lib" 1
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmodL_vc.lib" 1
 
+REM PhysX 라이브러리
+call :WaitForFile "%BASE%Engine\ThirdPartyLib\PhysX\debug\PhysX_64.lib" 1
+call :WaitForFile "%BASE%Engine\ThirdPartyLib\PhysX\release\PhysX_64.lib" 1
+
 REM 실제 복사 
 xcopy /y "%BASE%Engine\Bin\Engine.dll"      "%BASE%DemoProject\Bin\"
 xcopy /y "%BASE%Engine\Bin\fmodL.dll"      "%BASE%DemoProject\Bin\"
 xcopy /y "%BASE%Engine\Bin\fmod.dll"        "%BASE%DemoProject\Bin\"
+
+xcopy /y /s /e /i "%BASE%Engine\Bin\PhysX\debug"   "%BASE%DemoProject\Bin\PhysX\debug\"
+xcopy /y /s /e /i "%BASE%Engine\Bin\PhysX\release" "%BASE%DemoProject\Bin\PhysX\release\"
 
 REM ==========================================================
 xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
@@ -32,6 +39,8 @@ xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mtd.lib"        "%BASE%EngineS
 xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mt.lib"           "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTKd.lib"                        "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTK.lib"                           "%BASE%EngineSDK\Lib\"
+xcopy /y /s /e /i "%BASE%Engine\ThirdPartyLib\PhysX\debug"   "%BASE%EngineSDK\Lib\PhysX\debug\"
+xcopy /y /s /e /i "%BASE%Engine\ThirdPartyLib\PhysX\release" "%BASE%EngineSDK\Lib\PhysX\release\"
 
 goto :eof
 

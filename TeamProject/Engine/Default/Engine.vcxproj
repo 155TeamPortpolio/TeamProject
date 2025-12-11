@@ -120,7 +120,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysX/debug/PhysXFoundation_64.lib;PhysX/debug/PhysXCommon_64.lib;PhysX/debug/PhysX_64.lib;PhysX/debug/PhysXExtensions_static_64.lib;PhysX/debug/PhysXPvdSDK_static_64.lib;PhysX/debug/PhysXCharacterKinematic_static_64.lib;PhysX/debug/PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(TargetDir)Engine_Shaders\"
@@ -151,7 +151,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysX/release/PhysXFoundation_64.lib;PhysX/release/PhysXCommon_64.lib;PhysX/release/PhysX_64.lib;PhysX/release/PhysXExtensions_static_64.lib;PhysX/release/PhysXPvdSDK_static_64.lib;PhysX/release/PhysXCharacterKinematic_static_64.lib;PhysX/release/PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>mkdir "$(TargetDir)Engine_Shaders\"
