@@ -27,6 +27,7 @@ public:
 
 protected:
     _float m_fDuration{};
+    _float m_fElpasedTime{};
 
 };
 NS_END

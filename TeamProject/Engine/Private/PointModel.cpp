@@ -73,7 +73,7 @@ HRESULT CPointModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 HRESULT CPointModel::Link_Model(const string& levelKey, const string& modelDataKey)
 {
 	Safe_Release(m_pPoint);
-	m_pPoint = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_VIBuffer(levelKey, modelDataKey, BUFFER_TYPE::BASIC_RECT);
+	m_pPoint = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_VIBuffer(levelKey, modelDataKey, BUFFER_TYPE::BASIC_POINT);
 	Safe_AddRef(m_pPoint);
 
 	return S_OK;

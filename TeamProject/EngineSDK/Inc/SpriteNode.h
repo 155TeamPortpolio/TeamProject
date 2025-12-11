@@ -24,6 +24,7 @@ public:
     virtual void Free();
 
 private:
-
+    _uint m_iMaxFrameIndex{};
+    _uint m_iCurrFrameIndex{};
 };
 NS_END
