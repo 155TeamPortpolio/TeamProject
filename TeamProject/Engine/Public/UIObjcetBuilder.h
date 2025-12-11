@@ -9,7 +9,6 @@ class ENGINE_DLL CUIObjcetBuilder
         ~CUIObjcetBuilder();
     public:
         class CUI_Object* Build(const string& instanceKey, _uint* id = nullptr);
-        CUIObjcetBuilder& Add_To_Level(const string& Level);/*{level,layer}*/
     public:
         CUIObjcetBuilder& Position(const _float2 position);
         CUIObjcetBuilder& Rotate(const _float rotate);
@@ -18,7 +17,6 @@ class ENGINE_DLL CUIObjcetBuilder
 
     private:
         class CGameInstance* m_pGameInstance = { nullptr };
-        string m_LevelTag = {};
         CLONE_DESC* m_CloneDesc = { nullptr };
         UI_DESC* m_pObjDesc = { nullptr };
 

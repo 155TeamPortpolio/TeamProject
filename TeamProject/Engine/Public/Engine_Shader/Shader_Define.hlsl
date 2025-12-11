@@ -73,7 +73,7 @@ Texture2D OpacityTexture : register(t7);
 Texture2D DisplacementTexture : register(t8);
 Texture2D LightTexture : register(t9);
 Texture2D ReflectionTexture : register(t10);
-Texture2D BaseColorTexture : register(t111);
+Texture2D BaseColorTexture : register(t11);
 Texture2D NormalCameraTexture : register(t12);
 Texture2D EmmisionTexture : register(t13);
 Texture2D MetalnessTexture : register(t14);
