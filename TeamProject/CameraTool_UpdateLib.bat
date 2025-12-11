@@ -20,17 +20,17 @@ call :WaitForFile "%BASE%Engine\Bin\PhysX_64.lib" 1
 REM 여기서 부터 자신 프로젝트 기준으로 복사====================DemoProject부분을 자신 폴더명으로
 
 REM 실제 복사 
-xcopy /y "%BASE%Engine\Bin\Engine.dll"                                          "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%DemoProject\Bin\"
+xcopy /y "%BASE%Engine\Bin\Engine.dll"                                          "%BASE%CameraTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%CameraTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%CameraTool\Bin\"
 
-xcopy /y "%BASE%Engine\Bin\PhysX_64.dll"           "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXCommon_64.dll"     "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXFoundation_64.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXCooking_64.dll" "%BASE%DemoProject\Bin\"
+xcopy /y "%BASE%Engine\Bin\PhysX_64.dll"           "%BASE%CameraTool\Bin\"
+xcopy /y "%BASE%Engine\Bin\PhysXCommon_64.dll"     "%BASE%CameraTool\Bin\"
+xcopy /y "%BASE%Engine\Bin\PhysXFoundation_64.dll" "%BASE%CameraTool\Bin\"
+xcopy /y "%BASE%Engine\Bin\PhysXCooking_64.dll" "%BASE%CameraTool\Bin\"
 
-xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\"                "%BASE%DemoProject\Bin\ShaderFiles\"
-xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\"          "%BASE%DemoProject\Bin\ShaderFiles\"
+xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\"                "%BASE%CameraTool\Bin\ShaderFiles\"
+xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\"          "%BASE%CameraTool\Bin\ShaderFiles\"
 
 xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
 
