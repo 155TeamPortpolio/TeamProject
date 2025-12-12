@@ -28,6 +28,9 @@
     <Filter Include="02.Object\GUI\IMGUI">
       <UniqueIdentifier>{de841462-128e-48aa-927e-a7c41bd6d76b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\CanvasPanel">
+      <UniqueIdentifier>{41b794a8-2c02-4c2b-ae3e-92e09ea30532}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -72,6 +75,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
       <Filter>02.Object\GUI\IMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CanvasPanel.h">
+      <Filter>02.Object\UI\CanvasPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -112,6 +118,9 @@
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CanvasPanel.cpp">
+      <Filter>02.Object\UI\CanvasPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
