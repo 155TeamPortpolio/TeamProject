@@ -32,7 +32,7 @@ HRESULT CSpriteNode::Initialize(INIT_DESC* pArg)
 
 	/* Init Node */
 	SPRITE_NODE* pNodeDesc = static_cast<SPRITE_NODE*>(pArg);
-	m_IsAnimated = pNodeDesc->IsAnimated;
+	m_IsAnimated = pNodeDesc->isAnimated;
 	m_iMaxFrameIndex = pNodeDesc->iMaxFrameIndex;
 	m_iCurrFrameIndex = 0;
 	m_fSpeed = pNodeDesc->fSpeed;

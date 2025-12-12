@@ -1,6 +1,10 @@
 #include "Engine_Defines.h"
 #include "EffectContainer.h"
 
+#include "GameInstance.h"
+#include "IProtoService.h"
+#include "EffectNode.h"
+
 CEffectContainer::CEffectContainer()
 	:CGameObject()
 {
@@ -22,7 +26,35 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	EFFECT_ASSET* pAsset = static_cast<EFFECT_ASSET*>(pArg);
+	m_fDuration = pAsset->fDuration;
+	m_IsLoop = pAsset->isLoop;
+	m_iNumNodes = pAsset->Nodes.size();
+	m_Nodes.resize(m_iNumNodes);
 
+	auto proto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	for (_uint i = 0; i < m_iNumNodes; ++i)
+	{
+		CGameObject* pNode = nullptr;
+
+		switch (pAsset->Nodes[i].eType)
+		{
+		case Engine::EFFECT_TYPE::SPRITE:
+			pNode = proto->Clone_Prototype("", "", &pAsset->Nodes[i]);
+			break;
+		case Engine::EFFECT_TYPE::PARTICLE:
+			break;
+		case Engine::EFFECT_TYPE::MESH:
+			break;
+		case Engine::EFFECT_TYPE::END:
+			break;
+		default:
+			break;
+		}
+
+		if (pNode)
+			m_Nodes[i] = static_cast<CEffectNode*>(pNode);
+	}
 
 	return S_OK;
 }
@@ -41,6 +73,9 @@ void CEffectContainer::Update(_float dt)
 	{
 		m_fElapsedTime += dt;
 	}
+
+	for (const auto& node : m_Nodes)
+		node->Update(dt);
 }
 
 void CEffectContainer::Late_Update(_float dt)
@@ -76,4 +111,8 @@ CGameObject* CEffectContainer::Clone(INIT_DESC* pArg)
 void CEffectContainer::Free()
 {
 	__super::Free();
+
+	for (auto& node : m_Nodes)
+		Safe_Release(node);
+	m_Nodes.clear();
 }

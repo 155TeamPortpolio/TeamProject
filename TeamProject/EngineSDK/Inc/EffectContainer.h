@@ -27,7 +27,7 @@ private:
 	_bool m_IsLoop = false;
 	_float m_fDuration{};
 	_float m_fElapsedTime{};
-
-	vector<class EffectNode*> m_Nodes;
+	_uint m_iNumNodes{};
+	vector<class CEffectNode*> m_Nodes;
 };
 NS_END
