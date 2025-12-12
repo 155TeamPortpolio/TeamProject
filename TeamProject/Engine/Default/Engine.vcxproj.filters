@@ -337,6 +337,15 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CCameraTrail.h">
+      <Filter>01. Utility\04. Components\19. CamTrail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Struct.h">
+      <Filter>01. Utility\04. Components\01. Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Enum.h">
+      <Filter>01. Utility\04. Components\01. Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -636,6 +645,9 @@
     <Filter Include="01. Utility\03. GameObject\Effect\EffectNode">
       <UniqueIdentifier>{a6d5c0ba-2acf-42f6-b4a1-23541fa8958d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\19. CamTrail">
+      <UniqueIdentifier>{3c661f65-fdd4-4878-84e1-326e1562d117}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -913,6 +925,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CCameraTrail.cpp">
+      <Filter>01. Utility\04. Components\19. CamTrail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
