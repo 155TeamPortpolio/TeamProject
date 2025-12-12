@@ -421,6 +421,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
