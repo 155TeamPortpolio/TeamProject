@@ -10,10 +10,12 @@ private:
     virtual ~CPhysicsSystem() DEFAULT;
 
 public:
-    PxPhysics*           Get_Physics() { return m_pPhysics; }
-    PxScene*             Get_Scene() { return m_pScene; }
-    PxControllerManager* Get_ControllerManager() { return m_pControllerManager; }
-    PxMaterial*          Get_DefaultMaterial() { return m_pMaterial; }
+    PxPhysics*           Get_Physics() override { return m_pPhysics; }
+    PxScene*             Get_Scene() override { return m_pScene; }
+    PxControllerManager* Get_ControllerManager() override { return m_pControllerManager; }
+    PxMaterial*          Get_DefaultMaterial() override { return m_pMaterial; }
+    HRESULT              Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution) override;
+    PxMaterial*          Get_Material(const string& strKey) override;
 
 public:
     HRESULT Initialize();
@@ -34,15 +36,19 @@ private:
     };
 
 private:
-    PxFoundation*           m_pFoundation = { nullptr };            // 기반
-    PxPhysics*              m_pPhysics = { nullptr };               // 물리객체를 만들기(Device 역할)
-    PxPvd*                  m_pPvd = { nullptr };                   // 디버깅 툴용
-    PxDefaultCpuDispatcher* m_pDispatcher = { nullptr };            // 스레드관리자(멀티스레딩 물리연산)
-    PxScene*                m_pScene = { nullptr };                 // 물리월드
-    PxMaterial*             m_pMaterial = { nullptr };              // 물리재질(기본재질용)
-    PxControllerManager*    m_pControllerManager = { nullptr };     // 캐릭터 움직임 관리하는 매니저
-    PxDefaultAllocator      m_Allocator;                            // 메모리 할당자
-    CUserErrorCallback      m_ErrorCallback;                        // 에러 리포터
+    PxFoundation*            m_pFoundation = { nullptr };            // 기반
+    PxPhysics*               m_pPhysics = { nullptr };               // 물리객체를 만들기(Device 역할)
+    PxPvd*                   m_pPvd = { nullptr };                   // 디버깅 툴용
+    PxDefaultCpuDispatcher*  m_pDispatcher = { nullptr };            // 스레드관리자(멀티스레딩 물리연산)
+    PxScene*                 m_pScene = { nullptr };                 // 물리월드
+    PxMaterial*              m_pMaterial = { nullptr };              // 기본 물리재질
+    map<string, PxMaterial*> m_Materials;                            // 물리재질
+    PxControllerManager*     m_pControllerManager = { nullptr };     // 캐릭터 움직임 관리하는 매니저
+    PxDefaultAllocator       m_Allocator;                            // 메모리 할당자
+    CUserErrorCallback       m_ErrorCallback;                        // 에러 리포터
+
+    _float                  m_fTimer = {};
+    const _float            m_fDelta = 1.0f / 60.f;
 
 public:
     static CPhysicsSystem* Create();

@@ -260,6 +260,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
+    <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
@@ -349,6 +350,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
+    <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />

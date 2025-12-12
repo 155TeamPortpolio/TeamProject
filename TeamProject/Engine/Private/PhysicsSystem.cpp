@@ -4,6 +4,27 @@
 
 #include "GameInstance.h"
 
+HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
+{
+    if (m_Materials.find(strKey) != m_Materials.end())
+        return E_FAIL;  // already  exist
+
+    PxMaterial* pMaterial = m_pPhysics->createMaterial(fStatic, fDynamic, fRestitution);
+    if (!pMaterial) return E_FAIL;  // failed to create material
+
+    m_Materials.emplace(strKey, pMaterial);
+    return S_OK;
+}
+
+PxMaterial* CPhysicsSystem::Get_Material(const string& strKey)
+{
+    auto iter = m_Materials.find(strKey);
+    if (iter == m_Materials.end())
+        return m_pMaterial; // 없으면 기본 재질 반환
+
+    return iter->second;
+}
+
 HRESULT CPhysicsSystem::Initialize()
 {
     // Foundation 생성
@@ -67,9 +88,13 @@ HRESULT CPhysicsSystem::Initialize()
 
 void CPhysicsSystem::Update(_float dt)
 {
-    if (m_pScene)
+    if (!m_pScene) return;
+
+    m_fTimer += dt;
+    while (m_fTimer >= m_fDelta)
     {
-        m_pScene->simulate(dt);       // 시뮬레이션 진행 (멀티스레드)
+        m_pScene->simulate(m_fDelta);
+        m_fTimer -= m_fDelta;
     }
 }
 
@@ -94,6 +119,16 @@ CPhysicsSystem* CPhysicsSystem::Create()
 
 void CPhysicsSystem::Free()
 {
+    for (auto& pair : m_Materials)
+        pair.second->release();
+    m_Materials.clear();
+
+    if (m_pMaterial)
+    {
+        m_pMaterial->release();
+        m_pMaterial = nullptr;
+    }
+
     if (m_pControllerManager)
     {
         m_pControllerManager->release();
