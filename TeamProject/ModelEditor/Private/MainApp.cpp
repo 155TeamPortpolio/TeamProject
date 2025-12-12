@@ -1,13 +1,9 @@
 #include "pch.h"
 #include "Engine_Defines.h"
-#include "Engine_Service.h"
 
 #include "MainApp.h"
 #include "GameInstance.h"
-#include "IResourceService.h"
-
 #include "ModelEditLevel.h"
-#include "EditCamera.h"
 
 CMainApp::CMainApp()
 {
@@ -36,9 +32,9 @@ HRESULT CMainApp::Initialize()
 	
 	Set_Levels();
 
-	//#ifdef  _USING_GUI
-	//	ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
-	//#endif //  _USING_GUI
+	#ifdef  _USING_GUI
+		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+	#endif //  _USING_GUI
 
 	return S_OK;
 }

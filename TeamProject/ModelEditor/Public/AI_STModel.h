@@ -17,26 +17,24 @@ private:
     virtual ~CAI_STModel() DEFAULT;
 
 public:
-    virtual HRESULT Initialize(string fbxFilePath);
+    virtual HRESULT Initialize_Prototype() override;
+    virtual HRESULT Initialize(COMPONENT_DESC* pArg);
     virtual void Render_GUI() override;
 
 public:
-    HRESULT Load_AIModel(string fbxFilePath);
+    HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
 
 private:
-    HRESULT Ready_AIModelData();
-    HRESULT Ready_AIMaterials();
+    HRESULT Ready_AIModelData(const aiScene* pAIScene);
     HRESULT Ready_AIAnimations();
-
 private:
-    //Assimp
-    const aiScene* m_pAIScene = { nullptr };
-    Assimp::Importer	        m_Importer = {};
-    //PreTransform
+    HRESULT Release_Mesh();
+private:
+    string m_fileName = {};
     _matrix                     m_PreTransform = {};
 
 public:
-    static CAI_STModel* Create(string fbxFilePath);
+    static CAI_STModel* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
 };

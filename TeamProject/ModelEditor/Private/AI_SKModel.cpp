@@ -11,11 +11,13 @@ CAI_SKModel::CAI_SKModel(const CAI_SKModel& rhs)
 {
 }
 
-HRESULT CAI_SKModel::Initialize(string fbxFilePath)
+HRESULT CAI_SKModel::Initialize_Prototype()
 {
-	if (FAILED(Load_AIModel(fbxFilePath)))
-		return E_FAIL;
+	return S_OK;
+}
 
+HRESULT CAI_SKModel::Initialize(COMPONENT_DESC* pArg)
+{
 	return S_OK;
 }
 
@@ -24,31 +26,49 @@ void CAI_SKModel::Render_GUI()
 	__super::Render_GUI();
 }
 
-HRESULT CAI_SKModel::Load_AIModel(string fbxFilePath)
+HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 {
-	unsigned int iFlag = { aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast };
+	if (nullptr == pAIScene)
+		return E_FAIL;
+	_uint meshNum = pAIScene->mNumMeshes;
+	m_DrawableMeshes.resize(meshNum, true);
 
-	m_pAIScene = m_Importer.ReadFile(fbxFilePath, iFlag);
-	if (nullptr == m_pAIScene)
+	if (FAILED(Ready_AIModelData(pAIScene)))
 		return E_FAIL;
 
-	//애들 생성
-	if (FAILED(Ready_AIModelData()))
-		return E_FAIL;
+	m_fileName = fileName;
+	_float4x4 IdentityMatrix;
+	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
-	if (FAILED(Ready_AIMaterials()))
-		return E_FAIL;
+	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	if (FAILED(Ready_AIAnimations()))
-		return E_FAIL;
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		int parent = m_pData->Get_BoneParentIndex(i);
 
+		if (parent == -1) {
+			m_CombinedMatrices[i] = m_TransfromationMatrices[i];
+		}
+		else {
+			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
+			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
+			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
+		}
+	}
+
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
+	}
 	return S_OK;
 }
 
 
-HRESULT CAI_SKModel::Ready_AIModelData()
+HRESULT CAI_SKModel::Ready_AIModelData(const aiScene* pAIScene)
 {
-	m_pData = CAIModelData::Create(MESH_TYPE::ANIM, m_pAIScene);
+	m_pData = CAIModelData::Create(MESH_TYPE::ANIM, pAIScene);
 
 	if (nullptr == m_pData)
 		return E_FAIL;
@@ -56,21 +76,20 @@ HRESULT CAI_SKModel::Ready_AIModelData()
 	return S_OK;
 }
 
-HRESULT CAI_SKModel::Ready_AIMaterials()
+HRESULT CAI_SKModel::Release_Mesh()
 {
+	Safe_Release(m_pData);
+	vector<bool> v;
+	m_DrawableMeshes.swap(v);
+
 	return S_OK;
 }
 
-HRESULT CAI_SKModel::Ready_AIAnimations()
-{
-	return S_OK;
-}
-
-CAI_SKModel* CAI_SKModel::Create(string fbxFilePath)
+CAI_SKModel* CAI_SKModel::Create()
 {
 	CAI_SKModel* instance = new CAI_SKModel();
 
-	if (FAILED(instance->Initialize(fbxFilePath))) {
+	if (FAILED(instance->Initialize_Prototype())) {
 		MSG_BOX("CAI_SKModel Create Failed : CAI_SKModel");
 		Safe_Release(instance);
 	}
@@ -87,6 +106,4 @@ CComponent* CAI_SKModel::Clone()
 void CAI_SKModel::Free()
 {
 	__super::Free();
-
-	m_Importer.FreeScene();
 }

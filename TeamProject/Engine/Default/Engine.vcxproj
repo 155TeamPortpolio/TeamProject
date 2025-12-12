@@ -208,6 +208,9 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\Build_Struct.h" />
     <ClInclude Include="..\Public\Camera.h" />
     <ClInclude Include="..\Public\CameraMgr.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
@@ -327,6 +330,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />

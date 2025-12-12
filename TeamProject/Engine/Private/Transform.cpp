@@ -296,11 +296,11 @@ void CTransform::Render_GUI()
 
 	ImGui::BeginChild("##TransformChild", ImVec2{ 0, childHeight }, true);
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Position");
-	ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f");
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
-	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f");
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
-	ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f");
 	ImGui::EndChild();
 }
 

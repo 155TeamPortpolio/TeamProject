@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "IObjectService.h"
 #include "Child.h"
+#include "UI_Object.h"
 
 CObjectContainer::CObjectContainer()
 {
@@ -138,7 +139,11 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
 	
 
 	CChild* child = pObject->Add_Component<CChild>(m_pOwner);
-	child->Sync_To_Parent(SyncTransform);
+
+	if(dynamic_cast<CUI_Object*>(pObject))
+		child->Sync_To_Parent(false);
+	else
+		child->Sync_To_Parent(SyncTransform);
 
 	string name = pObject->Get_InstanceName();
 	m_ChildrensName.emplace(ObjectID, name);

@@ -80,6 +80,10 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 {
     m_iVertexStride = sizeof(VTXMESH);
 
+    m_ElementCount = VTXMESH::iElementCount;
+    m_ElementKey = VTXMESH::Key;
+    m_ElementDesc = VTXMESH::Elements;
+
     D3D11_BUFFER_DESC           VBDesc{};
     VBDesc.ByteWidth = m_iVerticesCount * m_iVertexStride;
     VBDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -122,6 +126,10 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 {
     if (nullptr == _pSkeleton)
         return E_FAIL;
+
+    m_ElementCount = VTXSKINMESH::iElementCount;
+    m_ElementKey = VTXSKINMESH::Key;
+    m_ElementDesc = VTXSKINMESH::Elements;
 
     m_iVertexStride = sizeof(VTXSKINMESH);
 
@@ -225,7 +233,6 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
         XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
         m_BoneIndices.push_back(BoneIndex);
     }
-
 
     return S_OK;
 }
