@@ -25,6 +25,45 @@
     <Filter Include="02. ModelObject\Model">
       <UniqueIdentifier>{5cbc0111-17df-4464-ba87-1ea0715ef5aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Component">
+      <UniqueIdentifier>{78a34969-b295-49ce-b102-6754be67b6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel">
+      <UniqueIdentifier>{faedaf66-fbb5-455e-8ea3-c248834c04cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\Extractor">
+      <UniqueIdentifier>{5097688f-e244-4c55-910b-31760c73304a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI">
+      <UniqueIdentifier>{dbafb4c4-051a-4b37-a866-728fb1d4e56c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIAnimation">
+      <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIMaterial">
+      <UniqueIdentifier>{71194301-77e2-4279-996d-b4b54d736cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\SK_Model">
+      <UniqueIdentifier>{4556e8b7-d5d6-43ec-b2b0-b0a1a7fbf5ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\ST_Model">
+      <UniqueIdentifier>{99872939-792e-4fb3-bcf4-9720a8626683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIAnimation\AIAnimationClip">
+      <UniqueIdentifier>{4b314883-8b00-497e-9e51-e9abff197546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData">
+      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AIMesh">
+      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AISkeleton">
+      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone">
+      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -70,6 +109,30 @@
     <ClInclude Include="..\Public\ModelEditor_Defines.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AI_SKModel.h">
+      <Filter>03. Component\AIModel\SK_Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AI_STModel.h">
+      <Filter>03. Component\AIModel\ST_Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIBone.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Assimps.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AISkeleton.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIMesh.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AIMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AIMaterial.h">
+      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIModelData.h">
+      <Filter>03. Component\AIModel\AI\AIModelData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -87,8 +150,29 @@
     <ClCompile Include="..\Private\EditCamera.cpp">
       <Filter>02. ModelObject\Camera</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\AI_SKModel.cpp">
+      <Filter>03. Component\AIModel\SK_Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AI_STModel.cpp">
+      <Filter>03. Component\AIModel\ST_Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIBone.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AISkeleton.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIMesh.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AIMesh</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\EditModel.cpp">
       <Filter>02. ModelObject\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIMaterial.cpp">
+      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIModelData.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

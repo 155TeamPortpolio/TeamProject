@@ -337,6 +337,15 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IPhysicsService.h">
+      <Filter>01. Utility\98. Services</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PhysicsSystem.h">
+      <Filter>01. Utility\12. PhysicsSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RigidBody.h">
+      <Filter>01. Utility\04. Components\19. RigidBody</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -627,6 +636,12 @@
     <Filter Include="01. Utility\04. Components\08. Collider\DebugDraw">
       <UniqueIdentifier>{776ff978-817b-4c94-bb93-09b82bc662dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\12. PhysicsSystem">
+      <UniqueIdentifier>{eef3a17c-3067-4db4-9341-a57791e7f963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\19. RigidBody">
+      <UniqueIdentifier>{80fdcd05-af2a-40fe-84b0-8e985aab4005}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -904,6 +919,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PhysicsSystem.cpp">
+      <Filter>01. Utility\12. PhysicsSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RigidBody.cpp">
+      <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

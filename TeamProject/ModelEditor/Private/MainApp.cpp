@@ -62,7 +62,7 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 {
 	m_pGameInstance->Get_LevelMgr()->Register_Level("ModelEdit_Level", []()->CLevel* {return CModelEditLevel::Create("ModelEdit_Level"); });
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("ModelEdit_Level",false); //로고 레벨로 시작!
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("ModelEdit_Level",false); //모델에디터 레벨로 시작!
 } 
 
 CMainApp* CMainApp::Create()

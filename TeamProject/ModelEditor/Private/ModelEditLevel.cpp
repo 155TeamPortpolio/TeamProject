@@ -39,12 +39,12 @@ HRESULT CModelEditLevel::Awake()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	CGameObject* DemoModel = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditModel"})
+	CGameObject* EditModel = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditModel"})
 		.Position({ 0,0,0 })
 		.Build("Edit_Model");
 
 	pObjMgr->Add_Object(Camera, { "ModelEdit_Level","Camera_Layer"});
-	pObjMgr->Add_Object(DemoModel, { "ModelEdit_Level","Model_Layer"});
+	pObjMgr->Add_Object(EditModel, { "ModelEdit_Level","Model_Layer"});
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 

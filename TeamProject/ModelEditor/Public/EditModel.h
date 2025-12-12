@@ -21,6 +21,7 @@ public:
 public:
     void Render_GUI() override;
 
+
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

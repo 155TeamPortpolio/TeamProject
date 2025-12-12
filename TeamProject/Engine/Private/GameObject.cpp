@@ -15,7 +15,7 @@
 #include "DebugRender.h"
 #include "InstanceModel.h"
 #include "MaterialInstance.h"
-
+#include "Layer.h"
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -127,8 +127,6 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 
 void CGameObject::Post_EngineUpdate(_float dt)
 {
-	if (m_InstanceTag == "Sub")
-		int i = 0;
 	/*패킷은 용도별로 따로 만든다.*/
 	if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 
@@ -234,6 +232,11 @@ const vector<CGameObject*> CGameObject::Get_Children()
 	}
 }
 
+
+LAYER_DESC CGameObject::Get_LayerDesc()
+{
+	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
+}
 
 _float4x4* CGameObject::Get_WorldMatrix()
 {

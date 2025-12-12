@@ -27,6 +27,8 @@ HRESULT CPrototypeMgr::Sync_To_Level()
 
 	for (string& name : LevelList)
 		m_Prototypes.emplace(name, PROTOTYPES{});
+
+	return S_OK;
 }
 
 HRESULT CPrototypeMgr::Add_ProtoType(const string& LevelTag, const string& protoTag, CGameObject* pProto)

@@ -21,16 +21,22 @@ public:
 	_uint Get_ObjectCount() { return m_IndexByID.size(); };
 	class CGameObject* Find_ObjectByID(_uint ObjectID);
 	const vector<class CGameObject*>& Get_AllObject() { return m_GameObjects; };
+
 public:
 	void Set_RenderState(_bool render) { m_isRender = render; };
+	string Get_LayerTag() { return m_LayerTag; }
+
 private:
 	vector<class CGameObject*>			m_GameObjects; /*순회용*/
 	unordered_map<_uint, _uint>				m_IndexByID; /*오브젝트 ID / 벡터 인덱스*/
 	/*오브젝트 아이디, 해당 레이어 상의 인덱스*/
 
 	_bool m_isRender = { true };
+	string m_LayerTag = { true };
+
 public:
 	static CLayer* Create();
+	static CLayer* Create(string layerTag);
 	virtual void Free() override;
 };
 
