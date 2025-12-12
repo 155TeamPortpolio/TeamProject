@@ -33,9 +33,15 @@ HRESULT CSpriteNode_Edit::Initialize(INIT_DESC* pArg)
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();
-	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Opaque", pDevice);
+	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "SpriteAnimation", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	customInstance->Set_Blended(true);
+
+	/* Shader Param */
+	customInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
+	customInstance->Set_Param("Rol", { &m_iRow,"uint",sizeof(_uint) });
+	customInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
+
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 
 	auto MaterialDat = customInstance->Get_MaterialData();
@@ -134,6 +140,8 @@ void CSpriteNode_Edit::SetUp_SpriteEffect()
 	ImGui::Checkbox("Is Animated", &m_IsAnimated);
 	ImGui::Checkbox("Is Repeat", &m_IsRepeat);
 	ImGui::DragFloat("Speed", &m_fSpeed);
+	ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_iCol));
+	ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_iRow));
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 }
 

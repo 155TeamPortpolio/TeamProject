@@ -89,6 +89,10 @@ struct PS_OUT
     vector vColor : SV_TARGET0;
 };
 
+uint Col;
+uint Row;
+uint FrameIndex;
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
@@ -98,6 +102,25 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     Out.vColor = vDiffuse ;
+    return Out;
+}
+
+PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 FrameSize = float2(1.f / Col, 1.f / Row);
+    int iFrameX = FrameIndex % Col;
+    int iFrameY = FrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
+    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
+    
+    vector vDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    if (vDiffuse.a < 0.1f)
+        discard;
+    
+    Out.vColor = vDiffuse;
+    
     return Out;
 }
 
@@ -111,6 +134,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
-    }  
+    }
+    pass SpriteAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
 }
 
