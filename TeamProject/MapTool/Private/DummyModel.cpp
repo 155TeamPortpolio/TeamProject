@@ -1,7 +1,10 @@
 #include "pch.h"
 #include "DummyModel.h"
 #include "StaticModel.h"
+#include "RectModel.h"
 #include "Material.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
 
 #include "GameInstance.h"
 
@@ -17,8 +20,8 @@ CDummyModel::CDummyModel(const CDummyModel& rhs)
 HRESULT CDummyModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	//Add_Component<CStaticModel>();
-	//Add_Component<CMaterial>();
+	Add_Component<CRectModel>();
+	Add_Component<CMaterial>();
 
 	return S_OK;
 }
@@ -27,13 +30,26 @@ HRESULT CDummyModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+
+
 	return S_OK;
 }
 
 void CDummyModel::Awake()
 {
-	/*CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	Get_Component<CModel>()->Link_Model("Demo_Level", "");*/
+	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
+
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+	CMaterial* pMaterial = Get_Component<CMaterial>();
+	//쓰고싶은이름
+	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Ma_Test", "Opaque", pDevice);
+	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
+	auto MaterialDat = customInstance->Get_MaterialData();
+	if (MaterialDat)
+		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_NorTex.hlsl");
+	if (FAILED(customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Test.dds", TEXTURE_TYPE::DIFFUSE)))
+		return;
+	
 }
 
 void CDummyModel::Priority_Update(_float dt)

@@ -2,6 +2,7 @@
 #include "MapToolLevel.h"
 
 #include "GameInstance.h"
+#include "IResourceService.h"
 #include "IInputService.h"
 #include "ILevelService.h"
 
@@ -26,10 +27,15 @@ HRESULT CMapToolLevel::Awake()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
+	
+	IResourceService* pResMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
 	CAMERA_DESC desc = {};
+
+	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Test.dds", "../Bin/Test.dds")))
+		return E_FAIL;
 
 	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DefaultCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
@@ -38,9 +44,9 @@ HRESULT CMapToolLevel::Awake()
 
 	CGameObject* DemoModel = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DummyModel" })
 		.Position({ 0,0,0 })
-		.Build("Demo_Model");
-
-
+		.Scale({50.f, 50.f, 50.f})
+		.Build("Dummy_Model");
+		
 	pObjMgr->Add_Object(Camera, { "MapTool_Level","Camera_Layer" });
 	pObjMgr->Add_Object(DemoModel, { "MapTool_Level","Model_Layer" });
 
