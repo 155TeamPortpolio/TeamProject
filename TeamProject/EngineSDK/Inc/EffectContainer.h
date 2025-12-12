@@ -2,10 +2,10 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CEffectContainer :
+class ENGINE_DLL CEffectContainer :
     public CGameObject
 {
-private:
+protected:
 	CEffectContainer();
 	CEffectContainer(const CEffectContainer& rhs);
 	virtual ~CEffectContainer() DEFAULT;
@@ -23,7 +23,7 @@ public:
 	CGameObject* Clone(INIT_DESC* pArg) override;
 	virtual void Free();
 
-private:
+protected:
 	_bool m_IsLoop = false;
 	_float m_fDuration{};
 	_float m_fElapsedTime{};

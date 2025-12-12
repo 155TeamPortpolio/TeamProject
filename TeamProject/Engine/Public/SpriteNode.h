@@ -2,10 +2,10 @@
 #include "EffectNode.h"
 
 NS_BEGIN(Engine)
-class CSpriteNode :
+class ENGINE_DLL CSpriteNode :
     public CEffectNode
 {
-private:
+protected:
     CSpriteNode();
     CSpriteNode(const CSpriteNode& rhs);
     virtual ~CSpriteNode() DEFAULT;
@@ -23,7 +23,7 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 
-private:
+protected:
     _bool m_IsAnimated = false;
     _bool m_IsRepeat = false;
     _float m_fSpeed{};

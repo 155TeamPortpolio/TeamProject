@@ -36,11 +36,11 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_iNumNodes; ++i)
 	{
 		CGameObject* pNode = nullptr;
-
+		EFFECT_NODE nodeDesc = pAsset->Nodes[i];
 		switch (pAsset->Nodes[i].eType)
 		{
 		case Engine::EFFECT_TYPE::SPRITE:
-			pNode = proto->Clone_Prototype("", "", &pAsset->Nodes[i]);
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", &nodeDesc);
 			break;
 		case Engine::EFFECT_TYPE::PARTICLE:
 			break;

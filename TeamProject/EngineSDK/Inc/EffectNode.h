@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 NS_BEGIN(Engine)
-class CEffectNode abstract :
+class ENGINE_DLL CEffectNode abstract :
     public CGameObject
 {
 protected:
