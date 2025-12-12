@@ -7,6 +7,7 @@
 
 #include "ToolCamera.h"
 #include "Camera.h"
+#include "EffectContainer_Edit.h"
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
