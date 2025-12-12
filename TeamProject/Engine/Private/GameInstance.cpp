@@ -49,7 +49,10 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pRenderSystem = CRenderSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
+
+#ifdef USINPHYSICS
 	m_pPhysicsSystem = CPhysicsSystem::Create();
+#endif
 
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
@@ -95,7 +98,10 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pUIManager->Update(dt);
 	m_pRaySystem->Update(dt);
 	m_pSoundDevice->Update();
+#ifdef USINPHYSICS
 	m_pPhysicsSystem->Update(dt);
+#endif // USINPHYSICS
+
 
 #if defined _USING_GUI
 	m_pGuiSystem->Update(dt);
@@ -105,7 +111,9 @@ void CGameInstance::Update_Engine(_float dt)
 
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(dt);
+#ifdef USINPHYSICS
 	m_pPhysicsSystem->Late_Update(dt);
+#endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();
 	m_pObjectManager->Post_EngineUpdate(dt);

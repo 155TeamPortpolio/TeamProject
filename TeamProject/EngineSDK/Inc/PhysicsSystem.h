@@ -5,6 +5,8 @@ NS_BEGIN(Engine)
 
 class CPhysicsSystem final : public IPhysicsService
 {
+#ifdef USINPHYSICS 
+
 private:
     CPhysicsSystem() DEFAULT;
     virtual ~CPhysicsSystem() DEFAULT;
@@ -53,6 +55,7 @@ private:
 public:
     static CPhysicsSystem* Create();
     virtual void Free() override;
+#endif
 
 };
 

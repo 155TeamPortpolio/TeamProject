@@ -5,6 +5,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 
+#ifdef USINPHYSICS 
+
 CRigidBody::CRigidBody()
 {
 }
@@ -315,3 +317,4 @@ void CRigidBody::Free()
 	}
 	__super::Free();
 }
+#endif

@@ -5,6 +5,7 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CRigidBody final : public CComponent
 {
+#ifdef USINPHYSICS 
 private:
 	CRigidBody();
 	CRigidBody(const CRigidBody& rhs);
@@ -58,7 +59,7 @@ public:
 	static CRigidBody* Create();
 	virtual CComponent* Clone();
 	virtual void Free() override;
-
+#endif
 };
 
 NS_END
