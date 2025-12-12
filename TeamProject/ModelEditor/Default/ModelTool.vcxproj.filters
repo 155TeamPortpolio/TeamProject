@@ -1,0 +1,178 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{44633978-702a-48f8-9f5f-28a44a1fc515}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default\Useless">
+      <UniqueIdentifier>{3072e2aa-95ed-4b79-becc-1bda8eb97b9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines">
+      <UniqueIdentifier>{2a7ddbdc-d374-4e0a-b105-16f70976695f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. MainApp">
+      <UniqueIdentifier>{a318929e-ff12-440d-8d6f-8a028127fc67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level">
+      <UniqueIdentifier>{fdfdefe2-d692-4187-81bc-294bbdbf0097}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ModelObject">
+      <UniqueIdentifier>{7405786b-04b9-4139-acc0-effff3ac55e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ModelObject\Camera">
+      <UniqueIdentifier>{a1a0fd14-2dc9-48a2-9cb0-200415b9079f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. ModelObject\Model">
+      <UniqueIdentifier>{5cbc0111-17df-4464-ba87-1ea0715ef5aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component">
+      <UniqueIdentifier>{78a34969-b295-49ce-b102-6754be67b6a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel">
+      <UniqueIdentifier>{faedaf66-fbb5-455e-8ea3-c248834c04cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\Extractor">
+      <UniqueIdentifier>{5097688f-e244-4c55-910b-31760c73304a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI">
+      <UniqueIdentifier>{dbafb4c4-051a-4b37-a866-728fb1d4e56c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIAnimation">
+      <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIMaterial">
+      <UniqueIdentifier>{71194301-77e2-4279-996d-b4b54d736cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\SK_Model">
+      <UniqueIdentifier>{4556e8b7-d5d6-43ec-b2b0-b0a1a7fbf5ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\ST_Model">
+      <UniqueIdentifier>{99872939-792e-4fb3-bcf4-9720a8626683}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIAnimation\AIAnimationClip">
+      <UniqueIdentifier>{4b314883-8b00-497e-9e51-e9abff197546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData">
+      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AIMesh">
+      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AISkeleton">
+      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone">
+      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="ModelEditor.ico">
+      <Filter>98. Default\Useless</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98. Default\Useless</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ModelEditor.rc">
+      <Filter>98. Default\Useless</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Resource.h">
+      <Filter>98. Default\Useless</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98. Default\Useless</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98. Default\Useless</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelEditor.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00. MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h">
+      <Filter>02. ModelObject\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditModel.h">
+      <Filter>02. ModelObject\Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelEditLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelEditor_Defines.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AI_SKModel.h">
+      <Filter>03. Component\AIModel\SK_Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AI_STModel.h">
+      <Filter>03. Component\AIModel\ST_Model</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIBone.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Assimps.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AISkeleton.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIMesh.h">
+      <Filter>03. Component\AIModel\AI\AIModelData\AIMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AIMaterial.h">
+      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIModelData.h">
+      <Filter>03. Component\AIModel\AI\AIModelData</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ModelEditor.cpp">
+      <Filter>98. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelEditLevel.cpp">
+      <Filter>01. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp">
+      <Filter>02. ModelObject\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AI_SKModel.cpp">
+      <Filter>03. Component\AIModel\SK_Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AI_STModel.cpp">
+      <Filter>03. Component\AIModel\ST_Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIBone.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton\AIBone</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AISkeleton.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AISkeleton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIMesh.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData\AIMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditModel.cpp">
+      <Filter>02. ModelObject\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIMaterial.cpp">
+      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIModelData.cpp">
+      <Filter>03. Component\AIModel\AI\AIModelData</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

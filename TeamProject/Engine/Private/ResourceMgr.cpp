@@ -88,6 +88,7 @@ HRESULT CResourceMgr::Sync_To_Level()
 
 		iCount++;
 	}
+	return S_OK;
 }
 
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)
