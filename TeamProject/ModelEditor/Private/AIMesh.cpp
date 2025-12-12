@@ -110,8 +110,8 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh, _fmatrix
             XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
 
         memcpy(&pVertices[i].vBinormal, &_pAIMesh->mTangents[i], sizeof(_float3));
-        XMStoreFloat3(&pVertices[i].vTangent,
-            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
+        XMStoreFloat3(&pVertices[i].vBinormal,
+            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vBinormal), _PreTransformMatrix));
     }
 
     //ÀúÀå¿ë
