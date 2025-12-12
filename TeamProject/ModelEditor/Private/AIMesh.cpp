@@ -14,7 +14,7 @@ CAIMesh::CAIMesh(const string& ModelKey)
 {
 }
 
-HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISkeleton* _pSkeleton, _matrix _PreTransformMatrix)
+HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISkeleton* _pSkeleton)
 {
     m_VIKey = _pAIMesh->mName.C_Str();
     m_MaterialIndex = _pAIMesh->mMaterialIndex;
@@ -30,7 +30,7 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
 #pragma region VERTEX_BUFFER
 
     HRESULT hr = MESH_TYPE::NONANIM == _eMeshType ? 
-        Ready_VertexBuffer_For_NonAnim(_pAIMesh, _PreTransformMatrix) :Ready_VertexBuffer_For_Anim(_pAIMesh, _pSkeleton);
+        Ready_VertexBuffer_For_NonAnim(_pAIMesh) :Ready_VertexBuffer_For_Anim(_pAIMesh, _pSkeleton);
     if (FAILED(hr))
         return E_FAIL;
 
@@ -76,9 +76,13 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
     return S_OK;
 }
 
-HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh, _fmatrix _PreTransformMatrix)
+HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 {
     m_iVertexStride = sizeof(VTXMESH);
+
+    m_ElementCount = VTXMESH::iElementCount;
+    m_ElementKey = VTXMESH::Key;
+    m_ElementDesc = VTXMESH::Elements;
 
     D3D11_BUFFER_DESC           VBDesc{};
     VBDesc.ByteWidth = m_iVerticesCount * m_iVertexStride;
@@ -94,24 +98,11 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh, _fmatrix
     for (_uint i = 0; i < m_iVerticesCount; i++)
     {
         memcpy(&pVertices[i].vPosition, &_pAIMesh->mVertices[i], sizeof(_float3));
-        XMStoreFloat3(&pVertices[i].vPosition,
-            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), _PreTransformMatrix));
-
         memcpy(&pVertices[i].vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
-        XMStoreFloat3(&pVertices[i].vPosition,
-            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vPosition), _PreTransformMatrix));
-
         if (nullptr != _pAIMesh->mTextureCoords[0])
             memcpy(&pVertices[i].vTexcoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
-
-
         memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
-        XMStoreFloat3(&pVertices[i].vTangent,
-            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
-
         memcpy(&pVertices[i].vBinormal, &_pAIMesh->mTangents[i], sizeof(_float3));
-        XMStoreFloat3(&pVertices[i].vTangent,
-            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
     }
 
     //ÀúÀå¿ë
@@ -135,6 +126,10 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 {
     if (nullptr == _pSkeleton)
         return E_FAIL;
+
+    m_ElementCount = VTXSKINMESH::iElementCount;
+    m_ElementKey = VTXSKINMESH::Key;
+    m_ElementDesc = VTXSKINMESH::Elements;
 
     m_iVertexStride = sizeof(VTXSKINMESH);
 
@@ -239,15 +234,14 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
         m_BoneIndices.push_back(BoneIndex);
     }
 
-
     return S_OK;
 }
 
-CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* _pSkeleton, _matrix _PreTransformMatrix)
+CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* _pSkeleton)
 {
     CAIMesh* pInstance = new CAIMesh();
 
-    if (FAILED(pInstance->Initialize(_pAIMesh, _eType, _pSkeleton, _PreTransformMatrix))) {
+    if (FAILED(pInstance->Initialize(_pAIMesh, _eType, _pSkeleton))) {
         MSG_BOX("Create Failed : Engine | CAIMesh");
         return nullptr;
     }

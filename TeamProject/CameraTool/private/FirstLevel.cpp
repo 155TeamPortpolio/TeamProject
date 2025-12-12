@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "FirstLevel.h"
+#include "DebugFreeCam.h"
 
 FirstLevel::FirstLevel(const string& key) : CLevel(key)
 {
@@ -14,7 +15,22 @@ HRESULT FirstLevel::Initialize()
 
 HRESULT FirstLevel::Awake()
 {
-	auto proto = game->Get_PrototypeMgr();
+	auto proto  = game->Get_PrototypeMgr();
+	auto objMgr = game->Get_ObjectMgr();
+	auto camMgr = game->Get_CameraMgr();
+
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DebugFreeCam", DebugFreeCam::Create());
+
+	constexpr float aspect = static_cast<float>(WinX) / WinY;
+
+	CGameObject* debugCamObj = Builder::Create_Object({ "First_Level", "Proto_GameObject_DebugFreeCam" })
+		.Camera({ aspect })
+		.Position({ 0.f, 3.f, -5.f })
+		.Build("DebugFreeCam_Main");
+
+	objMgr->Add_Object(debugCamObj, { "First_Level", "Camera_Layer" });
+
+	camMgr->Set_MainCam(debugCamObj->Get_Component<CCamera>());
 
 	return S_OK;
 }

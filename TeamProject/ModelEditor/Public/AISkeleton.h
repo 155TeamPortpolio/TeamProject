@@ -16,6 +16,7 @@ public:
 
 public:
 	_bool Find_BoneIndex(const _char* pName, _uint* _iGetIndex = nullptr);
+	void Set_Offset(_uint Index, _float4x4 offset);
 	class CAIBone* Find_Bone(const _char* pName) const;
 
 private:

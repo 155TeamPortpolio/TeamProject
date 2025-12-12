@@ -21,6 +21,13 @@ public:
 public:
     void Render_GUI() override;
 
+private:
+    HRESULT Load_AIScene(const string& filePath);
+    void Clear_Models();
+    _bool HasBones();
+private:
+    const aiScene* m_pAIScene = { nullptr };
+    Assimp::Importer	        m_Importer = {};
 
 public:
     static CEditModel* Create();

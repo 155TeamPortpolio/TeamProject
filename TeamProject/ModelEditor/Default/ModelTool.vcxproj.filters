@@ -31,35 +31,41 @@
     <Filter Include="03. Component\AIModel">
       <UniqueIdentifier>{faedaf66-fbb5-455e-8ea3-c248834c04cf}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Component\Extractor">
-      <UniqueIdentifier>{5097688f-e244-4c55-910b-31760c73304a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Component\AIModel\AI">
-      <UniqueIdentifier>{dbafb4c4-051a-4b37-a866-728fb1d4e56c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Component\AIModel\AI\AIAnimation">
-      <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Component\AIModel\AI\AIMesh">
-      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Component\AIModel\AI\AISkeleton">
-      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Component\AIModel\AI\AIMaterial">
-      <UniqueIdentifier>{71194301-77e2-4279-996d-b4b54d736cf0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Component\AIModel\SK_Model">
       <UniqueIdentifier>{4556e8b7-d5d6-43ec-b2b0-b0a1a7fbf5ab}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Component\AIModel\ST_Model">
       <UniqueIdentifier>{99872939-792e-4fb3-bcf4-9720a8626683}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Component\AIModel\AI\AIAnimation\AIAnimationClip">
+    <Filter Include="97. GUIInc">
+      <UniqueIdentifier>{3a8a4c76-edcd-44af-aa30-c91ecb90699c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource">
+      <UniqueIdentifier>{77824a55-e323-426b-a636-0968dce14e96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData">
+      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AIMesh">
+      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton">
+      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
+      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIAnimation">
+      <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIAnimation\AIAnimationClip">
       <UniqueIdentifier>{4b314883-8b00-497e-9e51-e9abff197546}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Component\AIModel\AI\AISkeleton\AIBone">
-      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
+    <Filter Include="04. AIResource\AIMaterial">
+      <UniqueIdentifier>{71194301-77e2-4279-996d-b4b54d736cf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Component\AIMaterial">
+      <UniqueIdentifier>{eb6b6ca7-2e6b-45ba-8385-2563e0a95eb0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -113,19 +119,67 @@
       <Filter>03. Component\AIModel\ST_Model</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AIBone.h">
-      <Filter>03. Component\AIModel\AI\AISkeleton\AIBone</Filter>
+      <Filter>04. AIResource\AIModelData\AISkeleton\AIBone</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Assimps.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AISkeleton.h">
-      <Filter>03. Component\AIModel\AI\AISkeleton</Filter>
+      <Filter>04. AIResource\AIModelData\AISkeleton</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AIMesh.h">
-      <Filter>03. Component\AIModel\AI\AIMesh</Filter>
+      <Filter>04. AIResource\AIModelData\AIMesh</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AIMaterial.h">
-      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+      <Filter>04. AIResource\AIMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIModelData.h">
+      <Filter>04. AIResource\AIModelData</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AI_Material.h">
+      <Filter>03. Component\AIMaterial</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,19 +205,61 @@
       <Filter>03. Component\AIModel\ST_Model</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AIBone.cpp">
-      <Filter>03. Component\AIModel\AI\AISkeleton\AIBone</Filter>
+      <Filter>04. AIResource\AIModelData\AISkeleton\AIBone</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AISkeleton.cpp">
-      <Filter>03. Component\AIModel\AI\AISkeleton</Filter>
+      <Filter>04. AIResource\AIModelData\AISkeleton</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AIMesh.cpp">
-      <Filter>03. Component\AIModel\AI\AIMesh</Filter>
+      <Filter>04. AIResource\AIModelData\AIMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EditModel.cpp">
       <Filter>02. ModelObject\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AIMaterial.cpp">
-      <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
+      <Filter>04. AIResource\AIMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIModelData.cpp">
+      <Filter>04. AIResource\AIModelData</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AI_Material.cpp">
+      <Filter>03. Component\AIMaterial</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
 #include "AI_STModel.h"
+#include "AIModelData.h"
 
 CAI_STModel::CAI_STModel()
 	: CStaticModel{}
@@ -12,7 +13,7 @@ CAI_STModel::CAI_STModel(const CAI_STModel& rhs)
 
 HRESULT CAI_STModel::Initialize_Prototype()
 {
-	return S_OK;
+	return E_NOTIMPL;
 }
 
 HRESULT CAI_STModel::Initialize(COMPONENT_DESC* pArg)
@@ -22,35 +23,43 @@ HRESULT CAI_STModel::Initialize(COMPONENT_DESC* pArg)
 
 void CAI_STModel::Render_GUI()
 {
+	__super::Render_GUI();
 }
 
-HRESULT CAI_STModel::Load_AIModel(string fbxFilePath)
+HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 {
-	unsigned int iFlag = { aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast | aiProcess_PreTransformVertices };
+	if (nullptr == pAIScene)
+		return E_FAIL;
+	Release_Mesh();
+	_uint meshNum = pAIScene->mNumMeshes;
+	m_DrawableMeshes.resize(meshNum, true);
+	m_fileName = fileName;
 
-	m_pAIScene = m_Importer.ReadFile(fbxFilePath, iFlag);
-	if (nullptr == m_pAIScene)
+	if (FAILED(Ready_AIModelData(pAIScene)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Ready_Skeleton(const aiNode* pAINode)
-{ 
-	return S_OK;
-}
-
-HRESULT CAI_STModel::Ready_Meshes()
+HRESULT CAI_STModel::Ready_AIModelData(const aiScene* pAIScene)
 {
+	m_pData = CAIModelData::Create(MESH_TYPE::NONANIM, pAIScene);
+	if (nullptr == m_pData)
+		return E_FAIL;
+
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Ready_Materials()
+
+HRESULT CAI_STModel::Release_Mesh()
 {
+	Safe_Release(m_pData);
+	vector<bool> v;
+	m_DrawableMeshes.swap(v);
+
 	return S_OK;
 }
-
-CAI_STModel* CAI_STModel::Create(string fbxFilePath)
+CAI_STModel* CAI_STModel::Create()
 {
 	CAI_STModel* instance = new CAI_STModel();
 
@@ -71,6 +80,4 @@ CComponent* CAI_STModel::Clone()
 void CAI_STModel::Free()
 {
 	__super::Free();
-
-	m_Importer.FreeScene();
 }

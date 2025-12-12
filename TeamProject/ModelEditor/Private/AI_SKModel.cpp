@@ -1,4 +1,5 @@
 #include "AI_SKModel.h"
+#include "AIModelData.h"
 
 CAI_SKModel::CAI_SKModel()
 	: CSkeletalModel{}
@@ -22,45 +23,69 @@ HRESULT CAI_SKModel::Initialize(COMPONENT_DESC* pArg)
 
 void CAI_SKModel::Render_GUI()
 {
+	__super::Render_GUI();
 }
 
-
-
-HRESULT CAI_SKModel::Load_AIModel(string fbxFilePath)
+HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 {
-	unsigned int iFlag = { aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast };
+	if (nullptr == pAIScene)
+		return E_FAIL;
+	_uint meshNum = pAIScene->mNumMeshes;
+	m_DrawableMeshes.resize(meshNum, true);
 
-	m_pAIScene = m_Importer.ReadFile(fbxFilePath, iFlag);
-	if (nullptr == m_pAIScene)
+	if (FAILED(Ready_AIModelData(pAIScene)))
 		return E_FAIL;
 
-	//애들 생성
+	m_fileName = fileName;
+	_float4x4 IdentityMatrix;
+	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
+	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		int parent = m_pData->Get_BoneParentIndex(i);
+
+		if (parent == -1) {
+			m_CombinedMatrices[i] = m_TransfromationMatrices[i];
+		}
+		else {
+			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
+			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
+			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
+		}
+	}
+
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
+	}
+	return S_OK;
+}
+
+
+HRESULT CAI_SKModel::Ready_AIModelData(const aiScene* pAIScene)
+{
+	m_pData = CAIModelData::Create(MESH_TYPE::ANIM, pAIScene);
+
+	if (nullptr == m_pData)
+		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CAI_SKModel::Ready_Skeleton(const aiNode* pAINode)
+HRESULT CAI_SKModel::Release_Mesh()
 {
+	Safe_Release(m_pData);
+	vector<bool> v;
+	m_DrawableMeshes.swap(v);
+
 	return S_OK;
 }
 
-HRESULT CAI_SKModel::Ready_Meshes()
-{
-	return E_NOTIMPL;
-}
-
-HRESULT CAI_SKModel::Ready_Materials()
-{
-	return E_NOTIMPL;
-}
-
-HRESULT CAI_SKModel::Ready_Animations()
-{
-	return E_NOTIMPL;
-}
-
-CAI_SKModel* CAI_SKModel::Create(string fbxFilePath)
+CAI_SKModel* CAI_SKModel::Create()
 {
 	CAI_SKModel* instance = new CAI_SKModel();
 
@@ -81,6 +106,4 @@ CComponent* CAI_SKModel::Clone()
 void CAI_SKModel::Free()
 {
 	__super::Free();
-
-	m_Importer.FreeScene();
 }

@@ -123,11 +123,38 @@
       <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
-copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+      <Command>@echo off
+setlocal
+
+echo === PostBuild: $(ProjectName) / $(Configuration) / $(Platform) ===
+echo TargetDir: "$(TargetDir)"
+echo SolutionDir: "$(SolutionDir)"
+
+REM 1) 셰이더 폴더 생성
+if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
+
+REM 2) *.cso 있을 때만 복사 (없으면 에러로 빌드 깨지는 거 방지)
+if exist "$(TargetDir)*.cso" (
+    copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
+) else (
+    echo [PostBuild] No .cso files found in "$(TargetDir)" (skip copy)
+)
+
+REM 3) 라이브러리/리소스 업데이트 배치 호출
+if exist "$(SolutionDir)UpdateLib.bat" (
+    call "$(SolutionDir)UpdateLib.bat" "$(Configuration)"
+    if errorlevel 1 (
+        echo [PostBuild] UpdateLib.bat failed with errorlevel %errorlevel%
+        exit /b %errorlevel%
+    )
+) else (
+    echo [PostBuild][ERROR] UpdateLib.bat not found: "$(SolutionDir)UpdateLib.bat"
+    exit /b 1
+)
+
+endlocal
+exit /b 0
+</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -153,14 +180,13 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
 copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
+</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -182,6 +208,9 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Build_Struct.h" />
     <ClInclude Include="..\Public\Camera.h" />
     <ClInclude Include="..\Public\CameraMgr.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
@@ -191,6 +220,8 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\public\EffectContainer.h" />
+    <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -225,6 +256,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
+    <ClInclude Include="..\Public\IPhysicsService.h" />
     <ClInclude Include="..\Public\IRayService.h" />
     <ClInclude Include="..\Public\IRenderService.h" />
     <ClInclude Include="..\Public\IResourceService.h" />
@@ -248,8 +280,10 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
+    <ClInclude Include="..\Public\PhysicsSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
+    <ClInclude Include="..\public\PointModel.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
@@ -258,6 +292,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
+    <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
@@ -265,6 +300,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sphere_Collider.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
+    <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
@@ -294,6 +330,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
@@ -303,6 +340,8 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\private\EffectContainer.cpp" />
+    <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -336,8 +375,10 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
+    <ClCompile Include="..\Private\PhysicsSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
+    <ClCompile Include="..\private\PointModel.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
@@ -346,6 +387,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
+    <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
@@ -353,6 +395,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sphere_Collider.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
+    <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
@@ -413,6 +456,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />

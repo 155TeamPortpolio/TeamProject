@@ -29,6 +29,17 @@ _bool CAISkeleton::Find_BoneIndex(const _char* pName, _uint* _iGetIndex)
 	return true;
 }
 
+void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
+{
+	if (m_Bones[Index]->Get_ParentIndex() == -1) {
+		_matrix Offset = XMLoadFloat4x4(&offset);
+		XMStoreFloat4x4(&m_OffsetMatrices[Index], Offset);
+	}
+	else {
+		m_OffsetMatrices[Index] = offset;
+	}
+}
+
 CAIBone* CAISkeleton::Find_Bone(const _char* pName) const
 {
 	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
@@ -55,6 +66,12 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	{
 		Ready_Bones(_pAINode->mChildren[i], iPIndex);
 	}
+
+	m_BoneMap.emplace(_pAINode->mName.C_Str(), iPIndex);
+
+	_float4x4 IdentityMat;
+	XMStoreFloat4x4(&IdentityMat, XMMatrixIdentity());
+	m_OffsetMatrices.resize(m_Bones.size(), IdentityMat);
 
 	return S_OK;
 }
