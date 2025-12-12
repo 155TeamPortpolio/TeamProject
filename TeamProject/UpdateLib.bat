@@ -44,13 +44,13 @@ xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mt.lib"           "%BASE%Engin
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTKd.lib"                        "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\DirectXTK.lib"                           "%BASE%EngineSDK\Lib\"
 
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX_64.lib"                                                "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCommon_64.lib"                              "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXFoundation_64.lib"                         "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXExtensions_static_64.lib"            "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXPvdSDK_static_64.lib"                           "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCharacterKinematic_static_64.lib"   "%BASE%EngineSDK\Lib\"
-REM xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCooking_64.lib"                                         "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX_64.lib"                                                "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCommon_64.lib"                              "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXFoundation_64.lib"                         "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXExtensions_static_64.lib"            "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXPvdSDK_static_64.lib"                           "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCharacterKinematic_static_64.lib"   "%BASE%EngineSDK\Lib\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysXCooking_64.lib"                                         "%BASE%EngineSDK\Lib\"
 
 goto :eof
 
