@@ -17,6 +17,7 @@ CUIObjcetBuilder::CUIObjcetBuilder(const CLONE_DESC& cloneDesc)
 	else {
 		m_CloneDesc = new CLONE_DESC(cloneDesc);
 	}
+
 	Safe_AddRef(m_pGameInstance);
 	m_pObjDesc = new UI_DESC;
 }
@@ -41,19 +42,13 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	if (m_LevelTag.empty())
-	{
-		MSG_BOX("LAYER_DESC is missing : CUIObjcetBuilder ");
-		return nullptr;
-	}
-
-	//¿ÀºêÁ§Æ® ¼³¸íÃ¼ Ã¤¿ì±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½Ã¼ Ã¤ï¿½ï¿½ï¿½
 	m_pObjDesc->InstanceName = instanceKey;
 
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//ÇÁ·ÎÅä ¸Å´ÏÀú¿¡¼­ °¡Á®¿À±â
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	CGameObject* Object = m_pGameInstance->Get_PrototypeMgr()->
 		Clone_Prototype(m_CloneDesc->OriginLevel, m_CloneDesc->protoTag, m_pObjDesc);
 	CUI_Object* instance = dynamic_cast<CUI_Object*>(Object);
@@ -61,8 +56,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 	if (!instance) {
 		return nullptr;
 	}
-
-	////¿ÀºêÁ§Æ® ·¹ÀÌ¾î¿¡ »ðÀÔ ->
 
 	if(m_bPivoted)
 		instance->Align_To(m_eAnchor, m_vPivot);
@@ -75,16 +68,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 	return instance;
 }
 
-CUIObjcetBuilder& CUIObjcetBuilder::Add_To_Level(const string& Level)
-{
-	if (!m_pGameInstance->Get_LevelMgr()->Check_ValidateLevel(Level)) {
-		MSG_BOX("Destination Level Tag is Invalidate : CUIObjcetBuilder");
-		return *this;
-	}
-
-	m_LevelTag = Level;
-	return *this;
-}
 
 CUIObjcetBuilder& CUIObjcetBuilder::Position(const _float2 position)
 {

@@ -295,7 +295,31 @@ namespace Engine
 		_uint Height = 720;
 	};
 
+	/* Effect */
 
+	typedef struct tagEffectNode
+	{
+		_float fDelayTime{};
+		_float fDuration{};
+		_bool isLoop = false;
+	}EFFECT_NODE;
+
+	typedef struct tagSpriteNode : public tagEffectNode
+	{
+
+	}SPRITE_NODE;
+
+	typedef struct tagParticleNode : public tagEffectNode
+	{
+
+	}PARTICLE_NODE;
+
+	typedef struct tagEffectAsset
+	{
+		string Name{};
+		_float fDuration{};
+		vector<tagEffectNode> Nodes;
+	}EFFECT_ASSET;
 }
 
 

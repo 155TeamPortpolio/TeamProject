@@ -5,6 +5,7 @@ NS_BEGIN(Engine)
 
 typedef struct ENGINE_DLL tagGUIContextInterface {
 	class IObjectService* pObjectManager = { nullptr };
+	class IUI_Service* pUIManager = { nullptr };
 	class ILevelService* pLevelManager = { nullptr };
 	class ICameraService* pCameraManager = { nullptr };
 	class IInputService* pInputDevice = { nullptr };

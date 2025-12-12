@@ -8,6 +8,8 @@
 
 #include "Layer.h"
 #include "GameObject.h"
+#include "UI_Object.h"
+#include "Level.h"
 
 CHierarchyPanel::CHierarchyPanel(GUI_CONTEXT* context)
 	:CBasePanel(context)
@@ -35,9 +37,32 @@ void CHierarchyPanel::Render_GUI()
 	ImGui::SetNextWindowPos(ImVec2(m_fPosX, 0));
 	ImGui::SetNextWindowSize(ImVec2(fPanelCX, fWincY));
 	ImGui::Begin("##Hierachy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+
 	ShowLevelList();
-	ShowLayerList(nowLevel);
-	ShowObjectList();
+	ShowLayerList(nowLevel);	
+
+	ImGui::SeparatorText("Show Object Type");
+	const char* label = m_bShowUI ? "UIObject" : "GameObject";
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(label);
+
+	// 현재 줄에서 오른쪽 끝으로 커서 이동
+	_float toggleWidth = ImGui::GetFrameHeight() * 1.55f;  // ToggleButton이 쓰는 width와 동일해야 함
+	_float spacing = 4.0f;                             // 오른쪽 여백 조금
+	_float posX = ImGui::GetCursorPosX();
+	_float avail = ImGui::GetContentRegionAvail().x;
+
+	// 현재 위치 + 남은 영역 - 토글 너비 - 여백
+	ImGui::SameLine(posX + avail - toggleWidth - spacing);
+
+	ToggleButton("##objToggle", &m_bShowUI);
+
+	if (!m_bShowUI)
+		ShowObjectList();
+	else
+		ShowUIObjectList();
+
 	ImGui::End();
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
@@ -86,6 +111,7 @@ void CHierarchyPanel::ShowLevelList()
 		m_pContext->pLevelManager->Request_ChangeLevel(levelList[m_iSelectedLevel]);
 		}
 	);
+	m_pContext->pSelectedLevel = m_pContext->pLevelManager->Get_CurrentLevel();
 }
 
 void CHierarchyPanel::ShowLayerList(const string& nowLevel)
@@ -123,6 +149,60 @@ void CHierarchyPanel::ShowObjectList()
 		Object->RenderHierarchy(m_pContext->pSelectedObject, isSel);
 	}
 }
+
+void CHierarchyPanel::ShowUIObjectList()
+{
+	if (!m_pContext->pSelectedLevel) return;
+	auto& LevelObj = m_pContext->pUIManager->Get_LevelUI(m_pContext->pSelectedLevel->Get_Key());
+
+	if (LevelObj.empty())
+		return;
+
+	string InstanceListHeader = "Instances (" + to_string(LevelObj.size()) + " )";
+	ImGui::SeparatorText(InstanceListHeader.c_str());
+
+	for (auto& Object : LevelObj) {
+		if (!Object || !Object->Is_Root()) continue;
+		bool isSel = (m_pContext->pSelectedObject == Object);
+		Object->RenderHierarchy(m_pContext->pSelectedObject, isSel);
+	}
+}
+
+_bool CHierarchyPanel::ToggleButton(const char* str_id, _bool* v)
+{
+	ImVec2 p = ImGui::GetCursorScreenPos();
+	ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+	_float height = ImGui::GetFrameHeight();
+	_float width = height * 1.55f;
+	_float radius = height * 0.5f;
+
+	// InvisibleButton: 클릭 영역만 잡아줌
+	if (ImGui::InvisibleButton(str_id, ImVec2(width, height)))
+		*v = !*v;
+
+	// 색 가져오기
+	ImU32 col_bg = ImGui::GetColorU32(*v ? ImGuiCol_ButtonActive : ImGuiCol_FrameBg);
+
+	// 바탕(타원)
+	draw_list->AddRectFilled(
+		p,
+		ImVec2(p.x + width, p.y + height),
+		col_bg,
+		radius
+	);
+
+	// 동그라미 위치
+	float t = *v ? 1.0f : 0.0f;
+	float cx = p.x + radius + t * (width - 2 * radius);
+
+	draw_list->AddCircleFilled(ImVec2(cx, p.y + radius),
+		radius - 2.0f,
+		IM_COL32(255, 255, 255, 255));
+
+	return *v;
+}
+
 
 vector<string> CHierarchyPanel::ConvertObjectNameList(CLayer* layer)
 {

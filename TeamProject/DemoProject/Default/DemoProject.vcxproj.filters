@@ -57,6 +57,9 @@
     <ClInclude Include="..\Public\DemoModel.h">
       <Filter>02. DemoObject\DemoModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DemoUI.h">
+      <Filter>02. DemoObject\DemoUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -76,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DemoModel.cpp">
       <Filter>02. DemoObject\DemoModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoUI.cpp">
+      <Filter>02. DemoObject\DemoUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

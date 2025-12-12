@@ -36,8 +36,6 @@ HRESULT CMainApp::Initialize()
 	
 	Set_Levels();
 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level"); //로고 레벨로 시작!
-
 	//#ifdef  _USING_GUI
 	//	ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	//#endif //  _USING_GUI
@@ -62,7 +60,6 @@ HRESULT CMainApp::Render()
 
 void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 {
-
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Demo_Level", []()->CLevel* {return CDemoLevel::Create("Demo_Level"); });
 	m_pGameInstance->Notify_LevelSet(); 
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Demo_Level",false); //로고 레벨로 시작!

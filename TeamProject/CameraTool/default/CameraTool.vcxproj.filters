@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClInclude Include="..\public\pch.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MainApp.h">
+      <Filter>00. MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Camera_Defines.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="CameraTool.h">
+      <Filter>99. Etc\99. Useless</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FirstLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamObj.h">
+      <Filter>03. Obj</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="CameraTool.ico">
+      <Filter>99. Etc\99. Useless</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>99. Etc\99. Useless</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="99. Etc">
+      <UniqueIdentifier>{8d989225-3d65-461d-86ff-09298e68813d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Etc\99. Useless">
+      <UniqueIdentifier>{ee46e9f8-03d0-478e-821b-eb6155ff5ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. MainApp">
+      <UniqueIdentifier>{9a3f9319-269b-4291-8bb3-dce222ee11bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level">
+      <UniqueIdentifier>{20e23329-6f20-4755-9042-ed22a12b154b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Panel">
+      <UniqueIdentifier>{88917ba0-ce9d-4e56-8054-510ce309742f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj">
+      <UniqueIdentifier>{c2111396-6794-42c1-aab0-48cb16489bb7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\private\pch.cpp">
+      <Filter>99. Etc\99. Useless</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MainApp.cpp">
+      <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FirstLevel.cpp">
+      <Filter>01. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraTool.cpp">
+      <Filter>99. Etc\99. Useless</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObj.cpp">
+      <Filter>03. Obj</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="CameraTool.rc">
+      <Filter>99. Etc\99. Useless</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>
