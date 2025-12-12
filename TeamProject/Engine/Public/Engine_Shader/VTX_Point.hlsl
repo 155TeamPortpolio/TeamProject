@@ -35,13 +35,17 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     GS_OUT v[4];
 
     float3 worldPos = In[0].vWorldPos.xyz;
+    float3 camPos = vCamPosition.xyz;
+    float3 worldUp = float3(0.f, 1.f, 0.f);
     
-    float3 right = normalize(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float3 up = normalize(ObjectBufferArray[TransformIndex].Transform[1].xyz);
-    float scaleX = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float scaleY = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float3 look = normalize(worldPos - camPos);
+    float3 right = normalize(cross(worldUp, look));
+    float3 up = normalize(cross(look, right));
+    
+    float scaleX = 50;
+    float scaleY = 50;
 
-    float3 offsetRight = right * ( scaleX*0.5f);
+    float3 offsetRight = right * (scaleX * 0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);
 
     // 정점 4개 위치 계산 (월드 기준)
