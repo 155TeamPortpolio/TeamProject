@@ -337,15 +337,6 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EffectContainer.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\EffectNode.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SpriteNode.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode\SpriteNode</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\PointModel.h">
       <Filter>01. Utility\04. Components\03. Model\PointModel</Filter>
     </ClInclude>
@@ -357,6 +348,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectContainer.h">
+      <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpriteNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -654,17 +654,26 @@
     <Filter Include="01. Utility\04. Components\19. RigidBody">
       <UniqueIdentifier>{80fdcd05-af2a-40fe-84b0-8e985aab4005}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\SpriteNode">
-      <UniqueIdentifier>{0de2f24e-ac66-4979-9a59-2d3d0d654f29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\ParticleNode">
-      <UniqueIdentifier>{dbf4d46c-091b-477a-b679-967c88695bfd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\MeshNode">
-      <UniqueIdentifier>{2c4bd79b-569a-43d9-85fa-b7cb9d92e981}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\PointModel">
       <UniqueIdentifier>{cab80bc9-9aa4-4f6b-97e1-42f9e9e0b65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect">
+      <UniqueIdentifier>{1e6545d9-1ce2-4aaf-aa2d-09c2958f80e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Container">
+      <UniqueIdentifier>{a350ec7b-e44f-44ae-8bb7-cb2d0ef20bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node">
+      <UniqueIdentifier>{0b89d95c-88e4-4e15-808a-88fb35a68fa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Sprite">
+      <UniqueIdentifier>{dfa3afac-5dc0-40a6-85ed-16742f0affda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Particle">
+      <UniqueIdentifier>{a04807fb-349a-42b4-87f6-6b85dcdeda0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Mesh">
+      <UniqueIdentifier>{d86f160d-72f2-44a6-93b4-fc107db0f100}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -944,15 +953,6 @@
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EffectContainer.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectContainer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\EffectNode.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SpriteNode.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode\SpriteNode</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\PointModel.cpp">
       <Filter>01. Utility\04. Components\03. Model\PointModel</Filter>
     </ClCompile>
@@ -961,6 +961,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectContainer.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpriteNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

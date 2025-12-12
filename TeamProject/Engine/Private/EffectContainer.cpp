@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "IProtoService.h"
 #include "EffectNode.h"
+#include "ObjectContainer.h"
 
 CEffectContainer::CEffectContainer()
 	:CGameObject()
@@ -18,7 +19,7 @@ CEffectContainer::CEffectContainer(const CEffectContainer& rhs)
 HRESULT CEffectContainer::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
+	Add_Component<CObjectContainer>();
 	return S_OK;
 }
 
@@ -74,8 +75,7 @@ void CEffectContainer::Update(_float dt)
 		m_fElapsedTime += dt;
 	}
 
-	for (const auto& node : m_Nodes)
-		node->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CEffectContainer::Late_Update(_float dt)

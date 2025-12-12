@@ -1,10 +1,16 @@
 #pragma once
 #include "SpriteNode.h"
+#include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
 class CSpriteNode_Edit :
     public CSpriteNode
 {
+public:
+    typedef struct tagSpriteNodeEditDesc : public GAMEOBJECT_DESC
+    {
+        CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* pContext = nullptr;
+    }SPRITE_NODE_EDIT_DESC;
 private:
     CSpriteNode_Edit();
     CSpriteNode_Edit(const CSpriteNode_Edit& rhs);
@@ -26,5 +32,9 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
+private:
+    CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
+
+    void AddTextures();
 };
 NS_END
