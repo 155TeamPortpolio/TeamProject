@@ -3,6 +3,7 @@
 #include "PhysicsSystem.h"
 
 #include "GameInstance.h"
+#ifdef USINPHYSICS 
 
 HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
 {
@@ -169,3 +170,4 @@ void CPhysicsSystem::Free()
         m_pFoundation = nullptr;
     }
 }
+#endif
