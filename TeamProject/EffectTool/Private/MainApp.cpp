@@ -61,7 +61,7 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 {
 	m_pGameInstance->Get_LevelMgr()->Register_Level("EffectEdit_Level", []()->CLevel* {return CEffectEditLevel::Create("EffectEdit_Level"); });
 	m_pGameInstance->Notify_LevelSet();
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("EffectEdit_Level", false); //로고 레벨로 시작!
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("EffectEdit_Level", false);
 }
 
 CMainApp* CMainApp::Create()
