@@ -24,18 +24,18 @@ HRESULT CAnimationEditLevel::Initialize()
 HRESULT CAnimationEditLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_AnimEditCamera", CEditCamera::Create());
-	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_AnimEditModel", CEditModel::Create());
+	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
+	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	CAMERA_DESC desc = {};
 
-	CGameObject* Camera = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_Camera" })
+	CGameObject* Camera = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_EditCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	CGameObject* AnimModel = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_AnimModel" })
+	CGameObject* AnimModel = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_EditModel" })
 		.Position({ 0,0,0 })
 		.Build("Anim_Model");
 

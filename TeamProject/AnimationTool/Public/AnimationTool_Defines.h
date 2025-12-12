@@ -15,4 +15,3 @@ extern HINSTANCE g_hInstance;
 
 using namespace AnimTool;
 
-#include "Engine_Defines.h"

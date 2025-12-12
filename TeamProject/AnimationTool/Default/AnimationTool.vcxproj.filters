@@ -19,6 +19,12 @@
     <Filter Include="99. Defines">
       <UniqueIdentifier>{ed2042d7-0999-4114-8b89-543170f5472b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Camera">
+      <UniqueIdentifier>{fcfec5ae-c3ad-4fe0-9978-4b1a09795f4d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Model">
+      <UniqueIdentifier>{b95cdd8c-fd10-4a2d-a31d-581aa23af775}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -46,10 +52,43 @@
     <ClInclude Include="AnimationTool.h">
       <Filter>98. Default</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\AnimationTool_Defines.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00. MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimationEditLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h">
+      <Filter>02. Object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditModel.h">
+      <Filter>02. Object\Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationTool.cpp">
       <Filter>98. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp">
+      <Filter>02. Object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditModel.cpp">
+      <Filter>02. Object\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimationEditLevel.cpp">
+      <Filter>01. Level</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
