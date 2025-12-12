@@ -195,6 +195,7 @@
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\SpriteNode_Edit.h" />
     <ClInclude Include="..\public\ToolCamera.h" />
+    <ClInclude Include="..\Public\ToolLight.h" />
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -279,6 +280,7 @@
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\SpriteNode_Edit.cpp" />
     <ClCompile Include="..\private\ToolCamera.cpp" />
+    <ClCompile Include="..\Private\ToolLight.cpp" />
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

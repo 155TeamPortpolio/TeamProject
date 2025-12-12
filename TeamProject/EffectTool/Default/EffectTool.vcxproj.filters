@@ -31,6 +31,9 @@
     <Filter Include="99. Defines\ImGui">
       <UniqueIdentifier>{8770c344-8604-4f68-a3bc-33a07affc731}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\ToolLight">
+      <UniqueIdentifier>{6024827c-522f-4e3b-be3c-db4e525e39bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -108,6 +111,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
       <Filter>99. Defines\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ToolLight.h">
+      <Filter>02. Object\ToolLight</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -166,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
       <Filter>99. Defines\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolLight.cpp">
+      <Filter>02. Object\ToolLight</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
