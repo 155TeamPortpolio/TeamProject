@@ -74,6 +74,12 @@ void CSpriteNode_Edit::Render_GUI()
 	ImGui::PopID();
 }
 
+void CSpriteNode_Edit::Play()
+{
+	m_fElpasedTime = 0.f;
+	m_iCurrFrameIndex = 0;
+}
+
 CSpriteNode_Edit* CSpriteNode_Edit::Create()
 {
 	CSpriteNode_Edit* instance = new CSpriteNode_Edit();

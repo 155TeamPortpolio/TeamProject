@@ -273,6 +273,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\MaterialData.h" />
     <ClInclude Include="..\Public\MaterialInstance.h" />
     <ClInclude Include="..\Public\Mesh.h" />
+    <ClInclude Include="..\Public\MeshNode.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\Public\ModelData.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd.h" />
@@ -280,6 +281,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
+    <ClInclude Include="..\Public\ParticleNode.h" />
     <ClInclude Include="..\Public\PhysicsSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
@@ -370,11 +372,13 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\MaterialData.cpp" />
     <ClCompile Include="..\Private\MaterialInstance.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
+    <ClCompile Include="..\Private\MeshNode.cpp" />
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\Private\ModelData.cpp" />
     <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
+    <ClCompile Include="..\Private\ParticleNode.cpp" />
     <ClCompile Include="..\Private\PhysicsSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />

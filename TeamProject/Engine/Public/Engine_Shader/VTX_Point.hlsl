@@ -38,7 +38,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 camPos = vCamPosition.xyz;
     float3 worldUp = float3(0.f, 1.f, 0.f);
     
-    float3 look = normalize(worldPos - camPos);
+    float3 look = normalize(camPos - worldPos);
     float3 right = normalize(cross(worldUp, look));
     float3 up = normalize(cross(look, right));
     
@@ -49,10 +49,10 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 offsetUp = up * (scaleY * 0.5f);
 
     // 정점 4개 위치 계산 (월드 기준)
-    float3 p0 = worldPos + (-offsetRight + offsetUp);
-    float3 p1 = worldPos + (offsetRight + offsetUp);
-    float3 p2 = worldPos + (offsetRight - offsetUp);
-    float3 p3 = worldPos + (-offsetRight - offsetUp);
+    float3 p0 = worldPos + (offsetRight + offsetUp);
+    float3 p1 = worldPos + (-offsetRight + offsetUp);
+    float3 p2 = worldPos + (-offsetRight - offsetUp);
+    float3 p3 = worldPos + (offsetRight - offsetUp);
     
     matrix matrixVP = mul(matView, matProjection);
     v[0].vPosition = mul(float4(p0, 1.f), matrixVP);

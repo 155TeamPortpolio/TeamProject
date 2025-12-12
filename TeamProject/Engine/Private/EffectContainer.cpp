@@ -112,7 +112,5 @@ void CEffectContainer::Free()
 {
 	__super::Free();
 
-	for (auto& node : m_Nodes)
-		Safe_Release(node);
 	m_Nodes.clear();
 }

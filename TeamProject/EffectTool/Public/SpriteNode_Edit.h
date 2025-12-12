@@ -26,7 +26,7 @@ public:
 
 public:
     void Render_GUI() override;
-
+    void Play() override;
 public:
     static CSpriteNode_Edit* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

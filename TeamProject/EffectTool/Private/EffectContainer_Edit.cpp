@@ -52,6 +52,7 @@ void CEffectContainer_Edit::Render_GUI()
 {
     ImGui::PushID(this);
 	DisplayAllTextures();
+	Play();
     AddNode();
 	RemoveLastNode();
 
@@ -97,6 +98,11 @@ void CEffectContainer_Edit::Free()
 
 void CEffectContainer_Edit::Play()
 {
+	if (ImGui::Button("Play"))
+	{
+		for (auto& node : m_Nodes)
+			node->Play();
+	}
 }
 
 void CEffectContainer_Edit::AddNode()

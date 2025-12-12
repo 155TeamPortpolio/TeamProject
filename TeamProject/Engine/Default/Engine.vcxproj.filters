@@ -358,6 +358,15 @@
     <ClInclude Include="..\public\SpriteNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
+    <ClInclude Include="..\Public\ParticleNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -970,6 +979,13 @@
     </ClCompile>
     <ClCompile Include="..\private\SpriteNode.cpp">
       <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
+    <ClCompile Include="..\Private\ParticleNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
