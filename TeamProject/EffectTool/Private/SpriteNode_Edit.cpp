@@ -35,13 +35,12 @@ HRESULT CSpriteNode_Edit::Initialize(INIT_DESC* pArg)
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Opaque", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	customInstance->Set_Blended(true);
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Point.hlsl");
-
-	m_pTransform->Scale(_float3{ 50.f,50.f,1.f });
 
 	return S_OK;
 }
@@ -68,10 +67,10 @@ void CSpriteNode_Edit::Render_GUI()
 	static _bool isOpen = true;
 
 	ImGui::PushID(this);
-	ImGui::Begin("SpriteNode", &isOpen);
+	//ImGui::Begin("SpriteNode", &isOpen);
 	AddTextures();
+	SetUp_SpriteEffect();
 
-	ImGui::End();
 	ImGui::PopID();
 }
 
@@ -116,8 +115,19 @@ void CSpriteNode_Edit::AddTextures()
 			for (_uint i = 0; i < m_pContext->Textures.size(); ++i)
 			{
 				pMaterialData->Link_Texture("EffectEdit_Level", m_pContext->TextureTags[i], TEXTURE_TYPE::DIFFUSE);
-				Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 			}
 		}
+
+		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	}
-}	
+}
+void CSpriteNode_Edit::SetUp_SpriteEffect()
+{
+	ImGui::SeparatorText("SpriteEffect Setting");
+
+	ImGui::Checkbox("Is Animated", &m_IsAnimated);
+	ImGui::Checkbox("Is Repeat", &m_IsRepeat);
+	ImGui::DragFloat("Speed", &m_fSpeed);
+	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+}
+

@@ -53,6 +53,7 @@ void CEffectContainer_Edit::Render_GUI()
     ImGui::PushID(this);
 	DisplayAllTextures();
     AddNode();
+	RemoveLastNode();
 
     CGameObject::Render_GUI();
     for (const auto& node : m_Nodes)
@@ -94,6 +95,10 @@ void CEffectContainer_Edit::Free()
 		Safe_Release(texture);
 }
 
+void CEffectContainer_Edit::Play()
+{
+}
+
 void CEffectContainer_Edit::AddNode()
 {
 	CGameObject* pNode = nullptr;
@@ -106,9 +111,31 @@ void CEffectContainer_Edit::AddNode()
 		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_SpriteNode" }).Add_ObjDesc(pDesc).Build("SpriteNode");
         m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
     }
+	if (ImGui::Button("Add Particle Node"))
+	{
+
+	}
+	if (ImGui::Button("Add Mesh Node"))
+	{
+
+	}
 
 	if (pNode)
 		Get_Component<CObjectContainer>()->Add_Child(pNode);
+}
+
+void CEffectContainer_Edit::RemoveLastNode()
+{
+	if (m_Nodes.empty())
+		return;
+
+	if (ImGui::Button("Remove Last Node"))
+	{
+		Safe_Release(m_Nodes.back());
+		m_Nodes.pop_back();
+
+		m_iNumNodes = m_Nodes.size();
+	}
 }
 
 void CEffectContainer_Edit::ContextClear()

@@ -36,5 +36,6 @@ private:
     CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
 
     void AddTextures();
+    void SetUp_SpriteEffect();
 };
 NS_END

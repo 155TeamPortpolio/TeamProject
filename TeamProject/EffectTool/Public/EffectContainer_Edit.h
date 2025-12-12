@@ -49,6 +49,7 @@ private:
     void Export();
     void Play();
     void AddNode();
+    void RemoveLastNode();
     void ContextClear();
     void LoadTextureFromDirectory(const string& dirPath);
     void DisplayAllTextures();

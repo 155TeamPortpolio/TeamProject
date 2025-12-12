@@ -42,8 +42,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 right = normalize(cross(worldUp, look));
     float3 up = normalize(cross(look, right));
     
-    float scaleX = 50;
-    float scaleY = 50;
+    float scaleX = length(ObjectBufferArray[TransformIndex].Transform[0]);
+    float scaleY = length(ObjectBufferArray[TransformIndex].Transform[1]);
 
     float3 offsetRight = right * (scaleX * 0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);
