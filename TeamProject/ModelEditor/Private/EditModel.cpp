@@ -3,6 +3,8 @@
 #include "StaticModel.h"
 #include "Material.h"
 
+#include "AIModel.h"
+
 #include "GameInstance.h"
 
 CEditModel::CEditModel()
@@ -27,13 +29,15 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	m_Components.emplace(type_index(typeid()))
+
 	return S_OK;
 }
 
 void CEditModel::Awake()
 {
-	/*CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	Get_Component<CModel>()->Link_Model("Demo_Level", "");*/
+	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
+	Get_Component<CModel>()->Link_Model("Demo_Level", "");
 }
 
 void CEditModel::Priority_Update(_float dt)
