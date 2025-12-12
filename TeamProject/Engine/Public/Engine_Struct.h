@@ -296,9 +296,9 @@ namespace Engine
 	};
 
 	/* Effect */
-
-	typedef struct tagEffectNode
+	typedef struct tagEffectNode : public INIT_DESC
 	{
+		EFFECT_TYPE eType = EFFECT_TYPE::END;
 		_float fDelayTime{};
 		_float fDuration{};
 		_bool isLoop = false;
@@ -306,18 +306,24 @@ namespace Engine
 
 	typedef struct tagSpriteNode : public tagEffectNode
 	{
-
+		string TextureKey{};
+		string TexturePath{};
+		_bool isAnimated = false;
+		_uint iMaxFrameIndex{};
+		_float fSpeed{};
 	}SPRITE_NODE;
 
 	typedef struct tagParticleNode : public tagEffectNode
 	{
-
+		string TextureKey{};
+		string TexturePath{};
 	}PARTICLE_NODE;
 
-	typedef struct tagEffectAsset
+	typedef struct tagEffectAsset : public INIT_DESC
 	{
 		string Name{};
 		_float fDuration{};
+		_bool isLoop = false;
 		vector<tagEffectNode> Nodes;
 	}EFFECT_ASSET;
 }

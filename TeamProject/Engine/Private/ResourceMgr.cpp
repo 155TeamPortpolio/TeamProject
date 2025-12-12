@@ -10,6 +10,7 @@
 #include "VI_Cube.h"
 #include "VI_Terrain.h"
 #include "VI_Plane.h"
+#include "VI_Point.h"
 
 #include "Shader.h"
 #include "Material.h"
@@ -135,6 +136,9 @@ CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& buf
 		break;
 	case Engine::BUFFER_TYPE::TERRAIN:
 		buffer = CVI_Terrain::Create(m_pDevice, bufferKey, MakePath(bufferKey));
+		break;
+	case Engine::BUFFER_TYPE::BASIC_POINT:
+		buffer = CVI_Point::Create(m_pDevice, bufferKey);
 		break;
 	default:
 		break;
@@ -332,9 +336,11 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_SkinMesh.hlsl", "../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
 	Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
 	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
+	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
 
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
+	m_Resources[0].m_Buffers.emplace("Engine_Default_Point", CVI_Point::Create(m_pDevice, "Engine_Default_Point"));
 
 	m_Resources[0].m_Shaders.emplace("VTX_TexPos.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_TexPos.hlsl", "VTX_TexPos.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Mesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Mesh.hlsl", "VTX_Mesh.hlsl"));
@@ -342,6 +348,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_SkinMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_SkinMesh.hlsl", "VTX_SkinMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UI.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UI.hlsl", "VTX_UI.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Debug.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Debug.hlsl", "VTX_Debug.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 }
 
