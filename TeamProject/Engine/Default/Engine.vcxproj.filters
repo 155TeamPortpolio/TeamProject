@@ -337,14 +337,29 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CCameraTrail.h">
-      <Filter>01. Utility\04. Components\19. CamTrail</Filter>
+    <ClInclude Include="..\public\CCamRail.h">
+      <Filter>01. Utility\04. Components\19. CamRail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICamEvaluator.h">
+      <Filter>01. Utility\04. Components\19. CamRail\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamEvaluator.h">
+      <Filter>01. Utility\04. Components\19. CamRail\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamUtil.h">
+      <Filter>01. Utility\04. Components\19. CamRail\99. CamUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamFovLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\19. CamRail\01. CamFovLinearEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamRotSlerpEvaluator.h">
+      <Filter>01. Utility\04. Components\19. CamRail\02. CamRotSlerpEvaluator</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Struct.h">
-      <Filter>01. Utility\04. Components\01. Camera</Filter>
+      <Filter>01. Utility\04. Components\19. CamRail</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Camera_Enum.h">
-      <Filter>01. Utility\04. Components\01. Camera</Filter>
+      <Filter>01. Utility\04. Components\19. CamRail</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -645,8 +660,20 @@
     <Filter Include="01. Utility\03. GameObject\Effect\EffectNode">
       <UniqueIdentifier>{a6d5c0ba-2acf-42f6-b4a1-23541fa8958d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\19. CamTrail">
+    <Filter Include="01. Utility\04. Components\19. CamRail">
       <UniqueIdentifier>{3c661f65-fdd4-4878-84e1-326e1562d117}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\19. CamRail\00. ICamEvaluator">
+      <UniqueIdentifier>{c0c60a6a-ae26-41f8-8cf6-e477784fccb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\19. CamRail\99. CamUtil">
+      <UniqueIdentifier>{7baa24b4-4e3a-4056-a355-d834dd11b2c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\19. CamRail\01. CamFovLinearEvaluator">
+      <UniqueIdentifier>{1eda1702-ac66-4d8f-a7a0-22de7f056c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\19. CamRail\02. CamRotSlerpEvaluator">
+      <UniqueIdentifier>{8f466f1a-5f38-42a2-890f-6b2640065140}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -926,8 +953,20 @@
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CCameraTrail.cpp">
-      <Filter>01. Utility\04. Components\19. CamTrail</Filter>
+    <ClCompile Include="..\private\CCamRail.cpp">
+      <Filter>01. Utility\04. Components\19. CamRail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamEvaluator.cpp">
+      <Filter>01. Utility\04. Components\19. CamRail\00. ICamEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamUtil.cpp">
+      <Filter>01. Utility\04. Components\19. CamRail\99. CamUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamFovLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\19. CamRail\01. CamFovLinearEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp">
+      <Filter>01. Utility\04. Components\19. CamRail\02. CamRotSlerpEvaluator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

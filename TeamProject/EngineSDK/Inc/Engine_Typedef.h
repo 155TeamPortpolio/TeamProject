@@ -45,7 +45,7 @@ namespace Engine
 	typedef		DirectX::SimpleMath::Vector2	_vector2;
 	typedef		DirectX::SimpleMath::Vector3	_vector3;
 	typedef		DirectX::SimpleMath::Vector4	_vector4;
-	typedef		DirectX::SimpleMath::Matrix		_smatrix;
+	typedef		DirectX::SimpleMath::Matrix		_mat;
 
 	using LEVEL_CREATOR = function<class CLevel* ()>;
 	static const string G_GlobalLevelKey = "Global_Level";
