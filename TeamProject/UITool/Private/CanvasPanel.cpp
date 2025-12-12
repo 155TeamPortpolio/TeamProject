@@ -5,6 +5,8 @@
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 
+#include "TestUI.h"
+
 CCanvasPanel::CCanvasPanel()
 {
 }
@@ -27,7 +29,13 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Bangboo.jpg");
+
+    CUI_Object* pImage = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_ImageUI" })
+        .Scale({ 1.f, 1.f })
+        .Build("UI_ImageUI");
+
+    Get_Component<CObjectContainer>()->Add_Child(pImage);
 
     return S_OK;
 }
@@ -49,6 +57,23 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
+    ImGui::SeparatorText("Create Child");
+
+    if (ImGui::Button("Image"))
+    {
+        CUI_Object* pImage = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_ImageUI" })
+            .Scale({ 1.f, 1.f })
+            .Build("UI_ImageUI");
+
+        if (!pImage)
+            return;
+
+        IUI_Service* pUIService = CGameInstance::GetInstance()->Get_UIMgr();
+        pUIService->Add_UIObject(pImage, "UITool_Level");
+        Get_Component<CObjectContainer>()->Add_Child(pImage);
+    }
+
+    __super::Render_GUI();
 }
 
 CGameObject* CCanvasPanel::Create()

@@ -10,6 +10,7 @@
 
 #include "GUIPanel.h"
 #include "CanvasPanel.h"
+#include "ImageUI.h"
 
 CUITool_Level::CUITool_Level(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -92,6 +93,9 @@ HRESULT CUITool_Level::Ready_UIObjects()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 
 	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create())))
+		return E_FAIL;
+
+	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ImageUI", CImageUI::Create())))
 		return E_FAIL;
 
 	return S_OK;

@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CUI_Object;
 class IProtoService;
 class IObjectService;
 class IUI_Service;
