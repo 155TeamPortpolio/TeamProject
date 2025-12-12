@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "UITool_Level.h"
 
 #include "GameInstance.h"
@@ -7,7 +7,8 @@
 
 #include "UITool_Camera.h"
 #include "Camera.h"
-#include "TestUI.h"
+
+#include "GUIPanel.h"
 
 CUITool_Level::CUITool_Level(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -23,27 +24,17 @@ HRESULT CUITool_Level::Initialize()
 
 HRESULT CUITool_Level::Awake()
 {
-	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_Camera", CUITool_Camera::Create());
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_UI", CTestUI::Create());
-	
-	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
+	if (FAILED(Ready_Textures()))
+		MSG_BOX("Failed to Ready Textures : UI Tool");
 
-	CGameObject* Camera = Builder::Create_Object({ "UITool_Level" ,"Proto_GameObject_Camera" })
-		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
-		.Position({ 0.f, 3.f, -3.f })
-		.Build("Main_Camera");
-	
-	CUI_Object* pUIObject = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_UI" })
-		.Scale({ 200.f, 200.f })
-		.Set_Anchor(ANCHOR::Left | ANCHOR::Top, {0.f, 0.f})
-		.Build("Test_UI");
+	if(FAILED(Ready_Camera()))
+		MSG_BOX("Failed to Ready Camera : UI Tool");
 
-	pObjMgr->Add_Object(Camera, { "UITool_Level","Camera_Layer" });
-	pUIMgr->Add_UIObject(pUIObject, "UITool_Level");
-	
-	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+	if (FAILED(Ready_UIObjects()))
+		MSG_BOX("Failed to Ready UI Objects : UI Tool");
+
+	if (FAILED(Ready_GUIPanel()))
+		MSG_BOX("Failed to Ready GUI Panel : UI Tool");
 
 	return S_OK;
 }
@@ -61,6 +52,56 @@ HRESULT CUITool_Level::Render()
 
 void CUITool_Level::PreLoad_Level()
 {
+}
+
+HRESULT CUITool_Level::Ready_Textures()
+{
+	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Logo.png", "../Bin/Resources/UI/Logo.png")))
+		return E_FAIL;
+
+	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg")))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_Camera()
+{
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+
+	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_Camera", CUITool_Camera::Create())))
+		return E_FAIL;
+
+	CGameObject* Camera = Builder::Create_Object({ "UITool_Level" ,"Proto_GameObject_Camera" })
+		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
+		.Position({ 0.f, 3.f, -3.f })
+		.Build("Main_Camera");
+
+	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+	pObjMgr->Add_Object(Camera, { "UITool_Level","Camera_Layer" });
+
+	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_UIObjects()
+{
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_GUIPanel()
+{
+	CBasePanel* pPanel = CGUIPanel::Create(CGameInstance::GetInstance()->Get_GUISystem()->Get_Context());
+	if (!pPanel)
+		return E_FAIL;
+
+	CGameInstance::GetInstance()->Get_GUISystem()->Register_Panel(pPanel);
+
+	return S_OK;
 }
 
 CUITool_Level* CUITool_Level::Create(const string& LevelKey)

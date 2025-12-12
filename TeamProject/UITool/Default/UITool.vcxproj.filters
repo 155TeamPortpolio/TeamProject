@@ -22,6 +22,12 @@
     <Filter Include="02.Object\UI">
       <UniqueIdentifier>{c97a6584-1b36-42e7-a997-b80cdddb12ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\GUI">
+      <UniqueIdentifier>{913be96d-9494-40fe-b9d7-9e1219925bef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\GUI\IMGUI">
+      <UniqueIdentifier>{de841462-128e-48aa-927e-a7c41bd6d76b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -51,6 +57,21 @@
     <ClInclude Include="..\Public\TestUI.h">
       <Filter>02.Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GUIPanel.h">
+      <Filter>02.Object\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -67,6 +88,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestUI.cpp">
       <Filter>02.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99.Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GUIPanel.cpp">
+      <Filter>02.Object\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

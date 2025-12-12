@@ -117,6 +117,9 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)UpdateLib_UITool.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -135,9 +138,17 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PreBuildEvent>
+      <Command>call "$(SolutionDir)UpdateLib_UITool.bat"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\Public\GUIPanel.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestUI.h" />
     <ClInclude Include="..\Public\UITool_Camera.h" />
     <ClInclude Include="..\Public\UITool_Defines.h" />
@@ -148,7 +159,15 @@
     <ClInclude Include="UITool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp" />
+    <ClCompile Include="..\Private\GUIPanel.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
     <ClCompile Include="..\Private\UITool_Camera.cpp" />
     <ClCompile Include="..\Private\UITool_Level.cpp" />
