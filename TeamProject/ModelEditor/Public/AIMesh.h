@@ -23,10 +23,10 @@ public:
 	}
 
 public:
-	virtual HRESULT Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, class CAISkeleton* _pSkeleton, _matrix _PreTransformMatrix);
+	virtual HRESULT Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, class CAISkeleton* _pSkeleton);
 
 public:
-	HRESULT Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh, _fmatrix _PreTransformMatrix);
+	HRESULT Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh);
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 
 private:
@@ -37,7 +37,7 @@ private:
 	vector<_uint>		m_BoneIndices;
 	 
 public:
-	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton, _matrix _PreTransformMatrix);
+	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	virtual void Free() override;
 };
 
