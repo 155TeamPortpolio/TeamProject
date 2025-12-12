@@ -1,4 +1,5 @@
 #include "AI_STModel.h"
+#include "AIModelData.h"
 
 CAI_STModel::CAI_STModel()
 	: CStaticModel{}
@@ -10,18 +11,17 @@ CAI_STModel::CAI_STModel(const CAI_STModel& rhs)
 {
 }
 
-HRESULT CAI_STModel::Initialize_Prototype()
+HRESULT CAI_STModel::Initialize(string fbxFilePath)
 {
-	return S_OK;
-}
+	if (FAILED(Load_AIModel(fbxFilePath)))
+		return E_FAIL;
 
-HRESULT CAI_STModel::Initialize(COMPONENT_DESC* pArg)
-{
 	return S_OK;
 }
 
 void CAI_STModel::Render_GUI()
 {
+	__super::Render_GUI();
 }
 
 HRESULT CAI_STModel::Load_AIModel(string fbxFilePath)
@@ -32,20 +32,33 @@ HRESULT CAI_STModel::Load_AIModel(string fbxFilePath)
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
 
+	if (FAILED(Ready_AIModelData()))
+		return E_FAIL;
+
+	if (FAILED(Ready_AIMaterials()))
+		return E_FAIL;
+
+	if (FAILED(Ready_AIAnimations()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Ready_Skeleton(const aiNode* pAINode)
-{ 
+HRESULT CAI_STModel::Ready_AIModelData()
+{
+	m_pData = CAIModelData::Create(MESH_TYPE::NONANIM, m_pAIScene);
+	if (nullptr == m_pData)
+		return E_FAIL;
+
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Ready_Meshes()
+HRESULT CAI_STModel::Ready_AIMaterials()
 {
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Ready_Materials()
+HRESULT CAI_STModel::Ready_AIAnimations()
 {
 	return S_OK;
 }
@@ -54,7 +67,7 @@ CAI_STModel* CAI_STModel::Create(string fbxFilePath)
 {
 	CAI_STModel* instance = new CAI_STModel();
 
-	if (FAILED(instance->Initialize_Prototype())) {
+	if (FAILED(instance->Initialize(fbxFilePath))) {
 		MSG_BOX("CAI_STModel Create Failed : CAI_STModel");
 		Safe_Release(instance);
 	}

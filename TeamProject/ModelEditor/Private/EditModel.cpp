@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "EditModel.h"
-#include "StaticModel.h"
+#include "AI_STModel.h"
 #include "Material.h"
 
 #include "GameInstance.h"
@@ -27,15 +27,15 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	//m_Components.emplace(type_index(typeid()))
+	m_Components.emplace(type_index(typeid(CAI_STModel)), CAI_STModel::Create("C:/Users/shs26/Downloads/Bangboo_Brawlerboo_UI/Bangboo_Brawlerboo_UI/Bangboo_Brawlerboo_UI.fbx"));
 
 	return S_OK;
 }
 
 void CEditModel::Awake()
 {
-	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	Get_Component<CModel>()->Link_Model("Demo_Level", "");
+	//CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
+	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
 }
 
 void CEditModel::Priority_Update(_float dt)
@@ -53,6 +53,8 @@ void CEditModel::Late_Update(_float dt)
 void CEditModel::Render_GUI()
 {
 	__super::Render_GUI();
+
+	Get_Component<CAI_STModel>()->Render_GUI();
 }
 
 CEditModel* CEditModel::Create()

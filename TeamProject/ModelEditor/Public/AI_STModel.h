@@ -17,32 +17,23 @@ private:
     virtual ~CAI_STModel() DEFAULT;
 
 public:
-    virtual HRESULT Initialize_Prototype() override;
-    virtual HRESULT Initialize(COMPONENT_DESC* pArg = nullptr) override;
+    virtual HRESULT Initialize(string fbxFilePath);
     virtual void Render_GUI() override;
 
 public:
     HRESULT Load_AIModel(string fbxFilePath);
 
 private:
-    HRESULT Ready_Skeleton(const aiNode* pAINode);
-    HRESULT Ready_Meshes();
-    HRESULT Ready_Materials();
+    HRESULT Ready_AIModelData();
+    HRESULT Ready_AIMaterials();
+    HRESULT Ready_AIAnimations();
 
 private:
     //Assimp
     const aiScene* m_pAIScene = { nullptr };
     Assimp::Importer	        m_Importer = {};
-    //Pretransform
+    //PreTransform
     _matrix                     m_PreTransform = {};
-    //Skeleton
-    class CAISkeleton*          m_pSkeleton = { nullptr };
-    //Meshes
-    _uint					    m_iNumMeshes = {};
-    vector<class CAIMesh*>	    m_Meshes;
-    //Materials
-    _uint						m_iNumMaterials = {};
-    vector<class CAIMaterial*>	m_Materials;
 
 public:
     static CAI_STModel* Create(string fbxFilePath);
