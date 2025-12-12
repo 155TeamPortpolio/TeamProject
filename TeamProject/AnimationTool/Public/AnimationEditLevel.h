@@ -8,13 +8,13 @@ class IProtoService;
 class IObjectService;
 NS_END
 
-NS_BEGIN(AnimEdit)
+NS_BEGIN(AnimTool)
 class CAnimationEditLevel :
     public CLevel
 {
 private:
-    CDemoLevel(const string& LevelKey);
-    virtual ~CDemoLevel() DEFAULT;
+    CAnimationEditLevel(const string& LevelKey);
+    virtual ~CAnimationEditLevel() DEFAULT;
 
 public:
     virtual HRESULT Initialize() override;

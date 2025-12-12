@@ -26,12 +26,23 @@
     <ResourceCompile Include="AnimationTool.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Public\AnimationTool_Defines.h" />
+    <ClInclude Include="..\public\AnimationEditLevel.h" />
+    <ClInclude Include="..\public\EditCamera.h" />
+    <ClInclude Include="..\public\EditModel.h" />
+    <ClInclude Include="..\public\MainApp.h" />
+    <ClInclude Include="..\public\pch.h" />
     <ClInclude Include="AnimationTool.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\AnimationEditLevel.cpp" />
+    <ClCompile Include="..\private\EditCamera.cpp" />
+    <ClCompile Include="..\private\EditModel.cpp" />
+    <ClCompile Include="..\private\MainApp.cpp" />
+    <ClCompile Include="..\private\pch.cpp" />
     <ClCompile Include="AnimationTool.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
