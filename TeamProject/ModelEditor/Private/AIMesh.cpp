@@ -26,6 +26,11 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
     m_iIndexStride = 4;
     m_eIndexFormat = m_iIndexStride == 2 ? DXGI_FORMAT_R16_UINT : DXGI_FORMAT_R32_UINT;
     m_ePrimitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    m_pSkeleton = _pSkeleton;
+    Safe_AddRef(m_pSkeleton);
+    m_ElementCount = _eMeshType == MESH_TYPE::ANIM ? VTXSKINMESH::iElementCount : VTXMESH::iElementCount;
+    m_ElementKey = _eMeshType == MESH_TYPE::ANIM ? VTXSKINMESH::Key : VTXMESH::Key;
+    m_ElementDesc = _eMeshType == MESH_TYPE::ANIM ? VTXSKINMESH::Elements : VTXMESH::Elements;
 
 #pragma region VERTEX_BUFFER
 
@@ -80,10 +85,6 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 {
     m_iVertexStride = sizeof(VTXMESH);
 
-    m_ElementCount = VTXMESH::iElementCount;
-    m_ElementKey = VTXMESH::Key;
-    m_ElementDesc = VTXMESH::Elements;
-
     D3D11_BUFFER_DESC           VBDesc{};
     VBDesc.ByteWidth = m_iVerticesCount * m_iVertexStride;
     VBDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -127,10 +128,6 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
     if (nullptr == _pSkeleton)
         return E_FAIL;
 
-    m_ElementCount = VTXSKINMESH::iElementCount;
-    m_ElementKey = VTXSKINMESH::Key;
-    m_ElementDesc = VTXSKINMESH::Elements;
-
     m_iVertexStride = sizeof(VTXSKINMESH);
 
     D3D11_BUFFER_DESC VBDesc{};
@@ -164,11 +161,14 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
         if (nullptr == pAIBone)
             return E_FAIL;
 
-        string  BoneName = pAIBone->mName.C_Str();
+		string BoneName = pAIBone->mName.C_Str();
+		_uint BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+		m_BoneIndices.push_back(BoneIndex);
 
-        _uint iBoneIndex = {};
-        if (false == _pSkeleton->Find_BoneIndex(pAIBone->mName.data, &iBoneIndex))
-            return E_FAIL;
+		_float4x4 m_OffsetMatrix = {};
+		memcpy(&m_OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+		XMStoreFloat4x4(&m_OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_OffsetMatrix)));
+		static_cast<CAISkeleton*>(m_pSkeleton)->Set_Offset(BoneIndex, m_OffsetMatrix);
 
         for (_uint j = 0; j < pAIBone->mNumWeights; j++)
         {
@@ -176,47 +176,39 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 
             if (0.0f == pVertices[AIWeight.mVertexId].vBlendWeight.x)
             {
-                pVertices[AIWeight.mVertexId].vBlendIndex.x = i;
+                pVertices[AIWeight.mVertexId].vBlendIndex.x = BoneIndex;
                 pVertices[AIWeight.mVertexId].vBlendWeight.x = AIWeight.mWeight;
             }
             else if (0.0f == pVertices[AIWeight.mVertexId].vBlendWeight.y)
             {
-                pVertices[AIWeight.mVertexId].vBlendIndex.y = i;
+                pVertices[AIWeight.mVertexId].vBlendIndex.y = BoneIndex;
                 pVertices[AIWeight.mVertexId].vBlendWeight.y = AIWeight.mWeight;
             }
             else if (0.0f == pVertices[AIWeight.mVertexId].vBlendWeight.z)
             {
-                pVertices[AIWeight.mVertexId].vBlendIndex.z = i;
+                pVertices[AIWeight.mVertexId].vBlendIndex.z = BoneIndex;
                 pVertices[AIWeight.mVertexId].vBlendWeight.z = AIWeight.mWeight;
             }
-            else if (0.0f == pVertices[AIWeight.mVertexId].vBlendWeight.x)
+            else if (0.0f == pVertices[AIWeight.mVertexId].vBlendWeight.w)
             {
-                pVertices[AIWeight.mVertexId].vBlendIndex.w = i;
+                pVertices[AIWeight.mVertexId].vBlendIndex.w = BoneIndex;
                 pVertices[AIWeight.mVertexId].vBlendWeight.w = AIWeight.mWeight;
             }
         }
     }
-
-    if (0 == NumBones) {
-        const CAIBone* pBone = _pSkeleton->Find_Bone(_pAIMesh->mName.data);
-
-        if (nullptr != pBone) {
-            _uint iBoneIndex = {};
-            _pSkeleton->Find_BoneIndex(_pAIMesh->mName.data, &iBoneIndex);
-
-            for (_uint i = 0; i < m_iVerticesCount; ++i)
-            {
-                pVertices[i].vBlendIndex.x = 0;
-                pVertices[i].vBlendWeight.x = 1.0f;
-            }
-        }
-    }
+    
+	if (0 == NumBones)
+	{
+		_int BoneIndex = m_pSkeleton->Find_BoneIndexByName(m_VIKey);
+		_float4x4       OffsetMatrix;
+		XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
+		m_BoneIndices.push_back(BoneIndex);
+	}
 
     m_SkinMeshes.reserve(m_iVerticesCount);
+
     for (_uint i = 0; i < m_iVerticesCount; i++)
-    {
         m_SkinMeshes.push_back(pVertices[i]);
-    }
 
     D3D11_SUBRESOURCE_DATA      VertexInitialData{};
     VertexInitialData.pSysMem = pVertices;
@@ -226,15 +218,38 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 
     Safe_Delete_Array(pVertices);
 
-    if (0 == NumBones)
-    {
-        _int BoneIndex = _pSkeleton->Find_BoneIndexByName(m_VIKey);
-        _float4x4       OffsetMatrix;
-        XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
-        m_BoneIndices.push_back(BoneIndex);
+    return S_OK;
+}
+
+void CAIMesh::Save_File(ofstream& ofs)
+{
+    MESH_INFO_HEADER infoHeader = {};
+    infoHeader.BoneCount = m_BoneIndices.size();
+    infoHeader.IndicesCount = m_iIndicesCount;
+    infoHeader.VerticesCount = m_iVerticesCount;
+    strcpy_s(infoHeader.MeshName, m_VIKey.c_str());
+    infoHeader.MaterialIndex = m_MaterialIndex;
+    ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(MESH_INFO_HEADER));
+
+    if (m_iVertexStride == sizeof(VTXSKINMESH)) {
+        for (VTXSKINMESH& vertex : m_SkinMeshes) {
+            ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXSKINMESH));
+        }
     }
 
-    return S_OK;
+    else if (m_iVertexStride == sizeof(VTXMESH)) {
+        for (VTXMESH& vertex : m_Meshes) {
+            _matrix		PreTransformMatrix = XMMatrixIdentity();
+            //PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(g_iExportPreRotate));
+            XMStoreFloat3(&vertex.vPosition, XMVector3TransformCoord(XMLoadFloat3(&vertex.vPosition), PreTransformMatrix));
+            XMStoreFloat3(&vertex.vNormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vNormal), PreTransformMatrix));
+
+            ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXMESH));
+        }
+    }
+
+    for (_uint indices : m_Indices)
+        ofs.write(reinterpret_cast<const char*>(&indices), sizeof(_uint));
 }
 
 CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* _pSkeleton)
@@ -252,5 +267,6 @@ CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* 
 void CAIMesh::Free()
 {
     __super::Free();
+    Safe_Release(m_pSkeleton);
 }
 

@@ -28,6 +28,7 @@ public:
 public:
 	HRESULT Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh);
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
+	void Save_File(ofstream& ofs);
 
 private:
 	//ÀúÀå¿ë
@@ -35,7 +36,8 @@ private:
 	vector<VTXMESH>		m_Meshes;
 	vector<_uint>		m_Indices;
 	vector<_uint>		m_BoneIndices;
-	 
+	CSkeleton* m_pSkeleton = { nullptr };
+
 public:
 	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	virtual void Free() override;

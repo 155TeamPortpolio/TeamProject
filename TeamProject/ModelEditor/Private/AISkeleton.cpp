@@ -15,24 +15,27 @@ HRESULT CAISkeleton::Initialize(const aiNode* _pAINode)
 }
 
 
-_bool CAISkeleton::Find_BoneIndex(const _char* pName, _uint* _iGetIndex)
-{
-	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
-		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
-
-	if (iter == m_Bones.end())
-		return false;
-
-	if (nullptr != _iGetIndex)
-		(*_iGetIndex) = static_cast<_int>(distance(m_Bones.begin(), iter));
-
-	return true;
-}
+//_bool CAISkeleton::Find_BoneIndex(const _char* pName, _uint* _iGetIndex)
+//{
+//	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
+//		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
+//
+//	if (iter == m_Bones.end())
+//		return false;
+//
+//	if (nullptr != _iGetIndex)
+//		(*_iGetIndex) = static_cast<_int>(distance(m_Bones.begin(), iter));
+//
+//	return true;
+//}
 
 void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 {
 	if (m_Bones[Index]->Get_ParentIndex() == -1) {
+		//_matrix PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(g_iImportPreRotate));
+		_matrix PreTransformMatrix = XMMatrixIdentity();
 		_matrix Offset = XMLoadFloat4x4(&offset);
+		Offset = PreTransformMatrix * Offset;
 		XMStoreFloat4x4(&m_OffsetMatrices[Index], Offset);
 	}
 	else {
@@ -40,16 +43,16 @@ void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 	}
 }
 
-CAIBone* CAISkeleton::Find_Bone(const _char* pName) const
-{
-	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
-		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
-
-	if (iter == m_Bones.end())
-		return nullptr;
-
-	return static_cast<CAIBone*>(*iter);
-}
+//CAIBone* CAISkeleton::Find_Bone(const _char* pName) const
+//{
+//	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
+//		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
+//
+//	if (iter == m_Bones.end())
+//		return nullptr;
+//
+//	return static_cast<CAIBone*>(*iter);
+//}
 
 HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 {
@@ -74,6 +77,26 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	m_OffsetMatrices.resize(m_Bones.size(), IdentityMat);
 
 	return S_OK;
+}
+
+void CAISkeleton::Save_File(ofstream& ofs)
+{
+	SKELETON_FILE_HEADER skeleton = {};
+	skeleton.BoneCount = m_Bones.size();
+	ofs.write(reinterpret_cast<const char*>(&skeleton), sizeof(SKELETON_FILE_HEADER));
+
+	for (size_t i = 0; i < m_Bones.size(); i++)
+	{
+		static_cast<CAIBone*>(m_Bones[i])->Save_File(ofs);
+	}
+
+	for (size_t i = 0; i < m_OffsetMatrices.size(); i++)
+	{
+		_float4x4 SaveFloat4x4 = {};
+		_matrix SaveMatrix = XMLoadFloat4x4(&m_OffsetMatrices[i]);
+		XMStoreFloat4x4(&SaveFloat4x4, SaveMatrix);
+		ofs.write(reinterpret_cast<const char*>(&SaveFloat4x4), sizeof(_float4x4));
+	}
 }
 
 CAISkeleton* CAISkeleton::Create(const aiNode* _pAINode)

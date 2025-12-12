@@ -23,6 +23,7 @@ public:
 
 private:
     HRESULT Load_AIScene(const string& filePath);
+    HRESULT Save_AIScene();
     void Clear_Models();
     _bool HasBones();
 private:

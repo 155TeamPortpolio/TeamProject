@@ -66,6 +66,7 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
+		Save_AIScene();
 	}
 	ImGui::EndChild();
 
@@ -108,6 +109,25 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Load_AIModel(m_pAIScene, fileName);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
+}
+
+HRESULT CEditModel::Save_AIScene()
+{
+	HRESULT hr = {};
+
+	if (HasBones()) {
+		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
+		hr = pModel->Save_Model();
+	}
+	else {
+		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
+		hr = pModel->Save_Model();
+	}
+
+	CAI_Material* pMaterial = dynamic_cast<CAI_Material*>(Get_Component<CMaterial>());
+	hr = pMaterial->Save_Material();
+
+	return S_OK;
 }
 
 _bool CEditModel::HasBones()

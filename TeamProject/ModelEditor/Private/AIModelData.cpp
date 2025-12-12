@@ -37,6 +37,17 @@ CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)
 	return pInstance;
 }
 
+void CAIModelData::Save_File(ofstream& ofs)
+{
+
+	for (size_t i = 0; i < m_Meshes.size(); i++)
+	{
+		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs);
+	}
+
+	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs);
+}
+
 void CAIModelData::Free()
 {
 	__super::Free();
