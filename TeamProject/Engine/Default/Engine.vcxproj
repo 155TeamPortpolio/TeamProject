@@ -125,9 +125,7 @@
     <PostBuildEvent>
       <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
 copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+call "$(SolutionDir)UpdateLib.bat" "$(Configuration)"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -158,9 +156,7 @@ call "$(SolutionDir)UpdateLib.bat"</Command>
     <PostBuildEvent>
       <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
 copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-xcopy /y "$(SolutionDir)Engine\ThirdPartyLib\PhysX\$(Configuration)\*.lib" "$(TargetDir)"
-xcopy /y "$(SolutionDir)Engine\Bin\PhysX\$(Configuration)\*.dll" "$(TargetDir)"
-call "$(SolutionDir)UpdateLib.bat"</Command>
+call "$(SolutionDir)UpdateLib.bat" "$(Configuration)"</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>

@@ -31,6 +31,7 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 }
 
 void CDemoModel::Awake()
+
 {
 	/*CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
 	Get_Component<CModel>()->Link_Model("Demo_Level", "");*/
