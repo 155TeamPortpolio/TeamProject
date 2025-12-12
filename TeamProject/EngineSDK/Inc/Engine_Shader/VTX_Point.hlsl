@@ -49,18 +49,18 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 p1 = worldPos + (offsetRight + offsetUp);
     float3 p2 = worldPos + (offsetRight - offsetUp);
     float3 p3 = worldPos + (-offsetRight - offsetUp);
-
-    // 직교 투영 사용
-    v[0].vPosition = mul(float4(p0, 1.f), matOrthograph);
+    
+    matrix matrixVP = mul(matView, matProjection);
+    v[0].vPosition = mul(float4(p0, 1.f), matrixVP);
     v[0].vTexcoord = float2(0, 0);
 
-    v[1].vPosition = mul(float4(p1, 1.f), matOrthograph);
+    v[1].vPosition = mul(float4(p1, 1.f), matrixVP);
     v[1].vTexcoord = float2(1, 0);
 
-    v[2].vPosition = mul(float4(p2, 1.f), matOrthograph);
+    v[2].vPosition = mul(float4(p2, 1.f), matrixVP);
     v[2].vTexcoord = float2(1, 1);
 
-    v[3].vPosition = mul(float4(p3, 1.f), matOrthograph);
+    v[3].vPosition = mul(float4(p3, 1.f), matrixVP);
     v[3].vTexcoord = float2(0, 1);
 
     triStream.Append(v[0]);
@@ -89,7 +89,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    vector vDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
         
     if (vDiffuse.a < 0.1f)
         discard;

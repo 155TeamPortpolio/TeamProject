@@ -296,8 +296,7 @@ namespace Engine
 	};
 
 	/* Effect */
-
-	typedef struct tagEffectNode
+	typedef struct tagEffectNode : public INIT_DESC
 	{
 		_float fDelayTime{};
 		_float fDuration{};
@@ -306,12 +305,17 @@ namespace Engine
 
 	typedef struct tagSpriteNode : public tagEffectNode
 	{
-
+		string TextureKey{};
+		string TexturePath{};
+		_bool IsAnimated = false;
+		_uint iMaxFrameIndex{};
+		_float fSpeed{};
 	}SPRITE_NODE;
 
 	typedef struct tagParticleNode : public tagEffectNode
 	{
-
+		string TextureKey{};
+		string TexturePath{};
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset

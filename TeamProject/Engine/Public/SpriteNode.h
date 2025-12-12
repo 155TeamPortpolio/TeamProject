@@ -24,6 +24,10 @@ public:
     virtual void Free();
 
 private:
+    _bool m_IsAnimated = false;
+    _bool m_IsRepeat = false;
+    _float m_fSpeed{};
+    _float m_fSpriteElapsedTime{};
     _uint m_iMaxFrameIndex{};
     _uint m_iCurrFrameIndex{};
 };

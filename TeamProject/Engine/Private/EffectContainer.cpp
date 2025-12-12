@@ -22,6 +22,8 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+
+
 	return S_OK;
 }
 
@@ -35,6 +37,10 @@ void CEffectContainer::Priority_Update(_float dt)
 
 void CEffectContainer::Update(_float dt)
 {
+	if (!m_IsLoop)
+	{
+		m_fElapsedTime += dt;
+	}
 }
 
 void CEffectContainer::Late_Update(_float dt)

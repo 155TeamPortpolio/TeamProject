@@ -11,11 +11,11 @@ protected:
     virtual ~CEffectNode() DEFAULT;
 
 public:
-    virtual HRESULT Initialize_Prototype() override { return S_OK; }
-    virtual HRESULT Initialize(INIT_DESC* pArg) override { return S_OK; }
+    virtual HRESULT Initialize_Prototype() override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void Awake() override {}
     virtual void Priority_Update(_float dt) override {}
-    virtual void Update(_float dt) override {}
+    virtual void Update(_float dt) override;
     virtual void Late_Update(_float dt) override {}
 
 public:
@@ -26,6 +26,7 @@ public:
     virtual void Free();
 
 protected:
+    _bool m_IsLoop = false;
     _float m_fDuration{};
     _float m_fElpasedTime{};
 

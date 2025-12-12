@@ -28,5 +28,6 @@ private:
 	_float m_fDuration{};
 	_float m_fElapsedTime{};
 
+	vector<class EffectNode*> m_Nodes;
 };
 NS_END
