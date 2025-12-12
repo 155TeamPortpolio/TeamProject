@@ -27,6 +27,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffectTool", "EffectTool\De
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UITool", "UITool\Default\UITool.vcxproj", "{A66E465B-DF4B-4476-865C-3DF454801146}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MapTool", "MapTool\Default\MapTool.vcxproj", "{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -83,6 +85,14 @@ Global
 		{A66E465B-DF4B-4476-865C-3DF454801146}.Release|x64.Build.0 = Release|x64
 		{A66E465B-DF4B-4476-865C-3DF454801146}.Release|x86.ActiveCfg = Release|Win32
 		{A66E465B-DF4B-4476-865C-3DF454801146}.Release|x86.Build.0 = Release|Win32
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Debug|x64.ActiveCfg = Debug|x64
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Debug|x64.Build.0 = Debug|x64
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Debug|x86.ActiveCfg = Debug|Win32
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Debug|x86.Build.0 = Debug|Win32
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Release|x64.ActiveCfg = Release|x64
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Release|x64.Build.0 = Release|x64
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Release|x86.ActiveCfg = Release|Win32
+		{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
