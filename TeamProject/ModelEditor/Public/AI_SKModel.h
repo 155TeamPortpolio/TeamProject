@@ -17,26 +17,23 @@ private:
     virtual ~CAI_SKModel() DEFAULT;
 
 public:
-    virtual HRESULT Initialize(string fbxFilePath);
+    virtual HRESULT Initialize_Prototype() override;
+    virtual HRESULT Initialize(COMPONENT_DESC* pArg);
     virtual void Render_GUI() override;
 
 public:
-    HRESULT Load_AIModel(string fbxFilePath);
+    HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
+private:
+    HRESULT Ready_AIModelData(const aiScene* pAIScene);
 
 private:
-    HRESULT Ready_AIModelData();
-    HRESULT Ready_AIMaterials();
-    HRESULT Ready_AIAnimations();
-
+    HRESULT Release_Mesh();
 private:
-    //Assimp
-    const aiScene*              m_pAIScene = { nullptr };
-    Assimp::Importer	        m_Importer = {};
-    //저장하기 전 부가 매트릭스
+    string m_fileName = {};
     _matrix                     m_PreTransform = {};
 
 public:
-    static CAI_SKModel* Create(string fbxFilePath);
+    static CAI_SKModel* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
 };
