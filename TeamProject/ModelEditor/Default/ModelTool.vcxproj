@@ -27,7 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\public\AIBone.h" />
-    <ClInclude Include="..\public\AIMaterial.h" />
+    <ClInclude Include="..\Public\AIMaterial.h" />
     <ClInclude Include="..\public\AIMesh.h" />
     <ClInclude Include="..\public\AISkeleton.h" />
     <ClInclude Include="..\public\AI_SKModel.h" />
@@ -46,14 +46,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\AIBone.cpp" />
-    <ClCompile Include="..\private\AIMaterial.cpp" />
+    <ClCompile Include="..\Private\AIMaterial.cpp" />
     <ClCompile Include="..\private\AIMesh.cpp" />
     <ClCompile Include="..\Private\AISkeleton.cpp" />
     <ClCompile Include="..\private\AI_SKModel.cpp" />
     <ClCompile Include="..\Private\AI_STModel.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
-    <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />
+    <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelEditLevel.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="ModelEditor.cpp" />

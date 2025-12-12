@@ -124,7 +124,7 @@
     <ClInclude Include="..\public\AIMesh.h">
       <Filter>03. Component\AIModel\AI\AIMesh</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\AIMaterial.h">
+    <ClInclude Include="..\Public\AIMaterial.h">
       <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
     </ClInclude>
   </ItemGroup>
@@ -144,9 +144,6 @@
     <ClCompile Include="..\Private\EditCamera.cpp">
       <Filter>02. ModelObject\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EditModel.cpp">
-      <Filter>02. ModelObject\Model</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\AI_SKModel.cpp">
       <Filter>03. Component\AIModel\SK_Model</Filter>
     </ClCompile>
@@ -162,7 +159,10 @@
     <ClCompile Include="..\private\AIMesh.cpp">
       <Filter>03. Component\AIModel\AI\AIMesh</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\AIMaterial.cpp">
+    <ClCompile Include="..\Private\EditModel.cpp">
+      <Filter>02. ModelObject\Model</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AIMaterial.cpp">
       <Filter>03. Component\AIModel\AI\AIMaterial</Filter>
     </ClCompile>
   </ItemGroup>

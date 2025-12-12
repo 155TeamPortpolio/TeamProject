@@ -18,7 +18,7 @@ HRESULT CAISkeleton::Initialize(const aiNode* _pAINode)
 _bool CAISkeleton::Find_BoneIndex(const _char* pName, _uint* _iGetIndex)
 {
 	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
-		[&](CAIBone* pBone) { return pBone->Compare_Name(pName); });
+		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
 
 	if (iter == m_Bones.end())
 		return false;
@@ -29,15 +29,15 @@ _bool CAISkeleton::Find_BoneIndex(const _char* pName, _uint* _iGetIndex)
 	return true;
 }
 
-const CAIBone* CAISkeleton::Find_Bone(const _char* pName) const
+CAIBone* CAISkeleton::Find_Bone(const _char* pName) const
 {
 	auto iter = find_if(m_Bones.begin(), m_Bones.end(),
-		[&](CAIBone* pBone) { return pBone->Compare_Name(pName); });
+		[&](CBone* pBone) { return static_cast<CAIBone*>(pBone)->Compare_Name(pName); });
 
 	if (iter == m_Bones.end())
 		return nullptr;
 
-	return (*iter);
+	return static_cast<CAIBone*>(*iter);
 }
 
 HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)

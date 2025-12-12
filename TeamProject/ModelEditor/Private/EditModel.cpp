@@ -3,8 +3,6 @@
 #include "StaticModel.h"
 #include "Material.h"
 
-#include "AIModel.h"
-
 #include "GameInstance.h"
 
 CEditModel::CEditModel()
@@ -29,7 +27,7 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	m_Components.emplace(type_index(typeid()))
+	//m_Components.emplace(type_index(typeid()))
 
 	return S_OK;
 }

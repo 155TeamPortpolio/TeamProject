@@ -6,6 +6,7 @@ CAI_SKModel::CAI_SKModel()
 }
 
 CAI_SKModel::CAI_SKModel(const CAI_SKModel& rhs)
+	: CSkeletalModel(rhs)
 {
 }
 
@@ -23,74 +24,7 @@ void CAI_SKModel::Render_GUI()
 {
 }
 
-const D3D11_INPUT_ELEMENT_DESC* CAI_SKModel::Get_ElementDesc(_uint DrawIndex)
-{
-	return nullptr;
-}
 
-const _uint CAI_SKModel::Get_ElementCount(_uint DrawIndex)
-{
-	return _uint();
-}
-
-const string_view CAI_SKModel::Get_ElementKey(_uint DrawIndex)
-{
-	return string_view();
-}
-
-HRESULT CAI_SKModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
-{
-	return S_OK;
-}
-
-HRESULT CAI_SKModel::Link_Model(const string& levelKey, const string& modelDataKey)
-{
-	return S_OK;
-}
-
-_uint CAI_SKModel::Get_MeshCount()
-{
-	return _uint();
-}
-
-_uint CAI_SKModel::Get_MaterialIndex(_uint Index)
-{
-	return _uint();
-}
-
-_bool CAI_SKModel::isDrawable(_uint Index)
-{
-	return _bool();
-}
-
-void CAI_SKModel::SetDrawable(_uint Index, _bool isDraw)
-{
-}
-
-_bool CAI_SKModel::isReadyToDraw()
-{
-	return _bool();
-}
-
-MINMAX_BOX CAI_SKModel::Get_LocalBoundingBox()
-{
-	return MINMAX_BOX();
-}
-
-vector<MINMAX_BOX> CAI_SKModel::Get_MeshBoundingBoxes()
-{
-	return vector<MINMAX_BOX>();
-}
-
-MINMAX_BOX CAI_SKModel::Get_MeshBoundingBox(_uint meshIndex)
-{
-	return MINMAX_BOX();
-}
-
-MINMAX_BOX CAI_SKModel::Get_WorldBoundingBox()
-{
-	return MINMAX_BOX();
-}
 
 HRESULT CAI_SKModel::Load_AIModel(string fbxFilePath)
 {
@@ -108,8 +42,6 @@ HRESULT CAI_SKModel::Load_AIModel(string fbxFilePath)
 
 HRESULT CAI_SKModel::Ready_Skeleton(const aiNode* pAINode)
 {
-	m_pAIScene->
-
 	return S_OK;
 }
 

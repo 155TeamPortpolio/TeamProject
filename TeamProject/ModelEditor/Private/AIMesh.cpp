@@ -108,6 +108,10 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh, _fmatrix
         memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
         XMStoreFloat3(&pVertices[i].vTangent,
             XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
+
+        memcpy(&pVertices[i].vBinormal, &_pAIMesh->mTangents[i], sizeof(_float3));
+        XMStoreFloat3(&pVertices[i].vTangent,
+            XMVector3TransformCoord(XMLoadFloat3(&pVertices[i].vTangent), _PreTransformMatrix));
     }
 
     //ÀúÀå¿ë
@@ -153,6 +157,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
         if (nullptr != _pAIMesh->mTextureCoords[0]) {
             memcpy(&pVertices[i].vTexcoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
             memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
+            memcpy(&pVertices[i].vBinormal, &_pAIMesh->mBitangents[i], sizeof(_float3));
         }
     }
 
@@ -169,8 +174,6 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
         _uint iBoneIndex = {};
         if (false == _pSkeleton->Find_BoneIndex(pAIBone->mName.data, &iBoneIndex))
             return E_FAIL;
-
-
 
         for (_uint j = 0; j < pAIBone->mNumWeights; j++)
         {

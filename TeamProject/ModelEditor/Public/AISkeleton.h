@@ -16,7 +16,7 @@ public:
 
 public:
 	_bool Find_BoneIndex(const _char* pName, _uint* _iGetIndex = nullptr);
-	const class CAIBone* Find_Bone(const _char* pName) const;
+	class CAIBone* Find_Bone(const _char* pName) const;
 
 private:
 	HRESULT Ready_Bones(const aiNode* _pAINode, _int _iParentIndex = -1);

@@ -22,26 +22,6 @@ public:
     virtual void Render_GUI() override;
 
 public:
-    virtual const D3D11_INPUT_ELEMENT_DESC* Get_ElementDesc(_uint DrawIndex) override;
-    virtual const _uint Get_ElementCount(_uint DrawIndex) override;
-    virtual const string_view Get_ElementKey(_uint DrawIndex) override;
-    virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index) override;
-    virtual HRESULT Link_Model(const string& levelKey, const string& modelDataKey)override;
-
-public:
-    virtual _uint Get_MeshCount() override;
-    virtual _uint Get_MaterialIndex(_uint Index) override;
-    virtual _bool isDrawable(_uint Index) override;
-    virtual void SetDrawable(_uint Index, _bool isDraw) override;
-    virtual _bool isReadyToDraw()	override;
-
-public:
-    virtual MINMAX_BOX Get_LocalBoundingBox()	override;
-    virtual vector<MINMAX_BOX> Get_MeshBoundingBoxes()	override;
-    virtual MINMAX_BOX Get_MeshBoundingBox(_uint meshIndex)	override;
-    virtual MINMAX_BOX Get_WorldBoundingBox()	override;
-
-public:
     HRESULT Load_AIModel(string fbxFilePath);
 
 private:
