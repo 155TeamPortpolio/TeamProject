@@ -26,11 +26,26 @@
     <ResourceCompile Include="ModelEditor.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="..\public\AIBone.h" />
     <ClInclude Include="..\Public\AIMaterial.h" />
     <ClInclude Include="..\public\AIMesh.h" />
     <ClInclude Include="..\public\AIModelData.h" />
     <ClInclude Include="..\public\AISkeleton.h" />
+    <ClInclude Include="..\Public\AI_Material.h" />
     <ClInclude Include="..\public\AI_SKModel.h" />
     <ClInclude Include="..\Public\AI_STModel.h" />
     <ClInclude Include="..\Public\Assimps.h" />
@@ -46,11 +61,24 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp" />
     <ClCompile Include="..\private\AIBone.cpp" />
     <ClCompile Include="..\Private\AIMaterial.cpp" />
     <ClCompile Include="..\private\AIMesh.cpp" />
     <ClCompile Include="..\private\AIModelData.cpp" />
     <ClCompile Include="..\Private\AISkeleton.cpp" />
+    <ClCompile Include="..\Private\AI_Material.cpp" />
     <ClCompile Include="..\private\AI_SKModel.cpp" />
     <ClCompile Include="..\Private\AI_STModel.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />

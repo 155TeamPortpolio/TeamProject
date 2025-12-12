@@ -76,8 +76,8 @@ HRESULT CRenderSystem::Render()
 #ifdef _DEBUG
 	m_pDebugPass->Execute(m_pContext);
 #endif // _DEBUG
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
+	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
 	//Render_Bright();
 	/*Custrom Rendering*/
@@ -204,7 +204,7 @@ HRESULT CRenderSystem::Render_Bright()
 	m_pShader->Bind_Value("g_EmmisiveTexture", BrightParam);
 
 	SHADER_PARAM FinalParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Fianl", FinalParam);
+	m_pTargetManager->Get_TargetParam("Target_Final", FinalParam);
 	m_pShader->Bind_Value("g_FinalTexture", FinalParam);
 
 	SHADER_PARAM WorldMat = {};

@@ -13,5 +13,7 @@ extern HWND g_hWnd;
 extern HINSTANCE g_hInstance;
 
 using namespace ModelEdit;
+#include "Assimps.h"
+using namespace Assimp;
 
 #include "Engine_Defines.h"
