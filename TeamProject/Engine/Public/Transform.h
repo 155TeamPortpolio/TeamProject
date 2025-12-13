@@ -23,7 +23,10 @@ public:
 	void Set_Pos(const _float4& position);
 	void Set_PosVector(_fvector position);
 	void Set_vectorPos(_fvector position);
+	void Set_WorldPos(_fvector position);
 	void Set_Y(const _float& position);
+	void Set_Quaternion(_fvector quaternion);
+	void Set_WorldQuaternion(_fvector quaternion);
 	void Rotate(const _float3& eular);
 	void Scale(const _float3& scale);
 	void Scale_Vector(_fvector scale);

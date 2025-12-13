@@ -135,9 +135,49 @@ void CTransform::Set_vectorPos(_fvector position)
 	}
 }
 
+void CTransform::Set_WorldPos(_fvector position)
+{
+	if (m_pParentTransform)
+	{
+		_float4x4 matParentInverse = m_pParentTransform->Get_InverseWorldMatrix();
+		_vector vLocalPos = XMVector3TransformCoord(position, XMLoadFloat4x4(&matParentInverse));
+		Set_vectorPos(vLocalPos);
+	}
+	else
+	{
+		Set_vectorPos(position);
+	}
+	MarkDirty();
+}
+
 void CTransform::Set_Y(const _float& position)
 {
 	m_vPosition.y = position;
+	MarkDirty();
+}
+
+void CTransform::Set_Quaternion(_fvector quaternion)
+{
+	XMStoreFloat4(&m_qRotation, quaternion);
+	MarkDirty();
+}
+
+void CTransform::Set_WorldQuaternion(_fvector quaternion)
+{
+	if (m_pParentTransform)
+	{	// 부모 스케일이 균등하지 않으면 나중에 문제 생길 수 있음 : ex) scale(1,2,1)
+		_float4x4 parentWorldMat = m_pParentTransform->Get_WorldMatrix();	// 부모월드행렬
+		_vector parentScale, parentRot, parentTrans;
+		XMMatrixDecompose(&parentScale, &parentRot, &parentTrans, XMLoadFloat4x4(&parentWorldMat));	// 회전추출
+		_vector parentRotInv = XMQuaternionInverse(parentRot);	// 회전행렬의 역행렬
+		_vector localRot = XMQuaternionMultiply(quaternion, parentRotInv);
+
+		Set_Quaternion(localRot);
+	}
+	else
+	{
+		Set_Quaternion(quaternion);
+	}
 	MarkDirty();
 }
 
@@ -256,11 +296,15 @@ void CTransform::Render_GUI()
 
 	ImGui::BeginChild("##TransformChild", ImVec2{ 0, childHeight }, true);
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Position");
-	ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f", ImGuiInputTextFlags_ReadOnly);
+	_bool changedPos = ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f");
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
-	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+	_bool changedRot = ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f");
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
-	ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f", ImGuiInputTextFlags_ReadOnly);
+	_bool changedScl = ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f");
+	if (changedPos || changedRot || changedScl)
+	{
+		MarkDirty();
+	}
 	ImGui::EndChild();
 }
 
