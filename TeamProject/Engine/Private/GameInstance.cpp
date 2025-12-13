@@ -50,7 +50,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 
-#ifdef USINPHYSICS
+#ifdef USINGPHYSICS
 	m_pPhysicsSystem = CPhysicsSystem::Create();
 #endif
 
@@ -98,7 +98,7 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pUIManager->Update(dt);
 	m_pRaySystem->Update(dt);
 	m_pSoundDevice->Update();
-#ifdef USINPHYSICS
+#ifdef USINGPHYSICS
 	m_pPhysicsSystem->Update(dt);
 #endif // USINPHYSICS
 
