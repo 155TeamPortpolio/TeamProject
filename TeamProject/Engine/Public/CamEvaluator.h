@@ -4,29 +4,32 @@
 
 NS_BEGIN(Engine)
 
-class CamEvaluator
+class ENGINE_DLL CamEvaluator final : public CBase
 {
 public:
-	bool Build(const CamSequenceDesc& seqDesc);
+    bool    Build(const CamSequenceDesc& seqDesc);
+    CamPose Evaluate(float playTime) const;
 
-	Campose Evaluate(float playTime) const;
+    void SetPosEvaluator(ICamPosEvaluator* _posEval);
+    void SetRotEvaluator(ICamRotEvaluator* _rotEval);
+    void SetFovEvaluator(ICamFovEvaluator* _fovEval);
 
-	void SetPosEvaluator(unique_ptr<ICamPosEvaluator> _posEval) { posEval = move(_posEval); }
-	void SetRotEvaluator(unique_ptr<ICamRotEvaluator> _rotEval) { rotEval = move(_rotEval); }
-	void SetFovEvaluator(unique_ptr<ICamFovEvaluator> _fovEval) { fovEval = move(_fovEval); }
-
-	_float GetDuration() const { return duration; }
-
-private:
-	_float MapTime(float playTime) const;
+    _float GetDuration() const { return duration; }
 
 private:
-	const CamSequenceDesc* seqDesc{};
-	_float duration{};
+    _float MapTime(float playTime) const;
 
-	unique_ptr<ICamPosEvaluator> posEval;
-	unique_ptr<ICamRotEvaluator> rotEval;
-	unique_ptr<ICamFovEvaluator> fovEval;
+private:
+    const CamSequenceDesc* seqDesc{};
+    _float duration{};
+
+    ICamPosEvaluator* posEval{};
+    ICamRotEvaluator* rotEval{};
+    ICamFovEvaluator* fovEval{};
+
+public:
+    static CamEvaluator* Create() { return new CamEvaluator(); }
+    virtual void Free() override;
 };
 
 NS_END

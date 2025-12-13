@@ -21,15 +21,33 @@ bool CamEvaluator::Build(const CamSequenceDesc& _seqDesc)
 	return true;
 }
 
-Campose CamEvaluator::Evaluate(float playTime) const
+CamPose CamEvaluator::Evaluate(float playTime) const
 {
 	const float t = MapTime(playTime);
 
-	Campose pose{};
+	CamPose pose{};
 	pose.pos = posEval->Evaluate(t);
 	pose.rot = rotEval->Evaluate(t);
 	pose.fov = fovEval->Evaluate(t);
 	return pose;
+}
+
+void CamEvaluator::SetPosEvaluator(ICamPosEvaluator* _posEval)
+{
+	Safe_Release(posEval);
+	posEval = _posEval;
+}
+
+void CamEvaluator::SetRotEvaluator(ICamRotEvaluator* _rotEval)
+{
+	Safe_Release(rotEval);
+	rotEval = _rotEval;
+}
+
+void CamEvaluator::SetFovEvaluator(ICamFovEvaluator* _fovEval)
+{
+	Safe_Release(fovEval);
+	fovEval = _fovEval;
 }
 
 _float CamEvaluator::MapTime(float playTime) const
@@ -60,4 +78,12 @@ _float CamEvaluator::MapTime(float playTime) const
 	}
 	}
 	return playTime;
+}
+
+void CamEvaluator::Free()
+{
+	__super::Free();
+	Safe_Release(posEval);
+	Safe_Release(rotEval);
+	Safe_Release(fovEval);
 }

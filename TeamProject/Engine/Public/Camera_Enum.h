@@ -1,7 +1,18 @@
 #pragma once
 
 NS_BEGIN(Engine)
-
+enum class CamPosInterp
+{
+	Linear, CatmullRom, Centripetal
+};
+enum class CamRotInterp
+{
+	Slerp, Squad
+};
+enum class CamFovInterp
+{
+	Linear, Smooth
+};
 enum class CamType // 카메라가 "무슨 용도"로 쓰이는지에 대한 분류, 게임 로직/상태에 따라 어떤 카메라를 활성화할지 결정할 때 사용.
 {
 	GamePlay,	// 플레이 중 메인 카메라 (입력/상태머신 영향 받음) -> 주로 전투
