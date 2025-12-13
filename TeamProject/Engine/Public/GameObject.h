@@ -75,6 +75,7 @@ private:
 	HRESULT Make_OpaquePacket();
 	HRESULT Make_BlendedPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
+	HRESULT Make_ParticlePacket();
 
 protected:
 	_bool m_isRootObject = { true };

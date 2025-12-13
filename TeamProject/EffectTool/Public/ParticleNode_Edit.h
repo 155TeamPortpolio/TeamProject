@@ -1,20 +1,20 @@
 #pragma once
-#include "SpriteNode.h"
+#include "ParticleNode.h"
 #include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
-class CSpriteNode_Edit :
-    public CSpriteNode
+class CParticleNode_Edit :
+    public CParticleNode
 {
 public:
-    typedef struct tagSpriteNodeEditDesc : public GAMEOBJECT_DESC
+    typedef struct tagParticleNodeEditDesc : public GAMEOBJECT_DESC
     {
         CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* pContext = nullptr;
-    }SPRITE_NODE_EDIT_DESC;
+    }PARTICLE_NODE_EDIT_DESC;
 private:
-    CSpriteNode_Edit();
-    CSpriteNode_Edit(const CSpriteNode_Edit& rhs);
-    virtual ~CSpriteNode_Edit() DEFAULT;
+    CParticleNode_Edit();
+    CParticleNode_Edit(const CParticleNode_Edit& rhs);
+    virtual ~CParticleNode_Edit() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -25,10 +25,11 @@ public:
     void Late_Update(_float dt) override;
 
 public:
-    void Render_GUI() override;
-    void Play() override;
+    void Render_GUI()override;
+    void Play()override;
+
 public:
-    static CSpriteNode_Edit* Create();
+    static CParticleNode_Edit* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
@@ -36,6 +37,6 @@ private:
     CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
 
     void AddTextures();
-    void SetUp_SpriteEffect();
+    void SetUp_ParticleEffect();
 };
 NS_END

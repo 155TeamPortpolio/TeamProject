@@ -90,6 +90,13 @@ namespace Engine {
 		BLENDRENDERKEY GetKey() const;
 	}BLENDED_PACKET;
 
+	/*Particle*/
+	typedef struct DrawParticlePacket : BASE_PACKET {
+		_float4x4* pWorldMatrix = { nullptr };
+		class CParticleSystem* pParticleSystem = { nullptr };
+		class CMaterial* pMaterial = { nullptr };
+	}PARTICLE_PACKET;
+
 	typedef struct DrawUIPacket : BASE_PACKET {
 		class CSprite2D* pSprite2D = { nullptr };
 	}SPRITE_PACKET;

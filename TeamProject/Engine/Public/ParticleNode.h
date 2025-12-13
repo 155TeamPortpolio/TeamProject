@@ -2,13 +2,13 @@
 #include "EffectNode.h"
 
 NS_BEGIN(Engine)
-class ENGINE_DLL CSpriteNode :
+class ENGINE_DLL CParticleNode :
     public CEffectNode
 {
 protected:
-    CSpriteNode();
-    CSpriteNode(const CSpriteNode& rhs);
-    virtual ~CSpriteNode() DEFAULT;
+    CParticleNode();
+    CParticleNode(const CParticleNode& rhs);
+    virtual ~CParticleNode() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -19,18 +19,11 @@ public:
     void Late_Update(_float dt) override;
 
 public:
-    static CSpriteNode* Create();
+    static CParticleNode* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free();
+    virtual void Free() override;
 
 protected:
-    _bool m_IsAnimated = false;
-    _bool m_IsRepeat = false;
-    _float m_fSpeed{};
-    _float m_fSpriteElapsedTime{};
-    _uint m_iMaxFrameIndex{};
-    _uint m_iCurrFrameIndex{};
-    _uint m_iCol{};
-    _uint m_iRow{};
+
 };
 NS_END

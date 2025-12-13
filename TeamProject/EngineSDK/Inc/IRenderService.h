@@ -16,6 +16,7 @@ public:
     virtual void Submit_Debug(const DEBUG_PACKET& packet) PURE;
     virtual void Submit_Priority(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Blend(const BLENDED_PACKET& packet) PURE;
+    virtual void Submit_Particle(const PARTICLE_PACKET& packet) PURE;
 
     virtual HRESULT Get_InputLayout(class CModel* pModel, class CShader* pShader, _uint DrawIndex,
         const string& passConstant, ID3D11InputLayout** ppInputLayout) PURE;

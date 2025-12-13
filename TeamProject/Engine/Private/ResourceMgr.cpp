@@ -11,6 +11,7 @@
 #include "VI_Terrain.h"
 #include "VI_Plane.h"
 #include "VI_Point.h"
+#include "VI_InstancePoint.h"
 
 #include "Shader.h"
 #include "Material.h"
@@ -139,6 +140,9 @@ CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& buf
 		break;
 	case Engine::BUFFER_TYPE::BASIC_POINT:
 		buffer = CVI_Point::Create(m_pDevice, bufferKey);
+		break;
+	case Engine::BUFFER_TYPE::BASIC_INSTANCE_POINT:
+		buffer = CVI_InstancePoint::Create(m_pDevice, bufferKey);
 		break;
 	default:
 		break;
@@ -337,10 +341,12 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
 	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
 	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
+	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Point", CVI_Point::Create(m_pDevice, "Engine_Default_Point"));
+	m_Resources[0].m_Buffers.emplace("Engine_Default_InstancePoint", CVI_InstancePoint::Create(m_pDevice, "Engine_Default_InstancePoint"));
 
 	m_Resources[0].m_Shaders.emplace("VTX_TexPos.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_TexPos.hlsl", "VTX_TexPos.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Mesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Mesh.hlsl", "VTX_Mesh.hlsl"));
