@@ -45,11 +45,18 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
-    CGameObject::Render_GUI();
-
+    ImGui::SeparatorText("Appearance");
     const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
     if(ImGui::Combo("Image", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
+
+    ImGui::SeparatorText("Layout");
+    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);
+    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
+    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
+    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
+
+    CGameObject::Render_GUI();
 }
 
 CGameObject* CImageUI::Create()

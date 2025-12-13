@@ -53,22 +53,44 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    ImGui::SeparatorText("Create Child");
-
-    if (ImGui::Button("Image"))
+    ImGui::SeparatorText("Create UI");
+    _bool isCreateChild = {};
+    string strProtoTag;
+    string strInstanceKey;
+    if (ImGui::Button("Create Image"))
     {
-        CUI_Object* pImage = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_ImageUI" })
-            .Scale({ m_fChildCreateSize.x, m_fChildCreateSize.y })
-            .Build("UI_ImageUI");
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_ImageUI";
+        strInstanceKey = "UI_ImageUI";       
+    }
+    if (ImGui::Button("Create Text"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_TextUI";
+        strInstanceKey = "UI_TextUI";
+    }
 
-        if (!pImage)
+    if(isCreateChild)
+    {
+        CUI_Object* pChild = Builder::Create_UIObject({ "UITool_Level" , strProtoTag })
+            .Scale({ m_fChildCreateSize.x, m_fChildCreateSize.y })
+            .Build(strInstanceKey);
+
+        if (!pChild)
             return;
 
         IUI_Service* pUIService = CGameInstance::GetInstance()->Get_UIMgr();
-        pUIService->Add_UIObject(pImage, "UITool_Level");
-        Get_Component<CObjectContainer>()->Add_Child(pImage);
+        pUIService->Add_UIObject(pChild, "UITool_Level");
+        Get_Component<CObjectContainer>()->Add_Child(pChild);
     }
 
+    ImGui::SeparatorText("Layout");
+    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);    // x, y 움직이면 자식 중에 이미지는 움직이는데 텍스트는 안 움직임 (Post~ 함수는 호출하는데 fontposition은 업데이트 안 해줘서)
+    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
+    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
+    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
+
+    //CGameObject::Render_GUI();
     __super::Render_GUI();
 }
 

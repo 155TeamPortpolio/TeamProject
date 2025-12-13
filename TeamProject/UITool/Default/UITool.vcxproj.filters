@@ -34,6 +34,9 @@
     <Filter Include="02.Object\UI\Image">
       <UniqueIdentifier>{75d01190-6cf5-4035-bcc2-857e29ba7c7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\Text">
+      <UniqueIdentifier>{6af4a99a-0ef3-4061-92d7-bc6bb1c5506f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -84,6 +87,9 @@
     <ClInclude Include="..\Public\ImageUI.h">
       <Filter>02.Object\UI\Image</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TextUI.h">
+      <Filter>02.Object\UI\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -130,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ImageUI.cpp">
       <Filter>02.Object\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextUI.cpp">
+      <Filter>02.Object\UI\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

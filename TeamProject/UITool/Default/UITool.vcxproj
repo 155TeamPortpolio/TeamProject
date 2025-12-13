@@ -152,6 +152,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestUI.h" />
+    <ClInclude Include="..\Public\TextUI.h" />
     <ClInclude Include="..\Public\UITool_Camera.h" />
     <ClInclude Include="..\Public\UITool_Defines.h" />
     <ClInclude Include="..\Public\UITool_Level.h" />
@@ -173,6 +174,7 @@
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
+    <ClCompile Include="..\Private\TextUI.cpp" />
     <ClCompile Include="..\Private\UITool_Camera.cpp" />
     <ClCompile Include="..\Private\UITool_Level.cpp" />
     <ClCompile Include="UITool.cpp" />
