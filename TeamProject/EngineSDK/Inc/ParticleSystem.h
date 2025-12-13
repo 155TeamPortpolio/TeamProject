@@ -14,6 +14,8 @@ class ENGINE_DLL CParticleSystem :
 		_float3 vPosition{};
 		_float2 vSize{};
 	}PARTICLE;
+
+	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 protected:
 	CParticleSystem();
 	CParticleSystem(const CParticleSystem& rhs);
@@ -62,7 +64,7 @@ private:
 	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
 	vector<_uint> m_DeadParticleIndices;
 
-	/*Particle Params*/
+	/*Particle Spawn Params*/
 	_bool m_UseGravity = false;
 
 	_uint m_iBurstCount{};
