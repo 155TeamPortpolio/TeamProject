@@ -25,6 +25,8 @@ public:
 
 private:
 	ID3D11Buffer* m_pInstanceBuffer = { nullptr };
-
+	_uint m_iMaxInstancesCount{};
+	_uint m_iInstanceStride{};
+	_uint m_iNumUsedInstances{};
 };
 NS_END

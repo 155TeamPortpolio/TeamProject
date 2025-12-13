@@ -17,19 +17,23 @@ CVI_InstancePoint::~CVI_InstancePoint()
 
 HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 {
-	m_ElementCount = VTXPOS::iElementCount;
-	m_ElementKey = VTXPOS::Key;
-	m_ElementDesc = VTXPOS::Elements;
-	m_iVertexBufferCount = 1;
+	m_ElementCount = VTX_INSTANCE_POINT_ELEMENT::iElementCount;
+	m_ElementKey = VTX_INSTANCE_POINT_ELEMENT::Key;
+	m_ElementDesc = VTX_INSTANCE_POINT_ELEMENT::Elements;
+
+	m_iVertexBufferCount = 2;
 	m_iVerticesCount = 1;
 	m_iVertexStride = sizeof(VTXPOS);
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
 
-	m_iNumMaxIntances = ;
+	m_iMaxInstancesCount = g_iMaxNumInstances;
 	m_iInstanceStride = sizeof(VTX_INSTANCE_POINT);
 	m_iNumUsedInstances = 0;
 
 	if (FAILED(Create_Vertex(pDevice)))
+		return E_FAIL;
+
+	if (FAILED(Create_InstanceBuffer(pDevice)))
 		return E_FAIL;
 
 	return S_OK;
@@ -37,29 +41,72 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 
 HRESULT CVI_InstancePoint::Bind_Buffer(ID3D11DeviceContext* pContext)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CVI_InstancePoint::Render(ID3D11DeviceContext* pContext)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CVI_InstancePoint::Create_Vertex(ID3D11Device* pDevice)
 {
-	return E_NOTIMPL;
+	D3D11_BUFFER_DESC VBDesc{};
+	VBDesc.ByteWidth = m_iVertexStride * m_iVerticesCount;
+	VBDesc.Usage = D3D11_USAGE_DEFAULT;
+	VBDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	VBDesc.CPUAccessFlags = 0;
+	VBDesc.MiscFlags = 0;
+	VBDesc.StructureByteStride = m_iVertexStride;
+
+	VTXPOS* m_VBContainer = new VTXPOS[m_iVerticesCount];
+	ZeroMemory(m_VBContainer, m_iVertexStride * m_iVerticesCount);
+	m_VBContainer[0].vPosition = _float3(0.f, 0.f, 0.f);
+
+	D3D11_SUBRESOURCE_DATA subData{};
+	subData.pSysMem = m_VBContainer;
+
+	HRESULT hr = pDevice->CreateBuffer(&VBDesc, &subData, &m_pVB);
+
+	Safe_Delete_Array(m_VBContainer);
+	return hr;
 }
 
 HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 {
-	return E_NOTIMPL;
+	D3D11_BUFFER_DESC InstanceDesc{};
+	InstanceDesc.ByteWidth = m_iInstanceStride * m_iMaxInstancesCount;
+	InstanceDesc.Usage = D3D11_USAGE_DYNAMIC;
+	InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	InstanceDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	InstanceDesc.MiscFlags = 0;
+	InstanceDesc.StructureByteStride = m_iInstanceStride;
+
+	VTX_INSTANCE_POINT* VBContainer = new VTX_INSTANCE_POINT[m_iMaxInstancesCount];
+	ZeroMemory(VBContainer, m_iInstanceStride * m_iMaxInstancesCount);
+
+	D3D11_SUBRESOURCE_DATA subData{};
+	subData.pSysMem = VBContainer;
+
+	HRESULT hr = pDevice->CreateBuffer(&InstanceDesc, &subData, &m_pInstanceBuffer);
+
+	Safe_Delete_Array(VBContainer);
+	return hr;
 }
 
 CVI_InstancePoint* CVI_InstancePoint::Create(ID3D11Device* pDevice, const string& bufferID)
 {
-	return nullptr;
+	CVI_InstancePoint* instance = new CVI_InstancePoint(bufferID);
+	if (FAILED(instance->Initialize(pDevice))) {
+		MSG_BOX("Failed to Created : CVI_InstancePoint");
+		Safe_Release(instance);
+	}
+	return instance;
 }
 
 void CVI_InstancePoint::Free()
 {
+	__super::Free();
+
+	Safe_Release(m_pInstanceBuffer);
 }

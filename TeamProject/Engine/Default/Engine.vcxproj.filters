@@ -1037,5 +1037,8 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

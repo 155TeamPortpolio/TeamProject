@@ -462,6 +462,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />

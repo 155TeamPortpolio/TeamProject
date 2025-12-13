@@ -137,7 +137,7 @@ void CEffectContainer_Edit::RemoveLastNode()
 
 	if (ImGui::Button("Remove Last Node"))
 	{
-		Safe_Release(m_Nodes.back());
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(m_Nodes.back());
 		m_Nodes.pop_back();
 
 		m_iNumNodes = m_Nodes.size();

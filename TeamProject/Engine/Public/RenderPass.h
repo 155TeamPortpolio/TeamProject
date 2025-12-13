@@ -121,6 +121,16 @@ public:
 };
 #pragma endregion
 
+#pragma region PARTICLE_PASS
+class ParticlePass final : public RenderPass {
+private:
+	ParticlePass(class CRenderSystem* pRenderSystem) : RenderPass{ pRenderSystem } {};
+	virtual ~ParticlePass() DEFAULT;
+public:
+	void Execute(ID3D11DeviceContext* pContext) override;
+};
+#pragma endregion
+
 
 #pragma region UI_PASS
 class UIPass final : public RenderPass {
