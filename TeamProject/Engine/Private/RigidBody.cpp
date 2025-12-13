@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-#ifdef USINPHYSICS 
+#ifdef USINGPHYSICS 
 
 CRigidBody::CRigidBody()
 {
