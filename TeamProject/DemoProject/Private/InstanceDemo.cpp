@@ -26,6 +26,7 @@ HRESULT CInstanceDemo::Initialize_Prototype()
 
 HRESULT CInstanceDemo::Initialize(INIT_DESC* pArg)
 {
+	/*셰이더 변경이 아직 안됨. 필요함.*/
 	__super::Initialize(pArg);
 
 	m_ParicleCount = 10;
