@@ -47,12 +47,12 @@ HRESULT CDemoLevel::Awake()
 	pUIMgr->Add_UIObject(DemoUI, "Demo_Level");
 
 	// Floor
-	RIGIDBODY_DESC floorRbDesc;
+	RIGIDBODY_DESC floorRbDesc = {};
 	floorRbDesc.isStatic = true;
 	floorRbDesc.isKinematic = false;
 	floorRbDesc.fMass = 0.f;
 
-	COLLIDER_DESC floorColDesc;
+	COLLIDER_DESC floorColDesc = {};
 	floorColDesc.eType = COLLIDER_TYPE::BOX;
 	floorColDesc.vSize = { 20.f, 1.f, 20.f };
 	floorColDesc.vCenter = { 0.f, 0.f, 0.f };
@@ -70,12 +70,12 @@ HRESULT CDemoLevel::Awake()
 	// Floor end
 
 	// Box
-	RIGIDBODY_DESC objRbDesc;
+	RIGIDBODY_DESC objRbDesc = {};
 	objRbDesc.isStatic = false;
 	objRbDesc.isKinematic = false;
 	objRbDesc.fMass = 10.0f;
 
-	COLLIDER_DESC objColDesc;
+	COLLIDER_DESC objColDesc = {};
 	objColDesc.eType = COLLIDER_TYPE::BOX;
 	objColDesc.vSize = { 1.f, 1.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };

@@ -120,12 +120,10 @@ void CRigidBody::Late_Update(_float dt)
 	Update_RigidBody();
 
 	// 3. 적용 후 Transform이 생각하는 위치
-	_vector vTransPos = m_pOwnerTransform->Get_WorldPos();
+
 
 	// 4. 로그 출력
-	char szBuff[256] = "";
-	sprintf_s(szBuff, "PhysX Y: %.4f | Trans Y: %.4f\n", pxPose.p.y, XMVectorGetY(vTransPos));
-	OutputDebugStringA(szBuff);
+
 }
 
 PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
@@ -269,7 +267,7 @@ void CRigidBody::Update_RigidBody()
 	{
 		// 시뮬레이션 결과가 트랜스폼을 덮어씀 : Physics -> Transform
 		PxTransform globalPose = m_pActor->getGlobalPose();
-		
+		_vector vTransPos = m_pOwnerTransform->Get_WorldPos();
 		// 디버그 로그 (임시)
 		static int frameCount = 0;
 		if (++frameCount % 60 == 0) // 60프레임마다
@@ -277,6 +275,10 @@ void CRigidBody::Update_RigidBody()
 			OutputDebugStringA(("PhysX -> Transform: " + m_pOwner->Get_InstanceName()).c_str());
 			OutputDebugStringA((" Y=" + to_string(globalPose.p.y) + "\n").c_str());
 		}
+
+		char szBuff[256] = "";
+		sprintf_s(szBuff, "PhysX Y: %.4f | Trans Y: %.4f\n", globalPose.p.y, XMVectorGetY(vTransPos));
+		OutputDebugStringA(szBuff);
 
 		m_pOwnerTransform->Set_WorldPos(ToDxVec(globalPose.p));
 		m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));

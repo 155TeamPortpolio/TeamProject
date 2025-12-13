@@ -91,6 +91,7 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 		return S_OK;
 
 	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+	
 	// Transform 초기화
 	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
 	if (tfIter != m_Components.end()) {
@@ -113,11 +114,9 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 
 	for (auto& pair : m_Components)
 	{
-
-		if (pair.first == type_index(typeid(CModel)))
-			continue;
-		//if (pair.first == type_index(typeid(CCollider)))
-		//	continue;
+		if (pair.first == type_index(typeid(CTransform))) continue;
+		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(CRigidBody))) continue;
 
 		auto iter = obj->CompDesc.find(pair.first);
 		/*각자 컴포넌트에 맞는 설명체 찾아서 넣어줌. 없으면 그냥 이니셜ㄹ라이즈*/
