@@ -20,7 +20,7 @@ public:
 	void	Update(_float dt);
 
 public:
-	void		Attach_Shape(const PxGeometry& geometry, const string& strMaterialName);
+	PxShape*	Attach_Shape(const PxGeometry& geometry, const string& strMaterialName);
 	void		Add_Force(_fvector vForce, PxForceMode::Enum eMode = PxForceMode::eFORCE);
 	void		Add_Torque(_fvector vTorque, PxForceMode::Enum eMode = PxForceMode::eFORCE);
 	void		Set_Velocity(_fvector vVelocity);

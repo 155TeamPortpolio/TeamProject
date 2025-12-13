@@ -105,19 +105,23 @@ void CRigidBody::Update(_float dt)
 	Update_RigidBody();
 }
 
-void CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
+PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
 {
-	if (!m_pActor) return;
+	if (!m_pActor) return nullptr;
 
 	PxMaterial* pUseMaterial = m_pMaterial;
-	if (strMaterialName != "")
-		pUseMaterial = m_pPhysicsSystem->Get_Material(strMaterialName);
+	if (strMaterialName != "") {
+		PxMaterial* pFoundMat = m_pPhysicsSystem->Get_Material(strMaterialName);
+		if (pFoundMat) pUseMaterial = pFoundMat;
+	}
 
 	PxShape* pShape = PxRigidActorExt::createExclusiveShape(*m_pActor, geometry, *pUseMaterial);
+
 	if (pShape && !m_bStatic)
 	{
 		Update_Inertia();
 	}
+	return pShape;
 }
 
 void CRigidBody::Add_Force(_fvector vForce, PxForceMode::Enum eMode)

@@ -55,6 +55,9 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // 중력 설정
     sceneDesc.cpuDispatcher = m_pDispatcher;
     sceneDesc.filterShader = PxDefaultSimulationFilterShader; // 기본 충돌 필터
+    sceneDesc.flags |= PxSceneFlag::eENABLE_PCM; // PCM(Persistent Contact Manifold) 활성화 (충돌 정확도/성능 향상)
+    // sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP; // 상황에 따라 SAP가 더 좋을 수 있음 (기본은 보통 MBP or SAP)
+
 
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
@@ -78,11 +81,14 @@ HRESULT CPhysicsSystem::Initialize()
         pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_SCENEQUERIES, true);
         pvdClient->setScenePvdFlag(PxPvdSceneFlag::eTRANSMIT_CONTACTS, true);
     }
+    m_pScene->setVisualizationParameter(PxVisualizationParameter::eSCALE, 1.0f);
+    m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
 #endif
 
     m_pControllerManager = PxCreateControllerManager(*m_pScene);     // Controller Manager 생성
-    // 기본 재질 생성
-    m_pMaterial = m_pPhysics->createMaterial(0.5f, 0.5f, 0.6f); // 정지마찰, 운동마찰, 반발계수
+    
+    Add_Material("Default", 0.5f, 0.5f, 0.6f);
+    m_pMaterial = Get_Material("Default");
 
     return S_OK;
 }
@@ -129,11 +135,7 @@ void CPhysicsSystem::Free()
         pair.second->release();
     m_Materials.clear();
 
-    if (m_pMaterial)
-    {
-        m_pMaterial->release();
-        m_pMaterial = nullptr;
-    }
+    m_pMaterial = nullptr;
 
     if (m_pControllerManager)
     {

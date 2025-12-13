@@ -166,17 +166,8 @@
     <ClInclude Include="..\Public\MaterialInstance.h">
       <Filter>01. Utility\04. Components\04. Material\Instance</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\AABB_Collider.h">
-      <Filter>01. Utility\04. Components\08. Collider\AABB</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Collider.h">
       <Filter>01. Utility\04. Components\08. Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\OBB_Collider.h">
-      <Filter>01. Utility\04. Components\08. Collider\OBB</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Sphere_Collider.h">
-      <Filter>01. Utility\04. Components\08. Collider\Sphere</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AudioSource.h">
       <Filter>01. Utility\04. Components\09. AudioSource</Filter>
@@ -352,6 +343,9 @@
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -548,15 +542,6 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\18. Light">
       <UniqueIdentifier>{59b6d872-6163-42d0-be33-a72b1d3bd442}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\08. Collider\AABB">
-      <UniqueIdentifier>{72a19a5c-b001-44fb-81e8-b2025cbbf7c3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\08. Collider\OBB">
-      <UniqueIdentifier>{054f888d-1e37-476e-b33f-53747b39717f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\08. Collider\Sphere">
-      <UniqueIdentifier>{0c47f4f3-35ff-4912-aa80-ceee3f36f481}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\04. Material">
       <UniqueIdentifier>{1408eef5-ddbf-446f-b665-6b80ee5f756e}</UniqueIdentifier>
@@ -791,15 +776,6 @@
     <ClCompile Include="..\Private\Collider.cpp">
       <Filter>01. Utility\04. Components\08. Collider</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\AABB_Collider.cpp">
-      <Filter>01. Utility\04. Components\08. Collider\AABB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\OBB_Collider.cpp">
-      <Filter>01. Utility\04. Components\08. Collider\OBB</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Sphere_Collider.cpp">
-      <Filter>01. Utility\04. Components\08. Collider\Sphere</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\AudioSource.cpp">
       <Filter>01. Utility\04. Components\09. AudioSource</Filter>
     </ClCompile>
@@ -941,6 +917,7 @@
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
