@@ -9,6 +9,7 @@ Texture2D g_SpecularTexture;
 Texture2D g_EmmisiveTexture;
 Texture2D g_DepthTexture;
 Texture2D g_ShadowTexture;
+Texture2D g_MetalicTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;

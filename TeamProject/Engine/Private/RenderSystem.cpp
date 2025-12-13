@@ -146,9 +146,9 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
-	SHADER_PARAM EmmisiveParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Emission", EmmisiveParam);
-	m_pShader->Bind_Value("g_EmmisiveTexture", EmmisiveParam);
+	SHADER_PARAM MetalicParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
 
 	SHADER_PARAM ShadeParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Shade", ShadeParam);
@@ -200,8 +200,8 @@ HRESULT CRenderSystem::Render_Bright()
 	m_pContext->IASetInputLayout(pLayout);
 
 	SHADER_PARAM BrightParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Emission", BrightParam);
-	m_pShader->Bind_Value("g_EmmisiveTexture", BrightParam);
+	m_pTargetManager->Get_TargetParam("Target_Metalic", BrightParam);
+	m_pShader->Bind_Value("g_MetalicTexture", BrightParam);
 
 	SHADER_PARAM FinalParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Final", FinalParam);
@@ -288,7 +288,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc DepthlDesc = { "Target_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
 
-	RenderTargetDesc EmiDesc = { "Target_Emission" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc EmiDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(EmiDesc);
 
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
@@ -307,7 +307,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Depth")))
 		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Emission")))
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Shade")))
 		return E_FAIL;
