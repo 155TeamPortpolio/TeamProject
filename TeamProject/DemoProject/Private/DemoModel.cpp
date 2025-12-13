@@ -4,7 +4,7 @@
 #include "Material.h"
 
 #include "GameInstance.h"
-
+#include "ObjectContainer.h"
 CDemoModel::CDemoModel()
 {
 }
@@ -17,8 +17,9 @@ CDemoModel::CDemoModel(const CDemoModel& rhs)
 HRESULT CDemoModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Add_Component<CStaticModel>();
-	Add_Component<CMaterial>();
+	/*Add_Component<CStaticModel>();
+	Add_Component<CMaterial>();*/
+	Add_Component<CObjectContainer>();
 
 	return S_OK;
 }
@@ -31,9 +32,10 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 }
 
 void CDemoModel::Awake()
+
 {
-	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	Get_Component<CModel>()->Link_Model("Demo_Level", "");
+	//CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
+	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
 }
 
 void CDemoModel::Priority_Update(_float dt)
@@ -51,6 +53,15 @@ void CDemoModel::Late_Update(_float dt)
 void CDemoModel::Render_GUI()
 {
 	__super::Render_GUI();
+
+	if (ImGui::Button("Add")) {
+		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
+			.Position({ 0,0,0 })
+			.Build("Demo_Model");
+		Get_Component<CObjectContainer>()->Add_Child(DemoModel,false);
+	}
+	_bool isLayer = Get_Layer();
+	ImGui::Checkbox("InLayer",&isLayer);
 }
 
 CDemoModel* CDemoModel::Create()

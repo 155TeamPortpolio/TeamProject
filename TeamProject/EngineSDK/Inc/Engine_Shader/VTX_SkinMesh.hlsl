@@ -6,6 +6,7 @@ struct VS_IN
     float3 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
     uint4 vBlendIndex : BLENDINDEX;
     float4 vBlendWeight : BLENDWEIGHT;
 };
@@ -16,7 +17,6 @@ struct VS_OUT
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
-    
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
 };

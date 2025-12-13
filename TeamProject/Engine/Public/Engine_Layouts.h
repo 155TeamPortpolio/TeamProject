@@ -61,14 +61,16 @@ namespace Engine {
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexcoord;
 		XMFLOAT3		vTangent;
+		XMFLOAT3		vBinormal;
 
 		static constexpr string_view  Key = "VTXMESH";
-		static constexpr unsigned int					iElementCount = { 4 };
+		static constexpr unsigned int					iElementCount = { 5 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 	}VTXMESH;
 
@@ -78,19 +80,21 @@ namespace Engine {
 		XMFLOAT3		vNormal;
 		XMFLOAT2		vTexcoord;
 		XMFLOAT3		vTangent;
+		XMFLOAT3		vBinormal;
 
 		XMUINT4 vBlendIndex;
 		XMFLOAT4 vBlendWeight;
 
 		static constexpr string_view  Key = "VTXSKINMESH";
-		static constexpr unsigned int					iElementCount = { 6 };
+		static constexpr unsigned int					iElementCount = { 7 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC		Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0,12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{ "BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 60, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+			{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 44, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BLENDINDEX", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, 56, D3D11_INPUT_PER_VERTEX_DATA, 0},
+			{"BLENDWEIGHT", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 72, D3D11_INPUT_PER_VERTEX_DATA, 0}
 		};
 	}VTXSKINMESH;
 

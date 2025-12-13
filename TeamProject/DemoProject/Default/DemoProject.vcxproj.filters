@@ -25,6 +25,9 @@
     <Filter Include="02. DemoObject\DemoUI">
       <UniqueIdentifier>{13432f48-7c58-4317-9130-020d9e26b42c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. GUI_Inc">
+      <UniqueIdentifier>{a11db653-af6a-4eb5-8d32-146e7ef2f709}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -60,6 +63,48 @@
     <ClInclude Include="..\Public\DemoUI.h">
       <Filter>02. DemoObject\DemoUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -82,6 +127,42 @@
     </ClCompile>
     <ClCompile Include="..\Private\DemoUI.cpp">
       <Filter>02. DemoObject\DemoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
+      <Filter>97. GUI_Inc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
