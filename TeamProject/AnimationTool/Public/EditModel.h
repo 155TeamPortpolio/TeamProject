@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include <set>
 
 NS_BEGIN(AnimTool)
 class CEditModel :
@@ -21,16 +22,18 @@ public:
 public:
     void Render_GUI() override;
 
-private:
+private: //GUI Func
+    void GUI_LoadResource(_float fChildHeight);
+    void GUI_SetModel(_float fChildHeight);
+
+private: //Model Logic
     void Load_Resource();
-    void Set_Model();
-    void Set_Material();
+    void Set_Model(string ModelTag, string MaterialTag);
     void Clear_Model();
-    void Clear_Material();
 
 private:
-    vector<string> m_ModelTag;
-    vector<string> m_MaterialTag;
+    set<string> m_ModelTags;
+    set<string> m_MaterialTags;
 
 public:
     static CEditModel* Create();

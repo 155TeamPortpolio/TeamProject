@@ -29,6 +29,16 @@ HRESULT CEditCamera::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	m_pTransform->LookAt({ 0,0,0 });
+
+	LIGHT_DESC desc = {};
+	desc.vLightPosition = { 0,20,0,0 };
+	desc.fLightRange = 80.0f;
+	desc.vLightDirection = _float4(0.f, -1.f, 1.f, 0.f);
+	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	desc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
+	desc.vLightSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+
+	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 	return S_OK;
 }
 
@@ -41,23 +51,27 @@ void CEditCamera::Priority_Update(_float dt)
 	_vector WorldRight = XMVectorSet(1.f, 0.f, 0.f, 0.f);
 	_vector WorldLook = XMVectorSet(0.f, 0.f, 1.f, 0.f);
 
+	_float fExtraSpeed = 1.f;
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LSHIFT))
+		fExtraSpeed += 5.f;
+
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('W'))
-		m_pTransform->Translate(LookDir * dt * m_fSpeed);
+		m_pTransform->Translate(LookDir * dt * m_fSpeed * fExtraSpeed);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('S'))
-		m_pTransform->Translate(LookDir * dt * -m_fSpeed);
+		m_pTransform->Translate(LookDir * dt * -m_fSpeed * fExtraSpeed);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('D'))
-		m_pTransform->Translate(RightDir * dt * m_fSpeed);
+		m_pTransform->Translate(RightDir * dt * m_fSpeed * fExtraSpeed);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('A'))
-		m_pTransform->Translate(RightDir * dt * -m_fSpeed);
+		m_pTransform->Translate(RightDir * dt * -m_fSpeed * fExtraSpeed);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_SPACE))
-		m_pTransform->Translate(WorldUp * dt * m_fSpeed);
+		m_pTransform->Translate(WorldUp * dt * m_fSpeed * fExtraSpeed);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_CONTROL))
-		m_pTransform->Translate(WorldUp * dt * -m_fSpeed);
+		m_pTransform->Translate(WorldUp * dt * -m_fSpeed * fExtraSpeed);
 
 	_float Yaw = {}; //Y축 회전
 	_float Pitch = {};//X축 회전
