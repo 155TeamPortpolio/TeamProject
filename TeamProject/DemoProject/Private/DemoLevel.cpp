@@ -10,6 +10,7 @@
 #include "DemoUI.h"
 #include "Camera.h"
 #include "DemoGrid.h"
+#include "InstanceDemo.h"
 
 CDemoLevel::CDemoLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -31,6 +32,7 @@ HRESULT CDemoLevel::Awake()
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoGrid", CDemoGrid::Create());
+	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_InstanceDemo", CInstanceDemo::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -53,11 +55,18 @@ HRESULT CDemoLevel::Awake()
 		.Position({ 1000,0,1000 })
 		.Build("Demo_Grid");
 	
+
+	CGameObject* DemoInstance = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_InstanceDemo"})
+		.Position({ 10,0,10 })
+		.Build("Demo_Instance");
+	
 	CUI_Object* DemoUI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" }).Build("DemoUI");
 
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer"});
 	pObjMgr->Add_Object(DemoModel, { "Demo_Level","Model_Layer"});
 	pObjMgr->Add_Object(DemoGrid, { "Demo_Level","Model_Layer"});
+	pObjMgr->Add_Object(DemoInstance, { "Demo_Level","Model_Layer"});
+
 	pUIMgr->Add_UIObject(DemoUI, "Demo_Level");
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
