@@ -24,6 +24,7 @@ HRESULT CDemoLevel::Initialize()
 
 HRESULT CDemoLevel::Awake()
 {
+	CGameInstance::GetInstance()->Get_FontSystem()->Add_Font("Sindy", TEXT("../../DemoResource/Font/Sindy.spritefont"));
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
