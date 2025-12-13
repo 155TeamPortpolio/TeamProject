@@ -20,20 +20,25 @@ call :WaitForFile "%BASE%Engine\Bin\PhysX_64.lib" 1
 REM 여기서 부터 자신 프로젝트 기준으로 복사====================DemoProject부분을 자신 폴더명으로
 
 REM 실제 복사 
-xcopy /y "%BASE%Engine\Bin\Engine.dll"                                  "%BASE%MapTool\Bin\"
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%MapTool\Bin\"
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%MapTool\Bin\"
+echo [UpdateLib] Copying files...
+xcopy /y "%BASE%Engine\Bin\Engine.dll" "%BASE%MapTool\Bin\"
+if errorlevel 1 (
+    echo [ERROR] Failed to copy Engine.dll
+    exit /b 1
+)
 
-xcopy /y "%BASE%Engine\Bin\PhysX_64.dll"                                "%BASE%MapTool\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXCommon_64.dll"                          "%BASE%MapTool\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXFoundation_64.dll"                      "%BASE%MapTool\Bin\"
-xcopy /y "%BASE%Engine\Bin\PhysXCooking_64.dll"                         "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll" "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll" "%BASE%MapTool\Bin\"
 
-xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\"                "%BASE%MapTool\Bin\ShaderFiles\"
-xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\"          "%BASE%MapTool\Bin\ShaderFiles\"
+xcopy /y "%BASE%%PHYSX_DIR%\PhysX_64.dll" "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXCommon_64.dll" "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXFoundation_64.dll" "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXCooking_64.dll" "%BASE%MapTool\Bin\"
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXGpu_64.dll" "%BASE%MapTool\Bin\"
 
-xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
-
+xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\" "%BASE%MapTool\Bin\ShaderFiles\"
+xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%BASE%MapTool\Bin\ShaderFiles\"
+xcopy /y /s /e /i "%BASE%Engine\Public\" "%BASE%EngineSDK\Inc\"
 REM 여기까지==========================================================
 
 xcopy /y "%BASE%Engine\Bin\Engine.lib"                                                      "%BASE%EngineSDK\Lib\"

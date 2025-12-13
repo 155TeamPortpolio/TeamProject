@@ -37,14 +37,19 @@ HRESULT CMapToolLevel::Awake()
 	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Test.dds", "../Bin/Test.dds")))
 		return E_FAIL;
 
+	LIGHT_INIT_DESC DefaultCameraLightDesc = {};
+	DefaultCameraLightDesc.eType = LIGHT_TYPE::POINT;
+	DefaultCameraLightDesc.fRange = 100.f;
+	DefaultCameraLightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	
 	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DefaultCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
+		.Light(DefaultCameraLightDesc)
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
 	CGameObject* DemoModel = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DummyModel" })
 		.Position({ 0,0,0 })
-		.Scale({50.f, 50.f, 50.f})
 		.Build("Dummy_Model");
 		
 	pObjMgr->Add_Object(Camera, { "MapTool_Level","Camera_Layer" });

@@ -46,7 +46,7 @@ void CDummyModel::Awake()
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
-		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_NorTex.hlsl");
+		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_TexPos.hlsl");
 	if (FAILED(customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Test.dds", TEXTURE_TYPE::DIFFUSE)))
 		return;
 	
