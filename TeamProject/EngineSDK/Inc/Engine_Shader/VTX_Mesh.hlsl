@@ -6,6 +6,7 @@ struct VS_IN
     float3 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float3 vTangent : TANGENT;
+    float3 vBinormal : BINORMAL;
 };
 
 struct VS_OUT

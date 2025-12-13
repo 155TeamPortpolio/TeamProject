@@ -92,19 +92,24 @@ void CPhysicsSystem::Update(_float dt)
     if (!m_pScene) return;
 
     m_fTimer += dt;
+
+    int iMaxSteps = 5; // 무한 루프 방지용 최대 5회 제한
+
     while (m_fTimer >= m_fDelta)
     {
+        if (iMaxSteps-- <= 0)
+        {
+            m_fTimer = 0.f;
+            break;
+        }
         m_pScene->simulate(m_fDelta);
+        m_pScene->fetchResults(true);
         m_fTimer -= m_fDelta;
     }
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
 {
-    if (m_pScene)
-    {
-        m_pScene->fetchResults(true); // 결과가 나올 때까지 대기 : 동기처리
-    }
 }
 
 CPhysicsSystem* CPhysicsSystem::Create()

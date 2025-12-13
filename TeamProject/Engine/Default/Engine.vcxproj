@@ -119,42 +119,42 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXExtensions_static_64.lib;PhysXPvdSDK_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/deb;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>@echo off
 setlocal
-
-echo === PostBuild: $(ProjectName) / $(Configuration) / $(Platform) ===
+echo === PostBuild: Engine / Debug / x64 ===
 echo TargetDir: "$(TargetDir)"
 echo SolutionDir: "$(SolutionDir)"
 
 REM 1) 셰이더 폴더 생성
 if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
 
-REM 2) *.cso 있을 때만 복사 (없으면 에러로 빌드 깨지는 거 방지)
+REM 2) *.cso 복사
 if exist "$(TargetDir)*.cso" (
     copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
 ) else (
-    echo [PostBuild] No .cso files found in "$(TargetDir)" (skip copy)
+    echo [PostBuild] No .cso files found (skip copy)
 )
 
 REM 3) 라이브러리/리소스 업데이트 배치 호출
 if exist "$(SolutionDir)UpdateLib.bat" (
-    call "$(SolutionDir)UpdateLib.bat" "$(Configuration)"
+    echo [PostBuild] Calling UpdateLib.bat with Debug...
+    call "$(SolutionDir)UpdateLib.bat" Debug
     if errorlevel 1 (
         echo [PostBuild] UpdateLib.bat failed with errorlevel %errorlevel%
         exit /b %errorlevel%
     )
+    echo [PostBuild] UpdateLib.bat completed successfully
 ) else (
     echo [PostBuild][ERROR] UpdateLib.bat not found: "$(SolutionDir)UpdateLib.bat"
     exit /b 1
 )
 
 endlocal
-exit /b 0
-</Command>
+exit /b 0</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -179,14 +179,42 @@ exit /b 0
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysXFoundation_64.lib;PhysXCommon_64.lib;PhysX_64.lib;PhysXCooking_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/rel;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
-copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
-call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
-</Command>
+      <Command>@echo off
+setlocal
+echo === PostBuild: Engine / Release / x64 ===
+echo TargetDir: "$(TargetDir)"
+echo SolutionDir: "$(SolutionDir)"
+
+REM 1) 셰이더 폴더 생성
+if not exist "$(TargetDir)Engine_Shaders\" mkdir "$(TargetDir)Engine_Shaders\"
+
+REM 2) *.cso 복사
+if exist "$(TargetDir)*.cso" (
+    copy /y "$(TargetDir)*.cso" "$(TargetDir)Engine_Shaders\"
+) else (
+    echo [PostBuild] No .cso files found (skip copy)
+)
+
+REM 3) 라이브러리/리소스 업데이트 배치 호출
+if exist "$(SolutionDir)UpdateLib.bat" (
+    echo [PostBuild] Calling UpdateLib.bat with Release...
+    call "$(SolutionDir)UpdateLib.bat" Release
+    if errorlevel 1 (
+        echo [PostBuild] UpdateLib.bat failed with errorlevel %errorlevel%
+        exit /b %errorlevel%
+    )
+    echo [PostBuild] UpdateLib.bat completed successfully
+) else (
+    echo [PostBuild][ERROR] UpdateLib.bat not found: "$(SolutionDir)UpdateLib.bat"
+    exit /b 1
+)
+
+endlocal
+exit /b 0</Command>
     </PostBuildEvent>
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
@@ -208,6 +236,9 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\Build_Struct.h" />
     <ClInclude Include="..\Public\Camera.h" />
     <ClInclude Include="..\Public\CameraMgr.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
@@ -327,6 +358,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />

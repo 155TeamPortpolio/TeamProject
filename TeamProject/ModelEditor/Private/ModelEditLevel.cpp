@@ -2,9 +2,6 @@
 #include "ModelEditLevel.h"
 
 #include "GameInstance.h"
-#include "IInputService.h"
-#include "ILevelService.h"
-
 #include "EditCamera.h"
 #include "EditModel.h"
 #include "Camera.h"
@@ -27,9 +24,6 @@ HRESULT CModelEditLevel::Awake()
 	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
 	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
 
-	//		IResourceService* pService = CGameInstance::GetInstance()->Get_ResourceMgr();
-	//		pService->Add_ResourcePath("TileCell.png", "../../Resources/TileCell.png");
-	//		pService->Add_ResourcePath("VTX_PlaneGrid.hlsl", "../Bin/ShaderFiles/VTX_PlaneGrid.hlsl");
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	CAMERA_DESC desc = {};
@@ -43,8 +37,8 @@ HRESULT CModelEditLevel::Awake()
 		.Position({ 0,0,0 })
 		.Build("Edit_Model");
 
-	pObjMgr->Add_Object(Camera, { "ModelEdit_Level","Camera_Layer"});
 	pObjMgr->Add_Object(EditModel, { "ModelEdit_Level","Model_Layer"});
+	pObjMgr->Add_Object(Camera, { "ModelEdit_Level","Camera_Layer"});
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 

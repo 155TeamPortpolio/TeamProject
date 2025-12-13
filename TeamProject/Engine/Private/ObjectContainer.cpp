@@ -4,6 +4,8 @@
 #include "GameObject.h"
 #include "IObjectService.h"
 #include "Child.h"
+#include "UI_Object.h"
+#include "Layer.h"
 
 CObjectContainer::CObjectContainer()
 {
@@ -22,14 +24,14 @@ CObjectContainer::~CObjectContainer()
 HRESULT CObjectContainer::Initialize_Prototype()
 {
 	//*Initialize Prototype시에는 다른 오브젝트들과 부모자식 관계 설정하지 않는 것으로*//
-    return S_OK;
+	return S_OK;
 }
 
 HRESULT CObjectContainer::Initialize(COMPONENT_DESC* pArg)
 {
 	//각자가 자기것만 담당하는 걸로. 단, 이때에는 추가된 자식에 대한 레이어 추가는 진행이 알아서 됨.
 
-    return S_OK;
+	return S_OK;
 }
 
 void CObjectContainer::Priority_UpdateChild(_float dt)
@@ -40,7 +42,7 @@ void CObjectContainer::Priority_UpdateChild(_float dt)
 
 void CObjectContainer::UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects) 
+	for (auto& child : m_ChildrenObjects)
 		if (child && child->Is_Alive()) child->Update(dt);
 }
 
@@ -50,7 +52,7 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 		if (child && child->Is_Alive()) child->Late_Update(dt);
 }
 
-	/*자식 전체 순회 -> 효율 떨어짐*/
+/*자식 전체 순회 -> 효율 떨어짐*/
 CGameObject* CObjectContainer::Find_ObjectByName(const string& ObjectName)
 {
 
@@ -69,7 +71,7 @@ CGameObject* CObjectContainer::Find_ObjectByName(const string& ObjectName)
 CGameObject* CObjectContainer::Find_ObjectByID(_uint ObjectID)
 {
 	auto iter = m_IndexByID.find(ObjectID);
-	if (iter == m_IndexByID.end()){
+	if (iter == m_IndexByID.end()) {
 		return nullptr;
 	}
 	else {
@@ -107,7 +109,7 @@ _int CObjectContainer::Find_IndexByID(_uint ObjectID)
 /*IParent-> vector<CGamObject*> m_CHilds*/
 /*UPdate_Child(dt)*/
 
-_int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
+_int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 {
 	if (nullptr == pObject) return -1;
 
@@ -135,15 +137,35 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform )
 	else {
 		m_ChildrenObjects[ObjectIndex] = pObject;
 	}
-	
+
 
 	CChild* child = pObject->Add_Component<CChild>(m_pOwner);
-	child->Sync_To_Parent(SyncTransform);
+	CUI_Object* ownerCast = dynamic_cast<CUI_Object*>(m_pOwner);
+	_bool isUI = (ownerCast != nullptr);
+
+	if (isUI)
+		child->Sync_To_Parent(false);
+	else
+		child->Sync_To_Parent(SyncTransform);
 
 	string name = pObject->Get_InstanceName();
 	m_ChildrensName.emplace(ObjectID, name);
 	m_IndexByID.emplace(ObjectID, ObjectIndex);
 	Safe_AddRef(pObject);
+
+	/*부모의 업데이트 동안에, 차일드가 추가됨*/
+	if (isUI) {
+		if (!ownerCast->Get_Level().empty()) {
+			CUI_Object* uiCast = dynamic_cast<CUI_Object*>(pObject);
+			CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiCast, ownerCast->Get_Level());
+		}
+	}
+	else {
+		/*레이어가 있으면*/
+		if (m_pOwner->Get_Layer()) {
+			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObject, m_pOwner->Get_LayerDesc());
+		}
+	}
 
 	return static_cast<int>(ObjectIndex);
 }
@@ -153,8 +175,8 @@ void CObjectContainer::Destroy_Child(_uint ChildIndex)
 	if (m_ChildrenObjects.size() <= ChildIndex)
 		return;
 
-	CGameObject* target= m_ChildrenObjects[ChildIndex];
-	  
+	CGameObject* target = m_ChildrenObjects[ChildIndex];
+
 	auto nameIter = m_ChildrensName.find(target->Get_ObjectID());
 	m_ChildrensName.erase(nameIter);
 	auto IndexIter = m_IndexByID.find(target->Get_ObjectID());
@@ -213,8 +235,8 @@ void CObjectContainer::Free()
 	if (m_ChildrenObjects.empty()) return;
 
 	for (auto& child : m_ChildrenObjects) {
-		if(child)
-		child->Get_Component<CChild>()->Dettach_Parent();
+		if (child)
+			child->Get_Component<CChild>()->Dettach_Parent();
 		Safe_Release(child);
 	}
 
