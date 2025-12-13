@@ -13,13 +13,6 @@ HRESULT CAIBone::Initialize(const aiNode* _pAINode, _int _iParentIndex)
 
     XMStoreFloat4x4(&m_TransformationMatrix, XMMatrixTranspose(XMLoadFloat4x4(&m_TransformationMatrix)));
 
-    if (m_iParentBoneIndex == -1) {
-        _matrix		PreTransformMatrix = XMMatrixIdentity();
-        //PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(g_iImportPreRotate));
-        XMStoreFloat4x4(&m_TransformationMatrix,
-            PreTransformMatrix * XMLoadFloat4x4(&m_TransformationMatrix));
-    }
-
     return S_OK;
 }
 

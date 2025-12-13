@@ -37,6 +37,7 @@ private:
 	vector<_uint>		m_Indices;
 	vector<_uint>		m_BoneIndices;
 	CSkeleton* m_pSkeleton = { nullptr };
+	_int BoneIndex = {};
 
 public:
 	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);

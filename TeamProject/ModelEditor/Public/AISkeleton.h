@@ -15,8 +15,6 @@ public:
 	HRESULT Initialize(const aiNode* _pAINode);
 
 public:
-	//_bool Find_BoneIndex(const _char* pName, _uint* _iGetIndex = nullptr);
-	//class CAIBone* Find_Bone(const _char* pName) const;
 	void Set_Offset(_uint Index, _float4x4 offset);
 	void Save_File(ofstream& ofs);
 
