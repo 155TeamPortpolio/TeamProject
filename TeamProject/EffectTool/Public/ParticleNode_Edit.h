@@ -1,14 +1,14 @@
 #pragma once
-#include "EffectNode.h"
+#include "ParticleNode.h"
 
-NS_BEGIN(Engine)
-class ENGINE_DLL CParticleNode :
-    public CEffectNode
+NS_BEGIN(EffectTool)
+class CParticleNode_Edit :
+    public CParticleNode
 {
-protected:
-    CParticleNode();
-    CParticleNode(const CParticleNode& rhs);
-    virtual ~CParticleNode() DEFAULT;
+private:
+    CParticleNode_Edit();
+    CParticleNode_Edit(const CParticleNode_Edit& rhs);
+    virtual ~CParticleNode_Edit() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -19,11 +19,11 @@ public:
     void Late_Update(_float dt) override;
 
 public:
-    static CParticleNode* Create();
+    static CParticleNode_Edit* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
-protected:
+private:
 
 };
 NS_END

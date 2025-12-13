@@ -134,7 +134,7 @@ private:
 	virtual ~ParticlePass() DEFAULT;
 public:
 	void Execute(ID3D11DeviceContext* pContext) override;
-	void Subimit(PARTICLE_PACKET packet);
+	void Submit(PARTICLE_PACKET packet);
 
 private:
 	vector<PARTICLE_PACKET> m_Packets;

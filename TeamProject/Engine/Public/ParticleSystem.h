@@ -40,6 +40,8 @@ public:
 	_bool isReadyToDraw()	override { return true; };
 
 public:
+	void SetParticleParams(PARTICLE_NODE particleDesc);
+	void Simulation_Particle(_float dt);
 	HRESULT Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count);
 	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 
@@ -47,13 +49,34 @@ public:
 	virtual void Render_GUI() override;
 
 private:
+	void SpawnParticles(_float dt);
+	void UpdateParticles(_float dt);
+	void SetUpParticle(PARTICLE & particle)const;
 	void BuildInstanceData();
 
 	class CVIBuffer* m_pInstancePoint = { nullptr };
-	std::vector<PARTICLE> m_Particles;
-	std::vector<VTX_INSTANCE_POINT> m_InstanceDatas;
-	_uint m_iNumMaxInstances{};
+	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
+
+	vector<PARTICLE> m_Particles;
+	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
+	vector<_uint> m_DeadParticleIndices;
+
+	/*Particle Params*/
+	_bool m_UseGravity = false;
+
+	_uint m_iBurstCount{};
+	_float m_fSpawnPerSec{};
+	_float m_fSpawnAcc{};
+	_bool m_IsLoop = false;
+	_uint m_iSpawnParticleCount{};
+	_uint m_iMaxSpawnParticleCount{};
+
+	_float3 m_SpawnAreaMin{};
+	_float3 m_SpawnAreaMax{};
+
+	_float3 m_VelocityMin{};
+	_float3 m_VelocityMax{};
 
 public:
 	static CParticleSystem* Create();

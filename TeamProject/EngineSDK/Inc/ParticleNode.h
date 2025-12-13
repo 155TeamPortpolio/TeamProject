@@ -2,7 +2,7 @@
 #include "EffectNode.h"
 
 NS_BEGIN(Engine)
-class CParticleNode :
+class ENGINE_DLL CParticleNode :
     public CEffectNode
 {
 protected:

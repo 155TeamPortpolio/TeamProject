@@ -34,6 +34,9 @@
     <Filter Include="02. Object\ToolLight">
       <UniqueIdentifier>{6024827c-522f-4e3b-be3c-db4e525e39bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\ParticleNode">
+      <UniqueIdentifier>{14853119-7764-4e03-9155-0e747b7a92fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -114,6 +117,9 @@
     <ClInclude Include="..\Public\ToolLight.h">
       <Filter>02. Object\ToolLight</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ParticleNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -175,6 +181,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ToolLight.cpp">
       <Filter>02. Object\ToolLight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

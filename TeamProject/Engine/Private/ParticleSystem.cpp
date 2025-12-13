@@ -3,6 +3,7 @@
 #include "VI_InstancePoint.h"
 #include "GameInstance.h"
 #include "ResourceMgr.h"
+#include "Helper_Func.h"
 
 CParticleSystem::CParticleSystem()
 {
@@ -92,6 +93,22 @@ MINMAX_BOX CParticleSystem::Get_MeshBoundingBox(_uint index)
 	return MINMAX_BOX{ { -0.5f, -0.5f, 0.f }, {0.5f,0.5f ,0.f} };
 }
 
+void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
+{
+	m_Particles.resize(30);
+	m_DeadParticleIndices.reserve(30);
+
+	for (_uint i = 0; i < m_Particles.size(); ++i)
+		m_DeadParticleIndices.push_back(i);
+}
+
+void CParticleSystem::Simulation_Particle(_float dt)
+{
+	SpawnParticles(dt);
+	UpdateParticles(dt);
+	BuildInstanceData();
+}
+
 HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count)
 {
 	pContext->Draw(count, offset);
@@ -103,13 +120,86 @@ void CParticleSystem::Render_GUI()
 {
 }
 
+void CParticleSystem::SpawnParticles(_float dt)
+{
+	m_fSpawnAcc += m_fSpawnPerSec * dt;
+	_uint spawnCount = static_cast<_uint>(m_fSpawnAcc);
+
+	if (spawnCount)
+	{
+		m_fSpawnAcc -= spawnCount;
+		m_iSpawnParticleCount += spawnCount;
+
+		for (_uint i = 0; i < spawnCount; ++i)
+		{
+			if (m_DeadParticleIndices.empty())
+				break;
+
+			auto& particle = m_Particles[m_DeadParticleIndices.back()];
+			m_DeadParticleIndices.pop_back();
+
+			SetUpParticle(particle);
+		}
+	}
+}
+
+void CParticleSystem::UpdateParticles(_float dt)
+{
+	_uint index{};
+	for (_uint i = 0; i < m_Particles.size(); ++i)
+	{
+		auto& particle = m_Particles[i];
+
+		if (!particle.isAlive)
+			continue;
+
+		particle.fLifeTime += dt;
+		if (particle.fLifeTime >= particle.fMaxLifeTime)
+		{
+			particle.isAlive = false;
+			m_DeadParticleIndices.push_back(i);
+		}
+
+		_vector3 currPosition = particle.vPosition;
+		_vector3 nextPosition = currPosition + particle.vVelocity * dt;
+
+		particle.vPosition = nextPosition;
+	}
+}
+
+void CParticleSystem::SetUpParticle(PARTICLE& particle) const
+{
+	particle.isAlive = true;
+	
+	particle.vPosition.x = Helper::Get_Random_Float(m_SpawnAreaMin.x, m_SpawnAreaMax.x);
+	particle.vPosition.y = Helper::Get_Random_Float(m_SpawnAreaMin.y, m_SpawnAreaMax.y);
+	particle.vPosition.z = Helper::Get_Random_Float(m_SpawnAreaMin.z, m_SpawnAreaMax.z);
+
+	particle.vVelocity.x = Helper::Get_Random_Float(m_VelocityMin.x, m_VelocityMax.x);
+	particle.vVelocity.y = Helper::Get_Random_Float(m_VelocityMin.y, m_VelocityMax.y);
+	particle.vVelocity.z = Helper::Get_Random_Float(m_VelocityMin.z, m_VelocityMax.z);
+
+	particle.vSize.x = Helper::Get_Random_Float(2.f, 2.f);
+	particle.vSize.y = Helper::Get_Random_Float(2.f, 2.f);
+
+	particle.fLifeTime = 0.f;
+	particle.fMaxLifeTime = 2.f;
+}
+
 void CParticleSystem::BuildInstanceData()
 {
 	m_InstanceDatas.clear();
 
 	for (const auto& particle : m_Particles)
 	{
+		if (!particle.isAlive)
+			continue;
 
+		VTX_INSTANCE_POINT data{};
+
+		_vector4 translate = _vector4(particle.vPosition.x, particle.vPosition.y, particle.vPosition.z, 1.f);
+		_vector3 velocity = particle.vVelocity;
+		_vector2 lifeTime(particle.fLifeTime, particle.fMaxLifeTime);
 	}
 }
 
@@ -134,4 +224,5 @@ CComponent* CParticleSystem::Clone()
 void CParticleSystem::Free()
 {
 	__super::Free();
+	Safe_Release(m_pInstancePoint);
 }

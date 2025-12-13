@@ -10,6 +10,8 @@
 #include "Camera.h"
 #include "EffectContainer_Edit.h"
 #include "SpriteNode_Edit.h"
+#include "ParticleNode_Edit.h"
+
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -29,6 +31,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolCamera", CToolCamera::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_EffectContainer", CEffectContainer_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_SpriteNode", CSpriteNode_Edit::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ParticleNode", CParticleNode_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 
 	//		IResourceService* pService = CGameInstance::GetInstance()->Get_ResourceMgr();
