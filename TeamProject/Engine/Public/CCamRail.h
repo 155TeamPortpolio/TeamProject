@@ -4,12 +4,12 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CCameraTrail final : public CComponent
+class ENGINE_DLL CCamRail final : public CComponent
 {
 private:
-	CCameraTrail() = default;
-	CCameraTrail(const CCameraTrail& rhs) : CComponent(rhs) {}
-	~CCameraTrail() = default;
+	CCamRail() = default;
+	CCamRail(const CCamRail& rhs) : CComponent(rhs) {}
+	~CCamRail() = default;
 
 public:
 	HRESULT Initialize_Prototype() override;
@@ -20,7 +20,7 @@ public:
 
 
 public:
-	static CCameraTrail* Create();
+	static CCamRail* Create();
 	virtual void Free() override;
 	CComponent* Clone() override;
 };
