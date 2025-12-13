@@ -43,8 +43,13 @@ HRESULT CSpriteNode::Initialize(INIT_DESC* pArg)
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Point_Effect_Base", "Opaque", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
-	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 
+	/* Shader Param */
+	customInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
+	customInstance->Set_Param("Rol", { &m_iRow,"uint",sizeof(_uint) });
+	customInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
+
+	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 	{
@@ -94,8 +99,8 @@ void CSpriteNode::Update(_float dt)
 			m_fSpriteElapsedTime -= 1.f;
 		}
 
-		CMaterialInstance* pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		pMaterialInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, m_iCurrFrameIndex);
+		//CMaterialInstance* pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		//pMaterialInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, m_iCurrFrameIndex);
 	}
 }
 
