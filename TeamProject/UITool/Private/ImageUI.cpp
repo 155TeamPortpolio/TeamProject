@@ -3,7 +3,7 @@
 
 #include "Sprite2D.h"
 #include "GameInstance.h"
-#include "ObjectContainer.h"
+#include "UITool_Level.h"
 
 CImageUI::CImageUI()
 {
@@ -47,21 +47,9 @@ void CImageUI::Render_GUI()
 {
     CGameObject::Render_GUI();
 
-    ImGui::SeparatorText("Position");
-    if (ImGui::Button("Left"))  m_fLocalX -= 0.1f;
-    ImGui::SameLine();
-    if (ImGui::Button("Right")) m_fLocalX += 0.1f;
-    if (ImGui::Button("Up"))			m_fLocalY -= 0.1f;
-    ImGui::SameLine();
-    if (ImGui::Button("Down"))    m_fLocalY += 0.1f;
-
-    ImGui::SeparatorText("Scale");
-    if (ImGui::Button("Sub X"))       m_fSizeX -= 0.1f;
-    ImGui::SameLine();
-    if (ImGui::Button("Add X"))         m_fSizeX += 0.1f;
-    if (ImGui::Button("Sub Y"))			m_fSizeY -= 0.1f;
-    ImGui::SameLine();
-    if (ImGui::Button("Add Y"))    m_fSizeY += 0.1f;
+    const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
+    if(ImGui::Combo("Image", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
 }
 
 CGameObject* CImageUI::Create()

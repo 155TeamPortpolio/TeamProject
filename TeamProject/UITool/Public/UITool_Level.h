@@ -24,15 +24,23 @@ public:
 
 public:
     static void PreLoad_Level();
+    static const vector<const _char*> Get_TextureKeys();
+    static _int Get_TextureKeysSize() { return static_cast<_int>(m_TextureKeys.size()); }
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
+
+private:
+    static vector<string> m_TextureKeys;
 
 private:
     HRESULT Ready_Textures();
     HRESULT Ready_Camera();
     HRESULT Ready_UIObjects();
     HRESULT Ready_GUIPanel();
+
+private:
+    HRESULT Add_Texture(const string& resourceKey, const string& resourcePath);
 
 public:
     static CUITool_Level* Create(const string& LevelKey);

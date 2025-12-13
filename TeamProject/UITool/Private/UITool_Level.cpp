@@ -12,6 +12,8 @@
 #include "CanvasPanel.h"
 #include "ImageUI.h"
 
+vector<string> CUITool_Level::m_TextureKeys;
+
 CUITool_Level::CUITool_Level(const string& LevelKey)
 	: CLevel{ LevelKey },
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -26,17 +28,15 @@ HRESULT CUITool_Level::Initialize()
 
 HRESULT CUITool_Level::Awake()
 {
-	if (FAILED(Ready_Textures()))
-		MSG_BOX("Failed to Ready Textures : UI Tool");
-
-	if(FAILED(Ready_Camera()))
-		MSG_BOX("Failed to Ready Camera : UI Tool");
-
-	if (FAILED(Ready_UIObjects()))
-		MSG_BOX("Failed to Ready UI Objects : UI Tool");
+	if (FAILED(Ready_Camera()))
+		MSG_BOX("Failed to Ready Camera");
 
 	if (FAILED(Ready_GUIPanel()))
-		MSG_BOX("Failed to Ready GUI Panel : UI Tool");
+		MSG_BOX("Failed to Ready GUI Panel");
+
+	Ready_Textures();
+
+	Ready_UIObjects();	 
 
 	return S_OK;
 }
@@ -56,16 +56,23 @@ void CUITool_Level::PreLoad_Level()
 {
 }
 
-HRESULT CUITool_Level::Ready_Textures()
+const vector<const _char*> CUITool_Level::Get_TextureKeys()
 {
+	vector<const _char*> TextureKeys;
+
+	for (const auto& Key : m_TextureKeys)
+		TextureKeys.push_back(Key.c_str());
+
+	return TextureKeys;
+}
+
+HRESULT CUITool_Level::Ready_Textures()
+{ 
+	Add_Texture("Logo.png", "../Bin/Resources/UI/Logo.png");
+	Add_Texture("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg");
+
 	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("CanvasPanel.png", "../Bin/Resources/UI/CanvasPanel.png")))
-		return E_FAIL;
-
-	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Logo.png", "../Bin/Resources/UI/Logo.png")))
-		return E_FAIL;
-
-	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg")))
-		return E_FAIL;
+		MSG_BOX("Failed to Ready Textures : CanvasPanel.png");
 
 	return S_OK;
 }
@@ -95,11 +102,9 @@ HRESULT CUITool_Level::Ready_UIObjects()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 
-	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create())))
-		return E_FAIL;
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
 
-	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ImageUI", CImageUI::Create())))
-		return E_FAIL;
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ImageUI", CImageUI::Create());
 
 	return S_OK;
 }
@@ -111,6 +116,15 @@ HRESULT CUITool_Level::Ready_GUIPanel()
 		return E_FAIL;
 
 	CGameInstance::GetInstance()->Get_GUISystem()->Register_Panel(pPanel);
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Add_Texture(const string& resourceKey, const string& resourcePath)
+{
+	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(resourceKey, resourcePath)))
+		return E_FAIL;
+	m_TextureKeys.push_back(resourceKey);
 
 	return S_OK;
 }
