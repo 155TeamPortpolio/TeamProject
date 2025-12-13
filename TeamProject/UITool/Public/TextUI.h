@@ -25,6 +25,9 @@ private:
 	_char		m_szText[MAX_PATH] = {};
 	_float4		m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
+private:
+	wstring Utf8ToWstring(const string& strUtf8);
+
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
