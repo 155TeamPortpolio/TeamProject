@@ -1,15 +1,16 @@
 #pragma once
-#include "Base.h"
+#include "AnimationTool_Defines.h"
+#include "AnimationClip.h"
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CAnimationClip :
-    public CBase
+class CAnimationClipEX :
+	public CAnimationClip
 {
 protected:
-    CAnimationClip(const string& Subject);
-    CAnimationClip();
-    virtual ~CAnimationClip() DEFAULT;
+	CAnimationClipEX(const string& Subject);
+	CAnimationClipEX();
+	virtual ~CAnimationClipEX() DEFAULT;
 
 public:
 	HRESULT Initialize(const string& animationPath);
@@ -17,7 +18,7 @@ public:
 	_bool isLoop() { return m_bLoop; }
 
 	//현재 애니매이션 클립을 재생함
-	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
+	_float TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
 		_bool isLoop,
@@ -25,14 +26,14 @@ public:
 
 	//현재 키프레임을 기준으로 다음 애니매이션을 보간
 	_bool ConvertTo(vector<_float4x4>& transfomationMatrices,
-		 CAnimationClip& DestAnimation, 
-		_float fConvertDuration, 
-		_float PrevTrackPosition, 
+		CAnimationClip& DestAnimation,
+		_float fConvertDuration,
+		_float PrevTrackPosition,
 		_float ConversionTrackPosition);
 
 	//현재 트랙포지션 기준으로 다음 애니매이션을 보간
 	_bool ConvertByCurrentMatrix(
-		vector<_float4x4>& transfomationMatrices, 
+		vector<_float4x4>& transfomationMatrices,
 		CAnimationClip& DestAnimation,
 		_float fConvertDuration,
 		_float PrevTrackPosition,
@@ -58,7 +59,7 @@ protected:
 	vector<class CChannel*> m_Channels;
 
 public:
-    static CAnimationClip* Create(const string& animationPath, const string& animClipKey, const string& Subject);
+	static CAnimationClipEX* Create(const string& animationPath, const string& animClipKey, const string& Subject);
 	virtual void Free();
 };
 NS_END

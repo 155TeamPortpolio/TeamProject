@@ -23,6 +23,8 @@ REM 실제 복사
 xcopy /y "%BASE%Engine\Bin\Engine.dll"                                          "%BASE%AnimationTool\Bin\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%AnimationTool\Bin\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%AnimationTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mtd.dll"        "%BASE%AnimationTool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\assimp-vc143-mt.dll"           "%BASE%AnimationTool\Bin\"
 
 xcopy /y "%BASE%Engine\Bin\PhysX_64.dll"           "%BASE%AnimationTool\Bin\"
 xcopy /y "%BASE%Engine\Bin\PhysXCommon_64.dll"     "%BASE%AnimationTool\Bin\"
