@@ -30,6 +30,8 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 {
 	if (nullptr == pAIScene)
 		return E_FAIL;
+	Release_Mesh();
+
 	_uint meshNum = pAIScene->mNumMeshes;
 	m_DrawableMeshes.resize(meshNum, true);
 
