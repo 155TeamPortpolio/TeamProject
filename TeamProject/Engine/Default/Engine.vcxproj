@@ -255,6 +255,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
     <ClInclude Include="..\Public\IRayService.h" />
@@ -315,6 +316,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VI_Cube.h" />
+    <ClInclude Include="..\Public\VI_InstancePoint.h" />
     <ClInclude Include="..\Public\VI_Plane.h" />
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
@@ -361,6 +363,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\InputMgr.cpp" />
     <ClCompile Include="..\Private\InspectorPanel.cpp" />
     <ClCompile Include="..\Private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\LevelMgr.cpp" />
@@ -412,6 +415,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VI_Cube.cpp" />
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp" />
     <ClCompile Include="..\Private\VI_Plane.cpp" />
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />

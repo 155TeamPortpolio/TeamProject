@@ -98,4 +98,12 @@ namespace Engine {
 		};
 	}VTXSKINMESH;
 
+	/* Particle */
+	typedef struct ENGINE_DLL tagVertexInstancePoint
+	{
+		_float4 vRight{}, vUp{}, vLook{};
+		_float4 vTraslate{};
+		_float3 vVelocity{};
+		_float2 vLifeTime{};
+	}VTX_INSTANCE_POINT;
 };

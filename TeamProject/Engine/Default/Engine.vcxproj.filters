@@ -367,6 +367,12 @@
     <ClInclude Include="..\Public\MeshNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ParticleSystem.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VI_InstancePoint.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -684,6 +690,12 @@
     <Filter Include="01. Utility\03. GameObject\Effect\Node\Mesh">
       <UniqueIdentifier>{d86f160d-72f2-44a6-93b4-fc107db0f100}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem">
+      <UniqueIdentifier>{f7cc879b-7930-4410-8398-f5a5c4d46259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint">
+      <UniqueIdentifier>{39dbf45d-dfc2-4053-b4d7-bc4f01640cb2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -986,6 +998,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\MeshNode.cpp">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleSystem.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

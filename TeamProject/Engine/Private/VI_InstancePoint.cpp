@@ -25,6 +25,10 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 	m_iVertexStride = sizeof(VTXPOS);
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_POINTLIST;
 
+	m_iNumMaxIntances = ;
+	m_iInstanceStride = sizeof(VTX_INSTANCE_POINT);
+	m_iNumUsedInstances = 0;
+
 	if (FAILED(Create_Vertex(pDevice)))
 		return E_FAIL;
 
@@ -42,6 +46,11 @@ HRESULT CVI_InstancePoint::Render(ID3D11DeviceContext* pContext)
 }
 
 HRESULT CVI_InstancePoint::Create_Vertex(ID3D11Device* pDevice)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 {
 	return E_NOTIMPL;
 }
