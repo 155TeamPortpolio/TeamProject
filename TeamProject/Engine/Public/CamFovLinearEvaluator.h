@@ -1,0 +1,17 @@
+#pragma once
+
+#include "ICamEvaluator.h"
+
+NS_BEGIN(Engine)
+
+class CamFovLinearEvaluator final : public ICamFovEvaluator
+{
+public:
+	bool   Build(const vector<CamKeyFrame>& keys) override;
+	_float Evaluate(float time) const override;
+
+private:
+	const vector<CamKeyFrame>* keyframes{};
+};
+
+NS_END

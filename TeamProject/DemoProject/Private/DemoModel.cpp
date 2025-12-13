@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "DemoModel.h"
 #include "StaticModel.h"
+#include "SkeletalModel.h"
 #include "Material.h"
 
 #include "GameInstance.h"
-#include "ObjectContainer.h"
+
 CDemoModel::CDemoModel()
 {
 }
@@ -17,9 +18,8 @@ CDemoModel::CDemoModel(const CDemoModel& rhs)
 HRESULT CDemoModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	/*Add_Component<CStaticModel>();
-	Add_Component<CMaterial>();*/
-	Add_Component<CObjectContainer>();
+	Add_Component<CSkeletalModel>();
+	Add_Component<CMaterial>();
 
 	return S_OK;
 }
@@ -32,10 +32,17 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 }
 
 void CDemoModel::Awake()
-
 {
-	//CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+
+	/*파일명과 키값은 일치*/
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model", 
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
+			"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
 }
 
 void CDemoModel::Priority_Update(_float dt)
@@ -53,15 +60,6 @@ void CDemoModel::Late_Update(_float dt)
 void CDemoModel::Render_GUI()
 {
 	__super::Render_GUI();
-
-	if (ImGui::Button("Add")) {
-		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
-			.Position({ 0,0,0 })
-			.Build("Demo_Model");
-		Get_Component<CObjectContainer>()->Add_Child(DemoModel,false);
-	}
-	_bool isLayer = Get_Layer();
-	ImGui::Checkbox("InLayer",&isLayer);
 }
 
 CDemoModel* CDemoModel::Create()

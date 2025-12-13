@@ -3,7 +3,7 @@
 #include "PhysicsSystem.h"
 
 #include "GameInstance.h"
-#ifdef USINPHYSICS 
+#ifdef USINGPHYSICS 
 
 HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
 {

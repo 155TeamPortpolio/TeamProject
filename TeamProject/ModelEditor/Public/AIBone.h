@@ -24,6 +24,7 @@ public:
 
 public:
 	HRESULT Initialize(const aiNode* _pAINode, _int _iParentIndex);
+	void Save_File(ofstream& ofs);
 
 public:
 	static CAIBone* Create(const aiNode* _pAINode, _int _iParentIndex);
