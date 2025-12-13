@@ -5,10 +5,18 @@ set BASE=%~dp0
 
 REM 실제 복사 
 xcopy /y "%BASE%Engine\Bin\Engine.dll"                                          "%BASE%UITool\Bin\"
+
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll"                         "%BASE%UITool\Bin\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll"                          "%BASE%UITool\Bin\"
+
 xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\"                "%BASE%UITool\Bin\ShaderFiles\"
 xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\"          "%BASE%UITool\Bin\ShaderFiles\"
+
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX\deb\PhysX_64.dll"                "%BASE%UITool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX\deb\PhysXCommon_64.dll"          "%BASE%UITool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX\deb\PhysXFoundation_64.dll"      "%BASE%UITool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX\deb\PhysXCooking_64.dll"         "%BASE%UITool\Bin\"
+xcopy /y "%BASE%Engine\ThirdPartyLib\PhysX\deb\PhysXGpu_64.dll"             "%BASE%UITool\Bin\"
 
 REM xcopy /y /s /e /i "%BASE%Engine\Public\"      "%BASE%EngineSDK\Inc\"
 
