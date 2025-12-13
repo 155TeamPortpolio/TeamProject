@@ -293,6 +293,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
     <ClInclude Include="..\Public\IRayService.h" />
@@ -311,6 +312,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\MaterialData.h" />
     <ClInclude Include="..\Public\MaterialInstance.h" />
     <ClInclude Include="..\Public\Mesh.h" />
+    <ClInclude Include="..\Public\MeshNode.h" />
     <ClInclude Include="..\Public\Model.h" />
     <ClInclude Include="..\Public\ModelData.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd.h" />
@@ -318,6 +320,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
+    <ClInclude Include="..\Public\ParticleNode.h" />
     <ClInclude Include="..\Public\PhysicsSystem.h" />
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
@@ -351,6 +354,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
     <ClInclude Include="..\Public\VI_Cube.h" />
+    <ClInclude Include="..\Public\VI_InstancePoint.h" />
     <ClInclude Include="..\Public\VI_Plane.h" />
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
@@ -405,6 +409,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\InputMgr.cpp" />
     <ClCompile Include="..\Private\InspectorPanel.cpp" />
     <ClCompile Include="..\Private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
     <ClCompile Include="..\Private\LevelMgr.cpp" />
@@ -416,11 +421,13 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\MaterialData.cpp" />
     <ClCompile Include="..\Private\MaterialInstance.cpp" />
     <ClCompile Include="..\Private\Mesh.cpp" />
+    <ClCompile Include="..\Private\MeshNode.cpp" />
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\Private\ModelData.cpp" />
     <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
+    <ClCompile Include="..\Private\ParticleNode.cpp" />
     <ClCompile Include="..\Private\PhysicsSystem.cpp" />
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
@@ -454,6 +461,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
     <ClCompile Include="..\Private\VI_Cube.cpp" />
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp" />
     <ClCompile Include="..\Private\VI_Plane.cpp" />
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />
@@ -500,6 +508,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />

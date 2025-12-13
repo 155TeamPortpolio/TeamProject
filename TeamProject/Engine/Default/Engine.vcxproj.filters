@@ -390,6 +390,29 @@
     </ClInclude>
     <ClInclude Include="..\public\CamPosCentripetalEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator</Filter>
+    <ClInclude Include="..\public\EffectContainer.h">
+      <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SpriteNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CCameraTrail.h" />
+    <ClInclude Include="..\Public\ParticleNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleSystem.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VI_InstancePoint.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -716,6 +739,29 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator">
       <UniqueIdentifier>{9979460a-8fa8-4412-9e4b-0a41f0270d9c}</UniqueIdentifier>
+    <Filter Include="01. Utility\03. GameObject\Effect">
+      <UniqueIdentifier>{1e6545d9-1ce2-4aaf-aa2d-09c2958f80e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Container">
+      <UniqueIdentifier>{a350ec7b-e44f-44ae-8bb7-cb2d0ef20bb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node">
+      <UniqueIdentifier>{0b89d95c-88e4-4e15-808a-88fb35a68fa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Sprite">
+      <UniqueIdentifier>{dfa3afac-5dc0-40a6-85ed-16742f0affda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Particle">
+      <UniqueIdentifier>{a04807fb-349a-42b4-87f6-6b85dcdeda0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Mesh">
+      <UniqueIdentifier>{d86f160d-72f2-44a6-93b4-fc107db0f100}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem">
+      <UniqueIdentifier>{f7cc879b-7930-4410-8398-f5a5c4d46259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint">
+      <UniqueIdentifier>{39dbf45d-dfc2-4053-b4d7-bc4f01640cb2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1034,6 +1080,28 @@
     <ClCompile Include="..\private\CamPosCentripetalEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EffectContainer.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SpriteNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CCameraTrail.cpp" />
+    <ClCompile Include="..\Private\ParticleNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleSystem.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1064,6 +1132,9 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>

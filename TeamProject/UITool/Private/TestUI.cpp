@@ -26,10 +26,10 @@ HRESULT CTestUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Resources_Logo.png", "../Bin/Resources/UI/Logo.png");
+    CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Logo.png", "../Bin/Resources/UI/Logo.png");
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Resources_Logo.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
 
     return S_OK;
 }

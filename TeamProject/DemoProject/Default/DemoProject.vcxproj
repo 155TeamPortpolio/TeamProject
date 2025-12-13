@@ -34,6 +34,7 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="..\Public\DemoCamera.h" />
+    <ClInclude Include="..\Public\DemoGrid.h" />
     <ClInclude Include="..\Public\DemoLevel.h" />
     <ClInclude Include="..\Public\DemoModel.h" />
     <ClInclude Include="..\Public\DemoUI.h" />
@@ -95,6 +96,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\DemoCamera.cpp" />
+    <ClCompile Include="..\Private\DemoGrid.cpp" />
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
     <ClCompile Include="..\Private\DemoUI.cpp" />
@@ -107,6 +109,9 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DemoProject.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -229,6 +234,12 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTK.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
