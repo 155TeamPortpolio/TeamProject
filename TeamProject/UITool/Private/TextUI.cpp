@@ -66,6 +66,18 @@ void CTextUI::Render_GUI()
     const auto& FontKeys = CUITool_Level::Get_FontKeys();
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, FontKeys.data(), CUITool_Level::Get_FontKeysSize()))
         Get_Component<CTextSlot>()->Set_Font(FontKeys[m_iFontKeyIndex]);
+    
+    if (ImGui::Button(u8"크기 +"))
+    {
+        m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
+        Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button(u8"크기 -"))
+    {
+        m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
+        Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+    }
 
     if(ImGui::ColorPicker4(u8"컬러", reinterpret_cast<_float*>(&m_vColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vColor);

@@ -93,9 +93,8 @@ HRESULT CUITool_Level::Ready_Textures()
 
 HRESULT CUITool_Level::Ready_Fonts()
 {
-	Add_Font("NotoSansKR_Regular_20", L"../Bin/Resources/Fonts/NotoSansKR_Regular_20.spritefont");
-	Add_Font("NotoSansKR_Regular_24", L"../Bin/Resources/Fonts/NotoSansKR_Regular_24.spritefont");
-	Add_Font("NotoSansKR_Regular_32", L"../Bin/Resources/Fonts/NotoSansKR_Regular_32.spritefont");
+	Add_Font("NotoSansKR_Regular", L"../Bin/Resources/Fonts/NotoSansKR_Regular.spritefont");
+	Add_Font("NotoSansKR_Bold", L"../Bin/Resources/Fonts/NotoSansKR_Bold.spritefont");
 
 	return S_OK;
 }
