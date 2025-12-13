@@ -35,9 +35,9 @@ HRESULT CMainApp::Initialize()
 
 	Set_Levels();
 
-	//#ifdef  _USING_GUI
-	//	ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
-	//#endif //  _USING_GUI
+	#ifdef  _USING_GUI
+		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+	#endif //  _USING_GUI
 
 	return S_OK;
 }

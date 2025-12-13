@@ -47,11 +47,12 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
+	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransfromationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*T본 형태로 구성*/
+	/*부모 뼈를 받을 수 있게 기본값으로 초기화*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -65,7 +66,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-
+	/*최종 뼈 행렬에 대입*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));

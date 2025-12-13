@@ -38,7 +38,7 @@ void CEffectNode::Update(_float dt)
 		m_fElpasedTime += dt;
 		if (m_fElpasedTime >= m_fDuration)
 		{
-			m_isAlive = false;
+			//m_isAlive = false;
 		}
 	}
 }
