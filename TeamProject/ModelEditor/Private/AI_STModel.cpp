@@ -13,7 +13,7 @@ CAI_STModel::CAI_STModel(const CAI_STModel& rhs)
 
 HRESULT CAI_STModel::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CAI_STModel::Initialize(COMPONENT_DESC* pArg)

@@ -13,54 +13,43 @@ CAIMaterial::CAIMaterial()
 HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fileDirectory)
 {
 	m_MaterialKey = pAIMaterial->GetName().C_Str();
-	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
-	{
-		size_t texCount = pAIMaterial->GetTextureCount(static_cast<aiTextureType>(i));
 
-		for (size_t j = 0; j < texCount; j++)
-		{
-			aiString     strTexturePath;
-			pAIMaterial->GetTexture(static_cast<aiTextureType>(i), j, &strTexturePath);
+	string parentFolder = filesystem::path(fileDirectory).parent_path().string();
+	string ParentName = filesystem::path(parentFolder).filename().string();
 
-			string extention = filesystem::path(strTexturePath.C_Str()).extension().string(); //".png"
-			string fileName = Helper::GetFileNameWithOutExtension(strTexturePath.C_Str()); //"avsAlv" or "avsALv.0"
-			string BaseName = Helper::GetFileNameWithOutExtension(fileName);
-
-			string filePath = fileDirectory + "\\" + BaseName + extention;
-			/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
-			if (filesystem::exists(filePath)) { //있으면 로드
-				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(BaseName + extention, filePath);
-				Link_Texture(G_GlobalLevelKey, BaseName + extention, static_cast<TEXTURE_TYPE>(i));
-			}
-
-			/*순회 검색 시작*/
-			_uint Index = {};
-
-			while (true) {
-				string targetName = BaseName + "." + to_string(Index);
-				string IndexedPath = fileDirectory + "\\" + targetName + extention;
-
-				if (filesystem::exists(IndexedPath)) { //있으면 로드
-					CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(targetName + extention, IndexedPath);
-					Link_Texture(G_GlobalLevelKey, targetName + extention, static_cast<TEXTURE_TYPE>(i));
-					Index++;
-				}
-				else {
-					break;
-				}
-			}
-		}
-	}
+	//for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
+	//{
+	//	size_t texCount = pAIMaterial->GetTextureCount(static_cast<aiTextureType>(i));
+	//
+	//	for (size_t j = 0; j < texCount; j++)
+	//	{
+	//		aiString     strTexturePath;
+	//		pAIMaterial->GetTexture(static_cast<aiTextureType>(i), j, &strTexturePath);
+	//
+	//		string extention = filesystem::path(strTexturePath.C_Str()).extension().string(); //".png"
+	//		string fileName = Helper::GetFileNameWithOutExtension(strTexturePath.C_Str()); //"avsAlv" or "avsALv.0"
+	//		string BaseName = Helper::GetFileNameWithOutExtension(fileName);
+	//
+	//		string filePath = fileDirectory + "\\" + BaseName + extention;
+	//		/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
+	//		if (filesystem::exists(filePath)) { //있으면 로드
+	//			CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(BaseName + extention, filePath);
+	//			Link_Texture(G_GlobalLevelKey, BaseName + extention, static_cast<TEXTURE_TYPE>(i));
+	//		}
+	//	}
+	//}
+	Add_AdditionalTexture(fileDirectory,"MAT_","_N.png",TEXTURE_TYPE::NORMALS);
+	Add_AdditionalTexture(fileDirectory,"MAT_","_M.png",TEXTURE_TYPE::METALNESS);
+	Add_AdditionalTexture(fileDirectory,"MAT_","_A.png",TEXTURE_TYPE::AMBIENT);
+	Add_AdditionalTexture(fileDirectory,"MAT_","_D.png",TEXTURE_TYPE::DIFFUSE);
 
 	m_passConstant = "Opaque";
-
 	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
 	{
 		if (ConvertToConstant(static_cast<TEXTURE_TYPE>(i)).empty()) continue;
 		textureTypes.push_back(i);
 	}
-
-	return S_OK;
+		return S_OK;
 }
 
 
@@ -89,7 +78,7 @@ void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs
 		for (size_t i = 0; i < pair.second.size(); i++)
 		{
 			TEXTURE_INFO_HEADER texInfo = {};
-			string textureKey = Helper::GetFileNameWithOutExtension(pair.second[i]->Get_Key()) + "." + to_string(i) + ".dds";
+			string textureKey = Helper::GetFileNameWithOutExtension(pair.second[i]->Get_Key()) +".dds";
 			strcpy_s(texInfo.TextureKey, sizeof(texInfo.TextureKey), textureKey.c_str());
 			ofs.write(reinterpret_cast<const char*>(&texInfo), sizeof(texInfo));
 			if (FAILED(Helper::SaveTextureToDDs(pContext, directory + "\\" + textureKey, pair.second[i]->Get_SRV()))) {
@@ -97,6 +86,7 @@ void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs
 			}
 		}
 	}
+
 }
 void CAIMaterial::Render_GUI()
 {
@@ -202,6 +192,26 @@ void CAIMaterial::Render_MaterialAdd()
 
 
 	ImGui::End();
+}
+
+void CAIMaterial::Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type)
+{
+	// 접두사 제거
+	const string prefix = preFix;
+
+	/*Normal*/
+	string Texturekey = m_MaterialKey;
+	if (Texturekey.rfind(prefix, 0) == 0)
+		Texturekey.erase(0, prefix.size());
+	Texturekey += typeAdd;
+
+	string filePath = fileDirectory + "\\" + Texturekey;
+	/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
+	if (filesystem::exists(filePath)) { //있으면 로드
+		CGameInstance::GetInstance()->Get_ResourceMgr()->
+			Add_ResourcePath(Texturekey, filePath);
+		Link_Texture(G_GlobalLevelKey, Texturekey, type);
+	}
 }
 
 CAIMaterial* CAIMaterial::Create(const aiMaterial* pAIMaterial, const string& fileDirectory)

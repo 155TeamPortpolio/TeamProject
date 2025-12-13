@@ -95,18 +95,20 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	if (isSkeletal) {
 		auto skeletal = CAI_SKModel::Create();
-		m_Components.emplace(type_index(typeid(CAI_SKModel)), skeletal);
+		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
 		Safe_AddRef(skeletal);
 		skeletal->Load_AIModel(m_pAIScene, fileName);
+		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
 	}
 	else {
 		auto staticModel = CAI_STModel::Create();
-		m_Components.emplace(type_index(typeid(CAI_STModel)), staticModel);
+		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
 		Safe_AddRef(staticModel);
 		staticModel->Load_AIModel(m_pAIScene, fileName);
+		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
 }

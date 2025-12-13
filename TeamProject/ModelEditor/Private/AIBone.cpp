@@ -37,7 +37,7 @@ void CAIBone::Save_File(ofstream& ofs)
 
     if (m_iParentBoneIndex == -1) {
         _matrix		PreTransformMatrix = XMMatrixIdentity();
-        //PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(g_iExportPreRotate));
+        PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180));
         SaveMatrix = PreTransformMatrix * SaveMatrix;
     }
     XMStoreFloat4x4(&infoHeader.TransformationMatrix, SaveMatrix);

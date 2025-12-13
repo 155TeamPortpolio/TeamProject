@@ -37,12 +37,19 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 		return E_FAIL;
 
 	m_fileName = fileName;
+
+	//TBone
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
-
 	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		m_TransfromationMatrices[i] = m_pData->Get_TransformMatrix(i);
+	}
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
@@ -86,6 +93,8 @@ HRESULT CAI_SKModel::Save_Model()
 
 HRESULT CAI_SKModel::Ready_AIModelData(const aiScene* pAIScene)
 {
+	_uint meshNum = pAIScene->mNumMeshes;
+	m_DrawableMeshes.resize(meshNum, true);	
 	m_pData = CAIModelData::Create(MESH_TYPE::ANIM, pAIScene);
 
 	if (nullptr == m_pData)

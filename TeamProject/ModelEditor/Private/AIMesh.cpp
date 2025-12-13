@@ -93,33 +93,27 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 	VBDesc.CPUAccessFlags = 0;
 	VBDesc.MiscFlags = 0;
 	VBDesc.StructureByteStride = m_iVertexStride;
-
-	VTXMESH* pVertices = new VTXMESH[m_iVerticesCount];
-	ZeroMemory(pVertices, sizeof(VTXMESH) * m_iVerticesCount);
+	m_Meshes.reserve(m_iVerticesCount);
 
 	for (_uint i = 0; i < m_iVerticesCount; i++)
 	{
-		memcpy(&pVertices[i].vPosition, &_pAIMesh->mVertices[i], sizeof(_float3));
-		memcpy(&pVertices[i].vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
-		if (_pAIMesh->mNumUVComponents[0] > 0)
-			memcpy(&pVertices[i].vTexcoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
-		memcpy(&pVertices[i].vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
-		memcpy(&pVertices[i].vBinormal, &_pAIMesh->mBitangents[i], sizeof(_float3));
+		VTXMESH mesh = {};
+		memcpy(&mesh.vPosition, &_pAIMesh->mVertices[i], sizeof(_float3));
+		memcpy(&mesh.vNormal, &_pAIMesh->mNormals[i], sizeof(_float3));
+		if (_pAIMesh->mNumUVComponents[0] > 0) {
+			memcpy(&mesh.vTexcoord, &_pAIMesh->mTextureCoords[0][i], sizeof(_float2));
+			memcpy(&mesh.vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
+			memcpy(&mesh.vBinormal, &_pAIMesh->mBitangents[i], sizeof(_float3));
+		}
+		m_Meshes.push_back(mesh);
 	}
 
-	//ÀúÀå¿ë
-	m_Meshes.reserve(m_iVerticesCount);
-	for (_uint i = 0; i < m_iVerticesCount; i++) {
-		m_Meshes.push_back(pVertices[i]);
-	}
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
-	VertexInitialData.pSysMem = pVertices;
+	VertexInitialData.pSysMem = m_Meshes.data();
 
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
-
-	Safe_Delete_Array(pVertices);
 
 	return S_OK;
 }
@@ -168,7 +162,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 		_float4x4 OffsetMatrix = {};
 		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
 		XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
-		static_cast<CAISkeleton*>(m_pSkeleton)->Set_Offset(BoneIndex, OffsetMatrix);
+		_pSkeleton->Set_Offset(BoneIndex, OffsetMatrix);
 
 		for (size_t j = 0; j < pAIBone->mNumWeights; j++)
 		{
@@ -236,9 +230,11 @@ void CAIMesh::Save_File(ofstream& ofs)
 	else if (m_iVertexStride == sizeof(VTXMESH)) {
 		for (VTXMESH& vertex : m_Meshes) {
 			_matrix		PreTransformMatrix = XMMatrixIdentity();
-			//PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(g_iExportPreRotate));
+			PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180));
 			XMStoreFloat3(&vertex.vPosition, XMVector3TransformCoord(XMLoadFloat3(&vertex.vPosition), PreTransformMatrix));
 			XMStoreFloat3(&vertex.vNormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vNormal), PreTransformMatrix));
+			XMStoreFloat3(&vertex.vTangent, XMVector3TransformNormal(XMLoadFloat3(&vertex.vTangent), PreTransformMatrix));
+			XMStoreFloat3(&vertex.vBinormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vBinormal), PreTransformMatrix));
 
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXMESH));
 		}
