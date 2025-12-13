@@ -5,7 +5,7 @@ NS_BEGIN(Engine)
 
 class CPhysicsSystem final : public IPhysicsService
 {
-#ifdef USINPHYSICS 
+#ifdef USINGPHYSICS 
 
 private:
     CPhysicsSystem() DEFAULT;

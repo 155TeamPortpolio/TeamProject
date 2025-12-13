@@ -5,7 +5,7 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CRigidBody final : public CComponent
 {
-#ifdef USINPHYSICS 
+#ifdef USINGPHYSICS 
 private:
 	CRigidBody();
 	CRigidBody(const CRigidBody& rhs);

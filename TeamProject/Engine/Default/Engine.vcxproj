@@ -238,7 +238,11 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CameraMgr.h" />
     <ClInclude Include="..\Public\Camera_Enum.h" />
     <ClInclude Include="..\Public\Camera_Struct.h" />
-    <ClInclude Include="..\public\CCameraTrail.h" />
+    <ClInclude Include="..\public\CamEvaluator.h" />
+    <ClInclude Include="..\public\CamFovLinearEvaluator.h" />
+    <ClInclude Include="..\public\CamRotSlerpEvaluator.h" />
+    <ClInclude Include="..\public\CamUtil.h" />
+    <ClInclude Include="..\public\CCamRail.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
@@ -275,6 +279,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\HierarchyPanel.h" />
     <ClInclude Include="..\Public\IAudioService.h" />
     <ClInclude Include="..\Public\ICameraService.h" />
+    <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\ICollisionService.h" />
     <ClInclude Include="..\Public\IFontService.h" />
     <ClInclude Include="..\Public\IGUIService.h" />
@@ -358,7 +363,11 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\BoneFollower.cpp" />
     <ClCompile Include="..\Private\Camera.cpp" />
     <ClCompile Include="..\Private\CameraMgr.cpp" />
-    <ClCompile Include="..\private\CCameraTrail.cpp" />
+    <ClCompile Include="..\private\CamEvaluator.cpp" />
+    <ClCompile Include="..\private\CamFovLinearEvaluator.cpp" />
+    <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp" />
+    <ClCompile Include="..\private\CamUtil.cpp" />
+    <ClCompile Include="..\private\CCamRail.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />

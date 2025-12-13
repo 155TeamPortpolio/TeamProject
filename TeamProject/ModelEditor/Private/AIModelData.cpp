@@ -9,19 +9,15 @@ CAIModelData::CAIModelData()
 HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 {
 	m_pSkeleton = CAISkeleton::Create(pAIScene->mRootNode);
-
-	for (int i = 0; i < pAIScene->mNumMeshes; ++i) {
-		CAIMesh* newAIMesh = CAIMesh::Create(_eType, pAIScene->mMeshes[i], static_cast<CAISkeleton*>(m_pSkeleton));
-		if (newAIMesh)
-			m_Meshes.push_back(newAIMesh);
-		else
-		{
-			for (auto& mesh : m_Meshes)
-				Safe_Release(mesh);
+	_uint meshNum = pAIScene->mNumMeshes;
+	
+	for (size_t i = 0; i < meshNum; i++)
+	{
+		CAIMesh* pMesh = CAIMesh::Create(_eType, pAIScene->mMeshes[i], static_cast<CAISkeleton*>(m_pSkeleton));
+		if (nullptr == pMesh)
 			return E_FAIL;
-		}
+		m_Meshes.push_back(pMesh);
 	}
-
 	return S_OK;
 }
 
@@ -35,6 +31,17 @@ CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)
 	}
 
 	return pInstance;
+}
+
+void CAIModelData::Save_File(ofstream& ofs)
+{
+
+	for (size_t i = 0; i < m_Meshes.size(); i++)
+	{
+		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs);
+	}
+
+	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs);
 }
 
 void CAIModelData::Free()
