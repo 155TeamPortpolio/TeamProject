@@ -22,8 +22,10 @@ public:
 
 private:
 	_int		m_iFontKeyIndex = {};
+	_int		m_iFontSizeIndex = {}; 
 	_char		m_szText[MAX_PATH] = {};
-	_float4		m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	_float		m_fFontScale = { 1.f };
+	_float4		m_vColor = { 1.f, 1.f, 1.f, 1.f }; 
 
 private:
 	wstring Utf8ToWstring(const string& strUtf8);
@@ -35,3 +37,6 @@ public:
 };
 
 NS_END
+
+// 폰트 크기 32로 해서 스케일
+// /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 font.spritefont
