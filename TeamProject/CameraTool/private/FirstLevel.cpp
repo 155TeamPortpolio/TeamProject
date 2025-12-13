@@ -2,6 +2,8 @@
 #include "FirstLevel.h"
 #include "DebugFreeCam.h"
 
+#include "CamPanel.h"
+
 FirstLevel::FirstLevel(const string& key) : CLevel(key)
 {
 	game = CGameInstance::GetInstance();
@@ -31,6 +33,9 @@ HRESULT FirstLevel::Awake()
 	objMgr->Add_Object(debugCamObj, { "First_Level", "Camera_Layer" });
 
 	camMgr->Set_MainCam(debugCamObj->Get_Component<CCamera>());
+
+	auto guiSys = game->Get_GUISystem();
+	guiSys->Register_Panel(CamPanel::Create(guiSys->Get_Context()));
 
 	return S_OK;
 }

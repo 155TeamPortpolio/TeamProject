@@ -5,7 +5,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-#ifdef USINPHYSICS 
+#ifdef USINGPHYSICS 
 
 CRigidBody::CRigidBody()
 {
@@ -73,8 +73,10 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 
 	// 초기 위치
 	_vector vPos = m_pOwnerTransform->Get_WorldPos();
-	_vector vQuat = m_pOwnerTransform->Get_QuaternionRotate();
-	PxTransform initialPose(ToPxVec3(vPos), ToPxQuat(vQuat));
+	_matrix mWorldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+	_vector vScale, vRot, vTrans;
+	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+	PxTransform initialPose(ToPxVec3(vPos), ToPxQuat(vRot));
 
 	if(m_bStatic)
 		m_pActor = pPhysics->createRigidStatic(initialPose);
@@ -159,7 +161,10 @@ _vector CRigidBody::Get_Velocity()
 	if (m_pActor && !m_bStatic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
-		if (pDynamic) return ToDxVec(pDynamic->getLinearVelocity());
+		if (pDynamic) {
+			_vector vVel = ToDxVec(pDynamic->getLinearVelocity());
+			return XMVectorSetW(vVel, 0.f);
+		}
 	}
 	return XMVectorZero();
 }
@@ -224,11 +229,13 @@ void CRigidBody::Update_RigidBody()
 	{
 		// 로직이 위치를 제어 : Transform -> Physics
 		_vector vPos = m_pOwnerTransform->Get_WorldPos();
-		_vector vQuat = m_pOwnerTransform->Get_QuaternionRotate();
+		_matrix worldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+		_vector vScale, vRot, vTrans;
+		XMMatrixDecompose(&vScale, &vRot, &vTrans, worldMat);
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic)
 		{
-			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vQuat)));
+			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 		}
 	}
 	else

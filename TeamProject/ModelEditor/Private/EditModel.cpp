@@ -66,6 +66,7 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
+		Save_AIScene();
 	}
 	ImGui::EndChild();
 
@@ -94,20 +95,41 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	if (isSkeletal) {
 		auto skeletal = CAI_SKModel::Create();
-		m_Components.emplace(type_index(typeid(CAI_SKModel)), skeletal);
+		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
 		Safe_AddRef(skeletal);
 		skeletal->Load_AIModel(m_pAIScene, fileName);
+		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
 	}
 	else {
 		auto staticModel = CAI_STModel::Create();
-		m_Components.emplace(type_index(typeid(CAI_STModel)), staticModel);
+		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
 		Safe_AddRef(staticModel);
 		staticModel->Load_AIModel(m_pAIScene, fileName);
+		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
+}
+
+HRESULT CEditModel::Save_AIScene()
+{
+	HRESULT hr = {};
+
+	if (HasBones()) {
+		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
+		hr = pModel->Save_Model();
+	}
+	else {
+		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
+		hr = pModel->Save_Model();
+	}
+
+	CAI_Material* pMaterial = dynamic_cast<CAI_Material*>(Get_Component<CMaterial>());
+	hr = pMaterial->Save_Material();
+
+	return S_OK;
 }
 
 _bool CEditModel::HasBones()

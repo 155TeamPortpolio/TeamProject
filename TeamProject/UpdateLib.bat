@@ -1,87 +1,68 @@
 @echo off
-setlocal
+setlocal enabledelayedexpansion
+
+REM ========== 프로젝트 폴더 등록 (공백으로 구분) ==========
+set PROJECT_LIST=MapTool DemoProject AnimationTool CameraTool EffectTool UITool
+REM ======================================================
 
 set BASE=%~dp0
 set CONFIG=%~1
 
-REM ===== 디버깅: 받은 파라미터 출력 =====
 echo [UpdateLib] Received parameter: [%CONFIG%]
 
-REM 공백/따옴표 제거 (안전장치)
 set CONFIG=%CONFIG:"=%
 set CONFIG=%CONFIG: =%
 
-REM 파라미터가 없으면 기본값
 if "%CONFIG%"=="" (
     echo [UpdateLib] No parameter received, defaulting to Release
     set "CONFIG=Release"
 )
 
-REM =======================================================
 if /I "%CONFIG%"=="Debug" goto :SetDebug
 if /I "%CONFIG%"=="Release" goto :SetRelease
 
-REM 예외 처리
 goto :SetError
 
-REM -------------------------------------------------------
 :SetDebug
 set "PHYSX_DIR=Engine\ThirdPartyLib\PhysX\deb"
 echo [UpdateLib] Mode: DEBUG (Source: %PHYSX_DIR%)
 goto :StartCopy
 
-REM -------------------------------------------------------
 :SetRelease
 set "PHYSX_DIR=Engine\ThirdPartyLib\PhysX\rel"
 echo [UpdateLib] Mode: RELEASE (Source: %PHYSX_DIR%)
 goto :StartCopy
 
-REM -------------------------------------------------------
 :SetError
 echo [UpdateLib] ERROR: Unknown configuration '%CONFIG%'
 echo [UpdateLib] Valid values: Debug or Release
 exit /b 1
 
-REM =======================================================
 :StartCopy
-REM 생성될 때까지 기다리는 함수
 echo [UpdateLib] Waiting for Engine.dll...
 call :WaitForFile "%BASE%Engine\Bin\Engine.dll" 15
 call :WaitForFile "%BASE%Engine\Bin\Engine.lib" 15
 call :WaitForFileUnlock "%BASE%Engine\Bin\Engine.dll" 10
 
-REM FMOD 라이브러리 함수
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmod_vc.lib" 5
 call :WaitForFile "%BASE%Engine\ThirdPartyLib\fmodL_vc.lib" 5
-
-REM PhysX
 call :WaitForFile "%BASE%%PHYSX_DIR%\PhysX_64.lib" 5
 
+echo [UpdateLib] Registered projects: %PROJECT_LIST%
+echo [UpdateLib] Starting copy to project folders...
 
-REM 여기서 부터 자신 프로젝트 기준으로 복사====================DemoProject부분을 자신 폴더명으로
-
-REM 실제 복사 
-echo [UpdateLib] Copying files...
-xcopy /y "%BASE%Engine\Bin\Engine.dll" "%BASE%DemoProject\Bin\"
-if errorlevel 1 (
-    echo [ERROR] Failed to copy Engine.dll
-    exit /b 1
+for %%P in (%PROJECT_LIST%) do (
+    if exist "%BASE%%%P\Bin\" (
+        echo [UpdateLib] Copying to %%P...
+        call :CopyToProject "%BASE%%%P" "%%P"
+    ) else (
+        echo [UpdateLib] WARNING: %%P\Bin folder not found, skipping...
+    )
 )
 
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll" "%BASE%DemoProject\Bin\"
-
-xcopy /y "%BASE%%PHYSX_DIR%\PhysX_64.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%%PHYSX_DIR%\PhysXCommon_64.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%%PHYSX_DIR%\PhysXFoundation_64.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%%PHYSX_DIR%\PhysXCooking_64.dll" "%BASE%DemoProject\Bin\"
-xcopy /y "%BASE%%PHYSX_DIR%\PhysXGpu_64.dll" "%BASE%DemoProject\Bin\"
-
-xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\" "%BASE%DemoProject\Bin\ShaderFiles\"
-xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%BASE%DemoProject\Bin\ShaderFiles\"
-xcopy /y /s /e /i "%BASE%Engine\Public\" "%BASE%EngineSDK\Inc\"
-
-REM 여기까지==========================================================
+echo [UpdateLib] Copying to EngineSDK...
+if not exist "%BASE%EngineSDK\Lib\" mkdir "%BASE%EngineSDK\Lib\"
+if not exist "%BASE%EngineSDK\Inc\" mkdir "%BASE%EngineSDK\Inc\"
 
 xcopy /y "%BASE%Engine\Bin\Engine.lib" "%BASE%EngineSDK\Lib\"
 xcopy /y "%BASE%Engine\ThirdPartyLib\fmod_vc.lib" "%BASE%EngineSDK\Lib\"
@@ -103,7 +84,34 @@ if exist "%BASE%%PHYSX_DIR%\*.pdb" (
     xcopy /y "%BASE%%PHYSX_DIR%\*.pdb" "%BASE%EngineSDK\Lib\"
 )
 
+xcopy /y /s /e /i "%BASE%Engine\Public\" "%BASE%EngineSDK\Inc\"
+
 echo [UpdateLib] Copy completed successfully for %CONFIG% mode
+goto :eof
+
+:CopyToProject
+set PROJECT_PATH=%~1
+set PROJECT_NAME=%~2
+
+xcopy /y "%BASE%Engine\Bin\Engine.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+if errorlevel 1 (
+    echo [ERROR] Failed to copy Engine.dll to %PROJECT_NAME%
+    goto :eof
+)
+
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmodL.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%Engine\ThirdPartyLib\fmod.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+
+xcopy /y "%BASE%%PHYSX_DIR%\PhysX_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXCommon_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXFoundation_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXCooking_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+xcopy /y "%BASE%%PHYSX_DIR%\PhysXGpu_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
+
+xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1
+xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1
+
+echo [UpdateLib] %PROJECT_NAME% completed
 goto :eof
 
 :WaitForFile
@@ -129,7 +137,6 @@ set file=%~1
 set retry=%~2
 set count=0
 :unlock_loop
-REM 파일을 복사해서 쓰기 가능한지 테스트
 copy /y "%file%" "%file%.test" >nul 2>&1
 if %errorlevel% equ 0 (
     del "%file%.test" >nul 2>&1

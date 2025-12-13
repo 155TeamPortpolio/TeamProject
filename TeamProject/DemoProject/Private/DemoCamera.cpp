@@ -29,6 +29,15 @@ HRESULT CDemoCamera::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	m_pTransform->LookAt({ 0,0,0 }); 
+	LIGHT_DESC desc = {};
+	desc.vLightPosition = { 0,20,0,0 };
+	desc.fLightRange = 80.0f;
+	desc.vLightDirection = _float4(0.f, -1.f, 1.f, 0.f);
+	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	desc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
+	desc.vLightSpecular = _float4(1.f, 1.f, 1.f, 1.f);
+
+	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 	return S_OK;
 }
 
@@ -88,6 +97,12 @@ void CDemoCamera::Update(_float dt)
 
 void CDemoCamera::Late_Update(_float dt)
 {
+}
+
+void CDemoCamera::Render_GUI()
+{
+	__super::Render_GUI();
+	ImGui::DragFloat("MoveSpeed", &m_fSpeed);
 }
 
 CDemoCamera* CDemoCamera::Create()
