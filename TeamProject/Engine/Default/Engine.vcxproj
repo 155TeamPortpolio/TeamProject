@@ -223,7 +223,6 @@ exit /b 0</Command>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\Public\AABB_Collider.h" />
     <ClInclude Include="..\Public\AnimationClip.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
     <ClInclude Include="..\Public\AudioDevice.h" />
@@ -312,7 +311,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ModelData.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd.h" />
     <ClInclude Include="..\Public\NFD_Inc\nfd_common.h" />
-    <ClInclude Include="..\Public\OBB_Collider.h" />
     <ClInclude Include="..\Public\ObjectContainer.h" />
     <ClInclude Include="..\Public\ObjectMgr.h" />
     <ClInclude Include="..\Public\ParticleNode.h" />
@@ -334,7 +332,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
     <ClInclude Include="..\Public\SoundData.h" />
-    <ClInclude Include="..\Public\Sphere_Collider.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
@@ -356,7 +353,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Private\AABB_Collider.cpp" />
     <ClCompile Include="..\Private\AnimationClip.cpp" />
     <ClCompile Include="..\Private\Animator3D.cpp" />
     <ClCompile Include="..\Private\AudioDevice.cpp" />
@@ -415,7 +411,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\MeshNode.cpp" />
     <ClCompile Include="..\Private\Model.cpp" />
     <ClCompile Include="..\Private\ModelData.cpp" />
-    <ClCompile Include="..\Private\OBB_Collider.cpp" />
     <ClCompile Include="..\Private\ObjectContainer.cpp" />
     <ClCompile Include="..\Private\ObjectMgr.cpp" />
     <ClCompile Include="..\Private\ParticleNode.cpp" />
@@ -437,7 +432,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
     <ClCompile Include="..\Private\SoundData.cpp" />
-    <ClCompile Include="..\Private\Sphere_Collider.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
