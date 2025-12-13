@@ -39,7 +39,7 @@ HRESULT CSpriteNode_Edit::Initialize(INIT_DESC* pArg)
 
 	/* Shader Param */
 	customInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
-	customInstance->Set_Param("Rol", { &m_iRow,"uint",sizeof(_uint) });
+	customInstance->Set_Param("Row", { &m_iRow,"uint",sizeof(_uint) });
 	customInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
 
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
