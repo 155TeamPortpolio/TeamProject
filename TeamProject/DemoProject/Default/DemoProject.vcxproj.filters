@@ -28,6 +28,12 @@
     <Filter Include="97. GUI_Inc">
       <UniqueIdentifier>{a11db653-af6a-4eb5-8d32-146e7ef2f709}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. DemoObject\DemoGrid">
+      <UniqueIdentifier>{c66fd9c3-82e7-4802-96d7-4733975e64a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. DemoShader">
+      <UniqueIdentifier>{b85ecac9-0442-4d9a-bcc3-36944c48427f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -105,6 +111,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
       <Filter>97. GUI_Inc</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DemoGrid.h">
+      <Filter>02. DemoObject\DemoGrid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -164,10 +173,18 @@
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
       <Filter>97. GUI_Inc</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\DemoGrid.cpp">
+      <Filter>02. DemoObject\DemoGrid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DemoProject.rc">
       <Filter>98. Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <Filter>96. DemoShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

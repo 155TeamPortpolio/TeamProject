@@ -99,6 +99,12 @@ void CDemoCamera::Late_Update(_float dt)
 {
 }
 
+void CDemoCamera::Render_GUI()
+{
+	__super::Render_GUI();
+	ImGui::DragFloat("MoveSpeed", &m_fSpeed);
+}
+
 CDemoCamera* CDemoCamera::Create()
 {
 	CDemoCamera* instance = new CDemoCamera();

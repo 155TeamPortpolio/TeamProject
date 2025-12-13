@@ -35,20 +35,24 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     GS_OUT v[4];
 
     float3 worldPos = In[0].vWorldPos.xyz;
+    float3 camPos = vCamPosition.xyz;
+    float3 worldUp = float3(0.f, 1.f, 0.f);
     
-    float3 right = normalize(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float3 up = normalize(ObjectBufferArray[TransformIndex].Transform[1].xyz);
-    float scaleX = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float scaleY = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float3 look = normalize(camPos - worldPos);
+    float3 right = normalize(cross(worldUp, look));
+    float3 up = normalize(cross(look, right));
+    
+    float scaleX = length(ObjectBufferArray[TransformIndex].Transform[0]);
+    float scaleY = length(ObjectBufferArray[TransformIndex].Transform[1]);
 
-    float3 offsetRight = right * ( scaleX*0.5f);
+    float3 offsetRight = right * (scaleX * 0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);
 
     // 정점 4개 위치 계산 (월드 기준)
-    float3 p0 = worldPos + (-offsetRight + offsetUp);
-    float3 p1 = worldPos + (offsetRight + offsetUp);
-    float3 p2 = worldPos + (offsetRight - offsetUp);
-    float3 p3 = worldPos + (-offsetRight - offsetUp);
+    float3 p0 = worldPos + (offsetRight + offsetUp);
+    float3 p1 = worldPos + (-offsetRight + offsetUp);
+    float3 p2 = worldPos + (-offsetRight - offsetUp);
+    float3 p3 = worldPos + (offsetRight - offsetUp);
     
     matrix matrixVP = mul(matView, matProjection);
     v[0].vPosition = mul(float4(p0, 1.f), matrixVP);
@@ -85,6 +89,10 @@ struct PS_OUT
     vector vColor : SV_TARGET0;
 };
 
+uint Col;
+uint Row;
+uint FrameIndex;
+
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
@@ -94,6 +102,25 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     Out.vColor = vDiffuse ;
+    return Out;
+}
+
+PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 FrameSize = float2(1.f / Col, 1.f / Row);
+    int iFrameX = FrameIndex % Col;
+    int iFrameY = FrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
+    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
+    
+    vector vDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    if (vDiffuse.a < 0.1f)
+        discard;
+    
+    Out.vColor = vDiffuse;
+    
     return Out;
 }
 
@@ -107,6 +134,15 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
-    }  
+    }
+    pass SpriteAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
 }
 
