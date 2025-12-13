@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "GameInstance.h"
 #include "SpriteNode_Edit.h"
+#include "ParticleNode_Edit.h"
 #include "ObjectContainer.h"
 
 CEffectContainer_Edit::CEffectContainer_Edit()
@@ -52,6 +53,7 @@ void CEffectContainer_Edit::Render_GUI()
 {
     ImGui::PushID(this);
 	DisplayAllTextures();
+	ContextClear();
 	Play();
     AddNode();
 	RemoveLastNode();
@@ -119,7 +121,10 @@ void CEffectContainer_Edit::AddNode()
     }
 	if (ImGui::Button("Add Particle Node"))
 	{
-		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ParticleNode" }).Build("ParticleNode");
+		CParticleNode_Edit::PARTICLE_NODE_EDIT_DESC* pDesc = new CParticleNode_Edit::PARTICLE_NODE_EDIT_DESC;
+		pDesc->pContext = &m_Context;
+
+		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ParticleNode" }).Add_ObjDesc(pDesc).Build("ParticleNode");
 		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
 	}
 	if (ImGui::Button("Add Mesh Node"))

@@ -92,6 +92,7 @@ namespace Engine {
 
 	/*Particle*/
 	typedef struct DrawParticlePacket : BASE_PACKET {
+		_float4x4* pWorldMatrix = { nullptr };
 		class CParticleSystem* pParticleSystem = { nullptr };
 		class CMaterial* pMaterial = { nullptr };
 	}PARTICLE_PACKET;

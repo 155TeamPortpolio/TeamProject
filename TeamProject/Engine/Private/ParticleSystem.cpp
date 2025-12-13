@@ -95,11 +95,16 @@ MINMAX_BOX CParticleSystem::Get_MeshBoundingBox(_uint index)
 
 void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 {
+	m_fSpawnPerSec = 4.f;
+
 	m_Particles.resize(30);
 	m_DeadParticleIndices.reserve(30);
 
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 		m_DeadParticleIndices.push_back(i);
+
+	m_VelocityMin = _float3(0.f, 5.f, 0.f);
+	m_VelocityMax = _float3(0.f, 10.f, 0.f);
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -111,7 +116,7 @@ void CParticleSystem::Simulation_Particle(_float dt)
 
 HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count)
 {
-	pContext->Draw(count, offset);
+	pContext->DrawInstanced(m_pInstancePoint->Get_VertexCount(), count, 0, offset);
 
 	return S_OK;
 }
@@ -200,6 +205,18 @@ void CParticleSystem::BuildInstanceData()
 		_vector4 translate = _vector4(particle.vPosition.x, particle.vPosition.y, particle.vPosition.z, 1.f);
 		_vector3 velocity = particle.vVelocity;
 		_vector2 lifeTime(particle.fLifeTime, particle.fMaxLifeTime);
+		_vector4 right(1.f, 0.f, 0.f, 0.f);
+		_vector4 up(0.f, 1.f, 0.f, 0.f);
+		_vector4 look(0.f, 0.f, 1.f, 0.f);
+
+		data.vRight = right;
+		data.vUp = up;
+		data.vLook = look;
+		data.vTraslate = translate;
+		data.vVelocity = velocity;
+		data.vLifeTime = lifeTime;
+
+		m_InstanceDatas.push_back(data);
 	}
 }
 

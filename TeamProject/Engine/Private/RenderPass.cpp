@@ -342,11 +342,19 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext)
 	/*각 파티클시스템 렌더링*/
 	for (_uint i = 0; i < m_Packets.size(); ++i)
 	{
-		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) {
-			BindConstant(pContext, m_Packets[i].pParticleSystem, m_Packets[i].pMaterial, 0, 0);
-		}
-		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
+		auto& packet = m_Packets[i];
 
+		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) {
+			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0);
+		}
+
+		SHADER_PARAM param = {};
+		param.iSize = sizeof(_float4x4);
+		param.typeName = "float4x4";
+		param.pData = packet.pWorldMatrix;
+		pCurShader->Bind_Value("g_WorldMatrix", param);
+
+		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
 		m_Packets[i].pMaterial->Apply_Material(pContext, 0);
 		m_Packets[i].pParticleSystem->Draw(pContext, DrawData.iOffset, DrawData.iParticleCount);
 	}

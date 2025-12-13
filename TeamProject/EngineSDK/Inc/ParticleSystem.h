@@ -2,7 +2,7 @@
 #include "Model.h"
 
 NS_BEGIN(Engine)
-class CParticleSystem :
+class ENGINE_DLL CParticleSystem :
     public CModel
 {
 	typedef struct tagParticle
