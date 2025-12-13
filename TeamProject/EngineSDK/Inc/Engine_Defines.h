@@ -50,7 +50,7 @@ using namespace DirectX::SimpleMath;
 
 #include <FMOD_Inc/fmod.hpp>
 
-// 기존 new 매크로로 인해 충돌 방지
+// 기존 new 매크로로 인해 충돌5 방지
 #pragma push_macro("new")
 #undef new
 #include "GUI_Inc/imgui.h"
@@ -65,8 +65,12 @@ using namespace DirectX::SimpleMath;
 using json = nlohmann::json;
 
 //--PhysX--//
+#pragma push_macro("new") 
+#undef new 
 #include "PhysX_Inc/PxPhysicsAPI.h"
+#define USINGPHYSICS
 using namespace physx;
+#pragma pop_macro("new")
 
 #define UNICODE
 #define _UNICODE

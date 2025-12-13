@@ -16,15 +16,6 @@ enum class CamRigType // 카메라가 "어떻게 움직이는지"에 대한 분류, 같은 CamType 
 	Orbit,	  // 타겟을 중심으로 공전하듯 빙글 도는 카메라.
 	Fixed     // 완전히 고정된 카메라 (pos/rot 변하지 않음).
 };
-enum class CamEaseType // 키프레임 사이를 어떻게 보간할지에 대한 이징 타입
-{
-	Step, 		// 전 키 값 유지 (계단 처럼 뚝뚝 바뀌는 형태)
-	Linear, 	// 선형 보간
-	EaseIn,		// 시작은 천천히, 끝으로 갈수록 빠르게
-	EaseOut,	// 시작은 빠르게, 끝으로 갈수록 천천히
-	EaseInOut,  // 양 끝은 천천히, 중간은 빠르게
-	// 추후 Sine, Quad, Cubic 추가 할수도..
-};
 enum class CamSequenceMarkerType // 시퀀스 타임라인 위에 찍는 "트리거 이벤트" 종류. 카메라 움직임이 아니라, 특정 시점에서 발동할 연출/이벤트
 {
 	CamShake,        // 카메라 흔들기 (amp/freq/dur 등..)

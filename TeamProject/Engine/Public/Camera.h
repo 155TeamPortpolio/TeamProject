@@ -2,8 +2,7 @@
 
 #include "Component.h"
 #include "Transform.h"
-#include "Camera_Enum.h"
-#include "Camera_Struct.h"
+#include "CamUtil.h"
 
 NS_BEGIN(Engine)
 template<typename T>

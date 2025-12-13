@@ -18,6 +18,10 @@ void MainApp::Init()
 	context = game->Get_Context();
 
 	Set_Levels();
+
+#ifdef  _USING_GUI
+	ImGui::SetCurrentContext(game->Get_GUISystem()->GetEngineImGuiContext());
+#endif 
 }
 
 void MainApp::Update(float dt)
