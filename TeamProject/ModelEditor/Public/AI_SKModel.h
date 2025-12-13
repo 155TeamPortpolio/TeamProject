@@ -20,6 +20,7 @@ public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg);
     virtual void Render_GUI() override;
+    HRESULT Save_Model();
 
 public:
     HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);

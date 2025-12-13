@@ -13,9 +13,8 @@ private:
 
 public:
 	HRESULT Initialize(MESH_TYPE _eType, const aiScene* pAIScene);
-
+	void Save_File(ofstream& ofs);
 private:
-
 
 public:
 	static CModelData* Create(MESH_TYPE _eType, const aiScene* pAIScene);

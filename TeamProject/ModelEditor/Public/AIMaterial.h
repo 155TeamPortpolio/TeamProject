@@ -17,9 +17,10 @@ public:
     void Render_GUI(vector<_uint>& TextureIndexes) override;
     void LinkShader(const string& shader);
 
+
 private:
     void Render_MaterialAdd();
-
+    void Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type);
 private:
     int m_currentPassIndex = {};
     _bool MaterialTabOpened = { false };
