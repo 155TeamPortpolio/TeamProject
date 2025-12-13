@@ -12,6 +12,10 @@ public:
 
 private:
 	const vector<CamKeyFrame>* keyframes{};
+
+public:
+	static CamFovLinearEvaluator* Create() { return new CamFovLinearEvaluator(); }
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

@@ -3,7 +3,7 @@
 
 bool CamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-	if (keys.size() < 2)
+	if (keys.empty())
 		return false;
 
 	keyframes = &keys;
@@ -12,16 +12,19 @@ bool CamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CamPosLinearEvaluator::Evaluate(_float time) const
 {
-	assert(keyframes);
-	assert(keyframes->size() >= 2);
+    assert(keyframes);
+    assert(!keyframes->empty());
 
-	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
+    if (keyframes->size() == 1)
+        return (*keyframes)[0].pos;
 
-	const _uint segmentIdx = segment.segmentIdx;
-	const float u = segment.normalizedTime;
+    const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
 
-	const _vector3& startPos = (*keyframes)[segmentIdx].pos;
-	const _vector3& endPos   = (*keyframes)[segmentIdx + 1].pos;
+    const _uint segmentIdx = segment.segmentIdx;
+    const float u = segment.normalizedTime;
 
-	return startPos + (endPos - startPos) * u;
+    const _vector3& startPos = (*keyframes)[segmentIdx].pos;
+    const _vector3& endPos = (*keyframes)[segmentIdx + 1].pos;
+
+    return startPos + (endPos - startPos) * u;
 }

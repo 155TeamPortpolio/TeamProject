@@ -3,7 +3,7 @@
 
 bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-	if (keys.size() < 2)
+	if (keys.empty())
 		return false;
 
 	keyframes = &keys;
@@ -11,18 +11,17 @@ bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 	cachedRots.clear();
 	cachedRots.resize(keys.size());
 
-	// 1. look + roll -> quaterion 변환 캐시
 	for (size_t keyIdx = 0; keyIdx < keys.size(); ++keyIdx)
 	{
 		const CamKeyFrame& key = keys[keyIdx];
-		
+
 		const float lookLengthSq = key.look.LengthSquared();
 		if (lookLengthSq < 1e-8f)
 			return false;
 
 		cachedRots[keyIdx] = MakeRotFromLookRoll(key.look, key.roll);
 	}
-	// 2. hemisphere 정리 (연속성 유지: dot < 0 이면 부호 반전)
+
 	for (size_t keyIdx = 1; keyIdx < cachedRots.size(); ++keyIdx)
 	{
 		const float dotValue = cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]);
@@ -35,8 +34,11 @@ bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 Quaternion CamRotSlerpEvaluator::Evaluate(_float time) const
 {
 	assert(keyframes);
-	assert(keyframes->size() >= 2);
+	assert(!keyframes->empty());
 	assert(cachedRots.size() == keyframes->size());
+
+	if (keyframes->size() == 1)
+		return cachedRots[0];
 
 	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
 
@@ -44,7 +46,7 @@ Quaternion CamRotSlerpEvaluator::Evaluate(_float time) const
 	const float u          = segment.normalizedTime;
 
 	const Quaternion& startRot = cachedRots[segmentIdx];
-	const Quaternion& endRot = cachedRots[segmentIdx + 1];
+	const Quaternion& endRot   = cachedRots[segmentIdx + 1];
 
 	return Quaternion::Slerp(startRot, endRot, u);
 }

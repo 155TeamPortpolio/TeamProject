@@ -25,23 +25,23 @@ private:
 	void DrawKeyframeList();
 	void DrawKeyframeEditor();
 	void DrawTimeline();
+	void DrawInterpSelector();
 
 private: // Helper
-	vector<CamKeyFrame>&       GetKeys();
-	const vector<CamKeyFrame>& GetKeys() const;
-	bool                       HasValidSelection() const;
-	CamKeyFrame&               GetSelectedKey();
-	_uint                      GetSelectedKeyId() const;
-	_float                     GetNextDefaultTime() const;
-	void                       AddKey_Default();
-	void                       DeleteSelectedKey();
-	void                       SortKeysByTime_Stable();
-	void                       MergeNearDuplicateTimes_KeepLast();
-	bool                       SelectKeyById(_uint keyId);
-	void                       SyncEditorFromSelection();
-	void                       ApplyEditorToSelectedKey_TimeOnly();
-	void                       CaptureSelectedKey_FromCaptureCam();
-	void                       ApplyPlaybackAtTime(_float t);
+    vector<CamKeyFrame>&       GetKeyFrames()                 { return target.sequence->keyframes; }
+	const vector<CamKeyFrame>& GetKeyFrames() const           { return target.sequence->keyframes; }
+    bool                       HasValidSelection() const;
+    CamKeyFrame&               GetSelectedKey();
+    _uint                      GetSelectedKeyId() const;
+    _float                     GetNextDefaultTime() const;
+    void                       AddKey_Default();
+    void                       DeleteSelectedKey();
+    void                       SortKeysByTime_Stable();
+    void                       MergeNearDuplicateTimes_KeepLast();
+    bool                       SelectKeyById(_uint keyId);
+    void                       SyncEditorFromSelection();
+    void                       ApplyEditorToSelectedKey_TimeOnly();
+    void                       CaptureSelectedKey_FromCaptureCam();
 
 private:
 	CamSequenceDesc  debugSequence{};

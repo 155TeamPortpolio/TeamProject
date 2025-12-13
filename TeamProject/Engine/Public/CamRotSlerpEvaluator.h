@@ -16,6 +16,10 @@ private:
 private:
 	const vector<CamKeyFrame>* keyframes{};
 	vector<Quaternion>         cachedRots{};
+
+public:
+	static CamRotSlerpEvaluator* Create() { return new CamRotSlerpEvaluator(); }
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

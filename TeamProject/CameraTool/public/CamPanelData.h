@@ -1,14 +1,17 @@
 #pragma once
 
+#include "CamSequencePlayer.h"
+
 NS_BEGIN(CameraTool)
 
 struct CamToolTarget
 {
-	CamSequenceDesc* sequence{};
-	_uint            nextKeyId = 1;
+	CamSequenceDesc*   sequence{};
+	_uint              nextKeyId = 1;
 
-    CamObj*          captureCamObj{};
-    CCamera*         captureCamComp{};
+    CamObj*            captureCamObj{};
+    CCamera*           captureCamComp{};
+    CamSequencePlayer* player{};
 };
 struct CamToolEditState
 {
@@ -19,9 +22,9 @@ struct CamToolEditState
     _bool playing   = false;
     _bool loop      = false;
 
-    _float curTime = 0.f;
-    _float endTime = 10.f;
-    _float zoom    = 1.f;
+    _float curTime   = 0.f;
+    _float endTime   = 10.f;
+    _float timeScale = 1.f;
 
     _float editTime = 0.f;
     _float editFov  = 60.f;

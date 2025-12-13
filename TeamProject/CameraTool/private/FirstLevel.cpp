@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "FirstLevel.h"
 #include "DebugFreeCam.h"
+#include "DemoModel.h"
 
 #include "CamPanel.h"
 
@@ -22,6 +23,7 @@ HRESULT FirstLevel::Awake()
 	auto camMgr = game->Get_CameraMgr();
 
 	proto->Add_ProtoType("First_Level", "Proto_GameObject_DebugFreeCam", DebugFreeCam::Create());
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoModel",    CDemoModel::Create());
 
 	constexpr float aspect = static_cast<float>(WinX) / WinY;
 
@@ -30,7 +32,12 @@ HRESULT FirstLevel::Awake()
 		.Position({ 0.f, 3.f, -5.f })
 		.Build("DebugFreeCam_Main");
 
+	CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_GameObject_DemoModel" })
+		.Position({})
+		.Build("Demo_Model");
+
 	objMgr->Add_Object(debugCamObj, { "First_Level", "Camera_Layer" });
+	objMgr->Add_Object(demoModel, { "First_Level", "Model_Layer" });
 
 	camMgr->Set_MainCam(debugCamObj->Get_Component<CCamera>());
 

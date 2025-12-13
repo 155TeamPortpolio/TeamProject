@@ -3,7 +3,7 @@
 
 bool CamFovLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-	if (keys.size() < 2)
+	if (keys.empty())
 		return false;
 
 	keyframes = &keys;
@@ -13,12 +13,12 @@ bool CamFovLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 _float CamFovLinearEvaluator::Evaluate(float time) const
 {
 	assert(keyframes);
-	assert(keyframes->size() >= 2);
+	assert(!keyframes->empty());
 
 	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
 
 	const _uint segmentIdx = segment.segmentIdx;
-	const float u = segment.normalizedTime;
+	const float u          = segment.normalizedTime;
 
 	const float startFov = (*keyframes)[segmentIdx].fov;
 	const float endFov   = (*keyframes)[segmentIdx + 1].fov;
