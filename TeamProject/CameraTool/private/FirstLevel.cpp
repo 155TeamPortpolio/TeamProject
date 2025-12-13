@@ -35,7 +35,9 @@ HRESULT FirstLevel::Awake()
 	camMgr->Set_MainCam(debugCamObj->Get_Component<CCamera>());
 
 	auto guiSys = game->Get_GUISystem();
-	guiSys->Register_Panel(CamPanel::Create(guiSys->Get_Context()));
+	auto camPanel = CamPanel::Create(guiSys->Get_Context());
+	camPanel->SetCaptureTarget(static_cast<CamObj*>(debugCamObj));
+	guiSys->Register_Panel(camPanel);
 
 	return S_OK;
 }

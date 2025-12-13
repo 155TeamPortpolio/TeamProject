@@ -154,6 +154,7 @@
     <ClInclude Include="..\public\Camera_Defines.h" />
     <ClInclude Include="..\public\CamObj.h" />
     <ClInclude Include="..\public\CamPanel.h" />
+    <ClInclude Include="..\public\CamPanelData.h" />
     <ClInclude Include="..\public\DebugFreeCam.h" />
     <ClInclude Include="..\public\FirstLevel.h" />
     <ClInclude Include="..\public\MainApp.h">

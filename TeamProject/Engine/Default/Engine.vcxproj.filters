@@ -337,15 +337,6 @@
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EffectContainer.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectContainer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\EffectNode.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SpriteNode.h">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode\SpriteNode</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\PointModel.h">
       <Filter>01. Utility\04. Components\03. Model\PointModel</Filter>
     </ClInclude>
@@ -357,6 +348,36 @@
     </ClInclude>
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectContainer.h" />
+    <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\public\CCamRail.h">
+      <Filter>01. Utility\04. Components\20. CamRail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICamEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamUtil.h">
+      <Filter>01. Utility\04. Components\20. CamRail\99. CamUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Enum.h">
+      <Filter>01. Utility\04. Components\20. CamRail\99. CamUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Struct.h">
+      <Filter>01. Utility\04. Components\20. CamRail\99. CamUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPosLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\01. PosLinearEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamRotSlerpEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\02. RotSlerpEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamFovLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\03. FovLinearEvaluator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -654,17 +675,26 @@
     <Filter Include="01. Utility\04. Components\19. RigidBody">
       <UniqueIdentifier>{80fdcd05-af2a-40fe-84b0-8e985aab4005}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\SpriteNode">
-      <UniqueIdentifier>{0de2f24e-ac66-4979-9a59-2d3d0d654f29}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\ParticleNode">
-      <UniqueIdentifier>{dbf4d46c-091b-477a-b679-967c88695bfd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\03. GameObject\Effect\EffectNode\MeshNode">
-      <UniqueIdentifier>{2c4bd79b-569a-43d9-85fa-b7cb9d92e981}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\PointModel">
       <UniqueIdentifier>{cab80bc9-9aa4-4f6b-97e1-42f9e9e0b65c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail">
+      <UniqueIdentifier>{e88fc0ec-fc90-4b21-8c2d-31db4fcc5e6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail\00. ICamEvaluator">
+      <UniqueIdentifier>{51f3de9c-4117-44d1-9eb0-9657ad55863a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail\99. CamUtil">
+      <UniqueIdentifier>{1d338711-2916-4e49-a426-95ee5720f64f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail\00. ICamEvaluator\02. RotSlerpEvaluator">
+      <UniqueIdentifier>{c927021c-6837-4985-915b-23ac71124b02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail\00. ICamEvaluator\01. PosLinearEvaluator">
+      <UniqueIdentifier>{6ed5bcd8-afef-43d0-afe8-5031065c4b77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamRail\00. ICamEvaluator\03. FovLinearEvaluator">
+      <UniqueIdentifier>{70c7e72f-8409-4400-99c3-8ea3524d8eaa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -944,15 +974,6 @@
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EffectContainer.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectContainer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\EffectNode.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\SpriteNode.cpp">
-      <Filter>01. Utility\03. GameObject\Effect\EffectNode\SpriteNode</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\PointModel.cpp">
       <Filter>01. Utility\04. Components\03. Model\PointModel</Filter>
     </ClCompile>
@@ -961,6 +982,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectContainer.cpp" />
+    <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\private\SpriteNode.cpp" />
+    <ClCompile Include="..\private\CCamRail.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamUtil.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail\99. CamUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPosLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\01. PosLinearEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\02. RotSlerpEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamFovLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamRail\00. ICamEvaluator\03. FovLinearEvaluator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -28,13 +28,16 @@ bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 		const float dotValue = cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]);
 		if (dotValue < 0.f)
 			cachedRots[keyIdx] = -cachedRots[keyIdx];
-
 	}
 	return true;
 }
 
 Quaternion CamRotSlerpEvaluator::Evaluate(_float time) const
 {
+	assert(keyframes);
+	assert(keyframes->size() >= 2);
+	assert(cachedRots.size() == keyframes->size());
+
 	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
 
 	const _uint segmentIdx = segment.segmentIdx;

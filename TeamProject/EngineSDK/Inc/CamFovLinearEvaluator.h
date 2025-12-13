@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 
-class CamFovLinearEvaluator final : public ICamFovEvaluator
+class ENGINE_DLL CamFovLinearEvaluator final : public ICamFovEvaluator
 {
 public:
 	bool   Build(const vector<CamKeyFrame>& keys) override;

@@ -4,10 +4,10 @@
 
 NS_BEGIN(Engine)
 
-class CamRotSlerpEvaluator final : public ICamRotEvaluator
+class ENGINE_DLL CamRotSlerpEvaluator final : public ICamRotEvaluator
 {
 public:
-	bool Build(const vector<CamKeyFrame>& keys) override;
+	bool       Build(const vector<CamKeyFrame>& keys) override;
 	Quaternion Evaluate(_float time) const override;
 
 private:

@@ -61,6 +61,9 @@
     <ClInclude Include="..\ThridParty\GUI_Inc\ImZoomSlider.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamPanelData.h">
+      <Filter>02. Panel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">

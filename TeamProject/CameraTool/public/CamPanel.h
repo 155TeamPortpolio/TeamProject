@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BasePanel.h"
+#include "CamPanelData.h"
 
 NS_BEGIN(CameraTool)
 
@@ -15,6 +16,7 @@ private:
 public:
 	void Update_Panel(_float dt) override;
 	void Render_GUI() override;
+	void SetCaptureTarget(CamObj* camObj);
 
 private:
 	void DrawToolbar();
@@ -24,17 +26,28 @@ private:
 	void DrawKeyframeEditor();
 	void DrawTimeline();
 
+private: // Helper
+	vector<CamKeyFrame>&       GetKeys();
+	const vector<CamKeyFrame>& GetKeys() const;
+	bool                       HasValidSelection() const;
+	CamKeyFrame&               GetSelectedKey();
+	_uint                      GetSelectedKeyId() const;
+	_float                     GetNextDefaultTime() const;
+	void                       AddKey_Default();
+	void                       DeleteSelectedKey();
+	void                       SortKeysByTime_Stable();
+	void                       MergeNearDuplicateTimes_KeepLast();
+	bool                       SelectKeyById(_uint keyId);
+	void                       SyncEditorFromSelection();
+	void                       ApplyEditorToSelectedKey_TimeOnly();
+	void                       CaptureSelectedKey_FromCaptureCam();
+	void                       ApplyPlaybackAtTime(_float t);
+
 private:
-	_bool recording = false;
-	_bool playing   = false;
-	_bool loop      = false;
-
-	_uint selectedCam    = 0;
-	_int  selectedKeyIdx = -1;
-
-	_float curTime = 0.f;
-	_float endTime = 10.f;
-	_float zoom    = 1.f;
+	CamSequenceDesc  debugSequence{};
+	CamToolTarget    target{};
+	CamToolEditState state{};
+	CamToolKeyPolicy policy{};
 
 public:
 	static CamPanel* Create(GUI_CONTEXT* context);

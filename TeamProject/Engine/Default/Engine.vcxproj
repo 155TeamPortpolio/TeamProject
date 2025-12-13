@@ -212,6 +212,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClInclude Include="..\Public\Camera_Struct.h" />
     <ClInclude Include="..\public\CamEvaluator.h" />
     <ClInclude Include="..\public\CamFovLinearEvaluator.h" />
+    <ClInclude Include="..\public\CamPosLinearEvaluator.h" />
     <ClInclude Include="..\public\CamRotSlerpEvaluator.h" />
     <ClInclude Include="..\public\CamUtil.h" />
     <ClInclude Include="..\public\CCamRail.h" />
@@ -337,6 +338,7 @@ call "$(SolutionDir)UpdateLib.bat" "$(ConfigurationName)" "$(TargetDir)"
     <ClCompile Include="..\Private\CameraMgr.cpp" />
     <ClCompile Include="..\private\CamEvaluator.cpp" />
     <ClCompile Include="..\private\CamFovLinearEvaluator.cpp" />
+    <ClCompile Include="..\private\CamPosLinearEvaluator.cpp" />
     <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp" />
     <ClCompile Include="..\private\CamUtil.cpp" />
     <ClCompile Include="..\private\CCamRail.cpp" />

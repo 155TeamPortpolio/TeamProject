@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 
-class ICamPosEvaluator
+class ENGINE_DLL ICamPosEvaluator
 {
 public:
 	virtual ~ICamPosEvaluator() = default;
@@ -12,7 +12,7 @@ public:
 	virtual _vector3 Evaluate(float t) const = 0;
 };
 
-class ICamRotEvaluator
+class ENGINE_DLL ICamRotEvaluator
 {
 public:
 	virtual ~ICamRotEvaluator() = default;
@@ -20,7 +20,7 @@ public:
 	virtual Quaternion Evaluate(float t) const = 0;
 };
 
-class ICamFovEvaluator
+class ENGINE_DLL ICamFovEvaluator
 {
 public:
 	virtual ~ICamFovEvaluator() = default;

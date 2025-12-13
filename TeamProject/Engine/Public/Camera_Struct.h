@@ -16,7 +16,8 @@ struct Campose
 };
 struct CamKeyFrame // 한 스퀀스 안에서 특정 시점의 카메라 상태를 표현하는 단일 키프레임 데이터
 {
-	_float time = 0.f;
+	_uint  keyId = 0; // "배열이 재정렬/삭제/병합돼도 같은 키를 계속 가리키기 위한 고유 식별자"
+	_float time  = 0.f;
 
 	_vector3 pos{};
 	_vector3 look{};
