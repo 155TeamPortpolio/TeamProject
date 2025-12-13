@@ -37,8 +37,21 @@ HRESULT CPhysicsSystem::Initialize()
     // PVD 생성
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
-    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
+    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 100);
+    if (m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL))
+    {
+        // 연결 성공 로그 (콘솔이나 Output 창 확인)
+        OutputDebugStringA("------------------------------------------------\n");
+        OutputDebugStringA("   [PhysX] PVD Connected Successfully!          \n");
+        OutputDebugStringA("------------------------------------------------\n");
+    }
+    else
+    {
+        // 연결 실패 로그
+        OutputDebugStringA("------------------------------------------------\n");
+        OutputDebugStringA("   [PhysX] PVD Connection Failed...             \n");
+        OutputDebugStringA("------------------------------------------------\n");
+    }
 #else
     m_pPvd = nullptr; // 릴리즈 모드
 #endif
@@ -54,17 +67,20 @@ HRESULT CPhysicsSystem::Initialize()
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
     sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // 중력 설정
     sceneDesc.cpuDispatcher = m_pDispatcher;
-    sceneDesc.filterShader = PxDefaultSimulationFilterShader; // 기본 충돌 필터
-    sceneDesc.flags |= PxSceneFlag::eENABLE_PCM; // PCM(Persistent Contact Manifold) 활성화 (충돌 정확도/성능 향상)
-    // sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP; // 상황에 따라 SAP가 더 좋을 수 있음 (기본은 보통 MBP or SAP)
-
-
+    sceneDesc.filterShader = SimulationFilterShader; // 기본 충돌 필터
+    sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+    sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
+    sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
+    sceneDesc.ccdMaxPasses = 4;        // 기본값 1 -> 4로 증가
+    sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
     if (m_pPvd->isConnected())
     {
         // PvdSceneClient 플래그 설정
         sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
+        sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
+
         // (주의: PhysX 버전에 따라 sceneDesc.flags가 아니라 scene->getPvdSceneClient()->setScenePvdFlag 사용이 필요할 수 있음)
     }
 #endif
@@ -99,7 +115,7 @@ void CPhysicsSystem::Update(_float dt)
 
     m_fTimer += dt;
 
-    int iMaxSteps = 5; // 무한 루프 방지용 최대 5회 제한
+    int iMaxSteps = 3; // 무한 루프 방지용 최대 5회 제한
 
     while (m_fTimer >= m_fDelta)
     {
@@ -118,6 +134,34 @@ void CPhysicsSystem::Late_Update(_float dt)
 {
 }
 
+PxFilterFlags CPhysicsSystem::SimulationFilterShader(
+    PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+    PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+    PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
+{
+    // 1. 트리거(Trigger)인 경우
+    if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
+    {
+        pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
+        return PxFilterFlag::eDEFAULT;
+    }
+
+    // 2. [수정됨] 복잡한 그룹 검사 로직 제거 (일단 무조건 충돌)
+    // 이전 코드에 있던 if ((filterData0.word0 & filterData1.word1) == 0 ... ) 부분 삭제
+
+    // 3. 물리적 충돌 처리 + 알림 켜기
+    // eCONTACT_DEFAULT: 물리적으로 튕겨내라 (이게 있어야 안 뚫립니다!)
+    // eNOTIFY_TOUCH_FOUND: 충돌 시작되면 onContact 호출해라
+    pairFlags = PxPairFlag::eCONTACT_DEFAULT
+        | PxPairFlag::eSOLVE_CONTACT         // 물리적 반발력
+        | PxPairFlag::eDETECT_DISCRETE_CONTACT // 일반 충돌 감지
+        | PxPairFlag::eDETECT_CCD_CONTACT    // <--- [추가] CCD 충돌 감지 허용
+        | PxPairFlag::eNOTIFY_TOUCH_FOUND
+        | PxPairFlag::eNOTIFY_TOUCH_LOST;
+
+    return PxFilterFlag::eDEFAULT;
+}
+
 CPhysicsSystem* CPhysicsSystem::Create()
 {
     CPhysicsSystem* pInstance = new CPhysicsSystem();
@@ -134,7 +178,6 @@ void CPhysicsSystem::Free()
     for (auto& pair : m_Materials)
         pair.second->release();
     m_Materials.clear();
-
     m_pMaterial = nullptr;
 
     if (m_pControllerManager)

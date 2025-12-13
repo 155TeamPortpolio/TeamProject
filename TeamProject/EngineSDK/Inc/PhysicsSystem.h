@@ -23,6 +23,10 @@ public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
     virtual void Late_Update(_float dt) override;
+    static PxFilterFlags SimulationFilterShader(
+        PxFilterObjectAttributes attributes0, PxFilterData filterData0,
+        PxFilterObjectAttributes attributes1, PxFilterData filterData1,
+        PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize);
 
 private:
     class CUserErrorCallback : public PxErrorCallback

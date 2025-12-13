@@ -18,6 +18,7 @@ public:
     CGameObjectBuilder& Scale(const _float3 scale);
     
     CGameObjectBuilder& Collider(const COLLIDER_DESC& desc);
+    CGameObjectBuilder& RigidBody(const RIGIDBODY_DESC& desc);
    // CGameObjectBuilder& AABB_Collider(const AABB_COLLIDER_DESC& desc);
    //CGameObjectBuilder& OBB_Collider(const OBB_COLLIDER_DESC& desc);
    //CGameObjectBuilder& Sphere_Collider(const SPHERE_COLLIDER_DESC& desc);

@@ -1,6 +1,8 @@
 #pragma once
 #include "Component.h"
+
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CCollider final : public CComponent
 {
 private:

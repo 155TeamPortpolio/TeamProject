@@ -5,6 +5,9 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+
+#include "RigidBody.h"
+
 CDemoModel::CDemoModel()
 {
 }
@@ -20,6 +23,8 @@ HRESULT CDemoModel::Initialize_Prototype()
 	/*Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();*/
 	Add_Component<CObjectContainer>();
+	Add_Component<CRigidBody>();
+	Add_Component<CCollider>();
 
 	return S_OK;
 }
@@ -28,14 +33,16 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	GAMEOBJECT_DESC* pObjDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+
 	return S_OK;
 }
 
 void CDemoModel::Awake()
-
 {
 	//CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
 	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
+	
 }
 
 void CDemoModel::Priority_Update(_float dt)
@@ -47,6 +54,20 @@ void CDemoModel::Update(_float dt)
 }
 
 void CDemoModel::Late_Update(_float dt)
+{
+	Get_Component<CRigidBody>()->Late_Update(dt);
+}
+
+void CDemoModel::OnCollisionEnter()
+{
+	OutputDebugStringA("Collision Enter!\n");
+}
+
+void CDemoModel::OnCollisionStay()
+{
+}
+
+void CDemoModel::OnCollisionExit()
 {
 }
 

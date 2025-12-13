@@ -11,8 +11,10 @@
 #include "Camera.h"
 #include "Model.h"
 #include "Light.h"
+#include "RigidBody.h"
 
 #include "Child.h"
+
 
 CGameObjectBuilder::CGameObjectBuilder(const CLONE_DESC& _cloneDesc)
 	:m_pGameInstance(CGameInstance::GetInstance())
@@ -125,6 +127,13 @@ CGameObjectBuilder& CGameObjectBuilder::Collider(const COLLIDER_DESC& desc)
 {
 	COLLIDER_DESC* colliderDesc = new COLLIDER_DESC(desc);
 	m_CompDesc.emplace(type_index(typeid(CCollider)), colliderDesc);
+	return *this;
+}
+
+CGameObjectBuilder& CGameObjectBuilder::RigidBody(const RIGIDBODY_DESC& desc)
+{
+	RIGIDBODY_DESC* rigidbodyDesc = new RIGIDBODY_DESC(desc);
+	m_CompDesc.emplace(type_index(typeid(CRigidBody)), rigidbodyDesc);
 	return *this;
 }
 

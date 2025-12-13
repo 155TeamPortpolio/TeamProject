@@ -67,10 +67,25 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
+	// Shape Flag
+	m_pShape->setFlag(PxShapeFlag::eSCENE_QUERY_SHAPE, true);
+	m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
+	m_pShape->setFlag(PxShapeFlag::eVISUALIZATION, true);
+	m_pShape->setContactOffset(0.02f);  // 기본값: 0.02
+	m_pShape->setRestOffset(0.0f);      // 관통 허용 거리 최소화
 	if (pDesc->isTrigger) {
 		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
+
+	PxFilterData filterData;
+	filterData.word0 = 1;       // 나는 1번 그룹이다 (Default Layer)
+	filterData.word1 = 1;       // 나는 1번 그룹하고만 충돌한다
+	// (만약 바닥도 이 설정을 따르면 서로 word0(1) & word1(1) != 0 이라 충돌함)
+	// 만약 pDesc에 레이어 정보가 있다면 그걸 쓰면 더 좋습니다.
+	// 지금은 테스트를 위해 강제 설정합니다.
+	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
+	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 
 	_vector vPos = XMLoadFloat3(&pDesc->vCenter);
 	_vector vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
@@ -90,6 +105,8 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_vCenter = pDesc->vCenter;
 	m_vSize = pDesc->vSize;
 	m_vRotation = pDesc->vRotation;
+	m_bTrigger = pDesc->isTrigger;
+	m_strMaterialTag = pDesc->strMaterialTag;
 
 	// 시스템 등록
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollider(this, -1);
@@ -100,7 +117,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 void CCollider::OnCollisionEnter(CCollider* pOther, const PxContactPair& contactInfo)
 {
 	m_CurrentCollisions.insert(pOther);
-	//m_pOwner->OnCollisionEnter()
+	m_pOwner->OnCollisionEnter();
 }
 
 void CCollider::OnCollisionExit(CCollider* pOther)
@@ -174,7 +191,17 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 }
 #endif
 
+CCollider* CCollider::Create()
+{
+	CCollider* instance = new CCollider();
 
+	if (FAILED(instance->Initialize_Prototype())) {
+		MSG_BOX("Collider Create Failed : CCollider");
+		Safe_Release(instance);
+	}
+
+	return instance;
+}
 
 CComponent* CCollider::Clone()
 {
@@ -184,13 +211,7 @@ CComponent* CCollider::Clone()
 void CCollider::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnregisterCollider(this, -1);
-
-	if (m_pShape && m_pAttachedRigidBody && m_pAttachedRigidBody->Get_Body())
-	{
-		m_pAttachedRigidBody->Get_Body()->detachShape(*m_pShape);
-		m_pShape->release();
-		m_pShape = nullptr;
-	}
+	m_pShape = nullptr;
 	__super::Free();
 }
 
