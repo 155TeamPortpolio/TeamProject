@@ -76,19 +76,17 @@ void CUI_Object::Post_EngineUpdate(_float dt)
 {
     Update_UITransform();
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
-    SPRITE_PACKET packet;
-    packet.pSprite2D = Get_Component<CSprite2D>();
-    packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 
-    if (packet.pSprite2D == nullptr)
-        return;
-    if (!packet.pSprite2D->IsValid())
-        return;
-    if (!packet.pSprite2D->Get_CompActive())
-        return;
+        SPRITE_PACKET packet;
+        packet.pSprite2D = Get_Component<CSprite2D>();
+        packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 
-    CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
+        _bool isUI = (packet.pSprite2D != nullptr);
+        _bool isValid = (packet.pSprite2D->IsValid());
+        _bool isActive = (packet.pSprite2D->Get_CompActive());
 
+        if(isUI && isValid && isActive)
+            CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
     }
 
     for (auto& child : Get_Children()) {
