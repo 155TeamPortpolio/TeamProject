@@ -39,6 +39,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pShadowPass = ShadowPass::Create(this);
 	m_pInstancePass = InstancePass::Create(this);
 	m_pBlendedPass = BlendedPass::Create(this);
+	m_pParticlePass = ParticlePass::Create(this);
 	m_pUIPass = UIPass::Create(this);
 
 #ifdef _DEBUG
@@ -550,6 +551,7 @@ void CRenderSystem::Free()
 	Safe_Release(m_pDebugPass);
 	Safe_Release(m_pShadowPass);
 	Safe_Release(m_pBlendedPass);
+	Safe_Release(m_pParticlePass);
 	Safe_Release(m_pTargetManager);
 
 	for (auto& pair : m_InputLayouts)
