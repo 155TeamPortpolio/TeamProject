@@ -68,7 +68,7 @@ using json = nlohmann::json;
 #pragma push_macro("new") 
 #undef new 
 #include "PhysX_Inc/PxPhysicsAPI.h"
-#define USINPHYSICS
+#define USINGPHYSICS
 using namespace physx;
 #pragma pop_macro("new")
 

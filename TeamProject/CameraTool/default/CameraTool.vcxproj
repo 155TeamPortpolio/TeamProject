@@ -113,7 +113,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;../ThirdParty/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,7 +138,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;../ThirdParty/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\Camera_Defines.h" />
     <ClInclude Include="..\public\CamObj.h" />
+    <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\public\DebugFreeCam.h" />
     <ClInclude Include="..\public\FirstLevel.h" />
     <ClInclude Include="..\public\MainApp.h">
@@ -160,10 +161,23 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\pch.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\GraphEditor.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imconfig.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\ImCurveEdit.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\ImGradient.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\ImSequencer.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_rectpack.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_textedit.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_truetype.h" />
+    <ClInclude Include="..\ThridParty\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="CameraTool.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\CamObj.cpp" />
+    <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\private\DebugFreeCam.cpp" />
     <ClCompile Include="..\private\FirstLevel.cpp" />
     <ClCompile Include="..\private\MainApp.cpp">
@@ -173,6 +187,46 @@
     <ClCompile Include="..\private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\GraphEditor.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImCurveEdit.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImGradient.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\imgui.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImGuizmo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_demo.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_draw.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_tables.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_widgets.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="CameraTool.cpp" />
   </ItemGroup>
