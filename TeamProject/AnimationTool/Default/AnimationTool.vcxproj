@@ -26,6 +26,7 @@
     <ResourceCompile Include="AnimationTool.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\Animation3DEX.h" />
     <ClInclude Include="..\Public\AnimationEditLevel.h" />
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
@@ -38,6 +39,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\Animation3DEX.cpp" />
     <ClCompile Include="..\Private\AnimationEditLevel.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />

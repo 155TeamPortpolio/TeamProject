@@ -25,6 +25,9 @@
     <Filter Include="02. Object\Model">
       <UniqueIdentifier>{b95cdd8c-fd10-4a2d-a31d-581aa23af775}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Component">
+      <UniqueIdentifier>{4dc0cd9d-1962-4dcc-ad1e-01897fa8ec45}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -70,6 +73,9 @@
     <ClInclude Include="..\Public\EditModel.h">
       <Filter>02. Object\Model</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Animation3DEX.h">
+      <Filter>03. Component</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationTool.cpp">
@@ -89,6 +95,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnimationEditLevel.cpp">
       <Filter>01. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Animation3DEX.cpp">
+      <Filter>03. Component</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
