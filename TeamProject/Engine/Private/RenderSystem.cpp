@@ -180,6 +180,7 @@ HRESULT CRenderSystem::Render_Blended()
 	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
 	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	m_pBlendedPass->Execute(m_pContext);
+	m_pParticlePass->Execute(m_pContext);
 	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
 	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
