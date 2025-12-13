@@ -18,12 +18,12 @@ CAnimation3DEX* CAnimation3DEX::Create()
 	return instance;
 }
 
-CComponent* CAnimator3D::Clone()
+CComponent* CAnimation3DEX::Clone()
 {
-	return new CAnimator3D(*this);
+	return new CAnimation3DEX(*this);
 }
 
-void CAnimator3D::Free()
+void CAnimation3DEX::Free()
 {
 	__super::Free();
 }

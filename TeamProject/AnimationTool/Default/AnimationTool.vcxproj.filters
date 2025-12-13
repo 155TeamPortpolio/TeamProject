@@ -28,6 +28,21 @@
     <Filter Include="03. Component">
       <UniqueIdentifier>{4dc0cd9d-1962-4dcc-ad1e-01897fa8ec45}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Component\Animation3DEX">
+      <UniqueIdentifier>{39678314-ef18-4102-b46b-7a7253e575a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Resource">
+      <UniqueIdentifier>{73f20f64-8e21-450b-94b6-d60653db8446}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Resource\AnimationClipEx">
+      <UniqueIdentifier>{b9ff898f-71fa-4247-8197-6ef07d58f01a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Panel">
+      <UniqueIdentifier>{430e71c6-3c8d-49c5-8f97-873fee47df9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. GUIInc">
+      <UniqueIdentifier>{32389b12-0879-467b-a6c9-145ee79f3e1d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -73,8 +88,56 @@
     <ClInclude Include="..\Public\EditModel.h">
       <Filter>02. Object\Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Animation3DEX.h">
+    <ClInclude Include="..\public\AnimationLayout.h">
       <Filter>03. Component</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AnimToolPanel.h">
+      <Filter>05. Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Animation3DEX.h">
+      <Filter>03. Component\Animation3DEX</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AnimationClipEX.h">
+      <Filter>04. Resource\AnimationClipEx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Assimps.h">
+      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -96,8 +159,44 @@
     <ClCompile Include="..\Private\AnimationEditLevel.cpp">
       <Filter>01. Level</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\AnimToolPanel.cpp">
+      <Filter>05. Panel</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Animation3DEX.cpp">
-      <Filter>03. Component</Filter>
+      <Filter>03. Component\Animation3DEX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AnimationClipEX.cpp">
+      <Filter>04. Resource\AnimationClipEx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
+      <Filter>97. GUIInc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
