@@ -74,7 +74,7 @@ void CLight::Render_GUI()
         }
 
         ImGui::TreePop();
-    }
+    }t
 }
 
 void CLight::Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType)

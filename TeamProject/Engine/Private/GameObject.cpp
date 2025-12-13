@@ -16,8 +16,7 @@
 #include "InstanceModel.h"
 #include "MaterialInstance.h"
 #include "Layer.h"
-#include "ParticleSystem.h"
-
+#include "RigidBody.h"
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -47,8 +46,9 @@ CGameObject::CGameObject(const CGameObject& rhs)
 
 		if (pair.first == type_index(typeid(CModel)))
 			continue;
+		/*
 		if (pair.first == type_index(typeid(CCollider)))
-			continue;
+			continue;*/
 
 		else {
 			CComponent* comp = pair.second->Clone();
@@ -60,10 +60,10 @@ CGameObject::CGameObject(const CGameObject& rhs)
 				Safe_AddRef(comp);
 			}
 
-			if (dynamic_cast<CCollider*>(comp)) {
-				m_Components.emplace(type_index(typeid(CCollider)), comp);
-				Safe_AddRef(comp);
-			}
+			//if (dynamic_cast<CCollider*>(comp)) {
+			//	m_Components.emplace(type_index(typeid(CCollider)), comp);
+			//	Safe_AddRef(comp);
+			//}
 		}
 	}
 
@@ -82,7 +82,6 @@ HRESULT CGameObject::Initialize_Prototype()
 
 HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 {
-
 	if (!m_pTransform) {
 		m_pTransform = Add_Component<CTransform>();
 		Safe_AddRef(m_pTransform);
@@ -92,13 +91,32 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 		return S_OK;
 
 	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
+	
+	// Transform 초기화
+	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
+	if (tfIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CTransform)));
+		if (descIter == obj->CompDesc.end())
+			tfIter->second->Initialize(nullptr);
+		else
+			tfIter->second->Initialize(descIter->second);
+	}
+
+	// RigidBody 초기화
+	auto rbIter = m_Components.find(type_index(typeid(CRigidBody)));
+	if (rbIter != m_Components.end()) {
+		auto descIter = obj->CompDesc.find(type_index(typeid(CRigidBody)));
+		if (descIter == obj->CompDesc.end())
+			rbIter->second->Initialize(nullptr);
+		else
+			rbIter->second->Initialize(descIter->second);
+	}
+
 	for (auto& pair : m_Components)
 	{
-
-		if (pair.first == type_index(typeid(CModel)))
-			continue;
-		if (pair.first == type_index(typeid(CCollider)))
-			continue;
+		if (pair.first == type_index(typeid(CTransform))) continue;
+		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(CRigidBody))) continue;
 
 		auto iter = obj->CompDesc.find(pair.first);
 		/*각자 컴포넌트에 맞는 설명체 찾아서 넣어줌. 없으면 그냥 이니셜ㄹ라이즈*/
@@ -135,8 +153,6 @@ void CGameObject::Post_EngineUpdate(_float dt)
 		if (Get_Component<CInstanceModel>()) {
 			Make_InstancePacket();
 		}
-		else if (Get_Component<CParticleSystem>())
-			Make_ParticlePacket();
 		else {
 			Make_OpaquePacket();
 		}
@@ -163,18 +179,6 @@ void CGameObject::Post_EngineUpdate(_float dt)
 		if (child && child->Is_Alive())
 			child->Post_EngineUpdate(dt);
 	}
-}
-
-void CGameObject::OnCollisionEnter(COLLISION_CONTEXT context)
-{
-}
-
-void CGameObject::OnCollisionStay(COLLISION_CONTEXT context)
-{
-}
-
-void CGameObject::OnCollisionExit(COLLISION_CONTEXT context)
-{
 }
 
 void CGameObject::Render_GUI()
@@ -351,19 +355,6 @@ HRESULT CGameObject::Make_InstancePacket()
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
 		}
 	}
-
-	return S_OK;
-}
-
-HRESULT CGameObject::Make_ParticlePacket()
-{
-	PARTICLE_PACKET packet;
-	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-	packet.pParticleSystem = Get_Component<CParticleSystem>();
-	packet.pMaterial = Get_Component<CMaterial>();
-	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;
-
-	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Particle(packet);
 
 	return S_OK;
 }

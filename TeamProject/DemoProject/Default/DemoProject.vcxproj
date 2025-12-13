@@ -39,6 +39,7 @@
     <ClInclude Include="..\Public\DemoModel.h" />
     <ClInclude Include="..\Public\DemoUI.h" />
     <ClInclude Include="..\Public\Demo_Defines.h" />
+    <ClInclude Include="..\Public\InstanceDemo.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="DemoProject.h" />
@@ -100,6 +101,7 @@
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
     <ClCompile Include="..\Private\DemoUI.cpp" />
+    <ClCompile Include="..\Private\InstanceDemo.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -111,6 +113,7 @@
     <ResourceCompile Include="DemoProject.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
