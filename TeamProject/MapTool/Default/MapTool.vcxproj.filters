@@ -22,6 +22,9 @@
     <Filter Include="02. Object\DefaultCamera">
       <UniqueIdentifier>{7d5ced48-0ba1-43c3-b7ce-aa3eb4c7a7dd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Floor">
+      <UniqueIdentifier>{2c23fb0d-26a6-43ca-8bdc-32ddfd2bbce0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -54,6 +57,9 @@
     <ClInclude Include="..\public\DummyModel.h">
       <Filter>02. Object\DummyModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\PickingInstanceModel.h">
+      <Filter>02. Object\Floor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -81,6 +87,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DummyModel.cpp">
       <Filter>02. Object\DummyModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PickingInstanceModel.cpp">
+      <Filter>02. Object\Floor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

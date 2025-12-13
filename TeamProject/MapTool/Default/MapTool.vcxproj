@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="..\public\DefaultCamera.h" />
     <ClInclude Include="..\public\DummyModel.h" />
+    <ClInclude Include="..\public\PickingInstanceModel.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapToolLevel.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
@@ -155,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="..\private\DefaultCamera.cpp" />
     <ClCompile Include="..\private\DummyModel.cpp" />
+    <ClCompile Include="..\private\PickingInstanceModel.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapToolLevel.cpp" />
     <ClCompile Include="..\private\pch.cpp">
