@@ -6,6 +6,10 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CamPosCatmullRomEvaluator final : public ICamPosEvaluator
 {
+private:
+	CamPosCatmullRomEvaluator() = default;
+	virtual ~CamPosCatmullRomEvaluator() = default;
+
 public:
 	bool     Build(const vector<CamKeyFrame>& keys) override;
 	_vector3 Evaluate(_float time) const override;

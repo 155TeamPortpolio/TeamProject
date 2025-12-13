@@ -6,6 +6,10 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CamFovLinearEvaluator final : public ICamFovEvaluator
 {
+private:
+	CamFovLinearEvaluator() = default;
+	virtual ~CamFovLinearEvaluator() = default;
+
 public:
 	bool   Build(const vector<CamKeyFrame>& keys) override;
 	_float Evaluate(float time) const override;
