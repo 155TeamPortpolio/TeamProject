@@ -41,6 +41,13 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 
 HRESULT CVI_InstancePoint::Bind_Buffer(ID3D11DeviceContext* pContext)
 {
+	ID3D11Buffer* pVertexBuffers[2] = { m_pVB, m_pInstanceBuffer };
+	_uint  pVertexStrides[2] = { m_iVertexStride, m_iInstanceStride };
+	_uint  pVertexOffsets[2] = { 0,0 };
+
+	pContext->IASetVertexBuffers(0, m_iVertexBufferCount, pVertexBuffers, pVertexStrides, pVertexOffsets);
+	pContext->IASetPrimitiveTopology(m_ePrimitive);
+
 	return S_OK;
 }
 
@@ -109,4 +116,15 @@ void CVI_InstancePoint::Free()
 	__super::Free();
 
 	Safe_Release(m_pInstanceBuffer);
+}
+
+void CVI_InstancePoint::Update_InstanceBuffer(ID3D11DeviceContext* pContext, const VTX_INSTANCE_POINT* instanceData, _uint numInstance)
+{
+	if (numInstance > m_iMaxInstancesCount)
+		numInstance = m_iMaxInstancesCount;
+
+	D3D11_MAPPED_SUBRESOURCE mapSubResource{};
+	pContext->Map(m_pInstanceBuffer,0,D3D11_MAP_WRITE_DISCARD,0,&mapSubResource);
+	memcpy_s(mapSubResource.pData, sizeof(VTX_INSTANCE_POINT) * numInstance, instanceData, sizeof(VTX_INSTANCE_POINT) * numInstance);
+	pContext->Unmap(m_pInstanceBuffer,0);
 }

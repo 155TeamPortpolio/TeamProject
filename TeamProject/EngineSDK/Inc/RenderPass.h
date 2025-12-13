@@ -121,6 +121,33 @@ public:
 };
 #pragma endregion
 
+#pragma region PARTICLE_PASS
+class ParticlePass final : public RenderPass {
+	typedef struct tagParticleDrawData
+	{
+		_uint iOffset{};
+		_uint iParticleCount{};
+	}PARTICLE_DRAW_DATA;
+
+private:
+	ParticlePass(class CRenderSystem* pRenderSystem) : RenderPass{ pRenderSystem } {};
+	virtual ~ParticlePass() DEFAULT;
+public:
+	void Execute(ID3D11DeviceContext* pContext) override;
+	void Subimit(PARTICLE_PACKET packet);
+
+private:
+	vector<PARTICLE_PACKET> m_Packets;
+	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
+	vector<PARTICLE_DRAW_DATA> m_DrawDatas;
+
+public:
+	static ParticlePass* Create(class CRenderSystem* pRenderSystem) { return new ParticlePass(pRenderSystem); }
+	virtual void Free()override { __super::Free(); m_Packets.clear(); }
+
+};
+#pragma endregion
+
 
 #pragma region UI_PASS
 class UIPass final : public RenderPass {

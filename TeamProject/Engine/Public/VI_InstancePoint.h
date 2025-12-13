@@ -23,6 +23,9 @@ public:
 	static CVI_InstancePoint* Create(ID3D11Device* pDevice, const string& bufferID);
 	virtual void Free() override;
 
+public:
+	void Update_InstanceBuffer(ID3D11DeviceContext* pContext, const VTX_INSTANCE_POINT* instanceData, _uint numInstance);
+
 private:
 	ID3D11Buffer* m_pInstanceBuffer = { nullptr };
 	_uint m_iMaxInstancesCount{};

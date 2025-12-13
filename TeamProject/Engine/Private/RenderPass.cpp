@@ -15,6 +15,8 @@
 #include "InstanceModel.h"
 #include "Sprite2D.h"
 #include "VIBuffer.h"
+#include "VI_InstancePoint.h"
+#include "ParticleSystem.h"
 
 RenderPass::RenderPass(CRenderSystem* pRenderSystem)
 	:m_pRenderSystem(pRenderSystem)
@@ -299,6 +301,64 @@ void BlendedPass::Submit(BLENDED_PACKET packet)
 }
 
 #pragma endregion
+
+#pragma region PARTICLE_PASS
+
+void ParticlePass::Execute(ID3D11DeviceContext* pContext)
+{
+	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
+	CVIBuffer* pBuffer = 
+		CGameInstance::GetInstance()->Get_ResourceMgr()->
+		Load_VIBuffer(G_GlobalLevelKey, "Engine_Default_InstancePoint", BUFFER_TYPE::BASIC_INSTANCE_POINT);
+
+	CVI_InstancePoint* pInstancePoint = static_cast<CVI_InstancePoint*>(pBuffer);
+
+	m_InstanceDatas.clear();
+	m_DrawDatas.clear();
+
+	/*모든 인스턴스 데이터 모으기*/
+	for (const auto& packet : m_Packets)
+	{
+		auto& instanceDatas = packet.pParticleSystem->GetInstanceDatas();
+
+		_uint offset = m_InstanceDatas.size();
+		_uint count = instanceDatas.size();
+
+		m_InstanceDatas.insert(m_InstanceDatas.begin() + offset, instanceDatas.begin(), instanceDatas.end());
+
+		PARTICLE_DRAW_DATA DrawData{};
+		DrawData.iOffset = offset;
+		DrawData.iParticleCount = count;
+		m_DrawDatas.push_back(DrawData);
+	}
+
+	/* 버퍼 바인딩은 한번만 */
+	pInstancePoint->Update_InstanceBuffer(pContext, m_InstanceDatas.data(), m_InstanceDatas.size());
+	pInstancePoint->Bind_Buffer(pContext);
+
+	/*각 파티클시스템 렌더링*/
+	for (_uint i = 0; i < m_Packets.size(); ++i)
+	{
+		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
+
+		m_Packets[i].pMaterial->Apply_Material(pContext, 0);
+		m_Packets[i].pParticleSystem->Draw(pContext, DrawData.iOffset, DrawData.iParticleCount);
+	}
+
+	m_Packets.clear();
+}
+
+void ParticlePass::Subimit(PARTICLE_PACKET packet)
+{
+	//if (packet.pSprite2D == nullptr) return;
+	m_Packets.push_back(packet);
+}
+
+#pragma endregion
+
 
 #pragma region INSTANCE_PASS
 
