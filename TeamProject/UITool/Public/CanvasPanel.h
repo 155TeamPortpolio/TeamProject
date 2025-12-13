@@ -27,6 +27,9 @@ public:
 
 	virtual void Render_GUI() override;
 
+private:
+	_float2			m_fChildCreateSize = { 100.f, 30.f };
+
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;

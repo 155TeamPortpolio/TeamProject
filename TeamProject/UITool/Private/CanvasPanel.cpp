@@ -28,14 +28,10 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+#ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Bangboo.jpg");
-
-    CUI_Object* pImage = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_ImageUI" })
-        .Scale({ 1.f, 1.f })
-        .Build("UI_ImageUI");
-
-    Get_Component<CObjectContainer>()->Add_Child(pImage);
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "CanvasPanel.png");
+#endif
 
     return S_OK;
 }
@@ -62,7 +58,7 @@ void CCanvasPanel::Render_GUI()
     if (ImGui::Button("Image"))
     {
         CUI_Object* pImage = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_ImageUI" })
-            .Scale({ 1.f, 1.f })
+            .Scale({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build("UI_ImageUI");
 
         if (!pImage)

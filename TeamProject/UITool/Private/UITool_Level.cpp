@@ -58,6 +58,9 @@ void CUITool_Level::PreLoad_Level()
 
 HRESULT CUITool_Level::Ready_Textures()
 {
+	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("CanvasPanel.png", "../Bin/Resources/UI/CanvasPanel.png")))
+		return E_FAIL;
+
 	if (FAILED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Logo.png", "../Bin/Resources/UI/Logo.png")))
 		return E_FAIL;
 
