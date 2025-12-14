@@ -59,7 +59,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
     Out.vTangent = normalize(mul(vTangent, ObjectBufferArray[TransformIndex].Transform));
     Out.vBinormal = normalize(mul(vBinormal, ObjectBufferArray[TransformIndex].Transform));
-
+    
     return Out;
 }
 
@@ -81,6 +81,7 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
+    vector vAmbient : SV_Target4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -92,23 +93,25 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
-    
     Out.vDiffuse = vMtrlDiffuse;
+  
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
-    
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
     float3 T = normalize(In.vTangent);
-    float3 B = normalize(In.vBinormal);
+    float3 B = normalize(In.vBinormal * -1);
     float3 N = normalize(In.vNormal.xyz);
 
-    float3x3 WorldMatrix = float3x3(T, B * -1.f, N);
- 
+    float3x3 WorldMatrix = float3x3(T, B, N);
+
     vNormal = mul(vNormal, WorldMatrix);
     
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-
+    Out.vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     return Out;
 }
 

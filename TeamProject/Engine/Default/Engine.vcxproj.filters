@@ -352,6 +352,14 @@
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
+    <ClInclude Include="..\Public\Camera_Enum.h" />
+    <ClInclude Include="..\Public\Camera_Struct.h" />
+    <ClInclude Include="..\public\CamEvaluator.h" />
+    <ClInclude Include="..\public\CamFovLinearEvaluator.h" />
+    <ClInclude Include="..\public\CamRotSlerpEvaluator.h" />
+    <ClInclude Include="..\public\CamUtil.h" />
+    <ClInclude Include="..\public\CCamRail.h" />
+    <ClInclude Include="..\Public\ICamEvaluator.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -941,6 +949,11 @@
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
+    <ClCompile Include="..\private\CamEvaluator.cpp" />
+    <ClCompile Include="..\private\CamFovLinearEvaluator.cpp" />
+    <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp" />
+    <ClCompile Include="..\private\CamUtil.cpp" />
+    <ClCompile Include="..\private\CCamRail.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -971,6 +984,9 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>

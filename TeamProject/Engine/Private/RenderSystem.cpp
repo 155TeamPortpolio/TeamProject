@@ -79,7 +79,6 @@ HRESULT CRenderSystem::Render()
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
-	//Render_Bright();
 	/*Custrom Rendering*/
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_UI"))) return E_FAIL;
 	/*UI Rendering*/
@@ -111,6 +110,10 @@ HRESULT CRenderSystem::Render_LightAcc()
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc"))) return E_FAIL;
 
+	SHADER_PARAM DiffuseParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Diffuse", DiffuseParam);
+	m_pShader->Bind_Value("g_DiffuseTexture", DiffuseParam);
+
 	SHADER_PARAM NormalParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Normal", NormalParam);
 	m_pShader->Bind_Value("g_NormalTexture", NormalParam);
@@ -118,6 +121,14 @@ HRESULT CRenderSystem::Render_LightAcc()
 	SHADER_PARAM DepthParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
+
+	SHADER_PARAM MetalicParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
+
+	SHADER_PARAM AmbientParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Ambient", AmbientParam);
+	m_pShader->Bind_Value("g_AmbientTexture", AmbientParam);
 
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
@@ -145,10 +156,6 @@ HRESULT CRenderSystem::Render_Combined()
 	SHADER_PARAM DepthParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
-
-	SHADER_PARAM MetalicParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
-	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
 
 	SHADER_PARAM ShadeParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Shade", ShadeParam);
@@ -188,37 +195,6 @@ HRESULT CRenderSystem::Render_Blended()
 
 	return S_OK;
 }
-
-HRESULT CRenderSystem::Render_Bright()
-{
-
-	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
-
-	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Brightness", &pLayout);
-	m_pContext->IASetInputLayout(pLayout);
-
-	SHADER_PARAM BrightParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Metalic", BrightParam);
-	m_pShader->Bind_Value("g_MetalicTexture", BrightParam);
-
-	SHADER_PARAM FinalParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Final", FinalParam);
-	m_pShader->Bind_Value("g_FinalTexture", FinalParam);
-
-	SHADER_PARAM WorldMat = {};
-	WorldMat.iSize = sizeof(_float4x4);
-	WorldMat.typeName = "float4x4";
-	WorldMat.pData = &m_WorldMatrix;
-	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
-
-	m_pShader->Apply("Brightness", m_pContext);
-	m_pVIBuffer->Bind_Buffer(m_pContext);
-	m_pVIBuffer->Render(m_pContext);
-	return S_OK;
-}
-
 
 #ifdef _USING_GUI
 void CRenderSystem::Render_GUI()
@@ -288,8 +264,11 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc DepthlDesc = { "Target_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
 
-	RenderTargetDesc EmiDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(EmiDesc);
+	RenderTargetDesc MetalDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(MetalDesc);	
+
+	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.1f, 0.1f, 0.1f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(AmbiDesc);
 
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 	m_pTargetManager->Create_Target(ShadowDesc);
@@ -308,6 +287,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Depth")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Shade")))
 		return E_FAIL;
@@ -370,10 +351,8 @@ void CRenderSystem::Process_RenderCommand()
 
 		m_pTargetManager->Push_Target(cmd.TargetKey);
 
-		if (pTarget->Get_RTV())
-			pTarget->Clear();
-		if (pTarget->Get_DSV())
-			m_pContext->ClearDepthStencilView(pTarget->Get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+		if (pTarget->Get_RTV()) pTarget->Clear();
+		if (pTarget->Get_DSV()) m_pContext->ClearDepthStencilView(pTarget->Get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
 		cmd.DrawCallback(m_pContext);
 
@@ -411,26 +390,24 @@ HRESULT CRenderSystem::Get_InputLayout(CModel* pModel, CShader* pShader, _uint D
 
 	auto iter = m_InputLayouts.find(LayOutID);
 
-	if (iter != m_InputLayouts.end()) {
+	if (iter != m_InputLayouts.end()) 
+	{
 		*ppInputLayout = iter->second;
 		return S_OK;
 	}
 
 	D3DX11_PASS_DESC passDesc = {};
 
-	if (FAILED(pShader->GetPassSignature(passConstant, &passDesc)))
-		return E_FAIL;
+	if (FAILED(pShader->GetPassSignature(passConstant, &passDesc))) return E_FAIL;
 
-	if (pModel->Get_ElementCount(DrawIndex) == 0 || pModel->Get_ElementDesc(DrawIndex) == nullptr)
-		return E_FAIL;
+	if (pModel->Get_ElementCount(DrawIndex) == 0 || pModel->Get_ElementDesc(DrawIndex) == nullptr) return E_FAIL;
 
 	HRESULT hr = m_pDevice->CreateInputLayout(
 		pModel->Get_ElementDesc(DrawIndex), pModel->Get_ElementCount(DrawIndex),
 		passDesc.pIAInputSignature, passDesc.IAInputSignatureSize,
 		ppInputLayout);
 
-	if (FAILED(hr))
-		return E_FAIL;
+	if (FAILED(hr)) return E_FAIL;
 
 	m_InputLayouts.emplace(LayOutID, *ppInputLayout);
 
@@ -446,26 +423,24 @@ HRESULT CRenderSystem::Get_BufferInputLayout(class CVIBuffer* pBuffer, CShader* 
 
 	auto iter = m_InputLayouts.find(LayOutID);
 
-	if (iter != m_InputLayouts.end()) {
+	if (iter != m_InputLayouts.end()) 
+	{
 		*ppInputLayout = iter->second;
 		return S_OK;
 	}
 
 	D3DX11_PASS_DESC passDesc = {};
 
-	if (FAILED(pShader->GetPassSignature(passConstant, &passDesc)))
-		return E_FAIL;
+	if (FAILED(pShader->GetPassSignature(passConstant, &passDesc))) return E_FAIL;
 
-	if (pBuffer->Get_ElementCount() == 0 || pBuffer->Get_ElementDesc() == nullptr)
-		return E_FAIL;
+	if (pBuffer->Get_ElementCount() == 0 || pBuffer->Get_ElementDesc() == nullptr) return E_FAIL;
 
 	HRESULT hr = m_pDevice->CreateInputLayout(
 		pBuffer->Get_ElementDesc(), pBuffer->Get_ElementCount(),
 		passDesc.pIAInputSignature, passDesc.IAInputSignatureSize,
 		ppInputLayout);
 
-	if (FAILED(hr))
-		return E_FAIL;
+	if (FAILED(hr)) return E_FAIL;
 
 	m_InputLayouts.emplace(LayOutID, *ppInputLayout);
 

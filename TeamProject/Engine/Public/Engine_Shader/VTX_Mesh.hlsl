@@ -56,6 +56,7 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
+    vector vAmbient : SV_TARGET4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -82,6 +83,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     return Out;
 }
 
