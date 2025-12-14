@@ -33,7 +33,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
     Get_Component<CTextSlot>()->Set_Text(L"텍스트 블록");
     Get_Component<CTextSlot>()->Set_Color(m_vColor);
-    Get_Component<CTextSlot>()->Set_Position({ m_fLocalX, m_fLocalY });
+    //Get_Component<CTextSlot>()->Set_Position({ m_fLocalX, m_fLocalY });
 
     return S_OK;
 }
@@ -55,12 +55,12 @@ void CTextUI::Render_GUI()
 {
     ImGui::SeparatorText(u8"레이아웃");
     _bool isMoved = {};
-    if (ImGui::DragFloat(u8"X 위치", &m_fLocalX, 1.f)) isMoved = true;
-    if (ImGui::DragFloat(u8"Y 위치", &m_fLocalY, 1.f)) isMoved = true;
-    ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);   // 앵커할 때 폰트 사이즈가 영향이 있을것 같음
-    ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
-    if (isMoved)
-        Get_Component<CTextSlot>()->Set_Position({ m_fLocalX, m_fLocalY });
+    //if (ImGui::DragFloat(u8"X 위치", &m_fLocalX, 1.f)) isMoved = true;
+    //if (ImGui::DragFloat(u8"Y 위치", &m_fLocalY, 1.f)) isMoved = true;
+    //ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);   // 앵커할 때 폰트 사이즈가 영향이 있을것 같음
+    //ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
+    //if (isMoved)
+    //    Get_Component<CTextSlot>()->Set_Position({ m_fLocalX, m_fLocalY });
 
     ImGui::SeparatorText(u8"콘텐츠");
     if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText)))

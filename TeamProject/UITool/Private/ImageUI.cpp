@@ -47,18 +47,20 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
-    ImGui::SeparatorText(u8"레이아웃");
-    ImGui::DragFloat(u8"X 위치", &m_fLocalX, 1.f);
-    ImGui::DragFloat(u8"Y 위치", &m_fLocalY, 1.f);
-    ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);
-    ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
+    //ImGui::SeparatorText(u8"레이아웃");
+    //ImGui::DragFloat(u8"X 위치", &m_fLocalX, 1.f);
+    //ImGui::DragFloat(u8"Y 위치", &m_fLocalY, 1.f);
+    //ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);
+    //ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
 
     ImGui::SeparatorText(u8"이미지");
     const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
     if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
      
-    CGameObject::Render_GUI();
+    __super::Render_GUI();
+
+    //CGameObject::Render_GUI();
 }
 
 CGameObject* CImageUI::Create()

@@ -23,7 +23,6 @@ void CGUIPanel::Render_GUI()
 		{
 			CUI_Object* pCanvasPanel = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_CanvasPanel" })
 				.Scale({ CGameInstance::GetInstance()->Get_ClientSize().x, CGameInstance::GetInstance()->Get_ClientSize().y })
-				.Set_Anchor(ANCHOR::Left | ANCHOR::Top, {})
 				.Build("UI_CanvasPanel" + to_string(counter));
 
 			IUI_Service* pUIMgr = CGameInstance::GetInstance()->Get_UIMgr();

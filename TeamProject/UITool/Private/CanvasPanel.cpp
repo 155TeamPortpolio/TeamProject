@@ -73,7 +73,7 @@ void CCanvasPanel::Render_GUI()
     if(isCreateChild)
     {
         CUI_Object* pChild = Builder::Create_UIObject({ "UITool_Level" , strProtoTag })
-            .Scale({ m_fChildCreateSize.x, m_fChildCreateSize.y })
+            .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build(strInstanceKey);
 
         if (!pChild)
@@ -84,11 +84,11 @@ void CCanvasPanel::Render_GUI()
         Get_Component<CObjectContainer>()->Add_Child(pChild);
     }
 
-    ImGui::SeparatorText("Layout");
-    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);    // x, y 움직이면 자식 중에 이미지는 움직이는데 텍스트는 안 움직임 (Post~ 함수는 호출하는데 fontposition은 업데이트 안 해줘서)
-    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
-    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
-    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
+    //ImGui::SeparatorText("Layout");
+    //ImGui::DragFloat("X Position", &m_fLocalX, 1.f);    // x, y 움직이면 자식 중에 이미지는 움직이는데 텍스트는 안 움직임 (Post~ 함수는 호출하는데 fontposition은 업데이트 안 해줘서)
+    //ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
+    //ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
+    //ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
 
     //CGameObject::Render_GUI();
     __super::Render_GUI();
