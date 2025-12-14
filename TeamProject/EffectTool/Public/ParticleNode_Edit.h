@@ -59,5 +59,8 @@ private:
     _bool m_UseGravity = false;
     _float m_fGravityScale{};
 
+    /*Module Params*/
+
+
 };
 NS_END

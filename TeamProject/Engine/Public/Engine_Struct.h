@@ -329,6 +329,9 @@ namespace Engine
 		_float2 vStartSizeMax{};
 		_float3 vSpawnAreaMin{};
 		_float3 vSpawnAreaMax{};
+
+		_bool useGravity = false;
+		_float fGravityScale{};
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

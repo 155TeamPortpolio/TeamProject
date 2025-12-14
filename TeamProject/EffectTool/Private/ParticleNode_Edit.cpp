@@ -133,18 +133,20 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::SeparatorText("ParticleEffect Setting");
 
-	isDirty|=ImGui::Checkbox("Is Loop", &m_IsLoop);
-	isDirty|=ImGui::DragInt("Burst Count", reinterpret_cast<_int*>(&m_iBurstCount));
-	isDirty|=ImGui::DragFloat("Spawn Per Sec", &m_fSpawnPerSec);
-	isDirty|=ImGui::DragInt("Max Particle", reinterpret_cast<_int*>(&m_iMaxSpawnParticleCount));
-	
-	isDirty|=ImGui::DragFloat2("Start Speed Min,Max", &m_vStartSpeed.x);
-	isDirty|=ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
-	isDirty|=ImGui::DragFloat2("Start Size Min", &m_vStartSizeMin.x);
-	isDirty|=ImGui::DragFloat2("Start Size Max", &m_vStartSizeMax.x);
-	
-	isDirty|=ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
-	isDirty|=ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
+	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
+	isDirty |= ImGui::Checkbox("Use Gravity", &m_UseGravity);
+	isDirty |= ImGui::DragFloat("Gravity Scale", &m_fGravityScale);
+	isDirty |= ImGui::DragInt("Burst Count", reinterpret_cast<_int*>(&m_iBurstCount));
+	isDirty |= ImGui::DragFloat("Spawn Per Sec", &m_fSpawnPerSec);
+	isDirty |= ImGui::DragInt("Max Particle", reinterpret_cast<_int*>(&m_iMaxSpawnParticleCount));
+
+	isDirty |= ImGui::DragFloat2("Start Speed Min,Max", &m_vStartSpeed.x);
+	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
+	isDirty |= ImGui::DragFloat2("Start Size Min", &m_vStartSizeMin.x);
+	isDirty |= ImGui::DragFloat2("Start Size Max", &m_vStartSizeMax.x);
+
+	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
+	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
 
 	if (isDirty)
 	{
@@ -160,6 +162,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vStartSizeMax = m_vStartSizeMax;
 		node.vSpawnAreaMin = m_vSpawnAreaMin;
 		node.vSpawnAreaMax = m_vSpawnAreaMax;
+		node.useGravity = m_UseGravity;
+		node.fGravityScale = m_fGravityScale;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

@@ -131,6 +131,9 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_vSpawnAreaMin = particleDesc.vSpawnAreaMin;
 	m_vSpawnAreaMax = particleDesc.vSpawnAreaMax;
 
+	m_UseGravity = particleDesc.useGravity;
+	m_fGravityScale = particleDesc.fGravityScale;
+
 	m_Particles.resize(m_iMaxSpawnParticleCount);
 	m_DeadParticleIndices.reserve(m_iMaxSpawnParticleCount);
 
@@ -224,8 +227,15 @@ void CParticleSystem::UpdateParticles(_float dt)
 			module->Update(particle, dt);
 
 		_vector3 currPosition = particle.vPosition;
-		_vector3 nextPosition = currPosition + particle.vVelocity * dt;
+		_vector3 nextPosition;
+		if (m_UseGravity)
+		{
+			_vector3 velocity = particle.vVelocity;
+			velocity.y -= m_fGravityScale * 10.f;
+			particle.vVelocity = velocity;
+		}
 		
+		nextPosition = currPosition + particle.vVelocity * dt;
 		particle.vPosition = nextPosition;
 	}
 }
