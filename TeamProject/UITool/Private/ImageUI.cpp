@@ -2,7 +2,6 @@
 #include "ImageUI.h"
 
 #include "Sprite2D.h"
-#include "GameInstance.h"
 #include "UITool_Level.h"
 
 CImageUI::CImageUI()
@@ -26,7 +25,10 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    if (CUITool_Level::Get_TextureKeysSize())
+        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, CUITool_Level::Get_TextureKeys()[m_iTextureKeyIndex]);
+    else
+        MSG_BOX("Failed to Add_Texture : No Textures Loaded");
 
     return S_OK;
 }
@@ -45,16 +47,18 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
+    ImGui::SeparatorText(u8"레이아웃");
+    ImGui::DragFloat(u8"X 위치", &m_fLocalX, 1.f);
+    ImGui::DragFloat(u8"Y 위치", &m_fLocalY, 1.f);
+    ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);
+    ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
+
     ImGui::SeparatorText("Appearance");
     const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
     if(ImGui::Combo("Image", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
 
-    ImGui::SeparatorText("Layout");
-    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);
-    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
-    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
-    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
+    // 컬러 추가 필요. 이미지에 multiply
 
     CGameObject::Render_GUI();
 }
