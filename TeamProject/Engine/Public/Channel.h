@@ -23,8 +23,8 @@ public:
     vector<KEYFRAME>& Get_KeyFrames() { return m_KeyFrames; };
 
 protected:
-    _bool               m_isRoot = {};
-    string			    m_ChannelName;       //본과 일치할 수 있도록.
+    _bool             m_isRoot = {};
+    string			m_ChannelName;       //본과 일치할 수 있도록.
     _uint				m_iBoneIndex = {};
     _uint				m_iNumKeyFrames = {};
     vector<KEYFRAME>	m_KeyFrames;

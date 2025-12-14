@@ -10,22 +10,13 @@ private:
 public:
     HRESULT Initialize();
     void Update_Timer();
-
     _float Get_DeltaTime(_bool raw);
     _float Get_TotalTime();
-
-    _float Get_RawDeltaTime(_bool raw);
-    _float Get_RawTotalTime();
-
     void Set_TimeScale(_float Scale) { m_fTimeScale = Scale; };
 
 private:
-    _float m_fRawDeltaTime{};
-    _float m_fScaledDeltaTime{};
-
-    _float m_fRawTotalTime{};
-    _float m_fScaledTotalTime{};
-
+    _float m_fDeltaTime{};
+    _float m_fTotalTime{};
     _float m_fTimeScale{1.f};
 
     LARGE_INTEGER m_TickCount{};

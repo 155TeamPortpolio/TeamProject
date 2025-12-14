@@ -5,7 +5,6 @@
 #pragma pack_constant_buffers
 
 #include "Shader_State.hlsl"
-#include "Shader_PBRFunction.hlsl"
 
 cbuffer FrameBuffer : register(b0)
 {

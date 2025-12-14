@@ -27,6 +27,7 @@ public:
 	HRESULT Render_LightAcc();
 	HRESULT Render_Combined();
 	HRESULT Render_Blended();
+	HRESULT Render_Bright();
 	void Render_Shadow();
 	HRESULT Render_Final();
 #ifdef _USING_GUI

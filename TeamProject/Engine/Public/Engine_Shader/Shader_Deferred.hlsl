@@ -9,8 +9,6 @@ Texture2D g_SpecularTexture;
 Texture2D g_EmmisiveTexture;
 Texture2D g_DepthTexture;
 Texture2D g_ShadowTexture;
-Texture2D g_MetalicTexture;
-Texture2D g_AmbientTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -18,7 +16,7 @@ Texture2D g_PostProcessTexture;
 
 vector g_vLightDir;
 vector g_vLightPos;
-float  g_fLightRange;
+float      g_fLightRange;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
@@ -72,37 +70,38 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     PS_OUT_LIGHT Out;
     
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    float ambientocclusion = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float3 vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float fViewZ = vDepthDesc.y * zFar;
     
+    Out.vShade = g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) +
+        (g_vLightAmbient * g_vMtrlAmbient);
+    
     vector vWorldPos;
+    
+    /* 투영공간 상의x, y를 구한다. */
+    
+    /* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 * 1/w */
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
     vWorldPos.z = vDepthDesc.x;
     vWorldPos.w = 1.f;
     
+    /* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 * 1/w * w */
     vWorldPos = vWorldPos * fViewZ;
+    
+    /* 투영행렬의 역을 곱한다. */
+    /* 로컬위치 * 월드행렬 * 뷰행렬 */
     vWorldPos = mul(vWorldPos, matProjectionInverse);
+    
+    /* 로컬위치 * 월드행렬  */
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
-    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+    vector vLook = vWorldPos - vCamPosition;
+    vector vReflect = normalize(reflect(normalize(g_vLightDir), vNormal));
     
-    float3 pbrResult = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, 10.0f, 1.0f);
+    Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 50.f);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ambientocclusion;
-
-    Out.vShade = float4(pbrResult + ambient, 1.f);
-    Out.vSpecular = float4(0, 0, 0, 1);
     return Out;
 }
 
@@ -113,21 +112,26 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    
     float fViewZ = vDepthDesc.y * zFar;
     
     vector vWorldPos;
     
+    /* 투영공간 상의x, y를 구한다. */
+    
+    /* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 * 1/w */
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
     vWorldPos.z = vDepthDesc.x;
     vWorldPos.w = 1.f;
     
+    /* 로컬위치 * 월드행렬 * 뷰행렬 * 투영행렬 * 1/w * w */
     vWorldPos = vWorldPos * fViewZ;
+    
+    /* 투영행렬의 역을 곱한다. */
+    /* 로컬위치 * 월드행렬 * 뷰행렬 */
     vWorldPos = mul(vWorldPos, matProjectionInverse);
+    
+    /* 로컬위치 * 월드행렬  */
     vWorldPos = mul(vWorldPos, matViewInverse);
     
     vector vLightDir = vWorldPos - g_vLightPos;
@@ -154,10 +158,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
         discard;
     
     vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
-    // vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
-
-    Out.vBackBuffer = vShade; // Diffuse 곱셈 제거, Specular 덧셈 제거
- 
+    vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    Out.vBackBuffer = vDiffuse * vShade + vSpecular;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
@@ -170,9 +173,13 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vWorldPos.w = 1.f;
     
     vWorldPos = vWorldPos * fViewZ;
+    
     vWorldPos = mul(vWorldPos, matProjectionInverse);
+    
     vWorldPos = mul(vWorldPos, matViewInverse);
+    
     vWorldPos = mul(vWorldPos, matShadowView);
+    
     vWorldPos = mul(vWorldPos, matShadowProjection);
     
     float2 vTexcoord;
@@ -241,3 +248,4 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_FINAL();
     }
 }
+

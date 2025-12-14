@@ -30,7 +30,6 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 
 	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
 	pParticle->Link_Model(G_GlobalLevelKey, "Engine_Default_InstancePoint");
-	pParticle->Initialize(nullptr);
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();
@@ -44,7 +43,6 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
-	m_InstanceName = "ParticleNode";
 	return S_OK;
 }
 
@@ -130,54 +128,5 @@ void CParticleNode_Edit::AddTextures()
 
 void CParticleNode_Edit::SetUp_ParticleEffect()
 {
-	_bool isDirty = false;
-
 	ImGui::SeparatorText("ParticleEffect Setting");
-
-	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
-	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
-	isDirty |= ImGui::Checkbox("Use Gravity", &m_UseGravity);
-	isDirty |= ImGui::DragFloat("Gravity Scale", &m_fGravityScale);
-	isDirty |= ImGui::DragInt("Burst Count", reinterpret_cast<_int*>(&m_iBurstCount));
-	isDirty |= ImGui::DragFloat("Spawn Per Sec", &m_fSpawnPerSec);
-	isDirty |= ImGui::DragInt("Max Particle", reinterpret_cast<_int*>(&m_iMaxSpawnParticleCount));
-
-	isDirty |= ImGui::DragFloat2("Start Speed Min,Max", &m_vStartSpeed.x);
-	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
-	isDirty |= ImGui::DragFloat2("Start Size", &m_vStartSize.x);
-
-	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
-	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
-
-	ImGui::SeparatorText("Life Time Velocity");
-	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
-
-	ImGui::SeparatorText("Life Time Size");
-	isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
-	isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
-
-	if (isDirty)
-	{
-		PARTICLE_NODE node{};
-
-		node.isWorld = m_IsWorld;
-		node.isLoop = m_IsLoop;
-		node.iBurstCount = m_iBurstCount;
-		node.fSpawnPerSec = m_fSpawnPerSec;
-		node.iMaxSpawnParticleCount = m_iMaxSpawnParticleCount;
-		node.vStartSpeed = m_vStartSpeed;
-		node.vStartLifeTime = m_vStartLifeTime;
-		node.vStartSize = m_vStartSize;
-		node.vSpawnAreaMin = m_vSpawnAreaMin;
-		node.vSpawnAreaMax = m_vSpawnAreaMax;
-		node.useGravity = m_UseGravity;
-		node.fGravityScale = m_fGravityScale;
-
-		node.fDampScale = m_fDampScale;
-
-		node.vStartScale = m_vStartScale;
-		node.vEndScale = m_vEndScale;
-
-		Get_Component<CParticleSystem>()->SetParticleParams(node);
-	}
 }

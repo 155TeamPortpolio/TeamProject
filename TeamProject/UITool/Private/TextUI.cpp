@@ -3,7 +3,6 @@
 
 #include "TextSlot.h"
 #include "UITool_Level.h"
-#include "Helper_Func.h"
 
 CTextUI::CTextUI()
 {
@@ -27,10 +26,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    if (CUITool_Level::Get_FontKeysSize())
-        Get_Component<CTextSlot>()->Set_Font(CUITool_Level::Get_FontKeys()[m_iFontKeyIndex]);
-    else
-        MSG_BOX("Failed to Set_Font : No Fonts Loaded");
+    Get_Component<CTextSlot>()->Set_Font(CUITool_Level::Get_FontKeys()[m_iFontKeyIndex]);
     Get_Component<CTextSlot>()->Set_Text(L"텍스트 블록");
     Get_Component<CTextSlot>()->Set_Color(m_vColor);
     Get_Component<CTextSlot>()->Set_Position({ m_fLocalX, m_fLocalY });
@@ -64,7 +60,7 @@ void CTextUI::Render_GUI()
 
     ImGui::SeparatorText(u8"콘텐츠");
     if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText)))
-        Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+        Get_Component<CTextSlot>()->Set_Text(Utf8ToWstring(m_szText));
 
     ImGui::SeparatorText(u8"폰트");
     const auto& FontKeys = CUITool_Level::Get_FontKeys();
@@ -87,6 +83,18 @@ void CTextUI::Render_GUI()
         Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
     CGameObject::Render_GUI();
+}
+
+wstring CTextUI::Utf8ToWstring(const string& strUtf8)
+{
+    if (strUtf8.empty())
+        return wstring();
+
+    int iSize = MultiByteToWideChar(CP_UTF8, 0, strUtf8.c_str(), (int)strUtf8.size(), NULL, 0);
+    wstring strWstr(iSize, 0);
+    MultiByteToWideChar(CP_UTF8, 0, strUtf8.c_str(), (int)strUtf8.size(), &strWstr[0], iSize);
+
+    return strWstr;
 }
 
 CGameObject* CTextUI::Create()

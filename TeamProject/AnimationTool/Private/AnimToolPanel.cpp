@@ -20,11 +20,13 @@ void CAnimToolPanel::Render_GUI()
 	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
 
 	if (ImGui::Button("Model Load")) {
+		string path = Helper::OpenFile_Dialogue();
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::Button("Material Loadar")) {
+		
 	}
 	ImGui::EndChild();
 
@@ -35,6 +37,7 @@ CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
 {
 	return new CAnimToolPanel(context);
 }
+
 
 void CAnimToolPanel::Free()
 {

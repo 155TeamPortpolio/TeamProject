@@ -12,7 +12,6 @@
 #include "Model.h"
 #include "Light.h"
 #include "RigidBody.h"
-#include "CharacterController.h"
 
 #include "Child.h"
 
@@ -135,13 +134,6 @@ CGameObjectBuilder& CGameObjectBuilder::RigidBody(const RIGIDBODY_DESC& desc)
 {
 	RIGIDBODY_DESC* rigidbodyDesc = new RIGIDBODY_DESC(desc);
 	m_CompDesc.emplace(type_index(typeid(CRigidBody)), rigidbodyDesc);
-	return *this;
-}
-
-CGameObjectBuilder& CGameObjectBuilder::CharacterController(const CCT_DESC& desc)
-{
-	CCT_DESC* cctDesc = new CCT_DESC(desc);
-	m_CompDesc.emplace(type_index(typeid(CCharacterController)), cctDesc);
 	return *this;
 }
 

@@ -29,7 +29,6 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
    // __super::Initialize(pArg);
 
 	LoadTextureFromDirectory("../Bin/TestTexture");
-	m_InstanceName = "EffectContainer";
     return S_OK;
 }
 

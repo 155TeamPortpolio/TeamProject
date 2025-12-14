@@ -17,7 +17,6 @@ public:
     virtual void Update(_float dt);
     virtual void Render_GUI();
     virtual ImGuiContext* GetEngineImGuiContext() override;
-
 public:
     virtual GUI_CONTEXT* Get_Context() override  { return &m_tGuiContext; };
     virtual void Register_Panel(class CBasePanel* pPanel)override;

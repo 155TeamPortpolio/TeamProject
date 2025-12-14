@@ -17,8 +17,6 @@
 #include "MaterialInstance.h"
 #include "Layer.h"
 #include "RigidBody.h"
-#include "ParticleSystem.h"
-
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -154,9 +152,6 @@ void CGameObject::Post_EngineUpdate(_float dt)
 
 		if (Get_Component<CInstanceModel>()) {
 			Make_InstancePacket();
-		}
-		else if (Get_Component<CParticleSystem>()) {
-			Make_ParticlePacket();
 		}
 		else {
 			Make_OpaquePacket();
@@ -360,25 +355,6 @@ HRESULT CGameObject::Make_InstancePacket()
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
 		}
 	}
-
-	return S_OK;
-}
-
-HRESULT CGameObject::Make_ParticlePacket()
-{
-	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
-
-	PARTICLE_PACKET packet;
-	if (pParticle->IsWorldSpace())
-		packet.WorldMatrix = _smatrix::Identity;
-	else
-		packet.WorldMatrix = m_pTransform->Get_WorldMatrix();
-
-	packet.pParticleSystem = Get_Component<CParticleSystem>();
-	packet.pMaterial = Get_Component<CMaterial>();
-	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;
-
-	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Particle(packet);
 
 	return S_OK;
 }

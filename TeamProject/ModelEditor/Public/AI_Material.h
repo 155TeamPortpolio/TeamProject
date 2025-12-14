@@ -12,7 +12,7 @@ public:
     HRESULT Initialize();
     virtual void Render_GUI() override;
     HRESULT Load_Material(_uint materialNum, aiMaterial* material[], const string& filePath);
-    HRESULT Save_Material(const string& fileName);
+    HRESULT Save_Material();
     HRESULT Save_Material(const string& SavePath, const string& fileName);
     void LinkShader(const string& shader);
     void Override_ShaderKey(const string& overrideKey) { m_OverrideShaderKey = overrideKey; };

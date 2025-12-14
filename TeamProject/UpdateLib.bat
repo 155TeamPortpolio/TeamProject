@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM ========== 프로젝트 폴더 등록 (공백으로 구분) ==========
-set PROJECT_LIST=MapTool DemoProject AnimationTool CameraTool EffectTool UITool ModelEditor
+set PROJECT_LIST=MapTool DemoProject AnimationTool CameraTool EffectTool UITool
 REM ======================================================
 
 set BASE=%~dp0
@@ -110,7 +110,6 @@ xcopy /y "%BASE%%PHYSX_DIR%\PhysXGpu_64.dll" "%PROJECT_PATH%\Bin\" >nul 2>&1
 
 xcopy /y /s /e /i "%BASE%Engine\Bin\Engine_Shaders\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1
 xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%PROJECT_PATH%\Bin\ShaderFiles\" >nul 2>&1
-xcopy /y /s /e /i "%BASE%Engine\Public\Engine_Shader\" "%BASE%\EngineSDK\Inc\Engine_Shader\" >nul 2>&1
 
 echo [UpdateLib] %PROJECT_NAME% completed
 goto :eof

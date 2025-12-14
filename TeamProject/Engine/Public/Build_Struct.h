@@ -41,6 +41,7 @@ namespace Engine {
 		_bool		bLockX = true;
 		_bool		bLockY = false;
 		_bool		bLockZ = true;
+		string		strMaterialTag = {};
 
 		RigidBodyinitDesc() DEFAULT;
 		virtual ~RigidBodyinitDesc() DEFAULT;
@@ -71,37 +72,18 @@ namespace Engine {
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
+
 	}LIGHT_INIT_DESC;
 
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
-		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
-
-		_float3			vCenter = { 0.f, 0.f, 0.f };		// 로컬 오프셋
-		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
-		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
-		_bool			isTrigger = false;					// 트리거 여부
-		string			strMaterialTag = "";				// 재질 태그
-
-		ColliderInitDesc() DEFAULT;
-		virtual ~ColliderInitDesc() DEFAULT;
+		COLLIDER_TYPE eType = COLLIDER_TYPE::BOX;
+		_float3 vCenter = { 0.f, 0.f, 0.f };	// 로컬 오프셋
+		_float3 vSize = { 1.f, 1.f, 1.f };		// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
+		_float3 vRotation = { 0.f, 0.f, 0.f };	// 로컬 회전 (Radian)
+		_bool   isTrigger = false;				// 트리거 여부
+		string  strMaterialTag = "";			// 재질 태그
 	}COLLIDER_DESC;
 
-	typedef struct CCTinitDesc : public COMPONENT_DESC {
-		_float      fHeight = { 2.0f };         // 캡슐 높이
-		_float      fRadius = { 0.5f };         // 캡슐 반지름
-		_float      fStepOffset = { 0.5f };     // 계단 등반 높이
-		_float      fSlopeLimit = { 45.0f };    // 등반 각도 제한
-		_float3     vPos = { 0.f, 0.f, 0.f };   // 초기 위치
-		string      strMaterialTag = { "" };    // 재질
-		_float      fDensity = { 10.0f };       // 밀도
-		
-		CCTinitDesc() DEFAULT;
-		virtual ~CCTinitDesc() DEFAULT;
-	}CCT_DESC;
-
-#pragma region OLD
 	//typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {
 	//	_float3 vSize = {};
 	//	ColliderAABBInitDesc() DEFAULT;
@@ -126,7 +108,7 @@ namespace Engine {
 	//	ColliderInitSphereDesc(_float3 vCenter, _float vRadius) :COLLIDER_DESC{ vCenter }, fRadius{ vRadius }{};
 	//	ColliderInitSphereDesc(const ColliderInitSphereDesc& rhs) :COLLIDER_DESC{ rhs }, fRadius{ rhs.fRadius }{};
 	//}SPHERE_COLLIDER_DESC;
-#pragma endregion
+
 	/*Parent Child Desc*/
 	typedef struct tagSetParentDesc :public COMPONENT_DESC {
 		class CGameObject* pParent = { nullptr };
@@ -143,12 +125,13 @@ namespace Engine {
 	}GAMEOBJECT_DESC;
 
 	typedef struct tagUIObjectDesc : public GAMEOBJECT_DESC {
-		_float2 AnchorOffset = {};
-		_float2 Size = { 1.f,1.f};
-		_float2 Scale = {1.f,1.f };
+		_float fX = {};
+		_float fY = {  };
+		_float fSizeX = {1.f };
+		_float fSizeY = { 1.f };
 		_float fRadian = {};
-
 		tagUIObjectDesc() DEFAULT;
+		tagUIObjectDesc(const _float4& ui_Info) :fX(ui_Info.x), fY(ui_Info.y), fSizeX(ui_Info.z), fSizeY(ui_Info.w), GAMEOBJECT_DESC{} {}
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;
 

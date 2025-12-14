@@ -26,16 +26,10 @@ public:
 	HRESULT Draw_End();
 
 public:
-	void Update_EngineTimer();
-	_float Get_EngineDeltaTime();
-	void Set_EngineTimeScale(_float fScale);
-
-public:
 	ID3D11Device* Get_Device() { return m_pDevice; };
 	ID3D11DeviceContext* Get_Context() { return m_pDeviceContext; };
 	_float2 Get_ClientSize() { return _float2(m_ClientRect.right, m_ClientRect.bottom); }
 	_uint Get_FrameCount() const { return m_totalFrameCount; }
-
 #pragma region Game_Managers
 public:
 	class IGraphicService* Get_GraphicDev() { return m_pGraphicDevice; }

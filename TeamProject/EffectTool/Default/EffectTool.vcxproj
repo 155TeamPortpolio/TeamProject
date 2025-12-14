@@ -103,12 +103,6 @@
       <Command>
       </Command>
     </PreBuildEvent>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -135,12 +129,6 @@
       <Command>
       </Command>
     </PreBuildEvent>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -163,12 +151,6 @@
       <Command>
       </Command>
     </PreBuildEvent>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -195,12 +177,6 @@
       <Command>
       </Command>
     </PreBuildEvent>
-    <FxCompile>
-      <ShaderType>Effect</ShaderType>
-    </FxCompile>
-    <FxCompile>
-      <ShaderModel>5.0</ShaderModel>
-    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h" />
@@ -221,11 +197,9 @@
     <ClInclude Include="..\public\EffectContainer_Edit.h" />
     <ClInclude Include="..\Public\EffectTool_Defines.h" />
     <ClInclude Include="..\public\MainApp.h" />
-    <ClInclude Include="..\Public\MeshNode_Edit.h" />
     <ClInclude Include="..\Public\ParticleNode_Edit.h" />
     <ClInclude Include="..\Public\SpriteNode_Edit.h" />
     <ClInclude Include="..\public\ToolCamera.h" />
-    <ClInclude Include="..\Public\ToolGrid.h" />
     <ClInclude Include="..\Public\ToolLight.h" />
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="framework.h" />
@@ -309,11 +283,9 @@
     <ClCompile Include="..\private\EffectEditLevel.cpp" />
     <ClCompile Include="..\private\EffectContainer_Edit.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
-    <ClCompile Include="..\Private\MeshNode_Edit.cpp" />
     <ClCompile Include="..\Private\ParticleNode_Edit.cpp" />
     <ClCompile Include="..\Private\SpriteNode_Edit.cpp" />
     <ClCompile Include="..\private\ToolCamera.cpp" />
-    <ClCompile Include="..\Private\ToolGrid.cpp" />
     <ClCompile Include="..\Private\ToolLight.cpp" />
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="pch.cpp">
@@ -329,9 +301,6 @@
   <ItemGroup>
     <Image Include="EffectTool.ico" />
     <Image Include="small.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

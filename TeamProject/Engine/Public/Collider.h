@@ -1,9 +1,9 @@
 #pragma once
-#include "ICollidable.h"
+#include "Component.h"
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CCollider final : public ICollidable
+class ENGINE_DLL CCollider final : public CComponent
 {
 private:
     CCollider();
@@ -11,32 +11,31 @@ private:
     virtual ~CCollider() DEFAULT;
 
 public:
-    PxShape*        Get_Shape() { return m_pShape; }
-    _bool           IsTrigger() const { return m_bTrigger; }
+    PxShape* Get_Shape() { return m_pShape; }
+    _bool IsColliding() const { return !m_CurrentCollisions.empty(); }
+
 
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
     // 충돌 이벤트 핸들러 (System에서 호출)
-    virtual void    OnCollisionEnter(ICollidable* pOther) override;
-    virtual void    OnCollisionStay(ICollidable* pOther) override;
-    virtual void    OnCollisionExit(ICollidable* pOther) override;
-
-    void            OnTriggerEnter(ICollidable* pOther);
-    void            OnTriggerExit(ICollidable* pOther);
+    void OnCollisionEnter(CCollider* pOther, const PxContactPair& contactInfo);
+    void OnCollisionExit(CCollider* pOther);
+    void OnTriggerEnter(CCollider* pOther);
+    void OnTriggerExit(CCollider* pOther);
 
     void Render_GUI();
 
 #ifdef _DEBUG
-    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor);
 #endif
 
 private:
     PxShape*                    m_pShape = { nullptr };
     class CRigidBody*           m_pAttachedRigidBody = { nullptr };
+    unordered_set<CCollider*>   m_CurrentCollisions;     // 현재 충돌 중인 대상 목록 (Stay 처리나 중복 Enter 방지용)
+
     COLLIDER_TYPE               m_eType = {};
-    COLLISION_GROUP             m_eGroup = {};
-    _uint                       m_iCollisionMask = {};
     _float3                     m_vCenter = {};
     _float3                     m_vSize = {};
     _float3                     m_vRotation = {};

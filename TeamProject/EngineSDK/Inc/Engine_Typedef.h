@@ -50,7 +50,6 @@ namespace Engine
 
 	using LEVEL_CREATOR = function<class CLevel* ()>;
 	static const string G_GlobalLevelKey = "Global_Level";
-	static const string G_EngineTimerID = "Engine_Timer";
 	static constexpr _uint g_iMaxNumBones = 16384;
 	static constexpr _uint g_iMaxTransform = 4096;
 	static constexpr _uint g_iMaxLightss = 46;

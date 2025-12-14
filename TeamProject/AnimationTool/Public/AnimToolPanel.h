@@ -1,7 +1,6 @@
 #pragma once
 #include "AnimationTool_Defines.h"
 #include "BasePanel.h"
-
 class CAnimToolPanel
 	: CBasePanel
 {

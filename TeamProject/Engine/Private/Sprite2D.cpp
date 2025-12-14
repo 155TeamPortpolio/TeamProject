@@ -11,17 +11,8 @@ CSprite2D::CSprite2D()
 }
 
 CSprite2D::CSprite2D(const CSprite2D& rhs)
-	:CComponent(rhs),
-	m_pShader(rhs.m_pShader),
-	m_pPoint(rhs.m_pPoint),
-	m_pTextures(rhs.m_pTextures)
+	:CComponent(rhs)
 {
-	Safe_AddRef(m_pShader);
-	Safe_AddRef(m_pPoint);
-	for (auto tex : m_pTextures)
-	{
-		Safe_AddRef(tex);
-	}
 }
 
 CSprite2D::~CSprite2D()
@@ -30,14 +21,14 @@ CSprite2D::~CSprite2D()
 
 HRESULT CSprite2D::Initialize_Prototype()
 {
-	m_pPoint = CVI_Point::Create(CGameInstance::GetInstance()->Get_Device(), "Sprite2D");
-
+	
 	return S_OK;
 }
 
 
 HRESULT CSprite2D::Initialize(COMPONENT_DESC* pArg)
 {
+	m_pPoint = CVI_Point::Create(CGameInstance::GetInstance()->Get_Device(), "Sprite2D");
 	if (m_pPoint == nullptr)
 		return E_FAIL;
 

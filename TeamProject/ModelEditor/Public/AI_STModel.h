@@ -23,7 +23,7 @@ public:
 
 public:
     HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
-    HRESULT Save_Model(const string& SavePath);
+    HRESULT Save_Model();
 
 private:
     HRESULT Ready_AIModelData(const aiScene* pAIScene);
