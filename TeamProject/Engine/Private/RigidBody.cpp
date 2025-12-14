@@ -63,12 +63,6 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 		m_bLockX = pDesc->bLockX;
 		m_bLockY = pDesc->bLockY;
 		m_bLockZ = pDesc->bLockZ;
-
-		m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
-	}
-	else
-	{
-		m_pMaterial = m_pPhysicsSystem->Get_DefaultMaterial();
 	}
 
 	// 초기 위치
@@ -112,32 +106,78 @@ void CRigidBody::Update(_float dt)
 void CRigidBody::Late_Update(_float dt)
 {
 	if (!m_pActor) return;
-
-	// 1. PhysX가 생각하는 위치
-	PxTransform pxPose = m_pActor->getGlobalPose();
-
-	// 2. Transform에 적용
 	Update_RigidBody();
+}
 
-	// 3. 적용 후 Transform이 생각하는 위치
+void CRigidBody::Render_GUI()
+{
+	if (!Get_CompActive()) return;
 
+	ImGui::SeparatorText("RigidBody");
 
-	// 4. 로그 출력
+	if (ImGui::BeginChild("##RigidBodyChild", ImVec2(0, 250), true))
+	{
+		// 기본 속성
+		ImGui::Text("Type: %s", m_bStatic ? "Static" : m_bKinematic ? "Kinematic" : "Dynamic");
+		ImGui::Text("Mass: %.2f kg", m_fMass);
+		ImGui::Text("Gravity: %s", m_bGravity ? "Enabled" : "Disabled");
 
+		// 회전 잠금
+		ImGui::Separator();
+		ImGui::Text("Rotation Lock");
+		ImGui::Text("X: %s | Y: %s | Z: %s",
+			m_bLockX ? "Locked" : "Free",
+			m_bLockY ? "Locked" : "Free",
+			m_bLockZ ? "Locked" : "Free");
+
+		// 속도 정보
+		if (!m_bStatic)
+		{
+			PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+			if (pDynamic)
+			{
+				ImGui::Separator();
+				PxVec3 vel = pDynamic->getLinearVelocity();
+				PxVec3 angVel = pDynamic->getAngularVelocity();
+
+				ImGui::Text("Linear Velocity");
+				ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", vel.x, vel.y, vel.z);
+				ImGui::Text("Speed: %.2f m/s", vel.magnitude());
+
+				ImGui::Separator();
+				ImGui::Text("Angular Velocity");
+				ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", angVel.x, angVel.y, angVel.z);
+			}
+		}
+
+		// 위치 정보
+		if (m_pActor)
+		{
+			ImGui::Separator();
+			PxTransform pose = m_pActor->getGlobalPose();
+			ImGui::Text("Position");
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", pose.p.x, pose.p.y, pose.p.z);
+
+			ImGui::Text("Rotation (Quat)");
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f | W: %.2f",
+				pose.q.x, pose.q.y, pose.q.z, pose.q.w);
+		}
+
+		// Shape 개수
+		if (m_pActor)
+		{
+			ImGui::Separator();
+			ImGui::Text("Attached Shapes: %d", m_pActor->getNbShapes());
+		}
+	}
+	ImGui::EndChild();
 }
 
 PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
 {
 	if (!m_pActor) return nullptr;
-
-	PxMaterial* pUseMaterial = m_pMaterial;
-	if (strMaterialName != "") {
-		PxMaterial* pFoundMat = m_pPhysicsSystem->Get_Material(strMaterialName);
-		if (pFoundMat) pUseMaterial = pFoundMat;
-	}
-
-	PxShape* pShape = PxRigidActorExt::createExclusiveShape(*m_pActor, geometry, *pUseMaterial);
-
+	PxMaterial* pMaterial = m_pPhysicsSystem->Get_Material(strMaterialName);
+	PxShape* pShape = PxRigidActorExt::createExclusiveShape(*m_pActor, geometry, *pMaterial);
 	if (pShape && !m_bStatic)
 	{
 		Update_Inertia();

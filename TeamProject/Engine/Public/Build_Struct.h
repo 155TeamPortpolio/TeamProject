@@ -41,7 +41,6 @@ namespace Engine {
 		_bool		bLockX = true;
 		_bool		bLockY = false;
 		_bool		bLockZ = true;
-		string		strMaterialTag = {};
 
 		RigidBodyinitDesc() DEFAULT;
 		virtual ~RigidBodyinitDesc() DEFAULT;
@@ -72,16 +71,21 @@ namespace Engine {
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
-
 	}LIGHT_INIT_DESC;
 
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
-		COLLIDER_TYPE eType = COLLIDER_TYPE::BOX;
-		_float3 vCenter = { 0.f, 0.f, 0.f };	// 로컬 오프셋
-		_float3 vSize = { 1.f, 1.f, 1.f };		// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
-		_float3 vRotation = { 0.f, 0.f, 0.f };	// 로컬 회전 (Radian)
-		_bool   isTrigger = false;				// 트리거 여부
-		string  strMaterialTag = "";			// 재질 태그
+		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+
+		_float3			vCenter = { 0.f, 0.f, 0.f };		// 로컬 오프셋
+		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
+		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
+		_bool			isTrigger = false;					// 트리거 여부
+		string			strMaterialTag = "";				// 재질 태그
+
+		ColliderInitDesc() DEFAULT;
+		virtual ~ColliderInitDesc() DEFAULT;
 	}COLLIDER_DESC;
 
 	//typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {

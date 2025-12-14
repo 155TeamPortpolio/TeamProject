@@ -33,6 +33,7 @@ private:
 public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
+    void Render_GUI();
 
 private: // 내부 로직 (Proxy가 호출함)
     void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
@@ -49,7 +50,7 @@ private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };
     BasicEffect* m_pEffect = { nullptr };
     PrimitiveBatch<VertexPositionColor>* m_pBatch = { nullptr };
-    vector<class CCollider*> m_Colliders; // 디버그 렌더링용
+    vector<class CCollider*> m_Colliders;   // For Debug Render
 #endif 
 
 private:

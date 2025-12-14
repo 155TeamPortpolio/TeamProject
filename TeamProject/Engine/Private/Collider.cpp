@@ -34,7 +34,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
 	if (m_pAttachedRigidBody == nullptr)
 	{
-		MSG_BOX("CCollider::Initialize : Onwer's RigidBody is nullptr!");
+		MSG_BOX("CCollider::Initialize : Owner must have RigidBody component! Add RigidBody before Collider.");
 		return E_FAIL;
 	}
 
@@ -78,14 +78,11 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
 
-	//PxFilterData filterData;
-	//filterData.word0 = 1;       // 나는 1번 그룹이다 (Default Layer)
-	//filterData.word1 = 1;       // 나는 1번 그룹하고만 충돌한다
-	//// (만약 바닥도 이 설정을 따르면 서로 word0(1) & word1(1) != 0 이라 충돌함)
-	//// 만약 pDesc에 레이어 정보가 있다면 그걸 쓰면 더 좋습니다.
-	//// 지금은 테스트를 위해 강제 설정합니다.
-	//m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
-	//m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
+	PxFilterData filterData;
+	filterData.word0 = 1 << ENUM(pDesc->eGroup);
+	filterData.word1 = pDesc->iCollisionMask;
+	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
+	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 
 	// 초기 위치 및 회전값 설정
 	_vector vPos = XMLoadFloat3(&pDesc->vCenter);
@@ -103,6 +100,8 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 	// 멤버 변수 저장
 	m_eType = pDesc->eType;
+	m_eGroup = pDesc->eGroup;
+	m_iCollisionMask = pDesc->iCollisionMask;
 	m_vCenter = pDesc->vCenter;
 	m_vSize = pDesc->vSize;
 	m_vRotation = pDesc->vRotation;
@@ -139,19 +138,49 @@ void CCollider::OnTriggerExit(CCollider* pOther)
 
 void CCollider::Render_GUI()
 {
-	//if(Get_CompActive()){
-	//ImGui::SeparatorText("Collider");
-	//float childWidth = ImGui::GetContentRegionAvail().x;
-	//const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	//const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	if (!Get_CompActive()) return;
 
-	//ImGui::BeginChild("##ColliderChild", ImVec2{ 0, childHeight }, true);
-	//ImGui::Text("System Index : %d", m_SystemIndex);
-	//string ownerTag = "Owner Tag : " + m_CollisionContext.Owner->Get_Tag();
-	//ImGui::Text(ownerTag.c_str());
-	//ImGui::Text(m_CollisionContext.EventTag.c_str());
-	//ImGui::EndChild();
-	//}
+	ImGui::SeparatorText("Collider");
+
+	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 200), true))
+	{
+		// 기본 정보
+		ImGui::Text("Type: %s", m_eType == COLLIDER_TYPE::BOX ? "Box" :
+			m_eType == COLLIDER_TYPE::SPHERE ? "Sphere" : "Capsule");
+		ImGui::Text("Trigger: %s", m_bTrigger ? "True" : "False");
+		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
+
+		// 충돌 레이어 정보
+		ImGui::Separator();
+		ImGui::Text("Collision Layer: %d", ENUM(m_eGroup));
+		ImGui::Text("Collision Mask: %d", m_iCollisionMask);
+
+		// 크기 정보
+		ImGui::Separator();
+		ImGui::DragFloat3("Center", &m_vCenter.x, 0.01f);
+		ImGui::DragFloat3("Size", &m_vSize.x, 0.01f);
+		ImGui::DragFloat3("Rotation", &m_vRotation.x, 0.01f);
+
+		// 충돌 상태
+		ImGui::Separator();
+		ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
+		ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
+
+		// 충돌 중인 객체 리스트
+		if (!m_CurrentCollisions.empty())
+		{
+			ImGui::Separator();
+			ImGui::Text("Colliding With:");
+			for (auto pOther : m_CurrentCollisions)
+			{
+				if (pOther && pOther->Get_Owner())
+				{
+					ImGui::BulletText("%s", pOther->Get_Owner()->Get_InstanceName().c_str());
+				}
+			}
+		}
+	}
+	ImGui::EndChild();
 }
 
 #ifdef _DEBUG

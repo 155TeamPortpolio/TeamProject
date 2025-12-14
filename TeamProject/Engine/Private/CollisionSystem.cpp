@@ -42,7 +42,6 @@ HRESULT CCollisionSystem::Initialize()
 	m_Colliders.reserve(1000);
 #endif
 
-
 	// 프록시 콜백
 	m_pPhysXCallback = new CPhysXEventCallback(this);
 	// 씬에 등록
@@ -69,8 +68,75 @@ void CCollisionSystem::Update(_float dt)
 #endif
 }
 
+void CCollisionSystem::Render_GUI()
+{
+	ImGui::Begin("Collision System");
+
+	ImGui::Text("Total Colliders: %d", m_Colliders.size());
+
+	// 활성/비활성 카운트
+	_uint iActiveCount = 0;
+	_uint iTriggerCount = 0;
+	_uint iCollidingCount = 0;
+
+	for (auto pCollider : m_Colliders)
+	{
+		if (pCollider && pCollider->Get_CompActive())
+		{
+			iActiveCount++;
+			if (pCollider->IsTrigger()) iTriggerCount++;
+			if (pCollider->IsColliding()) iCollidingCount++;
+		}
+	}
+
+	ImGui::Text("Active: %d | Inactive: %d", iActiveCount, m_Colliders.size() - iActiveCount);
+	ImGui::Text("Triggers: %d", iTriggerCount);
+	ImGui::Text("Currently Colliding: %d", iCollidingCount);
+
+	ImGui::Separator();
+
+	// 콜라이더 리스트
+	if (ImGui::CollapsingHeader("Collider List"))
+	{
+		for (size_t i = 0; i < m_Colliders.size(); ++i)
+		{
+			auto pCollider = m_Colliders[i];
+			if (!pCollider) continue;
+
+			ImGui::PushID(i);
+			_bool bActive = pCollider->Get_CompActive();
+
+			if (ImGui::Checkbox("##Active", &bActive))
+			{
+				pCollider->Set_CompActive(bActive);
+			}
+
+			ImGui::SameLine();
+			string ownerName = pCollider->Get_Owner() ?
+				pCollider->Get_Owner()->Get_InstanceName() : "No Owner";
+
+			if (pCollider->IsColliding())
+			{
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "[HIT] %s", ownerName.c_str());
+			}
+			else
+			{
+				ImGui::Text("%s", ownerName.c_str());
+			}
+
+			ImGui::PopID();
+		}
+	}
+
+	ImGui::End();
+}
+
 void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
+	// Actor가 삭제되었는지 확인
+	if (pairHeader.flags & (PxContactPairHeaderFlag::eREMOVED_ACTOR_0 | PxContactPairHeaderFlag::eREMOVED_ACTOR_1))
+		return;
+
 	for (PxU32 i = 0; i < nbPairs; i++)
 	{
 		const PxContactPair& cp = pairs[i];
@@ -79,22 +145,26 @@ void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, co
 		if (cp.flags & (PxContactPairFlag::eREMOVED_SHAPE_0 | PxContactPairFlag::eREMOVED_SHAPE_1))
 			continue;
 
-		// UserData에서 Collider 추출
-		if (cp.shapes[0]->userData && cp.shapes[1]->userData)
-		{
-			auto pColA = static_cast<CCollider*>(cp.shapes[0]->userData);
-			auto pColB = static_cast<CCollider*>(cp.shapes[1]->userData);
+		// UserData 유효성 검사
+		if (!cp.shapes[0] || !cp.shapes[1]) continue;
+		if (!cp.shapes[0]->userData || !cp.shapes[1]->userData) continue;
 
-			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				pColA->OnCollisionEnter(pColB, cp);
-				pColB->OnCollisionEnter(pColA, cp);
-			}
-			else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
-			{
-				pColA->OnCollisionExit(pColB);
-				pColB->OnCollisionExit(pColA);
-			}
+		auto pColA = static_cast<CCollider*>(cp.shapes[0]->userData);
+		auto pColB = static_cast<CCollider*>(cp.shapes[1]->userData);
+		// Collider 유효성 검사
+		if (!pColA || !pColB) continue;
+		if (!pColA->Get_CompActive() || !pColB->Get_CompActive()) continue;
+
+		// 이벤트 처리
+		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		{
+			pColA->OnCollisionEnter(pColB, cp);
+			pColB->OnCollisionEnter(pColA, cp);
+		}
+		else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			pColA->OnCollisionExit(pColB);
+			pColB->OnCollisionExit(pColA);
 		}
 	}
 }
@@ -103,24 +173,31 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 {
 	for (PxU32 i = 0; i < count; i++)
 	{
+		// Shape가 삭제되었는지 확인
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
+
+		// UserData 유효성 검사
+		if (!pairs[i].triggerShape || !pairs[i].otherShape) continue;
+		if (!pairs[i].triggerShape->userData || !pairs[i].otherShape->userData) continue;
 
 		auto pTrigger = static_cast<CCollider*>(pairs[i].triggerShape->userData);
 		auto pOther = static_cast<CCollider*>(pairs[i].otherShape->userData);
 
-		if (pTrigger && pOther)
+		// Collider 유효성 검사
+		if (!pTrigger || !pOther) continue;
+		if (!pTrigger->Get_CompActive() || !pOther->Get_CompActive()) continue;
+
+		// 이벤트 처리
+		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				pTrigger->OnTriggerEnter(pOther);
-				pOther->OnTriggerEnter(pTrigger);
-			}
-			else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
-			{
-				pTrigger->OnTriggerExit(pOther);
-				pOther->OnTriggerExit(pTrigger);
-			}
+			pTrigger->OnTriggerEnter(pOther);
+			pOther->OnTriggerEnter(pTrigger);
+		}
+		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			pTrigger->OnTriggerExit(pOther);
+			pOther->OnTriggerExit(pTrigger);
 		}
 	}
 }

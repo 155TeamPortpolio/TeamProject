@@ -12,7 +12,8 @@ private:
 
 public:
     PxShape* Get_Shape() { return m_pShape; }
-    _bool IsColliding() const { return !m_CurrentCollisions.empty(); }
+    _bool    IsColliding() const { return !m_CurrentCollisions.empty(); }
+    _bool    IsTrigger() const { return m_bTrigger; }
 
 
 public:
@@ -36,6 +37,8 @@ private:
     unordered_set<CCollider*>   m_CurrentCollisions;     // 현재 충돌 중인 대상 목록 (Stay 처리나 중복 Enter 방지용)
 
     COLLIDER_TYPE               m_eType = {};
+    COLLISION_GROUP             m_eGroup = {};
+    _uint                       m_iCollisionMask = {};
     _float3                     m_vCenter = {};
     _float3                     m_vSize = {};
     _float3                     m_vRotation = {};
