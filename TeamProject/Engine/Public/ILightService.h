@@ -8,9 +8,11 @@ public IService
 protected:
 	virtual  ~ILightService() DEFAULT;
 public:
-	virtual _int Register_Light(class CLight* Light) PURE;
-	virtual void UnRegister_Light(_int ID) PURE;
-	virtual vector<class CLight*>& Get_VisibleLight() PURE;/*나중에 컬링해서 보내기*/
+    virtual _int Register_Light(class CLight* Light, _int Index)PURE;
+    virtual void UnRegister_Light(class CLight* Light, _int Index)PURE;
+    virtual void DeActive_Light(class CLight* Light, _int Index)PURE;
+    virtual void Active_Light(class CLight* Light, _int Index)PURE;
+    virtual vector<LIGHT_DESC> Visible_Lights() PURE;
 
 };
 NS_END

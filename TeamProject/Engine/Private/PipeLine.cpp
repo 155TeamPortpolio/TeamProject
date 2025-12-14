@@ -289,14 +289,13 @@ HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext)
 {
 
-	auto& vector = CGameInstance::GetInstance()->Get_LightMgr()->Get_VisibleLight();
-	if (vector.empty()) return E_FAIL;
+	auto LightSnapShots = CGameInstance::GetInstance()->Get_LightMgr()->Visible_Lights();
 
-	for (size_t i = 0; i < vector.size(); i++)
+	if (LightSnapShots.empty()) return E_FAIL;
+
+	for (size_t i = 0; i < LightSnapShots.size(); i++)
 	{
-		if (vector[i] == nullptr)
-			continue;
-		LIGHT_DESC desc = *vector[i]->Get_Desc(); // 값 복사
+		LIGHT_DESC desc = LightSnapShots[i]; // 값 복사
 
 		SHADER_PARAM LightParam;
 		LightParam.iSize = sizeof(_float4);
@@ -323,7 +322,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 		ID3D11InputLayout* pLayout;
 
-		switch (vector[i]->Get_Type())
+		switch (desc.eType)
 		{
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
 			m_pSystem->Get_BufferInputLayout(pBuffer, pShader, "Directional", &pLayout);
