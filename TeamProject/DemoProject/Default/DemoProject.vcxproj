@@ -39,8 +39,10 @@
     <ClInclude Include="..\Public\DemoModel.h" />
     <ClInclude Include="..\Public\DemoUI.h" />
     <ClInclude Include="..\Public\Demo_Defines.h" />
+    <ClInclude Include="..\Public\InstanceDemo.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\PhysicsLevel.h" />
     <ClInclude Include="DemoProject.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -100,17 +102,20 @@
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
     <ClCompile Include="..\Private\DemoUI.cpp" />
+    <ClCompile Include="..\Private\InstanceDemo.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\PhysicsLevel.cpp" />
     <ClCompile Include="DemoProject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DemoProject.rc" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -214,6 +219,12 @@
       <AdditionalLibraryDirectories>../../EngineSDK/Lib/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;fmod_vc.lib;DirectXTKd.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderType>Effect</ShaderType>
+    </FxCompile>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>

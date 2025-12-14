@@ -6,7 +6,6 @@
 #include "IResourceService.h"
 
 #include "UITool_Level.h"
-#include "UITool_Camera.h"
 
 CMainApp::CMainApp()
 {
@@ -35,9 +34,9 @@ HRESULT CMainApp::Initialize()
 
 	Set_Levels();
 
-	//#ifdef  _USING_GUI
-	//	ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
-	//#endif //  _USING_GUI
+	#ifdef  _USING_GUI
+		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+	#endif //  _USING_GUI
 
 	return S_OK;
 }
@@ -46,7 +45,6 @@ void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
 }
-
 
 HRESULT CMainApp::Render()
 {

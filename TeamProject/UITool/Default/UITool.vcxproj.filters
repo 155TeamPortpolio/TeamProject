@@ -22,6 +22,21 @@
     <Filter Include="02.Object\UI">
       <UniqueIdentifier>{c97a6584-1b36-42e7-a997-b80cdddb12ea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\GUI">
+      <UniqueIdentifier>{913be96d-9494-40fe-b9d7-9e1219925bef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\GUI\IMGUI">
+      <UniqueIdentifier>{de841462-128e-48aa-927e-a7c41bd6d76b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\UI\CanvasPanel">
+      <UniqueIdentifier>{41b794a8-2c02-4c2b-ae3e-92e09ea30532}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\UI\Image">
+      <UniqueIdentifier>{75d01190-6cf5-4035-bcc2-857e29ba7c7d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\UI\Text">
+      <UniqueIdentifier>{6af4a99a-0ef3-4061-92d7-bc6bb1c5506f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -51,6 +66,30 @@
     <ClInclude Include="..\Public\TestUI.h">
       <Filter>02.Object\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GUIPanel.h">
+      <Filter>02.Object\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CanvasPanel.h">
+      <Filter>02.Object\UI\CanvasPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImageUI.h">
+      <Filter>02.Object\UI\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextUI.h">
+      <Filter>02.Object\UI\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -67,6 +106,39 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestUI.cpp">
       <Filter>02.Object\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99.Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GUIPanel.cpp">
+      <Filter>02.Object\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>02.Object\GUI\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CanvasPanel.cpp">
+      <Filter>02.Object\UI\CanvasPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImageUI.cpp">
+      <Filter>02.Object\UI\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextUI.cpp">
+      <Filter>02.Object\UI\Text</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
