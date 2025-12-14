@@ -405,6 +405,12 @@
     <ClInclude Include="..\Public\Camera_Struct.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICollidable.h">
+      <Filter>01. Utility\10. CollisionSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -746,6 +752,9 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\21. CharacterController">
+      <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1074,6 +1083,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\VI_InstancePoint.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

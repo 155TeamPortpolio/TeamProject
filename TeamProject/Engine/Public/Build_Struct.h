@@ -88,6 +88,20 @@ namespace Engine {
 		virtual ~ColliderInitDesc() DEFAULT;
 	}COLLIDER_DESC;
 
+	typedef struct CCTinitDesc : public COMPONENT_DESC {
+		_float      fHeight = { 2.0f };         // 캡슐 높이
+		_float      fRadius = { 0.5f };         // 캡슐 반지름
+		_float      fStepOffset = { 0.5f };     // 계단 등반 높이
+		_float      fSlopeLimit = { 45.0f };    // 등반 각도 제한
+		_float3     vPos = { 0.f, 0.f, 0.f };   // 초기 위치
+		string      strMaterialTag = { "" };    // 재질
+		_float      fDensity = { 10.0f };       // 밀도
+		
+		CCTinitDesc() DEFAULT;
+		virtual ~CCTinitDesc() DEFAULT;
+	}CCT_DESC;
+
+#pragma region OLD
 	//typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {
 	//	_float3 vSize = {};
 	//	ColliderAABBInitDesc() DEFAULT;
@@ -112,7 +126,7 @@ namespace Engine {
 	//	ColliderInitSphereDesc(_float3 vCenter, _float vRadius) :COLLIDER_DESC{ vCenter }, fRadius{ vRadius }{};
 	//	ColliderInitSphereDesc(const ColliderInitSphereDesc& rhs) :COLLIDER_DESC{ rhs }, fRadius{ rhs.fRadius }{};
 	//}SPHERE_COLLIDER_DESC;
-
+#pragma endregion
 	/*Parent Child Desc*/
 	typedef struct tagSetParentDesc :public COMPONENT_DESC {
 		class CGameObject* pParent = { nullptr };

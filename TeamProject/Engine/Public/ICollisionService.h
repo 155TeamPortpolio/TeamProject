@@ -13,6 +13,8 @@ public:
 #ifdef _DEBUG
    virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
    virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
+   virtual void RegisterCCT(class CCharacterController* pCCT) PURE;
+   virtual void UnregisterCCT(class CCharacterController* pCCT) PURE;
    virtual void Render_Debug() PURE;
 #endif 
 };

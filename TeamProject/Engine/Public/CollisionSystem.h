@@ -35,9 +35,12 @@ public:
     virtual void Update(_float dt) override;
     void Render_GUI();
 
-private: // 내부 로직 (Proxy가 호출함)
+private:
     void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
     void Process_Trigger(PxTriggerPair* pairs, PxU32 count);
+    void Process_Stay();
+    void Process_CCTExit();
+
     friend class CPhysXEventCallback;   // Proxy 클래스
 
 
@@ -45,12 +48,16 @@ private: // 내부 로직 (Proxy가 호출함)
     // 디버그 렌더링을 위한 등록
     virtual _int RegisterCollider(class CCollider* pCollider, _int Index)override;
     virtual void UnregisterCollider(class CCollider* pCollider, _int Index)override;
+    virtual void RegisterCCT(class CCharacterController* pCCT) override;
+    virtual void UnregisterCCT(class CCharacterController* pCCT) override;
     virtual void Render_Debug()override;
+
 private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };
     BasicEffect* m_pEffect = { nullptr };
     PrimitiveBatch<VertexPositionColor>* m_pBatch = { nullptr };
     vector<class CCollider*> m_Colliders;   // For Debug Render
+    vector<class CCharacterController*> m_Controllers;
 #endif 
 
 private:

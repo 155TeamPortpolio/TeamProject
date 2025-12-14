@@ -14,7 +14,7 @@ CCollider::CCollider()
 }
 
 CCollider::CCollider(const CCollider& rhs)
-	:CComponent(rhs)
+	:ICollidable(rhs)
 	,m_pShape(nullptr)
 	,m_pAttachedRigidBody(nullptr)
 {
@@ -115,26 +115,31 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
-void CCollider::OnCollisionEnter(CCollider* pOther, const PxContactPair& contactInfo)
+void CCollider::OnCollisionEnter(ICollidable* pOther)
 {
 	m_CurrentCollisions.insert(pOther);
 	m_pOwner->OnCollisionEnter();
 }
 
-void CCollider::OnCollisionExit(CCollider* pOther)
+void CCollider::OnCollisionStay(ICollidable* pOther)
+{
+}
+
+void CCollider::OnCollisionExit(ICollidable* pOther)
 {
 	m_CurrentCollisions.erase(pOther);
 	//m_pOwner->OnCollisionExit()
 }
 
-void CCollider::OnTriggerEnter(CCollider* pOther)
-{
-
-}
-
-void CCollider::OnTriggerExit(CCollider* pOther)
+void CCollider::OnTriggerEnter(ICollidable* pOther)
 {
 }
+
+void CCollider::OnTriggerExit(ICollidable* pOther)
+{
+}
+
+
 
 void CCollider::Render_GUI()
 {
