@@ -16,6 +16,8 @@ public:
 
 private:
     void Extract_Clip();
+    void Extract_Channels(aiAnimation* pAIAnimation, ofstream* ofs);
+    void Extract_KeyFrame(aiNodeAnim* pAIChannel, ofstream* ofs);
 
 
 private:

@@ -100,13 +100,12 @@ namespace Engine
 	}TEXTURE_INFO_HEADER;
 
 	/*Animation*/
-	typedef struct ENGINE_DLL tagAnimationClipHeader {
-		_bool					bLoop = { };
+	typedef struct ENGINE_DLL tagAnimationInfoHeader {
 		_float					fDuration = {};
 		_float					fTickPerSecond = {};
 		_uint					iNumChannels = {};
 		char					ClipName[MAX_PATH];
-	}ANIMATION_CLIP_HEADER;
+	}ANIMATION_INFO_HEADER;
 
 	typedef struct ENGINE_DLL tagAnimationChannelHeader {
 		_bool				isRootBoneChannel = { false };

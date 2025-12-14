@@ -21,10 +21,9 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 		return E_FAIL;
 	}
 
-	ANIMATION_CLIP_HEADER ClipHeader = {};
-	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_CLIP_HEADER));
+	ANIMATION_INFO_HEADER ClipHeader = {};
+	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_INFO_HEADER));
 
-	m_bLoop = ClipHeader.bLoop;
 	m_ClipName = ClipHeader.ClipName;
 	m_fDuration = ClipHeader.fDuration;
 	m_fTickPerSecond = ClipHeader.fTickPerSecond;
