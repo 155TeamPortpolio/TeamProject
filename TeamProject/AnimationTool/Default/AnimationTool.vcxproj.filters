@@ -91,7 +91,7 @@
     <ClInclude Include="..\public\AnimToolPanel.h">
       <Filter>05. Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Animation3DEX.h">
+    <ClInclude Include="..\public\Animator3DEX.h">
       <Filter>03. Component\Animation3DEX</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AnimationClipEX.h">
@@ -162,7 +162,7 @@
     <ClCompile Include="..\private\AnimToolPanel.cpp">
       <Filter>05. Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Animation3DEX.cpp">
+    <ClCompile Include="..\private\Animator3DEX.cpp">
       <Filter>03. Component\Animation3DEX</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AnimationClipEX.cpp">
