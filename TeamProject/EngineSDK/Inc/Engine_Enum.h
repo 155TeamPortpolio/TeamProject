@@ -15,6 +15,8 @@ namespace Engine
 	enum class LIGHT_TYPE { DIRECTIONAL, POINT, SPOTLIGHT };
 
 	enum class COLLIDER_TYPE { BOX, SPHERE, CAPSULE, END };
+	// 0 ~ 31¹üÀ§
+	enum class COLLISION_GROUP { COMMON, PLAYER, MONSTER, PLAYER_ATTACK, MONSTER_ATTACK, END};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE};
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
@@ -66,6 +68,7 @@ namespace Engine
 		END = 28
 	};
 
+	/* Effect */
 	enum class EFFECT_TYPE
 	{
 		SPRITE,
@@ -73,7 +76,6 @@ namespace Engine
 		MESH,
 		END
 	};
-
 }
 #endif // Engine_Enum_h__
 

@@ -5,6 +5,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CParticleSystem :
     public CModel
 {
+public:
 	typedef struct tagParticle
 	{
 		_bool isAlive = false;
@@ -12,6 +13,9 @@ class ENGINE_DLL CParticleSystem :
 		_float fLifeTime{};
 		_float3 vVelocity{};
 		_float3 vPosition{};
+		_float4 vColor{};
+
+		_float2 vStartSize{};
 		_float2 vSize{};
 	}PARTICLE;
 
@@ -47,6 +51,7 @@ public:
 	HRESULT Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count);
 	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 
+	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
 public:
 	virtual void Render_GUI() override;
 
@@ -64,21 +69,31 @@ private:
 	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
 	vector<_uint> m_DeadParticleIndices;
 
-	/*Particle Spawn Params*/
-	_bool m_UseGravity = false;
-
+	/*Main Params*/
+	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
+	_bool m_IsLoop = false;
 	_uint m_iBurstCount{};
+
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};
-	_bool m_IsLoop = false;
 	_uint m_iSpawnParticleCount{};
 	_uint m_iMaxSpawnParticleCount{};
 
-	_float3 m_SpawnAreaMin{};
-	_float3 m_SpawnAreaMax{};
+	_float2 m_vStartSpeed{};
+	_float2 m_vStartLifeTime{};
+	_float2 m_vStartSize{};
+	_float3 m_vSpawnAreaMin{};
+	_float3 m_vSpawnAreaMax{};
+	
+	/*Gravity mode*/
+	_bool m_UseGravity = false;
+	_float m_fGravityScale{};
 
-	_float3 m_VelocityMin{};
-	_float3 m_VelocityMax{};
+	/*Modules*/
+	class CLifeTimeVelocity* m_pLifeTimeVelocity = { nullptr };
+	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
+	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
+	vector<class IParticleModule*> m_Modules;
 
 public:
 	static CParticleSystem* Create();

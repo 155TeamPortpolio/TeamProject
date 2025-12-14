@@ -248,6 +248,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\CamUtil.h" />
     <ClInclude Include="..\public\CamSequencePlayer.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
@@ -258,6 +259,9 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\LifeTimeSize.h" />
+    <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -284,6 +288,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IAudioService.h" />
     <ClInclude Include="..\Public\ICameraService.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\ICollidable.h" />
     <ClInclude Include="..\Public\ICollisionService.h" />
     <ClInclude Include="..\Public\IFontService.h" />
     <ClInclude Include="..\Public\IGUIService.h" />
@@ -292,6 +297,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\IParticleModule.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
@@ -378,6 +384,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\CamUtil.cpp" />
     <ClCompile Include="..\private\CamSequencePlayer.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
@@ -388,6 +395,9 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\Private\LifeTimeColor.cpp" />
+    <ClCompile Include="..\Private\LifeTimeSize.cpp" />
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -405,6 +415,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\InputMgr.cpp" />
     <ClCompile Include="..\Private\InspectorPanel.cpp" />
     <ClCompile Include="..\Private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\IParticleModule.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
