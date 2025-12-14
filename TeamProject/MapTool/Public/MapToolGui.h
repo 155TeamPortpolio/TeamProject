@@ -15,8 +15,19 @@ private:
 	virtual ~CMapToolGui() = default;
 
 public:
-	virtual void Update_Panel(_float dt) override;
-	virtual void Render_GUI() override;
+	HRESULT			Initialize();
+	virtual void	Update_Panel(_float dt) override;
+	virtual void	Render_GUI() override;
+
+private:
+	void				Compute_Ray();
+
+private:
+	CGameInstance* m_pGameInstance = { nullptr };
+
+	RAY			m_Ray = {};
+	_float3		m_vRayHitPos = {};
+
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);

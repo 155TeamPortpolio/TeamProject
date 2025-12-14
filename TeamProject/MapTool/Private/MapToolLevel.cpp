@@ -45,10 +45,7 @@ HRESULT CMapToolLevel::Awake()
 
 void CMapToolLevel::Update()
 {
-	//if (m_pGameInstance->Get_InputDev()->Key_Down('P')) {
-	//	RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
-	//	
-	//}
+
 }
 
 HRESULT CMapToolLevel::Render()
