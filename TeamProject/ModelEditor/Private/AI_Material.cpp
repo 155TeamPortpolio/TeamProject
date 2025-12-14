@@ -59,13 +59,15 @@ HRESULT CAI_Material::Load_Material(_uint materialNum, aiMaterial* material[], c
 	return S_OK;
 }
 
-HRESULT CAI_Material::Save_Material()
+HRESULT CAI_Material::Save_Material(const string& SavePath)
 {
-	string path = Helper::SaveFileDialogByWinAPI(m_MaterialFileKey, "mat");
+
+	string path = SavePath + m_MaterialFileKey + ".mat";
 	filesystem::path directory(path);
 	ofstream ofs(path.c_str(), ios::binary);
 	if (!ofs.is_open())
 		return E_FAIL;
+
 	string FileKey = m_MaterialFileKey + ".mat";
 	MATERIAL_FILE_HEADER fileHead = {};
 	fileHead.MaterialDataCount = m_MaterialInstances.size();

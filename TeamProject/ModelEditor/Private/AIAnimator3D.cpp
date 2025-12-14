@@ -61,13 +61,14 @@ void CAIAnimator3D::Render_GUI()
 	__super::Render_GUI();
 }
 
-HRESULT CAIAnimator3D::Save_Animation()
+HRESULT CAIAnimator3D::Save_Animation(const string& SavePath)
 {
-	std::filesystem::path path = Helper::OpenFolder_Dialogue();
-	std::filesystem::create_directories(path / "Anim");
+	
+	string AnimSavePath = SavePath + "\\Anim\\";
+	std::filesystem::create_directories(AnimSavePath);
 
 	for (auto& Clip : m_pAnimClips) {
-		std::filesystem::path filePath = std::filesystem::path(path) / "Anim" / (Clip->Get_Name() + ".anim");
+		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
 		std::ofstream ofs(filePath, std::ios::binary);
 
 		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);

@@ -129,23 +129,24 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 HRESULT CEditModel::Save_AIScene()
 {
 	HRESULT hr = {};
+	string SavePath = Helper::OpenFolder_Dialogue() + "\\";
 
 	if (HasBones()) {
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
-		hr = pModel->Save_Model();
+		hr = pModel->Save_Model(SavePath);
 
 		if (m_pAIScene->HasAnimations()) {
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
-			hr = pAnimator3D->Save_Animation();
+			hr = pAnimator3D->Save_Animation(SavePath);
 		}
 	}
 	else {
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
-		hr = pModel->Save_Model();
+		hr = pModel->Save_Model(SavePath);
 	}
 
 	CAI_Material* pMaterial = dynamic_cast<CAI_Material*>(Get_Component<CMaterial>());
-	hr = pMaterial->Save_Material();
+	hr = pMaterial->Save_Material(SavePath);
 
 	return S_OK;
 }
