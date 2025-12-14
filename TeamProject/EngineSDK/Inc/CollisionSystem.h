@@ -33,12 +33,6 @@ private:
 public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
-    virtual void Late_Update(_float dt) override;
-
-public:
-    // 디버그 렌더링을 위한 등록
-   virtual _int RegisterCollider(class CCollider* pCollider, _int Index)override;
-   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)override;
 
 private: // 내부 로직 (Proxy가 호출함)
     void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
@@ -47,6 +41,9 @@ private: // 내부 로직 (Proxy가 호출함)
 
 
 #ifdef _DEBUG
+    // 디버그 렌더링을 위한 등록
+    virtual _int RegisterCollider(class CCollider* pCollider, _int Index)override;
+    virtual void UnregisterCollider(class CCollider* pCollider, _int Index)override;
     virtual void Render_Debug()override;
 private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };

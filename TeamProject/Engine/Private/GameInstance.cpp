@@ -105,7 +105,6 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pGuiSystem->Update(dt);
 #endif
 	m_pCollisionSystem->Update(dt);
-	m_pCollisionSystem->Late_Update(dt);
 
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(dt);

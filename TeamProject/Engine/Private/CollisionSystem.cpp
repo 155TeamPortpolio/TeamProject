@@ -38,8 +38,9 @@ HRESULT CCollisionSystem::Initialize()
 	if (FAILED(m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
-#endif
+
 	m_Colliders.reserve(1000);
+#endif
 
 
 	// 프록시 콜백
@@ -56,6 +57,7 @@ HRESULT CCollisionSystem::Initialize()
 
 void CCollisionSystem::Update(_float dt)
 {
+#ifdef _DEBUG
 	// 디버그용 리스트 관리
 	for (auto it = m_Colliders.begin(); it != m_Colliders.end();)
 	{
@@ -64,34 +66,7 @@ void CCollisionSystem::Update(_float dt)
 		else
 			++it;
 	}
-}
-
-void CCollisionSystem::Late_Update(_float dt)
-{
-}
-
-_int CCollisionSystem::RegisterCollider(CCollider* pCollider, _int Index)
-{
-	m_Colliders.push_back(pCollider);
-	return m_Colliders.size() - 1;
-}
-
-
-void CCollisionSystem::UnregisterCollider(CCollider* pCollider, _int Index)
-{
-	for (size_t i = 0; i < m_Colliders.size(); ++i)
-	{
-		if (m_Colliders[i] == pCollider)
-		{
-			// 제거할 대상을 마지막 요소와 교체하고 pop_back
-			if (i != m_Colliders.size() - 1)
-			{
-				swap(m_Colliders[i], m_Colliders.back());
-			}
-			m_Colliders.pop_back();
-			return;
-		}
-	}
+#endif
 }
 
 void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
@@ -151,6 +126,29 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 }
 
 #ifdef _DEBUG
+_int CCollisionSystem::RegisterCollider(CCollider* pCollider, _int Index)
+{
+	m_Colliders.push_back(pCollider);
+	return m_Colliders.size() - 1;
+}
+
+void CCollisionSystem::UnregisterCollider(CCollider* pCollider, _int Index)
+{
+	for (size_t i = 0; i < m_Colliders.size(); ++i)
+	{
+		if (m_Colliders[i] == pCollider)
+		{
+			// 제거할 대상을 마지막 요소와 교체하고 pop_back
+			if (i != m_Colliders.size() - 1)
+			{
+				swap(m_Colliders[i], m_Colliders.back());
+			}
+			m_Colliders.pop_back();
+			return;
+		}
+	}
+}
+
 void CCollisionSystem::Render_Debug()
 {
 	if (m_Colliders.empty()) return;
@@ -199,12 +197,12 @@ void CCollisionSystem::Free()
 		m_pPhysXCallback = nullptr;
 	}
 
-	m_Colliders.clear();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
 #ifdef _DEBUG
+	m_Colliders.clear();
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pEffect);
 	Safe_Delete(m_pBatch);

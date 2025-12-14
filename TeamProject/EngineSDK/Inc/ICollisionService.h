@@ -9,13 +9,10 @@ protected:
     virtual  ~ICollisionService() DEFAULT;
 public:
     virtual void Update(_float dt) PURE;
-    virtual void Late_Update(_float dt) PURE;
-
-public:
-   virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
-   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
 
 #ifdef _DEBUG
+   virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
+   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
    virtual void Render_Debug() PURE;
 #endif 
 };

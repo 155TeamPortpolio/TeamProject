@@ -204,10 +204,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+    <FxCompile Include="..\..\DemoResource\Shader\VTX_DemoInstance.hlsl">
       <Filter>96. DemoShader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\VTX_DemoInstance.hlsl">
+    <FxCompile Include="..\..\DemoResource\Shader\VTX_PlaneGrid.hlsl">
       <Filter>96. DemoShader</Filter>
     </FxCompile>
   </ItemGroup>
