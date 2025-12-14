@@ -7,6 +7,7 @@
 
 #include "DemoCamera.h"
 #include "DemoModel.h"
+#include "DemoShaderModel.h"
 #include "DemoUI.h"
 #include "Camera.h"
 #include "InstanceDemo.h"
@@ -30,7 +31,7 @@ HRESULT CDemoLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
-	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
+	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -42,6 +43,16 @@ HRESULT CDemoLevel::Awake()
 
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+
+	 pObjMgr = m_pGameInstance->Get_ObjectMgr();
+	 pUIMgr = m_pGameInstance->Get_UIMgr();
+
+	CGameObject* Model = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
+		.Position({ 0, 0, 0 })
+		.Scale({ 1.f, 1.f, 1.f })
+		.Build("Demo_Model");
+
+	pObjMgr->Add_Object(Model, { "Demo_Level","Model_Layer" });
 
 	return S_OK;
 }

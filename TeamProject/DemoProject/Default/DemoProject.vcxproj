@@ -37,6 +37,7 @@
     <ClInclude Include="..\Public\DemoGrid.h" />
     <ClInclude Include="..\Public\DemoLevel.h" />
     <ClInclude Include="..\Public\DemoModel.h" />
+    <ClInclude Include="..\public\DemoShaderModel.h" />
     <ClInclude Include="..\Public\DemoUI.h" />
     <ClInclude Include="..\Public\Demo_Defines.h" />
     <ClInclude Include="..\Public\InstanceDemo.h" />
@@ -101,6 +102,7 @@
     <ClCompile Include="..\Private\DemoGrid.cpp" />
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
+    <ClCompile Include="..\private\DemoShaderModel.cpp" />
     <ClCompile Include="..\Private\DemoUI.cpp" />
     <ClCompile Include="..\Private\InstanceDemo.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />

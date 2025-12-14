@@ -43,6 +43,9 @@
     <Filter Include="01. Level\PhysicsLevel">
       <UniqueIdentifier>{75bec75e-0af6-4df9-b616-d26f7c4e4104}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. DemoObject\DemoShaderModel">
+      <UniqueIdentifier>{898bf3e7-709f-48b4-b574-22a7ec05ffbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -71,9 +74,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\DemoModel.h">
       <Filter>02. DemoObject\DemoModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DemoUI.h">
-      <Filter>02. DemoObject\DemoUI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
       <Filter>97. GUI_Inc</Filter>
@@ -128,6 +128,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\PhysicsLevel.h">
       <Filter>01. Level\PhysicsLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoUI.h">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemoShaderModel.h">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -196,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PhysicsLevel.cpp">
       <Filter>01. Level\PhysicsLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemoShaderModel.cpp">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
