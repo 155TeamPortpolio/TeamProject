@@ -125,13 +125,12 @@ namespace Engine {
 	}GAMEOBJECT_DESC;
 
 	typedef struct tagUIObjectDesc : public GAMEOBJECT_DESC {
-		_float fX = {};
-		_float fY = {  };
-		_float fSizeX = {1.f };
-		_float fSizeY = { 1.f };
+		_float2 AnchorOffset = {};
+		_float2 Size = { 1.f,1.f};
+		_float2 Scale = {1.f,1.f };
 		_float fRadian = {};
+
 		tagUIObjectDesc() DEFAULT;
-		tagUIObjectDesc(const _float4& ui_Info) :fX(ui_Info.x), fY(ui_Info.y), fSizeX(ui_Info.z), fSizeY(ui_Info.w), GAMEOBJECT_DESC{} {}
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;
 

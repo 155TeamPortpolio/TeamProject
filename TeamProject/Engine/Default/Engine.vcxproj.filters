@@ -340,9 +340,6 @@
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EffectContainer.h" />
-    <ClInclude Include="..\public\EffectNode.h" />
-    <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\public\CamSequencePlayer.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClInclude>
@@ -1024,9 +1021,6 @@
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EffectContainer.cpp" />
-    <ClCompile Include="..\private\EffectNode.cpp" />
-    <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\private\CamSequencePlayer.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClCompile>
@@ -1106,6 +1100,9 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl">
       <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
+    <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
       <Filter>98. BasicShader</Filter>

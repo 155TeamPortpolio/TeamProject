@@ -28,8 +28,8 @@ void CDemoModel::Awake()
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
 
-	Get_Component<CModel>()->Link_Model("First_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("First_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
 }
 
 void CDemoModel::Render_GUI()
