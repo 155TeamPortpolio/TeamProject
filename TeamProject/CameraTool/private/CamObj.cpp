@@ -7,7 +7,7 @@ HRESULT CamObj::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	cam = Add_Component<CCamera>();
 	Add_Component<CLight>();
-	Add_Component<CamSequencePlayer>();
+	Add_Component<CCamSequencePlayer>();
 	game = CGameInstance::GetInstance();
 	return S_OK;
 }

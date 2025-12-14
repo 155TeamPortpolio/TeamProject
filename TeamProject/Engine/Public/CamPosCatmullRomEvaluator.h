@@ -4,11 +4,11 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CamPosCatmullRomEvaluator final : public ICamPosEvaluator
+class ENGINE_DLL CCamPosCatmullRomEvaluator final : public ICamPosEvaluator
 {
 private:
-	CamPosCatmullRomEvaluator() = default;
-	virtual ~CamPosCatmullRomEvaluator() = default;
+	CCamPosCatmullRomEvaluator() {}
+	virtual ~CCamPosCatmullRomEvaluator() DEFAULT;
 
 public:
 	bool     Build(const vector<CamKeyFrame>& keys) override;
@@ -22,7 +22,7 @@ private:
 	const vector<CamKeyFrame>* keyframes{};
 
 public:
-	static CamPosCatmullRomEvaluator* Create() { return new CamPosCatmullRomEvaluator(); }
+	static CCamPosCatmullRomEvaluator* Create() { return new CCamPosCatmullRomEvaluator(); }
 	virtual void Free() override { __super::Free(); }
 };
 

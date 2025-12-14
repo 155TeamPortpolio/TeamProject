@@ -158,6 +158,7 @@
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\public\CamPanelData.h" />
     <ClInclude Include="..\public\DebugFreeCam.h" />
+    <ClInclude Include="..\public\DemoGrid.h" />
     <ClInclude Include="..\public\DemoModel.h" />
     <ClInclude Include="..\public\FirstLevel.h" />
     <ClInclude Include="..\public\MainApp.h">
@@ -183,6 +184,7 @@
     <ClCompile Include="..\private\CamObj.cpp" />
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\private\DebugFreeCam.cpp" />
+    <ClCompile Include="..\private\DemoGrid.cpp" />
     <ClCompile Include="..\private\DemoModel.cpp" />
     <ClCompile Include="..\private\FirstLevel.cpp" />
     <ClCompile Include="..\private\MainApp.cpp">
@@ -241,6 +243,24 @@
   <ItemGroup>
     <Image Include="CameraTool.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\bin\ShaderFiles\VTX_DemoInstance.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">main</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">main</EntryPointName>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -86,7 +86,7 @@ namespace
     };
 }
 
-void CamPanel::Init()
+void CCamPanel::Init()
 {
     debugSequence.name         = "DebugSequence";
     debugSequence.camType      = CamType::Cinematic;
@@ -97,7 +97,7 @@ void CamPanel::Init()
     target.sequence = &debugSequence;
 }
 
-void CamPanel::Update_Panel(_float dt)
+void CCamPanel::Update_Panel(_float dt)
 {
     if (!target.sequence)
     {
@@ -134,6 +134,8 @@ void CamPanel::Update_Panel(_float dt)
         target.player->SetApplyEnabled(!state.recording);
         target.player->SetTimeScale(state.timeScale);
     }
+    if (target.captureCamObj)
+        target.captureCamObj->SetControlEnabled(state.recording);
 
     if (state.playing)
     {
@@ -164,7 +166,7 @@ void CamPanel::Update_Panel(_float dt)
 }
 
 
-void CamPanel::Render_GUI()
+void CCamPanel::Render_GUI()
 {
     constexpr float leftW  = 200.f;
     constexpr float rightW = 250.f;
@@ -228,11 +230,11 @@ void CamPanel::Render_GUI()
     ImGui::End();
 }
 
-void CamPanel::SetCaptureTarget(CamObj* camObj)
+void CCamPanel::SetCaptureTarget(CamObj* camObj)
 {
     target.captureCamObj  = camObj;
     target.captureCamComp = camObj ? camObj->Get_Component<CCamera>() : nullptr;
-    target.player         = camObj ? camObj->Get_Component<CamSequencePlayer>() : nullptr;
+    target.player         = camObj ? camObj->Get_Component<CCamSequencePlayer>() : nullptr;
 
     if (target.player && target.sequence)
         target.player->SetSequence(target.sequence);
@@ -242,9 +244,12 @@ void CamPanel::SetCaptureTarget(CamObj* camObj)
 
     if (target.player && !state.recording)
         target.player->SetTime(state.curTime);
+
+    if (target.captureCamObj)
+        target.captureCamObj->SetControlEnabled(state.recording);
 }
 
-void CamPanel::DrawToolbar()
+void CCamPanel::DrawToolbar()
 {
     const ImVec2 buttonSize(80.f, 0.f);
     const bool wasRecording = state.recording;
@@ -280,6 +285,9 @@ void CamPanel::DrawToolbar()
         }
         else
             state.recording = nextRecording;
+
+        if (target.captureCamObj)
+            target.captureCamObj->SetControlEnabled(state.recording);
     }
 
     if (ImGui::BeginPopupModal("CaptureOff_Confirm_TooFewKeys", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -294,6 +302,10 @@ void CamPanel::DrawToolbar()
         if (ImGui::Button(u8"끄기", ImVec2(120.f, 0.f)))
         {
             state.recording = false;
+
+            if (target.captureCamObj)
+                target.captureCamObj->SetControlEnabled(state.recording);
+
             ImGui::CloseCurrentPopup();
         }
 
@@ -302,6 +314,10 @@ void CamPanel::DrawToolbar()
         if (ImGui::Button(u8"계속 캡처", ImVec2(120.f, 0.f)))
         {
             state.recording = true;
+
+            if (target.captureCamObj)
+                target.captureCamObj->SetControlEnabled(state.recording);
+
             ImGui::CloseCurrentPopup();
         }
 
@@ -334,6 +350,9 @@ void CamPanel::DrawToolbar()
         const float eps = 1e-4f;
 
         state.recording = false;
+
+        if (target.captureCamObj)
+            target.captureCamObj->SetControlEnabled(state.recording);
 
         if (state.endTime > 1e-6f && state.curTime >= state.endTime - eps)
             state.curTime = 0.f;
@@ -401,7 +420,7 @@ void CamPanel::DrawToolbar()
     DrawTimeline();
 }
 
-void CamPanel::DrawCamSelector()
+void CCamPanel::DrawCamSelector()
 {
     ImGui::AlignTextToFramePadding();
     ImGui::TextUnformatted("Target");
@@ -437,8 +456,9 @@ void CamPanel::DrawCamSelector()
     ImGui::SameLine();
     {
         const char* posPreview = "Linear";
-        if (target.sequence->posInterp == CamPosInterp::CatmullRom) posPreview = "CatmullRom";
+        if (target.sequence->posInterp == CamPosInterp::CatmullRom)  posPreview = "CatmullRom";
         if (target.sequence->posInterp == CamPosInterp::Centripetal) posPreview = "Centripetal";
+        if (target.sequence->posInterp == CamPosInterp::BSpline)     posPreview = "B-Spline";
 
         ImGui::SetNextItemWidth(140.f);
 
@@ -459,6 +479,12 @@ void CamPanel::DrawCamSelector()
                 target.sequence->posInterp = CamPosInterp::Centripetal;
                 changedAny = true;
             }
+            if (ImGui::Selectable("B-Spline", target.sequence->posInterp == CamPosInterp::BSpline))
+            {
+                target.sequence->posInterp = CamPosInterp::BSpline;
+                changedAny = true;
+            }
+
             ImGui::EndCombo();
         }
     }
@@ -481,10 +507,11 @@ void CamPanel::DrawCamSelector()
                 target.sequence->rotInterp = CamRotInterp::Slerp;
                 changedAny = true;
             }
-
-            ImGui::BeginDisabled();
-            ImGui::Selectable("Squad (WIP)", target.sequence->rotInterp == CamRotInterp::Squad);
-            ImGui::EndDisabled();
+            if (ImGui::Selectable("Squad", target.sequence->rotInterp == CamRotInterp::Squad))
+            {
+                target.sequence->rotInterp = CamRotInterp::Squad;
+                changedAny = true;
+            }
 
             ImGui::EndCombo();
         }
@@ -528,7 +555,8 @@ void CamPanel::DrawCamSelector()
 }
 
 
-void CamPanel::DrawKeyframeArea()
+
+void CCamPanel::DrawKeyframeArea()
 {
     ImVec2 avail = ImGui::GetContentRegionAvail();
     float left = 260.0f; 
@@ -544,7 +572,7 @@ void CamPanel::DrawKeyframeArea()
     ImGui::EndChild();
 }
 
-void CamPanel::DrawKeyframeList()
+void CCamPanel::DrawKeyframeList()
 {
     if (!target.sequence)
     {
@@ -554,6 +582,10 @@ void CamPanel::DrawKeyframeList()
 
     auto& keys = GetKeyFrames();
     const ImVec2 btnSize(78.f, 0.f);
+
+    static _uint pendingDeleteKeyId = 0;
+    static int pendingKeyCount = 0;
+    static bool requestOpenDeletePopup = false;
 
     if (ImGui::Button("+ Add", btnSize))
     {
@@ -590,14 +622,59 @@ void CamPanel::DrawKeyframeList()
 
     const bool canDelete = HasValidSelection();
     if (!canDelete) ImGui::BeginDisabled();
+
     if (ImGui::Button("- Delete", btnSize))
-        DeleteSelectedKey();
+    {
+        if (!state.recording && keys.size() <= 2)
+        {
+            pendingDeleteKeyId = GetSelectedKeyId();
+            pendingKeyCount = (int)keys.size();
+            requestOpenDeletePopup = true;
+        }
+        else
+        {
+            DeleteSelectedKey();
+        }
+    }
+
     if (!canDelete) ImGui::EndDisabled();
+
+    if (requestOpenDeletePopup)
+    {
+        ImGui::OpenPopup("DeleteKey_Confirm_TooFewKeys");
+        requestOpenDeletePopup = false;
+    }
+
+    if (ImGui::BeginPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::TextUnformatted(u8"키프레임이 2개 이하입니다.");
+        ImGui::Separator();
+        ImGui::TextUnformatted(u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.");
+        ImGui::TextUnformatted(u8"그래도 삭제할까요?");
+
+        ImGui::Separator();
+
+        if (ImGui::Button(u8"삭제", ImVec2(120.f, 0.f)))
+        {
+            if (SelectKeyById(pendingDeleteKeyId))
+                DeleteSelectedKey();
+
+            ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(u8"취소", ImVec2(120.f, 0.f)))
+            ImGui::CloseCurrentPopup();
+
+        ImGui::EndPopup();
+    }
 
     ImGui::SameLine();
 
     const bool canDuplicate = HasValidSelection();
     if (!canDuplicate) ImGui::BeginDisabled();
+
     if (ImGui::Button("Duplicate", ImVec2(92.f, 0.f)))
     {
         const CamKeyFrame& src = GetSelectedKey();
@@ -614,6 +691,7 @@ void CamPanel::DrawKeyframeList()
         if (target.player)
             target.player->Invalidate();
     }
+
     if (!canDuplicate) ImGui::EndDisabled();
 
     ImGui::SameLine();
@@ -706,7 +784,8 @@ void CamPanel::DrawKeyframeList()
     ImGui::PopStyleVar();
 }
 
-void CamPanel::DrawKeyframeEditor()
+
+void CCamPanel::DrawKeyframeEditor()
 {
     ImGui::SeparatorText("Selected Key");
 
@@ -718,10 +797,31 @@ void CamPanel::DrawKeyframeEditor()
 
     CamKeyFrame* keyPtr = &GetSelectedKey();
 
-    constexpr float labelWidth    = 70.f;
-    constexpr float floatWidth    = 150.f;
+    constexpr float labelWidth = 70.f;
+    constexpr float floatWidth = 150.f;
     constexpr float vecValueWidth = 80.f;
-    constexpr float axisGap       = 10.f;
+    constexpr float axisGap = 10.f;
+
+    static _uint pendingTimeSelectedId = 0;
+    static float pendingTimeValue = 0.f;
+    static int pendingOverwriteCount = 0;
+    static bool requestOpenTimeCollisionPopup = false;
+
+    auto CountOverwriteAtTime = [&](float t, _uint exceptId) -> int
+        {
+            if (!target.sequence) return 0;
+
+            const auto& keys = GetKeyFrames();
+
+            int count = 0;
+            for (size_t i = 0; i < keys.size(); ++i)
+            {
+                const CamKeyFrame& k = keys[i];
+                if (k.keyId == exceptId) continue;
+                if (fabsf(k.time - t) <= policy.mergeEpsilon) ++count;
+            }
+            return count;
+        };
 
     auto DrawLabelButton = [&](const char* text)
         {
@@ -745,8 +845,7 @@ void CamPanel::DrawKeyframeEditor()
             ImGui::SameLine();
 
             ImGui::SetNextItemWidth(vecValueWidth);
-            if (minV < maxV)
-                return ImGui::DragFloat(id, &v, speed, minV, maxV);
+            if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV);
             return ImGui::DragFloat(id, &v, speed);
         };
 
@@ -779,9 +878,9 @@ void CamPanel::DrawKeyframeEditor()
 
     ImGuiTableFlags tableFlags =
         ImGuiTableFlags_SizingFixedFit |
-        ImGuiTableFlags_PadOuterX      |
-        ImGuiTableFlags_RowBg          |
-        ImGuiTableFlags_BordersOuter   |
+        ImGuiTableFlags_PadOuterX |
+        ImGuiTableFlags_RowBg |
+        ImGuiTableFlags_BordersOuter |
         ImGuiTableFlags_BordersInnerV;
 
     if (ImGui::BeginTable("KeyEditorTable", 2, tableFlags))
@@ -795,17 +894,33 @@ void CamPanel::DrawKeyframeEditor()
             ImGui::SetNextItemWidth(floatWidth);
 
             ImGui::DragFloat("##time", &state.editTime, 0.01f, 0.f, 9999.f);
-            if (state.editTime < 0.f)
-                state.editTime = 0.f;
+            if (state.editTime < 0.f) state.editTime = 0.f;
 
             if (ImGui::IsItemDeactivatedAfterEdit())
             {
                 const _uint selectedId = GetSelectedKeyId();
-                ApplyEditorToSelectedKey_TimeOnly();
-                SelectKeyById(selectedId);
+                const float newTime = max(0.f, state.editTime);
 
-                if (HasValidSelection())
+                const int overwriteCount = CountOverwriteAtTime(newTime, selectedId);
+
+                if (overwriteCount > 0)
+                {
+                    pendingTimeSelectedId = selectedId;
+                    pendingTimeValue = newTime;
+                    pendingOverwriteCount = overwriteCount;
+                    requestOpenTimeCollisionPopup = true;
+                }
+                else
+                {
+                    ApplyEditorToSelectedKey_TimeOnly();
+                    if (!HasValidSelection())
+                    {
+                        ImGui::PopID();
+                        ImGui::EndTable();
+                        return;
+                    }
                     keyPtr = &GetSelectedKey();
+                }
             }
 
             ImGui::SameLine();
@@ -817,8 +932,7 @@ void CamPanel::DrawKeyframeEditor()
         BeginRow("Pos");
         {
             _vector3 pos = keyPtr->pos;
-            if (DrawVec3Row_LeftLabel("pos", pos, 0.05f))
-                keyPtr->pos = pos;
+            if (DrawVec3Row_LeftLabel("pos", pos, 0.05f)) keyPtr->pos = pos;
         }
 
         BeginRow("Look");
@@ -837,31 +951,26 @@ void CamPanel::DrawKeyframeEditor()
         BeginRow("Roll");
         {
             float roll = keyPtr->roll;
-            if (DrawFloatRow("roll", roll, 0.01f, -XM_PI, XM_PI))
-                keyPtr->roll = roll;
+            if (DrawFloatRow("roll", roll, 0.01f, -XM_PI, XM_PI)) keyPtr->roll = roll;
         }
 
         BeginRow("FOV");
         {
             float fov = keyPtr->fov;
-            if (DrawFloatRow("fov", fov, 0.1f, 1.f, 179.f))
-                keyPtr->fov = fov;
+            if (DrawFloatRow("fov", fov, 0.1f, 1.f, 179.f)) keyPtr->fov = fov;
         }
 
         BeginRow("Capture");
         {
             const bool hasCaptureTarget = (target.captureCamObj != nullptr);
 
-            if (!hasCaptureTarget)
-                ImGui::BeginDisabled();
+            if (!hasCaptureTarget) ImGui::BeginDisabled();
 
             ImGui::PushID("capture_action");
-            if (ImGui::Button("Capture", ImVec2(140.f, 0.f)))
-                CaptureSelectedKey_FromCaptureCam();
+            if (ImGui::Button("Capture", ImVec2(140.f, 0.f))) CaptureSelectedKey_FromCaptureCam();
             ImGui::PopID();
 
-            if (!hasCaptureTarget)
-                ImGui::EndDisabled();
+            if (!hasCaptureTarget) ImGui::EndDisabled();
 
             ImGui::SameLine();
             ImGui::TextDisabled(hasCaptureTarget ? "(from DebugFreeCam)" : "(no capture camera)");
@@ -869,9 +978,47 @@ void CamPanel::DrawKeyframeEditor()
 
         ImGui::EndTable();
     }
+
+    if (requestOpenTimeCollisionPopup)
+    {
+        ImGui::OpenPopup("TimeCollisionConfirm");
+        requestOpenTimeCollisionPopup = false;
+    }
+
+    if (ImGui::BeginPopupModal("TimeCollisionConfirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::TextUnformatted(u8"같은 시간대에 키가 이미 있습니다.");
+        ImGui::Separator();
+
+        char msg[256];
+        sprintf_s(msg, u8"적용하면 기존 키 %d개가 덮어씌워져 제거됩니다.\n그래도 적용할까요?", pendingOverwriteCount);
+        ImGui::TextUnformatted(msg);
+
+        ImGui::Separator();
+
+        if (ImGui::Button(u8"적용", ImVec2(120.f, 0.f)))
+        {
+            if (SelectKeyById(pendingTimeSelectedId) && HasValidSelection())
+            {
+                state.editTime = pendingTimeValue;
+                ApplyEditorToSelectedKey_TimeOnly();
+            }
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+
+        if (ImGui::Button(u8"취소", ImVec2(120.f, 0.f)))
+        {
+            if (SelectKeyById(pendingTimeSelectedId) && HasValidSelection())
+                SyncEditorFromSelection();
+            ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+    }
 }
 
-void CamPanel::DrawTimeline()
+
+void CCamPanel::DrawTimeline()
 {
     ImVec2 avail = ImGui::GetContentRegionAvail();
     float barH = ImGui::GetFrameHeight();
@@ -1017,7 +1164,7 @@ void CamPanel::DrawTimeline()
     }
 }
 
-void CamPanel::DrawInterpSelector()
+void CCamPanel::DrawInterpSelector()
 {
     if (!target.sequence)
         return;
@@ -1066,7 +1213,7 @@ void CamPanel::DrawInterpSelector()
     ImGui::PopID();
 }
 
-bool CamPanel::HasValidSelection() const
+bool CCamPanel::HasValidSelection() const
 {
     if (!target.sequence) return false;
     if (state.selectedKeyIdx < 0) return false;
@@ -1074,19 +1221,19 @@ bool CamPanel::HasValidSelection() const
     return true;
 }
 
-CamKeyFrame& CamPanel::GetSelectedKey()
+CamKeyFrame& CCamPanel::GetSelectedKey()
 {
     assert(HasValidSelection());
     return target.sequence->keyframes[(size_t)state.selectedKeyIdx];
 }
 
-_uint CamPanel::GetSelectedKeyId() const
+_uint CCamPanel::GetSelectedKeyId() const
 {
     assert(HasValidSelection());
     return target.sequence->keyframes[(size_t)state.selectedKeyIdx].keyId;
 }
 
-_float CamPanel::GetNextDefaultTime() const
+_float CCamPanel::GetNextDefaultTime() const
 {
     if (!target.sequence || target.sequence->keyframes.empty())
         return 0.f;
@@ -1095,7 +1242,7 @@ _float CamPanel::GetNextDefaultTime() const
     return lastTime + policy.defaultStepTime;
 }
 
-void CamPanel::AddKey_Default()
+void CCamPanel::AddKey_Default()
 {
     assert(target.sequence);
 
@@ -1131,7 +1278,7 @@ void CamPanel::AddKey_Default()
         target.player->Invalidate();
 }
 
-void CamPanel::DeleteSelectedKey()
+void CCamPanel::DeleteSelectedKey()
 {
     if (!HasValidSelection()) return;
 
@@ -1141,9 +1288,12 @@ void CamPanel::DeleteSelectedKey()
     const _int deleteIdx = state.selectedKeyIdx;
     keys.erase(keys.begin() + deleteIdx);
 
+    state.playing = false;
+
     if (keys.empty())
     {
         state.selectedKeyIdx = -1;
+        state.curTime = 0.f;
 
         if (target.player)
             target.player->Invalidate();
@@ -1158,13 +1308,14 @@ void CamPanel::DeleteSelectedKey()
         target.player->Invalidate();
 }
 
-void CamPanel::SortKeysByTime_Stable()
+
+void CCamPanel::SortKeysByTime_Stable()
 {
     auto& keys = GetKeyFrames();
     stable_sort(keys.begin(), keys.end(), [](const CamKeyFrame& a, const CamKeyFrame& b) { return a.time < b.time; });
 }
 
-void CamPanel::MergeNearDuplicateTimes_KeepLast()
+void CCamPanel::MergeNearDuplicateTimes_KeepLast()
 {
     auto& keys = GetKeyFrames();
     if (keys.size() < 2) return;
@@ -1192,7 +1343,7 @@ void CamPanel::MergeNearDuplicateTimes_KeepLast()
     keys.swap(merged);
 }
 
-bool CamPanel::SelectKeyById(_uint keyId)
+bool CCamPanel::SelectKeyById(_uint keyId)
 {
     if (!target.sequence)
     {
@@ -1213,7 +1364,7 @@ bool CamPanel::SelectKeyById(_uint keyId)
     return false;
 }
 
-void CamPanel::SyncEditorFromSelection()
+void CCamPanel::SyncEditorFromSelection()
 {
     if (!HasValidSelection()) return;
 
@@ -1232,18 +1383,69 @@ void CamPanel::SyncEditorFromSelection()
         target.player->SetTime(state.curTime);
 }
 
-void CamPanel::ApplyEditorToSelectedKey_TimeOnly()
+void CCamPanel::ApplyEditorToSelectedKey_TimeOnly()
 {
     if (!HasValidSelection()) return;
 
-    CamKeyFrame& key = GetSelectedKey();
-    const _uint selectedId = key.keyId;
+    auto& keys = GetKeyFrames();
 
-    key.time = max(0.f, state.editTime);
+    CamKeyFrame& selectedKey = GetSelectedKey();
+    const _uint selectedId = selectedKey.keyId;
+
+    const float newTime = max(0.f, state.editTime);
+    selectedKey.time = newTime;
 
     SortKeysByTime_Stable();
-    MergeNearDuplicateTimes_KeepLast();
+
+    if (keys.size() >= 2)
+    {
+        vector<CamKeyFrame> merged;
+        merged.reserve(keys.size());
+
+        for (size_t idx = 0; idx < keys.size(); ++idx)
+        {
+            const CamKeyFrame& cur = keys[idx];
+
+            if (merged.empty())
+            {
+                merged.push_back(cur);
+                continue;
+            }
+
+            CamKeyFrame& last = merged.back();
+
+            if (fabsf(cur.time - last.time) <= policy.mergeEpsilon)
+            {
+                const bool lastIsSelected = (last.keyId == selectedId);
+                const bool curIsSelected = (cur.keyId == selectedId);
+
+                if (lastIsSelected && !curIsSelected)
+                {
+                }
+                else if (!lastIsSelected && curIsSelected)
+                {
+                    last = cur;
+                }
+                else
+                {
+                    last = cur;
+                }
+            }
+            else
+            {
+                merged.push_back(cur);
+            }
+        }
+
+        keys.swap(merged);
+    }
+
     SelectKeyById(selectedId);
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+    else
+        state.selectedKeyIdx = -1;
 
     if (target.player)
     {
@@ -1253,7 +1455,8 @@ void CamPanel::ApplyEditorToSelectedKey_TimeOnly()
     }
 }
 
-void CamPanel::CaptureSelectedKey_FromCaptureCam()
+
+void CCamPanel::CaptureSelectedKey_FromCaptureCam()
 {
     if (!HasValidSelection()) return;
     if (!target.captureCamObj) return;
@@ -1277,14 +1480,14 @@ void CamPanel::CaptureSelectedKey_FromCaptureCam()
         target.player->Invalidate();
 }
 
-CamPanel* CamPanel::Create(GUI_CONTEXT* context)
+CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
-    auto inst = new CamPanel(context);
+    auto inst = new CCamPanel(context);
     inst->Init();
     return inst;
 }
 
-void CamPanel::Free()
+void CCamPanel::Free()
 {
     __super::Free();
 }

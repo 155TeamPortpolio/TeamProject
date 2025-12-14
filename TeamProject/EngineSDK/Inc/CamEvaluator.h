@@ -4,8 +4,12 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CamEvaluator final : public CBase
+class ENGINE_DLL CCamEvaluator final : public CBase
 {
+private:
+    CCamEvaluator() {}
+    virtual ~CCamEvaluator() DEFAULT;
+
 public:
     bool    Build(const CamSequenceDesc& seqDesc);
     CamPose Evaluate(float playTime) const;
@@ -21,14 +25,15 @@ private:
 
 private:
     const CamSequenceDesc* seqDesc{};
-    _float duration{};
+    vector<CamKeyFrame>    cachedKeys;
+    _float                 duration{};
 
     ICamPosEvaluator* posEval{};
     ICamRotEvaluator* rotEval{};
     ICamFovEvaluator* fovEval{};
 
 public:
-    static CamEvaluator* Create() { return new CamEvaluator(); }
+    static CCamEvaluator* Create() { return new CCamEvaluator(); }
     virtual void Free() override;
 };
 

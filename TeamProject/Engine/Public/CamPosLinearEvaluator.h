@@ -4,11 +4,11 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CamPosLinearEvaluator final : public ICamPosEvaluator
+class ENGINE_DLL CCamPosLinearEvaluator final : public ICamPosEvaluator
 {
 private:
-	CamPosLinearEvaluator() = default;
-	virtual ~CamPosLinearEvaluator() = default;
+	CCamPosLinearEvaluator() {}
+	virtual ~CCamPosLinearEvaluator() DEFAULT;
 
 public:
 	bool     Build(const vector<CamKeyFrame>& keys) override;
@@ -18,7 +18,7 @@ private:
 	const vector<CamKeyFrame>* keyframes{};
 
 public:
-	static CamPosLinearEvaluator* Create() { return new CamPosLinearEvaluator(); }
+	static CCamPosLinearEvaluator* Create() { return new CCamPosLinearEvaluator(); }
 	virtual void Free() override { __super::Free(); }
 };
 

@@ -5,11 +5,11 @@
 
 NS_BEGIN(CameraTool)
 
-class CamPanel final : public CBasePanel
+class CCamPanel final : public CBasePanel
 {
 private:
-	CamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
-	~CamPanel() = default;
+	CCamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
+	~CCamPanel() = default;
 
 	void Init();
 
@@ -50,7 +50,7 @@ private:
 	CamToolKeyPolicy policy{};
 
 public:
-	static CamPanel* Create(GUI_CONTEXT* context);
+	static CCamPanel* Create(GUI_CONTEXT* context);
 	virtual void Free() override;
 };
 

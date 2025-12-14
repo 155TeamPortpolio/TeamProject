@@ -17,6 +17,8 @@ public:
     void Update(_float dt)          override PURE;
     void Late_Update(_float dt)     override PURE;
 
+    virtual void SetControlEnabled(_bool enabled) {}
+
 protected:
     CGameInstance* game{};
     CCamera*       cam{};

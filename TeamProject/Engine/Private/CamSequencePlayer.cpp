@@ -5,26 +5,29 @@
 #include "CamPosLinearEvaluator.h"
 #include "CamPosCatmullRomEvaluator.h"
 #include "CamPosCentripetalEvaluator.h"
+#include "CamPosBSplineEvaluator.h"
+#include "CamPosHermiteEvaluator.h"
 
 #include "CamRotSlerpEvaluator.h"
+#include "CamRotSquadEvaluator.h"
 
 #include "CamFovLinearEvaluator.h"
 #include "CamFovSmoothEvaluator.h"
 
-HRESULT CamSequencePlayer::Initialize_Prototype()
+HRESULT CCamSequencePlayer::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
+HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
 {
     apply.transform = m_pOwner->Get_Component<CTransform>();
     apply.cam = m_pOwner->Get_Component<CCamera>();
 
-    eval.evaluator = CamEvaluator::Create();
-    eval.evaluator->SetPosEvaluator(CamPosLinearEvaluator::Create());
-    eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
-    eval.evaluator->SetFovEvaluator(CamFovLinearEvaluator::Create());
+    eval.evaluator = CCamEvaluator::Create();
+    eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
+    eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
+    eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
 
     target.seq         = nullptr;
     playback.playing   = false;
@@ -37,7 +40,7 @@ HRESULT CamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     return S_OK;
 }
 
-void CamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
+void CCamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
 {
     target.seq        = seq;
     playback.playing  = false;
@@ -45,7 +48,7 @@ void CamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
     eval.dirty        = true;
 }
 
-void CamSequencePlayer::Play()
+void CCamSequencePlayer::Play()
 {
     if (!target.seq) return;
 
@@ -53,14 +56,14 @@ void CamSequencePlayer::Play()
     playback.playing = true;
 }
 
-void CamSequencePlayer::Stop(_bool resetTime)
+void CCamSequencePlayer::Stop(_bool resetTime)
 {
     playback.playing = false;
     if (resetTime)
         playback.playTime = 0.f;
 }
 
-void CamSequencePlayer::SetTime(_float t)
+void CCamSequencePlayer::SetTime(_float t)
 {
     playback.playTime = max(0.f, t);
 
@@ -75,7 +78,7 @@ void CamSequencePlayer::SetTime(_float t)
         ApplyPose(eval.evaluator->Evaluate(playback.playTime));
 }
 
-void CamSequencePlayer::SetApplyEnabled(_bool enabled)
+void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
@@ -90,7 +93,7 @@ void CamSequencePlayer::SetApplyEnabled(_bool enabled)
     ApplyPose(eval.evaluator->Evaluate(playback.playTime));
 }
 
-void CamSequencePlayer::Update(_float dt)
+void CCamSequencePlayer::Update(_float dt)
 {
     if (!target.seq || !apply.applyEnabled) return;
 
@@ -105,7 +108,7 @@ void CamSequencePlayer::Update(_float dt)
     ApplyPose(eval.evaluator->Evaluate(playback.playTime));
 }
 
-void CamSequencePlayer::RebuildIfNeeded()
+void CCamSequencePlayer::RebuildIfNeeded()
 {
     if (!eval.dirty) return;
 
@@ -114,42 +117,60 @@ void CamSequencePlayer::RebuildIfNeeded()
     if (!target.seq) return;
 
     const auto& keys = target.seq->keyframes;
-    if (keys.empty())
-        return;
+    if (keys.empty()) return;
 
     if (!eval.evaluator)
-        eval.evaluator = CamEvaluator::Create();
+        eval.evaluator = CCamEvaluator::Create();
+
+    const size_t keyCount = keys.size();
+
+    if (keyCount == 1)
+    {
+        eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
+        eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
+        eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
+
+        const bool ok = eval.evaluator->Build(*target.seq);
+        assert(ok);
+        return;
+    }
 
     switch (target.seq->posInterp)
     {
     case CamPosInterp::Linear:
-        eval.evaluator->SetPosEvaluator(CamPosLinearEvaluator::Create());
+        eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
         break;
     case CamPosInterp::CatmullRom:
-        eval.evaluator->SetPosEvaluator(CamPosCatmullRomEvaluator::Create());
+        eval.evaluator->SetPosEvaluator(CCamPosCatmullRomEvaluator::Create());
         break;
     case CamPosInterp::Centripetal:
-        eval.evaluator->SetPosEvaluator(CamPosCentripetalEvaluator::Create());
+        eval.evaluator->SetPosEvaluator(CCamPosCentripetalEvaluator::Create());
+        break;
+    case CamPosInterp::BSpline:
+        eval.evaluator->SetPosEvaluator(CCamPosBSplineEvaluator::Create());
+        break;
+    case CamPosInterp::Hermite:
+        eval.evaluator->SetPosEvaluator(CCamPosHermiteEvaluator::Create());
         break;
     }
 
     switch (target.seq->rotInterp)
     {
     case CamRotInterp::Slerp:
-        eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
+        eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
         break;
     case CamRotInterp::Squad:
-        eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
+        eval.evaluator->SetRotEvaluator(CCamRotSquadEvaluator::Create());
         break;
     }
 
     switch (target.seq->fovInterp)
     {
     case CamFovInterp::Linear:
-        eval.evaluator->SetFovEvaluator(CamFovLinearEvaluator::Create());
+        eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
         break;
     case CamFovInterp::Smooth:
-        eval.evaluator->SetFovEvaluator(CamFovSmoothEvaluator::Create());
+        eval.evaluator->SetFovEvaluator(CCamFovSmoothEvaluator::Create());
         break;
     }
 
@@ -157,26 +178,20 @@ void CamSequencePlayer::RebuildIfNeeded()
     assert(ok);
 }
 
-void CamSequencePlayer::ApplyPose(const CamPose& pose)
+void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
     apply.transform->Set_Pos(pose.pos);
-    const Quaternion rotation = pose.rot;
-    _vector3 forward = _vector3::Transform(_vector3(0.f, 0.f, 1.f), rotation);
 
-    if (forward.LengthSquared() <= 1e-8f)
-        forward = _vector3{ 0.f, 0.f, 1.f };
-    else
-        forward.Normalize();
-
-    apply.transform->LookAt(pose.pos + forward);
+    const _vector4 quat{ pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w };
+    apply.transform->Set_Quaternion(quat);
 
     if (apply.cam)
         apply.cam->Set_FOV(pose.fov);
 }
 
-CamSequencePlayer* CamSequencePlayer::Create()
+CCamSequencePlayer* CCamSequencePlayer::Create()
 {
-    auto inst = new CamSequencePlayer();
+    auto inst = new CCamSequencePlayer();
     if (FAILED(inst->Initialize_Prototype()))
     {
         MSG_BOX("CamSequencePlayer Create Failed : CamSequencePlayer");
@@ -185,7 +200,7 @@ CamSequencePlayer* CamSequencePlayer::Create()
     return inst;
 }
 
-void CamSequencePlayer::Free()
+void CCamSequencePlayer::Free()
 {
     __super::Free();
     Safe_Release(eval.evaluator);

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "DebugFreeCam.h"
 
-HRESULT DebugFreeCam::Initialize_Prototype()
+HRESULT CDebugFreeCam::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	camType = CamType::Debug;
@@ -9,7 +9,7 @@ HRESULT DebugFreeCam::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT DebugFreeCam::Initialize(INIT_DESC* pArg)
+HRESULT CDebugFreeCam::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -36,8 +36,14 @@ HRESULT DebugFreeCam::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void DebugFreeCam::Priority_Update(_float dt)
+void CDebugFreeCam::Priority_Update(_float dt)
 {
+	if (!controlEnabled)
+	{
+		SyncRotationFromTransform();
+		return;
+	}
+
 	auto input = game->Get_InputDev();
 
 	if (input->Mouse_Down(MOUSE_BTN::RB))
@@ -63,15 +69,91 @@ void DebugFreeCam::Priority_Update(_float dt)
 	if (input->Key_Down('A')) transform->Translate(right * -speed);
 }
 
-void DebugFreeCam::Update(_float dt)
+void CDebugFreeCam::Update(_float dt)
 {
 }
 
-void DebugFreeCam::Late_Update(_float dt)
+void CDebugFreeCam::Late_Update(_float dt)
 {
 }
 
-void DebugFreeCam::Render_GUI()
+void CDebugFreeCam::SetControlEnabled(_bool enabled)
+{
+	if (controlEnabled == enabled)
+		return;
+
+	controlEnabled = enabled;
+
+	if (controlEnabled)
+		SyncRotationFromTransform();
+}
+
+void CDebugFreeCam::ApplyRotation(_float dt)
+{
+	const _float yawRad = XMConvertToRadians(rotDegTarget.x);
+	const _float pitchRad = XMConvertToRadians(rotDegTarget.y);
+
+	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+	float alpha = 1.f - expf(-rotSmoothSpeed * dt);
+	alpha = clamp(alpha, 0.f, 1.f);
+
+	rotQuatCurrent = Quaternion::Slerp(rotQuatCurrent, rotQuatTarget, alpha);
+	rotQuatCurrent.Normalize();
+
+	const _vector4 q4{ rotQuatCurrent.x, rotQuatCurrent.y, rotQuatCurrent.z, rotQuatCurrent.w };
+	transform->Set_Quaternion(q4);
+}
+
+void CDebugFreeCam::SyncRotationFromTransform()
+{
+	_vector4 look4 = transform->Dir(STATE::LOOK);
+	_vector3 forward{ look4.x, look4.y, look4.z };
+
+	if (forward.LengthSquared() <= 1e-8f)
+		forward = _vector3{ 0.f, 0.f, 1.f };
+	else
+		forward.Normalize();
+
+	const float yawRad = atan2f(forward.x, forward.z);
+	const float pitchRad = asinf(-forward.y);
+
+	rotDegTarget.x = XMConvertToDegrees(yawRad);
+	rotDegTarget.y = XMConvertToDegrees(pitchRad);
+	rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
+
+	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	rotQuatCurrent = rotQuatTarget;
+}
+
+CDebugFreeCam* CDebugFreeCam::Create()
+{
+	auto inst = new CDebugFreeCam();
+	if (FAILED(inst->Initialize_Prototype()))
+	{
+		MSG_BOX("Object Create Failed : CDebugFreeCam");
+		Safe_Release(inst);
+	}
+	return inst;
+}
+
+CGameObject* CDebugFreeCam::Clone(INIT_DESC* pArg)
+{
+	auto inst = new CDebugFreeCam(*this);
+	if (FAILED(inst->Initialize(pArg)))
+	{
+		MSG_BOX("Object Clone Failed : CDebugFreeCam");
+		Safe_Release(inst);
+	}
+	return inst;
+}
+
+void CDebugFreeCam::Free()
+{
+	__super::Free();
+}
+
+void CDebugFreeCam::Render_GUI()
 {
 	__super::Render_GUI();
 
@@ -102,58 +184,4 @@ void DebugFreeCam::Render_GUI()
 
 		ImGui::PopID();
 	}
-}
-
-void DebugFreeCam::ApplyRotation(_float dt)
-{
-	const _float yawRad = XMConvertToRadians(rotDegTarget.x);
-	const _float pitchRad = XMConvertToRadians(rotDegTarget.y);
-
-	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-
-	float alpha = 1.f - expf(-rotSmoothSpeed * dt);
-	alpha = clamp(alpha, 0.f, 1.f);
-
-	rotQuatCurrent = Quaternion::Slerp(rotQuatCurrent, rotQuatTarget, alpha);
-	rotQuatCurrent.Normalize();
-
-	_vector3 forwardVector = _vector3::Transform(_vector3(0.f, 0.f, 1.f), rotQuatCurrent);
-
-	_vector3 forward{ forwardVector.x, forwardVector.y, forwardVector.z };
-	if (forward.LengthSquared() <= 1e-8f)
-		forward = _vector3{ 0.f, 0.f, 1.f };
-	else
-		forward.Normalize();
-
-	_vector4 pos4 = transform->Get_Pos();
-	_vector3 pos{ pos4.x, pos4.y, pos4.z };
-
-	transform->LookAt(pos + forward);
-}
-
-DebugFreeCam* DebugFreeCam::Create()
-{
-	auto inst = new DebugFreeCam();
-	if (FAILED(inst->Initialize_Prototype()))
-	{
-		MSG_BOX("Object Create Failed : CDebugFreeCam");
-		Safe_Release(inst);
-	}
-	return inst;
-}
-
-CGameObject* DebugFreeCam::Clone(INIT_DESC* pArg)
-{
-	auto inst = new DebugFreeCam(*this);
-	if (FAILED(inst->Initialize(pArg)))
-	{
-		MSG_BOX("Object Clone Failed : CDebugFreeCam");
-		Safe_Release(inst);
-	}
-	return inst;
-}
-
-void DebugFreeCam::Free()
-{
-	__super::Free();
 }

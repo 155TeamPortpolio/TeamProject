@@ -67,6 +67,9 @@
     <ClInclude Include="..\public\DemoModel.h">
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DemoGrid.h">
+      <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -103,6 +106,12 @@
     </Filter>
     <Filter Include="03. Obj\01. DemoModel">
       <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\02. DemoGrid">
+      <UniqueIdentifier>{6125f693-e174-4247-a27d-cbb4dc6d7cd2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. DemoShader">
+      <UniqueIdentifier>{33400add-fc51-42ba-9f80-6eb46c7853d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,10 +169,21 @@
     <ClCompile Include="..\private\DemoModel.cpp">
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DemoGrid.cpp">
+      <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="CameraTool.rc">
       <Filter>99. Etc\99. Useless</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\bin\ShaderFiles\VTX_DemoInstance.hlsl">
+      <Filter>96. DemoShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <Filter>96. DemoShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

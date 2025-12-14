@@ -24,7 +24,7 @@ struct CamPlayerApplyState
 struct CamPlayerEvalState
 {
 	_bool         dirty = true;
-	CamEvaluator* evaluator{};
+	CCamEvaluator* evaluator{};
 };
 
 NS_END

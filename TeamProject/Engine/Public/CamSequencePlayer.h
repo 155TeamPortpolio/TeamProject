@@ -7,12 +7,12 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CamSequencePlayer final : public CComponent
+class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
 private:
-	CamSequencePlayer() = default;
-	CamSequencePlayer(const CamSequencePlayer& rhs) : CComponent(rhs) {}
-	~CamSequencePlayer() = default;
+	CCamSequencePlayer() {}
+	CCamSequencePlayer(const CCamSequencePlayer& rhs) : CComponent(rhs) {}
+	~CCamSequencePlayer() DEFAULT;
 
 public:
 	HRESULT Initialize_Prototype()           override;
@@ -52,9 +52,9 @@ private:
 	CamPlayerEvalState     eval{};
 
 public:
-	static CamSequencePlayer* Create();
+	static CCamSequencePlayer* Create();
 	virtual void Free() override;
-	CComponent* Clone() override { return new CamSequencePlayer(*this); }
+	CComponent* Clone() override { return new CCamSequencePlayer(*this); }
 };
 
 NS_END

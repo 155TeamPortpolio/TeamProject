@@ -25,7 +25,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
 
     if (!InitInstance(hInstance, nCmdShow)) return FALSE;
 
-    auto mainApp = MainApp::Create();
+    auto mainApp = CMainApp::Create();
     auto game = CGameInstance::GetInstance();
     Safe_AddRef(game);
 

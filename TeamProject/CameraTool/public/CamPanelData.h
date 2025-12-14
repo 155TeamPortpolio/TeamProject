@@ -6,12 +6,12 @@ NS_BEGIN(CameraTool)
 
 struct CamToolTarget
 {
-	CamSequenceDesc*   sequence{};
-	_uint              nextKeyId = 1;
+	CamSequenceDesc*    sequence{};
+	_uint               nextKeyId = 1;
 
-    CamObj*            captureCamObj{};
-    CCamera*           captureCamComp{};
-    CamSequencePlayer* player{};
+    CamObj*             captureCamObj{};
+    CCamera*            captureCamComp{};
+    CCamSequencePlayer* player{};
 };
 struct CamToolEditState
 {
