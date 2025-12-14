@@ -23,6 +23,6 @@ public:
     virtual void Free() override;
 
 private:
-    _float m_fDampScale = 10.f;
+    _float m_fDampScale{};
 };
 NS_END

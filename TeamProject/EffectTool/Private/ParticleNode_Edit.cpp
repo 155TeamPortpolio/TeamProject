@@ -149,7 +149,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
 	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
 
-	ImGui::SeparatorText("");
+	ImGui::SeparatorText("Life Time Velocity");
+	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
 
 	if (isDirty)
 	{
@@ -168,6 +169,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vSpawnAreaMax = m_vSpawnAreaMax;
 		node.useGravity = m_UseGravity;
 		node.fGravityScale = m_fGravityScale;
+
+		node.fDampScale = m_fDampScale;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

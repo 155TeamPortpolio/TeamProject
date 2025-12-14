@@ -16,11 +16,9 @@ void CLifeTimeVelocity::SetParams(PARTICLE_MODULE_DESC* pDesc)
 void CLifeTimeVelocity::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
 	_vector3 vVelocity = particle.vVelocity;
-	_vector3 vTarget = vVelocity;
-	vTarget.Normalize();
 	_float fDecay = expf(-m_fDampScale * dt);
 
-	particle.vVelocity = vTarget + (vVelocity - vTarget) * fDecay;
+	particle.vVelocity = vVelocity * fDecay;
 }
 
 CLifeTimeVelocity* CLifeTimeVelocity::Create()
