@@ -17,6 +17,8 @@
 #include "MaterialInstance.h"
 #include "Layer.h"
 #include "RigidBody.h"
+#include "ParticleSystem.h"
+
 _uint CGameObject::s_NextID = 1;
 
 CGameObject::CGameObject()
@@ -355,6 +357,19 @@ HRESULT CGameObject::Make_InstancePacket()
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
 		}
 	}
+
+	return S_OK;
+}
+
+HRESULT CGameObject::Make_ParticlePacket()
+{
+	PARTICLE_PACKET packet;
+	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
+	packet.pParticleSystem = Get_Component<CParticleSystem>();
+	packet.pMaterial = Get_Component<CMaterial>();
+	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;
+
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Particle(packet);
 
 	return S_OK;
 }
