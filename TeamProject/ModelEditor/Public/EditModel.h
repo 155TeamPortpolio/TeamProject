@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
 class CEditModel :
