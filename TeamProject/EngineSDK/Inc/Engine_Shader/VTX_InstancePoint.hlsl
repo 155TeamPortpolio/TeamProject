@@ -129,8 +129,8 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
     
     float4 color = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-    if (color.a < 0.1f)
-        discard;
+    //if (color.a < 0.1f)
+    //    discard;
     
     Out.vColor = color * In.vColor;
     
