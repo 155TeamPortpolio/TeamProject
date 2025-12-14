@@ -21,7 +21,7 @@ public:
 	virtual void Render_GUI() override;
 
 private:
-	_int		m_iTextureKeyIndex = {};
+	_int		m_iTextureKeyIndex = { 0 };
 
 public:
 	static CGameObject* Create();
