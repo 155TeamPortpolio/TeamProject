@@ -21,8 +21,8 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 		return E_FAIL;
 	}
 
-	ANIMATION_INFO_HEADER ClipHeader = {};
-	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_INFO_HEADER));
+	ANIMATION_CLIP_HEADER ClipHeader = {};
+	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_CLIP_HEADER));
 
 	m_ClipName = ClipHeader.ClipName;
 	m_fDuration = ClipHeader.fDuration;
@@ -32,7 +32,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	{
 		if (CChannel* pChannel = CChannel::Create(ifs))
 			if(pChannel)
-			m_Channels.push_back(pChannel);
+				m_Channels.push_back(pChannel);
 	}
 
 	ifs.close();

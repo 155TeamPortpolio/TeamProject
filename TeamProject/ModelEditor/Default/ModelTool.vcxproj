@@ -42,7 +42,8 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="..\public\AIAnimationClip.h" />
     <ClInclude Include="..\public\AIBone.h" />
-    <ClInclude Include="..\public\AIClipData.h" />
+    <ClInclude Include="..\public\AIAnimator3D.h" />
+    <ClInclude Include="..\public\AIChannel.h" />
     <ClInclude Include="..\Public\AIMaterial.h" />
     <ClInclude Include="..\public\AIMesh.h" />
     <ClInclude Include="..\public\AIModelData.h" />
@@ -77,7 +78,8 @@
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp" />
     <ClCompile Include="..\private\AIAnimationClip.cpp" />
     <ClCompile Include="..\private\AIBone.cpp" />
-    <ClCompile Include="..\private\AIClipData.cpp" />
+    <ClCompile Include="..\private\AIAnimator3D.cpp" />
+    <ClCompile Include="..\private\AIChannel.cpp" />
     <ClCompile Include="..\Private\AIMaterial.cpp" />
     <ClCompile Include="..\private\AIMesh.cpp" />
     <ClCompile Include="..\private\AIModelData.cpp" />

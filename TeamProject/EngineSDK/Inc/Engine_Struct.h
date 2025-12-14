@@ -105,7 +105,7 @@ namespace Engine
 		_float					fTickPerSecond = {};
 		_uint					iNumChannels = {};
 		char					ClipName[MAX_PATH];
-	}ANIMATION_INFO_HEADER;
+	}ANIMATION_CLIP_HEADER;
 
 	typedef struct ENGINE_DLL tagAnimationChannelHeader {
 		_bool				isRootBoneChannel = { false };

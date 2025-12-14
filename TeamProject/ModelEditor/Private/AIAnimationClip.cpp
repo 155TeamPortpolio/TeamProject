@@ -2,7 +2,6 @@
 #include "AIChannel.h"
 
 CAIAnimationClip::CAIAnimationClip()
-	: CAnimationClip{}
 {
 }
 
@@ -20,15 +19,26 @@ HRESULT CAIAnimationClip::Initialize(const aiAnimation* pAIAnimation, CAIModelDa
 			m_Channels.push_back(pChannel);
 	}
 	m_iNumChannels = m_Channels.size();
+
 	return S_OK;
-}
 }
 
 void CAIAnimationClip::Save_File(ofstream& ofs)
 {
+	ANIMATION_CLIP_HEADER tClipHeader{};
+	strcpy_s(tClipHeader.ClipName, sizeof(tClipHeader.ClipName), m_ClipName.c_str());
+	tClipHeader.fDuration = m_fDuration;
+	tClipHeader.fTickPerSecond = m_fTickPerSecond;
+	tClipHeader.iNumChannels = m_iNumChannels;
+
+	ofs.write(reinterpret_cast<const char*>(&tClipHeader), sizeof(tClipHeader));
+
+	for (_uint i = 0; i < m_iNumChannels; i++) {
+		static_cast<CAIChannel*>(m_Channels[i])->Save_File(ofs);
+	}
 }
 
-CAnimationClip* CAIAnimationClip::Create(const aiAnimation* pAIAnimation, CAIModelData* pAIModelData)
+CAIAnimationClip* CAIAnimationClip::Create(const aiAnimation* pAIAnimation, CAIModelData* pAIModelData)
 {
     CAIAnimationClip* pInstance = new CAIAnimationClip();
 

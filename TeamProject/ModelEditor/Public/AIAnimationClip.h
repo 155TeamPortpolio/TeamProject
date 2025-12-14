@@ -12,14 +12,11 @@ private:
 	virtual ~CAIAnimationClip() DEFAULT;
 
 public:
-	virtual HRESULT Initialize(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
+	HRESULT Initialize(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
 	void Save_File(ofstream& ofs);
 
-private:
-
 public:
-	static CAnimationClip* Create(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
+	static CAIAnimationClip* Create(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
 	virtual void Free() override;
 };
-
 NS_END

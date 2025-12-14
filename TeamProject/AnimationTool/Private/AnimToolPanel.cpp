@@ -67,7 +67,7 @@ void CAnimToolPanel::Extract_Clip()
 			return;
 		}
 		
-		ANIMATION_INFO_HEADER tClipHeader{};
+		ANIMATION_CLIP_HEADER tClipHeader{};
 		strcpy_s(tClipHeader.ClipName, sizeof(tClipHeader.ClipName), ClipName.c_str());
 		tClipHeader.fDuration = pClip->mDuration;
 		tClipHeader.fTickPerSecond = pClip->mTicksPerSecond;
@@ -86,18 +86,18 @@ void CAnimToolPanel::Extract_Channels(aiAnimation* pAIAnimation, ofstream* ofs)
 	_int iNumChannels = pAIAnimation->mNumChannels;
 	
 	ANIMATION_CHANNEL_HEADER ChannelHeader{};
-	strcpy_s(ChannelHeader.BoneName, sizeof(ChannelHeader.BoneName), pAIAnimation->mB )
-
-	for (_int i = 0; i < iNumChannels; i++) {
-		test.push_back(pAIAnimation->mChannels[i]->mNodeName.C_Str());
-		//Extract_KeyFrame(pAIAnimation->mChannels[i], ofs);
-	}
+	//strcpy_s(ChannelHeader.BoneName, sizeof(ChannelHeader.BoneName), pAIAnimation->mB )
+	//
+	//for (_int i = 0; i < iNumChannels; i++) {
+	//	test.push_back(pAIAnimation->mChannels[i]->mNodeName.C_Str());
+	//	//Extract_KeyFrame(pAIAnimation->mChannels[i], ofs);
+	//}
 }
 
 void CAnimToolPanel::Extract_KeyFrame(aiNodeAnim* pAIChannel, ofstream* ofs)
 {
 	KEYFRAME tKeyFrame{};
-	_int iNumKeyFrames = max(max(pAIChannel->mNumPositionKeys, pAIChannel->mNumRotationKeys), pAIChannel->mNumScalingKeys);
+	//_int iNumKeyFrames = 
 }
 
 CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)

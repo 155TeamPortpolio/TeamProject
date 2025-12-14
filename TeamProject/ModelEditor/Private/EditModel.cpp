@@ -9,6 +9,7 @@
 #include "GameInstance.h"
 #include "AI_Material.h"
 #include "AIMaterial.h"
+#include "AIAnimator3D.h"
 
 CEditModel::CEditModel()
 {
@@ -101,6 +102,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		skeletal->Load_AIModel(m_pAIScene, fileName);
 		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
+
 	}
 	else {
 		auto staticModel = CAI_STModel::Create();

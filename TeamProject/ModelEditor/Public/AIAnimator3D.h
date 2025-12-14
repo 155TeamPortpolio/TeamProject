@@ -1,23 +1,23 @@
 #pragma once
 #include "ModelEditor_Defines.h"
+#include "Animator3D.h"
 #include "Assimps.h"
-#include "Base.h"
 
-class CAIClipData final :
-	public CBase
+NS_BEGIN(ModelEdit)
+
+class CAIAnimator3D final :
+	public CAnimator3D
 {
 private:
-	CAIClipData();
-	virtual ~CAIClipData() DEFAULT;
+	CAIAnimator3D();
+	virtual ~CAIAnimator3D() DEFAULT;
 	
 public:
-	HRESULT Initialize();
-
-private:
-
+	HRESULT Initialize(const aiScene* pAIScene, class CAIModelData* pAIModelData);
 
 public:
-	static CAIClipData* Create(const aiAnimation* pAIAnimation);
+	static CAIAnimator3D* Create(const aiScene* pAIScene, class CAIModelData* pAIModelData);
 	virtual void Free() override;
 };
 
+NS_END
