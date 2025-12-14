@@ -155,6 +155,9 @@ void CGameObject::Post_EngineUpdate(_float dt)
 		if (Get_Component<CInstanceModel>()) {
 			Make_InstancePacket();
 		}
+		else if (Get_Component<CParticleSystem>()) {
+			Make_ParticlePacket();
+		}
 		else {
 			Make_OpaquePacket();
 		}

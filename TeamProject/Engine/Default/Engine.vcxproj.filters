@@ -405,6 +405,10 @@
     <ClInclude Include="..\Public\Camera_Struct.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IParticleModule.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Emission.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -746,6 +750,18 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
+      <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. Emission">
+      <UniqueIdentifier>{79b56825-9ca5-437c-8faf-cf0950852998}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LimitVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeSize">
+      <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1075,6 +1091,10 @@
     <ClCompile Include="..\Private\VI_InstancePoint.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\IParticleModule.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Emission.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">

@@ -65,12 +65,13 @@ private:
 	vector<_uint> m_DeadParticleIndices;
 
 	/*Particle Spawn Params*/
-	_bool m_UseGravity = false;
-
+	_bool m_IsLoop = false;
 	_uint m_iBurstCount{};
+	_uint m_iBurstCycle{};
+	_float m_fBurstDelay{};
+
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};
-	_bool m_IsLoop = false;
 	_uint m_iSpawnParticleCount{};
 	_uint m_iMaxSpawnParticleCount{};
 
@@ -79,6 +80,9 @@ private:
 
 	_float3 m_VelocityMin{};
 	_float3 m_VelocityMax{};
+
+	/*Update Module*/
+
 
 public:
 	static CParticleSystem* Create();

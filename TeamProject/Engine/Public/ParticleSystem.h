@@ -5,6 +5,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CParticleSystem :
     public CModel
 {
+public:
 	typedef struct tagParticle
 	{
 		_bool isAlive = false;
@@ -64,21 +65,11 @@ private:
 	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
 	vector<_uint> m_DeadParticleIndices;
 
-	/*Particle Spawn Params*/
-	_bool m_UseGravity = false;
+	/*Main Params*/
+	
 
-	_uint m_iBurstCount{};
-	_float m_fSpawnPerSec{};
-	_float m_fSpawnAcc{};
-	_bool m_IsLoop = false;
-	_uint m_iSpawnParticleCount{};
-	_uint m_iMaxSpawnParticleCount{};
+	/*Update Module*/
 
-	_float3 m_SpawnAreaMin{};
-	_float3 m_SpawnAreaMax{};
-
-	_float3 m_VelocityMin{};
-	_float3 m_VelocityMax{};
 
 public:
 	static CParticleSystem* Create();

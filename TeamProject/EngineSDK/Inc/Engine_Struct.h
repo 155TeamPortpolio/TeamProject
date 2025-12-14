@@ -317,6 +317,22 @@ namespace Engine
 	{
 		string TextureKey{};
 		string TexturePath{};
+
+		_bool isLoop = false;
+		_uint iBurstCount{};
+		_uint iBurstCycle{};
+		_float fBurstDelay{};
+
+		_float fSpawnPerSec{};
+		_float fSpawnAcc{};
+		_uint iSpawnParticleCount{};
+		_uint iMaxSpawnParticleCount{};
+
+		_float3 vSpawnAreaMin{};
+		_float3 vSpawnAreaMax{};
+
+		_float3 vVelocityMin{};
+		_float3 vVelocityMax{};
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC
