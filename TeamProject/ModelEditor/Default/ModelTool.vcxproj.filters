@@ -181,6 +181,12 @@
     <ClInclude Include="..\Public\AI_Material.h">
       <Filter>03. Component\AIMaterial</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AIAnimationClip.h">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIClipData.h">
+      <Filter>04. AIResource\AIAnimation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -260,6 +266,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\AI_Material.cpp">
       <Filter>03. Component\AIMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIAnimationClip.cpp">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIClipData.cpp">
+      <Filter>04. AIResource\AIAnimation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
