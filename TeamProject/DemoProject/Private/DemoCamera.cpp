@@ -32,7 +32,7 @@ HRESULT CDemoCamera::Initialize(INIT_DESC* pArg)
 	LIGHT_DESC desc = {};
 	desc.vLightPosition = { 0,20,0,0 };
 	desc.fLightRange = 80.0f;
-	desc.vLightDirection = _float4(0.f, -1.f, 1.f, 0.f);
+	desc.vLightDirection = _float4(0.f, -1.f, 0.f, 0.f);
 	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	desc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	desc.vLightSpecular = _float4(1.f, 1.f, 1.f, 1.f);

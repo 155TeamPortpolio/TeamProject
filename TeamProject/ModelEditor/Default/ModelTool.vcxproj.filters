@@ -58,14 +58,11 @@
     <Filter Include="03. Component\AIMaterial">
       <UniqueIdentifier>{eb6b6ca7-2e6b-45ba-8385-2563e0a95eb0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level\02. ModelObject">
-      <UniqueIdentifier>{7405786b-04b9-4139-acc0-effff3ac55e9}</UniqueIdentifier>
+    <Filter Include="03. Component\AIAnimator3D">
+      <UniqueIdentifier>{7102ee5e-daf0-4eb7-9fde-241ca614b376}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level\02. ModelObject\Camera">
-      <UniqueIdentifier>{a1a0fd14-2dc9-48a2-9cb0-200415b9079f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\02. ModelObject\Model">
-      <UniqueIdentifier>{5cbc0111-17df-4464-ba87-1ea0715ef5aa}</UniqueIdentifier>
+    <Filter Include="04. AIResource\AIAnimation\AIAnimationClip\AIChannel">
+      <UniqueIdentifier>{b0661ef4-aca7-42df-836f-bc272cbb7062}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -181,6 +178,15 @@
     <ClInclude Include="..\Public\AI_Material.h">
       <Filter>03. Component\AIMaterial</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AIAnimationClip.h">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIAnimator3D.h">
+      <Filter>03. Component\AIAnimator3D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AIChannel.h">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -260,6 +266,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\AI_Material.cpp">
       <Filter>03. Component\AIMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIAnimationClip.cpp">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIAnimator3D.cpp">
+      <Filter>03. Component\AIAnimator3D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AIChannel.cpp">
+      <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

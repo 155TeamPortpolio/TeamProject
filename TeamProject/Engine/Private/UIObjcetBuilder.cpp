@@ -42,13 +42,11 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	//������Ʈ ����ü ä���
 	m_pObjDesc->InstanceName = instanceKey;
 
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//������ �Ŵ������� ��������
 	CGameObject* Object = m_pGameInstance->Get_PrototypeMgr()->
 		Clone_Prototype(m_CloneDesc->OriginLevel, m_CloneDesc->protoTag, m_pObjDesc);
 	CUI_Object* instance = dynamic_cast<CUI_Object*>(Object);
@@ -56,9 +54,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 	if (!instance) {
 		return nullptr;
 	}
-
-	if(m_bPivoted)
-		instance->Align_To(m_eAnchor, m_vPivot);
 
 	if (instance && id) {
 		*id = instance->Get_ObjectID();
@@ -69,10 +64,9 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 }
 
 
-CUIObjcetBuilder& CUIObjcetBuilder::Position(const _float2 position)
+CUIObjcetBuilder& CUIObjcetBuilder::Offset(const _float2 Offset)
 {
-	m_pObjDesc->fX = position.x;
-	m_pObjDesc->fY = position.y;
+	m_pObjDesc->AnchorOffset = Offset;
 	return *this;
 }
 
@@ -84,14 +78,11 @@ CUIObjcetBuilder& CUIObjcetBuilder::Rotate(const _float radian)
 
 CUIObjcetBuilder& CUIObjcetBuilder::Scale(const _float2 scale)
 {
-	m_pObjDesc->fSizeX = scale.x;
-	m_pObjDesc->fSizeY = scale.y;
+	m_pObjDesc->Scale = scale;
 	return *this;
 }
-CUIObjcetBuilder& CUIObjcetBuilder::Set_Anchor(ANCHOR eAnchor, _float2 vPivot)
+CUIObjcetBuilder& CUIObjcetBuilder::Size(const _float2 size)
 {
-		m_eAnchor = eAnchor;
-		m_vPivot = vPivot;
-		m_bPivoted = true;
-		return *this;
+	m_pObjDesc->Size = size;
+	return *this;
 }

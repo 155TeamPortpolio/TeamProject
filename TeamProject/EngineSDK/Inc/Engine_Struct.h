@@ -31,13 +31,14 @@ namespace Engine
 
 	/* Light Desc struct*/
 	typedef struct tagLightDesc {
-		_float4		vLightPosition = {};
+		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
 		_float4		vLightDirection = {};
 		_float4		vLightDiffuse = {};
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
 		_float			fLightRange = {};
 		_float3		lightPadding = {};
+		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
 	}LIGHT_DESC;
 
 	/*File Info Desc*/
@@ -100,8 +101,7 @@ namespace Engine
 	}TEXTURE_INFO_HEADER;
 
 	/*Animation*/
-	typedef struct ENGINE_DLL tagAnimationClipHeader {
-		_bool					bLoop = { };
+	typedef struct ENGINE_DLL tagAnimationInfoHeader {
 		_float					fDuration = {};
 		_float					fTickPerSecond = {};
 		_uint					iNumChannels = {};
