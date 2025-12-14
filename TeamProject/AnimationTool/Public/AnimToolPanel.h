@@ -1,7 +1,6 @@
 #pragma once
 #include "AnimationTool_Defines.h"
 #include "BasePanel.h"
-#include "Assimps.h"
 
 class CAnimToolPanel
 	: CBasePanel
@@ -13,16 +12,6 @@ private:
 public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
-
-private:
-    void Extract_Clip();
-    void Extract_Channels(aiAnimation* pAIAnimation, ofstream* ofs);
-    void Extract_KeyFrame(aiNodeAnim* pAIChannel, ofstream* ofs);
-
-
-private:
-    const aiScene*      m_pAIScene = { nullptr };
-    Assimp::Importer	m_Importer = {};
 
 public:
     static CBasePanel* Create(GUI_CONTEXT* context);
