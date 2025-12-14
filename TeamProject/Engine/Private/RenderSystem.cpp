@@ -321,10 +321,11 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "Shader_Deferred.hlsl");
 	if (nullptr == m_pShader)
 		return E_FAIL;
-
+	Safe_AddRef(m_pShader);
 	m_pVIBuffer = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_VIBuffer(G_GlobalLevelKey, "Engine_Default_Rect", BUFFER_TYPE::BASIC_RECT);
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
+	Safe_AddRef(m_pVIBuffer);
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
 
@@ -557,5 +558,7 @@ void CRenderSystem::Free()
 	for (auto& pair : m_InputLayouts)
 		Safe_Release(pair.second);
 
+	Safe_Release(m_pShader);
+	Safe_Release(m_pVIBuffer);
 	m_InputLayouts.clear();
 }

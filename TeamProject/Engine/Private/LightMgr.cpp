@@ -12,40 +12,125 @@ CLightMgr::~CLightMgr()
 
 HRESULT CLightMgr::Initialize()
 {
-	m_LightLifes.resize(10);
-	m_Lights.resize(10);
-
+	m_LightSlots.resize(15);
 	return S_OK;
 }
 
-_int CLightMgr::Register_Light(class CLight* Light)
+/*라이트 매니저는 모든 라이트를 약한 참조로 관리하고 있음. 생성과 삭제는 모두 오브젝트가 컴포넌트를 담당해서 관리하고,
+라이트 컴포넌트가 본인이 사라질 때, 자신이 사라짐을 알려줄 것임*/
+
+_int CLightMgr::Register_Light(CLight* Light, _int Index)
 {
-	if (!m_LightLifes.empty()) {
-		for (size_t i = 0; i < m_LightLifes.size(); i++)
-		{
-			if (m_LightLifes[i] == false) {
-				m_LightLifes[i] = true;
-				m_Lights[i]= Light;
-				Safe_AddRef(Light);
-				return i;
-			}
-			else
-				continue;
+	//유효한 인덱스라면,
+	if (Index != -1 && Index < m_LightSlots.size()) {
+		//그리고 같은 라이트라면
+		if (m_LightSlots[Index].pLight == Light) {
+			return Index;
 		}
 	}
-	m_LightLifes.push_back(true);
-	m_Lights.push_back(Light);
-	Safe_AddRef(Light);
-	return m_LightLifes.size() - 1;
+
+	//등록 시에 순회 돌면서 살아있는 녀석으로 바꿈
+	for (size_t i = 0; i < m_LightSlots.size(); ++i)
+	{
+		//죽은 녀석이라면
+		if (m_LightSlots[i].pLight == nullptr && m_LightSlots[i].eState == LightState::DEAD)
+		{
+			m_LightSlots[i].pLight = Light;
+			/*활성 컴포넌트라면 액티브 아니면 인액티브*/
+			m_LightSlots[i].eState = (Light->Get_CompActive() ? LightState::ACTIVE : LightState::INACTIVE);
+			m_LightSlots[i].descSnapShot = Light->SnapShot_Desc();
+			return static_cast<_int>(i);
+		}
+	}
+
+	//더이상 남은 빈공간이 없다면.
+
+	LightSlot slot{};
+	slot.pLight = Light;
+	slot.eState = (Light->Get_CompActive() ? LightState::ACTIVE : LightState::INACTIVE);
+	slot.generation = 1;
+	slot.descSnapShot = Light->SnapShot_Desc();
+	m_LightSlots.push_back(slot);
+	return static_cast<_int>(m_LightSlots.size() - 1);
 }
 
-void CLightMgr::UnRegister_Light(_int ID)
+void CLightMgr::UnRegister_Light(CLight* Light, _int Index)
 {
-	if (m_LightLifes.size() <= ID || 0 > ID)
+	if (m_LightSlots.size() <= Index || 0 > Index)
 		return;
 
-	m_LightLifes[ID] = false;
-	Safe_Release(m_Lights[ID]);
+	if (m_LightSlots[Index].pLight != Light)
+		return;
+
+	else {
+		m_LightSlots[Index].pLight = nullptr;
+		m_LightSlots[Index].eState = LightState::DEAD;
+	}
+}
+
+void CLightMgr::DeActive_Light(CLight* Light, _int Index)
+{
+	if (Index >= m_LightSlots.size()) {
+		return;
+	}
+
+	if (m_LightSlots[Index].pLight != Light) {
+		return;
+	}
+
+	else {
+		m_LightSlots[Index].eState = LightState::INACTIVE;
+	}
+}
+
+void CLightMgr::Active_Light(CLight* Light, _int Index)
+{
+	if (Index >= m_LightSlots.size()) {
+		return;
+	}
+
+	if (m_LightSlots[Index].pLight != Light) {
+		return;
+	}
+	if (!Light->Get_CompActive()) {
+		return;
+	}
+	else {
+		m_LightSlots[Index].eState = LightState::ACTIVE;
+	}
+}
+
+vector<LIGHT_DESC> CLightMgr::Visible_Lights()
+{
+	CleanUp();
+
+	vector<LIGHT_DESC> lights;
+
+	for (auto& light : m_LightSlots)
+	{
+		if (light.eState == LightState::ACTIVE) {
+			light.descSnapShot = light.pLight->SnapShot_Desc();
+			lights.push_back(light.descSnapShot);
+		}
+	}
+
+	return lights;
+}
+
+void CLightMgr::CleanUp()
+{
+	for (auto& light : m_LightSlots) {
+		if (!light.pLight) {
+			light.eState = LightState::DEAD;
+			continue;
+		};
+
+		if (light.eState == LightState::DEAD) {
+			light.pLight = nullptr;
+			light.eState = LightState::DEAD;
+			light.generation++; /*죽을 때만 세대 교체*/
+		}
+	}
 }
 
 CLightMgr* CLightMgr::Create()
@@ -59,9 +144,5 @@ CLightMgr* CLightMgr::Create()
 
 void CLightMgr::Free()
 {
-	for (auto& light : m_Lights)
-		Safe_Release(light);
-
-	m_LightLifes.clear();
-	m_Lights.clear();
+	m_LightSlots.clear();
 }
