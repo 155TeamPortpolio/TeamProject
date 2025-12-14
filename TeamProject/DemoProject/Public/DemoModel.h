@@ -18,6 +18,9 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+    virtual void OnCollisionEnter() override;
+    virtual void OnCollisionStay() override;
+    virtual void OnCollisionExit() override;
 public:
     void Render_GUI() override;
 
@@ -25,5 +28,6 @@ public:
     static CDemoModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
+
 };
 NS_END

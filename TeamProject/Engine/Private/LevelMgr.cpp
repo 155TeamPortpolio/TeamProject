@@ -26,7 +26,8 @@ HRESULT CLevelMgr::Request_ChangeLevel(string LevelID,_bool Load)
         return E_FAIL;
 
     m_NextLevelTag = LevelID;
-    if (Load) //로딩 설정이 없으면 그냥 바로 로드되었다 치고 다음레벨로 넘어감.
+
+    if (Load&&!m_LoadingLevelKey.empty()) //로딩 설정이 없으면 그냥 바로 로드되었다 치고 다음레벨로 넘어감.
         m_eState = LEVEL_STATE::REQUEST;
     else
         m_eState = LEVEL_STATE::LOADED;

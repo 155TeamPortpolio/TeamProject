@@ -32,7 +32,7 @@ CamKeySegment CamUtil::FindKeySegment(const vector<CamKeyFrame>& keyframes, floa
 	assert(segmentDuration > 0.f);
 
 	float normalizedTime = (time - segmentStartTime) / segmentDuration;
-	normalizedTime = std::clamp(normalizedTime, 0.f, 1.f);
+	normalizedTime = clamp(normalizedTime, 0.f, 1.f);
 
 	return { segmentIdx, normalizedTime };
 }
