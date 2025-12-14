@@ -88,9 +88,6 @@
     <ClInclude Include="..\Public\EditModel.h">
       <Filter>02. Object\Model</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\AnimationLayout.h">
-      <Filter>03. Component</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\AnimToolPanel.h">
       <Filter>05. Panel</Filter>
     </ClInclude>
@@ -137,6 +134,9 @@
       <Filter>97. GUIInc</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Assimps.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AnimationLayout.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>

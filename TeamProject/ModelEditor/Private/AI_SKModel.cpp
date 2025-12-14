@@ -37,7 +37,7 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 
 	if (FAILED(Ready_AIModelData(pAIScene)))
 		return E_FAIL;
-
+	
 	m_fileName = fileName;
 
 	//TBone
@@ -74,10 +74,14 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	return S_OK;
 }
 
-HRESULT CAI_SKModel::Save_Model()
+CAIModelData* CAI_SKModel::Get_AIModelData()
 {
-	string path = Helper::SaveFileDialogByWinAPI(m_fileName, "model");
-	filesystem::path directory(path);
+	return static_cast<CAIModelData*>(m_pData);
+}
+
+HRESULT CAI_SKModel::Save_Model(const string& SavePath)
+{
+	string path = SavePath + m_fileName + ".model";
 	ofstream ofs(path.c_str(), ios::binary);
 	if (!ofs.is_open())
 		return E_FAIL;
