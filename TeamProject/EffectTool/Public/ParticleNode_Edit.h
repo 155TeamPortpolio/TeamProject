@@ -51,8 +51,7 @@ private:
 
     _float2 m_vStartSpeed{};
     _float2 m_vStartLifeTime{};
-    _float2 m_vStartSizeMin{};
-    _float2 m_vStartSizeMax{};
+    _float2 m_vStartSize{};
     _float3 m_vSpawnAreaMin{};
     _float3 m_vSpawnAreaMax{};
 
@@ -62,6 +61,9 @@ private:
 
     /*Module Params*/
     _float m_fDampScale{};
+
+    _float2 m_vStartScale{ 1.f,1.f };
+    _float2 m_vEndScale{ 1.f,1.f };
 
 };
 NS_END

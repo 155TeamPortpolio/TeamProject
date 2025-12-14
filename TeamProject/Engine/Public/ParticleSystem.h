@@ -14,6 +14,7 @@ public:
 		_float3 vVelocity{};
 		_float3 vPosition{};
 		_float4 vColor{};
+
 		_float2 vStartSize{};
 		_float2 vSize{};
 	}PARTICLE;
@@ -80,8 +81,7 @@ private:
 
 	_float2 m_vStartSpeed{};
 	_float2 m_vStartLifeTime{};
-	_float2 m_vStartSizeMin{};
-	_float2 m_vStartSizeMax{};
+	_float2 m_vStartSize{};
 	_float3 m_vSpawnAreaMin{};
 	_float3 m_vSpawnAreaMax{};
 	

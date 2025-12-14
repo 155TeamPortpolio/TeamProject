@@ -327,9 +327,7 @@ namespace Engine
 
 		_float2 vStartSpeed{};
 		_float2 vStartLifeTime{};
-
-		_float2 vStartSizeMin{};
-		_float2 vStartSizeMax{};
+		_float2 vStartSize{};
 
 		_float3 vSpawnAreaMin{};
 		_float3 vSpawnAreaMax{};
@@ -337,8 +335,12 @@ namespace Engine
 		_bool useGravity = false;
 		_float fGravityScale{};
 
-		/*Limit Velocity*/
+		/*Life Time Velocity*/
 		_float fDampScale{};
+
+		/*Life Time Size*/
+		_float2 vStartScale{};
+		_float2 vEndScale{};
 
 	}PARTICLE_NODE;
 

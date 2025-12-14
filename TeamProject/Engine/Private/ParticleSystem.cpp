@@ -127,8 +127,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_vStartSpeed = particleDesc.vStartSpeed;
 	m_vStartLifeTime = particleDesc.vStartLifeTime;
 
-	m_vStartSizeMin = particleDesc.vStartSizeMin;
-	m_vStartSizeMax = particleDesc.vStartSizeMax;
+	m_vStartSize = particleDesc.vStartSize;
 	m_vSpawnAreaMin = particleDesc.vSpawnAreaMin;
 	m_vSpawnAreaMax = particleDesc.vSpawnAreaMax;
 
@@ -140,6 +139,13 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
 		Desc.fDampScale = particleDesc.fDampScale;
 		m_pLifeTimeVelocity->SetParams(&Desc);
+	}
+
+	{
+		CLifeTimeSize::LIFE_TIME_SIZE_DESC Desc{};
+		Desc.vStartScale = particleDesc.vStartScale;
+		Desc.vEndScale = particleDesc.vEndScale;
+		m_pLifeTimeSize->SetParams(&Desc);
 	}
 
 	m_Particles.resize(m_iMaxSpawnParticleCount);
@@ -282,8 +288,7 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 	particle.fLifeTime = 0.f;
 	particle.fMaxLifeTime = Helper::Get_Random_Float(m_vStartLifeTime.x, m_vStartLifeTime.y);
 
-	particle.vSize.x = Helper::Get_Random_Float(m_vStartSizeMin.x, m_vStartSizeMax.x);
-	particle.vSize.y = Helper::Get_Random_Float(m_vStartSizeMin.y, m_vStartSizeMax.y);
+	particle.vSize = m_vStartSize;
 	particle.vStartSize = particle.vSize;
 
 	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);

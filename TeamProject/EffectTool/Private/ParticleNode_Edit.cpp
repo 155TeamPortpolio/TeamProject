@@ -44,6 +44,7 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
+	m_InstanceName = "ParticleNode";
 	return S_OK;
 }
 
@@ -143,14 +144,17 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	isDirty |= ImGui::DragFloat2("Start Speed Min,Max", &m_vStartSpeed.x);
 	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
-	isDirty |= ImGui::DragFloat2("Start Size Min", &m_vStartSizeMin.x);
-	isDirty |= ImGui::DragFloat2("Start Size Max", &m_vStartSizeMax.x);
+	isDirty |= ImGui::DragFloat2("Start Size", &m_vStartSize.x);
 
 	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
 	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
 
 	ImGui::SeparatorText("Life Time Velocity");
 	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
+
+	ImGui::SeparatorText("Life Time Size");
+	isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
+	isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
 
 	if (isDirty)
 	{
@@ -163,14 +167,16 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.iMaxSpawnParticleCount = m_iMaxSpawnParticleCount;
 		node.vStartSpeed = m_vStartSpeed;
 		node.vStartLifeTime = m_vStartLifeTime;
-		node.vStartSizeMin = m_vStartSizeMin;
-		node.vStartSizeMax = m_vStartSizeMax;
+		node.vStartSize = m_vStartSize;
 		node.vSpawnAreaMin = m_vSpawnAreaMin;
 		node.vSpawnAreaMax = m_vSpawnAreaMax;
 		node.useGravity = m_UseGravity;
 		node.fGravityScale = m_fGravityScale;
 
 		node.fDampScale = m_fDampScale;
+
+		node.vStartScale = m_vStartScale;
+		node.vEndScale = m_vEndScale;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

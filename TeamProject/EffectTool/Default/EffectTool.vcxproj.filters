@@ -43,6 +43,9 @@
     <Filter Include="97. Shader">
       <UniqueIdentifier>{c44fbadb-0d72-4e4f-92aa-1823199eaa89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\MeshNode">
+      <UniqueIdentifier>{7d25f85e-bf2d-454f-8c76-5978ff6c0f8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -129,6 +132,9 @@
     <ClInclude Include="..\Public\ToolGrid.h">
       <Filter>02. Object\ToolGrid</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MeshNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -196,6 +202,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ToolGrid.cpp">
       <Filter>02. Object\ToolGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
