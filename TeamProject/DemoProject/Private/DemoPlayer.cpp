@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "CharacterController.h"
+#include "StaticModel.h"
 
 CDemoPlayer::CDemoPlayer()
 {
@@ -18,6 +19,8 @@ HRESULT CDemoPlayer::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	Add_Component<CStaticModel>();
+
 
 	return S_OK;
 }
@@ -33,6 +36,8 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
+	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
+	Get_Component<CModel>()->Link_Model("Physics_Level", "../../DemoResources/static/Zero_Vehicle_Bus_01.model");
 }
 
 void CDemoPlayer::Priority_Update(_float dt)

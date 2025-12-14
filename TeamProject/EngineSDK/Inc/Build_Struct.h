@@ -33,18 +33,6 @@ namespace Engine {
 		virtual ~TransformInitDesc() DEFAULT;
 	}TRANSFORM_DESC;
 
-	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
-		_bool		isStatic = false;		// 움직이는 물체 / 안움직이는 물체
-		_bool       isKinematic = false;    // Transform을 통한 제어, 물리 엔진 제어
-		_bool       bEnableGravity = true;	// 중력 적용
-		_float		fMass = 1.0f;			// 질량
-		_bool		bLockX = true;
-		_bool		bLockY = false;
-		_bool		bLockZ = true;
-
-		RigidBodyinitDesc() DEFAULT;
-		virtual ~RigidBodyinitDesc() DEFAULT;
-	}RIGIDBODY_DESC;
 
 	typedef struct CameraInitDesc :public COMPONENT_DESC {
 		_float fNear = {1.f};
@@ -73,6 +61,19 @@ namespace Engine {
 		virtual ~LightInitDesc() DEFAULT;
 	}LIGHT_INIT_DESC;
 
+	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
+		_bool		isStatic = false;		// 움직이는 물체 / 안움직이는 물체
+		_bool       isKinematic = false;    // Transform을 통한 제어, 물리 엔진 제어
+		_bool       bEnableGravity = true;	// 중력 적용
+		_float		fMass = 1.0f;			// 질량
+		_bool		bLockX = true;
+		_bool		bLockY = false;
+		_bool		bLockZ = true;
+
+		RigidBodyinitDesc() DEFAULT;
+		virtual ~RigidBodyinitDesc() DEFAULT;
+	}RIGIDBODY_DESC;
+
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
 		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
 		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
@@ -89,13 +90,16 @@ namespace Engine {
 	}COLLIDER_DESC;
 
 	typedef struct CCTinitDesc : public COMPONENT_DESC {
-		_float      fHeight = { 2.0f };         // 캡슐 높이
-		_float      fRadius = { 0.5f };         // 캡슐 반지름
 		_float      fStepOffset = { 0.5f };     // 계단 등반 높이
 		_float      fSlopeLimit = { 45.0f };    // 등반 각도 제한
 		_float3     vPos = { 0.f, 0.f, 0.f };   // 초기 위치
+
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
+		_float      fHeight = { 2.0f };         // 캡슐 높이
+		_float      fRadius = { 0.5f };         // 캡슐 반지름
 		string      strMaterialTag = { "" };    // 재질
-		_float      fDensity = { 10.0f };       // 밀도
+		_float      fDensity = { 10.0f };       // 밀도 : 무게 역할
 		
 		CCTinitDesc() DEFAULT;
 		virtual ~CCTinitDesc() DEFAULT;

@@ -107,6 +107,15 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	}
 	m_pController->getActor()->userData = m_pOwner;
 	Set_Position(m_pOwnerTransform->Get_WorldPos());
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	
+	PxFilterData filterData;
+	filterData.word0 = 1 << ENUM(pDesc->eGroup);
+	filterData.word1 = pDesc->iCollisionMask;
+	pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
+	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
+	m_FilterData = filterData;
 
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
 
@@ -139,6 +148,7 @@ void CCharacterController::Update(_float dt)
 	if (!m_pController) return;
 	Apply_Gravity(dt);
 	Apply_Move(dt);
+
 }
 
 void CCharacterController::Late_Update(_float dt)
@@ -208,7 +218,7 @@ void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _
 }
 #endif
 
-void CCharacterController::Move(_fvector vDisp, _float fMinDist, _float dt)
+void CCharacterController::Move(_fvector vDisp, _float dt)
 {
 	if (!m_pController) return;
 
@@ -217,8 +227,9 @@ void CCharacterController::Move(_fvector vDisp, _float fMinDist, _float dt)
 	PxVec3 disp(vDisplacement.x, vDisplacement.y, vDisplacement.z);
 
 	PxControllerFilters filters;
+	filters.mFilterData = &m_FilterData;
 	// 이동 실행 (충돌 발생 시 내부적으로 m_pHitReport->on... 호출됨)
-	const PxControllerCollisionFlags flags = m_pController->move(disp, fMinDist, dt, filters);
+	const PxControllerCollisionFlags flags = m_pController->move(disp, 0.001f, dt, filters);
 
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }

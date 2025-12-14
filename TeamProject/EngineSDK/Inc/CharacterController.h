@@ -55,7 +55,7 @@ public:
 #endif
 
 public:
-    void            Move(_fvector vDisp, _float fMinDist, _float dt);
+    void            Move(_fvector vDisp, _float dt);
     void            Jump(_float fJump);
     void            Set_Position(_fvector vPos);
     void            Resize(_float fHeight, _float fRadius);
@@ -79,6 +79,7 @@ private:
     PxControllerManager*     m_pManager = { nullptr };
     PxMaterial*              m_pMaterial = { nullptr };
     CCTHitReportProxy*       m_pHitReport = { nullptr }; // ÇÁ·Ï½Ã °´Ã¼
+    PxFilterData             m_FilterData = {};
 
     _bool                    m_bGrounded = { false };
     _float3                  m_vVelocity = { 0.f, 0.f, 0.f };
