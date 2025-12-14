@@ -34,7 +34,6 @@ public:
 
 
 	void Set_Size(_float2 size) { m_vSize= size; } 
-	_float2 Get_CenterPos();
 	_bool Size_To(_fvector size, _float Speed);
 	_bool Move_To(_fvector size, _float Speed);
 	_bool Rotate_To(_float rad, _float Speed);
@@ -44,11 +43,13 @@ public:
 
 public:
 	void Update_UITransform();
+	void Set_LeftTop(_float2 desiredLT);
 	void Rotate_Left(_float _radian);
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
 	_float2 Get_RectTopLeft_Screen() ;
+
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -78,6 +79,7 @@ public:
 
 
 	void Align_To(ANCHOR anchor);
+	void Set_Pivot(_float2 newPivot);
 
 public:
 	void Set_OnSystem(const string& Level, _int systemIndex) { m_Level = Level; m_SystemIndex = systemIndex; }
@@ -89,6 +91,7 @@ public:
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);
+	_float2 Calc_AnchorPoint();
 
 protected:
 	/*스크린 사이즈*/
@@ -101,6 +104,9 @@ protected:
 
 	/*픽셀 상의 크기*/
 	_float2 m_vSize = {};
+
+	/*좌상단 위치*/
+	_float2 m_vLeftTop = {};
 
 	/*크기 배율*/
 	_float2 m_vScale = {};

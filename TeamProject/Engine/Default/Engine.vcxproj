@@ -248,6 +248,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\CamUtil.h" />
     <ClInclude Include="..\public\CamSequencePlayer.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
@@ -287,6 +288,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IAudioService.h" />
     <ClInclude Include="..\Public\ICameraService.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\ICollidable.h" />
     <ClInclude Include="..\Public\ICollisionService.h" />
     <ClInclude Include="..\Public\IFontService.h" />
     <ClInclude Include="..\Public\IGUIService.h" />
@@ -382,6 +384,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\CamUtil.cpp" />
     <ClCompile Include="..\private\CamSequencePlayer.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />

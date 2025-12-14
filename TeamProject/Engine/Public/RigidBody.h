@@ -19,6 +19,7 @@ public:
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 	void	Update(_float dt);
 	void	Late_Update(_float dt);
+	void	Render_GUI();
 
 public:
 	PxShape*	Attach_Shape(const PxGeometry& geometry, const string& strMaterialName);
@@ -47,7 +48,6 @@ private:
 	class CTransform*	   m_pOwnerTransform = { nullptr };
 
 	PxRigidActor*		   m_pActor = { nullptr };         // ¹°¸® °´Ã¼
-	PxMaterial*			   m_pMaterial = { nullptr };
 	_bool				   m_bStatic = { false };
 	_bool				   m_bKinematic = { false };
 	_bool				   m_bGravity = { true };

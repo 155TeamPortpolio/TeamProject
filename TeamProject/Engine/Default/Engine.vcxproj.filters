@@ -413,6 +413,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\LifeTimeColor.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICollidable.h">
+      <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +772,9 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
       <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="01. Utility\04. Components\21. CharacterController">
+      <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1104,6 +1113,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\LifeTimeColor.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

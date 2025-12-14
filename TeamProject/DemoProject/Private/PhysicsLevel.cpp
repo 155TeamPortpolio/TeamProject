@@ -7,6 +7,7 @@
 
 #include "DemoCamera.h"
 #include "DemoModel.h"
+#include "DemoPlayer.h"
 #include "DemoUI.h"
 #include "Camera.h"
 #include "InstanceDemo.h"
@@ -31,6 +32,7 @@ HRESULT CPhysicsLevel::Awake()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
+	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoPlayer", CDemoPlayer::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -39,8 +41,17 @@ HRESULT CPhysicsLevel::Awake()
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
-
 	pObjMgr->Add_Object(Camera, { "Physics_Level","Camera_Layer" });
+
+
+	// Player
+	CCT_DESC cctDesc = {};
+	CGameObject* Player = Builder::Create_Object({ "Physics_Level", "Proto_GameObject_DemoPlayer" })
+		.Position({ 5.f, 10.f, 0.f })
+		.Scale({ 1.f, 1.f, 1.f })
+		.CharacterController(cctDesc)
+		.Build("Demo_Player");
+	pObjMgr->Add_Object(Player, { "Physics_Level","Player_Layer" });
 
 	// Floor
 	RIGIDBODY_DESC floorRbDesc = {};
