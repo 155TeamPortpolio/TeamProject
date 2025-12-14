@@ -7,7 +7,8 @@ struct VS_IN
     float3 vPosition : POSITION;
     row_major matrix TransformMatrix : WORLD;
     float3 vVelocity : TEXCOORD0;
-    float2 VLifeTime : TEXCOORD1;
+    float4 vColor : TEXCOORD1;
+    float2 VLifeTime : TEXCOORD2;
 };
 
 struct VS_OUT
@@ -15,7 +16,8 @@ struct VS_OUT
     float4 vWorldPos : POSITION;
     float2 vSize : PSIZE;
     float3 vVelocity : TEXCOORD0;
-    float2 vLifeTime : TEXCOORD1;
+    float4 vColor : TEXCOORD1;
+    float2 vLifeTime : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -41,14 +43,16 @@ struct GS_IN
     float4 vWorldPos : POSITION;
     float2 vSize : PSIZE;
     float3 vVelocity : TEXCOORD0;
-    float2 vLifeTime : TEXCOORD1;
+    float4 vColor : TEXCOORD1;
+    float2 vLifeTime : TEXCOORD2;
 };
 
 struct GS_OUT
 {
     float4 vPosition : SV_Position;
     float2 vTexcoord : TEXCOORD0;
-    float2 vLifeTime : TEXCOORD1;
+    float4 vColor : TEXCOORD1;
+    float2 vLifeTime : TEXCOORD2;
 };
 
 [maxvertexcount(6)]
@@ -107,6 +111,8 @@ struct PS_IN
 {
     float4 vPosition : SV_Position;
     float2 vTexcoord : TEXCOORD0;
+    float4 vColor : TEXCOORD1;
+    float2 vLifeTime : TEXCOORD2;
 };
 
 struct PS_OUT

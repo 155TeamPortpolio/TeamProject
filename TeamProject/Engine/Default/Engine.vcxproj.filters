@@ -408,7 +408,15 @@
     <ClInclude Include="..\Public\IParticleModule.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Emission.h" />
+    <ClInclude Include="..\Public\LimitVelocity.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeSize.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeColor.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -753,14 +761,14 @@
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
       <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. Emission">
-      <UniqueIdentifier>{79b56825-9ca5-437c-8faf-cf0950852998}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LimitVelocity">
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity">
       <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeSize">
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize">
       <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor">
+      <UniqueIdentifier>{9d5d527f-ee2e-4350-8b91-02a2982315e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1094,7 +1102,15 @@
     <ClCompile Include="..\Private\IParticleModule.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Emission.cpp" />
+    <ClCompile Include="..\Private\LimitVelocity.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeSize.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeColor.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">

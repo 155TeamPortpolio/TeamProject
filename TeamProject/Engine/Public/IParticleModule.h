@@ -3,7 +3,7 @@
 #include "ParticleSystem.h"
 
 NS_BEGIN(Engine)
-class IParticleModule :
+class ENGINE_DLL IParticleModule :
     public CBase
 {
 protected:

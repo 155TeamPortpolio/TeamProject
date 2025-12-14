@@ -1,8 +1,15 @@
 #pragma once
 #include "Base.h"
+#include "ParticleSystem.h"
 
-class IParticleModule :
+NS_BEGIN(Engine)
+class ENGINE_DLL IParticleModule :
     public CBase
 {
-};
+protected:
+    virtual ~IParticleModule() DEFAULT;
 
+protected:
+    virtual void Update(CParticleSystem::PARTICLE& particle, _float dt) PURE;
+};
+NS_END

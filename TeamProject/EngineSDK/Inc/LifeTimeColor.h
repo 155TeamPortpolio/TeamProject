@@ -2,18 +2,18 @@
 #include "IParticleModule.h"
 
 NS_BEGIN(Engine)
-class ENGINE_DLL CLimitVelocity :
+class ENGINE_DLL CLifeTimeColor :
     public IParticleModule
 {
 private:
-    CLimitVelocity();
-    virtual ~CLimitVelocity() DEFAULT;
+    CLifeTimeColor();
+    virtual ~CLifeTimeColor() DEFAULT;
 
 public:
     void Update(CParticleSystem::PARTICLE& particle, _float dt) override;
 
 public:
-    static CLimitVelocity* Create();
-    virtual void Free() override;
+    static CLifeTimeColor* Create();
+    void Free()override;
 };
 NS_END
