@@ -4,6 +4,9 @@
 #include "Camera.h"
 
 NS_BEGIN(Engine)
+class CCamPosPerSegmentEvaluator;
+class CCamRotPerSegmentEvaluator;
+class CCamFovPerSegmentEvaluator;
 
 struct CamPlayerTarget
 {
@@ -23,8 +26,12 @@ struct CamPlayerApplyState
 };
 struct CamPlayerEvalState
 {
-	_bool         dirty = true;
-	CCamEvaluator* evaluator{};
+	_bool                       dirty = true;
+	CCamEvaluator*              evaluator{};
+
+	CCamPosPerSegmentEvaluator* pos{};
+	CCamRotPerSegmentEvaluator* rot{};
+	CCamFovPerSegmentEvaluator* fov{};
 };
 
 NS_END

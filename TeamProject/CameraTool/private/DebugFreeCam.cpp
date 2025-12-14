@@ -13,7 +13,7 @@ HRESULT CDebugFreeCam::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	transform->LookAt({ 0.f, 0.f, 0.f });
+	transform->LookAt({});
 
 	_vector4 look4 = transform->Dir(STATE::LOOK);
 	_vector3 forward{ look4.x, look4.y, look4.z };
@@ -58,14 +58,14 @@ void CDebugFreeCam::Priority_Update(_float dt)
 
 	ApplyRotation(dt);
 
-	_vector4 look = transform->Dir(STATE::LOOK);
+	_vector4 look  = transform->Dir(STATE::LOOK);
 	_vector4 right = transform->Dir(STATE::RIGHT);
 
 	const _float speed = moveSpeed * dt;
 
-	if (input->Key_Down('W')) transform->Translate(look * speed);
-	if (input->Key_Down('S')) transform->Translate(look * -speed);
-	if (input->Key_Down('D')) transform->Translate(right * speed);
+	if (input->Key_Down('W')) transform->Translate(look  *  speed);
+	if (input->Key_Down('S')) transform->Translate(look  * -speed);
+	if (input->Key_Down('D')) transform->Translate(right *  speed);
 	if (input->Key_Down('A')) transform->Translate(right * -speed);
 }
 

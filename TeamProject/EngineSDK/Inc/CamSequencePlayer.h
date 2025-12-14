@@ -11,7 +11,7 @@ class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
 private:
 	CCamSequencePlayer() {}
-	CCamSequencePlayer(const CCamSequencePlayer& rhs) : CComponent(rhs) {}
+	CCamSequencePlayer(const CCamSequencePlayer& rhs);
 	~CCamSequencePlayer() DEFAULT;
 
 public:

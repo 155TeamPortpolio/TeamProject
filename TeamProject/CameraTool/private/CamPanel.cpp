@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "CamPanel.h"
+#include "Helper_Func.h"
 
 namespace
 {
@@ -164,7 +165,6 @@ void CCamPanel::Update_Panel(_float dt)
     if (target.player && !state.recording)
         target.player->SetTime(state.curTime);
 }
-
 
 void CCamPanel::Render_GUI()
 {
@@ -554,8 +554,6 @@ void CCamPanel::DrawCamSelector()
     }
 }
 
-
-
 void CCamPanel::DrawKeyframeArea()
 {
     ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -584,15 +582,162 @@ void CCamPanel::DrawKeyframeList()
     const ImVec2 btnSize(78.f, 0.f);
 
     static _uint pendingDeleteKeyId = 0;
-    static int pendingKeyCount = 0;
     static bool requestOpenDeletePopup = false;
+
+    static string lastFileError{};
+    static bool requestOpenEmptySaveConfirm = false;
+    static bool requestOpenFileErrorPopup = false;
+
+    static char prefabNameBuf[128] = "DebugSequence";
+    static const CamSequenceDesc* lastSeqPtr = nullptr;
+    static bool nameEditing = false;
+
+    bool changedAny = false;
+
+    auto ShowFileError = [&]()
+        {
+            if (!lastFileError.empty()) requestOpenFileErrorPopup = true;
+        };
+
+    auto SyncNameBufFromSeq = [&]()
+        {
+            const string& n = target.sequence->name;
+            const string fallback = "DebugSequence";
+            const string& src = n.empty() ? fallback : n;
+            strncpy_s(prefabNameBuf, src.c_str(), _TRUNCATE);
+        };
+
+    if (lastSeqPtr != target.sequence)
+    {
+        lastSeqPtr = target.sequence;
+        SyncNameBufFromSeq();
+    }
+    else
+    {
+        if (!nameEditing)
+        {
+            if (target.sequence->name != string(prefabNameBuf))
+                SyncNameBufFromSeq();
+        }
+    }
+
+    auto ValidateCamPath = [&](const string& pickedPath) -> bool
+        {
+            if (pickedPath.empty()) return false;
+
+            if (Helper::ContainsNonAscii(pickedPath))
+            {
+                lastFileError = "File Path Must Be English";
+                return false;
+            }
+
+            if (!Helper::IsPathInProjectFolder(filesystem::path(pickedPath).parent_path().string()))
+            {
+                lastFileError = "Folders outside the project folder cannot be selected";
+                return false;
+            }
+
+            if (filesystem::path(pickedPath).extension().string() != ".cam")
+            {
+                lastFileError = "File extension must be .cam";
+                return false;
+            }
+
+            return true;
+        };
+
+    auto GetDefaultCamFileName = [&]() -> string
+        {
+            string base = target.sequence->name;
+            if (base.empty()) base = "CameraSequence";
+
+            if (Helper::ContainsNonAscii(base))
+                base = "CameraSequence";
+
+            for (char& c : base)
+            {
+                if (c == '\\' || c == '/' || c == ':' || c == '*' || c == '?' || c == '\"' || c == '<' || c == '>' || c == '|')
+                    c = '_';
+            }
+
+            if (filesystem::path(base).extension().string() != ".cam")
+                base += ".cam";
+
+            return base;
+        };
+
+    auto DoSave = [&]()
+        {
+            lastFileError.clear();
+
+            const string defaultName = GetDefaultCamFileName();
+            string picked = Helper::SaveFileDialogByWinAPI(defaultName, "cam");
+            if (picked.empty()) return;
+
+            if (!ValidateCamPath(picked))
+            {
+                ShowFileError();
+                return;
+            }
+
+            string err;
+            if (!CamUtil::Save(filesystem::path(picked), *target.sequence, err))
+            {
+                lastFileError = err;
+                ShowFileError();
+                return;
+            }
+        };
+
+    auto DoLoad = [&]()
+        {
+            lastFileError.clear();
+
+            string picked = Helper::OpenFile_Dialogue();
+            if (picked.empty()) return;
+
+            if (filesystem::path(picked).extension().string() != ".cam")
+            {
+                lastFileError = "File extension must be .cam";
+                ShowFileError();
+                return;
+            }
+
+            CamSequenceDesc loaded{};
+            string err;
+
+            if (!CamUtil::Load(filesystem::path(picked), loaded, err))
+            {
+                lastFileError = err;
+                ShowFileError();
+                return;
+            }
+
+            *target.sequence = move(loaded);
+
+            _uint maxId = 0;
+            for (size_t i = 0; i < target.sequence->keyframes.size(); ++i)
+                maxId = max(maxId, target.sequence->keyframes[i].keyId);
+            target.nextKeyId = maxId + 1;
+
+            state.selectedKeyIdx = target.sequence->keyframes.empty() ? -1 : 0;
+            state.playing = false;
+
+            SyncNameBufFromSeq();
+
+            if (HasValidSelection()) SyncEditorFromSelection();
+
+            if (target.player)
+            {
+                target.player->Invalidate();
+                if (!state.recording) target.player->SetTime(state.curTime);
+            }
+        };
 
     if (ImGui::Button("+ Add", btnSize))
     {
-        if (state.recording)
-            AddKey_Default();
-        else
-            ImGui::OpenPopup("AddKey_Confirm_NotCapture");
+        if (state.recording) AddKey_Default();
+        else ImGui::OpenPopup("AddKey_Confirm_NotCapture");
     }
 
     if (ImGui::BeginPopupModal("AddKey_Confirm_NotCapture", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
@@ -601,7 +746,6 @@ void CCamPanel::DrawKeyframeList()
         ImGui::Separator();
         ImGui::TextUnformatted(u8"- 이 키는 카메라에서 캡쳐되지 않습니다.");
         ImGui::TextUnformatted(u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다.");
-
         ImGui::Separator();
 
         if (ImGui::Button(u8"추가", ImVec2(120.f, 0.f)))
@@ -628,7 +772,6 @@ void CCamPanel::DrawKeyframeList()
         if (!state.recording && keys.size() <= 2)
         {
             pendingDeleteKeyId = GetSelectedKeyId();
-            pendingKeyCount = (int)keys.size();
             requestOpenDeletePopup = true;
         }
         else
@@ -651,14 +794,11 @@ void CCamPanel::DrawKeyframeList()
         ImGui::Separator();
         ImGui::TextUnformatted(u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.");
         ImGui::TextUnformatted(u8"그래도 삭제할까요?");
-
         ImGui::Separator();
 
         if (ImGui::Button(u8"삭제", ImVec2(120.f, 0.f)))
         {
-            if (SelectKeyById(pendingDeleteKeyId))
-                DeleteSelectedKey();
-
+            if (SelectKeyById(pendingDeleteKeyId)) DeleteSelectedKey();
             ImGui::CloseCurrentPopup();
         }
 
@@ -688,11 +828,84 @@ void CCamPanel::DrawKeyframeList()
         SelectKeyById(dup.keyId);
         SyncEditorFromSelection();
 
-        if (target.player)
-            target.player->Invalidate();
+        if (target.player) target.player->Invalidate();
     }
 
     if (!canDuplicate) ImGui::EndDisabled();
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("|");
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("FILE");
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(6.f, 0.f));
+    ImGui::SameLine();
+
+    if (ImGui::Button("Save", btnSize))
+    {
+        lastFileError.clear();
+
+        if (target.sequence->keyframes.empty()) requestOpenEmptySaveConfirm = true;
+        else DoSave();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Load", btnSize))
+        DoLoad();
+
+    if (requestOpenEmptySaveConfirm)
+    {
+        ImGui::OpenPopup("CamSeq_Save_EmptyConfirm");
+        requestOpenEmptySaveConfirm = false;
+    }
+
+    if (ImGui::BeginPopupModal("CamSeq_Save_EmptyConfirm", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::TextUnformatted(u8"키프레임이 0개입니다.");
+        ImGui::Separator();
+        ImGui::TextUnformatted(u8"그래도 저장할까요?");
+        ImGui::Separator();
+
+        if (ImGui::Button(u8"저장", ImVec2(120.f, 0.f)))
+        {
+            ImGui::CloseCurrentPopup();
+            DoSave();
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button(u8"취소", ImVec2(120.f, 0.f)))
+            ImGui::CloseCurrentPopup();
+
+        ImGui::EndPopup();
+    }
+
+    if (requestOpenFileErrorPopup)
+    {
+        ImGui::OpenPopup("CamSeq_FileError");
+        requestOpenFileErrorPopup = false;
+    }
+
+    if (ImGui::BeginPopupModal("CamSeq_FileError", nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+    {
+        ImGui::TextUnformatted(u8"File Error");
+        ImGui::Separator();
+
+        if (!lastFileError.empty())
+            ImGui::TextUnformatted(lastFileError.c_str());
+
+        ImGui::Separator();
+
+        if (ImGui::Button("OK", ImVec2(120.f, 0.f)))
+            ImGui::CloseCurrentPopup();
+
+        ImGui::EndPopup();
+    }
 
     ImGui::SameLine();
 
@@ -702,14 +915,58 @@ void CCamPanel::DrawKeyframeList()
     float rightX = ImGui::GetWindowContentRegionMax().x;
     float curX = ImGui::GetCursorPosX();
     float textW = ImGui::CalcTextSize(summaryBuf).x;
-    if (rightX - textW > curX + 10.f)
-        ImGui::SetCursorPosX(rightX - textW);
+    if (rightX - textW > curX + 10.f) ImGui::SetCursorPosX(rightX - textW);
 
     ImGui::TextDisabled("%s", summaryBuf);
 
     ImGui::Separator();
     ImGui::AlignTextToFramePadding();
+
     ImGui::TextUnformatted("Keyframes");
+
+    {
+        const float inputW = 220.f;
+        const float pad = 6.f;
+        const char* label = "Name";
+        const float labelW = ImGui::CalcTextSize(label).x;
+        const float totalW = labelW + pad + inputW;
+
+        ImGui::SameLine();
+        float x = ImGui::GetWindowContentRegionMax().x - totalW;
+        if (x < ImGui::GetCursorPosX()) x = ImGui::GetCursorPosX();
+        ImGui::SetCursorPosX(x);
+
+        ImGui::TextDisabled("%s", label);
+        ImGui::SameLine(0.f, pad);
+
+        ImGui::SetNextItemWidth(inputW);
+        const bool enter = ImGui::InputText("##prefab_name", prefabNameBuf, IM_ARRAYSIZE(prefabNameBuf), ImGuiInputTextFlags_EnterReturnsTrue);
+
+        nameEditing = ImGui::IsItemActive();
+
+        if (enter || ImGui::IsItemDeactivatedAfterEdit())
+        {
+            string nextName = prefabNameBuf;
+
+            if (nextName.empty())
+            {
+                lastFileError = "Name cannot be empty";
+                SyncNameBufFromSeq();
+                ShowFileError();
+            }
+            else if (Helper::ContainsNonAscii(nextName))
+            {
+                lastFileError = "Name must be English";
+                SyncNameBufFromSeq();
+                ShowFileError();
+            }
+            else
+            {
+                target.sequence->name = nextName;
+            }
+        }
+    }
+
     ImGui::Separator();
 
     ImVec2 tableSize = ImGui::GetContentRegionAvail();
@@ -718,12 +975,39 @@ void CCamPanel::DrawKeyframeList()
         ImGuiTableFlags_RowBg |
         ImGuiTableFlags_BordersOuter |
         ImGuiTableFlags_BordersInnerV |
-        ImGuiTableFlags_SizingFixedFit |
-        ImGuiTableFlags_ScrollY;
+        ImGuiTableFlags_ScrollY |
+        ImGuiTableFlags_SizingStretchProp;
 
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(6.f, 3.f));
 
-    if (ImGui::BeginTable("KeyframeTable", 4, tableFlags, tableSize))
+    auto GetPosLabel = [](_uint v) -> const char*
+        {
+            const CamPosInterp m = static_cast<CamPosInterp>(v);
+            if (m == CamPosInterp::Linear)      return "Linear";
+            if (m == CamPosInterp::CatmullRom)  return "Catmull";
+            if (m == CamPosInterp::Centripetal) return "Centrip";
+            if (m == CamPosInterp::BSpline)     return "B-Spline";
+            if (m == CamPosInterp::Hermite)     return "Hermite";
+            return "Unknown";
+        };
+
+    auto GetRotLabel = [](_uint v) -> const char*
+        {
+            const CamRotInterp m = static_cast<CamRotInterp>(v);
+            if (m == CamRotInterp::Slerp) return "Slerp";
+            if (m == CamRotInterp::Squad) return "Squad";
+            return "Unknown";
+        };
+
+    auto GetFovLabel = [](_uint v) -> const char*
+        {
+            const CamFovInterp m = static_cast<CamFovInterp>(v);
+            if (m == CamFovInterp::Linear) return "Linear";
+            if (m == CamFovInterp::Smooth) return "Smooth";
+            return "Unknown";
+        };
+
+    if (ImGui::BeginTable("KeyframeTable", 5, tableFlags, tableSize))
     {
         ImGui::TableSetupScrollFreeze(0, 1);
 
@@ -731,10 +1015,33 @@ void CCamPanel::DrawKeyframeList()
         ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, 78.f);
         ImGui::TableSetupColumn("Gap", ImGuiTableColumnFlags_WidthFixed, 66.f);
         ImGui::TableSetupColumn("Go", ImGuiTableColumnFlags_WidthFixed, 36.f);
+        ImGui::TableSetupColumn("Interp", ImGuiTableColumnFlags_WidthStretch);
 
         ImGui::TableHeadersRow();
 
-        const float rowH = ImGui::GetTextLineHeightWithSpacing();
+        const ImGuiStyle& style = ImGui::GetStyle();
+        const float frameH = ImGui::GetFrameHeight();
+        const float rowH = frameH + style.CellPadding.y * 2.f;
+
+        auto CellHit = [&](const char* id, bool& rowHovered, bool& rowClicked) -> bool
+            {
+                ImVec2 p = ImGui::GetCursorScreenPos();
+                float w = ImGui::GetContentRegionAvail().x;
+
+                ImGui::SetCursorScreenPos(ImVec2(p.x, p.y - style.CellPadding.y));
+                ImGui::InvisibleButton(id, ImVec2(w, rowH));
+
+                bool hovered = ImGui::IsItemHovered();
+                bool clicked = ImGui::IsItemClicked(0);
+
+                if (hovered) rowHovered = true;
+                if (clicked) rowClicked = true;
+
+                ImGui::SetItemAllowOverlap();
+                ImGui::SetCursorScreenPos(p);
+
+                return clicked;
+            };
 
         ImGuiListClipper clipper;
         clipper.Begin((int)keys.size(), rowH);
@@ -743,47 +1050,155 @@ void CCamPanel::DrawKeyframeList()
         {
             for (int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i)
             {
-                const CamKeyFrame& key = keys[(size_t)i];
+                CamKeyFrame& key = keys[(size_t)i];
                 const bool isSelected = (state.selectedKeyIdx == i);
 
-                ImGui::TableNextRow();
+                ImGui::TableNextRow(ImGuiTableRowFlags_None, rowH);
                 ImGui::PushID(i);
 
+                bool rowHovered = false;
+                bool rowClicked = false;
+
                 ImGui::TableSetColumnIndex(0);
-                if (ImGui::Selectable("##row", isSelected, ImGuiSelectableFlags_SpanAllColumns))
+                CellHit("##hit_id", rowHovered, rowClicked);
+                ImGui::AlignTextToFramePadding();
+                ImGui::Text("#%03u", key.keyId);
+
+                ImGui::TableSetColumnIndex(1);
+                CellHit("##hit_time", rowHovered, rowClicked);
+                ImGui::AlignTextToFramePadding();
+                ImGui::Text("%.1fs", key.time);
+
+                ImGui::TableSetColumnIndex(2);
+                CellHit("##hit_gap", rowHovered, rowClicked);
+                ImGui::AlignTextToFramePadding();
+                if ((size_t)i + 1 < keys.size()) ImGui::Text("%.1fs", keys[(size_t)i + 1].time - key.time);
+                else ImGui::TextDisabled("-");
+
+                ImGui::TableSetColumnIndex(3);
+                bool goCellClicked = CellHit("##hit_go", rowHovered, rowClicked);
+                bool goClicked = ImGui::SmallButton(">");
+                if (goClicked) state.curTime = key.time;
+                else if (goCellClicked) rowClicked = true;
+
+                if (rowClicked)
                 {
                     state.selectedKeyIdx = i;
                     SyncEditorFromSelection();
                 }
 
-                if (ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(0))
+                if (rowHovered && ImGui::IsMouseDoubleClicked(0))
                     state.curTime = key.time;
 
-                ImGui::SameLine();
-                ImGui::Text("#%03u", key.keyId);
+                if (isSelected)
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_HeaderActive));
+                else if (rowHovered)
+                    ImGui::TableSetBgColor(ImGuiTableBgTarget_RowBg0, ImGui::GetColorU32(ImGuiCol_HeaderHovered));
 
-                ImGui::TableSetColumnIndex(1);
-                ImGui::Text("%.1fs", key.time);
+                ImGui::TableSetColumnIndex(4);
+                {
+                    bool custom = key.useCustomInterp;
+                    if (ImGui::Checkbox("##custom", &custom))
+                    {
+                        key.useCustomInterp = custom;
 
-                ImGui::TableSetColumnIndex(2);
-                if ((size_t)i + 1 < keys.size())
-                    ImGui::Text("%.1fs", keys[(size_t)i + 1].time - key.time);
-                else
-                    ImGui::TextDisabled("-");
+                        if (key.useCustomInterp)
+                        {
+                            key.outPosInterp = target.sequence->posInterp;
+                            key.outRotInterp = target.sequence->rotInterp;
+                            key.outFovInterp = target.sequence->fovInterp;
+                        }
 
-                ImGui::TableSetColumnIndex(3);
-                if (ImGui::SmallButton(">"))
-                    state.curTime = key.time;
+                        changedAny = true;
+                    }
+
+                    ImGui::SameLine();
+
+                    const CamPosInterp shownPos = key.useCustomInterp ? key.outPosInterp : target.sequence->posInterp;
+                    const CamRotInterp shownRot = key.useCustomInterp ? key.outRotInterp : target.sequence->rotInterp;
+                    const CamFovInterp shownFov = key.useCustomInterp ? key.outFovInterp : target.sequence->fovInterp;
+
+                    if (!key.useCustomInterp) ImGui::BeginDisabled();
+
+                    ImGui::SetNextItemWidth(95.f);
+                    if (ImGui::BeginCombo("##pos", GetPosLabel((_uint)shownPos)))
+                    {
+                        auto PickPos = [&](CamPosInterp v)
+                            {
+                                if (ImGui::Selectable(GetPosLabel((_uint)v), shownPos == v))
+                                {
+                                    key.outPosInterp = v;
+                                    changedAny = true;
+                                }
+                            };
+
+                        PickPos(CamPosInterp::Linear);
+                        PickPos(CamPosInterp::CatmullRom);
+                        PickPos(CamPosInterp::Centripetal);
+                        PickPos(CamPosInterp::BSpline);
+                        PickPos(CamPosInterp::Hermite);
+
+                        ImGui::EndCombo();
+                    }
+
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(80.f);
+                    if (ImGui::BeginCombo("##rot", GetRotLabel((_uint)shownRot)))
+                    {
+                        auto PickRot = [&](CamRotInterp v)
+                            {
+                                if (ImGui::Selectable(GetRotLabel((_uint)v), shownRot == v))
+                                {
+                                    key.outRotInterp = v;
+                                    changedAny = true;
+                                }
+                            };
+
+                        PickRot(CamRotInterp::Slerp);
+                        PickRot(CamRotInterp::Squad);
+
+                        ImGui::EndCombo();
+                    }
+
+                    ImGui::SameLine();
+                    ImGui::SetNextItemWidth(85.f);
+                    if (ImGui::BeginCombo("##fov", GetFovLabel((_uint)shownFov)))
+                    {
+                        auto PickFov = [&](CamFovInterp v)
+                            {
+                                if (ImGui::Selectable(GetFovLabel((_uint)v), shownFov == v))
+                                {
+                                    key.outFovInterp = v;
+                                    changedAny = true;
+                                }
+                            };
+
+                        PickFov(CamFovInterp::Linear);
+                        PickFov(CamFovInterp::Smooth);
+
+                        ImGui::EndCombo();
+                    }
+
+                    if (!key.useCustomInterp) ImGui::EndDisabled();
+                }
 
                 ImGui::PopID();
             }
         }
+
         ImGui::EndTable();
     }
 
-    ImGui::PopStyleVar();
-}
 
+    ImGui::PopStyleVar();
+
+    if (changedAny && target.player)
+    {
+        target.player->Invalidate();
+        if (!state.recording)
+            target.player->SetTime(state.curTime);
+    }
+}
 
 void CCamPanel::DrawKeyframeEditor()
 {
@@ -1017,7 +1432,6 @@ void CCamPanel::DrawKeyframeEditor()
     }
 }
 
-
 void CCamPanel::DrawTimeline()
 {
     ImVec2 avail = ImGui::GetContentRegionAvail();
@@ -1250,6 +1664,11 @@ void CCamPanel::AddKey_Default()
     newKey.keyId = target.nextKeyId++;
     newKey.time = GetNextDefaultTime();
 
+    newKey.useCustomInterp = false;
+    newKey.outPosInterp = target.sequence->posInterp;
+    newKey.outRotInterp = target.sequence->rotInterp;
+    newKey.outFovInterp = target.sequence->fovInterp;
+
     auto& keys = GetKeyFrames();
 
     if (!keys.empty())
@@ -1307,7 +1726,6 @@ void CCamPanel::DeleteSelectedKey()
     if (target.player)
         target.player->Invalidate();
 }
-
 
 void CCamPanel::SortKeysByTime_Stable()
 {
@@ -1455,13 +1873,12 @@ void CCamPanel::ApplyEditorToSelectedKey_TimeOnly()
     }
 }
 
-
 void CCamPanel::CaptureSelectedKey_FromCaptureCam()
 {
     if (!HasValidSelection()) return;
     if (!target.captureCamObj) return;
 
-    CamKeyFrame& key = GetSelectedKey();
+    CamKeyFrame& key = GetSelectedKey(); 
 
     key.pos = target.captureCamObj->Get_Component<CTransform>()->Get_Pos();
     _vector4 look4 = target.captureCamObj->Get_Component<CTransform>()->Dir(STATE::LOOK);

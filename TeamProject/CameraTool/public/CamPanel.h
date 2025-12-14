@@ -28,20 +28,20 @@ private:
 	void DrawInterpSelector();
 
 private: // Helper
-    vector<CamKeyFrame>&       GetKeyFrames()                 { return target.sequence->keyframes; }
-	const vector<CamKeyFrame>& GetKeyFrames() const           { return target.sequence->keyframes; }
     bool                       HasValidSelection() const;
-    CamKeyFrame&               GetSelectedKey();
-    _uint                      GetSelectedKeyId() const;
-    _float                     GetNextDefaultTime() const;
+	bool                       SelectKeyById(_uint keyId);
     void                       AddKey_Default();
     void                       DeleteSelectedKey();
     void                       SortKeysByTime_Stable();
     void                       MergeNearDuplicateTimes_KeepLast();
-    bool                       SelectKeyById(_uint keyId);
     void                       SyncEditorFromSelection();
     void                       ApplyEditorToSelectedKey_TimeOnly();
     void                       CaptureSelectedKey_FromCaptureCam();
+	_uint                      GetSelectedKeyId()   const;
+	_float                     GetNextDefaultTime() const;
+	CamKeyFrame&               GetSelectedKey();
+	vector<CamKeyFrame>&       GetKeyFrames()       { return target.sequence->keyframes; }
+	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
 
 private:
 	CamSequenceDesc  debugSequence{};

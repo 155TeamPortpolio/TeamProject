@@ -406,6 +406,18 @@
     <ClInclude Include="..\public\CamRotSquadEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. SquadEvaluator</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ICamPoseSource.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPosPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamRotPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamFovPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -765,6 +777,15 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. SquadEvaluator">
       <UniqueIdentifier>{334d094e-e5f9-4161-90ba-084b41c9031f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegmentEvaluator">
+      <UniqueIdentifier>{8ea0933c-6096-437e-9120-d2f3953f0e3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegmentEvaluator">
+      <UniqueIdentifier>{a9a66ae6-c9e7-476a-8743-e60917f391d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator">
+      <UniqueIdentifier>{4b7e3faf-796b-43b9-89bc-8dbd8848ceda}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1094,6 +1115,15 @@
     </ClCompile>
     <ClCompile Include="..\private\CamRotSquadEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. SquadEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPosPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamRotPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamFovPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

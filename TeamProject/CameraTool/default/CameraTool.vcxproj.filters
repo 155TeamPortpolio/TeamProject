@@ -37,12 +37,6 @@
     <ClInclude Include="..\ThridParty\GUI_Inc\ImGradient.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="..\ThridParty\GUI_Inc\ImGuizmo.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
@@ -69,6 +63,12 @@
     </ClInclude>
     <ClInclude Include="..\public\DemoGrid.h">
       <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThridParty\GUI_Inc\imgui.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +145,18 @@
     <ClCompile Include="..\ThridParty\GUI_Inc\ImGradient.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImGuizmo.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemoModel.cpp">
+      <Filter>03. Obj\01. DemoModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemoGrid.cpp">
+      <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClCompile>
     <ClCompile Include="..\ThridParty\GUI_Inc\imgui.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClCompile>
@@ -159,18 +171,6 @@
     </ClCompile>
     <ClCompile Include="..\ThridParty\GUI_Inc\imgui_widgets.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImGuizmo.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DemoModel.cpp">
-      <Filter>03. Obj\01. DemoModel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DemoGrid.cpp">
-      <Filter>03. Obj\02. DemoGrid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -11,16 +11,16 @@ private:
     virtual ~CCamRotSquadEvaluator() DEFAULT;
 
 public:
-    bool       Build(const vector<CamKeyFrame>& keys) override;
-    Quaternion Evaluate(_float time) const override;
+    bool              Build(const vector<CamKeyFrame>& keys) override;
+    Quaternion        Evaluate(_float time) const override;
 
 private:
-    Quaternion MakeRotFromLookRoll(_vector3 look, _float rollRad) const;
-
-    Quaternion GetRotClamped(int idx) const;
-    Quaternion GetTanClamped(int idx) const;
-
-    Quaternion ComputeTangent(int idx) const;
+    Quaternion        MakeRotFromLookRoll(_vector3 look, _float rollRad) const;
+                      
+    Quaternion        GetRotClamped(int idx) const;
+    Quaternion        GetTanClamped(int idx) const;
+                      
+    Quaternion        ComputeTangent(int idx) const;
 
     static Quaternion QLogUnit(const Quaternion& q);
     static Quaternion QExpPure(const Quaternion& q);

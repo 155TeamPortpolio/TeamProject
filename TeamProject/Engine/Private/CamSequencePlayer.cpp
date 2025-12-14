@@ -2,17 +2,18 @@
 #include "CamSequencePlayer.h"
 #include "GameObject.h"
 
-#include "CamPosLinearEvaluator.h"
-#include "CamPosCatmullRomEvaluator.h"
-#include "CamPosCentripetalEvaluator.h"
-#include "CamPosBSplineEvaluator.h"
-#include "CamPosHermiteEvaluator.h"
+#include "CamPosPerSegmentEvaluator.h"
+#include "CamRotPerSegmentEvaluator.h"
+#include "CamFovPerSegmentEvaluator.h"
 
-#include "CamRotSlerpEvaluator.h"
-#include "CamRotSquadEvaluator.h"
-
-#include "CamFovLinearEvaluator.h"
-#include "CamFovSmoothEvaluator.h"
+CCamSequencePlayer::CCamSequencePlayer(const CCamSequencePlayer& rhs)
+    : CComponent(rhs)
+{
+    target   = {};
+    playback = {};
+    apply    = {};
+    eval     = {};
+}
 
 HRESULT CCamSequencePlayer::Initialize_Prototype()
 {
@@ -24,18 +25,24 @@ HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     apply.transform = m_pOwner->Get_Component<CTransform>();
     apply.cam = m_pOwner->Get_Component<CCamera>();
 
-    eval.evaluator = CCamEvaluator::Create();
-    eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
-    eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
-    eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
+    if (!eval.evaluator)
+        eval.evaluator = CCamEvaluator::Create();
 
-    target.seq         = nullptr;
-    playback.playing   = false;
-    playback.playTime  = 0.f;
+    eval.pos = CCamPosPerSegmentEvaluator::Create();
+    eval.rot = CCamRotPerSegmentEvaluator::Create();
+    eval.fov = CCamFovPerSegmentEvaluator::Create();
+
+    eval.evaluator->SetPosEvaluator(eval.pos);
+    eval.evaluator->SetRotEvaluator(eval.rot);
+    eval.evaluator->SetFovEvaluator(eval.fov);
+
+    target.seq = nullptr;
+    playback.playing = false;
+    playback.playTime = 0.f;
     playback.timeScale = 1.f;
 
     apply.applyEnabled = true;
-    eval.dirty         = true;
+    eval.dirty = true;
 
     return S_OK;
 }
@@ -119,60 +126,14 @@ void CCamSequencePlayer::RebuildIfNeeded()
     const auto& keys = target.seq->keyframes;
     if (keys.empty()) return;
 
-    if (!eval.evaluator)
-        eval.evaluator = CCamEvaluator::Create();
+    assert(eval.evaluator);
+    assert(eval.pos);
+    assert(eval.rot);
+    assert(eval.fov);
 
-    const size_t keyCount = keys.size();
-
-    if (keyCount == 1)
-    {
-        eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
-        eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
-        eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
-
-        const bool ok = eval.evaluator->Build(*target.seq);
-        assert(ok);
-        return;
-    }
-
-    switch (target.seq->posInterp)
-    {
-    case CamPosInterp::Linear:
-        eval.evaluator->SetPosEvaluator(CCamPosLinearEvaluator::Create());
-        break;
-    case CamPosInterp::CatmullRom:
-        eval.evaluator->SetPosEvaluator(CCamPosCatmullRomEvaluator::Create());
-        break;
-    case CamPosInterp::Centripetal:
-        eval.evaluator->SetPosEvaluator(CCamPosCentripetalEvaluator::Create());
-        break;
-    case CamPosInterp::BSpline:
-        eval.evaluator->SetPosEvaluator(CCamPosBSplineEvaluator::Create());
-        break;
-    case CamPosInterp::Hermite:
-        eval.evaluator->SetPosEvaluator(CCamPosHermiteEvaluator::Create());
-        break;
-    }
-
-    switch (target.seq->rotInterp)
-    {
-    case CamRotInterp::Slerp:
-        eval.evaluator->SetRotEvaluator(CCamRotSlerpEvaluator::Create());
-        break;
-    case CamRotInterp::Squad:
-        eval.evaluator->SetRotEvaluator(CCamRotSquadEvaluator::Create());
-        break;
-    }
-
-    switch (target.seq->fovInterp)
-    {
-    case CamFovInterp::Linear:
-        eval.evaluator->SetFovEvaluator(CCamFovLinearEvaluator::Create());
-        break;
-    case CamFovInterp::Smooth:
-        eval.evaluator->SetFovEvaluator(CCamFovSmoothEvaluator::Create());
-        break;
-    }
+    eval.pos->SetSequence(target.seq);
+    eval.rot->SetSequence(target.seq);
+    eval.fov->SetSequence(target.seq);
 
     const bool ok = eval.evaluator->Build(*target.seq);
     assert(ok);
@@ -202,6 +163,11 @@ CCamSequencePlayer* CCamSequencePlayer::Create()
 
 void CCamSequencePlayer::Free()
 {
-    __super::Free();
     Safe_Release(eval.evaluator);
+
+    eval.pos = nullptr;
+    eval.rot = nullptr;
+    eval.fov = nullptr;
+
+    __super::Free();
 }
