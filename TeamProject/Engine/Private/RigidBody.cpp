@@ -91,9 +91,14 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, m_bLockX);
 		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, m_bLockY);
 		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, m_bLockZ);
-
+		pDynamic->setSolverIterationCounts(8, 4);
+		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+		pDynamic->setMinCCDAdvanceCoefficient(0.15f);
+		pDynamic->setMaxDepenetrationVelocity(1.0f);
 		m_pActor = pDynamic;
 	}
+
+	m_pActor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
 	m_pActor->userData = m_pOwner;
 	pScene->addActor(*m_pActor);
 
@@ -102,22 +107,42 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 
 void CRigidBody::Update(_float dt)
 {
-	Update_RigidBody();
 }
 
-void CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
+void CRigidBody::Late_Update(_float dt)
 {
 	if (!m_pActor) return;
 
+	// 1. PhysX가 생각하는 위치
+	PxTransform pxPose = m_pActor->getGlobalPose();
+
+	// 2. Transform에 적용
+	Update_RigidBody();
+
+	// 3. 적용 후 Transform이 생각하는 위치
+
+
+	// 4. 로그 출력
+
+}
+
+PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strMaterialName)
+{
+	if (!m_pActor) return nullptr;
+
 	PxMaterial* pUseMaterial = m_pMaterial;
-	if (strMaterialName != "")
-		pUseMaterial = m_pPhysicsSystem->Get_Material(strMaterialName);
+	if (strMaterialName != "") {
+		PxMaterial* pFoundMat = m_pPhysicsSystem->Get_Material(strMaterialName);
+		if (pFoundMat) pUseMaterial = pFoundMat;
+	}
 
 	PxShape* pShape = PxRigidActorExt::createExclusiveShape(*m_pActor, geometry, *pUseMaterial);
+
 	if (pShape && !m_bStatic)
 	{
 		Update_Inertia();
 	}
+	return pShape;
 }
 
 void CRigidBody::Add_Force(_fvector vForce, PxForceMode::Enum eMode)
@@ -240,8 +265,21 @@ void CRigidBody::Update_RigidBody()
 	}
 	else
 	{
-		// 시뮬레이션 결과가 트랜스폼을 덮어씀 :  Physics -> Transform
+		// 시뮬레이션 결과가 트랜스폼을 덮어씀 : Physics -> Transform
 		PxTransform globalPose = m_pActor->getGlobalPose();
+		_vector vTransPos = m_pOwnerTransform->Get_WorldPos();
+		// 디버그 로그 (임시)
+		static int frameCount = 0;
+		if (++frameCount % 60 == 0) // 60프레임마다
+		{
+			OutputDebugStringA(("PhysX -> Transform: " + m_pOwner->Get_InstanceName()).c_str());
+			OutputDebugStringA((" Y=" + to_string(globalPose.p.y) + "\n").c_str());
+		}
+
+		char szBuff[256] = "";
+		sprintf_s(szBuff, "PhysX Y: %.4f | Trans Y: %.4f\n", globalPose.p.y, XMVectorGetY(vTransPos));
+		OutputDebugStringA(szBuff);
+
 		m_pOwnerTransform->Set_WorldPos(ToDxVec(globalPose.p));
 		m_pOwnerTransform->Set_WorldQuaternion(ToDxQuat(globalPose.q));
 	}
@@ -315,10 +353,10 @@ void CRigidBody::Free()
 {
 	if (m_pActor)
 	{
-		PxScene* pScene = m_pActor->getScene();
-		if (pScene)
-			pScene->removeActor(*m_pActor);
-
+		if (m_pActor->getScene())
+		{
+			m_pActor->getScene()->removeActor(*m_pActor);
+		}
 		m_pActor->release();
 		m_pActor = nullptr;
 	}

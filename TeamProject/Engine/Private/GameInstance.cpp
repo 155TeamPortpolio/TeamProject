@@ -47,12 +47,10 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pLightService = CLightMgr::Create();
 	m_pRaySystem = CRaySystem::Create();
 	m_pRenderSystem = CRenderSystem::Create(m_pDevice, m_pDeviceContext);
+	m_pPhysicsSystem = CPhysicsSystem::Create();
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 
-#ifdef USINGPHYSICS
-	m_pPhysicsSystem = CPhysicsSystem::Create();
-#endif
 
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);

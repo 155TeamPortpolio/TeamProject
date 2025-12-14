@@ -16,18 +16,21 @@ public:
 	_float Get_Duration() { return m_fDuration; }
 	_bool isLoop() { return m_bLoop; }
 
+	//현재 애니매이션 클립을 재생함
 	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
 		_bool isLoop,
 		_bool* isAnimEnd);
 
+	//현재 키프레임을 기준으로 다음 애니매이션을 보간
 	_bool ConvertTo(vector<_float4x4>& transfomationMatrices,
 		 CAnimationClip& DestAnimation, 
 		_float fConvertDuration, 
 		_float PrevTrackPosition, 
 		_float ConversionTrackPosition);
 
+	//현재 트랙포지션 기준으로 다음 애니매이션을 보간
 	_bool ConvertByCurrentMatrix(
 		vector<_float4x4>& transfomationMatrices, 
 		CAnimationClip& DestAnimation,
@@ -46,12 +49,12 @@ public:
 	virtual void Render_GUI();
 
 protected:
-	_bool					m_bLoop = { false };
-	_float					m_fDuration = {}; //총 재생
-	_float					m_fTickPerSecond = {}; //속도
-	_uint					m_iNumChannels = {};
-	string				m_ClipName = {};
-	string				m_Subject = {};
+	_bool					m_bLoop = { false };	//반복 여부
+	_float					m_fDuration = {};		//총 재생
+	_float					m_fTickPerSecond = {};	//속도
+	_uint					m_iNumChannels = {};	//채널 개수
+	string					m_ClipName = {};		//애니매이션 클립 이름
+	string					m_Subject = {};			//어떤 모델의 애니매이션인지?
 	vector<class CChannel*> m_Channels;
 
 public:

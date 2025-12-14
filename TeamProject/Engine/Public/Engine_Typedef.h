@@ -54,6 +54,7 @@ namespace Engine
 	static constexpr _uint g_iMaxTransform = 4096;
 	static constexpr _uint g_iMaxLightss = 46;
 	static constexpr _uint MAX_TEXTURE_TYPE_VALUE = static_cast<_uint>(TEXTURE_TYPE::END);
+	static constexpr _uint g_iMaxNumInstances = 3000;
 	const unsigned int g_iMaxWidth = 8192;
 	const unsigned int g_iMaxHeight = 4608;
 }

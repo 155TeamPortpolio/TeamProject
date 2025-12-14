@@ -14,8 +14,6 @@ public:
 public:
    virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
    virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
-   virtual void DeActiveCollider(class CCollider* pCollider, _int Index)PURE;
-   virtual void ActiveCollider(class CCollider* pCollider, _int Index)PURE;
 
 #ifdef _DEBUG
    virtual void Render_Debug() PURE;

@@ -9,6 +9,10 @@
 #include "DemoModel.h"
 #include "DemoUI.h"
 #include "Camera.h"
+#include "InstanceDemo.h"
+
+#include "RigidBody.h"
+#include "Collider.h"
 
 CDemoLevel::CDemoLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -27,27 +31,16 @@ HRESULT CDemoLevel::Awake()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
-	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
-	CAMERA_DESC desc = {};
 
-	CGameObject* Camera = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera"})
+	CGameObject* Camera = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel"})
-		.Position({ 0,0,0 })
-		.Build("Demo_Model");
-	
-	CUI_Object* DemoUI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" }).Build("DemoUI");
-
-	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer"});
-	pObjMgr->Add_Object(DemoModel, { "Demo_Level","Model_Layer"});
-	pUIMgr->Add_UIObject(DemoUI, "Demo_Level");
-
+	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
 	return S_OK;

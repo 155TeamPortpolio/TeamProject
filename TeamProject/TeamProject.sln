@@ -25,6 +25,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EffectTool", "EffectTool\De
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UITool", "UITool\Default\UITool.vcxproj", "{A66E465B-DF4B-4476-865C-3DF454801146}"
+	ProjectSection(ProjectDependencies) = postProject
+		{43577242-8126-479C-B342-5538FD29851E} = {43577242-8126-479C-B342-5538FD29851E}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MapTool", "MapTool\Default\MapTool.vcxproj", "{3CB48399-3BFA-4F57-B052-EA172A6D3DF5}"
 EndProject

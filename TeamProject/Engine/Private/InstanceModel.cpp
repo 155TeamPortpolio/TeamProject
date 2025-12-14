@@ -107,14 +107,11 @@ void CInstanceModel::Link_InstanceMeshAll(_uint InstanceIndex)
 
 HRESULT CInstanceModel::Update_Instance(ID3D11DeviceContext* pContext, const void* pData, _uint Index, _uint count)
 {
-	if (!Check_Valid(Index)) {
-		return E_FAIL;
-	}
- 	if (Index >= m_ActiveCounts.size()) return E_FAIL;
-
-
-	if (!pContext || !pData || m_InstanceBuffers.empty())
-		return E_FAIL;
+	if (!pContext || !pData) return E_FAIL;
+	if (Index >= m_InstanceBuffers.size()) return E_FAIL;    
+	if (Index >= m_DescArray.size()) return E_FAIL;
+	if (count > m_DescArray[Index].instanceCount)
+		count = m_DescArray[Index].instanceCount;
 
 	m_ActiveCounts[Index] = count;
 

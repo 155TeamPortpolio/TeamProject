@@ -61,6 +61,12 @@
     <ClInclude Include="..\ThridParty\GUI_Inc\ImZoomSlider.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamPanelData.h">
+      <Filter>02. Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemoModel.h">
+      <Filter>03. Obj\01. DemoModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -94,6 +100,9 @@
     </Filter>
     <Filter Include="99. Etc\99. Useless\ImGui">
       <UniqueIdentifier>{fbfc5b63-d139-4854-9034-dfde3870e289}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\01. DemoModel">
+      <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +156,9 @@
     </ClCompile>
     <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemoModel.cpp">
+      <Filter>03. Obj\01. DemoModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

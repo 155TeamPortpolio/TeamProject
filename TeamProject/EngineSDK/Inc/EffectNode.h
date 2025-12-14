@@ -20,7 +20,7 @@ public:
 
 public:
     void Render_GUI() override;
-
+    virtual void Play() {};
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free();

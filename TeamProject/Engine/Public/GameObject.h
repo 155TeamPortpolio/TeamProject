@@ -34,9 +34,9 @@ public:
 	virtual void Late_Update(_float dt) PURE;
 
 public:
-	virtual void OnCollisionEnter(COLLISION_CONTEXT context);
-	virtual void OnCollisionStay(COLLISION_CONTEXT context);
-	virtual void OnCollisionExit(COLLISION_CONTEXT context);
+	virtual void OnCollisionEnter() {};
+	virtual void OnCollisionStay() {};
+	virtual void OnCollisionExit() {};
 
 public:
 	_bool Has_Tag(const string& tag) { return m_InstanceTag == tag; };
@@ -75,6 +75,7 @@ private:
 	HRESULT Make_OpaquePacket();
 	HRESULT Make_BlendedPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
+	HRESULT Make_ParticlePacket();
 
 protected:
 	_bool m_isRootObject = { true };
@@ -121,11 +122,11 @@ inline T* CGameObject::Add_Component(Args && ...args)
 		m_Components.insert({ type_index(typeid(CModel)), comp });
 		Safe_AddRef(comp);
 	}
-	if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
-	{
-		m_Components.insert({ type_index(typeid(CCollider)), comp });
-		Safe_AddRef(comp);
-	}
+	//if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
+	//{
+	//	m_Components.insert({ type_index(typeid(CCollider)), comp });
+	//	Safe_AddRef(comp);
+	//}
 	return comp;
 }
 
@@ -150,11 +151,11 @@ inline HRESULT CGameObject::Remove_Component()
 			Safe_Release(iter->second);
 			m_Components.erase(type_index(typeid(CModel)));
 		}
-		if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
-		{
-			Safe_Release(iter->second);
-			m_Components.erase(type_index(typeid(CCollider)));
-		}
+		//if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
+		//{
+		//	Safe_Release(iter->second);
+		//	m_Components.erase(type_index(typeid(CCollider)));
+		//}
 		Safe_Release(iter->second);
 		m_Components.erase(iter);
 			return S_OK;

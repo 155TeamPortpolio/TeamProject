@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "UITool_Level.h"
 
 #include "GameInstance.h"
@@ -7,7 +7,14 @@
 
 #include "UITool_Camera.h"
 #include "Camera.h"
-#include "TestUI.h"
+
+#include "GUIPanel.h"
+#include "CanvasPanel.h"
+#include "ImageUI.h"
+#include "TextUI.h"
+
+vector<string> CUITool_Level::m_TextureKeys;
+vector<string> CUITool_Level::m_FontKeys;
 
 CUITool_Level::CUITool_Level(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -23,27 +30,17 @@ HRESULT CUITool_Level::Initialize()
 
 HRESULT CUITool_Level::Awake()
 {
-	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_Camera", CUITool_Camera::Create());
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_UI", CTestUI::Create());
-	
-	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
+	if (FAILED(Ready_Camera()))
+		MSG_BOX("Failed to Ready Camera");
 
-	CGameObject* Camera = Builder::Create_Object({ "UITool_Level" ,"Proto_GameObject_Camera" })
-		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
-		.Position({ 0.f, 3.f, -3.f })
-		.Build("Main_Camera");
-	
-	CUI_Object* pUIObject = Builder::Create_UIObject({ "UITool_Level" ,"Proto_GameObject_UI" })
-		.Scale({ 200.f, 200.f })
-		.Set_Anchor(ANCHOR::Left | ANCHOR::Top, {0.f, 0.f})
-		.Build("Test_UI");
+	if (FAILED(Ready_GUIPanel()))
+		MSG_BOX("Failed to Ready GUI Panel");
 
-	pObjMgr->Add_Object(Camera, { "UITool_Level","Camera_Layer" });
-	pUIMgr->Add_UIObject(pUIObject, "UITool_Level");
-	
-	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+	Ready_Textures();
+
+	Ready_Fonts();
+
+	Ready_UIObjects();	 
 
 	return S_OK;
 }
@@ -61,6 +58,107 @@ HRESULT CUITool_Level::Render()
 
 void CUITool_Level::PreLoad_Level()
 {
+}
+
+const vector<const _char*> CUITool_Level::Get_TextureKeys()
+{
+	vector<const _char*> TextureKeys;
+
+	for (const auto& Key : m_TextureKeys)
+		TextureKeys.push_back(Key.c_str());
+
+	return TextureKeys;
+}
+
+const vector<const _char*> CUITool_Level::Get_FontKeys()
+{
+	vector<const _char*> FontKeys;
+
+	for (const auto& Key : m_FontKeys)
+		FontKeys.push_back(Key.c_str());
+
+	return FontKeys;
+}
+
+HRESULT CUITool_Level::Ready_Textures()
+{ 
+	Add_Texture("Logo.png", "../Bin/Resources/UI/Logo.png");
+	Add_Texture("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg");
+
+	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath("CanvasPanel.png", "../Bin/Resources/UI/CanvasPanel.png")))
+		MSG_BOX("Failed to Ready Textures : CanvasPanel.png");
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_Fonts()
+{
+	Add_Font("NotoSansKR_Regular", L"../Bin/Resources/Fonts/NotoSansKR_Regular.spritefont");
+	Add_Font("NotoSansKR_Bold", L"../Bin/Resources/Fonts/NotoSansKR_Bold.spritefont");
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_Camera()
+{
+	IProtoService* pProto = m_pGameInstance->Get_PrototypeMgr();
+
+	if (FAILED(pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_Camera", CUITool_Camera::Create())))
+		return E_FAIL;
+
+	CGameObject* Camera = Builder::Create_Object({ "UITool_Level" ,"Proto_GameObject_Camera" })
+		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
+		.Position({ 0.f, 3.f, -3.f })
+		.Build("Main_Camera");
+
+	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+	pObjMgr->Add_Object(Camera, { "UITool_Level","Camera_Layer" });
+
+	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_UIObjects()
+{
+	IProtoService* pProto = m_pGameInstance->Get_PrototypeMgr();
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ImageUI", CImageUI::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_TextUI", CTextUI::Create());
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Ready_GUIPanel()
+{
+	CBasePanel* pPanel = CGUIPanel::Create(m_pGameInstance->Get_GUISystem()->Get_Context());
+	if (!pPanel)
+		return E_FAIL;
+
+	m_pGameInstance->Get_GUISystem()->Register_Panel(pPanel);
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Add_Texture(const string& resourceKey, const string& resourcePath)
+{
+	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(resourceKey, resourcePath)))
+		return E_FAIL;
+	m_TextureKeys.push_back(resourceKey);
+
+	return S_OK;
+}
+
+HRESULT CUITool_Level::Add_Font(string FontName, const wstring& FontFilePath)
+{
+	m_pGameInstance->Get_FontSystem()->Add_Font(FontName, FontFilePath);
+	m_FontKeys.push_back(FontName);
+
+	return S_OK;
 }
 
 CUITool_Level* CUITool_Level::Create(const string& LevelKey)

@@ -27,10 +27,9 @@ HRESULT CGUISystem::Initialize(const ENGINE_DESC& engine, ID3D11Device* pDevice,
 	ImGuiIO& io = ImGui::GetIO();
 	m_GuiIo = &ImGui::GetIO();
 
-	//		ImFont* fonts = io.Fonts->AddFontFromFileTTF("../../Resources/font/SUIT-Bold.ttf", 16.0f, nullptr,
-	//			io.Fonts->GetGlyphRangesKorean()); //
-	//		
-	//		io.FontDefault = fonts;
+	ImFont* fonts = io.Fonts->AddFontFromFileTTF("../../Font/SUIT-Bold.ttf", 16.0f, nullptr,
+		io.Fonts->GetGlyphRangesKorean()); //
+	io.FontDefault = fonts;
 	ImGui::StyleColorsDark();
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     /*키보드 컨트롤*/
 	io.DisplaySize = ImVec2((float)engine.iWinSizeX, (float)engine.iWinSizeY);

@@ -30,5 +30,7 @@ protected:
     _float m_fSpriteElapsedTime{};
     _uint m_iMaxFrameIndex{};
     _uint m_iCurrFrameIndex{};
+    _uint m_iCol{};
+    _uint m_iRow{};
 };
 NS_END

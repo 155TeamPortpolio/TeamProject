@@ -13,18 +13,24 @@ public:
 	HRESULT Initialize_Prototype()      override;
 	HRESULT Initialize(INIT_DESC* pArg) override;
 
-	void Priority_Update(_float dt) override;
-	void Update(_float dt)          override;
-	void Late_Update(_float dt)     override;
+	void    Priority_Update(_float dt)  override;
+	void    Update(_float dt)           override;
+	void    Late_Update(_float dt)      override;
+
+	void    Render_GUI()                override;
 
 private:
-	void ApplyRotation();
+	void ApplyRotation(_float dt);
 
 private:
-	_float moveSpeed   = 150.f;
-	_float sensitivity = 10.f;
+	_float moveSpeed   = 10.f;
+	_float sensitivity = 0.5f;
 
-	_float2 rotDeg{ 0.f, 0.f };
+	_vector2   rotDegTarget{ 0.f, 0.f };
+	Quaternion rotQuatCurrent = Quaternion::Identity;
+	Quaternion rotQuatTarget  = Quaternion::Identity;
+
+	_float rotSmoothSpeed = 10.f;
 
 public:
 	static DebugFreeCam* Create();

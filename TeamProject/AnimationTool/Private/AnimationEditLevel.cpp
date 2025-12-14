@@ -7,6 +7,7 @@
 
 #include "EditCamera.h"
 #include "EditModel.h"
+#include "AnimToolPanel.h"
 #include "Camera.h"
 
 CAnimationEditLevel::CAnimationEditLevel(const string& LevelKey)
@@ -39,10 +40,14 @@ HRESULT CAnimationEditLevel::Awake()
 		.Position({ 0,0,0 })
 		.Build("Anim_Model");
 
-	pObjMgr->Add_Object(Camera, { "AnimationEdit_Level","Camera_Layer" });
+	
 	pObjMgr->Add_Object(AnimModel, { "AnimationEdit_Level","Model_Layer" });
+	pObjMgr->Add_Object(Camera, { "AnimationEdit_Level","Camera_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+
+	IGUIService* guiSvc = CGameInstance::GetInstance()->Get_GUISystem();
+	guiSvc->Register_Panel(CAnimToolPanel::Create(guiSvc->Get_Context()));
 
 	return S_OK;
 }
