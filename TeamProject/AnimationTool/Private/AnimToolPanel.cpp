@@ -20,7 +20,7 @@ void CAnimToolPanel::Render_GUI()
 	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
 
 	if (ImGui::Button("Model Load")) {
-		string path = Helper::OpenFile_Dialogue();
+		Extract_Clip();
 	}
 
 	ImGui::SameLine();
@@ -33,13 +33,34 @@ void CAnimToolPanel::Render_GUI()
 	__super::Render_GUI();
 }
 
+void CAnimToolPanel::Extract_Clip()
+{
+	m_Importer.FreeScene();
+
+	string path = Helper::OpenFile_Dialogue();
+	unsigned int iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+	m_pAIScene = m_Importer.ReadFile(path.c_str(), iFlag);
+	 
+	if (nullptr == m_pAIScene)
+		return;
+
+	if (!m_pAIScene->HasAnimations())
+		return;
+
+	int iNumAnim = m_pAIScene->mNumAnimations;
+
+	for (int i = 0; i < iNumAnim; i++) {
+
+	}
+}
+
 CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
 {
 	return new CAnimToolPanel(context);
 }
 
-
 void CAnimToolPanel::Free()
 {
 	__super::Free();
+	m_Importer.FreeScene();
 }
