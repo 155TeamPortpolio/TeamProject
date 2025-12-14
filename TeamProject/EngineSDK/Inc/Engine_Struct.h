@@ -320,19 +320,14 @@ namespace Engine
 
 		_bool isLoop = false;
 		_uint iBurstCount{};
-		_uint iBurstCycle{};
-		_float fBurstDelay{};
-
-		_float fSpawnPerSec{};
-		_float fSpawnAcc{};
-		_uint iSpawnParticleCount{};
+		_float fSpawnPerSec;
 		_uint iMaxSpawnParticleCount{};
-
+		_float2 vStartSpeed{};
+		_float2 vStartLifeTime{};
+		_float2 vStartSizeMin{};
+		_float2 vStartSizeMax{};
 		_float3 vSpawnAreaMin{};
 		_float3 vSpawnAreaMax{};
-
-		_float3 vVelocityMin{};
-		_float3 vVelocityMax{};
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

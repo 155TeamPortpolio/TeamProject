@@ -34,6 +34,8 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vSize.x = lerp(Out.vSize.x, 0.f, t);
     Out.vSize.y = lerp(Out.vSize.y, 0.f, t);
     Out.vVelocity = In.vVelocity;
+    Out.vColor = In.vColor;
+    Out.vLifeTime = In.VLifeTime;
     
     return Out;
 }
@@ -82,18 +84,22 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     matrix matrixVP = mul(matView, matProjection);
     v[0].vPosition = mul(float4(p0, 1.f), matrixVP);
     v[0].vTexcoord = float2(0, 0);
+    v[0].vColor = In[0].vColor;
     v[0].vLifeTime = In[0].vLifeTime;
 
     v[1].vPosition = mul(float4(p1, 1.f), matrixVP);
     v[1].vTexcoord = float2(1, 0);
+    v[1].vColor = In[0].vColor;
     v[1].vLifeTime = In[0].vLifeTime;
     
     v[2].vPosition = mul(float4(p2, 1.f), matrixVP);
     v[2].vTexcoord = float2(1, 1);
+    v[2].vColor = In[0].vColor;
     v[2].vLifeTime = In[0].vLifeTime;
     
     v[3].vPosition = mul(float4(p3, 1.f), matrixVP);
     v[3].vTexcoord = float2(0, 1);
+    v[3].vColor = In[0].vColor;
     v[3].vLifeTime = In[0].vLifeTime;
     
     triStream.Append(v[0]);
@@ -128,7 +134,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (color.a < 0.1f)
         discard;
     
-    Out.vColor = color;
+    Out.vColor = color * In.vColor;
     
     return Out;
 }

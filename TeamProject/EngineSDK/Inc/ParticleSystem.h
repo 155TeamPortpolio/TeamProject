@@ -73,9 +73,13 @@ private:
 
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};
+	_uint m_iSpawnParticleCount{};
+	_uint m_iMaxSpawnParticleCount{};
 
+	_float2 m_vStartSpeed{};
 	_float2 m_vStartLifeTime{};
-	_float2 m_vStartSize{};
+	_float2 m_vStartSizeMin{};
+	_float2 m_vStartSizeMax{};
 	_float3 m_vSpawnAreaMin{};
 	_float3 m_vSpawnAreaMax{};
 	
@@ -83,6 +87,10 @@ private:
 	_bool m_UseGravity = false;
 	_float m_fGravityScale{};
 
+	/*Modules*/
+	class CLifeTimeVelocity* m_pLifeTimeVelocity = { nullptr };
+	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
+	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
 	vector<class IParticleModule*> m_Modules;
 
 public:

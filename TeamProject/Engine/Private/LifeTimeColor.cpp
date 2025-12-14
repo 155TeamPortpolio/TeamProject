@@ -8,6 +8,10 @@ CLifeTimeColor::CLifeTimeColor()
 
 void CLifeTimeColor::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
+	_float t = particle.fLifeTime / particle.fMaxLifeTime;
+
+	//_vector4 currColor = _vector4::Lerp(m_StartColor, m_EndColor, t);
+	//particle.vColor = currColor;
 }
 
 CLifeTimeColor* CLifeTimeColor::Create()

@@ -38,5 +38,26 @@ private:
 
     void AddTextures();
     void SetUp_ParticleEffect();
+
+    /*Main Params*/
+    _bool m_IsLoop = false;
+    _uint m_iBurstCount{};
+
+    _float m_fSpawnPerSec{};
+    _float m_fSpawnAcc{};
+    _uint m_iSpawnParticleCount{};
+    _uint m_iMaxSpawnParticleCount{};
+
+    _float2 m_vStartSpeed{};
+    _float2 m_vStartLifeTime{};
+    _float2 m_vStartSizeMin{};
+    _float2 m_vStartSizeMax{};
+    _float3 m_vSpawnAreaMin{};
+    _float3 m_vSpawnAreaMax{};
+
+    /*Gravity mode*/
+    _bool m_UseGravity = false;
+    _float m_fGravityScale{};
+
 };
 NS_END

@@ -408,8 +408,8 @@
     <ClInclude Include="..\Public\IParticleModule.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\LimitVelocity.h">
-      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity</Filter>
+    <ClInclude Include="..\Public\LifeTimeVelocity.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LifeTimeSize.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
@@ -761,14 +761,14 @@
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
       <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity">
-      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize">
       <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor">
       <UniqueIdentifier>{9d5d527f-ee2e-4350-8b91-02a2982315e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1102,8 +1102,8 @@
     <ClCompile Include="..\Private\IParticleModule.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\LimitVelocity.cpp">
-      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LimitVelocity</Filter>
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LifeTimeSize.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>

@@ -15,5 +15,9 @@ public:
 public:
     static CLifeTimeColor* Create();
     void Free()override;
+
+private:
+    _float4 m_StartColor{};
+    _float4 m_EndColor{};
 };
 NS_END

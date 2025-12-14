@@ -260,7 +260,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
-    <ClInclude Include="..\Public\LimitVelocity.h" />
+    <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -394,7 +394,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
-    <ClCompile Include="..\Private\LimitVelocity.cpp" />
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
