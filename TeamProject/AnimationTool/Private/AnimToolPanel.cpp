@@ -1,9 +1,12 @@
 #include "AnimToolPanel.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
+	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 void CAnimToolPanel::Update_Panel(_float dt)
@@ -19,16 +22,23 @@ void CAnimToolPanel::Render_GUI()
 	ImGui::SeparatorText("Model Load");
 	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
 
-	if (ImGui::Button("Model Load")) {
+	if (ImGui::Button("Load Clips")) {
+		Load_Clips();
 	}
-
+	
 	ImGui::SameLine();
 
-	if (ImGui::Button("Material Loadar")) {
-	}
 	ImGui::EndChild();
 
 	__super::Render_GUI();
+}
+
+void CAnimToolPanel::Load_Clips()
+{
+	vector<string> files = Helper::OpenMultiFiles();
+	for (auto& path : files) {
+		m_
+	}
 }
 
 CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
@@ -39,4 +49,5 @@ CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
 void CAnimToolPanel::Free()
 {
 	__super::Free();
+	Safe_Release(m_pGameInstance);
 }
