@@ -48,6 +48,10 @@ void CDemoPlayer::Update(_float dt)
 		vMoveDir += m_pTransform->Dir(STATE::LOOK);
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_DOWN))
 		vMoveDir -= m_pTransform->Dir(STATE::LOOK);
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_RIGHT))
+		vMoveDir += m_pTransform->Dir(STATE::RIGHT);
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LEFT))
+		vMoveDir -= m_pTransform->Dir(STATE::RIGHT);
 
 	if (XMVector3Length(vMoveDir).m128_f32[0] > 0.f)
 		vMoveDir = XMVector3Normalize(vMoveDir);
