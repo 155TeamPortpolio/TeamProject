@@ -24,6 +24,8 @@ public:
 
 public:
     HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
+    class CAIModelData* Get_AIModelData();
+
 private:
     HRESULT Ready_AIModelData(const aiScene* pAIScene);
 

@@ -74,6 +74,11 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	return S_OK;
 }
 
+CAIModelData* CAI_SKModel::Get_AIModelData()
+{
+	return static_cast<CAIModelData*>(m_pData);
+}
+
 HRESULT CAI_SKModel::Save_Model()
 {
 	string path = Helper::SaveFileDialogByWinAPI(m_fileName, "model");

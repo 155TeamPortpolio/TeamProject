@@ -14,6 +14,7 @@ private:
 	
 public:
 	HRESULT Initialize(const aiScene* pAIScene, class CAIModelData* pAIModelData);
+	virtual void Render_GUI() override;
 
 public:
 	static CAIAnimator3D* Create(const aiScene* pAIScene, class CAIModelData* pAIModelData);

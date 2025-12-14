@@ -44,6 +44,8 @@ void CEditModel::Priority_Update(_float dt)
 
 void CEditModel::Update(_float dt)
 {
+	if(nullptr != Get_Component<CAnimator3D>())
+		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CEditModel::Late_Update(_float dt)
@@ -94,7 +96,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	_uint NumMaterial = m_pAIScene->mNumMaterials;
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);
 
-	if (isSkeletal) {
+	if (isSkeletal) {//Skeletal
 		auto skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
@@ -103,8 +105,14 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
 
+		if (m_pAIScene->HasAnimations()) {//Animation
+			auto Animator3D = CAIAnimator3D::Create(m_pAIScene, skeletal->Get_AIModelData());
+			m_Components.emplace(type_index(typeid(CAnimator3D)), Animator3D);
+			Animator3D->Set_Owner(this);
+		}
+
 	}
-	else {
+	else {//Static
 		auto staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);

@@ -26,6 +26,7 @@ private:
     HRESULT Save_AIScene();
     void Clear_Models();
     _bool HasBones();
+
 private:
     const aiScene* m_pAIScene = { nullptr };
     Assimp::Importer	        m_Importer = {};
