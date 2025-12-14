@@ -164,6 +164,7 @@
     <ClInclude Include="..\public\MapToolLevel.h" />
     <ClInclude Include="..\Public\MapTool_Defines.h" />
     <ClInclude Include="..\public\pch.h" />
+    <ClInclude Include="..\public\StaticObject.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MapTool.h" />
     <ClInclude Include="Resource.h" />
@@ -206,6 +207,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\StaticObject.cpp" />
     <ClCompile Include="MapTool.cpp" />
   </ItemGroup>
   <ItemGroup>

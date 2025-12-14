@@ -24,6 +24,7 @@ void CMapToolGui::Update_Panel(_float dt)
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
 		RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
 		m_vRayHitPos = pRayHit->vHittedPosition;
+        Place_Object(pRayHit);
 	}
 }
 
@@ -34,6 +35,10 @@ void CMapToolGui::Render_GUI()
 	ImGui::SeparatorText("MapTool Controller");
 	
 	ImGui::Text("Last Ray Hit Pos : %.3f, %.3f, %.3f ", m_vRayHitPos.x, m_vRayHitPos.y, m_vRayHitPos.z);
+    
+    ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
+    ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale_PlacedObject), "%.1f");
+    
 
 	ImGui::PopID();
 }
@@ -95,6 +100,23 @@ void CMapToolGui::Compute_Ray()
     XMStoreFloat3(&m_Ray.vRayDirection, rayDir);
     XMStoreFloat3(&m_Ray.vRayOrigin, rayOrigin);
     m_Ray.fMaxDistance = 1550.f;
+}
+
+void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
+{
+    if (nullptr == pRayHit->pObject)
+        return;
+
+    IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_StaticObject" })
+    	.Position(pRayHit->vHittedPosition)
+    	.Scale(m_vScale_PlacedObject)
+    	.Build("Static_Model");
+    
+    pObjMgr->Add_Object(pStaticObject,	{ "MapTool_Level", "Static_Layer" });
+
+
 }
 
 CMapToolGui* CMapToolGui::Create(GUI_CONTEXT* pContext)

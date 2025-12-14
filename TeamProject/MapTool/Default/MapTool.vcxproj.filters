@@ -43,6 +43,9 @@
     <Filter Include="03. MapTool System">
       <UniqueIdentifier>{be04f0c9-3537-4656-b625-b044a376f6b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Static Object">
+      <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="..\public\MapToolGui.h">
       <Filter>03. MapTool System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticObject.h">
+      <Filter>02. Object\Static Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +159,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MapToolGui.cpp">
       <Filter>03. MapTool System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticObject.cpp">
+      <Filter>02. Object\Static Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
