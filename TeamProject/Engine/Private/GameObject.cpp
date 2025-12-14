@@ -366,8 +366,14 @@ HRESULT CGameObject::Make_InstancePacket()
 
 HRESULT CGameObject::Make_ParticlePacket()
 {
+	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
+
 	PARTICLE_PACKET packet;
-	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
+	if (pParticle->IsWorldSpace())
+		packet.WorldMatrix = _smatrix::Identity;
+	else
+		packet.WorldMatrix = m_pTransform->Get_WorldMatrix();
+
 	packet.pParticleSystem = Get_Component<CParticleSystem>();
 	packet.pMaterial = Get_Component<CMaterial>();
 	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;

@@ -49,6 +49,7 @@ public:
 	HRESULT Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count);
 	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 
+	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
 public:
 	virtual void Render_GUI() override;
 

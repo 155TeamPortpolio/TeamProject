@@ -351,7 +351,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext)
 		SHADER_PARAM param = {};
 		param.iSize = sizeof(_float4x4);
 		param.typeName = "float4x4";
-		param.pData = packet.pWorldMatrix;
+		param.pData = &packet.WorldMatrix;
 		pCurShader->Bind_Value("g_WorldMatrix", param);
 
 		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
