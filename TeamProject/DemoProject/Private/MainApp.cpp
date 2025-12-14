@@ -1,12 +1,10 @@
 #include "pch.h"
-#include "Engine_Defines.h"
-#include "Engine_Service.h"
-
 #include "MainApp.h"
 #include "GameInstance.h"
 #include "IResourceService.h"
 
 #include "DemoLevel.h"
+#include "PhysicsLevel.h"
 #include "DemoCamera.h"
 
 CMainApp::CMainApp()
@@ -61,8 +59,9 @@ HRESULT CMainApp::Render()
 void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 {
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Demo_Level", []()->CLevel* {return CDemoLevel::Create("Demo_Level"); });
+	m_pGameInstance->Get_LevelMgr()->Register_Level("Physics_Level", []()->CLevel* {return CPhysicsLevel::Create("Physics_Level"); });
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Demo_Level",false); //로고 레벨로 시작!
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Physics_Level",false); //로고 레벨로 시작!
 } 
 
 CMainApp* CMainApp::Create()

@@ -26,8 +26,25 @@
     <ResourceCompile Include="AnimationTool.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imconfig.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_internal.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_rectpack.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
+    <ClInclude Include="..\public\Animation3DEX.h" />
+    <ClInclude Include="..\public\AnimationClipEX.h" />
     <ClInclude Include="..\Public\AnimationEditLevel.h" />
+    <ClInclude Include="..\public\AnimationLayout.h" />
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
+    <ClInclude Include="..\public\AnimToolPanel.h" />
+    <ClInclude Include="..\public\Assimps.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MainApp.h" />
@@ -38,7 +55,20 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\GraphEditor.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImCurveEdit.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGradient.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_demo.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp" />
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp" />
+    <ClCompile Include="..\private\Animation3DEX.cpp" />
+    <ClCompile Include="..\private\AnimationClipEX.cpp" />
     <ClCompile Include="..\Private\AnimationEditLevel.cpp" />
+    <ClCompile Include="..\private\AnimToolPanel.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
@@ -137,6 +167,7 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -154,6 +185,8 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

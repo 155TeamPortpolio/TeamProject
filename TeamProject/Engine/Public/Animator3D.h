@@ -89,13 +89,14 @@ protected:
     _float m_fCurrentTrackPosition = {};
     _bool isAnimEnd = { false };
 
-    vector<_float4x4> m_TransfromationMatrices = {};
-    vector<_float4x4> m_ManipulateMatrices = {};
-    vector<_float4x4> m_CombinedMatrices = {};
-    vector<_float4x4> m_FinalMatices = {};
+    /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
+    vector<_float4x4> m_TransfromationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
+    vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
+    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 매트릭스
+    vector<_float4x4> m_FinalMatices = {};              //월드행렬까지 곱해진 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
-    vector<class CAnimationClip*> m_pAnimClips;
+    vector<class CAnimationClip*> m_pAnimClips;         //불러온 애니매이션클립들
     
     /*Blend*/
     _int m_iBlendAnimation = {-1};

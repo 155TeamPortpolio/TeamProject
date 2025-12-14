@@ -111,6 +111,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
+
+	return S_OK;
 }
 
 HRESULT CEditModel::Save_AIScene()

@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "TestUI.h"
 
 #include "Sprite2D.h"
@@ -25,8 +25,6 @@ HRESULT CTestUI::Initialize_Prototype()
 HRESULT CTestUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Logo.png", "../Bin/Resources/UI/Logo.png");
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
