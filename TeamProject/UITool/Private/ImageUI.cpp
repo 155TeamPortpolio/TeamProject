@@ -53,13 +53,11 @@ void CImageUI::Render_GUI()
     ImGui::DragFloat(u8"X 크기", &m_fSizeX, 1.f);
     ImGui::DragFloat(u8"Y 크기", &m_fSizeY, 1.f);
 
-    ImGui::SeparatorText("Appearance");
+    ImGui::SeparatorText(u8"이미지");
     const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
-    if(ImGui::Combo("Image", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
+    if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
-
-    // 컬러 추가 필요. 이미지에 multiply
-
+     
     CGameObject::Render_GUI();
 }
 

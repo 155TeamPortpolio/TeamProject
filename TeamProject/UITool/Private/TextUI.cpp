@@ -27,7 +27,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    if(CUITool_Level::Get_FontKeysSize())
+    if (CUITool_Level::Get_FontKeysSize())
         Get_Component<CTextSlot>()->Set_Font(CUITool_Level::Get_FontKeys()[m_iFontKeyIndex]);
     else
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
@@ -65,7 +65,7 @@ void CTextUI::Render_GUI()
     ImGui::SeparatorText(u8"콘텐츠");
     if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText)))
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-    
+
     ImGui::SeparatorText(u8"폰트");
     const auto& FontKeys = CUITool_Level::Get_FontKeys();
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, FontKeys.data(), CUITool_Level::Get_FontKeysSize()))
