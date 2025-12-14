@@ -25,6 +25,11 @@ public:
 public:
     static void PreLoad_Level();
 
+
+private:
+    HRESULT         Ready_MapToolObjects();
+    HRESULT         Ready_MapToolGui();
+
 private:
     CGameInstance*  m_pGameInstance = { nullptr };
 

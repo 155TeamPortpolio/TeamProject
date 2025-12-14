@@ -158,7 +158,7 @@
     <ClInclude Include="..\public\DefaultPlaneFloor.h" />
     <ClInclude Include="..\public\DummyModel.h" />
     <ClInclude Include="..\public\Grid.h" />
-    <ClInclude Include="..\public\MapToolSystem.h" />
+    <ClInclude Include="..\public\MapToolGui.h" />
     <ClInclude Include="..\public\PickingInstanceModel.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapToolLevel.h" />
@@ -198,7 +198,7 @@
     <ClCompile Include="..\private\DefaultPlaneFloor.cpp" />
     <ClCompile Include="..\private\DummyModel.cpp" />
     <ClCompile Include="..\private\Grid.cpp" />
-    <ClCompile Include="..\private\MapToolSystem.cpp" />
+    <ClCompile Include="..\private\MapToolGui.cpp" />
     <ClCompile Include="..\private\PickingInstanceModel.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapToolLevel.cpp" />

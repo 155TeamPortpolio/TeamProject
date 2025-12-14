@@ -6,10 +6,14 @@
 #include "IInputService.h"
 #include "ILevelService.h"
 
+/* MapTool Objects */
 #include "DefaultCamera.h"
 #include "DummyModel.h"
 #include "Camera.h"
 #include "Grid.h"
+
+/* MapTool Gui */
+#include "MapToolGui.h"
 
 CMapToolLevel::CMapToolLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -20,16 +24,45 @@ CMapToolLevel::CMapToolLevel(const string& LevelKey)
 
 HRESULT CMapToolLevel::Initialize()
 {
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_Grid", CGrid::Create());
+
 	return S_OK;
 }
 
 HRESULT CMapToolLevel::Awake()
 {
-	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
-	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
-	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_Grid", CGrid::Create());
-	
+	if (FAILED(Ready_MapToolObjects()))
+		return E_FAIL;
+
+	if (FAILED(Ready_MapToolGui()))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+void CMapToolLevel::Update()
+{
+	//if (m_pGameInstance->Get_InputDev()->Key_Down('P')) {
+	//	RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
+	//	
+	//}
+}
+
+HRESULT CMapToolLevel::Render()
+{
+	SetWindowText(g_hWnd, TEXT("Level : MapTool"));
+	return S_OK;
+}
+
+void CMapToolLevel::PreLoad_Level()
+{
+}
+
+HRESULT CMapToolLevel::Ready_MapToolObjects()
+{
 	IResourceService* pResMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
@@ -43,7 +76,7 @@ HRESULT CMapToolLevel::Awake()
 	DefaultCameraLightDesc.eType = LIGHT_TYPE::POINT;
 	DefaultCameraLightDesc.fRange = 100.f;
 	DefaultCameraLightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	
+
 	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DefaultCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Light(DefaultCameraLightDesc)
@@ -58,37 +91,30 @@ HRESULT CMapToolLevel::Awake()
 		.Position({ 0,0,0 })
 		.Scale({ 50.f, 1.f ,50.f })
 		.Build("Grid");
-		
-	pObjMgr->Add_Object(Camera,		{ "MapTool_Level", "Camera_Layer" });
-	pObjMgr->Add_Object(DemoModel,	{ "MapTool_Level", "Model_Layer" });
-	pObjMgr->Add_Object(pGrid,		{ "MapTool_Level", "Floor_Layer" });
+
+	pObjMgr->Add_Object(Camera, { "MapTool_Level", "Camera_Layer" });
+	pObjMgr->Add_Object(DemoModel, { "MapTool_Level", "Model_Layer" });
+	pObjMgr->Add_Object(pGrid, { "MapTool_Level", "Floor_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
 	/* 임시) Ray 등록*/
-	m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
+	//m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
 
 	return S_OK;
 }
 
-void CMapToolLevel::Update()
+HRESULT CMapToolLevel::Ready_MapToolGui()
 {
-	if (m_pGameInstance->Get_InputDev()->Key_Down('P')) {
-		RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
-		
-	}
+	auto pGuiSystem = m_pGameInstance->Get_GUISystem();
 
+	CMapToolGui* pMapToolGui = CMapToolGui::Create(pGuiSystem->Get_Context());
+	if (nullptr == pMapToolGui)
+		return E_FAIL;
 
-}
+	pGuiSystem->Register_Panel(pMapToolGui);
 
-HRESULT CMapToolLevel::Render()
-{
-	SetWindowText(g_hWnd, TEXT("Level : MapTool"));
 	return S_OK;
-}
-
-void CMapToolLevel::PreLoad_Level()
-{
 }
 
 CMapToolLevel* CMapToolLevel::Create(const string& LevelKey)

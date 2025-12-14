@@ -93,7 +93,7 @@
     <ClInclude Include="..\public\Grid.h">
       <Filter>02. Object\Floor\Grid</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapToolSystem.h">
+    <ClInclude Include="..\public\MapToolGui.h">
       <Filter>03. MapTool System</Filter>
     </ClInclude>
   </ItemGroup>
@@ -151,7 +151,7 @@
     <ClCompile Include="..\private\Grid.cpp">
       <Filter>02. Object\Floor\Grid</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MapToolSystem.cpp">
+    <ClCompile Include="..\private\MapToolGui.cpp">
       <Filter>03. MapTool System</Filter>
     </ClCompile>
   </ItemGroup>
