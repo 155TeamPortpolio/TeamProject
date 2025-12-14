@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "DummyModel.h"
+#include "DefaultPlaneFloor.h"
 #include "StaticModel.h"
 #include "RectModel.h"
 #include "Material.h"
@@ -8,16 +8,16 @@
 
 #include "GameInstance.h"
 
-CDummyModel::CDummyModel()
+CDefaultPlaneFloor::CDefaultPlaneFloor()
 {
 }
 
-CDummyModel::CDummyModel(const CDummyModel& rhs)
+CDefaultPlaneFloor::CDefaultPlaneFloor(const CDefaultPlaneFloor& rhs)
 	:CGameObject(rhs)
 {
 }
 
-HRESULT CDummyModel::Initialize_Prototype()
+HRESULT CDefaultPlaneFloor::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CRectModel>();
@@ -26,7 +26,7 @@ HRESULT CDummyModel::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CDummyModel::Initialize(INIT_DESC* pArg)
+HRESULT CDefaultPlaneFloor::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -41,60 +41,61 @@ HRESULT CDummyModel::Initialize(INIT_DESC* pArg)
 	if (FAILED(customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "Test.dds", TEXTURE_TYPE::DIFFUSE)))
 		return E_FAIL;
 
+
 	return S_OK;
 }
 
-void CDummyModel::Awake()
+void CDefaultPlaneFloor::Awake()
 {
 	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
 
 
-	
+
 }
 
-void CDummyModel::Priority_Update(_float dt)
+void CDefaultPlaneFloor::Priority_Update(_float dt)
 {
 }
 
-void CDummyModel::Update(_float dt)
+void CDefaultPlaneFloor::Update(_float dt)
 {
 }
 
-void CDummyModel::Late_Update(_float dt)
+void CDefaultPlaneFloor::Late_Update(_float dt)
 {
 }
 
-void CDummyModel::Render_GUI()
+void CDefaultPlaneFloor::Render_GUI()
 {
 	__super::Render_GUI();
 }
 
-CDummyModel* CDummyModel::Create()
+CDefaultPlaneFloor* CDefaultPlaneFloor::Create()
 {
-	CDummyModel* instance = new CDummyModel();
+	CDefaultPlaneFloor* instance = new CDefaultPlaneFloor();
 	if (FAILED(instance->Initialize_Prototype()))
 	{
-		MSG_BOX("Object Create Failed : CDummyModel");
+		MSG_BOX("Object Create Failed : CDefaultPlaneFloor");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-CGameObject* CDummyModel::Clone(INIT_DESC* pArg)
+CGameObject* CDefaultPlaneFloor::Clone(INIT_DESC* pArg)
 {
-	CDummyModel* instance = new CDummyModel(*this);
+	CDefaultPlaneFloor* instance = new CDefaultPlaneFloor(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
-		MSG_BOX("Object Clone Failed : CDummyModel");
+		MSG_BOX("Object Clone Failed : CDefaultPlaneFloor");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-void CDummyModel::Free()
+void CDefaultPlaneFloor::Free()
 {
 	__super::Free();
 }

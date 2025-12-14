@@ -30,25 +30,25 @@ HRESULT CPickingInstanceModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	INSTANCE_INIT_DESC instanceDesc = {};
-	instanceDesc.ElementKey = "ClientParticeInstance";
-	instanceDesc.ElementCount = VTX_PARTICLEINSTANCE::iElementCount;
-	instanceDesc.instanceStride = sizeof(INSTANCE_PARTICLE);
-	instanceDesc.pElementDesc = VTX_PARTICLEINSTANCE::Elements;
-	instanceDesc.instanceCount = 3000; // InstanceMaxCount
-
-	m_InitDescs.push_back(instanceDesc);
-	Get_Component<CMaterial>()->Link_Material("GamePlay_Level", "leaf.mat");
-	Get_Component<CPickingInstanceModel>()->Link_InstanceData(CGameInstance::GetInstance()->Get_Device(),
-	m_InitDescs, "GamePlay_Level", "leaf.model");
-	
-	Get_Component<CPickingInstanceModel>()->Link_InstanceMeshAll(0);
-	
-	Get_Component<CPickingInstanceModel>()->ShadowCast(true);
-	
-	
-	m_Particle.resize(m_ParicleCount, { {1,0,0,0},{0,1,0,0 },{0,0,1,0},{0,0,0,1},{0.3,0.4,0,1},{0,2} });
-	m_vVelocities.resize(m_ParicleCount, { 0,0,0 });
+	//INSTANCE_INIT_DESC instanceDesc = {};
+	//instanceDesc.ElementKey = "ClientParticeInstance";
+	//instanceDesc.ElementCount = VTX_PARTICLEINSTANCE::iElementCount;
+	//instanceDesc.instanceStride = sizeof(INSTANCE_PARTICLE);
+	//instanceDesc.pElementDesc = VTX_PARTICLEINSTANCE::Elements;
+	//instanceDesc.instanceCount = 3000; // InstanceMaxCount
+	//
+	//m_InitDescs.push_back(instanceDesc);
+	//Get_Component<CMaterial>()->Link_Material("GamePlay_Level", "leaf.mat");
+	//Get_Component<CPickingInstanceModel>()->Link_InstanceData(CGameInstance::GetInstance()->Get_Device(),
+	//m_InitDescs, "GamePlay_Level", "leaf.model");
+	//
+	//Get_Component<CPickingInstanceModel>()->Link_InstanceMeshAll(0);
+	//
+	//Get_Component<CPickingInstanceModel>()->ShadowCast(true);
+	//
+	//
+	//m_Particle.resize(m_ParicleCount, { {1,0,0,0},{0,1,0,0 },{0,0,1,0},{0,0,0,1},{0.3,0.4,0,1},{0,2} });
+	//m_vVelocities.resize(m_ParicleCount, { 0,0,0 });
 
 	//ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	//CMaterial* pMaterial = Get_Component<CMaterial>();

@@ -16,15 +16,6 @@
     <Filter Include="01. Level">
       <UniqueIdentifier>{fdfdefe2-d692-4187-81bc-294bbdbf0097}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. ModelObject">
-      <UniqueIdentifier>{7405786b-04b9-4139-acc0-effff3ac55e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. ModelObject\Camera">
-      <UniqueIdentifier>{a1a0fd14-2dc9-48a2-9cb0-200415b9079f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. ModelObject\Model">
-      <UniqueIdentifier>{5cbc0111-17df-4464-ba87-1ea0715ef5aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Component">
       <UniqueIdentifier>{78a34969-b295-49ce-b102-6754be67b6a1}</UniqueIdentifier>
     </Filter>
@@ -67,6 +58,15 @@
     <Filter Include="03. Component\AIMaterial">
       <UniqueIdentifier>{eb6b6ca7-2e6b-45ba-8385-2563e0a95eb0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\02. ModelObject">
+      <UniqueIdentifier>{7405786b-04b9-4139-acc0-effff3ac55e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\02. ModelObject\Camera">
+      <UniqueIdentifier>{a1a0fd14-2dc9-48a2-9cb0-200415b9079f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\02. ModelObject\Model">
+      <UniqueIdentifier>{5cbc0111-17df-4464-ba87-1ea0715ef5aa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -101,10 +101,10 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EditCamera.h">
-      <Filter>02. ModelObject\Camera</Filter>
+      <Filter>01. Level\02. ModelObject\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EditModel.h">
-      <Filter>02. ModelObject\Model</Filter>
+      <Filter>01. Level\02. ModelObject\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ModelEditLevel.h">
       <Filter>01. Level</Filter>
@@ -196,7 +196,7 @@
       <Filter>01. Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EditCamera.cpp">
-      <Filter>02. ModelObject\Camera</Filter>
+      <Filter>01. Level\02. ModelObject\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AI_SKModel.cpp">
       <Filter>03. Component\AIModel\SK_Model</Filter>
@@ -214,7 +214,7 @@
       <Filter>04. AIResource\AIModelData\AIMesh</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EditModel.cpp">
-      <Filter>02. ModelObject\Model</Filter>
+      <Filter>01. Level\02. ModelObject\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AIMaterial.cpp">
       <Filter>04. AIResource\AIMaterial</Filter>

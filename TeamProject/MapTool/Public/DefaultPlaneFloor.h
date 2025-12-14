@@ -2,31 +2,28 @@
 #include "GameObject.h"
 
 NS_BEGIN(MapTool)
-class CDefaultCamera :
+class CDefaultPlaneFloor :
     public CGameObject
 {
 private:
-    CDefaultCamera();
-    CDefaultCamera(const CDefaultCamera& rhs);
-    virtual ~CDefaultCamera()DEFAULT;
+    CDefaultPlaneFloor();
+    CDefaultPlaneFloor(const CDefaultPlaneFloor& rhs);
+    virtual ~CDefaultPlaneFloor() DEFAULT;
+
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
+    void Awake() override;
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
-    virtual void Render_GUI() override;
 
-
-private:
-    _float m_fSpeed = { 20.f };
-    _float m_fMouseSensitive = { 10.f };
-
-    _float2 m_vCurrentRotate = {};
 public:
-    static CDefaultCamera* Create();
-    virtual void Free() override;
-    CGameObject* Clone(INIT_DESC* pArg) override;
-};
+    void Render_GUI() override;
 
+public:
+    static CDefaultPlaneFloor* Create();
+    CGameObject* Clone(INIT_DESC* pArg) override;
+    virtual void Free();
+};
 NS_END

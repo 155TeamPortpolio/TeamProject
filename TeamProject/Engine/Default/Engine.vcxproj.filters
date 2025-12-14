@@ -77,7 +77,7 @@
       <Filter>00. System\02. Gui\NFD</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GameInstance.h">
-      <Filter>01. Utility\00. GameInstance</Filter>
+      <Filter>01. Utility\01. Levels\00. GameInstance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\LevelMgr.h">
       <Filter>01. Utility\01. Levels</Filter>
@@ -743,7 +743,7 @@
     <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint">
       <UniqueIdentifier>{39dbf45d-dfc2-4053-b4d7-bc4f01640cb2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\00. GameInstance">
+    <Filter Include="01. Utility\01. Levels\00. GameInstance">
       <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -803,7 +803,7 @@
       <Filter>00. System\02. Gui\NFD</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GameInstance.cpp">
-      <Filter>01. Utility\00. GameInstance</Filter>
+      <Filter>01. Utility\01. Levels\00. GameInstance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\LevelMgr.cpp">
       <Filter>01. Utility\01. Levels</Filter>

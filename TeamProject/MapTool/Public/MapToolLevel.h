@@ -26,7 +26,10 @@ public:
     static void PreLoad_Level();
 
 private:
-    CGameInstance* m_pGameInstance = { nullptr };
+    CGameInstance*  m_pGameInstance = { nullptr };
+
+    RAY             m_Ray = {};
+
 public:
     static CMapToolLevel* Create(const string& LevelKey);
     virtual void Free() override;
