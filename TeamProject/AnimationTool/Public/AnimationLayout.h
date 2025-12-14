@@ -10,6 +10,7 @@ enum class ANIM_EVENT_STATE { EFFECT, SOUND };
 //    {ANIM_EVENT_STATE::Effect, "Effect"}
 //}) 
 
+/* 애니매이션 클립 데이터 */
 typedef struct AnimationEvent {
     float   fEventTime;     //이벤트 작동 시간
     int     iEventState;    //ANIM_EVENT_STATE
@@ -20,7 +21,10 @@ typedef struct AnimationClip {
     string ClipTag; 
     vector<ANIM_EVENT> Events;
 }ANIM_CLIP;
+/* ------------------------ */
 
+
+/* 애니매이션 그래프 데이터 */
 typedef struct AnimationNode {
     string NodeTag;     //노드 이름
     int    iClipIndex;  //클립 인덱스
@@ -55,3 +59,4 @@ typedef struct AnimationGraph {
     int                 NumLayers = { 0 };  //레이어 개수
     vector<ANIM_LAYER>  Layers;             //레이어 데이터
 }ANIM_GRAPH;
+/* ------------------------ */
