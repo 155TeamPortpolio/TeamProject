@@ -72,9 +72,11 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 		return E_FAIL;
 
 	LIGHT_INIT_DESC DefaultCameraLightDesc = {};
-	DefaultCameraLightDesc.eType = LIGHT_TYPE::POINT;
+	DefaultCameraLightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	DefaultCameraLightDesc.fRange = 100.f;
 	DefaultCameraLightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+	DefaultCameraLightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+	DefaultCameraLightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 	CGameObject* Camera = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DefaultCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
