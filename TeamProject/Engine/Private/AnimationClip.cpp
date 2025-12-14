@@ -1,3 +1,5 @@
+#include "AnimationClipEX.h"
+#include "AnimationClipEX.h"
 #include "Engine_Defines.h"
 #include "AnimationClip.h"
 #include "Channel.h"
@@ -24,7 +26,6 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	ANIMATION_CLIP_HEADER ClipHeader = {};
 	ifs.read(reinterpret_cast<char*>(&ClipHeader), sizeof(ANIMATION_CLIP_HEADER));
 
-	m_bLoop = ClipHeader.bLoop;
 	m_ClipName = ClipHeader.ClipName;
 	m_fDuration = ClipHeader.fDuration;
 	m_fTickPerSecond = ClipHeader.fTickPerSecond;
@@ -33,7 +34,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	{
 		if (CChannel* pChannel = CChannel::Create(ifs))
 			if(pChannel)
-			m_Channels.push_back(pChannel);
+				m_Channels.push_back(pChannel);
 	}
 
 	ifs.close();

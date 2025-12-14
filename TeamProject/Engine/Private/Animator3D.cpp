@@ -374,13 +374,17 @@ void CAnimator3D::Animation_Run(_float dt)
 	if (m_iCurrentClipIndex == -1)  return;
 
 	auto& nowClip = m_pAnimClips[m_iCurrentClipIndex];
+	//m_fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+	//	m_TransfromationMatrices, m_fCurrentTrackPosition,
+	//	dt, m_pAnimLoops[m_iCurrentClipIndex], &isAnimEnd);
+
 	m_fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		m_TransfromationMatrices, m_fCurrentTrackPosition,
-		dt, m_pAnimLoops[m_iCurrentClipIndex], &isAnimEnd);
+		dt, true, &isAnimEnd);
 
-	if (m_pAnimLoops[m_iCurrentClipIndex] == false && isAnimEnd) {
-		m_eState = ANIMATOR_STATE::IDLE;
-	}
+	//if (m_pAnimLoops[m_iCurrentClipIndex] == false && isAnimEnd) {
+	//	m_eState = ANIMATOR_STATE::IDLE;
+	//}
 }
 
 void CAnimator3D::Animation_Convert(_float dt)
@@ -612,7 +616,6 @@ void CAnimator3D::Render_GUI()
 			Change_Animation(i);
 		}
 		ImGui::PopID();
-		ImGui::SameLine();
 
 		ImGui::PushID(("##" + m_pAnimClips[i]->Get_Name() + "Loop").c_str());
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 0));
@@ -620,8 +623,8 @@ void CAnimator3D::Render_GUI()
 		{
 			ImGui::SetTooltip("%s", m_pAnimClips[i]->Get_Name().c_str());
 		}
-		if (ImGui::Button(string(m_pAnimLoops[i] ? "Do Once" : "Do Loop").c_str(), ImVec2{ childWidth * 0.35f, textLineHeight + 4 }))
-			(m_pAnimLoops[i]) = !(m_pAnimLoops[i]);
+		//if (ImGui::Button(string(m_pAnimLoops[i] ? "Do Once" : "Do Loop").c_str(), ImVec2{ childWidth * 0.35f, textLineHeight + 4 }))
+		//	(m_pAnimLoops[i]) = !(m_pAnimLoops[i]);
 		ImGui::PopStyleVar();
 		ImGui::PopID();
 

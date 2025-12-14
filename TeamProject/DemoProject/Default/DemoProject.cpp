@@ -47,8 +47,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     ITimeService* timer = gameInstance->Get_TimeMgr();
     Safe_AddRef(timer);
-    timer->Add_Timer("Default_Timer");
-    timer->Add_Timer("Timer_Frame60");
+    timer->Add_Timer("Frame_Timer");
 
     if (!mainApp)
         return FALSE;
@@ -58,7 +57,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     _float      fTimeAcc = {};
     _bool Break = false;
-
+    const float step = 1.f / g_iMainFrame;
     while (true) {
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
@@ -71,12 +70,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         if (Break) {
             break;
         }
-        timer->Update_Timer("Default_Timer");
-        fTimeAcc += timer->Get_DeltaTime("Default_Timer");
 
-        if (fTimeAcc >= 1.f / g_iMainFrame) {
-            timer->Update_Timer("Timer_Frame60");
-            _float dt = timer->Get_DeltaTime("Timer_Frame60");
+        timer->Update_Timer("Frame_Timer");
+        fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
+
+        if (fTimeAcc >= step) {
+            gameInstance->Update_EngineTimer();
+            _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);
             mainApp->Render();
             fTimeAcc = 0.f;

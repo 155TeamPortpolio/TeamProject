@@ -340,9 +340,6 @@
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\EffectContainer.h" />
-    <ClInclude Include="..\public\EffectNode.h" />
-    <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\public\CamSequencePlayer.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClInclude>
@@ -391,6 +388,18 @@
     <ClInclude Include="..\Public\MeshNode.h" />
     <ClInclude Include="..\Public\ParticleNode.h" />
     <ClInclude Include="..\Public\VI_InstancePoint.h" />
+    <ClInclude Include="..\Public\MeshNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleSystem.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VI_InstancePoint.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Camera_Enum.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
@@ -417,6 +426,23 @@
     </ClInclude>
     <ClInclude Include="..\public\CamFovPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
+    <ClInclude Include="..\Public\IParticleModule.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeVelocity.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeSize.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeColor.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICollidable.h">
+      <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -711,6 +737,27 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator">
       <UniqueIdentifier>{4e978777-0a90-43e7-9737-9cd561db5378}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosLinearEvaluator">
+      <UniqueIdentifier>{cdc62e80-35b4-4ea5-b35b-def73eb08d20}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility">
+      <UniqueIdentifier>{4ee75f07-5322-4ded-9659-8e18c74ede02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\11. CamRotSlerpEvaluator">
+      <UniqueIdentifier>{bcb26ca9-5ec8-46ef-9fd6-60e1875c359f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\21. CamFovLinearEvaluator">
+      <UniqueIdentifier>{98f4525b-bd48-4df8-aca2-b5c9d34b9906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamPosCatmullRomEvaluator">
+      <UniqueIdentifier>{ba68c020-1545-4e1f-a71f-bed62c0f4806}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\22. CamFovSmoothEvaluator">
+      <UniqueIdentifier>{8772717f-9b26-46b0-a307-3f7e09235e86}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator">
+      <UniqueIdentifier>{9979460a-8fa8-4412-9e4b-0a41f0270d9c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. GameObject\Effect">
       <UniqueIdentifier>{1e6545d9-1ce2-4aaf-aa2d-09c2958f80e3}</UniqueIdentifier>
     </Filter>
@@ -785,6 +832,20 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator">
       <UniqueIdentifier>{4b7e3faf-796b-43b9-89bc-8dbd8848ceda}</UniqueIdentifier>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
+      <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize">
+      <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor">
+      <UniqueIdentifier>{9d5d527f-ee2e-4350-8b91-02a2982315e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="01. Utility\04. Components\21. CharacterController">
+      <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1064,9 +1125,6 @@
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\EffectContainer.cpp" />
-    <ClCompile Include="..\private\EffectNode.cpp" />
-    <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\private\CamSequencePlayer.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClCompile>
@@ -1093,6 +1151,7 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPosCentripetalEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. CentripetalEvaluator</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator</Filter>
     </ClCompile>
     <ClCompile Include="..\private\EffectContainer.cpp">
       <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
@@ -1124,6 +1183,32 @@
     </ClCompile>
     <ClCompile Include="..\private\CamFovPerSegmentEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
+    <ClCompile Include="..\Private\MeshNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Particle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ParticleSystem.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VI_InstancePoint.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IParticleModule.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeSize.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeColor.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1158,5 +1243,11 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
+    <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
