@@ -9,6 +9,7 @@
 #include "EditModel.h"
 #include "AnimToolPanel.h"
 #include "Camera.h"
+#include "Grid.h"
 
 CAnimationEditLevel::CAnimationEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -27,6 +28,7 @@ HRESULT CAnimationEditLevel::Awake()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
+	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_Grid", CGrid::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	CAMERA_DESC desc = {};
@@ -40,9 +42,13 @@ HRESULT CAnimationEditLevel::Awake()
 		.Position({ 0,0,0 })
 		.Build("Anim_Model");
 
+	CGameObject* Grid = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_Grid" })
+		.Position({ 0.f, 0.f, 0.f })
+		.Build("Grid");
 	
 	pObjMgr->Add_Object(AnimModel, { "AnimationEdit_Level","Model_Layer" });
 	pObjMgr->Add_Object(Camera, { "AnimationEdit_Level","Camera_Layer" });
+	pObjMgr->Add_Object(Grid, { "AnimationEdit_Level","Grid_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
