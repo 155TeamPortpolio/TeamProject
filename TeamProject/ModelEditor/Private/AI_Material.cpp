@@ -61,7 +61,6 @@ HRESULT CAI_Material::Load_Material(_uint materialNum, aiMaterial* material[], c
 
 HRESULT CAI_Material::Save_Material()
 {
-
 	string path = Helper::SaveFileDialogByWinAPI(m_MaterialFileKey, "mat");
 	filesystem::path directory(path);
 	ofstream ofs(path.c_str(), ios::binary);

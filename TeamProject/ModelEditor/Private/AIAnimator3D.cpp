@@ -1,6 +1,7 @@
 #include "AIAnimator3D.h"
 #include "AIAnimationClip.h"
 #include "AIModelData.h"
+#include "Helper_Func.h"
 #include "GameInstance.h"
 
 CAIAnimator3D::CAIAnimator3D()
@@ -62,6 +63,18 @@ void CAIAnimator3D::Render_GUI()
 
 HRESULT CAIAnimator3D::Save_Animation()
 {
+	std::filesystem::path path = Helper::OpenFolder_Dialogue();
+	std::filesystem::create_directories(path / "Anim");
+
+	for (auto& Clip : m_pAnimClips) {
+		std::filesystem::path filePath = std::filesystem::path(path) / "Anim" / (Clip->Get_Name() + ".anim");
+		std::ofstream ofs(filePath, std::ios::binary);
+
+		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);
+
+		ofs.close();
+	}
+	
 	return S_OK;
 }
 

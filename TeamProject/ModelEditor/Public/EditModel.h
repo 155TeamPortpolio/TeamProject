@@ -28,9 +28,9 @@ private:
     _bool HasBones();
 
 private:
-    const aiScene* m_pAIScene = { nullptr };
-    Assimp::Importer	        m_Importer = {};
-
+    const aiScene*      m_pAIScene = { nullptr };
+    Assimp::Importer	m_Importer = {};
+    
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

@@ -69,7 +69,8 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
-		Save_AIScene();
+		if(nullptr != Get_Component<CModel>())
+			Save_AIScene();
 	}
 	ImGui::EndChild();
 
@@ -132,6 +133,11 @@ HRESULT CEditModel::Save_AIScene()
 	if (HasBones()) {
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
 		hr = pModel->Save_Model();
+
+		if (m_pAIScene->HasAnimations()) {
+			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
+			hr = pAnimator3D->Save_Animation();
+		}
 	}
 	else {
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
