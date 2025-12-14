@@ -21,13 +21,14 @@ public:
     virtual void    OnCollisionEnter(ICollidable* pOther) override;
     virtual void    OnCollisionStay(ICollidable* pOther) override;
     virtual void    OnCollisionExit(ICollidable* pOther) override;
+
     void            OnTriggerEnter(ICollidable* pOther);
     void            OnTriggerExit(ICollidable* pOther);
 
     void Render_GUI();
 
 #ifdef _DEBUG
-    void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor);
+    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
 
 private:

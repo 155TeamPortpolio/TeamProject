@@ -9,13 +9,10 @@ protected:
     virtual  ~ICollisionService() DEFAULT;
 public:
     virtual void Update(_float dt) PURE;
-
+    virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
+    virtual void UnRegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
 #ifdef _DEBUG
-   virtual _int RegisterCollider(class CCollider* pCollider, _int Index) PURE;
-   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)PURE;
-   virtual void RegisterCCT(class CCharacterController* pCCT) PURE;
-   virtual void UnregisterCCT(class CCharacterController* pCCT) PURE;
-   virtual void Render_Debug() PURE;
+    virtual void Render_Debug() PURE;
 #endif 
 };
 NS_END

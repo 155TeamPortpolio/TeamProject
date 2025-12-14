@@ -108,9 +108,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_pController->getActor()->userData = m_pOwner;
 	Set_Position(m_pOwnerTransform->Get_WorldPos());
 
-#ifdef _DEBUG
-	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCCT(this);
-#endif
+	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
 
 	m_fHeight = pDesc->fHeight;
 	m_fRadius = pDesc->fRadius;
@@ -153,44 +151,44 @@ void CCharacterController::Late_Update(_float dt)
 
 void CCharacterController::Render_GUI()
 {
-	if (!Get_CompActive()) return;
+	//if (!Get_CompActive()) return;
 
-	ImGui::SeparatorText("CharacterController");
-	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
-	{
-		ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
+	//ImGui::SeparatorText("CharacterController");
+	//if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
+	//{
+	//	ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
 
-		if (m_pController)
-		{
-			PxExtendedVec3 pos = m_pController->getPosition();
-			ImGui::Text("Position: (%.2f, %.2f, %.2f)", (float)pos.x, (float)pos.y, (float)pos.z);
+	//	if (m_pController)
+	//	{
+	//		PxExtendedVec3 pos = m_pController->getPosition();
+	//		ImGui::Text("Position: (%.2f, %.2f, %.2f)", (float)pos.x, (float)pos.y, (float)pos.z);
 
-			PxExtendedVec3 foot = m_pController->getFootPosition();
-			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
+	//		PxExtendedVec3 foot = m_pController->getFootPosition();
+	//		ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
-			ImGui::Text("Height: %.2f", m_fHeight);
-			ImGui::Text("Radius: %.2f", m_fRadius);
-		}
+	//		ImGui::Text("Height: %.2f", m_fHeight);
+	//		ImGui::Text("Radius: %.2f", m_fRadius);
+	//	}
 
-		ImGui::Separator();
-		ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
-		ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
+	//	ImGui::Separator();
+	//	ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
+	//	ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
 
-		if (!m_CurrentCollisions.empty())
-		{
-			ImGui::Separator();
-			ImGui::Text("Colliding With:");
-			for (auto pOther : m_CurrentCollisions)
-			{
-				if (pOther && pOther->Get_Owner())
-				{
-					const char* typeStr = static_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
-					ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
-				}
-			}
-		}
-	}
-	ImGui::EndChild();
+	//	if (!m_CurrentCollisions.empty())
+	//	{
+	//		ImGui::Separator();
+	//		ImGui::Text("Colliding With:");
+	//		for (auto pOther : m_CurrentCollisions)
+	//		{
+	//			if (pOther && pOther->Get_Owner())
+	//			{
+	//				const char* typeStr = static_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
+	//				ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
+	//			}
+	//		}
+	//	}
+	//}
+	//ImGui::EndChild();
 }
 
 #ifdef _DEBUG
@@ -341,13 +339,8 @@ CComponent* CCharacterController::Clone()
 
 void CCharacterController::Free()
 {
+	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
 
-#ifdef _DEBUG
-	if (m_pPhysicsSystem)
-	{
-		CGameInstance::GetInstance()->Get_CollisionSystem()->UnregisterCCT(this);
-	}
-#endif
 
 	if (m_pHitReport)
 	{

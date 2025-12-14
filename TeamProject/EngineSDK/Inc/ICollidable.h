@@ -2,6 +2,8 @@
 #include "Engine_Defines.h"
 #include "Component.h"
 
+NS_BEGIN(Engine)
+
 class ENGINE_DLL ICollidable abstract : public CComponent
 {
 protected:
@@ -10,10 +12,12 @@ protected:
     virtual ~ICollidable() = default;
 
 public:
-    virtual void OnCollisionEnter(ICollidable* pOther) = 0;
-    virtual void OnCollisionStay(ICollidable* pOther) = 0;
-    virtual void OnCollisionExit(ICollidable* pOther) = 0;
-
+    virtual void OnCollisionEnter(ICollidable* pOther) PURE;
+    virtual void OnCollisionStay(ICollidable* pOther) PURE;
+    virtual void OnCollisionExit(ICollidable* pOther) PURE;
+#ifdef _DEBUG
+	virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;
+#endif
 	_bool IsColliding() const { return !m_CurrentCollisions.empty(); }
 	_bool IsCollidingWith(ICollidable* pOther) const
 	{
@@ -27,3 +31,5 @@ protected:
 public:
 	virtual void Free() override { __super::Free(); }
 };
+
+NS_END

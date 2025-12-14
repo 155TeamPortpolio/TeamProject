@@ -39,9 +39,9 @@ HRESULT CCollisionSystem::Initialize()
 	if (FAILED(m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
-
-	m_Colliders.reserve(1000);
 #endif
+
+	m_Collidables.reserve(1000);
 
 	// 프록시 콜백
 	m_pPhysXCallback = new CPhysXEventCallback(this);
@@ -57,38 +57,27 @@ HRESULT CCollisionSystem::Initialize()
 
 void CCollisionSystem::Update(_float dt)
 {
-#ifdef _DEBUG
-	// 디버그용 리스트 관리
-	for (auto it = m_Colliders.begin(); it != m_Colliders.end();)
+	for (auto it = m_Collidables.begin(); it != m_Collidables.end();)
 	{
 		if ((*it) == nullptr) // 이미 해제된 경우
-			it = m_Colliders.erase(it);
+			it = m_Collidables.erase(it);
 		else
 			++it;
 	}
-
-	for (auto it = m_Controllers.begin(); it != m_Controllers.end();)
-	{
-		if ((*it) == nullptr)
-			it = m_Controllers.erase(it);
-		else
-			++it;
-	}
-#endif
 }
 
 void CCollisionSystem::Render_GUI()
 {
-	ImGui::Begin("Collision System");
+	/*ImGui::Begin("Collision System");
 
-	ImGui::Text("Total Colliders: %d", m_Colliders.size());
+	ImGui::Text("Total Colliders: %d", m_Collidables.size());
 
-	// 활성/비활성 카운트
+	 활성/비활성 카운트
 	_uint iActiveCount = 0;
 	_uint iTriggerCount = 0;
 	_uint iCollidingCount = 0;
 
-	for (auto pCollider : m_Colliders)
+	for (auto pCollider : m_Collidables)
 	{
 		if (pCollider && pCollider->Get_CompActive())
 		{
@@ -104,7 +93,7 @@ void CCollisionSystem::Render_GUI()
 
 	ImGui::Separator();
 
-	// 콜라이더 리스트
+	 콜라이더 리스트
 	if (ImGui::CollapsingHeader("Collider List"))
 	{
 		for (size_t i = 0; i < m_Colliders.size(); ++i)
@@ -137,7 +126,7 @@ void CCollisionSystem::Render_GUI()
 		}
 	}
 
-	ImGui::End();
+	ImGui::End();*/
 }
 
 void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
@@ -207,40 +196,27 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 
 void CCollisionSystem::Process_Stay()
 {
-	for (auto pCollider : m_Colliders)
+	for (auto pCollidable : m_Collidables)
 	{
-		if (!pCollider || !pCollider->Get_CompActive()) continue;
+		if (!pCollidable || !pCollidable->Get_CompActive()) continue;
 
-		for (auto pOther : pCollider->Get_Collisions())
+		for (auto pOther : pCollidable->Get_Collisions())
 		{
 			if (pOther && pOther->Get_CompActive())
 			{
-				pCollider->OnCollisionStay(pOther);
-			}
-		}
-	}
-
-	for (auto pCCT : m_Controllers)
-	{
-		if (!pCCT || !pCCT->Get_CompActive()) continue;
-
-		for (auto pOther : pCCT->Get_Collisions())
-		{
-			if (pOther && pOther->Get_CompActive())
-			{
-				pCCT->OnCollisionStay(pOther);
+				pCollidable->OnCollisionStay(pOther);
 			}
 		}
 	}
 }
 
-void CCollisionSystem::Process_CCTExit()
+void CCollisionSystem::Process_Exit()
 {
-	for (auto pCCT : m_Controllers)
+	for (auto pCollidable : m_Collidables)
 	{
-		if (!pCCT || !pCCT->Get_CompActive()) continue;
+		if (!pCollidable || !pCollidable->Get_CompActive()) continue;
 
-		auto& collisions = const_cast<unordered_set<ICollidable*>&>(pCCT->Get_Collisions());
+		auto& collisions = const_cast<unordered_set<ICollidable*>&>(pCollidable->Get_Collisions());
 		for (auto it = collisions.begin(); it != collisions.end();)
 		{
 			ICollidable* pOther = *it;
@@ -249,8 +225,8 @@ void CCollisionSystem::Process_CCTExit()
 				it = collisions.erase(it);
 				if (pOther)
 				{
-					pCCT->OnCollisionExit(pOther);
-					pOther->OnCollisionExit(pCCT);
+					pCollidable->OnCollisionExit(pOther);
+					pOther->OnCollisionExit(pCollidable);
 				}
 			}
 			else
@@ -261,50 +237,34 @@ void CCollisionSystem::Process_CCTExit()
 	}
 }
 
-#ifdef _DEBUG
-_int CCollisionSystem::RegisterCollider(CCollider* pCollider, _int Index)
+_int CCollisionSystem::RegisterCollidable(ICollidable* pCollidable, _int Index)
 {
-	m_Colliders.push_back(pCollider);
-	return m_Colliders.size() - 1;
+	m_Collidables.push_back(pCollidable);
+	return m_Collidables.size() - 1;
 }
 
-void CCollisionSystem::UnregisterCollider(CCollider* pCollider, _int Index)
+void CCollisionSystem::UnRegisterCollidable(ICollidable* pCollidable, _int Index)
 {
-	for (size_t i = 0; i < m_Colliders.size(); ++i)
+	for (size_t i = 0; i < m_Collidables.size(); ++i)
 	{
-		if (m_Colliders[i] == pCollider)
+		if (m_Collidables[i] == pCollidable)
 		{
 			// 제거할 대상을 마지막 요소와 교체하고 pop_back
-			if (i != m_Colliders.size() - 1)
+			if (i != m_Collidables.size() - 1)
 			{
-				swap(m_Colliders[i], m_Colliders.back());
+				swap(m_Collidables[i], m_Collidables.back());
 			}
-			m_Colliders.pop_back();
+			m_Collidables.pop_back();
 			return;
 		}
 	}
 }
 
-void CCollisionSystem::RegisterCCT(CCharacterController* pCCT)
-{
-	if (pCCT) m_Controllers.push_back(pCCT);
-}
-
-void CCollisionSystem::UnregisterCCT(CCharacterController* pCCT)
-{
-	for (auto it = m_Controllers.begin(); it != m_Controllers.end(); ++it)
-	{
-		if (*it == pCCT)
-		{
-			m_Controllers.erase(it);
-			return;
-		}
-	}
-}
+#ifdef _DEBUG
 
 void CCollisionSystem::Render_Debug()
 {
-	if (m_Colliders.empty() && m_Controllers.empty()) return;
+	if (m_Collidables.empty()) return;
 
 	auto camMgr = CGameInstance::GetInstance()->Get_CameraMgr();
 	_matrix viewMat = XMLoadFloat4x4(camMgr->Get_ViewMatrix());
@@ -319,23 +279,22 @@ void CCollisionSystem::Render_Debug()
 
 	m_pBatch->Begin();
 
-	for (auto& pCollider : m_Colliders)
+	XMVECTOR vColor;
+	for (auto& pCollidable : m_Collidables)
 	{
-		if (pCollider && pCollider->Get_CompActive())
+		if (pCollidable && pCollidable->Get_CompActive())
 		{
-			XMVECTOR vColor = pCollider->IsColliding() ? Colors::Red : Colors::Green;
-			pCollider->Render(m_pBatch, vColor);
-		}
-	}
-
-	for (auto& pCCT : m_Controllers)
-	{
-		if (pCCT && pCCT->Get_CompActive())
-		{
-			XMVECTOR vColor = Colors::Yellow;
-			if (pCCT->Is_Grounded())
-				vColor = pCCT->IsColliding() ? Colors::Orange : Colors::Cyan;
-			pCCT->Render(m_pBatch, vColor);
+			if (dynamic_cast<CCollider*>(pCollidable) != nullptr)
+			{
+				vColor = pCollidable->IsColliding() ? Colors::Red : Colors::Green;
+			}
+			else if(dynamic_cast<CCharacterController*>(pCollidable) != nullptr)
+			{
+				vColor = Colors::Yellow;
+				if (dynamic_cast<CCharacterController*>(pCollidable)->Is_Grounded())
+					vColor = pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
+			}
+			pCollidable->Render(m_pBatch, vColor);
 		}
 	}
 
@@ -365,7 +324,7 @@ void CCollisionSystem::Free()
 	Safe_Release(m_pContext);
 
 #ifdef _DEBUG
-	m_Colliders.clear();
+	m_Collidables.clear();
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pEffect);
 	Safe_Delete(m_pBatch);

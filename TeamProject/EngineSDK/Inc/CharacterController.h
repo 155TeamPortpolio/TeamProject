@@ -51,7 +51,7 @@ public:
     void            Render_GUI();
 
 #ifdef _DEBUG
-    void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor);
+    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
 
 public:

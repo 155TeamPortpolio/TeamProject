@@ -109,9 +109,8 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_strMaterialTag = pDesc->strMaterialTag;
 
 	// 시스템 등록
-#ifdef _DEBUG
-	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollider(this, -1);
-#endif
+	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
+
 	return S_OK;
 }
 
@@ -246,9 +245,7 @@ CComponent* CCollider::Clone()
 
 void CCollider::Free()
 {
-#ifdef _DEBUG
-	CGameInstance::GetInstance()->Get_CollisionSystem()->UnregisterCollider(this, -1);
-#endif
+	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
 	m_pShape = nullptr;
 	__super::Free();
 }
