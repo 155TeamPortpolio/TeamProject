@@ -56,6 +56,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
 #endif
 
+	m_pTimeManager->Add_Timer(G_EngineTimerID);
 	Notify_LevelSet();
 	return TRUE;
 }
@@ -66,6 +67,21 @@ void CGameInstance::Notify_LevelSet()
 	m_pObjectManager->Sync_To_Level();
 	m_pResourceManager->Sync_To_Level();
 	m_pUIManager->Sync_To_Level();
+}
+
+void CGameInstance::Update_EngineTimer()
+{
+	m_pTimeManager->Update_Timer(G_EngineTimerID);
+}
+
+_float CGameInstance::Get_EngineDeltaTime()
+{
+	return m_pTimeManager->Get_DeltaTime(G_EngineTimerID);
+}
+
+void CGameInstance::Set_EngineTimeScale(_float fScale)
+{
+	m_pTimeManager->Set_TimeScale(G_EngineTimerID, fScale);
 }
 
 void CGameInstance::Clear_LevelResource(const string& levelKey)
@@ -81,37 +97,41 @@ void CGameInstance::Clear_LevelResource(const string& levelKey)
 
 void CGameInstance::Update_Engine(_float dt)
 {
+	_float realDt = m_pTimeManager->Get_RawDeltaTime(G_EngineTimerID);
+
 	m_totalFrameCount++;
+
+
 	/*엔진 제어 업데이트 -> 동기화용*/
-	m_pObjectManager->Pre_EngineUpdate(dt);
-	m_pUIManager->Pre_EngineUpdate(dt);
+	m_pObjectManager->Pre_EngineUpdate(realDt);
+	m_pUIManager->Pre_EngineUpdate(realDt);
 
 
 	/*클라 제어 업데이트 -> 게임 로직*/
 	m_pObjectManager->Priority_Update(dt);
-	m_pUIManager->Priority_Update(dt);
+	m_pUIManager->Priority_Update(realDt);
 	m_pLevelManager->Update(dt);
 	m_pCameraManager->Update(dt);
 	m_pObjectManager->Update(dt);
-	m_pUIManager->Update(dt);
+	m_pUIManager->Update(realDt);
 	m_pRaySystem->Update(dt);
 	m_pSoundDevice->Update();
+
 #ifdef USINGPHYSICS
 	m_pPhysicsSystem->Update(dt);
 #endif // USINPHYSICS
 
-
 #if defined _USING_GUI
-	m_pGuiSystem->Update(dt);
+	m_pGuiSystem->Update(realDt);
 #endif
 	m_pCollisionSystem->Update(dt);
 	m_pObjectManager->Late_Update(dt);
-	m_pUIManager->Late_Update(dt);
+	m_pUIManager->Late_Update(realDt);
 
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();
-	m_pObjectManager->Post_EngineUpdate(dt);
-	m_pUIManager->Post_EngineUpdate(dt);
+	m_pObjectManager->Post_EngineUpdate(realDt);
+	m_pUIManager->Post_EngineUpdate(realDt);
 }
 
 void CGameInstance::Release_Engine()
