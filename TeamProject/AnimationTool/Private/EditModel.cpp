@@ -127,18 +127,21 @@ void CEditModel::GUI_SetModel(_float fChildHeight)
 
 void CEditModel::Load_Resource()
 {
-	string path = Helper::OpenFile_Dialogue();
-	string ext = std::filesystem::path(path).extension().string();
-	string name = std::filesystem::path(path).stem().string() + ext;
+	vector<string> files = Helper::OpenMultiFiles();
 
-	if (".model" == ext) {
-		if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
-			m_ModelTags.insert(name);
+	for (auto& path : files) {
+		string ext = std::filesystem::path(path).extension().string();
+		string name = std::filesystem::path(path).stem().string() + ext;
+
+		if (".model" == ext) {
+			if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
+				m_ModelTags.insert(name);
+			}
 		}
-	}
-	else if (".mat" == ext) {
-		if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
-			m_MaterialTags.insert(name);
+		else if (".mat" == ext) {
+			if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
+				m_MaterialTags.insert(name);
+			}
 		}
 	}
 }
