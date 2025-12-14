@@ -319,19 +319,28 @@ namespace Engine
 		string TextureKey{};
 		string TexturePath{};
 
+		_bool isWorld = true;
 		_bool isLoop = false;
+
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
 		_uint iMaxSpawnParticleCount{};
+
 		_float2 vStartSpeed{};
 		_float2 vStartLifeTime{};
+
 		_float2 vStartSizeMin{};
 		_float2 vStartSizeMax{};
+
 		_float3 vSpawnAreaMin{};
 		_float3 vSpawnAreaMax{};
 
 		_bool useGravity = false;
 		_float fGravityScale{};
+
+		/*Limit Velocity*/
+		_float fDampScale{};
+
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

@@ -10,6 +10,7 @@ private:
     virtual ~CLifeTimeColor() DEFAULT;
 
 public:
+    void SetParams(PARTICLE_MODULE_DESC* pDesc)override;
     void Update(CParticleSystem::PARTICLE& particle, _float dt) override;
 
 public:

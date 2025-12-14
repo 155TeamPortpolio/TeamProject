@@ -14,6 +14,7 @@ public:
 		_float3 vVelocity{};
 		_float3 vPosition{};
 		_float4 vColor{};
+		_float2 vStartSize{};
 		_float2 vSize{};
 	}PARTICLE;
 

@@ -133,6 +133,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	ImGui::SeparatorText("ParticleEffect Setting");
 
+	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
 	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
 	isDirty |= ImGui::Checkbox("Use Gravity", &m_UseGravity);
 	isDirty |= ImGui::DragFloat("Gravity Scale", &m_fGravityScale);
@@ -148,10 +149,13 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
 	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
 
+	ImGui::SeparatorText("");
+
 	if (isDirty)
 	{
 		PARTICLE_NODE node{};
 
+		node.isWorld = m_IsWorld;
 		node.isLoop = m_IsLoop;
 		node.iBurstCount = m_iBurstCount;
 		node.fSpawnPerSec = m_fSpawnPerSec;

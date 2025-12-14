@@ -106,6 +106,7 @@ namespace Engine {
 		_float3 vVelocity{};
 		_float4 vColor{};
 		_float2 vLifeTime{};
+		_float2 vSize{};
 	}VTX_INSTANCE_POINT;
 
 	typedef struct ENGINE_DLL tagVertexInstancePointElement

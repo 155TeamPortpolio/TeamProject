@@ -40,6 +40,7 @@ private:
     void SetUp_ParticleEffect();
 
     /*Main Params*/
+    _bool m_IsWorld = true;
     _bool m_IsLoop = false;
     _uint m_iBurstCount{};
 
@@ -60,7 +61,7 @@ private:
     _float m_fGravityScale{};
 
     /*Module Params*/
-
+    _float m_fDampScale{};
 
 };
 NS_END

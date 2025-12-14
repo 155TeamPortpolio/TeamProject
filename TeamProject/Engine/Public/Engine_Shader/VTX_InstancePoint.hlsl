@@ -8,7 +8,7 @@ struct VS_IN
     row_major matrix TransformMatrix : WORLD;
     float3 vVelocity : TEXCOORD0;
     float4 vColor : TEXCOORD1;
-    float2 VLifeTime : TEXCOORD2;
+    float2 vLifeTime : TEXCOORD2;
 };
 
 struct VS_OUT
@@ -28,14 +28,12 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.vWorldPos = mul(position, g_WorldMatrix);
     Out.vSize = float2(length(In.TransformMatrix._11_12_13), length(In.TransformMatrix._21_22_23));
-    Out.vLifeTime = In.VLifeTime;
+    Out.vLifeTime = In.vLifeTime;
     
-    float t = In.VLifeTime.x / In.VLifeTime.y;
-    Out.vSize.x = lerp(Out.vSize.x, 0.f, t);
-    Out.vSize.y = lerp(Out.vSize.y, 0.f, t);
+    float t = In.vLifeTime.x / In.vLifeTime.y;
     Out.vVelocity = In.vVelocity;
     Out.vColor = In.vColor;
-    Out.vLifeTime = In.VLifeTime;
+    Out.vLifeTime = In.vLifeTime;
     
     return Out;
 }
@@ -70,8 +68,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 right = normalize(cross(worldUp, look));
     float3 up = normalize(cross(look, right));
     
-    float scaleX = length(g_WorldMatrix._11_12_13);
-    float scaleY = length(g_WorldMatrix._21_22_23);
+    float scaleX = In[0].vSize.x;
+    float scaleY = In[0].vSize.y;
     
     float3 offsetRight = right * (scaleX * 0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);

@@ -15,6 +15,7 @@ protected:
     virtual ~IParticleModule() DEFAULT;
 
 public:
+    virtual void SetParams(PARTICLE_MODULE_DESC* pDesc) PURE;
     virtual void Update(CParticleSystem::PARTICLE& particle, _float dt) PURE;
 };
 NS_END

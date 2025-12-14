@@ -6,6 +6,10 @@ CLifeTimeColor::CLifeTimeColor()
 {
 }
 
+void CLifeTimeColor::SetParams(PARTICLE_MODULE_DESC* pDesc)
+{
+}
+
 void CLifeTimeColor::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
 	_float t = particle.fLifeTime / particle.fMaxLifeTime;

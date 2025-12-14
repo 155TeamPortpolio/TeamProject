@@ -6,8 +6,21 @@ CLifeTimeVelocity::CLifeTimeVelocity()
 {
 }
 
+void CLifeTimeVelocity::SetParams(PARTICLE_MODULE_DESC* pDesc)
+{
+	LIFE_TIME_VELOCITY_DESC* pVelocityDesc = static_cast<LIFE_TIME_VELOCITY_DESC*>(pDesc);
+
+	m_fDampScale = pVelocityDesc->fDampScale;
+}
+
 void CLifeTimeVelocity::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
+	_vector3 vVelocity = particle.vVelocity;
+	_vector3 vTarget = vVelocity;
+	vTarget.Normalize();
+	_float fDecay = expf(-m_fDampScale * dt);
+
+	particle.vVelocity = vTarget + (vVelocity - vTarget) * fDecay;
 }
 
 CLifeTimeVelocity* CLifeTimeVelocity::Create()

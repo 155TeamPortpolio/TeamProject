@@ -116,6 +116,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_Particles.clear();
 	m_DeadParticleIndices.clear();
 
+	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
 	m_IsLoop = particleDesc.isLoop;
 	m_iBurstCount = particleDesc.iBurstCount;
 	m_fSpawnPerSec = particleDesc.fSpawnPerSec;
@@ -134,13 +135,18 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_UseGravity = particleDesc.useGravity;
 	m_fGravityScale = particleDesc.fGravityScale;
 
+	/*Module Params*/
+	{
+		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
+		Desc.fDampScale = particleDesc.fDampScale;
+		m_pLifeTimeVelocity->SetParams(&Desc);
+	}
+
 	m_Particles.resize(m_iMaxSpawnParticleCount);
 	m_DeadParticleIndices.reserve(m_iMaxSpawnParticleCount);
 
 	for (_uint i = 0; i < m_Particles.size(); ++i)
-	{
 		m_DeadParticleIndices.push_back(i);
-	}
 
 }
 
@@ -244,23 +250,44 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 {
 	particle.isAlive = true;
 
-	particle.vPosition.x = Helper::Get_Random_Float(m_vSpawnAreaMin.x, m_vSpawnAreaMax.x);
-	particle.vPosition.y = Helper::Get_Random_Float(m_vSpawnAreaMin.y, m_vSpawnAreaMax.y);
-	particle.vPosition.z = Helper::Get_Random_Float(m_vSpawnAreaMin.z, m_vSpawnAreaMax.z);
+	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
+	{
+		_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		_vector3 vAreaMin = vWorldPos + m_vSpawnAreaMin;
+		_vector3 vAreaMax = vWorldPos + m_vSpawnAreaMax;
+
+		particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
+		particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
+		particle.vPosition.z = Helper::Get_Random_Float(vAreaMin.z, vAreaMax.z);
+
+		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
+		_vector3 vDir = particle.vPosition - vWorldPos;
+		vDir.Normalize();
+
+		particle.vVelocity = vDir * fSpeed;
+	}
+	else
+	{
+		particle.vPosition.x = Helper::Get_Random_Float(m_vSpawnAreaMin.x, m_vSpawnAreaMax.x);
+		particle.vPosition.y = Helper::Get_Random_Float(m_vSpawnAreaMin.y, m_vSpawnAreaMax.y);
+		particle.vPosition.z = Helper::Get_Random_Float(m_vSpawnAreaMin.z, m_vSpawnAreaMax.z);
+
+		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
+		_vector3 vDir = particle.vPosition - _vector3(0.f, 0.f, 0.f);
+		vDir.Normalize();
+	
+		particle.vVelocity = vDir * fSpeed;
+	}
 
 	particle.fLifeTime = 0.f;
 	particle.fMaxLifeTime = Helper::Get_Random_Float(m_vStartLifeTime.x, m_vStartLifeTime.y);
 
 	particle.vSize.x = Helper::Get_Random_Float(m_vStartSizeMin.x, m_vStartSizeMax.x);
 	particle.vSize.y = Helper::Get_Random_Float(m_vStartSizeMin.y, m_vStartSizeMax.y);
+	particle.vStartSize = particle.vSize;
 
 	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 
-	_float speed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
-	_vector3 dir = particle.vPosition - _vector3(0.f, 0.f, 0.f);
-	dir.Normalize();
-	
-	particle.vVelocity = dir * speed;
 }
 
 void CParticleSystem::BuildInstanceData()
@@ -277,8 +304,8 @@ void CParticleSystem::BuildInstanceData()
 		_vector4 translate = _vector4(particle.vPosition.x, particle.vPosition.y, particle.vPosition.z, 1.f);
 		_vector3 velocity = particle.vVelocity;
 		_vector2 lifeTime(particle.fLifeTime, particle.fMaxLifeTime);
-		_vector4 right(1.f, 0.f, 0.f, 0.f);
-		_vector4 up(0.f, 1.f, 0.f, 0.f);
+		_vector4 right = _vector4(1.f, 0.f, 0.f, 0.f) * particle.vSize.x;
+		_vector4 up = _vector4(0.f, 1.f, 0.f, 0.f) * particle.vSize.y;
 		_vector4 look(0.f, 0.f, 1.f, 0.f);
 
 		data.vRight = right;

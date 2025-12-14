@@ -15,6 +15,7 @@ private:
     virtual ~CLifeTimeVelocity() DEFAULT;
 
 public:
+    void SetParams(PARTICLE_MODULE_DESC* pDesc)override;
     void Update(CParticleSystem::PARTICLE& particle, _float dt) override;
 
 public:
@@ -22,6 +23,6 @@ public:
     virtual void Free() override;
 
 private:
-    _float m_fDampScale{};
+    _float m_fDampScale = 10.f;
 };
 NS_END
