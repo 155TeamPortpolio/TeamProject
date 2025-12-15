@@ -424,7 +424,6 @@
     <ClInclude Include="..\public\CamFovPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
     </ClInclude>
-<<<<<<< HEAD
     <ClInclude Include="..\public\CamPosOrbitArcEvaulator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
     </ClInclude>
@@ -437,8 +436,6 @@
     <ClInclude Include="..\Public\EventListner.h">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
     </ClInclude>
-=======
->>>>>>> parent of 78bcc67 (feat : Camera Model 다운 #12)
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -807,7 +804,6 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator">
       <UniqueIdentifier>{4b7e3faf-796b-43b9-89bc-8dbd8848ceda}</UniqueIdentifier>
     </Filter>
-<<<<<<< HEAD
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator">
       <UniqueIdentifier>{7247bb33-2bec-4bbf-93df-2550cf1b91dc}</UniqueIdentifier>
     </Filter>
@@ -823,8 +819,6 @@
     <Filter Include="01. Utility\04. Components\22.EventListner">
       <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
     </Filter>
-=======
->>>>>>> parent of 78bcc67 (feat : Camera Model 다운 #12)
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1164,7 +1158,6 @@
     <ClCompile Include="..\private\CamFovPerSegmentEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="..\private\CamPosOrbitArcEvaulator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
     </ClCompile>
@@ -1183,8 +1176,6 @@
     <ClCompile Include="..\Private\EventListner.cpp">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
     </ClCompile>
-=======
->>>>>>> parent of 78bcc67 (feat : Camera Model 다운 #12)
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">

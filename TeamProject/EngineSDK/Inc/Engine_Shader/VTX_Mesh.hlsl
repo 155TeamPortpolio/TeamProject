@@ -70,12 +70,12 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
-    
+    vNormal.z = 1.f;
     float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal.xyz);
  
     vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vEmission = EmmisionTexture.Sample(DefaultSampler, In.vTexcoord);
     return Out;

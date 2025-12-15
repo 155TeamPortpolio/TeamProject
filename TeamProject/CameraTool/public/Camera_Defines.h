@@ -5,8 +5,8 @@
 
 namespace CameraTool
 {
-	//static constexpr unsigned int WinX    = 1280;
-	//static constexpr unsigned int WinY    = 720;
+	//static constexpr unsigned int WinX    = 1920;
+	//static constexpr unsigned int WinY    = 1360;
 	static constexpr unsigned int WinX      = 2560;
 	static constexpr unsigned int WinY      = 1360;
 	static constexpr unsigned int FrameRate = 144;

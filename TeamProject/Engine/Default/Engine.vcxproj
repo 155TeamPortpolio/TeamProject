@@ -246,6 +246,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\CamPosCentripetalEvaluator.h" />
     <ClInclude Include="..\public\CamPosHermiteEvaluator.h" />
     <ClInclude Include="..\public\CamPosLinearEvaluator.h" />
+    <ClInclude Include="..\public\CamPosOrbitArcEvaulator.h" />
     <ClInclude Include="..\public\CamPosPerSegmentEvaluator.h" />
     <ClInclude Include="..\public\CamRotPerSegmentEvaluator.h" />
     <ClInclude Include="..\public\CamRotSlerpEvaluator.h" />
@@ -304,6 +305,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\OrbitArcData.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
@@ -389,6 +391,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\CamPosCentripetalEvaluator.cpp" />
     <ClCompile Include="..\private\CamPosHermiteEvaluator.cpp" />
     <ClCompile Include="..\private\CamPosLinearEvaluator.cpp" />
+    <ClCompile Include="..\private\CamPosOrbitArcEvaulator.cpp" />
     <ClCompile Include="..\private\CamPosPerSegmentEvaluator.cpp" />
     <ClCompile Include="..\private\CamRotPerSegmentEvaluator.cpp" />
     <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp" />
