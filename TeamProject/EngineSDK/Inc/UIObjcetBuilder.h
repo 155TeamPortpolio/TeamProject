@@ -15,7 +15,6 @@ class ENGINE_DLL CUIObjcetBuilder
         CUIObjcetBuilder& Rotate(const _float rotate);
         CUIObjcetBuilder& Scale(const _float2 scale);
         CUIObjcetBuilder& Size(const _float2 size);
-        CUIObjcetBuilder& Anchor(ANCHOR eAnchor);
 
     private:
         class CGameInstance* m_pGameInstance = { nullptr };

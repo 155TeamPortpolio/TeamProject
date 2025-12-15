@@ -43,7 +43,7 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 
 	_uint Index = {};
 	pMaterial->Insert_MaterialInstance(customInstance, &Index);
-	pModel->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
