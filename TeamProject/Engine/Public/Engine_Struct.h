@@ -354,6 +354,11 @@ namespace Engine
 		_uint iRow{ 1 };
 		_uint iMaxFrameIndex{};
 
+		/*Noise*/
+		_float3 vStrength{};
+		_float3 vFrequency{};
+		_float3 vScrollSpeed{};
+
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

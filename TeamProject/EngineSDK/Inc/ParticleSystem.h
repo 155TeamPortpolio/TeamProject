@@ -99,6 +99,7 @@ private:
 	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
 	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
 	class CTextureSheetAnimation* m_pTextureSheetAnimation = { nullptr };
+	class CNoise* m_pNoise = { nullptr };
 	vector<class IParticleModule*> m_Modules;
 
 public:

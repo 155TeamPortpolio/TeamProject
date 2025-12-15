@@ -178,6 +178,11 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
 	isDirty |= ImGui::DragInt("Max FrameIndex", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 
+	ImGui::SeparatorText("Noise");
+	isDirty |= ImGui::DragFloat3("Strength", &m_vStrength.x);
+	isDirty |= ImGui::DragFloat3("Frequency", &m_vFrequency.x);
+	isDirty |= ImGui::DragFloat3("Scroll Speed", &m_vScrollSpeed.x);
+
 	if (isDirty)
 	{
 		PARTICLE_NODE node{};
@@ -208,6 +213,10 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.iCol = m_iCol;
 		node.iRow = m_iRow;
 		node.iMaxFrameIndex = m_iMaxFrameIndex;
+
+		node.vStrength = m_vStrength;
+		node.vFrequency = m_vFrequency;
+		node.vScrollSpeed = m_vScrollSpeed;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

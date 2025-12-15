@@ -74,5 +74,9 @@ private:
     _uint m_iRow{ 1 };
     _uint m_iMaxFrameIndex{ 1 };
 
+    _float3 m_vStrength{};
+    _float3 m_vFrequency{};
+    _float3 m_vScrollSpeed{};
+
 };
 NS_END

@@ -427,3 +427,8 @@ ENGINE_DLL _float Helper::Get_Random_Float(_float min, _float max)
 	return dist(RNG());
 
 }
+
+ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
+{
+	return x + (y - x) * t;
+}
