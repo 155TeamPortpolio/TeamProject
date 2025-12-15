@@ -5,7 +5,9 @@
 #include "GameInstance.h"
 #include "SpriteNode_Edit.h"
 #include "ParticleNode_Edit.h"
+#include "MeshNode_Edit.h"
 #include "ObjectContainer.h"
+#include "Helper_Func.h"
 
 CEffectContainer_Edit::CEffectContainer_Edit()
     :CEffectContainer()
@@ -28,7 +30,7 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 {
    // __super::Initialize(pArg);
 
-	LoadTextureFromDirectory("../Bin/Resource");
+	LoadTextureFromDirectory("../Bin/Resource/Texture");
 	m_InstanceName = "EffectContainer";
     return S_OK;
 }
@@ -54,6 +56,7 @@ void CEffectContainer_Edit::Render_GUI()
 {
     ImGui::PushID(this);
 	DisplayAllTextures();
+	LoadMesh();
 	ContextClear();
 	Play();
     AddNode();
@@ -130,7 +133,11 @@ void CEffectContainer_Edit::AddNode()
 	}
 	if (ImGui::Button("Add Mesh Node"))
 	{
+		CMeshNode_Edit::MESH_NODE_EDIT_DESC* pDesc = new CMeshNode_Edit::MESH_NODE_EDIT_DESC;
+		pDesc->pContext = &m_Context;
 
+		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_MeshNode" }).Add_ObjDesc(pDesc).Build("MeshNode");
+		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
 	}
 
 	if (pNode)
@@ -144,10 +151,10 @@ void CEffectContainer_Edit::RemoveLastNode()
 
 	if (ImGui::Button("Remove Last Node"))
 	{
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(m_Nodes.back());
-		m_Nodes.pop_back();
-
-		m_iNumNodes = m_Nodes.size();
+		//CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(m_Nodes.back());
+		//m_Nodes.pop_back();
+		//
+		//m_iNumNodes = m_Nodes.size();
 	}
 }
 
@@ -188,6 +195,18 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 	}
 
 	m_Context.pAllTextures = &m_Textures;
+}
+
+void CEffectContainer_Edit::LoadMesh()
+{
+	if (ImGui::Button("Load Mesh"))
+	{
+		string path = Helper::OpenFile_Dialogue();
+		//string modelKey = 
+
+		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+		//resource->Add_ResourcePath()
+	}
 }
 
 void CEffectContainer_Edit::DisplayAllTextures()

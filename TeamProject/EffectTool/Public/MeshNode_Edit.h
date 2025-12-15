@@ -10,7 +10,7 @@ public:
     typedef struct tagMeshNodeEditDesc : public GAMEOBJECT_DESC
     {
         CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* pContext = nullptr;
-    }PARTICLE_NODE_EDIT_DESC;
+    }MESH_NODE_EDIT_DESC;
 private:
     CMeshNode_Edit();
     CMeshNode_Edit(const CMeshNode_Edit& rhs);
