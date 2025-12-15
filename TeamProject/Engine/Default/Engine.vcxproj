@@ -262,6 +262,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\Noise.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
     <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
@@ -341,6 +342,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
+    <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
@@ -351,6 +353,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
+    <ClInclude Include="..\Public\TextureSheetAnimation.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Transform.h" />
@@ -400,6 +403,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
+    <ClCompile Include="..\Private\Noise.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
     <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
@@ -452,6 +456,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
+    <ClCompile Include="..\Private\SizeBySpeed.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
@@ -462,6 +467,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
@@ -519,6 +525,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />

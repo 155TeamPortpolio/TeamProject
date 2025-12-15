@@ -420,6 +420,15 @@
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SizeBySpeed.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextureSheetAnimation.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Noise.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EventSystem.h">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
@@ -782,6 +791,15 @@
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed">
+      <UniqueIdentifier>{d07abcf0-1a87-42f1-be09-1ad3a1367a04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation">
+      <UniqueIdentifier>{d9d9b9c5-06a5-472e-82ed-ea5146acbce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise">
+      <UniqueIdentifier>{c4cb2f4a-729b-4e11-95c5-1e2e066d08b8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\13. EventBus">
       <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
     </Filter>
@@ -1129,6 +1147,15 @@
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\SizeBySpeed.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Noise.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\EventSystem.cpp">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
@@ -1171,6 +1198,9 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">

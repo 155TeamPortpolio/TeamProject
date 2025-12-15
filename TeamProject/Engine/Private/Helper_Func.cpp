@@ -427,3 +427,27 @@ ENGINE_DLL _float Helper::Get_Random_Float(_float min, _float max)
 	return dist(RNG());
 
 }
+
+ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir)
+{
+	error_code ec;
+
+	auto f = std::filesystem::weakly_canonical(file, ec);
+	if (ec) return false;
+
+	auto d = std::filesystem::weakly_canonical(dir, ec);
+	if (ec) return false;
+
+	auto fit = f.begin();
+	for (auto dit = d.begin(); dit != d.end(); ++dit, ++fit)
+	{
+		if (fit == f.end() || *fit != *dit)
+			return false;
+	}
+	return true;
+}
+
+ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
+{
+	return x + (y - x) * t;
+}

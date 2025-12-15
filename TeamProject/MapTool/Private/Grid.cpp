@@ -24,7 +24,7 @@ HRESULT CGrid::Initialize_Prototype()
 	Add_Component<CRayReceiver>();
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	pRcsMgr->Add_ResourcePath("TileCell.png", "../Bin/MapToolResources/TileCell.png");
+	pRcsMgr->Add_ResourcePath("TileCell.png", "../Bin/Resources/TileCell.png");
 	pRcsMgr->Add_ResourcePath("VTX_PlaneGrid.hlsl",  "../Bin/ShaderFiles/VTX_PlaneGrid.hlsl");
 
 	return S_OK;
@@ -43,7 +43,7 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 
 	_uint Index = {};
 	pMaterial->Insert_MaterialInstance(customInstance, &Index);
-	pModel->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
