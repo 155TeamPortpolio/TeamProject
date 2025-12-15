@@ -1,14 +1,14 @@
 #pragma once
 #include "GameObject.h"
 
-NS_BEGIN(ModelEdit)
-class CEditModel :
-    public CGameObject
+NS_BEGIN(Demo)
+
+class CDemoPlayer final : public CGameObject
 {
 private:
-    CEditModel();
-    CEditModel(const CEditModel& rhs);
-    virtual ~CEditModel() DEFAULT;
+	CDemoPlayer();
+	CDemoPlayer(const CDemoPlayer& rhs);
+	virtual ~CDemoPlayer() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -18,22 +18,16 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+    virtual void OnCollisionEnter() override;
+    virtual void OnCollisionStay() override;
+    virtual void OnCollisionExit() override;
 public:
     void Render_GUI() override;
 
-private:
-    HRESULT Load_AIScene(const string& filePath);
-    HRESULT Save_AIScene();
-    void Clear_Models();
-    _bool HasBones();
-
-private:
-    const aiScene*      m_pAIScene = { nullptr };
-    Assimp::Importer	m_Importer = {};
-    
 public:
-    static CEditModel* Create();
+    static CDemoPlayer* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };
+
 NS_END
