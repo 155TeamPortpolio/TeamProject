@@ -92,6 +92,11 @@ void CGameInstance::Clear_LevelResource(const string& levelKey)
 	m_pResourceManager->Clear_Resource(levelKey);
 	m_pObjectManager->Clear(levelKey);
 	m_pUIManager->Clear(levelKey);
+
+#ifdef _USING_GUI
+	m_pGuiSystem->Get_Context()->pSelectedObject = nullptr;
+#endif // _USING_GUI
+
 }
 
 
