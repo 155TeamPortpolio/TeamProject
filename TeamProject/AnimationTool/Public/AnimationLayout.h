@@ -6,21 +6,22 @@ enum class ANIM_LAYER_STATE { OVERRIDE, INTERRUPT, ADDITIVE };
 enum class ANIM_BLEND_STATE {};
 enum class CLIP_EVENT_TYPE { EFFECT, SOUND };
 
-NLOHMANN_JSON_SERIALIZE_ENUM(CLIP_EVENT_TYPE, {
-    {CLIP_EVENT_TYPE::Effect, "Effect"},
-    {CLIP_EVENT_TYPE::Sound, "Sound"}
+NLOHMANN_JSON_SERIALIZE_ENUM(CLIP_EVENT_TYPE,
+{
+    {CLIP_EVENT_TYPE::EFFECT, "Effect"},
+    {CLIP_EVENT_TYPE::SOUND, "Sound"}
 }) 
 
 /* 애니매이션 클립 데이터 */
 typedef struct AnimationEvent {
-    float   EventTime;     //이벤트 작동 시간
-    string  EventType;    //ANIM_EVENT_STATE
-    string  EventTag;       //이벤트 태그 
+    float           EventTime;  //이벤트 작동 시간
+    CLIP_EVENT_TYPE EventType;  //이벤트 타입
+    string          EventTag;   //이벤트 태그 
 }ANIM_EVENT;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_EVENT, EventTime, EventType, EventTag);
 
 typedef struct AnimationClip {
-    string ClipTag; 
+    string ClipTag;        //애니매이션 이름
     vector<ANIM_EVENT> Events;
 }ANIM_CLIP;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_CLIP, ClipTag, Events);

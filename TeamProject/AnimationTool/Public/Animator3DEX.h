@@ -18,10 +18,10 @@ public:
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
-    HRESULT Add_ClipMeta(const string& LevelKey, const string& ClipMetaKey);
+    HRESULT Load_ClipMeta(const string& LevelKey, const string& ClipMetaKey);
 
 private:
-    vector<ANIM_EVENT> m_Events;
+    
 
 public:
     static CAnimator3DEX* Create();

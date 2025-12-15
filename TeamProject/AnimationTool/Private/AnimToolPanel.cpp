@@ -29,14 +29,32 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Clip Datas");
 
-	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, fChildHeight }, true);
+	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, fChildHeight * 2 }, true);
+
+	static string CurMetaTag = { "" };
+	if (ImGui::BeginCombo("##Meta Combo", CurMetaTag.c_str())) //Model
+	{
+		if (!m_Meta.empty()) {
+			for (auto& iter : m_Meta)
+			{
+				bool selected = (CurMetaTag == iter.first);
+				if (ImGui::Selectable(iter.first.c_str(), selected))
+				{
+					CurMetaTag = iter.first;
+				}
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
 
 	if (ImGui::Button("Load Clips")) {
 		Load_Clips();
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Create Meta")) {
-		Load_Clips();
+		Create_ClipMeta(CurMetaTag);
 	}
 
 	ImGui::EndChild();
@@ -55,6 +73,7 @@ void CAnimToolPanel::Load_Clips()
 	_bool				bFirstFile = true;
 	HRESULT				hr = S_OK;
 	string				MetaTag = "";
+	string				SavePath = "";
 	vector<ANIM_CLIP>	MetaData;
 
 	for (auto& path : files) {
@@ -62,28 +81,26 @@ void CAnimToolPanel::Load_Clips()
 
 		//이름 자르기
 		auto pos = ClipTag.find(CutStr);
-		string nameTag = ClipTag.substr(0, pos); // Avatar_Female_Size02_Unagi
-		string aniTag = ClipTag.substr(pos + CutStr.length());// Attack_Counter
-		
+		string nameTag = ClipTag.substr(0, pos);
+				
 		//만약 처음 불러온 파일이라면 그것을 기준으로 이후 파일체크 및 메타파일이름이 됌
 		if (bFirstFile) {
 			//이미 들어온 데이터인지 비교
-			auto iter = m_Clips.find(nameTag);
-			if (iter != m_Clips.end()) { 
+			auto iter = m_Meta.find(nameTag);
+			if (iter != m_Meta.end()) {
 				//데이터가 존재하며 데이터가 있으면 제거
 				for (ANIM_CLIP meta : iter->second) { 
-					if (meta.ClipTag == aniTag) { 
+					if (meta.ClipTag == ClipTag) {
 						hr = E_FAIL;
 						break;
 					}
 				}
 				//없으면 추가
-				ANIM_CLIP tClip{};
-				tClip.ClipTag = aniTag;
-				iter->second.push_back(tClip);
+				Create_Clips(MetaData, ClipTag, path);
 			}
 			//처음 불러온 이름이 전체 이름일것.
-			MetaTag = nameTag; 
+			MetaTag = nameTag;
+			SavePath = filesystem::path(path).parent_path().string();
 			bFirstFile = false;
 		}
 		//연속으로 들어온 데이터면 이름이 같은지 비교
@@ -96,17 +113,47 @@ void CAnimToolPanel::Load_Clips()
 		}
 
 		//클립 데이터 하나씩 넣기
-		ANIM_CLIP tClip{};
-		tClip.ClipTag = aniTag;
-		MetaData.push_back(tClip);
+		Create_Clips(MetaData, ClipTag, path);
 	}
 
 	//데이터 추가
-	if(SUCCEEDED(hr))
-		m_Clips.emplace(MetaTag, MetaData);
+	if (SUCCEEDED(hr)) {
+		m_Meta.emplace(MetaTag, MetaData);
+		m_Paths.emplace(MetaTag, SavePath);
+	}
 }
 
-void CAnimToolPanel::Set_Aniation()
+void CAnimToolPanel::Create_Clips(vector<ANIM_CLIP>& pMetaData, const string& ClipTag, const string& FilePath)
+{
+	ANIM_CLIP tClip{};
+	tClip.ClipTag = ClipTag;
+	pMetaData.push_back(tClip);
+	m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(ClipTag, FilePath);
+}
+
+void CAnimToolPanel::Create_ClipMeta(const string& CurMetaTag)
+{
+	auto iter = m_Meta.find(CurMetaTag);
+
+	if (iter == m_Meta.end()) {
+		OutputDebugStringA("Failed creating meta data");
+		return;
+	}
+
+	json JsonData = iter->second;
+	string SavePath = m_Paths.find(CurMetaTag)->second + "\\";
+	SavePath += iter->first + "_Meta.json";
+
+	ofstream file(SavePath);
+	if (!file.is_open()) {
+		OutputDebugStringA("Save Error");
+		return;
+	}
+	file << JsonData.dump(2);
+	file.close();
+}
+
+void CAnimToolPanel::Set_Animation()
 {
 	CGameObject* pSelectedObject = m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
 }

@@ -1,4 +1,7 @@
 #include "Animator3DEX.h"
+#include "AnimationClipEX.h"
+#include "AnimationLayout.h"
+#include "GameInstance.h"
 
 CAnimator3DEX::CAnimator3DEX()
 {
@@ -19,8 +22,12 @@ HRESULT CAnimator3DEX::Initialize(COMPONENT_DESC* pArg)
 	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3DEX::Add_ClipMeta(const string& LevelKey, const string& ClipMetaKey)
+HRESULT CAnimator3DEX::Load_ClipMeta(const string& LevelKey, const string& ClipMetaKey)
 {
+
+	//CGameInstance::GetInstance()->Get_ResourceMgr()->Get
+	//
+	//
 	return E_NOTIMPL;
 }
 
