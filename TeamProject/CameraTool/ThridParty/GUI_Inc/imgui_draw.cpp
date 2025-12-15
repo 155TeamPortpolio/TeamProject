@@ -1,3 +1,8 @@
+#ifdef ENGINE_EXPORTS
+#define IMGUI_API __declspec(dllexport)
+#else
+#define IMGUI_API __declspec(dllimport)
+#endif
 // dear imgui, v1.92.4 WIP
 // (drawing and font code)
 
