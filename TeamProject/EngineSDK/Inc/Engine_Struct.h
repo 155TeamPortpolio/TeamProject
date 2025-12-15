@@ -342,6 +342,10 @@ namespace Engine
 		_float2 vStartScale{};
 		_float2 vEndScale{};
 
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

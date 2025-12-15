@@ -148,6 +148,13 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 		m_pLifeTimeSize->SetParams(&Desc);
 	}
 
+	{
+		CLifeTimeColor::LIFE_TIME_COLOR_DESC Desc{};
+		Desc.vStartColor = particleDesc.vStartColor;
+		Desc.vEndColor = particleDesc.vEndColor;
+		m_pLifeTimeColor->SetParams(&Desc);
+	}
+
 	m_Particles.resize(m_iMaxSpawnParticleCount);
 	m_DeadParticleIndices.reserve(m_iMaxSpawnParticleCount);
 
@@ -291,7 +298,7 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 	particle.vSize = m_vStartSize;
 	particle.vStartSize = particle.vSize;
 
-	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
 
 }
 

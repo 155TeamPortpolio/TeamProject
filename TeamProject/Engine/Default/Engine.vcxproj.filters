@@ -413,12 +413,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\LifeTimeColor.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SizeBySpeed.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -772,9 +775,12 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
       <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed">
+      <UniqueIdentifier>{d07abcf0-1a87-42f1-be09-1ad3a1367a04}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1113,9 +1119,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\LifeTimeColor.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SizeBySpeed.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1150,7 +1159,7 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
-    <Filter>98. BasicShader</Filter>
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
       <Filter>98. BasicShader</Filter>

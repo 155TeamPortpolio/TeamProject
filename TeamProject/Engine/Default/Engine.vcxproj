@@ -339,6 +339,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
+    <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
@@ -448,6 +449,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
+    <ClCompile Include="..\Private\SizeBySpeed.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />

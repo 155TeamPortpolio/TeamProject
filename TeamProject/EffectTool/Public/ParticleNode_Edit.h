@@ -50,8 +50,8 @@ private:
     _uint m_iMaxSpawnParticleCount{};
 
     _float2 m_vStartSpeed{};
-    _float2 m_vStartLifeTime{};
-    _float2 m_vStartSize{};
+    _float2 m_vStartLifeTime{ 1.f,1.f };
+    _float2 m_vStartSize{ 1.f,1.f };
     _float3 m_vSpawnAreaMin{};
     _float3 m_vSpawnAreaMax{};
 
@@ -64,6 +64,9 @@ private:
 
     _float2 m_vStartScale{ 1.f,1.f };
     _float2 m_vEndScale{ 1.f,1.f };
+
+    _float4 m_vStartColor{ 1.f,1.f,1.f,1.f };
+    _float4 m_vEndColor{ 1.f,1.f,1.f,1.f };
 
 };
 NS_END

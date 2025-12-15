@@ -132,7 +132,8 @@ PS_OUT PS_MAIN(PS_IN In)
     //if (color.a < 0.1f)
     //    discard;
     
-    Out.vColor = color * In.vColor;
+    Out.vColor = lerp(In.vColor, color, color.a);
+    Out.vColor.a = color.a;
     
     return Out;
 }

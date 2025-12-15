@@ -156,6 +156,21 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
 	isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
 
+	ImGui::SeparatorText("Life Time Color");
+	_float startColor[4] = { m_vStartColor.x,m_vStartColor.y,m_vStartColor.z,m_vStartColor.w };
+	_float endColor[4] = { m_vEndColor.x,m_vEndColor.y,m_vEndColor.z,m_vEndColor.w };
+
+	if (ImGui::ColorEdit4("Start Color", startColor))
+	{
+		m_vStartColor = _float4(startColor[0], startColor[1], startColor[2], startColor[3]);
+		isDirty = true;
+	}
+	if (ImGui::ColorEdit4("End Color", endColor))
+	{
+		m_vEndColor = _float4(endColor[0], endColor[1], endColor[2], endColor[3]);
+		isDirty = true;
+	}
+
 	if (isDirty)
 	{
 		PARTICLE_NODE node{};
@@ -177,6 +192,9 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 		node.vStartScale = m_vStartScale;
 		node.vEndScale = m_vEndScale;
+		
+		node.vStartColor = m_vStartColor;
+		node.vEndColor = m_vEndColor;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}
