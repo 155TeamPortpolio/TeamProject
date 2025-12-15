@@ -55,8 +55,7 @@ struct PS_OUT
     vector vDiffuse : SV_TARGET0;
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
-    vector vMetalic : SV_TARGET3;
-    vector vAmbient : SV_TARGET4;
+    vector vEmission : SV_TARGET3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -65,33 +64,20 @@ PS_OUT PS_MAIN(PS_IN In)
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        discard;
-    }
-  
+  if (vMtrlDiffuse.a < 0.3f)
+      discard;
+    
     Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 vNormal;
-    vNormal.x = vNormalDesc.y * 2.f - 1.f;
-    vNormal.y = vNormalDesc.z * 2.f - 1.f;
+    float3 vNormal = vNormalDesc.xyz * 2.f - 1.f;
     vNormal.z = 1.f;
-    
-    float3 T = normalize(In.vTangent);
-    float3 B = normalize(In.vBinormal * -1);
-    float3 N = normalize(In.vNormal.xyz);
-
-    float3x3 WorldMatrix = float3x3(T, B, N);
-
+    float3x3 WorldMatrix = float3x3(In.vTangent, In.vBinormal, In.vNormal.xyz);
+ 
     vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 0.2f;
-    
+    Out.vEmission = EmmisionTexture.Sample(DefaultSampler, In.vTexcoord);
     return Out;
 }
 

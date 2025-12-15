@@ -301,8 +301,6 @@ HRESULT CGameObject::Make_OpaquePacket()
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Opaque(packet);
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::PRIORITY)
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(packet);
-		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
 
 		if (packet.pModel->doShadowCast()) {
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
@@ -336,12 +334,6 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.DistanceToCamera = XMVectorGetX(XMVector4Dot(CamDist, CamForward));
 
 	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Blend(newPacket);
-	return S_OK;
-}
-
-HRESULT CGameObject::Make_NonLightPacket(OPAQUE_PACKET packet)
-{
-	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
 	return S_OK;
 }
 

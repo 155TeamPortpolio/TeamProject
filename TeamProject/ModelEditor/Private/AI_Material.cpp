@@ -26,6 +26,7 @@ CAI_Material::CAI_Material(const CAI_Material& rhs)
 
 HRESULT CAI_Material::Initialize()
 {
+
 	return S_OK;
 }
 
@@ -33,11 +34,6 @@ void CAI_Material::Render_GUI()
 {
 	__super::Render_GUI();
 
-	if (ImGui::Button("Add_Material")) 
-		m_bCustomTabOpened = !m_bCustomTabOpened;
-	
-	if (m_bCustomTabOpened)
-		Render_CustomMaterial();
 }
 
 HRESULT CAI_Material::Load_Material(_uint materialNum, aiMaterial* material[], const string& filePath)
@@ -117,86 +113,6 @@ void CAI_Material::LinkShader(const string& shader)
 	for (auto& Aidata : m_AIMaterialDatas)
 		Aidata->LinkShader(shader);
 }
-
-static bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir)
-{
-	error_code ec;
-
-	auto f = std::filesystem::weakly_canonical(file, ec);
-	if (ec) return false;
-
-	auto d = std::filesystem::weakly_canonical(dir, ec);
-	if (ec) return false;
-
-	auto fit = f.begin();
-	for (auto dit = d.begin(); dit != d.end(); ++dit, ++fit)
-	{
-		if (fit == f.end() || *fit != *dit)
-			return false;
-	}
-	return true;
-}
-
-void CAI_Material::Render_CustomMaterial()
-{
-	const ImVec2 winSize(400.f, 400.f);
-	ImGui::SetNextWindowSize(winSize, ImGuiCond_Appearing);
-
-	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-	ImGui::Begin("Material_Add");
-
-	ImGui::Text("MaterialKey");
-	if (ImGui::InputText("##CustomMaterialKey", m_MaterialKeyBuf, sizeof(m_MaterialKeyBuf)))
-		Added_MaterialName = m_MaterialKeyBuf;
-
-	if (Added_MaterialName.empty())
-	{
-		ImGui::End();
-		return;
-	}
-
-	if (ImGui::Button("Link_Shader"))
-	{
-		string filePath = Helper::OpenFile_Dialogue();
-		if (!filePath.empty())
-		{
-			filesystem::path baseDir =
-			filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
-
-			if (!IsUnderDirectory(filesystem::path(filePath), baseDir))
-			{
-				Added_ShaderFile = "Invalid path: must be under ../Bin/ShaderFiles/";
-			}
-			else
-			{
-				Added_ShaderFile = filePath;
-
-				string file = filesystem::path(Added_ShaderFile).filename().string();
-				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, Added_ShaderFile);
-
-				CAIMaterial* data = CAIMaterial::Create(Added_MaterialName);
-				if (data)
-				{
-					data->LinkShader(file);
-					m_AIMaterialDatas.push_back(data);
-
-					CMaterialInstance* pHandle = CMaterialInstance::Make_Handle(data, m_pDevice);
-					m_MaterialInstances.push_back(pHandle);
-
-					Added_ShaderFile.clear();
-					Added_MaterialName.clear();
-					m_MaterialKeyBuf[0] = '\0';
-				}
-			}
-		}
-	}
-
-	ImGui::End();
-}
-
-
 
 CAI_Material* CAI_Material::Create()
 {

@@ -29,7 +29,6 @@ private:
 
 public:
     static CAIMaterial* Create(const aiMaterial* pAIMaterial, const string& fileDirectory);
-    static CAIMaterial* Create(const string& name);
     virtual void Free() override;
 };
 

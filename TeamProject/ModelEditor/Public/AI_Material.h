@@ -17,15 +17,7 @@ public:
     void LinkShader(const string& shader);
     void Override_ShaderKey(const string& overrideKey) { m_OverrideShaderKey = overrideKey; };
 
-public:
-    void Render_CustomMaterial();
-    
 private:
-    _bool m_bCustomTabOpened = { false };
-    char m_MaterialKeyBuf[128] = {};
-    string Added_ShaderFile;
-    string Added_MaterialName;
-
     vector<class CAIMaterial*> m_AIMaterialDatas;
     ID3D11Device* m_pDevice = { nullptr };
     ID3D11DeviceContext* m_pContext = { nullptr };

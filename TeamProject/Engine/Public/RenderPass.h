@@ -121,27 +121,6 @@ public:
 };
 #pragma endregion
 
-
-#pragma region NONLIGHT_PASS
-class NonLightPass final : public RenderPass {
-private:
-	NonLightPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
-	virtual ~NonLightPass() DEFAULT;
-public:
-	void Execute(ID3D11DeviceContext* pContext) override;
-	void Submit(OPAQUE_PACKET packet);
-
-private:
-	vector<OPAQUE_PACKET> m_Packets;
-	vector<OPAQUE_PACKET> m_VisiblePackets;
-
-public:
-	static NonLightPass* Create(class CRenderSystem* pRenderSystem) { return new NonLightPass(pRenderSystem); }
-	virtual void Free() override { __super::Free(); m_Packets.clear(); };
-};
-#pragma endregion
-
-
 #pragma region PARTICLE_PASS
 class ParticlePass final : public RenderPass {
 	typedef struct tagParticleDrawData
