@@ -418,6 +418,12 @@
     <ClInclude Include="..\public\CamFovPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamPosOrbitArcEvaulator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitArcData.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -786,6 +792,9 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator">
       <UniqueIdentifier>{4b7e3faf-796b-43b9-89bc-8dbd8848ceda}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator">
+      <UniqueIdentifier>{7247bb33-2bec-4bbf-93df-2550cf1b91dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1124,6 +1133,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamFovPerSegmentEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegmentEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPosOrbitArcEvaulator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

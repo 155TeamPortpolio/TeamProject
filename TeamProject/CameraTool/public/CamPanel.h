@@ -16,32 +16,35 @@ private:
 public:
 	void Update_Panel(_float dt) override;
 	void Render_GUI() override;
-	void SetCaptureTarget(CamObj* camObj);
+	void SetCaptureTarget(CCamObj* camObj);
 
 private:
-	void DrawToolbar();
-	void DrawCamSelector();
-	void DrawKeyframeArea();
-	void DrawKeyframeList();
-	void DrawKeyframeEditor();
-	void DrawTimeline();
-	void DrawInterpSelector();
+	void  DrawToolbar();
+	void  DrawCamSelector();
+	void  DrawKeyframeArea();
+	void  DrawKeyframeList();
+	void  DrawKeyframeEditor();
+	void  DrawTimeline();
+	void  DrawInterpSelector();
+	_bool DrawConstraintBar();
+	_bool DrawOrbitTargetBar();
 
 private: // Helper
-    bool                       HasValidSelection() const;
-	bool                       SelectKeyById(_uint keyId);
-    void                       AddKey_Default();
-    void                       DeleteSelectedKey();
-    void                       SortKeysByTime_Stable();
-    void                       MergeNearDuplicateTimes_KeepLast();
-    void                       SyncEditorFromSelection();
-    void                       ApplyEditorToSelectedKey_TimeOnly();
-    void                       CaptureSelectedKey_FromCaptureCam();
-	_uint                      GetSelectedKeyId()   const;
-	_float                     GetNextDefaultTime() const;
+    void    AddKey_Default();
+    void    DeleteSelectedKey();
+    void    SortKeysByTime_Stable();
+    void    MergeNearDuplicateTimes_KeepLast();
+    void    SyncEditorFromSelection();
+    void    ApplyEditorToSelectedKey_TimeOnly();
+    void    CaptureSelectedKey_FromCaptureCam();
+	_bool   SelectKeyById(_uint keyId);
+    _bool   HasValidSelection()  const;
+	_uint   GetSelectedKeyId()   const;
+	_float  GetNextDefaultTime() const;
+
 	CamKeyFrame&               GetSelectedKey();
-	vector<CamKeyFrame>&       GetKeyFrames()       { return target.sequence->keyframes; }
-	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
+	vector<CamKeyFrame>&       GetKeyFrames()         { return target.sequence->keyframes; }
+	const vector<CamKeyFrame>& GetKeyFrames()   const { return target.sequence->keyframes; }
 
 private:
 	CamSequenceDesc  debugSequence{};

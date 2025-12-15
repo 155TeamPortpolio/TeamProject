@@ -9,9 +9,9 @@ struct CamToolTarget
 	CamSequenceDesc*    sequence{};
 	_uint               nextKeyId = 1;
 
-    CamObj*             captureCamObj{};
-    CCamera*            captureCamComp{};
-    CCamSequencePlayer* player{};
+    CCamObj*             captureCamObj{};
+    CCamera*             captureCamComp{};
+    CCamSequencePlayer*  player{};
 };
 struct CamToolEditState
 {
@@ -29,6 +29,9 @@ struct CamToolEditState
     _float editTime = 0.f;
     _float editFov  = 60.f;
     _float editRoll = 0.f;
+
+    CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
+    CamOrbitState     orbit{};
 };
 struct CamToolKeyPolicy
 {

@@ -2,7 +2,7 @@
 #include "Light.h"
 #include "CamSequencePlayer.h"
 
-HRESULT CamObj::Initialize_Prototype()
+HRESULT CCamObj::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	cam = Add_Component<CCamera>();
@@ -12,7 +12,7 @@ HRESULT CamObj::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CamObj::Initialize(INIT_DESC* arg)
+HRESULT CCamObj::Initialize(INIT_DESC* arg)
 {
 	__super::Initialize(arg);
 
@@ -29,7 +29,7 @@ HRESULT CamObj::Initialize(INIT_DESC* arg)
 	return S_OK;
 }
 
-void CamObj::Free()
+void CCamObj::Free()
 {
 	__super::Free();
 }
