@@ -358,7 +358,7 @@ void CRigidBody::Set_AngularDamping(_float fDamping)
 
 void CRigidBody::Wake_Up()
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor && !m_bStatic && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->wakeUp();
@@ -367,7 +367,7 @@ void CRigidBody::Wake_Up()
 
 void CRigidBody::Put_ToSleep()
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor && !m_bStatic && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->putToSleep();

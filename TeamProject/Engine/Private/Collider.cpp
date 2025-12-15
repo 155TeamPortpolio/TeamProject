@@ -85,11 +85,11 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 
 	// 초기 위치 및 회전값 설정
-	_vector vPos = XMLoadFloat3(&pDesc->vCenter);
-	_vector vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
+	_vector3 vPos = pDesc->vCenter;
+	_vector4 vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
+	_float3 vP = vPos;
+	_float4 vQ = vRot;
 	PxTransform localPose;
-	_float3 vP; XMStoreFloat3(&vP, vPos);
-	_float4 vQ; XMStoreFloat4(&vQ, vRot);
 	localPose.p = PxVec3(vP.x, vP.y, vP.z);
 	localPose.q = PxQuat(vQ.x, vQ.y, vQ.z, vQ.w);
 	m_pShape->setLocalPose(localPose);
@@ -116,29 +116,128 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::OnCollisionEnter(ICollidable* pOther)
 {
-	m_CurrentCollisions.insert(pOther);
 	m_pOwner->OnCollisionEnter();
+	m_CurrentCollisions.insert(pOther);
 }
 
 void CCollider::OnCollisionStay(ICollidable* pOther)
 {
+	m_pOwner->OnCollisionStay();
 }
 
 void CCollider::OnCollisionExit(ICollidable* pOther)
 {
+	m_pOwner->OnCollisionExit();
 	m_CurrentCollisions.erase(pOther);
-	//m_pOwner->OnCollisionExit()
 }
 
 void CCollider::OnTriggerEnter(ICollidable* pOther)
 {
+	m_pOwner->OnTriggerEnter();
 }
 
 void CCollider::OnTriggerExit(ICollidable* pOther)
 {
+	m_pOwner->OnTriggerExit();
 }
 
+void CCollider::Set_Center(const _float3& vCenter)
+{
+	m_vCenter = vCenter;
+	Update_LocalPose();
+}
 
+void CCollider::Set_Size(const _float3& vSize)	// 사용자재
+{
+	if (!m_pShape) return;
+
+	m_vSize = vSize;
+	PxGeometry* pGeometry = nullptr;
+
+	switch (m_eType)
+	{
+	case COLLIDER_TYPE::BOX:
+		pGeometry = new PxBoxGeometry(vSize.x * 0.5f, vSize.y * 0.5f, vSize.z * 0.5f);
+		break;
+	case COLLIDER_TYPE::SPHERE:
+		pGeometry = new PxSphereGeometry(vSize.x);
+		break;
+	case COLLIDER_TYPE::CAPSULE:
+		pGeometry = new PxCapsuleGeometry(vSize.x, vSize.y * 0.5f);
+		break;
+	}
+
+	if (pGeometry)
+	{
+		m_pShape->setGeometry(*pGeometry);
+		delete pGeometry;
+
+		if (m_pAttachedRigidBody && !m_pAttachedRigidBody->Get_Body()->is<PxRigidStatic>())
+		{
+			PxRigidDynamic* pDynamic = m_pAttachedRigidBody->Get_Body()->is<PxRigidDynamic>();
+			if (pDynamic)
+			{
+				PxRigidBodyExt::updateMassAndInertia(*pDynamic, 1.0f);
+			}
+		}
+	}
+}
+
+void CCollider::Set_Rotation(const _float3& vRotation)
+{
+	m_vRotation = vRotation;
+	Update_LocalPose();
+}
+
+void CCollider::Set_Trigger(_bool bTrigger)
+{
+	if (!m_pShape) return;
+
+	m_bTrigger = bTrigger;
+
+	if (m_bTrigger)
+	{
+		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+	}
+	else
+	{
+		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, false);
+		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
+	}
+}
+
+void CCollider::Set_ContactOffset(_float fOffset)
+{
+	if (m_pShape)
+	{
+		m_pShape->setContactOffset(fOffset);
+	}
+}
+
+void CCollider::Set_RestOffset(_float fOffset)
+{
+	if (m_pShape)
+	{
+		m_pShape->setRestOffset(fOffset);
+	}
+}
+
+void CCollider::Update_LocalPose()
+{
+	if (!m_pShape) return;
+
+	_vector3 vPos = m_vCenter;
+	_vector4 vRot = XMQuaternionRotationRollPitchYaw(m_vRotation.x, m_vRotation.y, m_vRotation.z);
+
+	_float3 vP = vPos;
+	_float4 vQ = vRot;
+	PxTransform localPose;
+	localPose.p = PxVec3(vP.x, vP.y, vP.z);
+	localPose.q = PxQuat(vQ.x, vQ.y, vQ.z, vQ.w);
+
+	m_pShape->setLocalPose(localPose);
+}
 
 void CCollider::Render_GUI()
 {
@@ -146,31 +245,63 @@ void CCollider::Render_GUI()
 
 	ImGui::SeparatorText("Collider");
 
-	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 200), true))
+	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 300), true))
 	{
-		// 기본 정보
 		ImGui::Text("Type: %s", m_eType == COLLIDER_TYPE::BOX ? "Box" :
 			m_eType == COLLIDER_TYPE::SPHERE ? "Sphere" : "Capsule");
-		ImGui::Text("Trigger: %s", m_bTrigger ? "True" : "False");
+
+		_bool bTrigger = m_bTrigger;
+		if (ImGui::Checkbox("Is Trigger", &bTrigger))
+		{
+			Set_Trigger(bTrigger);
+		}
+
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
-		// 충돌 레이어 정보
 		ImGui::Separator();
 		ImGui::Text("Collision Layer: %d", ENUM(m_eGroup));
 		ImGui::Text("Collision Mask: %d", m_iCollisionMask);
 
-		// 크기 정보
 		ImGui::Separator();
-		ImGui::DragFloat3("Center", &m_vCenter.x, 0.01f);
-		ImGui::DragFloat3("Size", &m_vSize.x, 0.01f);
-		ImGui::DragFloat3("Rotation", &m_vRotation.x, 0.01f);
+		ImGui::Text("Transform");
 
-		// 충돌 상태
+		_float3 vCenter = m_vCenter;
+		if (ImGui::DragFloat3("Center", &vCenter.x, 0.01f))
+		{
+			Set_Center(vCenter);
+		}
+
+		_float3 vSize = m_vSize;
+		if (ImGui::DragFloat3("Size", &vSize.x, 0.01f, 0.01f, 100.0f))
+		{
+			Set_Size(vSize);
+		}
+
+		_float3 vRotation = m_vRotation;
+		if (ImGui::DragFloat3("Rotation", &vRotation.x, 0.01f))
+		{
+			Set_Rotation(vRotation);
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Advanced");
+
+		_float fContactOffset = m_pShape ? m_pShape->getContactOffset() : 0.02f;
+		if (ImGui::DragFloat("Contact Offset", &fContactOffset, 0.001f, 0.0f, 1.0f))
+		{
+			Set_ContactOffset(fContactOffset);
+		}
+
+		_float fRestOffset = m_pShape ? m_pShape->getRestOffset() : 0.0f;
+		if (ImGui::DragFloat("Rest Offset", &fRestOffset, 0.001f, -1.0f, 1.0f))
+		{
+			Set_RestOffset(fRestOffset);
+		}
+
 		ImGui::Separator();
 		ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
 		ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
 
-		// 충돌 중인 객체 리스트
 		if (!m_CurrentCollisions.empty())
 		{
 			ImGui::Separator();
