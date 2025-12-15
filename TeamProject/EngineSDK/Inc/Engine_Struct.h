@@ -37,7 +37,8 @@ namespace Engine
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
 		_float			fLightRange = {};
-		_float3		lightPadding = {};
+		_float			fLightIntensity = {1.f};
+		_float2		lightPadding = {};
 		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
 	}LIGHT_DESC;
 
