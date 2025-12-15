@@ -259,6 +259,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
@@ -396,6 +397,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />

@@ -5,8 +5,9 @@ CEventSystem::CEventSystem()
 {
 }
 
-HRESULT CEventSystem::Initialize() {
-
+HRESULT CEventSystem::Initialize() 
+{
+    return S_OK;
 }
 
 CEventSystem* CEventSystem::Create()
