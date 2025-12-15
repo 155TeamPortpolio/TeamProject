@@ -47,7 +47,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 newTexcoord = float2(In.vTexcoord* 400);
     vector GridCol = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
             
-    Out.vDiffuse = DiffuseTexture;
+    Out.vDiffuse = GridCol;
     return Out;
 }
 
