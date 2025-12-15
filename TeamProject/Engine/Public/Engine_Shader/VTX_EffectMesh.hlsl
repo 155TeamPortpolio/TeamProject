@@ -61,6 +61,20 @@ struct PS_OUT
     vector vDiffuse : SV_TARGET0;
 };
 
+PS_OUT PS_MAIN_DEFAULT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    if (vMtrlDiffuse.a < 0.1f)
+        discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    
+    return Out;
+}
+
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
@@ -100,6 +114,16 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 
 technique11 DefaultTechnique
 {
+    pass Default
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
+    }
+
     pass UVAnimation
     {
         SetRasterizerState(RS_Default);

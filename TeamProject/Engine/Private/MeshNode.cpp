@@ -35,6 +35,7 @@ void CMeshNode::Priority_Update(_float dt)
 
 void CMeshNode::Update(_float dt)
 {
+	m_fElpasedTime += dt;
 }
 
 void CMeshNode::Late_Update(_float dt)

@@ -26,6 +26,11 @@ HRESULT CMeshNode_Edit::Initialize_Prototype()
 
 HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 {
+	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	resource->Add_ResourcePath("Trail.model", "../Bin/Resource/Mesh/Trail.model");
+
+	Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, "Trail.model");
+
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Effect_Mesh_Base", "Default", pDevice);
