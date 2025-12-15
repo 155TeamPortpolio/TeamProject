@@ -2,72 +2,85 @@
 #include "FirstLevel.h"
 #include "DebugFreeCam.h"
 #include "DemoModel.h"
+#include "DemoGrid.h"
 
 #include "CamPanel.h"
 
-FirstLevel::FirstLevel(const string& key) : CLevel(key)
+CFirstLevel::CFirstLevel(const string& key) : CLevel(key)
 {
 	game = CGameInstance::GetInstance();
 	Safe_AddRef(game);
 }
 
-HRESULT FirstLevel::Initialize()
+HRESULT CFirstLevel::Initialize()
 {
 	return S_OK;
 }
 
-HRESULT FirstLevel::Awake()
+HRESULT CFirstLevel::Awake()
 {
-	auto proto  = game->Get_PrototypeMgr();
+	auto proto = game->Get_PrototypeMgr();
 	auto objMgr = game->Get_ObjectMgr();
 	auto camMgr = game->Get_CameraMgr();
 
-	proto->Add_ProtoType("First_Level", "Proto_GameObject_DebugFreeCam", DebugFreeCam::Create());
-	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoModel",    CDemoModel::Create());
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DebugFreeCam", CDebugFreeCam::Create());
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoGrid", CDemoGrid::Create());
 
-	constexpr float aspect = static_cast<float>(WinX) / WinY;
+	CAMERA_DESC camDesc{};
+	camDesc.fAspect = static_cast<float>(WinX) / WinY;
+	camDesc.fNear = 0.1f;
+	camDesc.fFar = 500.f;
+	camDesc.fFov = 60.f;
 
 	CGameObject* debugCamObj = Builder::Create_Object({ "First_Level", "Proto_GameObject_DebugFreeCam" })
-		.Camera({ aspect })
+		.Camera(camDesc)
 		.Position({ 0.f, 3.f, -5.f })
 		.Build("DebugFreeCam_Main");
 
 	CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_GameObject_DemoModel" })
 		.Position({})
 		.Build("Demo_Model");
+	demoModel->Get_Component<CTransform>()->Scale({ 0.5f, 0.5f, 0.5f });
+
+	CGameObject* demoGrid = Builder::Create_Object({ "First_Level", "Proto_GameObject_DemoGrid" })
+		.Position({})
+		.Build("Demo_Grid");
+	demoGrid->Get_Component<CTransform>()->Scale({ 10.f, 10.f, 10.f });
 
 	objMgr->Add_Object(debugCamObj, { "First_Level", "Camera_Layer" });
 	objMgr->Add_Object(demoModel, { "First_Level", "Model_Layer" });
+	objMgr->Add_Object(demoGrid, { "First_Level", "Grid_Layer" });
 
 	camMgr->Set_MainCam(debugCamObj->Get_Component<CCamera>());
 
 	auto guiSys = game->Get_GUISystem();
-	auto camPanel = CamPanel::Create(guiSys->Get_Context());
-	camPanel->SetCaptureTarget(static_cast<CamObj*>(debugCamObj));
+	auto camPanel = CCamPanel::Create(guiSys->Get_Context());
+	camPanel->SetCaptureTarget(static_cast<CCamObj*>(debugCamObj));
 	guiSys->Register_Panel(camPanel);
 
 	return S_OK;
 }
 
-void FirstLevel::Update()
+void CFirstLevel::Update()
 {
 
 }
 
-HRESULT FirstLevel::Render()
+HRESULT CFirstLevel::Render()
 {
 	SetWindowText(g_hWnd, TEXT("첫 레벨입니다."));
 	return S_OK;
 }
 
-FirstLevel* FirstLevel::Create(const string& key)
+CFirstLevel* CFirstLevel::Create(const string& key)
 {
-	auto inst = new FirstLevel(key);
+	auto inst = new CFirstLevel(key);
 	inst->Initialize();
 	return inst;
 }
 
-void FirstLevel::Free()
+void CFirstLevel::Free()
 {
 	__super::Free();
 	Safe_Release(game);

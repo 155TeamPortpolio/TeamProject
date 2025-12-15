@@ -6,34 +6,37 @@ NS_BEGIN(CameraTool)
 
 struct CamToolTarget
 {
-	CamSequenceDesc*   sequence{};
-	_uint              nextKeyId = 1;
+    CamSequenceDesc* sequence{};
+    _uint               nextKeyId = 1;
 
-    CamObj*            captureCamObj{};
-    CCamera*           captureCamComp{};
-    CamSequencePlayer* player{};
+    CCamObj* captureCamObj{};
+    CCamera* captureCamComp{};
+    CCamSequencePlayer* player{};
 };
 struct CamToolEditState
 {
-    _uint selectedCam    = 0;
+    _uint selectedCam = 0;
     _int  selectedKeyIdx = -1;
 
     _bool recording = false;
-    _bool playing   = false;
-    _bool loop      = false;
+    _bool playing = false;
+    _bool loop = false;
 
-    _float curTime   = 0.f;
-    _float endTime   = 10.f;
+    _float curTime = 0.f;
+    _float endTime = 10.f;
     _float timeScale = 1.f;
 
     _float editTime = 0.f;
-    _float editFov  = 60.f;
+    _float editFov = 60.f;
     _float editRoll = 0.f;
+
+    CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
+    CamOrbitState     orbit{};
 };
 struct CamToolKeyPolicy
 {
     _float defaultStepTime = 0.5f;
-    _float mergeEpsilon    = 1e-3f;
+    _float mergeEpsilon = 1e-3f;
 };
 
 NS_END
