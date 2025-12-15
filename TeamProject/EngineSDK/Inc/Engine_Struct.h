@@ -343,6 +343,22 @@ namespace Engine
 		_float2 vStartScale{};
 		_float2 vEndScale{};
 
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/*Texture Sheet Animation*/
+		_bool isParticleAnimated = false;
+		_bool isRandomFrameIndex = false;
+		_uint iCol{ 1 };
+		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{};
+
+		/*Noise*/
+		_float3 vStrength{};
+		_float3 vFrequency{};
+		_float3 vScrollSpeed{};
+
 	}PARTICLE_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC

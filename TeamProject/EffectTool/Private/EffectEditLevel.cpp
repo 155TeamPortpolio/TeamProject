@@ -12,6 +12,7 @@
 #include "EffectContainer_Edit.h"
 #include "SpriteNode_Edit.h"
 #include "ParticleNode_Edit.h"
+#include "MeshNode_Edit.h"
 
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
@@ -34,6 +35,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_EffectContainer", CEffectContainer_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_SpriteNode", CSpriteNode_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ParticleNode", CParticleNode_Edit::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_MeshNode", CMeshNode_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
 
