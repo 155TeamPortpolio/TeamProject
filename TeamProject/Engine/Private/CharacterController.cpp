@@ -121,7 +121,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	m_pController->getActor()->userData = this;
+	m_pController->getActor()->userData = m_pOwner;
 	Set_Position(m_pOwnerTransform->Get_WorldPos());
 
 	PxShape* pShape;

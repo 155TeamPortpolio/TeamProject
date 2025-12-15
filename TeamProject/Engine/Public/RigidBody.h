@@ -21,7 +21,6 @@ public:
 public:																
 	HRESULT Initialize_Prototype() override;
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
-	void	Update(_float dt);
 	void	Late_Update(_float dt);
 	void	Render_GUI();
 

@@ -21,14 +21,14 @@ public:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
+    void            Update(_float dt);
+    void            Render_GUI();
     // 충돌 이벤트 핸들러 (System에서 호출)
     virtual void    OnCollisionEnter(ICollidable* pOther) override;
     virtual void    OnCollisionStay(ICollidable* pOther) override;
     virtual void    OnCollisionExit(ICollidable* pOther) override;
     void            OnTriggerEnter(ICollidable* pOther) override;
     void            OnTriggerExit(ICollidable* pOther) override;
-
-    void Render_GUI();
 
 #ifdef _DEBUG
     virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
@@ -46,8 +46,12 @@ private:
     void            Update_LocalPose();
 
 private:
+    class IPhysicsService*      m_pPhysicsSystem = { nullptr };
+    class CTransform*           m_pOwnerTransform = { nullptr };
     PxShape*                    m_pShape = { nullptr };
     class CRigidBody*           m_pAttachedRigidBody = { nullptr };
+    PxRigidStatic*              m_pStaticActor = { nullptr };
+
     COLLIDER_TYPE               m_eType = {};
     COLLISION_GROUP             m_eGroup = {};
     _uint                       m_iCollisionMask = {};
@@ -56,6 +60,7 @@ private:
     _float3                     m_vRotation = {};
     _bool                       m_bTrigger = {};
     string                      m_strMaterialTag = {};
+
 
 public:
     static CCollider* Create();

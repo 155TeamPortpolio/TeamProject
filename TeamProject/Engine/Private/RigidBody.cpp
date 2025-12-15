@@ -103,10 +103,6 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
-void CRigidBody::Update(_float dt)
-{
-}
-
 void CRigidBody::Late_Update(_float dt)
 {
 	if (!m_pActor) return;

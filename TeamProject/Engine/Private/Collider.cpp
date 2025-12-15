@@ -15,8 +15,9 @@ CCollider::CCollider()
 
 CCollider::CCollider(const CCollider& rhs)
 	:ICollidable(rhs)
-	,m_pShape(nullptr)
-	,m_pAttachedRigidBody(nullptr)
+	, m_pShape(nullptr)
+	, m_pAttachedRigidBody(nullptr)
+	, m_pStaticActor(nullptr)
 {
 }
 
@@ -30,25 +31,24 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	if (!pArg) return E_FAIL;
 	COLLIDER_DESC* pDesc = static_cast<COLLIDER_DESC*>(pArg);
 
-	// RigidBody 컴포넌트 찾기 : Collider 이전에 RigidBody가 먼저 추가되어야함
-	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
-	if (m_pAttachedRigidBody == nullptr)
-	{
-		MSG_BOX("CCollider::Initialize : Owner must have RigidBody component! Add RigidBody before Collider.");
-		return E_FAIL;
-	}
+	m_pPhysicsSystem = CGameInstance::GetInstance()->Get_PhysicsSystem();
+	if (!m_pPhysicsSystem) return E_FAIL;
 
-	// Geometry(모양) 생성
+	m_pOwnerTransform = m_pOwner->Get_Component<CTransform>();
+	if (!m_pOwnerTransform) return E_FAIL;
+
+	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
+
 	PxGeometry* pGeometry = nullptr;
 	switch (pDesc->eType)
 	{
-	case COLLIDER_TYPE::BOX: // Box: HalfExtents(x,y,z)
+	case COLLIDER_TYPE::BOX:
 		pGeometry = new PxBoxGeometry(pDesc->vSize.x * 0.5f, pDesc->vSize.y * 0.5f, pDesc->vSize.z * 0.5f);
 		break;
-	case COLLIDER_TYPE::SPHERE: // Sphere: Radius(x)
+	case COLLIDER_TYPE::SPHERE:
 		pGeometry = new PxSphereGeometry(pDesc->vSize.x);
 		break;
-	case COLLIDER_TYPE::CAPSULE: // Capsule: Radius(x)/HalfHeight(y)
+	case COLLIDER_TYPE::CAPSULE:
 		pGeometry = new PxCapsuleGeometry(pDesc->vSize.x, pDesc->vSize.y * 0.5f);
 		break;
 	}
@@ -59,11 +59,48 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	m_pShape = m_pAttachedRigidBody->Attach_Shape(*pGeometry, pDesc->strMaterialTag);
+	if (m_pAttachedRigidBody)	// Dynamic Actor(RigidBody O)
+	{
+		m_pShape = m_pAttachedRigidBody->Attach_Shape(*pGeometry, pDesc->strMaterialTag);
+	}
+	else						// Static Actor(RigidBody X)
+	{
+		PxPhysics* pPhysics = m_pPhysicsSystem->Get_Physics();
+		PxScene* pScene = m_pPhysicsSystem->Get_Scene();
+		if (!pPhysics || !pScene)
+		{
+			delete pGeometry;
+			return E_FAIL;
+		}
+
+		_vector vPos = m_pOwnerTransform->Get_WorldPos();
+		_matrix mWorldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+		_vector vScale, vRot, vTrans;
+		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+		PxTransform initialPose(
+			PxVec3(XMVectorGetX(vPos), XMVectorGetY(vPos), XMVectorGetZ(vPos)),
+			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
+		);
+
+		m_pStaticActor = pPhysics->createRigidStatic(initialPose);
+		if (!m_pStaticActor)
+		{
+			delete pGeometry;
+			return E_FAIL;
+		}
+
+		PxMaterial* pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
+		m_pShape = PxRigidActorExt::createExclusiveShape(*m_pStaticActor, *pGeometry, *pMaterial);
+
+		m_pStaticActor->userData = m_pOwner;
+		pScene->addActor(*m_pStaticActor);
+	}
+
 	if (!m_pShape)
 	{
 		delete pGeometry;
-		MSG_BOX("CCollider::Initialize : Failed to Attach Shape to RigidBody");
+		MSG_BOX("CCollider::Initialize : Failed to Create Shape");
 		return E_FAIL;
 	}
 
@@ -87,15 +124,12 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	// 초기 위치 및 회전값 설정
 	_vector3 vPos = pDesc->vCenter;
 	_vector4 vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
-	_float3 vP = vPos;
-	_float4 vQ = vRot;
 	PxTransform localPose;
-	localPose.p = PxVec3(vP.x, vP.y, vP.z);
-	localPose.q = PxQuat(vQ.x, vQ.y, vQ.z, vQ.w);
+	localPose.p = PxVec3(vPos.x, vPos.y, vPos.z);
+	localPose.q = PxQuat(vRot.x, vRot.y, vRot.z, vRot.w);
 	m_pShape->setLocalPose(localPose);
-
-
 	m_pShape->userData = this;		// UserData 설정
+
 	delete pGeometry;				// Geometry 메모리 해제
 
 	// 멤버 변수 저장
@@ -112,6 +146,23 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	CGameInstance::GetInstance()->Get_CollisionSystem()->RegisterCollidable(this, -1);
 
 	return S_OK;
+}
+
+void CCollider::Update(_float dt)
+{
+	if (m_pStaticActor && !m_pAttachedRigidBody)
+	{
+		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();
+		_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
+		_vector vScale, vRot, vTrans;
+		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+		PxTransform pose(
+			PxVec3(vPos.x, vPos.y, vPos.x),
+			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
+		);
+		m_pStaticActor->setGlobalPose(pose);
+	}
 }
 
 void CCollider::OnCollisionEnter(ICollidable* pOther)
@@ -245,10 +296,12 @@ void CCollider::Render_GUI()
 
 	ImGui::SeparatorText("Collider");
 
-	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 300), true))
+	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 350), true))
 	{
 		ImGui::Text("Type: %s", m_eType == COLLIDER_TYPE::BOX ? "Box" :
 			m_eType == COLLIDER_TYPE::SPHERE ? "Sphere" : "Capsule");
+
+		ImGui::Text("Mode: %s", m_pAttachedRigidBody ? "Dynamic" : "Static");
 
 		_bool bTrigger = m_bTrigger;
 		if (ImGui::Checkbox("Is Trigger", &bTrigger))
@@ -310,7 +363,8 @@ void CCollider::Render_GUI()
 			{
 				if (pOther && pOther->Get_Owner())
 				{
-					ImGui::BulletText("%s", pOther->Get_Owner()->Get_InstanceName().c_str());
+					const char* typeStr = dynamic_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
+					ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
 				}
 			}
 		}
@@ -321,20 +375,30 @@ void CCollider::Render_GUI()
 #ifdef _DEBUG
 void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
-	if (!m_pShape || !m_pAttachedRigidBody || !m_pAttachedRigidBody->Get_Body()) return;
+	if (!m_pShape) return;
 
-	PxTransform trans = PxShapeExt::getGlobalPose(*m_pShape, *m_pAttachedRigidBody->Get_Body());
+	PxTransform trans;
+	if (m_pAttachedRigidBody)
+	{
+		trans = PxShapeExt::getGlobalPose(*m_pShape, *m_pAttachedRigidBody->Get_Body());
+	}
+	else if (m_pStaticActor)
+	{
+		trans = PxShapeExt::getGlobalPose(*m_pShape, *m_pStaticActor);
+	}
+	else
+	{
+		return;
+	}
 
-	// DirectX Math로 변환
 	XMFLOAT3 vPos(trans.p.x, trans.p.y, trans.p.z);
 	XMFLOAT4 vRot(trans.q.x, trans.q.y, trans.q.z, trans.q.w);
 
-	// 타입에 따라 DX::Draw 호출
 	if (m_eType == COLLIDER_TYPE::BOX)
 	{
 		BoundingOrientedBox obb;
 		obb.Center = vPos;
-		obb.Extents = _float3(m_vSize.x * 0.5f, m_vSize.y * 0.5f, m_vSize.z * 0.5f); // Half Size
+		obb.Extents = _float3(m_vSize.x * 0.5f, m_vSize.y * 0.5f, m_vSize.z * 0.5f);
 		obb.Orientation = vRot;
 		DX::Draw(pBatch, obb, vColor);
 	}
@@ -349,7 +413,6 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 	{
 		BoundingOrientedBox obb;
 		obb.Center = vPos;
-		// 캡슐 전체 크기 근사 (Radius, Height/2 + Radius, Radius)
 		obb.Extents = _float3(m_vSize.x, m_vSize.y * 0.5f + m_vSize.x, m_vSize.x);
 		obb.Orientation = vRot;
 		DX::Draw(pBatch, obb, vColor);
@@ -377,6 +440,17 @@ CComponent* CCollider::Clone()
 void CCollider::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
+
+	if (m_pStaticActor)
+	{
+		if (m_pStaticActor->getScene())
+		{
+			m_pStaticActor->getScene()->removeActor(*m_pStaticActor);
+		}
+		m_pStaticActor->release();
+		m_pStaticActor = nullptr;
+	}
+
 	m_pShape = nullptr;
 	__super::Free();
 }

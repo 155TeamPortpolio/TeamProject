@@ -127,7 +127,9 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pCollisionSystem->Update(dt);
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(realDt);
-
+#ifdef USINGPHYSICS
+	m_pPhysicsSystem->Late_Update(dt);
+#endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();
 	m_pObjectManager->Post_EngineUpdate(realDt);
