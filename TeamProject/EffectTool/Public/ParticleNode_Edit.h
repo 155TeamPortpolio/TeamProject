@@ -68,5 +68,10 @@ private:
     _float4 m_vStartColor{ 1.f,1.f,1.f,1.f };
     _float4 m_vEndColor{ 1.f,1.f,1.f,1.f };
 
+    _bool m_IsRandomFrameIndex = false;
+    _bool m_IsParticleAnimated = false;
+    _uint m_iCol{ 1 };
+    _uint m_iRow{ 1 };
+
 };
 NS_END

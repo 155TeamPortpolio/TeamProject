@@ -17,6 +17,8 @@ public:
 
 		_float2 vStartSize{};
 		_float2 vSize{};
+
+		_uint iFrameIndex{};
 	}PARTICLE;
 
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
@@ -90,9 +92,13 @@ private:
 	_float m_fGravityScale{};
 
 	/*Modules*/
+	_uint m_iTextureCol{ 1 };
+	_uint m_iTextureRow{ 1 };
+
 	class CLifeTimeVelocity* m_pLifeTimeVelocity = { nullptr };
 	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
 	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
+	class CTextureSheetAnimation* m_pTextureSheetAnimation = { nullptr };
 	vector<class IParticleModule*> m_Modules;
 
 public:

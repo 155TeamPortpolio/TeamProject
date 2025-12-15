@@ -171,6 +171,12 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		isDirty = true;
 	}
 
+	ImGui::SeparatorText("Texture Sheet Animation");
+	isDirty |= ImGui::Checkbox("Is Random Frame Index", &m_IsRandomFrameIndex);
+	isDirty |= ImGui::Checkbox("Is Particle Animated", &m_IsParticleAnimated);
+	isDirty |= ImGui::DragInt("Texture Col", reinterpret_cast<_int*>(&m_iCol));
+	isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
+
 	if (isDirty)
 	{
 		PARTICLE_NODE node{};
@@ -195,6 +201,11 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		
 		node.vStartColor = m_vStartColor;
 		node.vEndColor = m_vEndColor;
+
+		node.isRandomFrameIndex = m_IsRandomFrameIndex;
+		node.isParticleAnimated = m_IsParticleAnimated;
+		node.iCol = m_iCol;
+		node.iRow = m_iRow;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

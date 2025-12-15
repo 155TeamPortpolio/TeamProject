@@ -5,11 +5,16 @@
 #include "ResourceMgr.h"
 #include "Helper_Func.h"
 
+#include "Material.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
+
 /*Module*/
 #include "IParticleModule.h"
 #include "LifeTimeVelocity.h"
 #include "LifeTimeSize.h"
 #include "LifeTimeColor.h"
+#include "TextureSheetAnimation.h"
 
 CParticleSystem::CParticleSystem()
 {
@@ -29,14 +34,17 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	m_pLifeTimeVelocity = CLifeTimeVelocity::Create();
 	m_pLifeTimeSize = CLifeTimeSize::Create();
 	m_pLifeTimeColor = CLifeTimeColor::Create();
+	m_pTextureSheetAnimation = CTextureSheetAnimation::Create();
 
 	m_Modules.push_back(m_pLifeTimeVelocity);
 	m_Modules.push_back(m_pLifeTimeSize);
 	m_Modules.push_back(m_pLifeTimeColor);
+	m_Modules.push_back(m_pTextureSheetAnimation);
 
 	Safe_AddRef(m_pLifeTimeVelocity);
 	Safe_AddRef(m_pLifeTimeSize);
 	Safe_AddRef(m_pLifeTimeColor);
+	Safe_AddRef(m_pTextureSheetAnimation);
 
 	return S_OK;
 }
@@ -153,6 +161,22 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 		Desc.vStartColor = particleDesc.vStartColor;
 		Desc.vEndColor = particleDesc.vEndColor;
 		m_pLifeTimeColor->SetParams(&Desc);
+	}
+
+	{
+		CTextureSheetAnimation::TEXTURE_SHEET_ANIMATION_DESC Desc{};
+		Desc.isParticleAnimated = particleDesc.isParticleAnimated;
+		Desc.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
+		Desc.iCol = particleDesc.iCol;
+		Desc.iRow = particleDesc.iRow;
+		m_pTextureSheetAnimation->SetParams(&Desc);
+
+		m_iTextureCol = Desc.iCol;
+		m_iTextureRow = Desc.iRow;
+
+		auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		customInstance->Set_Param("Col", { &m_iTextureCol,"uint",sizeof(_uint) });
+		customInstance->Set_Param("Row", { &m_iTextureRow,"uint",sizeof(_uint) });
 	}
 
 	m_Particles.resize(m_iMaxSpawnParticleCount);
@@ -300,6 +324,8 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 
 	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
 
+	if (m_pTextureSheetAnimation)
+		m_pTextureSheetAnimation->SetUpParticle(particle);
 }
 
 void CParticleSystem::BuildInstanceData()
@@ -327,6 +353,7 @@ void CParticleSystem::BuildInstanceData()
 		data.vVelocity = velocity;
 		data.vColor = particle.vColor;
 		data.vLifeTime = lifeTime;
+		data.iFrameIndex = particle.iFrameIndex;
 
 		m_InstanceDatas.push_back(data);
 	}
@@ -361,4 +388,5 @@ void CParticleSystem::Free()
 	Safe_Release(m_pLifeTimeVelocity);
 	Safe_Release(m_pLifeTimeSize);
 	Safe_Release(m_pLifeTimeColor);
+	Safe_Release(m_pTextureSheetAnimation);
 }

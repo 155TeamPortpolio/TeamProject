@@ -8,7 +8,8 @@ class CTextureSheetAnimation :
 public:
     typedef struct tagTextureSheetAnimationDesc : public IParticleModule::PARTICLE_MODULE_DESC
     {
-        _float fFrameSpeed{};
+        _bool isRandomFrameIndex = false;
+        _bool isParticleAnimated = false;
         _uint iCol{ 1 };
         _uint iRow{ 1 };
     }TEXTURE_SHEET_ANIMATION_DESC;
@@ -17,6 +18,7 @@ private:
     virtual ~CTextureSheetAnimation() DEFAULT;
 
 public:
+    void SetUpParticle(CParticleSystem::PARTICLE& particle);
     void SetParams(PARTICLE_MODULE_DESC* pDesc) override;
     void Update(CParticleSystem::PARTICLE& particle, _float dt) override;
 
@@ -25,6 +27,8 @@ public:
     virtual void Free() override;
 
 private:
+    _bool m_IsRandomFrameIndex = false;
+    _bool m_IsParticleAnimated = false;
     _float m_fFrameSpeed{};
     _uint m_iCol{ 1 };
     _uint m_iRow{ 1 };

@@ -2,6 +2,9 @@
 
 float4x4 g_WorldMatrix;
 
+uint Col;
+uint Row;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -9,6 +12,7 @@ struct VS_IN
     float3 vVelocity : TEXCOORD0;
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
+    uint iFrameIndex : TEXCOORD3;
 };
 
 struct VS_OUT
@@ -18,6 +22,7 @@ struct VS_OUT
     float3 vVelocity : TEXCOORD0;
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
+    uint iFrameIndex : TEXCOORD3;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -34,6 +39,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vVelocity = In.vVelocity;
     Out.vColor = In.vColor;
     Out.vLifeTime = In.vLifeTime;
+    Out.iFrameIndex = In.iFrameIndex;
     
     return Out;
 }
@@ -45,6 +51,7 @@ struct GS_IN
     float3 vVelocity : TEXCOORD0;
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
+    uint iFrameIndex : TEXCOORD3;
 };
 
 struct GS_OUT
@@ -53,6 +60,7 @@ struct GS_OUT
     float2 vTexcoord : TEXCOORD0;
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
+    uint iFrameIndex : TEXCOORD3;
 };
 
 [maxvertexcount(6)]
@@ -106,21 +114,25 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[0].vTexcoord = float2(0, 0);
     v[0].vColor = In[0].vColor;
     v[0].vLifeTime = In[0].vLifeTime;
+    v[0].iFrameIndex = In[0].iFrameIndex;
 
     v[1].vPosition = mul(float4(p1, 1.f), matrixVP);
     v[1].vTexcoord = float2(1, 0);
     v[1].vColor = In[0].vColor;
     v[1].vLifeTime = In[0].vLifeTime;
+    v[1].iFrameIndex = In[0].iFrameIndex;
     
     v[2].vPosition = mul(float4(p2, 1.f), matrixVP);
     v[2].vTexcoord = float2(1, 1);
     v[2].vColor = In[0].vColor;
     v[2].vLifeTime = In[0].vLifeTime;
+    v[2].iFrameIndex = In[0].iFrameIndex;
     
     v[3].vPosition = mul(float4(p3, 1.f), matrixVP);
     v[3].vTexcoord = float2(0, 1);
     v[3].vColor = In[0].vColor;
     v[3].vLifeTime = In[0].vLifeTime;
+    v[3].iFrameIndex = In[0].iFrameIndex;
     
     triStream.Append(v[0]);
     triStream.Append(v[1]);
@@ -139,6 +151,7 @@ struct PS_IN
     float2 vTexcoord : TEXCOORD0;
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
+    uint iFrameIndex : TEXCOORD3;
 };
 
 struct PS_OUT
@@ -150,12 +163,20 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    float4 color = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 FrameSize = float2(1.f / Col, 1.f / Row);
+    int iFrameX = In.iFrameIndex % Col;
+    int iFrameY = In.iFrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
+    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
+    
+    float4 color = DiffuseTexture.Sample(LinearSampler, TexCoord);
     //if (color.a < 0.1f)
     //    discard;
     
     Out.vColor = lerp(In.vColor, color, color.a);
     Out.vColor.a = color.a;
+    
+    //Out.vColor = float4(1.f / In.iFrameIndex, 1.f / Col, 1.f / Row, 1.f);
     
     return Out;
 }
