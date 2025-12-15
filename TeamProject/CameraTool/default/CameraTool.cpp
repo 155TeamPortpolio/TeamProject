@@ -32,7 +32,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
     auto timer = game->Get_TimeMgr();
     Safe_AddRef(timer);
     timer->Add_Timer("Default");
-    timer->Add_Timer("FPS_60");
+    timer->Add_Timer("FPS_144");
 
     MSG    msg{};
     _float timeAcc{};
@@ -56,8 +56,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
 
         if (timeAcc >= 1.f / FrameRate)
         {
-            timer->Update_Timer("FPS_60");
-            _float dt = timer->Get_DeltaTime("FPS_60");
+            timer->Update_Timer("FPS_144");
+            _float dt = timer->Get_DeltaTime("FPS_144");
             mainApp->Update(dt);
             mainApp->Render();
             timeAcc = 0.f;

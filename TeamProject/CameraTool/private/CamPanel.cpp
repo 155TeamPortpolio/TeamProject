@@ -47,7 +47,6 @@ namespace
         ScopedCamToolStyle()
         {
             ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
-
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
             ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f,  7.f));
             ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f,   8.f));
@@ -186,7 +185,7 @@ void CCamPanel::Render_GUI()
 
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
-
+     
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
     ScopedCamToolStyle styleScope;
 
