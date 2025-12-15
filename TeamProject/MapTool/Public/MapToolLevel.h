@@ -29,7 +29,7 @@ public:
 private:
     HRESULT         Ready_MapToolObjects();
     HRESULT         Ready_MapToolGui();
-
+    void            Rake_Resources();
 private:
     CGameInstance*  m_pGameInstance = { nullptr };
 
