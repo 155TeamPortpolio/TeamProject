@@ -342,6 +342,7 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 	particle.vStartSize = particle.vSize;
 
 	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
+	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
 
 	if (m_pTextureSheetAnimation)
 		m_pTextureSheetAnimation->SetUpParticle(particle);

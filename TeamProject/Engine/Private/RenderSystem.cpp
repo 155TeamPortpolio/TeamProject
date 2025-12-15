@@ -72,6 +72,7 @@ HRESULT CRenderSystem::Render()
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
+
 	/*Debug Rendering*/
 
 #ifdef _DEBUG

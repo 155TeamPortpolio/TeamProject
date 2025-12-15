@@ -11,7 +11,7 @@ void CNoise::SetParams(PARTICLE_MODULE_DESC* pDesc)
 {
 	NOISE_DESC* pNoiseDesc = static_cast<NOISE_DESC*>(pDesc);
 
-	m_vStrength = pNoiseDesc->vFrequency;
+	m_vStrength = pNoiseDesc->vStrength;
 	m_vFrequency = pNoiseDesc->vFrequency;
 	m_vScrollSpeed = pNoiseDesc->vScrollSpeed;
 }
@@ -20,13 +20,12 @@ void CNoise::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
 	m_fElapsedTime += dt;
 
-	_vector3 vSample = particle.vPosition * m_vFrequency + m_fElapsedTime * m_vScrollSpeed;
+	_vector3 vSample = particle.vPosition * m_vFrequency * particle.fNoiseFrequency + m_fElapsedTime * m_vScrollSpeed;
 	_vector3 noise{};
 	noise.x = MakeNoise(vSample + _vector3(17.1f, 0.f, 0.f));
 	noise.y = MakeNoise(vSample + _vector3(0.f, 31.7f, 0.f));
 	noise.z = MakeNoise(vSample + _vector3(0.f, 0.f, 47.3f));
 
-	noise = noise * 2.f - _vector3(1.f, 1.f, 1.f);
 	noise *= m_vStrength;
 
 	particle.vVelocity = particle.vVelocity + noise * dt;

@@ -19,6 +19,7 @@ public:
 		_float2 vSize{};
 
 		_uint iFrameIndex{};
+		_float fNoiseFrequency{};
 	}PARTICLE;
 
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
