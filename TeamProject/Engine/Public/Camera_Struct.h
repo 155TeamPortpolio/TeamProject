@@ -32,20 +32,25 @@ struct CamKeyFrame // 한 스퀀스 안에서 특정 시점의 카메라 상태를 표현하는 단일 �
 	CamPosInterp outPosInterp    = CamPosInterp::Linear;
 	CamRotInterp outRotInterp    = CamRotInterp::Slerp;
 	CamFovInterp outFovInterp    = CamFovInterp::Linear;
+
+	_bool        useCustomEase   = false;
+	CamEaseType  outEase = CamEaseType::None;
 };
 struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋 데이터.
 {                      // 어떤 타입/리그의 카메라인지와, 그 스퀀스를 구성하는 키프레임/마커 목록을 가짐.
 	string              name; 
 					    
-	CamType             camType  = CamType::Cinematic;
-	CamRigType          rigType  = CamRigType::Free;
-	CamProjType         projType = CamProjType::Perspective;
+	CamType             camType      = CamType::Cinematic;
+	CamRigType          rigType      = CamRigType::Free;
+	CamProjType         projType     = CamProjType::Perspective;
 					    
 	CamPlaybackMode     playbackMode = CamPlaybackMode::Once;
 					    
-	CamPosInterp        posInterp = CamPosInterp::Linear;
-	CamRotInterp        rotInterp = CamRotInterp::Slerp;
-	CamFovInterp        fovInterp = CamFovInterp::Linear;
+	CamPosInterp        posInterp    = CamPosInterp::Linear;
+	CamRotInterp        rotInterp    = CamRotInterp::Slerp;
+	CamFovInterp        fovInterp    = CamFovInterp::Linear;
+
+	CamEaseType         segmentEase  = CamEaseType::None;
 
 	CamOrbitArcDesc     orbitArc{};
 

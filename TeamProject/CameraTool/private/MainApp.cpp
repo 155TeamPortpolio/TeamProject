@@ -2,7 +2,7 @@
 #include "MainApp.h"
 #include "FirstLevel.h"
 
-void MainApp::Init()
+void CMainApp::Init()
 {
 	game = CGameInstance::GetInstance();
 	Safe_AddRef(game);
@@ -24,12 +24,12 @@ void MainApp::Init()
 #endif 
 }
 
-void MainApp::Update(float dt)
+void CMainApp::Update(float dt)
 {
 	game->Update_Engine(dt);
 }
 
-void MainApp::Render()
+void CMainApp::Render()
 {
 	_float4 color = { 0.f, 0.f, 0.f, 1.f };
 	game->Draw_Begin(&color);
@@ -37,21 +37,21 @@ void MainApp::Render()
 	game->Draw_End();
 }
 
-void MainApp::Set_Levels()
+void CMainApp::Set_Levels()
 {
 	game->Get_LevelMgr()->Register_Level("First_Level", []()-> CLevel* { return CFirstLevel::Create("First_Level"); });
 	game->Notify_LevelSet();
 	game->Get_LevelMgr()->Request_ChangeLevel("First_Level", false);
 }
 
-MainApp* MainApp::Create()
+CMainApp* CMainApp::Create()
 {
-	auto inst = new MainApp();
+	auto inst = new CMainApp();
 	inst->Init();
 	return inst;
 }
 
-void MainApp::Free()
+void CMainApp::Free()
 {
 	__super::Free();
 	game->Release_Engine();

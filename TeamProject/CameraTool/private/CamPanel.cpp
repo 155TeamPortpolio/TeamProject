@@ -454,6 +454,15 @@ void CCamPanel::DrawCamSelector()
 
     bool changedAny = false;
 
+    auto GetEaseLabel = [](_uint v) -> const char*
+        {
+            const CamEaseType m = static_cast<CamEaseType>(v);
+            if (m == CamEaseType::None)      return "None";
+            if (m == CamEaseType::InOutSine) return "InOutSine";
+            if (m == CamEaseType::OutCubic)  return "OutCubic";
+            return "Unknown";
+        };
+
     ImGui::PushID("InterpInline");
 
     ImGui::AlignTextToFramePadding();
@@ -509,7 +518,10 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("Rot");
     ImGui::SameLine();
     {
-        const char* rotPreview = (target.sequence->rotInterp == CamRotInterp::Slerp) ? "Slerp" : "Squad";
+        const char* rotPreview = "Slerp";
+        if (target.sequence->rotInterp == CamRotInterp::Squad) rotPreview = "Squad";
+        if (target.sequence->rotInterp == CamRotInterp::Hold)  rotPreview = "Hold";
+
         ImGui::SetNextItemWidth(140.f);
 
         if (ImGui::BeginCombo("##rot_interp", rotPreview))
@@ -522,6 +534,11 @@ void CCamPanel::DrawCamSelector()
             if (ImGui::Selectable("Squad", target.sequence->rotInterp == CamRotInterp::Squad))
             {
                 target.sequence->rotInterp = CamRotInterp::Squad;
+                changedAny = true;
+            }
+            if (ImGui::Selectable("Hold", target.sequence->rotInterp == CamRotInterp::Hold))
+            {
+                target.sequence->rotInterp = CamRotInterp::Hold;
                 changedAny = true;
             }
 
@@ -537,7 +554,10 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("FOV");
     ImGui::SameLine();
     {
-        const char* fovPreview = (target.sequence->fovInterp == CamFovInterp::Linear) ? "Linear" : "Smooth";
+        const char* fovPreview = "Linear";
+        if (target.sequence->fovInterp == CamFovInterp::Smooth) fovPreview = "Smooth";
+        if (target.sequence->fovInterp == CamFovInterp::Hold)   fovPreview = "Hold";
+
         ImGui::SetNextItemWidth(140.f);
 
         if (ImGui::BeginCombo("##fov_interp", fovPreview))
@@ -552,6 +572,46 @@ void CCamPanel::DrawCamSelector()
                 target.sequence->fovInterp = CamFovInterp::Smooth;
                 changedAny = true;
             }
+            if (ImGui::Selectable("Hold", target.sequence->fovInterp == CamFovInterp::Hold))
+            {
+                target.sequence->fovInterp = CamFovInterp::Hold;
+                changedAny = true;
+            }
+
+            ImGui::EndCombo();
+        }
+    }
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("Ease");
+    ImGui::SameLine();
+    {
+        const CamEaseType shown = target.sequence->segmentEase;
+
+        ImGui::SetNextItemWidth(140.f);
+
+        if (ImGui::BeginCombo("##seg_ease", GetEaseLabel((_uint)shown)))
+        {
+            if (ImGui::Selectable("None", shown == CamEaseType::None))
+            {
+                target.sequence->segmentEase = CamEaseType::None;
+                changedAny = true;
+            }
+            if (ImGui::Selectable("InOutSine", shown == CamEaseType::InOutSine))
+            {
+                target.sequence->segmentEase = CamEaseType::InOutSine;
+                changedAny = true;
+            }
+            if (ImGui::Selectable("OutCubic", shown == CamEaseType::OutCubic))
+            {
+                target.sequence->segmentEase = CamEaseType::OutCubic;
+                changedAny = true;
+            }
+
             ImGui::EndCombo();
         }
     }
@@ -1081,6 +1141,15 @@ void CCamPanel::DrawKeyframeList()
             return "Unknown";
         };
 
+    auto GetEaseLabel = [](_uint v) -> const char*
+        {
+            const CamEaseType m = static_cast<CamEaseType>(v);
+            if (m == CamEaseType::None)      return "None";
+            if (m == CamEaseType::InOutSine) return "InOutSine";
+            if (m == CamEaseType::OutCubic)  return "OutCubic";
+            return "Unknown";
+        };
+
     if (ImGui::BeginTable("KeyframeTable", 5, tableFlags, tableSize))
     {
         ImGui::TableSetupScrollFreeze(0, 1);
@@ -1258,6 +1327,47 @@ void CCamPanel::DrawKeyframeList()
                     }
 
                     if (!key.useCustomInterp) ImGui::EndDisabled();
+
+                    ImGui::SameLine();
+                    ImGui::Dummy(ImVec2(8.f, 0.f));
+                    ImGui::SameLine();
+
+                    bool customEase = key.useCustomEase;
+                    if (ImGui::Checkbox("##custom_ease", &customEase))
+                    {
+                        key.useCustomEase = customEase;
+                        if (key.useCustomEase)
+                            key.outEase = target.sequence->segmentEase;
+
+                        changedAny = true;
+                    }
+
+                    ImGui::SameLine();
+
+                    const CamEaseType shownEase = key.useCustomEase ? key.outEase : target.sequence->segmentEase;
+
+                    if (!key.useCustomEase) ImGui::BeginDisabled();
+
+                    ImGui::SetNextItemWidth(110.f);
+                    if (ImGui::BeginCombo("##ease", GetEaseLabel((_uint)shownEase)))
+                    {
+                        auto PickEase = [&](CamEaseType v)
+                            {
+                                if (ImGui::Selectable(GetEaseLabel((_uint)v), shownEase == v))
+                                {
+                                    key.outEase = v;
+                                    changedAny = true;
+                                }
+                            };
+
+                        PickEase(CamEaseType::None);
+                        PickEase(CamEaseType::InOutSine);
+                        PickEase(CamEaseType::OutCubic);
+
+                        ImGui::EndCombo();
+                    }
+
+                    if (!key.useCustomEase) ImGui::EndDisabled();
                 }
 
                 ImGui::PopID();
@@ -2216,6 +2326,9 @@ void CCamPanel::AddKey_Default()
     newKey.outPosInterp = target.sequence->posInterp;
     newKey.outRotInterp = target.sequence->rotInterp;
     newKey.outFovInterp = target.sequence->fovInterp;
+
+    newKey.useCustomEase = false;
+    newKey.outEase = target.sequence->segmentEase;
 
     auto& keys = GetKeyFrames();
 

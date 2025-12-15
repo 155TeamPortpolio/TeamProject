@@ -1,4 +1,5 @@
 #include "Engine_Defines.h"
+#include "Helper_Func.h"
 #include "CamSequencePlayer.h"
 #include "GameObject.h"
 
@@ -90,7 +91,7 @@ void CCamSequencePlayer::SetTime(_float t)
     RebuildIfNeeded();
 
     if (apply.applyEnabled)
-        ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+        ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
 void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
@@ -105,7 +106,7 @@ void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
         return;
 
     RebuildIfNeeded();
-    ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
 void CCamSequencePlayer::Update(_float dt)
@@ -150,7 +151,7 @@ void CCamSequencePlayer::Update(_float dt)
         }
     }
 
-    ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
 void CCamSequencePlayer::RebuildIfNeeded()
@@ -163,11 +164,6 @@ void CCamSequencePlayer::RebuildIfNeeded()
 
     const auto& keys = target.seq->keyframes;
     if (keys.empty()) return;
-
-    assert(eval.evaluator);
-    assert(eval.pos);
-    assert(eval.rot);
-    assert(eval.fov);
 
     eval.pos->SetSequence(target.seq);
     eval.rot->SetSequence(target.seq);
@@ -187,6 +183,42 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     if (apply.cam)
         apply.cam->Set_FOV(pose.fov);
 }
+
+_float CCamSequencePlayer::RemapTimeBySegmentEasing(_float t) const
+{
+    if (!target.seq) return t;
+
+    const auto& keys = target.seq->keyframes;
+    if (keys.size() < 2) return t;
+
+    const CamKeySegment segment = CamUtil::FindKeySegment(keys, t);
+
+    const _uint i = segment.segmentIdx;
+    if (i + 1 >= (_uint)keys.size()) return t;
+
+    CamEaseType ease = target.seq->segmentEase;
+    if (keys[(size_t)i].useCustomEase)
+        ease = keys[(size_t)i].outEase;
+
+    if (ease == CamEaseType::None)
+        return t;
+
+    const float t0 = keys[(size_t)i].time;
+    const float t1 = keys[(size_t)i + 1].time;
+
+    float u = segment.normalizedTime;
+    u = std::clamp(u, 0.f, 1.f);
+
+    switch (ease)
+    {
+    case CamEaseType::InOutSine: u = Math::EaseInOutSine(u); break;
+    case CamEaseType::OutCubic:  u = Math::EaseOutCubic(u);  break;
+    default: break;
+    }
+
+    return Math::Lerp(t0, t1, u);
+}
+
 
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {

@@ -124,9 +124,6 @@
     <ClCompile Include="..\private\FirstLevel.cpp">
       <Filter>01. Level</Filter>
     </ClCompile>
-    <ClCompile Include="CameraTool.cpp">
-      <Filter>99. Etc\99. Useless</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CamObj.cpp">
       <Filter>03. Obj</Filter>
     </ClCompile>
@@ -171,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Grid.cpp">
       <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="CameraTool.cpp">
+      <Filter>99. Etc\99. Useless</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -343,8 +343,6 @@
     <ClInclude Include="..\public\SpriteNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Camera_Enum.h" />
-    <ClInclude Include="..\Public\Camera_Struct.h" />
     <ClInclude Include="..\Public\MeshNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClInclude>
@@ -403,46 +401,40 @@
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamFovLinearEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamFovSmoothEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamPosBSplineEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamPosCatmullRomEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamPosCentripetalEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamPosHermiteEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClInclude Include="..\Public\ICamEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamPosLinearEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosCatmullRomEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosCentripetalEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosBSplineEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosHermiteEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamPosOrbitArcEvaulator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamPosPerSegmentEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamRotPerSegmentEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClInclude Include="..\Public\CamUtil.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamRotSlerpEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClInclude Include="..\Public\Camera_Enum.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamRotSquadEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClInclude Include="..\Public\Camera_Struct.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CamSequencePlayer.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
@@ -450,11 +442,26 @@
     <ClInclude Include="..\Public\CamSequencePlayerData.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamUtil.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\OrbitArcData.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotSlerpEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotSquadEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovSmoothEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -803,6 +810,60 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer">
       <UniqueIdentifier>{2f7e73b0-8a42-4e4a-967e-5ecf27c71370}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator">
+      <UniqueIdentifier>{dd423fe4-a9b6-4937-9d12-157fea35be0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator">
+      <UniqueIdentifier>{21cb8920-b749-493f-b204-ffd4231ec7d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom">
+      <UniqueIdentifier>{bdef3805-f32e-4a12-90a7-b3990e33322d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear">
+      <UniqueIdentifier>{14555aa9-dfad-47fb-96c8-06cb9b34c8b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal">
+      <UniqueIdentifier>{d06e229a-9da3-4bf8-9af3-1900dcff9617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline">
+      <UniqueIdentifier>{78a366f5-6050-4c4c-9431-e2c3a6530784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite">
+      <UniqueIdentifier>{c1cceb16-2702-4f6e-867d-e081b55d5716}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc">
+      <UniqueIdentifier>{07d21dfb-4c07-4636-afcf-c78846f4e07b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment">
+      <UniqueIdentifier>{a064f87d-209f-4e9a-8339-2862e4f2e137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator">
+      <UniqueIdentifier>{2bfd74cd-3cfe-4e5e-89dc-78da561068fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator">
+      <UniqueIdentifier>{49aaab53-845a-47c7-840e-4dd2c54654cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility">
+      <UniqueIdentifier>{48f047a4-90c3-4c87-bbf2-0922436f4a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp">
+      <UniqueIdentifier>{e8ef766a-4eb4-4715-9e3a-33f2106a1976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad">
+      <UniqueIdentifier>{a9d5d01a-aea3-40ba-b84d-855937c49a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment">
+      <UniqueIdentifier>{8208b72b-4b64-4ccb-8527-a5dac78af0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear">
+      <UniqueIdentifier>{f587f5ac-e362-45eb-be26-104eb55fe81e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth">
+      <UniqueIdentifier>{68e32831-78f1-492e-8148-331d46629033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment">
+      <UniqueIdentifier>{a31566f4-5cd5-41af-b864-2969ce586967}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1133,52 +1194,52 @@
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamFovPerSegmentEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamFovSmoothEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamPosBSplineEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamPosCatmullRomEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamPosCentripetalEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamPosHermiteEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamPosLinearEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosCatmullRomEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosCentripetalEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosBSplineEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosHermiteEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamPosOrbitArcEvaulator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamPosPerSegmentEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CamRotPerSegmentEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamRotSlerpEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\CamRotSquadEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClCompile Include="..\Private\CamUtil.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamSequencePlayer.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CamUtil.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    <ClCompile Include="..\Private\CamRotSlerpEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamRotSquadEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamRotPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovSmoothEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

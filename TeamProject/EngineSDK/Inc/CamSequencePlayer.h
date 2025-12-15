@@ -44,6 +44,7 @@ public:
 private:
 	void   RebuildIfNeeded();
 	void   ApplyPose(const CamPose& pose);
+	_float RemapTimeBySegmentEasing(_float t) const;
 
 private:
 	CamPlayerTarget        target{};
