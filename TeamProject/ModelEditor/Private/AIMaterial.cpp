@@ -96,6 +96,28 @@ void CAIMaterial::Render_GUI()
 
 	float childWidth = ImGui::GetContentRegionAvail().x;//->이건 넓이 설정
 	ImGui::SetNextItemWidth(childWidth);
+
+	if (ImGui::Button("Link_Shader"))
+	{
+		string filePath = Helper::OpenFile_Dialogue();
+		if (!filePath.empty())
+		{
+			filesystem::path baseDir =
+				filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
+			_bool inBin = !Helper::IsUnderDirectory(filesystem::path(filePath), baseDir);
+			if (inBin)
+			{
+				MSG_BOX("Invalid path: must be under ../Bin/ShaderFiles/");
+			}
+			else
+			{
+				string file = filesystem::path(filePath).filename().string();
+				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, filePath);
+				Link_Shader(G_GlobalLevelKey, file);
+			}
+		}
+	}
+
 	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
 		for (int i = 0; i < passes.size(); ++i) {
 			bool isSelected = (i == m_currentPassIndex);
@@ -118,6 +140,7 @@ void CAIMaterial::Render_GUI()
 	if (MaterialTabOpened)
 		Render_MaterialAdd();
 
+
 	__super::Render_GUI();
 }
 
@@ -129,7 +152,26 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 
 	float childWidth = ImGui::GetContentRegionAvail().x;//->이건 넓이 설정
 	ImGui::SetNextItemWidth(childWidth);
-
+	if (ImGui::Button("Link_Shader"))
+	{
+		string filePath = Helper::OpenFile_Dialogue();
+		if (!filePath.empty())
+		{
+			filesystem::path baseDir =
+				filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
+			_bool inBin = !Helper::IsUnderDirectory(filesystem::path(filePath), baseDir);
+			if (inBin)
+			{
+				MSG_BOX("Invalid path: must be under ../Bin/ShaderFiles/");
+			}
+			else
+			{
+				string file = filesystem::path(filePath).filename().string();
+				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, filePath);
+				Link_Shader(G_GlobalLevelKey, file);
+			}
+		}
+	}
 	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
 		for (int i = 0; i < passes.size(); ++i) {
 			bool isSelected = (i == m_currentPassIndex);
