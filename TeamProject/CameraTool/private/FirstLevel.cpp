@@ -2,7 +2,7 @@
 #include "FirstLevel.h"
 #include "DebugFreeCam.h"
 #include "DemoModel.h"
-#include "DemoGrid.h"
+#include "Grid.h"
 
 #include "CamPanel.h"
 
@@ -25,7 +25,7 @@ HRESULT CFirstLevel::Awake()
 
 	proto->Add_ProtoType("First_Level", "Proto_GameObject_DebugFreeCam", CDebugFreeCam::Create());
 	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
-	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoGrid", CDemoGrid::Create());
+	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoGrid", CGrid::Create());
 
 	CAMERA_DESC camDesc{};
 	camDesc.fAspect = static_cast<float>(WinX) / WinY;
@@ -44,9 +44,9 @@ HRESULT CFirstLevel::Awake()
 	demoModel->Get_Component<CTransform>()->Scale({ 0.5f, 0.5f, 0.5f });
 
 	CGameObject* demoGrid = Builder::Create_Object({ "First_Level", "Proto_GameObject_DemoGrid" })
-		.Position({})
+		.Position({ 0, 0, 0 })
+		.Scale({ 50.f, 1.f, 50.f })
 		.Build("Demo_Grid");
-	demoGrid->Get_Component<CTransform>()->Scale({ 10.f, 10.f, 10.f });
 
 	objMgr->Add_Object(debugCamObj, { "First_Level", "Camera_Layer" });
 	objMgr->Add_Object(demoModel, { "First_Level", "Model_Layer" });

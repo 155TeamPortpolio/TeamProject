@@ -70,7 +70,7 @@
     <ClInclude Include="..\public\DebugCamData.h">
       <Filter>03. Obj\00. DebugCam</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DemoGrid.h">
+    <ClInclude Include="..\public\Grid.h">
       <Filter>03. Obj\02. DemoGrid</Filter>
     </ClInclude>
   </ItemGroup>
@@ -169,7 +169,7 @@
     <ClCompile Include="..\private\DemoModel.cpp">
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemoGrid.cpp">
+    <ClCompile Include="..\private\Grid.cpp">
       <Filter>03. Obj\02. DemoGrid</Filter>
     </ClCompile>
   </ItemGroup>

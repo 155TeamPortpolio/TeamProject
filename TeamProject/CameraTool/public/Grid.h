@@ -2,18 +2,18 @@
 #include "GameObject.h"
 
 NS_BEGIN(CameraTool)
-class CDemoGrid : public CGameObject
+class CGrid :
+    public CGameObject
 {
-    struct HittedArea
-    {
+    struct HittedArea {
         _float4 vEdgeMin = {};
         _float4 vEdgeMax = {};
     };
 
 protected:
-    CDemoGrid();
-    CDemoGrid(const CDemoGrid& rhs);
-    virtual ~CDemoGrid() DEFAULT;
+    CGrid();
+    CGrid(const CGrid& rhs);
+    virtual ~CGrid() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -26,13 +26,13 @@ public:
     void Render_GUI() override;
 
 private:
-    ID3D11Device* m_pDevice = { nullptr };
-    ID3D11DeviceContext* m_pContext = { nullptr };
+    _uint                   m_iRayReceiverID = {};
 
 public:
-    static CDemoGrid* Create();
+    static CGrid* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };
 
 NS_END
+
