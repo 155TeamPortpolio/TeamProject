@@ -36,6 +36,21 @@ void CCharacterController::Set_PlanarVelocity(_fvector vVelocity)
 	m_vVelocity.z = vIn.z;
 }
 
+void CCharacterController::Set_VerticalVelocity(_float fVelocity)
+{
+	m_vVelocity.y = fVelocity;
+}
+
+void CCharacterController::Set_MaxSpeed(_float fMaxSpeed)
+{
+	m_fMaxSpeed = fMaxSpeed;
+}
+
+void CCharacterController::Set_GravityEnabled(_bool bEnabled)
+{
+	m_bGravityEnabled = bEnabled;
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;
@@ -105,11 +120,14 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 		delete m_pHitReport;
 		return E_FAIL;
 	}
-	m_pController->getActor()->userData = m_pOwner;
+
+	m_pController->getActor()->userData = this;
 	Set_Position(m_pOwnerTransform->Get_WorldPos());
+
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
-	
+	pShape->userData = this;
+
 	PxFilterData filterData;
 	filterData.word0 = 1 << ENUM(pDesc->eGroup);
 	filterData.word1 = pDesc->iCollisionMask;
@@ -121,6 +139,9 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 
 	m_fHeight = pDesc->fHeight;
 	m_fRadius = pDesc->fRadius;
+	m_fStepOffset = pDesc->fStepOffset;
+	m_fSlopeLimit = pDesc->fSlopeLimit;
+	m_fMaxSpeed = pDesc->fMaxSpeed;
 
 	return S_OK;
 }
@@ -142,13 +163,22 @@ void CCharacterController::OnCollisionExit(ICollidable* pOther)
 	m_pOwner->OnCollisionExit();
 }
 
+void CCharacterController::OnTriggerEnter(ICollidable* pOther)
+{
+	m_pOwner->OnTriggerEnter();
+}
+
+void CCharacterController::OnTriggerExit(ICollidable* pOthter)
+{
+	m_pOwner->OnTriggerExit();
+}
+
 
 void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;
 	Apply_Gravity(dt);
 	Apply_Move(dt);
-
 }
 
 void CCharacterController::Late_Update(_float dt)
@@ -161,44 +191,93 @@ void CCharacterController::Late_Update(_float dt)
 
 void CCharacterController::Render_GUI()
 {
-	//if (!Get_CompActive()) return;
+	if (!Get_CompActive()) return;
 
-	//ImGui::SeparatorText("CharacterController");
-	//if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
-	//{
-	//	ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
+	ImGui::SeparatorText("CharacterController");
 
-	//	if (m_pController)
-	//	{
-	//		PxExtendedVec3 pos = m_pController->getPosition();
-	//		ImGui::Text("Position: (%.2f, %.2f, %.2f)", (float)pos.x, (float)pos.y, (float)pos.z);
+	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 400), true))
+	{
+		ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
 
-	//		PxExtendedVec3 foot = m_pController->getFootPosition();
-	//		ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
+		if (m_pController)
+		{
+			PxExtendedVec3 pos = m_pController->getPosition();
+			ImGui::Text("Position: (%.2f, %.2f, %.2f)", (float)pos.x, (float)pos.y, (float)pos.z);
 
-	//		ImGui::Text("Height: %.2f", m_fHeight);
-	//		ImGui::Text("Radius: %.2f", m_fRadius);
-	//	}
+			PxExtendedVec3 foot = m_pController->getFootPosition();
+			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
-	//	ImGui::Separator();
-	//	ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
-	//	ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
+			ImGui::Separator();
+			ImGui::Text("Properties");
 
-	//	if (!m_CurrentCollisions.empty())
-	//	{
-	//		ImGui::Separator();
-	//		ImGui::Text("Colliding With:");
-	//		for (auto pOther : m_CurrentCollisions)
-	//		{
-	//			if (pOther && pOther->Get_Owner())
-	//			{
-	//				const char* typeStr = static_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
-	//				ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
-	//			}
-	//		}
-	//	}
-	//}
-	//ImGui::EndChild();
+			_bool bGravity = m_bGravityEnabled;
+			if (ImGui::Checkbox("Gravity Enabled", &bGravity))
+			{
+				Set_GravityEnabled(bGravity);
+			}
+
+			_float fHeight = m_fHeight;
+			if (ImGui::DragFloat("Height", &fHeight, 0.01f, 0.1f, 10.0f))
+			{
+				Resize(fHeight, m_fRadius);
+			}
+
+			_float fRadius = m_fRadius;
+			if (ImGui::DragFloat("Radius", &fRadius, 0.01f, 0.1f, 5.0f))
+			{
+				Resize(m_fHeight, fRadius);
+			}
+
+			_float fStepOffset = m_fStepOffset;
+			if (ImGui::DragFloat("Step Offset", &fStepOffset, 0.01f, 0.0f, 2.0f))
+			{
+				Set_StepOffset(fStepOffset);
+			}
+
+			_float fSlopeLimit = m_fSlopeLimit;
+			if (ImGui::DragFloat("Slope Limit", &fSlopeLimit, 0.1f, 0.0f, 90.0f))
+			{
+				Set_SlopeLimit(fSlopeLimit);
+			}
+
+			ImGui::Separator();
+			ImGui::Text("Velocity");
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", m_vVelocity.x, m_vVelocity.y, m_vVelocity.z);
+
+			_float fSpeed = sqrtf(m_vVelocity.x * m_vVelocity.x + m_vVelocity.z * m_vVelocity.z);
+			ImGui::Text("Planar Speed: %.2f m/s", fSpeed);
+
+			_float fMaxSpeed = m_fMaxSpeed;
+			if (ImGui::DragFloat("Max Speed", &fMaxSpeed, 0.1f, 0.0f, 100.0f))
+			{
+				Set_MaxSpeed(fMaxSpeed);
+			}
+
+			if (ImGui::Button("Reset Velocity"))
+			{
+				m_vVelocity = _float3(0.f, 0.f, 0.f);
+			}
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
+		ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
+
+		if (!m_CurrentCollisions.empty())
+		{
+			ImGui::Separator();
+			ImGui::Text("Colliding With:");
+			for (auto pOther : m_CurrentCollisions)
+			{
+				if (pOther && pOther->Get_Owner())
+				{
+					const char* typeStr = dynamic_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
+					ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
+				}
+			}
+		}
+	}
+	ImGui::EndChild();
 }
 
 #ifdef _DEBUG
@@ -218,6 +297,30 @@ void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _
 }
 #endif
 
+void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed)
+{
+	if (!m_pController) return;
+
+	_vector vNormalized = XMVector3Normalize(vDir);
+	Set_PlanarVelocity(vNormalized * fSpeed);
+}
+
+void CCharacterController::Move_Velocity(_fvector vVelocity)
+{
+	if (!m_pController) return;
+
+	_float3 vVel;
+	XMStoreFloat3(&vVel, vVelocity);
+	m_vVelocity.x = vVel.x;
+	m_vVelocity.z = vVel.z;
+}
+
+void CCharacterController::Stop_Movement()
+{
+	m_vVelocity.x = 0.f;
+	m_vVelocity.z = 0.f;
+}
+
 void CCharacterController::Move(_fvector vDisp, _float dt)
 {
 	if (!m_pController) return;
@@ -228,11 +331,11 @@ void CCharacterController::Move(_fvector vDisp, _float dt)
 
 	PxControllerFilters filters;
 	filters.mFilterData = &m_FilterData;
-	// 이동 실행 (충돌 발생 시 내부적으로 m_pHitReport->on... 호출됨)
-	const PxControllerCollisionFlags flags = m_pController->move(disp, 0.001f, dt, filters);
 
+	const PxControllerCollisionFlags flags = m_pController->move(disp, 0.001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
+
 
 void CCharacterController::Jump(_float fJump)
 {
@@ -244,8 +347,7 @@ void CCharacterController::Set_Position(_fvector vPos)
 {
 	if (!m_pController) return;
 
-	_float3 p;
-	XMStoreFloat3(&p, vPos);
+	_vector3 p = vPos;
 	m_pController->setPosition(PxExtendedVec3(p.x, p.y, p.z));
 	m_pOwnerTransform->Set_WorldPos(vPos);
 }
@@ -259,7 +361,25 @@ void CCharacterController::Resize(_float fHeight, _float fRadius)
 	{
 		pCapsule->setHeight(fHeight);
 		pCapsule->setRadius(fRadius);
+		m_fHeight = fHeight;
+		m_fRadius = fRadius;
 	}
+}
+
+void CCharacterController::Set_StepOffset(_float fOffset)
+{
+	if (!m_pController) return;
+
+	m_fStepOffset = fOffset;
+	m_pController->setStepOffset(fOffset);
+}
+
+void CCharacterController::Set_SlopeLimit(_float fDegree)
+{
+	if (!m_pController) return;
+
+	m_fSlopeLimit = fDegree;
+	m_pController->setSlopeLimit(cosf(XMConvertToRadians(fDegree)));
 }
 
 _vector CCharacterController::Get_FootPosition()
@@ -284,6 +404,7 @@ PxShape* CCharacterController::Get_Shape()
 
 void CCharacterController::Apply_Gravity(_float dt)
 {
+	if (!m_bGravityEnabled) return;
 	if (m_bGrounded)
 	{
 		// 바닥에 있을 때: 약간의 하방 압력 유지 (땅에 붙어있기 위해)
@@ -292,32 +413,44 @@ void CCharacterController::Apply_Gravity(_float dt)
 	}
 	else
 	{
-		m_vVelocity.y += -9.81f * dt;			// 공중에 있을 때: 중력 가속도 누적
+		m_vVelocity.y += m_fGravity * dt;			// 공중에 있을 때: 중력 가속도 누적
 	}
 }
 
 void CCharacterController::Apply_Move(_float dt)
 {
-	_vector vDisplacement = XMLoadFloat3(&m_vVelocity) * dt;
-	_float3 vDisp; XMStoreFloat3(&vDisp, vDisplacement);
+	_float3 vVel = m_vVelocity;
+
+	if (m_fMaxSpeed > 0.0f)
+	{
+		_float fPlanarSpeed = sqrtf(vVel.x * vVel.x + vVel.z * vVel.z);
+		if (fPlanarSpeed > m_fMaxSpeed)
+		{
+			_float fScale = m_fMaxSpeed / fPlanarSpeed;
+			vVel.x *= fScale;
+			vVel.z *= fScale;
+		}
+	}
+
+	_vector vDisplacement = XMLoadFloat3(&vVel) * dt;
+	_float3 vDisp;
+	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
+
 	PxControllerFilters filters;
+	filters.mFilterData = &m_FilterData;
 
-	// PhysX Move 호출
 	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.001f, dt, filters);
-
-	// 바닥 체크 결과 갱신
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
 
 void CCharacterController::Process_ShapeHit(const PxControllerShapeHit& hit)
 {
-	// 벽이나 물체
 	PxRigidDynamic* actor = hit.shape->getActor()->is<PxRigidDynamic>();
 	if (actor && !(actor->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC))
 	{
 		const PxReal pushForce = 5.0f;
-		if (hit.dir.y < 0.1f) // 밟고 있는게 아니라면 (옆으로 밀 때만)
+		if (hit.dir.y < 0.1f)
 			actor->addForce(hit.dir * pushForce, PxForceMode::eIMPULSE);
 	}
 }
@@ -351,7 +484,6 @@ CComponent* CCharacterController::Clone()
 void CCharacterController::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
-
 
 	if (m_pHitReport)
 	{

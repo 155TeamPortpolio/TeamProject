@@ -19,9 +19,6 @@ HRESULT CDemoPlayer::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
-	Add_Component<CStaticModel>();
-
-
 	return S_OK;
 }
 
@@ -36,8 +33,7 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
-	Get_Component<CModel>()->Link_Model("Physics_Level", "../../DemoResources/static/Zero_Vehicle_Bus_01.model");
+	
 }
 
 void CDemoPlayer::Priority_Update(_float dt)
@@ -47,7 +43,7 @@ void CDemoPlayer::Priority_Update(_float dt)
 void CDemoPlayer::Update(_float dt)
 {
 	CCharacterController* pCCT = Get_Component<CCharacterController>();
-	_vector vMoveDir = XMVectorZero();
+	_vector3 vMoveDir = XMVectorZero();
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_UP))
 		vMoveDir += m_pTransform->Dir(STATE::LOOK);
@@ -58,20 +54,11 @@ void CDemoPlayer::Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LEFT))
 		vMoveDir -= m_pTransform->Dir(STATE::RIGHT);
 
-	if (XMVector3Length(vMoveDir).m128_f32[0] > 0.f)
-		vMoveDir = XMVector3Normalize(vMoveDir);
+	pCCT->Move_Direction(vMoveDir, 5.0f);
 
-	_float fSpeed = 5.0f;
-	pCCT->Set_PlanarVelocity(vMoveDir * fSpeed);
-
-	if (pCCT->Is_Grounded()) // 땅에 있을 때만 점프 가능
-	{
-		if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		{
-			pCCT->Jump(10.0f);
-		}
-	}
-
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
+		pCCT->Jump(10.f);
+	
 	pCCT->Update(dt);
 }
 
@@ -94,6 +81,16 @@ void CDemoPlayer::OnCollisionExit()
 
 void CDemoPlayer::Render_GUI()
 {
+	__super::Render_GUI();
+
+	if (ImGui::Button("Add")) {
+		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoPlayer" })
+			.Position({ 0,0,0 })
+			.Build("Demo_Model");
+		Get_Component<CObjectContainer>()->Add_Child(DemoModel, false);
+	}
+	_bool isLayer = Get_Layer();
+	ImGui::Checkbox("InLayer", &isLayer);
 }
 
 CDemoPlayer* CDemoPlayer::Create()

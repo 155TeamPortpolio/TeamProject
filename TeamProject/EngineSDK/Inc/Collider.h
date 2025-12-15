@@ -13,6 +13,10 @@ private:
 public:
     PxShape*        Get_Shape() { return m_pShape; }
     _bool           IsTrigger() const { return m_bTrigger; }
+    COLLIDER_TYPE   Get_Type() const { return m_eType; }
+    _float3         Get_Center() const { return m_vCenter; }
+    _float3         Get_Size() const { return m_vSize; }
+    _float3         Get_Rotation() const { return m_vRotation; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -21,15 +25,25 @@ public:
     virtual void    OnCollisionEnter(ICollidable* pOther) override;
     virtual void    OnCollisionStay(ICollidable* pOther) override;
     virtual void    OnCollisionExit(ICollidable* pOther) override;
-
-    void            OnTriggerEnter(ICollidable* pOther);
-    void            OnTriggerExit(ICollidable* pOther);
+    void            OnTriggerEnter(ICollidable* pOther) override;
+    void            OnTriggerExit(ICollidable* pOther) override;
 
     void Render_GUI();
 
 #ifdef _DEBUG
     virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
+
+public:
+    void            Set_Center(const _float3& vCenter);
+    void            Set_Size(const _float3& vSize);
+    void            Set_Rotation(const _float3& vRotation);
+    void            Set_Trigger(_bool bTrigger);
+    void            Set_ContactOffset(_float fOffset);
+    void            Set_RestOffset(_float fOffset);
+
+private:
+    void            Update_LocalPose();
 
 private:
     PxShape*                    m_pShape = { nullptr };
@@ -50,36 +64,3 @@ public:
 };
 
 NS_END
-
-
-#pragma region OLD
-//public:
-//   virtual _bool Intersect(COLLIDER_SLOT* pSlot) PURE;
-//   virtual _bool Has_Desc() PURE;
-//   virtual void Make_MinMaxCollider(MINMAX_BOX minMax)PURE;
-//   virtual void Set_ColliderActive(_bool Active);
-
-//public:
-//    virtual COLLIDER_TYPE Get_ColliderType() PURE;
-//    COLLISION_CONTEXT Get_Context() { return m_CollisionContext; };
-//    void Set_Context(class CGameObject* pObject,const string& eventTag) { m_CollisionContext.Owner = pObject; m_CollisionContext.EventTag = eventTag;};
-//    void Set_ContextOwner(class CGameObject* pObject) { m_CollisionContext.Owner = pObject; };
-//    void Set_ContextEvent(const string& eventTag) { m_CollisionContext.EventTag = eventTag; };
-//    void Reset_Context() { m_CollisionContext.Owner = m_pOwner;  m_CollisionContext.EventTag = {}; };
-//    void Reset_ContextEvent() { m_CollisionContext.EventTag = {}; };
-//    void Reset_ContextOwner() { m_CollisionContext.Owner = m_pOwner; };
-
-//public:
-//    void Render_GUI();
-//    virtual void Set_CompActive(_bool bActive) override;
-//    virtual void Releas_Component() override;
-
-//protected:
-//    _bool Compare_Same(COLLIDER_SLOT* prev, COLLIDER_SLOT* current);
-//
-//protected:
-//    _int m_SystemIndex = { -1 };
-//    COLLISION_CONTEXT m_CollisionContext = {};
-//    unordered_set<COLLIDER_SLOT*> m_prevCollider = {}; //ÀÌÀü ÇÁ·¹ÀÓ¿¡ ºÎµúÈû
-//    unordered_set<COLLIDER_SLOT*> m_CurrentCollider = {}; //ÇöÀç ÇÁ·¹ÀÓ¿¡ ºÎµúÈû.
-#pragma endregion
