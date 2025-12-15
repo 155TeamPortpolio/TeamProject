@@ -86,3 +86,9 @@ CUIObjcetBuilder& CUIObjcetBuilder::Size(const _float2 size)
 	m_pObjDesc->Size = size;
 	return *this;
 }
+
+CUIObjcetBuilder& CUIObjcetBuilder::Anchor(ANCHOR eAnchor)
+{
+	m_pObjDesc->eAnchor = eAnchor;
+	return *this;
+}
