@@ -188,9 +188,9 @@ void CCamPanel::Render_GUI()
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
     ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
-    //ScopedCamToolStyle styleScope;
+    ScopedCamToolStyle styleScope;
 
-    /*if (ImGui::Begin("Camera Tool", nullptr, flags))
+    if (ImGui::Begin("Camera Tool", nullptr, flags))
     {
         DrawToolbar();
         ImGui::Separator();
@@ -232,7 +232,7 @@ void CCamPanel::Render_GUI()
             ImGui::EndTable();
         }
     }
-    ImGui::End();*/
+    ImGui::End();
 }
 
 void CCamPanel::SetCaptureTarget(CCamObj* camObj)
