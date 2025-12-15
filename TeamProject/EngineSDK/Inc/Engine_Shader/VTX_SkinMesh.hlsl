@@ -93,9 +93,9 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
-    Out.vDiffuse = vMtrlDiffuse;
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse + vNormalDesc.z;
     float3 vNormal;
     vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
     vNormal.z = 1.f;

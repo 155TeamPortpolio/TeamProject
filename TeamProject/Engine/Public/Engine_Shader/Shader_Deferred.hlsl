@@ -98,10 +98,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float3 pbrResult = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
     ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, 10.0f, 1.0f);
-    
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ambientocclusion;
+   
 
-    Out.vShade = float4(pbrResult + ambient, 1.f);
+    Out.vShade = float4(pbrResult, 1.f);
     Out.vSpecular = float4(0, 0, 0, 1);
     return Out;
 }
@@ -114,8 +113,8 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -154,10 +153,11 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
         discard;
     
     vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
-    // vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
+    float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ao;
 
-    Out.vBackBuffer = vShade; // Diffuse °ö¼À Á¦°Å, Specular µ¡¼À Á¦°Å
- 
+    Out.vBackBuffer = float4(vShade.rgb + ambient, vShade.a);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;

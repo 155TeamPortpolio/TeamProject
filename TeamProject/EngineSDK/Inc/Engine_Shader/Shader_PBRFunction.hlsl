@@ -101,7 +101,7 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity)
     float G = GeometrySmith(N, V, L, roughness);
     float3 F = FresnelSchlick(VdotH, F0);
     
-    float3 numerator = D * G * F;
+    float3 numerator = D * F * G;
     float denominator = max(4.f * NdotV * NdotL, 0.001);
     float3 specular = numerator / denominator;
     
