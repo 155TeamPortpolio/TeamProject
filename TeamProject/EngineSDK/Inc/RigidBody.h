@@ -13,11 +13,14 @@ private:
 
 public:
 	PxRigidActor* Get_Body() { return m_pActor; }
+	_bool		  Is_Static() const { return m_bStatic; }
+	_bool		  Is_Kinematic() const { return m_bKinematic; }
+	_bool		  Is_GravityEnabled() const { return m_bGravity; }
+	_float		  Get_Mass() const { return m_fMass; }
 
 public:																
 	HRESULT Initialize_Prototype() override;
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
-	void	Update(_float dt);
 	void	Late_Update(_float dt);
 	void	Render_GUI();
 
@@ -28,11 +31,17 @@ public:
 	void		Set_Velocity(_fvector vVelocity);
 	void		Set_AngularVelocity(_fvector vAngVelocity);
 	_vector		Get_Velocity();
-	void		Set_GlobalPos(_fvector vPos, _fvector vQuat);	// 위치 임의 설정
+	_vector		Get_AngularVelocity();
+	void		Set_GlobalPos(_fvector vPos, _fvector vQuat);
 	void		Set_Gravity(_bool bEnable);
 	void		Set_Kinematic(_bool bKinematic);
 	void		Set_RotationLock(_bool bLockX, _bool bLockY, _bool bLockZ);
 	void		Set_Mass(_float fMass);
+	void		Set_LinearDamping(_float fDamping);
+	void		Set_AngularDamping(_float fDamping);
+	void		Wake_Up();
+	void		Put_ToSleep();
+	_bool		Is_Sleeping();
 
 private:
 	void	Update_RigidBody();
@@ -46,8 +55,8 @@ private:
 private:
 	class IPhysicsService* m_pPhysicsSystem = { nullptr }; // 시스템 참조
 	class CTransform*	   m_pOwnerTransform = { nullptr };
-
 	PxRigidActor*		   m_pActor = { nullptr };         // 물리 객체
+
 	_bool				   m_bStatic = { false };
 	_bool				   m_bKinematic = { false };
 	_bool				   m_bGravity = { true };
@@ -55,6 +64,8 @@ private:
 	_bool				   m_bLockY = { false };
 	_bool				   m_bLockZ = { true };
 	_float				   m_fMass = { 1.0f };
+	_float				   m_fLinearDamping = { 0.0f };
+	_float				   m_fAngularDamping = { 0.05f };
 
 public:
 	static CRigidBody* Create();

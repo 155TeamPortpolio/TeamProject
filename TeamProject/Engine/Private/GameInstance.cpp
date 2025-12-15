@@ -18,6 +18,7 @@
 #include "CollisionSystem.h"
 #include "FontSystem.h"
 #include "PhysicsSystem.h"
+#include "EventSystem.h"
 #include "Level.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -50,6 +51,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pPhysicsSystem = CPhysicsSystem::Create();
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
+	m_pEventSystem = CEventSystem::Create();
 
 
 #if defined _USING_GUI
@@ -92,6 +94,11 @@ void CGameInstance::Clear_LevelResource(const string& levelKey)
 	m_pResourceManager->Clear_Resource(levelKey);
 	m_pObjectManager->Clear(levelKey);
 	m_pUIManager->Clear(levelKey);
+
+#ifdef _USING_GUI
+	m_pGuiSystem->Get_Context()->pSelectedObject = nullptr;
+#endif // _USING_GUI
+
 }
 
 
@@ -127,7 +134,9 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pCollisionSystem->Update(dt);
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(realDt);
-
+#ifdef USINGPHYSICS
+	m_pPhysicsSystem->Late_Update(dt);
+#endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();
 	m_pObjectManager->Post_EngineUpdate(realDt);
@@ -155,6 +164,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionSystem);
 	Safe_Release(m_pFontSystem);
 	Safe_Release(m_pPhysicsSystem);
+	Safe_Release(m_pEventSystem);
 
 	DestroyInstance();
 }

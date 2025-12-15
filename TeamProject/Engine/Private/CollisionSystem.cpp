@@ -68,65 +68,89 @@ void CCollisionSystem::Update(_float dt)
 
 void CCollisionSystem::Render_GUI()
 {
-	/*ImGui::Begin("Collision System");
+	ImGui::Begin("Collision System");
 
-	ImGui::Text("Total Colliders: %d", m_Collidables.size());
+	ImGui::Text("Total Collidables: %d", m_Collidables.size());
 
-	 활성/비활성 카운트
 	_uint iActiveCount = 0;
 	_uint iTriggerCount = 0;
 	_uint iCollidingCount = 0;
+	_uint iColliderCount = 0;
+	_uint iCCTCount = 0;
 
-	for (auto pCollider : m_Collidables)
+	for (auto pCollidable : m_Collidables)
 	{
-		if (pCollider && pCollider->Get_CompActive())
+		if (pCollidable && pCollidable->Get_CompActive())
 		{
 			iActiveCount++;
-			if (pCollider->IsTrigger()) iTriggerCount++;
-			if (pCollider->IsColliding()) iCollidingCount++;
+			if (pCollidable->IsColliding())
+				iCollidingCount++;
+
+			if (dynamic_cast<CCollider*>(pCollidable))
+			{
+				iColliderCount++;
+				CCollider* pCol = static_cast<CCollider*>(pCollidable);
+				if (pCol->IsTrigger()) iTriggerCount++;
+			}
+			else if (dynamic_cast<CCharacterController*>(pCollidable))
+			{
+				iCCTCount++;
+			}
 		}
 	}
 
-	ImGui::Text("Active: %d | Inactive: %d", iActiveCount, m_Colliders.size() - iActiveCount);
+	ImGui::Text("Active: %d | Inactive: %d", iActiveCount, m_Collidables.size() - iActiveCount);
+	ImGui::Text("Colliders: %d | CCT: %d", iColliderCount, iCCTCount);
 	ImGui::Text("Triggers: %d", iTriggerCount);
 	ImGui::Text("Currently Colliding: %d", iCollidingCount);
 
 	ImGui::Separator();
 
-	 콜라이더 리스트
-	if (ImGui::CollapsingHeader("Collider List"))
+	if (ImGui::CollapsingHeader("Collidable List"))
 	{
-		for (size_t i = 0; i < m_Colliders.size(); ++i)
+		for (size_t i = 0; i < m_Collidables.size(); ++i)
 		{
-			auto pCollider = m_Colliders[i];
-			if (!pCollider) continue;
+			auto pCollidable = m_Collidables[i];
+			if (!pCollidable) continue;
 
 			ImGui::PushID(i);
-			_bool bActive = pCollider->Get_CompActive();
+			_bool bActive = pCollidable->Get_CompActive();
 
 			if (ImGui::Checkbox("##Active", &bActive))
 			{
-				pCollider->Set_CompActive(bActive);
+				pCollidable->Set_CompActive(bActive);
 			}
 
 			ImGui::SameLine();
-			string ownerName = pCollider->Get_Owner() ?
-				pCollider->Get_Owner()->Get_InstanceName() : "No Owner";
 
-			if (pCollider->IsColliding())
+			const char* typePrefix = "";
+			if (dynamic_cast<CCollider*>(pCollidable))
 			{
-				ImGui::TextColored(ImVec4(1, 0, 0, 1), "[HIT] %s", ownerName.c_str());
+				CCollider* pCol = static_cast<CCollider*>(pCollidable);
+				typePrefix = pCol->IsTrigger() ? "[TRG]" : "[COL]";
+			}
+			else if (dynamic_cast<CCharacterController*>(pCollidable))
+			{
+				typePrefix = "[CCT]";
+			}
+
+			string ownerName = pCollidable->Get_Owner() ?
+				pCollidable->Get_Owner()->Get_InstanceName() : "No Owner";
+
+			if (pCollidable->IsColliding())
+			{
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "%s [HIT] %s", typePrefix, ownerName.c_str());
 			}
 			else
 			{
-				ImGui::Text("%s", ownerName.c_str());
+				ImGui::Text("%s %s", typePrefix, ownerName.c_str());
 			}
 
 			ImGui::PopID();
 		}
 	}
 
-	ImGui::End();*/
+	ImGui::End();
 }
 
 void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
@@ -142,10 +166,19 @@ void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, co
 			continue;
 
 		if (!cp.shapes[0] || !cp.shapes[1]) continue;
-		if (!cp.shapes[0]->userData || !cp.shapes[1]->userData) continue;
 
-		auto pColA = static_cast<ICollidable*>(cp.shapes[0]->userData);
-		auto pColB = static_cast<ICollidable*>(cp.shapes[1]->userData);
+		ICollidable* pColA = nullptr;
+		ICollidable* pColB = nullptr;
+
+		if (cp.shapes[0]->userData)
+			pColA = static_cast<ICollidable*>(cp.shapes[0]->userData);
+		else if (pairHeader.actors[0] && pairHeader.actors[0]->userData)
+			pColA = Get_Collidable(pairHeader.actors[0]);
+
+		if (cp.shapes[1]->userData)
+			pColB = static_cast<ICollidable*>(cp.shapes[1]->userData);
+		else if (pairHeader.actors[1] && pairHeader.actors[1]->userData)
+			pColB = Get_Collidable(pairHeader.actors[1]);
 
 		if (!pColA || !pColB) continue;
 		if (!pColA->Get_CompActive() || !pColB->Get_CompActive()) continue;
@@ -171,25 +204,28 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 			continue;
 
 		if (!pairs[i].triggerShape || !pairs[i].otherShape) continue;
-		if (!pairs[i].triggerShape->userData || !pairs[i].otherShape->userData) continue;
 
-		auto pTrigger = static_cast<ICollidable*>(pairs[i].triggerShape->userData);
-		auto pOther = static_cast<ICollidable*>(pairs[i].otherShape->userData);
+		ICollidable* pTrigger = nullptr;
+		ICollidable* pOther = nullptr;
+
+		if (pairs[i].triggerShape->userData)
+			pTrigger = static_cast<ICollidable*>(pairs[i].triggerShape->userData);
+
+		if (pairs[i].otherShape->userData)
+			pOther = static_cast<ICollidable*>(pairs[i].otherShape->userData);
 
 		if (!pTrigger || !pOther) continue;
 		if (!pTrigger->Get_CompActive() || !pOther->Get_CompActive()) continue;
 
-		if (static_cast<CCollider*>(pTrigger) != nullptr)
+		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			CCollider* pTriggerCol = static_cast<CCollider*>(pTrigger);
-			if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
-			{
-				pTriggerCol->OnTriggerEnter(pOther);
-			}
-			else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
-			{
-				pTriggerCol->OnTriggerExit(pOther);
-			}
+			pTrigger->OnTriggerEnter(pOther);
+			pOther->OnTriggerEnter(pTrigger);
+		}
+		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
+		{
+			pTrigger->OnTriggerExit(pOther);
+			pOther->OnTriggerExit(pTrigger);
 		}
 	}
 }
@@ -216,7 +252,7 @@ void CCollisionSystem::Process_Exit()
 	{
 		if (!pCollidable || !pCollidable->Get_CompActive()) continue;
 
-		auto& collisions = const_cast<unordered_set<ICollidable*>&>(pCollidable->Get_Collisions());
+		auto& collisions = pCollidable->Get_Collisions();
 		for (auto it = collisions.begin(); it != collisions.end();)
 		{
 			ICollidable* pOther = *it;
@@ -235,6 +271,20 @@ void CCollisionSystem::Process_Exit()
 			}
 		}
 	}
+}
+
+ICollidable* CCollisionSystem::Get_Collidable(PxRigidActor* pActor)
+{
+	if (!pActor || !pActor->userData) return nullptr;
+
+	CGameObject* pOwner = static_cast<CGameObject*>(pActor->userData);
+	if (!pOwner) return nullptr;
+
+	ICollidable* pCollidable = pOwner->Get_Component<CCharacterController>();
+	if (!pCollidable)
+		pCollidable = pOwner->Get_Component<CCollider>();
+
+	return pCollidable;
 }
 
 _int CCollisionSystem::RegisterCollidable(ICollidable* pCollidable, _int Index)
@@ -290,9 +340,7 @@ void CCollisionSystem::Render_Debug()
 			}
 			else if(dynamic_cast<CCharacterController*>(pCollidable) != nullptr)
 			{
-				vColor = Colors::Yellow;
-				if (dynamic_cast<CCharacterController*>(pCollidable)->Is_Grounded())
-					vColor = pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
+				vColor = pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
 			}
 			pCollidable->Render(m_pBatch, vColor);
 		}
@@ -332,77 +380,3 @@ void CCollisionSystem::Free()
 
 	__super::Free();
 }
-
-#pragma region OLD
-//void CCollisionSystem::DeActiveCollider(CCollider* pCollider, _int Index)
-//{
-//	if (Index >= m_Colliders.size()) {
-//		return;
-//	}
-//
-//	if (m_Colliders[Index].pCollider != pCollider) {
-//		return;
-//	}
-//
-//	else {
-//		m_Colliders[Index].eState = COLLIDER_SLOT::STATE::INACTIVE;
-//	}
-//}
-//
-//void CCollisionSystem::ActiveCollider(CCollider* pCollider, _int Index)
-//{
-//	if (Index >= m_Colliders.size()) {
-//		return;
-//	}
-//	if (m_Colliders[Index].pCollider != pCollider) {
-//		return;
-//	}
-//	if (!pCollider->Has_Desc()) {
-//		return;
-//	}
-//
-//	else {
-//		m_Colliders[Index].eState = COLLIDER_SLOT::STATE::ACTIVE;
-//	}
-//}
-
-//void CCollisionSystem::Clean_Up()
-//{
-//	for (auto& col : m_Colliders) {
-//		if (!col.pCollider) continue;
-//
-//		if (false == col.pCollider->Get_CompActive()) {
-//			col.pCollider = nullptr;
-//			col.eState = COLLIDER_SLOT::STATE::DEAD;
-//		}
-//	}
-//}
-
-//void CCollisionSystem::MakeCandidate()
-//{
-//	m_CandidateCollision.clear();
-//	m_CandidateCollision.reserve(m_Colliders.size());
-//
-//	for (size_t i = 0; i < m_Colliders.size(); i++)
-//	{
-//		if (m_Colliders[i].IsValid() == false)
-//			continue;
-//		if (m_Colliders[i].IsActive() == false)
-//			continue;
-//		if (m_Colliders[i].pCollider->Get_CompActive() == false)
-//			continue;
-//
-//		for (size_t j = i + 1; j < m_Colliders.size(); j++)
-//		{
-//			if (m_Colliders[j].IsValid() == false)
-//				continue;
-//			if (m_Colliders[j].IsActive() == false)
-//				continue;
-//			if (m_Colliders[j].pCollider->Get_CompActive() == false)
-//				continue;
-//
-//			m_CandidateCollision.emplace_back(i, j);
-//		}
-//	}
-//}
-#pragma endregion

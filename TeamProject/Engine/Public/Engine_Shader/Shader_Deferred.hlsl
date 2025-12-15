@@ -4,7 +4,7 @@ matrix g_WorldMatrix;
 
 Texture2D g_NormalTexture;
 Texture2D g_DiffuseTexture;
-Texture2D g_ShadeTexture;
+Texture2D g_LightTexture;
 Texture2D g_SpecularTexture;
 Texture2D g_EmmisiveTexture;
 Texture2D g_DepthTexture;
@@ -19,6 +19,7 @@ Texture2D g_PostProcessTexture;
 vector g_vLightDir;
 vector g_vLightPos;
 float  g_fLightRange;
+float  g_fLightIntensity;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
@@ -63,8 +64,7 @@ struct PS_OUT_BACKBUFFER
 
 struct PS_OUT_LIGHT
 {
-    vector vShade : SV_TARGET0;
-    vector vSpecular : SV_TARGET1;
+    vector vLight : SV_TARGET0;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -76,10 +76,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    float ambientocclusion = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float3 vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -96,13 +95,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
-    float3 pbrResult = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, 10.0f, 1.0f);
+    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
+    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.0f);
+    //추후 light intensity 변수로 수정 예정
+   
+    Out.vLight = float4(PBR, 1.f);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ambientocclusion;
-
-    Out.vShade = float4(pbrResult + ambient, 1.f);
-    Out.vSpecular = float4(0, 0, 0, 1);
     return Out;
 }
 
@@ -111,11 +109,13 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     PS_OUT_LIGHT Out;
     
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vNormal = vector(vNormalDesc.xyz * 2.f - 1.f, 0.f);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -130,34 +130,34 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    vector vLightDir = vWorldPos - g_vLightPos;
+    float3 lightDir = float3(0.f, 0.f, 0.f); // 사용 x
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
-    float fAtt = saturate((g_fLightRange - length(vLightDir)) / g_fLightRange);
-    
-    Out.vShade = (g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) +
-        (g_vLightAmbient * g_vMtrlAmbient)) * fAtt;
-    
-    vector vLook = vWorldPos - vCamPosition;
-    vector vReflect = normalize(reflect(normalize(vLightDir), vNormal));
-    
-    Out.vSpecular = (g_vLightSpecular * g_vMtrlSpecular) * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 50.f) * fAtt;
+    float3 PBR = CalculatePointLight
+    (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
+    g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
+    //추후 light intensity 변수로 수정 예정
+   
+    Out.vLight = float4(PBR, 1.f);
     
     return Out;
 }
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out;
+    PS_OUT_BACKBUFFER Out; 
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     if (0.0f == vDiffuse.a)
         discard;
     
-    vector vShade = g_ShadeTexture.Sample(DefaultSampler, In.vTexcoord);
-    // vector vSpecular = g_SpecularTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float ao = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 ambient = vDiffuse.rgb *vAmbient.g * ao;
 
-    Out.vBackBuffer = vShade; // Diffuse 곱셈 제거, Specular 덧셈 제거
- 
+    Out.vBackBuffer = float4(vLight.rgb + ambient, vLight.a);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;

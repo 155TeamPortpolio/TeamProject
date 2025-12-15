@@ -15,7 +15,6 @@ private:
 
         virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
         virtual void onTrigger(PxTriggerPair* pairs, PxU32 count) override;
-
         // 사용 안 함
         virtual void onConstraintBreak(PxConstraintInfo*, PxU32) override {}
         virtual void onWake(PxActor**, PxU32) override {}
@@ -40,6 +39,8 @@ private:
     void Process_Trigger(PxTriggerPair* pairs, PxU32 count);
     void Process_Stay();
     void Process_Exit();
+    ICollidable* Get_Collidable(PxRigidActor* pActor);
+
 
     friend class CPhysXEventCallback;   // Proxy 클래스
 
@@ -67,9 +68,3 @@ public:
 };
 
 NS_END
-
-#pragma region OLD
-//private:
-//    void MakeCandidate();
-//    void Clean_Up();
-#pragma endregion
