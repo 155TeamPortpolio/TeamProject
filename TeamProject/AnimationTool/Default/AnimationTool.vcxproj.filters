@@ -43,6 +43,9 @@
     <Filter Include="97. GUIInc">
       <UniqueIdentifier>{32389b12-0879-467b-a6c9-145ee79f3e1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Grid">
+      <UniqueIdentifier>{bd8826f0-e3bb-4d8d-8abd-b0e0ae2e50db}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -85,16 +88,13 @@
     <ClInclude Include="..\Public\EditCamera.h">
       <Filter>02. Object\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EditModel.h">
+    <ClInclude Include="..\Public\AnimModel.h">
       <Filter>02. Object\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\AnimationLayout.h">
-      <Filter>03. Component</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AnimToolPanel.h">
       <Filter>05. Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Animation3DEX.h">
+    <ClInclude Include="..\public\Animator3DEX.h">
       <Filter>03. Component\Animation3DEX</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AnimationClipEX.h">
@@ -139,6 +139,12 @@
     <ClInclude Include="..\public\Assimps.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\AnimationLayout.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grid.h">
+      <Filter>02. Object\Grid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationTool.cpp">
@@ -153,7 +159,7 @@
     <ClCompile Include="..\Private\EditCamera.cpp">
       <Filter>02. Object\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EditModel.cpp">
+    <ClCompile Include="..\Private\AnimModel.cpp">
       <Filter>02. Object\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AnimationEditLevel.cpp">
@@ -162,7 +168,7 @@
     <ClCompile Include="..\private\AnimToolPanel.cpp">
       <Filter>05. Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Animation3DEX.cpp">
+    <ClCompile Include="..\private\Animator3DEX.cpp">
       <Filter>03. Component\Animation3DEX</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AnimationClipEX.cpp">
@@ -197,6 +203,9 @@
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp">
       <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grid.cpp">
+      <Filter>02. Object\Grid</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

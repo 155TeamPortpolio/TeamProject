@@ -34,7 +34,7 @@ public:
 
 	virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) override;
 	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey) override;
-	virtual class CAnimationClip* Load_AnimClip(const string& levelTag, const string& Subject, const string& AnimClipKey) override;
+	virtual class CAnimationClip* Load_AnimClip(const string& levelTag, const string& AnimClipKey) override;
 
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
