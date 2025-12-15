@@ -157,6 +157,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionSystem);
 	Safe_Release(m_pFontSystem);
 	Safe_Release(m_pPhysicsSystem);
+	Safe_Release(m_pEventSystem);
 
 	DestroyInstance();
 }

@@ -13,7 +13,7 @@ public:
 	{
 		CEventSystem* system = nullptr;
 		type_index type = type_index(typeid(void));
-		uint64_t hID = 0;
+		_uint hID = 0;
 
 		void Reset()
 		{
@@ -61,7 +61,7 @@ public:
 	struct TypeSafeStruct {
 		virtual ~TypeSafeStruct() = default;
 		virtual void RemoveByOwner(class CGameObject* pOwner) PURE;
-		virtual void RemoveById(uint64_t id) PURE;
+		virtual void RemoveById(_uint id) PURE;
 	};
 	template<typename T>
 	struct TypeSafeVector : TypeSafeStruct
@@ -111,29 +111,24 @@ public:
 	HRESULT Initialize();
 
 public:
-	template<typename Object, typename T>
-	ListenerHandle Subscribe(Object* owner, void(Object::* method)(const T&)) /*오너와 함수 포인터 제공*/
+	template<typename T>
+	ListenerHandle Subscribe(CGameObject* owner, function<void(const T&)> callback)
 	{
-		/*엔트리를 등록*/
-		static_assert(std::is_base_of_v<CGameObject, Object>,
-			"Subscribe owner must derive from CGameObject");
-
-		/*엔트리 있으면 가져오고, 없으면 생성*/
 		auto* vec = GetEntryContainer<T>();
 
-		/*엔트리 구조체 하나 만듦*/
 		typename TypeSafeVector<T>::Entry entry;
 		entry.owner = owner;
-		entry.hID = vec->nextId++; /*이건 다음 아이디 체크(벡터를 가진 TypeSafeVector가 관리 중)*/
-		entry.callBack = [owner, method](const T& evt) { (owner->*method)(evt); }; /*콜백 등록*/
-		/*벡터에 넣기*/
+		entry.hID = vec->nextId++;
+		entry.callBack = move(callback);
+		entry.alive = true;
+
 		vec->callbacks.push_back(move(entry));
 
-		ListenerHandle hListner;
-		hListner.system = this;
-		hListner.type = type_index(typeid(T));
-		hListner.hID = vec->callbacks.back().hID;
-		return hListner;
+		ListenerHandle h;
+		h.system = this;
+		h.type = type_index(typeid(T));
+		h.hID = vec->callbacks.back().hID;
+		return h;
 	}
 	void Unsubscribe(const type_index& type, _uint id)
 	{
