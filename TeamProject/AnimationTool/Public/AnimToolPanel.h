@@ -1,5 +1,6 @@
 #pragma once
 #include "AnimationTool_Defines.h"
+#include "AnimationLayout.h"
 #include "BasePanel.h"
 
 NS_BEGIN(Engine)
@@ -19,12 +20,21 @@ public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
 
+//GUI
+private:
+    void GUI_Setting_Clips(_float fChildHeight);
+
+//Func
 private:
     void Load_Clips();
+    void Set_Aniation();
+    void Create_AnimatorFromAnim();
+    void Create_ClipMeta();
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
-    unordered_map<string, string> m_Clips; //클립묶음 이름, 실제 클립 태그
+    //<애니매이션이름, { 클립이름, 이벤트 { 타이밍, 타입, 태그 } }>
+    unordered_map<string, vector<ANIM_CLIP>> m_Clips;
 
 public:
     static CBasePanel* Create(GUI_CONTEXT* context);

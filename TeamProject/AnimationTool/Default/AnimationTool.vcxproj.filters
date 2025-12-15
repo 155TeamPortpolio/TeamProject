@@ -88,7 +88,7 @@
     <ClInclude Include="..\Public\EditCamera.h">
       <Filter>02. Object\Camera</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EditModel.h">
+    <ClInclude Include="..\Public\AnimModel.h">
       <Filter>02. Object\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\public\AnimToolPanel.h">
@@ -159,7 +159,7 @@
     <ClCompile Include="..\Private\EditCamera.cpp">
       <Filter>02. Object\Camera</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EditModel.cpp">
+    <ClCompile Include="..\Private\AnimModel.cpp">
       <Filter>02. Object\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AnimationEditLevel.cpp">

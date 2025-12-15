@@ -3,13 +3,13 @@
 #include <set>
 
 NS_BEGIN(AnimTool)
-class CEditModel :
+class CAnimModel :
     public CGameObject
 {
 private:
-    CEditModel();
-    CEditModel(const CEditModel& rhs);
-    virtual ~CEditModel() DEFAULT;
+    CAnimModel();
+    CAnimModel(const CAnimModel& rhs);
+    virtual ~CAnimModel() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -36,7 +36,7 @@ private:
     set<string> m_MaterialTags;
 
 public:
-    static CEditModel* Create();
+    static CAnimModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };

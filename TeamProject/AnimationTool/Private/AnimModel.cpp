@@ -1,20 +1,20 @@
 #include "pch.h"
-#include "EditModel.h"
+#include "AnimModel.h"
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
 
-CEditModel::CEditModel()
+CAnimModel::CAnimModel()
 {
 }
 
-CEditModel::CEditModel(const CEditModel& rhs)
+CAnimModel::CAnimModel(const CAnimModel& rhs)
 	:CGameObject(rhs)
 {
 }
 
-HRESULT CEditModel::Initialize_Prototype()
+HRESULT CAnimModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	//Add_Component<CSkeletalModel>();
@@ -23,7 +23,7 @@ HRESULT CEditModel::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEditModel::Initialize(INIT_DESC* pArg)
+HRESULT CAnimModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -32,25 +32,25 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CEditModel::Awake()
+void CAnimModel::Awake()
 {
 	//CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("", "");
 	//Get_Component<CModel>()->Link_Model("Demo_Level", "");
 }
 
-void CEditModel::Priority_Update(_float dt)
+void CAnimModel::Priority_Update(_float dt)
 {
 }
 
-void CEditModel::Update(_float dt)
+void CAnimModel::Update(_float dt)
 {
 }
 
-void CEditModel::Late_Update(_float dt)
+void CAnimModel::Late_Update(_float dt)
 {
 }
 
-void CEditModel::Render_GUI()
+void CAnimModel::Render_GUI()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
@@ -65,7 +65,7 @@ void CEditModel::Render_GUI()
 	__super::Render_GUI();
 }
 
-void CEditModel::GUI_LoadResource(_float fChildHeight)
+void CAnimModel::GUI_LoadResource(_float fChildHeight)
 {
 	ImGui::SeparatorText("Model & Material Load");
 	ImGui::BeginChild("##Loaded Data", ImVec2{ 0, fChildHeight }, true);
@@ -75,7 +75,7 @@ void CEditModel::GUI_LoadResource(_float fChildHeight)
 	ImGui::EndChild();
 }
 
-void CEditModel::GUI_SetModel(_float fChildHeight)
+void CAnimModel::GUI_SetModel(_float fChildHeight)
 {
 	//Show Selected Tags
 	static string CurModelTag = { "Select Model" };
@@ -125,7 +125,7 @@ void CEditModel::GUI_SetModel(_float fChildHeight)
 	ImGui::EndChild();
 }
 
-void CEditModel::Load_Resource()
+void CAnimModel::Load_Resource()
 {
 	vector<string> files = Helper::OpenMultiFiles();
 
@@ -146,7 +146,7 @@ void CEditModel::Load_Resource()
 	}
 }
 
-void CEditModel::Set_Model(string ModelTag, string MaterialTag)
+void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
 {
 	Clear_Model();
 
@@ -165,39 +165,39 @@ void CEditModel::Set_Model(string ModelTag, string MaterialTag)
 	Get_Component<CMaterial>()->Link_Material("AnimationEdit_Level", MaterialTag);
 }
 
-void CEditModel::Clear_Model()
+void CAnimModel::Clear_Model()
 {
 	Remove_Component<CSkeletalModel>();
 	Remove_Component<CModel>();
 	Remove_Component<CMaterial>();
 }
 
-CEditModel* CEditModel::Create()
+CAnimModel* CAnimModel::Create()
 {
-	CEditModel* instance = new CEditModel();
+	CAnimModel* instance = new CAnimModel();
 	if (FAILED(instance->Initialize_Prototype()))
 	{
-		MSG_BOX("Object Create Failed : CEditModel");
+		MSG_BOX("Object Create Failed : CAnimModel");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-CGameObject* CEditModel::Clone(INIT_DESC* pArg)
+CGameObject* CAnimModel::Clone(INIT_DESC* pArg)
 {
-	CEditModel* instance = new CEditModel(*this);
+	CAnimModel* instance = new CAnimModel(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
-		MSG_BOX("Object Clone Failed : CEditModel");
+		MSG_BOX("Object Clone Failed : CAnimModel");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-void CEditModel::Free()
+void CAnimModel::Free()
 {
 	__super::Free();
 }

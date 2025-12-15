@@ -1,26 +1,30 @@
 #pragma once
 #include "Engine_Defines.h"
+#include "Json_Inc/json.hpp"
 
 enum class ANIM_LAYER_STATE { OVERRIDE, INTERRUPT, ADDITIVE };
 enum class ANIM_BLEND_STATE {};
-enum class ANIM_EVENT_STATE { EFFECT, SOUND };
+enum class CLIP_EVENT_TYPE { EFFECT, SOUND };
 
-//NLOHMANN_JSON_SERIALIZE_ENUM(ANIM_EVENT_STATE, {
-//    {ANIM_EVENT_STATE::Sound, "Sound"},
-//    {ANIM_EVENT_STATE::Effect, "Effect"}
-//}) 
+NLOHMANN_JSON_SERIALIZE_ENUM(CLIP_EVENT_TYPE, {
+    {CLIP_EVENT_TYPE::Effect, "Effect"},
+    {CLIP_EVENT_TYPE::Sound, "Sound"}
+}) 
 
 /* 애니매이션 클립 데이터 */
 typedef struct AnimationEvent {
-    float   fEventTime;     //이벤트 작동 시간
-    int     iEventState;    //ANIM_EVENT_STATE
+    float   EventTime;     //이벤트 작동 시간
+    string  EventType;    //ANIM_EVENT_STATE
     string  EventTag;       //이벤트 태그 
 }ANIM_EVENT;
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_EVENT, EventTime, EventType, EventTag);
 
 typedef struct AnimationClip {
     string ClipTag; 
     vector<ANIM_EVENT> Events;
 }ANIM_CLIP;
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_CLIP, ClipTag, Events);
+
 /* ------------------------ */
 
 

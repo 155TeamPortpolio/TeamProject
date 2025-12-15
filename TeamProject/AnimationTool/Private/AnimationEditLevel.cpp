@@ -6,7 +6,7 @@
 #include "ILevelService.h"
 
 #include "EditCamera.h"
-#include "EditModel.h"
+#include "AnimModel.h"
 #include "AnimToolPanel.h"
 #include "Camera.h"
 #include "Grid.h"
@@ -27,7 +27,7 @@ HRESULT CAnimationEditLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
-	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
+	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_AnimModel", CAnimModel::Create());
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_Grid", CGrid::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
@@ -38,7 +38,7 @@ HRESULT CAnimationEditLevel::Awake()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	CGameObject* AnimModel = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_EditModel" })
+	CGameObject* AnimModel = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_AnimModel" })
 		.Position({ 0,0,0 })
 		.Build("Anim_Model");
 
