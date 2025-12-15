@@ -1,31 +1,25 @@
 #pragma once
 
-#include "DebugCamData.h"
-
 NS_BEGIN(CameraTool)
 
-class CDebugFreeCam final : public CCamObj
+class CDebugFreeCam final : public CamObj
 {
 private:
 	CDebugFreeCam() = default;
-	CDebugFreeCam(const CDebugFreeCam& rhs) : CCamObj(rhs) {}
+	CDebugFreeCam(const CDebugFreeCam& rhs) : CamObj(rhs) {}
 	virtual ~CDebugFreeCam() = default;
 
 public:
-	HRESULT Initialize_Prototype()                    override;
-	HRESULT Initialize(INIT_DESC* pArg)               override;
-										              
-	void    Priority_Update(_float dt)                override;
-	void    Update(_float dt)                         override;
-	void    Late_Update(_float dt)                    override;
-										              
-	void    Render_GUI()                              override;
-											          
-	void    SetControlEnabled(_bool enabled)          override;
-	void    SetMoveConstraint(CamMoveConstraint mode) override;
-	void    SetOrbitState(const CamOrbitState& next)  override;
+	HRESULT Initialize_Prototype()           override;
+	HRESULT Initialize(INIT_DESC* pArg)      override;
+										     
+	void    Priority_Update(_float dt)       override;
+	void    Update(_float dt)                override;
+	void    Late_Update(_float dt)           override;
+										     
+	void    Render_GUI()                     override;
 
-	const   CamOrbitState& GetOrbitState() const { return orbit; }
+	void    SetControlEnabled(_bool enabled) override;
 
 private:
 	void    ApplyRotation(_float dt);
@@ -39,9 +33,6 @@ private:
 	Quaternion rotQuatTarget  = Quaternion::Identity;
 	_float     rotSmoothSpeed = 15.f;
 	_bool      controlEnabled = true;
-
-	CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
-	CamOrbitState     orbit{};
 
 public:
 	static CDebugFreeCam* Create();

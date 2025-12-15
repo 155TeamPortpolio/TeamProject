@@ -36,13 +36,13 @@ HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     eval.evaluator->SetRotEvaluator(eval.rot);
     eval.evaluator->SetFovEvaluator(eval.fov);
 
-    target.seq         = nullptr;
-    playback.playing   = false;
-    playback.playTime  = 0.f;
+    target.seq = nullptr;
+    playback.playing = false;
+    playback.playTime = 0.f;
     playback.timeScale = 1.f;
 
     apply.applyEnabled = true;
-    eval.dirty         = true;
+    eval.dirty = true;
 
     return S_OK;
 }
@@ -72,17 +72,9 @@ void CCamSequencePlayer::Stop(_bool resetTime)
 
 void CCamSequencePlayer::SetTime(_float t)
 {
-    if (!target.seq)
-    {
-        playback.playTime = max(0.f, t);
-        return;
-    }
-
-    const float duration = target.seq->GetDuration();
-
     playback.playTime = max(0.f, t);
-    if (duration > 1e-6f && playback.playTime > duration)
-        playback.playTime = duration;
+
+    if (!target.seq) return;
 
     const auto& keys = target.seq->keyframes;
     if (keys.empty()) return;
@@ -117,38 +109,8 @@ void CCamSequencePlayer::Update(_float dt)
 
     RebuildIfNeeded();
 
-    const float duration = target.seq->GetDuration();
-
     if (playback.playing)
-    {
         playback.playTime += dt * playback.timeScale;
-
-        if (duration <= 1e-6f)
-        {
-            playback.playTime = 0.f;
-            playback.playing = false;
-        }
-        else
-        {
-            if (target.seq->playbackMode == CamPlaybackMode::Loop)
-            {
-                playback.playTime = fmodf(playback.playTime, duration);
-                if (playback.playTime < 0.f) playback.playTime += duration;
-            }
-            else
-            {
-                if (playback.playTime >= duration)
-                {
-                    playback.playTime = duration;
-                    playback.playing = false;
-                }
-                else if (playback.playTime < 0.f)
-                {
-                    playback.playTime = 0.f;
-                }
-            }
-        }
-    }
 
     ApplyPose(eval.evaluator->Evaluate(playback.playTime));
 }
@@ -202,9 +164,6 @@ CCamSequencePlayer* CCamSequencePlayer::Create()
 void CCamSequencePlayer::Free()
 {
     Safe_Release(eval.evaluator);
-    Safe_Release(eval.pos);
-    Safe_Release(eval.rot);
-    Safe_Release(eval.fov);
 
     eval.pos = nullptr;
     eval.rot = nullptr;

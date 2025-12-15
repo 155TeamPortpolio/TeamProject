@@ -70,9 +70,6 @@
     <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DebugCamData.h">
-      <Filter>03. Obj\00. DebugCam</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">

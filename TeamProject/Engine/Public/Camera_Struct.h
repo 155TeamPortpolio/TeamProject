@@ -1,5 +1,4 @@
 #pragma once
-#include "OrbitArcData.h"
 
 NS_BEGIN(Engine)
 
@@ -46,8 +45,6 @@ struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋
 	CamPosInterp        posInterp = CamPosInterp::Linear;
 	CamRotInterp        rotInterp = CamRotInterp::Slerp;
 	CamFovInterp        fovInterp = CamFovInterp::Linear;
-
-	CamOrbitArcDesc     orbitArc{};
 
 	vector<CamKeyFrame> keyframes;
 

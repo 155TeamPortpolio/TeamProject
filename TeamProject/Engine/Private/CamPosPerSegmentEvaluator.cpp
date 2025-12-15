@@ -5,7 +5,6 @@
 #include "CamPosCentripetalEvaluator.h"
 #include "CamPosBSplineEvaluator.h"
 #include "CamPosHermiteEvaluator.h"
-#include "CamPosOrbitArcEvaulator.h"
 
 bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
@@ -18,16 +17,12 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
     Safe_Release(evalCentripetal);
     Safe_Release(evalBSpline);
     Safe_Release(evalHermite);
-    Safe_Release(evalOrbitArc);
 
     evalLinear      = CCamPosLinearEvaluator::Create();
     evalCatmull     = CCamPosCatmullRomEvaluator::Create();
     evalCentripetal = CCamPosCentripetalEvaluator::Create();
     evalBSpline     = CCamPosBSplineEvaluator::Create();
     evalHermite     = CCamPosHermiteEvaluator::Create();
-    evalOrbitArc    = CCamPosOrbitArcEvaluator::Create();
-
-    static_cast<CCamPosOrbitArcEvaluator*>(evalOrbitArc)->SetOrbitDesc(&seq->orbitArc);
 
     bool ok = true;
     ok &= evalLinear->Build(keys);
@@ -35,7 +30,6 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
     ok &= evalCentripetal->Build(keys);
     ok &= evalBSpline->Build(keys);
     ok &= evalHermite->Build(keys);
-    ok &= evalOrbitArc->Build(keys);
 
     return ok;
 }
@@ -72,24 +66,14 @@ _vector3 CCamPosPerSegmentEvaluator::Evaluate(_float time) const
     {
     case CamPosInterp::Linear:
         return evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos;
-
     case CamPosInterp::CatmullRom:
         return evalCatmull ? evalCatmull->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
-
     case CamPosInterp::Centripetal:
         return evalCentripetal ? evalCentripetal->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
-
     case CamPosInterp::BSpline:
         return evalBSpline ? evalBSpline->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
-
     case CamPosInterp::Hermite:
         return evalHermite ? evalHermite->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
-
-    case CamPosInterp::Hold:
-        return keys[(size_t)i].pos;
-
-    case CamPosInterp::OrbitArc:
-        return evalOrbitArc ? evalOrbitArc->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos);
     }
 
     return evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].pos;
@@ -118,7 +102,6 @@ void CCamPosPerSegmentEvaluator::Free()
     Safe_Release(evalCentripetal);
     Safe_Release(evalBSpline);
     Safe_Release(evalHermite);
-    Safe_Release(evalOrbitArc);
 
     __super::Free();
 }
