@@ -2,16 +2,15 @@
 #include "ImageUI.h"
 
 #include "Sprite2D.h"
+#include "GameInstance.h"
 #include "UITool_Level.h"
-
-_uint CImageUI::m_iCount = {};
 
 CImageUI::CImageUI()
 {
 }
 
 CImageUI::CImageUI(const CImageUI& rhs)
-    : CUIObject_Tool(rhs)
+    : CUI_Object(rhs)
 {
 }
 
@@ -27,10 +26,7 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    if (CUITool_Level::Get_TextureKeysSize())
-        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, CUITool_Level::Get_TextureKeys()[m_iTextureKeyIndex]);
-    else
-        MSG_BOX("Failed to Add_Texture : No Textures Loaded");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
 
     return S_OK;
 }
@@ -49,32 +45,18 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
-    Render_GUI_Layout();
-
-    Render_GUI_Transform();
-
-    ImGui::SeparatorText(u8"이미지");
+    ImGui::SeparatorText("Appearance");
     const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
-    if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
+    if(ImGui::Combo("Image", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
-}
 
-json CImageUI::ToJson()
-{
-    json objData;
-     
-    objData["typeTag"] = "ImageUI";
-    objData["textureTag"] = CUITool_Level::Get_TextureKeys()[m_iTextureKeyIndex];
+    ImGui::SeparatorText("Layout");
+    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);
+    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
+    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
+    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
 
-    ToJson_Common(objData);
-    
-    return objData;
-}
-
-void CImageUI::FromJson(const json& data)
-{
-    m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());     // 앵커는 빌더에 넣기
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+    CGameObject::Render_GUI();
 }
 
 CGameObject* CImageUI::Create()

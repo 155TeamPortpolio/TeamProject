@@ -33,6 +33,19 @@ namespace Engine {
 		virtual ~TransformInitDesc() DEFAULT;
 	}TRANSFORM_DESC;
 
+	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
+		_bool		isStatic = false;		// 움직이는 물체 / 안움직이는 물체
+		_bool       isKinematic = false;    // Transform을 통한 제어, 물리 엔진 제어
+		_bool       bEnableGravity = true;	// 중력 적용
+		_float		fMass = 1.0f;			// 질량
+		_bool		bLockX = true;
+		_bool		bLockY = false;
+		_bool		bLockZ = true;
+		string		strMaterialTag = {};
+
+		RigidBodyinitDesc() DEFAULT;
+		virtual ~RigidBodyinitDesc() DEFAULT;
+	}RIGIDBODY_DESC;
 
 	typedef struct CameraInitDesc :public COMPONENT_DESC {
 		_float fNear = {1.f};
@@ -59,54 +72,42 @@ namespace Engine {
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
+
 	}LIGHT_INIT_DESC;
 
-	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
-		_bool		isStatic = false;		// 움직이는 물체 / 안움직이는 물체
-		_bool       isKinematic = false;    // Transform을 통한 제어, 물리 엔진 제어
-		_bool       bEnableGravity = true;	// 중력 적용
-		_float		fMass = 1.0f;			// 질량
-		_bool		bLockX = true;
-		_bool		bLockY = false;
-		_bool		bLockZ = true;
-		_float		fLinearDamping = 0.f;
-		_float		fAngularDamping = 0.05f;
-
-		RigidBodyinitDesc() DEFAULT;
-		virtual ~RigidBodyinitDesc() DEFAULT;
-	}RIGIDBODY_DESC;
-
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
-		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// 충돌체 모양
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
-
-		_float3			vCenter = { 0.f, 0.f, 0.f };		// 로컬 오프셋
-		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
-		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
-		_bool			isTrigger = false;					// 트리거 여부
-		string			strMaterialTag = "";				// 재질 태그
-
-		ColliderInitDesc() DEFAULT;
-		virtual ~ColliderInitDesc() DEFAULT;
+		COLLIDER_TYPE eType = COLLIDER_TYPE::BOX;
+		_float3 vCenter = { 0.f, 0.f, 0.f };	// 로컬 오프셋
+		_float3 vSize = { 1.f, 1.f, 1.f };		// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
+		_float3 vRotation = { 0.f, 0.f, 0.f };	// 로컬 회전 (Radian)
+		_bool   isTrigger = false;				// 트리거 여부
+		string  strMaterialTag = "";			// 재질 태그
 	}COLLIDER_DESC;
 
-	typedef struct CCTinitDesc : public COMPONENT_DESC {
-		_float			fStepOffset = { 0.5f };     // 계단 등반 높이
-		_float			fSlopeLimit = { 45.0f };    // 등반 각도 제한
-		_float3			vPos = { 0.f, 0.f, 0.f };   // 초기 위치
-		_float			fMaxSpeed = 100.f;
+	//typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {
+	//	_float3 vSize = {};
+	//	ColliderAABBInitDesc() DEFAULT;
+	//	ColliderAABBInitDesc(_float3 vCenter, _float3 vSize) :COLLIDER_DESC{ vCenter }, vSize{vSize} {};
+	//	ColliderAABBInitDesc(const ColliderAABBInitDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize} {};
+	//	virtual ~ColliderAABBInitDesc() DEFAULT;
+	//}AABB_COLLIDER_DESC;
 
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// 충돌그룹
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// 충돌할그룹 : 기본값 모두
-		_float			fHeight = { 2.0f };         // 캡슐 높이
-		_float			fRadius = { 0.5f };         // 캡슐 반지름
-		string			strMaterialTag = { "" };    // 재질
-		_float			fDensity = { 10.0f };       // 밀도 : 무게 역할
+	//typedef struct ColliderInitOBBDesc :public COLLIDER_DESC {
+	//	_float3 vSize = {};
+	//	_float3 vEularRadians = {};
+	//	ColliderInitOBBDesc() DEFAULT;
+	//	virtual ~ColliderInitOBBDesc() DEFAULT;
+	//	ColliderInitOBBDesc(_float3 vCenter, _float3 vSize, _float3 vEularRadians) :COLLIDER_DESC{ vCenter }, vSize{ vSize }, vEularRadians{ vEularRadians } {};
+	//	ColliderInitOBBDesc(const ColliderInitOBBDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize } , vEularRadians{rhs.vEularRadians } {};
+	//}OBB_COLLIDER_DESC;
 
-		CCTinitDesc() DEFAULT;
-		virtual ~CCTinitDesc() DEFAULT;
-	}CCT_DESC;
+	//typedef struct ColliderInitSphereDesc :public COLLIDER_DESC {
+	//	_float fRadius = {};
+	//	ColliderInitSphereDesc() DEFAULT;
+	//	virtual ~ColliderInitSphereDesc() DEFAULT;
+	//	ColliderInitSphereDesc(_float3 vCenter, _float vRadius) :COLLIDER_DESC{ vCenter }, fRadius{ vRadius }{};
+	//	ColliderInitSphereDesc(const ColliderInitSphereDesc& rhs) :COLLIDER_DESC{ rhs }, fRadius{ rhs.fRadius }{};
+	//}SPHERE_COLLIDER_DESC;
 
 	/*Parent Child Desc*/
 	typedef struct tagSetParentDesc :public COMPONENT_DESC {
@@ -124,12 +125,13 @@ namespace Engine {
 	}GAMEOBJECT_DESC;
 
 	typedef struct tagUIObjectDesc : public GAMEOBJECT_DESC {
-		_float2 AnchorOffset = {};
-		_float2 Size = { 1.f,1.f};
-		_float2 Scale = {1.f,1.f };
+		_float fX = {};
+		_float fY = {  };
+		_float fSizeX = {1.f };
+		_float fSizeY = { 1.f };
 		_float fRadian = {};
-
 		tagUIObjectDesc() DEFAULT;
+		tagUIObjectDesc(const _float4& ui_Info) :fX(ui_Info.x), fY(ui_Info.y), fSizeX(ui_Info.z), fSizeY(ui_Info.w), GAMEOBJECT_DESC{} {}
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;
 

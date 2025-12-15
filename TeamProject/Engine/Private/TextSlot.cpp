@@ -156,15 +156,12 @@ _float2 CTextSlot::Get_Anchor(ANCHOR anchot)
 	return result;
 }
 
-_float2 CTextSlot::Get_TextSize()
+_float CTextSlot::Get_TextSize()
 {
 	if (m_pFont)
-	{
-		_vector vSize = m_pFont->TextSize(m_Info.Text);
-		return _float2(XMVectorGetX(vSize), XMVectorGetY(vSize));
-	}
-	else
-		return _float2();
+		return XMVectorGetX(m_pFont->TextSize(m_Info.Text)); 
+	else 
+		return 0.f;
 }
 
 CTextSlot* CTextSlot::Create()

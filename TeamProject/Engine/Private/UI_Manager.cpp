@@ -17,32 +17,15 @@ CUI_Manager::~CUI_Manager()
 void CUI_Manager::Pre_EngineUpdate(_float dt)
 {
 
-	for (CUI_Object* obj : DeleteUIs)
+	for (auto pObject : DeleteUIs)
 	{
-		if (!obj) continue;
-
-		const _int idx = obj->Get_SystemIndex();
-		if (idx < 0) continue;
-
-		const auto levelKey = obj->Get_SystemLevel();
-
-		auto itLevel = m_UIObjects.find(levelKey);
-		if (itLevel == m_UIObjects.end()) continue;
-
-		auto& vec = itLevel->second;
-		if (idx >= static_cast<_int>(vec.size())) continue;
-
-		// 아직 그 슬롯에 그 객체가 있을 때만 제거
-		if (vec[idx] != obj) continue;
-
-		// 시스템 연결 끊기
-		obj->Set_OnSystem("", -1);
-
-		Safe_Release(vec[idx]);
-		vec[idx] = nullptr;
+		_uint ObjectID = pObject->Get_ObjectID();
+		//pObject->Get_Layer()->Remove_GameObject(ObjectID);
+		//pObject->Set_Layer(nullptr);
 	}
-	DeleteUIs.clear();
 
+	DeleteUIs.clear();
+	
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 	for (auto& UI : m_UIObjects[m_nowLevelKey])
 		if (UI && UI->Is_Root())
@@ -157,35 +140,26 @@ void CUI_Manager::Add_Object_Recursive(const string& LevelTag, CUI_Object* objec
 			Add_Object_Recursive(LevelTag, CastChild);
 	}
 }
+
 void CUI_Manager::Remove_UIObject(CUI_Object* object)
 {
-	if (!object)
+
+	if (object == nullptr)
+		return;
+	_int systemIndex = object->Get_SystemIndex();
+	if (systemIndex == -1)
+		return;
+	auto& map = m_UIObjects.at(object->Get_SystemLevel());
+
+	if (map.empty())
+		return;
+	if (systemIndex >= map.size())
 		return;
 
-	const _int systemIndex = object->Get_SystemIndex();
-	if (systemIndex < 0)
-		return;
-
-	const auto level = object->Get_SystemLevel();
-
-	auto itLevel = m_UIObjects.find(level);
-	if (itLevel == m_UIObjects.end())
-		return;
-
-	auto& vec = itLevel->second;
-	if (systemIndex >= static_cast<_int>(vec.size()))
-		return;
-
-	if (vec[systemIndex] != object)
-		return;
-
-	auto it = std::find(DeleteUIs.begin(), DeleteUIs.end(), object);
-	if (it != DeleteUIs.end())
-		return;
-
-	DeleteUIs.push_back(object);
+	object->Set_OnSystem("", -1);
+	Safe_Release(map[systemIndex]);
+	map[systemIndex] = nullptr;
 }
- 
 
 static vector<CUI_Object*> emptyVec;
 

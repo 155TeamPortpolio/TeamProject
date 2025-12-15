@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="98. Default">
@@ -37,18 +37,6 @@
     <Filter Include="02. DemoObject\InstanceDemo">
       <UniqueIdentifier>{071519c1-f878-49a6-9b56-3b2964a6dd82}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Level\DemoLevel">
-      <UniqueIdentifier>{3d6a0f15-7788-4b46-91ad-0e5521566e0e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\PhysicsLevel">
-      <UniqueIdentifier>{75bec75e-0af6-4df9-b616-d26f7c4e4104}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. DemoObject\DemoShaderModel">
-      <UniqueIdentifier>{898bf3e7-709f-48b4-b574-22a7ec05ffbd}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. DemoObject\DemoPlayer">
-      <UniqueIdentifier>{de0b3c12-5943-417e-b837-66c275c05e91}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -69,6 +57,9 @@
     <ClInclude Include="..\Public\Demo_Defines.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DemoLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\DemoCamera.h">
       <Filter>02. DemoObject\DemoCamera</Filter>
     </ClInclude>
@@ -77,6 +68,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\DemoModel.h">
       <Filter>02. DemoObject\DemoModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoUI.h">
+      <Filter>02. DemoObject\DemoUI</Filter>
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
       <Filter>97. GUI_Inc</Filter>
@@ -126,21 +120,6 @@
     <ClInclude Include="..\Public\InstanceDemo.h">
       <Filter>02. DemoObject\InstanceDemo</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\DemoLevel.h">
-      <Filter>01. Level\DemoLevel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\PhysicsLevel.h">
-      <Filter>01. Level\PhysicsLevel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DemoUI.h">
-      <Filter>02. DemoObject\DemoUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DemoPlayer.h">
-      <Filter>02. DemoObject\DemoPlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\DemoShaderModel.h">
-      <Filter>02. DemoObject\DemoShaderModel</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -148,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoLevel.cpp">
+      <Filter>01. Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DemoCamera.cpp">
       <Filter>02. DemoObject\DemoCamera</Filter>
@@ -203,18 +185,6 @@
     <ClCompile Include="..\Private\InstanceDemo.cpp">
       <Filter>02. DemoObject\InstanceDemo</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\DemoLevel.cpp">
-      <Filter>01. Level\DemoLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\PhysicsLevel.cpp">
-      <Filter>01. Level\PhysicsLevel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DemoPlayer.cpp">
-      <Filter>02. DemoObject\DemoPlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\DemoShaderModel.cpp">
-      <Filter>02. DemoObject\DemoShaderModel</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DemoProject.rc">
@@ -222,10 +192,10 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_DemoInstance.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
       <Filter>96. DemoShader</Filter>
     </FxCompile>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_PlaneGrid.hlsl">
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_DemoInstance.hlsl">
       <Filter>96. DemoShader</Filter>
     </FxCompile>
   </ItemGroup>

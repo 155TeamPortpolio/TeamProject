@@ -1,7 +1,8 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-// 부모가 스케일, 회전하면 자식도 영향 받게 수정해야
+// 캔버스 패널은 모든 ui 오브젝트의 최상위 객체로
+// 목적은 UI가 항상 화면 전체를 기준으로 작동하도록 화면에 동기화 (화면 크기에 맞춰서 자동으로 크기 맞춤)
 
 NS_BEGIN(Engine)
 class IUI_Service;
@@ -9,7 +10,7 @@ NS_END
 
 NS_BEGIN(UITool)
 
-class CCanvasPanel final : public CUIObject_Tool
+class CCanvasPanel final : public CUI_Object
 {
 private:
 	CCanvasPanel();
@@ -26,15 +27,8 @@ public:
 
 	virtual void Render_GUI() override;
 
-public:
-	virtual json ToJson() override;
-	virtual void FromJson(const json& data) override;
-
 private:
-	const _float2		m_fChildCreateSize = { 100.f, 30.f };
-
-public:
-	static _uint m_iCount;
+	_float2			m_fChildCreateSize = { 100.f, 30.f };
 
 public:
 	static CGameObject* Create();

@@ -265,11 +265,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
-    <ClInclude Include="..\Public\EventListner.h" />
-    <ClInclude Include="..\Public\EventSystem.h" />
-    <ClInclude Include="..\Public\LifeTimeColor.h" />
-    <ClInclude Include="..\Public\LifeTimeSize.h" />
-    <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -409,11 +404,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
-    <ClCompile Include="..\Private\EventListner.cpp" />
-    <ClCompile Include="..\Private\EventSystem.cpp" />
-    <ClCompile Include="..\Private\LifeTimeColor.cpp" />
-    <ClCompile Include="..\Private\LifeTimeSize.cpp" />
-    <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -528,11 +518,9 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />

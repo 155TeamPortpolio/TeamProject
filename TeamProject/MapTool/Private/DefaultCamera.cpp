@@ -90,23 +90,6 @@ void CDefaultCamera::Late_Update(_float dt)
 {
 }
 
-void CDefaultCamera::Render_GUI()
-{
-	__super::Render_GUI();
-	
-	ImGui::PushID(this);
-
-	if (ImGui::TreeNode((void*)this, "Custom Camera Setting")) {
-
-		ImGui::Text("Camera Speed");
-		ImGui::InputFloat("##Speed", &m_fSpeed, 1.0f, 0.0f, "%.f");
-		
-		ImGui::TreePop();
-	}
-
-	ImGui::PopID();
-}
-
 CDefaultCamera* CDefaultCamera::Create()
 {
 	CDefaultCamera* instance = new CDefaultCamera();

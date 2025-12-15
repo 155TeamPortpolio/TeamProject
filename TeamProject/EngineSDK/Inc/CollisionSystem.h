@@ -15,6 +15,7 @@ private:
 
         virtual void onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs) override;
         virtual void onTrigger(PxTriggerPair* pairs, PxU32 count) override;
+
         // 사용 안 함
         virtual void onConstraintBreak(PxConstraintInfo*, PxU32) override {}
         virtual void onWake(PxActor**, PxU32) override {}
@@ -32,35 +33,32 @@ private:
 public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
-    void Render_GUI();
+    virtual void Late_Update(_float dt) override;
 
-private:
+public:
+    // 디버그 렌더링을 위한 등록
+   virtual _int RegisterCollider(class CCollider* pCollider, _int Index)override;
+   virtual void UnregisterCollider(class CCollider* pCollider, _int Index)override;
+
+private: // 내부 로직 (Proxy가 호출함)
     void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
     void Process_Trigger(PxTriggerPair* pairs, PxU32 count);
-    void Process_Stay();
-    void Process_Exit();
-    ICollidable* Get_Collidable(PxRigidActor* pActor);
-
-
     friend class CPhysXEventCallback;   // Proxy 클래스
 
-    virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) override;
-    virtual void UnRegisterCollidable(class ICollidable* pCollidable, _int Index) override;
-#ifdef _DEBUG
-    // 디버그 렌더링을 위한 등록
-    virtual void Render_Debug()override;
 
+#ifdef _DEBUG
+    virtual void Render_Debug()override;
 private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };
     BasicEffect* m_pEffect = { nullptr };
     PrimitiveBatch<VertexPositionColor>* m_pBatch = { nullptr };
+    vector<class CCollider*> m_Colliders; // 디버그 렌더링용
 #endif 
 
 private:
     ID3D11Device* m_pDevice = {nullptr};
     ID3D11DeviceContext* m_pContext = { nullptr };
     CPhysXEventCallback* m_pPhysXCallback = { nullptr };    // 이벤트 리스너
-    vector<class ICollidable*> m_Collidables;
 
 public:
     static CCollisionSystem* Create(ID3D11Device* pDevice , ID3D11DeviceContext* pContext);
@@ -68,3 +66,9 @@ public:
 };
 
 NS_END
+
+#pragma region OLD
+//private:
+//    void MakeCandidate();
+//    void Clean_Up();
+#pragma endregion

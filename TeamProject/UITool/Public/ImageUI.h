@@ -1,9 +1,9 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
 NS_BEGIN(UITool)
 
-class CImageUI final : public CUIObject_Tool
+class CImageUI final : public CUI_Object
 {
 private:
 	CImageUI();
@@ -20,15 +20,8 @@ public:
 
 	virtual void Render_GUI() override;
 
-public:
-	virtual json ToJson() override;
-	virtual void FromJson(const json& data) override;
-
 private:
 	_int		m_iTextureKeyIndex = {};
-
-public:
-	static _uint m_iCount;
 
 public:
 	static CGameObject* Create();

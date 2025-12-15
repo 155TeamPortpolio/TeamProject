@@ -16,7 +16,3 @@ extern HINSTANCE g_hInstance;
 using namespace Demo;
 
 #include "Engine_Defines.h"
-
-struct ExampleEvt {
-	wstring evt = L"이벤트가 왔어요!";
-};

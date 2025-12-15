@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 #include "ICameraService.h"
 #include "Collider.h"
-#include "CharacterController.h"
 
 void CCollisionSystem::CPhysXEventCallback::onContact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
@@ -40,8 +39,8 @@ HRESULT CCollisionSystem::Initialize()
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
 #endif
+	m_Colliders.reserve(1000);
 
-	m_Collidables.reserve(1000);
 
 	// 프록시 콜백
 	m_pPhysXCallback = new CPhysXEventCallback(this);
@@ -57,141 +56,70 @@ HRESULT CCollisionSystem::Initialize()
 
 void CCollisionSystem::Update(_float dt)
 {
-	for (auto it = m_Collidables.begin(); it != m_Collidables.end();)
+	// 디버그용 리스트 관리
+	for (auto it = m_Colliders.begin(); it != m_Colliders.end();)
 	{
 		if ((*it) == nullptr) // 이미 해제된 경우
-			it = m_Collidables.erase(it);
+			it = m_Colliders.erase(it);
 		else
 			++it;
 	}
 }
 
-void CCollisionSystem::Render_GUI()
+void CCollisionSystem::Late_Update(_float dt)
 {
-	ImGui::Begin("Collision System");
+}
 
-	ImGui::Text("Total Collidables: %d", m_Collidables.size());
+_int CCollisionSystem::RegisterCollider(CCollider* pCollider, _int Index)
+{
+	m_Colliders.push_back(pCollider);
+	return m_Colliders.size() - 1;
+}
 
-	_uint iActiveCount = 0;
-	_uint iTriggerCount = 0;
-	_uint iCollidingCount = 0;
-	_uint iColliderCount = 0;
-	_uint iCCTCount = 0;
 
-	for (auto pCollidable : m_Collidables)
+void CCollisionSystem::UnregisterCollider(CCollider* pCollider, _int Index)
+{
+	for (size_t i = 0; i < m_Colliders.size(); ++i)
 	{
-		if (pCollidable && pCollidable->Get_CompActive())
+		if (m_Colliders[i] == pCollider)
 		{
-			iActiveCount++;
-			if (pCollidable->IsColliding())
-				iCollidingCount++;
-
-			if (dynamic_cast<CCollider*>(pCollidable))
+			// 제거할 대상을 마지막 요소와 교체하고 pop_back
+			if (i != m_Colliders.size() - 1)
 			{
-				iColliderCount++;
-				CCollider* pCol = static_cast<CCollider*>(pCollidable);
-				if (pCol->IsTrigger()) iTriggerCount++;
+				swap(m_Colliders[i], m_Colliders.back());
 			}
-			else if (dynamic_cast<CCharacterController*>(pCollidable))
-			{
-				iCCTCount++;
-			}
+			m_Colliders.pop_back();
+			return;
 		}
 	}
-
-	ImGui::Text("Active: %d | Inactive: %d", iActiveCount, m_Collidables.size() - iActiveCount);
-	ImGui::Text("Colliders: %d | CCT: %d", iColliderCount, iCCTCount);
-	ImGui::Text("Triggers: %d", iTriggerCount);
-	ImGui::Text("Currently Colliding: %d", iCollidingCount);
-
-	ImGui::Separator();
-
-	if (ImGui::CollapsingHeader("Collidable List"))
-	{
-		for (size_t i = 0; i < m_Collidables.size(); ++i)
-		{
-			auto pCollidable = m_Collidables[i];
-			if (!pCollidable) continue;
-
-			ImGui::PushID(i);
-			_bool bActive = pCollidable->Get_CompActive();
-
-			if (ImGui::Checkbox("##Active", &bActive))
-			{
-				pCollidable->Set_CompActive(bActive);
-			}
-
-			ImGui::SameLine();
-
-			const char* typePrefix = "";
-			if (dynamic_cast<CCollider*>(pCollidable))
-			{
-				CCollider* pCol = static_cast<CCollider*>(pCollidable);
-				typePrefix = pCol->IsTrigger() ? "[TRG]" : "[COL]";
-			}
-			else if (dynamic_cast<CCharacterController*>(pCollidable))
-			{
-				typePrefix = "[CCT]";
-			}
-
-			string ownerName = pCollidable->Get_Owner() ?
-				pCollidable->Get_Owner()->Get_InstanceName() : "No Owner";
-
-			if (pCollidable->IsColliding())
-			{
-				ImGui::TextColored(ImVec4(1, 0, 0, 1), "%s [HIT] %s", typePrefix, ownerName.c_str());
-			}
-			else
-			{
-				ImGui::Text("%s %s", typePrefix, ownerName.c_str());
-			}
-
-			ImGui::PopID();
-		}
-	}
-
-	ImGui::End();
 }
 
 void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs)
 {
-	if (pairHeader.flags & (PxContactPairHeaderFlag::eREMOVED_ACTOR_0 | PxContactPairHeaderFlag::eREMOVED_ACTOR_1))
-		return;
-
 	for (PxU32 i = 0; i < nbPairs; i++)
 	{
 		const PxContactPair& cp = pairs[i];
 
+		// 쉐이프가 삭제되었으면 스킵
 		if (cp.flags & (PxContactPairFlag::eREMOVED_SHAPE_0 | PxContactPairFlag::eREMOVED_SHAPE_1))
 			continue;
 
-		if (!cp.shapes[0] || !cp.shapes[1]) continue;
-
-		ICollidable* pColA = nullptr;
-		ICollidable* pColB = nullptr;
-
-		if (cp.shapes[0]->userData)
-			pColA = static_cast<ICollidable*>(cp.shapes[0]->userData);
-		else if (pairHeader.actors[0] && pairHeader.actors[0]->userData)
-			pColA = Get_Collidable(pairHeader.actors[0]);
-
-		if (cp.shapes[1]->userData)
-			pColB = static_cast<ICollidable*>(cp.shapes[1]->userData);
-		else if (pairHeader.actors[1] && pairHeader.actors[1]->userData)
-			pColB = Get_Collidable(pairHeader.actors[1]);
-
-		if (!pColA || !pColB) continue;
-		if (!pColA->Get_CompActive() || !pColB->Get_CompActive()) continue;
-
-		if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		// UserData에서 Collider 추출
+		if (cp.shapes[0]->userData && cp.shapes[1]->userData)
 		{
-			pColA->OnCollisionEnter(pColB);
-			pColB->OnCollisionEnter(pColA);
-		}
-		else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
-		{
-			pColA->OnCollisionExit(pColB);
-			pColB->OnCollisionExit(pColA);
+			auto pColA = static_cast<CCollider*>(cp.shapes[0]->userData);
+			auto pColB = static_cast<CCollider*>(cp.shapes[1]->userData);
+
+			if (cp.events & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+			{
+				pColA->OnCollisionEnter(pColB, cp);
+				pColB->OnCollisionEnter(pColA, cp);
+			}
+			else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
+			{
+				pColA->OnCollisionExit(pColB);
+				pColB->OnCollisionExit(pColA);
+			}
 		}
 	}
 }
@@ -203,118 +131,29 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		if (pairs[i].flags & (PxTriggerPairFlag::eREMOVED_SHAPE_TRIGGER | PxTriggerPairFlag::eREMOVED_SHAPE_OTHER))
 			continue;
 
-		if (!pairs[i].triggerShape || !pairs[i].otherShape) continue;
+		auto pTrigger = static_cast<CCollider*>(pairs[i].triggerShape->userData);
+		auto pOther = static_cast<CCollider*>(pairs[i].otherShape->userData);
 
-		ICollidable* pTrigger = nullptr;
-		ICollidable* pOther = nullptr;
-
-		if (pairs[i].triggerShape->userData)
-			pTrigger = static_cast<ICollidable*>(pairs[i].triggerShape->userData);
-
-		if (pairs[i].otherShape->userData)
-			pOther = static_cast<ICollidable*>(pairs[i].otherShape->userData);
-
-		if (!pTrigger || !pOther) continue;
-		if (!pTrigger->Get_CompActive() || !pOther->Get_CompActive()) continue;
-
-		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
+		if (pTrigger && pOther)
 		{
-			pTrigger->OnTriggerEnter(pOther);
-			pOther->OnTriggerEnter(pTrigger);
-		}
-		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
-		{
-			pTrigger->OnTriggerExit(pOther);
-			pOther->OnTriggerExit(pTrigger);
-		}
-	}
-}
-
-void CCollisionSystem::Process_Stay()
-{
-	for (auto pCollidable : m_Collidables)
-	{
-		if (!pCollidable || !pCollidable->Get_CompActive()) continue;
-
-		for (auto pOther : pCollidable->Get_Collisions())
-		{
-			if (pOther && pOther->Get_CompActive())
+			if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 			{
-				pCollidable->OnCollisionStay(pOther);
+				pTrigger->OnTriggerEnter(pOther);
+				pOther->OnTriggerEnter(pTrigger);
 			}
-		}
-	}
-}
-
-void CCollisionSystem::Process_Exit()
-{
-	for (auto pCollidable : m_Collidables)
-	{
-		if (!pCollidable || !pCollidable->Get_CompActive()) continue;
-
-		auto& collisions = pCollidable->Get_Collisions();
-		for (auto it = collisions.begin(); it != collisions.end();)
-		{
-			ICollidable* pOther = *it;
-			if (!pOther || !pOther->Get_CompActive())
+			else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
 			{
-				it = collisions.erase(it);
-				if (pOther)
-				{
-					pCollidable->OnCollisionExit(pOther);
-					pOther->OnCollisionExit(pCollidable);
-				}
+				pTrigger->OnTriggerExit(pOther);
+				pOther->OnTriggerExit(pTrigger);
 			}
-			else
-			{
-				++it;
-			}
-		}
-	}
-}
-
-ICollidable* CCollisionSystem::Get_Collidable(PxRigidActor* pActor)
-{
-	if (!pActor || !pActor->userData) return nullptr;
-
-	CGameObject* pOwner = static_cast<CGameObject*>(pActor->userData);
-	if (!pOwner) return nullptr;
-
-	ICollidable* pCollidable = pOwner->Get_Component<CCharacterController>();
-	if (!pCollidable)
-		pCollidable = pOwner->Get_Component<CCollider>();
-
-	return pCollidable;
-}
-
-_int CCollisionSystem::RegisterCollidable(ICollidable* pCollidable, _int Index)
-{
-	m_Collidables.push_back(pCollidable);
-	return m_Collidables.size() - 1;
-}
-
-void CCollisionSystem::UnRegisterCollidable(ICollidable* pCollidable, _int Index)
-{
-	for (size_t i = 0; i < m_Collidables.size(); ++i)
-	{
-		if (m_Collidables[i] == pCollidable)
-		{
-			// 제거할 대상을 마지막 요소와 교체하고 pop_back
-			if (i != m_Collidables.size() - 1)
-			{
-				swap(m_Collidables[i], m_Collidables.back());
-			}
-			m_Collidables.pop_back();
-			return;
 		}
 	}
 }
 
 #ifdef _DEBUG
-
 void CCollisionSystem::Render_Debug()
 {
-	if (m_Collidables.empty()) return;
+	if (m_Colliders.empty()) return;
 
 	auto camMgr = CGameInstance::GetInstance()->Get_CameraMgr();
 	_matrix viewMat = XMLoadFloat4x4(camMgr->Get_ViewMatrix());
@@ -329,20 +168,13 @@ void CCollisionSystem::Render_Debug()
 
 	m_pBatch->Begin();
 
-	XMVECTOR vColor;
-	for (auto& pCollidable : m_Collidables)
+	// 등록된 콜라이더들만 그림
+	for (auto& pCollider : m_Colliders)
 	{
-		if (pCollidable && pCollidable->Get_CompActive())
+		if (pCollider && pCollider->Get_CompActive())
 		{
-			if (dynamic_cast<CCollider*>(pCollidable) != nullptr)
-			{
-				vColor = pCollidable->IsColliding() ? Colors::Red : Colors::Green;
-			}
-			else if(dynamic_cast<CCharacterController*>(pCollidable) != nullptr)
-			{
-				vColor = pCollidable->IsColliding() ? Colors::Orange : Colors::Cyan;
-			}
-			pCollidable->Render(m_pBatch, vColor);
+			XMVECTOR vColor = pCollider->IsColliding() ? Colors::Red : Colors::Green;
+			pCollider->Render(m_pBatch, vColor);
 		}
 	}
 
@@ -367,12 +199,12 @@ void CCollisionSystem::Free()
 		m_pPhysXCallback = nullptr;
 	}
 
+	m_Colliders.clear();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
 #ifdef _DEBUG
-	m_Collidables.clear();
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pEffect);
 	Safe_Delete(m_pBatch);
@@ -380,3 +212,77 @@ void CCollisionSystem::Free()
 
 	__super::Free();
 }
+
+#pragma region OLD
+//void CCollisionSystem::DeActiveCollider(CCollider* pCollider, _int Index)
+//{
+//	if (Index >= m_Colliders.size()) {
+//		return;
+//	}
+//
+//	if (m_Colliders[Index].pCollider != pCollider) {
+//		return;
+//	}
+//
+//	else {
+//		m_Colliders[Index].eState = COLLIDER_SLOT::STATE::INACTIVE;
+//	}
+//}
+//
+//void CCollisionSystem::ActiveCollider(CCollider* pCollider, _int Index)
+//{
+//	if (Index >= m_Colliders.size()) {
+//		return;
+//	}
+//	if (m_Colliders[Index].pCollider != pCollider) {
+//		return;
+//	}
+//	if (!pCollider->Has_Desc()) {
+//		return;
+//	}
+//
+//	else {
+//		m_Colliders[Index].eState = COLLIDER_SLOT::STATE::ACTIVE;
+//	}
+//}
+
+//void CCollisionSystem::Clean_Up()
+//{
+//	for (auto& col : m_Colliders) {
+//		if (!col.pCollider) continue;
+//
+//		if (false == col.pCollider->Get_CompActive()) {
+//			col.pCollider = nullptr;
+//			col.eState = COLLIDER_SLOT::STATE::DEAD;
+//		}
+//	}
+//}
+
+//void CCollisionSystem::MakeCandidate()
+//{
+//	m_CandidateCollision.clear();
+//	m_CandidateCollision.reserve(m_Colliders.size());
+//
+//	for (size_t i = 0; i < m_Colliders.size(); i++)
+//	{
+//		if (m_Colliders[i].IsValid() == false)
+//			continue;
+//		if (m_Colliders[i].IsActive() == false)
+//			continue;
+//		if (m_Colliders[i].pCollider->Get_CompActive() == false)
+//			continue;
+//
+//		for (size_t j = i + 1; j < m_Colliders.size(); j++)
+//		{
+//			if (m_Colliders[j].IsValid() == false)
+//				continue;
+//			if (m_Colliders[j].IsActive() == false)
+//				continue;
+//			if (m_Colliders[j].pCollider->Get_CompActive() == false)
+//				continue;
+//
+//			m_CandidateCollision.emplace_back(i, j);
+//		}
+//	}
+//}
+#pragma endregion

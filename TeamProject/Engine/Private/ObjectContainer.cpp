@@ -184,17 +184,10 @@ void CObjectContainer::Destroy_Child(_uint ChildIndex)
 
 	m_ChildrenObjects[ChildIndex] = nullptr;
 
-	CUI_Object* uiCast = dynamic_cast<CUI_Object*>(target);
-	_bool isUI = (uiCast != nullptr);
-
-	if (isUI) {
-		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiCast);
-		Safe_Release(uiCast);
-	}
-	else {
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(target);
-		Safe_Release(target);
-	}
+	//여기서 자식 오브젝트를 지우는 작업 필요.
+	//해당 컴포넌트 안에서도 지우고, 레이어에서도 지우는 작업이 필요함. 
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(target);
+	Safe_Release(target);
 }
 
 void CObjectContainer::Dettach_Child(_uint ChildIndex)
@@ -216,36 +209,6 @@ void CObjectContainer::Dettach_Child(_uint ChildIndex)
 	target->Get_Component<CChild>()->Dettach_Parent();
 	target->Remove_Component<CChild>();
 	Safe_Release(target);
-}
-
-void CObjectContainer::Render_GUI()
-{
-	ImGui::SeparatorText("Object_Container");
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * (m_ChildrenObjects.size() + 3)) + (ImGui::GetStyle().WindowPadding.y * 2);
-
-	ImGui::BeginChild("##AudioSourceChild", ImVec2{ 0, childHeight }, true);
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
-	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
-	{
-		if (m_ChildrenObjects[i] == nullptr)
-			continue;
-
-		string btnName = "Delete : " + m_ChildrenObjects[i]->Get_InstanceName() + to_string(i);
-
-		if (ImGui::Button(btnName.c_str())) {
-			Destroy_Child(i);
-		}
-
-		if (ImGui::IsItemHovered()) {
-			ImGui::BeginTooltip();
-			ImGui::Text(btnName.c_str());
-			ImGui::EndTooltip();
-		}
-	}
-	ImGui::PopStyleVar();
-	ImGui::EndChild();
 }
 
 CObjectContainer* CObjectContainer::Create()

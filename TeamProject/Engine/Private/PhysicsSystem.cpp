@@ -37,9 +37,8 @@ HRESULT CPhysicsSystem::Initialize()
     // PVD 생성
     m_pPvd = PxCreatePvd(*m_pFoundation);
     // PVD 연결 (로컬호스트, 포트 5425, 타임아웃 10ms)
-    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
-    m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
-    if (m_pPvd->isConnected())
+    PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 100);
+    if (m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL))
     {
         // 연결 성공 로그 (콘솔이나 Output 창 확인)
         OutputDebugStringA("------------------------------------------------\n");
@@ -114,13 +113,25 @@ void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
 
-    m_pScene->simulate(dt);
+    m_fTimer += dt;
 
+    int iMaxSteps = 3; // 무한 루프 방지용 최대 5회 제한
+
+    while (m_fTimer >= m_fDelta)
+    {
+        if (iMaxSteps-- <= 0)
+        {
+            m_fTimer = 0.f;
+            break;
+        }
+        m_pScene->simulate(m_fDelta);
+        m_pScene->fetchResults(true);
+        m_fTimer -= m_fDelta;
+    }
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
 {
-    m_pScene->fetchResults(true);
 }
 
 PxFilterFlags CPhysicsSystem::SimulationFilterShader(
