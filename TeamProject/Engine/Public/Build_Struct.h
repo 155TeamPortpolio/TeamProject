@@ -69,6 +69,8 @@ namespace Engine {
 		_bool		bLockX = true;
 		_bool		bLockY = false;
 		_bool		bLockZ = true;
+		_float		fLinearDamping = 0.f;
+		_float		fAngularDamping = 0.05f;
 
 		RigidBodyinitDesc() DEFAULT;
 		virtual ~RigidBodyinitDesc() DEFAULT;
@@ -105,32 +107,6 @@ namespace Engine {
 		virtual ~CCTinitDesc() DEFAULT;
 	}CCT_DESC;
 
-#pragma region OLD
-	//typedef struct ColliderAABBInitDesc :public COLLIDER_DESC {
-	//	_float3 vSize = {};
-	//	ColliderAABBInitDesc() DEFAULT;
-	//	ColliderAABBInitDesc(_float3 vCenter, _float3 vSize) :COLLIDER_DESC{ vCenter }, vSize{vSize} {};
-	//	ColliderAABBInitDesc(const ColliderAABBInitDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize} {};
-	//	virtual ~ColliderAABBInitDesc() DEFAULT;
-	//}AABB_COLLIDER_DESC;
-
-	//typedef struct ColliderInitOBBDesc :public COLLIDER_DESC {
-	//	_float3 vSize = {};
-	//	_float3 vEularRadians = {};
-	//	ColliderInitOBBDesc() DEFAULT;
-	//	virtual ~ColliderInitOBBDesc() DEFAULT;
-	//	ColliderInitOBBDesc(_float3 vCenter, _float3 vSize, _float3 vEularRadians) :COLLIDER_DESC{ vCenter }, vSize{ vSize }, vEularRadians{ vEularRadians } {};
-	//	ColliderInitOBBDesc(const ColliderInitOBBDesc& rhs) :COLLIDER_DESC{ rhs }, vSize{ rhs.vSize } , vEularRadians{rhs.vEularRadians } {};
-	//}OBB_COLLIDER_DESC;
-
-	//typedef struct ColliderInitSphereDesc :public COLLIDER_DESC {
-	//	_float fRadius = {};
-	//	ColliderInitSphereDesc() DEFAULT;
-	//	virtual ~ColliderInitSphereDesc() DEFAULT;
-	//	ColliderInitSphereDesc(_float3 vCenter, _float vRadius) :COLLIDER_DESC{ vCenter }, fRadius{ vRadius }{};
-	//	ColliderInitSphereDesc(const ColliderInitSphereDesc& rhs) :COLLIDER_DESC{ rhs }, fRadius{ rhs.fRadius }{};
-	//}SPHERE_COLLIDER_DESC;
-#pragma endregion
 	/*Parent Child Desc*/
 	typedef struct tagSetParentDesc :public COMPONENT_DESC {
 		class CGameObject* pParent = { nullptr };
