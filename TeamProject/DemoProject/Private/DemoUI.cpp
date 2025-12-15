@@ -3,6 +3,7 @@
 #include "TextSlot.h"
 #include "Sprite2D.h"
 #include "GameInstance.h"
+#include "EventListner.h"
 
 CDemoUI::CDemoUI()
 {
@@ -21,14 +22,23 @@ HRESULT CDemoUI::Initialize_Prototype()
 
 	Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 	Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "testUI.png");
+
+	Add_Component<CEventListner>();
+
 	return S_OK;
 }
 
 HRESULT CDemoUI::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+	Get_Component<CEventListner>()->Add_Listner<ExampleEvt>([this](const ExampleEvt& evt) {Listen(evt); });
 
 	return S_OK;
+}
+
+void CDemoUI::Listen(const ExampleEvt& evt)
+{
+	m_vSize = { 20,20 };
 }
 
 void CDemoUI::Awake()
