@@ -1,33 +1,31 @@
 #include "pch.h"
-#include "DemoModel.h"
+#include "DemoShaderModel.h"
 #include "SkeletalModel.h"
 #include "Material.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
-#include "RigidBody.h"
-CDemoModel::CDemoModel()
+CDemoShaderModel::CDemoShaderModel()
 {
 }
 
-CDemoModel::CDemoModel(const CDemoModel& rhs)
-	:CGameObject(rhs) 
+CDemoShaderModel::CDemoShaderModel(const CDemoShaderModel& rhs)
+    :CGameObject(rhs)
 {
 }
 
-HRESULT CDemoModel::Initialize_Prototype()
+HRESULT CDemoShaderModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
-	Add_Component<CRigidBody>();
-	Add_Component<CCollider>();
+
 	return S_OK;
 }
 
-HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
+HRESULT CDemoShaderModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -36,7 +34,7 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CDemoModel::Awake()
+void CDemoShaderModel::Awake()
 {
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
@@ -50,33 +48,19 @@ void CDemoModel::Awake()
 	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
 }
 
-void CDemoModel::Priority_Update(_float dt)
+void CDemoShaderModel::Priority_Update(_float dt)
 {
 }
 
-void CDemoModel::Update(_float dt)
+void CDemoShaderModel::Update(_float dt)
 {
 }
 
-void CDemoModel::Late_Update(_float dt)
-{
-	Get_Component<CRigidBody>()->Late_Update(dt);
-}
-
-void CDemoModel::OnCollisionEnter()
-{
-	OutputDebugStringA("Collision Enter!\n");
-}
-
-void CDemoModel::OnCollisionStay()
+void CDemoShaderModel::Late_Update(_float dt)
 {
 }
 
-void CDemoModel::OnCollisionExit()
-{
-}
-
-void CDemoModel::Render_GUI()
+void CDemoShaderModel::Render_GUI()
 {
 	__super::Render_GUI();
 
@@ -84,38 +68,38 @@ void CDemoModel::Render_GUI()
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
 			.Build("Demo_Model");
-		Get_Component<CObjectContainer>()->Add_Child(DemoModel,false);
+		Get_Component<CObjectContainer>()->Add_Child(DemoModel, false);
 	}
 	_bool isLayer = Get_Layer();
-	ImGui::Checkbox("InLayer",&isLayer);
+	ImGui::Checkbox("InLayer", &isLayer);
 }
 
-CDemoModel* CDemoModel::Create()
+CDemoShaderModel* CDemoShaderModel::Create()
 {
-	CDemoModel* instance = new CDemoModel();
+	CDemoShaderModel* instance = new CDemoShaderModel();
 	if (FAILED(instance->Initialize_Prototype()))
 	{
-		MSG_BOX("Object Create Failed : CDemoModel");
+		MSG_BOX("Object Create Failed : CDemoShaderModel");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-CGameObject* CDemoModel::Clone(INIT_DESC* pArg)
+CGameObject* CDemoShaderModel::Clone(INIT_DESC* pArg)
 {
-	CDemoModel* instance = new CDemoModel(*this);
+	CDemoShaderModel* instance = new CDemoShaderModel(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
-		MSG_BOX("Object Clone Failed : CDemoModel");
+		MSG_BOX("Object Clone Failed : CDemoShaderModel");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-void CDemoModel::Free()
+void CDemoShaderModel::Free()
 {
 	__super::Free();
 }

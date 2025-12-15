@@ -158,9 +158,9 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
-	SHADER_PARAM ShadeParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Shade", ShadeParam);
-	m_pShader->Bind_Value("g_ShadeTexture", ShadeParam);
+	SHADER_PARAM LightParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Light", LightParam);
+	m_pShader->Bind_Value("g_LightTexture", LightParam);
 
 	SHADER_PARAM ShadowParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Shadow", ShadowParam);
@@ -275,11 +275,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 	m_pTargetManager->Create_Target(ShadowDesc);
 
-	RenderTargetDesc ShadeDesc = { "Target_Shade" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(ShadeDesc);
-
-	RenderTargetDesc SpecularDesc = { "Target_Specular" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(SpecularDesc);
+	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(LightDesc);
 
 
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
@@ -292,9 +289,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
 		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Shade")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Specular")))
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
 		return E_FAIL;

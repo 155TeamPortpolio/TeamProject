@@ -120,14 +120,6 @@ _int CModelData::Find_MeshIndex(const string& name)
 
 void CModelData::Render_GUI()
 {
-	string meshCount = "Mesh : " + to_string(m_Meshes.size());
-
-	ImGui::Text(meshCount.c_str());
-	for (auto& mesh : m_Meshes) {
-		mesh->Render_GUI();
-	}
-	ImGui::Separator();
-
 	if (m_pSkeleton) {
 		if (ImGui::Button("Bones Tab")) {
 			isGui_BoneTabOpen = !isGui_BoneTabOpen;

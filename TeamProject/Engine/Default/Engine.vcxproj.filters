@@ -420,6 +420,12 @@
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EventSystem.h">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventListner.h">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -758,6 +764,9 @@
     <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint">
       <UniqueIdentifier>{39dbf45d-dfc2-4053-b4d7-bc4f01640cb2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\00. GameInstance">
+      <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
       <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
     </Filter>
@@ -773,8 +782,11 @@
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\00. GameInstance">
-      <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
+    <Filter Include="01. Utility\13. EventBus">
+      <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22.EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1117,6 +1129,12 @@
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\EventSystem.cpp">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventListner.cpp">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1153,6 +1171,12 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
