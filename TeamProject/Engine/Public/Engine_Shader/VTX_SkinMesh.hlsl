@@ -93,9 +93,9 @@ PS_OUT PS_MAIN(PS_IN In)
     {
         discard;
     }
-    Out.vDiffuse = vMtrlDiffuse;
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse;
     float3 vNormal;
     vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
     vNormal.z = 1.f;
@@ -107,7 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
     vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f,vNormalDesc.z);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     Out.vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
