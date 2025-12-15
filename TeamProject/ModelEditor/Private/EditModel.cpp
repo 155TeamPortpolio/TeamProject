@@ -75,6 +75,16 @@ void CEditModel::Render_GUI()
 	}
 	ImGui::EndChild();
 
+
+	ImGui::SeparatorText("Position Reset");
+	ImGui::BeginChild("##Reset", ImVec2{ 0, childHeight }, true);
+
+	if (ImGui::Button("Reset")) {
+		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
+	}
+
+	ImGui::EndChild();
+
 	__super::Render_GUI();
 }
 
@@ -88,6 +98,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
+	
+	Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
 
 	_bool isSkeletal = HasBones();
 
