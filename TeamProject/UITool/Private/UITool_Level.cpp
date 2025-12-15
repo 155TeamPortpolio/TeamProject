@@ -85,8 +85,8 @@ HRESULT CUITool_Level::Ready_Textures()
 	Add_Texture("Logo.png", "../Bin/Resources/UI/Logo.png");
 	Add_Texture("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg");
 
-	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath("CanvasPanel.png", "../Bin/Resources/UI/CanvasPanel.png")))
-		MSG_BOX("Failed to Ready Textures : CanvasPanel.png");
+	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/PanelBox.dds")))
+		MSG_BOX("Failed to Ready Textures : PanelBox.dds");
 
 	return S_OK;
 }
