@@ -435,6 +435,9 @@
     <ClInclude Include="..\Public\EventListner.h">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ObjectPool.h">
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -806,6 +809,9 @@
     <Filter Include="01. Utility\04. Components\22.EventListner">
       <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool">
+      <UniqueIdentifier>{da326297-d441-4077-b559-c58fd1c4c380}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1161,6 +1167,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EventListner.cpp">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ObjectPool.cpp">
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
