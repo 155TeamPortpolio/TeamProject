@@ -19,6 +19,7 @@ Texture2D g_PostProcessTexture;
 vector g_vLightDir;
 vector g_vLightPos;
 float  g_fLightRange;
+float  g_fLightIntensity;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
@@ -95,7 +96,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
     float3 PBR = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, 3.0f, 1.0f);
+    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.0f);
     //추후 light intensity 변수로 수정 예정
    
     Out.vLight = float4(PBR, 1.f);
@@ -134,7 +135,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
-    3.0f, g_vLightPos.xyz, g_fLightRange, 1.0f);
+    g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
     //추후 light intensity 변수로 수정 예정
    
     Out.vLight = float4(PBR, 1.f);

@@ -42,7 +42,7 @@ HRESULT CDemoCamera::Initialize(INIT_DESC* pArg)
 
 		Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 
-		IsFirst = false;
+		IsFirst = !IsFirst;
 	}
 	else
 	{
@@ -54,6 +54,8 @@ HRESULT CDemoCamera::Initialize(INIT_DESC* pArg)
 		desc.vLightDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
 		Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::POINT);
+
+		IsFirst = !IsFirst;
 	}
 
 
