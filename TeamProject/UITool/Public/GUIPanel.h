@@ -21,6 +21,16 @@ public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
 
+private:
+    CGameInstance*      m_pGameInstance = { nullptr };
+    _int                m_iLevelIndex = {};
+
+private:
+    void SelectLevel();
+    void CreateCanvasPanel();
+    void SaveToJson();
+    void LoadFromJson();
+
 public:
     static CGUIPanel* Create(GUI_CONTEXT* pContext);
     virtual void Free() override;

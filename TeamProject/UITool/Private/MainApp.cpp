@@ -7,6 +7,9 @@
 
 #include "UITool_Level.h"
 
+vector<string> CMainApp::m_strLevelTags;
+vector<const _char*> CMainApp::m_szLevelTags;
+
 CMainApp::CMainApp()
 {
 }
@@ -61,6 +64,11 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 	m_pGameInstance->Get_LevelMgr()->Register_Level("UITool_Level", []()->CLevel* {return CUITool_Level::Create("UITool_Level"); });
 	m_pGameInstance->Notify_LevelSet();
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("UITool_Level", false);
+
+	m_strLevelTags.push_back("UITool_Level");
+
+	for (const auto& Key : m_strLevelTags)
+		m_szLevelTags.push_back(Key.c_str());
 }
 
 CMainApp* CMainApp::Create()

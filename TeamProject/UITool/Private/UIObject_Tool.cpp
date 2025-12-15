@@ -13,6 +13,16 @@ CUIObject_Tool::CUIObject_Tool(const CUIObject_Tool& rhs)
 {
 }
 
+HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
+{
+    __super::Initialize(pArg);
+
+    // GUI Inspector Ã¢¿¡ ¶ç¿ò
+    CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+
+    return S_OK;
+}
+
 void CUIObject_Tool::LinkChildFromJson(const json& data)
 {
     if (!Get_Component<CObjectContainer>())

@@ -15,6 +15,9 @@ protected:
 	virtual ~CUIObject_Tool() DEFAULT;
 
 public:
+	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
+
+public:
 	virtual json ToJson() { return json(); }
 	virtual void FromJson(const json& data) {}
 
