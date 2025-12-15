@@ -423,6 +423,9 @@
     <ClInclude Include="..\Public\SizeBySpeed.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TextureSheetAnimation.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -782,6 +785,9 @@
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed">
       <UniqueIdentifier>{d07abcf0-1a87-42f1-be09-1ad3a1367a04}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation">
+      <UniqueIdentifier>{d9d9b9c5-06a5-472e-82ed-ea5146acbce5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1125,6 +1131,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SizeBySpeed.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

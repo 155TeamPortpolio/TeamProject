@@ -68,16 +68,38 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 right = normalize(cross(worldUp, look));
     float3 up = normalize(cross(look, right));
     
+    float3 dir = normalize(In[0].vVelocity);
+    float vx = dot(dir, right);
+    float vy = dot(dir, up);
+    
+    float rotZ = atan2(vy, vx);
+    float c = cos(rotZ);
+    float s = sin(rotZ);
+    
     float scaleX = In[0].vSize.x;
     float scaleY = In[0].vSize.y;
     
-    float3 offsetRight = right * (scaleX * 0.5f);
-    float3 offsetUp = up * (scaleY * 0.5f);
+    float2 offset[4] =
+    {
+        float2(scaleX * 0.5f, scaleY * 0.5f),
+        float2(-scaleX * 0.5f, scaleY * 0.5f),
+        float2(-scaleX * 0.5f, -scaleY * 0.5f),
+        float2(scaleX * 0.5f, -scaleY * 0.5f)
+    };
     
-    float3 p0 = worldPos + (offsetRight + offsetUp);
-    float3 p1 = worldPos + (-offsetRight + offsetUp);
-    float3 p2 = worldPos + (-offsetRight - offsetUp);
-    float3 p3 = worldPos + (offsetRight - offsetUp);
+    for (int i = 0; i < 4; ++i)
+    {
+        float x = offset[i].x;
+        float y = offset[i].y;
+
+        offset[i].x = x * c - y * s;
+        offset[i].y = x * s + y * c;
+    }
+    
+    float3 p0 = worldPos + (offset[0].x * right + offset[0].y * up);
+    float3 p1 = worldPos + (offset[1].x * right + offset[1].y * up);
+    float3 p2 = worldPos + (offset[2].x * right + offset[2].y * up);
+    float3 p3 = worldPos + (offset[3].x * right + offset[3].y * up);
     
     matrix matrixVP = mul(matView, matProjection);
     v[0].vPosition = mul(float4(p0, 1.f), matrixVP);
