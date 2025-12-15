@@ -21,12 +21,12 @@ HRESULT CLight::Initialize(COMPONENT_DESC* pArg)
 {
 	if (pArg != nullptr) {
 		LIGHT_INIT_DESC* desc = static_cast<LIGHT_INIT_DESC*>(pArg);
-		m_Light.eType						= desc->eType;
-		m_Light.fLightRange			= desc->fRange;
-		m_Light.vLightAmbient		= desc->vAmbient;
-		m_Light.vLightDiffuse		= desc->vDiffuse;
-		m_Light.vLightDirection	= desc->vDirection;
-		m_Light.vLightSpecular	= desc->vSpecular;
+		m_Light.eType = desc->eType;
+		m_Light.fLightRange = desc->fRange;
+		m_Light.vLightAmbient = desc->vAmbient;
+		m_Light.vLightDiffuse = desc->vDiffuse;
+		m_Light.vLightDirection = desc->vDirection;
+		m_Light.vLightSpecular = desc->vSpecular;
 	}
 
 	m_ID = CGameInstance::GetInstance()->Get_LightMgr()->Register_Light(this, m_ID);
@@ -35,48 +35,62 @@ HRESULT CLight::Initialize(COMPONENT_DESC* pArg)
 
 void CLight::Render_GUI()
 {
+	ImGui::SeparatorText("Light");
+	float childWidth = ImGui::GetContentRegionAvail().x;
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * 12) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	ImGui::Checkbox("Active", &m_bActive);
+	Set_CompActive(m_bActive);
+
+	ImGui::BeginChild("##LightChild", ImVec2{ 0, childHeight }, true);
 	LIGHT_TYPE eType = m_Light.eType;
-	// 라이트 하나를 접었다 폈다 할 수 있게
-	if (ImGui::TreeNode((void*)this, "Light %d", m_ID))
+
+	const char* typeNames[] = { "Directional", "Point", "Spot" };
+	ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
+
+	ImGui::Text("Range");
+	ImGui::DragFloat("##Range", &m_Light.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
+	ImGui::Text("Intensity");
+	ImGui::DragFloat("##Intensity", &m_Light.fLightIntensity, 0.5f, 0.0f, 10.0f, "%.1f");
+
+	ImGui::Text("Diffuse");
+	ImGui::ColorEdit3("Diffuse", &m_Light.vLightDiffuse.x);
+	ImGui::Text("Ambient");
+	ImGui::ColorEdit3("Ambient", &m_Light.vLightAmbient.x);
+	ImGui::Text("Specular");
+	ImGui::ColorEdit3("Specular", &m_Light.vLightSpecular.x);
+
+	if (eType == LIGHT_TYPE::DIRECTIONAL)
 	{
-		const char* typeNames[] = { "Directional", "Point", "Spot" };
-		ImGui::Text("Type : %s", typeNames[static_cast<_int>(eType)]);
-
-		ImGui::DragFloat("Range", &m_Light.fLightRange, 1.0f, 0.0f, 1000.0f, "%.1f");
-
-		ImGui::ColorEdit3("Diffuse", &m_Light.vLightDiffuse.x);
-		ImGui::ColorEdit3("Ambient", &m_Light.vLightAmbient.x);
-		ImGui::ColorEdit3("Specular", &m_Light.vLightSpecular.x);
-
-		if (eType == LIGHT_TYPE::DIRECTIONAL)
+		ImGui::Text("Direction");
+		if (ImGui::DragFloat3("##Direction", &m_Light.vLightDirection.x, 0.01f, -1.0f, 1.0f))
 		{
-			if (ImGui::DragFloat3("Direction", &m_Light.vLightDirection.x, 0.01f, -1.0f, 1.0f))
-			{
-				XMVECTOR dir = XMLoadFloat4(&m_Light.vLightDirection);
-				dir = XMVector3Normalize(dir);
-				XMStoreFloat4(&m_Light.vLightDirection, dir);
-			}
+			XMVECTOR dir = XMLoadFloat4(&m_Light.vLightDirection);
+			dir = XMVector3Normalize(dir);
+			XMStoreFloat4(&m_Light.vLightDirection, dir);
 		}
-		else {
-
-			if (auto pTransform = m_pOwner->Get_Component<CTransform>())
-			{
-				_float4 pos = {};
-				XMStoreFloat4(&pos, pTransform->Get_Pos());
-				if (ImGui::DragFloat3("Offset", &pos.x, 0.1f))
-				{
-					pTransform->Set_Pos(pos);
-					m_Light.vLightPosition = pos;
-				}
-			}
-			else
-			{
-				ImGui::DragFloat3("Offset", &m_Light.vOffsetPosition.x, 0.1f);
-			}
-		}
-
-		ImGui::TreePop();
 	}
+	else {
+
+		if (auto pTransform = m_pOwner->Get_Component<CTransform>())
+		{
+			_float4 pos = {};
+			XMStoreFloat4(&pos, pTransform->Get_Pos());
+			ImGui::Text("Offset");
+			if (ImGui::DragFloat3("##Offset", &pos.x, 0.1f))
+			{
+				pTransform->Set_Pos(pos);
+				m_Light.vLightPosition = pos;
+			}
+		}
+		else
+		{
+			ImGui::DragFloat3("Offset", &m_Light.vOffsetPosition.x, 0.1f);
+		}
+	}
+
+	ImGui::EndChild();
 }
 
 void CLight::Set_Desc(const LIGHT_DESC& desc, LIGHT_TYPE eType)
@@ -108,6 +122,9 @@ LIGHT_DESC CLight::SnapShot_Desc()
 
 void CLight::Set_CompActive(_bool bActive)
 {
+	if (m_bActive == bActive)
+		return;
+
 	m_bActive = bActive;
 
 	if (bActive)

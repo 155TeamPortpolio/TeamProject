@@ -103,6 +103,9 @@ void CDemoCamera::Render_GUI()
 {
 	__super::Render_GUI();
 	ImGui::DragFloat("MoveSpeed", &m_fSpeed);
+	if (ImGui::Button(u8"ÀÌº¥Æ® ¹ß½Î")) {
+		CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<ExampleEvt>({});
+	}
 }
 
 CDemoCamera* CDemoCamera::Create()

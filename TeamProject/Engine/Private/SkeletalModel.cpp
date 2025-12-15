@@ -5,7 +5,7 @@
 #include "ModelData.h"
 #include"GameObject.h"
 #include "Transform.h"
-
+#include "Mesh.h"
 CSkeletalModel::CSkeletalModel()
 {
 }
@@ -230,22 +230,26 @@ void CSkeletalModel::Hide_MehsByName(const string& name)
 
 void CSkeletalModel::Render_GUI()
 {
-	ImGui::SeparatorText("Animate Model");
+	ImGui::SeparatorText("Skeletal Model");
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4)) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##Animate ModelChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Skeletal ModelChild", ImVec2{ 0, childHeight }, true);
 		m_pData->Render_GUI();
-		string ID = "HideMesh : ";
 		for (size_t i = 0; i < m_pData->Get_MeshCount(); i++)
 		{
+			string ID = "HideMesh : " + m_pData->Get_Mesh(i)->Get_Key() + to_string(i);
 
-			if (ImGui::Button((ID + to_string(i)).c_str()))
+			if (ImGui::Button(ID.c_str()))
 			{
 				if (m_DrawableMeshes.size() >= 1) {
 					m_DrawableMeshes[i] = !m_DrawableMeshes[i];
 				}
+			}
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+			{
+				ImGui::SetTooltip("%s", ID.c_str());
 			}
 		}
 	ImGui::EndChild();

@@ -8,40 +8,68 @@ CTimer::CTimer()
 
 HRESULT CTimer::Initialize()
 {
+
 	QueryPerformanceCounter(&m_LastTime);
 	QueryPerformanceCounter(&m_CurTime);
 	QueryPerformanceCounter(&m_FixTime);
 	QueryPerformanceFrequency(&m_TickCount);
+	m_fRawTotalTime = m_fScaledTotalTime = 0.f;
+	m_fTimeScale = 1.f;
 
 	return S_OK;
 }
 
 void CTimer::Update_Timer()
 {
-	QueryPerformanceCounter(&m_CurTime);	
+	QueryPerformanceCounter(&m_CurTime);
 
-	if (m_CurTime.QuadPart - m_FixTime.QuadPart >= m_TickCount.QuadPart)
-	{
-		QueryPerformanceFrequency(&m_TickCount);
-		m_FixTime = m_CurTime;
-	}
-
-	m_fDeltaTime = (m_CurTime.QuadPart - m_LastTime.QuadPart) / static_cast<_float>(m_TickCount.QuadPart);
+	const LONGLONG diff = m_CurTime.QuadPart - m_LastTime.QuadPart;
 	m_LastTime = m_CurTime;
-	m_fTotalTime += m_fDeltaTime;
+
+	// raw dt (sec)
+	_float raw = (_float)((double)diff / (double)m_TickCount.QuadPart);
+
+	// 튐 방지(선택): alt-tab, 브레이크포인트 등
+	if (raw < 0.f) raw = 0.f;
+	if (raw > 0.1f) raw = 0.1f;
+
+	m_fRawDeltaTime = raw;
+
+	_float scaled = raw * m_fTimeScale;
+
+	// 필요하면 scaled도 clamp (예: 30fps 제한)
+	scaled = min(scaled, 0.033f);
+
+	m_fScaledDeltaTime = scaled;
+
+	m_fRawTotalTime += m_fRawDeltaTime;
+	m_fScaledTotalTime += m_fScaledDeltaTime;
 }
 
 _float CTimer::Get_DeltaTime(_bool raw)
 {
 	if (!raw)
-		return min(m_fDeltaTime* m_fTimeScale, 0.033);
+		return min(m_fScaledDeltaTime* m_fTimeScale, 0.033);
 	else
-		return m_fDeltaTime* m_fTimeScale;
+		return m_fScaledDeltaTime* m_fTimeScale;
 }
 
 _float CTimer::Get_TotalTime()
 {
-	return m_fTotalTime;
+	return m_fScaledTotalTime;
+}
+
+_float CTimer::Get_RawDeltaTime(_bool raw)
+{
+	if (!raw)
+		return min(m_fRawDeltaTime, 0.033);
+	else
+		return m_fRawDeltaTime;
+}
+
+_float CTimer::Get_RawTotalTime()
+{
+	return m_fRawTotalTime;
 }
 
 CTimer* CTimer::Create()
