@@ -53,8 +53,8 @@ private:
     PxDefaultAllocator       m_Allocator;                            // 메모리 할당자
     CUserErrorCallback       m_ErrorCallback;                        // 에러 리포터
 
-    _float                  m_fTimer = {};
-    const _float            m_fDelta = 1.0f / 60.f;
+    //_float                  m_fTimer = {};
+    //const _float            m_fDelta = 1.0f / 60.f;
 
 public:
     static CPhysicsSystem* Create();

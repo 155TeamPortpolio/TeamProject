@@ -25,8 +25,9 @@ public:
     _int Add_Child(class CGameObject* pObject, _bool SyncTransform = true);
     void Destroy_Child(_uint ChildIndex);
     void Dettach_Child(_uint ChildIndex);
-    void FreeSubTree(CGameObject* node);
-    void RemoveChildReference(CGameObject* node);
+
+public:
+    void Render_GUI() override;
 
 public:
     const vector<class CGameObject*> Get_Children() { return m_ChildrenObjects; };
