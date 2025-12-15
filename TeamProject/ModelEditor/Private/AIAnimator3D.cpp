@@ -94,4 +94,8 @@ CAIAnimator3D* CAIAnimator3D::Create(const aiScene* pAIScene, CAIModelData* pAIM
 void CAIAnimator3D::Free()
 {
 	__super::Free();
+
+	for (auto& Clip : m_pAnimClips) {
+		Safe_Release(Clip);
+	}
 }
