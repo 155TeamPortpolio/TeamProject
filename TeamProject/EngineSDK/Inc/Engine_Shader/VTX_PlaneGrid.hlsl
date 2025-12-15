@@ -44,8 +44,8 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    float2 newTexcoord = float2(In.vTexcoord* 400);
-    vector GridCol = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 newTexcoord = float2(In.vTexcoord* 100);
+    vector GridCol = DiffuseTexture.Sample(LinearSampler, newTexcoord);
             
     Out.vDiffuse = GridCol;
     return Out;
