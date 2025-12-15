@@ -98,4 +98,6 @@ CGameObject* CGrid::Clone(INIT_DESC* pArg)
 void CGrid::Free()
 {
 	__super::Free();
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
 }

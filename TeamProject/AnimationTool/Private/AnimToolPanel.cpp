@@ -153,11 +153,6 @@ void CAnimToolPanel::Create_ClipMeta(const string& CurMetaTag)
 	file.close();
 }
 
-void CAnimToolPanel::Set_Animation()
-{
-	CGameObject* pSelectedObject = m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
-}
-
 CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
 {
 	return new CAnimToolPanel(context);
@@ -167,4 +162,9 @@ void CAnimToolPanel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pGameInstance);
+	
+	for (auto clip : m_Meta)
+		clip.second.clear();
+	m_Meta.clear();
+	m_Paths.clear();
 }

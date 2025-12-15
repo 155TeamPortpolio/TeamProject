@@ -18,6 +18,7 @@ CAnimModel::CAnimModel(const CAnimModel& rhs)
 	:CGameObject(rhs)
 	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CAnimModel::Initialize_Prototype()
@@ -208,10 +209,6 @@ void CAnimModel::Clear_Model()
 	Remove_Component<CSkeletalModel>();
 	Remove_Component<CModel>();
 	Remove_Component<CMaterial>();
-}
-
-void CAnimModel::Load_Json()
-{
 }
 
 CAnimModel* CAnimModel::Create()
