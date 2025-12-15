@@ -301,7 +301,7 @@ void CDebugFreeCam::Render_GUI()
 {
 	__super::Render_GUI();
 
-	if (ImGui::CollapsingHeader(u8"DebugFreeCam", ImGuiTreeNodeFlags_DefaultOpen))
+	/*if (ImGui::CollapsingHeader(u8"DebugFreeCam", ImGuiTreeNodeFlags_DefaultOpen))
 	{
 		ImGui::PushID("DebugFreeCam_RenderGUI");
 
@@ -327,5 +327,5 @@ void CDebugFreeCam::Render_GUI()
 		}
 
 		ImGui::PopID();
-	}
+	}*/
 }
