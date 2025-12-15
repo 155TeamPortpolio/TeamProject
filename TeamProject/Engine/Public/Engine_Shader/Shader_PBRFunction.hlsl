@@ -1,5 +1,5 @@
-#ifndef __SHADER_FUNCTION_HLSL__
-#define __SHADER_FUNCTION_HLSL__
+#ifndef __SHADER_PBRFUNCTION_HLSL__
+#define __SHADER_PBRFUNCTION_HLSL__
 
 // material
 // 표면 거칠기 표현 (roughness가 낮으면 날카로운 반사, 높으면 넓은 반사)

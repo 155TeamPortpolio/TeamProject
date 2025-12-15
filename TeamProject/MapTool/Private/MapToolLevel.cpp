@@ -84,9 +84,9 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	CGameObject* DemoModel = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DummyModel" })
-		.Position({ 0,0,0 })
-		.Build("Dummy_Model");
+	//CGameObject* DemoModel = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DummyModel" })
+	//	.Position({ 0,0,0 })
+	//	.Build("Dummy_Model");
 
 	CGameObject* pGrid = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_Grid" })
 		.Position({ 0,0,0 })
@@ -99,7 +99,7 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 	//	.Build("Static_Model");
 
 	pObjMgr->Add_Object(Camera,			{ "MapTool_Level", "Camera_Layer" });
-	pObjMgr->Add_Object(DemoModel,		{ "MapTool_Level", "Model_Layer" });
+	//pObjMgr->Add_Object(DemoModel,		{ "MapTool_Level", "Model_Layer" });
 	pObjMgr->Add_Object(pGrid,			{ "MapTool_Level", "Floor_Layer" });
 	//pObjMgr->Add_Object(pStaticObject,	{ "MapTool_Level", "Static_Layer" });
 

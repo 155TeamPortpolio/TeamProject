@@ -127,7 +127,7 @@ namespace Engine
 		_float3			vScale;
 		_float4			vRotation = { 0,0,0,1 };
 		_float3			vTranslation;
-		_float				fTrackPosition;
+		_float			fTrackPosition;
 
 		_bool IsBefore(_float nowTrackPosition) {
 			return fTrackPosition < nowTrackPosition;
@@ -342,6 +342,22 @@ namespace Engine
 		/*Life Time Size*/
 		_float2 vStartScale{};
 		_float2 vEndScale{};
+
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/*Texture Sheet Animation*/
+		_bool isParticleAnimated = false;
+		_bool isRandomFrameIndex = false;
+		_uint iCol{ 1 };
+		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{};
+
+		/*Noise*/
+		_float3 vStrength{};
+		_float3 vFrequency{};
+		_float3 vScrollSpeed{};
 
 	}PARTICLE_NODE;
 

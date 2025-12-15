@@ -2,14 +2,18 @@
 #include "GameObject.h"
 #include <set>
 
+NS_BEGIN(Engine)
+class CGameInstance;
+NS_END
+
 NS_BEGIN(AnimTool)
-class CEditModel :
+class CAnimModel :
     public CGameObject
 {
 private:
-    CEditModel();
-    CEditModel(const CEditModel& rhs);
-    virtual ~CEditModel() DEFAULT;
+    CAnimModel();
+    CAnimModel(const CAnimModel& rhs);
+    virtual ~CAnimModel() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -29,14 +33,20 @@ private: //GUI Func
 private: //Model Logic
     void Load_Resource();
     void Set_Model(string ModelTag, string MaterialTag);
+    void Set_Animator();
     void Clear_Model();
-
+    void Load_Json();
 private:
+    CGameInstance* m_pGameInstance = { nullptr };
     set<string> m_ModelTags;
     set<string> m_MaterialTags;
 
+    //Show Selected Tags
+    string m_CurModelTag = { "Select Model" };
+    string m_CurMaterialTag = { "Select Material" };
+
 public:
-    static CEditModel* Create();
+    static CAnimModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };

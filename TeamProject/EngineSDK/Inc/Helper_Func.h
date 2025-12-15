@@ -40,3 +40,9 @@ namespace Helper
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
 };
 
+namespace Math
+{
+	//Float 보간 함수
+	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
+}
+
