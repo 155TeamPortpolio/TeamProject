@@ -402,6 +402,18 @@
     <ClInclude Include="..\Public\Camera_Struct.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IParticleModule.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeVelocity.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeSize.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeColor.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
@@ -749,6 +761,18 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
+      <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize">
+      <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor">
+      <UniqueIdentifier>{9d5d527f-ee2e-4350-8b91-02a2982315e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
@@ -1078,6 +1102,18 @@
     <ClCompile Include="..\Private\VI_InstancePoint.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\IParticleModule.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeSize.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeColor.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>

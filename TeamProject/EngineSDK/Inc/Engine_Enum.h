@@ -68,6 +68,7 @@ namespace Engine
 		END = 28
 	};
 
+	/* Effect */
 	enum class EFFECT_TYPE
 	{
 		SPRITE,
@@ -75,7 +76,6 @@ namespace Engine
 		MESH,
 		END
 	};
-
 }
 #endif // Engine_Enum_h__
 
