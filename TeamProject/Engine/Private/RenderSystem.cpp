@@ -40,6 +40,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pInstancePass = InstancePass::Create(this);
 	m_pBlendedPass = BlendedPass::Create(this);
 	m_pParticlePass = ParticlePass::Create(this);
+	m_pNonLightPass = NonLightPass::Create(this);
 	m_pUIPass = UIPass::Create(this);
 
 #ifdef _DEBUG
@@ -72,6 +73,7 @@ HRESULT CRenderSystem::Render()
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
+	m_pNonLightPass->Execute(m_pContext);
 	/*Debug Rendering*/
 
 #ifdef _DEBUG
@@ -523,6 +525,7 @@ void CRenderSystem::Free()
 	Safe_Release(m_pShadowPass);
 	Safe_Release(m_pBlendedPass);
 	Safe_Release(m_pParticlePass);
+	Safe_Release(m_pNonLightPass);
 	Safe_Release(m_pTargetManager);
 
 	for (auto& pair : m_InputLayouts)
