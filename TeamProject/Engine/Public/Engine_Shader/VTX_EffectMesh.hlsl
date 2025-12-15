@@ -1,5 +1,11 @@
 #include "Shader_Define.hlsl"
 
+float2 UVOffset;
+uint Col;
+uint Row;
+uint FrameIndex;
+float Alpha;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -55,30 +61,62 @@ struct PS_OUT
     vector vDiffuse : SV_TARGET0;
 };
 
-PS_OUT PS_MAIN(PS_IN In)
+PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 Texcoord = In.vTexcoord + UVOffset;
+        
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, Texcoord);
     
   if (vMtrlDiffuse.a < 0.1f)
       discard;
     
     Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse.a *= Alpha;
+    
+    return Out;
+}
+PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
+{
+    PS_OUT Out;
+    
+    float2 FrameSize = float2(1.f / Col, 1.f / Row);
+    int iFrameX = FrameIndex % Col;
+    int iFrameY = FrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
+    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    
+  if (vMtrlDiffuse.a < 0.1f)
+      discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    Out.vDiffuse.a *= Alpha;
     
     return Out;
 }
 
 technique11 DefaultTechnique
 {
-    pass Opaque
+    pass UVAnimation
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
+    }
+    pass SpriteAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
 }
 
