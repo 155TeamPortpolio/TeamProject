@@ -409,6 +409,12 @@
     <ClInclude Include="..\Public\ICamPoseSource.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeColor.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\CamPosPerSegmentEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegmentEvaluator</Filter>
     </ClInclude>
@@ -423,6 +429,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\OrbitArcData.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventSystem.h">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventListner.h">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -795,6 +807,18 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator">
       <UniqueIdentifier>{7247bb33-2bec-4bbf-93df-2550cf1b91dc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\21. CharacterController">
+      <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\13. EventBus">
+      <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22.EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1137,6 +1161,21 @@
     <ClCompile Include="..\private\CamPosOrbitArcEvaulator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArcEvaluator</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeSize.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeColor.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventSystem.cpp">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventListner.cpp">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1170,5 +1209,19 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

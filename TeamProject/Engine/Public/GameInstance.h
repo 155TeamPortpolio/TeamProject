@@ -49,6 +49,7 @@ public:
 	class ICollisionService* Get_CollisionSystem () { return m_pCollisionSystem; }
 	class IFontService* Get_FontSystem () { return m_pFontSystem; }
 	class IPhysicsService* Get_PhysicsSystem() { return m_pPhysicsSystem; }
+	class CEventSystem* Get_EventSystem() { return m_pEventSystem; }
 
 private:
 	class IGraphicService* m_pGraphicDevice = { nullptr };
@@ -68,6 +69,7 @@ private:
 	class ICollisionService* m_pCollisionSystem = { nullptr };
 	class IFontService* m_pFontSystem = { nullptr };
 	class IPhysicsService* m_pPhysicsSystem = { nullptr };
+	class CEventSystem* m_pEventSystem = { nullptr };
 #pragma endregion
 
 private:

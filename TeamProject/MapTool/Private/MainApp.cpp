@@ -36,9 +36,9 @@ HRESULT CMainApp::Initialize()
 
 	Set_Levels();
 
-	//#ifdef  _USING_GUI
-	//	ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
-	//#endif //  _USING_GUI
+	#ifdef  _USING_GUI
+		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
+	#endif //  _USING_GUI
 
 	return S_OK;
 }
@@ -51,7 +51,7 @@ void CMainApp::Update(const float dt)
 
 HRESULT CMainApp::Render()
 {
-	_float4 color = { 0.f,0.f,0.f,1.f };
+	_float4 color = { 1.f,1.f,1.f,1.f };
 	m_pGameInstance->Draw_Begin(&color);
 	m_pGameInstance->Draw();
 	m_pGameInstance->Draw_End();

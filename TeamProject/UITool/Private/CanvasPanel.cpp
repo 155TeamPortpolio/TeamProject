@@ -6,13 +6,17 @@
 #include "Sprite2D.h"
 
 #include "TestUI.h"
+#include "ImageUI.h"
+#include "TextUI.h"
+
+_uint CCanvasPanel::m_iCount = {};
 
 CCanvasPanel::CCanvasPanel()
 {
 }
 
 CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
-    : CUI_Object(rhs)
+    : CUIObject_Tool(rhs)
 {
 }
 
@@ -30,7 +34,7 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "CanvasPanel.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
 
     return S_OK;
@@ -53,27 +57,34 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    ImGui::SeparatorText("Create UI");
+    Render_GUI_Layout();
+
+    Render_GUI_Transform();
+
+    ImGui::SeparatorText("Create");
+
     _bool isCreateChild = {};
     string strProtoTag;
     string strInstanceKey;
+
     if (ImGui::Button("Create Image"))
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_ImageUI";
-        strInstanceKey = "UI_ImageUI";       
+        strInstanceKey = "UI_ImageUI" + to_string(CImageUI::m_iCount++);
     }
+
     if (ImGui::Button("Create Text"))
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_TextUI";
-        strInstanceKey = "UI_TextUI";
+        strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount++);
     }
 
     if(isCreateChild)
     {
         CUI_Object* pChild = Builder::Create_UIObject({ "UITool_Level" , strProtoTag })
-            .Scale({ m_fChildCreateSize.x, m_fChildCreateSize.y })
+            .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build(strInstanceKey);
 
         if (!pChild)
@@ -83,15 +94,24 @@ void CCanvasPanel::Render_GUI()
         pUIService->Add_UIObject(pChild, "UITool_Level");
         Get_Component<CObjectContainer>()->Add_Child(pChild);
     }
+}
 
-    ImGui::SeparatorText("Layout");
-    ImGui::DragFloat("X Position", &m_fLocalX, 1.f);    // x, y 움직이면 자식 중에 이미지는 움직이는데 텍스트는 안 움직임 (Post~ 함수는 호출하는데 fontposition은 업데이트 안 해줘서)
-    ImGui::DragFloat("Y Position", &m_fLocalY, 1.f);
-    ImGui::DragFloat("X Size", &m_fSizeX, 1.f);
-    ImGui::DragFloat("Y Size", &m_fSizeY, 1.f);
+json CCanvasPanel::ToJson()
+{
+    json objData;
 
-    //CGameObject::Render_GUI();
-    __super::Render_GUI();
+    objData["typeTag"] = "CanvasPanel";
+
+    ToJson_Common(objData);
+
+    return objData;
+}
+
+void CCanvasPanel::FromJson(const json& data)
+{
+    if (data.contains("children"))
+    {
+    }
 }
 
 CGameObject* CCanvasPanel::Create()

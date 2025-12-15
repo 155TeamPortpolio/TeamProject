@@ -1,9 +1,11 @@
 #pragma once
-#include "UI_Object.h"
+#include "UIObject_Tool.h"
+
+// 텍스트를 트랜스폼에 맞춰서 피봇 설정, 회전, 스케일하는 것 넣어야
 
 NS_BEGIN(UITool)
 
-class CTextUI final : public CUI_Object
+class CTextUI final : public CUIObject_Tool
 {
 private:
 	CTextUI();
@@ -20,12 +22,25 @@ public:
 
 	virtual void Render_GUI() override;
 
+public:
+	virtual json ToJson() override;
+	virtual void FromJson(const json& data) override;
+
 private:
 	_int		m_iFontKeyIndex = {};
 	_int		m_iFontSizeIndex = {}; 
 	_char		m_szText[MAX_PATH] = {};
 	_float		m_fFontScale = { 1.f };
-	_float4		m_vColor = { 1.f, 1.f, 1.f, 1.f }; 
+	_float4		m_vFontColor = { 1.f, 1.f, 1.f, 1.f }; 
+
+	_bool		m_isSizeToContent = { true };
+
+public:
+	static _uint m_iCount;
+
+private:
+	virtual void Render_GUI_Layout() override;
+	virtual void Render_GUI_Transform() override;
 
 private:
 	wstring Utf8ToWstring(const string& strUtf8);
