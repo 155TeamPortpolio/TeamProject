@@ -37,6 +37,8 @@ public:
 	virtual void OnCollisionEnter() {};
 	virtual void OnCollisionStay() {};
 	virtual void OnCollisionExit() {};
+	virtual void OnTriggerEnter() {};
+	virtual void OnTriggerExit() {};
 
 public:
 	_bool Has_Tag(const string& tag) { return m_InstanceTag == tag; };

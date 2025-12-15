@@ -4,6 +4,7 @@
 #include "Sprite2D.h"
 #include "GameInstance.h"
 #include "EventListner.h"
+#include "ObjectContainer.h"
 
 CDemoUI::CDemoUI()
 {
@@ -24,6 +25,7 @@ HRESULT CDemoUI::Initialize_Prototype()
 	Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "testUI.png");
 
 	Add_Component<CEventListner>();
+	Add_Component<CObjectContainer>();
 
 	return S_OK;
 }
@@ -61,6 +63,14 @@ void CDemoUI::Render_GUI()
 {
 	__super::Render_GUI();
 
+	if (ImGui::Button("Add Child")) {
+		CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
+			.Scale({ 500,500 })
+			.Offset({ 0,0, })
+			.Build("Demo_UI");
+
+		Get_Component<CObjectContainer>()->Add_Child(UI, false);
+	}
 }
 
 CDemoUI* CDemoUI::Create()
