@@ -10,6 +10,7 @@
 #include "AI_Material.h"
 #include "AIMaterial.h"
 #include "AIAnimator3D.h"
+#include "AIModelData.h"
 
 CEditModel::CEditModel()
 {
@@ -98,14 +99,14 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);
 
 	if (isSkeletal) {//Skeletal
-		auto skeletal = CAI_SKModel::Create();
+		CAI_SKModel* skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
 		Safe_AddRef(skeletal);
 		skeletal->Load_AIModel(m_pAIScene, fileName);
 		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
-
+		
 		if (m_pAIScene->HasAnimations()) {//Animation
 			auto Animator3D = CAIAnimator3D::Create(m_pAIScene, skeletal->Get_AIModelData());
 			m_Components.emplace(type_index(typeid(CAnimator3D)), Animator3D);
@@ -114,7 +115,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	}
 	else {//Static
-		auto staticModel = CAI_STModel::Create();
+		CAI_STModel* staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
 		Safe_AddRef(staticModel);
@@ -130,10 +131,11 @@ HRESULT CEditModel::Save_AIScene()
 {
 	HRESULT hr = {};
 	string SavePath = Helper::OpenFolder_Dialogue() + "\\";
+	_matrix PreTransform = XMLoadFloat4x4(Get_Component<CTransform>()->Get_WorldMatrix_Ptr());
 
 	if (HasBones()) {
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
-		hr = pModel->Save_Model(SavePath);
+		hr = pModel->Save_Model(SavePath, PreTransform);
 
 		if (m_pAIScene->HasAnimations()) {
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
@@ -142,7 +144,7 @@ HRESULT CEditModel::Save_AIScene()
 	}
 	else {
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
-		hr = pModel->Save_Model(SavePath);
+		hr = pModel->Save_Model(SavePath, PreTransform);
 	}
 
 	CAI_Material* pMaterial = dynamic_cast<CAI_Material*>(Get_Component<CMaterial>());

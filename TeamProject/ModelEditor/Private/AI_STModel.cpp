@@ -41,7 +41,7 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Save_Model(const string& SavePath)
+HRESULT CAI_STModel::Save_Model(const string& SavePath, _fmatrix WorldMatrix)
 {
 	string path = Helper::SaveFileDialogByWinAPI(m_fileName, "model");
 	filesystem::path directory(path);
@@ -55,7 +55,7 @@ HRESULT CAI_STModel::Save_Model(const string& SavePath)
 	strcpy_s(fileHeader.ModelKey, sizeof(fileHeader.ModelKey), m_fileName.data());
 	ofs.write(reinterpret_cast<char*>(&fileHeader), sizeof(MODEL_FILE_HEADER));
 
-	static_cast<CAIModelData*>(m_pData)->Save_File(ofs);
+	static_cast<CAIModelData*>(m_pData)->Save_File(ofs, WorldMatrix);
 	ofs.close();
 	return S_OK;
 }
