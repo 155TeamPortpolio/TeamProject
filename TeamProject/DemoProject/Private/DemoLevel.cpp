@@ -32,6 +32,8 @@ HRESULT CDemoLevel::Awake()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
+	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
+	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -40,6 +42,13 @@ HRESULT CDemoLevel::Awake()
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
+
+	CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
+		.Scale({500,500})
+		.Offset({0,0,})
+		.Build("Demo_UI");
+
+	pUIMgr->Add_UIObject(UI, "Demo_Level");
 
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
@@ -70,7 +79,7 @@ void CDemoLevel::Update()
 
 HRESULT CDemoLevel::Render()
 {
-	SetWindowText(g_hWnd, TEXT("µ¥¸ð ·¹º§ÀÔ´Ï´Ù."));
+	SetWindowText(g_hWnd, TEXT("ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ï´ï¿½."));
 	return S_OK;
 }
 

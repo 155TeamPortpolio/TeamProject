@@ -7,7 +7,6 @@
 #include "ObjectContainer.h"
 
 #include "RigidBody.h"
-
 CDemoModel::CDemoModel()
 {
 }
@@ -25,7 +24,6 @@ HRESULT CDemoModel::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
-
 	return S_OK;
 }
 

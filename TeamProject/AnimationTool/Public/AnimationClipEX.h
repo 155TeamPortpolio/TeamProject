@@ -8,8 +8,8 @@ class CAnimationClipEX :
 	public CAnimationClip
 {
 protected:
-	CAnimationClipEX(const string& Subject);
 	CAnimationClipEX();
+	CAnimationClipEX(const string& Subject);
 	virtual ~CAnimationClipEX() DEFAULT;
 
 public:

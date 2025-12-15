@@ -41,7 +41,7 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	return S_OK;
 }
 
-HRESULT CAI_STModel::Save_Model()
+HRESULT CAI_STModel::Save_Model(const string& SavePath)
 {
 	string path = Helper::SaveFileDialogByWinAPI(m_fileName, "model");
 	filesystem::path directory(path);

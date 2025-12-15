@@ -16,6 +16,8 @@ public:
     void Update_Timer(const string& timerID);
     _float Get_DeltaTime(const string& timerID,_bool raw = false);
     _float Get_TotalTime(const string& timerID);
+    _float Get_RawDeltaTime(const string& timerID,_bool raw = false);
+    _float Get_RawTotalTime(const string& timerID);
     void Set_TimeScale(const string& timerID,_float scale);
   
 private:

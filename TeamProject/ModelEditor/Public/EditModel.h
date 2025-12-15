@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
 class CEditModel :
@@ -26,10 +27,11 @@ private:
     HRESULT Save_AIScene();
     void Clear_Models();
     _bool HasBones();
-private:
-    const aiScene* m_pAIScene = { nullptr };
-    Assimp::Importer	        m_Importer = {};
 
+private:
+    const aiScene*      m_pAIScene = { nullptr };
+    Assimp::Importer	m_Importer = {};
+    
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

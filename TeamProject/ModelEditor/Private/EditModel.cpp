@@ -9,6 +9,7 @@
 #include "GameInstance.h"
 #include "AI_Material.h"
 #include "AIMaterial.h"
+#include "AIAnimator3D.h"
 
 CEditModel::CEditModel()
 {
@@ -43,6 +44,8 @@ void CEditModel::Priority_Update(_float dt)
 
 void CEditModel::Update(_float dt)
 {
+	if(nullptr != Get_Component<CAnimator3D>())
+		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CEditModel::Late_Update(_float dt)
@@ -66,7 +69,8 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
-		Save_AIScene();
+		if(nullptr != Get_Component<CModel>())
+			Save_AIScene();
 	}
 	ImGui::EndChild();
 
@@ -93,7 +97,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	_uint NumMaterial = m_pAIScene->mNumMaterials;
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);
 
-	if (isSkeletal) {
+	if (isSkeletal) {//Skeletal
 		auto skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
@@ -101,8 +105,15 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		skeletal->Load_AIModel(m_pAIScene, fileName);
 		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
+
+		if (m_pAIScene->HasAnimations()) {//Animation
+			auto Animator3D = CAIAnimator3D::Create(m_pAIScene, skeletal->Get_AIModelData());
+			m_Components.emplace(type_index(typeid(CAnimator3D)), Animator3D);
+			Animator3D->Set_Owner(this);
+		}
+
 	}
-	else {
+	else {//Static
 		auto staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
@@ -118,18 +129,24 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 HRESULT CEditModel::Save_AIScene()
 {
 	HRESULT hr = {};
+	string SavePath = Helper::OpenFolder_Dialogue() + "\\";
 
 	if (HasBones()) {
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
-		hr = pModel->Save_Model();
+		hr = pModel->Save_Model(SavePath);
+
+		if (m_pAIScene->HasAnimations()) {
+			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
+			hr = pAnimator3D->Save_Animation(SavePath);
+		}
 	}
 	else {
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
-		hr = pModel->Save_Model();
+		hr = pModel->Save_Model(SavePath);
 	}
 
 	CAI_Material* pMaterial = dynamic_cast<CAI_Material*>(Get_Component<CMaterial>());
-	hr = pMaterial->Save_Material();
+	hr = pMaterial->Save_Material(SavePath);
 
 	return S_OK;
 }
