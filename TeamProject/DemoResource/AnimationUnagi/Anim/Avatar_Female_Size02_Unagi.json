@@ -1,0 +1,110 @@
+[
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_Front",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter_02",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter_02_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Counter_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_H",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_H_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_ParryAid_Start",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Rush",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Rush_03",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Rush_03_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Attack_Rush_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Die",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Evade_Back",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Evade_Back_02",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_ParryAid_L",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_ParryAid_L_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Revive_01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Revive_02",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Revive_03",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Revive_04",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run_Start",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Run_Start_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Stagger_StopDraw",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Stagger_Walk_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Avatar_Female_Size02_Unagi_Ani_Stagger_Walk_Loop",
+    "Events": []
+  }
+]

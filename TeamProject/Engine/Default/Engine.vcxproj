@@ -521,6 +521,7 @@ exit /b 0</Command>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />

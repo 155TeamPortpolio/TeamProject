@@ -127,7 +127,7 @@ namespace Engine
 		_float3			vScale;
 		_float4			vRotation = { 0,0,0,1 };
 		_float3			vTranslation;
-		_float				fTrackPosition;
+		_float			fTrackPosition;
 
 		_bool IsBefore(_float nowTrackPosition) {
 			return fTrackPosition < nowTrackPosition;

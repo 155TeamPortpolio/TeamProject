@@ -1209,6 +1209,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

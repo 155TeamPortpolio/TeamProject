@@ -31,6 +31,7 @@ HRESULT CDemoShaderModel::Initialize(INIT_DESC* pArg)
 
 	GAMEOBJECT_DESC* pObjDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
 
+
 	return S_OK;
 }
 
@@ -45,6 +46,7 @@ void CDemoShaderModel::Awake()
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
 
 	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
 }
 
