@@ -18,6 +18,7 @@
 #include "CollisionSystem.h"
 #include "FontSystem.h"
 #include "PhysicsSystem.h"
+#include "EventSystem.h"
 #include "Level.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -50,6 +51,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pPhysicsSystem = CPhysicsSystem::Create();
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
+	m_pEventSystem = CEventSystem::Create();
 
 
 #if defined _USING_GUI
@@ -160,6 +162,7 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pCollisionSystem);
 	Safe_Release(m_pFontSystem);
 	Safe_Release(m_pPhysicsSystem);
+	Safe_Release(m_pEventSystem);
 
 	DestroyInstance();
 }
