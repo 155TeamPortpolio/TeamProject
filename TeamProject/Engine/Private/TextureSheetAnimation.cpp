@@ -9,10 +9,8 @@ CTextureSheetAnimation::CTextureSheetAnimation()
 
 void CTextureSheetAnimation::SetUpParticle(CParticleSystem::PARTICLE& particle)
 {
-	_uint iMaxFrames = m_iCol * m_iRow;
-
 	if (m_IsRandomFrameIndex)
-		particle.iFrameIndex = Helper::Get_Random_Int(0, iMaxFrames - 1);
+		particle.iFrameIndex = Helper::Get_Random_Int(0, m_iMaxFrameIndex);
 	else
 		particle.iFrameIndex = 0;
 }
@@ -25,13 +23,16 @@ void CTextureSheetAnimation::SetParams(PARTICLE_MODULE_DESC* pDesc)
 	m_IsRandomFrameIndex = pTextureDesc->isRandomFrameIndex;
 	m_iCol = pTextureDesc->iCol;
 	m_iRow = pTextureDesc->iRow;
+	m_iMaxFrameIndex = pTextureDesc->iMaxFrameIndex;
 }
 
 void CTextureSheetAnimation::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
 	if (m_IsParticleAnimated)
 	{
+		_float t = particle.fLifeTime / particle.fMaxLifeTime;
 
+		particle.iFrameIndex = static_cast<_uint>(t * m_iMaxFrameIndex);
 	}
 }
 

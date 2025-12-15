@@ -169,6 +169,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 		Desc.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
 		Desc.iCol = particleDesc.iCol;
 		Desc.iRow = particleDesc.iRow;
+		Desc.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
 		m_pTextureSheetAnimation->SetParams(&Desc);
 
 		m_iTextureCol = Desc.iCol;

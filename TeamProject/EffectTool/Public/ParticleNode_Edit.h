@@ -72,6 +72,7 @@ private:
     _bool m_IsParticleAnimated = false;
     _uint m_iCol{ 1 };
     _uint m_iRow{ 1 };
+    _uint m_iMaxFrameIndex{ 1 };
 
 };
 NS_END

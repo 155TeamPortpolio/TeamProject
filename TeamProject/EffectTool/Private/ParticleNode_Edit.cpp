@@ -176,6 +176,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::Checkbox("Is Particle Animated", &m_IsParticleAnimated);
 	isDirty |= ImGui::DragInt("Texture Col", reinterpret_cast<_int*>(&m_iCol));
 	isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
+	isDirty |= ImGui::DragInt("Max FrameIndex", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 
 	if (isDirty)
 	{
@@ -206,6 +207,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.isParticleAnimated = m_IsParticleAnimated;
 		node.iCol = m_iCol;
 		node.iRow = m_iRow;
+		node.iMaxFrameIndex = m_iMaxFrameIndex;
 
 		Get_Component<CParticleSystem>()->SetParticleParams(node);
 	}

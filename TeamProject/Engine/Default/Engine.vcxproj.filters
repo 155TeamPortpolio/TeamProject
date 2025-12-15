@@ -426,6 +426,9 @@
     <ClInclude Include="..\Public\TextureSheetAnimation.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Noise.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -788,6 +791,9 @@
     <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation">
       <UniqueIdentifier>{d9d9b9c5-06a5-472e-82ed-ea5146acbce5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise">
+      <UniqueIdentifier>{c4cb2f4a-729b-4e11-95c5-1e2e066d08b8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1134,6 +1140,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TextureSheetAnimation.cpp">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Noise.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

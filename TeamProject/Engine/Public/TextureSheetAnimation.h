@@ -12,6 +12,7 @@ public:
         _bool isParticleAnimated = false;
         _uint iCol{ 1 };
         _uint iRow{ 1 };
+        _uint iMaxFrameIndex{};
     }TEXTURE_SHEET_ANIMATION_DESC;
 private:
     CTextureSheetAnimation();
@@ -32,6 +33,7 @@ private:
     _float m_fFrameSpeed{};
     _uint m_iCol{ 1 };
     _uint m_iRow{ 1 };
+    _uint m_iMaxFrameIndex{};
 
 };
 NS_END

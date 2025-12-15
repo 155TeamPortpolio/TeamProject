@@ -351,6 +351,7 @@ namespace Engine
 		_bool isRandomFrameIndex = false;
 		_uint iCol{ 1 };
 		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{};
 
 	}PARTICLE_NODE;
 
