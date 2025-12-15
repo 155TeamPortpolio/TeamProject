@@ -1,6 +1,7 @@
 #pragma once
 #include "AnimationTool_Defines.h"
 #include "Animator3D.h"
+#include "AnimationLayout.h"
 
 NS_BEGIN(AnimTool)
 
@@ -13,11 +14,14 @@ private:
     ~CAnimator3DEX() DEFAULT;
 
 public:
+    HRESULT Initialize_Prototype() override;
+    HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
-
+public:
+    HRESULT Load_ClipMeta(const string& LevelKey, const string& ClipMetaKey);
 
 private:
-    _int m_iNumAnimLayer = { -1 }; //애니매이션 레이어까지 등록을 해줘야 사용이 가능하도록
+    
 
 public:
     static CAnimator3DEX* Create();

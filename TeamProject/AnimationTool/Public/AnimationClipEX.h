@@ -14,7 +14,7 @@ protected:
 	virtual ~CAnimationClipEX() DEFAULT;
 
 public:
-	HRESULT Initialize();
+	//virtual HRESULT Initialize();
 	
 public:
 	virtual void Render_GUI();
