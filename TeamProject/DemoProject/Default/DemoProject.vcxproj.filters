@@ -45,6 +45,7 @@
     </Filter>
     <Filter Include="02. DemoObject\DemoShaderModel">
       <UniqueIdentifier>{898bf3e7-709f-48b4-b574-22a7ec05ffbd}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. DemoObject\DemoPlayer">
       <UniqueIdentifier>{de0b3c12-5943-417e-b837-66c275c05e91}</UniqueIdentifier>
     </Filter>
@@ -132,12 +133,13 @@
       <Filter>01. Level\PhysicsLevel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DemoUI.h">
-      <Filter>02. DemoObject\DemoShaderModel</Filter>
+      <Filter>02. DemoObject\DemoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DemoShaderModel.h">
-      <Filter>02. DemoObject\DemoShaderModel</Filter>
     <ClInclude Include="..\Public\DemoPlayer.h">
       <Filter>02. DemoObject\DemoPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoShaderModel.h">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -207,10 +209,11 @@
     <ClCompile Include="..\Private\PhysicsLevel.cpp">
       <Filter>01. Level\PhysicsLevel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemoShaderModel.cpp">
-      <Filter>02. DemoObject\DemoShaderModel</Filter>
     <ClCompile Include="..\Private\DemoPlayer.cpp">
       <Filter>02. DemoObject\DemoPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoShaderModel.cpp">
+      <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
