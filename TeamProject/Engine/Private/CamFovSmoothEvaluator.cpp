@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "CamFovSmoothEvaluator.h"
 
-bool CamFovSmoothEvaluator::Build(const vector<CamKeyFrame>& keys)
+bool CCamFovSmoothEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
     if (keys.empty())
         return false;
@@ -10,7 +10,7 @@ bool CamFovSmoothEvaluator::Build(const vector<CamKeyFrame>& keys)
     return true;
 }
 
-_float CamFovSmoothEvaluator::Evaluate(_float time) const
+_float CCamFovSmoothEvaluator::Evaluate(_float time) const
 {
     assert(keyframes);
     assert(!keyframes->empty());

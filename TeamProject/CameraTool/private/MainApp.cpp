@@ -39,7 +39,7 @@ void MainApp::Render()
 
 void MainApp::Set_Levels()
 {
-	game->Get_LevelMgr()->Register_Level("First_Level", []()-> CLevel* { return FirstLevel::Create("First_Level"); });
+	game->Get_LevelMgr()->Register_Level("First_Level", []()-> CLevel* { return CFirstLevel::Create("First_Level"); });
 	game->Notify_LevelSet();
 	game->Get_LevelMgr()->Request_ChangeLevel("First_Level", false);
 }

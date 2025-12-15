@@ -67,6 +67,12 @@
     <ClInclude Include="..\public\DemoModel.h">
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DebugCamData.h">
+      <Filter>03. Obj\00. DebugCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DemoGrid.h">
+      <Filter>03. Obj\02. DemoGrid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -103,6 +109,9 @@
     </Filter>
     <Filter Include="03. Obj\01. DemoModel">
       <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\02. DemoGrid">
+      <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +168,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DemoModel.cpp">
       <Filter>03. Obj\01. DemoModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DemoGrid.cpp">
+      <Filter>03. Obj\02. DemoGrid</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

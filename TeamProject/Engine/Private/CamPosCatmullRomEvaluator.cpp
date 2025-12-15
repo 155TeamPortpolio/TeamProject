@@ -2,7 +2,7 @@
 #include "CamPosCatmullRomEvaluator.h"
 #include "CamPosCentripetalEvaluator.h"
 
-bool CamPosCatmullRomEvaluator::Build(const vector<CamKeyFrame>& keys)
+bool CCamPosCatmullRomEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
     if (keys.empty())
         return false;
@@ -11,7 +11,7 @@ bool CamPosCatmullRomEvaluator::Build(const vector<CamKeyFrame>& keys)
     return true;
 }
 
-_vector3 CamPosCatmullRomEvaluator::Evaluate(_float time) const
+_vector3 CCamPosCatmullRomEvaluator::Evaluate(_float time) const
 {
     assert(keyframes);
     assert(!keyframes->empty());
@@ -46,7 +46,7 @@ _vector3 CamPosCatmullRomEvaluator::Evaluate(_float time) const
     return CatmullRom(p0, p1, p2, p3, u);
 }
 
-_vector3 CamPosCatmullRomEvaluator::GetPosClamped(int idx) const
+_vector3 CCamPosCatmullRomEvaluator::GetPosClamped(int idx) const
 {
     assert(keyframes);
     const int n = (int)keyframes->size();
@@ -57,7 +57,7 @@ _vector3 CamPosCatmullRomEvaluator::GetPosClamped(int idx) const
     return (*keyframes)[(size_t)idx].pos;
 }
 
-_vector3 CamPosCatmullRomEvaluator::CatmullRom(const _vector3& p0, const _vector3& p1, const _vector3& p2, const _vector3& p3, float u) const
+_vector3 CCamPosCatmullRomEvaluator::CatmullRom(const _vector3& p0, const _vector3& p1, const _vector3& p2, const _vector3& p3, float u) const
 {
     const float u2 = u * u;
     const float u3 = u2 * u;

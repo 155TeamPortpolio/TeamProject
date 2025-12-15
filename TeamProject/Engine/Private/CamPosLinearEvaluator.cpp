@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "CamPosLinearEvaluator.h"
 
-bool CamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
+bool CCamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
 	if (keys.empty())
 		return false;
@@ -10,7 +10,7 @@ bool CamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 	return true;
 }
 
-_vector3 CamPosLinearEvaluator::Evaluate(_float time) const
+_vector3 CCamPosLinearEvaluator::Evaluate(_float time) const
 {
     assert(keyframes);
     assert(!keyframes->empty());
