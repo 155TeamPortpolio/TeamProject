@@ -5,6 +5,10 @@ NS_BEGIN(MapTool)
 class CStaticObject :
     public CGameObject
 {
+public:
+    typedef struct tagStaticObjectCreateDesc : public Engine::GAMEOBJECT_DESC {
+        _bool   isRayReceiver;
+    }STATIC_OBJECT_DESC;
 private:
     CStaticObject();
     CStaticObject(const CStaticObject& rhs);
@@ -20,6 +24,7 @@ public:
 
 public:
     void Render_GUI() override;
+    void Delete_Object();
 
 public:
     static CStaticObject* Create();

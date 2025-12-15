@@ -20,8 +20,10 @@ public:
 	virtual void	Render_GUI() override;
 
 private:
+	void				KeyInput();
 	void				Compute_Ray();
 	void				Place_Object(RAY_HIT* pRayHit);
+	void				Set_ObjectPicking(_bool is);
 
 
 private:
@@ -30,6 +32,7 @@ private:
 	RAY			m_Ray = {};
 	_float3		m_vRayHitPos = {};
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
+	_bool		m_isObjectPicking = { true };
 
 
 
