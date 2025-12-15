@@ -43,7 +43,7 @@ HRESULT CUI_Object::Initialize(INIT_DESC* pArg)
         m_vScale = uiDesc->Scale;
         m_vSize = uiDesc->Size;
         m_fRadian = uiDesc->fRadian;
-
+        m_eAnchor = uiDesc->eAnchor;
         Update_UITransform();
      }
     return S_OK;
