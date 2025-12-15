@@ -25,28 +25,36 @@ HRESULT CDemoCamera::Initialize_Prototype()
 	return S_OK;
 }
 
+static _bool IsFirst = true;
 HRESULT CDemoCamera::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	m_pTransform->LookAt({ 0,0,0 }); 
 
-	LIGHT_DESC desc = {};
-	desc.eType = LIGHT_TYPE::DIRECTIONAL;
-	desc.fLightRange = 100.f;
-	desc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
-	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	desc.vLightDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	if (IsFirst)
+	{
+		LIGHT_DESC desc = {};
+		desc.eType = LIGHT_TYPE::DIRECTIONAL;
+		desc.fLightRange = 100.f;
+		desc.vLightAmbient = _float4(1.f, 1.f, 1.f, 1.f);
+		desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		desc.vLightDirection = _float4(1.f, -1.f, 1.f, 0.f);
 
-	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
+		Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 
-	//desc = {};
-	//desc.vLightPosition = { 0,-10,0,0 };
-	//desc.fLightRange = 20.0f;
-	//desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	//desc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
-	//desc.vLightSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-	//
-	//Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::POINT);
+		IsFirst = false;
+	}
+	else
+	{
+		LIGHT_DESC desc = {};
+		desc.eType = LIGHT_TYPE::POINT;
+		desc.fLightRange = 100.f;
+		desc.vLightAmbient = _float4(1.f, 0.f, 0.f, 1.f);
+		desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
+		desc.vLightDirection = _float4(1.f, -1.f, 1.f, 0.f);
+
+		Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::POINT);
+	}
 
 
 	return S_OK;

@@ -44,6 +44,13 @@ HRESULT CDemoLevel::Awake()
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
+	CGameObject* Camera2 = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera" })
+		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
+		.Position({ 0,3,-3 })
+		.Build("Main_Camera");
+
+	pObjMgr->Add_Object(Camera2, { "Demo_Level","Camera_Layer" });
+
 	 pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	 pUIMgr = m_pGameInstance->Get_UIMgr();
 
