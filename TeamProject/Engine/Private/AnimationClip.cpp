@@ -2,11 +2,6 @@
 #include "AnimationClip.h"
 #include "Channel.h"
 
-CAnimationClip::CAnimationClip(const string& Subject)
-	:m_Subject(Subject)
-{
-}
-
 CAnimationClip::CAnimationClip()
 {
 }
@@ -16,7 +11,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	ifstream ifs(animationPath.c_str(), ios::binary);
 
 	if (!ifs.is_open()) {
-		string msg = "Anim Add Failed path: " + animationPath+"\n";
+		string msg = "Anim Add Failed path: " + animationPath + "\n";
 		OutputDebugStringA(msg.c_str());
 		return E_FAIL;
 	}
@@ -122,9 +117,9 @@ void CAnimationClip::Render_GUI()
 		channel->Render_GUI();
 }
 
-CAnimationClip* CAnimationClip::Create(const string& animationPath, const string& animClipKey, const string& Subject)
+CAnimationClip* CAnimationClip::Create(const string& animationPath, const string& animClipKey)
 {
-	CAnimationClip* instance = new CAnimationClip(Subject);
+	CAnimationClip* instance = new CAnimationClip();
 	if (FAILED(instance->Initialize(animationPath))) {
 		Safe_Release(instance);
 	}

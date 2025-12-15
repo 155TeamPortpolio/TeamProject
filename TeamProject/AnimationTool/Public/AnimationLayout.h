@@ -25,7 +25,6 @@ typedef struct AnimationClip {
     vector<ANIM_EVENT> Events;
 }ANIM_CLIP;
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_CLIP, ClipTag, Events);
-
 /* ------------------------ */
 
 

@@ -253,8 +253,7 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 }
 
 CAnimationClip* CResourceMgr::Load_AnimClip(const string& levelTag, 
-	const string& AnimClipKey, 
-	const string& Subject)
+	const string& AnimClipKey)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
@@ -263,16 +262,15 @@ CAnimationClip* CResourceMgr::Load_AnimClip(const string& levelTag,
 	}
 
 	auto& map = m_Resources[index].m_Animations;
-	auto iter = map.find(AnimClipKey + "_" + Subject);
+	auto iter = map.find(AnimClipKey);
 
 	if (iter != map.end()) {
-		if (iter->second->Get_Subject() == Subject)
-			return iter->second;
+		return iter->second;
 	}
 
-	CAnimationClip* pData = CAnimationClip::Create(MakePath(AnimClipKey + "_" + Subject), AnimClipKey, Subject);
+	CAnimationClip* pData = CAnimationClip::Create(MakePath(AnimClipKey), AnimClipKey);
 	if (pData)
-		map.emplace(AnimClipKey + "_" + Subject, pData);
+		map.emplace(AnimClipKey, pData);
 
 	return pData;
 }

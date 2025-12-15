@@ -1,16 +1,22 @@
 #include "pch.h"
 #include "AnimModel.h"
+#include "AnimationClipEX.h"
+#include "Animator3DEX.h"
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "AnimationLayout.h"
 
 CAnimModel::CAnimModel()
+	: m_pGameInstance{ CGameInstance::GetInstance() }
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 CAnimModel::CAnimModel(const CAnimModel& rhs)
 	:CGameObject(rhs)
+	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
 }
 
@@ -28,6 +34,7 @@ HRESULT CAnimModel::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	//m_Components.emplace(type_index(typeid()))
+	//m_Components.emplace(type_index(typeid(CAnimator3DEX)));
 
 	return S_OK;
 }
@@ -44,6 +51,8 @@ void CAnimModel::Priority_Update(_float dt)
 
 void CAnimModel::Update(_float dt)
 {
+	if (nullptr != Get_Component<CAnimator3D>())
+		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CAnimModel::Late_Update(_float dt)
@@ -72,26 +81,27 @@ void CAnimModel::GUI_LoadResource(_float fChildHeight)
 	if (ImGui::Button("Load Resource")) {
 		Load_Resource();
 	}
+	ImGui::SameLine();
+	if (ImGui::Button("Set Meta")) {
+		Set_Animator();
+	}
 	ImGui::EndChild();
 }
 
 void CAnimModel::GUI_SetModel(_float fChildHeight)
 {
-	//Show Selected Tags
-	static string CurModelTag = { "Select Model" };
-	static string CurMaterialTag = { "Select Material" };
 	//Select Model
 	ImGui::SeparatorText("Model & Material Set");
 	ImGui::BeginChild("##Set Data", ImVec2{ 0, fChildHeight * 2 }, true);
-	if (ImGui::BeginCombo("##Model Combo", CurModelTag.c_str())) //Model
+	if (ImGui::BeginCombo("##Model Combo", m_CurModelTag.c_str())) //Model
 	{
 		if (!m_ModelTags.empty()) {
 			for (string ModelTag : m_ModelTags)
 			{
-				bool selected = (CurModelTag == ModelTag);
+				bool selected = (m_CurModelTag == ModelTag);
 				if (ImGui::Selectable(ModelTag.c_str(), selected))
 				{
-					CurModelTag = ModelTag;
+					m_CurModelTag = ModelTag;
 				}
 				if (selected)
 					ImGui::SetItemDefaultFocus();
@@ -100,15 +110,15 @@ void CAnimModel::GUI_SetModel(_float fChildHeight)
 		ImGui::EndCombo();
 	}
 	//Select Material
-	if (ImGui::BeginCombo("##Material Combo", CurMaterialTag.c_str())) //Material
+	if (ImGui::BeginCombo("##Material Combo", m_CurMaterialTag.c_str())) //Material
 	{
 		if (!m_MaterialTags.empty()) {
 			for (string MatTag : m_MaterialTags)
 			{
-				bool selected = (CurMaterialTag == MatTag);
+				bool selected = (m_CurMaterialTag == MatTag);
 				if (ImGui::Selectable(MatTag.c_str(), selected))
 				{
-					CurMaterialTag = MatTag;
+					m_CurMaterialTag = MatTag;
 				}
 				if (selected)
 					ImGui::SetItemDefaultFocus();
@@ -119,7 +129,7 @@ void CAnimModel::GUI_SetModel(_float fChildHeight)
 	//Set Models;
 	ImGui::SameLine();
 	if (ImGui::Button("Set")) {
-		Set_Model(CurModelTag, CurMaterialTag);
+		Set_Model(m_CurModelTag, m_CurMaterialTag);
 	}
 
 	ImGui::EndChild();
@@ -165,11 +175,43 @@ void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
 	Get_Component<CMaterial>()->Link_Material("AnimationEdit_Level", MaterialTag);
 }
 
+void CAnimModel::Set_Animator()
+{
+	Remove_Component<CAnimator3D>();
+
+	string metaPath = Helper::OpenFile_Dialogue();
+	vector<ANIM_CLIP> Clips;
+
+	std::ifstream file(metaPath);
+	if (file.is_open()) {
+		json j;
+		file >> j;
+
+		Clips = j.get<vector<ANIM_CLIP>>();
+	}
+
+	string clipPath = std::filesystem::path(metaPath).parent_path().string();
+	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
+
+	Add_Component<CAnimator3D>();
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
+	
+	for (auto& Clip : Clips) {
+		string AnimPath = clipPath + "\\" + Clip.ClipTag + ".anim";
+		ResMgr->Add_ResourcePath(Clip.ClipTag, AnimPath);
+		Get_Component<CAnimator3D>()->Add_AnimClips("AnimationEdit_Level", Clip.ClipTag, "");
+	}
+}
+
 void CAnimModel::Clear_Model()
 {
 	Remove_Component<CSkeletalModel>();
 	Remove_Component<CModel>();
 	Remove_Component<CMaterial>();
+}
+
+void CAnimModel::Load_Json()
+{
 }
 
 CAnimModel* CAnimModel::Create()
@@ -200,4 +242,5 @@ CGameObject* CAnimModel::Clone(INIT_DESC* pArg)
 void CAnimModel::Free()
 {
 	__super::Free();
+	Safe_Release(m_pGameInstance);
 }
