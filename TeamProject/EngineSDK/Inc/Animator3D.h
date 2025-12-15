@@ -26,7 +26,7 @@ public:
 
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
-    HRESULT Add_AnimClips(const string& LevelKey, const string& AnimKey, const string& Subject,_bool Loop = false);
+    HRESULT Add_AnimClips(const string& LevelKey, const string& AnimKey,_bool Loop = false);
 
 public:
     virtual void Update_Animation(_float dt);

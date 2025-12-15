@@ -7,7 +7,6 @@ class ENGINE_DLL CAnimationClip :
     public CBase
 {
 protected:
-    CAnimationClip(const string& Subject);
     CAnimationClip();
     virtual ~CAnimationClip() DEFAULT;
 
@@ -42,7 +41,6 @@ public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
 
 	const string& Get_Name() { return m_ClipName; }
-	const string& Get_Subject() { return m_Subject; }
 	_float Get_TickPerSecond() { return m_fTickPerSecond; }
 
 public:
@@ -54,11 +52,10 @@ protected:
 	_float					m_fTickPerSecond = {};	//속도
 	_uint					m_iNumChannels = {};	//채널 개수
 	string					m_ClipName = {};		//애니매이션 클립 이름
-	string					m_Subject = {};			//어떤 모델의 애니매이션인지?
 	vector<class CChannel*> m_Channels;
 
 public:
-    static CAnimationClip* Create(const string& animationPath, const string& animClipKey, const string& Subject);
+    static CAnimationClip* Create(const string& animationPath, const string& animClipKey);
 	virtual void Free();
 };
 NS_END
