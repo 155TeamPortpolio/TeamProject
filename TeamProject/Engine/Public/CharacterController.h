@@ -35,6 +35,7 @@ public:
     _float          Get_Height() const { return m_fHeight; }
     _float          Get_Radius() const { return m_fRadius; }
     _float          Get_MaxSpeed() const { return m_fMaxSpeed; }
+    void            Set_Gravity(_float fGravity) { m_fGravity = fGravity; }
 
 
 public:

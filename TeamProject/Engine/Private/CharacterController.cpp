@@ -202,8 +202,11 @@ void CCharacterController::Render_GUI()
 		if (m_pController)
 		{
 			PxExtendedVec3 pos = m_pController->getPosition();
-			ImGui::Text("Position: (%.2f, %.2f, %.2f)", (float)pos.x, (float)pos.y, (float)pos.z);
-
+			_float fPos[3] = { (_float)pos.x, (_float)pos.y, (_float)pos.z };
+			if (ImGui::DragFloat3("Position", fPos, 0.1f))
+			{
+				Set_Position(_vector4(fPos[0], fPos[1], fPos[2], 1.f));
+			}
 			PxExtendedVec3 foot = m_pController->getFootPosition();
 			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
@@ -214,6 +217,11 @@ void CCharacterController::Render_GUI()
 			if (ImGui::Checkbox("Gravity Enabled", &bGravity))
 			{
 				Set_GravityEnabled(bGravity);
+			}
+			_float fGravity = m_fGravity;
+			if (ImGui::DragFloat("Gravity", &fGravity, 0.01f, -100.f, 0.0f))
+			{
+				Set_Gravity(fGravity);
 			}
 
 			_float fHeight = m_fHeight;
