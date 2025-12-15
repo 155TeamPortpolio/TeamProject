@@ -74,6 +74,7 @@ public:
 private:
 	HRESULT Make_OpaquePacket();
 	HRESULT Make_BlendedPacket(OPAQUE_PACKET packet);
+	HRESULT Make_NonLightPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
 	HRESULT Make_ParticlePacket();
 

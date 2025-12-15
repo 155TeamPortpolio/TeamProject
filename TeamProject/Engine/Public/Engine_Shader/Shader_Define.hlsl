@@ -5,6 +5,8 @@
 #pragma pack_constant_buffers
 
 #include "Shader_State.hlsl"
+#include "Shader_Function.hlsl"
+#include "Shader_PBRFunction.hlsl"
 
 cbuffer FrameBuffer : register(b0)
 {
@@ -79,6 +81,7 @@ Texture2D EmmisionTexture : register(t13);
 Texture2D MetalnessTexture : register(t14);
 Texture2D DiffuseRoughnessTexture : register(t15);
 Texture2D AmbientOcclusionTexture : register(t16);
+Texture2D NoiseTexture : register(t17);
 
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
