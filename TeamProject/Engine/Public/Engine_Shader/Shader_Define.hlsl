@@ -80,6 +80,7 @@ Texture2D EmmisionTexture : register(t13);
 Texture2D MetalnessTexture : register(t14);
 Texture2D DiffuseRoughnessTexture : register(t15);
 Texture2D AmbientOcclusionTexture : register(t16);
+Texture2D NoiseTexture : register(t17);
 
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
