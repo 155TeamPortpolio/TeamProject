@@ -88,6 +88,8 @@ private:
 
 	vector<RENDER_CUSTOM_COMMAND> m_RenderCommands;
 	vector<POST_PROCESS_COMMAND> m_PostCommands;
+
+	class CTexture* TempTexture = { nullptr };
 public:
 	static CRenderSystem* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;
