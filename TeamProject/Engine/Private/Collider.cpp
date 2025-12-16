@@ -159,7 +159,7 @@ void CCollider::Update(_float dt)
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
 
 		PxTransform pose(
-			PxVec3(vPos.x, vPos.y, vPos.x),
+			PxVec3(vPos.x, vPos.y, vPos.z),
 			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
 		);
 		m_pStaticActor->setGlobalPose(pose);

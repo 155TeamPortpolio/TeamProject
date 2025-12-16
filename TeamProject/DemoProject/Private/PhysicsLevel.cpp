@@ -54,11 +54,6 @@ HRESULT CPhysicsLevel::Awake()
 	pObjMgr->Add_Object(Player, { "Physics_Level","Player_Layer" });
 
 	// Floor
-	RIGIDBODY_DESC floorRbDesc = {};
-	floorRbDesc.isStatic = true;
-	floorRbDesc.isKinematic = false;
-	floorRbDesc.fMass = 0.f;
-
 	COLLIDER_DESC floorColDesc = {};
 	floorColDesc.eType = COLLIDER_TYPE::BOX;
 	floorColDesc.vSize = { 20.f, 1.f, 20.f };
@@ -69,7 +64,6 @@ HRESULT CPhysicsLevel::Awake()
 	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoModel" })
 		.Position({ 0.f, -2.f, 0.f })
 		.Scale({ 20.f, 1.f, 20.f })
-		.RigidBody(floorRbDesc)
 		.Collider(floorColDesc)
 		.Build("Demo_Floor");
 
@@ -78,7 +72,6 @@ HRESULT CPhysicsLevel::Awake()
 
 	// Box
 	RIGIDBODY_DESC objRbDesc = {};
-	objRbDesc.isStatic = false;
 	objRbDesc.isKinematic = false;
 	objRbDesc.fMass = 10.0f;
 
