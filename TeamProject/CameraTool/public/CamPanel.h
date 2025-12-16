@@ -13,31 +13,38 @@ private:
 	CCamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
 	~CCamPanel() = default;
 
-	void Init();
+	void    Init();
 
 public:
-	void Update_Panel(_float dt) override;
-	void Render_GUI() override;
-	void SetCaptureTarget(CCamObj* camObj);
+	void    Update_Panel(_float dt) override;
+	void    Render_GUI() override;
+	void    SetCaptureTarget(CCamObj* camObj);
 
 private:
-	void  DrawToolbar();
-	void  DrawCamSelector();
-	void  DrawKeyframeArea();
-	void  DrawKeyframeList();
-	void  DrawKeyframeEditor();
-	void  DrawTimeline();
-	void  DrawInterpSelector();
-	void  DrawHelpPopup();
-	void  DrawWindowHeader();
-	_bool DrawConstraintBar();
-	_bool DrawOrbitTargetBar();
+	void    DrawToolbar();
+	void    DrawCamSelector();
+	void    DrawKeyframeList();
+	void    DrawKeyframeEditor();
+	void    DrawTimeline();
+	void    DrawHelpPopup();
+	void    DrawWindowHeader();
+	_bool   DrawConstraintBar();
+	_bool   DrawOrbitTargetBar();
 
-private: // Helper
+private:
+    void    SetRecording(_bool on);
+    void    SetPlaying(_bool on);
+    void    RecalcEndTimeFromKeys();
+    void    ClampCurTime();
+    void    PostEdit_SequenceChanged();
+
+private: 
 	void    AddKey_Default();
 	void    DeleteSelectedKey();
 	void    SortKeysByTime_Stable();
-	void    MergeNearDuplicateTimes_KeepLast();
+
+    void    MergeNearDuplicateTimes(_uint preferKeyId = 0);
+
 	void    SyncEditorFromSelection();
 	void    ApplyEditorToSelectedKey_TimeOnly();
 	void    CaptureSelectedKey_FromCaptureCam();
@@ -51,14 +58,54 @@ private: // Helper
 	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
 
 private:
-	CamSequenceDesc  debugSequence{};
-	CamToolTarget    target{};
-	CamToolEditState state{};
-	CamToolKeyPolicy policy{};
+    struct KeyframeListUIState
+    {
+        _uint pendingDeleteKeyId = 0;
+
+        string lastFileError{};
+        bool requestOpenFileErrorPopup = false;
+
+        char prefabNameBuf[128] = "DebugSequence";
+        const CamSequenceDesc* lastSeqPtr = nullptr;
+        bool nameEditing = false;
+    };
+
+    struct KeyframeEditorUIState
+    {
+        _uint pendingTimeSelectedId = 0;
+        float pendingTimeValue = 0.f;
+        int   pendingOverwriteCount = 0;
+        bool  requestOpenTimeCollisionPopup = false;
+    };
+
+private:
+    void   DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChangedAny);
+    void   DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioChangedAny);
+    void   DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChangedAny);
+
+    bool   ValidateCamPath(const string& pickedPath, string& outError) const;
+    string GetDefaultCamFileName() const;
+    void   SyncNameBufFromSeq();
+    void   EnsureNameBufSync();
+    void   DoSaveSequence();
+    void   DoLoadSequence();
+
+private:
+    void   DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny);
+    void   DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit);
+
+private:
+    CamSequenceDesc       debugSequence{};
+    CamToolTarget         target{};
+    CamToolEditState      state{};
+    CamToolKeyPolicy      policy{};
+
+    KeyframeListUIState   keyListUI{};
+    KeyframeEditorUIState keyEditUI{};
 
 public:
-	static CCamPanel* Create(GUI_CONTEXT* context);
-	virtual void Free() override;
+    static CCamPanel* Create(GUI_CONTEXT* context);
+    virtual void Free() override;
 };
 
 NS_END
