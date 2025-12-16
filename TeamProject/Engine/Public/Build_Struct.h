@@ -55,7 +55,7 @@ namespace Engine {
 		_float4		vDirection = {};
 		_float4		vPosition = {};
 		_float			fRange = {};
-
+		_float			fIntensity = { 3.f };
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
