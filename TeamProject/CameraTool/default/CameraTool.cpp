@@ -93,12 +93,13 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
     return RegisterClassExW(&wcex);
 }
-// =======================================================================================
+
 struct MonitorPickResult
 {
     RECT workRect{};
     bool found = false;
 };
+
 static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
 {
     auto* data = reinterpret_cast<pair<int, MonitorPickResult*>*>(userData);
@@ -119,6 +120,7 @@ static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
     curIdx++;
     return TRUE;
 }
+
 static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
 {
     MonitorPickResult result{};
@@ -127,13 +129,14 @@ static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
     EnumDisplayMonitors(nullptr, nullptr, EnumMonProc, (LPARAM)&payload);
     return result;
 }
+
 static RECT CalcWindowRectFromClientSize(int clientW, int clientH, DWORD style, DWORD exStyle)
 {
     RECT rc{ 0, 0, clientW, clientH };
     AdjustWindowRectEx(&rc, style, FALSE, exStyle);
     return rc; 
 }
-// =========================================================================================
+
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     g_Inst = hInstance;

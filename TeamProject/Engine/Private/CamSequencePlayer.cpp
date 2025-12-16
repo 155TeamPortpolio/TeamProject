@@ -196,65 +196,21 @@ _float CCamSequencePlayer::RemapTimeBySegmentEasing(_float t) const
     const _uint i = segment.segmentIdx;
     if (i + 1 >= (_uint)keys.size()) return t;
 
-    CamEaseType ease = target.seq->segmentEase;
+    EaseType ease = target.seq->segmentEase;
     if (keys[(size_t)i].useCustomEase)
         ease = keys[(size_t)i].outEase;
 
-    if (ease == CamEaseType::None)
+    if (ease == EaseType::None)
         return t;
 
     const float t0 = keys[(size_t)i].time;
     const float t1 = keys[(size_t)i + 1].time;
 
     float u = segment.normalizedTime;
-    if (u < 0.f) u = 0.f;
-    if (u > 1.f) u = 1.f;
+    u = clamp(u, 0.f, 1.f);
 
-    switch (ease)
-    {
-    case CamEaseType::InOutSine:     u = Math::EaseInOutSine(u); break;
-    case CamEaseType::OutCubic:      u = Math::EaseOutCubic(u); break;
-    case CamEaseType::InOutCubic:    u = Math::EaseInOutCubic(u); break;
-    case CamEaseType::OutSine:       u = Math::EaseOutSine(u); break;
-    case CamEaseType::InOutQuad:     u = Math::EaseInOutQuad(u); break;
-
-    case CamEaseType::InSine:        u = Math::EaseInSine(u); break;
-    case CamEaseType::InCubic:       u = Math::EaseInCubic(u); break;
-    case CamEaseType::InQuad:        u = Math::EaseInQuad(u); break;
-    case CamEaseType::InCirc:        u = Math::EaseInCirc(u); break;
-
-    case CamEaseType::InOutCirc:     u = Math::EaseInOutCirc(u); break;
-    case CamEaseType::OutCirc:       u = Math::EaseOutCirc(u); break;
-    case CamEaseType::OutQuad:       u = Math::EaseOutQuad(u); break;
-
-    case CamEaseType::InQuart:       u = Math::EaseInQuart(u); break;
-    case CamEaseType::InQuint:       u = Math::EaseInQuint(u); break;
-    case CamEaseType::InOutQuart:    u = Math::EaseInOutQuart(u); break;
-    case CamEaseType::OutQuart:      u = Math::EaseOutQuart(u); break;
-    case CamEaseType::InOutQuint:    u = Math::EaseInOutQuint(u); break;
-    case CamEaseType::OutQuint:      u = Math::EaseOutQuint(u); break;
-
-    case CamEaseType::InOutExpo:     u = Math::EaseInOutExpo(u); break;
-    case CamEaseType::OutExpo:       u = Math::EaseOutExpo(u); break;
-    case CamEaseType::InExpo:        u = Math::EaseInExpo(u); break;
-
-    case CamEaseType::OutBack:       u = Math::EaseOutBack(u); break;
-    case CamEaseType::InOutBack:     u = Math::EaseInOutBack(u); break;
-    case CamEaseType::InBack:        u = Math::EaseInBack(u); break;
-
-    case CamEaseType::OutElastic:    u = Math::EaseOutElastic(u); break;
-    case CamEaseType::InOutElastic:  u = Math::EaseInOutElastic(u); break;
-    case CamEaseType::InElastic:     u = Math::EaseInElastic(u); break;
-
-    case CamEaseType::OutBounce:     u = Math::EaseOutBounce(u); break;
-    case CamEaseType::InOutBounce:   u = Math::EaseInOutBounce(u); break;
-    case CamEaseType::InBounce:      u = Math::EaseInBounce(u); break;
-
-    default: break;
-    }
-
-    if (u < 0.f) u = 0.f;
-    if (u > 1.f) u = 1.f;
+    u = Math::ApplyEase(ease, u);
+    u = clamp(u, 0.f, 1.f);
 
     return Math::Lerp(t0, t1, u);
 }
