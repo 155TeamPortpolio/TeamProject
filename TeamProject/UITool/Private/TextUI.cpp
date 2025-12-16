@@ -58,6 +58,14 @@ void CTextUI::Priority_Update(_float dt)
 void CTextUI::Update(_float dt)
 {
     Get_Component<CTextSlot>()->Push_Text();
+
+    const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+    switch (m_iAlign)
+    {
+    case 0: m_vAnchorOffset.x = 0.f;            break;
+    case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+    case 2: m_vAnchorOffset.x = -width;         break;
+    }
 }
 
 void CTextUI::Late_Update(_float dt)
@@ -71,7 +79,8 @@ void CTextUI::Render_GUI()
     Render_GUI_Transform();
     
     ImGui::SeparatorText(u8"콘텐츠");
-    if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText)))
+
+    if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
     
     ImGui::SeparatorText(u8"폰트");
@@ -84,12 +93,13 @@ void CTextUI::Render_GUI()
         m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     }
+    ImGui::SameLine();
     if (ImGui::Button(u8"크기 -"))
     {
         m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     }
-    
+
     if(ImGui::ColorPicker4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
@@ -196,6 +206,39 @@ void CTextUI::Render_GUI_Layout()
 
     ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&m_vAnchorOffset));
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+
+    if (ImGui::BeginTable("TextAlign", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX))
+    {
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text(u8"정렬");
+
+        ImGui::TableSetColumnIndex(1);
+
+        bool changed = false;
+
+        changed |= ImGui::RadioButton(u8"왼쪽", &m_iAlign, 2);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton(u8"가운데", &m_iAlign, 1);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton(u8"오른쪽", &m_iAlign, 0);
+
+        if (changed)
+        {
+            const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+
+            switch (m_iAlign)
+            {
+            case 0: m_vAnchorOffset.x = 0.f;            break;
+            case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+            case 2: m_vAnchorOffset.x = -width;         break;
+            }
+        }
+
+        ImGui::EndTable();
+    }
 
     ImGui::Checkbox("Size to Content", &m_isSizeToContent);
 

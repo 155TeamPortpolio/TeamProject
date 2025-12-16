@@ -39,6 +39,8 @@ private:
 
 	_bool		m_isSizeToContent = { true };
 
+	_int		m_iAlign = {};
+
 public:
 	static _uint m_iCount;
 
