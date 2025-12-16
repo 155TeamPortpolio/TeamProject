@@ -1,39 +1,50 @@
 #pragma once
 
+#include "DebugCamData.h"
+
 NS_BEGIN(CameraTool)
 
-class DebugFreeCam final : public CamObj
+class CDebugFreeCam final : public CCamObj
 {
 private:
-	DebugFreeCam() = default;
-	DebugFreeCam(const DebugFreeCam& rhs) : CamObj(rhs) {}
-	virtual ~DebugFreeCam() = default;
+	CDebugFreeCam() = default;
+	CDebugFreeCam(const CDebugFreeCam& rhs) : CCamObj(rhs) {}
+	virtual ~CDebugFreeCam() = default;
 
 public:
-	HRESULT Initialize_Prototype()      override;
-	HRESULT Initialize(INIT_DESC* pArg) override;
+	HRESULT Initialize_Prototype()                    override;
+	HRESULT Initialize(INIT_DESC* pArg)               override;
 
-	void    Priority_Update(_float dt)  override;
-	void    Update(_float dt)           override;
-	void    Late_Update(_float dt)      override;
+	void    Priority_Update(_float dt)                override;
+	void    Update(_float dt)                         override;
+	void    Late_Update(_float dt)                    override;
 
-	void    Render_GUI()                override;
+	void    Render_GUI()                              override;
+
+	void    SetControlEnabled(_bool enabled)          override;
+	void    SetMoveConstraint(CamMoveConstraint mode) override;
+	void    SetOrbitState(const CamOrbitState& next)  override;
+
+	const   CamOrbitState& GetOrbitState() const { return orbit; }
 
 private:
-	void ApplyRotation(_float dt);
+	void    ApplyRotation(_float dt);
+	void    SyncRotationFromTransform();
 
 private:
-	_float moveSpeed   = 10.f;
-	_float sensitivity = 0.5f;
-
-	_vector2   rotDegTarget{ 0.f, 0.f };
+	_float     moveSpeed = 10.f;
+	_float     sensitivity = 0.5f;
+	_vector2   rotDegTarget = {};
 	Quaternion rotQuatCurrent = Quaternion::Identity;
-	Quaternion rotQuatTarget  = Quaternion::Identity;
+	Quaternion rotQuatTarget = Quaternion::Identity;
+	_float     rotSmoothSpeed = 15.f;
+	_bool      controlEnabled = true;
 
-	_float rotSmoothSpeed = 10.f;
+	CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
+	CamOrbitState     orbit{};
 
 public:
-	static DebugFreeCam* Create();
+	static CDebugFreeCam* Create();
 	CGameObject* Clone(INIT_DESC* pArg) override;
 	virtual void Free() override;
 };

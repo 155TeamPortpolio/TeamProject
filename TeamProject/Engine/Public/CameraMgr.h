@@ -1,5 +1,7 @@
 #pragma once
 #include "ICameraService.h"
+//#include "ICamPoseSource.h"
+
 NS_BEGIN(Engine)
 class CCamera;
 

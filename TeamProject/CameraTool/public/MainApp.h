@@ -2,7 +2,7 @@
 
 NS_BEGIN(CameraTool)
 
-class MainApp : public CBase
+class CMainApp : public CBase
 {
 public:
 	void Init();
@@ -18,7 +18,7 @@ private:
 	ID3D11DeviceContext* context{};
 
 public:
-	static MainApp* Create();
+	static CMainApp* Create();
 	virtual void Free() override;
 };
 

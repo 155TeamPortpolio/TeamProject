@@ -48,5 +48,15 @@ namespace Math
 {
 	//Float 보간 함수
 	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
-}
 
+	ENGINE_DLL _float EaseOutCubic(_float t);   // EaseOutCubic:   빠르게 출발하고 끝에서 부드럽게 감속(카메라 이동 기본값으로 무난)
+	ENGINE_DLL _float EaseInOutSine(_float t);  // EaseInOutSine:  시작/끝이 가장 자연스럽게 부드러운 S-curve(안정적인 일반 카메라)
+	ENGINE_DLL _float EaseInOutCubic(_float t); // EaseInOutCubic: InOutSine보다 가속/감속이 더 뚜렷한 S-curve(연출/전투에 힘 있는 느낌)
+	ENGINE_DLL _float EaseInCubic(_float t);    // EaseInCubic:    초반 움직임을 숨기고 뒤쪽에서 확 가속(컷 시작에서 튐 줄이기)
+	ENGINE_DLL _float EaseOutSine(_float t);    // EaseOutSine:    감속이 가볍고 깔끔한 마무리(짧은 이동에 부담 없음)
+	ENGINE_DLL _float EaseInQuad(_float t);     // EaseInQuad:     InCubic보다 약한 초반 가속(작은 이동에 살짝 뜸 들이기)
+	ENGINE_DLL _float EaseOutQuad(_float t);    // EaseOutQuad:    OutCubic보다 단순한 감속(짧은 전환/미세 조정에 깔끔)
+	ENGINE_DLL _float EaseInOutQuad(_float t);  // EaseInOutQuad:  직선적인 느낌의 명확한 S-curve(툴/편집기에서 보기 좋은 반응)
+	ENGINE_DLL _float EaseInOutExpo(_float t);  // EaseInOutExpo:  초반 거의 정지→중간 매우 빠름→끝 부드러움(거리 큰 연출용, 일상엔 과함)
+	ENGINE_DLL _float EaseOutBack(_float t);    // EaseOutBack:    목표를 살짝 지나쳤다 되돌아오는 오버슛(줌/락온 강조 연출, 과하면 멀미)
+}

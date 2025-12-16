@@ -3,15 +3,15 @@
 NS_BEGIN(Engine)
 enum class CamPosInterp
 {
-	Linear, CatmullRom, Centripetal
+	Linear, CatmullRom, Centripetal, BSpline, Hermite, Hold, OrbitArc
 };
 enum class CamRotInterp
 {
-	Slerp, Squad
+	Slerp, Squad, Hold
 };
 enum class CamFovInterp
 {
-	Linear, Smooth
+	Linear, Smooth, Hold
 };
 enum class CamType // 카메라가 "무슨 용도"로 쓰이는지에 대한 분류, 게임 로직/상태에 따라 어떤 카메라를 활성화할지 결정할 때 사용.
 {
@@ -27,11 +27,6 @@ enum class CamRigType // 카메라가 "어떻게 움직이는지"에 대한 분류, 같은 CamType 
 	Orbit,	  // 타겟을 중심으로 공전하듯 빙글 도는 카메라.
 	Fixed     // 완전히 고정된 카메라 (pos/rot 변하지 않음).
 };
-enum class CamSequenceMarkerType // 시퀀스 타임라인 위에 찍는 "트리거 이벤트" 종류. 카메라 움직임이 아니라, 특정 시점에서 발동할 연출/이벤트
-{
-	CamShake,        // 카메라 흔들기 (amp/freq/dur 등..)
-	// 일단은 카메라 셰이크만 추가..
-};
 enum class CamPlaybackMode // 시퀀스 "끝까지 재생된 다음에" 어떻게 할지에 대한 규칙 (주로 Menu 쪽에서 사용예정)
 {
 	Once,
@@ -43,10 +38,9 @@ enum class CamProjType
 	Perspective,  // 원근투영
 	Orthographic, // 직교투영
 };
-//enum class CamBlendType // 카메라 A에서 B로 갈아탈 때
-//{
-//	Cut,    // 바로 전환
-//	Smooth, // 일정 시간 동안 부드럽게 블렌딩
-//};
+enum class CamEaseType
+{
+	None, InOutSine, OutCubic,
+};
 
 NS_END
