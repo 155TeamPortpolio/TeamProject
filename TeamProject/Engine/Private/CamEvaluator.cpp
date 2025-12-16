@@ -1,27 +1,53 @@
 #include "Engine_Defines.h"
 #include "CamEvaluator.h"
 
-bool CamEvaluator::Build(const CamSequenceDesc& _seqDesc)
+bool CCamEvaluator::Build(const CamSequenceDesc& _seqDesc)
 {
-	if (_seqDesc.keyframes.size() < 2)
-		return false;
-
 	seqDesc = &_seqDesc;
-	duration = seqDesc->GetDuration();
-	if (duration <= 0.f)
-		return false;
 
-	if (!posEval || !rotEval || !fovEval)
-		return false;
+	cachedKeys = _seqDesc.keyframes;
+	if (cachedKeys.size() < 2) return false;
 
-	if (!posEval->Build(_seqDesc.keyframes)) return false;
-	if (!rotEval->Build(_seqDesc.keyframes)) return false;
-	if (!fovEval->Build(_seqDesc.keyframes)) return false;
+	stable_sort(cachedKeys.begin(), cachedKeys.end(), [](const CamKeyFrame& a, const CamKeyFrame& b) { return a.time < b.time; });
+
+	vector<CamKeyFrame> merged;
+	merged.reserve(cachedKeys.size());
+
+	constexpr float kEps = 1e-4f;
+
+	for (size_t i = 0; i < cachedKeys.size(); ++i)
+	{
+		const CamKeyFrame& cur = cachedKeys[i];
+
+		if (merged.empty())
+		{
+			merged.push_back(cur);
+			continue;
+		}
+
+		CamKeyFrame& last = merged.back();
+
+		if (fabsf(cur.time - last.time) <= kEps) last = cur;
+		else merged.push_back(cur);
+	}
+
+	cachedKeys.swap(merged);
+
+	if (cachedKeys.size() < 2) return false;
+
+	duration = cachedKeys.back().time;
+	if (duration <= 0.f) return false;
+
+	if (!posEval || !rotEval || !fovEval) return false;
+
+	if (!posEval->Build(cachedKeys)) return false;
+	if (!rotEval->Build(cachedKeys)) return false;
+	if (!fovEval->Build(cachedKeys)) return false;
 
 	return true;
 }
 
-CamPose CamEvaluator::Evaluate(float playTime) const
+CamPose CCamEvaluator::Evaluate(float playTime) const
 {
 	const float t = MapTime(playTime);
 
@@ -32,25 +58,25 @@ CamPose CamEvaluator::Evaluate(float playTime) const
 	return pose;
 }
 
-void CamEvaluator::SetPosEvaluator(ICamPosEvaluator* _posEval)
+void CCamEvaluator::SetPosEvaluator(ICamPosEvaluator* _posEval)
 {
 	Safe_Release(posEval);
 	posEval = _posEval;
 }
 
-void CamEvaluator::SetRotEvaluator(ICamRotEvaluator* _rotEval)
+void CCamEvaluator::SetRotEvaluator(ICamRotEvaluator* _rotEval)
 {
 	Safe_Release(rotEval);
 	rotEval = _rotEval;
 }
 
-void CamEvaluator::SetFovEvaluator(ICamFovEvaluator* _fovEval)
+void CCamEvaluator::SetFovEvaluator(ICamFovEvaluator* _fovEval)
 {
 	Safe_Release(fovEval);
 	fovEval = _fovEval;
 }
 
-_float CamEvaluator::MapTime(float playTime) const
+_float CCamEvaluator::MapTime(float playTime) const
 {
 	const float dur = duration;
 	if (dur <= 0.f) return 0.f;
@@ -80,7 +106,7 @@ _float CamEvaluator::MapTime(float playTime) const
 	return playTime;
 }
 
-void CamEvaluator::Free()
+void CCamEvaluator::Free()
 {
 	__super::Free();
 	Safe_Release(posEval);

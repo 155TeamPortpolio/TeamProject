@@ -211,7 +211,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 	return S_OK;
 }
 
-void CAIMesh::Save_File(ofstream& ofs)
+void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
 	MESH_INFO_HEADER infoHeader = {};
 	infoHeader.BoneCount = m_BoneIndices.size();
@@ -229,12 +229,10 @@ void CAIMesh::Save_File(ofstream& ofs)
 
 	else if (m_iVertexStride == sizeof(VTXMESH)) {
 		for (VTXMESH& vertex : m_Meshes) {
-			_matrix		PreTransformMatrix = XMMatrixIdentity();
-			PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180));
-			XMStoreFloat3(&vertex.vPosition, XMVector3TransformCoord(XMLoadFloat3(&vertex.vPosition), PreTransformMatrix));
-			XMStoreFloat3(&vertex.vNormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vNormal), PreTransformMatrix));
-			XMStoreFloat3(&vertex.vTangent, XMVector3TransformNormal(XMLoadFloat3(&vertex.vTangent), PreTransformMatrix));
-			XMStoreFloat3(&vertex.vBinormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vBinormal), PreTransformMatrix));
+			XMStoreFloat3(&vertex.vPosition, XMVector3TransformCoord(XMLoadFloat3(&vertex.vPosition), PreTransform));
+			XMStoreFloat3(&vertex.vNormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vNormal), PreTransform));
+			XMStoreFloat3(&vertex.vTangent, XMVector3TransformNormal(XMLoadFloat3(&vertex.vTangent), PreTransform));
+			XMStoreFloat3(&vertex.vBinormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vBinormal), PreTransform));
 
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXMESH));
 		}

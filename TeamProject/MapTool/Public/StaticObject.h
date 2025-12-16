@@ -7,7 +7,9 @@ class CStaticObject :
 {
 public:
     typedef struct tagStaticObjectCreateDesc : public Engine::GAMEOBJECT_DESC {
-        _bool   isRayReceiver;
+        string  TagModelKey = "";
+        string  TagMaterialKey = "";
+        _bool   isRayReceiver = {};
     }STATIC_OBJECT_DESC;
 private:
     CStaticObject();
@@ -25,6 +27,10 @@ public:
 public:
     void Render_GUI() override;
     void Delete_Object();
+
+private:
+    string  m_TagModelKey = {};
+    string  m_TagMaterialKey = {};
 
 public:
     static CStaticObject* Create();

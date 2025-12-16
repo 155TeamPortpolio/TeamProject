@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "CamRotSlerpEvaluator.h"
 
-bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
+bool CCamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
 	if (keys.empty())
 		return false;
@@ -31,7 +31,7 @@ bool CamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 	return true;
 }
 
-Quaternion CamRotSlerpEvaluator::Evaluate(_float time) const
+Quaternion CCamRotSlerpEvaluator::Evaluate(_float time) const
 {
 	assert(keyframes);
 	assert(!keyframes->empty());
@@ -51,15 +51,19 @@ Quaternion CamRotSlerpEvaluator::Evaluate(_float time) const
 	return Quaternion::Slerp(startRot, endRot, u);
 }
 
-Quaternion CamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float rollRad) const
+Quaternion CCamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float rollRad) const
 {
-	look.Normalize();
+	if (look.LengthSquared() <= 1e-8f)
+		look = _vector3(0.f, 0.f, 1.f);
+	else
+		look.Normalize();
+
 	const _vector3 forward = look;
 
-	_vector3 referenceUp{ 0.f, 1.f, 0.f };
+	_vector3 referenceUp(0.f, 1.f, 0.f);
 	const float parallel = fabsf(forward.Dot(referenceUp));
 	if (parallel > 0.999f)
-		referenceUp = { 0.f, 0.f, 1.f };
+		referenceUp = _vector3(0.f, 0.f, 1.f);
 
 	_vector3 right = referenceUp.Cross(forward);
 	right.Normalize();
@@ -67,10 +71,16 @@ Quaternion CamRotSlerpEvaluator::MakeRotFromLookRoll(_vector3 look, _float rollR
 	_vector3 up = forward.Cross(right);
 	up.Normalize();
 
-	Matrix     basis    = Matrix::CreateWorld(Vector3::Zero, forward, up);
-	Quaternion baseRot  = Quaternion::CreateFromRotationMatrix(basis);
-	Quaternion rollRot  = Quaternion::CreateFromAxisAngle(forward, rollRad);
-	Quaternion finalRot = baseRot * rollRot;
+	Matrix basis;
+	basis._11 = right.x;   basis._12 = right.y;   basis._13 = right.z;   basis._14 = 0.f;
+	basis._21 = up.x;      basis._22 = up.y;      basis._23 = up.z;      basis._24 = 0.f;
+	basis._31 = forward.x; basis._32 = forward.y; basis._33 = forward.z; basis._34 = 0.f;
+	basis._41 = 0.f;       basis._42 = 0.f;       basis._43 = 0.f;       basis._44 = 1.f;
+
+	Quaternion baseRot = Quaternion::CreateFromRotationMatrix(basis);
+
+	Quaternion rollRot = Quaternion::CreateFromAxisAngle(forward, rollRad);
+	Quaternion finalRot = rollRot * baseRot;
 	finalRot.Normalize();
 	return finalRot;
 }
