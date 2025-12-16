@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "DemoShaderModel.h"
-#include "SkeletalModel.h"
+#include "StaticModel.h"
 #include "Material.h"
 
 #include "GameInstance.h"
@@ -18,7 +18,7 @@ CDemoShaderModel::CDemoShaderModel(const CDemoShaderModel& rhs)
 HRESULT CDemoShaderModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Add_Component<CSkeletalModel>();
+	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 
@@ -40,13 +40,13 @@ void CDemoShaderModel::Awake()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Zero_Vehicle_MilitaryHelicopter_01.model",
+		"../../DemoResource/static/Zero_Vehicle_MilitaryHelicopter_01.model");
+	pRcsMgr->Add_ResourcePath("Zero_Vehicle_MilitaryHelicopter_01.mat",
+		"../../DemoResource/static/Zero_Vehicle_MilitaryHelicopter_01.mat");
 
-	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Zero_Vehicle_MilitaryHelicopter_01.model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Zero_Vehicle_MilitaryHelicopter_01.mat");
 }
 
 void CDemoShaderModel::Priority_Update(_float dt)

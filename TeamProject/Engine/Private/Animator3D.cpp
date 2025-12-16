@@ -83,7 +83,7 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 		return E_FAIL;
 	}
 
-	for (auto& Clip : m_pAnimClips)
+	for(auto& Clip : m_pAnimClips)
 		Safe_AddRef(Clip);
 
 	return S_OK;

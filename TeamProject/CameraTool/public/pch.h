@@ -13,3 +13,6 @@
 #include "Light.h"
 
 #include "CamObj.h"
+
+#include "Helper_Func.h"
+#include "Engine_Math.h"
