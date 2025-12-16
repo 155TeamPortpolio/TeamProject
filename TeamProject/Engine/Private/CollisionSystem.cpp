@@ -240,7 +240,7 @@ void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, co
 		}
 		else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
-			// Exit: Current에서 제거 (여기가 핵심!)
+			// Exit: Current에서 제거
 			currentA.erase(pColB);
 			currentB.erase(pColA);
 		}
@@ -270,25 +270,11 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 
 		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
-			// Enter: Current에 추가
-			auto& triggerCurrent = pTrigger->Get_CurrentCollisions();
-			auto& otherCurrent = pOther->Get_CurrentCollisions();
-
-			triggerCurrent.insert(pOther);
-			otherCurrent.insert(pTrigger);
-
 			pTrigger->OnTriggerEnter(pOther);
 			pOther->OnTriggerEnter(pTrigger);
 		}
 		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
-			// Exit: Current에서 제거
-			auto& triggerCurrent = pTrigger->Get_CurrentCollisions();
-			auto& otherCurrent = pOther->Get_CurrentCollisions();
-
-			triggerCurrent.erase(pOther);
-			otherCurrent.erase(pTrigger);
-
 			pTrigger->OnTriggerExit(pOther);
 			pOther->OnTriggerExit(pTrigger);
 		}
@@ -309,6 +295,29 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 	ICollidable* pOther = Get_Collidable_Shape(hit.shape, hit.actor);
 	if (!pOther || !pOther->Get_CompActive()) return;
 
+	// 트리거 Collision 처리
+	CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
+	if (pCollider && pCollider->IsTrigger())
+	{
+		// Trigger 처리
+		auto& cctPrevious = pCCT->Get_PreviousCollisions();
+
+		// Enter 체크 (Previous에 없으면)
+		if (cctPrevious.find(pOther) == cctPrevious.end())
+		{
+			pCCT->OnTriggerEnter(pOther);
+			pOther->OnTriggerEnter(pCCT);
+		}
+
+		// Current에는 추가 (Exit 판정용)
+		pCCT->Get_CurrentCollisions().insert(pOther);
+		pOther->Get_CurrentCollisions().insert(pCCT);
+
+		// 물리 반응은 하지 않음
+		return;
+	}
+
+	// 일반 Collision 처리
 	auto& cctCurrent = pCCT->Get_CurrentCollisions();
 	auto& cctPrevious = pCCT->Get_PreviousCollisions();
 
@@ -364,7 +373,21 @@ void CCollisionSystem::Process_CCT_ControllerHit(const PxControllersHit& hit)
 
 void CCollisionSystem::Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit)
 {
-	// 필요시 구현
+	// 필요시 구현 (거의 안쓴다고 합니다.)
+	// Obstacle : CCT 전용 정적 장애물, Actor없음, 가볍고빠름, 박스만 가능, CCT만 충돌 가능
+	if (!hit.controller) return;
+
+	PxRigidDynamic* pCCTActor = hit.controller->getActor();
+	if (!pCCTActor || !pCCTActor->userData) return;
+
+	CGameObject* pCCTOwner = static_cast<CGameObject*>(pCCTActor->userData);
+	CCharacterController* pCCT = pCCTOwner ?
+		pCCTOwner->Get_Component<CCharacterController>() : nullptr;
+
+	if (pCCT && pCCT->Get_CompActive())
+	{
+		// 슬라이딩, 사운드
+	}
 }
 
 void CCollisionSystem::Process_CollisionEvents()
@@ -405,14 +428,28 @@ void CCollisionSystem::Process_CollisionEvents()
 		// Exit 이벤트 호출
 		for (auto pOther : toExit)
 		{
-			pCollidable->OnCollisionExit(pOther);
-			if (pOther)
+			// 트리거 Collision Exit
+			CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
+			if (pCollider && pCollider->IsTrigger())
 			{
-				pOther->Get_CurrentCollisions().erase(pCollidable);
+				pCollidable->OnTriggerExit(pOther);
+				if (pOther)
+				{
+					pOther->Get_CurrentCollisions().erase(pCollidable);
+				}
+			}
+			else
+			{
+				// 일반 Collision Exit
+				pCollidable->OnCollisionExit(pOther);
+				if (pOther)
+				{
+					pOther->Get_CurrentCollisions().erase(pCollidable);
+				}
 			}
 		}
 
-		// Stay: 이전과 현재 모두 있는 경우
+		// Stay: 이전과 현재 모두 있는 경우 (Trigger는 Stay 없음)
 		for (auto pOther : current)
 		{
 			if (previous.find(pOther) != previous.end())
