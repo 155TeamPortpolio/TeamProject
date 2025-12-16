@@ -30,7 +30,6 @@ void CDebugBonePanel::Render_GUI()
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 
-	// 접힘 상태면 창 자체가 작고, 이동만 가능하게(가림 최소화)
 	if (!m_bExpanded)
 	{
 		flags |= ImGuiWindowFlags_NoResize;
@@ -38,9 +37,9 @@ void CDebugBonePanel::Render_GUI()
 	}
 	else
 	{
-		// 펼침 상태면 크게
-		ImGui::SetNextWindowSize(ImVec2(420, 520), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(420, 520), ImGuiCond_Always);
 	}
+
 
 	ImGui::Begin("BonePanel", nullptr, flags);
 
@@ -59,7 +58,6 @@ void CDebugBonePanel::Render_GUI()
 	if (ImGui::Button("Hide"))
 		m_bExpanded = false;
 
-	ImGui::SameLine();
 	ImGui::Checkbox("Names", &m_bDrawNames);
 	ImGui::SameLine();
 	ImGui::Checkbox("Joints", &m_bDrawJoints);
