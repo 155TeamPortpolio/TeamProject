@@ -43,6 +43,7 @@ public:
     }
 #ifdef _DEBUG
     virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    void            Render_DebugRay(PrimitiveBatch<VertexPositionColor>* pBatch);
 #endif
 
 public:
@@ -60,6 +61,10 @@ public:
     void            Set_MaxSpeed(_float fMaxSpeed);
     void            Set_GravityEnabled(_bool bEnabled);
     _vector         Get_FootPosition();
+
+    // 레이캐스트 관련
+    _bool           Shoot_Ray(_fvector vDirection, _float fDistance);
+    void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
 
 private:
     void            Apply_Gravity(_float dt);
@@ -82,7 +87,13 @@ private:
     _float                   m_fMaxSpeed = { 0.0f };
     _float                   m_fGravity = { -9.81f };
 
-
+#ifdef _DEBUG
+    // 디버그 레이 시각화용
+    _bool                    m_bShowDebugRay = { false };
+    PHYSICS_RAY_HIT          m_DebugRayHit = {};
+    _float3                  m_vRayStart = {};
+    _float3                  m_vRayEnd = {};
+#endif
 
 public:
     static CCharacterController* Create();

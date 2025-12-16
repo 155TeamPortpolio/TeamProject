@@ -13,7 +13,7 @@ public:
     virtual class CSoundData* Load_Sound(const string& levelTag, const string& SoundKey) PURE;
     virtual class CVIBuffer* Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType) PURE;
     virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) PURE;
-    virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey) PURE;
+    virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) PURE;
     virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) PURE;	
     virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) PURE;
     virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) PURE;

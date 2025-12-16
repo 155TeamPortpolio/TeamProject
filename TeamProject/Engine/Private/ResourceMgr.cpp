@@ -235,7 +235,7 @@ CShader* CResourceMgr::Load_Shader(const string& levelTag, const string& shaderK
 	return pData;
 }
 
-CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textureKey)
+CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
@@ -249,7 +249,7 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 	if (iter != map.end()) return iter->second;
 
 	wstring path = Helper::ConvertToWideString(MakePath(textureKey));
-	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey);
+	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey, sRGBType);
 	map.emplace(textureKey, pData);
 
 	return pData;
