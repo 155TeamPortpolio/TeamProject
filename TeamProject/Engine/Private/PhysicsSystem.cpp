@@ -3,6 +3,8 @@
 #include "PhysicsSystem.h"
 
 #include "GameInstance.h"
+#include "CharacterController.h"
+
 #ifdef USINGPHYSICS 
 
 HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
@@ -41,7 +43,7 @@ HRESULT CPhysicsSystem::Initialize()
     m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
     if (m_pPvd->isConnected())
     {
-        // 연결 성공 로그 (콘솔이나 Output 창 확인)
+        // 연결 성공 로그
         OutputDebugStringA("------------------------------------------------\n");
         OutputDebugStringA("   [PhysX] PVD Connected Successfully!          \n");
         OutputDebugStringA("------------------------------------------------\n");
@@ -123,28 +125,140 @@ void CPhysicsSystem::Late_Update(_float dt)
     m_pScene->fetchResults(true);
 }
 
+_bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
+{
+    if (!m_pScene) return false;
+
+    PxVec3 origin(desc.vOrigin.x, desc.vOrigin.y, desc.vOrigin.z);
+    PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
+    direction.normalize();
+
+    PxRaycastBuffer hit;
+    PxQueryFilterData filterData = Create_FilterData(desc);
+
+    _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+        PxHitFlag::eDEFAULT, filterData);
+
+    if (bResult && hit.hasBlock)
+    {
+        Setup_RayHitInfo(hit.block, outHit);
+        if (!desc.bQueryTrigger && outHit.pCollidable)
+        {
+            CCollider* pCollider = dynamic_cast<CCollider*>(outHit.pCollidable);
+            if (pCollider && pCollider->IsTrigger())
+            {
+                // 트리거는 무시하고 다음 검사 (구현 복잡)
+                return false;
+            }
+        }
+        return true;
+    }
+
+    return false;
+}
+
+_bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)
+{
+    if (!m_pScene) return false;
+
+    outHits.Clear();
+
+    PxVec3 origin(desc.vOrigin.x, desc.vOrigin.y, desc.vOrigin.z);
+    PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
+    direction.normalize();
+
+    const PxU32 bufferSize = desc.iMaxHits > 0 ? desc.iMaxHits : 128;
+    PxRaycastHit* hitBuffer = new PxRaycastHit[bufferSize];
+    PxRaycastBuffer hit(hitBuffer, bufferSize);
+    PxQueryFilterData filterData = Create_FilterData(desc);
+
+    _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
+        PxHitFlag::eDEFAULT, filterData);
+
+    if (bResult)
+    {
+        outHits.iHitCount = hit.nbTouches;
+        outHits.vecHits.reserve(hit.nbTouches);
+
+        for (PxU32 i = 0; i < hit.nbTouches; ++i)
+        {
+            PHYSICS_RAY_HIT hitInfo;
+            Setup_RayHitInfo(hit.touches[i], hitInfo);
+            outHits.vecHits.push_back(hitInfo);
+        }
+
+        if (hit.hasBlock)
+        {
+            PHYSICS_RAY_HIT hitInfo;
+            Setup_RayHitInfo(hit.block, hitInfo);
+            outHits.vecHits.push_back(hitInfo);
+            outHits.iHitCount++;
+        }
+    }
+
+    delete[] hitBuffer;
+    return bResult;
+}
+
+_bool CPhysicsSystem::Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)
+{
+    PHYSICS_RAY allDesc = desc;
+    allDesc.iMaxHits = 128;
+    return Raycast_Multiple(allDesc, outHits);
+}
+
+void CPhysicsSystem::Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit)
+{
+    outHit.bHit = true;
+    outHit.fDistance = pxHit.distance;
+    outHit.vPoint = _float3(pxHit.position.x, pxHit.position.y, pxHit.position.z);
+    outHit.vNormal = _float3(pxHit.normal.x, pxHit.normal.y, pxHit.normal.z);
+    outHit.pShape = pxHit.shape;
+
+    if (pxHit.actor && pxHit.actor->userData)
+    {
+        outHit.pHitObject = static_cast<CGameObject*>(pxHit.actor->userData);
+
+        if (pxHit.shape && pxHit.shape->userData)
+        {
+            outHit.pCollidable = static_cast<ICollidable*>(pxHit.shape->userData);
+        }
+        else if (outHit.pHitObject)
+        {
+            outHit.pCollidable = outHit.pHitObject->Get_Component<CCollider>();
+            if (!outHit.pCollidable)
+                outHit.pCollidable = outHit.pHitObject->Get_Component<CCharacterController>();
+        }
+    }
+}
+
+PxQueryFilterData CPhysicsSystem::Create_FilterData(const PHYSICS_RAY& desc)
+{
+    PxQueryFilterData filterData;
+    filterData.data.word0 = desc.iCollisionMask;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC |
+        PxQueryFlag::ePREFILTER;
+    return filterData;
+}
+
 PxFilterFlags CPhysicsSystem::SimulationFilterShader(
     PxFilterObjectAttributes attributes0, PxFilterData filterData0,
     PxFilterObjectAttributes attributes1, PxFilterData filterData1,
     PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-    // 1. 트리거(Trigger)인 경우
+    // 트리거(Trigger)인 경우
     if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
     {
         pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
         return PxFilterFlag::eDEFAULT;
     }
-
-    // 2. [수정됨] 복잡한 그룹 검사 로직 제거 (일단 무조건 충돌)
-    // 이전 코드에 있던 if ((filterData0.word0 & filterData1.word1) == 0 ... ) 부분 삭제
-
-    // 3. 물리적 충돌 처리 + 알림 켜기
+    // 물리적 충돌 처리 + 알림 켜기
     // eCONTACT_DEFAULT: 물리적으로 튕겨내라 (이게 있어야 안 뚫립니다!)
     // eNOTIFY_TOUCH_FOUND: 충돌 시작되면 onContact 호출해라
     pairFlags = PxPairFlag::eCONTACT_DEFAULT
         | PxPairFlag::eSOLVE_CONTACT         // 물리적 반발력
         | PxPairFlag::eDETECT_DISCRETE_CONTACT // 일반 충돌 감지
-        | PxPairFlag::eDETECT_CCD_CONTACT    // <--- [추가] CCD 충돌 감지 허용
+        | PxPairFlag::eDETECT_CCD_CONTACT    // CCD 충돌 감지 허용
         | PxPairFlag::eNOTIFY_TOUCH_FOUND
         | PxPairFlag::eNOTIFY_TOUCH_LOST;
 
