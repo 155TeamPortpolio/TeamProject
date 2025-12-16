@@ -186,14 +186,6 @@ void CAnimModel::Set_Animator()
 	string metaPath = Helper::OpenFile_Dialogue();
 	vector<ANIM_CLIP> Clips = Helper::GetDataFromJson<vector<ANIM_CLIP>>(metaPath);
 
-	//std::ifstream file(metaPath);
-	//if (file.is_open()) {
-	//	json j;
-	//	file >> j;
-	//
-	//	Clips = j.get<vector<ANIM_CLIP>>();
-	//}
-
 	string clipPath = std::filesystem::path(metaPath).parent_path().string();
 	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
 
@@ -203,8 +195,8 @@ void CAnimModel::Set_Animator()
 	for (auto& Clip : Clips) {
 		string AnimPath = clipPath + "\\" + Clip.ClipTag + ".anim";
 		ResMgr->Add_ResourcePath(Clip.ClipTag, AnimPath);
-		Get_Component<CAnimator3D>()->Add_AnimClips("AnimationEdit_Level", Clip.ClipTag, "");
 	}
+	Get_Component<CAnimator3D>()->Link_MetaData("AnimationEdit_Level", m_CurModelTag);
 }
 
 void CAnimModel::Clear_Model()
