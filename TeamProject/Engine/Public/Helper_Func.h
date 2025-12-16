@@ -33,16 +33,27 @@ namespace Helper
 	//모두 소문자로 변환
 	ENGINE_DLL string  ToLower(const string& fileName);
 	//경로에 텍스처 저장
-	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext,const string& filePath, ID3D11ShaderResourceView* pSRV);
-	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext,const wstring& filePath, ID3D11ShaderResourceView* pSRV);
+	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const string& filePath, ID3D11ShaderResourceView* pSRV);
+	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const wstring& filePath, ID3D11ShaderResourceView* pSRV);
 	//랜덤 함수
 	ENGINE_DLL _int Get_Random_Int(_int min, _int max);
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
 
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
-	
-};
+
+	//json을 불러 원하는 구조체로 변환
+	template <typename T>
+	inline T GetDataFromJson(const string& filePath) {
+		std::ifstream file(filePath);
+		if (!file.is_open())
+			return T{};
+
+		json j;
+		file >> j;
+		return j.get<T>();
+	};
+}
 
 namespace Math
 {
