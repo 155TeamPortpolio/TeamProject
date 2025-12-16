@@ -121,12 +121,6 @@
     <ClInclude Include="..\Public\Transform.h">
       <Filter>01. Utility\04. Components\00. Transform</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Camera.h">
-      <Filter>01. Utility\04. Components\01. Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CameraMgr.h">
-      <Filter>01. Utility\07. CameraManager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Model.h">
       <Filter>01. Utility\04. Components\03. Model</Filter>
     </ClInclude>
@@ -340,39 +334,6 @@
     <ClInclude Include="..\Public\RigidBody.h">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CamSequencePlayer.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ICamEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamPosLinearEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosLinearEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamRotSlerpEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\11. CamRotSlerpEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamFovLinearEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\21. CamFovLinearEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamUtil.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\CamSequencePlayerData.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamPosCatmullRomEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamPosCatmullRomEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamFovSmoothEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\22. CamFovSmoothEvaluator</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamPosCentripetalEvaluator.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\EffectContainer.h">
       <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
     </ClInclude>
@@ -382,8 +343,6 @@
     <ClInclude Include="..\public\SpriteNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Sprite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Camera_Enum.h" />
-    <ClInclude Include="..\Public\Camera_Struct.h" />
     <ClInclude Include="..\Public\MeshNode.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClInclude>
@@ -420,11 +379,93 @@
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SizeBySpeed.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextureSheetAnimation.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Noise.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EventSystem.h">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EventListner.h">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ObjectPool.h">
+  <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+</ClInclude>
+<ClInclude Include="..\Public\Camera.h">
+  <Filter>01. Utility\04. Components\01. Camera</Filter>
+</ClInclude>
+
+    <ClInclude Include="..\Public\CameraMgr.h">
+      <Filter>01. Utility\07. CameraManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICamEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosCatmullRomEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosCentripetalEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosBSplineEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosHermiteEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosOrbitArcEvaulator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamPosPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamUtil.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Enum.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera_Struct.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamSequencePlayer.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamSequencePlayerData.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitArcData.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotSlerpEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotSquadEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamRotPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovPerSegmentEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovSmoothEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamFovLinearEvaluator.h">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -713,33 +754,6 @@
     <Filter Include="01. Utility\04. Components\03. Model\PointModel">
       <UniqueIdentifier>{cab80bc9-9aa4-4f6b-97e1-42f9e9e0b65c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer">
-      <UniqueIdentifier>{61b79f89-f1c8-4415-8a38-9c8573adb965}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator">
-      <UniqueIdentifier>{4e978777-0a90-43e7-9737-9cd561db5378}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosLinearEvaluator">
-      <UniqueIdentifier>{cdc62e80-35b4-4ea5-b35b-def73eb08d20}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility">
-      <UniqueIdentifier>{4ee75f07-5322-4ded-9659-8e18c74ede02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\11. CamRotSlerpEvaluator">
-      <UniqueIdentifier>{bcb26ca9-5ec8-46ef-9fd6-60e1875c359f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\21. CamFovLinearEvaluator">
-      <UniqueIdentifier>{98f4525b-bd48-4df8-aca2-b5c9d34b9906}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamPosCatmullRomEvaluator">
-      <UniqueIdentifier>{ba68c020-1545-4e1f-a71f-bed62c0f4806}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\22. CamFovSmoothEvaluator">
-      <UniqueIdentifier>{8772717f-9b26-46b0-a307-3f7e09235e86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator">
-      <UniqueIdentifier>{9979460a-8fa8-4412-9e4b-0a41f0270d9c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. GameObject\Effect">
       <UniqueIdentifier>{1e6545d9-1ce2-4aaf-aa2d-09c2958f80e3}</UniqueIdentifier>
     </Filter>
@@ -782,11 +796,80 @@
     <Filter Include="01. Utility\04. Components\21. CharacterController">
       <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed">
+      <UniqueIdentifier>{d07abcf0-1a87-42f1-be09-1ad3a1367a04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation">
+      <UniqueIdentifier>{d9d9b9c5-06a5-472e-82ed-ea5146acbce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise">
+      <UniqueIdentifier>{c4cb2f4a-729b-4e11-95c5-1e2e066d08b8}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\13. EventBus">
       <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\22.EventListner">
       <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool">
+      <UniqueIdentifier>{da326297-d441-4077-b559-c58fd1c4c380}</UniqueIdentifier>
+        </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer">
+      <UniqueIdentifier>{2f7e73b0-8a42-4e4a-967e-5ecf27c71370}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator">
+      <UniqueIdentifier>{dd423fe4-a9b6-4937-9d12-157fea35be0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator">
+      <UniqueIdentifier>{21cb8920-b749-493f-b204-ffd4231ec7d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom">
+      <UniqueIdentifier>{bdef3805-f32e-4a12-90a7-b3990e33322d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear">
+      <UniqueIdentifier>{14555aa9-dfad-47fb-96c8-06cb9b34c8b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal">
+      <UniqueIdentifier>{d06e229a-9da3-4bf8-9af3-1900dcff9617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline">
+      <UniqueIdentifier>{78a366f5-6050-4c4c-9431-e2c3a6530784}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite">
+      <UniqueIdentifier>{c1cceb16-2702-4f6e-867d-e081b55d5716}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc">
+      <UniqueIdentifier>{07d21dfb-4c07-4636-afcf-c78846f4e07b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment">
+      <UniqueIdentifier>{a064f87d-209f-4e9a-8339-2862e4f2e137}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator">
+      <UniqueIdentifier>{2bfd74cd-3cfe-4e5e-89dc-78da561068fb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator">
+      <UniqueIdentifier>{49aaab53-845a-47c7-840e-4dd2c54654cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility">
+      <UniqueIdentifier>{48f047a4-90c3-4c87-bbf2-0922436f4a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp">
+      <UniqueIdentifier>{e8ef766a-4eb4-4715-9e3a-33f2106a1976}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad">
+      <UniqueIdentifier>{a9d5d01a-aea3-40ba-b84d-855937c49a57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment">
+      <UniqueIdentifier>{8208b72b-4b64-4ccb-8527-a5dac78af0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear">
+      <UniqueIdentifier>{f587f5ac-e362-45eb-be26-104eb55fe81e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth">
+      <UniqueIdentifier>{68e32831-78f1-492e-8148-331d46629033}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment">
+      <UniqueIdentifier>{a31566f4-5cd5-41af-b864-2969ce586967}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -882,9 +965,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\Transform.cpp">
       <Filter>01. Utility\04. Components\00. Transform</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Camera.cpp">
-      <Filter>01. Utility\04. Components\01. Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model.cpp">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -1024,9 +1104,6 @@
     <ClCompile Include="..\Private\Target_Manager.cpp">
       <Filter>01. Utility\06. RenderSystem\RenderTarget\Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CameraMgr.cpp">
-      <Filter>01. Utility\07. CameraManager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\CollisionSystem.cpp">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClCompile>
@@ -1066,33 +1143,6 @@
     <ClCompile Include="..\Private\RigidBody.cpp">
       <Filter>01. Utility\04. Components\19. RigidBody</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CamSequencePlayer.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamPosLinearEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosLinearEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamRotSlerpEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\11. CamRotSlerpEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamFovLinearEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\21. CamFovLinearEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamUtil.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamPosCatmullRomEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamPosCatmullRomEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamFovSmoothEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\22. CamFovSmoothEvaluator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamPosCentripetalEvaluator.cpp">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamPosCentripetalEvaluator</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\EffectContainer.cpp">
       <Filter>01. Utility\03. GameObject\Effect\Container</Filter>
     </ClCompile>
@@ -1129,11 +1179,77 @@
     <ClCompile Include="..\Private\CharacterController.cpp">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\SizeBySpeed.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Noise.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\EventSystem.cpp">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EventListner.cpp">
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ObjectPool.cpp">
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+      </ClCompile>
+    <ClCompile Include="..\Private\Camera.cpp">
+      <Filter>01. Utility\04. Components\01. Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CameraMgr.cpp">
+      <Filter>01. Utility\07. CameraManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\00. ICamEvaluator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\00. Linear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosCatmullRomEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\01. CatmullRom</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosCentripetalEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\02. Centripetal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosBSplineEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\03. UniformBSpline</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosHermiteEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\04. Hermite</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosOrbitArcEvaulator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamPosPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\99. PerSegment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamUtil.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamSequencePlayer.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamRotSlerpEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\00. Slerp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamRotSquadEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\01. Squad</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamRotPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\02. CamRotEvaluator\99. PerSegment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovPerSegmentEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovSmoothEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\01. Smooth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp">
+      <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1171,6 +1287,9 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">

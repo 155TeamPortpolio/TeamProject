@@ -16,6 +16,9 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+public:
+    void Render_GUI() override;
+
 private:
     _float m_fSpeed = { 10.f };
     _float m_fMouseSensitive = { 10.f };

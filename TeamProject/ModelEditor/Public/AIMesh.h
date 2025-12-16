@@ -28,7 +28,7 @@ public:
 public:
 	HRESULT Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh);
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
-	void Save_File(ofstream& ofs);
+	void Save_File(ofstream& ofs, _fmatrix PreTransform);
 
 private:
 	//ÀúÀå¿ë

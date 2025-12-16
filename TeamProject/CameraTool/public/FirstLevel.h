@@ -4,11 +4,11 @@
 
 NS_BEGIN(CameraTool)
 
-class FirstLevel : public CLevel
+class CFirstLevel : public CLevel
 {
 private:
-	FirstLevel(const string& key);
-	
+    CFirstLevel(const string& key);
+
 public:
     virtual HRESULT Initialize() override;
     virtual HRESULT Awake()      override;
@@ -19,7 +19,7 @@ private:
     CGameInstance* game{};
 
 public:
-    static FirstLevel* Create(const string& key);
+    static CFirstLevel* Create(const string& key);
     virtual void Free() override;
 };
 

@@ -4,8 +4,12 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CamRotSlerpEvaluator final : public ICamRotEvaluator
+class ENGINE_DLL CCamRotSlerpEvaluator final : public ICamRotEvaluator
 {
+private:
+	CCamRotSlerpEvaluator() {}
+	virtual ~CCamRotSlerpEvaluator() DEFAULT;
+
 public:
 	bool       Build(const vector<CamKeyFrame>& keys) override;
 	Quaternion Evaluate(_float time) const override;
@@ -18,7 +22,7 @@ private:
 	vector<Quaternion>         cachedRots{};
 
 public:
-	static CamRotSlerpEvaluator* Create() { return new CamRotSlerpEvaluator(); }
+	static CCamRotSlerpEvaluator* Create() { return new CCamRotSlerpEvaluator(); }
 	virtual void Free() override { __super::Free(); }
 };
 

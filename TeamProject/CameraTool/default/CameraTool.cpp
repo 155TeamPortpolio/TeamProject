@@ -25,50 +25,53 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
 
     if (!InitInstance(hInstance, nCmdShow)) return FALSE;
 
-    auto mainApp = MainApp::Create();
-    auto game = CGameInstance::GetInstance();
-    Safe_AddRef(game);
+    CMainApp* mainApp = CMainApp::Create();
+    CGameInstance* gameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(gameInstance);
 
-    auto timer = game->Get_TimeMgr();
+    ITimeService* timer = gameInstance->Get_TimeMgr();
     Safe_AddRef(timer);
-    timer->Add_Timer("Default");
-    timer->Add_Timer("FPS_60");
+    timer->Add_Timer("Frame_Timer");
 
-    MSG    msg{};
-    _float timeAcc{};
-    _bool  stop = false;
+    if (!mainApp)
+        return FALSE;
 
-    while (1)
-    {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
-        {
-            if (msg.message == WM_QUIT)
-                stop = true;
+    MSG msg;
+    ZeroMemory(&msg, sizeof(MSG));
+
+    _float      fTimeAcc = {};
+    _bool Break = false;
+    const float step = 1.f / FrameRate;
+    while (true) {
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+            if (msg.message == WM_QUIT) {
+                Break = true;
+            }
 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        if (stop)
+        if (Break) {
             break;
+        }
 
-        timer->Update_Timer("Default");
-        timeAcc += timer->Get_DeltaTime("Default");
+        timer->Update_Timer("Frame_Timer");
+        fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
 
-        if (timeAcc >= 1.f / FrameRate)
-        {
-            timer->Update_Timer("FPS_60");
-            _float dt = timer->Get_DeltaTime("FPS_60");
+        if (fTimeAcc >= step) {
+            gameInstance->Update_EngineTimer();
+            _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);
             mainApp->Render();
-            timeAcc = 0.f;
+            fTimeAcc = 0.f;
         }
     }
 
     Safe_Release(timer);
-    game->DestroyInstance();
+    gameInstance->DestroyInstance();
     Safe_Release(mainApp);
 
-    return (int) msg.wParam;
+    return (int)msg.wParam;
 }
 
 ATOM MyRegisterClass(HINSTANCE hInstance)
