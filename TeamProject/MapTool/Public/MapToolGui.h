@@ -20,10 +20,14 @@ public:
 	virtual void	Render_GUI() override;
 
 private:
-	void				KeyInput();
-	void				Compute_Ray();
-	void				Place_Object(RAY_HIT* pRayHit);
-	void				Set_ObjectPicking(_bool is);
+	void			RakeResources();
+	void			KeyInput();
+	void			Compute_Ray();
+	void			Place_Object(RAY_HIT* pRayHit);
+	void			Set_ObjectPicking(_bool is);
+	void			PreSet_ModelResource();
+	void			Save_MapData();
+	void			Load_MapData();
 
 
 private:
@@ -31,9 +35,17 @@ private:
 
 	RAY			m_Ray = {};
 	_float3		m_vRayHitPos = {};
-	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
-	_bool		m_isObjectPicking = { true };
 
+
+	/* For.RakeResouece */
+	vector<ModelPathPack>		m_ModelPathPack;
+
+	/* For.Object */
+	_int		m_iSelectedIndex = { -1 };
+	string		m_TagSelectedModelName = {};
+	_bool		m_isObjectPicking = { true };
+	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
+	
 
 
 public:

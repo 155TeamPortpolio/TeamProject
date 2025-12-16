@@ -99,6 +99,23 @@ void CEditCamera::Late_Update(_float dt)
 {
 }
 
+void CEditCamera::Render_GUI()
+{
+	float childWidth = ImGui::GetContentRegionAvail().x;
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	ImGui::SeparatorText("Camera Reset");
+	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
+
+	if (ImGui::Button("Reset")) {
+		Get_Component<CTransform>()->TranslateMatrix(XMMatrixTranslation(0.f, 1.f, -1.f));
+	}
+
+	ImGui::EndChild();
+}
+
+
 CEditCamera* CEditCamera::Create()
 {
 	CEditCamera* instance = new CEditCamera();

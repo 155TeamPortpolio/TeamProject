@@ -20,7 +20,7 @@ public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(COMPONENT_DESC* pArg);
     virtual void Render_GUI() override;
-    HRESULT Save_Model(const string& SavePath);
+    HRESULT Save_Model(const string& SavePath, _fmatrix WorldMatrix);
 
 public:
     HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
@@ -31,9 +31,9 @@ private:
 
 private:
     HRESULT Release_Mesh();
+
 private:
-    string m_fileName = {};
-    _matrix                     m_PreTransform = {};
+    string  m_fileName = {};
 
 public:
     static CAI_SKModel* Create();

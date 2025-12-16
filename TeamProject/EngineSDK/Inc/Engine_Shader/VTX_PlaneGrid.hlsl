@@ -1,5 +1,7 @@
 #include "Shader_Define.hlsl"
 
+float GridSize = 100.f;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -44,7 +46,7 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-    float2 newTexcoord = float2(In.vTexcoord* 100);
+    float2 newTexcoord = float2(In.vTexcoord * GridSize);
     vector GridCol = DiffuseTexture.Sample(LinearSampler, newTexcoord);
             
     Out.vDiffuse = GridCol;

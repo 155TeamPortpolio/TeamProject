@@ -79,7 +79,7 @@ CAIModelData* CAI_SKModel::Get_AIModelData()
 	return static_cast<CAIModelData*>(m_pData);
 }
 
-HRESULT CAI_SKModel::Save_Model(const string& SavePath)
+HRESULT CAI_SKModel::Save_Model(const string& SavePath, _fmatrix WorldMatrix)
 {
 	string path = SavePath + m_fileName + ".model";
 	ofstream ofs(path.c_str(), ios::binary);
@@ -92,7 +92,7 @@ HRESULT CAI_SKModel::Save_Model(const string& SavePath)
 	strcpy_s(fileHeader.ModelKey, sizeof(fileHeader.ModelKey), m_fileName.data());
 	ofs.write(reinterpret_cast<char*>(&fileHeader), sizeof(MODEL_FILE_HEADER));
 
-	static_cast<CAIModelData*>(m_pData)->Save_File(ofs);
+	static_cast<CAIModelData*>(m_pData)->Save_File(ofs, WorldMatrix);
 	ofs.close();
 	return S_OK;
 }
