@@ -155,7 +155,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     float ao = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 ambient = vDiffuse.rgb *vAmbient.g * ao;
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ao;
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, vLight.a);
     

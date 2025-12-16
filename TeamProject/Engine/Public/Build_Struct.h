@@ -128,7 +128,7 @@ namespace Engine {
 		_float2 Size = { 1.f,1.f};
 		_float2 Scale = {1.f,1.f };
 		_float fRadian = {};
-
+		ANCHOR eAnchor = { ANCHOR::Left | ANCHOR::Top };
 		tagUIObjectDesc() DEFAULT;
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;

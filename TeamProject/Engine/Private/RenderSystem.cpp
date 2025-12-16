@@ -40,6 +40,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pInstancePass = InstancePass::Create(this);
 	m_pBlendedPass = BlendedPass::Create(this);
 	m_pParticlePass = ParticlePass::Create(this);
+	m_pNonLightPass = NonLightPass::Create(this);
 	m_pUIPass = UIPass::Create(this);
 
 #ifdef _DEBUG
@@ -72,6 +73,8 @@ HRESULT CRenderSystem::Render()
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
+
+	m_pNonLightPass->Execute(m_pContext);
 	/*Debug Rendering*/
 
 #ifdef _DEBUG
@@ -269,7 +272,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc MetalDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(MetalDesc);	
 
-	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.1f, 0.1f, 0.1f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.2f, 0.2f, 0.2f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AmbiDesc);
 
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
@@ -381,9 +384,9 @@ HRESULT CRenderSystem::Get_InputLayout(CModel* pModel, CShader* pShader, _uint D
 	if (!pModel || !pShader || !ppInputLayout)
 		return E_FAIL;
 
-	/*¸Þ½¬¸¦ »ý¼ºÇÒ ‹š¸¶´Ù ·¹ÀÌ¾Æ¿ôÀ» ¸¸µå´Â°Ô¾Æ´Ñ, ¹öÅØ½º±¸Á¶, ¼ÎÀÌ´õ ±¸Á¶¸¦ ÀÌ¸§À¸·Î ¾ÆÀÌµðÈ­ ½ÃÄÑ¼­ °°Àº°Å¸é ±×³É µé°í ÀÖ´Â°É ¾²´Â°Å*/
+	/*ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Â°Ô¾Æ´ï¿½, ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½È­ ï¿½ï¿½ï¿½Ñ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½Â°ï¿½*/
 
-	/*¸ðµ¨ µ¥ÀÌÅÍ ÀÌ¸§ + ¼ÎÀÌ´õ ÀÌ¸§*/
+	/*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ + ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ì¸ï¿½*/
 	string LayOutID = string(pModel->Get_ElementKey(DrawIndex)) + pShader->Get_Key();
 
 	auto iter = m_InputLayouts.find(LayOutID);
@@ -523,6 +526,7 @@ void CRenderSystem::Free()
 	Safe_Release(m_pShadowPass);
 	Safe_Release(m_pBlendedPass);
 	Safe_Release(m_pParticlePass);
+	Safe_Release(m_pNonLightPass);
 	Safe_Release(m_pTargetManager);
 
 	for (auto& pair : m_InputLayouts)

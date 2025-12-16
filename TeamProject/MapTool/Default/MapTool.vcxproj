@@ -159,6 +159,7 @@
     <ClInclude Include="..\public\DummyModel.h" />
     <ClInclude Include="..\public\Grid.h" />
     <ClInclude Include="..\public\MapToolGui.h" />
+    <ClInclude Include="..\Public\MapTool_Struct.h" />
     <ClInclude Include="..\public\PickingInstanceModel.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\public\MapToolLevel.h" />

@@ -5,11 +5,17 @@
 #include "ResourceMgr.h"
 #include "Helper_Func.h"
 
+#include "Material.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
+
 /*Module*/
 #include "IParticleModule.h"
 #include "LifeTimeVelocity.h"
 #include "LifeTimeSize.h"
 #include "LifeTimeColor.h"
+#include "TextureSheetAnimation.h"
+#include "Noise.h"
 
 CParticleSystem::CParticleSystem()
 {
@@ -29,14 +35,20 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	m_pLifeTimeVelocity = CLifeTimeVelocity::Create();
 	m_pLifeTimeSize = CLifeTimeSize::Create();
 	m_pLifeTimeColor = CLifeTimeColor::Create();
+	m_pTextureSheetAnimation = CTextureSheetAnimation::Create();
+	m_pNoise = CNoise::Create();
 
 	m_Modules.push_back(m_pLifeTimeVelocity);
 	m_Modules.push_back(m_pLifeTimeSize);
 	m_Modules.push_back(m_pLifeTimeColor);
+	m_Modules.push_back(m_pTextureSheetAnimation);
+	m_Modules.push_back(m_pNoise);
 
 	Safe_AddRef(m_pLifeTimeVelocity);
 	Safe_AddRef(m_pLifeTimeSize);
 	Safe_AddRef(m_pLifeTimeColor);
+	Safe_AddRef(m_pTextureSheetAnimation);
+	Safe_AddRef(m_pNoise);
 
 	return S_OK;
 }
@@ -135,17 +147,55 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_fGravityScale = particleDesc.fGravityScale;
 
 	/*Module Params*/
+
+	/*Life Time Velocity*/
 	{
 		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
 		Desc.fDampScale = particleDesc.fDampScale;
 		m_pLifeTimeVelocity->SetParams(&Desc);
 	}
 
+	/*Life Time Size*/
 	{
 		CLifeTimeSize::LIFE_TIME_SIZE_DESC Desc{};
 		Desc.vStartScale = particleDesc.vStartScale;
 		Desc.vEndScale = particleDesc.vEndScale;
 		m_pLifeTimeSize->SetParams(&Desc);
+	}
+
+	/*Life Time Color*/
+	{
+		CLifeTimeColor::LIFE_TIME_COLOR_DESC Desc{};
+		Desc.vStartColor = particleDesc.vStartColor;
+		Desc.vEndColor = particleDesc.vEndColor;
+		m_pLifeTimeColor->SetParams(&Desc);
+	}
+
+	/*Texture Sheet Animation*/
+	{
+		CTextureSheetAnimation::TEXTURE_SHEET_ANIMATION_DESC Desc{};
+		Desc.isParticleAnimated = particleDesc.isParticleAnimated;
+		Desc.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
+		Desc.iCol = particleDesc.iCol;
+		Desc.iRow = particleDesc.iRow;
+		Desc.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
+		m_pTextureSheetAnimation->SetParams(&Desc);
+
+		m_iTextureCol = Desc.iCol;
+		m_iTextureRow = Desc.iRow;
+
+		auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		customInstance->Set_Param("Col", { &m_iTextureCol,"uint",sizeof(_uint) });
+		customInstance->Set_Param("Row", { &m_iTextureRow,"uint",sizeof(_uint) });
+	}
+
+	/*Noise*/
+	{
+		CNoise::NOISE_DESC Desc{};
+		Desc.vStrength = particleDesc.vStrength;
+		Desc.vFrequency = particleDesc.vFrequency;
+		Desc.vScrollSpeed = particleDesc.vScrollSpeed;
+		m_pNoise->SetParams(&Desc);
 	}
 
 	m_Particles.resize(m_iMaxSpawnParticleCount);
@@ -291,8 +341,11 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 	particle.vSize = m_vStartSize;
 	particle.vStartSize = particle.vSize;
 
-	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
+	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
+	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
 
+	if (m_pTextureSheetAnimation)
+		m_pTextureSheetAnimation->SetUpParticle(particle);
 }
 
 void CParticleSystem::BuildInstanceData()
@@ -320,6 +373,7 @@ void CParticleSystem::BuildInstanceData()
 		data.vVelocity = velocity;
 		data.vColor = particle.vColor;
 		data.vLifeTime = lifeTime;
+		data.iFrameIndex = particle.iFrameIndex;
 
 		m_InstanceDatas.push_back(data);
 	}
@@ -354,4 +408,6 @@ void CParticleSystem::Free()
 	Safe_Release(m_pLifeTimeVelocity);
 	Safe_Release(m_pLifeTimeSize);
 	Safe_Release(m_pLifeTimeColor);
+	Safe_Release(m_pTextureSheetAnimation);
+	Safe_Release(m_pNoise);
 }

@@ -31,7 +31,7 @@ HRESULT CEditCamera::Initialize(INIT_DESC* pArg)
 	m_pTransform->LookAt({ 0,0,0 });
 
 	LIGHT_DESC desc = {};
-	desc.vLightPosition = { 0,20,0,0 };
+	desc.vLightPosition = { 0.f, 0.f, 0.f, 0.f };
 	desc.fLightRange = 80.0f;
 	desc.vLightDirection = _float4(0.f, -1.f, 1.f, 0.f);
 	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);

@@ -5,43 +5,46 @@
 
 NS_BEGIN(CameraTool)
 
-class CamPanel final : public CBasePanel
+class CCamPanel final : public CBasePanel
 {
 private:
-	CamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
-	~CamPanel() = default;
+	CCamPanel(GUI_CONTEXT* context) : CBasePanel(context) {}
+	~CCamPanel() = default;
 
 	void Init();
 
 public:
 	void Update_Panel(_float dt) override;
 	void Render_GUI() override;
-	void SetCaptureTarget(CamObj* camObj);
+	void SetCaptureTarget(CCamObj* camObj);
 
 private:
-	void DrawToolbar();
-	void DrawCamSelector();
-	void DrawKeyframeArea();
-	void DrawKeyframeList();
-	void DrawKeyframeEditor();
-	void DrawTimeline();
-	void DrawInterpSelector();
+	void  DrawToolbar();
+	void  DrawCamSelector();
+	void  DrawKeyframeArea();
+	void  DrawKeyframeList();
+	void  DrawKeyframeEditor();
+	void  DrawTimeline();
+	void  DrawInterpSelector();
+	_bool DrawConstraintBar();
+	_bool DrawOrbitTargetBar();
 
 private: // Helper
-    vector<CamKeyFrame>&       GetKeyFrames()                 { return target.sequence->keyframes; }
-	const vector<CamKeyFrame>& GetKeyFrames() const           { return target.sequence->keyframes; }
-    bool                       HasValidSelection() const;
-    CamKeyFrame&               GetSelectedKey();
-    _uint                      GetSelectedKeyId() const;
-    _float                     GetNextDefaultTime() const;
-    void                       AddKey_Default();
-    void                       DeleteSelectedKey();
-    void                       SortKeysByTime_Stable();
-    void                       MergeNearDuplicateTimes_KeepLast();
-    bool                       SelectKeyById(_uint keyId);
-    void                       SyncEditorFromSelection();
-    void                       ApplyEditorToSelectedKey_TimeOnly();
-    void                       CaptureSelectedKey_FromCaptureCam();
+	void    AddKey_Default();
+	void    DeleteSelectedKey();
+	void    SortKeysByTime_Stable();
+	void    MergeNearDuplicateTimes_KeepLast();
+	void    SyncEditorFromSelection();
+	void    ApplyEditorToSelectedKey_TimeOnly();
+	void    CaptureSelectedKey_FromCaptureCam();
+	_bool   SelectKeyById(_uint keyId);
+	_bool   HasValidSelection()  const;
+	_uint   GetSelectedKeyId()   const;
+	_float  GetNextDefaultTime() const;
+
+	CamKeyFrame& GetSelectedKey();
+	vector<CamKeyFrame>& GetKeyFrames() { return target.sequence->keyframes; }
+	const vector<CamKeyFrame>& GetKeyFrames()   const { return target.sequence->keyframes; }
 
 private:
 	CamSequenceDesc  debugSequence{};
@@ -50,7 +53,7 @@ private:
 	CamToolKeyPolicy policy{};
 
 public:
-	static CamPanel* Create(GUI_CONTEXT* context);
+	static CCamPanel* Create(GUI_CONTEXT* context);
 	virtual void Free() override;
 };
 

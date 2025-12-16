@@ -49,7 +49,7 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	return S_OK;
 }
 
-void CAISkeleton::Save_File(ofstream& ofs)
+void CAISkeleton::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
 	SKELETON_FILE_HEADER skeleton = {};
 	skeleton.BoneCount = m_Bones.size();
@@ -57,7 +57,7 @@ void CAISkeleton::Save_File(ofstream& ofs)
 
 	for (size_t i = 0; i < m_Bones.size(); i++)
 	{
-		static_cast<CAIBone*>(m_Bones[i])->Save_File(ofs);
+		static_cast<CAIBone*>(m_Bones[i])->Save_File(ofs, PreTransform);
 	}
 
 	for (size_t i = 0; i < m_OffsetMatrices.size(); i++)

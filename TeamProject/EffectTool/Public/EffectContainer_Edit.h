@@ -17,6 +17,9 @@ public:
         vector<CTexture*> Textures;
         map<string, CTexture*>* pAllTextures;
 
+        vector<string> ModelTags;
+        _int iSelectModelIndex = -1;
+
     }EFFECT_EDIT_CONTEXT;
 private:
     CEffectContainer_Edit();
@@ -52,6 +55,7 @@ private:
     void RemoveLastNode();
     void ContextClear();
     void LoadTextureFromDirectory(const string& dirPath);
+    void LoadMesh();
     void DisplayAllTextures();
 };
 
