@@ -160,6 +160,10 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
+	SHADER_PARAM MetalicParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
+
 	SHADER_PARAM LightParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Light", LightParam);
 	m_pShader->Bind_Value("g_LightTexture", LightParam);
