@@ -50,7 +50,7 @@ namespace Helper
 namespace Helper
 {
 	template <typename T>
-	inline T GetDataFromJson(const string& filePath) {
+	inline T LoadJson(const string& filePath) {
 		std::ifstream file(filePath);
 		if (!file.is_open())
 			return T{};
