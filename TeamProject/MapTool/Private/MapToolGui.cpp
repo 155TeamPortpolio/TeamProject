@@ -2,15 +2,17 @@
 #include "MapToolGui.h"
 #include "GameInstance.h"
 
-#include "StaticObject.h"
+#include "PlacedObject.h"
 #include "Layer.h"
 #include "RayReceiver.h"
 
 #include "Helper_Func.h"
+#include "Helper_MapTool.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
     , m_pGameInstance(CGameInstance::GetInstance())
+    , m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer"}
 {
     Safe_AddRef(m_pGameInstance);
 }
@@ -19,6 +21,9 @@ HRESULT CMapToolGui::Initialize()
 {
     m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
     RakeResources();
+
+    m_TagPlacedObjectLayer = "PlacedObject_Layer";
+    
 
     return S_OK;
 }
@@ -76,17 +81,38 @@ void CMapToolGui::Render_GUI()
 
     ImGui::Text("Data");
     if (ImGui::TreeNode("Data Save & Load")) {
+        ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight }, true);
+
+        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Data Version");
+        ImGui::InputInt(" ##Version", reinterpret_cast<int*>(&m_iVersion));
 
         if (ImGui::Button("Save")) {
             Save_MapData();
         }
-        ImGui::SameLine();
+
         if (ImGui::Button("Load")) {
             Load_MapData();
         }
 
+        ImGui::EndChild();
         ImGui::TreePop();
     }
+
+
+    //ImGui::SameLine();
+
+    if (ImGui::TreeNode("Clear")) {
+        ImGui::BeginChild("##MapToolClearLayerList", ImVec2{ 0, childHeight }, true);
+
+        Clear_Layer();
+
+        ImGui::EndChild();
+        ImGui::TreePop();
+    }
+
+    
+
+
 
 
     ImGui::PopID();
@@ -110,6 +136,9 @@ void CMapToolGui::RakeResources()
             mpp.TagMaterialKey = MaterialPath.filename().string();
 
             m_ModelPathPack.push_back(mpp);
+
+            pRcsMgr->Add_ResourcePath(mpp.TagModelKey, mpp.TagModelPath);
+            pRcsMgr->Add_ResourcePath(mpp.TagMaterialKey, mpp.TagMaterialPath);
         }
     }
 }
@@ -181,23 +210,23 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 
-    CStaticObject::STATIC_OBJECT_DESC* Desc = new CStaticObject::STATIC_OBJECT_DESC;
+    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
     Desc->isRayReceiver = m_isObjectPicking;
     Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
 
-    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_StaticObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
         .Position(pRayHit->vHittedPosition)
         .Scale(m_vScale_PlacedObject)
         .Add_ObjDesc(Desc)
         .Build("Static_Model");
 
-    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", "Static_Layer" });
+    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", "Static_Layer" });
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagPlacedObjectLayer });
     if (nullptr == pStaticLayer)
         return;
 
@@ -208,10 +237,11 @@ void CMapToolGui::Set_ObjectPicking(_bool is)
 
 void CMapToolGui::PreSet_ModelResource()
 {
+    ImGui::PushID("MapTool_RakeResource");
     ImGuiListClipper clipper;
     clipper.Begin((_int)m_ModelPathPack.size());
     while (clipper.Step()) {
-        for (_uint i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
             const string TagResourceName = m_ModelPathPack[i].TagName;
 
             ImGuiTreeNodeFlags flags =
@@ -237,14 +267,143 @@ void CMapToolGui::PreSet_ModelResource()
             }
         }
     }
+    ImGui::PopID();
 }
 
 void CMapToolGui::Save_MapData()
 {
+
+    m_Data.iVersion = m_iVersion;
+    m_Data.TagDataFormat = "MapTool.Data";
+    //m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer" }
+
+    for (_uint i = 0; i < (_uint)m_TagLayers.size(); ++i) {
+        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagLayers[i] });
+        if (nullptr == pLayer)
+            continue;
+        MapData_Layer DataLayer = {};
+        DataLayer.TagLayer = m_TagLayers[i];
+
+        for (auto& pObject : pLayer->Get_AllObject()) {
+            if (m_TagLayers[i] == "PlacedObject_Layer") {
+                MapData_Object DataDesc = {};
+                static_cast<CPlacedObject*>(pObject)->Export_ObjectData(&DataDesc);
+                DataLayer.Objects.push_back(DataDesc);
+            }
+            else if (m_TagLayers[i] == "FloorObject_Layer") {
+
+            }
+            else if (m_TagLayers[i] == "TriggerObject_Layer") {
+
+            }
+            else if (m_TagLayers[i] == "Navigation_Layer") {
+
+            }
+        }
+        m_Data.Layers.push_back(DataLayer);
+    }
+    int a = 1;
+
+    string TagFileName = m_Data.TagDataFormat + "_" + std::to_string(m_Data.iVersion);
+    string SavePath = "../Bin/Data/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    HelperMT::SaveJson_MapTool<MapData_Header>(m_Data, SavePath);
+    
+    //m_Data = Helper::LoadJson<MapData_Header>(path);
 }
 
 void CMapToolGui::Load_MapData()
 {
+    filesystem::path OpenPath = Helper::OpenFile_Dialogue();
+
+    if (OpenPath.empty()) 
+        return;
+    
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
+        return;
+    }
+
+
+    MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
+
+    if (mapdata.iVersion != m_iVersion) {
+        MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
+        return;
+    }
+
+    for (auto& layerdata : mapdata.Layers) {
+        // 레이어 태그 무결성 검사
+        const auto iter = find(m_TagLayers.begin(), m_TagLayers.end(), layerdata.TagLayer);
+        if (iter == m_TagLayers.end())
+            continue;
+
+        for (auto& objectdata : layerdata.Objects) 
+            Place_PlacedObjectFromLoadData(&objectdata);
+    }
+
+}
+
+void CMapToolGui::Place_PlacedObjectFromLoadData(MapData_Object* pData)
+{
+    if (nullptr == pData)
+        return;
+
+    IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
+    Desc->isRayReceiver = m_isObjectPicking;
+    Desc->TagModelKey = pData->TagModelResourceKey;
+    Desc->TagMaterialKey = pData->TagMaterialResourceKey;
+   
+
+    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
+        .Add_ObjDesc(Desc)
+        .Build("Placed_Model");
+    
+    _float4x4 matWorld = {
+        pData->vRight[0], pData->vRight[1] , pData->vRight[2] , pData->vRight[3],
+        pData->vUp[0],  pData->vUp[1] , pData->vUp[2] , pData->vUp[3],
+        pData->vLook[0], pData->vLook[1] , pData->vLook[2] , pData->vLook[3],
+        pData->vPos[0], pData->vPos[1] , pData->vPos[2] , pData->vPos[3] };
+
+    pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
+
+    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
+
+
+}
+
+void CMapToolGui::Clear_Layer()
+{
+    ImGui::PushID("MapTool_LayerDelete");
+    ImGuiListClipper clipper;
+    clipper.Begin((_int)m_TagLayers.size());
+    while (clipper.Step()) {
+        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+            const string TagClearLayer = m_TagLayers[i];
+
+            ImGuiTreeNodeFlags flags =
+                ImGuiTreeNodeFlags_Leaf |
+                ImGuiTreeNodeFlags_NoTreePushOnOpen |
+                ImGuiTreeNodeFlags_SpanFullWidth |
+                ((m_iSelectedIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+
+            ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagClearLayer.c_str());
+
+            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+            {
+                CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", TagClearLayer });
+                if (nullptr == pLayer) {
+                    ImGui::PopID();
+                    return;
+                }
+                pLayer->Clear_Layer();
+                m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject = { nullptr };
+            }
+        }
+    }
+    ImGui::PopID();
 }
 
 void CMapToolGui::KeyInput()
@@ -262,7 +421,7 @@ void CMapToolGui::KeyInput()
 
         RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
         if (nullptr != pRayHit) {
-            if ("Static_Layer" == pRayHit->pObject->Get_Layer()->Get_LayerTag())
+            if (m_TagPlacedObjectLayer == pRayHit->pObject->Get_Layer()->Get_LayerTag())
                 CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = pRayHit->pObject;
         }
 
@@ -275,10 +434,10 @@ void CMapToolGui::KeyInput()
         auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
 
         if (nullptr != pGuiContext->pSelectedObject &&
-            "Static_Layer" == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
-            nullptr != dynamic_cast<CStaticObject*>(pGuiContext->pSelectedObject)) {
+            m_TagPlacedObjectLayer == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
+            nullptr != dynamic_cast<CPlacedObject*>(pGuiContext->pSelectedObject)) {
 
-            static_cast<CStaticObject*>(pGuiContext->pSelectedObject)->Delete_Object();
+            static_cast<CPlacedObject*>(pGuiContext->pSelectedObject)->Delete_Object();
 
         }
     }
