@@ -19,6 +19,7 @@ HRESULT CDemoPlayer::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	//Add_Component<CStaticModel>();
 	return S_OK;
 }
 
@@ -33,7 +34,7 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-	
+
 }
 
 void CDemoPlayer::Priority_Update(_float dt)
@@ -59,6 +60,17 @@ void CDemoPlayer::Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
 		pCCT->Jump(10.f);
 	
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
+	{
+		_vector vLook = m_pTransform->Dir(STATE::LOOK);
+		pCCT->Shoot_Ray(vLook, 100.f);
+	}
+	else
+	{
+		pCCT->Clear_DebugRay();
+	}
+	
 	pCCT->Update(dt);
 }
 
@@ -69,14 +81,17 @@ void CDemoPlayer::Late_Update(_float dt)
 
 void CDemoPlayer::OnCollisionEnter()
 {
+	OutputDebugStringA("CCT Collision Enter!\n");
 }
 
 void CDemoPlayer::OnCollisionStay()
 {
+	OutputDebugStringA("CCT Collision Stay!\n");
 }
 
 void CDemoPlayer::OnCollisionExit()
 {
+	OutputDebugStringA("CCT Collision Exit!\n");
 }
 
 void CDemoPlayer::Render_GUI()

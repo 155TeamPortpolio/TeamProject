@@ -73,6 +73,9 @@
     <ClInclude Include="..\public\Grid.h">
       <Filter>03. Obj\02. DemoGrid</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamPanelUtil.h">
+      <Filter>02. Panel\CamPanelUtil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -112,6 +115,9 @@
     </Filter>
     <Filter Include="03. Obj\02. DemoGrid">
       <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Panel\CamPanelUtil">
+      <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -171,6 +177,9 @@
     </ClCompile>
     <ClCompile Include="CameraTool.cpp">
       <Filter>99. Etc\99. Useless</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPanelUtil.cpp">
+      <Filter>02. Panel\CamPanelUtil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

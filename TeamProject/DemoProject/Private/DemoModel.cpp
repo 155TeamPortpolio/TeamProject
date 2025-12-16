@@ -65,7 +65,7 @@ void CDemoModel::Late_Update(_float dt)
 
 void CDemoModel::OnCollisionEnter()
 {
-	OutputDebugStringA("Collision Enter!\n");
+
 }
 
 void CDemoModel::OnCollisionStay()

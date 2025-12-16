@@ -33,7 +33,7 @@ public:
 	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
 
 	virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) override;
-	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey) override;
+	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) override;
 	virtual class CAnimationClip* Load_AnimClip(const string& levelTag, const string& AnimClipKey) override;
 
 	virtual string Get_ResourcePath(const string& resourceKey) override;

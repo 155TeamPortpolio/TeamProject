@@ -51,6 +51,8 @@
     </Filter>
     <Filter Include="02. DemoObject\DemoShaderAnimModel">
       <UniqueIdentifier>{3407796f-ec5b-4d5a-beb1-157a52b9ff8f}</UniqueIdentifier>
+    <Filter Include="02. DemoObject\DemoFloor">
+      <UniqueIdentifier>{8d029e85-8d6f-4322-a696-eae22a635241}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +148,8 @@
     </ClInclude>
     <ClInclude Include="..\public\DemoShaderAnimModel.h">
       <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
+    <ClInclude Include="..\Public\DemoFloor.h">
+      <Filter>02. DemoObject\DemoFloor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,6 +227,8 @@
     </ClCompile>
     <ClCompile Include="..\private\DemoShaderAnimModel.cpp">
       <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
+    <ClCompile Include="..\Private\DemoFloor.cpp">
+      <Filter>02. DemoObject\DemoFloor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

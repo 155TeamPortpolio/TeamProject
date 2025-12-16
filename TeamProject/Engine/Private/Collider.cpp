@@ -4,6 +4,7 @@
 #include "ICollisionService.h"
 #include "GameObject.h"
 #include "RigidBody.h"
+#include "CharacterController.h"
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
@@ -158,7 +159,7 @@ void CCollider::Update(_float dt)
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
 
 		PxTransform pose(
-			PxVec3(vPos.x, vPos.y, vPos.x),
+			PxVec3(vPos.x, vPos.y, vPos.z),
 			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
 		);
 		m_pStaticActor->setGlobalPose(pose);
@@ -168,7 +169,6 @@ void CCollider::Update(_float dt)
 void CCollider::OnCollisionEnter(ICollidable* pOther)
 {
 	m_pOwner->OnCollisionEnter();
-	m_CurrentCollisions.insert(pOther);
 }
 
 void CCollider::OnCollisionStay(ICollidable* pOther)
@@ -179,7 +179,6 @@ void CCollider::OnCollisionStay(ICollidable* pOther)
 void CCollider::OnCollisionExit(ICollidable* pOther)
 {
 	m_pOwner->OnCollisionExit();
-	m_CurrentCollisions.erase(pOther);
 }
 
 void CCollider::OnTriggerEnter(ICollidable* pOther)
@@ -359,13 +358,31 @@ void CCollider::Render_GUI()
 		{
 			ImGui::Separator();
 			ImGui::Text("Colliding With:");
+
+			// 안전한 순회를 위해 벡터에 복사
+			vector<ICollidable*> collisionSnapshot;
+			collisionSnapshot.reserve(m_CurrentCollisions.size());
 			for (auto pOther : m_CurrentCollisions)
 			{
-				if (pOther && pOther->Get_Owner())
-				{
-					const char* typeStr = dynamic_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
-					ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
-				}
+				if (pOther)
+					collisionSnapshot.push_back(pOther);
+			}
+
+			for (auto pOther : collisionSnapshot)
+			{
+				// 추가 안전성 체크
+				if (!pOther || !pOther->Get_Owner()) continue;
+
+				const char* typeStr = "[???]";
+				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
+				CCharacterController* pCCT = dynamic_cast<CCharacterController*>(pOther);
+
+				if (pCollider)
+					typeStr = "[COL]";
+				else if (pCCT)
+					typeStr = "[CCT]";
+
+				ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
 			}
 		}
 	}

@@ -196,29 +196,24 @@ _float CCamSequencePlayer::RemapTimeBySegmentEasing(_float t) const
     const _uint i = segment.segmentIdx;
     if (i + 1 >= (_uint)keys.size()) return t;
 
-    CamEaseType ease = target.seq->segmentEase;
+    EaseType ease = target.seq->segmentEase;
     if (keys[(size_t)i].useCustomEase)
         ease = keys[(size_t)i].outEase;
 
-    if (ease == CamEaseType::None)
+    if (ease == EaseType::None)
         return t;
 
     const float t0 = keys[(size_t)i].time;
     const float t1 = keys[(size_t)i + 1].time;
 
     float u = segment.normalizedTime;
-    u = std::clamp(u, 0.f, 1.f);
+    u = clamp(u, 0.f, 1.f);
 
-    switch (ease)
-    {
-    case CamEaseType::InOutSine: u = Math::EaseInOutSine(u); break;
-    case CamEaseType::OutCubic:  u = Math::EaseOutCubic(u);  break;
-    default: break;
-    }
+    u = Math::ApplyEase(ease, u);
+    u = clamp(u, 0.f, 1.f);
 
     return Math::Lerp(t0, t1, u);
 }
-
 
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {

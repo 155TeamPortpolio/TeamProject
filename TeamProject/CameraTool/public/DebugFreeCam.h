@@ -32,13 +32,13 @@ private:
 	void    SyncRotationFromTransform();
 
 private:
-	_float     moveSpeed = 10.f;
-	_float     sensitivity = 0.5f;
-	_vector2   rotDegTarget = {};
-	Quaternion rotQuatCurrent = Quaternion::Identity;
-	Quaternion rotQuatTarget = Quaternion::Identity;
-	_float     rotSmoothSpeed = 15.f;
-	_bool      controlEnabled = true;
+	_float            moveSpeed      = 5.f;
+	_float            sensitivity    = 0.5f;
+	_vector2          rotDegTarget   = {};
+	Quaternion        rotQuatCurrent = Quaternion::Identity;
+	Quaternion        rotQuatTarget  = Quaternion::Identity;
+	_float            rotSmoothSpeed = 20.f;
+	_bool             controlEnabled = true;
 
 	CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
 	CamOrbitState     orbit{};

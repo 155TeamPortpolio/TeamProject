@@ -26,10 +26,14 @@ public:
 	{
 		return m_CurrentCollisions.find(pOther) != m_CurrentCollisions.end();
 	}
-	unordered_set<ICollidable*>& Get_Collisions() { return m_CurrentCollisions; }
+	unordered_set<ICollidable*>& Get_CurrentCollisions() { return m_CurrentCollisions; }
+	unordered_set<ICollidable*>& Get_PreviousCollisions() { return m_PreviousCollisions; }
+	virtual void Update_Collisions() { m_PreviousCollisions = m_CurrentCollisions;}
+
 
 protected:
 	unordered_set<ICollidable*> m_CurrentCollisions;
+	unordered_set<ICollidable*> m_PreviousCollisions;
 
 public:
 	virtual void Free() override { __super::Free(); }

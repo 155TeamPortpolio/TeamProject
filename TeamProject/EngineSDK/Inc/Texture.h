@@ -7,7 +7,7 @@ private:
 	CTexture();
 	virtual ~CTexture() DEFAULT;
 private:
-	HRESULT Initialize(ID3D11Device* pDevice, const _tchar* filePath);
+	HRESULT Initialize(ID3D11Device* pDevice, const _tchar* filePath, _bool sRGBType);
 
 public:
 	const string& Get_Key() { return m_TextureKey; }
@@ -19,7 +19,7 @@ private:
 	ID3D11ShaderResourceView* m_pShaderResourceView = { nullptr };
 
 public:
-	static CTexture* Create(ID3D11Device* pDevice, const wstring& filePath, const string& textureKey);
+	static CTexture* Create(ID3D11Device* pDevice, const wstring& filePath, const string& textureKey, _bool sRGBType);
 	virtual void Free() override;
 };
 NS_END

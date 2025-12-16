@@ -3,6 +3,8 @@
 #include "BasePanel.h"
 #include "CamPanelData.h"
 
+#include "CamPanelUtil.h"
+
 NS_BEGIN(CameraTool)
 
 class CCamPanel final : public CBasePanel
@@ -26,6 +28,8 @@ private:
 	void  DrawKeyframeEditor();
 	void  DrawTimeline();
 	void  DrawInterpSelector();
+	void  DrawHelpPopup();
+	void  DrawWindowHeader();
 	_bool DrawConstraintBar();
 	_bool DrawOrbitTargetBar();
 
@@ -42,9 +46,9 @@ private: // Helper
 	_uint   GetSelectedKeyId()   const;
 	_float  GetNextDefaultTime() const;
 
-	CamKeyFrame& GetSelectedKey();
-	vector<CamKeyFrame>& GetKeyFrames() { return target.sequence->keyframes; }
-	const vector<CamKeyFrame>& GetKeyFrames()   const { return target.sequence->keyframes; }
+	CamKeyFrame&               GetSelectedKey();
+	vector<CamKeyFrame>&       GetKeyFrames()       { return target.sequence->keyframes; }
+	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
 
 private:
 	CamSequenceDesc  debugSequence{};

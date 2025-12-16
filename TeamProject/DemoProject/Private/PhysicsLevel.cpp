@@ -7,10 +7,12 @@
 
 #include "DemoCamera.h"
 #include "DemoModel.h"
+#include "DemoFloor.h"
 #include "DemoPlayer.h"
 #include "DemoUI.h"
 #include "Camera.h"
 #include "InstanceDemo.h"
+
 
 #include "RigidBody.h"
 #include "Collider.h"
@@ -33,6 +35,7 @@ HRESULT CPhysicsLevel::Awake()
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoPlayer", CDemoPlayer::Create());
+	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoFloor", CDemoFloor::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -54,11 +57,6 @@ HRESULT CPhysicsLevel::Awake()
 	pObjMgr->Add_Object(Player, { "Physics_Level","Player_Layer" });
 
 	// Floor
-	RIGIDBODY_DESC floorRbDesc = {};
-	floorRbDesc.isStatic = true;
-	floorRbDesc.isKinematic = false;
-	floorRbDesc.fMass = 0.f;
-
 	COLLIDER_DESC floorColDesc = {};
 	floorColDesc.eType = COLLIDER_TYPE::BOX;
 	floorColDesc.vSize = { 20.f, 1.f, 20.f };
@@ -66,10 +64,9 @@ HRESULT CPhysicsLevel::Awake()
 	floorColDesc.isTrigger = false;
 	floorColDesc.vRotation = { 0.f, 0.f, 0.f };
 
-	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoModel" })
+	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoFloor" })
 		.Position({ 0.f, -2.f, 0.f })
 		.Scale({ 20.f, 1.f, 20.f })
-		.RigidBody(floorRbDesc)
 		.Collider(floorColDesc)
 		.Build("Demo_Floor");
 
@@ -78,13 +75,12 @@ HRESULT CPhysicsLevel::Awake()
 
 	// Box
 	RIGIDBODY_DESC objRbDesc = {};
-	objRbDesc.isStatic = false;
 	objRbDesc.isKinematic = false;
 	objRbDesc.fMass = 10.0f;
 
 	COLLIDER_DESC objColDesc = {};
 	objColDesc.eType = COLLIDER_TYPE::BOX;
-	objColDesc.vSize = { 1.f, 1.f, 1.f };
+	objColDesc.vSize = { 10.f, 10.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };
 	objColDesc.isTrigger = false;
 	objColDesc.vRotation = { 0.f, 0.f, 0.f };

@@ -13,33 +13,44 @@ CUIObject_Tool::CUIObject_Tool(const CUIObject_Tool& rhs)
 {
 }
 
-void CUIObject_Tool::LinkChildFromJson(const json& data)
+HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
-    if (!Get_Component<CObjectContainer>())
+    __super::Initialize(pArg);
+
+    // GUI Inspector 창에 띄움
+    CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+
+    return S_OK;
+}
+
+void CUIObject_Tool::DestroyChild_FromParent()
+{
+    if (!m_pParent)
         return;
 
-    IUI_Service* pUIMgr = CGameInstance::GetInstance()->Get_UIMgr();
-    vector<CUI_Object*> UIObjects = pUIMgr->Get_LevelUI(data["levelTag"]);
+    auto pParentContainer = m_pParent->Get_Component<CObjectContainer>();
+    if (!pParentContainer)
+        return;
 
-    for (_int i = 0; i < data["children"].size(); ++i)
-    {
-        string strChildInstanceKey = data["children"][i];
-         
-        for (auto& pUIObject : UIObjects)
-        {
-            if (strChildInstanceKey == pUIObject->Get_InstanceName())
-            {
-                Get_Component<CObjectContainer>()->Add_Child(pUIObject);
-                break;
-            }
-        }
-    }
+    pParentContainer->Destroy_Child(m_iChildIndex);
+}
+
+void CUIObject_Tool::ToJson(json& data)
+{
+    ToJson_Common(data);
+
+    ToJson_Parent(data);
+}
+
+void CUIObject_Tool::FromJson(const json& data)
+{
+    FromJson_LinkParent(data);
 }
 
 void CUIObject_Tool::ToJson_Common(json& data)
 { 
     // 기본 정보
-    data["levelTag"] = m_Level;
+    data["levelTag"] = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(); // 현재 레벨을 가져와야하나 아니면 객체에 저장된 레벨을 가져와야하나
     data["instanceKey"] = m_InstanceName;
 
     // Transform 정보
@@ -53,16 +64,91 @@ void CUIObject_Tool::ToJson_Common(json& data)
     data["transform"]["pivot"]["x"] = m_vPivot.x;
     data["transform"]["pivot"]["y"] = m_vPivot.y;
     data["transform"]["rotation"] = m_fRadian;
+}
 
-    // 자식들 있다면 
-    if (Get_Component<CObjectContainer>())
+void CUIObject_Tool::ToJson_Parent(json& data)
+{
+    if (!m_pParent || -1 == m_iChildIndex)
+        return;
+
+    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    auto& Objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
+
+    string strParentInstanceKey;
+    for (auto& pObj : Objects)
     {
-        data["children"] = json::array();
-        for (auto& child : Get_Component<CObjectContainer>()->Get_Children())  // 자식 리스트가 있다면
+        if (pObj == m_pParent)
         {
-            data["children"].push_back(child->Get_InstanceName());
+            strParentInstanceKey = pObj->Get_InstanceName();
+            break;
         }
-    } 
+    }
+
+    if (strParentInstanceKey.empty())
+        return;
+
+    data["parent"]["instanceKey"] = strParentInstanceKey;
+    data["parent"]["childIndex"] = m_iChildIndex;
+}
+
+void CUIObject_Tool::FromJson_LinkParent(const json& data)
+{
+    if (!data.contains("parent") || !data["parent"].size())
+        return;
+
+    vector<CUI_Object*> objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(data["levelTag"]);
+
+    for (auto& pObj : objects)
+    {
+        if (data["parent"]["instanceKey"] == pObj->Get_InstanceName())
+        {
+            CUIObject_Tool* pUIObj = dynamic_cast<CUIObject_Tool*>(pObj);
+            if (!pUIObj)
+                break;
+
+            m_pParent = pUIObj;
+            m_iChildIndex = data["parent"]["childIndex"];
+
+            pObj->Get_Component<CObjectContainer>()->Add_Child(this);
+
+            break;
+        }
+    }
+}
+
+void CUIObject_Tool::Add_Child(CUIObject_Tool* pChild)
+{
+    if (!pChild || pChild == this)
+        return;
+
+    auto pContainer = Get_Component<CObjectContainer>();
+   if (!pContainer)
+       return;
+
+   if (pChild->m_pParent)
+       pChild->m_pParent->Remove_Child(pChild);
+
+   _int iIndex = pContainer->Add_Child(pChild);
+   if (-1 == iIndex)
+       return;
+
+   pChild->m_pParent = this;
+   pChild->m_iChildIndex = iIndex;
+}
+
+void CUIObject_Tool::Remove_Child(CUIObject_Tool* pChild)
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer)
+        return;
+
+    _int index = pContainer->Find_IndexByName(pChild->Get_InstanceName());
+    if (index == -1)
+        return;
+
+    pContainer->Destroy_Child(index);
+    pChild->m_pParent = nullptr;
+    pChild->m_iChildIndex = -1;
 }
 
 void CUIObject_Tool::Render_GUI_Layout()

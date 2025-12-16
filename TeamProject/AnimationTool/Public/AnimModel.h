@@ -35,7 +35,7 @@ private: //Model Logic
     void Set_Model(string ModelTag, string MaterialTag);
     void Set_Animator();
     void Clear_Model();
-    void Load_Json();
+
 private:
     CGameInstance* m_pGameInstance = { nullptr };
     set<string> m_ModelTags;
