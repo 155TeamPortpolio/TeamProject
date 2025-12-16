@@ -11,7 +11,7 @@
 #include "DummyModel.h"
 #include "Camera.h"
 #include "Grid.h"
-#include "StaticObject.h"
+#include "PlacedObject.h"
 
 /* MapTool Gui */
 #include "MapToolGui.h"
@@ -29,7 +29,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DefaultCamera", CDefaultCamera::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_Grid", CGrid::Create());
-	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_StaticObject", CStaticObject::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_PlacedObject", CPlacedObject::Create());
 
 	return S_OK;
 }
@@ -84,29 +84,15 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	//CGameObject* DemoModel = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_DummyModel" })
-	//	.Position({ 0,0,0 })
-	//	.Build("Dummy_Model");
-
 	CGameObject* pGrid = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_Grid" })
 		.Position({ 0,0,0 })
 		.Scale({ 50.f, 1.f ,50.f })
 		.Build("Grid");
 
-	//CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_StaticObject" })
-	//	.Position({ 5,0,5 })
-	//	.Scale({ 1.f, 1.f ,1.f })
-	//	.Build("Static_Model");
-
 	pObjMgr->Add_Object(Camera,			{ "MapTool_Level", "Camera_Layer" });
-	//pObjMgr->Add_Object(DemoModel,		{ "MapTool_Level", "Model_Layer" });
 	pObjMgr->Add_Object(pGrid,			{ "MapTool_Level", "Floor_Layer" });
-	//pObjMgr->Add_Object(pStaticObject,	{ "MapTool_Level", "Static_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
-
-	/* 임시) Ray 등록*/
-	//m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
 
 	return S_OK;
 }

@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 NS_BEGIN(MapTool)
-class CStaticObject :
+class CPlacedObject :
     public CGameObject
 {
 public:
@@ -12,9 +12,9 @@ public:
         _bool   isRayReceiver = {};
     }STATIC_OBJECT_DESC;
 private:
-    CStaticObject();
-    CStaticObject(const CStaticObject& rhs);
-    virtual ~CStaticObject() DEFAULT;
+    CPlacedObject();
+    CPlacedObject(const CPlacedObject& rhs);
+    virtual ~CPlacedObject() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -33,7 +33,7 @@ private:
     string  m_TagMaterialKey = {};
 
 public:
-    static CStaticObject* Create();
+    static CPlacedObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };

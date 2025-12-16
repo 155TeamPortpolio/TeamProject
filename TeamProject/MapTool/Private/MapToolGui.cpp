@@ -2,11 +2,12 @@
 #include "MapToolGui.h"
 #include "GameInstance.h"
 
-#include "StaticObject.h"
+#include "PlacedObject.h"
 #include "Layer.h"
 #include "RayReceiver.h"
 
 #include "Helper_Func.h"
+#include "Helper_MapTool.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -19,6 +20,8 @@ HRESULT CMapToolGui::Initialize()
 {
     m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
     RakeResources();
+
+    m_TagPlacedObjectLayer = "PlacedObject_Layer";
 
     return S_OK;
 }
@@ -181,7 +184,7 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 
-    CStaticObject::STATIC_OBJECT_DESC* Desc = new CStaticObject::STATIC_OBJECT_DESC;
+    CPlacedObject::STATIC_OBJECT_DESC* Desc = new CPlacedObject::STATIC_OBJECT_DESC;
     Desc->isRayReceiver = m_isObjectPicking;
     Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
@@ -192,12 +195,12 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
         .Add_ObjDesc(Desc)
         .Build("Static_Model");
 
-    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", "Static_Layer" });
+    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", "Static_Layer" });
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagPlacedObjectLayer });
     if (nullptr == pStaticLayer)
         return;
 
@@ -211,7 +214,7 @@ void CMapToolGui::PreSet_ModelResource()
     ImGuiListClipper clipper;
     clipper.Begin((_int)m_ModelPathPack.size());
     while (clipper.Step()) {
-        for (_uint i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
             const string TagResourceName = m_ModelPathPack[i].TagName;
 
             ImGuiTreeNodeFlags flags =
@@ -241,6 +244,14 @@ void CMapToolGui::PreSet_ModelResource()
 
 void CMapToolGui::Save_MapData()
 {
+    //Helper::SaveJson<MapData_Header>(m_Data, path);
+    //
+    //m_Data = Helper::LoadJson<MapData_Header>(path);
+    
+
+    
+
+
 }
 
 void CMapToolGui::Load_MapData()
@@ -262,7 +273,7 @@ void CMapToolGui::KeyInput()
 
         RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
         if (nullptr != pRayHit) {
-            if ("Static_Layer" == pRayHit->pObject->Get_Layer()->Get_LayerTag())
+            if (m_TagPlacedObjectLayer == pRayHit->pObject->Get_Layer()->Get_LayerTag())
                 CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = pRayHit->pObject;
         }
 
@@ -275,10 +286,10 @@ void CMapToolGui::KeyInput()
         auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
 
         if (nullptr != pGuiContext->pSelectedObject &&
-            "Static_Layer" == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
-            nullptr != dynamic_cast<CStaticObject*>(pGuiContext->pSelectedObject)) {
+            m_TagPlacedObjectLayer == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
+            nullptr != dynamic_cast<CPlacedObject*>(pGuiContext->pSelectedObject)) {
 
-            static_cast<CStaticObject*>(pGuiContext->pSelectedObject)->Delete_Object();
+            static_cast<CPlacedObject*>(pGuiContext->pSelectedObject)->Delete_Object();
 
         }
     }

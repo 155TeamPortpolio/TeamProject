@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "StaticObject.h"
+#include "Placed.h"
 
 #include "ModelData.h"
 #include "StaticModel.h"
@@ -11,16 +11,16 @@
 #include "GameInstance.h"
 
 
-CStaticObject::CStaticObject()
+CPlacedObject::CPlacedObject()
 {
 }
 
-CStaticObject::CStaticObject(const CStaticObject& rhs)
+CPlacedObject::CPlacedObject(const CPlacedObject& rhs)
 	:CGameObject(rhs)
 {
 }
 
-HRESULT CStaticObject::Initialize_Prototype()
+HRESULT CPlacedObject::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	//Add_Component<CStaticModel>();
@@ -35,7 +35,7 @@ HRESULT CStaticObject::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CStaticObject::Initialize(INIT_DESC* pArg)
+HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 {
 #pragma region Model Type Check
 	STATIC_OBJECT_DESC* pObjDesc = static_cast<STATIC_OBJECT_DESC*>(pArg);
@@ -77,25 +77,25 @@ HRESULT CStaticObject::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CStaticObject::Awake()
+void CPlacedObject::Awake()
 {
 	// (!!포인터 접근해서 값 변경) 만들어 지면 무조건 Inspector창에 띄움.
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 }
 
-void CStaticObject::Priority_Update(_float dt)
+void CPlacedObject::Priority_Update(_float dt)
 {
 }
 
-void CStaticObject::Update(_float dt)
+void CPlacedObject::Update(_float dt)
 {
 }
 
-void CStaticObject::Late_Update(_float dt)
+void CPlacedObject::Late_Update(_float dt)
 {
 }
 
-void CStaticObject::Render_GUI()
+void CPlacedObject::Render_GUI()
 {
 	ImGui::PushID(this);
 
@@ -108,38 +108,38 @@ void CStaticObject::Render_GUI()
 	ImGui::PopID();
 }
 
-void CStaticObject::Delete_Object()
+void CPlacedObject::Delete_Object()
 {
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(this);
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = nullptr;
 }
 
-CStaticObject* CStaticObject::Create()
+CPlacedObject* CPlacedObject::Create()
 {
-	CStaticObject* instance = new CStaticObject();
+	CPlacedObject* instance = new CPlacedObject();
 	if (FAILED(instance->Initialize_Prototype()))
 	{
-		MSG_BOX("Object Create Failed : CStaticObject");
+		MSG_BOX("Object Create Failed : CPlacedObject");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-CGameObject* CStaticObject::Clone(INIT_DESC* pArg)
+CGameObject* CPlacedObject::Clone(INIT_DESC* pArg)
 {
-	CStaticObject* instance = new CStaticObject(*this);
+	CPlacedObject* instance = new CPlacedObject(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
-		MSG_BOX("Object Clone Failed : CStaticObject");
+		MSG_BOX("Object Clone Failed : CPlacedObject");
 		Safe_Release(instance);
 	}
 
 	return instance;
 }
 
-void CStaticObject::Free()
+void CPlacedObject::Free()
 {
 	__super::Free();
 }
