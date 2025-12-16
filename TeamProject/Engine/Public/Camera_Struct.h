@@ -1,6 +1,8 @@
 #pragma once
 #include "OrbitArcData.h"
 
+#include "Engine_math.h"
+
 NS_BEGIN(Engine)
 
 struct CamPose
@@ -34,7 +36,7 @@ struct CamKeyFrame // 한 스퀀스 안에서 특정 시점의 카메라 상태를 표현하는 단일 �
 	CamFovInterp outFovInterp    = CamFovInterp::Linear;
 
 	_bool        useCustomEase   = false;
-	CamEaseType  outEase = CamEaseType::None;
+	EaseType     outEase         = EaseType::None;
 };
 struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋 데이터.
 {                      // 어떤 타입/리그의 카메라인지와, 그 스퀀스를 구성하는 키프레임/마커 목록을 가짐.
@@ -50,7 +52,7 @@ struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋
 	CamRotInterp        rotInterp    = CamRotInterp::Slerp;
 	CamFovInterp        fovInterp    = CamFovInterp::Linear;
 
-	CamEaseType         segmentEase  = CamEaseType::None;
+	EaseType            segmentEase  = EaseType::None;
 
 	CamOrbitArcDesc     orbitArc{};
 

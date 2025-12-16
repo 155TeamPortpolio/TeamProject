@@ -73,7 +73,6 @@ Quaternion CCamRotPerSegmentEvaluator::Evaluate(_float time) const
     return evalSlerp ? evalSlerp->Evaluate(t) : Quaternion::Identity;
 }
 
-
 void CCamRotPerSegmentEvaluator::Free()
 {
     Safe_Release(evalSlerp);

@@ -466,7 +466,10 @@
     <ClInclude Include="..\Public\CamFovLinearEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\AnimationLayout.h">
+    <ClInclude Include="..\public\Engine_Math.h">
+      <Filter>01. Utility\97. Helper</Filter>
+        </ClInclude>
+        <ClInclude Include="..\Public\AnimationLayout.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1252,6 +1255,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Engine_Math.cpp">
+      <Filter>01. Utility\97. Helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
