@@ -161,12 +161,12 @@ void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;
 	Apply_Gravity(dt);
-	Apply_Move(dt);
 }
 
 void CCharacterController::Late_Update(_float dt)
 {
 	if (!m_pController) return;
+	Apply_Move(dt);
 	// PhysX -> Transform
 	const PxExtendedVec3& position = m_pController->getPosition();
 	m_pOwnerTransform->Set_WorldPos(XMVectorSet((float)position.x, (float)position.y, (float)position.z, 1.f));

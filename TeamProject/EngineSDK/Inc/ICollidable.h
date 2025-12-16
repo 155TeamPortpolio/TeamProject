@@ -30,26 +30,11 @@ public:
 	unordered_set<ICollidable*>& Get_PreviousCollisions() { return m_PreviousCollisions; }
 	virtual void Update_Collisions() { m_PreviousCollisions = m_CurrentCollisions;}
 
-	void Clear_CCTs() { m_CCTs.clear(); }
-	void Add_To_CCT(ICollidable* pOther) { m_CCTs.insert(pOther); }
-	void Update_CCTs() {
-		vector<ICollidable*> toRemove;
-		for (auto pOther : m_CurrentCollisions)
-		{
-			if (m_CCTs.find(pOther) == m_CCTs.end())
-			{
-				toRemove.push_back(pOther);
-			}
-		}
-
-		for (auto pOther : toRemove) m_CurrentCollisions.erase(pOther);
-		for (auto pOther : m_CCTs) m_CurrentCollisions.insert(pOther);
-	}
 
 protected:
 	unordered_set<ICollidable*> m_CurrentCollisions;
 	unordered_set<ICollidable*> m_PreviousCollisions;
-	unordered_set<ICollidable*> m_CCTs;
+
 public:
 	virtual void Free() override { __super::Free(); }
 };

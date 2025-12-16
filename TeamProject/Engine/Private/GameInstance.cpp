@@ -118,17 +118,18 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pSoundDevice->Update();
 
 #ifdef USINGPHYSICS
+	m_pCollisionSystem->Update(dt);
 	m_pPhysicsSystem->Update(dt);
 #endif // USINPHYSICS
 
 #if defined _USING_GUI
 	m_pGuiSystem->Update(realDt);
 #endif
-	m_pCollisionSystem->Update(dt);
 	m_pObjectManager->Late_Update(dt);
 	m_pUIManager->Late_Update(realDt);
 #ifdef USINGPHYSICS
 	m_pPhysicsSystem->Late_Update(dt);
+	m_pCollisionSystem->Late_Update(dt);
 #endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();

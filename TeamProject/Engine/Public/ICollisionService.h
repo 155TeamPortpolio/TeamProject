@@ -9,6 +9,7 @@ protected:
     virtual  ~ICollisionService() DEFAULT;
 public:
     virtual void Update(_float dt) PURE;
+    virtual void Late_Update(_float dt) PURE;
     virtual void Render_GUI() PURE;
     virtual PxUserControllerHitReport* Get_CCTCallback() PURE;
     virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;

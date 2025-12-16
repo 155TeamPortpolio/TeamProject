@@ -70,14 +70,17 @@ void CDemoPlayer::Late_Update(_float dt)
 
 void CDemoPlayer::OnCollisionEnter()
 {
+	OutputDebugStringA("CCT Collision Enter!\n");
 }
 
 void CDemoPlayer::OnCollisionStay()
 {
+	OutputDebugStringA("CCT Collision Stay!\n");
 }
 
 void CDemoPlayer::OnCollisionExit()
 {
+	OutputDebugStringA("CCT Collision Exit!\n");
 }
 
 void CDemoPlayer::Render_GUI()

@@ -82,27 +82,18 @@ void CCollisionSystem::Update(_float dt)
 		else
 			++it;
 	}
-
+	// 이전 프레임 충돌 백업
 	for (auto pCollidable : m_Collidables)
 	{
 		if (pCollidable && pCollidable->Get_CompActive())
 		{
-			pCollidable->Update_Collisions();
+			pCollidable->Update_Collisions();	// CCT : Current.clear()
 		}
 	}
+}
 
-	for (auto pCollidable : m_Collidables)
-	{
-		if (pCollidable && pCollidable->Get_CompActive())
-		{
-			CCharacterController* pCCT = dynamic_cast<CCharacterController*>(pCollidable);
-			if (pCCT)
-			{
-				pCollidable->Update_CCTs();
-			}
-		}
-	}
-
+void CCollisionSystem::Late_Update(_float dt)
+{
 	Process_CollisionEvents();
 }
 
@@ -321,7 +312,7 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 	auto& cctCurrent = pCCT->Get_CurrentCollisions();
 	auto& cctPrevious = pCCT->Get_PreviousCollisions();
 
-	pCCT->Add_To_CCT(pOther);
+	cctCurrent.insert(pOther);
 
 	// Enter 체크 (Previous에 없으면 Enter)
 	if (cctPrevious.find(pOther) == cctPrevious.end())
@@ -359,17 +350,15 @@ void CCollisionSystem::Process_CCT_ControllerHit(const PxControllersHit& hit)
 	auto& current2 = pCCT2->Get_CurrentCollisions();
 	auto& previous1 = pCCT1->Get_PreviousCollisions();
 
-	if (current1.find(pCCT2) == current1.end())
-	{
-		current1.insert(pCCT2);
+	current1.insert(pCCT2);
 
-		if (previous1.find(pCCT2) == previous1.end())
-		{
-			pCCT1->OnCollisionEnter(pCCT2);
-			pCCT2->OnCollisionEnter(pCCT1);
-		}
+	if (previous1.find(pCCT2) == previous1.end())
+	{
+		pCCT1->OnCollisionEnter(pCCT2);
+		pCCT2->OnCollisionEnter(pCCT1);
 	}
 
+	// CCT2 Current에도 추가
 	current2.insert(pCCT1);
 }
 

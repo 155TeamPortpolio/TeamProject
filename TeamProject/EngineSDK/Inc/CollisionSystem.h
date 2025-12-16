@@ -46,6 +46,7 @@ private:
 public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
+    virtual void Late_Update(_float dt) override;
     void Render_GUI() override;
 
     PxUserControllerHitReport* Get_CCTCallback() override { return m_pCCTCallback; }

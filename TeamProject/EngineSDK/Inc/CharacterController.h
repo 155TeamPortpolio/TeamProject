@@ -37,7 +37,10 @@ public:
     void            Render_GUI();       // GUI ·»´õ¸µ
 
     void            Process_Response(const PxControllerShapeHit& hit);
-    virtual void    Update_Collisions() override { __super::Update_Collisions(); Clear_CCTs(); }
+    virtual void    Update_Collisions() override {
+        m_PreviousCollisions = m_CurrentCollisions;
+        m_CurrentCollisions.clear();
+    }
 #ifdef _DEBUG
     virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
