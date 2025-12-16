@@ -28,6 +28,7 @@ private:
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Load_MapData();
+	void			Clear_Layer();
 	
 
 
@@ -51,8 +52,10 @@ private:
 	_bool		m_isObjectPicking = { true };
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
 	
-	MapData_Header m_Data = {};
-
+	/* For.Data */
+	vector<string>	m_TagLayers;
+	_int			m_iVersion = { 1 };
+	MapData_Header	m_Data = {};
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);

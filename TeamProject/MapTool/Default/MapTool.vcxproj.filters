@@ -43,7 +43,10 @@
     <Filter Include="03. MapTool System">
       <UniqueIdentifier>{be04f0c9-3537-4656-b625-b044a376f6b8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object\Static Object">
+    <Filter Include="02. Object\MapTool Object">
+      <UniqueIdentifier>{e268297a-f12f-4503-8e76-bfdfffbcf90f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Placed Object">
       <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -96,17 +99,20 @@
     <ClInclude Include="..\public\Grid.h">
       <Filter>02. Object\Floor\Grid</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapToolGui.h">
-      <Filter>03. MapTool System</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\PlacedObject.h">
-      <Filter>02. Object\Static Object</Filter>
+      <Filter>02. Object\MapTool Object\Placed Object</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapTool_Struct.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Helper_MapTool.h">
       <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapToolGui.h">
+      <Filter>03. MapTool System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapToolObject.h">
+      <Filter>02. Object\MapTool Object</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -163,11 +169,14 @@
     <ClCompile Include="..\private\Grid.cpp">
       <Filter>02. Object\Floor\Grid</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\PlacedObject.cpp">
+      <Filter>02. Object\MapTool Object\Placed Object</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MapToolGui.cpp">
       <Filter>03. MapTool System</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\PlacedObject.cpp">
-      <Filter>02. Object\Static Object</Filter>
+    <ClCompile Include="..\private\MapToolObject.cpp">
+      <Filter>02. Object\MapTool Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

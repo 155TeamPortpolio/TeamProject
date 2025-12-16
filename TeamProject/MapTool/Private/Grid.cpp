@@ -22,8 +22,8 @@ HRESULT CGrid::Initialize_Prototype()
 	Add_Component<CPlaneModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CRayReceiver>();
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("TileCell.png", "../Bin/Resources/TileCell.png");
 	pRcsMgr->Add_ResourcePath("VTX_PlaneGrid.hlsl",  "../Bin/ShaderFiles/VTX_PlaneGrid.hlsl");
 

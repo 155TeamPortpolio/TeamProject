@@ -12,6 +12,7 @@
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
     , m_pGameInstance(CGameInstance::GetInstance())
+    , m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer"}
 {
     Safe_AddRef(m_pGameInstance);
 }
@@ -22,6 +23,7 @@ HRESULT CMapToolGui::Initialize()
     RakeResources();
 
     m_TagPlacedObjectLayer = "PlacedObject_Layer";
+    
 
     return S_OK;
 }
@@ -78,18 +80,37 @@ void CMapToolGui::Render_GUI()
     ImGui::Text("");/////////////////////////////////
 
     ImGui::Text("Data");
-    if (ImGui::TreeNode("Data Save & Load")) {
+    if (ImGui::TreeNode("Data Save")) {
+        ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight }, true);
+
+        ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Data Version");
+        ImGui::InputInt(" ##Version", reinterpret_cast<int*>(&m_iVersion));
 
         if (ImGui::Button("Save")) {
             Save_MapData();
         }
-        ImGui::SameLine();
-        if (ImGui::Button("Load")) {
-            Load_MapData();
-        }
 
+        ImGui::EndChild();
         ImGui::TreePop();
     }
+
+
+    //ImGui::SameLine();
+    if (ImGui::Button("Load")) {
+        Load_MapData();
+    }
+    if (ImGui::TreeNode("Clear")) {
+        ImGui::BeginChild("##MapToolClearLayerList", ImVec2{ 0, childHeight }, true);
+
+        Clear_Layer();
+
+        ImGui::EndChild();
+        ImGui::TreePop();
+    }
+
+    
+
+
 
 
     ImGui::PopID();
@@ -184,7 +205,7 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 
-    CPlacedObject::STATIC_OBJECT_DESC* Desc = new CPlacedObject::STATIC_OBJECT_DESC;
+    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
     Desc->isRayReceiver = m_isObjectPicking;
     Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
@@ -211,6 +232,7 @@ void CMapToolGui::Set_ObjectPicking(_bool is)
 
 void CMapToolGui::PreSet_ModelResource()
 {
+    ImGui::PushID("MapTool_RakeResource");
     ImGuiListClipper clipper;
     clipper.Begin((_int)m_ModelPathPack.size());
     while (clipper.Step()) {
@@ -240,22 +262,84 @@ void CMapToolGui::PreSet_ModelResource()
             }
         }
     }
+    ImGui::PopID();
 }
 
 void CMapToolGui::Save_MapData()
 {
-    //Helper::SaveJson<MapData_Header>(m_Data, path);
-    //
+
+    m_Data.iVersion = m_iVersion;
+    m_Data.TagDataFormat = "MapTool.Data";
+    //m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer" }
+
+    for (_uint i = 0; i < (_uint)m_TagLayers.size(); ++i) {
+        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagLayers[i] });
+        if (nullptr == pLayer)
+            continue;
+        MapData_Layer DataLayer = {};
+        DataLayer.TagLayer = m_TagLayers[i];
+
+        for (auto& pObject : pLayer->Get_AllObject()) {
+            if (m_TagLayers[i] == "PlacedObject_Layer") {
+                MapData_Object DataDesc = {};
+                static_cast<CPlacedObject*>(pObject)->Export_ObjectData(&DataDesc);
+                DataLayer.Objects.push_back(DataDesc);
+            }
+            else if (m_TagLayers[i] == "FloorObject_Layer") {
+
+            }
+            else if (m_TagLayers[i] == "TriggerObject_Layer") {
+
+            }
+            else if (m_TagLayers[i] == "Navigation_Layer") {
+
+            }
+        }
+        m_Data.Layers.push_back(DataLayer);
+    }
+    int a = 1;
+
+    string TagFileName = m_Data.TagDataFormat + "_" + std::to_string(m_Data.iVersion);
+    string SavePath = "../Bin/Data/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+
+    HelperMT::SaveJson_MapTool<MapData_Header>(m_Data, SavePath);
+    
     //m_Data = Helper::LoadJson<MapData_Header>(path);
-    
-
-    
-
-
 }
 
 void CMapToolGui::Load_MapData()
 {
+}
+
+void CMapToolGui::Clear_Layer()
+{
+    ImGui::PushID("MapTool_LayerDelete");
+    ImGuiListClipper clipper;
+    clipper.Begin((_int)m_TagLayers.size());
+    while (clipper.Step()) {
+        for (_int i = clipper.DisplayStart; i < clipper.DisplayEnd; ++i) {
+            const string TagClearLayer = m_TagLayers[i];
+
+            ImGuiTreeNodeFlags flags =
+                ImGuiTreeNodeFlags_Leaf |
+                ImGuiTreeNodeFlags_NoTreePushOnOpen |
+                ImGuiTreeNodeFlags_SpanFullWidth |
+                ((m_iSelectedIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+
+            ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagClearLayer.c_str());
+
+            if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+            {
+                CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", TagClearLayer });
+                if (nullptr == pLayer) {
+                    ImGui::PopID();
+                    return;
+                }
+                // Layer 싹 삭제하는 기능 부기맨이 만들어줄예정
+            }
+        }
+    }
+    ImGui::PopID();
 }
 
 void CMapToolGui::KeyInput()

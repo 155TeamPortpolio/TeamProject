@@ -9,7 +9,7 @@ namespace MapTool {
 	static constexpr unsigned int g_iWinSizeY = 720;
 	static constexpr unsigned int g_iMainFrame = 144;
 
-	enum class ObjectType { Static, Floor, Trigger, Navigation, END};
+	enum class ObjectType { Placed, Floor, Trigger, Navigation, END};
 }
 
 extern HWND g_hWnd;

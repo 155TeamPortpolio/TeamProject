@@ -12,25 +12,20 @@
 
 
 CPlacedObject::CPlacedObject()
+	: CMapToolObject()
 {
 }
 
 CPlacedObject::CPlacedObject(const CPlacedObject& rhs)
-	:CGameObject(rhs)
+	: CMapToolObject(rhs)
 {
 }
 
 HRESULT CPlacedObject::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	//Add_Component<CStaticModel>();
-	Add_Component<CMaterial>();
-	Add_Component<CRayReceiver>();
 
-	// 임시
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Zero_Vehicle_Bus_01.model", "../../DemoResource/static/Zero_Vehicle_Bus_01.model");
-	pRcsMgr->Add_ResourcePath("Zero_Vehicle_Bus_01.mat", "../../DemoResource/static/Zero_Vehicle_Bus_01.mat");
+	Add_Component<CMaterial>();
 
 	return S_OK;
 }
@@ -38,7 +33,7 @@ HRESULT CPlacedObject::Initialize_Prototype()
 HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 {
 #pragma region Model Type Check
-	STATIC_OBJECT_DESC* pObjDesc = static_cast<STATIC_OBJECT_DESC*>(pArg);
+	MAPTOOL_OBJECT_DESC* pObjDesc = static_cast<MAPTOOL_OBJECT_DESC*>(pArg);
 	
 	m_TagModelKey = pObjDesc->TagModelKey;
 	m_TagMaterialKey = pObjDesc->TagMaterialKey;
@@ -70,17 +65,12 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CMaterial>()->Link_Material("MapTool_Level", m_TagMaterialKey);
 	
-	// 임시
-	//Get_Component<CStaticModel>()->Link_Model("MapTool_Level", "Zero_Vehicle_Bus_01.model");
-	//Get_Component<CMaterial>()->Link_Material("MapTool_Level", "Zero_Vehicle_Bus_01.mat");
-
 	return S_OK;
 }
 
 void CPlacedObject::Awake()
 {
-	// (!!포인터 접근해서 값 변경) 만들어 지면 무조건 Inspector창에 띄움.
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+	__super::Awake();
 }
 
 void CPlacedObject::Priority_Update(_float dt)
@@ -93,6 +83,21 @@ void CPlacedObject::Update(_float dt)
 
 void CPlacedObject::Late_Update(_float dt)
 {
+}
+
+void CPlacedObject::Export_ObjectData(void* pDesc)
+{
+	MapData_Object* pObjectDesc = static_cast<MapData_Object*>(pDesc);
+
+	pObjectDesc->TagModelResourceKey = m_TagModelKey;
+	pObjectDesc->TagMaterialResourceKey = m_TagMaterialKey;
+	
+	_float4x4 matWorld = Get_Component<CTransform>()->Get_WorldMatrix();
+
+	pObjectDesc->vRight =	{ matWorld._11,matWorld._12, matWorld._13, matWorld._14 };
+	pObjectDesc->vUp =		{ matWorld._21,matWorld._22, matWorld._23, matWorld._24 };
+	pObjectDesc->vLook =	{ matWorld._31,matWorld._32, matWorld._33, matWorld._34 };
+	pObjectDesc->vPos =		{ matWorld._41,matWorld._42, matWorld._43, matWorld._44 };
 }
 
 void CPlacedObject::Render_GUI()

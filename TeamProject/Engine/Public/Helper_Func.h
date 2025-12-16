@@ -62,7 +62,8 @@ namespace Helper
 
 	template <typename T>
 	inline void SaveJson(T& Data, const string& filePath) {
-		json JsonData = Data;
+		//json JsonData = Data;
+		nlohmann::ordered_json JsonData = Data;
 		ofstream file(filePath);
 
 		if (file.is_open()) {

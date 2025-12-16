@@ -42,4 +42,14 @@ namespace HelperMT {
         };
     }
 
+    template <typename T>
+    inline void SaveJson_MapTool(T& Data, const string& filePath) {
+        nlohmann::ordered_json JsonData = Data;
+        ofstream file(filePath);
+
+        if (file.is_open()) {
+            file << JsonData.dump(2);
+            file.close();
+        }
+    };
 }

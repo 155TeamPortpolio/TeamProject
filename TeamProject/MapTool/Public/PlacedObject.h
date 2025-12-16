@@ -1,16 +1,10 @@
 #pragma once
-#include "GameObject.h"
+#include "MapToolObject.h"
 
 NS_BEGIN(MapTool)
 class CPlacedObject :
-    public CGameObject
+    public CMapToolObject
 {
-public:
-    typedef struct tagStaticObjectCreateDesc : public Engine::GAMEOBJECT_DESC {
-        string  TagModelKey = "";
-        string  TagMaterialKey = "";
-        _bool   isRayReceiver = {};
-    }STATIC_OBJECT_DESC;
 private:
     CPlacedObject();
     CPlacedObject(const CPlacedObject& rhs);
@@ -23,6 +17,9 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+    
+    virtual void Export_ObjectData(void* pDesc) override;
+
 
 public:
     void Render_GUI() override;

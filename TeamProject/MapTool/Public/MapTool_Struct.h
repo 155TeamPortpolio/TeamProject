@@ -15,12 +15,13 @@ namespace MapTool {
 
 	typedef struct tagMapObjectData {
 		std::string TagModelResourceKey = {};
+		std::string TagMaterialResourceKey = {};
 		std::array<_float, 4> vRight =	{1.f, 0.f, 0.f, 0.f};
 		std::array<_float, 4> vUp =		{ 0.f, 1.f, 0.f, 0.f };
 		std::array<_float, 4> vLook =	{ 0.f, 0.f, 1.f, 0.f };
 		std::array<_float, 4> vPos =	{ 0.f, 0.f, 0.f, 1.f };
 	}MapData_Object;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, TagModelResourceKey, vRight, vUp, vLook, vPos);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, TagModelResourceKey, TagMaterialResourceKey, vRight, vUp, vLook, vPos);
 
 	typedef struct tagMapDataDefaultDesc {
 		std::string TagLayer = {};
@@ -29,7 +30,7 @@ namespace MapTool {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Layer, TagLayer, Objects);
 
 	typedef struct tagMapDataHeader {
-		std::string	TagDataFormat = "MapTool.Data";
+		std::string	TagDataFormat = {};
 		_int		iVersion = 1;
 		std::vector<MapData_Layer> Layers;
 	}MapData_Header;
