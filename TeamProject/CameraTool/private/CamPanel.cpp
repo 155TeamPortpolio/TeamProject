@@ -46,34 +46,34 @@ namespace
     {
         ScopedCamToolStyle()
         {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 7.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.f, 8.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 16.f);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f, 8.f));
+            ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,  4.f);
+            ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize,  16.f);
 
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg,          ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ChildBg,           ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_Border,            ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
+            ImGui::PushStyleColor(ImGuiCol_Separator,         ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
 
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBg,           ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,    ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive,     ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+                                                              
+            ImGui::PushStyleColor(ImGuiCol_Button,            ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered,     ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+                                                              
+            ImGui::PushStyleColor(ImGuiCol_Header,            ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered,     ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
 
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_TableHeaderBg,     ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
             ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
+            ImGui::PushStyleColor(ImGuiCol_TableBorderLight,  ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
         }
 
         ~ScopedCamToolStyle()
@@ -85,6 +85,117 @@ namespace
         ScopedCamToolStyle(const ScopedCamToolStyle&) = delete;
         ScopedCamToolStyle& operator=(const ScopedCamToolStyle&) = delete;
     };
+    static const char* GetEaseLabel(CamEaseType v)
+    {
+        switch (v)
+        {
+        case CamEaseType::None:         return "None";
+
+        case CamEaseType::InOutSine:    return "InOutSine";
+        case CamEaseType::OutCubic:     return "OutCubic";
+        case CamEaseType::InOutCubic:   return "InOutCubic";
+        case CamEaseType::OutSine:      return "OutSine";
+        case CamEaseType::InOutQuad:    return "InOutQuad";
+
+        case CamEaseType::InSine:       return "InSine";
+        case CamEaseType::InCubic:      return "InCubic";
+        case CamEaseType::InQuad:       return "InQuad";
+        case CamEaseType::InCirc:       return "InCirc";
+
+        case CamEaseType::InOutCirc:    return "InOutCirc";
+        case CamEaseType::OutCirc:      return "OutCirc";
+        case CamEaseType::OutQuad:      return "OutQuad";
+
+        case CamEaseType::InQuart:      return "InQuart";
+        case CamEaseType::InQuint:      return "InQuint";
+        case CamEaseType::InOutQuart:   return "InOutQuart";
+        case CamEaseType::OutQuart:     return "OutQuart";
+        case CamEaseType::InOutQuint:   return "InOutQuint";
+        case CamEaseType::OutQuint:     return "OutQuint";
+
+        case CamEaseType::InOutExpo:    return "InOutExpo";
+        case CamEaseType::OutExpo:      return "OutExpo";
+        case CamEaseType::InExpo:       return "InExpo";
+
+        case CamEaseType::OutBack:      return "OutBack";
+        case CamEaseType::InOutBack:    return "InOutBack";
+        case CamEaseType::InBack:       return "InBack";
+
+        case CamEaseType::OutElastic:   return "OutElastic";
+        case CamEaseType::InOutElastic: return "InOutElastic";
+        case CamEaseType::InElastic:    return "InElastic";
+
+        case CamEaseType::OutBounce:    return "OutBounce";
+        case CamEaseType::InOutBounce:  return "InOutBounce";
+        case CamEaseType::InBounce:     return "InBounce";
+
+        default:                        return "Unknown";
+        }
+    }
+
+    static bool DrawEaseComboPopup(CamEaseType& ioValue, CamEaseType shownValue)
+    {
+        bool changed = false;
+
+        auto Pick = [&](CamEaseType v)
+            {
+                const bool selected = (shownValue == v);
+                if (ImGui::Selectable(GetEaseLabel(v), selected))
+                {
+                    ioValue = v;
+                    changed = true;
+                }
+                if (selected) ImGui::SetItemDefaultFocus();
+            };
+
+        Pick(CamEaseType::None);
+
+        ImGui::SeparatorText("A. Stable");
+        Pick(CamEaseType::InOutSine);
+        Pick(CamEaseType::OutCubic);
+        Pick(CamEaseType::InOutCubic);
+        Pick(CamEaseType::OutSine);
+        Pick(CamEaseType::InOutQuad);
+
+        ImGui::SeparatorText("B. Ease In");
+        Pick(CamEaseType::InSine);
+        Pick(CamEaseType::InCubic);
+        Pick(CamEaseType::InQuad);
+        Pick(CamEaseType::InCirc);
+
+        ImGui::SeparatorText("C. Settle / Stop");
+        Pick(CamEaseType::InOutCirc);
+        Pick(CamEaseType::OutCirc);
+        Pick(CamEaseType::OutQuad);
+
+        ImGui::SeparatorText("D. Strong");
+        Pick(CamEaseType::InQuart);
+        Pick(CamEaseType::InQuint);
+        Pick(CamEaseType::InOutQuart);
+        Pick(CamEaseType::OutQuart);
+        Pick(CamEaseType::InOutQuint);
+        Pick(CamEaseType::OutQuint);
+
+        ImGui::SeparatorText("E. Extreme");
+        Pick(CamEaseType::InOutExpo);
+        Pick(CamEaseType::OutExpo);
+        Pick(CamEaseType::InExpo);
+
+        ImGui::SeparatorText("F. Overshoot");
+        Pick(CamEaseType::OutBack);
+        Pick(CamEaseType::InOutBack);
+        Pick(CamEaseType::InBack);
+
+        ImGui::SeparatorText("G. Special");
+        Pick(CamEaseType::OutElastic);
+        Pick(CamEaseType::InOutElastic);
+        Pick(CamEaseType::InElastic);
+        Pick(CamEaseType::OutBounce);
+        Pick(CamEaseType::InOutBounce);
+        Pick(CamEaseType::InBounce);
+
+        return changed;
+    }
 }
 
 void CCamPanel::Init()
@@ -454,15 +565,6 @@ void CCamPanel::DrawCamSelector()
 
     bool changedAny = false;
 
-    auto GetEaseLabel = [](_uint v) -> const char*
-        {
-            const CamEaseType m = static_cast<CamEaseType>(v);
-            if (m == CamEaseType::None)      return "None";
-            if (m == CamEaseType::InOutSine) return "InOutSine";
-            if (m == CamEaseType::OutCubic)  return "OutCubic";
-            return "Unknown";
-        };
-
     ImGui::PushID("InterpInline");
 
     ImGui::AlignTextToFramePadding();
@@ -594,23 +696,10 @@ void CCamPanel::DrawCamSelector()
 
         ImGui::SetNextItemWidth(140.f);
 
-        if (ImGui::BeginCombo("##seg_ease", GetEaseLabel((_uint)shown)))
+        if (ImGui::BeginCombo("##seg_ease", GetEaseLabel(shown)))
         {
-            if (ImGui::Selectable("None", shown == CamEaseType::None))
-            {
-                target.sequence->segmentEase = CamEaseType::None;
+            if (DrawEaseComboPopup(target.sequence->segmentEase, shown))
                 changedAny = true;
-            }
-            if (ImGui::Selectable("InOutSine", shown == CamEaseType::InOutSine))
-            {
-                target.sequence->segmentEase = CamEaseType::InOutSine;
-                changedAny = true;
-            }
-            if (ImGui::Selectable("OutCubic", shown == CamEaseType::OutCubic))
-            {
-                target.sequence->segmentEase = CamEaseType::OutCubic;
-                changedAny = true;
-            }
 
             ImGui::EndCombo();
         }
@@ -1141,15 +1230,6 @@ void CCamPanel::DrawKeyframeList()
             return "Unknown";
         };
 
-    auto GetEaseLabel = [](_uint v) -> const char*
-        {
-            const CamEaseType m = static_cast<CamEaseType>(v);
-            if (m == CamEaseType::None)      return "None";
-            if (m == CamEaseType::InOutSine) return "InOutSine";
-            if (m == CamEaseType::OutCubic)  return "OutCubic";
-            return "Unknown";
-        };
-
     if (ImGui::BeginTable("KeyframeTable", 5, tableFlags, tableSize))
     {
         ImGui::TableSetupScrollFreeze(0, 1);
@@ -1349,20 +1429,10 @@ void CCamPanel::DrawKeyframeList()
                     if (!key.useCustomEase) ImGui::BeginDisabled();
 
                     ImGui::SetNextItemWidth(110.f);
-                    if (ImGui::BeginCombo("##ease", GetEaseLabel((_uint)shownEase)))
+                    if (ImGui::BeginCombo("##ease", GetEaseLabel(shownEase)))
                     {
-                        auto PickEase = [&](CamEaseType v)
-                            {
-                                if (ImGui::Selectable(GetEaseLabel((_uint)v), shownEase == v))
-                                {
-                                    key.outEase = v;
-                                    changedAny = true;
-                                }
-                            };
-
-                        PickEase(CamEaseType::None);
-                        PickEase(CamEaseType::InOutSine);
-                        PickEase(CamEaseType::OutCubic);
+                        if (DrawEaseComboPopup(key.outEase, shownEase))
+                            changedAny = true;
 
                         ImGui::EndCombo();
                     }
