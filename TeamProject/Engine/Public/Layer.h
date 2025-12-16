@@ -26,6 +26,9 @@ public:
 	void Set_RenderState(_bool render) { m_isRender = render; };
 	string Get_LayerTag() { return m_LayerTag; }
 
+public: 
+	void Clear_Layer();
+
 private:
 	vector<class CGameObject*>			m_GameObjects; /*순회용*/
 	unordered_map<_uint, _uint>				m_IndexByID; /*오브젝트 ID / 벡터 인덱스*/
