@@ -224,6 +224,7 @@ exit /b 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\AnimationClip.h" />
+    <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
     <ClInclude Include="..\Public\AudioDevice.h" />
     <ClInclude Include="..\Public\AudioSource.h" />
@@ -266,6 +267,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\public\Engine_Math.h" />
     <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
@@ -416,6 +418,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\private\Engine_Math.cpp" />
     <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />

@@ -195,7 +195,6 @@ void CDebugFreeCam::Priority_Update(_float dt)
 		transform->Translate(_vector4{ move.x, move.y, move.z, 0.f });
 }
 
-
 void CDebugFreeCam::Update(_float dt)
 {
 }
@@ -305,8 +304,8 @@ void CDebugFreeCam::Render_GUI()
 	{
 		ImGui::PushID("DebugFreeCam_RenderGUI");
 
-		ImGui::DragFloat(u8"이동 속도", &moveSpeed, 0.1f, 0.f, 5000.f);
-		ImGui::DragFloat(u8"마우스 감도", &sensitivity, 0.001f, 0.f, 5.f);
+		ImGui::DragFloat(u8"이동 속도",        &moveSpeed, 0.1f, 0.f, 5000.f);
+		ImGui::DragFloat(u8"마우스 감도",      &sensitivity, 0.001f, 0.f, 5.f);
 		ImGui::DragFloat(u8"회전 스무딩 속도", &rotSmoothSpeed, 0.1f, 0.f, 60.f);
 
 		ImGui::Separator();
@@ -315,16 +314,12 @@ void CDebugFreeCam::Render_GUI()
 		rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
 
 		if (ImGui::Button(u8"회전 목표 초기화", ImVec2(160.f, 0.f)))
-		{
 			rotDegTarget = _vector2{ 0.f, 0.f };
-		}
 
 		ImGui::SameLine();
 
 		if (ImGui::Button(u8"현재 회전 즉시 적용", ImVec2(160.f, 0.f)))
-		{
 			rotQuatCurrent = rotQuatTarget;
-		}
 
 		ImGui::PopID();
 	}
