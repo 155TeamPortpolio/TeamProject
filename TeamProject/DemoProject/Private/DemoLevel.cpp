@@ -73,8 +73,8 @@ HRESULT CDemoLevel::Awake()
 
 
 	Model = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoAnimModel" })
-		.Position({ 10, 0, 0 })
-		.Scale({ 1.f, 1.f, 1.f })
+		.Position({ 0, 5, 0 })
+		.Scale({ 20.f, 20.f, 20.f })
 		.Build("Demo_Model");
 
 	pObjMgr->Add_Object(Model, { "Demo_Level","Model_Layer" });
