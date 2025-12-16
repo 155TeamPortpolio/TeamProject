@@ -28,7 +28,7 @@ CAIBone* CAIBone::Create(const aiNode* _pAINode, _int _iParentIndex)
     return pBone;
 }
 
-void CAIBone::Save_File(ofstream& ofs)
+void CAIBone::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
     BONE_INFO_HEADER infoHeader = {};
     strcpy_s(infoHeader.BoneName, sizeof(infoHeader.BoneName), m_BoneName.data());
@@ -36,9 +36,7 @@ void CAIBone::Save_File(ofstream& ofs)
     _matrix SaveMatrix = XMLoadFloat4x4(&m_TransformationMatrix);
 
     if (m_iParentBoneIndex == -1) {
-        _matrix		PreTransformMatrix = XMMatrixIdentity();
-        PreTransformMatrix = XMMatrixRotationY(XMConvertToRadians(180));
-        SaveMatrix = PreTransformMatrix * SaveMatrix;
+        SaveMatrix = PreTransform * SaveMatrix;
     }
     XMStoreFloat4x4(&infoHeader.TransformationMatrix, SaveMatrix);
     infoHeader.ParentBoneIndex = { m_iParentBoneIndex };
