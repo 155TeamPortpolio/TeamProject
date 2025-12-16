@@ -50,6 +50,9 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
 
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "TileCell.png", TEXTURE_TYPE::DIFFUSE);
+
+	Get_Component<CTransform>()->Scale(_float3(100.f, 100.f, 100.f));
+
 	return S_OK;
 }
 
@@ -98,4 +101,6 @@ CGameObject* CGrid::Clone(INIT_DESC* pArg)
 void CGrid::Free()
 {
 	__super::Free();
+	Safe_Release(m_pDevice);
+	Safe_Release(m_pContext);
 }

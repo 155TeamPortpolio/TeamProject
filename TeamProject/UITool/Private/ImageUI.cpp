@@ -27,8 +27,10 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    if (CUITool_Level::Get_TextureKeysSize())
-        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, CUITool_Level::Get_TextureKeys()[m_iTextureKeyIndex]);
+
+    const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
+    if (strTextureKeys.size())
+        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex]);
     else
         MSG_BOX("Failed to Add_Texture : No Textures Loaded");
 
@@ -54,27 +56,26 @@ void CImageUI::Render_GUI()
     Render_GUI_Transform();
 
     ImGui::SeparatorText(u8"이미지");
-    const auto& TextureKeys = CUITool_Level::Get_TextureKeys();
-    if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, TextureKeys.data(), CUITool_Level::Get_TextureKeysSize()))
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, TextureKeys[m_iTextureKeyIndex]);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }
 
-json CImageUI::ToJson()
+void CImageUI::ToJson(json& data)
 {
-    json objData;
+    __super::ToJson(data);
      
-    objData["typeTag"] = "ImageUI";
-    objData["textureTag"] = CUITool_Level::Get_TextureKeys()[m_iTextureKeyIndex];
+    data["typeTag"] = "ImageUI";
 
-    ToJson_Common(objData);
-    
-    return objData;
+    data["textureTag"] = CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
 }
 
 void CImageUI::FromJson(const json& data)
 {
     m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());     // 앵커는 빌더에 넣기
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+
+    __super::FromJson(data);
 }
 
 CGameObject* CImageUI::Create()

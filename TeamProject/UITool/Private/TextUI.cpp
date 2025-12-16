@@ -30,10 +30,12 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    if (CUITool_Level::Get_FontKeysSize())
-        Get_Component<CTextSlot>()->Set_Font(CUITool_Level::Get_FontKeys()[m_iFontKeyIndex]);
+    const auto& strFontKeys = CUITool_Level::m_strFontKeys;
+    if (strFontKeys.size())
+        Get_Component<CTextSlot>()->Set_Font(strFontKeys[m_iFontKeyIndex]);
     else
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
+
     Get_Component<CTextSlot>()->Set_Text(L"텍스트 블록");
     Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
@@ -69,9 +71,9 @@ void CTextUI::Render_GUI()
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
     
     ImGui::SeparatorText(u8"폰트");
-    const auto& FontKeys = CUITool_Level::Get_FontKeys();
-    if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, FontKeys.data(), CUITool_Level::Get_FontKeysSize()))
-        Get_Component<CTextSlot>()->Set_Font(FontKeys[m_iFontKeyIndex]);
+    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
+    if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, szFontKeys.data(), szFontKeys.size()))
+        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
     
     if (ImGui::Button(u8"크기 +"))
     {
@@ -89,22 +91,19 @@ void CTextUI::Render_GUI()
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 }
 
-json CTextUI::ToJson()
+void CTextUI::ToJson(json& data)
 {
-    json objData;
+    __super::ToJson(data);
 
-    objData["typeTag"] = "TextUI";
-    objData["fontTag"] = CUITool_Level::Get_FontKeys()[m_iFontKeyIndex];
-    objData["text"] = m_szText;
-    objData["fontScale"] = m_fFontScale;
-    objData["fontColor"]["x"] = m_vFontColor.x;
-    objData["fontColor"]["y"] = m_vFontColor.y;
-    objData["fontColor"]["z"] = m_vFontColor.z;
-    objData["fontColor"]["w"] = m_vFontColor.w;
+    data["typeTag"] = "TextUI";
 
-    ToJson_Common(objData);
-
-    return objData;
+    data["fontTag"] = CUITool_Level::m_strFontKeys[m_iFontKeyIndex];
+    data["text"] = m_szText;
+    data["fontScale"] = m_fFontScale;
+    data["fontColor"]["x"] = m_vFontColor.x;
+    data["fontColor"]["y"] = m_vFontColor.y;
+    data["fontColor"]["z"] = m_vFontColor.z;
+    data["fontColor"]["w"] = m_vFontColor.w;
 }
 
 void CTextUI::FromJson(const json& data)
@@ -121,6 +120,8 @@ void CTextUI::FromJson(const json& data)
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+
+    __super::FromJson(data);
 }
 
 void CTextUI::Render_GUI_Layout()

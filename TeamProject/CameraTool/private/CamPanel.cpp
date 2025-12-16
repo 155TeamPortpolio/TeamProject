@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CamPanel.h"
 #include "Helper_Func.h"
+#include "Engine_Math.h"
 
 namespace
 {
@@ -46,34 +47,34 @@ namespace
     {
         ScopedCamToolStyle()
         {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+            ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
 
             ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 7.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.f, 8.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 16.f);
+            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));
+            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f, 8.f));
+            ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,  4.f);
+            ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize,  16.f);
 
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
+            ImGui::PushStyleColor(ImGuiCol_WindowBg,          ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ChildBg,           ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_Border,            ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
+            ImGui::PushStyleColor(ImGuiCol_Separator,         ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
 
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBg,           ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,    ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_FrameBgActive,     ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+                                                              
+            ImGui::PushStyleColor(ImGuiCol_Button,            ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered,     ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+                                                              
+            ImGui::PushStyleColor(ImGuiCol_Header,            ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered,     ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
 
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_TableHeaderBg,     ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
             ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
+            ImGui::PushStyleColor(ImGuiCol_TableBorderLight,  ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
         }
 
         ~ScopedCamToolStyle()
@@ -85,6 +86,213 @@ namespace
         ScopedCamToolStyle(const ScopedCamToolStyle&) = delete;
         ScopedCamToolStyle& operator=(const ScopedCamToolStyle&) = delete;
     };
+    static bool DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
+    {
+        bool changed = false;
+
+        auto Pick = [&](EaseType v)
+            {
+                const bool selected = (shownValue == v);
+                if (ImGui::Selectable(Math::GetEaseLabel(v), selected))
+                {
+                    ioValue = v;
+                    changed = true;
+                }
+                if (selected) ImGui::SetItemDefaultFocus();
+            };
+
+        Pick(EaseType::None);
+
+        ImGui::SeparatorText("A. Stable");
+        Pick(EaseType::InOutSine);
+        Pick(EaseType::OutCubic);
+        Pick(EaseType::InOutCubic);
+        Pick(EaseType::OutSine);
+        Pick(EaseType::InOutQuad);
+
+        ImGui::SeparatorText("B. Ease In");
+        Pick(EaseType::InSine);
+        Pick(EaseType::InCubic);
+        Pick(EaseType::InQuad);
+        Pick(EaseType::InCirc);
+
+        ImGui::SeparatorText("C. Settle / Stop");
+        Pick(EaseType::InOutCirc);
+        Pick(EaseType::OutCirc);
+        Pick(EaseType::OutQuad);
+
+        ImGui::SeparatorText("D. Strong");
+        Pick(EaseType::InQuart);
+        Pick(EaseType::InQuint);
+        Pick(EaseType::InOutQuart);
+        Pick(EaseType::OutQuart);
+        Pick(EaseType::InOutQuint);
+        Pick(EaseType::OutQuint);
+
+        ImGui::SeparatorText("E. Extreme");
+        Pick(EaseType::InOutExpo);
+        Pick(EaseType::OutExpo);
+        Pick(EaseType::InExpo);
+
+        ImGui::SeparatorText("F. Overshoot");
+        Pick(EaseType::OutBack);
+        Pick(EaseType::InOutBack);
+        Pick(EaseType::InBack);
+
+        ImGui::SeparatorText("G. Special");
+        Pick(EaseType::OutElastic);
+        Pick(EaseType::InOutElastic);
+        Pick(EaseType::InElastic);
+        Pick(EaseType::OutBounce);
+        Pick(EaseType::InOutBounce);
+        Pick(EaseType::InBounce);
+
+        return changed;
+    }
+    static float EvalEase(EaseType v, float u)
+    {
+        if (u < 0.f) u = 0.f;
+        if (u > 1.f) u = 1.f;
+
+        switch (v)
+        {
+        case EaseType::None:         return u;
+        case EaseType::InOutSine:    return Math::EaseInOutSine(u);
+        case EaseType::OutCubic:     return Math::EaseOutCubic(u);
+        case EaseType::InOutCubic:   return Math::EaseInOutCubic(u);
+        case EaseType::OutSine:      return Math::EaseOutSine(u);
+        case EaseType::InOutQuad:    return Math::EaseInOutQuad(u);
+
+        case EaseType::InSine:       return Math::EaseInSine(u);
+        case EaseType::InCubic:      return Math::EaseInCubic(u);
+        case EaseType::InQuad:       return Math::EaseInQuad(u);
+        case EaseType::InCirc:       return Math::EaseInCirc(u);
+
+        case EaseType::InOutCirc:    return Math::EaseInOutCirc(u);
+        case EaseType::OutCirc:      return Math::EaseOutCirc(u);
+        case EaseType::OutQuad:      return Math::EaseOutQuad(u);
+
+        case EaseType::InQuart:      return Math::EaseInQuart(u);
+        case EaseType::InQuint:      return Math::EaseInQuint(u);
+        case EaseType::InOutQuart:   return Math::EaseInOutQuart(u);
+        case EaseType::OutQuart:     return Math::EaseOutQuart(u);
+        case EaseType::InOutQuint:   return Math::EaseInOutQuint(u);
+        case EaseType::OutQuint:     return Math::EaseOutQuint(u);
+
+        case EaseType::InOutExpo:    return Math::EaseInOutExpo(u);
+        case EaseType::OutExpo:      return Math::EaseOutExpo(u);
+        case EaseType::InExpo:       return Math::EaseInExpo(u);
+
+        case EaseType::OutBack:      return Math::EaseOutBack(u);
+        case EaseType::InOutBack:    return Math::EaseInOutBack(u);
+        case EaseType::InBack:       return Math::EaseInBack(u);
+
+        case EaseType::OutElastic:   return Math::EaseOutElastic(u);
+        case EaseType::InOutElastic: return Math::EaseInOutElastic(u);
+        case EaseType::InElastic:    return Math::EaseInElastic(u);
+
+        case EaseType::OutBounce:    return Math::EaseOutBounce(u);
+        case EaseType::InOutBounce:  return Math::EaseInOutBounce(u);
+        case EaseType::InBounce:     return Math::EaseInBounce(u);
+        default:                        return u;
+        }
+    }
+
+    static void DrawEaseGraph(EaseType ease, ImVec2 size)
+    {
+        if (size.x <= 10.f) size.x = 360.f;
+        if (size.y <= 10.f) size.y = 180.f;
+
+        ImDrawList* dl = ImGui::GetWindowDrawList();
+        ImVec2 p0 = ImGui::GetCursorScreenPos();
+        ImVec2 p1(p0.x + size.x, p0.y + size.y);
+
+        ImGui::InvisibleButton("##ease_graph", size);
+
+        ImU32 colBg     = ImGui::GetColorU32(ImGuiCol_FrameBg);
+        ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
+        ImU32 colGrid   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+        ImU32 colLinear = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+        ImU32 colCurve  = ImGui::GetColorU32(ImGuiCol_Text);
+        ImU32 colWarn   = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+
+        dl->AddRectFilled(p0, p1, colBg, 6.f);
+        dl->AddRect(p0, p1, colBorder, 6.f);
+
+        const int samples = 160;
+        float minY = 1e9f;
+        float maxY = -1e9f;
+
+        for (int i = 0; i <= samples; ++i)
+        {
+            float u = (float)i / (float)samples;
+            float y = EvalEase(ease, u);
+            if (y < minY) minY = y;
+            if (y > maxY) maxY = y;
+        }
+
+        float lo = minY;
+        float hi = maxY;
+
+        if (lo > 0.f) lo = 0.f;
+        if (hi < 1.f) hi = 1.f;
+
+        float pad = (hi - lo) * 0.08f;
+        if (pad < 0.02f) pad = 0.02f;
+
+        lo -= pad;
+        hi += pad;
+
+        if (lo < -1.0f) lo = -1.0f;
+        if (hi > 2.0f) hi = 2.0f;
+
+        auto ToScreen = [&](float u, float y) -> ImVec2
+            {
+                float x01 = u;
+                float y01 = (y - lo) / (hi - lo);
+                if (y01 < 0.f) y01 = 0.f;
+                if (y01 > 1.f) y01 = 1.f;
+
+                float x = p0.x + x01 * size.x;
+                float ypix = p1.y - y01 * size.y;
+                return ImVec2(x, ypix);
+            };
+
+        const int gridN = 4;
+        for (int i = 1; i < gridN; ++i)
+        {
+            float t = (float)i / (float)gridN;
+            float x = p0.x + t * size.x;
+            float y = p0.y + t * size.y;
+
+            dl->AddLine(ImVec2(x, p0.y), ImVec2(x, p1.y), colGrid, 1.f);
+            dl->AddLine(ImVec2(p0.x, y), ImVec2(p1.x, y), colGrid, 1.f);
+        }
+
+        dl->AddLine(ToScreen(0.f, 0.f), ToScreen(1.f, 1.f), colLinear, 1.5f);
+
+        bool overshoot = (minY < 0.f) || (maxY > 1.f);
+
+        ImVec2 prev = ToScreen(0.f, EvalEase(ease, 0.f));
+        for (int i = 1; i <= samples; ++i)
+        {
+            float u = (float)i / (float)samples;
+            float y = EvalEase(ease, u);
+            ImVec2 cur = ToScreen(u, y);
+            dl->AddLine(prev, cur, overshoot ? colWarn : colCurve, 2.0f);
+            prev = cur;
+        }
+
+        ImVec2 labelPos(p0.x + 10.f, p0.y + 8.f);
+        dl->AddText(labelPos, ImGui::GetColorU32(ImGuiCol_Text), Math::GetEaseLabel(ease));
+
+        char rangeBuf[128];
+        sprintf_s(rangeBuf, "y range: %.2f .. %.2f", minY, maxY);
+        dl->AddText(ImVec2(labelPos.x, labelPos.y + 18.f), ImGui::GetColorU32(ImGuiCol_TextDisabled), rangeBuf);
+
+        if (overshoot)
+            dl->AddText(ImVec2(labelPos.x, labelPos.y + 36.f), colWarn, "Overshoot");
+    }
 }
 
 void CCamPanel::Init()
@@ -187,11 +395,18 @@ void CCamPanel::Render_GUI()
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
-    ImGuiWindowFlags flags = ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoTitleBar;
+
     ScopedCamToolStyle styleScope;
 
-    if (ImGui::Begin("Camera Tool", nullptr, flags))
+    if (ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags))
     {
+        DrawWindowHeader();
+
         DrawToolbar();
         ImGui::Separator();
 
@@ -454,15 +669,6 @@ void CCamPanel::DrawCamSelector()
 
     bool changedAny = false;
 
-    auto GetEaseLabel = [](_uint v) -> const char*
-        {
-            const CamEaseType m = static_cast<CamEaseType>(v);
-            if (m == CamEaseType::None)      return "None";
-            if (m == CamEaseType::InOutSine) return "InOutSine";
-            if (m == CamEaseType::OutCubic)  return "OutCubic";
-            return "Unknown";
-        };
-
     ImGui::PushID("InterpInline");
 
     ImGui::AlignTextToFramePadding();
@@ -590,27 +796,14 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("Ease");
     ImGui::SameLine();
     {
-        const CamEaseType shown = target.sequence->segmentEase;
+        const EaseType shown = target.sequence->segmentEase;
 
         ImGui::SetNextItemWidth(140.f);
 
-        if (ImGui::BeginCombo("##seg_ease", GetEaseLabel((_uint)shown)))
+        if (ImGui::BeginCombo("##seg_ease", Math::GetEaseLabel(shown)))
         {
-            if (ImGui::Selectable("None", shown == CamEaseType::None))
-            {
-                target.sequence->segmentEase = CamEaseType::None;
+            if (DrawEaseComboPopup(target.sequence->segmentEase, shown))
                 changedAny = true;
-            }
-            if (ImGui::Selectable("InOutSine", shown == CamEaseType::InOutSine))
-            {
-                target.sequence->segmentEase = CamEaseType::InOutSine;
-                changedAny = true;
-            }
-            if (ImGui::Selectable("OutCubic", shown == CamEaseType::OutCubic))
-            {
-                target.sequence->segmentEase = CamEaseType::OutCubic;
-                changedAny = true;
-            }
 
             ImGui::EndCombo();
         }
@@ -1141,15 +1334,6 @@ void CCamPanel::DrawKeyframeList()
             return "Unknown";
         };
 
-    auto GetEaseLabel = [](_uint v) -> const char*
-        {
-            const CamEaseType m = static_cast<CamEaseType>(v);
-            if (m == CamEaseType::None)      return "None";
-            if (m == CamEaseType::InOutSine) return "InOutSine";
-            if (m == CamEaseType::OutCubic)  return "OutCubic";
-            return "Unknown";
-        };
-
     if (ImGui::BeginTable("KeyframeTable", 5, tableFlags, tableSize))
     {
         ImGui::TableSetupScrollFreeze(0, 1);
@@ -1344,25 +1528,15 @@ void CCamPanel::DrawKeyframeList()
 
                     ImGui::SameLine();
 
-                    const CamEaseType shownEase = key.useCustomEase ? key.outEase : target.sequence->segmentEase;
+                    const EaseType shownEase = key.useCustomEase ? key.outEase : target.sequence->segmentEase;
 
                     if (!key.useCustomEase) ImGui::BeginDisabled();
 
                     ImGui::SetNextItemWidth(110.f);
-                    if (ImGui::BeginCombo("##ease", GetEaseLabel((_uint)shownEase)))
+                    if (ImGui::BeginCombo("##ease", Math::GetEaseLabel(shownEase)))
                     {
-                        auto PickEase = [&](CamEaseType v)
-                            {
-                                if (ImGui::Selectable(GetEaseLabel((_uint)v), shownEase == v))
-                                {
-                                    key.outEase = v;
-                                    changedAny = true;
-                                }
-                            };
-
-                        PickEase(CamEaseType::None);
-                        PickEase(CamEaseType::InOutSine);
-                        PickEase(CamEaseType::OutCubic);
+                        if (DrawEaseComboPopup(key.outEase, shownEase))
+                            changedAny = true;
 
                         ImGui::EndCombo();
                     }
@@ -2099,6 +2273,198 @@ void CCamPanel::DrawInterpSelector()
     ImGui::SameLine();
     ImGui::TextDisabled(u8"(Rot: Slerp)");
     ImGui::PopID();
+}
+
+void CCamPanel::DrawHelpPopup()
+{
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+
+    if (!ImGui::BeginPopupModal("CameraTool_Help", nullptr, flags))
+        return;
+
+    ImGui::SeparatorText(u8"Camera Tool Guide");
+
+    if (ImGui::BeginTabBar("##help_tabs"))
+    {
+        if (ImGui::BeginTabItem(u8"Quick Start"))
+        {
+            ImGui::TextDisabled(u8"가장 빠른 사용 흐름");
+            ImGui::Spacing();
+
+            ImGui::BulletText(u8"1) CAPTURE ON");
+            ImGui::Indent();
+            ImGui::TextUnformatted(u8"- DebugFreeCam으로 원하는 구도/위치로 이동");
+            ImGui::TextUnformatted(u8"- Key Editor의 Capture 버튼으로 선택 키프레임에 기록");
+            ImGui::Unindent();
+
+            ImGui::BulletText(u8"2) CAPTURE OFF");
+            ImGui::Indent();
+            ImGui::TextUnformatted(u8"- Play로 재생하며 보간/연출 확인");
+            ImGui::TextUnformatted(u8"- 타임라인 드래그로 구간별 문제를 빠르게 찾기");
+            ImGui::Unindent();
+
+            ImGui::BulletText(u8"3) 키 추가/이동");
+            ImGui::Indent();
+            ImGui::TextUnformatted(u8"- + Add : 키 추가 (기본은 마지막 키 복사)");
+            ImGui::TextUnformatted(u8"- Go(>) : 그 키 시간으로 커서 이동");
+            ImGui::TextUnformatted(u8"- 리스트 더블클릭 : 그 키로 점프");
+            ImGui::Unindent();
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextDisabled(u8"주의");
+            ImGui::BulletText(u8"키가 1개 이하이면 재생/보간이 '고정'처럼 보일 수 있어요.");
+            ImGui::BulletText(u8"Time을 바꿨는데 키가 사라진 것 같으면, 같은 시간대 덮어쓰기(merge) 가능성을 확인하세요.");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(u8"Keyframe"))
+        {
+            ImGui::TextDisabled(u8"키프레임 단위로 바뀌는 것들");
+            ImGui::Spacing();
+
+            ImGui::BulletText(u8"Custom Interp");
+            ImGui::Indent();
+            ImGui::TextUnformatted(u8"- 그 키에서 다음 키까지 구간의 Pos/Rot/FOV 보간을 개별 지정");
+            ImGui::TextUnformatted(u8"- 체크 시 기본값(Sequence 설정)을 복사해 시작하므로 안전");
+            ImGui::Unindent();
+
+            ImGui::BulletText(u8"Custom Ease");
+            ImGui::Indent();
+            ImGui::TextUnformatted(u8"- 그 키(출발 키)에서 다음 키까지 구간의 Easing만 개별 지정");
+            ImGui::TextUnformatted(u8"- 즉, outEase는 '출발 키의 구간 설정'이에요");
+            ImGui::Unindent();
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextDisabled(u8"Time 변경");
+            ImGui::BulletText(u8"같은 시간대 키가 있으면 덮어쓰기 경고가 뜹니다.");
+            ImGui::BulletText(u8"덮어쓰면 '가까운 시간 키들'이 merge 정책에 의해 정리될 수 있어요.");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(u8"Easing"))
+        {
+            static EaseType selected = EaseType::InOutSine;
+
+            ImGui::TextDisabled(u8"개념");
+            ImGui::BulletText(u8"Ease는 시간 u(0~1)을 다시 매핑해서 같은 구간에서도 체감 속도를 바꿔요.");
+            ImGui::BulletText(u8"Sequence.segmentEase : 전체 구간 기본 Ease");
+            ImGui::BulletText(u8"Key.useCustomEase + Key.outEase : 특정 구간만 Override");
+
+            ImGui::Spacing();
+            ImGui::Separator();
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::TextUnformatted(u8"Preview");
+            ImGui::SameLine();
+
+            ImGui::SetNextItemWidth(220.f);
+            if (ImGui::BeginCombo("##ease_preview_combo", Math::GetEaseLabel(selected)))
+            {
+                for (_uint v = (_uint)EaseType::None; v <= (_uint)EaseType::InBounce; ++v)
+                {
+                    EaseType e = (EaseType)v;
+                    bool isSel = (e == selected);
+                    if (ImGui::Selectable(Math::GetEaseLabel(e), isSel))
+                        selected = e;
+                    if (isSel) ImGui::SetItemDefaultFocus();
+                }
+                ImGui::EndCombo();
+            }
+
+            ImGui::SameLine();
+            ImGui::TextDisabled(u8"(대각선 = Linear 기준)");
+
+            ImGui::Spacing();
+
+            ImVec2 graphSize(520.f, 220.f);
+            DrawEaseGraph(selected, graphSize);
+
+            ImGui::Spacing();
+            ImGui::Separator();
+
+            ImGui::TextDisabled(u8"빠른 선택 규칙");
+            ImGui::BulletText(u8"일반 이동/팔로우: InOutSine");
+            ImGui::BulletText(u8"빠르게 접근 후 자연스런 감속: OutCubic / OutQuint");
+            ImGui::BulletText(u8"컷 진입을 숨기고 싶다: InCubic / InQuart");
+            ImGui::BulletText(u8"착 붙는 정착감: OutCirc / InOutCirc");
+            ImGui::BulletText(u8"그래프에 Overshoot가 뜨면(Back/Elastic/Bounce 계열) 카메라에서는 멀미 주의");
+
+            ImGui::EndTabItem();
+        }
+
+
+        if (ImGui::BeginTabItem(u8"OrbitArc"))
+        {
+            ImGui::TextDisabled(u8"OrbitArc는 직선 대신 원호로 이동하는 모드");
+            ImGui::BulletText(u8"Center: 원의 중심");
+            ImGui::BulletText(u8"Axis: 회전 축(정규화 필요)");
+            ImGui::BulletText(u8"AngleMode: Shortest/Longest/Force180");
+            ImGui::BulletText(u8"CW: 회전 방향 강제");
+            ImGui::BulletText(u8"RadiusMode: Start/End/Blend");
+
+            ImGui::Spacing();
+            ImGui::Separator();
+            ImGui::TextDisabled(u8"Auto");
+            ImGui::BulletText(u8"Auto 180: 두 키 사이를 기준으로 중심/축을 잡고 180도 원호로 구성");
+            ImGui::BulletText(u8"Auto Center/Axis: 중심 또는 축만 빠르게 세팅");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(u8"Shortcuts"))
+        {
+            ImGui::TextDisabled(u8"자주 쓰는 조작");
+            ImGui::BulletText(u8"타임라인 드래그: 커서 이동");
+            ImGui::BulletText(u8"타임라인 Hover: 시간/가까운 키 정보 Tooltip");
+            ImGui::BulletText(u8"키 리스트 더블클릭: 해당 키 시간으로 이동");
+            ImGui::BulletText(u8"Go(>): 해당 키로 점프");
+
+            ImGui::EndTabItem();
+        }
+
+        if (ImGui::BeginTabItem(u8"Troubleshooting"))
+        {
+            ImGui::TextDisabled(u8"자주 나오는 문제");
+            ImGui::BulletText(u8"Play를 눌렀는데 안 움직임: CAPTURE가 켜져 있으면 Player Apply가 꺼져 있을 수 있어요.");
+            ImGui::BulletText(u8"키가 갑자기 사라짐: 같은 시간대 merge(덮어쓰기)로 정리됐을 수 있어요.");
+            ImGui::BulletText(u8"Easing이 선택돼도 표시가 안 바뀜: Ease 라벨/콤보 목록이 30개를 다 지원하는지 확인하세요.");
+
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+
+    ImGui::Separator();
+
+    if (ImGui::Button("Close", ImVec2(120.f, 0.f)))
+        ImGui::CloseCurrentPopup();
+
+    ImGui::EndPopup();
+}
+
+void CCamPanel::DrawWindowHeader()
+{
+    float y = ImGui::GetCursorPosY();
+    if (y > 2.f) ImGui::SetCursorPosY(y - 2.f);
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("Camera Tool");
+    ImGui::SameLine(0.f, 10.f);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.f, 4.f));
+    bool open = ImGui::SmallButton("Help");
+    ImGui::PopStyleVar();
+
+    if (open) ImGui::OpenPopup("CameraTool_Help");
+    if (ImGui::IsItemHovered()) ImGui::SetTooltip(u8"카메라툴 사용법 / Easing 가이드 / 단축키");
+
+    DrawHelpPopup();
+    ImGui::Separator();
 }
 
 _bool CCamPanel::DrawConstraintBar()

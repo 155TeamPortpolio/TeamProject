@@ -16,12 +16,11 @@ _vector3 CCamPosOrbitArcEvaluator::Evaluate(_float time) const
     assert(orbitDesc);
 
     const size_t n = keyframes->size();
-
     if (n == 1) return (*keyframes)[0].pos;
 
     const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
     const _uint segIdx = segment.segmentIdx;
-    const float u = segment.normalizedTime;
+    float u = segment.normalizedTime;
 
     if (segIdx + 1 >= n) return (*keyframes)[n - 1].pos;
 
@@ -34,23 +33,27 @@ _vector3 CCamPosOrbitArcEvaluator::Evaluate(_float time) const
     if (axis.LengthSquared() <= 1e-10f) return p0 + (p1 - p0) * u;
     axis.Normalize();
 
+    if (u < 0.f) u = 0.f;
+    if (u > 1.f) u = 1.f;
+
     const _vector3 c = orbitDesc->center;
 
     const _vector3 v0 = p0 - c;
     const _vector3 v1 = p1 - c;
 
-    const float r0 = v0.Length();
-    const float r1 = v1.Length();
+    const float h0 = v0.Dot(axis);
+    const float h1 = v1.Dot(axis);
+
+    const _vector3 v0p = v0 - axis * h0;
+    const _vector3 v1p = v1 - axis * h1;
+
+    const float r0 = v0p.Length();
+    const float r1 = v1p.Length();
 
     if (r0 <= 1e-6f || r1 <= 1e-6f) return p0 + (p1 - p0) * u;
 
-    _vector3 d0 = ProjectToPlane(v0, axis);
-    _vector3 d1 = ProjectToPlane(v1, axis);
-
-    if (d0.LengthSquared() <= 1e-10f || d1.LengthSquared() <= 1e-10f) return p0 + (p1 - p0) * u;
-
-    d0.Normalize();
-    d1.Normalize();
+    _vector3 d0 = v0p; d0.Normalize();
+    _vector3 d1 = v1p; d1.Normalize();
 
     float angle = 0.f;
 
@@ -67,16 +70,26 @@ _vector3 CCamPosOrbitArcEvaluator::Evaluate(_float time) const
             if (angle >= 0.f) angle -= DirectX::XM_2PI;
             else angle += DirectX::XM_2PI;
         }
+
+        if (orbitDesc->clockwise)
+        {
+            if (angle > 0.f) angle -= DirectX::XM_2PI;
+        }
+        else
+        {
+            if (angle < 0.f) angle += DirectX::XM_2PI;
+        }
     }
 
     const _vector3 dir = RotateAroundAxis(d0, axis, angle * u);
 
     float r = r0;
-
     if (orbitDesc->radiusMode == CamOrbitArcRadiusMode::FixedEndRadius) r = r1;
     else if (orbitDesc->radiusMode == CamOrbitArcRadiusMode::BlendRadius) r = r0 + (r1 - r0) * u;
 
-    return c + dir * r;
+    const float h = h0 + (h1 - h0) * u;
+
+    return c + dir * r + axis * h;
 }
 
 _vector3 CCamPosOrbitArcEvaluator::NormalizeSafe(const _vector3& v, float eps)
@@ -108,7 +121,7 @@ _vector3 CCamPosOrbitArcEvaluator::RotateAroundAxis(const _vector3& v, const _ve
 
 float CCamPosOrbitArcEvaluator::SignedAngleAroundAxis(const _vector3& fromUnit, const _vector3& toUnit, const _vector3& unitAxis)
 {
-    const float cosv = std::clamp(fromUnit.Dot(toUnit), -1.f, 1.f);
+    const float cosv = clamp(fromUnit.Dot(toUnit), -1.f, 1.f);
     const _vector3 cr = fromUnit.Cross(toUnit);
     const float sinv = unitAxis.Dot(cr);
     return atan2f(sinv, cosv);

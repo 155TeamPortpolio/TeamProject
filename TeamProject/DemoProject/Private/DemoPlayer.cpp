@@ -19,6 +19,7 @@ HRESULT CDemoPlayer::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	//Add_Component<CStaticModel>();
 	return S_OK;
 }
 
@@ -33,7 +34,7 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-	
+
 }
 
 void CDemoPlayer::Priority_Update(_float dt)
@@ -69,14 +70,17 @@ void CDemoPlayer::Late_Update(_float dt)
 
 void CDemoPlayer::OnCollisionEnter()
 {
+	OutputDebugStringA("CCT Collision Enter!\n");
 }
 
 void CDemoPlayer::OnCollisionStay()
 {
+	OutputDebugStringA("CCT Collision Stay!\n");
 }
 
 void CDemoPlayer::OnCollisionExit()
 {
+	OutputDebugStringA("CCT Collision Exit!\n");
 }
 
 void CDemoPlayer::Render_GUI()
