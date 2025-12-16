@@ -39,8 +39,8 @@ public:
     void            Set_Size(const _float3& vSize);
     void            Set_Rotation(const _float3& vRotation);
     void            Set_Trigger(_bool bTrigger);
-    void            Set_ContactOffset(_float fOffset);
-    void            Set_RestOffset(_float fOffset);
+    void            Set_ContactOffset(_float fOffset);  // 충돌계산시작 버퍼 구간 : 크면 허공충돌, 작으면 터널링/겹침
+    void            Set_RestOffset(_float fOffset);     // 정지했을때 서로 유지하려는 거리 : 양수일때 바깥충돌, 음수일때 안쪽충돌
 
 private:
     void            Update_LocalPose();
