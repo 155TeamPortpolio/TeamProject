@@ -38,6 +38,7 @@
     <ClInclude Include="..\Public\DemoLevel.h" />
     <ClInclude Include="..\Public\DemoModel.h" />
     <ClInclude Include="..\Public\DemoPlayer.h" />
+    <ClInclude Include="..\public\DemoShaderAnimModel.h" />
     <ClInclude Include="..\Public\DemoShaderModel.h" />
     <ClInclude Include="..\Public\DemoUI.h" />
     <ClInclude Include="..\Public\Demo_Defines.h" />
@@ -104,6 +105,7 @@
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
     <ClCompile Include="..\Private\DemoPlayer.cpp" />
+    <ClCompile Include="..\private\DemoShaderAnimModel.cpp" />
     <ClCompile Include="..\Private\DemoShaderModel.cpp" />
     <ClCompile Include="..\Private\DemoUI.cpp" />
     <ClCompile Include="..\Private\InstanceDemo.cpp" />
@@ -124,6 +126,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="..\..\DemoResource\Shader\VTX_PlaneGrid.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
   </ItemGroup>

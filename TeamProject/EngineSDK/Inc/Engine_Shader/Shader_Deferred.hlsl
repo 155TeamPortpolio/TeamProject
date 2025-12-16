@@ -94,11 +94,15 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+
+    float NdotL = saturate(dot(worldNormal, lightDir));
+    
+    float toonSteps = 2.0f;
+    float diffuseStep = floor(NdotL * toonSteps) / toonSteps;
     
     float3 PBR = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.0f);
-    //추후 light intensity 변수로 수정 예정
-   
+    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+    
     Out.vLight = float4(PBR, 1.f);
     
     return Out;
@@ -136,7 +140,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
     g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
-    //추후 light intensity 변수로 수정 예정
    
     Out.vLight = float4(PBR, 1.f);
     
