@@ -37,6 +37,15 @@
     <Filter Include="02. Object\EffectContainer_Edit\EffectNode\ParticleNode">
       <UniqueIdentifier>{14853119-7764-4e03-9155-0e747b7a92fa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\ToolGrid">
+      <UniqueIdentifier>{ff41e5bd-1f6f-459b-b664-f2125fd2a16a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Shader">
+      <UniqueIdentifier>{c44fbadb-0d72-4e4f-92aa-1823199eaa89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\MeshNode">
+      <UniqueIdentifier>{7d25f85e-bf2d-454f-8c76-5978ff6c0f8a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -120,6 +129,12 @@
     <ClInclude Include="..\Public\ParticleNode_Edit.h">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ToolGrid.h">
+      <Filter>02. Object\ToolGrid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MeshNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -185,6 +200,12 @@
     <ClCompile Include="..\Private\ParticleNode_Edit.cpp">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\ParticleNode</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ToolGrid.cpp">
+      <Filter>02. Object\ToolGrid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MeshNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="EffectTool.ico">
@@ -198,5 +219,10 @@
     <ResourceCompile Include="EffectTool.rc">
       <Filter>98. Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <Filter>97. Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

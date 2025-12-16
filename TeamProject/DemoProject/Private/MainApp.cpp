@@ -37,7 +37,7 @@ HRESULT CMainApp::Initialize()
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
-
+	
 	return S_OK;
 }
 

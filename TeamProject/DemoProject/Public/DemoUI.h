@@ -19,6 +19,8 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    void Listen(const ExampleEvt& evt);
+public:
     void Render_GUI() override;
 
 public:

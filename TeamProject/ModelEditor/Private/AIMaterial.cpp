@@ -96,6 +96,28 @@ void CAIMaterial::Render_GUI()
 
 	float childWidth = ImGui::GetContentRegionAvail().x;//->이건 넓이 설정
 	ImGui::SetNextItemWidth(childWidth);
+
+	if (ImGui::Button("Link_Shader"))
+	{
+		string filePath = Helper::OpenFile_Dialogue();
+		if (!filePath.empty())
+		{
+			filesystem::path baseDir =
+				filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
+			_bool inBin = !Helper::IsUnderDirectory(filesystem::path(filePath), baseDir);
+			if (inBin)
+			{
+				MSG_BOX("Invalid path: must be under ../Bin/ShaderFiles/");
+			}
+			else
+			{
+				string file = filesystem::path(filePath).filename().string();
+				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, filePath);
+				Link_Shader(G_GlobalLevelKey, file);
+			}
+		}
+	}
+
 	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
 		for (int i = 0; i < passes.size(); ++i) {
 			bool isSelected = (i == m_currentPassIndex);
@@ -118,6 +140,7 @@ void CAIMaterial::Render_GUI()
 	if (MaterialTabOpened)
 		Render_MaterialAdd();
 
+
 	__super::Render_GUI();
 }
 
@@ -129,7 +152,26 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 
 	float childWidth = ImGui::GetContentRegionAvail().x;//->이건 넓이 설정
 	ImGui::SetNextItemWidth(childWidth);
-
+	if (ImGui::Button("Link_Shader"))
+	{
+		string filePath = Helper::OpenFile_Dialogue();
+		if (!filePath.empty())
+		{
+			filesystem::path baseDir =
+				filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
+			_bool inBin = !Helper::IsUnderDirectory(filesystem::path(filePath), baseDir);
+			if (inBin)
+			{
+				MSG_BOX("Invalid path: must be under ../Bin/ShaderFiles/");
+			}
+			else
+			{
+				string file = filesystem::path(filePath).filename().string();
+				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, filePath);
+				Link_Shader(G_GlobalLevelKey, file);
+			}
+		}
+	}
 	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
 		for (int i = 0; i < passes.size(); ++i) {
 			bool isSelected = (i == m_currentPassIndex);
@@ -162,17 +204,52 @@ void CAIMaterial::LinkShader(const string& shader)
 
 void CAIMaterial::Render_MaterialAdd()
 {
-	_uint iTextureType = textureTypes[m_currentTextureTypeIndex];
-	string strTextureType = ConvertToConstant(static_cast<TEXTURE_TYPE>(iTextureType));
+	ImGui::Begin("Add_Texture", nullptr, 0);
 
-	ImGui::Begin("Add_Texture", 0, 0);
-	if (ImGui::BeginCombo(string("##textureTypes").c_str(), strTextureType.c_str())) {
-		for (int i = 0; i < textureTypes.size(); ++i) {
+	// fallback 타입 목록 (프로젝트 enum에 맞춰 채워)
+	static const TEXTURE_TYPE kFallbackTypes[] = {
+		TEXTURE_TYPE::DIFFUSE,
+	};
+
+	// 콤보에 사용할 "타입 소스" 결정
+	const bool useFallback = textureTypes.empty();
+
+	int count = useFallback ? (int)(sizeof(kFallbackTypes) / sizeof(kFallbackTypes[0]))
+		: (int)textureTypes.size();
+
+	if (count <= 0)
+	{
+		ImGui::TextUnformatted("No selectable texture types (fallback list is empty).");
+		ImGui::End();
+		return;
+	}
+
+	// 인덱스 가드
+	if (m_currentTextureTypeIndex < 0 || m_currentTextureTypeIndex >= count)
+		m_currentTextureTypeIndex = 0;
+
+	// 현재 선택 타입 얻기
+	TEXTURE_TYPE selectedType = TEXTURE_TYPE::DIFFUSE;
+	if (useFallback)
+		selectedType = kFallbackTypes[m_currentTextureTypeIndex];
+	else
+		selectedType = static_cast<TEXTURE_TYPE>(textureTypes[m_currentTextureTypeIndex]);
+
+	std::string strTextureType = ConvertToConstant(selectedType);
+
+	// 콤보
+	if (ImGui::BeginCombo("##textureTypes", strTextureType.c_str()))
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			TEXTURE_TYPE t = useFallback
+				? kFallbackTypes[i]
+				: static_cast<TEXTURE_TYPE>(textureTypes[i]);
+
 			bool isSelected = (i == m_currentTextureTypeIndex);
 
-			if (ImGui::Selectable(ConvertToConstant(static_cast<TEXTURE_TYPE>(textureTypes[i])).c_str(), isSelected)) {
+			if (ImGui::Selectable(ConvertToConstant(t).c_str(), isSelected))
 				m_currentTextureTypeIndex = i;
-			}
 
 			if (isSelected)
 				ImGui::SetItemDefaultFocus();
@@ -180,19 +257,38 @@ void CAIMaterial::Render_MaterialAdd()
 		ImGui::EndCombo();
 	}
 
-	if (ImGui::Button("Find_Texture")) {
-		string path = Helper::OpenFile_Dialogue();
-		if (path.empty()) return;
-		string fileName = filesystem::path(path).filename().string();
-		CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, path);
-		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, fileName);
-		Safe_AddRef(pTexture);
-		m_Textures[static_cast<TEXTURE_TYPE>(textureTypes[m_currentTextureTypeIndex])].push_back(pTexture);
-	}
+	// 텍스처 찾기
+	if (ImGui::Button("Find_Texture"))
+	{
+		std::string path = Helper::OpenFile_Dialogue();
+		if (!path.empty())
+		{
+			std::string fileName = std::filesystem::path(path).filename().string();
 
+			auto* rm = CGameInstance::GetInstance()->Get_ResourceMgr();
+			rm->Add_ResourcePath(fileName, path);
+
+			CTexture* pTexture = rm->Load_Texture(G_GlobalLevelKey, fileName);
+			if (!pTexture)
+			{
+				ImGui::TextUnformatted("Failed to load texture.");
+			}
+			else
+			{
+				Safe_AddRef(pTexture);
+				m_Textures[selectedType].push_back(pTexture);
+
+				// 선택: textureTypes가 비어있으면 이번에 선택한 타입을 등록해두고 싶다면
+				// (다음부터는 fallback 말고 실제 리스트로 운영)
+				if (textureTypes.empty())
+					textureTypes.push_back((_uint)selectedType);
+			}
+		}
+	}
 
 	ImGui::End();
 }
+
 
 void CAIMaterial::Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type)
 {
@@ -220,6 +316,14 @@ CAIMaterial* CAIMaterial::Create(const aiMaterial* pAIMaterial, const string& fi
 	if (FAILED(instance->Initialize(pAIMaterial, fileDirectory))) {
 		Safe_Release(instance);
 	}
+	return instance;
+}
+
+CAIMaterial* CAIMaterial::Create(const string& name)
+{
+	CAIMaterial* instance = new CAIMaterial();
+	instance->m_MaterialKey = name;
+	instance->m_passConstant = "Opaque";
 	return instance;
 }
 

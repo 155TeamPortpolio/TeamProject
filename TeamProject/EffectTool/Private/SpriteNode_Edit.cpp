@@ -48,6 +48,8 @@ HRESULT CSpriteNode_Edit::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_Point.hlsl");
 
+	m_InstanceName = "SpriteNode";
+
 	return S_OK;
 }
 

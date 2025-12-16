@@ -43,7 +43,7 @@ HRESULT CUI_Object::Initialize(INIT_DESC* pArg)
         m_vScale = uiDesc->Scale;
         m_vSize = uiDesc->Size;
         m_fRadian = uiDesc->fRadian;
-
+        m_eAnchor = uiDesc->eAnchor;
         Update_UITransform();
      }
     return S_OK;
@@ -153,7 +153,11 @@ void CUI_Object::Render_GUI()
     ImGui::InputFloat2("Scale", (float*)&m_vScale);
     ImGui::InputFloat2("AnchorOffset(px)", (float*)&m_vAnchorOffset);
 
-    ImGui::SliderFloat2("Pivot(0~1)", (float*)&m_vPivot, 0.f, 1.f);
+    _float2 tmpPivot = m_vPivot;
+    if (ImGui::SliderFloat2("Pivot(0~1)", (float*)&tmpPivot, 0.f, 1.f))
+        Set_Pivot(tmpPivot);
+
+    ImGui::InputFloat2("LeftTop", (float*)&m_vLeftTop);
     ImGui::SliderAngle("Radian", &m_fRadian, -180.f, 180.f);
 
     ImGui::SeparatorText("Anchor");
@@ -204,17 +208,54 @@ _float2 CUI_Object::Get_RectTopLeft_Screen()
              m_vScreenOffset.y - m_vPivot.y * size.y };
 }
 
+void CUI_Object::Set_Pivot(_float2 newPivot)
+{
+    _float2 sizePx = { m_vSize.x * m_vScale.x, m_vSize.y * m_vScale.y };
+
+    // centerPos 고정되도록 anchorOffset 보정
+    m_vAnchorOffset.x += (newPivot.x - m_vPivot.x) * sizePx.x;
+    m_vAnchorOffset.y += (newPivot.y - m_vPivot.y) * sizePx.y;
+
+    m_vPivot = newPivot;
+}
+
 void CUI_Object::Update_UITransform()
 {
     _float2 sizePx = { m_vSize.x * m_vScale.x, m_vSize.y * m_vScale.y };
+
     m_pTransform->Scale({ sizePx.x, sizePx.y, 1.f });
     m_pTransform->Rotate({ 0.f, 0.f, m_fRadian });
 
-    // 1) 기준 Rect(부모가 있으면 부모, 없으면 스크린)
+    _float2 anchorPoint = Calc_AnchorPoint();
+
+    // pivotPos (내 pivot이 붙는 화면 좌표)
+    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x,
+                        anchorPoint.y + m_vAnchorOffset.y };
+
+    // transform 원점이 center라고 가정한 centerPos
+    _float2 centerPos = {
+        m_vScreenOffset.x + (0.5f - m_vPivot.x) * sizePx.x,
+        m_vScreenOffset.y + (0.5f - m_vPivot.y) * sizePx.y
+    };
+
+    m_pTransform->Set_Pos({
+        centerPos.x - m_WinSize.x * 0.5f,
+        m_WinSize.y * 0.5f - centerPos.y,
+        0.f
+        });
+
+    // 필요하면 캐시
+     m_vLeftTop = { m_vScreenOffset.x - m_vPivot.x * sizePx.x,
+                   m_vScreenOffset.y - m_vPivot.y * sizePx.y };
+}
+
+
+_float2 CUI_Object::Calc_AnchorPoint() 
+{
     _float2 rectPos = { 0.f, 0.f };
     _float2 rectSize = m_WinSize;
 
-    if (auto pChild = Get_Component<CChild>())
+    if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
     {
         if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
         {
@@ -223,34 +264,18 @@ void CUI_Object::Update_UITransform()
         }
     }
 
-    // 2) 부모 Rect에서 앵커 지점 계산
-    const _uint f = static_cast<_uint>(m_eAnchor);
+    const _uint flag = static_cast<_uint>(m_eAnchor);
     _float2 anchorPoint = rectPos;
 
-    if (f & static_cast<_uint>(ANCHOR::Left))        anchorPoint.x = rectPos.x;
-    else if (f & static_cast<_uint>(ANCHOR::Right))  anchorPoint.x = rectPos.x + rectSize.x;
-    else                                             anchorPoint.x = rectPos.x + rectSize.x * 0.5f;
+    if (flag & static_cast<_uint>(ANCHOR::Left))        anchorPoint.x = rectPos.x;
+    else if (flag & static_cast<_uint>(ANCHOR::Right))  anchorPoint.x = rectPos.x + rectSize.x;
+    else                                                anchorPoint.x = rectPos.x + rectSize.x * 0.5f;
 
-    if (f & static_cast<_uint>(ANCHOR::Top))         anchorPoint.y = rectPos.y;
-    else if (f & static_cast<_uint>(ANCHOR::Bottom)) anchorPoint.y = rectPos.y + rectSize.y;
-    else                                             anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
+    if (flag & static_cast<_uint>(ANCHOR::Top))         anchorPoint.y = rectPos.y;
+    else if (flag & static_cast<_uint>(ANCHOR::Bottom)) anchorPoint.y = rectPos.y + rectSize.y;
+    else                                                anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
 
-    // 3) 내 pivot이 붙을 스크린 좌표 = anchorPoint + local offset
-    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x,
-                        anchorPoint.y + m_vAnchorOffset.y };
-
-    // 4) pivot(0~1) 반영해서 트랜스폼 중심 위치 계산
-    _float2 centerPos = {
-        m_vScreenOffset.x + (0.5f - m_vPivot.x) * sizePx.x,
-        m_vScreenOffset.y + (0.5f - m_vPivot.y) * sizePx.y
-    };
-
-    // 5) 스크린(좌상단 원점) -> 화면중심 원점 + Y반전
-    m_pTransform->Set_Pos({
-        centerPos.x - m_WinSize.x * 0.5f,
-        m_WinSize.y * 0.5f - centerPos.y,
-        0.f
-        });
+    return anchorPoint;
 }
 
 

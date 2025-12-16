@@ -351,7 +351,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext)
 		SHADER_PARAM param = {};
 		param.iSize = sizeof(_float4x4);
 		param.typeName = "float4x4";
-		param.pData = packet.pWorldMatrix;
+		param.pData = &packet.WorldMatrix;
 		pCurShader->Bind_Value("g_WorldMatrix", param);
 
 		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
@@ -651,4 +651,85 @@ void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext)
 	}
 	m_InstancePackets.clear();
 }
+#pragma endregion
+
+
+#pragma region NONLIGHT_PASS
+
+void NonLightPass::Execute(ID3D11DeviceContext* pContext)
+{
+	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
+	/*같은 셰이더, 같은 머티리얼, 같은 모델끼리 정렬 */
+	sort(m_Packets.begin(), m_Packets.end(),
+		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
+			return a.GetKey() < b.GetKey();
+		});
+
+	/*패킷이 비어 있으면 리턴*/
+	if (m_Packets.empty())
+		return;
+
+	/*상수 버퍼 및 SRV 세팅*/
+	pPipeLine->Begin_ObjectBuffer(pContext);
+	pPipeLine->Begin_SkinningBuffer(pContext);
+
+	for (auto& packet : m_Packets)
+	{
+		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+			continue;
+
+		//여기서 인덱스 추가 저장해줌
+		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		_uint SkinningOffset = 0;
+		if (packet.bSkinning) {
+			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+			else
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+		}
+
+		packet.TransformIndex = TransformIndex;
+		packet.SkinningOffset = SkinningOffset;
+
+		m_VisiblePackets.push_back(packet);
+	}
+
+	pPipeLine->End_ObjectBuffer(pContext);
+	pPipeLine->End_SkinningBuffer(pContext);
+
+	/*드로우콜 시작*/
+	for (auto& packet : m_VisiblePackets)
+	{
+		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex);
+		}
+
+		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
+		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
+
+		if (packet.bSkinning) {
+			SHADER_PARAM SkinningBoneParam{ &packet.SkinningOffset , "uint",sizeof(UINT) };
+			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
+		}
+
+		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
+		packet.pModel->Draw(pContext, packet.DrawIndex);
+	}
+
+	m_Packets.clear();
+	m_VisiblePackets.clear();
+}
+
+
+void NonLightPass::Submit(OPAQUE_PACKET packet)
+{
+	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
+	m_Packets.push_back(packet);
+}
+
 #pragma endregion

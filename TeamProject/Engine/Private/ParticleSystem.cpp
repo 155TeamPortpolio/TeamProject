@@ -5,6 +5,18 @@
 #include "ResourceMgr.h"
 #include "Helper_Func.h"
 
+#include "Material.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
+
+/*Module*/
+#include "IParticleModule.h"
+#include "LifeTimeVelocity.h"
+#include "LifeTimeSize.h"
+#include "LifeTimeColor.h"
+#include "TextureSheetAnimation.h"
+#include "Noise.h"
+
 CParticleSystem::CParticleSystem()
 {
 }
@@ -20,6 +32,24 @@ HRESULT CParticleSystem::Initialize_Prototype()
 
 HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 {
+	m_pLifeTimeVelocity = CLifeTimeVelocity::Create();
+	m_pLifeTimeSize = CLifeTimeSize::Create();
+	m_pLifeTimeColor = CLifeTimeColor::Create();
+	m_pTextureSheetAnimation = CTextureSheetAnimation::Create();
+	m_pNoise = CNoise::Create();
+
+	m_Modules.push_back(m_pLifeTimeVelocity);
+	m_Modules.push_back(m_pLifeTimeSize);
+	m_Modules.push_back(m_pLifeTimeColor);
+	m_Modules.push_back(m_pTextureSheetAnimation);
+	m_Modules.push_back(m_pNoise);
+
+	Safe_AddRef(m_pLifeTimeVelocity);
+	Safe_AddRef(m_pLifeTimeSize);
+	Safe_AddRef(m_pLifeTimeColor);
+	Safe_AddRef(m_pTextureSheetAnimation);
+	Safe_AddRef(m_pNoise);
+
 	return S_OK;
 }
 
@@ -95,16 +125,85 @@ MINMAX_BOX CParticleSystem::Get_MeshBoundingBox(_uint index)
 
 void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 {
-	m_fSpawnPerSec = 4.f;
+	m_Particles.clear();
+	m_DeadParticleIndices.clear();
 
-	m_Particles.resize(30);
-	m_DeadParticleIndices.reserve(30);
+	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
+	m_IsLoop = particleDesc.isLoop;
+	m_iBurstCount = particleDesc.iBurstCount;
+	m_fSpawnPerSec = particleDesc.fSpawnPerSec;
+	m_fSpawnAcc = 0.f;
+	m_iSpawnParticleCount = 0;
+	m_iMaxSpawnParticleCount = particleDesc.iMaxSpawnParticleCount;
+
+	m_vStartSpeed = particleDesc.vStartSpeed;
+	m_vStartLifeTime = particleDesc.vStartLifeTime;
+
+	m_vStartSize = particleDesc.vStartSize;
+	m_vSpawnAreaMin = particleDesc.vSpawnAreaMin;
+	m_vSpawnAreaMax = particleDesc.vSpawnAreaMax;
+
+	m_UseGravity = particleDesc.useGravity;
+	m_fGravityScale = particleDesc.fGravityScale;
+
+	/*Module Params*/
+
+	/*Life Time Velocity*/
+	{
+		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
+		Desc.fDampScale = particleDesc.fDampScale;
+		m_pLifeTimeVelocity->SetParams(&Desc);
+	}
+
+	/*Life Time Size*/
+	{
+		CLifeTimeSize::LIFE_TIME_SIZE_DESC Desc{};
+		Desc.vStartScale = particleDesc.vStartScale;
+		Desc.vEndScale = particleDesc.vEndScale;
+		m_pLifeTimeSize->SetParams(&Desc);
+	}
+
+	/*Life Time Color*/
+	{
+		CLifeTimeColor::LIFE_TIME_COLOR_DESC Desc{};
+		Desc.vStartColor = particleDesc.vStartColor;
+		Desc.vEndColor = particleDesc.vEndColor;
+		m_pLifeTimeColor->SetParams(&Desc);
+	}
+
+	/*Texture Sheet Animation*/
+	{
+		CTextureSheetAnimation::TEXTURE_SHEET_ANIMATION_DESC Desc{};
+		Desc.isParticleAnimated = particleDesc.isParticleAnimated;
+		Desc.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
+		Desc.iCol = particleDesc.iCol;
+		Desc.iRow = particleDesc.iRow;
+		Desc.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
+		m_pTextureSheetAnimation->SetParams(&Desc);
+
+		m_iTextureCol = Desc.iCol;
+		m_iTextureRow = Desc.iRow;
+
+		auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		customInstance->Set_Param("Col", { &m_iTextureCol,"uint",sizeof(_uint) });
+		customInstance->Set_Param("Row", { &m_iTextureRow,"uint",sizeof(_uint) });
+	}
+
+	/*Noise*/
+	{
+		CNoise::NOISE_DESC Desc{};
+		Desc.vStrength = particleDesc.vStrength;
+		Desc.vFrequency = particleDesc.vFrequency;
+		Desc.vScrollSpeed = particleDesc.vScrollSpeed;
+		m_pNoise->SetParams(&Desc);
+	}
+
+	m_Particles.resize(m_iMaxSpawnParticleCount);
+	m_DeadParticleIndices.reserve(m_iMaxSpawnParticleCount);
 
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 		m_DeadParticleIndices.push_back(i);
 
-	m_VelocityMin = _float3(0.f, 5.f, 0.f);
-	m_VelocityMax = _float3(0.f, 10.f, 0.f);
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -127,15 +226,12 @@ void CParticleSystem::Render_GUI()
 
 void CParticleSystem::SpawnParticles(_float dt)
 {
-	m_fSpawnAcc += m_fSpawnPerSec * dt;
-	_uint spawnCount = static_cast<_uint>(m_fSpawnAcc);
-
-	if (spawnCount)
+	if (m_iBurstCount > 0) /*Use Burst*/
 	{
-		m_fSpawnAcc -= spawnCount;
-		m_iSpawnParticleCount += spawnCount;
+		_uint iBurstCount = m_iBurstCount;
+		m_iBurstCount = 0;
 
-		for (_uint i = 0; i < spawnCount; ++i)
+		for (_uint i = 0; i < iBurstCount; ++i)
 		{
 			if (m_DeadParticleIndices.empty())
 				break;
@@ -146,11 +242,35 @@ void CParticleSystem::SpawnParticles(_float dt)
 			SetUpParticle(particle);
 		}
 	}
+	else
+	{
+		if (!m_IsLoop && m_iSpawnParticleCount >= m_iMaxSpawnParticleCount)
+			return;
+
+		m_fSpawnAcc += m_fSpawnPerSec * dt;
+		_uint iSpawnCount = static_cast<_uint>(m_fSpawnAcc);
+
+		if (iSpawnCount > 0)
+		{
+			m_fSpawnAcc -= static_cast<_float>(iSpawnCount);
+			m_iSpawnParticleCount += iSpawnCount;
+
+			for (_uint i = 0; i < iSpawnCount; ++i)
+			{
+				if (m_DeadParticleIndices.empty())
+					break;
+
+				auto& particle = m_Particles[m_DeadParticleIndices.back()];
+				m_DeadParticleIndices.pop_back();
+
+				SetUpParticle(particle);
+			}
+		}
+	}
 }
 
 void CParticleSystem::UpdateParticles(_float dt)
 {
-	_uint index{};
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 	{
 		auto& particle = m_Particles[i];
@@ -165,9 +285,19 @@ void CParticleSystem::UpdateParticles(_float dt)
 			m_DeadParticleIndices.push_back(i);
 		}
 
-		_vector3 currPosition = particle.vPosition;
-		_vector3 nextPosition = currPosition + particle.vVelocity * dt;
+		for (const auto& module : m_Modules)
+			module->Update(particle, dt);
 
+		_vector3 currPosition = particle.vPosition;
+		_vector3 nextPosition;
+		if (m_UseGravity)
+		{
+			_vector3 velocity = particle.vVelocity;
+			velocity.y -= m_fGravityScale * 10.f;
+			particle.vVelocity = velocity;
+		}
+		
+		nextPosition = currPosition + particle.vVelocity * dt;
 		particle.vPosition = nextPosition;
 	}
 }
@@ -175,20 +305,47 @@ void CParticleSystem::UpdateParticles(_float dt)
 void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 {
 	particle.isAlive = true;
+
+	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
+	{
+		_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
+		_vector3 vAreaMin = vWorldPos + m_vSpawnAreaMin;
+		_vector3 vAreaMax = vWorldPos + m_vSpawnAreaMax;
+
+		particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
+		particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
+		particle.vPosition.z = Helper::Get_Random_Float(vAreaMin.z, vAreaMax.z);
+
+		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
+		_vector3 vDir = particle.vPosition - vWorldPos;
+		vDir.Normalize();
+
+		particle.vVelocity = vDir * fSpeed;
+	}
+	else
+	{
+		particle.vPosition.x = Helper::Get_Random_Float(m_vSpawnAreaMin.x, m_vSpawnAreaMax.x);
+		particle.vPosition.y = Helper::Get_Random_Float(m_vSpawnAreaMin.y, m_vSpawnAreaMax.y);
+		particle.vPosition.z = Helper::Get_Random_Float(m_vSpawnAreaMin.z, m_vSpawnAreaMax.z);
+
+		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
+		_vector3 vDir = particle.vPosition - _vector3(0.f, 0.f, 0.f);
+		vDir.Normalize();
 	
-	particle.vPosition.x = Helper::Get_Random_Float(m_SpawnAreaMin.x, m_SpawnAreaMax.x);
-	particle.vPosition.y = Helper::Get_Random_Float(m_SpawnAreaMin.y, m_SpawnAreaMax.y);
-	particle.vPosition.z = Helper::Get_Random_Float(m_SpawnAreaMin.z, m_SpawnAreaMax.z);
-
-	particle.vVelocity.x = Helper::Get_Random_Float(m_VelocityMin.x, m_VelocityMax.x);
-	particle.vVelocity.y = Helper::Get_Random_Float(m_VelocityMin.y, m_VelocityMax.y);
-	particle.vVelocity.z = Helper::Get_Random_Float(m_VelocityMin.z, m_VelocityMax.z);
-
-	particle.vSize.x = Helper::Get_Random_Float(2.f, 2.f);
-	particle.vSize.y = Helper::Get_Random_Float(2.f, 2.f);
+		particle.vVelocity = vDir * fSpeed;
+	}
 
 	particle.fLifeTime = 0.f;
-	particle.fMaxLifeTime = 2.f;
+	particle.fMaxLifeTime = Helper::Get_Random_Float(m_vStartLifeTime.x, m_vStartLifeTime.y);
+
+	particle.vSize = m_vStartSize;
+	particle.vStartSize = particle.vSize;
+
+	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
+	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
+
+	if (m_pTextureSheetAnimation)
+		m_pTextureSheetAnimation->SetUpParticle(particle);
 }
 
 void CParticleSystem::BuildInstanceData()
@@ -205,8 +362,8 @@ void CParticleSystem::BuildInstanceData()
 		_vector4 translate = _vector4(particle.vPosition.x, particle.vPosition.y, particle.vPosition.z, 1.f);
 		_vector3 velocity = particle.vVelocity;
 		_vector2 lifeTime(particle.fLifeTime, particle.fMaxLifeTime);
-		_vector4 right(1.f, 0.f, 0.f, 0.f);
-		_vector4 up(0.f, 1.f, 0.f, 0.f);
+		_vector4 right = _vector4(1.f, 0.f, 0.f, 0.f) * particle.vSize.x;
+		_vector4 up = _vector4(0.f, 1.f, 0.f, 0.f) * particle.vSize.y;
 		_vector4 look(0.f, 0.f, 1.f, 0.f);
 
 		data.vRight = right;
@@ -214,7 +371,9 @@ void CParticleSystem::BuildInstanceData()
 		data.vLook = look;
 		data.vTraslate = translate;
 		data.vVelocity = velocity;
+		data.vColor = particle.vColor;
 		data.vLifeTime = lifeTime;
+		data.iFrameIndex = particle.iFrameIndex;
 
 		m_InstanceDatas.push_back(data);
 	}
@@ -242,4 +401,13 @@ void CParticleSystem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pInstancePoint);
+
+	for (auto& module : m_Modules)
+		Safe_Release(module);
+
+	Safe_Release(m_pLifeTimeVelocity);
+	Safe_Release(m_pLifeTimeSize);
+	Safe_Release(m_pLifeTimeColor);
+	Safe_Release(m_pTextureSheetAnimation);
+	Safe_Release(m_pNoise);
 }

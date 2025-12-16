@@ -104,13 +104,15 @@ namespace Engine {
 		_float4 vRight{}, vUp{}, vLook{};
 		_float4 vTraslate{};
 		_float3 vVelocity{};
+		_float4 vColor{};
 		_float2 vLifeTime{};
+		_uint iFrameIndex{};
 	}VTX_INSTANCE_POINT;
 
 	typedef struct ENGINE_DLL tagVertexInstancePointElement
 	{
 		static constexpr string_view Key = "VTX_INSTANCE_POINT_ELEMENT";
-		static constexpr unsigned int iElementCount = { 7 };
+		static constexpr unsigned int iElementCount = { 9 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
@@ -119,7 +121,9 @@ namespace Engine {
 			{"WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			{"WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32B32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-			{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT,1,76, D3D11_INPUT_PER_INSTANCE_DATA, 1}
+			{"TEXCOORD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 76, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT,1,92, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+			{"TEXCOORD", 3, DXGI_FORMAT_R32_UINT, 1, 100, D3D11_INPUT_PER_INSTANCE_DATA, 1}
 		};
 	}VTX_INSTANCE_POINT_ELEMENT;
 };

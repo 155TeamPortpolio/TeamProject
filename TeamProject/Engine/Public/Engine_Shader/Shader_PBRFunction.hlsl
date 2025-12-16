@@ -1,5 +1,5 @@
-#ifndef __SHADER_FUNCTION_HLSL__
-#define __SHADER_FUNCTION_HLSL__
+#ifndef __SHADER_PBRFUNCTION_HLSL__
+#define __SHADER_PBRFUNCTION_HLSL__
 
 // material
 // 표면 거칠기 표현 (roughness가 낮으면 날카로운 반사, 높으면 넓은 반사)
@@ -91,7 +91,7 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity)
     float3 L = normalize(light);
     float3 H = normalize(V + L);
     
-    float NdotL = dot(N, L);
+    float NdotL = max(dot(N, L), 0.0);
     
     float NdotV = max(dot(N, V), 0.001);
     float VdotH = max(dot(V, H), 0.001);
@@ -101,7 +101,7 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity)
     float G = GeometrySmith(N, V, L, roughness);
     float3 F = FresnelSchlick(VdotH, F0);
     
-    float3 numerator = D * G * F;
+    float3 numerator = D * F * G;
     float denominator = max(4.f * NdotV * NdotL, 0.001);
     float3 specular = numerator / denominator;
     
@@ -126,12 +126,11 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity, float shadow
 float3 CalculatePointLight(float3 albedo, float3 normal, float metalic, float roughness, float ambientocclusion, float3 worldPos,
 float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 lightposition, float lightrange, float shadowFactor)
 {
-    float3 lightdir = lightposition - worldPos;
-    float distance = length(lightdir);
+    float3 lightdir = normalize(lightposition - worldPos);
+    float distance = length(lightposition - worldPos);
     lightdir = lightdir / distance;
     
     float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
-    
     float rangeFactor = max(0.0, 1.0 - (distance / lightrange));
     attenuation *= rangeFactor * rangeFactor;
     

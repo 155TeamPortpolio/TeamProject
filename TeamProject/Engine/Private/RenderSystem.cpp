@@ -40,6 +40,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pInstancePass = InstancePass::Create(this);
 	m_pBlendedPass = BlendedPass::Create(this);
 	m_pParticlePass = ParticlePass::Create(this);
+	m_pNonLightPass = NonLightPass::Create(this);
 	m_pUIPass = UIPass::Create(this);
 
 #ifdef _DEBUG
@@ -72,6 +73,8 @@ HRESULT CRenderSystem::Render()
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
+
+	m_pNonLightPass->Execute(m_pContext);
 	/*Debug Rendering*/
 
 #ifdef _DEBUG
@@ -158,9 +161,9 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
-	SHADER_PARAM ShadeParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Shade", ShadeParam);
-	m_pShader->Bind_Value("g_ShadeTexture", ShadeParam);
+	SHADER_PARAM LightParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Light", LightParam);
+	m_pShader->Bind_Value("g_LightTexture", LightParam);
 
 	SHADER_PARAM ShadowParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Shadow", ShadowParam);
@@ -269,17 +272,14 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc MetalDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(MetalDesc);	
 
-	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.1f, 0.1f, 0.1f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.2f, 0.2f, 0.2f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AmbiDesc);
 
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 	m_pTargetManager->Create_Target(ShadowDesc);
 
-	RenderTargetDesc ShadeDesc = { "Target_Shade" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(ShadeDesc);
-
-	RenderTargetDesc SpecularDesc = { "Target_Specular" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(SpecularDesc);
+	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(LightDesc);
 
 
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
@@ -292,9 +292,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
 		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Shade")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Specular")))
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
 		return E_FAIL;
@@ -386,9 +384,9 @@ HRESULT CRenderSystem::Get_InputLayout(CModel* pModel, CShader* pShader, _uint D
 	if (!pModel || !pShader || !ppInputLayout)
 		return E_FAIL;
 
-	/*¸Þ½¬¸¦ »ý¼ºÇÒ ‹š¸¶´Ù ·¹ÀÌ¾Æ¿ôÀ» ¸¸µå´Â°Ô¾Æ´Ñ, ¹öÅØ½º±¸Á¶, ¼ÎÀÌ´õ ±¸Á¶¸¦ ÀÌ¸§À¸·Î ¾ÆÀÌµðÈ­ ½ÃÄÑ¼­ °°Àº°Å¸é ±×³É µé°í ÀÖ´Â°É ¾²´Â°Å*/
+	/*ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾Æ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Â°Ô¾Æ´ï¿½, ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ìµï¿½È­ ï¿½ï¿½ï¿½Ñ¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ ï¿½Ö´Â°ï¿½ ï¿½ï¿½ï¿½Â°ï¿½*/
 
-	/*¸ðµ¨ µ¥ÀÌÅÍ ÀÌ¸§ + ¼ÎÀÌ´õ ÀÌ¸§*/
+	/*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ + ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½Ì¸ï¿½*/
 	string LayOutID = string(pModel->Get_ElementKey(DrawIndex)) + pShader->Get_Key();
 
 	auto iter = m_InputLayouts.find(LayOutID);
@@ -528,6 +526,7 @@ void CRenderSystem::Free()
 	Safe_Release(m_pShadowPass);
 	Safe_Release(m_pBlendedPass);
 	Safe_Release(m_pParticlePass);
+	Safe_Release(m_pNonLightPass);
 	Safe_Release(m_pTargetManager);
 
 	for (auto& pair : m_InputLayouts)

@@ -30,6 +30,7 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 
 	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
 	pParticle->Link_Model(G_GlobalLevelKey, "Engine_Default_InstancePoint");
+	pParticle->Initialize(nullptr);
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();
@@ -43,6 +44,7 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
+	m_InstanceName = "ParticleNode";
 	return S_OK;
 }
 
@@ -128,5 +130,94 @@ void CParticleNode_Edit::AddTextures()
 
 void CParticleNode_Edit::SetUp_ParticleEffect()
 {
+	_bool isDirty = false;
+
 	ImGui::SeparatorText("ParticleEffect Setting");
+
+	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
+	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
+	isDirty |= ImGui::Checkbox("Use Gravity", &m_UseGravity);
+	isDirty |= ImGui::DragFloat("Gravity Scale", &m_fGravityScale);
+	isDirty |= ImGui::DragInt("Burst Count", reinterpret_cast<_int*>(&m_iBurstCount));
+	isDirty |= ImGui::DragFloat("Spawn Per Sec", &m_fSpawnPerSec);
+	isDirty |= ImGui::DragInt("Max Particle", reinterpret_cast<_int*>(&m_iMaxSpawnParticleCount));
+
+	isDirty |= ImGui::DragFloat2("Start Speed Min,Max", &m_vStartSpeed.x);
+	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
+	isDirty |= ImGui::DragFloat2("Start Size", &m_vStartSize.x);
+
+	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
+	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
+
+	ImGui::SeparatorText("Life Time Velocity");
+	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
+
+	ImGui::SeparatorText("Life Time Size");
+	isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
+	isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
+
+	ImGui::SeparatorText("Life Time Color");
+	_float startColor[4] = { m_vStartColor.x,m_vStartColor.y,m_vStartColor.z,m_vStartColor.w };
+	_float endColor[4] = { m_vEndColor.x,m_vEndColor.y,m_vEndColor.z,m_vEndColor.w };
+
+	if (ImGui::ColorEdit4("Start Color", startColor))
+	{
+		m_vStartColor = _float4(startColor[0], startColor[1], startColor[2], startColor[3]);
+		isDirty = true;
+	}
+	if (ImGui::ColorEdit4("End Color", endColor))
+	{
+		m_vEndColor = _float4(endColor[0], endColor[1], endColor[2], endColor[3]);
+		isDirty = true;
+	}
+
+	ImGui::SeparatorText("Texture Sheet Animation");
+	isDirty |= ImGui::Checkbox("Is Random Frame Index", &m_IsRandomFrameIndex);
+	isDirty |= ImGui::Checkbox("Is Particle Animated", &m_IsParticleAnimated);
+	isDirty |= ImGui::DragInt("Texture Col", reinterpret_cast<_int*>(&m_iCol));
+	isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
+	isDirty |= ImGui::DragInt("Max FrameIndex", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+
+	ImGui::SeparatorText("Noise");
+	isDirty |= ImGui::DragFloat3("Strength", &m_vStrength.x);
+	isDirty |= ImGui::DragFloat3("Frequency", &m_vFrequency.x);
+	isDirty |= ImGui::DragFloat3("Scroll Speed", &m_vScrollSpeed.x);
+
+	if (isDirty)
+	{
+		PARTICLE_NODE node{};
+
+		node.isWorld = m_IsWorld;
+		node.isLoop = m_IsLoop;
+		node.iBurstCount = m_iBurstCount;
+		node.fSpawnPerSec = m_fSpawnPerSec;
+		node.iMaxSpawnParticleCount = m_iMaxSpawnParticleCount;
+		node.vStartSpeed = m_vStartSpeed;
+		node.vStartLifeTime = m_vStartLifeTime;
+		node.vStartSize = m_vStartSize;
+		node.vSpawnAreaMin = m_vSpawnAreaMin;
+		node.vSpawnAreaMax = m_vSpawnAreaMax;
+		node.useGravity = m_UseGravity;
+		node.fGravityScale = m_fGravityScale;
+
+		node.fDampScale = m_fDampScale;
+
+		node.vStartScale = m_vStartScale;
+		node.vEndScale = m_vEndScale;
+		
+		node.vStartColor = m_vStartColor;
+		node.vEndColor = m_vEndColor;
+
+		node.isRandomFrameIndex = m_IsRandomFrameIndex;
+		node.isParticleAnimated = m_IsParticleAnimated;
+		node.iCol = m_iCol;
+		node.iRow = m_iRow;
+		node.iMaxFrameIndex = m_iMaxFrameIndex;
+
+		node.vStrength = m_vStrength;
+		node.vFrequency = m_vFrequency;
+		node.vScrollSpeed = m_vScrollSpeed;
+
+		Get_Component<CParticleSystem>()->SetParticleParams(node);
+	}
 }

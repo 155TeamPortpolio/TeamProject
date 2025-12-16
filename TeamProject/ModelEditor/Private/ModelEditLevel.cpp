@@ -30,11 +30,11 @@ HRESULT CModelEditLevel::Awake()
 
 	CGameObject* Camera = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditCamera"})
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
-		.Position({ 0,0,-3 })
-		.Build("Main_Camera");
+		.Position({ 0.f, 0.f, -5.f })
+		.Build("Default_Camera");
 
 	CGameObject* EditModel = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditModel"})
-		.Position({ 0,0,0 })
+		.Position({ 0.f,0.f,0.f })
 		.Build("Edit_Model");
 
 	pObjMgr->Add_Object(EditModel, { "ModelEdit_Level","Model_Layer"});

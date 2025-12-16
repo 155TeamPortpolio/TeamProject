@@ -38,5 +38,15 @@ namespace Helper
 	//랜덤 함수
 	ENGINE_DLL _int Get_Random_Int(_int min, _int max);
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
+
+	/*해당 디렉토리에 있는지*/
+	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
+	
 };
+
+namespace Math
+{
+	//Float 보간 함수
+	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
+}
 

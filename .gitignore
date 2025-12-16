@@ -416,3 +416,11 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# Resource/Resources 폴더는 전부 무시
+**/Resource/
+**/Resources/
+
+# DemoResource는 예외로 추적 (어디에 있든)
+!**/DemoResource/
+!**/DemoResource/**

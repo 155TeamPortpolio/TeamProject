@@ -248,6 +248,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\CamUtil.h" />
     <ClInclude Include="..\public\CamSequencePlayer.h" />
     <ClInclude Include="..\Public\Channel.h" />
+    <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
@@ -258,6 +259,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\Public\EventListner.h" />
+    <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\Noise.h" />
+    <ClInclude Include="..\Public\LifeTimeSize.h" />
+    <ClInclude Include="..\Public\LifeTimeVelocity.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Enum.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
@@ -284,6 +291,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IAudioService.h" />
     <ClInclude Include="..\Public\ICameraService.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\ICollidable.h" />
     <ClInclude Include="..\Public\ICollisionService.h" />
     <ClInclude Include="..\Public\IFontService.h" />
     <ClInclude Include="..\Public\IGUIService.h" />
@@ -292,6 +300,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\InputMgr.h" />
     <ClInclude Include="..\Public\InspectorPanel.h" />
     <ClInclude Include="..\Public\InstanceModel.h" />
+    <ClInclude Include="..\Public\IParticleModule.h" />
+    <ClInclude Include="..\Public\ObjectPool.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
@@ -333,6 +343,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
+    <ClInclude Include="..\Public\SizeBySpeed.h" />
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
@@ -343,6 +354,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
+    <ClInclude Include="..\Public\TextureSheetAnimation.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Transform.h" />
@@ -378,6 +390,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\CamUtil.cpp" />
     <ClCompile Include="..\private\CamSequencePlayer.cpp" />
     <ClCompile Include="..\Private\Channel.cpp" />
+    <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
@@ -388,6 +401,12 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\Private\EventListner.cpp" />
+    <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\Private\LifeTimeColor.cpp" />
+    <ClCompile Include="..\Private\Noise.cpp" />
+    <ClCompile Include="..\Private\LifeTimeSize.cpp" />
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp" />
     <ClCompile Include="..\Private\Engine_Defines.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -405,6 +424,8 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\InputMgr.cpp" />
     <ClCompile Include="..\Private\InspectorPanel.cpp" />
     <ClCompile Include="..\Private\InstanceModel.cpp" />
+    <ClCompile Include="..\Private\IParticleModule.cpp" />
+    <ClCompile Include="..\Private\ObjectPool.cpp" />
     <ClCompile Include="..\Private\ParticleSystem.cpp" />
     <ClCompile Include="..\Private\Layer.cpp" />
     <ClCompile Include="..\Private\Level.cpp" />
@@ -437,6 +458,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
+    <ClCompile Include="..\Private\SizeBySpeed.cpp" />
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
@@ -447,6 +469,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
@@ -500,12 +523,16 @@ exit /b 0</Command>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Mesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_NorTex.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />

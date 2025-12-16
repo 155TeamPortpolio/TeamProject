@@ -402,6 +402,42 @@
     <ClInclude Include="..\Public\Camera_Struct.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IParticleModule.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeVelocity.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeSize.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LifeTimeColor.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ICollidable.h">
+      <Filter>01. Utility\10. CollisionSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SizeBySpeed.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextureSheetAnimation.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Noise.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventSystem.h">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventListner.h">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ObjectPool.h">
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -743,6 +779,39 @@
     <Filter Include="01. Utility\00. GameInstance">
       <UniqueIdentifier>{2f279431-fa67-4a43-815e-17b0bfb3b1de}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module">
+      <UniqueIdentifier>{1a55a423-0fd4-49ce-bcf8-3cb536e5eb55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize">
+      <UniqueIdentifier>{884c908a-109b-4b5d-899e-3e4f0d202e73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor">
+      <UniqueIdentifier>{9d5d527f-ee2e-4350-8b91-02a2982315e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity">
+      <UniqueIdentifier>{545bafb2-52d4-49e8-9f74-48ac949bbf8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\21. CharacterController">
+      <UniqueIdentifier>{369a82b3-3454-4a97-8d03-a03f4504558b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed">
+      <UniqueIdentifier>{d07abcf0-1a87-42f1-be09-1ad3a1367a04}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation">
+      <UniqueIdentifier>{d9d9b9c5-06a5-472e-82ed-ea5146acbce5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise">
+      <UniqueIdentifier>{c4cb2f4a-729b-4e11-95c5-1e2e066d08b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\13. EventBus">
+      <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22.EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool">
+      <UniqueIdentifier>{da326297-d441-4077-b559-c58fd1c4c380}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1069,6 +1138,39 @@
     <ClCompile Include="..\Private\VI_InstancePoint.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\IParticleModule.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeVelocity.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\00. LifeTimeVelocity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeSize.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\01. LifeTimeSize</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LifeTimeColor.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CharacterController.cpp">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SizeBySpeed.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\03. SizeBySpeed</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextureSheetAnimation.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\04. TextureSheetAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Noise.cpp">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\05. Noise</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventSystem.cpp">
+      <Filter>01. Utility\13. EventBus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventListner.cpp">
+      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ObjectPool.cpp">
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1102,9 +1204,21 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl">
-    <Filter>98. BasicShader</Filter>
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_PlaneGrid.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>

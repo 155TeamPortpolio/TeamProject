@@ -7,20 +7,44 @@
     <Filter Include="01. Level">
       <UniqueIdentifier>{9d05d3bf-01cc-4163-8df9-e293f1764d63}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object">
-      <UniqueIdentifier>{2d7455a9-0965-481f-908f-becd9c88a77a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98. Default">
       <UniqueIdentifier>{c55a0bf6-497d-40b5-b350-37d523e44696}</UniqueIdentifier>
     </Filter>
     <Filter Include="99. Defines">
       <UniqueIdentifier>{a5db3253-b3a0-4749-9b58-aecbfafd59d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97. Gui_Inc">
+      <UniqueIdentifier>{af30a32d-4836-474f-a1bd-2abf7d06e697}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. Shader">
+      <UniqueIdentifier>{321e4d0c-0a1f-478d-b84c-4c6812b62e6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object">
+      <UniqueIdentifier>{2d7455a9-0965-481f-908f-becd9c88a77a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. Object\DummyModel">
       <UniqueIdentifier>{7c04ff1f-cf2b-48a8-aa37-4cadb83023b0}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Object\DefaultCamera">
       <UniqueIdentifier>{7d5ced48-0ba1-43c3-b7ce-aa3eb4c7a7dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Floor">
+      <UniqueIdentifier>{2c23fb0d-26a6-43ca-8bdc-32ddfd2bbce0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Floor\DefaultPlaneFloor %28Soon%29">
+      <UniqueIdentifier>{4307d987-6e14-4355-ae97-7b6305b281ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Floor\PickingInstanceModel %28X%29">
+      <UniqueIdentifier>{b9bf4851-7641-470f-ac42-4f98b127cf52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Floor\Grid">
+      <UniqueIdentifier>{36058828-8cba-45d6-bb4f-d353f744fdc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System">
+      <UniqueIdentifier>{be04f0c9-3537-4656-b625-b044a376f6b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Static Object">
+      <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,6 +78,30 @@
     <ClInclude Include="..\public\DummyModel.h">
       <Filter>02. Object\DummyModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. Gui_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>97. Gui_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>97. Gui_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DefaultPlaneFloor.h">
+      <Filter>02. Object\Floor\DefaultPlaneFloor %28Soon%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PickingInstanceModel.h">
+      <Filter>02. Object\Floor\PickingInstanceModel %28X%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Grid.h">
+      <Filter>02. Object\Floor\Grid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapToolGui.h">
+      <Filter>03. MapTool System</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\StaticObject.h">
+      <Filter>02. Object\Static Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -82,10 +130,51 @@
     <ClCompile Include="..\private\DummyModel.cpp">
       <Filter>02. Object\DummyModel</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DefaultPlaneFloor.cpp">
+      <Filter>02. Object\Floor\DefaultPlaneFloor %28Soon%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PickingInstanceModel.cpp">
+      <Filter>02. Object\Floor\PickingInstanceModel %28X%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Grid.cpp">
+      <Filter>02. Object\Floor\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapToolGui.cpp">
+      <Filter>03. MapTool System</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\StaticObject.cpp">
+      <Filter>02. Object\Static Object</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MapTool.rc">
       <Filter>98. Default</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_InstancePoint.hlsl">
+      <Filter>96. Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\VTX_PlaneGrid.hlsl">
+      <Filter>96. Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

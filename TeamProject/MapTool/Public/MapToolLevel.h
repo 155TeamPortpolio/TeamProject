@@ -25,8 +25,16 @@ public:
 public:
     static void PreLoad_Level();
 
+
 private:
-    CGameInstance* m_pGameInstance = { nullptr };
+    HRESULT         Ready_MapToolObjects();
+    HRESULT         Ready_MapToolGui();
+    void            Rake_Resources();
+private:
+    CGameInstance*  m_pGameInstance = { nullptr };
+
+    RAY             m_Ray = {};
+
 public:
     static CMapToolLevel* Create(const string& LevelKey);
     virtual void Free() override;

@@ -37,6 +37,8 @@ public:
 	virtual void OnCollisionEnter() {};
 	virtual void OnCollisionStay() {};
 	virtual void OnCollisionExit() {};
+	virtual void OnTriggerEnter() {};
+	virtual void OnTriggerExit() {};
 
 public:
 	_bool Has_Tag(const string& tag) { return m_InstanceTag == tag; };
@@ -74,6 +76,7 @@ public:
 private:
 	HRESULT Make_OpaquePacket();
 	HRESULT Make_BlendedPacket(OPAQUE_PACKET packet);
+	HRESULT Make_NonLightPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
 	HRESULT Make_ParticlePacket();
 
