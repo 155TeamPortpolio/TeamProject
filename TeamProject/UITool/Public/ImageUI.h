@@ -25,10 +25,14 @@ public:
 	virtual void FromJson(const json& data) override;
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };
+	string		m_strTextureKey;
+	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
 	static _uint m_iCount;
+
+private:
+	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey);
 
 public:
 	static CGameObject* Create();
