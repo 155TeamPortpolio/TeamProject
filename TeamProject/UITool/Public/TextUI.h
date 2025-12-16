@@ -30,8 +30,12 @@ private:
 	string		m_strFontTag;
 	_int		m_iFontKeyIndex = { 0 };
 	_char		m_szText[MAX_PATH] = {};
-	_float		m_fFontScale = { 1.f };
+	_float		m_fFontScale = { 1.f }; 
 	_float4		m_vFontColor = { 1.f, 1.f, 1.f, 1.f }; 
+
+	_bool		m_isOutlined = {};
+	_float		m_fOutlineThickness = { 1.f };
+	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
 	_bool		m_isSizeToContent = { true };
 

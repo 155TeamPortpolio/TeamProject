@@ -36,7 +36,9 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     else
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
 
-    Get_Component<CTextSlot>()->Set_Text(L"텍스트 블록");
+    strcpy_s(m_szText, sizeof(m_szText), u8"텍스트");
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+
     Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
 #ifdef _DEBUG
@@ -82,15 +84,25 @@ void CTextUI::Render_GUI()
         m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     }
-    ImGui::SameLine();
     if (ImGui::Button(u8"크기 -"))
     {
         m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     }
     
-    if(ImGui::ColorPicker4(u8"컬러", reinterpret_cast<_float*>(&m_vFontColor)))
+    if(ImGui::ColorPicker4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+
+    ImGui::SeparatorText(u8"외곽선");
+    _bool isOutlined = {};
+    if (ImGui::Checkbox(u8"외곽선", &m_isOutlined)) isOutlined = true;
+    if(ImGui::DragFloat(u8"굵기", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) isOutlined = true;
+    if(ImGui::ColorPicker4(u8"외곽선 컬러", reinterpret_cast<_float*>(& m_vOutlineColor))) isOutlined = true;
+
+    if (m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+    else
+        Get_Component<CTextSlot>()->ReSet_OutLine();
 }
 
 void CTextUI::ToJson(json& data)
@@ -106,6 +118,12 @@ void CTextUI::ToJson(json& data)
     data["fontColor"]["y"] = m_vFontColor.y;
     data["fontColor"]["z"] = m_vFontColor.z;
     data["fontColor"]["w"] = m_vFontColor.w;
+    data["outlined"] = m_isOutlined;
+    data["outlineThickness"] = m_fOutlineThickness;
+    data["outlineColor"]["x"] = m_vOutlineColor.x;
+    data["outlineColor"]["y"] = m_vOutlineColor.y;
+    data["outlineColor"]["z"] = m_vOutlineColor.z;
+    data["outlineColor"]["w"] = m_vOutlineColor.w;
 }
 
 void CTextUI::FromJson(const json& data)
@@ -121,6 +139,12 @@ void CTextUI::FromJson(const json& data)
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+
+    m_isOutlined = data["outlined"];
+    m_fOutlineThickness = data["outlineThickness"];
+    m_vOutlineColor = _float4(data["outlineColor"]["x"].get<_float>(), data["outlineColor"]["y"].get<_float>(), data["outlineColor"]["z"].get<_float>(), data["outlineColor"]["w"].get<_float>());
+    if(m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
