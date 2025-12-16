@@ -47,10 +47,13 @@ void CMeshNode::Update(_float dt)
 	{
 	case Engine::CMeshNode::MODE::UV_ANIMATION:
 	{
-		m_fThreshold = m_fElpasedTime / m_fDuration;
+		_float t = m_fElpasedTime / m_fDuration;
+		m_fThreshold = t;
 
+		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(EaseType::InCubic, t));
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 		pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
+		pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
 	}break;
 	case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
 	{

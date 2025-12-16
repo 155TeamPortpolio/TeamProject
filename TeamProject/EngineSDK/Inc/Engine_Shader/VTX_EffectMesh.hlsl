@@ -98,7 +98,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     vector vBright = fBrightColorMask * vBrightColor;
     
     Out.vDiffuse = vBase + vBright;
-    Out.vDiffuse.a = fAlphaMask * fRGBMask;
+    Out.vDiffuse.a = fAlphaMask * Alpha;
     
     return Out;
 }
