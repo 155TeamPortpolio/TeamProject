@@ -44,6 +44,8 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
 
+    m_iCount++;
+
     return S_OK;
 }
 

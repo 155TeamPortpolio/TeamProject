@@ -45,6 +45,8 @@ void CGUIPanel::Render_GUI()
 
 		LoadFromJson();
 
+		ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
+
 		ImGui::End();
 	}
 }
@@ -66,7 +68,7 @@ void CGUIPanel::CreateCanvasPanel()
 
 		CUI_Object* pCanvasPanel = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_CanvasPanel" })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
-			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount++));
+			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount));
 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pCanvasPanel, strCurrentLevelKey);
 	}

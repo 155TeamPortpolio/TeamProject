@@ -34,6 +34,8 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     else
         MSG_BOX("Failed to Add_Texture : No Textures Loaded");
 
+    m_iCount++;
+
     return S_OK;
 }
 

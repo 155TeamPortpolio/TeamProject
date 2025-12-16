@@ -35,6 +35,8 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
+
+    m_iCount++;
     
     return S_OK;
 }
@@ -70,14 +72,14 @@ void CCanvasPanel::Render_GUI()
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_ImageUI";
-        strInstanceKey = "UI_ImageUI" + to_string(CImageUI::m_iCount++);
+        strInstanceKey = "UI_ImageUI" + to_string(CImageUI::m_iCount);
     }
 
     if (ImGui::Button("Create Text"))
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_TextUI";
-        strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount++);
+        strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount);
     }
 
     // 자식 생성
