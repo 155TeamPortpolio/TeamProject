@@ -76,6 +76,15 @@
     <ClInclude Include="..\public\CamPanelUtil.h">
       <Filter>02. Panel\CamPanelUtil</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamDirector.h">
+      <Filter>04. CamDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraTool_Enum.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CameraTool_Struct.h">
+      <Filter>99. Etc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -118,6 +127,9 @@
     </Filter>
     <Filter Include="02. Panel\CamPanelUtil">
       <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. CamDirector">
+      <UniqueIdentifier>{89e011ca-dc95-4662-abf6-1ea29ae20eaa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -180,6 +192,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPanelUtil.cpp">
       <Filter>02. Panel\CamPanelUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamDirector.cpp">
+      <Filter>04. CamDirector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
