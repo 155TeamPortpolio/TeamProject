@@ -85,20 +85,11 @@ HRESULT CFontSystem::Render_Font()
 			if (pFont) m_pBatch->End();
 			pFont = m_Fonts[m_Texts[i].systemIndex];
 
-#ifdef _DEBUG
-			m_pBatch->Begin(
-				SpriteSortMode_Deferred,
-				m_pStates->Opaque(),   // ¡ç default´Â non-premultiplied
-				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
-			);
-#endif // _DEBUG
-#ifndef _DEBUG
 			m_pBatch->Begin(
 				SpriteSortMode_Deferred,
 				m_pStates->AlphaBlend(),   // ¡ç default´Â non-premultiplied
 				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
 			);
-#endif // _DEBUG
 		}
 		if (m_Texts[i].info.OutLined) {
 			pFont->DrawOutlinedText(m_pBatch,

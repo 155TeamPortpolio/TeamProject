@@ -151,6 +151,18 @@ void CUIObject_Tool::Remove_Child(CUIObject_Tool* pChild)
     pChild->m_iChildIndex = -1;
 }
 
+void CUIObject_Tool::FromJson_RefreshCount(_uint& iCount)
+{
+    int index = {};
+    for (char c : Get_InstanceName())
+    {
+        if (isdigit(c))
+            index = index * 10 + (c - '0');
+    }
+
+    iCount = max(iCount, index + 1);
+}
+
 void CUIObject_Tool::Render_GUI_Layout()
 {
     ImGui::SeparatorText("Layout");
