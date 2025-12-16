@@ -73,8 +73,7 @@ HRESULT CRenderSystem::Render()
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
-
-	m_pNonLightPass->Execute(m_pContext);
+	Render_NonLight();
 	/*Debug Rendering*/
 
 #ifdef _DEBUG
@@ -161,6 +160,10 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
+	SHADER_PARAM MetalicParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
+
 	SHADER_PARAM LightParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Light", LightParam);
 	m_pShader->Bind_Value("g_LightTexture", LightParam);
@@ -192,6 +195,25 @@ HRESULT CRenderSystem::Render_Blended()
 	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	m_pBlendedPass->Execute(m_pContext);
 	m_pParticlePass->Execute(m_pContext);
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
+
+	return S_OK;
+}
+
+HRESULT CRenderSystem::Render_NonLight()
+{
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
+
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+	m_pNonLightPass->Execute(m_pContext);
 	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
 	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
