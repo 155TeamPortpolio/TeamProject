@@ -96,7 +96,7 @@ void CGUIPanel::SaveToJson()
 			data["uiObjects"].push_back(objData);
 		}
 
-		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("uiObjects", "json"));
+		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey(), "json"));
 
 		if (outputFile.is_open())
 		{
