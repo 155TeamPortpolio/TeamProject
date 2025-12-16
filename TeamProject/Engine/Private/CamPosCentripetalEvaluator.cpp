@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "CamPosCentripetalEvaluator.h"
 
-bool CamPosCentripetalEvaluator::Build(const vector<CamKeyFrame>& keys)
+bool CCamPosCentripetalEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
     if (keys.empty())
         return false;
@@ -11,7 +11,32 @@ bool CamPosCentripetalEvaluator::Build(const vector<CamKeyFrame>& keys)
     return true;
 }
 
-_vector3 CamPosCentripetalEvaluator::Evaluate(_float time) const
+_vector3 CCamPosCentripetalEvaluator::GetPosExtended(int idx) const
+{
+    assert(keyframes);
+    const int n = (int)keyframes->size();
+    assert(n >= 1);
+
+    if (idx < 0)
+    {
+        if (n == 1) return (*keyframes)[0].pos;
+        const _vector3 p1 = (*keyframes)[0].pos;
+        const _vector3 p2 = (*keyframes)[1].pos;
+        return p1 + (p1 - p2);
+    }
+
+    if (idx >= n)
+    {
+        if (n == 1) return (*keyframes)[0].pos;
+        const _vector3 pnm1 = (*keyframes)[n - 2].pos;
+        const _vector3 pn = (*keyframes)[n - 1].pos;
+        return pn + (pn - pnm1);
+    }
+
+    return (*keyframes)[(size_t)idx].pos;
+}
+
+_vector3 CCamPosCentripetalEvaluator::Evaluate(_float time) const
 {
     assert(keyframes);
     assert(!keyframes->empty());
@@ -37,10 +62,10 @@ _vector3 CamPosCentripetalEvaluator::Evaluate(_float time) const
     const int i1 = (int)segment.segmentIdx;
     const int i2 = i1 + 1;
 
-    const _vector3 p0 = GetPosClamped(i1 - 1);
-    const _vector3 p1 = GetPosClamped(i1);
-    const _vector3 p2 = GetPosClamped(i2);
-    const _vector3 p3 = GetPosClamped(i2 + 1);
+    const _vector3 p0 = GetPosExtended(i1 - 1);
+    const _vector3 p1 = GetPosExtended(i1);
+    const _vector3 p2 = GetPosExtended(i2);
+    const _vector3 p3 = GetPosExtended(i2 + 1);
 
     auto DistPow = [&](const _vector3& a, const _vector3& b) -> float
         {
@@ -55,13 +80,17 @@ _vector3 CamPosCentripetalEvaluator::Evaluate(_float time) const
     float t3 = t2 + DistPow(p2, p3);
 
     if ((t2 - t1) <= 1e-6f)
-        return p1;
+    {
+        const float u = segment.normalizedTime;
+        return p1 + (p2 - p1) * u;
+    }
 
     const float u = segment.normalizedTime;
     const float t = t1 + (t2 - t1) * u;
 
     auto Lerp = [&](const _vector3& a, const _vector3& b, float s) -> _vector3
         {
+            s = std::clamp(s, 0.f, 1.f);
             return a + (b - a) * s;
         };
 
@@ -80,15 +109,4 @@ _vector3 CamPosCentripetalEvaluator::Evaluate(_float time) const
 
     const _vector3 C = Lerp(B1, B2, SafeRatio(t - t1, t2 - t1));
     return C;
-}
-
-_vector3 CamPosCentripetalEvaluator::GetPosClamped(int idx) const
-{
-    assert(keyframes);
-    const int n = (int)keyframes->size();
-
-    if (idx < 0)  idx = 0;
-    if (idx >= n) idx = n - 1;
-
-    return (*keyframes)[(size_t)idx].pos;
 }

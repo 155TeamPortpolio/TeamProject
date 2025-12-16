@@ -451,3 +451,83 @@ ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
 {
 	return x + (y - x) * t;
 }
+
+ENGINE_DLL _float Math::EaseOutCubic(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	_float u = 1.f - t;
+	return 1.f - u * u * u;
+}
+
+ENGINE_DLL _float Math::EaseInOutSine(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	return 0.5f * (1.f - cosf(XM_PI * t));
+}
+
+ENGINE_DLL _float Math::EaseInOutCubic(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	if (t < 0.5f)
+		return 4.f * t * t * t;
+
+	_float u = -2.f * t + 2.f;
+	return 1.f - (u * u * u) * 0.5f;
+}
+
+ENGINE_DLL _float Math::EaseInCubic(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	return t * t * t;
+}
+
+ENGINE_DLL _float Math::EaseOutSine(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	return sinf(0.5f * XM_PI * t);
+}
+
+ENGINE_DLL _float Math::EaseInQuad(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	return t * t;
+}
+
+ENGINE_DLL _float Math::EaseOutQuad(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	_float u = 1.f - t;
+	return 1.f - u * u;
+}
+
+ENGINE_DLL _float Math::EaseInOutQuad(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	if (t < 0.5f)
+		return 2.f * t * t;
+
+	_float u = -2.f * t + 2.f;
+	return 1.f - (u * u) * 0.5f;
+}
+
+ENGINE_DLL _float Math::EaseInOutExpo(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+
+	if (t <= 0.f) return 0.f;
+	if (t >= 1.f) return 1.f;
+
+	if (t < 0.5f)
+		return 0.5f * powf(2.f, 20.f * t - 10.f);
+
+	return 1.f - 0.5f * powf(2.f, -20.f * t + 10.f);
+}
+
+ENGINE_DLL _float Math::EaseOutBack(_float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	const _float c1 = 1.70158f;
+	const _float c3 = c1 + 1.f;
+	_float u = t - 1.f;
+	return 1.f + c3 * u * u * u + c1 * u * u;
+}

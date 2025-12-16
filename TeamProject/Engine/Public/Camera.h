@@ -26,20 +26,20 @@ public:
 	CTransform* Get_Transform()  const { return transform; }
 	_vector     Get_Pos()        const { return transform->Get_Pos(); }
 
-	_float      Get_FOV()      const { return fov;    }
-	_float      Get_Near()     const { return zNear;  }
-	_float      Get_Far()      const { return zFar;   }
-	_float      Get_Aspect()   const { return aspect; }
-	CamProjType Get_ProjType() const { return projType; }
+	_float      Get_FOV()        const { return fov;    }
+	_float      Get_Near()       const { return zNear;  }
+	_float      Get_Far()        const { return zFar;   }
+	_float      Get_Aspect()     const { return aspect; }
+	CamProjType Get_ProjType()   const { return projType; }
 
-	void  Set_FOV(_float _fov)       { fov = _fov;}
-	void  Set_Far(_float _zFar)      { zFar = _zFar; }
-	void  Set_Near(_float _zNear)    { zNear = _zNear; }
-	void  Set_Aspect(_float _aspect) { aspect = _aspect; }
-	void  Set_ProjType(CamProjType _projType) { projType = _projType; }
-	void  Set_Lens(_float _fov, _float _aspect, _float _zNear, _float _zFar);
+	void        Set_FOV(_float _fov)       { fov = _fov;}
+	void        Set_Far(_float _zFar)      { zFar = _zFar; }
+	void        Set_Near(_float _zNear)    { zNear = _zNear; }
+	void        Set_Aspect(_float _aspect) { aspect = _aspect; }
+	void        Set_ProjType(CamProjType _projType) { projType = _projType; }
+	void        Set_Lens(_float _fov, _float _aspect, _float _zNear, _float _zFar);
 
-	_bool Lerp_FOV(_float dst, _float dt);
+	_bool       Lerp_FOV(_float dst, _float dt);
 
 public:
 	void      Render_GUI();

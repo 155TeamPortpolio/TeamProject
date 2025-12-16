@@ -1,30 +1,41 @@
 #include "Engine_Defines.h"
+#include "Helper_Func.h"
 #include "CamSequencePlayer.h"
 #include "GameObject.h"
 
-#include "CamPosLinearEvaluator.h"
-#include "CamPosCatmullRomEvaluator.h"
-#include "CamPosCentripetalEvaluator.h"
+#include "CamPosPerSegmentEvaluator.h"
+#include "CamRotPerSegmentEvaluator.h"
+#include "CamFovPerSegmentEvaluator.h"
 
-#include "CamRotSlerpEvaluator.h"
+CCamSequencePlayer::CCamSequencePlayer(const CCamSequencePlayer& rhs)
+    : CComponent(rhs)
+{
+    target   = {};
+    playback = {};
+    apply    = {};
+    eval     = {};
+}
 
-#include "CamFovLinearEvaluator.h"
-#include "CamFovSmoothEvaluator.h"
-
-HRESULT CamSequencePlayer::Initialize_Prototype()
+HRESULT CCamSequencePlayer::Initialize_Prototype()
 {
     return S_OK;
 }
 
-HRESULT CamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
+HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
 {
     apply.transform = m_pOwner->Get_Component<CTransform>();
     apply.cam = m_pOwner->Get_Component<CCamera>();
 
-    eval.evaluator = CamEvaluator::Create();
-    eval.evaluator->SetPosEvaluator(CamPosLinearEvaluator::Create());
-    eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
-    eval.evaluator->SetFovEvaluator(CamFovLinearEvaluator::Create());
+    if (!eval.evaluator)
+        eval.evaluator = CCamEvaluator::Create();
+
+    eval.pos = CCamPosPerSegmentEvaluator::Create();
+    eval.rot = CCamRotPerSegmentEvaluator::Create();
+    eval.fov = CCamFovPerSegmentEvaluator::Create();
+
+    eval.evaluator->SetPosEvaluator(eval.pos);
+    eval.evaluator->SetRotEvaluator(eval.rot);
+    eval.evaluator->SetFovEvaluator(eval.fov);
 
     target.seq         = nullptr;
     playback.playing   = false;
@@ -37,7 +48,7 @@ HRESULT CamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
     return S_OK;
 }
 
-void CamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
+void CCamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
 {
     target.seq        = seq;
     playback.playing  = false;
@@ -45,7 +56,7 @@ void CamSequencePlayer::SetSequence(const CamSequenceDesc* seq)
     eval.dirty        = true;
 }
 
-void CamSequencePlayer::Play()
+void CCamSequencePlayer::Play()
 {
     if (!target.seq) return;
 
@@ -53,18 +64,26 @@ void CamSequencePlayer::Play()
     playback.playing = true;
 }
 
-void CamSequencePlayer::Stop(_bool resetTime)
+void CCamSequencePlayer::Stop(_bool resetTime)
 {
     playback.playing = false;
     if (resetTime)
         playback.playTime = 0.f;
 }
 
-void CamSequencePlayer::SetTime(_float t)
+void CCamSequencePlayer::SetTime(_float t)
 {
-    playback.playTime = max(0.f, t);
+    if (!target.seq)
+    {
+        playback.playTime = max(0.f, t);
+        return;
+    }
 
-    if (!target.seq) return;
+    const float duration = target.seq->GetDuration();
+
+    playback.playTime = max(0.f, t);
+    if (duration > 1e-6f && playback.playTime > duration)
+        playback.playTime = duration;
 
     const auto& keys = target.seq->keyframes;
     if (keys.empty()) return;
@@ -72,10 +91,10 @@ void CamSequencePlayer::SetTime(_float t)
     RebuildIfNeeded();
 
     if (apply.applyEnabled)
-        ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+        ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
-void CamSequencePlayer::SetApplyEnabled(_bool enabled)
+void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
@@ -87,10 +106,10 @@ void CamSequencePlayer::SetApplyEnabled(_bool enabled)
         return;
 
     RebuildIfNeeded();
-    ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
-void CamSequencePlayer::Update(_float dt)
+void CCamSequencePlayer::Update(_float dt)
 {
     if (!target.seq || !apply.applyEnabled) return;
 
@@ -99,13 +118,43 @@ void CamSequencePlayer::Update(_float dt)
 
     RebuildIfNeeded();
 
+    const float duration = target.seq->GetDuration();
+
     if (playback.playing)
+    {
         playback.playTime += dt * playback.timeScale;
 
-    ApplyPose(eval.evaluator->Evaluate(playback.playTime));
+        if (duration <= 1e-6f)
+        {
+            playback.playTime = 0.f;
+            playback.playing = false;
+        }
+        else
+        {
+            if (target.seq->playbackMode == CamPlaybackMode::Loop)
+            {
+                playback.playTime = fmodf(playback.playTime, duration);
+                if (playback.playTime < 0.f) playback.playTime += duration;
+            }
+            else
+            {
+                if (playback.playTime >= duration)
+                {
+                    playback.playTime = duration;
+                    playback.playing = false;
+                }
+                else if (playback.playTime < 0.f)
+                {
+                    playback.playTime = 0.f;
+                }
+            }
+        }
+    }
+
+    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
 }
 
-void CamSequencePlayer::RebuildIfNeeded()
+void CCamSequencePlayer::RebuildIfNeeded()
 {
     if (!eval.dirty) return;
 
@@ -114,69 +163,66 @@ void CamSequencePlayer::RebuildIfNeeded()
     if (!target.seq) return;
 
     const auto& keys = target.seq->keyframes;
-    if (keys.empty())
-        return;
+    if (keys.empty()) return;
 
-    if (!eval.evaluator)
-        eval.evaluator = CamEvaluator::Create();
-
-    switch (target.seq->posInterp)
-    {
-    case CamPosInterp::Linear:
-        eval.evaluator->SetPosEvaluator(CamPosLinearEvaluator::Create());
-        break;
-    case CamPosInterp::CatmullRom:
-        eval.evaluator->SetPosEvaluator(CamPosCatmullRomEvaluator::Create());
-        break;
-    case CamPosInterp::Centripetal:
-        eval.evaluator->SetPosEvaluator(CamPosCentripetalEvaluator::Create());
-        break;
-    }
-
-    switch (target.seq->rotInterp)
-    {
-    case CamRotInterp::Slerp:
-        eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
-        break;
-    case CamRotInterp::Squad:
-        eval.evaluator->SetRotEvaluator(CamRotSlerpEvaluator::Create());
-        break;
-    }
-
-    switch (target.seq->fovInterp)
-    {
-    case CamFovInterp::Linear:
-        eval.evaluator->SetFovEvaluator(CamFovLinearEvaluator::Create());
-        break;
-    case CamFovInterp::Smooth:
-        eval.evaluator->SetFovEvaluator(CamFovSmoothEvaluator::Create());
-        break;
-    }
+    eval.pos->SetSequence(target.seq);
+    eval.rot->SetSequence(target.seq);
+    eval.fov->SetSequence(target.seq);
 
     const bool ok = eval.evaluator->Build(*target.seq);
     assert(ok);
 }
 
-void CamSequencePlayer::ApplyPose(const CamPose& pose)
+void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
     apply.transform->Set_Pos(pose.pos);
-    const Quaternion rotation = pose.rot;
-    _vector3 forward = _vector3::Transform(_vector3(0.f, 0.f, 1.f), rotation);
 
-    if (forward.LengthSquared() <= 1e-8f)
-        forward = _vector3{ 0.f, 0.f, 1.f };
-    else
-        forward.Normalize();
-
-    apply.transform->LookAt(pose.pos + forward);
+    const _vector4 quat{ pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w };
+    apply.transform->Set_Quaternion(quat);
 
     if (apply.cam)
         apply.cam->Set_FOV(pose.fov);
 }
 
-CamSequencePlayer* CamSequencePlayer::Create()
+_float CCamSequencePlayer::RemapTimeBySegmentEasing(_float t) const
 {
-    auto inst = new CamSequencePlayer();
+    if (!target.seq) return t;
+
+    const auto& keys = target.seq->keyframes;
+    if (keys.size() < 2) return t;
+
+    const CamKeySegment segment = CamUtil::FindKeySegment(keys, t);
+
+    const _uint i = segment.segmentIdx;
+    if (i + 1 >= (_uint)keys.size()) return t;
+
+    CamEaseType ease = target.seq->segmentEase;
+    if (keys[(size_t)i].useCustomEase)
+        ease = keys[(size_t)i].outEase;
+
+    if (ease == CamEaseType::None)
+        return t;
+
+    const float t0 = keys[(size_t)i].time;
+    const float t1 = keys[(size_t)i + 1].time;
+
+    float u = segment.normalizedTime;
+    u = std::clamp(u, 0.f, 1.f);
+
+    switch (ease)
+    {
+    case CamEaseType::InOutSine: u = Math::EaseInOutSine(u); break;
+    case CamEaseType::OutCubic:  u = Math::EaseOutCubic(u);  break;
+    default: break;
+    }
+
+    return Math::Lerp(t0, t1, u);
+}
+
+
+CCamSequencePlayer* CCamSequencePlayer::Create()
+{
+    auto inst = new CCamSequencePlayer();
     if (FAILED(inst->Initialize_Prototype()))
     {
         MSG_BOX("CamSequencePlayer Create Failed : CamSequencePlayer");
@@ -185,8 +231,16 @@ CamSequencePlayer* CamSequencePlayer::Create()
     return inst;
 }
 
-void CamSequencePlayer::Free()
+void CCamSequencePlayer::Free()
 {
-    __super::Free();
     Safe_Release(eval.evaluator);
+    Safe_Release(eval.pos);
+    Safe_Release(eval.rot);
+    Safe_Release(eval.fov);
+
+    eval.pos = nullptr;
+    eval.rot = nullptr;
+    eval.fov = nullptr;
+
+    __super::Free();
 }

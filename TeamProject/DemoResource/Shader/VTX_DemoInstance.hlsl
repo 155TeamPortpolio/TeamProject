@@ -1,4 +1,4 @@
-#include "../../DemoProject/Bin/ShaderFiles/Shader_Define.hlsl"
+#include "Shader_Define.hlsl"
 
 struct VS_IN
 {
