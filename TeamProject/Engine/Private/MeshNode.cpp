@@ -41,22 +41,28 @@ void CMeshNode::Priority_Update(_float dt)
 
 void CMeshNode::Update(_float dt)
 {
-	m_fElpasedTime += dt;
+	__super::Update(dt);
 
-	if (!m_IsLoop)
+	switch (m_eMode)
 	{
-		if (m_fElpasedTime >= m_fDuration)
-			return;
+	case Engine::CMeshNode::MODE::UV_ANIMATION:
+	{
+		m_fThreshold = m_fElpasedTime / m_fDuration;
 
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-
+		pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
+	}break;
+	case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
+	{
 		_float t = m_fElpasedTime / m_fDuration;
-		t = clamp(t, 0.f, 1.f);
-		t = Math::EaseInCubic(t);
+		m_iCurrFrameIndex = static_cast<_uint>(m_iMaxFrameIndex * t);
 
-		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, t);
-
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		pMaterialInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
 		pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
+	}break;
+	default:
+		break;
 	}
 }
 

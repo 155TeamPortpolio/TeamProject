@@ -40,6 +40,7 @@ private:
     void SetMesh();
     void SetUp_MeshEffect();
 
+    _bool m_IsSpriteMode = false;
     _bool m_SetMesh = false;
     _bool m_SetMaterial = false;
 };

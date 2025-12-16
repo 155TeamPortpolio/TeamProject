@@ -28,17 +28,30 @@ public:
 
 protected:    
     MODE m_eMode = MODE::END;
-    _float4 m_vColor{};
+    string m_PassTag{};
 
+    _float4 m_vBaseColor{};
+    _float4 m_vBrightColor{};
+    _float4 m_vEmissiveColor{};
+    _float m_fThreshold{};
+
+    /*UV Animation*/
     EaseType m_eAlphaFadeEase = EaseType::None;
     _float2 m_vAlphaFade{};
-    _float m_fAlpha{};
+    _float m_fAlpha{ 1.f };
 
+    EaseType m_eUVEase = EaseType::None;
     _float2 m_vUVSpeed{};
-    _float2 m_vUVOffset{};
+    _float2 m_vStartUVOffset{};
+    _float2 m_vEndUVOffset{};
+    _float2 m_vCurrUVOffset{};
 
+    /*Sprite Aniamtion*/
+    _float m_fSpriteSpeed{};
     _uint m_iCol{};
     _uint m_iRow{};
-    _uint m_iFrameIndex{};
+    _uint m_iMaxFrameIndex{};
+    _uint m_iCurrFrameIndex{};
+
 };
 NS_END

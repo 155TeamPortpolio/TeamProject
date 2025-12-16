@@ -5,6 +5,11 @@ uint Col;
 uint Row;
 uint FrameIndex;
 float Alpha;
+float Threshold;
+
+float4 vBaseColor;
+float4 vBrightColor;
+float4 vEmissiveColor;
 
 struct VS_IN
 {
@@ -81,13 +86,19 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     
     float2 Texcoord = In.vTexcoord + UVOffset;
         
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, Texcoord);
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     
-    //if(vMtrlDiffuse.a < 0.1f)
-    //   discard;
+    float fBaseColorMask = vMtrlDiffuse.g;
+    float fBrightColorMask = vMtrlDiffuse.r;
+    float fEmissiveColorMask = vMtrlDiffuse.b;
+    float fAlphaMask = vMtrlDiffuse.a;
+    float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a *= Alpha;
+    vector vBase = fBaseColorMask * vBaseColor;
+    vector vBright = fBrightColorMask * vBrightColor;
+    
+    Out.vDiffuse = vBase + vBright;
+    Out.vDiffuse.a = fAlphaMask * fRGBMask;
     
     return Out;
 }
@@ -128,7 +139,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();

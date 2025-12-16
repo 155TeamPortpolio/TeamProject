@@ -72,6 +72,7 @@ void CMeshNode_Edit::Render_GUI()
 
 void CMeshNode_Edit::Play()
 {
+	m_isAlive = true;
 	m_IsLoop = false;
 	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
@@ -151,9 +152,48 @@ void CMeshNode_Edit::SetMesh()
 void CMeshNode_Edit::SetUp_MeshEffect()
 {
 	_bool isDirty = false;
+	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
 	ImGui::SeparatorText("MeshEffect Setting");
+	if (ImGui::Button("Set UV Anim Mode"))
+	{
+		m_eMode = MODE::UV_ANIMATION;
+
+		pMaterialInstance->Override_Pass("UVAnimation");
+	}
+	if (ImGui::Button("Set Sprite Anim Mode"))
+	{
+		m_eMode = MODE::SPRITE_ANIAMTION;
+
+		pMaterialInstance->Override_Pass("SpriteAnimation");
+	}
 	ImGui::DragFloat("Duration", &m_fDuration);
 	ImGui::DragFloat2("Alpha Fade", &m_vAlphaFade.x);
 	ImGui::DragFloat2("UVSpeed", &m_vUVSpeed.x);
+
+	_float brightColor[4] = { m_vBrightColor.x,m_vBrightColor.y,m_vBrightColor.z,m_vBrightColor.w };
+	_float baseColor[4] = { m_vBaseColor.x,m_vBaseColor.y,m_vBaseColor.z,m_vBaseColor.w };
+
+	if (ImGui::ColorEdit4("Bright Color", brightColor))
+	{
+		m_vBrightColor = _float4(brightColor[0], brightColor[1], brightColor[2], brightColor[3]);
+		isDirty = true;
+	}
+	if (ImGui::ColorEdit4("Base Color", baseColor))
+	{
+		m_vBaseColor = _float4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
+		isDirty = true;
+	}
+
+	isDirty |= ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_iCol));
+	isDirty |= ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_iRow));
+	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+
+	if (isDirty)
+	{
+		pMaterialInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
+		pMaterialInstance->Set_Param("Row", { &m_iRow,"uint",sizeof(_uint) });
+		pMaterialInstance->Set_Param("vBrightColor", { &m_vBrightColor,"float4",sizeof(_float4) });
+		pMaterialInstance->Set_Param("vBaseColor", { &m_vBaseColor,"float4",sizeof(_float4) });
+	}
 }
