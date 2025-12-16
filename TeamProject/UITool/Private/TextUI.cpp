@@ -91,22 +91,19 @@ void CTextUI::Render_GUI()
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 }
 
-json CTextUI::ToJson()
+void CTextUI::ToJson(json& data)
 {
-    json objData;
+    __super::ToJson(data);
 
-    objData["typeTag"] = "TextUI";
-    objData["fontTag"] = CUITool_Level::m_strFontKeys[m_iFontKeyIndex];
-    objData["text"] = m_szText;
-    objData["fontScale"] = m_fFontScale;
-    objData["fontColor"]["x"] = m_vFontColor.x;
-    objData["fontColor"]["y"] = m_vFontColor.y;
-    objData["fontColor"]["z"] = m_vFontColor.z;
-    objData["fontColor"]["w"] = m_vFontColor.w;
+    data["typeTag"] = "TextUI";
 
-    ToJson_Common(objData);
-
-    return objData;
+    data["fontTag"] = CUITool_Level::m_strFontKeys[m_iFontKeyIndex];
+    data["text"] = m_szText;
+    data["fontScale"] = m_fFontScale;
+    data["fontColor"]["x"] = m_vFontColor.x;
+    data["fontColor"]["y"] = m_vFontColor.y;
+    data["fontColor"]["z"] = m_vFontColor.z;
+    data["fontColor"]["w"] = m_vFontColor.w;
 }
 
 void CTextUI::FromJson(const json& data)
@@ -123,6 +120,8 @@ void CTextUI::FromJson(const json& data)
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+
+    __super::FromJson(data);
 }
 
 void CTextUI::Render_GUI_Layout()

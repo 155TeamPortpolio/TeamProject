@@ -5,7 +5,6 @@
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 
-#include "TestUI.h"
 #include "ImageUI.h"
 #include "TextUI.h"
 
@@ -36,7 +35,7 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
-
+    
     return S_OK;
 }
 
@@ -81,37 +80,38 @@ void CCanvasPanel::Render_GUI()
         strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount++);
     }
 
+    // 자식 생성
     if(isCreateChild)
     {
-        CUI_Object* pChild = Builder::Create_UIObject({ "UITool_Level" , strProtoTag })
+        string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+
+        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, strProtoTag})       // UI Object 생성
             .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build(strInstanceKey);
 
         if (!pChild)
             return;
 
-        IUI_Service* pUIService = CGameInstance::GetInstance()->Get_UIMgr();
-        pUIService->Add_UIObject(pChild, "UITool_Level");
-        Get_Component<CObjectContainer>()->Add_Child(pChild);
+        CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
+
+        CUIObject_Tool* pUIChild = dynamic_cast<CUIObject_Tool*>(pChild);
+        if (!pUIChild)
+            return;
+       
+        Add_Child(pUIChild);    // 부모의 오브젝트 컨테이너에 자식을 추가하고, 자식에 부모 포인터와 자식 인덱스 저장
     }
 }
 
-json CCanvasPanel::ToJson()
+void CCanvasPanel::ToJson(json& data)
 {
-    json objData;
+    __super::ToJson(data);
 
-    objData["typeTag"] = "CanvasPanel";
-
-    ToJson_Common(objData);
-
-    return objData;
+    data["typeTag"] = "CanvasPanel";
 }
 
 void CCanvasPanel::FromJson(const json& data)
 {
-    if (data.contains("children"))
-    {
-    }
+    __super::FromJson(data);
 }
 
 CGameObject* CCanvasPanel::Create()

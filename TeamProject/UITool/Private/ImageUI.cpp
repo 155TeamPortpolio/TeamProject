@@ -61,22 +61,21 @@ void CImageUI::Render_GUI()
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }
 
-json CImageUI::ToJson()
+void CImageUI::ToJson(json& data)
 {
-    json objData;
+    __super::ToJson(data);
      
-    objData["typeTag"] = "ImageUI";
-    objData["textureTag"] = CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
+    data["typeTag"] = "ImageUI";
 
-    ToJson_Common(objData);
-    
-    return objData;
+    data["textureTag"] = CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
 }
 
 void CImageUI::FromJson(const json& data)
 {
     m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());     // ¾ÞÄ¿´Â ºô´õ¿¡ ³Ö±â
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+
+    __super::FromJson(data);
 }
 
 CGameObject* CImageUI::Create()

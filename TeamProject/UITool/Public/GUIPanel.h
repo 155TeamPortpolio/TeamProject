@@ -26,7 +26,7 @@ private:
     _int                m_iLevelIndex = {};
 
 private:
-    void SelectLevel();
+    void ChangeLevel();
     void CreateCanvasPanel();
     void SaveToJson();
     void LoadFromJson();

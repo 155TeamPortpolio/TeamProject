@@ -15,6 +15,21 @@ CGUIPanel::CGUIPanel(GUI_CONTEXT* pContext)
 
 void CGUIPanel::Update_Panel(_float dt)
 {
+	// Inspector 창에 떠있는 오브젝트 삭제
+	if (m_pGameInstance->Get_InputDev()->Key_Tap(VK_DELETE))
+	{
+		auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
+
+		if (pGuiContext->pSelectedObject)
+		{
+			if (CUIObject_Tool* pUISelected = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
+			{ 
+				m_pGameInstance->Get_UIMgr()->Remove_UIObject(pUISelected);	// UI Mgr에서 자신을 제거
+				pUISelected->DestroyChild_FromParent();						// 부모 container 컴포넌트에서 자식을 제거
+				pGuiContext->pSelectedObject = nullptr;						// Gui에 selectedObject를 nullptr로 
+			}
+		}
+	}
 }
 
 void CGUIPanel::Render_GUI()
@@ -22,7 +37,7 @@ void CGUIPanel::Render_GUI()
 	{
 		ImGui::Begin("UI Tool");
 
-		SelectLevel();
+		//ChangeLevel();
 
 		CreateCanvasPanel();
 
@@ -34,8 +49,10 @@ void CGUIPanel::Render_GUI()
 	}
 }
 
-void CGUIPanel::SelectLevel()
+void CGUIPanel::ChangeLevel()
 {
+	// 레벨 바꾸고 다시 로드하게 추후 추가할 예정
+
 	auto& szLevelTags = CMainApp::m_szLevelTags;
 
 	ImGui::Combo(u8"레벨", &m_iLevelIndex, szLevelTags.data(), szLevelTags.size());
@@ -45,13 +62,13 @@ void CGUIPanel::CreateCanvasPanel()
 {
 	if (ImGui::Button("Create Canvas_Panel"))
 	{
-		auto& strLevelTags = CMainApp::m_strLevelTags;
+		string strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 
-		CUI_Object* pCanvasPanel = Builder::Create_UIObject({ strLevelTags[m_iLevelIndex], "Proto_GameObject_CanvasPanel" })
+		CUI_Object* pCanvasPanel = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_CanvasPanel" })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
 			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount++));
 
-		m_pGameInstance->Get_UIMgr()->Add_UIObject(pCanvasPanel, strLevelTags[m_iLevelIndex]);
+		m_pGameInstance->Get_UIMgr()->Add_UIObject(pCanvasPanel, strCurrentLevelKey);
 	}
 }
 
@@ -62,7 +79,7 @@ void CGUIPanel::SaveToJson()
 		json data;
 		data["uiObjects"] = json::array();
 
-		auto& levelUIObjects = m_pGameInstance->Get_UIMgr()->Get_LevelUI(CMainApp::m_strLevelTags[m_iLevelIndex]);
+		auto& levelUIObjects = m_pGameInstance->Get_UIMgr()->Get_LevelUI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
 
 		for (auto& pObj : levelUIObjects)
 		{
@@ -74,7 +91,9 @@ void CGUIPanel::SaveToJson()
 				continue;
 			}
 
-			data["uiObjects"].push_back(pUI->ToJson());
+			json objData;
+			pUI->ToJson(objData);
+			data["uiObjects"].push_back(objData);
 		}
 
 		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("uiObjects", "json"));
@@ -108,7 +127,7 @@ void CGUIPanel::LoadFromJson()
 
 		IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
 
-		pUIMgr->Clear(CMainApp::m_strLevelTags[m_iLevelIndex]);
+		pUIMgr->Clear(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
 
 		vector<CUIObject_Tool*> UIObjects;
 
@@ -145,14 +164,6 @@ void CGUIPanel::LoadFromJson()
 			pUI->FromJson(uiData);
 
 			pUIMgr->Add_UIObject(pObj, strLevel);
-		}
-
-		// 자식을 찾아서 부모의 컨테이너 컴포넌트에 추가
-		_int iIndex = {};
-		for (auto& uiData : data["uiObjects"])
-		{
-			if (uiData.contains("children") && uiData["children"].size())
-				UIObjects[iIndex++]->LinkChildFromJson(uiData);
 		}
 	}
 }

@@ -202,12 +202,12 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 void CUI_Manager::Sort_UI()
 {
-	for (auto& pair : m_UIObjects) {
-		sort(pair.second.begin(), pair.second.end(),
-			[&](CUI_Object* a, CUI_Object* b) {
-				return a->Get_Priority() < b->Get_Priority();
-			});
-	}
+	//for (auto& pair : m_UIObjects) {
+	//	sort(pair.second.begin(), pair.second.end(),
+	//		[&](CUI_Object* a, CUI_Object* b) {
+	//			return a->Get_Priority() < b->Get_Priority();
+	//		});
+	//}
 }
 
 CUI_Manager* CUI_Manager::Create()
