@@ -60,6 +60,17 @@ void CDemoPlayer::Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
 		pCCT->Jump(10.f);
 	
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
+	{
+		_vector vLook = m_pTransform->Dir(STATE::LOOK);
+		pCCT->Shoot_Ray(vLook, 100.f);
+	}
+	else
+	{
+		pCCT->Clear_DebugRay();
+	}
+	
 	pCCT->Update(dt);
 }
 

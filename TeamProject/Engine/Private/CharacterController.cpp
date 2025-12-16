@@ -287,6 +287,49 @@ void CCharacterController::Render_GUI()
 				ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
 			}
 		}
+
+#ifdef _DEBUG
+		ImGui::Separator();
+		ImGui::Text("Debug Ray");
+		ImGui::Checkbox("Show Ray", &m_bShowDebugRay);
+
+		if (m_bShowDebugRay)
+		{
+			ImGui::Text("Ray Start: (%.2f, %.2f, %.2f)",
+				m_vRayStart.x, m_vRayStart.y, m_vRayStart.z);
+			ImGui::Text("Ray End: (%.2f, %.2f, %.2f)",
+				m_vRayEnd.x, m_vRayEnd.y, m_vRayEnd.z);
+
+			if (m_DebugRayHit.bHit)
+			{
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "Hit!");
+				ImGui::Text("Distance: %.2f", m_DebugRayHit.fDistance);
+				ImGui::Text("Hit Point: (%.2f, %.2f, %.2f)",
+					m_DebugRayHit.vPoint.x,
+					m_DebugRayHit.vPoint.y,
+					m_DebugRayHit.vPoint.z);
+				ImGui::Text("Normal: (%.2f, %.2f, %.2f)",
+					m_DebugRayHit.vNormal.x,
+					m_DebugRayHit.vNormal.y,
+					m_DebugRayHit.vNormal.z);
+
+				if (m_DebugRayHit.pHitObject)
+				{
+					ImGui::Text("Hit Object: %s",
+						m_DebugRayHit.pHitObject->Get_InstanceName().c_str());
+				}
+			}
+			else
+			{
+				ImGui::TextColored(ImVec4(0, 1, 0, 1), "No Hit");
+			}
+
+			if (ImGui::Button("Clear Ray"))
+			{
+				Clear_DebugRay();
+			}
+		}
+#endif
 	}
 	ImGui::EndChild();
 }
@@ -316,6 +359,46 @@ void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _
 	obb.Orientation = _float4(0.f, 0.f, 0.f, 1.f);
 
 	DX::Draw(pBatch, obb, vColor);
+
+	// 레이 시각화
+	if (m_bShowDebugRay)
+	{
+		Render_DebugRay(pBatch);
+	}
+}
+void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* pBatch)
+{
+	_vector vStart = XMLoadFloat3(&m_vRayStart);
+	_vector vEnd = XMLoadFloat3(&m_vRayEnd);
+
+	// 충돌 여부에 따라 색상 결정
+	XMVECTOR vLineColor = m_DebugRayHit.bHit ? Colors::Red : Colors::Yellow;
+
+	// 레이 라인 그리기
+	pBatch->DrawLine(
+		VertexPositionColor(vStart, vLineColor),
+		VertexPositionColor(vEnd, vLineColor)
+	);
+
+	// 충돌 지점 표시
+	if (m_DebugRayHit.bHit)
+	{
+		// 충돌 지점에 작은 구체 그리기
+		BoundingSphere hitSphere;
+		hitSphere.Center = m_DebugRayHit.vPoint;
+		hitSphere.Radius = 0.1f;
+		DX::Draw(pBatch, hitSphere, Colors::Red);
+
+		// 법선 벡터 표시 (선택사항)
+		_vector vHitPoint = XMLoadFloat3(&m_DebugRayHit.vPoint);
+		_vector vNormal = XMLoadFloat3(&m_DebugRayHit.vNormal);
+		_vector vNormalEnd = vHitPoint + vNormal * 0.5f;
+
+		pBatch->DrawLine(
+			VertexPositionColor(vHitPoint, Colors::Blue),
+			VertexPositionColor(vNormalEnd, Colors::Cyan)
+		);
+	}
 }
 #endif
 
@@ -410,6 +493,58 @@ _vector CCharacterController::Get_FootPosition()
 
 	const PxExtendedVec3& pos = m_pController->getFootPosition();
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
+}
+
+_bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance)
+{
+	if (!m_pController) return false;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	IPhysicsService* pPhysics = pGameInstance->Get_PhysicsSystem();
+
+	const PxExtendedVec3& pos = m_pController->getPosition();
+	_vector vOrigin = XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
+	_vector vDir = XMVector3Normalize(vDirection);
+
+	vOrigin += vDir * (m_fRadius + 0.1f);
+
+	PHYSICS_RAY rayDesc;
+	XMStoreFloat3(&rayDesc.vOrigin, vOrigin);
+	XMStoreFloat3(&rayDesc.vDirection, vDir);
+	rayDesc.fMaxDistance = fDistance;
+	rayDesc.iCollisionMask = 0xFFFFFFFF;
+	rayDesc.bQueryTrigger = false;
+
+#ifdef _DEBUG
+	m_bShowDebugRay = true;
+	m_vRayStart = rayDesc.vOrigin;
+
+	_vector vEndPos = vOrigin + vDir * fDistance;
+	XMStoreFloat3(&m_vRayEnd, vEndPos);
+#endif
+
+	PHYSICS_RAY_HIT hit;
+	_bool bResult = pPhysics->Raycast(rayDesc, hit);
+
+#ifdef _DEBUG
+	if (bResult)
+	{
+		m_DebugRayHit = hit;
+		XMStoreFloat3(&m_vRayEnd, XMLoadFloat3(&hit.vPoint));
+	}
+	else
+	{
+		// 히트하지 않았을 때 - 이전 정보 초기화
+		m_DebugRayHit.bHit = false;
+		m_DebugRayHit.fDistance = 0.f;
+		m_DebugRayHit.pHitObject = nullptr;
+		m_DebugRayHit.pCollidable = nullptr;
+		m_DebugRayHit.pShape = nullptr;
+		// vRayEnd는 최대 거리 위치로 유지
+	}
+#endif
+
+	return bResult;
 }
 
 PxShape* CCharacterController::Get_Shape()

@@ -468,9 +468,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Engine_Math.h">
       <Filter>01. Utility\97. Helper</Filter>
-        </ClInclude>
-        <ClInclude Include="..\Public\AnimationLayout.h">
-      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimationLayout.h">
+      <Filter>99. Defines\AnimationLayout</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -875,6 +875,9 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment">
       <UniqueIdentifier>{a31566f4-5cd5-41af-b864-2969ce586967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines\AnimationLayout">
+      <UniqueIdentifier>{08d4aef7-fcc3-432b-a822-f966d04565ac}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

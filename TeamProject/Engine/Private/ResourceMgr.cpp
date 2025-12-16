@@ -21,6 +21,7 @@
 #include "ModelData.h"
 #include "MaterialInstance.h"
 #include "AnimationClip.h"
+#include "AnimationLayout.h"
 
 CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }, m_pContext{ pContext }, m_pInstance(CGameInstance::GetInstance())
@@ -65,7 +66,9 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 			Safe_Release(materialData);
 
 	for (auto& pair : m_Resources[index].m_Animations)
-		Safe_Release(pair.second);
+		for (auto& clipData : pair.second)
+			Safe_Release(clipData);
+
 
 	m_Resources[index] = {};
 }
@@ -232,7 +235,7 @@ CShader* CResourceMgr::Load_Shader(const string& levelTag, const string& shaderK
 	return pData;
 }
 
-CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textureKey)
+CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
@@ -246,33 +249,44 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 	if (iter != map.end()) return iter->second;
 
 	wstring path = Helper::ConvertToWideString(MakePath(textureKey));
-	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey);
+	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey, sRGBType);
 	map.emplace(textureKey, pData);
 
 	return pData;
 }
 
-CAnimationClip* CResourceMgr::Load_AnimClip(const string& levelTag, 
-	const string& AnimClipKey)
+vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_AnimClip ");
-		return nullptr;
+		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
+		return vector<class CAnimationClip*>();
 	}
 
 	auto& map = m_Resources[index].m_Animations;
-	auto iter = map.find(AnimClipKey);
+	auto iter = map.find(MetaClipKey);
 
 	if (iter != map.end()) {
-		return iter->second;
+		if(!iter->second.empty())
+			return iter->second;
 	}
 
-	CAnimationClip* pData = CAnimationClip::Create(MakePath(AnimClipKey), AnimClipKey);
-	if (pData)
-		map.emplace(AnimClipKey, pData);
+	auto MetaData = Helper::LoadJson<vector<ANIM_CLIP>>(MakePath(MetaClipKey));
 
-	return pData;
+	vector<CAnimationClip*> Clips;
+	for (auto& Meta : MetaData) {
+
+		string AnimPath = std::filesystem::path(Get_ResourcePath(MetaClipKey)).parent_path().string() + "\\";
+		AnimPath += Meta.ClipTag + ".anim";
+
+		CAnimationClip* pData = CAnimationClip::Create(AnimPath, MetaClipKey);
+		if (pData)
+			Clips.push_back(pData);
+	}
+
+	map.emplace(MetaClipKey, Clips);
+
+	return Clips;
 }
 
 CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& ModelKey)

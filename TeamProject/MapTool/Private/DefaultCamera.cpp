@@ -29,6 +29,7 @@ HRESULT CDefaultCamera::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 	m_pTransform->LookAt({ 0,0,0 });
+
 	return S_OK;
 }
 
