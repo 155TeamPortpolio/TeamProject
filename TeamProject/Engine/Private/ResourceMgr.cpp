@@ -271,7 +271,7 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 			return iter->second;
 	}
 
-	auto MetaData = Helper::GetDataFromJson<vector<ANIM_CLIP>>(MakePath(MetaClipKey));
+	auto MetaData = Helper::LoadJson<vector<ANIM_CLIP>>(MakePath(MetaClipKey));
 
 	vector<CAnimationClip*> Clips;
 	for (auto& Meta : MetaData) {

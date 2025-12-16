@@ -80,7 +80,7 @@ void CMapToolGui::Render_GUI()
     ImGui::Text("");/////////////////////////////////
 
     ImGui::Text("Data");
-    if (ImGui::TreeNode("Data Save")) {
+    if (ImGui::TreeNode("Data Save & Load")) {
         ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight }, true);
 
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Data Version");
@@ -90,15 +90,17 @@ void CMapToolGui::Render_GUI()
             Save_MapData();
         }
 
+        if (ImGui::Button("Load")) {
+            Load_MapData();
+        }
+
         ImGui::EndChild();
         ImGui::TreePop();
     }
 
 
     //ImGui::SameLine();
-    if (ImGui::Button("Load")) {
-        Load_MapData();
-    }
+
     if (ImGui::TreeNode("Clear")) {
         ImGui::BeginChild("##MapToolClearLayerList", ImVec2{ 0, childHeight }, true);
 
@@ -134,6 +136,9 @@ void CMapToolGui::RakeResources()
             mpp.TagMaterialKey = MaterialPath.filename().string();
 
             m_ModelPathPack.push_back(mpp);
+
+            pRcsMgr->Add_ResourcePath(mpp.TagModelKey, mpp.TagModelPath);
+            pRcsMgr->Add_ResourcePath(mpp.TagMaterialKey, mpp.TagMaterialPath);
         }
     }
 }
@@ -309,6 +314,64 @@ void CMapToolGui::Save_MapData()
 
 void CMapToolGui::Load_MapData()
 {
+    filesystem::path OpenPath = Helper::OpenFile_Dialogue();
+
+    if (OpenPath.empty()) 
+        return;
+    
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
+        return;
+    }
+
+
+    MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
+
+    if (mapdata.iVersion != m_iVersion) {
+        MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
+        return;
+    }
+
+    for (auto& layerdata : mapdata.Layers) {
+        // 레이어 태그 무결성 검사
+        const auto iter = find(m_TagLayers.begin(), m_TagLayers.end(), layerdata.TagLayer);
+        if (iter == m_TagLayers.end())
+            continue;
+
+        for (auto& objectdata : layerdata.Objects) 
+            Place_PlacedObjectFromLoadData(&objectdata);
+    }
+
+}
+
+void CMapToolGui::Place_PlacedObjectFromLoadData(MapData_Object* pData)
+{
+    if (nullptr == pData)
+        return;
+
+    IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
+    Desc->isRayReceiver = m_isObjectPicking;
+    Desc->TagModelKey = pData->TagModelResourceKey;
+    Desc->TagMaterialKey = pData->TagMaterialResourceKey;
+   
+
+    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
+        .Add_ObjDesc(Desc)
+        .Build("Placed_Model");
+    
+    _float4x4 matWorld = {
+        pData->vRight[0], pData->vRight[1] , pData->vRight[2] , pData->vRight[3],
+        pData->vUp[0],  pData->vUp[1] , pData->vUp[2] , pData->vUp[3],
+        pData->vLook[0], pData->vLook[1] , pData->vLook[2] , pData->vLook[3],
+        pData->vPos[0], pData->vPos[1] , pData->vPos[2] , pData->vPos[3] };
+
+    pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
+
+    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
+
+
 }
 
 void CMapToolGui::Clear_Layer()
@@ -335,7 +398,8 @@ void CMapToolGui::Clear_Layer()
                     ImGui::PopID();
                     return;
                 }
-                // Layer 싹 삭제하는 기능 부기맨이 만들어줄예정
+                pLayer->Clear_Layer();
+                m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject = { nullptr };
             }
         }
     }

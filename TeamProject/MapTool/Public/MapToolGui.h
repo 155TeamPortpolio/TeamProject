@@ -28,6 +28,7 @@ private:
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Load_MapData();
+	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Clear_Layer();
 	
 
