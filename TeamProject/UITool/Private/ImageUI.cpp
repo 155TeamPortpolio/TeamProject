@@ -72,7 +72,6 @@ void CImageUI::ToJson(json& data)
 
 void CImageUI::FromJson(const json& data)
 {
-    m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());     // ¾ÞÄ¿´Â ºô´õ¿¡ ³Ö±â
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
 
     __super::FromJson(data);

@@ -108,8 +108,6 @@ void CTextUI::ToJson(json& data)
 
 void CTextUI::FromJson(const json& data)
 {
-    m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());    // ¾ÞÄ¿´Â ºô´õ¿¡ ³Ö±â
-
     string strText = data["text"]; 
     strcpy_s(m_szText, sizeof(m_szText), strText.c_str());
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(strText));
