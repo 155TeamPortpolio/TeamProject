@@ -6,43 +6,86 @@
 
 namespace Helper
 {
-	//¾Æ½ºÅ° ÄÚµå°¡ ¾Æ´Ñ °ÍÀÌ Æ÷ÇÔµÇ¾î ÀÖ´ÂÁö È®ÀÎ
+	//ï¿½Æ½ï¿½Å° ï¿½Úµå°¡ ï¿½Æ´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÔµÇ¾ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	ENGINE_DLL _bool ContainsNonAscii(const string& str);
-	//¼Ö·ç¼Ç Æú´õ ¾È¿¡ ÀÖ´Â °ÍÀÎÁö È®ÀÎ
+	//ï¿½Ö·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½È¿ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
 	ENGINE_DLL _bool IsPathInProjectFolder(const string& path);
-	//ÆÄÀÏ ¼±ÅÃ¿ë Å½»ö±â
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ Å½ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string OpenFile_Dialogue();
-	//Æú´õ ¼±ÅÃ¿ë Å½»ö±â
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¿ï¿½ Å½ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string OpenFolder_Dialogue();
-	//¿©·¯ Æú´õ °¡Á®¿À±â
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL vector<string> OpenMultiFolders();
-	//¿©·¯ ÆÄÀÏ °¡Á®¿À±â
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL vector<string> OpenMultiFiles();
-	//ÆÄÀÏ ÀúÀå¿ë Å½»ö±â
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string SaveFileDialog();
-	//ÆÄÀÏ ÀúÀå¿ë Å½»ö±â - nfd±â¹Ý
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½ - nfdï¿½ï¿½ï¿½
 	ENGINE_DLL string SaveFileDialog(const string& fileName, const string& filter);
-	//ÆÄÀÏ ÀúÀå¿ë Å½»ö±â - ±âº» ÆÄÀÏ Çü½Ä, ÀÌ¸§ ÁöÁ¤ °¡´É
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Å½ï¿½ï¿½ï¿½ï¿½ - ï¿½âº» ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½Ì¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string SaveFileDialogByWinAPI(const string& fileName, const string& filterStr);
-	//wstringÀ¸·Î º¯È¯
+	//wstringï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	ENGINE_DLL wstring ConvertToWideString(const string& str);
-	//stringÀ¸·Î º¯È¯
+	//stringï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 	ENGINE_DLL string ConvertToString(const wstring& wstr);
-	//ÆÄÀÏ¸í+È®ÀåÀÚ ÃßÃâ
+	//ï¿½ï¿½ï¿½Ï¸ï¿½+È®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string GetFileNameWithExtension(const string& filePath);
-	//È®ÀåÀÚ¸í Á¦¿Ü, ÆÄÀÏ¸í ÃßÃâ
+	//È®ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½ï¿½ï¿½ï¿½
 	ENGINE_DLL string GetFileNameWithOutExtension(const string& filePath);
-	//¸ðµÎ ¼Ò¹®ÀÚ·Î º¯È¯
+	//ï¿½ï¿½ï¿½ ï¿½Ò¹ï¿½ï¿½Ú·ï¿½ ï¿½ï¿½È¯
 	ENGINE_DLL string  ToLower(const string& fileName);
-	//°æ·Î¿¡ ÅØ½ºÃ³ ÀúÀå
-	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext,const string& filePath, ID3D11ShaderResourceView* pSRV);
-	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext,const wstring& filePath, ID3D11ShaderResourceView* pSRV);
-	//·£´ý ÇÔ¼ö
+	//ï¿½ï¿½Î¿ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½
+	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const string& filePath, ID3D11ShaderResourceView* pSRV);
+	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const wstring& filePath, ID3D11ShaderResourceView* pSRV);
+	//ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
 	ENGINE_DLL _int Get_Random_Int(_int min, _int max);
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
 
-	/*ÇØ´ç µð·ºÅä¸®¿¡ ÀÖ´ÂÁö*/
+	/*ï¿½Ø´ï¿½ ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
-	
-};
+
+}
+
+//jsonï¿½ï¿½ ï¿½Ò·ï¿½ ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½È¯
+namespace Helper
+{
+	template <typename T>
+	inline T GetDataFromJson(const string& filePath) {
+		std::ifstream file(filePath);
+		if (!file.is_open())
+			return T{};
+
+		json j;
+		file >> j;
+		return j.get<T>();
+	};
+
+	template <typename T>
+	inline void SaveJson(T& Data, const string& filePath) {
+		json JsonData = Data;
+		ofstream file(filePath);
+
+		if (file.is_open()) {
+			file << JsonData.dump(2);
+			file.close();
+		}
+	};
+}
+
+namespace Math
+{
+	//Float ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½
+	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
+
+	ENGINE_DLL _float EaseOutCubic(_float t);   // EaseOutCubic:   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµå·´ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Ä«ï¿½Þ¶ï¿½ ï¿½Ìµï¿½ ï¿½âº»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseInOutSine(_float t);  // EaseInOutSine:  ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ú¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµå·¯ï¿½ï¿½ S-curve(ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ï¹ï¿½ Ä«ï¿½Þ¶ï¿½)
+	ENGINE_DLL _float EaseInOutCubic(_float t); // EaseInOutCubic: InOutSineï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ñ·ï¿½ï¿½ï¿½ S-curve(ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseInCubic(_float t);    // EaseInCubic:    ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ È® ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ï¿½ï¿½ Æ¦ ï¿½ï¿½ï¿½Ì±ï¿½)
+	ENGINE_DLL _float EaseOutSine(_float t);    // EaseOutSine:    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Âªï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½Î´ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseInQuad(_float t);     // EaseInQuad:     InCubicï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ï¿½ï¿½ ï¿½ï¿½Â¦ ï¿½ï¿½ ï¿½ï¿½ï¿½Ì±ï¿½)
+	ENGINE_DLL _float EaseOutQuad(_float t);    // EaseOutQuad:    OutCubicï¿½ï¿½ï¿½ï¿½ ï¿½Ü¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(Âªï¿½ï¿½ ï¿½ï¿½È¯/ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseInOutQuad(_float t);  // EaseInOutQuad:  ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È®ï¿½ï¿½ S-curve(ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½â¿¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseInOutExpo(_float t);  // EaseInOutExpo:  ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß°ï¿½ ï¿½Å¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½æ³¡ ï¿½Îµå·¯ï¿½ï¿½(ï¿½Å¸ï¿½ Å« ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½Ï»ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	ENGINE_DLL _float EaseOutBack(_float t);    // EaseOutBack:    ï¿½ï¿½Ç¥ï¿½ï¿½ ï¿½ï¿½Â¦ ï¿½ï¿½ï¿½ï¿½ï¿½Æ´ï¿½ ï¿½Çµï¿½ï¿½Æ¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ï¸ï¿½ ï¿½Ö¹ï¿½)
+}
 

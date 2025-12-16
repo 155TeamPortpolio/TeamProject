@@ -184,15 +184,15 @@ void CAnimModel::Set_Animator()
 	Remove_Component<CAnimator3D>();
 
 	string metaPath = Helper::OpenFile_Dialogue();
-	vector<ANIM_CLIP> Clips;
+	vector<ANIM_CLIP> Clips = Helper::GetDataFromJson<vector<ANIM_CLIP>>(metaPath);
 
-	std::ifstream file(metaPath);
-	if (file.is_open()) {
-		json j;
-		file >> j;
-
-		Clips = j.get<vector<ANIM_CLIP>>();
-	}
+	//std::ifstream file(metaPath);
+	//if (file.is_open()) {
+	//	json j;
+	//	file >> j;
+	//
+	//	Clips = j.get<vector<ANIM_CLIP>>();
+	//}
 
 	string clipPath = std::filesystem::path(metaPath).parent_path().string();
 	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
