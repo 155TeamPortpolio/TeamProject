@@ -6,6 +6,9 @@ class ENGINE_DLL CMeshNode :
     public CEffectNode
 {
 protected:
+    enum class MODE { UV_ANIMATION, SPRITE_ANIAMTION, END };
+
+protected:
     CMeshNode();
     CMeshNode(const CMeshNode& rhs);
     virtual ~CMeshNode() DEFAULT;
@@ -24,6 +27,7 @@ public:
     virtual void Free() override;
 
 protected:    
+    //MODE m_eMode = 
     _float4 m_vColor{};
 
     _float2 m_vAlphaFade{};
