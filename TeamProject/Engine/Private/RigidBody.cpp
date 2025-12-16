@@ -13,7 +13,6 @@ CRigidBody::CRigidBody()
 
 CRigidBody::CRigidBody(const CRigidBody& rhs)
 	: CComponent(rhs)
-	, m_bStatic(rhs.m_bStatic)
 	, m_bKinematic(rhs.m_bKinematic)
 	, m_bGravity(rhs.m_bGravity)
 	, m_fMass(rhs.m_fMass)
@@ -56,7 +55,6 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	if (pArg)
 	{
 		RIGIDBODY_DESC* pDesc = static_cast<RIGIDBODY_DESC*>(pArg);
-		m_bStatic = pDesc->isStatic;
 		m_bKinematic = pDesc->isKinematic;
 		m_bGravity = pDesc->bEnableGravity;
 		m_fMass = pDesc->fMass;
@@ -74,27 +72,22 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
 	PxTransform initialPose(ToPxVec3(vPos), ToPxQuat(vRot));
 
-	if(m_bStatic)
-		m_pActor = pPhysics->createRigidStatic(initialPose);
-	else
-	{
-		PxRigidDynamic* pDynamic = pPhysics->createRigidDynamic(initialPose);
+	m_pActor = pPhysics->createRigidDynamic(initialPose);
+	if (!m_pActor) return E_FAIL;
+	
+	m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, m_bKinematic);
+	m_pActor->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_bGravity);
+	m_pActor->setMass(m_fMass);
+	m_pActor->setLinearDamping(m_fLinearDamping);
+	m_pActor->setAngularDamping(m_fAngularDamping);
 
-		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, m_bKinematic);
-		pDynamic->setActorFlag(PxActorFlag::eDISABLE_GRAVITY, !m_bGravity);
-		pDynamic->setMass(m_fMass);
-		pDynamic->setLinearDamping(m_fLinearDamping);
-		pDynamic->setAngularDamping(m_fAngularDamping);
-
-		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, m_bLockX);
-		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, m_bLockY);
-		pDynamic->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, m_bLockZ);
-		pDynamic->setSolverIterationCounts(8, 4);
-		pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-		pDynamic->setMinCCDAdvanceCoefficient(0.15f);
-		pDynamic->setMaxDepenetrationVelocity(1.0f);
-		m_pActor = pDynamic;
-	}
+	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_X, m_bLockX);
+	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, m_bLockY);
+	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, m_bLockZ);
+	m_pActor->setSolverIterationCounts(8, 4);
+	m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+	m_pActor->setMinCCDAdvanceCoefficient(0.15f);
+	m_pActor->setMaxDepenetrationVelocity(1.0f);
 
 	m_pActor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);
 	m_pActor->userData = m_pOwner;
@@ -117,74 +110,72 @@ void CRigidBody::Render_GUI()
 
 	if (ImGui::BeginChild("##RigidBodyChild", ImVec2(0, 350), true))
 	{
-		ImGui::Text("Type: %s", m_bStatic ? "Static" : m_bKinematic ? "Kinematic" : "Dynamic");
+		ImGui::Text("Type: %s", m_bKinematic ? "Kinematic" : "NonKinematic");
 
-		if (!m_bStatic)
+
+		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
+		if (pDynamic)
 		{
-			PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
-			if (pDynamic)
+			ImGui::Separator();
+			ImGui::Text("Properties");
+
+			if (ImGui::DragFloat("Mass", &m_fMass, 0.1f, 0.1f, 1000.0f))
 			{
-				ImGui::Separator();
-				ImGui::Text("Properties");
+				Set_Mass(m_fMass);
+			}
 
-				if (ImGui::DragFloat("Mass", &m_fMass, 0.1f, 0.1f, 1000.0f))
-				{
-					Set_Mass(m_fMass);
-				}
+			_bool bGravity = m_bGravity;
+			if (ImGui::Checkbox("Gravity", &bGravity))
+			{
+				Set_Gravity(bGravity);
+			}
 
-				_bool bGravity = m_bGravity;
-				if (ImGui::Checkbox("Gravity", &bGravity))
-				{
-					Set_Gravity(bGravity);
-				}
+			_bool bKinematic = m_bKinematic;
+			if (ImGui::Checkbox("Kinematic", &bKinematic))
+			{
+				Set_Kinematic(bKinematic);
+			}
 
-				_bool bKinematic = m_bKinematic;
-				if (ImGui::Checkbox("Kinematic", &bKinematic))
-				{
-					Set_Kinematic(bKinematic);
-				}
+			ImGui::Separator();
+			ImGui::Text("Damping");
+			if (ImGui::DragFloat("Linear Damping", &m_fLinearDamping, 0.01f, 0.0f, 10.0f))
+			{
+				pDynamic->setLinearDamping(m_fLinearDamping);
+			}
+			if (ImGui::DragFloat("Angular Damping", &m_fAngularDamping, 0.01f, 0.0f, 10.0f))
+			{
+				pDynamic->setAngularDamping(m_fAngularDamping);
+			}
 
-				ImGui::Separator();
-				ImGui::Text("Damping");
-				if (ImGui::DragFloat("Linear Damping", &m_fLinearDamping, 0.01f, 0.0f, 10.0f))
-				{
-					pDynamic->setLinearDamping(m_fLinearDamping);
-				}
-				if (ImGui::DragFloat("Angular Damping", &m_fAngularDamping, 0.01f, 0.0f, 10.0f))
-				{
-					pDynamic->setAngularDamping(m_fAngularDamping);
-				}
+			ImGui::Separator();
+			ImGui::Text("Rotation Lock");
+			_bool bLockX = m_bLockX;
+			_bool bLockY = m_bLockY;
+			_bool bLockZ = m_bLockZ;
 
-				ImGui::Separator();
-				ImGui::Text("Rotation Lock");
-				_bool bLockX = m_bLockX;
-				_bool bLockY = m_bLockY;
-				_bool bLockZ = m_bLockZ;
+			if (ImGui::Checkbox("Lock X", &bLockX) |
+				ImGui::Checkbox("Lock Y", &bLockY) |
+				ImGui::Checkbox("Lock Z", &bLockZ))
+			{
+				Set_RotationLock(bLockX, bLockY, bLockZ);
+			}
 
-				if (ImGui::Checkbox("Lock X", &bLockX) |
-					ImGui::Checkbox("Lock Y", &bLockY) |
-					ImGui::Checkbox("Lock Z", &bLockZ))
-				{
-					Set_RotationLock(bLockX, bLockY, bLockZ);
-				}
+			ImGui::Separator();
+			PxVec3 vel = pDynamic->getLinearVelocity();
+			PxVec3 angVel = pDynamic->getAngularVelocity();
 
-				ImGui::Separator();
-				PxVec3 vel = pDynamic->getLinearVelocity();
-				PxVec3 angVel = pDynamic->getAngularVelocity();
+			ImGui::Text("Linear Velocity");
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", vel.x, vel.y, vel.z);
+			ImGui::Text("Speed: %.2f m/s", vel.magnitude());
 
-				ImGui::Text("Linear Velocity");
-				ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", vel.x, vel.y, vel.z);
-				ImGui::Text("Speed: %.2f m/s", vel.magnitude());
+			ImGui::Separator();
+			ImGui::Text("Angular Velocity");
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", angVel.x, angVel.y, angVel.z);
 
-				ImGui::Separator();
-				ImGui::Text("Angular Velocity");
-				ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", angVel.x, angVel.y, angVel.z);
-
-				if (ImGui::Button("Reset Velocity"))
-				{
-					Set_Velocity(XMVectorZero());
-					Set_AngularVelocity(XMVectorZero());
-				}
+			if (ImGui::Button("Reset Velocity"))
+			{
+				Set_Velocity(XMVectorZero());
+				Set_AngularVelocity(XMVectorZero());
 			}
 		}
 
@@ -211,7 +202,7 @@ PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strM
 	if (!m_pActor) return nullptr;
 	PxMaterial* pMaterial = m_pPhysicsSystem->Get_Material(strMaterialName);
 	PxShape* pShape = PxRigidActorExt::createExclusiveShape(*m_pActor, geometry, *pMaterial);
-	if (pShape && !m_bStatic)
+	if (pShape)
 	{
 		Update_Inertia();
 	}
@@ -220,7 +211,7 @@ PxShape* CRigidBody::Attach_Shape(const PxGeometry& geometry, const string& strM
 
 void CRigidBody::Add_Force(_fvector vForce, PxForceMode::Enum eMode)
 {
-	if (m_pActor && !m_bStatic && !m_bKinematic)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->addForce(ToPxVec3(vForce), eMode);
@@ -229,7 +220,7 @@ void CRigidBody::Add_Force(_fvector vForce, PxForceMode::Enum eMode)
 
 void CRigidBody::Add_Torque(_fvector vTorque, PxForceMode::Enum eMode)
 {
-	if (m_pActor && !m_bStatic && !m_bKinematic)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->addTorque(ToPxVec3(vTorque), eMode);
@@ -238,7 +229,7 @@ void CRigidBody::Add_Torque(_fvector vTorque, PxForceMode::Enum eMode)
 
 void CRigidBody::Set_Velocity(_fvector vVelocity)
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setLinearVelocity(ToPxVec3(vVelocity));
@@ -247,7 +238,7 @@ void CRigidBody::Set_Velocity(_fvector vVelocity)
 
 void CRigidBody::Set_AngularVelocity(_fvector vAngVelocity)
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setAngularVelocity(ToPxVec3(vAngVelocity));
@@ -256,7 +247,7 @@ void CRigidBody::Set_AngularVelocity(_fvector vAngVelocity)
 
 _vector CRigidBody::Get_Velocity()
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) {
@@ -269,7 +260,7 @@ _vector CRigidBody::Get_Velocity()
 
 _vector CRigidBody::Get_AngularVelocity()
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) {
@@ -304,7 +295,7 @@ void CRigidBody::Set_RotationLock(_bool bLockX, _bool bLockY, _bool bLockZ)
 	m_bLockY = bLockY;
 	m_bLockZ = bLockZ;
 
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic)
@@ -325,7 +316,7 @@ void CRigidBody::Set_Mass(_float fMass)
 void CRigidBody::Set_Kinematic(_bool bKinematic)
 {
 	m_bKinematic = bKinematic;
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, m_bKinematic);
@@ -335,7 +326,7 @@ void CRigidBody::Set_Kinematic(_bool bKinematic)
 void CRigidBody::Set_LinearDamping(_float fDamping)
 {
 	m_fLinearDamping = fDamping;
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setLinearDamping(m_fLinearDamping);
@@ -345,7 +336,7 @@ void CRigidBody::Set_LinearDamping(_float fDamping)
 void CRigidBody::Set_AngularDamping(_float fDamping)
 {
 	m_fAngularDamping = fDamping;
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->setAngularDamping(m_fAngularDamping);
@@ -354,7 +345,7 @@ void CRigidBody::Set_AngularDamping(_float fDamping)
 
 void CRigidBody::Wake_Up()
 {
-	if (m_pActor && !m_bStatic && !m_bKinematic)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->wakeUp();
@@ -363,7 +354,7 @@ void CRigidBody::Wake_Up()
 
 void CRigidBody::Put_ToSleep()
 {
-	if (m_pActor && !m_bStatic && !m_bKinematic)
+	if (m_pActor && !m_bKinematic)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) pDynamic->putToSleep();
@@ -372,7 +363,7 @@ void CRigidBody::Put_ToSleep()
 
 _bool CRigidBody::Is_Sleeping()
 {
-	if (m_pActor && !m_bStatic)
+	if (m_pActor)
 	{
 		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
 		if (pDynamic) return pDynamic->isSleeping();
@@ -382,20 +373,16 @@ _bool CRigidBody::Is_Sleeping()
 
 void CRigidBody::Update_RigidBody()
 {
-	if (!m_pActor || m_bStatic) return;
+	if (!m_pActor) return;
 
 	if (m_bKinematic)	// Transform -> Physics
 	{
 		_vector vPos = m_pOwnerTransform->Get_WorldPos();
-		_matrix worldMat = XMLoadFloat4x4(m_pOwnerTransform->Get_WorldMatrix_Ptr());
+		_smatrix worldMat = m_pOwnerTransform->Get_WorldMatrix();
 		_vector vScale, vRot, vTrans;
 		XMMatrixDecompose(&vScale, &vRot, &vTrans, worldMat);
 
-		PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();
-		if (pDynamic)
-		{
-			pDynamic->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
-		}
+		m_pActor->setKinematicTarget(PxTransform(ToPxVec3(vPos), ToPxQuat(vRot)));
 	}
 	else				// Physics -> Transform
 	{
@@ -407,7 +394,7 @@ void CRigidBody::Update_RigidBody()
 
 void CRigidBody::Update_Inertia()
 {
-	if (!m_pActor || m_bStatic) return;
+	if (!m_pActor) return;
 	if (m_pActor->getNbShapes() == 0) return;
 
 	PxRigidDynamic* pDynamic = m_pActor->is<PxRigidDynamic>();

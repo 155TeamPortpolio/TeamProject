@@ -5,22 +5,6 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CCharacterController final : public ICollidable
 {
-private:
-    // [Proxy Class] PhysX 이벤트를 수신하는 내부 클래스
-    class CCTHitReportProxy : public PxUserControllerHitReport
-    {
-    public:
-        CCTHitReportProxy(CCharacterController* pOwner) : m_pOwner(pOwner) {}
-        virtual ~CCTHitReportProxy() = default;
-
-        // PxUserControllerHitReport 인터페이스 구현
-        virtual void onShapeHit(const PxControllerShapeHit& hit) override;
-        virtual void onControllerHit(const PxControllersHit& hit) override;
-        virtual void onObstacleHit(const PxControllerObstacleHit& hit) override;
-
-    private:
-        CCharacterController* m_pOwner = nullptr;
-    };
 
 private:
     CCharacterController();
@@ -52,8 +36,13 @@ public:
     void            Late_Update(_float dt);
     void            Render_GUI();       // GUI 렌더링
 
+    void            Process_Response(const PxControllerShapeHit& hit);
+    virtual void    Update_Collisions() override {
+        m_PreviousCollisions = m_CurrentCollisions;
+        m_CurrentCollisions.clear();
+    }
 #ifdef _DEBUG
-    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
 #endif
 
 public:
@@ -72,15 +61,9 @@ public:
     void            Set_GravityEnabled(_bool bEnabled);
     _vector         Get_FootPosition();
 
-
-
 private:
-    void Apply_Gravity(_float dt);
-    void Apply_Move(_float dt);
-    void Process_ShapeHit(const PxControllerShapeHit& hit);
-    void Process_ControllerHit(const PxControllersHit& hit);
-    void Process_ObstacleHit(const PxControllerObstacleHit& hit);
-    friend class CCTHitReportProxy;
+    void            Apply_Gravity(_float dt);
+    void            Apply_Move(_float dt);
 
 private:
     class IPhysicsService*   m_pPhysicsSystem = { nullptr };
@@ -88,7 +71,6 @@ private:
     PxController*            m_pController = { nullptr };
     PxControllerManager*     m_pManager = { nullptr };
     PxMaterial*              m_pMaterial = { nullptr };
-    CCTHitReportProxy*       m_pHitReport = { nullptr };
     PxFilterData             m_FilterData = {};
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };

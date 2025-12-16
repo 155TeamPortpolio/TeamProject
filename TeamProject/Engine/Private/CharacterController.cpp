@@ -4,21 +4,6 @@
 #include "GameInstance.h"
 #include "DebugDraw.h"
 
-void CCharacterController::CCTHitReportProxy::onShapeHit(const PxControllerShapeHit& hit)
-{
-	if (m_pOwner) m_pOwner->Process_ShapeHit(hit);
-}
-
-void CCharacterController::CCTHitReportProxy::onControllerHit(const PxControllersHit& hit)
-{
-	if (m_pOwner) m_pOwner->Process_ControllerHit(hit);
-}
-
-void CCharacterController::CCTHitReportProxy::onObstacleHit(const PxControllerObstacleHit& hit)
-{
-	if (m_pOwner) m_pOwner->Process_ObstacleHit(hit);
-}
-
 CCharacterController::CCharacterController()
 {
 }
@@ -71,16 +56,17 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 		return E_FAIL;
 	}
 
-	m_pHitReport = new CCTHitReportProxy(this);
-	
 	CCT_DESC* pDesc = {nullptr};
 	if (pArg)
 	{
 		pDesc = static_cast<CCT_DESC*>(pArg);
 	}
 
-	
 	m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
+
+	PxUserControllerHitReport* pHitReport =
+		CGameInstance::GetInstance()->Get_CollisionSystem()->Get_CCTCallback();
+
 	PxCapsuleControllerDesc capsuleDesc;
 	capsuleDesc.height = pDesc->fHeight;
 	capsuleDesc.radius = pDesc->fRadius;
@@ -95,9 +81,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	// 초기 위치
 	if (pDesc->vPos.x == 0 && pDesc->vPos.y == 0 && pDesc->vPos.z == 0)
 	{
-		_vector vPos = m_pOwnerTransform->Get_WorldPos();
-		_float3 vP; XMStoreFloat3(&vP, vPos);
-		capsuleDesc.position = PxExtendedVec3(vP.x, vP.y, vP.z);
+		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();
+		capsuleDesc.position = PxExtendedVec3(vPos.x, vPos.y, vPos.z);
 	}
 	else
 	{
@@ -105,11 +90,11 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	}
 
 
-	capsuleDesc.reportCallback = m_pHitReport;
+	capsuleDesc.reportCallback = pHitReport;
 	capsuleDesc.behaviorCallback = nullptr;
+
 	if (!capsuleDesc.isValid())
 	{
-		delete m_pHitReport;
 		MSG_BOX("CCT Desc is Invalid!");
 		return E_FAIL;
 	}
@@ -117,7 +102,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_pController = m_pManager->createController(capsuleDesc);
 	if (!m_pController)
 	{
-		delete m_pHitReport;
+		MSG_BOX("Failed to Create Controller");
 		return E_FAIL;
 	}
 
@@ -148,7 +133,6 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 
 void CCharacterController::OnCollisionEnter(ICollidable* pOther)
 {
-	m_CurrentCollisions.insert(pOther);
 	m_pOwner->OnCollisionEnter();
 }
 
@@ -159,7 +143,6 @@ void CCharacterController::OnCollisionStay(ICollidable* pOther)
 
 void CCharacterController::OnCollisionExit(ICollidable* pOther)
 {
-	m_CurrentCollisions.erase(pOther);
 	m_pOwner->OnCollisionExit();
 }
 
@@ -178,12 +161,12 @@ void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;
 	Apply_Gravity(dt);
-	Apply_Move(dt);
 }
 
 void CCharacterController::Late_Update(_float dt)
 {
 	if (!m_pController) return;
+	Apply_Move(dt);
 	// PhysX -> Transform
 	const PxExtendedVec3& position = m_pController->getPosition();
 	m_pOwnerTransform->Set_WorldPos(XMVectorSet((float)position.x, (float)position.y, (float)position.z, 1.f));
@@ -207,6 +190,7 @@ void CCharacterController::Render_GUI()
 			{
 				Set_Position(_vector4(fPos[0], fPos[1], fPos[2], 1.f));
 			}
+
 			PxExtendedVec3 foot = m_pController->getFootPosition();
 			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
@@ -218,6 +202,7 @@ void CCharacterController::Render_GUI()
 			{
 				Set_GravityEnabled(bGravity);
 			}
+
 			_float fGravity = m_fGravity;
 			if (ImGui::DragFloat("Gravity", &fGravity, 0.01f, -100.f, 0.0f))
 			{
@@ -275,17 +260,46 @@ void CCharacterController::Render_GUI()
 		{
 			ImGui::Separator();
 			ImGui::Text("Colliding With:");
+
+			// 안전한 순회를 위해 벡터에 복사
+			vector<ICollidable*> collisionSnapshot;
+			collisionSnapshot.reserve(m_CurrentCollisions.size());
 			for (auto pOther : m_CurrentCollisions)
 			{
-				if (pOther && pOther->Get_Owner())
-				{
-					const char* typeStr = dynamic_cast<CCollider*>(pOther) != nullptr ? "[COL]" : "[CCT]";
-					ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
-				}
+				if (pOther)
+					collisionSnapshot.push_back(pOther);
+			}
+
+			for (auto pOther : collisionSnapshot)
+			{
+				// 추가 안전성 체크
+				if (!pOther || !pOther->Get_Owner()) continue;
+
+				const char* typeStr = "[???]";
+				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
+				CCharacterController* pCCT = dynamic_cast<CCharacterController*>(pOther);
+
+				if (pCollider)
+					typeStr = "[COL]";
+				else if (pCCT)
+					typeStr = "[CCT]";
+
+				ImGui::BulletText("%s %s", typeStr, pOther->Get_Owner()->Get_InstanceName().c_str());
 			}
 		}
 	}
 	ImGui::EndChild();
+}
+
+void CCharacterController::Process_Response(const PxControllerShapeHit& hit)
+{
+	PxRigidDynamic* pDynamic = hit.actor->is<PxRigidDynamic>();
+	if (pDynamic && !(pDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC))
+	{
+		const PxReal pushForce = 5.0f;
+		if (hit.dir.y < 0.1f)
+			pDynamic->addForce(hit.dir * pushForce, PxForceMode::eIMPULSE);
+	}
 }
 
 #ifdef _DEBUG
@@ -427,50 +441,27 @@ void CCharacterController::Apply_Gravity(_float dt)
 
 void CCharacterController::Apply_Move(_float dt)
 {
-	_float3 vVel = m_vVelocity;
+	_vector3 vVelocity = m_vVelocity;
 
 	if (m_fMaxSpeed > 0.0f)
 	{
-		_float fPlanarSpeed = sqrtf(vVel.x * vVel.x + vVel.z * vVel.z);
+		_float fPlanarSpeed = sqrtf(vVelocity.x * vVelocity.x + vVelocity.z * vVelocity.z);
 		if (fPlanarSpeed > m_fMaxSpeed)
 		{
 			_float fScale = m_fMaxSpeed / fPlanarSpeed;
-			vVel.x *= fScale;
-			vVel.z *= fScale;
+			vVelocity.x *= fScale;
+			vVelocity.z *= fScale;
 		}
 	}
 
-	_vector vDisplacement = XMLoadFloat3(&vVel) * dt;
-	_float3 vDisp;
-	XMStoreFloat3(&vDisp, vDisplacement);
-	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
+	_vector3 vDisplacement = vVelocity * dt;
+	PxVec3 pxDisp(vDisplacement.x, vDisplacement.y, vDisplacement.z);
 
 	PxControllerFilters filters;
 	filters.mFilterData = &m_FilterData;
 
 	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
-}
-
-void CCharacterController::Process_ShapeHit(const PxControllerShapeHit& hit)
-{
-	PxRigidDynamic* actor = hit.shape->getActor()->is<PxRigidDynamic>();
-	if (actor && !(actor->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC))
-	{
-		const PxReal pushForce = 5.0f;
-		if (hit.dir.y < 0.1f)
-			actor->addForce(hit.dir * pushForce, PxForceMode::eIMPULSE);
-	}
-}
-
-void CCharacterController::Process_ControllerHit(const PxControllersHit& hit)
-{
-	// 다른 캐릭터
-}
-
-void CCharacterController::Process_ObstacleHit(const PxControllerObstacleHit& hit)
-{
-	// Obstacle
 }
 
 CCharacterController* CCharacterController::Create()
@@ -492,12 +483,6 @@ CComponent* CCharacterController::Clone()
 void CCharacterController::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
-
-	if (m_pHitReport)
-	{
-		delete m_pHitReport;
-		m_pHitReport = nullptr;
-	}
 
 	if (m_pController)
 	{
