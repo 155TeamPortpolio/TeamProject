@@ -42,7 +42,6 @@
     <ClInclude Include="..\public\AnimationLayout.h" />
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
     <ClInclude Include="..\public\AnimToolPanel.h" />
-    <ClInclude Include="..\public\Assimps.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\Public\AnimModel.h" />
     <ClInclude Include="..\public\Grid.h" />
