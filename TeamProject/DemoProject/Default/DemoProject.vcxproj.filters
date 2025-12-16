@@ -51,6 +51,7 @@
     </Filter>
     <Filter Include="02. DemoObject\DemoShaderAnimModel">
       <UniqueIdentifier>{3407796f-ec5b-4d5a-beb1-157a52b9ff8f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. DemoObject\DemoFloor">
       <UniqueIdentifier>{8d029e85-8d6f-4322-a696-eae22a635241}</UniqueIdentifier>
     </Filter>
@@ -146,10 +147,11 @@
     <ClInclude Include="..\Public\DemoShaderModel.h">
       <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DemoShaderAnimModel.h">
-      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     <ClInclude Include="..\Public\DemoFloor.h">
       <Filter>02. DemoObject\DemoFloor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DemoShaderAnimModel.h">
+      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -225,23 +227,16 @@
     <ClCompile Include="..\Private\DemoShaderModel.cpp">
       <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemoShaderAnimModel.cpp">
-      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     <ClCompile Include="..\Private\DemoFloor.cpp">
       <Filter>02. DemoObject\DemoFloor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoShaderAnimModel.cpp">
+      <Filter>02. DemoObject\DemoShaderAnimModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="DemoProject.rc">
       <Filter>98. Default</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_DemoInstance.hlsl">
-      <Filter>96. DemoShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_PlaneGrid.hlsl">
-      <Filter>96. DemoShader</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

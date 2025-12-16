@@ -90,7 +90,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 0.2f;
+    if (vAmbient.g < 0.2) vAmbient.g = 0.5f;
     
     return Out;
 }
