@@ -27,6 +27,7 @@ public:
 	virtual void FromJson(const json& data) override;
 
 private:
+	string		m_strFontTag;
 	_int		m_iFontKeyIndex = { 0 };
 	_char		m_szText[MAX_PATH] = {};
 	_float		m_fFontScale = { 1.f };
@@ -40,6 +41,9 @@ public:
 private:
 	virtual void Render_GUI_Layout() override;
 	virtual void Render_GUI_Transform() override;
+
+private:
+	void Set_Font(const string& strFontTag);
 
 public:
 	static CGameObject* Create();

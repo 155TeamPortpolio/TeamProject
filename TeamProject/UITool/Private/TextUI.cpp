@@ -32,7 +32,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     const auto& strFontKeys = CUITool_Level::m_strFontKeys;
     if (strFontKeys.size())
-        Get_Component<CTextSlot>()->Set_Font(strFontKeys[m_iFontKeyIndex]);
+        Set_Font(strFontKeys[m_iFontKeyIndex]);
     else
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
 
@@ -75,7 +75,7 @@ void CTextUI::Render_GUI()
     ImGui::SeparatorText(u8"폰트");
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, szFontKeys.data(), szFontKeys.size()))
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+        Set_Font(szFontKeys[m_iFontKeyIndex]);
     
     if (ImGui::Button(u8"크기 +"))
     {
@@ -99,7 +99,7 @@ void CTextUI::ToJson(json& data)
 
     data["typeTag"] = "TextUI";
 
-    data["fontTag"] = CUITool_Level::m_strFontKeys[m_iFontKeyIndex];
+    data["fontTag"] = m_strFontTag;
     data["text"] = m_szText;
     data["fontScale"] = m_fFontScale;
     data["fontColor"]["x"] = m_vFontColor.x;
@@ -113,8 +113,9 @@ void CTextUI::FromJson(const json& data)
     string strText = data["text"]; 
     strcpy_s(m_szText, sizeof(m_szText), strText.c_str());
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(strText));
-    Get_Component<CTextSlot>()->Set_Font(data["fontTag"]);
-    Get_Component<CTextSlot>()->Set_Size(data["fontScale"]);
+    Set_Font(data["fontTag"]);
+    m_fFontScale = data["fontScale"];
+    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     m_vFontColor = _float4(data["fontColor"]["x"].get<float>(), data["fontColor"]["y"].get<float>(), data["fontColor"]["z"].get<float>(), data["fontColor"]["w"].get<float>());
     Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
@@ -174,8 +175,8 @@ void CTextUI::Render_GUI_Layout()
 
     ImGui::Checkbox("Size to Content", &m_isSizeToContent);
 
-    if(m_isSizeToContent)
-        m_vSize = Get_Component<CTextSlot>()->Get_TextSize();
+    if (m_isSizeToContent)
+        m_vSize = Get_Component<CTextSlot>()->Get_TextSize() * m_fFontScale;
     else
         ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 }
@@ -203,6 +204,12 @@ void CTextUI::Render_GUI_Transform()
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
+}
+
+void CTextUI::Set_Font(const string& strFontTag)
+{
+    Get_Component<CTextSlot>()->Set_Font(strFontTag);
+    m_strFontTag = strFontTag;
 }
 
 CGameObject* CTextUI::Create()
