@@ -32,9 +32,12 @@ HRESULT CAnimationEditLevel::Awake()
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	CAMERA_DESC desc = {};
+	desc.fAspect = (float)g_iWinSizeX / g_iWinSizeY;
+	desc.fNear = 0.1f; desc.fFar = 500.f;
+	desc.fFov = 60.f;
 
 	CGameObject* Camera = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_EditCamera" })
-		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
+		.Camera(desc)
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
