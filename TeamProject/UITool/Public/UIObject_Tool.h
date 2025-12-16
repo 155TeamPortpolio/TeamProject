@@ -15,15 +15,30 @@ protected:
 	virtual ~CUIObject_Tool() DEFAULT;
 
 public:
-	virtual json ToJson() { return json(); }
-	virtual void FromJson(const json& data) {}
+	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 
-	void LinkChildFromJson(const json& data);
+public:
+	void DestroyChild_FromParent();
 
-protected:
-	void ToJson_Common(json& data);
+public:
+	virtual void ToJson(json& data);
+	virtual void FromJson(const json& data);
+
+protected: 
+	void Add_Child(CUIObject_Tool* pChild);
+	void Remove_Child(CUIObject_Tool* pChild);
+
 	virtual void Render_GUI_Layout();
 	virtual void Render_GUI_Transform();
+
+private:
+	void ToJson_Common(json& data);
+	void ToJson_Parent(json& data);
+	void FromJson_LinkParent(const json& data);
+
+protected:
+	CUIObject_Tool*		m_pParent = {};
+	_int				m_iChildIndex = { -1 }; 
 
 public:
 	virtual void Free();

@@ -13,8 +13,10 @@
 #include "ImageUI.h"
 #include "TextUI.h"
 
-vector<string> CUITool_Level::m_TextureKeys;
-vector<string> CUITool_Level::m_FontKeys;
+vector<string> CUITool_Level::m_strTextureKeys;
+vector<const _char*> CUITool_Level::m_szTextureKeys;
+vector<string> CUITool_Level::m_strFontKeys;
+vector<const _char*> CUITool_Level::m_szFontKeys;
 
 CUITool_Level::CUITool_Level(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -60,26 +62,6 @@ void CUITool_Level::PreLoad_Level()
 {
 }
 
-const vector<const _char*> CUITool_Level::Get_TextureKeys()
-{
-	vector<const _char*> TextureKeys;
-
-	for (const auto& Key : m_TextureKeys)
-		TextureKeys.push_back(Key.c_str());
-
-	return TextureKeys;
-}
-
-const vector<const _char*> CUITool_Level::Get_FontKeys()
-{
-	vector<const _char*> FontKeys;
-
-	for (const auto& Key : m_FontKeys)
-		FontKeys.push_back(Key.c_str());
-
-	return FontKeys;
-}
-
 HRESULT CUITool_Level::Ready_Textures()
 { 
 	Add_Texture("Logo.png", "../Bin/Resources/UI/Logo.png");
@@ -88,6 +70,9 @@ HRESULT CUITool_Level::Ready_Textures()
 	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/PanelBox.dds")))
 		MSG_BOX("Failed to Ready Textures : PanelBox.dds");
 
+	for (const auto& Key : m_strTextureKeys)
+		m_szTextureKeys.push_back(Key.c_str());
+
 	return S_OK;
 }
 
@@ -95,6 +80,9 @@ HRESULT CUITool_Level::Ready_Fonts()
 {
 	Add_Font("NotoSansKR_Regular", L"../Bin/Resources/Fonts/NotoSansKR_Regular.spritefont");
 	Add_Font("NotoSansKR_Bold", L"../Bin/Resources/Fonts/NotoSansKR_Bold.spritefont");
+
+	for (const auto& Key : m_strFontKeys)
+		m_szFontKeys.push_back(Key.c_str());
 
 	return S_OK;
 }
@@ -148,7 +136,7 @@ HRESULT CUITool_Level::Add_Texture(const string& resourceKey, const string& reso
 {
 	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(resourceKey, resourcePath)))
 		return E_FAIL;
-	m_TextureKeys.push_back(resourceKey);
+	m_strTextureKeys.push_back(resourceKey);
 
 	return S_OK;
 }
@@ -156,7 +144,7 @@ HRESULT CUITool_Level::Add_Texture(const string& resourceKey, const string& reso
 HRESULT CUITool_Level::Add_Font(string FontName, const wstring& FontFilePath)
 {
 	m_pGameInstance->Get_FontSystem()->Add_Font(FontName, FontFilePath);
-	m_FontKeys.push_back(FontName);
+	m_strFontKeys.push_back(FontName);
 
 	return S_OK;
 }

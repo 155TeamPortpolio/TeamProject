@@ -24,17 +24,16 @@ public:
 
 public:
     static void PreLoad_Level();
-    static const vector<const _char*> Get_TextureKeys();
-    static _int Get_TextureKeysSize() { return static_cast<_int>(m_TextureKeys.size()); }
-    static const vector<const _char*> Get_FontKeys();
-    static _int Get_FontKeysSize() { return static_cast<_int>(m_FontKeys.size()); }
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
 
-private:
-    static vector<string> m_TextureKeys;
-    static vector<string> m_FontKeys;
+public:
+    static vector<string> m_strTextureKeys;
+    static vector<const _char*> m_szTextureKeys;
+
+    static vector<string> m_strFontKeys;
+    static vector<const _char*> m_szFontKeys;
 
 private:
     HRESULT Ready_Textures();
