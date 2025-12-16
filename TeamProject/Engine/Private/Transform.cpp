@@ -302,26 +302,23 @@ void CTransform::Render_GUI()
 	_bool changedScl = ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f");
 
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
-	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.2f", ImGuiInputTextFlags_ReadOnly);
 
 	_float rad = XMConvertToRadians(90);
 	// X
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate X");
-	ImGui::SameLine();
 	if (ImGui::Button("X -90")) Rotation(XMVectorSet(1, 0, 0, 0), -rad);
 	ImGui::SameLine();
 	if (ImGui::Button("X +90")) Rotation(XMVectorSet(1, 0, 0, 0), +rad);
 
 	// Y
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Y");
-	ImGui::SameLine();
 	if (ImGui::Button("Y -90")) Rotation(XMVectorSet(0, 1, 0, 0), -rad);
 	ImGui::SameLine();
 	if (ImGui::Button("Y +90")) Rotation(XMVectorSet(0, 1, 0, 0), +rad);
 
 	// Z
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Z");
-	ImGui::SameLine();
 	if (ImGui::Button("Z -90")) Rotation(XMVectorSet(0, 0, 1, 0), -rad);
 	ImGui::SameLine();
 	if (ImGui::Button("Z +90")) Rotation(XMVectorSet(0, 0, 1, 0), +rad);
