@@ -43,10 +43,9 @@ namespace Helper
 
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
-
 }
 
-//json�� �ҷ� ���ϴ� ����ü�� ��ȯ
+//json 저장 및 불러오기
 namespace Helper
 {
 	template <typename T>
