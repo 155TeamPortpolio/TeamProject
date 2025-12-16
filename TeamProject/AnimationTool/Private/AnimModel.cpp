@@ -180,7 +180,7 @@ void CAnimModel::Set_Animator()
 	Remove_Component<CAnimator3D>();
 
 	string metaPath = Helper::OpenFile_Dialogue();
-	vector<ANIM_CLIP> Clips = Helper::GetStructFromJson<vector<ANIM_CLIP>>(metaPath);
+	vector<ANIM_CLIP> Clips = Helper::GetDataFromJson<vector<ANIM_CLIP>>(metaPath);
 
 	//std::ifstream file(metaPath);
 	//if (file.is_open()) {

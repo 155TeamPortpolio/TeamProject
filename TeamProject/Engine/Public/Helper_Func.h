@@ -76,16 +76,13 @@ namespace Helper
 	};
 
 	template <typename T>
-	inline T SaveJson(T Data, const string& filePath) {
+	inline void SaveJson(T& Data, const string& filePath) {
 		json JsonData = Data;
 		ofstream file(filePath);
 
-		if (!file.is_open()) {
-			OutputDebugStringA("Save Error");
-			return;
+		if (file.is_open()) {
+			file << JsonData.dump(2);
+			file.close();
 		}
-
-		file << JsonData.dump(2);
-		file.close();
 	};
 }

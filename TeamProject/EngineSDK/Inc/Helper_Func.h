@@ -42,17 +42,6 @@ namespace Helper
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
 
-	//json을 불러 원하는 구조체로 변환
-	template <typename T>
-	inline T GetDataFromJson(const string& filePath) {
-		std::ifstream file(filePath);
-		if (!file.is_open())
-			return T{};
-
-		json j;
-		file >> j;
-		return j.get<T>();
-	};
 }
 
 namespace Math
@@ -70,4 +59,30 @@ namespace Math
 	ENGINE_DLL _float EaseInOutQuad(_float t);  // EaseInOutQuad:  직선적인 느낌의 명확한 S-curve(툴/편집기에서 보기 좋은 반응)
 	ENGINE_DLL _float EaseInOutExpo(_float t);  // EaseInOutExpo:  초반 거의 정지→중간 매우 빠름→끝 부드러움(거리 큰 연출용, 일상엔 과함)
 	ENGINE_DLL _float EaseOutBack(_float t);    // EaseOutBack:    목표를 살짝 지나쳤다 되돌아오는 오버슛(줌/락온 강조 연출, 과하면 멀미)
+}
+
+//json을 불러 원하는 구조체로 변환
+namespace Helper
+{
+	template <typename T>
+	inline T GetDataFromJson(const string& filePath) {
+		std::ifstream file(filePath);
+		if (!file.is_open())
+			return T{};
+
+		json j;
+		file >> j;
+		return j.get<T>();
+	};
+
+	template <typename T>
+	inline void SaveJson(T& Data, const string& filePath) {
+		json JsonData = Data;
+		ofstream file(filePath);
+
+		if (file.is_open()) {
+			file << JsonData.dump(2);
+			file.close();
+		}
+	};
 }
