@@ -27,9 +27,10 @@ public:
     virtual void Free() override;
 
 protected:    
-    //MODE m_eMode = 
+    MODE m_eMode = MODE::END;
     _float4 m_vColor{};
 
+    EaseType m_eAlphaFadeEase = EaseType::None;
     _float2 m_vAlphaFade{};
     _float m_fAlpha{};
 
