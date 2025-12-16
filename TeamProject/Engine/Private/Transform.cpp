@@ -290,23 +290,48 @@ void CTransform::TranslateMatrix(_fmatrix matrix)
 void CTransform::Render_GUI()
 {
 	ImGui::SeparatorText("Transform");
-	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 8) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::BeginChild("##TransformChild", ImVec2{ 0, childHeight }, true);
+
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Position");
 	_bool changedPos = ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_vPosition), "%.1f");
-	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
-	_bool changedRot = ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f");
+
 	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
 	_bool changedScl = ImGui::InputFloat3("##Scale", reinterpret_cast<float*>(&m_vScale), "%.1f");
-	if (changedPos || changedRot || changedScl)
-	{
+
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
+	ImGui::InputFloat4("##Rotation", reinterpret_cast<float*>(&m_qRotation), "%.4f", ImGuiInputTextFlags_ReadOnly);
+
+	_float rad = XMConvertToRadians(90);
+	// X
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate X");
+	ImGui::SameLine();
+	if (ImGui::Button("X -90")) Rotation(XMVectorSet(1, 0, 0, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("X +90")) Rotation(XMVectorSet(1, 0, 0, 0), +rad);
+
+	// Y
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Y");
+	ImGui::SameLine();
+	if (ImGui::Button("Y -90")) Rotation(XMVectorSet(0, 1, 0, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("Y +90")) Rotation(XMVectorSet(0, 1, 0, 0), +rad);
+
+	// Z
+	ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotate Z");
+	ImGui::SameLine();
+	if (ImGui::Button("Z -90")) Rotation(XMVectorSet(0, 0, 1, 0), -rad);
+	ImGui::SameLine();
+	if (ImGui::Button("Z +90")) Rotation(XMVectorSet(0, 0, 1, 0), +rad);
+
+	if (changedPos || changedScl)
 		MarkDirty();
-	}
+
 	ImGui::EndChild();
 }
+
 
 void CTransform::LookAt(_fvector vAt)
 {

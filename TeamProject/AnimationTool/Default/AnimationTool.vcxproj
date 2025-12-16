@@ -38,13 +38,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_textedit.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
-    <ClInclude Include="..\public\Animator3DEX.h" />
-    <ClInclude Include="..\public\AnimationClipEX.h" />
     <ClInclude Include="..\Public\AnimationEditLevel.h" />
-    <ClInclude Include="..\public\AnimationLayout.h" />
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
     <ClInclude Include="..\public\AnimToolPanel.h" />
-    <ClInclude Include="..\public\Assimps.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\Public\AnimModel.h" />
     <ClInclude Include="..\public\Grid.h" />
@@ -66,8 +62,6 @@
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp" />
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp" />
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImSequencer.cpp" />
-    <ClCompile Include="..\private\Animator3DEX.cpp" />
-    <ClCompile Include="..\private\AnimationClipEX.cpp" />
     <ClCompile Include="..\Private\AnimationEditLevel.cpp" />
     <ClCompile Include="..\private\AnimToolPanel.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />

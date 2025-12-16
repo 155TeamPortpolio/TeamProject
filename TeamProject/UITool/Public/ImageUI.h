@@ -21,7 +21,7 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	virtual json ToJson() override;
+	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
 private:

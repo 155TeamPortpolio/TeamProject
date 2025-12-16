@@ -395,12 +395,11 @@
       <Filter>01. Utility\04. Components\22.EventListner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ObjectPool.h">
-  <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
-</ClInclude>
-<ClInclude Include="..\Public\Camera.h">
-  <Filter>01. Utility\04. Components\01. Camera</Filter>
-</ClInclude>
-
+      <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Camera.h">
+      <Filter>01. Utility\04. Components\01. Camera</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CameraMgr.h">
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClInclude>
@@ -466,6 +465,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\CamFovLinearEvaluator.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Engine_Math.h">
+      <Filter>01. Utility\97. Helper</Filter>
+        </ClInclude>
+        <ClInclude Include="..\Public\AnimationLayout.h">
+      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -813,7 +818,7 @@
     </Filter>
     <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool">
       <UniqueIdentifier>{da326297-d441-4077-b559-c58fd1c4c380}</UniqueIdentifier>
-        </Filter>
+    </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer">
       <UniqueIdentifier>{2f7e73b0-8a42-4e4a-967e-5ecf27c71370}</UniqueIdentifier>
     </Filter>
@@ -1196,7 +1201,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\ObjectPool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
-      </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\Camera.cpp">
       <Filter>01. Utility\04. Components\01. Camera</Filter>
     </ClCompile>
@@ -1250,6 +1255,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CamFovLinearEvaluator.cpp">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Engine_Math.cpp">
+      <Filter>01. Utility\97. Helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
