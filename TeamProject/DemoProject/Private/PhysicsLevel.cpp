@@ -7,10 +7,12 @@
 
 #include "DemoCamera.h"
 #include "DemoModel.h"
+#include "DemoFloor.h"
 #include "DemoPlayer.h"
 #include "DemoUI.h"
 #include "Camera.h"
 #include "InstanceDemo.h"
+
 
 #include "RigidBody.h"
 #include "Collider.h"
@@ -33,6 +35,7 @@ HRESULT CPhysicsLevel::Awake()
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
 	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoPlayer", CDemoPlayer::Create());
+	pProto->Add_ProtoType("Physics_Level", "Proto_GameObject_DemoFloor", CDemoFloor::Create());
 
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
@@ -61,7 +64,7 @@ HRESULT CPhysicsLevel::Awake()
 	floorColDesc.isTrigger = false;
 	floorColDesc.vRotation = { 0.f, 0.f, 0.f };
 
-	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoModel" })
+	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoFloor" })
 		.Position({ 0.f, -2.f, 0.f })
 		.Scale({ 20.f, 1.f, 20.f })
 		.Collider(floorColDesc)

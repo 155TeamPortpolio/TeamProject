@@ -34,6 +34,7 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="..\Public\DemoCamera.h" />
+    <ClInclude Include="..\Public\DemoFloor.h" />
     <ClInclude Include="..\Public\DemoGrid.h" />
     <ClInclude Include="..\Public\DemoLevel.h" />
     <ClInclude Include="..\Public\DemoModel.h" />
@@ -99,6 +100,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\DemoCamera.cpp" />
+    <ClCompile Include="..\Private\DemoFloor.cpp" />
     <ClCompile Include="..\Private\DemoGrid.cpp" />
     <ClCompile Include="..\Private\DemoLevel.cpp" />
     <ClCompile Include="..\Private\DemoModel.cpp" />
