@@ -122,6 +122,7 @@ void CTextUI::FromJson(const json& data)
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
 
     __super::FromJson(data);
+    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 void CTextUI::Render_GUI_Layout()

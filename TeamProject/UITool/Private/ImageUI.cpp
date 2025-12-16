@@ -59,8 +59,8 @@ void CImageUI::Render_GUI()
 
     ImGui::SeparatorText(u8"이미지");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if(ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }
 
 void CImageUI::ToJson(json& data)
@@ -69,14 +69,22 @@ void CImageUI::ToJson(json& data)
      
     data["typeTag"] = "ImageUI";
 
-    data["textureTag"] = CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
+    data["textureTag"] = m_strTextureKey;// CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
 }
 
 void CImageUI::FromJson(const json& data)
 {
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+    Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+    //Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
 
     __super::FromJson(data);
+    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
+}
+
+void CImageUI::Change_Texture(_uint index, const string& levelKey, const string& TextureKey)
+{
+    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
+    m_strTextureKey = TextureKey;
 }
 
 CGameObject* CImageUI::Create()

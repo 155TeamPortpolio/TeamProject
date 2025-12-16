@@ -114,6 +114,7 @@ void CCanvasPanel::ToJson(json& data)
 void CCanvasPanel::FromJson(const json& data)
 {
     __super::FromJson(data);
+    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 CGameObject* CCanvasPanel::Create()
