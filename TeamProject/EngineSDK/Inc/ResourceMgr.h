@@ -7,13 +7,13 @@ class CResourceMgr final :
 	public IResourceService
 {
 	struct RS_Pool {
-		unordered_map<string, class CShader*>m_Shaders;
-		unordered_map<string, class CVIBuffer*>m_Buffers;
-		unordered_map<string, class CModelData*>m_ModelDatas;
-		unordered_map<string, vector<class CMaterialData*>> m_MaterialInstances;
-		unordered_map<string, class CTexture*>m_Textures;
-		unordered_map<string, class CSoundData*>m_Sounds;
-		unordered_map<string, class CAnimationClip*>m_Animations;
+		unordered_map<string, class CShader*>					m_Shaders;
+		unordered_map<string, class CVIBuffer*>					m_Buffers;
+		unordered_map<string, class CModelData*>				m_ModelDatas;
+		unordered_map<string, vector<class CMaterialData*>>		m_MaterialInstances;
+		unordered_map<string, class CTexture*>					m_Textures;
+		unordered_map<string, class CSoundData*>				m_Sounds;
+		unordered_map<string, vector<class CAnimationClip*>>	m_Animations;
 	};
 
 private:
@@ -31,10 +31,9 @@ public:
 	virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) override;
 	virtual class CVIBuffer* Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType) override;
 	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
-
 	virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) override;
 	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) override;
-	virtual class CAnimationClip* Load_AnimClip(const string& levelTag, const string& AnimClipKey) override;
+	virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) override;
 
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;

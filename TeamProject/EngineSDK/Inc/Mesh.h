@@ -28,6 +28,7 @@ public:
 protected:
 	vector<_uint> m_indices;						//임시 인덱스 (함수로 따로 빼려고 하다보니 생김)
 	vector<VTXSKINMESH> m_Skined;						//임시 버텍스 (본 기준의 민맥스 따로 만드려다 보니.)
+	vector<VTXMESH> m_StaticVertex;
 	_uint m_MaterialIndex = {};					//어떤 머티리얼을 사용하는가??
 
 	_float3 m_vMeshMinLocal = { FLT_MAX ,FLT_MAX ,FLT_MAX };

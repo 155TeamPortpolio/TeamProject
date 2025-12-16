@@ -2,7 +2,7 @@
 #include "GameObject.h"
 
 NS_BEGIN(MapTool)
-class CStaticObject :
+class CMapToolObject abstract :
     public CGameObject
 {
 public:
@@ -10,11 +10,12 @@ public:
         string  TagModelKey = "";
         string  TagMaterialKey = "";
         _bool   isRayReceiver = {};
-    }STATIC_OBJECT_DESC;
-private:
-    CStaticObject();
-    CStaticObject(const CStaticObject& rhs);
-    virtual ~CStaticObject() DEFAULT;
+    }MAPTOOL_OBJECT_DESC;
+
+protected:
+    CMapToolObject();
+    CMapToolObject(const CMapToolObject& rhs);
+    virtual ~CMapToolObject() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -24,17 +25,17 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+    virtual void Export_ObjectData(void* pDesc) PURE;
+
 public:
     void Render_GUI() override;
     void Delete_Object();
 
-private:
+protected:
     string  m_TagModelKey = {};
     string  m_TagMaterialKey = {};
 
 public:
-    static CStaticObject* Create();
-    CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };
 NS_END

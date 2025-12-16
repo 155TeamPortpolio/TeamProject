@@ -43,14 +43,13 @@ namespace Helper
 
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
-
 }
 
-//json�� �ҷ� ���ϴ� ����ü�� ��ȯ
+//json 저장 및 불러오기
 namespace Helper
 {
 	template <typename T>
-	inline T GetDataFromJson(const string& filePath) {
+	inline T LoadJson(const string& filePath) {
 		std::ifstream file(filePath);
 		if (!file.is_open())
 			return T{};
@@ -62,7 +61,8 @@ namespace Helper
 
 	template <typename T>
 	inline void SaveJson(T& Data, const string& filePath) {
-		json JsonData = Data;
+		//json JsonData = Data;
+		nlohmann::ordered_json JsonData = Data;
 		ofstream file(filePath);
 
 		if (file.is_open()) {
