@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "AnimModel.h"
-#include "AnimationClipEX.h"
-#include "Animator3DEX.h"
-#include "SkeletalModel.h"
-#include "Material.h"
+
 #include "Helper_Func.h"
 #include "GameInstance.h"
+
+#include "SkeletalModel.h"
+#include "Material.h"
 #include "AnimationLayout.h"
+#include "AnimationClip.h"
+#include "Animator3D.h"
+
 
 CAnimModel::CAnimModel()
 	: m_pGameInstance{ CGameInstance::GetInstance() }

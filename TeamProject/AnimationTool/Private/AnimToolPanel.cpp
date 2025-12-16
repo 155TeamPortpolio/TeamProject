@@ -1,7 +1,8 @@
 #include "AnimToolPanel.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
-#include "AnimationClipEX.h"
+#include "AnimationClip.h"
+
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
@@ -89,7 +90,7 @@ void CAnimToolPanel::Load_Clips()
 			auto iter = m_Meta.find(nameTag);
 			if (iter != m_Meta.end()) {
 				//데이터가 존재하며 데이터가 있으면 제거
-				for (ANIM_CLIP meta : iter->second) { 
+				for (auto& meta : iter->second) { 
 					if (meta.ClipTag == ClipTag) {
 						hr = E_FAIL;
 						break;

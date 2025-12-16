@@ -39,7 +39,6 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imstb_truetype.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="..\Public\AnimationEditLevel.h" />
-    <ClInclude Include="..\public\AnimationLayout.h" />
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
     <ClInclude Include="..\public\AnimToolPanel.h" />
     <ClInclude Include="..\Public\EditCamera.h" />

@@ -224,6 +224,7 @@ exit /b 0</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\AnimationClip.h" />
+    <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
     <ClInclude Include="..\Public\AudioDevice.h" />
     <ClInclude Include="..\Public\AudioSource.h" />
