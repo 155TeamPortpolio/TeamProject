@@ -57,6 +57,7 @@ private:
     void LoadTextureFromDirectory(const string& dirPath);
     void LoadMesh();
     void DisplayAllTextures();
+    void DisplayModels();
 };
 
 NS_END

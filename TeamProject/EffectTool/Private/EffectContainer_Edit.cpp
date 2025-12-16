@@ -56,6 +56,7 @@ void CEffectContainer_Edit::Render_GUI()
 {
     ImGui::PushID(this);
 	DisplayAllTextures();
+	DisplayModels();
 	LoadMesh();
 	ContextClear();
 	Play();
@@ -63,8 +64,8 @@ void CEffectContainer_Edit::Render_GUI()
 	RemoveLastNode();
 
     CGameObject::Render_GUI();
-    for (const auto& node : m_Nodes)
-        node->Render_GUI();
+    //for (const auto& node : m_Nodes)
+    //    node->Render_GUI();
     ImGui::PopID();
 }
 
@@ -199,13 +200,19 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 
 void CEffectContainer_Edit::LoadMesh()
 {
+	namespace fs = std::filesystem;
+
 	if (ImGui::Button("Load Mesh"))
 	{
-		string path = Helper::OpenFile_Dialogue();
-		//string modelKey = 
+		
+		fs::path filePath = Helper::OpenFile_Dialogue();
+		string path = filePath.string();
+		string modelKey = filePath.filename().string();
 
 		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
-		//resource->Add_ResourcePath()
+		resource->Add_ResourcePath(modelKey, path);
+
+		m_Context.ModelTags.push_back(modelKey);
 	}
 }
 
@@ -273,5 +280,36 @@ void CEffectContainer_Edit::DisplayAllTextures()
 		ImGui::PopID();
 		++idx;
 	}
+	ImGui::End();
+}
+
+void CEffectContainer_Edit::DisplayModels()
+{
+	ImGui::Begin("Models");
+
+	if (m_Context.ModelTags.empty())
+	{
+		ImGui::Text("No Model");
+		ImGui::End();
+		return;
+	}
+
+	for (_uint i = 0; i < m_Context.ModelTags.size(); ++i)
+	{
+		_bool isSelect = (i == m_Context.iSelectModelIndex);
+
+		if (ImGui::Selectable(m_Context.ModelTags[i].c_str(), isSelect))
+			m_Context.iSelectModelIndex = i;
+
+		if (isSelect)
+			ImGui::SetItemDefaultFocus();
+	}
+
+	if (-1 != m_Context.iSelectModelIndex)
+	{
+		ImGui::Separator();
+		ImGui::Text("Select Model : %s", m_Context.ModelTags[m_Context.iSelectModelIndex].c_str());
+	}
+
 	ImGui::End();
 }

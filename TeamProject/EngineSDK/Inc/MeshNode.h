@@ -24,6 +24,7 @@ public:
     virtual void Free() override;
 
 private:    
+    _float4 m_vColor{};
 
 };
 NS_END
