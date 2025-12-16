@@ -29,11 +29,12 @@ private:
 
 private:
 	_bool    m_bEnable = true;
+	_bool		m_bExpanded = false;
 	_bool    m_bDrawNames = false;
 	_bool    m_bDrawJoints = true;
+	_bool    m_bOnlySelect = false;
 	_float   m_fLineThickness = 1.5f;
 	_float   m_fJointRadius = 3.0f;
-
 	_int     m_iSelectedBone = -1;
 
 public:

@@ -19,33 +19,60 @@ HRESULT CDebugBonePanel::Initialize()
 
 void CDebugBonePanel::Render_GUI()
 {
-	ImGui::SeparatorText("Debug Skeleton");
 
-	ImGui::Checkbox("Enable", &m_bEnable);
+	CGameObject* pTarget = m_pContext->pSelectedObject;
+	if (!pTarget) return;
+
+	CSkeletalModel* pModel = pTarget->Get_Component<CSkeletalModel>();
+	if (!pModel) return;
+
+	CModelData* pData = pModel->Get_ModelData();
+
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
+
+	// 접힘 상태면 창 자체가 작고, 이동만 가능하게(가림 최소화)
+	if (!m_bExpanded)
+	{
+		flags |= ImGuiWindowFlags_NoResize;
+		ImGui::SetNextWindowSize(ImVec2(180, 60), ImGuiCond_Always);
+	}
+	else
+	{
+		// 펼침 상태면 크게
+		ImGui::SetNextWindowSize(ImVec2(420, 520), ImGuiCond_FirstUseEver);
+	}
+
+	ImGui::Begin("BonePanel", nullptr, flags);
+
+	if (!m_bExpanded)
+	{
+		if (ImGui::Button("Show Bones", ImVec2(-1, 0)))
+			m_bExpanded = true;
+
+		// (선택) 선택된 오브젝트 이름만 한 줄
+		// ImGui::TextDisabled("Target: %s", pTarget->Get_Name().c_str());
+		ImGui::End();
+		return;
+	}
+
+	// 펼쳐진 상태: 상단에 닫기 버튼
+	if (ImGui::Button("Hide"))
+		m_bExpanded = false;
+
 	ImGui::SameLine();
 	ImGui::Checkbox("Names", &m_bDrawNames);
 	ImGui::SameLine();
 	ImGui::Checkbox("Joints", &m_bDrawJoints);
+	ImGui::SameLine();
+	ImGui::Checkbox("Only Select", &m_bOnlySelect);
 
 	ImGui::SliderFloat("Line Thickness", &m_fLineThickness, 1.0f, 4.0f, "%.1f");
 	ImGui::SliderFloat("Joint Radius", &m_fJointRadius, 1.0f, 8.0f, "%.1f");
 
-	CGameObject* pTarget = m_pContext->pSelectedObject;
-	if (pTarget == nullptr)
+	if (!pData)
 	{
-		ImGui::TextDisabled("No target selected.");
-		return;
-	}
-
-	CSkeletalModel* pModel = pTarget->Get_Component<CSkeletalModel>();
-	if (pModel == nullptr) {
-		ImGui::TextDisabled("Target is Not Skinned");
-		return;
-	}
-
-	CModelData* pData = pModel->Get_ModelData();
-	if (pData == nullptr) {
 		ImGui::TextDisabled("Empty Model Data");
+		ImGui::End();
 		return;
 	}
 
@@ -54,12 +81,13 @@ void CDebugBonePanel::Render_GUI()
 	vector<uint8_t> isAncestor(bones.size(), 0);
 	if (m_iSelectedBone >= 0 && m_iSelectedBone < (int)bones.size())
 	{
-		int p = pData->Get_BoneParentIndex(m_iSelectedBone);
-		while (p != -1)
+		int parent = pData->Get_BoneParentIndex(m_iSelectedBone);
+		while (parent != -1)
+
 		{
-			if (p < 0 || p >= (int)bones.size()) break;
-			isAncestor[p] = 1;
-			p = pData->Get_BoneParentIndex(p);
+			if (parent < 0 || parent >= (int)bones.size()) break;
+			isAncestor[parent] = 1;
+			parent = pData->Get_BoneParentIndex(parent);
 		}
 	}
 
@@ -71,8 +99,8 @@ void CDebugBonePanel::Render_GUI()
 		const _bool selected = (m_iSelectedBone == i);
 
 		ImVec4 textCol = ImGui::GetStyleColorVec4(ImGuiCol_Text);
-		if (selected)              textCol = ImVec4(1.f, 0.35f, 0.35f, 1.f); // 선택: 빨강
-		else if (isAncestor[i])    textCol = ImVec4(1.f, 0.9f, 0.25f, 1.f);  // 조상: 노랑
+		if (selected)              textCol = ImVec4(1.f, 0.35f, 0.35f, 1.f);
+		else if (isAncestor[i])    textCol = ImVec4(1.f, 0.9f, 0.25f, 1.f);
 
 		ImGui::PushStyleColor(ImGuiCol_Text, textCol);
 
@@ -99,19 +127,20 @@ void CDebugBonePanel::Render_GUI()
 
 	ImGui::EndChild();
 	ImGui::Text("Selected Bone: %d", m_iSelectedBone);
-}
 
-void CDebugBonePanel::Update_Panel(_float dt)
-{
-	if (!m_bEnable) return;
-
-	CGameObject* pTarget = m_pContext->pSelectedObject;
-	if (!pTarget) return;
 
 	ImVec2 vpPos = ImGui::GetMainViewport()->Pos;
 	ImVec2 vpSize = ImGui::GetMainViewport()->Size;
 
 	DrawSkeletonOverlay_ImGui(pTarget, vpPos, vpSize);
+
+	ImGui::End();
+}
+
+void CDebugBonePanel::Update_Panel(_float dt)
+{
+
+
 }
 
 _bool CDebugBonePanel::WorldToScreen(const _float3& world, const _float4x4& view, const _float4x4& proj, const ImVec2& vpPos, const ImVec2& vpSize, ImVec2& out) const
@@ -166,84 +195,83 @@ void CDebugBonePanel::DrawSkeletonOverlay_ImGui(CGameObject* target, const ImVec
 		boneModel = pAnimator->Get_BoneMatrices();
 	else
 		boneModel = pModel->Get_BoneMatrices();
-	
+
 	Matrix ownerWorld = pTransform->Get_WorldMatrix();
 
 	vector<uint8_t> isAncestor(boneCount, 0);
 	if (m_iSelectedBone >= 0 && m_iSelectedBone < boneCount)
 	{
-		int p = pData->Get_BoneParentIndex(m_iSelectedBone);
-		while (p != -1)
+		int parent = pData->Get_BoneParentIndex(m_iSelectedBone);
+		while (parent != -1)
 		{
-			if (p < 0 || p >= boneCount) break;
-			isAncestor[p] = 1;
-			p = pData->Get_BoneParentIndex(p);
+			if (parent < 0 || parent >= boneCount) break;
+			isAncestor[parent] = 1;
+			parent = pData->Get_BoneParentIndex(parent);
 		}
 	}
-	
-	ImDrawList* dl = ImGui::GetBackgroundDrawList();
-	
-	// 게임뷰 영역 밖으로 그려지는 거 방지(진짜 중요)
-	dl->PushClipRect(vpPos, ImVec2(vpPos.x + vpSize.x, vpPos.y + vpSize.y), true);
-	
+
+	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+	drawList->PushClipRect(vpPos, ImVec2(vpPos.x + vpSize.x, vpPos.y + vpSize.y), true);
+
 	vector<ImVec2> screen(boneCount);
-	vector<bool>   ok(boneCount, false);
-	
-	// 본 월드 위치 투영
+	vector<_bool>   isOk(boneCount, false);
+
 	for (int i = 0; i < boneCount; ++i)
 	{
-		// boneWorld = boneModel * ownerWorld (네 컨벤션에 따라 뒤집힐 수도 있음!)
 		Matrix boneWorld = boneModel[i] * ownerWorld;
-	
+
 		Vector3 pos(boneWorld._41, boneWorld._42, boneWorld._43);
-		ok[i] = WorldToScreen(pos, view, proj, vpPos, vpSize, screen[i]);
+		isOk[i] = WorldToScreen(pos, view, proj, vpPos, vpSize, screen[i]);
 	}
-	
-	// 라인(부모-자식)
+
 	for (int i = 0; i < boneCount; ++i)
 	{
 		const int parent = pData->Get_BoneParentIndex(i);
 		if (parent < 0) continue;
-		if (!ok[i] || !ok[parent]) continue;
-	
+		if (!isOk[i] || !isOk[parent]) continue;
+
 		const bool sel = (i == m_iSelectedBone);
 		const bool anc = (!sel && isAncestor[i]);
-	
-		ImU32 col = IM_COL32(255, 230, 90, 255);        // 기본: 노랑
-		if (anc) col = IM_COL32(255, 200, 80, 255);     // 조상: 조금 진한 노랑
-		if (sel) col = IM_COL32(255, 120, 120, 255);    // 선택: 빨강
-	
+
+		ImU32 color = m_bOnlySelect ? IM_COL32(0, 0, 0, 0) : IM_COL32(255, 230, 90, 255);
+		if (anc) color = IM_COL32(255, 200, 80, 255);
+		if (sel) color = IM_COL32(255, 120, 120, 255);
+
 		float thick = m_fLineThickness + (sel ? 1.2f : 0.f);
-	
-		dl->AddLine(screen[i], screen[parent], col, thick);
+
+		drawList->AddLine(screen[i], screen[parent], color, thick);
 	}
-	
-	// 관절 점 + 이름
+
 	for (int i = 0; i < boneCount; ++i)
 	{
-		if (!ok[i]) continue;
-	
-		const bool sel = (i == m_iSelectedBone);
-		const bool anc = (!sel && isAncestor[i]);
-	
+		if (!isOk[i]) continue;
+
+		const _bool sel = (i == m_iSelectedBone);
+		const _bool anc = (!sel && isAncestor[i]);
+
 		if (m_bDrawJoints)
 		{
-			ImU32 col = IM_COL32(90, 220, 255, 255);     // 기본: 하늘색
-			if (anc) col = IM_COL32(255, 220, 120, 255); // 조상: 연노랑
-			if (sel) col = IM_COL32(255, 120, 120, 255); // 선택: 빨강
-	
-			float r = m_fJointRadius + (sel ? 1.5f : 0.f);
-			dl->AddCircleFilled(screen[i], r, col);
+			ImU32 color = IM_COL32(90, 220, 255, 255);     // 기본: 하늘색
+			if (anc) color = IM_COL32(255, 220, 120, 255); // 조상: 연노랑
+			if (sel) color = IM_COL32(255, 120, 120, 255); // 선택: 빨강
+
+			float radius = m_fJointRadius + (sel ? 1.5f : 0.f);
+			drawList->AddCircleFilled(screen[i], radius, color);
 		}
-	
+
 		if (m_bDrawNames)
 		{
-			ImU32 tcol = sel ? IM_COL32(255, 140, 140, 255) : IM_COL32(255, 255, 255, 220);
-			dl->AddText(ImVec2(screen[i].x + 4, screen[i].y - 6), tcol, boneNames[i].c_str());
+			if (m_bOnlySelect && !sel)
+				continue;
+
+			ImU32 tcol = sel ? IM_COL32(255, 140, 140, 255)
+				: IM_COL32(255, 255, 255, 220);
+
+			drawList->AddText(ImVec2(screen[i].x + 4, screen[i].y - 6), tcol, boneNames[i].c_str());
 		}
 	}
-	
-	dl->PopClipRect();
+
+	drawList->PopClipRect();
 	return;
 }
 
