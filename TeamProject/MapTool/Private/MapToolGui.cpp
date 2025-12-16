@@ -189,7 +189,7 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
     Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
 
-    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_StaticObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
         .Position(pRayHit->vHittedPosition)
         .Scale(m_vScale_PlacedObject)
         .Add_ObjDesc(Desc)

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Placed.h"
+#include "PlacedObject.h"
 
 #include "ModelData.h"
 #include "StaticModel.h"
