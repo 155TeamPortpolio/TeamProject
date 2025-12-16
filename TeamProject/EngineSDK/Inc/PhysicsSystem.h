@@ -23,6 +23,15 @@ public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
     virtual void Late_Update(_float dt) override;
+
+    virtual _bool Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit) override;
+    virtual _bool Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) override;
+    virtual _bool Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) override;
+
+private:
+    void Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit);
+    PxQueryFilterData Create_FilterData(const PHYSICS_RAY& desc);
+
     static PxFilterFlags SimulationFilterShader(
         PxFilterObjectAttributes attributes0, PxFilterData filterData0,
         PxFilterObjectAttributes attributes1, PxFilterData filterData1,

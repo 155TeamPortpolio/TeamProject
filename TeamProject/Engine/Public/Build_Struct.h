@@ -55,22 +55,21 @@ namespace Engine {
 		_float4		vDirection = {};
 		_float4		vPosition = {};
 		_float			fRange = {};
-
+		_float			fIntensity = { 3.f };
 
 		LightInitDesc() DEFAULT;
 		virtual ~LightInitDesc() DEFAULT;
 	}LIGHT_INIT_DESC;
 
 	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
-		_bool		isStatic = false;		// 움직이는 물체 / 안움직이는 물체
-		_bool       isKinematic = false;    // Transform을 통한 제어, 물리 엔진 제어
-		_bool       bEnableGravity = true;	// 중력 적용
-		_float		fMass = 1.0f;			// 질량
-		_bool		bLockX = true;
-		_bool		bLockY = false;
-		_bool		bLockZ = true;
-		_float		fLinearDamping = 0.f;
-		_float		fAngularDamping = 0.05f;
+		_bool	isKinematic = false;      // Transform 제어 vs 물리 제어
+		_bool	bEnableGravity = true;    // 중력 적용
+		_float  fMass = 1.0f;            // 질량
+		_bool	bLockX = true;
+		_bool	bLockY = false;
+		_bool	bLockZ = true;
+		_float  fLinearDamping = 0.f;
+		_float  fAngularDamping = 0.05f;
 
 		RigidBodyinitDesc() DEFAULT;
 		virtual ~RigidBodyinitDesc() DEFAULT;

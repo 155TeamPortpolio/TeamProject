@@ -145,6 +145,18 @@ CGameObject* CLayer::Find_ObjectByID(_uint ObjectID)
 	}
 }
 
+void CLayer::Clear_Layer()
+{
+	for (auto& pGameObject : m_GameObjects)
+		Safe_Release(pGameObject);
+
+	vector<CGameObject*> emptyVec;
+	unordered_map<_uint, _uint> emptyMap;
+
+	m_GameObjects.swap(emptyVec);
+	m_IndexByID.swap(emptyMap);
+}
+
 CLayer* CLayer::Create()
 {
 	return new CLayer();

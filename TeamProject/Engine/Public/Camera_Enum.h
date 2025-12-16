@@ -38,9 +38,5 @@ enum class CamProjType
 	Perspective,  // 원근투영
 	Orthographic, // 직교투영
 };
-enum class CamEaseType
-{
-	None, InOutSine, OutCubic,
-};
 
 NS_END

@@ -19,7 +19,10 @@ public:
 public:
 	virtual void Update(_float dt) PURE;
 	virtual void Late_Update(_float dt) PURE;
-
+	// Ray Cast
+	virtual _bool Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit) PURE;
+	virtual _bool Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) PURE;
+	virtual _bool Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) PURE;
 };
 
 NS_END

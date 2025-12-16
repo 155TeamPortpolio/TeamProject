@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math.h"
 #include "Camera_Enum.h"
 #include "Camera_Struct.h"
 

@@ -81,10 +81,9 @@ HRESULT CMesh::Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs)
 	m_ElementCount = VTXMESH::iElementCount;
 	m_ElementKey = VTXMESH::Key;
 	m_ElementDesc = VTXMESH::Elements;
-	vector<VTXMESH>vertices = {};
-	vertices.resize(m_iVerticesCount);
+	m_StaticVertex.resize(m_iVerticesCount);
 
-	ifs.read(reinterpret_cast<char*>(vertices.data()), m_iVerticesCount * m_iVertexStride);
+	ifs.read(reinterpret_cast<char*>(m_StaticVertex.data()), m_iVerticesCount * m_iVertexStride);
 
 	D3D11_BUFFER_DESC VBDesc;
 	VBDesc.ByteWidth = m_iVertexStride * m_iVerticesCount;
@@ -95,14 +94,14 @@ HRESULT CMesh::Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs)
 	VBDesc.StructureByteStride = m_iVertexStride;
 
 	D3D11_SUBRESOURCE_DATA subData;
-	subData.pSysMem = vertices.data();
+	subData.pSysMem = m_StaticVertex.data();
 
 	HRESULT hr = pDevice->CreateBuffer(&VBDesc, &subData, &m_pVB);
 
 	m_vMeshMinLocal = { FLT_MAX,FLT_MAX ,FLT_MAX };
 	m_vMeshMaxLocal = { -FLT_MAX,-FLT_MAX ,-FLT_MAX };
 
-	for (const auto& vertex : vertices) {
+	for (const auto& vertex : m_StaticVertex) {
 		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, vertex.vPosition.x);
 		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, vertex.vPosition.y);
 		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, vertex.vPosition.z);

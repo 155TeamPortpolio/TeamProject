@@ -49,6 +49,9 @@
     <Filter Include="02. DemoObject\DemoPlayer">
       <UniqueIdentifier>{de0b3c12-5943-417e-b837-66c275c05e91}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. DemoObject\DemoFloor">
+      <UniqueIdentifier>{8d029e85-8d6f-4322-a696-eae22a635241}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DemoProject.h">
@@ -141,6 +144,9 @@
     <ClInclude Include="..\Public\DemoShaderModel.h">
       <Filter>02. DemoObject\DemoShaderModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DemoFloor.h">
+      <Filter>02. DemoObject\DemoFloor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DemoProject.cpp">
@@ -214,6 +220,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\DemoShaderModel.cpp">
       <Filter>02. DemoObject\DemoShaderModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DemoFloor.cpp">
+      <Filter>02. DemoObject\DemoFloor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

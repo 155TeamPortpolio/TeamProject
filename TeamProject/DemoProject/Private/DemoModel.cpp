@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "DemoModel.h"
 #include "SkeletalModel.h"
+#include "Animator3D.h"
 #include "Material.h"
 
 #include "GameInstance.h"
@@ -20,6 +21,7 @@ HRESULT CDemoModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CSkeletalModel>();
+	Add_Component<CAnimator3D>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CRigidBody>();
@@ -45,9 +47,14 @@ void CDemoModel::Awake()
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
+		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
 
 	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->Change_Animation(3);
 }
 
 void CDemoModel::Priority_Update(_float dt)
@@ -56,6 +63,7 @@ void CDemoModel::Priority_Update(_float dt)
 
 void CDemoModel::Update(_float dt)
 {
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CDemoModel::Late_Update(_float dt)
@@ -65,7 +73,7 @@ void CDemoModel::Late_Update(_float dt)
 
 void CDemoModel::OnCollisionEnter()
 {
-	OutputDebugStringA("Collision Enter!\n");
+
 }
 
 void CDemoModel::OnCollisionStay()

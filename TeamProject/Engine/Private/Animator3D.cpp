@@ -73,26 +73,18 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	}
 }
 
-HRESULT CAnimator3D::Add_AnimClips(const string& LevelKey, 
-	const string& AnimKey,
-	_bool Loop)
+HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
 {
-	if (m_pAnimNames.count(AnimKey))
-		return S_OK;
+	m_pAnimClips = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MetaClip(LevelKey, MetaClipKey);
 
-	CAnimationClip* pClips = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_AnimClip(
-		LevelKey, AnimKey);
-
-	if (!pClips) {
-			string msg = "Anim Add Failed: " + AnimKey + "\n";
-			OutputDebugStringA(msg.c_str());
+	if (m_pAnimClips.empty()) {
+		string msg = "Anim Add Failed: " + MetaClipKey + "\n";
+		OutputDebugStringA(msg.c_str());
 		return E_FAIL;
 	}
 
-	m_pAnimClips.push_back(pClips);
-	Safe_AddRef(pClips);
-	m_pAnimNames.emplace(AnimKey, m_pAnimClips.size() - 1);
-	m_pAnimLoops.push_back(Loop);
+	for (auto& Clip : m_pAnimClips)
+		Safe_AddRef(Clip);
 
 	return S_OK;
 }
