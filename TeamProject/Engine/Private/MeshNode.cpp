@@ -52,6 +52,7 @@ void CMeshNode::Update(_float dt)
 
 		_float t = m_fElpasedTime / m_fDuration;
 		t = clamp(t, 0.f, 1.f);
+		t = Math::EaseInCubic(t);
 
 		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, t);
 
