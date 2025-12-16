@@ -221,12 +221,4 @@
       <Filter>98. Default</Filter>
     </ResourceCompile>
   </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_DemoInstance.hlsl">
-      <Filter>96. DemoShader</Filter>
-    </FxCompile>
-    <FxCompile Include="..\..\DemoResource\Shader\VTX_PlaneGrid.hlsl">
-      <Filter>96. DemoShader</Filter>
-    </FxCompile>
-  </ItemGroup>
 </Project>
