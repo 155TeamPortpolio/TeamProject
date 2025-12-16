@@ -36,9 +36,11 @@ public:
 private:
     CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
 
-    void AddTexture();
+    void SetMaterial();
     void SetMesh();
     void SetUp_MeshEffect();
 
+    _bool m_SetMesh = false;
+    _bool m_SetMaterial = false;
 };
 NS_END

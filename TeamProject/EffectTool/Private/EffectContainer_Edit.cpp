@@ -57,15 +57,17 @@ void CEffectContainer_Edit::Render_GUI()
     ImGui::PushID(this);
 	DisplayAllTextures();
 	DisplayModels();
+	DisplayMaterial();
 	LoadMesh();
+	LoadMaterial();
 	ContextClear();
 	Play();
     AddNode();
 	RemoveLastNode();
 
     CGameObject::Render_GUI();
-    //for (const auto& node : m_Nodes)
-    //    node->Render_GUI();
+    for (const auto& node : m_Nodes)
+        node->Render_GUI();
     ImGui::PopID();
 }
 
@@ -204,7 +206,6 @@ void CEffectContainer_Edit::LoadMesh()
 
 	if (ImGui::Button("Load Mesh"))
 	{
-		
 		fs::path filePath = Helper::OpenFile_Dialogue();
 		string path = filePath.string();
 		string modelKey = filePath.filename().string();
@@ -216,8 +217,27 @@ void CEffectContainer_Edit::LoadMesh()
 	}
 }
 
+void CEffectContainer_Edit::LoadMaterial()
+{
+	namespace fs = std::filesystem;
+
+	if (ImGui::Button("Load Material"))
+	{
+		fs::path filePath = Helper::OpenFile_Dialogue();
+		string path = filePath.string();
+		string materialKey = filePath.filename().string();
+
+		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+		resource->Add_ResourcePath(materialKey, path);
+
+		m_Context.MaterialTags.push_back(materialKey);
+	}
+}
+
 void CEffectContainer_Edit::DisplayAllTextures()
 {
+	ImGui::SetNextWindowPos(ImVec2(60, 600), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Texture");
 	float avail = ImGui::GetWindowSize().x;
 	int   cols = (std::max)(1, (int)((avail + 8.f) / (128.f + 8.f)));
@@ -285,6 +305,8 @@ void CEffectContainer_Edit::DisplayAllTextures()
 
 void CEffectContainer_Edit::DisplayModels()
 {
+	ImGui::SetNextWindowPos(ImVec2(660, 600), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Models");
 
 	if (m_Context.ModelTags.empty())
@@ -309,6 +331,39 @@ void CEffectContainer_Edit::DisplayModels()
 	{
 		ImGui::Separator();
 		ImGui::Text("Select Model : %s", m_Context.ModelTags[m_Context.iSelectModelIndex].c_str());
+	}
+
+	ImGui::End();
+}
+
+void CEffectContainer_Edit::DisplayMaterial()
+{
+	ImGui::SetNextWindowPos(ImVec2(860, 600), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
+	ImGui::Begin("Materials");
+
+	if (m_Context.MaterialTags.empty())
+	{
+		ImGui::Text("No Material");
+		ImGui::End();
+		return;
+	}
+
+	for (_uint i = 0; i < m_Context.MaterialTags.size(); ++i)
+	{
+		_bool isSelect = (i == m_Context.iSelectMaterialIndex);
+
+		if (ImGui::Selectable(m_Context.MaterialTags[i].c_str(), isSelect))
+			m_Context.iSelectMaterialIndex = i;
+
+		if (isSelect)
+			ImGui::SetItemDefaultFocus();
+	}
+
+	if (-1 != m_Context.iSelectMaterialIndex)
+	{
+		ImGui::Separator();
+		ImGui::Text("Select Material : %s", m_Context.MaterialTags[m_Context.iSelectMaterialIndex].c_str());
 	}
 
 	ImGui::End();

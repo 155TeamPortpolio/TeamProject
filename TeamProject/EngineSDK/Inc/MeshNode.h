@@ -23,8 +23,17 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
-private:    
+protected:    
     _float4 m_vColor{};
 
+    _float2 m_vAlphaFade{};
+    _float m_fAlpha{};
+
+    _float2 m_vUVSpeed{};
+    _float2 m_vUVOffset{};
+
+    _uint m_iCol{};
+    _uint m_iRow{};
+    _uint m_iFrameIndex{};
 };
 NS_END

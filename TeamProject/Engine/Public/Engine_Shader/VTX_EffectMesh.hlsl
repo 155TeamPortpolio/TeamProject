@@ -67,8 +67,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
     
-    if (vMtrlDiffuse.a < 0.1f)
-        discard;
+    //if (vMtrlDiffuse.a < 0.1f)
+    //    discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     
@@ -83,8 +83,8 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
         
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, Texcoord);
     
-  if (vMtrlDiffuse.a < 0.1f)
-      discard;
+    //if(vMtrlDiffuse.a < 0.1f)
+    //   discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a *= Alpha;
@@ -103,8 +103,8 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
     
-  if (vMtrlDiffuse.a < 0.1f)
-      discard;
+    //if(vMtrlDiffuse.a < 0.1f)
+    //   discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a *= Alpha;
@@ -114,7 +114,7 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 
 technique11 DefaultTechnique
 {
-    pass Default
+    pass Opaque
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
