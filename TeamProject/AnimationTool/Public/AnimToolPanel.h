@@ -31,10 +31,6 @@ private:
     void Create_ClipMeta(const string& CurMetaTag);
 
 private:
-    void Set_Animation();
-
-
-private:
     CGameInstance* m_pGameInstance = { nullptr };
     //<데이터이름, { 클립이름, 이벤트 { 타이밍, 타입, 태그 } }>
     // 데이터이름 + _Ani_ + 클립이름 + .anim = 파일

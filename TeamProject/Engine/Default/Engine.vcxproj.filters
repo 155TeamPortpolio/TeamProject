@@ -468,6 +468,9 @@
     </ClInclude>
     <ClInclude Include="..\public\Engine_Math.h">
       <Filter>01. Utility\97. Helper</Filter>
+        </ClInclude>
+        <ClInclude Include="..\Public\AnimationLayout.h">
+      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -26,6 +26,10 @@ private:
 	ID3D11DeviceContext* m_pDeviceContext = { nullptr };
 
 public:
+	static vector<string>			m_strLevelTags;
+	static vector<const _char*>		m_szLevelTags;
+
+public:
 	static CMainApp* Create();
 	virtual void Free() override;
 };
