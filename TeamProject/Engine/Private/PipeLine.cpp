@@ -226,49 +226,25 @@ void CPipeLine::Update_Frustum()
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
-
-	_float4x4 matViewInverse = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
-	_float4 vCamPosition = CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos();
-	_float3 CameraForward = { matViewInverse._31,matViewInverse._32,matViewInverse._33 };
-
 	XMFLOAT3 center{
 		(minMax.vMin.x + minMax.vMax.x) * 0.5f,
 		(minMax.vMin.y + minMax.vMax.y) * 0.5f,
 		(minMax.vMin.z + minMax.vMax.z) * 0.5f
 	};
-
 	XMFLOAT3 extents{
 		(minMax.vMax.x - minMax.vMin.x) * 0.5f,
 		(minMax.vMax.y - minMax.vMin.y) * 0.5f,
 		(minMax.vMax.z - minMax.vMin.z) * 0.5f
 	};
 
-	float radius = sqrtf(extents.x * extents.x +
-		extents.y * extents.y +
-		extents.z * extents.z);
+	BoundingBox localAabb(center, extents);
 
-	BoundingSphere localSphere(center, radius);
+	BoundingBox worldAabb;
+	localAabb.Transform(worldAabb, worldTransform); 
 
-	BoundingSphere worldSphere;
-
-	localSphere.Transform(worldSphere, worldTransform);
-	_vector camPos = XMLoadFloat4(&vCamPosition);     
-	_vector camForward = XMLoadFloat3(&CameraForward); 
-	_vector sphereCenter = XMLoadFloat3(&worldSphere.Center);
-
-	_vector toObj = XMVectorSubtract(sphereCenter, camPos);
-	_float dist = XMVectorGetX(XMVector3Dot(toObj, camForward));
-
-	_float curve = (dist * dist) / 900 * 0.85;
-	//_float curve = (dist * dist) / 1000 * 0;
-
-	worldSphere.Center.y -= curve;
-	_float maxExtent = max(extents.x, max(extents.y, extents.z));
-	_float scaleFactor = 0.1f; // 여유 비율 (10%)
-	worldSphere.Radius += maxExtent * scaleFactor;
-
-	return m_Frustum.Intersects(worldSphere);
+	return m_Frustum.Intersects(worldAabb);
 }
+
 
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 {

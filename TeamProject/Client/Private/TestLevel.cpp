@@ -2,7 +2,7 @@
 #include "TestLevel.h"
 #include "GameInstance.h"
 
-#include "FreeCamera.h"
+#include "FreeCam.h"
 #include "TestObject.h"
 
 #include "Camera.h"
@@ -23,7 +23,7 @@ HRESULT CTestLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCamera", CFreeCamera::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 
 
@@ -39,10 +39,10 @@ void CTestLevel::Ready_Camera()
 {
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 	CGameObject* Camera =
-		Builder::Create_Object({ "Test_Level" ,"Proto_GameObject_FreeCamera" })
+		Builder::Create_Object({ "Test_Level" ,"Proto_GameObject_FreeCam" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
-		.Position({ 0,3,-3 })
-		.Build("Main_Camera");
+		.Position({ 0.f, 3.f, -3.f })
+		.Build("Free_Cam");
 
 	pObjMgr->Add_Object(Camera, { "Test_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
@@ -71,4 +71,5 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 
 void CTestLevel::Free()
 {
+	m_pGameInstance->DestroyInstance();
 }

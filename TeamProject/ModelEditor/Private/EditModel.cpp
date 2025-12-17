@@ -11,6 +11,7 @@
 #include "AIMaterial.h"
 #include "AIAnimator3D.h"
 #include "AIModelData.h"
+#include "DebugRender.h"
 
 CEditModel::CEditModel()
 {
@@ -37,6 +38,7 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 
 void CEditModel::Awake()
 {
+	Add_Component<CDebugRender>();
 }
 
 void CEditModel::Priority_Update(_float dt)
@@ -57,10 +59,16 @@ void CEditModel::Render_GUI()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight*4 + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::SeparatorText("Model Load & Save");
 	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
+	static const char* kModes[] = { "Auto", "Forced Static", "Forced Skeletal" };
+	int cur = static_cast<int>(m_eMode);
+	ImGui::TextUnformatted("Import Mode");
+	ImGui::SetNextItemWidth(170.f);
+	if (ImGui::Combo("##ImportMode", &cur, kModes, IM_ARRAYSIZE(kModes)))
+		m_eMode = static_cast<MODEL_IMPORT_MODE>(cur);
 
 	if (ImGui::Button("Model Load")) {
 		string path = Helper::OpenFile_Dialogue();
@@ -94,6 +102,9 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	m_Importer.FreeScene();
 
 	unsigned int iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+	if (!HasBones())
+		iFlag |= aiProcess_PreTransformVertices;
+
 	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), iFlag);
 
 	if (nullptr == m_pAIScene)
@@ -135,6 +146,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
+	Get_Component<CDebugRender>()->Add_DebugBounding(Get_Component<CModel>()->Get_LocalBoundingBox());
 
 	return S_OK;
 }
@@ -170,13 +182,21 @@ _bool CEditModel::HasBones()
 	if (nullptr == m_pAIScene)
 		return false;
 
-	for (size_t i = 0; i < m_pAIScene->mNumMeshes; ++i)
-	{
-		if (m_pAIScene->mMeshes[i]->HasBones())
-			return true;
-	}
+	if(m_eMode == MODEL_IMPORT_MODE::AUTO){
+		for (size_t i = 0; i < m_pAIScene->mNumMeshes; ++i)
+		{
+			if (m_pAIScene->mMeshes[i]->HasBones())
+				return true;
+		}
 
-	return false;
+		return false;
+	}
+	else if (m_eMode == MODEL_IMPORT_MODE::FORCED_STATIC) {
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 void CEditModel::Clear_Models()

@@ -7,7 +7,7 @@ NS_BEGIN(CameraTool)
 // CamDirector 규칙 테이블의 Key가 되는 값.
 enum class CamRequestType 
 {
-	GamePlay_Field, GamePlay_Battle
+	GamePlay, 
 };
 
 enum class CamBlendMode // 전환 방식 
@@ -17,7 +17,6 @@ enum class CamBlendMode // 전환 방식
 
 enum class CamRequestEndRule // 요청의 종료 방식(자동 종료/조건 종료)
 {
-
 };
 //enum class CamApplyMask // 비트플래그 “Modifier(흔들림만 위에 얹기)”로 갈 때 핵심
 //{
