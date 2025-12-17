@@ -26,6 +26,8 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Set_Clickable(true);
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
     const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
