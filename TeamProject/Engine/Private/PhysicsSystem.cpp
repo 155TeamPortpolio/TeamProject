@@ -68,13 +68,13 @@ HRESULT CPhysicsSystem::Initialize()
 
     // Scene(물리 월드) 생성
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-    sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // 중력 설정
-    sceneDesc.cpuDispatcher = m_pDispatcher;
-    sceneDesc.filterShader = SimulationFilterShader; // 기본 충돌 필터
-    sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
+    sceneDesc.gravity        = PxVec3(0.0f, -9.81f, 0.0f); // 중력 설정
+    sceneDesc.cpuDispatcher  = m_pDispatcher;
+    sceneDesc.filterShader   = SimulationFilterShader; // 기본 충돌 필터
+    sceneDesc.flags         |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
-    sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;        // 기본값 1 -> 4로 증가
+    sceneDesc.flags         |= PxSceneFlag::eENABLE_STABILIZATION;
+    sceneDesc.ccdMaxPasses   = 4;        // 기본값 1 -> 4로 증가
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
@@ -115,9 +115,7 @@ HRESULT CPhysicsSystem::Initialize()
 void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
-
     m_pScene->simulate(dt);
-
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
@@ -167,7 +165,7 @@ _bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS
     PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
     direction.normalize();
 
-    const PxU32 bufferSize = desc.iMaxHits > 0 ? desc.iMaxHits : 128;
+    const PxU32 bufferSize  = desc.iMaxHits > 0 ? desc.iMaxHits : 128;
     PxRaycastHit* hitBuffer = new PxRaycastHit[bufferSize];
     PxRaycastBuffer hit(hitBuffer, bufferSize);
     PxQueryFilterData filterData = Create_FilterData(desc);
@@ -209,11 +207,11 @@ _bool CPhysicsSystem::Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& out
 
 void CPhysicsSystem::Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit)
 {
-    outHit.bHit = true;
+    outHit.bHit      = true;
     outHit.fDistance = pxHit.distance;
-    outHit.vPoint = _float3(pxHit.position.x, pxHit.position.y, pxHit.position.z);
-    outHit.vNormal = _float3(pxHit.normal.x, pxHit.normal.y, pxHit.normal.z);
-    outHit.pShape = pxHit.shape;
+    outHit.vPoint    = _float3(pxHit.position.x, pxHit.position.y, pxHit.position.z);
+    outHit.vNormal   = _float3(pxHit.normal.x, pxHit.normal.y, pxHit.normal.z);
+    outHit.pShape    = pxHit.shape;
 
     if (pxHit.actor && pxHit.actor->userData)
     {

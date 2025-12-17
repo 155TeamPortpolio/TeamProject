@@ -25,7 +25,7 @@ HRESULT CTestObject::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
-	Add_Component<CRigidBody>();
+	//Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
 	return S_OK;
 }
@@ -51,10 +51,10 @@ void CTestObject::Awake()
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
 		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Change_Animation(3);
 }
 
@@ -69,7 +69,7 @@ void CTestObject::Update(_float dt)
 
 void CTestObject::Late_Update(_float dt)
 {
-	Get_Component<CRigidBody>()->Late_Update(dt);
+	//Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CTestObject::OnCollisionEnter()

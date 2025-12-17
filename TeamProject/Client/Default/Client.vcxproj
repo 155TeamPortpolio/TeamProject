@@ -148,10 +148,12 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
     <ClInclude Include="..\public\CamObject.h" />
-    <ClInclude Include="..\public\CamSpawnObject.h" />
+    <ClInclude Include="..\public\CamDirector.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="Client.h" />
@@ -189,13 +191,15 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\CamObject.cpp" />
-    <ClCompile Include="..\private\CamSpawnObject.cpp" />
+    <ClCompile Include="..\private\CamDirector.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\TestLevel.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="Client.cpp" />

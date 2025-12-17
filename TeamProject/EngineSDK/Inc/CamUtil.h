@@ -12,8 +12,8 @@ namespace CamUtil
 	ENGINE_DLL CamKeySegment FindKeySegment(const vector<CamKeyFrame>& keyframes, float time);
 
 	// =========================================================================================================================
-    ENGINE_DLL bool Save(const filesystem::path& path, const CamSequenceDesc& seq, string& outErrorMsg);
-    ENGINE_DLL bool Load(const filesystem::path& path, CamSequenceDesc& outSeq, string& outErrorMsg);
+    ENGINE_DLL bool Save(const filesystem::path& path, const CamSequenceDesc& seq, string* outErrorMsg = {});
+    ENGINE_DLL bool Load(const filesystem::path& path, CamSequenceDesc& outSeq, string* outErrorMsg = {});
 
     ENGINE_DLL ofstream OpenOut(const filesystem::path& filePath, bool truncate = true);
     ENGINE_DLL ifstream OpenIn(const filesystem::path& filePath);
