@@ -116,6 +116,6 @@ protected:
 public:
     static CAnimator3D* Create();
     virtual CComponent* Clone();
-    void Free() override;
+    virtual void Free() override;
 };
 NS_END

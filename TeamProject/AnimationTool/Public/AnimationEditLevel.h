@@ -27,6 +27,7 @@ public:
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
+
 public:
     static CAnimationEditLevel* Create(const string& LevelKey);
     virtual void Free() override;
