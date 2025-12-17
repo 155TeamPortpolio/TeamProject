@@ -83,7 +83,7 @@ void CalculateEnergyConservation(float3 fresenel, float metalic, out float3 kSpe
     kDiffuse = kDiffuse * (1.0 - metalic);
 }
 
-float3 CalculatePBR(float3 albedo, float3 normal, float metalic, float roughness, float ambientocclusion,
+float3 CalculatePBR(float3 albedo, float3 normal, float metalic, float roughness,
 float3 view, float3 light, float3 lightcolor, float lightIntensity)
 {
     float3 N = normalize(normal);
@@ -114,16 +114,16 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity)
     return  BRDF * lightcolor * lightIntensity * NdotL;
 }
 
-float3 CalculateDirectionalLight(float3 albedo, float3 normal, float metalic, float roughness, float ambientocclusion,
+float3 CalculateDirectionalLight(float3 albedo, float3 normal, float metalic, float roughness,
 float3 view, float3 light, float3 lightcolor, float lightIntensity, float shadowFactor)
 {
-    float3 Luminance = CalculatePBR(albedo, normal, metalic, roughness, ambientocclusion, view, light,
+    float3 Luminance = CalculatePBR(albedo, normal, metalic, roughness, view, light,
                                   lightcolor, lightIntensity);
     
     return Luminance* shadowFactor;
 }
 
-float3 CalculatePointLight(float3 albedo, float3 normal, float metalic, float roughness, float ambientocclusion, float3 worldPos,
+float3 CalculatePointLight(float3 albedo, float3 normal, float metalic, float roughness, float3 worldPos,
 float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 lightposition, float lightrange, float shadowFactor)
 {
     float3 lightdir = normalize(lightposition - worldPos);
@@ -134,7 +134,7 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 light
     float rangeFactor = max(0.0, 1.0 - (distance / lightrange));
     attenuation *= rangeFactor * rangeFactor;
     
-    float3 Luminance = CalculatePBR(albedo, normal, metalic, roughness, ambientocclusion, view, lightdir,
+    float3 Luminance = CalculatePBR(albedo, normal, metalic, roughness, view, lightdir,
                                   lightcolor, lightIntensity * attenuation);
     
     return Luminance * shadowFactor;
