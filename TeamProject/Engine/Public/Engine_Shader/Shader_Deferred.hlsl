@@ -103,7 +103,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
-    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
     float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, 
     ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
@@ -149,7 +149,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
-    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,

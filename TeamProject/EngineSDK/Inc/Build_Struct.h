@@ -62,9 +62,9 @@ namespace Engine {
 	}LIGHT_INIT_DESC;
 
 	typedef struct RigidBodyinitDesc : public COMPONENT_DESC {
-		_bool	isKinematic = false;      // Transform Á¦¾î vs ¹°¸® Á¦¾î
-		_bool	bEnableGravity = true;    // Áß·Â Àû¿ë
-		_float  fMass = 1.0f;            // Áú·®
+		_bool	isKinematic = false;      // Transform ì œì–´ vs ë¬¼ë¦¬ ì œì–´
+		_bool	bEnableGravity = true;    // ì¤‘ë ¥ ì ìš©
+		_float  fMass = 1.0f;            // ì§ˆëŸ‰
 		_bool	bLockX = true;
 		_bool	bLockY = false;
 		_bool	bLockZ = true;
@@ -76,32 +76,32 @@ namespace Engine {
 	}RIGIDBODY_DESC;
 
 	typedef struct ColliderInitDesc :public COMPONENT_DESC {
-		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// Ãæµ¹Ã¼ ¸ğ¾ç
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// Ãæµ¹±×·ì
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// Ãæµ¹ÇÒ±×·ì : ±âº»°ª ¸ğµÎ
+		COLLIDER_TYPE	eType = COLLIDER_TYPE::BOX;			// ì¶©ëŒì²´ ëª¨ì–‘
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// ì¶©ëŒê·¸ë£¹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// ì¶©ëŒí• ê·¸ë£¹ : ê¸°ë³¸ê°’ ëª¨ë‘
 
-		_float3			vCenter = { 0.f, 0.f, 0.f };		// ·ÎÄÃ ¿ÀÇÁ¼Â
+		_float3			vCenter = { 0.f, 0.f, 0.f };		// ë¡œì»¬ ì˜¤í”„ì…‹
 		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
-		_float3			vRotation = { 0.f, 0.f, 0.f };		// ·ÎÄÃ È¸Àü (Radian)
-		_bool			isTrigger = false;					// Æ®¸®°Å ¿©ºÎ
-		string			strMaterialTag = "";				// ÀçÁú ÅÂ±×
+		_float3			vRotation = { 0.f, 0.f, 0.f };		// ë¡œì»¬ íšŒì „ (Radian)
+		_bool			isTrigger = false;					// íŠ¸ë¦¬ê±° ì—¬ë¶€
+		string			strMaterialTag = "";				// ì¬ì§ˆ íƒœê·¸
 
 		ColliderInitDesc() DEFAULT;
 		virtual ~ColliderInitDesc() DEFAULT;
 	}COLLIDER_DESC;
 
 	typedef struct CCTinitDesc : public COMPONENT_DESC {
-		_float			fStepOffset = { 0.5f };     // °è´Ü µî¹İ ³ôÀÌ
-		_float			fSlopeLimit = { 45.0f };    // µî¹İ °¢µµ Á¦ÇÑ
-		_float3			vPos = { 0.f, 0.f, 0.f };   // ÃÊ±â À§Ä¡
+		_float			fStepOffset = { 0.5f };     // ê³„ë‹¨ ë“±ë°˜ ë†’ì´
+		_float			fSlopeLimit = { 45.0f };    // ë“±ë°˜ ê°ë„ ì œí•œ
+		_float3			vPos = { 0.f, 0.f, 0.f };   // ì´ˆê¸° ìœ„ì¹˜
 		_float			fMaxSpeed = 100.f;
 
-		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// Ãæµ¹±×·ì
-		_uint			iCollisionMask = { 0xFFFFFFFF };	// Ãæµ¹ÇÒ±×·ì : ±âº»°ª ¸ğµÎ
-		_float			fHeight = { 2.0f };         // Ä¸½¶ ³ôÀÌ
-		_float			fRadius = { 0.5f };         // Ä¸½¶ ¹İÁö¸§
-		string			strMaterialTag = { "" };    // ÀçÁú
-		_float			fDensity = { 10.0f };       // ¹Ğµµ : ¹«°Ô ¿ªÇÒ
+		COLLISION_GROUP eGroup = COLLISION_GROUP::COMMON;	// ì¶©ëŒê·¸ë£¹
+		_uint			iCollisionMask = { 0xFFFFFFFF };	// ì¶©ëŒí• ê·¸ë£¹ : ê¸°ë³¸ê°’ ëª¨ë‘
+		_float			fHeight = { 2.0f };         // ìº¡ìŠ ë†’ì´
+		_float			fRadius = { 0.5f };         // ìº¡ìŠ ë°˜ì§€ë¦„
+		string			strMaterialTag = { "" };    // ì¬ì§ˆ
+		_float			fDensity = { 10.0f };       // ë°€ë„ : ë¬´ê²Œ ì—­í• 
 
 		CCTinitDesc() DEFAULT;
 		virtual ~CCTinitDesc() DEFAULT;

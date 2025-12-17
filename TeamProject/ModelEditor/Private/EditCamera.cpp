@@ -101,6 +101,7 @@ void CEditCamera::Late_Update(_float dt)
 
 void CEditCamera::Render_GUI()
 {
+	__super::Render_GUI();
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
