@@ -43,6 +43,9 @@
     <Filter Include="02. GameObject\Camera\02. FreeCam">
       <UniqueIdentifier>{be87aa4e-607e-4972-bd9f-9f2d942322b4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\TestMap">
+      <UniqueIdentifier>{d86d2932-f147-43a5-8fad-7aee5088b563}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -89,6 +92,9 @@
     </ClInclude>
     <ClInclude Include="..\public\CamSpawnObject.h">
       <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestMap.h">
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -149,6 +155,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CamSpawnObject.cpp">
       <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestMap.cpp">
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

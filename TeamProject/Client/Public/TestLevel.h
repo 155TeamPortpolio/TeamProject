@@ -23,6 +23,7 @@ public:
 
 private:
     void Ready_Camera();
+    void Ready_Map();
 
 public:
     static void PreLoad_Level();

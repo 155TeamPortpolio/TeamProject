@@ -153,6 +153,7 @@
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
+    <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -197,6 +198,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\TestLevel.cpp" />
+    <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

@@ -4,6 +4,7 @@
 
 #include "FreeCam.h"
 #include "TestObject.h"
+#include "TestMap.h"
 
 #include "Camera.h"
 
@@ -25,8 +26,10 @@ HRESULT CTestLevel::Awake()
 
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 
+	Ready_Map();
 	Ready_Camera();
 	return S_OK;
 }
@@ -46,6 +49,23 @@ void CTestLevel::Ready_Camera()
 
 	pObjMgr->Add_Object(Camera, { "Test_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+}
+
+void CTestLevel::Ready_Map()
+{
+	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+
+	COLLIDER_DESC MapColDesc = {};
+	MapColDesc.bCooking = true;
+	MapColDesc.strModelKey = "Mesh (merge).model";
+
+	CGameObject* Map =
+		Builder::Create_Object({ "Test_Level" ,"Proto_GameObject_TestMap" })
+		.Position({ 0.f, 0.f, 0.f })
+		.Build("TestMap");
+
+	pObjMgr->Add_Object(Map, { "Test_Level","Map_Layer" });
+	
 }
 
 HRESULT CTestLevel::Render()
