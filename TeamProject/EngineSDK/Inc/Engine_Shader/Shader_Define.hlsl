@@ -60,6 +60,19 @@ cbuffer ShadowBuffer : register(b8)
     float3 ShadowPadding;
 };
 
+cbuffer SSAOBuffer : register(b10)
+{
+    float fRadius;
+    float fBias;
+    float fScreenWidth;
+    float fScreenHeight;
+};
+
+cbuffer SSAOKernel : register(b11)
+{
+    float4 SSAOKernel[64];
+};
+
 struct BoneMatrix{matrix BoneMat;};
 struct TransfomMatrix{matrix Transform;};
 

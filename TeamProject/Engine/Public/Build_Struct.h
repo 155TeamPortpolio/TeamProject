@@ -85,6 +85,9 @@ namespace Engine {
 		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
 		_bool			isTrigger = false;					// 트리거 여부
 		string			strMaterialTag = "";				// 재질 태그
+		// 쿠킹 관련
+		_bool			bCooking = false;
+		string			strModelKey = "";					// 쿠킹용 모델 키
 
 		ColliderInitDesc() DEFAULT;
 		virtual ~ColliderInitDesc() DEFAULT;
