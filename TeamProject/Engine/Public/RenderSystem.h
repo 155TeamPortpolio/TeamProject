@@ -25,6 +25,7 @@ public:
 	virtual void Submit_Particle(const PARTICLE_PACKET& packet)override { m_pParticlePass->Submit(packet); }
 
 public:
+	HRESULT Render_SSAO();
 	HRESULT Render_LightAcc();
 	HRESULT Render_Combined();
 	HRESULT Render_Blended();
@@ -43,6 +44,7 @@ public:
 	virtual void DrawTo(const string& targetKey, function<void(ID3D11DeviceContext*)> drawCall) override;
 	virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) override;
 	virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) override;
+	HRESULT Create_NoiseTexture();
 
 private:
 	HRESULT Ready_GBuffer();
@@ -89,7 +91,9 @@ private:
 	vector<RENDER_CUSTOM_COMMAND> m_RenderCommands;
 	vector<POST_PROCESS_COMMAND> m_PostCommands;
 
-	class CTexture* TempTexture = { nullptr };
+	class CTexture* RampTexture = { nullptr };
+	ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
+
 public:
 	static CRenderSystem* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

@@ -12,6 +12,9 @@ Texture2D g_ShadowTexture;
 Texture2D g_MetalicTexture;
 Texture2D g_AmbientTexture;
 Texture2D g_RampTexture;
+Texture2D g_SSAONoiseTexture;
+Texture2D g_SSAOTexture;
+Texture2D g_SSAOBlurTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -68,6 +71,109 @@ struct PS_OUT_LIGHT
     vector vLight : SV_TARGET0;
 };
 
+struct PS_OUT_SSAO
+{
+    vector vSSAO : SV_TARGET0;
+};
+
+PS_OUT_SSAO PS_SSAO(PS_IN In)
+{
+    PS_OUT_SSAO Out;
+    
+    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float fViewZ = vDepthDesc.y * zFar;
+    
+    float3 N = mul(float4(worldNormal, 0.f), matView).xyz;
+    N = normalize(N);
+    
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+    
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+
+    float3 fragPos = mul(vWorldPos, matView).xyz;
+    
+    float2 noiseScale = float2(fScreenWidth / 4.0, fScreenHeight / 4.0);
+    float3 randomVec = g_SSAONoiseTexture.Sample(DefaultSampler, In.vTexcoord * noiseScale).xyz;
+    randomVec = randomVec * 2.0 - 1.0; 
+    
+    float3 T = normalize(randomVec - N * dot(randomVec, N));
+    float3 B = cross(N, T);
+    float3x3 TBN = float3x3(T, B, N);
+    
+    float occlusion = 0.0;
+    
+    for (int i = 0; i < 64; ++i)
+    {
+        float3 samplePos = mul(SSAOKernel[i].xyz, TBN);
+        samplePos = fragPos + samplePos * fRadius;
+        
+        float4 offset = float4(samplePos, 1.0);
+        offset = mul(offset, matProjection);
+        offset.xyz /= offset.w;
+        
+        offset.xy = offset.xy * 0.5 + 0.5;
+        offset.y = 1.0 - offset.y;
+        
+        vector vSampleDepthDesc = g_DepthTexture.Sample(DefaultSampler, offset.xy);
+        float fSampleViewZ = vSampleDepthDesc.y * zFar;
+        
+        vector vSampleWorldPos;
+        vSampleWorldPos.x = offset.x * 2.f - 1.f;
+        vSampleWorldPos.y = offset.y * -2.f + 1.f;
+        vSampleWorldPos.z = vSampleDepthDesc.x;
+        vSampleWorldPos.w = 1.f;
+        
+        vSampleWorldPos = vSampleWorldPos * fSampleViewZ;
+        vSampleWorldPos = mul(vSampleWorldPos, matProjectionInverse);
+        vSampleWorldPos = mul(vSampleWorldPos, matViewInverse);
+        
+        float3 sampleViewPos = mul(vSampleWorldPos, matView).xyz;
+        float sampleDepth = sampleViewPos.z;
+        
+        float rangeCheck = smoothstep(0.0, 1.0, fRadius / abs(fragPos.z - sampleDepth));
+        
+        occlusion += (sampleDepth >= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
+    }
+    
+    occlusion = 1.0 - (occlusion / 64.0);
+    Out.vSSAO = occlusion;
+    
+    return Out;
+}
+
+
+PS_OUT_SSAO PS_SSAO_BLUR(PS_IN In)
+{
+    PS_OUT_SSAO Out;
+    float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+
+    const float weights[5] = { 0.06136, 0.24477, 0.38774, 0.24477, 0.06136 };
+    
+    float result = 0.0;
+    
+    for (int x = -2; x <= 2; ++x)
+    {
+        for (int y = -2; y <= 2; ++y)
+        {
+            float2 offset = float2(float(x), float(y)) * texelSize;
+            float weight = weights[x + 2] * weights[y + 2];
+            result += g_SSAOTexture.Sample(DefaultSampler, In.vTexcoord + offset).r * weight;
+        }
+    }
+    
+    Out.vSSAO = result;
+    
+    return Out;
+}
+
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
@@ -79,7 +185,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
     
     vector vRamp = g_RampTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -103,10 +208,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
-    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
-    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
     
     float RampRatio = 0.7f; 
     Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
@@ -125,7 +229,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
  
     
     float fViewZ = vDepthDesc.y * zFar;
@@ -141,7 +244,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float3 lightDir = float3(0.f, 0.f, 0.f); // »ç¿ë x
+    float3 lightDir = normalize(g_vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
     float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
@@ -149,10 +252,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
-    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
     float3 PBR = CalculatePointLight
-    (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
+    (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
     g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
     
     float RampRatio = 0.7f;
@@ -170,12 +273,12 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
         discard;
     
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+    float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ao;
+    float3 ambient = saturate(vDiffuse.rgb * vAmbient.g * ao * ssao);
 
-    Out.vBackBuffer = float4(vLight.rgb + ambient, vLight.a);
+    Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
@@ -200,10 +303,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     float4 vLightDepthDesc = g_ShadowTexture.Sample(DefaultSampler, vTexcoord);
     
-    if (vWorldPos.w - 0.01f > vLightDepthDesc.y * zShadowFar)
-    {
-        Out.vBackBuffer *= 0.3f;
-    }
+    //if (vWorldPos.w - 0.01f > vLightDepthDesc.y * zShadowFar)
+    //{
+    //    Out.vBackBuffer *= 0.3f;
+    //}
     
     return Out;
 }
@@ -220,6 +323,26 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 
 technique11 DefaultTechnique
 {
+    pass SSAO
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SSAO();
+    }
+
+    pass SSAO_BLUR
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_SSAO_BLUR();
+    }
+
     pass Directional
     {
         SetRasterizerState(RS_Default);
@@ -249,6 +372,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
+
     pass Final
     {
         SetRasterizerState(RS_Default);

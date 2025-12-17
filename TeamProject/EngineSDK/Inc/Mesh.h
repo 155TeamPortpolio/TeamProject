@@ -20,6 +20,8 @@ public:
 	_uint Get_MaterialIndex() { return m_MaterialIndex; }
 	_float3 Get_MinVertexLocal() { return m_vMeshMinLocal; }
 	_float3 Get_MaxVertexLocal() { return m_vMeshMaxLocal; }
+	const vector<_uint>& Get_Indices() { return m_indices; }
+	const vector<VTXMESH>& Get_StaticVertices() { return m_StaticVertex; }
 
 public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);

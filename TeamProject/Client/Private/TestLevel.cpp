@@ -71,4 +71,5 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 
 void CTestLevel::Free()
 {
+	m_pGameInstance->DestroyInstance();
 }

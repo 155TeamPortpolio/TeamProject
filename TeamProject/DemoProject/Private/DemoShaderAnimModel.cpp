@@ -62,7 +62,7 @@ void CDemoShaderAnimModel::Priority_Update(_float dt)
 
 void CDemoShaderAnimModel::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	//Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CDemoShaderAnimModel::Late_Update(_float dt)
