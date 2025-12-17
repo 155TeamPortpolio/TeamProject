@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Helper_Func.h"
 
 CPipeLine::CPipeLine()
 {
@@ -29,6 +30,8 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 	desc.ByteWidth = sizeof(ShadowBuffer);
 	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceShadowBuffer);
 
+	desc.ByteWidth = sizeof(SSAOBuffer);
+	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceSSAOBuffer);
 	/*---------------------------------------------------------------------------------------------------- - */
 	/*스키닝 본 버퍼 - > 이건 셰이더 리소스 뷰도 같이 만들어버림*/
 	vector<_float4x4> BoneMatrices;
@@ -154,7 +157,6 @@ HRESULT CPipeLine::Update_SSAOBuffer(ID3D11DeviceContext* pContext)
 	ssaoBuffer.Bias = 0.025f;
 	ssaoBuffer.ScreenWidth = ViewportDesc.Width;
 	ssaoBuffer.ScreenHeight = ViewportDesc.Height;
-	ssaoBuffer.SampleCount = 32;
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -170,6 +172,43 @@ HRESULT CPipeLine::Update_SSAOBuffer(ID3D11DeviceContext* pContext)
 
 	memcpy(mappedResource.pData, &ssaoBuffer, sizeof(SSAOBuffer));
 	pContext->Unmap(m_pDeviceSSAOBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CPipeLine::Write_SSAOKernelBuffer(ID3D11Device* pDevice)
+{
+	if (m_pDeviceSSAOKernelBuffer)
+	{
+		Safe_Release(m_pDeviceSSAOKernelBuffer);
+		m_pDeviceSSAOKernelBuffer = nullptr;
+	}
+
+	SSAOKernel kernelBuffer;
+
+	for (unsigned int i = 0; i < 64; ++i)
+	{
+		_vector3 Sample(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(0.f, 1.f));
+		Sample.Normalize();
+
+		float scale = (float)i / 64.0f;
+		scale = 0.1f + (scale * scale) * 0.9f;
+		Sample *= scale;
+
+		kernelBuffer.SSAOKernel[i] = _float4(Sample.x, Sample.y, Sample.z, 0.0f);
+	}
+
+	D3D11_BUFFER_DESC Desc = {};
+	Desc.ByteWidth = sizeof(SSAOKernel);
+	Desc.Usage = D3D11_USAGE_IMMUTABLE;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA Data = {};
+	Data.pSysMem = &kernelBuffer;
+
+	if (FAILED(pDevice->CreateBuffer(&Desc, &Data, &m_pDeviceSSAOKernelBuffer)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -403,5 +442,7 @@ void CPipeLine::Free()
 	Safe_Release(m_pSkinningResource);
 	Safe_Release(m_pObjectResource);
 	Safe_Release(m_pDeviceShadowBuffer);
+	Safe_Release(m_pDeviceSSAOBuffer);
+	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 }

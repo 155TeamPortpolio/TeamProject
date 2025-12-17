@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include "VIBuffer.h"
 #include "RenderTarget.h"
+#include "Helper_Func.h"
 
 CRenderSystem::CRenderSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:m_pDevice{ pDevice }, m_pContext{ pContext }
@@ -30,7 +31,7 @@ HRESULT CRenderSystem::Initialize()
 	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 	/*Render Target*/
 	m_pTargetManager = CTarget_Manager::Create(m_pDevice, m_pContext);
-	TempTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
+	RampTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
 	if (FAILED(Ready_GBuffer())) return E_FAIL;
 	/*RenderPass*/
 	m_pPriorityPass = PriorityPass::Create(this);
@@ -45,9 +46,8 @@ HRESULT CRenderSystem::Initialize()
 #ifdef _DEBUG
 	m_pDebugPass = DebugPass::Create(this);
 #endif // _DEBUG
-
-
-
+	Create_NoiseTexture();
+	m_pPipeLine->Write_SSAOKernelBuffer(m_pDevice);
 	return S_OK;
 }
 
@@ -69,6 +69,7 @@ HRESULT CRenderSystem::Render()
 	m_pInstancePass->Execute(m_pContext);
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
+	Render_SSAO();
 	Render_LightAcc();
 	Render_Combined();
 	Render_Blended();
@@ -113,6 +114,7 @@ HRESULT CRenderSystem::Render_SSAO()
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO"))) return E_FAIL;
 
+		m_pPipeLine->Update_SSAOBuffer(m_pContext);
 		SHADER_PARAM DepthParam = {};
 		m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
 		m_pShader->Bind_Value("g_DepthTexture", DepthParam);
@@ -120,6 +122,14 @@ HRESULT CRenderSystem::Render_SSAO()
 		SHADER_PARAM NormalParam = {};
 		m_pTargetManager->Get_TargetParam("Target_Normal", NormalParam);
 		m_pShader->Bind_Value("g_NormalTexture", NormalParam);
+
+		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
+		m_pShader->SetConstantBuffer("SSAOKernel", m_pPipeLine->Get_SSAOKernelBuffer());
+		m_pShader->Bind_Value("g_SSAONoiseTexture", { m_pSSAONoiseTexture, "Texture2D", 0 });
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SSAO", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
 		m_pShader->Apply("SSAO", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -129,11 +139,13 @@ HRESULT CRenderSystem::Render_SSAO()
 	}
 
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_BLUR"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_Blur"))) return E_FAIL;
 
 		SHADER_PARAM SSAOParam = {};
 		m_pTargetManager->Get_TargetParam("Target_SSAO", SSAOParam);
 		m_pShader->Bind_Value("g_SSAOTexture", SSAOParam);
+
+		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
 
 		m_pShader->Apply("SSAO_BLUR", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -171,7 +183,7 @@ HRESULT CRenderSystem::Render_LightAcc()
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 
-	m_pShader->Bind_Value("g_RampTexture", {TempTexture->Get_SRV(), "Texture2D", 0});
+	m_pShader->Bind_Value("g_RampTexture", {RampTexture->Get_SRV(), "Texture2D", 0});
 
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext);
 
@@ -195,7 +207,11 @@ HRESULT CRenderSystem::Render_Combined()
 
 	SHADER_PARAM DepthParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
-	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
+	m_pShader->Bind_Value("g_DepthTexture", DepthParam);	
+
+	SHADER_PARAM SSAOParam = {};
+	m_pTargetManager->Get_TargetParam("Target_SSAO_Blur", SSAOParam);
+	m_pShader->Bind_Value("g_SSAOBlurTexture", SSAOParam);
 
 	SHADER_PARAM MetalicParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
@@ -317,6 +333,54 @@ ID3D11ShaderResourceView* CRenderSystem::Get_EngineTargetSRV(const string strTag
 	return pTarget->Get_SRV();
 }
 
+HRESULT CRenderSystem::Create_NoiseTexture()
+{
+	std::vector<_float4> ssaoNoise;
+
+	for (unsigned int i = 0; i < 16; i++)
+	{
+		_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f),0.0f,0.0f);
+		ssaoNoise.push_back(noise);
+	}
+
+	D3D11_TEXTURE2D_DESC texDesc = {};
+	texDesc.Width = 4;
+	texDesc.Height = 4;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = ssaoNoise.data();
+	initData.SysMemPitch = 4 * sizeof(_float4);
+	initData.SysMemSlicePitch = 0;
+
+
+	ID3D11Texture2D* noiseTexture = nullptr;
+	if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
+	{
+		Safe_Release(noiseTexture);
+		return E_FAIL;
+	}
+
+	Safe_Release(noiseTexture);
+	return S_OK;
+}
+
 HRESULT CRenderSystem::Ready_GBuffer()
 {
 	_uint				iNumViewports = { 1 };
@@ -344,8 +408,11 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightDesc);
 
-	RenderTargetDesc SSAODesc = { "Target_SSAO" , DXGI_FORMAT_R16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc SSAODesc = { "Target_SSAO" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(SSAODesc);
+
+	RenderTargetDesc SSAOBlurDesc = { "Target_SSAO_Blur" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(SSAOBlurDesc);
 
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
 		return E_FAIL;
@@ -362,6 +429,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO", "Target_SSAO")))
+		return E_FAIL;	
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO_Blur", "Target_SSAO_Blur")))
 		return E_FAIL;
 
 	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "Shader_Deferred.hlsl");
@@ -581,7 +650,8 @@ HRESULT CRenderSystem::Change_Viewport(_uint iWidth, _uint iHeight)
 void CRenderSystem::Free()
 {
 	__super::Free();
-	Safe_Release(TempTexture);
+	Safe_Release(RampTexture);
+	Safe_Release(m_pSSAONoiseTexture);
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
