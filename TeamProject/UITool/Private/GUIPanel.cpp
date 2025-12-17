@@ -45,6 +45,8 @@ void CGUIPanel::Render_GUI()
 
 		LoadFromJson();
 
+		ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
+
 		ImGui::End();
 	}
 }
@@ -66,7 +68,7 @@ void CGUIPanel::CreateCanvasPanel()
 
 		CUI_Object* pCanvasPanel = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_CanvasPanel" })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
-			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount++));
+			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount));
 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pCanvasPanel, strCurrentLevelKey);
 	}
@@ -96,7 +98,7 @@ void CGUIPanel::SaveToJson()
 			data["uiObjects"].push_back(objData);
 		}
 
-		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("uiObjects", "json"));
+		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey(), "json"));
 
 		if (outputFile.is_open())
 		{
@@ -151,6 +153,7 @@ void CGUIPanel::LoadFromJson()
 				.Size(_float2(uiData["transform"]["size"]["x"].get<float>(), uiData["transform"]["size"]["y"].get<float>()))
 				.Scale(_float2(uiData["transform"]["scale"]["x"].get<float>(), uiData["transform"]["scale"]["y"].get<float>()))
 				.Rotate(uiData["transform"]["rotation"].get<float>())
+				.Anchor(static_cast<ANCHOR>(uiData["transform"]["anchor"]))
 				.Build(uiData["instanceKey"]);
 
 			if (!pObj)

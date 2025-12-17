@@ -47,13 +47,13 @@ void CInspectorPanel::ShowObject_Inspector()
 {
 	CGameObject* pObj = m_pContext->pSelectedObject;
 	if (!pObj) return;
-	ImVec2 windowPos = ImVec2((float)m_pContext->viewPort.x - 250, 0);
-	ImVec2 windowSize = ImVec2(250, (float)m_pContext->viewPort.y);
+	ImVec2 windowSize = ImVec2(m_pContext->viewPort.x * 0.15f, (float)m_pContext->viewPort.y);
+	ImVec2 windowPos = ImVec2((float)m_pContext->viewPort.x - windowSize.x, 0.0f);
 
 	ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
 	ImGui::SetNextWindowSize(windowSize, ImGuiCond_Once);
 
-	if (ImGui::Begin("Object Inspector", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
+	if (ImGui::Begin("Object Inspector", nullptr,   ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove))
 	{
 		ImGui::PushFontSize(14);
 		const char* btnText = m_bLocked ?  " Locked" :  " UnLocked"; 

@@ -153,6 +153,9 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\public\CamDirector.h" />
+    <ClInclude Include="..\public\CameraTool_Enum.h" />
+    <ClInclude Include="..\public\CameraTool_Struct.h" />
     <ClInclude Include="..\public\Camera_Defines.h" />
     <ClInclude Include="..\public\CamObj.h" />
     <ClInclude Include="..\public\CamPanel.h" />
@@ -183,6 +186,7 @@
     <ClInclude Include="CameraTool.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\private\CamDirector.cpp" />
     <ClCompile Include="..\private\CamObj.cpp" />
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\private\CamPanelUtil.cpp" />

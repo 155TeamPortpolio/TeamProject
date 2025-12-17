@@ -9,6 +9,7 @@
 #include "HierarchyPanel.h"
 #include "InspectorPanel.h"
 #include "GuizmoPanel.h"
+#include "DebugBonePanel.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);                // Use ImGui::GetCurrentContext()
 
@@ -121,6 +122,7 @@ void CGUISystem::Set_Panel()
 	m_Panels.push_back(CHierarchyPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
+	m_Panels.push_back(CDebugBonePanel::Create(&m_tGuiContext));
 }
 
 void CGUISystem::Render_Frame()

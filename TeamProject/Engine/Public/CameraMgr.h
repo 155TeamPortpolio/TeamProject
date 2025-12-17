@@ -1,9 +1,8 @@
 #pragma once
 #include "ICameraService.h"
-//#include "ICamPoseSource.h"
+#include "Camera.h"
 
 NS_BEGIN(Engine)
-class CCamera;
 
 class CCameraMgr : public ICameraService
 {
@@ -11,45 +10,45 @@ private:
     CCameraMgr();
     virtual ~CCameraMgr() DEFAULT;
 public:
-    virtual void Set_MainCam(CCamera* pCamCom) override;
-    virtual void Set_ShadowCam(CCamera* pCamCom) override;
+    virtual void Set_MainCam(CCamera* camComp) override;
+    virtual void Set_ShadowCam(CCamera* camComp) override;
 
 public:
     virtual void Update(_float dt) override;
 
-    virtual const _float4x4*  Get_ViewMatrix()               override { return &m_ViewMatrix; };
-    virtual const _float4x4*  Get_ProjMatrix()               override { return &m_ProjMatrix; };
-    virtual const _float4x4*  Get_InversedViewMatrix()       override { return &m_InversedViewMatrix; };
-    virtual const _float4x4*  Get_InversedProjMatrix()       override { return &m_InversedProjMatrix; };
-    virtual const _float4     Get_CameraPos()                override;
-    virtual const _float      Get_Far()                      override;
+    virtual const Matrix* Get_ViewMatrix()               override { return &view;    }
+    virtual const Matrix* Get_ProjMatrix()               override { return &proj;    }
+    virtual const Matrix* Get_InversedViewMatrix()       override { return &invView; }
+    virtual const Matrix* Get_InversedProjMatrix()       override { return &invProj; }
+    virtual const _float4 Get_CameraPos()                override { return camPos;   }
+    virtual const _float  Get_Far()                      override { return mainCam ? mainCam->Get_Far() : 0.f; }
 
-    virtual const _float4x4*  Get_ShadowViewMatrix()         override { return &m_ShadowViewMatrix; };
-    virtual const _float4x4*  Get_ShadowProjMatrix()         override { return &m_ShadowProjMatrix; };
-    virtual const _float4x4*  Get_InversedShadowViewMatrix() override { return &m_ShadowInversedViewMatrix; };
-    virtual const _float4x4*  Get_InversedShadowProjMatrix() override { return &m_ShadowInversedProjMatrix; };
-    virtual const _float4     Get_ShadowCameraPos()          override;
-    virtual const _float      Get_ShadowFar()                override;
+    virtual const Matrix* Get_ShadowViewMatrix()         override { return &shadowView;    }
+    virtual const Matrix* Get_ShadowProjMatrix()         override { return &shadowProj;    }
+    virtual const Matrix* Get_InversedShadowViewMatrix() override { return &shadowInvView; }
+    virtual const Matrix* Get_InversedShadowProjMatrix() override { return &shadowInvProj; }
+    virtual const _float4 Get_ShadowCameraPos()          override { return shadowCamPos;   }
+    virtual const _float  Get_ShadowFar()                override { return shadowCam ? shadowCam->Get_Far() : 0.f; }
 
 public:
-    static CCameraMgr* Create();
+    static CCameraMgr* Create() { return new CCameraMgr(); }
     virtual void Free() override;
 
 private:
-    CCamera*  m_pMainCam{};
-    CCamera*  m_pShadowCam{};
+    CCamera* mainCam{};
+    CCamera* shadowCam{};
 
-    _float4x4 m_ViewMatrix{};
-    _float4x4 m_ProjMatrix{};
-    _float4x4 m_InversedViewMatrix{};
-    _float4x4 m_InversedProjMatrix{};
-    _float4   m_vCamPos{};
+    Matrix   view{};
+    Matrix   proj{};
+    Matrix   invView{};
+    Matrix   invProj{};
+    Vector4  camPos{};
 
-    _float4   m_vShadowCamPos{};
-    _float4x4 m_ShadowViewMatrix{};
-    _float4x4 m_ShadowProjMatrix{};
-    _float4x4 m_ShadowInversedViewMatrix{};
-    _float4x4 m_ShadowInversedProjMatrix{};
+    Vector4  shadowCamPos{};
+    Matrix   shadowView{};
+    Matrix   shadowProj{};
+    Matrix   shadowInvView{};
+    Matrix   shadowInvProj{};
 };
 
 NS_END

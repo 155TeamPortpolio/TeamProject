@@ -40,6 +40,8 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 	/* 머테리얼 셋팅 */
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Grid_Material", "Opaque", CGameInstance::GetInstance()->Get_Device());
+	static _float size = 20.f ;
+	customInstance->Set_Param("GridSize", { &size, "float", sizeof(size) });
 
 	_uint Index = {};
 	pMaterial->Insert_MaterialInstance(customInstance, &Index);

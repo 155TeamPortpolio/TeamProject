@@ -141,17 +141,8 @@ void CAnimToolPanel::Create_ClipMeta(const string& CurMetaTag)
 		return;
 	}
 
-	json JsonData = iter->second;
 	string SavePath = m_Paths.find(CurMetaTag)->second + "\\";
-	SavePath += iter->first + "_Meta.json";
-
-	ofstream file(SavePath);
-	if (!file.is_open()) {
-		OutputDebugStringA("Save Error");
-		return;
-	}
-	file << JsonData.dump(2);
-	file.close();
+	Helper::SaveJson<vector<ANIM_CLIP>>(iter->second, SavePath);
 }
 
 CBasePanel* CAnimToolPanel::Create(GUI_CONTEXT* context)
