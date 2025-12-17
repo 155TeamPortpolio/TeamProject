@@ -216,6 +216,40 @@ namespace Engine
 		_float3 vHittedPosition = {};
 	}RAY_HIT;
 
+	// Physics Ray Info
+	typedef struct tagPhysicsRayInfo {
+		_float3 vOrigin = {};                 // 시작점
+		_float3 vDirection = {};              // 방향 (정규화됨)
+		_float	fMaxDistance = 1000.f;        // 최대 거리
+		_uint	iCollisionMask = 0xFFFFFFFF;  // 충돌 레이어 마스크
+		_bool	bQueryTrigger = false;        // 트리거도 검사할지 여부
+		_uint	iMaxHits = 1;                 // 최대 검출 개수
+	}PHYSICS_RAY;
+
+	// Physics Hit Info
+	typedef struct tagPhysicsRayHitInfo {
+		_bool				bHit = false;          // 충돌 여부
+		_float				fDistance = 0.f;       // 충돌 지점까지의 거리
+		_float3				vPoint = {};           // 충돌 지점 월드 좌표
+		_float3				vNormal = {};          // 충돌 표면의 법선
+		class CGameObject*	pHitObject = nullptr;  // 충돌한 오브젝트
+		class ICollidable*	pCollidable = nullptr; // 충돌한 컴포넌트
+		PxShape*			pShape = nullptr;      // 충돌한 Shape
+	}PHYSICS_RAY_HIT;
+
+	// Physics Hits Info
+	typedef struct tagPhysicsRayHitsInfo {
+		_uint iHitCount = 0;
+		vector<PHYSICS_RAY_HIT> vecHits;
+
+		void Clear()
+		{
+			iHitCount = 0;
+			vecHits.clear();
+		}
+	}PHYSICS_RAY_HITS;
+
+
 	typedef struct tagInstanceInitDESC {
 		_uint instanceStride = {};		// 인스턴스 구조체 크기 
 		_uint instanceCount = {};     // 최대 인스턴스 개수

@@ -392,7 +392,7 @@
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EventListner.h">
-      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ObjectPool.h">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
@@ -468,9 +468,12 @@
     </ClInclude>
     <ClInclude Include="..\public\Engine_Math.h">
       <Filter>01. Utility\97. Helper</Filter>
-        </ClInclude>
-        <ClInclude Include="..\Public\AnimationLayout.h">
-      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimationLayout.h">
+      <Filter>99. Defines\AnimationLayout</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DebugBonePanel.h">
+      <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -813,9 +816,6 @@
     <Filter Include="01. Utility\13. EventBus">
       <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\22.EventListner">
-      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool">
       <UniqueIdentifier>{da326297-d441-4077-b559-c58fd1c4c380}</UniqueIdentifier>
     </Filter>
@@ -875,6 +875,15 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\99. PerSegment">
       <UniqueIdentifier>{a31566f4-5cd5-41af-b864-2969ce586967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines\AnimationLayout">
+      <UniqueIdentifier>{08d4aef7-fcc3-432b-a822-f966d04565ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\22. EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. System\02. Gui\GUI_Panel\DebugBonePanel">
+      <UniqueIdentifier>{a386466d-aef6-4f11-98d1-562ebda21137}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1197,7 +1206,7 @@
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EventListner.cpp">
-      <Filter>01. Utility\04. Components\22.EventListner</Filter>
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ObjectPool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
@@ -1258,6 +1267,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Engine_Math.cpp">
       <Filter>01. Utility\97. Helper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DebugBonePanel.cpp">
+      <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

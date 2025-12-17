@@ -182,29 +182,15 @@ void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
 void CAnimModel::Set_Animator()
 {
 	Remove_Component<CAnimator3D>();
+	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
 
 	string metaPath = Helper::OpenFile_Dialogue();
-	vector<ANIM_CLIP> Clips;
-
-	std::ifstream file(metaPath);
-	if (file.is_open()) {
-		json j;
-		file >> j;
-
-		Clips = j.get<vector<ANIM_CLIP>>();
-	}
-
-	string clipPath = std::filesystem::path(metaPath).parent_path().string();
-	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
+	string metaTag = Helper::GetFileNameWithExtension(metaPath);
+	ResMgr->Add_ResourcePath(metaTag, metaPath);
 
 	Add_Component<CAnimator3D>();
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
-	
-	for (auto& Clip : Clips) {
-		string AnimPath = clipPath + "\\" + Clip.ClipTag + ".anim";
-		ResMgr->Add_ResourcePath(Clip.ClipTag, AnimPath);
-		Get_Component<CAnimator3D>()->Add_AnimClips("AnimationEdit_Level", Clip.ClipTag, "");
-	}
+	Get_Component<CAnimator3D>()->Link_MetaData("AnimationEdit_Level", metaTag);
 }
 
 void CAnimModel::Clear_Model()

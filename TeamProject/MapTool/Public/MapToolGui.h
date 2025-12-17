@@ -28,6 +28,9 @@ private:
 	void			PreSet_ModelResource();
 	void			Save_MapData();
 	void			Load_MapData();
+	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
+	void			Clear_Layer();
+	
 
 
 private:
@@ -41,12 +44,19 @@ private:
 	vector<ModelPathPack>		m_ModelPathPack;
 
 	/* For.Object */
+	string		m_TagPlacedObjectLayer = {};
+	string		m_TagFloorObjectLayer = {};
+	string		m_TagTriggerObjectLayer = {};
+
 	_int		m_iSelectedIndex = { -1 };
 	string		m_TagSelectedModelName = {};
 	_bool		m_isObjectPicking = { true };
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
 	
-
+	/* For.Data */
+	vector<string>	m_TagLayers;
+	_int			m_iVersion = { 1 };
+	MapData_Header	m_Data = {};
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);

@@ -80,7 +80,7 @@ HRESULT CPhysicsLevel::Awake()
 
 	COLLIDER_DESC objColDesc = {};
 	objColDesc.eType = COLLIDER_TYPE::BOX;
-	objColDesc.vSize = { 1.f, 1.f, 1.f };
+	objColDesc.vSize = { 10.f, 10.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };
 	objColDesc.isTrigger = false;
 	objColDesc.vRotation = { 0.f, 0.f, 0.f };

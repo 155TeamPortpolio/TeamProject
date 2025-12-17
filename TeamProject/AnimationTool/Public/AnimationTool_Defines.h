@@ -3,10 +3,12 @@
 #include <windows.h>
 #include <d3d11.h>
 
-
 namespace AnimTool {
-	static constexpr unsigned int g_iWinSizeX = 1280;
-	static constexpr unsigned int g_iWinSizeY = 720;
+	//static constexpr unsigned int g_iWinSizeX = 1280;
+	//static constexpr unsigned int g_iWinSizeY = 720;
+	
+	static constexpr unsigned int g_iWinSizeX = 1920;
+	static constexpr unsigned int g_iWinSizeY = 1080;
 	static constexpr unsigned int g_iMainFrame = 144;
 }
 
