@@ -31,6 +31,7 @@ HRESULT CTestLevel::Awake()
 
 	Ready_Map();		// 프레임 이슈로 잠시 사용 X
 	Ready_Camera();
+	Ready_Object();
 	return S_OK;
 }
 
@@ -67,6 +68,20 @@ void CTestLevel::Ready_Map()
 
 	pObjMgr->Add_Object(Map, { "Test_Level","Map_Layer" });
 	
+}
+
+void CTestLevel::Ready_Object()
+{
+	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+	
+	CCT_DESC ObjCCTDesc = {};
+	CGameObject* Obj =
+		Builder::Create_Object({ "Test_Level" ,"Proto_GameObject_TestModel" })
+		.Position({ 0.f, 10.f, 0.f })
+		.CharacterController(ObjCCTDesc)
+		.Build("TestObj");
+
+	pObjMgr->Add_Object(Obj, { "Test_Level","Object_Layer" });
 }
 
 HRESULT CTestLevel::Render()

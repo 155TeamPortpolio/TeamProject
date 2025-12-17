@@ -26,6 +26,20 @@ HRESULT CDemoModel::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
+
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+
+	/*파일명과 키값은 일치*/
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
+		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+
 	return S_OK;
 }
 
@@ -40,19 +54,7 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 
 void CDemoModel::Awake()
 {
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
-		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
-
-	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Change_Animation(3);
 }

@@ -78,7 +78,7 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;        // 기본값 1 -> 4로 증가
+    sceneDesc.ccdMaxPasses = 4;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송

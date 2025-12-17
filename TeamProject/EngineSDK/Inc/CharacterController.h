@@ -69,6 +69,7 @@ public:
 private:
     void            Apply_Gravity(_float dt);
     void            Apply_Move(_float dt);
+    HRESULT         AutoFit(CCT_DESC* pDesc);
 
 private:
     class IPhysicsService*   m_pPhysicsSystem = { nullptr };

@@ -3,6 +3,8 @@
 #include "CharacterController.h"
 #include "GameInstance.h"
 #include "DebugDraw.h"
+#include "StaticModel.h"
+#include "SkeletalModel.h"
 
 CCharacterController::CCharacterController()
 {
@@ -60,6 +62,10 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	if (pArg)
 	{
 		pDesc = static_cast<CCT_DESC*>(pArg);
+		if (pDesc->bAutoFit)
+		{
+			AutoFit(pDesc);
+		}
 	}
 
 	m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
@@ -599,6 +605,65 @@ void CCharacterController::Apply_Move(_float dt)
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
 
+HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
+{
+	CStaticModel* pStaticModel = m_pOwner->Get_Component<CStaticModel>();
+	CSkeletalModel* pSkeletalModel = m_pOwner->Get_Component<CSkeletalModel>();
+
+	MINMAX_BOX boundingBox = {};
+	_bool bHasModel = false;
+
+	if (pStaticModel)
+	{
+		boundingBox = pStaticModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+	else if (pSkeletalModel)
+	{
+		boundingBox = pSkeletalModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+
+	if (!bHasModel)
+	{
+		return E_FAIL;
+	}
+
+	_float3 vMin = boundingBox.vMin;
+	_float3 vMax = boundingBox.vMax;
+
+	// Radius 계산: XZ 평면에서의 최대 반지름
+	_float fRadiusX = (vMax.x - vMin.x) * 0.5f;
+	_float fRadiusZ = (vMax.z - vMin.z) * 0.5f;
+	_float fRadius = max(fRadiusX, fRadiusZ);
+
+	// Height 계산: Y축 높이에서 위아래 반구 부분 제외
+	_float fTotalHeight = vMax.y - vMin.y;
+	_float fCylinderHeight = fTotalHeight - (fRadius * 2.0f);
+
+	// 최소값 보장
+	if (fCylinderHeight < 0.1f)
+	{
+		fCylinderHeight = 0.1f;
+	}
+
+	// 스케일 적용
+	pDesc->fRadius = fRadius * pDesc->fRadiusScale * pDesc->fSizeScale;
+	pDesc->fHeight = fCylinderHeight * pDesc->fHeightScale * pDesc->fSizeScale;
+
+	// 초기 위치가 설정되지 않았다면 바운딩 박스 중심으로 설정
+	if (pDesc->vPos.x == 0.f && pDesc->vPos.y == 0.f && pDesc->vPos.z == 0.f)
+	{
+		pDesc->vPos.x = (vMin.x + vMax.x) * 0.5f;
+		pDesc->vPos.y = vMin.y + pDesc->fRadius;  // 발 위치를 바닥에 맞춤
+		pDesc->vPos.z = (vMin.z + vMax.z) * 0.5f;
+	}
+
+	// StepOffset 자동 조정
+	pDesc->fStepOffset = pDesc->fHeight * 0.25f;  // 높이의 25%를 계단 오를 수 있는 높이로 설정
+
+	return S_OK;
+}
 CCharacterController* CCharacterController::Create()
 {
 	CCharacterController* pInstance = new CCharacterController();
