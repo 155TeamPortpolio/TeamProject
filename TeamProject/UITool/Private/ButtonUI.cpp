@@ -28,10 +28,12 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
+    for (_int i = 0; i < static_cast<_int>(STATE::END); ++i)
+    { 
+        if (strTextureKeys.size())
+            Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndices[i]]);
+    }
 
     return S_OK;
 }
@@ -55,15 +57,13 @@ void CButtonUI::Render_GUI()
     ImGui::SeparatorText(u8"이미지 넣기");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     Render_GUI_Texture(STATE::NORMAL, u8"normal", szTextureKeys, G_GlobalLevelKey);
-    Render_GUI_Texture(STATE::HOVERED, u8"hovered", szTextureKeys, G_GlobalLevelKey);
-    Render_GUI_Texture(STATE::PRESSED, u8"pressed", szTextureKeys, G_GlobalLevelKey);
+    Render_GUI_Texture(STATE::CLICKED, u8"clicked", szTextureKeys, G_GlobalLevelKey);
     Render_GUI_Texture(STATE::DISABLED, u8"disabled", szTextureKeys, G_GlobalLevelKey);
 
     ImGui::SeparatorText(u8"이미지 보기");
     _bool isChanged = {};
     isChanged |= ImGui::RadioButton(u8"show normal", &m_iState, static_cast<_int>(STATE::NORMAL));
-    isChanged |= ImGui::RadioButton(u8"show hovered", &m_iState, static_cast<_int>(STATE::HOVERED));
-    isChanged |= ImGui::RadioButton(u8"show pressed", &m_iState, static_cast<_int>(STATE::PRESSED));
+    isChanged |= ImGui::RadioButton(u8"show clicked", &m_iState, static_cast<_int>(STATE::CLICKED));
     isChanged |= ImGui::RadioButton(u8"show disabled", &m_iState, static_cast<_int>(STATE::DISABLED));
     if(isChanged)
         Get_Component<CSprite2D>()->ChangeSprite(m_iState);
@@ -71,10 +71,17 @@ void CButtonUI::Render_GUI()
 
 void CButtonUI::ToJson(json& data)
 {
+    __super::ToJson(data);
+
+    data["typeTag"] = "ImageUI";
+
+    // 추후 추가 예정
+    //data["textureTag"] = m_strTextureKey;// CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
 }
 
 void CButtonUI::FromJson(const json& data)
 {
+    // 추후 추가 예정
 }
 
 void CButtonUI::Render_GUI_Texture(STATE eState, const char* label, const vector<const _char*>& szTextureKeys, const string& levelKey)
@@ -82,7 +89,7 @@ void CButtonUI::Render_GUI_Texture(STATE eState, const char* label, const vector
     _int iState = static_cast<_int>(eState);
 
     if (ImGui::Combo(label, &m_iTextureKeyIndices[iState], szTextureKeys.data(), szTextureKeys.size()))
-        Get_Component<CSprite2D>()->Change_Texture(iState, levelKey, szTextureKeys[m_iTextureKeyIndices[iState]]);
+        Change_Texture(iState, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndices[iState]], m_strTextureKeys[iState]);
 }
 
 CGameObject* CButtonUI::Create()

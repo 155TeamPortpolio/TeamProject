@@ -6,7 +6,7 @@ NS_BEGIN(UITool)
 class CButtonUI final : public CUIObject_Tool
 {
 public:
-	enum class STATE { NORMAL, HOVERED, PRESSED, DISABLED, END };
+	enum class STATE { NORMAL, CLICKED, DISABLED, END };
 
 private:
 	CButtonUI();
