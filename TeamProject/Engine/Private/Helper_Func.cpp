@@ -34,7 +34,6 @@ _bool Helper::IsPathInProjectFolder(const string& path)
 	return false;
 }
 
-
 string Helper::OpenFile_Dialogue()
 {
 	string filePath = "";
