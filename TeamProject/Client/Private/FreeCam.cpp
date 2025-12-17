@@ -19,7 +19,7 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 
 void CFreeCam::Priority_Update(_float dt)
 {
-    auto input = m_pGame->Get_InputDev();
+    auto input = GAME->Get_InputDev();
 
     if (input->Mouse_Down(MOUSE_BTN::RB))
     {
@@ -84,7 +84,29 @@ void CFreeCam::SyncRotation()
     m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
 
     m_qRotTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-    m_qCurRot = m_qRotTarget;
+    m_qCurRot    = m_qRotTarget;
+}
+
+CFreeCam* CFreeCam::Create()
+{
+    auto inst = new CFreeCam();
+    if (FAILED(inst->Initialize_Prototype()))
+    {
+        MSG_BOX("Object Create Failed : CFreeCam");
+        Safe_Release(inst);
+    }
+    return inst;
+}
+
+CGameObject* CFreeCam::Clone(INIT_DESC* pArg)
+{
+    auto inst = new CFreeCam(*this);
+    if (FAILED(inst->Initialize(pArg)))
+    {
+        MSG_BOX("Object Clone Failed : CFreeCam");
+        Safe_Release(inst);
+    }
+    return inst;
 }
 
 void CFreeCam::Render_GUI()

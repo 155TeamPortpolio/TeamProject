@@ -5,10 +5,6 @@
 #include "GameInstance.h"
 #include "CharacterController.h"
 
-#include "StaticModel.h"
-#include "ModelData.h"
-#include "Mesh.h"
-
 #ifdef USINGPHYSICS 
 
 HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
@@ -109,18 +105,9 @@ HRESULT CPhysicsSystem::Initialize()
 #endif
 
     m_pControllerManager = PxCreateControllerManager(*m_pScene);     // Controller Manager 생성
-    
-    // 머터리얼 데이터 세팅 : 필요시 추가
+
     Add_Material("Default", 0.5f, 0.5f, 0.6f);
     m_pMaterial = Get_Material("Default");
-
-    // Cooking 초기화
-    PxCookingParams cookingParams(m_pPhysics->getTolerancesScale());
-    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
-    cookingParams.meshWeldTolerance = 0.001f;
-    m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, cookingParams);
-    if (!m_pCooking)
-        return E_FAIL;
 
     return S_OK;
 }
@@ -128,9 +115,7 @@ HRESULT CPhysicsSystem::Initialize()
 void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
-
     m_pScene->simulate(dt);
-
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
@@ -220,39 +205,6 @@ _bool CPhysicsSystem::Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& out
     return Raycast_Multiple(allDesc, outHits);
 }
 
-PxTriangleMesh* CPhysicsSystem::Cook_TriangleMesh(const string& strModelKey, CModel* pModel)
-{
-    if (!pModel || !m_pCooking)
-        return nullptr;
-
-    // 캐시 확인
-    auto iter = m_CachedTriangleMeshes.find(strModelKey);
-    if (iter != m_CachedTriangleMeshes.end())
-        return iter->second;
-
-    // 쿠킹된 파일 확인
-    string strCookedPath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
-
-    PxTriangleMesh* pTriMesh = nullptr;
-
-    if (filesystem::exists(strCookedPath))
-    {
-        pTriMesh = Load_CookedMesh(strCookedPath);
-    }
-    else
-    {
-        if (FAILED(Cooking(strModelKey, pModel)))
-            return nullptr;
-
-        pTriMesh = Load_CookedMesh(strCookedPath);
-    }
-
-    if (pTriMesh)
-        m_CachedTriangleMeshes[strModelKey] = pTriMesh;
-
-    return pTriMesh;
-}
-
 void CPhysicsSystem::Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit)
 {
     outHit.bHit = true;
@@ -311,141 +263,6 @@ PxFilterFlags CPhysicsSystem::SimulationFilterShader(
     return PxFilterFlag::eDEFAULT;
 }
 
-HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
-{
-    if (!m_pCooking || !pModel)
-        return E_FAIL;
-
-    CModelData* pModelData = static_cast<CStaticModel*>(pModel)->Get_ModelData();
-    if (!pModelData)
-        return E_FAIL;
-
-    vector<PxVec3> vertices;
-    vector<PxU32> indices;
-
-    _uint iMeshCount = pModelData->Get_MeshCount();
-
-#ifdef _DEBUG
-    char debugMsg[512];
-    sprintf_s(debugMsg, "[PhysX Cooking] Start: %s (Meshes: %d)\n", strModelKey.c_str(), iMeshCount);
-    OutputDebugStringA(debugMsg);
-#endif
-
-    for (_uint i = 0; i < iMeshCount; ++i)
-    {
-        CMesh* pMesh = pModelData->Get_Mesh(i);
-
-        const vector<VTXMESH>& meshVerts = pMesh->Get_StaticVertices();
-        const vector<_uint>& meshIndices = pMesh->Get_Indices();
-
-        if (meshVerts.empty() || meshIndices.empty())
-            continue;
-
-        if (meshIndices.size() % 3 != 0)
-            continue;
-
-        _uint vertexOffset = vertices.size();
-
-        // 인덱스 범위 검증
-        _bool bValidIndices = true;
-        for (_uint idx : meshIndices)
-        {
-            if (idx >= meshVerts.size())
-            {
-                bValidIndices = false;
-                break;
-            }
-        }
-
-        if (!bValidIndices)
-            continue;
-
-        // 버텍스 추가
-        for (const auto& vtx : meshVerts)
-        {
-            vertices.push_back(PxVec3(vtx.vPosition.x, vtx.vPosition.y, vtx.vPosition.z));
-        }
-
-        // 인덱스 추가
-        for (_uint idx : meshIndices)
-        {
-            indices.push_back(idx + vertexOffset);
-        }
-    }
-
-    if (vertices.empty() || indices.empty())
-    {
-#ifdef _DEBUG
-        OutputDebugStringA("[PhysX Cooking] Error: No valid mesh data\n");
-#endif
-        return E_FAIL;
-    }
-
-    PxTriangleMeshDesc meshDesc;
-    meshDesc.points.count = static_cast<PxU32>(vertices.size());
-    meshDesc.points.stride = sizeof(PxVec3);
-    meshDesc.points.data = vertices.data();
-
-    meshDesc.triangles.count = static_cast<PxU32>(indices.size() / 3);
-    meshDesc.triangles.stride = 3 * sizeof(PxU32);
-    meshDesc.triangles.data = indices.data();
-
-#ifdef _DEBUG
-    sprintf_s(debugMsg, "[PhysX Cooking] Vertices=%d, Triangles=%d\n",
-        meshDesc.points.count, meshDesc.triangles.count);
-    OutputDebugStringA(debugMsg);
-#endif
-
-    string strSavePath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
-    filesystem::create_directories("../../DemoResource/Physics/Cooked/");
-
-    PxDefaultFileOutputStream writeBuffer(strSavePath.c_str());
-    PxTriangleMeshCookingResult::Enum result;
-
-    if (!m_pCooking->cookTriangleMesh(meshDesc, writeBuffer, &result))
-    {
-#ifdef _DEBUG
-        OutputDebugStringA("[PhysX Cooking] Error: Cook failed\n");
-#endif
-        return E_FAIL;
-    }
-
-    switch (result)
-    {
-    case PxTriangleMeshCookingResult::eSUCCESS:
-#ifdef _DEBUG
-        sprintf_s(debugMsg, "[PhysX Cooking] Success: %s\n", strModelKey.c_str());
-        OutputDebugStringA(debugMsg);
-#endif
-        break;
-
-    case PxTriangleMeshCookingResult::eLARGE_TRIANGLE:
-#ifdef _DEBUG
-        sprintf_s(debugMsg, "[PhysX Cooking] Warning: Large triangles in %s (still usable)\n", strModelKey.c_str());
-        OutputDebugStringA(debugMsg);
-#endif
-        break;
-
-    case PxTriangleMeshCookingResult::eFAILURE:
-#ifdef _DEBUG
-        sprintf_s(debugMsg, "[PhysX Cooking] Error: Cook failed for %s\n", strModelKey.c_str());
-        OutputDebugStringA(debugMsg);
-#endif
-        return E_FAIL;
-    }
-
-    return S_OK;
-}
-
-PxTriangleMesh* CPhysicsSystem::Load_CookedMesh(const string& strFilePath)
-{
-    if (!m_pPhysics)
-        return nullptr;
-
-    PxDefaultFileInputData readBuffer(strFilePath.c_str());
-    return m_pPhysics->createTriangleMesh(readBuffer);
-}
-
 CPhysicsSystem* CPhysicsSystem::Create()
 {
     CPhysicsSystem* pInstance = new CPhysicsSystem();
@@ -459,19 +276,6 @@ CPhysicsSystem* CPhysicsSystem::Create()
 
 void CPhysicsSystem::Free()
 {
-    for (auto& pair : m_CachedTriangleMeshes)
-    {
-        if (pair.second)
-            pair.second->release();
-    }
-    m_CachedTriangleMeshes.clear();
-
-    if (m_pCooking)
-    {
-        m_pCooking->release();
-        m_pCooking = nullptr;
-    }
-
     for (auto& pair : m_Materials)
         pair.second->release();
     m_Materials.clear();
