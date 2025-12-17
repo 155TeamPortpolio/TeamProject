@@ -25,6 +25,7 @@ public:
 	virtual void Submit_Particle(const PARTICLE_PACKET& packet)override { m_pParticlePass->Submit(packet); }
 
 public:
+	HRESULT Render_SSAO();
 	HRESULT Render_LightAcc();
 	HRESULT Render_Combined();
 	HRESULT Render_Blended();

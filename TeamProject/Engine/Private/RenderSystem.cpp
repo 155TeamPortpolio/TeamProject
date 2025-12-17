@@ -108,6 +108,42 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 	return instance;
 }
 
+HRESULT CRenderSystem::Render_SSAO()
+{
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO"))) return E_FAIL;
+
+		SHADER_PARAM DepthParam = {};
+		m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
+		m_pShader->Bind_Value("g_DepthTexture", DepthParam);
+
+		SHADER_PARAM NormalParam = {};
+		m_pTargetManager->Get_TargetParam("Target_Normal", NormalParam);
+		m_pShader->Bind_Value("g_NormalTexture", NormalParam);
+
+		m_pShader->Apply("SSAO", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_BLUR"))) return E_FAIL;
+
+		SHADER_PARAM SSAOParam = {};
+		m_pTargetManager->Get_TargetParam("Target_SSAO", SSAOParam);
+		m_pShader->Bind_Value("g_SSAOTexture", SSAOParam);
+
+		m_pShader->Apply("SSAO_BLUR", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	return S_OK;
+}
+
 HRESULT CRenderSystem::Render_LightAcc()
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc"))) return E_FAIL;
@@ -308,6 +344,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightDesc);
 
+	RenderTargetDesc SSAODesc = { "Target_SSAO" , DXGI_FORMAT_R16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(SSAODesc);
 
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
 		return E_FAIL;
@@ -322,6 +360,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO", "Target_SSAO")))
 		return E_FAIL;
 
 	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "Shader_Deferred.hlsl");
