@@ -186,6 +186,9 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::Update(_float dt)
 {
+	if (m_bCooked)
+		return;
+
 	if (m_pStaticActor && !m_pAttachedRigidBody)
 	{
 		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();

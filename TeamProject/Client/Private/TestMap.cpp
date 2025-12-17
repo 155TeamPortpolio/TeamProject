@@ -53,7 +53,7 @@ void CTestMap::Priority_Update(_float dt)
 
 void CTestMap::Update(_float dt)
 {
-	Get_Component<CCollider>()->Update(dt);
+
 }
 
 void CTestMap::Late_Update(_float dt)
