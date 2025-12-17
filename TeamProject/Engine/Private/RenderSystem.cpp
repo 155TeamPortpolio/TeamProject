@@ -6,9 +6,10 @@
 #include "ICameraService.h"
 #include "Shader.h"
 #include "PipeLine.h"
-#include"Material.h"
+#include "Material.h"
 #include "Target_Manager.h"
 #include "IResourceService.h"
+#include "Texture.h"
 #include "VIBuffer.h"
 #include "RenderTarget.h"
 
@@ -29,10 +30,8 @@ HRESULT CRenderSystem::Initialize()
 	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 	/*Render Target*/
 	m_pTargetManager = CTarget_Manager::Create(m_pDevice, m_pContext);
-	if (FAILED(Ready_GBuffer())) {
-		return E_FAIL;
-	}
-
+	TempTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
+	if (FAILED(Ready_GBuffer())) return E_FAIL;
 	/*RenderPass*/
 	m_pPriorityPass = PriorityPass::Create(this);
 	m_pOpaquePass = OpaquePass::Create(this);
@@ -136,6 +135,8 @@ HRESULT CRenderSystem::Render_LightAcc()
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 
+	m_pShader->Bind_Value("g_RampTexture", {TempTexture->Get_SRV(), "Texture2D", 0});
+
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext);
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -171,6 +172,10 @@ HRESULT CRenderSystem::Render_Combined()
 	SHADER_PARAM ShadowParam = {};
 	m_pTargetManager->Get_TargetParam("Target_Shadow", ShadowParam);
 	m_pShader->Bind_Value("g_ShadowTexture", ShadowParam);
+
+	SHADER_PARAM AmbientParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Ambient", AmbientParam);
+	m_pShader->Bind_Value("g_AmbientTexture", AmbientParam);
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
@@ -536,6 +541,8 @@ HRESULT CRenderSystem::Change_Viewport(_uint iWidth, _uint iHeight)
 void CRenderSystem::Free()
 {
 	__super::Free();
+	Safe_Release(TempTexture);
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pPipeLine);

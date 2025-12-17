@@ -263,6 +263,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
+    <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
@@ -414,6 +415,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
+    <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />

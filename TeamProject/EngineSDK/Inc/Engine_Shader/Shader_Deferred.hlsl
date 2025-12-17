@@ -11,6 +11,7 @@ Texture2D g_DepthTexture;
 Texture2D g_ShadowTexture;
 Texture2D g_MetalicTexture;
 Texture2D g_AmbientTexture;
+Texture2D g_RampTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -80,6 +81,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
     float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
     
+    vector vRamp = g_RampTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     float fViewZ = vDepthDesc.y * zFar;
     
     vector vWorldPos;
@@ -94,12 +97,19 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+
+    float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
     
-    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb,worldNormal, metalic, roughness, 
-    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.0f);
-    //추후 light intensity 변수로 수정 예정
-   
-    Out.vLight = float4(PBR, 1.f);
+    float2 vRampCoord = float2(NdotL, 1.f);
+    float3 vRampColor;
+ 
+    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    
+    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, 
+    ambientocclusion, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+    
+    float RampRatio = 0.7f; 
+    Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
     
     return Out;
 }
@@ -116,6 +126,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
     float ambientocclusion = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).b;
+ 
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -133,12 +144,19 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float3 lightDir = float3(0.f, 0.f, 0.f); // 사용 x
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
+    float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
+    
+    float2 vRampCoord = float2(NdotL, 1.f);
+    float3 vRampColor;
+ 
+    vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
+    
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, ambientocclusion, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
     g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
-    //추후 light intensity 변수로 수정 예정
-   
-    Out.vLight = float4(PBR, 1.f);
+    
+    float RampRatio = 0.7f;
+    Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
     
     return Out;
 }

@@ -1,7 +1,5 @@
 #pragma once
 
-NS_BEGIN(Engine)
-
 enum class EaseType
 {
 	None, InOutSine, OutCubic, InOutCubic, OutSine, InOutQuad, InSine, InCubic, InQuad, InCirc, InOutCirc, OutCirc, OutQuad,
@@ -63,5 +61,3 @@ namespace Math
 	ENGINE_DLL _float EaseInOutBounce(_float t);  // 29. EaseInOutBounce: 중간 포함 바운스(카메라엔 거의 비추천)
 	ENGINE_DLL _float EaseInBounce(_float t);     // 30. EaseInBounce:    시작이 바운스(특수 연출)
 }
-
-NS_END
