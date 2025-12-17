@@ -66,7 +66,7 @@ void CTestLevel::Ready_Camera()
 		.Build("FreeCam");
 
 	objMgr->Add_Object(freeCam, { "Test_Level","Camera_Layer" });
-//	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 	// ----------------- SequenceCam -------------------------------------------------
 	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
 		.Camera(kAspect)
@@ -80,9 +80,9 @@ void CTestLevel::Ready_Camera()
 		.Position({ 0.f, 2.f, -5.f })
 		.Build("Orbit_Cam");
 
-	objMgr->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
+	//objMgr->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
 
-	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
+	//CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
 	if (!m_pCamDirector)
 		m_pCamDirector = CCamDirector::Create();

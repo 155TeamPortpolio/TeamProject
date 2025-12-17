@@ -13,7 +13,6 @@ HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 
 	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
 	m_transform = m_pOwner->Get_Component<CTransform>();
-	Safe_AddRef(m_transform);
 	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar);
 	return S_OK;
 }
@@ -51,6 +50,7 @@ _bool CCamera::Lerp_FOV(_float dst, _float dt)
 		m_fov = dst;
 		return true;
 	}
+
 	return false;
 }
 
@@ -63,17 +63,6 @@ CCamera* CCamera::Create()
 		Safe_Release(instance);
 	}
 	return instance;
-}
-
-CComponent* CCamera::Clone()
-{
-	return new CCamera(*this);
-}
-
-void CCamera::Free()
-{
-	__super::Free();
-	Safe_Release(m_transform);
 }
 
 void CCamera::Render_GUI()

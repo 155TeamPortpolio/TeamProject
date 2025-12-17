@@ -1,8 +1,20 @@
 #include "Engine_Defines.h"
 #include "CameraMgr.h"
 #include "Camera.h"
-#include "GameInstance.h"
 #include "GameObject.h"
+
+namespace
+{
+    float QuatDot(const Quaternion& a, const Quaternion& b)
+    {
+        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+    }
+
+    Quaternion QuatNegate(const Quaternion& q)
+    {
+        return Quaternion(-q.x, -q.y, -q.z, -q.w);
+    }
+}
 
 void CCameraMgr::Set_MainCam(CCamera* camComp)
 {
@@ -53,7 +65,7 @@ _bool CCameraMgr::Pop(_uint handle, _float blendSec)
     {
         if (m_overrides[i].handle == handle)
         {
-            idx = i; 
+            idx = i;
             break;
         }
     }
@@ -117,14 +129,7 @@ void CCameraMgr::Update(_float dt)
     else
         ApplyOutputPose(CapturePose(GetDesiredActiveCam()));
 
-    if (m_shadowCam)
-    {
-        m_shadowView    = m_shadowCam->Get_ViewMatrix();
-        m_shadowProj    = m_shadowCam->Get_ProjMatrix();
-        m_shadowInvView = m_shadowView.Invert();
-        m_shadowInvProj = m_shadowProj.Invert();
-        m_shadowCamPos  = m_shadowCam->Get_Pos();
-    }
+    UpdateShadowCache();
 }
 
 CCamera* CCameraMgr::GetDesiredActiveCam() const
@@ -138,14 +143,24 @@ CCamera* CCameraMgr::GetDesiredActiveCam() const
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame out{};
-
     if (!cam) return out;
 
-    CTransform* tr = cam->Get_Transform();
+    CTransform* tr = cam->Get_Owner()->Get_Component<CTransform>();
     assert(tr);
 
-    out.pos = _vector3(tr->Get_Pos());
-    out.rot = Quaternion(tr->Get_QuaternionRotate());
+    Matrix world = Matrix(tr->Get_WorldMatrix());
+
+    Vector3 scale{};
+    Vector3 translation{};
+    Quaternion rotation = Quaternion::Identity;
+
+    const bool ok = world.Decompose(scale, rotation, translation);
+    assert(ok);
+
+    rotation.Normalize();
+
+    out.pos = translation;
+    out.rot = rotation;
 
     out.lens.projType = cam->Get_ProjType();
     out.lens.fov = cam->Get_FOV();
@@ -169,7 +184,13 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
     CamPoseFrame out{};
 
     out.pos = a.pos + (b.pos - a.pos) * t;
-    out.rot = Quaternion::Slerp(a.rot, b.rot, t);
+
+    Quaternion qb = b.rot;
+    if (QuatDot(a.rot, qb) < 0.f)
+        qb = QuatNegate(qb);
+
+    out.rot = Quaternion::Slerp(a.rot, qb, t);
+    out.rot.Normalize();
 
     out.lens.nearZ = a.lens.nearZ + (b.lens.nearZ - a.lens.nearZ) * t;
     out.lens.farZ = a.lens.farZ + (b.lens.farZ - a.lens.farZ) * t;
@@ -186,10 +207,8 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
     }
     else
     {
-        if (t < 1.f)
-            out.lens = a.lens;
-        else
-            out.lens = b.lens;
+        if (t < 1.f) out.lens = a.lens;
+        else out.lens = b.lens;
     }
 
     return out;
@@ -205,12 +224,12 @@ void CCameraMgr::ApplyOutputPose(const CamPoseFrame& pose)
     m_view = world.Invert();
 
     if (pose.lens.projType == CamProjType::Perspective)
-        m_proj = Matrix::CreatePerspectiveFieldOfView(pose.lens.fov, pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
+        m_proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(pose.lens.fov), pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
     else
     {
-        const float h = pose.lens.orthoHeight;
-        const float w = h * pose.lens.aspect;
-        m_proj = Matrix::CreateOrthographic(w, h, pose.lens.nearZ, pose.lens.farZ);
+        const float height = pose.lens.orthoHeight;
+        const float width = height * pose.lens.aspect;
+        m_proj = XMMatrixOrthographicLH( width,  height, pose.lens.nearZ, pose.lens.farZ );
     }
 
     m_invProj = m_proj.Invert();
@@ -245,6 +264,17 @@ void CCameraMgr::BeginBlendTo(CCamera* targetCam, _float blendSec)
     m_blendDuration = blendSec;
 }
 
+void CCameraMgr::UpdateShadowCache()
+{
+    if (!m_shadowCam) return;
+
+    m_shadowView    = m_shadowCam->Get_ViewMatrix();
+    m_shadowProj    = m_shadowCam->Get_ProjMatrix();
+    m_shadowInvView = m_shadowView.Invert();
+    m_shadowInvProj = m_shadowProj.Invert();
+    m_shadowCamPos  = m_shadowCam->Get_Pos();
+}
+
 void CCameraMgr::Free()
 {
     m_isBlending = false;
@@ -253,8 +283,6 @@ void CCameraMgr::Free()
         Safe_Release(m_blendTargetCam);
 
     m_blendTargetCam = nullptr;
-
-    Clear(0.f);
 
     if (m_baseCam)
         Safe_Release(m_baseCam);

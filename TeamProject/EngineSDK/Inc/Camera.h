@@ -19,7 +19,6 @@ public:
 public:
 	Matrix      Get_ViewMatrix() const { return m_transform->Get_InverseWorldMatrix(); }
 	Matrix      Get_ProjMatrix() const;			
-	CTransform* Get_Transform()  const { return m_transform; }
 	_vector     Get_Pos()        const { return m_transform->Get_Pos(); }
 	_float      Get_FOV()        const { return m_fov;      }
 	_float      Get_Near()       const { return m_zNear;    }
@@ -51,7 +50,7 @@ private:
 
 public:
 	static CCamera* Create();
-	virtual CComponent* Clone();
-	void Free() override;
+	virtual CComponent* Clone() { return new CCamera(*this); }
+	void Free() override { __super::Free(); }
 };
 NS_END
