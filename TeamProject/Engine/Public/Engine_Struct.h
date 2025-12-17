@@ -296,7 +296,7 @@ namespace Engine
 		string FontTag;
 		_float Scale = 1.f;
 		_float Rotation = 0.f;
-		_float2 Origin = { 0.f, 0.f }; // 회전 중점
+		_float2 Origin = { 0.f, 0.f }; 
 
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
