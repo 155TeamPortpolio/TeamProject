@@ -1,15 +1,28 @@
 #include "Shader_Define.hlsl"
 
-float2 UVOffset;
-uint Col;
-uint Row;
-uint FrameIndex;
-float Alpha;
-float Threshold;
 
+/*Default Params*/
 float4 vBaseColor;
 float4 vBrightColor;
 float4 vEmissiveColor;
+float Alpha;
+float Threshold;
+
+/*Sprite Animation Params*/
+uint Col;
+uint Row;
+uint FrameIndex;
+
+/*UV Animation Params*/
+float2 UVOffset;
+
+/*Noise Params*/
+
+/*Dissolve Params*/
+float DissolveThreshold;
+
+/*Distortion Params*/
+
 
 struct VS_IN
 {
@@ -85,20 +98,24 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     PS_OUT Out;
     
     float2 Texcoord = In.vTexcoord + UVOffset;
-    if (Texcoord.x < 0 || Texcoord.x > 1)
-        discard;
-    if (Texcoord.y < 0 || Texcoord.y > 1)
-        discard;
+    //if (Texcoord.x < 0 || Texcoord.x > 1)
+    //    discard;
+    //if (Texcoord.y < 0 || Texcoord.y > 1)
+    //    discard;
         
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, Texcoord);
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
+    float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
     
     float fBrightIntensity = 2.f;
     float fBase = vMtrlDiffuse.g;
     float fBright = vMtrlDiffuse.r;
+    float fMask = vMtrlDiffuse.b;
     float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
     Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
     Out.vDiffuse.a = Alpha * fRGBMask;
+    if (fDissolveMask < DissolveThreshold)
+        Out.vDiffuse.a = 0.f;
     
     return Out;
 }

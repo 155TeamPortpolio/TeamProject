@@ -31,6 +31,8 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
    // __super::Initialize(pArg);
 
 	LoadTextureFromDirectory("../Bin/Resource/Texture");
+	LoadMeshFromDirectory("../Bin/Resource/Mesh");
+	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
     return S_OK;
 }
@@ -58,8 +60,6 @@ void CEffectContainer_Edit::Render_GUI()
 	DisplayAllTextures();
 	DisplayModels();
 	DisplayMaterial();
-	LoadMesh();
-	LoadMaterial();
 	ContextClear();
 	Play();
     AddNode();
@@ -200,34 +200,44 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 	m_Context.pAllTextures = &m_Textures;
 }
 
-void CEffectContainer_Edit::LoadMesh()
+void CEffectContainer_Edit::LoadMeshFromDirectory(const string& dirPath)
 {
 	namespace fs = std::filesystem;
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	if (ImGui::Button("Load Mesh"))
+	for (auto& entry : fs::recursive_directory_iterator(dirPath))
 	{
-		fs::path filePath = Helper::OpenFile_Dialogue();
-		string path = filePath.string();
-		string modelKey = filePath.filename().string();
+		if (!entry.is_regular_file())
+			continue;
 
-		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+		if (entry.path().extension() != ".model")
+			continue;
+
+		string path = entry.path().string();
+		string modelKey = entry.path().filename().string();
 		resource->Add_ResourcePath(modelKey, path);
 
 		m_Context.ModelTags.push_back(modelKey);
 	}
 }
 
-void CEffectContainer_Edit::LoadMaterial()
+void CEffectContainer_Edit::LoadMaterialFromDirectory(const string& dirPath)
 {
 	namespace fs = std::filesystem;
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	if (ImGui::Button("Load Material"))
+	for (auto& entry : fs::recursive_directory_iterator(dirPath))
 	{
-		fs::path filePath = Helper::OpenFile_Dialogue();
-		string path = filePath.string();
-		string materialKey = filePath.filename().string();
+		if (!entry.is_regular_file())
+			continue;
 
-		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+		if (entry.path().extension() != ".mat")
+			continue;
+
+		string path = entry.path().string();
+		string materialKey = entry.path().filename().string();
 		resource->Add_ResourcePath(materialKey, path);
 
 		m_Context.MaterialTags.push_back(materialKey);

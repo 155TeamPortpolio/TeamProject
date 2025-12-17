@@ -30,14 +30,19 @@ protected:
     MODE m_eMode = MODE::END;
     string m_PassTag{};
 
-    _float4 m_vBaseColor{};
-    _float m_fThreshold{};
+    /*Default Params*/
+    _float4 m_vBaseColor{ 1.f,1.f,1.f,1.f };
+    _float m_fThreshold{};  //전체 진행도
 
-    /*UV Animation*/
     EaseType m_eAlphaFadeEase = EaseType::None;
     _float2 m_vAlphaFade{};
     _float m_fAlpha{ 1.f };
 
+    EaseType m_eScaleEase = EaseType::None;
+    _float3 m_vStartScale{ 1.f,1.f,1.f };
+    _float3 m_vEndScale{ 1.f,1.f,1.f };
+
+    /*UV Animation*/
     EaseType m_eUVEase = EaseType::None;
     _float2 m_vUVSpeed{};
     _float2 m_vStartUVOffset{};
@@ -52,12 +57,14 @@ protected:
     _uint m_iCurrFrameIndex{};
 
     /*Dissolve Params*/
-    _float m_fDissolveThreshold{};
-    _float m_fDissolveStartProgress{};
+    _float m_fDissolveThreshold{};     //Dissolve 진행도
+    _float m_fDissolveStartProgress{}; //Dissolve가 시작될 전체 진행도 
 
     /*Noise Params*/
 
 
     /*Distortion Params*/
+    _float m_fDistortionWeight{};
+
 };
 NS_END

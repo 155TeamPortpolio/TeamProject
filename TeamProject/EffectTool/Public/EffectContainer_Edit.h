@@ -57,8 +57,8 @@ private:
     void RemoveLastNode();
     void ContextClear();
     void LoadTextureFromDirectory(const string& dirPath);
-    void LoadMesh();
-    void LoadMaterial();
+    void LoadMeshFromDirectory(const string& dirPath);
+    void LoadMaterialFromDirectory(const string& dirPath);
     void DisplayAllTextures();
     void DisplayModels();
     void DisplayMaterial();

@@ -65,12 +65,16 @@ void CMeshNode_Edit::Late_Update(_float dt)
 
 void CMeshNode_Edit::Render_GUI()
 {
+	static _bool isOpen = true;
 	ImGui::PushID(this);
+	ImGui::SeparatorText("MeshEffect");
 	SetMesh();
 	SetMaterial();
-	SetUp_MeshEffect();
-	if(m_SetMesh && m_SetMaterial)
+	if (m_SetMesh && m_SetMaterial)
+	{
+		SetUp_MeshEffect();
 		CGameObject::Render_GUI();
+	}
 	ImGui::PopID();
 }
 
@@ -81,6 +85,7 @@ void CMeshNode_Edit::Play()
 	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
 	m_vCurrUVOffset = m_vStartUVOffset;
+	m_fDissolveThreshold = 0.f;
 }
 
 CMeshNode_Edit* CMeshNode_Edit::Create()
@@ -154,6 +159,70 @@ void CMeshNode_Edit::SetMesh()
 	}
 }
 
+_bool CMeshNode_Edit::ChangeEaseType(EaseType& ioValue, EaseType shownValue)
+{
+	_bool changed = false;
+
+	auto Pick = [&](EaseType v)
+		{
+			const bool selected = (shownValue == v);
+			if (ImGui::Selectable(Math::GetEaseLabel(v), selected))
+			{
+				ioValue = v;
+				changed = true;
+			}
+			if (selected) ImGui::SetItemDefaultFocus();
+		};
+
+	Pick(EaseType::None);
+
+	ImGui::SeparatorText("A. Stable");
+	Pick(EaseType::InOutSine);
+	Pick(EaseType::OutCubic);
+	Pick(EaseType::InOutCubic);
+	Pick(EaseType::OutSine);
+	Pick(EaseType::InOutQuad);
+
+	ImGui::SeparatorText("B. Ease In");
+	Pick(EaseType::InSine);
+	Pick(EaseType::InCubic);
+	Pick(EaseType::InQuad);
+	Pick(EaseType::InCirc);
+
+	ImGui::SeparatorText("C. Settle / Stop");
+	Pick(EaseType::InOutCirc);
+	Pick(EaseType::OutCirc);
+	Pick(EaseType::OutQuad);
+
+	ImGui::SeparatorText("D. Strong");
+	Pick(EaseType::InQuart);
+	Pick(EaseType::InQuint);
+	Pick(EaseType::InOutQuart);
+	Pick(EaseType::OutQuart);
+	Pick(EaseType::InOutQuint);
+	Pick(EaseType::OutQuint);
+
+	ImGui::SeparatorText("E. Extreme");
+	Pick(EaseType::InOutExpo);
+	Pick(EaseType::OutExpo);
+	Pick(EaseType::InExpo);
+
+	ImGui::SeparatorText("F. Overshoot");
+	Pick(EaseType::OutBack);
+	Pick(EaseType::InOutBack);
+	Pick(EaseType::InBack);
+
+	ImGui::SeparatorText("G. Special");
+	Pick(EaseType::OutElastic);
+	Pick(EaseType::InOutElastic);
+	Pick(EaseType::InElastic);
+	Pick(EaseType::OutBounce);
+	Pick(EaseType::InOutBounce);
+	Pick(EaseType::InBounce);
+
+	return changed;
+}
+
 void CMeshNode_Edit::SetUp_MeshEffect()
 {
 	_bool isDirty = false;
@@ -173,9 +242,24 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		pMaterialInstance->Override_Pass("SpriteAnimation");
 	}
 	ImGui::DragFloat("Duration", &m_fDuration);
+
+	/*Default Params*/
+	if (ImGui::BeginCombo("##seg_ease_alpha", Math::GetEaseLabel(m_eAlphaFadeEase)))
+	{
+		EaseType eType = m_eAlphaFadeEase;
+		ChangeEaseType(m_eAlphaFadeEase, eType);
+		ImGui::EndCombo();
+	}
 	ImGui::DragFloat2("Alpha Fade", &m_vAlphaFade.x);
-	ImGui::DragFloat2("Start UV Offset", &m_vStartUVOffset.x);
-	ImGui::DragFloat2("End UV Offset", &m_vEndUVOffset.x);
+
+	if (ImGui::BeginCombo("##seg_ease_scale", Math::GetEaseLabel(m_eScaleEase)))
+	{
+		EaseType eType = m_eScaleEase;
+		ChangeEaseType(m_eScaleEase, eType);
+		ImGui::EndCombo();
+	}
+	ImGui::DragFloat3("Start Scale", &m_vStartScale.x);
+	ImGui::DragFloat3("End Scale", &m_vEndScale.x);
 
 	_float baseColor[4] = { m_vBaseColor.x,m_vBaseColor.y,m_vBaseColor.z,m_vBaseColor.w };
 
@@ -185,9 +269,23 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		isDirty = true;
 	}
 
+	/*UV Animation*/
+	if (ImGui::BeginCombo("##seg_ease_uv", Math::GetEaseLabel(m_eUVEase)))
+	{
+		EaseType eType = m_eUVEase;
+		ChangeEaseType(m_eUVEase, eType);
+		ImGui::EndCombo();
+	}
+	ImGui::DragFloat2("Start UV Offset", &m_vStartUVOffset.x);
+	ImGui::DragFloat2("End UV Offset", &m_vEndUVOffset.x);
+
+	/*Sprite Animation*/
 	isDirty |= ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_iCol));
 	isDirty |= ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_iRow));
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+
+	/*Dissolve*/
+	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
 
 	if (isDirty)
 	{
