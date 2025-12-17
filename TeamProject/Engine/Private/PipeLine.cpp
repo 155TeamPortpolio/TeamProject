@@ -142,6 +142,38 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
+HRESULT CPipeLine::Update_SSAOBuffer(ID3D11DeviceContext* pContext)
+{
+	SSAOBuffer ssaoBuffer{};
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+	pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	ssaoBuffer.Radius = 0.5f;
+	ssaoBuffer.Bias = 0.025f;
+	ssaoBuffer.ScreenWidth = ViewportDesc.Width;
+	ssaoBuffer.ScreenHeight = ViewportDesc.Height;
+	ssaoBuffer.SampleCount = 32;
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	HRESULT hr = pContext->Map(
+		m_pDeviceSSAOBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedResource
+	);
+	if (FAILED(hr))
+		return hr;
+
+	memcpy(mappedResource.pData, &ssaoBuffer, sizeof(SSAOBuffer));
+	pContext->Unmap(m_pDeviceSSAOBuffer, 0);
+
+	return S_OK;
+}
+
 void CPipeLine::Update_Frustum()
 {
 	_matrix view = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ViewMatrix());

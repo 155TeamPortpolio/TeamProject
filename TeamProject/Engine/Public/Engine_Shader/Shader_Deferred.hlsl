@@ -220,6 +220,16 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 
 technique11 DefaultTechnique
 {
+    //pass SSAO
+    //{
+
+    //}
+
+    //pass BLUR_SSAO
+    //{
+
+    //}
+
     pass Directional
     {
         SetRasterizerState(RS_Default);
@@ -249,6 +259,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
+
     pass Final
     {
         SetRasterizerState(RS_Default);

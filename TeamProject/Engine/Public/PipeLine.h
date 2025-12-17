@@ -28,6 +28,16 @@ class ENGINE_DLL CPipeLine :
         _float3 ShadowPadding;
     };
 
+    struct alignas(16)  SSAOBuffer
+    {
+        _float Radius;
+        _float Bias;
+        _float ScreenWidth;
+        _float ScreenHeight;
+        _int SampleCount;
+        _float3 SSAOPadding;
+    };
+
     struct SkinningBuffer
     {
         _float4x4 SkinningBuffer[g_iMaxNumBones];
@@ -45,6 +55,7 @@ public:
 public:
     HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
     HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext);
+    HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
     void Update_Frustum();
 
     _uint Write_ObjectData(const _float4x4& worldMatrix);
@@ -58,6 +69,7 @@ public:
 public:
     ID3D11Buffer* Get_FrameBuffer() { return m_pDeviceFrameBuffer; };
     ID3D11Buffer* Get_ShadowBuffer() { return m_pDeviceShadowBuffer; };
+    ID3D11Buffer* Get_SSAOBuffer() { return m_pDeviceSSAOBuffer; };
 
     ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
     ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
@@ -67,6 +79,7 @@ public:
 private:
     ID3D11Buffer* m_pDeviceFrameBuffer = {nullptr};
     ID3D11Buffer* m_pDeviceShadowBuffer = {nullptr};
+    ID3D11Buffer* m_pDeviceSSAOBuffer = {nullptr};
     
     /*Transform*/
     _uint m_ObjectOffset = {};
