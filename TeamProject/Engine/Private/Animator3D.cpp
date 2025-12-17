@@ -381,37 +381,37 @@ void CAnimator3D::Animation_Run(_float dt)
 
 void CAnimator3D::Animation_Convert(_float dt)
 {
-	m_fCurrentTrackPosition += dt;
-
-	if (m_iCurrentClipIndex == -1) {
-		m_fConvertDuration = 0;
-		m_fPrevTrackPosition = 0;
-		m_fCurrentTrackPosition = 0;
-		m_eState = ANIMATOR_STATE::RUNNING;
-		m_iCurrentClipIndex = m_iNextClipIndex;
-		m_iNextClipIndex = UINT_MAX;
-		isAnimEnd = false;
-		return;
-	}
-
-
-	_bool ConvertComplete = m_pAnimClips[m_iCurrentClipIndex]->ConvertByCurrentMatrix(
-		m_TransfromationMatrices,
-		*m_pAnimClips[m_iNextClipIndex],
-		m_fConvertDuration,
-		m_fPrevTrackPosition,
-		m_fCurrentTrackPosition);
-
-	if (ConvertComplete) {
-		m_fConvertDuration = 0;
-		m_fPrevTrackPosition = 0;
-		m_fCurrentTrackPosition = 0;
-		m_eState = ANIMATOR_STATE::RUNNING;
-		m_iCurrentClipIndex = m_iNextClipIndex;
-		m_iNextClipIndex = UINT_MAX;
-		isAnimEnd = false;
-	}
-
+	//m_fCurrentTrackPosition += dt;
+	//
+	//if (m_iCurrentClipIndex == -1) {
+	//	m_fConvertDuration = 0;
+	//	m_fPrevTrackPosition = 0;
+	//	m_fCurrentTrackPosition = 0;
+	//	m_eState = ANIMATOR_STATE::RUNNING;
+	//	m_iCurrentClipIndex = m_iNextClipIndex;
+	//	m_iNextClipIndex = UINT_MAX;
+	//	isAnimEnd = false;
+	//	return;
+	//}
+	//
+	//
+	//_bool ConvertComplete = m_pAnimClips[m_iCurrentClipIndex]->ConvertByCurrentMatrix(
+	//	m_TransfromationMatrices,
+	//	*m_pAnimClips[m_iNextClipIndex],
+	//	m_fConvertDuration,
+	//	m_fPrevTrackPosition,
+	//	m_fCurrentTrackPosition);
+	//
+	//if (ConvertComplete) {
+	//	m_fConvertDuration = 0;
+	//	m_fPrevTrackPosition = 0;
+	//	m_fCurrentTrackPosition = 0;
+	//	m_eState = ANIMATOR_STATE::RUNNING;
+	//	m_iCurrentClipIndex = m_iNextClipIndex;
+	//	m_iNextClipIndex = UINT_MAX;
+	//	isAnimEnd = false;
+	//}
+	//
 }
 
 void CAnimator3D::Blend_In(_float dt)
@@ -484,48 +484,48 @@ void CAnimator3D::Blend_Pause(_float dt)
 
 void CAnimator3D::Blend_Convert(_float dt)
 {
-	//ºí·»µå ¾øÀ¸¸é °Å³Ê¶Ü
-	if (m_iBlendAnimation == -1)
-		return;
+	////ºí·»µå ¾øÀ¸¸é °Å³Ê¶Ü
+	//if (m_iBlendAnimation == -1)
+	//	return;
 
-	//ºí·»µåµÉ Å¬¸³
-	auto& blendClip = m_pAnimClips[m_iBlendAnimation];
-	_float speed = dt * m_fBlendWeight;
+	////ºí·»µåµÉ Å¬¸³
+	//auto& blendClip = m_pAnimClips[m_iBlendAnimation];
+	//_float speed = dt * m_fBlendWeight;
 
-	if (m_eBlendState == BLENDER_STATE::BLEND_IN) {
-		m_fBlendDuration += speed;
+	//if (m_eBlendState == BLENDER_STATE::BLEND_IN) {
+	//	m_fBlendDuration += speed;
 
-		if (m_fBlendDuration > 1.f) {
-			m_fBlendDuration = 1.f;
-			m_eBlendState = BLENDER_STATE::RUNNING;
-		}
-	}
-	else if (m_eBlendState == BLENDER_STATE::BLEND_OUT) {
-		m_fBlendDuration -= speed;
-		if (m_fBlendDuration <= 0.f) {
-			m_fBlendDuration = 0.f;
-			m_BlendIndex.clear();
-			m_BlendTransfomationMatices.clear();
-			m_iBlendAnimation = -1;
-			m_eBlendState = BLENDER_STATE::NONE;
-			return;
-		}
-	}
+	//	if (m_fBlendDuration > 1.f) {
+	//		m_fBlendDuration = 1.f;
+	//		m_eBlendState = BLENDER_STATE::RUNNING;
+	//	}
+	//}
+	//else if (m_eBlendState == BLENDER_STATE::BLEND_OUT) {
+	//	m_fBlendDuration -= speed;
+	//	if (m_fBlendDuration <= 0.f) {
+	//		m_fBlendDuration = 0.f;
+	//		m_BlendIndex.clear();
+	//		m_BlendTransfomationMatices.clear();
+	//		m_iBlendAnimation = -1;
+	//		m_eBlendState = BLENDER_STATE::NONE;
+	//		return;
+	//	}
+	//}
 
-	m_BlendTransfomationMatices = m_TransfromationMatrices;
+	//m_BlendTransfomationMatices = m_TransfromationMatrices;
 
-	m_fBlendTrackPosition = blendClip->TranslateAnimateMatrix(
-		m_BlendTransfomationMatices, m_fBlendTrackPosition,
-		dt, m_pAnimLoops[m_iBlendAnimation], &isBlendAnimEnd);
+	//m_fBlendTrackPosition = blendClip->TranslateAnimateMatrix(
+	//	m_BlendTransfomationMatices, m_fBlendTrackPosition,
+	//	dt, m_pAnimLoops[m_iBlendAnimation], &isBlendAnimEnd);
 
-	m_pAnimClips[m_iBlendAnimation]->ConvertTo(
-		m_BlendTransfomationMatices,
-		*m_pAnimClips[m_iNextClipIndex],
-		m_fBlendDuration,
-		m_fPrevTrackPosition,
-		m_fCurrentTrackPosition);
+	//m_pAnimClips[m_iBlendAnimation]->ConvertTo(
+	//	m_BlendTransfomationMatices,
+	//	*m_pAnimClips[m_iNextClipIndex],
+	//	m_fBlendDuration,
+	//	m_fPrevTrackPosition,
+	//	m_fCurrentTrackPosition);
 
-	Override_BlendAnim();
+	//Override_BlendAnim();
 }
 
 void CAnimator3D::Override_BlendAnim()

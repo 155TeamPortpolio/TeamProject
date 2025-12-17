@@ -38,10 +38,10 @@ namespace Engine
         bool   bisLoop;     //반복여부
     }ANIM_NODE;
 
-    typedef struct AnimationTransition { // to와 from을 둘 다 충족시킬시 변경
-        string toNode;      //현재 재생중인 노드
-        string fromNode;    //에서 바꿀노드
-        int    iBlendState;  //ANIM_BLEND_STATE
+    typedef struct AnimationTransition { // from과 to를 둘 다 충족시킬시 변경
+        string fromNode;    //현재 재생중인 노드
+        string toNode;      //에서 바꿀노드
+        int    iBlendState;  //ANIM_BLEND_STATE < 나중에 구조체로 또 분리해서 데이터 채우게할것
     }ANIM_TRANSIT;
 
     typedef struct AnimationLayer {
@@ -66,5 +66,4 @@ namespace Engine
         vector<ANIM_LAYER>  Layers;             //레이어 데이터
     }ANIM_GRAPH;
     /* ------------------------ */
-
 }
