@@ -100,7 +100,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
     
-    float2 vRampCoord = float2(NdotL, 1.f);
+    float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
     vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
@@ -146,7 +146,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
     
-    float2 vRampCoord = float2(NdotL, 1.f);
+    float2 vRampCoord = float2(NdotL, 0.5f);
     float3 vRampColor;
  
     vRampColor = g_RampTexture.Sample(DefaultSampler, vRampCoord).g;
