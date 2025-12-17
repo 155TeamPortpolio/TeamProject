@@ -87,10 +87,10 @@ private:
     _float                   m_fMaxSpeed = { 0.0f };
     _float                   m_fGravity = { -9.81f };
 
-#ifdef _DEBUG
-    // 디버그 레이 시각화용
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
+#ifdef _DEBUG
+    // 디버그 레이 시각화용
     _float3                  m_vRayStart = {};
     _float3                  m_vRayEnd = {};
 #endif

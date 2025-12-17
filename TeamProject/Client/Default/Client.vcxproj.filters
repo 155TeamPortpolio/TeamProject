@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99. Defines">
+      <UniqueIdentifier>{b462f77d-05d0-4452-982f-e4ee2adcba47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Default">
+      <UniqueIdentifier>{52917668-5378-4fdb-b04f-2c37f674eb87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. MainApp">
+      <UniqueIdentifier>{655d3ee5-432c-4c9d-9891-95b9d2687484}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. GUI_Inc">
+      <UniqueIdentifier>{46732b2e-e4d0-4929-aa86-f5b3aed6397d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. GUI_Inc\backend">
+      <UniqueIdentifier>{97d80c65-4526-4e59-a1bc-8da44d5e5e3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. GUI_Inc\Guizmo">
+      <UniqueIdentifier>{9d85da13-28b5-4706-8886-a70ad1ee518b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level">
+      <UniqueIdentifier>{b7664385-7831-46b8-a66b-51c17d874ed8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject">
+      <UniqueIdentifier>{2ff13ba2-a6c0-4782-a777-d30d31b77b1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera">
+      <UniqueIdentifier>{06dd2e72-ca01-48ca-8865-a51ad9d6a00c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object">
+      <UniqueIdentifier>{ee0b304b-250c-46e2-9366-5f47d592f662}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestObject">
+      <UniqueIdentifier>{0e6fbf4f-e3f7-4fbe-b297-96bd81424db0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\00. CamObject">
+      <UniqueIdentifier>{e0bba242-799e-4a24-b080-7db510093c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\01. CamSpawnObject">
+      <UniqueIdentifier>{135d1fb6-54ac-44fc-b5bc-00ae5043c969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\02. FreeCam">
+      <UniqueIdentifier>{be87aa4e-607e-4972-bd9f-9f2d942322b4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>98. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\pch.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00. MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h">
+      <Filter>97. GUI_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.h">
+      <Filter>97. GUI_Inc\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h">
+      <Filter>97. GUI_Inc\backend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h">
+      <Filter>97. GUI_Inc\Guizmo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestLevel.h">
+      <Filter>01. Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestObject.h">
+      <Filter>02. GameObject\Object\TestObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FreeCam.h">
+      <Filter>02. GameObject\Camera\02. FreeCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. GameObject\Camera\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamSpawnObject.h">
+      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>98. Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>98. Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>98. Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>98. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\pch.cpp">
+      <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00. MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_draw.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_tables.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp">
+      <Filter>97. GUI_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_dx11.cpp">
+      <Filter>97. GUI_Inc\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.cpp">
+      <Filter>97. GUI_Inc\backend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.cpp">
+      <Filter>97. GUI_Inc\Guizmo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestLevel.cpp">
+      <Filter>01. Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestObject.cpp">
+      <Filter>02. GameObject\Object\TestObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FreeCam.cpp">
+      <Filter>02. GameObject\Camera\02. FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. GameObject\Camera\00. CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamSpawnObject.cpp">
+      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
