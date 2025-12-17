@@ -65,9 +65,13 @@ void CMeshNode_Edit::Late_Update(_float dt)
 
 void CMeshNode_Edit::Render_GUI()
 {
+	ImGui::PushID(this);
 	SetMesh();
 	SetMaterial();
 	SetUp_MeshEffect();
+	if(m_SetMesh && m_SetMaterial)
+		CGameObject::Render_GUI();
+	ImGui::PopID();
 }
 
 void CMeshNode_Edit::Play()
@@ -132,7 +136,7 @@ void CMeshNode_Edit::SetMesh()
 {
 	if (-1 != m_pContext->iSelectModelIndex)
 	{
-		if (ImGui::Button("Set Select Model"))
+		if (ImGui::Button("Set Select Model#mesh"))
 		{
 			if (!m_SetMaterial)
 			{

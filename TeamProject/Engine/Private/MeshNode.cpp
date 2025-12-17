@@ -43,14 +43,15 @@ void CMeshNode::Update(_float dt)
 {
 	__super::Update(dt);
 
+	_float t = m_fElpasedTime / m_fDuration;
+	m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(EaseType::InCubic, t));
+
 	switch (m_eMode)
 	{
 	case Engine::CMeshNode::MODE::UV_ANIMATION:
 	{
-		_float t = m_fElpasedTime / m_fDuration;
 		m_fThreshold = t;
 
-		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(EaseType::InCubic, t));
 		m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, t);
 
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);

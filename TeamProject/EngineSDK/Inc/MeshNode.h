@@ -53,6 +53,9 @@ protected:
 
     /*Dissolve Params*/
     _float m_fDissolveThreshold{};
+    _float m_fDissolveStartProgress{};
+
+    /*Noise Params*/
 
 };
 NS_END
