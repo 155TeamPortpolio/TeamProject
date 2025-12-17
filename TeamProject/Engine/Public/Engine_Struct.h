@@ -32,7 +32,7 @@ namespace Engine
 	/* Light Desc struct*/
 	typedef struct tagLightDesc {
 		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
-		_float4		vLightDirection = {};
+		_float4		vLightDirection = {0,-1,0,0};
 		_float4		vLightDiffuse = {};
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};

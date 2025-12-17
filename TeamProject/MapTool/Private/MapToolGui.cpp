@@ -410,8 +410,11 @@ void CMapToolGui::KeyInput()
 {
     auto pInputDev = m_pGameInstance->Get_InputDev();
 
+    ImGuiIO& io = ImGui::GetIO();
+
     // 오브젝트 피킹
-    if (pInputDev->Mouse_Tap(MOUSE_BTN::LB)) {
+    if (pInputDev->Mouse_Tap(MOUSE_BTN::LB) && false == io.WantCaptureMouse) {
+     
         // 오브젝트 피킹이 꺼져있을때 임시로 킴
         _bool isResetObjectPicking = false;
         if (false == m_isObjectPicking) {
