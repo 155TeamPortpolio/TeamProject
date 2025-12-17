@@ -23,6 +23,8 @@ public:
 
 private:
     void Ready_Camera();
+    void Rake_MapResources();
+
 
 public:
     static void PreLoad_Level();

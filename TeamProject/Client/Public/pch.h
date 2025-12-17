@@ -16,3 +16,5 @@ extern HINSTANCE g_hInstance;
 using namespace Client;
 
 #include "Engine_Defines.h"
+
+#include "Data_Struct.h"
