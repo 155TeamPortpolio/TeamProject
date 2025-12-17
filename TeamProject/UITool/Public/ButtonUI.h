@@ -3,12 +3,15 @@
 
 NS_BEGIN(UITool)
 
-class CImageUI final : public CUIObject_Tool
+class CButtonUI final : public CUIObject_Tool
 {
+public:
+	enum class STATE { NORMAL, CLICKED, DISABLED, END };
+
 private:
-	CImageUI();
-	CImageUI(const CImageUI& rhs);
-	virtual ~CImageUI() DEFAULT;
+	CButtonUI();
+	CButtonUI(const CButtonUI& rhs);
+	virtual ~CButtonUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,12 +27,16 @@ public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
-private:
-	string		m_strTextureKey;
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+public:
+	_int			m_iState = {};
+	string			m_strTextureKeys[static_cast<_int>(STATE::END)];
+	_int			m_iTextureKeyIndices[static_cast<_int>(STATE::END)] = {};
 
 public:
 	static _uint m_iCount;
+
+private:
+	void Render_GUI_Texture(STATE eState, const char* label, const vector<const _char*>& szTextureKeys, const string& levelKey);
 
 public:
 	static CGameObject* Create();

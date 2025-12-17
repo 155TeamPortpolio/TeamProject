@@ -7,6 +7,7 @@
 
 #include "ImageUI.h"
 #include "TextUI.h"
+#include "ButtonUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
 
@@ -80,6 +81,13 @@ void CCanvasPanel::Render_GUI()
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_TextUI";
         strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create Button"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_ButtonUI";
+        strInstanceKey = "UI_ButtonUI" + to_string(CButtonUI::m_iCount);
     }
 
     // 자식 생성

@@ -149,9 +149,11 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamSpawnObject.h" />
+    <ClInclude Include="..\Public\Data_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\MapFloorObject.h" />
+    <ClInclude Include="..\public\MapLoader.h" />
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\MapPlacedObject.h" />
     <ClInclude Include="..\public\MapTriggerObject.h" />
@@ -197,6 +199,7 @@
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\private\MapFloorObject.cpp" />
+    <ClCompile Include="..\private\MapLoader.cpp" />
     <ClCompile Include="..\private\MapObject.cpp" />
     <ClCompile Include="..\private\MapPlacedObject.cpp" />
     <ClCompile Include="..\private\MapTriggerObject.cpp" />
