@@ -78,6 +78,9 @@
     <ClInclude Include="..\Public\FreeCamera.h">
       <Filter>02. GameObject\Camera\FreeCam</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. GameObject\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -131,6 +134,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\FreeCamera.cpp">
       <Filter>02. GameObject\Camera\FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. GameObject\Camera</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
