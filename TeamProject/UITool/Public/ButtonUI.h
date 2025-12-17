@@ -5,6 +5,9 @@ NS_BEGIN(UITool)
 
 class CButtonUI final : public CUIObject_Tool
 {
+public:
+	enum class STATE { NORMAL, HOVERED, PRESSED, DISABLED, END };
+
 private:
 	CButtonUI();
 	CButtonUI(const CButtonUI& rhs);
@@ -25,7 +28,15 @@ public:
 	virtual void FromJson(const json& data) override;
 
 public:
+	_int			m_iState = {};
+	string			m_strTextureKeys[static_cast<_int>(STATE::END)];
+	_int			m_iTextureKeyIndices[static_cast<_int>(STATE::END)] = {};
+
+public:
 	static _uint m_iCount;
+
+private:
+	void Render_GUI_Texture(STATE eState, const char* label, const vector<const _char*>& szTextureKeys, const string& levelKey);
 
 public:
 	static CGameObject* Create();

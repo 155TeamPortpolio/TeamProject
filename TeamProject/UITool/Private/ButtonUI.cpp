@@ -26,6 +26,13 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "Logo.png");
+
     return S_OK;
 }
 
@@ -43,6 +50,23 @@ void CButtonUI::Late_Update(_float dt)
 
 void CButtonUI::Render_GUI()
 {
+    Render_GUI_Layout();
+
+    ImGui::SeparatorText(u8"이미지 넣기");
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    Render_GUI_Texture(STATE::NORMAL, u8"normal", szTextureKeys, G_GlobalLevelKey);
+    Render_GUI_Texture(STATE::HOVERED, u8"hovered", szTextureKeys, G_GlobalLevelKey);
+    Render_GUI_Texture(STATE::PRESSED, u8"pressed", szTextureKeys, G_GlobalLevelKey);
+    Render_GUI_Texture(STATE::DISABLED, u8"disabled", szTextureKeys, G_GlobalLevelKey);
+
+    ImGui::SeparatorText(u8"이미지 보기");
+    _bool isChanged = {};
+    isChanged |= ImGui::RadioButton(u8"show normal", &m_iState, static_cast<_int>(STATE::NORMAL));
+    isChanged |= ImGui::RadioButton(u8"show hovered", &m_iState, static_cast<_int>(STATE::HOVERED));
+    isChanged |= ImGui::RadioButton(u8"show pressed", &m_iState, static_cast<_int>(STATE::PRESSED));
+    isChanged |= ImGui::RadioButton(u8"show disabled", &m_iState, static_cast<_int>(STATE::DISABLED));
+    if(isChanged)
+        Get_Component<CSprite2D>()->ChangeSprite(m_iState);
 }
 
 void CButtonUI::ToJson(json& data)
@@ -51,6 +75,14 @@ void CButtonUI::ToJson(json& data)
 
 void CButtonUI::FromJson(const json& data)
 {
+}
+
+void CButtonUI::Render_GUI_Texture(STATE eState, const char* label, const vector<const _char*>& szTextureKeys, const string& levelKey)
+{
+    _int iState = static_cast<_int>(eState);
+
+    if (ImGui::Combo(label, &m_iTextureKeyIndices[iState], szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(iState, levelKey, szTextureKeys[m_iTextureKeyIndices[iState]]);
 }
 
 CGameObject* CButtonUI::Create()
