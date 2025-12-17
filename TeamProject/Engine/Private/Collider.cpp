@@ -5,6 +5,7 @@
 #include "GameObject.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
+#include "StaticModel.h"
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
@@ -41,19 +42,50 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
 
 	PxGeometry* pGeometry = nullptr;
-	switch (pDesc->eType)
+	// 쿠킹이 필요한 경우
+	if (pDesc->bCooking)
 	{
-	case COLLIDER_TYPE::BOX:
-		pGeometry = new PxBoxGeometry(pDesc->vSize.x * 0.5f, pDesc->vSize.y * 0.5f, pDesc->vSize.z * 0.5f);
-		break;
-	case COLLIDER_TYPE::SPHERE:
-		pGeometry = new PxSphereGeometry(pDesc->vSize.x);
-		break;
-	case COLLIDER_TYPE::CAPSULE:
-		pGeometry = new PxCapsuleGeometry(pDesc->vSize.x, pDesc->vSize.y * 0.5f);
-		break;
-	}
+		m_bCooked = true;
 
+		if (m_pAttachedRigidBody)
+		{
+			MSG_BOX("CCollider::Initialize : Cooked Mesh cannot have RigidBody");
+			return E_FAIL;
+		}
+
+		CStaticModel* pModel = m_pOwner->Get_Component<CStaticModel>();
+		if (!pModel)
+		{
+			MSG_BOX("CCollider::Initialize : No StaticModel for Cooking");
+			return E_FAIL;
+		}
+
+		m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
+
+		if (!m_pTriangleMesh)
+		{
+			MSG_BOX("CCollider::Initialize : Failed to Cook TriangleMesh");
+			return E_FAIL;
+		}
+
+		pGeometry = new PxTriangleMeshGeometry(m_pTriangleMesh);
+	}
+	else
+	{
+		switch (pDesc->eType)
+		{
+		case COLLIDER_TYPE::BOX:
+			pGeometry = new PxBoxGeometry(pDesc->vSize.x * 0.5f, pDesc->vSize.y * 0.5f, pDesc->vSize.z * 0.5f);
+			break;
+		case COLLIDER_TYPE::SPHERE:
+			pGeometry = new PxSphereGeometry(pDesc->vSize.x);
+			break;
+		case COLLIDER_TYPE::CAPSULE:
+			pGeometry = new PxCapsuleGeometry(pDesc->vSize.x, pDesc->vSize.y * 0.5f);
+			break;
+		}
+	}
+	
 	if (!pGeometry)
 	{
 		MSG_BOX("CCollider::Initialize : Failed to Create Geometry");
@@ -122,15 +154,18 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
 
-	// 초기 위치 및 회전값 설정
-	_vector3 vPos = pDesc->vCenter;
-	_vector4 vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
-	PxTransform localPose;
-	localPose.p = PxVec3(vPos.x, vPos.y, vPos.z);
-	localPose.q = PxQuat(vRot.x, vRot.y, vRot.z, vRot.w);
-	m_pShape->setLocalPose(localPose);
-	m_pShape->userData = this;		// UserData 설정
+	if (!m_bCooked)
+	{
+		_vector3 vPos = pDesc->vCenter;
+		_vector4 vRot = XMQuaternionRotationRollPitchYaw(pDesc->vRotation.x, pDesc->vRotation.y, pDesc->vRotation.z);
 
+		PxTransform localPose;
+		localPose.p = PxVec3(vPos.x, vPos.y, vPos.z);
+		localPose.q = PxQuat(vRot.x, vRot.y, vRot.z, vRot.w);
+		m_pShape->setLocalPose(localPose);
+	}
+
+	m_pShape->userData = this;		// UserData 설정
 	delete pGeometry;				// Geometry 메모리 해제
 
 	// 멤버 변수 저장
@@ -411,7 +446,22 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 	XMFLOAT3 vPos(trans.p.x, trans.p.y, trans.p.z);
 	XMFLOAT4 vRot(trans.q.x, trans.q.y, trans.q.z, trans.q.w);
 
-	if (m_eType == COLLIDER_TYPE::BOX)
+	if (m_bCooked)
+	{
+		// TriangleMesh는 AABB로 렌더링
+		PxBounds3 bounds = m_pTriangleMesh->getLocalBounds();
+
+		BoundingOrientedBox obb;
+		obb.Center = vPos;
+		obb.Extents = _float3(
+			(bounds.maximum.x - bounds.minimum.x) * 0.5f,
+			(bounds.maximum.y - bounds.minimum.y) * 0.5f,
+			(bounds.maximum.z - bounds.minimum.z) * 0.5f
+		);
+		obb.Orientation = vRot;
+		DX::Draw(pBatch, obb, vColor);
+	}
+	else if (m_eType == COLLIDER_TYPE::BOX)
 	{
 		BoundingOrientedBox obb;
 		obb.Center = vPos;

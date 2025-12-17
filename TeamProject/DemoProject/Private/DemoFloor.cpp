@@ -6,7 +6,6 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
-#include "RigidBody.h"
 
 CDemoFloor::CDemoFloor()
 {
@@ -21,6 +20,16 @@ HRESULT CDemoFloor::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CObjectContainer>();
+	Add_Component<CStaticModel>();
+	Add_Component<CMaterial>();
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	pRcsMgr->Add_ResourcePath("Zero_Vehicle_Bus_01.model",
+		"../../DemoResource/static/Zero_Vehicle_Bus_01.model");
+	pRcsMgr->Add_ResourcePath("Zero_Vehicle_Bus_01.mat",
+		"../../DemoResource/static/Zero_Vehicle_Bus_01.mat");
+	Get_Component<CStaticModel>()->Link_Model("Physics_Level", "Zero_Vehicle_Bus_01.model");
+	Get_Component<CMaterial>()->Link_Material("Physics_Level", "Zero_Vehicle_Bus_01.mat");
+
 	Add_Component<CCollider>();
 
 	return S_OK;
@@ -37,6 +46,8 @@ HRESULT CDemoFloor::Initialize(INIT_DESC* pArg)
 
 void CDemoFloor::Awake()
 {
+
+
 }
 
 void CDemoFloor::Priority_Update(_float dt)
