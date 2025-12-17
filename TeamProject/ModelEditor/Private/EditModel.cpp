@@ -11,6 +11,7 @@
 #include "AIMaterial.h"
 #include "AIAnimator3D.h"
 #include "AIModelData.h"
+#include "DebugRender.h"
 
 CEditModel::CEditModel()
 {
@@ -37,6 +38,7 @@ HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 
 void CEditModel::Awake()
 {
+	Add_Component<CDebugRender>();
 }
 
 void CEditModel::Priority_Update(_float dt)
@@ -144,6 +146,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
+	Get_Component<CDebugRender>()->Add_DebugBounding(Get_Component<CModel>()->Get_LocalBoundingBox());
 
 	return S_OK;
 }
