@@ -147,7 +147,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
-    <ClInclude Include="..\Public\FreeCamera.h" />
+    <ClInclude Include="..\public\CamObject.h" />
+    <ClInclude Include="..\public\CamSpawnObject.h" />
+    <ClInclude Include="..\Public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
@@ -186,7 +188,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\Private\FreeCamera.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp" />
+    <ClCompile Include="..\private\CamSpawnObject.cpp" />
+    <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

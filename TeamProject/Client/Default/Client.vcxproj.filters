@@ -34,7 +34,13 @@
     <Filter Include="02. GameObject\Object\TestObject">
       <UniqueIdentifier>{0e6fbf4f-e3f7-4fbe-b297-96bd81424db0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\FreeCam">
+    <Filter Include="02. GameObject\Camera\00. CamObject">
+      <UniqueIdentifier>{e0bba242-799e-4a24-b080-7db510093c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\01. CamSpawnObject">
+      <UniqueIdentifier>{135d1fb6-54ac-44fc-b5bc-00ae5043c969}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\02. FreeCam">
       <UniqueIdentifier>{be87aa4e-607e-4972-bd9f-9f2d942322b4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -75,8 +81,14 @@
     <ClInclude Include="..\Public\TestObject.h">
       <Filter>02. GameObject\Object\TestObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\FreeCamera.h">
-      <Filter>02. GameObject\Camera\FreeCam</Filter>
+    <ClInclude Include="..\Public\FreeCam.h">
+      <Filter>02. GameObject\Camera\02. FreeCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. GameObject\Camera\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamSpawnObject.h">
+      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -129,8 +141,14 @@
     <ClCompile Include="..\Private\TestObject.cpp">
       <Filter>02. GameObject\Object\TestObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\FreeCamera.cpp">
-      <Filter>02. GameObject\Camera\FreeCam</Filter>
+    <ClCompile Include="..\Private\FreeCam.cpp">
+      <Filter>02. GameObject\Camera\02. FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. GameObject\Camera\00. CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamSpawnObject.cpp">
+      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
