@@ -31,8 +31,6 @@ protected:
     string m_PassTag{};
 
     _float4 m_vBaseColor{};
-    _float4 m_vBrightColor{};
-    _float4 m_vEmissiveColor{};
     _float m_fThreshold{};
 
     /*UV Animation*/
@@ -52,6 +50,9 @@ protected:
     _uint m_iRow{};
     _uint m_iMaxFrameIndex{};
     _uint m_iCurrFrameIndex{};
+
+    /*Dissolve Params*/
+    _float m_fDissolveThreshold{};
 
 };
 NS_END

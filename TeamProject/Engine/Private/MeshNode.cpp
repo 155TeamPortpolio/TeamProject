@@ -51,9 +51,12 @@ void CMeshNode::Update(_float dt)
 		m_fThreshold = t;
 
 		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(EaseType::InCubic, t));
+		m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, t);
+
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 		pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
 		pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
+		pMaterialInstance->Set_Param("UVOffset", { &m_vCurrUVOffset,"float2",sizeof(_float2) });
 	}break;
 	case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
 	{

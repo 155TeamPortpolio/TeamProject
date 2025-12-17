@@ -28,5 +28,8 @@ public:
     static CToolGrid* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
+
+private:
+    _float m_fGridSize{ 20.f };
 };
 NS_END

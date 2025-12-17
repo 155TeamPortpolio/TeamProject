@@ -76,6 +76,7 @@ void CMeshNode_Edit::Play()
 	m_IsLoop = false;
 	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
+	m_vCurrUVOffset = m_vStartUVOffset;
 }
 
 CMeshNode_Edit* CMeshNode_Edit::Create()
@@ -169,16 +170,11 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	}
 	ImGui::DragFloat("Duration", &m_fDuration);
 	ImGui::DragFloat2("Alpha Fade", &m_vAlphaFade.x);
-	ImGui::DragFloat2("UVSpeed", &m_vUVSpeed.x);
+	ImGui::DragFloat2("Start UV Offset", &m_vStartUVOffset.x);
+	ImGui::DragFloat2("End UV Offset", &m_vEndUVOffset.x);
 
-	_float brightColor[4] = { m_vBrightColor.x,m_vBrightColor.y,m_vBrightColor.z,m_vBrightColor.w };
 	_float baseColor[4] = { m_vBaseColor.x,m_vBaseColor.y,m_vBaseColor.z,m_vBaseColor.w };
 
-	if (ImGui::ColorEdit4("Bright Color", brightColor))
-	{
-		m_vBrightColor = _float4(brightColor[0], brightColor[1], brightColor[2], brightColor[3]);
-		isDirty = true;
-	}
 	if (ImGui::ColorEdit4("Base Color", baseColor))
 	{
 		m_vBaseColor = _float4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
@@ -193,7 +189,6 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	{
 		pMaterialInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
 		pMaterialInstance->Set_Param("Row", { &m_iRow,"uint",sizeof(_uint) });
-		pMaterialInstance->Set_Param("vBrightColor", { &m_vBrightColor,"float4",sizeof(_float4) });
 		pMaterialInstance->Set_Param("vBaseColor", { &m_vBaseColor,"float4",sizeof(_float4) });
 	}
 }
