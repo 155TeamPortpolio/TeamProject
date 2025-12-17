@@ -3,14 +3,16 @@
 #include "GameObject.h"
 #include "CameraMgr.h"
 
-NS_BEGIN(Client)
-class CGameInstance;
+NS_BEGIN(Engine)
+class CGameInstance; class CLight;
+NS_END
 
+NS_BEGIN(Client)
 class CCamObject abstract : public CGameObject
 {
 protected:
-	CCamObject() : CGameObject() {}
-	CCamObject(const CCamObject& rhs) : CGameObject(rhs), game(rhs.game) {}
+	CCamObject() : CGameObject() {} 
+	CCamObject(const CCamObject& rhs) : CGameObject(rhs), m_pLight(rhs.m_pLight), m_pGame(rhs.m_pGame) {}
 	virtual ~CCamObject() DEFAULT;
 
 public:
@@ -22,14 +24,14 @@ public:
 	void    Late_Update(_float dt)      override PURE;
 
 protected:
-	CGameInstance* game{};
-	CCamera*       cam{};
-	CamType        camType = CamType::Debug;
-	CamRigType     rigType = CamRigType::Free;
+	CGameInstance* m_pGame{};
+	CCamera*       m_pCam{};
+	CLight*        m_pLight{};
+	CamType        m_eCamType = CamType::Debug;
+	CamRigType     m_eRigType = CamRigType::Free;
 
 public:
 	CGameObject* Clone(INIT_DESC* pArg) override PURE;
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
-
 NS_END

@@ -438,8 +438,6 @@ void CTransform::MarkDirty()
 	m_VersionCounter++;
 }
 
-
-
 CTransform* CTransform::Create()
 {
 	CTransform* instance = new CTransform();
