@@ -22,12 +22,12 @@ HRESULT CTestMap::Initialize_Prototype()
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Mesh (merge).model",
-		"../../DemoResource/testmap/Mesh (merge).model");
-	pRcsMgr->Add_ResourcePath("Mesh (merge).mat",
-		"../../DemoResource/testmap/Mesh (merge).mat");
-	Get_Component<CModel>()->Link_Model("Test_Level", "Mesh (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Mesh (merge).mat");
+	pRcsMgr->Add_ResourcePath("Concert_Ground_FloorTile_01.model",
+		"../../DemoResource/testfloor/Concert_Ground_FloorTile_01.model");
+	pRcsMgr->Add_ResourcePath("Concert_Ground_FloorTile_01.mat",
+		"../../DemoResource/testfloor/Concert_Ground_FloorTile_01.mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Concert_Ground_FloorTile_01.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Concert_Ground_FloorTile_01.mat");
 
 	Add_Component<CCollider>();
 	return S_OK;

@@ -340,7 +340,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
         // 필터링 : 메쉬 이름 체크
         string meshName = pMesh->Get_Key();
 
-        _bool bShouldCook = false;
+        _bool bShouldCook = true;
 
         if (meshName.find("_Proxy") != string::npos)
         {

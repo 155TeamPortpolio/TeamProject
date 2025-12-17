@@ -29,7 +29,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 
-	//Ready_Map();		// 프레임 이슈로 잠시 사용 X
+	Ready_Map();		// 프레임 이슈로 잠시 사용 X
 	Ready_Camera();
 	return S_OK;
 }
@@ -57,7 +57,7 @@ void CTestLevel::Ready_Map()
 
 	COLLIDER_DESC MapColDesc = {};
 	MapColDesc.bCooking = true;
-	MapColDesc.strModelKey = "Mesh (merge).model";
+	MapColDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
 
 	CGameObject* Map =
 		Builder::Create_Object({ "Test_Level" ,"Proto_GameObject_TestMap" })
