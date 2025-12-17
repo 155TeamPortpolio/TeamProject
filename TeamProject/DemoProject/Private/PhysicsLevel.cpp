@@ -59,14 +59,15 @@ HRESULT CPhysicsLevel::Awake()
 	// Floor
 	COLLIDER_DESC floorColDesc = {};
 	floorColDesc.eType = COLLIDER_TYPE::BOX;
-	floorColDesc.vSize = { 20.f, 1.f, 20.f };
 	floorColDesc.vCenter = { 0.f, 0.f, 0.f };
 	floorColDesc.isTrigger = false;
 	floorColDesc.vRotation = { 0.f, 0.f, 0.f };
+	floorColDesc.bCooking = true;
+	floorColDesc.strModelKey = "Zero_Vehicle_Bus_01.model";
 
 	CGameObject* Floor = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoFloor" })
 		.Position({ 0.f, -2.f, 0.f })
-		.Scale({ 20.f, 1.f, 20.f })
+		.Scale({ 1.f, 1.f, 1.f })
 		.Collider(floorColDesc)
 		.Build("Demo_Floor");
 

@@ -82,9 +82,12 @@ namespace Engine {
 
 		_float3			vCenter = { 0.f, 0.f, 0.f };		// 로컬 오프셋
 		_float3			vSize = { 1.f, 1.f, 1.f };			// Box: HalfExtents(x,y,z), Sphere: Radius(x), Capsule: Radius(x)/HalfHeight(y)
-		_float3			vRotation = { 0.f, 0.f, 0.f };		// 로컬 회전 (Radian)
-		_bool			isTrigger = false;					// 트리거 여부
-		string			strMaterialTag = "";				// 재질 태그
+		_float3			vRotation = { 0.f, 0.f, 0.f };		// ���� ȸ�� (Radian)
+		_bool			isTrigger = false;					// Ʈ���� ����
+		string			strMaterialTag = "";				// ���� �±�
+		// ��ŷ ����
+		_bool			bCooking = false;
+		string			strModelKey = "";					// ��ŷ�� �� Ű
 
 		ColliderInitDesc() DEFAULT;
 		virtual ~ColliderInitDesc() DEFAULT;
