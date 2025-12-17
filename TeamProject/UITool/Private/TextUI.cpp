@@ -32,17 +32,21 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     const auto& strFontKeys = CUITool_Level::m_strFontKeys;
     if (strFontKeys.size())
-        Get_Component<CTextSlot>()->Set_Font(strFontKeys[m_iFontKeyIndex]);
+        Set_Font(strFontKeys[m_iFontKeyIndex]);
     else
         MSG_BOX("Failed to Set_Font : No Fonts Loaded");
 
-    Get_Component<CTextSlot>()->Set_Text(L"텍스트 블록");
+    strcpy_s(m_szText, sizeof(m_szText), u8"텍스트");
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+
     Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
+
+    m_iCount++;
 
     return S_OK;
 }
@@ -54,6 +58,14 @@ void CTextUI::Priority_Update(_float dt)
 void CTextUI::Update(_float dt)
 {
     Get_Component<CTextSlot>()->Push_Text();
+
+    const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+    switch (m_iAlign)
+    {
+    case 0: m_vAnchorOffset.x = 0.f;            break;
+    case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+    case 2: m_vAnchorOffset.x = -width;         break;
+    }
 }
 
 void CTextUI::Late_Update(_float dt)
@@ -67,13 +79,14 @@ void CTextUI::Render_GUI()
     Render_GUI_Transform();
     
     ImGui::SeparatorText(u8"콘텐츠");
-    if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText)))
+
+    if(ImGui::InputTextMultiline(u8"텍스트", (char*)m_szText, sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
     
     ImGui::SeparatorText(u8"폰트");
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, szFontKeys.data(), szFontKeys.size()))
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+        Set_Font(szFontKeys[m_iFontKeyIndex]);
     
     if (ImGui::Button(u8"크기 +"))
     {
@@ -86,9 +99,20 @@ void CTextUI::Render_GUI()
         m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     }
-    
-    if(ImGui::ColorPicker4(u8"컬러", reinterpret_cast<_float*>(&m_vFontColor)))
+
+    if(ImGui::ColorPicker4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+
+    ImGui::SeparatorText(u8"외곽선");
+    _bool isOutlined = {};
+    if (ImGui::Checkbox(u8"외곽선", &m_isOutlined)) isOutlined = true;
+    if(ImGui::DragFloat(u8"굵기", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) isOutlined = true;
+    if(ImGui::ColorPicker4(u8"외곽선 컬러", reinterpret_cast<_float*>(& m_vOutlineColor))) isOutlined = true;
+
+    if (m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+    else
+        Get_Component<CTextSlot>()->ReSet_OutLine();
 }
 
 void CTextUI::ToJson(json& data)
@@ -97,31 +121,43 @@ void CTextUI::ToJson(json& data)
 
     data["typeTag"] = "TextUI";
 
-    data["fontTag"] = CUITool_Level::m_strFontKeys[m_iFontKeyIndex];
+    data["fontTag"] = m_strFontTag;
     data["text"] = m_szText;
     data["fontScale"] = m_fFontScale;
     data["fontColor"]["x"] = m_vFontColor.x;
     data["fontColor"]["y"] = m_vFontColor.y;
     data["fontColor"]["z"] = m_vFontColor.z;
     data["fontColor"]["w"] = m_vFontColor.w;
+    data["outlined"] = m_isOutlined;
+    data["outlineThickness"] = m_fOutlineThickness;
+    data["outlineColor"]["x"] = m_vOutlineColor.x;
+    data["outlineColor"]["y"] = m_vOutlineColor.y;
+    data["outlineColor"]["z"] = m_vOutlineColor.z;
+    data["outlineColor"]["w"] = m_vOutlineColor.w;
 }
 
 void CTextUI::FromJson(const json& data)
 {
-    m_eAnchor = static_cast<ANCHOR>(data["transform"]["anchor"].get<int>());    // 앵커는 빌더에 넣기
-
     string strText = data["text"]; 
     strcpy_s(m_szText, sizeof(m_szText), strText.c_str());
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(strText));
-    Get_Component<CTextSlot>()->Set_Font(data["fontTag"]);
-    Get_Component<CTextSlot>()->Set_Size(data["fontScale"]);
+    Set_Font(data["fontTag"]);
+    m_fFontScale = data["fontScale"];
+    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     m_vFontColor = _float4(data["fontColor"]["x"].get<float>(), data["fontColor"]["y"].get<float>(), data["fontColor"]["z"].get<float>(), data["fontColor"]["w"].get<float>());
     Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
 
+    m_isOutlined = data["outlined"];
+    m_fOutlineThickness = data["outlineThickness"];
+    m_vOutlineColor = _float4(data["outlineColor"]["x"].get<_float>(), data["outlineColor"]["y"].get<_float>(), data["outlineColor"]["z"].get<_float>(), data["outlineColor"]["w"].get<_float>());
+    if(m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+
     __super::FromJson(data);
+    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 void CTextUI::Render_GUI_Layout()
@@ -171,10 +207,43 @@ void CTextUI::Render_GUI_Layout()
     ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&m_vAnchorOffset));
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
 
+    if (ImGui::BeginTable("TextAlign", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX))
+    {
+        ImGui::TableNextRow();
+
+        ImGui::TableSetColumnIndex(0);
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text(u8"정렬");
+
+        ImGui::TableSetColumnIndex(1);
+
+        bool changed = false;
+
+        changed |= ImGui::RadioButton(u8"왼쪽", &m_iAlign, 2);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton(u8"가운데", &m_iAlign, 1);
+        ImGui::SameLine();
+        changed |= ImGui::RadioButton(u8"오른쪽", &m_iAlign, 0);
+
+        if (changed)
+        {
+            const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+
+            switch (m_iAlign)
+            {
+            case 0: m_vAnchorOffset.x = 0.f;            break;
+            case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+            case 2: m_vAnchorOffset.x = -width;         break;
+            }
+        }
+
+        ImGui::EndTable();
+    }
+
     ImGui::Checkbox("Size to Content", &m_isSizeToContent);
 
-    if(m_isSizeToContent)
-        m_vSize = Get_Component<CTextSlot>()->Get_TextSize();
+    if (m_isSizeToContent)
+        m_vSize = Get_Component<CTextSlot>()->Get_TextSize() * m_fFontScale;
     else
         ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 }
@@ -202,6 +271,12 @@ void CTextUI::Render_GUI_Transform()
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
+}
+
+void CTextUI::Set_Font(const string& strFontTag)
+{
+    Get_Component<CTextSlot>()->Set_Font(strFontTag);
+    m_strFontTag = strFontTag;
 }
 
 CGameObject* CTextUI::Create()

@@ -7,6 +7,8 @@
 
 
 #include "Camera_Defines.h"
+#include "CameraTool_Enum.h"
+#include "CameraTool_Struct.h"
 
 #include "GameObject.h"
 #include "Camera.h"

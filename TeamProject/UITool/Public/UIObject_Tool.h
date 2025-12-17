@@ -28,13 +28,15 @@ protected:
 	void Add_Child(CUIObject_Tool* pChild);
 	void Remove_Child(CUIObject_Tool* pChild);
 
+	void FromJson_RefreshCount(_uint& iCount);
+
 	virtual void Render_GUI_Layout();
 	virtual void Render_GUI_Transform();
 
 private:
 	void ToJson_Common(json& data);
 	void ToJson_Parent(json& data);
-	void FromJson_LinkParent(const json& data);
+	void FromJson_LinkParent(const json& data); 
 
 protected:
 	CUIObject_Tool*		m_pParent = {};

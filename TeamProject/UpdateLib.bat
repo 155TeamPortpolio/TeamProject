@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 REM ========== 프로젝트 폴더 등록 (공백으로 구분) ==========
-set PROJECT_LIST=MapTool DemoProject AnimationTool CameraTool EffectTool UITool ModelEditor
+set PROJECT_LIST=Client MapTool DemoProject AnimationTool CameraTool EffectTool UITool ModelEditor
 REM ======================================================
 
 set BASE=%~dp0

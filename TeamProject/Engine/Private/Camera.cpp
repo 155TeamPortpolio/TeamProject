@@ -19,7 +19,7 @@ HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
-_matrix CCamera::Get_ProjMatrix() const
+Matrix CCamera::Get_ProjMatrix() const
 {
 	switch (projType)
 	{
