@@ -52,6 +52,8 @@ private:
     class CRigidBody*           m_pAttachedRigidBody = { nullptr };
     PxRigidStatic*              m_pStaticActor = { nullptr };
 
+    PxTriangleMesh*             m_pTriangleMesh = { nullptr };  // ÄíÅ·µÈ ¸Þ½¬
+    _bool                       m_bCooked = { false };      // ÄíÅ· ¿©ºÎ
     COLLIDER_TYPE               m_eType = {};
     COLLISION_GROUP             m_eGroup = {};
     _uint                       m_iCollisionMask = {};

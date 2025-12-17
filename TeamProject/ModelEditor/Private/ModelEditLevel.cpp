@@ -41,7 +41,7 @@ HRESULT CModelEditLevel::Awake()
 	pObjMgr->Add_Object(Camera, { "ModelEdit_Level","Camera_Layer"});
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
-
+	m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
 	return S_OK;
 }
 

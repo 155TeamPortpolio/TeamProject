@@ -6,6 +6,13 @@ NS_BEGIN(ModelEdit)
 class CEditModel :
     public CGameObject
 {
+    enum class MODEL_IMPORT_MODE : int
+    {
+        AUTO = 0,
+        FORCED_STATIC,
+        FORCED_SKELETAL,
+    };
+
 private:
     CEditModel();
     CEditModel(const CEditModel& rhs);
@@ -31,7 +38,7 @@ private:
 private:
     const aiScene*      m_pAIScene = { nullptr };
     Assimp::Importer	m_Importer = {};
-    
+    MODEL_IMPORT_MODE m_eMode = { MODEL_IMPORT_MODE::AUTO };
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

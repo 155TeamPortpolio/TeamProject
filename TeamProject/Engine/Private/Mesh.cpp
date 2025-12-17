@@ -132,8 +132,6 @@ HRESULT CMesh::Create_Index(ID3D11Device* pDevice)
 	subData.pSysMem = m_indices.data();
 	HRESULT hr = pDevice->CreateBuffer(&IDDesc, &subData, &m_pIB);
 
-	vector<_uint>v = {};
-	m_indices.swap(v);
 	return hr;
 
 }
@@ -184,6 +182,7 @@ void CMesh::Free()
 {
 	__super::Free();
 
-	vector<_uint>i = {};
-	m_indices.swap(i);
+	vector<_uint>().swap(m_indices);
+	vector<VTXMESH>().swap(m_StaticVertex);
+	vector<VTXSKINMESH>().swap(m_Skined);
 }

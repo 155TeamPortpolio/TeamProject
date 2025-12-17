@@ -49,6 +49,18 @@
     <Filter Include="02. GameObject\Camera\99. CamDirector">
       <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject">
+      <UniqueIdentifier>{80767227-77fa-4633-b0c5-65b7efc809cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\00. MapPlacedObject">
+      <UniqueIdentifier>{bc0b3861-27a6-4aa7-b273-a9806541117e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\01. MapFloorObject">
+      <UniqueIdentifier>{b25394ec-c9ac-4d93-913e-306ed8fab634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\02. MapTriggerObject">
+      <UniqueIdentifier>{3ee57455-7966-4d9b-bcb9-5d01b67f74e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -101,6 +113,18 @@
     </ClInclude>
     <ClInclude Include="..\public\OrbitCam.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapFloorObject.h">
+      <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapObject.h">
+      <Filter>02. GameObject\MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapPlacedObject.h">
+      <Filter>02. GameObject\MapObject\00. MapPlacedObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTriggerObject.h">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -167,6 +191,18 @@
     </ClCompile>
     <ClCompile Include="..\private\OrbitCam.cpp">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapFloorObject.cpp">
+      <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapObject.cpp">
+      <Filter>02. GameObject\MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapPlacedObject.cpp">
+      <Filter>02. GameObject\MapObject\00. MapPlacedObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapTriggerObject.cpp">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

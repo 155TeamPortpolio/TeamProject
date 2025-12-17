@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Helper_Func.h"
 
 CPipeLine::CPipeLine()
 {
@@ -29,6 +30,8 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 	desc.ByteWidth = sizeof(ShadowBuffer);
 	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceShadowBuffer);
 
+	desc.ByteWidth = sizeof(SSAOBuffer);
+	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceSSAOBuffer);
 	/*---------------------------------------------------------------------------------------------------- - */
 	/*스키닝 본 버퍼 - > 이건 셰이더 리소스 뷰도 같이 만들어버림*/
 	vector<_float4x4> BoneMatrices;
@@ -142,6 +145,74 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
+HRESULT CPipeLine::Update_SSAOBuffer(ID3D11DeviceContext* pContext)
+{
+	SSAOBuffer ssaoBuffer{};
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+	pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	ssaoBuffer.Radius = 0.5f;
+	ssaoBuffer.Bias = 0.025f;
+	ssaoBuffer.ScreenWidth = ViewportDesc.Width;
+	ssaoBuffer.ScreenHeight = ViewportDesc.Height;
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	HRESULT hr = pContext->Map(
+		m_pDeviceSSAOBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedResource
+	);
+	if (FAILED(hr))
+		return hr;
+
+	memcpy(mappedResource.pData, &ssaoBuffer, sizeof(SSAOBuffer));
+	pContext->Unmap(m_pDeviceSSAOBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CPipeLine::Write_SSAOKernelBuffer(ID3D11Device* pDevice)
+{
+	if (m_pDeviceSSAOKernelBuffer)
+	{
+		Safe_Release(m_pDeviceSSAOKernelBuffer);
+		m_pDeviceSSAOKernelBuffer = nullptr;
+	}
+
+	SSAOKernel kernelBuffer;
+
+	for (unsigned int i = 0; i < 64; ++i)
+	{
+		_vector3 Sample(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(0.f, 1.f));
+		Sample.Normalize();
+
+		float scale = (float)i / 64.0f;
+		scale = 0.1f + (scale * scale) * 0.9f;
+		Sample *= scale;
+
+		kernelBuffer.SSAOKernel[i] = _float4(Sample.x, Sample.y, Sample.z, 0.0f);
+	}
+
+	D3D11_BUFFER_DESC Desc = {};
+	Desc.ByteWidth = sizeof(SSAOKernel);
+	Desc.Usage = D3D11_USAGE_IMMUTABLE;
+	Desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	Desc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA Data = {};
+	Data.pSysMem = &kernelBuffer;
+
+	if (FAILED(pDevice->CreateBuffer(&Desc, &Data, &m_pDeviceSSAOKernelBuffer)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 void CPipeLine::Update_Frustum()
 {
 	_matrix view = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ViewMatrix());
@@ -155,49 +226,25 @@ void CPipeLine::Update_Frustum()
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
-
-	_float4x4 matViewInverse = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
-	_float4 vCamPosition = CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos();
-	_float3 CameraForward = { matViewInverse._31,matViewInverse._32,matViewInverse._33 };
-
 	XMFLOAT3 center{
 		(minMax.vMin.x + minMax.vMax.x) * 0.5f,
 		(minMax.vMin.y + minMax.vMax.y) * 0.5f,
 		(minMax.vMin.z + minMax.vMax.z) * 0.5f
 	};
-
 	XMFLOAT3 extents{
 		(minMax.vMax.x - minMax.vMin.x) * 0.5f,
 		(minMax.vMax.y - minMax.vMin.y) * 0.5f,
 		(minMax.vMax.z - minMax.vMin.z) * 0.5f
 	};
 
-	float radius = sqrtf(extents.x * extents.x +
-		extents.y * extents.y +
-		extents.z * extents.z);
+	BoundingBox localAabb(center, extents);
 
-	BoundingSphere localSphere(center, radius);
+	BoundingBox worldAabb;
+	localAabb.Transform(worldAabb, worldTransform); 
 
-	BoundingSphere worldSphere;
-
-	localSphere.Transform(worldSphere, worldTransform);
-	_vector camPos = XMLoadFloat4(&vCamPosition);     
-	_vector camForward = XMLoadFloat3(&CameraForward); 
-	_vector sphereCenter = XMLoadFloat3(&worldSphere.Center);
-
-	_vector toObj = XMVectorSubtract(sphereCenter, camPos);
-	_float dist = XMVectorGetX(XMVector3Dot(toObj, camForward));
-
-	_float curve = (dist * dist) / 900 * 0.85;
-	//_float curve = (dist * dist) / 1000 * 0;
-
-	worldSphere.Center.y -= curve;
-	_float maxExtent = max(extents.x, max(extents.y, extents.z));
-	_float scaleFactor = 0.1f; // 여유 비율 (10%)
-	worldSphere.Radius += maxExtent * scaleFactor;
-
-	return m_Frustum.Intersects(worldSphere);
+	return m_Frustum.Intersects(worldAabb);
 }
+
 
 _uint CPipeLine::Write_ObjectData(const _float4x4& worldMatrix)
 {
@@ -371,5 +418,7 @@ void CPipeLine::Free()
 	Safe_Release(m_pSkinningResource);
 	Safe_Release(m_pObjectResource);
 	Safe_Release(m_pDeviceShadowBuffer);
+	Safe_Release(m_pDeviceSSAOBuffer);
+	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 }

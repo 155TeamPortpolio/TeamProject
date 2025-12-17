@@ -424,3 +424,6 @@ FodyWeavers.xsd
 # DemoResource는 예외로 추적 (어디에 있든)
 !**/DemoResource/
 !**/DemoResource/**
+
+#Maptool 리소스 추출 폴더 무시
+**/ZZZOutput/
