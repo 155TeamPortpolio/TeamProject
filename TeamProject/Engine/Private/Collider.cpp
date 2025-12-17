@@ -448,18 +448,18 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 
 	if (m_bCooked)
 	{
-		// TriangleMesh´Â AABB·Î ·»´õ¸µ
-		PxBounds3 bounds = m_pTriangleMesh->getLocalBounds();
+		//// TriangleMesh´Â AABB·Î ·»´õ¸µ
+		//PxBounds3 bounds = m_pTriangleMesh->getLocalBounds();
 
-		BoundingOrientedBox obb;
-		obb.Center = vPos;
-		obb.Extents = _float3(
-			(bounds.maximum.x - bounds.minimum.x) * 0.5f,
-			(bounds.maximum.y - bounds.minimum.y) * 0.5f,
-			(bounds.maximum.z - bounds.minimum.z) * 0.5f
-		);
-		obb.Orientation = vRot;
-		DX::Draw(pBatch, obb, vColor);
+		//BoundingOrientedBox obb;
+		//obb.Center = vPos;
+		//obb.Extents = _float3(
+		//	(bounds.maximum.x - bounds.minimum.x) * 0.5f,
+		//	(bounds.maximum.y - bounds.minimum.y) * 0.5f,
+		//	(bounds.maximum.z - bounds.minimum.z) * 0.5f
+		//);
+		//obb.Orientation = vRot;
+		//DX::Draw(pBatch, obb, vColor);
 	}
 	else if (m_eType == COLLIDER_TYPE::BOX)
 	{
