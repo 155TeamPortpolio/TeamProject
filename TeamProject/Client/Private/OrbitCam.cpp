@@ -45,7 +45,13 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 
 void COrbitCam::SetTarget(CTransform* target)
 {
+    if (m_pTargetTransform)
+        Safe_Release(m_pTargetTransform);
+
     m_pTargetTransform = target;
+
+    if (m_pTargetTransform)
+        Safe_AddRef(m_pTargetTransform);
 
     if (!m_pTargetTransform)
         return;
@@ -81,6 +87,15 @@ void COrbitCam::SetTarget(CTransform* target)
     m_rotDegTarget = m_rotDegCur;
 
     ClampTargets();
+}
+
+
+void COrbitCam::ClearTarget()
+{
+    if (m_pTargetTransform)
+        Safe_Release(m_pTargetTransform);
+
+    m_pTargetTransform = nullptr;
 }
 
 void COrbitCam::Priority_Update(_float dt)

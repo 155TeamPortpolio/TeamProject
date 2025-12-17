@@ -44,6 +44,10 @@ private:
         _uint  handle = 0u;
         string key{};
         _bool  active = false;
+
+        _bool  pendingStart = false;
+        _float blendInRemain = 0.f;
+        _bool  resetTimeOnStart = true;
     };
 
 private:

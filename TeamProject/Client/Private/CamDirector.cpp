@@ -14,9 +14,9 @@ void CCamDirector::Register(const string& key, const filesystem::path& path)
     assert(!key.empty());
 
     SeqEntry& entry = m_sequences[key];
-    entry.path      = path;
-    entry.loaded    = false;
-    entry.seq       = CamSequenceDesc{};
+    entry.path = path;
+    entry.loaded = false;
+    entry.seq = CamSequenceDesc{};
 }
 
 void CCamDirector::UnRegister(const string& key)
@@ -36,10 +36,32 @@ void CCamDirector::Update(_float dt)
     if (!m_playing.active) return;
 
     auto sequencePlayer = m_sequenceCam->Get_Component<CCamSequencePlayer>();
+
+    if (m_playing.pendingStart)
+    {
+        m_playing.blendInRemain -= dt;
+
+        if (m_playing.blendInRemain <= 0.f)
+        {
+            if (m_playing.resetTimeOnStart)
+                sequencePlayer->SetTime(0.f);
+
+            sequencePlayer->Play();
+            m_playing.pendingStart = false;
+        }
+        else
+        {
+            if (m_playing.resetTimeOnStart)
+                sequencePlayer->SetTime(0.f);
+        }
+
+        return;
+    }
+
     sequencePlayer->Update(dt);
 
     if (!sequencePlayer->IsPlaying())
-        StopAll(0.25f);
+        StopAll(2.f);
 }
 
 _uint CCamDirector::RequestSequence(const string& key, _float blendSec, _bool resetTime)
@@ -59,8 +81,6 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendSec, _bool re
     if (resetTime)
         sequencePlayer->SetTime(0.f);
 
-    sequencePlayer->Play();
-
     auto camComp = m_sequenceCam->Get_Component<CCamera>();
     const _uint handle = CAM->Push(camComp, blendSec);
     if (handle == 0u)
@@ -69,9 +89,30 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendSec, _bool re
         sequencePlayer->SetApplyEnabled(false);
         return 0u;
     }
+
     m_playing.handle = handle;
-    m_playing.key    = key;
+    m_playing.key = key;
     m_playing.active = true;
+
+    if (blendSec > 1e-6f)
+    {
+        m_playing.pendingStart = true;
+        m_playing.blendInRemain = blendSec;
+        m_playing.resetTimeOnStart = resetTime;
+        sequencePlayer->Pause();
+        if (resetTime)
+            sequencePlayer->SetTime(0.f);
+    }
+    else
+    {
+        if (resetTime)
+            sequencePlayer->SetTime(0.f);
+        sequencePlayer->Play();
+        m_playing.pendingStart = false;
+        m_playing.blendInRemain = 0.f;
+        m_playing.resetTimeOnStart = resetTime;
+    }
+
     return handle;
 }
 
@@ -88,6 +129,9 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     m_playing.handle = 0u;
     m_playing.key.clear();
     m_playing.active = false;
+    m_playing.pendingStart = false;
+    m_playing.blendInRemain = 0.f;
+    m_playing.resetTimeOnStart = true;
 
     return ok;
 }

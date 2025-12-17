@@ -22,7 +22,7 @@ public:
 
 public:
     void    SetTarget(CTransform* target);
-    void    ClearTarget() { m_pTransform = nullptr; }
+    void    ClearTarget();
 
 private:
     void    UpdateInput(_float dt);
@@ -37,7 +37,7 @@ private:
 private:
     CTransform* m_pTargetTransform{};
 
-    _float   m_offsetY = 1.5f;
+    _float   m_offsetY = 0.2f;
 
     Vector2  m_rotDegTarget{};
     Vector2  m_rotDegCur{};
@@ -47,8 +47,8 @@ private:
 
     _float   m_pitchMin        = -30.f;
     _float   m_pitchMax        = 60.f;
-    _float   m_distanceMin     = 1.5f;
-    _float   m_distanceMax     = 12.f;
+    _float   m_distanceMin     = 0.5f;
+    _float   m_distanceMax     = 2.f;
 
     _float   m_sensitivityX    = 0.15f;
     _float   m_sensitivityY    = 0.12f;
