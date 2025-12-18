@@ -144,7 +144,7 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pInputDevice->Update(); 
 	m_pObjectManager->Post_EngineUpdate(realDt);
 	m_pUIManager->Post_EngineUpdate(realDt);
-	m_pClickManager->Update(dt);
+	m_pClickManager->Update(realDt);
 }
 
 void CGameInstance::Release_Engine()
