@@ -32,6 +32,8 @@ public:
 
 #ifdef _DEBUG
     virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+private:
+    _bool           m_bDebugRender = { true };
 #endif
 
 public:

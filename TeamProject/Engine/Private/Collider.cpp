@@ -414,6 +414,7 @@ void CCollider::Render_GUI()
 		{
 			Set_Trigger(bTrigger);
 		}
+		ImGui::Checkbox("Is Render", &m_bDebugRender);
 
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
@@ -499,7 +500,7 @@ void CCollider::Render_GUI()
 #ifdef _DEBUG
 void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
-	if (!m_pShape) return;
+	if (!m_pShape || !m_bDebugRender) return;
 
 	PxTransform trans;
 	if (m_pAttachedRigidBody)
