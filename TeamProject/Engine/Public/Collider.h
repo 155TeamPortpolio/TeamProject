@@ -44,6 +44,7 @@ public:
 
 private:
     void            Update_LocalPose();
+    HRESULT         AutoFit(COLLIDER_DESC* pDesc);
 
 private:
     class IPhysicsService*      m_pPhysicsSystem = { nullptr };

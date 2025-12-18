@@ -161,6 +161,7 @@
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
+    <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -212,6 +213,7 @@
     </ClCompile>
     <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\TestLevel.cpp" />
+    <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
