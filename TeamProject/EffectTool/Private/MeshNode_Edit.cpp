@@ -285,6 +285,12 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 
 	/*Dissolve*/
+	if (ImGui::BeginCombo("##seg_ease_dissolve", Math::GetEaseLabel(m_eDissolveEase)))
+	{
+		EaseType eType = m_eDissolveEase;
+		ChangeEaseType(m_eDissolveEase, eType);
+		ImGui::EndCombo();
+	}
 	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
 
 	if (isDirty)
