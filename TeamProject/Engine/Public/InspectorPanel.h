@@ -18,7 +18,7 @@ public:
 private:
 	void ShowObject_Inspector();
 private:
-	_bool m_bLocked = {false};
+	_bool m_bLocked = {true};
 public:
 	static CInspectorPanel* Create(GUI_CONTEXT* context);
 	virtual void Free();
