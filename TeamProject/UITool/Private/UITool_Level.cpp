@@ -65,11 +65,21 @@ void CUITool_Level::PreLoad_Level()
 
 HRESULT CUITool_Level::Ready_Textures()
 { 
-	Add_Texture("Logo.png", "../Bin/Resources/UI/Logo.png");
-	Add_Texture("Bangboo.jpg", "../Bin/Resources/UI/Bangboo.jpg");
+	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/UI/"))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".png" ||
+			entry.is_regular_file() && entry.path().extension() == ".jpg" ||
+			entry.is_regular_file() && entry.path().extension() == ".dds")
+		{
+			filesystem::path filePath = entry.path();	
 
-	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/PanelBox.dds")))
-		MSG_BOX("Failed to Ready Textures : PanelBox.dds");
+			pResourceMgr->Add_ResourcePath(filePath.filename().string(), filePath.string());
+
+			if(filePath.filename().string() != "PanelBox.dds")
+				m_strTextureKeys.push_back(filePath.filename().string());
+		}
+	}
 
 	for (const auto& Key : m_strTextureKeys)
 		m_szTextureKeys.push_back(Key.c_str());

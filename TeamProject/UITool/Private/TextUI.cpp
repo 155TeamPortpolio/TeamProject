@@ -66,13 +66,15 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();
     
     ImGui::SeparatorText(u8"ƒ‹≈Ÿ√˜");
 
-    if (ImGui::InputTextMultiline(u8"≈ÿΩ∫∆Æ", (char*)m_szText, sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
+    if (ImGui::InputTextMultiline(u8"≈ÿΩ∫∆Æ", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
     {
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
         UpdateAnchorOffsetByAlign();
@@ -141,9 +143,8 @@ void CTextUI::ToJson(json& data)
 
 void CTextUI::FromJson(const json& data)
 {
-    string strText = data["text"]; 
-    strcpy_s(m_szText, sizeof(m_szText), strText.c_str());
-    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(strText));
+    strcpy_s(m_szText, sizeof(m_szText), data["text"].get<string>().c_str());
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
     Set_Font(data["fontTag"]);
     m_fFontScale = data["fontScale"];
     Get_Component<CTextSlot>()->Set_Size(m_fFontScale);

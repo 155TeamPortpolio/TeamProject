@@ -25,6 +25,7 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    void Render_BloomEffect(ID3D11DeviceContext* pContext);
     void Render_GUI()override;
     void Play()override; 
     void Import(nlohmann::ordered_json& json);

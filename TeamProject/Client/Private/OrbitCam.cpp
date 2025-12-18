@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "OrbitCam.h"
 #include "GameInstance.h"
+#include "Light.h"
 
 COrbitCam* COrbitCam::Create()
 {
@@ -27,7 +28,6 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
 void COrbitCam::Free()
 {
    __super::Free(); 
-   Safe_Release(m_pTargetTransform);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
@@ -37,7 +37,7 @@ HRESULT COrbitCam::Initialize_Prototype()
     m_eCamType = CamType::GamePlay;
     m_eRigType = CamRigType::Free;
 
-    m_rotDegCur = m_rotDegTarget;
+    m_rotDegCur   = m_rotDegTarget;
     m_distanceCur = m_distanceTarget;
 
     return S_OK;
@@ -49,18 +49,10 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetTarget(CTransform* target)
+void COrbitCam::SetTarget(CGameObject* obj)
 {
-    if (m_pTargetTransform)
-        Safe_Release(m_pTargetTransform);
-
-    m_pTargetTransform = target;
-
-    if (m_pTargetTransform)
-        Safe_AddRef(m_pTargetTransform);
-
-    if (!m_pTargetTransform)
-        return;
+    m_targetHandle = obj->Get_Handle();
+    if (!m_targetHandle.isValid()) return;
 
     const Vector3 pivot = GetPivotPos();
 
@@ -75,11 +67,8 @@ void COrbitCam::SetTarget(CTransform* target)
 
     m_distanceCur = dist;
     m_distanceTarget = dist;
-
-    if (toPivot.LengthSquared() > 1e-8f)
-        toPivot.Normalize();
-    else
-        toPivot = Vector3(0.f, 0.f, 1.f);
+    
+    toPivot.Normalize();
 
     const float yawRad = atan2f(toPivot.x, toPivot.z);
 
@@ -98,16 +87,12 @@ void COrbitCam::SetTarget(CTransform* target)
 
 void COrbitCam::ClearTarget()
 {
-    if (m_pTargetTransform)
-        Safe_Release(m_pTargetTransform);
-
-    m_pTargetTransform = nullptr;
+    m_targetHandle.Reset();
 }
 
 void COrbitCam::Priority_Update(_float dt)
 {
-    if (!m_pTargetTransform)
-        return;
+    if (!m_targetHandle.isValid()) return;
 
     UpdateInput(dt);
     ClampTargets();
@@ -132,7 +117,29 @@ void COrbitCam::UpdateInput(_float dt)
 
     if (input->Key_Down('Q')) m_distanceTarget += zoomDelta;
     if (input->Key_Down('E')) m_distanceTarget -= zoomDelta;
+
+    if (!m_usePitchAutoZoom)
+        m_pitchZoomOffsetTarget = 0.f;
+    else
+    {
+        const float pitchAbs = fabsf(m_rotDegTarget.y);
+        const float pitchLimit = max(fabsf(m_pitchMin), fabsf(m_pitchMax));
+
+        float n = pitchAbs / pitchLimit;
+        n = clamp(n, 0.f, 1.f);
+
+        float k = 0.f;
+        if (n > m_pitchAutoZoomStartN)
+        {
+            k = (n - m_pitchAutoZoomStartN) / (1.f - m_pitchAutoZoomStartN);
+            k = clamp(k, 0.f, 1.f);
+            k = k * k * (3.f - 2.f * k);
+        }
+
+        m_pitchZoomOffsetTarget = -m_pitchAutoZoomMax * k;
+    }
 }
+
 
 void COrbitCam::ClampTargets()
 {
@@ -151,13 +158,19 @@ void COrbitCam::SmoothStates(_float dt)
     aDist = clamp(aDist, 0.f, 1.f);
 
     m_distanceCur = m_distanceCur + (m_distanceTarget - m_distanceCur) * aDist;
+
+    float aZoom = 1.f - expf(-m_pitchAutoZoomSmooth * dt);
+    aZoom = clamp(aZoom, 0.f, 1.f);
+
+    m_pitchZoomOffsetCur = m_pitchZoomOffsetCur + (m_pitchZoomOffsetTarget - m_pitchZoomOffsetCur) * aZoom;
 }
 
 Vector3 COrbitCam::GetPivotPos() const
 {
-    assert(m_pTargetTransform);
+    auto obj = GAME->Get_ObjectMgr()->Request_Object(m_targetHandle);
+    if (!obj) return {};
 
-    const Vector4 tpos4 = m_pTargetTransform->Get_Pos();
+    const Vector4 tpos4 = obj->Get_Component<CTransform>()->Get_Pos();
     const Vector3 tpos{ tpos4.x, tpos4.y, tpos4.z };
 
     return tpos + Vector3(0.f, m_offsetY, 0.f);
@@ -165,33 +178,7 @@ Vector3 COrbitCam::GetPivotPos() const
 
 float COrbitCam::GetEffectiveDistance() const
 {
-    float dist = m_distanceCur;
-
-    if (!m_usePitchDolly)
-        return clamp(dist, m_distanceMin, m_distanceMax);
-
-    const float pitchAbs = fabsf(m_rotDegCur.y);
-    const float pitchLimit = max(fabsf(m_pitchMin), fabsf(m_pitchMax));
-
-    if (pitchLimit <= 1e-6f)
-        return clamp(dist, m_distanceMin, m_distanceMax);
-
-    float n = pitchAbs / pitchLimit;
-    n = clamp(n, 0.f, 1.f);
-
-    if (n <= m_pitchDollyStartN)
-        return clamp(dist, m_distanceMin, m_distanceMax);
-
-    float k = (n - m_pitchDollyStartN) / (1.f - m_pitchDollyStartN);
-    k = clamp(k, 0.f, 1.f);
-
-    k = k * k * (3.f - 2.f * k);
-
-    float mul = 1.f - m_pitchDollyStrength * k;
-    mul = clamp(mul, 0.1f, 1.f);
-
-    dist *= mul;
-
+    float dist = m_distanceCur + m_pitchZoomOffsetCur;
     return clamp(dist, m_distanceMin, m_distanceMax);
 }
 

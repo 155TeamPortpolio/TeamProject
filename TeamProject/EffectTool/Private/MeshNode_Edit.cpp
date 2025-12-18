@@ -21,6 +21,7 @@ HRESULT CMeshNode_Edit::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
+
 	return S_OK;
 }
 
@@ -53,14 +54,53 @@ void CMeshNode_Edit::Priority_Update(_float dt)
 {
 }
 
+
 void CMeshNode_Edit::Update(_float dt)
 {
-	if(m_SetMaterial && m_SetMesh)
+	if (m_SetMaterial && m_SetMesh)
+	{
 		__super::Update(dt);
+
+
+		POST_PROCESS_COMMAND Command =
+		{
+			POSTPROCESS::MRT_Bloom,
+			Get_Component<CMaterial>()->Get_Shader(0),
+			m_pTransform->Get_WorldMatrix_Ptr(),
+			[this](ID3D11DeviceContext* pContext)
+			{
+				Render_BloomEffect(pContext);
+			}
+		};
+
+		CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
+	}
 }
 
 void CMeshNode_Edit::Late_Update(_float dt)
 {
+}
+
+void CMeshNode_Edit::Render_BloomEffect(ID3D11DeviceContext* pContext)
+{
+	auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem();
+	auto effectModel = Get_Component<CModel>();
+	auto effectMaterial = Get_Component<CMaterial>();
+	auto effectShader = effectMaterial->Get_Shader(0);
+	auto pCamMgr = CGameInstance::GetInstance()->Get_CameraMgr();
+	
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		effectModel,
+		effectShader,
+		0,
+		"Bright",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	effectShader->Apply("Bright", pContext);
+	effectModel->Draw(pContext,0);
 }
 
 void CMeshNode_Edit::Render_GUI()

@@ -147,6 +147,8 @@ void CGUIPanel::LoadFromJson()
 				strProtoTag = "Proto_GameObject_ImageUI";
 			else if (strType == "TextUI")
 				strProtoTag = "Proto_GameObject_TextUI";
+			else if (strType == "ButtonUI")
+				strProtoTag = "Proto_GameObject_ButtonUI";
 
 			pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
 				.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))

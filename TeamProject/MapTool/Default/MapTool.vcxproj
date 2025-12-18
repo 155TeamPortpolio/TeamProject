@@ -148,6 +148,8 @@
     </Link>
     <FxCompile>
       <AdditionalIncludeDirectories>../Public/;</AdditionalIncludeDirectories>
+      <ShaderType>Effect</ShaderType>
+      <ShaderModel>5.0</ShaderModel>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

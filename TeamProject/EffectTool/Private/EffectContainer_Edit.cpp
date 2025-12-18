@@ -29,13 +29,13 @@ HRESULT CEffectContainer_Edit::Initialize_Prototype()
 
 HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 {
-   // __super::Initialize(pArg);
+	// __super::Initialize(pArg);
 
 	LoadTextureFromDirectory("../Bin/Resource/Texture");
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
-    return S_OK;
+	return S_OK;
 }
 
 void CEffectContainer_Edit::Awake()
