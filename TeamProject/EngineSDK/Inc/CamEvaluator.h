@@ -12,16 +12,15 @@ private:
 
 public:
     bool    Build(const CamSequenceDesc& seqDesc);
-    CamPose Evaluate(float playTime) const;
+    CamPose Evaluate(float time) const;
+
+    _float RemapTimeBySegmentEasing(float t) const;
 
     void SetPosEvaluator(ICamPosEvaluator* _posEval);
     void SetRotEvaluator(ICamRotEvaluator* _rotEval);
     void SetFovEvaluator(ICamFovEvaluator* _fovEval);
 
     _float GetDuration() const { return duration; }
-
-private:
-    _float MapTime(float playTime) const;
 
 private:
     const CamSequenceDesc* seqDesc{};

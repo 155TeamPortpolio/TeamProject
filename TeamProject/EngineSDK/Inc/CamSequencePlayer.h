@@ -11,7 +11,7 @@ class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
 private:
 	CCamSequencePlayer() {}
-	CCamSequencePlayer(const CCamSequencePlayer& rhs);
+	CCamSequencePlayer(const CCamSequencePlayer& rhs) : CComponent(rhs) {}
 	~CCamSequencePlayer() DEFAULT;
 
 public:
@@ -39,12 +39,14 @@ public:
 	void   SetApplyEnabled(_bool enabled);
 	_bool  IsApplyEnabled() const { return apply.applyEnabled; }
 
+	void   SetSpaceReference(OBJECT_HANDLE handle) { apply.spaceRefHandle = handle; }
+	void   ClearSpaceReference() { apply.spaceRefHandle.Reset(); }
+
 	void   Update(_float dt);
 
 private:
 	void   RebuildIfNeeded();
 	void   ApplyPose(const CamPose& pose);
-	_float RemapTimeBySegmentEasing(_float t) const;
 
 private:
 	CamPlayerTarget        target{};

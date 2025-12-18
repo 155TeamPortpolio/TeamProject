@@ -53,8 +53,9 @@ struct CamSequenceDesc // 하나의 카메라 시퀀스(컷씬/연출)를 정의하는 전체 프리셋
 	CamFovInterp        fovInterp    = CamFovInterp::Linear;
 
 	EaseType            segmentEase  = EaseType::None;
-
 	CamOrbitArcDesc     orbitArc{};
+
+	CamSpace            space        = CamSpace::World;
 
 	vector<CamKeyFrame> keyframes;
 

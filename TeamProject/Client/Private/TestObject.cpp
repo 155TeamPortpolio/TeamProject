@@ -60,12 +60,14 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 void CTestObject::Awake()
 {
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	Get_Component<CAnimator3D>()->Change_Animation(3);
+	auto animator = Get_Component<CAnimator3D>();
+    animator->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+    animator->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
+    animator->Change_Animation(3);
 
-	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
-	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
+	auto controller = Get_Component<CCharacterController>();
+	controller->Set_GravityEnabled(true);
+	controller->Set_Position({0.f, 0.5f, 0.f});
 }
 
 void CTestObject::Priority_Update(_float dt)
@@ -76,9 +78,9 @@ void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 
-	auto controller = Get_Component<CCharacterController>();
 	auto cam        = CAM->Get_ActiveCam();
 	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
+	auto controller = Get_Component<CCharacterController>();
 
 	_vector3 camLook = camTf->Dir(STATE::LOOK);
 	_vector3 camRight = camTf->Dir(STATE::RIGHT);

@@ -12,9 +12,6 @@ bool CCamPosLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosLinearEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-
     if (keyframes->size() == 1)
         return (*keyframes)[0].pos;
 

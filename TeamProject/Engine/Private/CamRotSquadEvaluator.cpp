@@ -20,7 +20,6 @@ bool CCamRotSquadEvaluator::Build(const vector<CamKeyFrame>& keys)
         cachedRots[keyIdx] = MakeRotFromLookRoll(key.look, key.roll);
         cachedRots[keyIdx] = QNormalizeSafe(cachedRots[keyIdx]);
     }
-
     for (size_t keyIdx = 1; keyIdx < cachedRots.size(); ++keyIdx)
     {
         const float dotValue = cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]);
@@ -39,7 +38,6 @@ bool CCamRotSquadEvaluator::Build(const vector<CamKeyFrame>& keys)
 
         cachedTans[i] = QNormalizeSafe(cachedTans[i]);
     }
-
     for (size_t i = 1; i < cachedTans.size(); ++i)
     {
         if (cachedTans[i - 1].Dot(cachedTans[i]) < 0.f) cachedTans[i] = -cachedTans[i];
@@ -51,11 +49,6 @@ bool CCamRotSquadEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 Quaternion CCamRotSquadEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-    assert(cachedRots.size() == keyframes->size());
-    assert(cachedTans.size() == keyframes->size());
-
     if (keyframes->size() == 1) return cachedRots[0];
 
     const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
@@ -131,8 +124,6 @@ Quaternion CCamRotSquadEvaluator::MakeRotFromLookRoll(_vector3 look, _float roll
 
 Quaternion CCamRotSquadEvaluator::GetRotClamped(int idx) const
 {
-    assert(!cachedRots.empty());
-
     const int n = (int)cachedRots.size();
 
     if (idx < 0) idx = 0;
@@ -143,8 +134,6 @@ Quaternion CCamRotSquadEvaluator::GetRotClamped(int idx) const
 
 Quaternion CCamRotSquadEvaluator::GetTanClamped(int idx) const
 {
-    assert(!cachedTans.empty());
-
     const int n = (int)cachedTans.size();
 
     if (idx < 0) idx = 0;
@@ -155,8 +144,6 @@ Quaternion CCamRotSquadEvaluator::GetTanClamped(int idx) const
 
 Quaternion CCamRotSquadEvaluator::ComputeTangent(int idx) const
 {
-    assert(!cachedRots.empty());
-
     const int n = (int)cachedRots.size();
     const Quaternion qCur = cachedRots[(size_t)idx];
 

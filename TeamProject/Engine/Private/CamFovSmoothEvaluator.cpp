@@ -12,9 +12,6 @@ bool CCamFovSmoothEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _float CCamFovSmoothEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-
     if (keyframes->size() == 1)
         return (*keyframes)[0].fov;
 

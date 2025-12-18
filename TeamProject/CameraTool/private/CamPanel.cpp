@@ -9,7 +9,6 @@ namespace
         ImGui::Button(label, ImVec2(width, 0.f));
         ImGui::SameLine();
     }
-
     bool DrawVec3Editor(const char* headerLabel, _vector3& v, float speed = 0.05f, float headerWidth = 70.f)
     {
         DrawFieldHeaderButton(headerLabel, headerWidth);
@@ -27,7 +26,6 @@ namespace
         ImGui::PopID();
         return changed;
     }
-
     bool DrawFloatEditor(const char* headerLabel, float& value, float speed = 0.1f, float minV = 0.f, float maxV = 0.f, float headerWidth = 70.f)
     {
         DrawFieldHeaderButton(headerLabel, headerWidth);
@@ -42,7 +40,6 @@ namespace
         ImGui::PopID();
         return changed;
     }
-
     struct ScopedCamToolStyle final
     {
         ScopedCamToolStyle()
@@ -76,30 +73,25 @@ namespace
             ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
             ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
         }
-
         ~ScopedCamToolStyle()
         {
             ImGui::PopStyleColor(16);
             ImGui::PopStyleVar(6);
         }
-
         ScopedCamToolStyle(const ScopedCamToolStyle&) = delete;
         ScopedCamToolStyle& operator=(const ScopedCamToolStyle&) = delete;
     };
-
     void DrawInlineLabelDisabled(const char* t)
     {
         ImGui::AlignTextToFramePadding();
         ImGui::TextDisabled("%s", t);
     }
-
     bool DragFloatInline(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
     {
         ImGui::SetNextItemWidth(valueW);
         if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV, fmt);
         return ImGui::DragFloat(id, &v, speed, 0.f, 0.f, fmt);
     }
-
     bool DragVec3XYZ_Inline(const char* id, _vector3& v, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
     {
         bool changed = false;
@@ -125,7 +117,6 @@ namespace
         ImGui::PopID();
         return changed;
     }
-
     template<typename TEnum, typename GetLabelFn>
     bool DrawEnumCombo(const char* id, TEnum& ioValue, TEnum shownValue, GetLabelFn GetLabel, initializer_list<TEnum> options, float width)
     {
@@ -228,7 +219,7 @@ void CCamPanel::Update_Panel(_float dt)
 
 void CCamPanel::Render_GUI()
 {
-    constexpr float leftW  = 200.f;
+    constexpr float leftW = 200.f;
     constexpr float rightW = 250.f;
     constexpr float height = 400.f;
 
@@ -239,16 +230,16 @@ void CCamPanel::Render_GUI()
 
     bottomLeft.x = floorf(bottomLeft.x);
     bottomLeft.y = floorf(bottomLeft.y);
-    size.x       = floorf(size.x);
-    size.y       = floorf(size.y);
+    size.x = floorf(size.x);
+    size.y = floorf(size.y);
 
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
     ImGui::SetNextWindowSize(size, ImGuiCond_Always);
 
     ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoResize   |
+        ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoCollapse |
-        ImGuiWindowFlags_NoMove     |
+        ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoTitleBar;
 
     ScopedCamToolStyle styleScope;
@@ -269,15 +260,15 @@ void CCamPanel::Render_GUI()
         {
             ImVec2 contentAvail = ImGui::GetContentRegionAvail();
 
-            float minRight = 560.f;
-            float minLeft = 360.f;
+            float minRight = 420.f;
+            float minLeft = 520.f;
 
-            float desiredLeft = contentAvail.x * 0.40f;
+            float desiredLeft = contentAvail.x * 0.60f;
             float maxLeft = contentAvail.x - minRight;
 
             float leftColW = desiredLeft;
             leftColW = clamp(leftColW, minLeft, maxLeft);
-            leftColW = max(leftColW, 300.f);
+            leftColW = max(leftColW, 360.f);
 
             ImGui::TableSetupColumn("Left", ImGuiTableColumnFlags_WidthFixed, leftColW);
             ImGui::TableSetupColumn("Right", ImGuiTableColumnFlags_WidthStretch);
@@ -477,6 +468,16 @@ void CCamPanel::DrawCamSelector()
 
     bool changedAny = false;
 
+    auto GetSpaceLabel = [](CamSpace v) -> const char*
+        {
+            switch (v)
+            {
+            case CamSpace::World: return "World";
+            case CamSpace::Local: return "Local";
+            }
+            return "World";
+        };
+
     ImGui::PushID("InterpInline");
 
     ImGui::AlignTextToFramePadding();
@@ -556,6 +557,25 @@ void CCamPanel::DrawCamSelector()
 
             ImGui::EndCombo();
         }
+    }
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("Space");
+    ImGui::SameLine();
+    {
+        const CamSpace shown = target.sequence->space;
+
+        if (DrawEnumCombo("##space",
+            target.sequence->space,
+            shown,
+            GetSpaceLabel,
+            { CamSpace::World, CamSpace::Local },
+            120.f))
+            changedAny = true;
     }
 
     ImGui::PopID();

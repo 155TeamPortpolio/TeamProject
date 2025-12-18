@@ -48,7 +48,7 @@ private:
 
 private:
     CSequenceCam* RequireSequenceCam() const;
-    void          ClearPlayingState();
+    void          ClearPlayingState() { m_playing = {}; }
 
 private:
     unordered_map<string, SeqEntry> m_sequences{};

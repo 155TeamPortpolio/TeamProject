@@ -28,6 +28,7 @@ private:
     _float     m_fSpeed          = 5.f;
     _float     m_fSensitivity    = 0.5f;
     _float     m_fRotSmoothSpeed = 20.f;
+
     _vector2   m_vRotDegTarget   = {};
     Quaternion m_qCurRot         = Quaternion::Identity;
     Quaternion m_qRotTarget      = Quaternion::Identity;

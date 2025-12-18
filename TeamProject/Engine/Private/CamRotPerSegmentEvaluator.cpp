@@ -5,8 +5,6 @@
 
 bool CCamRotPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-    assert(seq);
-
     keyframes = &keys;
 
     Safe_Release(evalSlerp);
@@ -24,9 +22,6 @@ bool CCamRotPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 CamRotInterp CCamRotPerSegmentEvaluator::ResolveMode(_uint segIdx) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
 
     if (keys.size() < 2) return seq->rotInterp;
@@ -40,9 +35,6 @@ CamRotInterp CCamRotPerSegmentEvaluator::ResolveMode(_uint segIdx) const
 
 Quaternion CCamRotPerSegmentEvaluator::Evaluate(_float time) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
     const size_t n = keys.size();
 
