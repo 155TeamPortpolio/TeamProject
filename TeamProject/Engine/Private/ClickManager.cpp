@@ -29,21 +29,18 @@ void CClickManager::Update(_float dt)
 	{
 		auto& pObj = m_ClickableObjects.back();
 
-		if (pObj->Is_Alive())
+		_float2 fCenter = pObj->Get_RectTopLeft_Screen();
+		_float2 fSize = pObj->Get_PxSize();
+
+		if (fCenter.x <= fMouse.x && fCenter.x + fSize.x >= fMouse.x &&
+			fCenter.y <= fMouse.y && fCenter.y + fSize.y >= fMouse.y)
 		{
-			_float2 fCenter = pObj->Get_RectTopLeft_Screen();
-			_float2 fSize = pObj->Get_PxSize();
+			m_pNewHovered = pObj;
 
-			if (fCenter.x <= fMouse.x && fCenter.x + fSize.x >= fMouse.x &&
-				fCenter.y <= fMouse.y && fCenter.y + fSize.y >= fMouse.y)
-			{
-				m_pNewHovered = pObj;
+			if(CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
+				pObj->OnClick();
 
-				if(CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
-					pObj->OnClick();
-
-				break;
-			}
+			break;
 		}
 
 		m_ClickableObjects.pop_back();

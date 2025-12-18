@@ -16,6 +16,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
+	virtual void Render_GUI() override;
 
 public:
 	void DestroyChild_FromParent();

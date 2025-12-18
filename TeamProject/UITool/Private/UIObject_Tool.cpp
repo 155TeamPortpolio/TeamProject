@@ -24,6 +24,13 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CUIObject_Tool::Render_GUI()
+{
+    ImGui::SeparatorText(u8"¼Ó¼º");
+
+    ImGui::Checkbox("Alive", &m_isAlive);
+}
+
 void CUIObject_Tool::DestroyChild_FromParent()
 {
     if (!m_pParent)
