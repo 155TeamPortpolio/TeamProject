@@ -57,6 +57,7 @@ public:
 
 public:
 	LAYER_DESC Get_LayerDesc();
+	OBJECT_HANDEL Get_Handle();
 public:
 	const string& Get_InstanceName() { return m_InstanceName; }
 	const _uint Get_ObjectID() { return m_ObjectID; }
