@@ -64,7 +64,7 @@ private:
 public:
     static COrbitCam* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override { __super::Free(); }
+    virtual void Free() override;
 };
 
 NS_END

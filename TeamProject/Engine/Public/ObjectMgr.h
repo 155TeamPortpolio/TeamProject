@@ -31,6 +31,9 @@ public:
 	virtual const unordered_map<string, class CLayer*>& Get_LevelLayer(const string& LevelTag) override;
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) override;
 
+public:
+	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
+
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);

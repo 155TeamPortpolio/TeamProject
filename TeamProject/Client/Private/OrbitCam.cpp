@@ -24,6 +24,12 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
     return inst;
 }
 
+void COrbitCam::Free()
+{
+   __super::Free(); 
+   Safe_Release(m_pTargetTransform);
+}
+
 HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
