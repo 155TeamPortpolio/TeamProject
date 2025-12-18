@@ -11,14 +11,17 @@ private:
 	virtual ~CClickManager();
 
 public:
-	virtual void Update(_float dt);
+	void Update(_float dt);
 
 public:
-	virtual void Add_ClickableObject(class CUI_Object* object);
+	void Add_ClickableObject(class CUI_Object* object);
 
 private:
 	HWND						m_hWnd;
 	vector<class CUI_Object*>	m_ClickableObjects;
+
+	class CUI_Object*			m_pHovered = { nullptr };
+	class CUI_Object*			m_pNewHovered = { nullptr };
 
 public:
 	static CClickManager* Create(HWND hWnd);
