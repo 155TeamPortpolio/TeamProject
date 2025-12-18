@@ -24,6 +24,13 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CUIObject_Tool::Render_GUI()
+{
+    ImGui::SeparatorText(u8"¼Ó¼º");
+
+    ImGui::Checkbox("Alive", &m_isAlive);
+}
+
 void CUIObject_Tool::DestroyChild_FromParent()
 {
     if (!m_pParent)
@@ -232,10 +239,10 @@ void CUIObject_Tool::Render_GUI_Transform()
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 }
 
-void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& strTextureKey)
+void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
 {
     Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
-    strTextureKey = TextureKey;
+    OutstrTextureKey = TextureKey;
 }
 
 void CUIObject_Tool::Free()
