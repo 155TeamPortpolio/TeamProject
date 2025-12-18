@@ -393,7 +393,7 @@ namespace Engine
 		_float3 vFrequency{};
 		_float3 vScrollSpeed{};
 
-		tagParticleNode FromJson(nlohmann::ordered_json& json);
+		static tagParticleNode FromJson(nlohmann::ordered_json& json);
 	}PARTICLE_NODE;
 
 	typedef struct tagMeshNode : public tagEffectNode
@@ -426,7 +426,7 @@ namespace Engine
 		_uint DissolveEase{};
 		_float fDissolveStartProgress{};
 
-		tagMeshNode FromJson(nlohmann::ordered_json& json);
+		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC
@@ -434,7 +434,9 @@ namespace Engine
 		_uint iNodeCount{};
 		_float fDuration{};
 		_bool isLoop = false;
-		vector<tagEffectNode> Nodes;
+		vector<tagEffectNode*> Nodes;
+
+		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
 
 	typedef struct ENGINE_DLL tagObjectHandle {

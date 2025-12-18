@@ -129,6 +129,7 @@ void CEffectContainer_Edit::Export()
 
 		ordered_json EffectData;
 		
+		EffectData["node_count"] = m_Nodes.size();
 		EffectData["is_loop"] = m_IsLoop;
 		EffectData["duration"] = m_fDuration;
 

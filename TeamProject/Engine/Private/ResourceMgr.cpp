@@ -289,11 +289,36 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 	return Clips;
 }
 
+EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string& effectTag)
+{
+	using namespace nlohmann;
+	namespace fs = std::filesystem;
+
+	int index = ValidLevel(levelTag);
+	if (index == -1) {
+		MSG_BOX("Wrong Level Tag. : Load_EffectAsset");
+		return EFFECT_ASSET();
+	}
+
+	auto& map = m_Resources[index].m_EffectAssets;
+	auto iter = map.find(effectTag);
+
+	if (iter != map.end()) return iter->second;
+
+	string filePath = MakePath(effectTag);
+	ifstream file(filePath);
+
+	ordered_json EffectData = json::parse(file);
+	EFFECT_ASSET Effect = EFFECT_ASSET::FromJson(EffectData);
+
+	return Effect;
+}
+
 CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& ModelKey)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_ModelData ");
+		MSG_BOX("Wrong Level Tag. : Load_ModelData ");
 		return nullptr;
 	}
 

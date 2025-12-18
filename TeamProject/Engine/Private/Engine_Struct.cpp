@@ -149,3 +149,14 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 
 	return node;
 }
+
+EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
+{
+	EFFECT_ASSET Effect{};
+
+	Effect.iNodeCount = json.value("node_count", Effect.iNodeCount);
+	Effect.fDuration = json.value("duration", Effect.fDuration);
+	Effect.isLoop = json.value("is_loop", Effect.isLoop);
+
+	return Effect;
+}
