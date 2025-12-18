@@ -173,11 +173,21 @@ void CCharacterController::Update(_float dt)
 
 void CCharacterController::Late_Update(_float dt)
 {
-	if (!m_pController) return;
-	Apply_Move(dt);
-	// PhysX -> Transform
-	const PxExtendedVec3& position = m_pController->getPosition();
-	m_pOwnerTransform->Set_WorldPos(XMVectorSet((float)position.x, (float)position.y, (float)position.z, 1.f));
+	_float3 vDisplacement = m_vVelocity * dt;
+
+	if (m_fMaxSpeed > 0.0f)
+	{
+		_float fPlanarSpeed = sqrtf(vDisplacement.x * vDisplacement.x +
+			vDisplacement.z * vDisplacement.z);
+		if (fPlanarSpeed > m_fMaxSpeed * dt)
+		{
+			_float fScale = (m_fMaxSpeed * dt) / fPlanarSpeed;
+			vDisplacement.x *= fScale;
+			vDisplacement.z *= fScale;
+		}
+	}
+
+	Move(XMLoadFloat3(&vDisplacement), dt);
 }
 
 void CCharacterController::Render_GUI()
@@ -269,7 +279,6 @@ void CCharacterController::Render_GUI()
 			ImGui::Separator();
 			ImGui::Text("Colliding With:");
 
-			// 안전한 순회를 위해 벡터에 복사
 			vector<ICollidable*> collisionSnapshot;
 			collisionSnapshot.reserve(m_CurrentCollisions.size());
 			for (auto pOther : m_CurrentCollisions)
@@ -280,7 +289,6 @@ void CCharacterController::Render_GUI()
 
 			for (auto pOther : collisionSnapshot)
 			{
-				// 추가 안전성 체크
 				if (!pOther || !pOther->Get_Owner()) continue;
 
 				const char* typeStr = "[???]";
@@ -306,7 +314,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("충돌 감지 시작 거리 (작을수록 정확)");
+			ImGui::SetTooltip("충돌 감지 시작 거리");
 		}
 
 		_float fRestOffset = Get_RestOffset();
@@ -316,7 +324,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("실제 접촉 거리 (보통 0.0)");
+			ImGui::SetTooltip("실제 접촉 거리");
 		}
 
 #ifdef _DEBUG
@@ -361,8 +369,6 @@ void CCharacterController::Render_GUI()
 			}
 		}
 #endif
-
-
 	}
 	ImGui::EndChild();
 }
@@ -373,7 +379,7 @@ void CCharacterController::Process_Response(const PxControllerShapeHit& hit)
 	if (pDynamic && !(pDynamic->getRigidBodyFlags() & PxRigidBodyFlag::eKINEMATIC))
 	{
 		const PxReal pushForce = 5.0f;
-		if (hit.dir.y < 0.1f)
+		if (hit.dir.y < 0.0001f)
 			pDynamic->addForce(hit.dir * pushForce, PxForceMode::eIMPULSE);
 	}
 }
@@ -435,22 +441,37 @@ void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* 
 }
 #endif
 
-void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed)
+
+void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float dt)
 {
 	if (!m_pController) return;
 
 	_vector vNormalized = XMVector3Normalize(vDir);
-	Set_PlanarVelocity(vNormalized * fSpeed);
+	_vector vDisplacement = vNormalized * fSpeed * dt;
+
+	_float3 vDisp;
+	XMStoreFloat3(&vDisp, vDisplacement);
+	vDisp.y = m_vVelocity.y * dt;
+
+	Move(XMLoadFloat3(&vDisp), dt);
 }
 
-void CCharacterController::Move_Velocity(_fvector vVelocity)
+void CCharacterController::Move_Velocity(_fvector vVelocity, _float dt)
 {
 	if (!m_pController) return;
 
 	_float3 vVel;
 	XMStoreFloat3(&vVel, vVelocity);
-	m_vVelocity.x = vVel.x;
-	m_vVelocity.z = vVel.z;
+	vVel.y = m_vVelocity.y;
+
+	_float3 vDisplacement = vVel * dt;
+	Move(XMLoadFloat3(&vDisplacement), dt);
+}
+
+void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
+{
+	if (!m_pController) return;
+	Move(vDisp, dt);
 }
 
 void CCharacterController::Stop_Movement()
@@ -459,21 +480,20 @@ void CCharacterController::Stop_Movement()
 	m_vVelocity.z = 0.f;
 }
 
-void CCharacterController::Move(_fvector vDisp, _float dt)
+void CCharacterController::Move(_fvector vDisplacement, _float dt)
 {
 	if (!m_pController) return;
 
-	_float3 vDisplacement;
-	XMStoreFloat3(&vDisplacement, vDisp);
-	PxVec3 disp(vDisplacement.x, vDisplacement.y, vDisplacement.z);
+	_float3 vDisp;
+	XMStoreFloat3(&vDisp, vDisplacement);
+	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
 	PxControllerFilters filters;
 	filters.mFilterData = &m_FilterData;
 
-	const PxControllerCollisionFlags flags = m_pController->move(disp, 0.001f, dt, filters);
+	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.0001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
-
 
 void CCharacterController::Jump(_float fJump)
 {
@@ -605,31 +625,6 @@ void CCharacterController::Apply_Gravity(_float dt)
 	{
 		m_vVelocity.y += m_fGravity * dt;			// 공중에 있을 때: 중력 가속도 누적
 	}
-}
-
-void CCharacterController::Apply_Move(_float dt)
-{
-	_vector3 vVelocity = m_vVelocity;
-
-	if (m_fMaxSpeed > 0.0f)
-	{
-		_float fPlanarSpeed = sqrtf(vVelocity.x * vVelocity.x + vVelocity.z * vVelocity.z);
-		if (fPlanarSpeed > m_fMaxSpeed)
-		{
-			_float fScale = m_fMaxSpeed / fPlanarSpeed;
-			vVelocity.x *= fScale;
-			vVelocity.z *= fScale;
-		}
-	}
-
-	_vector3 vDisplacement = vVelocity * dt;
-	PxVec3 pxDisp(vDisplacement.x, vDisplacement.y, vDisplacement.z);
-
-	PxControllerFilters filters;
-	filters.mFilterData = &m_FilterData;
-
-	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.001f, dt, filters);
-	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
 
 HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)

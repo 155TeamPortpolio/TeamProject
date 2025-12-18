@@ -47,17 +47,17 @@ public:
 #endif
 
 public:
-    void            Move_Direction(_fvector vDir, _float fSpeed);   // 일반적인 이동 : 방향 + 속도
-    void            Move_Velocity(_fvector vVelocity);              // 속도벡터로 이동
+    void            Move_Direction(_fvector vDir, _float fSpeed, _float dt);
+    void            Move_Velocity(_fvector vVelocity, _float dt);
+    void            Move_Displacement(_fvector vDisp, _float dt);
     void            Stop_Movement();
-    void            Move(_fvector vDisp, _float dt);                // 특수상황에만 사용 : 대시, 넉백
-    void            Jump(_float fJump);
-    void            Set_Position(_fvector vPos);                    // 텔레포트
+    void            Jump(_float fJumpSpeed);
+    void            Set_Position(_fvector vPos);
     void            Resize(_float fHeight, _float fRadius);
     void            Set_StepOffset(_float fOffset);
     void            Set_SlopeLimit(_float fDegree);
-    void            Set_PlanarVelocity(_fvector vVelocity);         // XZ
-    void            Set_VerticalVelocity(_float fVelocity);         // Y
+    void            Set_PlanarVelocity(_fvector vVelocity);
+    void            Set_VerticalVelocity(_float fVelocity);
     void            Set_MaxSpeed(_float fMaxSpeed);
     void            Set_GravityEnabled(_bool bEnabled);
     _vector         Get_FootPosition();
@@ -66,13 +66,12 @@ public:
     _float          Get_ContactOffset();
     _float          Get_RestOffset();
 
-    // 레이캐스트 관련
     _bool           Shoot_Ray(_fvector vDirection, _float fDistance);
     void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
 
 private:
+    void            Move(_fvector vDisplacement, _float dt);
     void            Apply_Gravity(_float dt);
-    void            Apply_Move(_float dt);
     HRESULT         AutoFit(CCT_DESC* pDesc);
 
 private:
