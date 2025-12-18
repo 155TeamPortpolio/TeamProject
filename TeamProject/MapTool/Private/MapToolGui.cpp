@@ -145,9 +145,6 @@ void CMapToolGui::RakeResources()
 
 void CMapToolGui::Compute_Ray()
 {
-    //m_Ray = {};
-    m_PhysicsRay = {};
-
     POINT   pt = {};
 
     GetCursorPos(&pt);
@@ -220,7 +217,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
 
     COLLIDER_DESC ColDesc = {};
-    ColDesc.bCooking = true;
+    ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
     ColDesc.strModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
 
     CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })

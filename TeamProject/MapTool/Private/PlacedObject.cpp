@@ -36,7 +36,7 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 {
 #pragma region Model Type Check
 	MAPTOOL_OBJECT_DESC* pObjDesc = static_cast<MAPTOOL_OBJECT_DESC*>(pArg);
-	
+
 	m_TagModelKey = pObjDesc->TagModelKey;
 	m_TagMaterialKey = pObjDesc->TagMaterialKey;
 
@@ -47,26 +47,22 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData("MapTool_Level", pObjDesc->TagModelKey);
 	if (nullptr == pData)
 		return E_FAIL;
-	
+
 	_bool isSkinned = pData->isSkinned();
 
-	if (true == isSkinned)
+	if (true == isSkinned) {
 		Add_Component<CSkeletalModel>();
-	else
-		Add_Component<CStaticModel>();
-
-	if (true == isSkinned)
 		Get_Component<CSkeletalModel>()->Link_Model("MapTool_Level", m_TagModelKey);
-	else
+	}
+	else {
+		Add_Component<CStaticModel>();
 		Get_Component<CStaticModel>()->Link_Model("MapTool_Level", m_TagModelKey);
+	}
 
 	Get_Component<CMaterial>()->Link_Material("MapTool_Level", m_TagMaterialKey);
 
 #pragma endregion
 	__super::Initialize(pArg);
-
-	Get_Component<CRayReceiver>()->Set_CompActive(pObjDesc->isRayReceiver);
-
 	
 	return S_OK;
 }
