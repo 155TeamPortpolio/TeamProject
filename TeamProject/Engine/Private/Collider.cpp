@@ -6,6 +6,7 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 #include "StaticModel.h"
+#include "SkeletalModel.h"
 
 #ifdef _DEBUG
 #include "DebugDraw.h"
@@ -30,9 +31,6 @@ HRESULT CCollider::Initialize_Prototype()
 
 HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 {
-	if (!pArg) return E_FAIL;
-	COLLIDER_DESC* pDesc = static_cast<COLLIDER_DESC*>(pArg);
-
 	m_pPhysicsSystem = CGameInstance::GetInstance()->Get_PhysicsSystem();
 	if (!m_pPhysicsSystem) return E_FAIL;
 
@@ -40,6 +38,14 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	if (!m_pOwnerTransform) return E_FAIL;
 
 	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
+
+	if (!pArg) return S_OK;
+	COLLIDER_DESC* pDesc = static_cast<COLLIDER_DESC*>(pArg);
+
+	if (pDesc->bAutoFit && !pDesc->bCooking)
+	{
+		AutoFit(pDesc);
+	}
 
 	PxGeometry* pGeometry = nullptr;
 	// 쿠킹이 필요한 경우
@@ -60,7 +66,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 			return E_FAIL;
 		}
 
-		//m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
+		m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
 
 		if (!m_pTriangleMesh)
 		{
@@ -186,6 +192,9 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::Update(_float dt)
 {
+	if (m_bCooked)
+		return;
+
 	if (m_pStaticActor && !m_pAttachedRigidBody)
 	{
 		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();
@@ -322,6 +331,69 @@ void CCollider::Update_LocalPose()
 	localPose.q = PxQuat(vQ.x, vQ.y, vQ.z, vQ.w);
 
 	m_pShape->setLocalPose(localPose);
+}
+
+HRESULT CCollider::AutoFit(COLLIDER_DESC* pDesc)
+{
+	CStaticModel* pStaticModel = m_pOwner->Get_Component<CStaticModel>();
+	CSkeletalModel* pSkeletalModel = m_pOwner->Get_Component<CSkeletalModel>();
+
+	MINMAX_BOX boundingBox = {};
+	_bool bHasModel = false;
+
+	if (pStaticModel)
+	{
+		boundingBox = pStaticModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+	else if (pSkeletalModel)
+	{
+		boundingBox = pSkeletalModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+
+	if (!bHasModel)
+	{
+		return E_FAIL;
+	}
+
+	_float3 vMin = boundingBox.vMin;
+	_float3 vMax = boundingBox.vMax;
+
+	// Center 계산
+	pDesc->vCenter.x = (vMin.x + vMax.x) * 0.5f;
+	pDesc->vCenter.y = (vMin.y + vMax.y) * 0.5f;
+	pDesc->vCenter.z = (vMin.z + vMax.z) * 0.5f;
+
+	// Size 계산
+	switch (pDesc->eType)
+	{
+	case COLLIDER_TYPE::BOX:
+		pDesc->vSize.x = (vMax.x - vMin.x) * pDesc->fSizeScale;
+		pDesc->vSize.y = (vMax.y - vMin.y) * pDesc->fSizeScale;
+		pDesc->vSize.z = (vMax.z - vMin.z) * pDesc->fSizeScale;
+		break;
+
+	case COLLIDER_TYPE::SPHERE:
+	{
+		_float fRadiusX = (vMax.x - vMin.x) * 0.5f;
+		_float fRadiusY = (vMax.y - vMin.y) * 0.5f;
+		_float fRadiusZ = (vMax.z - vMin.z) * 0.5f;
+		pDesc->vSize.x = max(max(fRadiusX, fRadiusY), fRadiusZ) * pDesc->fSizeScale;
+		break;
+	}
+
+	case COLLIDER_TYPE::CAPSULE:
+	{
+		_float fRadiusXZ = max((vMax.x - vMin.x) * 0.5f, (vMax.z - vMin.z) * 0.5f);
+		_float fHeight = vMax.y - vMin.y;
+		pDesc->vSize.x = fRadiusXZ * pDesc->fSizeScale;
+		pDesc->vSize.y = (fHeight - fRadiusXZ * 2.0f) * pDesc->fSizeScale;
+		break;
+	}
+	}
+
+	return S_OK;
 }
 
 void CCollider::Render_GUI()

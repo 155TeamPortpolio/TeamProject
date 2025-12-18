@@ -50,7 +50,7 @@ HRESULT CPhysicsLevel::Awake()
 	// Player
 	CCT_DESC cctDesc = {};
 	CGameObject* Player = Builder::Create_Object({ "Physics_Level", "Proto_GameObject_DemoPlayer" })
-		.Position({ 5.f, 10.f, 0.f })
+		.Position({ 0.f, 5.f, 0.f })
 		.Scale({ 1.f, 1.f, 1.f })
 		.CharacterController(cctDesc)
 		.Build("Demo_Player");

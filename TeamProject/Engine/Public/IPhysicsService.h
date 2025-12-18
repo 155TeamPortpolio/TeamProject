@@ -23,6 +23,8 @@ public:
     virtual _bool Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)            PURE;
     virtual _bool Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits) PURE;
     virtual _bool Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& outHits)      PURE;
+    // Mesh Cooking
+    virtual PxTriangleMesh* Cook_TriangleMesh(const string& strModelKey, class CModel* pModel) PURE;
 };
 
 NS_END
