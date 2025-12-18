@@ -81,7 +81,7 @@ void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
 	else {
 		pDestLayer = iter->second;
 	}
-	Add_Object_Recursive(pDestLayer, object,layer.LevelTag);
+	Add_Object_Recursive(pDestLayer, object, layer.LevelTag);
 }
 
 
@@ -203,6 +203,24 @@ CLayer* CObjectMgr::Get_Layer(const LAYER_DESC& SrcLayer)
 		}
 	}
 	return nullptr;
+}
+
+class CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDEL& handle)
+{
+	/*레벨 확인*/
+	auto iter = m_Layers.find(handle.Level);
+
+	if (iter == m_Layers.end())
+		return nullptr;
+
+	/*레이어 확인*/
+	auto Layers = iter->second;
+	auto LayerIter = Layers.find(handle.Layer);
+	if (LayerIter == Layers.end())
+		return nullptr;
+
+	auto TargetLayer = LayerIter->second;
+	return TargetLayer->Find_ObjectByID(handle.hObjID);
 }
 
 

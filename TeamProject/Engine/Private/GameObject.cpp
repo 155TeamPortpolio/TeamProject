@@ -251,6 +251,26 @@ LAYER_DESC CGameObject::Get_LayerDesc()
 	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
 }
 
+OBJECT_HANDEL CGameObject::Get_Handle()
+{
+	OBJECT_HANDEL hObj = {};
+	if (m_LevelTag.empty()) {
+		hObj.Reset();
+		return;
+	}
+
+	if (!m_pLayer) {
+		hObj.Reset();
+		return;
+	}
+
+	hObj.Layer = m_pLayer->Get_LayerTag();
+	hObj.Level = m_LevelTag;
+	hObj.hObjID = m_ObjectID;
+
+	return hObj;
+}
+
 _float4x4* CGameObject::Get_WorldMatrix()
 {
 	return m_pTransform->Get_WorldMatrix_Ptr();
