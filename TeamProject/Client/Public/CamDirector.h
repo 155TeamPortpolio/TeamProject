@@ -20,7 +20,7 @@ public:
     void   Bind(CSequenceCam* sequenceCam);
 
 public:
-	void   Register(const string& key, const filesystem::path& path);
+	_bool   Register(const string& key, const filesystem::path& path);
 	void   UnRegister(const string& key);
 
 public:

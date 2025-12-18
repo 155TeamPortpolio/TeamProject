@@ -54,6 +54,7 @@ HRESULT CTestLevel::Awake()
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.Build("Test_Model");
+	testModel->Get_Component<CTransform>()->Set_Pos({0.f, 5.f, 0.f});
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	m_testModel = testModel;

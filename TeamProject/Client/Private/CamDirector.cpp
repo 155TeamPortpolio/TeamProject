@@ -9,14 +9,20 @@ void CCamDirector::Bind(CSequenceCam* sequenceCam)
     m_sequenceCam = sequenceCam;
 }
 
-void CCamDirector::Register(const string& key, const filesystem::path& path)
+_bool CCamDirector::Register(const string& key, const filesystem::path& path)
 {
     assert(!key.empty());
 
-    SeqEntry& entry = m_sequences[key];
+    SeqEntry entry{};
     entry.path = path;
-    entry.loaded = false;
-    entry.seq = CamSequenceDesc{};
+
+    string err;
+    if (!CamUtil::Load(entry.path, entry.seq, &err))
+        return false;
+
+    entry.loaded = true;
+    m_sequences[key] = move(entry);
+    return true;
 }
 
 void CCamDirector::UnRegister(const string& key)
