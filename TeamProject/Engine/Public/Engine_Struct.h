@@ -410,7 +410,7 @@ namespace Engine
 
 		_bool isValid() { return !(Level.empty() || Layer.empty() || hObjID < 1); }
 		void Reset() { Level.clear(); Layer.clear(); hObjID = 0; }
-	}OBJECT_HANDEL;
+	}OBJECT_HANDLE;
 }
 
 

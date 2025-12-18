@@ -205,7 +205,7 @@ CLayer* CObjectMgr::Get_Layer(const LAYER_DESC& SrcLayer)
 	return nullptr;
 }
 
-class CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDEL& handle)
+class CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 {
 	/*레벨 확인*/
 	auto iter = m_Layers.find(handle.Level);
