@@ -37,11 +37,38 @@
     <Filter Include="02. GameObject\Camera\00. CamObject">
       <UniqueIdentifier>{e0bba242-799e-4a24-b080-7db510093c47}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\01. CamSpawnObject">
-      <UniqueIdentifier>{135d1fb6-54ac-44fc-b5bc-00ae5043c969}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Camera\02. FreeCam">
       <UniqueIdentifier>{be87aa4e-607e-4972-bd9f-9f2d942322b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\03. SequenceCam">
+      <UniqueIdentifier>{428eefa6-c000-4601-8551-4c1fc4bf9561}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\04. OrbitCam">
+      <UniqueIdentifier>{3ccc4b33-1ec4-4b1a-a032-fb66d8ec8e75}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\99. CamDirector">
+      <UniqueIdentifier>{0d1fd986-9b7f-4463-b27c-8cc9eae09a0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject">
+      <UniqueIdentifier>{80767227-77fa-4633-b0c5-65b7efc809cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\00. MapPlacedObject">
+      <UniqueIdentifier>{bc0b3861-27a6-4aa7-b273-a9806541117e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\01. MapFloorObject">
+      <UniqueIdentifier>{b25394ec-c9ac-4d93-913e-306ed8fab634}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\02. MapTriggerObject">
+      <UniqueIdentifier>{3ee57455-7966-4d9b-bcb9-5d01b67f74e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility">
+      <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\MapLoader">
+      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestMap">
+      <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -87,8 +114,35 @@
     <ClInclude Include="..\public\CamObject.h">
       <Filter>02. GameObject\Camera\00. CamObject</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CamSpawnObject.h">
-      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    <ClInclude Include="..\public\SequenceCam.h">
+      <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamDirector.h">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OrbitCam.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapFloorObject.h">
+      <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapObject.h">
+      <Filter>02. GameObject\MapObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapPlacedObject.h">
+      <Filter>02. GameObject\MapObject\00. MapPlacedObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapTriggerObject.h">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapLoader.h">
+      <Filter>03. Utility\MapLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Data_Struct.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestMap.h">
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -147,8 +201,32 @@
     <ClCompile Include="..\private\CamObject.cpp">
       <Filter>02. GameObject\Camera\00. CamObject</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CamSpawnObject.cpp">
-      <Filter>02. GameObject\Camera\01. CamSpawnObject</Filter>
+    <ClCompile Include="..\private\SequenceCam.cpp">
+      <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamDirector.cpp">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OrbitCam.cpp">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapFloorObject.cpp">
+      <Filter>02. GameObject\MapObject\01. MapFloorObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapObject.cpp">
+      <Filter>02. GameObject\MapObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapPlacedObject.cpp">
+      <Filter>02. GameObject\MapObject\00. MapPlacedObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapTriggerObject.cpp">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapLoader.cpp">
+      <Filter>03. Utility\MapLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestMap.cpp">
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

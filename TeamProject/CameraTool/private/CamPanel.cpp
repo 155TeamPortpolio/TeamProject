@@ -1508,7 +1508,7 @@ void CCamPanel::DoSaveSequence()
         return;
     }
 
-    if (!CamUtil::Save(filesystem::path(picked), *target.sequence, err))
+    if (!CamUtil::Save(filesystem::path(picked), *target.sequence, &err))
     {
         keyListUI.lastFileError = err;
         keyListUI.requestOpenFileErrorPopup = true;
@@ -1533,7 +1533,7 @@ void CCamPanel::DoLoadSequence()
     CamSequenceDesc loaded{};
     string err;
 
-    if (!CamUtil::Load(filesystem::path(picked), loaded, err))
+    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
     {
         keyListUI.lastFileError = err;
         keyListUI.requestOpenFileErrorPopup = true;

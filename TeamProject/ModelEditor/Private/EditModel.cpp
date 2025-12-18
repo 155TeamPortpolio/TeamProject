@@ -100,13 +100,25 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 {
 	Clear_Models();
 	m_Importer.FreeScene();
+	m_pAIScene = nullptr;
 
-	unsigned int iFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-	if (!HasBones())
-		iFlag |= aiProcess_PreTransformVertices;
+	unsigned int base = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
+	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base);
+	if (!m_pAIScene) return E_FAIL;
 
-	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), iFlag);
+	bool hasBones = HasBones();
 
+	// AUTO인데 본이 없으면 2차 로드(PreTransform 포함)
+	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones)
+	{
+		m_Importer.FreeScene();
+		m_pAIScene = nullptr;
+
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base | aiProcess_PreTransformVertices);
+		if (!m_pAIScene) return E_FAIL;
+
+		hasBones = false;
+	}
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
 	
@@ -146,7 +158,6 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
-	Get_Component<CDebugRender>()->Add_DebugBounding(Get_Component<CModel>()->Get_LocalBoundingBox());
 
 	return S_OK;
 }

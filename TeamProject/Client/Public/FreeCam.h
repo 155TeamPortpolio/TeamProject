@@ -1,16 +1,14 @@
 #pragma once
 
-#include "CamSpawnObject.h"
+#include "CamObject.h"
 
 NS_BEGIN(Client)
 
-class CFreeCam final : public CCamSpawnObject<CFreeCam>
+class CFreeCam final : public CCamObject
 {
-    friend class CCamSpawnObject<CFreeCam>;
-
 private:
     CFreeCam() DEFAULT;
-    CFreeCam(const CFreeCam& rhs) : CCamSpawnObject(rhs) {}
+    CFreeCam(const CFreeCam& rhs) : CCamObject(rhs) {}
     virtual ~CFreeCam() DEFAULT;
 
 public:
@@ -33,6 +31,11 @@ private:
     _vector2   m_vRotDegTarget   = {};
     Quaternion m_qCurRot         = Quaternion::Identity;
     Quaternion m_qRotTarget      = Quaternion::Identity;
+
+public:
+    static CFreeCam* Create();
+    CGameObject* Clone(INIT_DESC* pArg) override;
+    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

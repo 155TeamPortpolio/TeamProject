@@ -32,26 +32,26 @@ namespace Engine {
 		
 	}PRIORITY_PACKET;
 
-	/*ºÒÅõ¸í ÆÐÅ¶*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶*/
 	typedef struct DrawOpaquePacket : BASE_PACKET {
-		_bool bSkinning = { false }; /*±×·¡¼­ º»ÀÌ ÀÖ´Ï?*/
+		_bool bSkinning = { false }; /*ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½?*/
 
-		_uint DrawIndex = {};		/*¸î¹øÂ° ¸Þ½Ã ±×¸®´Âµ¥?*/
-		_uint MaterialIndex = {};/*±× ¸Þ½Ã´Â ¹¹¾²´Âµ¥*/
+		_uint DrawIndex = {};		/*ï¿½ï¿½ï¿½Â° ï¿½Þ½ï¿½ ï¿½×¸ï¿½ï¿½Âµï¿½?*/
+		_uint MaterialIndex = {};/*ï¿½ï¿½ ï¿½Þ½Ã´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½*/
 		_uint SkinningOffset = {};
 
 		class CModel* pModel = { nullptr };
 		class CMaterial* pMaterial = { nullptr };
 
-		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*Ãß°¡ÀûÀ¸·Î ³Ö°í ½ÍÀº °Í ÀÖ¾î?*/
+		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½?*/
 
 		RENDERKEY GetKey() const;
 	}OPAQUE_PACKET;
 
-	/*ÀÎ½ºÅÏ½Ì ÆÐÅ¶*/
+	/*ï¿½Î½ï¿½ï¿½Ï½ï¿½ ï¿½ï¿½Å¶*/
 	typedef struct DrawInstancePacket : BASE_PACKET {
-		_uint DrawIndex = {};			/*¸î¹øÂ° ¸Þ½Ã ±×¸®´Âµ¥?*/
-		_uint MaterialIndex = {};		/*±× ¸Þ½Ã´Â ¹¹¾²´Âµ¥*/		
+		_uint DrawIndex = {};			/*ï¿½ï¿½ï¿½Â° ï¿½Þ½ï¿½ ï¿½×¸ï¿½ï¿½Âµï¿½?*/
+		_uint MaterialIndex = {};		/*ï¿½ï¿½ ï¿½Þ½Ã´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½*/		
 		_float4x4* pWorldMatrix;
 		class CInstanceModel* pModel = { nullptr };
 		class CMaterial* pMaterial = { nullptr };
@@ -73,20 +73,20 @@ namespace Engine {
 		}
 	}BLENDRENDERKEY;
 
-	/*¹ÝÅõ¸í ÆÐÅ¶*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶*/
 	typedef struct DrawBlendedPacket : BASE_PACKET {
-		_bool bSkinning = { false }; /*±×·¡¼­ º»ÀÌ ÀÖ´Ï?*/
+		_bool bSkinning = { false }; /*ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½?*/
 
-		_uint DrawIndex = {};		/*¸î¹øÂ° ¸Þ½Ã ±×¸®´Âµ¥?*/
-		_uint MaterialIndex = {};/*±× ¸Þ½Ã´Â ¹¹¾²´Âµ¥*/
+		_uint DrawIndex = {};		/*ï¿½ï¿½ï¿½Â° ï¿½Þ½ï¿½ ï¿½×¸ï¿½ï¿½Âµï¿½?*/
+		_uint MaterialIndex = {};/*ï¿½ï¿½ ï¿½Þ½Ã´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½*/
 		_uint SkinningOffset = {};
 
 		class CModel* pModel = { nullptr };
 		class CMaterial* pMaterial = { nullptr };
 
-		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*Ãß°¡ÀûÀ¸·Î ³Ö°í ½ÍÀº °Í ÀÖ¾î?*/
+		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*ï¿½ß°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½?*/
 
-		_float DistanceToCamera = 0.f;       // Á¤·Ä¿ë Key
+		_float DistanceToCamera = 0.f;       // ï¿½ï¿½ï¿½Ä¿ï¿½ Key
 		BLENDRENDERKEY GetKey() const;
 	}BLENDED_PACKET;
 
@@ -104,7 +104,7 @@ namespace Engine {
 	typedef struct DrawDebugPacket : BASE_PACKET {
 		class CModel* pModel = { nullptr };
 		class CDebugRender* pDebug = { nullptr };
-		_uint DrawIndex = {}; /*¸î¹øÂ° ¸Þ½Ã ±×¸®´Âµ¥?*/
+		_uint DrawIndex = {}; /*ï¿½ï¿½ï¿½Â° ï¿½Þ½ï¿½ ï¿½×¸ï¿½ï¿½Âµï¿½?*/
 	}DEBUG_PACKET;
 
 	/*Audio*/

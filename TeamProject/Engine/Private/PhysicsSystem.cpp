@@ -78,7 +78,7 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;        // 기본값 1 -> 4로 증가
+    sceneDesc.ccdMaxPasses = 4;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
@@ -231,7 +231,7 @@ PxTriangleMesh* CPhysicsSystem::Cook_TriangleMesh(const string& strModelKey, CMo
         return iter->second;
 
     // 쿠킹된 파일 확인
-    string strCookedPath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
+    string strCookedPath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
 
     PxTriangleMesh* pTriMesh = nullptr;
 
@@ -331,52 +331,125 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
     OutputDebugStringA(debugMsg);
 #endif
 
+    _uint skippedMeshCount = 0;
+
     for (_uint i = 0; i < iMeshCount; ++i)
     {
         CMesh* pMesh = pModelData->Get_Mesh(i);
 
+        // 필터링 : 메쉬 이름 체크
+        string meshName = pMesh->Get_Key();
+
+        _bool bShouldCook = true;
+
+        if (meshName.find("_Proxy") != string::npos)
+        {
+            // _Proxy 메쉬만 쿠킹
+            bShouldCook = true;
+        }
+        if (!bShouldCook)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (not Proxy)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
+
         const vector<VTXMESH>& meshVerts = pMesh->Get_StaticVertices();
         const vector<_uint>& meshIndices = pMesh->Get_Indices();
 
+        // 필터링 : 빈 데이터
         if (meshVerts.empty() || meshIndices.empty())
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (empty data)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
             continue;
+        }
 
+        // 필터링 : 삼각형이 아닌 메쉬
         if (meshIndices.size() % 3 != 0)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (not triangles)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
             continue;
+        }
 
-        _uint vertexOffset = vertices.size();
+        // 필터링 : 버텍스 최소 개수
+        if (meshVerts.size() < 3)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (too few vertices)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
 
-        // 인덱스 범위 검증
+        // 필터링 : 인덱스 범위 검증
         _bool bValidIndices = true;
         for (_uint idx : meshIndices)
         {
             if (idx >= meshVerts.size())
             {
+#ifdef _DEBUG
+                sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (invalid indices)\n",
+                    i, meshName.c_str());
+                OutputDebugStringA(debugMsg);
+#endif
                 bValidIndices = false;
                 break;
             }
         }
 
         if (!bValidIndices)
+        {
+            skippedMeshCount++;
             continue;
+        }
 
-        // 버텍스 추가
+        // 유효한 메쉬 추가
+        _uint vertexOffset = vertices.size();
+
         for (const auto& vtx : meshVerts)
         {
             vertices.push_back(PxVec3(vtx.vPosition.x, vtx.vPosition.y, vtx.vPosition.z));
         }
 
-        // 인덱스 추가
         for (_uint idx : meshIndices)
         {
             indices.push_back(idx + vertexOffset);
         }
+
+#ifdef _DEBUG
+        _uint triangleCount = meshIndices.size() / 3;
+        sprintf_s(debugMsg, "[PhysX Cooking] Mesh %d OK: '%s' - Verts=%zu, Triangles=%d\n",
+            i, meshName.c_str(), meshVerts.size(), triangleCount);
+        OutputDebugStringA(debugMsg);
+#endif
     }
+
+#ifdef _DEBUG
+    sprintf_s(debugMsg, "[PhysX Cooking] Processed: %d valid, %d skipped\n",
+        iMeshCount - skippedMeshCount, skippedMeshCount);
+    OutputDebugStringA(debugMsg);
+#endif
 
     if (vertices.empty() || indices.empty())
     {
 #ifdef _DEBUG
-        OutputDebugStringA("[PhysX Cooking] Error: No valid mesh data\n");
+        OutputDebugStringA("[PhysX Cooking] Error: No valid mesh data after filtering\n");
 #endif
         return E_FAIL;
     }
@@ -391,13 +464,13 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
     meshDesc.triangles.data = indices.data();
 
 #ifdef _DEBUG
-    sprintf_s(debugMsg, "[PhysX Cooking] Vertices=%d, Triangles=%d\n",
+    sprintf_s(debugMsg, "[PhysX Cooking] Final: Vertices=%d, Triangles=%d\n",
         meshDesc.points.count, meshDesc.triangles.count);
     OutputDebugStringA(debugMsg);
 #endif
 
-    string strSavePath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
-    filesystem::create_directories("../../DemoResource/Physics/Cooked/");
+    string strSavePath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
+    filesystem::create_directories("../Resources/Physics/Cooked/");
 
     PxDefaultFileOutputStream writeBuffer(strSavePath.c_str());
     PxTriangleMeshCookingResult::Enum result;
@@ -421,15 +494,14 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
 
     case PxTriangleMeshCookingResult::eLARGE_TRIANGLE:
 #ifdef _DEBUG
-        sprintf_s(debugMsg, "[PhysX Cooking] Warning: Large triangles in %s (still usable)\n", strModelKey.c_str());
+        sprintf_s(debugMsg, "[PhysX Cooking] Warning: Large triangles (still usable)\n");
         OutputDebugStringA(debugMsg);
 #endif
         break;
 
     case PxTriangleMeshCookingResult::eFAILURE:
 #ifdef _DEBUG
-        sprintf_s(debugMsg, "[PhysX Cooking] Error: Cook failed for %s\n", strModelKey.c_str());
-        OutputDebugStringA(debugMsg);
+        OutputDebugStringA("[PhysX Cooking] Error: Cook failed\n");
 #endif
         return E_FAIL;
     }

@@ -1,10 +1,28 @@
 #include "Shader_Define.hlsl"
 
-float2 UVOffset;
+
+/*Default Params*/
+float4 vBaseColor;
+float4 vBrightColor;
+float4 vEmissiveColor;
+float Alpha;
+float Threshold;
+
+/*Sprite Animation Params*/
 uint Col;
 uint Row;
 uint FrameIndex;
-float Alpha;
+
+/*UV Animation Params*/
+float2 UVOffset;
+
+/*Noise Params*/
+
+/*Dissolve Params*/
+float DissolveThreshold;
+
+/*Distortion Params*/
+
 
 struct VS_IN
 {
@@ -61,22 +79,47 @@ struct PS_OUT
     vector vDiffuse : SV_TARGET0;
 };
 
+PS_OUT PS_MAIN_DEFAULT(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    
+    //if (vMtrlDiffuse.a < 0.1f)
+    //    discard;
+    
+    Out.vDiffuse = vMtrlDiffuse;
+    
+    return Out;
+}
+
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
     
     float2 Texcoord = In.vTexcoord + UVOffset;
+    //if (Texcoord.x < 0 || Texcoord.x > 1)
+    //    discard;
+    //if (Texcoord.y < 0 || Texcoord.y > 1)
+    //    discard;
         
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, Texcoord);
+    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
+    float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
     
-  if (vMtrlDiffuse.a < 0.1f)
-      discard;
+    float fBrightIntensity = 2.f;
+    float fBase = vMtrlDiffuse.g;
+    float fBright = vMtrlDiffuse.r;
+    float fMask = vMtrlDiffuse.b;
+    float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a *= Alpha;
+    Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
+    Out.vDiffuse.a = Alpha * fRGBMask;
+    if (fDissolveMask < DissolveThreshold)
+        Out.vDiffuse.a = 0.f;
     
     return Out;
 }
+
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {
     PS_OUT Out;
@@ -89,8 +132,8 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
     
-  if (vMtrlDiffuse.a < 0.1f)
-      discard;
+    //if(vMtrlDiffuse.a < 0.1f)
+    //   discard;
     
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a *= Alpha;
@@ -100,6 +143,16 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 
 technique11 DefaultTechnique
 {
+    pass Opaque
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
+    }
+
     pass UVAnimation
     {
         SetRasterizerState(RS_Default);

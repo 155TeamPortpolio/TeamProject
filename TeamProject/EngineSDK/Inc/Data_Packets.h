@@ -139,9 +139,9 @@ namespace Engine {
 	{
 		//string MrtKey;
 		vector<string> TargetNames;
+		function<void(ID3D11DeviceContext*)> DrawCall;
 		_bool bClearColor = false;
 		_bool bClearDepth = false;
-		
-		function<void(ID3D11DeviceContext*)> DrawCall;
+
 	}POST_PROCESS_COMMAND;
 }
