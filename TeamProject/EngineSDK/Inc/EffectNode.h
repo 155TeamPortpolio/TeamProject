@@ -30,6 +30,8 @@ public:
 
 protected:
     _bool m_IsLoop = false;
+    _bool m_IsEffectActive = false;
+    _float m_fDelayTime{};
     _float m_fDuration{};
     _float m_fElpasedTime{};
 

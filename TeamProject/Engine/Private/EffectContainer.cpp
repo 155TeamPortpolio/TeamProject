@@ -70,12 +70,20 @@ void CEffectContainer::Priority_Update(_float dt)
 
 void CEffectContainer::Update(_float dt)
 {
-	if (!m_IsLoop)
+	if (m_IsLoop)
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	else
 	{
 		m_fElapsedTime += dt;
+		if (m_fElapsedTime >= m_fDuration)
+		{
+			m_isAlive = false;
+			return;
+		}
+
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
 	}
 
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CEffectContainer::Late_Update(_float dt)

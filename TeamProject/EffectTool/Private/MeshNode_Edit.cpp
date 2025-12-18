@@ -81,7 +81,10 @@ void CMeshNode_Edit::Render_GUI()
 void CMeshNode_Edit::Play()
 {
 	m_isAlive = true;
-	m_IsLoop = false;
+
+	if (!m_IsLoop)
+		m_IsEffectActive = false;
+
 	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
 	m_vCurrUVOffset = m_vStartUVOffset;
@@ -97,6 +100,12 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
+		{"model_key",m_ModelKey},
+		{"material_key",m_MaterialKey},
+
+		{"delay_time", m_fDelayTime},
+		{"duration", m_fDuration},
+		{"is_loop",m_IsLoop},
 		{"base_color",{{"x",m_vBaseColor.x},{"y",m_vBaseColor.y},{"z",m_vBaseColor.z},{"w",m_vBaseColor.w}}},
 
 		/* Alpha */
@@ -168,7 +177,9 @@ void CMeshNode_Edit::SetMaterial()
 
 			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
 			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
+
 			m_SetMaterial = true;
+			m_MaterialKey = MaterialTag;
 		}
 	}
 }
@@ -191,6 +202,7 @@ void CMeshNode_Edit::SetMesh()
 				MSG_BOX("Link Failed - Mesh");
 
 			m_SetMesh = true;
+			m_ModelKey = ModelTag;
 		}
 	}
 }
@@ -277,6 +289,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		pMaterialInstance->Override_Pass("SpriteAnimation");
 	}
+	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
 	/*Default Params*/

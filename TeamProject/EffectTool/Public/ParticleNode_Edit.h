@@ -46,7 +46,6 @@ private:
 
     /*Main Params*/
     _bool m_IsWorld = true;
-    _bool m_IsLoop = false;
     _uint m_iBurstCount{};
 
     _float m_fSpawnPerSec{};

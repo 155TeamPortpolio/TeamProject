@@ -61,6 +61,7 @@ void CEffectContainer_Edit::Render_GUI()
 	DisplayAllTextures();
 	DisplayModels();
 	DisplayMaterial();
+	SetUp_EffectContainer();
 	ContextClear();
 	Import();
 	Export();
@@ -114,10 +115,7 @@ void CEffectContainer_Edit::Import()
 	{
 		using namespace nlohmann;
 		namespace fs = std::filesystem;
-
 	}
-
-
 }
 
 void CEffectContainer_Edit::Export()
@@ -159,6 +157,9 @@ void CEffectContainer_Edit::Play()
 {
 	if (ImGui::Button("Play"))
 	{
+		m_isAlive = true;
+		m_fElapsedTime = 0.f;
+
 		for (auto& node : m_Nodes)
 			node->Play();
 	}
@@ -428,4 +429,11 @@ void CEffectContainer_Edit::DisplayMaterial()
 	}
 
 	ImGui::End();
+}
+
+void CEffectContainer_Edit::SetUp_EffectContainer()
+{
+	ImGui::SeparatorText("EffectContainer Setting");
+	ImGui::Checkbox("Is Loop", &m_IsLoop);
+	ImGui::DragFloat("Duration", &m_fDuration);
 }

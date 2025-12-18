@@ -79,6 +79,12 @@ void CParticleNode_Edit::Render_GUI()
 
 void CParticleNode_Edit::Play()
 {
+	m_isAlive = true;
+	if (!m_IsLoop)
+		m_IsEffectActive = false;
+
+	m_fElpasedTime = 0.f;
+
 	PARTICLE_NODE node{};
 
 	node.isWorld = m_IsWorld;
@@ -123,10 +129,13 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
-		{"texture_key",m_TextureKey},
+		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
-		{"is_world", m_IsWorld},
+
+		{"delay_time",m_fDelayTime},
+		{"duration", m_fDuration},
 		{"is_loop",m_IsLoop},
+		{"is_world", m_IsWorld},
 		{"burst_count",m_iBurstCount},
 		{"spawn_per_sec",m_fSpawnPerSec},
 		{"max_spawn_particle_count",m_iMaxSpawnParticleCount},
@@ -215,6 +224,9 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	_bool isDirty = false;
 
 	ImGui::SeparatorText("ParticleEffect Setting");
+
+	ImGui::DragFloat("Delay Time", &m_fDelayTime);
+	ImGui::DragFloat("Duration", &m_fDuration);
 
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
 	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);

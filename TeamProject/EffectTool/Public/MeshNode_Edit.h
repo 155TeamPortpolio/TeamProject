@@ -43,6 +43,9 @@ private:
     _bool ChangeEaseType(EaseType& ioValue, EaseType shownValue);
     void SetUp_MeshEffect();
 
+    string m_ModelKey{};
+    string m_MaterialKey{};
+
     _bool m_IsSpriteMode = false;
     _bool m_SetMesh = false;
     _bool m_SetMaterial = false;
