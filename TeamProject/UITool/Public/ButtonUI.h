@@ -6,7 +6,7 @@ NS_BEGIN(UITool)
 class CButtonUI final : public CUIObject_Tool
 {
 public:
-	enum class STATE { NORMAL, CLICKED, DISABLED, END };
+	enum class STATE { NORMAL, HOVERED, CLICKED, DISABLED, END };
 
 private:
 	CButtonUI();
@@ -23,12 +23,16 @@ public:
 
 	virtual void Render_GUI() override;
 
+	virtual void Enter_Hover() override;
+	virtual void Exit_Hover() override;
+	virtual void OnClick() override;
+
 public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
 public:
-	_int		m_iState = {};
+	STATE		m_eState = {};
 	string		m_strTextureKey;
 	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 

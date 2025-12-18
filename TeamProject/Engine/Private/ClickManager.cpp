@@ -23,6 +23,8 @@ void CClickManager::Update(_float dt)
 
 	_float2 fMouse = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
 
+	m_pNewHovered = nullptr;
+
 	while (!m_ClickableObjects.empty())
 	{
 		auto& pObj = m_ClickableObjects.back();
@@ -32,16 +34,30 @@ void CClickManager::Update(_float dt)
 			_float2 fCenter = pObj->Get_RectTopLeft_Screen();
 			_float2 fSize = pObj->Get_PxSize();
 
-			if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB) &&
-				fCenter.x <= fMouse.x && fCenter.x + fSize.x >= fMouse.x &&
+			if (fCenter.x <= fMouse.x && fCenter.x + fSize.x >= fMouse.x &&
 				fCenter.y <= fMouse.y && fCenter.y + fSize.y >= fMouse.y)
 			{
-				// 클릭 이벤트 처리 필요
+				m_pNewHovered = pObj;
+
+				if(CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
+					pObj->OnClick();
+
 				break;
 			}
 		}
 
 		m_ClickableObjects.pop_back();
+	}
+
+	if (m_pHovered != m_pNewHovered)
+	{
+		if (m_pHovered)
+			m_pHovered->Exit_Hover();
+
+		m_pHovered = m_pNewHovered;
+
+		if (m_pHovered)
+			m_pHovered->Enter_Hover();
 	}
 
 	m_ClickableObjects.clear();

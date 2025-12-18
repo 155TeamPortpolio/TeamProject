@@ -61,6 +61,27 @@ void CButtonUI::Render_GUI()
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     if (ImGui::Combo(u8"¿ÃπÃ¡ˆ", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+
+    _char szText[32] = {};
+    sprintf_s(szText, sizeof(szText), "%d", static_cast<_int>(m_eState));
+    ImGui::TextDisabled(szText);
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("[ STATE ] 0:normal 1:hovered 2:clicked 3:disabled");
+}
+
+void CButtonUI::Enter_Hover()
+{
+    OutputDebugString(L"Enter_Hover\n");
+}
+
+void CButtonUI::Exit_Hover()
+{
+    OutputDebugString(L"Exit_Hover\n");
+}
+
+void CButtonUI::OnClick()
+{
+    OutputDebugString(L"Clicked\n");
 }
 
 void CButtonUI::ToJson(json& data)
