@@ -523,23 +523,38 @@ void CRenderSystem::Process_RenderCommand()
 
 	m_RenderCommands.clear();
 }
-
 void CRenderSystem::Process_PostProcessQueue()
 {
+	if (m_PostCommands.empty()) return;
+
+	std::stable_sort(m_PostCommands.begin(), m_PostCommands.end(),
+		[](const auto& a, const auto& b) { return a.GetKey() < b.GetKey(); });
+
+	_uint key = 0;
+	bool bound = false;
+
 	for (auto& cmd : m_PostCommands)
 	{
-		m_pTargetManager->Bind_Targets(cmd.Targets, cmd.bClearColor, cmd.bClearDepth);
-		//m_pTargetManager->Begin_MRT("MRT_Bloom");
+		const _uint curKey = cmd.GetKey();
+
+		if (!bound || curKey != key)
+		{
+			if (bound) m_pTargetManager->End_MRT();
+			string mrt = m_pTargetManager->PostProcessToTargetName(cmd.eTarget);
+			if (FAILED(m_pTargetManager->Begin_MRT(mrt))) return;
+
+			key = curKey;
+			bound = true;
+		}
+
 		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
-
 		cmd.DrawCall(m_pContext);
-		//m_pTargetManager->End_MRT();
-		//m_pTargetManager->Restore_Targets();
 	}
-
+	if (bound) m_pTargetManager->End_MRT();
 	m_PostCommands.clear();
 }
+
 
 #pragma endregion
 

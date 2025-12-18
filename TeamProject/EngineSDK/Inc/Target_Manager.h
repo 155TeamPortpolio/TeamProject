@@ -29,6 +29,7 @@ public:
 public:
 	HRESULT Bind_Targets(const vector<POSTPROCESS>& targets, _bool ClearColor = false, _bool ClearDepth = false);
 	HRESULT Restore_Targets();
+	const string PostProcessToTargetName(POSTPROCESS type);
 
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -43,7 +44,6 @@ public:
 private:
 	class CRenderTarget* Find_RenderTarget(const string& strTargetTag);
 	vector<CRenderTarget*>& Find_MRT(const string& strMRTTag);
-	const string PostProcessToTargetName(POSTPROCESS type);
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };

@@ -62,10 +62,9 @@ void CMeshNode_Edit::Update(_float dt)
 		__super::Update(dt);
 
 
-		vector<POSTPROCESS> targets = { POSTPROCESS::MRT_Bloom };
 		POST_PROCESS_COMMAND Command =
 		{
-			targets,
+			POSTPROCESS::MRT_Bloom,
 			Get_Component<CMaterial>()->Get_Shader(0),
 			m_pTransform->Get_WorldMatrix_Ptr(),
 			[this](ID3D11DeviceContext* pContext)
