@@ -115,6 +115,61 @@ void CEffectContainer_Edit::Import()
 	{
 		using namespace nlohmann;
 		namespace fs = std::filesystem;
+
+		string filePath = Helper::OpenFile_Dialogue();
+
+		ifstream file(filePath, std::ios::binary);
+		if (!file.is_open())
+		{
+			MSG_BOX("Load Failed");
+			return;
+		}
+
+		ordered_json EffectData = json::parse(file);
+
+		m_iNumNodes = EffectData.at("node_count").get<_uint>();
+		m_IsLoop = EffectData.at("is_loop").get<_bool>();
+		m_fDuration = EffectData.at("duration").get<_float>();
+
+		m_Nodes.reserve(m_iNumNodes);
+		for (_uint i = 0; i < m_iNumNodes; ++i)
+		{
+			CGameObject* pNode = nullptr;
+			EFFECT_TYPE type = static_cast<EFFECT_TYPE>(EffectData["nodes"][i].at("effect_type").get<_uint>());
+
+			switch (type)
+			{
+			case Engine::EFFECT_TYPE::SPRITE:
+			{
+
+			}break;
+			case Engine::EFFECT_TYPE::PARTICLE:
+			{
+				CParticleNode_Edit::PARTICLE_NODE_EDIT_DESC* pDesc = new CParticleNode_Edit::PARTICLE_NODE_EDIT_DESC;
+				pDesc->pContext = &m_Context;
+
+				pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ParticleNode" }).Add_ObjDesc(pDesc).Build("ParticleNode");
+				m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+
+				m_Nodes.back()->Import(EffectData["nodes"][i]);
+			}break;
+			case Engine::EFFECT_TYPE::MESH:
+			{
+				CMeshNode_Edit::MESH_NODE_EDIT_DESC* pDesc = new CMeshNode_Edit::MESH_NODE_EDIT_DESC;
+				pDesc->pContext = &m_Context;
+
+				pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_MeshNode" }).Add_ObjDesc(pDesc).Build("MeshNode");
+				m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+
+				m_Nodes.back()->Import(EffectData["nodes"][i]);
+			}break;
+			default:
+				break;
+			}
+
+			if (pNode)
+				Get_Component<CObjectContainer>()->Add_Child(pNode);
+		}
 	}
 }
 
@@ -122,7 +177,7 @@ void CEffectContainer_Edit::Export()
 {
 	if (ImGui::Button("Export"))
 	{
-		string filePath = Helper::SaveFileDialog();
+		string filePath = Helper::SaveFileDialogByWinAPI("", ".json");
 
 		using namespace nlohmann;
 		namespace fs = std::filesystem;

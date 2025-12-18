@@ -123,6 +123,77 @@ void CParticleNode_Edit::Play()
 
 void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 {
+	m_TextureKey = json.value("texture_key", m_TextureKey);
+	m_TexturePath = json.value("texture_path", m_TexturePath);
+
+	m_fDelayTime = json.value("delay_time", m_fDelayTime);
+	m_fDuration = json.value("duration", m_fDuration);
+	m_IsLoop = json.value("is_loop", m_IsLoop);
+	m_IsWorld = json.value("is_world", m_IsWorld);
+	m_iBurstCount = json.value("burst_count", m_iBurstCount);
+	m_fSpawnPerSec = json.value("spawn_per_sec", m_fSpawnPerSec);
+	m_iMaxSpawnParticleCount = json.value("max_spawn_particle_count", m_iMaxSpawnParticleCount);
+
+	m_vStartSpeed.x = json.at("start_speed").at("x").get<_float>();
+	m_vStartSpeed.y = json.at("start_speed").at("y").get<_float>();
+	m_vStartLifeTime.x = json.at("start_life_time").at("x").get<_float>();
+	m_vStartLifeTime.y = json.at("start_life_time").at("y").get<_float>();
+	m_vStartSize.x = json.at("start_size").at("x").get<_float>();
+	m_vStartSize.y = json.at("start_size").at("y").get<_float>();
+
+	m_vSpawnAreaMin.x = json.at("spawn_area_min").at("x").get<_float>();
+	m_vSpawnAreaMin.y = json.at("spawn_area_min").at("y").get<_float>();
+	m_vSpawnAreaMin.z = json.at("spawn_area_min").at("z").get<_float>();
+
+	m_vSpawnAreaMax.x = json.at("spawn_area_max").at("x").get<_float>();
+	m_vSpawnAreaMax.y = json.at("spawn_area_max").at("y").get<_float>();
+	m_vSpawnAreaMax.z = json.at("spawn_area_max").at("z").get<_float>();
+
+	m_UseGravity = json.value("use_gravity", m_UseGravity);
+	m_fGravityScale = json.value("gravity_scale", m_fGravityScale);
+
+	m_fDampScale = json.value("damp_scale", m_fDampScale);
+
+	m_vStartScale.x = json.at("start_scale").at("x").get<_float>();
+	m_vStartScale.y = json.at("start_scale").at("y").get<_float>();
+	m_vEndScale.x = json.at("end_scale").at("x").get<_float>();
+	m_vEndScale.y = json.at("end_scale").at("y").get<_float>();
+
+	m_vStartColor.x = json.at("start_color").at("x").get<_float>();
+	m_vStartColor.y = json.at("start_color").at("y").get<_float>();
+	m_vStartColor.z = json.at("start_color").at("z").get<_float>();
+	m_vStartColor.w = json.at("start_color").at("w").get<_float>();
+
+	m_vEndColor.x = json.at("end_color").at("x").get<_float>();
+	m_vEndColor.y = json.at("end_color").at("y").get<_float>();
+	m_vEndColor.z = json.at("end_color").at("z").get<_float>();
+	m_vEndColor.w = json.at("end_color").at("w").get<_float>();
+
+	m_IsParticleAnimated = json.value("particle_animated", m_IsParticleAnimated);
+	m_IsRandomFrameIndex = json.value("random_frame_index", m_IsRandomFrameIndex);
+	m_iCol = json.value("col", m_iCol);
+	m_iRow = json.value("row", m_iRow);
+	m_iMaxFrameIndex = json.value("max_frame_index", m_iMaxFrameIndex);
+
+	m_vStrength.x = json.at("strength").at("x").get<_float>();
+	m_vStrength.y = json.at("strength").at("y").get<_float>();
+	m_vStrength.z = json.at("strength").at("z").get<_float>();
+
+	m_vFrequency.x = json.at("frequency").at("x").get<_float>();
+	m_vFrequency.y = json.at("frequency").at("y").get<_float>();
+	m_vFrequency.z = json.at("frequency").at("z").get<_float>();
+	
+	m_vScrollSpeed.x = json.at("scroll_speed").at("x").get<_float>();
+	m_vScrollSpeed.y = json.at("scroll_speed").at("y").get<_float>();
+	m_vScrollSpeed.z = json.at("scroll_speed").at("z").get<_float>();
+
+	/* Set Texture */
+	{
+		auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
+		pMaterialData->Link_Texture("EffectEdit_Level", m_TextureKey, TEXTURE_TYPE::DIFFUSE);
+
+		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	}
 }
 
 void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
