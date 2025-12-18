@@ -27,68 +27,68 @@ PxMaterial* CPhysicsSystem::Get_Material(const string& strKey)
 {
     auto iter = m_Materials.find(strKey);
     if (iter == m_Materials.end())
-        return m_pMaterial; // ¾øÀ¸¸é ±âº» ÀçÁú ¹İÈ¯
+        return m_pMaterial; // ì—†ìœ¼ë©´ ê¸°ë³¸ ì¬ì§ˆ ë°˜í™˜
 
     return iter->second;
 }
 
 HRESULT CPhysicsSystem::Initialize()
 {
-    // Foundation »ı¼º
+    // Foundation ìƒì„±
     m_pFoundation = PxCreateFoundation(PX_PHYSICS_VERSION, m_Allocator, m_ErrorCallback);
     if (!m_pFoundation) return E_FAIL;
 
-    // PVD (Visual Debugger) ¼³Á¤
+    // PVD (Visual Debugger) ì„¤ì •
 #ifdef _DEBUG 
-    // PVD »ı¼º
+    // PVD ìƒì„±
     m_pPvd = PxCreatePvd(*m_pFoundation);
-    // PVD ¿¬°á (·ÎÄÃÈ£½ºÆ®, Æ÷Æ® 5425, Å¸ÀÓ¾Æ¿ô 10ms)
+    // PVD ì—°ê²° (ë¡œì»¬í˜¸ìŠ¤íŠ¸, í¬íŠ¸ 5425, íƒ€ì„ì•„ì›ƒ 10ms)
     PxPvdTransport* transport = PxDefaultPvdSocketTransportCreate("127.0.0.1", 5425, 10);
     m_pPvd->connect(*transport, PxPvdInstrumentationFlag::eALL);
     if (m_pPvd->isConnected())
     {
-        // ¿¬°á ¼º°ø ·Î±×
+        // ì—°ê²° ì„±ê³µ ë¡œê·¸
         OutputDebugStringA("------------------------------------------------\n");
         OutputDebugStringA("   [PhysX] PVD Connected Successfully!          \n");
         OutputDebugStringA("------------------------------------------------\n");
     }
     else
     {
-        // ¿¬°á ½ÇÆĞ ·Î±×
+        // ì—°ê²° ì‹¤íŒ¨ ë¡œê·¸
         OutputDebugStringA("------------------------------------------------\n");
         OutputDebugStringA("   [PhysX] PVD Connection Failed...             \n");
         OutputDebugStringA("------------------------------------------------\n");
     }
 #else
-    m_pPvd = nullptr; // ¸±¸®Áî ¸ğµå
+    m_pPvd = nullptr; // ë¦´ë¦¬ì¦ˆ ëª¨ë“œ
 #endif
 
-    // Physics »ı¼º (PVD ¿¬°á)
+    // Physics ìƒì„± (PVD ì—°ê²°)
     m_pPhysics = PxCreatePhysics(PX_PHYSICS_VERSION, *m_pFoundation, PxTolerancesScale(), true, m_pPvd);
     if (!m_pPhysics) return E_FAIL;
-    if (!PxInitExtensions(*m_pPhysics, m_pPvd)) return E_FAIL;   // Extensions ÃÊ±âÈ­ (ÇÊ¼öÀûÀÎ È®Àå ±â´Éµé)
+    if (!PxInitExtensions(*m_pPhysics, m_pPvd)) return E_FAIL;   // Extensions ì´ˆê¸°í™” (í•„ìˆ˜ì ì¸ í™•ì¥ ê¸°ëŠ¥ë“¤)
 
-    m_pDispatcher = PxDefaultCpuDispatcherCreate(2);             // Dispatcher »ı¼º (CPU ½º·¹µå 2°³ »ç¿ë)
+    m_pDispatcher = PxDefaultCpuDispatcherCreate(2);             // Dispatcher ìƒì„± (CPU ìŠ¤ë ˆë“œ 2ê°œ ì‚¬ìš©)
 
-    // Scene(¹°¸® ¿ùµå) »ı¼º
+    // Scene(ë¬¼ë¦¬ ì›”ë“œ) ìƒì„±
     PxSceneDesc sceneDesc(m_pPhysics->getTolerancesScale());
-    sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // Áß·Â ¼³Á¤
+    sceneDesc.gravity = PxVec3(0.0f, -9.81f, 0.0f); // ì¤‘ë ¥ ì„¤ì •
     sceneDesc.cpuDispatcher = m_pDispatcher;
-    sceneDesc.filterShader = SimulationFilterShader; // ±âº» Ãæµ¹ ÇÊÅÍ
+    sceneDesc.filterShader = SimulationFilterShader; // ê¸°ë³¸ ì¶©ëŒ í•„í„°
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
     sceneDesc.ccdMaxPasses = 4;
-    sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // Áß·Â ±â¹İ
+    sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // ì¤‘ë ¥ ê¸°ë°˜
 #ifdef _DEBUG
-    // µğ¹ö±× ¸ğµåÀÏ ¶§ ¾À Á¤º¸¸¦ PVD·Î Àü¼Û
+    // ë””ë²„ê·¸ ëª¨ë“œì¼ ë•Œ ì”¬ ì •ë³´ë¥¼ PVDë¡œ ì „ì†¡
     if (m_pPvd->isConnected())
     {
-        // PvdSceneClient ÇÃ·¡±× ¼³Á¤
+        // PvdSceneClient í”Œë˜ê·¸ ì„¤ì •
         sceneDesc.flags |= PxSceneFlag::eENABLE_PCM;
         sceneDesc.flags |= PxSceneFlag::eENABLE_ACTIVE_ACTORS;
 
-        // (ÁÖÀÇ: PhysX ¹öÀü¿¡ µû¶ó sceneDesc.flags°¡ ¾Æ´Ï¶ó scene->getPvdSceneClient()->setScenePvdFlag »ç¿ëÀÌ ÇÊ¿äÇÒ ¼ö ÀÖÀ½)
+        // (ì£¼ì˜: PhysX ë²„ì „ì— ë”°ë¼ sceneDesc.flagsê°€ ì•„ë‹ˆë¼ scene->getPvdSceneClient()->setScenePvdFlag ì‚¬ìš©ì´ í•„ìš”í•  ìˆ˜ ìˆìŒ)
     }
 #endif
 
@@ -96,7 +96,7 @@ HRESULT CPhysicsSystem::Initialize()
     if (!m_pScene) return E_FAIL;
 
 #ifdef _DEBUG
-    // SceneÀÇ PVD ÇÃ·¡±×
+    // Sceneì˜ PVD í”Œë˜ê·¸
     PxPvdSceneClient* pvdClient = m_pScene->getScenePvdClient();
     if (pvdClient)
     {
@@ -108,13 +108,13 @@ HRESULT CPhysicsSystem::Initialize()
     m_pScene->setVisualizationParameter(PxVisualizationParameter::eCOLLISION_SHAPES, 1.0f);
 #endif
 
-    m_pControllerManager = PxCreateControllerManager(*m_pScene);     // Controller Manager »ı¼º
+    m_pControllerManager = PxCreateControllerManager(*m_pScene);     // Controller Manager ìƒì„±
     
-    // ¸ÓÅÍ¸®¾ó µ¥ÀÌÅÍ ¼¼ÆÃ : ÇÊ¿ä½Ã Ãß°¡
+    // ë¨¸í„°ë¦¬ì–¼ ë°ì´í„° ì„¸íŒ… : í•„ìš”ì‹œ ì¶”ê°€
     Add_Material("Default", 0.5f, 0.5f, 0.6f);
     m_pMaterial = Get_Material("Default");
 
-    // Cooking ÃÊ±âÈ­
+    // Cooking ì´ˆê¸°í™”
     PxCookingParams cookingParams(m_pPhysics->getTolerancesScale());
     cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
     cookingParams.meshWeldTolerance = 0.001f;
@@ -160,7 +160,7 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
             CCollider* pCollider = dynamic_cast<CCollider*>(outHit.pCollidable);
             if (pCollider && pCollider->IsTrigger())
             {
-                // Æ®¸®°Å´Â ¹«½ÃÇÏ°í ´ÙÀ½ °Ë»ç (±¸Çö º¹Àâ)
+                // íŠ¸ë¦¬ê±°ëŠ” ë¬´ì‹œí•˜ê³  ë‹¤ìŒ ê²€ì‚¬ (êµ¬í˜„ ë³µì¡)
                 return false;
             }
         }
@@ -225,12 +225,12 @@ PxTriangleMesh* CPhysicsSystem::Cook_TriangleMesh(const string& strModelKey, CMo
     if (!pModel || !m_pCooking)
         return nullptr;
 
-    // Ä³½Ã È®ÀÎ
+    // ìºì‹œ í™•ì¸
     auto iter = m_CachedTriangleMeshes.find(strModelKey);
     if (iter != m_CachedTriangleMeshes.end())
         return iter->second;
 
-    // ÄíÅ·µÈ ÆÄÀÏ È®ÀÎ
+    // ì¿ í‚¹ëœ íŒŒì¼ í™•ì¸
     string strCookedPath = "../Bin/Resources/Physics/Cooked/" + strModelKey + ".px";
 
     PxTriangleMesh* pTriMesh = nullptr;
@@ -292,19 +292,19 @@ PxFilterFlags CPhysicsSystem::SimulationFilterShader(
     PxFilterObjectAttributes attributes1, PxFilterData filterData1,
     PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-    // Æ®¸®°Å(Trigger)ÀÎ °æ¿ì
+    // íŠ¸ë¦¬ê±°(Trigger)ì¸ ê²½ìš°
     if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
     {
         pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
         return PxFilterFlag::eDEFAULT;
     }
-    // ¹°¸®Àû Ãæµ¹ Ã³¸® + ¾Ë¸² ÄÑ±â
-    // eCONTACT_DEFAULT: ¹°¸®ÀûÀ¸·Î Æ¨°Ü³»¶ó (ÀÌ°Ô ÀÖ¾î¾ß ¾È ¶Õ¸³´Ï´Ù!)
-    // eNOTIFY_TOUCH_FOUND: Ãæµ¹ ½ÃÀÛµÇ¸é onContact È£ÃâÇØ¶ó
+    // ë¬¼ë¦¬ì  ì¶©ëŒ ì²˜ë¦¬ + ì•Œë¦¼ ì¼œê¸°
+    // eCONTACT_DEFAULT: ë¬¼ë¦¬ì ìœ¼ë¡œ íŠ•ê²¨ë‚´ë¼ (ì´ê²Œ ìˆì–´ì•¼ ì•ˆ ëš«ë¦½ë‹ˆë‹¤!)
+    // eNOTIFY_TOUCH_FOUND: ì¶©ëŒ ì‹œì‘ë˜ë©´ onContact í˜¸ì¶œí•´ë¼
     pairFlags = PxPairFlag::eCONTACT_DEFAULT
-        | PxPairFlag::eSOLVE_CONTACT         // ¹°¸®Àû ¹İ¹ß·Â
-        | PxPairFlag::eDETECT_DISCRETE_CONTACT // ÀÏ¹İ Ãæµ¹ °¨Áö
-        | PxPairFlag::eDETECT_CCD_CONTACT    // CCD Ãæµ¹ °¨Áö Çã¿ë
+        | PxPairFlag::eSOLVE_CONTACT         // ë¬¼ë¦¬ì  ë°˜ë°œë ¥
+        | PxPairFlag::eDETECT_DISCRETE_CONTACT // ì¼ë°˜ ì¶©ëŒ ê°ì§€
+        | PxPairFlag::eDETECT_CCD_CONTACT    // CCD ì¶©ëŒ ê°ì§€ í—ˆìš©
         | PxPairFlag::eNOTIFY_TOUCH_FOUND
         | PxPairFlag::eNOTIFY_TOUCH_LOST;
 
@@ -337,14 +337,14 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
     {
         CMesh* pMesh = pModelData->Get_Mesh(i);
 
-        // ÇÊÅÍ¸µ : ¸Ş½¬ ÀÌ¸§ Ã¼Å©
+        // í•„í„°ë§ : ë©”ì‰¬ ì´ë¦„ ì²´í¬
         string meshName = pMesh->Get_Key();
 
         _bool bShouldCook = true;
 
         if (meshName.find("_Proxy") != string::npos)
         {
-            // _Proxy ¸Ş½¬¸¸ ÄíÅ·
+            // _Proxy ë©”ì‰¬ë§Œ ì¿ í‚¹
             bShouldCook = true;
         }
         if (!bShouldCook)
@@ -361,7 +361,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
         const vector<VTXMESH>& meshVerts = pMesh->Get_StaticVertices();
         const vector<_uint>& meshIndices = pMesh->Get_Indices();
 
-        // ÇÊÅÍ¸µ : ºó µ¥ÀÌÅÍ
+        // í•„í„°ë§ : ë¹ˆ ë°ì´í„°
         if (meshVerts.empty() || meshIndices.empty())
         {
 #ifdef _DEBUG
@@ -373,7 +373,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
             continue;
         }
 
-        // ÇÊÅÍ¸µ : »ï°¢ÇüÀÌ ¾Æ´Ñ ¸Ş½¬
+        // í•„í„°ë§ : ì‚¼ê°í˜•ì´ ì•„ë‹Œ ë©”ì‰¬
         if (meshIndices.size() % 3 != 0)
         {
 #ifdef _DEBUG
@@ -385,7 +385,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
             continue;
         }
 
-        // ÇÊÅÍ¸µ : ¹öÅØ½º ÃÖ¼Ò °³¼ö
+        // í•„í„°ë§ : ë²„í…ìŠ¤ ìµœì†Œ ê°œìˆ˜
         if (meshVerts.size() < 3)
         {
 #ifdef _DEBUG
@@ -397,7 +397,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
             continue;
         }
 
-        // ÇÊÅÍ¸µ : ÀÎµ¦½º ¹üÀ§ °ËÁõ
+        // í•„í„°ë§ : ì¸ë±ìŠ¤ ë²”ìœ„ ê²€ì¦
         _bool bValidIndices = true;
         for (_uint idx : meshIndices)
         {
@@ -419,7 +419,7 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
             continue;
         }
 
-        // À¯È¿ÇÑ ¸Ş½¬ Ãß°¡
+        // ìœ íš¨í•œ ë©”ì‰¬ ì¶”ê°€
         _uint vertexOffset = vertices.size();
 
         for (const auto& vtx : meshVerts)
