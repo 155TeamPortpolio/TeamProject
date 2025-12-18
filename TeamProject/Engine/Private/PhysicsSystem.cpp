@@ -231,7 +231,7 @@ PxTriangleMesh* CPhysicsSystem::Cook_TriangleMesh(const string& strModelKey, CMo
         return iter->second;
 
     // 쿠킹된 파일 확인
-    string strCookedPath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
+    string strCookedPath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
 
     PxTriangleMesh* pTriMesh = nullptr;
 
@@ -469,8 +469,8 @@ HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
     OutputDebugStringA(debugMsg);
 #endif
 
-    string strSavePath = "../../DemoResource/Physics/Cooked/" + strModelKey + ".px";
-    filesystem::create_directories("../../DemoResource/Physics/Cooked/");
+    string strSavePath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
+    filesystem::create_directories("../Resources/Physics/Cooked/");
 
     PxDefaultFileOutputStream writeBuffer(strSavePath.c_str());
     PxTriangleMeshCookingResult::Enum result;
