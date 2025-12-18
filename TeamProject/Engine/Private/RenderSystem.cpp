@@ -91,10 +91,11 @@ HRESULT CRenderSystem::Render()
 
 	Process_RenderCommand();
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
 	Process_PostProcessQueue();
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
+	Render_Bloom();
+	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	Render_Final();
 
 	return S_OK;
@@ -405,6 +406,9 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 	m_pTargetManager->Create_Target(ShadowDesc);
 
+	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomDesc);
+
 	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightDesc);
 
@@ -423,6 +427,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
@@ -503,7 +509,7 @@ void CRenderSystem::Process_PostProcessQueue()
 {
 	for (auto& cmd : m_PostCommands)
 	{
-		m_pTargetManager->Bind_Targets(cmd.TargetNames, cmd.bClearColor, cmd.bClearDepth);
+		m_pTargetManager->Bind_Targets(cmd.Targets);
 
 		cmd.DrawCall(m_pContext);
 
@@ -599,6 +605,12 @@ void CRenderSystem::Render_Shadow()
 	m_pShadowPass->Execute(m_pContext);
 	m_pTargetManager->End_MRT();
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
+}
+
+HRESULT CRenderSystem::Render_Bloom()
+{
+
+	return E_NOTIMPL;
 }
 
 HRESULT CRenderSystem::Render_Final()

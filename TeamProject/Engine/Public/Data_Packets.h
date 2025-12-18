@@ -137,11 +137,10 @@ namespace Engine {
 
 	typedef struct RenderPostProcessingRequestCommand
 	{
-		string MrtKey;
-		vector<string> TargetNames;
-		_bool bClearColor = false;
-		_bool bClearDepth = false;
-		
+		//string MrtKey;
+		vector<POSTPROCESS> Targets; //	enum class POSTPROCESS { BLOOM, DISTORTION, END};
+		/*_bool bClearColor = false;
+		_bool bClearDepth = false;*/
 		function<void(ID3D11DeviceContext*)> DrawCall;
 	}POST_PROCESS_COMMAND;
 }

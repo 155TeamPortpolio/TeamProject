@@ -137,7 +137,7 @@ namespace Engine {
 
 	typedef struct RenderPostProcessingRequestCommand
 	{
-		string MrtKey;
+		//string MrtKey;
 		vector<string> TargetNames;
 		_bool bClearColor = false;
 		_bool bClearDepth = false;

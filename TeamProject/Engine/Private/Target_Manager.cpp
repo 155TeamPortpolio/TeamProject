@@ -128,9 +128,9 @@ ID3D11DepthStencilView* CTarget_Manager::Get_MTR_DSV(const string& strMRTTag)
 	return pMRTList[0]->Get_DSV();
 }
 
-HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool clearColor, bool clearDepth)
+HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets)
 {
-	if (targetNames.empty())
+	if (targets.empty())
 		return E_FAIL;
 
 	SavedState saved;
@@ -139,28 +139,28 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool cl
 	m_SaveEngineStates.push(saved);
 
 	vector<CRenderTarget*> bindTargets;
-	bindTargets.reserve(targetNames.size());
+	bindTargets.reserve(targets.size());
 
-	for (auto& key : targetNames)
+	for (auto& key : targets)
 	{
-		auto& mrtList = Find_MRT(key);      
-		if (!mrtList.empty())               
-		{
-			for (auto& pTarget : mrtList)
-				bindTargets.push_back(pTarget);
-			continue;
-		}
-
-		CRenderTarget* pTarget = Get_CustomTarget(key);
-		if (!pTarget)
-			pTarget = Get_EngineTarget(key);
-
-		if (!pTarget)
-		{
-			return E_FAIL;
-		}
-
-		bindTargets.push_back(pTarget);
+		//auto& mrtList = Find_MRT();
+		//if (!mrtList.empty())               
+		//{
+		//	for (auto& pTarget : mrtList)
+		//		bindTargets.push_back(pTarget);
+		//	continue;
+		//}
+		//
+		//CRenderTarget* pTarget = Get_CustomTarget(key);
+		//if (!pTarget)
+		//	pTarget = Get_EngineTarget(key);
+		//
+		//if (!pTarget)
+		//{
+		//	return E_FAIL;
+		//}
+		//
+		//bindTargets.push_back(pTarget);
 	}
 
 	ID3D11RenderTargetView* RTVs[8] = { nullptr };
