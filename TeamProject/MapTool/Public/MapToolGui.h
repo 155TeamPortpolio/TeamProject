@@ -23,7 +23,8 @@ private:
 	void			RakeResources();
 	void			KeyInput();
 	void			Compute_Ray();
-	void			Place_Object(RAY_HIT* pRayHit);
+	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
+	// 기존 레이피킹 방식. 사용X
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 	void			Save_MapData();
@@ -36,9 +37,12 @@ private:
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 
-	RAY			m_Ray = {};
+	// BG
+	//RAY			m_Ray = {};
 	_float3		m_vRayHitPos = {};
 
+	// Physics Ray
+	PHYSICS_RAY	m_PhysicsRay = {};
 
 	/* For.RakeResouece */
 	vector<ModelPathPack>		m_ModelPathPack;

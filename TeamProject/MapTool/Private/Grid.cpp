@@ -5,7 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
-#include "RayReceiver.h"
+#include "Collider.h"
 
 CGrid::CGrid()
 {
@@ -21,7 +21,6 @@ HRESULT CGrid::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CPlaneModel>();
 	Add_Component<CMaterial>();
-	Add_Component<CRayReceiver>();
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("TileCell.png", "../Bin/Resources/TileCell.png");
@@ -32,10 +31,10 @@ HRESULT CGrid::Initialize_Prototype()
 
 HRESULT CGrid::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
-
 	/* 모델 셋팅 */
 	CPlaneModel* pModel = Get_Component<CPlaneModel>();
+
+	__super::Initialize(pArg);
 
 	/* 머테리얼 셋팅 */
 	CMaterial* pMaterial = Get_Component<CMaterial>();

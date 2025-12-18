@@ -5,6 +5,7 @@
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 #include "Material.h"
+#include "Collider.h"
 
 #include "RayReceiver.h"
 
@@ -26,6 +27,7 @@ HRESULT CPlacedObject::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	Add_Component<CMaterial>();
+	Add_Component<CCollider>();
 
 	return S_OK;
 }
@@ -53,17 +55,18 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 	else
 		Add_Component<CStaticModel>();
 
-#pragma endregion
-	__super::Initialize(pArg);
-
-	Get_Component<CRayReceiver>()->Set_CompActive(pObjDesc->isRayReceiver);
-
 	if (true == isSkinned)
 		Get_Component<CSkeletalModel>()->Link_Model("MapTool_Level", m_TagModelKey);
 	else
 		Get_Component<CStaticModel>()->Link_Model("MapTool_Level", m_TagModelKey);
 
 	Get_Component<CMaterial>()->Link_Material("MapTool_Level", m_TagMaterialKey);
+
+#pragma endregion
+	__super::Initialize(pArg);
+
+	Get_Component<CRayReceiver>()->Set_CompActive(pObjDesc->isRayReceiver);
+
 	
 	return S_OK;
 }

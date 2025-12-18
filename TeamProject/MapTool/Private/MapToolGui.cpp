@@ -12,14 +12,14 @@
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
     , m_pGameInstance(CGameInstance::GetInstance())
-    , m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer"}
+    , m_TagLayers{ "All_Layer", "PlacedObject_Layer", "TriggerObject_Layer" }
 {
     Safe_AddRef(m_pGameInstance);
 }
 
 HRESULT CMapToolGui::Initialize()
 {
-    m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
+    //m_pGameInstance->Get_RayMgr()->Register_Ray(&m_Ray);
     RakeResources();
 
     m_TagPlacedObjectLayer = "PlacedObject_Layer";
@@ -145,7 +145,8 @@ void CMapToolGui::RakeResources()
 
 void CMapToolGui::Compute_Ray()
 {
-    m_Ray = {};
+    //m_Ray = {};
+    m_PhysicsRay = {};
 
     POINT   pt = {};
 
@@ -196,29 +197,37 @@ void CMapToolGui::Compute_Ray()
     _vector rayOrigin = raySrc;
     _vector rayDir = XMVector3Normalize(rayDest - raySrc);
 
+    // BG Ray
+    //XMStoreFloat3(&m_Ray.vRayDirection, rayDir);
+    //XMStoreFloat3(&m_Ray.vRayOrigin, rayOrigin);
+    //m_Ray.fMaxDistance = 1550.f;
 
-    XMStoreFloat3(&m_Ray.vRayDirection, rayDir);
-    XMStoreFloat3(&m_Ray.vRayOrigin, rayOrigin);
-    m_Ray.fMaxDistance = 1550.f;
+    // SB RAY
+    XMStoreFloat3(&m_PhysicsRay.vOrigin, rayOrigin);
+    XMStoreFloat3(&m_PhysicsRay.vDirection, rayDir);
 }
 
-void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
+void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 {
-    if (nullptr == pRayHit->pObject ||
+    if (nullptr == pRayHit->pHitObject ||
         -1 == m_iSelectedIndex)
         return;
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 
     CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
-    Desc->isRayReceiver = m_isObjectPicking;
     Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
     Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
 
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.bCooking = true;
+    ColDesc.strModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
+
     CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
-        .Position(pRayHit->vHittedPosition)
+        .Position(pRayHit->vPoint)
         .Scale(m_vScale_PlacedObject)
         .Add_ObjDesc(Desc)
+        .Collider(ColDesc)
         .Build("Static_Model");
 
     pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
@@ -226,6 +235,7 @@ void CMapToolGui::Place_Object(RAY_HIT* pRayHit)
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
+    // 사용X
     CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagPlacedObjectLayer });
     if (nullptr == pStaticLayer)
         return;
@@ -290,15 +300,10 @@ void CMapToolGui::Save_MapData()
                 static_cast<CPlacedObject*>(pObject)->Export_ObjectData(&DataDesc);
                 DataLayer.Objects.push_back(DataDesc);
             }
-            else if (m_TagLayers[i] == "FloorObject_Layer") {
-
-            }
             else if (m_TagLayers[i] == "TriggerObject_Layer") {
 
             }
-            else if (m_TagLayers[i] == "Navigation_Layer") {
 
-            }
         }
         m_Data.Layers.push_back(DataLayer);
     }
@@ -356,9 +361,13 @@ void CMapToolGui::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     Desc->TagModelKey = pData->TagModelResourceKey;
     Desc->TagMaterialKey = pData->TagMaterialResourceKey;
    
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.bCooking = true;
+    ColDesc.strModelKey = pData->TagModelResourceKey;
 
     CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
         .Add_ObjDesc(Desc)
+        .Collider(ColDesc)
         .Build("Placed_Model");
     
     _float4x4 matWorld = {
@@ -393,12 +402,23 @@ void CMapToolGui::Clear_Layer()
 
             if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
             {
-                CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", TagClearLayer });
-                if (nullptr == pLayer) {
-                    ImGui::PopID();
-                    return;
+                if (m_TagLayers[i] == "All_Layer") {
+                    for (_int j = 0; j < (_int)m_TagLayers.size(); j++)
+                    {
+                        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagLayers[j]});
+                        if (nullptr == pLayer) 
+                            continue;
+                        pLayer->Clear_Layer();
+                    }
                 }
-                pLayer->Clear_Layer();
+                else {
+                    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", TagClearLayer });
+                    if (nullptr == pLayer) {
+                        ImGui::PopID();
+                        return;
+                    }
+                    pLayer->Clear_Layer();
+                }
                 m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject = { nullptr };
             }
         }
@@ -414,22 +434,12 @@ void CMapToolGui::KeyInput()
 
     // 오브젝트 피킹
     if (pInputDev->Mouse_Tap(MOUSE_BTN::LB) && false == io.WantCaptureMouse) {
-     
-        // 오브젝트 피킹이 꺼져있을때 임시로 킴
-        _bool isResetObjectPicking = false;
-        if (false == m_isObjectPicking) {
-            isResetObjectPicking = true;
-            Set_ObjectPicking(true);
+        PHYSICS_RAY_HIT HitDesc = {};
+        if (true == m_pGameInstance->Get_PhysicsSystem()->Raycast(m_PhysicsRay, HitDesc)) {
+            if (m_TagPlacedObjectLayer == HitDesc.pHitObject->Get_Layer()->Get_LayerTag())
+                CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = HitDesc.pHitObject  ;
         }
 
-        RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
-        if (nullptr != pRayHit) {
-            if (m_TagPlacedObjectLayer == pRayHit->pObject->Get_Layer()->Get_LayerTag())
-                CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = pRayHit->pObject;
-        }
-
-        if (true == isResetObjectPicking)
-            Set_ObjectPicking(false);
     }
 
     // Inspector 창에 떠있는 오브젝트 삭제
@@ -447,10 +457,9 @@ void CMapToolGui::KeyInput()
 
     // 레이피킹으로 오브젝트 배치
     if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
-        RAY_HIT* pRayHit = m_pGameInstance->Get_RayMgr()->Get_FrontRayHit();
-        if (nullptr != pRayHit) {
-            m_vRayHitPos = pRayHit->vHittedPosition;
-            Place_Object(pRayHit);
+        PHYSICS_RAY_HIT HitDesc = {};
+        if (true == m_pGameInstance->Get_PhysicsSystem()->Raycast(m_PhysicsRay, HitDesc)) {
+            Place_Object(&HitDesc);
         }
     }
 }

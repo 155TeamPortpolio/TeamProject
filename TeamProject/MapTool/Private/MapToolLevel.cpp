@@ -76,7 +76,7 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 	DefaultCameraLightDesc.fRange = 100.f;
 	DefaultCameraLightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	DefaultCameraLightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	DefaultCameraLightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	DefaultCameraLightDesc.vDirection = _float4(0.f, -1.f, 0.f, 0.f);
 	DefaultCameraLightDesc.fIntensity = 10.f;
 	
 
