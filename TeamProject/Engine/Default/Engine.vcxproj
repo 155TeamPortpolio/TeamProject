@@ -423,6 +423,7 @@ exit /b 0</Command>
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
     <ClCompile Include="..\private\Engine_Math.cpp" />
+    <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />

@@ -5,6 +5,10 @@
 #include "GameInstance.h"
 #include "CharacterController.h"
 
+#include "StaticModel.h"
+#include "ModelData.h"
+#include "Mesh.h"
+
 #ifdef USINGPHYSICS 
 
 HRESULT CPhysicsSystem::Add_Material(const string& strKey, _float fStatic, _float fDynamic, _float fRestitution)
@@ -74,7 +78,7 @@ HRESULT CPhysicsSystem::Initialize()
     sceneDesc.flags |= PxSceneFlag::eENABLE_CCD;
     sceneDesc.broadPhaseType = PxBroadPhaseType::eSAP;
     sceneDesc.flags |= PxSceneFlag::eENABLE_STABILIZATION;
-    sceneDesc.ccdMaxPasses = 4;        // 기본값 1 -> 4로 증가
+    sceneDesc.ccdMaxPasses = 4;
     sceneDesc.bounceThresholdVelocity = 0.2f * 9.81f;  // 중력 기반
 #ifdef _DEBUG
     // 디버그 모드일 때 씬 정보를 PVD로 전송
@@ -105,9 +109,18 @@ HRESULT CPhysicsSystem::Initialize()
 #endif
 
     m_pControllerManager = PxCreateControllerManager(*m_pScene);     // Controller Manager 생성
-
+    
+    // 머터리얼 데이터 세팅 : 필요시 추가
     Add_Material("Default", 0.5f, 0.5f, 0.6f);
     m_pMaterial = Get_Material("Default");
+
+    // Cooking 초기화
+    PxCookingParams cookingParams(m_pPhysics->getTolerancesScale());
+    cookingParams.meshPreprocessParams |= PxMeshPreprocessingFlag::eWELD_VERTICES;
+    cookingParams.meshWeldTolerance = 0.001f;
+    m_pCooking = PxCreateCooking(PX_PHYSICS_VERSION, *m_pFoundation, cookingParams);
+    if (!m_pCooking)
+        return E_FAIL;
 
     return S_OK;
 }
@@ -115,7 +128,9 @@ HRESULT CPhysicsSystem::Initialize()
 void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
+
     m_pScene->simulate(dt);
+
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
@@ -205,6 +220,39 @@ _bool CPhysicsSystem::Raycast_All(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS& out
     return Raycast_Multiple(allDesc, outHits);
 }
 
+PxTriangleMesh* CPhysicsSystem::Cook_TriangleMesh(const string& strModelKey, CModel* pModel)
+{
+    if (!pModel || !m_pCooking)
+        return nullptr;
+
+    // 캐시 확인
+    auto iter = m_CachedTriangleMeshes.find(strModelKey);
+    if (iter != m_CachedTriangleMeshes.end())
+        return iter->second;
+
+    // 쿠킹된 파일 확인
+    string strCookedPath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
+
+    PxTriangleMesh* pTriMesh = nullptr;
+
+    if (filesystem::exists(strCookedPath))
+    {
+        pTriMesh = Load_CookedMesh(strCookedPath);
+    }
+    else
+    {
+        if (FAILED(Cooking(strModelKey, pModel)))
+            return nullptr;
+
+        pTriMesh = Load_CookedMesh(strCookedPath);
+    }
+
+    if (pTriMesh)
+        m_CachedTriangleMeshes[strModelKey] = pTriMesh;
+
+    return pTriMesh;
+}
+
 void CPhysicsSystem::Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit)
 {
     outHit.bHit = true;
@@ -263,6 +311,213 @@ PxFilterFlags CPhysicsSystem::SimulationFilterShader(
     return PxFilterFlag::eDEFAULT;
 }
 
+HRESULT CPhysicsSystem::Cooking(const string& strModelKey, CModel* pModel)
+{
+    if (!m_pCooking || !pModel)
+        return E_FAIL;
+
+    CModelData* pModelData = static_cast<CStaticModel*>(pModel)->Get_ModelData();
+    if (!pModelData)
+        return E_FAIL;
+
+    vector<PxVec3> vertices;
+    vector<PxU32> indices;
+
+    _uint iMeshCount = pModelData->Get_MeshCount();
+
+#ifdef _DEBUG
+    char debugMsg[512];
+    sprintf_s(debugMsg, "[PhysX Cooking] Start: %s (Meshes: %d)\n", strModelKey.c_str(), iMeshCount);
+    OutputDebugStringA(debugMsg);
+#endif
+
+    _uint skippedMeshCount = 0;
+
+    for (_uint i = 0; i < iMeshCount; ++i)
+    {
+        CMesh* pMesh = pModelData->Get_Mesh(i);
+
+        // 필터링 : 메쉬 이름 체크
+        string meshName = pMesh->Get_Key();
+
+        _bool bShouldCook = true;
+
+        if (meshName.find("_Proxy") != string::npos)
+        {
+            // _Proxy 메쉬만 쿠킹
+            bShouldCook = true;
+        }
+        if (!bShouldCook)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (not Proxy)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
+
+        const vector<VTXMESH>& meshVerts = pMesh->Get_StaticVertices();
+        const vector<_uint>& meshIndices = pMesh->Get_Indices();
+
+        // 필터링 : 빈 데이터
+        if (meshVerts.empty() || meshIndices.empty())
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (empty data)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
+
+        // 필터링 : 삼각형이 아닌 메쉬
+        if (meshIndices.size() % 3 != 0)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (not triangles)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
+
+        // 필터링 : 버텍스 최소 개수
+        if (meshVerts.size() < 3)
+        {
+#ifdef _DEBUG
+            sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (too few vertices)\n",
+                i, meshName.c_str());
+            OutputDebugStringA(debugMsg);
+#endif
+            skippedMeshCount++;
+            continue;
+        }
+
+        // 필터링 : 인덱스 범위 검증
+        _bool bValidIndices = true;
+        for (_uint idx : meshIndices)
+        {
+            if (idx >= meshVerts.size())
+            {
+#ifdef _DEBUG
+                sprintf_s(debugMsg, "[PhysX Cooking] Skip Mesh %d: '%s' (invalid indices)\n",
+                    i, meshName.c_str());
+                OutputDebugStringA(debugMsg);
+#endif
+                bValidIndices = false;
+                break;
+            }
+        }
+
+        if (!bValidIndices)
+        {
+            skippedMeshCount++;
+            continue;
+        }
+
+        // 유효한 메쉬 추가
+        _uint vertexOffset = vertices.size();
+
+        for (const auto& vtx : meshVerts)
+        {
+            vertices.push_back(PxVec3(vtx.vPosition.x, vtx.vPosition.y, vtx.vPosition.z));
+        }
+
+        for (_uint idx : meshIndices)
+        {
+            indices.push_back(idx + vertexOffset);
+        }
+
+#ifdef _DEBUG
+        _uint triangleCount = meshIndices.size() / 3;
+        sprintf_s(debugMsg, "[PhysX Cooking] Mesh %d OK: '%s' - Verts=%zu, Triangles=%d\n",
+            i, meshName.c_str(), meshVerts.size(), triangleCount);
+        OutputDebugStringA(debugMsg);
+#endif
+    }
+
+#ifdef _DEBUG
+    sprintf_s(debugMsg, "[PhysX Cooking] Processed: %d valid, %d skipped\n",
+        iMeshCount - skippedMeshCount, skippedMeshCount);
+    OutputDebugStringA(debugMsg);
+#endif
+
+    if (vertices.empty() || indices.empty())
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("[PhysX Cooking] Error: No valid mesh data after filtering\n");
+#endif
+        return E_FAIL;
+    }
+
+    PxTriangleMeshDesc meshDesc;
+    meshDesc.points.count = static_cast<PxU32>(vertices.size());
+    meshDesc.points.stride = sizeof(PxVec3);
+    meshDesc.points.data = vertices.data();
+
+    meshDesc.triangles.count = static_cast<PxU32>(indices.size() / 3);
+    meshDesc.triangles.stride = 3 * sizeof(PxU32);
+    meshDesc.triangles.data = indices.data();
+
+#ifdef _DEBUG
+    sprintf_s(debugMsg, "[PhysX Cooking] Final: Vertices=%d, Triangles=%d\n",
+        meshDesc.points.count, meshDesc.triangles.count);
+    OutputDebugStringA(debugMsg);
+#endif
+
+    string strSavePath = "../Resources/Physics/Cooked/" + strModelKey + ".px";
+    filesystem::create_directories("../Resources/Physics/Cooked/");
+
+    PxDefaultFileOutputStream writeBuffer(strSavePath.c_str());
+    PxTriangleMeshCookingResult::Enum result;
+
+    if (!m_pCooking->cookTriangleMesh(meshDesc, writeBuffer, &result))
+    {
+#ifdef _DEBUG
+        OutputDebugStringA("[PhysX Cooking] Error: Cook failed\n");
+#endif
+        return E_FAIL;
+    }
+
+    switch (result)
+    {
+    case PxTriangleMeshCookingResult::eSUCCESS:
+#ifdef _DEBUG
+        sprintf_s(debugMsg, "[PhysX Cooking] Success: %s\n", strModelKey.c_str());
+        OutputDebugStringA(debugMsg);
+#endif
+        break;
+
+    case PxTriangleMeshCookingResult::eLARGE_TRIANGLE:
+#ifdef _DEBUG
+        sprintf_s(debugMsg, "[PhysX Cooking] Warning: Large triangles (still usable)\n");
+        OutputDebugStringA(debugMsg);
+#endif
+        break;
+
+    case PxTriangleMeshCookingResult::eFAILURE:
+#ifdef _DEBUG
+        OutputDebugStringA("[PhysX Cooking] Error: Cook failed\n");
+#endif
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+PxTriangleMesh* CPhysicsSystem::Load_CookedMesh(const string& strFilePath)
+{
+    if (!m_pPhysics)
+        return nullptr;
+
+    PxDefaultFileInputData readBuffer(strFilePath.c_str());
+    return m_pPhysics->createTriangleMesh(readBuffer);
+}
+
 CPhysicsSystem* CPhysicsSystem::Create()
 {
     CPhysicsSystem* pInstance = new CPhysicsSystem();
@@ -276,6 +531,19 @@ CPhysicsSystem* CPhysicsSystem::Create()
 
 void CPhysicsSystem::Free()
 {
+    for (auto& pair : m_CachedTriangleMeshes)
+    {
+        if (pair.second)
+            pair.second->release();
+    }
+    m_CachedTriangleMeshes.clear();
+
+    if (m_pCooking)
+    {
+        m_pCooking->release();
+        m_pCooking = nullptr;
+    }
+
     for (auto& pair : m_Materials)
         pair.second->release();
     m_Materials.clear();
