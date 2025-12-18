@@ -30,9 +30,7 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 
     const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
     if (strTextureKeys.size())
-        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex]);
-    else
-        MSG_BOX("Failed to Add_Texture : No Textures Loaded");
+        Change_Texture(0, G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 
     m_iCount++;
 

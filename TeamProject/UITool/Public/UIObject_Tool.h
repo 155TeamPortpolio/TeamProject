@@ -33,7 +33,7 @@ protected:
 	virtual void Render_GUI_Layout();
 	virtual void Render_GUI_Transform();
 
-	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& strTextureKey);
+	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);
 
 private:
 	void ToJson_Common(json& data);
