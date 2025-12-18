@@ -402,6 +402,15 @@ namespace Engine
 		_bool isLoop = false;
 		vector<tagEffectNode> Nodes;
 	}EFFECT_ASSET;
+
+	typedef struct tagObjectHandle {
+		string Level = {};
+		string Layer = {};
+		_uint hObjID = {};
+
+		_bool isValid() { return !(Level.empty() || Layer.empty() || hObjID < 1); }
+		void Reset() { Level.clear(); Layer.clear(); hObjID = 0; }
+	}OBJECT_HANDLE;
 }
 
 

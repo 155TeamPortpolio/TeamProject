@@ -32,7 +32,7 @@ public:
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) override;
 
 public:
-	virtual class CGameObject* Request_Object(const OBJECT_HANDEL& handle);
+	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
 
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);

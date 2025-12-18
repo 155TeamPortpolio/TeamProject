@@ -251,17 +251,17 @@ LAYER_DESC CGameObject::Get_LayerDesc()
 	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
 }
 
-OBJECT_HANDEL CGameObject::Get_Handle()
+OBJECT_HANDLE CGameObject::Get_Handle()
 {
-	OBJECT_HANDEL hObj = {};
+	OBJECT_HANDLE hObj = {};
 	if (m_LevelTag.empty()) {
 		hObj.Reset();
-		return;
+		return hObj;
 	}
 
 	if (!m_pLayer) {
 		hObj.Reset();
-		return;
+		return hObj;
 	}
 
 	hObj.Layer = m_pLayer->Get_LayerTag();
