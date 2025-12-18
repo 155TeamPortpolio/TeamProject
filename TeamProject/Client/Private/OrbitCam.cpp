@@ -27,7 +27,6 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
 void COrbitCam::Free()
 {
    __super::Free(); 
-   Safe_Release(m_pTargetTransform);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
@@ -49,18 +48,10 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetTarget(CTransform* target)
+void COrbitCam::SetTarget(CGameObject* obj)
 {
-    if (m_pTargetTransform)
-        Safe_Release(m_pTargetTransform);
-
-    m_pTargetTransform = target;
-
-    if (m_pTargetTransform)
-        Safe_AddRef(m_pTargetTransform);
-
-    if (!m_pTargetTransform)
-        return;
+    m_targetHandle = obj->Get_Handle();
+    if (!m_targetHandle.isValid()) return;
 
     const Vector3 pivot = GetPivotPos();
 
@@ -98,16 +89,12 @@ void COrbitCam::SetTarget(CTransform* target)
 
 void COrbitCam::ClearTarget()
 {
-    if (m_pTargetTransform)
-        Safe_Release(m_pTargetTransform);
-
-    m_pTargetTransform = nullptr;
+    m_targetHandle.Reset();
 }
 
 void COrbitCam::Priority_Update(_float dt)
 {
-    if (!m_pTargetTransform)
-        return;
+    if (!m_targetHandle.isValid()) return;
 
     UpdateInput(dt);
     ClampTargets();
@@ -155,9 +142,10 @@ void COrbitCam::SmoothStates(_float dt)
 
 Vector3 COrbitCam::GetPivotPos() const
 {
-    assert(m_pTargetTransform);
+    auto obj = GAME->Get_ObjectMgr()->Request_Object(m_targetHandle);
+    if (!obj) return {};
 
-    const Vector4 tpos4 = m_pTargetTransform->Get_Pos();
+    const Vector4 tpos4 = obj->Get_Component<CTransform>()->Get_Pos();
     const Vector3 tpos{ tpos4.x, tpos4.y, tpos4.z };
 
     return tpos + Vector3(0.f, m_offsetY, 0.f);

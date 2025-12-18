@@ -57,8 +57,30 @@ HRESULT CTestLevel::Awake()
 	testModel->Get_Component<CTransform>()->Set_Pos({0.f, 5.f, 0.f});
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	m_testModel = testModel;
-	Safe_AddRef(m_testModel);
+	// --------------------------- Camera -------------------------------------------------
+	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
+
+	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+		.Camera(kAspect)
+		.Position({ 0.f, 2.f, -5.f })
+		.Build("Orbit_Cam");
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
+
+	objMgr->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
+
+	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
+		.Camera(kAspect)
+		.Position({ 0.f, 2.f, -5.f })
+		.Build("SequenceCam");
+	objMgr->Add_Object(sequenceCam, { "Test_Level", "Camera_Layer" });
+
+	if (!m_pCamDirector)
+		m_pCamDirector = CCamDirector::Create();
+
+	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
+	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
+
+	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
 	Ready_Camera();
 	return S_OK;
@@ -79,37 +101,7 @@ void CTestLevel::Update()
 
 void CTestLevel::Ready_Camera()
 {
-	assert(m_testModel);
 
-	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
-	auto objMgr = m_pGameInstance->Get_ObjectMgr();
-
-	auto sequenceCamObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("SequenceCam");
-	objMgr->Add_Object(sequenceCamObj, { "Test_Level", "Camera_Layer" });
-
-	auto orbitCamObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("Orbit_Cam");
-	objMgr->Add_Object(orbitCamObj, { "Test_Level", "Camera_Layer" });
-
-	m_orbitCam = static_cast<COrbitCam*>(orbitCamObj);
-	Safe_AddRef(m_orbitCam);
-
-	CTransform* targetTr = m_testModel->Get_Component<CTransform>();
-	assert(targetTr);
-	m_orbitCam->SetTarget(targetTr);
-
-	CAM->Set_MainCam(orbitCamObj->Get_Component<CCamera>());
-
-	if (!m_pCamDirector)
-		m_pCamDirector = CCamDirector::Create();
-
-	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCamObj));
-	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
 }
 
 void CTestLevel::Rake_MapResources()
@@ -156,7 +148,5 @@ void CTestLevel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pCamDirector);
-	Safe_Release(m_testModel);
-	Safe_Release(m_orbitCam);
 	m_pGameInstance->DestroyInstance();
 }

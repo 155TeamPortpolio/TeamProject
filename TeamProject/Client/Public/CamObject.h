@@ -5,6 +5,7 @@
 
 #define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
 #define GAME  CGameInstance::GetInstance()
+#define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
 
 NS_BEGIN(Engine)
 class CGameInstance; class CLight;

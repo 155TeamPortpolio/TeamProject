@@ -21,7 +21,7 @@ public:
     void    Render_GUI()                override;
 
 public:
-    void    SetTarget(CTransform* target);
+    void    SetTarget(CGameObject* obj);
     void    ClearTarget();
 
 private:
@@ -35,7 +35,7 @@ private:
     void    ApplyOrbitPose();
 
 private:
-    CTransform* m_pTargetTransform{};
+    OBJECT_HANDLE m_targetHandle{};
 
     _float   m_offsetY = 0.2f;
 
