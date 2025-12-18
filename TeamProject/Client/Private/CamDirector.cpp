@@ -167,7 +167,6 @@ bool CCamDirector::EnsureLoaded(const string& key)
 CCamDirector* CCamDirector::Create()
 {
     auto inst = new CCamDirector();
-    Safe_AddRef(inst);
     return inst;
 }
 
