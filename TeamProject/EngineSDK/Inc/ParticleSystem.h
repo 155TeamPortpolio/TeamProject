@@ -74,6 +74,10 @@ private:
 
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
+
+	_float m_fDelayDuration{};
+	_float m_fElapsedTime{};
+
 	_bool m_IsLoop = false;
 	_uint m_iBurstCount{};
 

@@ -129,6 +129,8 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_DeadParticleIndices.clear();
 
 	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
+	m_fDelayDuration = particleDesc.fDelayTime;
+	m_fElapsedTime = 0.f;
 	m_IsLoop = particleDesc.isLoop;
 	m_iBurstCount = particleDesc.iBurstCount;
 	m_fSpawnPerSec = particleDesc.fSpawnPerSec;
@@ -208,9 +210,13 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 
 void CParticleSystem::Simulation_Particle(_float dt)
 {
-	SpawnParticles(dt);
-	UpdateParticles(dt);
-	BuildInstanceData();
+	m_fElapsedTime += dt;
+	if (m_fElapsedTime >= m_fDelayDuration)
+	{
+		SpawnParticles(dt);
+		UpdateParticles(dt);
+		BuildInstanceData();
+	}
 }
 
 HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count)

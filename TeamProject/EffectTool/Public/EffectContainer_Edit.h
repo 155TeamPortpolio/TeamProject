@@ -62,6 +62,7 @@ private:
     void DisplayAllTextures();
     void DisplayModels();
     void DisplayMaterial();
+    void SetUp_EffectContainer();
 };
 
 NS_END

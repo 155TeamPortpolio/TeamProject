@@ -132,10 +132,11 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     float fMask = vMtrlDiffuse.b;
     float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
+    if (fDissolveMask < DissolveThreshold)
+        discard;
+    
     Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
     Out.vDiffuse.a = Alpha * fRGBMask;
-    if (fDissolveMask < DissolveThreshold)
-        Out.vDiffuse.a = 0.f;
     
     return Out;
 }

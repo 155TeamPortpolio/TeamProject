@@ -88,6 +88,14 @@ void CSpriteNode_Edit::Play()
 	m_iCurrFrameIndex = 0;
 }
 
+void CSpriteNode_Edit::Import(nlohmann::ordered_json& json)
+{
+}
+
+void CSpriteNode_Edit::Export(nlohmann::ordered_json& json)
+{
+}
+
 CSpriteNode_Edit* CSpriteNode_Edit::Create()
 {
 	CSpriteNode_Edit* instance = new CSpriteNode_Edit();
