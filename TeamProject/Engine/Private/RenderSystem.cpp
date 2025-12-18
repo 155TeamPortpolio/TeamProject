@@ -413,7 +413,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomDesc);
 
-	RenderTargetDesc BloomTypeDesc = { "Target_BloomType" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc BloomTypeDesc = { "Target_BloomType" , DXGI_FORMAT_R16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomTypeDesc);
 
 	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -529,12 +529,13 @@ void CRenderSystem::Process_PostProcessQueue()
 	for (auto& cmd : m_PostCommands)
 	{
 		m_pTargetManager->Bind_Targets(cmd.Targets, cmd.bClearColor, cmd.bClearDepth);
+		//m_pTargetManager->Begin_MRT("MRT_Bloom");
 		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
 
 		cmd.DrawCall(m_pContext);
-
-		m_pTargetManager->Restore_Targets();
+		//m_pTargetManager->End_MRT();
+		//m_pTargetManager->Restore_Targets();
 	}
 
 	m_PostCommands.clear();
@@ -632,45 +633,45 @@ HRESULT CRenderSystem::Render_Bloom()
 {
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
-
+		
 		SHADER_PARAM BrightParam = {};
 		m_pTargetManager->Get_TargetParam("Target_Bloom", BrightParam);
 		m_pShader->Bind_Value("g_BrightTexture", BrightParam);
-
+		
 		SHADER_PARAM BlurTypeParam = {};
 		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
 		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
-
+		
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
-
+		
 		m_pShader->Apply("BLOOM_BLURX", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
 		m_pVIBuffer->Render(m_pContext);
-
+		
 		m_pTargetManager->End_MRT();
 	}
 
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
-
+		
 		SHADER_PARAM BrightParam = {};
 		m_pTargetManager->Get_TargetParam("Target_BloomBlurX", BrightParam);
 		m_pShader->Bind_Value("g_BlurXTexture", BrightParam);
-
+		
 		SHADER_PARAM BlurTypeParam = {};
 		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
 		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
-
+		
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
-
+		
 		m_pShader->Apply("BLOOM_BLURY", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
 		m_pVIBuffer->Render(m_pContext);
-
+		
 		m_pTargetManager->End_MRT();
 	}
 	return S_OK;

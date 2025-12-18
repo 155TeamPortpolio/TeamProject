@@ -70,8 +70,8 @@ VS_OUT VS_MAIN_BRIGHT(VS_IN In)
     matrix matWV, matWVP;
     
     float3 worldPos = mul(float4(In.vPosition, 1.f), g_worldMatrix).xyz;
-    float4 viewPos = float4(worldPos, 1.f);
-    float4 projPos = mul(viewPos, matOrthograph);
+    float4 viewPos =mul(float4(worldPos, 1.f), matView);
+    float4 projPos = mul(viewPos, matProjection);
 
     Out.vPosition = projPos;
     Out.vTexcoord = In.vTexcoord;
@@ -171,7 +171,7 @@ PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
 {
     PS_OUT_BRIGHT Out;
     
-    Out.vBloom = float4(0.8, 1, 1, 1); // »¡°­
+    Out.vBloom = float4(1.f, 1, 1, 1); // »¡°­
     Out.BloomType = 1.0f;
     
     return Out;
@@ -212,7 +212,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_SrcAdditive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN_BRIGHT();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_BRIGHT();

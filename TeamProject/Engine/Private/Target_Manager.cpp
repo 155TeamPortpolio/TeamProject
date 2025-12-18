@@ -127,6 +127,7 @@ ID3D11DepthStencilView* CTarget_Manager::Get_MTR_DSV(const string& strMRTTag)
 	}
 	return pMRTList[0]->Get_DSV();
 }
+
 HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool ClearColor, _bool ClearDepth)
 {
 	if (targets.empty())
@@ -143,7 +144,7 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool 
 	for (auto& key : targets)
 	{
 		string strKey = PostProcessToTargetName(key);
-		auto& mrtList = Find_MRT(strKey);
+		auto& mrtList = Find_MRT(/*strKey*/"MRT_Bloom");
 		if (!mrtList.empty())
 		{
 			for (auto& pTarget : mrtList)
@@ -156,7 +157,9 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool 
 			pTarget = Get_EngineTarget(strKey);
 
 		if (!pTarget)
+		{
 			return E_FAIL;
+		}
 
 		bindTargets.push_back(pTarget);
 	}
@@ -172,41 +175,33 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool 
 		if (!dsv) dsv = target->Get_DSV();
 	}
 
-	// 먼저 바인딩
-	m_pContext->OMSetRenderTargets(count, RTVs, dsv);
+	D3D11_VIEWPORT         ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = (_float)bindTargets[0]->Get_ViewPort()->Width;
+	ViewPortDesc.Height = (_float)bindTargets[0]->Get_ViewPort()->Height;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
 
-	// 뷰포트 설정 (첫 번째 타겟 기준)
-	if (!bindTargets.empty())
-	{
-		D3D11_VIEWPORT vp;
-		vp.TopLeftX = 0.f;
-		vp.TopLeftY = 0.f;
-		vp.Width = static_cast<float>(bindTargets[0]->Get_ViewPort()->Width);
-		vp.Height = static_cast<float>(bindTargets[0]->Get_ViewPort()->Height);
-		vp.MinDepth = 0.f;
-		vp.MaxDepth = 1.f;
-		m_pContext->RSSetViewports(1, &vp);
-	}
+	m_pContext->RSSetViewports(1, &ViewPortDesc);
 
-	// 바인딩 후에 Clear
-	if (true)
-	{
-		for (UINT i = 0; i < count; ++i)
-		{
-			if (RTVs[i])
-			{
-				float clearColor[4] = { 1.f, 0.f, 1.f, 0.f };
-				m_pContext->ClearRenderTargetView(RTVs[i], clearColor);
-			}
-		}
-	}
+	for (auto& target : bindTargets)
+		if (ClearColor) target->Clear();
 
 	if (dsv && ClearDepth)
 		m_pContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 
+
+	if (count == 0 && dsv)
+	{
+		m_pContext->OMSetRenderTargets(0, nullptr, dsv);
+		return S_OK;
+	}
+
+	m_pContext->OMSetRenderTargets(count, RTVs, dsv);
 	return S_OK;
 }
-
 
 HRESULT CTarget_Manager::Restore_Targets()
 {
