@@ -414,8 +414,9 @@ void CCollider::Render_GUI()
 		{
 			Set_Trigger(bTrigger);
 		}
+#ifdef _DEBUG
 		ImGui::Checkbox("Is Render", &m_bDebugRender);
-
+#endif
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
 		ImGui::Separator();

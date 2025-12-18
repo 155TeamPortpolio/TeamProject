@@ -32,17 +32,18 @@ private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	void			Clear_Layer();
 	
-
+#ifdef _DEBUG
+private:
+	void			Set_AllObjectDebugRender(_bool is);
+	_bool			m_isAllDebugRender = { true };
+#endif // _DEBUG
 
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 
-	// BG
-	//RAY			m_Ray = {};
-	_float3		m_vRayHitPos = {};
-
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
+	_float3		m_vRayHitPos = {};
 
 	/* For.RakeResouece */
 	vector<ModelPathPack>		m_ModelPathPack;

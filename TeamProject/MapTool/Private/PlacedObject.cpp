@@ -44,7 +44,7 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 		true == m_TagMaterialKey.empty())
 		return E_FAIL;
 
-	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData("MapTool_Level", pObjDesc->TagModelKey);
+	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(g_TagMapToolLevel, pObjDesc->TagModelKey);
 	if (nullptr == pData)
 		return E_FAIL;
 
@@ -52,14 +52,14 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 
 	if (true == isSkinned) {
 		Add_Component<CSkeletalModel>();
-		Get_Component<CSkeletalModel>()->Link_Model("MapTool_Level", m_TagModelKey);
+		Get_Component<CSkeletalModel>()->Link_Model(g_TagMapToolLevel, m_TagModelKey);
 	}
 	else {
 		Add_Component<CStaticModel>();
-		Get_Component<CStaticModel>()->Link_Model("MapTool_Level", m_TagModelKey);
+		Get_Component<CStaticModel>()->Link_Model(g_TagMapToolLevel, m_TagModelKey);
 	}
 
-	Get_Component<CMaterial>()->Link_Material("MapTool_Level", m_TagMaterialKey);
+	Get_Component<CMaterial>()->Link_Material(g_TagMapToolLevel, m_TagMaterialKey);
 
 #pragma endregion
 	__super::Initialize(pArg);

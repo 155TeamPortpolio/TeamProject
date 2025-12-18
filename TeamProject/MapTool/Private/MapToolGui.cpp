@@ -48,6 +48,12 @@ void CMapToolGui::Render_GUI()
 
     ImGui::Text("Controller");
     ImGui::BeginChild("##MapToolGuiControllerChild", ImVec2{ 0, childControllerHeight }, true);
+
+#ifdef _DEBUG
+    if (ImGui::Checkbox("IsDebugRender", &m_isAllDebugRender))
+        Set_AllObjectDebugRender(m_isAllDebugRender);
+#endif // _DEBUG
+
     ImGui::Text("Last Ray Hit Pos : %.3f, %.3f, %.3f ", m_vRayHitPos.x, m_vRayHitPos.y, m_vRayHitPos.z);
     ImGui::EndChild();
 
@@ -220,20 +226,24 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
     ColDesc.strModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
 
-    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
         .Position(pRayHit->vPoint)
         .Scale(m_vScale_PlacedObject)
         .Add_ObjDesc(Desc)
         .Collider(ColDesc)
         .Build("Static_Model");
 
-    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
+#ifdef _DEBUG
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_isAllDebugRender);
+#endif // _DEBUG
+    
+    pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_TagPlacedObjectLayer });
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
     // 사용X
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagPlacedObjectLayer });
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_TagPlacedObjectLayer });
     if (nullptr == pStaticLayer)
         return;
 
@@ -241,6 +251,19 @@ void CMapToolGui::Set_ObjectPicking(_bool is)
         pObject->Get_Component<CRayReceiver>()->Set_CompActive(is);
     }
 }
+
+#ifdef _DEBUG
+void CMapToolGui::Set_AllObjectDebugRender(_bool is)
+{
+    for (auto& Pair : m_pGameInstance->Get_ObjectMgr()->Get_LevelLayer(g_TagMapToolLevel)) {
+        for (auto& pObject : Pair.second->Get_AllObject()) {
+            if (nullptr != pObject && pObject->Get_Component<CCollider>()) {
+                pObject->Get_Component<CCollider>()->Set_DebugRender(is);
+            }
+        }
+    }
+}
+#endif // _DEBUG
 
 void CMapToolGui::PreSet_ModelResource()
 {
@@ -285,7 +308,7 @@ void CMapToolGui::Save_MapData()
     //m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer" }
 
     for (_uint i = 0; i < (_uint)m_TagLayers.size(); ++i) {
-        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagLayers[i] });
+        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_TagLayers[i] });
         if (nullptr == pLayer)
             continue;
         MapData_Layer DataLayer = {};
@@ -362,7 +385,7 @@ void CMapToolGui::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     ColDesc.bCooking = true;
     ColDesc.strModelKey = pData->TagModelResourceKey;
 
-    CGameObject* pStaticObject = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_PlacedObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
         .Add_ObjDesc(Desc)
         .Collider(ColDesc)
         .Build("Placed_Model");
@@ -374,8 +397,11 @@ void CMapToolGui::Place_PlacedObjectFromLoadData(MapData_Object* pData)
         pData->vPos[0], pData->vPos[1] , pData->vPos[2] , pData->vPos[3] };
 
     pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
+#ifdef _DEBUG
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_isAllDebugRender);
+#endif // _DEBUG
 
-    pObjMgr->Add_Object(pStaticObject, { "MapTool_Level", m_TagPlacedObjectLayer });
+    pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_TagPlacedObjectLayer });
 
 
 }
@@ -402,14 +428,14 @@ void CMapToolGui::Clear_Layer()
                 if (m_TagLayers[i] == "All_Layer") {
                     for (_int j = 0; j < (_int)m_TagLayers.size(); j++)
                     {
-                        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", m_TagLayers[j]});
+                        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_TagLayers[j]});
                         if (nullptr == pLayer) 
                             continue;
                         pLayer->Clear_Layer();
                     }
                 }
                 else {
-                    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ "MapTool_Level", TagClearLayer });
+                    CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, TagClearLayer });
                     if (nullptr == pLayer) {
                         ImGui::PopID();
                         return;
