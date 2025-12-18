@@ -259,7 +259,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         dir = normalize(dir);
         
         float3 result = float3(0, 0, 0);
-        float samples = 100.0f;          //test하고 싶다면 이거 수정 ㄱㄱ
+        float samples = 15.0f;          //test하고 싶다면 이거 수정 ㄱㄱ
         float strength = 0.1f;          //test하고 싶다면 이거 수정 ㄱㄱ
         
         for (float i = 0; i < samples; i++)
