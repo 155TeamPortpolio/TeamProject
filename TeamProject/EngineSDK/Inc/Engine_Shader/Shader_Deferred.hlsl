@@ -143,7 +143,7 @@ PS_OUT_SSAO PS_SSAO(PS_IN In)
         occlusion += (sampleDepth >= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
     }
     
-    occlusion = 1.0 - (occlusion / 64.0);
+    occlusion = 1.0 - (occlusion / 32.0);
     Out.vSSAO = occlusion;
     
     return Out;
@@ -200,7 +200,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
+    float3 lightDir = normalize(g_vLightDir.xyz * -1);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
@@ -210,11 +210,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
  
     vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
-    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
     
     float RampRatio = 0.7f; 
-    Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
-    
+    //Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
+    Out.vLight = float4(PBR, 1.f);
+
     return Out;
 }
 
@@ -276,8 +277,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 ambient = saturate(vDiffuse.rgb * vAmbient.g * ao * ssao);
-
+    
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao;
+    ambient = max(ambient, vDiffuse.rgb * 0.15f); 
+    
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);

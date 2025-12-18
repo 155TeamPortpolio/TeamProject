@@ -24,7 +24,8 @@ float GeometrySchlickGGX(float NdotV, float roughness)
 {
     //NdotV - 법선 시선벡터 내적
     float r = roughness + 1.f;
-    float k = (r * r) / 8.f; 
+    roughness = max(roughness, 0.04);
+    float k = (r * r) / 2.f;
     
     float NdotV_clamped = max(NdotV, 0.001);
     float denom = NdotV_clamped * (1.f - k) + k;
@@ -126,9 +127,9 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity, float shadow
 float3 CalculatePointLight(float3 albedo, float3 normal, float metalic, float roughness, float3 worldPos,
 float3 view, float3 light, float3 lightcolor, float lightIntensity, float3 lightposition, float lightrange, float shadowFactor)
 {
-    float3 lightdir = normalize(lightposition - worldPos);
-    float distance = length(lightposition - worldPos);
-    lightdir = lightdir / distance;
+    float3 lightVec = lightposition - worldPos;
+    float distance = length(lightVec);
+    float3 lightdir = lightVec / distance; 
     
     float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
     float rangeFactor = max(0.0, 1.0 - (distance / lightrange));
