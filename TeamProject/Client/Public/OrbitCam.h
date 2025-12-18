@@ -21,7 +21,7 @@ public:
     void    Render_GUI()                override;
 
 public:
-    void    SetTarget(CTransform* target);
+    void    SetTarget(CGameObject* obj);
     void    ClearTarget();
 
 private:
@@ -35,7 +35,7 @@ private:
     void    ApplyOrbitPose();
 
 private:
-    CTransform* m_pTargetTransform{};
+    OBJECT_HANDLE m_targetHandle{};
 
     _float   m_offsetY = 0.2f;
 
@@ -60,6 +60,14 @@ private:
     _bool    m_usePitchDolly      = true;
     _float   m_pitchDollyStrength = 0.25f;
     _float   m_pitchDollyStartN   = 0.75f;
+
+    _bool    m_usePitchAutoZoom = true;
+    _float   m_pitchAutoZoomMax = 1.0f;
+    _float   m_pitchAutoZoomStartN = 0.75f;
+    _float   m_pitchAutoZoomSmooth = 18.f;
+             
+    _float   m_pitchZoomOffsetTarget = 0.f;
+    _float   m_pitchZoomOffsetCur = 0.f;
 
 public:
     static COrbitCam* Create();

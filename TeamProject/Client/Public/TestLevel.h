@@ -32,9 +32,6 @@ private:
     CCamDirector*  m_pCamDirector{};
     _uint          m_sequenceHandle = 0u;
 
-    CGameObject* m_testModel{};
-    COrbitCam*   m_orbitCam{};
-
 public:
     static CTestLevel* Create(const string& LevelKey);
     virtual void Free() override;
