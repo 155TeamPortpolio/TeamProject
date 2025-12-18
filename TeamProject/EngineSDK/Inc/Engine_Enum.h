@@ -65,9 +65,7 @@ namespace Engine
         MAYA_SPECULAR_ROUGHNESS = 25,
         ANISOTROPY = 26,
         GLTF_METALLIC_ROUGHNESS = 27,
-		NOISE = 28,
-		DISSOLVE = 29,
-		END = 30
+		END = 28
 	};
 
 	/* Effect */

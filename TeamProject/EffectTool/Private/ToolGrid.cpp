@@ -50,7 +50,6 @@ HRESULT CToolGrid::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
 
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "TileCell.png", TEXTURE_TYPE::DIFFUSE);
-	customInstance->Set_Param("GridSize", { &m_fGridSize,"float",sizeof(_float) });
 	return S_OK;
 }
 

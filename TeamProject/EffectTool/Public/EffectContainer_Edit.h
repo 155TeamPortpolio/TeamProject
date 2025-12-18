@@ -18,9 +18,7 @@ public:
         map<string, CTexture*>* pAllTextures;
 
         vector<string> ModelTags;
-        vector<string> MaterialTags;
         _int iSelectModelIndex = -1;
-        _int iSelectMaterialIndex = -1;
 
     }EFFECT_EDIT_CONTEXT;
 private:
@@ -57,11 +55,8 @@ private:
     void RemoveLastNode();
     void ContextClear();
     void LoadTextureFromDirectory(const string& dirPath);
-    void LoadMeshFromDirectory(const string& dirPath);
-    void LoadMaterialFromDirectory(const string& dirPath);
+    void LoadMesh();
     void DisplayAllTextures();
-    void DisplayModels();
-    void DisplayMaterial();
 };
 
 NS_END

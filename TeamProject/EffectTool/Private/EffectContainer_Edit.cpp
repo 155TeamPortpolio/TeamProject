@@ -31,8 +31,6 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
    // __super::Initialize(pArg);
 
 	LoadTextureFromDirectory("../Bin/Resource/Texture");
-	LoadMeshFromDirectory("../Bin/Resource/Mesh");
-	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
     return S_OK;
 }
@@ -58,8 +56,7 @@ void CEffectContainer_Edit::Render_GUI()
 {
     ImGui::PushID(this);
 	DisplayAllTextures();
-	DisplayModels();
-	DisplayMaterial();
+	LoadMesh();
 	ContextClear();
 	Play();
     AddNode();
@@ -200,54 +197,20 @@ void CEffectContainer_Edit::LoadTextureFromDirectory(const string& dirPath)
 	m_Context.pAllTextures = &m_Textures;
 }
 
-void CEffectContainer_Edit::LoadMeshFromDirectory(const string& dirPath)
+void CEffectContainer_Edit::LoadMesh()
 {
-	namespace fs = std::filesystem;
-	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	for (auto& entry : fs::recursive_directory_iterator(dirPath))
+	if (ImGui::Button("Load Mesh"))
 	{
-		if (!entry.is_regular_file())
-			continue;
+		string path = Helper::OpenFile_Dialogue();
+		//string modelKey = 
 
-		if (entry.path().extension() != ".model")
-			continue;
-
-		string path = entry.path().string();
-		string modelKey = entry.path().filename().string();
-		resource->Add_ResourcePath(modelKey, path);
-
-		m_Context.ModelTags.push_back(modelKey);
-	}
-}
-
-void CEffectContainer_Edit::LoadMaterialFromDirectory(const string& dirPath)
-{
-	namespace fs = std::filesystem;
-	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
-	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	for (auto& entry : fs::recursive_directory_iterator(dirPath))
-	{
-		if (!entry.is_regular_file())
-			continue;
-
-		if (entry.path().extension() != ".mat")
-			continue;
-
-		string path = entry.path().string();
-		string materialKey = entry.path().filename().string();
-		resource->Add_ResourcePath(materialKey, path);
-
-		m_Context.MaterialTags.push_back(materialKey);
+		auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
+		//resource->Add_ResourcePath()
 	}
 }
 
 void CEffectContainer_Edit::DisplayAllTextures()
 {
-	ImGui::SetNextWindowPos(ImVec2(60, 600), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(600, 600), ImGuiCond_FirstUseEver);
 	ImGui::Begin("Texture");
 	float avail = ImGui::GetWindowSize().x;
 	int   cols = (std::max)(1, (int)((avail + 8.f) / (128.f + 8.f)));
@@ -310,71 +273,5 @@ void CEffectContainer_Edit::DisplayAllTextures()
 		ImGui::PopID();
 		++idx;
 	}
-	ImGui::End();
-}
-
-void CEffectContainer_Edit::DisplayModels()
-{
-	ImGui::SetNextWindowPos(ImVec2(660, 600), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Models");
-
-	if (m_Context.ModelTags.empty())
-	{
-		ImGui::Text("No Model");
-		ImGui::End();
-		return;
-	}
-
-	for (_uint i = 0; i < m_Context.ModelTags.size(); ++i)
-	{
-		_bool isSelect = (i == m_Context.iSelectModelIndex);
-
-		if (ImGui::Selectable(m_Context.ModelTags[i].c_str(), isSelect))
-			m_Context.iSelectModelIndex = i;
-
-		if (isSelect)
-			ImGui::SetItemDefaultFocus();
-	}
-
-	if (-1 != m_Context.iSelectModelIndex)
-	{
-		ImGui::Separator();
-		ImGui::Text("Select Model : %s", m_Context.ModelTags[m_Context.iSelectModelIndex].c_str());
-	}
-
-	ImGui::End();
-}
-
-void CEffectContainer_Edit::DisplayMaterial()
-{
-	ImGui::SetNextWindowPos(ImVec2(860, 600), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(200, 200), ImGuiCond_FirstUseEver);
-	ImGui::Begin("Materials");
-
-	if (m_Context.MaterialTags.empty())
-	{
-		ImGui::Text("No Material");
-		ImGui::End();
-		return;
-	}
-
-	for (_uint i = 0; i < m_Context.MaterialTags.size(); ++i)
-	{
-		_bool isSelect = (i == m_Context.iSelectMaterialIndex);
-
-		if (ImGui::Selectable(m_Context.MaterialTags[i].c_str(), isSelect))
-			m_Context.iSelectMaterialIndex = i;
-
-		if (isSelect)
-			ImGui::SetItemDefaultFocus();
-	}
-
-	if (-1 != m_Context.iSelectMaterialIndex)
-	{
-		ImGui::Separator();
-		ImGui::Text("Select Material : %s", m_Context.MaterialTags[m_Context.iSelectMaterialIndex].c_str());
-	}
-
 	ImGui::End();
 }

@@ -272,11 +272,6 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 	case Engine::TEXTURE_TYPE::GLTF_METALLIC_ROUGHNESS:
 		return "GltfMetalicRoughnessTexture";
 
-	case Engine::TEXTURE_TYPE::NOISE:
-		return "NoiseTexture";
-
-	case Engine::TEXTURE_TYPE::DISSOLVE:
-		return "DissolveTexture";
 	default:
 		break;
 	}

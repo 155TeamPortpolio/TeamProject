@@ -258,7 +258,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\CharacterController.h" />
     <ClInclude Include="..\Public\Child.h" />
-    <ClInclude Include="..\Public\ClickManager.h" />
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
@@ -411,7 +410,6 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Channel.cpp" />
     <ClCompile Include="..\Private\CharacterController.cpp" />
     <ClCompile Include="..\Private\Child.cpp" />
-    <ClCompile Include="..\Private\ClickManager.cpp" />
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />

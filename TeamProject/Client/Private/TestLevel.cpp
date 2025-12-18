@@ -10,10 +10,6 @@
 
 #include "Camera.h"
 
-/* MapData */
-#include "MapLoader.h"
-#include "MapPlacedObject.h"
-
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() }
@@ -23,9 +19,6 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-
-
-
 	return S_OK;
 }
 
@@ -39,7 +32,6 @@ HRESULT CTestLevel::Awake()
 	// =========================================================================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel",   CTestObject::Create());
 
-<<<<<<< HEAD
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.Build("Test_Model");
@@ -47,21 +39,6 @@ HRESULT CTestLevel::Awake()
 
 	m_testModel = testModel;
 	Safe_AddRef(m_testModel);
-=======
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
-
-	// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-
-	//경로는 임시. 추후 로직 변경예정
-	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	// 바로 지움
-	Safe_Release(pMapLoader);
->>>>>>> develop
 
 	Ready_Camera();
 	return S_OK;
@@ -115,25 +92,6 @@ void CTestLevel::Ready_Camera()
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCamObj));
 	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
-}
-
-void CTestLevel::Rake_MapResources()
-{
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/MapData/Model/"))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
-		}
-	}
 }
 
 HRESULT CTestLevel::Render()

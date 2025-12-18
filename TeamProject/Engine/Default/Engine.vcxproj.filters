@@ -475,9 +475,6 @@
     <ClInclude Include="..\Public\DebugBonePanel.h">
       <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ClickManager.h">
-      <Filter>01. Utility\14.ClickManager</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -888,9 +885,6 @@
     <Filter Include="00. System\02. Gui\GUI_Panel\DebugBonePanel">
       <UniqueIdentifier>{a386466d-aef6-4f11-98d1-562ebda21137}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\14.ClickManager">
-      <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1276,9 +1270,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\DebugBonePanel.cpp">
       <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ClickManager.cpp">
-      <Filter>01. Utility\14.ClickManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

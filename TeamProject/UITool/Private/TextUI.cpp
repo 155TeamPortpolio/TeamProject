@@ -58,6 +58,14 @@ void CTextUI::Priority_Update(_float dt)
 void CTextUI::Update(_float dt)
 {
     Get_Component<CTextSlot>()->Push_Text();
+
+    const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+    switch (m_iAlign)
+    {
+    case 0: m_vAnchorOffset.x = 0.f;            break;
+    case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+    case 2: m_vAnchorOffset.x = -width;         break;
+    }
 }
 
 void CTextUI::Late_Update(_float dt)
@@ -72,11 +80,8 @@ void CTextUI::Render_GUI()
     
     ImGui::SeparatorText(u8"ÄÜÅÙÃ÷");
 
-    if (ImGui::InputTextMultiline(u8"ÅØ½ºÆ®", (char*)m_szText, sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
-    {
+    if(ImGui::InputTextMultiline(u8"ÅØ½ºÆ®", (char*)m_szText, sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-        UpdateAnchorOffsetByAlign();
-    } 
     
     ImGui::SeparatorText(u8"ÆùÆ®");
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
@@ -87,35 +92,27 @@ void CTextUI::Render_GUI()
     {
         m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-        UpdateAnchorOffsetByAlign();
     }
     ImGui::SameLine();
     if (ImGui::Button(u8"Å©±â -"))
     {
         m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-        UpdateAnchorOffsetByAlign();
     }
 
     if(ImGui::ColorPicker4(u8"ÆùÆ® ÄÃ·¯", reinterpret_cast<_float*>(&m_vFontColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
-    {
-        ImGui::SeparatorText(u8"¿Ü°û¼±");
+    ImGui::SeparatorText(u8"¿Ü°û¼±");
+    _bool isOutlined = {};
+    if (ImGui::Checkbox(u8"¿Ü°û¼±", &m_isOutlined)) isOutlined = true;
+    if(ImGui::DragFloat(u8"±½±â", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp)) isOutlined = true;
+    if(ImGui::ColorPicker4(u8"¿Ü°û¼± ÄÃ·¯", reinterpret_cast<_float*>(& m_vOutlineColor))) isOutlined = true;
 
-        _bool isChanged = {};
-        isChanged |= ImGui::Checkbox(u8"¿Ü°û¼±", &m_isOutlined);
-        isChanged |= ImGui::DragFloat(u8"±½±â", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-        isChanged |= ImGui::ColorPicker4(u8"¿Ü°û¼± ÄÃ·¯", reinterpret_cast<_float*>(&m_vOutlineColor));
-
-        if (!isChanged)
-            return;
-
-        if (m_isOutlined)
-            Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
-        else
-            Get_Component<CTextSlot>()->ReSet_OutLine();
-    } 
+    if (m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+    else
+        Get_Component<CTextSlot>()->ReSet_OutLine();
 }
 
 void CTextUI::ToJson(json& data)
@@ -220,16 +217,25 @@ void CTextUI::Render_GUI_Layout()
 
         ImGui::TableSetColumnIndex(1);
 
-        _bool isChanged = {};
+        bool changed = false;
 
-        isChanged |= ImGui::RadioButton(u8"¿ÞÂÊ", &m_iAlign, 2);
+        changed |= ImGui::RadioButton(u8"¿ÞÂÊ", &m_iAlign, 2);
         ImGui::SameLine();
-        isChanged |= ImGui::RadioButton(u8"°¡¿îµ¥", &m_iAlign, 1);
+        changed |= ImGui::RadioButton(u8"°¡¿îµ¥", &m_iAlign, 1);
         ImGui::SameLine();
-        isChanged |= ImGui::RadioButton(u8"¿À¸¥ÂÊ", &m_iAlign, 0);
+        changed |= ImGui::RadioButton(u8"¿À¸¥ÂÊ", &m_iAlign, 0);
 
-        if (isChanged)
-            UpdateAnchorOffsetByAlign();
+        if (changed)
+        {
+            const float width = Get_Component<CTextSlot>()->Get_TextSize().x;
+
+            switch (m_iAlign)
+            {
+            case 0: m_vAnchorOffset.x = 0.f;            break;
+            case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
+            case 2: m_vAnchorOffset.x = -width;         break;
+            }
+        }
 
         ImGui::EndTable();
     }
@@ -257,7 +263,10 @@ void CTextUI::Render_GUI_Transform()
 
     _float2 tmpPivot = m_vPivot;
     if (ImGui::DragFloat2("Pivot", reinterpret_cast<_float*>(&tmpPivot), 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
         Set_Pivot(tmpPivot);
+        //Get_Component<CTextSlot>()->Set_Origin(tmpPivot);
+    } 
 
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
@@ -268,17 +277,6 @@ void CTextUI::Set_Font(const string& strFontTag)
 {
     Get_Component<CTextSlot>()->Set_Font(strFontTag);
     m_strFontTag = strFontTag;
-}
-
-void CTextUI::UpdateAnchorOffsetByAlign()
-{
-    const float width = m_vSize.x * m_fFontScale;  // Get_Component<CTextSlot>()->Get_TextSize().x;
-    switch (m_iAlign)
-    {
-    case 0: m_vAnchorOffset.x = 0.f;            break;
-    case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
-    case 2: m_vAnchorOffset.x = -width;         break;
-    }
 }
 
 CGameObject* CTextUI::Create()

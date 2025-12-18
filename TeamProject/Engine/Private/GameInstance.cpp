@@ -20,7 +20,6 @@
 #include "PhysicsSystem.h"
 #include "EventSystem.h"
 #include "Level.h"
-#include "ClickManager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -53,7 +52,6 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pCollisionSystem = CCollisionSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pEventSystem = CEventSystem::Create();
-	m_pClickManager = CClickManager::Create(engine.hWnd);
 
 
 #if defined _USING_GUI
@@ -142,7 +140,6 @@ void CGameInstance::Update_Engine(_float dt)
 #endif // USINPHYSICS
 	/*엔진 제어 업데이트 -> 렌더 패킷 제출용*/
 	m_pInputDevice->Update();
-	m_pClickManager->Update(dt);
 	m_pObjectManager->Post_EngineUpdate(realDt);
 	m_pUIManager->Post_EngineUpdate(realDt);
 }
@@ -169,7 +166,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pFontSystem);
 	Safe_Release(m_pPhysicsSystem);
 	Safe_Release(m_pEventSystem);
-	Safe_Release(m_pClickManager);
 
 	DestroyInstance();
 }

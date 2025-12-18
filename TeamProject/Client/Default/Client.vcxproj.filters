@@ -61,12 +61,6 @@
     <Filter Include="02. GameObject\MapObject\02. MapTriggerObject">
       <UniqueIdentifier>{3ee57455-7966-4d9b-bcb9-5d01b67f74e6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility">
-      <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\MapLoader">
-      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -131,12 +125,6 @@
     </ClInclude>
     <ClInclude Include="..\public\MapTriggerObject.h">
       <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MapLoader.h">
-      <Filter>03. Utility\MapLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Data_Struct.h">
-      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -215,9 +203,6 @@
     </ClCompile>
     <ClCompile Include="..\private\MapTriggerObject.cpp">
       <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MapLoader.cpp">
-      <Filter>03. Utility\MapLoader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

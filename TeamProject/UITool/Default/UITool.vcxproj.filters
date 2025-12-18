@@ -37,9 +37,6 @@
     <Filter Include="02.Object\UI\Text">
       <UniqueIdentifier>{6af4a99a-0ef3-4061-92d7-bc6bb1c5506f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Object\UI\Button">
-      <UniqueIdentifier>{1e93654c-77c0-4328-9909-d9fe90890e57}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -96,9 +93,6 @@
     <ClInclude Include="..\Public\UIObject_Tool.h">
       <Filter>02.Object\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\ButtonUI.h">
-      <Filter>02.Object\UI\Button</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -151,9 +145,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\UIObject_Tool.cpp">
       <Filter>02.Object\UI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ButtonUI.cpp">
-      <Filter>02.Object\UI\Button</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

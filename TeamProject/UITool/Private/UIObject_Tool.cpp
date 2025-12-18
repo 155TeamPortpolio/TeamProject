@@ -3,7 +3,6 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
 CUIObject_Tool::CUIObject_Tool()
 {
@@ -230,12 +229,6 @@ void CUIObject_Tool::Render_GUI_Transform()
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
-}
-
-void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& strTextureKey)
-{
-    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
-    strTextureKey = TextureKey;
 }
 
 void CUIObject_Tool::Free()

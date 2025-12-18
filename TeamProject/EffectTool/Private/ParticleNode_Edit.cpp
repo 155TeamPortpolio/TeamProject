@@ -80,38 +80,6 @@ void CParticleNode_Edit::Render_GUI()
 void CParticleNode_Edit::Play()
 {
 	PARTICLE_NODE node{};
-
-	node.isWorld = m_IsWorld;
-	node.isLoop = m_IsLoop;
-	node.iBurstCount = m_iBurstCount;
-	node.fSpawnPerSec = m_fSpawnPerSec;
-	node.iMaxSpawnParticleCount = m_iMaxSpawnParticleCount;
-	node.vStartSpeed = m_vStartSpeed;
-	node.vStartLifeTime = m_vStartLifeTime;
-	node.vStartSize = m_vStartSize;
-	node.vSpawnAreaMin = m_vSpawnAreaMin;
-	node.vSpawnAreaMax = m_vSpawnAreaMax;
-	node.useGravity = m_UseGravity;
-	node.fGravityScale = m_fGravityScale;
-
-	node.fDampScale = m_fDampScale;
-
-	node.vStartScale = m_vStartScale;
-	node.vEndScale = m_vEndScale;
-
-	node.vStartColor = m_vStartColor;
-	node.vEndColor = m_vEndColor;
-
-	node.isRandomFrameIndex = m_IsRandomFrameIndex;
-	node.isParticleAnimated = m_IsParticleAnimated;
-	node.iCol = m_iCol;
-	node.iRow = m_iRow;
-	node.iMaxFrameIndex = m_iMaxFrameIndex;
-
-	node.vStrength = m_vStrength;
-	node.vFrequency = m_vFrequency;
-	node.vScrollSpeed = m_vScrollSpeed;
-
 	Get_Component<CParticleSystem>()->SetParticleParams(node);
 }
 
