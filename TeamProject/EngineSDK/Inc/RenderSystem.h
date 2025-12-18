@@ -31,6 +31,7 @@ public:
 	HRESULT Render_Blended();
 	HRESULT Render_NonLight();
 	void Render_Shadow();
+	HRESULT Render_Bloom();
 	HRESULT Render_Final();
 #ifdef _USING_GUI
 	void Render_GUI();

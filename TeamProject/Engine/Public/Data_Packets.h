@@ -139,8 +139,10 @@ namespace Engine {
 	{
 		//string MrtKey;
 		vector<POSTPROCESS> Targets; //	enum class POSTPROCESS { BLOOM, DISTORTION, END};
-		/*_bool bClearColor = false;
-		_bool bClearDepth = false;*/
+		class CShader* pShader = { nullptr };
+		_float4x4* pWorldMatrix = { nullptr };
 		function<void(ID3D11DeviceContext*)> DrawCall;
+		_bool bClearColor = false;
+		_bool bClearDepth = false;
 	}POST_PROCESS_COMMAND;
 }

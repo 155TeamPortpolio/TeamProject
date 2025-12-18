@@ -27,7 +27,7 @@ public:
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
 
 public:
-	HRESULT Bind_Targets(const vector<POSTPROCESS>& targets);
+	HRESULT Bind_Targets(const vector<POSTPROCESS>& targets, _bool ClearColor = false, _bool ClearDepth = false);
 	HRESULT Restore_Targets();
 
 #ifdef _USING_GUI
@@ -43,7 +43,7 @@ public:
 private:
 	class CRenderTarget* Find_RenderTarget(const string& strTargetTag);
 	vector<CRenderTarget*>& Find_MRT(const string& strMRTTag);
-
+	const string PostProcessToTargetName(POSTPROCESS type);
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };

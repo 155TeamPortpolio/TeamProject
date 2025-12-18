@@ -93,9 +93,9 @@ HRESULT CRenderSystem::Render()
 
 	Process_PostProcessQueue();
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
+	//if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
 	Render_Bloom();
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	//if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	Render_Final();
 
 	return S_OK;
@@ -147,6 +147,10 @@ HRESULT CRenderSystem::Render_SSAO()
 		m_pShader->Bind_Value("g_SSAOTexture", SSAOParam);
 
 		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SSAO_BLUR", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
 		m_pShader->Apply("SSAO_BLUR", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -409,7 +413,16 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomDesc);
 
-	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc BloomTypeDesc = { "Target_BloomType" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomTypeDesc);
+
+	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomBlurXDesc);
+
+	RenderTargetDesc BloomBlurYDesc = { "Target_BloomBlurY" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomBlurYDesc);
+
+	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightDesc);
 
 	RenderTargetDesc SSAODesc = { "Target_SSAO" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -429,6 +442,12 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomType")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
@@ -509,7 +528,9 @@ void CRenderSystem::Process_PostProcessQueue()
 {
 	for (auto& cmd : m_PostCommands)
 	{
-		m_pTargetManager->Bind_Targets(cmd.Targets);
+		m_pTargetManager->Bind_Targets(cmd.Targets, cmd.bClearColor, cmd.bClearDepth);
+		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
 
 		cmd.DrawCall(m_pContext);
 
@@ -609,8 +630,50 @@ void CRenderSystem::Render_Shadow()
 
 HRESULT CRenderSystem::Render_Bloom()
 {
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
 
-	return E_NOTIMPL;
+		SHADER_PARAM BrightParam = {};
+		m_pTargetManager->Get_TargetParam("Target_Bloom", BrightParam);
+		m_pShader->Bind_Value("g_BrightTexture", BrightParam);
+
+		SHADER_PARAM BlurTypeParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
+		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("BLOOM_BLURX", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
+
+		SHADER_PARAM BrightParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomBlurX", BrightParam);
+		m_pShader->Bind_Value("g_BlurXTexture", BrightParam);
+
+		SHADER_PARAM BlurTypeParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
+		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("BLOOM_BLURY", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	return S_OK;
 }
 
 HRESULT CRenderSystem::Render_Final()
@@ -628,8 +691,8 @@ HRESULT CRenderSystem::Render_Final()
 	m_pShader->Bind_Value("g_UITexture", uiParam);
 
 	SHADER_PARAM postProcessParam = {};
-	m_pTargetManager->Get_TargetParam("Target_PostProcess", postProcessParam);
-	m_pShader->Bind_Value("g_PostProcessTexture", postProcessParam);
+	m_pTargetManager->Get_TargetParam("Target_BloomBlurY", postProcessParam);
+	m_pShader->Bind_Value("g_BloomFinal", postProcessParam);
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);

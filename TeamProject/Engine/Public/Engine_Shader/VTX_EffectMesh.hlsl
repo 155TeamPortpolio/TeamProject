@@ -22,7 +22,7 @@ float2 UVOffset;
 float DissolveThreshold;
 
 /*Distortion Params*/
-
+float4x4 g_worldMatrix;
 
 struct VS_IN
 {
@@ -58,6 +58,26 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
+    Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+   
+    return Out;
+}
+
+VS_OUT VS_MAIN_BRIGHT(VS_IN In)
+{
+    VS_OUT Out;
+    
+    matrix matWV, matWVP;
+    
+    float3 worldPos = mul(float4(In.vPosition, 1.f), g_worldMatrix).xyz;
+    float4 viewPos = float4(worldPos, 1.f);
+    float4 projPos = mul(viewPos, matOrthograph);
+
+    Out.vPosition = projPos;
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = mul(vector(In.vNormal, 0.f), g_worldMatrix);
+    Out.vProjPos = Out.vPosition;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_worldMatrix)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
    
     return Out;
@@ -141,6 +161,22 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     return Out;
 }
 
+struct PS_OUT_BRIGHT
+{
+    vector vBloom : SV_TARGET0;
+    float BloomType : SV_TARGET1;
+};
+
+PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
+{
+    PS_OUT_BRIGHT Out;
+    
+    Out.vBloom = float4(0.8, 1, 1, 1); // »¡°­
+    Out.BloomType = 1.0f;
+    
+    return Out;
+}
+
 technique11 DefaultTechnique
 {
     pass Opaque
@@ -170,6 +206,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
+
+    pass Bright
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN_BRIGHT();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BRIGHT();
     }
 }
 
