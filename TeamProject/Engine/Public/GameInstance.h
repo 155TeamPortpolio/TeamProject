@@ -38,44 +38,46 @@ public:
 
 #pragma region Game_Managers
 public:
-	class IGraphicService*   Get_GraphicDev()       { return m_pGraphicDevice;    }
-	class ITimeService*      Get_TimeMgr()          { return m_pTimeManager;      }
-	class IInputService*     Get_InputDev()         { return m_pInputDevice;      }
-	class IAudioService*     Get_AudioDev()         { return m_pSoundDevice;      }
-	class ILevelService*     Get_LevelMgr()         { return m_pLevelManager;     }
-	class IProtoService*     Get_PrototypeMgr()     { return m_pPrototypeManager; }
-	class IObjectService*    Get_ObjectMgr()        { return m_pObjectManager;    }
-	class IResourceService*  Get_ResourceMgr()      { return m_pResourceManager;  }
-	class IGUIService*       Get_GUISystem()        { return m_pGuiSystem;        }
-	class IRenderService*    Get_RenderSystem()     { return m_pRenderSystem;     }
-	class ICameraService*    Get_CameraMgr()        { return m_pCameraManager;    }
-	class IUI_Service*       Get_UIMgr()            { return m_pUIManager;        }
-	class ILightService*     Get_LightMgr()         { return m_pLightService;     }
-	class IRayService*       Get_RayMgr()           { return m_pRaySystem;        }
-	class ICollisionService* Get_CollisionSystem()  { return m_pCollisionSystem;  }
-	class IFontService*      Get_FontSystem ()      { return m_pFontSystem;       }
-	class IPhysicsService*   Get_PhysicsSystem()    { return m_pPhysicsSystem;    }
-	class CEventSystem*      Get_EventSystem()      { return m_pEventSystem;      }
+	class IGraphicService* Get_GraphicDev() { return m_pGraphicDevice; }
+	class ITimeService* Get_TimeMgr() { return m_pTimeManager; }
+	class IInputService* Get_InputDev() { return m_pInputDevice; }
+	class IAudioService* Get_AudioDev() { return m_pSoundDevice; }
+	class ILevelService* Get_LevelMgr() { return m_pLevelManager; }
+	class IProtoService* Get_PrototypeMgr() { return m_pPrototypeManager; }
+	class IObjectService* Get_ObjectMgr() { return m_pObjectManager; }
+	class IResourceService* Get_ResourceMgr() { return m_pResourceManager; }
+	class IGUIService* Get_GUISystem() { return m_pGuiSystem; }
+	class IRenderService* Get_RenderSystem() { return m_pRenderSystem; }
+	class ICameraService* Get_CameraMgr() { return m_pCameraManager; }
+	class IUI_Service* Get_UIMgr() { return m_pUIManager; }
+	class ILightService* Get_LightMgr() { return m_pLightService; }
+	class IRayService* Get_RayMgr() { return m_pRaySystem; }
+	class ICollisionService* Get_CollisionSystem () { return m_pCollisionSystem; }
+	class IFontService* Get_FontSystem () { return m_pFontSystem; }
+	class IPhysicsService* Get_PhysicsSystem() { return m_pPhysicsSystem; }
+	class CEventSystem* Get_EventSystem() { return m_pEventSystem; }
+	class CClickManager* Get_ClickMgr() { return m_pClickManager; }
 
 private:
-	class IGraphicService*   m_pGraphicDevice    = { nullptr };
-	class ITimeService*      m_pTimeManager      = { nullptr };
-	class IInputService*     m_pInputDevice      = { nullptr };
-	class IAudioService*     m_pSoundDevice      = { nullptr };
-	class ILevelService*     m_pLevelManager     = { nullptr };
-	class IProtoService*     m_pPrototypeManager = { nullptr };
-	class IObjectService*    m_pObjectManager    = { nullptr };
-	class IResourceService*  m_pResourceManager  = { nullptr };
-	class IGUIService*       m_pGuiSystem        = { nullptr };
-	class IRenderService*    m_pRenderSystem     = { nullptr };
-	class ICameraService*    m_pCameraManager    = { nullptr };
-	class IUI_Service*       m_pUIManager        = { nullptr };
-	class ILightService*     m_pLightService     = { nullptr };
-	class IRayService*       m_pRaySystem        = { nullptr };
-	class ICollisionService* m_pCollisionSystem  = { nullptr };
-	class IFontService*      m_pFontSystem       = { nullptr };
-	class IPhysicsService*   m_pPhysicsSystem    = { nullptr };
-	class CEventSystem*      m_pEventSystem      = { nullptr };
+	class IGraphicService* m_pGraphicDevice = { nullptr };
+	class ITimeService* m_pTimeManager = { nullptr };
+	class IInputService* m_pInputDevice = { nullptr };
+	class IAudioService* m_pSoundDevice = { nullptr };
+	class ILevelService* m_pLevelManager = { nullptr };
+	class IProtoService* m_pPrototypeManager = { nullptr };
+	class IObjectService* m_pObjectManager = { nullptr };
+	class IResourceService* m_pResourceManager = { nullptr };
+	class IGUIService* m_pGuiSystem = { nullptr };
+	class IRenderService* m_pRenderSystem = { nullptr };
+	class ICameraService* m_pCameraManager = { nullptr };
+	class IUI_Service* m_pUIManager = { nullptr };
+	class ILightService* m_pLightService = { nullptr };
+	class IRayService* m_pRaySystem = { nullptr };
+	class ICollisionService* m_pCollisionSystem = { nullptr };
+	class IFontService* m_pFontSystem = { nullptr };
+	class IPhysicsService* m_pPhysicsSystem = { nullptr };
+	class CEventSystem* m_pEventSystem = { nullptr };
+	class CClickManager* m_pClickManager = { nullptr };
 #pragma endregion
 
 private:
