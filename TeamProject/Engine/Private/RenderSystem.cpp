@@ -413,8 +413,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomDesc);
 
-	RenderTargetDesc BloomTypeDesc = { "Target_BloomType" , DXGI_FORMAT_R16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomTypeDesc);
+	RenderTargetDesc BloomInfoDesc = { "Target_BloomInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomInfoDesc);
 
 	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurXDesc);
@@ -443,7 +443,7 @@ HRESULT CRenderSystem::Ready_GBuffer()
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
 		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomType")))
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX")))
 		return E_FAIL;
@@ -523,6 +523,7 @@ void CRenderSystem::Process_RenderCommand()
 
 	m_RenderCommands.clear();
 }
+
 void CRenderSystem::Process_PostProcessQueue()
 {
 	if (m_PostCommands.empty()) return;
@@ -654,8 +655,8 @@ HRESULT CRenderSystem::Render_Bloom()
 		m_pShader->Bind_Value("g_BrightTexture", BrightParam);
 		
 		SHADER_PARAM BlurTypeParam = {};
-		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
-		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
+		m_pTargetManager->Get_TargetParam("Target_BloomInfo", BlurTypeParam);
+		m_pShader->Bind_Value("g_BloomInfo", BlurTypeParam);
 		
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);

@@ -16,7 +16,7 @@ Texture2D g_SSAONoiseTexture;
 Texture2D g_SSAOTexture;
 Texture2D g_SSAOBlurTexture;
 Texture2D g_BrightTexture;
-Texture2D g_BloomType;
+Texture2D g_BloomInfo;
 Texture2D g_BlurXTexture;
 Texture2D g_BloomFinal;
 
@@ -153,7 +153,6 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
     return Out;
 }
 
-
 PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -177,22 +176,38 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
     
     return Out;
 }
+
 //GaussianBlur
-static const float weights[5] = { 0.227027, 0.1945946, 0.1216216, 0.054054, 0.016216 };
+static const float weights[9] =
+{
+    0.13298076,
+    0.12579441,
+    0.10648267,
+    0.08065691,
+    0.05467002,
+    0.03315905,
+    0.01799699,
+    0.00874063,
+    0.00379866
+};
 
 PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float bloomType = g_BloomType.Sample(DefaultSampler, In.vTexcoord).r;
+    vector vBloomInfo = g_BloomInfo.Sample(DefaultSampler, In.vTexcoord);
+    
+    float bloomType = vBloomInfo.r;
+    float bloomStrength = vBloomInfo.g;
+
     float4 bright = g_BrightTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    if (bloomType < 0.5f) // Gaussian
+    if (bloomType == 0.f) // Gaussian
     {
         float3 result = bright.rgb * weights[0];
-        float texelSize = 1.0f / fScreenWidth;
+        float texelSize = bloomStrength / fScreenWidth;
         
-        for (int i = 1; i < 5; ++i)
+        for (int i = 1; i < 9; ++i)
         {
             result += g_BrightTexture.Sample(DefaultSampler,
                 In.vTexcoord + float2(texelSize * i, 0)).rgb * weights[i];
@@ -214,15 +229,20 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float bloomType = g_BloomType.Sample(DefaultSampler, In.vTexcoord).r;
+    vector vBloomInfo = g_BloomInfo.Sample(DefaultSampler, In.vTexcoord);
+    
     float4 blurX = g_BlurXTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float bloomType = vBloomInfo.r;
+    float bloomStrength = vBloomInfo.g;
+    float2 RadialCenter = vBloomInfo.ba;
     
     if (bloomType < 0.5f) // Gaussian
     {
         float3 result = blurX.rgb * weights[0];
-        float texelSize = 1.0f / fScreenHeight; // 화면 높이
+        float texelSize = bloomStrength / fScreenHeight;
         
-        for (int i = 1; i < 5; ++i)
+        for (int i = 1; i < 9; ++i)
         {
             result += g_BlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
@@ -234,14 +254,13 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     }
     else // Radial Blur
     {
-        float2 center = float2(0.5f, 0.5f);
-        float2 dir = In.vTexcoord - center;
+        float2 dir = In.vTexcoord - RadialCenter;
         float dist = length(dir);
         dir = normalize(dir);
         
         float3 result = float3(0, 0, 0);
-        float samples = 10.0f;
-        float strength = 0.02f;
+        float samples = 100.0f;          //test하고 싶다면 이거 수정 ㄱㄱ
+        float strength = 0.1f;          //test하고 싶다면 이거 수정 ㄱㄱ
         
         for (float i = 0; i < samples; i++)
         {
