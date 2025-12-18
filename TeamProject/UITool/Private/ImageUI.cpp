@@ -51,6 +51,8 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();

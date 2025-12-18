@@ -66,6 +66,8 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();

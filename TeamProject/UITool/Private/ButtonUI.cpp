@@ -55,6 +55,8 @@ void CButtonUI::Late_Update(_float dt)
 
 void CButtonUI::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();
