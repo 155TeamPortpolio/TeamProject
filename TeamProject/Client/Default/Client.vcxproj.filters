@@ -67,6 +67,9 @@
     <Filter Include="03. Utility\MapLoader">
       <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\TestMap">
+      <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -139,7 +142,7 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestMap.h">
-      <Filter>02. GameObject\MapObject</Filter>
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -223,7 +226,7 @@
       <Filter>03. Utility\MapLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestMap.cpp">
-      <Filter>02. GameObject\MapObject</Filter>
+      <Filter>02. GameObject\Object\TestMap</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
