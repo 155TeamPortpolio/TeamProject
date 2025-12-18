@@ -31,7 +31,12 @@ public:
     void            OnTriggerExit(ICollidable* pOther) override;
 
 #ifdef _DEBUG
-    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+private:
+    _bool           m_bDebugRender = { true };
+public:
+    virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    _bool           IsDebugRender() { return m_bDebugRender; }
+    void            Set_DebugRender(_bool bDebugRender) { m_bDebugRender = bDebugRender; }
 #endif
 
 public:

@@ -6,7 +6,7 @@ NS_BEGIN(UITool)
 class CButtonUI final : public CUIObject_Tool
 {
 public:
-	enum class STATE { NORMAL, CLICKED, DISABLED, END };
+	enum class STATE { NORMAL, HOVERED, CLICKED, DISABLED, END };
 
 private:
 	CButtonUI();
@@ -23,20 +23,23 @@ public:
 
 	virtual void Render_GUI() override;
 
+	virtual void Enter_Hover() override;
+	virtual void Exit_Hover() override;
+	virtual void OnClick() override;
+
 public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
 public:
-	_int			m_iState = {};
-	string			m_strTextureKeys[static_cast<_int>(STATE::END)];
-	_int			m_iTextureKeyIndices[static_cast<_int>(STATE::END)] = {};
+	STATE		m_eState = {};
+	string		m_strTextureKey;
+	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+
+	_char		m_szEventMsg[MAX_PATH] = {};	// 클릭했을 때 내보내는 메시지
 
 public:
 	static _uint m_iCount;
-
-private:
-	void Render_GUI_Texture(STATE eState, const char* label, const vector<const _char*>& szTextureKeys, const string& levelKey);
 
 public:
 	static CGameObject* Create();

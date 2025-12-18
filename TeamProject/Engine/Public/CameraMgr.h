@@ -11,20 +11,23 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    virtual void Set_MainCam(CCamera* camComp) override;
+    virtual void Set_MainCam(CCamera* camComp)   override;
     virtual void Set_ShadowCam(CCamera* camComp) override;
 
 public:
     virtual void     Set_BlendEase(EaseType ease) override { m_easeType = ease; }
-    virtual EaseType Get_BlendEase() const override { return m_easeType; }
+    virtual EaseType Get_BlendEase()        const override { return m_easeType; }
+                                            
+    CCamera*         Get_BaseCam()          const override { return m_baseCam; }
+    CCamera*         Get_ActiveCam()        const override { return GetDesiredActiveCam(); }
 
 public:
-    virtual _uint Push(CCamera* camComp, _float blendSec = 0.25f) override;
-    virtual _bool Pop(_uint handle, _float blendSec = 0.25f) override;
-    virtual void  Clear(_float blendSec = 0.25f) override;
+    virtual _uint    Push(CCamera* camComp, _float blendSec = 0.25f) override;
+    virtual _bool    Pop(_uint handle, _float blendSec = 0.25f)      override;
+    virtual void     Clear(_float blendSec = 0.25f)                  override;
 
 public:
-    virtual void Update(_float dt) override;
+    virtual void     Update(_float dt) override;
 
 public:
     virtual const Matrix* Get_ViewMatrix()         override { return &m_view; }
@@ -47,7 +50,6 @@ private:
         _uint    handle{};
         CCamera* cam{};
     };
-
     struct CamLens
     {
         CamProjType projType = CamProjType::Perspective;
@@ -102,7 +104,7 @@ private:
     Vector4 m_shadowCamPos  = { 0.f, 0.f, 0.f, 1.f };
 
 private:
-    CCamera* GetDesiredActiveCam() const;
+    CCamera*     GetDesiredActiveCam() const;
 
     CamPoseFrame CapturePose(CCamera* cam) const;
     CamPoseFrame GetCurOutputPose() const { return m_outputPose; }

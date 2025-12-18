@@ -15,3 +15,7 @@ extern HINSTANCE g_hInstance;
 using namespace UITool;
 
 #include "Engine_Defines.h"
+
+struct ButtonEvent {
+	wstring msg = L"";
+};

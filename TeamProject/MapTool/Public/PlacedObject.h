@@ -25,10 +25,6 @@ public:
     void Render_GUI() override;
     void Delete_Object();
 
-private:
-    string  m_TagModelKey = {};
-    string  m_TagMaterialKey = {};
-
 public:
     static CPlacedObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

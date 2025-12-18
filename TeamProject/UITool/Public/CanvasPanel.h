@@ -36,6 +36,9 @@ private:
 public:
 	static _uint m_iCount;
 
+private:
+	void Render_GUI_Create();
+
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;

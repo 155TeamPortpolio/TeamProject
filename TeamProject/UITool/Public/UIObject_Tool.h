@@ -16,6 +16,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
+	virtual void Render_GUI() override;
 
 public:
 	void DestroyChild_FromParent();
@@ -33,7 +34,7 @@ protected:
 	virtual void Render_GUI_Layout();
 	virtual void Render_GUI_Transform();
 
-	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& strTextureKey);
+	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);
 
 private:
 	void ToJson_Common(json& data);

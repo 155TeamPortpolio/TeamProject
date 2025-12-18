@@ -76,7 +76,7 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 	DefaultCameraLightDesc.fRange = 100.f;
 	DefaultCameraLightDesc.vAmbient = _float4(1.f, 1.f, 1.f, 1.f);
 	DefaultCameraLightDesc.vDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
-	DefaultCameraLightDesc.vDirection = _float4(1.f, -1.f, 1.f, 0.f);
+	DefaultCameraLightDesc.vDirection = _float4(0.f, -1.f, 0.f, 0.f);
 	DefaultCameraLightDesc.fIntensity = 10.f;
 	
 
@@ -86,9 +86,18 @@ HRESULT CMapToolLevel::Ready_MapToolObjects()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
+	_float3 vGridScale = { 50.f, 0.01f ,50.f };
+	_float3 vGridPos = { 0,(0.f - vGridScale.y),0 };
+
+	COLLIDER_DESC GridColliderDesc = {};
+	GridColliderDesc.bAutoFit = true;
+	GridColliderDesc.strModelKey = {};
+	GridColliderDesc.vCenter = vGridPos;
+	GridColliderDesc.vSize = vGridScale;
 	CGameObject* pGrid = Builder::Create_Object({ "MapTool_Level" ,"Proto_GameObject_Grid" })
-		.Position({ 0,0,0 })
-		.Scale({ 50.f, 1.f ,50.f })
+		.Position(vGridPos)
+		.Scale(vGridScale)
+		.Collider(GridColliderDesc)
 		.Build("Grid");
 
 	pObjMgr->Add_Object(Camera,			{ "MapTool_Level", "Camera_Layer" });

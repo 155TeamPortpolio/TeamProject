@@ -134,27 +134,51 @@ HRESULT CStaticModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 void CStaticModel::Render_GUI()
 {
     ImGui::SeparatorText("Static Model");
-    float childWidth = ImGui::GetContentRegionAvail().x;
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-    const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4)) + (ImGui::GetStyle().WindowPadding.y * 2);
+    const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4))
+        + (ImGui::GetStyle().WindowPadding.y * 2);
 
     ImGui::BeginChild("##Static ModelChild", ImVec2{ 0, childHeight }, true);
-    for (size_t i = 0; i < m_pData->Get_MeshCount(); i++)
-    {
-        string ID = "HideMesh : "+ m_pData->Get_Mesh(i)->Get_Key() + to_string(i);
 
-        if (ImGui::Button(ID.c_str()))
+    m_pData->Render_GUI();
+
+    const size_t meshCount = m_pData->Get_MeshCount();
+
+    for (size_t i = 0; i < meshCount; ++i)
+    {
+        const string meshKey = m_pData->Get_Mesh(i)->Get_Key();
+
+        // 안전: m_DrawableMeshes가 meshCount보다 작으면 접근 터짐
+        if (m_DrawableMeshes.size() < meshCount)
+            m_DrawableMeshes.resize(meshCount, true);
+
+        const bool hidden = (m_DrawableMeshes[i] == false);
+
+        // 숨김 상태면 버튼 색 변경
+        if (hidden)
         {
-            if (m_DrawableMeshes.size() >= 1) {
-                m_DrawableMeshes[i] = !m_DrawableMeshes[i];
-            }
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.55f, 0.15f, 0.15f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.70f, 0.20f, 0.20f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.45f, 0.12f, 0.12f, 1.00f));
         }
+
+        string label = (hidden ? "[HIDDEN]" : "") + meshKey;
+        string imguiId = "##HideMeshBtn_" + meshKey + "_" + std::to_string(i);
+
+        if (ImGui::Button((label + imguiId).c_str()))
+        {
+            m_DrawableMeshes[i] = !m_DrawableMeshes[i];
+        }
+
+        if (hidden)
+            ImGui::PopStyleColor(3);
+
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
         {
-            ImGui::SetTooltip("%s", ID.c_str());
+            string tip = (hidden ? "Hidden mesh: " : "Visible mesh: ") + meshKey;
+            ImGui::SetTooltip("%s", tip.c_str());
         }
     }
-    m_pData->Render_GUI();
     ImGui::EndChild();
 }
 

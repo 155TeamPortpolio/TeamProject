@@ -70,6 +70,9 @@ void CUI_Object::Late_Update(_float dt)
 
 void CUI_Object::Post_EngineUpdate(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Update_UITransform();
 
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
