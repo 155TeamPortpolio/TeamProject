@@ -140,6 +140,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
+		{"effect_type", static_cast<_uint>(EFFECT_TYPE::MESH)},
 		{"model_key",m_ModelKey},
 		{"material_key",m_MaterialKey},
 

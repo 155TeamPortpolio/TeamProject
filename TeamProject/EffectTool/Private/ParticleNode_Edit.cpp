@@ -129,6 +129,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
+		{"effect_type", static_cast<_uint>(EFFECT_TYPE::PARTICLE)},
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 

@@ -69,6 +69,9 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 		for (auto& clipData : pair.second)
 			Safe_Release(clipData);
 
+	for (auto& pair : m_Resources[index].m_EffectAssets)
+		for (auto& node : pair.second.Nodes)
+			Safe_Delete(node);
 
 	m_Resources[index] = {};
 }
@@ -310,6 +313,37 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 
 	ordered_json EffectData = json::parse(file);
 	EFFECT_ASSET Effect = EFFECT_ASSET::FromJson(EffectData);
+
+	for (_uint i = 0; i < Effect.iNodeCount; ++i)
+	{
+		EFFECT_TYPE type = static_cast<EFFECT_TYPE>(EffectData["nodes"][i].at("effect_type"));
+
+		switch (type)
+		{
+		case Engine::EFFECT_TYPE::SPRITE:
+		{
+
+		}break;
+		case Engine::EFFECT_TYPE::PARTICLE:
+		{
+			PARTICLE_NODE* pParticleNode = new PARTICLE_NODE();
+			*pParticleNode = PARTICLE_NODE::FromJson(EffectData["nodes"][i]);
+
+			Effect.Nodes.push_back(pParticleNode);
+		}break;
+		case Engine::EFFECT_TYPE::MESH:
+		{
+			MESH_NODE* pMeshNode = new MESH_NODE();
+			*pMeshNode = MESH_NODE::FromJson(EffectData["nodes"][i]);
+
+			Effect.Nodes.push_back(pMeshNode);
+		}break;
+		default:
+			break;
+		}
+	}
+
+	map.emplace(effectTag, Effect);
 
 	return Effect;
 }
