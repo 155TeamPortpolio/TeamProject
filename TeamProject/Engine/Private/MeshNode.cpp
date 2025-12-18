@@ -55,7 +55,7 @@ void CMeshNode::Update(_float dt)
 	{
 	case Engine::CMeshNode::MODE::UV_ANIMATION:
 	{
-		m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, t);
+		m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, Math::ApplyEase(m_eUVEase, t));
 		
 		pMaterialInstance->Set_Param("UVOffset", { &m_vCurrUVOffset,"float2",sizeof(_float2) });
 	}break;
@@ -74,7 +74,7 @@ void CMeshNode::Update(_float dt)
 	if (t >= m_fDissolveStartProgress)
 	{
 		m_fDissolveThreshold = (t - m_fDissolveStartProgress) / (1.f - m_fDissolveStartProgress);
-		m_fDissolveThreshold = clamp(m_fDissolveThreshold, 0.f, 1.f);
+		m_fDissolveThreshold = Math::ApplyEase(m_eDissolveEase, m_fDissolveThreshold);
 	}
 
 	if (m_fElpasedTime >= m_fDuration)
