@@ -68,13 +68,15 @@ void CButtonUI::Render_GUI()
     ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
     ImGui::SeparatorText(u8"상태");
-    _char szText[32] = {};
-    sprintf_s(szText, sizeof(szText), "%d", static_cast<_int>(m_eState));
-    ImGui::Text(u8"상태 : ");
-    ImGui::SameLine();
-    ImGui::TextDisabled(szText);
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("0 : normal, 1 : hovered, 2 : clicked, 3 : disabled");
+    string strState = {};
+    switch (m_eState)
+    { 
+    case STATE::NORMAL: strState = ENUM_TO_STRING(STATE::NORMAL); break;
+    case STATE::HOVERED: strState = ENUM_TO_STRING(STATE::HOVERED); break;
+    case STATE::CLICKED: strState = ENUM_TO_STRING(STATE::CLICKED); break;
+    case STATE::DISABLED: strState = ENUM_TO_STRING(STATE::DISABLED); break;
+    }
+    ImGui::TextDisabled(strState.c_str());
 }
 
 void CButtonUI::Enter_Hover()
