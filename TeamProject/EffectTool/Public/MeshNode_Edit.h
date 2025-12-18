@@ -1,10 +1,11 @@
 #pragma once
 #include "MeshNode.h"
+#include "IEditable.h"
 #include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
 class CMeshNode_Edit :
-    public CMeshNode
+    public CMeshNode, public IEditable
 {
 public:
     typedef struct tagMeshNodeEditDesc : public GAMEOBJECT_DESC

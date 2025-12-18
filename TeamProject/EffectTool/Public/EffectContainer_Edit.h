@@ -50,8 +50,8 @@ private:
     vector<_int> m_SelectIndices;
     EFFECT_EDIT_CONTEXT m_Context{};
 
-    void Import();
-    void Export();
+    void Import(const string& filePath);
+    void Export(const string& outFilePath);
     void Play();
     void AddNode();
     void RemoveLastNode();

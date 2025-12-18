@@ -22,6 +22,8 @@ public:
 public:
     void Render_GUI() override;
     virtual void Play() {};
+    virtual void Import(const string& filePath) {};
+    virtual void Export(const string& outFilePath) {};
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free();

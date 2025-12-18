@@ -147,3 +147,11 @@ void CSpriteNode_Edit::SetUp_SpriteEffect()
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 }
 
+void CSpriteNode_Edit::ImportToJson(nlohmann::ordered_json& json)
+{
+}
+
+void CSpriteNode_Edit::ExportToJson(nlohmann::ordered_json& json)
+{
+}
+

@@ -1,10 +1,11 @@
 #pragma once
 #include "ParticleNode.h"
+#include "IEditable.h"
 #include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
 class CParticleNode_Edit :
-    public CParticleNode
+    public CParticleNode, public IEditable
 {
 public:
     typedef struct tagParticleNodeEditDesc : public GAMEOBJECT_DESC

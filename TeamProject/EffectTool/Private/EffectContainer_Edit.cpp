@@ -105,6 +105,34 @@ void CEffectContainer_Edit::Free()
 		Safe_Release(texture);
 }
 
+void CEffectContainer_Edit::Import(const string& filePath)
+{
+	using namespace nlohmann;
+	namespace fs = std::filesystem;
+
+
+}
+
+void CEffectContainer_Edit::Export(const string& outFilePath)
+{
+	using namespace nlohmann;
+	namespace fs = std::filesystem;
+
+	ordered_json EffectData;
+	//EffectData["version"] = 
+
+	EffectData["is_loop"] = m_IsLoop;
+	EffectData["duration"] = m_fDuration;
+
+	auto& nodes = EffectData["nodes"];
+	nodes = ordered_json::array();
+
+	for (const auto& node : m_Nodes)
+	{
+
+	}
+}
+
 void CEffectContainer_Edit::Play()
 {
 	if (ImGui::Button("Play"))
