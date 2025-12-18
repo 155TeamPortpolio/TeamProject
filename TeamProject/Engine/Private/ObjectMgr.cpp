@@ -61,6 +61,7 @@ void CObjectMgr::Late_Update(_float dt)
 	}
 
 	DeleteObjs.clear();
+	DeleteIDs.clear();
 }
 
 void CObjectMgr::Add_Object(CGameObject* object, const LAYER_DESC& layer)
@@ -120,14 +121,13 @@ void CObjectMgr::Remove_Object(CGameObject* object)
 		return;
 
 	DeleteObjs.push_back(object);
+	DeleteIDs.insert(object->Get_ObjectID());
 }
 
 void CObjectMgr::Change_Layer(const LAYER_DESC& SrcLayer, CGameObject* object, const LAYER_DESC& DstLayer)
 {
 	_uint ObjectID = object->Get_ObjectID();
 
-	auto& SrcMap = m_Layers.at(SrcLayer.LevelTag);
-	auto& DstMap = m_Layers.at(DstLayer.LevelTag);
 
 	if (!m_Layers.count(SrcLayer.LevelTag)) {
 		MSG_BOX(" wrong  Source Level Tag : CObjectMgr");
@@ -137,6 +137,9 @@ void CObjectMgr::Change_Layer(const LAYER_DESC& SrcLayer, CGameObject* object, c
 		MSG_BOX(" wrong  Dest Level Tag : CObjectMgr");
 		return;
 	}
+	auto& SrcMap = m_Layers.at(SrcLayer.LevelTag);
+	auto& DstMap = m_Layers.at(DstLayer.LevelTag);
+
 	auto SrcIter = SrcMap.find(SrcLayer.LayerTag);
 	auto DstIter = DstMap.find(DstLayer.LayerTag);
 
@@ -184,11 +187,9 @@ HRESULT CObjectMgr::Sync_To_Level()
 
 const unordered_map<string, class CLayer*>& CObjectMgr::Get_LevelLayer(const string& LevelTag)
 {
-	auto iter = m_Layers.find(LevelTag);
-	if (iter == m_Layers.end())
-		return unordered_map<string, class CLayer*>();
-	else
-		return iter->second;
+	static const unordered_map<string, CLayer*> kEmpty;
+	auto it = m_Layers.find(LevelTag);
+	return (it == m_Layers.end()) ? kEmpty : it->second;
 }
 
 CLayer* CObjectMgr::Get_Layer(const LAYER_DESC& SrcLayer)
@@ -205,22 +206,18 @@ CLayer* CObjectMgr::Get_Layer(const LAYER_DESC& SrcLayer)
 	return nullptr;
 }
 
-class CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
+CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 {
-	/*레벨 확인*/
-	auto iter = m_Layers.find(handle.Level);
+	auto it = m_Layers.find(handle.Level);
+	if (it == m_Layers.end()) return nullptr;
 
-	if (iter == m_Layers.end())
-		return nullptr;
+	auto& layers = it->second;
+	auto lit = layers.find(handle.Layer);
+	if (lit == layers.end()) return nullptr;
 
-	/*레이어 확인*/
-	auto Layers = iter->second;
-	auto LayerIter = Layers.find(handle.Layer);
-	if (LayerIter == Layers.end())
-		return nullptr;
+	if (DeleteIDs.count(handle.hObjID)) return nullptr;
 
-	auto TargetLayer = LayerIter->second;
-	return TargetLayer->Find_ObjectByID(handle.hObjID);
+	return lit->second->Find_ObjectByID(handle.hObjID);
 }
 
 

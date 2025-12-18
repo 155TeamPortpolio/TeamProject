@@ -44,7 +44,7 @@ private:
 
 	/*object Array to Delete*/
 	vector<CGameObject*> DeleteObjs;
-
+	unordered_set<_uint> DeleteIDs;
 public:
 	static CObjectMgr* Create();
 	virtual void Free() override;
