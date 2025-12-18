@@ -403,7 +403,7 @@ namespace Engine
 		vector<tagEffectNode> Nodes;
 	}EFFECT_ASSET;
 
-	typedef struct tagObjectHandle {
+	typedef struct ENGINE_DLL tagObjectHandle {
 		string Level = {};
 		string Layer = {};
 		_uint hObjID = {};
