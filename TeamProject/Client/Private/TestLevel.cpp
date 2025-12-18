@@ -32,26 +32,25 @@ HRESULT CTestLevel::Initialize()
 HRESULT CTestLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+
 	// ============ Camera ==================================================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
 	// =========================================================================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel",   CTestObject::Create());
 
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 
 	// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
 
-	//��δ� �ӽ�. ���� ���� ���濹��
+	//Map Loader Logic is going to Change
 	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
-	// �ٷ� ����
 	Safe_Release(pMapLoader);
+
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.Build("Test_Model");
@@ -75,8 +74,6 @@ void CTestLevel::Update()
 	if (input->Key_Down('C'))
 		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 1.f, true);
 
-	//if (input->Key_Down('1'))
-	//	m_pCamDirector->StopAll(0.25f);
 }
 
 void CTestLevel::Ready_Camera()
@@ -158,4 +155,7 @@ void CTestLevel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pCamDirector);
+	Safe_Release(m_testModel);
+	Safe_Release(m_orbitCam);
+	m_pGameInstance->DestroyInstance();
 }

@@ -402,6 +402,18 @@ namespace Engine
 		_bool isLoop = false;
 		vector<tagEffectNode> Nodes;
 	}EFFECT_ASSET;
+
+	typedef struct tagObjectHandle {
+		string Level = {};
+		string Layer = {};
+		_uint hObjID = {};
+
+		_bool isValid();
+		void Reset();
+		class CGameObject* Get();
+		void Release();
+	}OBJECT_HANDLE;
+	
 }
 
 
