@@ -112,6 +112,9 @@ namespace Engine {
 		_float          fSizeScale = 1.0f;					// 크기 스케일
 		_float          fRadiusScale = 1.0f;				// 반지름 별도 스케일
 		_float          fHeightScale = 1.0f;				// 높이 별도 스케일
+
+		_float          fContactOffset = 0.001f;			// 감지 시작 오프셋
+		_float          fRestOffset = 0.0f;					// 충돌 깊이 오프셋
 		CCTinitDesc() DEFAULT;
 		virtual ~CCTinitDesc() DEFAULT;
 	}CCT_DESC;

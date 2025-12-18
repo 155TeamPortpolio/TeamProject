@@ -61,6 +61,10 @@ public:
     void            Set_MaxSpeed(_float fMaxSpeed);
     void            Set_GravityEnabled(_bool bEnabled);
     _vector         Get_FootPosition();
+    void            Set_ContactOffset(_float fOffset);
+    void            Set_RestOffset(_float fOffset);
+    _float          Get_ContactOffset();
+    _float          Get_RestOffset();
 
     // 레이캐스트 관련
     _bool           Shoot_Ray(_fvector vDirection, _float fDistance);
@@ -87,9 +91,11 @@ private:
     _float                   m_fSlopeLimit = { 45.0f };
     _float                   m_fMaxSpeed = { 0.0f };
     _float                   m_fGravity = { -9.81f };
-
+    _float                   m_fContactOffset = 0.001f;
+    _float                   m_fRestOffset = 0.0f;
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
+
 #ifdef _DEBUG
     // 디버그 레이 시각화용
     _float3                  m_vRayStart = {};

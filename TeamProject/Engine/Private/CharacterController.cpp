@@ -80,7 +80,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	capsuleDesc.stepOffset = pDesc->fStepOffset;
 	capsuleDesc.material = m_pMaterial;
 	capsuleDesc.slopeLimit = cosf(XMConvertToRadians(pDesc->fSlopeLimit));
-	capsuleDesc.contactOffset = 0.01f;
+	capsuleDesc.contactOffset = pDesc->fContactOffset;
 	capsuleDesc.upDirection = PxVec3(0, 1, 0);
 	capsuleDesc.density = pDesc->fDensity;
 
@@ -118,6 +118,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
 	pShape->userData = this;
+	pShape->setContactOffset(pDesc->fContactOffset);
+	pShape->setRestOffset(pDesc->fRestOffset);
 
 	PxFilterData filterData;
 	filterData.word0 = 1 << ENUM(pDesc->eGroup);
@@ -294,6 +296,29 @@ void CCharacterController::Render_GUI()
 			}
 		}
 
+		ImGui::Separator();
+		ImGui::Text("Collision Offsets");
+
+		_float fContactOffset = Get_ContactOffset();
+		if (ImGui::DragFloat("Contact Offset", &fContactOffset, 0.0001f, 0.0001f, 0.1f, "%.4f"))
+		{
+			Set_ContactOffset(fContactOffset);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip("충돌 감지 시작 거리 (작을수록 정확)");
+		}
+
+		_float fRestOffset = Get_RestOffset();
+		if (ImGui::DragFloat("Rest Offset", &fRestOffset, 0.0001f, -0.01f, 0.01f, "%.4f"))
+		{
+			Set_RestOffset(fRestOffset);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip("실제 접촉 거리 (보통 0.0)");
+		}
+
 #ifdef _DEBUG
 		ImGui::Separator();
 		ImGui::Text("Debug Ray");
@@ -336,6 +361,8 @@ void CCharacterController::Render_GUI()
 			}
 		}
 #endif
+
+
 	}
 	ImGui::EndChild();
 }
@@ -664,6 +691,63 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 
 	return S_OK;
 }
+
+void CCharacterController::Set_ContactOffset(_float fOffset)
+{
+	m_fContactOffset = fOffset;
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			pShape->setContactOffset(fOffset);
+		}
+	}
+}
+
+void CCharacterController::Set_RestOffset(_float fOffset)
+{
+	m_fRestOffset = fOffset;
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			pShape->setRestOffset(fOffset);
+		}
+	}
+}
+
+_float CCharacterController::Get_ContactOffset()
+{
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			return pShape->getContactOffset();
+		}
+	}
+	return m_fContactOffset;
+}
+
+_float CCharacterController::Get_RestOffset()
+{
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			return pShape->getRestOffset();
+		}
+	}
+	return m_fRestOffset;
+}
+
 CCharacterController* CCharacterController::Create()
 {
 	CCharacterController* pInstance = new CCharacterController();
