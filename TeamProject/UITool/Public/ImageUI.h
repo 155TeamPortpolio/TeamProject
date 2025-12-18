@@ -31,9 +31,6 @@ private:
 public:
 	static _uint m_iCount;
 
-private:
-	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey);
-
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;

@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "Sprite2D.h"
 
 CUIObject_Tool::CUIObject_Tool()
 {
@@ -21,6 +22,13 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
     return S_OK;
+}
+
+void CUIObject_Tool::Render_GUI()
+{
+    ImGui::SeparatorText(u8"¼Ó¼º");
+
+    ImGui::Checkbox("Alive", &m_isAlive);
 }
 
 void CUIObject_Tool::DestroyChild_FromParent()
@@ -229,6 +237,12 @@ void CUIObject_Tool::Render_GUI_Transform()
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
+}
+
+void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
+{
+    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
+    OutstrTextureKey = TextureKey;
 }
 
 void CUIObject_Tool::Free()

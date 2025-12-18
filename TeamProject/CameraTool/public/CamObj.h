@@ -13,7 +13,7 @@ class CCamObj abstract : public CGameObject
 {
 protected:
     CCamObj() : CGameObject(), transform(m_pTransform) {}
-    CCamObj(const CCamObj& rhs) : CGameObject(rhs), transform(m_pTransform), game(rhs.game) {}
+    CCamObj(const CCamObj& rhs) : CGameObject(rhs), transform(m_pTransform), light(rhs.light), game(rhs.game) {}
     virtual ~CCamObj() = default;
 
 public:
@@ -30,10 +30,11 @@ public:
 
 protected:
     CGameInstance* game{};
-    CCamera* cam{};
+    CCamera*       cam{};
+    CLight*        light{};
     CamType        camType = CamType::Debug;
     CamRigType     rigType = CamRigType::Free;
-    CTransform*& transform;
+    CTransform*&   transform;
 
 public:
     CGameObject* Clone(INIT_DESC* pArg) override PURE;

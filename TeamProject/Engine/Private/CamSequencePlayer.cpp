@@ -173,7 +173,7 @@ void CCamSequencePlayer::RebuildIfNeeded()
     assert(ok);
 }
 
-void CCamSequencePlayer::ApplyPose(const CamPose& pose)
+void CCamSequencePlayer::ApplyPose(const CamPose& pose) // World 기준/ Local 기준 나눠야할수도
 {
     apply.transform->Set_Pos(pose.pos);
 

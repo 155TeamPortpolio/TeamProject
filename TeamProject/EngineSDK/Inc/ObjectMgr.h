@@ -31,6 +31,9 @@ public:
 	virtual const unordered_map<string, class CLayer*>& Get_LevelLayer(const string& LevelTag) override;
 	virtual  CLayer* Get_Layer(const LAYER_DESC& SrcLayer) override;
 
+public:
+	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
+
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
@@ -41,7 +44,7 @@ private:
 
 	/*object Array to Delete*/
 	vector<CGameObject*> DeleteObjs;
-
+	unordered_set<_uint> DeleteIDs;
 public:
 	static CObjectMgr* Create();
 	virtual void Free() override;

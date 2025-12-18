@@ -40,13 +40,13 @@ void CDemoShaderModel::Awake()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Zero_Vehicle_MilitaryHelicopter_01.model",
-		"../../DemoResource/static/Zero_Vehicle_MilitaryHelicopter_01.model");
-	pRcsMgr->Add_ResourcePath("Zero_Vehicle_MilitaryHelicopter_01.mat",
-		"../../DemoResource/static/Zero_Vehicle_MilitaryHelicopter_01.mat");
+	pRcsMgr->Add_ResourcePath("Mesh (merge).model",
+		"../../DemoResource/static/Mesh (merge).model");
+	pRcsMgr->Add_ResourcePath("Mesh (merge).mat",
+		"../../DemoResource/static/Mesh (merge).mat");
 
-	Get_Component<CModel>()->Link_Model("Demo_Level", "Zero_Vehicle_MilitaryHelicopter_01.model");
-	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Zero_Vehicle_MilitaryHelicopter_01.mat");
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Mesh (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Mesh (merge).mat");
 }
 
 void CDemoShaderModel::Priority_Update(_float dt)

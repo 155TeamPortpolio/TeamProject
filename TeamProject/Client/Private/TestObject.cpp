@@ -3,11 +3,15 @@
 #include "SkeletalModel.h"
 #include "Animator3D.h"
 #include "Material.h"
+#include "CharacterController.h"
+#include "Camera.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
 #include "RigidBody.h"
+
+#define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
 CTestObject::CTestObject()
 {
@@ -25,8 +29,23 @@ HRESULT CTestObject::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
-	Add_Component<CRigidBody>();
-	Add_Component<CCollider>();
+	//Add_Component<CRigidBody>();
+	//Add_Component<CCollider>();
+	Add_Component<CCharacterController>();
+
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+
+	/*파일명과 키값은 일치*/
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
+		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+
+	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+
 	return S_OK;
 }
 
@@ -41,21 +60,12 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 void CTestObject::Awake()
 {
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
-		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
-
-	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Change_Animation(3);
+
+	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
+	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
 }
 
 void CTestObject::Priority_Update(_float dt)
@@ -65,11 +75,48 @@ void CTestObject::Priority_Update(_float dt)
 void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+
+	auto controller = Get_Component<CCharacterController>();
+	auto cam        = CAM->Get_ActiveCam();
+	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
+
+	_vector3 camLook = camTf->Dir(STATE::LOOK);
+	_vector3 camRight = camTf->Dir(STATE::RIGHT);
+
+	camLook.y = 0.f; camRight.y = 0.f;
+
+	_vector3 vMoveDir{};
+
+	auto input = CGameInstance::GetInstance()->Get_InputDev();
+
+	if (input->Key_Down(VK_UP))
+		vMoveDir += camLook;
+	if (input->Key_Down(VK_DOWN))
+		vMoveDir -= camLook;
+	if (input->Key_Down(VK_RIGHT))
+		vMoveDir += camRight;
+	if (input->Key_Down(VK_LEFT))
+		vMoveDir -= camRight;
+
+	controller->Move_Direction(vMoveDir, 5.0f);
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
+		controller->Jump(10.f);
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
+	{
+		_vector vLook = m_pTransform->Dir(STATE::LOOK);
+		controller->Shoot_Ray(vLook, 100.f);
+	}
+	else
+		controller->Clear_DebugRay();
+
+	controller->Update(dt);
 }
 
 void CTestObject::Late_Update(_float dt)
 {
-	Get_Component<CRigidBody>()->Late_Update(dt);
+	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 void CTestObject::OnCollisionEnter()

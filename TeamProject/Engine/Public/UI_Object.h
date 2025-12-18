@@ -32,6 +32,9 @@ public:
 	virtual void UI_Active(void* pArg = nullptr) {};
 	virtual void UI_DeActive(void* pArg = nullptr) {};
 
+	virtual void Enter_Hover() {}
+	virtual void Exit_Hover() {}
+	virtual void OnClick() {}
 
 	void Set_Size(_float2 size) { m_vSize= size; } 
 	_bool Size_To(_fvector size, _float Speed);
@@ -88,6 +91,10 @@ public:
 	_uint Get_Priority() { return m_iPriority; };
 	void Set_Priority(_uint priority) { m_iPriority = priority; }
 
+public:
+	void Set_Clickable(_bool isClickable) { m_isClickable = isClickable; }
+	_bool Is_Clickable() { return m_isClickable; }
+
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -119,6 +126,8 @@ protected:
 
 	string m_Level = {};
 	_int m_SystemIndex = {-1};
+
+	_bool m_isClickable = {};
 
 public:
 	virtual void Free() override;

@@ -65,7 +65,7 @@ void CLight::Render_GUI()
 	if (eType == LIGHT_TYPE::DIRECTIONAL)
 	{
 		ImGui::Text("Direction");
-		if (ImGui::DragFloat3("##Direction", &m_Light.vLightDirection.x, 0.01f, -1.0f, 1.0f))
+		if (ImGui::DragFloat3("##Direction", &m_Light.vLightDirection.x, 0.0f, -1.0f, 1.0f))
 		{
 			XMVECTOR dir = XMLoadFloat4(&m_Light.vLightDirection);
 			dir = XMVector3Normalize(dir);
@@ -118,7 +118,7 @@ LIGHT_DESC CLight::SnapShot_Desc()
 
 	XMStoreFloat4(&snapShot.vLightPosition, lightOffset + ownerPos);
 
-	return m_Light;
+	return snapShot;
 }
 
 void CLight::Set_CompActive(_bool bActive)

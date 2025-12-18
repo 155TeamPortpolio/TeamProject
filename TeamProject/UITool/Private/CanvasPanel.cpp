@@ -7,6 +7,7 @@
 
 #include "ImageUI.h"
 #include "TextUI.h"
+#include "ButtonUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
 
@@ -58,10 +59,30 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();
 
+    Render_GUI_Create();
+}
+
+void CCanvasPanel::ToJson(json& data)
+{
+    __super::ToJson(data);
+
+    data["typeTag"] = "CanvasPanel";
+}
+
+void CCanvasPanel::FromJson(const json& data)
+{
+    __super::FromJson(data);
+    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
+}
+
+void CCanvasPanel::Render_GUI_Create()
+{
     ImGui::SeparatorText("Create");
 
     _bool isCreateChild = {};
@@ -82,12 +103,19 @@ void CCanvasPanel::Render_GUI()
         strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount);
     }
 
+    if (ImGui::Button("Create Button"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_ButtonUI";
+        strInstanceKey = "UI_ButtonUI" + to_string(CButtonUI::m_iCount);
+    }
+
     // 자식 생성
-    if(isCreateChild)
+    if (isCreateChild)
     {
         string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, strProtoTag})       // UI Object 생성
+        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, strProtoTag })       // UI Object 생성
             .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build(strInstanceKey);
 
@@ -99,22 +127,9 @@ void CCanvasPanel::Render_GUI()
         CUIObject_Tool* pUIChild = dynamic_cast<CUIObject_Tool*>(pChild);
         if (!pUIChild)
             return;
-       
+
         Add_Child(pUIChild);    // 부모의 오브젝트 컨테이너에 자식을 추가하고, 자식에 부모 포인터와 자식 인덱스 저장
     }
-}
-
-void CCanvasPanel::ToJson(json& data)
-{
-    __super::ToJson(data);
-
-    data["typeTag"] = "CanvasPanel";
-}
-
-void CCanvasPanel::FromJson(const json& data)
-{
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 CGameObject* CCanvasPanel::Create()

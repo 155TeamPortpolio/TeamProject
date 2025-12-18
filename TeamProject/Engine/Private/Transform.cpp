@@ -158,7 +158,9 @@ void CTransform::Set_Y(const _float& position)
 
 void CTransform::Set_Quaternion(_fvector quaternion)
 {
-	XMStoreFloat4(&m_qRotation, quaternion);
+	_vector4 quat = quaternion;
+	quat.Normalize();
+	XMStoreFloat4(&m_qRotation, quat);
 	MarkDirty();
 }
 
@@ -437,8 +439,6 @@ void CTransform::MarkDirty()
 	m_bDirty = true;
 	m_VersionCounter++;
 }
-
-
 
 CTransform* CTransform::Create()
 {

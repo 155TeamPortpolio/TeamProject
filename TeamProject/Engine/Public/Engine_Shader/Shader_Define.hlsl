@@ -60,6 +60,19 @@ cbuffer ShadowBuffer : register(b8)
     float3 ShadowPadding;
 };
 
+cbuffer SSAOBuffer : register(b10)
+{
+    float fRadius;
+    float fBias;
+    float fScreenWidth;
+    float fScreenHeight;
+};
+
+cbuffer SSAOKernel : register(b11)
+{
+    float4 SSAOKernel[64];
+};
+
 struct BoneMatrix{matrix BoneMat;};
 struct TransfomMatrix{matrix Transform;};
 
@@ -82,6 +95,7 @@ Texture2D MetalnessTexture : register(t14);
 Texture2D DiffuseRoughnessTexture : register(t15);
 Texture2D AmbientOcclusionTexture : register(t16);
 Texture2D NoiseTexture : register(t17);
+Texture2D DissolveTexture : register(t18);
 
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式

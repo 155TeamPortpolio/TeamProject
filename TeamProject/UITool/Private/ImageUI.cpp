@@ -30,9 +30,7 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 
     const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
     if (strTextureKeys.size())
-        Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex]);
-    else
-        MSG_BOX("Failed to Add_Texture : No Textures Loaded");
+        Change_Texture(0, G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 
     m_iCount++;
 
@@ -53,6 +51,8 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
+    __super::Render_GUI();
+
     Render_GUI_Layout();
 
     Render_GUI_Transform();
@@ -60,7 +60,7 @@ void CImageUI::Render_GUI()
     ImGui::SeparatorText(u8"이미지");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 }
 
 void CImageUI::ToJson(json& data)
@@ -74,17 +74,11 @@ void CImageUI::ToJson(json& data)
 
 void CImageUI::FromJson(const json& data)
 {
-    Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+    Change_Texture(0, G_GlobalLevelKey, data["textureTag"], m_strTextureKey);
     //Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
-}
-
-void CImageUI::Change_Texture(_uint index, const string& levelKey, const string& TextureKey)
-{
-    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
-    m_strTextureKey = TextureKey;
 }
 
 CGameObject* CImageUI::Create()

@@ -70,6 +70,9 @@ void CUI_Object::Late_Update(_float dt)
 
 void CUI_Object::Post_EngineUpdate(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Update_UITransform();
 
     if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
@@ -84,6 +87,9 @@ void CUI_Object::Post_EngineUpdate(_float dt)
 
         if(isUI && isValid && isActive)
             CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
+
+        if (m_isClickable)
+            CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
     }
 
     for (auto& child : Get_Children()) {

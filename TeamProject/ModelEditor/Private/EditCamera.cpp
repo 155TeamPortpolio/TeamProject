@@ -35,7 +35,7 @@ HRESULT CEditCamera::Initialize(INIT_DESC* pArg)
 	desc.vLightDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 	desc.vLightAmbient = _float4(0.6f, 0.6f, 0.6f, 1.f);
 	desc.vLightSpecular = _float4(1.f, 1.f, 1.f, 1.f);
-
+	desc.fLightIntensity = 10.f;
 	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 	m_pTransform->LookAt({ 0,0,0 }); 
 	return S_OK;
@@ -101,6 +101,7 @@ void CEditCamera::Late_Update(_float dt)
 
 void CEditCamera::Render_GUI()
 {
+	__super::Render_GUI();
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);

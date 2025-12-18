@@ -32,7 +32,7 @@ namespace Engine
 	/* Light Desc struct*/
 	typedef struct tagLightDesc {
 		union { _float4 vLightPosition;  _float4 vOffsetPosition; };
-		_float4		vLightDirection = {};
+		_float4		vLightDirection = { 0,-1,0,0 };
 		_float4		vLightDiffuse = {};
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
@@ -218,23 +218,23 @@ namespace Engine
 
 	// Physics Ray Info
 	typedef struct tagPhysicsRayInfo {
-		_float3 vOrigin = {};                 // ½ÃÀÛÁ¡
-		_float3 vDirection = {};              // ¹æÇâ (Á¤±ÔÈ­µÊ)
-		_float	fMaxDistance = 1000.f;        // ÃÖ´ë °Å¸®
-		_uint	iCollisionMask = 0xFFFFFFFF;  // Ãæµ¹ ·¹ÀÌ¾î ¸¶½ºÅ©
-		_bool	bQueryTrigger = false;        // Æ®¸®°Åµµ °Ë»çÇÒÁö ¿©ºÎ
-		_uint	iMaxHits = 1;                 // ÃÖ´ë °ËÃâ °³¼ö
+		_float3 vOrigin = {};                 // ì‹œì‘ì 
+		_float3 vDirection = {};              // ë°©í–¥ (ì •ê·œí™”ë¨)
+		_float	fMaxDistance = 1000.f;        // ìµœëŒ€ ê±°ë¦¬
+		_uint	iCollisionMask = 0xFFFFFFFF;  // ì¶©ëŒ ë ˆì´ì–´ ë§ˆìŠ¤í¬
+		_bool	bQueryTrigger = false;        // íŠ¸ë¦¬ê±°ë„ ê²€ì‚¬í• ì§€ ì—¬ë¶€
+		_uint	iMaxHits = 1;                 // ìµœëŒ€ ê²€ì¶œ ê°œìˆ˜
 	}PHYSICS_RAY;
 
 	// Physics Hit Info
 	typedef struct tagPhysicsRayHitInfo {
-		_bool				bHit = false;          // Ãæµ¹ ¿©ºÎ
-		_float				fDistance = 0.f;       // Ãæµ¹ ÁöÁ¡±îÁöÀÇ °Å¸®
-		_float3				vPoint = {};           // Ãæµ¹ ÁöÁ¡ ¿ùµå ÁÂÇ¥
-		_float3				vNormal = {};          // Ãæµ¹ Ç¥¸éÀÇ ¹ı¼±
-		class CGameObject*	pHitObject = nullptr;  // Ãæµ¹ÇÑ ¿ÀºêÁ§Æ®
-		class ICollidable*	pCollidable = nullptr; // Ãæµ¹ÇÑ ÄÄÆ÷³ÍÆ®
-		PxShape*			pShape = nullptr;      // Ãæµ¹ÇÑ Shape
+		_bool				bHit = false;          // ì¶©ëŒ ì—¬ë¶€
+		_float				fDistance = 0.f;       // ì¶©ëŒ ì§€ì ê¹Œì§€ì˜ ê±°ë¦¬
+		_float3				vPoint = {};           // ì¶©ëŒ ì§€ì  ì›”ë“œ ì¢Œí‘œ
+		_float3				vNormal = {};          // ì¶©ëŒ í‘œë©´ì˜ ë²•ì„ 
+		class CGameObject*	pHitObject = nullptr;  // ì¶©ëŒí•œ ì˜¤ë¸Œì íŠ¸
+		class ICollidable*	pCollidable = nullptr; // ì¶©ëŒí•œ ì»´í¬ë„ŒíŠ¸
+		PxShape*			pShape = nullptr;      // ì¶©ëŒí•œ Shape
 	}PHYSICS_RAY_HIT;
 
 	// Physics Hits Info
@@ -251,8 +251,8 @@ namespace Engine
 
 
 	typedef struct tagInstanceInitDESC {
-		_uint instanceStride = {};		// ÀÎ½ºÅÏ½º ±¸Á¶Ã¼ Å©±â 
-		_uint instanceCount = {};     // ÃÖ´ë ÀÎ½ºÅÏ½º °³¼ö
+		_uint instanceStride = {};		// ì¸ìŠ¤í„´ìŠ¤ êµ¬ì¡°ì²´ í¬ê¸° 
+		_uint instanceCount = {};     // ìµœëŒ€ ì¸ìŠ¤í„´ìŠ¤ ê°œìˆ˜
 		_uint ElementCount = {};
 		const D3D11_INPUT_ELEMENT_DESC* pElementDesc = { nullptr };
 		string ElementKey = {  };
@@ -262,10 +262,10 @@ namespace Engine
 	{
 		enum class STATE : _uint
 		{
-			NONE = 0,   // ºñ¾î ÀÖÀ½ (½½·Ô ¹Ì»ç¿ë)
-			ACTIVE = 1,   // Ãæµ¹ °Ë»ç ´ë»ó
-			INACTIVE = 2,   // ÀÏ½Ã ºñÈ°¼º (Ãæµ¹ °Ë»ç Á¦¿Ü)
-			DEAD = 3,   // ¼ÒÀ¯ÀÚ°¡ »èÁ¦µÊ, ¿ÏÀüÈ÷ Á¦°Å ¿¹Á¤
+			NONE = 0,   // ë¹„ì–´ ìˆìŒ (ìŠ¬ë¡¯ ë¯¸ì‚¬ìš©)
+			ACTIVE = 1,   // ì¶©ëŒ ê²€ì‚¬ ëŒ€ìƒ
+			INACTIVE = 2,   // ì¼ì‹œ ë¹„í™œì„± (ì¶©ëŒ ê²€ì‚¬ ì œì™¸)
+			DEAD = 3,   // ì†Œìœ ìê°€ ì‚­ì œë¨, ì™„ì „íˆ ì œê±° ì˜ˆì •
 		};
 
 		class CCollider* pCollider;
@@ -296,7 +296,7 @@ namespace Engine
 		string FontTag;
 		_float Scale = 1.f;
 		_float Rotation = 0.f;
-		_float2 Origin = { 0.f, 0.f }; // È¸ÀüŸÔ ÁßÁ¡
+		_float2 Origin = { 0.f, 0.f }; 
 
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
@@ -402,6 +402,18 @@ namespace Engine
 		_bool isLoop = false;
 		vector<tagEffectNode> Nodes;
 	}EFFECT_ASSET;
+
+	typedef struct ENGINE_DLL tagObjectHandle {
+		string Level = {};
+		string Layer = {};
+		_uint hObjID = {};
+
+		_bool isValid();
+		void Reset();
+		class CGameObject* Get();
+		void Release();
+	}OBJECT_HANDLE;
+	
 }
 
 

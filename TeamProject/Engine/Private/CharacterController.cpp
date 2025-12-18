@@ -3,6 +3,8 @@
 #include "CharacterController.h"
 #include "GameInstance.h"
 #include "DebugDraw.h"
+#include "StaticModel.h"
+#include "SkeletalModel.h"
 
 CCharacterController::CCharacterController()
 {
@@ -60,6 +62,10 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	if (pArg)
 	{
 		pDesc = static_cast<CCT_DESC*>(pArg);
+		if (pDesc->bAutoFit)
+		{
+			AutoFit(pDesc);
+		}
 	}
 
 	m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
@@ -74,7 +80,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	capsuleDesc.stepOffset = pDesc->fStepOffset;
 	capsuleDesc.material = m_pMaterial;
 	capsuleDesc.slopeLimit = cosf(XMConvertToRadians(pDesc->fSlopeLimit));
-	capsuleDesc.contactOffset = 0.01f;
+	capsuleDesc.contactOffset = pDesc->fContactOffset;
 	capsuleDesc.upDirection = PxVec3(0, 1, 0);
 	capsuleDesc.density = pDesc->fDensity;
 
@@ -112,6 +118,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
 	pShape->userData = this;
+	pShape->setContactOffset(pDesc->fContactOffset);
+	pShape->setRestOffset(pDesc->fRestOffset);
 
 	PxFilterData filterData;
 	filterData.word0 = 1 << ENUM(pDesc->eGroup);
@@ -288,6 +296,29 @@ void CCharacterController::Render_GUI()
 			}
 		}
 
+		ImGui::Separator();
+		ImGui::Text("Collision Offsets");
+
+		_float fContactOffset = Get_ContactOffset();
+		if (ImGui::DragFloat("Contact Offset", &fContactOffset, 0.0001f, 0.0001f, 0.1f, "%.4f"))
+		{
+			Set_ContactOffset(fContactOffset);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip("충돌 감지 시작 거리 (작을수록 정확)");
+		}
+
+		_float fRestOffset = Get_RestOffset();
+		if (ImGui::DragFloat("Rest Offset", &fRestOffset, 0.0001f, -0.01f, 0.01f, "%.4f"))
+		{
+			Set_RestOffset(fRestOffset);
+		}
+		if (ImGui::IsItemHovered())
+		{
+			ImGui::SetTooltip("실제 접촉 거리 (보통 0.0)");
+		}
+
 #ifdef _DEBUG
 		ImGui::Separator();
 		ImGui::Text("Debug Ray");
@@ -330,6 +361,8 @@ void CCharacterController::Render_GUI()
 			}
 		}
 #endif
+
+
 	}
 	ImGui::EndChild();
 }
@@ -597,6 +630,122 @@ void CCharacterController::Apply_Move(_float dt)
 
 	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
+}
+
+HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
+{
+	CStaticModel* pStaticModel = m_pOwner->Get_Component<CStaticModel>();
+	CSkeletalModel* pSkeletalModel = m_pOwner->Get_Component<CSkeletalModel>();
+
+	MINMAX_BOX boundingBox = {};
+	_bool bHasModel = false;
+
+	if (pStaticModel)
+	{
+		boundingBox = pStaticModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+	else if (pSkeletalModel)
+	{
+		boundingBox = pSkeletalModel->Get_LocalBoundingBox();
+		bHasModel = true;
+	}
+
+	if (!bHasModel)
+	{
+		return E_FAIL;
+	}
+
+	_float3 vMin = boundingBox.vMin;
+	_float3 vMax = boundingBox.vMax;
+
+	// Radius 계산: XZ 평면에서의 최대 반지름
+	_float fRadiusX = (vMax.x - vMin.x) * 0.5f;
+	_float fRadiusZ = (vMax.z - vMin.z) * 0.5f;
+	_float fRadius = max(fRadiusX, fRadiusZ);
+
+	// Height 계산: Y축 높이에서 위아래 반구 부분 제외
+	_float fTotalHeight = vMax.y - vMin.y;
+	_float fCylinderHeight = fTotalHeight - (fRadius * 2.0f);
+
+	// 최소값 보장
+	if (fCylinderHeight < 0.1f)
+	{
+		fCylinderHeight = 0.1f;
+	}
+
+	// 스케일 적용
+	pDesc->fRadius = fRadius * pDesc->fRadiusScale * pDesc->fSizeScale;
+	pDesc->fHeight = fCylinderHeight * pDesc->fHeightScale * pDesc->fSizeScale;
+
+	// 초기 위치가 설정되지 않았다면 바운딩 박스 중심으로 설정
+	if (pDesc->vPos.x == 0.f && pDesc->vPos.y == 0.f && pDesc->vPos.z == 0.f)
+	{
+		pDesc->vPos.x = (vMin.x + vMax.x) * 0.5f;
+		pDesc->vPos.y = vMin.y + pDesc->fRadius;  // 발 위치를 바닥에 맞춤
+		pDesc->vPos.z = (vMin.z + vMax.z) * 0.5f;
+	}
+
+	// StepOffset 자동 조정
+	pDesc->fStepOffset = pDesc->fHeight * 0.25f;  // 높이의 25%를 계단 오를 수 있는 높이로 설정
+
+	return S_OK;
+}
+
+void CCharacterController::Set_ContactOffset(_float fOffset)
+{
+	m_fContactOffset = fOffset;
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			pShape->setContactOffset(fOffset);
+		}
+	}
+}
+
+void CCharacterController::Set_RestOffset(_float fOffset)
+{
+	m_fRestOffset = fOffset;
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			pShape->setRestOffset(fOffset);
+		}
+	}
+}
+
+_float CCharacterController::Get_ContactOffset()
+{
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			return pShape->getContactOffset();
+		}
+	}
+	return m_fContactOffset;
+}
+
+_float CCharacterController::Get_RestOffset()
+{
+	if (m_pController)
+	{
+		PxShape* pShape;
+		m_pController->getActor()->getShapes(&pShape, 1);
+		if (pShape)
+		{
+			return pShape->getRestOffset();
+		}
+	}
+	return m_fRestOffset;
 }
 
 CCharacterController* CCharacterController::Create()

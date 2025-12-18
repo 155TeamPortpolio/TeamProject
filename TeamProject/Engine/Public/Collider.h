@@ -31,7 +31,12 @@ public:
     void            OnTriggerExit(ICollidable* pOther) override;
 
 #ifdef _DEBUG
-    virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+private:
+    _bool           m_bDebugRender = { true };
+public:
+    virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
+    _bool           IsDebugRender() { return m_bDebugRender; }
+    void            Set_DebugRender(_bool bDebugRender) { m_bDebugRender = bDebugRender; }
 #endif
 
 public:
@@ -44,6 +49,7 @@ public:
 
 private:
     void            Update_LocalPose();
+    HRESULT         AutoFit(COLLIDER_DESC* pDesc);
 
 private:
     class IPhysicsService*      m_pPhysicsSystem = { nullptr };
@@ -52,6 +58,8 @@ private:
     class CRigidBody*           m_pAttachedRigidBody = { nullptr };
     PxRigidStatic*              m_pStaticActor = { nullptr };
 
+    PxTriangleMesh*             m_pTriangleMesh = { nullptr };  // ÄíÅ·µÈ ¸Þ½¬
+    _bool                       m_bCooked = { false };      // ÄíÅ· ¿©ºÎ
     COLLIDER_TYPE               m_eType = {};
     COLLISION_GROUP             m_eGroup = {};
     _uint                       m_iCollisionMask = {};
