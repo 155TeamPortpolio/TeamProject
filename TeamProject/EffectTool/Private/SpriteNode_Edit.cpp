@@ -88,6 +88,14 @@ void CSpriteNode_Edit::Play()
 	m_iCurrFrameIndex = 0;
 }
 
+void CSpriteNode_Edit::Import(nlohmann::ordered_json& json)
+{
+}
+
+void CSpriteNode_Edit::Export(nlohmann::ordered_json& json)
+{
+}
+
 CSpriteNode_Edit* CSpriteNode_Edit::Create()
 {
 	CSpriteNode_Edit* instance = new CSpriteNode_Edit();
@@ -145,13 +153,5 @@ void CSpriteNode_Edit::SetUp_SpriteEffect()
 	ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_iCol));
 	ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_iRow));
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
-}
-
-void CSpriteNode_Edit::ImportToJson(nlohmann::ordered_json& json)
-{
-}
-
-void CSpriteNode_Edit::ExportToJson(nlohmann::ordered_json& json)
-{
 }
 

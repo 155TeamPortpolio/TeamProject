@@ -1,11 +1,10 @@
 #pragma once
 #include "MeshNode.h"
-#include "IEditable.h"
 #include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
 class CMeshNode_Edit :
-    public CMeshNode, public IEditable
+    public CMeshNode
 {
 public:
     typedef struct tagMeshNodeEditDesc : public GAMEOBJECT_DESC
@@ -27,7 +26,9 @@ public:
 
 public:
     void Render_GUI()override;
-    void Play()override;
+    void Play()override; 
+    void Import(nlohmann::ordered_json& json);
+    void Export(nlohmann::ordered_json& json);
 
 public:
     static CMeshNode_Edit* Create();

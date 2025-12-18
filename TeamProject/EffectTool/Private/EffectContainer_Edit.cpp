@@ -8,6 +8,7 @@
 #include "MeshNode_Edit.h"
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
+#include "IEditable.h"
 
 CEffectContainer_Edit::CEffectContainer_Edit()
     :CEffectContainer()
@@ -61,6 +62,8 @@ void CEffectContainer_Edit::Render_GUI()
 	DisplayModels();
 	DisplayMaterial();
 	ContextClear();
+	Import();
+	Export();
 	Play();
     AddNode();
 	RemoveLastNode();
@@ -105,31 +108,50 @@ void CEffectContainer_Edit::Free()
 		Safe_Release(texture);
 }
 
-void CEffectContainer_Edit::Import(const string& filePath)
+void CEffectContainer_Edit::Import()
 {
-	using namespace nlohmann;
-	namespace fs = std::filesystem;
+	if (ImGui::Button("Import"))
+	{
+		using namespace nlohmann;
+		namespace fs = std::filesystem;
+
+	}
 
 
 }
 
-void CEffectContainer_Edit::Export(const string& outFilePath)
+void CEffectContainer_Edit::Export()
 {
-	using namespace nlohmann;
-	namespace fs = std::filesystem;
-
-	ordered_json EffectData;
-	//EffectData["version"] = 
-
-	EffectData["is_loop"] = m_IsLoop;
-	EffectData["duration"] = m_fDuration;
-
-	auto& nodes = EffectData["nodes"];
-	nodes = ordered_json::array();
-
-	for (const auto& node : m_Nodes)
+	if (ImGui::Button("Export"))
 	{
+		string filePath = Helper::SaveFileDialog();
 
+		using namespace nlohmann;
+		namespace fs = std::filesystem;
+
+		ordered_json EffectData;
+		
+		EffectData["is_loop"] = m_IsLoop;
+		EffectData["duration"] = m_fDuration;
+
+		auto& NodeDatas = EffectData["nodes"];
+		NodeDatas = ordered_json::array();
+
+		for (const auto& node : m_Nodes)
+		{
+			ordered_json NodeData;
+			node->Export(NodeData);
+			NodeDatas.push_back(std::move(NodeData));
+		}
+		
+		ofstream file(filePath, std::ios::binary);
+		if (!file.is_open())
+		{
+			MSG_BOX("Save Failed");
+			return;
+		}
+
+		file << EffectData.dump(2);
 	}
 }
 
@@ -161,6 +183,7 @@ void CEffectContainer_Edit::AddNode()
 
 		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ParticleNode" }).Add_ObjDesc(pDesc).Build("ParticleNode");
 		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+		
 	}
 	if (ImGui::Button("Add Mesh Node"))
 	{

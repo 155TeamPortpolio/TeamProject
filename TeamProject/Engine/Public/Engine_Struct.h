@@ -395,6 +395,35 @@ namespace Engine
 
 	}PARTICLE_NODE;
 
+	typedef struct tagMeshNode : public tagEffectNode
+	{
+		_float4 vBaseColor{ 1.f,1.f,1.f,1.f };
+		
+		/* Alpha */
+		_uint AlphaFadeEase{};
+		_float2 vAlphaFade{};
+
+		/* Scale */
+		_uint ScaleEase{};
+		_float3 vStartScale{};
+		_float3 vEndScale{};
+
+		/* UV Animation */
+		_uint eUVEase{};
+		_float2 vStartUVOffset{};
+		_float2 vEndUVOffset{};
+
+		/* Sprite Animation */
+		_uint iCol{};
+		_uint iRow{};
+		_uint iMaxFrameIndex{};
+
+		/* Dissolve */
+		_uint DissolveEase{};
+		_float fDissolveStartProgress{};
+
+	}MESH_NODE;
+
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
 		string Name{};

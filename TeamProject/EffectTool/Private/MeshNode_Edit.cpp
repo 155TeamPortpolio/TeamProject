@@ -88,6 +88,42 @@ void CMeshNode_Edit::Play()
 	m_fDissolveThreshold = 0.f;
 }
 
+void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
+{
+
+}
+
+void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
+{
+	json =
+	{
+		{"base_color",{{"x",m_vBaseColor.x},{"y",m_vBaseColor.y},{"z",m_vBaseColor.z},{"w",m_vBaseColor.w}}},
+
+		/* Alpha */
+		{"alpha_fade_ease",static_cast<_uint>(m_eAlphaFadeEase)},
+		{"alpha_fade",{{"x",m_vAlphaFade.x},{"y",m_vAlphaFade.y}}},
+
+		/* Scale */
+		{"scale_ease",static_cast<_uint>(m_eScaleEase)},
+		{"start_scale",{{"x",m_vStartScale.x},{"y",m_vStartScale.y},{"z",m_vStartScale.z}}},
+		{"end_scale",{{"x",m_vEndScale.x},{"y",m_vEndScale.y},{"z",m_vEndScale.z}}},
+
+		/* UV Animation */
+		{"uv_ease",static_cast<_uint>(m_eUVEase)},
+		{"start_uv_offset",{{"x",m_vStartUVOffset.x},{"y",m_vStartUVOffset.y}}},
+		{"end_uv_offset",{{"x",m_vEndUVOffset.x},{"y",m_vEndUVOffset.y}}},
+
+		/* Sprite Animation */
+		{"col", m_iCol},
+		{"row", m_iRow},
+		{"max_frame_index",m_iMaxFrameIndex},
+
+		/* Dissolve */
+		{"dissolve_ease",static_cast<_uint>(m_eDissolveEase)},
+		{"dissolve_start_progress",m_fDissolveStartProgress}
+	};
+}
+
 CMeshNode_Edit* CMeshNode_Edit::Create()
 {
 	CMeshNode_Edit* instance = new CMeshNode_Edit();

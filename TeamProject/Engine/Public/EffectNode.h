@@ -22,8 +22,8 @@ public:
 public:
     void Render_GUI() override;
     virtual void Play() {};
-    virtual void Import(const string& filePath) {};
-    virtual void Export(const string& outFilePath) {};
+    virtual void Import(nlohmann::ordered_json& json) {};
+    virtual void Export(nlohmann::ordered_json& json) {};
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free();

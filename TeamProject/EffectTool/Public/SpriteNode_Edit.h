@@ -1,11 +1,10 @@
 #pragma once
 #include "SpriteNode.h"
-#include "IEditable.h"
 #include "EffectContainer_Edit.h"
 
 NS_BEGIN(EffectTool)
 class CSpriteNode_Edit :
-    public CSpriteNode, public IEditable
+    public CSpriteNode
 {
 public:
     typedef struct tagSpriteNodeEditDesc : public GAMEOBJECT_DESC
@@ -28,8 +27,8 @@ public:
 public:
     void Render_GUI() override;
     void Play() override;
-    void ImportToJson(nlohmann::ordered_json& json) override;
-    void ExportToJson(nlohmann::ordered_json& json) override;
+    void Import(nlohmann::ordered_json& json);
+    void Export(nlohmann::ordered_json& json);
 
 public:
     static CSpriteNode_Edit* Create();
