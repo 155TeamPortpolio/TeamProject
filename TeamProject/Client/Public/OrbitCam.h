@@ -61,6 +61,14 @@ private:
     _float   m_pitchDollyStrength = 0.25f;
     _float   m_pitchDollyStartN   = 0.75f;
 
+    _bool    m_usePitchAutoZoom = true;
+    _float   m_pitchAutoZoomMax = 1.0f;
+    _float   m_pitchAutoZoomStartN = 0.75f;
+    _float   m_pitchAutoZoomSmooth = 18.f;
+             
+    _float   m_pitchZoomOffsetTarget = 0.f;
+    _float   m_pitchZoomOffsetCur = 0.f;
+
 public:
     static COrbitCam* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

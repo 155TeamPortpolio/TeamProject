@@ -118,7 +118,7 @@ LIGHT_DESC CLight::SnapShot_Desc()
 
 	XMStoreFloat4(&snapShot.vLightPosition, lightOffset + ownerPos);
 
-	return m_Light;
+	return snapShot;
 }
 
 void CLight::Set_CompActive(_bool bActive)

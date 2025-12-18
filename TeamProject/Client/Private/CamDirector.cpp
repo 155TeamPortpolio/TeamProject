@@ -4,6 +4,8 @@
 #include "SequenceCam.h"
 #include "GameInstance.h"
 
+IMPLEMENT_SINGLETON(CCamDirector)
+
 CSequenceCam* CCamDirector::RequireSequenceCam() const
 {
     return static_cast<CSequenceCam*>(OBJ->Request_Object(m_sequenceHandle));
@@ -15,9 +17,9 @@ void CCamDirector::ClearPlayingState()
     m_playing.key.clear();
     m_playing.active = false;
 
-    m_playing.pendingStart = false;
-    m_playing.blendInRemain = 0.f;
-    m_playing.resetTimeOnStart = true;
+    m_playing.pendingStart       = false;
+    m_playing.blendInRemain      = 0.f;
+    m_playing.resetTimeOnStart   = true;
     m_playing.defaultBlendOutSec = 0.25f;
 }
 
@@ -45,8 +47,7 @@ void CCamDirector::UnRegister(const string& key)
 
 void CCamDirector::Update(_float dt)
 {
-    if (!m_playing.active)
-        return;
+    if (!m_playing.active) return;
 
     auto sequenceCam = RequireSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
@@ -63,10 +64,8 @@ void CCamDirector::Update(_float dt)
             sequencePlayer->Play();
             m_playing.pendingStart = false;
         }
-
         return;
     }
-
     sequencePlayer->Update(dt);
 
     if (!sequencePlayer->IsPlaying())

@@ -12,9 +12,10 @@ class CSequenceCam;
 
 class CCamDirector final : public CBase
 {
+    DECLARE_SINGLETON(CCamDirector)
 private:
     CCamDirector() {}
-    virtual ~CCamDirector() DEFAULT;
+    virtual ~CCamDirector() {}
 
 public:
     void  Bind(CSequenceCam* sequenceCam);
@@ -55,7 +56,6 @@ private:
     OBJECT_HANDLE                   m_sequenceHandle{};
 
 public:
-    static CCamDirector* Create() { return new CCamDirector(); }
     void Free() override;
 };
 

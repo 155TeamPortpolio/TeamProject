@@ -7,6 +7,8 @@
 #include "CamDirector.h"
 #include "OrbitCam.h"
 #include "SequenceCam.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
 
 #include "Camera.h"
 
@@ -16,7 +18,8 @@
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() }
+	m_pGameInstance{ CGameInstance::GetInstance() },
+	m_pCamDirector{ CCamDirector::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
@@ -53,8 +56,11 @@ HRESULT CTestLevel::Awake()
 
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+		.CharacterController({})
 		.Build("Test_Model");
-	testModel->Get_Component<CTransform>()->Set_Pos({0.f, 5.f, 0.f});
+	//testModel->Get_Component<CTransform>()->Set_Pos({0.f, 10.f, 0.f});
+	auto cc = testModel->Get_Component<CCharacterController>();
+
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// --------------------------- Camera -------------------------------------------------
@@ -74,9 +80,6 @@ HRESULT CTestLevel::Awake()
 		.Build("SequenceCam");
 	objMgr->Add_Object(sequenceCam, { "Test_Level", "Camera_Layer" });
 
-	if (!m_pCamDirector)
-		m_pCamDirector = CCamDirector::Create();
-
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
 	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
 
@@ -95,7 +98,7 @@ void CTestLevel::Update()
 	auto input = m_pGameInstance->Get_InputDev();
 
 	if (input->Key_Down('C'))
-		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 1.f, true);
+		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 1.f, true, 1.f);
 
 }
 
@@ -147,6 +150,6 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
-	Safe_Release(m_pCamDirector);
+	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

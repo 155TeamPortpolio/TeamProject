@@ -13,9 +13,12 @@ public:
                                                                               
     virtual void             Set_MainCam(CCamera* pCamCom)                    PURE;
     virtual void             Set_ShadowCam(CCamera* pCamCom)                  PURE;
+
+    virtual CCamera*         Get_BaseCam()                              const PURE;
+    virtual CCamera*         Get_ActiveCam()                            const PURE;
                                                                               
     virtual void             Set_BlendEase(EaseType ease)                     PURE;
-    virtual EaseType         Get_BlendEase() const                            PURE;
+    virtual EaseType         Get_BlendEase()                            const PURE;
 
     virtual _uint            Push(CCamera* camComp, _float blendTime = 0.25f) PURE;
     virtual _bool            Pop(_uint handle, _float blendTime = 0.25f)      PURE;

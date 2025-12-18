@@ -16,7 +16,7 @@ class CCamObject abstract : public CGameObject
 {
 protected:
 	CCamObject() : CGameObject() {} 
-	CCamObject(const CCamObject& rhs) : CGameObject(rhs), m_pLight(rhs.m_pLight), m_pCam(rhs.m_pCam) {}
+	CCamObject(const CCamObject& rhs) : CGameObject(rhs) {}
 	virtual ~CCamObject() DEFAULT;
 
 public:
@@ -27,8 +27,6 @@ public:
 	void    Late_Update(_float dt)      override PURE;
 
 protected:
-	CCamera*       m_pCam{};
-	CLight*        m_pLight{};
 	CamType        m_eCamType = CamType::Debug;
 	CamRigType     m_eRigType = CamRigType::Free;
 
