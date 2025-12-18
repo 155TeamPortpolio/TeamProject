@@ -185,22 +185,14 @@ void CDebugFreeCam::Priority_Update(_float dt)
 	}
 	else
 	{
-		if (input->Key_Down('W')) move += look * speed;
-		if (input->Key_Down('S')) move += look * -speed;
-		if (input->Key_Down('D')) move += right * speed;
+		if (input->Key_Down('W')) move += look  *  speed;
+		if (input->Key_Down('S')) move += look  * -speed;
+		if (input->Key_Down('D')) move += right *  speed;
 		if (input->Key_Down('A')) move += right * -speed;
 	}
 
 	if (move.LengthSquared() > 1e-8f)
 		transform->Translate(_vector4{ move.x, move.y, move.z, 0.f });
-}
-
-void CDebugFreeCam::Update(_float dt)
-{
-}
-
-void CDebugFreeCam::Late_Update(_float dt)
-{
 }
 
 void CDebugFreeCam::SetControlEnabled(_bool enabled)
@@ -289,11 +281,6 @@ CGameObject* CDebugFreeCam::Clone(INIT_DESC* pArg)
 		Safe_Release(inst);
 	}
 	return inst;
-}
-
-void CDebugFreeCam::Free()
-{
-	__super::Free();
 }
 
 void CDebugFreeCam::Render_GUI()

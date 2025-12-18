@@ -36,9 +36,13 @@ public:
 private:
     CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
 
-    void AddTexture();
+    void SetMaterial();
     void SetMesh();
+    _bool ChangeEaseType(EaseType& ioValue, EaseType shownValue);
     void SetUp_MeshEffect();
 
+    _bool m_IsSpriteMode = false;
+    _bool m_SetMesh = false;
+    _bool m_SetMaterial = false;
 };
 NS_END

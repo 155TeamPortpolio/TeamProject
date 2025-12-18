@@ -15,12 +15,12 @@ struct CamToolTarget
 };
 struct CamToolEditState
 {
-    _uint selectedCam = 0;
-    _int  selectedKeyIdx = -1;
-
-    _bool recording = false;
-    _bool playing = false;
-    _bool loop = false;
+    _uint  selectedCam = 0;
+    _int   selectedKeyIdx = -1;
+           
+    _bool  recording = false;
+    _bool  playing = false;
+    _bool  loop = false;
 
     _float curTime = 0.f;
     _float endTime = 10.f;

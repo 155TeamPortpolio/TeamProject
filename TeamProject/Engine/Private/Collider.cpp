@@ -66,7 +66,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 			return E_FAIL;
 		}
 
-		m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
+		//m_pTriangleMesh = m_pPhysicsSystem->Cook_TriangleMesh(pDesc->strModelKey, pModel);
 
 		if (!m_pTriangleMesh)
 		{

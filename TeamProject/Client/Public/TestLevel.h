@@ -1,15 +1,13 @@
 #pragma once
 #include "Level.h"
 NS_BEGIN(Engine)
-class CGameInstance;
-class CUI_Object;
-class IProtoService;
-class IObjectService;
+class CGameInstance; class CUI_Object; class IProtoService; class IObjectService;
 NS_END
 
 NS_BEGIN(Client)
-class CTestLevel :
-    public CLevel
+class CCamDirector; class COrbitCam;
+
+class CTestLevel : public CLevel
 {
 private:
     CTestLevel(const string& LevelKey);
@@ -17,20 +15,26 @@ private:
 
 public:
     virtual HRESULT Initialize() override;
-    virtual HRESULT Awake() override;
-    virtual void Update() override;
-    virtual HRESULT Render()override;
+    virtual HRESULT Awake()      override;
+    virtual void    Update()     override;
+    virtual HRESULT Render()     override;
 
 private:
     void Ready_Camera();
-    void Ready_Map();
-    void Ready_Object();
+    void Rake_MapResources();
+
 
 public:
     static void PreLoad_Level();
 
 private:
-    CGameInstance* m_pGameInstance = { nullptr };
+    CGameInstance* m_pGameInstance{};
+    CCamDirector*  m_pCamDirector{};
+    _uint          m_sequenceHandle = 0u;
+
+    CGameObject* m_testModel{};
+    COrbitCam*   m_orbitCam{};
+
 public:
     static CTestLevel* Create(const string& LevelKey);
     virtual void Free() override;

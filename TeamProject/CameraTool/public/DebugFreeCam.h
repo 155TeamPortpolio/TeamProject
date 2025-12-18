@@ -16,8 +16,8 @@ public:
 	HRESULT Initialize(INIT_DESC* pArg)               override;
 
 	void    Priority_Update(_float dt)                override;
-	void    Update(_float dt)                         override;
-	void    Late_Update(_float dt)                    override;
+	void    Update(_float dt)                         override {}
+	void    Late_Update(_float dt)                    override {}
 
 	void    Render_GUI()                              override;
 
@@ -46,7 +46,7 @@ private:
 public:
 	static CDebugFreeCam* Create();
 	CGameObject* Clone(INIT_DESC* pArg) override;
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

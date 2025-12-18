@@ -93,6 +93,13 @@ BlendState BS_Additive
     DestBlend = One;
     BlendOp = Add;
 };
+BlendState BS_SrcAdditive
+{
+    BlendEnable[0] = true;
+    SrcBlend = Src_Alpha;
+    DestBlend = One;
+    BlendOpAlpha = Add;
+};
 
 BlendState BS_Blend
 {
@@ -136,6 +143,12 @@ SamplerState LinearSampler = sampler_state
     Filter = MIN_MAG_MIP_LINEAR;
     AddressU = WRAP;
     AddressV = WRAP;
+};
+SamplerState LinearClampSampler = sampler_state
+{
+    Filter = MIN_MAG_MIP_LINEAR;
+    AddressU = CLAMP;
+    AddressV = CLAMP;
 };
 SamplerState PointSampler = sampler_state
 {

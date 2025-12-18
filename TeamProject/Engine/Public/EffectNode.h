@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "Engine_Math.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CEffectNode abstract :
