@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "ButtonUI.h"
 
+#include "GameInstance.h"
+#include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
@@ -62,26 +64,45 @@ void CButtonUI::Render_GUI()
     if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 
+    ImGui::SeparatorText(u8"이벤트");
+    ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+
+    ImGui::SeparatorText(u8"상태");
     _char szText[32] = {};
     sprintf_s(szText, sizeof(szText), "%d", static_cast<_int>(m_eState));
+    ImGui::Text(u8"상태 : ");
+    ImGui::SameLine();
     ImGui::TextDisabled(szText);
     if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("[ STATE ] 0:normal 1:hovered 2:clicked 3:disabled");
+        ImGui::SetTooltip("0 : normal, 1 : hovered, 2 : clicked, 3 : disabled");
 }
 
 void CButtonUI::Enter_Hover()
 {
+    if (STATE::DISABLED == m_eState)
+        return;
+
     OutputDebugString(L"Enter_Hover\n");
+    m_eState = STATE::HOVERED;
 }
 
 void CButtonUI::Exit_Hover()
 {
     OutputDebugString(L"Exit_Hover\n");
+    m_eState = STATE::NORMAL;
 }
 
 void CButtonUI::OnClick()
 {
+    if (STATE::DISABLED == m_eState)
+        return;
+
     OutputDebugString(L"Clicked\n");
+    m_eState = STATE::CLICKED;
+
+    ButtonEvent event = {};
+    event.msg = Helper::ConvertToWideString(m_szEventMsg);
+    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<ButtonEvent>({ event });
 }
 
 void CButtonUI::ToJson(json& data)
@@ -91,11 +112,15 @@ void CButtonUI::ToJson(json& data)
     data["typeTag"] = "ButtonUI";
 
     data["textureTag"] = m_strTextureKey;
+
+    data["eventMsg"] = m_szEventMsg;
 }
 
 void CButtonUI::FromJson(const json& data)
 {
     Change_Texture(0, G_GlobalLevelKey, data["textureTag"], m_strTextureKey);
+
+    strcpy_s(m_szEventMsg, sizeof(m_szEventMsg), data["eventMsg"].get<string>().c_str());
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침

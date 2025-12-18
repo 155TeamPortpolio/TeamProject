@@ -34,7 +34,7 @@ public:
 
 	virtual void Enter_Hover() {}
 	virtual void Exit_Hover() {}
-	virtual void OnClick() {};
+	virtual void OnClick() {}
 
 	void Set_Size(_float2 size) { m_vSize= size; } 
 	_bool Size_To(_fvector size, _float Speed);
