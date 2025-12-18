@@ -50,6 +50,7 @@ private:
 
 private:
 	void Set_Font(const string& strFontTag);
+	void UpdateAnchorOffsetByAlign();
 
 public:
 	static CGameObject* Create();

@@ -148,10 +148,22 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
     <ClInclude Include="..\public\CamObject.h" />
+<<<<<<< HEAD
     <ClInclude Include="..\public\CamDirector.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
+=======
+    <ClInclude Include="..\public\CamSpawnObject.h" />
+    <ClInclude Include="..\Public\Data_Struct.h" />
+    <ClInclude Include="..\Public\FreeCam.h" />
+    <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\MapFloorObject.h" />
+    <ClInclude Include="..\public\MapLoader.h" />
+    <ClInclude Include="..\public\MapObject.h" />
+    <ClInclude Include="..\public\MapPlacedObject.h" />
+    <ClInclude Include="..\public\MapTriggerObject.h" />
+>>>>>>> develop
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
@@ -194,7 +206,15 @@
     <ClCompile Include="..\private\CamDirector.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="..\private\OrbitCam.cpp" />
+=======
+    <ClCompile Include="..\private\MapFloorObject.cpp" />
+    <ClCompile Include="..\private\MapLoader.cpp" />
+    <ClCompile Include="..\private\MapObject.cpp" />
+    <ClCompile Include="..\private\MapPlacedObject.cpp" />
+    <ClCompile Include="..\private\MapTriggerObject.cpp" />
+>>>>>>> develop
     <ClCompile Include="..\Private\pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>

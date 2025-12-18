@@ -69,12 +69,12 @@ HRESULT CEffectEditLevel::Awake()
 	CGameObject* Light = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolLight" })
 		.Light(LightDesc)
 		.Build("Tool_Light");
-
-	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
+	  
 	pObjMgr->Add_Object(Grid, { "EffectEdit_Level","Grid_Layer" });
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
+	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
 
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
