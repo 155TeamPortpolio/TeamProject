@@ -1415,18 +1415,6 @@ void CCamPanel::CaptureSelectedKey_FromCaptureCam()
     PostEdit_SequenceChanged();
 }
 
-CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
-{
-    auto inst = new CCamPanel(context);
-    inst->Init();
-    return inst;
-}
-
-void CCamPanel::Free()
-{
-    __super::Free();
-}
-
 bool CCamPanel::ValidateCamPath(const string& pickedPath, string& outError) const
 {
     if (pickedPath.empty())
@@ -2289,4 +2277,16 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
     DrawLabelDisabled("Radius");
     ImGui::SameLine();
     if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
+}
+// -----------------------------------------------------------------------------
+CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
+{
+    auto inst = new CCamPanel(context);
+    inst->Init();
+    return inst;
+}
+
+void CCamPanel::Free()
+{
+    __super::Free();
 }

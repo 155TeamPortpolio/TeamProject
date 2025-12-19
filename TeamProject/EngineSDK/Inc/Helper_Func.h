@@ -177,7 +177,7 @@ namespace Helper
 	{
 		DarkThemeStyle()
 		{
-			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));

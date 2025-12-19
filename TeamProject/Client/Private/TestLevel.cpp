@@ -94,6 +94,7 @@ HRESULT CTestLevel::Awake()
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
 	//m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
 	m_pCamDirector->Register("Intro", "../bin/Resources/Test.cam");
+	m_pCamDirector->SetSpaceReference(testModel->Get_Handle());
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 

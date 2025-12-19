@@ -23,6 +23,7 @@ public:
     void  UnRegister(const string& key);
 
 public:
+    void  SetSpaceReference(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
     _uint RequestSequence(const string& key, _float blendInSec = 0.25f, _bool resetTime = true, _float blendOutSec = 0.25f);
     _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void  StopAll(_float blendOutSec = 0.25f);
@@ -54,6 +55,7 @@ private:
     unordered_map<string, SeqEntry> m_sequences{};
     PlayingState                    m_playing{};
     OBJECT_HANDLE                   m_sequenceHandle{};
+    OBJECT_HANDLE                   m_spaceRefHandle{};
 
 public:
     void Free() override;

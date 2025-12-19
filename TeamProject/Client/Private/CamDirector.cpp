@@ -72,6 +72,10 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     sequencePlayer->SetSequence(&entry.seq);
+
+    if (entry.seq.space == CamSpace::Local) sequencePlayer->SetSpaceReference(m_spaceRefHandle);
+    else sequencePlayer->ClearSpaceReference();
+
     sequencePlayer->SetApplyEnabled(true);
 
     if (resetTime)
@@ -89,10 +93,8 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     m_playing.blendInRemain = blendInSec;
     m_playing.resetTimeOnStart = resetTime;
 
-    if (m_playing.pendingStart)
-        sequencePlayer->Pause();
-    else
-        sequencePlayer->Play();
+    if (m_playing.pendingStart) sequencePlayer->Pause();
+    else sequencePlayer->Play();
 
     return handle;
 }
