@@ -5,6 +5,7 @@
 #include "CamUtil.h"
 
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CCamera final : public CComponent
 {
 private:

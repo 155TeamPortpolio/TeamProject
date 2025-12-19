@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "Shader.h"
 #include "Helper_Func.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 #include "Texture.h"
 
 _uint CShader::s_NextID = 1;

@@ -35,7 +35,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*ÆÄÀÏ¸í°ú Å°°ªÀº ÀÏÄ¡*/
+	/*Ã†Ã„Ã€ÃÂ¸Ã­Â°Ãº Ã…Â°Â°ÂªÃ€Âº Ã€ÃÃ„Â¡*/
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
@@ -64,8 +64,9 @@ void CTestObject::Awake()
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 
-	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
-	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
+	auto controller = Get_Component<CCharacterController>();
+	controller->Set_GravityEnabled(true);
+	controller->Set_Position({0.f, 0.5f, 0.f});
 }
 
 void CTestObject::Priority_Update(_float dt)
@@ -76,9 +77,9 @@ void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 
-	auto controller = Get_Component<CCharacterController>();
 	auto cam        = CAM->Get_ActiveCam();
 	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
+	auto controller = Get_Component<CCharacterController>();
 
 	_vector3 camLook = camTf->Dir(STATE::LOOK);
 	_vector3 camRight = camTf->Dir(STATE::RIGHT);
@@ -101,7 +102,7 @@ void CTestObject::Update(_float dt)
 	controller->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		controller->Jump(10.f);
+		controller->Jump(4.f);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
 	{

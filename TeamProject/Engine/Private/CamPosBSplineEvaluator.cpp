@@ -11,9 +11,6 @@ bool CCamPosBSplineEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosBSplineEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-
     const size_t n = keyframes->size();
 
     if (n == 1) return (*keyframes)[0].pos;
@@ -46,8 +43,6 @@ _vector3 CCamPosBSplineEvaluator::Evaluate(_float time) const
 
 _vector3 CCamPosBSplineEvaluator::GetPosClamped(int idx) const
 {
-    assert(keyframes);
-
     const int n = (int)keyframes->size();
 
     if (idx < 0) idx = 0;

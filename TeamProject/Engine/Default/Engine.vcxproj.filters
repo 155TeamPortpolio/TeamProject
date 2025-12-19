@@ -316,8 +316,8 @@
     <ClInclude Include="..\Public\Data_Packets.h">
       <Filter>99. Defines\Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GUIWidget.h">
-      <Filter>00. System\02. Gui\Widget</Filter>
+    <ClInclude Include="..\Public\GUIUtil.h">
+      <Filter>00. System\02. Gui\GUIUtil</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
@@ -750,9 +750,6 @@
     <Filter Include="98. BasicShader">
       <UniqueIdentifier>{4d73f3c7-aa2d-464b-ae01-4e68fd6a1fe9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="00. System\02. Gui\Widget">
-      <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\08. Collider\DebugDraw">
       <UniqueIdentifier>{776ff978-817b-4c94-bb93-09b82bc662dd}</UniqueIdentifier>
     </Filter>
@@ -890,6 +887,9 @@
     </Filter>
     <Filter Include="01. Utility\14.ClickManager">
       <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. System\02. Gui\GUIUtil">
+      <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1139,8 +1139,8 @@
     <ClCompile Include="..\Private\Data_Packets.cpp">
       <Filter>99. Defines\Packet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GUIWidget.cpp">
-      <Filter>00. System\02. Gui\Widget</Filter>
+    <ClCompile Include="..\Private\GUIUtil.cpp">
+      <Filter>00. System\02. Gui\GUIUtil</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\GUI_Inc\imgui_widgets.cpp">
       <Filter>00. System\02. Gui\IMGUI</Filter>

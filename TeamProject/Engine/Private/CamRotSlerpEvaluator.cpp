@@ -21,7 +21,6 @@ bool CCamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 		cachedRots[keyIdx] = MakeRotFromLookRoll(key.look, key.roll);
 	}
-
 	for (size_t keyIdx = 1; keyIdx < cachedRots.size(); ++keyIdx)
 	{
 		const float dotValue = cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]);
@@ -33,10 +32,6 @@ bool CCamRotSlerpEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 Quaternion CCamRotSlerpEvaluator::Evaluate(_float time) const
 {
-	assert(keyframes);
-	assert(!keyframes->empty());
-	assert(cachedRots.size() == keyframes->size());
-
 	if (keyframes->size() == 1)
 		return cachedRots[0];
 

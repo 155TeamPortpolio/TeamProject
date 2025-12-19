@@ -22,9 +22,8 @@ public:
     void    Render_GUI()                override;
 
 public:
-    void    Stop(_bool resetTime = true);
-            
-    _bool   IsPlaying() const { return m_sequencePlayer && m_sequencePlayer->IsPlaying(); }
+    void    Stop(_bool resetTime = true);    
+    _bool   IsPlaying() const { return m_sequencePlayer->IsPlaying(); }
 
 private:
     CCamSequencePlayer* m_sequencePlayer{};

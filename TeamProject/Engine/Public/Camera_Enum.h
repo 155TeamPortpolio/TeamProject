@@ -38,5 +38,8 @@ enum class CamProjType
 	Perspective,  // 원근투영
 	Orthographic, // 직교투영
 };
-
+enum class CamSpace
+{
+	Local, World
+};
 NS_END

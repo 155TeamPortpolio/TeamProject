@@ -13,9 +13,7 @@ bool CCamPosCentripetalEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosCentripetalEvaluator::GetPosExtended(int idx) const
 {
-    assert(keyframes);
     const int n = (int)keyframes->size();
-    assert(n >= 1);
 
     if (idx < 0)
     {
@@ -24,7 +22,6 @@ _vector3 CCamPosCentripetalEvaluator::GetPosExtended(int idx) const
         const _vector3 p2 = (*keyframes)[1].pos;
         return p1 + (p1 - p2);
     }
-
     if (idx >= n)
     {
         if (n == 1) return (*keyframes)[0].pos;
@@ -38,9 +35,6 @@ _vector3 CCamPosCentripetalEvaluator::GetPosExtended(int idx) const
 
 _vector3 CCamPosCentripetalEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-
     const size_t n = keyframes->size();
 
     if (n == 1)
