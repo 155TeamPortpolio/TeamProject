@@ -5,7 +5,6 @@
 #include "AnimationClip.h"
 #include "Channel.h"
 
-
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
 	, m_pGameInstance{ CGameInstance::GetInstance() }
@@ -26,34 +25,51 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 void CAnimToolPanel::Render_GUI()
 {
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	constexpr float defaultHeight = 350.f;
+	constexpr float leftX = 200.f;
+	constexpr float rightMargin = 275.f;
 
-	ImGui::SetNextWindowPos(ImVec2(200, AnimTool::g_iWinSizeY - 400), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(AnimTool::g_iWinSizeX - 450, 400), ImGuiCond_FirstUseEver);
+	const ImGuiViewport* vp = ImGui::GetMainViewport();
+	const ImVec2 workPos = vp->WorkPos;
+	const ImVec2 workSize = vp->WorkSize;
 
-	if (ImGui::Begin("Materials"))
+	ImVec2 bottomLeft(workPos.x + leftX, workPos.y + workSize.y);
+	bottomLeft.x = floorf(bottomLeft.x);
+	bottomLeft.y = floorf(bottomLeft.y);
+
+	float width = workSize.x - leftX - rightMargin;
+	width = floorf(width);
+	
+	ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
+	ImGui::SetNextWindowSize(ImVec2(width, defaultHeight), ImGuiCond_FirstUseEver);
+
+	Helper::DarkThemeStyle styleScope;
+
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("AnimTool", nullptr, flags);
+
+	if (ImGui::BeginTabBar("##ToolTabs"))
 	{
-		if (ImGui::BeginTabBar("##ToolTabs"))
+		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+		if (ImGui::BeginTabItem("Setting Clip"))
 		{
-			if (ImGui::BeginTabItem("Setting Clip"))
-			{
-				GUI_Setting_Clips(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Create Meta"))
-			{
-				GUI_Create_MetaData(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			ImGui::EndTabBar();
+			GUI_Setting_Clips(childHeight);
+			ImGui::EndTabItem();
 		}
-		ImGui::End();
+
+		if (ImGui::BeginTabItem("Create Meta"))
+		{
+			GUI_Create_MetaData(childHeight);
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
 	}
-		                                                              
+
+	ImGui::End();
 }
 
 void CAnimToolPanel::Render_Taps(_float fChildHeight)
@@ -64,23 +80,145 @@ void CAnimToolPanel::Render_Taps(_float fChildHeight)
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
-	//ImGui::BeginChild("##Play TimeLine", ImVec2{ 0, fChildHeight * 2 }, true);
-	//어느 애니매이션인지 
-	//m_pSelectModel->Get_Component<CAnimator3D>()->
 
-	//애니매이션 바	
-	ImGui::SliderFloat(
-		"Time",
-		&m_fCurTime,
-		0.f,
-		m_fDuration
-	);
-	
-	//애니매이션 컨트롤러
-	if (ImGui::Button(m_isPlay ? "Pause" : "Play")) { m_isPlay = !m_isPlay; } ImGui::SameLine();
+	Draw_ToolbarUI();
+
+	ImGui::Separator();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted("Time");
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(260.f);
+	ImGui::SliderFloat("##AnimTime", &m_fCurTime, 0.f, m_fDuration);
+
+	ImGui::SameLine();
+	ImGui::Text("%.2f / %.2f", m_fCurTime, m_fDuration);
+}
+
+void CAnimToolPanel::Draw_ToolbarUI()
+{
+	const ImVec2 buttonSize(80.f, 0.f);
+	static float timeScale = 1.f;
+
+	if (ImGui::Button(m_isPlay ? "Pause" : "Play", buttonSize)) m_isPlay = !m_isPlay;
+	ImGui::SameLine();
+
+	if (ImGui::Button("Stop", buttonSize))
+	{
+		m_isPlay = false;
+		m_fCurTime = 0.f;
+	}
+
+	ImGui::SameLine();
 	ImGui::Checkbox("Loop", &m_bLoop);
 
-	//ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::Dummy(ImVec2(10.f, 0.f));
+	ImGui::SameLine();
+
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(u8"속도");
+	ImGui::SameLine();
+
+	ImGui::PushID("AnimSpeedUI");
+
+	auto SpeedBtn = [&](const char* label, float v)
+		{
+			const bool active = fabsf(timeScale - v) < 1e-6f;
+			if (active) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+			if (ImGui::SmallButton(label)) timeScale = v;
+			if (active) ImGui::PopStyleColor();
+		};
+
+	SpeedBtn(u8"x0.25", 0.25f); ImGui::SameLine();
+	SpeedBtn(u8"x0.5", 0.5f);  ImGui::SameLine();
+	SpeedBtn(u8"x1", 1.0f);  ImGui::SameLine();
+	SpeedBtn(u8"x2", 2.0f);  ImGui::SameLine();
+	SpeedBtn(u8"x4", 4.0f);
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(90.f);
+	ImGui::DragFloat("##scale", &timeScale, 0.01f, 0.05f, 8.0f, "x%.2f");
+
+	ImGui::PopID();
+
+	ImGui::SameLine();
+	Draw_TimelineUI(m_fDuration, m_fCurTime, "##AnimTimeline");
+}
+
+void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* id)
+{
+	ImVec2 avail = ImGui::GetContentRegionAvail();
+	float barH = ImGui::GetFrameHeight();
+
+	if (avail.x < 140.f) return;
+
+	float endT = (duration > 1e-6f) ? duration : 1.f;
+
+	ImVec2 barPos = ImGui::GetCursorScreenPos();
+	ImVec2 barSize(avail.x, barH);
+
+	ImGui::InvisibleButton(id, barSize);
+
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+
+	ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+	ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
+	ImU32 colFill = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+	ImU32 colTick = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colCursor = ImGui::GetColorU32(ImGuiCol_Text);
+	ImU32 colText = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colHot = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+
+	dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBg, 4.f);
+	dl->AddRect(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBorder, 4.f);
+
+	const int gridN = 8;
+	for (int i = 1; i < gridN; ++i)
+	{
+		float t = (float)i / (float)gridN;
+		float x = barPos.x + barSize.x * t;
+		dl->AddLine(ImVec2(x, barPos.y + 2.f), ImVec2(x, barPos.y + barSize.y - 2.f), colTick, 1.f);
+	}
+
+	float t01 = clamp(ioTime / endT, 0.f, 1.f);
+	dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x * t01, barPos.y + barSize.y), colFill, 4.f);
+
+	float cx = barPos.x + barSize.x * t01;
+	dl->AddLine(ImVec2(cx, barPos.y - 2.f), ImVec2(cx, barPos.y + barSize.y + 2.f), colCursor, 2.0f);
+
+	ImVec2 tri0(cx, barPos.y + barSize.y + 1.f);
+	ImVec2 tri1(cx - 5.f, barPos.y + barSize.y + 9.f);
+	ImVec2 tri2(cx + 5.f, barPos.y + barSize.y + 9.f);
+	dl->AddTriangleFilled(tri0, tri1, tri2, colCursor);
+
+	char buf[64];
+	sprintf_s(buf, "%.2fs / %.2fs", ioTime, duration);
+
+	ImVec2 textSize = ImGui::CalcTextSize(buf);
+	ImVec2 textPos(barPos.x + 8.f, barPos.y + (barSize.y - textSize.y) * 0.5f);
+	dl->AddText(textPos, colText, buf);
+
+	const bool hovered = ImGui::IsItemHovered();
+	if (hovered)
+	{
+		float mx = ImGui::GetIO().MousePos.x;
+		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		float hoverTime = local01 * endT;
+
+		ImGui::BeginTooltip();
+		ImGui::Text("t = %.2fs", hoverTime);
+		ImGui::EndTooltip();
+
+		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);
+	}
+
+	if (ImGui::IsItemActive())
+	{
+		float mx = ImGui::GetIO().MousePos.x;
+		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		ioTime = local01 * endT;
+	}
 }
 
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
