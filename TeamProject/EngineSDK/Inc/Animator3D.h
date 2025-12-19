@@ -56,28 +56,36 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
+    //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     HRESULT Resize_Layer(_uint iLayerCount);
 
 public:
     //clip
     virtual void Update_Animation(_float dt);
     //보간을 무시한 애니매이션 설정 ?
-    virtual HRESULT Set_Animation(_uint LayerIndex, string ClipTag);
+    virtual HRESULT Set_Animation(_uint LayerIndex, string ClipTag); //(구현안됌)
     virtual HRESULT Set_Animation(_uint LayerIndex, _uint Clipindex);
-    //애니매이션 보간 변경
-    virtual HRESULT Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration = 0.2f);
-    virtual HRESULT Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration = 0.2f);
+    //애니매이션 보간 변경 
+    virtual HRESULT Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration = 0.2f); //(구현안됌)
+    virtual HRESULT Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration = 0.2f); //(구현안됌)
     //그즉시 보간 대상을 변경 ?
-    virtual HRESULT ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame = false, _float convertDuration = 0.2f);
-    virtual HRESULT ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame = false,_float convertDuration = 0.2f);
+    virtual HRESULT ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame = false, _float convertDuration = 0.2f); //(구현안됌)
+    virtual HRESULT ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame = false,_float convertDuration = 0.2f); //(구현안됌)
     
-    virtual void Reset_AnimClip(_uint LayerIndex);
-    virtual HRESULT Stop_Animation(_uint LayerIndex);
-    virtual HRESULT StopAll_Animation();
+    //레이어 초기화
+    virtual void Reset_Layer(_uint LayerIndex);
+    //레이어 애니매이션을 멈춤
+    virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
+    virtual HRESULT StopAll_Animation(); //(구현안됌)
 
+    //현재 레이어의 애니매이션이 끝났는지
     _bool isCurrentAnimEnd(_uint LayerIndex);
+    //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
     _bool isOverClipTiming(_uint LayerIndex, _float percent);
-    string Get_CurrentAnimName(_uint LayerIndex);
+    //현재 레이어 클립의 진행률 0~1 반환
+    _float Get_CurAnimDuration(_uint LayerIndex);
+    //현재 레이어의 애니매이션 이름
+    string Get_CurAnimName(_uint LayerIndex);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -85,11 +93,13 @@ public:
     void Dettach_BoneRelation(_uint Index);
 
 public:
+    //월드상의 최종 뼈 위치를 가져옴
     _float4x4 Get_BoneMatrix(const string& boneName);
     _float4x4 Get_BoneMatrix(_uint Index);
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
     const vector<_float4x4>& Get_BoneMatrices() { return m_FinalMatices; };
+    //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
 
 protected:

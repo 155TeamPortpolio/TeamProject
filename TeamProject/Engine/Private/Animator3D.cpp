@@ -137,7 +137,7 @@ HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _uint Clipindex)
 	if (!isExistLayer(LayerIndex))
 		return S_OK;
 
-	Reset_AnimClip(LayerIndex);
+	Reset_Layer(LayerIndex);
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 	Layer.iClipIndex = Clipindex;
 	Layer.bLoop = true;
@@ -165,7 +165,7 @@ HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _b
 	return E_NOTIMPL;
 }
 
-void CAnimator3D::Reset_AnimClip(_uint LayerIndex)
+void CAnimator3D::Reset_Layer(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
 		return;
@@ -236,7 +236,18 @@ _bool CAnimator3D::isOverClipTiming(_uint LayerIndex, _float percent)
 	return  m_fCurrentTrackPosition >= threshold;
 }
 
-string CAnimator3D::Get_CurrentAnimName(_uint LayerIndex)
+_float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex))
+		return true;
+
+	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+
+	return m_fCurrentTrackPosition / nowClip->Get_Duration();
+}
+
+string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return "";
 	
