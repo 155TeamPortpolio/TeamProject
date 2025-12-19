@@ -67,7 +67,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     if (vMtrlDiffuse.a < 0.2)
     {
-        discard;
+        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
     }
   
     Out.vDiffuse = vMtrlDiffuse;

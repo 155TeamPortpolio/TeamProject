@@ -273,7 +273,9 @@ void CSkeletalModel::Render_GUI()
 		if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
 		{
 			string tip = (hidden ? "Hidden mesh: " : "Visible mesh: ") + meshKey;
+			_uint count = m_pData->Get_Mesh(i)->Get_SkinnedVerticesCount();
 			ImGui::SetTooltip("%s", tip.c_str());
+			ImGui::SetTooltip("Vertices : %d", to_string(count).c_str());
 		}
 	}
 	ImGui::EndChild();
