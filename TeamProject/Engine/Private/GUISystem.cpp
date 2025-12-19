@@ -213,14 +213,14 @@ void CGUISystem::Test()
 	{
 		ImGui::Separator();
 		const auto& levelList = CGameInstance::GetInstance()->Get_LevelMgr()->Get_LevelList();
-		GUIWidget::ShowListString(levelList, [&](const string& selectedLevel)->void {
+		GuiUtil::ShowListString(levelList, [&](const string& selectedLevel)->void {
 			string debugMessage = "Button for '" + selectedLevel + "' was clicked. \n";
 			OutputDebugStringA(debugMessage.c_str());
 			ImGuiStyle& style = ImGui::GetStyle();
 			});
 
 		static _vector vec = XMVectorSet(1, 1, 1, 1);
-		vec= GUIWidget::Vector4Float("TestVector", vec);
+		vec= GuiUtil::Vector4Float("TestVector", vec);
 	}
 	ImGui::End(); 
 }

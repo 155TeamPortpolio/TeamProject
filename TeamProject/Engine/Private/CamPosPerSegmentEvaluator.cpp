@@ -42,9 +42,6 @@ bool CCamPosPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosPerSegmentEvaluator::Evaluate(_float time) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
     const size_t n = keys.size();
 
@@ -97,9 +94,6 @@ _vector3 CCamPosPerSegmentEvaluator::Evaluate(_float time) const
 
 CamPosInterp CCamPosPerSegmentEvaluator::ResolveMode(_uint segIdx) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
 
     if (keys.size() < 2) return seq->posInterp;
@@ -119,6 +113,5 @@ void CCamPosPerSegmentEvaluator::Free()
     Safe_Release(evalBSpline);
     Safe_Release(evalHermite);
     Safe_Release(evalOrbitArc);
-
     __super::Free();
 }

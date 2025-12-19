@@ -445,3 +445,109 @@ ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const fi
 	}
 	return true;
 }
+// -------------------------------------------------------------------------------------------------
+
+ConfirmResult Helper::DrawConfirmPopupModal(const char* popupId, const char* title, initializer_list<const char*> lines, const char* okLabel, const char* cancelLabel, float buttonW)
+{
+	if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		return ConfirmResult::None;
+
+	if (title && title[0])
+	{
+		ImGui::TextUnformatted(title);
+		ImGui::Separator();
+	}
+
+	for (auto* s : lines)
+		ImGui::TextUnformatted(s);
+
+	ImGui::Separator();
+
+	ConfirmResult r = ConfirmResult::None;
+
+	if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
+	{
+		r = ConfirmResult::Ok;
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button(cancelLabel, ImVec2(buttonW, 0.f)))
+	{
+		r = ConfirmResult::Cancel;
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+	return r;
+}
+
+bool Helper::DrawOkPopupModal(const char* popupId, const char* title, initializer_list<const char*> lines, const char* okLabel, float buttonW)
+{
+	if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		return false;
+
+	if (title && title[0])
+	{
+		ImGui::TextUnformatted(title);
+		ImGui::Separator();
+	}
+
+	for (auto* s : lines)
+		ImGui::TextUnformatted(s);
+
+	ImGui::Separator();
+
+	bool closed = false;
+
+	if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
+	{
+		closed = true;
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+	return closed;
+}
+
+bool Helper::DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText, const char* okLabel, float buttonW)
+{
+	if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
+		return false;
+
+	if (title && title[0])
+	{
+		ImGui::TextUnformatted(title);
+		ImGui::Separator();
+	}
+
+	if (!bodyText.empty())
+		ImGui::TextUnformatted(bodyText.c_str());
+
+	ImGui::Separator();
+
+	bool closed = false;
+
+	if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
+	{
+		closed = true;
+		ImGui::CloseCurrentPopup();
+	}
+
+	ImGui::EndPopup();
+	return closed;
+}
+
+ENGINE_DLL void Helper::DrawLabelDisabled(const char* t)
+{
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextDisabled("%s", t);
+}
+
+ENGINE_DLL bool Helper::DragFloat(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
+{
+	ImGui::SetNextItemWidth(valueW);
+	if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV, fmt);
+	return ImGui::DragFloat(id, &v, speed, 0.f, 0.f, fmt);
+}

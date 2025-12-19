@@ -9,8 +9,6 @@ HRESULT CCamera::Initialize_Prototype()
 
 HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 {
-	if (!pArg) return S_OK;
-
 	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
 	m_transform = m_pOwner->Get_Component<CTransform>();
 	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar);
@@ -50,7 +48,6 @@ _bool CCamera::Lerp_FOV(_float dst, _float dt)
 		m_fov = dst;
 		return true;
 	}
-
 	return false;
 }
 

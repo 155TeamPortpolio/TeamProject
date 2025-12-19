@@ -1,6 +1,6 @@
 #pragma once
 #include "IGUIService.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 #include "GUI_Context.h"
 
 NS_BEGIN(Engine)

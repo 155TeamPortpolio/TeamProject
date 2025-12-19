@@ -113,7 +113,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;../ThirdParty/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../public/;../ThirdParty/</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -171,18 +171,18 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\public\pch.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\GraphEditor.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imconfig.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImCurveEdit.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImGradient.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImGuizmo.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImSequencer.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_rectpack.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_textedit.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_truetype.h" />
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImZoomSlider.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\GraphEditor.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imconfig.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImCurveEdit.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGradient.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui_internal.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImSequencer.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_rectpack.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_textedit.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_truetype.h" />
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImZoomSlider.h" />
     <ClInclude Include="CameraTool.h" />
   </ItemGroup>
   <ItemGroup>
@@ -202,43 +202,43 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\GraphEditor.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\GraphEditor.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImCurveEdit.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImCurveEdit.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImGradient.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGradient.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImGuizmo.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGuizmo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_demo.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_demo.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_draw.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_draw.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_tables.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_tables.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_widgets.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_widgets.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImSequencer.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

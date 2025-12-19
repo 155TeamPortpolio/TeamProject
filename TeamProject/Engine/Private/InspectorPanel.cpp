@@ -1,6 +1,6 @@
 ﻿#include "Engine_Defines.h"
 #include "InspectorPanel.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 #include "GameObject.h"
 #include "IInputService.h"
 

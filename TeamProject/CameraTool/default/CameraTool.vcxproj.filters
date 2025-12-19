@@ -25,42 +25,6 @@
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\GraphEditor.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imconfig.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImCurveEdit.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImGradient.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imgui_internal.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImGuizmo.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImSequencer.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_rectpack.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_textedit.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\imstb_truetype.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
-    <ClInclude Include="..\ThridParty\GUI_Inc\ImZoomSlider.h">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CamPanelData.h">
       <Filter>02. Panel</Filter>
     </ClInclude>
@@ -84,6 +48,42 @@
     </ClInclude>
     <ClInclude Include="..\public\CameraTool_Struct.h">
       <Filter>99. Etc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\GraphEditor.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imconfig.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImCurveEdit.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGradient.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imgui_internal.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImGuizmo.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImSequencer.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_rectpack.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_textedit.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\imstb_truetype.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ThirdParty\GUI_Inc\ImZoomSlider.h">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -151,36 +151,6 @@
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\GraphEditor.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImCurveEdit.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImGradient.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_demo.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_draw.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_tables.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\imgui_widgets.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImGuizmo.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
-    <ClCompile Include="..\ThridParty\GUI_Inc\ImSequencer.cpp">
-      <Filter>99. Etc\99. Useless\ImGui</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\DemoModel.cpp">
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClCompile>
@@ -195,6 +165,36 @@
     </ClCompile>
     <ClCompile Include="..\private\CamDirector.cpp">
       <Filter>04. CamDirector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\GraphEditor.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImCurveEdit.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGradient.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_demo.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_draw.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_tables.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\imgui_widgets.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImGuizmo.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\ThirdParty\GUI_Inc\ImSequencer.cpp">
+      <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
