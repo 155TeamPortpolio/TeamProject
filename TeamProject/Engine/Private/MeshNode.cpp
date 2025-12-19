@@ -88,7 +88,7 @@ void CMeshNode::Update(_float dt)
 		pMaterialInstance->Set_Param("DissolveThreshold", { &m_fDissolveThreshold,"float",sizeof(_float) });
 		pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
 		pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
-
+		pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
 	}
 }
 

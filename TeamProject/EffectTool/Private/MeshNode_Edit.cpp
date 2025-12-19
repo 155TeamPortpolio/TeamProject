@@ -61,21 +61,18 @@ void CMeshNode_Edit::Update(_float dt)
 	{
 		__super::Update(dt);
 
-		if (MODE::UV_ANIMATION == m_eMode)
+		POST_PROCESS_COMMAND Command =
 		{
-			POST_PROCESS_COMMAND Command =
+			POSTPROCESS::MRT_Bloom,
+			Get_Component<CMaterial>()->Get_Shader(0),
+			m_pTransform->Get_WorldMatrix_Ptr(),
+			[this](ID3D11DeviceContext* pContext)
 			{
-				POSTPROCESS::MRT_Bloom,
-				Get_Component<CMaterial>()->Get_Shader(0),
-				m_pTransform->Get_WorldMatrix_Ptr(),
-				[this](ID3D11DeviceContext* pContext)
-				{
-					Render_BloomEffect(pContext);
-				}
-			};
+				Render_BloomEffect(pContext);
+			}
+		};
 
-			CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
-		}
+		CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
 	}
 }
 
@@ -438,6 +435,9 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::EndCombo();
 	}
 	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
+
+	/*Bloom*/
+	ImGui::DragFloat("Bloom Intensity", &m_fBloomIntensity);
 
 	if (isDirty)
 	{

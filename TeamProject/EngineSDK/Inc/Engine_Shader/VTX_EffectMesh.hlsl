@@ -1,5 +1,6 @@
 #include "Shader_Define.hlsl"
 
+float4x4 g_worldMatrix;
 
 /*Default Params*/
 float4 vBaseColor;
@@ -22,9 +23,9 @@ float2 UVOffset;
 float DissolveThreshold;
 
 /*Distortion Params*/
-float4x4 g_worldMatrix;
 
-/**/
+/* Bloom Params */
+float BloomIntensity;
 
 struct VS_IN
 {
@@ -165,8 +166,8 @@ struct PS_OUT_BRIGHT
 
 PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
 {
-    PS_OUT_BRIGHT Out;
-
+    PS_OUT_BRIGHT Out;  
+    
     float2 Texcoord = In.vTexcoord + UVOffset;
         
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
@@ -178,12 +179,15 @@ PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
     float fMask = vMtrlDiffuse.b;
     float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
-    float4 Test = float4(1.f, 0.f, 0.f, 1.f);
-    Test.a = Alpha * fRGBMask;
-    //if (fDissolveMask < DissolveThreshold)
-    //    Test.a = 0.f;
+    if (fDissolveMask < DissolveThreshold)
+        discard;
+    
+    vector vBloomColor = vBaseColor * (fBase + fBright * fBrightIntensity);
+    vBloomColor.a = Alpha * fRGBMask;
+    
+    
     Out.BloomInfo = float4(0.f, 1.5f, 0.f,0.f);
-    Out.vBloom = Test * 3;
+    Out.vBloom = vBloomColor * BloomIntensity;
     
     return Out;
 }
@@ -209,6 +213,7 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
+
     pass SpriteAnimation
     {
         SetRasterizerState(RS_Default);
