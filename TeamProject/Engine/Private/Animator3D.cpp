@@ -93,186 +93,53 @@ void CAnimator3D::Update_Animation(_float dt)
 {
 	if (m_pAnimClips.empty()) return;
 
-	switch (m_eState)
-	{
-	case Engine::CAnimator3D::ANIMATOR_STATE::IDLE:
-		break;
-	case Engine::CAnimator3D::ANIMATOR_STATE::RUNNING:
+	for (auto& Layer : m_AnimLayers) {
 		Animation_Run(dt);
-		break;
-	case Engine::CAnimator3D::ANIMATOR_STATE::CONVERTING:
-		Animation_Convert(dt);
-		break;
-	default:
-		break;
 	}
 
-	if (m_iBlendAnimation != -1) {
-
-		switch (m_eBlendState)
-		{
-		case Engine::CAnimator3D::BLENDER_STATE::NONE:
-			break;
-		case Engine::CAnimator3D::BLENDER_STATE::BLEND_IN:
-			Blend_In(dt);
-			break;
-		case Engine::CAnimator3D::BLENDER_STATE::RUNNING:
-			Blend_Run(dt);
-			break;
-		case Engine::CAnimator3D::BLENDER_STATE::BLEND_OUT:
-			Blend_Out(dt);
-			break;
-		case Engine::CAnimator3D::BLENDER_STATE::BLEND_PAUSE:
-			//m_fBlendDuration += dt * m_fBlendWeight;
-			break;
-		default:
-			break;
-		}
-	}
 	BuildBone();
 }
 
-void CAnimator3D::Change_Animation(_uint index, _float convertDuration)
+HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, string ClipTag)
 {
-	if (index >= m_pAnimClips.size()) return;
-
-	m_eState = ANIMATOR_STATE::CONVERTING;
-	m_fPrevTrackPosition = m_fCurrentTrackPosition;
-	m_fCurrentTrackPosition = 0;
-	m_iNextClipIndex = index;
-	m_fConvertDuration = convertDuration;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Change_Animation(string animName, _bool overrideSame, _float convertDuration)
+HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _uint Clipindex)
 {
-	auto iter = m_pAnimNames.find(animName);
-
-	if (iter == m_pAnimNames.end()) return E_FAIL;
-
-	if (iter->second == m_iCurrentClipIndex) {
-		if (!overrideSame) {
-			m_eState = ANIMATOR_STATE::RUNNING;
-			return E_FAIL;
-		}
-		else {
-			//m_eState = ANIMATOR_STATE::CONVERTING;
-			//m_fConvertDuration = convertDuration;
-			//m_fCurrentTrackPosition = 0;
-		}
-
-	}
-
-	if (m_iCurrentClipIndex == -1) {
-		m_eState = ANIMATOR_STATE::RUNNING;
-		m_iCurrentClipIndex = iter->second;
-		m_fCurrentTrackPosition = 0.f;
-		isAnimEnd = false;
-		return S_OK;
-	}
-
-	//if (m_eState == ANIMATOR_STATE::CONVERTING)
-	//{
-	//	return E_FAIL;
-	//}
-
-	m_eState = ANIMATOR_STATE::CONVERTING;
-	m_fPrevTrackPosition = m_fCurrentTrackPosition;
-	m_fCurrentTrackPosition = 0;
-	m_iNextClipIndex = iter->second;
-	m_fConvertDuration = convertDuration;
-
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::ForceChange_Animation(string animName, _bool overrideSame, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration)
 {
-	auto iter = m_pAnimNames.find(animName);
-
-	if (iter == m_pAnimNames.end()) return E_FAIL;
-
-	if (iter->second == m_iCurrentClipIndex) {
-		if (!overrideSame) {
-			m_eState = ANIMATOR_STATE::RUNNING;
-			return E_FAIL;
-		}
-	}
-
-	if (m_iCurrentClipIndex == -1) {
-		m_eState = ANIMATOR_STATE::RUNNING;
-		m_iCurrentClipIndex = iter->second;
-		m_fCurrentTrackPosition = 0.f;
-		isAnimEnd = false;
-		return S_OK;
-	}
-
-	m_eState = ANIMATOR_STATE::CONVERTING;
-	m_fPrevTrackPosition = m_fCurrentTrackPosition;
-	m_fCurrentTrackPosition = 0;
-	m_iNextClipIndex = iter->second;
-	m_fConvertDuration = convertDuration;
-
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Stop_Animation()
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration)
 {
-	m_fCurrentTrackPosition = 0;
-	m_iCurrentClipIndex = -1;
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Set_AnimationBlend(string animName, vector<_uint> blendIndex)
+HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame, _float convertDuration)
 {
-	m_BlendIndex.clear();
-
-	auto iter = m_pAnimNames.find(animName);
-
-	if (iter == m_pAnimNames.end()) return E_FAIL;
-
-	if (iter->second == m_iCurrentClipIndex) {
-		return E_FAIL;
-	}
-
-	if (iter->second == m_iBlendAnimation) {
-		//m_fBlendDuration = 0.f;
-		m_eBlendState = BLENDER_STATE::BLEND_IN;
-		m_BlendIndex = blendIndex;
-		return S_OK;
-	}
-
-	m_eBlendState = BLENDER_STATE::BLEND_IN;
-	m_fBlendTrackPosition = 0.f;
-	m_fBlendDuration = 0;
-	m_iBlendAnimation = iter->second;
-	m_BlendIndex = blendIndex;
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Release_AnimationBlend(vector<_uint> blendIndex)
+HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame, _float convertDuration)
 {
-	m_eBlendState = BLENDER_STATE::BLEND_OUT;
-	m_BlendIndex = blendIndex;
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Release_AnimationBlend()
+HRESULT CAnimator3D::Stop_Animation(_uint LayerIndex)
 {
-	m_eBlendState = BLENDER_STATE::BLEND_OUT;
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Stop_AnimationBlend()
+HRESULT CAnimator3D::StopAll_Animation(_uint LayerIndex)
 {
-	m_eBlendState = BLENDER_STATE::BLEND_PAUSE;
-
-	return S_OK;
+	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Restart_AnimationBlend()
-{
-	m_eBlendState = BLENDER_STATE::BLEND_IN;
-	return S_OK;
-}
 
 _bool CAnimator3D::isCurrentAnimEnd()
 {
@@ -295,7 +162,7 @@ _bool CAnimator3D::isOverAnimTiming(_float percent)
 	return  m_fCurrentTrackPosition >= threshold;
 }
 
-string CAnimator3D::Get_CurrentAnimName()
+string CAnimator3D::Get_CurrentAnimName(_uint LayerIndex)
 {
 	if (m_eState == ANIMATOR_STATE::CONVERTING)
 		return m_pAnimClips[m_iNextClipIndex]->Get_Name();
@@ -381,151 +248,7 @@ void CAnimator3D::Animation_Run(_float dt)
 
 void CAnimator3D::Animation_Convert(_float dt)
 {
-	//m_fCurrentTrackPosition += dt;
-	//
-	//if (m_iCurrentClipIndex == -1) {
-	//	m_fConvertDuration = 0;
-	//	m_fPrevTrackPosition = 0;
-	//	m_fCurrentTrackPosition = 0;
-	//	m_eState = ANIMATOR_STATE::RUNNING;
-	//	m_iCurrentClipIndex = m_iNextClipIndex;
-	//	m_iNextClipIndex = UINT_MAX;
-	//	isAnimEnd = false;
-	//	return;
-	//}
-	//
-	//
-	//_bool ConvertComplete = m_pAnimClips[m_iCurrentClipIndex]->ConvertByCurrentMatrix(
-	//	m_TransfromationMatrices,
-	//	*m_pAnimClips[m_iNextClipIndex],
-	//	m_fConvertDuration,
-	//	m_fPrevTrackPosition,
-	//	m_fCurrentTrackPosition);
-	//
-	//if (ConvertComplete) {
-	//	m_fConvertDuration = 0;
-	//	m_fPrevTrackPosition = 0;
-	//	m_fCurrentTrackPosition = 0;
-	//	m_eState = ANIMATOR_STATE::RUNNING;
-	//	m_iCurrentClipIndex = m_iNextClipIndex;
-	//	m_iNextClipIndex = UINT_MAX;
-	//	isAnimEnd = false;
-	//}
-	//
-}
 
-void CAnimator3D::Blend_In(_float dt)
-{
-	auto& blendClip = m_pAnimClips[m_iBlendAnimation];
-	_float speed = dt * m_fBlendWeight;
-	m_fBlendDuration += speed;
-
-	//계산된 트랜스폼 복제
-	m_BlendTransfomationMatices = m_TransfromationMatrices;
-
-	//복제된 매트릭스 블렌드 애님에 넣어서 보간 시작(변경된 것과 -> 블렌드 할 것)
-	m_fBlendTrackPosition = blendClip->TranslateAnimateMatrix(
-		m_BlendTransfomationMatices, m_fBlendTrackPosition,
-		dt, m_pAnimLoops[m_iBlendAnimation], &isBlendAnimEnd);
-	if (m_fBlendDuration > 1.f) {
-		m_fBlendDuration = 1.f;
-		m_eBlendState = BLENDER_STATE::RUNNING;
-	}
-	// base와 blend 보간 -> 블렌드하기로 한 뼈만 -> 현재 트랜스폼과 내 블렌드된 애니메이션과 보간함
-	Override_BlendAnim();
-}
-
-void CAnimator3D::Blend_Run(_float dt)
-{
-	auto& blendClip = m_pAnimClips[m_iBlendAnimation];
-
-	//계산된 트랜스폼 복제
-	m_BlendTransfomationMatices = m_TransfromationMatrices;
-
-	//복제된 매트릭스 블렌드 애님에 넣어서 보간 시작(변경된 것과 -> 블렌드 할 것)
-	m_fBlendTrackPosition = blendClip->TranslateAnimateMatrix(
-		m_BlendTransfomationMatices, m_fBlendTrackPosition,
-		dt, m_pAnimLoops[m_iBlendAnimation], &isBlendAnimEnd);
-	if (m_fBlendDuration > 1.f) {
-		m_fBlendDuration = 1.f;
-		m_eBlendState = BLENDER_STATE::RUNNING;
-	}
-	// base와 blend 보간 -> 블렌드하기로 한 뼈만 -> 현재 트랜스폼과 내 블렌드된 애니메이션과 보간함
-	Override_BlendAnim();
-}
-
-void CAnimator3D::Blend_Out(_float dt)
-{
-	auto& blendClip = m_pAnimClips[m_iBlendAnimation];
-	_float speed = dt * m_fBlendWeight;
-	m_fBlendDuration -= speed;
-
-	if (m_fBlendDuration <= 0.f) {
-		m_fBlendDuration = 0.f;
-		m_BlendIndex.clear();
-		m_BlendTransfomationMatices.clear();
-		m_iBlendAnimation = -1;
-		m_eBlendState = BLENDER_STATE::NONE;
-		/*블렌드 끝*/
-		return;
-	}
-
-	/*그 전까지는 현재 상태 기준으로 다음 원하는 애니메이션과 보간 될 것임*/
-	/*그러니까 업데이트는 하지 않되.... 현재 기준 트랜스폼과 애니메이션을 보간하고,-> 그리고 원하는 애니메이션을 만들어야 하지 않나?*/
-	/*아니다. 먼저 베이스 애니메이션 돌리고 나온 트랜스폼에다가 내가 원하는 인덱스만 바꾸는거니까. (그런데, 나온 거에 조금 보간 해서 덮어쓰는 것이니까)*/
-	Override_BlendAnim();
-}
-
-void CAnimator3D::Blend_Pause(_float dt)
-{
-	/*잠깐 블렌드를 중지함.*/
-	//
-}
-
-void CAnimator3D::Blend_Convert(_float dt)
-{
-	////블렌드 없으면 거너뜀
-	//if (m_iBlendAnimation == -1)
-	//	return;
-
-	////블렌드될 클립
-	//auto& blendClip = m_pAnimClips[m_iBlendAnimation];
-	//_float speed = dt * m_fBlendWeight;
-
-	//if (m_eBlendState == BLENDER_STATE::BLEND_IN) {
-	//	m_fBlendDuration += speed;
-
-	//	if (m_fBlendDuration > 1.f) {
-	//		m_fBlendDuration = 1.f;
-	//		m_eBlendState = BLENDER_STATE::RUNNING;
-	//	}
-	//}
-	//else if (m_eBlendState == BLENDER_STATE::BLEND_OUT) {
-	//	m_fBlendDuration -= speed;
-	//	if (m_fBlendDuration <= 0.f) {
-	//		m_fBlendDuration = 0.f;
-	//		m_BlendIndex.clear();
-	//		m_BlendTransfomationMatices.clear();
-	//		m_iBlendAnimation = -1;
-	//		m_eBlendState = BLENDER_STATE::NONE;
-	//		return;
-	//	}
-	//}
-
-	//m_BlendTransfomationMatices = m_TransfromationMatrices;
-
-	//m_fBlendTrackPosition = blendClip->TranslateAnimateMatrix(
-	//	m_BlendTransfomationMatices, m_fBlendTrackPosition,
-	//	dt, m_pAnimLoops[m_iBlendAnimation], &isBlendAnimEnd);
-
-	//m_pAnimClips[m_iBlendAnimation]->ConvertTo(
-	//	m_BlendTransfomationMatices,
-	//	*m_pAnimClips[m_iNextClipIndex],
-	//	m_fBlendDuration,
-	//	m_fPrevTrackPosition,
-	//	m_fCurrentTrackPosition);
-
-	//Override_BlendAnim();
 }
 
 void CAnimator3D::Override_BlendAnim()
