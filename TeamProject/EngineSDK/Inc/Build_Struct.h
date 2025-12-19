@@ -144,4 +144,10 @@ namespace Engine {
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;
 
+	typedef struct tagEffectObjectDesc : public GAMEOBJECT_DESC {
+		string EffectAssetKey{};
+
+		tagEffectObjectDesc() DEFAULT;
+		virtual ~tagEffectObjectDesc() DEFAULT;
+	}EFFECT_DESC;
 }

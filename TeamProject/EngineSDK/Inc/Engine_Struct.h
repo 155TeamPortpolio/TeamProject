@@ -333,7 +333,7 @@ namespace Engine
 	/* Effect */
 	typedef struct tagEffectNode : public INIT_DESC
 	{
-		EFFECT_TYPE eType = EFFECT_TYPE::END;
+		_uint eType = static_cast<_uint>(EFFECT_TYPE::END);
 		_float fDelayTime{};
 		_float fDuration{};
 		_bool isLoop = false;
