@@ -19,6 +19,10 @@ Texture2D g_BrightTexture;
 Texture2D g_BloomInfo;
 Texture2D g_BlurXTexture;
 Texture2D g_BloomFinal;
+Texture2D g_DistortionTexture;
+Texture2D g_DistortionNoiseTexture;
+Texture2D g_DistortionAdd_Texture;
+Texture2D g_DistortionFinal;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -275,6 +279,55 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    // ============================================
+    // 테스트용 파라미터 (여기서 조절)
+    // ============================================
+    float2 center = float2(0.5, 0.5); // 화면 중앙
+    float radius = 0.3; // 효과 반경 (테스트: 0.2 ~ 0.5)
+    float power = 2.0; // 곡선 강도 (테스트: 1.0 ~ 5.0)
+    float strength = 0.8; // 왜곡 세기 (테스트: -1.0 ~ 1.0)
+    
+    // ============================================
+    // Spherical Distortion 계산
+    // ============================================
+    float2 offset = In.vTexcoord - center;
+    
+    // Aspect Ratio 보정
+    offset.x *= 1.777;
+    
+    float distance = length(offset);
+    
+    // 반경 밖
+    if (distance > radius || distance < 0.0001)
+    {
+        Out.vResult = float4(0.5, 0.5, 0.5, 1.0);
+        return Out;
+    }
+    
+    // 정규화된 거리
+    float normalizedDist = distance / radius;
+    
+    // 중심에서 강하게
+    float distortStrength = 1.0 - normalizedDist;
+    distortStrength = pow(distortStrength, power);
+    
+    // 방향 계산
+    float2 direction = normalize(offset);
+    float2 distortion = direction * distortStrength * strength;
+    
+    // Aspect 역보정
+    distortion.x /= 1.777;
+    
+    // 저장
+    Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
+    
+    return Out;
+}
+
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
     PS_OUT_LIGHT Out;
@@ -415,14 +468,31 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
-{
-    float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
-    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
+{ //
+  //float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+  //float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
+  //float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
+  //
+  //float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
+  //float3 mapped = scene.rgb + bloom.rgb + distortion.rgb;
+  //
+  //return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
+    
+    float2 distortionValue = g_DistortionAdd_Texture.Sample(DefaultSampler, In.vTexcoord).rg;
+    distortionValue = (distortionValue - 0.5) * 2.0;
+    
+    float2 distortedUV = In.vTexcoord + distortionValue * 0.05;
+    distortedUV = saturate(distortedUV);
+    
+    float4 scene = g_FinalTexture.Sample(DefaultSampler, distortedUV); 
+    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord); 
+    
+    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord); 
     float3 mapped = scene.rgb + bloom.rgb;
     
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
+
 
 
 technique11 DefaultTechnique
@@ -465,6 +535,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
+    }
+
+    pass DISTORTION_ADD
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
     }
 
     pass Directional

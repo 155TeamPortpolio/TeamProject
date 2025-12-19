@@ -90,7 +90,6 @@ HRESULT CRenderSystem::Render()
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
 	Process_RenderCommand();
-
 	Clear_PostProcess();
 	Process_PostProcessQueue();
 	Render_Bloom();
@@ -251,7 +250,7 @@ HRESULT CRenderSystem::Render_Blended()
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
 
 	ID3D11RenderTargetView* pPrevRTV = { nullptr };
-	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr }; 
 	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
 	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
 	m_pBlendedPass->Execute(m_pContext);
@@ -502,8 +501,14 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc SSAOBlurDesc = { "Target_SSAO_Blur" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(SSAOBlurDesc);
 
-	RenderTargetDesc DistortionDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc DistortionDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionDesc);
+
+	RenderTargetDesc DistortionAddDesc = { "Target_Distortion_Add" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.5f, 0.5f, 0.5f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionAddDesc);
+
+	RenderTargetDesc DistortionFinalDesc = { "Target_Distortion_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionFinalDesc);
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
@@ -542,6 +547,10 @@ HRESULT CRenderSystem::Ready_GBuffer()
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_Distortion")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_DistortionInfo")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add")))
 			return E_FAIL;
 	}
 
@@ -803,7 +812,27 @@ HRESULT CRenderSystem::Render_Bloom()
 
 HRESULT CRenderSystem::Render_Distortion()
 {
-	return E_NOTIMPL;
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
+
+		SHADER_PARAM DistortionParam = {};
+		m_pTargetManager->Get_TargetParam("Target_Distortion", DistortionParam);
+		m_pShader->Bind_Value("g_DistortionTexture", DistortionParam);
+
+		m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "DISTORTION_ADD", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("DISTORTION_ADD", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	return S_OK;
 }
 
 HRESULT CRenderSystem::Render_Final()
@@ -820,9 +849,13 @@ HRESULT CRenderSystem::Render_Final()
 	m_pTargetManager->Get_TargetParam("Target_UI", uiParam);
 	m_pShader->Bind_Value("g_UITexture", uiParam);
 
-	SHADER_PARAM postProcessParam = {};
-	m_pTargetManager->Get_TargetParam("Target_BloomBlurY", postProcessParam);
-	m_pShader->Bind_Value("g_BloomFinal", postProcessParam);
+	SHADER_PARAM bloomParam = {};
+	m_pTargetManager->Get_TargetParam("Target_BloomBlurY", bloomParam);
+	m_pShader->Bind_Value("g_BloomFinal", bloomParam);
+
+	SHADER_PARAM distortionParam = {};
+	m_pTargetManager->Get_TargetParam("Target_Distortion_Add", distortionParam);
+	m_pShader->Bind_Value("g_DistortionAdd_Texture", distortionParam);
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
