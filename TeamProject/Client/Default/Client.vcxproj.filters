@@ -70,6 +70,9 @@
     <Filter Include="02. GameObject\Object\TestMap">
       <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\FSM">
+      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -143,6 +146,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\TestMap.h">
       <Filter>02. GameObject\Object\TestMap</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IBaseState.h">
+      <Filter>03. Utility\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

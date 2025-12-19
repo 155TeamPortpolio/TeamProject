@@ -79,6 +79,12 @@ void CParticleNode_Edit::Render_GUI()
 
 void CParticleNode_Edit::Play()
 {
+	m_isAlive = true;
+	if (!m_IsLoop)
+		m_IsEffectActive = false;
+
+	m_fElpasedTime = 0.f;
+
 	PARTICLE_NODE node{};
 
 	node.isWorld = m_IsWorld;
@@ -113,6 +119,57 @@ void CParticleNode_Edit::Play()
 	node.vScrollSpeed = m_vScrollSpeed;
 
 	Get_Component<CParticleSystem>()->SetParticleParams(node);
+}
+
+void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
+{
+}
+
+void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
+{
+	json =
+	{
+		{"texture_key", m_TextureKey},
+		{"texture_path",m_TexturePath},
+
+		{"delay_time",m_fDelayTime},
+		{"duration", m_fDuration},
+		{"is_loop",m_IsLoop},
+		{"is_world", m_IsWorld},
+		{"burst_count",m_iBurstCount},
+		{"spawn_per_sec",m_fSpawnPerSec},
+		{"max_spawn_particle_count",m_iMaxSpawnParticleCount},
+		{"start_speed",{{"x",m_vStartSpeed.x},{"y",m_vStartSpeed.y}}},
+		{"start_life_time",{{"x",m_vStartLifeTime.x},{"y",m_vStartLifeTime.y}}},
+		{"start_size",{{"x",m_vStartSize.x},{"y",m_vStartSize.y}}},
+		{"spawn_area_min",{{"x",m_vSpawnAreaMin.x},{"y",m_vSpawnAreaMin.y},{"z",m_vSpawnAreaMin.z}}},
+		{"spawn_area_max",{{"x",m_vSpawnAreaMax.x},{"y",m_vSpawnAreaMax.y},{"z",m_vSpawnAreaMax.z}}},
+		{"use_gravity",m_UseGravity},
+		{"gravity_scale",m_fGravityScale},
+
+		/* Life Time Speed */
+		{"damp_scale",m_fDampScale},
+
+		/* Life Time Scale */
+		{"start_scale",{{"x",m_vStartScale.x},{"y",m_vStartScale.y}}},
+		{"end_scale",{{"x",m_vEndScale.x},{"y",m_vEndScale.y}}},
+
+		/* Life Time Color */
+		{"start_color",{{"x",m_vStartColor.x},{"y",m_vStartColor.y},{"z",m_vStartColor.z},{"w",m_vStartColor.w}}},
+		{"end_color",{{"x",m_vEndColor.x},{"y",m_vEndColor.y},{"z",m_vEndColor.z},{"w",m_vEndColor.w}}},
+
+		/* Texture Sheet Animation */
+		{"particle_animated",m_IsParticleAnimated},
+		{"random_frame_index",m_IsRandomFrameIndex},
+		{"col",m_iCol},
+		{"row",m_iRow},
+		{"max_frame_index",m_iMaxFrameIndex},
+
+		/* Noise */
+		{"strength",{{"x",m_vStrength.x},{"y",m_vStrength.y},{"z",m_vStrength.z}}},
+		{"frequency",{{"x",m_vFrequency.x},{"y",m_vFrequency.y},{"z",m_vFrequency.z}}},
+		{"scroll_speed",{{"x",m_vScrollSpeed.x},{"y",m_vScrollSpeed.y},{"z",m_vScrollSpeed.z}}}
+	};
 }
 
 CParticleNode_Edit* CParticleNode_Edit::Create()
@@ -154,6 +211,8 @@ void CParticleNode_Edit::AddTextures()
 		{
 			auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
 			pMaterialData->Link_Texture("EffectEdit_Level", m_pContext->TextureTags[0], TEXTURE_TYPE::DIFFUSE);
+
+			m_TextureKey = m_pContext->TextureTags[0];
 		}
 
 		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
@@ -165,6 +224,9 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	_bool isDirty = false;
 
 	ImGui::SeparatorText("ParticleEffect Setting");
+
+	ImGui::DragFloat("Delay Time", &m_fDelayTime);
+	ImGui::DragFloat("Duration", &m_fDuration);
 
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
 	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);

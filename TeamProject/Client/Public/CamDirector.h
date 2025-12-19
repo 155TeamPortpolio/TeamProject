@@ -12,32 +12,28 @@ class CSequenceCam;
 
 class CCamDirector final : public CBase
 {
+    DECLARE_SINGLETON(CCamDirector)
 private:
     CCamDirector() {}
-    virtual ~CCamDirector() DEFAULT;
+    virtual ~CCamDirector() {}
 
 public:
-    void   Bind(CSequenceCam* sequenceCam);
+    void  Bind(CSequenceCam* sequenceCam);
+    _bool Register(const string& key, const filesystem::path& path);
+    void  UnRegister(const string& key);
 
 public:
-	void   Register(const string& key, const filesystem::path& path);
-	void   UnRegister(const string& key);
-
-public:
-	_uint  RequestSequence(const string& key, _float blendSec = 0.25f, _bool resetTime = true);
-	_bool  StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
-	void   StopAll(_float blendOutSec = 0.25f);
-	void   Update(_float dt);
-
-private:
-	bool   EnsureLoaded(const string& key);
+    void  SetSpaceReference(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
+    _uint RequestSequence(const string& key, _float blendInSec = 0.25f, _bool resetTime = true, _float blendOutSec = 0.25f);
+    _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
+    void  StopAll(_float blendOutSec = 0.25f);
+    void  Update(_float dt);
 
 private:
     struct SeqEntry
     {
         filesystem::path path{};
         CamSequenceDesc  seq{};
-        _bool            loaded = false;
     };
     struct PlayingState
     {
@@ -48,15 +44,20 @@ private:
         _bool  pendingStart = false;
         _float blendInRemain = 0.f;
         _bool  resetTimeOnStart = true;
+        _float defaultBlendOutSec = 0.25f;
     };
+
+private:
+    CSequenceCam* RequireSequenceCam() const;
+    void          ClearPlayingState() { m_playing = {}; }
 
 private:
     unordered_map<string, SeqEntry> m_sequences{};
     PlayingState                    m_playing{};
-    CSequenceCam*                   m_sequenceCam{};
+    OBJECT_HANDLE                   m_sequenceHandle{};
+    OBJECT_HANDLE                   m_spaceRefHandle{};
 
 public:
-    static CCamDirector* Create();
     void Free() override;
 };
 

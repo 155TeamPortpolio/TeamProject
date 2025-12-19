@@ -57,8 +57,9 @@ protected:
     _uint m_iCurrFrameIndex{};
 
     /*Dissolve Params*/
+    EaseType m_eDissolveEase = EaseType::None;
     _float m_fDissolveThreshold{};     //Dissolve 진행도
-    _float m_fDissolveStartProgress{}; //Dissolve가 시작될 전체 진행도 
+    _float m_fDissolveStartProgress{}; //Dissolve가 시작될 전체 진행도
 
     /*Noise Params*/
 

@@ -63,7 +63,7 @@ void CDefaultCamera::Priority_Update(_float dt)
 	_float Yaw = {}; //Y축 회전
 	_float Pitch = {};//X축 회전
 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Down(MOUSE_BTN::RB)) {
+	if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Down(MOUSE_BTN::MB)) {
 		Yaw = CGameInstance::GetInstance()->Get_InputDev()->Mouse_DeltaX() * dt * m_fMouseSensitive;
 		Pitch = CGameInstance::GetInstance()->Get_InputDev()->Mouse_DeltaY() * dt * m_fMouseSensitive;
 	}

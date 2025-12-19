@@ -128,9 +128,9 @@ ID3D11DepthStencilView* CTarget_Manager::Get_MTR_DSV(const string& strMRTTag)
 	return pMRTList[0]->Get_DSV();
 }
 
-HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool clearColor, bool clearDepth)
+HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool ClearColor, _bool ClearDepth)
 {
-	if (targetNames.empty())
+	if (targets.empty())
 		return E_FAIL;
 
 	SavedState saved;
@@ -139,21 +139,22 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool cl
 	m_SaveEngineStates.push(saved);
 
 	vector<CRenderTarget*> bindTargets;
-	bindTargets.reserve(targetNames.size());
+	bindTargets.reserve(targets.size());
 
-	for (auto& key : targetNames)
+	for (auto& key : targets)
 	{
-		auto& mrtList = Find_MRT(key);      
-		if (!mrtList.empty())               
+		string strKey = PostProcessToTargetName(key);
+		auto& mrtList = Find_MRT(/*strKey*/"MRT_Bloom");
+		if (!mrtList.empty())
 		{
-			for (auto& pTarget : mrtList)
+			for (auto& pTarget : mrtList) 
 				bindTargets.push_back(pTarget);
 			continue;
 		}
 
-		CRenderTarget* pTarget = Get_CustomTarget(key);
+		CRenderTarget* pTarget = Get_CustomTarget(strKey);
 		if (!pTarget)
-			pTarget = Get_EngineTarget(key);
+			pTarget = Get_EngineTarget(strKey);
 
 		if (!pTarget)
 		{
@@ -174,11 +175,23 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool cl
 		if (!dsv) dsv = target->Get_DSV();
 	}
 
-	for (auto& target : bindTargets)
-		if (clearColor) target->Clear();
+	D3D11_VIEWPORT         ViewPortDesc;
+	ZeroMemory(&ViewPortDesc, sizeof(D3D11_VIEWPORT));
+	ViewPortDesc.TopLeftX = 0;
+	ViewPortDesc.TopLeftY = 0;
+	ViewPortDesc.Width = (_float)bindTargets[0]->Get_ViewPort()->Width;
+	ViewPortDesc.Height = (_float)bindTargets[0]->Get_ViewPort()->Height;
+	ViewPortDesc.MinDepth = 0.f;
+	ViewPortDesc.MaxDepth = 1.f;
 
-	if (dsv && clearDepth)
+	m_pContext->RSSetViewports(1, &ViewPortDesc);
+
+	for (auto& target : bindTargets)
+		if (ClearColor) target->Clear();
+
+	if (dsv && ClearDepth)
 		m_pContext->ClearDepthStencilView(dsv, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+
 
 	if (count == 0 && dsv)
 	{
@@ -189,8 +202,6 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<string>& targetNames, bool cl
 	m_pContext->OMSetRenderTargets(count, RTVs, dsv);
 	return S_OK;
 }
-
-
 
 HRESULT CTarget_Manager::Restore_Targets()
 {
@@ -450,6 +461,16 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	}
 
 	return iter->second;
+}
+
+const string CTarget_Manager::PostProcessToTargetName(POSTPROCESS type)
+{
+	switch (type)
+	{
+	case POSTPROCESS::MRT_Bloom:  return "MRT_Bloom";
+	case POSTPROCESS::MRT_Distortion:  return "MRT_Distortion";
+	}
+	return "";
 }
 
 

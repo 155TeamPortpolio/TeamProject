@@ -11,9 +11,6 @@ namespace Math
 {
 	//Float 보간 함수
 	ENGINE_DLL _float      Lerp(_float x, _float y, _float t);
-	ENGINE_DLL Vector2	   LerpFloat2(Vector2 x, Vector2 y, _float t);
-
-	ENGINE_DLL const char* GetEaseLabel(EaseType v);
 	ENGINE_DLL _float      ApplyEase(EaseType type, _float t);
 
 	// Easing 보간 (Camera 추천 순위 1~30)  (중복 없음)

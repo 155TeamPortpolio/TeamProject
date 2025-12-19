@@ -16,6 +16,7 @@ private:
 	void ShowObject_Guizmo();
 private:
 	ImGuizmo::OPERATION gizmoOperation;
+	_bool m_isActive = {true};
 public:
 	static CGuizmoPanel* Create(GUI_CONTEXT* context);
 	virtual void Free();

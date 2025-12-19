@@ -23,68 +23,60 @@ void CFreeCam::Priority_Update(_float dt)
 
     if (input->Mouse_Down(MOUSE_BTN::RB))
     {
-        const float deltaX = input->Mouse_DeltaX();
-        const float deltaY = input->Mouse_DeltaY();
-
-        m_vRotDegTarget.x += deltaX * m_fSensitivity;
-        m_vRotDegTarget.y += deltaY * m_fSensitivity;
+        m_vRotDegTarget.x += input->Mouse_DeltaX() * m_fSensitivity;
+        m_vRotDegTarget.y += input->Mouse_DeltaY() * m_fSensitivity;
         m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
     }
 
     ApplyRotation(dt);
 
-    _vector4 look4  = m_pTransform->Dir(STATE::LOOK);
-    _vector4 right4 = m_pTransform->Dir(STATE::RIGHT);
+    const _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
+    const _vector4 right4 = m_pTransform->Dir(STATE::RIGHT);
 
-    _vector3 look { look4.x,  look4.y,  look4.z  };
-    _vector3 right{ right4.x, right4.y, right4.z };
+    const _vector3 look{ look4.x, look4.y, look4.z };
+    const _vector3 right{ right4.x, right4.y, right4.z };
 
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-
     if (input->Key_Down('W')) move += look  *  speed;
     if (input->Key_Down('S')) move += look  * -speed;
     if (input->Key_Down('D')) move += right *  speed;
     if (input->Key_Down('A')) move += right * -speed;
 
-    if (move.LengthSquared() > 1e-8f)
+    if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });
 }
 
 void CFreeCam::ApplyRotation(_float dt)
 {
-    const float yawRad   = XMConvertToRadians(m_vRotDegTarget.x);
+    const float yawRad = XMConvertToRadians(m_vRotDegTarget.x);
     const float pitchRad = XMConvertToRadians(m_vRotDegTarget.y);
 
     m_qRotTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
-    float alpha = 1.f - expf(-m_fRotSmoothSpeed * dt);
-    alpha = clamp(alpha, 0.f, 1.f);
+    float a = 1.f - expf(-m_fRotSmoothSpeed * dt);
+    a = clamp(a, 0.f, 1.f);
 
-    m_qCurRot = Quaternion::Slerp(m_qCurRot, m_qRotTarget, alpha);
+    m_qCurRot = Quaternion::Slerp(m_qCurRot, m_qRotTarget, a);
     m_qCurRot.Normalize();
 
-    const _vector4 q4{ m_qCurRot.x, m_qCurRot.y, m_qCurRot.z, m_qCurRot.w };
-    m_pTransform->Set_Quaternion(q4);
+    m_pTransform->Set_Quaternion(_vector4(m_qCurRot.x, m_qCurRot.y, m_qCurRot.z, m_qCurRot.w));
 }
 
 void CFreeCam::SyncRotation()
 {
-    _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
-    _vector3 forward{ look4.x, look4.y, look4.z };
+    const _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
+    const _vector3 forward{ look4.x, look4.y, look4.z };
 
     const float yawRad = atan2f(forward.x, forward.z);
-
-    const float y = clamp(-forward.y, -1.f, 1.f);
-    const float pitchRad = asinf(y);
+    const float pitchRad = asinf(clamp(-forward.y, -1.f, 1.f));
 
     m_vRotDegTarget.x = XMConvertToDegrees(yawRad);
-    m_vRotDegTarget.y = XMConvertToDegrees(pitchRad);
-    m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
+    m_vRotDegTarget.y = clamp(XMConvertToDegrees(pitchRad), -89.f, 89.f);
 
     m_qRotTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-    m_qCurRot    = m_qRotTarget;
+    m_qCurRot = m_qRotTarget;
 }
 
 CFreeCam* CFreeCam::Create()

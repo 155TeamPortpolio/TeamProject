@@ -53,7 +53,7 @@ void CDemoShaderAnimModel::Awake()
 	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
-	Get_Component<CAnimator3D>()->Change_Animation(6);
+	Get_Component<CAnimator3D>()->Set_Animation(0, 6);
 }
 
 void CDemoShaderAnimModel::Priority_Update(_float dt)
@@ -62,7 +62,7 @@ void CDemoShaderAnimModel::Priority_Update(_float dt)
 
 void CDemoShaderAnimModel::Update(_float dt)
 {
-	//Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CDemoShaderAnimModel::Late_Update(_float dt)

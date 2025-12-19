@@ -43,8 +43,13 @@ void CParticleNode::Priority_Update(_float dt)
 
 void CParticleNode::Update(_float dt)
 {
-	auto particle = Get_Component<CParticleSystem>();
-	particle->Simulation_Particle(dt);
+	__super::Update(dt);
+
+	if (m_IsEffectActive)
+	{
+		auto particle = Get_Component<CParticleSystem>();
+		particle->Simulation_Particle(dt);
+	}
 }
 
 void CParticleNode::Late_Update(_float dt)

@@ -149,18 +149,6 @@ void CGUISystem::Adjust_Alpha(_float dt)
 		m_bUsingUI = false;
 	else
 		m_bUsingUI = true;
-
-	ImGuiStyle& style = ImGui::GetStyle();
-	float alpha = style.Alpha;
-
-	if (m_bUsingUI)
-		alpha += dt;
-	else
-		alpha -= dt * 0.4f;
-
-	alpha = clamp(alpha, 0.3f, 1.f);
-	style.Alpha = alpha;
-
 }
 
 void CGUISystem::GUI_Begin()
@@ -225,14 +213,14 @@ void CGUISystem::Test()
 	{
 		ImGui::Separator();
 		const auto& levelList = CGameInstance::GetInstance()->Get_LevelMgr()->Get_LevelList();
-		GUIWidget::ShowListString(levelList, [&](const string& selectedLevel)->void {
+		GuiUtil::ShowListString(levelList, [&](const string& selectedLevel)->void {
 			string debugMessage = "Button for '" + selectedLevel + "' was clicked. \n";
 			OutputDebugStringA(debugMessage.c_str());
 			ImGuiStyle& style = ImGui::GetStyle();
 			});
 
 		static _vector vec = XMVectorSet(1, 1, 1, 1);
-		vec= GUIWidget::Vector4Float("TestVector", vec);
+		vec= GuiUtil::Vector4Float("TestVector", vec);
 	}
 	ImGui::End(); 
 }

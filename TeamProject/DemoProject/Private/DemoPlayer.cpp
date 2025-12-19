@@ -55,7 +55,7 @@ void CDemoPlayer::Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LEFT))
 		vMoveDir -= m_pTransform->Dir(STATE::RIGHT);
 
-	pCCT->Move_Direction(vMoveDir, 5.0f);
+	pCCT->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
 		pCCT->Jump(10.f);

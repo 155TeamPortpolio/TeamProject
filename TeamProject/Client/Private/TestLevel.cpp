@@ -4,9 +4,12 @@
 
 #include "FreeCam.h"
 #include "TestObject.h"
+#include "TestPlane.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
 #include "SequenceCam.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
 
 #include "Camera.h"
 
@@ -16,7 +19,8 @@
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() }
+	m_pGameInstance{ CGameInstance::GetInstance() },
+	m_pCamDirector{ CCamDirector::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
 }
@@ -39,6 +43,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
 	// =========================================================================
 
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 
@@ -46,18 +51,52 @@ HRESULT CTestLevel::Awake()
 	Rake_MapResources();
 
 	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
+	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
+	//if (nullptr == pMapLoader)
+	//	MSG_BOX("Failed to Load MapData!");
+//	Safe_Release(pMapLoader);
 
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+		.CharacterController({})
 		.Build("Test_Model");
-	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	m_testModel = testModel;
-	Safe_AddRef(m_testModel);
+	COLLIDER_DESC desc;
+	desc.bCooking = true;
+	desc.strModelKey = "Concert_Ground_FloorTile_01.model";
+
+	auto testPlane = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestPlane" })
+		.Collider(desc)
+		.Build("Test_Plane");
+	//testModel->Get_Component<CTransform>()->Set_Pos({0.f, 10.f, 0.f});
+	auto cc = testModel->Get_Component<CCharacterController>();
+
+	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer" });
+	objMgr->Add_Object(testPlane, { "Test_Level", "Model_Layer" });
+
+	// --------------------------- Camera -------------------------------------------------
+	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
+
+	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+		.Camera(kAspect)
+		.Position({ 0.f, 2.f, -5.f })
+		.Build("Orbit_Cam");
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
+
+	objMgr->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
+
+	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
+		.Camera(kAspect)
+		.Position({ 0.f, 2.f, -5.f })
+		.Build("SequenceCam");
+	objMgr->Add_Object(sequenceCam, { "Test_Level", "Camera_Layer" });
+
+	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
+	//m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
+	m_pCamDirector->Register("Intro", "../bin/Resources/Test.cam");
+	m_pCamDirector->SetSpaceReference(testModel->Get_Handle());
+
+	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
 	Ready_Camera();
 	return S_OK;
@@ -72,43 +111,12 @@ void CTestLevel::Update()
 	auto input = m_pGameInstance->Get_InputDev();
 
 	if (input->Key_Down('C'))
-		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 1.f, true);
-
+		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 2.f, true, 2.f);
 }
 
 void CTestLevel::Ready_Camera()
 {
-	assert(m_testModel);
 
-	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
-	auto objMgr = m_pGameInstance->Get_ObjectMgr();
-
-	auto sequenceCamObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("SequenceCam");
-	objMgr->Add_Object(sequenceCamObj, { "Test_Level", "Camera_Layer" });
-
-	auto orbitCamObj = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("Orbit_Cam");
-	objMgr->Add_Object(orbitCamObj, { "Test_Level", "Camera_Layer" });
-
-	m_orbitCam = static_cast<COrbitCam*>(orbitCamObj);
-	Safe_AddRef(m_orbitCam);
-
-	CTransform* targetTr = m_testModel->Get_Component<CTransform>();
-	assert(targetTr);
-	m_orbitCam->SetTarget(targetTr);
-
-	CAM->Set_MainCam(orbitCamObj->Get_Component<CCamera>());
-
-	if (!m_pCamDirector)
-		m_pCamDirector = CCamDirector::Create();
-
-	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCamObj));
-	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
 }
 
 void CTestLevel::Rake_MapResources()
@@ -154,8 +162,6 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
-	Safe_Release(m_pCamDirector);
-	Safe_Release(m_testModel);
-	Safe_Release(m_orbitCam);
+	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

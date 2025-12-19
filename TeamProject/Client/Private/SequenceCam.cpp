@@ -19,9 +19,7 @@ HRESULT CSequenceCam::Initialize(INIT_DESC* pArg)
 
 void CSequenceCam::Stop(_bool resetTime)
 {
-    if (!m_sequencePlayer)
-        return;
-
+    if (!m_sequencePlayer)  return;
     m_sequencePlayer->Stop(resetTime);
 }
 

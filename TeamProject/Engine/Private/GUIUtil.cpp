@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 
-void GUIWidget::ShowListButton(const vector<string>& vector, function<void(const string&)> callback)
+void GuiUtil::ShowListButton(const vector<string>& vector, function<void(const string&)> callback)
 {
 	for (const string& btnName : vector)
 	{
@@ -12,7 +12,7 @@ void GUIWidget::ShowListButton(const vector<string>& vector, function<void(const
 	}
 }
 
-void GUIWidget::ShowListString(const vector<string>& vector, function<void(const string&)> callback)
+void GuiUtil::ShowListString(const vector<string>& vector, function<void(const string&)> callback)
 {
 
 	for (auto it = vector.begin(); it != vector.end(); ++it)
@@ -27,7 +27,7 @@ void GUIWidget::ShowListString(const vector<string>& vector, function<void(const
 	}
 }
 
-void GUIWidget::ShowListInt(const vector<string>& vector, function<void(_uint)> callback)
+void GuiUtil::ShowListInt(const vector<string>& vector, function<void(_uint)> callback)
 {
 	for (size_t i = 0; i < vector.size(); ++i) {
 		string ListID = "##" + i;
@@ -40,14 +40,14 @@ void GUIWidget::ShowListInt(const vector<string>& vector, function<void(_uint)> 
 	}
 }
 
-_vector GUIWidget::Vector4Float(const string& Name, _fvector vector, bool Editable)
+_vector GuiUtil::Vector4Float(const string& Name, _fvector vector, bool Editable)
 {
 	ImGui::Text(Name.c_str());
 	ImGui::DragFloat4(("##" + Name).c_str(), (float*)&vector, 0.1f);
 	return vector;
 }
 
-void GUIWidget::ShowCombo(const vector<string>& vector, int currentIndex, const string& key, function<void(_uint)> callback)
+void GuiUtil::ShowCombo(const vector<string>& vector, int currentIndex, const string& key, function<void(_uint)> callback)
 {
 	if (vector.empty())
 		return;

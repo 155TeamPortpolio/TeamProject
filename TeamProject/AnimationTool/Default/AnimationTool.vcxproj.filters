@@ -34,6 +34,12 @@
     <Filter Include="03. Panel">
       <UniqueIdentifier>{430e71c6-3c8d-49c5-8f97-873fee47df9d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. Component">
+      <UniqueIdentifier>{09b69214-f3af-41c7-8b94-9e93d527d0ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Component\Animator3DEX">
+      <UniqueIdentifier>{2319dbc4-8c4a-41f1-bce6-560ac72cbfcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -121,6 +127,9 @@
     <ClInclude Include="..\public\Grid.h">
       <Filter>02. Object\Grid</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Animator3DEX.h">
+      <Filter>04. Component\Animator3DEX</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationTool.cpp">
@@ -176,6 +185,9 @@
     </ClCompile>
     <ClCompile Include="..\private\Grid.cpp">
       <Filter>02. Object\Grid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Animator3DEX.cpp">
+      <Filter>04. Component\Animator3DEX</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

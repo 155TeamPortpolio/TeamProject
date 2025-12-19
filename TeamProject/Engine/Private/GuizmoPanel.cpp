@@ -3,6 +3,7 @@
 #include "ICameraService.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "GameInstance.h"
 
 CGuizmoPanel::CGuizmoPanel(GUI_CONTEXT* context)
 	:CBasePanel{ context }
@@ -18,28 +19,75 @@ HRESULT CGuizmoPanel::Initialize()
 	gizmoOperation = ImGuizmo::ROTATE;
 	return S_OK;
 }
+
 void CGuizmoPanel::Render_GUI()
 {
-	if (!m_pContext->pSelectedObject)
-		return;
-	ImVec2 windowPos = ImVec2((float)m_pContext->viewPort.x - 450, 0);
-	ImGui::SetNextWindowPos(ImVec2(windowPos), ImGuiCond_Once);
+    if (!m_pContext->pSelectedObject)
+        return;
 
-	ImGui::Begin("Gizmo Control",0,ImGuiWindowFlags_NoDecoration| ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
+    ImVec2 windowPos = ImVec2((float)m_pContext->viewPort.x - 450.0f, 0.0f);
+    ImGui::SetNextWindowPos(windowPos, ImGuiCond_Once);
 
-	if (ImGui::Button("Translate"))
-		gizmoOperation = ImGuizmo::TRANSLATE;
-	ImGui::SameLine();
-	if (ImGui::Button("Rotate"))
-		gizmoOperation = ImGuizmo::ROTATE;
-	ImGui::SameLine();
-	if (ImGui::Button("Scale"))
-		gizmoOperation = ImGuizmo::SCALE;
+    ImGui::Begin("Gizmo Control", nullptr,
+        ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove);
 
-	ShowObject_Guizmo();
+    const ImVec4 onBtn = ImVec4(0.20f, 0.70f, 0.25f, 1.00f);
+    const ImVec4 onHovered = ImVec4(0.25f, 0.80f, 0.30f, 1.00f);
+    const ImVec4 onActive = ImVec4(0.15f, 0.60f, 0.20f, 1.00f);
 
-	ImGui::End();
+    const ImVec4 offBtn = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+    const ImVec4 offHovered = ImVec4(0.45f, 0.45f, 0.45f, 1.00f);
+    const ImVec4 offActive = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+
+    const bool isOn = m_isActive;
+
+    ImGui::PushStyleColor(ImGuiCol_Button, isOn ? onBtn : offBtn);
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, isOn ? onHovered : offHovered);
+    ImGui::PushStyleColor(ImGuiCol_ButtonActive, isOn ? onActive : offActive);
+
+    if (ImGui::Button(isOn ? "Gizmo Active: ON" : "Gizmo Active: OFF"))
+        m_isActive = !m_isActive;
+
+    ImGui::PopStyleColor(3);
+
+    auto PushOpStyle = [](bool selected)
+        {
+            if (!selected) return;
+            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.25f, 0.45f, 0.90f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.30f, 0.55f, 0.95f, 1.00f));
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.20f, 0.40f, 0.85f, 1.00f));
+        };
+    auto PopOpStyle = [](bool selected)
+        {
+            if (selected) ImGui::PopStyleColor(3);
+        };
+
+    const bool selT = (gizmoOperation == ImGuizmo::TRANSLATE);
+    const bool selR = (gizmoOperation == ImGuizmo::ROTATE);
+    const bool selS = (gizmoOperation == ImGuizmo::SCALE);
+
+    PushOpStyle(selT);
+    if (ImGui::Button("Translate")) gizmoOperation = ImGuizmo::TRANSLATE;
+    PopOpStyle(selT);
+
+    ImGui::SameLine();
+
+    PushOpStyle(selR);
+    if (ImGui::Button("Rotate")) gizmoOperation = ImGuizmo::ROTATE;
+    PopOpStyle(selR);
+
+    ImGui::SameLine();
+
+    PushOpStyle(selS);
+    if (ImGui::Button("Scale")) gizmoOperation = ImGuizmo::SCALE;
+    PopOpStyle(selS);
+
+    if (m_isActive)
+        ShowObject_Guizmo();
+
+    ImGui::End();
 }
+
 
 void CGuizmoPanel::ShowObject_Guizmo()
 {

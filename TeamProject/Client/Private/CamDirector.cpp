@@ -4,175 +4,124 @@
 #include "SequenceCam.h"
 #include "GameInstance.h"
 
-void CCamDirector::Bind(CSequenceCam* sequenceCam)
+IMPLEMENT_SINGLETON(CCamDirector)
+
+CSequenceCam* CCamDirector::RequireSequenceCam() const
 {
-    m_sequenceCam = sequenceCam;
+    return static_cast<CSequenceCam*>(OBJ->Request_Object(m_sequenceHandle));
 }
 
-void CCamDirector::Register(const string& key, const filesystem::path& path)
+void CCamDirector::Bind(CSequenceCam* sequenceCam)
 {
-    assert(!key.empty());
+    m_sequenceHandle = sequenceCam->Get_Handle();
+}
 
-    SeqEntry& entry = m_sequences[key];
+_bool CCamDirector::Register(const string& key, const filesystem::path& path)
+{
+    SeqEntry entry{};
     entry.path = path;
-    entry.loaded = false;
-    entry.seq = CamSequenceDesc{};
+    CamUtil::Load(entry.path, entry.seq);
+    m_sequences[key] = move(entry);
+    return true;
 }
 
 void CCamDirector::UnRegister(const string& key)
 {
-    auto it = m_sequences.find(key);
-    if (it == m_sequences.end())
-        return;
-
     if (m_playing.active && m_playing.key == key)
-        StopAll(0.25f);
+        StopAll(m_playing.defaultBlendOutSec);
 
-    m_sequences.erase(it);
+    m_sequences.erase(key);
 }
 
 void CCamDirector::Update(_float dt)
 {
     if (!m_playing.active) return;
 
-    auto sequencePlayer = m_sequenceCam->Get_Component<CCamSequencePlayer>();
+    auto sequenceCam = RequireSequenceCam();
+    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     if (m_playing.pendingStart)
     {
         m_playing.blendInRemain -= dt;
 
+        if (m_playing.resetTimeOnStart)
+            sequencePlayer->SetTime(0.f);
+
         if (m_playing.blendInRemain <= 0.f)
         {
-            if (m_playing.resetTimeOnStart)
-                sequencePlayer->SetTime(0.f);
-
             sequencePlayer->Play();
             m_playing.pendingStart = false;
         }
-        else
-        {
-            if (m_playing.resetTimeOnStart)
-                sequencePlayer->SetTime(0.f);
-        }
-
         return;
     }
 
     sequencePlayer->Update(dt);
 
     if (!sequencePlayer->IsPlaying())
-        StopAll(2.f);
+        StopAll(m_playing.defaultBlendOutSec);
 }
 
-_uint CCamDirector::RequestSequence(const string& key, _float blendSec, _bool resetTime)
+_uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec)
 {
-    if (!EnsureLoaded(key))  return 0u;
-
     if (m_playing.active)
-        StopAll(blendSec);
+        StopAll(blendOutSec);
 
-    auto sequencePlayer = m_sequenceCam->Get_Component<CCamSequencePlayer>();
-    auto it = m_sequences.find(key);
-    SeqEntry& entry = it->second;
+    auto& entry = m_sequences.at(key);
+
+    auto sequenceCam = RequireSequenceCam();
+    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     sequencePlayer->SetSequence(&entry.seq);
+
+    if (entry.seq.space == CamSpace::Local) sequencePlayer->SetSpaceReference(m_spaceRefHandle);
+    else sequencePlayer->ClearSpaceReference();
+
     sequencePlayer->SetApplyEnabled(true);
 
     if (resetTime)
         sequencePlayer->SetTime(0.f);
 
-    auto camComp = m_sequenceCam->Get_Component<CCamera>();
-    const _uint handle = CAM->Push(camComp, blendSec);
-    if (handle == 0u)
-    {
-        sequencePlayer->Stop(true);
-        sequencePlayer->SetApplyEnabled(false);
-        return 0u;
-    }
+    auto camComp = sequenceCam->Get_Component<CCamera>();
+    const _uint handle = CAM->Push(camComp, blendInSec);
 
     m_playing.handle = handle;
     m_playing.key = key;
     m_playing.active = true;
+    m_playing.defaultBlendOutSec = blendOutSec;
 
-    if (blendSec > 1e-6f)
-    {
-        m_playing.pendingStart = true;
-        m_playing.blendInRemain = blendSec;
-        m_playing.resetTimeOnStart = resetTime;
-        sequencePlayer->Pause();
-        if (resetTime)
-            sequencePlayer->SetTime(0.f);
-    }
-    else
-    {
-        if (resetTime)
-            sequencePlayer->SetTime(0.f);
-        sequencePlayer->Play();
-        m_playing.pendingStart = false;
-        m_playing.blendInRemain = 0.f;
-        m_playing.resetTimeOnStart = resetTime;
-    }
+    m_playing.pendingStart = (blendInSec > 0.f);
+    m_playing.blendInRemain = blendInSec;
+    m_playing.resetTimeOnStart = resetTime;
+
+    if (m_playing.pendingStart) sequencePlayer->Pause();
+    else sequencePlayer->Play();
 
     return handle;
 }
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
-    if (!m_playing.active) return false;
-    if (m_playing.handle != handle) return false;
+    if (m_playing.handle != handle)
+        return false;
 
-    auto sequencePlayer = m_sequenceCam->Get_Component<CCamSequencePlayer>();
+    auto sequenceCam = RequireSequenceCam();
+    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
+
     sequencePlayer->Stop(resetTime);
+    sequencePlayer->SetApplyEnabled(false);
 
     const _bool ok = CAM->Pop(handle, blendOutSec);
 
-    m_playing.handle = 0u;
-    m_playing.key.clear();
-    m_playing.active = false;
-    m_playing.pendingStart = false;
-    m_playing.blendInRemain = 0.f;
-    m_playing.resetTimeOnStart = true;
-
+    ClearPlayingState();
     return ok;
 }
 
 void CCamDirector::StopAll(_float blendOutSec)
 {
-    if (!m_playing.active) return;
     StopRequest(m_playing.handle, blendOutSec, true);
-}
-
-bool CCamDirector::EnsureLoaded(const string& key)
-{
-    auto it = m_sequences.find(key);
-    if (it == m_sequences.end())
-        return false;
-
-    SeqEntry& entry = it->second;
-
-    if (entry.loaded)
-        return true;
-
-    string err;
-    if (!CamUtil::Load(entry.path, entry.seq, &err))
-    {
-        entry.loaded = false;
-        return false;
-    }
-
-    entry.loaded = true;
-    return true;
-}
-
-CCamDirector* CCamDirector::Create()
-{
-    auto inst = new CCamDirector();
-    return inst;
 }
 
 void CCamDirector::Free()
 {
-    StopAll(0.f);
-    Safe_Release(m_sequenceCam);
     __super::Free();
 }
