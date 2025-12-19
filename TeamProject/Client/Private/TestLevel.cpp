@@ -40,6 +40,7 @@ HRESULT CTestLevel::Initialize()
 
 HRESULT CTestLevel::Awake()
 {
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 
@@ -50,16 +51,20 @@ HRESULT CTestLevel::Awake()
 	// =========================================================================
 
 	//==================== Effect =======================
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
-
-	pResource->Add_ResourcePath("test_particle.json", "../Bin/Effect/test_particle.json");
-	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Effect/Eff_Particle_044.json");
-
-	EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
-	auto effect = pProto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", &EffectAsset);
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	//
+	//pResource->Add_ResourcePath("test_particle.json", "../Bin/Effect/test_particle.json");
+	//pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Effect/Eff_Particle_044.png");
+	//
+	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
+	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("test_particle.json")
+	//	.Position(_float3(0.f, 0.f, 0.f))
+	//	.Build("Test_Effect");
+	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" })  ;
 	//===================================================
 
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
@@ -74,7 +79,6 @@ HRESULT CTestLevel::Awake()
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
 
-	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.CharacterController({})
 		.Build("Test_Model");
@@ -83,7 +87,6 @@ HRESULT CTestLevel::Awake()
 
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
 
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;

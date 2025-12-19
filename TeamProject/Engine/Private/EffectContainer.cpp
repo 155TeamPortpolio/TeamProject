@@ -2,6 +2,7 @@
 #include "EffectContainer.h"
 
 #include "GameInstance.h"
+#include "IResourceService.h"
 #include "IProtoService.h"
 #include "EffectNode.h"
 #include "ObjectContainer.h"
@@ -27,17 +28,20 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	EFFECT_ASSET* pAsset = static_cast<EFFECT_ASSET*>(pArg);
-	m_fDuration = pAsset->fDuration;
-	m_IsLoop = pAsset->isLoop;
-	m_iNumNodes = pAsset->Nodes.size();
+	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	EFFECT_DESC* pDesc = static_cast<EFFECT_DESC*>(pArg);
+
+	EFFECT_ASSET pAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, pDesc->EffectAssetKey);
+	m_fDuration = pAsset.fDuration;
+	m_IsLoop = pAsset.isLoop;
+	m_iNumNodes = pAsset.Nodes.size();
 	m_Nodes.resize(m_iNumNodes);
 
 	auto proto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	for (_uint i = 0; i < m_iNumNodes; ++i)
 	{
 		CGameObject* pNode = nullptr;
-		EFFECT_NODE* pNodeDesc = pAsset->Nodes[i];
+		EFFECT_NODE* pNodeDesc = pAsset.Nodes[i];
 		switch (static_cast<EFFECT_TYPE>(pNodeDesc->eType))
 		{
 		case Engine::EFFECT_TYPE::SPRITE:

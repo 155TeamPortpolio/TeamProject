@@ -478,6 +478,9 @@
     <ClInclude Include="..\Public\ClickManager.h">
       <Filter>01. Utility\14.ClickManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EffectBuilder.h">
+      <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -891,6 +894,9 @@
     <Filter Include="01. Utility\14.ClickManager">
       <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. GameObject\BuildSystem\Builder_Effect">
+      <UniqueIdentifier>{b38ebe60-64a0-457a-9554-4e9baf299e0d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1282,6 +1288,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EffectBuilder.cpp">
+      <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
