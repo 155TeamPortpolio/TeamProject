@@ -5,7 +5,6 @@
 #include "AnimationClip.h"
 #include "Channel.h"
 
-
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
 	, m_pGameInstance{ CGameInstance::GetInstance() }
@@ -26,34 +25,49 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 void CAnimToolPanel::Render_GUI()
 {
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	constexpr float defaultHeight = 350.f;
+	constexpr float leftX = 200.f;
+	constexpr float rightMargin = 275.f;
 
-	ImGui::SetNextWindowPos(ImVec2(200, AnimTool::g_iWinSizeY - 400), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(AnimTool::g_iWinSizeX - 450, 400), ImGuiCond_FirstUseEver);
+	const ImGuiViewport* vp = ImGui::GetMainViewport();
+	const ImVec2 workPos = vp->WorkPos;
+	const ImVec2 workSize = vp->WorkSize;
 
-	if (ImGui::Begin("Materials"))
+	ImVec2 bottomLeft(workPos.x + leftX, workPos.y + workSize.y);
+	bottomLeft.x = floorf(bottomLeft.x);
+	bottomLeft.y = floorf(bottomLeft.y);
+
+	float width = workSize.x - leftX - rightMargin;
+	width = floorf(width);
+
+	ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
+	ImGui::SetNextWindowSize(ImVec2(width, defaultHeight), ImGuiCond_FirstUseEver);
+
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
+
+	ImGui::Begin("AnimTool", nullptr, flags);
+
+	if (ImGui::BeginTabBar("##ToolTabs"))
 	{
-		if (ImGui::BeginTabBar("##ToolTabs"))
+		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+		if (ImGui::BeginTabItem("Setting Clip"))
 		{
-			if (ImGui::BeginTabItem("Setting Clip"))
-			{
-				GUI_Setting_Clips(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Create Meta"))
-			{
-				GUI_Create_MetaData(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			ImGui::EndTabBar();
+			GUI_Setting_Clips(childHeight);
+			ImGui::EndTabItem();
 		}
-		ImGui::End();
+
+		if (ImGui::BeginTabItem("Create Meta"))
+		{
+			GUI_Create_MetaData(childHeight);
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
 	}
-		                                                              
+
+	ImGui::End();
 }
 
 void CAnimToolPanel::Render_Taps(_float fChildHeight)
@@ -64,23 +78,12 @@ void CAnimToolPanel::Render_Taps(_float fChildHeight)
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
-	//ImGui::BeginChild("##Play TimeLine", ImVec2{ 0, fChildHeight * 2 }, true);
-	//어느 애니매이션인지 
-	//m_pSelectModel->Get_Component<CAnimator3D>()->
 
-	//애니매이션 바	
-	ImGui::SliderFloat(
-		"Time",
-		&m_fCurTime,
-		0.f,
-		m_fDuration
-	);
-	
-	//애니매이션 컨트롤러
-	if (ImGui::Button(m_isPlay ? "Pause" : "Play")) { m_isPlay = !m_isPlay; } ImGui::SameLine();
+	ImGui::SliderFloat("Time", &m_fCurTime, 0.f, m_fDuration);
+
+	if (ImGui::Button(m_isPlay ? "Pause" : "Play")) m_isPlay = !m_isPlay;
+	ImGui::SameLine();
 	ImGui::Checkbox("Loop", &m_bLoop);
-
-	//ImGui::EndChild();
 }
 
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)

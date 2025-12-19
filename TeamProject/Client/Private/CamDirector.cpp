@@ -78,7 +78,6 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
         StopAll(blendOutSec);
 
     auto& entry = m_sequences.at(key);
-
     auto sequenceCam = RequireSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 

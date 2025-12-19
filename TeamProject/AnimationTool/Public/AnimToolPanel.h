@@ -27,6 +27,9 @@ public:
 private:
     void Render_Taps(_float fChildHeight);
     void GUI_Setting_Clips(_float fChildHeight);
+    // --------------------------------------------------
+
+    // -------------------------------------------------
     void GUI_Create_MetaData(_float fChildHeight);
 
 //Func
@@ -44,12 +47,16 @@ private:
    
 private:
     class CGameObject* m_pSelectModel = { nullptr };
-    TAPBAR m_eCurrentTap = { TAPBAR::SETTING_CLIP };
-    _bool m_isPlay{};
-    _bool m_bLoop{};
-    _float m_fCurTime{};
-    _float m_fDuration = {100};
+    TAPBAR             m_eCurrentTap  = { TAPBAR::SETTING_CLIP };
+    _bool              m_isPlay       = {};
+    _bool              m_bLoop        = {};
+    _float             m_fCurTime     = {};
+    _float             m_fDuration    = {100};
 
+private:
+    // ---------------------------------------
+
+    // ---------------------------------------
 private:
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;

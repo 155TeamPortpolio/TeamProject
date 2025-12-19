@@ -28,8 +28,8 @@ public:
 	void    Late_Update(_float dt)      override PURE;
 
 protected:
-	CamType        m_eCamType = CamType::Debug;
-	CamRigType     m_eRigType = CamRigType::Free;
+	CamType    m_eCamType = CamType::Debug;
+	CamRigType m_eRigType = CamRigType::Free;
 
 public:
 	CGameObject* Clone(INIT_DESC* pArg) override PURE;
