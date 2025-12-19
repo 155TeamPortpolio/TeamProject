@@ -220,6 +220,7 @@
     <ClInclude Include="..\public\EffectEditLevel.h" />
     <ClInclude Include="..\public\EffectContainer_Edit.h" />
     <ClInclude Include="..\Public\EffectTool_Defines.h" />
+    <ClInclude Include="..\Public\IEditable.h" />
     <ClInclude Include="..\public\MainApp.h" />
     <ClInclude Include="..\Public\MeshNode_Edit.h" />
     <ClInclude Include="..\Public\ParticleNode_Edit.h" />
@@ -308,6 +309,7 @@
     </ClCompile>
     <ClCompile Include="..\private\EffectEditLevel.cpp" />
     <ClCompile Include="..\private\EffectContainer_Edit.cpp" />
+    <ClCompile Include="..\Private\IEditable.cpp" />
     <ClCompile Include="..\private\MainApp.cpp" />
     <ClCompile Include="..\Private\MeshNode_Edit.cpp" />
     <ClCompile Include="..\Private\ParticleNode_Edit.cpp" />

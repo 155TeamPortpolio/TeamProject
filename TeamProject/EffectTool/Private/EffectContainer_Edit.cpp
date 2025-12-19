@@ -8,6 +8,7 @@
 #include "MeshNode_Edit.h"
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
+#include "IEditable.h"
 
 CEffectContainer_Edit::CEffectContainer_Edit()
     :CEffectContainer()
@@ -28,13 +29,13 @@ HRESULT CEffectContainer_Edit::Initialize_Prototype()
 
 HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 {
-   // __super::Initialize(pArg);
+	// __super::Initialize(pArg);
 
 	LoadTextureFromDirectory("../Bin/Resource/Texture");
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
-    return S_OK;
+	return S_OK;
 }
 
 void CEffectContainer_Edit::Awake()
@@ -60,7 +61,10 @@ void CEffectContainer_Edit::Render_GUI()
 	DisplayAllTextures();
 	DisplayModels();
 	DisplayMaterial();
+	SetUp_EffectContainer();
 	ContextClear();
+	Import();
+	Export();
 	Play();
     AddNode();
 	RemoveLastNode();
@@ -105,10 +109,58 @@ void CEffectContainer_Edit::Free()
 		Safe_Release(texture);
 }
 
+void CEffectContainer_Edit::Import()
+{
+	if (ImGui::Button("Import"))
+	{
+		using namespace nlohmann;
+		namespace fs = std::filesystem;
+	}
+}
+
+void CEffectContainer_Edit::Export()
+{
+	if (ImGui::Button("Export"))
+	{
+		string filePath = Helper::SaveFileDialog();
+
+		using namespace nlohmann;
+		namespace fs = std::filesystem;
+
+		ordered_json EffectData;
+		
+		EffectData["node_count"] = m_Nodes.size();
+		EffectData["is_loop"] = m_IsLoop;
+		EffectData["duration"] = m_fDuration;
+
+		auto& NodeDatas = EffectData["nodes"];
+		NodeDatas = ordered_json::array();
+
+		for (const auto& node : m_Nodes)
+		{
+			ordered_json NodeData;
+			node->Export(NodeData);
+			NodeDatas.push_back(std::move(NodeData));
+		}
+		
+		ofstream file(filePath, std::ios::binary);
+		if (!file.is_open())
+		{
+			MSG_BOX("Save Failed");
+			return;
+		}
+
+		file << EffectData.dump(2);
+	}
+}
+
 void CEffectContainer_Edit::Play()
 {
 	if (ImGui::Button("Play"))
 	{
+		m_isAlive = true;
+		m_fElapsedTime = 0.f;
+
 		for (auto& node : m_Nodes)
 			node->Play();
 	}
@@ -133,6 +185,7 @@ void CEffectContainer_Edit::AddNode()
 
 		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ParticleNode" }).Add_ObjDesc(pDesc).Build("ParticleNode");
 		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+		
 	}
 	if (ImGui::Button("Add Mesh Node"))
 	{
@@ -377,4 +430,11 @@ void CEffectContainer_Edit::DisplayMaterial()
 	}
 
 	ImGui::End();
+}
+
+void CEffectContainer_Edit::SetUp_EffectContainer()
+{
+	ImGui::SeparatorText("EffectContainer Setting");
+	ImGui::Checkbox("Is Loop", &m_IsLoop);
+	ImGui::DragFloat("Duration", &m_fDuration);
 }

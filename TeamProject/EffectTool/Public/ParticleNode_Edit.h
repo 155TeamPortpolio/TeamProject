@@ -27,6 +27,8 @@ public:
 public:
     void Render_GUI()override;
     void Play()override;
+    void Import(nlohmann::ordered_json& json);
+    void Export(nlohmann::ordered_json& json);
 
 public:
     static CParticleNode_Edit* Create();
@@ -39,9 +41,11 @@ private:
     void AddTextures();
     void SetUp_ParticleEffect();
 
+    string m_TextureKey{};
+    string m_TexturePath{};
+
     /*Main Params*/
     _bool m_IsWorld = true;
-    _bool m_IsLoop = false;
     _uint m_iBurstCount{};
 
     _float m_fSpawnPerSec{};

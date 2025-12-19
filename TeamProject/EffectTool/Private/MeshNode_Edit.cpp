@@ -21,6 +21,7 @@ HRESULT CMeshNode_Edit::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CStaticModel>();
 	Add_Component<CMaterial>();
+
 	return S_OK;
 }
 
@@ -53,14 +54,53 @@ void CMeshNode_Edit::Priority_Update(_float dt)
 {
 }
 
+
 void CMeshNode_Edit::Update(_float dt)
 {
-	if(m_SetMaterial && m_SetMesh)
+	if (m_SetMaterial && m_SetMesh)
+	{
 		__super::Update(dt);
+
+
+		POST_PROCESS_COMMAND Command =
+		{
+			POSTPROCESS::MRT_Bloom,
+			Get_Component<CMaterial>()->Get_Shader(0),
+			m_pTransform->Get_WorldMatrix_Ptr(),
+			[this](ID3D11DeviceContext* pContext)
+			{
+				Render_BloomEffect(pContext);
+			}
+		};
+
+		CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
+	}
 }
 
 void CMeshNode_Edit::Late_Update(_float dt)
 {
+}
+
+void CMeshNode_Edit::Render_BloomEffect(ID3D11DeviceContext* pContext)
+{
+	auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem();
+	auto effectModel = Get_Component<CModel>();
+	auto effectMaterial = Get_Component<CMaterial>();
+	auto effectShader = effectMaterial->Get_Shader(0);
+	auto pCamMgr = CGameInstance::GetInstance()->Get_CameraMgr();
+	
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		effectModel,
+		effectShader,
+		0,
+		"Bright",
+		&pLayout
+	);
+
+	pContext->IASetInputLayout(pLayout);
+	effectShader->Apply("Bright", pContext);
+	effectModel->Draw(pContext,0);
 }
 
 void CMeshNode_Edit::Render_GUI()
@@ -81,11 +121,56 @@ void CMeshNode_Edit::Render_GUI()
 void CMeshNode_Edit::Play()
 {
 	m_isAlive = true;
-	m_IsLoop = false;
+
+	if (!m_IsLoop)
+		m_IsEffectActive = false;
+
 	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
 	m_vCurrUVOffset = m_vStartUVOffset;
 	m_fDissolveThreshold = 0.f;
+}
+
+void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
+{
+
+}
+
+void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
+{
+	json =
+	{
+		{"model_key",m_ModelKey},
+		{"material_key",m_MaterialKey},
+
+		{"delay_time", m_fDelayTime},
+		{"duration", m_fDuration},
+		{"is_loop",m_IsLoop},
+		{"base_color",{{"x",m_vBaseColor.x},{"y",m_vBaseColor.y},{"z",m_vBaseColor.z},{"w",m_vBaseColor.w}}},
+
+		/* Alpha */
+		{"alpha_fade_ease",static_cast<_uint>(m_eAlphaFadeEase)},
+		{"alpha_fade",{{"x",m_vAlphaFade.x},{"y",m_vAlphaFade.y}}},
+
+		/* Scale */
+		{"scale_ease",static_cast<_uint>(m_eScaleEase)},
+		{"start_scale",{{"x",m_vStartScale.x},{"y",m_vStartScale.y},{"z",m_vStartScale.z}}},
+		{"end_scale",{{"x",m_vEndScale.x},{"y",m_vEndScale.y},{"z",m_vEndScale.z}}},
+
+		/* UV Animation */
+		{"uv_ease",static_cast<_uint>(m_eUVEase)},
+		{"start_uv_offset",{{"x",m_vStartUVOffset.x},{"y",m_vStartUVOffset.y}}},
+		{"end_uv_offset",{{"x",m_vEndUVOffset.x},{"y",m_vEndUVOffset.y}}},
+
+		/* Sprite Animation */
+		{"col", m_iCol},
+		{"row", m_iRow},
+		{"max_frame_index",m_iMaxFrameIndex},
+
+		/* Dissolve */
+		{"dissolve_ease",static_cast<_uint>(m_eDissolveEase)},
+		{"dissolve_start_progress",m_fDissolveStartProgress}
+	};
 }
 
 CMeshNode_Edit* CMeshNode_Edit::Create()
@@ -132,7 +217,9 @@ void CMeshNode_Edit::SetMaterial()
 
 			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
 			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
+
 			m_SetMaterial = true;
+			m_MaterialKey = MaterialTag;
 		}
 	}
 }
@@ -155,6 +242,7 @@ void CMeshNode_Edit::SetMesh()
 				MSG_BOX("Link Failed - Mesh");
 
 			m_SetMesh = true;
+			m_ModelKey = ModelTag;
 		}
 	}
 }
@@ -241,6 +329,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		pMaterialInstance->Override_Pass("SpriteAnimation");
 	}
+	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
 	/*Default Params*/
@@ -285,6 +374,12 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 
 	/*Dissolve*/
+	if (ImGui::BeginCombo("##seg_ease_dissolve", Math::GetEaseLabel(m_eDissolveEase)))
+	{
+		EaseType eType = m_eDissolveEase;
+		ChangeEaseType(m_eDissolveEase, eType);
+		ImGui::EndCombo();
+	}
 	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
 
 	if (isDirty)

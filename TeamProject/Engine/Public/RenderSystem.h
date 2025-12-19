@@ -31,6 +31,8 @@ public:
 	HRESULT Render_Blended();
 	HRESULT Render_NonLight();
 	void Render_Shadow();
+	HRESULT Render_Bloom();
+	HRESULT Render_Distortion();
 	HRESULT Render_Final();
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -50,6 +52,7 @@ private:
 	HRESULT Ready_GBuffer();
 	void Process_RenderCommand();
 	void Process_PostProcessQueue();
+	void Clear_PostProcess();
 #pragma endregion
 
 public:
@@ -93,6 +96,7 @@ private:
 
 	class CTexture* RampTexture = { nullptr };
 	ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
+	ID3D11ShaderResourceView* m_pDistortionNoiseTexture = { nullptr };
 
 public:
 	static CRenderSystem* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

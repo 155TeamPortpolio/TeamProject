@@ -91,10 +91,13 @@ HRESULT CRenderSystem::Render()
 
 	Process_RenderCommand();
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
-	Process_PostProcessQueue();
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	Clear_PostProcess();
 
+	Process_PostProcessQueue();
+
+	//if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
+	Render_Bloom();
+	//if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	Render_Final();
 
 	return S_OK;
@@ -146,6 +149,10 @@ HRESULT CRenderSystem::Render_SSAO()
 		m_pShader->Bind_Value("g_SSAOTexture", SSAOParam);
 
 		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SSAO_BLUR", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
 		m_pShader->Apply("SSAO_BLUR", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -335,49 +342,121 @@ ID3D11ShaderResourceView* CRenderSystem::Get_EngineTargetSRV(const string strTag
 
 HRESULT CRenderSystem::Create_NoiseTexture()
 {
-	std::vector<_float4> ssaoNoise;
-
-	for (unsigned int i = 0; i < 16; i++)
 	{
-		_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f),0.0f,0.0f);
-		ssaoNoise.push_back(noise);
-	}
+		//SSAO NoiseTexture
+		std::vector<_float4> ssaoNoise;
 
-	D3D11_TEXTURE2D_DESC texDesc = {};
-	texDesc.Width = 4;
-	texDesc.Height = 4;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
+		for (unsigned int i = 0; i < 16; i++)
+		{
+			_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f), 0.0f, 0.0f);
+			ssaoNoise.push_back(noise);
+		}
 
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = ssaoNoise.data();
-	initData.SysMemPitch = 4 * sizeof(_float4);
-	initData.SysMemSlicePitch = 0;
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		texDesc.Width = 4;
+		texDesc.Height = 4;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = ssaoNoise.data();
+		initData.SysMemPitch = 4 * sizeof(_float4);
+		initData.SysMemSlicePitch = 0;
 
 
-	ID3D11Texture2D* noiseTexture = nullptr;
-	if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
-		return E_FAIL;
+		ID3D11Texture2D* noiseTexture = nullptr;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+			return E_FAIL;
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-	srvDesc.Texture2D.MostDetailedMip = 0;
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
 
-	if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
-	{
+		if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
+		{
+			Safe_Release(noiseTexture);
+			return E_FAIL;
+		}
+
 		Safe_Release(noiseTexture);
-		return E_FAIL;
 	}
 
-	Safe_Release(noiseTexture);
+	{
+		//Distortion Noise Texture (heat haze)
+		std::vector<_float4> distortionNoise;
+		const int noiseSize = 128;
+
+		for (int y = 0; y < noiseSize; y++)
+		{
+			for (int x = 0; x < noiseSize; x++)
+			{
+				float fx = (float)x / noiseSize;
+				float fy = (float)y / noiseSize;
+
+				// 여러 주파수의 사인파 조합으로 부드러운 노이즈 생성
+				float noise1 = sin(fx * 3.14f * 8.0f) * cos(fy * 3.14f * 6.0f);
+				float noise2 = sin(fx * 3.14f * 12.0f) * cos(fy * 3.14f * 10.0f);
+				float noise3 = sin(fx * 3.14f * 5.0f) * cos(fy * 3.14f * 7.0f);
+
+				// 다른 방향의 노이즈
+				float noise4 = cos(fx * 3.14f * 9.0f) * sin(fy * 3.14f * 11.0f);
+				float noise5 = cos(fx * 3.14f * 6.0f) * sin(fy * 3.14f * 8.0f);
+
+				// 조합 및 정규화
+				float r = (noise1 * 0.5f + noise2 * 0.3f + noise3 * 0.2f);
+				float g = (noise4 * 0.5f + noise5 * 0.3f + noise1 * 0.2f);
+
+				// 0~1 범위로 변환
+				r = (r + 1.0f) * 0.5f;
+				g = (g + 1.0f) * 0.5f;
+
+				distortionNoise.push_back(_float4(r, g, 0.0f, 0.0f));
+			}
+		}
+
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		texDesc.Width = noiseSize;
+		texDesc.Height = noiseSize;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = distortionNoise.data();
+		initData.SysMemPitch = noiseSize * sizeof(_float4);
+		initData.SysMemSlicePitch = 0;
+
+		ID3D11Texture2D* noiseTexture = nullptr;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pDistortionNoiseTexture)))
+		{
+			Safe_Release(noiseTexture);
+			return E_FAIL;
+		}
+		Safe_Release(noiseTexture);
+	}
+
 	return S_OK;
 }
 
@@ -405,7 +484,19 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 	m_pTargetManager->Create_Target(ShadowDesc);
 
-	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomDesc);
+
+	RenderTargetDesc BloomInfoDesc = { "Target_BloomInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomInfoDesc);
+
+	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomBlurXDesc);
+
+	RenderTargetDesc BloomBlurYDesc = { "Target_BloomBlurY" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomBlurYDesc);
+
+	RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightDesc);
 
 	RenderTargetDesc SSAODesc = { "Target_SSAO" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -423,6 +514,14 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX")))
+		return E_FAIL;
+	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY")))
 		return E_FAIL;
 	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
 		return E_FAIL;
@@ -501,16 +600,56 @@ void CRenderSystem::Process_RenderCommand()
 
 void CRenderSystem::Process_PostProcessQueue()
 {
+	if (m_PostCommands.empty()) return;
+
+	std::stable_sort(m_PostCommands.begin(), m_PostCommands.end(),
+		[](const auto& a, const auto& b) { return a.GetKey() < b.GetKey(); });
+
+	_uint key = 0;
+	bool bound = false;
+
 	for (auto& cmd : m_PostCommands)
 	{
-		m_pTargetManager->Bind_Targets(cmd.TargetNames, cmd.bClearColor, cmd.bClearDepth);
+		const _uint curKey = cmd.GetKey();
 
+		if (!bound || curKey != key)
+		{
+			if (bound) m_pTargetManager->End_MRT();
+			string mrt = m_pTargetManager->PostProcessToTargetName(cmd.eTarget);
+			if (FAILED(m_pTargetManager->Begin_MRT(mrt))) return;
+
+			key = curKey;
+			bound = true;
+		}
+
+		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
 		cmd.DrawCall(m_pContext);
-
-		m_pTargetManager->Restore_Targets();
 	}
-
+	if (bound) m_pTargetManager->End_MRT();
 	m_PostCommands.clear();
+}
+
+void CRenderSystem::Clear_PostProcess()
+{
+	for (size_t i = 0; i < static_cast<_uint>(POSTPROCESS::END); ++i)
+	{
+		POSTPROCESS eType = static_cast<POSTPROCESS>(i);
+		string targetName = m_pTargetManager->PostProcessToTargetName(eType);
+
+		vector<CRenderTarget*> Targets = m_pTargetManager->Find_MRT(targetName);
+		for (auto& Target : Targets)
+		{
+			if (!Target)
+			{
+				MSG_BOX("Invalid PostProcess Target Key");
+				continue;
+			}
+
+			if (Target->Get_RTV())
+				Target->Clear();
+		}
+	}
 }
 
 #pragma endregion
@@ -601,6 +740,59 @@ void CRenderSystem::Render_Shadow()
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 }
 
+HRESULT CRenderSystem::Render_Bloom()
+{
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
+		
+		SHADER_PARAM BrightParam = {};
+		m_pTargetManager->Get_TargetParam("Target_Bloom", BrightParam);
+		m_pShader->Bind_Value("g_BrightTexture", BrightParam);
+		
+		SHADER_PARAM BlurTypeParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomInfo", BlurTypeParam);
+		m_pShader->Bind_Value("g_BloomInfo", BlurTypeParam);
+		
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+		
+		m_pShader->Apply("BLOOM_BLURX", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+		
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
+		
+		SHADER_PARAM BrightParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomBlurX", BrightParam);
+		m_pShader->Bind_Value("g_BlurXTexture", BrightParam);
+		
+		SHADER_PARAM BlurTypeParam = {};
+		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
+		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
+		
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+		
+		m_pShader->Apply("BLOOM_BLURY", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+		
+		m_pTargetManager->End_MRT();
+	}
+	return S_OK;
+}
+
+HRESULT CRenderSystem::Render_Distortion()
+{
+	return E_NOTIMPL;
+}
+
 HRESULT CRenderSystem::Render_Final()
 {
 	ID3D11InputLayout* pLayout;
@@ -616,8 +808,8 @@ HRESULT CRenderSystem::Render_Final()
 	m_pShader->Bind_Value("g_UITexture", uiParam);
 
 	SHADER_PARAM postProcessParam = {};
-	m_pTargetManager->Get_TargetParam("Target_PostProcess", postProcessParam);
-	m_pShader->Bind_Value("g_PostProcessTexture", postProcessParam);
+	m_pTargetManager->Get_TargetParam("Target_BloomBlurY", postProcessParam);
+	m_pShader->Bind_Value("g_BloomFinal", postProcessParam);
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
@@ -652,6 +844,7 @@ void CRenderSystem::Free()
 	__super::Free();
 	Safe_Release(RampTexture);
 	Safe_Release(m_pSSAONoiseTexture);
+	Safe_Release(m_pDistortionNoiseTexture);
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

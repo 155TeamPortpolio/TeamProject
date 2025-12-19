@@ -95,65 +95,109 @@ void CEditModel::Render_GUI()
 
 	__super::Render_GUI();
 }
-
 HRESULT CEditModel::Load_AIScene(const string& filePath)
 {
 	Clear_Models();
 	m_Importer.FreeScene();
 	m_pAIScene = nullptr;
 
-	unsigned int base = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast;
-	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base);
-	if (!m_pAIScene) return E_FAIL;
+	// 1) Preset 사용하되, LOD/계층 망가뜨릴 수 있는 Optimize 계열은 제거
+	unsigned int base =
+		aiProcess_ConvertToLeftHanded |
+		aiProcessPreset_TargetRealtime_Fast;
 
+	base &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+
+	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base);
+	if (!m_pAIScene)
+		return E_FAIL;
+
+	// 2) LOD 노드가 있는지 간단 탐지 (이름에 LOD가 섞여있는 경우가 많음)
+	auto HasLODNodes = [](const aiNode* root) -> bool
+		{
+			if (!root) return false;
+
+			function<bool(const aiNode*)> dfs = [&](const aiNode* n) -> bool
+				{
+					if (!n) return false;
+
+					// Assimp node name
+					const char* nm = n->mName.C_Str();
+					if (nm && *nm)
+					{
+						string name = nm;
+						// 대충이라도 "LOD" 포함이면 LOD 구조로 간주
+						if (name.find("LOD") != std::string::npos || name.find("lod") != std::string::npos)
+							return true;
+					}
+
+					for (unsigned i = 0; i < n->mNumChildren; ++i)
+						if (dfs(n->mChildren[i])) return true;
+
+					return false;
+				};
+
+			return dfs(root);
+		};
+
+	const bool hasLOD = HasLODNodes(m_pAIScene->mRootNode);
 	bool hasBones = HasBones();
 
-	// AUTO인데 본이 없으면 2차 로드(PreTransform 포함)
-	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones)
+	// 3) AUTO + 본 없음일 때 2차 로드(PreTransform) 하던 로직은,
+	//    "LOD가 없을 때만" 적용 (LOD 있으면 계층 유지가 중요함)
+	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones && !hasLOD)
 	{
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
 		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base | aiProcess_PreTransformVertices);
-		if (!m_pAIScene) return E_FAIL;
+		if (!m_pAIScene)
+			return E_FAIL;
 
 		hasBones = false;
 	}
+
 	if (nullptr == m_pAIScene)
 		return E_FAIL;
-	
+
 	Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
 
-	_bool isSkeletal = HasBones();
+	const _bool isSkeletal = HasBones();
 
 	string fileName = Helper::GetFileNameWithOutExtension(filePath);
+
 	CAI_Material* pMaterial = CAI_Material::Create();
 	pMaterial->Set_Owner(this);
 	m_Components.emplace(type_index(typeid(CMaterial)), pMaterial);
+
 	_uint NumMaterial = m_pAIScene->mNumMaterials;
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);
 
-	if (isSkeletal) {//Skeletal
+	if (isSkeletal)
+	{
 		CAI_SKModel* skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
 		Safe_AddRef(skeletal);
+
 		skeletal->Load_AIModel(m_pAIScene, fileName);
 		skeletal->Set_Owner(this);
 		pMaterial->LinkShader("VTX_SkinMesh.hlsl");
-		
-		if (m_pAIScene->HasAnimations()) {//Animation
+
+		if (m_pAIScene->HasAnimations())
+		{
 			auto Animator3D = CAIAnimator3D::Create(m_pAIScene, skeletal->Get_AIModelData());
 			m_Components.emplace(type_index(typeid(CAnimator3D)), Animator3D);
 			Animator3D->Set_Owner(this);
 		}
-
 	}
-	else {//Static
+	else
+	{
 		CAI_STModel* staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
 		Safe_AddRef(staticModel);
+
 		staticModel->Load_AIModel(m_pAIScene, fileName);
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
@@ -161,6 +205,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	return S_OK;
 }
+
 
 HRESULT CEditModel::Save_AIScene()
 {

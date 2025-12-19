@@ -343,6 +343,7 @@ namespace Engine
 	{
 		string TextureKey{};
 		string TexturePath{};
+
 		_bool isAnimated = false;
 		_uint iMaxFrameIndex{};
 		_float fSpeed{};
@@ -353,9 +354,8 @@ namespace Engine
 		string TextureKey{};
 		string TexturePath{};
 
+		//_bool isLoop = false; 부모 구조체에서 루프 제어함
 		_bool isWorld = true;
-		_bool isLoop = false;
-
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
 		_uint iMaxSpawnParticleCount{};
@@ -393,14 +393,50 @@ namespace Engine
 		_float3 vFrequency{};
 		_float3 vScrollSpeed{};
 
+		static tagParticleNode FromJson(nlohmann::ordered_json& json);
 	}PARTICLE_NODE;
+
+	typedef struct tagMeshNode : public tagEffectNode
+	{
+		string ModelTag{};
+		string MaterialTag{};
+
+		_float4 vBaseColor{ 1.f,1.f,1.f,1.f };
+		
+		/* Alpha */
+		_uint AlphaFadeEase{};
+		_float2 vAlphaFade{};
+
+		/* Scale */
+		_uint ScaleEase{};
+		_float3 vStartScale{};
+		_float3 vEndScale{};
+
+		/* UV Animation */
+		_uint UVEase{};
+		_float2 vStartUVOffset{};
+		_float2 vEndUVOffset{};
+
+		/* Sprite Animation */
+		_uint iCol{};
+		_uint iRow{};
+		_uint iMaxFrameIndex{};
+
+		/* Dissolve */
+		_uint DissolveEase{};
+		_float fDissolveStartProgress{};
+
+		static tagMeshNode FromJson(nlohmann::ordered_json& json);
+	}MESH_NODE;
 
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
-		string Name{};
+		_uint iNodeCount{};
 		_float fDuration{};
 		_bool isLoop = false;
-		vector<tagEffectNode> Nodes;
+		vector<tagEffectNode*> Nodes;
+
+		static tagEffectAsset FromJson(nlohmann::ordered_json& json);
 	}EFFECT_ASSET;
 
 	typedef struct ENGINE_DLL tagObjectHandle {

@@ -25,8 +25,11 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    void Render_BloomEffect(ID3D11DeviceContext* pContext);
     void Render_GUI()override;
-    void Play()override;
+    void Play()override; 
+    void Import(nlohmann::ordered_json& json);
+    void Export(nlohmann::ordered_json& json);
 
 public:
     static CMeshNode_Edit* Create();
@@ -40,6 +43,9 @@ private:
     void SetMesh();
     _bool ChangeEaseType(EaseType& ioValue, EaseType shownValue);
     void SetUp_MeshEffect();
+
+    string m_ModelKey{};
+    string m_MaterialKey{};
 
     _bool m_IsSpriteMode = false;
     _bool m_SetMesh = false;
