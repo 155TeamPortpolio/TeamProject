@@ -76,21 +76,21 @@ namespace Helper
 namespace Helper // magic_enum 관련
 {
 	template<typename TEnum>
-	string_view EnumNameView(TEnum v)
+	string_view EnumNameView(TEnum v) // Enum -> string_view
 	{
 		static_assert(is_enum_v<TEnum>, "Helper::EnumNameView<TEnum> requires an enum type.");
 		return magic_enum::enum_name(v);
 	}
 
 	template<typename TEnum>
-	string EnumToString(TEnum v)
+	string EnumToString(TEnum v) // Enum -> string
 	{
 		static_assert(is_enum_v<TEnum>, "Helper::EnumToString<TEnum> requires an enum type.");
 		return string(EnumNameView(v));
 	}
 
 	template<typename TEnum>
-	const char* EnumLabel(TEnum v)
+	const char* EnumLabel(TEnum v) // enum -> const char*
 	{
 		static_assert(is_enum_v<TEnum>, "Helper::EnumLabel<TEnum> requires an enum type.");
 
@@ -121,6 +121,9 @@ namespace Helper // magic_enum 관련
 	bool DrawEnumCombo(const char* id, TEnum& ioValue, TEnum shownValue, float width, FilterFn Filter) 
 	{
 		static_assert(is_enum_v<TEnum>, "Helper::DrawEnumCombo<TEnum> requires an enum type.");
+		static_assert(is_invocable_r_v<bool, FilterFn, TEnum>, "Helper::DrawEnumCombo Filter must be callable as bool(TEnum).");
+		static_assert(is_same_v<decltype(EnumLabel(declval<TEnum>())), const char*>, 
+			"Helper::DrawEnumCombo requires EnumLabel(TEnum) -> const char*.");
 
 		ImGui::SetNextItemWidth(width);
 		if (!ImGui::BeginCombo(id, EnumLabel(shownValue))) return false;
@@ -160,5 +163,128 @@ namespace Helper // magic_enum 관련
 	bool DrawEnumCombo(const char* id, TEnum& ioValue, float width, FilterFn Filter)
 	{
 		return DrawEnumCombo(id, ioValue, ioValue, width, Filter);
+	}
+}
+
+enum class ConfirmResult
+{
+	None, Ok, Cancel
+};
+
+namespace Helper
+{
+	struct DarkThemeStyle
+	{
+		DarkThemeStyle()
+		{
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+
+			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f, 8.f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,  4.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize,  16.f);
+
+			ImGui::PushStyleColor(ImGuiCol_WindowBg,          ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ChildBg,           ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_Border,            ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
+			ImGui::PushStyleColor(ImGuiCol_Separator,         ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
+
+			ImGui::PushStyleColor(ImGuiCol_FrameBg,           ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,    ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive,     ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+
+			ImGui::PushStyleColor(ImGuiCol_Button,            ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered,     ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+														      
+			ImGui::PushStyleColor(ImGuiCol_Header,            ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered,     ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+
+			ImGui::PushStyleColor(ImGuiCol_TableHeaderBg,     ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
+			ImGui::PushStyleColor(ImGuiCol_TableBorderLight,  ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
+		}
+		~DarkThemeStyle()
+		{
+			ImGui::PopStyleColor(16);
+			ImGui::PopStyleVar(6);
+		}
+		DarkThemeStyle(const DarkThemeStyle&) = delete;
+		DarkThemeStyle& operator=(const DarkThemeStyle&) = delete;
+	};
+	
+	// 확인(Ok, Cancel) 팝업. lines 내용을 출력하고, 버튼 선택 결과(Ok/Cancel/None)를 반환.
+	ENGINE_DLL ConfirmResult DrawConfirmPopupModal(const char* popupId, const char* title, initializer_list<const char*> lines, const char* okLabel, const char* cancelLabel, float buttonW = 120.f);
+
+	// 단순 확인(OK만) 팝업. lines 내용을 출력하고, Ok를 눌러 닫히면 true(그 외엔 false).
+	ENGINE_DLL bool DrawOkPopupModal(const char* popupId, const char* title, initializer_list<const char*> lines,
+		const char* okLabel = "OK", float buttonW = 120.f);
+
+	// 단순 확인(Ok만) 팝업(본문이 string). bodyText를 출력하고, Ok를 눌러 닫히면 true(그외엔 false)
+	ENGINE_DLL bool DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText,
+		const char* okLabel = "OK", float buttonW = 120.f);
+
+	ENGINE_DLL void DrawLabelDisabled(const char* t);
+	ENGINE_DLL bool DragFloat(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW);
+
+	template<int N>
+	inline bool DragFloatN(const char* id, const char* const (&labels)[N], float* const (&values)[N], float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
+	{
+		bool changed = false;
+
+		ImGui::PushID(id);
+
+		for (int i = 0; i < N; ++i)
+		{
+			DrawLabelDisabled(labels[i]);
+			ImGui::SameLine();
+
+			char compId[16];
+			sprintf_s(compId, "##%d", i);
+
+			changed |= DragFloat(compId, *values[i], speed, minV, maxV, fmt, valueW);
+
+			if (i + 1 < N) ImGui::SameLine(0.f, gap);
+		}
+
+		ImGui::PopID();
+		return changed;
+	}
+
+	inline bool DragFloat1(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
+	{
+		const char* const labels[1] = { "" };
+		float* const values[1] = { &v };
+		return DragFloatN<1>(id, labels, values, speed, minV, maxV, fmt, valueW, 0.f);
+	}
+
+	inline bool DragVec2XY(const char* id, _vector2& v, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
+	{
+		const char* const labels[2] = { "X", "Y" };
+		float* const values[2] = { &v.x, &v.y };
+		return DragFloatN<2>(id, labels, values, speed, minV, maxV, fmt, valueW, gap);
+	}
+
+	inline bool DragVec3XYZ(const char* id, _vector3& v, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
+	{
+		const char* const labels[3] = { "X", "Y", "Z" };
+		float* const values[3] = { &v.x, &v.y, &v.z };
+		return DragFloatN<3>(id, labels, values, speed, minV, maxV, fmt, valueW, gap);
+	}
+
+	inline bool DragVec4XYZW(const char* id, _vector4& v, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
+	{
+		const char* const labels[4] = { "X", "Y", "Z", "W" };
+		float* const values[4] = { &v.x, &v.y, &v.z, &v.w };
+		return DragFloatN<4>(id, labels, values, speed, minV, maxV, fmt, valueW, gap);
+	}
+
+	inline bool DragVec3(const char* id, _vector3& v, const char* lx, const char* ly, const char* lz, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
+	{
+		const char* const labels[3] = { lx, ly, lz };
+		float* const values[3] = { &v.x, &v.y, &v.z };
+		return DragFloatN<3>(id, labels, values, speed, minV, maxV, fmt, valueW, gap);
 	}
 }

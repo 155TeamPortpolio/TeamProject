@@ -5,123 +5,6 @@
 
 namespace
 {
-    void DrawFieldHeaderButton(const char* label, float width = 70.f)
-    {
-        ImGui::Button(label, ImVec2(width, 0.f));
-        ImGui::SameLine();
-    }
-    bool DrawVec3Editor(const char* headerLabel, _vector3& v, float speed = 0.05f, float headerWidth = 70.f)
-    {
-        DrawFieldHeaderButton(headerLabel, headerWidth);
-
-        bool changed = false;
-        ImGui::PushID(headerLabel);
-
-        ImGui::SetNextItemWidth(80.f);
-        changed |= ImGui::DragFloat("X", &v.x, speed); ImGui::SameLine();
-        ImGui::SetNextItemWidth(80.f);
-        changed |= ImGui::DragFloat("Y", &v.y, speed); ImGui::SameLine();
-        ImGui::SetNextItemWidth(80.f);
-        changed |= ImGui::DragFloat("Z", &v.z, speed);
-
-        ImGui::PopID();
-        return changed;
-    }
-    bool DrawFloatEditor(const char* headerLabel, float& value, float speed = 0.1f, float minV = 0.f, float maxV = 0.f, float headerWidth = 70.f)
-    {
-        DrawFieldHeaderButton(headerLabel, headerWidth);
-
-        ImGui::PushID(headerLabel);
-        ImGui::SetNextItemWidth(160.f);
-
-        bool changed = false;
-        if (minV < maxV) changed = ImGui::DragFloat("##val", &value, speed, minV, maxV);
-        else changed = ImGui::DragFloat("##val", &value, speed);
-
-        ImGui::PopID();
-        return changed;
-    }
-    struct ScopedCamToolStyle
-    {
-        ScopedCamToolStyle()
-        {
-            ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
-
-            ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f, 8.f));
-            ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,  4.f);
-            ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize,  16.f);
-
-            ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
-
-            ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
-
-            ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
-            ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-            ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
-        }
-        ~ScopedCamToolStyle()
-        {
-            ImGui::PopStyleColor(16);
-            ImGui::PopStyleVar(6);
-        }
-        ScopedCamToolStyle(const ScopedCamToolStyle&) = delete;
-        ScopedCamToolStyle& operator=(const ScopedCamToolStyle&) = delete;
-    };
-
-    void DrawInlineLabelDisabled(const char* t)
-    {
-        ImGui::AlignTextToFramePadding();
-        ImGui::TextDisabled("%s", t);
-    }
-
-    bool DragFloatInline(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
-    {
-        ImGui::SetNextItemWidth(valueW);
-        if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV, fmt);
-        return ImGui::DragFloat(id, &v, speed, 0.f, 0.f, fmt);
-    }
-
-    bool DragVec3XYZ_Inline(const char* id, _vector3& v, float speed, float minV, float maxV, const char* fmt, float valueW, float gap)
-    {
-        bool changed = false;
-
-        ImGui::PushID(id);
-
-        DrawInlineLabelDisabled("X");
-        ImGui::SameLine();
-        changed |= DragFloatInline("##x", v.x, speed, minV, maxV, fmt, valueW);
-
-        ImGui::SameLine(0.f, gap);
-
-        DrawInlineLabelDisabled("Y");
-        ImGui::SameLine();
-        changed |= DragFloatInline("##y", v.y, speed, minV, maxV, fmt, valueW);
-
-        ImGui::SameLine(0.f, gap);
-
-        DrawInlineLabelDisabled("Z");
-        ImGui::SameLine();
-        changed |= DragFloatInline("##z", v.z, speed, minV, maxV, fmt, valueW);
-
-        ImGui::PopID();
-        return changed;
-    }
-
     Matrix GetRefRT(OBJECT_HANDLE h)
     {
         auto obj = OBJ->Request_Object(h);
@@ -137,14 +20,12 @@ namespace
 
         return Matrix::CreateFromQuaternion(r) * Matrix::CreateTranslation(t);
     }
-
     _vector3 ToLocalPos(_vector3 worldPos, const Matrix& refRT)
     {
         const Matrix inv = refRT.Invert();
         const Vector3 p = Vector3::Transform(Vector3(worldPos.x, worldPos.y, worldPos.z), inv);
         return _vector3(p.x, p.y, p.z);
     }
-
     _vector3 ToLocalDir(_vector3 worldDir, const Matrix& refRT)
     {
         const Matrix inv = refRT.Invert();
@@ -153,20 +34,17 @@ namespace
         d.Normalize();
         return _vector3(d.x, d.y, d.z);
     }
-
     _vector3 ToWorldPos(_vector3 localPos, const Matrix& refRT)
     {
         const Vector3 p = Vector3::Transform(Vector3(localPos.x, localPos.y, localPos.z), refRT);
         return _vector3(p.x, p.y, p.z);
     }
-
     _vector3 ToWorldDir(_vector3 localDir, const Matrix& refRT)
     {
         Vector3 d = Vector3::TransformNormal(Vector3(localDir.x, localDir.y, localDir.z), refRT);
         d.Normalize();
         return _vector3(d.x, d.y, d.z);
     }
-
     void ConvertKeysSpace(vector<CamKeyFrame>& keys, CamSpace from, CamSpace to, OBJECT_HANDLE refHandle)
     {
         if (from == to) return;
@@ -182,7 +60,6 @@ namespace
             }
             return;
         }
-
         if (from == CamSpace::Local && to == CamSpace::World)
         {
             for (auto& k : keys)
@@ -300,7 +177,7 @@ void CCamPanel::Render_GUI()
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoTitleBar;
 
-    ScopedCamToolStyle styleScope;
+    Helper::DarkThemeStyle styleScope;
 
     if (ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags))
     {
@@ -404,17 +281,13 @@ void CCamPanel::DrawToolbar()
                 nextRecording = true;
             }
             else
-            {
                 SetRecording(false);
-            }
         }
         else
-        {
             SetRecording(nextRecording);
-        }
     }
 
-    const ConfirmResult capOff = CamPanelUtil::DrawConfirmPopupModal( "CaptureOff_Confirm_TooFewKeys", nullptr, { u8"키프레임이 1개 이하입니다.", u8"CAPTURE(REC)를 끄면 재생이 고정처럼 보일 수 있어요.", u8"그래도 끌까요?" }, u8"끄기", u8"계속 캡처", 120.f);
+    const ConfirmResult capOff = DrawConfirmPopupModal( "CaptureOff_Confirm_TooFewKeys", nullptr, { u8"키프레임이 1개 이하입니다.", u8"CAPTURE(REC)를 끄면 재생이 고정처럼 보일 수 있어요.", u8"그래도 끌까요?" }, u8"끄기", u8"계속 캡처", 120.f);
 
     if (capOff == ConfirmResult::Ok)
         SetRecording(false);
@@ -660,16 +533,13 @@ void CCamPanel::DrawCamSelector()
 
                 if (selected) ImGui::SetItemDefaultFocus();
             }
-
             ImGui::EndCombo();
         }
     }
-
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
-
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -719,9 +589,7 @@ void CCamPanel::DrawKeyframeEditor()
             ImGui::TableSetupColumn("OrbitArc", ImGuiTableColumnFlags_WidthStretch);
         }
         else
-        {
             ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch);
-        }
 
         ImGui::TableNextRow();
 
@@ -761,13 +629,13 @@ void CCamPanel::DrawTimeline()
 
     ImDrawList* dl = ImGui::GetWindowDrawList();
 
-    ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+    ImU32 colBg     = ImGui::GetColorU32(ImGuiCol_FrameBg);
     ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
-    ImU32 colFill = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
-    ImU32 colTick = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    ImU32 colFill   = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+    ImU32 colTick   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
     ImU32 colCursor = ImGui::GetColorU32(ImGuiCol_Text);
-    ImU32 colText = ImGui::GetColorU32(ImGuiCol_TextDisabled);
-    ImU32 colHot = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+    ImU32 colText   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    ImU32 colHot    = ImGui::GetColorU32(ImGuiCol_ButtonActive);
 
     dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBg, 4.f);
     dl->AddRect(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBorder, 4.f);
@@ -1161,8 +1029,7 @@ _bool CCamPanel::DrawConstraintBar()
 
 _bool CCamPanel::DrawOrbitTargetBar()
 {
-    if (state.moveConstraint != CamMoveConstraint::Orbit)
-        return false;
+    if (state.moveConstraint != CamMoveConstraint::Orbit) return false;
 
     bool changed = false;
     const char* fmt = "%.1f";
@@ -1178,11 +1045,11 @@ _bool CCamPanel::DrawOrbitTargetBar()
     if (!state.orbit.lookAtCenter)
         ImGui::BeginDisabled();
 
-    DrawInlineLabelDisabled("Target");
+    DrawLabelDisabled("Target");
     ImGui::SameLine(0.f, gapS);
 
     _vector3 targetPos = state.orbit.targetPos;
-    if (DragVec3XYZ_Inline("target", targetPos, 0.1f, -99999.f, 99999.f, fmt, 58.f, gapM))
+    if (DragVec3XYZ("target", targetPos, 0.1f, -99999.f, 99999.f, fmt, 58.f, gapM))
     {
         state.orbit.targetPos = targetPos;
         changed = true;
@@ -1190,9 +1057,10 @@ _bool CCamPanel::DrawOrbitTargetBar()
 
     ImGui::SameLine(0.f, gapM);
 
-    DrawInlineLabelDisabled("OffY");
+    DrawLabelDisabled("OffY");
     ImGui::SameLine(0.f, gapS);
-    if (DragFloatInline("##offy", state.orbit.offsetY, 0.1f, -99999.f, 99999.f, fmt, 58.f))
+
+    if (DragFloat("##offy", state.orbit.offsetY, 0.1f, -99999.f, 99999.f, fmt, 58.f))
         changed = true;
 
     if (!state.orbit.lookAtCenter)
@@ -1715,7 +1583,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
         else ImGui::OpenPopup("AddKey_Confirm_NotCapture");
     }
 
-    const ConfirmResult addR = CamPanelUtil::DrawConfirmPopupModal( "AddKey_Confirm_NotCapture", nullptr, { u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다." }, u8"추가", u8"취소", 120.f);
+    const ConfirmResult addR = DrawConfirmPopupModal( "AddKey_Confirm_NotCapture", nullptr, { u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다." }, u8"추가", u8"취소", 120.f);
 
     if (addR == ConfirmResult::Ok)
         AddKey_Default();
@@ -1733,14 +1601,12 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
             ImGui::OpenPopup("DeleteKey_Confirm_TooFewKeys");
         }
         else
-        {
             DeleteSelectedKey();
-        }
     }
 
     if (!canDelete) ImGui::EndDisabled();
 
-    const ConfirmResult delR = CamPanelUtil::DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,  { u8"키프레임이 2개 이하입니다.",
+    const ConfirmResult delR = DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,  { u8"키프레임이 2개 이하입니다.",
         u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.", u8"그래도 삭제할까요?" }, u8"삭제", u8"취소", 120.f);
 
     if (delR == ConfirmResult::Ok)
@@ -1798,7 +1664,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     if (ImGui::Button("Load", btnSize))
         DoLoadSequence();
 
-    const ConfirmResult saveEmptyR = CamPanelUtil::DrawConfirmPopupModal( "CamSeq_Save_EmptyConfirm", nullptr,
+    const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr, 
         { u8"키프레임이 0개입니다.", u8"그래도 저장할까요?" }, u8"저장", u8"취소", 120.f);
 
     if (saveEmptyR == ConfirmResult::Ok)
@@ -1810,7 +1676,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
         keyListUI.requestOpenFileErrorPopup = false;
     }
 
-    if (CamPanelUtil::DrawOkPopupModalText("CamSeq_FileError", u8"File Error", keyListUI.lastFileError, "OK", 120.f))
+    if (DrawOkPopupModalText("CamSeq_FileError", u8"File Error", keyListUI.lastFileError, "OK", 120.f))
         keyListUI.lastFileError.clear();
 
     ImGui::SameLine();
@@ -1883,16 +1749,14 @@ void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioC
             SyncNameBufFromSeq();
             keyListUI.requestOpenFileErrorPopup = true;
         }
-        else if (Helper::ContainsNonAscii(nextName))
+        else if (ContainsNonAscii(nextName))
         {
             keyListUI.lastFileError = "Name must be English";
             SyncNameBufFromSeq();
             keyListUI.requestOpenFileErrorPopup = true;
         }
         else
-        {
             target.sequence->name = nextName;
-        }
     }
 
     if (constraintChanged && target.captureCamObj && state.recording)
@@ -1920,9 +1784,7 @@ void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioC
             ImGui::PopClipRect();
         }
         else
-        {
             orbitChanged = DrawOrbitTargetBar();
-        }
 
         if (orbitChanged && target.captureCamObj && state.recording)
             target.captureCamObj->SetOrbitState(state.orbit);
@@ -2087,8 +1949,7 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
 
 void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
 {
-    if (!HasValidSelection())
-        return;
+    if (!HasValidSelection()) return;
 
     CamKeyFrame* keyPtr = &GetSelectedKey();
 
@@ -2298,7 +2159,7 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     char msg[256];
     sprintf_s(msg, u8"적용하면 기존 키 %d개가 덮어씌워져 제거됩니다.\n그래도 적용할까요?", keyEditUI.pendingOverwriteCount);
 
-    const ConfirmResult timeR = CamPanelUtil::DrawConfirmPopupModal( "TimeCollisionConfirm", nullptr,
+    const ConfirmResult timeR = DrawConfirmPopupModal( "TimeCollisionConfirm", nullptr,
         { u8"같은 시간대에 키가 이미 있습니다.", msg }, u8"적용",  u8"취소", 120.f);
 
     if (timeR == ConfirmResult::Ok)
@@ -2352,7 +2213,7 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
 
     ImGui::SeparatorText("OrbitArc");
 
-    DrawInlineLabelDisabled("Enabled");
+    DrawLabelDisabled("Enabled");
     ImGui::SameLine();
     if (ImGui::Checkbox("##oa_enabled", &d.enabled)) ioChangedOrbit = true;
 
@@ -2406,26 +2267,26 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
     const float vecW = 90.f;
     const float gap = 10.f;
 
-    DrawInlineLabelDisabled("Center");
+    DrawLabelDisabled("Center");
     ImGui::SameLine();
     _vector3 center = d.center;
-    if (DragVec3XYZ_Inline("oa_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap)) { d.center = center; ioChangedOrbit = true; }
+    if (DragVec3XYZ("oa_center", center, 0.05f, -99999.f, 99999.f, "%.1f", vecW, gap)) { d.center = center; ioChangedOrbit = true; }
 
-    DrawInlineLabelDisabled("Axis");
+    DrawLabelDisabled("Axis");
     ImGui::SameLine();
     _vector3 axis = d.axis;
-    if (DragVec3XYZ_Inline("oa_axis", axis, 0.01f, -1.f, 1.f, "%.2f", vecW, gap)) { d.axis = axis; d.NormalizeAxis(); ioChangedOrbit = true; }
+    if (DragVec3XYZ("oa_axis", axis, 0.01f, -1.f, 1.f, "%.2f", vecW, gap)) { d.axis = axis; d.NormalizeAxis(); ioChangedOrbit = true; }
 
-    DrawInlineLabelDisabled("Angle");
+    DrawLabelDisabled("Angle");
     ImGui::SameLine();
-    if (Helper::DrawEnumCombo("##oa_angle", d.angleMode, 160.f)) ioChangedOrbit = true;
+    if (DrawEnumCombo("##oa_angle", d.angleMode, 160.f)) ioChangedOrbit = true;
 
     ImGui::SameLine(0.f, 12.f);
-    DrawInlineLabelDisabled("CW");
+    DrawLabelDisabled("CW");
     ImGui::SameLine();
     if (ImGui::Checkbox("##oa_cw", &d.clockwise)) ioChangedOrbit = true;
 
-    DrawInlineLabelDisabled("Radius");
+    DrawLabelDisabled("Radius");
     ImGui::SameLine();
-    if (Helper::DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
+    if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
 }
