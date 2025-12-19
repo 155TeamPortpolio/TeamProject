@@ -23,20 +23,21 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		Reset_Panel();
 	}
 	
-
 	if (nullptr == m_pSelectAnimator)
 		return;
 
 	if (m_isPlay) {
-		m_fCurTime += dt;
-
-		if (m_fDuration <= m_fCurTime) {
+		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
+		
+		if (m_fDuration <= m_fTrackPos) {
 			if (m_bLoop)
-				m_fCurTime = 0.f;
+				m_fTrackPos = 0.f;
 			else
 				m_isPlay = false;
 		}
 	}
+
+	m_pSelectAnimator->Update_Animation(m_fTrackPos);
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -112,10 +113,15 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 				if (ImGui::Selectable(ClipTag.c_str(), selected))
 				{
 					m_CurClipTag = ClipTag;
+					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
 
 					//가져온 애니매이션의 duration 가져옴
-					m_fCurTime = 0.f;
-					m_fDuration = (*m_pSelectAnimator->Get_Clips())[iIndex]->Get_Duration();
+					m_fTrackPos = 0.f;
+
+					
+					m_pSelectAnimator->Set_Animation(0, iIndex);
+					m_fTickPerSec = Clip->Get_TickPerSec();
+					m_fDuration = Clip->Get_Duration();
 				}
 				if (selected)
 					ImGui::SetItemDefaultFocus();
@@ -129,7 +135,7 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	Draw_ToolbarUI();
 
 	ImGui::SameLine();
-	ImGui::Text("%.2f / %.2f", m_fCurTime, m_fDuration);
+	ImGui::Text("%.2f / %.2f", m_fTrackPos, m_fDuration);
 }
 
 void CAnimToolPanel::Draw_ToolbarUI()
@@ -143,7 +149,7 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	if (ImGui::Button("Stop", buttonSize))
 	{
 		m_isPlay = false;
-		m_fCurTime = 0.f;
+		m_fTrackPos = 0.f;
 	}
 
 	ImGui::SameLine();
@@ -180,7 +186,7 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	ImGui::PopID();
 
 	ImGui::SameLine();
-	Draw_TimelineUI(m_fDuration, m_fCurTime, "##AnimTimeline");
+	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
 }
 
 void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* id)
@@ -295,7 +301,7 @@ void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 void CAnimToolPanel::Reset_Panel()
 {
 	m_isPlay = false;
-	m_fCurTime = 0.f;
+	m_fTrackPos = 0.f;
 	m_fDuration = 0.f;
 	m_CurClipTag = "";
 	m_ClipTags.clear();

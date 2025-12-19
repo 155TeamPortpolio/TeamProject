@@ -1,4 +1,5 @@
 #include "Animator3DEX.h"
+#include "AnimationClip.h"
 
 CAnimator3DEX::CAnimator3DEX()
 {
@@ -23,9 +24,20 @@ void CAnimator3DEX::Render_GUI()
 	//__super::Render_GUI();
 }
 
-void CAnimator3DEX::Update_Animation_ToPanel(_float fTrackPosition)
+void CAnimator3DEX::Update_Animation(_float fTrackPosition)
 {
-	m_AnimLayers[0].fCurrentTrackPosition = fTrackPosition;
+
+	if (m_AnimLayers.empty()) return;
+	
+	for (auto& Layer : m_AnimLayers) {
+		if (-1 == Layer.iClipIndex) continue;
+	
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	
+		nowClip->TranslateAnimateMatrixFromDuration(Layer.LocalMatrices, fTrackPosition);
+	}
+	
+	BuildBone();
 }
 
 vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()

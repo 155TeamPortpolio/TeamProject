@@ -55,9 +55,10 @@ private: //Create Clip
     vector<string>       m_ClipTags;
 
     _bool   m_isPlay     = {};
+    _bool   m_bLoop = { true };
     _float  m_fPlaySpeed = { 1.f };
-    _bool   m_bLoop      = {};
-    _float  m_fCurTime   = {};
+    _float  m_fTickPerSec = { 1.f };
+    _float  m_fTrackPos   = {};
     _float  m_fDuration  = {};
 
 private: //Create MetaData

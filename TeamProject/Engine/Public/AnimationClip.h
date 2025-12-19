@@ -12,9 +12,6 @@ protected:
 
 public:
 	HRESULT Initialize(const string& animationPath);
-	_float Get_Duration() { return m_fDuration; }
-	_bool isLoop() { return m_bLoop; }
-
 	//현재 애니매이션 클립을 재생함
 	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
@@ -22,11 +19,14 @@ public:
 		_bool isLoop,
 		_bool* isAnimEnd);
 
+	void TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition);
+
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
-
+	_bool isLoop() { return m_bLoop; }
+	_float Get_TickPerSec() { return m_fTickPerSecond; }
+	_float Get_Duration() { return m_fDuration; }
 	const string& Get_Name() { return m_ClipName; }
-	_float Get_TickPerSecond() { return m_fTickPerSecond; }
 
 public:
 	virtual void Render_GUI();

@@ -57,8 +57,6 @@ void CAnimModel::Priority_Update(_float dt)
 
 void CAnimModel::Update(_float dt)
 {
-	if (nullptr != Get_Component<CAnimator3D>())
-		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CAnimModel::Late_Update(_float dt)

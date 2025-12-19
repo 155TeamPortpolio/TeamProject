@@ -22,7 +22,7 @@ public:
 
 public:
     virtual void Render_GUI() override;
-    void Update_Animation_ToPanel(_float fTrackPosition);
+    virtual void Update_Animation(_float fTrackPosition) override;
 
 public:
     vector<CAnimationClip*>* Get_Clips();

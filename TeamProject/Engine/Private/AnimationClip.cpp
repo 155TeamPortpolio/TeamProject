@@ -36,7 +36,6 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd)
 {
-
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 
 	if (isLoop) {
@@ -56,6 +55,14 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 	}
 
 	return RealTrackPosition;
+}
+
+void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition)
+{
+	for (size_t i = 0; i < m_iNumChannels; i++)
+	{
+		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, CurrentTrackPosition, false);
+	}
 }
 
 CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
