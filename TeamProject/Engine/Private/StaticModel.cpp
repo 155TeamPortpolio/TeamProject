@@ -175,11 +175,16 @@ void CStaticModel::Render_GUI()
 
         if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
         {
-            string tip = (hidden ? "Hidden mesh: " : "Visible mesh: ") + meshKey;
+            const bool hidden = !m_DrawableMeshes[i]; // 예시
+            const std::string& meshKey = m_pData->Get_Mesh(i)->Get_Key(); // 예시
             _uint count = m_pData->Get_Mesh(i)->Get_StaticVerticesCount();
-            ImGui::SetTooltip("%s", tip.c_str());
-            ImGui::SetTooltip("Vertices : %d", to_string(count).c_str());
+
+            ImGui::SetTooltip("%s%s\nVertices : %u",
+                hidden ? "Hidden mesh: " : "Visible mesh: ",
+                meshKey.c_str(),
+                (unsigned)count);
         }
+
     }
     ImGui::EndChild();
 }

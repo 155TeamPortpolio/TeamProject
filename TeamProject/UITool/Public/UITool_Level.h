@@ -42,10 +42,6 @@ private:
     HRESULT Ready_UIObjects();
     HRESULT Ready_GUIPanel();
 
-private:
-    HRESULT Add_Texture(const string& resourceKey, const string& resourcePath);
-    HRESULT Add_Font(string FontName, const wstring& FontFilePath);
-
 public:
     static CUITool_Level* Create(const string& LevelKey);
     virtual void Free() override;

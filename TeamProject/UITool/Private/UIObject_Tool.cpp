@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
+#include "Helper_Func.h"
 
 CUIObject_Tool::CUIObject_Tool()
 {
@@ -29,6 +30,8 @@ void CUIObject_Tool::Render_GUI()
     ImGui::SeparatorText(u8"속성");
 
     ImGui::Checkbox("Alive", &m_isAlive);
+
+    Render_GUI_Animation();
 }
 
 void CUIObject_Tool::DestroyChild_FromParent()
@@ -237,6 +240,232 @@ void CUIObject_Tool::Render_GUI_Transform()
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
 
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
+}
+
+void CUIObject_Tool::Render_GUI_Animation()
+{
+    ImGui::SeparatorText(u8"애니메이션");
+
+    // 클립 추가
+    {
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text(u8"클립 : ");
+
+        ImGui::SameLine();
+        static _int iCount = 0;
+        if (ImGui::Button(u8"추가 +"))
+            m_AnimClips.push_back(UI_ANIM_CLIP("clip" + to_string(iCount++)));
+
+        ImGui::SameLine();
+        ImGui::BeginDisabled(m_AnimClips.empty());
+        if (ImGui::Button(u8"삭제 -"))
+        {
+            m_AnimClips.pop_back();
+            iCount--;
+        } 
+        ImGui::EndDisabled();
+    } 
+
+    // 애니메이션 클립이 없으면 리턴
+    if (m_AnimClips.empty())
+        return;
+
+    // 클립 선택
+    static _int iClipIndex = -1;
+    string strCombined;
+    for (_int i = 0; i < m_AnimClips.size(); ++i)
+        strCombined += m_AnimClips[i].strName + '\0';
+    strCombined += '\0';
+    
+    ImGui::Combo(u8"클립", &iClipIndex, strCombined.c_str());
+    
+    // 클립 선택 없으면 리턴
+    if (-1 == iClipIndex)
+        return;
+
+    static bool showPopup = false;
+
+    if (ImGui::Button(u8"클립 편집"))
+        showPopup = true;
+
+    if (showPopup)
+    {
+        ImGui::SetNextWindowPos(ImVec2(880, 400), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+        ImGui::Begin(m_AnimClips[iClipIndex].strName.c_str(), &showPopup);
+
+        // 선택한 클립 편집
+        ImGui::SeparatorText(u8"클립");
+        char szBuffer[256] = {};
+        strcpy_s(szBuffer, m_AnimClips[iClipIndex].strName.c_str());
+        if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
+            m_AnimClips[iClipIndex].strName = szBuffer;
+
+        ImGui::InputFloat(u8"길이", &m_AnimClips[iClipIndex].fDuration);
+        ImGui::Checkbox(u8"루프", &m_AnimClips[iClipIndex].isLoop);
+        ImGui::BeginDisabled(m_AnimClips[iClipIndex].keyframes.empty());
+        if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
+        {
+            m_isBlending = !m_isBlending;
+            if (m_isBlending)
+                m_iCurrentClipIndex = iClipIndex;
+        }
+        ImGui::EndDisabled();
+        ImGui::SameLine();
+        if (m_isBlending)   ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), u8"● Playing");
+        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped");
+
+        // 키프레임 추가
+        ImGui::SeparatorText(u8"키프레임");
+        if (ImGui::Button(u8"추가 +"))
+        {
+            _float fTime = {};
+            if (!m_AnimClips[iClipIndex].keyframes.empty())
+                fTime = min(m_AnimClips[iClipIndex].keyframes.back().fTime + 0.5f, m_AnimClips[iClipIndex].fDuration);
+
+            m_AnimClips[iClipIndex].keyframes.push_back(UI_KEYFRAME(fTime));
+        }
+        ImGui::SameLine();
+        if (ImGui::Button(u8"삭제 -"))
+        {
+            if(!m_AnimClips[iClipIndex].keyframes.empty())
+                m_AnimClips[iClipIndex].keyframes.pop_back();
+        }
+
+        // 키프레임 편집 
+        ImGui::Separator();
+        int idx = 0;
+        for (auto& keyframe : m_AnimClips[iClipIndex].keyframes)
+        {
+            ImGui::PushID(idx);
+
+            if (ImGui::TreeNodeEx(("Keyframe : " + to_string(keyframe.fTime)).c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+            {
+                ImGui::TreePush("##Content");
+
+                ImGui::DragFloat(u8"시간", &keyframe.fTime, 0.1f, 0.f, m_AnimClips[iClipIndex].fDuration, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat2(u8"스케일", reinterpret_cast<_float*>(&keyframe.vScale), 0.1f, 0.f, 100.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat(u8"각도", &keyframe.fAngle, 1.f, -180.f, 180.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&keyframe.vPosition), 0.1f);
+                ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&keyframe.vColor));
+
+                Helper::DrawEnumCombo("id", keyframe.easeType, 100.f);
+
+                ImGui::TreePop();
+            }
+
+            ImGui::PopID();
+            ++idx;
+        }
+
+        ImGui::End();
+    } 
+}
+
+void CUIObject_Tool::Play_Animation(_float dt)
+{
+    if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= m_AnimClips.size())
+        return;
+
+    if (m_isBlending)
+    {
+        const UI_ANIM_CLIP& clip = m_AnimClips[m_iCurrentClipIndex];
+
+        if (clip.keyframes.empty())
+        {
+            m_isBlending = false;
+            return;
+        } 
+
+        m_fBlendTime += dt;
+        _float fRatio = {};
+
+        if (clip.fDuration > 0.f)
+            fRatio = m_fBlendTime / clip.fDuration;
+
+        fRatio = clamp(fRatio, 0.f, 1.f);
+
+        // 현재 시간에 해당하는 키프레임 찾기
+        _int iCurrentKeyIdx = -1;
+        _int iNextKeyIdx = -1;
+
+        for (int i = 0; i < clip.keyframes.size() - 1; i++)
+        {
+            _float fNormalizedTime = clip.keyframes[i].fTime / clip.fDuration;
+            _float fNextNormalizedTime = clip.keyframes[i + 1].fTime / clip.fDuration;
+
+            if (fRatio >= fNormalizedTime && fRatio <= fNextNormalizedTime)
+            {
+                iCurrentKeyIdx = i;
+                iNextKeyIdx = i + 1;
+                break;
+            }
+        }
+
+        // 키프레임 사이 보간
+        if (iCurrentKeyIdx >= 0 && iNextKeyIdx >= 0)
+        {
+            const UI_KEYFRAME& fromKey = clip.keyframes[iCurrentKeyIdx];
+            const UI_KEYFRAME& toKey = clip.keyframes[iNextKeyIdx];
+
+            _float fFromTime = fromKey.fTime / clip.fDuration;
+            _float fToTime = toKey.fTime / clip.fDuration;
+            _float fLocalRatio = (fRatio - fFromTime) / (fToTime - fFromTime);
+            fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
+
+            // 이징 적용
+            _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
+
+            // 보간된 값 적용
+            _float2 vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
+            _float fAngle = Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio);
+            _float2 vPosition = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
+            _float4 vColor = {};
+            XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
+
+            // UI 오브젝트에 적용
+            m_vScale = vScale;
+            m_fRadian = XMConvertToRadians(fAngle);
+
+            // 포지션
+            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos);
+            // 컬러
+        }
+        else if (fRatio >= 1.f)
+        {
+            // 마지막 키프레임 적용
+            if (!clip.keyframes.empty())
+            {
+                const UI_KEYFRAME& lastKey = clip.keyframes.back();
+                m_vScale.x = lastKey.vScale.x;
+                m_vScale.y = lastKey.vScale.y;
+                m_fRadian = XMConvertToRadians(lastKey.fAngle);
+            }
+        }
+
+        // 애니메이션 종료 처리
+        if (fRatio >= 1.f)
+        {
+            if (!clip.isLoop)
+                m_isBlending = false;
+
+            m_fBlendTime = 0.f;
+        }
+    }
+    else
+    {
+        // 애니메이션 재생이 아닐 때 리셋을 어디서 해줘야하지
+    }
+}
+
+void CUIObject_Tool::Set_Animation(_uint iIndex)
+{
+    if (m_iCurrentClipIndex == iIndex)//&& m_isAnimLoop == isLoop)
+        return;
+
+    m_iCurrentClipIndex = iIndex;
+
+    //m_iCurrentClipIndex[iIndex]->Reset();
 }
 
 void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)

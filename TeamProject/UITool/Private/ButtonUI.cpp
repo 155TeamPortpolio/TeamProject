@@ -104,9 +104,9 @@ void CButtonUI::OnClick()
     OutputDebugString(L"Clicked\n");
     m_eState = STATE::CLICKED;
 
-    ButtonEvent event = {};
+    BTN_EVENT event = {};
     event.msg = Helper::ConvertToWideString(m_szEventMsg);
-    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<ButtonEvent>({ event });
+    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
 }
 
 void CButtonUI::ToJson(json& data)

@@ -6,6 +6,11 @@ ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
 	return x + (y - x) * t;
 }
 
+ENGINE_DLL _vector2 Math::Lerp(_vector2 x, _vector2 y, _float t)
+{
+	return x + (y - x) * t;
+}
+
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 {
 	t = clamp(t, 0.f, 1.f);

@@ -3,6 +3,7 @@
 
 NS_BEGIN(Engine)
 class IUI_Service;
+class Engine_Math;
 NS_END
 
 NS_BEGIN(UITool)
@@ -33,6 +34,10 @@ protected:
 
 	virtual void Render_GUI_Layout();
 	virtual void Render_GUI_Transform();
+	virtual void Render_GUI_Animation();
+
+	void Play_Animation(_float dt);
+	void Set_Animation(_uint iIndex);
 
 	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);
 
@@ -44,6 +49,16 @@ private:
 protected:
 	CUIObject_Tool*		m_pParent = {};
 	_int				m_iChildIndex = { -1 }; 
+
+	_float4				m_vColor = { 1.f, 1.f, 1.f, 1.f };
+
+	_bool				m_isBlending = {};
+	_float				m_fBlendTime = {};
+	_float				m_fBlendDuration = {};
+
+	vector<UI_ANIM_CLIP> m_AnimClips;				// 애니메이션을 따로 클래스로 만드는게 나은가
+
+	_int				m_iCurrentClipIndex = { -1 };
 
 public:
 	virtual void Free();

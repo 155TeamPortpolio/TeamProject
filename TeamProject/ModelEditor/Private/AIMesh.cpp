@@ -16,7 +16,7 @@ CAIMesh::CAIMesh(const string& ModelKey)
 
 HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISkeleton* _pSkeleton)
 {
-	m_VIKey = _pAIMesh->mName.C_Str();
+	m_VIKey = _pAIMesh->mName.C_Str();\
 	m_MaterialIndex = _pAIMesh->mMaterialIndex;
 
 	m_iVertexBufferCount = 1;
@@ -111,7 +111,6 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
 	VertexInitialData.pSysMem = m_Meshes.data();
-
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
 

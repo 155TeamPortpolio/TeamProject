@@ -61,7 +61,6 @@ void CMeshNode_Edit::Update(_float dt)
 	{
 		__super::Update(dt);
 
-
 		POST_PROCESS_COMMAND Command =
 		{
 			POSTPROCESS::MRT_Bloom,
@@ -133,13 +132,68 @@ void CMeshNode_Edit::Play()
 
 void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 {
+	m_ModelKey = json.value("model_key", m_ModelKey);
+	m_MaterialKey = json.value("material_key", m_MaterialKey);
 
+	m_fDelayTime = json.value("delay_time", m_fDelayTime);
+	m_fDuration = json.value("duration", m_fDuration);
+	m_IsLoop = json.value("is_loop", m_IsLoop);
+
+	m_vBaseColor.x = json.at("base_color").at("x").get<_float>();
+	m_vBaseColor.y = json.at("base_color").at("y").get<_float>();
+	m_vBaseColor.z = json.at("base_color").at("z").get<_float>();
+	m_vBaseColor.w = json.at("base_color").at("w").get<_float>();
+
+	m_eAlphaFadeEase = static_cast<EaseType>(json.value("alpha_fade_ease", 0));
+	m_vAlphaFade.x = json.at("alpha_fade").at("x").get<_float>();
+	m_vAlphaFade.y = json.at("alpha_fade").at("y").get<_float>();
+
+	m_eScaleEase = static_cast<EaseType>(json.value("scale_ease", 0));
+	m_vStartScale.x = json.at("start_scale").at("x").get<_float>();
+	m_vStartScale.y = json.at("start_scale").at("y").get<_float>();
+	m_vStartScale.z = json.at("start_scale").at("z").get<_float>();
+	m_vEndScale.x = json.at("end_scale").at("x").get<_float>();
+	m_vEndScale.y = json.at("end_scale").at("y").get<_float>();
+	m_vEndScale.z = json.at("end_scale").at("z").get<_float>();
+
+	m_eUVEase = static_cast<EaseType>(json.value("uv_ease", 0));
+	m_vStartUVOffset.x = json.at("start_uv_offset").at("x").get<_float>();
+	m_vStartUVOffset.y = json.at("start_uv_offset").at("y").get<_float>();
+	m_vEndUVOffset.x = json.at("end_uv_offset").at("x").get<_float>();
+	m_vEndUVOffset.y = json.at("end_uv_offset").at("y").get<_float>();
+
+	m_iCol = json.value("col", m_iCol);
+	m_iRow = json.value("row", m_iRow);
+	m_iMaxFrameIndex = json.value("max_frame_index", m_iMaxFrameIndex);
+
+	m_eDissolveEase = static_cast<EaseType>(json.value("dissolve_ease", 0));
+	m_fDissolveStartProgress = json.value("dissolve_start_progress", m_fDissolveStartProgress);
+
+	{
+		m_SetMaterial = true;
+
+		if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, m_MaterialKey)))
+			MSG_BOX("Link Failed - Material");
+
+		Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
+		Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
+
+		m_SetMaterial = true;
+	}
+
+	{
+		if (FAILED(Get_Component<CStaticModel>()->Link_Model(G_GlobalLevelKey, m_ModelKey)))
+			MSG_BOX("Link Failed - Mesh");
+
+		m_SetMesh = true;
+	}
 }
 
 void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
+		{"effect_type", static_cast<_uint>(EFFECT_TYPE::MESH)},
 		{"model_key",m_ModelKey},
 		{"material_key",m_MaterialKey},
 
@@ -381,6 +435,9 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::EndCombo();
 	}
 	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
+
+	/*Bloom*/
+	ImGui::DragFloat("Bloom Intensity", &m_fBloomIntensity);
 
 	if (isDirty)
 	{
