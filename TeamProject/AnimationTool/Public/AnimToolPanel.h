@@ -16,26 +16,41 @@ private:
     CAnimToolPanel(GUI_CONTEXT* pContext);
     virtual ~CAnimToolPanel() DEFAULT;
 
+private:
+    enum class TAPBAR { SETTING_NODE, SETTING_CLIP, CREATE_META};
+
 public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
 
 //GUI
 private:
+    void Render_Taps(_float fChildHeight);
     void GUI_Setting_Clips(_float fChildHeight);
+    void GUI_Create_MetaData(_float fChildHeight);
 
 //Func
 private:
+    /* Setting Animation Clips */
+    void Reset_Pannels();
+
+    /* Create Json MetaData */
     void Load_Clips();
     void Create_Clips(vector<ANIM_CLIP>& pMetaData , const string& ClipTag, const string& FilePath);
     void Create_ClipMeta(const string& CurMetaTag);
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
-    //<데이터이름, { 클립이름, 이벤트 { 타이밍, 타입, 태그 } }>
-    // 데이터이름 + _Ani_ + 클립이름 + .anim = 파일
-    //ex) Avatar_Female_Size02_Unagi / _Ani_ / Attack_ChargeAttack_Start_Front / .anim
-    // (데이터이름 + _Ani_ + 클립이름) << 리소스 키였으면 함
+   
+private:
+    class CGameObject* m_pSelectModel = { nullptr };
+    TAPBAR m_eCurrentTap = { TAPBAR::SETTING_CLIP };
+    _bool m_isPlay{};
+    _bool m_bLoop{};
+    _float m_fCurTime{};
+    _float m_fDuration = {100};
+
+private:
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
 public:

@@ -9,7 +9,6 @@ namespace
     {
         return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
     }
-
     Quaternion QuatNegate(const Quaternion& q)
     {
         return Quaternion(-q.x, -q.y, -q.z, -q.w);
@@ -18,13 +17,9 @@ namespace
 
 void CCameraMgr::Set_MainCam(CCamera* camComp)
 {
-    if (m_baseCam)
-        Safe_Release(m_baseCam);
-
+    Safe_Release(m_baseCam);
     m_baseCam = camComp;
-
-    if (m_baseCam)
-        Safe_AddRef(m_baseCam);
+    Safe_AddRef(m_baseCam);
 
     if (m_overrides.empty())
         BeginBlendTo(GetDesiredActiveCam(), 0.f);
@@ -32,19 +27,13 @@ void CCameraMgr::Set_MainCam(CCamera* camComp)
 
 void CCameraMgr::Set_ShadowCam(CCamera* camComp)
 {
-    if (m_shadowCam)
-        Safe_Release(m_shadowCam);
-
+    Safe_Release(m_shadowCam);
     m_shadowCam = camComp;
-
-    if (m_shadowCam)
-        Safe_AddRef(m_shadowCam);
+    Safe_AddRef(m_shadowCam);
 }
 
 _uint CCameraMgr::Push(CCamera* camComp, _float blendSec)
 {
-    if (!camComp) return 0u;
-
     OverrideEntry entry{};
     entry.handle = m_nextHandle++;
     entry.cam = camComp;
@@ -58,25 +47,19 @@ _uint CCameraMgr::Push(CCamera* camComp, _float blendSec)
 
 _bool CCameraMgr::Pop(_uint handle, _float blendSec)
 {
-    if (handle == 0u) return false;
-
     size_t idx = (size_t)-1;
     for (size_t i = 0; i < m_overrides.size(); ++i)
-    {
         if (m_overrides[i].handle == handle)
         {
             idx = i;
             break;
         }
-    }
 
     if (idx == (size_t)-1) return false;
 
     const bool wasTop = (idx + 1 == m_overrides.size());
 
-    if (m_overrides[idx].cam)
-        Safe_Release(m_overrides[idx].cam);
-
+    Safe_Release(m_overrides[idx].cam);
     m_overrides.erase(m_overrides.begin() + (ptrdiff_t)idx);
 
     if (wasTop)
@@ -88,8 +71,7 @@ _bool CCameraMgr::Pop(_uint handle, _float blendSec)
 void CCameraMgr::Clear(_float blendSec)
 {
     for (size_t i = 0; i < m_overrides.size(); ++i)
-        if (m_overrides[i].cam)
-            Safe_Release(m_overrides[i].cam);
+        Safe_Release(m_overrides[i].cam);
 
     m_overrides.clear();
     BeginBlendTo(GetDesiredActiveCam(), blendSec);
@@ -101,28 +83,17 @@ void CCameraMgr::Update(_float dt)
     {
         m_blendTime += dt;
 
-        float t = 1.f;
-        if (m_blendDuration > 1e-6f)
-            t = m_blendTime / m_blendDuration;
+        float t = clamp(m_blendTime / m_blendDuration, 0.f, 1.f);
 
-        t = clamp(t, 0.f, 1.f);
+        if (m_easeType != EaseType::None)
+            t = clamp(Math::ApplyEase(m_easeType, t), 0.f, 1.f);
 
-        if (m_easeType != EaseType::None && t > 0.f && t < 1.f)
-        {
-            t = Math::ApplyEase(m_easeType, t);
-            t = clamp(t, 0.f, 1.f);
-        }
-
-        const CamPoseFrame toPose = CapturePose(m_blendTargetCam);
-        ApplyOutputPose(BlendPose(m_blendFrom, toPose, t));
+        ApplyOutputPose(BlendPose(m_blendFrom, CapturePose(m_blendTargetCam), t));
 
         if (t >= 1.f)
         {
             m_isBlending = false;
-
-            if (m_blendTargetCam)
-                Safe_Release(m_blendTargetCam);
-
+            Safe_Release(m_blendTargetCam);
             m_blendTargetCam = nullptr;
         }
     }
@@ -143,20 +114,15 @@ CCamera* CCameraMgr::GetDesiredActiveCam() const
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
     CamPoseFrame out{};
-    if (!cam) return out;
 
-    CTransform* tr = cam->Get_Owner()->Get_Component<CTransform>();
-    assert(tr);
-
-    Matrix world = Matrix(tr->Get_WorldMatrix());
+    CTransform* transform = cam->Get_Owner()->Get_Component<CTransform>();
+    Matrix world(transform->Get_WorldMatrix());
 
     Vector3 scale{};
     Vector3 translation{};
     Quaternion rotation = Quaternion::Identity;
 
-    const bool ok = world.Decompose(scale, rotation, translation);
-    assert(ok);
-
+    world.Decompose(scale, rotation, translation);
     rotation.Normalize();
 
     out.pos = translation;
@@ -171,9 +137,7 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     if (out.lens.projType == CamProjType::Orthographic)
     {
         const Matrix proj = cam->Get_ProjMatrix();
-        const float m22 = proj._22;
-        if (fabsf(m22) > 1e-6f)
-            out.lens.orthoHeight = 2.f / m22;
+        out.lens.orthoHeight = 2.f / proj._22;
     }
 
     return out;
@@ -192,8 +156,8 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
     out.rot = Quaternion::Slerp(a.rot, qb, t);
     out.rot.Normalize();
 
-    out.lens.nearZ = a.lens.nearZ + (b.lens.nearZ - a.lens.nearZ) * t;
-    out.lens.farZ = a.lens.farZ + (b.lens.farZ - a.lens.farZ) * t;
+    out.lens.nearZ  = a.lens.nearZ  + (b.lens.nearZ  - a.lens.nearZ)  * t;
+    out.lens.farZ   = a.lens.farZ   + (b.lens.farZ   - a.lens.farZ)   * t;
     out.lens.aspect = a.lens.aspect + (b.lens.aspect - a.lens.aspect) * t;
 
     if (a.lens.projType == b.lens.projType)
@@ -228,8 +192,8 @@ void CCameraMgr::ApplyOutputPose(const CamPoseFrame& pose)
     else
     {
         const float height = pose.lens.orthoHeight;
-        const float width = height * pose.lens.aspect;
-        m_proj = XMMatrixOrthographicLH( width,  height, pose.lens.nearZ, pose.lens.farZ );
+        const float width  = height * pose.lens.aspect;
+        m_proj = XMMatrixOrthographicLH(width, height, pose.lens.nearZ, pose.lens.farZ);
     }
 
     m_invProj = m_proj.Invert();
@@ -240,17 +204,14 @@ void CCameraMgr::ApplyOutputPose(const CamPoseFrame& pose)
 
 void CCameraMgr::BeginBlendTo(CCamera* targetCam, _float blendSec)
 {
-    if (m_blendTargetCam)
-        Safe_Release(m_blendTargetCam);
-
+    Safe_Release(m_blendTargetCam);
     m_blendTargetCam = nullptr;
 
-    if (!targetCam || blendSec <= 1e-6f)
+    if (blendSec <= 0.f)
     {
         m_isBlending = false;
         m_blendTime = 0.f;
         m_blendDuration = 0.f;
-
         ApplyOutputPose(CapturePose(targetCam));
         return;
     }
@@ -279,14 +240,11 @@ void CCameraMgr::Free()
 {
     m_isBlending = false;
 
-    if (m_blendTargetCam)
-        Safe_Release(m_blendTargetCam);
-
+    Safe_Release(m_blendTargetCam);
     m_blendTargetCam = nullptr;
 
-    if (m_baseCam)
-        Safe_Release(m_baseCam);
+    Safe_Release(m_baseCam);
+    Safe_Release(m_shadowCam);
 
-    if (m_shadowCam)
-        Safe_Release(m_shadowCam);
+    __super::Free();
 }

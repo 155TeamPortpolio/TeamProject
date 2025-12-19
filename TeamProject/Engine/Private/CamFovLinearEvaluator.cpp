@@ -12,9 +12,6 @@ bool CCamFovLinearEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _float CCamFovLinearEvaluator::Evaluate(float time) const
 {
-	assert(keyframes);
-	assert(!keyframes->empty());
-
 	const CamKeySegment segment = CamUtil::FindKeySegment(*keyframes, time);
 
 	const _uint segmentIdx = segment.segmentIdx;

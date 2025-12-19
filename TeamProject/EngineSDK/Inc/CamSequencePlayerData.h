@@ -20,9 +20,10 @@ struct CamPlayerPlaybackState
 };
 struct CamPlayerApplyState
 {
-	_bool       applyEnabled = true;
-	CTransform* transform{};
-	CCamera*    cam{};
+	_bool         applyEnabled = true;
+	CTransform*   transform{};
+	CCamera*      cam{};
+	OBJECT_HANDLE spaceRefHandle{};
 };
 struct CamPlayerEvalState
 {

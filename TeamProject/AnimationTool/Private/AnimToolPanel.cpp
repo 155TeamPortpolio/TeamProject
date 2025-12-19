@@ -1,7 +1,9 @@
 #include "AnimToolPanel.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "Animator3D.h"
 #include "AnimationClip.h"
+#include "Channel.h"
 
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
@@ -13,6 +15,13 @@ CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 
 void CAnimToolPanel::Update_Panel(_float dt)
 {
+	CGameObject* CurSelected = m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
+
+	if (m_pSelectModel != CurSelected) {
+		Reset_Pannels();
+		m_pSelectModel = CurSelected;
+
+	}
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -21,15 +30,62 @@ void CAnimToolPanel::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	GUI_Setting_Clips(childHeight);
+	ImGui::SetNextWindowPos(ImVec2(200, AnimTool::g_iWinSizeY - 400), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSize(ImVec2(AnimTool::g_iWinSizeX - 450, 400), ImGuiCond_FirstUseEver);
 
-	__super::Render_GUI();
+	if (ImGui::Begin("Materials"))
+	{
+		if (ImGui::BeginTabBar("##ToolTabs"))
+		{
+			if (ImGui::BeginTabItem("Setting Clip"))
+			{
+				GUI_Setting_Clips(childHeight);
+				ImGui::EndTabItem();
+			}
+
+			if (ImGui::BeginTabItem("Create Meta"))
+			{
+				GUI_Create_MetaData(childHeight);
+				ImGui::EndTabItem();
+			}
+
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
+		                                                              
+}
+
+void CAnimToolPanel::Render_Taps(_float fChildHeight)
+{
+
 }
 
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
-	ImGui::SeparatorText("Clip Datas");
+	ImGui::SeparatorText("Play Animation");
+	//ImGui::BeginChild("##Play TimeLine", ImVec2{ 0, fChildHeight * 2 }, true);
+	//어느 애니매이션인지 
+	//m_pSelectModel->Get_Component<CAnimator3D>()->
 
+	//애니매이션 바	
+	ImGui::SliderFloat(
+		"Time",
+		&m_fCurTime,
+		0.f,
+		m_fDuration
+	);
+	
+	//애니매이션 컨트롤러
+	if (ImGui::Button(m_isPlay ? "Pause" : "Play")) { m_isPlay = !m_isPlay; } ImGui::SameLine();
+	ImGui::Checkbox("Loop", &m_bLoop);
+
+	//ImGui::EndChild();
+}
+
+void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
+{
+	ImGui::SeparatorText("Clip Datas");
 	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, fChildHeight * 2 }, true);
 
 	static string CurMetaTag = { "" };
@@ -59,6 +115,10 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	}
 
 	ImGui::EndChild();
+}
+
+void CAnimToolPanel::Reset_Pannels()
+{
 }
 
 void CAnimToolPanel::Load_Clips()

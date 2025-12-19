@@ -2,18 +2,42 @@
 #include "Helper_Func.h"
 #include "CamSequencePlayer.h"
 #include "GameObject.h"
+#include "GameInstance.h"
+#include "ObjectMgr.h"
 
 #include "CamPosPerSegmentEvaluator.h"
 #include "CamRotPerSegmentEvaluator.h"
 #include "CamFovPerSegmentEvaluator.h"
 
-CCamSequencePlayer::CCamSequencePlayer(const CCamSequencePlayer& rhs)
-    : CComponent(rhs)
+#define OBJ CGameInstance::GetInstance()->Get_ObjectMgr()
+
+namespace
 {
-    target   = {};
-    playback = {};
-    apply    = {};
-    eval     = {};
+    float WrapLoopTime(float t, float dur)
+    {
+        float x = fmodf(t, dur);
+        if (x < 0.f) x += dur;
+        return x;
+    }
+    float WrapPingPongSampleTime(float t, float dur)
+    {
+        const float period = dur * 2.f;
+        float x = fmodf(t, period);
+        if (x < 0.f) x += period;
+        if (x <= dur) return x;
+        return period - x;
+    }
+    float CalcSampleTime(CamPlaybackMode mode, float playTime, float dur)
+    {
+        if (dur <= 1e-6f) return 0.f;
+        switch (mode)
+        {
+        case CamPlaybackMode::Once:     return clamp(playTime, 0.f, dur);
+        case CamPlaybackMode::Loop:     return WrapLoopTime(playTime, dur);
+        case CamPlaybackMode::PingPong: return WrapPingPongSampleTime(playTime, dur);
+        }
+        return clamp(playTime, 0.f, dur);
+    }
 }
 
 HRESULT CCamSequencePlayer::Initialize_Prototype()
@@ -73,93 +97,74 @@ void CCamSequencePlayer::Stop(_bool resetTime)
 
 void CCamSequencePlayer::SetTime(_float t)
 {
-    if (!target.seq)
-    {
-        playback.playTime = max(0.f, t);
-        return;
-    }
+    playback.playTime = t;
 
-    const float duration = target.seq->GetDuration();
-
-    playback.playTime = max(0.f, t);
-    if (duration > 1e-6f && playback.playTime > duration)
-        playback.playTime = duration;
-
-    const auto& keys = target.seq->keyframes;
-    if (keys.empty()) return;
+    if (!target.seq) return;
+    if (!apply.applyEnabled) return;
+    if (target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
 
-    if (apply.applyEnabled)
-        ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
+    const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, eval.evaluator->GetDuration());
+    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
 void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
-    if (!apply.applyEnabled || !target.seq)
-        return;
-
-    const auto& keys = target.seq->keyframes;
-    if (keys.empty())
-        return;
+    if (!apply.applyEnabled) return;
+    if (!target.seq) return;
+    if (target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
-    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
+
+    const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, eval.evaluator->GetDuration());
+    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
 void CCamSequencePlayer::Update(_float dt)
 {
-    if (!target.seq || !apply.applyEnabled) return;
-
-    const auto& keys = target.seq->keyframes;
-    if (keys.empty()) return;
+    if (!target.seq) return;
+    if (!apply.applyEnabled) return;
+    if (target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
 
-    const float duration = target.seq->GetDuration();
+    const float dur = eval.evaluator->GetDuration();
 
     if (playback.playing)
     {
         playback.playTime += dt * playback.timeScale;
 
-        if (duration <= 1e-6f)
+        if (dur <= 1e-6f)
         {
             playback.playTime = 0.f;
             playback.playing = false;
         }
-        else
+        else if (target.seq->playbackMode == CamPlaybackMode::Once)
         {
-            if (target.seq->playbackMode == CamPlaybackMode::Loop)
+            if (playback.playTime >= dur)
             {
-                playback.playTime = fmodf(playback.playTime, duration);
-                if (playback.playTime < 0.f) playback.playTime += duration;
+                playback.playTime = dur;
+                playback.playing = false;
             }
-            else
-            {
-                if (playback.playTime >= duration)
-                {
-                    playback.playTime = duration;
-                    playback.playing = false;
-                }
-                else if (playback.playTime < 0.f)
-                {
-                    playback.playTime = 0.f;
-                }
-            }
+            else if (playback.playTime < 0.f)
+                playback.playTime = 0.f;
         }
     }
 
-    ApplyPose(eval.evaluator->Evaluate(RemapTimeBySegmentEasing(playback.playTime)));
+    const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, dur);
+    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
 void CCamSequencePlayer::RebuildIfNeeded()
 {
     if (!eval.dirty) return;
-
     eval.dirty = false;
-
     if (!target.seq) return;
 
     const auto& keys = target.seq->keyframes;
@@ -169,51 +174,48 @@ void CCamSequencePlayer::RebuildIfNeeded()
     eval.rot->SetSequence(target.seq);
     eval.fov->SetSequence(target.seq);
 
-    const bool ok = eval.evaluator->Build(*target.seq);
-    assert(ok);
+    eval.evaluator->Build(*target.seq);
 }
 
-void CCamSequencePlayer::ApplyPose(const CamPose& pose) // World 기준/ Local 기준 나눠야할수도
+void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
-    apply.transform->Set_Pos(pose.pos);
+    if (target.seq && target.seq->space == CamSpace::Local)
+    {
+        auto refObj = OBJ->Request_Object(apply.spaceRefHandle);
+        auto refTr = refObj->Get_Component<CTransform>();
 
-    const _vector4 quat{ pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w };
-    apply.transform->Set_Quaternion(quat);
+        Matrix refWorld = Matrix(refTr->Get_WorldMatrix());
+
+        Vector3 refS{};
+        Vector3 refT{};
+        Quaternion refR = Quaternion::Identity;
+        refWorld.Decompose(refS, refR, refT);
+        refR.Normalize();
+
+        Matrix refRT = Matrix::CreateFromQuaternion(refR) * Matrix::CreateTranslation(refT);
+
+        const Matrix localM = Matrix::CreateFromQuaternion(pose.rot) * Matrix::CreateTranslation(pose.pos);
+        Matrix worldM = localM * refRT;
+
+        Vector3 s{};
+        Vector3 t{};
+        Quaternion r = Quaternion::Identity;
+        worldM.Decompose(s, r, t);
+        r.Normalize();
+
+        apply.transform->Set_Pos(_vector3(t.x, t.y, t.z));
+        apply.transform->Set_Quaternion(_vector4(r.x, r.y, r.z, r.w));
+    }
+    else
+    {
+        apply.transform->Set_Pos(pose.pos);
+        apply.transform->Set_Quaternion(_vector4(pose.rot.x, pose.rot.y, pose.rot.z, pose.rot.w));
+    }
 
     if (apply.cam)
         apply.cam->Set_FOV(pose.fov);
 }
 
-_float CCamSequencePlayer::RemapTimeBySegmentEasing(_float t) const
-{
-    if (!target.seq) return t;
-
-    const auto& keys = target.seq->keyframes;
-    if (keys.size() < 2) return t;
-
-    const CamKeySegment segment = CamUtil::FindKeySegment(keys, t);
-
-    const _uint i = segment.segmentIdx;
-    if (i + 1 >= (_uint)keys.size()) return t;
-
-    EaseType ease = target.seq->segmentEase;
-    if (keys[(size_t)i].useCustomEase)
-        ease = keys[(size_t)i].outEase;
-
-    if (ease == EaseType::None)
-        return t;
-
-    const float t0 = keys[(size_t)i].time;
-    const float t1 = keys[(size_t)i + 1].time;
-
-    float u = segment.normalizedTime;
-    u = clamp(u, 0.f, 1.f);
-
-    u = Math::ApplyEase(ease, u);
-    u = clamp(u, 0.f, 1.f);
-
-    return Math::Lerp(t0, t1, u);
-}
 
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {
@@ -229,13 +231,5 @@ CCamSequencePlayer* CCamSequencePlayer::Create()
 void CCamSequencePlayer::Free()
 {
     Safe_Release(eval.evaluator);
-    Safe_Release(eval.pos);
-    Safe_Release(eval.rot);
-    Safe_Release(eval.fov);
-
-    eval.pos = nullptr;
-    eval.rot = nullptr;
-    eval.fov = nullptr;
-
     __super::Free();
 }

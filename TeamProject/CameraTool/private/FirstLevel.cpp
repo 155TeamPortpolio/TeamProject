@@ -27,14 +27,10 @@ HRESULT CFirstLevel::Awake()
 	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoModel", CDemoModel::Create());
 	proto->Add_ProtoType("First_Level", "Proto_GameObject_DemoGrid", CGrid::Create());
 
-	CAMERA_DESC camDesc{};
-	camDesc.fAspect = static_cast<float>(WinX) / WinY;
-	camDesc.fNear = 0.1f;
-	camDesc.fFar = 500.f;
-	camDesc.fFov = 60.f;
+	constexpr float kAspect = static_cast<float>(WinX) / WinY;
 
 	CGameObject* debugCamObj = Builder::Create_Object({ "First_Level", "Proto_GameObject_DebugFreeCam" })
-		.Camera(camDesc)
+		.Camera(kAspect)
 		.Position({ 0.f, 3.f, -5.f })
 		.Build("DebugFreeCam_Main");
 
@@ -57,8 +53,10 @@ HRESULT CFirstLevel::Awake()
 	auto guiSys = game->Get_GUISystem();
 	auto camPanel = CCamPanel::Create(guiSys->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(debugCamObj));
+	
+	OBJECT_HANDLE objHandle = demoModel->Get_Handle();
+	camPanel->SetSpaceReference(objHandle);
 	guiSys->Register_Panel(camPanel);
-
 	return S_OK;
 }
 
