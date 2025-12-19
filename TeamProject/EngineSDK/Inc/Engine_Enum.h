@@ -20,7 +20,7 @@ namespace Engine
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE};
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
-
+	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, END};
 	enum class ANCHOR : unsigned int {
 		Center = 0,
 		Left = 1,				// 0001

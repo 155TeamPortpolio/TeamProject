@@ -135,6 +135,9 @@
     <ClInclude Include="..\Public\MeshNode_Edit.h">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IEditable.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -205,6 +208,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MeshNode_Edit.cpp">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\MeshNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IEditable.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

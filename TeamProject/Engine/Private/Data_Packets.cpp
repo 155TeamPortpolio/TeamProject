@@ -19,3 +19,8 @@ BLENDRENDERKEY Engine::DrawBlendedPacket::GetKey() const
 		DistanceToCamera
 	};
 }
+
+_uint Engine::RenderPostProcessingRequestCommand::GetKey() const
+{
+	return static_cast<_uint>(eTarget);
+}

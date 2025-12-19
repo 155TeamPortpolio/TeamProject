@@ -27,6 +27,9 @@ public:
 public:
     void Render_GUI() override;
     void Play() override;
+    void Import(nlohmann::ordered_json& json);
+    void Export(nlohmann::ordered_json& json);
+
 public:
     static CSpriteNode_Edit* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

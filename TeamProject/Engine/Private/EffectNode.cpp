@@ -36,10 +36,23 @@ void CEffectNode::Update(_float dt)
 	if (!m_IsLoop)
 	{
 		m_fElpasedTime += dt;
-		if (m_fElpasedTime >= m_fDuration)
+
+		if (!m_IsEffectActive)
 		{
-			m_isAlive = false;
+			if (m_fElpasedTime >= m_fDelayTime)
+			{
+				m_fElpasedTime = 0.f;
+				m_IsEffectActive = true;
+			}
 		}
+		else
+		{
+			if (m_fElpasedTime >= m_fDuration)
+			{
+				m_isAlive = false;
+			}
+		}
+
 	}
 }
 
