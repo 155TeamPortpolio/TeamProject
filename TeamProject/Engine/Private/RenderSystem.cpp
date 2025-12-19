@@ -92,12 +92,9 @@ HRESULT CRenderSystem::Render()
 	Process_RenderCommand();
 
 	Clear_PostProcess();
-
 	Process_PostProcessQueue();
-
-	//if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
 	Render_Bloom();
-	//if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	Render_Distortion();
 	Render_Final();
 
 	return S_OK;
@@ -505,32 +502,48 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc SSAOBlurDesc = { "Target_SSAO_Blur" , DXGI_FORMAT_R16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(SSAOBlurDesc);
 
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Normal")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Depth")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
-		return E_FAIL;
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO", "Target_SSAO")))
-		return E_FAIL;	
-	if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO_Blur", "Target_SSAO_Blur")))
-		return E_FAIL;
+	RenderTargetDesc DistortionDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(DistortionDesc);
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Normal")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Depth")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow")))
+			return E_FAIL;
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY")))
+			return E_FAIL;
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO", "Target_SSAO")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_SSAO_Blur", "Target_SSAO_Blur")))
+			return E_FAIL;
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_Distortion")))
+			return E_FAIL;
+	}
 
 	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "Shader_Deferred.hlsl");
 	if (nullptr == m_pShader)

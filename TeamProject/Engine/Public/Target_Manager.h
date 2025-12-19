@@ -28,8 +28,6 @@ public:
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
 
 public:
-	HRESULT Bind_Targets(const vector<POSTPROCESS>& targets, _bool ClearColor = false, _bool ClearDepth = false);
-	HRESULT Restore_Targets();
 	const string PostProcessToTargetName(POSTPROCESS type);
 
 #ifdef _USING_GUI
