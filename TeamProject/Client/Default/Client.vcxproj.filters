@@ -73,6 +73,9 @@
     <Filter Include="03. Utility\FSM">
       <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\TestFloor">
+      <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -155,6 +158,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\StateMachine.h">
       <Filter>03. Utility\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestFloor.h">
+      <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -245,6 +251,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\StateMachine.cpp">
       <Filter>03. Utility\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestFloor.cpp">
+      <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

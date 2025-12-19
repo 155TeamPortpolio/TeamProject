@@ -64,7 +64,7 @@ void CTestObject::Awake()
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Change_Animation(3);
 
-	Get_Component<CCharacterController>()->Set_GravityEnabled(false);
+	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
 }
 

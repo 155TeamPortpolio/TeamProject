@@ -163,6 +163,7 @@
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
     <ClInclude Include="..\Public\StateParameter.h" />
+    <ClInclude Include="..\Public\TestFloor.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
     <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
@@ -217,6 +218,7 @@
     <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />
+    <ClCompile Include="..\Private\TestFloor.cpp" />
     <ClCompile Include="..\Private\TestLevel.cpp" />
     <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
