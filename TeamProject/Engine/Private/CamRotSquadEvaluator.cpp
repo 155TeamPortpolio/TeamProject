@@ -17,13 +17,13 @@ bool CCamRotSquadEvaluator::Build(const vector<CamKeyFrame>& keys)
         const float lookLengthSq = key.look.LengthSquared();
         if (lookLengthSq < 1e-8f) return false;
 
-        cachedRots[keyIdx] = MakeRotFromLookRoll(key.look, key.roll);
-        cachedRots[keyIdx] = QNormalizeSafe(cachedRots[keyIdx]);
+        cachedRots[keyIdx] = QNormalizeSafe(MakeRotFromLookRoll(key.look, key.roll));
     }
+
     for (size_t keyIdx = 1; keyIdx < cachedRots.size(); ++keyIdx)
     {
-        const float dotValue = cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]);
-        if (dotValue < 0.f) cachedRots[keyIdx] = -cachedRots[keyIdx];
+        if (cachedRots[keyIdx - 1].Dot(cachedRots[keyIdx]) < 0.f) cachedRots[keyIdx] = -cachedRots[keyIdx];
+        cachedRots[keyIdx] = QNormalizeSafe(cachedRots[keyIdx]);
     }
 
     cachedTans.clear();
@@ -31,16 +31,8 @@ bool CCamRotSquadEvaluator::Build(const vector<CamKeyFrame>& keys)
 
     for (size_t i = 0; i < cachedRots.size(); ++i)
     {
-        cachedTans[i] = ComputeTangent((int)i);
-
-        const float d = cachedRots[i].Dot(cachedTans[i]);
-        if (d < 0.f) cachedTans[i] = -cachedTans[i];
-
-        cachedTans[i] = QNormalizeSafe(cachedTans[i]);
-    }
-    for (size_t i = 1; i < cachedTans.size(); ++i)
-    {
-        if (cachedTans[i - 1].Dot(cachedTans[i]) < 0.f) cachedTans[i] = -cachedTans[i];
+        cachedTans[i] = QNormalizeSafe(ComputeTangent((int)i));
+        if (cachedRots[i].Dot(cachedTans[i]) < 0.f) cachedTans[i] = -cachedTans[i];
         cachedTans[i] = QNormalizeSafe(cachedTans[i]);
     }
 
@@ -56,8 +48,8 @@ Quaternion CCamRotSquadEvaluator::Evaluate(_float time) const
     const _uint segmentIdx = segment.segmentIdx;
     const float u = segment.normalizedTime;
 
-    const Quaternion& q0 = cachedRots[segmentIdx];
-    const Quaternion& q1 = cachedRots[segmentIdx + 1];
+    Quaternion q0 = cachedRots[segmentIdx];
+    Quaternion q1 = cachedRots[segmentIdx + 1];
 
     if (keyframes->size() == 2)
     {
@@ -70,9 +62,10 @@ Quaternion CCamRotSquadEvaluator::Evaluate(_float time) const
     Quaternion s0 = cachedTans[segmentIdx];
     Quaternion s1 = cachedTans[segmentIdx + 1];
 
-    if (s0.Dot(q0) < 0.f) s0 = -s0;
-    if (s1.Dot(q1) < 0.f) s1 = -s1;
-    if (s0.Dot(s1) < 0.f) s1 = -s1;
+    if (q0.Dot(q1) < 0.f) { q1 = -q1; s1 = -s1; }
+
+    if (q0.Dot(s0) < 0.f) s0 = -s0;
+    if (q0.Dot(s1) < 0.f) s1 = -s1;
 
     Quaternion a = Quaternion::Slerp(q0, q1, u);
     Quaternion b = Quaternion::Slerp(s0, s1, u);

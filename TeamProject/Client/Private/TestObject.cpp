@@ -103,7 +103,7 @@ void CTestObject::Update(_float dt)
 	controller->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		controller->Jump(10.f);
+		controller->Jump(4.f);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
 	{
