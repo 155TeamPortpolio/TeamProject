@@ -105,8 +105,9 @@ void CTestObject::Update(_float dt)
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
 	{
+		PHYSICS_RAY_HIT hit;
 		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		controller->Shoot_Ray(vLook, 100.f);
+		controller->Shoot_Ray(vLook, 100.f, hit);
 	}
 	else
 		controller->Clear_DebugRay();
