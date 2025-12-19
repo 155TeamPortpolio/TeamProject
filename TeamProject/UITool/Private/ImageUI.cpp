@@ -53,8 +53,6 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
@@ -64,7 +62,7 @@ void CImageUI::Render_GUI()
     if (ImGui::Combo(u8"¿ÃπÃ¡ˆ", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 
-    Render_GUI_Animation();
+    __super::Render_GUI();
 }
 
 void CImageUI::ToJson(json& data)

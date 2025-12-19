@@ -6,6 +6,11 @@ ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
 	return x + (y - x) * t;
 }
 
+ENGINE_DLL Vector2 Math::LerpFloat2(Vector2 x, Vector2 y, _float t)
+{
+	return x + (y - x) * t;
+}
+
 ENGINE_DLL const char* Math::GetEaseLabel(EaseType v)
 {
 	switch (v)

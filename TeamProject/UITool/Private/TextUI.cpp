@@ -58,6 +58,8 @@ void CTextUI::Priority_Update(_float dt)
 void CTextUI::Update(_float dt)
 {
     Get_Component<CTextSlot>()->Push_Text();
+
+    Play_Animation(dt);
 }
 
 void CTextUI::Late_Update(_float dt)
@@ -66,8 +68,6 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
@@ -118,6 +118,8 @@ void CTextUI::Render_GUI()
         else
             Get_Component<CTextSlot>()->ReSet_OutLine();
     } 
+
+    __super::Render_GUI();
 }
 
 void CTextUI::ToJson(json& data)

@@ -17,43 +17,28 @@ using namespace UITool;
 #include "Engine_Defines.h"
 #include "Engine_Math.h"
 
+// 엔진에 넣어야
 typedef struct tagButtonEvent {
 	wstring msg = L"";
 }BTN_EVENT;
 
-typedef struct tagUIScaleKeyframe {
-	_float		fTrackPosition = {};
-	_float2		value = { 1.f, 1.f };
+typedef struct tagUIKeyframe {
+	_float		fTime = {};
+	_float2		vScale = { 1.f, 1.f };
+	_float		fAngle = {};
+	_float2		vPosition = {};
+	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
 	EaseType	easeType = {};
-}UI_SCALE_KEYFRAME;
 
-typedef struct tagUIRotationKeyframe {
-	_float		fTrackPosition = {};
-	_float		value = {};
-	EaseType	easeType = {};
-}UI_ROTATION_KEYFRAME;
-
-typedef struct tagUIPositionKeyframe {
-	_float		fTrackPosition = {};
-	_float2		value = {};
-	EaseType	easeType = {};
-}UI_POS_KEYFRAME;
-
-typedef struct tagUIColorKeyframe {
-	_float		fTrackPosition = {};
-	_float4		value = { 1.f, 1.f, 1.f, 1.f };
-	EaseType	easeType = {};
-}UI_COLOR_KEYFRAME;
+	tagUIKeyframe(_float _fTime = 0.f) : fTime(_fTime) {}
+}UI_KEYFRAME;
 
 typedef struct tagUIAnimationClip {
 	string		strName;
 	_bool		isLoop = {};
 	_float		fDuration = { 1.f };
 
-	vector<UI_SCALE_KEYFRAME>	m_ScaleKeyframes;
-	vector<UI_ROTATION_KEYFRAME> m_RotationKeyframes;
-	vector<UI_POS_KEYFRAME>	m_PosKeyframes;
-	vector<UI_COLOR_KEYFRAME> m_ColorKeyframes;
+	vector<UI_KEYFRAME>	keyframes;
 
 	tagUIAnimationClip(string _strName) : strName(_strName) {}
 }UI_ANIM_CLIP;

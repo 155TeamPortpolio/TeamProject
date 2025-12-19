@@ -50,6 +50,8 @@ void CCanvasPanel::Priority_Update(_float dt)
 void CCanvasPanel::Update(_float dt)
 {
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    Play_Animation(dt);
 }
 
 void CCanvasPanel::Late_Update(_float dt)
@@ -59,13 +61,13 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
 
     Render_GUI_Create();
+
+    __super::Render_GUI();
 }
 
 void CCanvasPanel::ToJson(json& data)
