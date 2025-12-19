@@ -180,3 +180,16 @@ bool CamPanelUtil::TableCellHit(const char* id, float rowH, bool& outRowHovered,
 
     return clicked;
 }
+
+void CamPanelUtil::DrawLabelDisabled(const char* t)
+{
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextDisabled("%s", t);
+}
+
+bool CamPanelUtil::DragFloat(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
+{
+    ImGui::SetNextItemWidth(valueW);
+    if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV, fmt);
+    return ImGui::DragFloat(id, &v, speed, 0.f, 0.f, fmt);
+}

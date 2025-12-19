@@ -27,9 +27,6 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-
-
-
 	return S_OK;
 }
 
@@ -93,7 +90,7 @@ HRESULT CTestLevel::Awake()
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
 	//m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
-	m_pCamDirector->Register("Intro", "../bin/Resources/Test.cam");
+	m_pCamDirector->Register("Test", "../bin/Resources/Test_2.cam");
 	m_pCamDirector->SetSpaceReference(testModel->Get_Handle());
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
@@ -111,7 +108,7 @@ void CTestLevel::Update()
 	auto input = m_pGameInstance->Get_InputDev();
 
 	if (input->Key_Down('C'))
-		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 2.f, true, 2.f);
+		m_sequenceHandle = m_pCamDirector->RequestSequence("Test", 2.f, true, 2.f);
 }
 
 void CTestLevel::Ready_Camera()

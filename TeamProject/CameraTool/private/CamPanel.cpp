@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "CamPanel.h"
 #include "CamPanelUtil.h"
+#include "GUIUtil.h"
 #include "Helper_Func.h"
+
+using namespace CamPanelUtil;
+using namespace GuiUtil;
+using namespace Helper;
 
 namespace
 {
