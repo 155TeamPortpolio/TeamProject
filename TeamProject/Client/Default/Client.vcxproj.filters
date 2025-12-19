@@ -70,8 +70,8 @@
     <Filter Include="02. GameObject\Object\TestMap">
       <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\TestPlane">
-      <UniqueIdentifier>{09538d67-de34-4754-8fbe-8ed472e4e794}</UniqueIdentifier>
+    <Filter Include="03. Utility\FSM">
+      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -147,8 +147,8 @@
     <ClInclude Include="..\Public\TestMap.h">
       <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestPlane.h">
-      <Filter>02. GameObject\Object\TestPlane</Filter>
+    <ClInclude Include="..\Public\IBaseState.h">
+      <Filter>03. Utility\FSM</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -233,9 +233,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestMap.cpp">
       <Filter>02. GameObject\Object\TestMap</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TestPlane.cpp">
-      <Filter>02. GameObject\Object\TestPlane</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
