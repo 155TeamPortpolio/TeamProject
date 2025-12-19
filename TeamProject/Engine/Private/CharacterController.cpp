@@ -210,6 +210,13 @@ void CCharacterController::Render_GUI()
 			PxExtendedVec3 foot = m_pController->getFootPosition();
 			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
+			_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
+			_float3 vLocalFoot;
+			vLocalFoot.x = (float)foot.x - vWorldPos.x;
+			vLocalFoot.y = (float)foot.y - vWorldPos.y;
+			vLocalFoot.z = (float)foot.z - vWorldPos.z;
+			ImGui::Text("Foot Local: (%.2f, %.2f, %.2f)", vLocalFoot.x, vLocalFoot.y, vLocalFoot.z);
+
 			ImGui::Separator();
 			ImGui::Text("Properties");
 
