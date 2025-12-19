@@ -24,6 +24,21 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 		if (pMesh->Get_Key().find("Lod2") != string::npos) 
 			m_ProxyMarked.push_back(m_Meshes.size() - 1);
 	}
+
+
+	for (auto mesh : m_Meshes) {
+		_float3 meshMin = mesh->Get_MinVertexLocal();
+		_float3 meshMax = mesh->Get_MaxVertexLocal();
+
+		m_vMinLocal.x = min(m_vMinLocal.x, meshMin.x);
+		m_vMinLocal.y = min(m_vMinLocal.y, meshMin.y);
+		m_vMinLocal.z = min(m_vMinLocal.z, meshMin.z);
+
+		m_vMaxLocal.x = max(m_vMaxLocal.x, meshMax.x);
+		m_vMaxLocal.y = max(m_vMaxLocal.y, meshMax.y);
+		m_vMaxLocal.z = max(m_vMaxLocal.z, meshMax.z);
+	}
+
 	return S_OK;
 }
 
