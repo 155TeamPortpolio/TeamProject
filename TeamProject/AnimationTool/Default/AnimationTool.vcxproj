@@ -42,8 +42,9 @@
     <ClInclude Include="..\Public\AnimationTool_Defines.h" />
     <ClInclude Include="..\public\Animator3DEX.h" />
     <ClInclude Include="..\public\AnimToolPanel.h" />
-    <ClInclude Include="..\Public\EditCamera.h" />
+    <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\Public\AnimModel.h" />
+    <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\public\Grid.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
@@ -66,8 +67,9 @@
     <ClCompile Include="..\Private\AnimationEditLevel.cpp" />
     <ClCompile Include="..\private\Animator3DEX.cpp" />
     <ClCompile Include="..\private\AnimToolPanel.cpp" />
-    <ClCompile Include="..\Private\EditCamera.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\Private\AnimModel.cpp" />
+    <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\private\Grid.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />

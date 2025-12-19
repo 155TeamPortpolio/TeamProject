@@ -71,21 +71,3 @@ namespace Helper
 		}
 	};
 }
-
-namespace Math
-{
-	//Float ���� �Լ�
-	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
-
-	ENGINE_DLL _float EaseOutCubic(_float t);   // EaseOutCubic:   ������ ����ϰ� ������ �ε巴�� ����(ī�޶� �̵� �⺻������ ����)
-	ENGINE_DLL _float EaseInOutSine(_float t);  // EaseInOutSine:  ����/���� ���� �ڿ������� �ε巯�� S-curve(�������� �Ϲ� ī�޶�)
-	ENGINE_DLL _float EaseInOutCubic(_float t); // EaseInOutCubic: InOutSine���� ����/������ �� �ѷ��� S-curve(����/������ �� �ִ� ����)
-	ENGINE_DLL _float EaseInCubic(_float t);    // EaseInCubic:    �ʹ� �������� ����� ���ʿ��� Ȯ ����(�� ���ۿ��� Ʀ ���̱�)
-	ENGINE_DLL _float EaseOutSine(_float t);    // EaseOutSine:    ������ ������ ����� ������(ª�� �̵��� �δ� ����)
-	ENGINE_DLL _float EaseInQuad(_float t);     // EaseInQuad:     InCubic���� ���� �ʹ� ����(���� �̵��� ��¦ �� ���̱�)
-	ENGINE_DLL _float EaseOutQuad(_float t);    // EaseOutQuad:    OutCubic���� �ܼ��� ����(ª�� ��ȯ/�̼� ������ ���)
-	ENGINE_DLL _float EaseInOutQuad(_float t);  // EaseInOutQuad:  �������� ������ ��Ȯ�� S-curve(��/�����⿡�� ���� ���� ����)
-	ENGINE_DLL _float EaseInOutExpo(_float t);  // EaseInOutExpo:  �ʹ� ���� �������߰� �ſ� �����泡 �ε巯��(�Ÿ� ū �����, �ϻ� ����)
-	ENGINE_DLL _float EaseOutBack(_float t);    // EaseOutBack:    ��ǥ�� ��¦ �����ƴ� �ǵ��ƿ��� ������(��/���� ���� ����, ���ϸ� �ֹ�)
-}
-
