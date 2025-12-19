@@ -27,6 +27,7 @@ public:
 
 private:
     HRESULT Ready_AIModelData(const aiScene* pAIScene);
+    void Clear_Proxy();
 private:
     HRESULT Release_Mesh();
 private:

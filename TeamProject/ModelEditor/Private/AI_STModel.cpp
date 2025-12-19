@@ -1,6 +1,7 @@
 #include "AI_STModel.h"
 #include "AIModelData.h"
 #include "Helper_Func.h"
+#include "AIMesh.h"
 CAI_STModel::CAI_STModel()
 	: CStaticModel{}
 {
@@ -23,6 +24,9 @@ HRESULT CAI_STModel::Initialize(COMPONENT_DESC* pArg)
 
 void CAI_STModel::Render_GUI()
 {
+	if (ImGui::Button("Clear Proxy_Mesh")) {
+		Clear_Proxy();
+	}
 	__super::Render_GUI();
 }
 
@@ -67,6 +71,15 @@ HRESULT CAI_STModel::Ready_AIModelData(const aiScene* pAIScene)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CAI_STModel::Clear_Proxy()
+{
+	auto proxy = dynamic_cast<CAIModelData*>(m_pData)->Get_ProxyIndex();
+
+	for (_uint Index : proxy) {
+		m_DrawableMeshes[Index] = !m_DrawableMeshes[Index];
+	}
 }
 
 

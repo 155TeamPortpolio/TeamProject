@@ -17,6 +17,12 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 		if (nullptr == pMesh)
 			return E_FAIL;
 		m_Meshes.push_back(pMesh);
+		if (pMesh->Get_Key().find("Proxy") != string::npos) 
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);
+		if (pMesh->Get_Key().find("Lod1") != string::npos) 
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);
+		if (pMesh->Get_Key().find("Lod2") != string::npos) 
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);
 	}
 	return S_OK;
 }
@@ -40,7 +46,6 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	{
 		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);
 	}
-
 	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs, PreTransform);
 }
 
