@@ -147,7 +147,7 @@ HRESULT CTarget_Manager::Bind_Targets(const vector<POSTPROCESS>& targets, _bool 
 		auto& mrtList = Find_MRT(/*strKey*/"MRT_Bloom");
 		if (!mrtList.empty())
 		{
-			for (auto& pTarget : mrtList)
+			for (auto& pTarget : mrtList) 
 				bindTargets.push_back(pTarget);
 			continue;
 		}

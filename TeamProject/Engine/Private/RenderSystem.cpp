@@ -91,6 +91,8 @@ HRESULT CRenderSystem::Render()
 
 	Process_RenderCommand();
 
+	Clear_PostProcess();
+
 	Process_PostProcessQueue();
 
 	//if (FAILED(m_pTargetManager->Begin_MRT("MRT_PostProcess"))) return E_FAIL;
@@ -628,6 +630,27 @@ void CRenderSystem::Process_PostProcessQueue()
 	m_PostCommands.clear();
 }
 
+void CRenderSystem::Clear_PostProcess()
+{
+	for (size_t i = 0; i < static_cast<_uint>(POSTPROCESS::END); ++i)
+	{
+		POSTPROCESS eType = static_cast<POSTPROCESS>(i);
+		string targetName = m_pTargetManager->PostProcessToTargetName(eType);
+
+		vector<CRenderTarget*> Targets = m_pTargetManager->Find_MRT(targetName);
+		for (auto& Target : Targets)
+		{
+			if (!Target)
+			{
+				MSG_BOX("Invalid PostProcess Target Key");
+				continue;
+			}
+
+			if (Target->Get_RTV())
+				Target->Clear();
+		}
+	}
+}
 
 #pragma endregion
 

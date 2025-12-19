@@ -52,6 +52,7 @@ private:
 	HRESULT Ready_GBuffer();
 	void Process_RenderCommand();
 	void Process_PostProcessQueue();
+	void Clear_PostProcess();
 #pragma endregion
 
 public:
