@@ -35,7 +35,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*ÆÄÀÏ¸í°ú Å°°ªÀº ÀÏÄ¡*/
+	/*Ã†Ã„Ã€ÃÂ¸Ã­Â°Ãº Ã…Â°Â°ÂªÃ€Âº Ã€ÃÃ„Â¡*/
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
@@ -60,10 +60,9 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 void CTestObject::Awake()
 {
-	auto animator = Get_Component<CAnimator3D>();
-    animator->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-    animator->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-    animator->Change_Animation(3);
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 
 	auto controller = Get_Component<CCharacterController>();
 	controller->Set_GravityEnabled(true);
