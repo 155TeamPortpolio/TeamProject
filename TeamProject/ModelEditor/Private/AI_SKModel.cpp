@@ -118,6 +118,16 @@ HRESULT CAI_SKModel::Release_Mesh()
 	return S_OK;
 }
 
+void CAI_SKModel::Clear_Proxy()
+{
+	auto proxy = dynamic_cast<CAIModelData*>(m_pData)->Get_ProxyIndex();
+
+	for (_uint Index : proxy) {
+		m_DrawableMeshes[Index] = !m_DrawableMeshes[Index];
+	}
+}
+
+
 CAI_SKModel* CAI_SKModel::Create()
 {
 	CAI_SKModel* instance = new CAI_SKModel();
