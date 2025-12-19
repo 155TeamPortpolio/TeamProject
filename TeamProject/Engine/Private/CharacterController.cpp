@@ -169,10 +169,7 @@ void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;
 	Apply_Gravity(dt);
-}
-
-void CCharacterController::Late_Update(_float dt)
-{
+	// Apply_Move
 	_float3 vDisplacement = m_vVelocity * dt;
 
 	if (m_fMaxSpeed > 0.0f)
@@ -188,6 +185,13 @@ void CCharacterController::Late_Update(_float dt)
 	}
 
 	Move(XMLoadFloat3(&vDisplacement), dt);
+}
+
+void CCharacterController::Late_Update(_float dt)
+{
+	if (!m_pController) return;
+	const PxExtendedVec3& position = m_pController->getPosition();
+	m_pOwnerTransform->Set_WorldPos(XMVectorSet((float)position.x, (float)position.y, (float)position.z, 1.f));
 }
 
 void CCharacterController::Render_GUI()

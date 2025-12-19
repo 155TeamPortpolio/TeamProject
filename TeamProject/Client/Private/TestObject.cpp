@@ -98,7 +98,7 @@ void CTestObject::Update(_float dt)
 	if (input->Key_Down(VK_LEFT))
 		vMoveDir -= camRight;
 
-	controller->Move_Direction(vMoveDir, 5.0f);
+	controller->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
 		controller->Jump(10.f);

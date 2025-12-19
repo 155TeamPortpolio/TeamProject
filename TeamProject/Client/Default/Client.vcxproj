@@ -149,6 +149,7 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
+    <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
