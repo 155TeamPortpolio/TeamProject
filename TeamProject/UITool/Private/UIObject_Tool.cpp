@@ -349,6 +349,8 @@ void CUIObject_Tool::Render_GUI_Animation()
                 ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&keyframe.vPosition), 0.1f);
                 ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&keyframe.vColor));
 
+                Helper::DrawEnumCombo("id", keyframe.easeType, 100.f);
+
                 ImGui::TreePop();
             }
 
@@ -412,12 +414,12 @@ void CUIObject_Tool::Play_Animation(_float dt)
             fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
 
             // 이징 적용
-            _float fEaseRatio = Math::ApplyEase(EaseType::InSine, fLocalRatio);
+            _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
 
             // 보간된 값 적용
-            _float2 vScale = Math::LerpFloat2(fromKey.vScale, toKey.vScale, fEaseRatio);
+            _float2 vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
             _float fAngle = Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio);
-            _float2 vPosition = Math::LerpFloat2(fromKey.vPosition, toKey.vPosition, fEaseRatio);
+            _float2 vPosition = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
             _float4 vColor = {};
             XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
 
