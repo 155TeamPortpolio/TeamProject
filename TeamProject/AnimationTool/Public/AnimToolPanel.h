@@ -5,6 +5,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CAnimator3D;
 NS_END
 
 NS_BEGIN(AnimTool)
@@ -28,7 +29,8 @@ private:
     void Render_Taps(_float fChildHeight);
     void GUI_Setting_Clips(_float fChildHeight);
     // --------------------------------------------------
-
+    void Draw_ToolbarUI();
+    void Draw_TimelineUI(float duration, float& ioTime, const char* id);
     // -------------------------------------------------
     void GUI_Create_MetaData(_float fChildHeight);
 
