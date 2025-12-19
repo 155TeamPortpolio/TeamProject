@@ -3,6 +3,7 @@
 #include <random>
 
 #include "Engine_Math.h"
+#include <magic_enum_Inc/magic_enum.hpp>
 
 namespace Helper
 {
@@ -72,20 +73,92 @@ namespace Helper
 	};
 }
 
-namespace Math
+namespace Helper // magic_enum 관련
 {
-	//Float ���� �Լ�
-	ENGINE_DLL _float Lerp(_float x, _float y, _float t);
+	template<typename TEnum>
+	string_view EnumNameView(TEnum v)
+	{
+		static_assert(is_enum_v<TEnum>, "Helper::EnumNameView<TEnum> requires an enum type.");
+		return magic_enum::enum_name(v);
+	}
 
-	ENGINE_DLL _float EaseOutCubic(_float t);   // EaseOutCubic:   ������ ����ϰ� ������ �ε巴�� ����(ī�޶� �̵� �⺻������ ����)
-	ENGINE_DLL _float EaseInOutSine(_float t);  // EaseInOutSine:  ����/���� ���� �ڿ������� �ε巯�� S-curve(�������� �Ϲ� ī�޶�)
-	ENGINE_DLL _float EaseInOutCubic(_float t); // EaseInOutCubic: InOutSine���� ����/������ �� �ѷ��� S-curve(����/������ �� �ִ� ����)
-	ENGINE_DLL _float EaseInCubic(_float t);    // EaseInCubic:    �ʹ� �������� ����� ���ʿ��� Ȯ ����(�� ���ۿ��� Ʀ ���̱�)
-	ENGINE_DLL _float EaseOutSine(_float t);    // EaseOutSine:    ������ ������ ����� ������(ª�� �̵��� �δ� ����)
-	ENGINE_DLL _float EaseInQuad(_float t);     // EaseInQuad:     InCubic���� ���� �ʹ� ����(���� �̵��� ��¦ �� ���̱�)
-	ENGINE_DLL _float EaseOutQuad(_float t);    // EaseOutQuad:    OutCubic���� �ܼ��� ����(ª�� ��ȯ/�̼� ������ ���)
-	ENGINE_DLL _float EaseInOutQuad(_float t);  // EaseInOutQuad:  �������� ������ ��Ȯ�� S-curve(��/�����⿡�� ���� ���� ����)
-	ENGINE_DLL _float EaseInOutExpo(_float t);  // EaseInOutExpo:  �ʹ� ���� �������߰� �ſ� �����泡 �ε巯��(�Ÿ� ū �����, �ϻ� ����)
-	ENGINE_DLL _float EaseOutBack(_float t);    // EaseOutBack:    ��ǥ�� ��¦ �����ƴ� �ǵ��ƿ��� ������(��/���� ���� ����, ���ϸ� �ֹ�)
+	template<typename TEnum>
+	string EnumToString(TEnum v)
+	{
+		static_assert(is_enum_v<TEnum>, "Helper::EnumToString<TEnum> requires an enum type.");
+		return string(EnumNameView(v));
+	}
+
+	template<typename TEnum>
+	const char* EnumLabel(TEnum v)
+	{
+		static_assert(is_enum_v<TEnum>, "Helper::EnumLabel<TEnum> requires an enum type.");
+
+		constexpr size_t N = magic_enum::enum_count<TEnum>();
+
+		struct Cache
+		{
+			array<string, N> labels{};
+
+			Cache()
+			{
+				auto values = magic_enum::enum_values<TEnum>();
+				for (size_t i = 0; i < N; ++i) labels[i] = string(magic_enum::enum_name(values[i]));
+			}
+
+			const char* Get(TEnum x) const
+			{
+				return labels[magic_enum::enum_index(x).value()].c_str();
+			}
+		};
+
+		static Cache cache;
+		return cache.Get(v);
+	}
+
+	// enum 선택 콤보박스(UI)를 그려주고 선택 결과를 반영
+	template<typename TEnum, typename FilterFn>
+	bool DrawEnumCombo(const char* id, TEnum& ioValue, TEnum shownValue, float width, FilterFn Filter) 
+	{
+		static_assert(is_enum_v<TEnum>, "Helper::DrawEnumCombo<TEnum> requires an enum type.");
+
+		ImGui::SetNextItemWidth(width);
+		if (!ImGui::BeginCombo(id, EnumLabel(shownValue))) return false;
+
+		bool changed = false;
+
+		for (TEnum v : magic_enum::enum_values<TEnum>())
+		{
+			if (!Filter(v)) continue;
+
+			const bool selected = (shownValue == v);
+
+			if (ImGui::Selectable(EnumLabel(v), selected)) { ioValue = v; changed = true; }
+			if (selected) ImGui::SetItemDefaultFocus();
+		}
+
+		ImGui::EndCombo();
+		return changed;
+	}
+
+	// A: 가장 기본형, 현재 값을 그대로 보여주고, 선택하면 그대로 바꾸는" 가장 일반적인 상황
+	template<typename TEnum>
+	bool DrawEnumCombo(const char* id, TEnum& ioValue, float width)
+	{
+		return DrawEnumCombo(id, ioValue, ioValue, width, [](TEnum) { return true; });
+	}
+
+	// B: 표시값(shownValue)을 따로 주는 버젼 -> "콤보에 표시되는 값"과 "실제로 저장될 값"을 분리하고 싶을때
+	template<typename TEnum>
+	bool DrawEnumCombo(const char* id, TEnum& ioValue, TEnum shownValue, float width)
+	{
+		return DrawEnumCombo(id, ioValue, shownValue, width, [](TEnum) { return true; });
+	}
+
+	// C: 필터(FilterFn)로 일부 enum을 숨기는 버전(표시값 분리 포함) -> 특정 값은 UI에서 선택 못 하게 숨기고 싶을 때 (None, End는 목록에서 제외.. 등)
+	template<typename TEnum, typename FilterFn>
+	bool DrawEnumCombo(const char* id, TEnum& ioValue, float width, FilterFn Filter)
+	{
+		return DrawEnumCombo(id, ioValue, ioValue, width, Filter);
+	}
 }
-

@@ -5,7 +5,6 @@
 
 #include <windows.h>
 
-
 #include "Camera_Defines.h"
 #include "CameraTool_Enum.h"
 #include "CameraTool_Struct.h"

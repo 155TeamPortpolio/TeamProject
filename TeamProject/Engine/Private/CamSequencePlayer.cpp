@@ -133,7 +133,7 @@ void CCamSequencePlayer::Update(_float dt)
 
     RebuildIfNeeded();
 
-    const float dur = target.seq->GetDuration();
+    const float dur = eval.evaluator->GetDuration();
 
     if (playback.playing)
     {
@@ -184,9 +184,18 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         auto refObj = OBJ->Request_Object(apply.spaceRefHandle);
         auto refTr = refObj->Get_Component<CTransform>();
 
+        Matrix refWorld = Matrix(refTr->Get_WorldMatrix());
+
+        Vector3 refS{};
+        Vector3 refT{};
+        Quaternion refR = Quaternion::Identity;
+        refWorld.Decompose(refS, refR, refT);
+        refR.Normalize();
+
+        Matrix refRT = Matrix::CreateFromQuaternion(refR) * Matrix::CreateTranslation(refT);
+
         const Matrix localM = Matrix::CreateFromQuaternion(pose.rot) * Matrix::CreateTranslation(pose.pos);
-        const Matrix refWorld = Matrix(refTr->Get_WorldMatrix());
-        Matrix worldM = localM * refWorld;
+        Matrix worldM = localM * refRT;
 
         Vector3 s{};
         Vector3 t{};
@@ -207,6 +216,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         apply.cam->Set_FOV(pose.fov);
 }
 
+
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {
     auto inst = new CCamSequencePlayer();
@@ -221,8 +231,5 @@ CCamSequencePlayer* CCamSequencePlayer::Create()
 void CCamSequencePlayer::Free()
 {
     Safe_Release(eval.evaluator);
-    Safe_Release(eval.pos);
-    Safe_Release(eval.rot);
-    Safe_Release(eval.fov);
     __super::Free();
 }

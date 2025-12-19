@@ -39,9 +39,9 @@ void CFreeCam::Priority_Update(_float dt)
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (input->Key_Down('W')) move += look * speed;
-    if (input->Key_Down('S')) move += look * -speed;
-    if (input->Key_Down('D')) move += right * speed;
+    if (input->Key_Down('W')) move += look  *  speed;
+    if (input->Key_Down('S')) move += look  * -speed;
+    if (input->Key_Down('D')) move += right *  speed;
     if (input->Key_Down('A')) move += right * -speed;
 
     if (move.LengthSquared() > 0.f)

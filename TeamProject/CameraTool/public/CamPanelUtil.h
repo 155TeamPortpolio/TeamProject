@@ -22,14 +22,6 @@ namespace CamPanelUtil
         const char* okLabel = "OK", float buttonW = 120.f);
 
     bool DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText, const char* okLabel = "OK", float buttonW = 120.f);
-
-    const char* GetPosInterpLabel(CamPosInterp v);
-    const char* GetRotInterpLabel(CamRotInterp v);
-    const char* GetFovInterpLabel(CamFovInterp v);
-
-    const char* GetMoveConstraintLabel(CamMoveConstraint v);
-    const char* GetOrbitArcAngleLabel(CamOrbitArcAngleMode v);
-    const char* GetOrbitArcRadiusLabel(CamOrbitArcRadiusMode v);
 }
 
 NS_END

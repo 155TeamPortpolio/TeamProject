@@ -10,7 +10,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
 private:
-	CCamSequencePlayer() {}
+	CCamSequencePlayer() DEFAULT;
 	CCamSequencePlayer(const CCamSequencePlayer& rhs) : CComponent(rhs) {}
 	~CCamSequencePlayer() DEFAULT;
 

@@ -158,7 +158,7 @@ Vector3 COrbitCam::GetPivotPos() const
 
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
-    auto obj = GAME->Get_ObjectMgr()->Request_Object(m_targetHandle);
+    auto obj = OBJ->Request_Object(m_targetHandle);
     const Vector4 p4 = obj->Get_Component<CTransform>()->Get_Pos();
     return Vector3(p4.x, p4.y, p4.z) + Vector3(0.f, m_offsetY, 0.f);
 }

@@ -97,6 +97,8 @@ HRESULT CTestLevel::Awake()
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
+	string tag = sequenceCam->Get_Tag();
+
 	Ready_Camera();
 	return S_OK;
 }
