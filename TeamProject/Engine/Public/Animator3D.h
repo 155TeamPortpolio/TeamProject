@@ -7,7 +7,7 @@ class ENGINE_DLL CAnimator3D :
     public CComponent
 {
 protected:
-    enum class ANIM_LAYER_STATE {OVERRIDE, BLEND, ADDITIVE};
+    enum class ANIM_LAYER_STATE {OVERRIDE, BLEND, ADDITIVE };
     enum class BLEND_STATE{ NONE, CROSSFADE, IMMEDIATE };
 
     struct AnimConvert {
@@ -21,26 +21,26 @@ protected:
         //---------- 레이어 속성
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
+        vector<_int>        AffectedBonesIndices;
 
         //---------- 애니매이션 데이터
-        string  iClipTag{};
-        _int    iClipIndex = { 0 };
+        _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
         _bool   bLoop = { false };
-        _bool   bisFinish = { false };
+        _bool   bisFinished = { true };
         vector<_float4x4> LocalMatrices = {};
+        //클립 옵션
 
-        // ───────── 블렌드 상태
+        //---------- 블렌드 상태
         _bool   bBlending = { false };
-        _int    iNextNodeIndex = { -1 };
+        _int    iNextClipIndex = { -1 };
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
         BLEND_STATE     eBlendState = { BLEND_STATE::NONE };
-        vector<_uint>   BlendBonesIndex;
         vector<_float4x4> BlendMatrices = {};
 
-        // ───────── 로컬매트릭스
+        //---------- 레이어 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
@@ -56,24 +56,28 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
+    HRESULT Resize_Layer(_uint iLayerCount);
 
 public:
     //clip
     virtual void Update_Animation(_float dt);
+    //보간을 무시한 애니매이션 설정 ?
     virtual HRESULT Set_Animation(_uint LayerIndex, string ClipTag);
     virtual HRESULT Set_Animation(_uint LayerIndex, _uint Clipindex);
+    //애니매이션 보간 변경
     virtual HRESULT Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration = 0.2f);
     virtual HRESULT Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration = 0.2f);
+    //그즉시 보간 대상을 변경 ?
     virtual HRESULT ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame = false, _float convertDuration = 0.2f);
     virtual HRESULT ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame = false,_float convertDuration = 0.2f);
     
+    virtual void Reset_AnimClip(_uint LayerIndex);
     virtual HRESULT Stop_Animation(_uint LayerIndex);
-    virtual HRESULT StopAll_Animation(_uint LayerIndex);
+    virtual HRESULT StopAll_Animation();
 
-
-    _bool isCurrentAnimEnd();
-    _bool isOverAnimTiming(_float percent);
-    string Get_CurrentAnimName();
+    _bool isCurrentAnimEnd(_uint LayerIndex);
+    _bool isOverClipTiming(_uint LayerIndex, _float percent);
+    string Get_CurrentAnimName(_uint LayerIndex);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -89,10 +93,17 @@ public:
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
 
 protected:
+    _bool isExistLayer(_int LayerIndex);
+    _bool isExistClip(_int ClipIndex);
     void Animation_Run(_float dt);
     void Animation_Convert(_float dt);
 
     void Override_BlendAnim();
+
+    void Layer_Override(const ANIM_LAYER& Layer);
+    void Layer_Blend(const ANIM_LAYER& Layer);
+    void Layer_Additive(const ANIM_LAYER& Layer);
+
     void BuildBone();
 
 public:
@@ -104,7 +115,7 @@ protected:
     class CModelData* m_pData = {};
     vector<class CAnimationClip*> m_pAnimClips;         //불러온 애니매이션클립들
     vector<ANIM_LAYER> m_AnimLayers;
-
+    vector<string> m_EventBus;
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TransfromationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
