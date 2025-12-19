@@ -5,7 +5,7 @@
 #include "IInputService.h"
 #include "ILevelService.h"
 
-#include "EditCamera.h"
+#include "FreeCam.h"
 #include "AnimModel.h"
 #include "AnimToolPanel.h"
 #include "Camera.h"
@@ -26,7 +26,7 @@ HRESULT CAnimationEditLevel::Initialize()
 HRESULT CAnimationEditLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
+	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_EditCamera", CFreeCam::Create());
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_AnimModel", CAnimModel::Create());
 	pProto->Add_ProtoType("AnimationEdit_Level", "Proto_GameObject_Grid", CGrid::Create());
 
