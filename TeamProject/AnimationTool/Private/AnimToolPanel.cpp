@@ -22,6 +22,21 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
 		Reset_Panel();
 	}
+	
+
+	if (nullptr == m_pSelectAnimator)
+		return;
+
+	if (m_isPlay) {
+		m_fCurTime += dt;
+
+		if (m_fDuration <= m_fCurTime) {
+			if (m_bLoop)
+				m_fCurTime = 0.f;
+			else
+				m_isPlay = false;
+		}
+	}
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -90,15 +105,22 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
 		if (!m_ClipTags.empty()) {
+			int iIndex = 0;
 			for (string ClipTag : m_ClipTags)
 			{
 				bool selected = (m_CurClipTag == ClipTag);
 				if (ImGui::Selectable(ClipTag.c_str(), selected))
 				{
 					m_CurClipTag = ClipTag;
+
+					//가져온 애니매이션의 duration 가져옴
+					m_fCurTime = 0.f;
+					m_fDuration = (*m_pSelectAnimator->Get_Clips())[iIndex]->Get_Duration();
 				}
 				if (selected)
 					ImGui::SetItemDefaultFocus();
+
+				iIndex++;
 			}
 		}
 		ImGui::EndCombo();
@@ -139,9 +161,9 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 	auto SpeedBtn = [&](const char* label, float v)
 		{
-			const bool active = fabsf(timeScale - v) < 1e-6f;
+			const bool active = fabsf(m_fPlaySpeed - v) < 1e-6f;
 			if (active) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
-			if (ImGui::SmallButton(label)) timeScale = v;
+			if (ImGui::SmallButton(label)) m_fPlaySpeed = v;
 			if (active) ImGui::PopStyleColor();
 		};
 
@@ -153,7 +175,7 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 	ImGui::SameLine();
 	ImGui::SetNextItemWidth(90.f);
-	ImGui::DragFloat("##scale", &timeScale, 0.01f, 0.05f, 8.0f, "x%.2f");
+	ImGui::DragFloat("##scale", &m_fPlaySpeed, 0.01f, 0.05f, 8.0f, "x%.2f");
 
 	ImGui::PopID();
 

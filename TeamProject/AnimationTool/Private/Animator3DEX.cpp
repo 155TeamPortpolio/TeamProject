@@ -23,6 +23,11 @@ void CAnimator3DEX::Render_GUI()
 	//__super::Render_GUI();
 }
 
+void CAnimator3DEX::Update_Animation_ToPanel(_float fTrackPosition)
+{
+	m_AnimLayers[0].fCurrentTrackPosition = fTrackPosition;
+}
+
 vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()
 {
 	return &m_pAnimClips;

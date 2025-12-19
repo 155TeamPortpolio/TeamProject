@@ -53,10 +53,12 @@ private: //Create Clip
     class CAnimator3DEX* m_pSelectAnimator = { nullptr };
     string               m_CurClipTag{};
     vector<string>       m_ClipTags;
-    _bool                m_isPlay       = {};
-    _bool                m_bLoop        = {};
-    _float               m_fCurTime     = {};
-    _float               m_fDuration    = {};
+
+    _bool   m_isPlay     = {};
+    _float  m_fPlaySpeed = { 1.f };
+    _bool   m_bLoop      = {};
+    _float  m_fCurTime   = {};
+    _float  m_fDuration  = {};
 
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
