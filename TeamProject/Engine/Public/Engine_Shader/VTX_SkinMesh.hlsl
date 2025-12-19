@@ -115,6 +115,36 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
+PS_OUT PS_DEBUG(PS_IN In)
+{
+    PS_OUT Out;
+    
+    vector vMtrlDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vMtrlDiffuse.a < 0.2)
+    {
+        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
+    }
+  
+    vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse;
+    float3 vNormal;
+    vNormal.xy = vNormalDesc.xy * 2.f - 1.f;
+    vNormal.z = 1.f;
+    float3 T = normalize(In.vTangent);
+    float3 B = normalize(In.vBinormal * -1);
+    float3 N = normalize(In.vNormal.xyz);
+
+    float3x3 WorldMatrix = float3x3(T, B, N);
+
+    vNormal = mul(vNormal, WorldMatrix);
+    
+    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
+    Out.vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    return Out;
+}
 
 struct VS_OUT_SHADOW
 {
@@ -178,6 +208,15 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
+    pass Debug
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DEBUG();
+    }
     pass Shadow
     {
         SetRasterizerState(RS_Default);
