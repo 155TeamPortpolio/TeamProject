@@ -1,6 +1,102 @@
-#pragma once
 #include "pch.h"
 #include "StateParameter.h"
+
+CStateParameter::CStateParameter()
+    : m_eType(PARAM_BOOL)
+    , m_bValue(false)
+{
+}
+
+CStateParameter::CStateParameter(const CStateParameter& rhs)
+    : m_eType(rhs.m_eType)
+{
+    switch (m_eType)
+    {
+    case PARAM_FLOAT:
+        m_fValue = rhs.m_fValue;
+        break;
+    case PARAM_INT:
+        m_iValue = rhs.m_iValue;
+        break;
+    case PARAM_BOOL:
+        m_bValue = rhs.m_bValue;
+        break;
+    case PARAM_TRIGGER:
+        m_bTrigger = rhs.m_bTrigger;
+        break;
+    }
+}
+
+CStateParameter::CStateParameter(CStateParameter&& rhs) noexcept
+    : m_eType(rhs.m_eType)
+{
+    switch (m_eType)
+    {
+    case PARAM_FLOAT:
+        m_fValue = rhs.m_fValue;
+        break;
+    case PARAM_INT:
+        m_iValue = rhs.m_iValue;
+        break;
+    case PARAM_BOOL:
+        m_bValue = rhs.m_bValue;
+        break;
+    case PARAM_TRIGGER:
+        m_bTrigger = rhs.m_bTrigger;
+        break;
+    }
+}
+
+CStateParameter& CStateParameter::operator=(const CStateParameter& rhs)
+{
+    if (this != &rhs)
+    {
+        m_eType = rhs.m_eType;
+
+        switch (m_eType)
+        {
+        case PARAM_FLOAT:
+            m_fValue = rhs.m_fValue;
+            break;
+        case PARAM_INT:
+            m_iValue = rhs.m_iValue;
+            break;
+        case PARAM_BOOL:
+            m_bValue = rhs.m_bValue;
+            break;
+        case PARAM_TRIGGER:
+            m_bTrigger = rhs.m_bTrigger;
+            break;
+        }
+    }
+    return *this;
+}
+
+CStateParameter& CStateParameter::operator=(CStateParameter&& rhs) noexcept
+{
+    if (this != &rhs)
+    {
+        m_eType = rhs.m_eType;
+
+        switch (m_eType)
+        {
+        case PARAM_FLOAT:
+            m_fValue = rhs.m_fValue;
+            break;
+        case PARAM_INT:
+            m_iValue = rhs.m_iValue;
+            break;
+        case PARAM_BOOL:
+            m_bValue = rhs.m_bValue;
+            break;
+        case PARAM_TRIGGER:
+            m_bTrigger = rhs.m_bTrigger;
+            break;
+        }
+    }
+    return *this;
+}
+
 
 void CStateParameter::Set_Float(_float fValue)
 {

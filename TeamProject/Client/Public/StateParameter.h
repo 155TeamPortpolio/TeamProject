@@ -1,5 +1,4 @@
 #pragma once
-#include "Base.h"
 
 NS_BEGIN(Client)
 
@@ -11,11 +10,17 @@ enum PARAMETER_TYPE
     PARAM_TRIGGER,
 };
 
-class CStateParameter final : public CBase
+class CStateParameter final
 {
-private:
-    CStateParameter() DEFAULT;
-    virtual ~CStateParameter() DEFAULT;
+public:
+    CStateParameter();
+    CStateParameter(const CStateParameter& rhs);
+    CStateParameter(CStateParameter&& rhs) noexcept;
+    ~CStateParameter() DEFAULT;
+
+public:
+    CStateParameter& operator=(const CStateParameter& rhs);
+    CStateParameter& operator=(CStateParameter&& rhs) noexcept;
 
 public:
     void    Set_Float(_float fValue);

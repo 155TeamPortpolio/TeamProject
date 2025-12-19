@@ -150,6 +150,12 @@
     <ClInclude Include="..\Public\IBaseState.h">
       <Filter>03. Utility\FSM</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StateParameter.h">
+      <Filter>03. Utility\FSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StateMachine.h">
+      <Filter>03. Utility\FSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -233,6 +239,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestMap.cpp">
       <Filter>02. GameObject\Object\TestMap</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateParameter.cpp">
+      <Filter>03. Utility\FSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StateMachine.cpp">
+      <Filter>03. Utility\FSM</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
