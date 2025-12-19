@@ -36,25 +36,25 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 	auto proto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	for (_uint i = 0; i < m_iNumNodes; ++i)
 	{
-		CGameObject* pNode = nullptr;
-		EFFECT_NODE nodeDesc = pAsset->Nodes[i];
-		switch (pAsset->Nodes[i].eType)
-		{
-		case Engine::EFFECT_TYPE::SPRITE:
-			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", &nodeDesc);
-			break;
-		case Engine::EFFECT_TYPE::PARTICLE:
-			break;
-		case Engine::EFFECT_TYPE::MESH:
-			break;
-		case Engine::EFFECT_TYPE::END:
-			break;
-		default:
-			break;
-		}
+		//CGameObject* pNode = nullptr;
+		//EFFECT_NODE nodeDesc = pAsset->Nodes[i];
+		//switch (pAsset->Nodes[i].eType)
+		//{
+		//case Engine::EFFECT_TYPE::SPRITE:
+		//	pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", &nodeDesc);
+		//	break;
+		//case Engine::EFFECT_TYPE::PARTICLE:
+		//	break;
+		//case Engine::EFFECT_TYPE::MESH:
+		//	break;
+		//case Engine::EFFECT_TYPE::END:
+		//	break;
+		//default:
+		//	break;
+		//}
 
-		if (pNode)
-			m_Nodes[i] = static_cast<CEffectNode*>(pNode);
+		//if (pNode)
+		//	m_Nodes[i] = static_cast<CEffectNode*>(pNode);
 	}
 
 	return S_OK;
@@ -70,12 +70,20 @@ void CEffectContainer::Priority_Update(_float dt)
 
 void CEffectContainer::Update(_float dt)
 {
-	if (!m_IsLoop)
+	if (m_IsLoop)
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	else
 	{
 		m_fElapsedTime += dt;
+		if (m_fElapsedTime >= m_fDuration)
+		{
+			m_isAlive = false;
+			return;
+		}
+
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
 	}
 
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CEffectContainer::Late_Update(_float dt)

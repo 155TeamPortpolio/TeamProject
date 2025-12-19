@@ -15,6 +15,10 @@ Texture2D g_RampTexture;
 Texture2D g_SSAONoiseTexture;
 Texture2D g_SSAOTexture;
 Texture2D g_SSAOBlurTexture;
+Texture2D g_BrightTexture;
+Texture2D g_BloomInfo;
+Texture2D g_BlurXTexture;
+Texture2D g_BloomFinal;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -71,14 +75,14 @@ struct PS_OUT_LIGHT
     vector vLight : SV_TARGET0;
 };
 
-struct PS_OUT_SSAO
+struct PS_OUT_RESULT
 {
-    vector vSSAO : SV_TARGET0;
+    vector vResult : SV_TARGET0;
 };
 
-PS_OUT_SSAO PS_SSAO(PS_IN In)
+PS_OUT_RESULT PS_SSAO(PS_IN In)
 {
-    PS_OUT_SSAO Out;
+    PS_OUT_RESULT Out;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -143,16 +147,15 @@ PS_OUT_SSAO PS_SSAO(PS_IN In)
         occlusion += (sampleDepth >= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
     }
     
-    occlusion = 1.0 - (occlusion / 64.0);
-    Out.vSSAO = occlusion;
+    occlusion = 1.0 - (occlusion / 32.0);
+    Out.vResult = occlusion;
     
     return Out;
 }
 
-
-PS_OUT_SSAO PS_SSAO_BLUR(PS_IN In)
+PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
 {
-    PS_OUT_SSAO Out;
+    PS_OUT_RESULT Out;
     float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
 
     const float weights[5] = { 0.06136, 0.24477, 0.38774, 0.24477, 0.06136 };
@@ -169,7 +172,105 @@ PS_OUT_SSAO PS_SSAO_BLUR(PS_IN In)
         }
     }
     
-    Out.vSSAO = result;
+    Out.vResult = result;
+    
+    return Out;
+}
+
+//GaussianBlur
+static const float weights[9] =
+{
+    0.13298076,
+    0.12579441,
+    0.10648267,
+    0.08065691,
+    0.05467002,
+    0.03315905,
+    0.01799699,
+    0.00874063,
+    0.00379866
+};
+
+PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    vector vBloomInfo = g_BloomInfo.Sample(DefaultSampler, In.vTexcoord);
+    
+    float bloomType = vBloomInfo.r;
+    float bloomStrength = vBloomInfo.g;
+
+    float4 bright = g_BrightTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    if (bloomType == 0.f) // Gaussian
+    {
+        float3 result = bright.rgb * weights[0];
+        float texelSize = bloomStrength / fScreenWidth;
+        
+        for (int i = 1; i < 9; ++i)
+        {
+            result += g_BrightTexture.Sample(DefaultSampler,
+                In.vTexcoord + float2(texelSize * i, 0)).rgb * weights[i];
+            result += g_BrightTexture.Sample(DefaultSampler,
+                In.vTexcoord - float2(texelSize * i, 0)).rgb * weights[i];
+        }
+        
+        Out.vResult = float4(result, bright.a);
+    }
+    else // Radial은 X패스에서 그대로 통과
+    {
+        Out.vResult = bright;
+    }
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    vector vBloomInfo = g_BloomInfo.Sample(DefaultSampler, In.vTexcoord);
+    
+    float4 blurX = g_BlurXTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float bloomType = vBloomInfo.r;
+    float bloomStrength = vBloomInfo.g;
+    float2 RadialCenter = vBloomInfo.ba;
+    
+    if (bloomType < 0.5f) // Gaussian
+    {
+        float3 result = blurX.rgb * weights[0];
+        float texelSize = bloomStrength / fScreenHeight;
+        
+        for (int i = 1; i < 9; ++i)
+        {
+            result += g_BlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
+            result += g_BlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
+        }
+        
+        Out.vResult = float4(result, blurX.a);
+    }
+    else // Radial Blur
+    {
+        float2 dir = In.vTexcoord - RadialCenter;
+        float dist = length(dir);
+        dir = normalize(dir);
+        
+        float3 result = float3(0, 0, 0);
+        float samples = 15.0f;          //test하고 싶다면 이거 수정 ㄱㄱ
+        float strength = 0.1f;          //test하고 싶다면 이거 수정 ㄱㄱ
+        
+        for (float i = 0; i < samples; i++)
+        {
+            float offset = (i / samples) * strength * dist;
+            result += g_BlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord - dir * offset).rgb;
+        }
+        
+        Out.vResult = float4(result / samples, blurX.a);
+    }
     
     return Out;
 }
@@ -200,7 +301,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float3 lightDir = normalize(g_vLightDir.xyz * -1.f);
+    float3 lightDir = normalize(g_vLightDir.xyz * -1);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
@@ -210,11 +311,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
  
     vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
     
-    float3 PBR = CalculateDirectionalLight (vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
     
     float RampRatio = 0.7f; 
     Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
-    
+
     return Out;
 }
 
@@ -276,8 +377,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 ambient = saturate(vDiffuse.rgb * vAmbient.g * ao * ssao);
-
+    
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao;
+    ambient = max(ambient, vDiffuse.rgb * 0.15f); 
+    
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -314,9 +417,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 mapped = scene.rgb;
-
+    float3 mapped = scene.rgb + bloom.rgb;
+    
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 
@@ -341,6 +445,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SSAO_BLUR();
+    }
+
+    pass BLOOM_BLURX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURX();
+    }
+
+    pass BLOOM_BLURY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
     }
 
     pass Directional
