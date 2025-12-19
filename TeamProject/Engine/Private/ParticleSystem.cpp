@@ -50,6 +50,9 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	Safe_AddRef(m_pTextureSheetAnimation);
 	Safe_AddRef(m_pNoise);
 
+	/*---------------Gpu Buffer-------------*/
+
+	
 	return S_OK;
 }
 
