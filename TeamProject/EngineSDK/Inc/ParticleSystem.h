@@ -107,6 +107,15 @@ private:
 	class CNoise* m_pNoise = { nullptr };
 	vector<class IParticleModule*> m_Modules;
 
+	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
+
+	/*Buffer*/
+	ID3D11Buffer* m_pParticleBuffer = { nullptr };
+	ID3D11Buffer* m_pDeadIndicesBuffer = { nullptr };
+
+	/*Compute Shaders*/
+	class CComputeShader* m_pCSParticleBasic = { nullptr };
+
 public:
 	static CParticleSystem* Create();
 	CComponent* Clone() override;

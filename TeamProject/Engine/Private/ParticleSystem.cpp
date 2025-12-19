@@ -299,7 +299,7 @@ void CParticleSystem::UpdateParticles(_float dt)
 		if (m_UseGravity)
 		{
 			_vector3 velocity = particle.vVelocity;
-			velocity.y -= m_fGravityScale * 10.f;
+			velocity.y -= m_fGravityScale * 10.f * dt;
 			particle.vVelocity = velocity;
 		}
 		

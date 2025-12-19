@@ -262,6 +262,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\ComputeShader.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
@@ -416,6 +417,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\ComputeShader.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
@@ -546,6 +548,18 @@ exit /b 0</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
@@ -562,6 +576,11 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

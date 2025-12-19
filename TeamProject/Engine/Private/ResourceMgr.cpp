@@ -22,6 +22,7 @@
 #include "MaterialInstance.h"
 #include "AnimationClip.h"
 #include "AnimationLayout.h"
+#include "ComputeShader.h"
 
 CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }, m_pContext{ pContext }, m_pInstance(CGameInstance::GetInstance())
@@ -72,6 +73,9 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 	for (auto& pair : m_Resources[index].m_EffectAssets)
 		for (auto& node : pair.second.Nodes)
 			Safe_Delete(node);
+
+	for (auto& pair : m_Resources[index].m_ComputeShaders)
+		Safe_Release(pair.second);
 
 	m_Resources[index] = {};
 }
@@ -348,6 +352,28 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 	return Effect;
 }
 
+CComputeShader* CResourceMgr::Load_ComputeShader(const string& levelTag, const string& shaderKey)
+{
+	int index = ValidLevel(levelTag);
+	if (index == -1) {
+		MSG_BOX("Wrong Level Tag. : Load_ComputeShader ");
+		return nullptr;
+	}
+
+	auto& map = m_Resources[index].m_ComputeShaders;
+	auto iter = map.find(shaderKey);
+
+	if (iter != map.end()) return iter->second;
+
+	if (MakePath(shaderKey).empty()) {
+		MSG_BOX("There is No Key : Load_ComputeShader");
+	}
+	CComputeShader* pData = CComputeShader::Create(m_pDevice, MakePath(shaderKey), shaderKey);
+	map.emplace(shaderKey, pData);
+
+	return pData;
+}
+
 CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& ModelKey)
 {
 	int index = ValidLevel(levelTag);
@@ -405,6 +431,8 @@ void CResourceMgr::Load_InitialResource()
 
 	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
 	m_Resources.resize(1);
+
+	/* Default Shader */
 	Add_ResourcePath("VTX_TexPos.hlsl", "../Bin/ShaderFiles/VTX_TexPos.hlsl");
 	Add_ResourcePath("VTX_Mesh.hlsl", "../Bin/ShaderFiles/VTX_Mesh.hlsl");
 	Add_ResourcePath("VTX_NorTex.hlsl", "../Bin/ShaderFiles/VTX_NorTex.hlsl");
@@ -414,6 +442,9 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
+
+	/* Compute Shader */
+	Add_ResourcePath("CS_Particle_Basic.hlsl", "../Bin/ShaderFiles/CS_Particle_Basic.hlsl");
 
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
@@ -430,7 +461,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 
-	
+	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));
 }
 
 
