@@ -340,49 +340,121 @@ ID3D11ShaderResourceView* CRenderSystem::Get_EngineTargetSRV(const string strTag
 
 HRESULT CRenderSystem::Create_NoiseTexture()
 {
-	std::vector<_float4> ssaoNoise;
-
-	for (unsigned int i = 0; i < 16; i++)
 	{
-		_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f),0.0f,0.0f);
-		ssaoNoise.push_back(noise);
-	}
+		//SSAO NoiseTexture
+		std::vector<_float4> ssaoNoise;
 
-	D3D11_TEXTURE2D_DESC texDesc = {};
-	texDesc.Width = 4;
-	texDesc.Height = 4;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
+		for (unsigned int i = 0; i < 16; i++)
+		{
+			_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f), 0.0f, 0.0f);
+			ssaoNoise.push_back(noise);
+		}
 
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = ssaoNoise.data();
-	initData.SysMemPitch = 4 * sizeof(_float4);
-	initData.SysMemSlicePitch = 0;
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		texDesc.Width = 4;
+		texDesc.Height = 4;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = ssaoNoise.data();
+		initData.SysMemPitch = 4 * sizeof(_float4);
+		initData.SysMemSlicePitch = 0;
 
 
-	ID3D11Texture2D* noiseTexture = nullptr;
-	if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
-		return E_FAIL;
+		ID3D11Texture2D* noiseTexture = nullptr;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+			return E_FAIL;
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-	srvDesc.Texture2D.MostDetailedMip = 0;
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
 
-	if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
-	{
+		if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
+		{
+			Safe_Release(noiseTexture);
+			return E_FAIL;
+		}
+
 		Safe_Release(noiseTexture);
-		return E_FAIL;
 	}
 
-	Safe_Release(noiseTexture);
+	{
+		//Distortion Noise Texture (heat haze)
+		std::vector<_float4> distortionNoise;
+		const int noiseSize = 128;
+
+		for (int y = 0; y < noiseSize; y++)
+		{
+			for (int x = 0; x < noiseSize; x++)
+			{
+				float fx = (float)x / noiseSize;
+				float fy = (float)y / noiseSize;
+
+				// 여러 주파수의 사인파 조합으로 부드러운 노이즈 생성
+				float noise1 = sin(fx * 3.14f * 8.0f) * cos(fy * 3.14f * 6.0f);
+				float noise2 = sin(fx * 3.14f * 12.0f) * cos(fy * 3.14f * 10.0f);
+				float noise3 = sin(fx * 3.14f * 5.0f) * cos(fy * 3.14f * 7.0f);
+
+				// 다른 방향의 노이즈
+				float noise4 = cos(fx * 3.14f * 9.0f) * sin(fy * 3.14f * 11.0f);
+				float noise5 = cos(fx * 3.14f * 6.0f) * sin(fy * 3.14f * 8.0f);
+
+				// 조합 및 정규화
+				float r = (noise1 * 0.5f + noise2 * 0.3f + noise3 * 0.2f);
+				float g = (noise4 * 0.5f + noise5 * 0.3f + noise1 * 0.2f);
+
+				// 0~1 범위로 변환
+				r = (r + 1.0f) * 0.5f;
+				g = (g + 1.0f) * 0.5f;
+
+				distortionNoise.push_back(_float4(r, g, 0.0f, 0.0f));
+			}
+		}
+
+		D3D11_TEXTURE2D_DESC texDesc = {};
+		texDesc.Width = noiseSize;
+		texDesc.Height = noiseSize;
+		texDesc.MipLevels = 1;
+		texDesc.ArraySize = 1;
+		texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+		texDesc.SampleDesc.Count = 1;
+		texDesc.SampleDesc.Quality = 0;
+		texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		texDesc.CPUAccessFlags = 0;
+
+		D3D11_SUBRESOURCE_DATA initData = {};
+		initData.pSysMem = distortionNoise.data();
+		initData.SysMemPitch = noiseSize * sizeof(_float4);
+		initData.SysMemSlicePitch = 0;
+
+		ID3D11Texture2D* noiseTexture = nullptr;
+		if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+			return E_FAIL;
+
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = texDesc.Format;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MipLevels = 1;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+
+		if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pDistortionNoiseTexture)))
+		{
+			Safe_Release(noiseTexture);
+			return E_FAIL;
+		}
+		Safe_Release(noiseTexture);
+	}
+
 	return S_OK;
 }
 
@@ -693,6 +765,11 @@ HRESULT CRenderSystem::Render_Bloom()
 	return S_OK;
 }
 
+HRESULT CRenderSystem::Render_Distortion()
+{
+	return E_NOTIMPL;
+}
+
 HRESULT CRenderSystem::Render_Final()
 {
 	ID3D11InputLayout* pLayout;
@@ -744,6 +821,7 @@ void CRenderSystem::Free()
 	__super::Free();
 	Safe_Release(RampTexture);
 	Safe_Release(m_pSSAONoiseTexture);
+	Safe_Release(m_pDistortionNoiseTexture);
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
