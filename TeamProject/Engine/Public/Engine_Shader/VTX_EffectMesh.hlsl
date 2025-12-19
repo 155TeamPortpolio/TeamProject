@@ -24,6 +24,8 @@ float DissolveThreshold;
 /*Distortion Params*/
 float4x4 g_worldMatrix;
 
+/**/
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -69,15 +71,15 @@ VS_OUT VS_MAIN_BRIGHT(VS_IN In)
     
     matrix matWV, matWVP;
     
-    float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
+    float3 worldPos = mul(float4(In.vPosition, 1.f), g_worldMatrix).xyz;
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
 
     Out.vPosition = projPos;
     Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = mul(vector(In.vNormal, 0.f), ObjectBufferArray[TransformIndex].Transform);
+    Out.vNormal = mul(vector(In.vNormal, 0.f), g_worldMatrix);
     Out.vProjPos = Out.vPosition;
-    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
+    Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), g_worldMatrix)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
     
     return Out;
@@ -118,10 +120,6 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     PS_OUT Out;
     
     float2 Texcoord = In.vTexcoord + UVOffset;
-    //if (Texcoord.x < 0 || Texcoord.x > 1)
-    //    discard;
-    //if (Texcoord.y < 0 || Texcoord.y > 1)
-    //    discard;
         
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
     float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
@@ -153,9 +151,6 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
     
-    //if(vMtrlDiffuse.a < 0.1f)
-    //   discard;
-    
     Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a *= Alpha;
     
@@ -173,10 +168,6 @@ PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
     PS_OUT_BRIGHT Out;
 
     float2 Texcoord = In.vTexcoord + UVOffset;
-    //if (Texcoord.x < 0 || Texcoord.x > 1)
-    //    discard;
-    //if (Texcoord.y < 0 || Texcoord.y > 1)
-    //    discard;
         
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
     float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
@@ -187,11 +178,11 @@ PS_OUT_BRIGHT PS_BRIGHT(PS_IN In)
     float fMask = vMtrlDiffuse.b;
     float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
     
-    float4 Test = vBaseColor * (fBase + fBright * fBrightIntensity);
+    float4 Test = float4(1.f, 0.f, 0.f, 1.f);
     Test.a = Alpha * fRGBMask;
-    if (fDissolveMask < DissolveThreshold)
-        Test.a = 0.f;
-    Out.BloomInfo = float4(1.f, 2.f, 0.f,0.f);
+    //if (fDissolveMask < DissolveThreshold)
+    //    Test.a = 0.f;
+    Out.BloomInfo = float4(0.f, 1.5f, 0.f,0.f);
     Out.vBloom = Test * 3;
     
     return Out;

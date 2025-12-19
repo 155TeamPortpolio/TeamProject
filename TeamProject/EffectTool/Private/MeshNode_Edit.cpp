@@ -61,19 +61,21 @@ void CMeshNode_Edit::Update(_float dt)
 	{
 		__super::Update(dt);
 
-
-		POST_PROCESS_COMMAND Command =
+		if (MODE::UV_ANIMATION == m_eMode)
 		{
-			POSTPROCESS::MRT_Bloom,
-			Get_Component<CMaterial>()->Get_Shader(0),
-			m_pTransform->Get_WorldMatrix_Ptr(),
-			[this](ID3D11DeviceContext* pContext)
+			POST_PROCESS_COMMAND Command =
 			{
-				Render_BloomEffect(pContext);
-			}
-		};
+				POSTPROCESS::MRT_Bloom,
+				Get_Component<CMaterial>()->Get_Shader(0),
+				m_pTransform->Get_WorldMatrix_Ptr(),
+				[this](ID3D11DeviceContext* pContext)
+				{
+					Render_BloomEffect(pContext);
+				}
+			};
 
-		CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
+			CGameInstance::GetInstance()->Get_RenderSystem()->Add_PostProcessCommand(Command);
+		}
 	}
 }
 
