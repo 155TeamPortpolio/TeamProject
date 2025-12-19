@@ -18,6 +18,16 @@ HRESULT CAnimator3DEX::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+void CAnimator3DEX::Render_GUI()
+{
+	//__super::Render_GUI();
+}
+
+vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()
+{
+	return &m_pAnimClips;
+}
+
 CAnimator3DEX* CAnimator3DEX::Create()
 {
 	CAnimator3DEX* instance = new CAnimator3DEX();

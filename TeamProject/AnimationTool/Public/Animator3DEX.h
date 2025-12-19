@@ -2,6 +2,10 @@
 #include "AnimationTool_Defines.h"
 #include "Animator3D.h"
 
+NS_BEGIN(Engine)
+class CAnimationClip;
+NS_END
+
 NS_BEGIN(AnimTool)
 
 class CAnimator3DEX final
@@ -15,6 +19,12 @@ private:
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
+
+public:
+    virtual void Render_GUI() override;
+
+public:
+    vector<CAnimationClip*>* Get_Clips();
 
 public:
     static CAnimator3DEX* Create();

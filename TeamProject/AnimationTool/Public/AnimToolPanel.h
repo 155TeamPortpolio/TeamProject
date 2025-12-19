@@ -5,6 +5,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
 class CAnimator3D;
 NS_END
 
@@ -17,27 +18,27 @@ private:
     CAnimToolPanel(GUI_CONTEXT* pContext);
     virtual ~CAnimToolPanel() DEFAULT;
 
-private:
-    enum class TAPBAR { SETTING_NODE, SETTING_CLIP, CREATE_META};
-
 public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
 
 //GUI
 private:
+    void GUI_DefaultSetting();
     void Render_Taps(_float fChildHeight);
-    void GUI_Setting_Clips(_float fChildHeight);
     // --------------------------------------------------
+    void GUI_Setting_Clips(_float fChildHeight);
     void Draw_ToolbarUI();
     void Draw_TimelineUI(float duration, float& ioTime, const char* id);
     // -------------------------------------------------
     void GUI_Create_MetaData(_float fChildHeight);
 
 //Func
+public:
+    void Update_Panel();
 private:
-    /* Setting Animation Clips */
-    void Reset_Pannels();
+    void Reset_Panel();
+    
 
     /* Create Json MetaData */
     void Load_Clips();
@@ -47,21 +48,20 @@ private:
 private:
     CGameInstance* m_pGameInstance = { nullptr };
    
-private:
-    class CGameObject* m_pSelectModel = { nullptr };
-    TAPBAR             m_eCurrentTap  = { TAPBAR::SETTING_CLIP };
-    _bool              m_isPlay       = {};
-    _bool              m_bLoop        = {};
-    _float             m_fCurTime     = {};
-    _float             m_fDuration    = {100};
+private: //Create Clip
+    class CGameObject*   m_pSelectModel = { nullptr };
+    class CAnimator3DEX* m_pSelectAnimator = { nullptr };
+    string               m_CurClipTag{};
+    vector<string>       m_ClipTags;
+    _bool                m_isPlay       = {};
+    _bool                m_bLoop        = {};
+    _float               m_fCurTime     = {};
+    _float               m_fDuration    = {};
 
-private:
-    // ---------------------------------------
-
-    // ---------------------------------------
-private:
+private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
+
 public:
     static CBasePanel* Create(GUI_CONTEXT* context);
     virtual void Free() override;

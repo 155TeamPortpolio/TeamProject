@@ -1,8 +1,9 @@
 #include "AnimToolPanel.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
-#include "Animator3D.h"
+#include "Animator3DEX.h"
 #include "AnimationClip.h"
+#include "AnimModel.h"
 #include "Channel.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
@@ -17,34 +18,15 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	CGameObject* CurSelected = m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
 
 	if (m_pSelectModel != CurSelected) {
-		Reset_Pannels();
 		m_pSelectModel = CurSelected;
-
+		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
+		Reset_Panel();
 	}
 }
 
 void CAnimToolPanel::Render_GUI()
 {
-	constexpr float defaultHeight = 350.f;
-	constexpr float leftX = 200.f;
-	constexpr float rightMargin = 275.f;
-
-	const ImGuiViewport* vp = ImGui::GetMainViewport();
-	const ImVec2 workPos = vp->WorkPos;
-	const ImVec2 workSize = vp->WorkSize;
-
-	ImVec2 bottomLeft(workPos.x + leftX, workPos.y + workSize.y);
-	bottomLeft.x = floorf(bottomLeft.x);
-	bottomLeft.y = floorf(bottomLeft.y);
-
-	float width = workSize.x - leftX - rightMargin;
-	width = floorf(width);
-	
-	ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
-	ImGui::SetNextWindowSize(ImVec2(width, defaultHeight), ImGuiCond_FirstUseEver);
-
-	Helper::DarkThemeStyle styleScope;
-
+	GUI_DefaultSetting();
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
 	ImGui::Begin("AnimTool", nullptr, flags);
@@ -72,6 +54,29 @@ void CAnimToolPanel::Render_GUI()
 	ImGui::End();
 }
 
+void CAnimToolPanel::GUI_DefaultSetting()
+{
+	constexpr float defaultHeight = 200.f;
+	constexpr float leftX = 200.f;
+	constexpr float rightMargin = 275.f;
+
+	const ImGuiViewport* vp = ImGui::GetMainViewport();
+	const ImVec2 workPos = vp->WorkPos;
+	const ImVec2 workSize = vp->WorkSize;
+
+	ImVec2 bottomLeft(workPos.x + leftX, workPos.y + workSize.y);
+	bottomLeft.x = floorf(bottomLeft.x);
+	bottomLeft.y = floorf(bottomLeft.y);
+
+	float width = workSize.x - leftX - rightMargin;
+	width = floorf(width);
+
+	ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
+	ImGui::SetNextWindowSize(ImVec2(width, defaultHeight), ImGuiCond_FirstUseEver);
+
+	Helper::DarkThemeStyle styleScope;
+}
+
 void CAnimToolPanel::Render_Taps(_float fChildHeight)
 {
 
@@ -81,15 +86,25 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
 
+	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
+	{
+		if (!m_ClipTags.empty()) {
+			for (string ClipTag : m_ClipTags)
+			{
+				bool selected = (m_CurClipTag == ClipTag);
+				if (ImGui::Selectable(ClipTag.c_str(), selected))
+				{
+					m_CurClipTag = ClipTag;
+				}
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+			}
+		}
+		ImGui::EndCombo();
+	}
+
 	Draw_ToolbarUI();
-
-	ImGui::Separator();
-
-	ImGui::AlignTextToFramePadding();
-	ImGui::TextUnformatted("Time");
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(260.f);
-	ImGui::SliderFloat("##AnimTime", &m_fCurTime, 0.f, m_fDuration);
 
 	ImGui::SameLine();
 	ImGui::Text("%.2f / %.2f", m_fCurTime, m_fDuration);
@@ -255,8 +270,29 @@ void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 	ImGui::EndChild();
 }
 
-void CAnimToolPanel::Reset_Pannels()
+void CAnimToolPanel::Reset_Panel()
 {
+	m_isPlay = false;
+	m_fCurTime = 0.f;
+	m_fDuration = 0.f;
+	m_CurClipTag = "";
+	m_ClipTags.clear();
+
+	if (nullptr == m_pSelectModel)
+		return;
+
+	Update_Panel();
+}
+
+void CAnimToolPanel::Update_Panel()
+{
+	m_pSelectAnimator = m_pSelectModel->Get_Component<CAnimator3DEX>();
+	if (nullptr == m_pSelectAnimator)
+		return;
+
+	m_CurClipTag = m_pSelectAnimator->Get_CurAnimName(0);
+	for (auto& Clips : *m_pSelectAnimator->Get_Clips())
+		m_ClipTags.push_back(Clips->Get_Name());
 }
 
 void CAnimToolPanel::Load_Clips()
