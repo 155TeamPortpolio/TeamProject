@@ -39,6 +39,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.eType = json.value("effect_type", node.eType);
 	node.TextureKey = json.value("texture_key", node.TextureKey);
 	node.TexturePath = json.value("texture_path", node.TexturePath);
 
@@ -110,6 +111,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 {
 	MESH_NODE node{};
 
+	node.eType = json.value("effect_type", node.eType);
 	node.ModelTag = json.value("model_key", node.ModelTag);
 	node.MaterialTag = json.value("material_key", node.MaterialTag);
 

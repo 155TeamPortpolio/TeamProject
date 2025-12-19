@@ -30,6 +30,9 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
 	pParticle->Link_Model(G_GlobalLevelKey, "Engine_Default_InstancePoint");
 
+	PARTICLE_NODE* pParticleNode = static_cast<PARTICLE_NODE*>(pArg);
+	pParticle->SetParticleParams(*pParticleNode);
+
 	return S_OK;
 }
 

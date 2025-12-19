@@ -38,7 +38,7 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 	{
 		CGameObject* pNode = nullptr;
 		EFFECT_NODE* pNodeDesc = pAsset->Nodes[i];
-		switch (pNodeDesc->eType)
+		switch (static_cast<EFFECT_TYPE>(pNodeDesc->eType))
 		{
 		case Engine::EFFECT_TYPE::SPRITE:
 			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", pNodeDesc);
@@ -56,7 +56,10 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 		}
 
 		if (pNode)
+		{
 			m_Nodes[i] = static_cast<CEffectNode*>(pNode);
+			Get_Component<CObjectContainer>()->Add_Child(pNode);
+		}
 	}
 
 	return S_OK;
