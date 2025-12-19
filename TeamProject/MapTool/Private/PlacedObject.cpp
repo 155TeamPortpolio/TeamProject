@@ -37,6 +37,7 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 #pragma region Model Type Check
 	MAPTOOL_OBJECT_DESC* pObjDesc = static_cast<MAPTOOL_OBJECT_DESC*>(pArg);
 
+	m_iObjectIndex = pObjDesc->iObjectIndex;
 	m_TagModelKey = pObjDesc->TagModelKey;
 	m_TagMaterialKey = pObjDesc->TagMaterialKey;
 
@@ -104,10 +105,6 @@ void CPlacedObject::Render_GUI()
 	ImGui::PushID(this);
 
 	__super::Render_GUI();
-
-	if (ImGui::Button("Delete")) {
-		Delete_Object();
-	}
 
 	ImGui::PopID();
 }
