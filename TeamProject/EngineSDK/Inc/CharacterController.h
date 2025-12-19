@@ -66,7 +66,7 @@ public:
     _float          Get_ContactOffset();
     _float          Get_RestOffset();
 
-    _bool           Shoot_Ray(_fvector vDirection, _float fDistance);
+    _bool           Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit);
     void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
 
 private:

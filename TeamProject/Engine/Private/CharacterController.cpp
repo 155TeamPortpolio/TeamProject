@@ -552,7 +552,7 @@ _vector CCharacterController::Get_FootPosition()
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
 }
 
-_bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance)
+_bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit)
 {
 	if (!m_pController) return false;
 
@@ -580,7 +580,6 @@ _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance)
 	XMStoreFloat3(&m_vRayEnd, vEndPos);
 #endif
 
-	PHYSICS_RAY_HIT hit;
 	_bool bResult = pPhysics->Raycast(rayDesc, hit);
 
 #ifdef _DEBUG
