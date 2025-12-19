@@ -5,7 +5,7 @@
 NS_BEGIN(Client)
 
 template<typename Type>
-class CStateMachine final
+class CStateMachine 
 {
 public:
 	CStateMachine();

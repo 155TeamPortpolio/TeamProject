@@ -10,7 +10,7 @@ enum PARAMETER_TYPE
     PARAM_TRIGGER,
 };
 
-class CStateParameter final
+class CStateParameter 
 {
 public:
     CStateParameter();
