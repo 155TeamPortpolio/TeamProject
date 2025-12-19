@@ -5,6 +5,10 @@
 
 #include "CamPanelUtil.h"
 
+#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
+#define GAME  CGameInstance::GetInstance()
+#define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
+
 NS_BEGIN(CameraTool)
 
 class CCamPanel final : public CBasePanel
@@ -19,6 +23,8 @@ public:
 	void    Update_Panel(_float dt) override;
 	void    Render_GUI() override;
 	void    SetCaptureTarget(CCamObj* camObj);
+    void    SetSpaceReference(OBJECT_HANDLE handle);
+    void    SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles);
 
 private:
 	void    DrawToolbar();
@@ -102,6 +108,7 @@ private:
 
     KeyframeListUIState   keyListUI{};
     KeyframeEditorUIState keyEditUI{};
+    vector<OBJECT_HANDLE> spaceRefCandidates{};
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);

@@ -291,7 +291,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\GameObjectBuilder.h" />
     <ClInclude Include="..\Public\GraphicDevice.h" />
     <ClInclude Include="..\Public\GUISystem.h" />
-    <ClInclude Include="..\Public\GUIWidget.h" />
+    <ClInclude Include="..\Public\GUIUtil.h" />
     <ClInclude Include="..\Public\GuizmoPanel.h" />
     <ClInclude Include="..\Public\GUI_Context.h" />
     <ClInclude Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.h" />
@@ -440,7 +440,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\GameObjectBuilder.cpp" />
     <ClCompile Include="..\Private\GraphicDevice.cpp" />
     <ClCompile Include="..\Private\GUISystem.cpp" />
-    <ClCompile Include="..\Private\GUIWidget.cpp" />
+    <ClCompile Include="..\Private\GUIUtil.cpp" />
     <ClCompile Include="..\Private\GuizmoPanel.cpp" />
     <ClCompile Include="..\Private\Helper_Func.cpp" />
     <ClCompile Include="..\Private\HierarchyPanel.cpp" />

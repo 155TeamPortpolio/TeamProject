@@ -29,6 +29,5 @@ public:
     static CTestObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
-
 };
 NS_END

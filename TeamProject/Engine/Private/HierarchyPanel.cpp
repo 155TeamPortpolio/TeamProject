@@ -1,6 +1,6 @@
 #include "Engine_Defines.h"
 #include "HierarchyPanel.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 #include "GameInstance.h"
 
 #include "ILevelService.h"
@@ -102,7 +102,7 @@ void CHierarchyPanel::ShowLevelList()
 	if (it != levelList.end())
 		m_iSelectedLevel = distance(levelList.begin(), it);
 
-	GUIWidget::ShowCombo(levelList, m_iSelectedLevel, "LevelList", [&](_uint ID) {
+	GuiUtil::ShowCombo(levelList, m_iSelectedLevel, "LevelList", [&](_uint ID) {
 		if (m_iSelectedLevel == ID)
 			return;
 		if (levelList[ID] == G_GlobalLevelKey)
@@ -127,7 +127,7 @@ void CHierarchyPanel::ShowLayerList(const string& nowLevel)
 
 	if (layers[m_iSelectedLayer] == G_GlobalLevelKey) return;
 
-	GUIWidget::ShowCombo(layers, m_iSelectedLayer, "LayerList", [&](_uint ID) {m_iSelectedLayer = ID; });
+	GuiUtil::ShowCombo(layers, m_iSelectedLayer, "LayerList", [&](_uint ID) {m_iSelectedLayer = ID; });
 
 	auto iter = LayerMap.find(layers[m_iSelectedLayer]);
 
