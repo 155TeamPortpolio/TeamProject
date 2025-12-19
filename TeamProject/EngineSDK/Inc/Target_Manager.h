@@ -24,6 +24,7 @@ public:
 	HRESULT Begin_MRT(const string& strMRTTag);
 	HRESULT End_MRT();
 	HRESULT Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param);
+	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
 
 public:
@@ -43,7 +44,6 @@ public:
 
 private:
 	class CRenderTarget* Find_RenderTarget(const string& strTargetTag);
-	vector<CRenderTarget*>& Find_MRT(const string& strMRTTag);
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
