@@ -4,7 +4,7 @@
 
 #include "FreeCam.h"
 #include "TestObject.h"
-#include "TestPlane.h"
+#include "TestFloor.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
 #include "SequenceCam.h"
@@ -16,12 +16,6 @@
 /* MapData */
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
-
-/* Effect */
-#include "EffectContainer.h"
-#include "ParticleNode.h"
-#include "SpriteNode.h"
-#include "MeshNode.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -41,9 +35,7 @@ HRESULT CTestLevel::Initialize()
 
 HRESULT CTestLevel::Awake()
 {
-	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	// ============ Camera ==================================================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
@@ -51,54 +43,35 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
 	// =========================================================================
 
-	//==================== Effect =======================
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
-	//
-	//pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
-	//pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
-	//
-	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
-	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("test_particle.json")
-	//	.Position(_float3(0.f, 0.f, 0.f))
-	//	.Build("Test_Effect");
-	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	//===================================================
-
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 
-	// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
+	//// Ready MapObject key and path to ResourceMgr 
+	//Rake_MapResources();
 
-	//Map Loader Logic is going to Change
+	////Map Loader Logic is going to Change
 	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
 	//if (nullptr == pMapLoader)
 	//	MSG_BOX("Failed to Load MapData!");
-//	Safe_Release(pMapLoader);
+	//Safe_Release(pMapLoader);
 
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.CharacterController({})
 		.Build("Test_Model");
 
-	COLLIDER_DESC desc;
-	desc.bCooking = true;
-	desc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
-	auto testPlane = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestPlane" })
-		.Collider(desc)
-		.Build("Test_Plane");
-	//testModel->Get_Component<CTransform>()->Set_Pos({0.f, 10.f, 0.f});
-	auto cc = testModel->Get_Component<CCharacterController>();
-
-	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer" });
-	objMgr->Add_Object(testPlane, { "Test_Level", "Model_Layer" });
+	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 
+	COLLIDER_DESC colDesc;
+	colDesc.bCooking = true;
+	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+	CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+		.Collider(colDesc)
+		.Build("Test_Floor");
+
+	objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
@@ -117,9 +90,7 @@ HRESULT CTestLevel::Awake()
 	objMgr->Add_Object(sequenceCam, { "Test_Level", "Camera_Layer" });
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
-	//m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
-	m_pCamDirector->Register("Intro", "../bin/Resources/Test.cam");
-	m_pCamDirector->SetSpaceReference(testModel->Get_Handle());
+	m_pCamDirector->Register("Intro", "../bin/Resources/Intro_2.cam");
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
@@ -136,7 +107,8 @@ void CTestLevel::Update()
 	auto input = m_pGameInstance->Get_InputDev();
 
 	if (input->Key_Down('C'))
-		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 2.f, true, 2.f);
+		m_sequenceHandle = m_pCamDirector->RequestSequence("Intro", 1.f, true, 1.f);
+
 }
 
 void CTestLevel::Ready_Camera()

@@ -80,6 +80,7 @@ HRESULT CPhysicsLevel::Awake()
 	objRbDesc.fMass = 10.0f;
 
 	COLLIDER_DESC objColDesc = {};
+	objColDesc.bAutoFit = false;
 	objColDesc.eType = COLLIDER_TYPE::BOX;
 	objColDesc.vSize = { 10.f, 10.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };
