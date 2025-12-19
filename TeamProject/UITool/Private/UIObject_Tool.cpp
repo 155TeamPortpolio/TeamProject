@@ -239,6 +239,152 @@ void CUIObject_Tool::Render_GUI_Transform()
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 }
 
+void CUIObject_Tool::Render_GUI_Animation()
+{
+    ImGui::SeparatorText(u8"애니메이션");
+
+    {
+        // 클립 추가
+        static _int iCount = 0;
+        if (ImGui::Button(u8"클립 추가 +"))
+            m_AnimClips.push_back(UI_ANIM_CLIP("clip" + to_string(iCount++)));
+    } 
+
+    // 애니메이션 클립이 없으면 리턴
+    if (m_AnimClips.empty())
+        return;
+
+    // 클립 선택
+    static _int iClipIndex = -1;
+    string strCombined;
+    for (_int i = 0; i < m_AnimClips.size(); ++i)
+        strCombined += m_AnimClips[i].strName + '\0';
+    strCombined += '\0';
+    
+    ImGui::Combo(u8"클립", &iClipIndex, strCombined.c_str());
+    
+    // 클립 선택 없으면 리턴
+    if (-1 == iClipIndex)
+        return;
+    
+    // 선택한 클립 편집
+    char szBuffer[256] = {};
+    strcpy_s(szBuffer, m_AnimClips[iClipIndex].strName.c_str());
+    if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
+        m_AnimClips[iClipIndex].strName = szBuffer;
+
+    ImGui::InputFloat(u8"길이", &m_AnimClips[iClipIndex].fDuration);
+    ImGui::Checkbox(u8"루프", &m_AnimClips[iClipIndex].isLoop);
+
+    static bool showPopup = false;
+
+    if (ImGui::Button(u8"클립 편집"))
+        showPopup = true;
+
+    if (showPopup)
+    {
+        ImGui::SetNextWindowPos(ImVec2(760, 400), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(300, 300), ImGuiCond_Once);
+        ImGui::Begin(m_AnimClips[iClipIndex].strName.c_str(), &showPopup);
+
+        // 키프레임 추가
+        _bool isSelected = {};
+        static _int isSelect = {};
+        const _char* items[] = { u8"스케일", u8"로테이션", u8"위치", u8"컬러" };
+
+        if (ImGui::Button(u8"키프레임 추가 +"))
+            ImGui::OpenPopup("create_popup");
+
+        if (ImGui::BeginPopup("create_popup"))
+        {
+            for (int i = 0; i < IM_ARRAYSIZE(items); i++)
+            {
+                if (ImGui::Selectable(items[i], isSelect == i))
+                {
+                    isSelected = true;
+                    isSelect = i;
+                }
+            }
+            ImGui::EndPopup();
+        }
+
+        if (isSelected)
+        {
+            UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
+
+            if (isSelect == 0)                clip.m_ScaleKeyframes.push_back(UI_SCALE_KEYFRAME());
+            else if (isSelect == 1)           clip.m_RotationKeyframes.push_back(UI_ROTATION_KEYFRAME());
+            else if (isSelect == 2)           clip.m_PosKeyframes.push_back(UI_POS_KEYFRAME());
+            else if (isSelect == 3)           clip.m_ColorKeyframes.push_back(UI_COLOR_KEYFRAME());
+        }
+
+        // 키프레임 편집
+        _int idx = {};
+
+        ImGui::Text(u8"--- 스케일 키프레임 ---");
+        ImGui::Separator();
+        ImGui::PushID("scale");
+        idx = 0;
+        for (auto& keyframe : m_AnimClips[iClipIndex].m_ScaleKeyframes)
+        {
+            ImGui::PushID(idx++);
+            ImGui::InputFloat(u8"트랙포지션", &keyframe.fTrackPosition);
+            ImGui::InputFloat2(u8"스케일", reinterpret_cast<_float*>(&keyframe.value));
+            ImGui::Spacing();
+            ImGui::PopID();
+        }
+        ImGui::PopID();
+
+        ImGui::Text(u8"--- 회전 키프레임 ---");
+        ImGui::Separator();
+        ImGui::PushID("rotation");
+        idx = 0;
+        for (auto& keyframe : m_AnimClips[iClipIndex].m_RotationKeyframes)
+        {
+            ImGui::PushID(idx++);
+            ImGui::InputFloat(u8"트랙포지션", &keyframe.fTrackPosition);
+            ImGui::InputFloat(u8"각도", &keyframe.value);
+            ImGui::Spacing();
+            ImGui::PopID();
+        }
+        ImGui::PopID();
+
+        ImGui::Text(u8"--- 위치 키프레임 ---");
+        ImGui::Separator();
+        ImGui::PushID("position");
+        idx = 0;
+        for (auto& keyframe : m_AnimClips[iClipIndex].m_PosKeyframes)
+        {
+            ImGui::PushID(idx++);
+            ImGui::InputFloat(u8"트랙포지션", &keyframe.fTrackPosition);
+            ImGui::InputFloat2(u8"포지션", reinterpret_cast<_float*>(&keyframe.value));
+            ImGui::Spacing();
+            ImGui::PopID();
+        }
+        ImGui::PopID();
+
+        ImGui::Text(u8"--- 컬러 키프레임 ---");
+        ImGui::Separator();
+        ImGui::PushID("position");
+        idx = 0;
+        for (auto& keyframe : m_AnimClips[iClipIndex].m_ColorKeyframes)
+        {
+            ImGui::PushID(idx++);
+            ImGui::InputFloat(u8"트랙포지션", &keyframe.fTrackPosition);
+            ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&keyframe.value));
+            ImGui::Spacing();
+            ImGui::PopID();
+        }
+        ImGui::PopID();
+
+        ImGui::End();
+    } 
+}
+
+void CUIObject_Tool::Play_Animation(_float dt)
+{
+}
+
 void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
 {
     Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);

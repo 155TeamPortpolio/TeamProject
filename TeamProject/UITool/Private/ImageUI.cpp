@@ -3,6 +3,7 @@
 
 #include "Sprite2D.h"
 #include "UITool_Level.h"
+#include "Engine_Math.h"
 
 _uint CImageUI::m_iCount = {};
 
@@ -43,6 +44,7 @@ void CImageUI::Priority_Update(_float dt)
 
 void CImageUI::Update(_float dt)
 {
+    Play_Animation(dt);
 }
 
 void CImageUI::Late_Update(_float dt)
@@ -61,6 +63,8 @@ void CImageUI::Render_GUI()
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     if (ImGui::Combo(u8"¿ÃπÃ¡ˆ", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+
+    Render_GUI_Animation();
 }
 
 void CImageUI::ToJson(json& data)

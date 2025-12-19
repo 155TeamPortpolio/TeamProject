@@ -99,7 +99,7 @@ void CTextUI::Render_GUI()
         UpdateAnchorOffsetByAlign();
     }
 
-    if(ImGui::ColorPicker4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
+    if(ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
         Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
 
     {
@@ -108,7 +108,7 @@ void CTextUI::Render_GUI()
         _bool isChanged = {};
         isChanged |= ImGui::Checkbox(u8"외곽선", &m_isOutlined);
         isChanged |= ImGui::DragFloat(u8"굵기", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-        isChanged |= ImGui::ColorPicker4(u8"외곽선 컬러", reinterpret_cast<_float*>(&m_vOutlineColor));
+        isChanged |= ImGui::ColorEdit4(u8"외곽선 컬러", reinterpret_cast<_float*>(&m_vOutlineColor));
 
         if (!isChanged)
             return;
