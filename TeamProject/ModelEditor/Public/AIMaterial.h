@@ -26,7 +26,8 @@ private:
     _bool MaterialTabOpened = { false };
     int m_currentTextureTypeIndex = {};
     vector<_uint> textureTypes;
-
+    vector<string> m_LogMsgs;
+    _bool m_bSpecific = false;
 public:
     static CAIMaterial* Create(const aiMaterial* pAIMaterial, const string& fileDirectory);
     static CAIMaterial* Create(const string& name);

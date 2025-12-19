@@ -378,9 +378,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao;
+    float3 ambient = vDiffuse.rgb * vAmbient.g * (1 - ssao);
     ambient = max(ambient, vDiffuse.rgb * 0.15f); 
-    
+
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
