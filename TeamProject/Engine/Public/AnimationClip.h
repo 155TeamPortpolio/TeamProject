@@ -22,21 +22,6 @@ public:
 		_bool isLoop,
 		_bool* isAnimEnd);
 
-	//현재 키프레임을 기준으로 다음 애니매이션을 보간
-	_bool ConvertTo(vector<_float4x4>& transfomationMatrices,
-		 CAnimationClip& DestAnimation, 
-		_float fConvertDuration, 
-		_float PrevTrackPosition, 
-		_float ConversionTrackPosition);
-
-	//현재 트랙포지션 기준으로 다음 애니매이션을 보간
-	_bool ConvertByCurrentMatrix(
-		vector<_float4x4>& transfomationMatrices, 
-		CAnimationClip& DestAnimation,
-		_float fConvertDuration,
-		_float PrevTrackPosition,
-		_float ConversionTrackPosition);
-
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
 

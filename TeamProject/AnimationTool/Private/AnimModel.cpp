@@ -186,6 +186,10 @@ void CAnimModel::Set_Animator()
 
 	string metaPath = Helper::OpenFile_Dialogue();
 	string metaTag = Helper::GetFileNameWithExtension(metaPath);
+
+	if ("" == metaTag)
+		return;
+
 	ResMgr->Add_ResourcePath(metaTag, metaPath);
 
 	Add_Component<CAnimator3D>();
