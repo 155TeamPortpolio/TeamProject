@@ -28,6 +28,22 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
+	MESH_NODE* pMeshNode = static_cast<MESH_NODE*>(pArg);
+
+	CMaterial* pMaterial = Get_Component<CMaterial>();
+	if (FAILED(pMaterial->Link_Material(G_GlobalLevelKey, pMeshNode->MaterialTag)))
+	{
+		MSG_BOX("Material Link Failed : CMeshNode");
+		return E_FAIL;
+	}
+	
+	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
+	pMaterialInstance->Set_Blended(true);
+	pMaterialInstance->Override_Pass("UVAnimation");
+
+	CStaticModel* pModel = Get_Component<CStaticModel>();
+	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
+
 	return S_OK;
 }
 
