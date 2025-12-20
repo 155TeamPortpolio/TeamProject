@@ -327,3 +327,4 @@ _bool CStateMachine<Type>::Get_Trigger(const string& strParam) const
 }
 
 template class CStateMachine<class CCharacter>;
+template class CStateMachine<class CTestObject>;

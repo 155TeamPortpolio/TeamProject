@@ -15,6 +15,15 @@ CCharacterController::CCharacterController(const CCharacterController& rhs)
 {
 }
 
+void CCharacterController::Set_Velocity(_fvector vVelocity)
+{
+	_float3 vIn;
+	XMStoreFloat3(&vIn, vVelocity);
+	m_vVelocity.x = vIn.x;
+	m_vVelocity.y = vIn.y;
+	m_vVelocity.z = vIn.z;
+}
+
 void CCharacterController::Set_PlanarVelocity(_fvector vVelocity)
 {
 	_float3 vIn;

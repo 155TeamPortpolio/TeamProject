@@ -69,5 +69,6 @@ private:
 };
 
 using CCharacterStateMachine = CStateMachine<class CCharacter>;
+using CTestObjectStateMachine = CStateMachine<class CTestObject>;
 
 NS_END
