@@ -15,7 +15,6 @@ CThreadPool::CThreadPool(_uint threadCount)
 
 CThreadPool::~CThreadPool()
 {
-    ShutDown();
 }
 
 /*일 없으면 잠들고, 일 생기면 하나 꺼내서 실행하고, stop이면 종료*/
@@ -83,7 +82,7 @@ void CThreadPool::ShutDown()
     }
 }
 
-void CThreadPool::Wait_Idle()
+void CThreadPool::Wait_Idle()/*이건 워커가 아닌 호출자를 위한 것*/
 {
     /*일단 쓰레드 잠그고*/
     unique_lock<mutex> lock(m_mutex);
@@ -100,6 +99,12 @@ bool CThreadPool::isQueueEmpty() const
     return m_Queues.empty();
 }
 
+CThreadPool* CThreadPool::Create(_uint threadCount)
+{
+    new CThreadPool(threadCount);
+}
+
 void CThreadPool::Free()
 {
+    ShutDown();
 }

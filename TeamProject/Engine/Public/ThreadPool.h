@@ -25,14 +25,15 @@ private:
     void Wait_Idle();
     bool isQueueEmpty() const;
 
-private:
+public:
     template <class Function, class... Args>/*후행 반환 타입 : Function을 args로 호출 했을 때 나오는 타입을 후행으로 선언하는 문법*/
-    auto enqueue(Function&& f, Args&&... args)->future<invoke_result_t<Function, Args...>>;
+    auto enqueue(Function&& func, Args&&... args)->future<invoke_result_t<Function, Args...>>;
 
 private:
-    atomic<_bool> m_bStop;
-    atomic<_int>  m_iActive;
-    mutable mutex m_mutex; /*잠금 -> 콘스트 떔시*/
+    /*현재 진행 중입니까?*/atomic<_bool> m_bStop;
+    /*지금 작업 몇개 진행 중입니까?*/atomic<_int>  m_iActive;
+
+    mutable mutex m_mutex; /*잠금 -> 콘스트 때문시*/
     condition_variable m_ConditionVariable; /*현재 상태*/
     deque<function<void()>> m_Queues; /*작업 큐*/
     vector<thread> m_Workers; /*쓰레드 풀*/
@@ -42,18 +43,17 @@ private:
     condition_variable m_idleConditionVariable;
 
 public:
-    static CThreadPool* Create();
+    static CThreadPool* Create(_uint threadCount);
     virtual void Free() override;
 };
 NS_END
+
 
 template<class Function, class ...Args>
 inline auto CThreadPool::enqueue(Function&& func, Args && ...args) -> future<invoke_result_t<Function, Args ...>>
 {
     //invoke_result_t 후행 반환 타입 -> 템플릿 타입 반환값이 복잡할 때 사용
     using Return =invoke_result_t<Function, Args...>;
-
-
 
     /*packaged_task :  Return을 돌려주는 함수 객체를 저장해줌 -> 여기서 Return()은 호출이 아닌 타입임.*/
     auto task = make_shared<packaged_task<Return()>>(
@@ -86,3 +86,6 @@ inline auto CThreadPool::enqueue(Function&& func, Args && ...args) -> future<inv
 //동시에 건드리면 망가질 수 있는 공유 데이터를, 한 번에 한 스레드만 접근하게 막아주는 “잠금 장치”
 /*condition_variable*/
 //필수적인 것은 아니지만, 워커 쓰레드가 할 일이 없을 떄 계속 포문을 돌면서 락언락을 할 필요 없이, 재웠다가 꺠우는 역할임
+
+
+/*퓨처는 미래에 값이 들어올 것을 예상하고 던지는- 핸들임. 나중에 값이 진짜 들어오면 퓨처에서 꺼낼 수 있다.*/
