@@ -8,8 +8,7 @@
 
 void CTestState_Idle::Enter(CTestObject* pOwner)
 {
-    for (_uint i = 0; i < 3; i++)
-        pOwner->Get_Component<CAnimator3D>()->Set_Animation(i, 2);
+    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 2);
 
     CCharacterController* pCCt = pOwner->Get_Component<CCharacterController>();
     if (pCCt)

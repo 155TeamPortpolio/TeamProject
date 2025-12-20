@@ -9,8 +9,7 @@
 
 void CTestState_Jump::Enter(CTestObject* pOwner)
 {
-    for (_uint i = 0; i < 3; i++)
-        pOwner->Get_Component<CAnimator3D>()->Set_Animation(i, 1);
+    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 1);
 
     CCharacterController* pCCT = pOwner->Get_Component<CCharacterController>();
     if (pCCT)

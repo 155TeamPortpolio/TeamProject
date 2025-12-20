@@ -9,8 +9,7 @@
 
 void CTestState_Walk::Enter(CTestObject* pOwner)
 {
-    for (_uint i = 0; i < 3; i++)
-        pOwner->Get_Component<CAnimator3D>()->Set_Animation(i, 9);
+    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 9);
 }
 
 void CTestState_Walk::Update(CTestObject* pOwner, _float fTimeDelta)
