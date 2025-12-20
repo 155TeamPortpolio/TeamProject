@@ -17,5 +17,3 @@
 
 #include "Helper_Func.h"
 #include "Engine_Math.h"
-
-using namespace Helper;

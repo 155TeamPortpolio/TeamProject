@@ -5,6 +5,7 @@
 #include "EditCamera.h"
 #include "EditModel.h"
 #include "Camera.h"
+#include "FreeCam.h"
 
 CModelEditLevel::CModelEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -21,7 +22,7 @@ HRESULT CModelEditLevel::Initialize()
 HRESULT CModelEditLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditCamera", CEditCamera::Create());
+	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditCamera", CFreeCam::Create());
 	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
 
 

@@ -1,8 +1,7 @@
 #pragma once
 
 #include "GameObject.h"
-#include "Camera_Enum.h"
-#include "Camera_Struct.h"
+#include "CameraMgr.h"
 
 #define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
 #define GAME  CGameInstance::GetInstance()
@@ -12,7 +11,7 @@ NS_BEGIN(Engine)
 class CGameInstance; class CLight;
 NS_END
 
-NS_BEGIN(AnimTool)
+NS_BEGIN(ModelEdit)
 class CCamObject abstract : public CGameObject
 {
 protected:

@@ -31,19 +31,19 @@ void CFreeCam::Priority_Update(_float dt)
     const _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
     const _vector4 right4 = m_pTransform->Dir(STATE::RIGHT);
 
-    const _vector3 look{ look4.x, look4.y, look4.z };
-    const _vector3 right{ right4.x, right4.y, right4.z };
+    const _vector3 look{look4.x, look4.y, look4.z};
+    const _vector3 right{right4.x, right4.y, right4.z};
 
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (input->Key_Down('W')) move += look  *  speed;
-    if (input->Key_Down('S')) move += look  * -speed;
-    if (input->Key_Down('D')) move += right *  speed;
+    if (input->Key_Down('W')) move += look * speed;
+    if (input->Key_Down('S')) move += look * -speed;
+    if (input->Key_Down('D')) move += right * speed;
     if (input->Key_Down('A')) move += right * -speed;
 
     if (move.LengthSquared() > 0.f)
-        m_pTransform->Translate({ move.x, move.y, move.z, 0.f });
+        m_pTransform->Translate({move.x, move.y, move.z, 0.f});
 }
 
 void CFreeCam::ApplyRotation(_float dt)
@@ -65,7 +65,7 @@ void CFreeCam::ApplyRotation(_float dt)
 void CFreeCam::SyncRotation()
 {
     const _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
-    const _vector3 forward{ look4.x, look4.y, look4.z };
+    const _vector3 forward{look4.x, look4.y, look4.z};
 
     const float yawRad = atan2f(forward.x, forward.z);
     const float pitchRad = asinf(clamp(-forward.y, -1.f, 1.f));

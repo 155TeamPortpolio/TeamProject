@@ -5,8 +5,6 @@
 HRESULT CFreeCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_eCamType = CamType::Debug;
-    m_eRigType = CamRigType::Free;
     return S_OK;
 }
 
