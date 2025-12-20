@@ -7,7 +7,7 @@
 namespace Client {
 	static constexpr unsigned int g_iWinSizeX = 1920;
 	static constexpr unsigned int g_iWinSizeY = 1080;
-	static constexpr unsigned int g_iMainFrame = 144;
+	static constexpr unsigned int g_iMainFrame = 10000;
 }
 
 extern HWND g_hWnd;

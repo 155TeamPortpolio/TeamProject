@@ -190,6 +190,15 @@ void COrbitCam::Render_GUI()
     {
         ImGui::PushID("OrbitCam_RenderGUI");
 
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
+
         ImGui::DragFloat(u8"OffsetY", &m_offsetY, 0.01f, -10.f, 10.f);
 
         ImGui::Separator();
