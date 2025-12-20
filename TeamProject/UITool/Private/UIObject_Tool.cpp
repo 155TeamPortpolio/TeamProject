@@ -295,7 +295,7 @@ void CUIObject_Tool::Render_GUI_Animation()
     // 클립 추가
     {
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(u8"클립 : ");
+        ImGui::Text((u8"클립 (" + to_string(m_AnimClips.size()) + ")").c_str());
 
         ImGui::SameLine();
         static _int iCount = 0;
@@ -336,20 +336,21 @@ void CUIObject_Tool::Render_GUI_Animation()
 
     if (showPopup)
     {
+        UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
+
         ImGui::SetNextWindowPos(ImVec2(880, 400), ImGuiCond_Once);
         ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
-        ImGui::Begin(m_AnimClips[iClipIndex].strName.c_str(), &showPopup);
+        ImGui::Begin(clip.strName.c_str(), &showPopup);
 
         // 선택한 클립 편집
-        ImGui::SeparatorText(u8"클립");
         char szBuffer[256] = {};
-        strcpy_s(szBuffer, m_AnimClips[iClipIndex].strName.c_str());
+        strcpy_s(szBuffer, clip.strName.c_str());
         if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
-            m_AnimClips[iClipIndex].strName = szBuffer;
+            clip.strName = szBuffer;
 
-        ImGui::InputFloat(u8"길이", &m_AnimClips[iClipIndex].fDuration);
-        ImGui::Checkbox(u8"루프", &m_AnimClips[iClipIndex].isLoop);
-        ImGui::BeginDisabled(m_AnimClips[iClipIndex].keyframes.empty());
+        ImGui::InputFloat(u8"길이", &clip.fDuration);
+        ImGui::Checkbox(u8"루프", &clip.isLoop);
+        ImGui::BeginDisabled(clip.keyframes.empty());
         if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
         {
             m_isBlending = !m_isBlending;
@@ -362,26 +363,26 @@ void CUIObject_Tool::Render_GUI_Animation()
         else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped");
 
         // 키프레임 추가
-        ImGui::SeparatorText(u8"키프레임");
+        ImGui::SeparatorText((u8"키프레임 ( " + to_string(clip.keyframes.size()) + " )").c_str());
         if (ImGui::Button(u8"추가 +"))
         {
             _float fTime = {};
-            if (!m_AnimClips[iClipIndex].keyframes.empty())
-                fTime = min(m_AnimClips[iClipIndex].keyframes.back().fTime + 0.5f, m_AnimClips[iClipIndex].fDuration);
+            if (!clip.keyframes.empty())
+                fTime = min(clip.keyframes.back().fTime + 0.5f, clip.fDuration);
 
-            m_AnimClips[iClipIndex].keyframes.push_back(UI_KEYFRAME(fTime));
+            clip.keyframes.push_back(UI_KEYFRAME(fTime));
         }
         ImGui::SameLine();
         if (ImGui::Button(u8"삭제 -"))
         {
-            if(!m_AnimClips[iClipIndex].keyframes.empty())
-                m_AnimClips[iClipIndex].keyframes.pop_back();
+            if(!clip.keyframes.empty())
+                clip.keyframes.pop_back();
         }
 
         // 키프레임 편집 
         ImGui::Separator();
         int idx = 0;
-        for (auto& keyframe : m_AnimClips[iClipIndex].keyframes)
+        for (auto& keyframe : clip.keyframes)
         {
             ImGui::PushID(idx);
 
@@ -389,7 +390,7 @@ void CUIObject_Tool::Render_GUI_Animation()
             {
                 ImGui::TreePush("##Content");
 
-                ImGui::DragFloat(u8"시간", &keyframe.fTime, 0.1f, 0.f, m_AnimClips[iClipIndex].fDuration, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat(u8"시간", &keyframe.fTime, 0.1f, 0.f, clip.fDuration, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat2(u8"스케일", reinterpret_cast<_float*>(&keyframe.vScale), 0.1f, 0.f, 100.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat(u8"각도", &keyframe.fAngle, 1.f, -180.f, 180.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&keyframe.vPosition), 0.1f);
