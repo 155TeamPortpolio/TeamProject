@@ -16,19 +16,33 @@ struct Particle
 cbuffer CBFrame : register(b0)
 {
     float fDeltaTime;
+    uint iAliveCount;
     uint iMaxParticles;
     uint UseGravity;
     float fGravityScale;
-}
+    float3 framePad;
+};
 
-// 살아있는 파티클 슬롯 인덱스 목록
+/* 파티클 생성에 필요한 파라미터 */
+cbuffer CBSpawn : register(b1)
+{
+    uint iSpawnCount;
+    uint3 spawnPad;
+};
+
+/* 이번 프레임에 생성 할 파티클의 데이터들, cpu에서 계산해서 올려줌 */
+StructuredBuffer<Particle> SpawnIn : register(t1);
+
+/* 이번 프레임에 살아있는 파티클들의 인덱스가 담겨있음 -> 파티클 업데이트에서 사용 */
 StructuredBuffer<uint> AliveIn : register(t0);
 
-// 다음 프레임 Alive 인덱스 리스트(append)
+/* 다음 프레임에 사용 할 살아있는 파티클들의 인덱스, AliveIn을 통해 들어온 파티클들이 갱신되어 만들어진 값들 */
 AppendStructuredBuffer<uint> AliveOut : register(u0);
 
-// 죽은 슬롯 반환 리스트(append)
-AppendStructuredBuffer<uint> DeadIndices : register(u1);
 
-// 파티클 데이터 풀(갱신 대상)
+/* 파티클 업데이트 -> append    파티클 스폰 -> consume*/
+AppendStructuredBuffer<uint> DeadAppend : register(u1);
+ConsumeStructuredBuffer<uint> DeadConsume : register(u1);
+
+/* 전체 파티클 데이터 */
 RWStructuredBuffer<Particle> Particles : register(u2);

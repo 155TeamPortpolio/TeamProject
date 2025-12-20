@@ -9,6 +9,9 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 
+#include "StructuredBuffer.h"
+#include "ComputeShader.h"
+
 /*Module*/
 #include "IParticleModule.h"
 #include "LifeTimeVelocity.h"
@@ -50,10 +53,19 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	Safe_AddRef(m_pTextureSheetAnimation);
 	Safe_AddRef(m_pNoise);
 
-	/*---------------Gpu Buffer-------------*/
+	/*---------------Compute Shader-------------*/
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 
-	HRSULT hr = 
+	{
+		CStructuredBuffer::DESC Desc{};
+
+	}
+
+
+	m_ComputeShaders.resize(static_cast<_uint>(SHADER::END));
+
+
+	
 	
 	return S_OK;
 }

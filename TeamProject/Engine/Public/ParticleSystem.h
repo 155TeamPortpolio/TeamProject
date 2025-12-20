@@ -36,6 +36,7 @@ public:
 		_float2 pad{};
 	}PARTICLE_GPU;
 
+	enum class SHADER { SPAWN, BASIC, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 protected:
 	CParticleSystem();
@@ -122,13 +123,15 @@ private:
 	vector<class IParticleModule*> m_Modules;
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
-
-	/*Buffer*/
-	ID3D11Buffer* m_pParticleBuffer = { nullptr };
-	ID3D11Buffer* m_pDeadIndicesBuffer = { nullptr };
-
-	/*Compute Shaders*/
-	class CComputeShader* m_pCSParticleBasic = { nullptr };
+	class CStructuredBuffer* m_pParticlesBuffer = { nullptr };
+	class CStructuredBuffer* m_pDeadListBuffer = { nullptr };
+	class CStructuredBuffer* m_pAliveBuffer[2] = {};
+	class CStructuredBuffer* m_pSpawnInBuffer = { nullptr };
+	
+	vector<class CComputeShader*> m_ComputeShaders;
+	ID3D11Buffer* m_pFrameBuffer = { nullptr };
+	ID3D11Buffer* m_pSpawnBuffer = { nullptr };
+	_uint m_iAliveCount{};
 
 public:
 	static CParticleSystem* Create();

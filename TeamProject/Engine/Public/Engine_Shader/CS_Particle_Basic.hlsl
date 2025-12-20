@@ -1,10 +1,10 @@
 #include "CS_Particle.hlsli"
 
-[numthreads(256,1,1)]
-void CS_MAIN(uint3 DTid : SV_DispatchThreadID)
+[numthreads(256,1,1)] /*계산에 사용할 스레드 그룹 x,y,z의 좌표로 각 스레드를 식별 함, 그룹에 포함된 스레드 갯수는 x*y*z 만큼 */
+void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
 {
-    uint i = DTid.x;
-    if(i>=iMaxParticles)
+    uint i = DispatchThreadID.x;
+    if (i >= iAliveCount)
         return;
     
     Particle p = Particles[i];
@@ -18,7 +18,7 @@ void CS_MAIN(uint3 DTid : SV_DispatchThreadID)
     {
         p.IsAlive = 0;
         Particles[i] = p;
-        DeadIndices.Append(i);
+        DeadAppend.Append(i); /* 죽은 파티클 append에 추가 */
         return;
     }
     

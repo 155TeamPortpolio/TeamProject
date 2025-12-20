@@ -484,6 +484,9 @@
     <ClInclude Include="..\Public\ComputeShader.h">
       <Filter>01. Utility\05. Resources\08. Compute Shader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\StructuredBuffer.h">
+      <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -906,6 +909,9 @@
     <Filter Include="98. BasicShader\Compute Shader">
       <UniqueIdentifier>{f1430c7b-2cf0-40f4-832e-3c52075693be}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
+      <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1304,6 +1310,9 @@
     <ClCompile Include="..\Private\ComputeShader.cpp">
       <Filter>01. Utility\05. Resources\08. Compute Shader</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\StructuredBuffer.cpp">
+      <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1358,6 +1367,9 @@
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
   </ItemGroup>

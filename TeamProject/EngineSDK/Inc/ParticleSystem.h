@@ -22,6 +22,22 @@ public:
 		_float fNoiseFrequency{};
 	}PARTICLE;
 
+	typedef struct tagParticle_GPU
+	{
+		_uint IsAlive{};
+		_float3 vPosition{};
+		_float3 vVelocity{};
+		_float4 vColor{};
+		_float fLifeTime{};
+		_float fMaxLifeTime{};
+		_float2 vStartSize{};
+		_float2 vSize{};
+		_float fNoiseFrequency{};
+		_float2 pad{};
+	}PARTICLE_GPU;
+
+	enum class BUFFER { SPAWN_IN, ALIVE_IN, ALIVE_OUT, DEAD_LIST, PARTICLES, END };
+	enum class SHADER { SPAWN, BASIC, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 protected:
 	CParticleSystem();
@@ -108,13 +124,11 @@ private:
 	vector<class IParticleModule*> m_Modules;
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
-
-	/*Buffer*/
-	ID3D11Buffer* m_pParticleBuffer = { nullptr };
-	ID3D11Buffer* m_pDeadIndicesBuffer = { nullptr };
-
-	/*Compute Shaders*/
-	class CComputeShader* m_pCSParticleBasic = { nullptr };
+	vector<class CStructuredBuffer*> m_Buffers;
+	vector<class CComputeShader*> m_ComputeShaders;
+	ID3D11Buffer* m_pFrameBuffer = { nullptr };
+	ID3D11Buffer* m_pSpawnBuffer = { nullptr };
+	_uint m_iAliveCount{};
 
 public:
 	static CParticleSystem* Create();
