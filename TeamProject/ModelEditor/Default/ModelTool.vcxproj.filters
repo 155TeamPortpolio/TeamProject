@@ -64,6 +64,18 @@
     <Filter Include="04. AIResource\AIAnimation\AIAnimationClip\AIChannel">
       <UniqueIdentifier>{b0661ef4-aca7-42df-836f-bc272cbb7062}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object">
+      <UniqueIdentifier>{3bd974bc-1339-4471-8d9e-5c9c6200aa87}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\ModelObject">
+      <UniqueIdentifier>{bb36c00a-1407-442c-87db-d81028ac2b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Camera">
+      <UniqueIdentifier>{c8f2b36a-b9b3-43c7-bbaf-d30b1bbecc0e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Light">
+      <UniqueIdentifier>{52d7a695-68d8-4d6f-9f27-c087f1fcc24a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -96,12 +108,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\pch.h">
       <Filter>99. Defines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\EditCamera.h">
-      <Filter>01. Level\02. ModelObject\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\EditModel.h">
-      <Filter>01. Level\02. ModelObject\Model</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ModelEditLevel.h">
       <Filter>01. Level</Filter>
@@ -187,6 +193,15 @@
     <ClInclude Include="..\public\AIChannel.h">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EditModel.h">
+      <Filter>02. Object\ModelObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h">
+      <Filter>02. Object\Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LightObject.h">
+      <Filter>02. Object\Light</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -200,9 +215,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\ModelEditLevel.cpp">
       <Filter>01. Level</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\EditCamera.cpp">
-      <Filter>01. Level\02. ModelObject\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AI_SKModel.cpp">
       <Filter>03. Component\AIModel\SK_Model</Filter>
@@ -218,9 +230,6 @@
     </ClCompile>
     <ClCompile Include="..\private\AIMesh.cpp">
       <Filter>04. AIResource\AIModelData\AIMesh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\EditModel.cpp">
-      <Filter>01. Level\02. ModelObject\Model</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AIMaterial.cpp">
       <Filter>04. AIResource\AIMaterial</Filter>
@@ -275,6 +284,15 @@
     </ClCompile>
     <ClCompile Include="..\private\AIChannel.cpp">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditModel.cpp">
+      <Filter>02. Object\ModelObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp">
+      <Filter>02. Object\Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LightObject.cpp">
+      <Filter>02. Object\Light</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
