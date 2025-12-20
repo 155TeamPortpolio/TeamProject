@@ -79,8 +79,6 @@ namespace
 void CCamPanel::Init()
 {
     debugSequence.name         = "DebugSequence";
-    debugSequence.camType      = CamType::Cinematic;
-    debugSequence.rigType      = CamRigType::Free;
     debugSequence.projType     = CamProjType::Perspective;
     debugSequence.playbackMode = CamPlaybackMode::Once;
 

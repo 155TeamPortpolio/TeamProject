@@ -34,9 +34,6 @@ HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    m_eCamType = CamType::GamePlay;
-    m_eRigType = CamRigType::Free;
-
     m_rotDegCur   = m_rotDegTarget;
     m_distanceCur = m_distanceTarget;
 

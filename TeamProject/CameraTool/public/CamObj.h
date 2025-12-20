@@ -32,8 +32,6 @@ protected:
     CGameInstance* game{};
     CCamera*       cam{};
     CLight*        light{};
-    CamType        camType = CamType::Debug;
-    CamRigType     rigType = CamRigType::Free;
     CTransform*&   transform;
 
 public:

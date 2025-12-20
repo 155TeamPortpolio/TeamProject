@@ -4,8 +4,6 @@
 HRESULT CSequenceCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_eCamType = CamType::Cinematic;
-    m_eRigType = CamRigType::Free;
     m_sequencePlayer = Add_Component<CCamSequencePlayer>();
     return S_OK;
 }
