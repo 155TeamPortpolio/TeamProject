@@ -40,6 +40,7 @@ private:
     void Reset_Panel();
     void Add_Event();
     void Save_Event();
+    ImU32 GetEventColor(CLIP_EVENT_TYPE eType);
     /* Create Json MetaData */
     void Load_Clips();
     void Create_Clips(vector<ANIM_CLIP>& pMetaData , const string& ClipTag, const string& FilePath);

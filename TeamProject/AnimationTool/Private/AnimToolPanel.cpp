@@ -241,6 +241,15 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 	float cx = barPos.x + barSize.x * t01;
 	dl->AddLine(ImVec2(cx, barPos.y - 2.f), ImVec2(cx, barPos.y + barSize.y + 2.f), colCursor, 2.0f);
 
+	//클립마다 타임라인에 막대기 보이도록
+	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
+		for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
+			float t = clamp(Event.EventTime / endT, 0.f, 1.f);
+			float x = barPos.x + barSize.x * t;
+			dl->AddLine(ImVec2(x, barPos.y + 2.f), ImVec2(x, barPos.y + barSize.y - 2.f), GetEventColor(Event.EventType), 3.f);
+		}
+	}
+
 	ImVec2 tri0(cx, barPos.y + barSize.y + 1.f);
 	ImVec2 tri1(cx - 5.f, barPos.y + barSize.y + 9.f);
 	ImVec2 tri2(cx + 5.f, barPos.y + barSize.y + 9.f);
@@ -424,6 +433,17 @@ void CAnimToolPanel::Save_Event()
 
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, MetaPath);
+}
+
+ImU32 CAnimToolPanel::GetEventColor(CLIP_EVENT_TYPE eType)
+{
+	switch (eType)
+	{
+	case CLIP_EVENT_TYPE::NOTIFY: return IM_COL32(120, 200, 255, 255);
+	case CLIP_EVENT_TYPE::EFFECT: return IM_COL32(120, 255, 120, 255);
+	case CLIP_EVENT_TYPE::SOUND:  return IM_COL32(255, 200, 120, 255);
+	default:                      return IM_COL32(200, 200, 200, 255);
+	}
 }
 
 void CAnimToolPanel::Load_Clips()
