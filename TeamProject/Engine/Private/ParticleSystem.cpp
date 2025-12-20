@@ -92,6 +92,33 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 		pDevice->CreateBuffer(&desc, nullptr, &m_pCBDeadListInitBuffer);
 	}
 	
+	/* GPU Count Buffer */
+	{
+		D3D11_BUFFER_DESC Desc{};
+		Desc.ByteWidth = sizeof(_uint);
+		Desc.Usage = D3D11_USAGE_DEFAULT;
+		Desc.BindFlags = 0;
+		Desc.MiscFlags = 0;
+		Desc.CPUAccessFlags = 0;
+		Desc.StructureByteStride = 0;
+
+		pDevice->CreateBuffer(&Desc, nullptr, &m_pCounterGPU);
+	}
+
+	/* GPU Staging Buffer */
+	{
+		D3D11_BUFFER_DESC Desc{};
+		Desc.ByteWidth = sizeof(_uint);
+		Desc.Usage = D3D11_USAGE_STAGING;
+		Desc.BindFlags = 0;
+		Desc.MiscFlags = 0;
+		Desc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		Desc.StructureByteStride = 0;
+
+		pDevice->CreateBuffer(&Desc, nullptr, &m_pCounterStaging);
+	}
+
+
 	/* Set Compute Shader */
 	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	m_ComputeShaders.resize(static_cast<_uint>(SHADER::END));
@@ -265,8 +292,11 @@ void CParticleSystem::Simulation_Particle(_float dt)
 	if (m_fElapsedTime >= m_fDelayDuration)
 	{
 		SpawnParticles(dt);
+		ResetAliveOut();
+		UploadSpawnIn();
 		UpdateParticles(dt);
-		BuildInstanceData();
+		ReadAliveOutCount();
+		swap(m_iAliveInIndex, m_iAliveOutIndex);
 	}
 }
 
@@ -366,22 +396,44 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 	}
 }
 
+void CParticleSystem::ReadAliveOutCount()
+{
+	ID3D11DeviceContext* pDeviceContext = CGameInstance::GetInstance()->Get_Context();
+	ID3D11UnorderedAccessView* pUAV = m_pAliveBuffer[m_iAliveOutIndex]->GetUAV();
+
+	pDeviceContext->CopyStructureCount(m_pCounterGPU, 0, pUAV);
+	pDeviceContext->CopyResource(m_pCounterStaging, m_pCounterGPU);
+
+	D3D11_MAPPED_SUBRESOURCE mapSubResource{};
+	if (FAILED(pDeviceContext->Map(m_pCounterStaging, 0, D3D11_MAP_READ, 0, &mapSubResource)))
+		m_iAliveCount = 0;
+
+	_uint iCount = *reinterpret_cast<_uint*>(mapSubResource.pData);
+	pDeviceContext->Unmap(m_pCounterStaging, 0);
+
+	m_iAliveCount = iCount;
+}
 void CParticleSystem::SpawnParticles(_float dt)
 {
+	m_SpawnList.clear();
+
 	if (m_iBurstCount > 0) /*Use Burst*/
 	{
-		_uint iBurstCount = m_iBurstCount;
+		_uint iCapacityLeft = (m_iMaxSpawnParticleCount > m_iAliveCount)
+			? (m_iMaxSpawnParticleCount - m_iAliveCount)
+			: 0;
+
+		_uint iSpawnCount = m_iBurstCount;
+		iSpawnCount = min(iSpawnCount, iCapacityLeft);
+
 		m_iBurstCount = 0;
 
-		for (_uint i = 0; i < iBurstCount; ++i)
+		for (_uint i = 0; i < iSpawnCount; ++i)
 		{
-			if (m_DeadParticleIndices.empty())
-				break;
-
-			auto& particle = m_Particles[m_DeadParticleIndices.back()];
-			m_DeadParticleIndices.pop_back();
-
+			PARTICLE_GPU particle{};
 			SetUpParticle(particle);
+
+			m_SpawnList.push_back(particle);
 		}
 	}
 	else
@@ -390,63 +442,141 @@ void CParticleSystem::SpawnParticles(_float dt)
 			return;
 
 		m_fSpawnAcc += m_fSpawnPerSec * dt;
+		_uint iCapacityLeft = (m_iMaxSpawnParticleCount > m_iAliveCount) ? (m_iMaxSpawnParticleCount - m_iAliveCount) : 0;
 		_uint iSpawnCount = static_cast<_uint>(m_fSpawnAcc);
+		iSpawnCount = min(iSpawnCount, iCapacityLeft);
 
 		if (iSpawnCount > 0)
 		{
 			m_fSpawnAcc -= static_cast<_float>(iSpawnCount);
-			m_iSpawnParticleCount += iSpawnCount;
+
+			if(!m_IsLoop) /*루프가 아닐때만 누적*/
+				m_iSpawnParticleCount += iSpawnCount;
 
 			for (_uint i = 0; i < iSpawnCount; ++i)
 			{
-				if (m_DeadParticleIndices.empty())
-					break;
-
-				auto& particle = m_Particles[m_DeadParticleIndices.back()];
-				m_DeadParticleIndices.pop_back();
-
+				PARTICLE_GPU particle{};
 				SetUpParticle(particle);
+
+				m_SpawnList.push_back(particle);
 			}
 		}
 	}
 }
 
-void CParticleSystem::UpdateParticles(_float dt)
+void CParticleSystem::ResetAliveOut()
 {
-	for (_uint i = 0; i < m_Particles.size(); ++i)
+	_uint iSpawnCount = m_SpawnList.size();
+	
+	if (m_iAliveCount > 0)
 	{
-		auto& particle = m_Particles[i];
+		ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
+		ID3D11UnorderedAccessView* pUAV = m_pAliveBuffer[m_iAliveOutIndex]->GetUAV();
+		_uint initialCount = 0;
 
-		if (!particle.isAlive)
-			continue;
-
-		particle.fLifeTime += dt;
-		if (particle.fLifeTime >= particle.fMaxLifeTime)
-		{
-			particle.isAlive = false;
-			m_DeadParticleIndices.push_back(i);
-		}
-
-		for (const auto& module : m_Modules)
-			module->Update(particle, dt);
-
-		_vector3 currPosition = particle.vPosition;
-		_vector3 nextPosition;
-		if (m_UseGravity)
-		{
-			_vector3 velocity = particle.vVelocity;
-			velocity.y -= m_fGravityScale * 10.f * dt;
-			particle.vVelocity = velocity;
-		}
-		
-		nextPosition = currPosition + particle.vVelocity * dt;
-		particle.vPosition = nextPosition;
+		pContext->CSSetUnorderedAccessViews(0, 1, &pUAV, &initialCount);
 	}
 }
 
-void CParticleSystem::SetUpParticle(PARTICLE& particle) const
+void CParticleSystem::UploadSpawnIn()
 {
-	particle.isAlive = true;
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
+
+	_uint iSpawnCount = m_SpawnList.size();
+	if (iSpawnCount <= 0)
+		return;
+
+	auto pComputeShader = m_ComputeShaders[ENUM(SHADER::SPAWN)];
+
+	{
+		D3D11_MAPPED_SUBRESOURCE mapSubResource{};
+		pContext->Map(m_pSpawnInBuffer->GetBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
+		memcpy_s(mapSubResource.pData, m_pSpawnInBuffer->GetCount() * sizeof(PARTICLE_GPU), m_SpawnList.data(), iSpawnCount * sizeof(PARTICLE_GPU));
+		pContext->Unmap(m_pSpawnInBuffer->GetBuffer(), 0);
+	}
+
+	{
+		CB_SPAWN cbSpawn{};
+		cbSpawn.iSpawnCount = iSpawnCount;
+
+		D3D11_MAPPED_SUBRESOURCE mapSubResource{};
+		pContext->Map(m_pCBSpawnBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
+		memcpy_s(mapSubResource.pData, sizeof(CB_SPAWN), &cbSpawn, sizeof(CB_SPAWN));
+		pContext->Unmap(m_pCBSpawnBuffer, 0);
+	}
+
+	pComputeShader->Bind(pContext);
+	pComputeShader->SetCB(pContext, 1, m_pCBSpawnBuffer);
+	pComputeShader->SetSRV(pContext, 1, m_pSpawnInBuffer->GetSRV());
+	pComputeShader->SetUAV(pContext, 0, m_pAliveBuffer[m_iAliveOutIndex]->GetUAV());
+	pComputeShader->SetUAV(pContext, 1, m_pDeadListBuffer->GetUAV());
+	pComputeShader->SetUAV(pContext, 2, m_pParticlesBuffer->GetUAV());
+	pComputeShader->Dispatch1D(pContext, iSpawnCount);
+	CComputeShader::UnbindAll(pContext);
+}
+
+void CParticleSystem::UpdateParticles(_float dt)
+{
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
+	auto pComputeShader = m_ComputeShaders[ENUM(SHADER::BASIC)];
+
+	{
+		CB_FRAME cbFrame{};
+		cbFrame.fDeltaTime = dt;
+		cbFrame.iAliveCount = m_iAliveCount;
+		cbFrame.UseGravity = m_UseGravity ? 1 : 0;
+		cbFrame.fGravityScale = m_fGravityScale;
+		cbFrame.iMaxParticles = m_iMaxSpawnParticleCount;
+
+		D3D11_MAPPED_SUBRESOURCE mapSubResource{};
+		pContext->Map(m_pCBFrameBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
+		memcpy_s(mapSubResource.pData, sizeof(CB_FRAME), &cbFrame, sizeof(CB_FRAME));
+		pContext->Unmap(m_pCBFrameBuffer, 0);
+	}
+
+	pComputeShader->Bind(pContext);
+	pComputeShader->SetCB(pContext, 0, m_pCBFrameBuffer);
+	pComputeShader->SetSRV(pContext, 0, m_pAliveBuffer[m_iAliveInIndex]->GetSRV());
+	pComputeShader->SetUAV(pContext, 0, m_pAliveBuffer[m_iAliveOutIndex]->GetUAV());
+	pComputeShader->SetUAV(pContext, 1, m_pDeadListBuffer->GetUAV());
+	pComputeShader->SetUAV(pContext, 2, m_pParticlesBuffer->GetUAV());
+	pComputeShader->Dispatch1D(pContext, m_iAliveCount);
+	CComputeShader::UnbindAll(pContext);
+	
+	//for (_uint i = 0; i < m_Particles.size(); ++i)
+	//{
+	//	auto& particle = m_Particles[i];
+	//
+	//	if (!particle.isAlive)
+	//		continue;
+	//
+	//	particle.fLifeTime += dt;
+	//	if (particle.fLifeTime >= particle.fMaxLifeTime)
+	//	{
+	//		particle.isAlive = false;
+	//		m_DeadParticleIndices.push_back(i);
+	//	}
+	//
+	//	for (const auto& module : m_Modules)
+	//		module->Update(particle, dt);
+	//
+	//	_vector3 currPosition = particle.vPosition;
+	//	_vector3 nextPosition;
+	//	if (m_UseGravity)
+	//	{
+	//		_vector3 velocity = particle.vVelocity;
+	//		velocity.y -= m_fGravityScale * 10.f * dt;
+	//		particle.vVelocity = velocity;
+	//	}
+	//	
+	//	nextPosition = currPosition + particle.vVelocity * dt;
+	//	particle.vPosition = nextPosition;
+	//}
+}
+
+void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
+{
+	particle.IsAlive = 1;
 
 	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
 	{
@@ -473,7 +603,7 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
 		_vector3 vDir = particle.vPosition - _vector3(0.f, 0.f, 0.f);
 		vDir.Normalize();
-	
+
 		particle.vVelocity = vDir * fSpeed;
 	}
 
@@ -483,42 +613,11 @@ void CParticleSystem::SetUpParticle(PARTICLE& particle) const
 	particle.vSize = m_vStartSize;
 	particle.vStartSize = particle.vSize;
 
-	particle.vColor = _float4(1.f, 0.f, 1.f, 1.f);
+	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
 
-	if (m_pTextureSheetAnimation)
-		m_pTextureSheetAnimation->SetUpParticle(particle);
-}
-
-void CParticleSystem::BuildInstanceData()
-{
-	m_InstanceDatas.clear();
-
-	for (const auto& particle : m_Particles)
-	{
-		if (!particle.isAlive)
-			continue;
-
-		VTX_INSTANCE_POINT data{};
-
-		_vector4 translate = _vector4(particle.vPosition.x, particle.vPosition.y, particle.vPosition.z, 1.f);
-		_vector3 velocity = particle.vVelocity;
-		_vector2 lifeTime(particle.fLifeTime, particle.fMaxLifeTime);
-		_vector4 right = _vector4(1.f, 0.f, 0.f, 0.f) * particle.vSize.x;
-		_vector4 up = _vector4(0.f, 1.f, 0.f, 0.f) * particle.vSize.y;
-		_vector4 look(0.f, 0.f, 1.f, 0.f);
-
-		data.vRight = right;
-		data.vUp = up;
-		data.vLook = look;
-		data.vTraslate = translate;
-		data.vVelocity = velocity;
-		data.vColor = particle.vColor;
-		data.vLifeTime = lifeTime;
-		data.iFrameIndex = particle.iFrameIndex;
-
-		m_InstanceDatas.push_back(data);
-	}
+	//if (m_pTextureSheetAnimation)
+	//	m_pTextureSheetAnimation->SetUpParticle(particle);
 }
 
 CParticleSystem* CParticleSystem::Create()
@@ -565,4 +664,7 @@ void CParticleSystem::Free()
 	Safe_Release(m_pCBDeadListInitBuffer);
 	Safe_Release(m_pCBFrameBuffer);
 	Safe_Release(m_pCBSpawnBuffer);
+
+	Safe_Release(m_pCounterGPU);
+	Safe_Release(m_pCounterStaging);
 }

@@ -36,15 +36,14 @@ cbuffer CBDeadListInit : register(b2)
     uint3 initPad;
 };
 
-/* 이번 프레임에 생성 할 파티클의 데이터들, cpu에서 계산해서 올려줌 */
-StructuredBuffer<Particle> SpawnIn : register(t1);
-
 /* 이번 프레임에 살아있는 파티클들의 인덱스가 담겨있음 -> 파티클 업데이트에서 사용 */
 StructuredBuffer<uint> AliveIn : register(t0);
 
+/* 이번 프레임에 생성 할 파티클의 데이터들, cpu에서 계산해서 올려줌 */
+StructuredBuffer<Particle> SpawnIn : register(t1);
+
 /* 다음 프레임에 사용 할 살아있는 파티클들의 인덱스, AliveIn을 통해 들어온 파티클들이 갱신되어 만들어진 값들 */
 AppendStructuredBuffer<uint> AliveOut : register(u0);
-
 
 /* 파티클 업데이트 -> append    파티클 스폰 -> consume*/
 AppendStructuredBuffer<uint> DeadAppend : register(u1);

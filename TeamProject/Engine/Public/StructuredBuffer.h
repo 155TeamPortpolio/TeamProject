@@ -28,8 +28,12 @@ private:
 public:
     HRESULT Initialize(const DESC& desc);
 
+    ID3D11Buffer* GetBuffer()const { return m_pBuffer; }
     ID3D11ShaderResourceView* GetSRV()const { return m_pSRV; }
     ID3D11UnorderedAccessView* GetUAV()const { return m_pUAV; }
+    _uint GetCount()const { return m_iCount; }
+    _uint GetStride()const { return m_iStride; }    
+    _uint GetSize()const { return m_iCount * m_iStride; }
 
 public:
     static CStructuredBuffer* Create(const DESC& desc);

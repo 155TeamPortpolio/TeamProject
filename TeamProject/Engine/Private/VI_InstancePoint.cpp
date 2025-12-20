@@ -36,6 +36,32 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 	if (FAILED(Create_InstanceBuffer(pDevice)))
 		return E_FAIL;
 
+	/*----------Compute Shader--------------*/
+	
+	/* Global Counter */
+	{
+		D3D11_BUFFER_DESC Desc{};
+		Desc.ByteWidth = sizeof(_uint);
+		Desc.Usage = D3D11_USAGE_DEFAULT;
+
+
+	}
+
+	/* Draw Args */
+	{
+
+	}
+
+	/* Alive Count */
+	{
+
+	}
+
+	/* Build Pack */
+	{
+
+	}
+
 	return S_OK;
 }
 
@@ -84,7 +110,7 @@ HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 	D3D11_BUFFER_DESC InstanceDesc{};
 	InstanceDesc.ByteWidth = m_iInstanceStride * m_iMaxInstancesCount;
 	InstanceDesc.Usage = D3D11_USAGE_DYNAMIC;
-	InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;
 	InstanceDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	InstanceDesc.MiscFlags = 0;
 	InstanceDesc.StructureByteStride = m_iInstanceStride;
@@ -96,6 +122,15 @@ HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 	subData.pSysMem = VBContainer;
 
 	HRESULT hr = pDevice->CreateBuffer(&InstanceDesc, &subData, &m_pInstanceBuffer);
+
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
+	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+	uavDesc.Buffer.FirstElement = 0;
+	uavDesc.Buffer.NumElements = m_iMaxInstancesCount;
+	uavDesc.Buffer.Flags = 0;
+
+	hr = pDevice->CreateUnorderedAccessView(m_pInstanceBuffer, &uavDesc, &m_pInstanceUAV);
 
 	Safe_Delete_Array(VBContainer);
 	return hr;

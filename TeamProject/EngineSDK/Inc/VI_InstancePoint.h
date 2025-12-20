@@ -5,6 +5,22 @@ NS_BEGIN(Engine)
 class CVI_InstancePoint :
     public CVIBuffer
 {
+public:
+	typedef struct tagCBPacked
+	{
+		_uint iSystemID{};
+		_uint iMaxCount{};
+		_uint iVertexCountPerInstance{};
+		_uint iCapacity{};
+	}CB_PACKED;
+
+	typedef struct tagDrawInstArgs
+	{
+		_uint iVertexCounterPerInstance{};
+		_uint iInstanceCount{};
+		_uint iStartVertexLocation{};
+		_uint iStartInstanceLocation{};
+	}DRAW_INST_ARGS;
 protected:
 	CVI_InstancePoint(const string& bufferID);
 	CVI_InstancePoint(const CVI_InstancePoint& rhs);
@@ -27,9 +43,24 @@ public:
 	void Update_InstanceBuffer(ID3D11DeviceContext* pContext, const VTX_INSTANCE_POINT* instanceData, _uint numInstance);
 
 private:
-	ID3D11Buffer* m_pInstanceBuffer = { nullptr };
 	_uint m_iMaxInstancesCount{};
 	_uint m_iInstanceStride{};
 	_uint m_iNumUsedInstances{};
+
+	/*------Buffer-------*/
+	ID3D11Buffer* m_pInstanceBuffer = { nullptr };
+	ID3D11UnorderedAccessView* m_pInstanceUAV = { nullptr };
+
+	ID3D11Buffer* m_pGlobalCounterBuffer = { nullptr };
+	ID3D11UnorderedAccessView* m_pGlobalCounterUAV = { nullptr };
+
+	ID3D11Buffer* m_pDrawArgs = { nullptr };
+	ID3D11UnorderedAccessView* m_pDrawArgsUAV = { nullptr };
+
+	ID3D11Buffer* m_pAliveCountRaw = { nullptr };
+	ID3D11ShaderResourceView* m_pAliveCountRawSRV = { nullptr };
+
+	class CComputeShader* m_pBuildPackShader = { nullptr };
+	ID3D11Buffer* m_pCBPacked = { nullptr };
 };
 NS_END

@@ -7,7 +7,9 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     if (i >= iAliveCount)
         return;
     
-    Particle p = Particles[i];
+    uint index = AliveIn[i];
+    
+    Particle p = Particles[index];
     
     if(p.IsAlive == 0)
         return;
@@ -30,5 +32,6 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     
     p.vPosition += p.vVelocity * fDeltaTime;
 
-    Particles[i] = p;
+    Particles[index] = p;
+    AliveOut.Append(index);
 }

@@ -96,11 +96,13 @@ public:
 
 private:
 	void CreateStructuredBuffers(_uint iMaxCount);
+	void ReadAliveOutCount();
 
 	void SpawnParticles(_float dt);
+	void ResetAliveOut();
+	void UploadSpawnIn();
 	void UpdateParticles(_float dt);
-	void SetUpParticle(PARTICLE & particle)const;
-	void BuildInstanceData();
+	void SetUpParticle(PARTICLE_GPU& particle)const;
 
 	class CVIBuffer* m_pInstancePoint = { nullptr };
 	_uint m_iMaxInstancesCount{};
@@ -121,7 +123,7 @@ private:
 
 	_float m_fSpawnPerSec{};
 	_float m_fSpawnAcc{};
-	_uint m_iSpawnParticleCount{};
+	_uint m_iSpawnParticleCount{};		//현재까지 방출한 파티클 갯수
 	_uint m_iMaxSpawnParticleCount{};
 
 	_float2 m_vStartSpeed{};
@@ -155,7 +157,15 @@ private:
 	ID3D11Buffer* m_pCBDeadListInitBuffer = { nullptr };
 	ID3D11Buffer* m_pCBFrameBuffer = { nullptr };
 	ID3D11Buffer* m_pCBSpawnBuffer = { nullptr };
-	_uint m_iAliveCount{};
+	ID3D11Buffer* m_pCounterGPU = { nullptr };
+	ID3D11Buffer* m_pCounterStaging = { nullptr };
+
+	_uint m_iAliveInIndex = 0;
+	_uint m_iAliveOutIndex = 1;							//이번 프레임에 alive out으로 사용할 버퍼 인덱스
+	_uint m_iAliveCount{};								//현재 살아있는 파티클 갯수
+	vector<PARTICLE_GPU> m_SpawnList;
+
+	_uint m_iBaseOffset{};
 
 public:
 	static CParticleSystem* Create();
