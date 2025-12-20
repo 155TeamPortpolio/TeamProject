@@ -62,34 +62,38 @@ public:
     virtual void Update_Animation(_float dt);
 
 public: //클라이언트 사용 전용 함수
-    //보간을 무시한 애니매이션 설정 ?
+    //즉시 애니매이션 변경
     virtual HRESULT Set_Animation(AnimArg ClipArg);
     virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg Clip);
-    virtual HRESULT Set_Animation(_uint LayerIndex, _int ClipIndex); //실제 기능함수
-    //애니매이션 보간 변경 
-    virtual HRESULT Change_Animation(AnimArg ClipArg, _float convertDuration = 0.2f); //(구현안됌)
-    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg, _float convertDuration = 0.2f); //(구현안됌)
-    virtual HRESULT Change_Animation(_uint LayerIndex, _int ClipIndex, _float convertDuration); //(구현안됌)
-    //그즉시 보간 대상을 변경?
-    virtual HRESULT ForceChange_Animation(_uint LayerIndex, AnimArg ClipArg, _bool overrideSame = false, _float convertDuration = 0.2f); //(구현안됌)
+    //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
+    virtual HRESULT Change_Animation(AnimArg ClipArg); 
+    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
+    
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
 
+protected:
+    virtual HRESULT Set_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
+    virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
+
 public://애니매이터 데이터
     //현재 레이어의 애니매이션이 끝났는지
-    _bool isCurrentAnimEnd(_uint LayerIndex);
+    _bool isCurrentAnimEnd(_uint LayerIndex = 0);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
-    _bool isOverClipTiming(_uint LayerIndex, _float percent);
+    _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
+    //현재 레이어의 애니매이션이 블랜드 중인지
+    _bool isBlending(_uint LayerIndex = 0);
     //현재 레이어 클립의 진행률 0~1 반환
-    _float Get_CurAnimDuration(_uint LayerIndex);
+    _float Get_CurAnimDuration(_uint LayerIndex = 0);
     //현재 레이어의 애니매이션 이름
-    string Get_CurAnimName(_uint LayerIndex);
+    string Get_CurAnimName(_uint LayerIndex = 0);
+    //현재 레이어의 애니매이션 인덱스
+    _int Get_CurAnimIndex(_uint LayerIndex = 0);
     //현재 레이어 개수
     _int Get_NumLayer();
-    //레이어 
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);

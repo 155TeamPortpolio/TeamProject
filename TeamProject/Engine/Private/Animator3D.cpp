@@ -133,7 +133,7 @@ HRESULT CAnimator3D::Set_Animation(AnimArg Clip)
 	if(!isExistClip(iClipIndex))
 		return E_FAIL;
 
-	return Set_Animation(0, iClipIndex);
+	return Set_Animation_Work(0, iClipIndex);
 }
 
 HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
@@ -143,49 +143,27 @@ HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
 	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
 		return E_FAIL;
 
-	return Set_Animation(LayerIndex, iClipIndex);;
+	return Set_Animation_Work(LayerIndex, iClipIndex);;
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _int ClipIndex)
-{
-	Reset_Layer(LayerIndex);
-	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-
-	Layer.iClipIndex = ClipIndex;
-	Layer.bLoop = true;
-
-	return S_OK;
-}
-
-HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg)
 {
 	_int iClipIndex = Resolve_ClipIndex(ClipArg);
 
 	if (!isExistClip(iClipIndex))
 		return E_FAIL;
 
-	return Change_Animation(0, iClipIndex, convertDuration);
+	return Change_Animation_Work(0, iClipIndex);
 }
 
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipArg, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
 	_int iClipIndex = Resolve_ClipIndex(ClipArg);
 
 	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
 		return E_FAIL;
 
-	return Change_Animation(LayerIndex, iClipIndex);
-}
-
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, _int ClipIndex, _float convertDuration)
-{
-	Reset_Layer(LayerIndex);
-	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-
-	Layer.iClipIndex = ClipIndex;
-	Layer.bLoop = true;
-
-	return S_OK;
+	return Change_Animation_Work(LayerIndex, iClipIndex);
 }
 
 void CAnimator3D::Reset_Layer(_uint LayerIndex)
@@ -226,6 +204,28 @@ HRESULT CAnimator3D::Stop_Animation(_uint LayerIndex)
 HRESULT CAnimator3D::StopAll_Animation()
 {
 	return E_NOTIMPL;
+}
+
+HRESULT CAnimator3D::Set_Animation_Work(_uint LayerIndex, _int ClipIndex)
+{
+	Reset_Layer(LayerIndex);
+	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	Layer.iClipIndex = ClipIndex;
+	Layer.bLoop = true;
+
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Change_Animation_Work(_uint LayerIndex, _int ClipIndex)
+{
+	Reset_Layer(LayerIndex);
+	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	Layer.iClipIndex = ClipIndex;
+	Layer.bLoop = true;
+
+	return S_OK;
 }
 
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
@@ -536,7 +536,7 @@ void CAnimator3D::Render_GUI()
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::BeginChild("##Animator 3DChild", ImVec2{ 0, childHeight }, true);
-	for (size_t i = 0; i < m_pAnimClips.size(); i++)
+	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
 		ImGui::PushID((int)i);

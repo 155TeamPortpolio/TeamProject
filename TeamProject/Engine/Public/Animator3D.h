@@ -65,16 +65,19 @@ public: //클라이언트 사용 전용 함수
     //즉시 애니매이션 변경
     virtual HRESULT Set_Animation(AnimArg ClipArg);
     virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg Clip);
-    virtual HRESULT Set_Animation(_uint LayerIndex, _int ClipIndex); //실제 기능함수
     //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
-    virtual HRESULT Change_Animation(AnimArg ClipArg, _float convertDuration = 0.2f); 
-    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg, _float convertDuration = 0.2f); 
-    virtual HRESULT Change_Animation(_uint LayerIndex, _int ClipIndex, _float convertDuration); //실제 기능함수
+    virtual HRESULT Change_Animation(AnimArg ClipArg); 
+    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
+    
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
+
+protected:
+    virtual HRESULT Set_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
+    virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
 
 public://애니매이터 데이터
     //현재 레이어의 애니매이션이 끝났는지
