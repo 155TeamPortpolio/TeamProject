@@ -72,15 +72,13 @@ public: //클라이언트 사용 전용 함수
     virtual HRESULT Change_Animation(_uint LayerIndex, _int ClipIndex, _float convertDuration); //(구현안됌)
     //그즉시 보간 대상을 변경?
     virtual HRESULT ForceChange_Animation(_uint LayerIndex, AnimArg ClipArg, _bool overrideSame = false, _float convertDuration = 0.2f); //(구현안됌)
-    
-
-public:
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
 
+public://애니매이터 데이터
     //현재 레이어의 애니매이션이 끝났는지
     _bool isCurrentAnimEnd(_uint LayerIndex);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
@@ -89,6 +87,9 @@ public:
     _float Get_CurAnimDuration(_uint LayerIndex);
     //현재 레이어의 애니매이션 이름
     string Get_CurAnimName(_uint LayerIndex);
+    //현재 레이어 개수
+    _int Get_NumLayer();
+    //레이어 
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
