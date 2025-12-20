@@ -152,9 +152,9 @@ private:
 	class CStructuredBuffer* m_pSpawnInBuffer = { nullptr };
 	
 	vector<class CComputeShader*> m_ComputeShaders;
-	ID3D11Buffer* m_pDeadListInitBuffer = { nullptr };
-	ID3D11Buffer* m_pFrameBuffer = { nullptr };
-	ID3D11Buffer* m_pSpawnBuffer = { nullptr };
+	ID3D11Buffer* m_pCBDeadListInitBuffer = { nullptr };
+	ID3D11Buffer* m_pCBFrameBuffer = { nullptr };
+	ID3D11Buffer* m_pCBSpawnBuffer = { nullptr };
 	_uint m_iAliveCount{};
 
 public:

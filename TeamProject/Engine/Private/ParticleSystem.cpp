@@ -65,7 +65,7 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		pDevice->CreateBuffer(&desc, nullptr, &m_pFrameBuffer);
+		pDevice->CreateBuffer(&desc, nullptr, &m_pCBFrameBuffer);
 	}
 
 	{
@@ -77,7 +77,7 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		pDevice->CreateBuffer(&desc, nullptr, &m_pSpawnBuffer);
+		pDevice->CreateBuffer(&desc, nullptr, &m_pCBSpawnBuffer);
 	}
 
 	{
@@ -89,7 +89,7 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 		desc.MiscFlags = 0;
 		desc.StructureByteStride = 0;
 
-		pDevice->CreateBuffer(&desc, nullptr, &m_pDeadListInitBuffer);
+		pDevice->CreateBuffer(&desc, nullptr, &m_pCBDeadListInitBuffer);
 	}
 	
 	/* Set Compute Shader */
@@ -323,16 +323,16 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 		CB_DEAD_LIST_INIT deadListInit{};
 		deadListInit.iMaxParticleCount = iMaxCount;
 
-		pContext->Map(m_pDeadListInitBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
+		pContext->Map(m_pCBDeadListInitBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
 		memcpy_s(subResource.pData, sizeof(CB_DEAD_LIST_INIT), &deadListInit, sizeof(CB_DEAD_LIST_INIT));
-		pContext->Unmap(m_pDeadListInitBuffer, 0);
+		pContext->Unmap(m_pCBDeadListInitBuffer, 0);
 
 		ID3D11UnorderedAccessView* uav = m_pDeadListBuffer->GetUAV();
 		_uint initCount = 0;
 
 		auto pComputeShader = m_ComputeShaders[ENUM(SHADER::INIT_DEAD_LIST)];
 		pComputeShader->Bind(pContext);
-		pComputeShader->SetCB(pContext, 1, m_pDeadListInitBuffer);
+		pComputeShader->SetCB(pContext, 2, m_pCBDeadListInitBuffer);
 		pComputeShader->SetUAV(pContext, 1, m_pDeadListBuffer->GetUAV(), 0);
 		pComputeShader->Dispatch1D(pContext, iMaxCount);
 		CComputeShader::UnbindAll(pContext);
@@ -562,7 +562,7 @@ void CParticleSystem::Free()
 	for (auto& shader : m_ComputeShaders)
 		Safe_Release(shader);
 
-	Safe_Release(m_pDeadListInitBuffer);
-	Safe_Release(m_pFrameBuffer);
-	Safe_Release(m_pSpawnBuffer);
+	Safe_Release(m_pCBDeadListInitBuffer);
+	Safe_Release(m_pCBFrameBuffer);
+	Safe_Release(m_pCBSpawnBuffer);
 }
