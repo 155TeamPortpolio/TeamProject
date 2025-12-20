@@ -4,9 +4,10 @@
 
 namespace Engine
 {
-    enum class CLIP_EVENT_TYPE { EFFECT, SOUND };
+    enum class CLIP_EVENT_TYPE { NOTIFY, EFFECT, SOUND };
     NLOHMANN_JSON_SERIALIZE_ENUM(CLIP_EVENT_TYPE,
     {
+        {CLIP_EVENT_TYPE::NOTIFY, "Notify"},
         {CLIP_EVENT_TYPE::EFFECT, "Effect"},
         {CLIP_EVENT_TYPE::SOUND, "Sound"}
     })

@@ -282,14 +282,14 @@ void CAnimToolPanel::Draw_EventListUI()
 		ImGuiTableFlags_ScrollY |
 		ImGuiTableFlags_BordersInnerV);
 
-	ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, 70.f);
+	ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
 	ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
 	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
 	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
 	ImGui::TableHeadersRow();
 	
 	//클립이 없거나 선택을 하지 않으면 렌더하지 않음
-	if (!m_AnimClip.empty() && (0 <= m_iCurClipIndex)) {
+	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
 		auto& Events = m_AnimClip[m_iCurClipIndex].Events;
 		for (size_t i = 0; i < Events.size(); ++i)
 		{
@@ -366,6 +366,31 @@ void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 	ImGui::EndChild();
 }
 
+void CAnimToolPanel::Setting_NewClip()
+{
+	m_pSelectAnimator = m_pSelectModel->Get_Component<CAnimator3DEX>();
+	if (nullptr == m_pSelectAnimator)
+		return;
+
+	m_CurClipTag = m_pSelectAnimator->Get_CurAnimName(0);
+	//클립을 지정하지 않은 상태로 함
+	m_iCurClipIndex = -1;
+
+	for (auto& clip : m_AnimClip)
+		clip.Events.clear();
+	m_AnimClip.clear();
+
+	for (auto& Clips : *m_pSelectAnimator->Get_Clips()) {
+		ANIM_CLIP newClip{};
+		//ClipName
+		newClip.ClipTag = Clips->Get_Name();
+		//EventData
+		newClip.Events = Clips->Get_Events();
+		//Pushback
+		m_AnimClip.push_back(newClip);
+	}
+}
+
 void CAnimToolPanel::Reset_Panel()
 {
 	m_isPlay = false;
@@ -382,7 +407,10 @@ void CAnimToolPanel::Reset_Panel()
 
 void CAnimToolPanel::Add_Event()
 {
-	ANIM_EVENT tEvent{ 5.f, CLIP_EVENT_TYPE::EFFECT, "effect" };
+	if (m_AnimClip.empty() || m_iCurClipIndex < 0)
+		return;
+
+	ANIM_EVENT tEvent{ m_fTrackPos, CLIP_EVENT_TYPE::EFFECT, "effect" };
 	m_AnimClip[m_iCurClipIndex].Events.push_back(tEvent);
 }
 
@@ -396,32 +424,6 @@ void CAnimToolPanel::Save_Event()
 
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
 	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, MetaPath);
-}
-
-void CAnimToolPanel::Setting_NewClip()
-{
-	m_pSelectAnimator = m_pSelectModel->Get_Component<CAnimator3DEX>();
-	if (nullptr == m_pSelectAnimator)
-		return;
-
-	m_CurClipTag = m_pSelectAnimator->Get_CurAnimName(0);
-		//클립을 지정하지 않은 상태로 함
-	m_iCurClipIndex = -1;
-
-	for (auto& clip : m_AnimClip)
-		clip.Events.clear();
-	m_AnimClip.clear();
-
-	for (auto& Clips : *m_pSelectAnimator->Get_Clips()) {
-		ANIM_CLIP newClip{};
-		//ClipName
-		newClip.ClipTag = Clips->Get_Name();
-		//EventData
-		auto& Events = Clips->Get_Events();
-		newClip.Events = Events;
-		//Pushback
-		m_AnimClip.push_back(newClip);
-	}
 }
 
 void CAnimToolPanel::Load_Clips()
@@ -518,10 +520,6 @@ void CAnimToolPanel::Free()
 	__super::Free();
 	Safe_Release(m_pGameInstance);
 
-	for (auto& clip : m_AnimClip)
-		clip.Events.clear();
-	m_AnimClip.clear();
-	
 	for (auto clip : m_Meta)
 		clip.second.clear();
 	m_Meta.clear();

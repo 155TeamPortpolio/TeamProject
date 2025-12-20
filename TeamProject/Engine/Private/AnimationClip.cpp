@@ -36,8 +36,7 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 
 void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 {
-	m_Events.resize(Events.size());
-	memcpy(m_Events.data(), Events.data(), sizeof(ANIM_EVENT) * Events.size());
+	m_Events = Events;
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd)
@@ -106,4 +105,6 @@ void CAnimationClip::Free()
 
 	for (auto& channel : m_Channels)
 		Safe_Release(channel);
+
+	m_Events.clear();
 }

@@ -6,6 +6,7 @@ CAnimator3DEX::CAnimator3DEX()
 }
 
 CAnimator3DEX::CAnimator3DEX(const CAnimator3DEX& rhs)
+	: CAnimator3D(rhs)
 {
 }
 
