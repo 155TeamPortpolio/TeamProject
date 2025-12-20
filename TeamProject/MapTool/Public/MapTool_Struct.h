@@ -58,8 +58,7 @@ namespace MapTool {
 
 	typedef struct tagFieldDataDef {
 		std::string		id = {};
-		std::string		TagName = {};
-		SLOT_DATA_TYPE	eDataType = SLOT_DATA_TYPE::END;
+ 		SLOT_DATA_TYPE	eDataType = SLOT_DATA_TYPE::END;
 		SlotValue		defaultvalue;
 		_int			iObjID = { -1 };
 

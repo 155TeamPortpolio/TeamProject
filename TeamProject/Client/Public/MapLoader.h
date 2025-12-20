@@ -1,5 +1,7 @@
 #pragma once
 #include "Base.h"
+#include "MapData_Defines.h"
+
 
 NS_BEGIN(Client)
 class CMapLoader final : public CBase

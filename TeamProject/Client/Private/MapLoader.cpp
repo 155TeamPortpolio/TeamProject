@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MapLoader.h"
+#include "MapData_Defines.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
 

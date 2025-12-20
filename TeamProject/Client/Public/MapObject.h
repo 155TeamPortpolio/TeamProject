@@ -29,7 +29,6 @@ public:
 
 public:
     void Render_GUI() override;
-    void Delete_Object();
 
 protected:
     string  m_TagModelKey = {};

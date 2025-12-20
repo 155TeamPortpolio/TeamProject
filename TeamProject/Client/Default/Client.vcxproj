@@ -150,6 +150,9 @@
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
+    <ClInclude Include="..\Public\MapData_Defines.h" />
+    <ClInclude Include="..\Public\MapLoader_Helper.h" />
+    <ClInclude Include="..\public\MapDataCloud.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
@@ -204,6 +207,7 @@
     </ClCompile>
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\private\CamDirector.cpp" />
+    <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "MapPlacedObject.h"
+#include "MapData_Defines.h"
 
 #include "ModelData.h"
 #include "StaticModel.h"
@@ -106,17 +107,7 @@ void CMapPlacedObject::Render_GUI()
 
 	__super::Render_GUI();
 
-	if (ImGui::Button("Delete")) {
-		Delete_Object();
-	}
-
 	ImGui::PopID();
-}
-
-void CMapPlacedObject::Delete_Object()
-{
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(this);
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = nullptr;
 }
 
 CMapPlacedObject* CMapPlacedObject::Create()

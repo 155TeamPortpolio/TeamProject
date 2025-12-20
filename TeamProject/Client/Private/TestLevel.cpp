@@ -48,13 +48,13 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 
 	//// Ready MapObject key and path to ResourceMgr 
-	//Rake_MapResources();
+	Rake_MapResources();
 
 	////Map Loader Logic is going to Change
-	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
-	//if (nullptr == pMapLoader)
-	//	MSG_BOX("Failed to Load MapData!");
-	//Safe_Release(pMapLoader);
+	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapData.Base.1.json" );
+	if (nullptr == pMapLoader)
+		MSG_BOX("Failed to Load MapData!");
+	Safe_Release(pMapLoader);
 
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
