@@ -1,7 +1,18 @@
 [
   {
     "ClipTag": "Bangboo_Sharkboo_Ani_Angry01",
-    "Events": []
+    "Events": [
+      {
+        "EventTime": 20.42331314086914,
+        "EventType": "Effect",
+        "EventTag": "effect"
+      },
+      {
+        "EventTime": 46.26354217529297,
+        "EventType": "Effect",
+        "EventTag": "effect"
+      }
+    ]
   },
   {
     "ClipTag": "Bangboo_Sharkboo_Ani_Happy01",

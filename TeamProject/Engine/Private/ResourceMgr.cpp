@@ -279,9 +279,13 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 		string AnimPath = std::filesystem::path(Get_ResourcePath(MetaClipKey)).parent_path().string() + "\\";
 		AnimPath += Meta.ClipTag + ".anim";
 
-		CAnimationClip* pData = CAnimationClip::Create(AnimPath, MetaClipKey);
-		if (pData)
-			Clips.push_back(pData);
+		CAnimationClip* pClip = CAnimationClip::Create(AnimPath);
+
+		if(!Meta.Events.empty())
+			pClip->Set_Events(Meta.Events);
+			
+		if (pClip)
+			Clips.push_back(pClip);
 	}
 
 	map.emplace(MetaClipKey, Clips);

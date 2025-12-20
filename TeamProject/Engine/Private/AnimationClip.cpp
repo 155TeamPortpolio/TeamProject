@@ -34,9 +34,13 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	return S_OK;
 }
 
+void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
+{
+	m_Events = Events;
+}
+
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd)
 {
-
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 
 	if (isLoop) {
@@ -56,6 +60,14 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 	}
 
 	return RealTrackPosition;
+}
+
+void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition)
+{
+	for (size_t i = 0; i < m_iNumChannels; i++)
+	{
+		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, CurrentTrackPosition, false);
+	}
 }
 
 CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
@@ -78,7 +90,7 @@ void CAnimationClip::Render_GUI()
 		channel->Render_GUI();
 }
 
-CAnimationClip* CAnimationClip::Create(const string& animationPath, const string& animClipKey)
+CAnimationClip* CAnimationClip::Create(const string& animationPath)
 {
 	CAnimationClip* instance = new CAnimationClip();
 	if (FAILED(instance->Initialize(animationPath))) {
@@ -93,4 +105,6 @@ void CAnimationClip::Free()
 
 	for (auto& channel : m_Channels)
 		Safe_Release(channel);
+
+	m_Events.clear();
 }
