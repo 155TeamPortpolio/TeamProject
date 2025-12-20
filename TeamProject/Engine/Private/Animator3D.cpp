@@ -254,9 +254,13 @@ string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
 	if (Layer.bBlending)
-		return m_pAnimClips[Layer.iNextClipIndex]->Get_Name();
+		if(isExistClip(Layer.iNextClipIndex))
+			return m_pAnimClips[Layer.iNextClipIndex]->Get_Name();
 	else
-		return m_pAnimClips[Layer.iClipIndex]->Get_Name();
+		if (isExistClip(Layer.iClipIndex))
+			return m_pAnimClips[Layer.iClipIndex]->Get_Name();
+
+	return "";
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
