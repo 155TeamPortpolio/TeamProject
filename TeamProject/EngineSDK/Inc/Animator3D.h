@@ -3,6 +3,8 @@
 #include "Engine_Math.h"
 
 NS_BEGIN(Engine)
+using AnimArg = variant<_int, string>;
+
 class ENGINE_DLL CAnimator3D :
     public CComponent
 {
@@ -56,36 +58,42 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
-    //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
-    HRESULT Resize_Layer(_uint iLayerCount);
-
-public:
-    //clip
+    HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     virtual void Update_Animation(_float dt);
-    //보간을 무시한 애니매이션 설정 ?
-    virtual HRESULT Set_Animation(_uint LayerIndex, string ClipTag); //(구현안됌)
-    virtual HRESULT Set_Animation(_uint LayerIndex, _uint Clipindex);
-    //애니매이션 보간 변경 
-    virtual HRESULT Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration = 0.2f); //(구현안됌)
-    virtual HRESULT Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration = 0.2f); //(구현안됌)
-    //그즉시 보간 대상을 변경 ?
-    virtual HRESULT ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame = false, _float convertDuration = 0.2f); //(구현안됌)
-    virtual HRESULT ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame = false,_float convertDuration = 0.2f); //(구현안됌)
+
+public: //클라이언트 사용 전용 함수
+    //즉시 애니매이션 변경
+    virtual HRESULT Set_Animation(AnimArg ClipArg);
+    virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg Clip);
+    //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
+    virtual HRESULT Change_Animation(AnimArg ClipArg); 
+    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
     
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
-    //레이어 애니매이션을 멈춤
+    //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
 
+protected:
+    virtual HRESULT Set_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
+    virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
+
+public://애니매이터 데이터
     //현재 레이어의 애니매이션이 끝났는지
-    _bool isCurrentAnimEnd(_uint LayerIndex);
+    _bool isCurrentAnimEnd(_uint LayerIndex = 0);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
-    _bool isOverClipTiming(_uint LayerIndex, _float percent);
+    _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
+    //현재 레이어의 애니매이션이 블랜드 중인지
+    _bool isBlending(_uint LayerIndex = 0);
     //현재 레이어 클립의 진행률 0~1 반환
-    _float Get_CurAnimDuration(_uint LayerIndex);
+    _float Get_CurAnimDuration(_uint LayerIndex = 0);
     //현재 레이어의 애니매이션 이름
-    string Get_CurAnimName(_uint LayerIndex);
+    string Get_CurAnimName(_uint LayerIndex = 0);
+    //현재 레이어의 애니매이션 인덱스
+    _int Get_CurAnimIndex(_uint LayerIndex = 0);
+    //현재 레이어 개수
+    _int Get_NumLayer();
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -102,9 +110,16 @@ public:
     //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
 
-protected:
+protected://애니매이션 체크
+    //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
+    _int Resolve_ClipIndex(AnimArg ClipArg);
+    //레이어 인덱스를 찾음
+    _int Find_Clip(const string& ClipTag);
+    //존재하는지 여부
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
+
+protected://애니매이션 연산
     void Animation_Run(_float dt);
     void Animation_Convert(_float dt);
 

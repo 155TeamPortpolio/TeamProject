@@ -127,42 +127,43 @@ void CAnimator3D::Update_Animation(_float dt)
 	BuildBone();
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, string ClipTag)
+HRESULT CAnimator3D::Set_Animation(AnimArg Clip)
 {
-	return E_NOTIMPL;
+	_int iClipIndex = Resolve_ClipIndex(Clip);
+	if(!isExistClip(iClipIndex))
+		return E_FAIL;
+
+	return Set_Animation_Work(0, iClipIndex);
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _uint Clipindex)
+HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
-	if (!isExistLayer(LayerIndex))
-		return S_OK;
+	_int iClipIndex = Resolve_ClipIndex(ClipArg);
 
-	Reset_Layer(LayerIndex);
-	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-	Layer.iClipIndex = Clipindex;
-	Layer.bLoop = true;
+	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
+		return E_FAIL;
 
-	return S_OK;
+	return Set_Animation_Work(LayerIndex, iClipIndex);;
 }
 
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg)
 {
-	return E_NOTIMPL;
+	_int iClipIndex = Resolve_ClipIndex(ClipArg);
+
+	if (!isExistClip(iClipIndex))
+		return E_FAIL;
+
+	return Change_Animation_Work(0, iClipIndex);
 }
 
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
-	return E_NOTIMPL;
-}
+	_int iClipIndex = Resolve_ClipIndex(ClipArg);
 
-HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame, _float convertDuration)
-{
-	return E_NOTIMPL;
-}
+	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
+		return E_FAIL;
 
-HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame, _float convertDuration)
-{
-	return E_NOTIMPL;
+	return Change_Animation_Work(LayerIndex, iClipIndex);
 }
 
 void CAnimator3D::Reset_Layer(_uint LayerIndex)
@@ -205,6 +206,28 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return E_NOTIMPL;
 }
 
+HRESULT CAnimator3D::Set_Animation_Work(_uint LayerIndex, _int ClipIndex)
+{
+	Reset_Layer(LayerIndex);
+	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	Layer.iClipIndex = ClipIndex;
+	Layer.bLoop = true;
+
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Change_Animation_Work(_uint LayerIndex, _int ClipIndex)
+{
+	Reset_Layer(LayerIndex);
+	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	Layer.iClipIndex = ClipIndex;
+	Layer.bLoop = true;
+
+	return S_OK;
+}
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
@@ -222,7 +245,7 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 		return Layer.bisFinished;
 }
 
-_bool CAnimator3D::isOverClipTiming(_uint LayerIndex, _float percent)
+_bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
 		return true;
@@ -234,6 +257,14 @@ _bool CAnimator3D::isOverClipTiming(_uint LayerIndex, _float percent)
 
 	// 이전 프레임 트랙 위치 < 기준 <= 현재 트랙 위치일 때 true
 	return  m_fCurrentTrackPosition >= threshold;
+}
+
+_bool CAnimator3D::isBlending(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex))
+		return false;
+
+	return m_AnimLayers[LayerIndex].bBlending;
 }
 
 _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
@@ -261,6 +292,19 @@ string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 			return m_pAnimClips[Layer.iClipIndex]->Get_Name();
 
 	return "";
+}
+
+_int CAnimator3D::Get_CurAnimIndex(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return -1;
+
+	return m_AnimLayers[LayerIndex].bBlending ?
+		m_AnimLayers[LayerIndex].iNextClipIndex : m_AnimLayers[LayerIndex].iClipIndex;
+}
+
+_int CAnimator3D::Get_NumLayer()
+{
+	return (_int)m_AnimLayers.size();
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -321,6 +365,27 @@ _float4x4* CAnimator3D::Get_BoneTransformMatrixPtr(const string& boneName)
 	}
 }
 
+_int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
+{
+	if (holds_alternative<_int>(ClipArg))
+		return get<_int>(ClipArg);
+
+	return Find_Clip(get<string>(ClipArg));
+}
+
+_int CAnimator3D::Find_Clip(const string& ClipTag)
+{
+	_int iIndex = 0;
+	for (auto& Clip : m_pAnimClips) {
+		if (ClipTag == Clip->Get_Name())
+			return iIndex;
+
+		++iIndex;
+	}
+
+	return -1;
+}
+
 _bool CAnimator3D::isExistLayer(_int LayerIndex)
 {
 	return !m_AnimLayers.empty() && LayerIndex < m_AnimLayers.size();
@@ -348,7 +413,15 @@ void CAnimator3D::Animation_Run(_float dt)
 
 void CAnimator3D::Animation_Convert(_float dt)
 {
+	for (auto& Layer : m_AnimLayers) {
+		if (-1 == Layer.iClipIndex) continue;
 
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+
+		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+			dt, Layer.bLoop, &Layer.bisFinished);
+	}
 }
 
 void CAnimator3D::Override_BlendAnim()
@@ -463,7 +536,7 @@ void CAnimator3D::Render_GUI()
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::BeginChild("##Animator 3DChild", ImVec2{ 0, childHeight }, true);
-	for (size_t i = 0; i < m_pAnimClips.size(); i++)
+	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
 		ImGui::PushID((int)i);

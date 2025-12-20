@@ -419,7 +419,7 @@ void CAnimToolPanel::Add_Event()
 	if (m_AnimClip.empty() || m_iCurClipIndex < 0)
 		return;
 
-	ANIM_EVENT tEvent{ m_fTrackPos, CLIP_EVENT_TYPE::EFFECT, "effect" };
+	ANIM_EVENT tEvent{ m_fTrackPos, CLIP_EVENT_TYPE::NOTIFY, "" };
 	m_AnimClip[m_iCurClipIndex].Events.push_back(tEvent);
 }
 
