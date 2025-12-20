@@ -208,6 +208,17 @@ void CUIObject_Tool::FromJson_Animation(const json& data)
     }
 }
 
+void CUIObject_Tool::Reset_Animation()
+{
+    m_fBlendTime = 0.f;
+
+    // 애니메이션 재생 전에 값으로 되돌려 놓음
+    m_vScale = m_vBaseScale;
+    m_fRadian = m_vBaseAngle;
+    // 포지션
+    m_vColor = m_vBaseColor;
+}
+
 void CUIObject_Tool::FromJson_RefreshCount(_uint& iCount)
 {
     int index = {};
@@ -347,15 +358,18 @@ void CUIObject_Tool::Render_GUI_Animation()
         strcpy_s(szBuffer, clip.strName.c_str());
         if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
             clip.strName = szBuffer;
-
         ImGui::InputFloat(u8"길이", &clip.fDuration);
         ImGui::Checkbox(u8"루프", &clip.isLoop);
+
+        // 재생, 정지
         ImGui::BeginDisabled(clip.keyframes.empty());
         if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                m_iCurrentClipIndex = iClipIndex;
+                Set_Animation(iClipIndex);
+            else
+                Reset_Animation();
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
@@ -436,9 +450,18 @@ void CUIObject_Tool::Play_Animation(_float dt)
         {
             // 애니메이션 종료 처리
             if (!clip.isLoop)
-                m_isBlending = false;
+            {
+                // 마지막 키프레임 적용
+                m_vScale = clip.keyframes.back().vScale;
+                m_fRadian = clip.keyframes.back().fAngle;
+                // 포지션
+                m_vColor = clip.keyframes.back().vColor;
 
-            m_fBlendTime = 0.f;
+                m_isBlending = false;
+            } 
+
+            Reset_Animation();
+
             return;
         }
 
@@ -481,14 +504,9 @@ void CUIObject_Tool::Play_Animation(_float dt)
             // UI 오브젝트에 적용
             m_vScale = vScale;
             m_fRadian = XMConvertToRadians(fAngle);
-            // 포지션
-            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos);
-            // 컬러
+            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos); // 포지션
+            m_vColor = vColor;
         }
-    }
-    else
-    {
-        // 애니메이션 재생이 아닐 때 리셋을 어디서 해줘야하지
     }
 }
 
@@ -498,6 +516,11 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
         return;
 
     m_iCurrentClipIndex = iIndex;
+
+    m_vBaseScale = m_vScale;
+    m_vBaseAngle = m_fRadian;
+    // 포지션
+    m_vBaseColor = m_vColor;
 }
 
 void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)

@@ -49,6 +49,8 @@ private:
 	void FromJson_Parent(const json& data);			// (툴, 클라이언트)
 	void FromJson_Animation(const json& data);		// (툴, 클라이언트)
 
+	void Reset_Animation();
+
 protected:
 	_float4				m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
@@ -57,8 +59,11 @@ protected:
 	_float				m_fBlendDuration = {};
 
 	vector<UI_ANIM_CLIP> m_AnimClips;
-
 	_int				m_iCurrentClipIndex = { -1 };
+
+	_float2				m_vBaseScale = {};
+	_float				m_vBaseAngle = {};
+	_float4				m_vBaseColor = {};
 
 public:
 	virtual void Free();
