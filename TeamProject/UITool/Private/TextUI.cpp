@@ -57,6 +57,9 @@ void CTextUI::Priority_Update(_float dt)
 
 void CTextUI::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Get_Component<CTextSlot>()->Push_Text();
 
     Play_Animation(dt);

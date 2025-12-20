@@ -138,14 +138,18 @@ void CGUIPanel::LoadFromJson()
 			string strProtoTag = {};
 
 			// 타입에 따라 프로토타입태그 분기 처리
-			if (strType == "CanvasPanel")
-				strProtoTag = "Proto_GameObject_CanvasPanel";
-			else if (strType == "ImageUI")
-				strProtoTag = "Proto_GameObject_ImageUI";
-			else if (strType == "TextUI")
-				strProtoTag = "Proto_GameObject_TextUI";
-			else if (strType == "ButtonUI")
-				strProtoTag = "Proto_GameObject_ButtonUI";
+			strProtoTag = "Proto_GameObject_" + strType;
+
+			//if (strType == "CanvasPanel")
+			//	strProtoTag = "Proto_GameObject_CanvasPanel";
+			//else if (strType == "ImageUI")
+			//	strProtoTag = "Proto_GameObject_ImageUI";
+			//else if (strType == "TextUI")
+			//	strProtoTag = "Proto_GameObject_TextUI";
+			//else if (strType == "ButtonUI")
+			//	strProtoTag = "Proto_GameObject_ButtonUI";
+			//else if (strType == "UVAnimationUI")
+			//	strProtoTag = "Proto_GameObject_UVAnimationUI";
 
 			CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
 				.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))

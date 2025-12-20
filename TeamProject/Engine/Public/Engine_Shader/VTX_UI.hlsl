@@ -74,6 +74,10 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     triStream.RestartStrip();
 }
 
+uint Col;
+uint Row;
+uint FrameIndex;
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -93,7 +97,23 @@ PS_OUT PS_MAIN(PS_IN In)
         
     if (vDiffuse.a < 0.1f)
         discard;
-    Out.vColor = vDiffuse ;
+    
+    Out.vColor = vDiffuse;
+    
+    return Out;
+}
+
+PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
+{    
+    PS_OUT Out;
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord));
+        
+    if (vDiffuse.a < 0.1f)
+        discard;
+    
+    Out.vColor = vDiffuse;
+    
     return Out;
 }
 
@@ -108,5 +128,15 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();
     }  
+
+    pass SpriteAnimation
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+    }
 }
 

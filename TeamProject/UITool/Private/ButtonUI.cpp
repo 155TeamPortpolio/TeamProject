@@ -47,6 +47,10 @@ void CButtonUI::Priority_Update(_float dt)
 
 void CButtonUI::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
+    Play_Animation(dt);
 }
 
 void CButtonUI::Late_Update(_float dt)
@@ -55,8 +59,6 @@ void CButtonUI::Late_Update(_float dt)
 
 void CButtonUI::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
@@ -79,6 +81,8 @@ void CButtonUI::Render_GUI()
     case STATE::DISABLED: strState = ENUM_TO_STRING(STATE::DISABLED); break;
     }
     ImGui::TextDisabled(strState.c_str());
+
+    __super::Render_GUI();
 }
 
 void CButtonUI::Enter_Hover()

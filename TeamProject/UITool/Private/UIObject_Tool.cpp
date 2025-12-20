@@ -349,8 +349,8 @@ void CUIObject_Tool::Render_GUI_Animation()
     {
         UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
 
-        ImGui::SetNextWindowPos(ImVec2(880, 400), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(880, 100), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(200, 600), ImGuiCond_Once);
         ImGui::Begin(clip.strName.c_str(), &showPopup);
 
         // 재생, 정지 

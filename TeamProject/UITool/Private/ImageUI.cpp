@@ -44,6 +44,9 @@ void CImageUI::Priority_Update(_float dt)
 
 void CImageUI::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Play_Animation(dt);
 }
 
