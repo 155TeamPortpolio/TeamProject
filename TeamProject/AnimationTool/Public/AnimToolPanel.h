@@ -25,7 +25,6 @@ public:
 //GUI
 private:
     void GUI_DefaultSetting();
-    void Render_Taps(_float fChildHeight);
     // --------------------------------------------------
     void GUI_Setting_Clips(_float fChildHeight);
     void Draw_ToolbarUI(); 
@@ -36,12 +35,11 @@ private:
 
 //Func
 public:
-    void Update_Panel();
+    void Setting_NewClip();
 private:
     void Reset_Panel();
-   
     void Add_Event();
-
+    void Save_Event();
     /* Create Json MetaData */
     void Load_Clips();
     void Create_Clips(vector<ANIM_CLIP>& pMetaData , const string& ClipTag, const string& FilePath);
@@ -54,8 +52,9 @@ private: //Create Clip
     class CGameObject*   m_pSelectModel = { nullptr };
     class CAnimator3DEX* m_pSelectAnimator = { nullptr };
     string               m_CurClipTag{};
-    vector<string>       m_ClipTags;
-    vector<ANIM_EVENT>   m_Events;
+    int                  m_iCurClipIndex = { -1 };
+    vector<ANIM_CLIP>    m_AnimClip;
+
     _bool   m_isPlay     = {};
     _bool   m_bLoop = { true };
     _float  m_fPlaySpeed = { 1.f };

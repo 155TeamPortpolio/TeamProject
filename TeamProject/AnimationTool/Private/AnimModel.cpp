@@ -209,7 +209,7 @@ void CAnimModel::Set_Animator()
 	pInstance->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
 	pInstance->Link_MetaData("AnimationEdit_Level", metaTag);
 
-	m_pAnimToolPanel->Update_Panel();
+	m_pAnimToolPanel->Setting_NewClip();
 }
 
 void CAnimModel::Clear_Model()

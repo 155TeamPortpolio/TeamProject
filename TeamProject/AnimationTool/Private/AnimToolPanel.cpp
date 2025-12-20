@@ -37,7 +37,6 @@ void CAnimToolPanel::Update_Panel(_float dt)
 				m_isPlay = false;
 		}
 	}
-
 	m_pSelectAnimator->Update_Animation(m_fTrackPos);
 }
 
@@ -94,11 +93,6 @@ void CAnimToolPanel::GUI_DefaultSetting()
 	Helper::DarkThemeStyle styleScope;
 }
 
-void CAnimToolPanel::Render_Taps(_float fChildHeight)
-{
-
-}
-
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
@@ -106,14 +100,17 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
-		if (!m_ClipTags.empty()) {
+		if (!m_AnimClip.empty()) {
 			int iIndex = 0;
-			for (string ClipTag : m_ClipTags)
+			for (auto& Clip : m_AnimClip)
 			{
+				string ClipTag = Clip.ClipTag;
 				bool selected = (m_CurClipTag == ClipTag);
 				if (ImGui::Selectable(ClipTag.c_str(), selected))
 				{
+					//새로운 클립을 눌렀다면
 					m_CurClipTag = ClipTag;
+					m_iCurClipIndex = iIndex;
 					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
 
 					//가져온 애니매이션의 duration 가져옴
@@ -191,8 +188,16 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 	ImGui::SameLine();
 
+
 	//재생 바 UI
 	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
+
+	//저장버튼
+	ImGui::SameLine();
+	if (ImGui::Button("Save", buttonSize))
+	{
+		Save_Event();
+	}
 }
 
 void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* id)
@@ -282,42 +287,46 @@ void CAnimToolPanel::Draw_EventListUI()
 	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
 	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
 	ImGui::TableHeadersRow();
-
-	for (size_t i = 0; i < m_Events.size(); ++i)
-	{
-		ANIM_EVENT& e = m_Events[i];
-		ImGui::PushID((int)i);
-
-		ImGui::TableNextRow();
-
-		// Time
-		ImGui::TableNextColumn();
-		ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
-
-		// Type
-		ImGui::TableNextColumn();
-		ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
-		int type = (int)e.EventType;
-		ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
-		e.EventType = (CLIP_EVENT_TYPE)type;
-
-		// Tag
-		ImGui::TableNextColumn();
-		char tagBuf[64];
-		strcpy_s(tagBuf, e.EventTag.c_str());
-		if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
-			e.EventTag = tagBuf;
-
-		// Delete
-		ImGui::TableNextColumn();
-		if (ImGui::SmallButton("X"))
+	
+	//클립이 없거나 선택을 하지 않으면 렌더하지 않음
+	if (!m_AnimClip.empty() && (0 <= m_iCurClipIndex)) {
+		auto& Events = m_AnimClip[m_iCurClipIndex].Events;
+		for (size_t i = 0; i < Events.size(); ++i)
 		{
-			m_Events.erase(m_Events.begin() + i);
-			ImGui::PopID();
-			break;
-		}
+			ANIM_EVENT& e = Events[i];
+			ImGui::PushID((int)i);
 
-		ImGui::PopID();
+			ImGui::TableNextRow();
+
+			// Time
+			ImGui::TableNextColumn();
+			ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
+
+			// Type
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
+			int type = (int)e.EventType;
+			ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
+			e.EventType = (CLIP_EVENT_TYPE)type;
+
+			// Tag
+			ImGui::TableNextColumn();
+			char tagBuf[64];
+			strcpy_s(tagBuf, e.EventTag.c_str());
+			if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
+				e.EventTag = tagBuf;
+
+			// Delete
+			ImGui::TableNextColumn();
+			if (ImGui::SmallButton("X"))
+			{
+				Events.erase(Events.begin() + i);
+				ImGui::PopID();
+				break;
+			}
+
+			ImGui::PopID();
+		}
 	}
 
 	ImGui::EndTable();
@@ -363,29 +372,56 @@ void CAnimToolPanel::Reset_Panel()
 	m_fTrackPos = 0.f;
 	m_fDuration = 0.f;
 	m_CurClipTag = "";
-	m_ClipTags.clear();
-	m_Events.clear();
+	m_AnimClip.clear();
+
 	if (nullptr == m_pSelectModel)
 		return;
 
-	Update_Panel();
+	Setting_NewClip();
 }
 
 void CAnimToolPanel::Add_Event()
 {
 	ANIM_EVENT tEvent{ 5.f, CLIP_EVENT_TYPE::EFFECT, "effect" };
-	m_Events.push_back(tEvent);
+	m_AnimClip[m_iCurClipIndex].Events.push_back(tEvent);
 }
 
-void CAnimToolPanel::Update_Panel()
+void CAnimToolPanel::Save_Event()
+{
+	if (m_AnimClip.empty())
+		return;
+
+	size_t pos = m_AnimClip[0].ClipTag.find("_Ani_");
+	string ClipKey = m_AnimClip[0].ClipTag.substr(0, pos) + "_Meta.json";
+
+	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
+	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, MetaPath);
+}
+
+void CAnimToolPanel::Setting_NewClip()
 {
 	m_pSelectAnimator = m_pSelectModel->Get_Component<CAnimator3DEX>();
 	if (nullptr == m_pSelectAnimator)
 		return;
 
 	m_CurClipTag = m_pSelectAnimator->Get_CurAnimName(0);
-	for (auto& Clips : *m_pSelectAnimator->Get_Clips())
-		m_ClipTags.push_back(Clips->Get_Name());
+		//클립을 지정하지 않은 상태로 함
+	m_iCurClipIndex = -1;
+
+	for (auto& clip : m_AnimClip)
+		clip.Events.clear();
+	m_AnimClip.clear();
+
+	for (auto& Clips : *m_pSelectAnimator->Get_Clips()) {
+		ANIM_CLIP newClip{};
+		//ClipName
+		newClip.ClipTag = Clips->Get_Name();
+		//EventData
+		auto& Events = Clips->Get_Events();
+		newClip.Events = Events;
+		//Pushback
+		m_AnimClip.push_back(newClip);
+	}
 }
 
 void CAnimToolPanel::Load_Clips()
@@ -481,6 +517,10 @@ void CAnimToolPanel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pGameInstance);
+
+	for (auto& clip : m_AnimClip)
+		clip.Events.clear();
+	m_AnimClip.clear();
 	
 	for (auto clip : m_Meta)
 		clip.second.clear();

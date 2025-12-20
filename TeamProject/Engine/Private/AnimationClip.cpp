@@ -34,6 +34,12 @@ HRESULT CAnimationClip::Initialize(const string& animationPath)
 	return S_OK;
 }
 
+void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
+{
+	m_Events.resize(Events.size());
+	memcpy(m_Events.data(), Events.data(), sizeof(ANIM_EVENT) * Events.size());
+}
+
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
@@ -85,7 +91,7 @@ void CAnimationClip::Render_GUI()
 		channel->Render_GUI();
 }
 
-CAnimationClip* CAnimationClip::Create(const string& animationPath, const string& animClipKey)
+CAnimationClip* CAnimationClip::Create(const string& animationPath)
 {
 	CAnimationClip* instance = new CAnimationClip();
 	if (FAILED(instance->Initialize(animationPath))) {
