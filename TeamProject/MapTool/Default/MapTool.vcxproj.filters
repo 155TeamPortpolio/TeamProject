@@ -49,6 +49,15 @@
     <Filter Include="02. Object\MapTool Object\Placed Object">
       <UniqueIdentifier>{42c068ab-f479-41e7-b642-c8eb0472f56a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. MapTool System\MapToolGui">
+      <UniqueIdentifier>{d7d994b2-905f-4cfe-8cf2-0ce25e9cca1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System\SlotFieldGui">
+      <UniqueIdentifier>{7c030cdd-12e6-4235-af0f-e901f91843ac}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. MapTool System\00. MapToolCore">
+      <UniqueIdentifier>{a8b4769b-6ec7-4997-8b77-72d1dec39669}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -108,11 +117,20 @@
     <ClInclude Include="..\Public\Helper_MapTool.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapToolGui.h">
-      <Filter>03. MapTool System</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MapToolObject.h">
       <Filter>02. Object\MapTool Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapToolGui.h">
+      <Filter>03. MapTool System\MapToolGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\SlotFieldGui.h">
+      <Filter>03. MapTool System\SlotFieldGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Engine\Public\GUI_Inc\imgui_stdlib.h">
+      <Filter>97. Gui_Inc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapToolCore.h">
+      <Filter>03. MapTool System\00. MapToolCore</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -172,11 +190,20 @@
     <ClCompile Include="..\private\PlacedObject.cpp">
       <Filter>02. Object\MapTool Object\Placed Object</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MapToolGui.cpp">
-      <Filter>03. MapTool System</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\MapToolObject.cpp">
       <Filter>02. Object\MapTool Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapToolGui.cpp">
+      <Filter>03. MapTool System\MapToolGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\SlotFieldGui.cpp">
+      <Filter>03. MapTool System\SlotFieldGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Engine\Public\GUI_Inc\imgui_stdlib.cpp">
+      <Filter>97. Gui_Inc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapToolCore.cpp">
+      <Filter>03. MapTool System\00. MapToolCore</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -7,6 +7,7 @@ class CMapToolObject abstract :
 {
 public:
     typedef struct tagStaticObjectCreateDesc : public Engine::GAMEOBJECT_DESC {
+        _int    iObjectIndex = { -1 };
         string  TagModelKey = "";
         string  TagMaterialKey = "";
         _bool   isRayReceiver = {};
@@ -32,6 +33,7 @@ public:
     void Delete_Object();
 
 protected:
+    _int    m_iObjectIndex = { -1 };
     string  m_TagModelKey = {};
     string  m_TagMaterialKey = {};
 
