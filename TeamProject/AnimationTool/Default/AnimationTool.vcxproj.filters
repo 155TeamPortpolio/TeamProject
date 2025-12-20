@@ -40,6 +40,12 @@
     <Filter Include="04. Component\Animator3DEX">
       <UniqueIdentifier>{2319dbc4-8c4a-41f1-bce6-560ac72cbfcd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\Camera\CamObject">
+      <UniqueIdentifier>{1613a626-909a-4bf9-a725-afd090e469dd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\Camera\FreeCam">
+      <UniqueIdentifier>{e4313e0d-a85d-4bf6-9018-4e645fb7c5c8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="AnimationTool.ico">
@@ -78,9 +84,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\AnimationEditLevel.h">
       <Filter>01. Level</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\EditCamera.h">
-      <Filter>02. Object\Camera</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AnimModel.h">
       <Filter>02. Object\Model</Filter>
@@ -130,6 +133,12 @@
     <ClInclude Include="..\public\Animator3DEX.h">
       <Filter>04. Component\Animator3DEX</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. Object\Camera\CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>02. Object\Camera\FreeCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="AnimationTool.cpp">
@@ -140,9 +149,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainApp.cpp">
       <Filter>00. MainApp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\EditCamera.cpp">
-      <Filter>02. Object\Camera</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AnimModel.cpp">
       <Filter>02. Object\Model</Filter>
@@ -188,6 +194,12 @@
     </ClCompile>
     <ClCompile Include="..\private\Animator3DEX.cpp">
       <Filter>04. Component\Animator3DEX</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. Object\Camera\CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>02. Object\Camera\FreeCam</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

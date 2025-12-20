@@ -2,6 +2,7 @@
 #include "EffectContainer.h"
 
 #include "GameInstance.h"
+#include "IResourceService.h"
 #include "IProtoService.h"
 #include "EffectNode.h"
 #include "ObjectContainer.h"
@@ -27,34 +28,42 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	EFFECT_ASSET* pAsset = static_cast<EFFECT_ASSET*>(pArg);
-	m_fDuration = pAsset->fDuration;
-	m_IsLoop = pAsset->isLoop;
-	m_iNumNodes = pAsset->Nodes.size();
+	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	EFFECT_DESC* pDesc = static_cast<EFFECT_DESC*>(pArg);
+
+	EFFECT_ASSET pAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, pDesc->EffectAssetKey);
+	m_fDuration = pAsset.fDuration;
+	m_IsLoop = pAsset.isLoop;
+	m_iNumNodes = pAsset.Nodes.size();
 	m_Nodes.resize(m_iNumNodes);
 
 	auto proto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	for (_uint i = 0; i < m_iNumNodes; ++i)
 	{
-		//CGameObject* pNode = nullptr;
-		//EFFECT_NODE nodeDesc = pAsset->Nodes[i];
-		//switch (pAsset->Nodes[i].eType)
-		//{
-		//case Engine::EFFECT_TYPE::SPRITE:
-		//	pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", &nodeDesc);
-		//	break;
-		//case Engine::EFFECT_TYPE::PARTICLE:
-		//	break;
-		//case Engine::EFFECT_TYPE::MESH:
-		//	break;
-		//case Engine::EFFECT_TYPE::END:
-		//	break;
-		//default:
-		//	break;
-		//}
+		CGameObject* pNode = nullptr;
+		EFFECT_NODE* pNodeDesc = pAsset.Nodes[i];
+		switch (static_cast<EFFECT_TYPE>(pNodeDesc->eType))
+		{
+		case Engine::EFFECT_TYPE::SPRITE:
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", pNodeDesc);
+			break;
+		case Engine::EFFECT_TYPE::PARTICLE:
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", pNodeDesc);
+			break;
+		case Engine::EFFECT_TYPE::MESH:
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_MeshNode", pNodeDesc);
+			break;
+		case Engine::EFFECT_TYPE::END:
+			break;
+		default:
+			break;
+		}
 
-		//if (pNode)
-		//	m_Nodes[i] = static_cast<CEffectNode*>(pNode);
+		if (pNode)
+		{
+			m_Nodes[i] = static_cast<CEffectNode*>(pNode);
+			Get_Component<CObjectContainer>()->Add_Child(pNode);
+		}
 	}
 
 	return S_OK;

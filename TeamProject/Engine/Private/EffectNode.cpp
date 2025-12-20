@@ -20,13 +20,16 @@ HRESULT CEffectNode::Initialize_Prototype()
 
 HRESULT CEffectNode::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+	//__super::Initialize(pArg);
 
 	/* Init Node */
 	EFFECT_NODE* pNodeDesc = static_cast<EFFECT_NODE*>(pArg);
 	m_fDuration = pNodeDesc->fDuration;
 	m_fElpasedTime = 0.f;
 	m_IsLoop = pNodeDesc->isLoop;
+
+	if (m_IsLoop)
+		m_IsEffectActive = true;
 
 	return S_OK;
 }

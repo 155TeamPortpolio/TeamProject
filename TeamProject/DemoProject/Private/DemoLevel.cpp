@@ -88,7 +88,7 @@ void CDemoLevel::Update()
 
 HRESULT CDemoLevel::Render()
 {
-	SetWindowText(g_hWnd, TEXT("���� �����Դϴ�."));
+	SetWindowText(g_hWnd, TEXT(""));
 	return S_OK;
 }
 

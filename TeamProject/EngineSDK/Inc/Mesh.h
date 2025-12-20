@@ -23,8 +23,8 @@ public:
 	const vector<_uint>& Get_Indices() { return m_indices; }
 	const vector<VTXMESH>& Get_StaticVertices() { return m_StaticVertex; }
 
-	_uint Get_StaticVerticesCount() { return m_StaticVertex.size(); }
-	_uint Get_SkinnedVerticesCount() { return m_Skined.size(); }
+	virtual _uint Get_StaticVerticesCount() { return m_iVerticesCount; }
+	virtual _uint Get_SkinnedVerticesCount() { return m_iVerticesCount; }
 public:
 	void Create_BoneMinMax(class CSkeleton* pSkeleton);
 	virtual void Render_GUI();

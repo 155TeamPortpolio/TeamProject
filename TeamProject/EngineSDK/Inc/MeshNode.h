@@ -67,5 +67,8 @@ protected:
     /*Distortion Params*/
     _float m_fDistortionWeight{};
 
+    /*Bloom Params*/
+    _float m_fBloomIntensity{};
+
 };
 NS_END

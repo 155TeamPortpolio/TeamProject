@@ -39,6 +39,7 @@ private:
 	CSkeleton* m_pSkeleton = { nullptr };
 	_int BoneIndex = {};
 
+	_uint VertexCount = {};
 public:
 	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	virtual void Free() override;
