@@ -86,7 +86,7 @@ void CUIObject_Tool::ToJson_Common(json& data)
     // Transform 정보
     data["transform"]["anchorOffset"]["x"] = m_vAnchorOffset.x;
     data["transform"]["anchorOffset"]["y"] = m_vAnchorOffset.y;
-    data["transform"]["anchor"] = static_cast<int>(m_eAnchor);
+    data["transform"]["anchor"] = ENUM(m_eAnchor);
     data["transform"]["size"]["x"] = m_vSize.x;
     data["transform"]["size"]["y"] = m_vSize.y;
     data["transform"]["scale"]["x"] = m_vScale.x;
@@ -353,15 +353,8 @@ void CUIObject_Tool::Render_GUI_Animation()
         ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
         ImGui::Begin(clip.strName.c_str(), &showPopup);
 
-        // 선택한 클립 편집
-        char szBuffer[256] = {};
-        strcpy_s(szBuffer, clip.strName.c_str());
-        if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
-            clip.strName = szBuffer;
-        ImGui::InputFloat(u8"길이", &clip.fDuration);
-        ImGui::Checkbox(u8"루프", &clip.isLoop);
-
-        // 재생, 정지
+        // 재생, 정지 
+        ImGui::SeparatorText(u8"재생");
         ImGui::BeginDisabled(clip.keyframes.empty());
         if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
         {
@@ -374,7 +367,16 @@ void CUIObject_Tool::Render_GUI_Animation()
         ImGui::EndDisabled();
         ImGui::SameLine();
         if (m_isBlending)   ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), u8"● Playing");
-        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped");
+        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped"); 
+
+        // 선택한 클립 편집
+        ImGui::SeparatorText(u8"기본 속성 편집");
+        char szBuffer[256] = {};
+        strcpy_s(szBuffer, clip.strName.c_str());
+        if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
+            clip.strName = szBuffer;
+        ImGui::InputFloat(u8"길이", &clip.fDuration);
+        ImGui::Checkbox(u8"루프", &clip.isLoop);
 
         // 키프레임 추가
         ImGui::SeparatorText((u8"키프레임 ( " + to_string(clip.keyframes.size()) + " )").c_str());
