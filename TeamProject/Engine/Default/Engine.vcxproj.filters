@@ -1372,5 +1372,8 @@
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_DeadListInit.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

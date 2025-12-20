@@ -53,20 +53,53 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	Safe_AddRef(m_pTextureSheetAnimation);
 	Safe_AddRef(m_pNoise);
 
-	/*---------------Compute Shader-------------*/
+	/*Constant Buffer*/
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 
 	{
-		CStructuredBuffer::DESC Desc{};
+		D3D11_BUFFER_DESC desc{};
+		desc.ByteWidth = sizeof(CB_FRAME);
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
 
+		pDevice->CreateBuffer(&desc, nullptr, &m_pFrameBuffer);
 	}
 
+	{
+		D3D11_BUFFER_DESC desc{};
+		desc.ByteWidth = sizeof(CB_SPAWN);
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
 
+		pDevice->CreateBuffer(&desc, nullptr, &m_pSpawnBuffer);
+	}
+
+	{
+		D3D11_BUFFER_DESC desc{};
+		desc.ByteWidth = sizeof(CB_DEAD_LIST_INIT);
+		desc.Usage = D3D11_USAGE_DYNAMIC;
+		desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+		desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		desc.MiscFlags = 0;
+		desc.StructureByteStride = 0;
+
+		pDevice->CreateBuffer(&desc, nullptr, &m_pDeadListInitBuffer);
+	}
+	
+	/* Set Compute Shader */
+	auto resource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	m_ComputeShaders.resize(static_cast<_uint>(SHADER::END));
 
+	m_ComputeShaders[static_cast<_uint>(SHADER::SPAWN)] = resource->Load_ComputeShader(G_GlobalLevelKey,"CS_Particle_Spawn.hlsl");
+	m_ComputeShaders[static_cast<_uint>(SHADER::BASIC)] = resource->Load_ComputeShader(G_GlobalLevelKey, "CS_Particle_Basic.hlsl");
+	m_ComputeShaders[static_cast<_uint>(SHADER::INIT_DEAD_LIST)] = resource->Load_ComputeShader(G_GlobalLevelKey, "CS_Particle_DeadListInit.hlsl");
 
-	
-	
 	return S_OK;
 }
 
@@ -223,6 +256,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 		m_DeadParticleIndices.push_back(i);
 
+	CreateStructuredBuffers(m_iMaxSpawnParticleCount);
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -245,6 +279,91 @@ HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext, _uint offset, _uint
 
 void CParticleSystem::Render_GUI()
 {
+}
+
+void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
+{
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
+
+	Safe_Release(m_pParticlesBuffer);
+	Safe_Release(m_pDeadListBuffer);
+	Safe_Release(m_pAliveBuffer[0]);
+	Safe_Release(m_pAliveBuffer[1]);
+	Safe_Release(m_pSpawnInBuffer);
+
+	/* Particles */
+	{
+		vector<PARTICLE_GPU> InitData;
+		InitData.resize(iMaxCount);
+
+		CStructuredBuffer::DESC desc{};
+		desc.iCount = iMaxCount;
+		desc.iStride = sizeof(PARTICLE_GPU);
+		desc.pInitData = InitData.data();
+		desc.iUAVFlag = 0;
+		desc.eUsage = D3D11_USAGE_DEFAULT;
+		desc.iCpuAccess = 0;
+		
+		m_pParticlesBuffer = CStructuredBuffer::Create(desc);
+	}
+
+	/* Dead List */
+	{
+		CStructuredBuffer::DESC desc{};
+		desc.iCount = iMaxCount;
+		desc.iStride = sizeof(_uint);
+		desc.iUAVFlag = D3D11_BUFFER_UAV_FLAG_APPEND;
+		desc.eUsage = D3D11_USAGE_DEFAULT;
+		desc.iCpuAccess = 0;
+		
+		m_pDeadListBuffer = CStructuredBuffer::Create(desc);
+
+		/*초기화 컴셰 필요*/
+		D3D11_MAPPED_SUBRESOURCE subResource{};
+		CB_DEAD_LIST_INIT deadListInit{};
+		deadListInit.iMaxParticleCount = iMaxCount;
+
+		pContext->Map(m_pDeadListInitBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &subResource);
+		memcpy_s(subResource.pData, sizeof(CB_DEAD_LIST_INIT), &deadListInit, sizeof(CB_DEAD_LIST_INIT));
+		pContext->Unmap(m_pDeadListInitBuffer, 0);
+
+		ID3D11UnorderedAccessView* uav = m_pDeadListBuffer->GetUAV();
+		_uint initCount = 0;
+
+		auto pComputeShader = m_ComputeShaders[ENUM(SHADER::INIT_DEAD_LIST)];
+		pComputeShader->Bind(pContext);
+		pComputeShader->SetCB(pContext, 1, m_pDeadListInitBuffer);
+		pComputeShader->SetUAV(pContext, 1, m_pDeadListBuffer->GetUAV(), 0);
+		pComputeShader->Dispatch1D(pContext, iMaxCount);
+		CComputeShader::UnbindAll(pContext);
+	}
+
+	/* Alive */
+	{
+		CStructuredBuffer::DESC desc{};
+		desc.iCount = iMaxCount;
+		desc.iStride = sizeof(_uint);
+		desc.iUAVFlag = D3D11_BUFFER_UAV_FLAG_APPEND;
+		desc.eUsage = D3D11_USAGE_DEFAULT;
+		desc.iCpuAccess = 0;
+
+		for (_uint i = 0; i < 2; ++i)
+			m_pAliveBuffer[i] = CStructuredBuffer::Create(desc);
+	}
+
+	/* Spawn In */
+	{
+		CStructuredBuffer::DESC desc{};
+		desc.iCount = iMaxCount;
+		desc.iStride = sizeof(PARTICLE_GPU);
+		desc.UseSRV = true;
+		desc.UseUAV = false;
+		desc.iUAVFlag = 0;
+		desc.eUsage = D3D11_USAGE_DYNAMIC;
+		desc.iCpuAccess = D3D11_CPU_ACCESS_WRITE;
+
+		m_pSpawnInBuffer = CStructuredBuffer::Create(desc);
+	}
 }
 
 void CParticleSystem::SpawnParticles(_float dt)
@@ -433,4 +552,17 @@ void CParticleSystem::Free()
 	Safe_Release(m_pLifeTimeColor);
 	Safe_Release(m_pTextureSheetAnimation);
 	Safe_Release(m_pNoise);
+
+	Safe_Release(m_pParticlesBuffer);
+	Safe_Release(m_pDeadListBuffer);
+	for (_uint i = 0; i < 2; ++i)
+		Safe_Release(m_pAliveBuffer[i]);
+	Safe_Release(m_pSpawnInBuffer);
+
+	for (auto& shader : m_ComputeShaders)
+		Safe_Release(shader);
+
+	Safe_Release(m_pDeadListInitBuffer);
+	Safe_Release(m_pFrameBuffer);
+	Safe_Release(m_pSpawnBuffer);
 }

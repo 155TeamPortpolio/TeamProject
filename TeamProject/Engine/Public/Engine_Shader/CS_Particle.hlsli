@@ -30,6 +30,12 @@ cbuffer CBSpawn : register(b1)
     uint3 spawnPad;
 };
 
+cbuffer CBDeadListInit : register(b2)
+{
+    uint iMaxParticleCount;
+    uint3 initPad;
+};
+
 /* 이번 프레임에 생성 할 파티클의 데이터들, cpu에서 계산해서 올려줌 */
 StructuredBuffer<Particle> SpawnIn : register(t1);
 

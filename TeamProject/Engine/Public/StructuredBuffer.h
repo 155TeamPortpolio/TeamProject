@@ -16,6 +16,9 @@ public:
         _bool UseUAV = true;
         _uint iUAVFlag{};
 
+        D3D11_USAGE eUsage{};
+        _uint iCpuAccess{};
+
         _bool UseStaging = false;
     }DESC;
 private:
@@ -30,12 +33,13 @@ public:
 
 public:
     static CStructuredBuffer* Create(const DESC& desc);
+    virtual void Free() override;
 
 private:
     HRESULT CreateBuffer(const DESC& desc);
-    HRESULT CreateSRV();                  
-    HRESULT CreateUAV(_uint iUAVFlag);
-    HRESULT CreateStaging();
+    HRESULT CreateSRV(const DESC& desc);
+    HRESULT CreateUAV(const DESC& desc);
+    HRESULT CreateStaging(const DESC& desc);
 
 private:
     ID3D11Buffer* m_pBuffer = { nullptr };

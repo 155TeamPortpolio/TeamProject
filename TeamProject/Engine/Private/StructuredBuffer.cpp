@@ -13,19 +13,19 @@ HRESULT CStructuredBuffer::Initialize(const DESC& desc)
 
 	if (desc.UseSRV)
 	{
-		if (FAILED(CreateSRV()))
+		if (FAILED(CreateSRV(desc)))
 			return E_FAIL;
 	}
 
 	if (desc.UseUAV)
 	{
-		if (FAILED(CreateUAV(desc.iUAVFlag)))
+		if (FAILED(CreateUAV(desc)))
 			return E_FAIL;
 	}
 
 	if (desc.UseStaging)
 	{
-		if (FAILED(CreateStaging()))
+		if (FAILED(CreateStaging(desc)))
 			return E_FAIL;
 	}
 
@@ -45,6 +45,16 @@ CStructuredBuffer* CStructuredBuffer::Create(const DESC& desc)
 	return instance;
 }
 
+void CStructuredBuffer::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pBuffer);
+	Safe_Release(m_pSRV);
+	Safe_Release(m_pUAV);
+	Safe_Release(m_pStaging);
+}
+
 HRESULT CStructuredBuffer::CreateBuffer(const DESC& desc)
 {
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
@@ -53,16 +63,17 @@ HRESULT CStructuredBuffer::CreateBuffer(const DESC& desc)
 	m_iStride = desc.iStride;
 	
 	D3D11_BUFFER_DESC BufferDesc{};
+	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	BufferDesc.ByteWidth = m_iStride * m_iCount;
 
 	if(desc.UseSRV)
 		BufferDesc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;
-	if (desc.UseSRV)
+	if (desc.UseUAV)
 		BufferDesc.BindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 
 	BufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-	BufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	BufferDesc.CPUAccessFlags = 0;
+	BufferDesc.Usage = desc.eUsage;
+	BufferDesc.CPUAccessFlags = desc.iCpuAccess;
 	BufferDesc.StructureByteStride = m_iStride;
 
 	HRESULT hr{};
@@ -81,7 +92,7 @@ HRESULT CStructuredBuffer::CreateBuffer(const DESC& desc)
 	return hr;
 }
 
-HRESULT CStructuredBuffer::CreateSRV()
+HRESULT CStructuredBuffer::CreateSRV(const DESC& desc)
 {
 	if (!m_pBuffer)
 		return E_FAIL;
@@ -100,7 +111,7 @@ HRESULT CStructuredBuffer::CreateSRV()
 	return S_OK;
 }
 
-HRESULT CStructuredBuffer::CreateUAV(_uint iUAVFlag)
+HRESULT CStructuredBuffer::CreateUAV(const DESC& desc)
 {
 	if (!m_pBuffer)
 		return E_FAIL;
@@ -112,7 +123,7 @@ HRESULT CStructuredBuffer::CreateUAV(_uint iUAVFlag)
 	UAVDesc.Format = DXGI_FORMAT_UNKNOWN;
 	UAVDesc.Buffer.FirstElement = 0;
 	UAVDesc.Buffer.NumElements = m_iCount;
-	UAVDesc.Buffer.Flags = iUAVFlag;    
+	UAVDesc.Buffer.Flags = desc.iUAVFlag;    
 
 	if (FAILED(pDevice->CreateUnorderedAccessView(m_pBuffer, &UAVDesc, &m_pUAV)))
 		return E_FAIL;
@@ -120,7 +131,7 @@ HRESULT CStructuredBuffer::CreateUAV(_uint iUAVFlag)
 	return S_OK;
 }
 
-HRESULT CStructuredBuffer::CreateStaging()
+HRESULT CStructuredBuffer::CreateStaging(const DESC& desc)
 {
 	if (!m_pBuffer)
 		return E_FAIL;

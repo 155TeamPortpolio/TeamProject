@@ -36,8 +36,28 @@ public:
 		_float2 pad{};
 	}PARTICLE_GPU;
 
-	enum class BUFFER { SPAWN_IN, ALIVE_IN, ALIVE_OUT, DEAD_LIST, PARTICLES, END };
-	enum class SHADER { SPAWN, BASIC, END };
+	typedef struct tagCBFrame
+	{
+		_float fDeltaTime{};
+		_uint iAliveCount{};
+		_uint iMaxParticles{};
+		_uint UseGravity{};
+		_float fGravityScale{};
+		_float3 pad{};
+	}CB_FRAME;
+
+	typedef struct tagCBSpawn
+	{
+		_uint iSpawnCount{};
+		_uint pad[3] = {};
+	}CB_SPAWN;
+
+	typedef struct tagCBDeadListInit
+	{
+		_uint iMaxParticleCount{};
+		_uint pad[3] = {};
+	}CB_DEAD_LIST_INIT;
+	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 protected:
 	CParticleSystem();
@@ -75,6 +95,8 @@ public:
 	virtual void Render_GUI() override;
 
 private:
+	void CreateStructuredBuffers(_uint iMaxCount);
+
 	void SpawnParticles(_float dt);
 	void UpdateParticles(_float dt);
 	void SetUpParticle(PARTICLE & particle)const;
@@ -124,8 +146,13 @@ private:
 	vector<class IParticleModule*> m_Modules;
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
-	vector<class CStructuredBuffer*> m_Buffers;
+	class CStructuredBuffer* m_pParticlesBuffer = { nullptr };
+	class CStructuredBuffer* m_pDeadListBuffer = { nullptr };
+	class CStructuredBuffer* m_pAliveBuffer[2] = {};
+	class CStructuredBuffer* m_pSpawnInBuffer = { nullptr };
+	
 	vector<class CComputeShader*> m_ComputeShaders;
+	ID3D11Buffer* m_pDeadListInitBuffer = { nullptr };
 	ID3D11Buffer* m_pFrameBuffer = { nullptr };
 	ID3D11Buffer* m_pSpawnBuffer = { nullptr };
 	_uint m_iAliveCount{};
