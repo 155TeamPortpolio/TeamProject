@@ -127,40 +127,58 @@ void CAnimator3D::Update_Animation(_float dt)
 	BuildBone();
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, string ClipTag)
+HRESULT CAnimator3D::Set_Animation(AnimArg Clip)
 {
-	return E_NOTIMPL;
+	_int iClipIndex = Resolve_ClipIndex(Clip);
+	if(!isExistClip(iClipIndex))
+		return E_FAIL;
+
+	return Set_Animation(0, iClipIndex);
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _uint Clipindex)
+HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
-	if (!isExistLayer(LayerIndex))
-		return S_OK;
+	_int iClipIndex = Resolve_ClipIndex(ClipArg);
 
+	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
+		return E_FAIL;
+
+	return Set_Animation(LayerIndex, iClipIndex);;
+}
+
+HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, _int ClipIndex)
+{
 	Reset_Layer(LayerIndex);
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-	Layer.iClipIndex = Clipindex;
+
+	Layer.iClipIndex = ClipIndex;
 	Layer.bLoop = true;
 
 	return S_OK;
 }
 
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, string ClipTag, _float convertDuration)
+
+HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg, _float convertDuration)
+{
+	_int iClipIndex = Resolve_ClipIndex(ClipArg);
+
+	if (!isExistClip(iClipIndex))
+		return E_FAIL;
+
+	return Change_Animation(0, iClipIndex, convertDuration);
+}
+
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipTag, _float convertDuration)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, _uint Clipindex, _float convertDuration)
+HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, _int ClipIndex, _float convertDuration)
 {
 	return E_NOTIMPL;
 }
 
-HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, string ClipTag, _bool overrideSame, _float convertDuration)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, _uint Clipindex, _bool overrideSame, _float convertDuration)
+HRESULT CAnimator3D::ForceChange_Animation(_uint LayerIndex, AnimArg ClipTag, _bool overrideSame, _float convertDuration)
 {
 	return E_NOTIMPL;
 }
@@ -319,6 +337,27 @@ _float4x4* CAnimator3D::Get_BoneTransformMatrixPtr(const string& boneName)
 	else {
 		return &m_TransfromationMatrices[Index];
 	}
+}
+
+_int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
+{
+	if (holds_alternative<_int>(ClipArg))
+		return get<_int>(ClipArg);
+
+	return Find_Clip(get<string>(ClipArg));
+}
+
+_int CAnimator3D::Find_Clip(const string& ClipTag)
+{
+	_int iIndex = 0;
+	for (auto& Clip : m_pAnimClips) {
+		if (ClipTag == Clip->Get_Name())
+			return iIndex;
+
+		++iIndex;
+	}
+
+	return -1;
 }
 
 _bool CAnimator3D::isExistLayer(_int LayerIndex)
