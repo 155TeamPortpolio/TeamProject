@@ -17,6 +17,7 @@
 
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
+
 CTestObject::CTestObject()
 {
 }
@@ -124,12 +125,8 @@ void CTestObject::Priority_Update(_float dt)
 void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	if (m_pStateMachine)
-	{
-		_float fProgress = Get_Component<CAnimator3D>()->Get_CurAnimDuration(0);
-		m_pStateMachine->Update_AnimProgress(fProgress);
-		m_pStateMachine->Update(dt);
-	}
+	if (m_pStateMachine)	m_pStateMachine->Update(dt);
+	
 
 	auto controller = Get_Component<CCharacterController>();
 	if (controller)

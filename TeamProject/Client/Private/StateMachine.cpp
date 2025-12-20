@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "StateMachine.h"
+#include "Animator3D.h"
+#include "TestObject.h"
 
 template<typename Type>
 CStateMachine<Type>::CStateMachine()
@@ -38,6 +40,8 @@ void CStateMachine<Type>::Update(_float dt)
     if (nullptr == m_pCurrentState)
         return;
 
+    Update_AnimProgress();
+
     m_fStateTime += dt;
     m_pCurrentState->m_fStateTime = m_fStateTime;
 
@@ -49,10 +53,21 @@ void CStateMachine<Type>::Update(_float dt)
 }
 
 template<typename Type>
-void CStateMachine<Type>::Update_AnimProgress(_float fProgress)
+void CStateMachine<Type>::Update_AnimProgress()
 {
-    if (m_pCurrentState)
-        m_pCurrentState->m_fAnimProgress = fProgress;
+    if (!m_pCurrentState || !m_pOwner)
+        return;
+
+    CGameObject* pGameObject = static_cast<CGameObject*>(m_pOwner);
+    if (pGameObject)
+    {
+        CAnimator3D* pAnimator = pGameObject->Get_Component<CAnimator3D>();
+        if (pAnimator)
+        {
+            _float fProgress = pAnimator->Get_CurAnimDuration(0);
+            m_pCurrentState->m_fAnimProgress = fProgress;
+        }
+    }
 }
 
 template<typename Type>
@@ -326,5 +341,6 @@ _bool CStateMachine<Type>::Get_Trigger(const string& strParam) const
     return iter->second.Get_Trigger();
 }
 
-template class CStateMachine<class CCharacter>;
+
+
 template class CStateMachine<class CTestObject>;
