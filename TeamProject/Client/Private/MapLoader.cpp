@@ -3,6 +3,7 @@
 #include "MapData_Defines.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "MapDataCloud.h"
 
 #include "MapPlacedObject.h"
 
@@ -11,11 +12,22 @@ CMapLoader::CMapLoader()
 {
 }
 
-HRESULT CMapLoader::Initialize(const string TagLevel, const string MapDataPath)
+HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)
 {
+    if (nullptr == pMapDataCloud)
+        return E_FAIL;
+
     m_TagLevel = TagLevel;
 
-    filesystem::path OpenPath = MapDataPath;
+    auto pPackets = pMapDataCloud->Get_MapDataPacket(TagArea);
+
+    for (auto& packet : *pPackets) {
+               
+        // packet 각각 json로드하고 오브젝트 ID순서대로 싹다 값 넣기! 
+
+    }
+
+    filesystem::path OpenPath = {};//MapDataPath;
 
     if (OpenPath.empty())
         return E_FAIL;
@@ -107,11 +119,11 @@ CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
     return eType;
 }
 
-CMapLoader* CMapLoader::Create(const string& TagLevel, const string& MapDataPath)
+CMapLoader* CMapLoader::Create(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)
 {
     CMapLoader* instance = new CMapLoader();
 
-    if (FAILED(instance->Initialize(TagLevel, MapDataPath))) {
+    if (FAILED(instance->Initialize(TagLevel, pMapDataCloud, TagArea))) {
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");

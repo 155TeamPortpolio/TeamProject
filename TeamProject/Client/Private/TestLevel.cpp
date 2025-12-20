@@ -14,6 +14,7 @@
 #include "Camera.h"
 
 /* MapData */
+#include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 
@@ -27,7 +28,9 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-
+	m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
+	if (nullptr == m_pMapDataCloud)
+		return E_FAIL;
 
 
 	return S_OK;
@@ -51,7 +54,7 @@ HRESULT CTestLevel::Awake()
 	Rake_MapResources();
 
 	////Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapData.Base.1.json" );
+	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
@@ -173,6 +176,8 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMapDataCloud);
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

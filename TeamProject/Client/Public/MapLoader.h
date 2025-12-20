@@ -14,19 +14,22 @@ private:
 	virtual ~CMapLoader() = default;
 
 public:
-	HRESULT	Initialize(const string TagLevel, const string MapDataPath);
+	HRESULT	Initialize(const string& TagLevel, class CMapDataCloud* pMapDataCloud, const string& TagArea);
 	
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
 
 private:
+	// 임시) 쓰레드풀 작업 후 개선 및 위치 이동예정 - 경인
+	//class CMapDataCloud* m_pMapDataCloud = { nullptr };
+
 	_int	m_iVersion = { 1 };
 	string	m_TagLevel = {};
 	vector<string>	m_TagLayers;
 
 public:
-	static CMapLoader* Create(const string& TagLevel, const string& MapDataPath);
+	static CMapLoader* Create(const string& TagLevel, class CMapDataCloud* pMapDataCloud, const string& TagArea);
 	virtual void Free() override;
 };
 

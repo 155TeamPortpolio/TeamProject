@@ -11,6 +11,14 @@ namespace Client {
 		variant<monostate, int64_t, double, bool, string, XMFLOAT3> value;
 	};
 
+	typedef struct tagMapDataFilePacket {
+		string		TagDataFileKey = {};		// 파일 이름
+		string		TagDataFilePath = {};		// json 파일 경로
+		string		TagArea = {};				// 지형 이름
+		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
+		int			iVersion = { -1 };
+	}MapData_Path_Packet;
+
 	typedef struct tagMapObjectData {
 		std::string TagModelResourceKey = {};
 		std::string TagMaterialResourceKey = {};
@@ -48,8 +56,6 @@ namespace Client {
 	}MapData_Slot_Header;
 	//NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
 
-	typedef struct tagSlotDataParsePerObj {
-
-	};
+	
 
 }
