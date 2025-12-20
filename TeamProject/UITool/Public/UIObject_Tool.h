@@ -44,7 +44,10 @@ protected:
 private:
 	void ToJson_Common(json& data);					// (툴)	
 	void ToJson_Parent(json& data);					// (툴)
+	void ToJson_Animation(json& data);				// (툴)
+
 	void FromJson_Parent(const json& data);			// (툴, 클라이언트)
+	void FromJson_Animation(const json& data);			// (툴, 클라이언트)
 
 protected:
 	_float4				m_vColor = { 1.f, 1.f, 1.f, 1.f };

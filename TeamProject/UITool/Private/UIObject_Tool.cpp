@@ -65,12 +65,16 @@ void CUIObject_Tool::ToJson(json& data)
 {
     ToJson_Common(data);
     ToJson_Parent(data);
+    ToJson_Animation(data);
 }
 
 void CUIObject_Tool::FromJson(const json& data)
 {
     // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
+    m_vPivot.x = data["transform"]["pivot"]["x"];
+    m_vPivot.y = data["transform"]["pivot"]["y"];
     FromJson_Parent(data);
+    FromJson_Animation(data);
 }
 
 void CUIObject_Tool::ToJson_Common(json& data)
@@ -122,6 +126,45 @@ void CUIObject_Tool::ToJson_Parent(json& data)
     }
 }
 
+void CUIObject_Tool::ToJson_Animation(json& data)
+{
+    if (m_AnimClips.empty())
+        return;
+
+    for (auto& clip : m_AnimClips)
+    {
+        if (clip.keyframes.empty())
+            return;
+
+        json clipData;
+
+        clipData["name"] = clip.strName;
+        clipData["loop"] = clip.isLoop;
+        clipData["duration"] = clip.fDuration;
+
+        for (auto& keyframe : clip.keyframes)
+        {
+            json keyframeData;
+
+            keyframeData["time"] = keyframe.fTime;
+            keyframeData["scale"]["x"] = keyframe.vScale.x;
+            keyframeData["scale"]["y"] = keyframe.vScale.y;
+            keyframeData["angle"] = keyframe.fAngle;
+            keyframeData["position"]["x"] = keyframe.vPosition.x;
+            keyframeData["position"]["y"] = keyframe.vPosition.y;
+            keyframeData["color"]["x"] = keyframe.vColor.x;
+            keyframeData["color"]["y"] = keyframe.vColor.y;
+            keyframeData["color"]["z"] = keyframe.vColor.z;
+            keyframeData["color"]["w"] = keyframe.vColor.w;
+            keyframeData["easeType"] = keyframe.easeType;
+
+            clipData["keyframes"].push_back(keyframeData);
+        }
+
+        data["animation"].push_back(clipData);
+    }
+}
+
 void CUIObject_Tool::FromJson_Parent(const json& data)
 {
     if (!data.contains("parentInstanceKey"))
@@ -137,6 +180,31 @@ void CUIObject_Tool::FromJson_Parent(const json& data)
             pObj->Get_Component<CObjectContainer>()->Add_Child(this);
             return;
         }
+    }
+}
+
+void CUIObject_Tool::FromJson_Animation(const json& data)
+{
+    if (!data.contains("animation"))
+        return;
+
+    for (auto& clipData : data["animation"])
+    {
+        UI_ANIM_CLIP clip = UI_ANIM_CLIP(clipData["name"]);
+        clip.isLoop = clipData["loop"];
+        clip.fDuration = clipData["duration"];
+        for (auto& keyframeData : clipData["keyframes"])
+        {
+            UI_KEYFRAME keyframe = {};
+            keyframe.fTime = keyframeData["time"];
+            keyframe.vScale = _float2(keyframeData["scale"]["x"], keyframeData["scale"]["y"]);
+            keyframe.fAngle = keyframeData["angle"];
+            keyframe.vPosition = _float2(keyframeData["position"]["x"], keyframeData["position"]["y"]);
+            keyframe.vColor = _float4(keyframeData["color"]["x"], keyframeData["color"]["y"], keyframeData["color"]["z"], keyframeData["color"]["w"]);
+            keyframe.easeType = keyframeData["easeType"];
+            clip.keyframes.push_back(keyframe);
+        }
+        m_AnimClips.push_back(clip);
     }
 }
 
@@ -363,6 +431,16 @@ void CUIObject_Tool::Play_Animation(_float dt)
 
         fRatio = clamp(fRatio, 0.f, 1.f);
 
+        if (fRatio >= 1.f)
+        {
+            // 애니메이션 종료 처리
+            if (!clip.isLoop)
+                m_isBlending = false;
+
+            m_fBlendTime = 0.f;
+            return;
+        }
+
         // 현재 시간에 해당하는 키프레임 찾기
         _int iCurrentKeyIdx = { -1 };
 
@@ -405,24 +483,7 @@ void CUIObject_Tool::Play_Animation(_float dt)
             // 포지션
             //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos);
             // 컬러
-        } 
-        else if (fRatio >= 1.f)
-        {
-            // 애니메이션 종료 처리
-            if (!clip.isLoop)
-                m_isBlending = false;
-
-            m_fBlendTime = 0.f;
-
-            //// 마지막 키프레임 적용 ?? 
-            //if (!clip.keyframes.empty())
-            //{
-            //    const UI_KEYFRAME& lastKey = clip.keyframes.back();
-            //    m_vScale.x = lastKey.vScale.x;
-            //    m_vScale.y = lastKey.vScale.y;
-            //    m_fRadian = XMConvertToRadians(lastKey.fAngle);
-            //}
-        } 
+        }
     }
     else
     {
@@ -436,8 +497,6 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
         return;
 
     m_iCurrentClipIndex = iIndex;
-
-    //m_iCurrentClipIndex[iIndex]->Reset();
 }
 
 void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
