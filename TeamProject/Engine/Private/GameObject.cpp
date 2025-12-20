@@ -328,7 +328,12 @@ HRESULT CGameObject::Make_OpaquePacket()
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(packet);
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_EFFECT)
+			Make_EffectPacket(packet);
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_3DUI)
+			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI3D(packet);
 
+		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
 		if (packet.pModel->doShadowCast()) {
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
 		}
@@ -408,6 +413,40 @@ HRESULT CGameObject::Make_ParticlePacket()
 
 	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Particle(packet);
 
+	return S_OK;
+}
+
+HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
+{
+	EFFECT_PACKET newPacket = {};
+	newPacket.bSkinning = packet.bSkinning;
+	newPacket.DrawIndex = packet.DrawIndex;
+	newPacket.MaterialIndex = packet.MaterialIndex;
+	newPacket.SkinningOffset = packet.SkinningOffset;
+	newPacket.pModel = packet.pModel;
+	newPacket.pMaterial = packet.pMaterial;
+	newPacket.pPayLoad = packet.pPayLoad;
+	newPacket.pWorldMatrix = packet.pWorldMatrix;
+	//float3 toObj = objWorldPos - cameraPos;
+	//float dist = dot(toObj, cameraForward);
+
+	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
+	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);
+
+	_float4 camPos = CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos();
+
+	_vector CamDist = m_pTransform->Get_Pos() - XMLoadFloat4(&camPos);
+	_vector CamForward = XMVector4Normalize(viewInverse.r[2]);
+
+	newPacket.DistanceToCamera = XMVectorGetX(XMVector4Dot(CamDist, CamForward));
+
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Effect(newPacket);
+	return S_OK;
+}
+
+HRESULT CGameObject::Make_3DUIPacket(OPAQUE_PACKET packet)
+{
+	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI3D(packet);
 	return S_OK;
 }
 

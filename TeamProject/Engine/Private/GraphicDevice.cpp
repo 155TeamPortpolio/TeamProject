@@ -108,7 +108,7 @@ HRESULT CGraphicDevice::Ready_SwapChain(HWND hWnd, WINMODE isWindowed, _uint iWi
 	SwapChain.BufferDesc.Width = iWinCX;	/* °¡·Î ÇÈ¼¿ ¼ö */
 	SwapChain.BufferDesc.Height = iWinCY;	/* ¼¼·Î ÇÈ¼¿ ¼ö */
 
-	SwapChain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	SwapChain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 

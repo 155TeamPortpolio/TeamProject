@@ -20,7 +20,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 {
 	__super::Initialize(pTargetManager, pPipeLine);
 
-	LoadShader("Shader_PostProcess.hlsl");
+	LoadShader("Shader_Deferred.hlsl");
 	Ready_Target();
 	Ready_MRT();
 
@@ -98,7 +98,6 @@ HRESULT CPostRenderer::Render_Final()
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
-	//m_pTargetManager->Bind_Target("/*       */", m_pShader, "g_DistortionAdd_Texture");
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
@@ -109,7 +108,6 @@ HRESULT CPostRenderer::Render_Final()
 	m_pShader->Apply("Final", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
-
 	return S_OK;
 }
 
@@ -123,6 +121,12 @@ HRESULT CPostRenderer::Ready_Target()
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomDesc);
+
+	RenderTargetDesc BloomInfoDesc = { "Target_BloomInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomInfoDesc);
 
 	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurXDesc);
@@ -138,7 +142,9 @@ HRESULT CPostRenderer::Ready_Target()
 
 HRESULT CPostRenderer::Ready_MRT()
 {
-	{
+	{   
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY"))) return E_FAIL;
 	}
@@ -250,6 +256,7 @@ HRESULT CPostRenderer::Process_PostProcessQueue()
 	}
 	if (bound) m_pTargetManager->End_MRT();
 	m_PostCommands.clear();
+	return S_OK;
 }
 
 HRESULT CPostRenderer::Clear_PostProcess()

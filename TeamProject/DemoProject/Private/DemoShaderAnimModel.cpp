@@ -48,6 +48,7 @@ void CDemoShaderAnimModel::Awake()
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
 		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+	Get_Component<CModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 
 	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");

@@ -37,16 +37,16 @@ HRESULT CRenderSystem::Initialize()
 	m_pTargetManager = CTarget_Manager::Create(m_pDevice, m_pContext);
 
 	/*RenderPass*/
-	m_pPriorityPass = PriorityPass::Create(this);
-	m_pOpaquePass = OpaquePass::Create(this);
-	m_pShadowPass = ShadowPass::Create(this);
-	m_pInstancePass = InstancePass::Create(this);
-	m_pBlendedPass = BlendedPass::Create(this);
-	m_pParticlePass = ParticlePass::Create(this);
-	m_pNonLightPass = NonLightPass::Create(this);
-	m_pUIPass = UIPass::Create(this);
-	m_pUI3DPass = UI3DPass::Create(this);
-	m_pEffectPass = EffectPass::Create(this);
+	m_pPriorityPass	= PriorityPass::Create(this);
+	m_pOpaquePass	= OpaquePass::Create(this);
+	m_pShadowPass	= ShadowPass::Create(this);
+	m_pInstancePass	= InstancePass::Create(this);
+	m_pBlendedPass	= BlendedPass::Create(this);
+	m_pParticlePass	= ParticlePass::Create(this);
+	m_pNonLightPass	= NonLightPass::Create(this);
+	m_pUIPass		= UIPass::Create(this);
+	m_pUI3DPass		= UI3DPass::Create(this);
+	m_pEffectPass	= EffectPass::Create(this);
 
 #ifdef _DEBUG
 	m_pDebugPass = DebugPass::Create(this);
@@ -63,19 +63,20 @@ HRESULT CRenderSystem::Initialize()
 HRESULT CRenderSystem::Render()
 {
 	m_pForward->Render_Priority(m_pPriorityPass);
+	m_pForward->Render_Shadow(m_pShadowPass);
 	m_pForward->Render_Forward(m_pOpaquePass,m_pInstancePass);
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	m_pForward->Render_Combined();
-
+	
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pUI->Render_2D(m_pUIPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
-
+	
 	m_pPost->Render_Bloom();
-	m_pPost->Render_Distortion();
+	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
 #ifdef _DEBUG

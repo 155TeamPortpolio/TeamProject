@@ -823,7 +823,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 	/*같은 셰이더, 같은 머티리얼, 같은 모델끼리 정렬 */
 	sort(m_Packets.begin(), m_Packets.end(),
-		[](const UI3D_PACKET& a, const UI3D_PACKET& b) {
+		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
@@ -884,7 +884,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	m_VisiblePackets.clear();
 }
 
-void UI3DPass::Submit(UI3D_PACKET packet)
+void UI3DPass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
 	m_Packets.push_back(packet);

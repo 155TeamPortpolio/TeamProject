@@ -33,11 +33,3 @@ BLENDRENDERKEY Engine::DrawEffectPacket::GetKey() const
 		DistanceToCamera
 	};
 }
-
-RENDERKEY Engine::Draw3DUIPacket::GetKey() const
-{
-	return {
-		pMaterial->Get_ShaderID(MaterialIndex),
-		pMaterial->Get_MaterialDataID(DrawIndex)
-	};
-}

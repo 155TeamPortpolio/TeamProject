@@ -13,7 +13,7 @@ public:
     virtual void Submit_Shadow(const INSTANCE_PACKET& packet) PURE;
     virtual void Submit_Instance(const INSTANCE_PACKET& packet) PURE;
     virtual void Submit_UI(const SPRITE_PACKET& packet) PURE;
-    virtual void Submit_UI3D(const UI3D_PACKET& packet) PURE;
+    virtual void Submit_UI3D(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Debug(const DEBUG_PACKET& packet) PURE;
     virtual void Submit_Priority(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Blend(const BLENDED_PACKET& packet) PURE;

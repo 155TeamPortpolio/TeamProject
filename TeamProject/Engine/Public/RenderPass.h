@@ -211,11 +211,11 @@ private:
 	virtual ~UI3DPass() DEFAULT;
 public:
 	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
-	void Submit(UI3D_PACKET packet);
+	void Submit(OPAQUE_PACKET packet);
 
 private:
-	vector<UI3D_PACKET> m_Packets;
-	vector<UI3D_PACKET> m_VisiblePackets;
+	vector<OPAQUE_PACKET> m_Packets;
+	vector<OPAQUE_PACKET> m_VisiblePackets;
 
 public:
 	static UI3DPass* Create(class CRenderSystem* pRenderSystem) { return new UI3DPass(pRenderSystem); }

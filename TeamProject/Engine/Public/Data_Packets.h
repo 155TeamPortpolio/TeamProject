@@ -117,21 +117,6 @@ namespace Engine {
 		class CSprite2D* pSprite2D = { nullptr };
 	}SPRITE_PACKET;
 
-	typedef struct Draw3DUIPacket : BASE_PACKET {
-		_bool bSkinning = { false }; /*�׷��� ���� �ִ�?*/
-
-		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
-		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
-		_uint SkinningOffset = {};
-
-		class CModel* pModel = { nullptr };
-		class CMaterial* pMaterial = { nullptr };
-
-		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*�߰������� �ְ� ���� �� �־�?*/
-
-		RENDERKEY GetKey() const;
-	}UI3D_PACKET;
-
 	typedef struct DrawDebugPacket : BASE_PACKET {
 		class CModel* pModel = { nullptr };
 		class CDebugRender* pDebug = { nullptr };

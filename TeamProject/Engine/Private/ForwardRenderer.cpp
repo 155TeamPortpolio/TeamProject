@@ -52,8 +52,8 @@ HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
 
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
-	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Shadow"))) return E_FAIL;
+	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 	pShadowPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);

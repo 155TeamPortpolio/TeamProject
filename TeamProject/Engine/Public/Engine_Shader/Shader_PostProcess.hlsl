@@ -79,7 +79,6 @@ struct PS_OUT_RESULT
     vector vResult : SV_TARGET0;
 };
 
-//GaussianBlur
 static const float weights[9] =
 {
     0.13298076,
@@ -123,6 +122,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     {
         Out.vResult = bright;
     }
+    Out.vResult=1.f;
     
     return Out;
 }
@@ -173,6 +173,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         
         Out.vResult = float4(result / samples, blurX.a);
     }
+    Out.vResult=1.f;
     
     return Out;
 }
@@ -222,6 +223,8 @@ PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
     
     // ¿˙¿Â
     Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
+    Out.vResult = 1.f;
+
     return Out;
 }
 
@@ -233,6 +236,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
     float3 mapped = scene.rgb + bloom.rgb;
   
+    return 1.f;
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

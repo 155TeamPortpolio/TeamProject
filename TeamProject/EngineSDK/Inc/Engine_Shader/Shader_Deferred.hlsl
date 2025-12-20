@@ -221,7 +221,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         
         Out.vResult = float4(result, bright.a);
     }
-    else // Radial은 X패스에서 그대로 통과
+    else 
     {
         Out.vResult = bright;
     }
@@ -431,7 +431,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao;
+    float3 ambient = vDiffuse.rgb * vAmbient.g * (1 - ssao);
     ambient = max(ambient, vDiffuse.rgb * 0.15f); 
     
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
@@ -467,32 +467,16 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
-{ //
-  //float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-  //float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
-  //float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
-  //
-  //float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-  //float3 mapped = scene.rgb + bloom.rgb + distortion.rgb;
-  //
-  //return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
-    
-    float2 distortionValue = g_DistortionAdd_Texture.Sample(DefaultSampler, In.vTexcoord).rg;
-    distortionValue = (distortionValue - 0.5) * 2.0;
-    
-    float2 distortedUV = In.vTexcoord + distortionValue * 0.05;
-    distortedUV = saturate(distortedUV);
-    
-    float4 scene = g_FinalTexture.Sample(DefaultSampler, distortedUV); 
-    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord); 
-    
-    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord); 
-    float3 mapped = scene.rgb + bloom.rgb;
-    return 1.f;
+{ 
+    float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
+    float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
+  
+    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 mapped = scene.rgb + bloom.rgb/* + distortion.rgb*/;
+  
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
-
-
 
 technique11 DefaultTechnique
 {
