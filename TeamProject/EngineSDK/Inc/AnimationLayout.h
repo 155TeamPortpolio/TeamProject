@@ -18,6 +18,7 @@ namespace Engine
         string          EventTag;   //이벤트 태그 
     }ANIM_EVENT;
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_EVENT, EventTime, EventType, EventTag);
+    
 
     typedef struct AnimationClip {
         string              ClipTag; //애니매이션 이름

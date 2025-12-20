@@ -4,6 +4,7 @@
 #include "Animator3DEX.h"
 #include "AnimationClip.h"
 #include "AnimModel.h"
+#include "AnimationLayout.h"
 #include "Channel.h"
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
@@ -116,9 +117,7 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
 
 					//가져온 애니매이션의 duration 가져옴
-					m_fTrackPos = 0.f;
-
-					
+					m_fTrackPos = 0.f;					
 					m_pSelectAnimator->Set_Animation(0, iIndex);
 					m_fTickPerSec = Clip->Get_TickPerSec();
 					m_fDuration = Clip->Get_Duration();
@@ -134,22 +133,26 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 
 	Draw_ToolbarUI();
 
-	ImGui::SameLine();
-	ImGui::Text("%.2f / %.2f", m_fTrackPos, m_fDuration);
+	Draw_EventListUI();
 }
 
 void CAnimToolPanel::Draw_ToolbarUI()
 {
-	const ImVec2 buttonSize(80.f, 0.f);
+	const ImVec2 buttonSize(55.f, 0.f);
 	static float timeScale = 1.f;
 
+	/* 버튼 */
 	if (ImGui::Button(m_isPlay ? "Pause" : "Play", buttonSize)) m_isPlay = !m_isPlay;
 	ImGui::SameLine();
-
 	if (ImGui::Button("Stop", buttonSize))
 	{
 		m_isPlay = false;
 		m_fTrackPos = 0.f;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Snap", buttonSize))
+	{
+		Add_Event();
 	}
 
 	ImGui::SameLine();
@@ -159,6 +162,7 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	ImGui::Dummy(ImVec2(10.f, 0.f));
 	ImGui::SameLine();
 
+	/* 재생속도 버튼 */
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(u8"속도");
 	ImGui::SameLine();
@@ -186,6 +190,8 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	ImGui::PopID();
 
 	ImGui::SameLine();
+
+	//재생 바 UI
 	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
 }
 
@@ -199,7 +205,7 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 	float endT = (duration > 1e-6f) ? duration : 1.f;
 
 	ImVec2 barPos = ImGui::GetCursorScreenPos();
-	ImVec2 barSize(avail.x, barH);
+	ImVec2 barSize(avail.x - 80.f, barH); //재생바 크기
 
 	ImGui::InvisibleButton(id, barSize);
 
@@ -264,6 +270,59 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 	}
 }
 
+void CAnimToolPanel::Draw_EventListUI()
+{
+	ImGui::BeginTable("##EventTable", 4,
+		ImGuiTableFlags_RowBg |
+		ImGuiTableFlags_ScrollY |
+		ImGuiTableFlags_BordersInnerV);
+
+	ImGui::TableSetupColumn("Time", ImGuiTableColumnFlags_WidthFixed, 70.f);
+	ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
+	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
+	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
+	ImGui::TableHeadersRow();
+
+	for (size_t i = 0; i < m_Events.size(); ++i)
+	{
+		ANIM_EVENT& e = m_Events[i];
+		ImGui::PushID((int)i);
+
+		ImGui::TableNextRow();
+
+		// Time
+		ImGui::TableNextColumn();
+		ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
+
+		// Type
+		ImGui::TableNextColumn();
+		ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
+		int type = (int)e.EventType;
+		ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
+		e.EventType = (CLIP_EVENT_TYPE)type;
+
+		// Tag
+		ImGui::TableNextColumn();
+		char tagBuf[64];
+		strcpy_s(tagBuf, e.EventTag.c_str());
+		if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
+			e.EventTag = tagBuf;
+
+		// Delete
+		ImGui::TableNextColumn();
+		if (ImGui::SmallButton("X"))
+		{
+			m_Events.erase(m_Events.begin() + i);
+			ImGui::PopID();
+			break;
+		}
+
+		ImGui::PopID();
+	}
+
+	ImGui::EndTable();
+}
+
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 {
 	ImGui::SeparatorText("Clip Datas");
@@ -305,11 +364,17 @@ void CAnimToolPanel::Reset_Panel()
 	m_fDuration = 0.f;
 	m_CurClipTag = "";
 	m_ClipTags.clear();
-
+	m_Events.clear();
 	if (nullptr == m_pSelectModel)
 		return;
 
 	Update_Panel();
+}
+
+void CAnimToolPanel::Add_Event()
+{
+	ANIM_EVENT tEvent{ 5.f, CLIP_EVENT_TYPE::EFFECT, "effect" };
+	m_Events.push_back(tEvent);
 }
 
 void CAnimToolPanel::Update_Panel()

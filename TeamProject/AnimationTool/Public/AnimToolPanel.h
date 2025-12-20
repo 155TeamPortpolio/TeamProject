@@ -28,8 +28,9 @@ private:
     void Render_Taps(_float fChildHeight);
     // --------------------------------------------------
     void GUI_Setting_Clips(_float fChildHeight);
-    void Draw_ToolbarUI();
+    void Draw_ToolbarUI(); 
     void Draw_TimelineUI(float duration, float& ioTime, const char* id);
+    void Draw_EventListUI();
     // -------------------------------------------------
     void GUI_Create_MetaData(_float fChildHeight);
 
@@ -38,7 +39,8 @@ public:
     void Update_Panel();
 private:
     void Reset_Panel();
-    
+   
+    void Add_Event();
 
     /* Create Json MetaData */
     void Load_Clips();
@@ -53,13 +55,14 @@ private: //Create Clip
     class CAnimator3DEX* m_pSelectAnimator = { nullptr };
     string               m_CurClipTag{};
     vector<string>       m_ClipTags;
-
+    vector<ANIM_EVENT>   m_Events;
     _bool   m_isPlay     = {};
     _bool   m_bLoop = { true };
     _float  m_fPlaySpeed = { 1.f };
     _float  m_fTickPerSec = { 1.f };
     _float  m_fTrackPos   = {};
     _float  m_fDuration  = {};
+    
 
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
