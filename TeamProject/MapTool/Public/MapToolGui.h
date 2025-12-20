@@ -3,7 +3,6 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
-
 NS_END
 
 NS_BEGIN(MapTool)
@@ -28,18 +27,20 @@ private:
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 	void			Save_MapData();
-	void			Load_MapData();
-	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
-	void			Clear_Layer();
+
+	void			Render_ClearLayer();
 	
 #ifdef _DEBUG
 private:
-	void			Set_AllObjectDebugRender(_bool is);
 	_bool			m_isAllDebugRender = { true };
 #endif // _DEBUG
 
 private:
-	CGameInstance* m_pGameInstance = { nullptr };
+	/* Refernce */
+	CGameInstance*			m_pGameInstance = { nullptr };
+	class CMapToolCore*		m_pMapToolCore = { nullptr };
+	class CSlotFieldGui*	m_pSlotFieldGui = { nullptr };
+	_int*					m_pVersion = { nullptr };
 
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
@@ -49,18 +50,14 @@ private:
 	vector<ModelPathPack>		m_ModelPathPack;
 
 	/* For.Object */
-	string		m_TagPlacedObjectLayer = {};
-	string		m_TagFloorObjectLayer = {};
-	string		m_TagTriggerObjectLayer = {};
-
 	_int		m_iSelectedIndex = { -1 };
 	string		m_TagSelectedModelName = {};
 	_bool		m_isObjectPicking = { true };
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
 	
 	/* For.Data */
-	vector<string>	m_TagLayers;
-	_int			m_iVersion = { 1 };
+	//vector<string>	m_TagLayers;
+	//_int			m_iVersion = { 1 };
 	MapData_Header	m_Data = {};
 
 public:

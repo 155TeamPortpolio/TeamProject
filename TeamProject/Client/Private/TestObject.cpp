@@ -35,7 +35,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*Ã†Ã„Ã€ÃÂ¸Ã­Â°Ãº Ã…Â°Â°ÂªÃ€Âº Ã€ÃÃ„Â¡*/
+	/*ÆÄÀÏ¸í°ú Å°°ªÀº ÀÏÄ¡*/
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
@@ -62,11 +62,10 @@ void CTestObject::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
+	Get_Component<CAnimator3D>()->Change_Animation(3);
 
-	auto controller = Get_Component<CCharacterController>();
-	controller->Set_GravityEnabled(true);
-	controller->Set_Position({0.f, 0.5f, 0.f});
+	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
 }
 
 void CTestObject::Priority_Update(_float dt)
@@ -77,9 +76,9 @@ void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 
+	auto controller = Get_Component<CCharacterController>();
 	auto cam        = CAM->Get_ActiveCam();
 	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
-	auto controller = Get_Component<CCharacterController>();
 
 	_vector3 camLook = camTf->Dir(STATE::LOOK);
 	_vector3 camRight = camTf->Dir(STATE::RIGHT);
@@ -102,12 +101,13 @@ void CTestObject::Update(_float dt)
 	controller->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		controller->Jump(4.f);
+		controller->Jump(3.f);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
 	{
+		PHYSICS_RAY_HIT hit;
 		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		controller->Shoot_Ray(vLook, 100.f);
+		controller->Shoot_Ray(vLook, 100.f, hit);
 	}
 	else
 		controller->Clear_DebugRay();

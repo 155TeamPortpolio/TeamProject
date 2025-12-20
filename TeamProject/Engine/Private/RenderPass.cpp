@@ -90,7 +90,7 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext)
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 	  
-	for (auto& packet : m_Packets)
+	for (auto& packet : m_Packets)     
 	{
 		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),XMLoadFloat4x4(packet.pWorldMatrix)))
 			continue;

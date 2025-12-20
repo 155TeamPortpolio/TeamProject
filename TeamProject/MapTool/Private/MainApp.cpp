@@ -4,6 +4,7 @@
 
 #include "MainApp.h"
 #include "GameInstance.h"
+#include "MapToolCore.h"
 #include "IResourceService.h"
 
 #include "MapToolLevel.h"
@@ -80,6 +81,8 @@ CMainApp* CMainApp::Create()
 void CMainApp::Free()
 {
 	__super::Free();
+	CMapToolCore::GetInstance()->DestroyInstance();
+	CMapToolCore::GetInstance()->DestroyInstance();
 	m_pGameInstance->Release_Engine();
 	m_pGameInstance->DestroyInstance();
 }

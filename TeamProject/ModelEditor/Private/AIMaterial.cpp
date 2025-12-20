@@ -115,7 +115,9 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 
 	if (!m_Textures[TEXTURE_TYPE::DIFFUSE].empty() && m_Textures[TEXTURE_TYPE::METALNESS].empty()) {
 		m_bSpecific = true;
+		m_passConstant = "Debug";
 	}
+	else
 	m_passConstant = "Opaque";
 	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
 	{
