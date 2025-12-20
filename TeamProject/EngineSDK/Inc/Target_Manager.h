@@ -23,7 +23,7 @@ public:
 	HRESULT Add_MRT(const string& strMRTTag, const string& strTargetTag);
 	HRESULT Begin_MRT(const string& strMRTTag, _bool Clear = true);
 	HRESULT End_MRT();
-	HRESULT Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param);
+	HRESULT Bind_Target(const string& strTargetTag, class CShader* pShader, const string& constantName);
 	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
 

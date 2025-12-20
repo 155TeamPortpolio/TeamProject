@@ -4,9 +4,11 @@
 #include "RenderPass.h"
 #include "RenderTarget.h"
 #include "Target_Manager.h"
+#include "VIBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "PipeLine.h"
+#include "Helper_Func.h"
 
 CForwardRenderer::CForwardRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CRenderer(pDevice, pContext)
@@ -25,7 +27,7 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	Ready_Target();
 	Ready_MRT();
 	m_pRampTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
-
+	m_pPipeLine->Write_SSAOKernelBuffer(m_pDevice);
 	return S_OK;
 }
 
@@ -35,7 +37,7 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 	m_pPipeLine->Update_Frustum();
 
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
-	pPriorityPass->Execute(m_pContext);
+	pPriorityPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 
 	return S_OK;
@@ -52,7 +54,7 @@ HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
 
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Shadow"))) return E_FAIL;
-	pShadowPass->Execute(m_pContext);
+	pShadowPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 	return S_OK;
@@ -61,8 +63,8 @@ HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
 HRESULT CForwardRenderer::Render_Forward(OpaquePass* pOpaquePass, InstancePass* pInstancePass)
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred"))) return E_FAIL;
-	pOpaquePass->Execute(m_pContext);
-	pInstancePass->Execute(m_pContext);
+	pOpaquePass->Execute(m_pContext, this);
+	pInstancePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 
 	return S_OK;
@@ -81,7 +83,7 @@ HRESULT CForwardRenderer::Render_LightAcc()
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 	m_pShader->Bind_Value("g_RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
-	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext);
+	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 
@@ -90,6 +92,44 @@ HRESULT CForwardRenderer::Render_LightAcc()
 
 HRESULT CForwardRenderer::Render_SSAO()
 {
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO"))) return E_FAIL;
+
+		m_pPipeLine->Update_SSAOBuffer(m_pContext);
+		m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+		m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
+
+		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
+		m_pShader->SetConstantBuffer("SSAOKernel", m_pPipeLine->Get_SSAOKernelBuffer());
+		m_pShader->Bind_Value("g_SSAONoiseTexture", { m_pSSAONoiseTexture, "Texture2D", 0 });
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SSAO", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("SSAO", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_Blur"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_SSAO", m_pShader, "g_SSAOTexture");
+		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "SSAO_BLUR", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("SSAO_BLUR", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
 	return S_OK;
 }
 
@@ -102,7 +142,7 @@ HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 	ID3D11DepthStencilView* pPrevDSV = { nullptr };
 	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
 	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-	pBlendPass->Execute(m_pContext);
+	pBlendPass->Execute(m_pContext, this);
 	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
 	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
@@ -121,13 +161,44 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 	ID3D11DepthStencilView* pPrevDSV = { nullptr };
 	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
 	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
-	pNonLightPass->Execute(m_pContext);
+	pNonLightPass->Execute(m_pContext, this);
 	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
 	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
 
 	Safe_Release(pPrevRTV);
 	Safe_Release(pPrevDSV);
 
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_Combined()
+{
+	m_pTargetManager->Begin_MRT("MRT_Final",false);
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Combined", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
+	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+	m_pTargetManager->Bind_Target("Target_SSAO_Blur", m_pShader, "g_SSAOBlurTexture");
+	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");
+	m_pTargetManager->Bind_Target("Target_Light", m_pShader, "g_LightTexture");
+	m_pTargetManager->Bind_Target("Target_Shadow", m_pShader, "g_ShadowTexture");
+	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
+
+	SHADER_PARAM WorldMat = {};
+	WorldMat.iSize = sizeof(_float4x4);
+	WorldMat.typeName = "float4x4";
+	WorldMat.pData = &m_WorldMatrix;
+	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+
+	m_pShader->Apply("Combined", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+	m_pTargetManager->End_MRT();
 	return S_OK;
 }
 
@@ -155,7 +226,6 @@ HRESULT CForwardRenderer::Ready_Target()
 
 		RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 		m_pTargetManager->Create_Target(ShadowDesc);
-
 	}
 
 	{
@@ -206,6 +276,55 @@ HRESULT CForwardRenderer::Ready_MRT()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::CreateSSAONoiseTexture()
+{
+	//SSAO NoiseTexture
+	vector<_float4> ssaoNoise;
+
+	for (unsigned int i = 0; i < 16; i++)
+	{
+		_float4 noise(Helper::Get_Random_Float(-1.f, 1.f), Helper::Get_Random_Float(-1.f, 1.f), 0.0f, 0.0f);
+		ssaoNoise.push_back(noise);
+	}
+
+	D3D11_TEXTURE2D_DESC texDesc = {};
+	texDesc.Width = 4;
+	texDesc.Height = 4;
+	texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	texDesc.SampleDesc.Count = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA initData = {};
+	initData.pSysMem = ssaoNoise.data();
+	initData.SysMemPitch = 4 * sizeof(_float4);
+	initData.SysMemSlicePitch = 0;
+
+
+	ID3D11Texture2D* noiseTexture = nullptr;
+	if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+		return E_FAIL;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MipLevels = 1;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+
+	if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pSSAONoiseTexture)))
+	{
+		Safe_Release(noiseTexture);
+		return E_FAIL;
+	}
+
+	Safe_Release(noiseTexture);
+	return S_OK;
+}
+
 CForwardRenderer* CForwardRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, CTarget_Manager* pTargetManager, CPipeLine* pPipeLine)
 {
 	CForwardRenderer* Instance = new CForwardRenderer(pDevice, pContext);
@@ -219,4 +338,7 @@ CForwardRenderer* CForwardRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 void CForwardRenderer::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pSSAONoiseTexture);
+	Safe_Release(m_pRampTexture);
 }

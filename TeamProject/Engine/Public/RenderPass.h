@@ -9,10 +9,10 @@ protected:
 	RenderPass(class CRenderSystem* pRenderSystem);
 	virtual ~RenderPass() DEFAULT;
 public:
-	virtual void Execute(ID3D11DeviceContext* pContext) PURE;
+	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  PURE;
 protected:
-	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex);
-	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant);
+	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex, class CRenderer* pRenderer);
+	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant, class CRenderer* pRenderer);
 protected:
 	class CRenderSystem* m_pRenderSystem = { nullptr };
 	class CShader* pCurShader = { nullptr };
@@ -27,13 +27,13 @@ private:
 	ShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~ShadowPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
 	void Submit(OPAQUE_PACKET packet);
 	void SubmitInstance(INSTANCE_PACKET packet);
 
 private:
-	void Execute_Opaque(ID3D11DeviceContext* pContext) ;
-	void Execute_Instance(ID3D11DeviceContext* pContext) ;
+	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
+	void Execute_Instance(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 
 private:
 	vector<OPAQUE_PACKET> m_Packets;
@@ -51,7 +51,7 @@ private:
 	PriorityPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~PriorityPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
 	void Submit(OPAQUE_PACKET packet);
 
 private:
@@ -69,7 +69,7 @@ private:
 	OpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~OpaquePass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
 	void Submit(OPAQUE_PACKET packet);
 
 private:
@@ -89,7 +89,7 @@ private:
 	InstancePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~InstancePass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
 	void Submit(INSTANCE_PACKET packet);
 private:
 	vector<INSTANCE_PACKET> m_Packets;
@@ -108,7 +108,7 @@ private:
 	BlendedPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~BlendedPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
 	void Submit(BLENDED_PACKET packet);
 
 private:
@@ -128,7 +128,7 @@ private:
 	NonLightPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~NonLightPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
 	void Submit(OPAQUE_PACKET packet);
 
 private:
@@ -154,7 +154,7 @@ private:
 	ParticlePass(class CRenderSystem* pRenderSystem) : RenderPass{ pRenderSystem } {};
 	virtual ~ParticlePass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
 	void Submit(PARTICLE_PACKET packet);
 
 private:
@@ -169,6 +169,24 @@ public:
 };
 #pragma endregion
 
+#pragma region EFFECT_DEFAULTPASS
+class EffectPass final : public RenderPass {
+private:
+	EffectPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	virtual ~EffectPass() DEFAULT;
+public:
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
+	void Submit(EFFECT_PACKET packet);
+
+private:
+	vector<EFFECT_PACKET> m_Packets;
+	vector<EFFECT_PACKET> m_VisiblePackets;
+
+public:
+	static EffectPass* Create(class CRenderSystem* pRenderSystem) { return new EffectPass(pRenderSystem); }
+	virtual void Free() override { __super::Free(); m_Packets.clear(); };
+};
+#pragma endregion
 
 #pragma region UI_PASS
 class UIPass final : public RenderPass {
@@ -176,7 +194,7 @@ private:
 	UIPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~UIPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
 	void Submit(SPRITE_PACKET packet);
 private:
 	vector<SPRITE_PACKET> m_Packets;
@@ -186,6 +204,24 @@ public:
 };
 #pragma endregion
 
+#pragma region UI3D_PASS
+class UI3DPass final : public RenderPass {
+private:
+	UI3DPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	virtual ~UI3DPass() DEFAULT;
+public:
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
+	void Submit(UI3D_PACKET packet);
+
+private:
+	vector<UI3D_PACKET> m_Packets;
+	vector<UI3D_PACKET> m_VisiblePackets;
+
+public:
+	static UI3DPass* Create(class CRenderSystem* pRenderSystem) { return new UI3DPass(pRenderSystem); }
+	virtual void Free() override { __super::Free(); m_Packets.clear(); };
+};
+#pragma endregion
 
 #pragma region DEBUG_PASS
 class DebugPass final : public RenderPass {
@@ -193,7 +229,7 @@ private:
 	DebugPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~DebugPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext) override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
 	void Submit(DEBUG_PACKET packet);
 private:
 	vector<DEBUG_PACKET> m_Packets;

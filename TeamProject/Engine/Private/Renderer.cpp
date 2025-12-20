@@ -27,6 +27,12 @@ HRESULT CRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pPipeL
 
 	if(FAILED(CreateVIBuffer())) return E_FAIL;
 
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
+
 	return S_OK;
 }
 
@@ -57,7 +63,7 @@ ID3D11ShaderResourceView* CRenderer::Get_EngineTargetSRV(const string strTag)
 
 HRESULT CRenderer::LoadShader(string shaderName)
 {
-	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "Shader_Deferred.hlsl");
+	m_pShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, shaderName);
 	if (nullptr == m_pShader)
 		return E_FAIL;
 	Safe_AddRef(m_pShader);
@@ -155,7 +161,14 @@ HRESULT CRenderer::Get_BufferInputLayout(CVIBuffer* pBuffer, CShader* pShader, c
 
 void CRenderer::Free()
 {
+	__super::Free();
+
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 	Safe_Release(m_pShader);
+	Safe_Release(m_pVIBuffer);
+
+	for (auto& pair : m_InputLayouts)
+		Safe_Release(pair.second);
+	m_InputLayouts.clear();
 }

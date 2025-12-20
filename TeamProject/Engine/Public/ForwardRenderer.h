@@ -19,12 +19,17 @@ public:
     HRESULT Render_SSAO();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
+    HRESULT Render_Combined();
 
 private:
     virtual HRESULT Ready_Target() override;
     virtual HRESULT Ready_MRT() override;
 
 private:
+    HRESULT CreateSSAONoiseTexture();
+
+private:
+    ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
     class CTexture* m_pRampTexture;
 
 public:

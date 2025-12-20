@@ -98,7 +98,7 @@ HRESULT CPostRenderer::Render_Final()
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
-	m_pTargetManager->Bind_Target("Target_Distortion_Add", m_pShader, "g_DistortionAdd_Texture");
+	//m_pTargetManager->Bind_Target("/*       */", m_pShader, "g_DistortionAdd_Texture");
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);

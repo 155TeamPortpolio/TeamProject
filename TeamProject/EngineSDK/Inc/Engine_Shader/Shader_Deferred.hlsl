@@ -463,7 +463,6 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     //{
     //    Out.vBackBuffer *= 0.3f;
     //}
-    
     return Out;
 }
 
@@ -489,7 +488,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord); 
     float3 mapped = scene.rgb + bloom.rgb;
-    
+    return 1.f;
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

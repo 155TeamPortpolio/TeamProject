@@ -21,6 +21,7 @@ namespace Engine
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE};
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, END};
+	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,
 		Left = 1,				// 0001

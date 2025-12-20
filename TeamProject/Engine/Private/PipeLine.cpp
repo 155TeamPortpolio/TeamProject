@@ -10,6 +10,7 @@
 #include "Shader.h"
 #include "Model.h"
 #include "Texture.h"
+#include "Renderer.h"
 #include "Helper_Func.h"
 
 CPipeLine::CPipeLine()
@@ -333,7 +334,7 @@ HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext)
+HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 
 	auto LightSnapShots = CGameInstance::GetInstance()->Get_LightMgr()->Visible_Lights();
@@ -375,14 +376,14 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 		switch (desc.eType)
 		{
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
-			m_pSystem->Get_BufferInputLayout(pBuffer, pShader, "Directional", &pLayout);
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "Directional", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("Directional", pContext);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
 		case Engine::LIGHT_TYPE::POINT:
-			m_pSystem->Get_BufferInputLayout(pBuffer, pShader, "Point", &pLayout);
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "Point", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("Point", pContext);
 			pBuffer->Bind_Buffer(pContext);

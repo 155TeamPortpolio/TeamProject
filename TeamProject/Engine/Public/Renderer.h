@@ -3,7 +3,7 @@
 
 NS_BEGIN(Engine)
 
-class CRenderer :
+class CRenderer abstract :
     public CBase
 {
 protected:
@@ -21,6 +21,9 @@ protected:
 	virtual HRESULT Ready_MRT() PURE;
 	HRESULT LoadShader(string shaderName);
 	HRESULT CreateVIBuffer();
+
+protected:
+	HRESULT Change_Viewport(_uint iWidth, _uint iHeight);
 
 public:
 	virtual HRESULT Get_InputLayout(class CModel* pModel, class CShader* pShader, _uint DrawIndex,

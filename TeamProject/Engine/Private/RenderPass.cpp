@@ -17,13 +17,14 @@
 #include "VIBuffer.h"
 #include "VI_InstancePoint.h"
 #include "ParticleSystem.h"
+#include "Renderer.h"
 
 RenderPass::RenderPass(CRenderSystem* pRenderSystem)
 	:m_pRenderSystem(pRenderSystem)
 {
 }
 
-void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CModel* pModel, CMaterial* pMaterial, _uint DrawIndex, _uint MaterialIndex)
+void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CModel* pModel, CMaterial* pMaterial, _uint DrawIndex, _uint MaterialIndex, CRenderer* pRenderer)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = pMaterial->Get_Shader(MaterialIndex);
@@ -42,11 +43,11 @@ void RenderPass::BindConstant(ID3D11DeviceContext* pContext, CModel* pModel, CMa
 	pCurShader->Bind_Value("g_BoneMatrices", SkinningMatricedParam);
 
 	ID3D11InputLayout* pLayout;
-	m_pRenderSystem->Get_InputLayout(pModel, pCurShader, DrawIndex, pMaterial->GetPassConstant(MaterialIndex), &pLayout);
+	pRenderer->Get_InputLayout(pModel, pCurShader, DrawIndex, pMaterial->GetPassConstant(MaterialIndex), &pLayout);
 	pContext->IASetInputLayout(pLayout);
 }
 
-void RenderPass::BindConstant(ID3D11DeviceContext* pContext,  CSprite2D* pSprite, string passConstant)
+void RenderPass::BindConstant(ID3D11DeviceContext* pContext,  CSprite2D* pSprite, string passConstant, class CRenderer* pRenderer)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = pSprite->Get_Shader();
@@ -60,7 +61,7 @@ void RenderPass::BindConstant(ID3D11DeviceContext* pContext,  CSprite2D* pSprite
 	pCurShader->Bind_Value("ObjectBufferArray", ObjectMaticedParam);
 
 	ID3D11InputLayout* pLayout;
-	m_pRenderSystem->Get_BufferInputLayout(pSprite->Get_Buffer(), pCurShader, passConstant, &pLayout);
+	pRenderer->Get_BufferInputLayout(pSprite->Get_Buffer(), pCurShader, passConstant, &pLayout);
 	pContext->IASetInputLayout(pLayout);
 }
 
@@ -70,7 +71,7 @@ void RenderPass::Free()
 }
 
 #pragma region OPAQUE_PASS
-void OpaquePass::Execute(ID3D11DeviceContext* pContext)
+void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -120,7 +121,7 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext)
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex);
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
 
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
@@ -149,7 +150,7 @@ void OpaquePass::Submit(OPAQUE_PACKET packet)
 
 #pragma region PRIORITY_PASS
 
-void PriorityPass::Execute(ID3D11DeviceContext* pContext)
+void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -196,7 +197,7 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext)
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex);
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
 
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
@@ -224,7 +225,7 @@ void PriorityPass::Submit(OPAQUE_PACKET packet)
 
 #pragma region BLENDED_PASS
 
-void BlendedPass::Execute(ID3D11DeviceContext* pContext)
+void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -274,7 +275,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext)
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex);
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
 
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
@@ -304,7 +305,7 @@ void BlendedPass::Submit(BLENDED_PACKET packet)
 
 #pragma region PARTICLE_PASS
 
-void ParticlePass::Execute(ID3D11DeviceContext* pContext)
+void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -345,7 +346,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext)
 		auto& packet = m_Packets[i];
 
 		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) {
-			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0);
+			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0, pRenderer);
 		}
 
 		SHADER_PARAM param = {};
@@ -373,7 +374,7 @@ void ParticlePass::Submit(PARTICLE_PACKET packet)
 
 #pragma region INSTANCE_PASS
 
-void InstancePass::Execute(ID3D11DeviceContext* pContext)
+void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
  	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
@@ -391,7 +392,7 @@ void InstancePass::Execute(ID3D11DeviceContext* pContext)
 		}
 
 		ID3D11InputLayout* pLayout;
-		m_pRenderSystem->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex,
+		pRenderer->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex,
 			packet.pMaterial->GetPassConstant(packet.MaterialIndex), &pLayout);
 		SHADER_PARAM param = {};
 		param.iSize = sizeof(_float4x4);
@@ -416,7 +417,7 @@ void InstancePass::Submit(INSTANCE_PACKET packet)
 #pragma endregion
 
 #pragma region UI_PASS
-void UIPass::Execute(ID3D11DeviceContext* pContext)
+void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
  	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
@@ -438,7 +439,7 @@ void UIPass::Execute(ID3D11DeviceContext* pContext)
 	{
 		if (packet.pSprite2D->Get_Shader() != pCurShader) {
 			
-			BindConstant(pContext, packet.pSprite2D, packet.pSprite2D->Get_PassConstant());
+			BindConstant(pContext, packet.pSprite2D, packet.pSprite2D->Get_PassConstant(), pRenderer);
 		}
 	
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
@@ -458,7 +459,7 @@ void UIPass::Submit(SPRITE_PACKET packet)
 #pragma endregion
 
 #pragma region DEBUG_PASS
-void DebugPass::Execute(ID3D11DeviceContext* pContext)
+void DebugPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	if (pCurShader == nullptr) {
@@ -487,7 +488,7 @@ void DebugPass::Execute(ID3D11DeviceContext* pContext)
 	{
 		if (packet.pModel != pCurModel) {
 		ID3D11InputLayout* pLayout;
-		m_pRenderSystem->Get_InputLayout(packet.pModel, pCurShader,
+		pRenderer->Get_InputLayout(packet.pModel, pCurShader,
 			0, "Debug", &pLayout);
    		pContext->IASetInputLayout(pLayout);
 			pCurModel = packet.pModel;
@@ -510,10 +511,10 @@ void DebugPass::Submit(DEBUG_PACKET packet)
 #pragma endregion
 
 #pragma region SHADOW_PASS
-void ShadowPass::Execute(ID3D11DeviceContext* pContext)
+void ShadowPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	Execute_Opaque(pContext);
-	Execute_Instance(pContext);
+	Execute_Opaque(pContext,pRenderer);
+	Execute_Instance(pContext, pRenderer);
 }
 
 void ShadowPass::Submit(OPAQUE_PACKET packet)
@@ -528,7 +529,7 @@ void ShadowPass::SubmitInstance(INSTANCE_PACKET packet)
 		m_InstancePackets.push_back(packet);
 }
 
-void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext)
+void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -593,7 +594,7 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext)
 			pCurShader->Bind_Value("g_BoneMatrices", SkinningMatricedParam);
 
 			ID3D11InputLayout* pLayout;
-			m_pRenderSystem->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex, "Shadow", &pLayout);
+			pRenderer->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex, "Shadow", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 		}
 
@@ -616,7 +617,7 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext)
 	pContext->IASetInputLayout(nullptr);
 }
 
-void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext)
+void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
@@ -634,7 +635,7 @@ void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext)
 		}
 
 		ID3D11InputLayout* pLayout;
-		m_pRenderSystem->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex,
+		pRenderer->Get_InputLayout(packet.pModel, pCurShader, packet.DrawIndex,
 		"InstanceShadow", &pLayout);
 
 		SHADER_PARAM param = {};
@@ -656,7 +657,7 @@ void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext)
 
 #pragma region NONLIGHT_PASS
 
-void NonLightPass::Execute(ID3D11DeviceContext* pContext)
+void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
@@ -706,7 +707,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext)
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex);
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
 		}
 
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
@@ -727,6 +728,163 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext)
 
 
 void NonLightPass::Submit(OPAQUE_PACKET packet)
+{
+	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
+	m_Packets.push_back(packet);
+}
+
+#pragma endregion
+
+#pragma region EFFECT_PASS
+
+void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
+	/*같은 셰이더, 같은 머티리얼, 같은 모델끼리 정렬 */
+	sort(m_Packets.begin(), m_Packets.end(),
+		[](const EFFECT_PACKET& a, const EFFECT_PACKET& b) {
+			return a.GetKey() < b.GetKey();
+		});
+
+	/*패킷이 비어 있으면 리턴*/
+	if (m_Packets.empty())
+		return;
+
+	/*상수 버퍼 및 SRV 세팅*/
+	pPipeLine->Begin_ObjectBuffer(pContext);
+	pPipeLine->Begin_SkinningBuffer(pContext);
+
+	for (auto& packet : m_Packets)
+	{
+		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+			continue;
+
+		//여기서 인덱스 추가 저장해줌
+		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		_uint SkinningOffset = 0;
+		if (packet.bSkinning) {
+			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+			else
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+		}
+
+		packet.TransformIndex = TransformIndex;
+		packet.SkinningOffset = SkinningOffset;
+
+		m_VisiblePackets.push_back(packet);
+	}
+
+	pPipeLine->End_ObjectBuffer(pContext);
+	pPipeLine->End_SkinningBuffer(pContext);
+
+	/*드로우콜 시작*/
+	for (auto& packet : m_VisiblePackets)
+	{
+		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
+		}
+
+		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
+		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
+
+		if (packet.bSkinning) {
+			SHADER_PARAM SkinningBoneParam{ &packet.SkinningOffset , "uint",sizeof(UINT) };
+			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
+		}
+
+		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
+		packet.pModel->Draw(pContext, packet.DrawIndex);
+	}
+
+	m_Packets.clear();
+	m_VisiblePackets.clear();
+}
+
+
+void EffectPass::Submit(EFFECT_PACKET packet)
+{
+	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
+	m_Packets.push_back(packet);
+}
+
+#pragma endregion
+
+#pragma region 3DUI_PASS
+void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{/*이건 전역적으로 셰이더에 값 넣어주는 역할*/
+	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
+	pCurShader = { nullptr };
+
+	/*같은 셰이더, 같은 머티리얼, 같은 모델끼리 정렬 */
+	sort(m_Packets.begin(), m_Packets.end(),
+		[](const UI3D_PACKET& a, const UI3D_PACKET& b) {
+			return a.GetKey() < b.GetKey();
+		});
+
+	/*패킷이 비어 있으면 리턴*/
+	if (m_Packets.empty())
+		return;
+
+	/*상수 버퍼 및 SRV 세팅*/
+	pPipeLine->Begin_ObjectBuffer(pContext);
+	pPipeLine->Begin_SkinningBuffer(pContext);
+
+	for (auto& packet : m_Packets)
+	{
+		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+			continue;
+
+		//여기서 인덱스 추가 저장해줌
+		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		_uint SkinningOffset = 0;
+		if (packet.bSkinning) {
+			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+			else
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+		}
+
+		packet.TransformIndex = TransformIndex;
+		packet.SkinningOffset = SkinningOffset;
+
+		m_VisiblePackets.push_back(packet);
+	}
+
+	pPipeLine->End_ObjectBuffer(pContext);
+	pPipeLine->End_SkinningBuffer(pContext);
+
+	/*드로우콜 시작*/
+	for (auto& packet : m_VisiblePackets)
+	{
+		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
+			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
+		}
+
+		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
+		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
+
+		if (packet.bSkinning) {
+			SHADER_PARAM SkinningBoneParam{ &packet.SkinningOffset , "uint",sizeof(UINT) };
+			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
+		}
+
+		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
+		packet.pModel->Draw(pContext, packet.DrawIndex);
+	}
+
+	m_Packets.clear();
+	m_VisiblePackets.clear();
+}
+
+void UI3DPass::Submit(UI3D_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
 	m_Packets.push_back(packet);

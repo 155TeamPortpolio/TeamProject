@@ -484,6 +484,15 @@
     <ClInclude Include="..\public\ForwardRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EffectRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UIRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PostRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -909,6 +918,12 @@
     <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
       <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\Effect">
+      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
+      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1307,6 +1322,15 @@
     <ClCompile Include="..\private\ForwardRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EffectRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UIRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1355,6 +1379,9 @@
       <Filter>98. BasicShader</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>

@@ -269,6 +269,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugRender.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\public\EffectRenderer.h" />
     <ClInclude Include="..\public\Engine_Math.h" />
     <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
@@ -346,6 +347,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
     <ClInclude Include="..\public\PointModel.h" />
+    <ClInclude Include="..\public\PostRenderer.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
@@ -373,6 +375,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Transform.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
+    <ClInclude Include="..\public\UIRenderer.h" />
     <ClInclude Include="..\Public\UI_Manager.h" />
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
@@ -424,6 +427,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugRender.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\private\EffectRenderer.cpp" />
     <ClCompile Include="..\private\Engine_Math.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListner.cpp" />
@@ -474,6 +478,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
     <ClCompile Include="..\private\PointModel.cpp" />
+    <ClCompile Include="..\private\PostRenderer.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
@@ -501,6 +506,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
+    <ClCompile Include="..\private\UIRenderer.cpp" />
     <ClCompile Include="..\Private\UI_Manager.cpp" />
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
@@ -552,6 +558,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />

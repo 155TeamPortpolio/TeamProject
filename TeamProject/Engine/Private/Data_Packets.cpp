@@ -24,3 +24,20 @@ _uint Engine::RenderPostProcessingRequestCommand::GetKey() const
 {
 	return static_cast<_uint>(eTarget);
 }
+
+BLENDRENDERKEY Engine::DrawEffectPacket::GetKey() const
+{
+	return {
+		pMaterial->Get_ShaderID(MaterialIndex),
+		pMaterial->Get_MaterialDataID(DrawIndex),
+		DistanceToCamera
+	};
+}
+
+RENDERKEY Engine::Draw3DUIPacket::GetKey() const
+{
+	return {
+		pMaterial->Get_ShaderID(MaterialIndex),
+		pMaterial->Get_MaterialDataID(DrawIndex)
+	};
+}

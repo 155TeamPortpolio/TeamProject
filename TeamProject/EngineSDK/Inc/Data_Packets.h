@@ -90,6 +90,22 @@ namespace Engine {
 		BLENDRENDERKEY GetKey() const;
 	}BLENDED_PACKET;
 
+	typedef struct DrawEffectPacket : BASE_PACKET {
+		_bool bSkinning = { false }; 
+
+		_uint DrawIndex = {};		
+		_uint MaterialIndex = {};
+		_uint SkinningOffset = {};
+
+		class CModel* pModel = { nullptr };
+		class CMaterial* pMaterial = { nullptr };
+
+		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; 
+
+		_float DistanceToCamera = 0.f;      
+		BLENDRENDERKEY GetKey() const;
+	}EFFECT_PACKET;
+
 	/*Particle*/
 	typedef struct DrawParticlePacket : BASE_PACKET {
 		_float4x4 WorldMatrix{};
@@ -100,6 +116,21 @@ namespace Engine {
 	typedef struct DrawUIPacket : BASE_PACKET {
 		class CSprite2D* pSprite2D = { nullptr };
 	}SPRITE_PACKET;
+
+	typedef struct Draw3DUIPacket : BASE_PACKET {
+		_bool bSkinning = { false }; /*�׷��� ���� �ִ�?*/
+
+		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
+		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
+		_uint SkinningOffset = {};
+
+		class CModel* pModel = { nullptr };
+		class CMaterial* pMaterial = { nullptr };
+
+		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*�߰������� �ְ� ���� �� �־�?*/
+
+		RENDERKEY GetKey() const;
+	}UI3D_PACKET;
 
 	typedef struct DrawDebugPacket : BASE_PACKET {
 		class CModel* pModel = { nullptr };
