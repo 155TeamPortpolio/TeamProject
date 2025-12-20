@@ -22,6 +22,20 @@ public:
 		_float fNoiseFrequency{};
 	}PARTICLE;
 
+	typedef struct tagParticle_GPU
+	{
+		_uint IsAlive{};
+		_float3 vPosition{};
+		_float3 vVelocity{};
+		_float4 vColor{};
+		_float fLifeTime{};
+		_float fMaxLifeTime{};
+		_float2 vStartSize{};
+		_float2 vSize{};
+		_float fNoiseFrequency{};
+		_float2 pad{};
+	}PARTICLE_GPU;
+
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 protected:
 	CParticleSystem();

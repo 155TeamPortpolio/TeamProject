@@ -51,7 +51,9 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	Safe_AddRef(m_pNoise);
 
 	/*---------------Gpu Buffer-------------*/
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 
+	HRSULT hr = 
 	
 	return S_OK;
 }
