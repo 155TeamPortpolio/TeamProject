@@ -1,6 +1,7 @@
 #include "Engine_Defines.h"
 #include "Target_Manager.h"
 #include "RenderTarget.h"
+#include "Shader.h"
 
 CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -27,7 +28,7 @@ HRESULT CTarget_Manager::Add_MRT(const string& strMRTTag, const string& strTarge
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag)
+HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _bool Clear)
 {
 	vector<CRenderTarget*>& pMRTList = Find_MRT(strMRTTag);
 
@@ -63,7 +64,7 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag)
 
 	for (auto& pRenderTarget : pMRTList)
 	{
-		pRenderTarget->Clear();
+		if(Clear) pRenderTarget->Clear();
 
 		pRenderTargets[iNumRenderTargets] = pRenderTarget->Get_RTV();
 		iNumRenderTargets++;
@@ -99,15 +100,18 @@ HRESULT CTarget_Manager::End_MRT()
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param)
+HRESULT CTarget_Manager::Bind_Target(const string& strTargetTag, CShader * pShader, const string& constantName)
 {
 	CRenderTarget* pRenderTarget = Find_RenderTarget(strTargetTag);
 	if (nullptr == pRenderTarget)
 		return E_FAIL;
 
-	param.iSize = 0;
-	param.pData = pRenderTarget->Get_SRV();
-	param.typeName = "Texture2D";
+	SHADER_PARAM Param;
+	Param.iSize = 0;
+	Param.pData = pRenderTarget->Get_SRV();
+	Param.typeName = "Texture2D";
+
+	pShader->Bind_Value(constantName, Param);
 
 	return S_OK;
 }

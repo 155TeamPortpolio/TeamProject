@@ -478,6 +478,12 @@
     <ClInclude Include="..\Public\ClickManager.h">
       <Filter>01. Utility\14.ClickManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Renderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ForwardRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -891,6 +897,18 @@
     <Filter Include="01. Utility\14.ClickManager">
       <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer">
+      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward">
+      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Post">
+      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
+      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1282,6 +1300,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Renderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ForwardRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -272,6 +272,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\Engine_Math.h" />
     <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\Noise.h" />
@@ -349,6 +350,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
     <ClInclude Include="..\Public\RectModel.h" />
+    <ClInclude Include="..\public\Renderer.h" />
     <ClInclude Include="..\Public\RenderPass.h" />
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
@@ -426,6 +428,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\private\ForwardRenderer.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
     <ClCompile Include="..\Private\Noise.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
@@ -475,6 +478,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
     <ClCompile Include="..\Private\RectModel.cpp" />
+    <ClCompile Include="..\private\Renderer.cpp" />
     <ClCompile Include="..\Private\RenderPass.cpp" />
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />

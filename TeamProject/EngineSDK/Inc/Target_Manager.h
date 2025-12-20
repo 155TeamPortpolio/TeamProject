@@ -21,7 +21,7 @@ public:
 
 public:
 	HRESULT Add_MRT(const string& strMRTTag, const string& strTargetTag);
-	HRESULT Begin_MRT(const string& strMRTTag);
+	HRESULT Begin_MRT(const string& strMRTTag, _bool Clear = true);
 	HRESULT End_MRT();
 	HRESULT Get_TargetParam(const string& strTargetTag, SHADER_PARAM& param);
 	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);

@@ -18,7 +18,7 @@ CRenderSystem::CRenderSystem(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	:m_pDevice{ pDevice }, m_pContext{ pContext }
 {
 	Safe_AddRef(pDevice);
-	Safe_AddRef(m_pContext);
+	Safe_AddRef(pContext);
 }
 
 CRenderSystem::~CRenderSystem()
@@ -93,7 +93,7 @@ HRESULT CRenderSystem::Render()
 	Clear_PostProcess();
 	Process_PostProcessQueue();
 	Render_Bloom();
-	Render_Distortion();
+	//Render_Distortion();
 	Render_Final();
 
 	return S_OK;
@@ -115,11 +115,11 @@ HRESULT CRenderSystem::Render_SSAO()
 
 		m_pPipeLine->Update_SSAOBuffer(m_pContext);
 		SHADER_PARAM DepthParam = {};
-		m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
+		m_pTargetManager->Bind_Target("Target_Depth", DepthParam);
 		m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
 		SHADER_PARAM NormalParam = {};
-		m_pTargetManager->Get_TargetParam("Target_Normal", NormalParam);
+		m_pTargetManager->Bind_Target("Target_Normal", NormalParam);
 		m_pShader->Bind_Value("g_NormalTexture", NormalParam);
 
 		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
@@ -141,7 +141,7 @@ HRESULT CRenderSystem::Render_SSAO()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_SSAO_Blur"))) return E_FAIL;
 
 		SHADER_PARAM SSAOParam = {};
-		m_pTargetManager->Get_TargetParam("Target_SSAO", SSAOParam);
+		m_pTargetManager->Bind_Target("Target_SSAO", SSAOParam);
 		m_pShader->Bind_Value("g_SSAOTexture", SSAOParam);
 
 		m_pShader->SetConstantBuffer("SSAOBuffer", m_pPipeLine->Get_SSAOBuffer());
@@ -164,23 +164,23 @@ HRESULT CRenderSystem::Render_LightAcc()
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc"))) return E_FAIL;
 
 	SHADER_PARAM DiffuseParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Diffuse", DiffuseParam);
+	m_pTargetManager->Bind_Target("Target_Diffuse", DiffuseParam);
 	m_pShader->Bind_Value("g_DiffuseTexture", DiffuseParam);
 
 	SHADER_PARAM NormalParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Normal", NormalParam);
+	m_pTargetManager->Bind_Target("Target_Normal", NormalParam);
 	m_pShader->Bind_Value("g_NormalTexture", NormalParam);
 
 	SHADER_PARAM DepthParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
+	m_pTargetManager->Bind_Target("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);
 
 	SHADER_PARAM MetalicParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pTargetManager->Bind_Target("Target_Metalic", MetalicParam);
 	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
 
 	SHADER_PARAM AmbientParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Ambient", AmbientParam);
+	m_pTargetManager->Bind_Target("Target_Ambient", AmbientParam);
 	m_pShader->Bind_Value("g_AmbientTexture", AmbientParam);
 
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
@@ -205,31 +205,31 @@ HRESULT CRenderSystem::Render_Combined()
 	m_pContext->IASetInputLayout(pLayout);
 
 	SHADER_PARAM DiffuseParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Diffuse", DiffuseParam);
+	m_pTargetManager->Bind_Target("Target_Diffuse", DiffuseParam);
 	m_pShader->Bind_Value("g_DiffuseTexture", DiffuseParam);
 
 	SHADER_PARAM DepthParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Depth", DepthParam);
+	m_pTargetManager->Bind_Target("Target_Depth", DepthParam);
 	m_pShader->Bind_Value("g_DepthTexture", DepthParam);	
 
 	SHADER_PARAM SSAOParam = {};
-	m_pTargetManager->Get_TargetParam("Target_SSAO_Blur", SSAOParam);
+	m_pTargetManager->Bind_Target("Target_SSAO_Blur", SSAOParam);
 	m_pShader->Bind_Value("g_SSAOBlurTexture", SSAOParam);
 
 	SHADER_PARAM MetalicParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Metalic", MetalicParam);
+	m_pTargetManager->Bind_Target("Target_Metalic", MetalicParam);
 	m_pShader->Bind_Value("g_MetalicTexture", MetalicParam);
 
 	SHADER_PARAM LightParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Light", LightParam);
+	m_pTargetManager->Bind_Target("Target_Light", LightParam);
 	m_pShader->Bind_Value("g_LightTexture", LightParam);
 
 	SHADER_PARAM ShadowParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Shadow", ShadowParam);
+	m_pTargetManager->Bind_Target("Target_Shadow", ShadowParam);
 	m_pShader->Bind_Value("g_ShadowTexture", ShadowParam);
 
 	SHADER_PARAM AmbientParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Ambient", AmbientParam);
+	m_pTargetManager->Bind_Target("Target_Ambient", AmbientParam);
 	m_pShader->Bind_Value("g_AmbientTexture", AmbientParam);
 
 	SHADER_PARAM WorldMat = {};
@@ -507,9 +507,6 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	RenderTargetDesc DistortionAddDesc = { "Target_Distortion_Add" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.5f, 0.5f, 0.5f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionAddDesc);
 
-	RenderTargetDesc DistortionFinalDesc = { "Target_Distortion_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(DistortionFinalDesc);
-
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Diffuse")))
 			return E_FAIL;
@@ -548,8 +545,8 @@ HRESULT CRenderSystem::Ready_GBuffer()
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_Distortion")))
 			return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_DistortionInfo")))
-			return E_FAIL;
+		//if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion", "Target_DistortionInfo")))
+		//	return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add")))
 			return E_FAIL;
 	}
@@ -768,11 +765,11 @@ HRESULT CRenderSystem::Render_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
 		
 		SHADER_PARAM BrightParam = {};
-		m_pTargetManager->Get_TargetParam("Target_Bloom", BrightParam);
+		m_pTargetManager->Bind_Target("Target_Bloom", BrightParam);
 		m_pShader->Bind_Value("g_BrightTexture", BrightParam);
 		
 		SHADER_PARAM BlurTypeParam = {};
-		m_pTargetManager->Get_TargetParam("Target_BloomInfo", BlurTypeParam);
+		m_pTargetManager->Bind_Target("Target_BloomInfo", BlurTypeParam);
 		m_pShader->Bind_Value("g_BloomInfo", BlurTypeParam);
 		
 		ID3D11InputLayout* pLayout;
@@ -790,11 +787,11 @@ HRESULT CRenderSystem::Render_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
 		
 		SHADER_PARAM BrightParam = {};
-		m_pTargetManager->Get_TargetParam("Target_BloomBlurX", BrightParam);
+		m_pTargetManager->Bind_Target("Target_BloomBlurX", BrightParam);
 		m_pShader->Bind_Value("g_BlurXTexture", BrightParam);
 		
 		SHADER_PARAM BlurTypeParam = {};
-		m_pTargetManager->Get_TargetParam("Target_BloomType", BlurTypeParam);
+		m_pTargetManager->Bind_Target("Target_BloomType", BlurTypeParam);
 		m_pShader->Bind_Value("g_BloomType", BlurTypeParam);
 		
 		ID3D11InputLayout* pLayout;
@@ -816,7 +813,7 @@ HRESULT CRenderSystem::Render_Distortion()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
 
 		SHADER_PARAM DistortionParam = {};
-		m_pTargetManager->Get_TargetParam("Target_Distortion", DistortionParam);
+		m_pTargetManager->Bind_Target("Target_Distortion", DistortionParam);
 		m_pShader->Bind_Value("g_DistortionTexture", DistortionParam);
 
 		m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
@@ -842,19 +839,19 @@ HRESULT CRenderSystem::Render_Final()
 	m_pContext->IASetInputLayout(pLayout);
 
 	SHADER_PARAM finalParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Final", finalParam);
+	m_pTargetManager->Bind_Target("Target_Final", finalParam);
 	m_pShader->Bind_Value("g_FinalTexture", finalParam);
 
 	SHADER_PARAM uiParam = {};
-	m_pTargetManager->Get_TargetParam("Target_UI", uiParam);
+	m_pTargetManager->Bind_Target("Target_UI", uiParam);
 	m_pShader->Bind_Value("g_UITexture", uiParam);
 
 	SHADER_PARAM bloomParam = {};
-	m_pTargetManager->Get_TargetParam("Target_BloomBlurY", bloomParam);
+	m_pTargetManager->Bind_Target("Target_BloomBlurY", bloomParam);
 	m_pShader->Bind_Value("g_BloomFinal", bloomParam);
 
 	SHADER_PARAM distortionParam = {};
-	m_pTargetManager->Get_TargetParam("Target_Distortion_Add", distortionParam);
+	m_pTargetManager->Bind_Target("Target_Distortion_Add", distortionParam);
 	m_pShader->Bind_Value("g_DistortionAdd_Texture", distortionParam);
 
 	SHADER_PARAM WorldMat = {};
