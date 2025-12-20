@@ -107,6 +107,15 @@ void CFreeCam::Render_GUI()
     {
         ImGui::PushID("FreeCam_RenderGUI");
 
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
+
         ImGui::DragFloat(u8"이동 속도", &m_fSpeed, 0.1f, 0.f, 5000.f);
         ImGui::DragFloat(u8"마우스 감도", &m_fSensitivity, 0.001f, 0.f, 5.f);
         ImGui::DragFloat(u8"회전 스무딩 속도", &m_fRotSmoothSpeed, 0.1f, 0.f, 60.f);

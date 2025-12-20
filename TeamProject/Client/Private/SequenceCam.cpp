@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SequenceCam.h"
+#include "GameInstance.h"
 
 HRESULT CSequenceCam::Initialize_Prototype()
 {
@@ -50,6 +51,15 @@ void CSequenceCam::Render_GUI()
     if (ImGui::CollapsingHeader(u8"SequenceCam", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::PushID("SequenceCam_RenderGUI");
+
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
 
         const _bool playing = IsPlaying();
 
