@@ -34,34 +34,49 @@ void CUIObject_Tool::Render_GUI()
     Render_GUI_Animation();
 }
 
-void CUIObject_Tool::DestroyChild_FromParent()
+void CUIObject_Tool::Remove_SelfFromParent()
 {
-    if (!m_pParent)
-        return;
+    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel); 
 
-    auto pParentContainer = m_pParent->Get_Component<CObjectContainer>();
-    if (!pParentContainer)
-        return;
+    for (auto& pObj : objects)
+    {
+        if (!pObj || pObj == this || !pObj->Is_Root())
+            continue;
 
-    pParentContainer->Destroy_Child(m_iChildIndex);
+        CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
+        const auto& children = pContainer->Get_Children();
+
+        for (_int i = 0; i < children.size(); ++i)
+        {
+            if (!children[i])
+                continue;
+
+            if (children[i]->Get_InstanceName() == Get_InstanceName())
+            {
+                pContainer->Destroy_Child(i);
+                return;
+            }
+        }
+    }
 }
 
 void CUIObject_Tool::ToJson(json& data)
 {
     ToJson_Common(data);
-
     ToJson_Parent(data);
 }
 
 void CUIObject_Tool::FromJson(const json& data)
 {
-    FromJson_LinkParent(data);
+    // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
+    FromJson_Parent(data);
 }
 
 void CUIObject_Tool::ToJson_Common(json& data)
 { 
     // 기본 정보
-    data["levelTag"] = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(); // 현재 레벨을 가져와야하나 아니면 객체에 저장된 레벨을 가져와야하나
+    data["levelTag"] = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
     data["instanceKey"] = m_InstanceName;
 
     // Transform 정보
@@ -79,87 +94,50 @@ void CUIObject_Tool::ToJson_Common(json& data)
 
 void CUIObject_Tool::ToJson_Parent(json& data)
 {
-    if (!m_pParent || -1 == m_iChildIndex)
+    if (Is_Root())
         return;
 
     const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    auto& Objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
-
-    string strParentInstanceKey;
-    for (auto& pObj : Objects)
-    {
-        if (pObj == m_pParent)
-        {
-            strParentInstanceKey = pObj->Get_InstanceName();
-            break;
-        }
-    }
-
-    if (strParentInstanceKey.empty())
-        return;
-
-    data["parent"]["instanceKey"] = strParentInstanceKey;
-    data["parent"]["childIndex"] = m_iChildIndex;
-}
-
-void CUIObject_Tool::FromJson_LinkParent(const json& data)
-{
-    if (!data.contains("parent") || !data["parent"].size())
-        return;
-
-    vector<CUI_Object*> objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(data["levelTag"]);
+    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
 
     for (auto& pObj : objects)
     {
-        if (data["parent"]["instanceKey"] == pObj->Get_InstanceName())
+        if (!pObj || pObj == this || !pObj->Is_Root())
+            continue;
+
+        CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
+        const auto& children = pContainer->Get_Children();
+
+        for (_int i = 0; i < children.size(); ++i)
         {
-            CUIObject_Tool* pUIObj = dynamic_cast<CUIObject_Tool*>(pObj);
-            if (!pUIObj)
-                break;
+            if (!children[i])
+                continue;
 
-            m_pParent = pUIObj;
-            m_iChildIndex = data["parent"]["childIndex"];
-
-            pObj->Get_Component<CObjectContainer>()->Add_Child(this);
-
-            break;
+            if (children[i]->Get_InstanceName() == Get_InstanceName())
+            {
+                data["parentInstanceKey"] = pObj->Get_InstanceName();
+                return;
+            }
         }
     }
 }
 
-void CUIObject_Tool::Add_Child(CUIObject_Tool* pChild)
+void CUIObject_Tool::FromJson_Parent(const json& data)
 {
-    if (!pChild || pChild == this)
+    if (!data.contains("parentInstanceKey"))
         return;
 
-    auto pContainer = Get_Component<CObjectContainer>();
-   if (!pContainer)
-       return;
+    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
 
-   if (pChild->m_pParent)
-       pChild->m_pParent->Remove_Child(pChild);
-
-   _int iIndex = pContainer->Add_Child(pChild);
-   if (-1 == iIndex)
-       return;
-
-   pChild->m_pParent = this;
-   pChild->m_iChildIndex = iIndex;
-}
-
-void CUIObject_Tool::Remove_Child(CUIObject_Tool* pChild)
-{
-    auto pContainer = Get_Component<CObjectContainer>();
-    if (!pContainer)
-        return;
-
-    _int index = pContainer->Find_IndexByName(pChild->Get_InstanceName());
-    if (index == -1)
-        return;
-
-    pContainer->Destroy_Child(index);
-    pChild->m_pParent = nullptr;
-    pChild->m_iChildIndex = -1;
+    for (auto& pObj : objects)
+    {
+        if (data["parentInstanceKey"] == pObj->Get_InstanceName())
+        {
+            pObj->Get_Component<CObjectContainer>()->Add_Child(this);
+            return;
+        }
+    }
 }
 
 void CUIObject_Tool::FromJson_RefreshCount(_uint& iCount)
@@ -375,7 +353,7 @@ void CUIObject_Tool::Play_Animation(_float dt)
         {
             m_isBlending = false;
             return;
-        } 
+        }
 
         m_fBlendTime += dt;
         _float fRatio = {};
@@ -386,10 +364,9 @@ void CUIObject_Tool::Play_Animation(_float dt)
         fRatio = clamp(fRatio, 0.f, 1.f);
 
         // 현재 시간에 해당하는 키프레임 찾기
-        _int iCurrentKeyIdx = -1;
-        _int iNextKeyIdx = -1;
+        _int iCurrentKeyIdx = { -1 };
 
-        for (int i = 0; i < clip.keyframes.size() - 1; i++)
+        for (_int i = 0; i < clip.keyframes.size() - 1; ++i)
         {
             _float fNormalizedTime = clip.keyframes[i].fTime / clip.fDuration;
             _float fNextNormalizedTime = clip.keyframes[i + 1].fTime / clip.fDuration;
@@ -397,19 +374,18 @@ void CUIObject_Tool::Play_Animation(_float dt)
             if (fRatio >= fNormalizedTime && fRatio <= fNextNormalizedTime)
             {
                 iCurrentKeyIdx = i;
-                iNextKeyIdx = i + 1;
                 break;
             }
         }
 
-        // 키프레임 사이 보간
-        if (iCurrentKeyIdx >= 0 && iNextKeyIdx >= 0)
+        if (iCurrentKeyIdx >= 0 && iCurrentKeyIdx + 1 >= 0)
         {
             const UI_KEYFRAME& fromKey = clip.keyframes[iCurrentKeyIdx];
-            const UI_KEYFRAME& toKey = clip.keyframes[iNextKeyIdx];
+            const UI_KEYFRAME& toKey = clip.keyframes[iCurrentKeyIdx + 1];
 
             _float fFromTime = fromKey.fTime / clip.fDuration;
             _float fToTime = toKey.fTime / clip.fDuration;
+
             _float fLocalRatio = (fRatio - fFromTime) / (fToTime - fFromTime);
             fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
 
@@ -426,31 +402,27 @@ void CUIObject_Tool::Play_Animation(_float dt)
             // UI 오브젝트에 적용
             m_vScale = vScale;
             m_fRadian = XMConvertToRadians(fAngle);
-
             // 포지션
             //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos);
             // 컬러
-        }
+        } 
         else if (fRatio >= 1.f)
         {
-            // 마지막 키프레임 적용
-            if (!clip.keyframes.empty())
-            {
-                const UI_KEYFRAME& lastKey = clip.keyframes.back();
-                m_vScale.x = lastKey.vScale.x;
-                m_vScale.y = lastKey.vScale.y;
-                m_fRadian = XMConvertToRadians(lastKey.fAngle);
-            }
-        }
-
-        // 애니메이션 종료 처리
-        if (fRatio >= 1.f)
-        {
+            // 애니메이션 종료 처리
             if (!clip.isLoop)
                 m_isBlending = false;
 
             m_fBlendTime = 0.f;
-        }
+
+            //// 마지막 키프레임 적용 ?? 
+            //if (!clip.keyframes.empty())
+            //{
+            //    const UI_KEYFRAME& lastKey = clip.keyframes.back();
+            //    m_vScale.x = lastKey.vScale.x;
+            //    m_vScale.y = lastKey.vScale.y;
+            //    m_fRadian = XMConvertToRadians(lastKey.fAngle);
+            //}
+        } 
     }
     else
     {
