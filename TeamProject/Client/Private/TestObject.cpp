@@ -14,6 +14,7 @@
 #include "TestState_Idle.h"
 #include "TestState_Walk.h"
 #include "TestState_Jump.h"
+#include "TestState_Dash.h"
 
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
@@ -72,7 +73,8 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
 	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
 	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
-	
+	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+
 	// Transition 설정
 	// Idle <-> Walk
 	m_pStateMachine->Register_Transition("Idle", "Walk",
@@ -84,6 +86,10 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_AnyStateTransition("Jump",
 		CONDITION_TRIGGER, "Jump");
 
+	// AnyState -> Dash (Shift 입력)
+	m_pStateMachine->Register_AnyStateTransition("Dash",
+		CONDITION_TRIGGER, "Dash");
+
 	// Jump -> Walk (착지 + 이동 중)
 	m_pStateMachine->Register_Transition("Jump", "Walk",
 		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
@@ -91,10 +97,17 @@ HRESULT CTestObject::Initialize_State()
 	// Jump -> Idle (착지 + 정지)
 	m_pStateMachine->Register_Transition("Jump", "Idle",
 		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
-	
+
+	// Dash -> Walk (대쉬 완료 + 이동 중)  
+	m_pStateMachine->Register_Transition("Dash", "Walk",
+		CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
+
+	// Dash -> Idle (대쉬 완료 + 정지) 
+	m_pStateMachine->Register_Transition("Dash", "Idle",
+		CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
+
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
-
 	m_pStateMachine->Initialize(this);
 
 	return S_OK;
@@ -127,6 +140,7 @@ void CTestObject::Update(_float dt)
 	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
 
 	m_bJump = input->Key_Down('J');
+	_bool bDash = input->Key_Down(VK_SHIFT);
 
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	if (m_pStateMachine) m_pStateMachine->Update(dt);
@@ -137,18 +151,27 @@ void CTestObject::Update(_float dt)
 	{
 		_bool bGrounded = pCCT->Is_Grounded();
 		_bool bMoving = m_vInputDir.Length() > 0.01f;
+		_bool bDashFinished = m_pStateMachine->Get_Bool("DashFinished");
 
 		m_pStateMachine->Set_Bool("IsGrounded", bGrounded);
 		m_pStateMachine->Set_Bool("IsMoving", bMoving);
 
 		m_pStateMachine->Set_Bool("IsGroundedAndMoving", bGrounded && bMoving);
 		m_pStateMachine->Set_Bool("IsGroundedAndIdle", bGrounded && !bMoving);
+
+		m_pStateMachine->Set_Bool("DashFinishedAndMoving", bDashFinished && bMoving);
+		m_pStateMachine->Set_Bool("DashFinishedAndIdle", bDashFinished && !bMoving);
 	}
 
 	if (m_bJump)
 	{
 		m_pStateMachine->Set_Trigger("Jump");
 		m_bJump = false;
+	}
+
+	if (bDash)
+	{
+		m_pStateMachine->Set_Trigger("Dash");
 	}
 
 	auto controller = Get_Component<CCharacterController>();
@@ -192,7 +215,6 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
-
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
