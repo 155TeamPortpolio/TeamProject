@@ -36,8 +36,6 @@ protected:
 	friend class CStateMachine<Type>;
 };
 
-using ICharacterState = IBaseState<class CCharacter>;
-
 enum TRANSITION_CONDITION
 {
 	CONDITION_NONE = 0,

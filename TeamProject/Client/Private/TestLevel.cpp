@@ -122,7 +122,6 @@ void CTestLevel::Update()
 		CAM->AddShake(3.0f, 8.f, 0.35f, 0.2f);
 	if (input->Key_Down('3'))
 		CAM->ClearShake();
-
 }
 
 void CTestLevel::Ready_Camera()
