@@ -14,7 +14,8 @@ CSprite2D::CSprite2D(const CSprite2D& rhs)
 	:CComponent(rhs),
 	m_pShader(rhs.m_pShader),
 	m_pPoint(rhs.m_pPoint),
-	m_pTextures(rhs.m_pTextures)
+	m_pTextures(rhs.m_pTextures),
+	m_TextKey(rhs.m_TextKey)
 {
 	Safe_AddRef(m_pShader);
 	Safe_AddRef(m_pPoint);

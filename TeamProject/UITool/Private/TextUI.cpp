@@ -34,6 +34,8 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     if (szFontKeys.size())
         Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
 
+    Get_Component<CTextSlot>()->Set_TextKey("text");
+
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
 

@@ -177,6 +177,12 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	return S_OK;
 }
 
+HRESULT CFontSystem::Clear_Texts()
+{
+	m_Texts.clear();
+	return S_OK;
+}
+
 CFontSystem* CFontSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CFontSystem* Instance = new CFontSystem(pDevice, pContext);
