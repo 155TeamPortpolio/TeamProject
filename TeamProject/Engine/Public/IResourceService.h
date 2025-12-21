@@ -18,6 +18,7 @@ public:
     virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) PURE;
     virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) PURE;
     virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectKey) PURE;
+    virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) PURE;
 
 
     virtual string Get_ResourcePath(const string& resourceKey) PURE;

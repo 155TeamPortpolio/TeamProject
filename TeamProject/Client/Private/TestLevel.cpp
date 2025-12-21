@@ -17,6 +17,12 @@
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 
+/* Effect */
+#include "MeshNode.h"
+#include "SpriteNode.h"
+#include "ParticleNode.h"
+#include "EffectContainer.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -36,6 +42,8 @@ HRESULT CTestLevel::Initialize()
 HRESULT CTestLevel::Awake()
 {
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
 	// ============ Camera ==================================================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
@@ -43,6 +51,24 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
 	// =========================================================================
 
+	//==================== Effect =======================
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	
+	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
+	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	
+	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
+	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("test_particle.json")
+		.Position(_float3(0.f, 0.f, 0.f))
+		.Build("Test_Effect");
+	objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//===================================================
+
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
@@ -56,7 +82,6 @@ HRESULT CTestLevel::Awake()
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
 
-	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.CharacterController({})
 		.Build("Test_Model");
