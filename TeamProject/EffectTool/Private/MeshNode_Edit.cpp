@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "Helper_Func.h"
 
 CMeshNode_Edit::CMeshNode_Edit()
 	:CMeshNode()
@@ -308,7 +309,7 @@ _bool CMeshNode_Edit::ChangeEaseType(EaseType& ioValue, EaseType shownValue)
 	auto Pick = [&](EaseType v)
 		{
 			const bool selected = (shownValue == v);
-			if (ImGui::Selectable(Math::GetEaseLabel(v), selected))
+			if (ImGui::Selectable(Helper::EnumLabel<EaseType>(v), selected))
 			{
 				ioValue = v;
 				changed = true;
@@ -387,7 +388,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragFloat("Duration", &m_fDuration);
 
 	/*Default Params*/
-	if (ImGui::BeginCombo("##seg_ease_alpha", Math::GetEaseLabel(m_eAlphaFadeEase)))
+	if (ImGui::BeginCombo("##seg_ease_alpha", Helper::EnumLabel(m_eAlphaFadeEase)))
 	{
 		EaseType eType = m_eAlphaFadeEase;
 		ChangeEaseType(m_eAlphaFadeEase, eType);
@@ -395,7 +396,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	}
 	ImGui::DragFloat2("Alpha Fade", &m_vAlphaFade.x);
 
-	if (ImGui::BeginCombo("##seg_ease_scale", Math::GetEaseLabel(m_eScaleEase)))
+	if (ImGui::BeginCombo("##seg_ease_scale", Helper::EnumLabel(m_eScaleEase)))
 	{
 		EaseType eType = m_eScaleEase;
 		ChangeEaseType(m_eScaleEase, eType);
@@ -413,7 +414,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	}
 
 	/*UV Animation*/
-	if (ImGui::BeginCombo("##seg_ease_uv", Math::GetEaseLabel(m_eUVEase)))
+	if (ImGui::BeginCombo("##seg_ease_uv", Helper::EnumLabel(m_eUVEase)))
 	{
 		EaseType eType = m_eUVEase;
 		ChangeEaseType(m_eUVEase, eType);
@@ -428,7 +429,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
 
 	/*Dissolve*/
-	if (ImGui::BeginCombo("##seg_ease_dissolve", Math::GetEaseLabel(m_eDissolveEase)))
+	if (ImGui::BeginCombo("##seg_ease_dissolve", Helper::EnumLabel(m_eDissolveEase)))
 	{
 		EaseType eType = m_eDissolveEase;
 		ChangeEaseType(m_eDissolveEase, eType);
