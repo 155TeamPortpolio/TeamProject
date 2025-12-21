@@ -34,7 +34,7 @@ public:
 
     void               Render_GUI() override;
 
-    void               Rotate_Horizontal(const _vector3& vDirection, _float dt);
+    void               Rotate_Horizontal(const _vector3& vDirection);
 
 private:
     CTestStateMachine*          m_pStateMachine = { nullptr };
@@ -42,8 +42,6 @@ private:
     _bool                       m_bJump = { false };
     _float                      m_fSpeed = 5.f;
     _float                      m_fJumpPower = 3.f;
-
-    static constexpr _float     ROTATION_SPEED = 10.f;
 
 public:
     static CTestObject* Create();

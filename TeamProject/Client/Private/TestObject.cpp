@@ -74,26 +74,24 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
 	
 	// Transition 설정
+	// Idle <-> Walk
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CONDITION_BOOL_TRUE, "IsMoving");
-
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CONDITION_BOOL_FALSE, "IsMoving");
 
+	// AnyState -> Jump (점프 키 입력)
 	m_pStateMachine->Register_AnyStateTransition("Jump",
 		CONDITION_TRIGGER, "Jump");
 
-	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CONDITION_BOOL_TRUE, "IsGrounded");
-
-	m_pStateMachine->Register_Transition("Idle", "Jump",
-		CONDITION_BOOL_FALSE, "IsGrounded");
-
+	// Jump -> Walk (착지 + 이동 중)
 	m_pStateMachine->Register_Transition("Jump", "Walk",
-		CONDITION_BOOL_TRUE, "IsMoving");
+		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
+
+	// Jump -> Idle (착지 + 정지)
+	m_pStateMachine->Register_Transition("Jump", "Idle",
+		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
 	
-
-
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
 
@@ -137,10 +135,15 @@ void CTestObject::Update(_float dt)
 	auto pCCT = Get_Component<CCharacterController>();
 	if (pCCT)
 	{
-		m_pStateMachine->Set_Bool("IsGrounded", pCCT->Is_Grounded());
-	}
+		_bool bGrounded = pCCT->Is_Grounded();
+		_bool bMoving = m_vInputDir.Length() > 0.01f;
 
-	m_pStateMachine->Set_Bool("IsMoving", m_vInputDir.Length() > 0.01f);
+		m_pStateMachine->Set_Bool("IsGrounded", bGrounded);
+		m_pStateMachine->Set_Bool("IsMoving", bMoving);
+
+		m_pStateMachine->Set_Bool("IsGroundedAndMoving", bGrounded && bMoving);
+		m_pStateMachine->Set_Bool("IsGroundedAndIdle", bGrounded && !bMoving);
+	}
 
 	if (m_bJump)
 	{
@@ -208,7 +211,7 @@ void CTestObject::Render_GUI()
 	}
 }
 
-void CTestObject::Rotate_Horizontal(const _vector3& vDirection, _float dt)
+void CTestObject::Rotate_Horizontal(const _vector3& vDirection)
 {
 	_vector vDir = XMLoadFloat3(&vDirection);
 	vDir = XMVectorSetY(vDir, 0.f);

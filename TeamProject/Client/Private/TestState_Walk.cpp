@@ -19,7 +19,7 @@ void CTestState_Walk::Update(CTestObject* pOwner, _float dt)
     if (vInputDir.Length() > 0.01f)
     {
         vInputDir.Normalize();
-        pOwner->Rotate_Horizontal(-vInputDir, dt);
+        pOwner->Rotate_Horizontal(-vInputDir);
         pOwner->Get_Component<CCharacterController>()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
     }
 }

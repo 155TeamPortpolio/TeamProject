@@ -16,16 +16,30 @@ void CTestState_Jump::Enter(CTestObject* pOwner)
     {
         pCCT->Jump(pOwner->Get_JumpPower());
     }
+
+    m_bMove = false;
 }
 
 void CTestState_Jump::Update(CTestObject* pOwner, _float dt)
 {
     _vector3 vInputDir = pOwner->Get_InputDir();
+    _bool bMoving = vInputDir.Length() > 0.01f;
 
-    if (vInputDir.Length() > 0.01f)
+    if (bMoving && !m_bMove)
+    {
+        pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 9);
+    }
+    else if (!bMoving && m_bMove)
+    {
+        pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 1);
+    }
+
+    m_bMove = bMoving;
+
+    if (bMoving)
     {
         vInputDir.Normalize();
-        pOwner->Rotate_Horizontal(-vInputDir, dt);
+        pOwner->Rotate_Horizontal(-vInputDir);
 
         auto pCCT = pOwner->Get_Component<CCharacterController>();
         if (pCCT)
@@ -35,4 +49,5 @@ void CTestState_Jump::Update(CTestObject* pOwner, _float dt)
 
 void CTestState_Jump::Exit(CTestObject* pOwner)
 {
+    m_bMove = false;
 }
