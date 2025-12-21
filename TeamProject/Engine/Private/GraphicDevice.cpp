@@ -108,7 +108,7 @@ HRESULT CGraphicDevice::Ready_SwapChain(HWND hWnd, WINMODE isWindowed, _uint iWi
 	SwapChain.BufferDesc.Width = iWinCX;	/* 가로 픽셀 수 */
 	SwapChain.BufferDesc.Height = iWinCY;	/* 세로 픽셀 수 */
 
-	SwapChain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+	SwapChain.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	SwapChain.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 	SwapChain.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
@@ -141,13 +141,15 @@ HRESULT CGraphicDevice::Ready_BackBufferRenderTargetView()
 		return E_FAIL;
 
 	ID3D11Texture2D* pBackBufferTexture = nullptr;
-
 	if (FAILED(m_pSwapChain->GetBuffer(0,
 		__uuidof(ID3D11Texture2D), (void**)&pBackBufferTexture)))
 		return E_FAIL;
-
+	D3D11_RENDER_TARGET_VIEW_DESC desc{};
+	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	desc.Texture2D.MipSlice = 0;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 스왑체인 포맷과 동일하게
 	if (FAILED(m_pDevice->CreateRenderTargetView(
-		pBackBufferTexture, nullptr, &m_pBackBufferRTV)))
+		pBackBufferTexture, &desc, &m_pBackBufferRTV)))
 		return E_FAIL;
 
 	Safe_Release(pBackBufferTexture);
