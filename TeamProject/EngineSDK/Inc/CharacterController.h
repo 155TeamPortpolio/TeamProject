@@ -93,6 +93,7 @@ private:
     _float                   m_fGravity = { -9.81f };
     _float                   m_fContactOffset = 0.001f;
     _float                   m_fRestOffset = 0.0f;
+    _float                   m_fBoundingMinY = 0.f;
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
 

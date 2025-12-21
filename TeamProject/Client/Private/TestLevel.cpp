@@ -88,15 +88,21 @@ HRESULT CTestLevel::Awake()
 
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-
 	COLLIDER_DESC colDesc;
 	colDesc.bCooking = true;
 	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-	CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-		.Collider(colDesc)
-		.Build("Test_Floor");
 
-	objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+	for (_int z = 0; z < 3; ++z)
+	{
+		for (_int x = 0; x < 3; ++x)
+		{
+			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+				.Collider(colDesc)
+				.Position({ x * 6.f, 0.f, z * 6.f })
+				.Build("Test_Floor_" + to_string(z * 3 + x));
+			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+		}
+	}
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 

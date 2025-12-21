@@ -39,6 +39,14 @@ public:
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
 
+        //루트본 관련
+        _bool   bUseTransform = { true };
+        _int    iMoveBoneIndex = { -1 };
+        _float3 fPrevAnimPos{};
+        //로컬 매트릭스
+        vector<_float4x4> LocalMatrices = {};
+        //클립 옵션
+
         //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
  
@@ -47,7 +55,7 @@ public:
         _int    iNextClipIndex = { -1 };
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
-        BLEND_STATE eBlendState = { BLEND_STATE::NONE };
+        BLEND_STATE     eBlendState = { BLEND_STATE::NONE };
         //다음 매트릭스
         vector<_float4x4> BlendMatrices = {};
         //보간을 다한 최종 매트릭스
@@ -84,7 +92,6 @@ public: //클라이언트 사용 전용 함수 .Apply() 로 적용할것
 
 public://애니매이터 데이터
     /*----- is -----*/
-
     //현재 레이어의 애니매이션이 끝났는지
     _bool isCurrentAnimEnd(_uint LayerIndex = 0);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
@@ -93,7 +100,6 @@ public://애니매이터 데이터
     _bool isBlending(_uint LayerIndex = 0);
 
     /*----- Getter -----*/
-
     //현재 레이어 클립의 진행률 0~1 반환
     _float Get_CurAnimDuration(_uint LayerIndex = 0);
     //현재 레이어의 애니매이션 이름
