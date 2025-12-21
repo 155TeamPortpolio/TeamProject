@@ -32,11 +32,15 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
             return E_FAIL;
 
         m_Meshes.push_back(pMesh);
-
+        m_AIMesh.push_back(pMesh);
         string keyLower = Helper::ToLower(pMesh->Get_Key());
 
-        if (keyLower.find("proxy") != string::npos)
+        if (keyLower.find("proxy") != string::npos) {
             m_ProxyMarked.push_back(m_Meshes.size() - 1);
+        }
+        else {
+            m_NotProxy.push_back(m_Meshes.size() - 1);
+        }
         if (keyLower.find("lod0") != string::npos)
             m_LOD0Marked.push_back(m_Meshes.size() - 1);
         if (keyLower.find("lod1") != string::npos)
@@ -64,6 +68,17 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
     }
 
     return S_OK;
+}
+
+vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
+{
+
+    return m_NotProxy;
+}
+
+CAIMesh* CAIModelData::Get_AIMesh(_uint index)
+{
+    return m_AIMesh[index];
 }
 
 CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)

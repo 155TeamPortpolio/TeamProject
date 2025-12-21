@@ -27,6 +27,7 @@ public:
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
+    class CEditorSystem* m_pSystem = { nullptr };
 
 public:
     static CModelEditLevel* Create(const string& LevelKey);

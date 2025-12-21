@@ -150,6 +150,11 @@ void CAI_STModel::Clear_Proxy()
 	}
 }
 
+CAIModelData* CAI_STModel::Get_AIModelData()
+{
+	return static_cast<CAIModelData*>(m_pData);
+}
+
 
 HRESULT CAI_STModel::Release_Mesh()
 {

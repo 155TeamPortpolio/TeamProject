@@ -76,6 +76,18 @@
     <Filter Include="02. Obj\02. EditModel">
       <UniqueIdentifier>{46cfa70e-40ac-4495-9782-44f8e8452150}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Obj\03. RayCaster">
+      <UniqueIdentifier>{746ec55a-8bbf-445c-8357-8d96b824889b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Editor_Manager">
+      <UniqueIdentifier>{43472c23-b70d-4dd3-8485-0bc8ba5ef8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Obj\00. CamObject\DelCam">
+      <UniqueIdentifier>{2734be5a-e955-4412-9539-5bdaf0dc039c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ModelHelper">
+      <UniqueIdentifier>{2278d253-cd1b-48fa-ae99-f82f700489e7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -193,7 +205,6 @@
     <ClInclude Include="..\public\AIChannel.h">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\public\CamObject.h">
       <Filter>02. Obj\00. CamObject</Filter>
     </ClInclude>
@@ -203,6 +214,16 @@
     <ClInclude Include="..\Public\EditModel.h">
       <Filter>02. Obj\02. EditModel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\RayCaster.h">
+      <Filter>02. Obj\03. RayCaster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditorSystem.h">
+      <Filter>05. Editor_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h">
+      <Filter>02. Obj\00. CamObject\DelCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -286,7 +307,6 @@
     <ClCompile Include="..\private\AIChannel.cpp">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\private\CamObject.cpp">
       <Filter>02. Obj\00. CamObject</Filter>
     </ClCompile>
@@ -296,5 +316,15 @@
     <ClCompile Include="..\Private\EditModel.cpp">
       <Filter>02. Obj\02. EditModel</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\RayCaster.cpp">
+      <Filter>02. Obj\03. RayCaster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditorSystem.cpp">
+      <Filter>05. Editor_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp">
+      <Filter>02. Obj\00. CamObject\DelCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelHelper.cpp" />
   </ItemGroup>
 </Project>

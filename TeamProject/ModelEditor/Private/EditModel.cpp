@@ -101,7 +101,17 @@ void CEditModel::Render_GUI()
 
 	ImGui::EndChild();
 
-	__super::Render_GUI();
+	Get_Component<CTransform>()->Render_GUI();
+	if (CAI_SKModel* pSkModel = Get_Component<CAI_SKModel>()) {
+		pSkModel->Render_GUI();
+	}
+	if (CAI_STModel* pStModel = Get_Component<CAI_STModel>()) {
+		pStModel->Render_GUI();
+	}
+	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) {
+		pMaterial->Render_GUI();
+	}
+	//__super::Render_GUI();
 }
 HRESULT CEditModel::Load_AIScene(const string& filePath)
 {
@@ -114,7 +124,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		aiProcessPreset_TargetRealtime_Fast;
 
 	/*메쉬 병합 플래그 끄게*/
-	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+	//basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
 
 	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag);
 	if (!m_pAIScene)
@@ -159,7 +169,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
-		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag  | aiProcess_PreTransformVertices);
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag /* | aiProcess_PreTransformVertices*/);
 		if (!m_pAIScene)
 			return E_FAIL;
 		hasBones = false;
@@ -185,6 +195,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		CAI_SKModel* skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
+		m_Components.emplace(type_index(typeid(CAI_SKModel)), skeletal);
+		Safe_AddRef(skeletal);
 		Safe_AddRef(skeletal);
 
 		skeletal->Load_AIModel(m_pAIScene, fileName);
@@ -203,6 +215,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		CAI_STModel* staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
+		m_Components.emplace(type_index(typeid(CAI_STModel)), staticModel);
+		Safe_AddRef(staticModel);
 		Safe_AddRef(staticModel);
 
 		staticModel->Load_AIModel(m_pAIScene, fileName);

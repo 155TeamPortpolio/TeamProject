@@ -42,6 +42,6 @@ private:
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free();
+    virtual void Free() override;
 };
 NS_END

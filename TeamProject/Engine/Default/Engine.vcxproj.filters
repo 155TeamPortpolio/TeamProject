@@ -311,7 +311,7 @@
       <Filter>01. Utility\97. Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Data_Packets.h">
-      <Filter>99. Defines\Packet</Filter>
+      <Filter>99. Defines\AnimationLayout\Packet</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GUIUtil.h">
       <Filter>00. System\02. Gui\GUIUtil</Filter>
@@ -759,9 +759,6 @@
     <Filter Include="01. Utility\11. FontSystem\Font">
       <UniqueIdentifier>{08e8bc38-e892-4de9-bc7b-4a7de073ce54}</UniqueIdentifier>
     </Filter>
-    <Filter Include="99. Defines\Packet">
-      <UniqueIdentifier>{d6efe361-4795-4b14-a3b0-d8c322504750}</UniqueIdentifier>
-    </Filter>
     <Filter Include="98. BasicShader">
       <UniqueIdentifier>{4d73f3c7-aa2d-464b-ae01-4e68fd6a1fe9}</UniqueIdentifier>
     </Filter>
@@ -929,6 +926,9 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Defines\AnimationLayout\Packet">
+      <UniqueIdentifier>{d6efe361-4795-4b14-a3b0-d8c322504750}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1176,7 +1176,7 @@
       <Filter>01. Utility\97. Helper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Data_Packets.cpp">
-      <Filter>99. Defines\Packet</Filter>
+      <Filter>99. Defines\AnimationLayout\Packet</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GUIUtil.cpp">
       <Filter>00. System\02. Gui\GUIUtil</Filter>
