@@ -215,6 +215,12 @@ MINMAX_BOX CParticleSystem::Get_MeshBoundingBox(_uint index)
 
 void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 {
+	if (particleDesc.iMaxSpawnParticleCount <= 0)
+		return;
+
+	if (m_iMaxSpawnParticleCount != particleDesc.iMaxSpawnParticleCount)
+		CreateStructuredBuffers(particleDesc.iMaxSpawnParticleCount);
+
 	m_Particles.clear();
 	m_DeadParticleIndices.clear();
 
@@ -237,6 +243,9 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 
 	m_UseGravity = particleDesc.useGravity;
 	m_fGravityScale = particleDesc.fGravityScale;
+
+	m_iAliveCount = 0;
+	m_SpawnList.clear();
 
 	/*Module Params*/
 	/*Life Time Velocity*/
@@ -295,7 +304,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 		m_DeadParticleIndices.push_back(i);
 
-	CreateStructuredBuffers(m_iMaxSpawnParticleCount);
+	
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -316,6 +325,9 @@ void CParticleSystem::Simulation_Particle(_float dt)
 
 HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
 {
+	if (m_iAliveCount <= 0)
+		return S_OK;
+
 	/* Instance 데이터 srv로 넘기기 */
 	{
 		CMaterialInstance* pMaterialInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
@@ -338,6 +350,9 @@ HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
 
 HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext)
 {
+	if (m_iAliveCount <= 0)
+		return S_OK;
+
 	pContext->DrawInstanced(m_pPoint->Get_VertexCount(), m_iAliveCount, 0, 0);
 
 	ID3D11ShaderResourceView* pSRV[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {
@@ -356,6 +371,12 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 {
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 
+	ID3D11ShaderResourceView* pSRV[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {
+		nullptr
+	};
+	pContext->VSSetShaderResources(0, D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT, pSRV);
+
+	CComputeShader::UnbindAll(pContext);
 	Safe_Release(m_pInstanceBuffer);
 	Safe_Release(m_pParticlesBuffer);
 	Safe_Release(m_pDeadListBuffer);
@@ -365,13 +386,9 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 
 	/* Instance */
 	{
-		vector<VTX_INSTANCE_POINT> InitData;
-		InitData.resize(iMaxCount);
-
 		CStructuredBuffer::DESC desc{};
 		desc.iCount = iMaxCount;
 		desc.iStride = sizeof(INSTANCE_DATA);
-		desc.pInitData = InitData.data();
 		desc.iUAVFlag = 0;
 		desc.eUsage = D3D11_USAGE_DEFAULT;
 		desc.iCpuAccess = 0;
@@ -381,13 +398,9 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 
 	/* Particles */
 	{
-		vector<PARTICLE_GPU> InitData;
-		InitData.resize(iMaxCount);
-
 		CStructuredBuffer::DESC desc{};
 		desc.iCount = iMaxCount;
 		desc.iStride = sizeof(PARTICLE_GPU);
-		desc.pInitData = InitData.data();
 		desc.iUAVFlag = 0;
 		desc.eUsage = D3D11_USAGE_DEFAULT;
 		desc.iCpuAccess = 0;
@@ -528,15 +541,12 @@ void CParticleSystem::SpawnParticles(_float dt)
 void CParticleSystem::ResetAliveOut()
 {
 	_uint iSpawnCount = m_SpawnList.size();
-	
-	if (m_iAliveCount > 0)
-	{
-		ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
-		ID3D11UnorderedAccessView* pUAV = m_pAliveBuffer[m_iAliveOutIndex]->GetUAV();
-		_uint initialCount = 0;
 
-		pContext->CSSetUnorderedAccessViews(0, 1, &pUAV, &initialCount);
-	}
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
+	ID3D11UnorderedAccessView* pUAV = m_pAliveBuffer[m_iAliveOutIndex]->GetUAV();
+	_uint initialCount = 0;
+
+	pContext->CSSetUnorderedAccessViews(0, 1, &pUAV, &initialCount);
 }
 
 void CParticleSystem::UploadSpawnIn()
