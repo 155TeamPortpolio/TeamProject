@@ -39,12 +39,18 @@ protected:
 	void Set_Animation(_uint iIndex);				// (툴, 클라이언트)
 
 protected:
-	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);	// (툴) 
+	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);	// (툴) (아마 없어질 듯)
+	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (툴)
 
 private:
 	void ToJson_Common(json& data);					// (툴)	
 	void ToJson_Parent(json& data);					// (툴)
+	void ToJson_Animation(json& data);				// (툴)
+
 	void FromJson_Parent(const json& data);			// (툴, 클라이언트)
+	void FromJson_Animation(const json& data);		// (툴, 클라이언트)
+
+	void Reset_Animation();
 
 protected:
 	_float4				m_vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -54,8 +60,11 @@ protected:
 	_float				m_fBlendDuration = {};
 
 	vector<UI_ANIM_CLIP> m_AnimClips;
-
 	_int				m_iCurrentClipIndex = { -1 };
+
+	_float2				m_vBaseScale = {};
+	_float				m_vBaseAngle = {};
+	_float4				m_vBaseColor = {};
 
 public:
 	virtual void Free();

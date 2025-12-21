@@ -67,6 +67,15 @@
     <Filter Include="02. Obj">
       <UniqueIdentifier>{a669aaff-6a46-4db2-aabe-edab1dd90a4f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Obj\00. CamObject">
+      <UniqueIdentifier>{91a0db12-ac56-4327-a4b6-4cc5fd9f21d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Obj\01. FreeCam">
+      <UniqueIdentifier>{af6519e9-4b4e-40dc-808a-f25247a7b5a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Obj\02. EditModel">
+      <UniqueIdentifier>{46cfa70e-40ac-4495-9782-44f8e8452150}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -185,12 +194,14 @@
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\EditCamera.h" />
-    <ClInclude Include="..\Public\EditModel.h" />
-    <ClInclude Include="..\public\FreeCam.h">
-      <Filter>02. Obj</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CamObject.h">
-      <Filter>02. Obj</Filter>
+      <Filter>02. Obj\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>02. Obj\01. FreeCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditModel.h">
+      <Filter>02. Obj\02. EditModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,12 +287,14 @@
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EditCamera.cpp" />
-    <ClCompile Include="..\Private\EditModel.cpp" />
     <ClCompile Include="..\private\CamObject.cpp">
-      <Filter>02. Obj</Filter>
+      <Filter>02. Obj\00. CamObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\FreeCam.cpp">
-      <Filter>02. Obj</Filter>
+      <Filter>02. Obj\01. FreeCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditModel.cpp">
+      <Filter>02. Obj\02. EditModel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

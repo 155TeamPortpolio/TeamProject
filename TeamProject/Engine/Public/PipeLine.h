@@ -79,7 +79,7 @@ public:
     ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
     ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
    
-    HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext);
+    HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 
 private:
     ID3D11Buffer* m_pDeviceFrameBuffer = {nullptr};

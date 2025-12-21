@@ -35,7 +35,7 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-
+	Get_Component<CCharacterController>()->Set_Position({ 0.f, 5.f, -2.5f });
 }
 
 void CDemoPlayer::Priority_Update(_float dt)

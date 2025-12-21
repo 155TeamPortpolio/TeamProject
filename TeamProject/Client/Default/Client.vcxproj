@@ -171,6 +171,9 @@
     <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\Public\TestState_Idle.h" />
+    <ClInclude Include="..\Public\TestState_Jump.h" />
+    <ClInclude Include="..\Public\TestState_Walk.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -228,6 +231,9 @@
     <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\Private\TestState_Idle.cpp" />
+    <ClCompile Include="..\Private\TestState_Jump.cpp" />
+    <ClCompile Include="..\Private\TestState_Walk.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

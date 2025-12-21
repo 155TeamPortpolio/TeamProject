@@ -79,6 +79,13 @@ namespace Engine
 		_float3 vPadding;
 	};
 
+	struct BloomConstants
+	{
+		_float BloomType = 0;
+		_float BloomIntensity = 1.f;
+		_float2 Center = _float2(0.5f, 0.5f);
+	};
+
 	typedef struct ENGINE_DLL tagMaterialFileHeader {
 		_uint MaterialDataCount = {};
 		char materialFileKey[MAX_PATH];
@@ -290,6 +297,7 @@ namespace Engine
 	}COLLISION_CONTEXT;
 
 	typedef struct tagUITextInfo {
+		string		TextKey;
 		wstring		Text = {};
 		_float2		TextPos = {};
 		_float4		TextColor = {};

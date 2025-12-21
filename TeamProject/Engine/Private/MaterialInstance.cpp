@@ -23,15 +23,6 @@ CMaterialInstance::CMaterialInstance(const CMaterialInstance& rhs)
 void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 {
 	/*상수 버퍼*/
-
-	if (nullptr != m_pCBuffer) {
-		D3D11_MAPPED_SUBRESOURCE mappedResource;
-		pContext->Map(m_pCBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedResource);
-		memcpy(mappedResource.pData, &overrides_Constant, sizeof(MaterialConstants));
-		pContext->Unmap(m_pCBuffer, 0);
-		m_pMaterialData->Set_MaterialConstantBuffer(m_pCBuffer);
-	}
-
 	m_pMaterialData->ApplyData(pContext, m_TextureIndexs);
 	CShader* pMaterialShader = m_pMaterialData->Get_Shader();
 
@@ -50,16 +41,40 @@ const string& CMaterialInstance::Get_PassConstant()
 		return override_Pass;
 }
 
-
-HRESULT CMaterialInstance::Create_CBuffer(ID3D11Device* pDevice)
+HRESULT CMaterialInstance::Create_CBloomBuffer(ID3D11Device* pDevice)
 {
 	D3D11_BUFFER_DESC desc = {};
-	desc.ByteWidth = sizeof(MaterialConstants);
+	desc.ByteWidth = sizeof(BloomConstants);
 	desc.Usage = D3D11_USAGE_DYNAMIC;
 	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	pDevice->CreateBuffer(&desc, nullptr, &m_pCBuffer);
-	m_pCBuffer->SetPrivateData(WKPDID_D3DDebugObjectName, strlen("MaterialCBuffer"), "MaterialCBuffer");
+	pDevice->CreateBuffer(&desc, nullptr, &m_pCBloomBuffer);
+
+	return S_OK;
+}
+
+HRESULT CMaterialInstance::Update_CBloomBuffer(BloomConstants newBloomConstants, ID3D11DeviceContext* pContext)
+{
+	if (m_pCBloomBuffer)
+	{
+		Safe_Release(m_pCBloomBuffer);
+		m_pCBloomBuffer = nullptr;
+	}
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	HRESULT hr = pContext->Map(
+		m_pCBloomBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedResource
+	);
+	if (FAILED(hr))
+		return hr;
+
+	memcpy(mappedResource.pData, &newBloomConstants, sizeof(BloomConstants));
+	pContext->Unmap(m_pCBloomBuffer, 0);
 
 	return S_OK;
 }
@@ -142,7 +157,7 @@ CMaterialInstance* CMaterialInstance::Make_Handle(CMaterialData* pData, ID3D11De
 	hMaterial->overrides_Constant = pData->Get_DefaultMaterialConstant();
 	hMaterial->m_TextureIndexs.resize(MAX_TEXTURE_TYPE_VALUE, 0);
 
-	if (FAILED(hMaterial->Create_CBuffer(hMaterial->m_pDevice))) {
+	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
 		Safe_Release(hMaterial);
 	};
 	return hMaterial;
@@ -157,7 +172,7 @@ CMaterialInstance* CMaterialInstance::Create_Handle(const string& materialKey, c
 	hMaterial->m_TextureIndexs.resize(MAX_TEXTURE_TYPE_VALUE, 0);
 	hMaterial->override_Pass = DefualtpassConstant;
 
-	if (FAILED(hMaterial->Create_CBuffer(hMaterial->m_pDevice))) {
+	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
 		Safe_Release(hMaterial);
 	};
 
@@ -172,7 +187,7 @@ CMaterialInstance* CMaterialInstance::Clone()
 {
 	CMaterialInstance* hMaterial = new CMaterialInstance(*this);
 
-	if (FAILED(hMaterial->Create_CBuffer(hMaterial->m_pDevice))) {
+	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
 		Safe_Release(hMaterial);
 	};
 
@@ -182,6 +197,6 @@ CMaterialInstance* CMaterialInstance::Clone()
 void CMaterialInstance::Free()
 {
 	Safe_Release(m_pMaterialData);
-	Safe_Release(m_pCBuffer);
+	Safe_Release(m_pCBloomBuffer);
 	Safe_Release(m_pDevice);
 }

@@ -87,7 +87,7 @@ HRESULT CFontSystem::Render_Font()
 
 			m_pBatch->Begin(
 				SpriteSortMode_Deferred,
-				m_pStates->AlphaBlend(),   // ¡ç default´Â non-premultiplied
+				m_pStates->AlphaBlend(),  
 				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
 			);
 		}
@@ -119,6 +119,67 @@ HRESULT CFontSystem::Render_Font()
 		m_pBatch->End();
 
 	m_Texts.clear(); 
+	return S_OK;
+}
+
+HRESULT CFontSystem::Render_TextFont(string TextKey)
+{
+	auto iter = std::find_if(m_Texts.begin(), m_Texts.end(),
+		[&TextKey](const TextData& textData) {
+			return textData.info.TextKey == TextKey;
+		});
+
+	if (iter == m_Texts.end())
+		return S_OK;
+
+	TextData& Text = *iter;
+
+	if (Text.systemIndex >= m_Fonts.size() || !m_Fonts[Text.systemIndex])
+		return E_FAIL;
+
+	CCustomFont* pFont = m_Fonts[Text.systemIndex];
+
+	m_pContext->GSSetShader(nullptr, nullptr, 0);
+
+	m_pBatch->Begin(
+		SpriteSortMode_Deferred,
+		m_pStates->AlphaBlend(),
+		nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
+	);
+
+	if (Text.info.OutLined) {
+		pFont->DrawOutlinedText(
+			m_pBatch,
+			Text.info.Text,
+			Text.info.TextPos,
+			XMLoadFloat4(&Text.info.OutLineColor),
+			XMLoadFloat4(&Text.info.TextColor),
+			Text.info.Thickness,
+			Text.info.Rotation,
+			Text.info.Origin,
+			Text.info.Scale
+		);
+	}
+	else {
+		pFont->Draw(
+			m_pBatch,
+			Text.info.Text,
+			Text.info.TextPos,
+			XMLoadFloat4(&Text.info.TextColor),
+			Text.info.Rotation,
+			Text.info.Origin,
+			Text.info.Scale
+		);
+	}
+
+	m_pBatch->End();
+
+	return S_OK;
+}
+
+HRESULT CFontSystem::Clear_Texts()
+{
+	m_Texts.clear();
 	return S_OK;
 }
 

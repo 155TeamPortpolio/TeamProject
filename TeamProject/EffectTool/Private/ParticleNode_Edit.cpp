@@ -82,6 +82,8 @@ void CParticleNode_Edit::Play()
 	m_isAlive = true;
 	if (!m_IsLoop)
 		m_IsEffectActive = false;
+	else
+		m_IsEffectActive = true;
 
 	m_fElpasedTime = 0.f;
 

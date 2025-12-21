@@ -59,11 +59,11 @@ void CEditModel::Render_GUI()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight*4 + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight * 4 + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::SeparatorText("Model Load & Save");
-	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
-	static const char* kModes[] = { "Auto", "Forced Static", "Forced Skeletal" };
+	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{0, childHeight}, true);
+	static const char* kModes[] = {"Auto", "Forced Static", "Forced Skeletal"};
 	int cur = static_cast<int>(m_eMode);
 	ImGui::TextUnformatted("Import Mode");
 	ImGui::SetNextItemWidth(170.f);
@@ -78,14 +78,22 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
-		if(nullptr != Get_Component<CModel>())
+		if (nullptr != Get_Component<CModel>())
 			Save_AIScene();
 	}
 	ImGui::EndChild();
 
+	ImGui::SeparatorText("Object State");
+	ImGui::BeginChild("##ObjectState", ImVec2{0, childHeight}, true);
+
+	bool alive = Is_Alive();
+	if (ImGui::Checkbox("Alive", &alive))
+		Set_Alive(alive);
+
+	ImGui::EndChild();
 
 	ImGui::SeparatorText("Position Reset");
-	ImGui::BeginChild("##Reset", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Reset", ImVec2{0, childHeight}, true);
 
 	if (ImGui::Button("Reset")) {
 		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
@@ -151,7 +159,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
-		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag | aiProcess_PreTransformVertices);
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag  | aiProcess_PreTransformVertices);
 		if (!m_pAIScene)
 			return E_FAIL;
 		hasBones = false;
