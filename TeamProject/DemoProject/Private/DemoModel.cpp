@@ -54,7 +54,7 @@ HRESULT CDemoModel::Initialize(INIT_DESC* pArg)
 
 void CDemoModel::Awake()
 {
-Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 }

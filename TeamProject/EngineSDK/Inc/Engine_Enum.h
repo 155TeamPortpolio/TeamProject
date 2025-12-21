@@ -18,9 +18,10 @@ namespace Engine
 	// 0 ~ 31¹üÀ§
 	enum class COLLISION_GROUP { COMMON, PLAYER, MONSTER, PLAYER_ATTACK, MONSTER_ATTACK, END};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
-	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE};
+	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, END};
+	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,
 		Left = 1,				// 0001
