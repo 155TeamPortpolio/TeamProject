@@ -14,6 +14,8 @@
 #include "ImageUI.h"
 #include "TextUI.h"
 #include "ButtonUI.h"
+#include "SpriteAnimationUI.h"
+#include "UVAnimationUI.h"
 
 vector<string> CUITool_Level::m_strTextureKeys;
 vector<const _char*> CUITool_Level::m_szTextureKeys;
@@ -143,6 +145,10 @@ HRESULT CUITool_Level::Ready_UIObjects()
 	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_TextUI", CTextUI::Create());
 
 	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ButtonUI", CButtonUI::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_SpriteAnimationUI", CSpriteAnimationUI::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_UVAnimationUI", CUVAnimationUI::Create());
 
 	return S_OK;
 }

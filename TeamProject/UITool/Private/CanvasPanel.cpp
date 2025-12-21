@@ -8,6 +8,8 @@
 #include "ImageUI.h"
 #include "TextUI.h"
 #include "ButtonUI.h"
+#include "SpriteAnimationUI.h"
+#include "UVAnimationUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
 
@@ -49,6 +51,9 @@ void CCanvasPanel::Priority_Update(_float dt)
 
 void CCanvasPanel::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
     Play_Animation(dt);
@@ -61,9 +66,9 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    Render_GUI_Layout();
-
-    Render_GUI_Transform();
+    //Render_GUI_Layout();
+    //
+    //Render_GUI_Transform();
 
     Render_GUI_Create();
 
@@ -95,21 +100,35 @@ void CCanvasPanel::Render_GUI_Create()
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_ImageUI";
-        strInstanceKey = "UI_ImageUI" + to_string(CImageUI::m_iCount);
+        strInstanceKey = "ImageUI" + to_string(CImageUI::m_iCount);
     }
 
     if (ImGui::Button("Create Text"))
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_TextUI";
-        strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount);
+        strInstanceKey = "TextUI" + to_string(CTextUI::m_iCount);
     }
 
     if (ImGui::Button("Create Button"))
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_ButtonUI";
-        strInstanceKey = "UI_ButtonUI" + to_string(CButtonUI::m_iCount);
+        strInstanceKey = "ButtonUI" + to_string(CButtonUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create SpriteAnimation"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_SpriteAnimationUI";
+        strInstanceKey = "SpriteAnimationUI" + to_string(CSpriteAnimationUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create UVAnimationUI"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_UVAnimationUI";
+        strInstanceKey = "UVAnimationUI" + to_string(CUVAnimationUI::m_iCount);
     }
 
     // 자식 생성

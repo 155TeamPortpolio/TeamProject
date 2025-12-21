@@ -32,9 +32,9 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
-    if (strTextureKeys.size())
-        Change_Texture(0, G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -47,6 +47,10 @@ void CButtonUI::Priority_Update(_float dt)
 
 void CButtonUI::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
+    Play_Animation(dt);
 }
 
 void CButtonUI::Late_Update(_float dt)
@@ -55,16 +59,16 @@ void CButtonUI::Late_Update(_float dt)
 
 void CButtonUI::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
 
-    ImGui::SeparatorText(u8"이미지");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+    // 이미지
+    ImGui::SeparatorText(u8"이미지");
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     ImGui::SeparatorText(u8"이벤트");
     ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
@@ -79,6 +83,8 @@ void CButtonUI::Render_GUI()
     case STATE::DISABLED: strState = ENUM_TO_STRING(STATE::DISABLED); break;
     }
     ImGui::TextDisabled(strState.c_str());
+
+    __super::Render_GUI();
 }
 
 void CButtonUI::Enter_Hover()
@@ -115,14 +121,19 @@ void CButtonUI::ToJson(json& data)
 
     data["typeTag"] = "ButtonUI";
 
-    data["textureTag"] = m_strTextureKey;
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
 
     data["eventMsg"] = m_szEventMsg;
 }
 
 void CButtonUI::FromJson(const json& data)
 {
-    Change_Texture(0, G_GlobalLevelKey, data["textureTag"], m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     strcpy_s(m_szEventMsg, sizeof(m_szEventMsg), data["eventMsg"].get<string>().c_str());
 

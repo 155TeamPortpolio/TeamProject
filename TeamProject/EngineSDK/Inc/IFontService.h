@@ -12,5 +12,6 @@ public:
 	virtual HRESULT Render_Font() PURE;
 	virtual HRESULT Render_TextFont(string TextKey) PURE;
 	virtual class CCustomFont* Get_Font(string FontName) PURE;
+	virtual HRESULT Clear_Texts() PURE;
 };
 NS_END

@@ -3,15 +3,12 @@
 
 NS_BEGIN(UITool)
 
-class CButtonUI final : public CUIObject_Tool
+class CUVAnimationUI final : public CUIObject_Tool
 {
-public:
-	enum class STATE { NORMAL, HOVERED, CLICKED, DISABLED, END };
-
 private:
-	CButtonUI();
-	CButtonUI(const CButtonUI& rhs);
-	virtual ~CButtonUI() DEFAULT;
+	CUVAnimationUI();
+	CUVAnimationUI(const CUVAnimationUI& rhs);
+	virtual ~CUVAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -20,22 +17,20 @@ public:
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
-
 	virtual void Render_GUI() override;
-
-	virtual void Enter_Hover() override;
-	virtual void Exit_Hover() override;
-	virtual void OnClick() override;
 
 public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
 public:
-	STATE		m_eState = {};
-	_char		m_szEventMsg[MAX_PATH] = {};	// 클릭했을 때 내보내는 메시지
+	_bool		m_isUseMask = {};
+
+	_float2		m_vUVOffset = {};
+	_float2		m_vUVOffsetSpeed = {};
 
 	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+	_int		m_iMaskTextureKeyIndex = { 0 };	// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
 	static _uint m_iCount;
