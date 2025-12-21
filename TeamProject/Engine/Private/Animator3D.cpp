@@ -127,50 +127,24 @@ void CAnimator3D::Update_Animation(_float dt)
 	BuildBone();
 }
 
-HRESULT CAnimator3D::Set_Animation(AnimArg Clip)
+SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
 {
-	_int iClipIndex = Resolve_ClipIndex(Clip);
-	if(!isExistClip(iClipIndex))
-		return E_FAIL;
-
-	return Set_Animation_Work(0, iClipIndex);
+	return SetAnimBuild(0, Resolve_ClipIndex(ClipArg), this);
 }
 
-HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
+SetAnimBuild CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
-	_int iClipIndex = Resolve_ClipIndex(ClipArg);
-
-	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
-		return E_FAIL;
-
-	return Set_Animation_Work(LayerIndex, iClipIndex);
+	return SetAnimBuild(LayerIndex, Resolve_ClipIndex(ClipArg), this);
 }
 
-SetAnimBuild CAnimator3D::Test_Set_Animation(_uint LayerIndex, AnimArg ClipArg)
+ChangeAnimBuild CAnimator3D::Change_Animation(AnimArg ClipArg)
 {
-	return SetAnimBuild(LayerIndex, Resolve_ClipIndex(ClipArg), this);;
+	return ChangeAnimBuild(0, Resolve_ClipIndex(ClipArg), this);
 }
 
-ChangeAnimBuild CAnimator3D::Test_Change_Animation(_uint LayerIndex, AnimArg ClipArg)
+ChangeAnimBuild CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipArg)
 {
 	return ChangeAnimBuild(LayerIndex, Resolve_ClipIndex(ClipArg), this);
-}
-
-HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg)
-{
-	_int iClipIndex = Resolve_ClipIndex(ClipArg);
-
-	if (!isExistClip(iClipIndex))
-		return E_FAIL;
-
-	return Change_Animation_Work(0, iClipIndex);
-}
-
-HRESULT CAnimator3D::Change_Animation(_uint LayerIndex, AnimArg ClipArg)
-{
-	_int iClipIndex = Resolve_ClipIndex(ClipArg);
-
-	return Change_Animation_Work(LayerIndex, iClipIndex);
 }
 
 void CAnimator3D::Reset_Layer(_uint LayerIndex)
@@ -211,35 +185,6 @@ HRESULT CAnimator3D::Stop_Animation(_uint LayerIndex)
 HRESULT CAnimator3D::StopAll_Animation()
 {
 	return E_NOTIMPL;
-}
-
-HRESULT CAnimator3D::Set_Animation_Work(_uint LayerIndex, _int ClipIndex)
-{
-	if (!isExistLayer(LayerIndex) || !isExistClip(ClipIndex))
-		return E_FAIL;
-
-	Reset_Layer(LayerIndex);
-
-	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-	Layer.iClipIndex = ClipIndex;
-
-	Layer.bLoop = true;
-
-	return S_OK;
-}
-
-HRESULT CAnimator3D::Change_Animation_Work(_uint LayerIndex, _int ClipIndex)
-{
-	if (!isExistLayer(LayerIndex) || !isExistClip(ClipIndex))
-		return E_FAIL;
-
-	Reset_Layer(LayerIndex);
-	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-
-	Layer.iClipIndex = ClipIndex;
-	Layer.bLoop = true;
-
-	return S_OK;
 }
 
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)

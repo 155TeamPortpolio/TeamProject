@@ -71,22 +71,16 @@ public:
 
 public: //클라이언트 사용 전용 함수 .Apply() 로 적용할것
     //즉시 애니매이션 변경
-    virtual HRESULT Set_Animation(AnimArg ClipArg);
-    virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg ClipArg);
-    class SetAnimBuild Test_Set_Animation(_uint LayerIndex, AnimArg ClipArg);
+    class SetAnimBuild Set_Animation(AnimArg ClipArg);
+    class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
     //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
-    virtual HRESULT Change_Animation(AnimArg ClipArg); 
-    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
-    class ChangeAnimBuild Test_Change_Animation(_uint LayerIndex, AnimArg ClipArg);
+    class ChangeAnimBuild Change_Animation(AnimArg ClipArg);
+    class ChangeAnimBuild Change_Animation(_uint LayerIndex, AnimArg ClipArg);
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
-
-protected:
-    virtual HRESULT Set_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
-    virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
 
 public://애니매이터 데이터
     /*----- is -----*/
@@ -199,7 +193,7 @@ class ENGINE_DLL SetAnimBuild {
 public:
     SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
         :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
-    virtual ~SetAnimBuild() DEFAULT;
+    ~SetAnimBuild() { if (!bApplied) Apply(); };
     
     SetAnimBuild(const SetAnimBuild&) = delete;
     SetAnimBuild& operator=(const SetAnimBuild&) = delete;
@@ -218,7 +212,8 @@ protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
-    
+    _bool bApplied = false;
+
     //---------- 기본 속성
     _bool m_bLoop = false;
     _float m_fSpeed = 1.f;
@@ -229,7 +224,7 @@ class ENGINE_DLL ChangeAnimBuild : public SetAnimBuild {
 public:
     ChangeAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
         :SetAnimBuild(LayerIndex, ClipIndex, Owner) {}
-    virtual ~ChangeAnimBuild() DEFAULT;
+    ~ChangeAnimBuild() DEFAULT;
 
     ChangeAnimBuild(const ChangeAnimBuild&) = delete;
     ChangeAnimBuild& operator=(const ChangeAnimBuild&) = delete;
