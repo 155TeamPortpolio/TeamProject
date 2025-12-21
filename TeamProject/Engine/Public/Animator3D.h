@@ -4,14 +4,13 @@
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
+enum class ANIM_LAYER_STATE { OVERRIDE, BLEND, ADDITIVE };
+enum class BLEND_STATE { NONE, CROSSFADE, IMMEDIATE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
 {
-protected:
-    enum class ANIM_LAYER_STATE {OVERRIDE, BLEND, ADDITIVE };
-    enum class BLEND_STATE{ NONE, CROSSFADE, IMMEDIATE };
-
+public:
     struct AnimConvert {
         _uint SrcClip;
         _uint DstClip;
@@ -19,13 +18,20 @@ protected:
         _float ConversionDuration = {};
     };
 
+    friend class SetAnimBuild;
+    friend class ChangeAnimBuild;
+
     typedef struct AnimationLayer {
-        //---------- 레이어 속성
+        //---------- 레이어 속성 (레이어 영구변경)
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
+        //루트본 관련
+        _bool   bUseTransform = { true };
+        _int    iMoveBoneIndex = { -1 };
+        _float3 fPrevAnimPos{};
 
-        //---------- 애니매이션 데이터
+        //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
@@ -33,20 +39,15 @@ protected:
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
 
-        //루트본 관련
-        _bool   bUseTransform = { true };
-        _int    iMoveBoneIndex = { -1 };
-        _float3 fPrevAnimPos{};
         //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
-        //클립 옵션
-
-        //---------- 블렌드 상태
+ 
+        //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
         _int    iNextClipIndex = { -1 };
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
-        BLEND_STATE     eBlendState = { BLEND_STATE::NONE };
+        BLEND_STATE eBlendState = { BLEND_STATE::NONE };
         //다음 매트릭스
         vector<_float4x4> BlendMatrices = {};
         //보간을 다한 최종 매트릭스
@@ -68,14 +69,15 @@ public:
     HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     virtual void Update_Animation(_float dt);
 
-public: //클라이언트 사용 전용 함수
+public: //클라이언트 사용 전용 함수 .Apply() 로 적용할것
     //즉시 애니매이션 변경
     virtual HRESULT Set_Animation(AnimArg ClipArg);
-    virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg Clip);
+    virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg ClipArg);
+    class SetAnimBuild Test_Set_Animation(_uint LayerIndex, AnimArg ClipArg);
     //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
     virtual HRESULT Change_Animation(AnimArg ClipArg); 
     virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
-    
+    class ChangeAnimBuild Test_Change_Animation(_uint LayerIndex, AnimArg ClipArg);
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
@@ -88,6 +90,7 @@ protected:
 
 public://애니매이터 데이터
     /*----- is -----*/
+
     //현재 레이어의 애니매이션이 끝났는지
     _bool isCurrentAnimEnd(_uint LayerIndex = 0);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
@@ -96,6 +99,7 @@ public://애니매이터 데이터
     _bool isBlending(_uint LayerIndex = 0);
 
     /*----- Getter -----*/
+
     //현재 레이어 클립의 진행률 0~1 반환
     _float Get_CurAnimDuration(_uint LayerIndex = 0);
     //현재 레이어의 애니매이션 이름
@@ -156,7 +160,7 @@ protected:
     vector<string> m_EventBus;
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
-    vector<_float4x4> m_TransfromationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
+    vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 매트릭스
     vector<_float4x4> m_FinalMatices = {};              //월드행렬까지 곱해진 최종 매트릭스
@@ -190,4 +194,56 @@ public:
     virtual CComponent* Clone();
     virtual void Free() override;
 };
+
+class ENGINE_DLL SetAnimBuild {
+public:
+    SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
+        :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
+    virtual ~SetAnimBuild() DEFAULT;
+    
+    SetAnimBuild(const SetAnimBuild&) = delete;
+    SetAnimBuild& operator=(const SetAnimBuild&) = delete;
+
+public:
+    virtual HRESULT Apply();
+
+    //---------- 기본 속성
+    
+    //애니매이션을 반복재생할건지
+    SetAnimBuild& Loop(_bool bLoop = false);
+    //애니매이션을 재생속도
+    SetAnimBuild& Speed(_float fSpeed = 1.f);
+
+protected:
+    CAnimator3D* m_pOwner = nullptr;
+    _int m_iLayerIndex = -1;
+    _int m_iClipIndex = -1;
+    
+    //---------- 기본 속성
+    _bool m_bLoop = false;
+    _float m_fSpeed = 1.f;
+
+};
+
+class ENGINE_DLL ChangeAnimBuild : public SetAnimBuild {
+public:
+    ChangeAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
+        :SetAnimBuild(LayerIndex, ClipIndex, Owner) {}
+    virtual ~ChangeAnimBuild() DEFAULT;
+
+    ChangeAnimBuild(const ChangeAnimBuild&) = delete;
+    ChangeAnimBuild& operator=(const ChangeAnimBuild&) = delete;
+
+public:
+    virtual HRESULT Apply() override;
+    //---------- 애니매이션 블랜드 속성
+
+    //애니매이션 전환시간
+    ChangeAnimBuild& BlendState(_float fDuration = 0.2f, BLEND_STATE eBlendState = BLEND_STATE::CROSSFADE);
+
+protected:
+    _float      m_fBlendDuration = 0.2f;
+    BLEND_STATE m_eBlendState = { BLEND_STATE::NONE };
+};
+
 NS_END
