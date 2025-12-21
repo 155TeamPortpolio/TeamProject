@@ -173,7 +173,7 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 
 HRESULT CForwardRenderer::Render_Combined()
 {
-	m_pTargetManager->Begin_MRT("MRT_Final", false);
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final", false))) return E_FAIL;
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 
@@ -182,6 +182,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseEffect", m_pShader, "g_EffectDiffuseTexture");
 	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
 	m_pTargetManager->Bind_Target("Target_SSAO_Blur", m_pShader, "g_SSAOBlurTexture");
 	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");

@@ -26,6 +26,9 @@ public:
 	virtual void Submit_Particle(const PARTICLE_PACKET& packet)override { m_pParticlePass->Submit(packet); }
 	virtual void Submit_Effect(const EFFECT_PACKET& packet)override { m_pEffectPass->Submit(packet); }
 
+public:
+	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
+
 #ifdef _USING_GUI
 	void Render_GUI();
 #endif // _USING_GUI

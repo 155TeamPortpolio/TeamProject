@@ -24,6 +24,7 @@ Texture2D g_DistortionTexture;
 Texture2D g_DistortionNoiseTexture;
 Texture2D g_DistortionAdd_Texture;
 Texture2D g_DistortionFinal;
+Texture2D g_EffectDiffuseTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -426,6 +427,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vEffect = g_EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -436,6 +438,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
  
     if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
+    if (vEffect.a > 0.f) Out.vBackBuffer.rgb = vEffect.rgb;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
