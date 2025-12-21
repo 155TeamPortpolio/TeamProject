@@ -420,7 +420,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
     float3 mapped = scene.rgb + bloom.rgb;
-    
+    mapped = pow(mapped, 1.0 / 2.2);
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

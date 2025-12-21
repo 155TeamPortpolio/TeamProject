@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CAnimator3D;
 NS_END
 
 NS_BEGIN(AnimTool)
@@ -25,6 +26,8 @@ public:
 
 public:
     void Render_GUI() override;
+    //애니매이션 클립 이름을 주기 위해 만들어짐
+    void Set_Panel(class CAnimToolPanel* pAnimToolPanel);
 
 private: //GUI Func
     void GUI_LoadResource(_float fChildHeight);
@@ -38,6 +41,7 @@ private: //Model Logic
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
+    class CAnimToolPanel* m_pAnimToolPanel = { nullptr };
     set<string> m_ModelTags;
     set<string> m_MaterialTags;
 

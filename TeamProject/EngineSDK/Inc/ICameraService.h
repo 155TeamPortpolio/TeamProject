@@ -23,6 +23,11 @@ public:
     virtual _uint         Push(CCamera* camComp, _float blendTime = 0.25f) PURE;
     virtual _bool         Pop(_uint handle, _float blendTime = 0.25f)      PURE;
     virtual void          Clear(_float blendTime = 0.25f)                  PURE;
+
+public:
+    virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
+    virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
+    virtual void ClearShake(_float fadeOutSec = 0.f)                                       PURE;
                                                                            
     virtual const Matrix* Get_ViewMatrix()                                 PURE;
     virtual const Matrix* Get_ProjMatrix()                                 PURE;
