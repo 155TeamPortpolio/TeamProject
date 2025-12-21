@@ -99,7 +99,7 @@ CVIBuffer* CSprite2D::Get_Buffer()
 
 HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
 {
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
+	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
 
 	if (!pTexture)
 		return E_FAIL;
@@ -119,7 +119,7 @@ HRESULT CSprite2D::Change_Texture(_uint index, const string& levelKey, const str
 		if (m_pTextures[index])
 			Safe_Release(m_pTextures[index]);
 
-		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
+		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
 
 		if (!pTexture)
 			return E_FAIL;
