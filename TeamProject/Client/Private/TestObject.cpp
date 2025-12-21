@@ -66,7 +66,7 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 HRESULT CTestObject::Initialize_State()
 {
-	m_pStateMachine = new CStateMachine<CTestObject>();
+	m_pStateMachine = new CTestStateMachine();
 
 	// States µî·Ï
 	m_pStateMachine->Register_State("Idle", new CTestState_Idle());

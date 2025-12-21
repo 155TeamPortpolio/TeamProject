@@ -68,6 +68,6 @@ private:
 	_float									 m_fStateTime = 0.f;
 };
 
-using CTestObjectStateMachine = CStateMachine<class CTestObject>;
+using CTestStateMachine = CStateMachine<class CTestObject>;
 
 NS_END
