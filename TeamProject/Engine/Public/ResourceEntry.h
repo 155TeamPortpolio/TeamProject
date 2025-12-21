@@ -35,7 +35,7 @@ private:
 
 private:
 	void Reset();
-	
+	void Release_NoLock();
 private:
 	ResourceKey m_ID{};
 	string m_SourcePath;
