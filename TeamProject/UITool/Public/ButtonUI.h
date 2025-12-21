@@ -33,10 +33,9 @@ public:
 
 public:
 	STATE		m_eState = {};
-	string		m_strTextureKey;
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-
 	_char		m_szEventMsg[MAX_PATH] = {};	// 클릭했을 때 내보내는 메시지
+
+	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
 	static _uint m_iCount;
