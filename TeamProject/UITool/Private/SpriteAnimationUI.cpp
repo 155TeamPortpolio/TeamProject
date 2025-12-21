@@ -32,9 +32,9 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
     Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
 
-    const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
-    if (strTextureKeys.size())
-        Change_Texture(0, G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -83,12 +83,15 @@ void CSpriteAnimationUI::Render_GUI()
 
     Render_GUI_Transform();
 
-    ImGui::SeparatorText(u8"이미지");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
-    if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
 
+    // 이미지
+    ImGui::SeparatorText(u8"이미지");
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+
+    // 스프라이트 애니메이션
     ImGui::SeparatorText(u8"스프라이트 애니메이션");
     if (ImGui::Button(m_isPlaying ? u8"정지" : u8"재생"))
     {
@@ -136,7 +139,8 @@ void CSpriteAnimationUI::ToJson(json& data)
 
     data["typeTag"] = "SpriteAnimationUI";
 
-    data["textureTag"] = m_strTextureKey;
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
 
     data["loop"] = m_isLoop;
     data["frameCountX"] = m_iFrameCountX;
@@ -147,7 +151,11 @@ void CSpriteAnimationUI::ToJson(json& data)
 
 void CSpriteAnimationUI::FromJson(const json& data)
 {
-    Change_Texture(0, G_GlobalLevelKey, data["textureTag"], m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_isLoop = data["loop"];
     m_iFrameCountX = data["frameCountX"];

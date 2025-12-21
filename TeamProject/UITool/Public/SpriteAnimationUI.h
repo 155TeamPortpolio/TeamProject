@@ -24,9 +24,6 @@ public:
 	virtual void FromJson(const json& data) override;
 
 public:
-	string		m_strTextureKey;				// (툴) json 저장 때문에 필요
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-
 	_bool		m_isPlaying = { true };
 	_bool		m_isLoop = {};
 
@@ -37,6 +34,8 @@ public:
 
 	_float		m_fFrameAccTime = {};
 	_uint		m_iCurrentFrameIndex = {};
+
+	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
 	static _uint m_iCount;
