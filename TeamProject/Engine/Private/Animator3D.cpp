@@ -143,7 +143,7 @@ HRESULT CAnimator3D::Set_Animation(_uint LayerIndex, AnimArg ClipArg)
 	if (!isExistLayer(LayerIndex) || !isExistClip(iClipIndex))
 		return E_FAIL;
 
-	return Set_Animation_Work(LayerIndex, iClipIndex);;
+	return Set_Animation_Work(LayerIndex, iClipIndex);
 }
 
 HRESULT CAnimator3D::Change_Animation(AnimArg ClipArg)
@@ -307,6 +307,14 @@ _int CAnimator3D::Get_NumLayer()
 	return (_int)m_AnimLayers.size();
 }
 
+void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].bUseTransform = false;
+	m_AnimLayers[LayerIndex].iMoveBoneIndex = MoveBoneIndex;
+}
+
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
@@ -408,6 +416,16 @@ void CAnimator3D::Animation_Run(_float dt)
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 			dt, Layer.bLoop, &Layer.bisFinished);
+	}
+
+	for (auto& Layer : m_AnimLayers) {
+		if (false == Layer.bUseTransform) {
+			if (isExistClip(Layer.iMoveBoneIndex)) {
+				_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+				Layer.fPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+				mat._41 = mat._42 = mat._43 = 0;
+			}
+		}
 	}
 }
 

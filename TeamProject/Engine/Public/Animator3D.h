@@ -29,8 +29,15 @@ protected:
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
+        _float  fAnimSpeed = { 1.f };
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
+
+        //루트본 관련
+        _bool   bUseTransform = { true };
+        _int    iMoveBoneIndex = { -1 };
+        _float3 fPrevAnimPos{};
+        //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
         //클립 옵션
 
@@ -40,9 +47,9 @@ protected:
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
         BLEND_STATE     eBlendState = { BLEND_STATE::NONE };
+        //다음 매트릭스
         vector<_float4x4> BlendMatrices = {};
-
-        //---------- 레이어 최종 매트릭스
+        //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
@@ -80,12 +87,15 @@ protected:
     virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //실제 기능함수
 
 public://애니매이터 데이터
+    /*----- is -----*/
     //현재 레이어의 애니매이션이 끝났는지
     _bool isCurrentAnimEnd(_uint LayerIndex = 0);
     //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
     _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
     //현재 레이어의 애니매이션이 블랜드 중인지
     _bool isBlending(_uint LayerIndex = 0);
+
+    /*----- Getter -----*/
     //현재 레이어 클립의 진행률 0~1 반환
     _float Get_CurAnimDuration(_uint LayerIndex = 0);
     //현재 레이어의 애니매이션 이름
@@ -94,6 +104,9 @@ public://애니매이터 데이터
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
     //현재 레이어 개수
     _int Get_NumLayer();
+
+    /*----- Setter -----*/
+    void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
