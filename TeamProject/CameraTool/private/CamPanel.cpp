@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "CamPanel.h"
 #include "CamPanelUtil.h"
+#include "GUIUtil.h"
 #include "Helper_Func.h"
+
+using namespace CamPanelUtil;
+using namespace GuiUtil;
+using namespace Helper;
 
 namespace
 {
@@ -74,8 +79,6 @@ namespace
 void CCamPanel::Init()
 {
     debugSequence.name         = "DebugSequence";
-    debugSequence.camType      = CamType::Cinematic;
-    debugSequence.rigType      = CamRigType::Free;
     debugSequence.projType     = CamProjType::Perspective;
     debugSequence.playbackMode = CamPlaybackMode::Once;
 

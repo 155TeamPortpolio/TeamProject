@@ -13,6 +13,21 @@ namespace
     {
         return Quaternion(-q.x, -q.y, -q.z, -q.w);
     }
+    _uint LcgStep(_uint& s)
+    {
+        s = s * 1664525u + 1013904223u;
+        return s;
+    }
+    float Rand01(_uint& s)
+    {
+        const _uint x = LcgStep(s) & 0x00FFFFFFu;
+        return (float)x / (float)0x01000000u;
+    }
+    float SmoothStep01(float t)
+    {
+        t = clamp(t, 0.f, 1.f);
+        return t * t * (3.f - 2.f * t);
+    }
 }
 
 void CCameraMgr::Set_MainCam(CCamera* camComp)
@@ -77,8 +92,59 @@ void CCameraMgr::Clear(_float blendSec)
     BeginBlendTo(GetDesiredActiveCam(), blendSec);
 }
 
+void CCameraMgr::SetShake(_float amplitudeDeg, _float frequency, _float duration, _float fadeOutSec)
+{
+    ClearShake();
+    AddShake(amplitudeDeg, frequency, duration, fadeOutSec);
+}
+
+void CCameraMgr::AddShake(_float amplitudeDeg, _float frequency, _float duration, _float fadeOutSec)
+{
+    ShakeInstance shakeInst{};
+    shakeInst.amplitudeDeg = amplitudeDeg;
+    shakeInst.frequency    = frequency;
+    shakeInst.duration     = duration;
+    shakeInst.fadeOutSec   = fadeOutSec;
+    shakeInst.elapsed      = 0.f;
+
+    shakeInst.phase.x = Rand01(m_shakeSeed) * XM_2PI;
+    shakeInst.phase.y = Rand01(m_shakeSeed) * XM_2PI;
+    shakeInst.phase.z = Rand01(m_shakeSeed) * XM_2PI;
+
+    m_shakes.push_back(shakeInst);
+}
+
+void CCameraMgr::ClearShake(_float fadeOutSec)
+{
+    if (fadeOutSec <= 0.f)
+    {
+        m_shakes.clear();
+        return;
+    }
+
+    for (size_t i = 0; i < m_shakes.size();)
+    {
+        auto& shake = m_shakes[i];
+
+        const float remain = shake.duration - shake.elapsed;
+        if (remain <= 0.f)
+        {
+            m_shakes.erase(m_shakes.begin() + (ptrdiff_t)i);
+            continue;
+        }
+
+        const float outSec = min(fadeOutSec, remain);
+        shake.fadeOutSec = outSec;
+        shake.duration = shake.elapsed + outSec;
+
+        ++i;
+    }
+}
+
 void CCameraMgr::Update(_float dt)
 {
+    CamPoseFrame pose{};
+
     if (m_isBlending)
     {
         m_blendTime += dt;
@@ -88,7 +154,7 @@ void CCameraMgr::Update(_float dt)
         if (m_easeType != EaseType::None)
             t = clamp(Math::ApplyEase(m_easeType, t), 0.f, 1.f);
 
-        ApplyOutputPose(BlendPose(m_blendFrom, CapturePose(m_blendTargetCam), t));
+        pose = BlendPose(m_blendFrom, CapturePose(m_blendTargetCam), t);
 
         if (t >= 1.f)
         {
@@ -98,7 +164,10 @@ void CCameraMgr::Update(_float dt)
         }
     }
     else
-        ApplyOutputPose(CapturePose(GetDesiredActiveCam()));
+        pose = CapturePose(GetDesiredActiveCam());
+
+    ApplyShake(pose, dt);
+    ApplyOutputPose(pose);
 
     UpdateShadowCache();
 }
@@ -236,6 +305,70 @@ void CCameraMgr::UpdateShadowCache()
     m_shadowCamPos  = m_shadowCam->Get_Pos();
 }
 
+void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
+{
+    if (m_shakes.empty()) return;
+
+    float sumYawDeg = 0.f;
+    float sumPitchDeg = 0.f;
+    float sumRollDeg = 0.f;
+
+    for (size_t i = 0; i < m_shakes.size();)
+    {
+        auto& shake = m_shakes[i];
+
+        shake.elapsed += dt;
+
+        if (shake.elapsed >= shake.duration)
+        {
+            m_shakes.erase(m_shakes.begin() + (ptrdiff_t)i);
+            continue;
+        }
+
+        const float fadeInSec = min(0.05f, shake.duration * 0.2f);
+
+        float wIn = 1.f;
+        if (fadeInSec > 0.f) wIn = SmoothStep01(shake.elapsed / fadeInSec);
+
+        float fadeOutSec = shake.fadeOutSec;
+        if (fadeOutSec < 0.f) fadeOutSec = 0.f;
+        if (fadeOutSec > shake.duration) fadeOutSec = shake.duration;
+
+        float wOut = 1.f;
+        if (fadeOutSec > 0.f)
+        {
+            const float startFadeOut = shake.duration - fadeOutSec;
+            if (shake.elapsed >= startFadeOut)
+            {
+                const float u = (shake.elapsed - startFadeOut) / fadeOutSec;
+                wOut = 1.f - SmoothStep01(u);
+            }
+        }
+
+        const float w = wIn * wOut;
+
+        const float omega = shake.elapsed * shake.frequency * XM_2PI;
+        const float a = shake.amplitudeDeg * w;
+
+        sumPitchDeg += sinf(omega + shake.phase.x) * a;
+        sumYawDeg += sinf(omega + shake.phase.y) * a;
+        sumRollDeg += sinf(omega + shake.phase.z) * a;
+
+        ++i;
+    }
+
+    if (sumYawDeg == 0.f && sumPitchDeg == 0.f && sumRollDeg == 0.f) return;
+
+    const float yawRad = XMConvertToRadians(sumYawDeg);
+    const float pitchRad = XMConvertToRadians(sumPitchDeg);
+    const float rollRad = XMConvertToRadians(sumRollDeg);
+
+    const Quaternion qShake = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
+
+    ioPose.rot = ioPose.rot * qShake;
+    ioPose.rot.Normalize();
+}
+
 void CCameraMgr::Free()
 {
     m_isBlending = false;
@@ -245,6 +378,8 @@ void CCameraMgr::Free()
 
     Safe_Release(m_baseCam);
     Safe_Release(m_shadowCam);
+
+    m_shakes.clear();
 
     __super::Free();
 }

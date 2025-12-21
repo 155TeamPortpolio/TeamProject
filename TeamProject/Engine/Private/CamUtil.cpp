@@ -206,8 +206,6 @@ bool CamUtil::Save(const filesystem::path& path, const CamSequenceDesc& seq, str
 
     WriteString(outFile, seq.name);
 
-    WriteData(outFile, static_cast<_uint>(seq.camType));
-    WriteData(outFile, static_cast<_uint>(seq.rigType));
     WriteData(outFile, static_cast<_uint>(seq.projType));
     WriteData(outFile, static_cast<_uint>(seq.playbackMode));
 
@@ -333,8 +331,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     if (!ReadData(inFile, segmentEase)) { SetErr("Read segmentEase failed"); return false; }
     if (!ReadData(inFile, outSeq.orbitArc)) { SetErr("Read orbitArc failed"); return false; }
 
-    outSeq.camType = static_cast<CamType>(camType);
-    outSeq.rigType = static_cast<CamRigType>(rigType);
     outSeq.projType = static_cast<CamProjType>(projType);
     outSeq.playbackMode = static_cast<CamPlaybackMode>(playbackMode);
 

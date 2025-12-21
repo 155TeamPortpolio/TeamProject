@@ -119,7 +119,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Model.h">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -144,9 +144,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\LightMgr.h">
       <Filter>01. Utility\08. LightManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Sprite2D.h">
-      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Animator3D.h">
       <Filter>01. Utility\04. Components\06. Animator3D</Filter>
@@ -478,6 +475,21 @@
     <ClInclude Include="..\Public\ClickManager.h">
       <Filter>01. Utility\14.ClickManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Renderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ForwardRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EffectRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UIRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\PostRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EffectBuilder.h">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClInclude>
@@ -486,6 +498,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\StructuredBuffer.h">
       <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\Sprite2D.h">
+      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -617,9 +632,6 @@
     </Filter>
     <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\Layer">
       <UniqueIdentifier>{b09d8139-3197-422c-8fe1-1c566d14f512}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\00. Transform">
-      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\01. Camera">
       <UniqueIdentifier>{5a3a970e-3685-4a5b-bef0-654dd3a421f1}</UniqueIdentifier>
@@ -897,6 +909,24 @@
     <Filter Include="01. Utility\14.ClickManager">
       <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer">
+      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward">
+      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Post">
+      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
+      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\Effect">
+      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
+      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\03. GameObject\BuildSystem\Builder_Effect">
       <UniqueIdentifier>{b38ebe60-64a0-457a-9554-4e9baf299e0d}</UniqueIdentifier>
     </Filter>
@@ -911,6 +941,9 @@
     </Filter>
     <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
       <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
+      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1005,7 +1038,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Transform.cpp">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model.cpp">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -1304,6 +1337,21 @@
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\Renderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ForwardRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Forward</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EffectRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UIRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\PostRenderer.cpp">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\EffectBuilder.cpp">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClCompile>
@@ -1377,6 +1425,9 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>  
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

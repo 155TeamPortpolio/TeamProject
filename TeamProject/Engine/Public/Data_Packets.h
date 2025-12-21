@@ -90,6 +90,22 @@ namespace Engine {
 		BLENDRENDERKEY GetKey() const;
 	}BLENDED_PACKET;
 
+	typedef struct DrawEffectPacket : BASE_PACKET {
+		_bool bSkinning = { false }; 
+
+		_uint DrawIndex = {};		
+		_uint MaterialIndex = {};
+		_uint SkinningOffset = {};
+
+		class CModel* pModel = { nullptr };
+		class CMaterial* pMaterial = { nullptr };
+
+		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; 
+
+		_float DistanceToCamera = 0.f;      
+		BLENDRENDERKEY GetKey() const;
+	}EFFECT_PACKET;
+
 	/*Particle*/
 	typedef struct DrawParticlePacket : BASE_PACKET {
 		_float4x4 WorldMatrix{};
@@ -137,13 +153,10 @@ namespace Engine {
 
 	typedef struct RenderPostProcessingRequestCommand
 	{
-		//string MrtKey;
 		POSTPROCESS eTarget; //	enum class POSTPROCESS { BLOOM, DISTORTION, END};
 		class CShader* pShader = { nullptr };
 		_float4x4* pWorldMatrix = { nullptr };
 		function<void(ID3D11DeviceContext*)> DrawCall;
-		_bool bClearColor = false;
-		_bool bClearDepth = false;
 		_uint GetKey() const;
 	}POST_PROCESS_COMMAND;
 }

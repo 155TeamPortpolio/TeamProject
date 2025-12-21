@@ -16,7 +16,7 @@ CAIMesh::CAIMesh(const string& ModelKey)
 
 HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISkeleton* _pSkeleton)
 {
-	m_VIKey = _pAIMesh->mName.C_Str();
+	m_VIKey = _pAIMesh->mName.C_Str();\
 	m_MaterialIndex = _pAIMesh->mMaterialIndex;
 
 	m_iVertexBufferCount = 1;
@@ -94,6 +94,8 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 	VBDesc.MiscFlags = 0;
 	VBDesc.StructureByteStride = m_iVertexStride;
 	m_Meshes.reserve(m_iVerticesCount);
+	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
+	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
 	for (_uint i = 0; i < m_iVerticesCount; i++)
 	{
@@ -105,13 +107,23 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 			memcpy(&mesh.vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
 			memcpy(&mesh.vBinormal, &_pAIMesh->mBitangents[i], sizeof(_float3));
 		}
+		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, mesh.vPosition.x);
+		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, mesh.vPosition.y);
+		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, mesh.vPosition.z);
+
+		m_vMeshMaxLocal.x = max(m_vMeshMaxLocal.x, mesh.vPosition.x);
+		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, mesh.vPosition.y);
+		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, mesh.vPosition.z);
+
 		m_Meshes.push_back(mesh);
 	}
 
+	if (m_vMeshMinLocal.x > m_vMeshMaxLocal.x) swap(m_vMeshMinLocal.x, m_vMeshMaxLocal.x);
+	if (m_vMeshMinLocal.y > m_vMeshMaxLocal.y) swap(m_vMeshMinLocal.y, m_vMeshMaxLocal.y);
+	if (m_vMeshMinLocal.z > m_vMeshMaxLocal.z) swap(m_vMeshMinLocal.z, m_vMeshMaxLocal.z);
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
 	VertexInitialData.pSysMem = m_Meshes.data();
-
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
 
@@ -132,7 +144,8 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 	VBDesc.StructureByteStride = m_iVertexStride;
 
 	m_SkinMeshes.reserve(m_iVerticesCount);
-
+	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
+	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 	//정점저장
 	for (_uint i = 0; i < m_iVerticesCount; i++)
 	{
@@ -144,6 +157,13 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 			memcpy(&mesh.vTangent, &_pAIMesh->mTangents[i], sizeof(_float3));
 			memcpy(&mesh.vBinormal, &_pAIMesh->mBitangents[i], sizeof(_float3));
 		}
+		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, mesh.vPosition.x);
+		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, mesh.vPosition.y);
+		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, mesh.vPosition.z);
+
+		m_vMeshMaxLocal.x = max(m_vMeshMaxLocal.x, mesh.vPosition.x);
+		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, mesh.vPosition.y);
+		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, mesh.vPosition.z);
 		m_SkinMeshes.push_back(mesh);
 	}
 

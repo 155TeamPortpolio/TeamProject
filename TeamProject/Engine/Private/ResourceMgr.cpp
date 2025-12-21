@@ -173,14 +173,14 @@ vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(const string& lev
 		MSG_BOX("Wrong Level Tag. :Load_MaterialFromFile ");
 		return MaterialHandles;
 	}
-	/*ÀÏ´Ü ·¹º§¿¡¼­ ²¨³»ºÁ*/
+	/*ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
-	/*¸ÓÆ¼¸®¾ó µ¥ÀÌÅÍ º¤ÅÍ¸¦ °¡Áø ¸Ê*/
+	/*ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
 	auto& map = m_Resources[index].m_MaterialInstances;
 
 	auto iter = map.find(fileKey);
 
-	//±×·± Å°°¡ ¾ø´Ù¸é
+	//ï¿½×·ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½
 	if (iter == map.end()) {
 		ifstream ifs;
 		ifs.open(MakePath(fileKey));
@@ -207,11 +207,11 @@ vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(const string& lev
 		map.emplace(fileHeader.materialFileKey, move(materialDataContainer));
 	}
 
-	//±×·± Å°°¡ ÀÖ´Ù¸é
+	//ï¿½×·ï¿½ Å°ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½
 	else {
 		vector<CMaterialData*>& vector = iter->second;
 		for (auto& pData : vector)
-		{ //¼øÈ¸ÇÏ¸é¼­ ÇÚµé¿¡ ´ã¾Æ.
+		{ //ï¿½ï¿½È¸ï¿½Ï¸é¼­ ï¿½Úµé¿¡ ï¿½ï¿½ï¿½.
 			CMaterialInstance* pMaterialHandle = CMaterialInstance::Make_Handle(pData, m_pDevice);
 			MaterialHandles.push_back(pMaterialHandle);
 		}
@@ -286,9 +286,13 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 		string AnimPath = std::filesystem::path(Get_ResourcePath(MetaClipKey)).parent_path().string() + "\\";
 		AnimPath += Meta.ClipTag + ".anim";
 
-		CAnimationClip* pData = CAnimationClip::Create(AnimPath, MetaClipKey);
-		if (pData)
-			Clips.push_back(pData);
+		CAnimationClip* pClip = CAnimationClip::Create(AnimPath);
+
+		if(!Meta.Events.empty())
+			pClip->Set_Events(Meta.Events);
+			
+		if (pClip)
+			Clips.push_back(pClip);
 	}
 
 	map.emplace(MetaClipKey, Clips);
@@ -427,7 +431,7 @@ _int CResourceMgr::ValidLevel(const string& levelKey)
 
 void CResourceMgr::Load_InitialResource()
 {
-	/*¸®¼Ò½º ·Î´õ ÇÊ¿ä. ÃÊ±â ·Îµù ³Ê¹« ¸¹ÀÌ °É¸²*/
+	/*ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½Î´ï¿½ ï¿½Ê¿ï¿½. ï¿½Ê±ï¿½ ï¿½Îµï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É¸ï¿½*/
 
 	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
 	m_Resources.resize(1);
@@ -442,6 +446,8 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
+	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
+	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
 
 	/* Compute Shader */
 	Add_ResourcePath("CS_Particle_Spawn.hlsl", "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl");
@@ -463,6 +469,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
+	m_Resources[0].m_Shaders.emplace("Shader_PostProcess.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_PostProcess.hlsl", "Shader_PostProcess.hlsl"));
 
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Spawn.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl", "CS_Particle_Spawn.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));

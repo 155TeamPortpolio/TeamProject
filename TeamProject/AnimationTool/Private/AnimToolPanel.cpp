@@ -1,10 +1,11 @@
 #include "AnimToolPanel.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
-#include "Animator3D.h"
+#include "Animator3DEX.h"
 #include "AnimationClip.h"
+#include "AnimModel.h"
+#include "AnimationLayout.h"
 #include "Channel.h"
-
 
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
@@ -18,69 +19,326 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	CGameObject* CurSelected = m_pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
 
 	if (m_pSelectModel != CurSelected) {
-		Reset_Pannels();
 		m_pSelectModel = CurSelected;
-
+		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
+		Reset_Panel();
 	}
+	
+	if (nullptr == m_pSelectAnimator)
+		return;
+
+	if (m_isPlay) {
+		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
+		
+		if (m_fDuration <= m_fTrackPos) {
+			if (m_bLoop)
+				m_fTrackPos = 0.f;
+			else
+				m_isPlay = false;
+		}
+	}
+	m_pSelectAnimator->Update_Animation(m_fTrackPos);
 }
 
 void CAnimToolPanel::Render_GUI()
 {
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	GUI_DefaultSetting();
+	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoMove;
 
-	ImGui::SetNextWindowPos(ImVec2(200, AnimTool::g_iWinSizeY - 400), ImGuiCond_FirstUseEver);
-	ImGui::SetNextWindowSize(ImVec2(AnimTool::g_iWinSizeX - 450, 400), ImGuiCond_FirstUseEver);
+	ImGui::Begin("AnimTool", nullptr, flags);
 
-	if (ImGui::Begin("Materials"))
+	if (ImGui::BeginTabBar("##ToolTabs"))
 	{
-		if (ImGui::BeginTabBar("##ToolTabs"))
+		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+		if (ImGui::BeginTabItem("Setting Clip"))
 		{
-			if (ImGui::BeginTabItem("Setting Clip"))
-			{
-				GUI_Setting_Clips(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			if (ImGui::BeginTabItem("Create Meta"))
-			{
-				GUI_Create_MetaData(childHeight);
-				ImGui::EndTabItem();
-			}
-
-			ImGui::EndTabBar();
+			GUI_Setting_Clips(childHeight);
+			ImGui::EndTabItem();
 		}
-		ImGui::End();
+
+		if (ImGui::BeginTabItem("Create Meta"))
+		{
+			GUI_Create_MetaData(childHeight);
+			ImGui::EndTabItem();
+		}
+
+		ImGui::EndTabBar();
 	}
-		                                                              
+
+	ImGui::End();
 }
 
-void CAnimToolPanel::Render_Taps(_float fChildHeight)
+void CAnimToolPanel::GUI_DefaultSetting()
 {
+	constexpr float defaultHeight = 200.f;
+	constexpr float leftX = 200.f;
+	constexpr float rightMargin = 275.f;
 
+	const ImGuiViewport* vp = ImGui::GetMainViewport();
+	const ImVec2 workPos = vp->WorkPos;
+	const ImVec2 workSize = vp->WorkSize;
+
+	ImVec2 bottomLeft(workPos.x + leftX, workPos.y + workSize.y);
+	bottomLeft.x = floorf(bottomLeft.x);
+	bottomLeft.y = floorf(bottomLeft.y);
+
+	float width = workSize.x - leftX - rightMargin;
+	width = floorf(width);
+
+	ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
+	ImGui::SetNextWindowSize(ImVec2(width, defaultHeight), ImGuiCond_FirstUseEver);
+
+	Helper::DarkThemeStyle styleScope;
 }
 
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
-	//ImGui::BeginChild("##Play TimeLine", ImVec2{ 0, fChildHeight * 2 }, true);
-	//어느 애니매이션인지 
-	//m_pSelectModel->Get_Component<CAnimator3D>()->
 
-	//애니매이션 바	
-	ImGui::SliderFloat(
-		"Time",
-		&m_fCurTime,
-		0.f,
-		m_fDuration
-	);
-	
-	//애니매이션 컨트롤러
-	if (ImGui::Button(m_isPlay ? "Pause" : "Play")) { m_isPlay = !m_isPlay; } ImGui::SameLine();
+	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
+	{
+		if (!m_AnimClip.empty()) {
+			int iIndex = 0;
+			for (auto& Clip : m_AnimClip)
+			{
+				string ClipTag = Clip.ClipTag;
+				bool selected = (m_CurClipTag == ClipTag);
+				if (ImGui::Selectable(ClipTag.c_str(), selected))
+				{
+					//새로운 클립을 눌렀다면
+					m_CurClipTag = ClipTag;
+					m_iCurClipIndex = iIndex;
+					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
+
+					//가져온 애니매이션의 duration 가져옴
+					m_fTrackPos = 0.f;					
+					m_pSelectAnimator->Set_Animation(0, iIndex);
+					m_fTickPerSec = Clip->Get_TickPerSec();
+					m_fDuration = Clip->Get_Duration();
+				}
+				if (selected)
+					ImGui::SetItemDefaultFocus();
+
+				iIndex++;
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	Draw_ToolbarUI();
+
+	Draw_EventListUI();
+}
+
+void CAnimToolPanel::Draw_ToolbarUI()
+{
+	const ImVec2 buttonSize(55.f, 0.f);
+	static float timeScale = 1.f;
+
+	/* 버튼 */
+	if (ImGui::Button(m_isPlay ? "Pause" : "Play", buttonSize)) m_isPlay = !m_isPlay;
+	ImGui::SameLine();
+	if (ImGui::Button("Stop", buttonSize))
+	{
+		m_isPlay = false;
+		m_fTrackPos = 0.f;
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Snap", buttonSize))
+	{
+		Add_Event();
+	}
+
+	ImGui::SameLine();
 	ImGui::Checkbox("Loop", &m_bLoop);
 
-	//ImGui::EndChild();
+	ImGui::SameLine();
+	ImGui::Dummy(ImVec2(10.f, 0.f));
+	ImGui::SameLine();
+
+	/* 재생속도 버튼 */
+	ImGui::AlignTextToFramePadding();
+	ImGui::TextUnformatted(u8"속도");
+	ImGui::SameLine();
+
+	ImGui::PushID("AnimSpeedUI");
+
+	auto SpeedBtn = [&](const char* label, float v)
+		{
+			const bool active = fabsf(m_fPlaySpeed - v) < 1e-6f;
+			if (active) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonActive));
+			if (ImGui::SmallButton(label)) m_fPlaySpeed = v;
+			if (active) ImGui::PopStyleColor();
+		};
+
+	SpeedBtn(u8"x0.25", 0.25f); ImGui::SameLine();
+	SpeedBtn(u8"x0.5", 0.5f);  ImGui::SameLine();
+	SpeedBtn(u8"x1", 1.0f);  ImGui::SameLine();
+	SpeedBtn(u8"x2", 2.0f);  ImGui::SameLine();
+	SpeedBtn(u8"x4", 4.0f);
+
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(90.f);
+	ImGui::DragFloat("##scale", &m_fPlaySpeed, 0.01f, 0.05f, 8.0f, "x%.2f");
+
+	ImGui::PopID();
+
+	ImGui::SameLine();
+
+
+	//재생 바 UI
+	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
+
+	//저장버튼
+	ImGui::SameLine();
+	if (ImGui::Button("Save", buttonSize))
+	{
+		Save_Event();
+	}
+}
+
+void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* id)
+{
+	ImVec2 avail = ImGui::GetContentRegionAvail();
+	float barH = ImGui::GetFrameHeight();
+
+	if (avail.x < 140.f) return;
+
+	float endT = (duration > 1e-6f) ? duration : 1.f;
+
+	ImVec2 barPos = ImGui::GetCursorScreenPos();
+	ImVec2 barSize(avail.x - 80.f, barH); //재생바 크기
+
+	ImGui::InvisibleButton(id, barSize);
+
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+
+	ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+	ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
+	ImU32 colFill = ImGui::GetColorU32(ImGuiCol_ButtonHovered);
+	ImU32 colTick = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colCursor = ImGui::GetColorU32(ImGuiCol_Text);
+	ImU32 colText = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colHot = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+
+	dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBg, 4.f);
+	dl->AddRect(barPos, ImVec2(barPos.x + barSize.x, barPos.y + barSize.y), colBorder, 4.f);
+
+	const int gridN = 8;
+	for (int i = 1; i < gridN; ++i)
+	{
+		float t = (float)i / (float)gridN;
+		float x = barPos.x + barSize.x * t;
+		dl->AddLine(ImVec2(x, barPos.y + 2.f), ImVec2(x, barPos.y + barSize.y - 2.f), colTick, 1.f);
+	}
+
+	float t01 = clamp(ioTime / endT, 0.f, 1.f);
+	dl->AddRectFilled(barPos, ImVec2(barPos.x + barSize.x * t01, barPos.y + barSize.y), colFill, 4.f);
+
+	float cx = barPos.x + barSize.x * t01;
+	dl->AddLine(ImVec2(cx, barPos.y - 2.f), ImVec2(cx, barPos.y + barSize.y + 2.f), colCursor, 2.0f);
+
+	//클립마다 타임라인에 막대기 보이도록
+	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
+		for (auto& Event : m_AnimClip[m_iCurClipIndex].Events) {
+			float t = clamp(Event.EventTime / endT, 0.f, 1.f);
+			float x = barPos.x + barSize.x * t;
+			dl->AddLine(ImVec2(x, barPos.y + 2.f), ImVec2(x, barPos.y + barSize.y - 2.f), GetEventColor(Event.EventType), 3.f);
+		}
+	}
+
+	ImVec2 tri0(cx, barPos.y + barSize.y + 1.f);
+	ImVec2 tri1(cx - 5.f, barPos.y + barSize.y + 9.f);
+	ImVec2 tri2(cx + 5.f, barPos.y + barSize.y + 9.f);
+	dl->AddTriangleFilled(tri0, tri1, tri2, colCursor);
+
+	char buf[64];
+	sprintf_s(buf, "%.2fs / %.2fs", ioTime, duration);
+
+	ImVec2 textSize = ImGui::CalcTextSize(buf);
+	ImVec2 textPos(barPos.x + 8.f, barPos.y + (barSize.y - textSize.y) * 0.5f);
+	dl->AddText(textPos, colText, buf);
+
+	const bool hovered = ImGui::IsItemHovered();
+	if (hovered)
+	{
+		float mx = ImGui::GetIO().MousePos.x;
+		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		float hoverTime = local01 * endT;
+
+		ImGui::BeginTooltip();
+		ImGui::Text("t = %.2fs", hoverTime);
+		ImGui::EndTooltip();
+
+		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);
+	}
+
+	if (ImGui::IsItemActive())
+	{
+		float mx = ImGui::GetIO().MousePos.x;
+		float local01 = clamp((mx - barPos.x) / barSize.x, 0.f, 1.f);
+		ioTime = local01 * endT;
+	}
+}
+
+void CAnimToolPanel::Draw_EventListUI()
+{
+	ImGui::BeginTable("##EventTable", 4,
+		ImGuiTableFlags_RowBg |
+		ImGuiTableFlags_ScrollY |
+		ImGuiTableFlags_BordersInnerV);
+
+	ImGui::TableSetupColumn("TrackPos", ImGuiTableColumnFlags_WidthFixed, 70.f);
+	ImGui::TableSetupColumn("Type", ImGuiTableColumnFlags_WidthFixed, 90.f);
+	ImGui::TableSetupColumn("Tag", ImGuiTableColumnFlags_WidthStretch);
+	ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthFixed, 40.f);
+	ImGui::TableHeadersRow();
+	
+	//클립이 없거나 선택을 하지 않으면 렌더하지 않음
+	if (!m_AnimClip.empty() && -1 != m_iCurClipIndex) {
+		auto& Events = m_AnimClip[m_iCurClipIndex].Events;
+		for (size_t i = 0; i < Events.size(); ++i)
+		{
+			ANIM_EVENT& e = Events[i];
+			ImGui::PushID((int)i);
+
+			ImGui::TableNextRow();
+
+			// Time
+			ImGui::TableNextColumn();
+			ImGui::DragFloat("##TrackPosition", &e.EventTime, 0.01f, 0.f, m_fDuration, "%.2f");
+
+			// Type
+			ImGui::TableNextColumn();
+			ImGui::SetNextItemWidth(80.f);   // ← 여기서 폭 조절
+			int type = (int)e.EventType;
+			ImGui::Combo("##EventType", &type, "Notify\0Effect\0Sound\0");
+			e.EventType = (CLIP_EVENT_TYPE)type;
+
+			// Tag
+			ImGui::TableNextColumn();
+			char tagBuf[64];
+			strcpy_s(tagBuf, e.EventTag.c_str());
+			if (ImGui::InputText("##EventTag", tagBuf, IM_ARRAYSIZE(tagBuf)))
+				e.EventTag = tagBuf;
+
+			// Delete
+			ImGui::TableNextColumn();
+			if (ImGui::SmallButton("X"))
+			{
+				Events.erase(Events.begin() + i);
+				ImGui::PopID();
+				break;
+			}
+
+			ImGui::PopID();
+		}
+	}
+
+	ImGui::EndTable();
 }
 
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
@@ -117,8 +375,75 @@ void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 	ImGui::EndChild();
 }
 
-void CAnimToolPanel::Reset_Pannels()
+void CAnimToolPanel::Setting_NewClip()
 {
+	m_pSelectAnimator = m_pSelectModel->Get_Component<CAnimator3DEX>();
+	if (nullptr == m_pSelectAnimator)
+		return;
+
+	m_CurClipTag = m_pSelectAnimator->Get_CurAnimName(0);
+	//클립을 지정하지 않은 상태로 함
+	m_iCurClipIndex = -1;
+
+	for (auto& clip : m_AnimClip)
+		clip.Events.clear();
+	m_AnimClip.clear();
+
+	for (auto& Clips : *m_pSelectAnimator->Get_Clips()) {
+		ANIM_CLIP newClip{};
+		//ClipName
+		newClip.ClipTag = Clips->Get_Name();
+		//EventData
+		newClip.Events = Clips->Get_Events();
+		//Pushback
+		m_AnimClip.push_back(newClip);
+	}
+}
+
+void CAnimToolPanel::Reset_Panel()
+{
+	m_isPlay = false;
+	m_fTrackPos = 0.f;
+	m_fDuration = 0.f;
+	m_CurClipTag = "";
+	m_AnimClip.clear();
+
+	if (nullptr == m_pSelectModel)
+		return;
+
+	Setting_NewClip();
+}
+
+void CAnimToolPanel::Add_Event()
+{
+	if (m_AnimClip.empty() || m_iCurClipIndex < 0)
+		return;
+
+	ANIM_EVENT tEvent{ m_fTrackPos, CLIP_EVENT_TYPE::NOTIFY, "" };
+	m_AnimClip[m_iCurClipIndex].Events.push_back(tEvent);
+}
+
+void CAnimToolPanel::Save_Event()
+{
+	if (m_AnimClip.empty())
+		return;
+
+	size_t pos = m_AnimClip[0].ClipTag.find("_Ani_");
+	string ClipKey = m_AnimClip[0].ClipTag.substr(0, pos) + "_Meta.json";
+
+	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
+	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, MetaPath);
+}
+
+ImU32 CAnimToolPanel::GetEventColor(CLIP_EVENT_TYPE eType)
+{
+	switch (eType)
+	{
+	case CLIP_EVENT_TYPE::NOTIFY: return IM_COL32(120, 200, 255, 255);
+	case CLIP_EVENT_TYPE::EFFECT: return IM_COL32(120, 255, 120, 255);
+	case CLIP_EVENT_TYPE::SOUND:  return IM_COL32(255, 200, 120, 255);
+	default:                      return IM_COL32(200, 200, 200, 255);
+	}
 }
 
 void CAnimToolPanel::Load_Clips()
@@ -214,7 +539,7 @@ void CAnimToolPanel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pGameInstance);
-	
+
 	for (auto clip : m_Meta)
 		clip.second.clear();
 	m_Meta.clear();

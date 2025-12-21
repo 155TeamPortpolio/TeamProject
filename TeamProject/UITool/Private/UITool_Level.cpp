@@ -2,6 +2,7 @@
 #include "UITool_Level.h"
 
 #include "GameInstance.h"
+#include "Helper_Func.h"
 #include "IInputService.h"
 #include "ILevelService.h"
 
@@ -13,6 +14,8 @@
 #include "ImageUI.h"
 #include "TextUI.h"
 #include "ButtonUI.h"
+#include "SpriteAnimationUI.h"
+#include "UVAnimationUI.h"
 
 vector<string> CUITool_Level::m_strTextureKeys;
 vector<const _char*> CUITool_Level::m_szTextureKeys;
@@ -74,7 +77,8 @@ HRESULT CUITool_Level::Ready_Textures()
 		{
 			filesystem::path filePath = entry.path();	
 
-			pResourceMgr->Add_ResourcePath(filePath.filename().string(), filePath.string());
+			if (FAILED(pResourceMgr->Add_ResourcePath(filePath.filename().string(), filePath.string())))
+				break;
 
 			if(filePath.filename().string() != "PanelBox.dds")
 				m_strTextureKeys.push_back(filePath.filename().string());
@@ -89,8 +93,19 @@ HRESULT CUITool_Level::Ready_Textures()
 
 HRESULT CUITool_Level::Ready_Fonts()
 {
-	Add_Font("NotoSansKR_Regular", L"../Bin/Resources/Fonts/NotoSansKR_Regular.spritefont");
-	Add_Font("NotoSansKR_Bold", L"../Bin/Resources/Fonts/NotoSansKR_Bold.spritefont");
+	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/Font/"))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".spritefont")
+		{
+			filesystem::path filePath = entry.path();
+
+			if (FAILED(m_pGameInstance->Get_FontSystem()->Add_Font(filePath.filename().string(), Helper::ConvertToWideString(filePath.string()))))
+				break;
+
+			m_strFontKeys.push_back(filePath.filename().string());
+		}
+	}
 
 	for (const auto& Key : m_strFontKeys)
 		m_szFontKeys.push_back(Key.c_str());
@@ -131,6 +146,10 @@ HRESULT CUITool_Level::Ready_UIObjects()
 
 	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ButtonUI", CButtonUI::Create());
 
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_SpriteAnimationUI", CSpriteAnimationUI::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_UVAnimationUI", CUVAnimationUI::Create());
+
 	return S_OK;
 }
 
@@ -141,23 +160,6 @@ HRESULT CUITool_Level::Ready_GUIPanel()
 		return E_FAIL;
 
 	m_pGameInstance->Get_GUISystem()->Register_Panel(pPanel);
-
-	return S_OK;
-}
-
-HRESULT CUITool_Level::Add_Texture(const string& resourceKey, const string& resourcePath)
-{
-	if (FAILED(m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(resourceKey, resourcePath)))
-		return E_FAIL;
-	m_strTextureKeys.push_back(resourceKey);
-
-	return S_OK;
-}
-
-HRESULT CUITool_Level::Add_Font(string FontName, const wstring& FontFilePath)
-{
-	m_pGameInstance->Get_FontSystem()->Add_Font(FontName, FontFilePath);
-	m_strFontKeys.push_back(FontName);
 
 	return S_OK;
 }

@@ -59,11 +59,11 @@ void CEditModel::Render_GUI()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight*4 + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight * 4 + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::SeparatorText("Model Load & Save");
-	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{ 0, childHeight }, true);
-	static const char* kModes[] = { "Auto", "Forced Static", "Forced Skeletal" };
+	ImGui::BeginChild("##Loaded OBJECT BTN", ImVec2{0, childHeight}, true);
+	static const char* kModes[] = {"Auto", "Forced Static", "Forced Skeletal"};
 	int cur = static_cast<int>(m_eMode);
 	ImGui::TextUnformatted("Import Mode");
 	ImGui::SetNextItemWidth(170.f);
@@ -78,14 +78,22 @@ void CEditModel::Render_GUI()
 	ImGui::SameLine();
 
 	if (ImGui::Button("Model Save")) {
-		if(nullptr != Get_Component<CModel>())
+		if (nullptr != Get_Component<CModel>())
 			Save_AIScene();
 	}
 	ImGui::EndChild();
 
+	ImGui::SeparatorText("Object State");
+	ImGui::BeginChild("##ObjectState", ImVec2{0, childHeight}, true);
+
+	bool alive = Is_Alive();
+	if (ImGui::Checkbox("Alive", &alive))
+		Set_Alive(alive);
+
+	ImGui::EndChild();
 
 	ImGui::SeparatorText("Position Reset");
-	ImGui::BeginChild("##Reset", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Reset", ImVec2{0, childHeight}, true);
 
 	if (ImGui::Button("Reset")) {
 		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
@@ -101,59 +109,59 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	m_Importer.FreeScene();
 	m_pAIScene = nullptr;
 
-	// 1) Preset 사용하되, LOD/계층 망가뜨릴 수 있는 Optimize 계열은 제거
-	unsigned int base =
+	_uint basFlag =
 		aiProcess_ConvertToLeftHanded |
 		aiProcessPreset_TargetRealtime_Fast;
 
-	base &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+	/*메쉬 병합 플래그 끄게*/
+	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
 
-	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base);
+	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag);
 	if (!m_pAIScene)
 		return E_FAIL;
 
-	// 2) LOD 노드가 있는지 간단 탐지 (이름에 LOD가 섞여있는 경우가 많음)
+	// 2)LOD 노드 탐색
+
 	auto HasLODNodes = [](const aiNode* root) -> bool
 		{
 			if (!root) return false;
 
-			function<bool(const aiNode*)> dfs = [&](const aiNode* n) -> bool
+			function<bool(const aiNode*)> recursvieNodeFind = 
+				[&](const aiNode* node) -> bool
 				{
-					if (!n) return false;
+					if (!node) return false;
 
-					// Assimp node name
-					const char* nm = n->mName.C_Str();
-					if (nm && *nm)
+					const char* nodeName = node->mName.C_Str();
+					if (nodeName && *nodeName)
 					{
-						string name = nm;
-						// 대충이라도 "LOD" 포함이면 LOD 구조로 간주
-						if (name.find("LOD") != std::string::npos || name.find("lod") != std::string::npos)
+						string name = nodeName;
+						if (name.find("LOD") != string::npos || name.find("lod") !=string::npos)
 							return true;
 					}
 
-					for (unsigned i = 0; i < n->mNumChildren; ++i)
-						if (dfs(n->mChildren[i])) return true;
+					for (_int i = 0; i < node->mNumChildren; ++i)
+						if (recursvieNodeFind(node->mChildren[i]))
+							return true;
 
 					return false;
 				};
 
-			return dfs(root);
+			return recursvieNodeFind(root);
 		};
 
-	const bool hasLOD = HasLODNodes(m_pAIScene->mRootNode);
-	bool hasBones = HasBones();
+	/*안에 노드 중에 LOD가 하나라도 있나?]*/
+	const _bool hasLOD = HasLODNodes(m_pAIScene->mRootNode);
+	_bool hasBones = HasBones();
 
-	// 3) AUTO + 본 없음일 때 2차 로드(PreTransform) 하던 로직은,
-	//    "LOD가 없을 때만" 적용 (LOD 있으면 계층 유지가 중요함)
+	/*LOD 없고 별거 없으면 그냥 원래 로직대로 로드*/
 	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones && !hasLOD)
 	{
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
-		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), base | aiProcess_PreTransformVertices);
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag  | aiProcess_PreTransformVertices);
 		if (!m_pAIScene)
 			return E_FAIL;
-
 		hasBones = false;
 	}
 
@@ -163,7 +171,6 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
 
 	const _bool isSkeletal = HasBones();
-
 	string fileName = Helper::GetFileNameWithOutExtension(filePath);
 
 	CAI_Material* pMaterial = CAI_Material::Create();

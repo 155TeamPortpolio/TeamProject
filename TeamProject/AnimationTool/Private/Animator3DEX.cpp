@@ -1,10 +1,12 @@
 #include "Animator3DEX.h"
+#include "AnimationClip.h"
 
 CAnimator3DEX::CAnimator3DEX()
 {
 }
 
 CAnimator3DEX::CAnimator3DEX(const CAnimator3DEX& rhs)
+	: CAnimator3D(rhs)
 {
 }
 
@@ -16,6 +18,32 @@ HRESULT CAnimator3DEX::Initialize_Prototype()
 HRESULT CAnimator3DEX::Initialize(COMPONENT_DESC* pArg)
 {
 	return S_OK;
+}
+
+void CAnimator3DEX::Render_GUI()
+{
+	//__super::Render_GUI();
+}
+
+void CAnimator3DEX::Update_Animation(_float fTrackPosition)
+{
+
+	if (m_AnimLayers.empty()) return;
+	
+	for (auto& Layer : m_AnimLayers) {
+		if (-1 == Layer.iClipIndex) continue;
+	
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	
+		nowClip->TranslateAnimateMatrixFromDuration(Layer.LocalMatrices, fTrackPosition);
+	}
+	
+	BuildBone();
+}
+
+vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()
+{
+	return &m_pAnimClips;
 }
 
 CAnimator3DEX* CAnimator3DEX::Create()

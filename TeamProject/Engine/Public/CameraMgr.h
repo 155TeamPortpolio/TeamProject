@@ -26,6 +26,11 @@ public:
     virtual void     Clear(_float blendSec = 0.25f)                  override;
 
 public:
+    virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void ClearShake(_float fadeOutSec = 0.f) override;
+
+public:
     virtual void     Update(_float dt) override;
 
 public:
@@ -65,6 +70,15 @@ private:
         Quaternion rot = Quaternion::Identity;
         CamLens    lens{};
     };
+    struct ShakeInstance
+    {
+        _float  amplitudeDeg{};
+        _float  frequency{};
+        _float  duration{};
+        _float  fadeOutSec{};
+        _float  elapsed{};
+        Vector3 phase{};
+    };
 
 private:
     CCamera* m_baseCam{};
@@ -84,6 +98,10 @@ private:
 private:
     CamPoseFrame m_outputPose{};
     EaseType     m_easeType = EaseType::OutSine;
+
+private:
+    vector<ShakeInstance> m_shakes{};
+    _uint                 m_shakeSeed = 1u;
 
 private:
     Matrix  m_view      = Matrix::Identity;
@@ -110,6 +128,7 @@ private:
     void         ApplyOutputPose(const CamPoseFrame& pose);
     void         BeginBlendTo(CCamera* targetCam, _float blendSec);
     void         UpdateShadowCache();
+    void         ApplyShake(CamPoseFrame& ioPose, _float dt);
 
 public:
     static CCameraMgr* Create() { return new CCameraMgr(); }
