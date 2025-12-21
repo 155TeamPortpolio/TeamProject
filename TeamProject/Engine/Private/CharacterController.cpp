@@ -174,7 +174,6 @@ void CCharacterController::Late_Update(_float dt)
 	if (!m_pController) return;
 	// Apply_Move
 	_float3 vDisplacement = m_vVelocity * dt;
-
 	if (m_fMaxSpeed > 0.0f)
 	{
 		_float fPlanarSpeed = sqrtf(vDisplacement.x * vDisplacement.x +
@@ -186,8 +185,8 @@ void CCharacterController::Late_Update(_float dt)
 			vDisplacement.z *= fScale;
 		}
 	}
-
 	Move(XMLoadFloat3(&vDisplacement), dt);
+
 	// Update Position
 	const PxExtendedVec3& position = m_pController->getPosition();
 	_float fFootOffsetY = m_fRadius + (m_fHeight * 0.5f);

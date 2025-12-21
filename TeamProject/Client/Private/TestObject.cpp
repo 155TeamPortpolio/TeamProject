@@ -108,7 +108,7 @@ void CTestObject::Awake()
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
-	//Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
+	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
@@ -206,6 +206,28 @@ void CTestObject::Render_GUI()
 		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
 		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
 	}
+}
+
+void CTestObject::Rotate_Horizontal(const _vector3& vDirection, _float dt)
+{
+	_vector vDir = XMLoadFloat3(&vDirection);
+	vDir = XMVectorSetY(vDir, 0.f);
+
+	if (XMVector3Length(vDir).m128_f32[0] < 0.001f)
+		return;
+
+	vDir = XMVector3Normalize(vDir);
+
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vDir));
+
+	_matrix vRotmat = XMMatrixIdentity();
+	vRotmat.r[0] = vRight;
+	vRotmat.r[1] = vWorldUp;
+	vRotmat.r[2] = vDir;
+
+	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	m_pTransform->Set_Quaternion(vQuaternion);
 }
 
 CTestObject* CTestObject::Create()

@@ -25,17 +25,11 @@ void CTestState_Jump::Update(CTestObject* pOwner, _float dt)
     if (vInputDir.Length() > 0.01f)
     {
         vInputDir.Normalize();
+        pOwner->Rotate_Horizontal(-vInputDir, dt);
 
-        CTransform* pTransform = pOwner->Get_Component<CTransform>();
-
-        _vector3 vLook = pTransform->Dir(STATE::LOOK);
-        _vector3 vNewLook = _vector3::Lerp(vLook, vInputDir, 10.f * dt);
-        vNewLook.Normalize();
-
-        _vector3 vPos = pTransform->Dir(STATE::POSITION);
-        pTransform->LookAt(vPos + vNewLook);
-
-        pOwner->Get_Component<CCharacterController>()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+        auto pCCT = pOwner->Get_Component<CCharacterController>();
+        if (pCCT)
+            pCCT->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
     }
 }
 
