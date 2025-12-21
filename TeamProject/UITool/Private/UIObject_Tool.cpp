@@ -73,6 +73,9 @@ void CUIObject_Tool::FromJson(const json& data)
     // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
     m_vPivot.x = data["transform"]["pivot"]["x"].get<_float>();
     m_vPivot.y = data["transform"]["pivot"]["y"].get<_float>();
+    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
+    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+
     FromJson_Parent(data);
     FromJson_Animation(data);
 }
@@ -94,6 +97,9 @@ void CUIObject_Tool::ToJson_Common(json& data)
     data["transform"]["pivot"]["x"] = m_vPivot.x;
     data["transform"]["pivot"]["y"] = m_vPivot.y;
     data["transform"]["rotation"] = m_fRadian;
+
+    // 텍스트 키
+    data["textKey"] = m_szTextKey;
 }
 
 void CUIObject_Tool::ToJson_Parent(json& data)
