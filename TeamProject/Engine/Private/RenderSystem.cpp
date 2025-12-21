@@ -66,6 +66,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Shadow(m_pShadowPass);
 	m_pForward->Render_Forward(m_pOpaquePass,m_pInstancePass);
 	m_pUI->Render_3D(m_pUI3DPass);
+	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	m_pForward->Render_Combined();
@@ -73,7 +74,6 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pUI->Render_2D(m_pUIPass);
-	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	
 	m_pPost->Render_Bloom();
 	//m_pPost->Render_Distortion();
@@ -93,6 +93,27 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		Safe_Release(Instance);
 	}
 	return Instance;
+}
+
+CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
+{
+	CRenderer* pRenderer = nullptr;
+	switch (eType)
+	{
+	case RENDERER_TYPE::FORWARD:
+		pRenderer = dynamic_cast<CRenderer*>(m_pForward);
+		break;
+	case RENDERER_TYPE::POST:
+		pRenderer = dynamic_cast<CRenderer*>(m_pPost);
+		break;
+	case RENDERER_TYPE::EFFECT:
+		pRenderer = dynamic_cast<CRenderer*>(m_pEffect);
+		break;
+	case RENDERER_TYPE::UI:
+		pRenderer = dynamic_cast<CRenderer*>(m_pUI);
+		break;
+	}
+	return pRenderer;
 }
 
 #ifdef _USING_GUI

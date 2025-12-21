@@ -22,6 +22,9 @@ public:
     virtual void Submit_Effect(const EFFECT_PACKET& packet) PURE;
 
 public:
+    virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
+
+public:
     virtual class CPipeLine* Get_Pipeline()PURE;
 
 public:
