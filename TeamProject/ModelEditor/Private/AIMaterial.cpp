@@ -5,6 +5,80 @@
 #include "IResourceService.h"
 #include "Helper_Func.h"
 
+static bool HasAnyTexture_Assimp(const aiMaterial* m)
+{
+	if (!m) return false;
+
+	static const aiTextureType types[] = {
+		aiTextureType_DIFFUSE, aiTextureType_BASE_COLOR,
+		aiTextureType_NORMALS, aiTextureType_HEIGHT,
+		aiTextureType_METALNESS, aiTextureType_DIFFUSE_ROUGHNESS,
+		aiTextureType_SPECULAR, aiTextureType_EMISSIVE,
+		aiTextureType_AMBIENT, aiTextureType_OPACITY,
+		aiTextureType_LIGHTMAP, aiTextureType_REFLECTION
+	};
+
+	for (auto t : types)
+		if (m->GetTextureCount(t) > 0) return true;
+
+	return false;
+}
+
+static int CountMeaningfulParams_Assimp(const aiMaterial* m)
+{
+	if (!m) return 0;
+
+	aiColor3D c;
+	float f = 0.f;
+	int i = 0;
+
+	int cnt = 0;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_DIFFUSE, c))  cnt++;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_SPECULAR, c)) cnt++;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_EMISSIVE, c)) cnt++;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_OPACITY, f))        cnt++;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_SHININESS, f))      cnt++;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_SHADING_MODEL, i))  cnt++;
+
+	return cnt;
+}
+
+static std::string GetMatName_Assimp(const aiMaterial* m)
+{
+	if (!m) return "(null)";
+	aiString n;
+	if (AI_SUCCESS == m->Get(AI_MATKEY_NAME, n) && n.length > 0)
+		return n.C_Str();
+	return "(no-name)";
+}
+
+static bool IsDefaultLike_Assimp(const aiMaterial* m, std::string& outReason)
+{
+	if (!m) { outReason = "aiMaterial is null"; return true; }
+
+	const std::string name = GetMatName_Assimp(m);
+
+	// 임포터/툴에 따라 이런 이름이 종종 나옴
+	if (name == "DefaultMaterial" || name == "$mat.default" || name == "default")
+	{
+		outReason = "material name indicates default";
+		return true;
+	}
+
+	const bool anyTex = HasAnyTexture_Assimp(m);
+	const int meaningful = CountMeaningfulParams_Assimp(m);
+	const unsigned propCount = m->mNumProperties;
+
+	// “진짜 빈 머티리얼” 휴리스틱
+	if (!anyTex && meaningful <= 1 && propCount <= 3)
+	{
+		outReason = "no textures + almost no params (props few)";
+		return true;
+	}
+
+	outReason = "has textures or meaningful parameters";
+	return false;
+}
 CAIMaterial::CAIMaterial()
 {
 }
@@ -12,37 +86,38 @@ CAIMaterial::CAIMaterial()
 
 HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fileDirectory)
 {
-	m_MaterialKey = pAIMaterial->GetName().C_Str();
+	m_LogMsgs.clear();
+
+	m_MaterialKey = pAIMaterial ? pAIMaterial->GetName().C_Str() : "";
+
+	{
+		string reason;
+		_bool m_bAssimpDefaultLike = IsDefaultLike_Assimp(pAIMaterial, reason);
+		string m_AssimpDefaultReason = reason;
+
+		if (m_bAssimpDefaultLike)
+		{
+			// 너무 많이 뜨면 불편하니: Output 로그 권장
+			string msg = "[Assimp] Default-like material detected: " + m_MaterialKey +
+				" | " + m_AssimpDefaultReason + "\n";
+
+			m_LogMsgs.push_back(msg);
+		}
+	}
 
 	string parentFolder = filesystem::path(fileDirectory).parent_path().string();
 	string ParentName = filesystem::path(parentFolder).filename().string();
 
-	//for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
-	//{
-	//	size_t texCount = pAIMaterial->GetTextureCount(static_cast<aiTextureType>(i));
-	//
-	//	for (size_t j = 0; j < texCount; j++)
-	//	{
-	//		aiString     strTexturePath;
-	//		pAIMaterial->GetTexture(static_cast<aiTextureType>(i), j, &strTexturePath);
-	//
-	//		string extention = filesystem::path(strTexturePath.C_Str()).extension().string(); //".png"
-	//		string fileName = Helper::GetFileNameWithOutExtension(strTexturePath.C_Str()); //"avsAlv" or "avsALv.0"
-	//		string BaseName = Helper::GetFileNameWithOutExtension(fileName);
-	//
-	//		string filePath = fileDirectory + "\\" + BaseName + extention;
-	//		/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
-	//		if (filesystem::exists(filePath)) { //있으면 로드
-	//			CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(BaseName + extention, filePath);
-	//			Link_Texture(G_GlobalLevelKey, BaseName + extention, static_cast<TEXTURE_TYPE>(i));
-	//		}
-	//	}
-	//}
 	Add_AdditionalTexture(fileDirectory,"MAT_","_N.png",TEXTURE_TYPE::NORMALS);
 	Add_AdditionalTexture(fileDirectory,"MAT_","_M.png",TEXTURE_TYPE::METALNESS);
 	Add_AdditionalTexture(fileDirectory,"MAT_","_A.png",TEXTURE_TYPE::AMBIENT);
 	Add_AdditionalTexture(fileDirectory,"MAT_","_D.png",TEXTURE_TYPE::DIFFUSE);
 
+	if (!m_Textures[TEXTURE_TYPE::DIFFUSE].empty() && m_Textures[TEXTURE_TYPE::METALNESS].empty()) {
+		m_bSpecific = true;
+		m_passConstant = "Debug";
+	}
+	else
 	m_passConstant = "Opaque";
 	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
 	{
@@ -51,6 +126,7 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	}
 		return S_OK;
 }
+
 
 
 void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey)
@@ -140,7 +216,12 @@ void CAIMaterial::Render_GUI()
 	if (MaterialTabOpened)
 		Render_MaterialAdd();
 
-
+	if (!m_LogMsgs.empty()) {
+		ImGui::Begin("Err Msg");
+		for (auto msg : m_LogMsgs)
+			ImGui::Text(msg.c_str());
+		ImGui::End();
+	}
 	__super::Render_GUI();
 }
 
@@ -194,6 +275,12 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 	if (MaterialTabOpened)
 		Render_MaterialAdd();
 
+	if (!m_LogMsgs.empty()) {
+		ImGui::Begin("Err Msg");
+		for (auto msg : m_LogMsgs)
+			ImGui::Text(msg.c_str());
+		ImGui::End();
+	}
 	__super::Render_GUI(TextureIndexes);
 }
 

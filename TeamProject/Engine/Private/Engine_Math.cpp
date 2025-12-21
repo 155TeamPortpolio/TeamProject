@@ -6,52 +6,9 @@ ENGINE_DLL _float Math::Lerp(_float x, _float y, _float t)
 	return x + (y - x) * t;
 }
 
-ENGINE_DLL const char* Math::GetEaseLabel(EaseType v)
+ENGINE_DLL _vector2 Math::Lerp(_vector2 x, _vector2 y, _float t)
 {
-	switch (v)
-	{
-	case EaseType::None:         return "None";
-
-	case EaseType::InOutSine:    return "InOutSine";
-	case EaseType::OutCubic:     return "OutCubic";
-	case EaseType::InOutCubic:   return "InOutCubic";
-	case EaseType::OutSine:      return "OutSine";
-	case EaseType::InOutQuad:    return "InOutQuad";
-
-	case EaseType::InSine:       return "InSine";
-	case EaseType::InCubic:      return "InCubic";
-	case EaseType::InQuad:       return "InQuad";
-	case EaseType::InCirc:       return "InCirc";
-
-	case EaseType::InOutCirc:    return "InOutCirc";
-	case EaseType::OutCirc:      return "OutCirc";
-	case EaseType::OutQuad:      return "OutQuad";
-
-	case EaseType::InQuart:      return "InQuart";
-	case EaseType::InQuint:      return "InQuint";
-	case EaseType::InOutQuart:   return "InOutQuart";
-	case EaseType::OutQuart:     return "OutQuart";
-	case EaseType::InOutQuint:   return "InOutQuint";
-	case EaseType::OutQuint:     return "OutQuint";
-
-	case EaseType::InOutExpo:    return "InOutExpo";
-	case EaseType::OutExpo:      return "OutExpo";
-	case EaseType::InExpo:       return "InExpo";
-
-	case EaseType::OutBack:      return "OutBack";
-	case EaseType::InOutBack:    return "InOutBack";
-	case EaseType::InBack:       return "InBack";
-
-	case EaseType::OutElastic:   return "OutElastic";
-	case EaseType::InOutElastic: return "InOutElastic";
-	case EaseType::InElastic:    return "InElastic";
-
-	case EaseType::OutBounce:    return "OutBounce";
-	case EaseType::InOutBounce:  return "InOutBounce";
-	case EaseType::InBounce:     return "InBounce";
-
-	default:                     return "Unknown";
-	}
+	return x + (y - x) * t;
 }
 
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)

@@ -50,6 +50,8 @@ void CCanvasPanel::Priority_Update(_float dt)
 void CCanvasPanel::Update(_float dt)
 {
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    Play_Animation(dt);
 }
 
 void CCanvasPanel::Late_Update(_float dt)
@@ -59,13 +61,13 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    __super::Render_GUI();
-
     Render_GUI_Layout();
 
     Render_GUI_Transform();
 
     Render_GUI_Create();
+
+    __super::Render_GUI();
 }
 
 void CCanvasPanel::ToJson(json& data)
@@ -123,12 +125,7 @@ void CCanvasPanel::Render_GUI_Create()
             return;
 
         CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
-
-        CUIObject_Tool* pUIChild = dynamic_cast<CUIObject_Tool*>(pChild);
-        if (!pUIChild)
-            return;
-
-        Add_Child(pUIChild);    // 부모의 오브젝트 컨테이너에 자식을 추가하고, 자식에 부모 포인터와 자식 인덱스 저장
+        this->Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
     }
 }
 

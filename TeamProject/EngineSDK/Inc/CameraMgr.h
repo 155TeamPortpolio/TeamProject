@@ -11,15 +11,14 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    virtual void Set_MainCam(CCamera* camComp)   override;
-    virtual void Set_ShadowCam(CCamera* camComp) override;
+    virtual void     Set_MainCam(CCamera* camComp)   override;
+    virtual void     Set_ShadowCam(CCamera* camComp) override;
 
 public:
-    virtual void     Set_BlendEase(EaseType ease) override { m_easeType = ease; }
-    virtual EaseType Get_BlendEase()        const override { return m_easeType; }
-                                            
-    CCamera*         Get_BaseCam()          const override { return m_baseCam; }
-    CCamera*         Get_ActiveCam()        const override { return GetDesiredActiveCam(); }
+    virtual void     Set_BlendEase(EaseType ease)    override { m_easeType = ease; }
+    virtual EaseType Get_BlendEase()           const override { return m_easeType; }                                                   
+    CCamera*         Get_BaseCam()             const override { return m_baseCam;  }
+    CCamera*         Get_ActiveCam()           const override { return GetDesiredActiveCam(); }
 
 public:
     virtual _uint    Push(CCamera* camComp, _float blendSec = 0.25f) override;
@@ -27,21 +26,26 @@ public:
     virtual void     Clear(_float blendSec = 0.25f)                  override;
 
 public:
+    virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void ClearShake(_float fadeOutSec = 0.f) override;
+
+public:
     virtual void     Update(_float dt) override;
 
 public:
-    virtual const Matrix* Get_ViewMatrix()         override { return &m_view; }
-    virtual const Matrix* Get_ProjMatrix()         override { return &m_proj; }
-    virtual const Matrix* Get_InversedViewMatrix() override { return &m_invView; }
-    virtual const Matrix* Get_InversedProjMatrix() override { return &m_invProj; }
-    virtual const _float4 Get_CameraPos()          override { return m_camPos; }
-    virtual const _float  Get_Far()                override { return m_activeFar; }
+    virtual const Matrix* Get_ViewMatrix()               override { return &m_view;     }
+    virtual const Matrix* Get_ProjMatrix()               override { return &m_proj;     }
+    virtual const Matrix* Get_InversedViewMatrix()       override { return &m_invView;  }
+    virtual const Matrix* Get_InversedProjMatrix()       override { return &m_invProj;  }
+    virtual const Vector4 Get_CameraPos()                override { return m_camPos;    }
+    virtual const _float  Get_Far()                      override { return m_activeFar; }
 
-    virtual const Matrix* Get_ShadowViewMatrix()         override { return &m_shadowView; }
-    virtual const Matrix* Get_ShadowProjMatrix()         override { return &m_shadowProj; }
+    virtual const Matrix* Get_ShadowViewMatrix()         override { return &m_shadowView;    }
+    virtual const Matrix* Get_ShadowProjMatrix()         override { return &m_shadowProj;    }
     virtual const Matrix* Get_InversedShadowViewMatrix() override { return &m_shadowInvView; }
     virtual const Matrix* Get_InversedShadowProjMatrix() override { return &m_shadowInvProj; }
-    virtual const _float4 Get_ShadowCameraPos()          override { return m_shadowCamPos; }
+    virtual const Vector4 Get_ShadowCameraPos()          override { return m_shadowCamPos;   }
     virtual const _float  Get_ShadowFar()                override { return m_shadowCam ? m_shadowCam->Get_Far() : 0.f; }
 
 private:
@@ -58,15 +62,22 @@ private:
         _float nearZ;
         _float farZ;
         _float aspect;
-
         _float orthoHeight = 10.f;
     };
-
     struct CamPoseFrame
     {
         _vector3   pos{};
         Quaternion rot = Quaternion::Identity;
         CamLens    lens{};
+    };
+    struct ShakeInstance
+    {
+        _float  amplitudeDeg{};
+        _float  frequency{};
+        _float  duration{};
+        _float  fadeOutSec{};
+        _float  elapsed{};
+        Vector3 phase{};
     };
 
 private:
@@ -87,6 +98,10 @@ private:
 private:
     CamPoseFrame m_outputPose{};
     EaseType     m_easeType = EaseType::OutSine;
+
+private:
+    vector<ShakeInstance> m_shakes{};
+    _uint                 m_shakeSeed = 1u;
 
 private:
     Matrix  m_view      = Matrix::Identity;
@@ -111,10 +126,9 @@ private:
 
     CamPoseFrame BlendPose(const CamPoseFrame& a, const CamPoseFrame& b, _float t) const;
     void         ApplyOutputPose(const CamPoseFrame& pose);
-
     void         BeginBlendTo(CCamera* targetCam, _float blendSec);
-
     void         UpdateShadowCache();
+    void         ApplyShake(CamPoseFrame& ioPose, _float dt);
 
 public:
     static CCameraMgr* Create() { return new CCameraMgr(); }

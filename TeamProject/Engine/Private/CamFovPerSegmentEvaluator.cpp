@@ -5,8 +5,6 @@
 
 bool CCamFovPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 {
-    assert(seq);
-
     keyframes = &keys;
 
     Safe_Release(evalLinear);
@@ -24,9 +22,6 @@ bool CCamFovPerSegmentEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 CamFovInterp CCamFovPerSegmentEvaluator::ResolveMode(_uint segIdx) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
 
     if (keys.size() < 2) return seq->fovInterp;
@@ -40,9 +35,6 @@ CamFovInterp CCamFovPerSegmentEvaluator::ResolveMode(_uint segIdx) const
 
 _float CCamFovPerSegmentEvaluator::Evaluate(_float time) const
 {
-    assert(seq);
-    assert(keyframes);
-
     const auto& keys = *keyframes;
     const size_t n = keys.size();
 
@@ -73,7 +65,6 @@ _float CCamFovPerSegmentEvaluator::Evaluate(_float time) const
     case CamFovInterp::Smooth:
         return evalSmooth ? evalSmooth->Evaluate(time) : (evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].fov);
     }
-
     return evalLinear ? evalLinear->Evaluate(time) : keys[(size_t)i].fov;
 }
 
@@ -81,6 +72,5 @@ void CCamFovPerSegmentEvaluator::Free()
 {
     Safe_Release(evalLinear);
     Safe_Release(evalSmooth);
-
     __super::Free();
 }

@@ -36,7 +36,7 @@ namespace Engine {
 
 	typedef struct CameraInitDesc :public COMPONENT_DESC {
 		_float fNear = {0.1f};
-		_float fFar = {500.f};
+		_float fFar = {1000.f};
 		_float fAspect = {};
 		_float fFov = {60.f};
 		CameraInitDesc() DEFAULT;
@@ -144,4 +144,10 @@ namespace Engine {
 		virtual ~tagUIObjectDesc() DEFAULT;
 	}UI_DESC;
 
+	typedef struct tagEffectObjectDesc : public GAMEOBJECT_DESC {
+		string EffectAssetKey{};
+
+		tagEffectObjectDesc() DEFAULT;
+		virtual ~tagEffectObjectDesc() DEFAULT;
+	}EFFECT_DESC;
 }

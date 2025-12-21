@@ -5,6 +5,8 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
+class CAnimator3D;
 NS_END
 
 NS_BEGIN(AnimTool)
@@ -22,22 +24,50 @@ public:
 
 //GUI
 private:
+    void GUI_DefaultSetting();
+    // --------------------------------------------------
     void GUI_Setting_Clips(_float fChildHeight);
+    void Draw_ToolbarUI(); 
+    void Draw_TimelineUI(float duration, float& ioTime, const char* id);
+    void Draw_EventListUI();
+    // -------------------------------------------------
+    void GUI_Create_MetaData(_float fChildHeight);
 
 //Func
+public:
+    void Setting_NewClip();
 private:
+    void Reset_Panel();
+    void Add_Event();
+    void Save_Event();
+    ImU32 GetEventColor(CLIP_EVENT_TYPE eType);
+    /* Create Json MetaData */
     void Load_Clips();
     void Create_Clips(vector<ANIM_CLIP>& pMetaData , const string& ClipTag, const string& FilePath);
     void Create_ClipMeta(const string& CurMetaTag);
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
-    //<데이터이름, { 클립이름, 이벤트 { 타이밍, 타입, 태그 } }>
-    // 데이터이름 + _Ani_ + 클립이름 + .anim = 파일
-    //ex) Avatar_Female_Size02_Unagi / _Ani_ / Attack_ChargeAttack_Start_Front / .anim
-    // (데이터이름 + _Ani_ + 클립이름) << 리소스 키였으면 함
+   
+private: //Create Clip
+    class CGameObject*   m_pSelectModel = { nullptr };
+    class CAnimator3DEX* m_pSelectAnimator = { nullptr };
+    string               m_CurClipTag{};
+    int                  m_iCurClipIndex = { -1 };
+    vector<ANIM_CLIP>    m_AnimClip;
+
+    _bool   m_isPlay     = {};
+    _bool   m_bLoop = { true };
+    _float  m_fPlaySpeed = { 1.f };
+    _float  m_fTickPerSec = { 1.f };
+    _float  m_fTrackPos   = {};
+    _float  m_fDuration  = {};
+    
+
+private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
+
 public:
     static CBasePanel* Create(GUI_CONTEXT* context);
     virtual void Free() override;

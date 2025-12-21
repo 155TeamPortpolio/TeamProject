@@ -9,7 +9,9 @@
 #include "AnimationLayout.h"
 #include "AnimationClip.h"
 #include "Animator3D.h"
+#include "Animator3DEX.h"
 
+#include "AnimToolPanel.h"
 
 CAnimModel::CAnimModel()
 	: m_pGameInstance{ CGameInstance::GetInstance() }
@@ -55,8 +57,6 @@ void CAnimModel::Priority_Update(_float dt)
 
 void CAnimModel::Update(_float dt)
 {
-	if (nullptr != Get_Component<CAnimator3D>())
-		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CAnimModel::Late_Update(_float dt)
@@ -76,6 +76,11 @@ void CAnimModel::Render_GUI()
 	GUI_SetModel(childHeight);
 
 	__super::Render_GUI();
+}
+
+void CAnimModel::Set_Panel(CAnimToolPanel* pAnimToolPanel)
+{
+	m_pAnimToolPanel = pAnimToolPanel;
 }
 
 void CAnimModel::GUI_LoadResource(_float fChildHeight)
@@ -181,16 +186,30 @@ void CAnimModel::Set_Model(string ModelTag, string MaterialTag)
 
 void CAnimModel::Set_Animator()
 {
+	Remove_Component<CAnimator3DEX>();
 	Remove_Component<CAnimator3D>();
+
 	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
 
 	string metaPath = Helper::OpenFile_Dialogue();
 	string metaTag = Helper::GetFileNameWithExtension(metaPath);
+
+	if ("" == metaTag || string::npos == metaTag.find("_Meta.json"))
+		return;
+
 	ResMgr->Add_ResourcePath(metaTag, metaPath);
 
-	Add_Component<CAnimator3D>();
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
-	Get_Component<CAnimator3D>()->Link_MetaData("AnimationEdit_Level", metaTag);
+	CAnimator3DEX* pInstance = CAnimator3DEX::Create();
+	pInstance->Set_Owner(this);
+
+	m_Components.emplace(type_index(typeid(CAnimator3DEX)), pInstance);
+	m_Components.emplace(type_index(typeid(CAnimator3D)), pInstance);
+	Safe_AddRef(pInstance);
+	
+	pInstance->LinkAnimate_Model("AnimationEdit_Level", m_CurModelTag);
+	pInstance->Link_MetaData("AnimationEdit_Level", metaTag);
+
+	m_pAnimToolPanel->Setting_NewClip();
 }
 
 void CAnimModel::Clear_Model()
@@ -229,4 +248,5 @@ void CAnimModel::Free()
 {
 	__super::Free();
 	Safe_Release(m_pGameInstance);
+	Remove_Component<CAnimator3DEX>();
 }

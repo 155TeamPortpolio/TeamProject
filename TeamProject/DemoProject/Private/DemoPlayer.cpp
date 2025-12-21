@@ -4,6 +4,7 @@
 #include "ObjectContainer.h"
 #include "CharacterController.h"
 #include "StaticModel.h"
+#include "RigidBody.h"
 
 CDemoPlayer::CDemoPlayer()
 {
@@ -34,7 +35,7 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-
+	Get_Component<CCharacterController>()->Set_Position({ 0.f, 5.f, -2.5f });
 }
 
 void CDemoPlayer::Priority_Update(_float dt)
@@ -64,7 +65,13 @@ void CDemoPlayer::Update(_float dt)
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
 	{
 		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		pCCT->Shoot_Ray(vLook, 100.f);
+		PHYSICS_RAY_HIT hit;
+		pCCT->Shoot_Ray(vLook, 100.f, hit);
+		if(hit.bHit)
+		{
+			CRigidBody* pRigid = hit.pHitObject->Get_Component<CRigidBody>();
+			if(pRigid) pRigid->Add_Force(vLook * 100);
+		}
 	}
 	else
 	{

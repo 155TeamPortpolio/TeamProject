@@ -47,15 +47,54 @@ bool CCamEvaluator::Build(const CamSequenceDesc& _seqDesc)
 	return true;
 }
 
-CamPose CCamEvaluator::Evaluate(float playTime) const
+CamPose CCamEvaluator::Evaluate(float time) const
 {
-	const float t = MapTime(playTime);
-
 	CamPose pose{};
-	pose.pos = posEval->Evaluate(t);
-	pose.rot = rotEval->Evaluate(t);
-	pose.fov = fovEval->Evaluate(t);
+	pose.pos = posEval->Evaluate(time);
+	pose.rot = rotEval->Evaluate(time);
+	pose.fov = fovEval->Evaluate(time);
 	return pose;
+}
+
+_float CCamEvaluator::RemapTimeBySegmentEasing(float t) const
+{
+	if (cachedKeys.size() < 2)
+		return t;
+
+	if (t <= cachedKeys.front().time)
+		return cachedKeys.front().time;
+
+	if (t >= cachedKeys.back().time)
+		return cachedKeys.back().time;
+
+	_uint seg = 0;
+	for (; seg + 1 < cachedKeys.size(); ++seg)
+	{
+		const float nextTime = cachedKeys[seg + 1].time;
+		if (t < nextTime)
+			break;
+	}
+
+	const CamKeyFrame& k0 = cachedKeys[seg];
+	const CamKeyFrame& k1 = cachedKeys[seg + 1];
+
+	EaseType ease = seqDesc ? seqDesc->segmentEase : EaseType::None;
+	if (k0.useCustomEase)
+		ease = k0.outEase;
+
+	if (ease == EaseType::None)
+		return t;
+
+	const float t0 = k0.time;
+	const float t1 = k1.time;
+
+	float u = (t - t0) / (t1 - t0);
+	u = clamp(u, 0.f, 1.f);
+
+	u = Math::ApplyEase(ease, u);
+	u = clamp(u, 0.f, 1.f);
+
+	return Math::Lerp(t0, t1, u);
 }
 
 void CCamEvaluator::SetPosEvaluator(ICamPosEvaluator* _posEval)
@@ -74,36 +113,6 @@ void CCamEvaluator::SetFovEvaluator(ICamFovEvaluator* _fovEval)
 {
 	Safe_Release(fovEval);
 	fovEval = _fovEval;
-}
-
-_float CCamEvaluator::MapTime(float playTime) const
-{
-	const float dur = duration;
-	if (dur <= 0.f) return 0.f;
-
-	switch (seqDesc->playbackMode)
-	{
-	case CamPlaybackMode::Once:
-		return clamp(playTime, 0.f, dur);
-
-	case CamPlaybackMode::Loop:
-	{
-		float t = fmodf(playTime, dur);
-		if (t < 0.f)
-			t += dur;
-		return t;
-	}
-
-	case CamPlaybackMode::PingPong:
-	{
-		const float period = dur * 2.f;
-		float x = fmodf(playTime, period);
-		if (x < 0.f)
-			x += period;
-		return (x <= dur) ? x : (period - x);
-	}
-	}
-	return playTime;
 }
 
 void CCamEvaluator::Free()

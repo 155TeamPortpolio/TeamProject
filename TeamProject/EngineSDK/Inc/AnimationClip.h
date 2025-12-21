@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "AnimationLayout.h"
 
 NS_BEGIN(Engine)
 
@@ -12,8 +13,7 @@ protected:
 
 public:
 	HRESULT Initialize(const string& animationPath);
-	_float Get_Duration() { return m_fDuration; }
-	_bool isLoop() { return m_bLoop; }
+	void Set_Events(vector<ANIM_EVENT>& Events);
 
 	//현재 애니매이션 클립을 재생함
 	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
@@ -22,26 +22,15 @@ public:
 		_bool isLoop,
 		_bool* isAnimEnd);
 
-	//현재 키프레임을 기준으로 다음 애니매이션을 보간
-	_bool ConvertTo(vector<_float4x4>& transfomationMatrices,
-		 CAnimationClip& DestAnimation, 
-		_float fConvertDuration, 
-		_float PrevTrackPosition, 
-		_float ConversionTrackPosition);
-
-	//현재 트랙포지션 기준으로 다음 애니매이션을 보간
-	_bool ConvertByCurrentMatrix(
-		vector<_float4x4>& transfomationMatrices, 
-		CAnimationClip& DestAnimation,
-		_float fConvertDuration,
-		_float PrevTrackPosition,
-		_float ConversionTrackPosition);
+	void TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition);
 
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
-
+	_bool isLoop() { return m_bLoop; }
+	_float Get_TickPerSec() { return m_fTickPerSecond; }
+	_float Get_Duration() { return m_fDuration; }
 	const string& Get_Name() { return m_ClipName; }
-	_float Get_TickPerSecond() { return m_fTickPerSecond; }
+	const vector<ANIM_EVENT>& Get_Events() { return m_Events; }
 
 public:
 	virtual void Render_GUI();
@@ -53,9 +42,10 @@ protected:
 	_uint					m_iNumChannels = {};	//채널 개수
 	string					m_ClipName = {};		//애니매이션 클립 이름
 	vector<class CChannel*> m_Channels;
+	vector<ANIM_EVENT>		m_Events;
 
 public:
-    static CAnimationClip* Create(const string& animationPath, const string& animClipKey);
+    static CAnimationClip* Create(const string& animationPath);
 	virtual void Free();
 };
 NS_END

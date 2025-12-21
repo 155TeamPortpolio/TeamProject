@@ -264,8 +264,8 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         dir = normalize(dir);
         
         float3 result = float3(0, 0, 0);
-        float samples = 15.0f;          //testÇÏ°í ½Í´Ù¸é ÀÌ°Å ¼öÁ¤ ¤¡¤¡
-        float strength = 0.1f;          //testÇÏ°í ½Í´Ù¸é ÀÌ°Å ¼öÁ¤ ¤¡¤¡
+        float samples = 15.0f;          //testï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        float strength = 0.1f;          //testï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         
         for (float i = 0; i < samples; i++)
         {
@@ -285,45 +285,45 @@ PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
     PS_OUT_RESULT Out;
     
     // ============================================
-    // Å×½ºÆ®¿ë ÆÄ¶ó¹ÌÅÍ (¿©±â¼­ Á¶Àý)
+    // ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½)
     // ============================================
-    float2 center = float2(0.5, 0.5); // È­¸é Áß¾Ó
-    float radius = 0.3; // È¿°ú ¹Ý°æ (Å×½ºÆ®: 0.2 ~ 0.5)
-    float power = 2.0; // °î¼± °­µµ (Å×½ºÆ®: 1.0 ~ 5.0)
-    float strength = 0.8; // ¿Ö°î ¼¼±â (Å×½ºÆ®: -1.0 ~ 1.0)
+    float2 center = float2(0.5, 0.5); // È­ï¿½ï¿½ ï¿½ß¾ï¿½
+    float radius = 0.3; // È¿ï¿½ï¿½ ï¿½Ý°ï¿½ (ï¿½×½ï¿½Æ®: 0.2 ~ 0.5)
+    float power = 2.0; // ï¿½î¼± ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: 1.0 ~ 5.0)
+    float strength = 0.8; // ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: -1.0 ~ 1.0)
     
     // ============================================
-    // Spherical Distortion °è»ê
+    // Spherical Distortion ï¿½ï¿½ï¿½
     // ============================================
     float2 offset = In.vTexcoord - center;
     
-    // Aspect Ratio º¸Á¤
+    // Aspect Ratio ï¿½ï¿½ï¿½ï¿½
     offset.x *= 1.777;
     
     float distance = length(offset);
     
-    // ¹Ý°æ ¹Û
+    // ï¿½Ý°ï¿½ ï¿½ï¿½
     if (distance > radius || distance < 0.0001)
     {
         Out.vResult = float4(0.5, 0.5, 0.5, 1.0);
         return Out;
     }
     
-    // Á¤±ÔÈ­µÈ °Å¸®
+    // ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ ï¿½Å¸ï¿½
     float normalizedDist = distance / radius;
     
-    // Áß½É¿¡¼­ °­ÇÏ°Ô
+    // ï¿½ß½É¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½
     float distortStrength = 1.0 - normalizedDist;
     distortStrength = pow(distortStrength, power);
     
-    // ¹æÇâ °è»ê
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     float2 direction = normalize(offset);
     float2 distortion = direction * distortStrength * strength;
     
-    // Aspect ¿ªº¸Á¤
+    // Aspect ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     distortion.x /= 1.777;
     
-    // ÀúÀå
+    // ï¿½ï¿½ï¿½ï¿½
     Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
     
     return Out;
@@ -432,7 +432,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     float3 ambient = vDiffuse.rgb * vAmbient.g * (1 - ssao);
     ambient = max(ambient, vDiffuse.rgb * 0.15f); 
-    
+
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
  
     if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
@@ -476,7 +476,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
   
     float3 mapped = scene.rgb + bloom.rgb;
-    return float4(mapped, 1.f);
+
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

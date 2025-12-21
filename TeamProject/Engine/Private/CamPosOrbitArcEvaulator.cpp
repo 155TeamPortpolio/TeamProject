@@ -11,10 +11,6 @@ bool CCamPosOrbitArcEvaluator::Build(const vector<CamKeyFrame>& keys)
 
 _vector3 CCamPosOrbitArcEvaluator::Evaluate(_float time) const
 {
-    assert(keyframes);
-    assert(!keyframes->empty());
-    assert(orbitDesc);
-
     const size_t n = keyframes->size();
     if (n == 1) return (*keyframes)[0].pos;
 

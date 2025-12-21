@@ -15,6 +15,15 @@ CCharacterController::CCharacterController(const CCharacterController& rhs)
 {
 }
 
+void CCharacterController::Set_Velocity(_fvector vVelocity)
+{
+	_float3 vIn;
+	XMStoreFloat3(&vIn, vVelocity);
+	m_vVelocity.x = vIn.x;
+	m_vVelocity.y = vIn.y;
+	m_vVelocity.z = vIn.z;
+}
+
 void CCharacterController::Set_PlanarVelocity(_fvector vVelocity)
 {
 	_float3 vIn;
@@ -83,18 +92,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	capsuleDesc.contactOffset = pDesc->fContactOffset;
 	capsuleDesc.upDirection = PxVec3(0, 1, 0);
 	capsuleDesc.density = pDesc->fDensity;
-
-	// 초기 위치
-	if (pDesc->vPos.x == 0 && pDesc->vPos.y == 0 && pDesc->vPos.z == 0)
-	{
-		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();
-		capsuleDesc.position = PxExtendedVec3(vPos.x, vPos.y, vPos.z);
-	}
-	else
-	{
-		capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, pDesc->vPos.y, pDesc->vPos.z);
-	}
-
+	capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, pDesc->vPos.y, pDesc->vPos.z);
 
 	capsuleDesc.reportCallback = pHitReport;
 	capsuleDesc.behaviorCallback = nullptr;
@@ -113,7 +111,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	}
 
 	m_pController->getActor()->userData = m_pOwner;
-	Set_Position(m_pOwnerTransform->Get_WorldPos());
+	Set_Position(XMLoadFloat3(&pDesc->vPos));
 
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);
@@ -173,6 +171,8 @@ void CCharacterController::Update(_float dt)
 
 void CCharacterController::Late_Update(_float dt)
 {
+	if (!m_pController) return;
+	// Apply_Move
 	_float3 vDisplacement = m_vVelocity * dt;
 
 	if (m_fMaxSpeed > 0.0f)
@@ -188,6 +188,14 @@ void CCharacterController::Late_Update(_float dt)
 	}
 
 	Move(XMLoadFloat3(&vDisplacement), dt);
+	// Update Position
+	const PxExtendedVec3& position = m_pController->getPosition();
+	_float fFootOffsetY = m_fRadius + (m_fHeight * 0.5f);
+	m_pOwnerTransform->Set_WorldPos(XMVectorSet(
+		(float)position.x,
+		(float)position.y - fFootOffsetY,
+		(float)position.z,
+		1.f));
 }
 
 void CCharacterController::Render_GUI()
@@ -211,6 +219,13 @@ void CCharacterController::Render_GUI()
 
 			PxExtendedVec3 foot = m_pController->getFootPosition();
 			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
+
+			_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
+			_float3 vLocalFoot;
+			vLocalFoot.x = (float)foot.x - vWorldPos.x;
+			vLocalFoot.y = (float)foot.y - vWorldPos.y;
+			vLocalFoot.z = (float)foot.z - vWorldPos.z;
+			ImGui::Text("Foot Local: (%.2f, %.2f, %.2f)", vLocalFoot.x, vLocalFoot.y, vLocalFoot.z);
 
 			ImGui::Separator();
 			ImGui::Text("Properties");
@@ -548,7 +563,7 @@ _vector CCharacterController::Get_FootPosition()
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
 }
 
-_bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance)
+_bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit)
 {
 	if (!m_pController) return false;
 
@@ -576,7 +591,6 @@ _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance)
 	XMStoreFloat3(&m_vRayEnd, vEndPos);
 #endif
 
-	PHYSICS_RAY_HIT hit;
 	_bool bResult = pPhysics->Raycast(rayDesc, hit);
 
 #ifdef _DEBUG
@@ -669,20 +683,23 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 		fCylinderHeight = 0.1f;
 	}
 
-	// 스케일 적용
 	pDesc->fRadius = fRadius * pDesc->fRadiusScale * pDesc->fSizeScale;
 	pDesc->fHeight = fCylinderHeight * pDesc->fHeightScale * pDesc->fSizeScale;
 
-	// 초기 위치가 설정되지 않았다면 바운딩 박스 중심으로 설정
-	if (pDesc->vPos.x == 0.f && pDesc->vPos.y == 0.f && pDesc->vPos.z == 0.f)
-	{
-		pDesc->vPos.x = (vMin.x + vMax.x) * 0.5f;
-		pDesc->vPos.y = vMin.y + pDesc->fRadius;  // 발 위치를 바닥에 맞춤
-		pDesc->vPos.z = (vMin.z + vMax.z) * 0.5f;
-	}
+	// Transform의 월드 위치 가져오기
+	_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
+
+	// 캡슐 컨트롤러의 중심 위치 계산
+	// 캡슐의 발 위치를 로컬 Y = -1에 맞추려면
+	// 캡슐 중심 = 발 위치(Y=-1) + 반지름 + (실린더 높이 / 2)
+	_float fCapsuleCenterY = -1.0f + pDesc->fRadius + (pDesc->fHeight * 0.5f);
+
+	pDesc->vPos.x = vWorldPos.x;
+	pDesc->vPos.y = vWorldPos.y + fCapsuleCenterY;
+	pDesc->vPos.z = vWorldPos.z;
 
 	// StepOffset 자동 조정
-	pDesc->fStepOffset = pDesc->fHeight * 0.25f;  // 높이의 25%를 계단 오를 수 있는 높이로 설정
+	pDesc->fStepOffset = pDesc->fHeight * 0.25f;
 
 	return S_OK;
 }

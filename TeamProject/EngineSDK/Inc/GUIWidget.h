@@ -1,6 +1,6 @@
 #pragma once
 #include "Engine_Defines.h"
-namespace GUIWidget
+namespace GuiUtil
 {
      void ShowListButton(const vector<string>& vector, function<void(const string&)> callback);
      void ShowListString(const vector<string>& vector, function<void(const string&)> callback);

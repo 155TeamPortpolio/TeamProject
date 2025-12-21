@@ -239,11 +239,15 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	};
 
 	BoundingBox localAabb(center, extents);
+; 
+	BoundingOrientedBox obb;
+	BoundingOrientedBox::CreateFromBoundingBox(obb, localAabb);
 
-	BoundingBox worldAabb;
-	localAabb.Transform(worldAabb, worldTransform); 
+	BoundingOrientedBox worldObb;
+	obb.Transform(worldObb, worldTransform);
 
-	return m_Frustum.Intersects(worldAabb);
+	return true;
+	//return m_Frustum.Intersects(worldObb);
 }
 
 

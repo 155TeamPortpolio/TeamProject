@@ -8,7 +8,7 @@ bool CamPanelUtil::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
     auto Pick = [&](EaseType v)
         {
             const bool selected = (shownValue == v);
-            if (ImGui::Selectable(Math::GetEaseLabel(v), selected))
+            if (ImGui::Selectable(Helper::EnumLabel(v), selected))
             {
                 ioValue = v;
                 changed = true;
@@ -76,12 +76,12 @@ void CamPanelUtil::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
 
     ImGui::InvisibleButton(id, size);
 
-    ImU32 colBg     = ImGui::GetColorU32(ImGuiCol_FrameBg);
+    ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
     ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
-    ImU32 colGrid   = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+    ImU32 colGrid = ImGui::GetColorU32(ImGuiCol_TextDisabled);
     ImU32 colLinear = ImGui::GetColorU32(ImGuiCol_TextDisabled);
-    ImU32 colCurve  = ImGui::GetColorU32(ImGuiCol_Text);
-    ImU32 colWarn   = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+    ImU32 colCurve = ImGui::GetColorU32(ImGuiCol_Text);
+    ImU32 colWarn = ImGui::GetColorU32(ImGuiCol_ButtonActive);
 
     dl->AddRectFilled(p0, p1, colBg, 6.f);
     dl->AddRect(p0, p1, colBorder, 6.f);
@@ -94,8 +94,8 @@ void CamPanelUtil::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
     {
         float u = (float)i / (float)samples;
         float y = Math::ApplyEase(ease, u);
-        minY    = min(minY, y);
-        maxY    = max(maxY, y);
+        minY = min(minY, y);
+        maxY = max(maxY, y);
     }
 
     float lo = minY;
@@ -116,7 +116,7 @@ void CamPanelUtil::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
     auto ToScreen = [&](float u, float y) -> ImVec2
         {
             float y01 = (y - lo) / (hi - lo);
-            y01 = std::clamp(y01, 0.f, 1.f);
+            y01 = clamp(y01, 0.f, 1.f);
 
             float x = p0.x + u * size.x;
             float ypix = p1.y - y01 * size.y;
@@ -149,7 +149,7 @@ void CamPanelUtil::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
     }
 
     ImVec2 labelPos(p0.x + 10.f, p0.y + 8.f);
-    dl->AddText(labelPos, ImGui::GetColorU32(ImGuiCol_Text), Math::GetEaseLabel(ease));
+    dl->AddText(labelPos, ImGui::GetColorU32(ImGuiCol_Text), Helper::EnumLabel(ease));
 
     char rangeBuf[128];
     sprintf_s(rangeBuf, "y range: %.2f .. %.2f", minY, maxY);
@@ -181,152 +181,15 @@ bool CamPanelUtil::TableCellHit(const char* id, float rowH, bool& outRowHovered,
     return clicked;
 }
 
-ConfirmResult CamPanelUtil::DrawConfirmPopupModal( const char* popupId, const char* title, initializer_list<const char*> lines,
-    const char* okLabel, const char* cancelLabel, float buttonW)
+void CamPanelUtil::DrawLabelDisabled(const char* t)
 {
-    if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        return ConfirmResult::None;
-
-    if (title && title[0])
-    {
-        ImGui::TextUnformatted(title);
-        ImGui::Separator();
-    }
-
-    for (auto* s : lines)
-        ImGui::TextUnformatted(s);
-
-    ImGui::Separator();
-
-    ConfirmResult r = ConfirmResult::None;
-
-    if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
-    {
-        r = ConfirmResult::Ok;
-        ImGui::CloseCurrentPopup();
-    }
-
-    ImGui::SameLine();
-
-    if (ImGui::Button(cancelLabel, ImVec2(buttonW, 0.f)))
-    {
-        r = ConfirmResult::Cancel;
-        ImGui::CloseCurrentPopup();
-    }
-
-    ImGui::EndPopup();
-    return r;
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextDisabled("%s", t);
 }
 
-bool CamPanelUtil::DrawOkPopupModal(const char* popupId, const char* title, initializer_list<const char*> lines, const char* okLabel, float buttonW)
+bool CamPanelUtil::DragFloat(const char* id, float& v, float speed, float minV, float maxV, const char* fmt, float valueW)
 {
-    if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        return false;
-
-    if (title && title[0])
-    {
-        ImGui::TextUnformatted(title);
-        ImGui::Separator();
-    }
-
-    for (auto* s : lines)
-        ImGui::TextUnformatted(s);
-
-    ImGui::Separator();
-
-    bool closed = false;
-
-    if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
-    {
-        closed = true;
-        ImGui::CloseCurrentPopup();
-    }
-
-    ImGui::EndPopup();
-    return closed;
-}
-
-bool CamPanelUtil::DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText, const char* okLabel, float buttonW)
-{
-    if (!ImGui::BeginPopupModal(popupId, nullptr, ImGuiWindowFlags_AlwaysAutoResize))
-        return false;
-
-    if (title && title[0])
-    {
-        ImGui::TextUnformatted(title);
-        ImGui::Separator();
-    }
-
-    if (!bodyText.empty())
-        ImGui::TextUnformatted(bodyText.c_str());
-
-    ImGui::Separator();
-
-    bool closed = false;
-
-    if (ImGui::Button(okLabel, ImVec2(buttonW, 0.f)))
-    {
-        closed = true;
-        ImGui::CloseCurrentPopup();
-    }
-
-    ImGui::EndPopup();
-    return closed;
-}
-
-const char* CamPanelUtil::GetPosInterpLabel(CamPosInterp v)
-{
-    if (v == CamPosInterp::Linear)      return "Linear";
-    if (v == CamPosInterp::CatmullRom)  return "Catmull";
-    if (v == CamPosInterp::Centripetal) return "Centrip";
-    if (v == CamPosInterp::BSpline)     return "B-Spline";
-    if (v == CamPosInterp::Hermite)     return "Hermite";
-    if (v == CamPosInterp::Hold)        return "Hold";
-    if (v == CamPosInterp::OrbitArc)    return "OrbitArc";
-    return "Unknown";
-}
-
-const char* CamPanelUtil::GetRotInterpLabel(CamRotInterp v)
-{
-    if (v == CamRotInterp::Slerp) return "Slerp";
-    if (v == CamRotInterp::Squad) return "Squad";
-    if (v == CamRotInterp::Hold)  return "Hold";
-    return "Unknown";
-}
-
-const char* CamPanelUtil::GetFovInterpLabel(CamFovInterp v)
-{
-    if (v == CamFovInterp::Linear) return "Linear";
-    if (v == CamFovInterp::Smooth) return "Smooth";
-    if (v == CamFovInterp::Hold)   return "Hold";
-    return "Unknown";
-}
-
-const char* CamPanelUtil::GetMoveConstraintLabel(CamMoveConstraint v)
-{
-    if (v == CamMoveConstraint::Free)  return "Free";
-    if (v == CamMoveConstraint::X)     return "X";
-    if (v == CamMoveConstraint::Y)     return "Y";
-    if (v == CamMoveConstraint::Z)     return "Z";
-    if (v == CamMoveConstraint::XY)    return "XY";
-    if (v == CamMoveConstraint::XZ)    return "XZ";
-    if (v == CamMoveConstraint::YZ)    return "YZ";
-    if (v == CamMoveConstraint::Orbit) return "Orbit";
-    return "Free";
-}
-
-const char* CamPanelUtil::GetOrbitArcAngleLabel(CamOrbitArcAngleMode v)
-{
-    if (v == CamOrbitArcAngleMode::Shortest) return "Shortest";
-    if (v == CamOrbitArcAngleMode::Longest)  return "Longest";
-    if (v == CamOrbitArcAngleMode::Force180) return "Force180";
-    return "Shortest";
-}
-
-const char* CamPanelUtil::GetOrbitArcRadiusLabel(CamOrbitArcRadiusMode v)
-{
-    if (v == CamOrbitArcRadiusMode::FixedStartRadius) return "Start";
-    if (v == CamOrbitArcRadiusMode::FixedEndRadius)   return "End";
-    if (v == CamOrbitArcRadiusMode::BlendRadius)      return "Blend";
-    return "Blend";
+    ImGui::SetNextItemWidth(valueW);
+    if (minV < maxV) return ImGui::DragFloat(id, &v, speed, minV, maxV, fmt);
+    return ImGui::DragFloat(id, &v, speed, 0.f, 0.f, fmt);
 }

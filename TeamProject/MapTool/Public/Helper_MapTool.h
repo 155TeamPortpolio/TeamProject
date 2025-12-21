@@ -21,35 +21,70 @@ namespace HelperMT {
 
         return oss.str(); // prefix_20251216_111530.json
     }
+    
+} 
 
-    inline json ToJson_WolrdMatrix(_fmatrix matWorld) {
-        _float4x4 World = {};
-        XMStoreFloat4x4(&World, matWorld);
+namespace nlohmann
+{
+    template<>
+    struct adl_serializer<DirectX::XMFLOAT3>
+    {
+        template <class BasicJsonType>
+        static void to_json(BasicJsonType& j, const DirectX::XMFLOAT3& v)
+        {
+            j = BasicJsonType::array({ v.x, v.y, v.z });
+        }
 
-        return json{
-            { "vRight", {World._11, World._12, World._13, World._14} },
-            { "vUp",    {World._21, World._22, World._23, World._24} },
-            { "vLook",  {World._31, World._32, World._33, World._34} },
-            { "vPos",   {World._41, World._42, World._43, World._44} }
-        };
+        template <class BasicJsonType>
+        static void from_json(const BasicJsonType& j, DirectX::XMFLOAT3& v)
+        {
+            v.x = j.at(0).template get<float>();
+            v.y = j.at(1).template get<float>();
+            v.z = j.at(2).template get<float>();
+        }
+    };
+
+
+    const inline _char* SlotTypeName(const SlotValue& value)
+    {
+        return std::visit([](auto&& arg) -> const _char*
+            {
+                using T = std::decay_t<decltype(arg)>;
+                if constexpr (std::is_same_v<T, int64_t>)             return "Int";
+                if constexpr (std::is_same_v<T, double>)              return "Float";
+                if constexpr (std::is_same_v<T, bool>)                return "Bool";
+                if constexpr (std::is_same_v<T, std::string>)         return "String";
+                if constexpr (std::is_same_v<T, DirectX::XMFLOAT3>)   return "Float3";
+                return "END";
+            }, value);
     }
-    inline json ToJson_WolrdMatrix(_float4x4* matWorld) {
-        return json{
-            { "vRight", {matWorld->_11, matWorld->_12, matWorld->_13, matWorld->_14} },
-            { "vUp",    {matWorld->_21, matWorld->_22, matWorld->_23, matWorld->_24} },
-            { "vLook",  {matWorld->_31, matWorld->_32, matWorld->_33, matWorld->_34} },
-            { "vPos",   {matWorld->_41, matWorld->_42, matWorld->_43, matWorld->_44} }
-        };
-    }
 
-    template <typename T>
-    inline void SaveJson_MapTool(T& Data, const string& filePath) {
-        nlohmann::ordered_json JsonData = Data;
-        ofstream file(filePath);
+    template<>
+    struct adl_serializer<SlotValue>
+    {
+        template <class BasicJsonType>
+        static void to_json(BasicJsonType& j, const SlotValue& value)
+        {
+            j = BasicJsonType::object();
+            j["type"] = SlotTypeName(value);
 
-        if (file.is_open()) {
-            file << JsonData.dump(2);
-            file.close();
+            std::visit([&](auto&& arg)
+                {
+                    j["value"] = arg; // XMFLOAT3는 위 adl_serializer로 자동 처리됨
+                }, value);
+        }
+
+        template <class BasicJsonType>
+        static void from_json(const BasicJsonType& j, SlotValue& value)
+        {
+            const std::string t = j.at("type").template get<std::string>();
+
+            if (t == "Int")    value = j.at("value").template get<int64_t>();
+            else if (t == "Float")  value = j.at("value").template get<double>();
+            else if (t == "Bool")   value = j.at("value").template get<bool>();
+            else if (t == "String") value = j.at("value").template get<std::string>();
+            else if (t == "Float3") value = j.at("value").template get<DirectX::XMFLOAT3>();
+            else                    value = int64_t{ 0 };
         }
     };
 }

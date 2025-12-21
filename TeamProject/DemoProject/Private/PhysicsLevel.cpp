@@ -50,7 +50,6 @@ HRESULT CPhysicsLevel::Awake()
 	// Player
 	CCT_DESC cctDesc = {};
 	CGameObject* Player = Builder::Create_Object({ "Physics_Level", "Proto_GameObject_DemoPlayer" })
-		.Position({ 0.f, 5.f, 0.f })
 		.Scale({ 1.f, 1.f, 1.f })
 		.CharacterController(cctDesc)
 		.Build("Demo_Player");
@@ -80,6 +79,7 @@ HRESULT CPhysicsLevel::Awake()
 	objRbDesc.fMass = 10.0f;
 
 	COLLIDER_DESC objColDesc = {};
+	objColDesc.bAutoFit = false;
 	objColDesc.eType = COLLIDER_TYPE::BOX;
 	objColDesc.vSize = { 10.f, 10.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };

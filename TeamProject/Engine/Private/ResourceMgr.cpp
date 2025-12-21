@@ -69,6 +69,9 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 		for (auto& clipData : pair.second)
 			Safe_Release(clipData);
 
+	for (auto& pair : m_Resources[index].m_EffectAssets)
+		for (auto& node : pair.second.Nodes)
+			Safe_Delete(node);
 
 	m_Resources[index] = {};
 }
@@ -166,14 +169,14 @@ vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(const string& lev
 		MSG_BOX("Wrong Level Tag. :Load_MaterialFromFile ");
 		return MaterialHandles;
 	}
-	/*ÀÏ´Ü ·¹º§¿¡¼­ ²¨³»ºÁ*/
+	/*ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 
-	/*¸ÓÆ¼¸®¾ó µ¥ÀÌÅÍ º¤ÅÍ¸¦ °¡Áø ¸Ê*/
+	/*ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
 	auto& map = m_Resources[index].m_MaterialInstances;
 
 	auto iter = map.find(fileKey);
 
-	//±×·± Å°°¡ ¾ø´Ù¸é
+	//ï¿½×·ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½Ù¸ï¿½
 	if (iter == map.end()) {
 		ifstream ifs;
 		ifs.open(MakePath(fileKey));
@@ -200,11 +203,11 @@ vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(const string& lev
 		map.emplace(fileHeader.materialFileKey, move(materialDataContainer));
 	}
 
-	//±×·± Å°°¡ ÀÖ´Ù¸é
+	//ï¿½×·ï¿½ Å°ï¿½ï¿½ ï¿½Ö´Ù¸ï¿½
 	else {
 		vector<CMaterialData*>& vector = iter->second;
 		for (auto& pData : vector)
-		{ //¼øÈ¸ÇÏ¸é¼­ ÇÚµé¿¡ ´ã¾Æ.
+		{ //ï¿½ï¿½È¸ï¿½Ï¸é¼­ ï¿½Úµé¿¡ ï¿½ï¿½ï¿½.
 			CMaterialInstance* pMaterialHandle = CMaterialInstance::Make_Handle(pData, m_pDevice);
 			MaterialHandles.push_back(pMaterialHandle);
 		}
@@ -279,9 +282,13 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 		string AnimPath = std::filesystem::path(Get_ResourcePath(MetaClipKey)).parent_path().string() + "\\";
 		AnimPath += Meta.ClipTag + ".anim";
 
-		CAnimationClip* pData = CAnimationClip::Create(AnimPath, MetaClipKey);
-		if (pData)
-			Clips.push_back(pData);
+		CAnimationClip* pClip = CAnimationClip::Create(AnimPath);
+
+		if(!Meta.Events.empty())
+			pClip->Set_Events(Meta.Events);
+			
+		if (pClip)
+			Clips.push_back(pClip);
 	}
 
 	map.emplace(MetaClipKey, Clips);
@@ -310,6 +317,37 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 
 	ordered_json EffectData = json::parse(file);
 	EFFECT_ASSET Effect = EFFECT_ASSET::FromJson(EffectData);
+
+	for (_uint i = 0; i < Effect.iNodeCount; ++i)
+	{
+		EFFECT_TYPE type = static_cast<EFFECT_TYPE>(EffectData["nodes"][i].at("effect_type"));
+
+		switch (type)
+		{
+		case Engine::EFFECT_TYPE::SPRITE:
+		{
+
+		}break;
+		case Engine::EFFECT_TYPE::PARTICLE:
+		{
+			PARTICLE_NODE* pParticleNode = new PARTICLE_NODE();
+			*pParticleNode = PARTICLE_NODE::FromJson(EffectData["nodes"][i]);
+
+			Effect.Nodes.push_back(pParticleNode);
+		}break;
+		case Engine::EFFECT_TYPE::MESH:
+		{
+			MESH_NODE* pMeshNode = new MESH_NODE();
+			*pMeshNode = MESH_NODE::FromJson(EffectData["nodes"][i]);
+
+			Effect.Nodes.push_back(pMeshNode);
+		}break;
+		default:
+			break;
+		}
+	}
+
+	map.emplace(effectTag, Effect);
 
 	return Effect;
 }
@@ -367,7 +405,7 @@ _int CResourceMgr::ValidLevel(const string& levelKey)
 
 void CResourceMgr::Load_InitialResource()
 {
-	/*¸®¼Ò½º ·Î´õ ÇÊ¿ä. ÃÊ±â ·Îµù ³Ê¹« ¸¹ÀÌ °É¸²*/
+	/*ï¿½ï¿½ï¿½Ò½ï¿½ ï¿½Î´ï¿½ ï¿½Ê¿ï¿½. ï¿½Ê±ï¿½ ï¿½Îµï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½É¸ï¿½*/
 
 	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
 	m_Resources.resize(1);

@@ -119,7 +119,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Model.h">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -316,8 +316,8 @@
     <ClInclude Include="..\Public\Data_Packets.h">
       <Filter>99. Defines\Packet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GUIWidget.h">
-      <Filter>00. System\02. Gui\Widget</Filter>
+    <ClInclude Include="..\Public\GUIUtil.h">
+      <Filter>00. System\02. Gui\GUIUtil</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01. Utility\04. Components\08. Collider\DebugDraw</Filter>
@@ -492,6 +492,9 @@
     </ClInclude>
     <ClInclude Include="..\public\PostRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\EffectBuilder.h">
+      <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -623,9 +626,6 @@
     </Filter>
     <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\Layer">
       <UniqueIdentifier>{b09d8139-3197-422c-8fe1-1c566d14f512}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\04. Components\00. Transform">
-      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\01. Camera">
       <UniqueIdentifier>{5a3a970e-3685-4a5b-bef0-654dd3a421f1}</UniqueIdentifier>
@@ -764,9 +764,6 @@
     </Filter>
     <Filter Include="98. BasicShader">
       <UniqueIdentifier>{4d73f3c7-aa2d-464b-ae01-4e68fd6a1fe9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="00. System\02. Gui\Widget">
-      <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
     </Filter>
     <Filter Include="01. Utility\04. Components\08. Collider\DebugDraw">
       <UniqueIdentifier>{776ff978-817b-4c94-bb93-09b82bc662dd}</UniqueIdentifier>
@@ -923,6 +920,15 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
       <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="01. Utility\03. GameObject\BuildSystem\Builder_Effect">
+      <UniqueIdentifier>{b38ebe60-64a0-457a-9554-4e9baf299e0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. System\02. Gui\GUIUtil">
+      <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
+      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1017,7 +1023,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Transform.cpp">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model.cpp">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -1172,8 +1178,8 @@
     <ClCompile Include="..\Private\Data_Packets.cpp">
       <Filter>99. Defines\Packet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GUIWidget.cpp">
-      <Filter>00. System\02. Gui\Widget</Filter>
+    <ClCompile Include="..\Private\GUIUtil.cpp">
+      <Filter>00. System\02. Gui\GUIUtil</Filter>
     </ClCompile>
     <ClCompile Include="..\Public\GUI_Inc\imgui_widgets.cpp">
       <Filter>00. System\02. Gui\IMGUI</Filter>
@@ -1330,6 +1336,9 @@
     </ClCompile>
     <ClCompile Include="..\private\PostRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\EffectBuilder.cpp">
+      <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

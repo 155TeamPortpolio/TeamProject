@@ -4,8 +4,6 @@
 HRESULT CDebugFreeCam::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	camType = CamType::Debug;
-	rigType = CamRigType::Free;
 	return S_OK;
 }
 

@@ -1,7 +1,7 @@
 #include "Engine_Defines.h"
 #include "Layer.h"
 #include "GameObject.h"
-#include "GUIWidget.h"
+#include "GUIUtil.h"
 
 CLayer::CLayer()
 {
