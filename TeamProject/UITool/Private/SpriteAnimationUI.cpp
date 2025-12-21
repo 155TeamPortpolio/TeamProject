@@ -130,6 +130,8 @@ void CSpriteAnimationUI::Render_GUI()
 
     ImGui::DragFloat(u8"재생 속도", &m_fFrameSpeed, 1.f, 1.f, 120.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 
+    Render_GUI_TextKey();
+
     __super::Render_GUI();
 }
 

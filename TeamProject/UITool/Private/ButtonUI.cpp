@@ -84,6 +84,8 @@ void CButtonUI::Render_GUI()
     }
     ImGui::TextDisabled(strState.c_str());
 
+    Render_GUI_TextKey();
+
     __super::Render_GUI();
 }
 

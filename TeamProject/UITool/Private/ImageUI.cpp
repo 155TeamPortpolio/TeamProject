@@ -70,13 +70,7 @@ void CImageUI::Render_GUI()
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    ImGui::SeparatorText(u8"텍스트키");
-    static _char buffer[256] = {}; 
-    if (ImGui::InputText(u8"텍스트키", buffer, sizeof(buffer)))
-    {
-        string str = string(buffer);
-        Get_Component<CSprite2D>()->Set_TextKey(str);
-    } 
+    Render_GUI_TextKey();
 
     __super::Render_GUI();
 }

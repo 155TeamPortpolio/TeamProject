@@ -425,6 +425,13 @@ void CUIObject_Tool::Render_GUI_Animation()
     } 
 }
 
+void CUIObject_Tool::Render_GUI_TextKey()
+{
+    ImGui::SeparatorText(u8"텍스트 키");
+    if (ImGui::InputText(u8"텍스트 키", m_szTextKey, sizeof(m_szTextKey)))
+        Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+}
+
 void CUIObject_Tool::Play_Animation(_float dt)
 {
     if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= m_AnimClips.size())
