@@ -13,13 +13,19 @@ private:
     virtual ~CTestObject() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype() override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-    HRESULT Initialize_State();
-    void    Awake() override;
-    void    Priority_Update(_float dt) override;
-    void    Update(_float dt) override;
-    void    Late_Update(_float dt) override;
+    _vector3     Get_InputDir() const { return m_vInputDir; }
+    _bool        Is_Jump() const { return m_bJump; }
+    _float       Get_Speed() const { return m_fSpeed; }
+    _float       Get_JumpPower() const { return m_fJumpPower; }
+
+public:
+    HRESULT      Initialize_Prototype() override;
+    HRESULT      Initialize(INIT_DESC* pArg) override;
+    HRESULT      Initialize_State();
+    void         Awake() override;
+    void         Priority_Update(_float dt) override;
+    void         Update(_float dt) override;
+    void         Late_Update(_float dt) override;
 
     virtual void OnCollisionEnter() override;
     virtual void OnCollisionStay() override;
@@ -33,7 +39,10 @@ public:
 
 private:
     CStateMachine<CTestObject>* m_pStateMachine = { nullptr };
-    _float                      m_fSpeed = 3.f;
+    _vector3                    m_vInputDir = {};
+    _bool                       m_bJump = { false };
+    _float                      m_fSpeed = 5.f;
+    _float                      m_fJumpPower = 3.f;
 
 public:
     static CTestObject* Create();
