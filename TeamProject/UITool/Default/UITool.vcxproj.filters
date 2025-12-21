@@ -108,6 +108,9 @@
     <ClInclude Include="..\Public\SpriteAnimationUI.h">
       <Filter>02.Object\UI\SpriteAnimation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UVAnimationUI.h">
+      <Filter>02.Object\UI\UVAnimation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -166,6 +169,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
       <Filter>02.Object\UI\SpriteAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UVAnimationUI.cpp">
+      <Filter>02.Object\UI\UVAnimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,6 +8,8 @@
 #include "ImageUI.h"
 #include "TextUI.h"
 #include "ButtonUI.h"
+#include "SpriteAnimationUI.h"
+#include "UVAnimationUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
 
@@ -119,7 +121,14 @@ void CCanvasPanel::Render_GUI_Create()
     {
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_SpriteAnimationUI";
-        strInstanceKey = "SpriteAnimationUI" + to_string(CButtonUI::m_iCount);
+        strInstanceKey = "SpriteAnimationUI" + to_string(CSpriteAnimationUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create UVAnimationUI"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_UVAnimationUI";
+        strInstanceKey = "UVAnimationUI" + to_string(CUVAnimationUI::m_iCount);
     }
 
     // 자식 생성

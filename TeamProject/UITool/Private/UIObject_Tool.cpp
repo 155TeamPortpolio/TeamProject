@@ -71,8 +71,8 @@ void CUIObject_Tool::ToJson(json& data)
 void CUIObject_Tool::FromJson(const json& data)
 {
     // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
-    m_vPivot.x = data["transform"]["pivot"]["x"];
-    m_vPivot.y = data["transform"]["pivot"]["y"];
+    m_vPivot.x = data["transform"]["pivot"]["x"].get<_float>();
+    m_vPivot.y = data["transform"]["pivot"]["y"].get<_float>();
     FromJson_Parent(data);
     FromJson_Animation(data);
 }
@@ -191,17 +191,17 @@ void CUIObject_Tool::FromJson_Animation(const json& data)
     for (auto& clipData : data["animation"])
     {
         UI_ANIM_CLIP clip = UI_ANIM_CLIP(clipData["name"]);
-        clip.isLoop = clipData["loop"];
-        clip.fDuration = clipData["duration"];
+        clip.isLoop = clipData["loop"].get<_bool>();
+        clip.fDuration = clipData["duration"].get<_float>();
         for (auto& keyframeData : clipData["keyframes"])
         {
             UI_KEYFRAME keyframe = {};
-            keyframe.fTime = keyframeData["time"];
-            keyframe.vScale = _float2(keyframeData["scale"]["x"], keyframeData["scale"]["y"]);
-            keyframe.fAngle = keyframeData["angle"];
-            keyframe.vPosition = _float2(keyframeData["position"]["x"], keyframeData["position"]["y"]);
-            keyframe.vColor = _float4(keyframeData["color"]["x"], keyframeData["color"]["y"], keyframeData["color"]["z"], keyframeData["color"]["w"]);
-            keyframe.easeType = keyframeData["easeType"];
+            keyframe.fTime = keyframeData["time"].get<_float>();
+            keyframe.vScale = _float2(keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>());
+            keyframe.fAngle = keyframeData["angle"].get<_float>();
+            keyframe.vPosition = _float2(keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>());
+            keyframe.vColor = _float4(keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>());
+            keyframe.easeType = keyframeData["easeType"].get<EaseType>();
             clip.keyframes.push_back(keyframe);
         }
         m_AnimClips.push_back(clip);
@@ -529,6 +529,15 @@ void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const s
 {
     Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
     OutstrTextureKey = TextureKey;
+}
+
+_int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
+{
+    for (_int i = 0; i < TextureKeys.size(); ++i)
+        if (TextureKeys[i] == strTextureTag)
+            return i;
+
+    return -1;
 }
 
 void CUIObject_Tool::Free()
