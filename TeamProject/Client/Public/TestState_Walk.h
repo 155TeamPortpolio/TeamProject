@@ -13,9 +13,6 @@ public:
     virtual void Enter(CTestObject* pOwner) override;
     virtual void Update(CTestObject* pOwner, _float dt) override;
     virtual void Exit(CTestObject* pOwner) override;
-
-private:
-    _float m_fWalkSpeed = 3.f;
 };
 
 NS_END

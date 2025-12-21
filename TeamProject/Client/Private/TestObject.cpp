@@ -66,7 +66,7 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 HRESULT CTestObject::Initialize_State()
 {
-	m_pStateMachine = new CStateMachine<CTestObject>();
+	m_pStateMachine = new CTestStateMachine();
 
 	// States 등록
 	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
@@ -74,28 +74,23 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
 	
 	// Transition 설정
-	// Idle <-> Walk (이동 입력)
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CONDITION_BOOL_TRUE, "IsMoving");
 
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CONDITION_BOOL_FALSE, "IsMoving");
 
-	// AnyState -> Jump
 	m_pStateMachine->Register_AnyStateTransition("Jump",
 		CONDITION_TRIGGER, "Jump");
 
-	// Jump -> Idle (착지 시)
 	m_pStateMachine->Register_Transition("Jump", "Idle",
 		CONDITION_BOOL_TRUE, "IsGrounded");
 
-	// Jump -> Walk (공중에서 이동 시)
+	m_pStateMachine->Register_Transition("Idle", "Jump",
+		CONDITION_BOOL_FALSE, "IsGrounded");
+
 	m_pStateMachine->Register_Transition("Jump", "Walk",
 		CONDITION_BOOL_TRUE, "IsMoving");
-
-	// Jump -> Idle (착지 시)
-	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CONDITION_BOOL_TRUE, "IsGrounded");
 	
 
 
@@ -111,8 +106,7 @@ void CTestObject::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	for (_uint i = 0; i < 3; i++)
-		Get_Component<CAnimator3D>()->Set_Animation(i, 3);
+	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
@@ -124,9 +118,33 @@ void CTestObject::Priority_Update(_float dt)
 
 void CTestObject::Update(_float dt)
 {
+	// Process Input
+	auto input = CGameInstance::GetInstance()->Get_InputDev();
+	m_vInputDir = _vector3(0.f, 0.f, 0.f);
+	if (input->Key_Down('W')) m_vInputDir.z += 1.f;
+	if (input->Key_Down('S')) m_vInputDir.z -= 1.f;
+	if (input->Key_Down('D')) m_vInputDir.x += 1.f;
+	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
+
+	m_bJump = input->Key_Down('J');
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	if (m_pStateMachine)	m_pStateMachine->Update(dt);
-	
+	if (m_pStateMachine) m_pStateMachine->Update(dt);
+
+	// Process Parameter
+	auto pCCT = Get_Component<CCharacterController>();
+	if (pCCT)
+	{
+		m_pStateMachine->Set_Bool("IsGrounded", pCCT->Is_Grounded());
+	}
+
+	m_pStateMachine->Set_Bool("IsMoving", m_vInputDir.Length() > 0.01f);
+
+	if (m_bJump)
+	{
+		m_pStateMachine->Set_Trigger("Jump");
+		m_bJump = false;
+	}
 
 	auto controller = Get_Component<CCharacterController>();
 	if (controller)
