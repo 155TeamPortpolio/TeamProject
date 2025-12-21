@@ -13,7 +13,7 @@ class CThreadPool :
     public CBase
 {
 private:
-    explicit CThreadPool(_uint threadCount = thread::hardware_concurrency()); //하드웨어가 사용할 수 있는 스레드 수 반환하는 함수
+    explicit CThreadPool(_uint threadCount); //하드웨어가 사용할 수 있는 스레드 수 반환하는 함수
     ~CThreadPool();
 
     CThreadPool(const CThreadPool&) = delete;
@@ -43,7 +43,7 @@ private:
     condition_variable m_idleConditionVariable;
 
 public:
-    static CThreadPool* Create(_uint threadCount);
+    static CThreadPool* Create(_uint threadCount = thread::hardware_concurrency());
     virtual void Free() override;
 };
 NS_END

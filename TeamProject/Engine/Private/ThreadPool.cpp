@@ -20,6 +20,9 @@ CThreadPool::~CThreadPool()
 /*일 없으면 잠들고, 일 생기면 하나 꺼내서 실행하고, stop이면 종료*/
 void CThreadPool::WokerLoop()
 {
+    HRESULT hr = CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+    const _bool comInited = SUCCEEDED(hr);
+
     while (true)
     {
         function<void()> job;
@@ -54,6 +57,7 @@ void CThreadPool::WokerLoop()
                 m_idleConditionVariable.notify_all();
         }
     }
+    if (comInited) CoUninitialize();
 }
 
 void CThreadPool::ShutDown()

@@ -484,6 +484,9 @@
     <ClInclude Include="..\Public\ThreadPool.h">
       <Filter>00. System\03. Thread</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ResourceEntry.h">
+      <Filter>01. Utility\05. Resources\ReosurceEntry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -903,6 +906,9 @@
     <Filter Include="00. System\03. Thread">
       <UniqueIdentifier>{b09ef07c-51f6-4921-a22b-cd8c00705774}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\ReosurceEntry">
+      <UniqueIdentifier>{8d7fbde5-4539-4e25-b2ce-2e6567d43791}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1300,6 +1306,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ThreadPool.cpp">
       <Filter>00. System\03. Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ResourceEntry.cpp">
+      <Filter>01. Utility\05. Resources\ReosurceEntry</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

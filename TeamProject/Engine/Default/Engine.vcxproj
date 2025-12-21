@@ -353,6 +353,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\RenderPass.h" />
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
+    <ClInclude Include="..\Public\ResourceEntry.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
@@ -481,6 +482,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\RenderPass.cpp" />
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
+    <ClCompile Include="..\Private\ResourceEntry.cpp" />
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
