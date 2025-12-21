@@ -422,6 +422,7 @@ void CAnimator3D::Animation_Run(_float dt)
 {
 	if (m_AnimLayers.empty()) return;
 
+	//애니매이션 업데이트
 	for (auto& Layer : m_AnimLayers) {
 		if (-1 == Layer.iClipIndex) continue;
 
@@ -429,9 +430,10 @@ void CAnimator3D::Animation_Run(_float dt)
 
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			dt, Layer.bLoop, &Layer.bisFinished);
+			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
 	}
 
+	//이동값 제거
 	for (auto& Layer : m_AnimLayers) {
 		if (false == Layer.bUseTransform) {
 			if (isExistClip(Layer.iMoveBoneIndex)) {
