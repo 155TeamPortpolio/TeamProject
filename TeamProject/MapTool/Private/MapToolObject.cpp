@@ -50,14 +50,16 @@ void CMapToolObject::Late_Update(_float dt)
 
 void CMapToolObject::Render_GUI()
 {
-
-	__super::Render_GUI();
-
-	if (ImGui::Button("Delete")) {
-		Delete_Object();
+	if (ImGui::TreeNode("Component Inspector")) {
+		__super::Render_GUI();
+		ImGui::TreePop();
 	}
+	ImGui::Separator();
 
-
+	string TagID = "Object ID : " + to_string(m_iObjectIndex);
+	ImGui::Text(TagID.c_str());
+	string TagModelKey = "Model Key : " + m_TagModelKey;
+	ImGui::Text(TagModelKey.c_str());
 }
 
 void CMapToolObject::Delete_Object()

@@ -1,11 +1,10 @@
 #include "pch.h"
 #include "SequenceCam.h"
+#include "GameInstance.h"
 
 HRESULT CSequenceCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_eCamType = CamType::Cinematic;
-    m_eRigType = CamRigType::Free;
     m_sequencePlayer = Add_Component<CCamSequencePlayer>();
     return S_OK;
 }
@@ -52,6 +51,15 @@ void CSequenceCam::Render_GUI()
     if (ImGui::CollapsingHeader(u8"SequenceCam", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::PushID("SequenceCam_RenderGUI");
+
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
 
         const _bool playing = IsPlaying();
 

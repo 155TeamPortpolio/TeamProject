@@ -34,9 +34,6 @@ HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    m_eCamType = CamType::GamePlay;
-    m_eRigType = CamRigType::Free;
-
     m_rotDegCur   = m_rotDegTarget;
     m_distanceCur = m_distanceTarget;
 
@@ -192,6 +189,15 @@ void COrbitCam::Render_GUI()
     if (ImGui::CollapsingHeader(u8"OrbitCam", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::PushID("OrbitCam_RenderGUI");
+
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
 
         ImGui::DragFloat(u8"OffsetY", &m_offsetY, 0.01f, -10.f, 10.f);
 

@@ -64,17 +64,17 @@
     <Filter Include="04. AIResource\AIAnimation\AIAnimationClip\AIChannel">
       <UniqueIdentifier>{b0661ef4-aca7-42df-836f-bc272cbb7062}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object">
-      <UniqueIdentifier>{3bd974bc-1339-4471-8d9e-5c9c6200aa87}</UniqueIdentifier>
+    <Filter Include="02. Obj">
+      <UniqueIdentifier>{a669aaff-6a46-4db2-aabe-edab1dd90a4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object\ModelObject">
-      <UniqueIdentifier>{bb36c00a-1407-442c-87db-d81028ac2b2c}</UniqueIdentifier>
+    <Filter Include="02. Obj\00. CamObject">
+      <UniqueIdentifier>{91a0db12-ac56-4327-a4b6-4cc5fd9f21d4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object\Camera">
-      <UniqueIdentifier>{c8f2b36a-b9b3-43c7-bbaf-d30b1bbecc0e}</UniqueIdentifier>
+    <Filter Include="02. Obj\01. FreeCam">
+      <UniqueIdentifier>{af6519e9-4b4e-40dc-808a-f25247a7b5a3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. Object\Light">
-      <UniqueIdentifier>{52d7a695-68d8-4d6f-9f27-c087f1fcc24a}</UniqueIdentifier>
+    <Filter Include="02. Obj\02. EditModel">
+      <UniqueIdentifier>{46cfa70e-40ac-4495-9782-44f8e8452150}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -193,14 +193,15 @@
     <ClInclude Include="..\public\AIChannel.h">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h" />
+    <ClInclude Include="..\public\CamObject.h">
+      <Filter>02. Obj\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>02. Obj\01. FreeCam</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\EditModel.h">
-      <Filter>02. Object\ModelObject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\EditCamera.h">
-      <Filter>02. Object\Camera</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\LightObject.h">
-      <Filter>02. Object\Light</Filter>
+      <Filter>02. Obj\02. EditModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -285,14 +286,15 @@
     <ClCompile Include="..\private\AIChannel.cpp">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp">
+      <Filter>02. Obj\00. CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>02. Obj\01. FreeCam</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\EditModel.cpp">
-      <Filter>02. Object\ModelObject</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\EditCamera.cpp">
-      <Filter>02. Object\Camera</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\LightObject.cpp">
-      <Filter>02. Object\Light</Filter>
+      <Filter>02. Obj\02. EditModel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

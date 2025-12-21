@@ -52,8 +52,9 @@
     <ClInclude Include="..\public\AI_SKModel.h" />
     <ClInclude Include="..\Public\AI_STModel.h" />
     <ClInclude Include="..\Public\Assimps.h" />
+    <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
-    <ClInclude Include="..\Public\LightObject.h" />
+    <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\ModelEditLevel.h" />
@@ -88,9 +89,10 @@
     <ClCompile Include="..\Private\AI_Material.cpp" />
     <ClCompile Include="..\private\AI_SKModel.cpp" />
     <ClCompile Include="..\Private\AI_STModel.cpp" />
+    <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />
-    <ClCompile Include="..\Private\LightObject.cpp" />
+    <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\ModelEditLevel.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />

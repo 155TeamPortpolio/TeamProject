@@ -119,7 +119,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Model.h">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -612,9 +612,6 @@
     <Filter Include="01. Utility\03. GameObject\Managers\ObjectManager\Layer">
       <UniqueIdentifier>{b09d8139-3197-422c-8fe1-1c566d14f512}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\00. Transform">
-      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\04. Components\01. Camera">
       <UniqueIdentifier>{5a3a970e-3685-4a5b-bef0-654dd3a421f1}</UniqueIdentifier>
     </Filter>
@@ -893,9 +890,12 @@
     </Filter>
     <Filter Include="01. Utility\03. GameObject\BuildSystem\Builder_Effect">
       <UniqueIdentifier>{b38ebe60-64a0-457a-9554-4e9baf299e0d}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="00. System\02. Gui\GUIUtil">
       <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
+      <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -990,7 +990,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Transform.cpp">
-      <Filter>01. Utility\04. Components\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model.cpp">
       <Filter>01. Utility\04. Components\03. Model</Filter>

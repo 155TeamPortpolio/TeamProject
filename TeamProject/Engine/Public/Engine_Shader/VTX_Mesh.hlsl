@@ -179,7 +179,7 @@ technique11 DefaultTechnique
 {
     pass Opaque
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_NoCull);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

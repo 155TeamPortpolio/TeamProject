@@ -56,6 +56,7 @@ public:
     void            Resize(_float fHeight, _float fRadius);
     void            Set_StepOffset(_float fOffset);
     void            Set_SlopeLimit(_float fDegree);
+    void            Set_Velocity(_fvector vVelocity);
     void            Set_PlanarVelocity(_fvector vVelocity);
     void            Set_VerticalVelocity(_float fVelocity);
     void            Set_MaxSpeed(_float fMaxSpeed);

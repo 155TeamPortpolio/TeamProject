@@ -5,8 +5,6 @@
 HRESULT CFreeCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_eCamType = CamType::Debug;
-    m_eRigType = CamRigType::Free;
     return S_OK;
 }
 
@@ -108,6 +106,15 @@ void CFreeCam::Render_GUI()
     if (ImGui::CollapsingHeader(u8"FreeCam", ImGuiTreeNodeFlags_DefaultOpen))
     {
         ImGui::PushID("FreeCam_RenderGUI");
+
+        auto myCam = Get_Component<CCamera>();
+        bool isMain = (CAM->Get_BaseCam() == myCam);
+
+        if (ImGui::Checkbox(u8"MainCam", &isMain))
+        {
+            if (isMain)
+                CAM->Set_MainCam(myCam);
+        }
 
         ImGui::DragFloat(u8"이동 속도", &m_fSpeed, 0.1f, 0.f, 5000.f);
         ImGui::DragFloat(u8"마우스 감도", &m_fSensitivity, 0.001f, 0.f, 5.f);

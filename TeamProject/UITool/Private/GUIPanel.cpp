@@ -23,9 +23,9 @@ void CGUIPanel::Update_Panel(_float dt)
 		if (pGuiContext->pSelectedObject)
 		{
 			if (CUIObject_Tool* pUISelected = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
-			{ 
-				m_pGameInstance->Get_UIMgr()->Remove_UIObject(pUISelected);	// UI Mgr에서 자신을 제거
-				pUISelected->DestroyChild_FromParent();						// 부모 container 컴포넌트에서 자식을 제거
+			{
+				pUISelected->Remove_SelfFromParent();						// 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
+				m_pGameInstance->Get_UIMgr()->Remove_UIObject(pUISelected);	// UI Mgr에서 자신을 제거 
 				pGuiContext->pSelectedObject = nullptr;						// Gui에 selectedObject를 nullptr로 
 			}
 		}
@@ -81,17 +81,17 @@ void CGUIPanel::SaveToJson()
 		json data;
 		data["uiObjects"] = json::array();
 
-		auto& levelUIObjects = m_pGameInstance->Get_UIMgr()->Get_LevelUI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
+		auto& objects = m_pGameInstance->Get_UIMgr()->Get_LevelUI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
 
-		for (auto& pObj : levelUIObjects)
+		for (auto& pObj : objects)
 		{
+			if (!pObj)
+				continue;
+
 			CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
 
 			if (!pUI)
-			{
-				MSG_BOX("Warning : UI Object is not serializable");
 				continue;
-			}
 
 			json objData;
 			pUI->ToJson(objData);
@@ -128,19 +128,16 @@ void CGUIPanel::LoadFromJson()
 		inputFile.close();
 
 		IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
-
 		pUIMgr->Clear(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
-
-		vector<CUIObject_Tool*> UIObjects;
 
 		// json에 있는 ui object 로드해서 level에 저장
 		for (auto& uiData : data["uiObjects"])
 		{
-			string strType = uiData["typeTag"];
-			string strLevel = uiData["levelTag"];
+			const string strType = uiData["typeTag"];
+			const string strLevel = uiData["levelTag"];
 			string strProtoTag = {};
-			CUI_Object* pObj = { nullptr };
 
+			// 타입에 따라 프로토타입태그 분기 처리
 			if (strType == "CanvasPanel")
 				strProtoTag = "Proto_GameObject_CanvasPanel";
 			else if (strType == "ImageUI")
@@ -150,7 +147,7 @@ void CGUIPanel::LoadFromJson()
 			else if (strType == "ButtonUI")
 				strProtoTag = "Proto_GameObject_ButtonUI";
 
-			pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
+			CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
 				.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))
 				.Size(_float2(uiData["transform"]["size"]["x"].get<float>(), uiData["transform"]["size"]["y"].get<float>()))
 				.Scale(_float2(uiData["transform"]["scale"]["x"].get<float>(), uiData["transform"]["scale"]["y"].get<float>()))
@@ -164,10 +161,8 @@ void CGUIPanel::LoadFromJson()
 			CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
 			if (!pUI)
 				continue;
-
-			UIObjects.push_back(pUI);
+			 
 			pUI->FromJson(uiData);
-
 			pUIMgr->Add_UIObject(pObj, strLevel);
 		}
 	}
