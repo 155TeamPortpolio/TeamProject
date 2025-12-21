@@ -65,7 +65,6 @@ HRESULT CStructuredBuffer::CreateBuffer(const DESC& desc)
 	D3D11_BUFFER_DESC BufferDesc{};
 	ZeroMemory(&BufferDesc, sizeof(D3D11_BUFFER_DESC));
 	BufferDesc.ByteWidth = m_iStride * m_iCount;
-	BufferDesc.BindFlags = desc.iBindFlag;
 
 	if(desc.UseSRV)
 		BufferDesc.BindFlags |= D3D11_BIND_SHADER_RESOURCE;

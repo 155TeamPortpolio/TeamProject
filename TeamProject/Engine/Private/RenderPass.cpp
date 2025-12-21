@@ -325,10 +325,9 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext)
 		param.pData = &packet.WorldMatrix;
 		pCurShader->Bind_Value("g_WorldMatrix", param);
 
-		PARTICLE_DRAW_DATA DrawData = m_DrawDatas[i];
-		packet.pMaterial->Apply_Material(pContext, 0);
 		packet.pParticleSystem->Bind_Buffer(pContext);
-		packet.pParticleSystem->Draw(pContext, DrawData.iOffset, DrawData.iParticleCount);
+		packet.pMaterial->Apply_Material(pContext, 0);
+		packet.pParticleSystem->Draw(pContext);
 	}
 
 	m_Packets.clear();

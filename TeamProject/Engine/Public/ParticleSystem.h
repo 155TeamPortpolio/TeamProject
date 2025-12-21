@@ -36,6 +36,17 @@ public:
 		_float2 pad{};
 	}PARTICLE_GPU;
 
+	typedef struct tagInstanceData
+	{
+		_float4 vRight{}, vUp{}, vLook{};
+		_float4 vTranslate{};
+		_float3 vVelocity{};
+		_float4 vColor{};
+		_float2 vLife{};
+		_uint iFrameIndex{};
+		_float2 pad{};
+	}INSTANCE_DATA;
+
 	typedef struct tagCBFrame
 	{
 		_float fDeltaTime{};
@@ -91,7 +102,7 @@ public:
 
 public:
 	HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
-	HRESULT Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count);
+	HRESULT Draw(ID3D11DeviceContext* pContext);
 	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
 

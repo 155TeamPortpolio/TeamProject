@@ -14,7 +14,6 @@ public:
 
         _bool UseSRV = true;
         _bool UseUAV = true;
-        _uint iBindFlag{};
         _uint iUAVFlag{};
 
         D3D11_USAGE eUsage{};

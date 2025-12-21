@@ -86,7 +86,7 @@ HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 	D3D11_BUFFER_DESC InstanceDesc{};
 	InstanceDesc.ByteWidth = m_iInstanceStride * m_iMaxInstancesCount;
 	InstanceDesc.Usage = D3D11_USAGE_DYNAMIC;
-	InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER | D3D11_BIND_UNORDERED_ACCESS;
+	InstanceDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	InstanceDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	InstanceDesc.MiscFlags = 0;
 	InstanceDesc.StructureByteStride = m_iInstanceStride;

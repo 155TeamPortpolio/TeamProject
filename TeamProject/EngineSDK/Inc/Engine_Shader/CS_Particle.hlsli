@@ -13,7 +13,7 @@ struct Particle
     float pad;
 };
 
-struct InstancePoint
+struct InstanceData
 {
     float4 vRight;
     float4 vUp;
@@ -73,4 +73,4 @@ ConsumeStructuredBuffer<uint> DeadConsume : register(u1);
 RWStructuredBuffer<Particle> Particles : register(u2);
 
 /* 드로우에 사용할 인스턴스 데이터 */
-RWStructuredBuffer<InstancePoint> Instances : register(u3);
+RWStructuredBuffer<InstanceData> Instances : register(u3);

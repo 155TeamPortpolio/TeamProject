@@ -13,7 +13,7 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     if (p.IsAlive == 0)
         return;
     
-    InstancePoint instance;
+    InstanceData instance;
     instance.vRight = float4(1.f, 0.f, 0.f, 0.f) * p.vSize.x;
     instance.vUp = float4(0.f, 1.f, 0.f, 0.f) * p.vSize.y;
     instance.vLook = float4(0.f, 0.f, 1.f, 0.f);
