@@ -19,6 +19,7 @@ Texture2D g_BrightTexture;
 Texture2D g_BloomInfo;
 Texture2D g_BlurXTexture;
 Texture2D g_BloomFinal;
+Texture2D g_3DUITexture;
 Texture2D g_DistortionTexture;
 Texture2D g_DistortionNoiseTexture;
 Texture2D g_DistortionAdd_Texture;
@@ -423,10 +424,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     PS_OUT_BACKBUFFER Out; 
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (0.0f == vDiffuse.a)
-        discard;
-    
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -435,6 +434,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     ambient = max(ambient, vDiffuse.rgb * 0.15f); 
     
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
+ 
+    if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
@@ -469,12 +470,13 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 { 
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
+    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
     float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
   
-    float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 mapped = scene.rgb + bloom.rgb/* + distortion.rgb*/;
-  
+    float3 mapped = scene.rgb + bloom.rgb;
+    return float4(mapped, 1.f);
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

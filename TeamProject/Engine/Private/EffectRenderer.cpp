@@ -27,10 +27,14 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 
 HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pParticlePass)
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect"))) return E_FAIL;
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
+
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
 	pEffectPass->Execute(m_pContext, this);
 	pParticlePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	
 	return S_OK;
 }
 

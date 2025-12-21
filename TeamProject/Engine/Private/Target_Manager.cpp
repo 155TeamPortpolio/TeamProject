@@ -28,7 +28,7 @@ HRESULT CTarget_Manager::Add_MRT(const string& strMRTTag, const string& strTarge
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _bool Clear)
+HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _bool Clear, ID3D11DepthStencilView* pExternalDSV, _bool DSVClear)
 {
 	vector<CRenderTarget*>& pMRTList = Find_MRT(strMRTTag);
 
@@ -64,17 +64,20 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _bool Clear)
 
 	for (auto& pRenderTarget : pMRTList)
 	{
-		if(Clear) pRenderTarget->Clear();
+		if (Clear) pRenderTarget->Clear();
 
 		pRenderTargets[iNumRenderTargets] = pRenderTarget->Get_RTV();
 		iNumRenderTargets++;
 
+
 		if (pMrtDSV == nullptr) {
 			pMrtDSV = pRenderTarget->Get_DSV();
-			m_pContext->ClearDepthStencilView(pMrtDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 		}
-	}
 
+	}
+	if (pExternalDSV) pMrtDSV = pExternalDSV;
+
+	if (pMrtDSV && DSVClear) m_pContext->ClearDepthStencilView(pMrtDSV, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
 	// ·»´õ Å¸°Ù, µª½º ¹ÙÀÎµù
 	m_pContext->OMSetRenderTargets(iNumRenderTargets, pRenderTargets, pMrtDSV);
 

@@ -173,7 +173,7 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 
 HRESULT CForwardRenderer::Render_Combined()
 {
-	m_pTargetManager->Begin_MRT("MRT_Final",false);
+	m_pTargetManager->Begin_MRT("MRT_Final", false);
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 
@@ -188,6 +188,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pTargetManager->Bind_Target("Target_Light", m_pShader, "g_LightTexture");
 	m_pTargetManager->Bind_Target("Target_Shadow", m_pShader, "g_ShadowTexture");
 	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);

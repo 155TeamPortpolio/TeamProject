@@ -97,6 +97,7 @@ HRESULT CPostRenderer::Render_Final()
 
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
 
 	SHADER_PARAM WorldMat = {};
