@@ -179,9 +179,8 @@ PS_OUT PS_MAIN(PS_IN In)
     //if (color.a < 0.1f)
     //    discard;
     
-    Out.vColor = lerp(In.vColor, color, color.a);
+    Out.vColor = color; //lerp(In.vColor, color, color.a);
     Out.vColor.a = color.a;
-    
     //Out.vColor = float4(1.f / In.iFrameIndex, 1.f / Col, 1.f / Row, 1.f);
     
     return Out;

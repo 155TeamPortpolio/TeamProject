@@ -19,8 +19,8 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     if(p.fLifeTime >= p.fMaxLifeTime)
     {
         p.IsAlive = 0;
-        Particles[i] = p;
-        DeadAppend.Append(i); /* 죽은 파티클 append에 추가 */
+        Particles[index] = p;
+        DeadAppend.Append(index); /* 죽은 파티클 append에 추가 */
         return;
     }
     

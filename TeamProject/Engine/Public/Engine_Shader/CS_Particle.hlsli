@@ -54,7 +54,7 @@ cbuffer CBPacked : register(b3)
 {
     uint iInstanceCount;
     uint3 packedPad;
-}
+};
 
 /* 이번 프레임에 살아있는 파티클들의 인덱스가 담겨있음 -> 파티클 업데이트에서 사용 */
 StructuredBuffer<uint> AliveIn : register(t0);

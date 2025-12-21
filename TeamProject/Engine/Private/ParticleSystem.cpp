@@ -304,7 +304,6 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	for (_uint i = 0; i < m_Particles.size(); ++i)
 		m_DeadParticleIndices.push_back(i);
 
-	
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
