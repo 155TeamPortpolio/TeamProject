@@ -4,11 +4,12 @@
 
 namespace Client {
 	/* Map Data */
-	enum class SLOT_DATA_TYPE { NONE, Int, Float, Bool, String, Float3 };
+	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float3, END };
 
 	struct SlotValue {
-		SLOT_DATA_TYPE type = SLOT_DATA_TYPE::NONE;
-		variant<monostate, int64_t, double, bool, string, XMFLOAT3> value;
+		SLOT_DATA_TYPE type = SLOT_DATA_TYPE::END;
+		//variant<monostate, int64_t, double, bool, string, XMFLOAT3> value;
+		variant<monostate, _int, _float, _bool, string, _float3> value;
 	};
 
 	typedef struct tagMapDataFilePacket {
@@ -20,6 +21,7 @@ namespace Client {
 	}MapData_Path_Packet;
 
 	typedef struct tagMapObjectData {
+		_int		iObjID = { -1 };
 		std::string TagModelResourceKey = {};
 		std::string TagMaterialResourceKey = {};
 		std::array<_float, 4> vRight = { 1.f, 0.f, 0.f, 0.f };
@@ -27,7 +29,7 @@ namespace Client {
 		std::array<_float, 4> vLook = { 0.f, 0.f, 1.f, 0.f };
 		std::array<_float, 4> vPos = { 0.f, 0.f, 0.f, 1.f };
 	}MapData_Object;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, TagModelResourceKey, TagMaterialResourceKey, vRight, vUp, vLook, vPos);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, iObjID, TagModelResourceKey, TagMaterialResourceKey, vRight, vUp, vLook, vPos);
 
 	typedef struct tagMapDataDefaultDesc {
 		std::string TagLayer = {};

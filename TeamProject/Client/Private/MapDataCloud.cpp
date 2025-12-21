@@ -52,15 +52,22 @@ void CMapDataCloud::Rake_MapData(const string& MapDataFolderPath)
 			if (tokens[0] != "MapData")
 				continue;
 
+			_int iVersion = {};
+			// version을 string -> int로 변환
+			auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), iVersion);
+			if (ec != std::errc{})   // 숫자 파싱 실패
+				continue;
+
+			// 현재 클라이언트 버전보다 높으면 패스
+			if (iVersion > g_iMapDataVersion)
+				continue;
+
 			MapData_Path_Packet packet = {};
 			packet.TagDataFileKey = FilePath.filename().string();
 			packet.TagDataFilePath = FilePath.string();
 			packet.TagArea = tokens[1];
 			packet.TagSlotFormat = tokens[2];
-			// version 파싱
-			auto [ptr, ec] = std::from_chars(tokens[3].data(), tokens[3].data() + tokens[3].size(), packet.iVersion);
-			if (ec != std::errc{})   // 숫자 파싱 실패
-				continue;
+			packet.iVersion = iVersion;
 
 			auto& vecPacket = m_MapAreaDatas[packet.TagArea];
 

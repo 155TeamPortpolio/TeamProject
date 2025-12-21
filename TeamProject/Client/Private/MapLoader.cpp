@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "MapLoader.h"
-#include "MapData_Defines.h"
 #include "GameInstance.h"
-#include "Helper_Func.h"
-#include "MapDataCloud.h"
 
+#include "MapData_Defines.h"
+#include "Helper_Func.h"
+#include "MapLoader_Helper.h"
+
+#include "MapDataCloud.h"
 #include "MapPlacedObject.h"
 
 CMapLoader::CMapLoader()
@@ -21,37 +23,29 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCl
 
     auto pPackets = pMapDataCloud->Get_MapDataPacket(TagArea);
 
+    _bool isFindBaseData = { false };
     for (auto& packet : *pPackets) {
-               
-        // packet 각각 json로드하고 오브젝트 ID순서대로 싹다 값 넣기! 
-
+        if ("Base" == packet.TagSlotFormat) {
+            LoadBaseData(&packet);
+            isFindBaseData = true;
+        }
+        else
+            CacheSlotDataFile(packet.TagDataFilePath);
     }
 
-    filesystem::path OpenPath = {};//MapDataPath;
-
-    if (OpenPath.empty())
+    // 맵 베이스 데이터 없으면 로드 불가!
+    if (false == isFindBaseData)
         return E_FAIL;
 
-    if (OpenPath.extension().string() != ".json") {
-        MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
-        return E_FAIL;
-    }
+    auto iter = m_SlotFormatData.find("COLLIDER_DESC");
+    if (iter != m_SlotFormatData.end())
+        m_hasColliderData = true;
 
-    MapData_Header mapdata = Helper::LoadJson<MapData_Header>(OpenPath.string());
-    if (-1 == mapdata.iVersion)
-        return E_FAIL;
-
-
-    if (mapdata.iVersion != m_iVersion) {
-        MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
-        return E_FAIL;
-    }
     
-    for (auto& layerdata : mapdata.Layers) {
+
+
+    for (auto& layerdata : m_MapBaseData.Layers) {
         // 레이어 태그 무결성 검사
-        /*const auto iter = find(m_TagLayers.begin(), m_TagLayers.end(), layerdata.TagLayer);
-        if (iter == m_TagLayers.end())
-            continue;*/
         MAPOBJ_TYPE eType = Check_LayerTag(layerdata.TagLayer);
         if (MAPOBJ_TYPE::END == eType)
             continue;
@@ -86,8 +80,26 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     Desc->TagModelKey = pData->TagModelResourceKey;
     Desc->TagMaterialKey = pData->TagMaterialResourceKey;
 
+    COLLIDER_DESC ColliderDesc = {};
+
+    // physics 데이터 넣는 부분. 개선의 여지가 있음
+    if (true == m_hasColliderData) {
+        for (auto& physicsData : m_SlotFormatData["COLLIDER_DESC"][pData->iObjID]) {
+            
+            if (physicsData.TagName == "bCooking" && physicsData.defaultvalue.type == SLOT_DATA_TYPE::Bool) {
+                auto bCooking = GetSlotValue<_bool>(physicsData.defaultvalue);
+                Desc->bCooking = *bCooking;
+                ColliderDesc.bCooking = *bCooking;
+                ColliderDesc.strModelKey = Desc->TagModelKey;
+            }
+        }
+
+    }
+
+
     CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapPlacedObject" })
         .Add_ObjDesc(Desc)
+        .Collider(ColliderDesc)
         .Build("Placed_Model");
 
     if (nullptr == pStaticObject)
@@ -117,6 +129,143 @@ CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
         eType = MAPOBJ_TYPE::END;
 
     return eType;
+}
+
+HRESULT CMapLoader::LoadBaseData(const MapData_Path_Packet* pPacket)
+{
+    filesystem::path OpenPath = pPacket->TagDataFilePath;
+
+    if (OpenPath.empty())
+        return E_FAIL;
+
+    if (OpenPath.extension().string() != ".json") {
+        MSG_BOX("[MapTool] Load Map Data Failed.\nJson 파일이 아닙니다.");
+        return E_FAIL;
+    }
+
+    m_MapBaseData = Helper::LoadJson<MapData_Header>(OpenPath.string());
+    if (-1 == m_MapBaseData.iVersion)
+        return E_FAIL;
+
+    if (m_MapBaseData.iVersion != g_iMapDataVersion) {
+        MSG_BOX("[MapTool] Load Map Data Failed.\n잘못된 버전입니다.");
+        return E_FAIL;
+    }
+
+    return S_OK;
+}
+
+HRESULT CMapLoader::LoadSlotData(const MapData_Path_Packet* pPacket)
+{
+    string TagSlotFormat = pPacket->TagSlotFormat;
+    
+
+
+   // m_SlotFormatData[TagSlotFormat]
+
+    return S_OK;
+}
+
+/*HRESULT CMapLoader::LoadSlotData(const MapData_Path_Packet* pPacket)
+{
+    json root;
+
+    ifstream ifs(pPacket->TagDataFilePath);
+    if (false == ifs.is_open())
+        return E_FAIL;
+    ifs >> root;
+
+    //TagDataFormat, iVersion, values
+    MapData_Slot_Header SlotHeader = {};
+    SlotHeader.TagDataFormat = root.value("TagDataFormat", "");
+    SlotHeader.iVersion = root.value("iVersion", 1);
+    SlotHeader.values.clear();
+
+    // 파일에 values가 없을 때, 방어코드
+    const auto iterValues = root.find("values");
+    if (iterValues == root.end() || false == iterValues->is_array())
+        return true;
+
+    SlotHeader.values.reserve(iterValues->size());
+
+    for (const auto& item : *iterValues) {
+        
+        if (false == item.is_object())
+            continue;
+        
+        //iObjID, TagName, defaultvalue
+        if (false == item.contains("iObjID") ||
+            false == item.contains("TagName") ||
+            false == item.contains("defaultvalue"))
+            continue;
+
+        if (false == item["iObjID"].is_number_integer() ||
+            false == item["TagName"].is_string())
+            continue;
+           
+        FIELD_DATA FieldData = {};
+        FieldData.iObjID = item["iObjID"].get<int>();
+        FieldData.TagName = item["TagName"].get<string>();
+
+        SLOT_DATA_TYPE inferType = SLOT_DATA_TYPE::END;
+        SlotValue sv = {};
+        if (false == TryParseSlotValue(item["defaultvalue"], sv))
+            continue;
+
+        FieldData.defaultvalue = move(sv);
+        FieldData.
+    }
+
+    return S_OK;
+}*/
+
+/*HRESULT CMapLoader::LoadJson(const string& path, json& OutRoot)
+{
+    if (true == path.empty())
+        return E_FAIL;
+
+    filesystem::path openpath = path;
+    ifstream ifs(path);
+    if (false == ifs.is_open())
+        return false;
+
+    OutRoot = json::parse(ifs, nullptr, false);
+    
+    return !OutRoot.is_discarded();
+}*/
+
+HRESULT CMapLoader::CacheSlotDataFile(const string& SlotDataFilePath)
+{
+    ifstream ifs(SlotDataFilePath);
+    if (false == ifs.is_open())
+        return E_FAIL;
+
+    json jRoot = json::parse(ifs, nullptr, false);
+    if (jRoot.is_discarded())
+        return E_FAIL;
+
+    if (false == jRoot.is_object())
+        return E_FAIL;
+
+    string TagSlotFormat = {};
+    if (false == TryReadString(jRoot, "TagDataFormat", TagSlotFormat) || TagSlotFormat.empty())
+        return E_FAIL;
+
+    const json* values = FindPtr(jRoot, "values");
+    if (nullptr == values || false == values->is_array())
+        return S_OK; // 빈 값으로 채우고 나가기 (터짐 방지)
+
+    ObjFieldMap& perObj = m_SlotFormatData[TagSlotFormat];
+
+    for (const auto& elem : *values) {
+        FIELD_DATA FieldData = {};
+        if (false == TryParseFieldData(elem, FieldData))
+            continue; // row 깨지면 무시하고 넘김
+
+        perObj[FieldData.iObjID].push_back(move(FieldData));
+    }
+
+    return S_OK;
 }
 
 CMapLoader* CMapLoader::Create(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)

@@ -17,10 +17,10 @@ namespace MapTool {
 		_int		iObjID = { -1 };
 		std::string TagModelResourceKey = {};
 		std::string TagMaterialResourceKey = {};
-		std::array<_float, 4> vRight =	{1.f, 0.f, 0.f, 0.f};
-		std::array<_float, 4> vUp =		{ 0.f, 1.f, 0.f, 0.f };
-		std::array<_float, 4> vLook =	{ 0.f, 0.f, 1.f, 0.f };
-		std::array<_float, 4> vPos =	{ 0.f, 0.f, 0.f, 1.f };
+		std::array<_float, 4> vRight = { 1.f, 0.f, 0.f, 0.f };
+		std::array<_float, 4> vUp = { 0.f, 1.f, 0.f, 0.f };
+		std::array<_float, 4> vLook = { 0.f, 0.f, 1.f, 0.f };
+		std::array<_float, 4> vPos = { 0.f, 0.f, 0.f, 1.f };
 	}MapData_Object;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, iObjID, TagModelResourceKey, TagMaterialResourceKey, vRight, vUp, vLook, vPos);
 
@@ -58,7 +58,8 @@ namespace MapTool {
 
 	typedef struct tagFieldDataDef {
 		std::string		id = {};
- 		SLOT_DATA_TYPE	eDataType = SLOT_DATA_TYPE::END;
+		std::string		TagName = {};
+		SLOT_DATA_TYPE	eDataType = SLOT_DATA_TYPE::END;
 		SlotValue		defaultvalue;
 		_int			iObjID = { -1 };
 
@@ -71,7 +72,7 @@ namespace MapTool {
 	typedef struct tagMapSlotDataHeader {
 		std::string	TagDataFormat = {};
 		_int		iVersion = 1;
-		std::vector<FIELD_DATA_DEFINE> values; // 여기엔iObjID, TagName, eDataType, defaultvalue 만 들어갔으면 함
+		std::vector<FIELD_DATA_DEFINE> values; 
 	}MapData_Slot_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
 

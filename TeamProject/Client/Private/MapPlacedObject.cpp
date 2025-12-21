@@ -36,7 +36,6 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 #pragma region Model Type Check
 	MAPOBJ_DESC* pObjDesc = static_cast<MAPOBJ_DESC*>(pArg);
 
-	
 	m_TagModelKey = pObjDesc->TagModelKey;
 	m_TagMaterialKey = pObjDesc->TagMaterialKey;
 
@@ -44,28 +43,37 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 		true == m_TagMaterialKey.empty())
 		return E_FAIL;
 
+	if (true == pObjDesc->bCooking)
+		Add_Component<CCollider>();
+
 	CModelData* pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(pObjDesc->TagLevel, pObjDesc->TagModelKey);
 	if (nullptr == pData)
 		return E_FAIL;
 
 	_bool isSkinned = pData->isSkinned();
 
-	if (true == isSkinned)
+	if (true == isSkinned) {
 		Add_Component<CSkeletalModel>();
-	else
+		Get_Component<CSkeletalModel>()->Link_Model(pObjDesc->TagLevel, m_TagModelKey);
+	}
+	else {
 		Add_Component<CStaticModel>();
+		Get_Component<CStaticModel>()->Link_Model(pObjDesc->TagLevel, m_TagModelKey);
+	}
 
+	Get_Component<CMaterial>()->Link_Material(pObjDesc->TagLevel, m_TagMaterialKey);
 #pragma endregion
 	__super::Initialize(pArg);
 
-	//Get_Component<CRayReceiver>()->Set_CompActive(pObjDesc->isRayReceiver);
-
-	if (true == isSkinned)
-		Get_Component<CSkeletalModel>()->Link_Model(pObjDesc->TagLevel, m_TagModelKey);
-	else
-		Get_Component<CStaticModel>()->Link_Model(pObjDesc->TagLevel, m_TagModelKey);
-
-	Get_Component<CMaterial>()->Link_Material(pObjDesc->TagLevel, m_TagMaterialKey);
+	auto iter = pObjDesc->SlotDataValues.find("Effect");
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		
+		
+			
+		for (auto& slotvalue : iter->second) {
+			//slotvalue.defaultvalue
+		}
+	}
 
 	return S_OK;
 }
@@ -84,7 +92,7 @@ void CMapPlacedObject::Update(_float dt)
 
 void CMapPlacedObject::Late_Update(_float dt)
 {
-}
+ }
 
 void CMapPlacedObject::Export_ObjectData(void* pDesc)
 {

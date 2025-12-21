@@ -73,7 +73,7 @@ HRESULT CTestLevel::Awake()
 	CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
 		.Collider(colDesc)
 		.Build("Test_Floor");
-
+	
 	objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;

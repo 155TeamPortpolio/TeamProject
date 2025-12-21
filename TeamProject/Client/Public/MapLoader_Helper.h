@@ -1,18 +1,22 @@
 #pragma once
 #include "Engine_Defines.h"
 #include "MapData_Defines.h"
+#include <limits>
+
 
 namespace Client {
 
-    inline SLOT_DATA_TYPE ParseType(const std::string& s)
+#pragma region Helper/Load SlotData From Json  
+    inline SLOT_DATA_TYPE ParseType(const std::string& tagType)
     {
-        if (s == "Int")    return SLOT_DATA_TYPE::Int;
-        if (s == "Float")  return SLOT_DATA_TYPE::Float;
-        if (s == "Bool")   return SLOT_DATA_TYPE::Bool;
-        if (s == "String") return SLOT_DATA_TYPE::String;
-        if (s == "Float3") return SLOT_DATA_TYPE::Float3;
-        return SLOT_DATA_TYPE::NONE;
+        if (tagType == "Int")    return SLOT_DATA_TYPE::Int;
+        if (tagType == "Float")  return SLOT_DATA_TYPE::Float;
+        if (tagType == "Bool")   return SLOT_DATA_TYPE::Bool;
+        if (tagType == "String") return SLOT_DATA_TYPE::String;
+        if (tagType == "Float3") return SLOT_DATA_TYPE::Float3;
+        return SLOT_DATA_TYPE::END;
     }
+
 
     template <class T>
     inline bool TryGet(const json& obj, const _char* key, T& out)
@@ -29,33 +33,62 @@ namespace Client {
         }
     }
 
-    inline bool TryGetInt(const json& obj, const _char* key, int32_t& Out)
+    inline bool TryGetInt(const json& obj, const _char* key, _int& Out)
     {
-        return TryGet<int32_t>(obj, key, Out);
+        return TryGet<_int>(obj, key, Out);
     }
-    inline bool TryGetFloat(const json& obj, const _char* key, double& Out)
+    inline bool TryGetFloat(const json& obj, const _char* key, _float& Out)
     {
-        return TryGet<double>(obj, key, Out);
+        return TryGet<_float>(obj, key, Out);
     }
-    inline bool TryGetBool(const json& obj, const _char* key, bool& Out)
+    inline bool TryGetBool(const json& obj, const _char* key, _bool& Out)
     {
-        return TryGet<bool>(obj, key, Out);
+        return TryGet<_bool>(obj, key, Out);
     }
     inline bool TryGetString(const json& obj, const _char* key, string& Out)
     {
         return TryGet<string>(obj, key, Out);
     }
-    inline bool TryGetFloat3(const json& obj, const _char* key, XMFLOAT3& Out)
+
+    inline const json* FindPtr(const json& obj, const _char* key)
     {
-        return TryGet<XMFLOAT3>(obj, key, Out);
+        if (!obj.is_object()) 
+            return nullptr;
+        auto it = obj.find(key);
+        return (it == obj.end()) ? nullptr : &(*it);
     }
 
-    inline _bool TryParseFloat3(const json& j, XMFLOAT3& out)
+    inline bool TryReadString(const json& obj, const _char* key, string& out)
+    {
+        const json* p = FindPtr(obj, key);
+        if (!p || !p->is_string()) 
+            return false;
+        out = p->get<std::string>();
+        return true;
+    }
+
+    inline bool TryReadInt(const json& obj, const char* key, _int& out)
+    {
+        const json* p = FindPtr(obj, key);
+        if (!p) return false;
+
+        if (p->is_number_integer() || p->is_number_unsigned()) {
+            const int64_t v = p->get<int64_t>(); 
+            if (v < (std::numeric_limits<_int>::min)() ||
+                v > (std::numeric_limits<_int>::max)())
+                return false;
+            out = static_cast<_int>(v);
+            return true;
+        }
+        return false;
+    }
+
+    inline _bool TryParseFloat3(const json& j, _float3& out)
     {
         if (j.is_array() && j.size() >= 3)
         {
             try {
-                out = XMFLOAT3{
+                out = _float3{
                     j.at(0).get<float>(),
                     j.at(1).get<float>(),
                     j.at(2).get<float>()
@@ -69,10 +102,10 @@ namespace Client {
 
         if (j.is_object())
         {
-            double x, y, z;
+            _float x, y, z;
             if (TryGetFloat(j, "x", x) && TryGetFloat(j, "y", y) && TryGetFloat(j, "z", z))
             {
-                out = XMFLOAT3{ x, y, z };
+                out = _float3{ x, y, z };
                 return true;
             }
         }
@@ -103,15 +136,15 @@ namespace Client {
             switch (out.type)
             {
             case SLOT_DATA_TYPE::Int:
-                out.value = v.get<int>();
+                out.value = v.get<_int>();
                 return true;
 
             case SLOT_DATA_TYPE::Float:
-                out.value = v.get<float>();
+                out.value = v.get<_float>();
                 return true;
 
             case SLOT_DATA_TYPE::Bool:
-                out.value = v.get<bool>();
+                out.value = v.get<_bool>();
                 return true;
 
             case SLOT_DATA_TYPE::String:
@@ -143,7 +176,7 @@ namespace Client {
             return false;
 
         // iObjID는 옵션: 없으면 -1 유지
-        int objId = -1;
+        int32_t objId = -1;
         if (TryGetInt(elem, "iObjID", objId))
             out.iObjID = objId;
 
@@ -161,4 +194,41 @@ namespace Client {
 
         return true;
     }
+#pragma endregion
+
+#pragma region Helper/Use SlotValue Data
+    template<typename T> struct SlotTypeTag;
+
+    template<> struct SlotTypeTag<int32_t> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Int; };
+    template<> struct SlotTypeTag<float> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float; };
+    template<> struct SlotTypeTag<bool> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Bool; };
+    template<> struct SlotTypeTag<std::string> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::String; };
+    template<> struct SlotTypeTag<DirectX::XMFLOAT3> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float3; };
+
+    template<typename T>
+    optional<T> GetSlotValue(const SlotValue& sv)
+    {
+        // SlotValue의 값과 완전히 일치하는 값만 가능
+        static_assert(
+            std::is_same_v<T, _int> ||
+            std::is_same_v<T, _float> ||
+            std::is_same_v<T, _bool> ||
+            std::is_same_v<T, std::string> ||
+            std::is_same_v<T, _float3>,
+            "Func<T>: unsupported type"
+            );
+
+        if (sv.type != SlotTypeTag<T>::tag)
+            return nullopt;
+
+        if (auto p = std::get_if<T>(&sv.value)) // 타입 아니면 nullptr
+            return *p;
+
+        return nullopt; // type과 variant가 어긋난 경우도 안전하게 실패
+    }
+
+
+
+#pragma endregion
+
 }

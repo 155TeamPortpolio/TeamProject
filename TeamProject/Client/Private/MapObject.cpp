@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "MapObject.h"
-#include "RayReceiver.h"
 
 #include "GameInstance.h"
 
