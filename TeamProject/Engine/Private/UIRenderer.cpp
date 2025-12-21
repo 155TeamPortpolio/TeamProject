@@ -44,12 +44,6 @@ HRESULT CUIRenderer::Render_2D(UIPass* pUIPass)
 	return S_OK;
 }
 
-HRESULT CUIRenderer::Render_Font()
-{
-	if (FAILED(CGameInstance::GetInstance()->Get_FontSystem()->Render_Font())) return E_FAIL;
-	return S_OK;
-}
-
 HRESULT CUIRenderer::Render_CustomTarget()
 {
 	for (auto& cmd : m_RenderCommands)

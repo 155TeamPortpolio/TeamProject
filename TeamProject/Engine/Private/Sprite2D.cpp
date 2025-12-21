@@ -149,6 +149,12 @@ HRESULT CSprite2D::ChangePass(const string& passConstant)
 	return S_OK;
 }
 
+HRESULT CSprite2D::Set_TextKey(const string& textKey)
+{
+	m_TextKey = textKey;
+	return S_OK;
+}
+
 HRESULT CSprite2D::Set_Param(const string& ConstantName, const SHADER_PARAM& parameter)
 {
 	auto it = m_DynamicSlots.find(ConstantName);

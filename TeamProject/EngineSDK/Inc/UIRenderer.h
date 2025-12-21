@@ -14,7 +14,6 @@ private:
 public:
     HRESULT Render_3D(class UI3DPass* pUI3DPass);
     HRESULT Render_2D(class UIPass* pUIPass);
-    HRESULT Render_Font();
     HRESULT Render_CustomTarget();
     void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command);
 

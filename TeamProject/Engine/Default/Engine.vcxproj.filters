@@ -145,9 +145,6 @@
     <ClInclude Include="..\Public\LightMgr.h">
       <Filter>01. Utility\08. LightManager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sprite2D.h">
-      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Animator3D.h">
       <Filter>01. Utility\04. Components\06. Animator3D</Filter>
     </ClInclude>
@@ -492,9 +489,12 @@
     </ClInclude>
     <ClInclude Include="..\public\PostRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\EffectBuilder.h">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sprite2D.h">
+      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -920,7 +920,7 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
       <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="01. Utility\03. GameObject\BuildSystem\Builder_Effect">
       <UniqueIdentifier>{b38ebe60-64a0-457a-9554-4e9baf299e0d}</UniqueIdentifier>
     </Filter>
@@ -1336,7 +1336,7 @@
     </ClCompile>
     <ClCompile Include="..\private\PostRenderer.cpp">
       <Filter>01. Utility\06. RenderSystem\Renderer\Post</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\EffectBuilder.cpp">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClCompile>

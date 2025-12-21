@@ -446,6 +446,9 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
 		packet.pSprite2D->Apply_Shader(pContext);
 		packet.pSprite2D->Draw_Sprite(pContext);
+
+
+		CGameInstance::GetInstance()->Get_FontSystem()->Render_TextFont(packet.pSprite2D->Get_TextKey());
 	}
 
 	m_Packets.clear();
