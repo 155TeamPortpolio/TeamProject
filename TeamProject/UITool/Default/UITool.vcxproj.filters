@@ -40,6 +40,12 @@
     <Filter Include="02.Object\UI\Button">
       <UniqueIdentifier>{1e93654c-77c0-4328-9909-d9fe90890e57}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\SpriteAnimation">
+      <UniqueIdentifier>{1578e3e1-07a9-462e-aabc-dc266985adda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Object\UI\UVAnimation">
+      <UniqueIdentifier>{91a5c3d0-6268-4417-b30c-e9cd29e2925e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -99,6 +105,12 @@
     <ClInclude Include="..\Public\ButtonUI.h">
       <Filter>02.Object\UI\Button</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SpriteAnimationUI.h">
+      <Filter>02.Object\UI\SpriteAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UVAnimationUI.h">
+      <Filter>02.Object\UI\UVAnimation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -154,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp">
       <Filter>02.Object\UI\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
+      <Filter>02.Object\UI\SpriteAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UVAnimationUI.cpp">
+      <Filter>02.Object\UI\UVAnimation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

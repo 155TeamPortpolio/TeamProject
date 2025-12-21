@@ -290,6 +290,7 @@ namespace Engine
 	}COLLISION_CONTEXT;
 
 	typedef struct tagUITextInfo {
+		string		TextKey;
 		wstring		Text = {};
 		_float2		TextPos = {};
 		_float4		TextColor = {};
