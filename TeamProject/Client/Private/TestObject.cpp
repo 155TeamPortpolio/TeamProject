@@ -11,7 +11,12 @@
 
 #include "RigidBody.h"
 
+#include "TestState_Idle.h"
+#include "TestState_Walk.h"
+#include "TestState_Jump.h"
+
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
+
 
 CTestObject::CTestObject()
 {
@@ -35,7 +40,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*Ã†Ã„Ã€ÃÂ¸Ã­Â°Ãº Ã…Â°Â°ÂªÃ€Âº Ã€ÃÃ„Â¡*/
+	/*ÆÄÀÏ¸í°ú Å°°ªÀº ÀÏÄ¡*/
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
@@ -52,8 +57,52 @@ HRESULT CTestObject::Initialize_Prototype()
 HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+	Initialize_State();
 
 	GAMEOBJECT_DESC* pObjDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+	return S_OK;
+}
+
+HRESULT CTestObject::Initialize_State()
+{
+	m_pStateMachine = new CStateMachine<CTestObject>();
+
+	// States µî·Ï
+	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
+	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
+	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
+	
+	// Transition ¼³Á¤
+	// Idle <-> Walk (ÀÌµ¿ ÀÔ·Â)
+	m_pStateMachine->Register_Transition("Idle", "Walk",
+		CONDITION_BOOL_TRUE, "IsMoving");
+
+	m_pStateMachine->Register_Transition("Walk", "Idle",
+		CONDITION_BOOL_FALSE, "IsMoving");
+
+	// AnyState -> Jump
+	m_pStateMachine->Register_AnyStateTransition("Jump",
+		CONDITION_TRIGGER, "Jump");
+
+	// Jump -> Idle (ÂøÁö ½Ã)
+	m_pStateMachine->Register_Transition("Jump", "Idle",
+		CONDITION_BOOL_TRUE, "IsGrounded");
+
+	// Jump -> Walk (°øÁß¿¡¼­ ÀÌµ¿ ½Ã)
+	m_pStateMachine->Register_Transition("Jump", "Walk",
+		CONDITION_BOOL_TRUE, "IsMoving");
+
+	// Jump -> Idle (ÂøÁö ½Ã)
+	m_pStateMachine->Register_Transition("Jump", "Idle",
+		CONDITION_BOOL_TRUE, "IsGrounded");
+	
+
+
+	// ±âº» »óÅÂ ¼³Á¤
+	m_pStateMachine->Set_DefaultState("Idle");
+
+	m_pStateMachine->Initialize(this);
 
 	return S_OK;
 }
@@ -62,8 +111,8 @@ void CTestObject::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	
-	Get_Component<CAnimator3D>()->Change_Animation(1);
+	for (_uint i = 0; i < 3; i++)
+		Get_Component<CAnimator3D>()->Set_Animation(i, 3);
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
@@ -76,44 +125,27 @@ void CTestObject::Priority_Update(_float dt)
 void CTestObject::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	if (m_pStateMachine)	m_pStateMachine->Update(dt);
+	
 
 	auto controller = Get_Component<CCharacterController>();
-	auto cam        = CAM->Get_ActiveCam();
-	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
-
-	_vector3 camLook = camTf->Dir(STATE::LOOK);
-	_vector3 camRight = camTf->Dir(STATE::RIGHT);
-
-	camLook.y = 0.f; camRight.y = 0.f;
-
-	_vector3 vMoveDir{};
-
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-
-	if (input->Key_Down(VK_UP))
-		vMoveDir += camLook;
-	if (input->Key_Down(VK_DOWN))
-		vMoveDir -= camLook;
-	if (input->Key_Down(VK_RIGHT))
-		vMoveDir += camRight;
-	if (input->Key_Down(VK_LEFT))
-		vMoveDir -= camRight;
-
-	controller->Move_Direction(vMoveDir, 5.0f, dt);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		controller->Jump(3.f);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
+	if (controller)
 	{
-		PHYSICS_RAY_HIT hit;
-		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		controller->Shoot_Ray(vLook, 100.f, hit);
-	}
-	else
-		controller->Clear_DebugRay();
+		controller->Update(dt);
 
-	controller->Update(dt);
+		// µð¹ö±×¿ë ·¹ÀÌÄ³½ºÆ® (FÅ°)
+		auto input = CGameInstance::GetInstance()->Get_InputDev();
+		if (input->Key_Hold('F'))
+		{
+			PHYSICS_RAY_HIT hit;
+			_vector vLook = m_pTransform->Dir(STATE::LOOK);
+			controller->Shoot_Ray(vLook, 100.f, hit);
+		}
+		else
+		{
+			controller->Clear_DebugRay();
+		}
+	}
 }
 
 void CTestObject::Late_Update(_float dt)
@@ -146,6 +178,14 @@ void CTestObject::Render_GUI()
 	}
 	_bool isLayer = Get_Layer();
 	ImGui::Checkbox("InLayer",&isLayer);
+
+	// StateMachine µð¹ö±ë Á¤º¸
+	if (m_pStateMachine)
+	{
+		ImGui::Separator();
+		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+	}
 }
 
 CTestObject* CTestObject::Create()
@@ -175,5 +215,6 @@ CGameObject* CTestObject::Clone(INIT_DESC* pArg)
 
 void CTestObject::Free()
 {
+	Safe_Delete(m_pStateMachine);
 	__super::Free();
 }
