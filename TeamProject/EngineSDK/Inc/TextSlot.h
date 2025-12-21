@@ -25,6 +25,7 @@ public:
     void Set_Position(_float2 Pos);
     void Set_Rotate(_float Rotate);
     void Set_Text(wstring Text) { m_Info.Text = Text; };
+    void Set_TextKey(string TextKey) { m_Info.TextKey = TextKey; };
     void Set_OutLine(_float Thickness, _float4 OutlineColor);
     void ReSet_OutLine() { m_Info.OutLined = false; };
     void Set_Origin(_float2 origin) { m_Info.Origin = origin; };

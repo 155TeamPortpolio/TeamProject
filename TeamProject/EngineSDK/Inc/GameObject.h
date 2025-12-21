@@ -80,6 +80,8 @@ private:
 	HRESULT Make_NonLightPacket(OPAQUE_PACKET packet);
 	HRESULT Make_InstancePacket();
 	HRESULT Make_ParticlePacket();
+	HRESULT Make_EffectPacket(OPAQUE_PACKET packet);
+	HRESULT Make_3DUIPacket(OPAQUE_PACKET packet);
 
 protected:
 	_bool m_isRootObject = { true };
