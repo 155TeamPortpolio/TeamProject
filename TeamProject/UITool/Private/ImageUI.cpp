@@ -29,9 +29,9 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    const auto& strTextureKeys = CUITool_Level::m_strTextureKeys;
-    if (strTextureKeys.size())
-        Change_Texture(0, G_GlobalLevelKey, strTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -60,10 +60,13 @@ void CImageUI::Render_GUI()
 
     Render_GUI_Transform();
 
-    ImGui::SeparatorText(u8"이미지");
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if (ImGui::Combo(u8"이미지", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex], m_strTextureKey);
+
+    // 이미지
+    ImGui::SeparatorText(u8"이미지");
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     __super::Render_GUI();
 }
@@ -74,13 +77,17 @@ void CImageUI::ToJson(json& data)
      
     data["typeTag"] = "ImageUI";
 
-    data["textureTag"] = m_strTextureKey;// CUITool_Level::m_strTextureKeys[m_iTextureKeyIndex];
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
 }
 
 void CImageUI::FromJson(const json& data)
 {
-    Change_Texture(0, G_GlobalLevelKey, data["textureTag"], m_strTextureKey);
-    //Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data["textureTag"]);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
