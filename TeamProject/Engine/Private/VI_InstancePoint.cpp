@@ -1,5 +1,8 @@
 #include "Engine_Defines.h"
 #include "VI_InstancePoint.h"
+#include "GameInstance.h"
+#include "IResourceService.h"
+#include "ComputeShader.h"
 
 CVI_InstancePoint::CVI_InstancePoint(const string& bufferID)
 	:CVIBuffer(bufferID)
@@ -35,33 +38,6 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 
 	if (FAILED(Create_InstanceBuffer(pDevice)))
 		return E_FAIL;
-
-	/*----------Compute Shader--------------*/
-	
-	/* Global Counter */
-	{
-		D3D11_BUFFER_DESC Desc{};
-		Desc.ByteWidth = sizeof(_uint);
-		Desc.Usage = D3D11_USAGE_DEFAULT;
-
-
-	}
-
-	/* Draw Args */
-	{
-
-	}
-
-	/* Alive Count */
-	{
-
-	}
-
-	/* Build Pack */
-	{
-
-	}
-
 	return S_OK;
 }
 
@@ -122,15 +98,6 @@ HRESULT CVI_InstancePoint::Create_InstanceBuffer(ID3D11Device* pDevice)
 	subData.pSysMem = VBContainer;
 
 	HRESULT hr = pDevice->CreateBuffer(&InstanceDesc, &subData, &m_pInstanceBuffer);
-
-	D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc{};
-	uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-	uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-	uavDesc.Buffer.FirstElement = 0;
-	uavDesc.Buffer.NumElements = m_iMaxInstancesCount;
-	uavDesc.Buffer.Flags = 0;
-
-	hr = pDevice->CreateUnorderedAccessView(m_pInstanceBuffer, &uavDesc, &m_pInstanceUAV);
 
 	Safe_Delete_Array(VBContainer);
 	return hr;

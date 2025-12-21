@@ -132,24 +132,24 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 
 const D3D11_INPUT_ELEMENT_DESC* CParticleSystem::Get_ElementDesc(_uint DrawIndex)
 {
-	return m_pInstancePoint->Get_ElementDesc();
+	return VTX_INSTANCE_POINT_ELEMENT::Elements;
 }
 
 const _uint CParticleSystem::Get_ElementCount(_uint DrawIndex)
 {
-	return m_pInstancePoint->Get_ElementCount();
+	return VTX_INSTANCE_POINT_ELEMENT::iElementCount;
 }
 
 const string_view CParticleSystem::Get_ElementKey(_uint DrawIndex)
 {
-	return m_pInstancePoint->Get_ElementKey();
+	return VTX_INSTANCE_POINT_ELEMENT::Key;
 }
 
 HRESULT CParticleSystem::Link_Model(const string& levelKey, const string& modelDataKey)
 {
-	Safe_Release(m_pInstancePoint);
-	m_pInstancePoint = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_VIBuffer(levelKey, modelDataKey, BUFFER_TYPE::BASIC_INSTANCE_POINT);
-	Safe_AddRef(m_pInstancePoint);
+	Safe_Release(m_pPoint);
+	m_pPoint = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_VIBuffer(levelKey, modelDataKey, BUFFER_TYPE::BASIC_POINT);
+	Safe_AddRef(m_pPoint);
 
 	return S_OK;
 }
@@ -225,8 +225,23 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_UseGravity = particleDesc.useGravity;
 	m_fGravityScale = particleDesc.fGravityScale;
 
-	/*Module Params*/
+	/* Instance Buffer */
+	{
+		ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+		Safe_Release(m_pInstanceBuffer);
+	
+		D3D11_BUFFER_DESC Desc{};
+		Desc.ByteWidth = m_iMaxSpawnParticleCount * sizeof(VTX_INSTANCE_POINT);
+		Desc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+		Desc.Usage = D3D11_USAGE_DYNAMIC;
+		Desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		Desc.MiscFlags = 0;
+		Desc.StructureByteStride = 0;
 
+		pDevice->CreateBuffer(&Desc, nullptr, &m_pInstanceBuffer);
+	}
+
+	/*Module Params*/
 	/*Life Time Velocity*/
 	{
 		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
@@ -300,9 +315,21 @@ void CParticleSystem::Simulation_Particle(_float dt)
 	}
 }
 
+HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
+{
+	ID3D11Buffer* buffers[2] = { m_pPoint->Get_VertexBuffer(),m_pInstanceBuffer };
+	_uint strides[2] = { m_pPoint->Get_VertexStride(), sizeof(VTX_INSTANCE_POINT) };
+	_uint offsets[2] = { 0,0 };
+
+	pContext->IASetVertexBuffers(0, 2, buffers, strides, offsets);
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+
+	return S_OK;
+}
+
 HRESULT CParticleSystem::Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count)
 {
-	pContext->DrawInstanced(m_pInstancePoint->Get_VertexCount(), count, 0, offset);
+	pContext->DrawInstanced(m_pPoint->Get_VertexCount(), count, 0, offset);
 
 	return S_OK;
 }
@@ -574,6 +601,11 @@ void CParticleSystem::UpdateParticles(_float dt)
 	//}
 }
 
+void CParticleSystem::BuildInstanceData()
+{
+	
+}
+
 void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 {
 	particle.IsAlive = 1;
@@ -641,7 +673,7 @@ CComponent* CParticleSystem::Clone()
 void CParticleSystem::Free()
 {
 	__super::Free();
-	Safe_Release(m_pInstancePoint);
+	Safe_Release(m_pPoint);
 
 	for (auto& module : m_Modules)
 		Safe_Release(module);

@@ -85,12 +85,15 @@ public:
 	_bool isReadyToDraw()	override { return true; };
 
 public:
-	void SetParticleParams(PARTICLE_NODE particleDesc);
-	void Simulation_Particle(_float dt);
+	HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
 	HRESULT Draw(ID3D11DeviceContext* pContext, _uint offset, _uint count);
 	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
-
 	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
+
+public:
+	void SetParticleParams(PARTICLE_NODE particleDesc);
+	void Simulation_Particle(_float dt);
+
 public:
 	virtual void Render_GUI() override;
 
@@ -102,9 +105,12 @@ private:
 	void ResetAliveOut();
 	void UploadSpawnIn();
 	void UpdateParticles(_float dt);
+	void BuildInstanceData();
 	void SetUpParticle(PARTICLE_GPU& particle)const;
 
-	class CVIBuffer* m_pInstancePoint = { nullptr };
+	class CVIBuffer* m_pPoint = { nullptr };
+	ID3D11Buffer* m_pInstanceBuffer = { nullptr };
+
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
 
