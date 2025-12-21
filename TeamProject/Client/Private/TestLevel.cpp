@@ -64,11 +64,11 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
 	
 	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
-	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("test_particle.json")
-		.Position(_float3(0.f, 0.f, 0.f))
-		.Build("Test_Effect");
-	objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("test_particle.json")
+	//	.Position(_float3(0.f, 0.f, 0.f))
+	//	.Build("Test_Effect");
+	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
 	//===================================================
 
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());

@@ -27,6 +27,7 @@ private:
 	HRESULT			LoadSlotData(const MapData_Path_Packet* pPacket);
 	HRESULT			CacheSlotDataFile(const string& SlotDataFilePath);
 	
+	_bool			isThereFormat(const string& TagSlotFormat);
 
 private:
 	string	m_TagLevel = {};

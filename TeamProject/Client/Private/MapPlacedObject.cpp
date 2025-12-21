@@ -1,15 +1,16 @@
 #include "pch.h"
 #include "MapPlacedObject.h"
+#include "GameInstance.h"
 #include "MapData_Defines.h"
+#include "MapLoader_Helper.h"
 
 #include "ModelData.h"
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 #include "Material.h"
 
-//#include "RayReceiver.h"
+#include "EffectContainer.h"
 
-#include "GameInstance.h"
 
 
 CMapPlacedObject::CMapPlacedObject()
@@ -67,12 +68,23 @@ HRESULT CMapPlacedObject::Initialize(INIT_DESC* pArg)
 
 	auto iter = pObjDesc->SlotDataValues.find("Effect");
 	if (iter != pObjDesc->SlotDataValues.end()) {
-		
-		
-			
-		for (auto& slotvalue : iter->second) {
-			//slotvalue.defaultvalue
+		string TagAsset = {};
+		_float3 vPosition = {};
+		for (auto& tFieldData : iter->second) {
+			if (tFieldData.TagName == "AssetKey") {
+				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
+				TagAsset = *TagValueAssetKey;
+			}
+			else if (tFieldData.TagName == "Position") {
+				auto vValuePos = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vPosition = *vValuePos;
+			}
 		}
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset(TagAsset)
+			.Position(vPosition)
+			.Build("Test_Effect");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, {"Test_Level","Effect_Layer"});
 	}
 
 	return S_OK;

@@ -82,19 +82,29 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 
     COLLIDER_DESC ColliderDesc = {};
 
-    // physics 데이터 넣는 부분. 개선의 여지가 있음
-    if (true == m_hasColliderData) {
-        for (auto& physicsData : m_SlotFormatData["COLLIDER_DESC"][pData->iObjID]) {
-            
-            if (physicsData.TagName == "bCooking" && physicsData.defaultvalue.type == SLOT_DATA_TYPE::Bool) {
-                auto bCooking = GetSlotValue<_bool>(physicsData.defaultvalue);
-                Desc->bCooking = *bCooking;
-                ColliderDesc.bCooking = *bCooking;
-                ColliderDesc.strModelKey = Desc->TagModelKey;
+    for (auto& tSlotData : m_SlotFormatData) {
+        if (tSlotData.first == "COLLIDER_DESC" && true == m_hasColliderData) {
+            // physics 데이터 넣는 부분. 개선의 여지가 있음
+            for (auto& physicsData : tSlotData.second[pData->iObjID]) {
+
+                if (physicsData.TagName == "bCooking" && physicsData.defaultvalue.type == SLOT_DATA_TYPE::Bool) {
+                    auto bCooking = GetSlotValue<_bool>(physicsData.defaultvalue);
+                    Desc->bCooking = *bCooking;
+                    ColliderDesc.bCooking = *bCooking;
+                    ColliderDesc.strModelKey = Desc->TagModelKey;
+                }
             }
         }
+        
+        // 일단 데이터 다 때려넣기
+        for (auto& FieldData : tSlotData.second[pData->iObjID]) 
+            Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
+
+
 
     }
+  
+
 
 
     CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapPlacedObject" })
@@ -266,6 +276,14 @@ HRESULT CMapLoader::CacheSlotDataFile(const string& SlotDataFilePath)
     }
 
     return S_OK;
+}
+
+_bool CMapLoader::isThereFormat(const string& TagSlotFormat)
+{
+    auto iter = m_SlotFormatData.find(TagSlotFormat);
+    if (iter == m_SlotFormatData.end())
+        return false;
+    return true;
 }
 
 CMapLoader* CMapLoader::Create(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)
