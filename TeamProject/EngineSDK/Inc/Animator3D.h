@@ -4,14 +4,13 @@
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
+enum class ANIM_LAYER_STATE { OVERRIDE, BLEND, ADDITIVE };
+enum class BLEND_STATE { NONE, CROSSFADE, IMMEDIATE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
 {
-protected:
-    enum class ANIM_LAYER_STATE {OVERRIDE, BLEND, ADDITIVE };
-    enum class BLEND_STATE{ NONE, CROSSFADE, IMMEDIATE };
-
+public:
     struct AnimConvert {
         _uint SrcClip;
         _uint DstClip;
@@ -19,13 +18,20 @@ protected:
         _float ConversionDuration = {};
     };
 
+    friend class SetAnimBuild;
+    friend class ChangeAnimBuild;
+
     typedef struct AnimationLayer {
-        //---------- ·¹ÀÌ¾î ¼Ó¼º
+        //---------- ë ˆì´ì–´ ì†ì„± (ë ˆì´ì–´ ì˜êµ¬ë³€ê²½)
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
+        //ë£¨íŠ¸ë³¸ ê´€ë ¨
+        _bool   bUseTransform = { true };
+        _int    iMoveBoneIndex = { -1 };
+        _float3 fPrevAnimPos{};
 
-        //---------- ¾Ö´Ï¸ÅÀÌ¼Ç µ¥ÀÌÅÍ
+        //---------- ì• ë‹ˆë§¤ì´ì…˜ ë°ì´í„° (ë³€ê²½ì‹œ ì´ˆê¸°í™”)
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
@@ -33,23 +39,27 @@ protected:
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
 
-        //·çÆ®º» °ü·Ã
+        //ë£¨íŠ¸ë³¸ ê´€ë ¨
         _bool   bUseTransform = { true };
         _int    iMoveBoneIndex = { -1 };
         _float3 fPrevAnimPos{};
-        //·ÎÄÃ ¸ÅÆ®¸¯½º
+        //ë¡œì»¬ ë§¤íŠ¸ë¦­ìŠ¤
         vector<_float4x4> LocalMatrices = {};
-        //Å¬¸³ ¿É¼Ç
+        //í´ë¦½ ì˜µì…˜
 
-        //---------- ºí·»µå »óÅÂ
-        _bool   bBlending = { false };
-        _int    iNextClipIndex = { -1 };
-        _float  fBlendElapsed = {};
-        _float  fBlendDuration = {};
-        BLEND_STATE     eBlendState = { BLEND_STATE::NONE };
-        //´ÙÀ½ ¸ÅÆ®¸¯½º
+        //ë¡œì»¬ ë§¤íŠ¸ë¦­ìŠ¤
+        vector<_float4x4> LocalMatrices = {};
+ 
+        //---------- ë¸”ë Œë“œ ìƒíƒœ (ë³€ê²½ì‹œ ì´ˆê¸°í™”)
+        _bool       bBlending = { false };
+        _int        iNextClipIndex = { -1 };
+        _float      fBlendElapsed = {};
+        _float      fBlendDuration = {};
+        BLEND_STATE eBlendState = { BLEND_STATE::NONE };
+
+        //ë‹¤ìŒ ë§¤íŠ¸ë¦­ìŠ¤
         vector<_float4x4> BlendMatrices = {};
-        //º¸°£À» ´ÙÇÑ ÃÖÁ¾ ¸ÅÆ®¸¯½º
+        //ë³´ê°„ì„ ë‹¤í•œ ìµœì¢… ë§¤íŠ¸ë¦­ìŠ¤
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
@@ -65,44 +75,41 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
-    HRESULT Resize_Layer(_uint iLayerCount); //·¹ÀÌ¾î Å©±â(°³¼ö) ÁöÁ¤ //º¤ÅÍresize¿Í µ¿ÀÏÇÑ ±â´É 
+    HRESULT Resize_Layer(_uint iLayerCount); //ë ˆì´ì–´ í¬ê¸°(ê°œìˆ˜) ì§€ì • //ë²¡í„°resizeì™€ ë™ì¼í•œ ê¸°ëŠ¥ 
     virtual void Update_Animation(_float dt);
 
-public: //Å¬¶óÀÌ¾ğÆ® »ç¿ë Àü¿ë ÇÔ¼ö
-    //Áï½Ã ¾Ö´Ï¸ÅÀÌ¼Ç º¯°æ
-    virtual HRESULT Set_Animation(AnimArg ClipArg);
-    virtual HRESULT Set_Animation(_uint LayerIndex, AnimArg Clip);
-    //¾Ö´Ï¸ÅÀÌ¼Ç º¸°£ º¯°æ (¾ÆÁ÷ º¸°£Ã³¸®°¡ ÀÛµ¿ÇÏÁö ¾ÊÀ½)
-    virtual HRESULT Change_Animation(AnimArg ClipArg); 
-    virtual HRESULT Change_Animation(_uint LayerIndex, AnimArg ClipArg); 
-    
-    //·¹ÀÌ¾î ÃÊ±âÈ­
+public: //í´ë¼ì´ì–¸íŠ¸ ì‚¬ìš© ì „ìš© í•¨ìˆ˜ .Apply() ë¡œ ì ìš©í• ê²ƒ
+    //ì¦‰ì‹œ ì• ë‹ˆë§¤ì´ì…˜ ë³€ê²½
+    class SetAnimBuild Set_Animation(AnimArg ClipArg);
+    class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
+    //ì• ë‹ˆë§¤ì´ì…˜ ë³´ê°„ ë³€ê²½ (ì•„ì§ ë³´ê°„ì²˜ë¦¬ê°€ ì‘ë™í•˜ì§€ ì•ŠìŒ)
+    class ChangeAnimBuild Change_Animation(AnimArg ClipArg);
+    class ChangeAnimBuild Change_Animation(_uint LayerIndex, AnimArg ClipArg);
+    //ë ˆì´ì–´ ì´ˆê¸°í™”
     virtual void Reset_Layer(_uint LayerIndex);
-    //·¹ÀÌ¾î ¾Ö´Ï¸ÅÀÌ¼ÇÀ» ¸ØÃã (ÃÊ±âÈ­ x)
-    virtual HRESULT Stop_Animation(_uint LayerIndex); //(±¸Çö¾È‰Î)
-    virtual HRESULT StopAll_Animation(); //(±¸Çö¾È‰Î)
+    //ë ˆì´ì–´ ì• ë‹ˆë§¤ì´ì…˜ì„ ë©ˆì¶¤ (ì´ˆê¸°í™” x)
+    virtual HRESULT Stop_Animation(_uint LayerIndex); //(êµ¬í˜„ì•ˆëŒ)
+    virtual HRESULT StopAll_Animation(); //(êµ¬í˜„ì•ˆëŒ)
 
-protected:
-    virtual HRESULT Set_Animation_Work(_uint LayerIndex, _int ClipIndex); //½ÇÁ¦ ±â´ÉÇÔ¼ö
-    virtual HRESULT Change_Animation_Work(_uint LayerIndex, _int ClipIndex); //½ÇÁ¦ ±â´ÉÇÔ¼ö
-
-public://¾Ö´Ï¸ÅÀÌÅÍ µ¥ÀÌÅÍ
+public://ì• ë‹ˆë§¤ì´í„° ë°ì´í„°
     /*----- is -----*/
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ ³¡³µ´ÂÁö
+
+    //í˜„ì¬ ë ˆì´ì–´ì˜ ì• ë‹ˆë§¤ì´ì…˜ì´ ëë‚¬ëŠ”ì§€
     _bool isCurrentAnimEnd(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ Å¬¸³ÀÌ 0~1»çÀÌÀÇ ºñÀ²À» ¹Ş°í, ±× °ªÀÇ ºñÀ²À» ³Ñ¾î¼¹´ÂÁö
+    //í˜„ì¬ ë ˆì´ì–´ì˜ í´ë¦½ì´ 0~1ì‚¬ì´ì˜ ë¹„ìœ¨ì„ ë°›ê³ , ê·¸ ê°’ì˜ ë¹„ìœ¨ì„ ë„˜ì–´ì„°ëŠ”ì§€
     _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ ºí·£µå ÁßÀÎÁö
+    //í˜„ì¬ ë ˆì´ì–´ì˜ ì• ë‹ˆë§¤ì´ì…˜ì´ ë¸”ëœë“œ ì¤‘ì¸ì§€
     _bool isBlending(_uint LayerIndex = 0);
 
     /*----- Getter -----*/
-    //ÇöÀç ·¹ÀÌ¾î Å¬¸³ÀÇ ÁøÇà·ü 0~1 ¹İÈ¯
+
+    //í˜„ì¬ ë ˆì´ì–´ í´ë¦½ì˜ ì§„í–‰ë¥  0~1 ë°˜í™˜
     _float Get_CurAnimDuration(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼Ç ÀÌ¸§
+    //í˜„ì¬ ë ˆì´ì–´ì˜ ì• ë‹ˆë§¤ì´ì…˜ ì´ë¦„
     string Get_CurAnimName(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼Ç ÀÎµ¦½º
+    //í˜„ì¬ ë ˆì´ì–´ì˜ ì• ë‹ˆë§¤ì´ì…˜ ì¸ë±ìŠ¤
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾î °³¼ö
+    //í˜„ì¬ ë ˆì´ì–´ ê°œìˆ˜
     _int Get_NumLayer();
 
     /*----- Setter -----*/
@@ -114,25 +121,25 @@ public:
     void Dettach_BoneRelation(_uint Index);
 
 public:
-    //¿ùµå»óÀÇ ÃÖÁ¾ »À À§Ä¡¸¦ °¡Á®¿È
+    //ì›”ë“œìƒì˜ ìµœì¢… ë¼ˆ ìœ„ì¹˜ë¥¼ ê°€ì ¸ì˜´
     _float4x4 Get_BoneMatrix(const string& boneName);
     _float4x4 Get_BoneMatrix(_uint Index);
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
     const vector<_float4x4>& Get_BoneMatrices() { return m_FinalMatices; };
-    //·ÎÄÃ »À ÃÖÁ¾À§Ä¡¸¦ °¡Á®¿È
+    //ë¡œì»¬ ë¼ˆ ìµœì¢…ìœ„ì¹˜ë¥¼ ê°€ì ¸ì˜´
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
 
-protected://¾Ö´Ï¸ÅÀÌ¼Ç Ã¼Å©
-    //¹®ÀÚ¿­ ¹× ¼ıÀÚ¸¦ ÀÎµ¦½º·Î Àß ¹Ù²ãÁÖ´Â ÇÔ¼ö
+protected://ì• ë‹ˆë§¤ì´ì…˜ ì²´í¬
+    //ë¬¸ìì—´ ë° ìˆ«ìë¥¼ ì¸ë±ìŠ¤ë¡œ ì˜ ë°”ê¿”ì£¼ëŠ” í•¨ìˆ˜
     _int Resolve_ClipIndex(AnimArg ClipArg);
-    //·¹ÀÌ¾î ÀÎµ¦½º¸¦ Ã£À½
+    //ë ˆì´ì–´ ì¸ë±ìŠ¤ë¥¼ ì°¾ìŒ
     _int Find_Clip(const string& ClipTag);
-    //Á¸ÀçÇÏ´ÂÁö ¿©ºÎ
+    //ì¡´ì¬í•˜ëŠ”ì§€ ì—¬ë¶€
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
 
-protected://¾Ö´Ï¸ÅÀÌ¼Ç ¿¬»ê
+protected://ì• ë‹ˆë§¤ì´ì…˜ ì—°ì‚°
     void Animation_Run(_float dt);
     void Animation_Convert(_float dt);
 
@@ -151,20 +158,20 @@ private:
     void Reset_Anim();
 protected:
     class CModelData* m_pData = {};
-    vector<class CAnimationClip*> m_pAnimClips;         //ºÒ·¯¿Â ¾Ö´Ï¸ÅÀÌ¼ÇÅ¬¸³µé
+    vector<class CAnimationClip*> m_pAnimClips;         //ë¶ˆëŸ¬ì˜¨ ì• ë‹ˆë§¤ì´ì…˜í´ë¦½ë“¤
     vector<ANIM_LAYER> m_AnimLayers;
     vector<string> m_EventBus;
 
-    /* ¾Æ·¡ 4°³ÀÇ °ª¸¸ Á¦´ë·Î µé¾î¿À¸é ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ µ¹¾Æ°¨  */
-    vector<_float4x4> m_TransfromationMatrices = {};    //¾Ö´Ï¸ÅÀÌ¼Ç Å¬¸³À» ¾÷µ¥ÀÌÆ®ÇÑ ·ÎÄÃ ¸ÅÆ®¸¯½º
-    vector<_float4x4> m_ManipulateMatrices = {};        //°­Á¦·Î Ãß°¡ÇÒ ¸ÅÆ®¸¯½º
-    vector<_float4x4> m_CombinedMatrices = {};          //ºÎ¸ğ·ÎºÎÅÍ ¾÷µ¥ÀÌÆ®‰Â ¸ÅÆ®¸¯½º
-    vector<_float4x4> m_FinalMatices = {};              //¿ùµåÇà·Ä±îÁö °öÇØÁø ÃÖÁ¾ ¸ÅÆ®¸¯½º
+    /* ì•„ë˜ 4ê°œì˜ ê°’ë§Œ ì œëŒ€ë¡œ ë“¤ì–´ì˜¤ë©´ ì• ë‹ˆë§¤ì´ì…˜ì´ ëŒì•„ê°  */
+    vector<_float4x4> m_TransformationMatrices = {};    //ì• ë‹ˆë§¤ì´ì…˜ í´ë¦½ì„ ì—…ë°ì´íŠ¸í•œ ë¡œì»¬ ë§¤íŠ¸ë¦­ìŠ¤
+    vector<_float4x4> m_ManipulateMatrices = {};        //ê°•ì œë¡œ ì¶”ê°€í•  ë§¤íŠ¸ë¦­ìŠ¤
+    vector<_float4x4> m_CombinedMatrices = {};          //ë¶€ëª¨ë¡œë¶€í„° ì—…ë°ì´íŠ¸ë€ ë§¤íŠ¸ë¦­ìŠ¤
+    vector<_float4x4> m_FinalMatices = {};              //ì›”ë“œí–‰ë ¬ê¹Œì§€ ê³±í•´ì§„ ìµœì¢… ë§¤íŠ¸ë¦­ìŠ¤
     unordered_set<_uint> m_DettachedBone = {};
 
-    _int m_iNextClipIndex = { -1 }; //´ÙÀ½ ¾Ö´Ï¸ŞÀÌ¼Ç ÀüÈ¯ ¿ë
+    _int m_iNextClipIndex = { -1 }; //ë‹¤ìŒ ì• ë‹ˆë©”ì´ì…˜ ì „í™˜ ìš©
     _float m_fConvertDuration = {}; 
-    _float m_fPrevTrackPosition = {}; //´ÙÀ½ ¾Ö´Ï¸ŞÀÌ¼Ç ÀüÈ¯ ¿ë
+    _float m_fPrevTrackPosition = {}; //ë‹¤ìŒ ì• ë‹ˆë©”ì´ì…˜ ì „í™˜ ìš©
 
     _int m_iCurrentClipIndex = { -1 };
     _float m_fCurrentTrackPosition = {};
@@ -190,4 +197,57 @@ public:
     virtual CComponent* Clone();
     virtual void Free() override;
 };
+
+class ENGINE_DLL SetAnimBuild {
+public:
+    SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
+        :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
+    ~SetAnimBuild() { if (!bApplied) Apply(); };
+    
+    SetAnimBuild(const SetAnimBuild&) = delete;
+    SetAnimBuild& operator=(const SetAnimBuild&) = delete;
+
+public:
+    virtual HRESULT Apply();
+
+    //---------- ê¸°ë³¸ ì†ì„±
+    
+    //ì• ë‹ˆë§¤ì´ì…˜ì„ ë°˜ë³µì¬ìƒí• ê±´ì§€
+    SetAnimBuild& Loop(_bool bLoop = false);
+    //ì• ë‹ˆë§¤ì´ì…˜ì„ ì¬ìƒì†ë„
+    SetAnimBuild& Speed(_float fSpeed = 1.f);
+
+protected:
+    CAnimator3D* m_pOwner = nullptr;
+    _int m_iLayerIndex = -1;
+    _int m_iClipIndex = -1;
+    _bool bApplied = false;
+
+    //---------- ê¸°ë³¸ ì†ì„±
+    _bool m_bLoop = false;
+    _float m_fSpeed = 1.f;
+
+};
+
+class ENGINE_DLL ChangeAnimBuild : public SetAnimBuild {
+public:
+    ChangeAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
+        :SetAnimBuild(LayerIndex, ClipIndex, Owner) {}
+    ~ChangeAnimBuild() DEFAULT;
+
+    ChangeAnimBuild(const ChangeAnimBuild&) = delete;
+    ChangeAnimBuild& operator=(const ChangeAnimBuild&) = delete;
+
+public:
+    virtual HRESULT Apply() override;
+    //---------- ì• ë‹ˆë§¤ì´ì…˜ ë¸”ëœë“œ ì†ì„±
+
+    //ì• ë‹ˆë§¤ì´ì…˜ ì „í™˜ì‹œê°„
+    ChangeAnimBuild& BlendState(_float fDuration = 0.2f, BLEND_STATE eBlendState = BLEND_STATE::CROSSFADE);
+
+protected:
+    _float      m_fBlendDuration = 0.2f;
+    BLEND_STATE m_eBlendState = { BLEND_STATE::NONE };
+};
+
 NS_END
