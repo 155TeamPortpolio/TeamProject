@@ -447,7 +447,6 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("CS_Particle_Spawn.hlsl", "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl");
 	Add_ResourcePath("CS_Particle_Basic.hlsl", "../Bin/ShaderFiles/CS_Particle_Basic.hlsl");
 	Add_ResourcePath("CS_Particle_DeadListInit.hlsl", "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl");
-	Add_ResourcePath("CS_Particle_BuildInstance.hlsl", "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl");
 
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
@@ -467,7 +466,6 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Spawn.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl", "CS_Particle_Spawn.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_DeadListInit.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl", "CS_Particle_DeadListInit.hlsl"));
-	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_BuildInstance.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl", "CS_Particle_BuildInstance.hlsl"));
 }
 
 

@@ -9,6 +9,20 @@ struct Particle
     float2 vStartSize;
     float2 vSize;
     float fNoiseFrequency;
+    uint iFrameIndex;
+    float pad;
+};
+
+struct InstancePoint
+{
+    float4 vRight;
+    float4 vUp;
+    float4 vLook;
+    float4 vTranslate;
+    float3 vVelocity;
+    float4 vColor;
+    float2 vLife;
+    uint iFrameIndex;
     float2 pad;
 };
 
@@ -36,6 +50,12 @@ cbuffer CBDeadListInit : register(b2)
     uint3 initPad;
 };
 
+cbuffer CBPacked : register(b3)
+{
+    uint iInstanceCount;
+    uint3 packedPad;
+}
+
 /* 이번 프레임에 살아있는 파티클들의 인덱스가 담겨있음 -> 파티클 업데이트에서 사용 */
 StructuredBuffer<uint> AliveIn : register(t0);
 
@@ -51,3 +71,6 @@ ConsumeStructuredBuffer<uint> DeadConsume : register(u1);
 
 /* 전체 파티클 데이터 */
 RWStructuredBuffer<Particle> Particles : register(u2);
+
+/* 드로우에 사용할 인스턴스 데이터 */
+RWStructuredBuffer<InstancePoint> Instances : register(u3);
