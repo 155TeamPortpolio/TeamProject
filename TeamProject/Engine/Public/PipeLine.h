@@ -66,7 +66,7 @@ public:
     HRESULT Begin_ObjectBuffer(ID3D11DeviceContext* pContext);
     HRESULT End_ObjectBuffer(ID3D11DeviceContext* pContext);
 
-    _uint Write_SkinningBuffer(const vector<_float4x4>& BoneMatrices);
+    _uint Write_SkinningBuffer(vector<_float4x4> BoneMatrices);
     HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
     HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
 

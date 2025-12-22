@@ -112,7 +112,9 @@ void CEditModel::Render_GUI()
 	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) {
 		pMaterial->Render_GUI();
 	}
-	//__super::Render_GUI();
+	if (CAnimator3D* pAnim = Get_Component<CAnimator3D>()) {
+		pAnim->Render_GUI();
+	}
 }
 
 HRESULT CEditModel::Load_AIScene(const string& filePath)
