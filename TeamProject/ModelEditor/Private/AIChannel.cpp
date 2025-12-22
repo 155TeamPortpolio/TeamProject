@@ -57,19 +57,43 @@ HRESULT CAIChannel::Initialize(const aiNodeAnim* pAIChannel, CAIModelData* pAIMo
 	return S_OK;
 }
 
-void CAIChannel::Save_File(ofstream& ofs)
+void CAIChannel::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
 {
 	ANIMATION_CHANNEL_HEADER tChannelHeader{};
 	tChannelHeader.iBoneIndex = m_iBoneIndex;
 	tChannelHeader.iNumKeyFrames = m_KeyFrames.size();
 	tChannelHeader.isRootBoneChannel = m_isRoot;
 	strcpy_s(tChannelHeader.BoneName, sizeof(tChannelHeader.BoneName), m_ChannelName.c_str());
-
 	ofs.write(reinterpret_cast<const char*>(&tChannelHeader), sizeof(tChannelHeader));
 
-	for (auto& keyFrame : m_KeyFrames) {
-		ofs.write(reinterpret_cast<const char*>(&keyFrame), sizeof(KEYFRAME));
-	}
+	for (auto& keyFrame : m_KeyFrames)
+	{
+		if (m_isRoot) {
+			KEYFRAME RootFrame = keyFrame;
+			_matrix W = XMLoadFloat4x4(WorldMatrix);
+			
+			_vector S = XMLoadFloat3(&keyFrame.vScale);
+			_vector R = XMLoadFloat4(&keyFrame.vRotation);
+			_vector T = XMLoadFloat3(&keyFrame.vTranslation);
+
+			_matrix Local = XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+
+			_matrix Baked = W * Local; XMMatrixDecompose(&S, &R, &T, Baked);
+
+			XMStoreFloat3(&RootFrame.vScale, S);
+			XMStoreFloat4(&RootFrame.vRotation, XMQuaternionNormalize(R));
+			XMStoreFloat3(&RootFrame.vTranslation, T);
+
+			ofs.write(reinterpret_cast<const char*>(&RootFrame), sizeof(KEYFRAME));
+			continue;
+		}
+		
+	ofs.write(reinterpret_cast<const char*>(&keyFrame), sizeof(KEYFRAME)); }
+}
+
+void CAIChannel::Set_Root()
+{
+	m_isRoot = true;
 }
 
 CAIChannel* CAIChannel::Create(const aiNodeAnim* pAIChannel, CAIModelData* pAIModelData)

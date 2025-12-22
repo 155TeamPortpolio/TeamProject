@@ -27,11 +27,14 @@ void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 
 HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 {
-	CAIBone* pBone = CAIBone::Create(_pAINode, _iParentIndex);
-	if (nullptr == pBone)
-		return E_FAIL;
+	if (!m_BoneMap.count(string(_pAINode->mName.C_Str()))) {
 
-	m_Bones.push_back(pBone);
+		CAIBone* pBone = CAIBone::Create(_pAINode, _iParentIndex);
+		if (nullptr == pBone)
+			return E_FAIL;
+
+		m_Bones.push_back(pBone);
+	}
 
 	_int iPIndex = m_Bones.size() - 1;
 

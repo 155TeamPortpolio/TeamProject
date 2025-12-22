@@ -97,6 +97,9 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 
 	auto ApplyDefaultClears = [&](const vector<_uint>& indices)
 		{
+			if (indices.empty())
+				return;
+
 			for (_uint index : indices)
 				m_DrawableMeshes[index] = false;
 		};
@@ -148,6 +151,11 @@ void CAI_STModel::Clear_Proxy()
 	for (_uint Index : proxy) {
 		m_DrawableMeshes[Index] = !m_DrawableMeshes[Index];
 	}
+}
+
+CAIModelData* CAI_STModel::Get_AIModelData()
+{
+	return static_cast<CAIModelData*>(m_pData);
 }
 
 
