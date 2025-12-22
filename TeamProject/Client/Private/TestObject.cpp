@@ -133,10 +133,10 @@ void CTestObject::Update(_float dt)
 	// Process Input
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	m_vInputDir = _vector3(0.f, 0.f, 0.f);
-	if (input->Key_Down('W')) m_vInputDir.z += 1.f;
-	if (input->Key_Down('S')) m_vInputDir.z -= 1.f;
-	if (input->Key_Down('D')) m_vInputDir.x += 1.f;
-	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
+	if (input->Key_Down(VK_UP)) m_vInputDir.z += 1.f;
+	if (input->Key_Down(VK_DOWN)) m_vInputDir.z -= 1.f;
+	if (input->Key_Down(VK_RIGHT)) m_vInputDir.x += 1.f;
+	if (input->Key_Down(VK_LEFT)) m_vInputDir.x -= 1.f;
 
 	m_bJump = input->Key_Down('J');
 	_bool bDash = input->Key_Down(VK_SHIFT);
