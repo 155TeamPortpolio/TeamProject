@@ -25,6 +25,7 @@ public:
 	const string_view Get_ElementKey(_uint DrawIndex);
 	_bool isSkinned() { return (m_pSkeleton != nullptr); }
 	_int Find_MeshIndex(const string& name);
+	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
 #pragma endregion 
 
 #pragma region Skeleton
@@ -53,6 +54,7 @@ protected:
 	_float3 m_vMaxLocal = { -FLT_MAX ,-FLT_MAX ,-FLT_MAX };
 
 	_bool isGui_BoneTabOpen = { false };
+	vector<_uint> m_ProxyMarked;
 public:
 	static CModelData* Create(const string& filePath, ID3D11Device* pDevice);
 	virtual void Free() override;
