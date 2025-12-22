@@ -235,7 +235,12 @@ void CSkeletalModel::Render_GUI()
 		+ (ImGui::GetStyle().WindowPadding.y * 2);
 
 	ImGui::BeginChild("##Skeletal ModelChild", ImVec2{ 0, childHeight }, true);
-
+	if (ImGui::Button("HideProxy"))
+	{
+		for (_uint index : m_pData->Get_ProxyIndex()) {
+			m_DrawableMeshes[index] = !m_DrawableMeshes[index];
+		};
+	}
 	m_pData->Render_GUI();
 
 	const size_t meshCount = m_pData->Get_MeshCount();
