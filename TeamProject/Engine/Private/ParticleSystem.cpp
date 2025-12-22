@@ -267,7 +267,6 @@ void CParticleSystem::ApplyPending()
 
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
 	m_eParticleSpace = m_PendingChanged.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
-	m_eSpawnShape = static_cast<SPAWN_SHAPE>(m_PendingChanged.SpawnShape);
 
 	m_fDelayDuration = m_PendingChanged.fDelayTime;
 	m_fElapsedTime = 0.f;
@@ -283,6 +282,7 @@ void CParticleSystem::ApplyPending()
 
 	m_vStartSize = m_PendingChanged.vStartSize;
 
+	m_eSpawnShape = static_cast<SPAWN_SHAPE>(m_PendingChanged.SpawnShape);
 	m_vCenter = m_PendingChanged.vCenter;
 	m_vHalfBox = m_PendingChanged.vHalfBox;
 	m_fRadius = m_PendingChanged.fRadius;

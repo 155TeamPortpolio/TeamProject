@@ -173,7 +173,6 @@ private:
 
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
-	SPAWN_SHAPE m_eSpawnShape = SPAWN_SHAPE::BOX;
 	MODULE_MASK m_eModuelMask{};
 
 	_float m_fDelayDuration{};
@@ -191,6 +190,7 @@ private:
 	_float2 m_vStartLifeTime{};
 	_float2 m_vStartSize{};
 
+	SPAWN_SHAPE m_eSpawnShape = SPAWN_SHAPE::BOX;
 	_float3 m_vCenter{};
 	_float3 m_vHalfBox{};
 	_float m_fRadius{};
