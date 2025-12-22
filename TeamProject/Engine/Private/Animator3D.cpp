@@ -47,12 +47,10 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*부모 뼈를 받을 수 있게 기본값으로 초기화*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -66,7 +64,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	/*최종 뼈 행렬에 대입*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
@@ -221,7 +218,7 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// 이전 프레임 트랙 위치 < 기준 <= 현재 트랙 위치일 때 true
+	// ?�전 ?�레???�랙 ?�치 < 기�? <= ?�재 ?�랙 ?�치????true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -378,7 +375,7 @@ void CAnimator3D::Animation_Run(_float dt)
 {
 	if (m_AnimLayers.empty()) return;
 
-	//애니매이션 업데이트
+	//?�니매이???�데?�트
 	for (auto& Layer : m_AnimLayers) {
 		if (-1 == Layer.iClipIndex) continue;
 
@@ -389,7 +386,7 @@ void CAnimator3D::Animation_Run(_float dt)
 			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
 	}
 
-	//이동값 제거
+	//?�동�??�거
 	for (auto& Layer : m_AnimLayers) {
 		if (false == Layer.bUseTransform) {
 			if (isExistClip(Layer.iMoveBoneIndex)) {
@@ -416,7 +413,7 @@ void CAnimator3D::Animation_Convert(_float dt)
 
 void CAnimator3D::Override_BlendAnim()
 {
-	// base와 blend 보간
+	// base?� blend 보간
 	for (size_t i = 0; i < m_BlendIndex.size(); ++i)
 	{
 		_uint idx = m_BlendIndex[i];
@@ -615,7 +612,7 @@ void CAnimator3D::GUI_SelectAnim()
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // 선택된 항목에 포커스
+			ImGui::SetItemDefaultFocus(); // ?�택????��???�커??
 		}
 	}
 
@@ -659,7 +656,7 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDERㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//BUILDER?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ?�ㅡ
 
 HRESULT SetAnimBuild::Apply()
 {

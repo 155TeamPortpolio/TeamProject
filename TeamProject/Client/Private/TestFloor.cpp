@@ -55,6 +55,7 @@ void CTestFloor::Priority_Update(_float dt)
 
 void CTestFloor::Update(_float dt)
 {
+	Get_Component<CCollider>()->Update(dt);
 }
 
 void CTestFloor::Late_Update(_float dt)

@@ -68,13 +68,13 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 HRESULT CTestObject::Initialize_State()
 {
-	m_pStateMachine = new CTestStateMachine();
+	m_pStateMachine = CTestStateMachine::Create();
 
 	// States 등록
-	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
-	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
-	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
-	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+	m_pStateMachine->Register_State("Idle", CTestState_Idle::Create());
+	m_pStateMachine->Register_State("Walk", CTestState_Walk::Create());
+	m_pStateMachine->Register_State("Jump", CTestState_Jump::Create());
+	m_pStateMachine->Register_State("Dash", CTestState_Dash::Create());
 
 	// Transition 설정
 	// Idle <-> Walk
