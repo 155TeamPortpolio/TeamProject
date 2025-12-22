@@ -211,7 +211,7 @@ HRESULT CForwardRenderer::Ready_Target()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	{
-		RenderTargetDesc DiffuseDesc = { "Target_Diffuse" , DXGI_FORMAT_R8G8B8A8_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc DiffuseDesc = { "Target_Diffuse" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(DiffuseDesc);
 
 		RenderTargetDesc NormalDesc = { "Target_Normal" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -244,7 +244,7 @@ HRESULT CForwardRenderer::Ready_Target()
 	}
 
 	{
-		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R8G8B8A8_UNORM ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(FianlDesc);
 	}
 
