@@ -8,7 +8,9 @@
 
 void CTestState_Idle::Enter(CTestObject* pOwner)
 {
-    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 2);
+    pOwner->Get_Component<CAnimator3D>()->Change_Animation(2)
+        .Loop(true)
+        .Apply();
 
     CCharacterController* pCCt = pOwner->Get_Component<CCharacterController>();
     if (pCCt)
