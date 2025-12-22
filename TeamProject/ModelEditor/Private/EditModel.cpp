@@ -228,7 +228,7 @@ HRESULT CEditModel::Save_AIScene()
 
 		if (m_pAIScene->HasAnimations()) {
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
-			hr = pAnimator3D->Save_Animation(SavePath);
+			hr = pAnimator3D->Save_Animation(SavePath, Get_WorldMatrix());
 		}
 	}
 	else {
