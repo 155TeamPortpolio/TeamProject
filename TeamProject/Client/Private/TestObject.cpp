@@ -214,6 +214,15 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
+
+	// StateMachine µð¹ö±ë Á¤º¸
+	if (m_pStateMachine)
+	{
+		ImGui::Separator();
+		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+	}
+
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
@@ -223,13 +232,7 @@ void CTestObject::Render_GUI()
 	_bool isLayer = Get_Layer();
 	ImGui::Checkbox("InLayer",&isLayer);
 
-	// StateMachine µð¹ö±ë Á¤º¸
-	if (m_pStateMachine)
-	{
-		ImGui::Separator();
-		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
-		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
-	}
+
 }
 
 void CTestObject::Rotate_Horizontal(const _vector3& vDirection)

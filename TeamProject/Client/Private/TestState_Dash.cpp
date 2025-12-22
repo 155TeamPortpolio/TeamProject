@@ -16,15 +16,18 @@ void CTestState_Dash::Enter(CTestObject* pOwner)
     pOwner->Get_Component<CCharacterController>()->Move_Displacement(
 		vDir * m_fDashDistance, 0.f);
 
-	pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 10);
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation(10);
 }
 
 void CTestState_Dash::Update(CTestObject* pOwner, _float dt)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	if (pAnimator->Get_CurAnimDuration() > 0.95f)
+	if (pAnimator->Get_CurAnimIndex() == 10 && pAnimator->isCurrentAnimEnd())
 	{
 		pOwner->Get_StateMachine()->Set_Bool("DashFinished", true);
+		pAnimator->Change_Animation(2)
+			.Loop(true)
+			.Apply();
 	}
 }
 
@@ -35,5 +38,8 @@ void CTestState_Dash::Exit(CTestObject* pOwner)
 
 bool CTestState_Dash::Handle_Transition(const string& strState)
 {
+	if (strState == "Idle" || strState == "Walk")
+		return true;
+
 	return false;
 }
