@@ -200,62 +200,15 @@ MINMAX_BOX CParticleSystem::Get_MeshBoundingBox(_uint index)
 
 void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 {
-	if (particleDesc.iMaxSpawnParticleCount <= 0)
-		return;
-
-	if (m_iMaxSpawnParticleCount != particleDesc.iMaxSpawnParticleCount)
-		CreateStructuredBuffers(particleDesc.iMaxSpawnParticleCount);
-
-	m_eModuelMask = static_cast<MODULE_MASK>(particleDesc.iModuleMask);
-	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
-	m_fDelayDuration = particleDesc.fDelayTime;
-	m_fElapsedTime = 0.f;
-	m_IsLoop = particleDesc.isLoop;
-	m_iBurstCount = particleDesc.iBurstCount;
-	m_fSpawnPerSec = particleDesc.fSpawnPerSec;
-	m_fSpawnAcc = 0.f;
-	m_iSpawnParticleCount = 0;
-	m_iMaxSpawnParticleCount = particleDesc.iMaxSpawnParticleCount;
-
-	m_vStartSpeed = particleDesc.vStartSpeed;
-	m_vStartLifeTime = particleDesc.vStartLifeTime;
-
-	m_vStartSize = particleDesc.vStartSize;
-	m_vSpawnAreaMin = particleDesc.vSpawnAreaMin;
-	m_vSpawnAreaMax = particleDesc.vSpawnAreaMax;
-
-	m_UseGravity = particleDesc.useGravity;
-	m_fGravityScale = particleDesc.fGravityScale;
-
-	m_iAliveCount = 0;
-	m_SpawnList.clear();
-
-	/*Module Params*/
-	m_LifeTimeVelocity.fDampScale = particleDesc.fDampScale;
-
-	m_LifeTimeSize.vStartScale = particleDesc.vStartScale;
-	m_LifeTimeSize.vEndScale = particleDesc.vEndScale;
-
-	m_LifeTimeColor.vStartColor = particleDesc.vStartColor;
-	m_LifeTimeColor.vEndColor = particleDesc.vEndColor;
-
-	m_TextureSheetAnimation.isParticleAnimated = particleDesc.isParticleAnimated;
-	m_TextureSheetAnimation.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
-	m_TextureSheetAnimation.iCol = particleDesc.iCol;
-	m_TextureSheetAnimation.iRow = particleDesc.iRow;
-	m_TextureSheetAnimation.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
-
-	m_Noise.vStrength = particleDesc.vStrength;
-	m_Noise.vFrequency = particleDesc.vFrequency;
-	m_Noise.vScrollSpeed = particleDesc.vScrollSpeed;
-
-	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
-	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
-	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
+	m_PendingChanged = particleDesc;
+	m_IsChanged = true;
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
 {
+	if (m_IsChanged)
+		ApplyPending();
+
 	m_fElapsedTime += dt;
 	if (m_fElapsedTime >= m_fDelayDuration)
 	{
@@ -304,6 +257,61 @@ void CParticleSystem::Render_GUI()
 {
 }
 
+void CParticleSystem::ApplyPending()
+{
+	if (m_PendingChanged.iMaxSpawnParticleCount <= 0)
+		return;
+
+	if (m_iMaxSpawnParticleCount != m_PendingChanged.iMaxSpawnParticleCount)
+		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
+
+	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
+	m_eParticleSpace = m_PendingChanged.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
+	m_fDelayDuration = m_PendingChanged.fDelayTime;
+	m_fElapsedTime = 0.f;
+	m_IsLoop = m_PendingChanged.isLoop;
+	m_iBurstCount = m_PendingChanged.iBurstCount;
+	m_fSpawnPerSec = m_PendingChanged.fSpawnPerSec;
+	m_fSpawnAcc = 0.f;
+	m_iSpawnParticleCount = 0;
+	m_iMaxSpawnParticleCount = m_PendingChanged.iMaxSpawnParticleCount;
+
+	m_vStartSpeed = m_PendingChanged.vStartSpeed;
+	m_vStartLifeTime = m_PendingChanged.vStartLifeTime;
+
+	m_vStartSize = m_PendingChanged.vStartSize;
+	m_vSpawnAreaMin = m_PendingChanged.vSpawnAreaMin;
+	m_vSpawnAreaMax = m_PendingChanged.vSpawnAreaMax;
+
+	m_UseGravity = m_PendingChanged.useGravity;
+	m_fGravityScale = m_PendingChanged.fGravityScale;
+
+	/*Module Params*/
+	m_LifeTimeVelocity.fDampScale = m_PendingChanged.fDampScale;
+
+	m_LifeTimeSize.vStartScale = m_PendingChanged.vStartScale;
+	m_LifeTimeSize.vEndScale = m_PendingChanged.vEndScale;
+
+	m_LifeTimeColor.vStartColor = m_PendingChanged.vStartColor;
+	m_LifeTimeColor.vEndColor = m_PendingChanged.vEndColor;
+
+	m_TextureSheetAnimation.isParticleAnimated = m_PendingChanged.isParticleAnimated;
+	m_TextureSheetAnimation.isRandomFrameIndex = m_PendingChanged.isRandomFrameIndex;
+	m_TextureSheetAnimation.iCol = m_PendingChanged.iCol;
+	m_TextureSheetAnimation.iRow = m_PendingChanged.iRow;
+	m_TextureSheetAnimation.iMaxFrameIndex = m_PendingChanged.iMaxFrameIndex;
+
+	m_Noise.vStrength = m_PendingChanged.vStrength;
+	m_Noise.vFrequency = m_PendingChanged.vFrequency;
+	m_Noise.vScrollSpeed = m_PendingChanged.vScrollSpeed;
+
+	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
+	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
+
+	m_IsChanged = false;
+}
+
 void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 {
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
@@ -321,6 +329,7 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 	Safe_Release(m_pAliveBuffer[1]);
 	Safe_Release(m_pSpawnInBuffer);
 
+	m_iAliveCount = 0;
 	m_iAliveInIndex = 0;
 	m_iAliveOutIndex = 1;
 

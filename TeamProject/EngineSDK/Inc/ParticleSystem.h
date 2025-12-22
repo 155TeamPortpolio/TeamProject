@@ -152,6 +152,7 @@ public:
 	virtual void Render_GUI() override;
 
 private:
+	void ApplyPending();
 	void CreateStructuredBuffers(_uint iMaxCount);
 	void ReadAliveOutCount();
 
@@ -166,6 +167,9 @@ private:
 
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
+
+	_bool m_IsChanged = false;
+	PARTICLE_NODE m_PendingChanged{};
 
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;

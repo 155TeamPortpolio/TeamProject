@@ -30,6 +30,7 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     p = LIFE_TIME_SIZE(p);
     p = LIFE_TIME_COLOR(p);
     p = TEXTURE_SHEET_ANIMATION(p);
+    p = NOISE(p);
     
     /* Gravity */
     if (UseGravity == 1)
