@@ -148,13 +148,12 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 vTexcoord = lerp(In.vTexcoord, float2(1.f - In.vTexcoord.x, In.vTexcoord.y), Direction);
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     if (vDiffuse.a < 0.1f)
         discard;
     
-    float fX = lerp(In.vTexcoord, 1.f - In.vTexcoord, Direction);
-    float fGauge = step(fX, FillAmount);
-    if (!fGauge)
+    if (vTexcoord.x > FillAmount)
         discard;
     
     Out.vColor = vDiffuse * vColor;
