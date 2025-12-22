@@ -27,35 +27,70 @@ public:
 	{
 		_uint IsAlive{};
 		_float3 vPosition{};
+
 		_float3 vVelocity{};
+		_float pad0{};
+
 		_float4 vColor{};
+
 		_float fLifeTime{};
 		_float fMaxLifeTime{};
 		_float2 vStartSize{};
+
 		_float2 vSize{};
+		_uint iFrameIndex{};
 		_float fNoiseFrequency{};
-		_float2 pad{};
 	}PARTICLE_GPU;
 
 	typedef struct tagInstanceData
 	{
 		_float4 vRight{}, vUp{}, vLook{};
 		_float4 vTranslate{};
+
 		_float3 vVelocity{};
+		_float pad0{};
+
 		_float4 vColor{};
+
 		_float2 vLife{};
 		_uint iFrameIndex{};
-		_float2 pad{};
+		_float pad1{};
 	}INSTANCE_DATA;
 
 	typedef struct tagCBFrame
 	{
+		_uint iModuleMask{};
 		_float fDeltaTime{};
 		_uint iAliveCount{};
 		_uint iMaxParticles{};
 		_uint UseGravity{};
 		_float fGravityScale{};
-		_float3 pad{};
+		_float2 pad0{};
+
+		/*Life Time Velocity*/
+		_float fDampScale{};
+		_float3 pad1{};
+
+		/*Life Time Size*/
+		_float2 vStartScale{};
+		_float2 vEndScale{};
+
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/*Texture Sheet Animation*/
+		_uint isAnimated{};
+		_uint iMaxFrameIndex{};
+		_float2 pad2{};
+
+		/*Noise*/
+		_float fElapsedTime{};
+		_float3 pad3{};
+
+		_float4 vStrength{};
+		_float4 vFrequency{};
+		_float4 vScrollSpeed{};
 	}CB_FRAME;
 
 	typedef struct tagCBPacked
@@ -158,8 +193,11 @@ private:
 	_float m_fGravityScale{};
 
 	/*Modules*/
-	_uint m_iTextureCol{ 1 };
-	_uint m_iTextureRow{ 1 };
+	LIFE_TIME_VELOCITY m_LifeTimeVelocity{};
+	LIFE_TIME_SIZE m_LifeTimeSize{};
+	LIFE_TIME_COLOR m_LifeTimeColor{};
+	TEXTURE_SHEET_ANIMATION m_TextureSheetAnimation{};
+	NOISE m_Noise{};
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
 	class CStructuredBuffer* m_pInstanceBuffer = { nullptr };

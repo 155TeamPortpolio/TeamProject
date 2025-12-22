@@ -39,6 +39,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.eType = json.value("effect_type", node.eType);
 	node.TextureKey = json.value("texture_key", node.TextureKey);
 	node.TexturePath = json.value("texture_path", node.TexturePath);

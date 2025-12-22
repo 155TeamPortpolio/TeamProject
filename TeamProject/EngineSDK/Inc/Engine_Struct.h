@@ -363,6 +363,7 @@ namespace Engine
 		string TexturePath{};
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
+		_uint iModuleMask{};
 		_bool isWorld = true;
 		_uint iBurstCount{};
 		_float fSpawnPerSec;

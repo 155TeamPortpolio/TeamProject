@@ -122,6 +122,9 @@ HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 	m_ComputeShaders[ENUM(SHADER::INIT_DEAD_LIST)] = resource->Load_ComputeShader(G_GlobalLevelKey, "CS_Particle_DeadListInit.hlsl");
 	m_ComputeShaders[ENUM(SHADER::BUILD)] = resource->Load_ComputeShader(G_GlobalLevelKey, "CS_Particle_BuildInstance.hlsl");
 
+	for (const auto& shader : m_ComputeShaders)
+		Safe_AddRef(shader);
+
 	return S_OK;
 }
 
@@ -203,6 +206,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	if (m_iMaxSpawnParticleCount != particleDesc.iMaxSpawnParticleCount)
 		CreateStructuredBuffers(particleDesc.iMaxSpawnParticleCount);
 
+	m_eModuelMask = static_cast<MODULE_MASK>(particleDesc.iModuleMask);
 	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
 	m_fDelayDuration = particleDesc.fDelayTime;
 	m_fElapsedTime = 0.f;
@@ -227,7 +231,27 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_SpawnList.clear();
 
 	/*Module Params*/
-	
+	m_LifeTimeVelocity.fDampScale = particleDesc.fDampScale;
+
+	m_LifeTimeSize.vStartScale = particleDesc.vStartScale;
+	m_LifeTimeSize.vEndScale = particleDesc.vEndScale;
+
+	m_LifeTimeColor.vStartColor = particleDesc.vStartColor;
+	m_LifeTimeColor.vEndColor = particleDesc.vEndColor;
+
+	m_TextureSheetAnimation.isParticleAnimated = particleDesc.isParticleAnimated;
+	m_TextureSheetAnimation.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
+	m_TextureSheetAnimation.iCol = particleDesc.iCol;
+	m_TextureSheetAnimation.iRow = particleDesc.iRow;
+	m_TextureSheetAnimation.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
+
+	m_Noise.vStrength = particleDesc.vStrength;
+	m_Noise.vFrequency = particleDesc.vFrequency;
+	m_Noise.vScrollSpeed = particleDesc.vScrollSpeed;
+
+	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
+	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -516,11 +540,33 @@ void CParticleSystem::UpdateParticles(_float dt)
 
 	{
 		CB_FRAME cbFrame{};
+		cbFrame.iModuleMask = ENUM(m_eModuelMask);
 		cbFrame.fDeltaTime = dt;
 		cbFrame.iAliveCount = m_iAliveCount;
-		cbFrame.UseGravity = m_UseGravity ? 1 : 0;
-		cbFrame.fGravityScale = m_fGravityScale;
 		cbFrame.iMaxParticles = m_iMaxSpawnParticleCount;
+		cbFrame.fGravityScale = m_fGravityScale;
+		cbFrame.UseGravity = m_UseGravity ? 1 : 0;
+
+		/* Life Time Velocity */
+		cbFrame.fDampScale = m_LifeTimeVelocity.fDampScale;
+
+		/* Life Time Size */
+		cbFrame.vStartScale = m_LifeTimeSize.vStartScale;
+		cbFrame.vEndScale = m_LifeTimeSize.vEndScale;
+
+		/* Life Time Color */
+		cbFrame.vStartColor = m_LifeTimeColor.vStartColor;
+		cbFrame.vEndColor = m_LifeTimeColor.vEndColor;
+
+		/* Texture Sheet Animation */
+		cbFrame.isAnimated = m_TextureSheetAnimation.isParticleAnimated ? 1 : 0;
+		cbFrame.iMaxFrameIndex = m_TextureSheetAnimation.iMaxFrameIndex;
+
+		/* Noise */
+		cbFrame.fElapsedTime = m_fElapsedTime;
+		cbFrame.vStrength = _float4(m_Noise.vStrength.x, m_Noise.vStrength.y, m_Noise.vStrength.z, 0.f);
+		cbFrame.vFrequency = _float4(m_Noise.vFrequency.x, m_Noise.vFrequency.y, m_Noise.vFrequency.z, 0.f);
+		cbFrame.vScrollSpeed = _float4(m_Noise.vScrollSpeed.x, m_Noise.vScrollSpeed.y, m_Noise.vScrollSpeed.z, 0.f);
 
 		D3D11_MAPPED_SUBRESOURCE mapSubResource{};
 		pContext->Map(m_pCBFrameBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
@@ -605,8 +651,10 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
 
-	//if (m_pTextureSheetAnimation)
-	//	m_pTextureSheetAnimation->SetUpParticle(particle);
+	if (m_TextureSheetAnimation.isRandomFrameIndex)
+		particle.iFrameIndex = Helper::Get_Random_Int(0, m_TextureSheetAnimation.iMaxFrameIndex);
+	else
+		particle.iFrameIndex = 0;
 }
 
 CParticleSystem* CParticleSystem::Create()

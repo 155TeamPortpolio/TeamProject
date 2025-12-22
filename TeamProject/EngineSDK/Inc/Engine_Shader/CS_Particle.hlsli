@@ -1,16 +1,23 @@
+#ifndef __PARTICLE_CS_DEFINE_HLSL__
+#define __PARTICLE_CS_DEFINE_HLSL__
+
 struct Particle
 {
     uint IsAlive;
     float3 vPosition;
+    
     float3 vVelocity;
+    float pad0;
+    
     float4 vColor;
+    
     float fLifeTime;
     float fMaxLifeTime;
     float2 vStartSize;
+    
     float2 vSize;
-    float fNoiseFrequency;
     uint iFrameIndex;
-    float pad;
+    float fNoiseFrequency;
 };
 
 struct InstanceData
@@ -19,22 +26,52 @@ struct InstanceData
     float4 vUp;
     float4 vLook;
     float4 vTranslate;
+    
     float3 vVelocity;
+    float pad0;
+    
     float4 vColor;
+    
     float2 vLife;
     uint iFrameIndex;
-    float2 pad;
+    float pad1;
 };
 
 // 파티클 업데이트에 필요한 파라미터
 cbuffer CBFrame : register(b0)
 {
+    uint iModuleMask;
     float fDeltaTime;
     uint iAliveCount;
     uint iMaxParticles;
     uint UseGravity;
     float fGravityScale;
-    float3 framePad;
+    float2 framePad0;
+    
+    /*Life Time Velocity*/
+    float fDampScale;
+    float3 framePad1;
+    
+    /*Life Time Size*/
+    float2 vStartScale;
+    float2 vEndScale;
+    
+    /*Life Time Color*/
+    float4 vStartColor;
+    float4 vEndColor;
+    
+    /*Texture Sheet Animation*/
+    uint IsAnimated;
+    uint iMaxFrameIndex;
+    float2 framePad2;
+    
+    /*Noise*/
+    float fElapsedTime;
+    float3 framePad3;
+    
+    float4 vStrength;
+    float4 vFrequency;
+    float4 vScrollSpeed;
 };
 
 /* 파티클 생성에 필요한 파라미터 */
@@ -56,6 +93,7 @@ cbuffer CBPacked : register(b3)
     uint3 packedPad;
 };
 
+
 /* 이번 프레임에 살아있는 파티클들의 인덱스가 담겨있음 -> 파티클 업데이트에서 사용 */
 StructuredBuffer<uint> AliveIn : register(t0);
 
@@ -74,3 +112,5 @@ RWStructuredBuffer<Particle> Particles : register(u2);
 
 /* 드로우에 사용할 인스턴스 데이터 */
 RWStructuredBuffer<InstanceData> Instances : register(u3);
+
+#endif //__PARTICLE_CS_DEFINE_HLSL__
