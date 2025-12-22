@@ -39,13 +39,13 @@ void CGUIPanel::Render_GUI()
 
 		CreateCanvasPanel();
 
-		SaveToJson();
-
-		LoadFromJson();
-
+		//SaveToJson();
+		//
+		//LoadFromJson();
+		//
 		LoadPrefab();
-
-		ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
+		//
+		//ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
 
 		ImGui::End();
 	}

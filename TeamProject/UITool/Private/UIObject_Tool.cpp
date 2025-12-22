@@ -19,6 +19,8 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
+
     // GUI Inspector 창에 띄움
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
@@ -28,8 +30,15 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 void CUIObject_Tool::Render_GUI()
 {
     ImGui::SeparatorText(u8"속성");
-
     ImGui::Checkbox("Alive", &m_isAlive);
+
+    Render_GUI_Layout();
+
+    Render_GUI_Transform();
+
+    Render_GUI_Color();
+
+    Render_GUI_TextKey();
 
     Render_GUI_Animation();
 }
@@ -93,6 +102,8 @@ void CUIObject_Tool::SavePrefab(json& data)
     CObjectContainer* pContainer = Get_Component<CObjectContainer>();
     if(pContainer && !pContainer->Get_Children().empty())
         Save_Childeren(data["children"]);
+
+    data["color"] = { {"x", m_vColor.x},{"y", m_vColor.y}, {"z", m_vColor.z}, {"w", m_vColor.w} };
 }
 
 void CUIObject_Tool::LoadPrefab(const json& data)
@@ -105,6 +116,9 @@ void CUIObject_Tool::LoadPrefab(const json& data)
         Load_Animation(data["animation"]);
     if(data.contains("children"))       
         Load_Children(data["children"]);
+
+    m_vColor = _float4{ data["color"]["x"].get <_float>(), data["color"]["y"].get <_float>(), data["color"]["z"].get <_float>(), data["color"]["w"].get <_float>() };
+    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 }
 
 void CUIObject_Tool::ToJson_Common(json& data)
@@ -607,6 +621,12 @@ void CUIObject_Tool::Render_GUI_Animation()
 
         ImGui::End();
     } 
+}
+
+void CUIObject_Tool::Render_GUI_Color()
+{
+    ImGui::SeparatorText(u8"컬러");
+    ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
 }
 
 void CUIObject_Tool::Render_GUI_TextKey()

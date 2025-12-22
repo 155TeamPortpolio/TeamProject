@@ -57,21 +57,14 @@ void CImageUI::Late_Update(_float dt)
 
 void CImageUI::Render_GUI()
 {
-    Render_GUI_Layout();
+    __super::Render_GUI();
 
-    Render_GUI_Transform();
-
+    // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-
-    // 이미지
     ImGui::SeparatorText(u8"이미지");
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
 void CImageUI::ToJson(json& data)

@@ -29,7 +29,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl"); 
+    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("UVAnimation");
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
@@ -63,13 +63,11 @@ void CUVAnimationUI::Late_Update(_float dt)
 
 void CUVAnimationUI::Render_GUI()
 {
-    Render_GUI_Layout();
+    __super::Render_GUI();
+     
 
-    Render_GUI_Transform();
-
+    // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-
-    // 이미지
     ImGui::SeparatorText(u8"이미지"); 
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
@@ -79,7 +77,7 @@ void CUVAnimationUI::Render_GUI()
     ImGui::SeparatorText(u8"UV 애니메이션");
     ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 
-    // 마스크 이미지
+    // 마스크 텍스쳐
     ImGui::SeparatorText(u8"마스크 이미지");
     if (ImGui::Checkbox(u8"사용", &m_isUseMask))
     {
@@ -95,10 +93,6 @@ void CUVAnimationUI::Render_GUI()
         Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
     } 
     ImGui::EndDisabled();
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
 void CUVAnimationUI::ToJson(json& data)

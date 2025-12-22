@@ -40,7 +40,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
 
-    Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+    Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
@@ -72,18 +72,17 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
-    Render_GUI_Layout();
+    __super::Render_GUI();
 
-    Render_GUI_Transform();
-    
+    // 텍스트
     ImGui::SeparatorText(u8"텍스트");
-
     if (ImGui::InputTextMultiline(u8"내용", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
     {
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
         UpdateAnchorOffsetByAlign();
     } 
     
+    // 폰트 
     ImGui::SeparatorText(u8"폰트");
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, szFontKeys.data(), szFontKeys.size()))
@@ -103,27 +102,24 @@ void CTextUI::Render_GUI()
         UpdateAnchorOffsetByAlign();
     }
 
-    if(ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vFontColor)))
-        Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+    if(ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor)))
+        Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
+    // 외곽선
+    ImGui::SeparatorText(u8"외곽선");
+
+    _bool isChanged = {};
+    isChanged |= ImGui::Checkbox(u8"외곽선", &m_isOutlined);
+    isChanged |= ImGui::DragFloat(u8"굵기", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    isChanged |= ImGui::ColorEdit4(u8"외곽선 컬러", reinterpret_cast<_float*>(&m_vOutlineColor));
+
+    if (isChanged)
     {
-        ImGui::SeparatorText(u8"외곽선");
-
-        _bool isChanged = {};
-        isChanged |= ImGui::Checkbox(u8"외곽선", &m_isOutlined);
-        isChanged |= ImGui::DragFloat(u8"굵기", &m_fOutlineThickness, 0.1f, 0.f, 2.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-        isChanged |= ImGui::ColorEdit4(u8"외곽선 컬러", reinterpret_cast<_float*>(&m_vOutlineColor));
-
-        if (!isChanged)
-            return;
-
         if (m_isOutlined)
             Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
         else
             Get_Component<CTextSlot>()->ReSet_OutLine();
     } 
-
-    __super::Render_GUI();
 }
 
 void CTextUI::ToJson(json& data)
@@ -137,10 +133,10 @@ void CTextUI::ToJson(json& data)
 
     data["text"] = m_szText;
     data["fontScale"] = m_fFontScale;
-    data["fontColor"]["x"] = m_vFontColor.x;
-    data["fontColor"]["y"] = m_vFontColor.y;
-    data["fontColor"]["z"] = m_vFontColor.z;
-    data["fontColor"]["w"] = m_vFontColor.w;
+    data["fontColor"]["x"] = m_vColor.x;
+    data["fontColor"]["y"] = m_vColor.y;
+    data["fontColor"]["z"] = m_vColor.z;
+    data["fontColor"]["w"] = m_vColor.w;
     data["outlined"] = m_isOutlined;
     data["outlineThickness"] = m_fOutlineThickness;
     data["outlineColor"]["x"] = m_vOutlineColor.x;
@@ -161,8 +157,8 @@ void CTextUI::FromJson(const json& data)
 
     m_fFontScale = data["fontScale"].get<_float>();
     Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-    m_vFontColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
-    Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+    m_vColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
+    Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
@@ -188,7 +184,7 @@ void CTextUI::SavePrefab(json& data)
 
     data["text"] = m_szText;
     data["fontScale"] = m_fFontScale;
-    data["fontColor"] = { {"x", m_vFontColor.x}, {"y", m_vFontColor.y} , {"z", m_vFontColor.z} , {"w", m_vFontColor.w}};
+    data["fontColor"] = { {"x", m_vColor.x}, {"y", m_vColor.y} , {"z", m_vColor.z} , {"w", m_vColor.w}};
     if (m_isOutlined)
     {
         data["outline"]["thickness"] = m_fOutlineThickness;
@@ -210,8 +206,8 @@ void CTextUI::LoadPrefab(const json& data)
 
     m_fFontScale = data["fontScale"].get<_float>();
     Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-    m_vFontColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
-    Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+    m_vColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
+    Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);

@@ -37,7 +37,8 @@ protected:
 	virtual void Render_GUI_Layout();				// (툴) GUI 앵커 오프셋, 사이즈
 	virtual void Render_GUI_Transform();			// (툴) GUI 스케일, 앵글, 피봇
 	virtual void Render_GUI_Animation();			// (툴)	GUI 애니메이션 추가
-	virtual void Render_GUI_TextKey();
+	virtual void Render_GUI_Color();
+	virtual void Render_GUI_TextKey(); 
 
 protected:
 	void Play_Animation(_float dt);					// (툴, 클라이언트)			
@@ -70,8 +71,6 @@ private:
 	void Reset_Animation();
 
 protected:
-	_float4				m_vColor = { 1.f, 1.f, 1.f, 1.f };
-
 	_bool				m_isBlending = {};
 	_float				m_fBlendTime = {};
 	_float				m_fBlendDuration = {};

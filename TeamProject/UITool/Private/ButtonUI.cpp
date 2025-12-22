@@ -60,20 +60,20 @@ void CButtonUI::Late_Update(_float dt)
 
 void CButtonUI::Render_GUI()
 {
-    Render_GUI_Layout();
-
-    Render_GUI_Transform();
-
+    __super::Render_GUI();
+     
+    // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    // 이미지
     ImGui::SeparatorText(u8"이미지");
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
+    // 이벤트
     ImGui::SeparatorText(u8"이벤트");
     ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
+    // 상태 표시
     ImGui::SeparatorText(u8"상태");
     string strState = {};
     switch (m_eState)
@@ -84,10 +84,6 @@ void CButtonUI::Render_GUI()
     case STATE::DISABLED: strState = ENUM_TO_STRING(STATE::DISABLED); break;
     }
     ImGui::TextDisabled(strState.c_str());
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
 void CButtonUI::Enter_Hover()

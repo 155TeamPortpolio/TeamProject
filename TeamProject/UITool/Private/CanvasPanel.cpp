@@ -28,6 +28,7 @@ CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
 HRESULT CCanvasPanel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
     Add_Component<CObjectContainer>();
 
     return S_OK;
@@ -69,10 +70,6 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    Render_GUI_Layout();
-    
-    Render_GUI_Transform();
-
     Render_GUI_Create();
 
     Render_GUI_SavePrefab();
@@ -180,29 +177,9 @@ void CCanvasPanel::Render_GUI_SavePrefab()
     {
         json data;
 
-        // 부모 정보 저장
         SavePrefab(data["parent"]);
 
-        //// 자식 정보 저장
-        //const vector<CGameObject*> Childeren = Get_Component<CObjectContainer>()->Get_Children();
-        //
-        //for (auto& pChild : Childeren)
-        //{
-        //    if (!pChild)
-        //        continue;
-        //
-        //    CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pChild);
-        //
-        //    if (!pUI)
-        //        continue;
-        //
-        //    json objData;
-        //    pUI->SavePrefab(objData);
-        //    data["parent"]["children"].push_back(objData);
-        //}
-
-        // 프리팹 이름으로 파일명 바꾸고
-        std::ofstream outputFile(Helper::SaveFileDialogByWinAPI(CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "json"));
+        std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("prefab", "json"));
 
         if (outputFile.is_open())
         {

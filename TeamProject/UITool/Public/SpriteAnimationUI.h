@@ -26,7 +26,7 @@ public:
 	virtual void SavePrefab(json& data) override;
 	virtual void LoadPrefab(const json& data) override;
 
-public:
+private:
 	_bool		m_isPlaying = { true };
 	_bool		m_isLoop = {};
 
@@ -38,6 +38,7 @@ public:
 	_float		m_fFrameAccTime = {};
 	_uint		m_iCurrentFrameIndex = {};
 
+private:
 	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
