@@ -63,7 +63,7 @@ void CAIAnimator3D::Render_GUI()
 	__super::Render_GUI();
 }
 
-HRESULT CAIAnimator3D::Save_Animation(const string& SavePath)
+HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* WorldMatrix)
 {
 	
 	string AnimSavePath = SavePath + "\\Anim\\";
@@ -73,7 +73,7 @@ HRESULT CAIAnimator3D::Save_Animation(const string& SavePath)
 		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
 		std::ofstream ofs(filePath, std::ios::binary);
 
-		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);
+		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs, WorldMatrix);
 
 		ofs.close();
 	}

@@ -85,6 +85,7 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	{
 		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);
 	}
+
 	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs, PreTransform);
 }
 
