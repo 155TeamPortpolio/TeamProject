@@ -49,6 +49,8 @@ public:
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
+
+
 protected:
     CAnimator3D();
     CAnimator3D(const CAnimator3D& rhs);
@@ -97,8 +99,8 @@ public://애니매이터 데이터
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
     //현재 레이어 개수
     _int Get_NumLayer();
-    //이벤트 사용 ※무조건 매 프레임마다 전부 꺼내서 사용할 것
-    const vector<pair<CLIP_EVENT_TYPE, string>>* Get_Event() const;
+    //이벤트들 불러오는 함수
+    const vector<EVENT_INST>& Get_EventBus() const;
     /*----- Setter -----*/
     
     //애니매이션 트랜스폼을 제거
@@ -157,9 +159,9 @@ private:
 protected:
     class CModelData* m_pData = {};
  
-    vector<ANIM_LAYER>                      m_AnimLayers;   //애니매이션 레이어
-    vector<class CAnimationClip*>           m_pAnimClips;   //애니매이션 클립
-    vector<pair<CLIP_EVENT_TYPE, string>>   m_EventBus;     //이벤트 버스
+    vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
+    vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
+    vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스

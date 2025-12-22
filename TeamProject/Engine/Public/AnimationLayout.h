@@ -18,8 +18,13 @@ namespace Engine
         CLIP_EVENT_TYPE EventType;  //이벤트 타입
         string          EventTag;   //이벤트 태그 
     }ANIM_EVENT;
+
+    typedef struct EventInstance {
+        CLIP_EVENT_TYPE Type;
+        string Tag;
+    }EVENT_INST;
+
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_EVENT, EventTime, EventType, EventTag);
-    
 
     typedef struct AnimationClip {
         string              ClipTag; //애니매이션 이름

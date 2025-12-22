@@ -278,9 +278,9 @@ _int CAnimator3D::Get_NumLayer()
 	return (_int)m_AnimLayers.size();
 }
 
-const vector<pair<CLIP_EVENT_TYPE, string>>* CAnimator3D::Get_Event() const
+const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
 {
-	return &m_EventBus;
+	return m_EventBus;
 }
 
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
@@ -323,7 +323,7 @@ void CAnimator3D::Dettach_BoneRelation(_uint Index)
 
 void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
 {
-	m_EventBus.push_back(make_pair(EventType, EventTag));
+	m_EventBus.push_back(EVENT_INST{EventType, EventTag});
 }
 
 void CAnimator3D::Clear_Events()

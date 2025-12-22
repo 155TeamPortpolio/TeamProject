@@ -41,7 +41,7 @@ void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd,
-	vector<pair<CLIP_EVENT_TYPE, string>>& EventBus)
+	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 
@@ -67,12 +67,13 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 }
 
 void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices,
-	_float TrackPosition, vector<pair<CLIP_EVENT_TYPE, string>>& EventBus)
+	_float TrackPosition, vector<EVENT_INST>& EventBus)
 {
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
 		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, TrackPosition, false);
 	}
+
 }
 
 CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
@@ -89,14 +90,14 @@ CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
 	}
 }
 
-void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<pair<CLIP_EVENT_TYPE, string>>& EventBus)
+void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus)
 {
 	for (auto& Event : m_Events)
 	{
 		//이전 프레임엔 작았고 현재프레임엔 크면
 		if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
 		{
-			EventBus.emplace_back(make_pair(Event.EventType, Event.EventTag));
+			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
 		}
 	}
 }
