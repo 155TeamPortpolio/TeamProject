@@ -33,8 +33,6 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     if (szTextureKeys.size())
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    //Get_Component<CSprite2D>()->Set_TextKey("text");
-
     m_iCount++;
 
     return S_OK;
