@@ -267,6 +267,8 @@ void CParticleSystem::ApplyPending()
 
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
 	m_eParticleSpace = m_PendingChanged.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
+	m_eSpawnShape = static_cast<SPAWN_SHAPE>(m_PendingChanged.SpawnShape);
+
 	m_fDelayDuration = m_PendingChanged.fDelayTime;
 	m_fElapsedTime = 0.f;
 	m_IsLoop = m_PendingChanged.isLoop;
@@ -280,8 +282,10 @@ void CParticleSystem::ApplyPending()
 	m_vStartLifeTime = m_PendingChanged.vStartLifeTime;
 
 	m_vStartSize = m_PendingChanged.vStartSize;
-	m_vSpawnAreaMin = m_PendingChanged.vSpawnAreaMin;
-	m_vSpawnAreaMax = m_PendingChanged.vSpawnAreaMax;
+
+	m_vCenter = m_PendingChanged.vCenter;
+	m_vHalfBox = m_PendingChanged.vHalfBox;
+	m_fRadius = m_PendingChanged.fRadius;
 
 	m_UseGravity = m_PendingChanged.useGravity;
 	m_fGravityScale = m_PendingChanged.fGravityScale;
@@ -625,8 +629,8 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
 	{
 		_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
-		_vector3 vAreaMin = vWorldPos + m_vSpawnAreaMin;
-		_vector3 vAreaMax = vWorldPos + m_vSpawnAreaMax;
+		_vector3 vAreaMin = vWorldPos - m_vHalfBox;
+		_vector3 vAreaMax = vWorldPos + m_vHalfBox;
 
 		particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
 		particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
@@ -640,9 +644,9 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 	}
 	else
 	{
-		particle.vPosition.x = Helper::Get_Random_Float(m_vSpawnAreaMin.x, m_vSpawnAreaMax.x);
-		particle.vPosition.y = Helper::Get_Random_Float(m_vSpawnAreaMin.y, m_vSpawnAreaMax.y);
-		particle.vPosition.z = Helper::Get_Random_Float(m_vSpawnAreaMin.z, m_vSpawnAreaMax.z);
+		particle.vPosition.x = Helper::Get_Random_Float(-m_vHalfBox.x, m_vHalfBox.x);
+		particle.vPosition.y = Helper::Get_Random_Float(-m_vHalfBox.y, m_vHalfBox.y);
+		particle.vPosition.z = Helper::Get_Random_Float(-m_vHalfBox.z, m_vHalfBox.z);
 
 		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
 		_vector3 vDir = particle.vPosition - _vector3(0.f, 0.f, 0.f);

@@ -59,13 +59,11 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartSize.x = json.at("start_size").at("x").get<_float>();
 	node.vStartSize.y = json.at("start_size").at("y").get<_float>();
 
-	node.vSpawnAreaMin.x = json.at("spawn_area_min").at("x").get<_float>();
-	node.vSpawnAreaMin.y = json.at("spawn_area_min").at("y").get<_float>();
-	node.vSpawnAreaMin.z = json.at("spawn_area_min").at("z").get<_float>();
-
-	node.vSpawnAreaMax.x = json.at("spawn_area_max").at("x").get<_float>();
-	node.vSpawnAreaMax.y = json.at("spawn_area_max").at("y").get<_float>();
-	node.vSpawnAreaMax.z = json.at("spawn_area_max").at("z").get<_float>();
+	node.SpawnShape = json.value("spawn_shape", node.SpawnShape);
+	node.vHalfBox.x = json.at("half_box").at("x").get<_float>();
+	node.vHalfBox.y = json.at("half_box").at("y").get<_float>();
+	node.vHalfBox.z = json.at("half_box").at("z").get<_float>();
+	node.fRadius = json.value("radius", node.fRadius);
 
 	node.useGravity = json.value("use_gravity", node.useGravity);
 	node.fGravityScale = json.value("gravity_scale", node.fGravityScale);

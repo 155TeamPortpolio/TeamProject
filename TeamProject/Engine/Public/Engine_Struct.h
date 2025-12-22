@@ -364,6 +364,7 @@ namespace Engine
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
 		_uint iModuleMask{};
+		_uint SpawnShape{};
 		_bool isWorld = true;
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
@@ -373,8 +374,9 @@ namespace Engine
 		_float2 vStartLifeTime{};
 		_float2 vStartSize{};
 
-		_float3 vSpawnAreaMin{};
-		_float3 vSpawnAreaMax{};
+		_float3 vCenter{};
+		_float3 vHalfBox{};
+		_float fRadius{};
 
 		_bool useGravity = false;
 		_float fGravityScale{};

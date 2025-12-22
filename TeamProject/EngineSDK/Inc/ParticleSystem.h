@@ -112,8 +112,8 @@ public:
 
 	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, BUILD, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
+	enum class SPAWN_SHAPE { SPHERE, BOX, CONE, END };
 	
-
 protected:
 	CParticleSystem();
 	CParticleSystem(const CParticleSystem& rhs);
@@ -173,6 +173,7 @@ private:
 
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
+	SPAWN_SHAPE m_eSpawnShape = SPAWN_SHAPE::BOX;
 	MODULE_MASK m_eModuelMask{};
 
 	_float m_fDelayDuration{};
@@ -189,9 +190,11 @@ private:
 	_float2 m_vStartSpeed{};
 	_float2 m_vStartLifeTime{};
 	_float2 m_vStartSize{};
-	_float3 m_vSpawnAreaMin{};
-	_float3 m_vSpawnAreaMax{};
-	
+
+	_float3 m_vCenter{};
+	_float3 m_vHalfBox{};
+	_float m_fRadius{};
+
 	/*Gravity mode*/
 	_bool m_UseGravity = false;
 	_float m_fGravityScale{};
