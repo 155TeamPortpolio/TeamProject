@@ -30,8 +30,8 @@ public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 
 public:
-	_bool GetOn() const  { return IsOn; }
-	void SetOn(_bool On) { IsOn = On; }
+	virtual _bool GetOn() const  override{ return IsOn; }
+	virtual void SetOn(_bool On) override { IsOn = On; }
 
 #ifdef _USING_GUI
 	void Render_GUI();
