@@ -327,16 +327,6 @@ HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
 	if (m_iAliveCount <= 0)
 		return S_OK;
 
-	/* Instance 데이터 srv로 넘기기 */
-	{
-		CMaterialInstance* pMaterialInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		SHADER_PARAM param{};
-		param.pData = m_pInstanceBuffer->GetSRV();
-		param.iSize = sizeof(INSTANCE_DATA) * m_iAliveCount;
-		param.typeName = "StructuredBuffer";
-		pMaterialInstance->Set_Param("InstanceDatas", param);
-	}
-
 	ID3D11Buffer* buffers[1] = { m_pPoint->Get_VertexBuffer() };
 	_uint strides[1] = { m_pPoint->Get_VertexStride() };
 	_uint offsets[1] = { 0 };
@@ -383,6 +373,9 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 	Safe_Release(m_pAliveBuffer[1]);
 	Safe_Release(m_pSpawnInBuffer);
 
+	m_iAliveInIndex = 0;
+	m_iAliveOutIndex = 1;
+
 	/* Instance */
 	{
 		CStructuredBuffer::DESC desc{};
@@ -393,6 +386,13 @@ void CParticleSystem::CreateStructuredBuffers(_uint iMaxCount)
 		desc.iCpuAccess = 0;
 
 		m_pInstanceBuffer = CStructuredBuffer::Create(desc);
+
+		CMaterialInstance* pMaterialInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		SHADER_PARAM param{};
+		param.pData = m_pInstanceBuffer->GetSRV();
+		param.iSize = sizeof(INSTANCE_DATA) * iMaxCount;
+		param.typeName = "StructuredBuffer";
+		pMaterialInstance->Set_Param("InstanceDatas", param);
 	}
 
 	/* Particles */
