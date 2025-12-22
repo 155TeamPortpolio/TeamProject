@@ -16,7 +16,8 @@ void CTestState_Dash::Enter(CTestObject* pOwner)
     pOwner->Get_Component<CCharacterController>()->Move_Displacement(
 		vDir * m_fDashDistance, 0.f);
 
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation(10);
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation(10)
+		.Apply();
 }
 
 void CTestState_Dash::Update(CTestObject* pOwner, _float dt)
