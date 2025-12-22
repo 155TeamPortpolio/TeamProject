@@ -33,7 +33,6 @@ HRESULT CModelEditLevel::Awake()
     for (int i = 0; i < 6; ++i)
     {
         string name = "Edit_Model_" + to_string(i);
-
         CGameObject* EditModel = Builder::Create_Object({"ModelEdit_Level", "Proto_GameObject_EditModel"}).Position({}).Build(name.c_str());
         pObjMgr->Add_Object(EditModel, {"ModelEdit_Level", "Model_Layer"});
     }

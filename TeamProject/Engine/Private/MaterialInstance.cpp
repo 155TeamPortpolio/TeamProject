@@ -41,44 +41,6 @@ const string& CMaterialInstance::Get_PassConstant()
 		return override_Pass;
 }
 
-HRESULT CMaterialInstance::Create_CBloomBuffer(ID3D11Device* pDevice)
-{
-	D3D11_BUFFER_DESC desc = {};
-	desc.ByteWidth = sizeof(BloomConstants);
-	desc.Usage = D3D11_USAGE_DYNAMIC;
-	desc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	desc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	pDevice->CreateBuffer(&desc, nullptr, &m_pCBloomBuffer);
-
-	return S_OK;
-}
-
-HRESULT CMaterialInstance::Update_CBloomBuffer(BloomConstants newBloomConstants, ID3D11DeviceContext* pContext)
-{
-	if (m_pCBloomBuffer)
-	{
-		Safe_Release(m_pCBloomBuffer);
-		m_pCBloomBuffer = nullptr;
-	}
-
-	D3D11_MAPPED_SUBRESOURCE mappedResource;
-
-	HRESULT hr = pContext->Map(
-		m_pCBloomBuffer,
-		0,
-		D3D11_MAP_WRITE_DISCARD,
-		0,
-		&mappedResource
-	);
-	if (FAILED(hr))
-		return hr;
-
-	memcpy(mappedResource.pData, &newBloomConstants, sizeof(BloomConstants));
-	pContext->Unmap(m_pCBloomBuffer, 0);
-
-	return S_OK;
-}
-
 CShader* CMaterialInstance::Get_Shader()
 {
 	return m_pMaterialData->Get_Shader();
@@ -158,9 +120,6 @@ CMaterialInstance* CMaterialInstance::Make_Handle(CMaterialData* pData, ID3D11De
 	hMaterial->overrides_Constant = pData->Get_DefaultMaterialConstant();
 	hMaterial->m_TextureIndexs.resize(MAX_TEXTURE_TYPE_VALUE, 0);
 
-	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
-		Safe_Release(hMaterial);
-	};
 	return hMaterial;
 }
 
@@ -173,10 +132,6 @@ CMaterialInstance* CMaterialInstance::Create_Handle(const string& materialKey, c
 	hMaterial->m_TextureIndexs.resize(MAX_TEXTURE_TYPE_VALUE, 0);
 	hMaterial->override_Pass = DefualtpassConstant;
 
-	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
-		Safe_Release(hMaterial);
-	};
-
 	/*직접 생성해주었으니, 안에 넣고 나면 addRef되고,
 	그거 레퍼런스 카운트 하나 다운 시켜주어야 함*/
 	Safe_Release(pData);
@@ -188,16 +143,11 @@ CMaterialInstance* CMaterialInstance::Clone()
 {
 	CMaterialInstance* hMaterial = new CMaterialInstance(*this);
 
-	if (FAILED(hMaterial->Create_CBloomBuffer(hMaterial->m_pDevice))) {
-		Safe_Release(hMaterial);
-	};
-
 	return hMaterial;
 }
 
 void CMaterialInstance::Free()
 {
 	Safe_Release(m_pMaterialData);
-	Safe_Release(m_pCBloomBuffer);
 	Safe_Release(m_pDevice);
 }

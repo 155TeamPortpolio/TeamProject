@@ -1,5 +1,6 @@
 #pragma once
 #include "GameObject.h"
+#include "MapData_Defines.h"
 
 NS_BEGIN(Client)
 class CMapObject abstract :
@@ -10,6 +11,8 @@ public:
         string  TagLevel = "";
         string  TagModelKey = "";
         string  TagMaterialKey = "";
+        _bool   bCooking = { false };
+        unordered_map<string, vector<FIELD_DATA>>  SlotDataValues;
     }MAPOBJ_DESC;
 
 protected:
@@ -29,7 +32,6 @@ public:
 
 public:
     void Render_GUI() override;
-    void Delete_Object();
 
 protected:
     string  m_TagModelKey = {};

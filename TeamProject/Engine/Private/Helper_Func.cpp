@@ -31,7 +31,7 @@ _bool Helper::IsPathInProjectFolder(const string& path)
 		return true;
 	}
 
-	return false;
+	return true;
 }
 
 string Helper::OpenFile_Dialogue()

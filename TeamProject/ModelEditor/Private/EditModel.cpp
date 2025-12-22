@@ -103,6 +103,7 @@ void CEditModel::Render_GUI()
 
 	__super::Render_GUI();
 }
+
 HRESULT CEditModel::Load_AIScene(const string& filePath)
 {
 	Clear_Models();
@@ -210,9 +211,10 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
 
+	m_InstanceName = fileName;
+
 	return S_OK;
 }
-
 
 HRESULT CEditModel::Save_AIScene()
 {

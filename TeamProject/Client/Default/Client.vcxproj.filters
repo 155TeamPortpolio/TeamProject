@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -76,6 +76,9 @@
     <Filter Include="02. GameObject\Object\TestFloor">
       <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\MapLoader\MapDataCloud">
+      <UniqueIdentifier>{044cb39a-140b-4e9d-877b-519ad3be00cc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\TestObject\State">
       <UniqueIdentifier>{085a852c-00e6-436e-a955-b9fee3ab278d}</UniqueIdentifier>
     </Filter>
@@ -87,6 +90,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\TestObject\State\Jump">
       <UniqueIdentifier>{23e2d573-702d-416e-9396-0a1c9ea17b26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestObject\State\Dash">
+      <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -174,7 +180,16 @@
     <ClInclude Include="..\Public\TestFloor.h">
       <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\public\TestPlane.h" />    <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\Public\MapData_Defines.h">
+      <Filter>03. Utility\MapLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MapDataCloud.h">
+      <Filter>03. Utility\MapLoader\MapDataCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapLoader_Helper.h">
+      <Filter>03. Utility\MapLoader</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\TestState_Idle.h">
       <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
     </ClInclude>
@@ -183,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Jump.h">
       <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestState_Dash.h">
+      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -277,7 +295,10 @@
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TestPlane.cpp" />
+       <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\private\MapDataCloud.cpp">
+      <Filter>03. Utility\MapLoader\MapDataCloud</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\TestState_Idle.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
     </ClCompile>
@@ -286,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Jump.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestState_Dash.cpp">
+      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
