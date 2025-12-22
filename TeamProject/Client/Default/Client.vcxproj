@@ -171,6 +171,7 @@
     <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\Public\TestState_Dash.h" />
     <ClInclude Include="..\Public\TestState_Idle.h" />
     <ClInclude Include="..\Public\TestState_Jump.h" />
     <ClInclude Include="..\Public\TestState_Walk.h" />
@@ -231,6 +232,7 @@
     <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\Private\TestState_Dash.cpp" />
     <ClCompile Include="..\Private\TestState_Idle.cpp" />
     <ClCompile Include="..\Private\TestState_Jump.cpp" />
     <ClCompile Include="..\Private\TestState_Walk.cpp" />

@@ -10,6 +10,7 @@
 #include "ButtonUI.h"
 #include "SpriteAnimationUI.h"
 #include "UVAnimationUI.h"
+#include "GaugeUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
 
@@ -129,6 +130,13 @@ void CCanvasPanel::Render_GUI_Create()
         isCreateChild = true;
         strProtoTag = "Proto_GameObject_UVAnimationUI";
         strInstanceKey = "UVAnimationUI" + to_string(CUVAnimationUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create Gauge"))
+    {
+        isCreateChild = true;
+        strProtoTag = "Proto_GameObject_GaugeUI";
+        strInstanceKey = "GaugeUI" + to_string(CGaugeUI::m_iCount);
     }
 
     // 자식 생성

@@ -95,6 +95,8 @@ void CUVAnimationUI::Render_GUI()
     } 
     ImGui::EndDisabled();
 
+    Render_GUI_TextKey();
+
     __super::Render_GUI();
 }
 

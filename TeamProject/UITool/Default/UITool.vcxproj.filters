@@ -46,6 +46,9 @@
     <Filter Include="02.Object\UI\UVAnimation">
       <UniqueIdentifier>{91a5c3d0-6268-4417-b30c-e9cd29e2925e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\Gauge">
+      <UniqueIdentifier>{b55ddad8-36a3-44f4-9791-b48a45d5bb0a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -111,6 +114,9 @@
     <ClInclude Include="..\Public\UVAnimationUI.h">
       <Filter>02.Object\UI\UVAnimation</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\GaugeUI.h">
+      <Filter>02.Object\UI\Gauge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -172,6 +178,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UVAnimationUI.cpp">
       <Filter>02.Object\UI\UVAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GaugeUI.cpp">
+      <Filter>02.Object\UI\Gauge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

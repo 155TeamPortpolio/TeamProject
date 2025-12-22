@@ -14,6 +14,7 @@
 #include "TestState_Idle.h"
 #include "TestState_Walk.h"
 #include "TestState_Jump.h"
+#include "TestState_Dash.h"
 
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
@@ -72,31 +73,41 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
 	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
 	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
-	
+	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+
 	// Transition 설정
+	// Idle <-> Walk
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CONDITION_BOOL_TRUE, "IsMoving");
-
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CONDITION_BOOL_FALSE, "IsMoving");
 
+	// AnyState -> Jump (점프 키 입력)
 	m_pStateMachine->Register_AnyStateTransition("Jump",
 		CONDITION_TRIGGER, "Jump");
 
-	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CONDITION_BOOL_TRUE, "IsGrounded");
+	// AnyState -> Dash (Shift 입력)
+	m_pStateMachine->Register_AnyStateTransition("Dash",
+		CONDITION_TRIGGER, "Dash");
 
-	m_pStateMachine->Register_Transition("Idle", "Jump",
-		CONDITION_BOOL_FALSE, "IsGrounded");
-
+	// Jump -> Walk (착지 + 이동 중)
 	m_pStateMachine->Register_Transition("Jump", "Walk",
-		CONDITION_BOOL_TRUE, "IsMoving");
-	
+		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
 
+	// Jump -> Idle (착지 + 정지)
+	m_pStateMachine->Register_Transition("Jump", "Idle",
+		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
+
+	// Dash -> Walk (대쉬 완료 + 이동 중)  
+	m_pStateMachine->Register_Transition("Dash", "Walk",
+		CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
+
+	// Dash -> Idle (대쉬 완료 + 정지) 
+	m_pStateMachine->Register_Transition("Dash", "Idle",
+		CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
 
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
-
 	m_pStateMachine->Initialize(this);
 
 	return S_OK;
@@ -107,7 +118,7 @@ void CTestObject::Awake()
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
-	//Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
+	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
@@ -128,6 +139,7 @@ void CTestObject::Update(_float dt)
 	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
 
 	m_bJump = input->Key_Down('J');
+	_bool bDash = input->Key_Down(VK_SHIFT);
 
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	if (m_pStateMachine) m_pStateMachine->Update(dt);
@@ -136,15 +148,29 @@ void CTestObject::Update(_float dt)
 	auto pCCT = Get_Component<CCharacterController>();
 	if (pCCT)
 	{
-		m_pStateMachine->Set_Bool("IsGrounded", pCCT->Is_Grounded());
-	}
+		_bool bGrounded = pCCT->Is_Grounded();
+		_bool bMoving = m_vInputDir.Length() > 0.01f;
+		_bool bDashFinished = m_pStateMachine->Get_Bool("DashFinished");
 
-	m_pStateMachine->Set_Bool("IsMoving", m_vInputDir.Length() > 0.01f);
+		m_pStateMachine->Set_Bool("IsGrounded", bGrounded);
+		m_pStateMachine->Set_Bool("IsMoving", bMoving);
+
+		m_pStateMachine->Set_Bool("IsGroundedAndMoving", bGrounded && bMoving);
+		m_pStateMachine->Set_Bool("IsGroundedAndIdle", bGrounded && !bMoving);
+
+		m_pStateMachine->Set_Bool("DashFinishedAndMoving", bDashFinished && bMoving);
+		m_pStateMachine->Set_Bool("DashFinishedAndIdle", bDashFinished && !bMoving);
+	}
 
 	if (m_bJump)
 	{
 		m_pStateMachine->Set_Trigger("Jump");
 		m_bJump = false;
+	}
+
+	if (bDash)
+	{
+		m_pStateMachine->Set_Trigger("Dash");
 	}
 
 	auto controller = Get_Component<CCharacterController>();
@@ -188,7 +214,6 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
-
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
@@ -205,6 +230,28 @@ void CTestObject::Render_GUI()
 		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
 		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
 	}
+}
+
+void CTestObject::Rotate_Horizontal(const _vector3& vDirection)
+{
+	_vector vDir = XMLoadFloat3(&vDirection);
+	vDir = XMVectorSetY(vDir, 0.f);
+
+	if (XMVector3Length(vDir).m128_f32[0] < 0.001f)
+		return;
+
+	vDir = XMVector3Normalize(vDir);
+
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vDir));
+
+	_matrix vRotmat = XMMatrixIdentity();
+	vRotmat.r[0] = vRight;
+	vRotmat.r[1] = vWorldUp;
+	vRotmat.r[2] = vDir;
+
+	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	m_pTransform->Set_Quaternion(vQuaternion);
 }
 
 CTestObject* CTestObject::Create()
