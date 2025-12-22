@@ -498,9 +498,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\StructuredBuffer.h">
       <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ParticleParams.h">
+      <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -941,7 +944,7 @@
     </Filter>
     <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
       <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
@@ -1425,7 +1428,7 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
-    </FxCompile>  
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>

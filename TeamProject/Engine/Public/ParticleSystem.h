@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "ParticleParams.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CParticleSystem :
@@ -73,8 +74,11 @@ public:
 		_uint iMaxParticleCount{};
 		_uint pad[3] = {};
 	}CB_DEAD_LIST_INIT;
+
 	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, BUILD, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
+	
+
 protected:
 	CParticleSystem();
 	CParticleSystem(const CParticleSystem& rhs);
@@ -103,7 +107,6 @@ public:
 public:
 	HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
 	HRESULT Draw(ID3D11DeviceContext* pContext);
-	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
 
 public:
@@ -129,12 +132,9 @@ private:
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
 
-	vector<PARTICLE> m_Particles;
-	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
-	vector<_uint> m_DeadParticleIndices;
-
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
+	MODULE_MASK m_eModuelMask{};
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};
@@ -160,13 +160,6 @@ private:
 	/*Modules*/
 	_uint m_iTextureCol{ 1 };
 	_uint m_iTextureRow{ 1 };
-
-	class CLifeTimeVelocity* m_pLifeTimeVelocity = { nullptr };
-	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
-	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
-	class CTextureSheetAnimation* m_pTextureSheetAnimation = { nullptr };
-	class CNoise* m_pNoise = { nullptr };
-	vector<class IParticleModule*> m_Modules;
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
 	class CStructuredBuffer* m_pInstanceBuffer = { nullptr };

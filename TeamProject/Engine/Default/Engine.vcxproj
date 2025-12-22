@@ -318,6 +318,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IParticleModule.h" />
     <ClInclude Include="..\Public\ObjectPool.h" />
     <ClInclude Include="..\Public\OrbitArcData.h" />
+    <ClInclude Include="..\Public\ParticleParams.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />

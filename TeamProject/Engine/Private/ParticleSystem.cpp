@@ -35,24 +35,6 @@ HRESULT CParticleSystem::Initialize_Prototype()
 
 HRESULT CParticleSystem::Initialize(COMPONENT_DESC* pArg)
 {
-	m_pLifeTimeVelocity = CLifeTimeVelocity::Create();
-	m_pLifeTimeSize = CLifeTimeSize::Create();
-	m_pLifeTimeColor = CLifeTimeColor::Create();
-	m_pTextureSheetAnimation = CTextureSheetAnimation::Create();
-	m_pNoise = CNoise::Create();
-
-	m_Modules.push_back(m_pLifeTimeVelocity);
-	m_Modules.push_back(m_pLifeTimeSize);
-	m_Modules.push_back(m_pLifeTimeColor);
-	m_Modules.push_back(m_pTextureSheetAnimation);
-	m_Modules.push_back(m_pNoise);
-
-	Safe_AddRef(m_pLifeTimeVelocity);
-	Safe_AddRef(m_pLifeTimeSize);
-	Safe_AddRef(m_pLifeTimeColor);
-	Safe_AddRef(m_pTextureSheetAnimation);
-	Safe_AddRef(m_pNoise);
-
 	/*Constant Buffer*/
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 
@@ -221,9 +203,6 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	if (m_iMaxSpawnParticleCount != particleDesc.iMaxSpawnParticleCount)
 		CreateStructuredBuffers(particleDesc.iMaxSpawnParticleCount);
 
-	m_Particles.clear();
-	m_DeadParticleIndices.clear();
-
 	m_eParticleSpace = particleDesc.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
 	m_fDelayDuration = particleDesc.fDelayTime;
 	m_fElapsedTime = 0.f;
@@ -248,62 +227,7 @@ void CParticleSystem::SetParticleParams(PARTICLE_NODE particleDesc)
 	m_SpawnList.clear();
 
 	/*Module Params*/
-	/*Life Time Velocity*/
-	{
-		CLifeTimeVelocity::LIFE_TIME_VELOCITY_DESC Desc{};
-		Desc.fDampScale = particleDesc.fDampScale;
-		m_pLifeTimeVelocity->SetParams(&Desc);
-	}
-
-	/*Life Time Size*/
-	{
-		CLifeTimeSize::LIFE_TIME_SIZE_DESC Desc{};
-		Desc.vStartScale = particleDesc.vStartScale;
-		Desc.vEndScale = particleDesc.vEndScale;
-		m_pLifeTimeSize->SetParams(&Desc);
-	}
-
-	/*Life Time Color*/
-	{
-		CLifeTimeColor::LIFE_TIME_COLOR_DESC Desc{};
-		Desc.vStartColor = particleDesc.vStartColor;
-		Desc.vEndColor = particleDesc.vEndColor;
-		m_pLifeTimeColor->SetParams(&Desc);
-	}
-
-	/*Texture Sheet Animation*/
-	{
-		CTextureSheetAnimation::TEXTURE_SHEET_ANIMATION_DESC Desc{};
-		Desc.isParticleAnimated = particleDesc.isParticleAnimated;
-		Desc.isRandomFrameIndex = particleDesc.isRandomFrameIndex;
-		Desc.iCol = particleDesc.iCol;
-		Desc.iRow = particleDesc.iRow;
-		Desc.iMaxFrameIndex = particleDesc.iMaxFrameIndex;
-		m_pTextureSheetAnimation->SetParams(&Desc);
-
-		m_iTextureCol = Desc.iCol;
-		m_iTextureRow = Desc.iRow;
-
-		auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		customInstance->Set_Param("Col", { &m_iTextureCol,"uint",sizeof(_uint) });
-		customInstance->Set_Param("Row", { &m_iTextureRow,"uint",sizeof(_uint) });
-	}
-
-	/*Noise*/
-	{
-		CNoise::NOISE_DESC Desc{};
-		Desc.vStrength = particleDesc.vStrength;
-		Desc.vFrequency = particleDesc.vFrequency;
-		Desc.vScrollSpeed = particleDesc.vScrollSpeed;
-		m_pNoise->SetParams(&Desc);
-	}
-
-	m_Particles.resize(m_iMaxSpawnParticleCount);
-	m_DeadParticleIndices.reserve(m_iMaxSpawnParticleCount);
-
-	for (_uint i = 0; i < m_Particles.size(); ++i)
-		m_DeadParticleIndices.push_back(i);
-
+	
 }
 
 void CParticleSystem::Simulation_Particle(_float dt)
@@ -707,15 +631,6 @@ void CParticleSystem::Free()
 {
 	__super::Free();
 	Safe_Release(m_pPoint);
-
-	for (auto& module : m_Modules)
-		Safe_Release(module);
-
-	Safe_Release(m_pLifeTimeVelocity);
-	Safe_Release(m_pLifeTimeSize);
-	Safe_Release(m_pLifeTimeColor);
-	Safe_Release(m_pTextureSheetAnimation);
-	Safe_Release(m_pNoise);
 
 	Safe_Release(m_pInstanceBuffer);
 	Safe_Release(m_pParticlesBuffer);
