@@ -53,6 +53,8 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
 	}
 
+	Resize_Layer(1);
+
 	return S_OK;
 }
 

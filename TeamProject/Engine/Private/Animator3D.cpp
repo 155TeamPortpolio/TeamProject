@@ -529,7 +529,7 @@ void CAnimator3D::Render_GUI()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Set_Animation(0, i);
+			Set_Animation(i).Loop(true);
 		}
 		ImGui::PopID();
 
