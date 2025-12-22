@@ -6,17 +6,14 @@ NS_BEGIN(Client)
 class CTestState_Dash final : public IBaseState<class CTestObject>
 {
 public:
-	CTestState_Dash();
-	virtual ~CTestState_Dash() = default;
+	CTestState_Dash() DEFAULT;
+	virtual ~CTestState_Dash() DEFAULT;
 
 public:
 	virtual void Enter(CTestObject* pOwner) override;
 	virtual void Update(CTestObject* pOwner, _float dt) override;
 	virtual void Exit(CTestObject* pOwner) override;
 	virtual bool Handle_Transition(const string& strState) override;
-
-private:
-	_float m_fDashDistance = 0.01f;
 
 public:
 	static CTestState_Dash* Create() { return new CTestState_Dash(); }
