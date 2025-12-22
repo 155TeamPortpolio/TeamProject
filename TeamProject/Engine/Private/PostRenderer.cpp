@@ -34,8 +34,8 @@ HRESULT CPostRenderer::Render_Bloom()
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
 
-		m_pTargetManager->Bind_Target("Target_Bloom", m_pShader, "g_BrightTexture");
-		m_pTargetManager->Bind_Target("Target_BloomInfo", m_pShader,"g_BloomInfo" );
+		m_pTargetManager->Bind_Target("Target_BloomEffect", m_pShader, "g_BrightTexture");
+		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader,"g_BloomInfo" );
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);

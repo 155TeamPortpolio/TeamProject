@@ -79,8 +79,11 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R8G8B8A8_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DiffuseDesc);
 
-	RenderTargetDesc NormalDesc = { "Target_BloomEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(NormalDesc);
+	RenderTargetDesc BloomDesc = { "Target_BloomEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomDesc);
+
+	RenderTargetDesc BloomInfoDesc = { "Target_BloomEffectInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomInfoDesc);
 
 	RenderTargetDesc DepthlDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
@@ -94,6 +97,8 @@ HRESULT CEffectRenderer::Ready_MRT()
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_DiffuseEffect"))) 
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffect")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffectInfo")))
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion")))
 			return E_FAIL;
