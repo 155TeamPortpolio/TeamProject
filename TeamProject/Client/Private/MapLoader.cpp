@@ -105,23 +105,33 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     }
   
 
-
-
-    CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapPlacedObject" })
-        .Add_ObjDesc(Desc)
-        .Collider(ColliderDesc)
-        .Build("Placed_Model");
-
-    if (nullptr == pStaticObject)
-        return;
-
+    _float3 vScl{}, vRot{}, vTrans{};
+    _float4 vRotQ{};
+   
+    // collider에 위치정보 구우려면 빌더단계에서ㄱㄱ
     _float4x4 matWorld = {
         pData->vRight[0], pData->vRight[1] , pData->vRight[2] , pData->vRight[3],
         pData->vUp[0],  pData->vUp[1] , pData->vUp[2] , pData->vUp[3],
         pData->vLook[0], pData->vLook[1] , pData->vLook[2] , pData->vLook[3],
         pData->vPos[0], pData->vPos[1] , pData->vPos[2] , pData->vPos[3] };
 
-    pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
+    if (true == ExtractSRT(XMLoadFloat4x4(&matWorld), vScl, vRotQ, vTrans))
+        vRot = QuaternionToEuler(vRotQ);
+
+
+    CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapPlacedObject" })
+        .Add_ObjDesc(Desc)
+        .Scale(vScl)
+        .Rotate(vRot)
+        .Position(vTrans)
+        .Collider(ColliderDesc)
+        .Build("Placed_Model");
+
+    if (nullptr == pStaticObject)
+        return;
+
+    
+    //pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
 
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});
 }
