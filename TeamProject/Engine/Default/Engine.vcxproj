@@ -262,6 +262,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\ComputeShader.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
@@ -368,6 +369,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
+    <ClInclude Include="..\Public\StructuredBuffer.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
@@ -421,6 +423,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\ComputeShader.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
@@ -500,6 +503,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
+    <ClCompile Include="..\Private\StructuredBuffer.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
@@ -556,6 +560,54 @@ exit /b 0</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_DeadListInit.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
@@ -573,6 +625,11 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

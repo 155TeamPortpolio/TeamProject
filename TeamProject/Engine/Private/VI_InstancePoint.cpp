@@ -1,5 +1,8 @@
 #include "Engine_Defines.h"
 #include "VI_InstancePoint.h"
+#include "GameInstance.h"
+#include "IResourceService.h"
+#include "ComputeShader.h"
 
 CVI_InstancePoint::CVI_InstancePoint(const string& bufferID)
 	:CVIBuffer(bufferID)
@@ -35,7 +38,6 @@ HRESULT CVI_InstancePoint::Initialize(ID3D11Device* pDevice)
 
 	if (FAILED(Create_InstanceBuffer(pDevice)))
 		return E_FAIL;
-
 	return S_OK;
 }
 

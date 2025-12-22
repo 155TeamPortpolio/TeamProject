@@ -12,7 +12,8 @@ private:
 
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
-	HRESULT Create_CBuffer(ID3D11Device* pDevice);
+	HRESULT Create_CBloomBuffer(ID3D11Device* pDevice);
+	HRESULT Update_CBloomBuffer(BloomConstants newBloomConstants, ID3D11DeviceContext* pContext);
 
 public:
 	const string& Get_PassConstant();
@@ -21,6 +22,9 @@ public:
 	_uint Get_MaterialDataID();
 	class CMaterialData* Get_MaterialData() { return m_pMaterialData; }	
 	const string& Get_MaterialName();
+
+public:
+	ID3D11Buffer* Get_BloomBuffer() { return m_pCBloomBuffer; };
 
 public:
 	HRESULT Set_Param(const string& ConstantName, const SHADER_PARAM& parameter);
@@ -49,7 +53,7 @@ private:
 
 	MaterialConstants overrides_Constant = {};
 	class CMaterialData* m_pMaterialData = { nullptr };
-	ID3D11Buffer* m_pCBuffer = { nullptr };
+	ID3D11Buffer* m_pCBloomBuffer = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
 
 public:

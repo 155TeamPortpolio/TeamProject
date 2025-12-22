@@ -87,7 +87,7 @@ HRESULT CFontSystem::Render_Font()
 
 			m_pBatch->Begin(
 				SpriteSortMode_Deferred,
-				m_pStates->AlphaBlend(),   // ¡ç default´Â non-premultiplied
+				m_pStates->AlphaBlend(),  
 				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
 			);
 		}

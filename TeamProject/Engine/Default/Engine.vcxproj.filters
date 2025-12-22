@@ -493,6 +493,12 @@
     <ClInclude Include="..\Public\EffectBuilder.h">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ComputeShader.h">
+      <Filter>01. Utility\05. Resources\08. Compute Shader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\StructuredBuffer.h">
+      <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
     </ClInclude>
@@ -927,6 +933,15 @@
     <Filter Include="00. System\02. Gui\GUIUtil">
       <UniqueIdentifier>{e907134b-1457-4cb0-bbac-22beb174e952}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources\08. Compute Shader">
+      <UniqueIdentifier>{8656b1ff-5557-4ecc-80a5-bb4548941a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Compute Shader">
+      <UniqueIdentifier>{f1430c7b-2cf0-40f4-832e-3c52075693be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
+      <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
@@ -1340,6 +1355,12 @@
     <ClCompile Include="..\Private\EffectBuilder.cpp">
       <Filter>01. Utility\03. GameObject\BuildSystem\Builder_Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\ComputeShader.cpp">
+      <Filter>01. Utility\05. Resources\08. Compute Shader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\StructuredBuffer.cpp">
+      <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1390,6 +1411,21 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_DeadListInit.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>  
     <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>

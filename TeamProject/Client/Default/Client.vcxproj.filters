@@ -88,6 +88,9 @@
     <Filter Include="02. GameObject\Object\TestObject\State\Jump">
       <UniqueIdentifier>{23e2d573-702d-416e-9396-0a1c9ea17b26}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\TestObject\State\Dash">
+      <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -183,6 +186,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Jump.h">
       <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TestState_Dash.h">
+      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -286,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Jump.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Jump</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TestState_Dash.cpp">
+      <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -12,20 +12,15 @@ void CTestState_Walk::Enter(CTestObject* pOwner)
     pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 9);
 }
 
-void CTestState_Walk::Update(CTestObject* pOwner, _float fTimeDelta)
+void CTestState_Walk::Update(CTestObject* pOwner, _float dt)
 {
     _vector3 vInputDir = pOwner->Get_InputDir();
 
     if (vInputDir.Length() > 0.01f)
     {
         vInputDir.Normalize();
-
-        CTransform* pTransform = pOwner->Get_Component<CTransform>();
-        _vector3 vPos = pTransform->Dir(STATE::POSITION);
-        pTransform->LookAt(vPos + vInputDir);
-
-        // ÀÌµ¿
-        pOwner->Get_Component<CCharacterController>()->Move_Direction(vInputDir, pOwner->Get_Speed(), fTimeDelta);
+        pOwner->Rotate_Horizontal(-vInputDir);
+        pOwner->Get_Component<CCharacterController>()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
     }
 }
 

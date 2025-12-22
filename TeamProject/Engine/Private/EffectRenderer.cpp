@@ -27,10 +27,7 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 
 HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pParticlePass)
 {
-	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
-
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect"))) return E_FAIL;
 	pEffectPass->Execute(m_pContext, this);
 	pParticlePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -91,9 +88,12 @@ HRESULT CEffectRenderer::Ready_Target()
 HRESULT CEffectRenderer::Ready_MRT()
 {
 	{
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_DiffuseEffect"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Bloom"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_DiffuseEffect"))) 
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffect")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion")))
+			return E_FAIL;
 	}
 
 	return S_OK;
