@@ -187,6 +187,11 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return E_NOTIMPL;
 }
 
+void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
+{
+	m_EventBus.push_back(make_pair(EventType, EventTag));
+}
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
@@ -282,6 +287,13 @@ void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 
 	m_AnimLayers[LayerIndex].bUseTransform = false;
 	m_AnimLayers[LayerIndex].iMoveBoneIndex = MoveBoneIndex;
+}
+
+void CAnimator3D::Set_UseTransform(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	m_AnimLayers[LayerIndex].bUseTransform = true;
+	m_AnimLayers[LayerIndex].iMoveBoneIndex = -1;
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -707,6 +719,8 @@ HRESULT SetAnimBuild::Apply()
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.bisFinished = false;
+
 	m_bApplied = true;
 	return S_OK;
 }
@@ -742,6 +756,8 @@ HRESULT ChangeAnimBuild::Apply()
 	
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+
+	Layer.bisFinished = false;
 
 	m_bApplied = true;
 	return S_OK;

@@ -75,7 +75,11 @@ public: //클라이언트 사용 전용 함수 .Apply() 로 적용할것
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
     virtual HRESULT StopAll_Animation(); //(구현안됌)
+    //이벤트 추가
+    void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
+    //이벤트 사용 ※무조건 매 프레임마다 전부 꺼내서 사용할 것
 
+    
 public://애니매이터 데이터
     /*----- is -----*/
 
@@ -98,7 +102,11 @@ public://애니매이터 데이터
     _int Get_NumLayer();
 
     /*----- Setter -----*/
+    
+    //애니매이션 트랜스폼을 제거
     void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
+    //애니매이션 트랜스폼 사용
+    void Set_UseTransform(_uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -124,14 +132,15 @@ protected://애니매이션 체크
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
 
-protected://애니매이션 연산
+protected:
+    //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
-
+    //레이어 연산
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-
+    //최종 뼈 계산
     void BuildBone();
 
 public:
@@ -143,11 +152,13 @@ protected:
 
 private:
     void Reset_Anim();
+
 protected:
     class CModelData* m_pData = {};
-    vector<class CAnimationClip*> m_pAnimClips;         //불러온 애니매이션클립들
-    vector<ANIM_LAYER> m_AnimLayers;
-    vector<string> m_EventBus;
+ 
+    vector<ANIM_LAYER>                      m_AnimLayers;   //애니매이션 레이어
+    vector<class CAnimationClip*>           m_pAnimClips;   //애니매이션 클립
+    vector<pair<CLIP_EVENT_TYPE, string>>   m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
