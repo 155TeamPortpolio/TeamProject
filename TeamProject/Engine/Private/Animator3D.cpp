@@ -191,10 +191,11 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
 		return true;
-	if (m_iCurrentClipIndex == -1)
-		return true;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	if (!isExistClip(Layer.iClipIndex))
+		return 0.f;
 
 	if (Layer.eBlendState != BLEND_STATE::NONE)
 		return false;

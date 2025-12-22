@@ -2,16 +2,17 @@
 
 NS_BEGIN(Client)
 
-enum PARAMETER_TYPE
+class CStateParameter
 {
-    PARAM_FLOAT,
-    PARAM_INT,
-    PARAM_BOOL,
-    PARAM_TRIGGER,
-};
+public:
+    enum PARAMETER_TYPE
+    {
+        PARAM_FLOAT,
+        PARAM_INT,
+        PARAM_BOOL,
+        PARAM_TRIGGER,
+    };
 
-class CStateParameter 
-{
 public:
     CStateParameter();
     CStateParameter(const CStateParameter& rhs);
