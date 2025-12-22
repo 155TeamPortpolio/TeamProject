@@ -27,9 +27,8 @@ public:
     HRESULT Initialize();
     void Update();
 
-private:
-    void CheckHittedMesh(class CGameObject* pObject);
-    void Load_MaterialMaps();
+public:
+    void Load_MaterialMaps(const string& mapDirectory);
     HRESULT Read_MaterialMaps();
     void Load_TextureMaps();
 

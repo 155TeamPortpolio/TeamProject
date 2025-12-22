@@ -85,7 +85,6 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
         pData->vUp[0],  pData->vUp[1] , pData->vUp[2] , pData->vUp[3],
         pData->vLook[0], pData->vLook[1] , pData->vLook[2] , pData->vLook[3],
         pData->vPos[0], pData->vPos[1] , pData->vPos[2] , pData->vPos[3] };
-
     pStaticObject->Get_Component<CTransform>()->TranslateMatrix(XMLoadFloat4x4(&matWorld));
 
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});

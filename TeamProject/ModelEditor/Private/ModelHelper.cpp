@@ -1,17 +1,31 @@
 #include "ModelHelper.h"
 
-HRESULT ModelHelper::Add_ModelPathFromDirectory(vector<string>& directoryPath, string path)
+#include <filesystem>
+#include <system_error>
+
+HRESULT ModelHelper::Add_ModelPathFromDirectory(std::vector<std::string>& directoryPath, std::string path)
 {
-	for (const auto& entry : filesystem::recursive_directory_iterator(filesystem::path(path))) {
-		if (!entry.is_regular_file())
-			continue;
+    namespace fs = std::filesystem;
+    error_code ec;
 
-		string ext = entry.path().extension().string();
+    // 폴더 없거나 디렉터리 아니면 조용히 스킵
+    if (!fs::exists(path, ec) || !fs::is_directory(path, ec))
+        return S_OK;
 
-		if (ext == ".json") {
-			directoryPath.push_back(entry.path().string());
-		}
-	}
+    // 권한/접근 문제도 예외 대신 ec로 처리
+    fs::recursive_directory_iterator it(fs::path(path), fs::directory_options::skip_permission_denied, ec);
+    fs::recursive_directory_iterator end;
 
-	return S_OK;
+    for (; it != end; it.increment(ec))
+    {
+        if (ec) { ec.clear(); continue; } // 해당 엔트리에서 오류나면 넘어감
+
+        const auto& entry = *it;
+        if (!entry.is_regular_file(ec)) continue;
+
+        if (entry.path().extension() == ".json")
+            directoryPath.push_back(entry.path().string());
+    }
+
+    return S_OK;
 }

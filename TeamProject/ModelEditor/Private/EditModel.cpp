@@ -72,7 +72,8 @@ void CEditModel::Render_GUI()
 
 	if (ImGui::Button("Model Load")) {
 		string path = Helper::OpenFile_Dialogue();
-		Load_AIScene(path);
+		if(!path.empty())
+			Load_AIScene(path);
 	}
 
 	ImGui::SameLine();
@@ -124,7 +125,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		aiProcessPreset_TargetRealtime_Fast;
 
 	/*메쉬 병합 플래그 끄게*/
-	//basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
+	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
 
 	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag);
 	if (!m_pAIScene)
@@ -169,7 +170,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
-		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag /* | aiProcess_PreTransformVertices*/);
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag| aiProcess_PreTransformVertices);
 		if (!m_pAIScene)
 			return E_FAIL;
 		hasBones = false;

@@ -9,12 +9,12 @@ class IObjectService;
 NS_END
 
 NS_BEGIN(ModelEdit)
-class CModelEditLevel :
+class CMapParseLevel :
     public CLevel
 {
 private:
-    CModelEditLevel(const string& LevelKey);
-    virtual ~CModelEditLevel() DEFAULT;
+    CMapParseLevel(const string& LevelKey);
+    virtual ~CMapParseLevel() DEFAULT;
 
 public:
     virtual HRESULT Initialize() override;
@@ -27,9 +27,9 @@ public:
 
 private:
     CGameInstance* m_pGameInstance = { nullptr };
-
+   
 public:
-    static CModelEditLevel* Create(const string& LevelKey);
+    static CMapParseLevel* Create(const string& LevelKey);
     virtual void Free() override;
 };
 
