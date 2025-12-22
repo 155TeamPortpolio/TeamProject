@@ -5,6 +5,7 @@
 #include "UITool_Level.h"
 
 _uint CSpriteAnimationUI::m_iCount = {};
+const string CSpriteAnimationUI::m_strTypeTag = "SpriteAnimation";
 
 CSpriteAnimationUI::CSpriteAnimationUI()
 {
@@ -167,6 +168,38 @@ void CSpriteAnimationUI::FromJson(const json& data)
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
+}
+
+void CSpriteAnimationUI::SavePrefab(json& data)
+{
+    __super::SavePrefab(data);
+
+    data["typeTag"] = m_strTypeTag;
+
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+
+    data["loop"] = m_isLoop;
+    data["frameCountX"] = m_iFrameCountX;
+    data["frameCountY"] = m_iFrameCountY;
+    data["frameCountTotal"] = m_iFrameCountTotal;
+    data["frameSpeed"] = m_fFrameSpeed;
+}
+
+void CSpriteAnimationUI::LoadPrefab(const json& data)
+{
+    __super::LoadPrefab(data);
+
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+
+    m_isLoop = data["loop"];
+    m_iFrameCountX = data["frameCountX"];
+    m_iFrameCountY = data["frameCountY"];
+    m_iFrameCountTotal = data["frameCountTotal"];
+    m_fFrameSpeed = data["frameSpeed"];
 }
 
 CGameObject* CSpriteAnimationUI::Create()

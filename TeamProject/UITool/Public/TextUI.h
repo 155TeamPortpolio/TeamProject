@@ -26,6 +26,9 @@ public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
+	virtual void SavePrefab(json& data) override;
+	virtual void LoadPrefab(const json& data) override;
+
 private:
 	_char		m_szText[MAX_PATH] = {};
 	_float		m_fFontScale = { 1.f }; 
@@ -41,6 +44,7 @@ private:
 	_bool		m_isSizeToContent = { true };
 
 public:
+	static const string m_strTypeTag;
 	static _uint m_iCount;
 
 private:

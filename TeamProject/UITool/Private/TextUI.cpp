@@ -7,6 +7,7 @@
 #include "Helper_Func.h"
 
 _uint CTextUI::m_iCount = {};
+const string CTextUI::m_strTypeTag = "Text";
 
 CTextUI::CTextUI()
 {
@@ -174,6 +175,54 @@ void CTextUI::FromJson(const json& data)
 
     __super::FromJson(data);
     FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
+}
+
+void CTextUI::SavePrefab(json& data)
+{
+    __super::SavePrefab(data);
+
+    data["typeTag"] = m_strTypeTag;
+
+    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
+    data["fontTag"] = szFontKeys[m_iFontKeyIndex];
+
+    data["text"] = m_szText;
+    data["fontScale"] = m_fFontScale;
+    data["fontColor"] = { {"x", m_vFontColor.x}, {"y", m_vFontColor.y} , {"z", m_vFontColor.z} , {"w", m_vFontColor.w}};
+    if (m_isOutlined)
+    {
+        data["outline"]["thickness"] = m_fOutlineThickness;
+        data["outline"]["color"] = { {"x", m_vOutlineColor.x}, {"y", m_vOutlineColor.y} , {"z", m_vOutlineColor.z} , {"w", m_vOutlineColor.w} };
+    } 
+}
+
+void CTextUI::LoadPrefab(const json& data)
+{
+    __super::LoadPrefab(data);
+
+    strcpy_s(m_szText, sizeof(m_szText), data["text"].get<string>().c_str());
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+
+    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
+    m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data["fontTag"].get<string>());
+    if (-1 != m_iFontKeyIndex)
+        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+
+    m_fFontScale = data["fontScale"].get<_float>();
+    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+    m_vFontColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
+    Get_Component<CTextSlot>()->Set_Color(m_vFontColor);
+
+    Update_UITransform();
+    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+
+    if (data.contains("outline"))
+    {
+        m_isOutlined = true;
+        m_fOutlineThickness = data["outline"]["thickness"].get<_float>();
+        m_vOutlineColor = _float4(data["outline"]["color"]["x"].get<_float>(), data["outline"]["color"]["y"].get<_float>(), data["outline"]["color"]["z"].get<_float>(), data["outline"]["color"]["w"].get<_float>());
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+    }
 }
 
 void CTextUI::Render_GUI_Layout()

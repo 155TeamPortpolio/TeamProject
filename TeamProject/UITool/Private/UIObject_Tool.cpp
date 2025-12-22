@@ -80,6 +80,33 @@ void CUIObject_Tool::FromJson(const json& data)
     FromJson_Animation(data);
 }
 
+void CUIObject_Tool::SavePrefab(json& data)
+{
+    Save_Transform(data["transform"]);
+
+    if (m_szTextKey[0] != '\0')
+        Save_TextKey(data["textKey"]);
+
+    if(!m_AnimClips.empty())
+        Save_Animation(data["animation"]);
+    
+    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+    if(pContainer && !pContainer->Get_Children().empty())
+        Save_Childeren(data["children"]);
+}
+
+void CUIObject_Tool::LoadPrefab(const json& data)
+{
+    if(data.contains("transform"))      
+        Load_Transform(data["transform"]);
+    if(data.contains("textKey"))        
+        Load_TextKey(data["textKey"]);
+    if(data.contains("animation"))      
+        Load_Animation(data["animation"]);
+    if(data.contains("children"))       
+        Load_Children(data["children"]);
+}
+
 void CUIObject_Tool::ToJson_Common(json& data)
 { 
     // 기본 정보
@@ -140,7 +167,7 @@ void CUIObject_Tool::ToJson_Animation(json& data)
     for (auto& clip : m_AnimClips)
     {
         if (clip.keyframes.empty())
-            return;
+            continue;
 
         json clipData;
 
@@ -212,6 +239,157 @@ void CUIObject_Tool::FromJson_Animation(const json& data)
         }
         m_AnimClips.push_back(clip);
     }
+}
+
+void CUIObject_Tool::Save_Transform(json& data)
+{
+    // Transform 정보
+    data["anchorOffset"] = { {"x", m_vAnchorOffset.x}, {"y", m_vAnchorOffset.y} };
+    data["anchor"] = ENUM(m_eAnchor);
+    data["size"] = { {"x", m_vSize.x}, {"y", m_vSize.y} };
+    data["scale"] = { {"x", m_vScale.x}, {"y", m_vScale.y} };
+    data["pivot"] = { {"x", m_vPivot.x}, {"y", m_vPivot.y} };
+    data["rotation"] = m_fRadian;
+}
+
+void CUIObject_Tool::Save_TextKey(json& data)
+{    
+    data["textKey"] = m_szTextKey;
+}
+
+void CUIObject_Tool::Save_Animation(json& data)
+{
+    for (auto& clip : m_AnimClips)
+    {
+        json clipData;
+
+        clipData["name"] = clip.strName;
+        clipData["loop"] = clip.isLoop;
+        clipData["duration"] = clip.fDuration;
+        
+        for (auto& keyframe : clip.keyframes)
+        {
+            json keyframeData;
+
+            keyframeData["time"] = keyframe.fTime;
+            keyframeData["scale"] = { {"x", keyframe.vScale.x}, {"y", keyframe.vScale.y} };
+            keyframeData["angle"] = keyframe.fAngle;
+            keyframeData["position"] = { {"x", keyframe.vPosition.x}, {"y", keyframe.vPosition.y} };
+            keyframeData["color"] = { {"x", keyframe.vColor.x}, {"y", keyframe.vColor.y}, {"z", keyframe.vColor.z}, {"w", keyframe.vColor.w} };
+            keyframeData["easeType"] = keyframe.easeType;
+
+            clipData["keyframes"].push_back(keyframeData);
+        }
+
+        data.push_back(clipData);
+    }
+}
+
+void CUIObject_Tool::Save_Childeren(json& data)
+{
+    const vector<CGameObject*> Childeren = Get_Component<CObjectContainer>()->Get_Children();
+    for (auto& pChild : Childeren)
+    {
+        if (!pChild)
+            continue;
+
+        CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pChild);
+
+        if (!pUI)
+            continue;
+
+        json objData;
+        pUI->SavePrefab(objData);
+        data.push_back(objData);
+    }
+}
+
+void CUIObject_Tool::Load_Transform(const json& data)
+{
+    m_vAnchorOffset.x = data["anchorOffset"]["x"].get<_float>();
+    m_vAnchorOffset.y = data["anchorOffset"]["y"].get<_float>();
+    m_eAnchor = static_cast<ANCHOR>(data["anchor"].get<_uint>());
+    m_vSize.x = data["size"]["x"].get<_float>();
+    m_vSize.y = data["size"]["y"].get<_float>();
+    m_vScale.x = data["scale"]["x"].get<_float>();
+    m_vScale.y = data["scale"]["y"].get<_float>();
+    m_vPivot.x = data["pivot"]["x"].get<_float>();
+    m_vPivot.y = data["pivot"]["y"].get<_float>();
+    m_fRadian = data["rotation"].get<_float>();
+    m_vPivot.x = data["pivot"]["x"].get<_float>();
+    m_vPivot.y = data["pivot"]["y"].get<_float>();
+}
+
+void CUIObject_Tool::Load_TextKey(const json& data)
+{
+    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
+    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+}
+
+void CUIObject_Tool::Load_Animation(const json& data)
+{
+    for (auto& clipData : data)
+    {
+        UI_ANIM_CLIP clip = UI_ANIM_CLIP(clipData["name"]);
+        clip.isLoop = clipData["loop"].get<_bool>();
+        clip.fDuration = clipData["duration"].get<_float>();
+
+        if (clipData.contains("keyframes"))
+        {
+            for (auto& keyframeData : clipData["keyframes"])
+            {
+                UI_KEYFRAME keyframe = {};
+                keyframe.fTime = keyframeData["time"].get<_float>();
+                keyframe.vScale = _float2(keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>());
+                keyframe.fAngle = keyframeData["angle"].get<_float>();
+                keyframe.vPosition = _float2(keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>());
+                keyframe.vColor = _float4(keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>());
+                keyframe.easeType = keyframeData["easeType"].get<EaseType>();
+                clip.keyframes.push_back(keyframe);
+            }
+        }
+         
+        m_AnimClips.push_back(clip);
+    }
+}
+
+void CUIObject_Tool::Load_Children(const json& data)
+{
+    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer)
+        return;
+
+    IUI_Service* pUIMgr = CGameInstance::GetInstance()->Get_UIMgr();
+    const string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    for (auto& childData : data)
+    {
+        CUI_Object* pObj = CreateChildObject(childData, strCurrentLevelKey);
+        if (!pObj)
+            continue;
+
+        CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
+        if (!pUI)
+            continue;
+
+        pUI->LoadPrefab(childData);
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
+    }
+}
+
+CUI_Object* CUIObject_Tool::CreateChildObject(const json& data, const string& strLevelKey)
+{
+    CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey , "Proto_GameObject_" + data["typeTag"].get<string>() })
+        .Build(data["typeTag"].get<string>());
+
+    //CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey , "Proto_GameObject_" + data["typeTag"].get<string>() })
+    //    .Offset(_float2(data["transform"]["anchorOffset"]["x"].get<float>(), data["transform"]["anchorOffset"]["y"].get<float>()))
+    //    .Size(_float2(data["transform"]["size"]["x"].get<float>(), data["transform"]["size"]["y"].get<float>()))
+    //    .Scale(_float2(data["transform"]["scale"]["x"].get<float>(), data["transform"]["scale"]["y"].get<float>()))
+    //    .Rotate(data["transform"]["rotation"].get<float>())
+    //    .Anchor(static_cast<ANCHOR>(data["transform"]["anchor"]))
+    //    .Build(data["typeTag"].get<string>());
+
+    return pObj;
 }
 
 void CUIObject_Tool::Reset_Animation()

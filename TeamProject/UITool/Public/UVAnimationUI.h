@@ -23,6 +23,9 @@ public:
 	virtual void ToJson(json& data) override;
 	virtual void FromJson(const json& data) override;
 
+	virtual void SavePrefab(json& data) override;
+	virtual void LoadPrefab(const json& data) override;
+
 public:
 	_bool		m_isUseMask = {};
 
@@ -33,6 +36,7 @@ public:
 	_int		m_iMaskTextureKeyIndex = { 0 };	// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
+	static const string m_strTypeTag;
 	static _uint m_iCount;
 
 public:

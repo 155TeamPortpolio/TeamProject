@@ -37,13 +37,13 @@ void CGUIPanel::Render_GUI()
 	{
 		ImGui::Begin("UI Tool");
 
-		//ChangeLevel();
-
 		CreateCanvasPanel();
 
 		SaveToJson();
 
 		LoadFromJson();
+
+		LoadPrefab();
 
 		ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
 
@@ -51,26 +51,18 @@ void CGUIPanel::Render_GUI()
 	}
 }
 
-void CGUIPanel::ChangeLevel()
-{
-	// 레벨 바꾸고 다시 로드하게 추후 추가할 예정
-
-	auto& szLevelTags = CMainApp::m_szLevelTags;
-
-	ImGui::Combo(u8"레벨", &m_iLevelIndex, szLevelTags.data(), szLevelTags.size());
-}
-
 void CGUIPanel::CreateCanvasPanel()
 {
 	if (ImGui::Button("Create Canvas_Panel"))
 	{
-		string strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+		const string& strTypeTag = CCanvasPanel::m_strTypeTag;
 
-		CUI_Object* pCanvasPanel = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_CanvasPanel" })
+		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strTypeTag })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
-			.Build("UI_CanvasPanel" + to_string(CCanvasPanel::m_iCount));
+			.Build(strTypeTag + to_string(CCanvasPanel::m_iCount));
 
-		m_pGameInstance->Get_UIMgr()->Add_UIObject(pCanvasPanel, strCurrentLevelKey);
+		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
 	}
 }
 
@@ -137,27 +129,18 @@ void CGUIPanel::LoadFromJson()
 			const string strLevel = uiData["levelTag"];
 			string strProtoTag = {};
 
-			// 타입에 따라 프로토타입태그 분기 처리
 			strProtoTag = "Proto_GameObject_" + strType;
 
-			//if (strType == "CanvasPanel")
-			//	strProtoTag = "Proto_GameObject_CanvasPanel";
-			//else if (strType == "ImageUI")
-			//	strProtoTag = "Proto_GameObject_ImageUI";
-			//else if (strType == "TextUI")
-			//	strProtoTag = "Proto_GameObject_TextUI";
-			//else if (strType == "ButtonUI")
-			//	strProtoTag = "Proto_GameObject_ButtonUI";
-			//else if (strType == "UVAnimationUI")
-			//	strProtoTag = "Proto_GameObject_UVAnimationUI";
-
 			CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
-				.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))
-				.Size(_float2(uiData["transform"]["size"]["x"].get<float>(), uiData["transform"]["size"]["y"].get<float>()))
-				.Scale(_float2(uiData["transform"]["scale"]["x"].get<float>(), uiData["transform"]["scale"]["y"].get<float>()))
-				.Rotate(uiData["transform"]["rotation"].get<float>())
-				.Anchor(static_cast<ANCHOR>(uiData["transform"]["anchor"]))
 				.Build(uiData["instanceKey"]);
+
+			//CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
+			//	.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))
+			//	.Size(_float2(uiData["transform"]["size"]["x"].get<float>(), uiData["transform"]["size"]["y"].get<float>()))
+			//	.Scale(_float2(uiData["transform"]["scale"]["x"].get<float>(), uiData["transform"]["scale"]["y"].get<float>()))
+			//	.Rotate(uiData["transform"]["rotation"].get<float>())
+			//	.Anchor(static_cast<ANCHOR>(uiData["transform"]["anchor"]))
+			//	.Build(uiData["instanceKey"]);
 
 			if (!pObj)
 				continue;
@@ -170,6 +153,62 @@ void CGUIPanel::LoadFromJson()
 			pUIMgr->Add_UIObject(pObj, strLevel);
 		}
 	}
+}
+
+void CGUIPanel::LoadPrefab()
+{
+	if (ImGui::Button("Load Prefab"))
+	{
+		string filePath(Helper::OpenFile_Dialogue());
+		if (filePath.empty())
+			return;
+
+		std::ifstream inputFile(filePath);
+		if (!inputFile.is_open())
+		{
+			MSG_BOX("Failed to open data file");
+			return;
+		}
+
+		json data;
+		inputFile >> data;
+		inputFile.close();
+
+		if (!data.contains("parent"))
+			return;
+
+		CUI_Object* pObj = CreateObject(data["parent"]);
+		if (!pObj)
+			return;
+
+		CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
+		if (!pUI)
+		{
+			Safe_Release(pObj);
+			return;
+		}
+
+		pUI->LoadPrefab(data["parent"]);
+		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
+	}
+}
+
+CUI_Object* CGUIPanel::CreateObject(const json& data)
+{
+	const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+	const json& transform = data["transform"];
+
+	CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["typeTag"].get<string>() })
+		.Offset(_float2(transform["anchorOffset"]["x"].get<float>(), transform["anchorOffset"]["y"].get<float>()))
+		.Size(_float2(transform["size"]["x"].get<float>(), transform["size"]["y"].get<float>()))
+		.Scale(_float2(transform["scale"]["x"].get<float>(), transform["scale"]["y"].get<float>()))
+		.Rotate(transform["rotation"].get<float>())
+		.Anchor(static_cast<ANCHOR>(transform["anchor"]))
+		.Build(data["typeTag"].get<string>());
+
+
+	return pObj;
 }
 
 CGUIPanel* CGUIPanel::Create(GUI_CONTEXT* pContext)

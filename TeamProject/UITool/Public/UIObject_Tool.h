@@ -26,6 +26,10 @@ public:
 	virtual void ToJson(json& data);				// (툴) json으로 쓰기
 	virtual void FromJson(const json& data);		// (툴, 클라이언트) json에서 읽기
 
+public:
+	virtual void SavePrefab(json& data);
+	virtual void LoadPrefab(const json& data);
+
 protected: 
 	void FromJson_RefreshCount(_uint& iCount);		// (툴) json에서 읽을 때 오브젝트 개수를 새로고침
 
@@ -50,6 +54,18 @@ private:
 
 	void FromJson_Parent(const json& data);			// (툴, 클라이언트)
 	void FromJson_Animation(const json& data);		// (툴, 클라이언트)
+
+	void Save_Transform(json& data);
+	void Save_TextKey(json& data);
+	void Save_Animation(json& data);
+	void Save_Childeren(json& data);
+
+	void Load_Transform(const json& data);
+	void Load_TextKey(const json& data);
+	void Load_Animation(const json& data);
+	void Load_Children(const json& data);
+
+	class CUI_Object* CreateChildObject(const json& data, const string& strLevelKey);
 
 	void Reset_Animation();
 
