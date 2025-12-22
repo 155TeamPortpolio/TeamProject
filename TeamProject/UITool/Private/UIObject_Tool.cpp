@@ -54,14 +54,16 @@ void CUIObject_Tool::Remove_SelfFromParent()
             continue;
 
         CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
-        const auto& children = pContainer->Get_Children();
+        if (!pContainer)
+            continue;
 
+        const auto& children = pContainer->Get_Children();
         for (_int i = 0; i < children.size(); ++i)
         {
             if (!children[i])
                 continue;
 
-            if (children[i]->Get_InstanceName() == Get_InstanceName())
+            if (children[i] == this)
             {
                 pContainer->Destroy_Child(i);
                 return;
