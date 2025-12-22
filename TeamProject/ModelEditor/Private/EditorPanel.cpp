@@ -14,19 +14,25 @@ void CEditorPanel::Render_GUI()
 {
 	ImGui::Begin("Editor Panel");
 	ImGui::SeparatorText("Add Object");
+
 	if (ImGui::Button("FBX")) {
 		CreateObject();
 	};
 	ImGui::SameLine();
+		
 	if (ImGui::Button("Binary")) {
 		CreateObject();
 	};
-	ImGui::SeparatorText("Map Object Option");
+
 	string levelKey = m_pContext->pSelectedLevel->Get_Key();
 	_bool isMapLevel = (levelKey == "MapParse_Level");
 	if (isMapLevel) {
+		ImGui::SeparatorText("Map Object Option");
 		if (ImGui::Button("Read Material")) {
-			Read_Material();
+			Read_Material(false);
+		};
+		if (ImGui::Button("Read MaterialMap")) {
+			Read_Material(true);
 		};
 	}
 	ImGui::End();
@@ -43,18 +49,22 @@ void CEditorPanel::CreateObject()
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(Model, { levelKey,"Model_Layer" });
 }
 
-void CEditorPanel::Read_Material()
+void CEditorPanel::Read_Material(_bool Json)
 {
-	//		string folder = Helper::OpenFolder_Dialogue();
-	//		if (folder.empty())
-	//			return;
-	//		
-	//		CEditorSystem::GetInstance()->Load_MaterialMaps(folder);
-	string file = Helper::OpenFile_Dialogue();
-	if (file.empty())
-		return;
+	if (Json) {
+		string folder = Helper::OpenFolder_Dialogue();
+		if (folder.empty())
+			return;
 
-	CEditorSystem::GetInstance()->Read_MaterialMapsCache(file);
+		CEditorSystem::GetInstance()->Load_MaterialMaps(folder);
+	}
+	else {
+		string file = Helper::OpenFile_Dialogue();
+		if (file.empty())
+			return;
+
+		CEditorSystem::GetInstance()->Read_MaterialMapsCache(file);
+	}
 }
 
 CEditorPanel* CEditorPanel::Create(GUI_CONTEXT* context)

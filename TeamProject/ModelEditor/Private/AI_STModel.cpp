@@ -97,6 +97,9 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 
 	auto ApplyDefaultClears = [&](const vector<_uint>& indices)
 		{
+			if (indices.empty())
+				return;
+
 			for (_uint index : indices)
 				m_DrawableMeshes[index] = false;
 		};

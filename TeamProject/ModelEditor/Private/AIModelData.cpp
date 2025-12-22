@@ -31,26 +31,32 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
         if (nullptr == pMesh)
             return E_FAIL;
 
-        m_Meshes.push_back(pMesh);
-        m_AIMesh.push_back(pMesh);
         string keyLower = Helper::ToLower(pMesh->Get_Key());
 
+        m_Meshes.push_back(pMesh);
+        m_AIMesh.push_back(pMesh);
         if (keyLower.find("proxy") != string::npos) {
             m_ProxyMarked.push_back(m_Meshes.size() - 1);
         }
         else {
             m_NotProxy.push_back(m_Meshes.size() - 1);
         }
-        if (keyLower.find("lod0") != string::npos)
+   
+        if (keyLower.find("lod0") != string::npos) {
             m_LOD0Marked.push_back(m_Meshes.size() - 1);
-        if (keyLower.find("lod1") != string::npos)
+        }
+        if (keyLower.find("lod1") != string::npos) {
             m_LOD1Marked.push_back(m_Meshes.size() - 1);
-        if (keyLower.find("lod2") != string::npos)
+        }
+        if (keyLower.find("lod2") != string::npos) {
             m_LOD2Marked.push_back(m_Meshes.size() - 1);
-        if (keyLower.find("lod3") != string::npos)
+        }
+        if (keyLower.find("lod3") != string::npos) {
             m_LOD3Marked.push_back(m_Meshes.size() - 1);
-        if (keyLower.find("eff") != string::npos)
+        }
+        if (keyLower.find("eff") != string::npos) {
             m_EffMarked.push_back(m_Meshes.size() - 1);
+        }
     }
 
     for (auto mesh : m_Meshes)
@@ -72,7 +78,6 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 
 vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
 {
-
     return m_NotProxy;
 }
 
@@ -95,7 +100,6 @@ CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)
 
 void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
-
 	for (size_t i = 0; i < m_Meshes.size(); i++)
 	{
 		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);

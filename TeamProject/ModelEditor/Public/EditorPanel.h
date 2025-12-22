@@ -15,9 +15,8 @@ public:
 
 private:
 	void CreateObject();
-	void Read_Material();
-	void Read_Texture();
-	void Read_Meshes();
+	void Read_Material(_bool Json);
+
 public:
 	static CEditorPanel* Create(GUI_CONTEXT* context);
 	virtual void Free() override;

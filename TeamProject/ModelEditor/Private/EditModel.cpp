@@ -187,6 +187,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	CAI_Material* pMaterial = CAI_Material::Create();
 	pMaterial->Set_Owner(this);
 	m_Components.emplace(type_index(typeid(CMaterial)), pMaterial);
+	m_Components.emplace(type_index(typeid(CAI_Material)), pMaterial);
+	Safe_AddRef(pMaterial);
 
 	_uint NumMaterial = m_pAIScene->mNumMaterials;
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);

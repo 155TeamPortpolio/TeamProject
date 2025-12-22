@@ -187,12 +187,6 @@ HRESULT CEditorSystem::Read_MaterialMapsCache(const string& mapDirectory)
 	return S_OK;
 }
 
-
-void CEditorSystem::Load_TextureMaps(const string& mapDirectory)
-{
-	
-}
-
 void CEditorSystem::Free()
 {
 	__super::Free();
