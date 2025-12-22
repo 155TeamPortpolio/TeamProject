@@ -2,6 +2,7 @@
 #include "TestLevel.h"
 #include "GameInstance.h"
 
+#include "TestMap.h"
 #include "FreeCam.h"
 #include "TestObject.h"
 #include "TestFloor.h"
@@ -46,6 +47,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//// Ready MapObject key and path to ResourceMgr 
 	//Rake_MapResources();
@@ -62,6 +64,11 @@ HRESULT CTestLevel::Awake()
 		.Build("Test_Model");
 
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+
+	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+		.Build("Test_Map");
+
+	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	COLLIDER_DESC colDesc;

@@ -210,6 +210,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
 
+	m_InstanceName = fileName;
+
 	return S_OK;
 }
 
