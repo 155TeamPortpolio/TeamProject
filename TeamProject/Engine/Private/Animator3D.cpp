@@ -520,11 +520,69 @@ void CAnimator3D::BuildBone()
 void CAnimator3D::Render_GUI()
 {
 	ImGui::SeparatorText("Animator 3D");
+	GUI_ShowLayerInfo();
+	GUI_SelectAnim();
+}
+
+void CAnimator3D::GUI_ShowLayerInfo()
+{
+	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
+	// ───────── Layer / Loop
+	ImGui::Text("Layer");
+	ImGui::SameLine();
+
+	int layerCount = m_AnimLayers.size();   // 현재 레이어 수
+
+	static int curLayerIndex = 0;
+	ImGui::SetNextItemWidth(80);
+	if (ImGui::BeginCombo("##Layer", std::to_string(curLayerIndex).c_str()))
+	{
+		for (int i = 0; i < layerCount; ++i)
+		{
+			bool selected = (curLayerIndex == i);
+			if (ImGui::Selectable(std::to_string(i).c_str(), selected))
+				curLayerIndex = i;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	auto& curLayer = m_AnimLayers[curLayerIndex];
+
+	ImGui::SameLine();
+	static bool bLoop = false;
+	ImGui::Checkbox("Loop", &curLayer.bLoop);
+
+	ImGui::Separator();
+
+	// ───────── Clip
+	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+	ImGui::Text(AnimInfo.c_str());
+	ImGui::Separator();
+
+	// ───────── Play bar
+	if (ImGui::Button("Play")) {
+		Set_Animation(curLayerIndex, curLayer.iClipIndex)
+			.Loop(bLoop);
+	}
+	ImGui::SameLine();
+
+
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, m_pAnimClips[curLayer.iClipIndex]->Get_Duration());
+	ImGui::EndChild();
+}
+
+void CAnimator3D::GUI_SelectAnim()
+{
+
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##Animator 3DChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
 	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
@@ -542,8 +600,6 @@ void CAnimator3D::Render_GUI()
 		{
 			ImGui::SetTooltip("%s", m_pAnimClips[i]->Get_Name().c_str());
 		}
-		//if (ImGui::Button(string(m_pAnimLoops[i] ? "Do Once" : "Do Loop").c_str(), ImVec2{ childWidth * 0.35f, textLineHeight + 4 }))
-		//	(m_pAnimLoops[i]) = !(m_pAnimLoops[i]);
 		ImGui::PopStyleVar();
 		ImGui::PopID();
 
