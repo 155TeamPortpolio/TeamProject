@@ -54,7 +54,10 @@
     <ClInclude Include="..\Public\Assimps.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
-    <ClInclude Include="..\Public\EditorPanel.h" />
+    <ClInclude Include="..\Public\EditorPanel.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\EditorSystem.h" />
     <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
@@ -97,7 +100,10 @@
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />
-    <ClCompile Include="..\Private\EditorPanel.cpp" />
+    <ClCompile Include="..\Private\EditorPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\EditorSystem.cpp" />
     <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />

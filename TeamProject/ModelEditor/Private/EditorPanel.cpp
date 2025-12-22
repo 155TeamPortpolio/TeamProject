@@ -45,11 +45,16 @@ void CEditorPanel::CreateObject()
 
 void CEditorPanel::Read_Material()
 {
-	string folder = Helper::OpenFolder_Dialogue();
-	if (folder.empty())
+	//		string folder = Helper::OpenFolder_Dialogue();
+	//		if (folder.empty())
+	//			return;
+	//		
+	//		CEditorSystem::GetInstance()->Load_MaterialMaps(folder);
+	string file = Helper::OpenFile_Dialogue();
+	if (file.empty())
 		return;
 
-	CEditorSystem::GetInstance()->Load_MaterialMaps(folder);
+	CEditorSystem::GetInstance()->Read_MaterialMapsCache(file);
 }
 
 CEditorPanel* CEditorPanel::Create(GUI_CONTEXT* context)

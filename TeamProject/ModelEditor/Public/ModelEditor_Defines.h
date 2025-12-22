@@ -14,10 +14,19 @@ namespace ModelEdit {
 }
 
 extern HWND g_hWnd;
-extern HINSTANCE g_hInstance;
+extern HINSTANCE g_hInstance; 
+
 
 using namespace ModelEdit;
 #include "Assimps.h"
 using namespace Assimp;
 
 #include "Engine_Defines.h"
+
+struct MaterialTexNames
+{
+	string Albedo;
+	string Normal;
+	string Metallic;
+	string AO;
+};

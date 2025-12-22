@@ -30,7 +30,8 @@ public:
 public:
     void Load_MaterialMaps(const string& mapDirectory);
     HRESULT Read_MaterialMaps();
-    void Load_TextureMaps();
+    HRESULT Read_MaterialMapsCache(const string& mapDirectory);
+    void Load_TextureMaps(const string& mapDirectory);
 
 private:
     class CRayCaster* m_pRayCast = { nullptr };
@@ -38,7 +39,7 @@ private:
     SelectedMesh mesh = {};
 
     vector<string> m_Directorys;
-    unordered_map<string, json> m_fileMaps;
+    unordered_map<string, MaterialTexNames> m_matTexNames;
 
 public:
     virtual void Free() override;
