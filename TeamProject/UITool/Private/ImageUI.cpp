@@ -67,28 +67,6 @@ void CImageUI::Render_GUI()
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }
 
-void CImageUI::ToJson(json& data)
-{
-    __super::ToJson(data);
-     
-    data["typeTag"] = "ImageUI";
-
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
-}
-
-void CImageUI::FromJson(const json& data)
-{
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
-    if (-1 != m_iTextureKeyIndex)
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
-
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
-}
-
 void CImageUI::SavePrefab(json& data)
 {
     __super::SavePrefab(data);

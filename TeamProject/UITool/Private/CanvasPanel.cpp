@@ -77,19 +77,6 @@ void CCanvasPanel::Render_GUI()
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ToJson(json& data)
-{
-    __super::ToJson(data);
-
-    data["typeTag"] = "CanvasPanel";
-}
-
-void CCanvasPanel::FromJson(const json& data)
-{
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
-}
-
 void CCanvasPanel::SavePrefab(json& data)
 { 
     __super::SavePrefab(data);

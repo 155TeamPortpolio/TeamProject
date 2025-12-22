@@ -28,9 +28,6 @@ private:
 private:
     void CreateCanvasPanel(); 
 
-    void SaveToJson();
-    void LoadFromJson();
-
     void LoadPrefab();
 
 private:

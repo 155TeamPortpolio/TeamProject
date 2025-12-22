@@ -39,13 +39,7 @@ void CGUIPanel::Render_GUI()
 
 		CreateCanvasPanel();
 
-		//SaveToJson();
-		//
-		//LoadFromJson();
-		//
 		LoadPrefab();
-		//
-		//ImGui::Text(to_string(CCanvasPanel::m_iCount).c_str());
 
 		ImGui::End();
 	}
@@ -63,95 +57,6 @@ void CGUIPanel::CreateCanvasPanel()
 			.Build(strTypeTag + to_string(CCanvasPanel::m_iCount));
 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
-	}
-}
-
-void CGUIPanel::SaveToJson()
-{
-	if (ImGui::Button("Save"))
-	{
-		json data;
-		data["uiObjects"] = json::array();
-
-		auto& objects = m_pGameInstance->Get_UIMgr()->Get_LevelUI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
-
-		for (auto& pObj : objects)
-		{
-			if (!pObj)
-				continue;
-
-			CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
-
-			if (!pUI)
-				continue;
-
-			json objData;
-			pUI->ToJson(objData);
-			data["uiObjects"].push_back(objData);
-		}
-
-		std::ofstream outputFile(Helper::SaveFileDialogByWinAPI(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey(), "json"));
-
-		if (outputFile.is_open())
-		{
-			outputFile << data.dump(4);
-			outputFile << std::endl;
-			outputFile.close();
-		}
-	}
-}
-
-void CGUIPanel::LoadFromJson()
-{
-	if (ImGui::Button("Load"))
-	{
-		std::ifstream inputFile(Helper::OpenFile_Dialogue());
-
-		if (!inputFile.is_open())
-		{
-			MSG_BOX("Failed to open data file");
-			return;
-		}
-
-		json data;
-
-		inputFile >> data;
-
-		inputFile.close();
-
-		IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
-		pUIMgr->Clear(m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey());
-
-		// json에 있는 ui object 로드해서 level에 저장
-		for (auto& uiData : data["uiObjects"])
-		{
-			const string strType = uiData["typeTag"];
-			const string strLevel = uiData["levelTag"];
-			string strProtoTag = {};
-
-			strProtoTag = "Proto_GameObject_" + strType;
-
-			CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
-				.Build(uiData["instanceKey"]);
-
-			//CUI_Object* pObj = Builder::Create_UIObject({ strLevel , strProtoTag })
-			//	.Offset(_float2(uiData["transform"]["anchorOffset"]["x"].get<float>(), uiData["transform"]["anchorOffset"]["y"].get<float>()))
-			//	.Size(_float2(uiData["transform"]["size"]["x"].get<float>(), uiData["transform"]["size"]["y"].get<float>()))
-			//	.Scale(_float2(uiData["transform"]["scale"]["x"].get<float>(), uiData["transform"]["scale"]["y"].get<float>()))
-			//	.Rotate(uiData["transform"]["rotation"].get<float>())
-			//	.Anchor(static_cast<ANCHOR>(uiData["transform"]["anchor"]))
-			//	.Build(uiData["instanceKey"]);
-
-			if (!pObj)
-				continue;
-
-			CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
-			if (!pUI)
-				continue;
-			 
-			pUI->FromJson(uiData);
-			pUIMgr->Add_UIObject(pObj, strLevel);
-		}
 	}
 }
 

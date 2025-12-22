@@ -122,57 +122,6 @@ void CTextUI::Render_GUI()
     } 
 }
 
-void CTextUI::ToJson(json& data)
-{
-    __super::ToJson(data);
-
-    data["typeTag"] = "TextUI";
-
-    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    data["fontTag"] = szFontKeys[m_iFontKeyIndex];
-
-    data["text"] = m_szText;
-    data["fontScale"] = m_fFontScale;
-    data["fontColor"]["x"] = m_vColor.x;
-    data["fontColor"]["y"] = m_vColor.y;
-    data["fontColor"]["z"] = m_vColor.z;
-    data["fontColor"]["w"] = m_vColor.w;
-    data["outlined"] = m_isOutlined;
-    data["outlineThickness"] = m_fOutlineThickness;
-    data["outlineColor"]["x"] = m_vOutlineColor.x;
-    data["outlineColor"]["y"] = m_vOutlineColor.y;
-    data["outlineColor"]["z"] = m_vOutlineColor.z;
-    data["outlineColor"]["w"] = m_vOutlineColor.w;
-}
-
-void CTextUI::FromJson(const json& data)
-{
-    strcpy_s(m_szText, sizeof(m_szText), data["text"].get<string>().c_str());
-    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-
-    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data["fontTag"]);
-    if (-1 != m_iFontKeyIndex)
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
-
-    m_fFontScale = data["fontScale"].get<_float>();
-    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-    m_vColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
-    Get_Component<CTextSlot>()->Set_Color(m_vColor);
-
-    Update_UITransform();
-    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
-
-    m_isOutlined = data["outlined"].get<_bool>();
-    m_fOutlineThickness = data["outlineThickness"].get<_float>();
-    m_vOutlineColor = _float4(data["outlineColor"]["x"].get<_float>(), data["outlineColor"]["y"].get<_float>(), data["outlineColor"]["z"].get<_float>(), data["outlineColor"]["w"].get<_float>());
-    if(m_isOutlined)
-        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
-
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
-}
-
 void CTextUI::SavePrefab(json& data)
 {
     __super::SavePrefab(data);
