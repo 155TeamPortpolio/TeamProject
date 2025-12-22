@@ -154,6 +154,9 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
+	Layer.iStartBoneIndex = -1;
+	Layer.AffectedBonesIndices.clear();
+
 	Layer.iClipIndex = -1;
 	Layer.fPrevTrackPosition = 0.f;
 	Layer.fCurrentTrackPosition = 0.f;
@@ -164,10 +167,8 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
-
 	Layer.eBlendState = { BLEND_STATE::NONE };
-	Layer.AffectedBonesIndices.clear();
-
+	
 	Matrix identityMat = XMMatrixIdentity();
 
 	_float4x4 IdentityMatrix;
@@ -191,17 +192,19 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
 		return true;
-	if (m_iCurrentClipIndex == -1)
-		return true;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (Layer.eBlendState != BLEND_STATE::NONE)
+	if (Layer.iClipIndex == -1)
+		return true;
+
+	if (Layer.bBlending)
 		return false;
-	else if (Layer.bLoop)
+
+	if (Layer.bLoop)
 		return false;
-	else
-		return Layer.bisFinished;
+
+	return Layer.bisFinished;
 }
 
 _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
