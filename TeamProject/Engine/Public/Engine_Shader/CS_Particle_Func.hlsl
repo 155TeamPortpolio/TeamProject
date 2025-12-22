@@ -45,7 +45,10 @@ Particle TEXTURE_SHEET_ANIMATION(Particle p)
     
     if (IsAnimated)
     {
+        float t = Out.fLifeTime / Out.fMaxLifeTime;
+        uint iFrameIndex = floor(iMaxFrameIndex * t);
         
+        Out.iFrameIndex = iFrameIndex;
     }
     
     return Out;
