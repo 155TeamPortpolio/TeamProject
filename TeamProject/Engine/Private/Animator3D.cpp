@@ -620,7 +620,6 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 void CAnimator3D::GUI_SelectAnim()
 {
-
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
@@ -647,7 +646,7 @@ void CAnimator3D::GUI_SelectAnim()
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // ? íƒ????ª©???¬ì»¤??
+			ImGui::SetItemDefaultFocus();
 		}
 	}
 
@@ -691,8 +690,9 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDER?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡
+//BUILDER------------------------------------------------------------------------------------------
 
+//----------  SetAnim Options
 HRESULT SetAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
@@ -725,6 +725,7 @@ SetAnimBuild& SetAnimBuild::Speed(_float fSpeed)
 	return *this;
 }
 
+//---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
