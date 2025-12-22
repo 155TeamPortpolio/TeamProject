@@ -556,7 +556,13 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Separator();
 
 	// 式式式式式式式式式 Clip
-	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+
+	string AnimName{};
+
+	if(isExistClip(curLayer.iClipIndex))
+		AnimName = m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+
+	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + AnimName;
 	ImGui::Text(AnimInfo.c_str());
 	ImGui::Separator();
 
@@ -569,7 +575,12 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, m_pAnimClips[curLayer.iClipIndex]->Get_Duration());
+	
+	int iDuration{};
+	if (isExistClip(curLayer.iClipIndex))
+		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
+
+	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, iDuration);
 	ImGui::EndChild();
 }
 
