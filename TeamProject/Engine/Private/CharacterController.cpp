@@ -204,7 +204,7 @@ void CCharacterController::Render_GUI()
 
 	ImGui::SeparatorText("CharacterController");
 
-	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 400), true))
+	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
 	{
 		ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
 
