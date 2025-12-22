@@ -438,8 +438,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
  
     if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
-    if (vEffect.a > 0.f)
-        Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
+    if (vEffect.a > 0.f) Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
