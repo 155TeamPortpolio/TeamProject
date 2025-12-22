@@ -140,8 +140,12 @@ void CHierarchyPanel::ShowObjectList()
 	if (!m_pContext->pSelectedLayer) return;
 	auto& ObjectVector = m_pContext->pSelectedLayer->Get_AllObject();
 
+
 	string InstanceListHeader = "Instances ("  + to_string(ObjectVector.size()) + " )";
 	ImGui::SeparatorText(InstanceListHeader.c_str());
+
+	if (ObjectVector.empty())
+		return;
 
 	for (auto& Object : ObjectVector) {
 		if (!Object || !Object->Is_Root()) continue;

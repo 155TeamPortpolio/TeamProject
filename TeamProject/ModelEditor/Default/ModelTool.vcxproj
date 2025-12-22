@@ -54,12 +54,20 @@
     <ClInclude Include="..\Public\Assimps.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
+    <ClInclude Include="..\Public\EditorPanel.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditorSystem.h" />
     <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\EditModel.h" />
+    <ClInclude Include="..\Public\MapParseLevel.h" />
     <ClInclude Include="..\Public\ModelEditLevel.h" />
     <ClInclude Include="..\Public\ModelEditor_Defines.h" />
+    <ClInclude Include="..\Public\ModelHelper.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\RayCaster.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="ModelEditor.h" />
     <ClInclude Include="Resource.h" />
@@ -92,10 +100,18 @@
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />
+    <ClCompile Include="..\Private\EditorPanel.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditorSystem.cpp" />
     <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\MapParseLevel.cpp" />
     <ClCompile Include="..\Private\ModelEditLevel.cpp" />
+    <ClCompile Include="..\Private\ModelHelper.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
+    <ClCompile Include="..\Private\RayCaster.cpp" />
     <ClCompile Include="ModelEditor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

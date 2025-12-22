@@ -5,6 +5,7 @@
 #include "SkeletalModel.h"
 #include "ModelData.h"
 #include "GameInstance.h"
+#include "StaticModel.h"
 
 CDebugBonePanel::CDebugBonePanel(GUI_CONTEXT* context)
 	:CBasePanel(context)
@@ -23,10 +24,24 @@ void CDebugBonePanel::Render_GUI()
 	CGameObject* pTarget = m_pContext->pSelectedObject;
 	if (!pTarget) return;
 
-	CSkeletalModel* pModel = pTarget->Get_Component<CSkeletalModel>();
-	if (!pModel) return;
+	CSkeletalModel* pSkeletalModel = pTarget->Get_Component<CSkeletalModel>();
+	CStaticModel* pStaticModel = pTarget->Get_Component<CStaticModel>();
+	CModelData* pData = nullptr;
 
-	CModelData* pData = pModel->Get_ModelData();
+	if (!pSkeletalModel) {
+		if (pStaticModel) {
+			pData = pStaticModel->Get_ModelData();
+			if (!pData->isSkinned())
+				return;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else {
+		pData = pSkeletalModel->Get_ModelData();
+	}
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 

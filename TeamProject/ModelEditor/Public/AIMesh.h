@@ -8,6 +8,15 @@ NS_BEGIN(ModelEdit)
 class CAIMesh final :
 	public CMesh
 {
+public:
+	struct RayHitMesh {
+		_bool bHit = { false };
+		_float distance;
+		_float3 vHittedPosition;
+		_uint Index = {};
+		CAIMesh* pMesh = { nullptr };
+	};
+
 private:
 	CAIMesh();
 	CAIMesh(const string& ModelKey);
@@ -30,6 +39,9 @@ public:
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	void Save_File(ofstream& ofs, _fmatrix PreTransform);
 
+public:
+	RayHitMesh CheckRay(const RAY& ray, const _float4x4& worldMatrix);
+
 private:
 	//ÀúÀå¿ë
 	vector<VTXSKINMESH> m_SkinMeshes;
@@ -37,8 +49,8 @@ private:
 	vector<_uint>		m_Indices;
 	vector<_uint>		m_BoneIndices;
 	CSkeleton* m_pSkeleton = { nullptr };
-	_int BoneIndex = {};
-
+	_int BoneIndex = {-1};
+	_bool isRigid = { false };
 	_uint VertexCount = {};
 public:
 	static CAIMesh* Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);

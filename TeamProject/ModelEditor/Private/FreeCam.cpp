@@ -33,6 +33,7 @@ void CFreeCam::Priority_Update(_float dt)
 
     const _vector3 look{look4.x, look4.y, look4.z};
     const _vector3 right{right4.x, right4.y, right4.z};
+    const _vector3 up{0, 1, 0};
 
     const float speed = m_fSpeed * dt;
 
@@ -41,6 +42,8 @@ void CFreeCam::Priority_Update(_float dt)
     if (input->Key_Down('S')) move += look * -speed;
     if (input->Key_Down('D')) move += right * speed;
     if (input->Key_Down('A')) move += right * -speed;
+    if (input->Key_Down(VK_SPACE)) move += up * speed;
+    if (input->Key_Down(VK_SHIFT)) move += up * -speed;
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({move.x, move.y, move.z, 0.f});
