@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 #include "Engine_Math.h"
+#include "AnimationLayout.h"
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
@@ -63,7 +64,7 @@ public:
     HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     virtual void Update_Animation(_float dt);
 
-public: //클라이언트 사용 전용 함수 .Apply() 로 적용할것
+public: 
     //즉시 애니매이션 변경
     class SetAnimBuild Set_Animation(AnimArg ClipArg);
     class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
@@ -96,14 +97,22 @@ public://애니매이터 데이터
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
     //현재 레이어 개수
     _int Get_NumLayer();
-
+    //이벤트 사용 ※무조건 매 프레임마다 전부 꺼내서 사용할 것
+    const vector<pair<CLIP_EVENT_TYPE, string>>* Get_Event() const;
     /*----- Setter -----*/
+    
+    //애니매이션 트랜스폼을 제거
     void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
+    //애니매이션 트랜스폼 사용
+    void Set_UseTransform(_uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
     void Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix);
     void Dettach_BoneRelation(_uint Index);
+    //이벤트 추가
+    void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
+    void Clear_Events();
 
 public:
     //월드상의 최종 뼈 위치를 가져옴
@@ -124,14 +133,15 @@ protected://애니매이션 체크
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
 
-protected://애니매이션 연산
+protected:
+    //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
-
+    //레이어 연산
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-
+    //최종 뼈 계산
     void BuildBone();
 
 public:
@@ -143,11 +153,13 @@ protected:
 
 private:
     void Reset_Anim();
+
 protected:
     class CModelData* m_pData = {};
-    vector<class CAnimationClip*> m_pAnimClips;         //불러온 애니매이션클립들
-    vector<ANIM_LAYER> m_AnimLayers;
-    vector<string> m_EventBus;
+ 
+    vector<ANIM_LAYER>                      m_AnimLayers;   //애니매이션 레이어
+    vector<class CAnimationClip*>           m_pAnimClips;   //애니매이션 클립
+    vector<pair<CLIP_EVENT_TYPE, string>>   m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
@@ -156,14 +168,8 @@ protected:
     vector<_float4x4> m_FinalMatices = {};              //월드행렬까지 곱해진 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
-    _int m_iNextClipIndex = { -1 }; //다음 애니메이션 전환 용
-    _float m_fConvertDuration = {}; 
-    _float m_fPrevTrackPosition = {}; //다음 애니메이션 전환 용
-
     _int m_iCurrentClipIndex = { -1 };
-    _float m_fCurrentTrackPosition = {};
-    _bool isAnimEnd = { false };
-   
+
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
@@ -173,6 +179,8 @@ public:
     virtual CComponent* Clone();
     virtual void Free() override;
 };
+
+// ───────── Builder
 
 class ENGINE_DLL SetAnimBuild {
 public:

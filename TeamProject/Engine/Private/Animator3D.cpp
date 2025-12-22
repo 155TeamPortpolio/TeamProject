@@ -116,6 +116,8 @@ void CAnimator3D::Update_Animation(_float dt)
 {
 	if (m_pAnimClips.empty()) return;
 
+	Clear_Events();
+
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
@@ -187,10 +189,6 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return E_NOTIMPL;
 }
 
-void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
-{
-	m_EventBus.push_back(make_pair(EventType, EventTag));
-}
 
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
@@ -225,7 +223,6 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// ?´ì „ ?„ë ˆ???¸ëž™ ?„ì¹˜ < ê¸°ì? <= ?„ìž¬ ?¸ëž™ ?„ì¹˜????true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -281,6 +278,11 @@ _int CAnimator3D::Get_NumLayer()
 	return (_int)m_AnimLayers.size();
 }
 
+const vector<pair<CLIP_EVENT_TYPE, string>>* CAnimator3D::Get_Event() const
+{
+	return &m_EventBus;
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -317,6 +319,16 @@ void CAnimator3D::Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix)
 void CAnimator3D::Dettach_BoneRelation(_uint Index)
 {
 	m_DettachedBone.insert(Index);
+}
+
+void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
+{
+	m_EventBus.push_back(make_pair(EventType, EventTag));
+}
+
+void CAnimator3D::Clear_Events()
+{
+	m_EventBus.clear();
 }
 
 _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
@@ -400,7 +412,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished);
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 	
 	//Eliminate Transform
 	if (false == Layer.bUseTransform) {
@@ -423,11 +435,11 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished);
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 
 	Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 		Layer.BlendMatrices, Layer.fBlendTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished);
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 
 	Layer.fBlendElapsed += dt;
 
