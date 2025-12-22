@@ -9,7 +9,7 @@
 
 void CTestState_Jump::Enter(CTestObject* pOwner)
 {
-    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 1);
+    pOwner->Get_Component<CAnimator3D>()->Change_Animation(1);
 
     CCharacterController* pCCT = pOwner->Get_Component<CCharacterController>();
     if (pCCT)
@@ -27,11 +27,13 @@ void CTestState_Jump::Update(CTestObject* pOwner, _float dt)
 
     if (bMoving && !m_bMove)
     {
-        pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 9);
+        pOwner->Get_Component<CAnimator3D>()->Change_Animation(9)
+            .Loop(true)
+            .Apply();
     }
     else if (!bMoving && m_bMove)
     {
-        pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 1);
+        pOwner->Get_Component<CAnimator3D>()->Change_Animation(1);
     }
 
     m_bMove = bMoving;

@@ -47,12 +47,12 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	/*»À °³¼ö¸¸Å­ »ÀÀÇ ·ÎÄÃ»óÅÂ¸¦ °¡Á®¿È*/
+	/*ë¼ˆ ê°œìˆ˜ë§Œí¼ ë¼ˆì˜ ë¡œì»¬ìƒíƒœë¥¼ ê°€ì ¸ì˜´*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*ºÎ¸ğ »À¸¦ ¹ŞÀ» ¼ö ÀÖ°Ô ±âº»°ªÀ¸·Î ÃÊ±âÈ­*/
+	/*ë¶€ëª¨ ë¼ˆë¥¼ ë°›ì„ ìˆ˜ ìˆê²Œ ê¸°ë³¸ê°’ìœ¼ë¡œ ì´ˆê¸°í™”*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -66,7 +66,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	/*ÃÖÁ¾ »À Çà·Ä¿¡ ´ëÀÔ*/
+	/*ìµœì¢… ë¼ˆ í–‰ë ¬ì— ëŒ€ì…*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
@@ -195,10 +195,10 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (Layer.iClipIndex == -1)
-		return true;
+	if (!isExistClip(Layer.iClipIndex))
+		return 0.f;
 
-	if (Layer.bBlending)
+	if (Layer.eBlendState != BLEND_STATE::NONE)
 		return false;
 
 	if (Layer.bLoop)
@@ -221,7 +221,7 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// ÀÌÀü ÇÁ·¹ÀÓ Æ®·¢ À§Ä¡ < ±âÁØ <= ÇöÀç Æ®·¢ À§Ä¡ÀÏ ¶§ true
+	// ì´ì „ í”„ë ˆì„ íŠ¸ë™ ìœ„ì¹˜ < ê¸°ì¤€ <= í˜„ì¬ íŠ¸ë™ ìœ„ì¹˜ì¼ ë•Œ true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -378,7 +378,7 @@ void CAnimator3D::Animation_Run(_float dt)
 {
 	if (m_AnimLayers.empty()) return;
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+	//ì• ë‹ˆë§¤ì´ì…˜ ì—…ë°ì´íŠ¸
 	for (auto& Layer : m_AnimLayers) {
 		if (-1 == Layer.iClipIndex) continue;
 
@@ -389,7 +389,7 @@ void CAnimator3D::Animation_Run(_float dt)
 			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
 	}
 
-	//ÀÌµ¿°ª Á¦°Å
+	//ì´ë™ê°’ ì œê±°
 	for (auto& Layer : m_AnimLayers) {
 		if (false == Layer.bUseTransform) {
 			if (isExistClip(Layer.iMoveBoneIndex)) {
@@ -416,7 +416,7 @@ void CAnimator3D::Animation_Convert(_float dt)
 
 void CAnimator3D::Override_BlendAnim()
 {
-	// base¿Í blend º¸°£
+	// baseì™€ blend ë³´ê°„
 	for (size_t i = 0; i < m_BlendIndex.size(); ++i)
 	{
 		_uint idx = m_BlendIndex[i];
@@ -548,7 +548,7 @@ void CAnimator3D::Render_GUI()
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // ¼±ÅÃµÈ Ç×¸ñ¿¡ Æ÷Ä¿½º
+			ImGui::SetItemDefaultFocus(); // ì„ íƒëœ í•­ëª©ì— í¬ì»¤ìŠ¤
 		}
 	}
 
@@ -592,7 +592,7 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDER¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//BUILDERã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡
 
 HRESULT SetAnimBuild::Apply()
 {
