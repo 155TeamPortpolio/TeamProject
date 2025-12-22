@@ -14,6 +14,7 @@
 #include "Camera.h"
 
 /* MapData */
+#include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 
@@ -33,7 +34,9 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-
+	m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
+	if (nullptr == m_pMapDataCloud)
+		return E_FAIL;
 
 
 	return S_OK;
@@ -61,11 +64,11 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
 	
 	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
-	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-		.Asset("test_particle.json")
-		.Position(_float3(0.f, 0.f, 0.f))
-		.Build("Test_Effect");
-	objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("test_particle.json")
+	//	.Position(_float3(0.f, 0.f, 0.f))
+	//	.Build("Test_Effect");
+	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
 	//===================================================
 
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -74,13 +77,13 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 
 	//// Ready MapObject key and path to ResourceMgr 
-	//Rake_MapResources();
+	Rake_MapResources();
 
 	////Map Loader Logic is going to Change
-	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level",  "../Bin/Resources/MapData/Data/MapTool.Data_1_20251217_200942.json" );
-	//if (nullptr == pMapLoader)
-	//	MSG_BOX("Failed to Load MapData!");
-	//Safe_Release(pMapLoader);
+	CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
+	if (nullptr == pMapLoader)
+		MSG_BOX("Failed to Load MapData!");
+	Safe_Release(pMapLoader);
 
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.CharacterController({})
@@ -88,21 +91,21 @@ HRESULT CTestLevel::Awake()
 
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+	//COLLIDER_DESC colDesc;
+	//colDesc.bCooking = true;
+	//colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
 
-	for (_int z = 0; z < 3; ++z)
-	{
-		for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.f, 0.f, z * 6.f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
+	//for (_int z = 0; z < 3; ++z)
+	//{
+	//for (_int x = 0; x < 3; ++x)
+	//	{
+	//		CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+	//			.Collider(colDesc)
+	//			.Position({ x * 6.f, 0.f, z * 6.f })
+	//			.Build("Test_Floor_" + to_string(z * 3 + x));
+	//		objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+	//	}
+	//}
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
@@ -203,6 +206,8 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pMapDataCloud);
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

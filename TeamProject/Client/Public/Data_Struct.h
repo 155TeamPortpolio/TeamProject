@@ -4,7 +4,7 @@
 namespace Client {
 	
 	/* Map Data */
-	typedef struct tagMapObjectData {
+	/*typedef struct tagMapObjectData {
 		std::string TagModelResourceKey = {};
 		std::string TagMaterialResourceKey = {};
 		std::array<_float, 4> vRight = { 1.f, 0.f, 0.f, 0.f };
@@ -25,6 +25,7 @@ namespace Client {
 		_int		iVersion = -1;
 		std::vector<MapData_Layer> Layers;
 	}MapData_Header;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, iVersion, Layers);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, iVersion, Layers);*/
+
 
 }
