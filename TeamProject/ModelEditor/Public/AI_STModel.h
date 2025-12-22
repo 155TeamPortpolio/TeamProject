@@ -24,6 +24,7 @@ public:
 public:
     HRESULT Load_AIModel(const aiScene* pAIScene, string fileName);
     HRESULT Save_Model(const string& SavePath, _fmatrix WorldMatrix);
+    class CAIModelData* Get_AIModelData();
 
 private:
     HRESULT Ready_AIModelData(const aiScene* pAIScene);

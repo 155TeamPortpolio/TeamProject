@@ -1,10 +1,12 @@
 #pragma once
 #include "Base.h"
 
-namespace Engine {
-	class CGameInstance;
-}
 
+NS_BEGIN(Engine)
+class CGameInstance;
+NS_END
+
+NS_BEGIN(ModelEdit)
 class CMainApp :public CBase
 {
 private:
@@ -20,12 +22,16 @@ public:
 	void Set_Levels();
 	
 private:
+	void ReadyBase();
+private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pDeviceContext = {nullptr};
+	class CEditorSystem* m_pSystem = { nullptr };
 
 public:
-	static CMainApp* Create();
+	static CMainApp* Create(); 
 	virtual void Free() override;
 };
 
+NS_END
