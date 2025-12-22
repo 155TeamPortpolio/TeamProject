@@ -150,6 +150,9 @@
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
+    <ClInclude Include="..\Public\MapData_Defines.h" />
+    <ClInclude Include="..\Public\MapLoader_Helper.h" />
+    <ClInclude Include="..\public\MapDataCloud.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
@@ -168,6 +171,10 @@
     <ClInclude Include="..\Public\TestMap.h" />
     <ClInclude Include="..\Public\TestObject.h" />
     <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\Public\TestState_Dash.h" />
+    <ClInclude Include="..\Public\TestState_Idle.h" />
+    <ClInclude Include="..\Public\TestState_Jump.h" />
+    <ClInclude Include="..\Public\TestState_Walk.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -204,6 +211,7 @@
     </ClCompile>
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\private\CamDirector.cpp" />
+    <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
@@ -224,6 +232,10 @@
     <ClCompile Include="..\Private\TestMap.cpp" />
     <ClCompile Include="..\Private\TestObject.cpp" />
     <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\Private\TestState_Dash.cpp" />
+    <ClCompile Include="..\Private\TestState_Idle.cpp" />
+    <ClCompile Include="..\Private\TestState_Jump.cpp" />
+    <ClCompile Include="..\Private\TestState_Walk.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

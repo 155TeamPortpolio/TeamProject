@@ -12,7 +12,6 @@ private:
 
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
-	HRESULT Create_CBuffer(ID3D11Device* pDevice);
 
 public:
 	const string& Get_PassConstant();
@@ -49,7 +48,6 @@ private:
 
 	MaterialConstants overrides_Constant = {};
 	class CMaterialData* m_pMaterialData = { nullptr };
-	ID3D11Buffer* m_pCBuffer = { nullptr };
 	ID3D11Device* m_pDevice = { nullptr };
 
 public:

@@ -27,8 +27,6 @@ public:
 	virtual void FromJson(const json& data) override;
 
 private:
-	string		m_strFontTag;
-	_int		m_iFontKeyIndex = { 0 };
 	_char		m_szText[MAX_PATH] = {};
 	_float		m_fFontScale = { 1.f }; 
 	_float4		m_vFontColor = { 1.f, 1.f, 1.f, 1.f }; 
@@ -37,9 +35,10 @@ private:
 	_float		m_fOutlineThickness = { 1.f };
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
-	_bool		m_isSizeToContent = { true };
-
 	_int		m_iAlign = {};
+
+	_int		m_iFontKeyIndex = { 0 };
+	_bool		m_isSizeToContent = { true };
 
 public:
 	static _uint m_iCount;
@@ -49,8 +48,8 @@ private:
 	virtual void Render_GUI_Transform() override;
 
 private:
-	void Set_Font(const string& strFontTag);
 	void UpdateAnchorOffsetByAlign();
+	_int Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag);
 
 public:
 	static CGameObject* Create();

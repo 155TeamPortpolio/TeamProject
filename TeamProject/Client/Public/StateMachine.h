@@ -14,7 +14,6 @@ public:
 public:
 	HRESULT Initialize(Type* pOwner);
 	void	Update(_float dt);
-	void	Update_AnimProgress(_float fProgress);
 
 public:
 	// State °ü¸®
@@ -50,6 +49,7 @@ public:
 	_float			  Get_StateTime() const { return m_fStateTime; }
 
 private:
+	void	Update_AnimProgress();
 	void	Check_Transitions();
 	void	Check_AnyStateTransitions();
 	_bool	Check_Transition(const TRANSITION_INFO& transition);
@@ -68,6 +68,6 @@ private:
 	_float									 m_fStateTime = 0.f;
 };
 
-using CCharacterStateMachine = CStateMachine<class CCharacter>;
+using CTestStateMachine = CStateMachine<class CTestObject>;
 
 NS_END

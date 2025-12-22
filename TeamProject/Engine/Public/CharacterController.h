@@ -56,6 +56,7 @@ public:
     void            Resize(_float fHeight, _float fRadius);
     void            Set_StepOffset(_float fOffset);
     void            Set_SlopeLimit(_float fDegree);
+    void            Set_Velocity(_fvector vVelocity);
     void            Set_PlanarVelocity(_fvector vVelocity);
     void            Set_VerticalVelocity(_float fVelocity);
     void            Set_MaxSpeed(_float fMaxSpeed);
@@ -92,6 +93,7 @@ private:
     _float                   m_fGravity = { -9.81f };
     _float                   m_fContactOffset = 0.001f;
     _float                   m_fRestOffset = 0.0f;
+    _float                   m_fBoundingMinY = 0.f;
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
 

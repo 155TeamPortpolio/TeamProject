@@ -150,16 +150,19 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CanvasPanel.h" />
+    <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\Public\GUIPanel.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestUI.h" />
     <ClInclude Include="..\Public\TextUI.h" />
+    <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\UIObject_Tool.h" />
     <ClInclude Include="..\Public\UITool_Camera.h" />
     <ClInclude Include="..\Public\UITool_Defines.h" />
     <ClInclude Include="..\Public\UITool_Level.h" />
+    <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
@@ -174,15 +177,18 @@
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_widgets.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CanvasPanel.cpp" />
+    <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\GUIPanel.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />
+    <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\UIObject_Tool.cpp" />
     <ClCompile Include="..\Private\UITool_Camera.cpp" />
     <ClCompile Include="..\Private\UITool_Level.cpp" />
+    <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="UITool.cpp" />
   </ItemGroup>
   <ItemGroup>

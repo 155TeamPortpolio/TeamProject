@@ -23,7 +23,8 @@ public:
     virtual HRESULT Push_Text(TEXT_INFO info);
 
     virtual HRESULT Render_Font();
-
+    virtual HRESULT Render_TextFont(string TextKey);
+    virtual HRESULT Clear_Texts();
 private:
     ID3D11Device* m_pDevice = {nullptr};
     ID3D11DeviceContext* m_pContext = {nullptr};

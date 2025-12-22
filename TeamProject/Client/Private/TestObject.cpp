@@ -11,7 +11,13 @@
 
 #include "RigidBody.h"
 
+#include "TestState_Idle.h"
+#include "TestState_Walk.h"
+#include "TestState_Jump.h"
+#include "TestState_Dash.h"
+
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
+
 
 CTestObject::CTestObject()
 {
@@ -35,7 +41,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*Ã†Ã„Ã€ÃÂ¸Ã­Â°Ãº Ã…Â°Â°ÂªÃ€Âº Ã€ÃÃ„Â¡*/
+	/*ÆÄÀÏ¸í°ú Å°°ªÀº ÀÏÄ¡*/
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
 		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
 	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
@@ -52,8 +58,57 @@ HRESULT CTestObject::Initialize_Prototype()
 HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+	Initialize_State();
 
 	GAMEOBJECT_DESC* pObjDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
+
+	return S_OK;
+}
+
+HRESULT CTestObject::Initialize_State()
+{
+	m_pStateMachine = new CTestStateMachine();
+
+	// States µî·Ï
+	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
+	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
+	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
+	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+
+	// Transition ¼³Á¤
+	// Idle <-> Walk
+	m_pStateMachine->Register_Transition("Idle", "Walk",
+		CONDITION_BOOL_TRUE, "IsMoving");
+	m_pStateMachine->Register_Transition("Walk", "Idle",
+		CONDITION_BOOL_FALSE, "IsMoving");
+
+	// AnyState -> Jump (Á¡ÇÁ Å° ÀÔ·Â)
+	m_pStateMachine->Register_AnyStateTransition("Jump",
+		CONDITION_TRIGGER, "Jump");
+
+	// AnyState -> Dash (Shift ÀÔ·Â)
+	m_pStateMachine->Register_AnyStateTransition("Dash",
+		CONDITION_TRIGGER, "Dash");
+
+	// Jump -> Walk (ÂøÁö + ÀÌµ¿ Áß)
+	m_pStateMachine->Register_Transition("Jump", "Walk",
+		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
+
+	// Jump -> Idle (ÂøÁö + Á¤Áö)
+	m_pStateMachine->Register_Transition("Jump", "Idle",
+		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
+
+	// Dash -> Walk (´ë½¬ ¿Ï·á + ÀÌµ¿ Áß)  
+	m_pStateMachine->Register_Transition("Dash", "Walk",
+		CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
+
+	// Dash -> Idle (´ë½¬ ¿Ï·á + Á¤Áö) 
+	m_pStateMachine->Register_Transition("Dash", "Idle",
+		CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
+
+	// ±âº» »óÅÂ ¼³Á¤
+	m_pStateMachine->Set_DefaultState("Idle");
+	m_pStateMachine->Initialize(this);
 
 	return S_OK;
 }
@@ -62,8 +117,8 @@ void CTestObject::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	
-	Get_Component<CAnimator3D>()->Change_Animation(1);
+	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
+	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo´Â 7¹øº»ÀÌ¿òÁ÷ÀÓ
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
@@ -75,45 +130,67 @@ void CTestObject::Priority_Update(_float dt)
 
 void CTestObject::Update(_float dt)
 {
+	// Process Input
+	auto input = CGameInstance::GetInstance()->Get_InputDev();
+	m_vInputDir = _vector3(0.f, 0.f, 0.f);
+	if (input->Key_Down('W')) m_vInputDir.z += 1.f;
+	if (input->Key_Down('S')) m_vInputDir.z -= 1.f;
+	if (input->Key_Down('D')) m_vInputDir.x += 1.f;
+	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
+
+	m_bJump = input->Key_Down('J');
+	_bool bDash = input->Key_Down(VK_SHIFT);
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	if (m_pStateMachine) m_pStateMachine->Update(dt);
+
+	// Process Parameter
+	auto pCCT = Get_Component<CCharacterController>();
+	if (pCCT)
+	{
+		_bool bGrounded = pCCT->Is_Grounded();
+		_bool bMoving = m_vInputDir.Length() > 0.01f;
+		_bool bDashFinished = m_pStateMachine->Get_Bool("DashFinished");
+
+		m_pStateMachine->Set_Bool("IsGrounded", bGrounded);
+		m_pStateMachine->Set_Bool("IsMoving", bMoving);
+
+		m_pStateMachine->Set_Bool("IsGroundedAndMoving", bGrounded && bMoving);
+		m_pStateMachine->Set_Bool("IsGroundedAndIdle", bGrounded && !bMoving);
+
+		m_pStateMachine->Set_Bool("DashFinishedAndMoving", bDashFinished && bMoving);
+		m_pStateMachine->Set_Bool("DashFinishedAndIdle", bDashFinished && !bMoving);
+	}
+
+	if (m_bJump)
+	{
+		m_pStateMachine->Set_Trigger("Jump");
+		m_bJump = false;
+	}
+
+	if (bDash)
+	{
+		m_pStateMachine->Set_Trigger("Dash");
+	}
 
 	auto controller = Get_Component<CCharacterController>();
-	auto cam        = CAM->Get_ActiveCam();
-	auto camTf      = cam->Get_Owner()->Get_Component<CTransform>();
-
-	_vector3 camLook = camTf->Dir(STATE::LOOK);
-	_vector3 camRight = camTf->Dir(STATE::RIGHT);
-
-	camLook.y = 0.f; camRight.y = 0.f;
-
-	_vector3 vMoveDir{};
-
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-
-	if (input->Key_Down(VK_UP))
-		vMoveDir += camLook;
-	if (input->Key_Down(VK_DOWN))
-		vMoveDir -= camLook;
-	if (input->Key_Down(VK_RIGHT))
-		vMoveDir += camRight;
-	if (input->Key_Down(VK_LEFT))
-		vMoveDir -= camRight;
-
-	controller->Move_Direction(vMoveDir, 5.0f, dt);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
-		controller->Jump(3.f);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Hold('F'))
+	if (controller)
 	{
-		PHYSICS_RAY_HIT hit;
-		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		controller->Shoot_Ray(vLook, 100.f, hit);
-	}
-	else
-		controller->Clear_DebugRay();
+		controller->Update(dt);
 
-	controller->Update(dt);
+		// µð¹ö±×¿ë ·¹ÀÌÄ³½ºÆ® (FÅ°)
+		auto input = CGameInstance::GetInstance()->Get_InputDev();
+		if (input->Key_Hold('F'))
+		{
+			PHYSICS_RAY_HIT hit;
+			_vector vLook = m_pTransform->Dir(STATE::LOOK);
+			controller->Shoot_Ray(vLook, 100.f, hit);
+		}
+		else
+		{
+			controller->Clear_DebugRay();
+		}
+	}
 }
 
 void CTestObject::Late_Update(_float dt)
@@ -137,7 +214,6 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
-
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
@@ -146,6 +222,36 @@ void CTestObject::Render_GUI()
 	}
 	_bool isLayer = Get_Layer();
 	ImGui::Checkbox("InLayer",&isLayer);
+
+	// StateMachine µð¹ö±ë Á¤º¸
+	if (m_pStateMachine)
+	{
+		ImGui::Separator();
+		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+	}
+}
+
+void CTestObject::Rotate_Horizontal(const _vector3& vDirection)
+{
+	_vector vDir = XMLoadFloat3(&vDirection);
+	vDir = XMVectorSetY(vDir, 0.f);
+
+	if (XMVector3Length(vDir).m128_f32[0] < 0.001f)
+		return;
+
+	vDir = XMVector3Normalize(vDir);
+
+	_vector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_vector vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vDir));
+
+	_matrix vRotmat = XMMatrixIdentity();
+	vRotmat.r[0] = vRight;
+	vRotmat.r[1] = vWorldUp;
+	vRotmat.r[2] = vDir;
+
+	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	m_pTransform->Set_Quaternion(vQuaternion);
 }
 
 CTestObject* CTestObject::Create()
@@ -175,5 +281,6 @@ CGameObject* CTestObject::Clone(INIT_DESC* pArg)
 
 void CTestObject::Free()
 {
+	Safe_Delete(m_pStateMachine);
 	__super::Free();
 }

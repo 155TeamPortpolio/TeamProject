@@ -15,6 +15,7 @@ class CResourceMgr final :
 		unordered_map<string, class CSoundData*>				m_Sounds;
 		unordered_map<string, vector<class CAnimationClip*>>	m_Animations;
 		unordered_map<string, EFFECT_ASSET>						m_EffectAssets;
+		unordered_map <string, class CComputeShader*>			m_ComputeShaders;
 	};
 
 private:
@@ -36,6 +37,7 @@ public:
 	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) override;
 	virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) override;
 	virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectTag) override;
+	virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) override;
 
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;

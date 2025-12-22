@@ -65,12 +65,19 @@ void CUIObject_Tool::ToJson(json& data)
 {
     ToJson_Common(data);
     ToJson_Parent(data);
+    ToJson_Animation(data);
 }
 
 void CUIObject_Tool::FromJson(const json& data)
 {
     // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
+    m_vPivot.x = data["transform"]["pivot"]["x"].get<_float>();
+    m_vPivot.y = data["transform"]["pivot"]["y"].get<_float>();
+    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
+    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+
     FromJson_Parent(data);
+    FromJson_Animation(data);
 }
 
 void CUIObject_Tool::ToJson_Common(json& data)
@@ -82,7 +89,7 @@ void CUIObject_Tool::ToJson_Common(json& data)
     // Transform 정보
     data["transform"]["anchorOffset"]["x"] = m_vAnchorOffset.x;
     data["transform"]["anchorOffset"]["y"] = m_vAnchorOffset.y;
-    data["transform"]["anchor"] = static_cast<int>(m_eAnchor);
+    data["transform"]["anchor"] = ENUM(m_eAnchor);
     data["transform"]["size"]["x"] = m_vSize.x;
     data["transform"]["size"]["y"] = m_vSize.y;
     data["transform"]["scale"]["x"] = m_vScale.x;
@@ -90,6 +97,9 @@ void CUIObject_Tool::ToJson_Common(json& data)
     data["transform"]["pivot"]["x"] = m_vPivot.x;
     data["transform"]["pivot"]["y"] = m_vPivot.y;
     data["transform"]["rotation"] = m_fRadian;
+
+    // 텍스트 키
+    data["textKey"] = m_szTextKey;
 }
 
 void CUIObject_Tool::ToJson_Parent(json& data)
@@ -122,6 +132,45 @@ void CUIObject_Tool::ToJson_Parent(json& data)
     }
 }
 
+void CUIObject_Tool::ToJson_Animation(json& data)
+{
+    if (m_AnimClips.empty())
+        return;
+
+    for (auto& clip : m_AnimClips)
+    {
+        if (clip.keyframes.empty())
+            return;
+
+        json clipData;
+
+        clipData["name"] = clip.strName;
+        clipData["loop"] = clip.isLoop;
+        clipData["duration"] = clip.fDuration;
+
+        for (auto& keyframe : clip.keyframes)
+        {
+            json keyframeData;
+
+            keyframeData["time"] = keyframe.fTime;
+            keyframeData["scale"]["x"] = keyframe.vScale.x;
+            keyframeData["scale"]["y"] = keyframe.vScale.y;
+            keyframeData["angle"] = keyframe.fAngle;
+            keyframeData["position"]["x"] = keyframe.vPosition.x;
+            keyframeData["position"]["y"] = keyframe.vPosition.y;
+            keyframeData["color"]["x"] = keyframe.vColor.x;
+            keyframeData["color"]["y"] = keyframe.vColor.y;
+            keyframeData["color"]["z"] = keyframe.vColor.z;
+            keyframeData["color"]["w"] = keyframe.vColor.w;
+            keyframeData["easeType"] = keyframe.easeType;
+
+            clipData["keyframes"].push_back(keyframeData);
+        }
+
+        data["animation"].push_back(clipData);
+    }
+}
+
 void CUIObject_Tool::FromJson_Parent(const json& data)
 {
     if (!data.contains("parentInstanceKey"))
@@ -138,6 +187,42 @@ void CUIObject_Tool::FromJson_Parent(const json& data)
             return;
         }
     }
+}
+
+void CUIObject_Tool::FromJson_Animation(const json& data)
+{
+    if (!data.contains("animation"))
+        return;
+
+    for (auto& clipData : data["animation"])
+    {
+        UI_ANIM_CLIP clip = UI_ANIM_CLIP(clipData["name"]);
+        clip.isLoop = clipData["loop"].get<_bool>();
+        clip.fDuration = clipData["duration"].get<_float>();
+        for (auto& keyframeData : clipData["keyframes"])
+        {
+            UI_KEYFRAME keyframe = {};
+            keyframe.fTime = keyframeData["time"].get<_float>();
+            keyframe.vScale = _float2(keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>());
+            keyframe.fAngle = keyframeData["angle"].get<_float>();
+            keyframe.vPosition = _float2(keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>());
+            keyframe.vColor = _float4(keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>());
+            keyframe.easeType = keyframeData["easeType"].get<EaseType>();
+            clip.keyframes.push_back(keyframe);
+        }
+        m_AnimClips.push_back(clip);
+    }
+}
+
+void CUIObject_Tool::Reset_Animation()
+{
+    m_fBlendTime = 0.f;
+
+    // 애니메이션 재생 전에 값으로 되돌려 놓음
+    m_vScale = m_vBaseScale;
+    m_fRadian = m_vBaseAngle;
+    // 포지션
+    m_vColor = m_vBaseColor;
 }
 
 void CUIObject_Tool::FromJson_RefreshCount(_uint& iCount)
@@ -227,7 +312,7 @@ void CUIObject_Tool::Render_GUI_Animation()
     // 클립 추가
     {
         ImGui::AlignTextToFramePadding();
-        ImGui::Text(u8"클립 : ");
+        ImGui::Text((u8"클립 (" + to_string(m_AnimClips.size()) + ")").c_str());
 
         ImGui::SameLine();
         static _int iCount = 0;
@@ -268,52 +353,58 @@ void CUIObject_Tool::Render_GUI_Animation()
 
     if (showPopup)
     {
-        ImGui::SetNextWindowPos(ImVec2(880, 400), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(200, 300), ImGuiCond_Once);
-        ImGui::Begin(m_AnimClips[iClipIndex].strName.c_str(), &showPopup);
+        UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
 
-        // 선택한 클립 편집
-        ImGui::SeparatorText(u8"클립");
-        char szBuffer[256] = {};
-        strcpy_s(szBuffer, m_AnimClips[iClipIndex].strName.c_str());
-        if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
-            m_AnimClips[iClipIndex].strName = szBuffer;
+        ImGui::SetNextWindowPos(ImVec2(880, 100), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(200, 600), ImGuiCond_Once);
+        ImGui::Begin(clip.strName.c_str(), &showPopup);
 
-        ImGui::InputFloat(u8"길이", &m_AnimClips[iClipIndex].fDuration);
-        ImGui::Checkbox(u8"루프", &m_AnimClips[iClipIndex].isLoop);
-        ImGui::BeginDisabled(m_AnimClips[iClipIndex].keyframes.empty());
+        // 재생, 정지 
+        ImGui::SeparatorText(u8"재생");
+        ImGui::BeginDisabled(clip.keyframes.empty());
         if (ImGui::Button(m_isBlending ? u8"정지" : u8"재생"))
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                m_iCurrentClipIndex = iClipIndex;
+                Set_Animation(iClipIndex);
+            else
+                Reset_Animation();
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
         if (m_isBlending)   ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), u8"● Playing");
-        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped");
+        else                ImGui::TextColored(ImVec4(1.f, 0.3f, 0.3f, 1.f), u8"■ Stopped"); 
+
+        // 선택한 클립 편집
+        ImGui::SeparatorText(u8"기본 속성 편집");
+        char szBuffer[256] = {};
+        strcpy_s(szBuffer, clip.strName.c_str());
+        if (ImGui::InputText(u8"이름", szBuffer, sizeof(szBuffer)))
+            clip.strName = szBuffer;
+        ImGui::InputFloat(u8"길이", &clip.fDuration);
+        ImGui::Checkbox(u8"루프", &clip.isLoop);
 
         // 키프레임 추가
-        ImGui::SeparatorText(u8"키프레임");
+        ImGui::SeparatorText((u8"키프레임 ( " + to_string(clip.keyframes.size()) + " )").c_str());
         if (ImGui::Button(u8"추가 +"))
         {
             _float fTime = {};
-            if (!m_AnimClips[iClipIndex].keyframes.empty())
-                fTime = min(m_AnimClips[iClipIndex].keyframes.back().fTime + 0.5f, m_AnimClips[iClipIndex].fDuration);
+            if (!clip.keyframes.empty())
+                fTime = min(clip.keyframes.back().fTime + 0.5f, clip.fDuration);
 
-            m_AnimClips[iClipIndex].keyframes.push_back(UI_KEYFRAME(fTime));
+            clip.keyframes.push_back(UI_KEYFRAME(fTime));
         }
         ImGui::SameLine();
         if (ImGui::Button(u8"삭제 -"))
         {
-            if(!m_AnimClips[iClipIndex].keyframes.empty())
-                m_AnimClips[iClipIndex].keyframes.pop_back();
+            if(!clip.keyframes.empty())
+                clip.keyframes.pop_back();
         }
 
         // 키프레임 편집 
         ImGui::Separator();
         int idx = 0;
-        for (auto& keyframe : m_AnimClips[iClipIndex].keyframes)
+        for (auto& keyframe : clip.keyframes)
         {
             ImGui::PushID(idx);
 
@@ -321,7 +412,7 @@ void CUIObject_Tool::Render_GUI_Animation()
             {
                 ImGui::TreePush("##Content");
 
-                ImGui::DragFloat(u8"시간", &keyframe.fTime, 0.1f, 0.f, m_AnimClips[iClipIndex].fDuration, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+                ImGui::DragFloat(u8"시간", &keyframe.fTime, 0.1f, 0.f, clip.fDuration, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat2(u8"스케일", reinterpret_cast<_float*>(&keyframe.vScale), 0.1f, 0.f, 100.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat(u8"각도", &keyframe.fAngle, 1.f, -180.f, 180.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
                 ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&keyframe.vPosition), 0.1f);
@@ -338,6 +429,13 @@ void CUIObject_Tool::Render_GUI_Animation()
 
         ImGui::End();
     } 
+}
+
+void CUIObject_Tool::Render_GUI_TextKey()
+{
+    ImGui::SeparatorText(u8"텍스트 키");
+    if (ImGui::InputText(u8"텍스트 키", m_szTextKey, sizeof(m_szTextKey)))
+        Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
 }
 
 void CUIObject_Tool::Play_Animation(_float dt)
@@ -362,6 +460,25 @@ void CUIObject_Tool::Play_Animation(_float dt)
             fRatio = m_fBlendTime / clip.fDuration;
 
         fRatio = clamp(fRatio, 0.f, 1.f);
+
+        if (fRatio >= 1.f)
+        {
+            // 애니메이션 종료 처리
+            if (!clip.isLoop)
+            {
+                // 마지막 키프레임 적용
+                m_vScale = clip.keyframes.back().vScale;
+                m_fRadian = clip.keyframes.back().fAngle;
+                // 포지션
+                m_vColor = clip.keyframes.back().vColor;
+
+                m_isBlending = false;
+            } 
+
+            Reset_Animation();
+
+            return;
+        }
 
         // 현재 시간에 해당하는 키프레임 찾기
         _int iCurrentKeyIdx = { -1 };
@@ -402,31 +519,9 @@ void CUIObject_Tool::Play_Animation(_float dt)
             // UI 오브젝트에 적용
             m_vScale = vScale;
             m_fRadian = XMConvertToRadians(fAngle);
-            // 포지션
-            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos);
-            // 컬러
-        } 
-        else if (fRatio >= 1.f)
-        {
-            // 애니메이션 종료 처리
-            if (!clip.isLoop)
-                m_isBlending = false;
-
-            m_fBlendTime = 0.f;
-
-            //// 마지막 키프레임 적용 ?? 
-            //if (!clip.keyframes.empty())
-            //{
-            //    const UI_KEYFRAME& lastKey = clip.keyframes.back();
-            //    m_vScale.x = lastKey.vScale.x;
-            //    m_vScale.y = lastKey.vScale.y;
-            //    m_fRadian = XMConvertToRadians(lastKey.fAngle);
-            //}
-        } 
-    }
-    else
-    {
-        // 애니메이션 재생이 아닐 때 리셋을 어디서 해줘야하지
+            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos); // 포지션
+            m_vColor = vColor;
+        }
     }
 }
 
@@ -437,13 +532,25 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
 
     m_iCurrentClipIndex = iIndex;
 
-    //m_iCurrentClipIndex[iIndex]->Reset();
+    m_vBaseScale = m_vScale;
+    m_vBaseAngle = m_fRadian;
+    // 포지션
+    m_vBaseColor = m_vColor;
 }
 
 void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
 {
     Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
     OutstrTextureKey = TextureKey;
+}
+
+_int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
+{
+    for (_int i = 0; i < TextureKeys.size(); ++i)
+        if (TextureKeys[i] == strTextureTag)
+            return i;
+
+    return -1;
 }
 
 void CUIObject_Tool::Free()

@@ -135,7 +135,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
         discard;
     
     Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
-    Out.vDiffuse.a = Alpha * fRGBMask;
+    //Out.vDiffuse.a = Alpha * fRGBMask;
     
     return Out;
 }
