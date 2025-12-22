@@ -145,6 +145,10 @@ protected://애니매이션 연산
 public:
     virtual void Render_GUI();
 
+protected:
+    void GUI_ShowLayerInfo();
+    void GUI_SelectAnim();
+
 private:
     void Reset_Anim();
 protected:
