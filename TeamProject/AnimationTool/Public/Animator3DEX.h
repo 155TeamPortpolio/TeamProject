@@ -26,6 +26,7 @@ public:
 
 public:
     vector<CAnimationClip*>* Get_Clips();
+    vector<ANIM_LAYER>& Get_AnimLayers();
 
 public:
     static CAnimator3DEX* Create();

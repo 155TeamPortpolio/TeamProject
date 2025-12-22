@@ -112,6 +112,9 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					m_CurClipTag = ClipTag;
 					m_iCurClipIndex = iIndex;
 					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
+					
+					//디버그용 레이어에 데이터넣기
+					m_pSelectAnimator->Get_AnimLayers()[0].iClipIndex = iIndex;
 
 					//가져온 애니매이션의 duration 가져옴
 					m_fTrackPos = 0.f;					
@@ -526,7 +529,7 @@ void CAnimToolPanel::Create_ClipMeta(const string& CurMetaTag)
 		return;
 	}
 
-	string SavePath = m_Paths.find(CurMetaTag)->second + "\\";
+	string SavePath = m_Paths.find(CurMetaTag)->second + "\\" + CurMetaTag + "_Meta.json";
 	Helper::SaveJson<vector<ANIM_CLIP>>(iter->second, SavePath);
 }
 
