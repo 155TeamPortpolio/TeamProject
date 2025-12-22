@@ -34,7 +34,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     if (szFontKeys.size())
         Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
 
-    Get_Component<CTextSlot>()->Set_TextKey("text");
+    Get_Component<CTextSlot>()->Set_TextKey(m_InstanceName);
 
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
@@ -75,9 +75,9 @@ void CTextUI::Render_GUI()
 
     Render_GUI_Transform();
     
-    ImGui::SeparatorText(u8"콘텐츠");
+    ImGui::SeparatorText(u8"텍스트");
 
-    if (ImGui::InputTextMultiline(u8"텍스트", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
+    if (ImGui::InputTextMultiline(u8"내용", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
     {
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
         UpdateAnchorOffsetByAlign();

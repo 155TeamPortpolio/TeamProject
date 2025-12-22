@@ -117,7 +117,6 @@ void CTestObject::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
-	
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
 
