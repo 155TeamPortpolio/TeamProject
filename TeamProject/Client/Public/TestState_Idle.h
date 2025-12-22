@@ -13,6 +13,9 @@ public:
     virtual void Enter(CTestObject* pOwner) override;
     virtual void Update(CTestObject* pOwner, _float dt) override;
     virtual void Exit(CTestObject* pOwner) override;
+
+public:
+    static CTestState_Idle* Create() { return new CTestState_Idle(); }
 };
 
 NS_END

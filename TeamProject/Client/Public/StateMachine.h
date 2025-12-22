@@ -92,7 +92,16 @@ private:
 	_float									 m_fStateTime = 0.f;
 
 public:
-	 void Free() override { __super::Free(); }
+	 static CStateMachine<Type>* Create() { return new CStateMachine(); }
+	 void Free() override
+	 {
+		 for (auto& Pair : m_States)
+		 {
+			 Safe_Release(Pair.second);
+		 }
+		 m_States.clear();
+		 __super::Free();
+	 }
 };
 
 using CTestStateMachine = CStateMachine<class CTestObject>;

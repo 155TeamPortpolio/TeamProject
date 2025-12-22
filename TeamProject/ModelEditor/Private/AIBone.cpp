@@ -38,6 +38,7 @@ void CAIBone::Save_File(ofstream& ofs, _fmatrix PreTransform)
     if (m_iParentBoneIndex == -1) {
         SaveMatrix = PreTransform * SaveMatrix;
     }
+
     XMStoreFloat4x4(&infoHeader.TransformationMatrix, SaveMatrix);
     infoHeader.ParentBoneIndex = { m_iParentBoneIndex };
     ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(BONE_INFO_HEADER));

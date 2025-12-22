@@ -47,12 +47,10 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*부모 뼈를 받을 수 있게 기본값으로 초기화*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -66,7 +64,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	/*최종 뼈 행렬에 대입*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
@@ -156,6 +153,9 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
+	Layer.iStartBoneIndex = -1;
+	Layer.AffectedBonesIndices.clear();
+
 	Layer.iClipIndex = -1;
 	Layer.fPrevTrackPosition = 0.f;
 	Layer.fCurrentTrackPosition = 0.f;
@@ -166,10 +166,8 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
-
 	Layer.eBlendState = { BLEND_STATE::NONE };
-	Layer.AffectedBonesIndices.clear();
-
+	
 	Matrix identityMat = XMMatrixIdentity();
 
 	_float4x4 IdentityMatrix;
@@ -201,10 +199,11 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 
 	if (Layer.eBlendState != BLEND_STATE::NONE)
 		return false;
-	else if (Layer.bLoop)
+
+	if (Layer.bLoop)
 		return false;
-	else
-		return Layer.bisFinished;
+
+	return Layer.bisFinished;
 }
 
 _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
@@ -221,7 +220,7 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// 이전 프레임 트랙 위치 < 기준 <= 현재 트랙 위치일 때 true
+	// ?댁쟾 ?꾨젅???몃옓 ?꾩튂 < 湲곗? <= ?꾩옱 ?몃옓 ?꾩튂????true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -391,7 +390,6 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		AnimSpeed, Layer.bLoop, &Layer.bisFinished);
 	
-
 	//Eliminate Transform
 	if (false == Layer.bUseTransform) {
 		if (-1 != Layer.iMoveBoneIndex) {
@@ -592,7 +590,13 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Separator();
 
 	// ───────── Clip
-	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+
+	string AnimName{};
+
+	if(isExistClip(curLayer.iClipIndex))
+		AnimName = m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+
+	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + AnimName;
 	ImGui::Text(AnimInfo.c_str());
 	ImGui::Separator();
 
@@ -605,7 +609,12 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, m_pAnimClips[curLayer.iClipIndex]->Get_Duration());
+	
+	int iDuration{};
+	if (isExistClip(curLayer.iClipIndex))
+		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
+
+	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, iDuration);
 	ImGui::EndChild();
 }
 
@@ -624,7 +633,7 @@ void CAnimator3D::GUI_SelectAnim()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Set_Animation(0, i);
+			Set_Animation(i).Loop(true);
 		}
 		ImGui::PopID();
 
@@ -638,7 +647,7 @@ void CAnimator3D::GUI_SelectAnim()
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // 선택된 항목에 포커스
+			ImGui::SetItemDefaultFocus(); // ?좏깮????ぉ???ъ빱??
 		}
 	}
 
@@ -682,7 +691,7 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDERㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//BUILDER?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫?▲뀫
 
 HRESULT SetAnimBuild::Apply()
 {

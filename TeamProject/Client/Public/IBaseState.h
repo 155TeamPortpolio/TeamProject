@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Base.h"
 
 NS_BEGIN(Client)
 
@@ -7,7 +8,7 @@ template<typename Type>
 class CStateMachine;
 
 template<typename Type>
-class IBaseState abstract
+class IBaseState abstract : public CBase
 {
 public:
 	virtual ~IBaseState() DEFAULT;
@@ -34,6 +35,9 @@ protected:
 	_float m_fAnimProgress = { 0.f }; // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
 
 	friend class CStateMachine<Type>;
+
+public:
+	void Free() override { __super::Free(); }
 };
 
 NS_END

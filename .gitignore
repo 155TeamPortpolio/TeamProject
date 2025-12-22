@@ -416,14 +416,13 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
-
-# Resource/Resources 폴더는 전부 무시
-**/Resource/
-**/Resources/
+# Resource/Resources 폴더(및 하위 전부) 무시
+**/Resource/**
+**/Resources/**
 
 # DemoResource는 예외로 추적 (어디에 있든)
 !**/DemoResource/
 !**/DemoResource/**
 
-#Maptool 리소스 추출 폴더 무시
-**/ZZZOutput/
+# Maptool 리소스 추출 폴더(및 하위 전부) 무시
+**/ZZZOutput/**

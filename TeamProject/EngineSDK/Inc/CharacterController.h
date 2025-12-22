@@ -66,6 +66,7 @@ public:
     void            Set_RestOffset(_float fOffset);
     _float          Get_ContactOffset();
     _float          Get_RestOffset();
+    void            Set_BoundingMinY(_float fMinY);
 
     _bool           Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit);
     void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
