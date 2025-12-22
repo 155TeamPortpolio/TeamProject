@@ -100,6 +100,8 @@ struct PS_IN
 struct PS_OUT
 {
     vector vDiffuse : SV_TARGET0;
+    vector vBloom : SV_TARGET1;
+    vector BloomInfo : SV_TARGET2;
 };
 
 PS_OUT PS_MAIN_DEFAULT(PS_IN In)
@@ -135,7 +137,10 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
         discard;
     
     Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
-    //Out.vDiffuse.a = Alpha * fRGBMask;
+    Out.vDiffuse.a = Alpha * fRGBMask;
+    Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vBloom = Out.vDiffuse * BloomIntensity;
+    Out.vBloom.a = Out.vDiffuse.a;
     
     return Out;
 }

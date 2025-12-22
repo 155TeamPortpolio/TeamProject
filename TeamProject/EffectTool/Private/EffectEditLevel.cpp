@@ -55,10 +55,10 @@ HRESULT CEffectEditLevel::Awake()
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 
-	//CGameObject* Grid = Builder::Create_Object({ "EffectEdit_Level" ,"Proto_GameObject_ToolGrid" })
-	//	.Position({ 0,-10.f,0.f })
-	//	.Scale({500.f,0.f,500.f})
-	//	.Build("ToolGrid");
+	CGameObject* Grid = Builder::Create_Object({ "EffectEdit_Level" ,"Proto_GameObject_ToolGrid" })
+		.Position({ 0,-10.f,0.f })
+		.Scale({500.f,0.f,500.f})
+		.Build("ToolGrid");
 
 	CGameObject* Effect = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
 		.Build("EffectContainer");
@@ -74,7 +74,7 @@ HRESULT CEffectEditLevel::Awake()
 		.Light(LightDesc)
 		.Build("Tool_Light");
 	  
-	//pObjMgr->Add_Object(Grid, { "EffectEdit_Level","Grid_Layer" });
+	pObjMgr->Add_Object(Grid, { "EffectEdit_Level","Grid_Layer" });
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
