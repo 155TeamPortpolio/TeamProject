@@ -136,6 +136,9 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     if (fDissolveMask < DissolveThreshold)
         discard;
     
+    if (vMtrlDiffuse.a < 0.01f)
+        discard;
+    
     Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
     Out.vDiffuse.a = Alpha * fRGBMask;
     Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
@@ -156,9 +159,13 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    if(vMtrlDiffuse.a <0.01f)
+        discard;
     
-    Out.vDiffuse = vMtrlDiffuse;
+        Out.vDiffuse = vMtrlDiffuse;
     Out.vDiffuse.a *= Alpha;
+    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
+    Out.BloomInfo = float4(0.f, 1.f, 0.f, 0.f);
     
     return Out;
 }
