@@ -17,7 +17,7 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	HRESULT Save_Animation(const string& SavePath);
+	HRESULT Save_Animation(const string& SavePath, const _float4x4* WorldMatrix);
 
 public:
 	static CAIAnimator3D* Create(const aiScene* pAIScene, class CAIModelData* pAIModelData);

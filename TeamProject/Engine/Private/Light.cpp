@@ -73,22 +73,7 @@ void CLight::Render_GUI()
 		}
 	}
 	else {
-
-		if (auto pTransform = m_pOwner->Get_Component<CTransform>())
-		{
-			_float4 pos = {};
-			XMStoreFloat4(&pos, pTransform->Get_Pos());
-			ImGui::Text("Offset");
-			if (ImGui::DragFloat3("##Offset", &pos.x, 0.1f))
-			{
-				pTransform->Set_Pos(pos);
-				m_Light.vLightPosition = pos;
-			}
-		}
-		else
-		{
-			ImGui::DragFloat3("Offset", &m_Light.vOffsetPosition.x, 0.1f);
-		}
+		ImGui::DragFloat3("Offset", &m_Light.vOffsetPosition.x, 0.1f);
 	}
 
 	ImGui::EndChild();

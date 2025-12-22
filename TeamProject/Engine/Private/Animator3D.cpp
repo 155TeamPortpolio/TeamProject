@@ -47,12 +47,12 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	/*»À °³¼ö¸¸Å­ »ÀÀÇ ·ÎÄÃ»óÅÂ¸¦ °¡Á®¿È*/
+	/*ë¼ˆ ê°œìˆ˜ë§Œí¼ ë¼ˆì˜ ë¡œì»¬ìƒíƒœë¥¼ ê°€ì ¸ì˜´*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*ºÎ¸ğ »À¸¦ ¹ŞÀ» ¼ö ÀÖ°Ô ±âº»°ªÀ¸·Î ÃÊ±âÈ­*/
+	/*ë¶€ëª¨ ë¼ˆë¥¼ ë°›ì„ ìˆ˜ ìˆê²Œ ê¸°ë³¸ê°’ìœ¼ë¡œ ì´ˆê¸°í™”*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -66,7 +66,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	/*ÃÖÁ¾ »À Çà·Ä¿¡ ´ëÀÔ*/
+	/*ìµœì¢… ë¼ˆ í–‰ë ¬ì— ëŒ€ì…*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
@@ -154,6 +154,9 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
+	Layer.iStartBoneIndex = -1;
+	Layer.AffectedBonesIndices.clear();
+
 	Layer.iClipIndex = -1;
 	Layer.fPrevTrackPosition = 0.f;
 	Layer.fCurrentTrackPosition = 0.f;
@@ -164,10 +167,8 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
-
 	Layer.eBlendState = { BLEND_STATE::NONE };
-	Layer.AffectedBonesIndices.clear();
-
+	
 	Matrix identityMat = XMMatrixIdentity();
 
 	_float4x4 IdentityMatrix;
@@ -199,10 +200,11 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 
 	if (Layer.eBlendState != BLEND_STATE::NONE)
 		return false;
-	else if (Layer.bLoop)
+
+	if (Layer.bLoop)
 		return false;
-	else
-		return Layer.bisFinished;
+
+	return Layer.bisFinished;
 }
 
 _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
@@ -219,7 +221,7 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// ÀÌÀü ÇÁ·¹ÀÓ Æ®·¢ À§Ä¡ < ±âÁØ <= ÇöÀç Æ®·¢ À§Ä¡ÀÏ ¶§ true
+	// ì´ì „ í”„ë ˆì„ íŠ¸ë™ ìœ„ì¹˜ < ê¸°ì¤€ <= í˜„ì¬ íŠ¸ë™ ìœ„ì¹˜ì¼ ë•Œ true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -376,7 +378,7 @@ void CAnimator3D::Animation_Run(_float dt)
 {
 	if (m_AnimLayers.empty()) return;
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç ¾÷µ¥ÀÌÆ®
+	//ì• ë‹ˆë§¤ì´ì…˜ ì—…ë°ì´íŠ¸
 	for (auto& Layer : m_AnimLayers) {
 		if (-1 == Layer.iClipIndex) continue;
 
@@ -387,7 +389,7 @@ void CAnimator3D::Animation_Run(_float dt)
 			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
 	}
 
-	//ÀÌµ¿°ª Á¦°Å
+	//ì´ë™ê°’ ì œê±°
 	for (auto& Layer : m_AnimLayers) {
 		if (false == Layer.bUseTransform) {
 			if (isExistClip(Layer.iMoveBoneIndex)) {
@@ -414,7 +416,7 @@ void CAnimator3D::Animation_Convert(_float dt)
 
 void CAnimator3D::Override_BlendAnim()
 {
-	// base¿Í blend º¸°£
+	// baseì™€ blend ë³´ê°„
 	for (size_t i = 0; i < m_BlendIndex.size(); ++i)
 	{
 		_uint idx = m_BlendIndex[i];
@@ -518,11 +520,69 @@ void CAnimator3D::BuildBone()
 void CAnimator3D::Render_GUI()
 {
 	ImGui::SeparatorText("Animator 3D");
+	GUI_ShowLayerInfo();
+	GUI_SelectAnim();
+}
+
+void CAnimator3D::GUI_ShowLayerInfo()
+{
+	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Layer / Loop
+	ImGui::Text("Layer");
+	ImGui::SameLine();
+
+	int layerCount = m_AnimLayers.size();   // ÇöÀç ·¹ÀÌ¾î ¼ö
+
+	static int curLayerIndex = 0;
+	ImGui::SetNextItemWidth(80);
+	if (ImGui::BeginCombo("##Layer", std::to_string(curLayerIndex).c_str()))
+	{
+		for (int i = 0; i < layerCount; ++i)
+		{
+			bool selected = (curLayerIndex == i);
+			if (ImGui::Selectable(std::to_string(i).c_str(), selected))
+				curLayerIndex = i;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	auto& curLayer = m_AnimLayers[curLayerIndex];
+
+	ImGui::SameLine();
+	static bool bLoop = false;
+	ImGui::Checkbox("Loop", &curLayer.bLoop);
+
+	ImGui::Separator();
+
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Clip
+	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+	ImGui::Text(AnimInfo.c_str());
+	ImGui::Separator();
+
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Play bar
+	if (ImGui::Button("Play")) {
+		Set_Animation(curLayerIndex, curLayer.iClipIndex)
+			.Loop(bLoop);
+	}
+	ImGui::SameLine();
+
+
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, m_pAnimClips[curLayer.iClipIndex]->Get_Duration());
+	ImGui::EndChild();
+}
+
+void CAnimator3D::GUI_SelectAnim()
+{
+
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##Animator 3DChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
 	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
@@ -530,7 +590,7 @@ void CAnimator3D::Render_GUI()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Set_Animation(0, i);
+			Set_Animation(i).Loop(true);
 		}
 		ImGui::PopID();
 
@@ -540,13 +600,11 @@ void CAnimator3D::Render_GUI()
 		{
 			ImGui::SetTooltip("%s", m_pAnimClips[i]->Get_Name().c_str());
 		}
-		//if (ImGui::Button(string(m_pAnimLoops[i] ? "Do Once" : "Do Loop").c_str(), ImVec2{ childWidth * 0.35f, textLineHeight + 4 }))
-		//	(m_pAnimLoops[i]) = !(m_pAnimLoops[i]);
 		ImGui::PopStyleVar();
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // ¼±ÅÃµÈ Ç×¸ñ¿¡ Æ÷Ä¿½º
+			ImGui::SetItemDefaultFocus(); // ì„ íƒëœ í•­ëª©ì— í¬ì»¤ìŠ¤
 		}
 	}
 
@@ -590,7 +648,7 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDER¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ¤Ñ
+//BUILDERã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡ã…¡
 
 HRESULT SetAnimBuild::Apply()
 {
