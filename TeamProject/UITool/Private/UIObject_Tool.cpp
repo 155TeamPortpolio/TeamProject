@@ -19,6 +19,8 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Set_Pivot(_float2(0.5f, 0.5f));
+
     Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 
     // GUI Inspector 창에 띄움
@@ -93,10 +95,13 @@ void CUIObject_Tool::LoadPrefab(const json& data)
 {
     if(data.contains("transform"))      
         Load_Transform(data["transform"]);
+
     if(data.contains("textKey"))        
         Load_TextKey(data["textKey"]);
+
     if(data.contains("animation"))      
         Load_Animation(data["animation"]);
+
     if(data.contains("children"))       
         Load_Children(data["children"]);
 
@@ -169,18 +174,12 @@ void CUIObject_Tool::Save_Childeren(json& data)
 
 void CUIObject_Tool::Load_Transform(const json& data)
 {
-    m_vAnchorOffset.x = data["anchorOffset"]["x"].get<_float>();
-    m_vAnchorOffset.y = data["anchorOffset"]["y"].get<_float>();
+    m_vAnchorOffset = { data["anchorOffset"]["x"].get<_float>(), data["anchorOffset"]["y"].get<_float>() };
     m_eAnchor = static_cast<ANCHOR>(data["anchor"].get<_uint>());
-    m_vSize.x = data["size"]["x"].get<_float>();
-    m_vSize.y = data["size"]["y"].get<_float>();
-    m_vScale.x = data["scale"]["x"].get<_float>();
-    m_vScale.y = data["scale"]["y"].get<_float>();
-    m_vPivot.x = data["pivot"]["x"].get<_float>();
-    m_vPivot.y = data["pivot"]["y"].get<_float>();
+    m_vSize = { data["size"]["x"].get<_float>(), data["size"]["y"].get<_float>() };
+    m_vScale = { data["scale"]["x"].get<_float>(), data["scale"]["y"].get<_float>() };
+    m_vPivot = { data["pivot"]["x"].get<_float>(), data["pivot"]["y"].get<_float>() };
     m_fRadian = data["rotation"].get<_float>();
-    m_vPivot.x = data["pivot"]["x"].get<_float>();
-    m_vPivot.y = data["pivot"]["y"].get<_float>();
 }
 
 void CUIObject_Tool::Load_TextKey(const json& data)
@@ -203,10 +202,10 @@ void CUIObject_Tool::Load_Animation(const json& data)
             {
                 UI_KEYFRAME keyframe = {};
                 keyframe.fTime = keyframeData["time"].get<_float>();
-                keyframe.vScale = _float2(keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>());
+                keyframe.vScale = { keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>() };
                 keyframe.fAngle = keyframeData["angle"].get<_float>();
-                keyframe.vPosition = _float2(keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>());
-                keyframe.vColor = _float4(keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>());
+                keyframe.vPosition = { keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>() };
+                keyframe.vColor = { keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>() };
                 keyframe.easeType = keyframeData["easeType"].get<EaseType>();
                 clip.keyframes.push_back(keyframe);
             }
@@ -556,12 +555,6 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
     m_vBaseAngle = m_fRadian;
     // 포지션
     m_vBaseColor = m_vColor;
-}
-
-void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
-{
-    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
-    OutstrTextureKey = TextureKey;
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)

@@ -38,7 +38,6 @@ protected:
 	void Set_Animation(_uint iIndex);				// (툴, 클라이언트)
 
 protected:
-	void Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey);	// (툴) (아마 없어질 듯)
 	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (툴)
 
 private:
