@@ -77,7 +77,10 @@ HRESULT CRenderSystem::Render()
 	
 	m_pPost->Render_EffectBloom();
 
-	m_pPost->Render_HDRBloom();
+	if (IsOn)
+	{
+		m_pPost->Render_HDRBloom();
+	}
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
