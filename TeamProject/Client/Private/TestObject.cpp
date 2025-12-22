@@ -11,6 +11,7 @@
 
 #include "RigidBody.h"
 
+#include "StateMachine.h"
 #include "TestState_Idle.h"
 #include "TestState_Walk.h"
 #include "TestState_Jump.h"
@@ -78,33 +79,33 @@ HRESULT CTestObject::Initialize_State()
 	// Transition 설정
 	// Idle <-> Walk
 	m_pStateMachine->Register_Transition("Idle", "Walk",
-		CONDITION_BOOL_TRUE, "IsMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsMoving");
 	m_pStateMachine->Register_Transition("Walk", "Idle",
-		CONDITION_BOOL_FALSE, "IsMoving");
+		CTestStateMachine::CONDITION_BOOL_FALSE, "IsMoving");
 
 	// AnyState -> Jump (점프 키 입력)
 	m_pStateMachine->Register_AnyStateTransition("Jump",
-		CONDITION_TRIGGER, "Jump");
+		CTestStateMachine::CONDITION_TRIGGER, "Jump");
 
 	// AnyState -> Dash (Shift 입력)
 	m_pStateMachine->Register_AnyStateTransition("Dash",
-		CONDITION_TRIGGER, "Dash");
+		CTestStateMachine::CONDITION_TRIGGER, "Dash");
 
 	// Jump -> Walk (착지 + 이동 중)
 	m_pStateMachine->Register_Transition("Jump", "Walk",
-		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
 
 	// Jump -> Idle (착지 + 정지)
 	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
 
 	// Dash -> Walk (대쉬 완료 + 이동 중)  
 	m_pStateMachine->Register_Transition("Dash", "Walk",
-		CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
 
 	// Dash -> Idle (대쉬 완료 + 정지) 
 	m_pStateMachine->Register_Transition("Dash", "Idle",
-		CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
 
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
@@ -133,10 +134,10 @@ void CTestObject::Update(_float dt)
 	// Process Input
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	m_vInputDir = _vector3(0.f, 0.f, 0.f);
-	if (input->Key_Down('W')) m_vInputDir.z += 1.f;
-	if (input->Key_Down('S')) m_vInputDir.z -= 1.f;
-	if (input->Key_Down('D')) m_vInputDir.x += 1.f;
-	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
+	if (input->Key_Down(VK_UP)) m_vInputDir.z += 1.f;
+	if (input->Key_Down(VK_DOWN)) m_vInputDir.z -= 1.f;
+	if (input->Key_Down(VK_RIGHT)) m_vInputDir.x += 1.f;
+	if (input->Key_Down(VK_LEFT)) m_vInputDir.x -= 1.f;
 
 	m_bJump = input->Key_Down('J');
 	_bool bDash = input->Key_Down(VK_SHIFT);
@@ -214,6 +215,15 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
+
+	// StateMachine 디버깅 정보
+	if (m_pStateMachine)
+	{
+		ImGui::Separator();
+		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+	}
+
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
@@ -223,13 +233,7 @@ void CTestObject::Render_GUI()
 	_bool isLayer = Get_Layer();
 	ImGui::Checkbox("InLayer",&isLayer);
 
-	// StateMachine 디버깅 정보
-	if (m_pStateMachine)
-	{
-		ImGui::Separator();
-		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
-		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
-	}
+
 }
 
 void CTestObject::Rotate_Horizontal(const _vector3& vDirection)
@@ -281,6 +285,6 @@ CGameObject* CTestObject::Clone(INIT_DESC* pArg)
 
 void CTestObject::Free()
 {
-	Safe_Delete(m_pStateMachine);
+	Safe_Release(m_pStateMachine);
 	__super::Free();
 }

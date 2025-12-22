@@ -9,7 +9,9 @@
 
 void CTestState_Walk::Enter(CTestObject* pOwner)
 {
-    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 9);
+    pOwner->Get_Component<CAnimator3D>()->Change_Animation(9)
+        .Loop(true)
+        .Apply();
 }
 
 void CTestState_Walk::Update(CTestObject* pOwner, _float dt)
