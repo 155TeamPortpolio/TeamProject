@@ -38,11 +38,34 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	}
 	
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
-	pMaterialInstance->Set_Blended(true);
 	pMaterialInstance->Override_Pass("UVAnimation");
 
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
+
+	/* Set Param */
+	{
+		m_vBaseColor = pMeshNode->vBaseColor;
+
+		m_eAlphaFadeEase = static_cast<EaseType>(pMeshNode->AlphaFadeEase);
+		m_vAlphaFade = pMeshNode->vAlphaFade;
+
+		m_eScaleEase = static_cast<EaseType>(pMeshNode->ScaleEase);
+		m_vStartScale = pMeshNode->vStartScale;
+		m_vEndScale = pMeshNode->vEndScale;
+
+		m_eUVEase = static_cast<EaseType>(pMeshNode->UVEase);
+		m_vStartUVOffset = pMeshNode->vStartUVOffset;
+		m_vEndUVOffset = pMeshNode->vEndUVOffset;
+
+		m_iCol = pMeshNode->iCol;
+		m_iRow = pMeshNode->iRow;
+		m_iMaxFrameIndex = pMeshNode->iMaxFrameIndex;
+
+		m_eDissolveEase = static_cast<EaseType>(pMeshNode->DissolveEase);
+		m_fDissolveStartProgress = pMeshNode->fDissolveStartProgress;
+	}
 
 	return S_OK;
 }
