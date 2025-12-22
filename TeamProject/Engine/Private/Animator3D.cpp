@@ -191,10 +191,11 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
 		return true;
-	if (m_iCurrentClipIndex == -1)
-		return true;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	if (!isExistClip(Layer.iClipIndex))
+		return 0.f;
 
 	if (Layer.eBlendState != BLEND_STATE::NONE)
 		return false;
@@ -210,12 +211,16 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 		return true;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+
+	if (!isExistClip(Layer.iClipIndex))
+		return 0.f;
+
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
 	// 이전 프레임 트랙 위치 < 기준 <= 현재 트랙 위치일 때 true
-	return  m_fCurrentTrackPosition >= threshold;
+	return Layer.fCurrentTrackPosition >= threshold;
 }
 
 _bool CAnimator3D::isBlending(_uint LayerIndex)
@@ -229,12 +234,16 @@ _bool CAnimator3D::isBlending(_uint LayerIndex)
 _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
-		return true;
+		return 0.f;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+	
+	if (!isExistClip(Layer.iClipIndex))
+		return 0.f;
+
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-	return m_fCurrentTrackPosition / nowClip->Get_Duration();
+	return Layer.fCurrentTrackPosition / nowClip->Get_Duration();
 }
 
 string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
