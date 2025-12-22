@@ -25,19 +25,21 @@ public:
 	virtual void Late_Update(_float dt) override;
 
 	virtual void Render_GUI() override;
-
+	
 public:
-	virtual void ToJson(json& data) override;
-	virtual void FromJson(const json& data) override;
-
+	virtual void SavePrefab(json& data) override;
+	virtual void LoadPrefab(const json& data) override;
+	
 private:
 	const _float2		m_fChildCreateSize = { 100.f, 30.f };
 
 public:
+	static const string m_strTypeTag;
 	static _uint m_iCount;
 
 private:
 	void Render_GUI_Create();
+	void Render_GUI_SavePrefab();
 
 public:
 	static CGameObject* Create();

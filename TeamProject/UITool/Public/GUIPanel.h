@@ -26,10 +26,12 @@ private:
     _int                m_iLevelIndex = {};
 
 private:
-    void ChangeLevel();
-    void CreateCanvasPanel();
-    void SaveToJson();
-    void LoadFromJson();
+    void CreateCanvasPanel(); 
+
+    void LoadPrefab();
+
+private:
+    class CUI_Object* CreateObject(const json& data);
 
 public:
     static CGUIPanel* Create(GUI_CONTEXT* pContext);
