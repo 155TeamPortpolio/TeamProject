@@ -11,13 +11,6 @@ class ENGINE_DLL CAnimator3D :
     public CComponent
 {
 public:
-    struct AnimConvert {
-        _uint SrcClip;
-        _uint DstClip;
-        _float ConversionElapsedTime = {};
-        _float ConversionDuration = {};
-    };
-
     friend class SetAnimBuild;
     friend class ChangeAnimBuild;
 
@@ -45,6 +38,7 @@ public:
         //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
         _int    iNextClipIndex = { -1 };
+        _float  fBlendTrackPosition = {};
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
         BLEND_STATE eBlendState = { BLEND_STATE::NONE };
@@ -131,10 +125,8 @@ protected://애니매이션 체크
     _bool isExistClip(_int ClipIndex);
 
 protected://애니매이션 연산
-    void Animation_Run(_float dt);
-    void Animation_Convert(_float dt);
-
-    void Override_BlendAnim();
+    void Animation_Run(ANIM_LAYER& Layer, _float dt);
+    void Animation_Convert(ANIM_LAYER& Layer, _float dt);
 
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
@@ -144,6 +136,10 @@ protected://애니매이션 연산
 
 public:
     virtual void Render_GUI();
+
+protected:
+    void GUI_ShowLayerInfo();
+    void GUI_SelectAnim();
 
 private:
     void Reset_Anim();
@@ -167,18 +163,7 @@ protected:
     _int m_iCurrentClipIndex = { -1 };
     _float m_fCurrentTrackPosition = {};
     _bool isAnimEnd = { false };
-
-    /*Blend*/
-    _int m_iBlendAnimation = {-1};
-    _float m_fBlendTrackPosition = {};
-    _float m_fBlendConversionTrackPosition = {};
-    _float m_fBlendDuration = {};
-    _float m_fBlendWeight = {1.5f};
-    vector<_uint> m_BlendIndex = {};
-    vector<_float4x4> m_BlendTransfomationMatices = {};
-    _bool isBlendAnimEnd = { false };
-    
-
+   
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
@@ -193,7 +178,7 @@ class ENGINE_DLL SetAnimBuild {
 public:
     SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
         :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
-    ~SetAnimBuild() { if (!bApplied) Apply(); };
+    ~SetAnimBuild() { if (!m_bApplied) Apply(); };
     
     SetAnimBuild(const SetAnimBuild&) = delete;
     SetAnimBuild& operator=(const SetAnimBuild&) = delete;
@@ -212,7 +197,7 @@ protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
-    _bool bApplied = false;
+    _bool m_bApplied = false;
 
     //---------- 기본 속성
     _bool m_bLoop = false;
@@ -238,7 +223,7 @@ public:
 
 protected:
     _float      m_fBlendDuration = 0.2f;
-    BLEND_STATE m_eBlendState = { BLEND_STATE::NONE };
+    BLEND_STATE m_eBlendState = { BLEND_STATE::CROSSFADE };
 };
 
 NS_END
