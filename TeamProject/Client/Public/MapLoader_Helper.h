@@ -226,9 +226,40 @@ namespace Client {
 
         return nullopt; // type과 variant가 어긋난 경우도 안전하게 실패
     }
-
-
-
 #pragma endregion
 
+
+    inline _bool ExtractSRT(const _matrix& mat, _float3& OutScale, _float4& OutRotQ, _float3& OutTrans) {
+        XMVECTOR S, R, T;
+
+        if (!XMMatrixDecompose(&S, &R, &T, mat))
+            return false;
+
+        XMStoreFloat3(&OutScale, S);
+        XMStoreFloat4(&OutRotQ, R);
+        XMStoreFloat3(&OutTrans, T);
+        return true;
+    }
+
+    inline _float3 QuaternionToEuler(const _float4& q) {
+        const _float x = q.x, y = q.y, z = q.z, w = q.w;
+
+        // pitch (x-axis)
+        _float sinp = 2.0f * (w * x - y * z);
+        _float pitch;
+        if (fabsf(sinp) >= 1.0f) 
+            pitch = copysignf(XM_PIDIV2, sinp);
+        else                     
+            pitch = asinf(sinp);
+
+        // yaw (y-axis)
+        _float yaw = atan2f(2.0f * (w * y + z * x),
+            1.0f - 2.0f * (x * x + y * y));
+
+        // roll (z-axis)
+        _float roll = atan2f(2.0f * (w * z + x * y),
+            1.0f - 2.0f * (z * z + x * x));
+
+        return XMFLOAT3(pitch, yaw, roll);
+    }
 }
