@@ -75,7 +75,9 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pUI->Render_2D(m_pUIPass);
 	
-	m_pPost->Render_Bloom();
+	m_pPost->Render_EffectBloom();
+
+	m_pPost->Render_HDRBloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 

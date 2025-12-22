@@ -30,7 +30,7 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 {
 	MESH_NODE_EDIT_DESC* pDesc = static_cast<MESH_NODE_EDIT_DESC*>(pArg);
 	m_pContext = pDesc->pContext;
-
+	Get_Component<CStaticModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 	/*ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Effect_Mesh_Base", "Default", pDevice);
@@ -141,7 +141,7 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, m_MaterialKey)))
 			MSG_BOX("Link Failed - Material");
 
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
+		//Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
 		Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
 
 		m_SetMaterial = true;
@@ -235,7 +235,7 @@ void CMeshNode_Edit::SetMaterial()
 			if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, MaterialTag)))
 				MSG_BOX("Link Failed - Material");
 
-			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
+			//Get_Component<CMaterial>()->Get_MaterialInstance(0)->Set_Blended(true);
 			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
 
 			m_SetMaterial = true;

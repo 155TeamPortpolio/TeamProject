@@ -29,4 +29,14 @@ float4 ExtractBright(float4 color, float Thereshold = 1.f, float Softness = 0.5f
     return color * contribution * Intensity;
 }
 
+float3 ACESFilm(float3 color)
+{
+    float a = 2.51f;
+    float b = 0.03f;
+    float c = 2.43f;
+    float d = 0.59f;
+    float e = 0.14f;
+    
+    return saturate((color * (a * color + b)) / (color * (c * color + d) + e));
+}
 #endif

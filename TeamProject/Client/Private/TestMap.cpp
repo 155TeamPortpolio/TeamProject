@@ -30,9 +30,9 @@ HRESULT CTestMap::Initialize_Prototype()
 	//Get_Component<CMaterial>()->Link_Material("Test_Level", "Concert_Ground_FloorTile_01.mat");
 
 	pRcsMgr->Add_ResourcePath("Mesh.model",
-		"../../DemoResource/Binary_MapData/Mesh.model");
+		"../Bin/Resources/Binary_MapData/Mesh.model");          
 	pRcsMgr->Add_ResourcePath("Mesh.mat",
-		"../../DemoResource/Binary_MapData/Mesh.mat");
+		"../Bin/Resources//Binary_MapData/Mesh.mat");
 
 	//Add_Component<CCollider>();
 	return S_OK;

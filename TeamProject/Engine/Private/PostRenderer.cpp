@@ -29,7 +29,7 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_Bloom()
+HRESULT CPostRenderer::Render_EffectBloom()
 {
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
@@ -52,13 +52,65 @@ HRESULT CPostRenderer::Render_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX", m_pShader, "g_BlurXTexture");
-		m_pTargetManager->Bind_Target("Target_BloomInfo", m_pShader, "g_BloomType");
+		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "g_BloomType");
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
 
 		m_pShader->Apply("BLOOM_BLURY", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	return S_OK;
+}
+
+HRESULT CPostRenderer::Render_HDRBloom()
+{
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Bright"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BRIGHT", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("HDR_BRIGHT", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Blur_H"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_HDR_Bright", m_pShader, "g_BrightTexture");
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BLURX", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("HDR_BLURX", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Blur_V"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_HDR_BlurX", m_pShader, "g_HDRBlurXTexture");
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BLURY", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("HDR_BLURY", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
 		m_pVIBuffer->Render(m_pContext);
 
@@ -96,6 +148,7 @@ HRESULT CPostRenderer::Render_Final()
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "g_HDRBlurYTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
@@ -135,6 +188,15 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc BloomBlurYDesc = { "Target_BloomBlurY" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurYDesc);
 
+	RenderTargetDesc HDRBrightDesc = { "Target_HDR_Bright" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(HDRBrightDesc);
+
+	RenderTargetDesc HDRBlurXDesc = { "Target_HDR_BlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(HDRBlurXDesc);
+
+	RenderTargetDesc HDRBlurYDesc = { "Target_HDR_BlurY" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(HDRBlurYDesc);
+
 	RenderTargetDesc DistortionAddDesc = { "Target_Distortion_Add" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.5f, 0.5f, 0.5f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionAddDesc);
 
@@ -153,6 +215,13 @@ HRESULT CPostRenderer::Ready_MRT()
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add"))) return E_FAIL;
 	}
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Bright", "Target_HDR_Bright"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Blur_H", "Target_HDR_BlurX"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_HDR_Blur_V", "Target_HDR_BlurY"))) return E_FAIL;
+	}
+
 	return S_OK;
 }
 
