@@ -138,14 +138,12 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	if (data)
 	{
 		ApplyDefaultClears(data->Get_ProxyIndex());
-		ApplyDefaultClears(data->Get_LOD0_Index());
-		ApplyDefaultClears(data->Get_LOD1_Index());
-		ApplyDefaultClears(data->Get_LOD2_Index());
-		ApplyDefaultClears(data->Get_LOD3_Index());
+		//ApplyDefaultClears(data->Get_LOD0_Index());
+		//ApplyDefaultClears(data->Get_LOD1_Index());
+		//ApplyDefaultClears(data->Get_LOD2_Index());
+		//ApplyDefaultClears(data->Get_LOD3_Index());
 		ApplyDefaultClears(data->Get_Eff_Index());
 	}
-	return S_OK;
-
 	return S_OK;
 }
 

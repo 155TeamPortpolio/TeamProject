@@ -9,36 +9,47 @@
 
 void CTestState_Jump::Enter(CTestObject* pOwner)
 {
-    pOwner->Get_Component<CAnimator3D>()->Set_Animation(0, 1);
+    pOwner->Get_Component<CAnimator3D>()->Change_Animation(1);
 
     CCharacterController* pCCT = pOwner->Get_Component<CCharacterController>();
     if (pCCT)
     {
         pCCT->Jump(pOwner->Get_JumpPower());
     }
+
+    m_bMove = false;
 }
 
 void CTestState_Jump::Update(CTestObject* pOwner, _float dt)
 {
     _vector3 vInputDir = pOwner->Get_InputDir();
+    _bool bMoving = vInputDir.Length() > 0.01f;
 
-    if (vInputDir.Length() > 0.01f)
+    if (bMoving && !m_bMove)
+    {
+        pOwner->Get_Component<CAnimator3D>()->Change_Animation(9)
+            .Loop(true)
+            .Apply();
+    }
+    else if (!bMoving && m_bMove)
+    {
+        pOwner->Get_Component<CAnimator3D>()->Change_Animation(1);
+    }
+
+    m_bMove = bMoving;
+
+    if (bMoving)
     {
         vInputDir.Normalize();
+        pOwner->Rotate_Horizontal(-vInputDir);
 
-        CTransform* pTransform = pOwner->Get_Component<CTransform>();
-
-        _vector3 vLook = pTransform->Dir(STATE::LOOK);
-        _vector3 vNewLook = _vector3::Lerp(vLook, vInputDir, 10.f * dt);
-        vNewLook.Normalize();
-
-        _vector3 vPos = pTransform->Dir(STATE::POSITION);
-        pTransform->LookAt(vPos + vNewLook);
-
-        pOwner->Get_Component<CCharacterController>()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+        auto pCCT = pOwner->Get_Component<CCharacterController>();
+        if (pCCT)
+            pCCT->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
     }
 }
 
 void CTestState_Jump::Exit(CTestObject* pOwner)
 {
+    m_bMove = false;
 }

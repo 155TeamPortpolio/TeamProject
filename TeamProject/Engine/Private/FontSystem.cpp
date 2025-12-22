@@ -87,7 +87,7 @@ HRESULT CFontSystem::Render_Font()
 
 			m_pBatch->Begin(
 				SpriteSortMode_Deferred,
-				m_pStates->AlphaBlend(),   // ¡ç default´Â non-premultiplied
+				m_pStates->AlphaBlend(),  
 				nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
 			);
 		}
@@ -137,6 +137,9 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	if (Text.systemIndex >= m_Fonts.size() || !m_Fonts[Text.systemIndex])
 		return E_FAIL;
 
+	ID3D11InputLayout* pPrevLayout = nullptr;
+	m_pContext->IAGetInputLayout(&pPrevLayout);
+
 	CCustomFont* pFont = m_Fonts[Text.systemIndex];
 
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
@@ -173,6 +176,9 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	}
 
 	m_pBatch->End();
+
+	m_pContext->IASetInputLayout(pPrevLayout);
+	Safe_Release(pPrevLayout);
 
 	return S_OK;
 }

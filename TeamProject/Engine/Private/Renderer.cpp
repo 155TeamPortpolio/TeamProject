@@ -67,6 +67,7 @@ HRESULT CRenderer::LoadShader(string shaderName)
 	if (nullptr == m_pShader)
 		return E_FAIL;
 	Safe_AddRef(m_pShader);
+	return S_OK;
 }
 
 HRESULT CRenderer::CreateVIBuffer()

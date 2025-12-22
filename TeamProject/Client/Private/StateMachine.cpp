@@ -341,6 +341,4 @@ _bool CStateMachine<Type>::Get_Trigger(const string& strParam) const
     return iter->second.Get_Trigger();
 }
 
-
-
 template class CStateMachine<class CTestObject>;
