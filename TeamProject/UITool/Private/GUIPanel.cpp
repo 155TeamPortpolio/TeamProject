@@ -91,10 +91,7 @@ void CGUIPanel::LoadPrefab()
 
 		CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
 		if (!pUI)
-		{
-			Safe_Release(pObj);
 			return;
-		}
 
 		pUI->LoadPrefab(data["parent"]); 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);

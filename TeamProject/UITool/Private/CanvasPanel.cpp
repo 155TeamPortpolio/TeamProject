@@ -74,6 +74,8 @@ void CCanvasPanel::Render_GUI()
 
     Render_GUI_SavePrefab();
 
+    Render_GUI_LoadPrefab();
+
     __super::Render_GUI();
 }
 
@@ -172,6 +174,44 @@ void CCanvasPanel::Render_GUI_SavePrefab()
             outputFile << std::endl;
             outputFile.close();
         }
+    }
+}
+
+void CCanvasPanel::Render_GUI_LoadPrefab()
+{
+    if (ImGui::Button("Load Prefab"))
+    {
+        string filePath(Helper::OpenFile_Dialogue());
+        if (filePath.empty())
+            return;
+
+        std::ifstream inputFile(filePath);
+        if (!inputFile.is_open())
+        {
+            MSG_BOX("Failed to open data file");
+            return;
+        }
+
+        json data;
+        inputFile >> data;
+        inputFile.close();
+
+        if (!data.contains("parent"))
+            return;
+
+        const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+        CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["parent"]["typeTag"].get<string>() })
+            .Build(data["parent"]["typeTag"].get<string>());
+
+        if (!pObj)
+            return;
+
+        CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
+        if (!pUI)
+            return;
+
+        pUI->LoadPrefab(data["parent"]);
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
 }
 
