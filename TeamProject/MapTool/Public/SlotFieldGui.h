@@ -1,5 +1,6 @@
 #pragma once
 #include "BasePanel.h"
+#include "MapTool_Context.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -30,6 +31,7 @@ public:
 	_bool			IsOpen() { return m_isOpen; }
 
 private:
+	void			CheckCoolTime(_float dt);
 	SlotValue		MakeDefaultValue(SLOT_DATA_TYPE eType);
 	string			MakeNewID();
 	void			InjectDefaultToAllRecords(vector<RECORD>& records, const FIELD_DATA_DEFINE& def);
@@ -73,11 +75,15 @@ private:
 	string		m_TagSlotFormat = {};
 
 
-
 private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	class CMapToolCore*		m_pMapToolCore = { nullptr };
+	MAPTOOL_CONTEXT*		m_pMapToolContext = { nullptr };
+
 	_bool					m_isOpen = { false };
+
+	_float2					m_vShowSaveFinish = {};
+	_bool					m_isShowSaveFinish = { false };
 
 public:
 	static CSlotFieldGui* Create(GUI_CONTEXT* pContext);

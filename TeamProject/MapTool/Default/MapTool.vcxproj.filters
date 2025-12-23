@@ -132,6 +132,9 @@
     <ClInclude Include="..\public\MapToolCore.h">
       <Filter>03. MapTool System\00. MapToolCore</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapTool_Context.h">
+      <Filter>03. MapTool System\00. MapToolCore</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -193,9 +196,6 @@
     <ClCompile Include="..\private\MapToolObject.cpp">
       <Filter>02. Object\MapTool Object</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MapToolGui.cpp">
-      <Filter>03. MapTool System\MapToolGui</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\SlotFieldGui.cpp">
       <Filter>03. MapTool System\SlotFieldGui</Filter>
     </ClCompile>
@@ -204,6 +204,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MapToolCore.cpp">
       <Filter>03. MapTool System\00. MapToolCore</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapToolGui.cpp">
+      <Filter>03. MapTool System\MapToolGui</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

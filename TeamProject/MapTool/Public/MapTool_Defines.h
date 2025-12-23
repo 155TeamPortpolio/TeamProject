@@ -14,7 +14,7 @@ namespace MapTool {
 	enum class MAPOBJ_TYPE { PLACED, TRIGGER, ALL,END};
 	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float3, END };
 	static std::string g_TagMapToolLevel = "MapTool_Level";
-	static std::string g_TagFileFirstName = "MapData.";
+	static std::string g_TagFileName_MapData = "MapData";
 	using MTjson = nlohmann::ordered_json;
 
 }
