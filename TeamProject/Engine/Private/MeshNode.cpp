@@ -120,6 +120,7 @@ void CMeshNode::Update(_float dt)
 		Update_SpriteAnimationModule(dt);
 		Update_DissolveModule(dt);
 		Update_BloomModule(dt);
+		Bind_Params();
 	}
 }
 
@@ -158,8 +159,8 @@ void CMeshNode::Free()
 
 void CMeshNode::Update_TextureSlotModule(_float dt)
 {
-	m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.iSamplerModeParam);
-	m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
+	m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.eSamplerMode);
+	m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.eMainUsage);
 	m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
 	m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eBlue);
 	m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eGreen);

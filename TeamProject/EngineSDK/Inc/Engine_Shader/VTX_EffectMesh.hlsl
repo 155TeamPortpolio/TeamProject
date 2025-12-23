@@ -11,7 +11,7 @@ float Progress;
 #define DISTORTION 3
 
 uint SamplerMode;
-uint MainTexUsage;
+uint MainUsage;
 uint4 ChannelUsage;
 float GetChannelValue(float4 vTexSample, uint iTargetUsage)
 {
@@ -113,19 +113,29 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     Texcoord += UVOffset;
     
     vector vTexSample = vector(1.f, 1.f, 1.f, 1.f);
+    float fDissolveMask = 1.f;
 
     if(SamplerMode == 0)
+    {
        vTexSample = DiffuseTexture.Sample(LinearSampler, Texcoord);
+       fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
+    }
     else if(SamplerMode == 1)
+    {
        vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
+       fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
+    }
+    
+    //if (fDissolveMask < DissolveProgress)
+    //    discard;
     
     float4 color = float4(1.f, 1.f, 1.f, 1.f);
     
-    if (MainTexUsage == 0)  //as color
+    if (MainUsage == 0)  //as color
     {
         color = vTexSample;
     }
-    else if (MainTexUsage == 1) //as channel
+    else if (MainUsage == 1) //as channel
     {
         float fShapeMask = GetChannelValue(vTexSample, SHAPE_MASK);
         float fEmission = GetChannelValue(vTexSample, EMISSION);
@@ -141,16 +151,19 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
             fEmission = GetChannelValue(vTexSample, EMISSION);
         }
         
-        color = vBaseColor;
+        color = vBaseColor + fEmission * vBaseColor;
         color.a = fShapeMask;
     }
-    else if (MainTexUsage == 2) //as grayscale
+    else if (MainUsage == 2) //as grayscale
     {
         float fValue = vTexSample.r;
         color = vBaseColor * fValue;
     }
-
+    
     Out.vDiffuse = color;
+    Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vBloom.rgb = Out.vDiffuse.rgb * BloomIntensity;
+    Out.vBloom.a = Out.vDiffuse.a;
     
     return Out;
 }

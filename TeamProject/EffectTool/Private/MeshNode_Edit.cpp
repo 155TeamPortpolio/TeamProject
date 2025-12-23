@@ -149,8 +149,6 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, m_MaterialKey)))
 			MSG_BOX("Link Failed - Material");
 
-		Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
-
 		m_SetMaterial = true;
 	}
 
@@ -263,7 +261,7 @@ void CMeshNode_Edit::SetMaterial()
 			if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, MaterialTag)))
 				MSG_BOX("Link Failed - Material");
 
-			Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
+			//Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
 
 			m_SetMaterial = true;
 			m_MaterialKey = MaterialTag;
@@ -364,6 +362,10 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
 	ImGui::SeparatorText("MeshEffect Setting");
+
+	ImGui::DragFloat("Delay Time", &m_fDelayTime);
+	ImGui::DragFloat("Duration", &m_fDuration);
+
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
 		if (Helper::DrawEnumCombo("Sampler Mode", m_TextureSlotModule.eSamplerMode, 100.f))
@@ -372,17 +374,17 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 			m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
 		if (Helper::DrawEnumCombo("Red", m_TextureSlotModule.eRed, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
-		if (Helper::DrawEnumCombo("Blue", m_TextureSlotModule.eBlue, 100.f))
-			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eBlue);
 		if (Helper::DrawEnumCombo("Green", m_TextureSlotModule.eGreen, 100.f))
-			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eGreen);
+			m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eGreen);
+		if (Helper::DrawEnumCombo("Blue", m_TextureSlotModule.eBlue, 100.f))
+			m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eBlue);
 		if (Helper::DrawEnumCombo("Alpha", m_TextureSlotModule.eAlpha, 100.f))
-			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eAlpha);
+			m_TextureSlotModule.vChannelUsageParam.w = ENUM(m_TextureSlotModule.eAlpha);
 	}
 
 	if (ImGui::CollapsingHeader("Color Module"))
 	{
-		Helper::DrawEnumCombo("Ease Type", m_ColorModule.eEaseType, 100.f);
+		Helper::DrawEnumCombo("Color Ease Type", m_ColorModule.eEaseType, 100.f);
 
 		_float startColor[4] = { m_ColorModule.vStartColor.x,m_ColorModule.vStartColor.y,m_ColorModule.vStartColor.z,m_ColorModule.vStartColor.w };
 		_float endColor[4] = { m_ColorModule.vEndColor.x,m_ColorModule.vEndColor.y,m_ColorModule.vEndColor.z,m_ColorModule.vEndColor.w };
@@ -399,7 +401,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Scale Module"))
 	{
-		Helper::DrawEnumCombo("Ease Type", m_ScaleModule.eEaseType, 100.f);
+		Helper::DrawEnumCombo("Scale Ease Type", m_ScaleModule.eEaseType, 100.f);
 
 		ImGui::DragFloat3("Start Scale", &m_ScaleModule.vStartScale.x);
 		ImGui::DragFloat3("End Scale", &m_ScaleModule.vEndScale.x);
@@ -407,7 +409,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("UV Animation Module"))
 	{
-		Helper::DrawEnumCombo("Ease Type", m_UVAnimaitonModule.eEaseType, 100.f);
+		Helper::DrawEnumCombo("UV Ease Type", m_UVAnimaitonModule.eEaseType, 100.f);
 
 		ImGui::DragFloat2("Start UV Offset", &m_UVAnimaitonModule.vStartUVOffset.x);
 		ImGui::DragFloat2("End UV Offset", &m_UVAnimaitonModule.vEndUVOffset.x);
@@ -422,7 +424,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Dissolve Module"))
 	{
-		Helper::DrawEnumCombo("Ease Type", m_DissolveModule.eEaseType, 100.f);
+		Helper::DrawEnumCombo("Dissolve Ease Type", m_DissolveModule.eEaseType, 100.f);
 
 		ImGui::DragFloat("Start Progress", &m_DissolveModule.fStartProgress);
 		ImGui::DragFloat("End Progress", &m_DissolveModule.fEndProgress);
