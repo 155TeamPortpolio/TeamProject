@@ -138,7 +138,7 @@ public:
     _float4x4 Get_BoneMatrix(_uint Index);
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
-    const vector<_float4x4>& Get_BoneMatrices() { return m_FinalMatices; };
+    const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
     //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
@@ -181,10 +181,10 @@ protected:
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
+    vector<_float4x4> m_TPose = {}; //T-Pose Matrices
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
-    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 매트릭스
-    vector<_float4x4> m_FinalMatices = {};              //월드행렬까지 곱해진 최종 매트릭스
+    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
     _int m_iCurrentClipIndex = { -1 };
