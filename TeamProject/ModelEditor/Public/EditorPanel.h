@@ -15,8 +15,10 @@ public:
 
 private:
 	void CreateObject();
-	void Read_Material(_bool Json);
+	void Render_Rules();
 
+private:
+	string nowRules;
 public:
 	static CEditorPanel* Create(GUI_CONTEXT* context);
 	virtual void Free() override;
