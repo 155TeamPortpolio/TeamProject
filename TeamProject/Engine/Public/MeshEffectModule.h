@@ -61,6 +61,8 @@ typedef struct tagDissolveModule
 
 typedef struct tagBloomModule
 {
+	_float fThreshold{};
+	_float fSoftness{};
 	_float fIntensity{};
 }BLOOM_MODULE;
 

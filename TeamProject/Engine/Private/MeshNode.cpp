@@ -46,7 +46,41 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 
 	/* Set Param */
 	{
-		
+		/* Texture */
+		m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(pMeshNode->SamplerMode);
+		m_TextureSlotModule.eMainUsage = static_cast<TEXTURE_SLOT_MODULE::MAIN_USAGE>(pMeshNode->MainUsage);
+		m_TextureSlotModule.eRed = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Red);
+		m_TextureSlotModule.eGreen = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Green);
+		m_TextureSlotModule.eBlue = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Blue);
+		m_TextureSlotModule.eAlpha = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Alpha);
+
+		/* Color */
+		m_ColorModule.eEaseType = static_cast<EaseType>(pMeshNode->ColorEaseType);
+		m_ColorModule.vStartColor = pMeshNode->vStartColor;
+		m_ColorModule.vEndColor = pMeshNode->vEndColor;
+
+		/* Scale */
+		m_ScaleModule.eEaseType = static_cast<EaseType>(pMeshNode->ScaleEaseType);
+		m_ScaleModule.vStartScale = pMeshNode->vStartScale;
+		m_ScaleModule.vEndScale = pMeshNode->vEndScale;
+
+		/* UV Anim */
+		m_UVAnimaitonModule.eEaseType = static_cast<EaseType>(pMeshNode->UVEaseType);
+		m_UVAnimaitonModule.vStartUVOffset = pMeshNode->vStartUVOffset;
+		m_UVAnimaitonModule.vEndUVOffset = pMeshNode->vEndUVOffset;
+
+		/* Sprite Anim */
+		m_SpriteAnimationModule.iCol = pMeshNode->iCol;
+		m_SpriteAnimationModule.iRow = pMeshNode->iRow;
+		m_SpriteAnimationModule.iMaxFrameIndex = pMeshNode->iMaxFrameIndex;
+
+		/* Dissolve */
+		m_DissolveModule.eEaseType = static_cast<EaseType>(pMeshNode->DissolveEase);
+		m_DissolveModule.fStartProgress = pMeshNode->fDissolveStartProgress;
+		m_DissolveModule.fEndProgress = pMeshNode->fDissolveEndProgress;
+
+		/* Bloom */
+		m_BloomModule.fIntensity = pMeshNode->fBloomIntensity;
 	}
 
 	return S_OK;
@@ -66,51 +100,6 @@ void CMeshNode::Update(_float dt)
 
 	if (m_IsEffectActive)
 	{
-		//_float t = m_fElpasedTime / m_fDuration;
-		//
-		//m_fThreshold = t;
-		//m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(m_eAlphaFadeEase, t));
-		//_float3 vCurrScale = _vector3::Lerp(m_vStartScale, m_vEndScale, Math::ApplyEase(m_eScaleEase, t));
-		//m_pTransform->Scale(vCurrScale);
-		//
-		//auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		//switch (m_eMode)
-		//{
-		//case Engine::CMeshNode::MODE::UV_ANIMATION:
-		//{
-		//	m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, Math::ApplyEase(m_eUVEase, t));
-		//
-		//	pMaterialInstance->Set_Param("UVOffset", { &m_vCurrUVOffset,"float2",sizeof(_float2) });
-		//}break;
-		//case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
-		//{
-		//	m_iCurrFrameIndex = static_cast<_uint>(m_iMaxFrameIndex * t);
-		//
-		//	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		//	pMaterialInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
-		//}break;
-		//default:
-		//	break;
-		//}
-		//
-		///*Dissolve*/
-		//if (t >= m_fDissolveStartProgress)
-		//{
-		//	m_fDissolveThreshold = (t - m_fDissolveStartProgress) / (1.f - m_fDissolveStartProgress);
-		//	m_fDissolveThreshold = Math::ApplyEase(m_eDissolveEase, m_fDissolveThreshold);
-		//}
-		//
-		//if (m_fElpasedTime >= m_fDuration)
-		//{
-		//	m_fDissolveThreshold = 1.f;
-		//	m_fThreshold = 1.f;
-		//}
-		//
-		//pMaterialInstance->Set_Param("DissolveThreshold", { &m_fDissolveThreshold,"float",sizeof(_float) });
-		//pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
-		//pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
-		//pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
-
 		m_fProgress = m_fElpasedTime / m_fDuration;
 
 		Update_TextureSlotModule(dt);
@@ -162,8 +151,8 @@ void CMeshNode::Update_TextureSlotModule(_float dt)
 	m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.eSamplerMode);
 	m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.eMainUsage);
 	m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
-	m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eBlue);
-	m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eGreen);
+	m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eGreen);
+	m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eBlue);
 	m_TextureSlotModule.vChannelUsageParam.w = ENUM(m_TextureSlotModule.eAlpha);
 }
 
@@ -234,9 +223,12 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("Row", { &m_SpriteAnimationModule.iRow,"uint",sizeof(_uint) });
 	pMaterialInstance->Set_Param("FrameIndex", { &m_SpriteAnimationModule.iCurrFrameIndex,"uint",sizeof(_uint) });
 
-	/* Bloom */
-	pMaterialInstance->Set_Param("BloomIntensity", { &m_BloomModule.fIntensity,"float",sizeof(_float) });
-
 	/* Dissolve */
 	pMaterialInstance->Set_Param("DissolveProgress", { &m_DissolveModule.fProgress,"float",sizeof(_float) });
+
+	/* Bloom */
+	pMaterialInstance->Set_Param("BloomThreshold", { &m_BloomModule.fThreshold,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("BloomSoftness", { &m_BloomModule.fSoftness,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("BloomIntensity", { &m_BloomModule.fIntensity,"float",sizeof(_float) });
+
 }

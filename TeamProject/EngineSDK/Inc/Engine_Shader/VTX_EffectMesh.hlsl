@@ -42,6 +42,8 @@ uint Row;
 uint FrameIndex;
 
 /* Bloom Params */
+float BloomThreshold;
+float BloomSoftness;
 float BloomIntensity;
 
 /*Dissolve Params*/
@@ -126,8 +128,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
        fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
     }
     
-    //if (fDissolveMask < DissolveProgress)
-    //    discard;
+    if (fDissolveMask < DissolveProgress)
+        discard;
     
     float4 color = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -162,8 +164,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     Out.vDiffuse = color;
     Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
-    Out.vBloom.rgb = Out.vDiffuse.rgb * BloomIntensity;
-    Out.vBloom.a = Out.vDiffuse.a;
+    Out.vBloom = ExtractBright(Out.vDiffuse, BloomThreshold, BloomSoftness, BloomIntensity); //Out.vDiffuse.rgb * BloomIntensity;
     
     return Out;
 }

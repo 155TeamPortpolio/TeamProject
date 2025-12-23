@@ -451,6 +451,9 @@ namespace Engine
 		_float fDissolveStartProgress{};
 		_float fDissolveEndProgress{};
 
+		/* Bloom */
+		_float fBloomIntensity{};
+
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
 
