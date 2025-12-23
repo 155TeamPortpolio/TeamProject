@@ -227,10 +227,22 @@ void CUI_Object::Set_Pivot(_float2 newPivot)
 
 void CUI_Object::Update_UITransform()
 {
-    _float2 sizePx = { m_vSize.x * m_vScale.x, m_vSize.y * m_vScale.y };
+    _float2 parentScale = { 1.f, 1.f };
+    float parentRadian = {};
+
+    if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
+    {
+        if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
+        {
+            parentScale = pParentUI->m_vScale;
+            parentRadian = pParentUI->m_fRadian;
+        }
+    }
+
+    _float2 sizePx = { parentScale.x * m_vSize.x * m_vScale.x, parentScale.y * m_vSize.y * m_vScale.y };
 
     m_pTransform->Scale({ sizePx.x, sizePx.y, 1.f });
-    m_pTransform->Rotate({ 0.f, 0.f, m_fRadian });
+    m_pTransform->Rotate({ 0.f, 0.f, parentRadian + m_fRadian });
 
     _float2 anchorPoint = Calc_AnchorPoint();
 

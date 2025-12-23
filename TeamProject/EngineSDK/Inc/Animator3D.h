@@ -118,6 +118,7 @@ public:
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
     const vector<_float4x4>& Get_BoneMatrices() { return m_FinalMatices; };
+    vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
     //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
 
