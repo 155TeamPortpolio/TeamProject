@@ -28,10 +28,14 @@ public:
     void Update();
 
 public:
-    void Load_MaterialMaps(const string& mapDirectory);
-    HRESULT Read_MaterialMaps();
-    HRESULT Read_MaterialMapsCache(const string& mapDirectory);
-    void Load_TextureMaps(const string& mapDirectory);
+    _bool CheckNamingRule(string MeshName);
+    unordered_set<string> Get_NamingRules();
+   void Push_NamingRules(string MeshName);
+   void Pop_NamingRules(string MeshName);
+
+    unordered_set<string> Get_MappingRules();
+   void Push_MappingRules(string MeshName);
+   void Pop_MappingRules(string MeshName);
 
 private:
     class CRayCaster* m_pRayCast = { nullptr };

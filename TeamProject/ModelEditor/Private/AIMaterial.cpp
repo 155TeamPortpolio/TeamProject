@@ -5,80 +5,6 @@
 #include "IResourceService.h"
 #include "Helper_Func.h"
 
-static bool HasAnyTexture_Assimp(const aiMaterial* m)
-{
-	if (!m) return false;
-
-	static const aiTextureType types[] = {
-		aiTextureType_DIFFUSE, aiTextureType_BASE_COLOR,
-		aiTextureType_NORMALS, aiTextureType_HEIGHT,
-		aiTextureType_METALNESS, aiTextureType_DIFFUSE_ROUGHNESS,
-		aiTextureType_SPECULAR, aiTextureType_EMISSIVE,
-		aiTextureType_AMBIENT, aiTextureType_OPACITY,
-		aiTextureType_LIGHTMAP, aiTextureType_REFLECTION
-	};
-
-	for (auto t : types)
-		if (m->GetTextureCount(t) > 0) return true;
-
-	return false;
-}
-
-static int CountMeaningfulParams_Assimp(const aiMaterial* m)
-{
-	if (!m) return 0;
-
-	aiColor3D c;
-	float f = 0.f;
-	int i = 0;
-
-	int cnt = 0;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_DIFFUSE, c))  cnt++;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_SPECULAR, c)) cnt++;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_COLOR_EMISSIVE, c)) cnt++;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_OPACITY, f))        cnt++;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_SHININESS, f))      cnt++;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_SHADING_MODEL, i))  cnt++;
-
-	return cnt;
-}
-
-static std::string GetMatName_Assimp(const aiMaterial* m)
-{
-	if (!m) return "(null)";
-	aiString n;
-	if (AI_SUCCESS == m->Get(AI_MATKEY_NAME, n) && n.length > 0)
-		return n.C_Str();
-	return "(no-name)";
-}
-
-static bool IsDefaultLike_Assimp(const aiMaterial* m, std::string& outReason)
-{
-	if (!m) { outReason = "aiMaterial is null"; return true; }
-
-	const std::string name = GetMatName_Assimp(m);
-
-	// 임포터/툴에 따라 이런 이름이 종종 나옴
-	if (name == "DefaultMaterial" || name == "$mat.default" || name == "default")
-	{
-		outReason = "material name indicates default";
-		return true;
-	}
-
-	const bool anyTex = HasAnyTexture_Assimp(m);
-	const int meaningful = CountMeaningfulParams_Assimp(m);
-	const unsigned propCount = m->mNumProperties;
-
-	// “진짜 빈 머티리얼” 휴리스틱
-	if (!anyTex && meaningful <= 1 && propCount <= 3)
-	{
-		outReason = "no textures + almost no params (props few)";
-		return true;
-	}
-
-	outReason = "has textures or meaningful parameters";
-	return false;
-}
 CAIMaterial::CAIMaterial()
 {
 }
@@ -90,44 +16,24 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 
 	m_MaterialKey = pAIMaterial ? pAIMaterial->GetName().C_Str() : "";
 
-	{
-		string reason;
-		_bool m_bAssimpDefaultLike = IsDefaultLike_Assimp(pAIMaterial, reason);
-		string m_AssimpDefaultReason = reason;
-
-		if (m_bAssimpDefaultLike)
-		{
-			// 너무 많이 뜨면 불편하니: Output 로그 권장
-			string msg = "[Assimp] Default-like material detected: " + m_MaterialKey +
-				" | " + m_AssimpDefaultReason + "\n";
-
-			m_LogMsgs.push_back(msg);
-		}
-	}
-
 	string parentFolder = filesystem::path(fileDirectory).parent_path().string();
 	string ParentName = filesystem::path(parentFolder).filename().string();
 
-	Add_AdditionalTexture(fileDirectory,"MAT_","_N.png",TEXTURE_TYPE::NORMALS);
-	Add_AdditionalTexture(fileDirectory,"MAT_","_M.png",TEXTURE_TYPE::METALNESS);
-	Add_AdditionalTexture(fileDirectory,"MAT_","_A.png",TEXTURE_TYPE::AMBIENT);
-	Add_AdditionalTexture(fileDirectory,"MAT_","_D.png",TEXTURE_TYPE::DIFFUSE);
+	Add_AdditionalTexture(fileDirectory, "MAT_", "_N.png", TEXTURE_TYPE::NORMALS);
+	Add_AdditionalTexture(fileDirectory, "MAT_", "_M.png", TEXTURE_TYPE::METALNESS);
+	Add_AdditionalTexture(fileDirectory, "MAT_", "_A.png", TEXTURE_TYPE::AMBIENT);
+	Add_AdditionalTexture(fileDirectory, "MAT_", "_D.png", TEXTURE_TYPE::DIFFUSE);
+	LoadByAssimp(fileDirectory, pAIMaterial);
 
-	if (!m_Textures[TEXTURE_TYPE::DIFFUSE].empty() && m_Textures[TEXTURE_TYPE::METALNESS].empty()) {
-		m_bSpecific = true;
-		m_passConstant = "Debug";
-	}
-	else
 	m_passConstant = "Opaque";
 	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
 	{
 		if (ConvertToConstant(static_cast<TEXTURE_TYPE>(i)).empty()) continue;
 		textureTypes.push_back(i);
 	}
-		return S_OK;
+	ReCheck_Material(fileDirectory);
+	return S_OK;
 }
-
-
 
 void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey)
 {
@@ -154,7 +60,7 @@ void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs
 		for (size_t i = 0; i < pair.second.size(); i++)
 		{
 			TEXTURE_INFO_HEADER texInfo = {};
-			string textureKey = Helper::GetFileNameWithOutExtension(pair.second[i]->Get_Key()) +".dds";
+			string textureKey = Helper::GetFileNameWithOutExtension(pair.second[i]->Get_Key()) + ".dds";
 			strcpy_s(texInfo.TextureKey, sizeof(texInfo.TextureKey), textureKey.c_str());
 			ofs.write(reinterpret_cast<const char*>(&texInfo), sizeof(texInfo));
 			if (FAILED(Helper::SaveTextureToDDs(pContext, directory + "\\" + textureKey, pair.second[i]->Get_SRV()))) {
@@ -164,67 +70,6 @@ void CAIMaterial::Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs
 	}
 
 }
-void CAIMaterial::Render_GUI()
-{
-	vector<string> passes = m_pShader->Get_PassList();
-	if (passes.empty())
-		return;
-
-	float childWidth = ImGui::GetContentRegionAvail().x;//->이건 넓이 설정
-	ImGui::SetNextItemWidth(childWidth);
-
-	if (ImGui::Button("Link_Shader"))
-	{
-		string filePath = Helper::OpenFile_Dialogue();
-		if (!filePath.empty())
-		{
-			filesystem::path baseDir =
-				filesystem::current_path() / ".." / "Bin" / "ShaderFiles";
-			_bool inBin = !Helper::IsUnderDirectory(filesystem::path(filePath), baseDir);
-			if (inBin)
-			{
-				MSG_BOX("Invalid path: must be under ../Bin/ShaderFiles/");
-			}
-			else
-			{
-				string file = filesystem::path(filePath).filename().string();
-				CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(file, filePath);
-				Link_Shader(G_GlobalLevelKey, file);
-			}
-		}
-	}
-
-	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
-		for (int i = 0; i < passes.size(); ++i) {
-			bool isSelected = (i == m_currentPassIndex);
-
-			if (ImGui::Selectable(passes[i].c_str(), isSelected)) {
-				m_currentPassIndex = i;
-				m_passConstant = passes[i];
-			}
-
-			if (isSelected)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
-	if (ImGui::Button("Add MaterialData")) {
-		MaterialTabOpened = !MaterialTabOpened;
-	}
-
-	if (MaterialTabOpened)
-		Render_MaterialAdd();
-
-	if (!m_LogMsgs.empty()) {
-		ImGui::Begin("Err Msg");
-		for (auto msg : m_LogMsgs)
-			ImGui::Text(msg.c_str());
-		ImGui::End();
-	}
-	__super::Render_GUI();
-}
-
 void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 {
 	vector<string> passes = m_pShader->Get_PassList();
@@ -287,6 +132,78 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 void CAIMaterial::LinkShader(const string& shader)
 {
 	Link_Shader(G_GlobalLevelKey, shader);
+}
+
+HRESULT CAIMaterial::LoadByAssimp(const std::string& fileDirectory, const aiMaterial* mat)
+{
+	if (!mat) return E_FAIL;
+
+	namespace fs = std::filesystem;
+	fs::path baseDir = fs::path(fileDirectory);
+
+	for (int ti = 0; ti < AI_TEXTURE_TYPE_MAX; ++ti)
+	{
+		aiTextureType aiType = static_cast<aiTextureType>(ti);
+		const unsigned int count = mat->GetTextureCount(aiType);
+
+		for (unsigned int j = 0; j < count; ++j)
+		{
+			aiString aiPath;
+			if (AI_SUCCESS != mat->GetTexture(aiType, j, &aiPath))
+				continue;
+
+			const char* raw = aiPath.C_Str();
+			if (!raw || !raw[0]) continue;
+
+			// 임베디드(*0 같은)면 여기선 파일로 못 찾음 -> 스킵 or 별도 처리
+			if (raw[0] == '*')
+				continue;
+
+			fs::path p(raw);
+			fs::path full = p.is_absolute() ? p : (baseDir / p);
+			full = full.lexically_normal();
+
+			if (!fs::exists(full))
+				continue;
+
+			string filePath = full.string();
+			string textureKey = full.filename().string();
+			auto rm = CGameInstance::GetInstance()->Get_ResourceMgr();
+			rm->Add_ResourcePath(textureKey, filePath);
+			_uint type = static_cast<_uint>(aiType);
+			Link_Texture(G_GlobalLevelKey, textureKey, static_cast<TEXTURE_TYPE>(type));
+		}
+	}
+
+	return S_OK;
+}
+
+void CAIMaterial::ReCheck_Material(const string& fileDirectory)
+{
+	_bool hasDiffuse = !m_Textures[TEXTURE_TYPE::DIFFUSE].empty();
+	_bool hasNormal = !m_Textures[TEXTURE_TYPE::NORMALS].empty();
+	_bool hasMetal = !m_Textures[TEXTURE_TYPE::METALNESS].empty();
+	_bool hasAmbient = !m_Textures[TEXTURE_TYPE::AMBIENT].empty();
+	_bool hasNothing = !(hasDiffuse || hasNormal || hasMetal || hasAmbient);
+
+	if (hasNothing) {
+		m_bSpecific = true;
+	}
+
+	if (hasDiffuse) {
+		string Key = m_Textures[TEXTURE_TYPE::DIFFUSE].front()->Get_Key();
+		//f ::path p(filename);
+		filesystem::path fileName(Key);
+		string stem = fileName.stem().string();
+		const string oldSuffix = "_D";
+		if (stem.size() >= oldSuffix.size() &&stem.compare(stem.size() - oldSuffix.size(), oldSuffix.size(), oldSuffix) == 0)
+		{
+			stem.erase(stem.size() - oldSuffix.size()); 
+		}
+		Add_AdditionalTexture(fileDirectory, "", "_N",TEXTURE_TYPE::NORMALS);
+		Add_AdditionalTexture(fileDirectory, "", "_M",TEXTURE_TYPE::METALNESS);
+		Add_AdditionalTexture(fileDirectory, "", "_A",TEXTURE_TYPE::AMBIENT);
+	}
 }
 
 void CAIMaterial::Render_MaterialAdd()
@@ -375,7 +292,6 @@ void CAIMaterial::Render_MaterialAdd()
 
 	ImGui::End();
 }
-
 
 void CAIMaterial::Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type)
 {
