@@ -101,6 +101,7 @@ void CCharacter::Update_Input(_float dt)
 	if (input->Key_Hold(VK_RIGHT)) m_vInputDir.x += 1.f;
 	if (input->Key_Hold(VK_LEFT))  m_vInputDir.x -= 1.f;
 
+	m_bIsAttack = input->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
 }
 

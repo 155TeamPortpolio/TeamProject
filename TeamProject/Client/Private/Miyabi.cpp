@@ -9,6 +9,7 @@
 
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Walk.h"
+#include "MiyabiState_Attack.h"
 
 CMiyabi::CMiyabi()
 {
@@ -70,8 +71,7 @@ void CMiyabi::Update(_float dt)
 {
 	Update_Input(dt);
 
-	if (m_pStateMachine)
-		m_pStateMachine->Update(dt);
+	m_pStateMachine->Update(dt);
 
 	__super::Update(dt);
 }
@@ -100,9 +100,24 @@ void CMiyabi::Update_Input(_float dt)
 	__super::Update_Input(dt);
 
 	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
-	m_pStateMachine->Set_Bool("IsGround", m_bIsGround);
-
-	if (m_pStateMachine) m_pStateMachine->Update(dt);
+	// Attack 입력 처리
+	if (m_bIsAttack)
+	{
+		string strCurrent = m_pStateMachine->Get_CurrentStateName();
+		if (strCurrent == "Attack")
+		{
+			// Attack 상태면 서브 스테이트머신에 트리거 전달
+			CMiyabiState_Attack* pAttackState =
+				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+			if (pAttackState && pAttackState->Get_SubStateMachine())
+				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+		}
+		else
+		{
+			// 다른 상태면 Attack 상태로 전이
+			m_pStateMachine->Set_Trigger("Attack");
+		}
+	}
 
 	// 디버그용 레이캐스트 (F키)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
@@ -146,7 +161,7 @@ HRESULT CMiyabi::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
 	m_pStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
-	//m_pStateMachine->Register_State("Jump", CMiyabiState_Jump::Create());
+	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
 
 	return S_OK;
 }
@@ -159,6 +174,12 @@ HRESULT CMiyabi::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+
+	m_pStateMachine->Register_AnyStateTransition("Attack",
+		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
+
+	m_pStateMachine->Register_Transition("Attack", "Idle",
+		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
