@@ -37,7 +37,7 @@ void CHierarchyPanel::Render_GUI()
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoCollapse |
 		ImGuiWindowFlags_NoTitleBar |
-		ImGuiWindowFlags_NoSavedSettings; // ★ ini 간섭 차단
+		ImGuiWindowFlags_NoSavedSettings;
 
 	ImGui::SetNextWindowPos(ImVec2(m_fPosX, 0.f), ImGuiCond_Always);
 	ImGui::SetNextWindowSize(ImVec2(m_fPanelCX, winH), ImGuiCond_Always);
@@ -76,12 +76,7 @@ void CHierarchyPanel::Render_GUI()
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
 
-	// 버튼창도 위치 강제
 	ImGui::SetNextWindowPos(ImVec2(m_fPosX + m_fPanelCX, 0.f), ImGuiCond_Always);
-
-	// auto-resize이지만, 높이 흔들림 싫으면 최소 높이만 맞추고 싶을 수 있음(선택)
-	// ImGui::SetNextWindowSize(ImVec2(0, winH), ImGuiCond_Always);
-
 	ImGui::Begin("##HierachyBtn", nullptr, btnFlags);
 
 	if (ImGui::ArrowButton("##HierachyOpenBtn", m_bOpened ? ImGuiDir_Left : ImGuiDir_Right))
