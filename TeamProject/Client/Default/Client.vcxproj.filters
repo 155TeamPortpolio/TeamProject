@@ -70,9 +70,6 @@
     <Filter Include="02. GameObject\Object\TestMap">
       <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\FSM">
-      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\TestFloor">
       <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
     </Filter>
@@ -94,8 +91,23 @@
     <Filter Include="02. GameObject\Object\TestObject\State\Dash">
       <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\FSM\NewFilter1">
-      <UniqueIdentifier>{f67616ea-fba5-4fed-a78d-52d51cb0c5b6}</UniqueIdentifier>
+    <Filter Include="02. GameObject\Object\Character">
+      <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi">
+      <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\HFSM">
+      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State">
+      <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Idle">
+      <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Walk">
+      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -172,13 +184,13 @@
       <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IBaseState.h">
-      <Filter>03. Utility\FSM</Filter>
+      <Filter>03. Utility\HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StateParameter.h">
-      <Filter>03. Utility\FSM</Filter>
+      <Filter>03. Utility\HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StateMachine.h">
-      <Filter>03. Utility\FSM</Filter>
+      <Filter>03. Utility\HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestFloor.h">
       <Filter>02. GameObject\Object\TestFloor</Filter>
@@ -205,6 +217,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Dash.h">
       <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Character.h">
+      <Filter>02. GameObject\Object\Character</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\IHState.h">
+      <Filter>03. Utility\HFSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Miyabi.h">
+      <Filter>02. GameObject\Object\Character\Miyabi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Idle.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Walk.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -291,10 +318,7 @@
       <Filter>02. GameObject\Object\TestMap</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StateParameter.cpp">
-      <Filter>03. Utility\FSM</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\StateMachine.cpp">
-      <Filter>03. Utility\FSM</Filter>
+      <Filter>03. Utility\HFSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
@@ -314,6 +338,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Dash.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Character.cpp">
+      <Filter>02. GameObject\Object\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Miyabi.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Idle.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Walk.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
