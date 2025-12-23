@@ -19,6 +19,7 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
+        _bool               bPause = { true };
         //루트본 관련
         _bool   bUseTransform = { true };
         _int    iMoveBoneIndex = { -1 };
@@ -111,6 +112,8 @@ public://애니매이터 데이터
     _float Get_EaseDuration(_uint LayerIndex = 0);
     //현재 레이어 재생속도
     _float Get_AnimSpeed(_uint LayerIndex = 0);
+    //퍼즈 상태인지
+    _bool Get_isPause(_uint LayerIndex = 0);
 
     /*----- Setter -----*/
     
@@ -118,6 +121,8 @@ public://애니매이터 데이터
     void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
     //애니매이션 트랜스폼 사용
     void Set_UseTransform(_uint LayerIndex = 0);
+    //애니매이션 퍼즈
+    void Set_Pause(_bool bPause, _uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -216,7 +221,8 @@ public:
     SetAnimBuild& Speed(_float fSpeed);
     //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
     SetAnimBuild& TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear);
-
+    //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
+    SetAnimBuild& Pause(_bool bPause);
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
@@ -225,6 +231,7 @@ protected:
 
     //---------- 기본 속성
     _bool    m_bLoop = false;
+    _bool    m_bPause = false;
     _float   m_fSpeed = 1.f;
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };

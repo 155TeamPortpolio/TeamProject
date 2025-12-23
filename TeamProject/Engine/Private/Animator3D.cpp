@@ -119,6 +119,8 @@ void CAnimator3D::Update_Animation(_float dt)
 	Clear_Events();
 
 	for (auto& Layer : m_AnimLayers) {
+		if (Layer.bPause) break;
+
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else	
@@ -317,6 +319,13 @@ _float CAnimator3D::Get_AnimSpeed(_uint LayerIndex)
 	return m_AnimLayers[LayerIndex].fAnimSpeed;
 }
 
+_bool CAnimator3D::Get_isPause(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return false;
+
+	return m_AnimLayers[LayerIndex].bPause;
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -330,6 +339,12 @@ void CAnimator3D::Set_UseTransform(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex)) return;
 	m_AnimLayers[LayerIndex].bUseTransform = true;
 	m_AnimLayers[LayerIndex].iMoveBoneIndex = -1;
+}
+
+void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	m_AnimLayers[LayerIndex].bPause = true;
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -650,11 +665,6 @@ void CAnimator3D::BuildBone()
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
-	}
 }
 
 void CAnimator3D::Render_GUI()
@@ -709,9 +719,10 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Separator();
 
 	// 式式式式式式式式式 Play bar
-	if (ImGui::Button("Play")) {
-		Set_Animation(curLayerIndex, curLayer.iClipIndex)
-			.Loop(bLoop);
+	static bool bPause = true;
+	if(ImGui::Button(bPause ? "Pause" : "Play", ImVec2(80.f, 0.f))) {
+		curLayer.bPause = bPause;
+		bPause = !bPause;
 	}
 	ImGui::SameLine();
 
@@ -813,6 +824,7 @@ HRESULT SetAnimBuild::Apply()
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+	Layer.bPause = m_bPause;
 
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
@@ -849,6 +861,12 @@ SetAnimBuild& SetAnimBuild::TransitionSpeed(_float fStartSpeed, _float fTargetSp
 	return *this;
 }
 
+SetAnimBuild& SetAnimBuild::Pause(_bool bPause)
+{
+	m_bPause = bPause;
+	return *this;
+}
+
 //---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
@@ -859,6 +877,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+	Layer.bPause = m_bPause;
 
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
