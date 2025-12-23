@@ -31,6 +31,7 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 		if (ConvertToConstant(static_cast<TEXTURE_TYPE>(i)).empty()) continue;
 		textureTypes.push_back(i);
 	}
+
 	ReCheck_Material(fileDirectory);
 	return S_OK;
 }
@@ -192,7 +193,6 @@ void CAIMaterial::ReCheck_Material(const string& fileDirectory)
 
 	if (hasDiffuse) {
 		string Key = m_Textures[TEXTURE_TYPE::DIFFUSE].front()->Get_Key();
-		//f ::path p(filename);
 		filesystem::path fileName(Key);
 		string stem = fileName.stem().string();
 		const string oldSuffix = "_D";
@@ -200,9 +200,10 @@ void CAIMaterial::ReCheck_Material(const string& fileDirectory)
 		{
 			stem.erase(stem.size() - oldSuffix.size()); 
 		}
-		Add_AdditionalTexture(fileDirectory, "", "_N",TEXTURE_TYPE::NORMALS);
-		Add_AdditionalTexture(fileDirectory, "", "_M",TEXTURE_TYPE::METALNESS);
-		Add_AdditionalTexture(fileDirectory, "", "_A",TEXTURE_TYPE::AMBIENT);
+		//Unagi_Body_Map1_D
+		Add_ReTexture(fileDirectory, stem, "_N",TEXTURE_TYPE::NORMALS);
+		Add_ReTexture(fileDirectory, stem, "_M",TEXTURE_TYPE::METALNESS);
+		Add_ReTexture(fileDirectory, stem, "_A",TEXTURE_TYPE::AMBIENT);
 	}
 }
 
@@ -305,6 +306,21 @@ void CAIMaterial::Add_AdditionalTexture(const string& fileDirectory, const strin
 	Texturekey += typeAdd;
 
 	string filePath = fileDirectory + "\\" + Texturekey;
+	/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
+	if (filesystem::exists(filePath)) { //있으면 로드
+		CGameInstance::GetInstance()->Get_ResourceMgr()->
+			Add_ResourcePath(Texturekey, filePath);
+		Link_Texture(G_GlobalLevelKey, Texturekey, type);
+	}
+}
+
+void CAIMaterial::Add_ReTexture(const string& fileDirectory, const string& base, const string& typeAdd, TEXTURE_TYPE type)
+{
+	/*Normal*/
+	string Texturekey = base;
+	Texturekey += typeAdd;
+
+	string filePath = fileDirectory + "\\" + Texturekey+".png";
 	/*일단 베이스 네임으로(인덱스 제외 후) 검색*/
 	if (filesystem::exists(filePath)) { //있으면 로드
 		CGameInstance::GetInstance()->Get_ResourceMgr()->

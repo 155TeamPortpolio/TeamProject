@@ -26,6 +26,7 @@ private:
 private:
     void Render_MaterialAdd();
     void Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type);
+    void Add_ReTexture(const string& fileDirectory, const string& base, const string& typeAdd, TEXTURE_TYPE type);
 
 private:
     int m_currentPassIndex = {};
