@@ -14,8 +14,8 @@ HRESULT CTestMap::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	auto resMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	string defaultPath = "../bin/Resources/Map/";
-	string folderName  = "MainStreet";
+	string defaultPath = "../bin/Resources/";
+	string folderName  = "Binary_MapData";
 	string fileName    = "Mesh";
 
 	resMgr->Add_ResourcePath(fileName + ".model", defaultPath + folderName + "/" + fileName + ".model");
