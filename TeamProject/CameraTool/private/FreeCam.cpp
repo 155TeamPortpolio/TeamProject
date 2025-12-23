@@ -1,50 +1,44 @@
 #include "pch.h"
-#include "DebugFreeCam.h"
+#include "FreeCam.h"
 
-HRESULT CDebugFreeCam::Initialize_Prototype()
+HRESULT CFreeCam::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
 	return S_OK;
 }
 
-HRESULT CDebugFreeCam::Initialize(INIT_DESC* pArg)
+HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	transform->LookAt({});
+	m_pTransform->LookAt({});
 
-	_vector4 look4 = transform->Dir(STATE::LOOK);
+	_vector4 look4 = m_pTransform->Dir(STATE::LOOK);
 	_vector3 forward{ look4.x, look4.y, look4.z };
+	forward.Normalize();
 
-	if (forward.LengthSquared() <= 1e-8f)
-		forward = _vector3{ 0.f, 0.f, 1.f };
-	else
-		forward.Normalize();
-
-	const float yawRad = atan2f(forward.x, forward.z);
+	const float yawRad   = atan2f(forward.x, forward.z);
 	const float pitchRad = asinf(-forward.y);
+	 
+	targetRotDeg.x = XMConvertToDegrees(yawRad);
+	targetRotDeg.y = XMConvertToDegrees(pitchRad);
+	targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 
-	rotDegTarget.x = XMConvertToDegrees(yawRad);
-	rotDegTarget.y = XMConvertToDegrees(pitchRad);
-	rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
-
-	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-	rotQuatCurrent = rotQuatTarget;
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	curRot    = targetRot;
 
 	return S_OK;
 }
 
-void CDebugFreeCam::Priority_Update(_float dt)
+void CFreeCam::Priority_Update(_float dt)
 {
 	if (!controlEnabled)
 	{
-		SyncRotationFromTransform();
+		SyncRotation();
 		return;
 	}
 
-	auto input = game->Get_InputDev();
-
+	auto input = KEY;
 	const float ad = (input->Key_Down('D') ? 1.f : 0.f) + (input->Key_Down('A') ? -1.f : 0.f);
 	const float ws = (input->Key_Down('W') ? 1.f : 0.f) + (input->Key_Down('S') ? -1.f : 0.f);
 
@@ -57,15 +51,15 @@ void CDebugFreeCam::Priority_Update(_float dt)
 				const float deltaX = input->Mouse_DeltaX();
 				const float deltaY = input->Mouse_DeltaY();
 
-				rotDegTarget.x += deltaX * sensitivity;
-				rotDegTarget.y += deltaY * sensitivity;
-				rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
+				targetRotDeg.x += deltaX * sensitivity;
+				targetRotDeg.y += deltaY * sensitivity;
+				targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 			}
 
 			ApplyRotation(dt);
 		}
 
-		_vector4 pos4 = transform->Get_Pos();
+		_vector4 pos4 = m_pTransform->Get_Pos();
 		_vector3 curPos{ pos4.x, pos4.y, pos4.z };
 
 		if (!orbit.initialized)
@@ -82,11 +76,9 @@ void CDebugFreeCam::Priority_Update(_float dt)
 				}
 				else
 				{
-					_vector4 look4 = transform->Dir(STATE::LOOK);
+					_vector4 look4 = m_pTransform->Dir(STATE::LOOK);
 					_vector3 look{ look4.x, 0.f, look4.z };
-
-					if (look.LengthSquared() <= 1e-8f) look = _vector3{ 0.f, 0.f, 1.f };
-					else look.Normalize();
+					look.Normalize();
 
 					orbit.center.x = curPos.x + look.x * orbit.distance;
 					orbit.center.z = curPos.z + look.z * orbit.distance;
@@ -98,8 +90,6 @@ void CDebugFreeCam::Priority_Update(_float dt)
 			const float rz = curPos.z - orbit.center.z;
 
 			const float dXZ = sqrtf(rx * rx + rz * rz);
-			if (dXZ > 1e-6f) orbit.distance = dXZ;
-
 			orbit.angleDeg = XMConvertToDegrees(atan2f(rz, rx));
 			orbit.initialized = true;
 		}
@@ -127,13 +117,13 @@ void CDebugFreeCam::Priority_Update(_float dt)
 		nextPos.z = orbit.center.z + s * orbit.distance;
 		nextPos.y = curPos.y;
 
-		transform->Set_Pos(_vector4{ nextPos.x, nextPos.y, nextPos.z, 1.f });
+		m_pTransform->Set_Pos(_vector4{ nextPos.x, nextPos.y, nextPos.z, 1.f });
 
 		if (orbit.lookAtCenter)
 		{
 			_vector3 lookAtPos = orbit.targetPos + _vector3{ 0.f, orbit.offsetY, 0.f };
-			transform->LookAt(lookAtPos);
-			SyncRotationFromTransform();
+			m_pTransform->LookAt(lookAtPos);
+			SyncRotation();
 		}
 
 		return;
@@ -144,15 +134,15 @@ void CDebugFreeCam::Priority_Update(_float dt)
 		const float deltaX = input->Mouse_DeltaX();
 		const float deltaY = input->Mouse_DeltaY();
 
-		rotDegTarget.x += deltaX * sensitivity;
-		rotDegTarget.y += deltaY * sensitivity;
-		rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
+		targetRotDeg.x += deltaX * sensitivity;
+		targetRotDeg.y += deltaY * sensitivity;
+		targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 	}
 
 	ApplyRotation(dt);
 
-	_vector4 look4 = transform->Dir(STATE::LOOK);
-	_vector4 right4 = transform->Dir(STATE::RIGHT);
+	_vector4 look4 = m_pTransform->Dir(STATE::LOOK);
+	_vector4 right4 = m_pTransform->Dir(STATE::RIGHT);
 
 	_vector3 look{ look4.x, look4.y, look4.z };
 	_vector3 right{ right4.x, right4.y, right4.z };
@@ -191,24 +181,22 @@ void CDebugFreeCam::Priority_Update(_float dt)
 	}
 
 	if (move.LengthSquared() > 1e-8f)
-		transform->Translate(_vector4{ move.x, move.y, move.z, 0.f });
+		m_pTransform->Translate(_vector4{ move.x, move.y, move.z, 0.f });
 }
 
-void CDebugFreeCam::SetControlEnabled(_bool enabled)
+void CFreeCam::SetControlEnabled(_bool enabled)
 {
-	if (controlEnabled == enabled)
-		return;
+	if (controlEnabled == enabled) return;
 
 	controlEnabled = enabled;
 
 	if (controlEnabled)
-		SyncRotationFromTransform();
+		SyncRotation();
 }
 
-void CDebugFreeCam::SetMoveConstraint(CamMoveConstraint mode)
+void CFreeCam::SetMoveConstraint(CamMoveConstraint mode)
 {
-	if (moveConstraint == mode)
-		return;
+	if (moveConstraint == mode) return;
 
 	moveConstraint = mode;
 
@@ -216,53 +204,49 @@ void CDebugFreeCam::SetMoveConstraint(CamMoveConstraint mode)
 		orbit.initialized = false;
 }
 
-void CDebugFreeCam::SetOrbitState(const CamOrbitState& next)
+void CFreeCam::SetOrbitState(const CamOrbitState& next)
 {
 	orbit = next;
 	orbit.initialized = false;
 }
 
-void CDebugFreeCam::ApplyRotation(_float dt)
+void CFreeCam::ApplyRotation(_float dt)
 {
-	const _float yawRad = XMConvertToRadians(rotDegTarget.x);
-	const _float pitchRad = XMConvertToRadians(rotDegTarget.y);
+	const _float yawRad = XMConvertToRadians(targetRotDeg.x);
+	const _float pitchRad = XMConvertToRadians(targetRotDeg.y);
 
-	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
 	float alpha = 1.f - expf(-rotSmoothSpeed * dt);
 	alpha = clamp(alpha, 0.f, 1.f);
 
-	rotQuatCurrent = Quaternion::Slerp(rotQuatCurrent, rotQuatTarget, alpha);
-	rotQuatCurrent.Normalize();
+	curRot = Quaternion::Slerp(curRot, targetRot, alpha);
+	curRot.Normalize();
 
-	const _vector4 q4{ rotQuatCurrent.x, rotQuatCurrent.y, rotQuatCurrent.z, rotQuatCurrent.w };
-	transform->Set_Quaternion(q4);
+	const _vector4 q4{curRot.x, curRot.y, curRot.z, curRot.w };
+	m_pTransform->Set_Quaternion(q4);
 }
 
-void CDebugFreeCam::SyncRotationFromTransform()
+void CFreeCam::SyncRotation()
 {
-	_vector4 look4 = transform->Dir(STATE::LOOK);
+	_vector4 look4 = m_pTransform->Dir(STATE::LOOK);
 	_vector3 forward{ look4.x, look4.y, look4.z };
-
-	if (forward.LengthSquared() <= 1e-8f)
-		forward = _vector3{ 0.f, 0.f, 1.f };
-	else
-		forward.Normalize();
+	forward.Normalize();
 
 	const float yawRad = atan2f(forward.x, forward.z);
 	const float pitchRad = asinf(-forward.y);
 
-	rotDegTarget.x = XMConvertToDegrees(yawRad);
-	rotDegTarget.y = XMConvertToDegrees(pitchRad);
-	rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
+	targetRotDeg.x = XMConvertToDegrees(yawRad);
+	targetRotDeg.y = XMConvertToDegrees(pitchRad);
+	targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 
-	rotQuatTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-	rotQuatCurrent = rotQuatTarget;
+	targetRot = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+	curRot = targetRot;
 }
 
-CDebugFreeCam* CDebugFreeCam::Create()
+CFreeCam* CFreeCam::Create()
 {
-	auto inst = new CDebugFreeCam();
+	auto inst = new CFreeCam();
 	if (FAILED(inst->Initialize_Prototype()))
 	{
 		MSG_BOX("Object Create Failed : CDebugFreeCam");
@@ -271,9 +255,9 @@ CDebugFreeCam* CDebugFreeCam::Create()
 	return inst;
 }
 
-CGameObject* CDebugFreeCam::Clone(INIT_DESC* pArg)
+CGameObject* CFreeCam::Clone(INIT_DESC* pArg)
 {
-	auto inst = new CDebugFreeCam(*this);
+	auto inst = new CFreeCam(*this);
 	if (FAILED(inst->Initialize(pArg)))
 	{
 		MSG_BOX("Object Clone Failed : CDebugFreeCam");
@@ -282,7 +266,7 @@ CGameObject* CDebugFreeCam::Clone(INIT_DESC* pArg)
 	return inst;
 }
 
-void CDebugFreeCam::Render_GUI()
+void CFreeCam::Render_GUI()
 {
 	__super::Render_GUI();
 
@@ -296,16 +280,16 @@ void CDebugFreeCam::Render_GUI()
 
 		ImGui::Separator();
 
-		ImGui::DragFloat2(u8"회전 목표(도)", &rotDegTarget.x, 0.05f);
-		rotDegTarget.y = clamp(rotDegTarget.y, -89.f, 89.f);
+		ImGui::DragFloat2(u8"회전 목표(도)", &targetRotDeg.x, 0.05f);
+		targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 
 		if (ImGui::Button(u8"회전 목표 초기화", ImVec2(160.f, 0.f)))
-			rotDegTarget = _vector2{ 0.f, 0.f };
+			targetRotDeg = _vector2{ 0.f, 0.f };
 
 		ImGui::SameLine();
 
 		if (ImGui::Button(u8"현재 회전 즉시 적용", ImVec2(160.f, 0.f)))
-			rotQuatCurrent = rotQuatTarget;
+			curRot = targetRot;
 
 		ImGui::PopID();
 	}
