@@ -1,5 +1,6 @@
 #pragma once
 #include "EffectNode.h"
+#include "MeshEffectModule.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CMeshNode :
@@ -26,7 +27,15 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
-protected:    
+protected:
+    void Update_ColorModule(_float dt);
+    void Update_ScaleModule(_float dt);
+    void Update_UVAnimationModule(_float dt);
+    void Update_SpriteAnimationModule(_float dt);
+    void Update_DissolveModule(_float dt);
+    void Update_BloomModule(_float dt);
+    void Bind_Params();
+
     MODE m_eMode = MODE::END;
     string m_PassTag{};
 
@@ -63,12 +72,20 @@ protected:
 
     /*Noise Params*/
 
-
     /*Distortion Params*/
     _float m_fDistortionWeight{};
 
     /*Bloom Params*/
     _float m_fBloomIntensity{};
+
+    /*-----Modules-----*/
+    TEXTURE_SLOT_MODULE m_TextureSlotModule{};
+    COLOR_MODULE m_ColorModule{};
+    SCALE_MODULE m_ScaleModule{};
+    UV_ANIMATION_MODULE m_UVAnimaitonModule{};
+    SPRITE_ANIMATION_MODULE m_SpriteAnimationModule{};
+    DISSOLVE_MODULE m_DissolveModule{};
+    BLOOM_MODULE m_BloomModule{};
 
 };
 NS_END

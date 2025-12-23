@@ -278,6 +278,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\Noise.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
     <ClInclude Include="..\Public\LifeTimeVelocity.h" />
