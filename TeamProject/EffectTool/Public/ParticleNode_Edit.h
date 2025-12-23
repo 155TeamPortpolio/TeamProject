@@ -1,6 +1,7 @@
 #pragma once
 #include "ParticleNode.h"
 #include "EffectContainer_Edit.h"
+#include "ParticleSystem.h"
 
 NS_BEGIN(EffectTool)
 class CParticleNode_Edit :
@@ -45,6 +46,7 @@ private:
     string m_TexturePath{};
 
     /*Main Params*/
+    CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
     _bool m_IsWorld = true;
     _uint m_iBurstCount{};
 
@@ -56,8 +58,10 @@ private:
     _float2 m_vStartSpeed{};
     _float2 m_vStartLifeTime{ 1.f,1.f };
     _float2 m_vStartSize{ 1.f,1.f };
-    _float3 m_vSpawnAreaMin{};
-    _float3 m_vSpawnAreaMax{};
+
+    _float3 m_vCenter{};
+    _float3 m_vHalfBox{ 1.f,1.f,1.f };
+    _float m_fRaidus{};
 
     /*Gravity mode*/
     _bool m_UseGravity = false;

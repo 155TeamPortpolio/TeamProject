@@ -52,7 +52,7 @@ HRESULT CPostRenderer::Render_EffectBloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX", m_pShader, "g_BlurXTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "g_BloomType");
+		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "g_BloomInfo");
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
@@ -228,7 +228,7 @@ HRESULT CPostRenderer::Ready_MRT()
 
 HRESULT CPostRenderer::CreateDistortionNoiseTexture()
 {
-	// heat haze¿ë
+	// heat hazeï¿½ï¿½
 	vector<_float4> distortionNoise;
 	const _int noiseSize = 128;
 
@@ -239,20 +239,20 @@ HRESULT CPostRenderer::CreateDistortionNoiseTexture()
 			_float fx = (float)x / noiseSize;
 			_float fy = (float)y / noiseSize;
 
-			// ¿©·¯ ÁÖÆÄ¼öÀÇ »çÀÎÆÄ Á¶ÇÕÀ¸·Î ºÎµå·¯¿î ³ëÀÌÁî »ý¼º
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµå·¯ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 			_float noise1 = sin(fx * 3.14f * 8.0f) * cos(fy * 3.14f * 6.0f);
 			_float noise2 = sin(fx * 3.14f * 12.0f) * cos(fy * 3.14f * 10.0f);
 			_float noise3 = sin(fx * 3.14f * 5.0f) * cos(fy * 3.14f * 7.0f);
 
-			// ´Ù¸¥ ¹æÇâÀÇ ³ëÀÌÁî
+			// ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			_float noise4 = cos(fx * 3.14f * 9.0f) * sin(fy * 3.14f * 11.0f);
 			_float noise5 = cos(fx * 3.14f * 6.0f) * sin(fy * 3.14f * 8.0f);
 
-			// Á¶ÇÕ ¹× Á¤±ÔÈ­
+			// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½È­
 			_float r = (noise1 * 0.5f + noise2 * 0.3f + noise3 * 0.2f);
 			_float g = (noise4 * 0.5f + noise5 * 0.3f + noise1 * 0.2f);
 
-			// 0~1 ¹üÀ§·Î º¯È¯
+			// 0~1 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
 			r = (r + 1.0f) * 0.5f;
 			g = (g + 1.0f) * 0.5f;
 

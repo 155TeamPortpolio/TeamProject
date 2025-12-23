@@ -1,5 +1,6 @@
 #pragma once
 #include "Model.h"
+#include "ParticleParams.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CParticleSystem :
@@ -26,35 +27,70 @@ public:
 	{
 		_uint IsAlive{};
 		_float3 vPosition{};
+
 		_float3 vVelocity{};
+		_float pad0{};
+
 		_float4 vColor{};
+
 		_float fLifeTime{};
 		_float fMaxLifeTime{};
 		_float2 vStartSize{};
+
 		_float2 vSize{};
+		_uint iFrameIndex{};
 		_float fNoiseFrequency{};
-		_float2 pad{};
 	}PARTICLE_GPU;
 
 	typedef struct tagInstanceData
 	{
 		_float4 vRight{}, vUp{}, vLook{};
 		_float4 vTranslate{};
+
 		_float3 vVelocity{};
+		_float pad0{};
+
 		_float4 vColor{};
+
 		_float2 vLife{};
 		_uint iFrameIndex{};
-		_float2 pad{};
+		_float pad1{};
 	}INSTANCE_DATA;
 
 	typedef struct tagCBFrame
 	{
+		_uint iModuleMask{};
 		_float fDeltaTime{};
 		_uint iAliveCount{};
 		_uint iMaxParticles{};
 		_uint UseGravity{};
 		_float fGravityScale{};
-		_float3 pad{};
+		_float2 pad0{};
+
+		/*Life Time Velocity*/
+		_float fDampScale{};
+		_float3 pad1{};
+
+		/*Life Time Size*/
+		_float2 vStartScale{};
+		_float2 vEndScale{};
+
+		/*Life Time Color*/
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/*Texture Sheet Animation*/
+		_uint isAnimated{};
+		_uint iMaxFrameIndex{};
+		_float2 pad2{};
+
+		/*Noise*/
+		_float fElapsedTime{};
+		_float3 pad3{};
+
+		_float4 vStrength{};
+		_float4 vFrequency{};
+		_float4 vScrollSpeed{};
 	}CB_FRAME;
 
 	typedef struct tagCBPacked
@@ -73,8 +109,11 @@ public:
 		_uint iMaxParticleCount{};
 		_uint pad[3] = {};
 	}CB_DEAD_LIST_INIT;
+
 	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, BUILD, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
+	enum class SPAWN_SHAPE { SPHERE, BOX, CONE, END };
+	
 protected:
 	CParticleSystem();
 	CParticleSystem(const CParticleSystem& rhs);
@@ -103,7 +142,6 @@ public:
 public:
 	HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
 	HRESULT Draw(ID3D11DeviceContext* pContext);
-	const std::vector<VTX_INSTANCE_POINT>& GetInstanceDatas() { return m_InstanceDatas; }
 	_bool IsWorldSpace() { return (m_eParticleSpace == PARTICLE_SPACE::WORLD); };
 
 public:
@@ -114,6 +152,7 @@ public:
 	virtual void Render_GUI() override;
 
 private:
+	void ApplyPending();
 	void CreateStructuredBuffers(_uint iMaxCount);
 	void ReadAliveOutCount();
 
@@ -129,12 +168,12 @@ private:
 	_uint m_iMaxInstancesCount{};
 	_bool isDrawing = { true };
 
-	vector<PARTICLE> m_Particles;
-	vector<VTX_INSTANCE_POINT> m_InstanceDatas;
-	vector<_uint> m_DeadParticleIndices;
+	_bool m_IsChanged = false;
+	PARTICLE_NODE m_PendingChanged{};
 
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
+	MODULE_MASK m_eModuelMask{};
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};
@@ -150,23 +189,22 @@ private:
 	_float2 m_vStartSpeed{};
 	_float2 m_vStartLifeTime{};
 	_float2 m_vStartSize{};
-	_float3 m_vSpawnAreaMin{};
-	_float3 m_vSpawnAreaMax{};
-	
+
+	SPAWN_SHAPE m_eSpawnShape = SPAWN_SHAPE::BOX;
+	_float3 m_vCenter{};
+	_float3 m_vHalfBox{};
+	_float m_fRadius{};
+
 	/*Gravity mode*/
 	_bool m_UseGravity = false;
 	_float m_fGravityScale{};
 
 	/*Modules*/
-	_uint m_iTextureCol{ 1 };
-	_uint m_iTextureRow{ 1 };
-
-	class CLifeTimeVelocity* m_pLifeTimeVelocity = { nullptr };
-	class CLifeTimeSize* m_pLifeTimeSize = { nullptr };
-	class CLifeTimeColor* m_pLifeTimeColor = { nullptr };
-	class CTextureSheetAnimation* m_pTextureSheetAnimation = { nullptr };
-	class CNoise* m_pNoise = { nullptr };
-	vector<class IParticleModule*> m_Modules;
+	LIFE_TIME_VELOCITY m_LifeTimeVelocity{};
+	LIFE_TIME_SIZE m_LifeTimeSize{};
+	LIFE_TIME_COLOR m_LifeTimeColor{};
+	TEXTURE_SHEET_ANIMATION m_TextureSheetAnimation{};
+	NOISE m_Noise{};
 
 	/*------------------------------컴퓨트 셰이더 이식중---------------------------------*/
 	class CStructuredBuffer* m_pInstanceBuffer = { nullptr };
@@ -187,8 +225,6 @@ private:
 	_uint m_iAliveOutIndex = 1;							//이번 프레임에 alive out으로 사용할 버퍼 인덱스
 	_uint m_iAliveCount{};								//현재 살아있는 파티클 갯수
 	vector<PARTICLE_GPU> m_SpawnList;
-
-	_uint m_iBaseOffset{};
 
 public:
 	static CParticleSystem* Create();

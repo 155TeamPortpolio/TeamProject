@@ -1,4 +1,5 @@
 #include "CS_Particle.hlsli"
+#include "CS_Particle_Func.hlsl"
 
 [numthreads(256,1,1)] /*계산에 사용할 스레드 그룹 x,y,z의 좌표로 각 스레드를 식별 함, 그룹에 포함된 스레드 갯수는 x*y*z 만큼 */
 void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
@@ -19,10 +20,17 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     if(p.fLifeTime >= p.fMaxLifeTime)
     {
         p.IsAlive = 0;
-        Particles[i] = p;
-        DeadAppend.Append(i); /* 죽은 파티클 append에 추가 */
+        Particles[index] = p;
+        DeadAppend.Append(index); /* 죽은 파티클 append에 추가 */
         return;
     }
+    
+    /* Module */
+    p = LIFE_TIME_VELOCITY(p);
+    p = LIFE_TIME_SIZE(p);
+    p = LIFE_TIME_COLOR(p);
+    p = TEXTURE_SHEET_ANIMATION(p);
+    p = NOISE(p);
     
     /* Gravity */
     if (UseGravity == 1)
