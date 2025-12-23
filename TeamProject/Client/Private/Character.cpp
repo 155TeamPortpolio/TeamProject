@@ -69,6 +69,29 @@ void CCharacter::Late_Update(_float dt)
 		m_pCCT->Late_Update(dt);
 }
 
+void CCharacter::Rotate(_vector3 vDirection)
+{
+	_vector3 vDir = vDirection;
+	vDir.y = 0.f;
+
+	if (vDir.Length() < 0.001f)
+		return;
+
+	vDir.Normalize();
+
+	_vector3 vUp = _vector3::Up;
+	_vector3 vRight = vDir.Cross(vUp);
+	vRight.Normalize();
+
+	_smatrix mRot = _smatrix::Identity;
+	mRot.Right(vRight);
+	mRot.Up(vUp);
+	mRot.Forward(vDir);
+
+	_quaternion qRot = _quaternion::CreateFromRotationMatrix(mRot);
+	m_pTransform->Set_Quaternion(qRot);
+}
+
 void CCharacter::Update_Input(_float dt)
 {
 	// Process Input

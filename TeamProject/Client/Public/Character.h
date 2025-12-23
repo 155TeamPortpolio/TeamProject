@@ -18,6 +18,7 @@ protected:
     CCharacter();
     CCharacter(const CCharacter& rhs);
     virtual ~CCharacter() DEFAULT;
+
 public:
     // 상태 접근
     _float Get_HP() const { return m_fCurrentHP; }
@@ -38,14 +39,19 @@ public:
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
     void   Set_Jump(_bool bJump) { m_bIsJump = bJump; }
 
+    _vector3              Get_InputDir() const { return m_vInputDir; }
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
+
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+
+public:
+    void Rotate(_vector3 vDirection);
 
 protected:
     // 입력 처리 - 파생 클래스에서 StateMachine 파라미터 설정에 사용
