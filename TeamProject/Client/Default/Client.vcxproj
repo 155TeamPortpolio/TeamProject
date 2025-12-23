@@ -149,10 +149,15 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
+    <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
+    <ClInclude Include="..\Public\IHState.h" />
     <ClInclude Include="..\Public\MapData_Defines.h" />
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
     <ClInclude Include="..\public\MapDataCloud.h" />
+    <ClInclude Include="..\Public\Miyabi.h" />
+    <ClInclude Include="..\Public\MiyabiState_Idle.h" />
+    <ClInclude Include="..\Public\MiyabiState_Walk.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
@@ -211,7 +216,11 @@
     </ClCompile>
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\private\CamDirector.cpp" />
+    <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
+    <ClCompile Include="..\Private\Miyabi.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Idle.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
@@ -225,7 +234,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\private\SequenceCam.cpp" />
-    <ClCompile Include="..\Private\StateMachine.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />
     <ClCompile Include="..\Private\TestFloor.cpp" />
     <ClCompile Include="..\Private\TestLevel.cpp" />
