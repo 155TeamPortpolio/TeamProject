@@ -105,13 +105,14 @@ namespace Engine {
 		_float3			vPos = { 0.f, 0.f, 0.f };			// 초기 위치
 		_float			fHeight = { 2.0f };					// 캡슐 높이
 		_float			fRadius = { 0.5f };					// 캡슐 반지름
+		_float          fBoundingMinY = 0.0f;				// 바닥 로컬 위치
 		string			strMaterialTag = { "" };			// 재질
 		_float			fDensity = { 10.0f };				// 밀도 : 무게 역할
 
 		_bool           bAutoFit = true;					// 자동 크기 맞춤 플래그
 		_float          fSizeScale = 1.0f;					// 크기 스케일
-		_float          fRadiusScale = 1.0f;				// 반지름 별도 스케일
-		_float          fHeightScale = 1.0f;				// 높이 별도 스케일
+		_float          fRadiusScale = 1.0f;				// 반지름 별도 스케일(AutoFit에서 사용)
+		_float          fHeightScale = 1.0f;				// 높이 별도 스케일(AutoFit에서 사용)
 
 		_float          fContactOffset = 0.001f;			// 감지 시작 오프셋
 		_float          fRestOffset = 0.0f;					// 충돌 깊이 오프셋
