@@ -31,8 +31,60 @@ HRESULT CAI_Material::Initialize()
 
 void CAI_Material::Render_GUI()
 {
-	__super::Render_GUI();
+	if (m_MaterialInstances.empty())
+		return;
 
+	ImGui::SeparatorText("Material");
+	float childWidth = ImGui::GetContentRegionAvail().x;
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (m_MaterialInstances.size() * 2) + (ImGui::GetStyle().WindowPadding.y * 4);
+
+	if (ImGui::Button("Material Tabs")) {
+		m_bMaterialTabOpen = true;
+	}
+
+	if (m_bMaterialTabOpen) {
+		ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
+		if (ImGui::Begin("Materials", &m_bMaterialTabOpen, ImGuiWindowFlags_NoCollapse))
+		{
+			if (ImGui::BeginTabBar("##MaterialTabs"))
+			{
+				for (int i = 0; i < m_MaterialInstances.size(); ++i)
+				{
+					CMaterialInstance* hMaterial = m_MaterialInstances[i];
+					const bool specific = m_AIMaterialDatas[i]->Get_Specific();
+
+					if (specific)
+					{
+						ImVec4 col = ImGui::GetStyleColorVec4(ImGuiCol_Tab);
+						ImVec4 colH = ImGui::GetStyleColorVec4(ImGuiCol_TabHovered);
+						ImVec4 colA = ImGui::GetStyleColorVec4(ImGuiCol_TabActive);
+
+						col = ImVec4(col.x + 0.80f, col.y + 0.05f, col.z + 0.00f, col.w);
+						colH = ImVec4(colH.x + 0.80f, colH.y + 0.07f, colH.z + 0.00f, colH.w);
+						colA = ImVec4(colA.x + 0.80f, colA.y + 0.10f, colA.z + 0.00f, colA.w);
+
+						ImGui::PushStyleColor(ImGuiCol_Tab, col);
+						ImGui::PushStyleColor(ImGuiCol_TabHovered, colH);
+						ImGui::PushStyleColor(ImGuiCol_TabActive, colA);
+					}
+
+					if (ImGui::BeginTabItem(hMaterial->Get_MaterialName().c_str()))
+					{
+						hMaterial->Render_GUI();
+						ImGui::EndTabItem();
+					}
+
+					if (specific)
+					{
+						ImGui::PopStyleColor(3);
+					}
+				}
+			}
+			ImGui::EndTabBar();
+		}
+		ImGui::End();
+	}
 	if (ImGui::Button("Add_Material")) 
 		m_bCustomTabOpened = !m_bCustomTabOpened;
 	

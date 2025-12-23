@@ -55,8 +55,6 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 	return S_OK;
 }
 
-
-
 void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>& TextureIndexs)
 {
 	if(TextureIndexs.size() < MAX_TEXTURE_TYPE_VALUE) return;
@@ -67,6 +65,7 @@ void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>
 
 	for (_uint i = 0; i < MAX_TEXTURE_TYPE_VALUE; ++i)
 	{
+		param.pData = nullptr; // 루프 시작마다 리셋
 		auto it = m_Textures.find(static_cast<TEXTURE_TYPE>(i));
 
 		if (it != m_Textures.end())

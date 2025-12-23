@@ -50,18 +50,9 @@ unordered_set<string> CEditorSystem::Get_NamingRules()
     return m_CheckNameRules;
 }
 
-unordered_set<string> CEditorSystem::Get_MappingRules()
-{
-    return unordered_set<string>();
-}
-
 void CEditorSystem::Push_NamingRules(string MeshName)
 {
     m_CheckNameRules.emplace(MeshName);
-}
-
-void CEditorSystem::Push_MappingRules(string MeshName)
-{
 }
 
 void CEditorSystem::Pop_NamingRules(string MeshName)
@@ -69,9 +60,6 @@ void CEditorSystem::Pop_NamingRules(string MeshName)
     m_CheckNameRules.erase(MeshName);
 }
 
-void CEditorSystem::Pop_MappingRules(string MeshName)
-{
-}
 
 void CEditorSystem::Free()
 {
