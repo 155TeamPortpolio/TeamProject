@@ -42,7 +42,3 @@ typedef struct tagUIAnimationClip {
 
 	tagUIAnimationClip(string _strName) : strName(_strName) {}
 }UI_ANIM_CLIP;
-
-typedef struct tagUIPrefab {
-
-};
