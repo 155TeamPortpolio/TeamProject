@@ -164,7 +164,7 @@ HRESULT CMaterialData::Link_Texture(const string& levelKey, const string& textur
 	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey, eType==TEXTURE_TYPE::DIFFUSE);
 	if (!pTexture)
 	{
-		MSG_BOX("There is no Texture Key : Link_Texture");
+		//MSG_BOX("There is no Texture Key : Link_Texture");
 		return E_FAIL;
 	}
 

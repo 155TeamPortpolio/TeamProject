@@ -12,7 +12,8 @@ private:
     HRESULT Initialize(class CTarget_Manager* pTargetManager, class CPipeLine* pPipeLine);
 
 public:
-    HRESULT Render_Bloom();
+    HRESULT Render_EffectBloom();
+    HRESULT Render_HDRBloom();
     HRESULT Render_Distortion();
     HRESULT Render_Final();
     void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command);

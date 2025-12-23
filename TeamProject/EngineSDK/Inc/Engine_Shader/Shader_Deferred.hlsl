@@ -5,6 +5,7 @@ matrix g_WorldMatrix;
 Texture2D g_NormalTexture;
 Texture2D g_DiffuseTexture;
 Texture2D g_LightTexture;
+Texture2D g_LightInfoTexture;
 Texture2D g_SpecularTexture;
 Texture2D g_EmmisiveTexture;
 Texture2D g_DepthTexture;
@@ -25,7 +26,8 @@ Texture2D g_DistortionNoiseTexture;
 Texture2D g_DistortionAdd_Texture;
 Texture2D g_DistortionFinal;
 Texture2D g_EffectDiffuseTexture;
-
+Texture2D g_HDRBlurXTexture;
+Texture2D g_HDRBloomFinalTexture;
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
 Texture2D g_PostProcessTexture;
@@ -79,6 +81,7 @@ struct PS_OUT_BACKBUFFER
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
+    float2 fLightInfo : SV_TARGET1;
 };
 
 struct PS_OUT_RESULT
@@ -150,10 +153,10 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
         
         float rangeCheck = smoothstep(0.0, 1.0, fRadius / abs(fragPos.z - sampleDepth));
         
-        occlusion += (sampleDepth >= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
+        occlusion += (sampleDepth <= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
     }
     
-    occlusion = 1.0 - (occlusion / 32.0);
+    occlusion = 1.0 - (occlusion / 64.0);
     Out.vResult = occlusion;
     
     return Out;
@@ -281,6 +284,63 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_HDR_BRIGHTPASS(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 bright = SoftExtractBright(scene);
+    
+    Out.vResult = bright;
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_HDR_BLURH(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
+    
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
+    
+    result = g_BrightTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
+    
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(texelSize.x * i, 0);
+        result += g_BrightTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += g_BrightTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
+    
+    Out.vResult = float4(result, 1.0);
+    return Out;
+}
+
+PS_OUT_RESULT PS_HDR_BLURV(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
+
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
+
+    result = g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
+    
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(0, texelSize.y * i);
+        result += g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
+    
+    Out.vResult = float4(result, 1.0);
+    
+    return Out;
+}
+
 PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -342,8 +402,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
     
-    vector vRamp = g_RampTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float fViewZ = vDepthDesc.y * zFar;
     
     vector vWorldPos;
@@ -359,17 +417,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 lightDir = normalize(g_vLightDir.xyz * -1);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
-    float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
-    
-    float2 vRampCoord = float2(NdotL, 0.5f);
-    float3 vRampColor;
- 
-    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
+    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
     
     float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
     
-    float RampRatio = 0.7f; 
-    Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
+    Out.vLight = float4(PBR, 1.f);
+    Out.fLightInfo = float2(NdotL, 0.f);
 
     return Out;
 }
@@ -386,7 +439,6 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
  
-    
     float fViewZ = vDepthDesc.y * zFar;
     
     vector vWorldPos;
@@ -403,19 +455,14 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float3 lightDir = normalize(g_vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
-    float NdotL = dot(worldNormal, lightDir) * -0.5f + 0.5f;
-    
-    float2 vRampCoord = float2(NdotL, 0.5f);
-    float3 vRampColor;
- 
-    vRampColor = saturate(g_RampTexture.Sample(DefaultSampler, vRampCoord).g - 0.5);
+    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
     g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
     
-    float RampRatio = 0.7f;
-    Out.vLight = float4(lerp(PBR, PBR * vRampColor, RampRatio), 1.f);
+    Out.vLight = float4(PBR, 1.f);
+    Out.fLightInfo = float2(NdotL, 0.f);
     
     return Out;
 }
@@ -426,14 +473,20 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 fLightInfo = g_LightInfoTexture.Sample(DefaultSampler, In.vTexcoord).rg;
     vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
     vector vEffect = g_EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * (1 - ssao);
-    ambient = max(ambient, vDiffuse.rgb * 0.15f); 
+    float NdotL = fLightInfo.r;
+    float2 vRampCoord = float2(1 - NdotL, 0.5f); 
+    vector vRampSample = g_RampTexture.Sample(DefaultSampler, vRampCoord);
+    float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
+    
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp;
+    //ambient = max(ambient, vDiffuse.rgb * 0.1);
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
  
@@ -473,16 +526,18 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 { 
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 hdrBloom = g_HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
+    float4 effectbloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
-  
-    float3 mapped = scene.rgb;
-    if (bloom.a > 0.f)
-        mapped.rgb = lerp(mapped.rgb, bloom.rgb, bloom.a);
+    //float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
+    float3 hdrColor = scene.rgb;
+    hdrColor += hdrBloom.rgb * 0.3;
+    if (effectbloom.a > 0.f) hdrColor += effectbloom.rgb * effectbloom.a;
     
-    return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
+    float3 mapped = ACESFilm(hdrColor);
+    float3 finalColor = lerp(mapped, ui.rgb, ui.a);
+    return float4(finalColor, 1.f);
 }
 
 technique11 DefaultTechnique
@@ -525,6 +580,36 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
+    }
+
+    pass HDR_BRIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BRIGHTPASS();
+    }
+
+    pass HDR_BLURH
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BLURH();
+    }
+
+    pass HDR_BLURV
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_HDR_BLURV();
     }
 
     pass DISTORTION_ADD

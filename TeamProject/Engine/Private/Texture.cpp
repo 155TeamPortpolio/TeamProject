@@ -75,7 +75,7 @@ CTexture* CTexture::Create(ID3D11Device* pDevice, const wstring& filePath, const
 
 	if (FAILED(instance->Initialize(pDevice, filePath.c_str(), sRGBType))) {
 		Safe_Release(instance);
-		MSG_BOX("Texture Create Failed : CTexture");
+		//MSG_BOX("Texture Create Failed : CTexture");
 	}
 	else {
 		instance->m_TextureKey = textureKey;

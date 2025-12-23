@@ -172,12 +172,12 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
-    
+
     float2 Texcoord = In.vTexcoord + UVOffset;
-        
+
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
     float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
-    
+
     float fBrightIntensity = 2.f;
     float fBase = vMtrlDiffuse.g;
     float fBright = vMtrlDiffuse.r;
@@ -198,6 +198,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     
     return Out;
 }
+
 
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {
