@@ -153,7 +153,7 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 		 }
 
 		 m_bDirty = false;
-		 return m_FinalMatices;
+		 return m_CombinedMatrices;
 	 }
 }
 
