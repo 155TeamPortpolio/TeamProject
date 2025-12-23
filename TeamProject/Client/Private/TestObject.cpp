@@ -17,6 +17,9 @@
 #include "TestState_Jump.h"
 #include "TestState_Dash.h"
 
+#include "AudioSource.h"
+#include "SoundData.h"
+
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
 
@@ -52,6 +55,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
@@ -68,13 +72,13 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 HRESULT CTestObject::Initialize_State()
 {
-	m_pStateMachine = new CTestStateMachine();
+	m_pStateMachine = CTestStateMachine::Create();
 
 	// States 등록
-	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
-	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
-	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
-	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+	m_pStateMachine->Register_State("Idle", CTestState_Idle::Create());
+	m_pStateMachine->Register_State("Walk", CTestState_Walk::Create());
+	m_pStateMachine->Register_State("Jump", CTestState_Jump::Create());
+	m_pStateMachine->Register_State("Dash", CTestState_Dash::Create());
 
 	// Transition 설정
 	// Idle <-> Walk
@@ -110,6 +114,12 @@ HRESULT CTestObject::Initialize_State()
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
+	
+	// 테스트 오디오 추가 (이벤트 감지용) add는 init에서
+	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Jump.mp3", "../../DemoResource/Sound/Jump.mp3");
+	Get_Component<CAudioSource>()->Add_Slot("Test_Level", "Jump.mp3", "Jump", false, SOUND_GROUP::SFX);
+	Get_Component<CAudioSource>()->Set_SlotVolume("Jump", 0.04f);
+	Get_Component<CAudioSource>()->Set_3DAttribute("Jump", false);
 
 	return S_OK;
 }
@@ -127,6 +137,23 @@ void CTestObject::Awake()
 
 void CTestObject::Priority_Update(_float dt)
 {
+	//이벤트 버스 테스트용 예시
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		switch (Event.Type)
+		{
+		case Engine::CLIP_EVENT_TYPE::NOTIFY:
+			break;
+		case Engine::CLIP_EVENT_TYPE::EFFECT:
+			break;
+		case Engine::CLIP_EVENT_TYPE::SOUND:
+			if(Event.Tag == "Jump")
+				Get_Component<CAudioSource>()->Play("Jump");
+			break;
+		default:
+			break;
+		}	
+	}
 }
 
 void CTestObject::Update(_float dt)

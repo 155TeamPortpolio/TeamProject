@@ -101,11 +101,11 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -177,11 +177,11 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -255,11 +255,11 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -533,11 +533,11 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRender
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -661,11 +661,11 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -741,11 +741,11 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;
@@ -819,11 +819,11 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
 			if (holds_alternative<CAnimator3D*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CAnimator3D*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else if (holds_alternative<CSkeletonFollower*>(packet.pPayLoad))
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(get<CSkeletonFollower*>(packet.pPayLoad)->Get_BoneMatrices(packet.DrawIndex));
 			else
-				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices());
+				SkinningOffset = pPipeLine->Write_SkinningBuffer(dynamic_cast<CSkeletalModel*>(packet.pModel)->Get_BoneMatrices(packet.DrawIndex));
 		}
 
 		packet.TransformIndex = TransformIndex;

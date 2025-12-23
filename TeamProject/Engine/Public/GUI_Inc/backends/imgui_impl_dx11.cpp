@@ -501,19 +501,26 @@ bool    ImGui_ImplDX11_CreateDeviceObjects()
     {
         static const char* pixelShader =
             "struct PS_INPUT\
-            {\
-            float4 pos : SV_POSITION;\
-            float4 col : COLOR0;\
-            float2 uv  : TEXCOORD0;\
-            };\
-            sampler sampler0;\
-            Texture2D texture0;\
-            \
-            float4 main(PS_INPUT input) : SV_Target\
-            {\
-            float4 out_col = input.col * texture0.Sample(sampler0, input.uv); \
-            return out_col; \
-            }";
+        {\
+        float4 pos : SV_POSITION;\
+        float4 col : COLOR0;\
+        float2 uv  : TEXCOORD0;\
+        };\
+        sampler sampler0;\
+        Texture2D texture0;\
+        float3 SRGBToLinear(float3 c)\
+        {\
+            float3 lo = c / 12.92;\
+            float3 hi = pow((c + 0.055) / 1.055, 2.4);\
+            return lerp(lo, hi, step(0.04045, c));\
+        }\
+        float4 main(PS_INPUT input) : SV_Target\
+        {\
+            float4 tex = texture0.Sample(sampler0, input.uv);\
+            float3 rgb = SRGBToLinear(saturate(input.col.rgb));\
+            float4 out_col = float4(rgb, input.col.a) * tex;\
+            return out_col;\
+        }";
 
         ID3DBlob* pixelShaderBlob;
         if (FAILED(D3DCompile(pixelShader, strlen(pixelShader), nullptr, nullptr, nullptr, "main", "ps_4_0", 0, 0, &pixelShaderBlob, nullptr)))

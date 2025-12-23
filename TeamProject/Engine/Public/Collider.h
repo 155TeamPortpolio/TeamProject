@@ -17,6 +17,8 @@ public:
     _float3         Get_Center() const { return m_vCenter; }
     _float3         Get_Size() const { return m_vSize; }
     _float3         Get_Rotation() const { return m_vRotation; }
+    void            Set_MapToolMode(_bool bEnable) { m_bMapTool = bEnable; }
+    _bool           Is_MapToolMode() const { return m_bMapTool; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -50,6 +52,7 @@ public:
 private:
     void            Update_LocalPose();
     HRESULT         AutoFit(COLLIDER_DESC* pDesc);
+    void            Sync_Transform();
 
 private:
     class IPhysicsService*      m_pPhysicsSystem = { nullptr };
@@ -68,6 +71,8 @@ private:
     _float3                     m_vRotation = {};
     _bool                       m_bTrigger = {};
     string                      m_strMaterialTag = {};
+
+    _bool                       m_bMapTool = { false };
 
 
 public:

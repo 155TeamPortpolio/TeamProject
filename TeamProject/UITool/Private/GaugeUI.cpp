@@ -5,6 +5,7 @@
 #include "UITool_Level.h"
 
 _uint CGaugeUI::m_iCount = {};
+const string CGaugeUI::m_strTypeTag = "Gauge";
 
 CGaugeUI::CGaugeUI()
 {
@@ -27,9 +28,10 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    if (m_isRadial)
+
+    if (m_isRadial)    
         Get_Component<CSprite2D>()->ChangePass("RadialFill");
-    else
+    else                
         Get_Component<CSprite2D>()->ChangePass("LinearFill");
 
     Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
@@ -61,13 +63,10 @@ void CGaugeUI::Late_Update(_float dt)
 
 void CGaugeUI::Render_GUI()
 {
-	Render_GUI_Layout();
-
-	Render_GUI_Transform();
-
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    __super::Render_GUI();
 
     // 이미지
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     ImGui::Text(m_InstanceName.c_str());
     ImGui::SeparatorText(u8"이미지");
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
@@ -88,17 +87,13 @@ void CGaugeUI::Render_GUI()
 
     if (ImGui::DragFloat(u8"방향 (0 또는 1)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
-void CGaugeUI::ToJson(json& data)
+void CGaugeUI::SavePrefab(json& data)
 {
-    __super::ToJson(data);
+    __super::SavePrefab(data);
 
-    data["typeTag"] = "GaugeUI";
+    data["typeTag"] = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
@@ -108,10 +103,11 @@ void CGaugeUI::ToJson(json& data)
     data["fillAmount"] = m_fFillAmount;
 }
 
-void CGaugeUI::FromJson(const json& data)
+void CGaugeUI::LoadPrefab(const json& data)
 {
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    __super::LoadPrefab(data);
 
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
@@ -127,9 +123,6 @@ void CGaugeUI::FromJson(const json& data)
 
     Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
     Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
-
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 CGameObject* CGaugeUI::Create()

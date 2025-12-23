@@ -24,6 +24,7 @@ public:
     
     virtual void Sync_Bones(_float dt);
     const vector<_float4x4>& Get_BoneMatrices() { return m_ReflectedMatices; };
+    vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
 private:
     class CModelData* m_pMyData = { nullptr };

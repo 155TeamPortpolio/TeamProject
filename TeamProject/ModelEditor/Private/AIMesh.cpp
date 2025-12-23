@@ -182,12 +182,15 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 
 		string BoneName = pAIBone->mName.C_Str();
 		BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+
+		if (BoneIndex < 0) continue; 
 		m_BoneIndices.push_back(BoneIndex);
 
 		_float4x4 OffsetMatrix = {};
 		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
 		XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
 		_pSkeleton->Set_Offset(BoneIndex, OffsetMatrix);
+		m_MeshOffset.emplace((_uint)BoneIndex, OffsetMatrix);
 
 		for (size_t j = 0; j < pAIBone->mNumWeights; j++)
 		{
@@ -244,11 +247,19 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	infoHeader.VerticesCount = m_iVerticesCount;
 	strcpy_s(infoHeader.MeshName, m_VIKey.c_str());
 	infoHeader.MaterialIndex = m_MaterialIndex;
+	infoHeader.offsetCount = m_MeshOffset.size();
 	ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(MESH_INFO_HEADER));
 
 	if (m_iVertexStride == sizeof(VTXSKINMESH)) {
 		for (VTXSKINMESH& vertex : m_SkinMeshes) {
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXSKINMESH));
+		}
+		for (auto& pair : m_MeshOffset)
+		{
+			MESH_OFFSET offset;
+			offset.BoneIndex = pair.first;
+			offset.offsetMat = pair.second;
+			ofs.write(reinterpret_cast<const char*>(&offset), sizeof(MESH_OFFSET));
 		}
 	}
 
@@ -265,93 +276,6 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 
 	for (_uint indices : m_Indices)
 		ofs.write(reinterpret_cast<const char*>(&indices), sizeof(_uint));
-}
-
-CAIMesh::RayHitMesh CAIMesh::CheckRay(const RAY& ray, const _float4x4& worldMatrix)
-{
-	RayHitMesh out{};
-	out.pMesh = nullptr;
-	out.distance = FLT_MAX;
-	out.bHit = false;
-
-	_smatrix world(worldMatrix);
-	_smatrix inv = world.Invert();
-
-	// Ray -> Local
-	_float3 rayLocalDir{};
-	XMStoreFloat3(
-		&rayLocalDir,
-		XMVector3Normalize(
-			XMVector3TransformNormal(XMLoadFloat3(&ray.vRayDirection), inv)
-		)
-	);
-
-	_float3 rayLocalOrigin{};
-	XMStoreFloat3(
-		&rayLocalOrigin,
-		XMVector3TransformCoord(XMLoadFloat3(&ray.vRayOrigin), inv)
-	);
-
-	const MINMAX_BOX box{ m_vMeshMinLocal, m_vMeshMaxLocal };
-
-	float tmin = -FLT_MAX;
-	float tmax = FLT_MAX;
-
-	const float eps = 1e-6f;
-
-	// 슬랩 테스트
-	for (int axis = 0; axis < 3; ++axis)
-	{
-		const float dir = (&rayLocalDir.x)[axis];
-		const float origin = (&rayLocalOrigin.x)[axis];
-		const float bmin = (&box.vMin.x)[axis];
-		const float bmax = (&box.vMax.x)[axis];
-
-		if (fabsf(dir) < eps)
-		{
-			// 축과 평행: 원점이 슬랩 밖이면 교차 없음
-			if (origin < bmin || origin > bmax)
-				return out;
-
-			// 슬랩 안이면 이 축은 t 범위를 제한하지 않음
-			continue;
-		}
-
-		float t1 = (bmin - origin) / dir;
-		float t2 = (bmax - origin) / dir;
-		if (t1 > t2) std::swap(t1, t2);
-
-		tmin = (std::max)(tmin, t1);
-		tmax = (std::min)(tmax, t2);
-
-		if (tmin > tmax)
-			return out; // 교차 구간 없음
-	}
-
-	// 박스가 레이 뒤쪽에만 있으면 제외
-	float t = (tmin >= 0.0f) ? tmin : tmax;
-	if (t < 0.0f)
-		return out;
-
-	// (옵션) 최대 거리 제한
-	if (ray.fMaxDistance > 0.0f && t > ray.fMaxDistance)
-		return out;
-
-	// hit point
-	const _vector hitLocal =
-		XMLoadFloat3(&rayLocalOrigin) + t * XMLoadFloat3(&rayLocalDir);
-
-	const _vector hitWorld =
-		XMVector3TransformCoord(hitLocal, XMLoadFloat4x4(&worldMatrix));
-
-	XMStoreFloat3(&out.vHittedPosition, hitWorld);
-
-	const _vector diff = hitWorld - XMLoadFloat3(&ray.vRayOrigin);
-	out.distance = XMVectorGetX(XMVector3Length(diff));
-
-	out.pMesh = this;
-	out.bHit = true;
-	return out;
 }
 
 

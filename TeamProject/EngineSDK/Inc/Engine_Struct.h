@@ -56,7 +56,13 @@ namespace Engine
 		_uint IndicesCount = {};
 		_uint MaterialIndex = {};
 		_uint BoneCount = {};
+		_uint offsetCount = {};
 	}MESH_INFO_HEADER;
+
+	typedef struct ENGINE_DLL tagMeshOffsetHeader {
+		_uint BoneIndex;
+		_float4x4 offsetMat;
+	}MESH_OFFSET;
 
 	typedef struct ENGINE_DLL tagSkeletonFileHeader {
 		_uint BoneCount = {};

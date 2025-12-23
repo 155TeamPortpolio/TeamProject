@@ -24,7 +24,9 @@ public:
 	vector<_uint> Get_Eff_Index()  { return m_EffMarked;   }
 
 	vector<_uint> Get_MeshIndex_WithOutProxy();
+	
 	class CAIMesh* Get_AIMesh(_uint index);
+
 private:
 	vector<_uint> m_NotProxy;
 	vector<_uint> m_ProxyMarked;

@@ -7,6 +7,7 @@
 #include "UITool_Level.h"
 
 _uint CUVAnimationUI::m_iCount = {};
+const string CUVAnimationUI::m_strTypeTag = "UVAnimation";
 
 CUVAnimationUI::CUVAnimationUI()
 {
@@ -28,7 +29,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl"); 
+    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("UVAnimation");
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
@@ -62,13 +63,11 @@ void CUVAnimationUI::Late_Update(_float dt)
 
 void CUVAnimationUI::Render_GUI()
 {
-    Render_GUI_Layout();
+    __super::Render_GUI();
+     
 
-    Render_GUI_Transform();
-
+    // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-
-    // 이미지
     ImGui::SeparatorText(u8"이미지"); 
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
@@ -78,7 +77,7 @@ void CUVAnimationUI::Render_GUI()
     ImGui::SeparatorText(u8"UV 애니메이션");
     ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 
-    // 마스크 이미지
+    // 마스크 텍스쳐
     ImGui::SeparatorText(u8"마스크 이미지");
     if (ImGui::Checkbox(u8"사용", &m_isUseMask))
     {
@@ -94,17 +93,13 @@ void CUVAnimationUI::Render_GUI()
         Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
     } 
     ImGui::EndDisabled();
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
-void CUVAnimationUI::ToJson(json& data)
+void CUVAnimationUI::SavePrefab(json& data)
 {
-    __super::ToJson(data);
+    __super::SavePrefab(data);
 
-    data["typeTag"] = "UVAnimationUI";
+    data["typeTag"] = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
@@ -116,10 +111,11 @@ void CUVAnimationUI::ToJson(json& data)
     data["uvOffsetSpeed"]["y"] = m_vUVOffsetSpeed.y;
 }
 
-void CUVAnimationUI::FromJson(const json& data)
+void CUVAnimationUI::LoadPrefab(const json& data)
 {
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    __super::LoadPrefab(data);
 
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
@@ -127,7 +123,7 @@ void CUVAnimationUI::FromJson(const json& data)
     if (data.contains("mask"))
     {
         m_isUseMask = true;
-        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) }); 
+        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) });
 
         m_iMaskTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["mask"]["textureTag"]);
         if (-1 != m_iMaskTextureKeyIndex)
@@ -139,9 +135,6 @@ void CUVAnimationUI::FromJson(const json& data)
 
     m_vUVOffsetSpeed.x = data["uvOffsetSpeed"]["x"].get<_float>();
     m_vUVOffsetSpeed.y = data["uvOffsetSpeed"]["y"].get<_float>();
-
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 CGameObject* CUVAnimationUI::Create()

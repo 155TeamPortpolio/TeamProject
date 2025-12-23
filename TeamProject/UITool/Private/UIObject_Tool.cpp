@@ -19,6 +19,10 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Set_Pivot(_float2(0.5f, 0.5f));
+
+    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
+
     // GUI Inspector 창에 띄움
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
@@ -28,8 +32,15 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 void CUIObject_Tool::Render_GUI()
 {
     ImGui::SeparatorText(u8"속성");
-
     ImGui::Checkbox("Alive", &m_isAlive);
+
+    Render_GUI_Layout();
+
+    Render_GUI_Transform();
+
+    Render_GUI_Color();
+
+    Render_GUI_TextKey();
 
     Render_GUI_Animation();
 }
@@ -45,14 +56,16 @@ void CUIObject_Tool::Remove_SelfFromParent()
             continue;
 
         CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
-        const auto& children = pContainer->Get_Children();
+        if (!pContainer)
+            continue;
 
+        const auto& children = pContainer->Get_Children();
         for (_int i = 0; i < children.size(); ++i)
         {
             if (!children[i])
                 continue;
 
-            if (children[i]->Get_InstanceName() == Get_InstanceName())
+            if (children[i] == this)
             {
                 pContainer->Destroy_Child(i);
                 return;
@@ -61,156 +74,168 @@ void CUIObject_Tool::Remove_SelfFromParent()
     }
 }
 
-void CUIObject_Tool::ToJson(json& data)
+void CUIObject_Tool::SavePrefab(json& data)
 {
-    ToJson_Common(data);
-    ToJson_Parent(data);
-    ToJson_Animation(data);
+    Save_Transform(data["transform"]);
+
+    if (m_szTextKey[0] != '\0')
+        Save_TextKey(data["textKey"]);
+
+    if(!m_AnimClips.empty())
+        Save_Animation(data["animation"]);
+    
+    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+    if(pContainer && !pContainer->Get_Children().empty())
+        Save_Childeren(data["children"]);
+
+    data["color"] = { {"x", m_vColor.x},{"y", m_vColor.y}, {"z", m_vColor.z}, {"w", m_vColor.w} };
 }
 
-void CUIObject_Tool::FromJson(const json& data)
+void CUIObject_Tool::LoadPrefab(const json& data)
 {
-    // 기본, 트랜스폼 정보는 GUIPanel에서 생성할 때 Build 통해서
-    m_vPivot.x = data["transform"]["pivot"]["x"].get<_float>();
-    m_vPivot.y = data["transform"]["pivot"]["y"].get<_float>();
-    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
-    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+    if(data.contains("transform"))      
+        Load_Transform(data["transform"]);
 
-    FromJson_Parent(data);
-    FromJson_Animation(data);
+    if(data.contains("textKey"))        
+        Load_TextKey(data["textKey"]);
+
+    if(data.contains("animation"))      
+        Load_Animation(data["animation"]);
+
+    if(data.contains("children"))       
+        Load_Children(data["children"]);
+
+    m_vColor = _float4{ data["color"]["x"].get <_float>(), data["color"]["y"].get <_float>(), data["color"]["z"].get <_float>(), data["color"]["w"].get <_float>() };
+    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 }
 
-void CUIObject_Tool::ToJson_Common(json& data)
-{ 
-    // 기본 정보
-    data["levelTag"] = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    data["instanceKey"] = m_InstanceName;
-
+void CUIObject_Tool::Save_Transform(json& data)
+{
     // Transform 정보
-    data["transform"]["anchorOffset"]["x"] = m_vAnchorOffset.x;
-    data["transform"]["anchorOffset"]["y"] = m_vAnchorOffset.y;
-    data["transform"]["anchor"] = ENUM(m_eAnchor);
-    data["transform"]["size"]["x"] = m_vSize.x;
-    data["transform"]["size"]["y"] = m_vSize.y;
-    data["transform"]["scale"]["x"] = m_vScale.x;
-    data["transform"]["scale"]["y"] = m_vScale.y;
-    data["transform"]["pivot"]["x"] = m_vPivot.x;
-    data["transform"]["pivot"]["y"] = m_vPivot.y;
-    data["transform"]["rotation"] = m_fRadian;
+    data["anchorOffset"] = { {"x", m_vAnchorOffset.x}, {"y", m_vAnchorOffset.y} };
+    data["anchor"] = ENUM(m_eAnchor);
+    data["size"] = { {"x", m_vSize.x}, {"y", m_vSize.y} };
+    data["scale"] = { {"x", m_vScale.x}, {"y", m_vScale.y} };
+    data["pivot"] = { {"x", m_vPivot.x}, {"y", m_vPivot.y} };
+    data["rotation"] = m_fRadian;
+}
 
-    // 텍스트 키
+void CUIObject_Tool::Save_TextKey(json& data)
+{    
     data["textKey"] = m_szTextKey;
 }
 
-void CUIObject_Tool::ToJson_Parent(json& data)
+void CUIObject_Tool::Save_Animation(json& data)
 {
-    if (Is_Root())
-        return;
-
-    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
-
-    for (auto& pObj : objects)
-    {
-        if (!pObj || pObj == this || !pObj->Is_Root())
-            continue;
-
-        CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
-        const auto& children = pContainer->Get_Children();
-
-        for (_int i = 0; i < children.size(); ++i)
-        {
-            if (!children[i])
-                continue;
-
-            if (children[i]->Get_InstanceName() == Get_InstanceName())
-            {
-                data["parentInstanceKey"] = pObj->Get_InstanceName();
-                return;
-            }
-        }
-    }
-}
-
-void CUIObject_Tool::ToJson_Animation(json& data)
-{
-    if (m_AnimClips.empty())
-        return;
-
     for (auto& clip : m_AnimClips)
     {
-        if (clip.keyframes.empty())
-            return;
-
         json clipData;
 
         clipData["name"] = clip.strName;
         clipData["loop"] = clip.isLoop;
         clipData["duration"] = clip.fDuration;
-
+        
         for (auto& keyframe : clip.keyframes)
         {
             json keyframeData;
 
             keyframeData["time"] = keyframe.fTime;
-            keyframeData["scale"]["x"] = keyframe.vScale.x;
-            keyframeData["scale"]["y"] = keyframe.vScale.y;
+            keyframeData["scale"] = { {"x", keyframe.vScale.x}, {"y", keyframe.vScale.y} };
             keyframeData["angle"] = keyframe.fAngle;
-            keyframeData["position"]["x"] = keyframe.vPosition.x;
-            keyframeData["position"]["y"] = keyframe.vPosition.y;
-            keyframeData["color"]["x"] = keyframe.vColor.x;
-            keyframeData["color"]["y"] = keyframe.vColor.y;
-            keyframeData["color"]["z"] = keyframe.vColor.z;
-            keyframeData["color"]["w"] = keyframe.vColor.w;
+            keyframeData["position"] = { {"x", keyframe.vPosition.x}, {"y", keyframe.vPosition.y} };
+            keyframeData["color"] = { {"x", keyframe.vColor.x}, {"y", keyframe.vColor.y}, {"z", keyframe.vColor.z}, {"w", keyframe.vColor.w} };
             keyframeData["easeType"] = keyframe.easeType;
 
             clipData["keyframes"].push_back(keyframeData);
         }
 
-        data["animation"].push_back(clipData);
+        data.push_back(clipData);
     }
 }
 
-void CUIObject_Tool::FromJson_Parent(const json& data)
+void CUIObject_Tool::Save_Childeren(json& data)
 {
-    if (!data.contains("parentInstanceKey"))
-        return;
-
-    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
-
-    for (auto& pObj : objects)
+    const vector<CGameObject*> Childeren = Get_Component<CObjectContainer>()->Get_Children();
+    for (auto& pChild : Childeren)
     {
-        if (data["parentInstanceKey"] == pObj->Get_InstanceName())
-        {
-            pObj->Get_Component<CObjectContainer>()->Add_Child(this);
-            return;
-        }
+        if (!pChild)
+            continue;
+
+        CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pChild);
+
+        if (!pUI)
+            continue;
+
+        json objData;
+        pUI->SavePrefab(objData);
+        data.push_back(objData);
     }
 }
 
-void CUIObject_Tool::FromJson_Animation(const json& data)
+void CUIObject_Tool::Load_Transform(const json& data)
 {
-    if (!data.contains("animation"))
-        return;
+    m_vAnchorOffset = { data["anchorOffset"]["x"].get<_float>(), data["anchorOffset"]["y"].get<_float>() };
+    m_eAnchor = static_cast<ANCHOR>(data["anchor"].get<_uint>());
+    m_vSize = { data["size"]["x"].get<_float>(), data["size"]["y"].get<_float>() };
+    m_vScale = { data["scale"]["x"].get<_float>(), data["scale"]["y"].get<_float>() };
+    m_vPivot = { data["pivot"]["x"].get<_float>(), data["pivot"]["y"].get<_float>() };
+    m_fRadian = data["rotation"].get<_float>();
+}
 
-    for (auto& clipData : data["animation"])
+void CUIObject_Tool::Load_TextKey(const json& data)
+{
+    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
+    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
+}
+
+void CUIObject_Tool::Load_Animation(const json& data)
+{
+    for (auto& clipData : data)
     {
         UI_ANIM_CLIP clip = UI_ANIM_CLIP(clipData["name"]);
         clip.isLoop = clipData["loop"].get<_bool>();
         clip.fDuration = clipData["duration"].get<_float>();
-        for (auto& keyframeData : clipData["keyframes"])
+
+        if (clipData.contains("keyframes"))
         {
-            UI_KEYFRAME keyframe = {};
-            keyframe.fTime = keyframeData["time"].get<_float>();
-            keyframe.vScale = _float2(keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>());
-            keyframe.fAngle = keyframeData["angle"].get<_float>();
-            keyframe.vPosition = _float2(keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>());
-            keyframe.vColor = _float4(keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>());
-            keyframe.easeType = keyframeData["easeType"].get<EaseType>();
-            clip.keyframes.push_back(keyframe);
+            for (auto& keyframeData : clipData["keyframes"])
+            {
+                UI_KEYFRAME keyframe = {};
+                keyframe.fTime = keyframeData["time"].get<_float>();
+                keyframe.vScale = { keyframeData["scale"]["x"].get<_float>(), keyframeData["scale"]["y"].get<_float>() };
+                keyframe.fAngle = keyframeData["angle"].get<_float>();
+                keyframe.vPosition = { keyframeData["position"]["x"].get<_float>(), keyframeData["position"]["y"].get<_float>() };
+                keyframe.vColor = { keyframeData["color"]["x"].get<_float>(), keyframeData["color"]["y"].get<_float>(), keyframeData["color"]["z"].get<_float>(), keyframeData["color"]["w"].get<_float>() };
+                keyframe.easeType = keyframeData["easeType"].get<EaseType>();
+                clip.keyframes.push_back(keyframe);
+            }
         }
+         
         m_AnimClips.push_back(clip);
+    }
+}
+
+void CUIObject_Tool::Load_Children(const json& data)
+{
+    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer)
+        return;
+
+    IUI_Service* pUIMgr = CGameInstance::GetInstance()->Get_UIMgr();
+    const string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    for (auto& childData : data)
+    {
+        CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + childData["typeTag"].get<string>() })
+            .Build(childData["typeTag"].get<string>());
+        if (!pObj)
+            continue;
+
+        CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
+        if (!pUI)
+            continue;
+
+        pUI->LoadPrefab(childData);
+        Get_Component<CObjectContainer>()->Add_Child(pObj);
     }
 }
 
@@ -223,18 +248,6 @@ void CUIObject_Tool::Reset_Animation()
     m_fRadian = m_vBaseAngle;
     // 포지션
     m_vColor = m_vBaseColor;
-}
-
-void CUIObject_Tool::FromJson_RefreshCount(_uint& iCount)
-{
-    int index = {};
-    for (char c : Get_InstanceName())
-    {
-        if (isdigit(c))
-            index = index * 10 + (c - '0');
-    }
-
-    iCount = max(iCount, index + 1);
 }
 
 void CUIObject_Tool::Render_GUI_Layout()
@@ -431,6 +444,12 @@ void CUIObject_Tool::Render_GUI_Animation()
     } 
 }
 
+void CUIObject_Tool::Render_GUI_Color()
+{
+    ImGui::SeparatorText(u8"컬러");
+    ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
+}
+
 void CUIObject_Tool::Render_GUI_TextKey()
 {
     ImGui::SeparatorText(u8"텍스트 키");
@@ -536,12 +555,6 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
     m_vBaseAngle = m_fRadian;
     // 포지션
     m_vBaseColor = m_vColor;
-}
-
-void CUIObject_Tool::Change_Texture(_uint index, const string& levelKey, const string& TextureKey, string& OutstrTextureKey)
-{
-    Get_Component<CSprite2D>()->Change_Texture(index, levelKey, TextureKey);
-    OutstrTextureKey = TextureKey;
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)

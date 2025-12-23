@@ -294,7 +294,7 @@ HRESULT CPipeLine::End_ObjectBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-_uint CPipeLine::Write_SkinningBuffer(const vector<_float4x4>& bones)
+_uint CPipeLine::Write_SkinningBuffer(vector<_float4x4> bones)
 {
 	if (!m_pSkinningArray) return UINT_MAX;
 
