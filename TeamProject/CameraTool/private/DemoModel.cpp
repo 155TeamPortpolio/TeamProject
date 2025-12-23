@@ -22,14 +22,16 @@ void CDemoModel::Awake()
 {
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	string levelName = "First_Level";
+	string defaultPath = "../bin/Resources/Model/";
+	string fileName = "Avatar_Female_Size02_Unagi";
 
-	Get_Component<CModel>()->Link_Model("First_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("First_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	/*파일명과 키값은 일치*/
+	pRcsMgr->Add_ResourcePath(fileName + ".model",  defaultPath + fileName + ".model");
+	pRcsMgr->Add_ResourcePath(fileName + ".mat",    defaultPath + fileName + ".mat");
+
+	Get_Component<CModel>()->Link_Model(levelName, fileName + ".model");
+	Get_Component<CMaterial>()->Link_Material(levelName, fileName + ".mat");
 }
 
 void CDemoModel::Render_GUI()
@@ -52,13 +54,11 @@ CDemoModel* CDemoModel::Create()
 CGameObject* CDemoModel::Clone(INIT_DESC* pArg)
 {
 	CDemoModel* instance = new CDemoModel(*this);
-
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		MSG_BOX("Object Clone Failed : CDemoModel");
 		Safe_Release(instance);
 	}
-
 	return instance;
 }
 

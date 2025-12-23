@@ -4,6 +4,7 @@
 HRESULT CDebugFreeCam::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+
 	return S_OK;
 }
 
