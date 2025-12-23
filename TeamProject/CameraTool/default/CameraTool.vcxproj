@@ -162,9 +162,9 @@
     <ClInclude Include="..\public\CamPanelData.h" />
     <ClInclude Include="..\public\CamPanelUtil.h" />
     <ClInclude Include="..\public\DebugCamData.h" />
-    <ClInclude Include="..\public\DebugFreeCam.h" />
+    <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\public\Grid.h" />
-    <ClInclude Include="..\public\DemoModel.h" />
+    <ClInclude Include="..\public\Unagi.h" />
     <ClInclude Include="..\public\FirstLevel.h" />
     <ClInclude Include="..\public\MainApp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -190,9 +190,9 @@
     <ClCompile Include="..\private\CamObj.cpp" />
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\private\CamPanelUtil.cpp" />
-    <ClCompile Include="..\private\DebugFreeCam.cpp" />
+    <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\private\Grid.cpp" />
-    <ClCompile Include="..\private\DemoModel.cpp" />
+    <ClCompile Include="..\private\Unagi.cpp" />
     <ClCompile Include="..\private\FirstLevel.cpp" />
     <ClCompile Include="..\private\MainApp.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
