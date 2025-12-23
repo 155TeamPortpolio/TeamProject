@@ -126,8 +126,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.bAutoFit = false;
-	miyabiCCT.fHeight = 0.36f;
-	miyabiCCT.fRadius = 0.64f;
+	miyabiCCT.fHeight = 1.28;
+	miyabiCCT.fRadius = 0.2f;
 	miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })

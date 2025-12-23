@@ -25,19 +25,15 @@ public:
     _float Get_MaxHP() const { return m_fMaxHP; }
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
-    _float Get_JumpSpeed() const { return m_fJumpSpeed; }
     _bool  Is_Ground() const { return m_bIsGround; }
     _bool  Is_Move() const { return m_bIsMove; }
-    _bool  Is_Jump() const { return m_bIsJump; }
     
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
-    void   Set_JumpSpeed(_float fJump) { m_fJumpSpeed = fJump; }
     void   Set_Ground(_bool bGrounded) { m_bIsGround = bGrounded; }
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
-    void   Set_Jump(_bool bJump) { m_bIsJump = bJump; }
 
     _vector3              Get_InputDir() const { return m_vInputDir; }
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
@@ -69,13 +65,11 @@ protected:
     _float   m_fCurrentEnergy = { 0.f };
     _float   m_fAttackPower = { 10.f };
     _float   m_fDefense = { 5.f };
-    _float   m_fMoveSpeed = { 5.f };
-    _float   m_fJumpSpeed = { 3.f };
+    _float   m_fMoveSpeed = { 1.f };
     _vector3 m_vInputDir = {};
     // 상태 플래그
     _bool  m_bIsGround = { true };
     _bool  m_bIsMove = { false };
-    _bool  m_bIsJump = { false };
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

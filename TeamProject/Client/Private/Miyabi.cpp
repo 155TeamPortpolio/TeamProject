@@ -102,10 +102,26 @@ void CMiyabi::Update_Input(_float dt)
 	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
 	m_pStateMachine->Set_Bool("IsGround", m_bIsGround);
 
-	if (m_bIsJump)
-		m_pStateMachine->Set_Trigger("Jump");
-
 	if (m_pStateMachine) m_pStateMachine->Update(dt);
+
+	// 디버그용 레이캐스트 (F키)
+	auto input = CGameInstance::GetInstance()->Get_InputDev();
+	if (input->Key_Hold('F'))
+	{
+		PHYSICS_RAY_HIT hit;
+		_vector vLook = m_pTransform->Dir(STATE::LOOK);
+		m_pCCT->Shoot_Ray(vLook, 100.f, hit);
+	}
+	else
+	{
+		m_pCCT->Clear_DebugRay();
+	}
+
+	// 테스트용 점프 (J키)
+	if (input->Key_Down('J'))
+	{
+		m_pCCT->Jump(3.f);
+	}
 }
 
 HRESULT CMiyabi::Initialize_StateMachine()
@@ -143,14 +159,6 @@ HRESULT CMiyabi::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
-
-	// Jump 
-	m_pStateMachine->Register_Transition("Idle", "Jump",
-		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Jump");
-	m_pStateMachine->Register_Transition("Walk", "Jump",
-		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Jump");
-	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }

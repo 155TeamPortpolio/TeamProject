@@ -21,7 +21,6 @@ CCharacter::CCharacter(const CCharacter& rhs)
 	, m_fAttackPower(rhs.m_fAttackPower)
 	, m_fDefense(rhs.m_fDefense)
 	, m_fMoveSpeed(rhs.m_fMoveSpeed)
-	, m_fJumpSpeed(rhs.m_fJumpSpeed)
 {
 }
 
@@ -103,7 +102,6 @@ void CCharacter::Update_Input(_float dt)
 	if (input->Key_Hold(VK_LEFT))  m_vInputDir.x -= 1.f;
 
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
-	m_bIsJump = input->Key_Down('J');
 }
 
 void CCharacter::Free()
