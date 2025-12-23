@@ -74,9 +74,9 @@ HRESULT CTestLevel::Awake()
 	//===================================================
 
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//// Ready MapObject key and path to ResourceMgr 
@@ -88,40 +88,40 @@ HRESULT CTestLevel::Awake()
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
 
-	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-		.CharacterController({})
-		.Build("Test_Model");
-
-	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
+	//
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
 		.Build("Test_Map");
 
 	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
-	for (_int z = 0; z < 3; ++z)
-	{
-	for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.5f, 0.f, z * 6.5f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
-	// --------------------------- Camera -------------------------------------------------
+	//COLLIDER_DESC colDesc;
+	//colDesc.bCooking = true;
+	//colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+	//
+	//for (_int z = 0; z < 3; ++z)
+	//{
+	//for (_int x = 0; x < 3; ++x)
+	//	{
+	//		CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+	//			.Collider(colDesc)
+	//			.Position({ x * 6.5f, 0.f, z * 6.5f })
+	//			.Build("Test_Floor_" + to_string(z * 3 + x));
+	//		objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+	//	}
+	//}
+	//// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
-	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("Orbit_Cam");
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
+	//auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+	//	.Camera(kAspect)
+	//	.Position({ 0.f, 2.f, -5.f })
+	//	.Build("Orbit_Cam");
+	//static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
 
 	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
 		.Camera(kAspect)
@@ -133,7 +133,7 @@ HRESULT CTestLevel::Awake()
 		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
 
-	objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
+	//objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(freeCam,     {"Test_Level", "Camera_Layer" });
 

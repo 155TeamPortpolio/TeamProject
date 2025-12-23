@@ -26,8 +26,7 @@ Texture2D g_DistortionNoiseTexture;
 Texture2D g_DistortionAdd_Texture;
 Texture2D g_DistortionFinal;
 Texture2D g_EffectDiffuseTexture;
-Texture2D g_HDRBloomTexture;
-Texture2D g_HDRBloomAddTexture;
+Texture2D g_HDRBlurXTexture;
 Texture2D g_HDRBloomFinalTexture;
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -290,64 +289,55 @@ PS_OUT_RESULT PS_HDR_BRIGHTPASS(PS_IN In)
     PS_OUT_RESULT Out;
     
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float4 bright = ExtractBright(scene);
+    float4 bright = SoftExtractBright(scene);
     
-    Out.vResult = bright; // 밝은 부분만 추출
+    Out.vResult = bright;
+
     return Out;
 }
 
-PS_OUT_RESULT PS_BLOOM_DOWNSAMPLE(PS_IN In)
+PS_OUT_RESULT PS_HDR_BLURH(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
     float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
     
-    float3 a = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-2, -2) * texelSize).rgb;
-    float3 b = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(0, -2) * texelSize).rgb;
-    float3 c = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(2, -2) * texelSize).rgb;
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
     
-    float3 d = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-2, 0) * texelSize).rgb;
-    float3 e = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord).rgb;
-    float3 f = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(2, 0) * texelSize).rgb;
+    result = g_BrightTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
     
-    float3 g = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-2, 2) * texelSize).rgb;
-    float3 h = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(0, 2) * texelSize).rgb;
-    float3 i = g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(2, 2) * texelSize).rgb;
-    
-    float3 result = e * 0.125;
-    result += (a + c + g + i) * 0.03125;
-    result += (b + d + f + h) * 0.0625;
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(texelSize.x * i, 0);
+        result += g_BrightTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += g_BrightTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
     
     Out.vResult = float4(result, 1.0);
     return Out;
 }
 
-PS_OUT_RESULT PS_BLOOM_UPSAMPLE(PS_IN In)
+PS_OUT_RESULT PS_HDR_BLURV(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
     float2 texelSize = 1.0 / float2(fScreenWidth, fScreenHeight);
+    float3 result = 0;
 
-    float3 result = float3(0, 0, 0);
+    float weights[3] = { 0.398942, 0.241971, 0.053991 };
+
+    result = g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord).rgb * weights[0];
     
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-1, -1) * texelSize).rgb;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(0, -1) * texelSize).rgb * 2.0;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(1, -1) * texelSize).rgb;
-    
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-1, 0) * texelSize).rgb * 2.0;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord).rgb * 4.0;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(1, 0) * texelSize).rgb * 2.0;
-    
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(-1, 1) * texelSize).rgb;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(0, 1) * texelSize).rgb * 2.0;
-    result += g_HDRBloomTexture.Sample(LinearSampler, In.vTexcoord + float2(1, 1) * texelSize).rgb;
-    
-    result /= 16.0;
-    
-    float3 addBloom = g_HDRBloomAddTexture.Sample(LinearSampler, In.vTexcoord).rgb;
-    result += addBloom;
+    for (int i = 1; i < 3; ++i)
+    {
+        float2 offset = float2(0, texelSize.y * i);
+        result += g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord + offset).rgb * weights[i];
+        result += g_HDRBlurXTexture.Sample(DefaultSampler, In.vTexcoord - offset).rgb * weights[i];
+    }
     
     Out.vResult = float4(result, 1.0);
+    
     return Out;
 }
 
@@ -602,24 +592,24 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_HDR_BRIGHTPASS();
     }
 
-    pass BLOOM_DOWNSAMPLE
+    pass HDR_BLURH
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_BLOOM_DOWNSAMPLE();
+        PixelShader = compile ps_5_0 PS_HDR_BLURH();
     }
 
-    pass BLOOM_UPSAMPLE
+    pass HDR_BLURV
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_BLOOM_UPSAMPLE();
+        PixelShader = compile ps_5_0 PS_HDR_BLURV();
     }
 
     pass DISTORTION_ADD

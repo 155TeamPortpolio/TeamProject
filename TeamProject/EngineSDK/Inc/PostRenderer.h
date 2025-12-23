@@ -15,8 +15,6 @@ public:
     HRESULT Render_EffectBloom();
     HRESULT Render_HDRBloom();
     HRESULT Render_Distortion();
-    HRESULT Downsample_Bloom(string strTarget, string strMRT, _float width, _float height);
-    HRESULT Upsample_Bloom(string strTarget, string addTarget, string strMRT, _float width, _float height);
     HRESULT Render_Final();
     void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command);
 

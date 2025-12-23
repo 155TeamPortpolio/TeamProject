@@ -14,9 +14,9 @@ HRESULT CTestMap::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	auto resMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	string defaultPath = "../bin/Resources/";
-	string folderName  = "Binary_MapData";
-	string fileName    = "Mesh";
+	string defaultPath = "../bin/Resources/Binary_MapData/";
+	string folderName  = "MainCity_Sub";
+	string fileName    = "Meshout";
 
 	resMgr->Add_ResourcePath(fileName + ".model", defaultPath + folderName + "/" + fileName + ".model");
 	resMgr->Add_ResourcePath(fileName + ".mat",   defaultPath + folderName + "/" + fileName + ".mat"  );
@@ -28,8 +28,8 @@ HRESULT CTestMap::Initialize_Prototype()
 HRESULT CTestMap::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	Get_Component<CModel>()->Link_Model("Test_Level", "Mesh.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Mesh.mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Meshout.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Meshout.mat");
 
 	GAMEOBJECT_DESC* pObjDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
 
