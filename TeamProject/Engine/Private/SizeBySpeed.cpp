@@ -13,7 +13,7 @@ void CSizeBySpeed::Update(CParticleSystem::PARTICLE& particle, _float dt)
 {
 }
 
-CLifeTimeColor* CSizeBySpeed::Create()
+CSizeBySpeed* CSizeBySpeed::Create()
 {
 	return nullptr;
 }

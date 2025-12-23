@@ -22,6 +22,70 @@ namespace HelperMT {
         return oss.str(); // prefix_20251216_111530.json
     }
     
+    inline _bool ExtractSRT(const _matrix& mat, _float3& OutScale, _float4& OutRotQ, _float3& OutTrans) {
+        XMVECTOR S, R, T;
+
+        if (!XMMatrixDecompose(&S, &R, &T, mat))
+            return false;
+
+        XMStoreFloat3(&OutScale, S);
+        XMStoreFloat4(&OutRotQ, R);
+        XMStoreFloat3(&OutTrans, T);
+        return true;
+    }
+
+    inline _float3 QuaternionToEuler(const _float4& q) {
+        const _float x = q.x, y = q.y, z = q.z, w = q.w;
+
+        // pitch (x-axis)
+        _float sinp = 2.0f * (w * x - y * z);
+        _float pitch;
+        if (fabsf(sinp) >= 1.0f)
+            pitch = copysignf(XM_PIDIV2, sinp);
+        else
+            pitch = asinf(sinp);
+
+        // yaw (y-axis)
+        _float yaw = atan2f(2.0f * (w * y + z * x),
+            1.0f - 2.0f * (x * x + y * y));
+
+        // roll (z-axis)
+        _float roll = atan2f(2.0f * (w * z + x * y),
+            1.0f - 2.0f * (z * z + x * x));
+
+        return XMFLOAT3(pitch, yaw, roll);
+    }
+
+    template <typename T>
+    inline bool ExportJsonFile(T& Data, const string& filePath)
+    {
+        nlohmann::ordered_json JsonData = Data;
+
+        filesystem::path p(filePath);
+        filesystem::path dir = p.parent_path();
+
+        std::error_code ec;
+
+        if (!dir.empty())
+        {
+            if (!filesystem::exists(dir, ec) && !ec)
+                filesystem::create_directories(dir, ec);
+
+            if (ec) 
+                return false;
+        }
+
+        std::ofstream ofs(p, std::ios::out | std::ios::trunc); 
+        if (!ofs) 
+            return false;
+
+        ofs << JsonData.dump(2);
+        if (!ofs) 
+            return false;
+
+        ofs.close();
+        return !ofs.fail();
+    }
 } 
 
 namespace nlohmann
@@ -87,4 +151,6 @@ namespace nlohmann
             else                    value = int64_t{ 0 };
         }
     };
+
+    
 }

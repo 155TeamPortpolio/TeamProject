@@ -165,6 +165,7 @@
     <ClInclude Include="..\public\MapToolGui.h" />
     <ClInclude Include="..\Public\Helper_MapTool.h" />
     <ClInclude Include="..\public\MapToolObject.h" />
+    <ClInclude Include="..\Public\MapTool_Context.h" />
     <ClInclude Include="..\Public\MapTool_Struct.h" />
     <ClInclude Include="..\public\PickingInstanceModel.h" />
     <ClInclude Include="..\public\MainApp.h" />

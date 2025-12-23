@@ -18,11 +18,15 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     instance.vUp = float4(0.f, 1.f, 0.f, 0.f) * p.vSize.y;
     instance.vLook = float4(0.f, 0.f, 1.f, 0.f);
     instance.vTranslate = float4(p.vPosition, 1.f);
+    
     instance.vVelocity = p.vVelocity;
+    instance.pad0 = 0.f;
+    
     instance.vColor = p.vColor;
+    
     instance.vLife = float2(p.fLifeTime, p.fMaxLifeTime);
     instance.iFrameIndex = p.iFrameIndex;
-    instance.pad = float2(0.f, 0.f);
+    instance.pad1 = 0.f;
     
     Instances[i] = instance;
 }

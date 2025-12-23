@@ -82,7 +82,6 @@ HRESULT CForwardRenderer::Render_LightAcc()
 
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
-	m_pShader->Bind_Value("g_RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -187,9 +186,12 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pTargetManager->Bind_Target("Target_SSAO_Blur", m_pShader, "g_SSAOBlurTexture");
 	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");
 	m_pTargetManager->Bind_Target("Target_Light", m_pShader, "g_LightTexture");
+	m_pTargetManager->Bind_Target("Target_LightInfo", m_pShader, "g_LightInfoTexture");
 	m_pTargetManager->Bind_Target("Target_Shadow", m_pShader, "g_ShadowTexture");
 	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
+
+	m_pShader->Bind_Value("g_RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
 
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
@@ -211,7 +213,7 @@ HRESULT CForwardRenderer::Ready_Target()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	{
-		RenderTargetDesc DiffuseDesc = { "Target_Diffuse" , DXGI_FORMAT_R8G8B8A8_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc DiffuseDesc = { "Target_Diffuse" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(DiffuseDesc);
 
 		RenderTargetDesc NormalDesc = { "Target_Normal" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -241,10 +243,12 @@ HRESULT CForwardRenderer::Ready_Target()
 	{
 		RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(LightDesc);
+		RenderTargetDesc LightInfoDesc = { "Target_LightInfo" , DXGI_FORMAT_R16G16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(LightInfoDesc);
 	}
 
 	{
-		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R8G8B8A8_UNORM ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(FianlDesc);
 	}
 
@@ -264,6 +268,7 @@ HRESULT CForwardRenderer::Ready_MRT()
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_LightInfo")))return E_FAIL;
 	}
 
 	{

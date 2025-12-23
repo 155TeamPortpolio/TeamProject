@@ -173,6 +173,7 @@ void CGUISystem::Render_GUI()
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
 #endif // _USING_GUI
 
+	Render_DebugBtn();
 
 	GUI_End();
 }
@@ -223,6 +224,16 @@ void CGUISystem::Test()
 		vec= GuiUtil::Vector4Float("TestVector", vec);
 	}
 	ImGui::End(); 
+}
+
+void CGUISystem::Render_DebugBtn()
+{
+	ImGui::Begin("Render TargetView");
+	if (ImGui::Button("Render_Debug")){
+		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
+		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
+	}
+	ImGui::End();
 }
 
 CGUISystem* CGUISystem::Create(const ENGINE_DESC& engine, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

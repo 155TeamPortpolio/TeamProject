@@ -85,9 +85,9 @@ public:
 	void Set_Pivot(_float2 newPivot);
 
 public:
-	void Set_OnSystem(const string& Level, _int systemIndex) { m_Level = Level; m_SystemIndex = systemIndex; }
+	void Set_OnSystem(const string& Level, _int systemIndex) { m_LevelTag = Level; m_SystemIndex = systemIndex; }
 	_int Get_SystemIndex() { return m_SystemIndex; }
-	string Get_SystemLevel() { return m_Level; }
+	string Get_SystemLevel() { return m_LevelTag; }
 	_uint Get_Priority() { return m_iPriority; };
 	void Set_Priority(_uint priority) { m_iPriority = priority; }
 
@@ -124,7 +124,6 @@ protected:
 	_float m_fRadian = {};
 	_uint m_iPriority = {UINT_MAX};
 
-	string m_Level = {};
 	_int m_SystemIndex = {-1};
 
 	_bool m_isClickable = {};

@@ -63,6 +63,7 @@ protected:
 
 	_float2				m_vBaseScale = {};
 	_float				m_vBaseAngle = {};
+	_float2				m_vBaseAnchorOffset = {};
 	_float4				m_vBaseColor = {};
 
 	_char				m_szTextKey[MAX_PATH] = {};

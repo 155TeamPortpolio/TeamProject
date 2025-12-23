@@ -2,6 +2,7 @@
 #include "MapToolGui.h"
 #include "GameInstance.h"
 #include "MapToolCore.h"
+#include "GUI_Inc/imgui_stdlib.h"
 
 #include "PlacedObject.h"
 #include "Layer.h"
@@ -31,13 +32,17 @@ HRESULT CMapToolGui::Initialize()
     Safe_AddRef(m_pSlotFieldGui);
     CGameInstance::GetInstance()->Get_GUISystem()->Register_Panel(m_pSlotFieldGui);
 
-    m_pVersion = m_pMapToolCore->Get_Version_Ptr();
+    m_pMapToolContext = m_pMapToolCore->Get_Context();
+    
+    // 저장 성공 시, 알림 쿨타임
+    m_vShowSaveFinish = { 3.f, 0.f };
 
     return S_OK;
 }
 
 void CMapToolGui::Update_Panel(_float dt)
 {
+    CheckCoolTime(dt);
     Compute_Ray();
     KeyInput();
 }
@@ -58,8 +63,8 @@ void CMapToolGui::Render_GUI()
     ImGui::BeginChild("##MapToolGuiControllerChild", ImVec2{ 0, childControllerHeight }, true);
 
 #ifdef _DEBUG
-    if (ImGui::Checkbox("IsDebugRender", &m_isAllDebugRender))
-        m_pMapToolCore->Set_AllObjectDebugRender(m_isAllDebugRender);
+    if (ImGui::Checkbox("IsDebugRender", &m_pMapToolContext->isAllDebugRender))
+        m_pMapToolCore->Set_AllObjectDebugRender(m_pMapToolContext->isAllDebugRender);
 #endif // _DEBUG
 
     ImGui::Text("Last Ray Hit Pos : %.3f, %.3f, %.3f ", m_vRayHitPos.x, m_vRayHitPos.y, m_vRayHitPos.z);
@@ -98,11 +103,28 @@ void CMapToolGui::Render_GUI()
         ImGui::BeginChild("##MapToolGuiDataSaveChild", ImVec2{ 0, childHeight }, true);
 
         ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Data Version");
-        ImGui::InputInt(" ##Version", reinterpret_cast<int*>(m_pVersion));
+        ImGui::InputInt("##Version", &m_pMapToolContext->iVersion);
 
-        if (ImGui::Button("Save")) {
+        ImGui::SetNextItemWidth(80.0f);
+        ImGui::InputText("Area Name##InputAreaName", &m_pMapToolContext->TagArea);
+
+        if (m_pMapToolContext->TagArea.empty())
+        {
+            ImDrawList* dl = ImGui::GetWindowDrawList();
+            ImVec2 pmin = ImGui::GetItemRectMin();
+            ImVec2 pmax = ImGui::GetItemRectMax();
+            dl->AddRect(pmin, pmax, IM_COL32(255, 0, 0, 255), 0.0f, 0, 2.0f);
+        }
+
+        if (ImGui::Button("Save") && false == m_pMapToolContext->TagArea.empty()) {
             Save_MapData();
         }
+
+        if (m_isShowSaveFinish) {
+            ImGui::SameLine(0.f, 20.f);
+            ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Save Json Success!");
+        }
+
 
         if (ImGui::Button("Load")) {
             m_pMapToolCore->Load_MapData();
@@ -158,6 +180,17 @@ void CMapToolGui::RakeResources()
 
             pRcsMgr->Add_ResourcePath(mpp.TagModelKey, mpp.TagModelPath);
             pRcsMgr->Add_ResourcePath(mpp.TagMaterialKey, mpp.TagMaterialPath);
+        }
+    }
+}
+
+void CMapToolGui::CheckCoolTime(_float dt)
+{
+    if (m_isShowSaveFinish) {
+        m_vShowSaveFinish.y += dt;
+        if (m_vShowSaveFinish.x < m_vShowSaveFinish.y) {
+            m_vShowSaveFinish.y = 0.f;
+            m_isShowSaveFinish = false;
         }
     }
 }
@@ -242,16 +275,16 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
         .Build("Static_Model");
 
 #ifdef _DEBUG
-    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_isAllDebugRender);
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
 #endif // _DEBUG
     
-    pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolCore->Get_TagLayer(MAPOBJ_TYPE::PLACED)});
+    pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
 {
     // 사용X
-    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolCore->Get_TagLayer(MAPOBJ_TYPE::PLACED) });
+    CLayer* pStaticLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
     if (nullptr == pStaticLayer)
         return;
 
@@ -297,18 +330,21 @@ void CMapToolGui::PreSet_ModelResource()
 
 void CMapToolGui::Save_MapData()
 {
+    
 
-    m_Data.iVersion = *m_pVersion;
-    m_Data.TagDataFormat = "MapTool.Data";
+    m_Data.iVersion = m_pMapToolContext->iVersion;
+    m_Data.TagArea = m_pMapToolContext->TagArea;
+    m_Data.TagDataFormat = "Base";
     //m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer" }
     _int    iObjIndex = {};
 
-    for (_uint i = 0; i < (_uint)m_pMapToolCore->Get_TagLayers()->size(); ++i) {
-        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolCore->Get_TagLayer(static_cast<MAPOBJ_TYPE>(i))});
+
+    for (_uint i = 0; i < (_uint)m_pMapToolContext->TagLayers.size(); ++i) {
+        CLayer* pLayer = m_pGameInstance->Get_ObjectMgr()->Get_Layer({ g_TagMapToolLevel, m_pMapToolContext->TagLayers[i] });
         if (nullptr == pLayer)
             continue;
         MapData_Layer DataLayer = {};
-        DataLayer.TagLayer = m_pMapToolCore->Get_TagLayer(static_cast<MAPOBJ_TYPE>(i));
+        DataLayer.TagLayer = m_pMapToolContext->TagLayers[i];
 
         for (auto& pObject : pLayer->Get_AllObject()) {
             if (i == ENUM(MAPOBJ_TYPE::PLACED)) {
@@ -326,15 +362,17 @@ void CMapToolGui::Save_MapData()
     }
     int a = 1;
 
-    string TagFileName = g_TagFileFirstName + m_Data.TagDataFormat + "." + std::to_string(m_Data.iVersion);
-    string SavePath = "../Bin/Data/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+    string TagFileName = g_TagFileName_MapData + "." + m_pMapToolContext->TagArea + "." + m_Data.TagDataFormat + "." + std::to_string(m_Data.iVersion);
+    string SavePath = "../Bin/Data/NewBaseData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
-    Helper::SaveJson<MapData_Header>(m_Data, SavePath);
+    //Helper::SaveJson<MapData_Header>(m_Data, SavePath);
+    if (true == HelperMT::ExportJsonFile<MapData_Header>(m_Data, SavePath))
+        m_isShowSaveFinish = true;
 }
 
 void CMapToolGui::Render_ClearLayer()
 {
-    auto pTagLayers = m_pMapToolCore->Get_TagLayers();
+    auto pTagLayers = &m_pMapToolContext->TagLayers;
 
     ImGui::PushID("MapTool_LayerDelete");
     ImGuiListClipper clipper;
@@ -370,7 +408,7 @@ void CMapToolGui::KeyInput()
     if (pInputDev->Mouse_Tap(MOUSE_BTN::LB) && false == io.WantCaptureMouse) {
         PHYSICS_RAY_HIT HitDesc = {};
         if (true == m_pGameInstance->Get_PhysicsSystem()->Raycast(m_PhysicsRay, HitDesc)) {
-            if (m_pMapToolCore->Get_TagLayer(MAPOBJ_TYPE::PLACED) == HitDesc.pHitObject->Get_Layer()->Get_LayerTag())
+            if (m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == HitDesc.pHitObject->Get_Layer()->Get_LayerTag())
                 CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = HitDesc.pHitObject  ;
         }
 
@@ -381,7 +419,7 @@ void CMapToolGui::KeyInput()
         auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
 
         if (nullptr != pGuiContext->pSelectedObject &&
-            m_pMapToolCore->Get_TagLayer(MAPOBJ_TYPE::PLACED) == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
+            m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == pGuiContext->pSelectedObject->Get_LayerDesc().LayerTag &&
             nullptr != dynamic_cast<CPlacedObject*>(pGuiContext->pSelectedObject)) {
 
             static_cast<CPlacedObject*>(pGuiContext->pSelectedObject)->Delete_Object();

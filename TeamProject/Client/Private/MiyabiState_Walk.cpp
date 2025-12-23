@@ -2,6 +2,8 @@
 #include "MiyabiState_Walk.h"
 #include "Miyabi.h"
 
+#include "CharacterController.h"
+
 void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
 {
     if (!m_pSubStateMachine)
@@ -40,6 +42,13 @@ void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 {
+    _vector3 vInputDir = pOwner->Get_InputDir();
+    if (vInputDir.Length() > 0.01f)
+    {
+        vInputDir.Normalize();
+        pOwner->Rotate(vInputDir);
+        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+    }
 }
 
 void CMiyabiState_Walk_Start::Exit(CMiyabi* pOwner)
@@ -48,7 +57,6 @@ void CMiyabiState_Walk_Start::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
-    OutputDebugStringA("Walk_Loop Enter\n");
     pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
         .Loop(true)
         .Apply();
@@ -56,10 +64,15 @@ void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
 {
-    OutputDebugStringA(("Walk_Loop Progress: " + to_string(m_fAnimProgress) + "\n").c_str());
+    _vector3 vInputDir = pOwner->Get_InputDir();
+    if (vInputDir.Length() > 0.01f)
+    {
+        vInputDir.Normalize();
+        pOwner->Rotate(vInputDir);
+        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+    }
 }
 
 void CMiyabiState_Walk_Loop::Exit(CMiyabi* pOwner)
 {
-    OutputDebugStringA("Walk Exit\n");
 }

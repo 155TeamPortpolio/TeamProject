@@ -241,12 +241,13 @@ void CUIObject_Tool::Load_Children(const json& data)
 
 void CUIObject_Tool::Reset_Animation()
 {
+    m_isBlending = false;
     m_fBlendTime = 0.f;
 
     // 애니메이션 재생 전에 값으로 되돌려 놓음
     m_vScale = m_vBaseScale;
     m_fRadian = m_vBaseAngle;
-    // 포지션
+    m_vAnchorOffset = m_vBaseAnchorOffset;
     m_vColor = m_vBaseColor;
 }
 
@@ -313,8 +314,9 @@ void CUIObject_Tool::Render_GUI_Transform()
     if (ImGui::DragFloat2("Pivot", reinterpret_cast<_float*>(&tmpPivot), 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
         Set_Pivot(tmpPivot);
 
+    ImGui::TextDisabled("AnchorOffset : %.1f, %.1f", m_vAnchorOffset.x, m_vAnchorOffset.y);
+    ImGui::TextDisabled("ScreenOffset : %.1f, %.1f", m_vScreenOffset.x, m_vScreenOffset.y);
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
-
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 }
 
@@ -483,18 +485,8 @@ void CUIObject_Tool::Play_Animation(_float dt)
         if (fRatio >= 1.f)
         {
             // 애니메이션 종료 처리
-            if (!clip.isLoop)
-            {
-                // 마지막 키프레임 적용
-                m_vScale = clip.keyframes.back().vScale;
-                m_fRadian = clip.keyframes.back().fAngle;
-                // 포지션
-                m_vColor = clip.keyframes.back().vColor;
-
-                m_isBlending = false;
-            } 
-
-            Reset_Animation();
+            if(!clip.isLoop)
+                Reset_Animation();
 
             return;
         }
@@ -529,16 +521,11 @@ void CUIObject_Tool::Play_Animation(_float dt)
             _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
 
             // 보간된 값 적용
-            _float2 vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
-            _float fAngle = Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio);
-            _float2 vPosition = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
+            m_vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
+            m_fRadian = XMConvertToRadians(Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio));
+            m_vAnchorOffset = m_vBaseAnchorOffset + Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
             _float4 vColor = {};
             XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
-
-            // UI 오브젝트에 적용
-            m_vScale = vScale;
-            m_fRadian = XMConvertToRadians(fAngle);
-            //m_vAnchorOffset.x = m_vAnchorOffset.x + XMVectorGetX(vInterpolatedPos); // 포지션
             m_vColor = vColor;
         }
     }
@@ -553,7 +540,7 @@ void CUIObject_Tool::Set_Animation(_uint iIndex)
 
     m_vBaseScale = m_vScale;
     m_vBaseAngle = m_fRadian;
-    // 포지션
+    m_vBaseAnchorOffset = m_vAnchorOffset;
     m_vBaseColor = m_vColor;
 }
 

@@ -47,7 +47,7 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 
 	if (isLoop) {
 		if (RealTrackPosition > m_fDuration)
-			return 0;
+			RealTrackPosition -= m_fDuration;
 	}
 	else {
 		if (RealTrackPosition > m_fDuration) {

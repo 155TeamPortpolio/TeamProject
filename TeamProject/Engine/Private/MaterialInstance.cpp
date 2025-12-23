@@ -69,14 +69,15 @@ const string& CMaterialInstance::Get_MaterialName()
 
 HRESULT CMaterialInstance::Set_Param(const string& ConstantName, const SHADER_PARAM& parameter)
 {
-	SHADER_PARAM DynamicSlot = parameter;
-	auto iter = m_DynamicSlots.emplace(ConstantName, DynamicSlot);
-
-	if (false == iter.second)
-		return E_FAIL;
-
-	else
+	auto it = m_DynamicSlots.find(ConstantName);
+	if (it != m_DynamicSlots.end())
+	{
+		it->second = parameter;    // 기존 값 덮어쓰기
 		return S_OK;
+	}
+	SHADER_PARAM newparameter = parameter;
+	m_DynamicSlots.emplace(ConstantName, newparameter);
+	return S_OK;
 }
 
 SHADER_PARAM* CMaterialInstance::Get_Param(const string& ConstantName)
