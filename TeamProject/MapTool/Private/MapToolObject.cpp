@@ -18,7 +18,7 @@ HRESULT CMapToolObject::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	Add_Component<CRayReceiver>();
+	//Add_Component<CRayReceiver>();
 
 	return S_OK;
 }

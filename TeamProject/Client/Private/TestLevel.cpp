@@ -25,6 +25,9 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 
+/* Character */
+#include "Miyabi.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -74,47 +77,65 @@ HRESULT CTestLevel::Awake()
 	//===================================================
 
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
-
 	//Map Loader Logic is going to Change
 	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
 	//if (nullptr == pMapLoader)
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
 
+	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 	//	.CharacterController({})
 	//	.Build("Test_Model");
-	//
+
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
-	//COLLIDER_DESC colDesc;
-	//colDesc.bCooking = true;
-	//colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-	//
-	//for (_int z = 0; z < 3; ++z)
-	//{
-	//for (_int x = 0; x < 3; ++x)
-	//	{
-	//		CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-	//			.Collider(colDesc)
-	//			.Position({ x * 6.5f, 0.f, z * 6.5f })
-	//			.Build("Test_Floor_" + to_string(z * 3 + x));
-	//		objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-	//	}
-	//}
-	//// --------------------------- Camera -------------------------------------------------
+
+	// =====================TestFloor=========================
+	COLLIDER_DESC colDesc;
+	colDesc.bCooking = true;
+	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+
+	for (_int z = 0; z < 3; ++z)
+	{
+	for (_int x = 0; x < 3; ++x)
+		{
+			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+				.Collider(colDesc)
+				.Position({ x * 6.5f, 0.f, z * 6.5f })
+				.Build("Test_Floor_" + to_string(z * 3 + x));
+			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+		}
+	}
+
+
+	/* Miyabi */
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	CCT_DESC miyabiCCT;
+	miyabiCCT.bAutoFit = false;
+	miyabiCCT.fHeight = 0.36f;
+	miyabiCCT.fRadius = 0.64f;
+	miyabiCCT.fBoundingMinY = -0.88f;
+	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
+	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.CharacterController(miyabiCCT)
+		.Build("Miyabi");
+	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
+
+	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
 	//auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
@@ -144,6 +165,7 @@ HRESULT CTestLevel::Awake()
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 
 	Ready_Camera();
+
 	return S_OK;
 }
 
