@@ -20,9 +20,12 @@ public:
 		_float CurrentTrackPosition,
 		_float dt,
 		_bool isLoop,
-		_bool* isAnimEnd);
+		_bool* isAnimEnd,
+		vector<EVENT_INST>& EventBus);
 
-	void TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition);
+	void TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices,
+		_float TrackPosition,
+		vector<EVENT_INST>& EventBus);
 
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
@@ -31,6 +34,7 @@ public:
 	_float Get_Duration() { return m_fDuration; }
 	const string& Get_Name() { return m_ClipName; }
 	const vector<ANIM_EVENT>& Get_Events() { return m_Events; }
+	void Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus);
 
 public:
 	virtual void Render_GUI();

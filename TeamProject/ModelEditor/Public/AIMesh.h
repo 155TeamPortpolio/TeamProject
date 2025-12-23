@@ -39,9 +39,6 @@ public:
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	void Save_File(ofstream& ofs, _fmatrix PreTransform);
 
-public:
-	RayHitMesh CheckRay(const RAY& ray, const _float4x4& worldMatrix);
-
 private:
 	//ÀúÀå¿ë
 	vector<VTXSKINMESH> m_SkinMeshes;

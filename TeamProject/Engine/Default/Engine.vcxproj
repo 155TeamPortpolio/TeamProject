@@ -223,6 +223,7 @@ exit /b 0</Command>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h" />
     <ClInclude Include="..\Public\AnimationClip.h" />
     <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
@@ -390,6 +391,10 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Private\AnimationClip.cpp" />
     <ClCompile Include="..\Private\Animator3D.cpp" />
     <ClCompile Include="..\Private\AudioDevice.cpp" />

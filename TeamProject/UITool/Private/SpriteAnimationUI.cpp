@@ -5,6 +5,7 @@
 #include "UITool_Level.h"
 
 _uint CSpriteAnimationUI::m_iCount = {};
+const string CSpriteAnimationUI::m_strTypeTag = "SpriteAnimation";
 
 CSpriteAnimationUI::CSpriteAnimationUI()
 {
@@ -79,13 +80,10 @@ void CSpriteAnimationUI::Late_Update(_float dt)
 
 void CSpriteAnimationUI::Render_GUI()
 {
-    Render_GUI_Layout();
-
-    Render_GUI_Transform();
-
+    __super::Render_GUI();
+     
+    // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-
-    // 이미지
     ImGui::SeparatorText(u8"이미지");
     ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
     if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
@@ -129,17 +127,13 @@ void CSpriteAnimationUI::Render_GUI()
     }     
 
     ImGui::DragFloat(u8"재생 속도", &m_fFrameSpeed, 1.f, 1.f, 120.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-
-    Render_GUI_TextKey();
-
-    __super::Render_GUI();
 }
 
-void CSpriteAnimationUI::ToJson(json& data)
+void CSpriteAnimationUI::SavePrefab(json& data)
 {
-    __super::ToJson(data);
+    __super::SavePrefab(data);
 
-    data["typeTag"] = "SpriteAnimationUI";
+    data["typeTag"] = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
@@ -151,10 +145,11 @@ void CSpriteAnimationUI::ToJson(json& data)
     data["frameSpeed"] = m_fFrameSpeed;
 }
 
-void CSpriteAnimationUI::FromJson(const json& data)
+void CSpriteAnimationUI::LoadPrefab(const json& data)
 {
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    __super::LoadPrefab(data);
 
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
@@ -164,9 +159,6 @@ void CSpriteAnimationUI::FromJson(const json& data)
     m_iFrameCountY = data["frameCountY"];
     m_iFrameCountTotal = data["frameCountTotal"];
     m_fFrameSpeed = data["frameSpeed"];
-
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
 }
 
 CGameObject* CSpriteAnimationUI::Create()

@@ -85,6 +85,8 @@ bool UseMask;
 float FillAmount;
 float Direction;
 
+float4 vColor;
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -104,7 +106,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse * vColor;
     
     return Out;
 }
@@ -117,7 +119,7 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse * vColor;
     
     return Out;
 }
@@ -133,11 +135,11 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
             discard;
     } 
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset); 
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse * vColor;
     
     return Out;
 }
@@ -146,16 +148,15 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 vTexcoord = lerp(In.vTexcoord, float2(1.f - In.vTexcoord.x, In.vTexcoord.y), Direction);
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     if (vDiffuse.a < 0.1f)
         discard;
     
-    float fX = lerp(In.vTexcoord, 1.f - In.vTexcoord, Direction);
-    float fGauge = step(fX, FillAmount);
-    if (!fGauge)
+    if (vTexcoord.x > FillAmount)
         discard;
     
-    Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse * vColor;
     
     return Out;
 }
@@ -178,7 +179,7 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     if (!fGauge)
         discard;
     
-    Out.vColor = vDiffuse;
+    Out.vColor = vDiffuse * vColor;
     
     return Out;
 }

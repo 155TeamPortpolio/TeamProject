@@ -57,6 +57,7 @@ using namespace DirectX::SimpleMath;
 #include "GUI_Inc/ImGuizmo.h"
 #include "GUI_Inc/backends/imgui_impl_win32.h"
 #include "GUI_Inc/backends/imgui_impl_dx11.h"
+#include "GUI_Inc/imgui_stdlib.h"
 #include "NFD_Inc/nfd.h"
 #pragma pop_macro("new")
 
