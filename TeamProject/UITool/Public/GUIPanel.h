@@ -30,9 +30,6 @@ private:
 
     void LoadPrefab();
 
-private:
-    class CUI_Object* CreateObject(const json& data);
-
 public:
     static CGUIPanel* Create(GUI_CONTEXT* pContext);
     virtual void Free() override;
