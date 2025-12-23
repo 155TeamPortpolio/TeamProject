@@ -279,6 +279,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
+    <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\Noise.h" />
     <ClInclude Include="..\Public\LifeTimeSize.h" />
     <ClInclude Include="..\Public\LifeTimeVelocity.h" />
@@ -319,6 +320,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\IParticleModule.h" />
     <ClInclude Include="..\Public\ObjectPool.h" />
     <ClInclude Include="..\Public\OrbitArcData.h" />
+    <ClInclude Include="..\Public\ParticleParams.h" />
     <ClInclude Include="..\Public\ParticleSystem.h" />
     <ClInclude Include="..\Public\IObjectService.h" />
     <ClInclude Include="..\Public\IPhysicsService.h" />
@@ -601,6 +603,7 @@ exit /b 0</Command>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
       <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Func.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>

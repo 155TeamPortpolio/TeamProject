@@ -38,11 +38,16 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	}
 	
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
-	pMaterialInstance->Set_Blended(true);
 	pMaterialInstance->Override_Pass("UVAnimation");
 
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
+
+	/* Set Param */
+	{
+		
+	}
 
 	return S_OK;
 }
@@ -61,50 +66,61 @@ void CMeshNode::Update(_float dt)
 
 	if (m_IsEffectActive)
 	{
-		_float t = m_fElpasedTime / m_fDuration;
+		//_float t = m_fElpasedTime / m_fDuration;
+		//
+		//m_fThreshold = t;
+		//m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(m_eAlphaFadeEase, t));
+		//_float3 vCurrScale = _vector3::Lerp(m_vStartScale, m_vEndScale, Math::ApplyEase(m_eScaleEase, t));
+		//m_pTransform->Scale(vCurrScale);
+		//
+		//auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		//switch (m_eMode)
+		//{
+		//case Engine::CMeshNode::MODE::UV_ANIMATION:
+		//{
+		//	m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, Math::ApplyEase(m_eUVEase, t));
+		//
+		//	pMaterialInstance->Set_Param("UVOffset", { &m_vCurrUVOffset,"float2",sizeof(_float2) });
+		//}break;
+		//case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
+		//{
+		//	m_iCurrFrameIndex = static_cast<_uint>(m_iMaxFrameIndex * t);
+		//
+		//	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		//	pMaterialInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
+		//}break;
+		//default:
+		//	break;
+		//}
+		//
+		///*Dissolve*/
+		//if (t >= m_fDissolveStartProgress)
+		//{
+		//	m_fDissolveThreshold = (t - m_fDissolveStartProgress) / (1.f - m_fDissolveStartProgress);
+		//	m_fDissolveThreshold = Math::ApplyEase(m_eDissolveEase, m_fDissolveThreshold);
+		//}
+		//
+		//if (m_fElpasedTime >= m_fDuration)
+		//{
+		//	m_fDissolveThreshold = 1.f;
+		//	m_fThreshold = 1.f;
+		//}
+		//
+		//pMaterialInstance->Set_Param("DissolveThreshold", { &m_fDissolveThreshold,"float",sizeof(_float) });
+		//pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
+		//pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
+		//pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
 
-		m_fThreshold = t;
-		m_fAlpha = Math::Lerp(m_vAlphaFade.x, m_vAlphaFade.y, Math::ApplyEase(m_eAlphaFadeEase, t));
-		_float3 vCurrScale = _vector3::Lerp(m_vStartScale, m_vEndScale, Math::ApplyEase(m_eScaleEase, t));
-		m_pTransform->Scale(vCurrScale);
+		m_fProgress = m_fElpasedTime / m_fDuration;
 
-		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		switch (m_eMode)
-		{
-		case Engine::CMeshNode::MODE::UV_ANIMATION:
-		{
-			m_vCurrUVOffset = _vector2::Lerp(m_vStartUVOffset, m_vEndUVOffset, Math::ApplyEase(m_eUVEase, t));
-		
-			pMaterialInstance->Set_Param("UVOffset", { &m_vCurrUVOffset,"float2",sizeof(_float2) });
-		}break;
-		case Engine::CMeshNode::MODE::SPRITE_ANIAMTION:
-		{
-			m_iCurrFrameIndex = static_cast<_uint>(m_iMaxFrameIndex * t);
-
-			auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-			pMaterialInstance->Set_Param("FrameIndex", { &m_iCurrFrameIndex,"uint",sizeof(_uint) });
-		}break;
-		default:
-			break;
-		}
-
-		/*Dissolve*/
-		if (t >= m_fDissolveStartProgress)
-		{
-			m_fDissolveThreshold = (t - m_fDissolveStartProgress) / (1.f - m_fDissolveStartProgress);
-			m_fDissolveThreshold = Math::ApplyEase(m_eDissolveEase, m_fDissolveThreshold);
-		}
-
-		if (m_fElpasedTime >= m_fDuration)
-		{
-			m_fDissolveThreshold = 1.f;
-			m_fThreshold = 1.f;
-		}
-
-		pMaterialInstance->Set_Param("DissolveThreshold", { &m_fDissolveThreshold,"float",sizeof(_float) });
-		pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
-		pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
-		pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
+		Update_TextureSlotModule(dt);
+		Update_ColorModule(dt);
+		Update_ScaleModule(dt);
+		Update_UVAnimationModule(dt);
+		Update_SpriteAnimationModule(dt);
+		Update_DissolveModule(dt);
+		Update_BloomModule(dt);
+		Bind_Params();
 	}
 }
 
@@ -139,4 +155,88 @@ CGameObject* CMeshNode::Clone(INIT_DESC* pArg)
 void CMeshNode::Free()
 {
 	__super::Free();
+}
+
+void CMeshNode::Update_TextureSlotModule(_float dt)
+{
+	m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.eSamplerMode);
+	m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.eMainUsage);
+	m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
+	m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eBlue);
+	m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eGreen);
+	m_TextureSlotModule.vChannelUsageParam.w = ENUM(m_TextureSlotModule.eAlpha);
+}
+
+void CMeshNode::Update_ColorModule(_float dt)
+{
+	_float t = m_fElpasedTime / m_fDuration;
+
+	m_ColorModule.vCurrColor = _vector4::Lerp(m_ColorModule.vStartColor, m_ColorModule.vEndColor, Math::ApplyEase(m_ColorModule.eEaseType, t));
+}
+
+void CMeshNode::Update_ScaleModule(_float dt)
+{
+	_float t = m_fElpasedTime / m_fDuration;
+
+	m_ScaleModule.vCurrScale = _vector3::Lerp(m_ScaleModule.vStartScale, m_ScaleModule.vEndScale, Math::ApplyEase(m_ScaleModule.eEaseType, t));
+	m_pTransform->Scale(m_ScaleModule.vCurrScale);
+}
+
+void CMeshNode::Update_UVAnimationModule(_float dt)
+{
+	_float t = m_fElpasedTime / m_fDuration;
+
+	m_UVAnimaitonModule.vCurrUVOffset = _vector2::Lerp(m_UVAnimaitonModule.vStartUVOffset, m_UVAnimaitonModule.vEndUVOffset, Math::ApplyEase(m_UVAnimaitonModule.eEaseType, t));
+}
+
+void CMeshNode::Update_SpriteAnimationModule(_float dt)
+{
+	_float t = m_fElpasedTime / m_fDuration;
+
+	m_SpriteAnimationModule.iCurrFrameIndex = static_cast<_uint>(t * m_SpriteAnimationModule.iMaxFrameIndex);
+}
+
+void CMeshNode::Update_DissolveModule(_float dt)
+{
+	_float t = m_fElpasedTime / m_fDuration;
+
+	if (t >= m_DissolveModule.fStartProgress && t <= m_DissolveModule.fEndProgress)
+		m_DissolveModule.fProgress = (t - m_DissolveModule.fStartProgress) / (m_DissolveModule.fEndProgress - m_DissolveModule.fStartProgress);
+
+	if (t >= m_DissolveModule.fEndProgress)
+		m_DissolveModule.fProgress = 1.f;
+}
+
+void CMeshNode::Update_BloomModule(_float dt)
+{
+
+}
+
+void CMeshNode::Bind_Params()
+{
+	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+	pMaterialInstance->Set_Param("Progress", { &m_fProgress,"float",sizeof(_float) });
+
+	/* Texture */
+	pMaterialInstance->Set_Param("SamplerMode", { &m_TextureSlotModule.iSamplerModeParam,"uint",sizeof(_uint)});
+	pMaterialInstance->Set_Param("MainUsage", { &m_TextureSlotModule.iMainUsageParam,"uint",sizeof(_uint)});
+	pMaterialInstance->Set_Param("ChannelUsage", { &m_TextureSlotModule.vChannelUsageParam,"uint4",sizeof(_uint4)});
+
+	/* Color */
+	pMaterialInstance->Set_Param("vBaseColor", { &m_ColorModule.vCurrColor,"float4",sizeof(_float4) });
+
+	/* UV Anim */
+	pMaterialInstance->Set_Param("UVOffset", { &m_UVAnimaitonModule.vCurrUVOffset,"float2",sizeof(_float2) });
+
+	/* Sprite Anim */
+	pMaterialInstance->Set_Param("Col", { &m_SpriteAnimationModule.iCol,"uint",sizeof(_uint) });
+	pMaterialInstance->Set_Param("Row", { &m_SpriteAnimationModule.iRow,"uint",sizeof(_uint) });
+	pMaterialInstance->Set_Param("FrameIndex", { &m_SpriteAnimationModule.iCurrFrameIndex,"uint",sizeof(_uint) });
+
+	/* Bloom */
+	pMaterialInstance->Set_Param("BloomIntensity", { &m_BloomModule.fIntensity,"float",sizeof(_float) });
+
+	/* Dissolve */
+	pMaterialInstance->Set_Param("DissolveProgress", { &m_DissolveModule.fProgress,"float",sizeof(_float) });
 }
