@@ -71,6 +71,33 @@ namespace Helper
 			file.close();
 		}
 	};
+
+	template <typename T>
+	inline bool SaveJsonMT(const T& Data, const std::string& filePath)
+	{
+		namespace fs = std::filesystem;
+
+		// 1) 폴더 준비
+		fs::path p(filePath);
+		fs::path dir = p.parent_path();
+
+		std::error_code ec;
+		if (!dir.empty() && !fs::exists(dir))
+			fs::create_directories(dir, ec);   // 중간 폴더까지 생성
+
+		if (ec)
+			return false;
+
+		// 2) json 변환 + 파일 저장
+		nlohmann::ordered_json JsonData = Data;
+
+		std::ofstream file(filePath, std::ios::out | std::ios::trunc);
+		if (!file.is_open())
+			return false;
+
+		file << JsonData.dump(2);
+		return file.good();
+	}
 }
 
 namespace Helper // magic_enum 관련
