@@ -226,8 +226,6 @@ private:
 	_uint m_iAliveCount{};								//현재 살아있는 파티클 갯수
 	vector<PARTICLE_GPU> m_SpawnList;
 
-	_uint m_iBaseOffset{};
-
 public:
 	static CParticleSystem* Create();
 	CComponent* Clone() override;
