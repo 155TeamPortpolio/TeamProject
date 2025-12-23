@@ -1,6 +1,5 @@
 #pragma once
 #include "ModelEditor_Defines.h"
-#include "Assimps.h"
 #include "Skeleton.h"
 
 NS_BEGIN(ModelEdit)
@@ -22,6 +21,7 @@ public:
 	void Render_GUI();
 private:
 	HRESULT Ready_Bones(const aiNode* _pAINode, _int _iParentIndex = -1);
+
 private:
 	vector<_bool> HasOffset;
 	vector<_float4x4> ErroredOffset;

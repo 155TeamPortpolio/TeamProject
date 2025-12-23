@@ -31,7 +31,6 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
         string keyLower = Helper::ToLower(pMesh->Get_Key());
 
         m_Meshes.push_back(pMesh);
-        m_AIMesh.push_back(pMesh);
 
         if (keyLower.find("proxy") != string::npos) {
             m_ProxyMarked.push_back(m_Meshes.size() - 1);
@@ -79,11 +78,6 @@ vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
     return m_NotProxy;
 }
 
-CAIMesh* CAIModelData::Get_AIMesh(_uint index)
-{
-    return m_AIMesh[index];
-}
-
 CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)
 {
 	CAIModelData* pInstance = new CAIModelData();
@@ -100,12 +94,6 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
 	for (size_t i = 0; i < m_Meshes.size(); i++)
 	{
-       //auto iter= find_if(m_ProxyMarked.begin(), m_ProxyMarked.end(), [&](_uint idx)->bool { return i == idx; });
-       //if (iter != m_ProxyMarked.end()) continue;
-
-       //auto iter2 = find_if(m_EffMarked.begin(), m_EffMarked.end(), [&](_uint idx)->bool { return i == idx; });
-       //if (iter2 != m_EffMarked.end()) continue;
-
        static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);
 	}
 
@@ -115,4 +103,5 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 void CAIModelData::Free()
 {
 	__super::Free();
+    int i = 0;
 }

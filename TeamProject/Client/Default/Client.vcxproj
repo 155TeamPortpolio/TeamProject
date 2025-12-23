@@ -156,6 +156,7 @@
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
     <ClInclude Include="..\public\MapDataCloud.h" />
     <ClInclude Include="..\Public\Miyabi.h" />
+    <ClInclude Include="..\Public\MiyabiState_Attack.h" />
     <ClInclude Include="..\Public\MiyabiState_Idle.h" />
     <ClInclude Include="..\Public\MiyabiState_Walk.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
@@ -219,6 +220,7 @@
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Idle.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />

@@ -82,38 +82,20 @@ void CGUIPanel::LoadPrefab()
 		if (!data.contains("parent"))
 			return;
 
-		CUI_Object* pObj = CreateObject(data["parent"]);
+		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["parent"]["typeTag"].get<string>()})
+			.Build(data["parent"]["typeTag"].get<string>());
+
 		if (!pObj)
 			return;
 
 		CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
 		if (!pUI)
-		{
-			Safe_Release(pObj);
 			return;
-		}
 
-		pUI->LoadPrefab(data["parent"]);
-		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+		pUI->LoadPrefab(data["parent"]); 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
 	}
-}
-
-CUI_Object* CGUIPanel::CreateObject(const json& data)
-{
-	const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-	const json& transform = data["transform"];
-
-	CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["typeTag"].get<string>() })
-		.Offset(_float2(transform["anchorOffset"]["x"].get<float>(), transform["anchorOffset"]["y"].get<float>()))
-		.Size(_float2(transform["size"]["x"].get<float>(), transform["size"]["y"].get<float>()))
-		.Scale(_float2(transform["scale"]["x"].get<float>(), transform["scale"]["y"].get<float>()))
-		.Rotate(transform["rotation"].get<float>())
-		.Anchor(static_cast<ANCHOR>(transform["anchor"]))
-		.Build(data["typeTag"].get<string>());
-
-
-	return pObj;
 }
 
 CGUIPanel* CGUIPanel::Create(GUI_CONTEXT* pContext)

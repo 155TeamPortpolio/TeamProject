@@ -94,7 +94,6 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 		return E_FAIL;
 	// -----------------------------------------------
 	auto data = dynamic_cast<CAIModelData*>(m_pData);
-
 	auto ApplyDefaultClears = [&](const vector<_uint>& indices)
 		{
 			if (indices.empty())

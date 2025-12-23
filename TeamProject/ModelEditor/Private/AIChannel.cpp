@@ -21,7 +21,9 @@ HRESULT CAIChannel::Initialize(const aiNodeAnim* pAIChannel, CAIModelData* pAIMo
 	_float3         vScale = {};
 	_float4         vRotation = {};
 	_float3         vTranslation = {};
-
+	if (pAIChannel->mPositionKeys->mInterpolation != aiAnimInterpolation_Linear) {
+		int i = 0;
+	}
 	for (size_t i = 0; i < m_iNumKeyFrames; i++)
 	{
 		KEYFRAME            KeyFrame{};

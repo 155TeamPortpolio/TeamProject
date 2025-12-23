@@ -1,7 +1,6 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "SkeletalModel.h"
-#include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
 class CAI_SKModel final
