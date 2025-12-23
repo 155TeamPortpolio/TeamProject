@@ -80,10 +80,7 @@ void CMeshNode_Edit::Play()
 	if (!m_IsLoop)
 		m_IsEffectActive = false;
 
-	m_fAlpha = 1.f;
 	m_fElpasedTime = 0.f;
-	m_vCurrUVOffset = m_vStartUVOffset;
-	m_fDissolveThreshold = 0.f;
 }
 
 void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
@@ -95,35 +92,56 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_fDuration = json.value("duration", m_fDuration);
 	m_IsLoop = json.value("is_loop", m_IsLoop);
 
-	m_vBaseColor.x = json.at("base_color").at("x").get<_float>();
-	m_vBaseColor.y = json.at("base_color").at("y").get<_float>();
-	m_vBaseColor.z = json.at("base_color").at("z").get<_float>();
-	m_vBaseColor.w = json.at("base_color").at("w").get<_float>();
+	/* Texture Slot Module */
+	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
+	m_TextureSlotModule.eMainUsage = static_cast<TEXTURE_SLOT_MODULE::MAIN_USAGE>(json.value("main_usage", 0));
+	m_TextureSlotModule.eRed = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("x").get<_uint>());
+	m_TextureSlotModule.eGreen = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("y").get<_uint>());
+	m_TextureSlotModule.eBlue = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("z").get<_uint>());
+	m_TextureSlotModule.eAlpha = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("w").get<_uint>());
 
-	m_eAlphaFadeEase = static_cast<EaseType>(json.value("alpha_fade_ease", 0));
-	m_vAlphaFade.x = json.at("alpha_fade").at("x").get<_float>();
-	m_vAlphaFade.y = json.at("alpha_fade").at("y").get<_float>();
+	/* Color Module */
+	m_ColorModule.eEaseType = static_cast<EaseType>(json.value("color_ease_type", 0));
+	m_ColorModule.vStartColor.x = json.at("start_color").at("x").get<_float>();
+	m_ColorModule.vStartColor.y = json.at("start_color").at("y").get<_float>();
+	m_ColorModule.vStartColor.z = json.at("start_color").at("z").get<_float>();
+	m_ColorModule.vStartColor.w = json.at("start_color").at("w").get<_float>();
 
-	m_eScaleEase = static_cast<EaseType>(json.value("scale_ease", 0));
-	m_vStartScale.x = json.at("start_scale").at("x").get<_float>();
-	m_vStartScale.y = json.at("start_scale").at("y").get<_float>();
-	m_vStartScale.z = json.at("start_scale").at("z").get<_float>();
-	m_vEndScale.x = json.at("end_scale").at("x").get<_float>();
-	m_vEndScale.y = json.at("end_scale").at("y").get<_float>();
-	m_vEndScale.z = json.at("end_scale").at("z").get<_float>();
+	m_ColorModule.vEndColor.x = json.at("end_color").at("x").get<_float>();
+	m_ColorModule.vEndColor.y = json.at("end_color").at("y").get<_float>();
+	m_ColorModule.vEndColor.z = json.at("end_color").at("z").get<_float>();
+	m_ColorModule.vEndColor.w = json.at("end_color").at("w").get<_float>();
 
-	m_eUVEase = static_cast<EaseType>(json.value("uv_ease", 0));
-	m_vStartUVOffset.x = json.at("start_uv_offset").at("x").get<_float>();
-	m_vStartUVOffset.y = json.at("start_uv_offset").at("y").get<_float>();
-	m_vEndUVOffset.x = json.at("end_uv_offset").at("x").get<_float>();
-	m_vEndUVOffset.y = json.at("end_uv_offset").at("y").get<_float>();
+	/* Scale Module */
+	m_ScaleModule.eEaseType = static_cast<EaseType>(json.value("scale_ease_type", 0));
+	m_ScaleModule.vStartScale.x = json.at("start_scale").at("x").get<_float>();
+	m_ScaleModule.vStartScale.y = json.at("start_scale").at("y").get<_float>();
+	m_ScaleModule.vStartScale.z = json.at("start_scale").at("z").get<_float>();
 
-	m_iCol = json.value("col", m_iCol);
-	m_iRow = json.value("row", m_iRow);
-	m_iMaxFrameIndex = json.value("max_frame_index", m_iMaxFrameIndex);
+	m_ScaleModule.vEndScale.x = json.at("end_scale").at("x").get<_float>();
+	m_ScaleModule.vEndScale.y = json.at("end_scale").at("y").get<_float>();
+	m_ScaleModule.vEndScale.z = json.at("end_scale").at("z").get<_float>();
 
-	m_eDissolveEase = static_cast<EaseType>(json.value("dissolve_ease", 0));
-	m_fDissolveStartProgress = json.value("dissolve_start_progress", m_fDissolveStartProgress);
+	/* UV Animation Module */
+	m_UVAnimaitonModule.eEaseType = static_cast<EaseType>(json.value("uv_ease_type", 0));
+	m_UVAnimaitonModule.vStartUVOffset.x = json.at("start_uv_offset").at("x").get<_float>();
+	m_UVAnimaitonModule.vStartUVOffset.y = json.at("start_uv_offset").at("y").get<_float>();
+
+	m_UVAnimaitonModule.vEndUVOffset.x = json.at("end_uv_offset").at("x").get<_float>();
+	m_UVAnimaitonModule.vEndUVOffset.y = json.at("end_uv_offset").at("y").get<_float>();
+
+	/* Sprite Anim Module */
+	m_SpriteAnimationModule.iCol = json.value("col", 1);
+	m_SpriteAnimationModule.iRow = json.value("row", 1);
+	m_SpriteAnimationModule.iMaxFrameIndex = json.value("max_frame_index", 1);
+
+	/* Dissolve Module */
+	m_DissolveModule.eEaseType = static_cast<EaseType>(json.value("dissolve_ease_type", 0));
+	m_DissolveModule.fStartProgress = json.value("dissolve_start_progress", 1.f);
+	m_DissolveModule.fEndProgress = json.value("dissolve_end_progress", 1.f);
+
+	/* Bloom Module */
+	m_BloomModule.fIntensity = json.value("bloom_intensity", 1.f);
 
 	{
 		m_SetMaterial = true;
@@ -155,30 +173,51 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"delay_time", m_fDelayTime},
 		{"duration", m_fDuration},
 		{"is_loop",m_IsLoop},
-		{"base_color",{{"x",m_vBaseColor.x},{"y",m_vBaseColor.y},{"z",m_vBaseColor.z},{"w",m_vBaseColor.w}}},
 
-		/* Alpha */
-		{"alpha_fade_ease",static_cast<_uint>(m_eAlphaFadeEase)},
-		{"alpha_fade",{{"x",m_vAlphaFade.x},{"y",m_vAlphaFade.y}}},
+		/* Texture Module */
+		{"sampler_mode",m_TextureSlotModule.iSamplerModeParam},
+		{"main_usage",m_TextureSlotModule.iMainUsageParam},
+		{"channel_usage",
+		{{"x",m_TextureSlotModule.vChannelUsageParam.x},
+		{"y",m_TextureSlotModule.vChannelUsageParam.y},
+		{"z",m_TextureSlotModule.vChannelUsageParam.z},
+		{"w",m_TextureSlotModule.vChannelUsageParam.w}}},
 
-		/* Scale */
-		{"scale_ease",static_cast<_uint>(m_eScaleEase)},
-		{"start_scale",{{"x",m_vStartScale.x},{"y",m_vStartScale.y},{"z",m_vStartScale.z}}},
-		{"end_scale",{{"x",m_vEndScale.x},{"y",m_vEndScale.y},{"z",m_vEndScale.z}}},
+		/* Color Module*/
+		{"color_ease_type",ENUM(m_ColorModule.eEaseType)},
+		{"start_color",
+		{{"x",m_ColorModule.vStartColor.x},
+		{"y",m_ColorModule.vStartColor.y},
+		{"z",m_ColorModule.vStartColor.z},
+		{"w",m_ColorModule.vStartColor.w}}},
+		{"end_color",
+		{{"x",m_ColorModule.vEndColor.x},
+		{"y",m_ColorModule.vEndColor.y},
+		{"z",m_ColorModule.vEndColor.z},
+		{"w",m_ColorModule.vEndColor.w}}},
 
-		/* UV Animation */
-		{"uv_ease",static_cast<_uint>(m_eUVEase)},
-		{"start_uv_offset",{{"x",m_vStartUVOffset.x},{"y",m_vStartUVOffset.y}}},
-		{"end_uv_offset",{{"x",m_vEndUVOffset.x},{"y",m_vEndUVOffset.y}}},
+		/* Scale Module */
+		{"scale_ease_type",ENUM(m_ScaleModule.eEaseType)},
+		{"start_scale",{{"x",m_ScaleModule.vStartScale.x},{"y",m_ScaleModule.vStartScale.y},{"z",m_ScaleModule.vStartScale.z}}},
+		{"end_scale",{{"x",m_ScaleModule.vEndScale.x},{"y",m_ScaleModule.vEndScale.y},{"z",m_ScaleModule.vEndScale.z}}},
 
-		/* Sprite Animation */
-		{"col", m_iCol},
-		{"row", m_iRow},
-		{"max_frame_index",m_iMaxFrameIndex},
+		/* UV Anim Module */
+		{"uv_ease_type",ENUM(m_UVAnimaitonModule.eEaseType)},
+		{"start_uv_offset",{{"x",m_UVAnimaitonModule.vStartUVOffset.x},{"y",m_UVAnimaitonModule.vStartUVOffset.y}}},
+		{"end_uv_offset",{{"x",m_UVAnimaitonModule.vEndUVOffset.x},{"y",m_UVAnimaitonModule.vEndUVOffset.y}}},
+
+		/* Sprite Anim Module */
+		{"col",m_SpriteAnimationModule.iCol},
+		{"row",m_SpriteAnimationModule.iRow},
+		{"max_frame_index",m_SpriteAnimationModule.iMaxFrameIndex},
 
 		/* Dissolve */
-		{"dissolve_ease",static_cast<_uint>(m_eDissolveEase)},
-		{"dissolve_start_progress",m_fDissolveStartProgress}
+		{"dissolve_ease_type",{ENUM(m_DissolveModule.eEaseType)}},
+		{"dissolve_start_progress",m_DissolveModule.fStartProgress},
+		{"dissolve_end_progress",m_DissolveModule.fEndProgress},
+
+		/* Bloom */
+		{"bloom_intensity",m_BloomModule.fIntensity}
 	};
 }
 
@@ -325,78 +364,72 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
 	ImGui::SeparatorText("MeshEffect Setting");
-	if (ImGui::Button("Set UV Anim Mode"))
+	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
-		m_eMode = MODE::UV_ANIMATION;
-
-		pMaterialInstance->Override_Pass("UVAnimation");
-	}
-	if (ImGui::Button("Set Sprite Anim Mode"))
-	{
-		m_eMode = MODE::SPRITE_ANIAMTION;
-
-		pMaterialInstance->Override_Pass("SpriteAnimation");
-	}
-	ImGui::DragFloat("Delay Time", &m_fDelayTime);
-	ImGui::DragFloat("Duration", &m_fDuration);
-
-	/*Default Params*/
-	if (ImGui::BeginCombo("##seg_ease_alpha", Helper::EnumLabel(m_eAlphaFadeEase)))
-	{
-		EaseType eType = m_eAlphaFadeEase;
-		ChangeEaseType(m_eAlphaFadeEase, eType);
-		ImGui::EndCombo();
-	}
-	ImGui::DragFloat2("Alpha Fade", &m_vAlphaFade.x);
-
-	if (ImGui::BeginCombo("##seg_ease_scale", Helper::EnumLabel(m_eScaleEase)))
-	{
-		EaseType eType = m_eScaleEase;
-		ChangeEaseType(m_eScaleEase, eType);
-		ImGui::EndCombo();
-	}
-	ImGui::DragFloat3("Start Scale", &m_vStartScale.x);
-	ImGui::DragFloat3("End Scale", &m_vEndScale.x);
-
-	_float baseColor[4] = { m_vBaseColor.x,m_vBaseColor.y,m_vBaseColor.z,m_vBaseColor.w };
-
-	if (ImGui::ColorEdit4("Base Color", baseColor))
-	{
-		m_vBaseColor = _float4(baseColor[0], baseColor[1], baseColor[2], baseColor[3]);
-		isDirty = true;
+		if (Helper::DrawEnumCombo("Sampler Mode", m_TextureSlotModule.eSamplerMode, 100.f))
+			m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.eSamplerMode);
+		if (Helper::DrawEnumCombo("Main Usage", m_TextureSlotModule.eMainUsage, 100.f))
+			m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
+		if (Helper::DrawEnumCombo("Red", m_TextureSlotModule.eRed, 100.f))
+			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
+		if (Helper::DrawEnumCombo("Blue", m_TextureSlotModule.eBlue, 100.f))
+			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eBlue);
+		if (Helper::DrawEnumCombo("Green", m_TextureSlotModule.eGreen, 100.f))
+			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eGreen);
+		if (Helper::DrawEnumCombo("Alpha", m_TextureSlotModule.eAlpha, 100.f))
+			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eAlpha);
 	}
 
-	/*UV Animation*/
-	if (ImGui::BeginCombo("##seg_ease_uv", Helper::EnumLabel(m_eUVEase)))
+	if (ImGui::CollapsingHeader("Color Module"))
 	{
-		EaseType eType = m_eUVEase;
-		ChangeEaseType(m_eUVEase, eType);
-		ImGui::EndCombo();
+		Helper::DrawEnumCombo("Ease Type", m_ColorModule.eEaseType, 100.f);
+
+		_float startColor[4] = { m_ColorModule.vStartColor.x,m_ColorModule.vStartColor.y,m_ColorModule.vStartColor.z,m_ColorModule.vStartColor.w };
+		_float endColor[4] = { m_ColorModule.vEndColor.x,m_ColorModule.vEndColor.y,m_ColorModule.vEndColor.z,m_ColorModule.vEndColor.w };
+
+		if (ImGui::ColorEdit4("Start Color", startColor))
+		{
+			m_ColorModule.vStartColor = _float4(startColor[0], startColor[1], startColor[2], startColor[3]);
+		}
+		if (ImGui::ColorEdit4("End Color", endColor))
+		{
+			m_ColorModule.vEndColor = _float4(endColor[0], endColor[1], endColor[2], endColor[3]);
+		}
 	}
-	ImGui::DragFloat2("Start UV Offset", &m_vStartUVOffset.x);
-	ImGui::DragFloat2("End UV Offset", &m_vEndUVOffset.x);
 
-	/*Sprite Animation*/
-	isDirty |= ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_iCol));
-	isDirty |= ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_iRow));
-	ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
-
-	/*Dissolve*/
-	if (ImGui::BeginCombo("##seg_ease_dissolve", Helper::EnumLabel(m_eDissolveEase)))
+	if (ImGui::CollapsingHeader("Scale Module"))
 	{
-		EaseType eType = m_eDissolveEase;
-		ChangeEaseType(m_eDissolveEase, eType);
-		ImGui::EndCombo();
+		Helper::DrawEnumCombo("Ease Type", m_ScaleModule.eEaseType, 100.f);
+
+		ImGui::DragFloat3("Start Scale", &m_ScaleModule.vStartScale.x);
+		ImGui::DragFloat3("End Scale", &m_ScaleModule.vEndScale.x);
 	}
-	ImGui::DragFloat("Dissolve Start Progress", &m_fDissolveStartProgress);
 
-	/*Bloom*/
-	ImGui::DragFloat("Bloom Intensity", &m_fBloomIntensity);
-
-	if (isDirty)
+	if (ImGui::CollapsingHeader("UV Animation Module"))
 	{
-		pMaterialInstance->Set_Param("Col", { &m_iCol,"uint",sizeof(_uint) });
-		pMaterialInstance->Set_Param("Row", { &m_iRow,"uint",sizeof(_uint) });
-		pMaterialInstance->Set_Param("vBaseColor", { &m_vBaseColor,"float4",sizeof(_float4) });
+		Helper::DrawEnumCombo("Ease Type", m_UVAnimaitonModule.eEaseType, 100.f);
+
+		ImGui::DragFloat2("Start UV Offset", &m_UVAnimaitonModule.vStartUVOffset.x);
+		ImGui::DragFloat2("End UV Offset", &m_UVAnimaitonModule.vEndUVOffset.x);
+	}
+	
+	if (ImGui::CollapsingHeader("Sprite Animation Module"))
+	{
+		ImGui::DragInt("Col", reinterpret_cast<_int*>(&m_SpriteAnimationModule.iCol));
+		ImGui::DragInt("Row", reinterpret_cast<_int*>(&m_SpriteAnimationModule.iRow));
+		ImGui::DragInt("Max Frame Index", reinterpret_cast<_int*>(&m_SpriteAnimationModule.iMaxFrameIndex));
+	}
+
+	if (ImGui::CollapsingHeader("Dissolve Module"))
+	{
+		Helper::DrawEnumCombo("Ease Type", m_DissolveModule.eEaseType, 100.f);
+
+		ImGui::DragFloat("Start Progress", &m_DissolveModule.fStartProgress);
+		ImGui::DragFloat("End Progress", &m_DissolveModule.fEndProgress);
+	}
+
+	if (ImGui::CollapsingHeader("Bloom Module"))
+	{
+		ImGui::DragFloat("Bloom Intensity", &m_BloomModule.fIntensity);
 	}
 }

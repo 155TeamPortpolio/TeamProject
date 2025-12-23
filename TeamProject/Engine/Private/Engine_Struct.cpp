@@ -118,35 +118,54 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fDuration = json.value("duration", node.fDuration);
 	node.isLoop = json.value("is_loop", node.isLoop);
 
-	node.vBaseColor.x = json.at("base_color").at("x").get<_float>();
-	node.vBaseColor.y = json.at("base_color").at("y").get<_float>();
-	node.vBaseColor.z = json.at("base_color").at("z").get<_float>();
-	node.vBaseColor.w = json.at("base_color").at("w").get<_float>();
+	/* Texture */
+	node.SamplerMode = json.value("sampler_mode", 0);
+	node.MainUsage = json.value("main_usage", 0);
+	node.Red = json.at("channel_usage").at("x").get<_uint>();
+	node.Green = json.at("channel_usage").at("y").get<_uint>();
+	node.Blue = json.at("channel_usage").at("z").get<_uint>();
+	node.Alpha = json.at("channel_usage").at("w").get<_uint>();
 
-	node.AlphaFadeEase = json.value("alpha_fade_ease", node.AlphaFadeEase);
-	node.vAlphaFade.x = json.at("alpha_fade").at("x").get<_float>();
-	node.vAlphaFade.y = json.at("alpha_fade").at("y").get<_float>();
+	/* Color */
+	node.ColorEaseType = json.value("color_ease_type", 0);
 
-	node.ScaleEase = json.value("scale_ease", node.ScaleEase);
+	node.vStartColor.x = json.at("start_color").at("x").get<_float>();
+	node.vStartColor.y = json.at("start_color").at("y").get<_float>();
+	node.vStartColor.z = json.at("start_color").at("z").get<_float>();
+	node.vStartColor.w = json.at("start_color").at("w").get<_float>();
+
+	node.vEndColor.x = json.at("end_color").at("x").get<_float>();
+	node.vEndColor.y = json.at("end_color").at("y").get<_float>();
+	node.vEndColor.z = json.at("end_color").at("z").get<_float>();
+	node.vEndColor.w = json.at("end_color").at("w").get<_float>();
+
+	/* Scale */
+	node.ScaleEaseType = json.value("scale_ease_type", 0);
+
 	node.vStartScale.x = json.at("start_scale").at("x").get<_float>();
 	node.vStartScale.y = json.at("start_scale").at("y").get<_float>();
 	node.vStartScale.z = json.at("start_scale").at("z").get<_float>();
+	
 	node.vEndScale.x = json.at("end_scale").at("x").get<_float>();
 	node.vEndScale.y = json.at("end_scale").at("y").get<_float>();
 	node.vEndScale.z = json.at("end_scale").at("z").get<_float>();
 
-	node.UVEase = json.value("uv_ease", node.UVEase);
+	/* UV Anim */
+	node.UVEaseType = json.value("uv_ease_type", 0);
 	node.vStartUVOffset.x = json.at("start_uv_offset").at("x").get<_float>();
 	node.vStartUVOffset.y = json.at("start_uv_offset").at("y").get<_float>();
 	node.vEndUVOffset.x = json.at("end_uv_offset").at("x").get<_float>();
 	node.vEndUVOffset.y = json.at("end_uv_offset").at("y").get<_float>();
 
+	/* Sprite Anim */
 	node.iCol = json.value("col", node.iCol);
 	node.iRow = json.value("row", node.iRow);
 	node.iMaxFrameIndex = json.value("max_frame_index", node.iMaxFrameIndex);
 
-	node.DissolveEase = json.value("dissolve_ease", node.DissolveEase);
+	/* Dissolve */
+	node.DissolveEase = json.value("dissolve_ease_type", node.DissolveEase);
 	node.fDissolveStartProgress = json.value("dissolve_start_progress", node.fDissolveStartProgress);
+	node.fDissolveEndProgress = json.value("dissolve_end_progress", node.fDissolveEndProgress);
 
 	return node;
 }

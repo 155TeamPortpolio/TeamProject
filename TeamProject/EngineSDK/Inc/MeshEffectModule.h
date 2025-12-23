@@ -16,7 +16,7 @@ typedef struct tagTextureSlotModule
 	_uint iSamplerModeParam{};
 	_uint iMainUsageParam{};
 	_uint4 vChannelUsageParam{};
-	
+
 }TEXTURE_SLOT_MODULE;
 
 typedef struct tagColorModule

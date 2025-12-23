@@ -2,6 +2,8 @@
 
 float4x4 g_worldMatrix;
 
+float Progress;
+
 /* Texture */
 #define NONE  0
 #define SHAPE_MASK 1

@@ -37,47 +37,8 @@ protected:
     void Update_BloomModule(_float dt);
     void Bind_Params();
 
-    MODE m_eMode = MODE::END;
-    string m_PassTag{};
-
     /*Default Params*/
-    _float4 m_vBaseColor{ 1.f,1.f,1.f,1.f };
-    _float m_fThreshold{};  //전체 진행도
-
-    EaseType m_eAlphaFadeEase = EaseType::None;
-    _float2 m_vAlphaFade{};
-    _float m_fAlpha{ 1.f };
-
-    EaseType m_eScaleEase = EaseType::None;
-    _float3 m_vStartScale{ 1.f,1.f,1.f };
-    _float3 m_vEndScale{ 1.f,1.f,1.f };
-
-    /*UV Animation*/
-    EaseType m_eUVEase = EaseType::None;
-    _float2 m_vUVSpeed{};
-    _float2 m_vStartUVOffset{};
-    _float2 m_vEndUVOffset{};
-    _float2 m_vCurrUVOffset{};
-
-    /*Sprite Aniamtion*/
-    _float m_fSpriteSpeed{};
-    _uint m_iCol{};
-    _uint m_iRow{};
-    _uint m_iMaxFrameIndex{};
-    _uint m_iCurrFrameIndex{};
-
-    /*Dissolve Params*/
-    EaseType m_eDissolveEase = EaseType::None;
-    _float m_fDissolveThreshold{};     //Dissolve 진행도
-    _float m_fDissolveStartProgress{}; //Dissolve가 시작될 전체 진행도
-
-    /*Noise Params*/
-
-    /*Distortion Params*/
-    _float m_fDistortionWeight{};
-
-    /*Bloom Params*/
-    _float m_fBloomIntensity{};
+    _float m_fProgress{};  //전체 진행도
 
     /*-----Modules-----*/
     TEXTURE_SLOT_MODULE m_TextureSlotModule{};

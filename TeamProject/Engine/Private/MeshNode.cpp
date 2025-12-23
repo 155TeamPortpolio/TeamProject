@@ -46,25 +46,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 
 	/* Set Param */
 	{
-		m_vBaseColor = pMeshNode->vBaseColor;
-
-		m_eAlphaFadeEase = static_cast<EaseType>(pMeshNode->AlphaFadeEase);
-		m_vAlphaFade = pMeshNode->vAlphaFade;
-
-		m_eScaleEase = static_cast<EaseType>(pMeshNode->ScaleEase);
-		m_vStartScale = pMeshNode->vStartScale;
-		m_vEndScale = pMeshNode->vEndScale;
-
-		m_eUVEase = static_cast<EaseType>(pMeshNode->UVEase);
-		m_vStartUVOffset = pMeshNode->vStartUVOffset;
-		m_vEndUVOffset = pMeshNode->vEndUVOffset;
-
-		m_iCol = pMeshNode->iCol;
-		m_iRow = pMeshNode->iRow;
-		m_iMaxFrameIndex = pMeshNode->iMaxFrameIndex;
-
-		m_eDissolveEase = static_cast<EaseType>(pMeshNode->DissolveEase);
-		m_fDissolveStartProgress = pMeshNode->fDissolveStartProgress;
+		
 	}
 
 	return S_OK;
@@ -128,6 +110,8 @@ void CMeshNode::Update(_float dt)
 		//pMaterialInstance->Set_Param("Threshold", { &m_fThreshold,"float",sizeof(_float) });
 		//pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
 		//pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
+
+		m_fProgress = m_fElpasedTime / m_fDuration;
 
 		Update_TextureSlotModule(dt);
 		Update_ColorModule(dt);
@@ -230,6 +214,8 @@ void CMeshNode::Update_BloomModule(_float dt)
 void CMeshNode::Bind_Params()
 {
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+	pMaterialInstance->Set_Param("Progress", { &m_fProgress,"float",sizeof(_float) });
 
 	/* Texture */
 	pMaterialInstance->Set_Param("SamplerMode", { &m_TextureSlotModule.iSamplerModeParam,"uint",sizeof(_uint)});
