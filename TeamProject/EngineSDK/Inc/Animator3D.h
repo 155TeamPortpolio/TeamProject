@@ -23,7 +23,7 @@ public:
         //루트본 관련
         _bool   bUseTransform = { true };
         _int    iMoveBoneIndex = { -1 };
-        _float3 fPrevAnimPos{};
+        _float3 vPrevAnimPos{};
 
         //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
@@ -101,6 +101,9 @@ public://애니매이터 데이터
     _int Get_NumLayer();
     //이벤트들 불러오는 함수
     const vector<EVENT_INST>& Get_EventBus() const;
+    //루트애니매이션 델타값
+    _vector Get_RootMotionDelta(_uint LayerIndex = 0);
+
     /*----- Setter -----*/
     
     //애니매이션 트랜스폼을 제거

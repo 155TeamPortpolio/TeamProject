@@ -283,6 +283,21 @@ const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
 	return m_EventBus;
 }
 
+_vector CAnimator3D::Get_RootMotionDelta(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return XMVectorZero(); 
+
+	auto& Layer = m_AnimLayers[LayerIndex];	
+	if (-1 == Layer.iMoveBoneIndex)
+		return XMVectorZero();
+
+	_float4x4 RootMat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+
+	_float3 fCurAnimPos = { RootMat._41, RootMat._42, RootMat._43 };
+
+	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&Layer.vPrevAnimPos));
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -418,7 +433,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	if (false == Layer.bUseTransform) {
 		if (-1 != Layer.iMoveBoneIndex) {
 			_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
-			Layer.fPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			//지금은 Transform만 가져오고 있지만 혹시 회전이나 크기가 필요하면 매트릭스 자체를 저장해도 무관
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
 			mat._41 = mat._42 = mat._43 = 0;
 		}
 	}
@@ -466,11 +482,10 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	}
 
 	//Eliminate Transform
-		//Eliminate Transform
 	if (false == Layer.bUseTransform) {
 		if (-1 != Layer.iMoveBoneIndex) {
 			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMoveBoneIndex];
-			Layer.fPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
 			mat._41 = mat._42 = mat._43 = 0;
 		}
 	}
