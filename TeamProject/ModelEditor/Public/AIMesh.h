@@ -1,6 +1,5 @@
 #pragma once
 #include "ModelEditor_Defines.h"
-#include "Assimps.h"
 #include "Mesh.h"
 
 NS_BEGIN(ModelEdit)
