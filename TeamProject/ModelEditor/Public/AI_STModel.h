@@ -1,7 +1,6 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "StaticModel.h"
-#include "Assimps.h"
 
 NS_BEGIN(Engine)
 class CModel;
@@ -32,7 +31,7 @@ private:
 private:
     HRESULT Release_Mesh();
 private:
-    string m_fileName = {};
+    string          m_fileName = {};
     _matrix                     m_PreTransform = {};
 
 public:

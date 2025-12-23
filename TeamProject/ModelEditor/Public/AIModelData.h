@@ -1,7 +1,6 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "ModelData.h"
-#include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
 class CAIModelData :
@@ -25,8 +24,6 @@ public:
 
 	vector<_uint> Get_MeshIndex_WithOutProxy();
 	
-	class CAIMesh* Get_AIMesh(_uint index);
-
 private:
 	vector<_uint> m_NotProxy;
 	vector<_uint> m_ProxyMarked;
@@ -35,7 +32,6 @@ private:
 	vector<_uint> m_LOD2Marked;
 	vector<_uint> m_LOD3Marked;
 	vector<_uint> m_EffMarked;
-	vector<CAIMesh*> m_AIMesh;
 public:
 	static CModelData* Create(MESH_TYPE _eType, const aiScene* pAIScene);
 	virtual void Free() override;
