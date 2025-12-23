@@ -423,6 +423,31 @@ void CCollider::Render_GUI()
 		ImGui::Text("Collision Layer: %d", ENUM(m_eGroup));
 		ImGui::Text("Collision Mask: %d", m_iCollisionMask);
 
+		// For MapTool
+		if (m_pStaticActor && !m_pAttachedRigidBody)
+		{
+			ImGui::Separator();
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "World Position");
+
+			_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
+			if (ImGui::DragFloat3("##WorldPos", &vWorldPos.x, 0.1f))
+			{
+				m_pOwnerTransform->Set_Pos(vWorldPos);
+
+				// StaticActor 즉시 동기화
+				_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
+				_vector vScale, vRot, vTrans;
+				XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
+				PxTransform pose(
+					PxVec3(vWorldPos.x, vWorldPos.y, vWorldPos.z),
+					PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot),
+						XMVectorGetZ(vRot), XMVectorGetW(vRot))
+				);
+				m_pStaticActor->setGlobalPose(pose);
+			}
+		}
+
 		ImGui::Separator();
 		ImGui::Text("Transform");
 

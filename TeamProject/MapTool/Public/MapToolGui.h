@@ -1,5 +1,6 @@
 #pragma once
 #include "BasePanel.h"
+#include "MapTool_Context.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -20,6 +21,7 @@ public:
 
 private:
 	void			RakeResources();
+	void			CheckCoolTime(_float dt);
 	void			KeyInput();
 	void			Compute_Ray();
 	void			Place_Object(PHYSICS_RAY_HIT* pRayHit);
@@ -32,7 +34,7 @@ private:
 	
 #ifdef _DEBUG
 private:
-	_bool			m_isAllDebugRender = { true };
+	//_bool			m_isAllDebugRender = { true };
 #endif // _DEBUG
 
 private:
@@ -40,7 +42,8 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	class CMapToolCore*		m_pMapToolCore = { nullptr };
 	class CSlotFieldGui*	m_pSlotFieldGui = { nullptr };
-	_int*					m_pVersion = { nullptr };
+	MAPTOOL_CONTEXT*		m_pMapToolContext = { nullptr };
+	//_int*					m_pVersion = { nullptr };
 
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};
@@ -56,9 +59,11 @@ private:
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
 	
 	/* For.Data */
-	//vector<string>	m_TagLayers;
-	//_int			m_iVersion = { 1 };
 	MapData_Header	m_Data = {};
+	//string			m_TagArea = {};
+
+	_float2			m_vShowSaveFinish = {};
+	_bool			m_isShowSaveFinish = { false };
 
 public:
 	static CMapToolGui* Create(GUI_CONTEXT* pContext);
