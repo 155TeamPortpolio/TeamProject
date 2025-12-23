@@ -161,14 +161,15 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 	Layer.iClipIndex = -1;
 	Layer.fPrevTrackPosition = 0.f;
 	Layer.fCurrentTrackPosition = 0.f;
+	Layer.ePlayEaseType = { EaseType::None };
 	Layer.bLoop = false;
 	Layer.bisFinished = true;
-
+	
 	Layer.bBlending = { false };
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
-	Layer.eBlendState = { BLEND_STATE::NONE };
+	Layer.eBlendEaseType = { EaseType::None };
 	
 	Matrix identityMat = XMMatrixIdentity();
 
@@ -200,7 +201,7 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 	if (!isExistClip(Layer.iClipIndex))
 		return 0.f;
 
-	if (Layer.eBlendState != BLEND_STATE::NONE)
+	if (Layer.bBlending)
 		return false;
 
 	if (Layer.bLoop)
@@ -296,6 +297,24 @@ _vector CAnimator3D::Get_RootMotionDelta(_uint LayerIndex)
 	_float3 fCurAnimPos = { RootMat._41, RootMat._42, RootMat._43 };
 
 	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&Layer.vPrevAnimPos));
+}
+
+_float CAnimator3D::Get_EaseDuration(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return 0.f;
+
+	auto& Layer = m_AnimLayers[LayerIndex];
+	if (EaseType::None == Layer.ePlayEaseType)
+		return 0.f;
+
+	return Layer.fEaseElapsed / Layer.fEaseDuration;
+}
+
+_float CAnimator3D::Get_AnimSpeed(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return 0.f;
+
+	return m_AnimLayers[LayerIndex].fAnimSpeed;
 }
 
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
@@ -423,11 +442,27 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update Animation
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-	_float AnimSpeed = dt * Layer.fAnimSpeed;
+	//Calc Animation Speed;
+	_float AnimSpeed = Layer.fAnimSpeed;
+	if (EaseType::None != Layer.ePlayEaseType) {
+		Layer.fEaseElapsed += dt;
 
+		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+		if (1.f <= t) {
+			Layer.fAnimSpeed = AnimSpeed;
+			Layer.ePlayEaseType = EaseType::None;
+		}
+	}
+
+	_float playSpeed = dt * AnimSpeed;
+	
+	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+		playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 	
 	//Eliminate Transform
 	if (false == Layer.bUseTransform) {
@@ -447,20 +482,39 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-	_float AnimSpeed = dt * Layer.fAnimSpeed;
+	//Calc Animation Speed;
+	_float AnimSpeed = Layer.fAnimSpeed;
+	if (EaseType::None != Layer.ePlayEaseType) {
+		Layer.fEaseElapsed += dt;
 
-	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+		if (1.f <= t) {
+			Layer.fAnimSpeed = AnimSpeed;
+			Layer.ePlayEaseType = EaseType::None;
+		}
+	}
+
+	_float playSpeed = dt * AnimSpeed;
+
+	//Update TrackPos
+	if (Layer.bKeepTrackPos) {
+		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+			playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+	}
 
 	Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 		Layer.BlendMatrices, Layer.fBlendTrackPosition,
-		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+		playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 
+	//Animation Blend
 	Layer.fBlendElapsed += dt;
+	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
+		Layer.fBlendElapsed / Layer.fBlendDuration);
 
-	//이걸 어떤블랜드냐에 따라 나눠도 될듯?
-	_float fBlendRate = Layer.fBlendElapsed / Layer.fBlendDuration;
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
 		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
@@ -738,13 +792,17 @@ HRESULT SetAnimBuild::Apply()
 		return E_FAIL;
 
 	m_pOwner->Reset_Layer(m_iLayerIndex);
-	CAnimator3D::ANIM_LAYER& Layer =
-		m_pOwner->m_AnimLayers[m_iLayerIndex];
+	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+
+	Layer.ePlayEaseType = m_ePlayEaseType;
+	Layer.fTargetSpeed = m_fTargetSpeed;
+	Layer.fEaseElapsed = 0.f;
+	Layer.fEaseDuration = m_fEaseDuration;
 
 	Layer.bisFinished = false;
 
@@ -766,6 +824,16 @@ SetAnimBuild& SetAnimBuild::Speed(_float fSpeed)
 	return *this;
 }
 
+SetAnimBuild& SetAnimBuild::TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType)
+{
+	m_fSpeed = fStartSpeed;
+	m_fTargetSpeed = fTargetSpeed;
+	m_fEaseDuration = fDuration;
+	m_ePlayEaseType = eEaseType;
+
+	return *this;
+}
+
 //---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
@@ -774,15 +842,21 @@ HRESULT ChangeAnimBuild::Apply()
 
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
-	Layer.bBlending = true;
-	Layer.iNextClipIndex = m_iClipIndex;
+	Layer.bLoop = m_bLoop;
+	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.ePlayEaseType = m_ePlayEaseType;
+	Layer.fTargetSpeed = m_fTargetSpeed;
+	Layer.fEaseElapsed = 0.f;
+	Layer.fEaseDuration = m_fEaseDuration;
+
+	Layer.bBlending = true;
+	Layer.bKeepTrackPos = m_bKeepTrackPos;
+	Layer.iNextClipIndex = m_iClipIndex;
 	Layer.fBlendTrackPosition = 0.f;
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = m_fBlendDuration;
-	
-	Layer.bLoop = m_bLoop;
-	Layer.fAnimSpeed = m_fSpeed;
+	Layer.eBlendEaseType = m_eBlendEaseType;
 
 	Layer.bisFinished = false;
 
@@ -790,10 +864,21 @@ HRESULT ChangeAnimBuild::Apply()
 	return S_OK;
 }
 
-ChangeAnimBuild& ChangeAnimBuild::BlendState(_float fDuration, BLEND_STATE eBlendState)
+ChangeAnimBuild& ChangeAnimBuild::BlendDuration(_float fDuration)
 {
 	m_fBlendDuration = fDuration;
-	m_eBlendState = eBlendState;
+	return *this;
+}
+
+ChangeAnimBuild& ChangeAnimBuild::BlendWeightEaseType(EaseType eEaseType)
+{
+	m_eBlendEaseType = eEaseType;
+	return *this;
+}
+
+ChangeAnimBuild& ChangeAnimBuild::KeepTrackPos(_bool bKeepTrackPos)
+{
+	m_bKeepTrackPos = bKeepTrackPos;
 	return *this;
 }
 
