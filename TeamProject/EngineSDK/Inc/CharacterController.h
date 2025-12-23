@@ -61,6 +61,7 @@ public:
     void            Set_VerticalVelocity(_float fVelocity);
     void            Set_MaxSpeed(_float fMaxSpeed);
     void            Set_GravityEnabled(_bool bEnabled);
+    void            Set_FootPosition(_vector3 vFootPos);
     _vector         Get_FootPosition();
     void            Set_ContactOffset(_float fOffset);
     void            Set_RestOffset(_float fOffset);
@@ -93,6 +94,7 @@ private:
     _float                   m_fMaxSpeed = { 0.0f };
     _float                   m_fGravity = { -9.81f };
     _float                   m_fContactOffset = 0.001f;
+    _float                   m_fFootOffset = { 0.f };
     _float                   m_fRestOffset = 0.0f;
     _float                   m_fBoundingMinY = 0.f;
     _bool                    m_bShowDebugRay = { false };

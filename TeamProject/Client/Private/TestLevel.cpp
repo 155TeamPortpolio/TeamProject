@@ -25,6 +25,9 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 
+/* Character */
+#include "Miyabi.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -87,11 +90,11 @@ HRESULT CTestLevel::Awake()
 	//Safe_Release(pMapLoader);
 
 	//==============TestModel==========================
-	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-		.CharacterController({})
-		.Build("Test_Model");
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
 
-	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
 	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
@@ -116,14 +119,29 @@ HRESULT CTestLevel::Awake()
 			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 		}
 	}
+
+
+	/* Miyabi */
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	CCT_DESC miyabiCCT;
+	miyabiCCT.bAutoFit = false;
+	miyabiCCT.fHeight = 0.36f;
+	miyabiCCT.fRadius = 0.64f;
+	miyabiCCT.fBoundingMinY = -0.88f;
+	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
+	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.CharacterController(miyabiCCT)
+		.Build("Miyabi");
+	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
+
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
-	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("Orbit_Cam");
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
+	//auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+	//	.Camera(kAspect)
+	//	.Position({ 0.f, 2.f, -5.f })
+	//	.Build("Orbit_Cam");
+	//static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
 
 	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
 		.Camera(kAspect)
@@ -135,7 +153,7 @@ HRESULT CTestLevel::Awake()
 		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
 
-	objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
+	//objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(freeCam,     {"Test_Level", "Camera_Layer" });
 
@@ -146,6 +164,7 @@ HRESULT CTestLevel::Awake()
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 
 	Ready_Camera();
+
 	return S_OK;
 }
 

@@ -38,6 +38,8 @@ public:
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
     void   Set_Jump(_bool bJump) { m_bIsJump = bJump; }
 
+    CAnimator3D*          Get_Animator() { return m_pAnimator; }
+    CCharacterController* Get_CCT() { return m_pCCT; }
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
