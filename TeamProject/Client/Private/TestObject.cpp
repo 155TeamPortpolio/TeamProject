@@ -11,10 +11,14 @@
 
 #include "RigidBody.h"
 
+#include "StateMachine.h"
 #include "TestState_Idle.h"
 #include "TestState_Walk.h"
 #include "TestState_Jump.h"
 #include "TestState_Dash.h"
+
+#include "AudioSource.h"
+#include "SoundData.h"
 
 #define CAM CGameInstance::GetInstance()->Get_CameraMgr()
 
@@ -51,6 +55,7 @@ HRESULT CTestObject::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Add_Component<CAudioSource>();
 
 	return S_OK;
 }
@@ -67,48 +72,54 @@ HRESULT CTestObject::Initialize(INIT_DESC* pArg)
 
 HRESULT CTestObject::Initialize_State()
 {
-	m_pStateMachine = new CTestStateMachine();
+	m_pStateMachine = CTestStateMachine::Create();
 
 	// States 등록
-	m_pStateMachine->Register_State("Idle", new CTestState_Idle());
-	m_pStateMachine->Register_State("Walk", new CTestState_Walk());
-	m_pStateMachine->Register_State("Jump", new CTestState_Jump());
-	m_pStateMachine->Register_State("Dash", new CTestState_Dash());
+	m_pStateMachine->Register_State("Idle", CTestState_Idle::Create());
+	m_pStateMachine->Register_State("Walk", CTestState_Walk::Create());
+	m_pStateMachine->Register_State("Jump", CTestState_Jump::Create());
+	m_pStateMachine->Register_State("Dash", CTestState_Dash::Create());
 
 	// Transition 설정
 	// Idle <-> Walk
 	m_pStateMachine->Register_Transition("Idle", "Walk",
-		CONDITION_BOOL_TRUE, "IsMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsMoving");
 	m_pStateMachine->Register_Transition("Walk", "Idle",
-		CONDITION_BOOL_FALSE, "IsMoving");
+		CTestStateMachine::CONDITION_BOOL_FALSE, "IsMoving");
 
 	// AnyState -> Jump (점프 키 입력)
 	m_pStateMachine->Register_AnyStateTransition("Jump",
-		CONDITION_TRIGGER, "Jump");
+		CTestStateMachine::CONDITION_TRIGGER, "Jump");
 
 	// AnyState -> Dash (Shift 입력)
 	m_pStateMachine->Register_AnyStateTransition("Dash",
-		CONDITION_TRIGGER, "Dash");
+		CTestStateMachine::CONDITION_TRIGGER, "Dash");
 
 	// Jump -> Walk (착지 + 이동 중)
 	m_pStateMachine->Register_Transition("Jump", "Walk",
-		CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
 
 	// Jump -> Idle (착지 + 정지)
 	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
 
 	// Dash -> Walk (대쉬 완료 + 이동 중)  
 	m_pStateMachine->Register_Transition("Dash", "Walk",
-		CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
 
 	// Dash -> Idle (대쉬 완료 + 정지) 
 	m_pStateMachine->Register_Transition("Dash", "Idle",
-		CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
 
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
+	
+	// 테스트 오디오 추가 (이벤트 감지용) add는 init에서
+	CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath("Jump.mp3", "../../DemoResource/Sound/Jump.mp3");
+	Get_Component<CAudioSource>()->Add_Slot("Test_Level", "Jump.mp3", "Jump", false, SOUND_GROUP::SFX);
+	Get_Component<CAudioSource>()->Set_SlotVolume("Jump", 0.04f);
+	Get_Component<CAudioSource>()->Set_3DAttribute("Jump", false);
 
 	return S_OK;
 }
@@ -126,6 +137,23 @@ void CTestObject::Awake()
 
 void CTestObject::Priority_Update(_float dt)
 {
+	//이벤트 버스 테스트용 예시
+	for (const auto& Event : Get_Component<CAnimator3D>()->Get_EventBus())
+	{
+		switch (Event.Type)
+		{
+		case Engine::CLIP_EVENT_TYPE::NOTIFY:
+			break;
+		case Engine::CLIP_EVENT_TYPE::EFFECT:
+			break;
+		case Engine::CLIP_EVENT_TYPE::SOUND:
+			if(Event.Tag == "Jump")
+				Get_Component<CAudioSource>()->Play("Jump");
+			break;
+		default:
+			break;
+		}	
+	}
 }
 
 void CTestObject::Update(_float dt)
@@ -133,10 +161,10 @@ void CTestObject::Update(_float dt)
 	// Process Input
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	m_vInputDir = _vector3(0.f, 0.f, 0.f);
-	if (input->Key_Down('W')) m_vInputDir.z += 1.f;
-	if (input->Key_Down('S')) m_vInputDir.z -= 1.f;
-	if (input->Key_Down('D')) m_vInputDir.x += 1.f;
-	if (input->Key_Down('A')) m_vInputDir.x -= 1.f;
+	if (input->Key_Down(VK_UP)) m_vInputDir.z += 1.f;
+	if (input->Key_Down(VK_DOWN)) m_vInputDir.z -= 1.f;
+	if (input->Key_Down(VK_RIGHT)) m_vInputDir.x += 1.f;
+	if (input->Key_Down(VK_LEFT)) m_vInputDir.x -= 1.f;
 
 	m_bJump = input->Key_Down('J');
 	_bool bDash = input->Key_Down(VK_SHIFT);
@@ -214,6 +242,15 @@ void CTestObject::OnCollisionExit()
 void CTestObject::Render_GUI()
 {
 	__super::Render_GUI();
+
+	// StateMachine 디버깅 정보
+	if (m_pStateMachine)
+	{
+		ImGui::Separator();
+		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+	}
+
 	if (ImGui::Button("Add")) {
 		CGameObject* DemoModel = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
 			.Position({ 0,0,0 })
@@ -223,13 +260,7 @@ void CTestObject::Render_GUI()
 	_bool isLayer = Get_Layer();
 	ImGui::Checkbox("InLayer",&isLayer);
 
-	// StateMachine 디버깅 정보
-	if (m_pStateMachine)
-	{
-		ImGui::Separator();
-		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
-		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
-	}
+
 }
 
 void CTestObject::Rotate_Horizontal(const _vector3& vDirection)
@@ -281,6 +312,6 @@ CGameObject* CTestObject::Clone(INIT_DESC* pArg)
 
 void CTestObject::Free()
 {
-	Safe_Delete(m_pStateMachine);
+	Safe_Release(m_pStateMachine);
 	__super::Free();
 }

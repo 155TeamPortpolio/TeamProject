@@ -192,21 +192,9 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::Update(_float dt)
 {
-	if (m_bCooked)
-		return;
-
-	if (m_pStaticActor && !m_pAttachedRigidBody)
+	if (m_bMapTool)
 	{
-		_vector3 vPos = m_pOwnerTransform->Get_WorldPos();
-		_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
-		_vector vScale, vRot, vTrans;
-		XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
-
-		PxTransform pose(
-			PxVec3(vPos.x, vPos.y, vPos.z),
-			PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot), XMVectorGetZ(vRot), XMVectorGetW(vRot))
-		);
-		m_pStaticActor->setGlobalPose(pose);
+		Sync_Transform();
 	}
 }
 
@@ -396,6 +384,22 @@ HRESULT CCollider::AutoFit(COLLIDER_DESC* pDesc)
 	return S_OK;
 }
 
+void CCollider::Sync_Transform()
+{
+	if (!m_pStaticActor || m_pAttachedRigidBody)
+		return;
+
+	_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
+	_vector vScale, vRot, vTrans;
+	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+	PxTransform pose(
+		PxVec3(XMVectorGetX(vTrans), XMVectorGetY(vTrans), XMVectorGetZ(vTrans)),
+		PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot),
+			XMVectorGetZ(vRot), XMVectorGetW(vRot))
+	);
+	m_pStaticActor->setGlobalPose(pose);
+}
+
 void CCollider::Render_GUI()
 {
 	if (!Get_CompActive()) return;
@@ -414,6 +418,12 @@ void CCollider::Render_GUI()
 		{
 			Set_Trigger(bTrigger);
 		}
+
+		if (m_pStaticActor && !m_pAttachedRigidBody)
+		{
+			ImGui::Checkbox("MapTool Mode", &m_bMapTool);
+		}
+
 #ifdef _DEBUG
 		ImGui::Checkbox("Is Render", &m_bDebugRender);
 #endif

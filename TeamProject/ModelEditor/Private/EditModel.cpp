@@ -72,7 +72,8 @@ void CEditModel::Render_GUI()
 
 	if (ImGui::Button("Model Load")) {
 		string path = Helper::OpenFile_Dialogue();
-		Load_AIScene(path);
+		if(!path.empty())
+			Load_AIScene(path);
 	}
 
 	ImGui::SameLine();
@@ -84,7 +85,7 @@ void CEditModel::Render_GUI()
 	ImGui::EndChild();
 
 	ImGui::SeparatorText("Object State");
-	ImGui::BeginChild("##ObjectState", ImVec2{0, childHeight}, true);
+	ImGui::BeginChild("##ObjectState", ImVec2{0, textLineHeight *2}, true);
 
 	bool alive = Is_Alive();
 	if (ImGui::Checkbox("Alive", &alive))
@@ -93,7 +94,7 @@ void CEditModel::Render_GUI()
 	ImGui::EndChild();
 
 	ImGui::SeparatorText("Position Reset");
-	ImGui::BeginChild("##Reset", ImVec2{0, childHeight}, true);
+	ImGui::BeginChild("##Reset", ImVec2{0,  textLineHeight * 2 }, true);
 
 	if (ImGui::Button("Reset")) {
 		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
@@ -101,7 +102,19 @@ void CEditModel::Render_GUI()
 
 	ImGui::EndChild();
 
-	__super::Render_GUI();
+	Get_Component<CTransform>()->Render_GUI();
+	if (CAI_SKModel* pSkModel = Get_Component<CAI_SKModel>()) {
+		pSkModel->Render_GUI();
+	}
+	if (CAI_STModel* pStModel = Get_Component<CAI_STModel>()) {
+		pStModel->Render_GUI();
+	}
+	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) {
+		pMaterial->Render_GUI();
+	}
+	if (CAnimator3D* pAnim = Get_Component<CAnimator3D>()) {
+		pAnim->Render_GUI();
+	}
 }
 
 HRESULT CEditModel::Load_AIScene(const string& filePath)
@@ -160,7 +173,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
-		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag  | aiProcess_PreTransformVertices);
+		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag| aiProcess_PreTransformVertices);
 		if (!m_pAIScene)
 			return E_FAIL;
 		hasBones = false;
@@ -177,6 +190,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	CAI_Material* pMaterial = CAI_Material::Create();
 	pMaterial->Set_Owner(this);
 	m_Components.emplace(type_index(typeid(CMaterial)), pMaterial);
+	m_Components.emplace(type_index(typeid(CAI_Material)), pMaterial);
+	Safe_AddRef(pMaterial);
 
 	_uint NumMaterial = m_pAIScene->mNumMaterials;
 	pMaterial->Load_Material(NumMaterial, m_pAIScene->mMaterials, filePath);
@@ -186,6 +201,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		CAI_SKModel* skeletal = CAI_SKModel::Create();
 		m_Components.emplace(type_index(typeid(CSkeletalModel)), skeletal);
 		m_Components.emplace(type_index(typeid(CModel)), skeletal);
+		m_Components.emplace(type_index(typeid(CAI_SKModel)), skeletal);
+		Safe_AddRef(skeletal);
 		Safe_AddRef(skeletal);
 
 		skeletal->Load_AIModel(m_pAIScene, fileName);
@@ -204,6 +221,8 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		CAI_STModel* staticModel = CAI_STModel::Create();
 		m_Components.emplace(type_index(typeid(CStaticModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
+		m_Components.emplace(type_index(typeid(CAI_STModel)), staticModel);
+		Safe_AddRef(staticModel);
 		Safe_AddRef(staticModel);
 
 		staticModel->Load_AIModel(m_pAIScene, fileName);
@@ -228,7 +247,7 @@ HRESULT CEditModel::Save_AIScene()
 
 		if (m_pAIScene->HasAnimations()) {
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
-			hr = pAnimator3D->Save_Animation(SavePath);
+			hr = pAnimator3D->Save_Animation(SavePath, Get_WorldMatrix());
 		}
 	}
 	else {

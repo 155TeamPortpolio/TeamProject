@@ -139,19 +139,19 @@ HRESULT CUITool_Level::Ready_UIObjects()
 {
 	IProtoService* pProto = m_pGameInstance->Get_PrototypeMgr();
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CCanvasPanel::m_strTypeTag, CCanvasPanel::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ImageUI", CImageUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CImageUI::m_strTypeTag, CImageUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_TextUI", CTextUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CTextUI::m_strTypeTag, CTextUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_ButtonUI", CButtonUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CButtonUI::m_strTypeTag, CButtonUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_SpriteAnimationUI", CSpriteAnimationUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CSpriteAnimationUI::m_strTypeTag, CSpriteAnimationUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_UVAnimationUI", CUVAnimationUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CUVAnimationUI::m_strTypeTag, CUVAnimationUI::Create());
 
-	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_GaugeUI", CGaugeUI::Create());
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CGaugeUI::m_strTypeTag, CGaugeUI::Create());
 
 	return S_OK;
 }

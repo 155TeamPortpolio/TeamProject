@@ -16,7 +16,7 @@ CAIMesh::CAIMesh(const string& ModelKey)
 
 HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISkeleton* _pSkeleton)
 {
-	m_VIKey = _pAIMesh->mName.C_Str();\
+	m_VIKey = _pAIMesh->mName.C_Str(); 
 	m_MaterialIndex = _pAIMesh->mMaterialIndex;
 
 	m_iVertexBufferCount = 1;
@@ -34,6 +34,11 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
 	Safe_AddRef(m_pSkeleton);
 
 #pragma region VERTEX_BUFFER
+	if (_eMeshType == MESH_TYPE::NONANIM && m_pSkeleton)
+	{
+		BoneIndex = m_pSkeleton->Find_BoneIndexByName(m_VIKey);
+		isRigid = (BoneIndex >= 0);
+	}
 
 	HRESULT hr = MESH_TYPE::NONANIM == _eMeshType ?
 		Ready_VertexBuffer_For_NonAnim(_pAIMesh) : Ready_VertexBuffer_For_Anim(_pAIMesh, _pSkeleton);
@@ -177,12 +182,15 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 
 		string BoneName = pAIBone->mName.C_Str();
 		BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+
+		if (BoneIndex < 0) continue; 
 		m_BoneIndices.push_back(BoneIndex);
 
 		_float4x4 OffsetMatrix = {};
 		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
 		XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
 		_pSkeleton->Set_Offset(BoneIndex, OffsetMatrix);
+		m_MeshOffset.emplace((_uint)BoneIndex, OffsetMatrix);
 
 		for (size_t j = 0; j < pAIBone->mNumWeights; j++)
 		{
@@ -239,11 +247,19 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	infoHeader.VerticesCount = m_iVerticesCount;
 	strcpy_s(infoHeader.MeshName, m_VIKey.c_str());
 	infoHeader.MaterialIndex = m_MaterialIndex;
+	infoHeader.offsetCount = m_MeshOffset.size();
 	ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(MESH_INFO_HEADER));
 
 	if (m_iVertexStride == sizeof(VTXSKINMESH)) {
 		for (VTXSKINMESH& vertex : m_SkinMeshes) {
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXSKINMESH));
+		}
+		for (auto& pair : m_MeshOffset)
+		{
+			MESH_OFFSET offset;
+			offset.BoneIndex = pair.first;
+			offset.offsetMat = pair.second;
+			ofs.write(reinterpret_cast<const char*>(&offset), sizeof(MESH_OFFSET));
 		}
 	}
 
@@ -262,15 +278,15 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 		ofs.write(reinterpret_cast<const char*>(&indices), sizeof(_uint));
 }
 
+
 CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* _pSkeleton)
 {
 	CAIMesh* pInstance = new CAIMesh();
-
 	if (FAILED(pInstance->Initialize(_pAIMesh, _eType, _pSkeleton))) {
 		MSG_BOX("Create Failed : Engine | CAIMesh");
+		Safe_Release(pInstance);
 		return nullptr;
 	}
-
 	return pInstance;
 }
 

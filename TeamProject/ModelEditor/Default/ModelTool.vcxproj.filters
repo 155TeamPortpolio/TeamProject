@@ -34,18 +34,6 @@
     <Filter Include="04. AIResource">
       <UniqueIdentifier>{77824a55-e323-426b-a636-0968dce14e96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. AIResource\AIModelData">
-      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AIMesh">
-      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AISkeleton">
-      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
-      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. AIResource\AIAnimation">
       <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
     </Filter>
@@ -75,6 +63,39 @@
     </Filter>
     <Filter Include="02. Obj\02. EditModel">
       <UniqueIdentifier>{46cfa70e-40ac-4495-9782-44f8e8452150}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Obj\03. RayCaster">
+      <UniqueIdentifier>{746ec55a-8bbf-445c-8357-8d96b824889b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. Editor_Manager">
+      <UniqueIdentifier>{43472c23-b70d-4dd3-8485-0bc8ba5ef8d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Obj\00. CamObject\DelCam">
+      <UniqueIdentifier>{2734be5a-e955-4412-9539-5bdaf0dc039c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96. ModelHelper">
+      <UniqueIdentifier>{2278d253-cd1b-48fa-ae99-f82f700489e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\ModelEdit">
+      <UniqueIdentifier>{7eec85e7-d5b3-4917-bb99-8439d1cd1e1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\MapParse">
+      <UniqueIdentifier>{9739d66a-c684-4348-80a2-dd312e1add60}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. EditorPanel">
+      <UniqueIdentifier>{6371916e-51ec-4ebf-b74c-a59bce12c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData">
+      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AIMesh">
+      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton">
+      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
+      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,9 +129,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\pch.h">
       <Filter>99. Defines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ModelEditLevel.h">
-      <Filter>01. Level</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ModelEditor_Defines.h">
       <Filter>99. Defines</Filter>
@@ -193,7 +211,6 @@
     <ClInclude Include="..\public\AIChannel.h">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\public\CamObject.h">
       <Filter>02. Obj\00. CamObject</Filter>
     </ClInclude>
@@ -202,6 +219,30 @@
     </ClInclude>
     <ClInclude Include="..\Public\EditModel.h">
       <Filter>02. Obj\02. EditModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RayCaster.h">
+      <Filter>02. Obj\03. RayCaster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditorSystem.h">
+      <Filter>05. Editor_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditCamera.h">
+      <Filter>02. Obj\00. CamObject\DelCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapParseLevel.h">
+      <Filter>01. Level\MapParse</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelEditLevel.h">
+      <Filter>01. Level\ModelEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ModelHelper.h">
+      <Filter>96. ModelHelper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EditorPanel.h">
+      <Filter>06. EditorPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
+      <Filter>97. GUIInc</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -213,9 +254,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\pch.cpp">
       <Filter>99. Defines</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ModelEditLevel.cpp">
-      <Filter>01. Level</Filter>
     </ClCompile>
     <ClCompile Include="..\private\AI_SKModel.cpp">
       <Filter>03. Component\AIModel\SK_Model</Filter>
@@ -286,7 +324,6 @@
     <ClCompile Include="..\private\AIChannel.cpp">
       <Filter>04. AIResource\AIAnimation\AIAnimationClip\AIChannel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\private\CamObject.cpp">
       <Filter>02. Obj\00. CamObject</Filter>
     </ClCompile>
@@ -295,6 +332,30 @@
     </ClCompile>
     <ClCompile Include="..\Private\EditModel.cpp">
       <Filter>02. Obj\02. EditModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RayCaster.cpp">
+      <Filter>02. Obj\03. RayCaster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditorSystem.cpp">
+      <Filter>05. Editor_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditCamera.cpp">
+      <Filter>02. Obj\00. CamObject\DelCam</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapParseLevel.cpp">
+      <Filter>01. Level\MapParse</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelEditLevel.cpp">
+      <Filter>01. Level\ModelEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ModelHelper.cpp">
+      <Filter>96. ModelHelper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EditorPanel.cpp">
+      <Filter>06. EditorPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <Filter>97. GUIInc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

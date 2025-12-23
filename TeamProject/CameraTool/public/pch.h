@@ -12,8 +12,22 @@
 #include "GameObject.h"
 #include "Camera.h"
 #include "Light.h"
-
 #include "CamObj.h"
+#include "CameraMgr.h"
+#include "InputMgr.h"
+#include "IInputService.h"
+#include "PrototypeMgr.h"
+#include "GameInstance.h"
 
 #include "Helper_Func.h"
 #include "Engine_Math.h"
+
+#define GAME  CGameInstance::GetInstance()
+#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
+#define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
+#define KEY   CGameInstance::GetInstance()->Get_InputDev();
+#define PROTO CGameInstance::GetInstance()->Get_PrototypeMgr()
+#define GUI   CGameInstance::GetInstance()->Get_GUISystem()
+#define RES   CGameInstance::GetInstance()->Get_ResourceMgr()
+
+namespace fs = filesystem;

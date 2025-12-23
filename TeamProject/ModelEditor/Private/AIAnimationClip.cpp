@@ -1,4 +1,5 @@
 #include "AIAnimationClip.h"
+#include "AIModelData.h"
 #include "AIChannel.h"
 
 CAIAnimationClip::CAIAnimationClip()
@@ -20,10 +21,24 @@ HRESULT CAIAnimationClip::Initialize(const aiAnimation* pAIAnimation, CAIModelDa
 	}
 	m_iNumChannels = m_Channels.size();
 
+	_int lowestBone = INT_MAX;
+	_int RootChan = -1;
+	for (_uint i = 0; i < m_iNumChannels; i++)
+	{
+		_int iBoneIndex = pAIModelData->Find_BoneIndexByName(m_Channels[i]->Get_Name());
+		lowestBone = min(lowestBone, iBoneIndex);
+
+		if (lowestBone == iBoneIndex)
+			RootChan = i;
+	}
+
+	if(-1 != RootChan)
+		dynamic_cast<CAIChannel*>(m_Channels[RootChan])->Set_Root();
+
 	return S_OK;
 }
 
-void CAIAnimationClip::Save_File(ofstream& ofs)
+void CAIAnimationClip::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
 {
 	ANIMATION_CLIP_HEADER tClipHeader{};
 	strcpy_s(tClipHeader.ClipName, sizeof(tClipHeader.ClipName), m_ClipName.c_str());
@@ -34,7 +49,7 @@ void CAIAnimationClip::Save_File(ofstream& ofs)
 	ofs.write(reinterpret_cast<const char*>(&tClipHeader), sizeof(tClipHeader));
 
 	for (_uint i = 0; i < m_iNumChannels; i++) {
-		static_cast<CAIChannel*>(m_Channels[i])->Save_File(ofs);
+		static_cast<CAIChannel*>(m_Channels[i])->Save_File(ofs, WorldMatrix);
 	}
 }
 

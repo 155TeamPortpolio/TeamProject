@@ -129,6 +129,8 @@ protected:
 
 	_bool m_isClickable = {};
 
+	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+
 public:
 	virtual void Free() override;
 };

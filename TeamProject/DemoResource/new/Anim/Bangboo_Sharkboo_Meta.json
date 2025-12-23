@@ -5,7 +5,13 @@
   },
   {
     "ClipTag": "Bangboo_Sharkboo_Ani_Happy01",
-    "Events": []
+    "Events": [
+      {
+        "EventTime": 3.333333730697632,
+        "EventType": "Sound",
+        "EventTag": "Jump"
+      }
+    ]
   },
   {
     "ClipTag": "Bangboo_Sharkboo_Ani_Idle",
