@@ -94,49 +94,48 @@ void CCanvasPanel::Render_GUI_Create()
     ImGui::SeparatorText("Create");
 
     _bool isCreateChild = {};
-    string strProtoTag = "Proto_GameObject_";
-    string strInstanceKey;
+    string strType = {};
+
+    if (ImGui::Button("Create Canvas"))
+    {
+        isCreateChild = true;
+        strType = CCanvasPanel::m_strTypeTag;
+    }
 
     if (ImGui::Button("Create Image"))
     {
         isCreateChild = true;
-        strProtoTag += CImageUI::m_strTypeTag;
-        strInstanceKey = CImageUI::m_strTypeTag + to_string(CImageUI::m_iCount);
+        strType = CImageUI::m_strTypeTag;
     }
 
     if (ImGui::Button("Create Text"))
     {
         isCreateChild = true;
-        strProtoTag += CTextUI::m_strTypeTag;
-        strInstanceKey = CTextUI::m_strTypeTag + to_string(CTextUI::m_iCount);
+        strType = CTextUI::m_strTypeTag;
     }
 
     if (ImGui::Button("Create Button"))
     {
         isCreateChild = true;
-        strProtoTag += CButtonUI::m_strTypeTag;
-        strInstanceKey = CButtonUI::m_strTypeTag + to_string(CButtonUI::m_iCount);
+        strType = CButtonUI::m_strTypeTag;
     }
 
     if (ImGui::Button("Create SpriteAnimation"))
     {
         isCreateChild = true;
-        strProtoTag += CSpriteAnimationUI::m_strTypeTag;
-        strInstanceKey = CSpriteAnimationUI::m_strTypeTag + to_string(CSpriteAnimationUI::m_iCount);
+        strType = CSpriteAnimationUI::m_strTypeTag;
     }
 
     if (ImGui::Button("Create UVAnimationUI"))
     {
         isCreateChild = true;
-        strProtoTag += CUVAnimationUI::m_strTypeTag;
-        strInstanceKey = CUVAnimationUI::m_strTypeTag + to_string(CUVAnimationUI::m_iCount);
+        strType = CUVAnimationUI::m_strTypeTag;
     }
 
     if (ImGui::Button("Create Gauge"))
     {
         isCreateChild = true;
-        strProtoTag += CGaugeUI::m_strTypeTag;
-        strInstanceKey = CGaugeUI::m_strTypeTag + to_string(CGaugeUI::m_iCount);
+        strType = CGaugeUI::m_strTypeTag;
     }
 
     // 자식 생성
@@ -144,14 +143,13 @@ void CCanvasPanel::Render_GUI_Create()
     {
         string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, strProtoTag })       // UI Object 생성
+        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType})       // UI Object 생성
             .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
-            .Build(strInstanceKey);
+            .Build(strType);
 
         if (!pChild)
             return;
 
-        //CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
         Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
     }
 }
