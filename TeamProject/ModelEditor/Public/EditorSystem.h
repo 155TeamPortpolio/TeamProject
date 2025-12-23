@@ -11,13 +11,6 @@ NS_BEGIN(ModelEdit)
 class CEditorSystem :
     public CBase
 {
-    struct SelectedMesh
-    {
-        _float4x4* pWorldMatrix = { nullptr };
-        CModel* pModel = { nullptr };
-        CMaterial* pMaterial = { nullptr };
-    };
-
     DECLARE_SINGLETON(CEditorSystem);
 private:
     explicit CEditorSystem();
@@ -28,18 +21,16 @@ public:
     void Update();
 
 public:
-    void Load_MaterialMaps(const string& mapDirectory);
-    HRESULT Read_MaterialMaps();
-    HRESULT Read_MaterialMapsCache(const string& mapDirectory);
-    void Load_TextureMaps(const string& mapDirectory);
+    _bool CheckNamingRule(string MeshName);
+    unordered_set<string> Get_NamingRules();
+    unordered_set<string> Get_MappingRules();
+   void Push_NamingRules(string MeshName);
+   void Push_MappingRules(string MeshName);
+   void Pop_NamingRules(string MeshName);
+   void Pop_MappingRules(string MeshName);
 
 private:
-    class CRayCaster* m_pRayCast = { nullptr };
-    CLayer* m_pModelLayer = { nullptr };
-    SelectedMesh mesh = {};
-
-    vector<string> m_Directorys;
-    unordered_map<string, MaterialTexNames> m_matTexNames;
+    unordered_set<string> m_CheckNameRules;
 
 public:
     virtual void Free() override;
