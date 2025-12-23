@@ -120,6 +120,9 @@ namespace Helper // magic_enum 관련
 	template<typename TEnum, typename FilterFn>
 	bool DrawEnumCombo(const char* id, TEnum& ioValue, TEnum shownValue, float width, FilterFn Filter) 
 	{
+		if constexpr (is_same_v<TEnum, EaseType>)
+			return DrawEaseCombo(id, reinterpret_cast<EaseType&>(ioValue), reinterpret_cast<EaseType>(shownValue), width);
+
 		static_assert(is_enum_v<TEnum>, "Helper::DrawEnumCombo<TEnum> requires an enum type.");
 		static_assert(is_invocable_r_v<bool, FilterFn, TEnum>, "Helper::DrawEnumCombo Filter must be callable as bool(TEnum).");
 		static_assert(is_same_v<decltype(EnumLabel(declval<TEnum>())), const char*>, 
@@ -166,11 +169,8 @@ namespace Helper // magic_enum 관련
 	}
 
 	ENGINE_DLL bool DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue);
-
 	ENGINE_DLL void DrawEaseGraph(EaseType ease, ImVec2 size, const char* id);
-
 	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width);
-
 	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, float width);
 }
 
