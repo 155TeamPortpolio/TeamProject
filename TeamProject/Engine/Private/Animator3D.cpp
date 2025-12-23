@@ -112,13 +112,17 @@ HRESULT CAnimator3D::Resize_Layer(_uint iLayerCount)
 	return S_OK;
 }
 
-
 void CAnimator3D::Update_Animation(_float dt)
 {
 	if (m_pAnimClips.empty()) return;
 
+	Clear_Events();
+
 	for (auto& Layer : m_AnimLayers) {
-		Animation_Run(dt);
+		if (Layer.bBlending)
+			Animation_Convert(Layer, dt);
+		else	
+			Animation_Run(Layer, dt);
 	}
 
 	BuildBone();
@@ -185,6 +189,7 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return E_NOTIMPL;
 }
 
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
@@ -218,7 +223,6 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// ?´ì „ ?„ë ˆ???¸ëž™ ?„ì¹˜ < ê¸°ì? <= ?„ìž¬ ?¸ëž™ ?„ì¹˜????true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -274,12 +278,39 @@ _int CAnimator3D::Get_NumLayer()
 	return (_int)m_AnimLayers.size();
 }
 
+const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
+{
+	return m_EventBus;
+}
+
+_vector CAnimator3D::Get_RootMotionDelta(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return XMVectorZero(); 
+
+	auto& Layer = m_AnimLayers[LayerIndex];	
+	if (-1 == Layer.iMoveBoneIndex)
+		return XMVectorZero();
+
+	_float4x4 RootMat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+
+	_float3 fCurAnimPos = { RootMat._41, RootMat._42, RootMat._43 };
+
+	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&Layer.vPrevAnimPos));
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
 
 	m_AnimLayers[LayerIndex].bUseTransform = false;
 	m_AnimLayers[LayerIndex].iMoveBoneIndex = MoveBoneIndex;
+}
+
+void CAnimator3D::Set_UseTransform(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	m_AnimLayers[LayerIndex].bUseTransform = true;
+	m_AnimLayers[LayerIndex].iMoveBoneIndex = -1;
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -303,6 +334,16 @@ void CAnimator3D::Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix)
 void CAnimator3D::Dettach_BoneRelation(_uint Index)
 {
 	m_DettachedBone.insert(Index);
+}
+
+void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
+{
+	m_EventBus.push_back(EVENT_INST{EventType, EventTag});
+}
+
+void CAnimator3D::Clear_Events()
+{
+	m_EventBus.clear();
 }
 
 _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
@@ -386,79 +427,112 @@ _bool CAnimator3D::isExistClip(_int ClipIndex)
 	return !m_pAnimClips.empty() && ClipIndex < m_pAnimClips.size();
 }
 
-void CAnimator3D::Animation_Run(_float dt)
+void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
+	//Empty Layer
 	if (m_AnimLayers.empty()) return;
+	
+	//Empty Clip
+	if (-1 == Layer.iClipIndex) return;
 
-	//? ë‹ˆë§¤ì´???…ë°?´íŠ¸
-	for (auto& Layer : m_AnimLayers) {
-		if (-1 == Layer.iClipIndex) continue;
+	//Update Animation
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	_float AnimSpeed = dt * Layer.fAnimSpeed;
 
-		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
-	}
-
-	//?´ë™ê°??œê±°
-	for (auto& Layer : m_AnimLayers) {
-		if (false == Layer.bUseTransform) {
-			if (isExistClip(Layer.iMoveBoneIndex)) {
-				_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
-				Layer.fPrevAnimPos = _float3(mat._41, mat._42, mat._43);
-				mat._41 = mat._42 = mat._43 = 0;
-			}
+	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+	
+	//Eliminate Transform
+	if (false == Layer.bUseTransform) {
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+			//Áö±ÝÀº Transform¸¸ °¡Á®¿À°í ÀÖÁö¸¸ È¤½Ã È¸ÀüÀÌ³ª Å©±â°¡ ÇÊ¿äÇÏ¸é ¸ÅÆ®¸¯½º ÀÚÃ¼¸¦ ÀúÀåÇØµµ ¹«°ü
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			mat._41 = mat._42 = mat._43 = 0;
 		}
 	}
 }
 
-void CAnimator3D::Animation_Convert(_float dt)
+void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 {
-	for (auto& Layer : m_AnimLayers) {
-		if (-1 == Layer.iClipIndex) continue;
+	if (-1 == Layer.iClipIndex) return;
 
-		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			dt, Layer.bLoop, &Layer.bisFinished);
-	}
-}
+	_float AnimSpeed = dt * Layer.fAnimSpeed;
 
-void CAnimator3D::Override_BlendAnim()
-{
-	// base?€ blend ë³´ê°„
-	for (size_t i = 0; i < m_BlendIndex.size(); ++i)
+	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+
+	Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
+		Layer.BlendMatrices, Layer.fBlendTrackPosition,
+		AnimSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+
+	Layer.fBlendElapsed += dt;
+
+	//ÀÌ°É ¾î¶²ºí·£µå³Ä¿¡ µû¶ó ³ª´²µµ µÉµí?
+	_float fBlendRate = Layer.fBlendElapsed / Layer.fBlendDuration;
+	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
-		_uint idx = m_BlendIndex[i];
-		_matrix base = XMLoadFloat4x4(&m_TransformationMatrices[idx]);
-		_matrix blend = XMLoadFloat4x4(&m_BlendTransfomationMatices[idx]);
+		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
+		_matrix blend = XMLoadFloat4x4(&Layer.BlendMatrices[i]);
 		_vector baseS, baseR, baseT;
 		_vector blendS, blendR, blendT;
 
 		XMMatrixDecompose(&baseS, &baseR, &baseT, base);
 		XMMatrixDecompose(&blendS, &blendR, &blendT, blend);
 
-		_vector blendedS = XMVectorLerp(baseS, blendS, m_fBlendDuration);
-		_vector blendedT = XMVectorLerp(baseT, blendT, m_fBlendDuration);
-		_vector blendedR = XMQuaternionSlerp(baseR, blendR, m_fBlendDuration);
+		_vector blendedS = XMVectorLerp(baseS, blendS, fBlendRate);
+		_vector blendedT = XMVectorLerp(baseT, blendT, fBlendRate);
+		_vector blendedR = XMQuaternionSlerp(baseR, blendR, fBlendRate);
 
 		_matrix blendedM = XMMatrixAffineTransformation(
 			blendedS, XMVectorSet(0.f, 0.f, 0.f, 1.f), blendedR, blendedT);
 
-		XMStoreFloat4x4(&m_TransformationMatrices[idx], blendedM);
+		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
+	}
+
+	//Eliminate Transform
+	if (false == Layer.bUseTransform) {
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMoveBoneIndex];
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			mat._41 = mat._42 = mat._43 = 0;
+		}
+	}
+
+	//Convert End
+	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
+		Layer.bBlending = false;
+
+		Layer.iClipIndex = Layer.iNextClipIndex;
+		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+		Layer.fBlendElapsed = 0.f;
+		Layer.fBlendDuration = 0.f;
+
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
 	}
 }
 
 void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
-		m_TransformationMatrices = Layer.LocalMatrices;
+		if(Layer.bBlending)
+			m_TransformationMatrices = Layer.FinalLocalMatrices;
+		else
+			m_TransformationMatrices = Layer.LocalMatrices;
 	}
 	else {
-		for (_int BoneIndex : Layer.AffectedBonesIndices)
-			m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (Layer.bBlending)
+				m_TransformationMatrices[BoneIndex] = Layer.FinalLocalMatrices[BoneIndex];
+			else
+				m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+		}
 	}
 }
 
@@ -600,7 +674,6 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 void CAnimator3D::GUI_SelectAnim()
 {
-
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
@@ -627,7 +700,7 @@ void CAnimator3D::GUI_SelectAnim()
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // ? íƒ????ª©???¬ì»¤??
+			ImGui::SetItemDefaultFocus();
 		}
 	}
 
@@ -671,8 +744,9 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDER?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡?¡ã…¡
+//BUILDER------------------------------------------------------------------------------------------
 
+//----------  SetAnim Options
 HRESULT SetAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
@@ -687,6 +761,9 @@ HRESULT SetAnimBuild::Apply()
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.bisFinished = false;
+
+	m_bApplied = true;
 	return S_OK;
 }
 
@@ -704,19 +781,27 @@ SetAnimBuild& SetAnimBuild::Speed(_float fSpeed)
 	return *this;
 }
 
+//---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	m_pOwner->Reset_Layer(m_iLayerIndex);
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
-	Layer.iClipIndex = m_iClipIndex;
+	Layer.bBlending = true;
+	Layer.iNextClipIndex = m_iClipIndex;
 
+	Layer.fBlendTrackPosition = 0.f;
+	Layer.fBlendElapsed = 0.f;
+	Layer.fBlendDuration = m_fBlendDuration;
+	
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.bisFinished = false;
+
+	m_bApplied = true;
 	return S_OK;
 }
 

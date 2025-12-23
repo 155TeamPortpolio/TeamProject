@@ -35,8 +35,10 @@ void CAnimator3DEX::Update_Animation(_float fTrackPosition)
 	
 		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
+		nowClip->Check_Event(Layer.fCurrentTrackPosition, fTrackPosition, m_EventBus);
+
 		Layer.fCurrentTrackPosition = fTrackPosition;
-		nowClip->TranslateAnimateMatrixFromDuration(Layer.LocalMatrices, fTrackPosition);
+		nowClip->TranslateAnimateMatrixFromDuration(Layer.LocalMatrices, fTrackPosition, m_EventBus);
 	}
 	
 	BuildBone();
