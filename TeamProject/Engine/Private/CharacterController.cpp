@@ -229,7 +229,6 @@ void CCharacterController::Render_GUI()
 			vLocalFoot.z = (float)foot.z - vWorldPos.z;
 			ImGui::Text("Foot Local: (%.2f, %.2f, %.2f)", vLocalFoot.x, vLocalFoot.y, vLocalFoot.z);
 
-			// 디버깅용 추가 정보
 			ImGui::Separator();
 			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Debug Info");
 			_float fCalculatedCenter = (float)foot.y + m_fRadius + (m_fHeight * 0.5f);
@@ -237,6 +236,32 @@ void CCharacterController::Render_GUI()
 			ImGui::Text("Actual Center Y: %.2f", (float)pos.y);
 			ImGui::Text("Difference: %.2f", fCalculatedCenter - (float)pos.y);
 			ImGui::Text("Height: %.2f, Radius: %.2f", m_fHeight, m_fRadius);
+
+			ImGui::Separator();
+			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Foot Offset Adjustment");
+			_float fBoundingMinY = m_fBoundingMinY;
+			if (ImGui::DragFloat("Bounding Min Y", &fBoundingMinY, 0.01f, -10.0f, 10.0f))
+			{
+				Set_BoundingMinY(fBoundingMinY);
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Local Foot Offset Adjustment");
+			}
+
+			if (ImGui::Button("Reset Foot Offset"))
+			{
+				Set_BoundingMinY(0.0f);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Re-Apply AutoFit"))
+			{
+				CCT_DESC desc;
+				desc.fRadiusScale = 1.0f;
+				desc.fHeightScale = 1.0f;
+				desc.fSizeScale = 1.0f;
+				AutoFit(&desc);
+			}
 
 			ImGui::Separator();
 			ImGui::Text("Properties");
@@ -340,7 +365,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("충돌 감지 시작 거리");
+			ImGui::SetTooltip("Collision Detect Distance");
 		}
 
 		_float fRestOffset = Get_RestOffset();
@@ -350,7 +375,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("실제 접촉 거리");
+			ImGui::SetTooltip("Contact Offset");
 		}
 
 #ifdef _DEBUG
@@ -658,6 +683,7 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 	CSkeletalModel* pSkeletalModel = m_pOwner->Get_Component<CSkeletalModel>();
 	MINMAX_BOX boundingBox = {};
 	_bool bHasModel = false;
+
 	if (pStaticModel)
 	{
 		boundingBox = pStaticModel->Get_LocalBoundingBox();
@@ -668,10 +694,12 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 		boundingBox = pSkeletalModel->Get_LocalBoundingBox();
 		bHasModel = true;
 	}
+
 	if (!bHasModel)
 	{
 		return E_FAIL;
 	}
+
 	_float3 vMin = boundingBox.vMin;
 	_float3 vMax = boundingBox.vMax;
 	m_fBoundingMinY = vMin.y;
@@ -693,7 +721,6 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 
 	_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
 
-	// position = vWorldPos + radius + (height * 0.5)
 	_float fFootY = vWorldPos.y + vMin.y;
 
 	pDesc->vPos.x = vWorldPos.x;
@@ -701,7 +728,6 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 	pDesc->vPos.z = vWorldPos.z;
 
 	pDesc->fStepOffset = pDesc->fHeight * 0.25f;
-
 
 	return S_OK;
 }
@@ -760,6 +786,20 @@ _float CCharacterController::Get_RestOffset()
 		}
 	}
 	return m_fRestOffset;
+}
+
+void CCharacterController::Set_BoundingMinY(_float fMinY)
+{
+	if (!m_pController) return;
+
+	_float fDelta = fMinY - m_fBoundingMinY;
+	m_fBoundingMinY = fMinY;
+
+	const PxExtendedVec3& currentPos = m_pController->getPosition();
+	PxExtendedVec3 newPos = currentPos;
+	newPos.y += fDelta;
+
+	m_pController->setPosition(newPos);
 }
 
 CCharacterController* CCharacterController::Create()

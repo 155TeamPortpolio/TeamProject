@@ -47,12 +47,10 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
-	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
-	/*부모 뼈를 받을 수 있게 기본값으로 초기화*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -66,7 +64,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	/*최종 뼈 행렬에 대입*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
@@ -115,13 +112,17 @@ HRESULT CAnimator3D::Resize_Layer(_uint iLayerCount)
 	return S_OK;
 }
 
-
 void CAnimator3D::Update_Animation(_float dt)
 {
 	if (m_pAnimClips.empty()) return;
 
+	Clear_Events();
+
 	for (auto& Layer : m_AnimLayers) {
-		Animation_Run(dt);
+		if (Layer.bBlending)
+			Animation_Convert(Layer, dt);
+		else	
+			Animation_Run(Layer, dt);
 	}
 
 	BuildBone();
@@ -154,20 +155,22 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
+	Layer.iStartBoneIndex = -1;
+	Layer.AffectedBonesIndices.clear();
+
 	Layer.iClipIndex = -1;
 	Layer.fPrevTrackPosition = 0.f;
 	Layer.fCurrentTrackPosition = 0.f;
+	Layer.ePlayEaseType = { EaseType::None };
 	Layer.bLoop = false;
 	Layer.bisFinished = true;
-
+	
 	Layer.bBlending = { false };
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
-
-	Layer.eBlendState = { BLEND_STATE::NONE };
-	Layer.AffectedBonesIndices.clear();
-
+	Layer.eBlendEaseType = { EaseType::None };
+	
 	Matrix identityMat = XMMatrixIdentity();
 
 	_float4x4 IdentityMatrix;
@@ -187,6 +190,7 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return E_NOTIMPL;
 }
 
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
@@ -197,12 +201,13 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 	if (!isExistClip(Layer.iClipIndex))
 		return 0.f;
 
-	if (Layer.eBlendState != BLEND_STATE::NONE)
+	if (Layer.bBlending)
 		return false;
-	else if (Layer.bLoop)
+
+	if (Layer.bLoop)
 		return false;
-	else
-		return Layer.bisFinished;
+
+	return Layer.bisFinished;
 }
 
 _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
@@ -219,7 +224,6 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	_float threshold = nowClip->Get_Duration() * percent;
 
-	// 이전 프레임 트랙 위치 < 기준 <= 현재 트랙 위치일 때 true
 	return Layer.fCurrentTrackPosition >= threshold;
 }
 
@@ -275,12 +279,57 @@ _int CAnimator3D::Get_NumLayer()
 	return (_int)m_AnimLayers.size();
 }
 
+const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
+{
+	return m_EventBus;
+}
+
+_vector CAnimator3D::Get_RootMotionDelta(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return XMVectorZero(); 
+
+	auto& Layer = m_AnimLayers[LayerIndex];	
+	if (-1 == Layer.iMoveBoneIndex)
+		return XMVectorZero();
+
+	_float4x4 RootMat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+
+	_float3 fCurAnimPos = { RootMat._41, RootMat._42, RootMat._43 };
+
+	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&Layer.vPrevAnimPos));
+}
+
+_float CAnimator3D::Get_EaseDuration(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return 0.f;
+
+	auto& Layer = m_AnimLayers[LayerIndex];
+	if (EaseType::None == Layer.ePlayEaseType)
+		return 0.f;
+
+	return Layer.fEaseElapsed / Layer.fEaseDuration;
+}
+
+_float CAnimator3D::Get_AnimSpeed(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return 0.f;
+
+	return m_AnimLayers[LayerIndex].fAnimSpeed;
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
 
 	m_AnimLayers[LayerIndex].bUseTransform = false;
 	m_AnimLayers[LayerIndex].iMoveBoneIndex = MoveBoneIndex;
+}
+
+void CAnimator3D::Set_UseTransform(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	m_AnimLayers[LayerIndex].bUseTransform = true;
+	m_AnimLayers[LayerIndex].iMoveBoneIndex = -1;
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -306,6 +355,16 @@ void CAnimator3D::Dettach_BoneRelation(_uint Index)
 	m_DettachedBone.insert(Index);
 }
 
+void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
+{
+	m_EventBus.push_back(EVENT_INST{EventType, EventTag});
+}
+
+void CAnimator3D::Clear_Events()
+{
+	m_EventBus.clear();
+}
+
 _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
@@ -313,6 +372,21 @@ _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
 	else {
 		return m_FinalMatices[Index];
 	}
+}
+
+vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
+{
+	vector<_float4x4> result;
+	result.reserve(m_CombinedMatrices.size());
+
+	for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	{
+		_smatrix final = m_CombinedMatrices[i];
+		_smatrix offset = m_pData->Get_Offset(meshIndex, i);
+
+		result.push_back(offset * final);
+	}
+	return result;
 }
 
 _float4x4 CAnimator3D::Get_BoneMatrix(_uint Index)
@@ -372,79 +446,147 @@ _bool CAnimator3D::isExistClip(_int ClipIndex)
 	return !m_pAnimClips.empty() && ClipIndex < m_pAnimClips.size();
 }
 
-void CAnimator3D::Animation_Run(_float dt)
+void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
+	//Empty Layer
 	if (m_AnimLayers.empty()) return;
+	
+	//Empty Clip
+	if (-1 == Layer.iClipIndex) return;
 
-	//애니매이션 업데이트
-	for (auto& Layer : m_AnimLayers) {
-		if (-1 == Layer.iClipIndex) continue;
+	//Update Animation
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	//Calc Animation Speed;
+	_float AnimSpeed = Layer.fAnimSpeed;
+	if (EaseType::None != Layer.ePlayEaseType) {
+		Layer.fEaseElapsed += dt;
 
-		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
-			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			(dt*Layer.fAnimSpeed) , Layer.bLoop, &Layer.bisFinished);
+		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+		if (1.f <= t) {
+			Layer.fAnimSpeed = AnimSpeed;
+			Layer.ePlayEaseType = EaseType::None;
+		}
 	}
 
-	//이동값 제거
-	for (auto& Layer : m_AnimLayers) {
-		if (false == Layer.bUseTransform) {
-			if (isExistClip(Layer.iMoveBoneIndex)) {
-				_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
-				Layer.fPrevAnimPos = _float3(mat._41, mat._42, mat._43);
-				mat._41 = mat._42 = mat._43 = 0;
-			}
+	_float playSpeed = dt * AnimSpeed;
+	
+	//Update TrackPos
+	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
+		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
+		playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+	
+	//Eliminate Transform
+	if (false == Layer.bUseTransform) {
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+			//지금은 Transform만 가져오고 있지만 혹시 회전이나 크기가 필요하면 매트릭스 자체를 저장해도 무관
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			mat._41 = mat._42 = mat._43 = 0;
 		}
 	}
 }
 
-void CAnimator3D::Animation_Convert(_float dt)
+void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 {
-	for (auto& Layer : m_AnimLayers) {
-		if (-1 == Layer.iClipIndex) continue;
+	if (-1 == Layer.iClipIndex) return;
 
-		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
+	//Calc Animation Speed;
+	_float AnimSpeed = Layer.fAnimSpeed;
+	if (EaseType::None != Layer.ePlayEaseType) {
+		Layer.fEaseElapsed += dt;
+
+		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+		if (1.f <= t) {
+			Layer.fAnimSpeed = AnimSpeed;
+			Layer.ePlayEaseType = EaseType::None;
+		}
+	}
+
+	_float playSpeed = dt * AnimSpeed;
+
+	//Update TrackPos
+	if (Layer.bKeepTrackPos) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			dt, Layer.bLoop, &Layer.bisFinished);
+			playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
 	}
-}
 
-void CAnimator3D::Override_BlendAnim()
-{
-	// base와 blend 보간
-	for (size_t i = 0; i < m_BlendIndex.size(); ++i)
+	Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
+		Layer.BlendMatrices, Layer.fBlendTrackPosition,
+		playSpeed, Layer.bLoop, &Layer.bisFinished, m_EventBus);
+
+	//Animation Blend
+	Layer.fBlendElapsed += dt;
+	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
+		Layer.fBlendElapsed / Layer.fBlendDuration);
+
+	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
-		_uint idx = m_BlendIndex[i];
-		_matrix base = XMLoadFloat4x4(&m_TransformationMatrices[idx]);
-		_matrix blend = XMLoadFloat4x4(&m_BlendTransfomationMatices[idx]);
+		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
+		_matrix blend = XMLoadFloat4x4(&Layer.BlendMatrices[i]);
 		_vector baseS, baseR, baseT;
 		_vector blendS, blendR, blendT;
 
 		XMMatrixDecompose(&baseS, &baseR, &baseT, base);
 		XMMatrixDecompose(&blendS, &blendR, &blendT, blend);
 
-		_vector blendedS = XMVectorLerp(baseS, blendS, m_fBlendDuration);
-		_vector blendedT = XMVectorLerp(baseT, blendT, m_fBlendDuration);
-		_vector blendedR = XMQuaternionSlerp(baseR, blendR, m_fBlendDuration);
+		_vector blendedS = XMVectorLerp(baseS, blendS, fBlendRate);
+		_vector blendedT = XMVectorLerp(baseT, blendT, fBlendRate);
+		_vector blendedR = XMQuaternionSlerp(baseR, blendR, fBlendRate);
 
 		_matrix blendedM = XMMatrixAffineTransformation(
 			blendedS, XMVectorSet(0.f, 0.f, 0.f, 1.f), blendedR, blendedT);
 
-		XMStoreFloat4x4(&m_TransformationMatrices[idx], blendedM);
+		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
+	}
+
+	//Eliminate Transform
+	if (false == Layer.bUseTransform) {
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMoveBoneIndex];
+			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			mat._41 = mat._42 = mat._43 = 0;
+		}
+	}
+
+	//Convert End
+	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
+		Layer.bBlending = false;
+
+		Layer.iClipIndex = Layer.iNextClipIndex;
+		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+		Layer.fBlendElapsed = 0.f;
+		Layer.fBlendDuration = 0.f;
+
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
 	}
 }
 
 void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
-		m_TransformationMatrices = Layer.LocalMatrices;
+		if(Layer.bBlending)
+			m_TransformationMatrices = Layer.FinalLocalMatrices;
+		else
+			m_TransformationMatrices = Layer.LocalMatrices;
 	}
 	else {
-		for (_int BoneIndex : Layer.AffectedBonesIndices)
-			m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (Layer.bBlending)
+				m_TransformationMatrices[BoneIndex] = Layer.FinalLocalMatrices[BoneIndex];
+			else
+				m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+		}
 	}
 }
 
@@ -518,11 +660,79 @@ void CAnimator3D::BuildBone()
 void CAnimator3D::Render_GUI()
 {
 	ImGui::SeparatorText("Animator 3D");
+	GUI_ShowLayerInfo();
+	GUI_SelectAnim();
+}
+
+void CAnimator3D::GUI_ShowLayerInfo()
+{
+	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
+	// ───────── Layer / Loop
+	ImGui::Text("Layer");
+	ImGui::SameLine();
+
+	int layerCount = m_AnimLayers.size();   // 현재 레이어 수
+
+	static int curLayerIndex = 0;
+	ImGui::SetNextItemWidth(80);
+	if (ImGui::BeginCombo("##Layer", std::to_string(curLayerIndex).c_str()))
+	{
+		for (int i = 0; i < layerCount; ++i)
+		{
+			bool selected = (curLayerIndex == i);
+			if (ImGui::Selectable(std::to_string(i).c_str(), selected))
+				curLayerIndex = i;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	auto& curLayer = m_AnimLayers[curLayerIndex];
+
+	ImGui::SameLine();
+	static bool bLoop = false;
+	ImGui::Checkbox("Loop", &curLayer.bLoop);
+
+	ImGui::Separator();
+
+	// ───────── Clip
+
+	string AnimName{};
+
+	if(isExistClip(curLayer.iClipIndex))
+		AnimName = m_pAnimClips[curLayer.iClipIndex]->Get_Name();
+
+	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + AnimName;
+	ImGui::Text(AnimInfo.c_str());
+	ImGui::Separator();
+
+	// ───────── Play bar
+	if (ImGui::Button("Play")) {
+		Set_Animation(curLayerIndex, curLayer.iClipIndex)
+			.Loop(bLoop);
+	}
+	ImGui::SameLine();
+
+
+	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+	
+	int iDuration{};
+	if (isExistClip(curLayer.iClipIndex))
+		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
+
+	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, iDuration);
+	ImGui::EndChild();
+}
+
+void CAnimator3D::GUI_SelectAnim()
+{
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##Animator 3DChild", ImVec2{ 0, childHeight }, true);
+	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
 	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
@@ -530,7 +740,7 @@ void CAnimator3D::Render_GUI()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Set_Animation(0, i);
+			Change_Animation(i).Loop(true);
 		}
 		ImGui::PopID();
 
@@ -540,13 +750,11 @@ void CAnimator3D::Render_GUI()
 		{
 			ImGui::SetTooltip("%s", m_pAnimClips[i]->Get_Name().c_str());
 		}
-		//if (ImGui::Button(string(m_pAnimLoops[i] ? "Do Once" : "Do Loop").c_str(), ImVec2{ childWidth * 0.35f, textLineHeight + 4 }))
-		//	(m_pAnimLoops[i]) = !(m_pAnimLoops[i]);
 		ImGui::PopStyleVar();
 		ImGui::PopID();
 
 		if (isSelected) {
-			ImGui::SetItemDefaultFocus(); // 선택된 항목에 포커스
+			ImGui::SetItemDefaultFocus();
 		}
 	}
 
@@ -590,22 +798,30 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDERㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡㅡ
+//BUILDER------------------------------------------------------------------------------------------
 
+//----------  SetAnim Options
 HRESULT SetAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
 	m_pOwner->Reset_Layer(m_iLayerIndex);
-	CAnimator3D::ANIM_LAYER& Layer =
-		m_pOwner->m_AnimLayers[m_iLayerIndex];
+	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.ePlayEaseType = m_ePlayEaseType;
+	Layer.fTargetSpeed = m_fTargetSpeed;
+	Layer.fEaseElapsed = 0.f;
+	Layer.fEaseDuration = m_fEaseDuration;
+
+	Layer.bisFinished = false;
+
+	m_bApplied = true;
 	return S_OK;
 }
 
@@ -623,26 +839,61 @@ SetAnimBuild& SetAnimBuild::Speed(_float fSpeed)
 	return *this;
 }
 
+SetAnimBuild& SetAnimBuild::TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType)
+{
+	m_fSpeed = fStartSpeed;
+	m_fTargetSpeed = fTargetSpeed;
+	m_fEaseDuration = fDuration;
+	m_ePlayEaseType = eEaseType;
+
+	return *this;
+}
+
+//---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	m_pOwner->Reset_Layer(m_iLayerIndex);
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-
-	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 
+	Layer.ePlayEaseType = m_ePlayEaseType;
+	Layer.fTargetSpeed = m_fTargetSpeed;
+	Layer.fEaseElapsed = 0.f;
+	Layer.fEaseDuration = m_fEaseDuration;
+
+	Layer.bBlending = true;
+	Layer.bKeepTrackPos = m_bKeepTrackPos;
+	Layer.iNextClipIndex = m_iClipIndex;
+	Layer.fBlendTrackPosition = 0.f;
+	Layer.fBlendElapsed = 0.f;
+	Layer.fBlendDuration = m_fBlendDuration;
+	Layer.eBlendEaseType = m_eBlendEaseType;
+
+	Layer.bisFinished = false;
+
+	m_bApplied = true;
 	return S_OK;
 }
 
-ChangeAnimBuild& ChangeAnimBuild::BlendState(_float fDuration, BLEND_STATE eBlendState)
+ChangeAnimBuild& ChangeAnimBuild::BlendDuration(_float fDuration)
 {
 	m_fBlendDuration = fDuration;
-	m_eBlendState = eBlendState;
+	return *this;
+}
+
+ChangeAnimBuild& ChangeAnimBuild::BlendWeightEaseType(EaseType eEaseType)
+{
+	m_eBlendEaseType = eEaseType;
+	return *this;
+}
+
+ChangeAnimBuild& ChangeAnimBuild::KeepTrackPos(_bool bKeepTrackPos)
+{
+	m_bKeepTrackPos = bKeepTrackPos;
 	return *this;
 }
 

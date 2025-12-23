@@ -98,6 +98,12 @@ _bool CModelData::isRootBone(_uint BoneIndex)
 		return false;
 }
 
+
+_float4x4 CModelData::Get_Offset(_uint meshIndex, _uint boneIndex)
+{
+	return m_Meshes[meshIndex]->Get_MeshOffset(boneIndex);
+}
+
 const D3D11_INPUT_ELEMENT_DESC* CModelData::Get_ElementDesc(_uint DrawIndex)
 {
 	return m_Meshes[DrawIndex]->Get_ElementDesc();

@@ -3,10 +3,6 @@
 #include "SkeletalModel.h"
 #include "Assimps.h"
 
-NS_BEGIN(Engine)
-class CSkeletalModel;
-NS_END 
-
 NS_BEGIN(ModelEdit)
 class CAI_SKModel final
     : public CSkeletalModel

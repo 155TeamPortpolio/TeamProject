@@ -16,26 +16,20 @@
     <ClInclude Include="..\public\FirstLevel.h">
       <Filter>01. Level</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\CamObj.h">
-      <Filter>03. Obj</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\DebugFreeCam.h">
-      <Filter>03. Obj\00. DebugCam</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. Panel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanelData.h">
       <Filter>02. Panel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DemoModel.h">
-      <Filter>03. Obj\01. DemoModel</Filter>
+    <ClInclude Include="..\public\Unagi.h">
+      <Filter>03. Obj\02. Unagi</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugCamData.h">
-      <Filter>03. Obj\00. DebugCam</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Grid.h">
-      <Filter>03. Obj\02. DemoGrid</Filter>
+      <Filter>03. Obj\03. DemoGrid</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanelUtil.h">
       <Filter>02. Panel\CamPanelUtil</Filter>
@@ -85,6 +79,12 @@
     <ClInclude Include="..\ThirdParty\GUI_Inc\ImZoomSlider.h">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CamObj.h">
+      <Filter>03. Obj\00. CamObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\FreeCam.h">
+      <Filter>03. Obj\01. FreeCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="CameraTool.ico">
@@ -113,23 +113,26 @@
     <Filter Include="03. Obj">
       <UniqueIdentifier>{c2111396-6794-42c1-aab0-48cb16489bb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Obj\00. DebugCam">
-      <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Etc\99. Useless\ImGui">
       <UniqueIdentifier>{fbfc5b63-d139-4854-9034-dfde3870e289}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Obj\01. DemoModel">
-      <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Obj\02. DemoGrid">
-      <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Panel\CamPanelUtil">
       <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. CamDirector">
       <UniqueIdentifier>{89e011ca-dc95-4662-abf6-1ea29ae20eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\00. CamObject">
+      <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\01. FreeCam">
+      <UniqueIdentifier>{b4764ff6-58dc-4996-b9bf-21c3d4a9f756}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\02. Unagi">
+      <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\03. DemoGrid">
+      <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -142,20 +145,14 @@
     <ClCompile Include="..\private\FirstLevel.cpp">
       <Filter>01. Level</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CamObj.cpp">
-      <Filter>03. Obj</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DebugFreeCam.cpp">
-      <Filter>03. Obj\00. DebugCam</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. Panel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\DemoModel.cpp">
-      <Filter>03. Obj\01. DemoModel</Filter>
+    <ClCompile Include="..\private\Unagi.cpp">
+      <Filter>03. Obj\02. Unagi</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Grid.cpp">
-      <Filter>03. Obj\02. DemoGrid</Filter>
+      <Filter>03. Obj\03. DemoGrid</Filter>
     </ClCompile>
     <ClCompile Include="CameraTool.cpp">
       <Filter>99. Etc\99. Useless</Filter>
@@ -195,6 +192,12 @@
     </ClCompile>
     <ClCompile Include="..\ThirdParty\GUI_Inc\ImSequencer.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamObj.cpp">
+      <Filter>03. Obj\00. CamObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\FreeCam.cpp">
+      <Filter>03. Obj\01. FreeCam</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

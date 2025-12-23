@@ -4,12 +4,12 @@
 
 NS_BEGIN(CameraTool)
 
-class CDemoModel : public CGameObject
+class CUnagi : public CGameObject
 {
 private:
-    CDemoModel() = default;
-    CDemoModel(const CDemoModel& rhs) : CGameObject(rhs) {}
-    virtual ~CDemoModel() DEFAULT;
+    CUnagi() = default;
+    CUnagi(const CUnagi& rhs) : CGameObject(rhs) {}
+    virtual ~CUnagi() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype()      override;
@@ -18,12 +18,10 @@ public:
     void    Priority_Update(_float dt)  override {}
     void    Update(_float dt)           override {}
     void    Late_Update(_float dt)      override {}
+    void    Render_GUI()                override;
 
 public:
-    void Render_GUI() override;
-
-public:
-    static CDemoModel* Create();
+    static CUnagi* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free();
 };

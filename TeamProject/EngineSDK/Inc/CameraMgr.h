@@ -18,7 +18,7 @@ public:
     virtual void     Set_BlendEase(EaseType ease)    override { m_easeType = ease; }
     virtual EaseType Get_BlendEase()           const override { return m_easeType; }                                                   
     CCamera*         Get_BaseCam()             const override { return m_baseCam;  }
-    CCamera*         Get_ActiveCam()           const override { return GetDesiredActiveCam(); }
+    CCamera*         Get_ActiveCam()           const override;
 
 public:
     virtual _uint    Push(CCamera* camComp, _float blendSec = 0.25f) override;
@@ -119,8 +119,6 @@ private:
     Vector4 m_shadowCamPos  = { 0.f, 0.f, 0.f, 1.f };
 
 private:
-    CCamera*     GetDesiredActiveCam() const;
-
     CamPoseFrame CapturePose(CCamera* cam) const;
     CamPoseFrame GetCurOutputPose() const { return m_outputPose; }
 

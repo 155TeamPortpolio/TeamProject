@@ -153,9 +153,24 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 		 }
 
 		 m_bDirty = false;
-		 return m_FinalMatices;
+		 return m_CombinedMatrices;
 	 }
 }
+
+ vector<_float4x4> CSkeletalModel::Get_BoneMatrices(_uint meshIndex)
+ {
+	 vector<_float4x4> result;
+	 result.reserve(m_CombinedMatrices.size());
+
+	 for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	 {
+		 _smatrix final = m_CombinedMatrices[i];
+		 _smatrix offset= m_pData->Get_Offset(meshIndex, i);
+
+		 result.push_back(offset*final);
+	 }
+	 return result;
+ }
 
  _float4x4* CSkeletalModel::Get_BoneMatrixPtr(const string& boneName)
  {

@@ -17,6 +17,9 @@ public:
 
 private:
 	_float m_fDashDistance = 0.01f;
+
+public:
+	static CTestState_Dash* Create() { return new CTestState_Dash(); }
 };
 
 NS_END

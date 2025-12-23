@@ -23,9 +23,15 @@ CMaterialInstance::CMaterialInstance(const CMaterialInstance& rhs)
 void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 {
 	/*상수 버퍼*/
-	m_pMaterialData->ApplyData(pContext, m_TextureIndexs);
 	CShader* pMaterialShader = m_pMaterialData->Get_Shader();
+	for (size_t i = 0; i < MAX_TEXTURE_TYPE_VALUE; i++)
+	{
+		string constant = m_pMaterialData->ConvertToConstant(static_cast<TEXTURE_TYPE>(i));
+		pMaterialShader->Bind_Value(constant, { nullptr,"Texture2D",0 });
+	}
 
+	m_pMaterialData->ApplyData(pContext, m_TextureIndexs);
+	
 	for (auto& Slot : m_DynamicSlots) {
 		pMaterialShader->Bind_Value(Slot.first, Slot.second);
 	}

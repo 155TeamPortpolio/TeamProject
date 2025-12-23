@@ -53,6 +53,9 @@ HRESULT CAnimationEditLevel::Awake()
 	pObjMgr->Add_Object(Camera, { "AnimationEdit_Level","Camera_Layer" });
 	pObjMgr->Add_Object(Grid, { "AnimationEdit_Level","Grid_Layer" });
 
+	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
+	pResource->Add_ResourcePath("Jump.mp3", "../Bin/Resources/Sound/Jump.mp3");
+
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 
 	IGUIService* guiSvc = CGameInstance::GetInstance()->Get_GUISystem();

@@ -5,6 +5,7 @@
 #include "SkeletalModel.h"
 #include "ModelData.h"
 #include "GameInstance.h"
+#include "StaticModel.h"
 
 CDebugBonePanel::CDebugBonePanel(GUI_CONTEXT* context)
 	:CBasePanel(context)
@@ -23,10 +24,24 @@ void CDebugBonePanel::Render_GUI()
 	CGameObject* pTarget = m_pContext->pSelectedObject;
 	if (!pTarget) return;
 
-	CSkeletalModel* pModel = pTarget->Get_Component<CSkeletalModel>();
-	if (!pModel) return;
+	CSkeletalModel* pSkeletalModel = pTarget->Get_Component<CSkeletalModel>();
+	CStaticModel* pStaticModel = pTarget->Get_Component<CStaticModel>();
+	CModelData* pData = nullptr;
 
-	CModelData* pData = pModel->Get_ModelData();
+	if (!pSkeletalModel) {
+		if (pStaticModel) {
+			pData = pStaticModel->Get_ModelData();
+			if (!pData->isSkinned())
+				return;
+		}
+		else
+		{
+			return;
+		}
+	}
+	else {
+		pData = pSkeletalModel->Get_ModelData();
+	}
 
 	ImGuiWindowFlags flags = ImGuiWindowFlags_NoCollapse;
 
@@ -47,9 +62,6 @@ void CDebugBonePanel::Render_GUI()
 	{
 		if (ImGui::Button("Show Bones", ImVec2(-1, 0)))
 			m_bExpanded = true;
-
-		// (선택) 선택된 오브젝트 이름만 한 줄
-		// ImGui::TextDisabled("Target: %s", pTarget->Get_Name().c_str());
 		ImGui::End();
 		return;
 	}
@@ -63,6 +75,8 @@ void CDebugBonePanel::Render_GUI()
 	ImGui::Checkbox("Joints", &m_bDrawJoints);
 	ImGui::SameLine();
 	ImGui::Checkbox("Only Select", &m_bOnlySelect);
+	ImGui::SameLine();
+	ImGui::Checkbox("ShowMatrix", &m_bShowMatrix);
 
 	ImGui::SliderFloat("Line Thickness", &m_fLineThickness, 1.0f, 4.0f, "%.1f");
 	ImGui::SliderFloat("Joint Radius", &m_fJointRadius, 1.0f, 8.0f, "%.1f");
@@ -125,7 +139,32 @@ void CDebugBonePanel::Render_GUI()
 
 	ImGui::EndChild();
 	ImGui::Text("Selected Bone: %d", m_iSelectedBone);
+	if (m_bShowMatrix) {
+		if (CAnimator3D* pAnimator = pTarget->Get_Component<CAnimator3D>()) {
+			const _float4x4& nowTrans = pAnimator->Get_CombinedBoneMatrices()[m_iSelectedBone];
 
+			ImGui::SeparatorText("Bone Matrix (Combined)");
+			ImGui::BeginChild("##MatView", ImVec2(0, 110), true);
+
+			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._11, nowTrans._12, nowTrans._13, nowTrans._14);
+			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._21, nowTrans._22, nowTrans._23, nowTrans._24);
+			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
+			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
+
+			_vector4 deltaTrans = pAnimator->Get_RootMotionDelta();
+			_vector3 move(deltaTrans.x, deltaTrans.y, deltaTrans.z);
+			_vector3 dir = move;
+			dir.Normalize();
+
+			ImGui::Separator();
+			ImGui::Text("Delta Move");
+			ImGui::Text("% .4f % .4f % .4f % .4f", deltaTrans.x, deltaTrans.y, deltaTrans.z, deltaTrans.w);
+			ImGui::Text("Delta Direction");
+			ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
+			
+			ImGui::EndChild();
+		}
+	}
 
 	ImVec2 vpPos = ImGui::GetMainViewport()->Pos;
 	ImVec2 vpSize = ImGui::GetMainViewport()->Size;

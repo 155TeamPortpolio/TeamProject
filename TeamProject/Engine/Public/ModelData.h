@@ -20,6 +20,7 @@ public:
 	_uint Get_MaterialIndex(_uint meshIndex);
 	_bool hasMesh() { return !m_Meshes.empty(); }
 	class CMesh* Get_Mesh(_uint meshIndex) { return m_Meshes[meshIndex]; }
+	_float4x4 Get_Offset(_uint meshIndex, _uint boneIndex);
 	const D3D11_INPUT_ELEMENT_DESC* Get_ElementDesc(_uint DrawIndex);
 	const _uint Get_ElementCount(_uint DrawIndex);
 	const string_view Get_ElementKey(_uint DrawIndex);

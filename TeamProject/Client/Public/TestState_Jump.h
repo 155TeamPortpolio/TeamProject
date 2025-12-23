@@ -16,6 +16,9 @@ public:
 
 private:
     _bool m_bMove = false;
+
+public:
+    static CTestState_Jump* Create() { return new CTestState_Jump(); }
 };
 
 NS_END

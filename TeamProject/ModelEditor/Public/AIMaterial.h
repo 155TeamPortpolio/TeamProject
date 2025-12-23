@@ -13,13 +13,20 @@ public:
     virtual HRESULT Initialize(const aiMaterial* pAIMaterial, const string& fileDirectory);
 public:
     void Save_MaterialData(ID3D11DeviceContext* pContext, ofstream& ofs, const string& directory, const string& overrideKey = {});
-    void Render_GUI() override;
     void Render_GUI(vector<_uint>& TextureIndexes) override;
     void LinkShader(const string& shader);
+
+public:
+    _bool Get_Specific() { return m_bSpecific; }
+
+private:
+    HRESULT LoadByAssimp(const string& fileDirectory, const aiMaterial* pAIMaterial);
+    void ReCheck_Material(const string& fileDirectory);
 
 private:
     void Render_MaterialAdd();
     void Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type);
+    void Add_ReTexture(const string& fileDirectory, const string& base, const string& typeAdd, TEXTURE_TYPE type);
 
 private:
     int m_currentPassIndex = {};

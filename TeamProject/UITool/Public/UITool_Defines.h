@@ -17,7 +17,7 @@ using namespace UITool;
 #include "Engine_Defines.h"
 #include "Engine_Math.h"
 
-// 엔진에 넣어야
+// 엔진에 넣어야 ??
 typedef struct tagButtonEvent {
 	wstring msg = L"";
 }BTN_EVENT;
@@ -42,3 +42,7 @@ typedef struct tagUIAnimationClip {
 
 	tagUIAnimationClip(string _strName) : strName(_strName) {}
 }UI_ANIM_CLIP;
+
+typedef struct tagUIPrefab {
+
+};

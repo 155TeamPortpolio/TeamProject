@@ -507,6 +507,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\MeshEffectModule.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
+      <Filter>00. System\02. Gui\IMGUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1366,6 +1369,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\StructuredBuffer.cpp">
       <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <Filter>00. System\02. Gui\IMGUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
