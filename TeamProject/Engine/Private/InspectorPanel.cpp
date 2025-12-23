@@ -64,7 +64,7 @@ void CInspectorPanel::ShowObject_Inspector()
 		ImGui::PopFontSize();
 		pObj->Render_GUI();
 	}
-
+	ImGui::Dummy({ 0,windowSize.y*0.1f });
 	ImGui::End();
 }
 

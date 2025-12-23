@@ -1,5 +1,6 @@
 #pragma once
 #include "EffectNode.h"
+#include "MeshEffectModule.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CMeshNode :
@@ -26,49 +27,27 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
-protected:    
-    MODE m_eMode = MODE::END;
-    string m_PassTag{};
+protected:
+    void Update_TextureSlotModule(_float dt);
+    void Update_ColorModule(_float dt);
+    void Update_ScaleModule(_float dt);
+    void Update_UVAnimationModule(_float dt);
+    void Update_SpriteAnimationModule(_float dt);
+    void Update_DissolveModule(_float dt);
+    void Update_BloomModule(_float dt);
+    void Bind_Params();
 
     /*Default Params*/
-    _float4 m_vBaseColor{ 1.f,1.f,1.f,1.f };
-    _float m_fThreshold{};  //전체 진행도
+    _float m_fProgress{};  //전체 진행도
 
-    EaseType m_eAlphaFadeEase = EaseType::None;
-    _float2 m_vAlphaFade{};
-    _float m_fAlpha{ 1.f };
-
-    EaseType m_eScaleEase = EaseType::None;
-    _float3 m_vStartScale{ 1.f,1.f,1.f };
-    _float3 m_vEndScale{ 1.f,1.f,1.f };
-
-    /*UV Animation*/
-    EaseType m_eUVEase = EaseType::None;
-    _float2 m_vUVSpeed{};
-    _float2 m_vStartUVOffset{};
-    _float2 m_vEndUVOffset{};
-    _float2 m_vCurrUVOffset{};
-
-    /*Sprite Aniamtion*/
-    _float m_fSpriteSpeed{};
-    _uint m_iCol{};
-    _uint m_iRow{};
-    _uint m_iMaxFrameIndex{};
-    _uint m_iCurrFrameIndex{};
-
-    /*Dissolve Params*/
-    EaseType m_eDissolveEase = EaseType::None;
-    _float m_fDissolveThreshold{};     //Dissolve 진행도
-    _float m_fDissolveStartProgress{}; //Dissolve가 시작될 전체 진행도
-
-    /*Noise Params*/
-
-
-    /*Distortion Params*/
-    _float m_fDistortionWeight{};
-
-    /*Bloom Params*/
-    _float m_fBloomIntensity{};
+    /*-----Modules-----*/
+    TEXTURE_SLOT_MODULE m_TextureSlotModule{};
+    COLOR_MODULE m_ColorModule{};
+    SCALE_MODULE m_ScaleModule{};
+    UV_ANIMATION_MODULE m_UVAnimaitonModule{};
+    SPRITE_ANIMATION_MODULE m_SpriteAnimationModule{};
+    DISSOLVE_MODULE m_DissolveModule{};
+    BLOOM_MODULE m_BloomModule{};
 
 };
 NS_END

@@ -6,36 +6,37 @@ namespace MapTool {
 
 	typedef struct tagResourceModelPathPack {
 		_bool			isLoaded = { false };
-		std::string		TagName = {};
-		std::string		TagModelKey = {};
-		std::string		TagModelPath = {};
-		std::string		TagMaterialKey = {};
-		std::string		TagMaterialPath = {};
+		string			TagName = {};
+		string			TagModelKey = {};
+		string			TagModelPath = {};
+		string			TagMaterialKey = {};
+		string			TagMaterialPath = {};
 	}ModelPathPack;
 
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
-		std::string TagModelResourceKey = {};
-		std::string TagMaterialResourceKey = {};
-		std::array<_float, 4> vRight = { 1.f, 0.f, 0.f, 0.f };
-		std::array<_float, 4> vUp = { 0.f, 1.f, 0.f, 0.f };
-		std::array<_float, 4> vLook = { 0.f, 0.f, 1.f, 0.f };
-		std::array<_float, 4> vPos = { 0.f, 0.f, 0.f, 1.f };
+		string TagModelResourceKey = {};
+		string TagMaterialResourceKey = {};
+		array<_float, 4> vRight = { 1.f, 0.f, 0.f, 0.f };
+		array<_float, 4> vUp = { 0.f, 1.f, 0.f, 0.f };
+		array<_float, 4> vLook = { 0.f, 0.f, 1.f, 0.f };
+		array<_float, 4> vPos = { 0.f, 0.f, 0.f, 1.f };
 	}MapData_Object;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Object, iObjID, TagModelResourceKey, TagMaterialResourceKey, vRight, vUp, vLook, vPos);
 
 	typedef struct tagMapDataDefaultDesc {
-		std::string TagLayer = {};
-		std::vector<MapData_Object> Objects;
+		string TagLayer = {};
+		vector<MapData_Object> Objects;
 	}MapData_Layer;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Layer, TagLayer, Objects);
 
 	typedef struct tagMapDataHeader {
-		std::string	TagDataFormat = {};
+		string		TagDataFormat = {};
+		string		TagArea = {};
 		_int		iVersion = 1;
-		std::vector<MapData_Layer> Layers;
+		vector<MapData_Layer> Layers;
 	}MapData_Header;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, iVersion, Layers);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Header, TagDataFormat, TagArea, iVersion, Layers);
 
 	struct LOADED_OBJECT {
 		_int	iObjIdx = { -1 };
@@ -57,8 +58,8 @@ namespace MapTool {
 
 
 	typedef struct tagFieldDataDef {
-		std::string		id = {};
-		std::string		TagName = {};
+		string			id = {};
+		string			TagName = {};
 		SLOT_DATA_TYPE	eDataType = SLOT_DATA_TYPE::END;
 		SlotValue		defaultvalue;
 		_int			iObjID = { -1 };
@@ -70,10 +71,11 @@ namespace MapTool {
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(FIELD_DATA_DEFINE, iObjID, TagName, defaultvalue);
 
 	typedef struct tagMapSlotDataHeader {
-		std::string	TagDataFormat = {};
+		string		TagDataFormat = {};
+		string		TagArea = {};
 		_int		iVersion = 1;
-		std::vector<FIELD_DATA_DEFINE> values; 
+		vector<FIELD_DATA_DEFINE> values; 
 	}MapData_Slot_Header;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, iVersion, values);
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, TagArea, iVersion, values);
 
 }

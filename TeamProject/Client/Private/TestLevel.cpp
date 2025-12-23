@@ -25,6 +25,9 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 
+/* Character */
+#include "Miyabi.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -64,10 +67,12 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
+	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
 	
-	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
+	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "glow_particle.json");
 	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("test_particle.json")
+	//	.Asset("glow_particle.json")
 	//	.Position(_float3(0.f, 0.f, 0.f))
 	//	.Build("Test_Effect");
 	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
@@ -81,24 +86,27 @@ HRESULT CTestLevel::Awake()
 
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
-
 	//Map Loader Logic is going to Change
 	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
 	//if (nullptr == pMapLoader)
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
 
-	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-		.CharacterController({})
-		.Build("Test_Model");
+	//==============TestModel==========================
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
 
-	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
+
+	// =====================TestFloor=========================
 	COLLIDER_DESC colDesc;
 	colDesc.bCooking = true;
 	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
@@ -114,14 +122,29 @@ HRESULT CTestLevel::Awake()
 			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 		}
 	}
+
+
+	/* Miyabi */
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	CCT_DESC miyabiCCT;
+	miyabiCCT.bAutoFit = false;
+	miyabiCCT.fHeight = 0.36f;
+	miyabiCCT.fRadius = 0.64f;
+	miyabiCCT.fBoundingMinY = -0.88f;
+	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
+	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.CharacterController(miyabiCCT)
+		.Build("Miyabi");
+	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
+
 	// --------------------------- Camera -------------------------------------------------
 	constexpr float kAspect = (float)g_iWinSizeX / g_iWinSizeY;
 
-	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(kAspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("Orbit_Cam");
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
+	//auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+	//	.Camera(kAspect)
+	//	.Position({ 0.f, 2.f, -5.f })
+	//	.Build("Orbit_Cam");
+	//static_cast<COrbitCam*>(orbitCam)->SetTarget(testModel);
 
 	auto sequenceCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
 		.Camera(kAspect)
@@ -133,7 +156,7 @@ HRESULT CTestLevel::Awake()
 		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
 
-	objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
+	//objMgr->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer" });
 	objMgr->Add_Object(freeCam,     {"Test_Level", "Camera_Layer" });
 
@@ -144,6 +167,7 @@ HRESULT CTestLevel::Awake()
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 
 	Ready_Camera();
+
 	return S_OK;
 }
 
