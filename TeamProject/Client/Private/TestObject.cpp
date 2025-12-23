@@ -46,15 +46,15 @@ HRESULT CTestObject::Initialize_Prototype()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
-		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.model",
+		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
+		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
+		"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
 	Add_Component<CAudioSource>();
 
 	return S_OK;
@@ -119,8 +119,8 @@ HRESULT CTestObject::Initialize_State()
 
 void CTestObject::Awake()
 {
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
 

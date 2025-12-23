@@ -80,24 +80,27 @@ HRESULT CTestLevel::Awake()
 
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
-
 	//Map Loader Logic is going to Change
 	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
 	//if (nullptr == pMapLoader)
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
 
+	//==============TestModel==========================
 	auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
 		.CharacterController({})
 		.Build("Test_Model");
 
 	objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
+
+	// =====================TestFloor=========================
 	COLLIDER_DESC colDesc;
 	colDesc.bCooking = true;
 	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
