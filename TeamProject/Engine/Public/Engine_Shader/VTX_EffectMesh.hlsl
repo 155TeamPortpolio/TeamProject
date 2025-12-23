@@ -3,12 +3,14 @@
 float4x4 g_worldMatrix;
 
 /* Texture */
-#define NONE = 0;
-#define SHAPE_MASK = 1;
-#define EMISSION = 2;
-#define DISTORTION = 3;
+#define NONE  0
+#define SHAPE_MASK 1
+#define EMISSION  2
+#define DISTORTION 3
 
-float4 ChannelUsage;
+uint SamplerMode;
+uint MainTexUsage;
+uint4 ChannelUsage;
 float GetChannelValue(float4 vTexSample, uint iTargetUsage)
 {
     if (ChannelUsage.x == iTargetUsage)
@@ -44,9 +46,6 @@ float BloomIntensity;
 float DissolveProgress;
 
 /*Distortion Params*/
-
-/*Func*/
-
 
 struct VS_IN
 {
@@ -108,12 +107,48 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 Texcoord = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
+    Texcoord += UVOffset;
     
-    //if (vMtrlDiffuse.a < 0.1f)
-    //    discard;
+    vector vTexSample = vector(1.f, 1.f, 1.f, 1.f);
+
+    if(SamplerMode == 0)
+       vTexSample = DiffuseTexture.Sample(LinearSampler, Texcoord);
+    else if(SamplerMode == 1)
+       vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
     
-    Out.vDiffuse = vMtrlDiffuse;
+    float4 color = float4(1.f, 1.f, 1.f, 1.f);
+    
+    if (MainTexUsage == 0)  //as color
+    {
+        color = vTexSample;
+    }
+    else if (MainTexUsage == 1) //as channel
+    {
+        float fShapeMask = GetChannelValue(vTexSample, SHAPE_MASK);
+        float fEmission = GetChannelValue(vTexSample, EMISSION);
+        float fDistortion = GetChannelValue(vTexSample, DISTORTION);
+        
+        if (fDistortion > 0.f)
+        {
+            float2 vDistortionOffset = (fDistortion - 0.5f) * 2.f;
+            Texcoord += vDistortionOffset;
+            
+            vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
+            fShapeMask = GetChannelValue(vTexSample, SHAPE_MASK);
+            fEmission = GetChannelValue(vTexSample, EMISSION);
+        }
+        
+        color = vBaseColor;
+        color.a = fShapeMask;
+    }
+    else if (MainTexUsage == 2) //as grayscale
+    {
+        float fValue = vTexSample.r;
+        color = vBaseColor * fValue;
+    }
+
+    Out.vDiffuse = color;
     
     return Out;
 }

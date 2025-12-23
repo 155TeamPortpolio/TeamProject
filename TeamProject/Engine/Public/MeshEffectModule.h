@@ -2,11 +2,20 @@
 
 typedef struct tagTextureSlotModule
 {
-	enum class MAIN_USAGE { AS_COLOR, AS_CHANNEL, AS_GRAYSCALE, END };
-	enum class CHANNEL_USAGE { NONE, SHAPE_MASK, EMISSION, DISTORTION, END };
+	enum class SAMPLER_MODE : _uint { WRAP, CLAMP, END };
+	enum class MAIN_USAGE : _uint { AS_COLOR, AS_CHANNEL, AS_GRAYSCALE, END };
+	enum class CHANNEL_USAGE : _uint { NONE, SHAPE_MASK, EMISSION, DISTORTION, END };
 
+	SAMPLER_MODE eSamplerMode = SAMPLER_MODE::WRAP;
 	MAIN_USAGE eMainUsage = MAIN_USAGE::AS_COLOR;
-	_float4 vChannelUsage{};
+	CHANNEL_USAGE eRed = CHANNEL_USAGE::NONE;
+	CHANNEL_USAGE eGreen = CHANNEL_USAGE::NONE;
+	CHANNEL_USAGE eBlue = CHANNEL_USAGE::NONE;
+	CHANNEL_USAGE eAlpha = CHANNEL_USAGE::NONE;
+
+	_uint iSamplerModeParam{};
+	_uint iMainUsageParam{};
+	_uint4 vChannelUsageParam{};
 	
 }TEXTURE_SLOT_MODULE;
 

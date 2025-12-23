@@ -28,6 +28,7 @@ public:
     virtual void Free() override;
 
 protected:
+    void Update_TextureSlotModule(_float dt);
     void Update_ColorModule(_float dt);
     void Update_ScaleModule(_float dt);
     void Update_UVAnimationModule(_float dt);

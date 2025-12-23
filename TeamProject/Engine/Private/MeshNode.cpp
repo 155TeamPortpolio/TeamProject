@@ -129,6 +129,7 @@ void CMeshNode::Update(_float dt)
 		//pMaterialInstance->Set_Param("Alpha", { &m_fAlpha,"float",sizeof(_float) });
 		//pMaterialInstance->Set_Param("BloomIntensity", { &m_fBloomIntensity,"float",sizeof(_float) });
 
+		Update_TextureSlotModule(dt);
 		Update_ColorModule(dt);
 		Update_ScaleModule(dt);
 		Update_UVAnimationModule(dt);
@@ -169,6 +170,16 @@ CGameObject* CMeshNode::Clone(INIT_DESC* pArg)
 void CMeshNode::Free()
 {
 	__super::Free();
+}
+
+void CMeshNode::Update_TextureSlotModule(_float dt)
+{
+	m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.iSamplerModeParam);
+	m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
+	m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
+	m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eBlue);
+	m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eGreen);
+	m_TextureSlotModule.vChannelUsageParam.w = ENUM(m_TextureSlotModule.eAlpha);
 }
 
 void CMeshNode::Update_ColorModule(_float dt)
@@ -221,7 +232,9 @@ void CMeshNode::Bind_Params()
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
 
 	/* Texture */
-	pMaterialInstance->Set_Param("ChannelUsage", { &m_TextureSlotModule.vChannelUsage,"float4",sizeof(_float4) });
+	pMaterialInstance->Set_Param("SamplerMode", { &m_TextureSlotModule.iSamplerModeParam,"uint",sizeof(_uint)});
+	pMaterialInstance->Set_Param("MainUsage", { &m_TextureSlotModule.iMainUsageParam,"uint",sizeof(_uint)});
+	pMaterialInstance->Set_Param("ChannelUsage", { &m_TextureSlotModule.vChannelUsageParam,"uint4",sizeof(_uint4)});
 
 	/* Color */
 	pMaterialInstance->Set_Param("vBaseColor", { &m_ColorModule.vCurrColor,"float4",sizeof(_float4) });
