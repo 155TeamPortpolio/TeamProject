@@ -43,7 +43,7 @@ private:
 private:
 	atomic<LoadState> state{ LoadState::Unloaded };
 
-	// 아래 3개는 같이 갱신되므로 뭉텅이로 보호
+	// 아래 3개는 같이 갱신됨 뭉텅이로 보호
 	mutable mutex m_Mutex;
 	ResourceVariant m_Resource;
 	shared_future<ResourceVariant> m_LoadingTask;

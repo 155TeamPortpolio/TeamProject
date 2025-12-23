@@ -16,7 +16,7 @@ void CResourceEntry::Release_NoLock()
         {
            /*타입을 꺼내서 저장*/
             using Value = decay_t<decltype(value)>;
-            /*포인터람*/
+            /*포인터라면*/
             if constexpr (is_pointer_v<Value>)
             {
                 Safe_Release(value);   
