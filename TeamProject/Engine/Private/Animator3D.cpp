@@ -710,7 +710,7 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	// 式式式式式式式式式 Play bar
 	if (ImGui::Button("Play")) {
-		Set_Animation(curLayerIndex, curLayer.iClipIndex)
+		Change_Animation(curLayerIndex, curLayer.iClipIndex)
 			.Loop(bLoop);
 	}
 	ImGui::SameLine();

@@ -51,6 +51,11 @@ void CAnimToolPanel::Render_GUI()
 	{
 		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+		
+		if (ImGui::BeginTabItem("Load Resources")) {
+			GUI_EventResources(childHeight);
+			ImGui::EndTabItem();
+		}
 
 		if (ImGui::BeginTabItem("Setting Clip"))
 		{
@@ -93,11 +98,16 @@ void CAnimToolPanel::GUI_DefaultSetting()
 	Helper::DarkThemeStyle styleScope;
 }
 
+void CAnimToolPanel::GUI_EventResources(_float fChildHeight)
+{
+}
+
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
 
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(300.f);
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
 		if (!m_AnimClip.empty()) {
@@ -129,6 +139,22 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 			}
 		}
 		ImGui::EndCombo();
+	}
+
+	ImGui::SameLine();
+	ImGui::Text("Extrack BoneMove : "); ImGui::SameLine();
+
+	static int BoneIndex = -1;
+	ImGui::PushItemWidth(120.f);
+	ImGui::InputInt("##ExtractBone", &BoneIndex); ImGui::SameLine();
+	if (ImGui::Button("Set", { 55.f, 0.f }))
+	{
+		m_pSelectAnimator->Set_NoTransform(BoneIndex);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset", { 55.f, 0.f }))
+	{
+		m_pSelectAnimator->Set_UseTransform();
 	}
 
 	Draw_ToolbarUI();
@@ -342,6 +368,11 @@ void CAnimToolPanel::Draw_EventListUI()
 	}
 
 	ImGui::EndTable();
+}
+
+void CAnimToolPanel::GUI_Setting_Effect(_float fChildHeight)
+{
+	//여기서 작업하면댐
 }
 
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
