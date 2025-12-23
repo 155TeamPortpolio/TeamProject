@@ -28,6 +28,7 @@ private:
 	_uint m_iSelectedLevel = {};
 	_uint m_iSelectedLayer = {};
 	_bool m_bShowUI = false;
+	_float m_fPanelCX = {};
 public:
 	static CHierarchyPanel* Create(GUI_CONTEXT* context);
 	virtual void Free();

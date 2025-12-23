@@ -478,8 +478,10 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
     float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
   
-    float3 mapped = scene.rgb + bloom.rgb;
-
+    float3 mapped = scene.rgb;
+    if (bloom.a > 0.f)
+        mapped.rgb = lerp(mapped.rgb, bloom.rgb, bloom.a);
+    
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
 

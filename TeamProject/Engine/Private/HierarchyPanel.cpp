@@ -25,72 +25,80 @@ HRESULT CHierarchyPanel::Initialize()
 
 	return S_OK;
 }
-
 void CHierarchyPanel::Render_GUI()
 {
 	const string& nowLevel = m_pContext->pLevelManager->Get_NowLevelKey();
-	
-	float fWincY = (float)m_pContext->viewPort.y;
-	float fPanelCX = 200;
 
+	const float winH = (float)m_pContext->viewPort.y;
+	m_fPanelCX = 200.0f;
 
-	ImGui::SetNextWindowPos(ImVec2(m_fPosX, 0));
-	ImGui::SetNextWindowSize(ImVec2(fPanelCX, fWincY));
-	ImGui::Begin("##Hierachy", nullptr, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar);
+	// 1) 메인 패널
+	ImGuiWindowFlags panelFlags =
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoCollapse |
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoSavedSettings;
+
+	ImGui::SetNextWindowPos(ImVec2(m_fPosX, 0.f), ImGuiCond_Always);
+	ImGui::SetNextWindowSize(ImVec2(m_fPanelCX, winH), ImGuiCond_Always);
+
+	ImGui::Begin("##Hierachy", nullptr, panelFlags);
 
 	ShowLevelList();
-	ShowLayerList(nowLevel);	
+	ShowLayerList(nowLevel);
 
 	ImGui::SeparatorText("Show Object Type");
 	const char* label = m_bShowUI ? "UIObject" : "GameObject";
 
+	// 왼쪽 라벨
 	ImGui::AlignTextToFramePadding();
 	ImGui::TextUnformatted(label);
 
-	// 현재 줄에서 오른쪽 끝으로 커서 이동
-	_float toggleWidth = ImGui::GetFrameHeight() * 1.55f;  // ToggleButton이 쓰는 width와 동일해야 함
-	_float spacing = 4.0f;                             // 오른쪽 여백 조금
-	_float posX = ImGui::GetCursorPosX();
-	_float avail = ImGui::GetContentRegionAvail().x;
+	// 오른쪽 토글 (같은 줄 우측 정렬)
+	const float toggleWidth = ImGui::GetFrameHeight() * 1.55f;
+	const float spacing = ImGui::GetStyle().ItemSpacing.x;
+	float startX = ImGui::GetCursorPosX();
+	float avail = ImGui::GetContentRegionAvail().x;
 
-	// 현재 위치 + 남은 영역 - 토글 너비 - 여백
-	ImGui::SameLine(posX + avail - toggleWidth - spacing);
-
+	ImGui::SameLine(startX + avail - toggleWidth - spacing);
 	ToggleButton("##objToggle", &m_bShowUI);
 
-	if (!m_bShowUI)
-		ShowObjectList();
-	else
-		ShowUIObjectList();
+	if (!m_bShowUI) ShowObjectList();
+	else           ShowUIObjectList();
 
 	ImGui::End();
+
+	// 2) 옆에 붙는 버튼(화살표)
+	ImGuiWindowFlags btnFlags =
+		ImGuiWindowFlags_NoDecoration |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_AlwaysAutoResize;
 
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.f, 0.f));
-	ImGui::SetNextWindowPos(ImVec2(m_fPosX + fPanelCX, 0));
-	ImGui::Begin("##HierachyBtn", nullptr, ImGuiWindowFlags_AlwaysAutoResize |
-		ImGuiWindowFlags_NoDecoration);
-	if (ImGui::ArrowButton("##HierachyOpenBtn",m_bOpened ? ImGuiDir::ImGuiDir_Left : ImGuiDir::ImGuiDir_Right)) {
+
+	ImGui::SetNextWindowPos(ImVec2(m_fPosX + m_fPanelCX, 0.f), ImGuiCond_Always);
+	ImGui::Begin("##HierachyBtn", nullptr, btnFlags);
+
+	if (ImGui::ArrowButton("##HierachyOpenBtn", m_bOpened ? ImGuiDir_Left : ImGuiDir_Right))
 		m_bOpened = !m_bOpened;
-	}
+
 	ImGui::End();
-	ImGui::PopStyleVar(1);
+	ImGui::PopStyleVar();
 }
 
 void CHierarchyPanel::Update_Panel(_float dt)
 {
-	if (m_bOpened) {
-		if (m_fPosX < 0)
-			m_fPosX += dt * 250;
-		else
-			m_fPosX = 0;
-	}
-	else {
-		if (m_fPosX > -200)
-			m_fPosX -= dt * 250;
-		else
-			m_fPosX = -200;
-	}
+	const float speed = 250.0f;
+	const float openX = 0.0f;
+	const float closeX = -m_fPanelCX;
+
+	if (m_bOpened)  m_fPosX += dt * speed;
+	else            m_fPosX -= dt * speed;
+
+	if (m_fPosX > openX)  m_fPosX = openX;
+	if (m_fPosX < closeX) m_fPosX = closeX;
 }
+
 
 void CHierarchyPanel::ShowLevelList()
 {

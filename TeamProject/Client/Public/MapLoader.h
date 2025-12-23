@@ -24,7 +24,6 @@ private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
 	HRESULT			LoadBaseData(const MapData_Path_Packet* pPacket);
-	HRESULT			LoadSlotData(const MapData_Path_Packet* pPacket);
 	HRESULT			CacheSlotDataFile(const string& SlotDataFilePath);
 	
 	_bool			isThereFormat(const string& TagSlotFormat);

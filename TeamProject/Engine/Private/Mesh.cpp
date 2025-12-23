@@ -89,7 +89,12 @@ HRESULT CMesh::Create_StaticVertex(ID3D11Device* pDevice, ifstream& ifs)
 	m_StaticVertex.resize(m_iVerticesCount);
 
 	ifs.read(reinterpret_cast<char*>(m_StaticVertex.data()), m_iVerticesCount * m_iVertexStride);
-
+	for (size_t i = 0; i < m_OffsetCount; i++)
+	{
+		MESH_OFFSET offset;
+		ifs.read(reinterpret_cast<char*>(&offset), sizeof(MESH_OFFSET));
+		m_MeshOffset.emplace(offset.BoneIndex, offset.offsetMat);
+	}
 	D3D11_BUFFER_DESC VBDesc;
 	VBDesc.ByteWidth = m_iVertexStride * m_iVerticesCount;
 	VBDesc.Usage = D3D11_USAGE_DEFAULT;
