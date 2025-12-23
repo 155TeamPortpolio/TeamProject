@@ -17,11 +17,19 @@ CSlotFieldGui::CSlotFieldGui(GUI_CONTEXT* pContext)
 
 HRESULT CSlotFieldGui::Initialize()
 {
+    m_pMapToolContext = m_pMapToolCore->Get_Context();
+
+
+    // 저장 성공 시, 알림 쿨타임
+    m_vShowSaveFinish = { 3.f, 0.f };
+
     return S_OK;
 }
 
 void CSlotFieldGui::Update_Panel(_float dt)
 {
+    CheckCoolTime(dt);
+
     if (m_isRequestApply)
     {
         ApplyDraftToB();
@@ -77,6 +85,17 @@ void CSlotFieldGui::Render_GUI()
 
     ImGui::PopID();
     ImGui::End();
+}
+
+void CSlotFieldGui::CheckCoolTime(_float dt)
+{
+    if (m_isShowSaveFinish) {
+        m_vShowSaveFinish.y += dt;
+        if (m_vShowSaveFinish.x < m_vShowSaveFinish.y) {
+            m_vShowSaveFinish.y = 0.f;
+            m_isShowSaveFinish = false;
+        }
+    }
 }
 
 SlotValue CSlotFieldGui::MakeDefaultValue(SLOT_DATA_TYPE eType)
@@ -186,6 +205,7 @@ void CSlotFieldGui::LoadBaseMapData()
 {
     m_LoadedObjects = m_pMapToolCore->Load_MapData();
 
+
     if (m_LoadedObjects.size() < 1) {
         MSG_BOX("데이터 읽기 실패!");
         return;
@@ -222,7 +242,8 @@ void CSlotFieldGui::SaveSlotData()
 {
     MapData_Slot_Header SlotHeader = { };
     SlotHeader.TagDataFormat = m_TagSlotFormat;
-    SlotHeader.iVersion = m_pMapToolCore->Get_Version();
+    SlotHeader.TagArea = m_pMapToolContext->TagArea;
+    SlotHeader.iVersion = m_pMapToolContext->iVersion;
 
     unordered_map<string, const FIELD_DATA_DEFINE*> TabByID;
     TabByID.reserve(m_AppliedTabs.size());
@@ -255,10 +276,13 @@ void CSlotFieldGui::SaveSlotData()
 
     }
 
-    string TagFileName = g_TagFileFirstName + SlotHeader.TagDataFormat + "." + std::to_string(SlotHeader.iVersion);
-    string SavePath = "../Bin/Data/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
+    string TagFileName = g_TagFileName_MapData + "." + m_pMapToolContext->TagArea + "." + SlotHeader.TagDataFormat + "." + std::to_string(SlotHeader.iVersion);
+    string SavePath = "../Bin/Data/NewSlotData/" + HelperMT::MakeTimestampFileName(TagFileName, ".json");
 
-    Helper::SaveJson<MapData_Slot_Header>(SlotHeader, SavePath);
+    //Helper::SaveJson<MapData_Slot_Header>(SlotHeader, SavePath);
+    if (true == HelperMT::ExportJsonFile<MapData_Slot_Header>(SlotHeader, SavePath))
+        m_isShowSaveFinish = true;
+
 }
 
 void CSlotFieldGui::DrawDefaultEditor(FIELD_DATA_DEFINE& def)
@@ -489,20 +513,40 @@ void CSlotFieldGui::DrawRightPanel()
     if (ImGui::Button("Load Base MapData"))
         LoadBaseMapData();
 
+    ImGui::SameLine(0.f, 20.f);
+
+    ImGui::Text("Loaded Objects: %d", (int)m_LoadedObjects.size());
     
 
 
     // (1-1) 로드된 맵 오브젝트가 B의 기본 행
-    ImGui::Text("Loaded Objects: %d", (int)m_LoadedObjects.size());
+    ImGui::Text("Loaded Area : %s", m_pMapToolContext->TagArea.c_str());
+
+
 
     ImGui::SameLine(0.f, 50.f);
 
     ImGui::SetNextItemWidth(80.0f);
     ImGui::InputText("Format Name", &m_TagSlotFormat);
 
+    if (m_TagSlotFormat.empty())
+    {
+        ImDrawList* dl = ImGui::GetWindowDrawList();
+        ImVec2 pmin = ImGui::GetItemRectMin();
+        ImVec2 pmax = ImGui::GetItemRectMax();
+        dl->AddRect(pmin, pmax, IM_COL32(255, 0, 0, 255), 0.0f, 0, 2.0f);
+    }
+
     ImGui::SameLine(0.f, 10.f);
-    if (ImGui::Button("Save Json"))
-        m_isRequestSave = true;
+    if (ImGui::Button("Save Json")) {
+        if (false == m_TagSlotFormat.empty())
+            m_isRequestSave = true;
+    }
+    if (m_isShowSaveFinish) {
+        ImGui::SameLine(0.f, 20.f);
+        ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "Save Json Success!");
+    }
+
 
     ImGui::Separator();
 
