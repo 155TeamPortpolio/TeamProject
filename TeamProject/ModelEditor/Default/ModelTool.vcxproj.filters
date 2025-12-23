@@ -241,6 +241,9 @@
     <ClInclude Include="..\Public\EditorPanel.h">
       <Filter>06. EditorPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
+      <Filter>97. GUIInc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -350,6 +353,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\EditorPanel.cpp">
       <Filter>06. EditorPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <Filter>97. GUIInc</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
