@@ -151,8 +151,8 @@ void CCanvasPanel::Render_GUI_Create()
         if (!pChild)
             return;
 
-        CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
-        this->Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
+        //CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
+        Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
     }
 }
 
