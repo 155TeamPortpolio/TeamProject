@@ -27,17 +27,19 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (nullptr == m_pSelectAnimator)
 		return;
 
-	if (m_isPlay) {
+	if (!m_bPause) {
 		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
 		
 		if (m_fDuration <= m_fTrackPos) {
 			if (m_bLoop)
 				m_fTrackPos = 0.f;
 			else
-				m_isPlay = false;
+				m_bPause = true;
 		}
 	}
-	m_pSelectAnimator->Update_Animation(m_fTrackPos);
+
+	if(!m_bPause)
+		m_pSelectAnimator->Update_Animation(m_fTrackPos);
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -142,11 +144,13 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	static float timeScale = 1.f;
 
 	/* ¹öÆ° */
-	if (ImGui::Button(m_isPlay ? "Pause" : "Play", buttonSize)) m_isPlay = !m_isPlay;
+
+	if (ImGui::Button(m_bPause ? "Pause" : "Play", buttonSize))
+		m_bPause = !m_bPause;
 	ImGui::SameLine();
 	if (ImGui::Button("Stop", buttonSize))
 	{
-		m_isPlay = false;
+		m_bPause = true;
 		m_fTrackPos = 0.f;
 	}
 	ImGui::SameLine();
@@ -405,7 +409,7 @@ void CAnimToolPanel::Setting_NewClip()
 
 void CAnimToolPanel::Reset_Panel()
 {
-	m_isPlay = false;
+	m_bPause = true;
 	m_fTrackPos = 0.f;
 	m_fDuration = 0.f;
 	m_CurClipTag = "";
