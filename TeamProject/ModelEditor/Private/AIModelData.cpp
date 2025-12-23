@@ -21,12 +21,12 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
         aiMesh* srcMesh = pAIScene->mMeshes[i];
         string meshName = Helper::ToLower(srcMesh->mName.C_Str());
 
-        if (!meshName.empty() && loadedMeshNames.find(meshName) != loadedMeshNames.end())
-            continue;
-
-        if (!meshName.empty())
-            loadedMeshNames.insert(meshName);
-
+        //if (!meshName.empty() && loadedMeshNames.find(meshName) != loadedMeshNames.end())
+        //    continue;
+        //
+        //if (!meshName.empty())
+        //    loadedMeshNames.insert(meshName);
+        //
         CAIMesh* pMesh = CAIMesh::Create(_eType, srcMesh, static_cast<CAISkeleton*>(m_pSkeleton));
         if (nullptr == pMesh)
             return E_FAIL;

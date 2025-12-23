@@ -33,7 +33,7 @@ HRESULT CMesh::Initialize_From_File(ID3D11Device* pDevice, ifstream& ifs, MESH_T
 	m_ElementCount = eType == MESH_TYPE::ANIM ? VTXSKINMESH::iElementCount : VTXMESH::iElementCount;
 	m_ElementKey = eType == MESH_TYPE::ANIM ? VTXSKINMESH::Key : VTXMESH::Key;
 	m_ElementDesc = eType == MESH_TYPE::ANIM ? VTXSKINMESH::Elements : VTXMESH::Elements;
-
+	m_OffsetCount = infoHeader.offsetCount;
 	HRESULT hr = eType == MESH_TYPE::ANIM ? Create_AnimateVertex(pDevice, ifs) : Create_StaticVertex(pDevice, ifs);
 
 	if (FAILED(hr))
@@ -71,7 +71,12 @@ HRESULT CMesh::Create_AnimateVertex(ID3D11Device* pDevice, ifstream& ifs)
 	subData.pSysMem = vertices.data();
 
 	HRESULT hr = pDevice->CreateBuffer(&VBDesc, &subData, &m_pVB);
-
+	for (size_t i = 0; i < m_OffsetCount; i++)
+	{
+		MESH_OFFSET offset;
+		ifs.read(reinterpret_cast<char*>(&offset), sizeof(MESH_OFFSET));
+		m_MeshOffset.emplace(offset.BoneIndex, offset.offsetMat);
+	}
 	m_Skined = vertices;
 	return hr;
 }
@@ -134,6 +139,19 @@ HRESULT CMesh::Create_Index(ID3D11Device* pDevice)
 
 	return hr;
 
+}
+
+_float4x4 CMesh::Get_MeshOffset(_uint boneIndex)
+{
+	auto iter = m_MeshOffset.find(boneIndex);
+	if (iter != m_MeshOffset.end()) {
+		return iter->second;
+	}
+	else {
+		_float4x4 identity;
+		XMStoreFloat4x4(&identity, XMMatrixIdentity());
+		return identity;
+	}
 }
 
 void CMesh::Create_BoneMinMax(CSkeleton* pSkeleton)

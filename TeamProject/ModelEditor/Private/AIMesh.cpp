@@ -182,12 +182,15 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 
 		string BoneName = pAIBone->mName.C_Str();
 		BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+
+		if (BoneIndex < 0) continue; 
 		m_BoneIndices.push_back(BoneIndex);
 
 		_float4x4 OffsetMatrix = {};
 		memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
 		XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
 		_pSkeleton->Set_Offset(BoneIndex, OffsetMatrix);
+		m_MeshOffset.emplace((_uint)BoneIndex, OffsetMatrix);
 
 		for (size_t j = 0; j < pAIBone->mNumWeights; j++)
 		{
@@ -244,11 +247,19 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	infoHeader.VerticesCount = m_iVerticesCount;
 	strcpy_s(infoHeader.MeshName, m_VIKey.c_str());
 	infoHeader.MaterialIndex = m_MaterialIndex;
+	infoHeader.offsetCount = m_MeshOffset.size();
 	ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(MESH_INFO_HEADER));
 
 	if (m_iVertexStride == sizeof(VTXSKINMESH)) {
 		for (VTXSKINMESH& vertex : m_SkinMeshes) {
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXSKINMESH));
+		}
+		for (auto& pair : m_MeshOffset)
+		{
+			MESH_OFFSET offset;
+			offset.BoneIndex = pair.first;
+			offset.offsetMat = pair.second;
+			ofs.write(reinterpret_cast<const char*>(&offset), sizeof(MESH_OFFSET));
 		}
 	}
 
