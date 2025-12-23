@@ -306,8 +306,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
         return false;
     }
 
-    _uint camType = 0;
-    _uint rigType = 0;
     _uint projType = 0;
     _uint playbackMode = 0;
     _uint space = 0;
@@ -317,8 +315,6 @@ bool CamUtil::Load(const filesystem::path& path, CamSequenceDesc& outSeq, string
     _uint fovInterp = 0;
     _uint segmentEase = 0;
 
-    if (!ReadData(inFile, camType)) { SetErr("Read camType failed"); return false; }
-    if (!ReadData(inFile, rigType)) { SetErr("Read rigType failed"); return false; }
     if (!ReadData(inFile, projType)) { SetErr("Read projType failed"); return false; }
     if (!ReadData(inFile, playbackMode)) { SetErr("Read playbackMode failed"); return false; }
 

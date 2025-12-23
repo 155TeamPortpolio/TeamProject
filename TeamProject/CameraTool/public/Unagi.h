@@ -9,7 +9,7 @@ class CUnagi : public CGameObject
 private:
     CUnagi() = default;
     CUnagi(const CUnagi& rhs) : CGameObject(rhs) {}
-    virtual ~CUnagi() DEFAULT;
+    virtual ~CUnagi() = default;
 
 public:
     HRESULT Initialize_Prototype()      override;
@@ -23,6 +23,6 @@ public:
 public:
     static CUnagi* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free();
+    virtual void Free() { __super::Free(); }
 };
 NS_END

@@ -9,7 +9,7 @@ class CGrid : public CGameObject
 protected:
     CGrid() {}
     CGrid(const CGrid& rhs) : CGameObject(rhs) {}
-    virtual ~CGrid() DEFAULT;
+    virtual ~CGrid() = default;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

@@ -51,7 +51,6 @@ CUnagi* CUnagi::Create()
 		MSG_BOX("Object Create Failed : CDemoModel");
 		Safe_Release(instance);
 	}
-
 	return instance;
 }
 
@@ -64,9 +63,4 @@ CGameObject* CUnagi::Clone(INIT_DESC* pArg)
 		Safe_Release(instance);
 	}
 	return instance;
-}
-
-void CUnagi::Free()
-{
-	__super::Free();
 }

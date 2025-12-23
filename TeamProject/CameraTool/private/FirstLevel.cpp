@@ -9,8 +9,8 @@
 HRESULT CFirstLevel::Awake()
 {
 	PROTO->Add_ProtoType("First_Level", "Proto_FreeCam", CFreeCam::Create());
-	PROTO->Add_ProtoType("First_Level", "Proto_Unagi", CUnagi::Create());
-	PROTO->Add_ProtoType("First_Level", "Proto_Grid", CGrid::Create());
+	PROTO->Add_ProtoType("First_Level", "Proto_Unagi",   CUnagi::Create());
+	PROTO->Add_ProtoType("First_Level", "Proto_Grid",    CGrid::Create());
 
 	CGameObject* freeCam = Builder::Create_Object({ "First_Level", "Proto_FreeCam" })
 		.Camera(aspect)
@@ -38,16 +38,6 @@ HRESULT CFirstLevel::Awake()
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceReference(objHandle);
 	GUI->Register_Panel(camPanel);
-	return S_OK;
-}
-
-void CFirstLevel::Update()
-{
-
-}
-
-HRESULT CFirstLevel::Render()
-{
 	return S_OK;
 }
 

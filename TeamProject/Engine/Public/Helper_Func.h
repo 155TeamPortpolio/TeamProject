@@ -164,6 +164,14 @@ namespace Helper // magic_enum 관련
 	{
 		return DrawEnumCombo(id, ioValue, ioValue, width, Filter);
 	}
+
+	ENGINE_DLL bool DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue);
+
+	ENGINE_DLL void DrawEaseGraph(EaseType ease, ImVec2 size, const char* id);
+
+	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width);
+
+	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, float width);
 }
 
 namespace Helper
@@ -172,34 +180,34 @@ namespace Helper
 	{
 		DarkThemeStyle()
 		{
-			ImGui::PushStyleVar(ImGuiStyleVar_Alpha, 1.0f);
+			ImGui::PushStyleVar(ImGuiStyleVar_Alpha,          1.0f);
 
 			ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 6.f);
-			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10.f, 7.f));
-			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8.f, 8.f));
-			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4.f);
-			ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize, 16.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding,   ImVec2(10.f, 7.f));
+			ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing,    ImVec2(8.f, 8.f));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding,  4.f);
+			ImGui::PushStyleVar(ImGuiStyleVar_ScrollbarSize,  16.f);
 
-			ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_ChildBg, ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-			ImGui::PushStyleColor(ImGuiCol_Separator, ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
+			ImGui::PushStyleColor(ImGuiCol_WindowBg,          ImVec4(0.06f, 0.06f, 0.06f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ChildBg,           ImVec4(0.09f, 0.09f, 0.09f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_Border,            ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
+			ImGui::PushStyleColor(ImGuiCol_Separator,         ImVec4(0.35f, 0.35f, 0.35f, 0.70f));
 
-			ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBg,           ImVec4(0.16f, 0.16f, 0.16f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered,    ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive,     ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
 
-			ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_Button,            ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonHovered,     ImVec4(0.20f, 0.20f, 0.20f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_ButtonActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
 
-			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
-			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_Header,            ImVec4(0.14f, 0.14f, 0.14f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered,     ImVec4(0.22f, 0.22f, 0.22f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_HeaderActive,      ImVec4(0.28f, 0.28f, 0.28f, 1.00f));
 
-			ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
+			ImGui::PushStyleColor(ImGuiCol_TableHeaderBg,     ImVec4(0.10f, 0.10f, 0.10f, 1.00f));
 			ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0.30f, 0.30f, 0.30f, 0.85f));
-			ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
+			ImGui::PushStyleColor(ImGuiCol_TableBorderLight,  ImVec4(0.25f, 0.25f, 0.25f, 0.65f));
 		}
 		~DarkThemeStyle()
 		{
