@@ -2,7 +2,7 @@
 #include "AISkeleton.h"
 #include "AIMesh.h"
 #include "Helper_Func.h"
-
+#include "EditorSystem.h"
 
 CAIModelData::CAIModelData()
 {
@@ -21,12 +21,9 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
         aiMesh* srcMesh = pAIScene->mMeshes[i];
         string meshName = Helper::ToLower(srcMesh->mName.C_Str());
 
-        if (!meshName.empty() && loadedMeshNames.find(meshName) != loadedMeshNames.end())
+        if (!CEditorSystem::GetInstance()->CheckNamingRule(meshName))
             continue;
-
-        if (!meshName.empty())
-            loadedMeshNames.insert(meshName);
-
+        
         CAIMesh* pMesh = CAIMesh::Create(_eType, srcMesh, static_cast<CAISkeleton*>(m_pSkeleton));
         if (nullptr == pMesh)
             return E_FAIL;
@@ -35,6 +32,7 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 
         m_Meshes.push_back(pMesh);
         m_AIMesh.push_back(pMesh);
+
         if (keyLower.find("proxy") != string::npos) {
             m_ProxyMarked.push_back(m_Meshes.size() - 1);
         }

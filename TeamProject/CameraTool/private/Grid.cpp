@@ -7,25 +7,15 @@
 #include "MaterialData.h"
 #include "RayReceiver.h"
 
-CGrid::CGrid()
-{
-}
-
-CGrid::CGrid(const CGrid& rhs)
-	:CGameObject(rhs)
-{
-}
-
 HRESULT CGrid::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CPlaneModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CRayReceiver>();
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-
-	pRcsMgr->Add_ResourcePath("TileCell.png", "../bin/Resources//TileCell.png");
-	pRcsMgr->Add_ResourcePath("VTX_PlaneGrid.hlsl", "../bin/ShaderFiles/VTX_PlaneGrid.hlsl");
+	auto resMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	resMgr->Add_ResourcePath("TileCell.png", "../bin/Resources/TileCell.png");
+	resMgr->Add_ResourcePath("VTX_PlaneGrid.hlsl", "../bin/ShaderFiles/VTX_PlaneGrid.hlsl");
 
 	return S_OK;
 }
@@ -45,7 +35,7 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 
 	_uint Index = {};
 	pMaterial->Insert_MaterialInstance(customInstance, &Index);
-	pModel->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_OPAQUE);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
@@ -56,23 +46,6 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CGrid::Priority_Update(_float dt)
-{
-}
-
-void CGrid::Update(_float dt)
-{
-}
-
-void CGrid::Late_Update(_float dt)
-{
-}
-
-void CGrid::Render_GUI()
-{
-	__super::Render_GUI();
-}
-
 CGrid* CGrid::Create()
 {
 	CGrid* instance = new CGrid();
@@ -81,24 +54,16 @@ CGrid* CGrid::Create()
 		MSG_BOX("Object Create Failed : CGrid");
 		Safe_Release(instance);
 	}
-
 	return instance;
 }
 
 CGameObject* CGrid::Clone(INIT_DESC* pArg)
 {
 	CGrid* instance = new CGrid(*this);
-
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		MSG_BOX("Object Clone Failed : CGrid");
 		Safe_Release(instance);
 	}
-
 	return instance;
-}
-
-void CGrid::Free()
-{
-	__super::Free();
 }

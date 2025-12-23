@@ -85,7 +85,7 @@ void CEditModel::Render_GUI()
 	ImGui::EndChild();
 
 	ImGui::SeparatorText("Object State");
-	ImGui::BeginChild("##ObjectState", ImVec2{0, childHeight}, true);
+	ImGui::BeginChild("##ObjectState", ImVec2{0, textLineHeight *2}, true);
 
 	bool alive = Is_Alive();
 	if (ImGui::Checkbox("Alive", &alive))
@@ -94,7 +94,7 @@ void CEditModel::Render_GUI()
 	ImGui::EndChild();
 
 	ImGui::SeparatorText("Position Reset");
-	ImGui::BeginChild("##Reset", ImVec2{0, childHeight}, true);
+	ImGui::BeginChild("##Reset", ImVec2{0,  textLineHeight * 2 }, true);
 
 	if (ImGui::Button("Reset")) {
 		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
@@ -112,7 +112,9 @@ void CEditModel::Render_GUI()
 	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) {
 		pMaterial->Render_GUI();
 	}
-	//__super::Render_GUI();
+	if (CAnimator3D* pAnim = Get_Component<CAnimator3D>()) {
+		pAnim->Render_GUI();
+	}
 }
 
 HRESULT CEditModel::Load_AIScene(const string& filePath)

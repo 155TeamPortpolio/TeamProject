@@ -374,6 +374,21 @@ _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
 	}
 }
 
+vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
+{
+	vector<_float4x4> result;
+	result.reserve(m_CombinedMatrices.size());
+
+	for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
+	{
+		_smatrix final = m_CombinedMatrices[i];
+		_smatrix offset = m_pData->Get_Offset(meshIndex, i);
+
+		result.push_back(offset * final);
+	}
+	return result;
+}
+
 _float4x4 CAnimator3D::Get_BoneMatrix(_uint Index)
 {
 	if (Index >= m_ManipulateMatrices.size()) return _float4x4{};
@@ -725,7 +740,7 @@ void CAnimator3D::GUI_SelectAnim()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Set_Animation(i).Loop(true);
+			Change_Animation(i).Loop(true);
 		}
 		ImGui::PopID();
 

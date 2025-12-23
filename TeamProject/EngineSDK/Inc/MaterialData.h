@@ -36,7 +36,7 @@ public:
 	virtual void Render_GUI();
 	virtual void Render_GUI( vector<_uint>& TextureIndexs);
 
-protected:
+public:
 	string ConvertToConstant(TEXTURE_TYPE eType);
 
 protected:

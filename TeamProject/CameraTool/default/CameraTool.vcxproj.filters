@@ -20,7 +20,7 @@
       <Filter>03. Obj</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugFreeCam.h">
-      <Filter>03. Obj\00. DebugCam</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. Panel</Filter>
@@ -32,7 +32,7 @@
       <Filter>03. Obj\01. DemoModel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugCamData.h">
-      <Filter>03. Obj\00. DebugCam</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Grid.h">
       <Filter>03. Obj\02. DemoGrid</Filter>
@@ -113,9 +113,6 @@
     <Filter Include="03. Obj">
       <UniqueIdentifier>{c2111396-6794-42c1-aab0-48cb16489bb7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Obj\00. DebugCam">
-      <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99. Etc\99. Useless\ImGui">
       <UniqueIdentifier>{fbfc5b63-d139-4854-9034-dfde3870e289}</UniqueIdentifier>
     </Filter>
@@ -130,6 +127,9 @@
     </Filter>
     <Filter Include="04. CamDirector">
       <UniqueIdentifier>{89e011ca-dc95-4662-abf6-1ea29ae20eaa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Obj\00. CamObject">
+      <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -146,7 +146,7 @@
       <Filter>03. Obj</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugFreeCam.cpp">
-      <Filter>03. Obj\00. DebugCam</Filter>
+      <Filter>03. Obj\00. CamObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. Panel</Filter>
