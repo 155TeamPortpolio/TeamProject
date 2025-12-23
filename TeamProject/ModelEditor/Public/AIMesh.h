@@ -8,15 +8,6 @@ NS_BEGIN(ModelEdit)
 class CAIMesh final :
 	public CMesh
 {
-public:
-	struct RayHitMesh {
-		_bool bHit = { false };
-		_float distance;
-		_float3 vHittedPosition;
-		_uint Index = {};
-		CAIMesh* pMesh = { nullptr };
-	};
-
 private:
 	CAIMesh();
 	CAIMesh(const string& ModelKey);

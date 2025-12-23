@@ -100,12 +100,6 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
 	for (size_t i = 0; i < m_Meshes.size(); i++)
 	{
-       //auto iter= find_if(m_ProxyMarked.begin(), m_ProxyMarked.end(), [&](_uint idx)->bool { return i == idx; });
-       //if (iter != m_ProxyMarked.end()) continue;
-
-       //auto iter2 = find_if(m_EffMarked.begin(), m_EffMarked.end(), [&](_uint idx)->bool { return i == idx; });
-       //if (iter2 != m_EffMarked.end()) continue;
-
        static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);
 	}
 
@@ -115,4 +109,8 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 void CAIModelData::Free()
 {
 	__super::Free();
+    for (auto& mesh : m_AIMesh)
+    {
+        Safe_Release(mesh);
+    }
 }
