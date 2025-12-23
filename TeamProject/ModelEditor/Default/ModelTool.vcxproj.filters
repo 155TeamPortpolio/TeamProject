@@ -34,18 +34,6 @@
     <Filter Include="04. AIResource">
       <UniqueIdentifier>{77824a55-e323-426b-a636-0968dce14e96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. AIResource\AIModelData">
-      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AIMesh">
-      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AISkeleton">
-      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
-      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
-    </Filter>
     <Filter Include="04. AIResource\AIAnimation">
       <UniqueIdentifier>{6d60e755-f76b-4d03-8353-469e3d63dce8}</UniqueIdentifier>
     </Filter>
@@ -96,6 +84,18 @@
     </Filter>
     <Filter Include="06. EditorPanel">
       <UniqueIdentifier>{6371916e-51ec-4ebf-b74c-a59bce12c0b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData">
+      <UniqueIdentifier>{48e1b1d9-9aee-441e-b01c-76ceb3acca19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AIMesh">
+      <UniqueIdentifier>{b04aa8df-a66d-46be-9fb0-463927d008bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton">
+      <UniqueIdentifier>{b7cd0fe3-a386-4268-9682-7ea2c9bb3271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
+      <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

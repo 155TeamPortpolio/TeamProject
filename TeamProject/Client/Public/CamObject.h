@@ -20,14 +20,14 @@ protected:
 	virtual ~CCamObject() DEFAULT;
 
 public:
-	HRESULT Initialize_Prototype()      override;
-	HRESULT Initialize(INIT_DESC* pArg) override;
-	void    Priority_Update(_float dt)  override PURE;
-	void    Update(_float dt)           override PURE;
-	void    Late_Update(_float dt)      override PURE;
+	virtual HRESULT Initialize_Prototype()      override;
+	virtual HRESULT Initialize(INIT_DESC* pArg) override;
+	virtual void    Priority_Update(_float dt)  override PURE;
+	virtual void    Update(_float dt)           override PURE;
+	virtual void    Late_Update(_float dt)      override PURE;
 
 public:
-	CGameObject* Clone(INIT_DESC* pArg) override PURE;
-	virtual void Free() override { __super::Free(); }
+	virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
+	virtual void Free()                         override { __super::Free(); }
 };
 NS_END
