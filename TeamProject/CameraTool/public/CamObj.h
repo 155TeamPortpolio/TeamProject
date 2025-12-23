@@ -20,9 +20,9 @@ public:
     HRESULT Initialize_Prototype()      override;
     HRESULT Initialize(INIT_DESC* pArg) override;
 
-    void Priority_Update(_float dt) override PURE;
-    void Update(_float dt)          override PURE;
-    void Late_Update(_float dt)     override PURE;
+    void    Priority_Update(_float dt)  override PURE;
+    void    Update(_float dt)           override PURE;
+    void    Late_Update(_float dt)      override PURE;
 
     virtual void SetControlEnabled(_bool enabled) {}
     virtual void SetMoveConstraint(CamMoveConstraint mode) {}
