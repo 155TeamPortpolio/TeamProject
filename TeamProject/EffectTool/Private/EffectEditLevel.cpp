@@ -40,8 +40,8 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
 
-	pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
-	pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
+	//pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
+	//pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
 
 	//		IResourceService* pService = CGameInstance::GetInstance()->Get_ResourceMgr();
 	//		pService->Add_ResourcePath("TileCell.png", "../../Resources/TileCell.png");

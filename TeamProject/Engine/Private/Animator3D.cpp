@@ -12,8 +12,7 @@ CAnimator3D::CAnimator3D()
 CAnimator3D::CAnimator3D(const CAnimator3D& rhs)
 	:CComponent(rhs), m_pAnimClips(rhs.m_pAnimClips), m_pData{ rhs.m_pData },
 	m_TransformationMatrices{ rhs.m_TransformationMatrices },
-	m_CombinedMatrices{ rhs.m_CombinedMatrices },
-	m_FinalMatices{ rhs.m_FinalMatices }
+	m_CombinedMatrices{ rhs.m_CombinedMatrices }
 {
 	for (auto& Clip : m_pAnimClips) {
 		Safe_AddRef(Clip);
@@ -43,9 +42,8 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
@@ -64,10 +62,8 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
-	}
+
+	m_TPose = m_CombinedMatrices;
 }
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
@@ -119,6 +115,8 @@ void CAnimator3D::Update_Animation(_float dt)
 	Clear_Events();
 
 	for (auto& Layer : m_AnimLayers) {
+		if (Layer.bPause) break;
+
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else	
@@ -317,6 +315,13 @@ _float CAnimator3D::Get_AnimSpeed(_uint LayerIndex)
 	return m_AnimLayers[LayerIndex].fAnimSpeed;
 }
 
+_bool CAnimator3D::Get_isPause(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return false;
+
+	return m_AnimLayers[LayerIndex].bPause;
+}
+
 void CAnimator3D::Set_NoTransform(_int MoveBoneIndex, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
@@ -330,6 +335,12 @@ void CAnimator3D::Set_UseTransform(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex)) return;
 	m_AnimLayers[LayerIndex].bUseTransform = true;
 	m_AnimLayers[LayerIndex].iMoveBoneIndex = -1;
+}
+
+void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	m_AnimLayers[LayerIndex].bPause = true;
 }
 
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
@@ -370,7 +381,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
 	if (Index == -1)  return _float4x4{};
 	else {
-		return m_FinalMatices[Index];
+		return m_CombinedMatrices[Index];
 	}
 }
 
@@ -393,7 +404,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(_uint Index)
 {
 	if (Index >= m_ManipulateMatrices.size()) return _float4x4{};
 	else {
-		return m_FinalMatices[Index];
+		return m_CombinedMatrices[Index];
 	}
 }
 
@@ -402,7 +413,7 @@ _float4x4* CAnimator3D::Get_BoneMatrixPtr(const string& boneName)
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
 	if (Index == -1)  return nullptr;
 	else {
-		return &m_FinalMatices[Index];
+		return &m_CombinedMatrices[Index];
 	}
 }
 
@@ -650,11 +661,6 @@ void CAnimator3D::BuildBone()
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
-	}
 }
 
 void CAnimator3D::Render_GUI()
@@ -709,9 +715,9 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Separator();
 
 	// 式式式式式式式式式 Play bar
-	if (ImGui::Button("Play")) {
-		Change_Animation(curLayerIndex, curLayer.iClipIndex)
-			.Loop(bLoop);
+	if(ImGui::Button(bPause ? "Pause" : "Play", ImVec2(80.f, 0.f))) {
+		curLayer.bPause = bPause;
+		bPause = !bPause;
 	}
 	ImGui::SameLine();
 
@@ -813,6 +819,7 @@ HRESULT SetAnimBuild::Apply()
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+	Layer.bPause = m_bPause;
 
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
@@ -849,6 +856,12 @@ SetAnimBuild& SetAnimBuild::TransitionSpeed(_float fStartSpeed, _float fTargetSp
 	return *this;
 }
 
+SetAnimBuild& SetAnimBuild::Pause(_bool bPause)
+{
+	m_bPause = bPause;
+	return *this;
+}
+
 //---------- ++ChangeAnim Options
 HRESULT ChangeAnimBuild::Apply()
 {
@@ -859,6 +872,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
+	Layer.bPause = m_bPause;
 
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;

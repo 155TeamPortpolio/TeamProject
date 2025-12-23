@@ -77,7 +77,6 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	}
 
 	m_BoneMap.emplace(_pAINode->mName.C_Str(), iPIndex);
-
 	_float4x4 IdentityMat;
 	XMStoreFloat4x4(&IdentityMat, XMMatrixIdentity());
 	m_OffsetMatrices.resize(m_Bones.size(), IdentityMat);
@@ -117,7 +116,6 @@ CAISkeleton* CAISkeleton::Create(const aiNode* _pAINode)
 
 	return pInstance;
 }
-
 void CAISkeleton::Free()
 {
 	__super::Free();

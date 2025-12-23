@@ -67,10 +67,12 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
+	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
 	
-	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "test_particle.json");
+	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "glow_particle.json");
 	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("test_particle.json")
+	//	.Asset("glow_particle.json")
 	//	.Position(_float3(0.f, 0.f, 0.f))
 	//	.Build("Test_Effect");
 	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
@@ -126,8 +128,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.bAutoFit = false;
-	miyabiCCT.fHeight = 0.36f;
-	miyabiCCT.fRadius = 0.64f;
+	miyabiCCT.fHeight = 1.28;
+	miyabiCCT.fRadius = 0.2f;
 	miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })

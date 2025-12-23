@@ -29,6 +29,10 @@ public:
 public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 
+public:
+	virtual _bool GetOn() const  override{ return IsOn; }
+	virtual void SetOn(_bool On) override { IsOn = On; }
+
 #ifdef _USING_GUI
 	void Render_GUI();
 #endif // _USING_GUI
@@ -66,6 +70,8 @@ private:
 	class CPostRenderer* m_pPost;
 	class CUIRenderer* m_pUI;
 	class CEffectRenderer* m_pEffect;
+
+	_bool IsOn = true;
 
 public:
 	static CRenderSystem* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -97,8 +97,9 @@ void CParticleNode_Edit::Play()
 	node.vStartSpeed = m_vStartSpeed;
 	node.vStartLifeTime = m_vStartLifeTime;
 	node.vStartSize = m_vStartSize;
-	node.vSpawnAreaMin = m_vSpawnAreaMin;
-	node.vSpawnAreaMax = m_vSpawnAreaMax;
+	node.vCenter = m_vCenter;
+	node.vHalfBox = m_vHalfBox;
+	node.fRadius = m_fRaidus;
 	node.useGravity = m_UseGravity;
 	node.fGravityScale = m_fGravityScale;
 
@@ -143,13 +144,15 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_vStartSize.x = json.at("start_size").at("x").get<_float>();
 	m_vStartSize.y = json.at("start_size").at("y").get<_float>();
 
-	m_vSpawnAreaMin.x = json.at("spawn_area_min").at("x").get<_float>();
-	m_vSpawnAreaMin.y = json.at("spawn_area_min").at("y").get<_float>();
-	m_vSpawnAreaMin.z = json.at("spawn_area_min").at("z").get<_float>();
+	m_vCenter.x = json.at("center").at("x").get<_float>();
+	m_vCenter.y = json.at("center").at("y").get<_float>();
+	m_vCenter.z = json.at("center").at("z").get<_float>();
 
-	m_vSpawnAreaMax.x = json.at("spawn_area_max").at("x").get<_float>();
-	m_vSpawnAreaMax.y = json.at("spawn_area_max").at("y").get<_float>();
-	m_vSpawnAreaMax.z = json.at("spawn_area_max").at("z").get<_float>();
+	m_eSpawnShape = static_cast<CParticleSystem::SPAWN_SHAPE>(json.at("spawn_shape").get<_uint>());
+	m_vHalfBox.x = json.at("half_box").at("x").get<_float>();
+	m_vHalfBox.y = json.at("half_box").at("y").get<_float>();
+	m_vHalfBox.z = json.at("half_box").at("z").get<_float>();
+	m_fRaidus = json.at("radius").get<_float>();
 
 	m_UseGravity = json.value("use_gravity", m_UseGravity);
 	m_fGravityScale = json.value("gravity_scale", m_fGravityScale);
@@ -202,7 +205,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 {
 	json =
 	{
-		{"effect_type", static_cast<_uint>(EFFECT_TYPE::PARTICLE)},
+		{"effect_type", ENUM(EFFECT_TYPE::PARTICLE)},
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 
@@ -216,8 +219,12 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"start_speed",{{"x",m_vStartSpeed.x},{"y",m_vStartSpeed.y}}},
 		{"start_life_time",{{"x",m_vStartLifeTime.x},{"y",m_vStartLifeTime.y}}},
 		{"start_size",{{"x",m_vStartSize.x},{"y",m_vStartSize.y}}},
-		{"spawn_area_min",{{"x",m_vSpawnAreaMin.x},{"y",m_vSpawnAreaMin.y},{"z",m_vSpawnAreaMin.z}}},
-		{"spawn_area_max",{{"x",m_vSpawnAreaMax.x},{"y",m_vSpawnAreaMax.y},{"z",m_vSpawnAreaMax.z}}},
+
+		{"spawn_shape",ENUM(m_eSpawnShape)},
+		{"center",{{"x",m_vCenter.x},{"y",m_vCenter.y},{"z",m_vCenter.z}}},
+		{"half_box",{{"x",m_vHalfBox.x},{"y",m_vHalfBox.y},{"z",m_vHalfBox.z}}},
+		{"radius",m_fRaidus},
+
 		{"use_gravity",m_UseGravity},
 		{"gravity_scale",m_fGravityScale},
 
@@ -314,8 +321,9 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
 	isDirty |= ImGui::DragFloat2("Start Size", &m_vStartSize.x);
 
-	isDirty |= ImGui::DragFloat3("Spawn Area Min", &m_vSpawnAreaMin.x);
-	isDirty |= ImGui::DragFloat3("Spawn Area Max", &m_vSpawnAreaMax.x);
+	isDirty |= ImGui::DragFloat3("Center", &m_vCenter.x);
+	isDirty |= ImGui::DragFloat3("Half Box", &m_vHalfBox.x);
+	isDirty |= ImGui::DragFloat("Radius", &m_fRaidus);
 
 	ImGui::SeparatorText("Life Time Velocity");
 	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
@@ -355,6 +363,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	{
 		PARTICLE_NODE node{};
 
+		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.isWorld = m_IsWorld;
 		node.isLoop = m_IsLoop;
 		node.iBurstCount = m_iBurstCount;
@@ -363,8 +372,11 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vStartSpeed = m_vStartSpeed;
 		node.vStartLifeTime = m_vStartLifeTime;
 		node.vStartSize = m_vStartSize;
-		node.vSpawnAreaMin = m_vSpawnAreaMin;
-		node.vSpawnAreaMax = m_vSpawnAreaMax;
+
+		node.vCenter = m_vCenter;
+		node.vHalfBox = m_vHalfBox;
+		node.fRadius = m_fRaidus;
+
 		node.useGravity = m_UseGravity;
 		node.fGravityScale = m_fGravityScale;
 

@@ -1,7 +1,6 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "Channel.h"
-#include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
 class CAIChannel :

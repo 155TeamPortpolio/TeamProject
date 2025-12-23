@@ -42,6 +42,7 @@ private:
 //Func
 public:
     void Setting_NewClip();
+
 private:
     void Reset_Panel();
     void Add_Event();
@@ -62,7 +63,7 @@ private: //Create Clip
     int                  m_iCurClipIndex = { -1 };
     vector<ANIM_CLIP>    m_AnimClip;
 
-    _bool   m_isPlay     = {};
+    _bool   m_bPause = { true };
     _bool   m_bLoop = { true };
     _float  m_fPlaySpeed = { 1.f };
     _float  m_fTickPerSec = { 1.f };

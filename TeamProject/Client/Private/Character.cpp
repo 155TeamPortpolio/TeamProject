@@ -21,7 +21,6 @@ CCharacter::CCharacter(const CCharacter& rhs)
 	, m_fAttackPower(rhs.m_fAttackPower)
 	, m_fDefense(rhs.m_fDefense)
 	, m_fMoveSpeed(rhs.m_fMoveSpeed)
-	, m_fJumpSpeed(rhs.m_fJumpSpeed)
 {
 }
 
@@ -69,6 +68,29 @@ void CCharacter::Late_Update(_float dt)
 		m_pCCT->Late_Update(dt);
 }
 
+void CCharacter::Rotate(_vector3 vDirection)
+{
+	_vector3 vDir = vDirection;
+	vDir.y = 0.f;
+
+	if (vDir.Length() < 0.001f)
+		return;
+
+	vDir.Normalize();
+
+	_vector3 vUp = _vector3::Up;
+	_vector3 vRight = vDir.Cross(vUp);
+	vRight.Normalize();
+
+	_smatrix mRot = _smatrix::Identity;
+	mRot.Right(vRight);
+	mRot.Up(vUp);
+	mRot.Forward(vDir);
+
+	_quaternion qRot = _quaternion::CreateFromRotationMatrix(mRot);
+	m_pTransform->Set_Quaternion(qRot);
+}
+
 void CCharacter::Update_Input(_float dt)
 {
 	// Process Input
@@ -79,8 +101,8 @@ void CCharacter::Update_Input(_float dt)
 	if (input->Key_Hold(VK_RIGHT)) m_vInputDir.x += 1.f;
 	if (input->Key_Hold(VK_LEFT))  m_vInputDir.x -= 1.f;
 
+	m_bIsAttack = input->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
-	m_bIsJump = input->Key_Down('J');
 }
 
 void CCharacter::Free()

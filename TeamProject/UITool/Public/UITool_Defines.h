@@ -4,8 +4,8 @@
 #include <d3d11.h>
 
 namespace UITool {
-	static constexpr unsigned int g_iWinSizeX = 1280;
-	static constexpr unsigned int g_iWinSizeY = 720;
+	static constexpr unsigned int g_iWinSizeX = 1920;
+	static constexpr unsigned int g_iWinSizeY = 1080;
 	static constexpr unsigned int g_iMainFrame = 144;
 }
 
@@ -42,7 +42,3 @@ typedef struct tagUIAnimationClip {
 
 	tagUIAnimationClip(string _strName) : strName(_strName) {}
 }UI_ANIM_CLIP;
-
-typedef struct tagUIPrefab {
-
-};
