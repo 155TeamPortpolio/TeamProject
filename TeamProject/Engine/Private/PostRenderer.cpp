@@ -52,7 +52,7 @@ HRESULT CPostRenderer::Render_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX", m_pShader, "g_BlurXTexture");
-		m_pTargetManager->Bind_Target("Target_BloomInfo", m_pShader, "g_BloomType");
+		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "g_BloomInfo");
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
