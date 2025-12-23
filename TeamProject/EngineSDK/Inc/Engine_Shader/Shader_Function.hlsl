@@ -1,16 +1,17 @@
 #ifndef __SHADER_FUNCTION_HLSL__
 #define __SHADER_FUNCTION_HLSL__
 
-float2 CalculateFrameIndex(uint Col, uint Row, uint FrameIndex)
+float2 CalculateFrameIndex(uint Col, uint Row, uint FrameIndex, float2 InTexcoord)
 {
     float2 FrameSize = float2(1.f / Col, 1.f / Row);
     
     int iFrameX = FrameIndex % Col;
     int iFrameY = FrameIndex / Col;
+    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
     
-    float2 Frame = float2(iFrameX, iFrameY) * FrameSize;
-  
-    return Frame;
+    float2 OutTexcoord = FrameMin + InTexcoord * FrameSize;
+
+    return OutTexcoord;
 }
 
 //Thereshold - 어느정도 밝기 이상 추출할건지 (높을수록 진짜 밝은것만 낮을수록 더 많이)

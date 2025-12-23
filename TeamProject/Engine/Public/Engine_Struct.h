@@ -56,7 +56,13 @@ namespace Engine
 		_uint IndicesCount = {};
 		_uint MaterialIndex = {};
 		_uint BoneCount = {};
+		_uint offsetCount = {};
 	}MESH_INFO_HEADER;
+
+	typedef struct ENGINE_DLL tagMeshOffsetHeader {
+		_uint BoneIndex;
+		_float4x4 offsetMat;
+	}MESH_OFFSET;
 
 	typedef struct ENGINE_DLL tagSkeletonFileHeader {
 		_uint BoneCount = {};
@@ -77,6 +83,13 @@ namespace Engine
 		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);  
 		_float fSpecularPow = { 0.1f };
 		_float3 vPadding;
+	};
+
+	struct BloomConstants
+	{
+		_float BloomType = 0;
+		_float BloomIntensity = 1.f;
+		_float2 Center = _float2(0.5f, 0.5f);
 	};
 
 	typedef struct ENGINE_DLL tagMaterialFileHeader {
@@ -290,6 +303,7 @@ namespace Engine
 	}COLLISION_CONTEXT;
 
 	typedef struct tagUITextInfo {
+		string		TextKey;
 		wstring		Text = {};
 		_float2		TextPos = {};
 		_float4		TextColor = {};

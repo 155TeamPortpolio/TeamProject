@@ -223,6 +223,7 @@ exit /b 0</Command>
     </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h" />
     <ClInclude Include="..\Public\AnimationClip.h" />
     <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
@@ -262,6 +263,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Collider.h" />
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
+    <ClInclude Include="..\Public\ComputeShader.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
@@ -270,9 +272,11 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
+    <ClInclude Include="..\public\EffectRenderer.h" />
     <ClInclude Include="..\public\Engine_Math.h" />
     <ClInclude Include="..\Public\EventListner.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\Noise.h" />
@@ -346,10 +350,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\PipeLine.h" />
     <ClInclude Include="..\Public\PlaneModel.h" />
     <ClInclude Include="..\public\PointModel.h" />
+    <ClInclude Include="..\public\PostRenderer.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
     <ClInclude Include="..\Public\RectModel.h" />
+    <ClInclude Include="..\public\Renderer.h" />
     <ClInclude Include="..\Public\RenderPass.h" />
     <ClInclude Include="..\Public\RenderSystem.h" />
     <ClInclude Include="..\Public\RenderTarget.h" />
@@ -365,6 +371,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
+    <ClInclude Include="..\Public\StructuredBuffer.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
@@ -374,6 +381,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Transform.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
+    <ClInclude Include="..\public\UIRenderer.h" />
     <ClInclude Include="..\Public\UI_Manager.h" />
     <ClInclude Include="..\Public\UI_Object.h" />
     <ClInclude Include="..\Public\VIBuffer.h" />
@@ -385,6 +393,10 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Terrain.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\Private\AnimationClip.cpp" />
     <ClCompile Include="..\Private\Animator3D.cpp" />
     <ClCompile Include="..\Private\AudioDevice.cpp" />
@@ -418,6 +430,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Collider.cpp" />
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
+    <ClCompile Include="..\Private\ComputeShader.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
@@ -426,10 +439,12 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
+    <ClCompile Include="..\private\EffectRenderer.cpp" />
     <ClCompile Include="..\private\Engine_Math.cpp" />
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListner.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\private\ForwardRenderer.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
     <ClCompile Include="..\Private\Noise.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
@@ -475,10 +490,12 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\PipeLine.cpp" />
     <ClCompile Include="..\Private\PlaneModel.cpp" />
     <ClCompile Include="..\private\PointModel.cpp" />
+    <ClCompile Include="..\private\PostRenderer.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
     <ClCompile Include="..\Private\RectModel.cpp" />
+    <ClCompile Include="..\private\Renderer.cpp" />
     <ClCompile Include="..\Private\RenderPass.cpp" />
     <ClCompile Include="..\Private\RenderSystem.cpp" />
     <ClCompile Include="..\Private\RenderTarget.cpp" />
@@ -494,6 +511,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
+    <ClCompile Include="..\Private\StructuredBuffer.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
@@ -503,6 +521,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
+    <ClCompile Include="..\private\UIRenderer.cpp" />
     <ClCompile Include="..\Private\UI_Manager.cpp" />
     <ClCompile Include="..\Private\UI_Object.cpp" />
     <ClCompile Include="..\Private\VIBuffer.cpp" />
@@ -550,10 +569,59 @@ exit /b 0</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_BuildInstance.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_DeadListInit.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'"> CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Spawn.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Compute</ShaderType>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
@@ -566,6 +634,11 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
+      <FileType>Document</FileType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

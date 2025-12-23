@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "Base.h"
 
 NS_BEGIN(Client)
 
@@ -7,7 +8,7 @@ template<typename Type>
 class CStateMachine;
 
 template<typename Type>
-class IBaseState abstract
+class IBaseState abstract : public CBase
 {
 public:
 	virtual ~IBaseState() DEFAULT;
@@ -34,28 +35,9 @@ protected:
 	_float m_fAnimProgress = { 0.f }; // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
 
 	friend class CStateMachine<Type>;
-};
 
-enum TRANSITION_CONDITION
-{
-	CONDITION_NONE = 0,
-	CONDITION_ANIMATION_END,      // 애니메이션이 끝났을 때
-	CONDITION_TIME_GREATER,       // 상태 시간이 특정 값보다 클 때
-	CONDITION_TIME_LESS,          // 상태 시간이 특정 값보다 작을 때
-	CONDITION_BOOL_TRUE,          // Bool 파라미터가 true일 때
-	CONDITION_BOOL_FALSE,         // Bool 파라미터가 false일 때
-	CONDITION_TRIGGER,            // Trigger 파라미터가 설정되었을 때
+public:
+	void Free() override { __super::Free(); }
 };
-
-typedef struct TransitionInfo
-{
-	string strFromState = "";
-	string strToState = "";
-	TRANSITION_CONDITION eCondition = CONDITION_NONE;
-	string strParameter = "";
-	_float fTimer = 0.f;		// m_fStateTime과의 비교
-	_bool  bExitTime = false;   // Exit Time 사용 여부
-	_float fExitTime = 1.f;     // Exit Time 값 (Progress 기준)
-}TRANSITION_INFO;
 
 NS_END

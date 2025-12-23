@@ -174,7 +174,6 @@ void CCharacterController::Late_Update(_float dt)
 	if (!m_pController) return;
 	// Apply_Move
 	_float3 vDisplacement = m_vVelocity * dt;
-
 	if (m_fMaxSpeed > 0.0f)
 	{
 		_float fPlanarSpeed = sqrtf(vDisplacement.x * vDisplacement.x +
@@ -186,15 +185,16 @@ void CCharacterController::Late_Update(_float dt)
 			vDisplacement.z *= fScale;
 		}
 	}
-
 	Move(XMLoadFloat3(&vDisplacement), dt);
+
 	// Update Position
-	const PxExtendedVec3& position = m_pController->getPosition();
-	_float fFootOffsetY = m_fRadius + (m_fHeight * 0.5f);
+	const PxExtendedVec3& footPosition = m_pController->getFootPosition();
+	_float fTransformY = (float)footPosition.y - m_fBoundingMinY;
+
 	m_pOwnerTransform->Set_WorldPos(XMVectorSet(
-		(float)position.x,
-		(float)position.y - fFootOffsetY,
-		(float)position.z,
+		(float)footPosition.x,
+		fTransformY,
+		(float)footPosition.z,
 		1.f));
 }
 
@@ -221,11 +221,47 @@ void CCharacterController::Render_GUI()
 			ImGui::Text("Foot Pos: (%.2f, %.2f, %.2f)", (float)foot.x, (float)foot.y, (float)foot.z);
 
 			_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
+			ImGui::Text("Transform Pos: (%.2f, %.2f, %.2f)", vWorldPos.x, vWorldPos.y, vWorldPos.z);
+
 			_float3 vLocalFoot;
 			vLocalFoot.x = (float)foot.x - vWorldPos.x;
 			vLocalFoot.y = (float)foot.y - vWorldPos.y;
 			vLocalFoot.z = (float)foot.z - vWorldPos.z;
 			ImGui::Text("Foot Local: (%.2f, %.2f, %.2f)", vLocalFoot.x, vLocalFoot.y, vLocalFoot.z);
+
+			ImGui::Separator();
+			ImGui::TextColored(ImVec4(1, 1, 0, 1), "Debug Info");
+			_float fCalculatedCenter = (float)foot.y + m_fRadius + (m_fHeight * 0.5f);
+			ImGui::Text("Calculated Center Y: %.2f", fCalculatedCenter);
+			ImGui::Text("Actual Center Y: %.2f", (float)pos.y);
+			ImGui::Text("Difference: %.2f", fCalculatedCenter - (float)pos.y);
+			ImGui::Text("Height: %.2f, Radius: %.2f", m_fHeight, m_fRadius);
+
+			ImGui::Separator();
+			ImGui::TextColored(ImVec4(0, 1, 1, 1), "Foot Offset Adjustment");
+			_float fBoundingMinY = m_fBoundingMinY;
+			if (ImGui::DragFloat("Bounding Min Y", &fBoundingMinY, 0.01f, -10.0f, 10.0f))
+			{
+				Set_BoundingMinY(fBoundingMinY);
+			}
+			if (ImGui::IsItemHovered())
+			{
+				ImGui::SetTooltip("Local Foot Offset Adjustment");
+			}
+
+			if (ImGui::Button("Reset Foot Offset"))
+			{
+				Set_BoundingMinY(0.0f);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Re-Apply AutoFit"))
+			{
+				CCT_DESC desc;
+				desc.fRadiusScale = 1.0f;
+				desc.fHeightScale = 1.0f;
+				desc.fSizeScale = 1.0f;
+				AutoFit(&desc);
+			}
 
 			ImGui::Separator();
 			ImGui::Text("Properties");
@@ -329,7 +365,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("충돌 감지 시작 거리");
+			ImGui::SetTooltip("Collision Detect Distance");
 		}
 
 		_float fRestOffset = Get_RestOffset();
@@ -339,7 +375,7 @@ void CCharacterController::Render_GUI()
 		}
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("실제 접촉 거리");
+			ImGui::SetTooltip("Contact Offset");
 		}
 
 #ifdef _DEBUG
@@ -645,7 +681,6 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 {
 	CStaticModel* pStaticModel = m_pOwner->Get_Component<CStaticModel>();
 	CSkeletalModel* pSkeletalModel = m_pOwner->Get_Component<CSkeletalModel>();
-
 	MINMAX_BOX boundingBox = {};
 	_bool bHasModel = false;
 
@@ -667,17 +702,15 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 
 	_float3 vMin = boundingBox.vMin;
 	_float3 vMax = boundingBox.vMax;
+	m_fBoundingMinY = vMin.y;
 
-	// Radius 계산: XZ 평면에서의 최대 반지름
 	_float fRadiusX = (vMax.x - vMin.x) * 0.5f;
 	_float fRadiusZ = (vMax.z - vMin.z) * 0.5f;
 	_float fRadius = max(fRadiusX, fRadiusZ);
 
-	// Height 계산: Y축 높이에서 위아래 반구 부분 제외
 	_float fTotalHeight = vMax.y - vMin.y;
 	_float fCylinderHeight = fTotalHeight - (fRadius * 2.0f);
 
-	// 최소값 보장
 	if (fCylinderHeight < 0.1f)
 	{
 		fCylinderHeight = 0.1f;
@@ -686,19 +719,14 @@ HRESULT CCharacterController::AutoFit(CCT_DESC* pDesc)
 	pDesc->fRadius = fRadius * pDesc->fRadiusScale * pDesc->fSizeScale;
 	pDesc->fHeight = fCylinderHeight * pDesc->fHeightScale * pDesc->fSizeScale;
 
-	// Transform의 월드 위치 가져오기
 	_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
 
-	// 캡슐 컨트롤러의 중심 위치 계산
-	// 캡슐의 발 위치를 로컬 Y = -1에 맞추려면
-	// 캡슐 중심 = 발 위치(Y=-1) + 반지름 + (실린더 높이 / 2)
-	_float fCapsuleCenterY = -1.0f + pDesc->fRadius + (pDesc->fHeight * 0.5f);
+	_float fFootY = vWorldPos.y + vMin.y;
 
 	pDesc->vPos.x = vWorldPos.x;
-	pDesc->vPos.y = vWorldPos.y + fCapsuleCenterY;
+	pDesc->vPos.y = fFootY + pDesc->fRadius + (pDesc->fHeight * 0.5f);
 	pDesc->vPos.z = vWorldPos.z;
 
-	// StepOffset 자동 조정
 	pDesc->fStepOffset = pDesc->fHeight * 0.25f;
 
 	return S_OK;
@@ -758,6 +786,20 @@ _float CCharacterController::Get_RestOffset()
 		}
 	}
 	return m_fRestOffset;
+}
+
+void CCharacterController::Set_BoundingMinY(_float fMinY)
+{
+	if (!m_pController) return;
+
+	_float fDelta = fMinY - m_fBoundingMinY;
+	m_fBoundingMinY = fMinY;
+
+	const PxExtendedVec3& currentPos = m_pController->getPosition();
+	PxExtendedVec3 newPos = currentPos;
+	newPos.y += fDelta;
+
+	m_pController->setPosition(newPos);
 }
 
 CCharacterController* CCharacterController::Create()

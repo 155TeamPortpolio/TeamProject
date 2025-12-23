@@ -23,7 +23,7 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
-	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
@@ -31,7 +31,7 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
-		m_TransfromationMatrices[i] = m_pData->Get_TransformMatrix(i);
+		m_TransformationMatrices[i] = m_pData->Get_TransformMatrix(i);
 	}
 	/*부모 뼈를 받을 수 있게 기본값으로 초기화*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -39,11 +39,11 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 		int parent = m_pData->Get_BoneParentIndex(i);
 
 		if (parent == -1) {
-			m_CombinedMatrices[i] = m_TransfromationMatrices[i];
+			m_CombinedMatrices[i] = m_TransformationMatrices[i];
 		}
 		else {
 			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
-			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
+			_matrix MyTransformation = XMLoadFloat4x4(&m_TransformationMatrices[i]);
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
@@ -53,6 +53,8 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
 	}
 
+	Resize_Layer(1);
+
 	return S_OK;
 }
 
@@ -61,7 +63,7 @@ void CAIAnimator3D::Render_GUI()
 	__super::Render_GUI();
 }
 
-HRESULT CAIAnimator3D::Save_Animation(const string& SavePath)
+HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* WorldMatrix)
 {
 	
 	string AnimSavePath = SavePath + "\\Anim\\";
@@ -71,7 +73,7 @@ HRESULT CAIAnimator3D::Save_Animation(const string& SavePath)
 		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
 		std::ofstream ofs(filePath, std::ios::binary);
 
-		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);
+		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs, WorldMatrix);
 
 		ofs.close();
 	}

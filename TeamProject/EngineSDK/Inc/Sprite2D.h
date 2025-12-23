@@ -18,6 +18,8 @@ public:
     HRESULT Change_Texture(_uint index, const string& levelKey, const string& TextureKey);
     HRESULT Link_Shader(const string& levelKey, const string& shaderKey);
     HRESULT ChangePass(const string& passConstant);
+    HRESULT Set_TextKey(const string& textKey);
+    const string& Get_TextKey() { return m_TextKey; }
 
 public:
     void Apply_Shader(ID3D11DeviceContext* pContext);
@@ -40,6 +42,7 @@ public:
 private:
     _uint m_iDrawIndex = {};
     string m_PassConstant = {"Opaque"};
+    string m_TextKey = "";
 
     class  CVI_Point* m_pPoint = {nullptr};
     class  CShader* m_pShader = { nullptr };

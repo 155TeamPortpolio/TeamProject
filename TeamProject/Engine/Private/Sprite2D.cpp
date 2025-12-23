@@ -14,7 +14,8 @@ CSprite2D::CSprite2D(const CSprite2D& rhs)
 	:CComponent(rhs),
 	m_pShader(rhs.m_pShader),
 	m_pPoint(rhs.m_pPoint),
-	m_pTextures(rhs.m_pTextures)
+	m_pTextures(rhs.m_pTextures),
+	m_TextKey(rhs.m_TextKey)
 {
 	Safe_AddRef(m_pShader);
 	Safe_AddRef(m_pPoint);
@@ -98,7 +99,7 @@ CVIBuffer* CSprite2D::Get_Buffer()
 
 HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
 {
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
+	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
 
 	if (!pTexture)
 		return E_FAIL;
@@ -118,7 +119,7 @@ HRESULT CSprite2D::Change_Texture(_uint index, const string& levelKey, const str
 		if (m_pTextures[index])
 			Safe_Release(m_pTextures[index]);
 
-		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey);
+		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
 
 		if (!pTexture)
 			return E_FAIL;
@@ -146,6 +147,12 @@ HRESULT CSprite2D::ChangePass(const string& passConstant)
 		return S_OK;
 
 	m_PassConstant = passConstant;
+	return S_OK;
+}
+
+HRESULT CSprite2D::Set_TextKey(const string& textKey)
+{
+	m_TextKey = textKey;
 	return S_OK;
 }
 

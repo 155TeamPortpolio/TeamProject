@@ -143,7 +143,12 @@ void CStaticModel::Render_GUI()
     m_pData->Render_GUI();
 
     const size_t meshCount = m_pData->Get_MeshCount();
-
+    if (ImGui::Button("HideProxy"))
+    {
+        for (_uint index : m_pData->Get_ProxyIndex()) {
+            m_DrawableMeshes[index] = !m_DrawableMeshes[index];
+        };
+    }
     for (size_t i = 0; i < meshCount; ++i)
     {
         const string meshKey = m_pData->Get_Mesh(i)->Get_Key();

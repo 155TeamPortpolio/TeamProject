@@ -14,8 +14,8 @@ public:
     virtual void Update(CTestObject* pOwner, _float dt) override;
     virtual void Exit(CTestObject* pOwner) override;
 
-private:
-    _float m_fWalkSpeed = 3.f;
+public:
+    static CTestState_Walk* Create() { return new CTestState_Walk(); }
 };
 
 NS_END

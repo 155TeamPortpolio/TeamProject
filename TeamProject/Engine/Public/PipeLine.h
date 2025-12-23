@@ -66,7 +66,7 @@ public:
     HRESULT Begin_ObjectBuffer(ID3D11DeviceContext* pContext);
     HRESULT End_ObjectBuffer(ID3D11DeviceContext* pContext);
 
-    _uint Write_SkinningBuffer(const vector<_float4x4>& BoneMatrices);
+    _uint Write_SkinningBuffer(vector<_float4x4> BoneMatrices);
     HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
     HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
 
@@ -79,7 +79,7 @@ public:
     ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
     ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
    
-    HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext);
+    HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 
 private:
     ID3D11Buffer* m_pDeviceFrameBuffer = {nullptr};

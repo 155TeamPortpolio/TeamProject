@@ -37,7 +37,7 @@ void CCameraMgr::Set_MainCam(CCamera* camComp)
     Safe_AddRef(m_baseCam);
 
     if (m_overrides.empty())
-        BeginBlendTo(GetDesiredActiveCam(), 0.f);
+        BeginBlendTo(Get_ActiveCam(), 0.f);
 }
 
 void CCameraMgr::Set_ShadowCam(CCamera* camComp)
@@ -45,6 +45,14 @@ void CCameraMgr::Set_ShadowCam(CCamera* camComp)
     Safe_Release(m_shadowCam);
     m_shadowCam = camComp;
     Safe_AddRef(m_shadowCam);
+}
+
+CCamera* CCameraMgr::Get_ActiveCam() const
+{
+    if (!m_overrides.empty())
+        return m_overrides.back().cam;
+
+    return m_baseCam;
 }
 
 _uint CCameraMgr::Push(CCamera* camComp, _float blendSec)
@@ -56,7 +64,7 @@ _uint CCameraMgr::Push(CCamera* camComp, _float blendSec)
     Safe_AddRef(entry.cam);
     m_overrides.push_back(entry);
 
-    BeginBlendTo(GetDesiredActiveCam(), blendSec);
+    BeginBlendTo(Get_ActiveCam(), blendSec);
     return entry.handle;
 }
 
@@ -78,7 +86,7 @@ _bool CCameraMgr::Pop(_uint handle, _float blendSec)
     m_overrides.erase(m_overrides.begin() + (ptrdiff_t)idx);
 
     if (wasTop)
-        BeginBlendTo(GetDesiredActiveCam(), blendSec);
+        BeginBlendTo(Get_ActiveCam(), blendSec);
 
     return true;
 }
@@ -89,7 +97,7 @@ void CCameraMgr::Clear(_float blendSec)
         Safe_Release(m_overrides[i].cam);
 
     m_overrides.clear();
-    BeginBlendTo(GetDesiredActiveCam(), blendSec);
+    BeginBlendTo(Get_ActiveCam(), blendSec);
 }
 
 void CCameraMgr::SetShake(_float amplitudeDeg, _float frequency, _float duration, _float fadeOutSec)
@@ -164,20 +172,12 @@ void CCameraMgr::Update(_float dt)
         }
     }
     else
-        pose = CapturePose(GetDesiredActiveCam());
+        pose = CapturePose(Get_ActiveCam());
 
     ApplyShake(pose, dt);
     ApplyOutputPose(pose);
 
     UpdateShadowCache();
-}
-
-CCamera* CCameraMgr::GetDesiredActiveCam() const
-{
-    if (!m_overrides.empty())
-        return m_overrides.back().cam;
-
-    return m_baseCam;
 }
 
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
@@ -187,21 +187,19 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     CTransform* transform = cam->Get_Owner()->Get_Component<CTransform>();
     Matrix world(transform->Get_WorldMatrix());
 
-    Vector3 scale{};
-    Vector3 translation{};
-    Quaternion rotation = Quaternion::Identity;
+    Vector3 scale{}, trans{};
+    Quaternion rot = Quaternion::Identity;
 
-    world.Decompose(scale, rotation, translation);
-    rotation.Normalize();
+    world.Decompose(scale, rot, trans);
+    rot.Normalize();
 
-    out.pos = translation;
-    out.rot = rotation;
-
+    out.pos           = trans;
+    out.rot           = rot;
     out.lens.projType = cam->Get_ProjType();
-    out.lens.fov = cam->Get_FOV();
-    out.lens.nearZ = cam->Get_Near();
-    out.lens.farZ = cam->Get_Far();
-    out.lens.aspect = cam->Get_Aspect();
+    out.lens.fov      = cam->Get_FOV();
+    out.lens.nearZ    = cam->Get_Near();
+    out.lens.farZ     = cam->Get_Far();
+    out.lens.aspect   = cam->Get_Aspect();
 
     if (out.lens.projType == CamProjType::Orthographic)
     {
@@ -372,14 +370,9 @@ void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
 void CCameraMgr::Free()
 {
     m_isBlending = false;
-
     Safe_Release(m_blendTargetCam);
-    m_blendTargetCam = nullptr;
-
     Safe_Release(m_baseCam);
     Safe_Release(m_shadowCam);
-
     m_shakes.clear();
-
     __super::Free();
 }

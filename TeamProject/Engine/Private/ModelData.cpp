@@ -2,7 +2,7 @@
 #include "ModelData.h"
 #include "Mesh.h"
 #include "Skeleton.h"
-
+#include "Helper_Func.h"
 CModelData::CModelData()
 {
 }
@@ -23,6 +23,7 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	MODEL_FILE_HEADER fileHeader = {};
 	ifs.read(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
 
+
 	for (int i = 0; i < fileHeader.MeshCount; ++i) {
 		CMesh* newMesh = CMesh::Create(pDevice, ifs, fileHeader.isAnimate? MESH_TYPE::ANIM : MESH_TYPE::NONANIM);
 		if (newMesh)
@@ -34,6 +35,11 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 				Safe_Release(mesh);
 			return E_FAIL;
 		}
+		string keyLower = Helper::ToLower(newMesh->Get_Key());
+		if (keyLower.find("proxy") != string::npos)
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);	
+		if (keyLower.find("eff") != string::npos)
+			m_ProxyMarked.push_back(m_Meshes.size() - 1);
 	}
 
 	if (fileHeader.isAnimate) {
@@ -90,6 +96,12 @@ _bool CModelData::isRootBone(_uint BoneIndex)
 		return true;
 	else
 		return false;
+}
+
+
+_float4x4 CModelData::Get_Offset(_uint meshIndex, _uint boneIndex)
+{
+	return m_Meshes[meshIndex]->Get_MeshOffset(boneIndex);
 }
 
 const D3D11_INPUT_ELEMENT_DESC* CModelData::Get_ElementDesc(_uint DrawIndex)

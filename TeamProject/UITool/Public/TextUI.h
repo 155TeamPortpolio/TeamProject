@@ -23,25 +23,26 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	virtual void ToJson(json& data) override;
-	virtual void FromJson(const json& data) override;
+	virtual void SavePrefab(json& data) override;
+	virtual void LoadPrefab(const json& data) override;
 
 private:
-	string		m_strFontTag;
-	_int		m_iFontKeyIndex = { 0 };
 	_char		m_szText[MAX_PATH] = {};
 	_float		m_fFontScale = { 1.f }; 
-	_float4		m_vFontColor = { 1.f, 1.f, 1.f, 1.f }; 
 
 	_bool		m_isOutlined = {};
 	_float		m_fOutlineThickness = { 1.f };
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
-	_bool		m_isSizeToContent = { true };
-
 	_int		m_iAlign = {};
 
+	_bool		m_isSizeToContent = { true };
+
+private:
+	_int		m_iFontKeyIndex = { 0 }; 
+
 public:
+	static const string m_strTypeTag;
 	static _uint m_iCount;
 
 private:
@@ -49,8 +50,8 @@ private:
 	virtual void Render_GUI_Transform() override;
 
 private:
-	void Set_Font(const string& strFontTag);
 	void UpdateAnchorOffsetByAlign();
+	_int Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag);
 
 public:
 	static CGameObject* Create();

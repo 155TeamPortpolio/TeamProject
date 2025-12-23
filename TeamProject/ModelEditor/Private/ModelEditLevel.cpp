@@ -2,10 +2,8 @@
 #include "ModelEditLevel.h"
 
 #include "GameInstance.h"
-#include "EditCamera.h"
-#include "EditModel.h"
+#include "EditCamera.h""
 #include "Camera.h"
-#include "FreeCam.h"
 
 CModelEditLevel::CModelEditLevel(const string& LevelKey)
 	: CLevel{ LevelKey },
@@ -21,29 +19,13 @@ HRESULT CModelEditLevel::Initialize()
 
 HRESULT CModelEditLevel::Awake()
 {
-	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditCamera", CFreeCam::Create());
-	pProto->Add_ProtoType("ModelEdit_Level", "Proto_GameObject_EditModel", CEditModel::Create());
+    IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+    CGameObject* Camera = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_EditCamera" }).Camera({ (float)g_iWinSizeX / (float)g_iWinSizeY }).Position({ 0.f, 0.f, -5.f }).Build("Default_Camera");
+    pObjMgr->Add_Object(Camera, { "ModelEdit_Level", "Camera_Layer" });
+    m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+    m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
 
-
-	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	CAMERA_DESC desc = {};
-
-	CGameObject* Camera = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditCamera"})
-		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
-		.Position({ 0.f, 0.f, -5.f })
-		.Build("Default_Camera");
-
-	CGameObject* EditModel = Builder::Create_Object({ "ModelEdit_Level" ,"Proto_GameObject_EditModel"})
-		.Position({ 0.f,0.f,0.f })
-		.Build("Edit_Model");
-
-	pObjMgr->Add_Object(EditModel, { "ModelEdit_Level","Model_Layer"});
-	pObjMgr->Add_Object(Camera, { "ModelEdit_Level","Camera_Layer"});
-
-	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
-	m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
-	return S_OK;
+    return S_OK;
 }
 
 void CModelEditLevel::Update()

@@ -4,18 +4,29 @@
 
 
 namespace ModelEdit {
-	static constexpr unsigned int g_iWinSizeX = 1280;
-	static constexpr unsigned int g_iWinSizeY = 720;
-	//static constexpr unsigned int g_iWinSizeX = 1600;
-	//static constexpr unsigned int g_iWinSizeY = 900;
+	//static constexpr unsigned int g_iWinSizeX = 1280;
+	//static constexpr unsigned int g_iWinSizeY = 720;
+	static constexpr unsigned int g_iWinSizeX = 1600;
+	static constexpr unsigned int g_iWinSizeY = 900;
+	//static constexpr unsigned int g_iWinSizeX = 2560;
+	//static constexpr unsigned int g_iWinSizeY = 1360;
 	static constexpr unsigned int g_iMainFrame = 144;
 }
 
 extern HWND g_hWnd;
-extern HINSTANCE g_hInstance;
+extern HINSTANCE g_hInstance; 
+
 
 using namespace ModelEdit;
 #include "Assimps.h"
 using namespace Assimp;
 
 #include "Engine_Defines.h"
+
+struct MaterialTexNames
+{
+	string Albedo;
+	string Normal;
+	string Metallic;
+	string AO;
+};

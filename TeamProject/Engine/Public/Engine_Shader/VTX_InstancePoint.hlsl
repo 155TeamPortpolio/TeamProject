@@ -1,4 +1,7 @@
 #include "Shader_Define.hlsl"
+#include "CS_Particle.hlsli"
+
+StructuredBuffer<InstanceData> InstanceDatas;
 
 float4x4 g_WorldMatrix;
 
@@ -8,11 +11,6 @@ uint Row;
 struct VS_IN
 {
     float3 vPosition : POSITION;
-    row_major matrix TransformMatrix : WORLD;
-    float3 vVelocity : TEXCOORD0;
-    float4 vColor : TEXCOORD1;
-    float2 vLifeTime : TEXCOORD2;
-    uint iFrameIndex : TEXCOORD3;
 };
 
 struct VS_OUT
@@ -25,21 +23,29 @@ struct VS_OUT
     uint iFrameIndex : TEXCOORD3;
 };
 
-VS_OUT VS_MAIN(VS_IN In)
+VS_OUT VS_MAIN(VS_IN In, uint InstanceID : SV_InstanceID)
 {
     VS_OUT Out;
     
-    float4 position = mul(float4(In.vPosition, 1.f), In.TransformMatrix);
+    InstanceData data = InstanceDatas[InstanceID];
+    
+    matrix TransformMatrix;
+    TransformMatrix._11_12_13_14 = data.vRight;
+    TransformMatrix._21_22_23_24 = data.vUp;
+    TransformMatrix._31_32_33_34 = data.vLook;
+    TransformMatrix._41_42_43_44 = data.vTranslate;
+    
+    float4 position = mul(float4(In.vPosition, 1.f), TransformMatrix);
     
     Out.vWorldPos = mul(position, g_WorldMatrix);
-    Out.vSize = float2(length(In.TransformMatrix._11_12_13), length(In.TransformMatrix._21_22_23));
-    Out.vLifeTime = In.vLifeTime;
+    Out.vSize = float2(length(data.vRight), length(data.vUp));
+    Out.vLifeTime = data.vLife;
     
-    float t = In.vLifeTime.x / In.vLifeTime.y;
-    Out.vVelocity = In.vVelocity;
-    Out.vColor = In.vColor;
-    Out.vLifeTime = In.vLifeTime;
-    Out.iFrameIndex = In.iFrameIndex;
+    float t = Out.vLifeTime.x / Out.vLifeTime.y;
+    Out.vVelocity = data.vVelocity;
+    Out.vColor = data.vColor;
+    Out.vLifeTime = data.vLife;
+    Out.iFrameIndex = data.iFrameIndex;
     
     return Out;
 }

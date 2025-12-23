@@ -19,6 +19,12 @@ Texture2D g_BrightTexture;
 Texture2D g_BloomInfo;
 Texture2D g_BlurXTexture;
 Texture2D g_BloomFinal;
+Texture2D g_3DUITexture;
+Texture2D g_DistortionTexture;
+Texture2D g_DistortionNoiseTexture;
+Texture2D g_DistortionAdd_Texture;
+Texture2D g_DistortionFinal;
+Texture2D g_EffectDiffuseTexture;
 
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
@@ -217,7 +223,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         
         Out.vResult = float4(result, bright.a);
     }
-    else // RadialÀº XÆÐ½º¿¡¼­ ±×´ë·Î Åë°ú
+    else 
     {
         Out.vResult = bright;
     }
@@ -259,8 +265,8 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         dir = normalize(dir);
         
         float3 result = float3(0, 0, 0);
-        float samples = 15.0f;          //testÇÏ°í ½Í´Ù¸é ÀÌ°Å ¼öÁ¤ ¤¡¤¡
-        float strength = 0.1f;          //testÇÏ°í ½Í´Ù¸é ÀÌ°Å ¼öÁ¤ ¤¡¤¡
+        float samples = 15.0f;          //testï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+        float strength = 0.1f;          //testï¿½Ï°ï¿½ ï¿½Í´Ù¸ï¿½ ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         
         for (float i = 0; i < samples; i++)
         {
@@ -271,6 +277,55 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         
         Out.vResult = float4(result / samples, blurX.a);
     }
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    // ============================================
+    // ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½â¼­ ï¿½ï¿½ï¿½ï¿½)
+    // ============================================
+    float2 center = float2(0.5, 0.5); // È­ï¿½ï¿½ ï¿½ß¾ï¿½
+    float radius = 0.3; // È¿ï¿½ï¿½ ï¿½Ý°ï¿½ (ï¿½×½ï¿½Æ®: 0.2 ~ 0.5)
+    float power = 2.0; // ï¿½î¼± ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: 1.0 ~ 5.0)
+    float strength = 0.8; // ï¿½Ö°ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½×½ï¿½Æ®: -1.0 ~ 1.0)
+    
+    // ============================================
+    // Spherical Distortion ï¿½ï¿½ï¿½
+    // ============================================
+    float2 offset = In.vTexcoord - center;
+    
+    // Aspect Ratio ï¿½ï¿½ï¿½ï¿½
+    offset.x *= 1.777;
+    
+    float distance = length(offset);
+    
+    // ï¿½Ý°ï¿½ ï¿½ï¿½
+    if (distance > radius || distance < 0.0001)
+    {
+        Out.vResult = float4(0.5, 0.5, 0.5, 1.0);
+        return Out;
+    }
+    
+    // ï¿½ï¿½ï¿½ï¿½È­ï¿½ï¿½ ï¿½Å¸ï¿½
+    float normalizedDist = distance / radius;
+    
+    // ï¿½ß½É¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï°ï¿½
+    float distortStrength = 1.0 - normalizedDist;
+    distortStrength = pow(distortStrength, power);
+    
+    // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+    float2 direction = normalize(offset);
+    float2 distortion = direction * distortStrength * strength;
+    
+    // Aspect ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    distortion.x /= 1.777;
+    
+    // ï¿½ï¿½ï¿½ï¿½
+    Out.vResult = float4(distortion + 0.5, 0.5, 1.0);
     
     return Out;
 }
@@ -370,10 +425,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     PS_OUT_BACKBUFFER Out; 
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (0.0f == vDiffuse.a)
-        discard;
-    
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vEffect = g_EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -382,6 +436,9 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     ambient = max(ambient, vDiffuse.rgb * 0.15f); 
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
+ 
+    if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
+    if (vEffect.a > 0.f) Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
@@ -410,20 +467,21 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     //{
     //    Out.vBackBuffer *= 0.3f;
     //}
-    
     return Out;
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
-{
+{ 
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
     float4 bloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
+  
     float3 mapped = scene.rgb + bloom.rgb;
-    
+
     return float4((1 - ui.a) * mapped.xyz + (ui.a * ui.rgb), 1.f);
 }
-
 
 technique11 DefaultTechnique
 {
@@ -467,11 +525,21 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
     }
 
+    pass DISTORTION_ADD
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
+    }
+
     pass Directional
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
@@ -481,7 +549,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Blend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_POINT();

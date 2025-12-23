@@ -2,7 +2,7 @@
 
 enum class EaseType
 {
-	None, InOutSine, OutCubic, InOutCubic, OutSine, InOutQuad, InSine, InCubic, InQuad, InCirc, InOutCirc, OutCirc, OutQuad,
+	None, Linear, InOutSine, OutCubic, InOutCubic, OutSine, InOutQuad, InSine, InCubic, InQuad, InCirc, InOutCirc, OutCirc, OutQuad,
 	InQuart, InQuint, InOutQuart, OutQuart, InOutQuint, OutQuint, InOutExpo, OutExpo, InExpo, OutBack, InOutBack, InBack,
 	OutElastic, InOutElastic, InElastic, OutBounce, InOutBounce, InBounce,
 };
@@ -10,10 +10,10 @@ enum class EaseType
 namespace Math
 {
 	//Float 보간 함수
-	ENGINE_DLL _float      Lerp(_float x, _float y, _float t);
-	ENGINE_DLL _vector2    Lerp(_vector2 x, _vector2 y, _float t);
+	ENGINE_DLL _float   Lerp(_float x, _float y, _float t);
+	ENGINE_DLL _vector2 Lerp(_vector2 x, _vector2 y, _float t);
 	 
-	ENGINE_DLL _float      ApplyEase(EaseType type, _float t);
+	ENGINE_DLL _float   ApplyEase(EaseType type, _float t);
 
 	// Easing 보간 (Camera 추천 순위 1~30)  (중복 없음)
 	// [A] 범용/안정 (일반 이동/패닝/팔로우 기본값)

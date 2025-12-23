@@ -2,14 +2,19 @@
 #include "CanvasPanel.h"
 
 #include "GameInstance.h"
+#include "Helper_Func.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 
 #include "ImageUI.h"
 #include "TextUI.h"
 #include "ButtonUI.h"
+#include "SpriteAnimationUI.h"
+#include "UVAnimationUI.h"
+#include "GaugeUI.h"
 
 _uint CCanvasPanel::m_iCount = {};
+const string CCanvasPanel::m_strTypeTag = "CanvasPanel";
 
 CCanvasPanel::CCanvasPanel()
 {
@@ -23,6 +28,7 @@ CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
 HRESULT CCanvasPanel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
     Add_Component<CObjectContainer>();
 
     return S_OK;
@@ -49,6 +55,9 @@ void CCanvasPanel::Priority_Update(_float dt)
 
 void CCanvasPanel::Update(_float dt)
 {
+    if (!m_isAlive)
+        return;
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 
     Play_Animation(dt);
@@ -61,26 +70,23 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    Render_GUI_Layout();
-
-    Render_GUI_Transform();
-
     Render_GUI_Create();
+
+    Render_GUI_SavePrefab();
 
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ToJson(json& data)
-{
-    __super::ToJson(data);
+void CCanvasPanel::SavePrefab(json& data)
+{ 
+    __super::SavePrefab(data);
 
-    data["typeTag"] = "CanvasPanel";
+    data["typeTag"] = m_strTypeTag;
 }
 
-void CCanvasPanel::FromJson(const json& data)
+void CCanvasPanel::LoadPrefab(const json& data)
 {
-    __super::FromJson(data);
-    FromJson_RefreshCount(m_iCount);    // json에서 불러올 때 카운트 새로고침
+    __super::LoadPrefab(data);
 }
 
 void CCanvasPanel::Render_GUI_Create()
@@ -88,28 +94,49 @@ void CCanvasPanel::Render_GUI_Create()
     ImGui::SeparatorText("Create");
 
     _bool isCreateChild = {};
-    string strProtoTag;
+    string strProtoTag = "Proto_GameObject_";
     string strInstanceKey;
 
     if (ImGui::Button("Create Image"))
     {
         isCreateChild = true;
-        strProtoTag = "Proto_GameObject_ImageUI";
-        strInstanceKey = "UI_ImageUI" + to_string(CImageUI::m_iCount);
+        strProtoTag += CImageUI::m_strTypeTag;
+        strInstanceKey = CImageUI::m_strTypeTag + to_string(CImageUI::m_iCount);
     }
 
     if (ImGui::Button("Create Text"))
     {
         isCreateChild = true;
-        strProtoTag = "Proto_GameObject_TextUI";
-        strInstanceKey = "UI_TextUI" + to_string(CTextUI::m_iCount);
+        strProtoTag += CTextUI::m_strTypeTag;
+        strInstanceKey = CTextUI::m_strTypeTag + to_string(CTextUI::m_iCount);
     }
 
     if (ImGui::Button("Create Button"))
     {
         isCreateChild = true;
-        strProtoTag = "Proto_GameObject_ButtonUI";
-        strInstanceKey = "UI_ButtonUI" + to_string(CButtonUI::m_iCount);
+        strProtoTag += CButtonUI::m_strTypeTag;
+        strInstanceKey = CButtonUI::m_strTypeTag + to_string(CButtonUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create SpriteAnimation"))
+    {
+        isCreateChild = true;
+        strProtoTag += CSpriteAnimationUI::m_strTypeTag;
+        strInstanceKey = CSpriteAnimationUI::m_strTypeTag + to_string(CSpriteAnimationUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create UVAnimationUI"))
+    {
+        isCreateChild = true;
+        strProtoTag += CUVAnimationUI::m_strTypeTag;
+        strInstanceKey = CUVAnimationUI::m_strTypeTag + to_string(CUVAnimationUI::m_iCount);
+    }
+
+    if (ImGui::Button("Create Gauge"))
+    {
+        isCreateChild = true;
+        strProtoTag += CGaugeUI::m_strTypeTag;
+        strInstanceKey = CGaugeUI::m_strTypeTag + to_string(CGaugeUI::m_iCount);
     }
 
     // 자식 생성
@@ -126,6 +153,27 @@ void CCanvasPanel::Render_GUI_Create()
 
         CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pChild, strCurrentLevelKey);    // UI Manager에 추가
         this->Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
+    }
+}
+
+void CCanvasPanel::Render_GUI_SavePrefab()
+{
+    ImGui::SeparatorText("Save as Prefab");
+
+    if (ImGui::Button("Save"))
+    {
+        json data;
+
+        SavePrefab(data["parent"]);
+
+        std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("prefab", "json"));
+
+        if (outputFile.is_open())
+        {
+            outputFile << data.dump(4);
+            outputFile << std::endl;
+            outputFile.close();
+        }
     }
 }
 
