@@ -40,6 +40,7 @@ public:
 private:
 	void Render_GUI_Create();
 	void Render_GUI_SavePrefab();
+	void Render_GUI_LoadPrefab();
 
 public:
 	static CGameObject* Create();
