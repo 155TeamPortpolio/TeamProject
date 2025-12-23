@@ -46,15 +46,15 @@ HRESULT CTestObject::Initialize_Prototype()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	/*파일명과 키값은 일치*/
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
-		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
-	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
-		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.model",
+		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
+		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
+		"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
 	Add_Component<CAudioSource>();
 
 	return S_OK;
@@ -87,29 +87,22 @@ HRESULT CTestObject::Initialize_State()
 	m_pStateMachine->Register_Transition("Walk", "Idle",
 		CTestStateMachine::CONDITION_BOOL_FALSE, "IsMoving");
 
-	// AnyState -> Jump (점프 키 입력)
+	// AnyState -> Jump
 	m_pStateMachine->Register_AnyStateTransition("Jump",
 		CTestStateMachine::CONDITION_TRIGGER, "Jump");
 
-	// AnyState -> Dash (Shift 입력)
+	// AnyState -> Dash
 	m_pStateMachine->Register_AnyStateTransition("Dash",
 		CTestStateMachine::CONDITION_TRIGGER, "Dash");
 
-	// Jump -> Walk (착지 + 이동 중)
-	m_pStateMachine->Register_Transition("Jump", "Walk",
-		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndMoving");
-
-	// Jump -> Idle (착지 + 정지)
+	// Jump -> Idle (착지하면 무조건 Idle로)
 	m_pStateMachine->Register_Transition("Jump", "Idle",
-		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGroundedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "IsGrounded");
 
-	// Dash -> Walk (대쉬 완료 + 이동 중)  
-	m_pStateMachine->Register_Transition("Dash", "Walk",
-		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndMoving");
-
-	// Dash -> Idle (대쉬 완료 + 정지) 
+	// Dash -> Idle (대쉬 완료되면 무조건 Idle로)
 	m_pStateMachine->Register_Transition("Dash", "Idle",
-		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinishedAndIdle");
+		CTestStateMachine::CONDITION_BOOL_TRUE, "DashFinished");
+
 
 	// 기본 상태 설정
 	m_pStateMachine->Set_DefaultState("Idle");
@@ -126,8 +119,8 @@ HRESULT CTestObject::Initialize_State()
 
 void CTestObject::Awake()
 {
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Bangboo_Sharkboo_NPC (merge).model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
 	Get_Component<CAnimator3D>()->Set_NoTransform(7); // << SharkBoo는 7번본이움직임
 
@@ -176,18 +169,8 @@ void CTestObject::Update(_float dt)
 	auto pCCT = Get_Component<CCharacterController>();
 	if (pCCT)
 	{
-		_bool bGrounded = pCCT->Is_Grounded();
-		_bool bMoving = m_vInputDir.Length() > 0.01f;
-		_bool bDashFinished = m_pStateMachine->Get_Bool("DashFinished");
-
-		m_pStateMachine->Set_Bool("IsGrounded", bGrounded);
-		m_pStateMachine->Set_Bool("IsMoving", bMoving);
-
-		m_pStateMachine->Set_Bool("IsGroundedAndMoving", bGrounded && bMoving);
-		m_pStateMachine->Set_Bool("IsGroundedAndIdle", bGrounded && !bMoving);
-
-		m_pStateMachine->Set_Bool("DashFinishedAndMoving", bDashFinished && bMoving);
-		m_pStateMachine->Set_Bool("DashFinishedAndIdle", bDashFinished && !bMoving);
+		m_pStateMachine->Set_Bool("IsGrounded", pCCT->Is_Grounded());
+		m_pStateMachine->Set_Bool("IsMoving", m_vInputDir.Length() > 0.01f);
 	}
 
 	if (m_bJump)

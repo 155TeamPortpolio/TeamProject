@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "MapTool_Context.h"
 
 NS_BEGIN(Engine)
 class CGameInstance;
@@ -15,12 +16,16 @@ private:
 	virtual ~CMapToolCore() = default;
 
 public:
-	_int*			Get_Version_Ptr()					{ return &m_iVersion; }
-	_int			Get_Version()						{ return m_iVersion; }
-	void			Set_Version(_int iVersion)			{ m_iVersion = iVersion; }
-	string			Get_TagLayer(MAPOBJ_TYPE eObjType)	{ return m_TagLayers[ENUM(eObjType)]; }
-	vector<string>* Get_TagLayers()						{ return &m_TagLayers; }
-	_bool			IsAllDebugRender()					{ return m_isAllDebugRender; }
+	//_int*			Get_Version_Ptr()					{ return &m_iVersion; }
+	//_int			Get_Version()						{ return m_iVersion; }
+	//void			Set_Version(_int iVersion)			{ m_iVersion = iVersion; }
+	//string			Get_TagLayer(MAPOBJ_TYPE eObjType)	{ return m_TagLayers[ENUM(eObjType)]; }
+	//vector<string>* Get_TagLayers()						{ return &m_TagLayers; }
+	//_bool			IsAllDebugRender()					{ return m_isAllDebugRender; }
+	MAPTOOL_CONTEXT* Get_Context() { return &m_tMapToolContext; }
+
+
+
 
 #ifdef _DEBUG
 	void			Set_AllObjectDebugRender(_bool is);
@@ -40,9 +45,12 @@ private:
 private:
 	CGameInstance*		m_pGameInstance = { nullptr };
 
-	vector<string>	m_TagLayers;
-	_int			m_iVersion = { 1 };
-	_bool			m_isAllDebugRender = { true };
+	//vector<string>		m_TagLayers;
+	//_int				m_iVersion = { 1 };
+	//_bool				m_isAllDebugRender = { true };
+	//string				m_TagLoadArea = {};
+
+	MAPTOOL_CONTEXT		m_tMapToolContext = {};
 
 public:
 	static CMapToolCore* Create();

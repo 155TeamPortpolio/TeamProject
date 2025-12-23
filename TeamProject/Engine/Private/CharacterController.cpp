@@ -47,6 +47,13 @@ void CCharacterController::Set_GravityEnabled(_bool bEnabled)
 	m_bGravityEnabled = bEnabled;
 }
 
+void CCharacterController::Set_FootPosition(_vector3 vFootPos)
+{
+	_float fCenterY = vFootPos.y + m_fFootOffset + m_fRadius + (m_fHeight * 0.5f);
+	PxExtendedVec3 pos(vFootPos.x, fCenterY, vFootPos.z);
+	m_pController->setPosition(pos);
+}
+
 HRESULT CCharacterController::Initialize_Prototype()
 {
 	return S_OK;
@@ -75,6 +82,16 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 		{
 			AutoFit(pDesc);
 		}
+		else
+		{
+			m_fBoundingMinY = pDesc->fBoundingMinY;
+		}
+
+		// 음수면 발이 바닥에 묻히는 상태 -> 양수 오프셋으로 보정
+		if (m_fBoundingMinY < 0.f)
+			m_fFootOffset = -m_fBoundingMinY;
+		else
+			m_fFootOffset = 0.f;
 	}
 
 	m_pMaterial = m_pPhysicsSystem->Get_Material(pDesc->strMaterialTag);
@@ -89,10 +106,13 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	capsuleDesc.stepOffset = pDesc->fStepOffset;
 	capsuleDesc.material = m_pMaterial;
 	capsuleDesc.slopeLimit = cosf(XMConvertToRadians(pDesc->fSlopeLimit));
-	capsuleDesc.contactOffset = pDesc->fContactOffset;
+	capsuleDesc.contactOffset = max(pDesc->fContactOffset, 0.01f);
 	capsuleDesc.upDirection = PxVec3(0, 1, 0);
 	capsuleDesc.density = pDesc->fDensity;
 	capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, pDesc->vPos.y, pDesc->vPos.z);
+
+	_float fAdjustY = pDesc->vPos.y + m_fFootOffset + pDesc->fRadius + (pDesc->fHeight * 0.5f);
+	capsuleDesc.position = PxExtendedVec3(pDesc->vPos.x, fAdjustY, pDesc->vPos.z);
 
 	capsuleDesc.reportCallback = pHitReport;
 	capsuleDesc.behaviorCallback = nullptr;
@@ -204,7 +224,7 @@ void CCharacterController::Render_GUI()
 
 	ImGui::SeparatorText("CharacterController");
 
-	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 400), true))
+	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
 	{
 		ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
 

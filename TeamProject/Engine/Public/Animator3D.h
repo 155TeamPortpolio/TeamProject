@@ -6,7 +6,6 @@
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
 enum class ANIM_LAYER_STATE { OVERRIDE, BLEND, ADDITIVE };
-enum class BLEND_STATE { NONE, CROSSFADE, IMMEDIATE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
@@ -32,24 +31,29 @@ public:
         _float  fAnimSpeed = { 1.f };
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
+        //재생 속도관련
+        EaseType ePlayEaseType = { EaseType::None };
+        _float  fTargetSpeed;
+        _float  fEaseDuration = {};
+        _float  fEaseElapsed = {};
 
         //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
  
         //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
+        _bool   bKeepTrackPos = { false };
         _int    iNextClipIndex = { -1 };
         _float  fBlendTrackPosition = {};
         _float  fBlendElapsed = {};
         _float  fBlendDuration = {};
-        BLEND_STATE eBlendState = { BLEND_STATE::NONE };
+        EaseType eBlendEaseType = { EaseType::None };
+             
         //다음 매트릭스
         vector<_float4x4> BlendMatrices = {};
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
-
-
 
 protected:
     CAnimator3D();
@@ -103,6 +107,10 @@ public://애니매이터 데이터
     const vector<EVENT_INST>& Get_EventBus() const;
     //루트애니매이션 델타값
     _vector Get_RootMotionDelta(_uint LayerIndex = 0);
+    //현재 레이어의 Ease중이면 그 비율가져옴
+    _float Get_EaseDuration(_uint LayerIndex = 0);
+    //현재 레이어 재생속도
+    _float Get_AnimSpeed(_uint LayerIndex = 0);
 
     /*----- Setter -----*/
     
@@ -203,9 +211,11 @@ public:
     //---------- 기본 속성
     
     //애니매이션을 반복재생할건지
-    SetAnimBuild& Loop(_bool bLoop = false);
-    //애니매이션을 재생속도
-    SetAnimBuild& Speed(_float fSpeed = 1.f);
+    SetAnimBuild& Loop(_bool bLoop);
+    //애니매이션 재생속도 (TransitionSpeed랑 마지막에 부른거로 덮어씌임)
+    SetAnimBuild& Speed(_float fSpeed);
+    //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
+    SetAnimBuild& TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear);
 
 protected:
     CAnimator3D* m_pOwner = nullptr;
@@ -214,9 +224,11 @@ protected:
     _bool m_bApplied = false;
 
     //---------- 기본 속성
-    _bool m_bLoop = false;
-    _float m_fSpeed = 1.f;
-
+    _bool    m_bLoop = false;
+    _float   m_fSpeed = 1.f;
+    EaseType m_ePlayEaseType = { EaseType::None };
+    _float   m_fTargetSpeed = { 1.f };
+    _float   m_fEaseDuration = { 0.f };
 };
 
 class ENGINE_DLL ChangeAnimBuild : public SetAnimBuild {
@@ -233,11 +245,16 @@ public:
     //---------- 애니매이션 블랜드 속성
 
     //애니매이션 전환시간
-    ChangeAnimBuild& BlendState(_float fDuration = 0.2f, BLEND_STATE eBlendState = BLEND_STATE::CROSSFADE);
+    ChangeAnimBuild& BlendDuration(_float fDuration);
+    //애니매이션 전환 가중치 이징
+    ChangeAnimBuild& BlendWeightEaseType(EaseType eEaseType);
+    //애니매이션을 변경하면서 이전 클립의 트랙포지션을 같이 사용해서 섞을건지
+    ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos);
 
 protected:
     _float      m_fBlendDuration = 0.2f;
-    BLEND_STATE m_eBlendState = { BLEND_STATE::CROSSFADE };
+    _bool       m_bKeepTrackPos = false;
+    EaseType    m_eBlendEaseType = { EaseType::Linear };
 };
 
 NS_END

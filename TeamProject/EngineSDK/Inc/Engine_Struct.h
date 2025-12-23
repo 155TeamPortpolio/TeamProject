@@ -369,6 +369,7 @@ namespace Engine
 		string TexturePath{};
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
+		_uint iModuleMask{};
 		_bool isWorld = true;
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
@@ -378,8 +379,10 @@ namespace Engine
 		_float2 vStartLifeTime{};
 		_float2 vStartSize{};
 
-		_float3 vSpawnAreaMin{};
-		_float3 vSpawnAreaMax{};
+		_uint SpawnShape{};
+		_float3 vCenter{};
+		_float3 vHalfBox{};
+		_float fRadius{};
 
 		_bool useGravity = false;
 		_float fGravityScale{};
@@ -415,30 +418,41 @@ namespace Engine
 		string ModelTag{};
 		string MaterialTag{};
 
-		_float4 vBaseColor{ 1.f,1.f,1.f,1.f };
-		
-		/* Alpha */
-		_uint AlphaFadeEase{};
-		_float2 vAlphaFade{};
+		/* Texture Slot */
+		_uint SamplerMode{};
+		_uint MainUsage{};
+		_uint Red{};
+		_uint Green{};
+		_uint Blue{};
+		_uint Alpha{};
+
+		/* Color */
+		_uint ColorEaseType{};
+		_float4 vStartColor{1.f,1.f,1.f,1.f};
+		_float4 vEndColor{1.f,1.f,1.f,1.f};
 
 		/* Scale */
-		_uint ScaleEase{};
-		_float3 vStartScale{};
-		_float3 vEndScale{};
+		_uint ScaleEaseType{};
+		_float3 vStartScale{ 1.f,1.f,1.f };
+		_float3 vEndScale{ 1.f,1.f,1.f };
 
-		/* UV Animation */
-		_uint UVEase{};
+		/* UV Anim */
+		_uint UVEaseType{};
 		_float2 vStartUVOffset{};
 		_float2 vEndUVOffset{};
 
 		/* Sprite Animation */
-		_uint iCol{};
-		_uint iRow{};
-		_uint iMaxFrameIndex{};
+		_uint iCol{ 1 };
+		_uint iRow{ 1 };
+		_uint iMaxFrameIndex{ 1 };
 
 		/* Dissolve */
 		_uint DissolveEase{};
 		_float fDissolveStartProgress{};
+		_float fDissolveEndProgress{};
+
+		/* Bloom */
+		_float fBloomIntensity{};
 
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;

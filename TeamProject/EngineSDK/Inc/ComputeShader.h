@@ -45,7 +45,7 @@ private:
        
        CB(상수버퍼) -> dt, 옵션, 크기 등등 파라미터
        SRV -> 읽기 전용, Texture2D, StructuredBuffer 같은 입력,
-       UAV -> 쓰기 전용, RWStructuredBuffer, RWTexture2D 같은 출력 (파티클 데이터 갱신 등등)
+       UAV -> 읽기, 쓰기 전용, RWStructuredBuffer, RWTexture2D 같은 출력 (파티클 데이터 갱신 등등)
     */
 };
 

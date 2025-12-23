@@ -18,6 +18,7 @@ ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 	switch (type)
 	{
 	case EaseType::None:         return t;
+	case EaseType::Linear:       return t;
 
 	case EaseType::InOutSine:    return EaseInOutSine(t);
 	case EaseType::OutCubic:     return EaseOutCubic(t);
@@ -63,17 +64,17 @@ ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 
 ENGINE_DLL _float Math::EaseInSine(_float t)
 {
-	return 1.f - ::cosf((t * XM_PI) * 0.5f);
+	return 1.f - cosf((t * XM_PI) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseOutSine(_float t)
 {
-	return ::sinf((t * XM_PI) * 0.5f);
+	return sinf((t * XM_PI) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseInOutSine(_float t)
 {
-	return 0.5f * (1.f - ::cosf(XM_PI * t));
+	return 0.5f * (1.f - cosf(XM_PI * t));
 }
 
 ENGINE_DLL _float Math::EaseInQuad(_float t)
@@ -88,7 +89,7 @@ ENGINE_DLL _float Math::EaseOutQuad(_float t)
 
 ENGINE_DLL _float Math::EaseInOutQuad(_float t)
 {
-	return (t < 0.5f) ? (2.f * t * t) : (1.f - ::powf(-2.f * t + 2.f, 2.f) * 0.5f);
+	return (t < 0.5f) ? (2.f * t * t) : (1.f - powf(-2.f * t + 2.f, 2.f) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseInCubic(_float t)
@@ -104,7 +105,7 @@ ENGINE_DLL _float Math::EaseOutCubic(_float t)
 
 ENGINE_DLL _float Math::EaseInOutCubic(_float t)
 {
-	return (t < 0.5f) ? (4.f * t * t * t) : (1.f - ::powf(-2.f * t + 2.f, 3.f) * 0.5f);
+	return (t < 0.5f) ? (4.f * t * t * t) : (1.f - powf(-2.f * t + 2.f, 3.f) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseInQuart(_float t)
@@ -114,66 +115,66 @@ ENGINE_DLL _float Math::EaseInQuart(_float t)
 
 ENGINE_DLL _float Math::EaseOutQuart(_float t)
 {
-	return 1.f - ::powf(1.f - t, 4.f);
+	return 1.f - powf(1.f - t, 4.f);
 }
 
 ENGINE_DLL _float Math::EaseInOutQuart(_float t)
 {
-	return (t < 0.5f) ? (8.f * ::powf(t, 4.f)) : (1.f - ::powf(-2.f * t + 2.f, 4.f) * 0.5f);
+	return (t < 0.5f) ? (8.f * powf(t, 4.f)) : (1.f - powf(-2.f * t + 2.f, 4.f) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseInQuint(_float t)
 {
-	return ::powf(t, 5.f);
+	return powf(t, 5.f);
 }
 
 ENGINE_DLL _float Math::EaseOutQuint(_float t)
 {
-	return 1.f - ::powf(1.f - t, 5.f);
+	return 1.f - powf(1.f - t, 5.f);
 }
 
 ENGINE_DLL _float Math::EaseInOutQuint(_float t)
 {
-	return (t < 0.5f) ? (16.f * ::powf(t, 5.f)) : (1.f - ::powf(-2.f * t + 2.f, 5.f) * 0.5f);
+	return (t < 0.5f) ? (16.f * powf(t, 5.f)) : (1.f - powf(-2.f * t + 2.f, 5.f) * 0.5f);
 }
 
 ENGINE_DLL _float Math::EaseInCirc(_float t)
 {
-	return 1.f - ::sqrtf(1.f - t * t);
+	return 1.f - sqrtf(1.f - t * t);
 }
 
 ENGINE_DLL _float Math::EaseOutCirc(_float t)
 {
 	const float u = t - 1.f;
-	return ::sqrtf(1.f - u * u);
+	return sqrtf(1.f - u * u);
 }
 
 ENGINE_DLL _float Math::EaseInOutCirc(_float t)
 {
 	if (t < 0.5f)
-		return (1.f - ::sqrtf(1.f - ::powf(2.f * t, 2.f))) * 0.5f;
+		return (1.f - sqrtf(1.f - powf(2.f * t, 2.f))) * 0.5f;
 
-	return (::sqrtf(1.f - ::powf(-2.f * t + 2.f, 2.f)) + 1.f) * 0.5f;
+	return (sqrtf(1.f - powf(-2.f * t + 2.f, 2.f)) + 1.f) * 0.5f;
 }
 
 ENGINE_DLL _float Math::EaseInExpo(_float t)
 {
 	if (t <= 0.f) return 0.f;
-	return ::powf(2.f, 10.f * t - 10.f);
+	return powf(2.f, 10.f * t - 10.f);
 }
 
 ENGINE_DLL _float Math::EaseOutExpo(_float t)
 {
 	if (t >= 1.f) return 1.f;
-	return 1.f - ::powf(2.f, -10.f * t);
+	return 1.f - powf(2.f, -10.f * t);
 }
 
 ENGINE_DLL _float Math::EaseInOutExpo(_float t)
 {
 	if (t <= 0.f) return 0.f;
 	if (t >= 1.f) return 1.f;
-	if (t < 0.5f) return ::powf(2.f, 20.f * t - 10.f) * 0.5f;
-	return (2.f - ::powf(2.f, -20.f * t + 10.f)) * 0.5f;
+	if (t < 0.5f) return powf(2.f, 20.f * t - 10.f) * 0.5f;
+	return (2.f - powf(2.f, -20.f * t + 10.f)) * 0.5f;
 }
 
 ENGINE_DLL _float Math::EaseInBack(_float t)
@@ -213,7 +214,7 @@ ENGINE_DLL _float Math::EaseInElastic(_float t)
 	if (t <= 0.f) return 0.f;
 	if (t >= 1.f) return 1.f;
 	const float c4 = (2.f * XM_PI) / 3.f;
-	return -::powf(2.f, 10.f * t - 10.f) * ::sinf((t * 10.f - 10.75f) * c4);
+	return -powf(2.f, 10.f * t - 10.f) * sinf((t * 10.f - 10.75f) * c4);
 }
 
 ENGINE_DLL _float Math::EaseOutElastic(_float t)
@@ -221,7 +222,7 @@ ENGINE_DLL _float Math::EaseOutElastic(_float t)
 	if (t <= 0.f) return 0.f;
 	if (t >= 1.f) return 1.f;
 	const float c4 = (2.f * XM_PI) / 3.f;
-	return ::powf(2.f, -10.f * t) * ::sinf((t * 10.f - 0.75f) * c4) + 1.f;
+	return powf(2.f, -10.f * t) * sinf((t * 10.f - 0.75f) * c4) + 1.f;
 }
 
 ENGINE_DLL _float Math::EaseInOutElastic(_float t)
@@ -232,9 +233,9 @@ ENGINE_DLL _float Math::EaseInOutElastic(_float t)
 	const float c5 = (2.f * XM_PI) / 4.5f;
 
 	if (t < 0.5f)
-		return -0.5f * ::powf(2.f, 20.f * t - 10.f) * ::sinf((20.f * t - 11.125f) * c5);
+		return -0.5f * powf(2.f, 20.f * t - 10.f) * sinf((20.f * t - 11.125f) * c5);
 
-	return 0.5f * ::powf(2.f, -20.f * t + 10.f) * ::sinf((20.f * t - 11.125f) * c5) + 1.f;
+	return 0.5f * powf(2.f, -20.f * t + 10.f) * sinf((20.f * t - 11.125f) * c5) + 1.f;
 }
 
 static inline float OutBounceLocal(float t)

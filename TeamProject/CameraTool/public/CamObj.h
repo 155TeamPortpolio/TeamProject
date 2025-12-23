@@ -12,30 +12,23 @@ enum class CamMoveConstraint
 class CCamObj abstract : public CGameObject
 {
 protected:
-    CCamObj() : CGameObject(), transform(m_pTransform) {}
-    CCamObj(const CCamObj& rhs) : CGameObject(rhs), transform(m_pTransform), light(rhs.light), game(rhs.game) {}
-    virtual ~CCamObj() = default;
+    CCamObj() : CGameObject() {}
+    CCamObj(const CCamObj& rhs) : CGameObject(rhs) {}
+    virtual ~CCamObj() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Priority_Update(_float dt)  override PURE;
+    virtual void    Update(_float dt)           override PURE;
+    virtual void    Late_Update(_float dt)      override PURE;
 
-    void Priority_Update(_float dt) override PURE;
-    void Update(_float dt)          override PURE;
-    void Late_Update(_float dt)     override PURE;
-
-    virtual void SetControlEnabled(_bool enabled) {}
-    virtual void SetMoveConstraint(CamMoveConstraint mode) {}
-    virtual void SetOrbitState(const CamOrbitState& next) {}
-
-protected:
-    CGameInstance* game{};
-    CCamera*       cam{};
-    CLight*        light{};
-    CTransform*&   transform;
+    virtual void    SetControlEnabled(_bool enabled) {}
+    virtual void    SetMoveConstraint(CamMoveConstraint mode) {}
+    virtual void    SetOrbitState(const CamOrbitState& next) {}
 
 public:
-    CGameObject* Clone(INIT_DESC* pArg) override PURE;
+    virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
     virtual void Free() override;
 };
 
