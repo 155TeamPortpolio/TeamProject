@@ -31,24 +31,18 @@ protected:
 	virtual void Render_GUI_Transform();			// (툴) GUI 스케일, 앵글, 피봇
 	virtual void Render_GUI_Animation();			// (툴)	GUI 애니메이션 추가
 	virtual void Render_GUI_Color();
-	virtual void Render_GUI_TextKey(); 
 
 protected:
 	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (툴)
 
 private:
 	void Save_Transform(json& data);
-	void Save_TextKey(json& data);
 	void Save_Animation(json& data);
 	void Save_Childeren(json& data);
 
 	void Load_Transform(const json& data);
-	void Load_TextKey(const json& data);
 	void Load_Animation(const json& data);
 	void Load_Children(const json& data);
-
-protected:
-	_char				m_szTextKey[MAX_PATH] = {};
 
 public:
 	virtual void Free();

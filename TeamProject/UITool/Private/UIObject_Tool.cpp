@@ -38,8 +38,6 @@ void CUIObject_Tool::Render_GUI()
 
     Render_GUI_Color();
 
-    Render_GUI_TextKey();
-
     Render_GUI_Animation();
 }
 
@@ -76,9 +74,6 @@ void CUIObject_Tool::SavePrefab(json& data)
 {
     Save_Transform(data["transform"]);
 
-    if (m_szTextKey[0] != '\0')
-        Save_TextKey(data["textKey"]);
-
     if(!m_AnimClips.empty())
         Save_Animation(data["animation"]);
     
@@ -93,9 +88,6 @@ void CUIObject_Tool::LoadPrefab(const json& data)
 {
     if(data.contains("transform"))      
         Load_Transform(data["transform"]);
-
-    if(data.contains("textKey"))        
-        Load_TextKey(data["textKey"]);
 
     if(data.contains("animation"))      
         Load_Animation(data["animation"]);
@@ -116,11 +108,6 @@ void CUIObject_Tool::Save_Transform(json& data)
     data["scale"] = { {"x", m_vScale.x}, {"y", m_vScale.y} };
     data["pivot"] = { {"x", m_vPivot.x}, {"y", m_vPivot.y} };
     data["rotation"] = m_fRadian;
-}
-
-void CUIObject_Tool::Save_TextKey(json& data)
-{    
-    data["textKey"] = m_szTextKey;
 }
 
 void CUIObject_Tool::Save_Animation(json& data)
@@ -178,12 +165,6 @@ void CUIObject_Tool::Load_Transform(const json& data)
     m_vScale = { data["scale"]["x"].get<_float>(), data["scale"]["y"].get<_float>() };
     m_vPivot = { data["pivot"]["x"].get<_float>(), data["pivot"]["y"].get<_float>() };
     m_fRadian = data["rotation"].get<_float>();
-}
-
-void CUIObject_Tool::Load_TextKey(const json& data)
-{
-    strcpy_s(m_szTextKey, sizeof(m_szTextKey), data["textKey"].get<string>().c_str());
-    Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
 }
 
 void CUIObject_Tool::Load_Animation(const json& data)
@@ -436,13 +417,6 @@ void CUIObject_Tool::Render_GUI_Color()
 {
     ImGui::SeparatorText(u8"컬러");
     ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
-}
-
-void CUIObject_Tool::Render_GUI_TextKey()
-{
-    ImGui::SeparatorText(u8"텍스트 키");
-    if (ImGui::InputText(u8"텍스트 키", m_szTextKey, sizeof(m_szTextKey)))
-        Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)

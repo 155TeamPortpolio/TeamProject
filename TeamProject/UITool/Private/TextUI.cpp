@@ -35,10 +35,10 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     if (szFontKeys.size())
         Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
 
-    Get_Component<CTextSlot>()->Set_TextKey(m_InstanceName);
-
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
 
     Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
@@ -79,6 +79,8 @@ void CTextUI::Render_GUI()
     if (ImGui::InputTextMultiline(u8"³»¿ë", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
     {
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+        Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+        Get_Component<CTextSlot>()->Set_TextKey(m_szText);
         UpdateAnchorOffsetByAlign();
     } 
     
@@ -147,6 +149,8 @@ void CTextUI::LoadPrefab(const json& data)
 
     strcpy_s(m_szText, sizeof(m_szText), data["text"].get<string>().c_str());
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
 
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data["fontTag"].get<string>());
