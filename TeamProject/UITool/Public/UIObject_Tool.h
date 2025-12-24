@@ -34,10 +34,6 @@ protected:
 	virtual void Render_GUI_TextKey(); 
 
 protected:
-	void Play_Animation(_float dt);					// (툴, 클라이언트)			
-	void Set_Animation(_uint iIndex);				// (툴, 클라이언트)
-
-protected:
 	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (툴)
 
 private:
@@ -51,21 +47,7 @@ private:
 	void Load_Animation(const json& data);
 	void Load_Children(const json& data);
 
-	void Reset_Animation();
-
 protected:
-	_bool				m_isBlending = {};
-	_float				m_fBlendTime = {};
-	_float				m_fBlendDuration = {};
-
-	vector<UI_ANIM_CLIP> m_AnimClips;
-	_int				m_iCurrentClipIndex = { -1 };
-
-	_float2				m_vBaseScale = {};
-	_float				m_vBaseAngle = {};
-	_float2				m_vBaseAnchorOffset = {};
-	_float4				m_vBaseColor = {};
-
 	_char				m_szTextKey[MAX_PATH] = {};
 
 public:

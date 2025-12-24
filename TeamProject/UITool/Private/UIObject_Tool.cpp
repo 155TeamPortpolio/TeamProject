@@ -19,8 +19,6 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    //Set_Pivot(_float2(0.5f, 0.5f));
-
     Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 
     // GUI Inspector 창에 띄움
@@ -239,18 +237,6 @@ void CUIObject_Tool::Load_Children(const json& data)
     }
 }
 
-void CUIObject_Tool::Reset_Animation()
-{
-    m_isBlending = false;
-    m_fBlendTime = 0.f;
-
-    // 애니메이션 재생 전에 값으로 되돌려 놓음
-    m_vScale = m_vBaseScale;
-    m_fRadian = m_vBaseAngle;
-    m_vAnchorOffset = m_vBaseAnchorOffset;
-    m_vColor = m_vBaseColor;
-}
-
 void CUIObject_Tool::Render_GUI_Layout()
 {
     ImGui::SeparatorText("Layout");
@@ -457,91 +443,6 @@ void CUIObject_Tool::Render_GUI_TextKey()
     ImGui::SeparatorText(u8"텍스트 키");
     if (ImGui::InputText(u8"텍스트 키", m_szTextKey, sizeof(m_szTextKey)))
         Get_Component<CSprite2D>()->Set_TextKey(m_szTextKey);
-}
-
-void CUIObject_Tool::Play_Animation(_float dt)
-{
-    if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= m_AnimClips.size())
-        return;
-
-    if (m_isBlending)
-    {
-        const UI_ANIM_CLIP& clip = m_AnimClips[m_iCurrentClipIndex];
-
-        if (clip.keyframes.empty())
-        {
-            m_isBlending = false;
-            return;
-        }
-
-        m_fBlendTime += dt;
-        _float fRatio = {};
-
-        if (clip.fDuration > 0.f)
-            fRatio = m_fBlendTime / clip.fDuration;
-
-        fRatio = clamp(fRatio, 0.f, 1.f);
-
-        if (fRatio >= 1.f)
-        {
-            // 애니메이션 종료 처리
-            if(!clip.isLoop)
-                Reset_Animation();
-
-            return;
-        }
-
-        // 현재 시간에 해당하는 키프레임 찾기
-        _int iCurrentKeyIdx = { -1 };
-
-        for (_int i = 0; i < clip.keyframes.size() - 1; ++i)
-        {
-            _float fNormalizedTime = clip.keyframes[i].fTime / clip.fDuration;
-            _float fNextNormalizedTime = clip.keyframes[i + 1].fTime / clip.fDuration;
-
-            if (fRatio >= fNormalizedTime && fRatio <= fNextNormalizedTime)
-            {
-                iCurrentKeyIdx = i;
-                break;
-            }
-        }
-
-        if (iCurrentKeyIdx >= 0 && iCurrentKeyIdx + 1 >= 0)
-        {
-            const UI_KEYFRAME& fromKey = clip.keyframes[iCurrentKeyIdx];
-            const UI_KEYFRAME& toKey = clip.keyframes[iCurrentKeyIdx + 1];
-
-            _float fFromTime = fromKey.fTime / clip.fDuration;
-            _float fToTime = toKey.fTime / clip.fDuration;
-
-            _float fLocalRatio = (fRatio - fFromTime) / (fToTime - fFromTime);
-            fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
-
-            // 이징 적용
-            _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
-
-            // 보간된 값 적용
-            m_vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
-            m_fRadian = XMConvertToRadians(Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio));
-            m_vAnchorOffset = m_vBaseAnchorOffset + Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
-            _float4 vColor = {};
-            XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
-            m_vColor = vColor;
-        }
-    }
-}
-
-void CUIObject_Tool::Set_Animation(_uint iIndex)
-{
-    if (m_iCurrentClipIndex == iIndex)//&& m_isAnimLoop == isLoop)
-        return;
-
-    m_iCurrentClipIndex = iIndex;
-
-    m_vBaseScale = m_vScale;
-    m_vBaseAngle = m_fRadian;
-    m_vBaseAnchorOffset = m_vAnchorOffset;
-    m_vBaseColor = m_vColor;
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
