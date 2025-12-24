@@ -24,10 +24,8 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	/* 모델 셋팅 */
 	CPlaneModel* pModel = Get_Component<CPlaneModel>();
 
-	/* 머테리얼 셋팅 */
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Grid_Material", "Opaque", CGameInstance::GetInstance()->Get_Device());
 	static _float size = 20.f ;
@@ -40,7 +38,6 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
 
-	/* 텍스쳐 셋팅 */
 	customInstance->Get_MaterialData()->Link_Texture(G_GlobalLevelKey, "TileCell.png", TEXTURE_TYPE::DIFFUSE);
 
 	return S_OK;

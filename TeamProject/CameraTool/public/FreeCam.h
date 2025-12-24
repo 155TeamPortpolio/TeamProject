@@ -3,7 +3,6 @@
 #include "DebugCamData.h"
 
 NS_BEGIN(CameraTool)
-
 class CFreeCam final : public CCamObj
 {
 private:
@@ -46,5 +45,4 @@ public:
 	CGameObject* Clone(INIT_DESC* pArg) override;
 	virtual void Free() override { __super::Free(); }
 };
-
 NS_END

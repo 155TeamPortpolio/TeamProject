@@ -7,9 +7,9 @@ NS_BEGIN(Client)
 class COrbitCam final : public CCamObject
 {
 private:
-    COrbitCam() DEFAULT;
+    COrbitCam() = default;
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
-    virtual ~COrbitCam() DEFAULT;
+    virtual ~COrbitCam() = default;
 
 public:
     HRESULT Initialize_Prototype()      override;

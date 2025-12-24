@@ -401,6 +401,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float fLight = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -418,9 +419,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-    
+
     float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
-    
     Out.vLight = float4(PBR, 1.f);
     Out.fLightInfo = float2(NdotL, 0.f);
 
@@ -477,7 +477,6 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
     vector vEffect = g_EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float NdotL = fLightInfo.r;

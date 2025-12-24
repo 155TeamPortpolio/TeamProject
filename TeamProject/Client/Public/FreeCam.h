@@ -7,9 +7,9 @@ NS_BEGIN(Client)
 class CFreeCam final : public CCamObject
 {
 private:
-    CFreeCam() DEFAULT;
+    CFreeCam() = default;
     CFreeCam(const CFreeCam& rhs) : CCamObject(rhs) {}
-    virtual ~CFreeCam() DEFAULT;
+    virtual ~CFreeCam() = default;
 
 public:
     HRESULT Initialize_Prototype()      override;

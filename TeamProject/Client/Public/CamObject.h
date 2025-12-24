@@ -3,9 +3,13 @@
 #include "GameObject.h"
 #include "CameraMgr.h"
 
-#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
 #define GAME  CGameInstance::GetInstance()
+#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
 #define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
+#define KEY   CGameInstance::GetInstance()->Get_InputDev();
+#define PROTO CGameInstance::GetInstance()->Get_PrototypeMgr()
+#define GUI   CGameInstance::GetInstance()->Get_GUISystem()
+#define RES   CGameInstance::GetInstance()->Get_ResourceMgr()
 
 NS_BEGIN(Engine)
 class CGameInstance; class CLight;
@@ -17,7 +21,7 @@ class CCamObject abstract : public CGameObject
 protected:
 	CCamObject() : CGameObject() {} 
 	CCamObject(const CCamObject& rhs) : CGameObject(rhs) {}
-	virtual ~CCamObject() DEFAULT;
+	virtual ~CCamObject() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype()      override;

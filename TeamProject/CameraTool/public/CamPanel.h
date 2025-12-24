@@ -62,6 +62,7 @@ private:
 	CamKeyFrame&               GetSelectedKey();
 	vector<CamKeyFrame>&       GetKeyFrames()       { return target.sequence->keyframes; }
 	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
+    void                       FlipKeys_Yaw180();
 
 private:
     struct KeyframeListUIState

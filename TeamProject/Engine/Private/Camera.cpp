@@ -2,17 +2,16 @@
 #include "Camera.h"
 #include "GameObject.h"
 
-HRESULT CCamera::Initialize_Prototype()
-{
-	return S_OK;
-}
-
 HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 {
 	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
-	m_transform = m_pOwner->Get_Component<CTransform>();
 	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar);
 	return S_OK;
+}
+
+Matrix CCamera::Get_ViewMatrix() const
+{
+	return m_pOwner->Get_Component<CTransform>()->Get_InverseWorldMatrix();
 }
 
 Matrix CCamera::Get_ProjMatrix() const
@@ -28,6 +27,11 @@ Matrix CCamera::Get_ProjMatrix() const
 		return XMMatrixOrthographicLH(width, height, m_zNear, m_zFar);
 	}
 	return {};
+}
+
+_vector CCamera::Get_Pos() const
+{
+	return m_pOwner->Get_Component<CTransform>()->Get_Pos();
 }
 
 void CCamera::Set_Lens(_float _fov, _float _aspect, _float _zNear, _float _zFar)

@@ -55,7 +55,6 @@ void CFreeCam::Priority_Update(_float dt)
 				targetRotDeg.y += deltaY * sensitivity;
 				targetRotDeg.y = clamp(targetRotDeg.y, -89.f, 89.f);
 			}
-
 			ApplyRotation(dt);
 		}
 
