@@ -234,12 +234,14 @@ void CUI_Object::Update_UITransform()
     {
         if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
         {
-            parentScale = pParentUI->m_vScale;
+            parentScale = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
         }
     }
 
-    _float2 sizePx = { parentScale.x * m_vSize.x * m_vScale.x, parentScale.y * m_vSize.y * m_vScale.y };
+    m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+
+    _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
     m_pTransform->Scale({ sizePx.x, sizePx.y, 1.f });
     m_pTransform->Rotate({ 0.f, 0.f, parentRadian + m_fRadian });

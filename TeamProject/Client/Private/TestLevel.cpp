@@ -116,7 +116,7 @@ HRESULT CTestLevel::Awake()
 		{
 			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
 				.Collider(colDesc)
-				.Position({ x * 6.5f, 0.f, z * 6.5f })
+				.Position({ x * 6.15f, 0.f, z * 6.15f })
 				.Build("Test_Floor_" + to_string(z * 3 + x));
 			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 		}
