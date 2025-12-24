@@ -376,17 +376,6 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	return iter->second;
 }
 
-const string CTarget_Manager::PostProcessToTargetName(POSTPROCESS type)
-{
-	switch (type)
-	{
-	case POSTPROCESS::MRT_Bloom:  return "MRT_Bloom";
-	case POSTPROCESS::MRT_Distortion:  return "MRT_Distortion";
-	}
-	return "";
-}
-
-
 CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	return new CTarget_Manager(pDevice, pContext);

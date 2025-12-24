@@ -16,6 +16,7 @@ public:
 
     HRESULT Link_Material(const string& levelKey, const string& materialKey);
     HRESULT Insert_MaterialInstance(class CMaterialInstance* pInstance, _uint* outIndex);
+    HRESULT Set_RimLightInfo(_float3 RimColor, _float Power = 1.f);
 
 public:
     void Apply_Material(ID3D11DeviceContext* pContext, _uint Index);
@@ -36,6 +37,8 @@ public:
 protected:
     vector<class CMaterialInstance*> m_MaterialInstances;
     _bool m_bMaterialTabOpen = {false};
+    _float3 m_vRimLightColor = _float3(0, 0, 0);
+    _float  m_fRimLightPower = 0.f;
 
 public:
     static CMaterial* Create();
