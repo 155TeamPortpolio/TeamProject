@@ -98,7 +98,8 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 0.5f;
+    if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
+    if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     return Out;

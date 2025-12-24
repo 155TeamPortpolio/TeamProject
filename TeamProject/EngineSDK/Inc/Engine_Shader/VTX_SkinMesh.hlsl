@@ -120,7 +120,7 @@ PS_OUT PS_MAIN(PS_IN In)
         vMetalic.b = 1.f;
     }
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    if (vAmbient.g < 0.2)vAmbient.g = 1.f;
+    if (vAmbient.g < 0.2)vAmbient.g = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     return Out;
