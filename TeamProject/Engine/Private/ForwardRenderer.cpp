@@ -112,6 +112,48 @@ HRESULT CForwardRenderer::Render_RimLight()
 
 		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	}
+	else if (RimLightMode == RIMLIGHT::BACKLIGHT)
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "g_RimLightTexture");
+		m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
+		m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+
+		SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
+		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BACKRIMLIGHT", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("BACKRIMLIGHT", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
+	else if (RimLightMode == RIMLIGHT::RIMLIGHT)
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "g_RimLightTexture");
+		m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
+		m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+
+		SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
+		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "RIMLIGHT", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("RIMLIGHT", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
 	return S_OK;
 }
 
