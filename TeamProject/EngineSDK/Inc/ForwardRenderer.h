@@ -16,6 +16,7 @@ public:
     HRESULT Render_Shadow(class ShadowPass* pShadowPass);
     HRESULT Render_Forward(class OpaquePass* pOpaquePass, class InstancePass* pInstancePass);
     HRESULT Render_LightAcc();
+    HRESULT Render_RimLight();
     HRESULT Render_SSAO();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);

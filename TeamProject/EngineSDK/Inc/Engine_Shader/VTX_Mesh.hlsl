@@ -106,7 +106,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
-    Out.vRimLight = (vRimLightColor, fRimLightPower);
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }
 
