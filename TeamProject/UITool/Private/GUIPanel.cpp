@@ -36,6 +36,7 @@ void CGUIPanel::Render_GUI()
 {
 	{
 		ImGui::SetNextWindowPos(ImVec2(220.f, 40.f), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(200.f, 200.f), ImGuiCond_FirstUseEver);
 
 		ImGui::Begin("UI Tool");
 
