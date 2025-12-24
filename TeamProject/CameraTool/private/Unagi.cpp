@@ -5,6 +5,31 @@
 #include "Material.h"
 #include "Animator3D.h"
 
+namespace
+{
+	struct PlayerAssetDesc
+	{
+		const char* folder;
+		const char* fileName;
+	};
+
+	const PlayerAssetDesc& GetPlayerAssetDesc(Player v)
+	{
+		static const PlayerAssetDesc table[] =
+		{
+			{"Unagi",  "Avatar_Female_Size02_Unagi" },
+			{"Qingyi", "Avatar_Female_Size01_QingYi"},
+		};
+		return table[(int)v];
+	};
+
+	fs::path GetPlayerBaseDir(Player v)
+	{
+		const auto& d = GetPlayerAssetDesc(v);
+		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder / "Anim";
+	}
+}
+
 HRESULT CUnagi::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -22,10 +47,14 @@ HRESULT CUnagi::Initialize(INIT_DESC* pArg)
 
 void CUnagi::Awake()
 {
-	const string levelName = "First_Level";
-	const string fileName  = "Avatar_Female_Size02_Unagi";
+	const Player player = Player::QingYi;
 
-	const fs::path baseDir = fs::path("..") / "bin" / "Resources" / "Model" / "Anim";
+	const string levelName = "First_Level";
+
+	const auto& d = GetPlayerAssetDesc(player);
+	const string fileName = d.fileName;
+
+	const fs::path baseDir = GetPlayerBaseDir(player);
 
 	const string modelKey  = fileName + ".model";
 	const string matKey    = fileName + ".mat";
@@ -36,8 +65,8 @@ void CUnagi::Awake()
 	const string jsonPath  = (baseDir / jsonKey).string();
 
 	RES->Add_ResourcePath(modelKey, modelPath);
-	RES->Add_ResourcePath(matKey,   matPath);
-	RES->Add_ResourcePath(jsonKey,  jsonPath);
+	RES->Add_ResourcePath(matKey, matPath);
+	RES->Add_ResourcePath(jsonKey, jsonPath);
 
 	Get_Component<CModel>()->Link_Model(levelName, modelKey);
 	Get_Component<CMaterial>()->Link_Material(levelName, matKey);
