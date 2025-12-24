@@ -91,25 +91,27 @@ HRESULT CForwardRenderer::Render_LightAcc()
 
 HRESULT CForwardRenderer::Render_RimLight()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal"))) return E_FAIL;
+	if (RimLightMode == RIMLIGHT::OUTLINE)
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_RimLightFinal"))) return E_FAIL;
 
-	m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "g_RimLightTexture");
-	m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
-	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+		m_pTargetManager->Bind_Target("Target_RimLight", m_pShader, "g_RimLightTexture");
+		m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
+		m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
 
-	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
-	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
-	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "RIMLIGHT", &pLayout);
-	m_pContext->IASetInputLayout(pLayout);
+		SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
+		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "OUTLINERIMLIGHT", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
 
-	m_pShader->Apply("RIMLIGHT", m_pContext);
-	m_pVIBuffer->Bind_Buffer(m_pContext);
-	m_pVIBuffer->Render(m_pContext);
+		m_pShader->Apply("OUTLINERIMLIGHT", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
 
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
-	
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
 	return S_OK;
 }
 
@@ -229,6 +231,11 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pVIBuffer->Render(m_pContext);
 	m_pTargetManager->End_MRT();
 	return S_OK;
+}
+
+void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)
+{
+	RimLightMode = eMode;
 }
 
 HRESULT CForwardRenderer::Ready_Target()
