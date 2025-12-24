@@ -238,7 +238,7 @@ void COrbitCam::Priority_Update(_float dt)
 
 void COrbitCam::UpdateInput(_float dt)
 {
-    if (KEY->Mouse_Down(MOUSE_BTN::RB))
+    if (!ImGui::GetIO().WantCaptureMouse)
     {
         m_targetRotDeg.x += KEY->Mouse_DeltaX() * m_sensitivityX;
         m_targetRotDeg.y += KEY->Mouse_DeltaY() * m_sensitivityY;
@@ -263,6 +263,7 @@ void COrbitCam::UpdateInput(_float dt)
 
     m_targetPitchZoomOffset = -m_pitchAutoZoomMax * k;
 }
+
 
 void COrbitCam::ClampTargets()
 {

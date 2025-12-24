@@ -127,6 +127,8 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     if (m_returnCamType != CamReturnType::None)
     {
         auto seqTf = sequenceCam->Get_Component<CTransform>();
+        const Matrix seqWorld = seqTf->Get_WorldMatrix();
+
         const Vector4 p4 = seqTf->Get_Pos();
         const Vector3 seqPos(p4.x, p4.y, p4.z);
 
@@ -144,7 +146,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         if (m_returnCamType == CamReturnType::FreeCam)
         {
             auto returnTf = returnObj->Get_Component<CTransform>();
-            returnTf->Set_WorldPos(XMVectorSet(seqPos.x, seqPos.y, seqPos.z, 1.f));
+            returnTf->TranslateMatrix(seqWorld);
 
             auto freeCam = static_cast<CFreeCam*>(returnObj);
             freeCam->SyncRotation();
@@ -159,6 +161,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     ClearPlayingState();
     return ok;
 }
+
 
 void CCamDirector::StopAll(_float blendOutSec)
 {

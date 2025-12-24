@@ -57,8 +57,8 @@ private:
     _float   m_minDist         = 0.5f;
     _float   m_maxDist         = 2.5f;
 
-    _float   m_sensitivityX    = 0.15f;
-    _float   m_sensitivityY    = 0.12f;
+    _float   m_sensitivityX    = 0.12f;
+    _float   m_sensitivityY    = 0.08f;
     _float   m_zoomSpeed       = 1.0f;
 
     _float   m_rotSmoothSpeed  = 18.f;

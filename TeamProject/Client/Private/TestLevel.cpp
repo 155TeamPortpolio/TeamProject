@@ -3,16 +3,18 @@
 #include "GameInstance.h"
 
 #include "TestMap.h"
-#include "FreeCam.h"
 #include "TestObject.h"
 #include "TestFloor.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "SequenceCam.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
 
+// Camera
 #include "Camera.h"
+#include "FreeCam.h"
+#include "CamDirector.h"
+#include "OrbitCam.h"
+#include "SequenceCam.h"
+#include "CamPanel.h"
 
 /* MapData */
 #include "MapDataCloud.h"
@@ -200,6 +202,10 @@ void CTestLevel::Ready_Camera()
 	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
+
+	auto camPanel = CCamPanel::Create(GUI->Get_Context());
+	GUI->Register_Panel(camPanel);
+
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 }
 

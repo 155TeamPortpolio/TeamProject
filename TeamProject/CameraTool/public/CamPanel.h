@@ -3,7 +3,6 @@
 #include "BasePanel.h"
 #include "CamPanelData.h"
 #include "Unagi.h"
-
 #include "CamPanelUtil.h"
 
 #define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
