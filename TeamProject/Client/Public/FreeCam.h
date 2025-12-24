@@ -20,7 +20,7 @@ public:
     void    Late_Update(_float dt)      override {}
     void    Render_GUI()                override;
 
-private:
+public:
     void    ApplyRotation(_float dt);
     void    SyncRotation();
 

@@ -72,6 +72,8 @@ public:
     _bool           Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit);
     void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
 
+    _float          Get_HalfSize()  const { return m_fHeight * 0.5f + m_fRadius * 0.5f; }
+
 private:
     void            Move(_fvector vDisplacement, _float dt);
     void            Apply_Gravity(_float dt);

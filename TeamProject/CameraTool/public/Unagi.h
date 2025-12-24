@@ -4,7 +4,7 @@
 
 NS_BEGIN(CameraTool)
 
-enum class Player { Unagi, QingYi };
+enum class Player { Unagi, QingYi, Belle, Corin };
 
 class CUnagi : public CGameObject
 {
