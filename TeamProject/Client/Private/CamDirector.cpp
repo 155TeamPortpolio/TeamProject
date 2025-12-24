@@ -2,7 +2,10 @@
 #include "CamDirector.h"
 #include "CamSequencePlayer.h"
 #include "SequenceCam.h"
+#include "CharacterController.h"
 #include "GameInstance.h"
+#include "OrbitCam.h"
+#include "FreeCam.h"
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
@@ -72,9 +75,9 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
     seqPlayer->SetSequence(&entry.seq);
 
-    if (entry.seq.space == CamSpace::Local) 
+    if (entry.seq.space == CamSpace::Local)
         seqPlayer->SetSpaceReference(m_spaceRefHandle);
-    else 
+    else
         seqPlayer->ClearSpaceReference();
 
     seqPlayer->SetApplyEnabled(true);
@@ -83,15 +86,25 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
         seqPlayer->SetTime(0.f);
 
     auto camComp = sequenceCam->Get_Component<CCamera>();
+
+    if (entry.seq.space == CamSpace::Local)
+    {
+        auto refObj = OBJ->Request_Object(m_spaceRefHandle);
+        auto cc = refObj->Get_Component<CCharacterController>();
+        camComp->Set_ViewOffset(Vector3(0.f, -cc->Get_HalfSize(), 0.f));
+    }
+    else
+        camComp->Clear_ViewOffset();
+
     const _uint handle = CAM->Push(camComp, blendInSec);
 
-    m_playing.handle             = handle;
-    m_playing.key                = key;
-    m_playing.active             = true;
+    m_playing.handle = handle;
+    m_playing.key = key;
+    m_playing.active = true;
     m_playing.defaultBlendOutSec = blendOutSec;
-    m_playing.pendingStart       = (blendInSec > 0.f);
-    m_playing.blendInRemain      = blendInSec;
-    m_playing.resetTimeOnStart   = resetTime;
+    m_playing.pendingStart = (blendInSec > 0.f);
+    m_playing.blendInRemain = blendInSec;
+    m_playing.resetTimeOnStart = resetTime;
 
     if (m_playing.pendingStart)
         seqPlayer->Pause();
@@ -105,16 +118,43 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 {
     if (m_playing.handle != handle) return false;
 
-    auto sequencePlayer = GetSequenceCam()->Get_Component<CCamSequencePlayer>();
+    auto sequenceCam = GetSequenceCam();
+    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     sequencePlayer->Stop(resetTime);
     sequencePlayer->SetApplyEnabled(false);
+
+    if (m_returnCamType != CamReturnType::None)
+    {
+        auto seqTf = sequenceCam->Get_Component<CTransform>();
+        const Matrix seqWorld = seqTf->Get_WorldMatrix();
+
+        auto returnObj = OBJ->Request_Object(m_returnCamHandle);
+        auto returnTf = returnObj->Get_Component<CTransform>();
+        returnTf->TranslateMatrix(seqWorld);
+
+        if (m_returnCamType == CamReturnType::OrbitCam)
+        {
+            auto orbit = static_cast<COrbitCam*>(returnObj);
+            orbit->SyncFromCurTransform();
+        }
+
+        if (m_returnCamType == CamReturnType::FreeCam)
+        {
+            auto freeCam = static_cast<CFreeCam*>(returnObj);
+            freeCam->SyncRotation();
+        }
+    }
+
+    auto camComp = sequenceCam->Get_Component<CCamera>();
+    camComp->Clear_ViewOffset();
 
     const _bool ok = CAM->Pop(handle, blendOutSec);
 
     ClearPlayingState();
     return ok;
 }
+
 
 void CCamDirector::StopAll(_float blendOutSec)
 {

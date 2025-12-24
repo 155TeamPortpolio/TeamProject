@@ -93,7 +93,6 @@ namespace Helper // magic_enum 관련
 	const char* EnumLabel(TEnum v) // enum -> const char*
 	{
 		static_assert(is_enum_v<TEnum>, "Helper::EnumLabel<TEnum> requires an enum type.");
-
 		constexpr size_t N = magic_enum::enum_count<TEnum>();
 
 		struct Cache
@@ -115,6 +114,9 @@ namespace Helper // magic_enum 관련
 		static Cache cache;
 		return cache.Get(v);
 	}
+
+	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width);
+	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, float width);
 
 	// enum 선택 콤보박스(UI)를 그려주고 선택 결과를 반영
 	template<typename TEnum, typename FilterFn>
@@ -170,8 +172,6 @@ namespace Helper // magic_enum 관련
 
 	ENGINE_DLL bool DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue);
 	ENGINE_DLL void DrawEaseGraph(EaseType ease, ImVec2 size, const char* id);
-	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width);
-	ENGINE_DLL bool DrawEaseCombo(const char* id, EaseType& ioValue, float width);
 }
 
 namespace Helper

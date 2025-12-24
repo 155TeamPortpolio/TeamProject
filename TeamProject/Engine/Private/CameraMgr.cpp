@@ -193,6 +193,8 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     world.Decompose(scale, rot, trans);
     rot.Normalize();
 
+    trans += cam->Get_ViewOffset();
+
     out.pos           = trans;
     out.rot           = rot;
     out.lens.projType = cam->Get_ProjType();
