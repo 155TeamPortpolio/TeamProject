@@ -72,26 +72,33 @@ PS_OUT PS_MAIN(PS_IN In)
   
     Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 vNormal;
-    vNormal.x = vNormalDesc.y * 2.f - 1.f;
-    vNormal.y = vNormalDesc.z * 2.f - 1.f;
-    vNormal.z = 1.f;
-    
-    float3 T = normalize(In.vTangent);
-    float3 B = normalize(In.vBinormal * -1);
-    float3 N = normalize(In.vNormal.xyz);
+    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    if (vNormalDesc.a > 0.f)
+    {
+        float3 vNormal;
+        vNormal.x = vNormalDesc.y * 2.f - 1.f;
+        vNormal.y = vNormalDesc.z * 2.f - 1.f;
+        vNormal.z = 1.f;
+        float3 T = normalize(In.vTangent);
+        float3 B = normalize(In.vBinormal * -1);
+        float3 N = normalize(In.vNormal.xyz);
 
-    float3x3 WorldMatrix = float3x3(T, B, N);
-
-    vNormal = mul(vNormal, WorldMatrix);
+        float3x3 WorldMatrix = float3x3(T, B, N);
+        
+        vNormal = mul(vNormal, WorldMatrix);
     
-    Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+        Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
+    }
+    else
+    {
+        float3 vNormal = normalize(In.vNormal);
+        Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
+    }
+
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vAmbient.g < 0.2) vAmbient.g = 0.5f;
-    if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     return Out;
