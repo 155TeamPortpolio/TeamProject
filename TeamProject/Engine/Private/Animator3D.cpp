@@ -715,9 +715,8 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Separator();
 
 	// 式式式式式式式式式 Play bar
-	if(ImGui::Button(bPause ? "Pause" : "Play", ImVec2(80.f, 0.f))) {
-		curLayer.bPause = bPause;
-		bPause = !bPause;
+	if(ImGui::Button(curLayer.bPause ? "Play" : "Pause", ImVec2(60.f, 0.f))) {
+		curLayer.bPause = !curLayer.bPause;
 	}
 	ImGui::SameLine();
 
