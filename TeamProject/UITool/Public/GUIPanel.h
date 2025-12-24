@@ -23,7 +23,6 @@ public:
 
 private:
     CGameInstance*      m_pGameInstance = { nullptr };
-    _int                m_iLevelIndex = {};
 
 private:
     void CreateCanvasPanel(); 

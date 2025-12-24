@@ -19,7 +19,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Set_Pivot(_float2(0.5f, 0.5f));
+    //Set_Pivot(_float2(0.5f, 0.5f));
 
     Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 

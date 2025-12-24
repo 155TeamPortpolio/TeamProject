@@ -35,6 +35,8 @@ void CGUIPanel::Update_Panel(_float dt)
 void CGUIPanel::Render_GUI()
 {
 	{
+		ImGui::SetNextWindowPos(ImVec2(220.f, 40.f), ImGuiCond_FirstUseEver);
+
 		ImGui::Begin("UI Tool");
 
 		CreateCanvasPanel();
@@ -54,7 +56,7 @@ void CGUIPanel::CreateCanvasPanel()
 
 		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strTypeTag })
 			.Size({ m_pGameInstance->Get_ClientSize().x, m_pGameInstance->Get_ClientSize().y })
-			.Build(strTypeTag + to_string(CCanvasPanel::m_iCount));
+			.Build(strTypeTag);
 
 		m_pGameInstance->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
 	}
@@ -83,8 +85,9 @@ void CGUIPanel::LoadPrefab()
 			return;
 
 		const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["parent"]["typeTag"].get<string>()})
-			.Build(data["parent"]["typeTag"].get<string>());
+		const string& strTypeTag = data["parent"]["typeTag"].get<string>();
+		CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
+			.Build(strTypeTag);
 
 		if (!pObj)
 			return;
