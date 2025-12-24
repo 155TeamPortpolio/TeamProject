@@ -20,8 +20,11 @@ public:
     virtual void Submit_NonLight(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Particle(const PARTICLE_PACKET& packet) PURE;
     virtual void Submit_Effect(const EFFECT_PACKET& packet) PURE;
+    virtual void SetRimLightMode(RIMLIGHT eMode) PURE;
+
     virtual _bool GetOn() const  PURE;
     virtual void SetOn(_bool On) PURE;
+
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
 

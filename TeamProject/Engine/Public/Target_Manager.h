@@ -27,9 +27,6 @@ public:
 	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);
 	ID3D11DepthStencilView* Get_MTR_DSV(const string& strMRTTag);
 
-public:
-	const string PostProcessToTargetName(POSTPROCESS type);
-
 #ifdef _USING_GUI
 	void Render_GUI();
 #endif // _USING_GUI

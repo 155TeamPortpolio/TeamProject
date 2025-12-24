@@ -39,6 +39,16 @@ void CAnimator3DEX::Update_Animation(_float fTrackPosition)
 
 		Layer.fCurrentTrackPosition = fTrackPosition;
 		nowClip->TranslateAnimateMatrixFromDuration(Layer.LocalMatrices, fTrackPosition, m_EventBus);
+
+		//Eliminate Transform
+		if (false == Layer.bUseTransform) {
+			if (-1 != Layer.iMoveBoneIndex) {
+				_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
+				//지금은 Transform만 가져오고 있지만 혹시 회전이나 크기가 필요하면 매트릭스 자체를 저장해도 무관
+				Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+				mat._41 = mat._42 = mat._43 = 0;
+			}
+		}
 	}
 	
 	BuildBone();

@@ -12,6 +12,8 @@ Texture2D g_DepthTexture;
 Texture2D g_ShadowTexture;
 Texture2D g_MetalicTexture;
 Texture2D g_AmbientTexture;
+Texture2D g_RimLightTexture;
+Texture2D g_RimLightFinalTexture;
 Texture2D g_RampTexture;
 Texture2D g_SSAONoiseTexture;
 Texture2D g_SSAOTexture;
@@ -183,6 +185,144 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
     
     Out.vResult = result;
     
+    return Out;
+}
+
+
+PS_OUT_RESULT PS_BACKRIMLIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 vRimInfo = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
+     
+    if (vRimInfo.a <= 0.f)
+    {
+        Out.vResult = float4(0.f, 0.f, 0.f, 0.f);
+        return Out;
+    }
+    
+    float4 vNormalDesc = g_NormalTexture.Sample(PointClampSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float4 vDepthDesc = g_DepthTexture.Sample(PointClampSampler, In.vTexcoord);
+    
+    float fViewZ = vDepthDesc.y * zFar;
+    
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+    
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+    float NdotV = saturate(dot(worldNormal, viewDir));
+    float rimPower = 1.f - NdotV;
+    float fresnelPower = lerp(2.0, 8.0, vRimInfo.a);
+    rimPower = pow(rimPower, fresnelPower);
+    
+    float3 lightDir = normalize(g_vLightDir.xyz * -1);
+    float NdotL = dot(worldNormal, lightDir);
+
+    float backlightMask = saturate(-NdotL * 0.5 + 0.5);
+    backlightMask = pow(backlightMask, 2.0); 
+    
+    float rimThreshold = 0.5; 
+    float rimSmoothness = 0.05; 
+    float fRim = smoothstep(rimThreshold - rimSmoothness,
+                           rimThreshold + rimSmoothness,
+                           rimPower);
+    
+    fRim *= lerp(0.3, 1.0, backlightMask); 
+
+    float3 vRimColor = vRimInfo.rgb * fRim;
+    
+    Out.vResult = float4(vRimColor, 1.f);
+    
+    return Out;
+}
+
+PS_OUT_RESULT PS_OUTLINERIMLIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 vRimInfo = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vRimInfo.a <= 0.f)
+    {
+        Out.vResult = float4(0.f, 0.f, 0.f, 0.f);
+        return Out;
+    }
+
+    float4 vNormalDesc = g_NormalTexture.Sample(PointClampSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float4 vDepthDesc = g_DepthTexture.Sample(PointClampSampler, In.vTexcoord);
+
+    float fViewZ = vDepthDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+    float NdotV = saturate(dot(worldNormal, viewDir));
+    
+    float rimPower = 1.f - NdotV;
+    float fresnelPower = lerp(2.0, 8.0, vRimInfo.a);
+    rimPower = pow(rimPower, fresnelPower);
+
+    float fRim = smoothstep(0.45, 0.55, rimPower);
+
+    float3 vRimColor = vRimInfo.rgb * fRim;
+    Out.vResult = float4(vRimColor, 1.f);
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 vRimInfo = g_RimLightTexture.Sample(PointSampler, In.vTexcoord);
+
+    if (vRimInfo.a <= 0.f)
+    {
+        Out.vResult = float4(0.f, 0.f, 0.f, 0.f);
+        return Out;
+    }
+
+    float4 vNormal = g_NormalTexture.Sample(PointSampler, In.vTexcoord);
+    float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, In.vTexcoord);
+
+    float fViewZ = vDepthDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+    vNormal = float4(vNormal.xyz * 2.f - 1.f, 0.f);
+
+    float fRim = 1.f - saturate(dot(normalize(vNormal.xyz), viewDir));
+    fRim = pow(fRim, vRimInfo.a);
+
+    float3 vRimColor = vRimInfo.rgb * fRim;
+
+    Out.vResult = float4(vRimColor, 1.f);
+
     return Out;
 }
 
@@ -401,6 +541,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float fLight = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -418,10 +560,18 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+
+    if (fSkin > 0.f)
+    {
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+        Out.vLight = float4(PBR, 1.f);
+    }
+    else
+    {
+        float NdotL = dot(normalize(lightDir), worldNormal) * 0.5 + 0.5;
+        Out.vLight = float4(g_vLightDiffuse.rgb *vDiffuse.rgb  *NdotL * g_fLightIntensity * 0.3, 1.f) ;
+    }
     
-    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
-    
-    Out.vLight = float4(PBR, 1.f);
     Out.fLightInfo = float2(NdotL, 0.f);
 
     return Out;
@@ -477,8 +627,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vUI3D = g_3DUITexture.Sample(DefaultSampler, In.vTexcoord);
     vector vEffect = g_EffectDiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float ao = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vRimLight = g_RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f); 
@@ -489,7 +639,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     //ambient = max(ambient, vDiffuse.rgb * 0.1);
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
- 
+    
+    float rimIntensity = max(vRamp, 0.5f);
+    Out.vBackBuffer.rgb += vRimLight.rgb * rimIntensity;
+    
     if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
     if (vEffect.a > 0.f) Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
     
@@ -560,6 +713,36 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SSAO_BLUR();
+    }
+
+    pass BACKRIMLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BACKRIMLIGHT();
+    }
+
+    pass OUTLINERIMLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OUTLINERIMLIGHT();
+    }
+
+    pass RIMLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RIMLIGHT();
     }
 
     pass BLOOM_BLURX

@@ -159,23 +159,31 @@ void CCamPanel::Render_GUI()
 {
     constexpr float leftW = 200.f;
     constexpr float rightW = 250.f;
-    constexpr float height = 400.f;
+
+    constexpr float minH = 220.f;
+
+    static float panelH = 400.f;
 
     const ImVec2 display = ImGui::GetIO().DisplaySize;
 
     ImVec2 bottomLeft(leftW, display.y);
-    ImVec2 size(display.x - leftW - rightW, height);
-
     bottomLeft.x = floorf(bottomLeft.x);
     bottomLeft.y = floorf(bottomLeft.y);
-    size.x = floorf(size.x);
-    size.y = floorf(size.y);
+
+    float desiredW = display.x - leftW - rightW;
+    desiredW = floorf(desiredW);
+    if (desiredW < 360.f) desiredW = 360.f;
+
+    float maxH = floorf(display.y - 60.f);
+    if (maxH < minH) maxH = minH;
+
+    panelH = clamp(panelH, minH, maxH);
 
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
-    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(desiredW, minH), ImVec2(desiredW, maxH));
+    ImGui::SetNextWindowSize(ImVec2(desiredW, panelH), ImGuiCond_FirstUseEver);
 
     ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoTitleBar;
@@ -184,6 +192,12 @@ void CCamPanel::Render_GUI()
 
     if (ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags))
     {
+        const ImVec2 curSize = ImGui::GetWindowSize();
+        if (fabsf(curSize.x - desiredW) > 0.5f)
+            ImGui::SetWindowSize(ImVec2(desiredW, curSize.y));
+
+        panelH = clamp(ImGui::GetWindowSize().y, minH, maxH);
+
         DrawWindowHeader();
 
         DrawToolbar();
@@ -228,6 +242,7 @@ void CCamPanel::Render_GUI()
     }
     ImGui::End();
 }
+
 
 void CCamPanel::SetCaptureTarget(CCamObj* camObj)
 {
@@ -372,21 +387,32 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("Target");
     ImGui::SameLine();
 
-    const char* preview = "None";
-    if (target.sequence) preview = target.sequence->name.c_str();
+    const bool hasSeq = (target.sequence != nullptr);
+    const char* preview = hasSeq ? target.sequence->name.c_str() : "None";
 
-    ImGui::SetNextItemWidth(260.f);
+    ImGui::SetNextItemWidth(90.f);
     if (ImGui::BeginCombo("##cam_track_combo", preview))
     {
         ImGui::Selectable(preview, true);
         ImGui::EndCombo();
     }
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("%s", preview);
+
+    ImGui::SameLine(0.f, 6.f);
+
+    if (!hasSeq) ImGui::BeginDisabled();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 3.f));
+    if (ImGui::SmallButton("Flip180##flip_yaw180"))
+        FlipKeys_Yaw180();
+    ImGui::PopStyleVar();
+    if (!hasSeq) ImGui::EndDisabled();
 
     ImGui::SameLine();
     ImGui::Dummy(ImVec2(14.f, 0.f));
     ImGui::SameLine();
 
-    if (!target.sequence)
+    if (!hasSeq)
     {
         ImGui::TextDisabled("(No Sequence)");
         return;
@@ -469,7 +495,7 @@ void CCamPanel::DrawCamSelector()
         ImGui::SetNextItemWidth(140.f);
         if (ImGui::BeginCombo("##seg_ease", Helper::EnumLabel(shown)))
         {
-            if (CamPanelUtil::DrawEaseComboPopup(target.sequence->segmentEase, shown)) changedAny = true;
+            if (DrawEaseComboPopup(target.sequence->segmentEase, shown)) changedAny = true;
             ImGui::EndCombo();
         }
     }
@@ -539,10 +565,12 @@ void CCamPanel::DrawCamSelector()
             ImGui::EndCombo();
         }
     }
+
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
+
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -850,7 +878,7 @@ void CCamPanel::DrawHelpPopup()
             ImGui::SetNextItemWidth(220.f);
             if (ImGui::BeginCombo("##ease_preview_combo", Helper::EnumLabel(selected)))
             {
-                CamPanelUtil::DrawEaseComboPopup(selected, selected);
+                DrawEaseComboPopup(selected, selected);
                 ImGui::EndCombo();
             }
 
@@ -860,7 +888,7 @@ void CCamPanel::DrawHelpPopup()
             ImGui::Spacing();
 
             ImVec2 graphSize(520.f, 220.f);
-            CamPanelUtil::DrawEaseGraph(selected, graphSize, "##ease_graph_preview");
+            DrawEaseGraph(selected, graphSize, "##ease_graph_preview");
 
             ImGui::Spacing();
             ImGui::Separator();
@@ -1166,6 +1194,38 @@ CamKeyFrame& CCamPanel::GetSelectedKey()
 {
     assert(HasValidSelection());
     return target.sequence->keyframes[(size_t)state.selectedKeyIdx];
+}
+
+void CCamPanel::FlipKeys_Yaw180()
+{
+    assert(target.sequence);
+
+    for (auto& k : target.sequence->keyframes)
+    {
+        k.pos.x = -k.pos.x;
+        k.pos.z = -k.pos.z;
+
+        k.look.x = -k.look.x;
+        k.look.z = -k.look.z;
+        k.look.Normalize();
+    }
+
+    if (target.sequence->posInterp == CamPosInterp::OrbitArc)
+    {
+        auto& d = target.sequence->orbitArc;
+
+        d.center.x = -d.center.x;
+        d.center.z = -d.center.z;
+
+        d.axis.x = -d.axis.x;
+        d.axis.z = -d.axis.z;
+        d.NormalizeAxis();
+    }
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+
+    PostEdit_SequenceChanged();
 }
 
 _uint CCamPanel::GetSelectedKeyId() const
@@ -1917,7 +1977,7 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
                     ImGui::SetNextItemWidth(110.f);
                     if (ImGui::BeginCombo("##ease", Helper::EnumLabel(shownEase)))
                     {
-                        if (CamPanelUtil::DrawEaseComboPopup(key.outEase, shownEase)) ioChangedAny = true;
+                        if (DrawEaseComboPopup(key.outEase, shownEase)) ioChangedAny = true;
                         ImGui::EndCombo();
                     }
 
@@ -2281,7 +2341,7 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
     ImGui::SameLine();
     if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
 }
-// -----------------------------------------------------------------------------
+
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
     auto inst = new CCamPanel(context);

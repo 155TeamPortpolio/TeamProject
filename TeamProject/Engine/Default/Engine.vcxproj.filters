@@ -119,7 +119,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Transform.h">
-      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\00. Transform</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Model.h">
       <Filter>01. Utility\04. Components\03. Model</Filter>
@@ -951,7 +951,7 @@
     <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
       <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\03. Model\00. Transform">
+    <Filter Include="01. Utility\04. Components\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -1047,7 +1047,7 @@
       <Filter>01. Utility\03. GameObject\LevelObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Transform.cpp">
-      <Filter>01. Utility\04. Components\03. Model\00. Transform</Filter>
+      <Filter>01. Utility\04. Components\00. Transform</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Model.cpp">
       <Filter>01. Utility\04. Components\03. Model</Filter>

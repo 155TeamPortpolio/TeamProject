@@ -8,17 +8,17 @@ struct CamOrbitState
 	_bool    lookAtCenter    = true;
 	_bool    useCustomCenter = false;
 
-	_vector3 center = { 0.f, 0.f, 0.f };
-	_vector3 axis   = { 0.f, 1.f, 0.f };
-
-	_float   distance      = 5.f;
-	_float   distanceSpeed = 5.f;
+	_vector3 center          = { 0.f, 0.f, 0.f };
+	_vector3 axis            = { 0.f, 1.f, 0.f };
+						     
+	_float   distance        = 5.f;
+	_float   distanceSpeed   = 5.f;
 
 	_float   angleDeg        = 0.f;
 	_float   angularSpeedDeg = 120.f;
 
-	_vector3 targetPos = { 0.f, 0.f, 0.f };
-	_float   offsetY   = 0.f;
+	_vector3 targetPos       = { 0.f, 0.f, 0.f };
+	_float   offsetY         = 0.f;
 };
 
 NS_END
