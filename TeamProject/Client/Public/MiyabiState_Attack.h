@@ -15,16 +15,30 @@ public:
 public:
     void    Set_AttackIndex(_uint iAttack) { m_iAttackIdx = iAttack; }
     _uint   Get_AttackIndex() const { return m_iAttackIdx; }
+    void    Set_ComboReserve(_bool bReserve) { m_bComboReserve = bReserve; }
+    _bool   Is_ComboReserve() const { return m_bComboReserve; }
 
 private:
     _uint   m_iAttackIdx;
+    _bool   m_bComboReserve = { false };
 
 public:
-    static CMiyabiState_Attack* Create() { return new CMiyabiState_Attack(); }
+    static CMiyabiState_Attack* Create() { return new CMiyabiState_Attack(); } 
     virtual void Free() override { __super::Free(); }
 };
 
 // Sub States
+class CMiyabiState_Attack_Branch_01 : public IBaseState<CMiyabi>
+{
+public:
+    virtual void Enter(CMiyabi* pOwner) override;
+    virtual void Update(CMiyabi* pOwner, _float dt) override;
+    virtual void Exit(CMiyabi* pOwner) override;
+
+public:
+    static CMiyabiState_Attack_Branch_01* Create() { return new CMiyabiState_Attack_Branch_01(); }
+    virtual void Free() override { __super::Free(); }
+};
 
 class CMiyabiState_Attack_01 : public IBaseState<CMiyabi>
 {
