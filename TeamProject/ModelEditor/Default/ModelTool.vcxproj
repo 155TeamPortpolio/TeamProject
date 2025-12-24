@@ -65,6 +65,7 @@
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MapParseLevel.h" />
     <ClInclude Include="..\Public\ModelEditLevel.h" />
+    <ClInclude Include="..\Public\ModelEditor_BoneData.h" />
     <ClInclude Include="..\Public\ModelEditor_Defines.h" />
     <ClInclude Include="..\Public\ModelHelper.h" />
     <ClInclude Include="..\Public\pch.h" />
