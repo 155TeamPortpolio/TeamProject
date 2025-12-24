@@ -19,6 +19,7 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
+        _bool               bPause = { true };
         //루트본 관련
         _bool   bUseTransform = { true };
         _int    iMoveBoneIndex = { -1 };
@@ -111,6 +112,8 @@ public://애니매이터 데이터
     _float Get_EaseDuration(_uint LayerIndex = 0);
     //현재 레이어 재생속도
     _float Get_AnimSpeed(_uint LayerIndex = 0);
+    //퍼즈 상태인지
+    _bool Get_isPause(_uint LayerIndex = 0);
 
     /*----- Setter -----*/
     
@@ -118,6 +121,8 @@ public://애니매이터 데이터
     void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
     //애니매이션 트랜스폼 사용
     void Set_UseTransform(_uint LayerIndex = 0);
+    //애니매이션 퍼즈
+    void Set_Pause(_bool bPause, _uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -133,7 +138,7 @@ public:
     _float4x4 Get_BoneMatrix(_uint Index);
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
-    const vector<_float4x4>& Get_BoneMatrices() { return m_FinalMatices; };
+    const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
     //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
@@ -176,10 +181,10 @@ protected:
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
+    vector<_float4x4> m_TPose = {}; //T-Pose Matrices
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
-    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 매트릭스
-    vector<_float4x4> m_FinalMatices = {};              //월드행렬까지 곱해진 최종 매트릭스
+    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
     _int m_iCurrentClipIndex = { -1 };
@@ -216,7 +221,8 @@ public:
     SetAnimBuild& Speed(_float fSpeed);
     //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
     SetAnimBuild& TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear);
-
+    //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
+    SetAnimBuild& Pause(_bool bPause);
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
@@ -225,6 +231,7 @@ protected:
 
     //---------- 기본 속성
     _bool    m_bLoop = false;
+    _bool    m_bPause = false;
     _float   m_fSpeed = 1.f;
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };
