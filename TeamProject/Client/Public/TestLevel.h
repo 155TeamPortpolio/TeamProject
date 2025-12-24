@@ -31,6 +31,7 @@ private:
     CGameInstance* m_pGameInstance{};
     CCamDirector*  m_pCamDirector{};
 
+    OBJECT_HANDLE m_miyabiHandle{};
     OBJECT_HANDLE m_freeCamHandle{};
     OBJECT_HANDLE m_orbitCamHandle{};
     OBJECT_HANDLE m_seqCamHandle{};
