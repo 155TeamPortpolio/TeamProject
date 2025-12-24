@@ -239,6 +239,9 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamData.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

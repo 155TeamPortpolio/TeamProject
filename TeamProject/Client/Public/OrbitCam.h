@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CamObject.h"
+#include "OrbitCamData.h"
 
 NS_BEGIN(Client)
 
@@ -12,31 +13,35 @@ private:
     virtual ~COrbitCam() = default;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-
-    void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override {}
-    void    Late_Update(_float dt)      override {}
-    void    Render_GUI()                override;
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Awake()                     override;
+    virtual void    Priority_Update(_float dt)  override;
+    virtual void    Update(_float dt)           override {}
+    virtual void    Late_Update(_float dt)      override {}
+    virtual void    Render_GUI()                override;
 
 public:
+    void    SetPreset(OrbitPreset preset, _bool keepZoomRatio, _bool snap);
     void    SetTarget(CGameObject* obj);
-    void    ClearTarget();
+    void    ClearTarget() { m_targetHandle.Reset(); }
     void    SyncFromCurTransform();
+    void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
 
 private:
     void    UpdateInput(_float dt);
     void    ClampTargets();
     void    SmoothStates(_float dt);
 
-    Vector3 GetPivotPos() const;
-    Vector3 GetPivotTargetPos() const;
-    float   GetEffectiveDistance() const;
+    Vector3 GetPivotPos()          const { return m_curPivot; }
+    Vector3 GetPivotTargetPos()    const;
+    float   GetEffectiveDist() const;
 
     void    ApplyOrbitPose();
 
 private:
+    OrbitPreset   m_preset    = OrbitPreset::Field;
+    _bool         m_firstSnap = true;
     OBJECT_HANDLE m_targetHandle{};
 
     _float   m_offsetY = 0.2f;
@@ -44,13 +49,13 @@ private:
     Vector2  m_targetRotDeg{};
     Vector2  m_curRotDeg{};
 
-    _float   m_targetDist      = 5.f;
-    _float   m_curDist         = 5.f;
+    _float   m_targetDist      = 2.f;
+    _float   m_curDist         = 2.f;
                                
     _float   m_pitchMin        = -30.f;
     _float   m_pitchMax        = 60.f;
     _float   m_minDist         = 0.5f;
-    _float   m_maxDist         = 3.f;
+    _float   m_maxDist         = 2.5f;
 
     _float   m_sensitivityX    = 0.15f;
     _float   m_sensitivityY    = 0.12f;
@@ -77,8 +82,8 @@ private:
 
 public:
     static COrbitCam* Create();
-    CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override;
+    virtual CGameObject* Clone(INIT_DESC* pArg) override;
+    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

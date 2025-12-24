@@ -29,13 +29,10 @@
       <Filter>03. Obj\00. CamObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Grid.h">
-      <Filter>03. Obj\03. DemoGrid</Filter>
+      <Filter>03. Obj\03. Grid</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanelUtil.h">
       <Filter>02. Panel\CamPanelUtil</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\CamDirector.h">
-      <Filter>04. CamDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CameraTool_Enum.h">
       <Filter>99. Etc</Filter>
@@ -119,9 +116,6 @@
     <Filter Include="02. Panel\CamPanelUtil">
       <UniqueIdentifier>{6971a1bb-6f0a-401e-826b-0f48029fd767}</UniqueIdentifier>
     </Filter>
-    <Filter Include="04. CamDirector">
-      <UniqueIdentifier>{89e011ca-dc95-4662-abf6-1ea29ae20eaa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Obj\00. CamObject">
       <UniqueIdentifier>{2d1f6ea8-fad9-46aa-bbba-0c5a65380ae3}</UniqueIdentifier>
     </Filter>
@@ -131,7 +125,7 @@
     <Filter Include="03. Obj\02. Unagi">
       <UniqueIdentifier>{eef41651-0e8b-45c5-9d8c-d8deaf8027d2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Obj\03. DemoGrid">
+    <Filter Include="03. Obj\03. Grid">
       <UniqueIdentifier>{84f15bf7-4f1a-4438-aad4-dad5e84bf49d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -152,16 +146,13 @@
       <Filter>03. Obj\02. Unagi</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Grid.cpp">
-      <Filter>03. Obj\03. DemoGrid</Filter>
+      <Filter>03. Obj\03. Grid</Filter>
     </ClCompile>
     <ClCompile Include="CameraTool.cpp">
       <Filter>99. Etc\99. Useless</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamPanelUtil.cpp">
       <Filter>02. Panel\CamPanelUtil</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\CamDirector.cpp">
-      <Filter>04. CamDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\ThirdParty\GUI_Inc\GraphEditor.cpp">
       <Filter>99. Etc\99. Useless\ImGui</Filter>

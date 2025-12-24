@@ -74,6 +74,11 @@ namespace
             }
         }
     }
+    float Approach(float cur, float target, float maxDelta)
+    {
+        if (cur < target) return min(cur + maxDelta, target);
+        return max(cur - maxDelta, target);
+    }
 }
 
 void CCamPanel::Init()
@@ -160,28 +165,31 @@ void CCamPanel::Render_GUI()
     constexpr float leftW = 200.f;
     constexpr float rightW = 250.f;
 
-    constexpr float minH = 220.f;
-
-    static float panelH = 400.f;
+    constexpr float expandedMinH = 220.f;
 
     const ImVec2 display = ImGui::GetIO().DisplaySize;
-
-    ImVec2 bottomLeft(leftW, display.y);
-    bottomLeft.x = floorf(bottomLeft.x);
-    bottomLeft.y = floorf(bottomLeft.y);
 
     float desiredW = display.x - leftW - rightW;
     desiredW = floorf(desiredW);
     if (desiredW < 360.f) desiredW = 360.f;
 
     float maxH = floorf(display.y - 60.f);
-    if (maxH < minH) maxH = minH;
+    if (maxH < expandedMinH) maxH = expandedMinH;
 
-    panelH = clamp(panelH, minH, maxH);
+    const float hideExtra = 40.f;
+    const float hideTarget = panelUI.hidden ? (panelUI.expandedH + hideExtra) : 0.f;
+
+    const float dt = ImGui::GetIO().DeltaTime;
+    const float slideSpeed = 900.f;
+    panelUI.slideY = Approach(panelUI.slideY, hideTarget, slideSpeed * dt);
+
+    ImVec2 bottomLeft(leftW, display.y + panelUI.slideY);
+    bottomLeft.x = floorf(bottomLeft.x);
+    bottomLeft.y = floorf(bottomLeft.y);
 
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
-    ImGui::SetNextWindowSizeConstraints(ImVec2(desiredW, minH), ImVec2(desiredW, maxH));
-    ImGui::SetNextWindowSize(ImVec2(desiredW, panelH), ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(desiredW, expandedMinH), ImVec2(desiredW, maxH));
+    ImGui::SetNextWindowSize(ImVec2(desiredW, panelUI.expandedH), ImGuiCond_FirstUseEver);
 
     ImGuiWindowFlags flags =
         ImGuiWindowFlags_NoCollapse |
@@ -190,59 +198,68 @@ void CCamPanel::Render_GUI()
 
     Helper::DarkThemeStyle styleScope;
 
-    if (ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags))
+    const bool began = ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags);
+
+    if (began)
     {
         const ImVec2 curSize = ImGui::GetWindowSize();
         if (fabsf(curSize.x - desiredW) > 0.5f)
             ImGui::SetWindowSize(ImVec2(desiredW, curSize.y));
 
-        panelH = clamp(ImGui::GetWindowSize().y, minH, maxH);
+        if (!panelUI.hidden)
+            panelUI.expandedH = clamp(curSize.y, expandedMinH, maxH);
 
         DrawWindowHeader();
 
-        DrawToolbar();
-        ImGui::Separator();
-
-        DrawCamSelector();
-        ImGui::Separator();
-
-        ImGuiTableFlags layoutFlags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV;
-
-        if (ImGui::BeginTable("CamToolBodyLayout", 2, layoutFlags, ImVec2(0.f, 0.f)))
+        if (!panelUI.hidden)
         {
-            ImVec2 contentAvail = ImGui::GetContentRegionAvail();
+            DrawToolbar();
+            ImGui::Separator();
 
-            float minRight = 420.f;
-            float minLeft = 520.f;
+            DrawCamSelector();
+            ImGui::Separator();
 
-            float desiredLeft = contentAvail.x * 0.60f;
-            float maxLeft = contentAvail.x - minRight;
+            ImGuiTableFlags layoutFlags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV;
 
-            float leftColW = desiredLeft;
-            leftColW = clamp(leftColW, minLeft, maxLeft);
-            leftColW = max(leftColW, 360.f);
+            if (ImGui::BeginTable("CamToolBodyLayout", 2, layoutFlags, ImVec2(0.f, 0.f)))
+            {
+                ImVec2 contentAvail = ImGui::GetContentRegionAvail();
 
-            ImGui::TableSetupColumn("Left", ImGuiTableColumnFlags_WidthFixed, leftColW);
-            ImGui::TableSetupColumn("Right", ImGuiTableColumnFlags_WidthStretch);
+                float minRight = 420.f;
+                float minLeft = 520.f;
 
-            ImGui::TableNextRow();
+                float desiredLeft = contentAvail.x * 0.60f;
+                float maxLeft = contentAvail.x - minRight;
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::BeginChild("CamToolLeft", ImVec2(0.f, 0.f), true);
-            DrawKeyframeList();
-            ImGui::EndChild();
+                float leftColW = desiredLeft;
+                leftColW = clamp(leftColW, minLeft, maxLeft);
+                leftColW = max(leftColW, 360.f);
 
-            ImGui::TableSetColumnIndex(1);
-            ImGui::BeginChild("CamToolRight", ImVec2(0.f, 0.f), true);
-            DrawKeyframeEditor();
-            ImGui::EndChild();
+                ImGui::TableSetupColumn("Left", ImGuiTableColumnFlags_WidthFixed, leftColW);
+                ImGui::TableSetupColumn("Right", ImGuiTableColumnFlags_WidthStretch);
 
-            ImGui::EndTable();
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::BeginChild("CamToolLeft", ImVec2(0.f, 0.f), true);
+                DrawKeyframeList();
+                ImGui::EndChild();
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::BeginChild("CamToolRight", ImVec2(0.f, 0.f), true);
+                DrawKeyframeEditor();
+                ImGui::EndChild();
+
+                ImGui::EndTable();
+            }
         }
     }
-    ImGui::End();
-}
 
+    ImGui::End();
+
+    if (panelUI.hidden)
+        DrawHiddenHandle();
+}
 
 void CCamPanel::SetCaptureTarget(CCamObj* camObj)
 {
@@ -966,11 +983,45 @@ void CCamPanel::DrawWindowHeader()
     bool open = ImGui::SmallButton("Help");
     ImGui::PopStyleVar();
 
+    ImGui::SameLine(0.f, 6.f);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.f, 4.f));
+    if (ImGui::SmallButton("Hide"))
+        panelUI.hidden = true;
+    ImGui::PopStyleVar();
+
     if (open) ImGui::OpenPopup("CameraTool_Help");
     if (ImGui::IsItemHovered()) ImGui::SetTooltip(u8"카메라툴 사용법 / Easing 가이드 / 단축키");
 
     DrawHelpPopup();
     ImGui::Separator();
+}
+
+void CCamPanel::DrawHiddenHandle()
+{
+    const ImVec2 display = ImGui::GetIO().DisplaySize;
+
+    ImVec2 pos(200.f, display.y);
+    pos.x = floorf(pos.x);
+    pos.y = floorf(pos.y);
+
+    ImGui::SetNextWindowPos(pos, ImGuiCond_Always, ImVec2(0.f, 1.f));
+    ImGui::SetNextWindowBgAlpha(0.9f);
+
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowSize(ImVec2(170.f, 0.f), ImGuiCond_Always);
+
+    if (ImGui::Begin("##CamToolHiddenHandle", nullptr, flags))
+    {
+        if (ImGui::Button("Camera Tool  ^", ImVec2(0.f, 0.f)))
+            panelUI.hidden = false;
+    }
+    ImGui::End();
 }
 
 _bool CCamPanel::DrawConstraintBar()
@@ -1634,7 +1685,9 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
         else ImGui::OpenPopup("AddKey_Confirm_NotCapture");
     }
 
-    const ConfirmResult addR = DrawConfirmPopupModal( "AddKey_Confirm_NotCapture", nullptr, { u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다." }, u8"추가", u8"취소", 120.f);
+    const ConfirmResult addR = DrawConfirmPopupModal("AddKey_Confirm_NotCapture", nullptr,
+        {u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다."},
+        u8"추가", u8"취소", 120.f);
 
     if (addR == ConfirmResult::Ok)
         AddKey_Default();
@@ -1657,8 +1710,9 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
 
     if (!canDelete) ImGui::EndDisabled();
 
-    const ConfirmResult delR = DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,  { u8"키프레임이 2개 이하입니다.",
-        u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.", u8"그래도 삭제할까요?" }, u8"삭제", u8"취소", 120.f);
+    const ConfirmResult delR = DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,
+        {u8"키프레임이 2개 이하입니다.", u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.", u8"그래도 삭제할까요?"},
+        u8"삭제", u8"취소", 120.f);
 
     if (delR == ConfirmResult::Ok)
     {
@@ -1715,8 +1769,8 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     if (ImGui::Button("Load", btnSize))
         DoLoadSequence();
 
-    const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr, 
-        { u8"키프레임이 0개입니다.", u8"그래도 저장할까요?" }, u8"저장", u8"취소", 120.f);
+    const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr,
+        {u8"키프레임이 0개입니다.", u8"그래도 저장할까요?"}, u8"저장", u8"취소", 120.f);
 
     if (saveEmptyR == ConfirmResult::Ok)
         DoSaveSequence();
@@ -1729,6 +1783,22 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
 
     if (DrawOkPopupModalText("CamSeq_FileError", u8"File Error", keyListUI.lastFileError, "OK", 120.f))
         keyListUI.lastFileError.clear();
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("|");
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("Avatar");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(140.f);
+
+    if (Helper::DrawEnumCombo("##player_combo", avatarUI, avatarUI, 140.f))
+    {
+        if (onAvatarChanged) onAvatarChanged(avatarUI);
+    }
 
     ImGui::SameLine();
 
