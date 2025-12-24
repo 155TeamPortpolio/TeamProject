@@ -52,7 +52,7 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
     for (auto& pObj : objects)
     {
-        if (!pObj || pObj == this || !pObj->Is_Root())
+        if (!pObj || pObj == this)
             continue;
 
         CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
