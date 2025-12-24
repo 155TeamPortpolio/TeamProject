@@ -6,14 +6,14 @@
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
-CSequenceCam* CCamDirector::RequireSequenceCam() const
+CSequenceCam* CCamDirector::GetSequenceCam() const
 {
-    return static_cast<CSequenceCam*>(OBJ->Request_Object(m_sequenceHandle));
+    return static_cast<CSequenceCam*>(OBJ->Request_Object(m_seqHandle));
 }
 
 void CCamDirector::Bind(CSequenceCam* sequenceCam)
 {
-    m_sequenceHandle = sequenceCam->Get_Handle();
+    m_seqHandle = sequenceCam->Get_Handle();
 }
 
 _bool CCamDirector::Register(const string& key, const filesystem::path& path)
@@ -21,7 +21,7 @@ _bool CCamDirector::Register(const string& key, const filesystem::path& path)
     SeqEntry entry{};
     entry.path = path;
     CamUtil::Load(entry.path, entry.seq);
-    m_sequences[key] = move(entry);
+    m_seqs[key] = move(entry);
     return true;
 }
 
@@ -30,14 +30,14 @@ void CCamDirector::UnRegister(const string& key)
     if (m_playing.active && m_playing.key == key)
         StopAll(m_playing.defaultBlendOutSec);
 
-    m_sequences.erase(key);
+    m_seqs.erase(key);
 }
 
 void CCamDirector::Update(_float dt)
 {
     if (!m_playing.active) return;
 
-    auto sequenceCam = RequireSequenceCam();
+    auto sequenceCam = GetSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     if (m_playing.pendingStart)
@@ -66,45 +66,46 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     if (m_playing.active)
         StopAll(blendOutSec);
 
-    auto& entry = m_sequences.at(key);
-    auto sequenceCam = RequireSequenceCam();
-    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
+    auto& entry = m_seqs.at(key);
+    auto sequenceCam = GetSequenceCam();
+    auto seqPlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
-    sequencePlayer->SetSequence(&entry.seq);
+    seqPlayer->SetSequence(&entry.seq);
 
-    if (entry.seq.space == CamSpace::Local) sequencePlayer->SetSpaceReference(m_spaceRefHandle);
-    else sequencePlayer->ClearSpaceReference();
+    if (entry.seq.space == CamSpace::Local) 
+        seqPlayer->SetSpaceReference(m_spaceRefHandle);
+    else 
+        seqPlayer->ClearSpaceReference();
 
-    sequencePlayer->SetApplyEnabled(true);
+    seqPlayer->SetApplyEnabled(true);
 
     if (resetTime)
-        sequencePlayer->SetTime(0.f);
+        seqPlayer->SetTime(0.f);
 
     auto camComp = sequenceCam->Get_Component<CCamera>();
     const _uint handle = CAM->Push(camComp, blendInSec);
 
-    m_playing.handle = handle;
-    m_playing.key = key;
-    m_playing.active = true;
+    m_playing.handle             = handle;
+    m_playing.key                = key;
+    m_playing.active             = true;
     m_playing.defaultBlendOutSec = blendOutSec;
+    m_playing.pendingStart       = (blendInSec > 0.f);
+    m_playing.blendInRemain      = blendInSec;
+    m_playing.resetTimeOnStart   = resetTime;
 
-    m_playing.pendingStart = (blendInSec > 0.f);
-    m_playing.blendInRemain = blendInSec;
-    m_playing.resetTimeOnStart = resetTime;
-
-    if (m_playing.pendingStart) sequencePlayer->Pause();
-    else sequencePlayer->Play();
+    if (m_playing.pendingStart)
+        seqPlayer->Pause();
+    else
+        seqPlayer->Play();
 
     return handle;
 }
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
-    if (m_playing.handle != handle)
-        return false;
+    if (m_playing.handle != handle) return false;
 
-    auto sequenceCam = RequireSequenceCam();
-    auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
+    auto sequencePlayer = GetSequenceCam()->Get_Component<CCamSequencePlayer>();
 
     sequencePlayer->Stop(resetTime);
     sequencePlayer->SetApplyEnabled(false);
@@ -118,9 +119,4 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 void CCamDirector::StopAll(_float blendOutSec)
 {
     StopRequest(m_playing.handle, blendOutSec, true);
-}
-
-void CCamDirector::Free()
-{
-    __super::Free();
 }

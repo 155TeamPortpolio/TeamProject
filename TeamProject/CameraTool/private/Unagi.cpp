@@ -3,12 +3,14 @@
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 #include "Material.h"
+#include "Animator3D.h"
 
 HRESULT CUnagi::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CAnimator3D>();
 	return S_OK;
 }
 
@@ -23,19 +25,29 @@ void CUnagi::Awake()
 	const string levelName = "First_Level";
 	const string fileName  = "Avatar_Female_Size02_Unagi";
 
-	const fs::path baseDir = fs::path("..") / "bin" / "Resources" / "Model";
+	const fs::path baseDir = fs::path("..") / "bin" / "Resources" / "Model" / "Anim";
 
 	const string modelKey  = fileName + ".model";
 	const string matKey    = fileName + ".mat";
+	const string jsonKey   = fileName + "_Meta.json";
 
 	const string modelPath = (baseDir / modelKey).string();
 	const string matPath   = (baseDir / matKey).string();
+	const string jsonPath  = (baseDir / jsonKey).string();
 
 	RES->Add_ResourcePath(modelKey, modelPath);
-	RES->Add_ResourcePath(matKey, matPath);
+	RES->Add_ResourcePath(matKey,   matPath);
+	RES->Add_ResourcePath(jsonKey,  jsonPath);
 
 	Get_Component<CModel>()->Link_Model(levelName, modelKey);
 	Get_Component<CMaterial>()->Link_Material(levelName, matKey);
+	Get_Component<CAnimator3D>()->LinkAnimate_Model(levelName, modelKey);
+	Get_Component<CAnimator3D>()->Link_MetaData(levelName, jsonKey);
+}
+
+void CUnagi::Update(_float dt)
+{
+	//Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CUnagi::Render_GUI()

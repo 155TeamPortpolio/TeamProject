@@ -30,14 +30,14 @@ namespace
     }
 }
 
-void CCameraMgr::Set_MainCam(CCamera* camComp)
+void CCameraMgr::Set_MainCam(CCamera* camComp, _float blendSec)
 {
     Safe_Release(m_baseCam);
     m_baseCam = camComp;
     Safe_AddRef(m_baseCam);
 
     if (m_overrides.empty())
-        BeginBlendTo(Get_ActiveCam(), 0.f);
+        BeginBlendTo(Get_ActiveCam(), blendSec);
 }
 
 void CCameraMgr::Set_ShadowCam(CCamera* camComp)
@@ -370,6 +370,11 @@ void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
 void CCameraMgr::Free()
 {
     m_isBlending = false;
+
+    for (size_t i = 0; i < m_overrides.size(); ++i)
+        Safe_Release(m_overrides[i].cam);
+    m_overrides.clear();
+
     Safe_Release(m_blendTargetCam);
     Safe_Release(m_baseCam);
     Safe_Release(m_shadowCam);

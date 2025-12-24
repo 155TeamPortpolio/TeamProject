@@ -387,21 +387,32 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("Target");
     ImGui::SameLine();
 
-    const char* preview = "None";
-    if (target.sequence) preview = target.sequence->name.c_str();
+    const bool hasSeq = (target.sequence != nullptr);
+    const char* preview = hasSeq ? target.sequence->name.c_str() : "None";
 
-    ImGui::SetNextItemWidth(260.f);
+    ImGui::SetNextItemWidth(90.f);
     if (ImGui::BeginCombo("##cam_track_combo", preview))
     {
         ImGui::Selectable(preview, true);
         ImGui::EndCombo();
     }
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("%s", preview);
+
+    ImGui::SameLine(0.f, 6.f);
+
+    if (!hasSeq) ImGui::BeginDisabled();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 3.f));
+    if (ImGui::SmallButton("Flip180##flip_yaw180"))
+        FlipKeys_Yaw180();
+    ImGui::PopStyleVar();
+    if (!hasSeq) ImGui::EndDisabled();
 
     ImGui::SameLine();
     ImGui::Dummy(ImVec2(14.f, 0.f));
     ImGui::SameLine();
 
-    if (!target.sequence)
+    if (!hasSeq)
     {
         ImGui::TextDisabled("(No Sequence)");
         return;
@@ -554,10 +565,12 @@ void CCamPanel::DrawCamSelector()
             ImGui::EndCombo();
         }
     }
+
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
+
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -1181,6 +1194,38 @@ CamKeyFrame& CCamPanel::GetSelectedKey()
 {
     assert(HasValidSelection());
     return target.sequence->keyframes[(size_t)state.selectedKeyIdx];
+}
+
+void CCamPanel::FlipKeys_Yaw180()
+{
+    assert(target.sequence);
+
+    for (auto& k : target.sequence->keyframes)
+    {
+        k.pos.x = -k.pos.x;
+        k.pos.z = -k.pos.z;
+
+        k.look.x = -k.look.x;
+        k.look.z = -k.look.z;
+        k.look.Normalize();
+    }
+
+    if (target.sequence->posInterp == CamPosInterp::OrbitArc)
+    {
+        auto& d = target.sequence->orbitArc;
+
+        d.center.x = -d.center.x;
+        d.center.z = -d.center.z;
+
+        d.axis.x = -d.axis.x;
+        d.axis.z = -d.axis.z;
+        d.NormalizeAxis();
+    }
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+
+    PostEdit_SequenceChanged();
 }
 
 _uint CCamPanel::GetSelectedKeyId() const

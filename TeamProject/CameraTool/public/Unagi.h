@@ -16,7 +16,7 @@ public:
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override {}
-    void    Update(_float dt)           override {}
+    void    Update(_float dt)           override;
     void    Late_Update(_float dt)      override {}
     void    Render_GUI()                override;
 

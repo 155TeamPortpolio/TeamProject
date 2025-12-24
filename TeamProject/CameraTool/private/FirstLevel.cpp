@@ -19,8 +19,8 @@ HRESULT CFirstLevel::Awake()
 
 	CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_Unagi" })
 		.Position({})
+		.Rotate(Vector3{0.f, XMConvertToRadians(180.f), 0.f})
 		.Build("Unagi");
-	demoModel->Get_Component<CTransform>()->Scale({ 0.5f, 0.5f, 0.5f });
 
 	CGameObject* demoGrid = Builder::Create_Object({ "First_Level", "Proto_Grid" })
 		.Position({ 0, 0, 0 })
