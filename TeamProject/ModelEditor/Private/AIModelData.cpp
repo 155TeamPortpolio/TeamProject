@@ -100,6 +100,11 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs, PreTransform);
 }
 
+void CAIModelData::Rake_SkeletonInfo(BONE_DATA_HEADER* pHeader)
+{
+    dynamic_cast<CAISkeleton*>(m_pSkeleton)->Rake_BoneInfo(pHeader);
+}
+
 void CAIModelData::Free()
 {
 	__super::Free();

@@ -12,6 +12,8 @@
 #include "AIAnimator3D.h"
 #include "AIModelData.h"
 #include "DebugRender.h"
+#include "ModelEditor_BoneData.h"
+#include "Mesh.h"
 
 CEditModel::CEditModel()
 {
@@ -81,6 +83,10 @@ void CEditModel::Render_GUI()
 	if (ImGui::Button("Model Save")) {
 		if (nullptr != Get_Component<CModel>())
 			Save_AIScene();
+	}
+	if (ImGui::Button("Export BoneInfo")) {
+		if (nullptr != Get_Component<CModel>())
+			ExportBoneInfo();
 	}
 	ImGui::EndChild();
 
@@ -223,7 +229,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		m_Components.emplace(type_index(typeid(CModel)), staticModel);
 		m_Components.emplace(type_index(typeid(CAI_STModel)), staticModel);
 		Safe_AddRef(staticModel);
-		Safe_AddRef(staticModel);
+		Safe_AddRef(staticModel); 
 
 		staticModel->Load_AIModel(m_pAIScene, fileName);
 		staticModel->Set_Owner(this);
@@ -281,6 +287,46 @@ _bool CEditModel::HasBones()
 	else {
 		return true;
 	}
+}
+
+HRESULT CEditModel::ExportBoneInfo()
+{
+	BONE_DATA_HEADER header = {};
+
+	CAIModelData* pModelData = { nullptr };
+
+	if (HasBones()) {
+		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
+		pModelData = pModel->Get_AIModelData();
+		if (nullptr == pModelData)
+			return E_FAIL;
+		
+	}
+	else {
+		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
+		pModelData = pModel->Get_AIModelData();
+		if (nullptr == pModelData)
+			return E_FAIL;
+	}
+
+
+
+	_uint IBoneCount = pModelData->Get_BoneCount();
+	auto pBoneNames = pModelData->Get_BoneNames();
+
+	header.TagModel = m_InstanceName;
+
+	pModelData->Rake_SkeletonInfo(&header);
+
+
+	string filename = m_InstanceName + ".BoneData";
+	string path = Helper::SaveFileDialogByWinAPI(filename, ".json");
+
+	Helper::SaveJson<BONE_DATA_HEADER>(header, path);
+
+	
+
+	return S_OK;
 }
 
 void CEditModel::Clear_Models()
