@@ -68,10 +68,10 @@ public:
 
 public:
 	IBaseState<Type>* Get_CurrentState() const { return m_pCurrentState; }
-	const string& Get_CurrentStateName() const { return m_strCurrentState; }
-	const string& Get_DefaultStateName() const { return m_strDefaultState; }
-	_float Get_StateTime() const { return m_fStateTime; }
-
+	const string&	  Get_CurrentStateName() const { return m_strCurrentState; }
+	const string&	  Get_DefaultStateName() const { return m_strDefaultState; }
+	_float			  Get_StateTime() const { return m_fStateTime; }
+	const unordered_map<string, IBaseState<Type>*>& Get_States() const { return m_States; }
 private:
 	void    Update_AnimProgress();
 	void    Check_Transitions();
@@ -133,16 +133,16 @@ void CStateMachine<Type>::Update(_float dt)
 	if (nullptr == m_pCurrentState)
 		return;
 
-	Update_AnimProgress();
-
 	m_fStateTime += dt;
 	m_pCurrentState->m_fStateTime = m_fStateTime;
 
-	Check_AnyStateTransitions();
-	Check_Transitions();
-
 	if (m_pCurrentState)
 		m_pCurrentState->Update(m_pOwner, dt);
+
+	Update_AnimProgress();
+
+	Check_AnyStateTransitions();
+	Check_Transitions();
 }
 
 template<typename Type>
