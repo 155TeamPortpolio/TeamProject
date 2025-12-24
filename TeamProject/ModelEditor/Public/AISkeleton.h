@@ -1,6 +1,7 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "Skeleton.h"
+#include "ModelEditor_BoneData.h"
 
 NS_BEGIN(ModelEdit)
 
@@ -16,6 +17,7 @@ public:
 public:
 	void Set_Offset(_uint Index, _float4x4 offset);
 	void Save_File(ofstream& ofs, _fmatrix PreTransform);
+	void Rake_BoneInfo(BONE_DATA_HEADER* pHeader);
 
 public:
 	void Render_GUI();

@@ -244,6 +244,9 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
       <Filter>97. GUIInc</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ModelEditor_BoneData.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">

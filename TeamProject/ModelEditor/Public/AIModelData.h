@@ -1,6 +1,7 @@
 #pragma once
 #include "ModelEditor_Defines.h"
 #include "ModelData.h"
+#include "ModelEditor_BoneData.h"
 
 NS_BEGIN(ModelEdit)
 class CAIModelData :
@@ -12,7 +13,8 @@ private:
 
 public:
 	HRESULT Initialize(MESH_TYPE _eType, const aiScene* pAIScene);
-	void Save_File(ofstream& ofs, _fmatrix PreTransform);
+	void	Save_File(ofstream& ofs, _fmatrix PreTransform);
+	void	Rake_SkeletonInfo(BONE_DATA_HEADER* pHeader);
 
 public:
 	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
