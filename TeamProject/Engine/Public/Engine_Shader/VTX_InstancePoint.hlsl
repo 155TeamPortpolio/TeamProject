@@ -2,11 +2,49 @@
 #include "CS_Particle.hlsli"
 
 StructuredBuffer<InstanceData> InstanceDatas;
-
 float4x4 g_WorldMatrix;
 
 uint Col;
 uint Row;
+
+BlendState BS_OITAccmulation
+{
+    /* Diffuse Effect */
+    BlendEnable[0] = true;
+    SrcBlend[0] = One;
+    DestBlend[0] = One;
+    BlendOp[0] = Add;
+    SrcBlendAlpha[0] = One;
+    DestBlendAlpha[0] = One;
+    BlendOpAlpha[0] = Add;
+
+    /* Bloom Effect */
+    BlendEnable[1] = true;
+    SrcBlend[1] = One;
+    DestBlend[1] = One;
+    BlendOp[1] = Add;
+    SrcBlendAlpha[1] = One;
+    DestBlendAlpha[1] = One;
+    BlendOpAlpha[1] = Add;
+
+    /* Bloom Info */
+    BlendEnable[2] = true;
+    SrcBlend[2] = One;
+    DestBlend[2] = One;
+    BlendOp[2] = Add;
+    SrcBlendAlpha[2] = One;
+    DestBlendAlpha[2] = One;
+    BlendOpAlpha[2] = Add;
+
+    /* Revealage */
+    BlendEnable[3] = true;
+    SrcBlend[3] = Zero;
+    DestBlend[3] = Inv_Src_Alpha;
+    BlendOp[3] = Add;
+    SrcBlendAlpha[3] = Zero;
+    DestBlendAlpha[3] = Inv_Src_Alpha;
+    BlendOpAlpha[3] = Add;
+};
 
 struct VS_IN
 {
@@ -67,6 +105,7 @@ struct GS_OUT
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
     uint iFrameIndex : TEXCOORD3;
+    float4 vViewPosition : TEXCOORD4;
 };
 
 [maxvertexcount(6)]
@@ -121,24 +160,28 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[0].vColor = In[0].vColor;
     v[0].vLifeTime = In[0].vLifeTime;
     v[0].iFrameIndex = In[0].iFrameIndex;
+    v[0].vViewPosition = mul(float4(p0, 1.f), matView);
 
     v[1].vPosition = mul(float4(p1, 1.f), matrixVP);
     v[1].vTexcoord = float2(1, 0);
     v[1].vColor = In[0].vColor;
     v[1].vLifeTime = In[0].vLifeTime;
     v[1].iFrameIndex = In[0].iFrameIndex;
+    v[1].vViewPosition = mul(float4(p1, 1.f), matView);
     
     v[2].vPosition = mul(float4(p2, 1.f), matrixVP);
     v[2].vTexcoord = float2(1, 1);
     v[2].vColor = In[0].vColor;
     v[2].vLifeTime = In[0].vLifeTime;
     v[2].iFrameIndex = In[0].iFrameIndex;
+    v[2].vViewPosition = mul(float4(p2, 1.f), matView);
     
     v[3].vPosition = mul(float4(p3, 1.f), matrixVP);
     v[3].vTexcoord = float2(0, 1);
     v[3].vColor = In[0].vColor;
     v[3].vLifeTime = In[0].vLifeTime;
     v[3].iFrameIndex = In[0].iFrameIndex;
+    v[3].vViewPosition = mul(float4(p3, 1.f), matView);
     
     triStream.Append(v[0]);
     triStream.Append(v[1]);
@@ -158,11 +201,15 @@ struct PS_IN
     float4 vColor : TEXCOORD1;
     float2 vLifeTime : TEXCOORD2;
     uint iFrameIndex : TEXCOORD3;
+    float4 vViewPosition : TEXCOORD4;
 };
 
 struct PS_OUT
 {
-    float4 vColor : SV_Target0;
+    float4 vDiffuseAcc : SV_Target0;
+    float4 vBloomAcc : SV_Target1;
+    float4 vBloomInfo : SV_Target2;
+    float4 vRevealage : SV_Target3;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -175,13 +222,22 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
     float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
     
-    float4 color = DiffuseTexture.Sample(LinearSampler, TexCoord);
-    //if (color.a < 0.1f)
-    //    discard;
+    float4 vColorDesc = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    float3 vColor = vColorDesc.rgb;
+    float fAlpha = vColorDesc.a;
+    vColor = lerp(In.vColor.rgb, vColor, fAlpha);
+
+    /* 깊이 기반 가중치 생성 */
+    float fLinearZ = In.vViewPosition.z;
+    float fWeight = clamp(0.03 / (1e-5 + pow(fLinearZ, 4.f)), 0.01f, 3e3);
+    fWeight = max(fWeight, 1.f);
+    float4 vBloomColor = float4(vColor, fAlpha) * fAlpha;
     
-    Out.vColor = lerp(In.vColor, color, color.a);//color;
-    Out.vColor.a = color.a;
-    //Out.vColor = float4(1.f / In.iFrameIndex, 1.f / Col, 1.f / Row, 1.f);
+    Out.vDiffuseAcc = float4(vColor* fAlpha * fAlpha, fAlpha) * fWeight;
+    Out.vBloomAcc = ExtractBright(vBloomColor, 0.6f, 0.5f, 1.5f) * fWeight;
+    Out.vBloomAcc.a = fAlpha;
+    Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     
     return Out;
 }
@@ -192,7 +248,7 @@ technique11 Default
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_ReadOnly, 0);
-        SetBlendState(BS_AlphaBlend, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
+        SetBlendState(BS_OITAccmulation, float4(1.f, 1.f, 1.f, 1.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN();

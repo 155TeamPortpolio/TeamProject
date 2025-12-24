@@ -504,7 +504,7 @@
     </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
       <Filter>00. System\02. Gui\IMGUI</Filter>
-         </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\ParticleParams.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem</Filter>
     </ClInclude>
@@ -1443,6 +1443,9 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Func.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
