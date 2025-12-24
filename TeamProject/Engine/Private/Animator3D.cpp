@@ -355,6 +355,18 @@ void CAnimator3D::Set_StartBone(_int StartBoneIndex, _uint LayerIndex)
 	int a;
 }
 
+void CAnimator3D::Set_TPose()
+{
+	for (_uint i = 0; i < m_AnimLayers.size(); i++)
+	{
+		Reset_Layer(i);
+		if (0 < i)
+			m_AnimLayers[i].eLayerType = ANIM_LAYER_STATE::NONE;
+	}
+	
+	m_CombinedMatrices = m_TPose;
+}
+
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
@@ -632,6 +644,8 @@ void CAnimator3D::BuildBone()
 	for (auto& Layer : m_AnimLayers) {
 		switch (Layer.eLayerType)
 		{
+		case Engine::ANIM_LAYER_STATE::NONE:
+			break;
 		case Engine::ANIM_LAYER_STATE::OVERRIDE:
 			Layer_Override(Layer);
 			break;

@@ -15,6 +15,16 @@ class CAnimToolPanel
 	: CBasePanel
 {
 private:
+    struct SEQ_SEGMENT
+    {
+        int   ClipIndex;   // 어떤 클립인지
+        float Duration;    // 클립 길이
+        float BlendTime;   // 다음으로 넘어갈 때 보간
+    };
+    vector<SEQ_SEGMENT> m_Sequence;
+    int m_iSelectSegment = -1;
+
+private:
     CAnimToolPanel(GUI_CONTEXT* pContext);
     virtual ~CAnimToolPanel() DEFAULT;
 
@@ -28,12 +38,12 @@ public:
 private:
     void GUI_DefaultSetting();
     // -----------------------------------------------
-    void GUI_EventResources(_float fChildHeight);
-    // -----------------------------------------------
     void GUI_Setting_Clips(_float fChildHeight);
     void Draw_ToolbarUI(); 
     void Draw_TimelineUI(float duration, float& ioTime, const char* id);
     void Draw_EventListUI();
+    // -----------------------------------------------
+    void GUI_Prev_Animation(_float fChildHeight);
     // -------------------------------------------------
     void GUI_Setting_Effect(_float fChildHeight); // << 이 칸 안에서 작업하고 클래스 추가하면 댐
     // -------------------------------------------------
@@ -70,6 +80,8 @@ private: //Create Clip
     _float  m_fTrackPos   = {};
     _float  m_fDuration  = {};
     
+
+
 
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
