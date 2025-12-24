@@ -11,14 +11,10 @@ void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
         m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
         m_pSubStateMachine->Register_State("Start", CMiyabiState_Walk_Start::Create());
         m_pSubStateMachine->Register_State("Loop", CMiyabiState_Walk_Loop::Create());
-
         m_pSubStateMachine->Register_Transition("Start", "Loop",
             CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-
         m_pSubStateMachine->Set_DefaultState("Start");
     }
-
-
     __super::Enter(pOwner);
 }
 
@@ -47,7 +43,14 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
+        vDelta.z = -vDelta.z;  // 애니메이션 좌표계 보정 (로컬에서 처리)
+
+        _smatrix matWorld = pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+        _vector3 vWorldDelta = XMVector3TransformNormal(vDelta, matWorld);
+
+        pOwner->Get_CCT()->Move_Velocity(vWorldDelta, dt);
     }
 }
 
@@ -69,7 +72,14 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
+
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
+        vDelta.z = -vDelta.z;  // 애니메이션 좌표계 보정 (로컬에서 처리)
+
+        _smatrix matWorld = pOwner->Get_Component<CTransform>()->Get_WorldMatrix();
+        _vector3 vWorldDelta = XMVector3TransformNormal(vDelta, matWorld);
+
+        pOwner->Get_CCT()->Move_Velocity(vWorldDelta, dt);
     }
 }
 
