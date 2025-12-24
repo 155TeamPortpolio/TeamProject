@@ -158,7 +158,7 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
         occlusion += (sampleDepth <= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
     }
     
-    occlusion = 1.0 - (occlusion / 128.0);
+    occlusion = 1.0 - (occlusion / 64.0);
     Out.vResult = occlusion;
     
     return Out;
