@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Character.h"
 #include "GameInstance.h"
+#include "CamObject.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -93,15 +94,32 @@ void CCharacter::Rotate(_vector3 vDirection)
 
 void CCharacter::Update_Input(_float dt)
 {
-	// Process Input
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	m_vInputDir = _vector3(0.f, 0.f, 0.f);
-	if (input->Key_Hold(VK_UP))    m_vInputDir.z += 1.f;
-	if (input->Key_Hold(VK_DOWN))  m_vInputDir.z -= 1.f;
-	if (input->Key_Hold(VK_RIGHT)) m_vInputDir.x += 1.f;
-	if (input->Key_Hold(VK_LEFT))  m_vInputDir.x -= 1.f;
+	int x = 0, z = 0;
+	if (KEY->Key_Hold(VK_UP))    z += 1;
+	if (KEY->Key_Hold(VK_DOWN))  z -= 1;
+	if (KEY->Key_Hold(VK_RIGHT)) x += 1;
+	if (KEY->Key_Hold(VK_LEFT))  x -= 1;
 
-	m_bIsAttack = input->Mouse_Tap(MOUSE_BTN::LB);
+	m_vInputDir = Vector3{};
+
+	if (x || z)
+	{
+		auto cam = CAM->Get_ActiveCam();
+		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
+
+		Vector3 camLook  = camTf->Dir(STATE::LOOK);
+		Vector3 camRight = camTf->Dir(STATE::RIGHT);
+
+		camLook.y  = 0.f;
+		camRight.y = 0.f;
+
+		camLook.Normalize();
+		camRight.Normalize();
+
+		m_vInputDir = camRight * x + camLook * z;
+	}
+
+	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
 }
 

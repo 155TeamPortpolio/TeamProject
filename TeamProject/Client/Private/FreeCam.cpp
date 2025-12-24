@@ -17,12 +17,10 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 
 void CFreeCam::Priority_Update(_float dt)
 {
-    auto input = GAME->Get_InputDev();
-
-    if (input->Mouse_Down(MOUSE_BTN::RB))
+    if (KEY->Mouse_Down(MOUSE_BTN::RB))
     {
-        m_vRotDegTarget.x += input->Mouse_DeltaX() * m_fSensitivity;
-        m_vRotDegTarget.y += input->Mouse_DeltaY() * m_fSensitivity;
+        m_vRotDegTarget.x += KEY->Mouse_DeltaX() * m_fSensitivity;
+        m_vRotDegTarget.y += KEY->Mouse_DeltaY() * m_fSensitivity;
         m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
     }
 
@@ -37,10 +35,10 @@ void CFreeCam::Priority_Update(_float dt)
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (input->Key_Down('W')) move += look  *  speed;
-    if (input->Key_Down('S')) move += look  * -speed;
-    if (input->Key_Down('D')) move += right *  speed;
-    if (input->Key_Down('A')) move += right * -speed;
+    if (KEY->Key_Down('W')) move += look  *  speed;
+    if (KEY->Key_Down('S')) move += look  * -speed;
+    if (KEY->Key_Down('D')) move += right *  speed;
+    if (KEY->Key_Down('A')) move += right * -speed;
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });
