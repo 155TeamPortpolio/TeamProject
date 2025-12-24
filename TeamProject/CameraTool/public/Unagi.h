@@ -4,25 +4,27 @@
 
 NS_BEGIN(CameraTool)
 
+enum class Player { Unagi, QingYi };
+
 class CUnagi : public CGameObject
 {
 private:
     CUnagi() = default;
     CUnagi(const CUnagi& rhs) : CGameObject(rhs) {}
-    virtual ~CUnagi() DEFAULT;
+    virtual ~CUnagi() = default;
 
 public:
     HRESULT Initialize_Prototype()      override;
     HRESULT Initialize(INIT_DESC* pArg) override;
     void    Awake()                     override;
     void    Priority_Update(_float dt)  override {}
-    void    Update(_float dt)           override {}
+    void    Update(_float dt)           override;
     void    Late_Update(_float dt)      override {}
     void    Render_GUI()                override;
 
 public:
     static CUnagi* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free();
+    virtual void Free() { __super::Free(); }
 };
 NS_END

@@ -5,21 +5,15 @@
 HRESULT CSequenceCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    m_sequencePlayer = Add_Component<CCamSequencePlayer>();
+    m_seqPlayer = Add_Component<CCamSequencePlayer>();
     return S_OK;
 }
 
 HRESULT CSequenceCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-    m_sequencePlayer = Get_Component<CCamSequencePlayer>();
+    m_seqPlayer = Get_Component<CCamSequencePlayer>();
     return S_OK;
-}
-
-void CSequenceCam::Stop(_bool resetTime)
-{
-    if (!m_sequencePlayer)  return;
-    m_sequencePlayer->Stop(resetTime);
 }
 
 CSequenceCam* CSequenceCam::Create()
@@ -66,10 +60,10 @@ void CSequenceCam::Render_GUI()
         ImGui::Text("Playing: %s", playing ? "true" : "false");
         ImGui::Text("Last: %s", m_LastPath.string().c_str());
 
-        if (m_sequencePlayer)
+        if (m_seqPlayer)
         {
-            const float t = m_sequencePlayer->GetTime();
-            const float s = m_sequencePlayer->GetTimeScale();
+            const float t = m_seqPlayer->GetTime();
+            const float s = m_seqPlayer->GetTimeScale();
             ImGui::Text("Time: %.3f", t);
             ImGui::Text("TimeScale: %.3f", s);
         }

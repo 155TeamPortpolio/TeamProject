@@ -29,6 +29,9 @@ public:
     void  StopAll(_float blendOutSec = 0.25f);
     void  Update(_float dt);
 
+
+    virtual void  Free()   override { __super::Free(); }
+
 private:
     struct SeqEntry
     {
@@ -48,17 +51,14 @@ private:
     };
 
 private:
-    CSequenceCam* RequireSequenceCam() const;
+    CSequenceCam* GetSequenceCam() const;
     void          ClearPlayingState() { m_playing = {}; }
 
 private:
-    unordered_map<string, SeqEntry> m_sequences{};
+    unordered_map<string, SeqEntry> m_seqs{};
     PlayingState                    m_playing{};
-    OBJECT_HANDLE                   m_sequenceHandle{};
+    OBJECT_HANDLE                   m_seqHandle{};
     OBJECT_HANDLE                   m_spaceRefHandle{};
-
-public:
-    void Free() override;
 };
 
 NS_END
