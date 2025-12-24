@@ -24,9 +24,9 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	
 
 	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -46,11 +46,6 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 			_matrix MyTransformation = XMLoadFloat4x4(&m_TransformationMatrices[i]);
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
-	}
-	/*최종 뼈 행렬에 대입*/
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
 	}
 
 	Resize_Layer(1);
