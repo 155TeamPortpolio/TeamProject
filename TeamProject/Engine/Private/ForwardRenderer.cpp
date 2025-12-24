@@ -228,6 +228,9 @@ HRESULT CForwardRenderer::Ready_Target()
 		RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.2f, 0.2f, 0.2f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(AmbiDesc);
 
+		RenderTargetDesc RimDesc = { "Target_RimLight" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(RimDesc);
+
 		RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 		m_pTargetManager->Create_Target(ShadowDesc);
 	}
@@ -263,6 +266,7 @@ HRESULT CForwardRenderer::Ready_MRT()
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Depth"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_RimLight"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
 	}
 

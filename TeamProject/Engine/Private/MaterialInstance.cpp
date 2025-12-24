@@ -15,6 +15,7 @@ CMaterialInstance::CMaterialInstance(const CMaterialInstance& rhs)
 	, m_pMaterialData{ rhs.m_pMaterialData }
 	, m_TextureIndexs{ rhs.m_TextureIndexs }
 	, overrides_Constant{ rhs.overrides_Constant }
+
 {
 	Safe_AddRef(m_pMaterialData);
 	Safe_AddRef(m_pDevice);
