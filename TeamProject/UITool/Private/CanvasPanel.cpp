@@ -70,11 +70,12 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    Render_GUI_Create();
+    // 아래 주석 함수는 GUI 패널에서 작동하도록 이동
+    //Render_GUI_Create();
 
-    Render_GUI_SavePrefab();
+    //Render_GUI_SavePrefab();
 
-    Render_GUI_LoadPrefab();
+    //Render_GUI_LoadPrefab();
 
     __super::Render_GUI();
 }
@@ -145,14 +146,14 @@ void CCanvasPanel::Render_GUI_Create()
     {
         string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType})       // UI Object 생성
+        CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType})         // UI Object 생성
             .Size({ m_fChildCreateSize.x, m_fChildCreateSize.y })
             .Build(strType);
 
         if (!pChild)
             return;
 
-        Get_Component<CObjectContainer>()->Add_Child(pChild);                             // 컨테이너에 자식 추가
+        Get_Component<CObjectContainer>()->Add_Child(pChild);                                                       // 컨테이너에 자식 추가
     }
 }
 
@@ -200,8 +201,10 @@ void CCanvasPanel::Render_GUI_LoadPrefab()
             return;
 
         const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-        CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + data["parent"]["typeTag"].get<string>() })
-            .Build(data["parent"]["typeTag"].get<string>());
+        const string& strTypeTag = data["parent"]["typeTag"].get<string>();
+
+        CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
+            .Build(strTypeTag);
 
         if (!pObj)
             return;

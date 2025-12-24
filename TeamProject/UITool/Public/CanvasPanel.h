@@ -1,8 +1,6 @@
 #pragma once
 #include "UIObject_Tool.h"
 
-// 부모가 스케일, 회전하면 자식도 영향 받게 수정해야
-
 NS_BEGIN(Engine)
 class IUI_Service;
 NS_END
