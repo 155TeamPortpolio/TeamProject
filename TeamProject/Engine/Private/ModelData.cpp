@@ -199,6 +199,12 @@ MINMAX_BOX CModelData::Get_MeshBoundingBox(_uint index)
 	return box;
 }
 
+void CModelData::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex)
+{
+	outvec.clear();
+	m_pSkeleton->Get_AffectBoneIndices(outvec, StartBoneIndex);
+}
+
 _int CModelData::Get_BoneParentIndex(_uint i)
 {
 	return m_pSkeleton->Get_BoneParentIndex(i);

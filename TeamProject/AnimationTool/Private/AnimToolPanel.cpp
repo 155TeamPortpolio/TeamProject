@@ -143,20 +143,64 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 		ImGui::EndCombo();
 	}
 
+	//Set Layer
 	ImGui::SameLine();
-	ImGui::Text("Extrack BoneMove : "); ImGui::SameLine();
+	ImGui::Text("	Layer : "); ImGui::SameLine();
 
-	static int BoneIndex = -1;
-	ImGui::PushItemWidth(120.f);
-	ImGui::InputInt("##ExtractBone", &BoneIndex); ImGui::SameLine();
-	if (ImGui::Button("Set", { 55.f, 0.f }))
+	static int LayerIndex = 0;
+	int LayerCount = m_pSelectAnimator ? m_pSelectAnimator->Get_NumLayer() : 0;
+
+	char preview[16];
+	sprintf_s(preview, "%d", LayerIndex);
+	ImGui::PushItemWidth(50.f);
+	if (ImGui::BeginCombo("##LayerCombo", preview))
 	{
-		m_pSelectAnimator->Set_NoTransform(BoneIndex);
+		for (int i = 0; i < LayerCount; ++i)
+		{
+			bool selected = (LayerIndex == i);
+			char label[16];
+			sprintf_s(label, "%d", i);
+
+			if (ImGui::Selectable(label, selected))
+				LayerIndex = i;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	//Start Bone
+	ImGui::SameLine();
+	ImGui::Text("	Start Bone : "); ImGui::SameLine();
+	static int StartBoneIndex = -1;
+	ImGui::PushItemWidth(50.f);
+	ImGui::InputInt("##StartBone", &StartBoneIndex, 0, 0);
+	ImGui::SameLine();
+	if (ImGui::Button("Set##StartBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_StartBone(StartBoneIndex);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Reset", { 55.f, 0.f }))
+	if (ImGui::Button("Reset##StartBone", { 55.f, 0.f }))
 	{
-		m_pSelectAnimator->Set_UseTransform();
+	}
+
+	//Extract Bone
+	ImGui::SameLine();
+	ImGui::Text("	Extrack Bone : "); ImGui::SameLine();
+	static int RootBoneIndex = -1;
+	ImGui::PushItemWidth(50.f);
+	ImGui::InputInt("##ExtractBone", &RootBoneIndex, 0, 0);
+	ImGui::SameLine();
+	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_NoTransform(RootBoneIndex);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_UseTransform();
 	}
 
 	Draw_ToolbarUI();

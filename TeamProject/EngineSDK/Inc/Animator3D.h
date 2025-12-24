@@ -123,6 +123,8 @@ public://애니매이터 데이터
     void Set_UseTransform(_uint LayerIndex = 0);
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
+    //애니매이션을 돌릴 본 설정
+    void Set_StartBone(_int StartBoneIndex, _uint LayerIndex = 0);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);

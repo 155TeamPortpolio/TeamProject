@@ -343,6 +343,18 @@ void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].bPause = true;
 }
 
+void CAnimator3D::Set_StartBone(_int StartBoneIndex, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].iStartBoneIndex = StartBoneIndex;
+	m_pData->Get_AffectBoneIndices(
+		m_AnimLayers[LayerIndex].AffectedBonesIndices,
+		m_AnimLayers[LayerIndex].iStartBoneIndex);
+
+	int a;
+}
+
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
