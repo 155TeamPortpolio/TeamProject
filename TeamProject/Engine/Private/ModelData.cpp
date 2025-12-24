@@ -161,6 +161,16 @@ HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
 	return S_OK;
 }
 
+HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex, _uint IslandIndex)
+{
+	if (MeshIndex >= m_Meshes.size()) return E_FAIL;
+
+	m_Meshes[MeshIndex]->Bind_Buffer(pContext);
+	m_Meshes[MeshIndex]->Render_Island(pContext, IslandIndex);
+
+	return S_OK;
+}
+
 _matrix CModelData::Get_OffsetMatrix(_uint BoneIndex)
 {
 	return m_pSkeleton->Get_OffsetMatrix(BoneIndex);

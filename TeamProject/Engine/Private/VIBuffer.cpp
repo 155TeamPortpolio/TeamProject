@@ -49,6 +49,11 @@ HRESULT CVIBuffer::Render(ID3D11DeviceContext* pContext)
 	pContext->DrawIndexed(m_iIndicesCount, 0, 0);
 	return S_OK;
 }
+HRESULT CVIBuffer::Render(ID3D11DeviceContext* pContext)
+{
+	pContext->DrawIndexed(m_iIndicesCount, 0, 0);
+	return S_OK;
+}
 
 void CVIBuffer::Render_GUI()
 {
