@@ -11,14 +11,10 @@ void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
         m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
         m_pSubStateMachine->Register_State("Start", CMiyabiState_Walk_Start::Create());
         m_pSubStateMachine->Register_State("Loop", CMiyabiState_Walk_Loop::Create());
-
         m_pSubStateMachine->Register_Transition("Start", "Loop",
             CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-
         m_pSubStateMachine->Set_DefaultState("Start");
     }
-
-
     __super::Enter(pOwner);
 }
 

@@ -19,7 +19,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Set_Pivot(_float2(0.5f, 0.5f));
+    //Set_Pivot(_float2(0.5f, 0.5f));
 
     Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
 
@@ -52,7 +52,7 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
     for (auto& pObj : objects)
     {
-        if (!pObj || pObj == this || !pObj->Is_Root())
+        if (!pObj || pObj == this)
             continue;
 
         CObjectContainer* pContainer = pObj->Get_Component<CObjectContainer>();
@@ -370,8 +370,8 @@ void CUIObject_Tool::Render_GUI_Animation()
     {
         UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
 
-        ImGui::SetNextWindowPos(ImVec2(880, 100), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(200, 600), ImGuiCond_Once);
+        ImGui::SetNextWindowPos(ImVec2(g_iWinSizeX * 0.72f, 100), ImGuiCond_Once);
+        ImGui::SetNextWindowSize(ImVec2(200, g_iWinSizeY * 0.8f), ImGuiCond_Once);
         ImGui::Begin(clip.strName.c_str(), &showPopup);
 
         // 재생, 정지 

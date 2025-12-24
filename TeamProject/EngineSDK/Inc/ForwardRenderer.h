@@ -16,10 +16,14 @@ public:
     HRESULT Render_Shadow(class ShadowPass* pShadowPass);
     HRESULT Render_Forward(class OpaquePass* pOpaquePass, class InstancePass* pInstancePass);
     HRESULT Render_LightAcc();
+    HRESULT Render_RimLight();
     HRESULT Render_SSAO();
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
     HRESULT Render_Combined();
+
+public:
+    void SetRimLightMode(RIMLIGHT eMode);
 
 private:
     virtual HRESULT Ready_Target() override;
@@ -31,6 +35,8 @@ private:
 private:
     ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
     class CTexture* m_pRampTexture;
+
+    RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
 
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
