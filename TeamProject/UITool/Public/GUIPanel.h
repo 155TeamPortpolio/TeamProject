@@ -3,10 +3,11 @@
 
 NS_BEGIN(Engine)
 class CGameInstance;
+class CGameObject;
 class CUI_Object;
 class IProtoService;
 class IObjectService;
-class IUI_Service;
+class IUI_Service; 
 NS_END
 
 NS_BEGIN(UITool)
@@ -25,9 +26,15 @@ private:
     CGameInstance*      m_pGameInstance = { nullptr };
 
 private:
-    void CreateCanvasPanel(); 
+    void Render_GUI_CreateCanvasPanel(); 
+    void Render_GUI_OpenPrefab();
+    void Render_GUI_AddPrefab();
+    void Render_GUI_CanvasPanel();
 
-    void LoadPrefab();
+    CUI_Object* LoadPrefab();
+    void SavePrefab(class CUIObject_Tool* pObj);
+
+    CGameObject* Get_SelectedObject();
 
 public:
     static CGUIPanel* Create(GUI_CONTEXT* pContext);

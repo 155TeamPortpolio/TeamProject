@@ -70,11 +70,12 @@ void CCanvasPanel::Late_Update(_float dt)
 
 void CCanvasPanel::Render_GUI()
 {
-    Render_GUI_Create();
+    // 아래 주석 함수는 GUI 패널에서 작동하도록 이동
+    //Render_GUI_Create();
 
-    Render_GUI_SavePrefab();
+    //Render_GUI_SavePrefab();
 
-    Render_GUI_LoadPrefab();
+    //Render_GUI_LoadPrefab();
 
     __super::Render_GUI();
 }
