@@ -158,7 +158,7 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
         occlusion += (sampleDepth <= samplePos.z + fBias ? 1.0 : 0.0) * rangeCheck;
     }
     
-    occlusion = 1.0 - (occlusion / 64.0);
+    occlusion = 1.0 - (occlusion / 128.0);
     Out.vResult = occlusion;
     
     return Out;
@@ -189,7 +189,7 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
 }
 
 
-PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
+PS_OUT_RESULT PS_BACKRIMLIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
@@ -220,8 +220,7 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     float NdotV = saturate(dot(worldNormal, viewDir));
     float rimPower = 1.f - NdotV;
-    
-    float fresnelPower = lerp(2.0, 8.0, vRimInfo.a); 
+    float fresnelPower = lerp(2.0, 8.0, vRimInfo.a);
     rimPower = pow(rimPower, fresnelPower);
     
     float3 lightDir = normalize(g_vLightDir.xyz * -1);
@@ -245,7 +244,50 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     return Out;
 }
 
-PS_OUT_RESULT PS_RIMLIGHT2(PS_IN In)
+PS_OUT_RESULT PS_OUTLINERIMLIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 vRimInfo = g_RimLightTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    if (vRimInfo.a <= 0.f)
+    {
+        Out.vResult = float4(0.f, 0.f, 0.f, 0.f);
+        return Out;
+    }
+
+    float4 vNormalDesc = g_NormalTexture.Sample(PointClampSampler, In.vTexcoord);
+    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
+    float4 vDepthDesc = g_DepthTexture.Sample(PointClampSampler, In.vTexcoord);
+
+    float fViewZ = vDepthDesc.y * zFar;
+
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
+    float NdotV = saturate(dot(worldNormal, viewDir));
+    
+    float rimPower = 1.f - NdotV;
+    float fresnelPower = lerp(2.0, 8.0, vRimInfo.a);
+    rimPower = pow(rimPower, fresnelPower);
+
+    float fRim = smoothstep(0.45, 0.55, rimPower);
+
+    float3 vRimColor = vRimInfo.rgb * fRim;
+    Out.vResult = float4(vRimColor, 1.f);
+
+    return Out;
+}
+
+PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
 
@@ -283,6 +325,7 @@ PS_OUT_RESULT PS_RIMLIGHT2(PS_IN In)
 
     return Out;
 }
+
 //GaussianBlur
 static const float weights[9] =
 {
@@ -499,6 +542,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
     float fLight = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float fViewZ = vDepthDesc.y * zFar;
     
@@ -517,8 +561,17 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
 
-    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
-    Out.vLight = float4(PBR, 1.f);
+    if (fSkin > 0.f)
+    {
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
+        Out.vLight = float4(PBR, 1.f);
+    }
+    else
+    {
+        float NdotL = dot(normalize(lightDir), worldNormal) * 0.5 + 0.5;
+        Out.vLight = float4(g_vLightDiffuse.rgb *vDiffuse.rgb  *NdotL * g_fLightIntensity * 0.3, 1.f) ;
+    }
+    
     Out.fLightInfo = float2(NdotL, 0.f);
 
     return Out;
@@ -660,6 +713,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_SSAO_BLUR();
+    }
+
+    pass BACKRIMLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BACKRIMLIGHT();
+    }
+
+    pass OUTLINERIMLIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OUTLINERIMLIGHT();
     }
 
     pass RIMLIGHT

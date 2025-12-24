@@ -120,6 +120,11 @@ CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 	return pRenderer;
 }
 
+void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
+{
+	m_pForward->SetRimLightMode(eMode);
+}
+
 #ifdef _USING_GUI
 void CRenderSystem::Render_GUI()
 {
