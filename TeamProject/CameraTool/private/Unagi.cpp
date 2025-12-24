@@ -51,8 +51,8 @@ void CUnagi::Awake()
 	const Player player = Player::QingYi;
 
 	const string levelName = "First_Level";
-	const auto& d = GetPlayerAssetDesc(player);
-	const string fileName = d.fileName;
+	const auto& desc = GetPlayerAssetDesc(player);
+	const string fileName = desc.fileName;
 
 	const fs::path baseDir = GetPlayerBaseDir(player);
 
