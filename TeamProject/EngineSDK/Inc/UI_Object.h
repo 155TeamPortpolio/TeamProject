@@ -52,7 +52,7 @@ public:
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
 	_float2 Get_RectTopLeft_Screen() ;
-
+	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -117,6 +117,8 @@ protected:
 
 	/*크기 배율*/
 	_float2 m_vScale = {};
+	/*크기 배율 - 부모가 있다면 부모 스케일을 곱한 값 */
+	_float2 m_vCombinedScale = {};
 
 	/*트랜스폼 기준점 - 내부 좌표 기준 : 0~1, 0~1 */
 	_float2 m_vPivot= {};
