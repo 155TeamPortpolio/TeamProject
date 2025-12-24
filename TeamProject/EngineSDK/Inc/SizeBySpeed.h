@@ -14,7 +14,7 @@ public:
     void Update(CParticleSystem::PARTICLE& particle, _float dt) override;
 
 public:
-    static CLifeTimeColor* Create();
+    static CSizeBySpeed* Create();
     void Free()override;
 
 private:

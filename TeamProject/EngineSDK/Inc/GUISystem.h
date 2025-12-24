@@ -36,6 +36,8 @@ private:
     void Test();
 
 private:
+    void Render_DebugBtn();
+private:
     bool m_bActiveGUI = {true};
     bool m_bUsingUI = {false};
     class CGameInstance* m_pGameInstance = { nullptr };

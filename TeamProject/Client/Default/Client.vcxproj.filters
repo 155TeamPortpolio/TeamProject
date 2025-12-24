@@ -109,6 +109,9 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Walk">
       <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
+      <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -233,6 +236,9 @@
     <ClInclude Include="..\Public\MiyabiState_Walk.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Attack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -350,6 +356,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

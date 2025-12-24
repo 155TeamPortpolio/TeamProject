@@ -120,7 +120,7 @@ void CEditModel::Render_GUI()
 HRESULT CEditModel::Load_AIScene(const string& filePath)
 {
 	Clear_Models();
-	m_Importer.FreeScene();
+	//m_Importer.FreeScene();
 	m_pAIScene = nullptr;
 
 	_uint basFlag =
@@ -170,7 +170,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	/*LOD 없고 별거 없으면 그냥 원래 로직대로 로드*/
 	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones && !hasLOD)
 	{
-		m_Importer.FreeScene();
+		//m_Importer.FreeScene();
 		m_pAIScene = nullptr;
 
 		m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag| aiProcess_PreTransformVertices);
@@ -321,5 +321,6 @@ CGameObject* CEditModel::Clone(INIT_DESC* pArg)
 void CEditModel::Free()
 {
 	__super::Free();
-	m_Importer.FreeScene();
+	//m_Importer.FreeScene();
+	//m_pAIScene = nullptr;
 }

@@ -18,15 +18,14 @@ extern HINSTANCE g_hInstance;
 
 
 using namespace ModelEdit;
-#include "Assimps.h"
-using namespace Assimp;
 
-#include "Engine_Defines.h"
+#include "Engine_Defines.h"   // 엔진 디버그 new 세팅이 여기서 완료된 상태
 
-struct MaterialTexNames
-{
-	string Albedo;
-	string Normal;
-	string Metallic;
-	string AO;
-};
+#pragma push_macro("new")
+#undef new
+
+#include <assimp/scene.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+
+#pragma pop_macro("new")
