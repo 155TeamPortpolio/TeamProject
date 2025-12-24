@@ -90,11 +90,13 @@ void CMiyabi::Render_GUI()
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
-		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
-		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+		ImGui::Text("StateMachine: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+
+		if (ImGui::Button("Open StateMachine"))
+			m_pStateMachine->Set_ShowWindow(true);
+
+		m_pStateMachine->Render_GUI();
 	}
-	_bool isLayer = Get_Layer();
-	ImGui::Checkbox("InLayer", &isLayer);
 }
 
 void CMiyabi::Update_Input(_float dt)
