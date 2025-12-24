@@ -80,6 +80,7 @@ void CMeshNode_Edit::Play()
 	if (!m_IsLoop)
 		m_IsEffectActive = false;
 
+	m_DissolveModule.fProgress = 0.f;
 	m_fElpasedTime = 0.f;
 }
 
@@ -181,7 +182,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"z",m_TextureSlotModule.vChannelUsageParam.z},
 		{"w",m_TextureSlotModule.vChannelUsageParam.w}}},
 
-		/* Color Module*/
+		/* Color Module */
 		{"color_ease_type",ENUM(m_ColorModule.eEaseType)},
 		{"start_color",
 		{{"x",m_ColorModule.vStartColor.x},
@@ -210,7 +211,7 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"max_frame_index",m_SpriteAnimationModule.iMaxFrameIndex},
 
 		/* Dissolve */
-		{"dissolve_ease_type",{ENUM(m_DissolveModule.eEaseType)}},
+		{"dissolve_ease_type",ENUM(m_DissolveModule.eEaseType)},
 		{"dissolve_start_progress",m_DissolveModule.fStartProgress},
 		{"dissolve_end_progress",m_DissolveModule.fEndProgress},
 
@@ -260,8 +261,6 @@ void CMeshNode_Edit::SetMaterial()
 
 			if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, MaterialTag)))
 				MSG_BOX("Link Failed - Material");
-
-			//Get_Component<CMaterial>()->Get_MaterialInstance(0)->Override_Pass("UVAnimation");
 
 			m_SetMaterial = true;
 			m_MaterialKey = MaterialTag;
@@ -370,14 +369,19 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	{
 		if (Helper::DrawEnumCombo("Sampler Mode", m_TextureSlotModule.eSamplerMode, 100.f))
 			m_TextureSlotModule.iSamplerModeParam = ENUM(m_TextureSlotModule.eSamplerMode);
+
 		if (Helper::DrawEnumCombo("Main Usage", m_TextureSlotModule.eMainUsage, 100.f))
 			m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
+
 		if (Helper::DrawEnumCombo("Red", m_TextureSlotModule.eRed, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);
+
 		if (Helper::DrawEnumCombo("Green", m_TextureSlotModule.eGreen, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.y = ENUM(m_TextureSlotModule.eGreen);
+
 		if (Helper::DrawEnumCombo("Blue", m_TextureSlotModule.eBlue, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.z = ENUM(m_TextureSlotModule.eBlue);
+
 		if (Helper::DrawEnumCombo("Alpha", m_TextureSlotModule.eAlpha, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.w = ENUM(m_TextureSlotModule.eAlpha);
 	}

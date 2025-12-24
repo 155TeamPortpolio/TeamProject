@@ -13,8 +13,8 @@ private:
 public:
     virtual HRESULT Initialize() override { return S_OK; }
     virtual HRESULT Awake()      override;
-    virtual void    Update()     override;
-    virtual HRESULT Render()     override;
+    virtual void    Update()     override {}
+    virtual HRESULT Render()     override { return S_OK; }
 
 public:
     static CFirstLevel* Create(const string& key);

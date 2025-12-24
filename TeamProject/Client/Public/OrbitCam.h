@@ -7,9 +7,9 @@ NS_BEGIN(Client)
 class COrbitCam final : public CCamObject
 {
 private:
-    COrbitCam() DEFAULT;
+    COrbitCam() = default;
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
-    virtual ~COrbitCam() DEFAULT;
+    virtual ~COrbitCam() = default;
 
 public:
     HRESULT Initialize_Prototype()      override;
@@ -23,6 +23,7 @@ public:
 public:
     void    SetTarget(CGameObject* obj);
     void    ClearTarget();
+    void    SyncFromCurTransform();
 
 private:
     void    UpdateInput(_float dt);
@@ -40,16 +41,16 @@ private:
 
     _float   m_offsetY = 0.2f;
 
-    Vector2  m_rotDegTarget{};
-    Vector2  m_rotDegCur{};
+    Vector2  m_targetRotDeg{};
+    Vector2  m_curRotDeg{};
 
-    _float   m_distanceTarget  = 5.f;
-    _float   m_distanceCur     = 5.f;
-
+    _float   m_targetDist      = 5.f;
+    _float   m_curDist         = 5.f;
+                               
     _float   m_pitchMin        = -30.f;
     _float   m_pitchMax        = 60.f;
-    _float   m_distanceMin     = 0.5f;
-    _float   m_distanceMax     = 2.f;
+    _float   m_minDist         = 0.5f;
+    _float   m_maxDist         = 3.f;
 
     _float   m_sensitivityX    = 0.15f;
     _float   m_sensitivityY    = 0.12f;
@@ -67,11 +68,11 @@ private:
     _float   m_pitchAutoZoomStartN = 0.75f;
     _float   m_pitchAutoZoomSmooth = 18.f;
              
-    _float   m_pitchZoomOffsetTarget = 0.f;
-    _float   m_pitchZoomOffsetCur    = 0.f;
+    _float   m_targetPitchZoomOffset = 0.f;
+    _float   m_curPitchZoomOffset    = 0.f;
 
-    Vector3  m_pivotTarget{};
-    Vector3  m_pivotCur{};
+    Vector3  m_targetPivot{};
+    Vector3  m_curPivot{};
     _float   m_pivotSmoothSpeed = 15.f;
 
 public:

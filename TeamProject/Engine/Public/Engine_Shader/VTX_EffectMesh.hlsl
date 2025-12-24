@@ -42,6 +42,8 @@ uint Row;
 uint FrameIndex;
 
 /* Bloom Params */
+float BloomThreshold;
+float BloomSoftness;
 float BloomIntensity;
 
 /*Dissolve Params*/
@@ -126,8 +128,8 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
        fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
     }
     
-    //if (fDissolveMask < DissolveProgress)
-    //    discard;
+    if (fDissolveMask < DissolveProgress)
+        discard;
     
     float4 color = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -162,8 +164,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     
     Out.vDiffuse = color;
     Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
-    Out.vBloom.rgb = Out.vDiffuse.rgb * BloomIntensity;
-    Out.vBloom.a = Out.vDiffuse.a;
+    Out.vBloom = ExtractBright(Out.vDiffuse, BloomThreshold, BloomSoftness, BloomIntensity); //Out.vDiffuse.rgb * BloomIntensity;
     
     return Out;
 }
@@ -171,12 +172,12 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
-    
+
     float2 Texcoord = In.vTexcoord + UVOffset;
-        
+
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
     float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
-    
+
     float fBrightIntensity = 2.f;
     float fBase = vMtrlDiffuse.g;
     float fBright = vMtrlDiffuse.r;
@@ -197,6 +198,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     
     return Out;
 }
+
 
 PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 {

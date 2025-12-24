@@ -27,17 +27,19 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (nullptr == m_pSelectAnimator)
 		return;
 
-	if (m_isPlay) {
+	if (!m_bPause) {
 		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
 		
 		if (m_fDuration <= m_fTrackPos) {
 			if (m_bLoop)
 				m_fTrackPos = 0.f;
 			else
-				m_isPlay = false;
+				m_bPause = true;
 		}
 	}
-	m_pSelectAnimator->Update_Animation(m_fTrackPos);
+
+	if(!m_bPause)
+		m_pSelectAnimator->Update_Animation(m_fTrackPos);
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -51,6 +53,11 @@ void CAnimToolPanel::Render_GUI()
 	{
 		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
+		
+		if (ImGui::BeginTabItem("Load Resources")) {
+			GUI_EventResources(childHeight);
+			ImGui::EndTabItem();
+		}
 
 		if (ImGui::BeginTabItem("Setting Clip"))
 		{
@@ -93,11 +100,16 @@ void CAnimToolPanel::GUI_DefaultSetting()
 	Helper::DarkThemeStyle styleScope;
 }
 
+void CAnimToolPanel::GUI_EventResources(_float fChildHeight)
+{
+}
+
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
 	ImGui::SeparatorText("Play Animation");
 
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
+	ImGui::SetNextItemWidth(300.f);
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
 	{
 		if (!m_AnimClip.empty()) {
@@ -131,6 +143,22 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 		ImGui::EndCombo();
 	}
 
+	ImGui::SameLine();
+	ImGui::Text("Extrack BoneMove : "); ImGui::SameLine();
+
+	static int BoneIndex = -1;
+	ImGui::PushItemWidth(120.f);
+	ImGui::InputInt("##ExtractBone", &BoneIndex); ImGui::SameLine();
+	if (ImGui::Button("Set", { 55.f, 0.f }))
+	{
+		m_pSelectAnimator->Set_NoTransform(BoneIndex);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset", { 55.f, 0.f }))
+	{
+		m_pSelectAnimator->Set_UseTransform();
+	}
+
 	Draw_ToolbarUI();
 
 	Draw_EventListUI();
@@ -142,11 +170,13 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	static float timeScale = 1.f;
 
 	/* 버튼 */
-	if (ImGui::Button(m_isPlay ? "Pause" : "Play", buttonSize)) m_isPlay = !m_isPlay;
+
+	if (ImGui::Button(m_bPause ? "Pause" : "Play", buttonSize))
+		m_bPause = !m_bPause;
 	ImGui::SameLine();
 	if (ImGui::Button("Stop", buttonSize))
 	{
-		m_isPlay = false;
+		m_bPause = true;
 		m_fTrackPos = 0.f;
 	}
 	ImGui::SameLine();
@@ -344,6 +374,11 @@ void CAnimToolPanel::Draw_EventListUI()
 	ImGui::EndTable();
 }
 
+void CAnimToolPanel::GUI_Setting_Effect(_float fChildHeight)
+{
+	//여기서 작업하면댐
+}
+
 void CAnimToolPanel::GUI_Create_MetaData(_float fChildHeight)
 {
 	ImGui::SeparatorText("Clip Datas");
@@ -405,7 +440,7 @@ void CAnimToolPanel::Setting_NewClip()
 
 void CAnimToolPanel::Reset_Panel()
 {
-	m_isPlay = false;
+	m_bPause = true;
 	m_fTrackPos = 0.f;
 	m_fDuration = 0.f;
 	m_CurClipTag = "";

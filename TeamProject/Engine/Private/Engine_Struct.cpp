@@ -167,6 +167,9 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fDissolveStartProgress = json.value("dissolve_start_progress", node.fDissolveStartProgress);
 	node.fDissolveEndProgress = json.value("dissolve_end_progress", node.fDissolveEndProgress);
 
+	/* Bloom */
+	node.fBloomIntensity = json.value("bloom_intensity", 0.f);
+
 	return node;
 }
 

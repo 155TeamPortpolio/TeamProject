@@ -32,4 +32,5 @@ CBone* CBone::Create(ifstream& ifs)
 
 void CBone::Free()
 {
+    __super::Free();
 }

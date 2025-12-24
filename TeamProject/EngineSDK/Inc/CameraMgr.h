@@ -11,7 +11,7 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    virtual void     Set_MainCam(CCamera* camComp)   override;
+    virtual void     Set_MainCam(CCamera* camComp, _float blendSec = 0.f)   override;
     virtual void     Set_ShadowCam(CCamera* camComp) override;
 
 public:
