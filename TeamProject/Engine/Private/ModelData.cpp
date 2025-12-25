@@ -77,16 +77,22 @@ _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 
 _uint CModelData::Get_BoneCount()
 {
+	if (!m_pSkeleton)
+		return 0;
 	return m_pSkeleton->Get_BoneCount();
 }
 
 _int CModelData::Find_BoneIndexByName(const string& BoneName)
 {
+	if (!m_pSkeleton)
+		return -1;
 	return m_pSkeleton->Find_BoneIndexByName(BoneName);
 }
 
 const string& CModelData::Find_BoneNameByIndex(_uint BoneIndex)
 {
+	if (!m_pSkeleton)
+		return "";
 	return m_pSkeleton->Find_BoneNameByIndex(BoneIndex);
 }
 
