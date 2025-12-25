@@ -24,18 +24,6 @@ HRESULT CHUD::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	UI_ELEMENT_DATA data = Helper::LoadJson<UI_ELEMENT_DATA>(CGameInstance::GetInstance()->Get_ResourceMgr()->Get_ResourcePath("test_ui.json"));
-	
-	const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-	const string& strTypeTag = data.strTypeTag;
-	CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
-		.Build(strTypeTag);
-	
-	if(pObj)
-		pObj->ReadElementData(data);
-
-	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, strCurrentLevelKey);
-
 	return S_OK;
 }
 

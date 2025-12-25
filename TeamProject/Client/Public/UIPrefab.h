@@ -18,7 +18,7 @@ public:
 	virtual void Late_Update(_float dt) override;
 
 protected:
-	CUI_Object* pCanvasPanel = { nullptr };
+	void LoadUIPrefab(const string& strResourceKey);
 
 public:
 	virtual void Free() override;

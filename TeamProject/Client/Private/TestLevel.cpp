@@ -149,19 +149,15 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD", CHUD::Create());
 
-	pResource->Add_ResourcePath("test_ui.json", "../Bin/Resources/UI/test_ui.json");
 	pResource->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/PanelBox.dds");
-	pResource->Add_ResourcePath("BangbooRunActivityIcon01.png", "../Bin/Resources/UI/BangbooRunActivityIcon01.png");
 
-	//CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
-	//	.Build("HUD");
-	//
-	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
+	pResource->Add_ResourcePath("ui_test1.json", "../Bin/Resources/UI/ui_test1.json");
+	 
 
-	CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_CanvasPanel" })
-		.Offset(_float2(100.f, 100.f))
-		.Size(_float2(300.f, 200.f))
-			.Build("CanvasPanel");
+	CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
+		.Asset("ui_test1.json")
+		.Build("HUD");
+	
 	m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
 
 

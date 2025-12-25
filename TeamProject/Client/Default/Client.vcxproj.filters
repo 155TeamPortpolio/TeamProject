@@ -115,14 +115,20 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\CanvasPanel">
-      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\HUD">
-      <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\Prefab">
       <UniqueIdentifier>{f5b975a3-e685-44f1-a1f3-e5ac454dac90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Prefab\UIPrefab">
+      <UniqueIdentifier>{4b65bdf4-8d54-4958-a1ed-d690c969d0e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Prefab\HUD">
+      <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Element">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Element\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -252,13 +258,13 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CanvasPanel.h">
-      <Filter>02. GameObject\UI\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\Element\CanvasPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\HUD.h">
-      <Filter>02. GameObject\UI\HUD</Filter>
+      <Filter>02. GameObject\UI\Prefab\HUD</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIPrefab.h">
-      <Filter>02. GameObject\UI\Prefab</Filter>
+      <Filter>02. GameObject\UI\Prefab\UIPrefab</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -382,13 +388,13 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CanvasPanel.cpp">
-      <Filter>02. GameObject\UI\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\Element\CanvasPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\HUD.cpp">
-      <Filter>02. GameObject\UI\HUD</Filter>
+      <Filter>02. GameObject\UI\Prefab\HUD</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIPrefab.cpp">
-      <Filter>02. GameObject\UI\Prefab</Filter>
+      <Filter>02. GameObject\UI\Prefab\UIPrefab</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

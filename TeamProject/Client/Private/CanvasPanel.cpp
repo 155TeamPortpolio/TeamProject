@@ -2,7 +2,6 @@
 #include "CanvasPanel.h"
 
 #include "GameInstance.h"
-#include "Helper_Func.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
 
@@ -30,7 +29,7 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "BangbooRunActivityIcon01.png");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
 #endif
 
     return S_OK;
