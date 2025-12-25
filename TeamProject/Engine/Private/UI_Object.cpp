@@ -80,6 +80,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         SPRITE_PACKET packet;
         packet.pSprite2D = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
+        packet.pColor = &m_vColor;
 
         _bool isUI = (packet.pSprite2D != nullptr);
         _bool isValid = (packet.pSprite2D->IsValid());
