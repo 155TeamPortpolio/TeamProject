@@ -93,7 +93,7 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 		return S_OK;
 
 	GAMEOBJECT_DESC* obj = static_cast<GAMEOBJECT_DESC*>(pArg);
-	
+
 	// Transform 초기화
 	auto tfIter = m_Components.find(type_index(typeid(CTransform)));
 	if (tfIter != m_Components.end()) {
@@ -150,36 +150,37 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 void CGameObject::Post_EngineUpdate(_float dt)
 {
 	/*패킷은 용도별로 따로 만든다.*/
-	if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
+	if (m_isAlive) {
+		if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
 
-		if (Get_Component<CInstanceModel>()) {
-			Make_InstancePacket();
-		}
-		else if (Get_Component<CParticleSystem>()) {
-			Make_ParticlePacket();
-		}
-		else {
-			Make_OpaquePacket();
-		}
+			if (Get_Component<CInstanceModel>()) {
+				Make_InstancePacket();
+			}
+			else if (Get_Component<CParticleSystem>()) {
+				Make_ParticlePacket();
+			}
+			else {
+				Make_OpaquePacket();
+			}
 
 #ifdef _DEBUG
-		DEBUG_PACKET debugPacket = {};
-		debugPacket.pModel = Get_Component<CModel>();
-		debugPacket.pDebug = Get_Component<CDebugRender>();
-		debugPacket.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-		if (debugPacket.pDebug) {
-			for (size_t i = 0; i < debugPacket.pDebug->Get_DebugBoxCount(); i++)
-			{
-				if (!debugPacket.pModel->isDrawable(i)) continue;
-				debugPacket.DrawIndex = i;
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Debug(debugPacket);
+			DEBUG_PACKET debugPacket = {};
+			debugPacket.pModel = Get_Component<CModel>();
+			debugPacket.pDebug = Get_Component<CDebugRender>();
+			debugPacket.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
+			if (debugPacket.pDebug) {
+				for (size_t i = 0; i < debugPacket.pDebug->Get_DebugBoxCount(); i++)
+				{
+					if (!debugPacket.pModel->isDrawable(i)) continue;
+					debugPacket.DrawIndex = i;
+					CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Debug(debugPacket);
+				}
 			}
-		}
 
 #endif // _DEBUG
 
+		}
 	}
-
 	for (auto& child : Get_Children()) {
 		if (child && child->Is_Alive())
 			child->Post_EngineUpdate(dt);
@@ -248,7 +249,7 @@ const vector<CGameObject*> CGameObject::Get_Children()
 
 LAYER_DESC CGameObject::Get_LayerDesc()
 {
-	return LAYER_DESC{m_LevelTag,m_pLayer->Get_LayerTag()};
+	return LAYER_DESC{ m_LevelTag,m_pLayer->Get_LayerTag() };
 }
 
 OBJECT_HANDLE CGameObject::Get_Handle()
@@ -289,6 +290,8 @@ HRESULT CGameObject::Make_OpaquePacket()
 	packet.pModel = { nullptr };
 	packet.bSkinning = false;
 	packet.pMaterial = Get_Component<CMaterial>();
+	if(!packet.pMaterial)return E_FAIL;
+
 	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 
 	packet.pModel = Get_Component<CModel>();
@@ -334,9 +337,9 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
-		if (packet.pModel->doShadowCast()) {
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-		}
+			if (packet.pModel->doShadowCast()) {
+				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
+			}
 	}
 	return S_OK;
 }
