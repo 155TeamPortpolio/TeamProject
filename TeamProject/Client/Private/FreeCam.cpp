@@ -1,28 +1,37 @@
 #include "pch.h"
 #include "FreeCam.h"
 #include "GameInstance.h"
+#include "Light.h"
 
 HRESULT CFreeCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+    Add_Component<CLight>();
     return S_OK;
 }
 
 HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+    LIGHT_DESC desc{};
+    desc.vLightPosition  = {};
+    desc.fLightRange     = {};
+    desc.fLightIntensity = 1.f;
+    desc.vLightDirection = {0.0f, -1.0f, 1.0f, 0.0f};
+    desc.vLightDiffuse   = {1.0f, 1.0f, 1.0f, 1.0f};
+    desc.vLightAmbient   = {0.6f, 0.6f, 0.6f, 1.0f};
+    desc.vLightSpecular  = {1.0f, 1.0f, 1.0f, 1.0f};
+    Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
     SyncRotation();
     return S_OK;
 }
 
 void CFreeCam::Priority_Update(_float dt)
 {
-    auto input = GAME->Get_InputDev();
-
-    if (input->Mouse_Down(MOUSE_BTN::RB))
+    if (KEY->Mouse_Down(MOUSE_BTN::RB))
     {
-        m_vRotDegTarget.x += input->Mouse_DeltaX() * m_fSensitivity;
-        m_vRotDegTarget.y += input->Mouse_DeltaY() * m_fSensitivity;
+        m_vRotDegTarget.x += KEY->Mouse_DeltaX() * m_fSensitivity;
+        m_vRotDegTarget.y += KEY->Mouse_DeltaY() * m_fSensitivity;
         m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
     }
 
@@ -34,13 +43,17 @@ void CFreeCam::Priority_Update(_float dt)
     const _vector3 look{ look4.x, look4.y, look4.z };
     const _vector3 right{ right4.x, right4.y, right4.z };
 
+    const _vector3 worldUp{0.f, 1.f, 0.f};
+
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (input->Key_Down('W')) move += look  *  speed;
-    if (input->Key_Down('S')) move += look  * -speed;
-    if (input->Key_Down('D')) move += right *  speed;
-    if (input->Key_Down('A')) move += right * -speed;
+    if (KEY->Key_Down('W'))      move += look    *  speed;
+    if (KEY->Key_Down('S'))      move += look    * -speed;
+    if (KEY->Key_Down('D'))      move += right   *  speed;
+    if (KEY->Key_Down('A'))      move += right   * -speed;
+    if (KEY->Key_Down(VK_SPACE)) move += worldUp *  speed;
+    if (KEY->Key_Down(VK_SHIFT)) move += worldUp * -speed;
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });

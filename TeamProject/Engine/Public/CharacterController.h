@@ -5,11 +5,10 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CCharacterController final : public ICollidable
 {
-
 private:
-    CCharacterController();
-    CCharacterController(const CCharacterController& rhs);
-    virtual ~CCharacterController() override DEFAULT;
+    CCharacterController() {}
+    CCharacterController(const CCharacterController& rhs) :ICollidable(rhs) {}
+    virtual ~CCharacterController() DEFAULT;
 
 public:
     PxController*   Get_Controller() { return m_pController; }
@@ -20,7 +19,6 @@ public:
     _float          Get_Radius() const { return m_fRadius; }
     _float          Get_MaxSpeed() const { return m_fMaxSpeed; }
     void            Set_Gravity(_float fGravity) { m_fGravity = fGravity; }
-
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -88,7 +86,7 @@ private:
     PxFilterData             m_FilterData = {};
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
-    _float3                  m_vVelocity = { 0.f, 0.f, 0.f };
+    Vector3                  m_vVelocity = { 0.f, 0.f, 0.f };
     _float                   m_fHeight = { 0.f };
     _float                   m_fRadius = { 0.f };
     _float                   m_fStepOffset = { 0.5f };
@@ -112,7 +110,6 @@ public:
     static CCharacterController* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
-
 };
 
 NS_END

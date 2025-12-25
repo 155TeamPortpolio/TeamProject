@@ -26,7 +26,7 @@ public:
 
 public:
     void  SetSpaceReference(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
-    void SetReturnCam(OBJECT_HANDLE handle, CamReturnType type) { m_returnCamHandle = handle; m_returnCamType = type; }
+    void  SetReturnCam(OBJECT_HANDLE handle, CamReturnType type) { m_returnCamHandle = handle; m_returnCamType = type; }
 
     _uint RequestSequence(const string& key, _float blendInSec = 0.25f, _bool resetTime = true, _float blendOutSec = 0.25f);
     _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
