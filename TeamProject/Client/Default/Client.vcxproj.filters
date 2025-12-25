@@ -112,6 +112,18 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
       <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI">
+      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\HUD">
+      <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Prefab">
+      <UniqueIdentifier>{f5b975a3-e685-44f1-a1f3-e5ac454dac90}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -239,6 +251,15 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CanvasPanel.h">
+      <Filter>02. GameObject\UI\CanvasPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HUD.h">
+      <Filter>02. GameObject\UI\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPrefab.h">
+      <Filter>02. GameObject\UI\Prefab</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -359,6 +380,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CanvasPanel.cpp">
+      <Filter>02. GameObject\UI\CanvasPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HUD.cpp">
+      <Filter>02. GameObject\UI\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPrefab.cpp">
+      <Filter>02. GameObject\UI\Prefab</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

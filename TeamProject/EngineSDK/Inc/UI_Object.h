@@ -123,6 +123,10 @@ public:
 	void Play_Animation(_float dt);					
 	void Set_Animation(_uint iIndex);				
 
+public:
+	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
+	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
+
 protected:
 	void Reset_Animation();
 

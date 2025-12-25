@@ -28,6 +28,10 @@
 /* Character */
 #include "Miyabi.h"
 
+/* UI */
+#include "CanvasPanel.h"
+#include "HUD.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -140,6 +144,26 @@ HRESULT CTestLevel::Awake()
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
+
+	//==================== UI =======================
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD", CHUD::Create());
+
+	pResource->Add_ResourcePath("test_ui.json", "../Bin/Resources/UI/test_ui.json");
+	pResource->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/PanelBox.dds");
+	pResource->Add_ResourcePath("BangbooRunActivityIcon01.png", "../Bin/Resources/UI/BangbooRunActivityIcon01.png");
+
+	//CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
+	//	.Build("HUD");
+	//
+	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
+
+	CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_CanvasPanel" })
+		.Offset(_float2(100.f, 100.f))
+		.Size(_float2(300.f, 200.f))
+			.Build("CanvasPanel");
+	m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
+
 
 	return S_OK;
 }

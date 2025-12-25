@@ -23,8 +23,8 @@ public:
 	void Remove_SelfFromParent();					// (툴) 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data);
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data);
+	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
+	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 protected:
 	virtual void Render_GUI_Layout();				// (툴) GUI 앵커 오프셋, 사이즈
