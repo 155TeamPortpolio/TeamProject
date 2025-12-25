@@ -33,6 +33,7 @@ public:
 	_float3 Get_MaxVertexLocal() { return m_vMeshMaxLocal; }
 	const vector<_uint>& Get_Indices() { return m_indices; }
 	const vector<VTXMESH>& Get_StaticVertices() { return m_StaticVertex; }
+	const vector<VTXSKINMESH>& Get_SkinnedVertices() { return m_Skined; }
 
 	virtual _uint Get_StaticVerticesCount() { return m_iVerticesCount; }
 	virtual _uint Get_SkinnedVerticesCount() { return m_iVerticesCount; }

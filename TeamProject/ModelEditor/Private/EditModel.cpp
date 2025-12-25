@@ -125,7 +125,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 
 	_uint basFlag =
 		aiProcess_ConvertToLeftHanded |
-		aiProcessPreset_TargetRealtime_Fast;
+		aiProcessPreset_TargetRealtime_Fast | aiProcess_Triangulate| aiProcess_JoinIdenticalVertices;
 
 	/*메쉬 병합 플래그 끄게*/
 	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
