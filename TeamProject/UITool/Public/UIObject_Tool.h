@@ -23,8 +23,8 @@ public:
 	void Remove_SelfFromParent();					// (툴) 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
 
 public:
-	virtual void SavePrefab(json& data);
-	virtual void LoadPrefab(const json& data);
+	virtual void FillElementData(UI_ELEMENT_DATA& data);
+	virtual void ReadElementData(const UI_ELEMENT_DATA& data);
 
 protected:
 	virtual void Render_GUI_Layout();				// (툴) GUI 앵커 오프셋, 사이즈
@@ -34,15 +34,6 @@ protected:
 
 protected:
 	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (툴)
-
-private:
-	void Save_Transform(json& data);
-	void Save_Animation(json& data);
-	void Save_Childeren(json& data);
-
-	void Load_Transform(const json& data);
-	void Load_Animation(const json& data);
-	void Load_Children(const json& data);
 
 public:
 	virtual void Free();

@@ -64,7 +64,6 @@ void CUVAnimationUI::Late_Update(_float dt)
 void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
-     
 
     // 텍스쳐
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
@@ -95,46 +94,32 @@ void CUVAnimationUI::Render_GUI()
     ImGui::EndDisabled();
 }
 
-void CUVAnimationUI::SavePrefab(json& data)
+void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
 
-    if (m_isUseMask)
-        data["mask"]["textureTag"] = szTextureKeys[m_iMaskTextureKeyIndex];
+    data.vUVOffsetSpeed = { m_vUVOffsetSpeed.x, m_vUVOffsetSpeed .y };
 
-    data["uvOffsetSpeed"]["x"] = m_vUVOffsetSpeed.x;
-    data["uvOffsetSpeed"]["y"] = m_vUVOffsetSpeed.y;
+    // 마스크는 아직
 }
 
-void CUVAnimationUI::LoadPrefab(const json& data)
+void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    if (data.contains("mask"))
-    {
-        m_isUseMask = true;
-        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) });
+    m_vUVOffsetSpeed = _float2(data.vUVOffsetSpeed[0], data.vUVOffsetSpeed[1]);
 
-        m_iMaskTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["mask"]["textureTag"]);
-        if (-1 != m_iMaskTextureKeyIndex)
-        {
-            CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
-            Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
-        }
-    }
-
-    m_vUVOffsetSpeed.x = data["uvOffsetSpeed"]["x"].get<_float>();
-    m_vUVOffsetSpeed.y = data["uvOffsetSpeed"]["y"].get<_float>();
+    // 마스크는 아직
 }
 
 CGameObject* CUVAnimationUI::Create()

@@ -124,54 +124,43 @@ void CTextUI::Render_GUI()
     } 
 }
 
-void CTextUI::SavePrefab(json& data)
+void CTextUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
+    
+    data.strTypeTag = m_strTypeTag;
 
-    data["typeTag"] = m_strTypeTag;
-
-    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    data["fontTag"] = szFontKeys[m_iFontKeyIndex];
-
-    data["text"] = m_szText;
-    data["fontScale"] = m_fFontScale;
-    data["fontColor"] = { {"x", m_vColor.x}, {"y", m_vColor.y} , {"z", m_vColor.z} , {"w", m_vColor.w}};
-    if (m_isOutlined)
-    {
-        data["outline"]["thickness"] = m_fOutlineThickness;
-        data["outline"]["color"] = { {"x", m_vOutlineColor.x}, {"y", m_vOutlineColor.y} , {"z", m_vOutlineColor.z} , {"w", m_vOutlineColor.w} };
-    } 
+    data.strText = m_szText;
+    data.fFontScale = m_fFontScale;
+    data.isOutlined = m_isOutlined;
+    data.fOutlineThickness = m_fOutlineThickness;
+    data.vOutlineColor = { m_vOutlineColor.x, m_vOutlineColor.y, m_vOutlineColor.z, m_vOutlineColor.w };
 }
 
-void CTextUI::LoadPrefab(const json& data)
+void CTextUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
-
-    strcpy_s(m_szText, sizeof(m_szText), data["text"].get<string>().c_str());
-    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
-    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
-
+    __super::ReadElementData(data);
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data["fontTag"].get<string>());
+    m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data.strFontTag);
     if (-1 != m_iFontKeyIndex)
         Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
 
-    m_fFontScale = data["fontScale"].get<_float>();
-    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-    m_vColor = _float4(data["fontColor"]["x"].get<_float>(), data["fontColor"]["y"].get<_float>(), data["fontColor"]["z"].get<_float>(), data["fontColor"]["w"].get<_float>());
-    Get_Component<CTextSlot>()->Set_Color(m_vColor);
+    strcpy_s(m_szText, data.strText.c_str());
+    m_fFontScale = data.fFontScale;
+    m_vColor = _float4(data.vColor[0], data.vColor[1], data.vColor[2], data.vColor[3]);
+    m_isOutlined = data.isOutlined;
+    m_fOutlineThickness = data.fOutlineThickness;
+    m_vOutlineColor = _float4(data.vOutlineColor[0], data.vOutlineColor[1], data.vOutlineColor[2], data.vOutlineColor[3]);
 
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+    Get_Component<CTextSlot>()->Set_Color(m_vColor); 
     Update_UITransform();
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
-
-    if (data.contains("outline"))
-    {
-        m_isOutlined = true;
-        m_fOutlineThickness = data["outline"]["thickness"].get<_float>();
-        m_vOutlineColor = _float4(data["outline"]["color"]["x"].get<_float>(), data["outline"]["color"]["y"].get<_float>(), data["outline"]["color"]["z"].get<_float>(), data["outline"]["color"]["w"].get<_float>());
+    if(m_isOutlined)
         Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
-    }
 }
 
 void CTextUI::Render_GUI_Layout()

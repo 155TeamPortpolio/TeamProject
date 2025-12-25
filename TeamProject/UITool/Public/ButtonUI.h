@@ -28,8 +28,8 @@ public:
 	virtual void OnClick() override;
 
 public:
-	virtual void SavePrefab(json& data) override;
-	virtual void LoadPrefab(const json& data) override;
+	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
+	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
 	STATE		m_eState = {};
