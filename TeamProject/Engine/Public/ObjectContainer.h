@@ -13,9 +13,12 @@ private:
 public:
     HRESULT Initialize_Prototype();
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
+    virtual void Pre_EngineUpdateChild(_float dt);
+    virtual void Post_EngineUpdateChild(_float dt);
     void Priority_UpdateChild(_float dt) ;
     void UpdateChild(_float dt) ;
     void Late_UpdateChild(_float dt) ;
+
 public:
     class CGameObject* Find_ObjectByName(const string& ObjectName);
     class CGameObject* Find_ObjectByID(_uint ObjectID);
