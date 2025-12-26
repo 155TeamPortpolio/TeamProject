@@ -148,6 +148,12 @@
     <Filter Include="02. GameObject\UI\UIElement\Text">
       <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -309,6 +315,12 @@
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -461,6 +473,12 @@
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
