@@ -21,23 +21,28 @@ public:
 		CONDITION_TRIGGER,
 	};
 
+	typedef struct TransitionCondition
+	{
+		TRANSITION_CONDITION eCondition = CONDITION_NONE;
+		string strParameter = "";
+		_float fTimer = 0.f;  // TIME_GREATER, TIME_LESS
+	}CONDITION_INFO;
+
 	typedef struct TransitionInfo
 	{
 		string strFromState = "";
 		string strToState = "";
-		TRANSITION_CONDITION eCondition = CONDITION_NONE;
-		string strParameter = "";
-		_float fTimer = 0.f;
-		_bool  bExitTime = false;
+		vector<CONDITION_INFO> Conditions;	// 다중조건(AND)
 		_float fExitTime = 1.f;
+		_bool  bExit = false;
 	}TRANSITION_INFO;
 
 	typedef struct StateTransitionRecord
 	{
 		string strFromState;
 		string strToState;
-		_float fTimestamp;        // 게임 시간 기준
-		_float fPrevStateTime;    // 이전 상태에서 머문 시간
+		_float fTimestamp = { 0.f };        // 게임 시간 기준
+		_float fPrevStateTime = { 0.f };    // 이전 상태에서 머문 시간
 		string strTriggerReason;  // 어떤 조건으로 전환되었는지
 	}STATE_RECORD;
 
@@ -58,9 +63,14 @@ public:
 	HRESULT Register_Transition(const TRANSITION_INFO& transition);
 	HRESULT Register_Transition(const string& strFrom, const string& strTo,
 		const TRANSITION_CONDITION eCondition = CONDITION_NONE,
-		const string& strParam = "", _float fTimer = 0.f);
+		const string& strParam = "", _float fTimer = 0.f);			// 단일 조건
+	HRESULT Register_Transition(const string& strFrom, const string& strTo,
+		const vector<CONDITION_INFO>& Conditions,
+		_bool bExit = false, _float fExitTime = 1.f);				// 다중 조건
 	HRESULT Register_AnyStateTransition(const string& strTo,
-		TRANSITION_CONDITION eCondition, const string& strParam);
+		TRANSITION_CONDITION eCondition, const string& strParam);	// 단일
+	HRESULT Register_AnyStateTransition(const string& strTo,
+		const vector<CONDITION_INFO>& Conditions);					// 다중
 
 	void    Change_State(const string& strState);
 	void    Set_DefaultState(const string& strState);
@@ -102,6 +112,7 @@ private:
 	void	Draw_Arrow(ImDrawList* pDrawList, ImVec2 vFrom, ImVec2 vTo, ImU32 color);
 
 	string	Get_Condition(const TRANSITION_INFO& transition);
+	_bool	Evaluate_SingleCondition(const CONDITION_INFO& condition);
 	_bool	Evaluate_Condition(const TRANSITION_INFO& transition);
 	void	Record_Transition(const string& strFrom, const string& strTo, const string& strReason, _float fPrevStateTime);
 
@@ -287,9 +298,33 @@ HRESULT CStateMachine<Type>::Register_Transition(const string& strFrom, const st
 	TRANSITION_INFO transition;
 	transition.strFromState = strFrom;
 	transition.strToState = strTo;
-	transition.eCondition = eCondition;
-	transition.strParameter = strParam;
-	transition.fTimer = fTimer;
+
+	if (eCondition != CONDITION_NONE)
+	{
+		CONDITION_INFO condition;
+		condition.eCondition = eCondition;
+		condition.strParameter = strParam;
+		condition.fTimer = fTimer;
+		transition.Conditions.push_back(condition);
+	}
+
+	m_Transitions.push_back(transition);
+
+	return S_OK;
+}
+
+template<typename Type>
+HRESULT CStateMachine<Type>::Register_Transition(const string& strFrom, const string& strTo, const vector<CONDITION_INFO>& Conditions, _bool bExit, _float fExitTime)
+{
+	if (strFrom.empty() || strTo.empty())
+		return E_FAIL;
+
+	TRANSITION_INFO transition;
+	transition.strFromState = strFrom;
+	transition.strToState = strTo;
+	transition.Conditions = Conditions;
+	transition.bExit = bExit;
+	transition.fExitTime = fExitTime;
 
 	m_Transitions.push_back(transition);
 
@@ -306,8 +341,30 @@ HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo,
 	TRANSITION_INFO transition;
 	transition.strFromState = "AnyState";
 	transition.strToState = strTo;
-	transition.eCondition = eCondition;
-	transition.strParameter = strParam;
+
+	if (eCondition != CONDITION_NONE)
+	{
+		CONDITION_INFO condition;
+		condition.eCondition = eCondition;
+		condition.strParameter = strParam;
+		transition.Conditions.push_back(condition);
+	}
+
+	m_AnyStateTransitions.push_back(transition);
+
+	return S_OK;
+}
+
+template<typename Type>
+HRESULT CStateMachine<Type>::Register_AnyStateTransition(const string& strTo, const vector<CONDITION_INFO>& Conditions)
+{
+	if (strTo.empty())
+		return E_FAIL;
+
+	TRANSITION_INFO transition;
+	transition.strFromState = "AnyState";
+	transition.strToState = strTo;
+	transition.Conditions = Conditions;
 
 	m_AnyStateTransitions.push_back(transition);
 
@@ -392,39 +449,28 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 template<typename Type>
 _bool CStateMachine<Type>::Check_Transition(const TRANSITION_INFO& transition)
 {
-	if (transition.bExitTime && m_pCurrentState)
+	// ExitTime 체크
+	if (transition.bExit && m_pCurrentState)
 	{
 		if (m_pCurrentState->Get_AnimProgress() < transition.fExitTime)
 			return false;
 	}
 
-	switch (transition.eCondition)
-	{
-	case CONDITION_NONE:
+	// 조건이 없으면 통과
+	if (transition.Conditions.empty())
 		return true;
 
-	case CONDITION_ANIMATION_END:
-		return m_pCurrentState && m_pCurrentState->Is_AnimEnd();
-
-	case CONDITION_TIME_GREATER:
-		return m_fStateTime > transition.fTimer;
-
-	case CONDITION_TIME_LESS:
-		return m_fStateTime < transition.fTimer;
-
-	case CONDITION_BOOL_TRUE:
-		return Get_Bool(transition.strParameter);
-
-	case CONDITION_BOOL_FALSE:
-		return !Get_Bool(transition.strParameter);
-
-	case CONDITION_TRIGGER:
-		return Get_Trigger(transition.strParameter);
+	// 모든 조건 충족 확인 (AND)
+	for (auto& condition : transition.Conditions)
+	{
+		if (!Evaluate_SingleCondition(condition))
+			return false;
 	}
 
-	return false;
+	return true;
 }
 
+#pragma region RENDER
 template<typename Type>
 void CStateMachine<Type>::Render_Info()
 {
@@ -518,7 +564,7 @@ void CStateMachine<Type>::Render_Transition()
 			continue;
 
 		_bool bConditionMet = Evaluate_Condition(transition);
-		_bool bExitTimeMet = !transition.bExitTime ||
+		_bool bExitTimeMet = !transition.bExit ||
 			(m_pCurrentState->Get_AnimProgress() >= transition.fExitTime);
 		_bool bCanTransit = bConditionMet && bExitTimeMet;
 
@@ -529,7 +575,7 @@ void CStateMachine<Type>::Render_Transition()
 		ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.7f, 1.f),
 			"[%s]", Get_Condition(transition).c_str());
 
-		if (transition.bExitTime)
+		if (transition.bExit)
 		{
 			ImGui::SameLine();
 			ImGui::Text("(Exit: %.0f%%/%.0f%%)",
@@ -740,44 +786,94 @@ void CStateMachine<Type>::Draw_Arrow(ImDrawList* pDrawList, ImVec2 vFrom, ImVec2
 			color);
 	}
 }
+#pragma endregion
 
 template<typename Type>
 string CStateMachine<Type>::Get_Condition(const TRANSITION_INFO& transition)
 {
-	switch (transition.eCondition)
+	if (transition.Conditions.empty())
+		return "None";
+
+	string strResult = "";
+	for (size_t i = 0; i < transition.Conditions.size(); ++i)
 	{
-	case CONDITION_NONE:          return "None";
-	case CONDITION_ANIMATION_END: return "AnimEnd";
-	case CONDITION_TIME_GREATER:  return "Time > " + to_string(transition.fTimer);
-	case CONDITION_TIME_LESS:     return "Time < " + to_string(transition.fTimer);
-	case CONDITION_BOOL_TRUE:     return transition.strParameter + " == true";
-	case CONDITION_BOOL_FALSE:    return transition.strParameter + " == false";
-	case CONDITION_TRIGGER:       return "Trigger: " + transition.strParameter;
+		auto& cond = transition.Conditions[i];
+
+		switch (cond.eCondition)
+		{
+		case CONDITION_NONE:
+			strResult += "None";
+			break;
+		case CONDITION_ANIMATION_END:
+			strResult += "AnimEnd";
+			break;
+		case CONDITION_TIME_GREATER:
+			strResult += "Time > " + to_string(cond.fTimer);
+			break;
+		case CONDITION_TIME_LESS:
+			strResult += "Time < " + to_string(cond.fTimer);
+			break;
+		case CONDITION_BOOL_TRUE:
+			strResult += cond.strParameter + " == true";
+			break;
+		case CONDITION_BOOL_FALSE:
+			strResult += cond.strParameter + " == false";
+			break;
+		case CONDITION_TRIGGER:
+			strResult += "Trigger: " + cond.strParameter;
+			break;
+		}
+
+		if (i < transition.Conditions.size() - 1)
+			strResult += " && ";
 	}
-	return "Unknown";
+
+	return strResult;
+}
+
+template<typename Type>
+_bool CStateMachine<Type>::Evaluate_SingleCondition(const CONDITION_INFO& condition)
+{
+	switch (condition.eCondition)
+	{
+	case CONDITION_NONE:
+		return true;
+
+	case CONDITION_ANIMATION_END:
+		return m_pCurrentState && m_pCurrentState->Is_AnimEnd();
+
+	case CONDITION_TIME_GREATER:
+		return m_fStateTime > condition.fTimer;
+
+	case CONDITION_TIME_LESS:
+		return m_fStateTime < condition.fTimer;
+
+	case CONDITION_BOOL_TRUE:
+		return Get_Bool(condition.strParameter);
+
+	case CONDITION_BOOL_FALSE:
+		return !Get_Bool(condition.strParameter);
+
+	case CONDITION_TRIGGER:
+		return Get_Trigger(condition.strParameter);
+	}
+
+	return false;
 }
 
 template<typename Type>
 _bool CStateMachine<Type>::Evaluate_Condition(const TRANSITION_INFO& transition)
 {
-	switch (transition.eCondition)
-	{
-	case CONDITION_NONE:
+	if (transition.Conditions.empty())
 		return true;
-	case CONDITION_ANIMATION_END:
-		return m_pCurrentState && m_pCurrentState->Is_AnimEnd();
-	case CONDITION_TIME_GREATER:
-		return m_fStateTime > transition.fTimer;
-	case CONDITION_TIME_LESS:
-		return m_fStateTime < transition.fTimer;
-	case CONDITION_BOOL_TRUE:
-		return Get_Bool(transition.strParameter);
-	case CONDITION_BOOL_FALSE:
-		return !Get_Bool(transition.strParameter);
-	case CONDITION_TRIGGER:
-		return Get_Trigger(transition.strParameter);
+
+	for (auto& condition : transition.Conditions)
+	{
+		if (!Evaluate_SingleCondition(condition))
+			return false;
 	}
-	return false;
+
+	return true;
 }
 
 template<typename Type>
