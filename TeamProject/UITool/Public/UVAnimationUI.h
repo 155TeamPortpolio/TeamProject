@@ -30,8 +30,7 @@ private:
 	_float2		m_vUVOffsetSpeed = {};
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-	_int		m_iMaskTextureKeyIndex = { 0 };	// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+	_int		m_iTextureKeyIndex = { 0 };	
 
 public:
 	static const string m_strTypeTag;

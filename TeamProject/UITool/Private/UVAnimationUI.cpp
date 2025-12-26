@@ -76,23 +76,6 @@ void CUVAnimationUI::Render_GUI()
     // UV 애니메이션
     ImGui::SeparatorText(u8"UV 애니메이션");
     ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
-
-    // 마스크 텍스쳐
-    ImGui::SeparatorText(u8"마스크 이미지");
-    if (ImGui::Checkbox(u8"사용", &m_isUseMask))
-    {
-        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) });
-        CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
-        Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
-    } 
-    ImGui::BeginDisabled(!m_isUseMask);
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
-    if (ImGui::Combo(u8"이미지##마스크", &m_iMaskTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-    {
-        CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
-        Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
-    } 
-    ImGui::EndDisabled();
 }
 
 void CUVAnimationUI::SavePrefab(json& data)
@@ -103,9 +86,6 @@ void CUVAnimationUI::SavePrefab(json& data)
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
-
-    if (m_isUseMask)
-        data["mask"]["textureTag"] = szTextureKeys[m_iMaskTextureKeyIndex];
 
     data["uvOffsetSpeed"]["x"] = m_vUVOffsetSpeed.x;
     data["uvOffsetSpeed"]["y"] = m_vUVOffsetSpeed.y;
@@ -119,19 +99,6 @@ void CUVAnimationUI::LoadPrefab(const json& data)
     m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
-
-    if (data.contains("mask"))
-    {
-        m_isUseMask = true;
-        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) });
-
-        m_iMaskTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["mask"]["textureTag"]);
-        if (-1 != m_iMaskTextureKeyIndex)
-        {
-            CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
-            Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
-        }
-    }
 
     m_vUVOffsetSpeed.x = data["uvOffsetSpeed"]["x"].get<_float>();
     m_vUVOffsetSpeed.y = data["uvOffsetSpeed"]["y"].get<_float>();
