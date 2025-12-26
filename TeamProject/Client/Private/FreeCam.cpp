@@ -18,9 +18,9 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
     desc.fLightRange     = {};
     desc.fLightIntensity = 1.f;
     desc.vLightDirection = {0.0f, -1.0f, 1.0f, 0.0f};
-    desc.vLightDiffuse   = {1.0f, 1.0f, 1.0f, 1.0f};
-    desc.vLightAmbient   = {0.6f, 0.6f, 0.6f, 1.0f};
-    desc.vLightSpecular  = {1.0f, 1.0f, 1.0f, 1.0f};
+    desc.vLightDiffuse   = {1.0f,  1.0f, 1.0f, 1.0f};
+    desc.vLightAmbient   = {0.6f,  0.6f, 0.6f, 1.0f};
+    desc.vLightSpecular  = {1.0f,  1.0f, 1.0f, 1.0f};
     Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
     SyncRotation();
     return S_OK;
