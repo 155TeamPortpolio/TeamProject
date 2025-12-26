@@ -158,4 +158,11 @@ void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex]);
 }
+void CMiyabiState_Attack_End::Update(CMiyabi* pOwner, _float dt)
+{
+    if (pOwner->Is_Move())
+    {
+        m_fAnimProgress = 1.f;
+    }
+}
 #pragma endregion

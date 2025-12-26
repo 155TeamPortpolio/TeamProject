@@ -186,6 +186,9 @@ HRESULT CMiyabi::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
+	m_pStateMachine->Register_Transition("Attack", "Walk",
+		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
+
 	return S_OK;
 }
 
