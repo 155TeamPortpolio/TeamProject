@@ -31,31 +31,14 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
             CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
         // ExitTime + Trigger 조건으로 콤보 연결
-        CStateMachine<CMiyabi>::TRANSITION_INFO trans;
-        trans.eCondition = CStateMachine<CMiyabi>::CONDITION_TRIGGER;
-        trans.strParameter = "Attack";
-        trans.bExitTime = true;
-        trans.fExitTime = 0.5f;
+        vector<CStateMachine<CMiyabi>::CONDITION_INFO> comboConditions;
+        comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack", 0.f });
 
-        trans.strFromState = "Attack_01";
-        trans.strToState = "Attack_02";
-        m_pSubStateMachine->Register_Transition(trans);
-
-        trans.strFromState = "Attack_02";
-        trans.strToState = "Attack_03";
-        m_pSubStateMachine->Register_Transition(trans);
-
-        trans.strFromState = "Attack_03";
-        trans.strToState = "Attack_04";
-        m_pSubStateMachine->Register_Transition(trans);
-
-        trans.strFromState = "Attack_04";
-        trans.strToState = "Attack_05";
-        m_pSubStateMachine->Register_Transition(trans);
-
-        trans.strFromState = "Attack_05";
-        trans.strToState = "Attack_06";
-        m_pSubStateMachine->Register_Transition(trans);
+        m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions, true, 0.5f);
+        m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions, true, 0.5f);
+        m_pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions, true, 0.5f);
+        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions, true, 0.5f);
+        m_pSubStateMachine->Register_Transition("Attack_05", "Attack_06", comboConditions, true, 0.5f);
 
         m_pSubStateMachine->Set_DefaultState("Attack_01");
     }
