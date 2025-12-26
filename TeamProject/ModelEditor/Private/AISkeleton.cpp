@@ -105,6 +105,22 @@ void CAISkeleton::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	}
 }
 
+void CAISkeleton::Rake_BoneInfo(BONE_DATA_HEADER* pHeader)
+{
+	pHeader->BoneInfos.reserve(m_Bones.size());
+
+	for (size_t i = 0; i < m_OffsetMatrices.size(); i++)
+	{
+		BONE_INFO boneinfo = {};
+
+		boneinfo.Index = i;
+		boneinfo.BoneOffsetMatrix = m_Bones[i]->Get_TransformationMatrix();
+		boneinfo.TagBone = m_Bones[i]->Get_Name();
+
+		pHeader->BoneInfos.push_back(boneinfo);
+	}
+}
+
 CAISkeleton* CAISkeleton::Create(const aiNode* _pAINode)
 {
 	CAISkeleton* pInstance = new CAISkeleton();

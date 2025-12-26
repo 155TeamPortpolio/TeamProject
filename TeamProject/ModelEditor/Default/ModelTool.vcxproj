@@ -53,6 +53,7 @@
     <ClInclude Include="..\public\AI_SKModel.h" />
     <ClInclude Include="..\Public\AI_STModel.h" />
     <ClInclude Include="..\Public\Assimps.h" />
+    <ClInclude Include="..\Public\BinaryModel.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\Public\EditCamera.h" />
     <ClInclude Include="..\Public\EditorPanel.h">
@@ -65,6 +66,7 @@
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MapParseLevel.h" />
     <ClInclude Include="..\Public\ModelEditLevel.h" />
+    <ClInclude Include="..\Public\ModelEditor_BoneData.h" />
     <ClInclude Include="..\Public\ModelEditor_Defines.h" />
     <ClInclude Include="..\Public\ModelHelper.h" />
     <ClInclude Include="..\Public\pch.h" />
@@ -99,6 +101,7 @@
     <ClCompile Include="..\Private\AI_Material.cpp" />
     <ClCompile Include="..\private\AI_SKModel.cpp" />
     <ClCompile Include="..\Private\AI_STModel.cpp" />
+    <ClCompile Include="..\Private\BinaryModel.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\Private\EditCamera.cpp" />
     <ClCompile Include="..\Private\EditModel.cpp" />

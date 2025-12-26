@@ -173,8 +173,8 @@ HRESULT CAI_SKModel::Save_Model(const string& SavePath, _fmatrix WorldMatrix)
 HRESULT CAI_SKModel::Ready_AIModelData(const aiScene* pAIScene)
 {
 	_uint meshNum = pAIScene->mNumMeshes;
-	m_DrawableMeshes.resize(meshNum, true);	
 	m_pData = CAIModelData::Create(MESH_TYPE::ANIM, pAIScene);
+	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 
 	if (nullptr == m_pData)
 		return E_FAIL;
