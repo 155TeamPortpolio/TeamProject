@@ -6,7 +6,7 @@
 #include "IRenderService.h"
 #include "Sprite2D.h"
 #include "Child.h"
-
+#include "ObjectContainer.h"
 CUI_Object::CUI_Object()
 {
 }
@@ -92,9 +92,8 @@ void CUI_Object::Post_EngineUpdate(_float dt)
             CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
     }
 
-    for (auto& child : Get_Children()) {
-        if (child)
-            child->Post_EngineUpdate(dt);
+    if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+        pObjContainer->Post_EngineUpdateChild(dt);
     }
 }
 

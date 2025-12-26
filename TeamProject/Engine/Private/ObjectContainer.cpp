@@ -225,32 +225,52 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	return static_cast<int>(ObjectIndex);
 }
 
-void CObjectContainer::Destroy_Child(_uint ChildIndex)
+void CObjectContainer::Destroy_Child(_uint childIndex)
 {
-	if (m_ChildrenObjects.size() <= ChildIndex)
+	if (m_ChildrenObjects.size() <= childIndex)
 		return;
 
-	CGameObject* target = m_ChildrenObjects[ChildIndex];
+	CGameObject* targetObject = m_ChildrenObjects[childIndex];
+	if (targetObject == nullptr)
+		return;
 
-	auto nameIter = m_ChildrensName.find(target->Get_ObjectID());
-	m_ChildrensName.erase(nameIter);
-	auto IndexIter = m_IndexByID.find(target->Get_ObjectID());
-	m_IndexByID.erase(IndexIter);
+	const _uint objectId = targetObject->Get_ObjectID();
 
-	m_ChildrenObjects[ChildIndex] = nullptr;
+	auto orderIndexIter = m_OrderIndexByID.find(objectId);
+	if (orderIndexIter != m_OrderIndexByID.end())
+	{
+		const _uint orderIndex = orderIndexIter->second;
+		if (orderIndex < m_UpdateOrder.size())
+			m_UpdateOrder[orderIndex] = 0;
 
-	CUI_Object* uiCast = dynamic_cast<CUI_Object*>(target);
-	_bool isUI = (uiCast != nullptr);
-
-	if (isUI) {
-		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiCast);
-		Safe_Release(uiCast);
+		m_OrderIndexByID.erase(orderIndexIter);
 	}
-	else {
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(target);
-		Safe_Release(target);
+
+	auto nameIter = m_ChildrensName.find(objectId);
+	if (nameIter != m_ChildrensName.end())
+		m_ChildrensName.erase(nameIter);
+
+	auto indexIter = m_IndexByID.find(objectId);
+	if (indexIter != m_IndexByID.end())
+		m_IndexByID.erase(indexIter);
+
+	m_ChildrenObjects[childIndex] = nullptr;
+
+	CUI_Object* uiObject = dynamic_cast<CUI_Object*>(targetObject);
+	const _bool isUIObject = (uiObject != nullptr);
+
+	if (isUIObject)
+	{
+		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiObject);
+		Safe_Release(uiObject); 
+	}
+	else
+	{
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(targetObject);
+		Safe_Release(targetObject);
 	}
 }
+
 
 void CObjectContainer::Dettach_Child(_uint ChildIndex)
 {
