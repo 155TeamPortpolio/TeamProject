@@ -18,8 +18,6 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 
-vector<string> CUITool_Level::m_strTextureKeys;
-vector<const _char*> CUITool_Level::m_szTextureKeys;
 vector<string> CUITool_Level::m_strFontKeys;
 vector<const _char*> CUITool_Level::m_szFontKeys;
 

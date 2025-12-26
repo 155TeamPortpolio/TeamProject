@@ -65,9 +65,9 @@ void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ï¿½Ø½ï¿½ï¿½ï¿½
-    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
-    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
+    // ÅØ½ºÃÄ
+    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
+    if (ImGui::Button(u8"¼±ÅÃ"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -80,9 +80,9 @@ void CGaugeUI::Render_GUI()
         }
     }
 
-    ImGui::SeparatorText(u8"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
-    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
-    if (ImGui::Checkbox(u8"ï¿½ï¿½ï¿½ï¿½", &m_isRadial))
+    // °ÔÀÌÁö
+    ImGui::SeparatorText(u8"°ÔÀÌÁö?"); 
+    if (ImGui::Checkbox(u8"¿øÇü", &m_isRadial))
     {
         if (m_isRadial)
             Get_Component<CSprite2D>()->ChangePass("RadialFill");
@@ -90,10 +90,10 @@ void CGaugeUI::Render_GUI()
             Get_Component<CSprite2D>()->ChangePass("LinearFill");
     }
 
-    if(ImGui::DragFloat(u8"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    if(ImGui::DragFloat(u8"Ã¤¿ò Á¤µµ", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 
-    if (ImGui::DragFloat(u8"ï¿½ï¿½ï¿½ï¿½ (0 ï¿½Ç´ï¿½ 1)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
+    if (ImGui::DragFloat(u8"¹æÇâ (0 - ¿ÞÂÊ / 1 - ¿À¸¥ÂÊ)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
 }
 
@@ -103,7 +103,7 @@ void CGaugeUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data["textureTag"] = m_strTextureKey;
+    data.strTextureTag = m_strTextureKey;
 
     data.isRadial = m_isRadial;
     data.fDirection = m_fDirection;
@@ -114,7 +114,7 @@ void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data["textureTag"];
+    m_strTextureKey = data.strTextureTag;
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     m_isRadial = data.isRadial;

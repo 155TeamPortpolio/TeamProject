@@ -143,7 +143,7 @@ void CSpriteAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data["textureTag"] = m_strTextureKey;
+    data.strTextureTag = m_strTextureKey;
 
     data.isLoop = m_isLoop;
     data.iFrameCountX = m_iFrameCountX;
@@ -156,7 +156,7 @@ void CSpriteAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data["textureTag"];
+    m_strTextureKey = data.strTextureTag;
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     m_isLoop = data.isLoop;

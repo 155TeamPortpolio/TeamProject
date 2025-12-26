@@ -59,9 +59,9 @@ void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ï¿½Ø½ï¿½ï¿½ï¿½
-    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
-    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
+    // ÅØ½ºÃÄ
+    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
+    if (ImGui::Button(u8"¼±ÅÃ"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -81,14 +81,14 @@ void CImageUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data["textureTag"] = m_strTextureKey;
+    data.strTextureTag = m_strTextureKey;
 }
 
 void CImageUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data["textureTag"];
+    m_strTextureKey = data.strTextureTag;
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 }
 

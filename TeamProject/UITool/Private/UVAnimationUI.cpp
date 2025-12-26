@@ -63,9 +63,9 @@ void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ï¿½Ø½ï¿½ï¿½ï¿½
-    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
-    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
+    // ÅØ½ºÃÄ
+    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
+    if (ImGui::Button(u8"¼±ÅÃ"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -78,9 +78,9 @@ void CUVAnimationUI::Render_GUI()
         }
     }
 
-    // UV ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
-    ImGui::SeparatorText(u8"UV ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½");
-    ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
+    // UV ¾Ö´Ï¸ÞÀÌ¼Ç
+    ImGui::SeparatorText(u8"UV¾Ö´Ï¸ÞÀÌ¼Ç");
+    ImGui::DragFloat2(u8"¼Óµµ", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 }
 
 void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
@@ -89,20 +89,18 @@ void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data["textureTag"] = m_strTextureKey;
-
-    // ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    data.strTextureTag = m_strTextureKey;
 }
 
 void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data["textureTag"];
+    m_strTextureKey = data.strTextureTag;
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
-    m_vUVOffsetSpeed.x = data["uvOffsetSpeed"]["x"].get<_float>();
-    m_vUVOffsetSpeed.y = data["uvOffsetSpeed"]["y"].get<_float>();
+    m_vUVOffsetSpeed.x = data.vUVOffsetSpeed[0];
+    m_vUVOffsetSpeed.y = data.vUVOffsetSpeed[1];
 }
 
 CGameObject* CUVAnimationUI::Create()
