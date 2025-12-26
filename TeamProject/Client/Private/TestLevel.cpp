@@ -148,8 +148,6 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
-	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
-
 	if (KEY->Key_Down('1'))
 	{
 		m_pCamDirector->StopAll(0.25f);
@@ -165,7 +163,12 @@ void CTestLevel::Update()
 	}
 
 	if (KEY->Key_Down('3'))
+	{
+		m_pCamDirector->StopAll(0.25f);
 		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
+	}
+
+	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 }
 
 void CTestLevel::Ready_Camera()

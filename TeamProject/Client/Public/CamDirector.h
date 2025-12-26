@@ -48,9 +48,9 @@ private:
         string key{};
         _bool  active = false;
 
-        _bool  pendingStart = false;
-        _float blendInRemain = 0.f;
-        _bool  resetTimeOnStart = true;
+        _bool  pendingStart       = false;
+        _float blendInRemain      = 0.f;
+        _bool  resetTimeOnStart   = true;
         _float defaultBlendOutSec = 0.25f;
     };
 
@@ -63,7 +63,6 @@ private:
     PlayingState                    m_playing{};
     OBJECT_HANDLE                   m_seqHandle{};
     OBJECT_HANDLE                   m_spaceRefHandle{};
-
     OBJECT_HANDLE                   m_returnCamHandle{};
     CamReturnType                   m_returnCamType = CamReturnType::None;
 };

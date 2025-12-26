@@ -98,13 +98,13 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
     const _uint handle = CAM->Push(camComp, blendInSec);
 
-    m_playing.handle = handle;
-    m_playing.key = key;
-    m_playing.active = true;
+    m_playing.handle             = handle;
+    m_playing.key                = key;
+    m_playing.active             = true;
     m_playing.defaultBlendOutSec = blendOutSec;
-    m_playing.pendingStart = (blendInSec > 0.f);
-    m_playing.blendInRemain = blendInSec;
-    m_playing.resetTimeOnStart = resetTime;
+    m_playing.pendingStart       = (blendInSec > 0.f);
+    m_playing.blendInRemain      = blendInSec;
+    m_playing.resetTimeOnStart   = resetTime;
 
     if (m_playing.pendingStart)
         seqPlayer->Pause();
@@ -146,6 +146,10 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         if (m_returnCamType == CamReturnType::FreeCam)
         {
             auto returnTf = returnObj->Get_Component<CTransform>();
+
+            auto seqTf = sequenceCam->Get_Component<CTransform>();
+            const Matrix seqWorld = seqTf->Get_WorldMatrix();
+
             returnTf->TranslateMatrix(seqWorld);
 
             auto freeCam = static_cast<CFreeCam*>(returnObj);
