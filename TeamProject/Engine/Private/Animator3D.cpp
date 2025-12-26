@@ -351,8 +351,14 @@ void CAnimator3D::Set_StartBone(_int StartBoneIndex, _uint LayerIndex)
 	m_pData->Get_AffectBoneIndices(
 		m_AnimLayers[LayerIndex].AffectedBonesIndices,
 		m_AnimLayers[LayerIndex].iStartBoneIndex);
+}
 
-	int a;
+void CAnimator3D::Reset_StartBone(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].iStartBoneIndex = -1;
+	m_AnimLayers[LayerIndex].AffectedBonesIndices.clear();
 }
 
 void CAnimator3D::Set_TPose()
@@ -837,7 +843,7 @@ HRESULT SetAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	m_pOwner->Reset_Layer(m_iLayerIndex);
+	//m_pOwner->Reset_Layer(m_iLayerIndex);
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
 	Layer.iClipIndex = m_iClipIndex;

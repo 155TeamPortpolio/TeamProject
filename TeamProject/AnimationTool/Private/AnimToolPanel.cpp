@@ -7,6 +7,7 @@
 #include "AnimationLayout.h"
 #include "Channel.h"
 
+
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
 	, m_pGameInstance{ CGameInstance::GetInstance() }
@@ -24,22 +25,20 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		Reset_Panel();
 	}
 	
-	if (nullptr == m_pSelectAnimator)
-		return;
-
-	if (!m_bPause) {
-		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
-		
-		if (m_fDuration <= m_fTrackPos) {
-			if (m_bLoop)
-				m_fTrackPos = 0.f;
-			else
-				m_bPause = true;
-		}
+	if (nullptr != m_pSelectAnimator) {
+		float fPause = 1.f;
+		if (m_bPause) fPause = 0.f;
+		m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
 	}
 
-	if(!m_bPause)
-		m_pSelectAnimator->Update_Animation(m_fTrackPos);
+	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
+		if (nullptr != m_pSelectAnimator) {
+			m_pSelectAnimator->Resize_Layer(2);
+			m_pSelectAnimator->Set_StartBone(23, 1);
+			m_pSelectAnimator->Set_Animation(1, 5).
+				Loop(true);
+		}
+	}
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -53,33 +52,35 @@ void CAnimToolPanel::Render_GUI()
 	{
 		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
-		
-		static bool b = true;
+
+		// 현재 프레임에서 활성화된 패널
+		PANELTYPE CurPanelType = m_ePanelType;
+
 		if (ImGui::BeginTabItem("Setting Clip"))
 		{
+			CurPanelType = PANELTYPE::CLIP;
 			GUI_Setting_Clips(childHeight);
-
-			if (true == b) {
-				if (m_pSelectAnimator) m_pSelectAnimator->Set_TPose();
-				b = false;
-			}
 			ImGui::EndTabItem();
 		}
 
-		if (ImGui::BeginTabItem("Preview Animation")) {
-			GUI_Prev_Animation(childHeight);
-			
-			if (false == b) {
-				if (m_pSelectAnimator) m_pSelectAnimator->Set_TPose();
-				b = true;
-			}
+		if (ImGui::BeginTabItem("Preview Animation"))
+		{
+			CurPanelType = PANELTYPE::PREVIEW;
+			GUI_Preview(childHeight);
 			ImGui::EndTabItem();
 		}
 
 		if (ImGui::BeginTabItem("Create Meta"))
 		{
+			CurPanelType = PANELTYPE::RESOURCE;
 			GUI_Create_MetaData(childHeight);
 			ImGui::EndTabItem();
+		}
+
+		if (CurPanelType != m_ePanelType)
+		{
+			m_bPause = true;
+			m_ePanelType = CurPanelType;
 		}
 
 		ImGui::EndTabBar();
@@ -128,14 +129,12 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					//새로운 클립을 눌렀다면
 					m_CurClipTag = ClipTag;
 					m_iCurClipIndex = iIndex;
-					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
+					m_pSelectAnimator->Set_Animation(0, iIndex)
+						.Loop(m_bLoop);
 					
 					//디버그용 레이어에 데이터넣기
-					m_pSelectAnimator->Get_AnimLayers()[0].iClipIndex = iIndex;
-
-					//가져온 애니매이션의 duration 가져옴
+					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
 					m_fTrackPos = 0.f;					
-					m_pSelectAnimator->Set_Animation(0, iIndex);
 					m_fTickPerSec = Clip->Get_TickPerSec();
 					m_fDuration = Clip->Get_Duration();
 				}
@@ -189,6 +188,7 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	ImGui::SameLine();
 	if (ImGui::Button("Reset##StartBone", { 55.f, 0.f }))
 	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_StartBone();
 	}
 
 	//Extract Bone
@@ -221,7 +221,6 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	/* 버튼 */
 
 	if (ImGui::Button(m_bPause ? "Play" : "Pause", buttonSize)) {
-		if (m_pSelectAnimator) m_pSelectAnimator->Get_AnimLayers()[0].eLayerType = ANIM_LAYER_STATE::OVERRIDE;
 		m_bPause = !m_bPause;
 	}
 	ImGui::SameLine();
@@ -229,6 +228,7 @@ void CAnimToolPanel::Draw_ToolbarUI()
 	{
 		m_bPause = true;
 		m_fTrackPos = 0.f;
+		if (m_pSelectAnimator) m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = 0.f;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Snap", buttonSize))
@@ -274,7 +274,13 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 
 	//재생 바 UI
+	if (m_pSelectAnimator)
+		m_fTrackPos = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
+
 	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
+	
+	if (m_pSelectAnimator)
+		m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = m_fTrackPos;
 
 	//저장버튼
 	ImGui::SameLine();
@@ -425,191 +431,9 @@ void CAnimToolPanel::Draw_EventListUI()
 	ImGui::EndTable();
 }
 
-void CAnimToolPanel::GUI_Prev_Animation(_float fChildHeight)
+void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 {
-	// =========================================================
-	// [0] 기본 상태 / 재생 상태 (GUI 전용)
-	// =========================================================
-	static bool  bPlay = false;
-	static float PlayTime = 0.f;
-
-	bool hasAnimator = (m_pSelectAnimator != nullptr);
-
-	ImGui::Text("Animation Sequence");
-
-	// =========================================================
-	// [1] 컨트롤 바 : Play / Stop / Time
-	// =========================================================
-	if (ImGui::Button(bPlay ? "Stop" : "Play"))
-	{
-		bPlay = !bPlay;
-		if (!bPlay)
-			PlayTime = 0.f;
-	}
-
-	ImGui::SameLine();
-	ImGui::Text("Time : %.2f", PlayTime);
-
-	// =========================================================
-	// [2] 시퀀스 추가 / 초기화
-	// =========================================================
-	if (ImGui::Button("Add Clip"))
-	{
-		SEQ_SEGMENT seg{};
-		seg.ClipIndex = (hasAnimator ? m_iCurClipIndex : -1);
-		seg.Duration =
-			(hasAnimator && m_iCurClipIndex != -1)
-			? m_pSelectAnimator->Get_Clips()
-			->at(m_iCurClipIndex)->Get_Duration()
-			: 1.f;
-
-		seg.BlendTime = 0.f; // 현재 GUI에서는 사용 안 함
-		m_Sequence.push_back(seg);
-	}
-
-	ImGui::SameLine();
-
-	if (ImGui::Button("Clear"))
-	{
-		m_Sequence.clear();
-		m_iSelectSegment = -1;
-		PlayTime = 0.f;
-	}
-
-	ImGui::Separator();
-
-	// =========================================================
-	// [3] 전체 시퀀스 시간 계산 (Clip 기준)
-	// =========================================================
-	float totalTime = 0.f;
-	for (auto& s : m_Sequence)
-		totalTime += max(0.001f, s.Duration);
-
-	if (totalTime <= 0.f)
-		totalTime = 1.f;
-
-	// =========================================================
-	// [4] 재생 시간 업데이트 (GUI 미리보기용)
-	// =========================================================
-	if (bPlay && !m_Sequence.empty())
-	{
-		PlayTime += ImGui::GetIO().DeltaTime;
-		if (PlayTime > totalTime)
-			PlayTime = fmodf(PlayTime, totalTime);
-	}
-
-	// =========================================================
-	// [5] 타임라인 렌더링 (Clip 단위 + 경계선)
-	// =========================================================
-	ImVec2 barSize = { ImGui::GetContentRegionAvail().x, 34.f };
-	ImDrawList* draw = ImGui::GetWindowDrawList();
-	ImVec2 start = ImGui::GetCursorScreenPos();
-
-	// 배경
-	draw->AddRectFilled(
-		start,
-		{ start.x + barSize.x, start.y + barSize.y },
-		IM_COL32(45, 45, 45, 255));
-
-	float cursorX = start.x;
-
-	for (int i = 0; i < m_Sequence.size(); ++i)
-	{
-		auto& seg = m_Sequence[i];
-
-		float clipT = max(0.001f, seg.Duration);
-		float clipW = (clipT / totalTime) * barSize.x;
-
-		// 클립 박스
-		ImU32 clipCol =
-			(m_iSelectSegment == i)
-			? IM_COL32(90, 160, 255, 255)
-			: IM_COL32(90, 90, 90, 255);
-
-		draw->AddRectFilled(
-			{ cursorX, start.y },
-			{ cursorX + clipW, start.y + barSize.y },
-			clipCol);
-
-		// 클립 시작 경계선
-		draw->AddLine(
-			{ cursorX, start.y },
-			{ cursorX, start.y + barSize.y },
-			IM_COL32(20, 20, 20, 255),
-			2.f);
-
-		// 클립 이름
-		const char* label = "Empty";
-		if (hasAnimator && seg.ClipIndex != -1)
-		{
-			label = m_pSelectAnimator->Get_Clips()
-				->at(seg.ClipIndex)->Get_Name().c_str();
-		}
-
-		draw->AddText(
-			{ cursorX + 4.f, start.y + 9.f },
-			IM_COL32_WHITE,
-			label);
-
-		// 선택 처리
-		ImGui::SetCursorScreenPos({ cursorX, start.y });
-		ImGui::InvisibleButton(
-			("##SeqClip" + std::to_string(i)).c_str(),
-			{ clipW, barSize.y });
-
-		if (ImGui::IsItemClicked())
-			m_iSelectSegment = i;
-
-		cursorX += clipW;
-	}
-
-	// 마지막 끝 경계선
-	draw->AddLine(
-		{ cursorX, start.y },
-		{ cursorX, start.y + barSize.y },
-		IM_COL32(20, 20, 20, 255),
-		2.f);
-
-	// =========================================================
-	// [6] 플레이 헤드 (현재 재생 위치)
-	// =========================================================
-	if (!m_Sequence.empty())
-	{
-		float playRatio = PlayTime / totalTime;
-		float playX = start.x + playRatio * barSize.x;
-
-		draw->AddLine(
-			{ playX, start.y },
-			{ playX, start.y + barSize.y },
-			IM_COL32(255, 80, 80, 255),
-			2.f);
-	}
-
-	ImGui::Dummy(barSize);
-
-	ImGui::Separator();
-
-	// =========================================================
-	// [7] 선택된 세그먼트 인스펙터 (이벤트 느낌)
-	// =========================================================
-	if (m_iSelectSegment >= 0 &&
-		m_iSelectSegment < (int)m_Sequence.size())
-	{
-		auto& seg = m_Sequence[m_iSelectSegment];
-
-		ImGui::Text("Segment Property");
-
-		if (hasAnimator && seg.ClipIndex != -1)
-			ImGui::Text("Clip : %s",
-				m_pSelectAnimator->Get_Clips()
-				->at(seg.ClipIndex)->Get_Name().c_str());
-		else
-			ImGui::Text("Clip : (Empty)");
-
-		ImGui::DragFloat("Duration", &seg.Duration, 0.01f, 0.01f, 20.f);
-	}
 }
-
 
 void CAnimToolPanel::GUI_Setting_Effect(_float fChildHeight)
 {
