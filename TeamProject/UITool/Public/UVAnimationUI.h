@@ -28,7 +28,7 @@ private:
 	_float2		m_vUVOffsetSpeed = {};
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };	
+	string		m_strTextureKey = {};
 
 public:
 	static const string m_strTypeTag;

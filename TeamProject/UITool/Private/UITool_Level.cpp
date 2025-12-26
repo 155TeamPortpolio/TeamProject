@@ -70,26 +70,9 @@ void CUITool_Level::PreLoad_Level()
 HRESULT CUITool_Level::Ready_Textures()
 { 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/UI/"))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".png" ||
-			entry.is_regular_file() && entry.path().extension() == ".jpg" ||
-			entry.is_regular_file() && entry.path().extension() == ".dds")
-		{
-			filesystem::path filePath = entry.path();	
-
-			if (FAILED(pResourceMgr->Add_ResourcePath(filePath.filename().string(), filePath.string())))
-				break;
-
-			if(filePath.filename().string() != "PanelBox.dds")
-				m_strTextureKeys.push_back(filePath.filename().string());
-		}
-	}
-
-	for (const auto& Key : m_strTextureKeys)
-		m_szTextureKeys.push_back(Key.c_str());
 
 	pResourceMgr->Add_ResourcePath("empty.png", "../Bin/Resources/UI/empty.png");
+	pResourceMgr->Add_ResourcePath("canvas.png", "../Bin/Resources/UI/canvas.png");
 
 	return S_OK;
 }
