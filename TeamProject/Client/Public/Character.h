@@ -15,7 +15,7 @@ class CStateMachine;
 class CCharacter abstract : public CGameObject
 {
 protected:
-    CCharacter();
+    CCharacter() {}
     CCharacter(const CCharacter& rhs);
     virtual ~CCharacter() DEFAULT;
 
@@ -64,7 +64,7 @@ protected:
     _float   m_fCurrentEnergy = { 0.f };
     _float   m_fAttackPower = { 10.f };
     _float   m_fDefense = { 5.f };
-    _float   m_fMoveSpeed = { 0.1f };
+    _float   m_fMoveSpeed = { 1.f };
     _vector3 m_vInputDir = {};
     // 상태 플래그
     _bool  m_bIsMove = { false };

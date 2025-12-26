@@ -28,7 +28,7 @@ public:
 
 public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
-
+	virtual void SetRimLightMode(RIMLIGHT eMode) override;
 public:
 	virtual _bool GetOn() const  override{ return IsOn; }
 	virtual void SetOn(_bool On) override { IsOn = On; }

@@ -1,6 +1,45 @@
 #include "Shader_Define.hlsl"
 
 float4x4 g_worldMatrix;
+BlendState BS_OITAccmulation
+{
+    /* Diffuse Effect */
+    BlendEnable[0] = true;
+    SrcBlend[0] = One;
+    DestBlend[0] = One;
+    BlendOp[0] = Add;
+    SrcBlendAlpha[0] = One;
+    DestBlendAlpha[0] = One;
+    BlendOpAlpha[0] = Add;
+
+    /* Bloom Effect */
+    BlendEnable[1] = true;
+    SrcBlend[1] = One;
+    DestBlend[1] = One;
+    BlendOp[1] = Add;
+    SrcBlendAlpha[1] = One;
+    DestBlendAlpha[1] = One;
+    BlendOpAlpha[1] = Add;
+
+    /* Bloom Info */
+    BlendEnable[2] = true;
+    SrcBlend[2] = One;
+    DestBlend[2] = One;
+    BlendOp[2] = Add;
+    SrcBlendAlpha[2] = One;
+    DestBlendAlpha[2] = One;
+    BlendOpAlpha[2] = Add;
+
+    /* Revealage */
+    BlendEnable[3] = true;
+    SrcBlend[3] = Zero;
+    DestBlend[3] = Inv_Src_Alpha;
+    BlendOp[3] = Add;
+    SrcBlendAlpha[3] = Zero;
+    DestBlendAlpha[3] = Inv_Src_Alpha;
+    BlendOpAlpha[3] = Add;
+};
+
 
 float Progress;
 
@@ -68,6 +107,7 @@ struct VS_OUT
     float4 vProjPos : TEXCOORD1;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+    float4 vViewPosition : TEXCOORD2;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -86,6 +126,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
+    Out.vViewPosition = viewPos;
    
     return Out;
 }
@@ -98,13 +139,15 @@ struct PS_IN
     float4 vProjPos : TEXCOORD1;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
+    float4 vViewPosition : TEXCOORD2;
 };
 
 struct PS_OUT
 {
-    vector vDiffuse : SV_TARGET0;
-    vector vBloom : SV_TARGET1;
-    vector BloomInfo : SV_TARGET2;
+    float4 vDiffuseAcc : SV_Target0;
+    float4 vBloomAcc : SV_Target1;
+    float4 vBloomInfo : SV_Target2;
+    float4 vRevealage : SV_Target3;
 };
 
 PS_OUT PS_MAIN_DEFAULT(PS_IN In)
@@ -120,16 +163,16 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     if(SamplerMode == 0)
     {
        vTexSample = DiffuseTexture.Sample(LinearSampler, Texcoord);
-       fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
+       //fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
     }
     else if(SamplerMode == 1)
     {
        vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
-       fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
+       //fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
     }
     
-    if (fDissolveMask < DissolveProgress)
-        discard;
+    //if (fDissolveMask < DissolveProgress)
+    //    discard;
     
     float4 color = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -162,102 +205,37 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
         color = vBaseColor * fValue;
     }
     
-    Out.vDiffuse = color;
-    Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
-    Out.vBloom = ExtractBright(Out.vDiffuse, BloomThreshold, BloomSoftness, BloomIntensity); //Out.vDiffuse.rgb * BloomIntensity;
+    /* 깊이 기반 가중치 생성 */
+    float fLinearZ = In.vViewPosition.z;
+    float fWeight = clamp(0.03 / (1e-5 + pow(fLinearZ, 4.f)), 0.01f, 3e3);
+    fWeight = max(fWeight, 1.f);
     
-    return Out;
-}
-
-PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
-{
-    PS_OUT Out;
-
-    float2 Texcoord = In.vTexcoord + UVOffset;
-
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
-    float fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
-
-    float fBrightIntensity = 2.f;
-    float fBase = vMtrlDiffuse.g;
-    float fBright = vMtrlDiffuse.r;
-    float fMask = vMtrlDiffuse.b;
-    float fRGBMask = max(vMtrlDiffuse.r, max(vMtrlDiffuse.g, vMtrlDiffuse.b));
+    float3 vColor = color.rgb;
+    float fAlpha = color.a;
     
-    if (fDissolveMask < DissolveProgress)
+    if (fAlpha < 0.01f)
         discard;
     
-    //if (vMtrlDiffuse.a < 0.01f)
-    //    discard;
-    
-    Out.vDiffuse = vBaseColor * (fBase + fBright * fBrightIntensity);
-    Out.vDiffuse.a = vBaseColor.a * fRGBMask;
-    Out.BloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
-    Out.vBloom = Out.vDiffuse * BloomIntensity;
-    Out.vBloom.a = Out.vDiffuse.a;
+    Out.vDiffuseAcc = float4(vColor, fAlpha);
+    Out.vDiffuseAcc.a = fAlpha;
+    Out.vBloomAcc = SoftExtractBright(float4(vColor, fAlpha), BloomThreshold, BloomSoftness, BloomIntensity);
+    Out.vBloomAcc.a = fAlpha;
+    Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     
     return Out;
 }
-
-
-PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
-{
-    PS_OUT Out;
-    
-    float2 FrameSize = float2(1.f / Col, 1.f / Row);
-    int iFrameX = FrameIndex % Col;
-    int iFrameY = FrameIndex / Col;
-    float2 FrameMin = float2(iFrameX, iFrameY) * FrameSize;
-    float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
-    
-    vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, TexCoord);
-    if(vMtrlDiffuse.a <0.01f)
-        discard;
-    
-    Out.vDiffuse = vMtrlDiffuse;
-    Out.vDiffuse.a *= vBaseColor.a;
-    Out.vBloom = float4(0.f, 0.f, 0.f, 0.f);
-    Out.BloomInfo = float4(0.f, 1.f, 0.f, 0.f);
-    
-    return Out;
-}
-
-struct PS_OUT_BRIGHT
-{
-    vector vBloom : SV_TARGET0;
-    vector BloomInfo : SV_TARGET1;
-};
 
 technique11 DefaultTechnique
 {
     pass Opaque
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_ReadOnly, 0);
+        SetBlendState(BS_OITAccmulation, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_DEFAULT();
-    }
-
-    pass UVAnimation
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
-    }
-
-    pass SpriteAnimation
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
 }
 

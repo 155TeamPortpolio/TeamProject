@@ -6,7 +6,7 @@
 #include "IRenderService.h"
 #include "Sprite2D.h"
 #include "Child.h"
-
+#include "ObjectContainer.h"
 CUI_Object::CUI_Object()
 {
 }
@@ -80,6 +80,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         SPRITE_PACKET packet;
         packet.pSprite2D = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
+        packet.pColor = &m_vColor;
 
         _bool isUI = (packet.pSprite2D != nullptr);
         _bool isValid = (packet.pSprite2D->IsValid());
@@ -92,9 +93,8 @@ void CUI_Object::Post_EngineUpdate(_float dt)
             CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
     }
 
-    for (auto& child : Get_Children()) {
-        if (child)
-            child->Post_EngineUpdate(dt);
+    if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+        pObjContainer->Post_EngineUpdateChild(dt);
     }
 }
 
@@ -234,12 +234,14 @@ void CUI_Object::Update_UITransform()
     {
         if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
         {
-            parentScale = pParentUI->m_vScale;
+            parentScale = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
         }
     }
 
-    _float2 sizePx = { parentScale.x * m_vSize.x * m_vScale.x, parentScale.y * m_vSize.y * m_vScale.y };
+    m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+
+    _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
     m_pTransform->Scale({ sizePx.x, sizePx.y, 1.f });
     m_pTransform->Rotate({ 0.f, 0.f, parentRadian + m_fRadian });
@@ -247,8 +249,8 @@ void CUI_Object::Update_UITransform()
     _float2 anchorPoint = Calc_AnchorPoint();
 
     // pivotPos (내 pivot이 붙는 화면 좌표)
-    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x,
-                        anchorPoint.y + m_vAnchorOffset.y };
+    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x + m_vTranslation.x,
+                        anchorPoint.y + m_vAnchorOffset.y + m_vTranslation.y };
 
     // transform 원점이 center라고 가정한 centerPos
     _float2 centerPos = {
@@ -296,7 +298,6 @@ _float2 CUI_Object::Calc_AnchorPoint()
     return anchorPoint;
 }
 
-
 void CUI_Object::Rotate_Left(_float _radian)
 {
     m_fRadian += _radian;
@@ -305,6 +306,92 @@ void CUI_Object::Rotate_Left(_float _radian)
 void CUI_Object::Align_To(ANCHOR anchor)
 {
     m_eAnchor = anchor;
+}
+
+void CUI_Object::Play_Animation(_float dt)
+{
+    if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= m_AnimClips.size())
+        return;
+
+    if (m_isBlending)
+    {
+        const UI_ANIM_CLIP& clip = m_AnimClips[m_iCurrentClipIndex];
+
+        if (clip.keyframes.empty())
+        {
+            m_isBlending = false;
+            return;
+        }
+
+        m_fBlendTime += dt;
+        _float fRatio = {};
+
+        if (clip.fDuration > 0.f)
+            fRatio = m_fBlendTime / clip.fDuration;
+
+        fRatio = clamp(fRatio, 0.f, 1.f);
+
+        if (fRatio >= 1.f)
+        {
+            // 애니메이션 종료 처리
+            if (!clip.isLoop)
+                Reset_Animation();
+
+            return;
+        }
+
+        // 현재 시간에 해당하는 키프레임 찾기
+        _int iCurrentKeyIdx = { -1 };
+
+        for (_int i = 0; i < clip.keyframes.size() - 1; ++i)
+        {
+            _float fNormalizedTime = clip.keyframes[i].fTime / clip.fDuration;
+            _float fNextNormalizedTime = clip.keyframes[i + 1].fTime / clip.fDuration;
+
+            if (fRatio >= fNormalizedTime && fRatio <= fNextNormalizedTime)
+            {
+                iCurrentKeyIdx = i;
+                break;
+            }
+        }
+
+        if (iCurrentKeyIdx >= 0 && iCurrentKeyIdx + 1 >= 0)
+        {
+            const UI_KEYFRAME& fromKey = clip.keyframes[iCurrentKeyIdx];
+            const UI_KEYFRAME& toKey = clip.keyframes[iCurrentKeyIdx + 1];
+
+            _float fFromTime = fromKey.fTime / clip.fDuration;
+            _float fToTime = toKey.fTime / clip.fDuration;
+
+            _float fLocalRatio = (fRatio - fFromTime) / (fToTime - fFromTime);
+            fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
+
+            // 이징 적용
+            _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
+
+            // 보간된 값 적용
+            m_vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
+            m_fRadian = XMConvertToRadians(Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio));
+            m_vTranslation = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
+            _float4 vColor = {};
+            XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
+            m_vColor = vColor;
+        }
+    }
+}
+
+void CUI_Object::Set_Animation(_uint iIndex)
+{
+    if (m_iCurrentClipIndex == iIndex)//&& m_isAnimLoop == isLoop)
+        return;
+
+    m_iCurrentClipIndex = iIndex;
+}
+
+void CUI_Object::Reset_Animation()
+{
+    m_isBlending = false;
+    m_fBlendTime = 0.f;
 }
 
 _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)

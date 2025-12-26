@@ -3,13 +3,14 @@
 #include "GameObject.h"
 #include "CameraMgr.h"
 
-#define GAME  CGameInstance::GetInstance()
-#define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
-#define OBJ   CGameInstance::GetInstance()->Get_ObjectMgr()
-#define KEY   CGameInstance::GetInstance()->Get_InputDev();
-#define PROTO CGameInstance::GetInstance()->Get_PrototypeMgr()
-#define GUI   CGameInstance::GetInstance()->Get_GUISystem()
-#define RES   CGameInstance::GetInstance()->Get_ResourceMgr()
+#define GAME   CGameInstance::GetInstance()
+#define CAM    CGameInstance::GetInstance()->Get_CameraMgr()
+#define OBJ    CGameInstance::GetInstance()->Get_ObjectMgr()
+#define KEY    CGameInstance::GetInstance()->Get_InputDev()
+#define PROTO  CGameInstance::GetInstance()->Get_PrototypeMgr()
+#define GUI    CGameInstance::GetInstance()->Get_GUISystem()
+#define RES    CGameInstance::GetInstance()->Get_ResourceMgr()
+#define PHYSIC CGameInstance::GetInstance()->Get_PhysicsSystem()
 
 NS_BEGIN(Engine)
 class CGameInstance; class CLight;

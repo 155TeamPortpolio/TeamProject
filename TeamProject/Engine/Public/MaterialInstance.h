@@ -24,7 +24,6 @@ public:
 public:
 	HRESULT Set_Param(const string& ConstantName, const SHADER_PARAM& parameter);
 	SHADER_PARAM* Get_Param(const string& ConstantName);
-
 	HRESULT Override_Pass(const string& passConstant) { override_Pass = passConstant; return S_OK; };
 	HRESULT Reset_Pass();
 	HRESULT Override_Constant(const MaterialConstants& materialConstant);

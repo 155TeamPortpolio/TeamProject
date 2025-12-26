@@ -1,5 +1,7 @@
 #pragma once
 #include "GameObject.h"
+#include "Helper_Func.h"
+
 NS_BEGIN(Engine)
 class ENGINE_DLL CUI_Object abstract : public CGameObject
 {
@@ -10,6 +12,28 @@ class ENGINE_DLL CUI_Object abstract : public CGameObject
 	//		
 	//		앵커는 부모 기준 각
 	//		앵커 오프셋 나의fxfy
+
+public:
+	typedef struct tagUIKeyframe {
+	_float		fTime = {};
+	_float2		vScale = { 1.f, 1.f };
+	_float		fAngle = {};
+	_float2		vPosition = {};
+	_float4		vColor = { 1.f, 1.f, 1.f, 1.f };
+	EaseType	easeType = {};
+
+	tagUIKeyframe(_float _fTime = 0.f) : fTime(_fTime) {}
+	}UI_KEYFRAME;
+
+	typedef struct tagUIAnimationClip {
+		string		strName;
+		_bool		isLoop = {};
+		_float		fDuration = { 1.f };
+	
+		vector<UI_KEYFRAME>	keyframes;
+	
+		tagUIAnimationClip(string _strName) : strName(_strName) {}
+	}UI_ANIM_CLIP;
 
 protected:
 	CUI_Object();
@@ -52,7 +76,7 @@ public:
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
 	_float2 Get_RectTopLeft_Screen() ;
-
+	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -95,6 +119,17 @@ public:
 	void Set_Clickable(_bool isClickable) { m_isClickable = isClickable; }
 	_bool Is_Clickable() { return m_isClickable; }
 
+public:
+	void Play_Animation(_float dt);					
+	void Set_Animation(_uint iIndex);				
+
+public:
+	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
+	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
+
+protected:
+	void Reset_Animation();
+
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -117,6 +152,8 @@ protected:
 
 	/*크기 배율*/
 	_float2 m_vScale = {};
+	/*크기 배율 - 부모가 있다면 부모 스케일을 곱한 값 */
+	_float2 m_vCombinedScale = {};
 
 	/*트랜스폼 기준점 - 내부 좌표 기준 : 0~1, 0~1 */
 	_float2 m_vPivot= {};
@@ -128,7 +165,18 @@ protected:
 
 	_bool m_isClickable = {};
 
+	/*텍스쳐에 곱해지는 컬러*/
 	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+
+	_bool m_isBlending = {};
+	_float m_fBlendTime = {};
+	_float m_fBlendDuration = {};
+
+	vector<UI_ANIM_CLIP> m_AnimClips;
+	_int m_iCurrentClipIndex = { -1 };
+
+	/*ui 애니메이션 위치 오프셋 값 m_vAnchorOffset에 더해지는 값*/
+	_float2 m_vTranslation = {};
 
 public:
 	virtual void Free() override;

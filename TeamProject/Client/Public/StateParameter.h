@@ -24,16 +24,17 @@ public:
     CStateParameter& operator=(CStateParameter&& rhs) noexcept;
 
 public:
-    void    Set_Float(_float fValue);
-    void    Set_Int(_int iValue);
-    void    Set_Bool(_bool bValue);
-    void    Set_Trigger();
-    void    Reset_Trigger();
+    void           Set_Float(_float fValue);
+    void           Set_Int(_int iValue);
+    void           Set_Bool(_bool bValue);
+    void           Set_Trigger();
+    void           Reset_Trigger();
 
-    _float  Get_Float() const;
-    _int    Get_Int() const;
-    _bool   Get_Bool() const;
-    _bool   Get_Trigger() const;
+    _float         Get_Float() const;
+    _int           Get_Int() const;
+    _bool          Get_Bool() const;
+    _bool          Get_Trigger() const;
+    PARAMETER_TYPE Get_Type() const { return m_eType; }
 
 private:
     PARAMETER_TYPE m_eType = PARAM_BOOL;

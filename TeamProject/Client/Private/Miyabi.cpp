@@ -60,6 +60,9 @@ void CMiyabi::Awake()
 		.Loop(true)
 		.Apply();
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 1.0), 1.5f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::RIMLIGHT);
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -88,11 +91,13 @@ void CMiyabi::Render_GUI()
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
-		ImGui::Text("Current State: %s", m_pStateMachine->Get_CurrentStateName().c_str());
-		ImGui::Text("State Time: %.2f", m_pStateMachine->Get_StateTime());
+		ImGui::Text("StateMachine: %s", m_pStateMachine->Get_CurrentStateName().c_str());
+
+		if (ImGui::Button("Open StateMachine"))
+			m_pStateMachine->Set_ShowWindow(true);
+
+		m_pStateMachine->Render_GUI();
 	}
-	_bool isLayer = Get_Layer();
-	ImGui::Checkbox("InLayer", &isLayer);
 }
 
 void CMiyabi::Update_Input(_float dt)

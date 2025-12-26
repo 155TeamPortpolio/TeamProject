@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "SpriteAnimationUI.h"
 
 #include "Sprite2D.h"
@@ -129,36 +129,36 @@ void CSpriteAnimationUI::Render_GUI()
     ImGui::DragFloat(u8"재생 속도", &m_fFrameSpeed, 1.f, 1.f, 120.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 }
 
-void CSpriteAnimationUI::SavePrefab(json& data)
+void CSpriteAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
 
-    data["loop"] = m_isLoop;
-    data["frameCountX"] = m_iFrameCountX;
-    data["frameCountY"] = m_iFrameCountY;
-    data["frameCountTotal"] = m_iFrameCountTotal;
-    data["frameSpeed"] = m_fFrameSpeed;
+    data.isLoop = m_isLoop;
+    data.iFrameCountX = m_iFrameCountX;
+    data.iFrameCountY = m_iFrameCountY;
+    data.iFrameCountTotal = m_iFrameCountTotal; 
+    data.fFrameSpeed = m_fFrameSpeed;
 }
 
-void CSpriteAnimationUI::LoadPrefab(const json& data)
+void CSpriteAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    m_isLoop = data["loop"];
-    m_iFrameCountX = data["frameCountX"];
-    m_iFrameCountY = data["frameCountY"];
-    m_iFrameCountTotal = data["frameCountTotal"];
-    m_fFrameSpeed = data["frameSpeed"];
+    m_isLoop = data.isLoop;
+    m_iFrameCountX = data.iFrameCountX;
+    m_iFrameCountY = data.iFrameCountY;
+    m_iFrameCountTotal = data.iFrameCountTotal;
+    m_fFrameSpeed = data.fFrameSpeed;
 }
 
 CGameObject* CSpriteAnimationUI::Create()

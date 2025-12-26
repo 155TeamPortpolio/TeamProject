@@ -7,25 +7,32 @@
 
 namespace
 {
-	struct PlayerAssetDesc
+	struct AvatarAssetDesc
 	{
 		const char* folder;
 		const char* fileName;
 	};
 
-	const PlayerAssetDesc& GetPlayerAssetDesc(Player v)
+	const AvatarAssetDesc& GetAvatarAssetDesc(Avatar v)
 	{
-		static const PlayerAssetDesc table[] =
+		static const AvatarAssetDesc table[] =
 		{
-			{"Unagi",  "Avatar_Female_Size02_Unagi" },
-			{"Qingyi", "Avatar_Female_Size01_QingYi"},
+			{"Unagi",   "Avatar_Female_Size02_Unagi"          },
+			{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
+			{"Corin",   "Avatar_Female_Size01_Corin"          },
+			{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
+			{"Alice",   "Avatar_Female_Size02_Alice"          },
+			{"Astra",   "Avatar_Female_Size03_Astra"          },
+			{"Burnice", "Avatar_Female_Size02_Burnice"        },
+			{"Yixuan",  "Avatar_Female_Size03_YiXuan"         },
+			{"Yuzuha",  "Avatar_Female_Size02_Yuzuha"         },
 		};
 		return table[(int)v];
 	};
 
-	fs::path GetPlayerBaseDir(Player v)
+	fs::path GetPlayerBaseDir(Avatar v)
 	{
-		const auto& d = GetPlayerAssetDesc(v);
+		const auto& d = GetAvatarAssetDesc(v);
 		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder / "Anim";
 	}
 }
@@ -47,18 +54,27 @@ HRESULT CUnagi::Initialize(INIT_DESC* pArg)
 
 void CUnagi::Awake()
 {
-	const Player player = Player::QingYi;
+	ApplyAvatar(m_avatar);
+}
+
+void CUnagi::Update(_float dt)
+{
+	//Get_Component<CAnimator3D>()->Update_Animation(dt);
+}
+
+void CUnagi::ApplyAvatar(Avatar avatar)
+{
+	m_avatar = avatar;
 
 	const string levelName = "First_Level";
+	const auto& desc = GetAvatarAssetDesc(avatar);
+	const string fileName = desc.fileName;
 
-	const auto& d = GetPlayerAssetDesc(player);
-	const string fileName = d.fileName;
+	const fs::path baseDir = GetPlayerBaseDir(avatar);
 
-	const fs::path baseDir = GetPlayerBaseDir(player);
-
-	const string modelKey  = fileName + ".model";
-	const string matKey    = fileName + ".mat";
-	const string jsonKey   = fileName + "_Meta.json";
+	const string modelKey = fileName + ".model";
+	const string matKey   = fileName + ".mat";
+	const string jsonKey  = fileName + "_Meta.json";
 
 	const string modelPath = (baseDir / modelKey).string();
 	const string matPath   = (baseDir / matKey).string();
@@ -72,16 +88,6 @@ void CUnagi::Awake()
 	Get_Component<CMaterial>()->Link_Material(levelName, matKey);
 	Get_Component<CAnimator3D>()->LinkAnimate_Model(levelName, modelKey);
 	Get_Component<CAnimator3D>()->Link_MetaData(levelName, jsonKey);
-}
-
-void CUnagi::Update(_float dt)
-{
-	//Get_Component<CAnimator3D>()->Update_Animation(dt);
-}
-
-void CUnagi::Render_GUI()
-{
-	__super::Render_GUI();
 }
 
 CUnagi* CUnagi::Create()

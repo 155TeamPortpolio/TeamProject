@@ -9,12 +9,15 @@ CMaterial::CMaterial()
 }
 
 CMaterial::CMaterial(const CMaterial& rhs)
-	:CComponent(rhs)
+	:CComponent(rhs), m_vRimLightColor(rhs.m_vRimLightColor), m_fRimLightPower(rhs.m_fRimLightPower)
 {
 	for (auto& instance : rhs.m_MaterialInstances) {
 		CMaterialInstance* cloned = instance->Clone();
 		m_MaterialInstances.emplace_back(move(cloned));
+		cloned->Set_Param("vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+		cloned->Set_Param("fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
 	}
+
 }
 
 HRESULT CMaterial::Initialize_Prototype()
@@ -46,6 +49,14 @@ HRESULT CMaterial::Insert_MaterialInstance(CMaterialInstance* pInstance, _uint* 
 	//Safe_AddRef(pInstance);
 	if(outIndex)
 		*outIndex = m_MaterialInstances.size() - 1;
+
+	return S_OK;
+}
+
+HRESULT CMaterial::Set_RimLightInfo(_float3 RimColor, _float Power)
+{
+	m_vRimLightColor = RimColor;
+	m_fRimLightPower = Power;
 
 	return S_OK;
 }
