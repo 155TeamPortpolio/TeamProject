@@ -118,6 +118,9 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
       <UniqueIdentifier>{70be0f5b-c736-4ef4-9c82-ba08f0db2b8b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{32d9c06b-c362-4a6f-b153-ea96a9d70b82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -254,6 +257,9 @@
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -380,6 +386,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

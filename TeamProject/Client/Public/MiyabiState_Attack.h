@@ -12,6 +12,9 @@ public:
     virtual void Update(CMiyabi* pOwner, _float dt) override;
     virtual void Exit(CMiyabi* pOwner) override;
 
+private:
+    _float m_fHoldTime = 0.f;
+
 public:
     static CMiyabiState_Attack* Create() { return new CMiyabiState_Attack(); }
     virtual void Free() override { __super::Free(); }

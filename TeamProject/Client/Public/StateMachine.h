@@ -92,6 +92,7 @@ public:
 public:
 	IBaseState<Type>* Get_CurrentState() const { return m_pCurrentState; }
 	const string&	  Get_CurrentStateName() const { return m_strCurrentState; }
+	const string&	  Get_PrevStateName() const { return m_strPrevState; }
 	const string&	  Get_DefaultStateName() const { return m_strDefaultState; }
 	_float			  Get_StateTime() const { return m_fStateTime; }
 	const unordered_map<string, IBaseState<Type>*>& Get_States() const { return m_States; }
@@ -123,6 +124,7 @@ private:
 	vector<TRANSITION_INFO>                  m_Transitions;
 	vector<TRANSITION_INFO>                  m_AnyStateTransitions;
 	IBaseState<Type>*						 m_pCurrentState = { nullptr };
+	string									 m_strPrevState = "";
 	string                                   m_strCurrentState = "";
 	string                                   m_strDefaultState = "";
 	_float                                   m_fStateTime = 0.f;
@@ -393,6 +395,7 @@ void CStateMachine<Type>::Change_State(const string& strState)
 	}
 
 	string strPrevState = m_strCurrentState;
+	m_strPrevState = m_strCurrentState;
 
 	m_pCurrentState = iter->second;
 	m_strCurrentState = strState;
