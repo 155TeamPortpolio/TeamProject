@@ -99,6 +99,7 @@ private:
 	void	Render_History();
 	void	Render_StateGraph();
 	void	Render_Hierarchy(IBaseState<Type>* pState, _uint iDepth = 0);
+	void	Draw_Arrow(ImDrawList* pDrawList, ImVec2 vFrom, ImVec2 vTo, ImU32 color);
 
 	string	Get_Condition(const TRANSITION_INFO& transition);
 	_bool	Evaluate_Condition(const TRANSITION_INFO& transition);
@@ -614,7 +615,10 @@ inline void CStateMachine<Type>::Render_StateGraph()
 		++iIndex;
 	}
 
-	// Transitions
+	if (!m_AnyStateTransitions.empty())
+		StatePositions["AnyState"] = vCenter;
+
+	// 일반 Transitions
 	for (auto& transition : m_Transitions)
 	{
 		auto itFrom = StatePositions.find(transition.strFromState);
@@ -625,26 +629,21 @@ inline void CStateMachine<Type>::Render_StateGraph()
 		ImU32 color = (transition.strFromState == m_strCurrentState) ?
 			IM_COL32(255, 200, 100, 255) : IM_COL32(100, 100, 100, 200);
 
-		pDrawList->AddLine(itFrom->second, itTo->second, color, 2.f);
+		Draw_Arrow(pDrawList, itFrom->second, itTo->second, color);
+	}
 
-		// Arrow head
-		ImVec2 vDir(itTo->second.x - itFrom->second.x,
-			itTo->second.y - itFrom->second.y);
-		_float fLen = sqrtf(vDir.x * vDir.x + vDir.y * vDir.y);
-		if (fLen > 0.f)
-		{
-			vDir.x /= fLen;
-			vDir.y /= fLen;
-			ImVec2 vArrowPos(itTo->second.x - vDir.x * 25.f,
-				itTo->second.y - vDir.y * 25.f);
-			ImVec2 vPerp(-vDir.y * 6.f, vDir.x * 6.f);
+	// AnyState Transitions
+	for (auto& transition : m_AnyStateTransitions)
+	{
+		auto itFrom = StatePositions.find("AnyState");
+		auto itTo = StatePositions.find(transition.strToState);
+		if (itFrom == StatePositions.end() || itTo == StatePositions.end())
+			continue;
 
-			pDrawList->AddTriangleFilled(
-				ImVec2(itTo->second.x - vDir.x * 20.f, itTo->second.y - vDir.y * 20.f),
-				ImVec2(vArrowPos.x + vPerp.x, vArrowPos.y + vPerp.y),
-				ImVec2(vArrowPos.x - vPerp.x, vArrowPos.y - vPerp.y),
-				color);
-		}
+		_bool bConditionMet = Evaluate_Condition(transition);
+		ImU32 color = bConditionMet ? IM_COL32(255, 100, 100, 255) : IM_COL32(150, 80, 80, 150);
+
+		Draw_Arrow(pDrawList, itFrom->second, itTo->second, color);
 	}
 
 	// State nodes
@@ -666,6 +665,19 @@ inline void CStateMachine<Type>::Render_StateGraph()
 			ImVec2(vPos.x - vTextSize.x * 0.5f, vPos.y + 25.f),
 			IM_COL32(255, 255, 255, 255),
 			pair.first.c_str());
+	}
+
+	// AnyState 노드 (다른 색상으로 구분)
+	if (!m_AnyStateTransitions.empty())
+	{
+		pDrawList->AddCircleFilled(vCenter, 15.f, IM_COL32(200, 80, 80, 255));
+		pDrawList->AddCircle(vCenter, 15.f, IM_COL32(255, 150, 150, 255), 0, 2.f);
+
+		ImVec2 vTextSize = ImGui::CalcTextSize("Any");
+		pDrawList->AddText(
+			ImVec2(vCenter.x - vTextSize.x * 0.5f, vCenter.y - vTextSize.y * 0.5f),
+			IM_COL32(255, 255, 255, 255),
+			"Any");
 	}
 
 	ImGui::Dummy(vCanvasSize);
@@ -705,6 +717,28 @@ void CStateMachine<Type>::Render_Hierarchy(IBaseState<Type>* pState, _uint iDept
 
 	if (bIsCurrent)
 		ImGui::PopStyleColor();
+}
+
+template<typename Type>
+void CStateMachine<Type>::Draw_Arrow(ImDrawList* pDrawList, ImVec2 vFrom, ImVec2 vTo, ImU32 color)
+{
+	pDrawList->AddLine(vFrom, vTo, color, 2.f);
+
+	ImVec2 vDir(vTo.x - vFrom.x, vTo.y - vFrom.y);
+	_float fLen = sqrtf(vDir.x * vDir.x + vDir.y * vDir.y);
+	if (fLen > 0.f)
+	{
+		vDir.x /= fLen;
+		vDir.y /= fLen;
+		ImVec2 vArrowPos(vTo.x - vDir.x * 25.f, vTo.y - vDir.y * 25.f);
+		ImVec2 vPerp(-vDir.y * 6.f, vDir.x * 6.f);
+
+		pDrawList->AddTriangleFilled(
+			ImVec2(vTo.x - vDir.x * 20.f, vTo.y - vDir.y * 20.f),
+			ImVec2(vArrowPos.x + vPerp.x, vArrowPos.y + vPerp.y),
+			ImVec2(vArrowPos.x - vPerp.x, vArrowPos.y - vPerp.y),
+			color);
+	}
 }
 
 template<typename Type>
