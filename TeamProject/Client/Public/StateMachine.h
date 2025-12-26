@@ -179,8 +179,7 @@ void CStateMachine<Type>::Update(_float dt)
 	m_fStateTime += dt;
 	m_pCurrentState->m_fStateTime = m_fStateTime;
 
-	if (m_pCurrentState)
-		m_pCurrentState->Update(m_pOwner, dt);
+	m_pCurrentState->Update(m_pOwner, dt);
 
 	Update_AnimProgress();
 

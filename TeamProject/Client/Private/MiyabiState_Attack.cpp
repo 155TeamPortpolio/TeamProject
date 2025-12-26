@@ -8,13 +8,10 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
-
         m_pSubStateMachine->Register_State("NormalAttack", CMiyabiState_NormalAttack::Create());
         m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
-
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
-
     __super::Enter(pOwner);
 }
 
