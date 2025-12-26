@@ -89,6 +89,8 @@ HRESULT CUITool_Level::Ready_Textures()
 	for (const auto& Key : m_strTextureKeys)
 		m_szTextureKeys.push_back(Key.c_str());
 
+	pResourceMgr->Add_ResourcePath("empty.png", "../Bin/Resources/UI/empty.png");
+
 	return S_OK;
 }
 
