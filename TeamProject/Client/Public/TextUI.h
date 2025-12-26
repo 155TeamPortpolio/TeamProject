@@ -1,11 +1,9 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-// 텍스트를 트랜스폼에 맞춰서 피봇 설정, 회전, 스케일하는 것 넣어야
+NS_BEGIN(Client)
 
-NS_BEGIN(UITool)
-
-class CTextUI final : public CUIObject_Tool
+class CTextUI final : public CUI_Object
 {
 private:
 	CTextUI();
@@ -15,20 +13,17 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
-
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
 	_char		m_szText[MAX_PATH] = {};
-	_float		m_fFontScale = { 1.f }; 
+	_float		m_fFontScale = { 1.f };
 
 	_bool		m_isOutlined = {};
 	_float		m_fOutlineThickness = { 1.f };
@@ -37,21 +32,6 @@ private:
 	_int		m_iAlign = {};
 
 	_bool		m_isSizeToContent = { true };
-
-private:
-	_int		m_iFontKeyIndex = { 0 }; 
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
-
-private:
-	virtual void Render_GUI_Layout() override;
-	virtual void Render_GUI_Transform() override;
-
-private:
-	void UpdateAnchorOffsetByAlign();
-	_int Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag);
 
 public:
 	static CGameObject* Create();

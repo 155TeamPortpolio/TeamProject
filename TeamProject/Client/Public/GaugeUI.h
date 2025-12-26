@@ -1,38 +1,31 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-NS_BEGIN(UITool)
+NS_BEGIN(Client)
 
-class CUVAnimationUI final : public CUIObject_Tool
+class CGaugeUI final : public CUI_Object
 {
 private:
-	CUVAnimationUI();
-	CUVAnimationUI(const CUVAnimationUI& rhs);
-	virtual ~CUVAnimationUI() DEFAULT;
+	CGaugeUI();
+	CGaugeUI(const CGaugeUI& rhs);
+	virtual ~CGaugeUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
-	_float2		m_vUVOffset = {};
-	_float2		m_vUVOffsetSpeed = {};
+	_bool		m_isRadial = {};
 
-private:
-	string		m_strTextureKey = {};
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
+	_float		m_fFillAmount = { 1.f };
 
 public:
 	static CGameObject* Create();

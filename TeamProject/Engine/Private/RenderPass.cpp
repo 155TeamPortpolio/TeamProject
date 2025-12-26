@@ -418,6 +418,7 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
+		pCurShader->Bind_Value("vColor", {packet.pColor, "float4", sizeof(_float4)});
 		packet.pSprite2D->Apply_Shader(pContext);
 		packet.pSprite2D->Draw_Sprite(pContext);
 

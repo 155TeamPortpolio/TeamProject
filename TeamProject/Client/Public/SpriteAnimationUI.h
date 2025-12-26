@@ -1,9 +1,9 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-NS_BEGIN(UITool)
+NS_BEGIN(Client)
 
-class CSpriteAnimationUI final : public CUIObject_Tool
+class CSpriteAnimationUI final : public CUI_Object
 {
 private:
 	CSpriteAnimationUI();
@@ -13,14 +13,12 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
@@ -34,13 +32,6 @@ private:
 
 	_float		m_fFrameAccTime = {};
 	_uint		m_iCurrentFrameIndex = {};
-
-private:
-	string		m_strTextureKey = {};
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
 
 public:
 	static CGameObject* Create();

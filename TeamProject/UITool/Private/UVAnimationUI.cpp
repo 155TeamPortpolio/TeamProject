@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "UVAnimationUI.h"
  
 #include "GameInstance.h"
@@ -63,9 +63,9 @@ void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÅØ½ºÃÄ
-    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
-    if (ImGui::Button(u8"¼±ÅÃ"))
+    // ï¿½Ø½ï¿½ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
+    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -78,26 +78,25 @@ void CUVAnimationUI::Render_GUI()
         }
     }
 
-    // UV ¾Ö´Ï¸ÞÀÌ¼Ç
-    ImGui::SeparatorText(u8"UV ¾Ö´Ï¸ÞÀÌ¼Ç");
+    // UV ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½
+    ImGui::SeparatorText(u8"UV ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½");
     ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 }
 
-void CUVAnimationUI::SavePrefab(json& data)
+void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     data["textureTag"] = m_strTextureKey;
 
-    data["uvOffsetSpeed"]["x"] = m_vUVOffsetSpeed.x;
-    data["uvOffsetSpeed"]["y"] = m_vUVOffsetSpeed.y;
+    // ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 }
 
-void CUVAnimationUI::LoadPrefab(const json& data)
+void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     m_strTextureKey = data["textureTag"];
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);

@@ -1,38 +1,25 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-NS_BEGIN(UITool)
+NS_BEGIN(Client)
 
-class CUVAnimationUI final : public CUIObject_Tool
+class CImageUI final : public CUI_Object
 {
 private:
-	CUVAnimationUI();
-	CUVAnimationUI(const CUVAnimationUI& rhs);
-	virtual ~CUVAnimationUI() DEFAULT;
+	CImageUI();
+	CImageUI(const CImageUI& rhs);
+	virtual ~CImageUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
-
-private:
-	_float2		m_vUVOffset = {};
-	_float2		m_vUVOffsetSpeed = {};
-
-private:
-	string		m_strTextureKey = {};
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
 
 public:
 	static CGameObject* Create();

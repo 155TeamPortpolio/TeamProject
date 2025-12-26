@@ -60,9 +60,9 @@ void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
      
-    // ÅØ½ºÃÄ
-    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
-    if (ImGui::Button(u8"¼±ÅÃ"))
+    // ï¿½Ø½ï¿½ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
+    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -75,12 +75,12 @@ void CButtonUI::Render_GUI()
         }
     }
 
-    // ÀÌº¥Æ®
-    ImGui::SeparatorText(u8"ÀÌº¥Æ®");
-    ImGui::InputText(u8"¸Þ½ÃÁö",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    // ï¿½Ìºï¿½Æ®
+    ImGui::SeparatorText(u8"ï¿½Ìºï¿½Æ®");
+    ImGui::InputText(u8"ï¿½Þ½ï¿½ï¿½ï¿½",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
-    // »óÅÂ Ç¥½Ã
-    ImGui::SeparatorText(u8"»óÅÂ");
+    // ï¿½ï¿½ï¿½ï¿½ Ç¥ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½ï¿½ï¿½ï¿½");
     string strState = {};
     switch (m_eState)
     { 
@@ -120,25 +120,25 @@ void CButtonUI::OnClick()
     CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
 }
 
-void CButtonUI::SavePrefab(json& data)
+void CButtonUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     data["textureTag"] = m_strTextureKey;
 
     data["eventMsg"] = m_szEventMsg;
 }
 
-void CButtonUI::LoadPrefab(const json& data)
+void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     m_strTextureKey = data["textureTag"];
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
-    strcpy_s(m_szEventMsg, sizeof(m_szEventMsg), data["eventMsg"].get<string>().c_str());
+    strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
 }
 
 CGameObject* CButtonUI::Create()

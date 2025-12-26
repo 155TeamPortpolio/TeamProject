@@ -1,4 +1,4 @@
-#include "UITool_Defines.h"
+#include "pch.h"
 #include "GaugeUI.h"
 
 #include "GameInstance.h"
@@ -65,9 +65,9 @@ void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÅØ½ºÃÄ
-    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
-    if (ImGui::Button(u8"¼±ÅÃ"))
+    // ï¿½Ø½ï¿½ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
+    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -80,9 +80,9 @@ void CGaugeUI::Render_GUI()
         }
     }
 
-    ImGui::SeparatorText(u8"°ÔÀÌÁö");
-    // °ÔÀÌÁö
-    if (ImGui::Checkbox(u8"¿øÇü", &m_isRadial))
+    ImGui::SeparatorText(u8"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (ImGui::Checkbox(u8"ï¿½ï¿½ï¿½ï¿½", &m_isRadial))
     {
         if (m_isRadial)
             Get_Component<CSprite2D>()->ChangePass("RadialFill");
@@ -90,44 +90,43 @@ void CGaugeUI::Render_GUI()
             Get_Component<CSprite2D>()->ChangePass("LinearFill");
     }
 
-    if(ImGui::DragFloat(u8"°ÔÀÌÁö", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    if(ImGui::DragFloat(u8"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 
-    if (ImGui::DragFloat(u8"¹æÇâ (0 ¶Ç´Â 1)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
+    if (ImGui::DragFloat(u8"ï¿½ï¿½ï¿½ï¿½ (0 ï¿½Ç´ï¿½ 1)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
 }
 
-void CGaugeUI::SavePrefab(json& data)
+void CGaugeUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     data["textureTag"] = m_strTextureKey;
 
-    data["isRadial"] = m_isRadial;
-    data["direction"] = m_fDirection;
-    data["fillAmount"] = m_fFillAmount;
+    data.isRadial = m_isRadial;
+    data.fDirection = m_fDirection;
+    data.fFillAmount = m_fFillAmount;
 }
 
-void CGaugeUI::LoadPrefab(const json& data)
+void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     m_strTextureKey = data["textureTag"];
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
-    m_isRadial = data["isRadial"].get<_bool>();
-    m_fDirection = data["direction"].get<_float>();
-    m_fFillAmount = data["fillAmount"].get<_float>();
+    m_isRadial = data.isRadial;
+    m_fDirection = data.fDirection;
+    m_fFillAmount = data.fFillAmount;
 
-    if (m_isRadial)
+    if (m_isRadial) 
         Get_Component<CSprite2D>()->ChangePass("RadialFill");
-    else
-        Get_Component<CSprite2D>()->ChangePass("LinearFill");
-
-    Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
+    else            
+        Get_Component<CSprite2D>()->ChangePass("LinearFill"); 
     Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
+    Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 }
 
 CGameObject* CGaugeUI::Create()

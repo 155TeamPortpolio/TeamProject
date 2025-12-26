@@ -59,9 +59,9 @@ void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÅØ½ºÃÄ
-    ImGui::SeparatorText(u8"ÀÌ¹ÌÁö");
-    if (ImGui::Button(u8"¼±ÅÃ"))
+    // ï¿½Ø½ï¿½ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½Ì¹ï¿½ï¿½ï¿½");
+    if (ImGui::Button(u8"ï¿½ï¿½ï¿½ï¿½"))
     {
         string filePath = Helper::OpenFile_Dialogue();
         if (!filePath.empty())
@@ -75,18 +75,18 @@ void CImageUI::Render_GUI()
     }
 }
 
-void CImageUI::SavePrefab(json& data)
+void CImageUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     data["textureTag"] = m_strTextureKey;
 }
 
-void CImageUI::LoadPrefab(const json& data)
+void CImageUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     m_strTextureKey = data["textureTag"];
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);

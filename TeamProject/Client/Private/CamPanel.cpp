@@ -6,8 +6,7 @@
 
 void CCamPanel::Update_Panel(_float dt)
 {
-    if (m_needRefresh)
-        RefreshCandidates();
+    RefreshCandidates();
 }
 
 void CCamPanel::Render_GUI()
@@ -47,6 +46,11 @@ void CCamPanel::RefreshCandidates()
     OBJECT_HANDLE prevSelected{};
     if (!m_candidates.empty() && m_selectedIndex >= 0 && m_selectedIndex < (int)m_candidates.size())
         prevSelected = m_candidates[m_selectedIndex].handle;
+
+    OBJECT_HANDLE mainSelected{};
+    auto curMainCam = CAM->Get_BaseCam();
+    if (curMainCam)
+        mainSelected = curMainCam->Get_Owner()->Get_Handle();
 
     m_candidates.clear();
 
@@ -88,9 +92,9 @@ void CCamPanel::RefreshCandidates()
     {
         if (nameCount[c.displayName] > 1)
         {
-            char dup[256];
-            sprintf_s(dup, "%s (%u)", c.displayName.c_str(), c.handle.hObjID);
-            c.displayName = dup;
+            char displayBuf[256];
+            sprintf_s(displayBuf, "%s (%u)", c.displayName.c_str(), c.handle.hObjID);
+            c.displayName = displayBuf;
         }
     }
 
@@ -108,11 +112,29 @@ void CCamPanel::RefreshCandidates()
         return;
     }
 
+    auto Match = [](const OBJECT_HANDLE& a, const OBJECT_HANDLE& b)
+        {
+            return a.Level == b.Level && a.Layer == b.Layer && a.hObjID == b.hObjID;
+        };
+
     m_selectedIndex = 0;
+
+    if (mainSelected.hObjID != 0)
+    {
+        for (int i = 0; i < (int)m_candidates.size(); ++i)
+        {
+            if (Match(m_candidates[i].handle, mainSelected))
+            {
+                m_selectedIndex = i;
+                m_needRefresh = false;
+                return;
+            }
+        }
+    }
+
     for (int i = 0; i < (int)m_candidates.size(); ++i)
     {
-        const auto& h = m_candidates[i].handle;
-        if (h.Level == prevSelected.Level && h.Layer == prevSelected.Layer && h.hObjID == prevSelected.hObjID)
+        if (Match(m_candidates[i].handle, prevSelected))
         {
             m_selectedIndex = i;
             break;
@@ -139,10 +161,15 @@ void CCamPanel::DrawMainCamSelector()
     auto curMain = CAM->Get_BaseCam();
 
     const auto& selected = m_candidates[m_selectedIndex];
-    const char* preview = selected.displayName.c_str();
+
+    auto selectedObj = OBJ->Request_Object(selected.handle);
+    auto selectedCam = selectedObj ? selectedObj->Get_Component<CCamera>() : nullptr;
+
+    string previewLabel = selected.displayName;
+    if (selectedCam && selectedCam == curMain) previewLabel += " (Main)";
 
     ImGui::SetNextItemWidth(220.f);
-    if (ImGui::BeginCombo("##MainCamCandidates", preview))
+    if (ImGui::BeginCombo("##MainCamCandidates", previewLabel.c_str()))
     {
         for (int i = 0; i < (int)m_candidates.size(); ++i)
         {
@@ -161,7 +188,7 @@ void CCamPanel::DrawMainCamSelector()
             {
                 m_selectedIndex = i;
 
-                auto selObj = m_candidates[m_selectedIndex].handle.Get();
+                auto selObj = OBJ->Request_Object(m_candidates[m_selectedIndex].handle);
                 auto selCam = selObj ? selObj->Get_Component<CCamera>() : nullptr;
                 if (selCam) CAM->Set_MainCam(selCam);
             }

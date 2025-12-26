@@ -106,7 +106,7 @@ void CCharacter::Update_Input(_float dt)
 		camLook.Normalize();
 		camRight.Normalize();
 
-		m_vInputDir = camRight * x + camLook * z;
+		m_vInputDir = camRight * (float)x + camLook * (float)z;
 	}
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
