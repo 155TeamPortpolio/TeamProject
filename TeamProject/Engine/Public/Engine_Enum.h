@@ -22,6 +22,7 @@ namespace Engine
 	enum class RENDERER_TYPE {FORWARD, POST, EFFECT, UI};
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
+	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,

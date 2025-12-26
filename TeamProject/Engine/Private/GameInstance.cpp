@@ -44,6 +44,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pPrototypeManager = CPrototypeMgr::Create();
 	m_pObjectManager = CObjectMgr::Create();
 	m_pResourceManager = CResourceMgr::Create(m_pDevice, m_pDeviceContext);
+	m_pResourceManager->Load_InitialResource();
 	m_pCameraManager = CCameraMgr::Create();
 	m_pUIManager = CUI_Manager::Create();
 	m_pLightService = CLightMgr::Create();

@@ -42,9 +42,11 @@ public:
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
 
+	virtual void Load_InitialResource() override;
 private:
 	_int ValidLevel(const string& levelKey);
-	void Load_InitialResource();
+	vector<CMaterialData*>* GetOrLoad_MaterialData(const string& levelTag, const string& fileKey);
+	vector<CMaterialInstance*> Make_MaterialHandles(const vector<CMaterialData*>& dataList);
 private:
 	string MakePath(const string& pathKey);
 

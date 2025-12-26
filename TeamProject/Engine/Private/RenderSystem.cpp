@@ -67,6 +67,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Forward(m_pOpaquePass, m_pInstancePass);
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
+	m_pEffect->Render_WeightOIT();
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
 	if (IsOn)
@@ -118,6 +119,11 @@ CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 		break;
 	}
 	return pRenderer;
+}
+
+void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
+{
+	m_pForward->SetRimLightMode(eMode);
 }
 
 #ifdef _USING_GUI

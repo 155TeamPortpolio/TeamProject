@@ -129,18 +129,25 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         auto seqTf = sequenceCam->Get_Component<CTransform>();
         const Matrix seqWorld = seqTf->Get_WorldMatrix();
 
+        const Vector4 p4 = seqTf->Get_Pos();
+        const Vector3 seqPos(p4.x, p4.y, p4.z);
+
         auto returnObj = OBJ->Request_Object(m_returnCamHandle);
-        auto returnTf = returnObj->Get_Component<CTransform>();
-        returnTf->TranslateMatrix(seqWorld);
 
         if (m_returnCamType == CamReturnType::OrbitCam)
         {
             auto orbit = static_cast<COrbitCam*>(returnObj);
+            auto orbitCC = orbit->Get_Component<CCharacterController>();
+
+            orbitCC->Set_Position(XMVectorSet(seqPos.x, seqPos.y, seqPos.z, 1.f));
             orbit->SyncFromCurTransform();
         }
 
         if (m_returnCamType == CamReturnType::FreeCam)
         {
+            auto returnTf = returnObj->Get_Component<CTransform>();
+            returnTf->TranslateMatrix(seqWorld);
+
             auto freeCam = static_cast<CFreeCam*>(returnObj);
             freeCam->SyncRotation();
         }

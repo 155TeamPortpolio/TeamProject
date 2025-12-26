@@ -34,6 +34,7 @@ private:
     HRESULT Save_AIScene();
     void Clear_Models();
     _bool HasBones();
+    HRESULT ExportBoneInfo();
 
 private:
     const aiScene*      m_pAIScene = { nullptr };
