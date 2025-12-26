@@ -364,6 +364,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ResourceEntry.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
     <ClInclude Include="..\Public\ResourceThread.h" />
+    <ClInclude Include="..\Public\Resource_Blobs.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\SizeBySpeed.h" />

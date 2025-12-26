@@ -23,34 +23,7 @@ private:
     ~CResourceEntry() DEFAULT;
 
 public:
-    enum class ResourceType : uint8_t { Texture, Model, Shader, Material, Audio, Animation, Unknown };
-    enum class LoadState : uint8_t { Unloaded, Loading, Committing, Ready, Failed };
-    struct ResourceKey {
-        uint64_t levelHash{};
-        ResourceType type{};
-        uint64_t keyHash{};
-        bool operator==(const ResourceKey& rhs) const {
-            return levelHash == rhs.levelHash && type == rhs.type && keyHash == rhs.keyHash;
-        }
-    };
-    struct ResourceKeyHash {
-        size_t operator()(const ResourceKey& resourceKey) const noexcept {
-            size_t combined = size_t(resourceKey.levelHash);
-            combined ^= size_t(resourceKey.keyHash) + 0x9e3779b97f4a7c15ull + (combined << 6) + (combined >> 2);
-            combined ^= (size_t(resourceKey.type) * 0x9e3779b97f4a7c15ull);
-            return combined;
-        }
-    };
-
-    using ResourceVariant = variant<
-         monostate,
-        CTexture*,
-        CModelData*,
-        CShader*,
-        CMaterialData*,
-        CAnimationClip*,
-        CSoundData*
-    >;
+    
 
     // 엔트리 생존 범위 내에서 "잠깐 보기"(ref 증가 없음)
     template<typename TResource>
@@ -73,7 +46,8 @@ public:
     }
 
     using LoaderFunc = function<ResourceVariant(const string& sourcePath, string& outError)>;
-    using CommitFunc = function<bool(ResourceVariant& inOutVariant, string& outError)>;
+    //using CommitFunc = function<bool(ResourceVariant& inOutVariant, string& outError)>;
+    using CommitFunc = function<_bool(const ResourceVariant& stagingVariant,ResourceVariant& finalVariant,string& errorMsg)>;
 
 public:
     

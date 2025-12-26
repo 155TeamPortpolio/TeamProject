@@ -91,6 +91,7 @@ using namespace physx;
 #include "Engine_Layouts.h"
 #include "Build_Struct.h"
 #include "Data_Packets.h"
+#include "Resource_Blobs.h"
 using namespace Engine;
 
 #include <windowsx.h>

@@ -11,6 +11,11 @@ CResourceEntry::CResourceEntry()
 {
 }
 
+//  Request(요청):                        이 키/경로 리소스를 로드하라 예약
+//  Load(백그라운드 작업):         파일 IO/파싱/CPU 디코드만 함 (GPU 금지)
+//  Commit(메인 스레드 확정):  GPU 리소스 생성/등록, 엔트리에 최종 반영
+
+//역할: “비동기 로딩을 시작해라”(중복 시작 방지 포함)“백그라운드 작업을 킥”만 한다.
 bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc)
 {
     LoadState expected = LoadState::Unloaded;
@@ -26,6 +31,7 @@ bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc)
         m_LastErrorMsg.clear();
         m_LoadingTask = shared_future<ResourceVariant>{};
     }
+
     //함수 하나를 다른 실행 컨텍스트에서 실행하고 결과를 future로 받는” 표준 기능launch::async를 줬기 때문에 새 스레드(또는 스레드풀)에서 즉시 실행
     future<ResourceVariant> futureTask = async(launch::async, [this, loaderFunc, capturedPath]()
         {
@@ -46,7 +52,7 @@ bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc)
 
     return true;
 }
-
+//로딩 끝났으면 메인 스레드에서 확정(commit)해라//ready면 결과를 m_StagingResource로 옮기고 Committing으로 전환
 void CResourceEntry::Pump(const CommitFunc& commitFunc)
 {
     LoadState currentState = m_State.load(memory_order_acquire);
@@ -88,38 +94,39 @@ void CResourceEntry::Pump(const CommitFunc& commitFunc)
             stagingVariant = m_StagingResource;
         }
 
-        // monostate면 실패 처리
         if (holds_alternative<monostate>(stagingVariant)) {
             m_State.store(LoadState::Failed, memory_order_release);
             return;
         }
 
         string commitError;
-        bool commitOk = true;
+        ResourceVariant finalVariant = monostate{};
+        _bool commitOk = true;
+
         if (commitFunc) {
-            commitOk = commitFunc(stagingVariant, commitError);
+            commitOk = commitFunc(stagingVariant, finalVariant, commitError);
+        }
+        else {
+            // 커밋이 필요 없는 타입이면 그대로 통과
+            finalVariant = stagingVariant;
         }
 
-        if (!commitOk) {
+        if (!commitOk || holds_alternative<monostate>(finalVariant)) {
             lock_guard<mutex> lockGuard(m_Mutex);
             m_LastErrorMsg = commitError;
-            // stagingVariant가 들고 있는 raw ptr은 로더가 만든 것이므로 여기서 정리할 정책 필요
-            // 간단히: 아래 ReleaseVariant로 해제
             ReleaseVariant_NoLock(stagingVariant);
             m_StagingResource = monostate{};
             m_State.store(LoadState::Failed, memory_order_release);
             return;
         }
 
-        // Commit 성공: 엔트리 본 소유로 확정(엔트리 1회 AddRef 확보)
         {
             lock_guard<mutex> lockGuard(m_Mutex);
 
-            Release_NoLock(); // 기존 리소스 정리
+            Release_NoLock();               // 기존 최종 리소스 정리(엔트리 유일 소유)
+            m_Resource = finalVariant;      // 최종 확정 (여기서 AddRef 금지)
 
-            AddRefVariant_NoLock(stagingVariant); // 엔트리 소유 1회 AddRef
-            m_Resource = stagingVariant;
-
+            ReleaseVariant_NoLock(stagingVariant);
             m_StagingResource = monostate{};
             m_LoadingTask = shared_future<ResourceVariant>{};
         }

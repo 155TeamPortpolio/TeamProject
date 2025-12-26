@@ -1,22 +1,12 @@
 #pragma once
 #include "IResourceService.h"
+#include "ResourceEntry.h"
 
 NS_BEGIN(Engine)
 
 class CResourceThread final :
 	public IResourceService
 {
-	struct RS_Pool {
-		unordered_map<string, class CShader*>					m_Shaders;
-		unordered_map<string, class CVIBuffer*>					m_Buffers;
-		unordered_map<string, class CModelData*>				m_ModelDatas;
-		unordered_map<string, vector<class CMaterialData*>>		m_MaterialInstances;
-		unordered_map<string, class CTexture*>					m_Textures;
-		unordered_map<string, class CSoundData*>				m_Sounds;
-		unordered_map<string, vector<class CAnimationClip*>>	m_Animations;
-		unordered_map<string, EFFECT_ASSET>						m_EffectAssets;
-		unordered_map <string, class CComputeShader*>			m_ComputeShaders;
-	};
 
 private:
 	CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -39,26 +29,38 @@ public:
 	virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectTag) override;
 	virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) override;
 
+	// 경로 등록 (키 -> 파일 경로)
+	//HRESULT Add_ResourcePath(const std::string& resourceKey, const std::string& resourcePath);
+
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
 
 	virtual void Load_InitialResource() override;
 private:
 	_int ValidLevel(const string& levelKey);
-	vector<CMaterialData*>* GetOrLoad_MaterialData(const string& levelTag, const string& fileKey);
-	vector<CMaterialInstance*> Make_MaterialHandles(const vector<CMaterialData*>& dataList);
+	string MakeTextureEntryKey(const string& textureKey, _bool isSRGB);
 private:
 	string MakePath(const string& pathKey);
-
+	void Pump_Textures(_uint maxCommitsPerFrame);
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	class CGameInstance* m_pInstance = { nullptr };
 
-	vector<RS_Pool >m_Resources;
-	unordered_map<string, _uint> m_LevelIndex;
-	unordered_map<string, string>m_KeyPath;
-	unordered_map<string, vector<string>>m_MateriaFileKeys;
+	unordered_map<string, string> m_PathByKey;
+	struct TEX_ENTRY
+	{
+		string levelTag;
+		string sourcePath;
+		_bool isSRGB = false;
+		CTexture* pTexture = { nullptr };
+		CResourceEntry* pEntry = { nullptr };      
+	};
+
+	unordered_map<string, TEX_ENTRY> m_TextureEntryByKey;
+
+private:
+	CTexture* m_DefaultTexture = { nullptr };
 
 public:
 	static CResourceThread* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

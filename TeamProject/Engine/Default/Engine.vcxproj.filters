@@ -520,6 +520,9 @@
     <ClInclude Include="..\Public\ResourceThread.h">
       <Filter>01. Utility\05. Resources\ThreadResource\00. Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Resource_Blobs.h">
+      <Filter>01. Utility\05. Resources\ThreadResource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
