@@ -849,6 +849,7 @@ HRESULT SetAnimBuild::Apply()
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
+	Layer.fCurrentTrackPosition = 0.f;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 

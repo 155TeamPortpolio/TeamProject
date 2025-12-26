@@ -22,7 +22,7 @@ HRESULT CAnimator3DEX::Initialize(COMPONENT_DESC* pArg)
 
 void CAnimator3DEX::Render_GUI()
 {
-	//__super::Render_GUI();
+	__super::Render_GUI();
 }
 
 void CAnimator3DEX::Update_Animation(_float dt)

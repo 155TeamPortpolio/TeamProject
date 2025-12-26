@@ -28,7 +28,26 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (nullptr != m_pSelectAnimator) {
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
-		m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
+
+	
+		if (m_ePanelType == PANELTYPE::CLIP) {
+			m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
+		}
+		else if (m_ePanelType == PANELTYPE::PREVIEW) {
+			if (m_bPreviewPlay) {
+				m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
+
+				if (m_pSelectAnimator->isCurrentAnimEnd()) {
+					if (m_iCurrentPrevIndex < m_PreviewList.size() - 1) {
+						m_fTrackPos = 0.f;
+						m_pSelectAnimator->Set_Animation(m_PreviewList[++m_iCurrentPrevIndex])
+							.Loop(false);
+					}
+					else
+						m_bPreviewPlay = false;
+				}
+			}
+		}
 	}
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
@@ -433,6 +452,63 @@ void CAnimToolPanel::Draw_EventListUI()
 
 void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 {
+	const ImVec2 buttonSize(55.f, 0.f);
+
+	if (ImGui::Button(m_bPreviewPlay ? "Stop" : "Play", buttonSize)) {
+		if (!m_bPreviewPlay) // Play 눌렀을 때만
+		{
+			m_bPreviewPlay = true;
+			m_bPause = false;
+
+
+			if (m_pSelectAnimator && !m_PreviewList.empty())
+			{
+				m_iCurrentPrevIndex = 0;
+				m_fTrackPos = 0.f;
+				m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = 0.f;
+				m_pSelectAnimator
+					->Set_Animation(m_PreviewList[0])
+					.Loop(false);
+			}
+		}
+		else // Stop
+		{
+			m_bPreviewPlay = false;
+			m_bPause = true;
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Add", buttonSize)) {
+		m_PreviewList.push_back("");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear", buttonSize)) {
+		m_PreviewList.clear();
+	}
+
+	for (int i = 0; i < m_PreviewList.size(); i++) {
+		string ComboTag = "##Preview Combo" + to_string(i);
+		if (ImGui::BeginCombo(ComboTag.c_str(), m_PreviewList[i].c_str())) //Model
+		{
+			if (!m_AnimClip.empty()) {
+				int iIndex = 0;
+				for (auto& Clip : m_AnimClip)
+				{
+					string ClipTag = Clip.ClipTag;
+					bool selected = (m_PreviewList[i] == ClipTag);
+					if (ImGui::Selectable(ClipTag.c_str(), selected))					{
+						//새로운 클립을 눌렀다면
+						m_PreviewList[i] = ClipTag;
+					}
+					if (selected)
+						ImGui::SetItemDefaultFocus();
+
+					iIndex++;
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
 }
 
 void CAnimToolPanel::GUI_Setting_Effect(_float fChildHeight)

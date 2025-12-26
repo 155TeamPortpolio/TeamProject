@@ -82,6 +82,10 @@ private: //Create Clip
     _float  m_fTrackPos   = {};
     _float  m_fDuration  = {};
     
+    vector<string> m_PreviewList;
+    _bool m_bPreviewPlay = false;
+    _int m_iCurrentPrevIndex = 0;
+    
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
