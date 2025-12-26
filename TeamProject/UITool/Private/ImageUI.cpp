@@ -67,22 +67,22 @@ void CImageUI::Render_GUI()
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }
 
-void CImageUI::SavePrefab(json& data)
+void CImageUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
 }
 
-void CImageUI::LoadPrefab(const json& data)
+void CImageUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 }

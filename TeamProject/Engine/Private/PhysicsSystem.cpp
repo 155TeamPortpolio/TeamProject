@@ -292,20 +292,43 @@ PxFilterFlags CPhysicsSystem::SimulationFilterShader(
     PxFilterObjectAttributes attributes1, PxFilterData filterData1,
     PxPairFlags& pairFlags, const void* constantBlock, PxU32 constantBlockSize)
 {
-    // 트리거(Trigger)인 경우
+    // 트리거 처리
     if (PxFilterObjectIsTrigger(attributes0) || PxFilterObjectIsTrigger(attributes1))
     {
+        // 트리거도 마스크 검사 적용
+        PxU32 mask0 = filterData0.word1;  // A가 충돌할 대상
+        PxU32 mask1 = filterData1.word1;  // B가 충돌할 대상
+        PxU32 group0 = filterData0.word0; // A의 그룹
+        PxU32 group1 = filterData1.word0; // B의 그룹
+
+        // 양방향 검사: A가 B를 허용하고, B가 A를 허용해야 함
+        if ((mask0 & group1) == 0 || (mask1 & group0) == 0)
+            return PxFilterFlag::eSUPPRESS;
+
         pairFlags = PxPairFlag::eTRIGGER_DEFAULT;
         return PxFilterFlag::eDEFAULT;
     }
-    // 물리적 충돌 처리 + 알림 켜기
-    // eCONTACT_DEFAULT: 물리적으로 튕겨내라 (이게 있어야 안 뚫립니다!)
-    // eNOTIFY_TOUCH_FOUND: 충돌 시작되면 onContact 호출해라
+
+    // 필터 마스크 검사
+    PxU32 group0 = filterData0.word0;  // A의 그룹 비트
+    PxU32 group1 = filterData1.word0;  // B의 그룹 비트
+    PxU32 mask0 = filterData0.word1;   // A가 충돌할 대상 마스크
+    PxU32 mask1 = filterData1.word1;   // B가 충돌할 대상 마스크
+
+    // 양방향 검사: A가 B를 허용하고, B가 A를 허용해야 충돌
+    _bool bAtoB = (mask0 & group1) != 0;
+    _bool bBtoA = (mask1 & group0) != 0;
+
+    if (!bAtoB || !bBtoA)
+        return PxFilterFlag::eSUPPRESS;  // 충돌 무시
+
+    // 충돌 허용
     pairFlags = PxPairFlag::eCONTACT_DEFAULT
-        | PxPairFlag::eSOLVE_CONTACT         // 물리적 반발력
-        | PxPairFlag::eDETECT_DISCRETE_CONTACT // 일반 충돌 감지
-        | PxPairFlag::eDETECT_CCD_CONTACT    // CCD 충돌 감지 허용
+        | PxPairFlag::eSOLVE_CONTACT
+        | PxPairFlag::eDETECT_DISCRETE_CONTACT
+        | PxPairFlag::eDETECT_CCD_CONTACT
         | PxPairFlag::eNOTIFY_TOUCH_FOUND
+        | PxPairFlag::eNOTIFY_TOUCH_PERSISTS  // Stay 이벤트용 추가
         | PxPairFlag::eNOTIFY_TOUCH_LOST;
 
     return PxFilterFlag::eDEFAULT;

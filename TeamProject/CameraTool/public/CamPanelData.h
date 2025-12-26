@@ -40,5 +40,11 @@ struct CamToolKeyPolicy
     _float defaultStepTime = 0.5f;
     _float mergeEpsilon = 1e-3f;
 };
+struct PanelUIState
+{
+    bool  hidden    = false;
+    float expandedH = 400.f;
+    float slideY    = 0.f;
+};
 
 NS_END

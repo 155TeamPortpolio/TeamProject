@@ -97,6 +97,9 @@
     <Filter Include="04. AIResource\AIModelData\AISkeleton\AIBone">
       <UniqueIdentifier>{09e5c331-848a-4417-bd80-33267843a950}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Obj\04. BinaryModel">
+      <UniqueIdentifier>{9c105ecb-2c2a-4622-93c4-4a0649ae69fe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -246,6 +249,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\ModelEditor_BoneData.h">
       <Filter>99. Defines</Filter>
+       </ClInclude>
+       <ClInclude Include="..\Public\BinaryModel.h">
+      <Filter>02. Obj\04. BinaryModel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -359,6 +365,9 @@
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
       <Filter>97. GUIInc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BinaryModel.cpp">
+      <Filter>02. Obj\04. BinaryModel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

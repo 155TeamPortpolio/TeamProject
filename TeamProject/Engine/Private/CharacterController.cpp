@@ -6,15 +6,6 @@
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 
-CCharacterController::CCharacterController()
-{
-}
-
-CCharacterController::CCharacterController(const CCharacterController& rhs)
-	: ICollidable(rhs)
-{
-}
-
 void CCharacterController::Set_Velocity(_fvector vVelocity)
 {
 	_float3 vIn;
@@ -154,6 +145,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_fSlopeLimit = pDesc->fSlopeLimit;
 	m_fMaxSpeed = pDesc->fMaxSpeed;
 
+	m_pQueryFilter = new CCCTQueryFilter(&m_FilterData);
+
 	return S_OK;
 }
 
@@ -181,7 +174,6 @@ void CCharacterController::OnTriggerExit(ICollidable* pOthter)
 {
 	m_pOwner->OnTriggerExit();
 }
-
 
 void CCharacterController::Update(_float dt)
 {
@@ -458,8 +450,6 @@ void CCharacterController::Process_Response(const PxControllerShapeHit& hit)
 #ifdef _DEBUG
 void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
-	if (!m_pController) return;
-
 	const PxExtendedVec3& pos = m_pController->getPosition();
 	XMFLOAT3 vPos((float)pos.x, (float)pos.y, (float)pos.z);
 
@@ -515,8 +505,6 @@ void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* 
 
 void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float dt)
 {
-	if (!m_pController) return;
-
 	_vector vNormalized = XMVector3Normalize(vDir);
 	_vector vDisplacement = vNormalized * fSpeed * dt;
 
@@ -529,8 +517,6 @@ void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float d
 
 void CCharacterController::Move_Velocity(_fvector vVelocity, _float dt)
 {
-	if (!m_pController) return;
-
 	_float3 vVel;
 	XMStoreFloat3(&vVel, vVelocity);
 	vVel.y = m_vVelocity.y;
@@ -541,26 +527,53 @@ void CCharacterController::Move_Velocity(_fvector vVelocity, _float dt)
 
 void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
 {
-	if (!m_pController) return;
 	Move(vDisp, dt);
 }
 
 void CCharacterController::Stop_Movement()
 {
-	m_vVelocity.x = 0.f;
-	m_vVelocity.z = 0.f;
+	m_vVelocity = {};
+}
+
+void CCharacterController::Set_CollisionMask(_uint iMask)
+{
+	m_FilterData.word1 = iMask;
+
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
+	{
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
+}
+
+void CCharacterController::Set_CollisionGroup(COLLISION_GROUP eGroup)
+{
+	m_FilterData.word0 = 1 << ENUM(eGroup);
+
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
+	{
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
 }
 
 void CCharacterController::Move(_fvector vDisplacement, _float dt)
 {
-	if (!m_pController) return;
-
 	_float3 vDisp;
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
+	// Scene Query 1차 필터용: 마스크를 word0에 설정
+	m_QueryFilterData.word0 = m_FilterData.word1;
+
 	PxControllerFilters filters;
-	filters.mFilterData = &m_FilterData;
+	filters.mFilterData = &m_QueryFilterData;
+	filters.mFilterCallback = m_pQueryFilter;
+	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
 	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.0001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
@@ -574,8 +587,6 @@ void CCharacterController::Jump(_float fJump)
 
 void CCharacterController::Set_Position(_fvector vPos)
 {
-	if (!m_pController) return;
-
 	_vector3 p = vPos;
 	m_pController->setPosition(PxExtendedVec3(p.x, p.y, p.z));
 	m_pOwnerTransform->Set_WorldPos(vPos);
@@ -583,8 +594,6 @@ void CCharacterController::Set_Position(_fvector vPos)
 
 void CCharacterController::Resize(_float fHeight, _float fRadius)
 {
-	if (!m_pController) return;
-
 	PxCapsuleController* pCapsule = static_cast<PxCapsuleController*>(m_pController);
 	if (pCapsule)
 	{
@@ -597,32 +606,24 @@ void CCharacterController::Resize(_float fHeight, _float fRadius)
 
 void CCharacterController::Set_StepOffset(_float fOffset)
 {
-	if (!m_pController) return;
-
 	m_fStepOffset = fOffset;
 	m_pController->setStepOffset(fOffset);
 }
 
 void CCharacterController::Set_SlopeLimit(_float fDegree)
 {
-	if (!m_pController) return;
-
 	m_fSlopeLimit = fDegree;
 	m_pController->setSlopeLimit(cosf(XMConvertToRadians(fDegree)));
 }
 
 _vector CCharacterController::Get_FootPosition()
 {
-	if (!m_pController) return XMVectorZero();
-
 	const PxExtendedVec3& pos = m_pController->getFootPosition();
 	return XMVectorSet((float)pos.x, (float)pos.y, (float)pos.z, 1.f);
 }
 
 _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit)
 {
-	if (!m_pController) return false;
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	IPhysicsService* pPhysics = pGameInstance->Get_PhysicsSystem();
 
@@ -672,8 +673,6 @@ _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHY
 
 PxShape* CCharacterController::Get_Shape()
 {
-	if (!m_pController) return nullptr;
-
 	PxRigidDynamic* pActor = m_pController->getActor();
 	if (!pActor) return nullptr;
 
@@ -769,49 +768,38 @@ void CCharacterController::Set_ContactOffset(_float fOffset)
 void CCharacterController::Set_RestOffset(_float fOffset)
 {
 	m_fRestOffset = fOffset;
-	if (m_pController)
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
 	{
-		PxShape* pShape;
-		m_pController->getActor()->getShapes(&pShape, 1);
-		if (pShape)
-		{
-			pShape->setRestOffset(fOffset);
-		}
+		pShape->setRestOffset(fOffset);
 	}
 }
 
 _float CCharacterController::Get_ContactOffset()
 {
-	if (m_pController)
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
 	{
-		PxShape* pShape;
-		m_pController->getActor()->getShapes(&pShape, 1);
-		if (pShape)
-		{
-			return pShape->getContactOffset();
-		}
+		return pShape->getContactOffset();
 	}
 	return m_fContactOffset;
 }
 
 _float CCharacterController::Get_RestOffset()
 {
-	if (m_pController)
-	{
-		PxShape* pShape;
-		m_pController->getActor()->getShapes(&pShape, 1);
-		if (pShape)
-		{
-			return pShape->getRestOffset();
-		}
-	}
+    PxShape* pShape;
+    m_pController->getActor()->getShapes(&pShape, 1);
+    if (pShape)
+    {
+    	return pShape->getRestOffset();
+    }
 	return m_fRestOffset;
 }
 
 void CCharacterController::Set_BoundingMinY(_float fMinY)
 {
-	if (!m_pController) return;
-
 	_float fDelta = fMinY - m_fBoundingMinY;
 	m_fBoundingMinY = fMinY;
 
@@ -841,6 +829,12 @@ CComponent* CCharacterController::Clone()
 void CCharacterController::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
+
+	if (m_pQueryFilter)
+	{
+		delete m_pQueryFilter;
+		m_pQueryFilter = nullptr;
+	}
 
 	if (m_pController)
 	{

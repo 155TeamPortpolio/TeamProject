@@ -21,7 +21,7 @@ public:
     _float4x4 Get_TransformationMatrix(_uint BoneIndex);
 
     const vector<string> Get_BoneNames();
-
+    void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
 private:
     _int FindBoneIndexWithPrefix(const string& BonePrefixName);
 

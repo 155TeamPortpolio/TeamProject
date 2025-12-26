@@ -34,7 +34,6 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
-	Load_InitialResource();
 	return S_OK;
 }
 
@@ -160,64 +159,82 @@ CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& buf
 
 	if (buffer)
 		map.emplace(bufferKey, buffer);
-
+	
 	return buffer;
 }
 
-vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(const string& levelTag, const string& fileKey)
+vector<CMaterialInstance*> CResourceMgr::Load_MaterialFromFile(
+	const string& levelTag,
+	const string& fileKey)
 {
-	vector<CMaterialInstance*> MaterialHandles;
+	vector<CMaterialInstance*> handles;
 
-	int index = ValidLevel(levelTag);
-	if (index == -1) {
-		MSG_BOX("Wrong Level Tag. :Load_MaterialFromFile ");
-		return MaterialHandles;
-	}
-	/*�ϴ� �������� ������*/
+	vector<CMaterialData*>* dataList = GetOrLoad_MaterialData(levelTag, fileKey);
 
-	/*��Ƽ���� ������ ���͸� ���� ��*/
-	auto& map = m_Resources[index].m_MaterialInstances;
+	if (!dataList)
+		dataList = GetOrLoad_MaterialData(levelTag, "Default.mat");
 
-	auto iter = map.find(fileKey);
-
-	//�׷� Ű�� ���ٸ�
-	if (iter == map.end()) {
-		ifstream ifs;
-		ifs.open(MakePath(fileKey));
-
-		if (!ifs.is_open()) {
-			MSG_BOX("Wrong File path.  :Load_MaterialFromFile ");
-			return MaterialHandles;
-		}
-
-		MATERIAL_FILE_HEADER fileHeader = {};
-		ifs.read(reinterpret_cast<char*>(&fileHeader), sizeof(fileHeader));
-		vector<CMaterialData*> materialDataContainer;
-
-		string filePath = MakePath(fileHeader.materialFileKey);
-		string fileDirectory = filesystem::path(filePath).parent_path().string() + "/";
-
-		for (size_t i = 0; i < fileHeader.MaterialDataCount; i++)
-		{
-			CMaterialData* pData = CMaterialData::Create(levelTag, ifs, fileDirectory);
-			materialDataContainer.push_back(pData);
-			CMaterialInstance* pMaterialHandle = CMaterialInstance::Make_Handle(pData, m_pDevice);
-			MaterialHandles.push_back(pMaterialHandle);
-		}
-		map.emplace(fileHeader.materialFileKey, move(materialDataContainer));
+	if (!dataList)
+	{
+		MSG_BOX("Default.mat is missing. Resource init problem.");
+		return handles;
 	}
 
-	//�׷� Ű�� �ִٸ�
-	else {
-		vector<CMaterialData*>& vector = iter->second;
-		for (auto& pData : vector)
-		{ //��ȸ�ϸ鼭 �ڵ鿡 ���.
-			CMaterialInstance* pMaterialHandle = CMaterialInstance::Make_Handle(pData, m_pDevice);
-			MaterialHandles.push_back(pMaterialHandle);
-		}
+	return Make_MaterialHandles(*dataList);
+}
+
+vector<CMaterialInstance*> CResourceMgr::Make_MaterialHandles(
+	const vector<CMaterialData*>& dataList)
+{
+	vector<CMaterialInstance*> handles;
+	handles.reserve(dataList.size());
+
+	for (CMaterialData* data : dataList)
+	{
+		CMaterialInstance* handle = CMaterialInstance::Make_Handle(data, m_pDevice);
+		handles.push_back(handle);
+	}
+	return handles;
+}
+
+vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
+	const string& levelTag,
+	const string& fileKey)
+{
+	const int levelIndex = ValidLevel(levelTag);
+	if (levelIndex == -1)
+		return nullptr;
+
+	auto& materialMap = m_Resources[levelIndex].m_MaterialInstances;
+
+	auto it = materialMap.find(fileKey);
+	if (it != materialMap.end())
+		return &it->second;
+
+	ifstream ifs(MakePath(fileKey), ios::binary);
+	if (!ifs.is_open())
+		return nullptr;
+
+	MATERIAL_FILE_HEADER header{};
+	ifs.read(reinterpret_cast<char*>(&header), sizeof(header));
+	if (!ifs.good())
+		return nullptr;
+
+	vector<CMaterialData*> container;
+	container.reserve(header.MaterialDataCount);
+
+	string filePath = MakePath(header.materialFileKey);
+	string directory = filesystem::path(filePath).parent_path().string() + "/";
+
+	for (size_t i = 0; i < header.MaterialDataCount; ++i)
+	{
+		CMaterialData* data = CMaterialData::Create(levelTag, ifs, directory);
+		if (!data) return nullptr;
+		container.push_back(data);
 	}
 
-	return MaterialHandles;
+	auto [insertIt, inserted] = materialMap.emplace(fileKey, std::move(container));
+	return &insertIt->second;
 }
 
 CShader* CResourceMgr::Load_Shader(const string& levelTag, const string& shaderKey)
@@ -257,8 +274,9 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 
 	wstring path = Helper::ConvertToWideString(MakePath(textureKey));
 	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey, sRGBType);
-	map.emplace(textureKey, pData);
-
+	if(pData)
+		map.emplace(textureKey, pData);
+	
 	return pData;
 }
 
@@ -392,7 +410,10 @@ CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& M
 	if (iter != map.end()) return iter->second;
 
 	CModelData* pData = CModelData::Create(MakePath(ModelKey), m_pDevice);
-	map.emplace(ModelKey, pData);
+	if (pData)
+		map.emplace(ModelKey, pData);
+	else
+ 		pData = m_Resources[0].m_ModelDatas["Default.model"];
 
 	return pData;
 }
@@ -411,7 +432,6 @@ HRESULT CResourceMgr::Add_ResourcePath(const string& resourceKey, const string& 
 
 	if (iter != m_KeyPath.end()) {
 		string msg = "directory Exist: " + resourceKey + "\n";
-		//string msg = "directory Exist: " + resourcePath + "\n";
 		OutputDebugStringA(msg.c_str());
 		return E_FAIL;
 	}
@@ -456,6 +476,11 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("CS_Particle_DeadListInit.hlsl", "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl");
 	Add_ResourcePath("CS_Particle_BuildInstance.hlsl", "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl");
 
+	//Default
+	Add_ResourcePath("Default.dds", "../../DefaultSource/Default.dds");
+	Add_ResourcePath("Default.mat", "../../DefaultSource/Default.mat");
+	Add_ResourcePath("Default.model", "../../DefaultSource/Default.model");
+
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Rect", CVI_Rect::Create(m_pDevice, "Engine_Default_Rect"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Plane", CVI_Plane::Create(m_pDevice, "Engine_Default_Plane"));
 	m_Resources[0].m_Buffers.emplace("Engine_Default_Point", CVI_Point::Create(m_pDevice, "Engine_Default_Point"));
@@ -477,6 +502,17 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_DeadListInit.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl", "CS_Particle_DeadListInit.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_BuildInstance.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl", "CS_Particle_BuildInstance.hlsl"));
+	
+	/*Default*/
+	m_Resources[0].m_ModelDatas.emplace("Default.model", CModelData::Create("../../DefaultSource/Default.model", m_pDevice));
+	m_Resources[0].m_Textures.emplace("Default.dds", CTexture::Create(m_pDevice,L"../../DefaultSource/Default.dds","Default.dds",false));
+	{
+		vector<CMaterialData*>* defaultData =
+			GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat");
+
+		if (!defaultData)
+			MSG_BOX("Failed to preload Default.mat");
+	}
 }
 
 

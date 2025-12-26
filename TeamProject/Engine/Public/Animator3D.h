@@ -5,7 +5,7 @@
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
-enum class ANIM_LAYER_STATE { OVERRIDE, BLEND, ADDITIVE };
+enum class ANIM_LAYER_STATE { NONE, OVERRIDE, BLEND, ADDITIVE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
@@ -123,6 +123,11 @@ public://애니매이터 데이터
     void Set_UseTransform(_uint LayerIndex = 0);
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
+    //애니매이션을 돌릴 본 설정
+    void Set_StartBone(_int StartBoneIndex, _uint LayerIndex = 0);
+    void Reset_StartBone(_uint LayerIndex = 0);
+    //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
+    void Set_TPose();
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);

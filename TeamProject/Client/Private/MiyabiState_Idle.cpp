@@ -5,9 +5,7 @@
 
 void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 {
-    CAnimator3D* pAnimator = pOwner->Get_Animator();
-    if (pAnimator)
-        pAnimator->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
         .Loop(true)
         .Apply();
 }
