@@ -1,6 +1,8 @@
 #include "UITool_Defines.h"
 #include "GaugeUI.h"
 
+#include "GameInstance.h"
+#include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
@@ -36,9 +38,7 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if (szTextureKeys.size())
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
 
     m_iCount++;
 
@@ -65,14 +65,22 @@ void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // 이미지
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    ImGui::Text(m_InstanceName.c_str());
+    // 텍스쳐
     ImGui::SeparatorText(u8"이미지");
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
-    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    if (ImGui::Button(u8"선택"))
+    {
+        string filePath = Helper::OpenFile_Dialogue();
+        if (!filePath.empty())
+        {
+            string fileName = Helper::GetFileNameWithExtension(filePath);
 
+            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+            m_strTextureKey = fileName;
+            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+        }
+    }
+
+    ImGui::SeparatorText(u8"게이지");
     // 게이지
     if (ImGui::Checkbox(u8"원형", &m_isRadial))
     {
@@ -95,8 +103,7 @@ void CGaugeUI::SavePrefab(json& data)
 
     data["typeTag"] = m_strTypeTag;
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+    data["textureTag"] = m_strTextureKey;
 
     data["isRadial"] = m_isRadial;
     data["direction"] = m_fDirection;
@@ -107,10 +114,8 @@ void CGaugeUI::LoadPrefab(const json& data)
 {
     __super::LoadPrefab(data);
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
-    if (-1 != m_iTextureKeyIndex)
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    m_strTextureKey = data["textureTag"];
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     m_isRadial = data["isRadial"].get<_bool>();
     m_fDirection = data["direction"].get<_float>();
