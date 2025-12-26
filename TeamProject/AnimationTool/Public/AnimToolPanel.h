@@ -15,6 +15,16 @@ class CAnimToolPanel
 	: CBasePanel
 {
 private:
+    struct SEQ_SEGMENT
+    {
+        int   ClipIndex;   // 어떤 클립인지
+        float Duration;    // 클립 길이
+        float BlendTime;   // 다음으로 넘어갈 때 보간
+    };
+    vector<SEQ_SEGMENT> m_Sequence;
+    int m_iSelectSegment = -1;
+
+private:
     CAnimToolPanel(GUI_CONTEXT* pContext);
     virtual ~CAnimToolPanel() DEFAULT;
 
@@ -22,22 +32,23 @@ public:
     virtual void Update_Panel(_float dt) override;
     virtual void Render_GUI() override;
 
-    
-
 //GUI
 private:
     void GUI_DefaultSetting();
-    // -----------------------------------------------
-    void GUI_EventResources(_float fChildHeight);
     // -----------------------------------------------
     void GUI_Setting_Clips(_float fChildHeight);
     void Draw_ToolbarUI(); 
     void Draw_TimelineUI(float duration, float& ioTime, const char* id);
     void Draw_EventListUI();
+    // -----------------------------------------------
+    void GUI_Preview(_float fChildHeight);
     // -------------------------------------------------
     void GUI_Setting_Effect(_float fChildHeight); // << 이 칸 안에서 작업하고 클래스 추가하면 댐
     // -------------------------------------------------
     void GUI_Create_MetaData(_float fChildHeight);
+
+    enum class PANELTYPE { CLIP, PREVIEW, RESOURCE };
+    PANELTYPE m_ePanelType = { PANELTYPE::CLIP };
 
 //Func
 public:
@@ -63,6 +74,7 @@ private: //Create Clip
     int                  m_iCurClipIndex = { -1 };
     vector<ANIM_CLIP>    m_AnimClip;
 
+    //전부 디버그용 표시여야함 
     _bool   m_bPause = { true };
     _bool   m_bLoop = { true };
     _float  m_fPlaySpeed = { 1.f };
@@ -70,7 +82,10 @@ private: //Create Clip
     _float  m_fTrackPos   = {};
     _float  m_fDuration  = {};
     
-
+    vector<string> m_PreviewList;
+    _bool m_bPreviewPlay = false;
+    _int m_iCurrentPrevIndex = 0;
+    
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
