@@ -128,6 +128,9 @@ HRESULT CTestLevel::Awake()
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
 	miyabiCCT.bAutoFit = false;
 	miyabiCCT.fHeight = 1.28;
 	miyabiCCT.fRadius = 0.2f;
