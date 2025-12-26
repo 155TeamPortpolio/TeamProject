@@ -147,7 +147,7 @@ public:
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
     //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
-
+    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
