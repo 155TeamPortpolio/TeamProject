@@ -36,7 +36,7 @@ private:
 	_char		m_szEventMsg[MAX_PATH] = {};	// 클릭했을 때 내보내는 메시지
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+	string		m_strTextureKey = {};
 
 public:
 	static const string m_strTypeTag;
