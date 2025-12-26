@@ -24,8 +24,6 @@ public:
 	virtual void LoadPrefab(const json& data) override;
 
 private:
-	_bool		m_isUseMask = {};
-
 	_float2		m_vUVOffset = {};
 	_float2		m_vUVOffsetSpeed = {};
 
