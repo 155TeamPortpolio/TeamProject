@@ -1,3 +1,6 @@
+#include "CamPanel.h"
+#include "CamPanel.h"
+#include "CamPanel.h"
 #include "pch.h"
 #include "CamPanel.h"
 #include "CamPanelUtil.h"
@@ -73,6 +76,11 @@ namespace
                 k.look = ToWorldDir(k.look, refRT);
             }
         }
+    }
+    float Approach(float cur, float target, float maxDelta)
+    {
+        if (cur < target) return min(cur + maxDelta, target);
+        return max(cur - maxDelta, target);
     }
 }
 
@@ -159,74 +167,101 @@ void CCamPanel::Render_GUI()
 {
     constexpr float leftW = 200.f;
     constexpr float rightW = 250.f;
-    constexpr float height = 400.f;
+
+    constexpr float expandedMinH = 220.f;
 
     const ImVec2 display = ImGui::GetIO().DisplaySize;
 
-    ImVec2 bottomLeft(leftW, display.y);
-    ImVec2 size(display.x - leftW - rightW, height);
+    float desiredW = display.x - leftW - rightW;
+    desiredW = floorf(desiredW);
+    if (desiredW < 360.f) desiredW = 360.f;
 
+    float maxH = floorf(display.y - 60.f);
+    if (maxH < expandedMinH) maxH = expandedMinH;
+
+    const float hideExtra = 40.f;
+    const float hideTarget = panelUI.hidden ? (panelUI.expandedH + hideExtra) : 0.f;
+
+    const float dt = ImGui::GetIO().DeltaTime;
+    const float slideSpeed = 900.f;
+    panelUI.slideY = Approach(panelUI.slideY, hideTarget, slideSpeed * dt);
+
+    ImVec2 bottomLeft(leftW, display.y + panelUI.slideY);
     bottomLeft.x = floorf(bottomLeft.x);
     bottomLeft.y = floorf(bottomLeft.y);
-    size.x = floorf(size.x);
-    size.y = floorf(size.y);
 
     ImGui::SetNextWindowPos(bottomLeft, ImGuiCond_Always, ImVec2(0.f, 1.f));
-    ImGui::SetNextWindowSize(size, ImGuiCond_Always);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(desiredW, expandedMinH), ImVec2(desiredW, maxH));
+    ImGui::SetNextWindowSize(ImVec2(desiredW, panelUI.expandedH), ImGuiCond_FirstUseEver);
 
     ImGuiWindowFlags flags =
-        ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoCollapse |
         ImGuiWindowFlags_NoMove |
         ImGuiWindowFlags_NoTitleBar;
 
     Helper::DarkThemeStyle styleScope;
 
-    if (ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags))
+    const bool began = ImGui::Begin("Camera Tool##CamToolWindow", nullptr, flags);
+
+    if (began)
     {
+        const ImVec2 curSize = ImGui::GetWindowSize();
+        if (fabsf(curSize.x - desiredW) > 0.5f)
+            ImGui::SetWindowSize(ImVec2(desiredW, curSize.y));
+
+        if (!panelUI.hidden)
+            panelUI.expandedH = clamp(curSize.y, expandedMinH, maxH);
+
         DrawWindowHeader();
 
-        DrawToolbar();
-        ImGui::Separator();
-
-        DrawCamSelector();
-        ImGui::Separator();
-
-        ImGuiTableFlags layoutFlags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV;
-
-        if (ImGui::BeginTable("CamToolBodyLayout", 2, layoutFlags, ImVec2(0.f, 0.f)))
+        if (!panelUI.hidden)
         {
-            ImVec2 contentAvail = ImGui::GetContentRegionAvail();
+            DrawToolbar();
+            ImGui::Separator();
 
-            float minRight = 420.f;
-            float minLeft = 520.f;
+            DrawCamSelector();
+            ImGui::Separator();
 
-            float desiredLeft = contentAvail.x * 0.60f;
-            float maxLeft = contentAvail.x - minRight;
+            ImGuiTableFlags layoutFlags = ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_BordersInnerV;
 
-            float leftColW = desiredLeft;
-            leftColW = clamp(leftColW, minLeft, maxLeft);
-            leftColW = max(leftColW, 360.f);
+            if (ImGui::BeginTable("CamToolBodyLayout", 2, layoutFlags, ImVec2(0.f, 0.f)))
+            {
+                ImVec2 contentAvail = ImGui::GetContentRegionAvail();
 
-            ImGui::TableSetupColumn("Left", ImGuiTableColumnFlags_WidthFixed, leftColW);
-            ImGui::TableSetupColumn("Right", ImGuiTableColumnFlags_WidthStretch);
+                float minRight = 420.f;
+                float minLeft = 520.f;
 
-            ImGui::TableNextRow();
+                float desiredLeft = contentAvail.x * 0.60f;
+                float maxLeft = contentAvail.x - minRight;
 
-            ImGui::TableSetColumnIndex(0);
-            ImGui::BeginChild("CamToolLeft", ImVec2(0.f, 0.f), true);
-            DrawKeyframeList();
-            ImGui::EndChild();
+                float leftColW = desiredLeft;
+                leftColW = clamp(leftColW, minLeft, maxLeft);
+                leftColW = max(leftColW, 360.f);
 
-            ImGui::TableSetColumnIndex(1);
-            ImGui::BeginChild("CamToolRight", ImVec2(0.f, 0.f), true);
-            DrawKeyframeEditor();
-            ImGui::EndChild();
+                ImGui::TableSetupColumn("Left", ImGuiTableColumnFlags_WidthFixed, leftColW);
+                ImGui::TableSetupColumn("Right", ImGuiTableColumnFlags_WidthStretch);
 
-            ImGui::EndTable();
+                ImGui::TableNextRow();
+
+                ImGui::TableSetColumnIndex(0);
+                ImGui::BeginChild("CamToolLeft", ImVec2(0.f, 0.f), true);
+                DrawKeyframeList();
+                ImGui::EndChild();
+
+                ImGui::TableSetColumnIndex(1);
+                ImGui::BeginChild("CamToolRight", ImVec2(0.f, 0.f), true);
+                DrawKeyframeEditor();
+                ImGui::EndChild();
+
+                ImGui::EndTable();
+            }
         }
     }
+
     ImGui::End();
+
+    if (panelUI.hidden)
+        DrawHiddenHandle();
 }
 
 void CCamPanel::SetCaptureTarget(CCamObj* camObj)
@@ -372,21 +407,32 @@ void CCamPanel::DrawCamSelector()
     ImGui::TextUnformatted("Target");
     ImGui::SameLine();
 
-    const char* preview = "None";
-    if (target.sequence) preview = target.sequence->name.c_str();
+    const bool hasSeq = (target.sequence != nullptr);
+    const char* preview = hasSeq ? target.sequence->name.c_str() : "None";
 
-    ImGui::SetNextItemWidth(260.f);
+    ImGui::SetNextItemWidth(90.f);
     if (ImGui::BeginCombo("##cam_track_combo", preview))
     {
         ImGui::Selectable(preview, true);
         ImGui::EndCombo();
     }
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("%s", preview);
+
+    ImGui::SameLine(0.f, 6.f);
+
+    if (!hasSeq) ImGui::BeginDisabled();
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(6.f, 3.f));
+    if (ImGui::SmallButton("Flip180##flip_yaw180"))
+        FlipKeys_Yaw180();
+    ImGui::PopStyleVar();
+    if (!hasSeq) ImGui::EndDisabled();
 
     ImGui::SameLine();
     ImGui::Dummy(ImVec2(14.f, 0.f));
     ImGui::SameLine();
 
-    if (!target.sequence)
+    if (!hasSeq)
     {
         ImGui::TextDisabled("(No Sequence)");
         return;
@@ -469,7 +515,7 @@ void CCamPanel::DrawCamSelector()
         ImGui::SetNextItemWidth(140.f);
         if (ImGui::BeginCombo("##seg_ease", Helper::EnumLabel(shown)))
         {
-            if (CamPanelUtil::DrawEaseComboPopup(target.sequence->segmentEase, shown)) changedAny = true;
+            if (DrawEaseComboPopup(target.sequence->segmentEase, shown)) changedAny = true;
             ImGui::EndCombo();
         }
     }
@@ -539,10 +585,12 @@ void CCamPanel::DrawCamSelector()
             ImGui::EndCombo();
         }
     }
+
     ImGui::PopID();
 
     if (changedAny) PostEdit_SequenceChanged();
 }
+
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -850,7 +898,7 @@ void CCamPanel::DrawHelpPopup()
             ImGui::SetNextItemWidth(220.f);
             if (ImGui::BeginCombo("##ease_preview_combo", Helper::EnumLabel(selected)))
             {
-                CamPanelUtil::DrawEaseComboPopup(selected, selected);
+                DrawEaseComboPopup(selected, selected);
                 ImGui::EndCombo();
             }
 
@@ -860,7 +908,7 @@ void CCamPanel::DrawHelpPopup()
             ImGui::Spacing();
 
             ImVec2 graphSize(520.f, 220.f);
-            CamPanelUtil::DrawEaseGraph(selected, graphSize, "##ease_graph_preview");
+            DrawEaseGraph(selected, graphSize, "##ease_graph_preview");
 
             ImGui::Spacing();
             ImGui::Separator();
@@ -938,11 +986,45 @@ void CCamPanel::DrawWindowHeader()
     bool open = ImGui::SmallButton("Help");
     ImGui::PopStyleVar();
 
+    ImGui::SameLine(0.f, 6.f);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.f, 4.f));
+    if (ImGui::SmallButton("Hide"))
+        panelUI.hidden = true;
+    ImGui::PopStyleVar();
+
     if (open) ImGui::OpenPopup("CameraTool_Help");
     if (ImGui::IsItemHovered()) ImGui::SetTooltip(u8"카메라툴 사용법 / Easing 가이드 / 단축키");
 
     DrawHelpPopup();
     ImGui::Separator();
+}
+
+void CCamPanel::DrawHiddenHandle()
+{
+    const ImVec2 display = ImGui::GetIO().DisplaySize;
+
+    ImVec2 pos(200.f, display.y);
+    pos.x = floorf(pos.x);
+    pos.y = floorf(pos.y);
+
+    ImGui::SetNextWindowPos(pos, ImGuiCond_Always, ImVec2(0.f, 1.f));
+    ImGui::SetNextWindowBgAlpha(0.9f);
+
+    ImGuiWindowFlags flags =
+        ImGuiWindowFlags_NoTitleBar |
+        ImGuiWindowFlags_NoResize |
+        ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoCollapse;
+
+    ImGui::SetNextWindowSize(ImVec2(170.f, 0.f), ImGuiCond_Always);
+
+    if (ImGui::Begin("##CamToolHiddenHandle", nullptr, flags))
+    {
+        if (ImGui::Button("Camera Tool  ^", ImVec2(0.f, 0.f)))
+            panelUI.hidden = false;
+    }
+    ImGui::End();
 }
 
 _bool CCamPanel::DrawConstraintBar()
@@ -1166,6 +1248,38 @@ CamKeyFrame& CCamPanel::GetSelectedKey()
 {
     assert(HasValidSelection());
     return target.sequence->keyframes[(size_t)state.selectedKeyIdx];
+}
+
+void CCamPanel::FlipKeys_Yaw180()
+{
+    assert(target.sequence);
+
+    for (auto& k : target.sequence->keyframes)
+    {
+        k.pos.x = -k.pos.x;
+        k.pos.z = -k.pos.z;
+
+        k.look.x = -k.look.x;
+        k.look.z = -k.look.z;
+        k.look.Normalize();
+    }
+
+    if (target.sequence->posInterp == CamPosInterp::OrbitArc)
+    {
+        auto& d = target.sequence->orbitArc;
+
+        d.center.x = -d.center.x;
+        d.center.z = -d.center.z;
+
+        d.axis.x = -d.axis.x;
+        d.axis.z = -d.axis.z;
+        d.NormalizeAxis();
+    }
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+
+    PostEdit_SequenceChanged();
 }
 
 _uint CCamPanel::GetSelectedKeyId() const
@@ -1574,7 +1688,9 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
         else ImGui::OpenPopup("AddKey_Confirm_NotCapture");
     }
 
-    const ConfirmResult addR = DrawConfirmPopupModal( "AddKey_Confirm_NotCapture", nullptr, { u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다." }, u8"추가", u8"취소", 120.f);
+    const ConfirmResult addR = DrawConfirmPopupModal("AddKey_Confirm_NotCapture", nullptr,
+        {u8"CAPTURE(REC) OFF 상태에서 키를 추가할까요?", u8"- 이 키는 카메라에서 캡쳐되지 않습니다.", u8"- 마지막 키 복사/기본값으로 생성되며, 이후 Capture로 덮어쓸 수 있습니다."},
+        u8"추가", u8"취소", 120.f);
 
     if (addR == ConfirmResult::Ok)
         AddKey_Default();
@@ -1597,8 +1713,9 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
 
     if (!canDelete) ImGui::EndDisabled();
 
-    const ConfirmResult delR = DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,  { u8"키프레임이 2개 이하입니다.",
-        u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.", u8"그래도 삭제할까요?" }, u8"삭제", u8"취소", 120.f);
+    const ConfirmResult delR = DrawConfirmPopupModal("DeleteKey_Confirm_TooFewKeys", nullptr,
+        {u8"키프레임이 2개 이하입니다.", u8"삭제하면 1개 이하가 되어 일부 보간/재생이 비정상일 수 있어요.", u8"그래도 삭제할까요?"},
+        u8"삭제", u8"취소", 120.f);
 
     if (delR == ConfirmResult::Ok)
     {
@@ -1655,8 +1772,8 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     if (ImGui::Button("Load", btnSize))
         DoLoadSequence();
 
-    const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr, 
-        { u8"키프레임이 0개입니다.", u8"그래도 저장할까요?" }, u8"저장", u8"취소", 120.f);
+    const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr,
+        {u8"키프레임이 0개입니다.", u8"그래도 저장할까요?"}, u8"저장", u8"취소", 120.f);
 
     if (saveEmptyR == ConfirmResult::Ok)
         DoSaveSequence();
@@ -1669,6 +1786,22 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
 
     if (DrawOkPopupModalText("CamSeq_FileError", u8"File Error", keyListUI.lastFileError, "OK", 120.f))
         keyListUI.lastFileError.clear();
+
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("|");
+    ImGui::SameLine();
+    ImGui::Dummy(ImVec2(10.f, 0.f));
+    ImGui::SameLine();
+    ImGui::TextDisabled("Avatar");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(140.f);
+
+    if (Helper::DrawEnumCombo("##player_combo", avatarUI, avatarUI, 140.f))
+    {
+        if (onAvatarChanged) onAvatarChanged(avatarUI);
+    }
 
     ImGui::SameLine();
 
@@ -1917,7 +2050,7 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
                     ImGui::SetNextItemWidth(110.f);
                     if (ImGui::BeginCombo("##ease", Helper::EnumLabel(shownEase)))
                     {
-                        if (CamPanelUtil::DrawEaseComboPopup(key.outEase, shownEase)) ioChangedAny = true;
+                        if (DrawEaseComboPopup(key.outEase, shownEase)) ioChangedAny = true;
                         ImGui::EndCombo();
                     }
 
@@ -2281,7 +2414,7 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
     ImGui::SameLine();
     if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
 }
-// -----------------------------------------------------------------------------
+
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
     auto inst = new CCamPanel(context);

@@ -12,6 +12,7 @@ public:
 	HRESULT Initialize(const string& filePath, ID3D11Device* pDevice);
 #pragma region Rendering
 	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint Index);
+	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex,_uint IslandIndex);
 
 #pragma endregion 
 

@@ -16,12 +16,13 @@ namespace Engine
 
 	enum class COLLIDER_TYPE { BOX, SPHERE, CAPSULE, END };
 	// 0 ~ 31¹üÀ§
-	enum class COLLISION_GROUP { COMMON, PLAYER, MONSTER, PLAYER_ATTACK, MONSTER_ATTACK, END};
+	enum class COLLISION_GROUP { COMMON, PLAYER, MONSTER, PLAYER_ATTACK, MONSTER_ATTACK, CAMERA, END};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDERER_TYPE {FORWARD, POST, EFFECT, UI};
 	enum class RENDER_LAYER { Default, CustomOnly, Both };
-	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, END};
+	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
+	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };
 	enum class ANCHOR : unsigned int {
 		Center = 0,

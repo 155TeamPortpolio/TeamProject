@@ -1,9 +1,11 @@
 #include "Engine_Defines.h"
 #include "EffectRenderer.h"
-
 #include "Target_Manager.h"
 #include "RenderTarget.h"
 #include "RenderPass.h"
+#include "VIBuffer.h"
+#include "Shader.h"
+#include "PipeLine.h"
 
 CEffectRenderer::CEffectRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CRenderer(pDevice, pContext)
@@ -18,7 +20,7 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 {
 	__super::Initialize(pTargetManager, pPipeLine);
 
-	LoadShader("Shader_Deferred.hlsl");
+	LoadShader("Shader_WeightOIT.hlsl");
 	Ready_Target();
 	Ready_MRT();
 
@@ -30,11 +32,48 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
-	pEffectPass->Execute(m_pContext, this);
-	pParticlePass->Execute(m_pContext, this);
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	/* Color Acc Pass */
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_WeightOIT", true, pDeferredDSV, false))) return E_FAIL;
+		pEffectPass->Execute(m_pContext, this);
+		pParticlePass->Execute(m_pContext, this);
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
+
+	/* Composite Pass */
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
+
+		SHADER_PARAM WorldMat = {};
+		WorldMat.iSize = sizeof(_float4x4);
+		WorldMat.typeName = "float4x4";
+		WorldMat.pData = &m_WorldMatrix;
+
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+		
+		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "g_DiffuseEffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "g_BloomEffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_Revealage", m_pShader, "g_RevealageTexture");
+		
+		ID3D11InputLayout* pLayout = nullptr;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Composite", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+		
+		m_pShader->Apply("Composite", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+		
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
 	
+	return S_OK;
+}
+
+HRESULT CEffectRenderer::Render_WeightOIT()
+{
+
+
 	return S_OK;
 }
 
@@ -76,14 +115,25 @@ HRESULT CEffectRenderer::Ready_Target()
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
+	/*------OIT Target-------*/
+	RenderTargetDesc AccumulationDesc = { "Target_DiffuseEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(AccumulationDesc);
+
+	RenderTargetDesc BloomAccDesc = { "Target_BloomEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f, 0.f, 0.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomAccDesc);
+
+	RenderTargetDesc BloomInfoDesc = { "Target_BloomEffectInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(BloomInfoDesc);
+
+	RenderTargetDesc RevealageDesc = { "Target_Revealage" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(RevealageDesc);
+	/*-------------------------*/
+
 	RenderTargetDesc DiffuseDesc = { "Target_DiffuseEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DiffuseDesc);
 
 	RenderTargetDesc BloomDesc = { "Target_BloomEffect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomDesc);
-
-	RenderTargetDesc BloomInfoDesc = { "Target_BloomEffectInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomInfoDesc);
 
 	RenderTargetDesc DepthlDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
@@ -94,14 +144,23 @@ HRESULT CEffectRenderer::Ready_Target()
 HRESULT CEffectRenderer::Ready_MRT()
 {
 	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_DiffuseEffectAcc")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_BloomEffectAcc")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_BloomEffectInfo")))
+			return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_WeightOIT", "Target_Revealage")))
+			return E_FAIL;
+	}
+
+	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_DiffuseEffect"))) 
 			return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffect")))
 			return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_BloomEffectInfo")))
-			return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion")))
-			return E_FAIL;
+		//if (FAILED(m_pTargetManager->Add_MRT("MRT_Effect", "Target_Distortion")))
+		//	return E_FAIL;
 	}
 
 	return S_OK;

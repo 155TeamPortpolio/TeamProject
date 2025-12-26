@@ -446,3 +446,234 @@ ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const fi
 	return true;
 }
 // -------------------------------------------------------------------------------------------------
+
+ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
+{
+	bool changed = false;
+	bool previewShown = false;
+
+	auto ShowPreview = [&](EaseType v)
+		{
+			if (previewShown) return;
+			previewShown = true;
+
+			ImVec2 itemMin = ImGui::GetItemRectMin();
+			ImVec2 itemMax = ImGui::GetItemRectMax();
+
+			const ImGuiStyle& style = ImGui::GetStyle();
+			const ImVec2 display = ImGui::GetIO().DisplaySize;
+
+			const float graphW = 260.f;
+			const float graphH = 110.f;
+
+			const float textH = ImGui::GetTextLineHeightWithSpacing();
+			const float tooltipW = graphW + style.WindowPadding.x * 2.f;
+			const float tooltipH = graphH + textH + style.ItemSpacing.y + style.WindowPadding.y * 2.f;
+
+			float x = itemMax.x + 12.f;
+			float y = itemMin.y;
+
+			if (x + tooltipW > display.x - 4.f) x = itemMin.x - 12.f - tooltipW;
+			if (y + tooltipH > display.y - 4.f) y = display.y - 4.f - tooltipH;
+			if (y < 4.f) y = 4.f;
+
+			ImGui::SetNextWindowPos(ImVec2(x, y), ImGuiCond_Always);
+			ImGui::SetNextWindowBgAlpha(0.96f);
+
+			ImGuiWindowFlags wf =
+				ImGuiWindowFlags_Tooltip |
+				ImGuiWindowFlags_NoTitleBar |
+				ImGuiWindowFlags_NoResize |
+				ImGuiWindowFlags_NoMove |
+				ImGuiWindowFlags_NoSavedSettings |
+				ImGuiWindowFlags_NoFocusOnAppearing |
+				ImGuiWindowFlags_NoNav;
+
+			if (ImGui::Begin("##EaseHoverPreview", nullptr, wf))
+			{
+				ImGui::TextDisabled("%s", Helper::EnumLabel(v));
+
+				ImGui::PushID((int)v);
+				DrawEaseGraph(v, ImVec2(graphW, graphH), "##ease_hover_graph");
+				ImGui::PopID();
+
+				ImGui::End();
+			}
+		};
+
+	auto Pick = [&](EaseType v)
+		{
+			const bool selected = (shownValue == v);
+
+			if (ImGui::Selectable(Helper::EnumLabel(v), selected))
+			{
+				ioValue = v;
+				changed = true;
+			}
+
+			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
+				ShowPreview(v);
+
+			if (selected) ImGui::SetItemDefaultFocus();
+		};
+
+	Pick(EaseType::None);
+
+	ImGui::SeparatorText("A. Stable");
+	Pick(EaseType::InOutSine);
+	Pick(EaseType::OutCubic);
+	Pick(EaseType::InOutCubic);
+	Pick(EaseType::OutSine);
+	Pick(EaseType::InOutQuad);
+
+	ImGui::SeparatorText("B. Ease In");
+	Pick(EaseType::InSine);
+	Pick(EaseType::InCubic);
+	Pick(EaseType::InQuad);
+	Pick(EaseType::InCirc);
+
+	ImGui::SeparatorText("C. Settle / Stop");
+	Pick(EaseType::InOutCirc);
+	Pick(EaseType::OutCirc);
+	Pick(EaseType::OutQuad);
+
+	ImGui::SeparatorText("D. Strong");
+	Pick(EaseType::InQuart);
+	Pick(EaseType::InQuint);
+	Pick(EaseType::InOutQuart);
+	Pick(EaseType::OutQuart);
+	Pick(EaseType::InOutQuint);
+	Pick(EaseType::OutQuint);
+
+	ImGui::SeparatorText("E. Extreme");
+	Pick(EaseType::InOutExpo);
+	Pick(EaseType::OutExpo);
+	Pick(EaseType::InExpo);
+
+	ImGui::SeparatorText("F. Overshoot");
+	Pick(EaseType::OutBack);
+	Pick(EaseType::InOutBack);
+	Pick(EaseType::InBack);
+
+	ImGui::SeparatorText("G. Special");
+	Pick(EaseType::OutElastic);
+	Pick(EaseType::InOutElastic);
+	Pick(EaseType::InElastic);
+	Pick(EaseType::OutBounce);
+	Pick(EaseType::InOutBounce);
+	Pick(EaseType::InBounce);
+
+	return changed;
+}
+
+ENGINE_DLL void Helper::DrawEaseGraph(EaseType ease, ImVec2 size, const char* id)
+{
+	if (size.x <= 10.f) size.x = 360.f;
+	if (size.y <= 10.f) size.y = 180.f;
+
+	ImDrawList* dl = ImGui::GetWindowDrawList();
+	ImVec2 p0 = ImGui::GetCursorScreenPos();
+	ImVec2 p1(p0.x + size.x, p0.y + size.y);
+
+	ImGui::InvisibleButton(id, size);
+
+	ImU32 colBg = ImGui::GetColorU32(ImGuiCol_FrameBg);
+	ImU32 colBorder = ImGui::GetColorU32(ImGuiCol_Border);
+	ImU32 colGrid = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colLinear = ImGui::GetColorU32(ImGuiCol_TextDisabled);
+	ImU32 colCurve = ImGui::GetColorU32(ImGuiCol_Text);
+	ImU32 colWarn = ImGui::GetColorU32(ImGuiCol_ButtonActive);
+
+	dl->AddRectFilled(p0, p1, colBg, 6.f);
+	dl->AddRect(p0, p1, colBorder, 6.f);
+
+	const int samples = 160;
+	float minY = 1e9f;
+	float maxY = -1e9f;
+
+	for (int i = 0; i <= samples; ++i)
+	{
+		float u = (float)i / (float)samples;
+		float y = Math::ApplyEase(ease, u);
+		minY = min(minY, y);
+		maxY = max(maxY, y);
+	}
+
+	float lo = minY;
+	float hi = maxY;
+
+	if (lo > 0.f) lo = 0.f;
+	if (hi < 1.f) hi = 1.f;
+
+	float pad = (hi - lo) * 0.08f;
+	if (pad < 0.02f) pad = 0.02f;
+
+	lo -= pad;
+	hi += pad;
+
+	lo = max(lo, -1.0f);
+	hi = min(hi, 2.0f);
+
+	auto ToScreen = [&](float u, float y) -> ImVec2
+		{
+			float y01 = (y - lo) / (hi - lo);
+			y01 = clamp(y01, 0.f, 1.f);
+
+			float x = p0.x + u * size.x;
+			float ypix = p1.y - y01 * size.y;
+			return ImVec2(x, ypix);
+		};
+
+	const int gridN = 4;
+	for (int i = 1; i < gridN; ++i)
+	{
+		float t = (float)i / (float)gridN;
+		float x = p0.x + t * size.x;
+		float y = p0.y + t * size.y;
+
+		dl->AddLine(ImVec2(x, p0.y), ImVec2(x, p1.y), colGrid, 1.f);
+		dl->AddLine(ImVec2(p0.x, y), ImVec2(p1.x, y), colGrid, 1.f);
+	}
+
+	dl->AddLine(ToScreen(0.f, 0.f), ToScreen(1.f, 1.f), colLinear, 1.5f);
+
+	const bool overshoot = (minY < 0.f) || (maxY > 1.f);
+
+	ImVec2 prev = ToScreen(0.f, Math::ApplyEase(ease, 0.f));
+	for (int i = 1; i <= samples; ++i)
+	{
+		float u = (float)i / (float)samples;
+		float y = Math::ApplyEase(ease, u);
+		ImVec2 cur = ToScreen(u, y);
+		dl->AddLine(prev, cur, overshoot ? colWarn : colCurve, 2.0f);
+		prev = cur;
+	}
+
+	ImVec2 labelPos(p0.x + 10.f, p0.y + 8.f);
+	dl->AddText(labelPos, ImGui::GetColorU32(ImGuiCol_Text), Helper::EnumLabel(ease));
+
+	char rangeBuf[128];
+	sprintf_s(rangeBuf, "y range: %.2f .. %.2f", minY, maxY);
+	dl->AddText(ImVec2(labelPos.x, labelPos.y + 18.f), ImGui::GetColorU32(ImGuiCol_TextDisabled), rangeBuf);
+
+	if (overshoot)
+		dl->AddText(ImVec2(labelPos.x, labelPos.y + 36.f), colWarn, "Overshoot");
+}
+
+ENGINE_DLL bool Helper::DrawEaseCombo(const char* id, EaseType& ioValue, EaseType shownValue, float width)
+{
+	ImGui::SetNextItemWidth(width);
+
+	if (!ImGui::BeginCombo(id, Helper::EnumLabel(shownValue)))
+		return false;
+
+	const bool changed = DrawEaseComboPopup(ioValue, shownValue);
+
+	ImGui::EndCombo();
+	return changed;
+}
+
+ENGINE_DLL bool Helper::DrawEaseCombo(const char* id, EaseType& ioValue, float width)
+{
+	return DrawEaseCombo(id, ioValue, ioValue, width);
+}

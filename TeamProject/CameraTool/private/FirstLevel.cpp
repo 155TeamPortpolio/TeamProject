@@ -9,8 +9,8 @@
 HRESULT CFirstLevel::Awake()
 {
 	PROTO->Add_ProtoType("First_Level", "Proto_FreeCam", CFreeCam::Create());
-	PROTO->Add_ProtoType("First_Level", "Proto_Unagi", CUnagi::Create());
-	PROTO->Add_ProtoType("First_Level", "Proto_Grid", CGrid::Create());
+	PROTO->Add_ProtoType("First_Level", "Proto_Unagi",   CUnagi::Create());
+	PROTO->Add_ProtoType("First_Level", "Proto_Grid",    CGrid::Create());
 
 	CGameObject* freeCam = Builder::Create_Object({ "First_Level", "Proto_FreeCam" })
 		.Camera(aspect)
@@ -18,12 +18,10 @@ HRESULT CFirstLevel::Awake()
 		.Build("FreeCam");
 
 	CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_Unagi" })
-		.Position({})
+		.Rotate(Vector3{0.f, XMConvertToRadians(180.f), 0.f})
 		.Build("Unagi");
-	demoModel->Get_Component<CTransform>()->Scale({ 0.5f, 0.5f, 0.5f });
 
 	CGameObject* demoGrid = Builder::Create_Object({ "First_Level", "Proto_Grid" })
-		.Position({ 0, 0, 0 })
 		.Scale({ 50.f, 1.f, 50.f })
 		.Build("Grid");
 
@@ -34,20 +32,21 @@ HRESULT CFirstLevel::Awake()
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 
 	OBJECT_HANDLE objHandle = demoModel->Get_Handle();
+	
 	auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceReference(objHandle);
+	camPanel->SetAvatarUI(Avatar::Corin);
+
+	auto avatar = static_cast<CUnagi*>(demoModel);
+	avatar->ApplyAvatar(Avatar::Corin);
+
+	camPanel->SetOnAvatarChanged([avatar](Avatar p)
+		{
+			avatar->ApplyAvatar(p);
+		});
+
 	GUI->Register_Panel(camPanel);
-	return S_OK;
-}
-
-void CFirstLevel::Update()
-{
-
-}
-
-HRESULT CFirstLevel::Render()
-{
 	return S_OK;
 }
 

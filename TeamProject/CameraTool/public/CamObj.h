@@ -14,7 +14,7 @@ class CCamObj abstract : public CGameObject
 protected:
     CCamObj() : CGameObject() {}
     CCamObj(const CCamObj& rhs) : CGameObject(rhs) {}
-    virtual ~CCamObj() DEFAULT;
+    virtual ~CCamObj() = default;
 
 public:
     virtual HRESULT Initialize_Prototype()      override;

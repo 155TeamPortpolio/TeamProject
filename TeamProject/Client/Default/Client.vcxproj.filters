@@ -112,6 +112,9 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
       <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\01, CamPanel">
+      <UniqueIdentifier>{f4256f6a-4439-4e31-9f91-f88406bd8821}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -239,6 +242,12 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamData.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamPanel.h">
+      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -359,6 +368,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CamPanel.cpp">
+      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

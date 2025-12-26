@@ -5,6 +5,7 @@
 #include "RenderTarget.h"
 #include "PipeLine.h"
 #include "Shader.h"
+#include "Helper_Func.h"
 #include "VIBuffer.h"
 
 CPostRenderer::CPostRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -314,7 +315,7 @@ HRESULT CPostRenderer::Process_PostProcessQueue()
 		if (!bound || curKey != key)
 		{
 			if (bound) m_pTargetManager->End_MRT();
-			string mrt = m_pTargetManager->PostProcessToTargetName(cmd.eTarget);
+			string mrt = Helper::EnumToString(cmd.eTarget);
 			if (FAILED(m_pTargetManager->Begin_MRT(mrt))) return E_FAIL;
 
 			key = curKey;
@@ -335,7 +336,7 @@ HRESULT CPostRenderer::Clear_PostProcess()
 	for (size_t i = 0; i < static_cast<_uint>(POSTPROCESS::END); ++i)
 	{
 		POSTPROCESS eType = static_cast<POSTPROCESS>(i);
-		string targetName = m_pTargetManager->PostProcessToTargetName(eType);
+		string targetName = Helper::EnumToString(eType);
 
 		vector<CRenderTarget*> Targets = m_pTargetManager->Find_MRT(targetName);
 		for (auto& Target : Targets)

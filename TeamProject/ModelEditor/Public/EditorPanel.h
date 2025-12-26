@@ -14,7 +14,7 @@ public:
 	virtual void Update_Panel(_float dt) override;
 
 private:
-	void CreateObject();
+	void CreateObject(_bool binary = false);
 	void Render_Rules();
 
 private:

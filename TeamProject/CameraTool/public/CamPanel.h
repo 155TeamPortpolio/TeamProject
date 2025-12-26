@@ -2,7 +2,7 @@
 
 #include "BasePanel.h"
 #include "CamPanelData.h"
-
+#include "Unagi.h"
 #include "CamPanelUtil.h"
 
 #define CAM   CGameInstance::GetInstance()->Get_CameraMgr()
@@ -26,6 +26,10 @@ public:
     void    SetSpaceReference(OBJECT_HANDLE handle);
     void    SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles);
 
+    void    SetOnAvatarChanged(function<void(Avatar)> func) { onAvatarChanged = move(func); }
+    void    SetAvatarUI(Avatar avatar)                      { avatarUI = avatar; }
+    Avatar  GetAvatarUI() const                             { return avatarUI; }
+
 private:
 	void    DrawToolbar();
 	void    DrawCamSelector();
@@ -34,6 +38,7 @@ private:
 	void    DrawTimeline();
 	void    DrawHelpPopup();
 	void    DrawWindowHeader();
+    void    DrawHiddenHandle();
 	_bool   DrawConstraintBar();
 	_bool   DrawOrbitTargetBar();
 
@@ -62,6 +67,7 @@ private:
 	CamKeyFrame&               GetSelectedKey();
 	vector<CamKeyFrame>&       GetKeyFrames()       { return target.sequence->keyframes; }
 	const vector<CamKeyFrame>& GetKeyFrames() const { return target.sequence->keyframes; }
+    void                       FlipKeys_Yaw180();
 
 private:
     struct KeyframeListUIState
@@ -105,10 +111,14 @@ private:
     CamToolTarget         target{};
     CamToolEditState      state{};
     CamToolKeyPolicy      policy{};
+    PanelUIState          panelUI{};
 
     KeyframeListUIState   keyListUI{};
     KeyframeEditorUIState keyEditUI{};
     vector<OBJECT_HANDLE> spaceRefCandidates{};
+
+    function<void(Avatar)> onAvatarChanged{};
+    Avatar avatarUI = Avatar::Unagi;
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);

@@ -11,7 +11,7 @@ private:
     virtual ~CCameraMgr() DEFAULT;
 
 public:
-    virtual void     Set_MainCam(CCamera* camComp)   override;
+    virtual void     Set_MainCam(CCamera* camComp, _float blendSec = 0.f)   override;
     virtual void     Set_ShadowCam(CCamera* camComp) override;
 
 public:
@@ -26,9 +26,9 @@ public:
     virtual void     Clear(_float blendSec = 0.25f)                  override;
 
 public:
-    virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    virtual void ClearShake(_float fadeOutSec = 0.f) override;
+    virtual void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void     ClearShake(_float fadeOutSec = 0.f) override;
 
 public:
     virtual void     Update(_float dt) override;

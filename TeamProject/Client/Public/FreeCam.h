@@ -7,20 +7,19 @@ NS_BEGIN(Client)
 class CFreeCam final : public CCamObject
 {
 private:
-    CFreeCam() DEFAULT;
+    CFreeCam() = default;
     CFreeCam(const CFreeCam& rhs) : CCamObject(rhs) {}
-    virtual ~CFreeCam() DEFAULT;
+    virtual ~CFreeCam() = default;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* arg)  override;
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* arg)  override;
+    virtual void    Priority_Update(_float dt)  override;
+    virtual void    Update(_float dt)           override {}
+    virtual void    Late_Update(_float dt)      override {}
+    virtual void    Render_GUI()                override;
 
-    void    Priority_Update(_float dt)  override;
-    void    Update(_float dt)           override {}
-    void    Late_Update(_float dt)      override {}
-    void    Render_GUI()                override;
-
-private:
+public:
     void    ApplyRotation(_float dt);
     void    SyncRotation();
 

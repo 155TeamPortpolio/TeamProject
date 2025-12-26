@@ -9,7 +9,11 @@
 #include "CamRotPerSegmentEvaluator.h"
 #include "CamFovPerSegmentEvaluator.h"
 
+namespace
+{
 #define OBJ CGameInstance::GetInstance()->Get_ObjectMgr()
+}
+
 
 namespace
 {

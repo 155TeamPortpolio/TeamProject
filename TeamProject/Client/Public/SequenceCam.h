@@ -8,25 +8,24 @@ NS_BEGIN(Client)
 class CSequenceCam final : public CCamObject
 {
 private:
-    CSequenceCam() DEFAULT;
+    CSequenceCam() = default;
     CSequenceCam(const CSequenceCam& rhs) : CCamObject(rhs) {}
-    virtual ~CSequenceCam() DEFAULT;
+    virtual ~CSequenceCam() = default;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-
-    void    Priority_Update(_float dt)  override {}
-    void    Update(_float dt)           override {}
-    void    Late_Update(_float dt)      override {}
-    void    Render_GUI()                override;
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Priority_Update(_float dt)  override {}
+    virtual void    Update(_float dt)           override {}
+    virtual void    Late_Update(_float dt)      override {}
+    virtual void    Render_GUI()                override;
 
 public:
-    void    Stop(_bool resetTime = true);    
-    _bool   IsPlaying() const { return m_sequencePlayer->IsPlaying(); }
+    void    Stop(_bool resetTime = true) { m_seqPlayer->Stop(resetTime); }
+    _bool   IsPlaying() const { return m_seqPlayer->IsPlaying(); }
 
 private:
-    CCamSequencePlayer* m_sequencePlayer{};
+    CCamSequencePlayer* m_seqPlayer{};
     CamSequenceDesc     m_seqDesc{};
     filesystem::path    m_LastPath{};
 

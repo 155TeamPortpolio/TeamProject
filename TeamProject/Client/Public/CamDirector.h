@@ -10,6 +10,8 @@ NS_END
 NS_BEGIN(Client)
 class CSequenceCam;
 
+enum class CamReturnType { None, OrbitCam ,FreeCam };
+
 class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
@@ -24,10 +26,15 @@ public:
 
 public:
     void  SetSpaceReference(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
+    void  SetReturnCam(OBJECT_HANDLE handle, CamReturnType type) { m_returnCamHandle = handle; m_returnCamType = type; }
+
     _uint RequestSequence(const string& key, _float blendInSec = 0.25f, _bool resetTime = true, _float blendOutSec = 0.25f);
     _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void  StopAll(_float blendOutSec = 0.25f);
     void  Update(_float dt);
+
+
+    virtual void  Free()   override { __super::Free(); }
 
 private:
     struct SeqEntry
@@ -48,17 +55,17 @@ private:
     };
 
 private:
-    CSequenceCam* RequireSequenceCam() const;
+    CSequenceCam* GetSequenceCam() const;
     void          ClearPlayingState() { m_playing = {}; }
 
 private:
-    unordered_map<string, SeqEntry> m_sequences{};
+    unordered_map<string, SeqEntry> m_seqs{};
     PlayingState                    m_playing{};
-    OBJECT_HANDLE                   m_sequenceHandle{};
+    OBJECT_HANDLE                   m_seqHandle{};
     OBJECT_HANDLE                   m_spaceRefHandle{};
 
-public:
-    void Free() override;
+    OBJECT_HANDLE                   m_returnCamHandle{};
+    CamReturnType                   m_returnCamType = CamReturnType::None;
 };
 
 NS_END

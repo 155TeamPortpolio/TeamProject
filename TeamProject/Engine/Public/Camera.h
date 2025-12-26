@@ -14,13 +14,13 @@ private:
 	~CCamera() DEFAULT;
 
 public:
-	HRESULT Initialize_Prototype()           override;
+	HRESULT Initialize_Prototype()           override { return S_OK; }
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
-	Matrix      Get_ViewMatrix() const { return m_transform->Get_InverseWorldMatrix(); }
+	Matrix      Get_ViewMatrix() const;
 	Matrix      Get_ProjMatrix() const;			
-	_vector     Get_Pos()        const { return m_transform->Get_Pos(); }
+	_vector     Get_Pos()        const;
 	_float      Get_FOV()        const { return m_fov;      }
 	_float      Get_Near()       const { return m_zNear;    }
 	_float      Get_Far()        const { return m_zFar;     }
@@ -37,10 +37,14 @@ public:
 	_bool       Lerp_FOV(_float dst, _float dt);
 
 public:
+	const Vector3& Get_ViewOffset() const { return m_viewOffset; }
+	void           Set_ViewOffset(const Vector3& v) { m_viewOffset = v; }
+	void           Clear_ViewOffset() { m_viewOffset = Vector3::Zero; }
+
+public:
 	void        Render_GUI();
 
 private:
-	CTransform* m_transform{};
 	_float      m_fov{};
 	_float      m_zNear{};
 	_float      m_zFar{};
@@ -48,6 +52,8 @@ private:
 
 	CamProjType m_projType  = CamProjType::Perspective;
 	_float      m_orthoSize = 10.f;
+
+	Vector3     m_viewOffset = Vector3::Zero;
 
 public:
 	static CCamera* Create();

@@ -60,6 +60,9 @@ void CMiyabi::Awake()
 		.Loop(true)
 		.Apply();
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 1.0), 1.5f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::RIMLIGHT);
 }
 
 void CMiyabi::Priority_Update(_float dt)

@@ -203,7 +203,8 @@ vector<MINMAX_BOX> CSkeletalModel::Get_MeshBoundingBoxes()
 
 MINMAX_BOX CSkeletalModel::Get_MeshBoundingBox(_uint index)
 {
-	return m_pData->Get_MeshBoundingBox(index);
+	return Get_LocalBoundingBox();
+	//return m_pData->Get_MeshBoundingBox(index);
 }
 
 _bool CSkeletalModel::isReadyToDraw()
