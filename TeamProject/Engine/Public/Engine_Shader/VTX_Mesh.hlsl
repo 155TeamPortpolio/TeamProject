@@ -1,5 +1,8 @@
 #include "Shader_Define.hlsl"
 
+float3 vRimLightColor;
+float fRimLightPower;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -57,6 +60,7 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_TARGET4;
+    vector vRimLight : SV_Target5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -102,6 +106,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
+    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }
 

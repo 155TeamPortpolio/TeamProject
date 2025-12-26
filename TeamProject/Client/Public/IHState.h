@@ -43,6 +43,11 @@ void IHState<Type>::Enter(Type* pOwner)
     {
         if (!m_bSubInitialized)
         {
+            for (auto& pair : m_pSubStateMachine->Get_States())
+            {   // 서브 상태들에 부모 상태 설정
+                if (pair.second)
+                    pair.second->Set_ParentState(this);
+            }
             m_pSubStateMachine->Initialize(pOwner);
             m_bSubInitialized = true;
         }

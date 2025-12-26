@@ -87,11 +87,13 @@ HRESULT CAI_STModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 		return E_FAIL;
 	Release_Mesh();
 	_uint meshNum = pAIScene->mNumMeshes;
-	m_DrawableMeshes.resize(meshNum, true);
 	m_fileName = fileName;
 
 	if (FAILED(Ready_AIModelData(pAIScene)))
 		return E_FAIL;
+
+	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
+
 	// -----------------------------------------------
 	auto data = dynamic_cast<CAIModelData*>(m_pData);
 	auto ApplyDefaultClears = [&](const vector<_uint>& indices)

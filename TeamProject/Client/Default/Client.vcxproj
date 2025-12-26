@@ -151,6 +151,7 @@
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
     <ClInclude Include="..\Public\CanvasPanel.h" />
+    <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\Public\HUD.h" />
@@ -173,6 +174,7 @@
     <ClInclude Include="..\public\MapObject.h" />
     <ClInclude Include="..\public\MapPlacedObject.h" />
     <ClInclude Include="..\public\MapTriggerObject.h" />
+    <ClInclude Include="..\Public\OrbitCamData.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
@@ -228,6 +230,7 @@
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\private\CamDirector.cpp" />
     <ClCompile Include="..\Private\CanvasPanel.cpp" />
+    <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\HUD.cpp" />

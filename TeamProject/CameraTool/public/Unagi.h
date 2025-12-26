@@ -4,7 +4,7 @@
 
 NS_BEGIN(CameraTool)
 
-enum class Player { Unagi, QingYi, Belle, Corin };
+enum class Avatar { Unagi, QingYi, Corin, Belle, Alice, Astra, Burnice, Yixuan, Yuzuha };
 
 class CUnagi : public CGameObject
 {
@@ -20,7 +20,15 @@ public:
     void    Priority_Update(_float dt)  override {}
     void    Update(_float dt)           override;
     void    Late_Update(_float dt)      override {}
-    void    Render_GUI()                override;
+    void    Render_GUI()                override { __super::Render_GUI(); }
+
+public:
+    void   ApplyAvatar(Avatar avatar);
+    void   SetAvatar(Avatar avatar) { m_avatar = avatar; }
+    Avatar GetAvatar() const { return m_avatar; }
+
+private:
+    Avatar m_avatar{};
 
 public:
     static CUnagi* Create();

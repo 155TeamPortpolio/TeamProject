@@ -3,16 +3,18 @@
 #include "GameInstance.h"
 
 #include "TestMap.h"
-#include "FreeCam.h"
 #include "TestObject.h"
 #include "TestFloor.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "SequenceCam.h"
 #include "RigidBody.h"
 #include "CharacterController.h"
 
+// Camera
 #include "Camera.h"
+#include "FreeCam.h"
+#include "CamDirector.h"
+#include "OrbitCam.h"
+#include "SequenceCam.h"
+#include "CamPanel.h"
 
 /* MapData */
 #include "MapDataCloud.h"
@@ -127,7 +129,7 @@ HRESULT CTestLevel::Awake()
 		{
 			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
 				.Collider(colDesc)
-				.Position({ x * 6.5f, 0.f, z * 6.5f })
+				.Position({ x * 6.15f, 0.f, z * 6.15f })
 				.Build("Test_Floor_" + to_string(z * 3 + x));
 			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
 		}
@@ -190,23 +192,22 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
-	auto input = m_pGameInstance->Get_InputDev();
 
-	if (input->Key_Down('1'))
+	if (KEY->Key_Down('1'))
 	{
 		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
 
-	if (input->Key_Down('2'))
+	if (KEY->Key_Down('2'))
 	{
 		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
 
-	if (input->Key_Down('3'))
+	if (KEY->Key_Down('3'))
 		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
 }
 
@@ -244,6 +245,10 @@ void CTestLevel::Ready_Camera()
 	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
+
+	auto camPanel = CCamPanel::Create(GUI->Get_Context());
+	GUI->Register_Panel(camPanel);
+
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 }
 
