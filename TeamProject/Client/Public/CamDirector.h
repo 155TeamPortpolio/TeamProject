@@ -17,7 +17,7 @@ class CCamDirector final : public CBase
     DECLARE_SINGLETON(CCamDirector)
 private:
     CCamDirector() {}
-    virtual ~CCamDirector() {}
+    virtual ~CCamDirector() = default;
 
 public:
     void  Bind(CSequenceCam* sequenceCam);
@@ -32,7 +32,6 @@ public:
     _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void  StopAll(_float blendOutSec = 0.25f);
     void  Update(_float dt);
-
 
     virtual void  Free()   override { __super::Free(); }
 

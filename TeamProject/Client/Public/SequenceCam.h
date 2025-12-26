@@ -18,7 +18,7 @@ public:
     virtual void    Priority_Update(_float dt)  override {}
     virtual void    Update(_float dt)           override {}
     virtual void    Late_Update(_float dt)      override {}
-    virtual void    Render_GUI()                override;
+    virtual void    Render_GUI()                override { __super::Render_GUI(); }
 
 public:
     void    Stop(_bool resetTime = true) { m_seqPlayer->Stop(resetTime); }

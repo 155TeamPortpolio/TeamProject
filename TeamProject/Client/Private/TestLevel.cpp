@@ -129,8 +129,9 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.bAutoFit = false;
-	miyabiCCT.fHeight = 1.28;
+	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
@@ -150,30 +151,24 @@ void CTestLevel::Update()
 {
 	if (KEY->Key_Down('1'))
 	{
-		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
-
 	if (KEY->Key_Down('2'))
 	{
-		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
-
 	if (KEY->Key_Down('3'))
 	{
-		m_pCamDirector->StopAll(0.25f);
 		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
 	}
-
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 }
 
 void CTestLevel::Ready_Camera()
 {
-	constexpr float aspect = static_cast<float>(g_iWinSizeX) / static_cast<float>(g_iWinSizeY);
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
 	auto sequenceCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
@@ -185,9 +180,12 @@ void CTestLevel::Ready_Camera()
 		.Position({0.f, 2.f, -3.f})                                       
 		.Build("FreeCam");
 
+	CCT_DESC desc;
+	desc.eGroup = COLLISION_GROUP::CAMERA;
+
 	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)
-		.CharacterController({})
+		.CharacterController(desc)
 		.Build("OrbitCam");
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
