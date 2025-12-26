@@ -208,7 +208,7 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 		(isSelected ? ImGuiTreeNodeFlags_Selected : 0) |
 		(Children.empty() ? (ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen) : 0);
 
-	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")";
+	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")"+ "##" + to_string(m_ObjectID) ;
 	bool opened = ImGui::TreeNodeEx(TreeNodeName.c_str(), flags);
 
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
