@@ -115,6 +115,9 @@
     <Filter Include="02. GameObject\Camera\01, CamPanel">
       <UniqueIdentifier>{f4256f6a-4439-4e31-9f91-f88406bd8821}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{70be0f5b-c736-4ef4-9c82-ba08f0db2b8b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -239,14 +242,17 @@
     <ClInclude Include="..\Public\MiyabiState_Walk.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MiyabiState_Attack.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\OrbitCamData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Attack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -366,11 +372,14 @@
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CamPanel.cpp">
+      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\CamPanel.cpp">
-      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+    <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
