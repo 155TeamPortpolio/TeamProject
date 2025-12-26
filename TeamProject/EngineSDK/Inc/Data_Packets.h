@@ -159,4 +159,11 @@ namespace Engine {
 		function<void(ID3D11DeviceContext*)> DrawCall;
 		_uint GetKey() const;
 	}POST_PROCESS_COMMAND;
+
+	typedef struct RenderOutLineRequestCommand
+	{
+		class CShader* pShader = { nullptr };
+		_float4x4* pWorldMatrix = { nullptr };
+		function<void(ID3D11DeviceContext*)> DrawCall;
+	}OUTLINE_COMMAND;
 }

@@ -65,20 +65,20 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_Shadow(m_pShadowPass);
 	m_pForward->Render_Forward(m_pOpaquePass, m_pInstancePass);
+
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_WeightOIT();
+
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
-	if (IsOn)
-	{
-		m_pForward->Render_RimLight();
-	}
+	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
+	m_pForward->Render_OutLine();
+
 	m_pUI->Render_2D(m_pUIPass);
-	
 	m_pPost->Render_EffectBloom();
 	m_pPost->Render_HDRBloom();
 	//m_pPost->Render_Distortion();

@@ -373,7 +373,13 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 		pShader->Bind_Value("g_fLightRange", LightParam);
 
 		LightParam.pData = &desc.fLightIntensity;
-		pShader->Bind_Value("g_fLightIntensity", LightParam);
+		pShader->Bind_Value("g_fLightIntensity", LightParam);		
+		
+		LightParam.iSize = sizeof(_int);
+		_int LightSize = LightSnapShots.size();
+		LightParam.typeName = "int";
+		LightParam.pData = &LightSize;
+		pShader->Bind_Value("g_iLightSize", LightParam);
 
 		ID3D11InputLayout* pLayout;
 
