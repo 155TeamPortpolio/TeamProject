@@ -130,6 +130,8 @@ void CTextUI::FillElementData(UI_ELEMENT_DATA& data)
     
     data.strTypeTag = m_strTypeTag;
 
+    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
+    data.strFontTag = szFontKeys[m_iFontKeyIndex];
     data.strText = m_szText;
     data.fFontScale = m_fFontScale;
     data.isOutlined = m_isOutlined;
@@ -140,6 +142,7 @@ void CTextUI::FillElementData(UI_ELEMENT_DATA& data)
 void CTextUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
+
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data.strFontTag);
     if (-1 != m_iFontKeyIndex)
@@ -157,8 +160,6 @@ void CTextUI::ReadElementData(const UI_ELEMENT_DATA& data)
     Get_Component<CTextSlot>()->Set_TextKey(m_szText);
     Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
     Get_Component<CTextSlot>()->Set_Color(m_vColor); 
-    Update_UITransform();
-    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     if(m_isOutlined)
         Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
 }
@@ -208,7 +209,7 @@ void CTextUI::Render_GUI_Layout()
     ImGui::TextDisabled("Selected: %u", (_uint)m_eAnchor);
 
     ImGui::DragFloat2(u8"À§Ä¡", reinterpret_cast<_float*>(&m_vAnchorOffset));
-    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
+    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   ////////////////////////////////
 
     if (ImGui::BeginTable("TextAlign", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX))
     {

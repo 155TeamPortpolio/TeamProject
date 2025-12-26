@@ -1,29 +1,30 @@
 #include "pch.h"
-#include "CanvasPanel.h"
+#include "TextUI.h"
 
+#include "TextSlot.h"
+#include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
-CCanvasPanel::CCanvasPanel()
+CTextUI::CTextUI()
 {
 }
 
-CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
+CTextUI::CTextUI(const CTextUI& rhs)
     : CUI_Object(rhs)
 {
 }
 
-HRESULT CCanvasPanel::Initialize_Prototype()
+HRESULT CTextUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
+    Add_Component<CTextSlot>();
 
     return S_OK;
 }
 
-HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
+HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
@@ -35,32 +36,32 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CCanvasPanel::Priority_Update(_float dt)
+void CTextUI::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CCanvasPanel::Update(_float dt)
+void CTextUI::Update(_float dt)
 {
     if (!m_isAlive)
         return;
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   //
+
+    Get_Component<CTextSlot>()->Push_Text();
 
     Play_Animation(dt);
 }
 
-void CCanvasPanel::Late_Update(_float dt)
+void CTextUI::Late_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::Render_GUI()
+void CTextUI::Render_GUI()
 {
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
+void CTextUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
@@ -107,41 +108,57 @@ void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 
             if (!pChildObj)
                 continue;
-            
+
             pChildObj->ReadElementData(childElementData);
 
             pContainer->Add_Child(pChildObj);
         }
     }
+
+    strcpy_s(m_szText, data.strText.c_str());
+    m_fFontScale = data.fFontScale;
+    m_vColor = _float4(data.vColor[0], data.vColor[1], data.vColor[2], data.vColor[3]);
+    m_isOutlined = data.isOutlined;
+    m_fOutlineThickness = data.fOutlineThickness;
+    m_vOutlineColor = _float4(data.vOutlineColor[0], data.vOutlineColor[1], data.vOutlineColor[2], data.vOutlineColor[3]);
+     
+    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
+    Get_Component<CTextSlot>()->Set_Font(data.strFontTag);
+    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+    Get_Component<CTextSlot>()->Set_Color(m_vColor);
+    if (m_isOutlined)
+        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
 }
 
-CGameObject* CCanvasPanel::Create()
+CGameObject* CTextUI::Create()
 {
-    CCanvasPanel* pInstance = new CCanvasPanel();
+    CTextUI* pInstance = new CTextUI();
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CCanvasPanel");
+        MSG_BOX("Failed to Create : CTextUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CGameObject* CCanvasPanel::Clone(INIT_DESC* pArg)
+CGameObject* CTextUI::Clone(INIT_DESC* pArg)
 {
-    CCanvasPanel* pInstance = new CCanvasPanel(*this);
+    CTextUI* pInstance = new CTextUI(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CCanvasPanel");
+        MSG_BOX("Failed to Clone : CTextUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CCanvasPanel::Free()
+void CTextUI::Free()
 {
     __super::Free();
 }

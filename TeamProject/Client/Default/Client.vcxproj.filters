@@ -115,20 +115,35 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Prefab">
+    <Filter Include="02. GameObject\UI\UIPrefab">
       <UniqueIdentifier>{f5b975a3-e685-44f1-a1f3-e5ac454dac90}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Prefab\UIPrefab">
-      <UniqueIdentifier>{4b65bdf4-8d54-4958-a1ed-d690c969d0e9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\Prefab\HUD">
+    <Filter Include="02. GameObject\UI\UIPrefab\HUD">
       <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Element">
+    <Filter Include="02. GameObject\UI\UIElement">
       <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Element\CanvasPanel">
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
       <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -258,13 +273,31 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CanvasPanel.h">
-      <Filter>02. GameObject\UI\Element\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\HUD.h">
-      <Filter>02. GameObject\UI\Prefab\HUD</Filter>
+      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SpriteAnimationUI.h">
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UVAnimationUI.h">
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImageUI.h">
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GaugeUI.h">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextUI.h">
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UIPrefab.h">
-      <Filter>02. GameObject\UI\Prefab\UIPrefab</Filter>
+      <Filter>02. GameObject\UI\UIPrefab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ButtonUI.h">
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -388,13 +421,31 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CanvasPanel.cpp">
-      <Filter>02. GameObject\UI\Element\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\HUD.cpp">
-      <Filter>02. GameObject\UI\Prefab\HUD</Filter>
+      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UVAnimationUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImageUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GaugeUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ButtonUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UIPrefab.cpp">
-      <Filter>02. GameObject\UI\Prefab\UIPrefab</Filter>
+      <Filter>02. GameObject\UI\UIPrefab</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

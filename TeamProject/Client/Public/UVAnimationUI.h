@@ -1,18 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class IUI_Service;
-NS_END
-
 NS_BEGIN(Client)
 
-class CCanvasPanel final : public CUI_Object
+class CUVAnimationUI final : public CUI_Object
 {
 private:
-	CCanvasPanel();
-	CCanvasPanel(const CCanvasPanel& rhs);
-	virtual ~CCanvasPanel() DEFAULT;
+	CUVAnimationUI();
+	CUVAnimationUI(const CUVAnimationUI& rhs);
+	virtual ~CUVAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,6 +20,12 @@ public:
 
 public:
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+
+private:
+	_bool		m_isUseMask = {};
+
+	_float2		m_vUVOffset = {};
+	_float2		m_vUVOffsetSpeed = {};
 
 public:
 	static CGameObject* Create();

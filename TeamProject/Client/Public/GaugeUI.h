@@ -1,18 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class IUI_Service;
-NS_END
-
 NS_BEGIN(Client)
 
-class CCanvasPanel final : public CUI_Object
+class CGaugeUI final : public CUI_Object
 {
 private:
-	CCanvasPanel();
-	CCanvasPanel(const CCanvasPanel& rhs);
-	virtual ~CCanvasPanel() DEFAULT;
+	CGaugeUI();
+	CGaugeUI(const CGaugeUI& rhs);
+	virtual ~CGaugeUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,6 +20,12 @@ public:
 
 public:
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+
+private:
+	_bool		m_isRadial = {};
+
+	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
+	_float		m_fFillAmount = { 1.f };
 
 public:
 	static CGameObject* Create();

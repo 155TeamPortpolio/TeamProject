@@ -16,7 +16,3 @@ using namespace UITool;
 
 #include "Engine_Defines.h"
 #include "Engine_Math.h"
-
-typedef struct tagButtonEvent {
-	wstring msg = L"";
-}BTN_EVENT;

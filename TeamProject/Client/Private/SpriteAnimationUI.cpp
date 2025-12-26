@@ -1,66 +1,78 @@
 #include "pch.h"
-#include "CanvasPanel.h"
+#include "SpriteAnimationUI.h"
 
+#include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
-CCanvasPanel::CCanvasPanel()
+CSpriteAnimationUI::CSpriteAnimationUI()
 {
 }
 
-CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
+CSpriteAnimationUI::CSpriteAnimationUI(const CSpriteAnimationUI& rhs)
     : CUI_Object(rhs)
 {
 }
 
-HRESULT CCanvasPanel::Initialize_Prototype()
+HRESULT CSpriteAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 
-HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
+HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-#ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
-#endif
+    Get_Component<CSprite2D>()->ChangePass("SpriteAnimation");
 
     return S_OK;
 }
 
-void CCanvasPanel::Priority_Update(_float dt)
+void CSpriteAnimationUI::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CCanvasPanel::Update(_float dt)
+void CSpriteAnimationUI::Update(_float dt)
 {
     if (!m_isAlive)
         return;
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
     Play_Animation(dt);
+
+    if (m_isPlaying)
+    {
+        m_fFrameAccTime += dt;
+
+        if (!m_isLoop && m_iCurrentFrameIndex >= m_iFrameCountTotal - 1)
+        {
+            m_fFrameAccTime = 0.f;
+            m_iCurrentFrameIndex = 0;
+            m_isPlaying = false;
+            return;
+        }
+
+        if (m_fFrameAccTime >= (1.f / m_fFrameSpeed))
+        {
+            m_fFrameAccTime = 0.f;
+            m_iCurrentFrameIndex = (m_iCurrentFrameIndex + 1) % m_iFrameCountTotal;// (m_iFrameCountX * m_iFrameCountY);
+            Get_Component<CSprite2D>()->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });
+        }
+    }
 }
 
-void CCanvasPanel::Late_Update(_float dt)
+void CSpriteAnimationUI::Late_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::Render_GUI()
+void CSpriteAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
+void CSpriteAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
@@ -107,41 +119,51 @@ void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 
             if (!pChildObj)
                 continue;
-            
+
             pChildObj->ReadElementData(childElementData);
 
             pContainer->Add_Child(pChildObj);
         }
     }
+
+    m_isLoop = data.isLoop;
+    m_iFrameCountX = data.iFrameCountX;
+    m_iFrameCountY = data.iFrameCountY;
+    m_iFrameCountTotal = data.iFrameCountTotal;
+    m_fFrameSpeed = data.fFrameSpeed;
+
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.strTextureTag);
+    Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
+    Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
 }
 
-CGameObject* CCanvasPanel::Create()
+CGameObject* CSpriteAnimationUI::Create()
 {
-    CCanvasPanel* pInstance = new CCanvasPanel();
+    CSpriteAnimationUI* pInstance = new CSpriteAnimationUI();
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CCanvasPanel");
+        MSG_BOX("Failed to Create : CSpriteAnimationUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CGameObject* CCanvasPanel::Clone(INIT_DESC* pArg)
+CGameObject* CSpriteAnimationUI::Clone(INIT_DESC* pArg)
 {
-    CCanvasPanel* pInstance = new CCanvasPanel(*this);
+    CSpriteAnimationUI* pInstance = new CSpriteAnimationUI(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CCanvasPanel");
+        MSG_BOX("Failed to Clone : CSpriteAnimationUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CCanvasPanel::Free()
+void CSpriteAnimationUI::Free()
 {
     __super::Free();
 }

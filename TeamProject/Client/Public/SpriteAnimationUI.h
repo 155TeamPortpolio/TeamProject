@@ -1,18 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class IUI_Service;
-NS_END
-
 NS_BEGIN(Client)
 
-class CCanvasPanel final : public CUI_Object
+class CSpriteAnimationUI final : public CUI_Object
 {
 private:
-	CCanvasPanel();
-	CCanvasPanel(const CCanvasPanel& rhs);
-	virtual ~CCanvasPanel() DEFAULT;
+	CSpriteAnimationUI();
+	CSpriteAnimationUI(const CSpriteAnimationUI& rhs);
+	virtual ~CSpriteAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -24,6 +20,18 @@ public:
 
 public:
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+
+private:
+	_bool		m_isPlaying = { true };
+	_bool		m_isLoop = {};
+
+	_uint		m_iFrameCountX = { 1 };
+	_uint		m_iFrameCountY = { 1 };
+	_uint		m_iFrameCountTotal = { 1 };
+	_float		m_fFrameSpeed = { 30.f };
+
+	_float		m_fFrameAccTime = {};
+	_uint		m_iCurrentFrameIndex = {};
 
 public:
 	static CGameObject* Create();

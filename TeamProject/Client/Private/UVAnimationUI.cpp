@@ -1,66 +1,62 @@
 #include "pch.h"
-#include "CanvasPanel.h"
+#include "UVAnimationUI.h"
 
+#include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
-CCanvasPanel::CCanvasPanel()
+CUVAnimationUI::CUVAnimationUI()
 {
 }
 
-CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
+CUVAnimationUI::CUVAnimationUI(const CUVAnimationUI& rhs)
     : CUI_Object(rhs)
 {
 }
 
-HRESULT CCanvasPanel::Initialize_Prototype()
+HRESULT CUVAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 
-HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
+HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-#ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
-#endif
+    Get_Component<CSprite2D>()->ChangePass("UVAnimation");
 
     return S_OK;
 }
 
-void CCanvasPanel::Priority_Update(_float dt)
+void CUVAnimationUI::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CCanvasPanel::Update(_float dt)
+void CUVAnimationUI::Update(_float dt)
 {
     if (!m_isAlive)
         return;
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
     Play_Animation(dt);
+
+    m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;
+    m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;
+    Get_Component<CSprite2D>()->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
 }
 
-void CCanvasPanel::Late_Update(_float dt)
+void CUVAnimationUI::Late_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::Render_GUI()
+void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
+void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
@@ -107,41 +103,45 @@ void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 
             if (!pChildObj)
                 continue;
-            
+
             pChildObj->ReadElementData(childElementData);
 
             pContainer->Add_Child(pChildObj);
         }
     }
+
+    m_vUVOffsetSpeed = _float2(data.vUVOffsetSpeed[0], data.vUVOffsetSpeed[1]);
+
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.strTextureTag);
 }
 
-CGameObject* CCanvasPanel::Create()
+CGameObject* CUVAnimationUI::Create()
 {
-    CCanvasPanel* pInstance = new CCanvasPanel();
+    CUVAnimationUI* pInstance = new CUVAnimationUI();
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CCanvasPanel");
+        MSG_BOX("Failed to Create : CUVAnimationUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CGameObject* CCanvasPanel::Clone(INIT_DESC* pArg)
+CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
 {
-    CCanvasPanel* pInstance = new CCanvasPanel(*this);
+    CUVAnimationUI* pInstance = new CUVAnimationUI(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CCanvasPanel");
+        MSG_BOX("Failed to Clone : CUVAnimationUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CCanvasPanel::Free()
+void CUVAnimationUI::Free()
 {
     __super::Free();
 }

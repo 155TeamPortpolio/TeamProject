@@ -1,66 +1,57 @@
 #include "pch.h"
-#include "CanvasPanel.h"
+#include "GaugeUI.h"
 
+#include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
-CCanvasPanel::CCanvasPanel()
+CGaugeUI::CGaugeUI()
 {
 }
 
-CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
+CGaugeUI::CGaugeUI(const CGaugeUI& rhs)
     : CUI_Object(rhs)
 {
 }
 
-HRESULT CCanvasPanel::Initialize_Prototype()
+HRESULT CGaugeUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 
-HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
+HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-#ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
-#endif
 
     return S_OK;
 }
 
-void CCanvasPanel::Priority_Update(_float dt)
+void CGaugeUI::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CCanvasPanel::Update(_float dt)
+void CGaugeUI::Update(_float dt)
 {
     if (!m_isAlive)
         return;
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
     Play_Animation(dt);
 }
 
-void CCanvasPanel::Late_Update(_float dt)
+void CGaugeUI::Late_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::Render_GUI()
+void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
+void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
@@ -107,41 +98,43 @@ void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 
             if (!pChildObj)
                 continue;
-            
+
             pChildObj->ReadElementData(childElementData);
 
             pContainer->Add_Child(pChildObj);
         }
     }
+
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.strTextureTag);
 }
 
-CGameObject* CCanvasPanel::Create()
+CGameObject* CGaugeUI::Create()
 {
-    CCanvasPanel* pInstance = new CCanvasPanel();
+    CGaugeUI* pInstance = new CGaugeUI();
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CCanvasPanel");
+        MSG_BOX("Failed to Create : CGaugeUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CGameObject* CCanvasPanel::Clone(INIT_DESC* pArg)
+CGameObject* CGaugeUI::Clone(INIT_DESC* pArg)
 {
-    CCanvasPanel* pInstance = new CCanvasPanel(*this);
+    CGaugeUI* pInstance = new CGaugeUI(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CCanvasPanel");
+        MSG_BOX("Failed to Clone : CGaugeUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CCanvasPanel::Free()
+void CGaugeUI::Free()
 {
     __super::Free();
 }

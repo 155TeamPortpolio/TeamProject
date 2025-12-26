@@ -17,9 +17,6 @@ public:
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
 
-protected:
-	void LoadUIPrefab(const string& strResourceKey);
-
 public:
 	virtual void Free() override;
 };

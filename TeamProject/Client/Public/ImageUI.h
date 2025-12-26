@@ -1,18 +1,14 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class IUI_Service;
-NS_END
-
 NS_BEGIN(Client)
 
-class CCanvasPanel final : public CUI_Object
+class CImageUI final : public CUI_Object
 {
 private:
-	CCanvasPanel();
-	CCanvasPanel(const CCanvasPanel& rhs);
-	virtual ~CCanvasPanel() DEFAULT;
+	CImageUI();
+	CImageUI(const CImageUI& rhs);
+	virtual ~CImageUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

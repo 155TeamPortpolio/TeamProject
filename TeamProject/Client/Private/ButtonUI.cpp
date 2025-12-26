@@ -1,66 +1,87 @@
 #include "pch.h"
-#include "CanvasPanel.h"
+#include "ButtonUI.h"
 
+#include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
 
-CCanvasPanel::CCanvasPanel()
+CButtonUI::CButtonUI()
 {
 }
 
-CCanvasPanel::CCanvasPanel(const CCanvasPanel& rhs)
+CButtonUI::CButtonUI(const CButtonUI& rhs)
     : CUI_Object(rhs)
 {
 }
 
-HRESULT CCanvasPanel::Initialize_Prototype()
+HRESULT CButtonUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
-
     return S_OK;
 }
 
-HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
+HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-#ifdef _DEBUG
+    Set_Clickable(true);
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
-#endif
 
     return S_OK;
 }
 
-void CCanvasPanel::Priority_Update(_float dt)
+void CButtonUI::Priority_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
-void CCanvasPanel::Update(_float dt)
+void CButtonUI::Update(_float dt)
 {
     if (!m_isAlive)
         return;
 
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
     Play_Animation(dt);
 }
 
-void CCanvasPanel::Late_Update(_float dt)
+void CButtonUI::Late_Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::Render_GUI()
+void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
 }
 
-void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
+void CButtonUI::Enter_Hover()
+{
+    if (STATE::DISABLED == m_eState)
+        return;
+
+    OutputDebugString(L"Enter_Hover\n");
+    m_eState = STATE::HOVERED;
+}
+
+void CButtonUI::Exit_Hover()
+{
+    OutputDebugString(L"Exit_Hover\n");
+    m_eState = STATE::NORMAL;
+}
+
+void CButtonUI::OnClick()
+{
+    if (STATE::DISABLED == m_eState)
+        return;
+
+    OutputDebugString(L"Clicked\n");
+    m_eState = STATE::CLICKED;
+
+    BTN_EVENT event = {};
+    event.msg = Helper::ConvertToWideString(m_szEventMsg);
+    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
+}
+
+void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
@@ -107,41 +128,44 @@ void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 
             if (!pChildObj)
                 continue;
-            
+
             pChildObj->ReadElementData(childElementData);
 
             pContainer->Add_Child(pChildObj);
         }
     }
+
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.strTextureTag);
+    strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
 }
 
-CGameObject* CCanvasPanel::Create()
+CGameObject* CButtonUI::Create()
 {
-    CCanvasPanel* pInstance = new CCanvasPanel();
+    CButtonUI* pInstance = new CButtonUI();
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CCanvasPanel");
+        MSG_BOX("Failed to Create : CButtonUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CGameObject* CCanvasPanel::Clone(INIT_DESC* pArg)
+CGameObject* CButtonUI::Clone(INIT_DESC* pArg)
 {
-    CCanvasPanel* pInstance = new CCanvasPanel(*this);
+    CButtonUI* pInstance = new CButtonUI(*this);
 
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CCanvasPanel");
+        MSG_BOX("Failed to Clone : CButtonUI");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CCanvasPanel::Free()
+void CButtonUI::Free()
 {
     __super::Free();
 }
