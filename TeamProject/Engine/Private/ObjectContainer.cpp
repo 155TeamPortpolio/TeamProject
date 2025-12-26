@@ -174,8 +174,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 		return m_IndexByID[ObjectID];
 	}
 	_uint ObjectIndex = m_ChildrenObjects.size();
-	m_ChildrenObjects.push_back(pObject);
-
+	
 	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
 	{	//중간에 비어잇다면 널포인터
 		if (nullptr == m_ChildrenObjects[i]) {

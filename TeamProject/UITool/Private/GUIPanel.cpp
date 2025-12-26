@@ -33,7 +33,6 @@ void CGUIPanel::Update_Panel(_float dt)
 			if (CUIObject_Tool* pSelectedUI = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
 			{
 				pSelectedUI->Remove_SelfFromParent();						// 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
-				m_pGameInstance->Get_UIMgr()->Remove_UIObject(pSelectedUI);	// UI Mgr에서 자신을 제거 
 				pGuiContext->pSelectedObject = nullptr;						// Gui에 selectedObject를 nullptr로 
 			}
 		}
