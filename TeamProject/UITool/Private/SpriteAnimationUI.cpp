@@ -1,6 +1,8 @@
 #include "UITool_Defines.h"
 #include "SpriteAnimationUI.h"
 
+#include "GameInstance.h"
+#include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
@@ -33,9 +35,7 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
     Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if (szTextureKeys.size())
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
 
     m_iCount++;
 
@@ -83,11 +83,19 @@ void CSpriteAnimationUI::Render_GUI()
     __super::Render_GUI();
      
     // 텍스쳐
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     ImGui::SeparatorText(u8"이미지");
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
-    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    if (ImGui::Button(u8"선택"))
+    {
+        string filePath = Helper::OpenFile_Dialogue();
+        if (!filePath.empty())
+        {
+            string fileName = Helper::GetFileNameWithExtension(filePath);
+
+            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+            m_strTextureKey = fileName;
+            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+        }
+    }
 
     // 스프라이트 애니메이션
     ImGui::SeparatorText(u8"스프라이트 애니메이션");
@@ -135,8 +143,7 @@ void CSpriteAnimationUI::SavePrefab(json& data)
 
     data["typeTag"] = m_strTypeTag;
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
+    data["textureTag"] = m_strTextureKey;
 
     data["loop"] = m_isLoop;
     data["frameCountX"] = m_iFrameCountX;
@@ -149,10 +156,8 @@ void CSpriteAnimationUI::LoadPrefab(const json& data)
 {
     __super::LoadPrefab(data);
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
-    if (-1 != m_iTextureKeyIndex)
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    m_strTextureKey = data["textureTag"];
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     m_isLoop = data["loop"];
     m_iFrameCountX = data["frameCountX"];

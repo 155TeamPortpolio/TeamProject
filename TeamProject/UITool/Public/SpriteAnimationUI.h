@@ -36,7 +36,7 @@ private:
 	_uint		m_iCurrentFrameIndex = {};
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+	string		m_strTextureKey = {};
 
 public:
 	static const string m_strTypeTag;
