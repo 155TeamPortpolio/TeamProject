@@ -30,10 +30,14 @@ void CGUIPanel::Update_Panel(_float dt)
 
 		if (pGuiContext->pSelectedObject)
 		{
-			if (CUIObject_Tool* pSelectedUI = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
+			if (CUIObject_Tool* pSelected = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
 			{
-				pSelectedUI->Remove_SelfFromParent();						// 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
-				pGuiContext->pSelectedObject = nullptr;						// Gui에 selectedObject를 nullptr로 
+				if (pSelected->Is_Root())
+					m_pGameInstance->Get_UIMgr()->Remove_UIObject(pSelected);	// 루트면 ui매니저에서 삭제
+				else
+					pSelected->Remove_SelfFromParent();							// 루트가 아니면 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
+
+				pGuiContext->pSelectedObject = nullptr;							// Gui에 selectedObject를 nullptr로 
 			}
 		}
 	}
