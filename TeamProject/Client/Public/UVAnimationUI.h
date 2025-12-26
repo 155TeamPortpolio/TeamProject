@@ -1,41 +1,31 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-NS_BEGIN(UITool)
+NS_BEGIN(Client)
 
-class CGaugeUI final : public CUIObject_Tool
+class CUVAnimationUI final : public CUI_Object
 {
 private:
-	CGaugeUI();
-	CGaugeUI(const CGaugeUI& rhs);
-	virtual ~CGaugeUI() DEFAULT;
+	CUVAnimationUI();
+	CUVAnimationUI(const CUVAnimationUI& rhs);
+	virtual ~CUVAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
-
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
-	_bool		m_isRadial = {};
+	_bool		m_isUseMask = {};
 
-	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
-	_float		m_fFillAmount = { 1.f };
-
-private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	_float2		m_vUVOffset = {};
+	_float2		m_vUVOffsetSpeed = {};
 
 public:
 	static CGameObject* Create();

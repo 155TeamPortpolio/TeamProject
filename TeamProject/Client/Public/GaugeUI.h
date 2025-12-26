@@ -1,9 +1,9 @@
 #pragma once
-#include "UIObject_Tool.h"
+#include "UI_Object.h"
 
-NS_BEGIN(UITool)
+NS_BEGIN(Client)
 
-class CGaugeUI final : public CUIObject_Tool
+class CGaugeUI final : public CUI_Object
 {
 private:
 	CGaugeUI();
@@ -13,15 +13,12 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
 	virtual void Priority_Update(_float dt) override;
 	virtual void Update(_float dt) override;
 	virtual void Late_Update(_float dt) override;
-
 	virtual void Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
@@ -29,13 +26,6 @@ private:
 
 	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
 	_float		m_fFillAmount = { 1.f };
-
-private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-
-public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
 
 public:
 	static CGameObject* Create();
