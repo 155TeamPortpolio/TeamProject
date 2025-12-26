@@ -140,10 +140,8 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 	else {
 		m_isRootObject = true;
 	}
-
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Pre_EngineUpdate(dt);
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Pre_EngineUpdateChild(dt);
 	}
 }
 
@@ -181,9 +179,9 @@ void CGameObject::Post_EngineUpdate(_float dt)
 
 		}
 	}
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Post_EngineUpdate(dt);
+
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Post_EngineUpdateChild(dt);
 	}
 }
 

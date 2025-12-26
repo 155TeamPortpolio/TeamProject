@@ -93,9 +93,10 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	  
 	for (auto& packet : m_Packets)     
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
-
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
@@ -247,8 +248,10 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
@@ -525,8 +528,10 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRender
 
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
@@ -653,8 +658,10 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
@@ -733,8 +740,10 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
@@ -811,8 +820,10 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
+		if (!packet.bSkinning) {
+			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+				continue;
+		}
 
 		//여기서 인덱스 추가 저장해줌
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
