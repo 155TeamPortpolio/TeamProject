@@ -511,6 +511,15 @@
     <ClInclude Include="..\Public\MeshEffectModule.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ThreadPool.h">
+      <Filter>00. System\03. Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ResourceEntry.h">
+      <Filter>01. Utility\05. Resources\ThreadResource\09. ResourceEntry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ResourceThread.h">
+      <Filter>01. Utility\05. Resources\ThreadResource\00. Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
@@ -954,6 +963,18 @@
     <Filter Include="01. Utility\04. Components\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00. System\03. Thread">
+      <UniqueIdentifier>{da7b847b-5b5d-4fdb-98a2-24cfd15cd11b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\ThreadResource">
+      <UniqueIdentifier>{d513d421-0118-439d-b12e-c4a580731431}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\ThreadResource\09. ResourceEntry">
+      <UniqueIdentifier>{0f4f3195-cc5f-4e76-b675-caf5b776ec51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\ThreadResource\00. Manager">
+      <UniqueIdentifier>{ba857d00-ea11-4520-a65d-af3d7bc5c87f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -1372,6 +1393,15 @@
     </ClCompile>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
       <Filter>00. System\02. Gui\IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ThreadPool.cpp">
+      <Filter>00. System\03. Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ResourceEntry.cpp">
+      <Filter>01. Utility\05. Resources\ThreadResource\09. ResourceEntry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ResourceThread.cpp">
+      <Filter>01. Utility\05. Resources\ThreadResource\00. Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

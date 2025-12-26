@@ -363,6 +363,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\RenderTarget.h" />
     <ClInclude Include="..\Public\ResourceEntry.h" />
     <ClInclude Include="..\Public\ResourceMgr.h" />
+    <ClInclude Include="..\Public\ResourceThread.h" />
     <ClInclude Include="..\Public\RigidBody.h" />
     <ClInclude Include="..\Public\Shader.h" />
     <ClInclude Include="..\Public\SizeBySpeed.h" />
@@ -503,6 +504,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\RenderTarget.cpp" />
     <ClCompile Include="..\Private\ResourceEntry.cpp" />
     <ClCompile Include="..\Private\ResourceMgr.cpp" />
+    <ClCompile Include="..\Private\ResourceThread.cpp" />
     <ClCompile Include="..\Private\RigidBody.cpp" />
     <ClCompile Include="..\Private\Shader.cpp" />
     <ClCompile Include="..\Private\SizeBySpeed.cpp" />

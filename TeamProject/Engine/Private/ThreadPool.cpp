@@ -105,7 +105,7 @@ bool CThreadPool::isQueueEmpty() const
 
 CThreadPool* CThreadPool::Create(_uint threadCount)
 {
-    new CThreadPool(threadCount);
+    return new CThreadPool(threadCount);
 }
 
 void CThreadPool::Free()

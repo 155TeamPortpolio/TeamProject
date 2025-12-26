@@ -568,7 +568,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     }
     else
     {
-        float NdotL = dot(normalize(lightDir), worldNormal) * 0.5 + 0.5;
+        //float NdotL = dot(normalize(lightDir), worldNormal) * 0.5 + 0.5;
         Out.vLight = float4(g_vLightDiffuse.rgb *vDiffuse.rgb  *NdotL * g_fLightIntensity * 0.3, 1.f) ;
     }
     

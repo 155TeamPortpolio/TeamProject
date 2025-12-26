@@ -30,8 +30,8 @@ public:
     auto enqueue(Function&& func, Args&&... args)->future<invoke_result_t<Function, Args...>>;
 
 private:
-    /*현재 진행 중입니까?*/atomic<_bool> m_bStop;
-    /*지금 작업 몇개 진행 중입니까?*/atomic<_int>  m_iActive;
+    /*현재 진행 중입니까?*/                        atomic<_bool> m_bStop;
+    /*지금 작업 몇개 진행 중입니까?*/       atomic<_int>  m_iActive;
 
     mutable mutex m_mutex; /*잠금 -> 콘스트 때문시*/
     condition_variable m_ConditionVariable; /*현재 상태*/

@@ -51,15 +51,12 @@ VS_OUT VS_MAIN(VS_IN In)
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
 
-        
-    matrix matrixWV = mul(ObjectBufferArray[TransformIndex].Transform, matView);
-    matrix matrixWVP = mul(matrixWV, matProjection);
     Out.vPosition = projPos;
     
     Out.vTexcoord = In.vTexcoord;
-    Out.vNormal = normalize(mul(vNormal, ObjectBufferArray[TransformIndex].Transform));
     Out.vProjPos = Out.vPosition;
 
+    Out.vNormal = normalize(mul(vNormal, ObjectBufferArray[TransformIndex].Transform));
     Out.vTangent = normalize(mul(vTangent, ObjectBufferArray[TransformIndex].Transform));
     Out.vBinormal = normalize(mul(vBinormal, ObjectBufferArray[TransformIndex].Transform));
     
