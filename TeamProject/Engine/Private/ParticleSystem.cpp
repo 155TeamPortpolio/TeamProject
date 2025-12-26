@@ -632,27 +632,91 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
 	{
 		_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
-		_vector3 vAreaMin = vWorldPos - m_vHalfBox;
-		_vector3 vAreaMax = vWorldPos + m_vHalfBox;
+		_vector3 vSpawnCenter = vWorldPos + m_vCenter;
+		_vector3 vPosition{};
 
-		particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
-		particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
-		particle.vPosition.z = Helper::Get_Random_Float(vAreaMin.z, vAreaMax.z);
+		switch (m_eSpawnShape)
+		{
+		case Engine::CParticleSystem::SPAWN_SHAPE::SPHERE:
+		{
+			_float u = Helper::Get_Random_Float(0.f, 1.f);
+			_float v = Helper::Get_Random_Float(0.f, 1.f);
+
+			_float z = 1.f - 2.f * u;
+			_float phi = 2.f * XM_PI * v;
+
+			_float xy = sqrtf(max(0.f, 1.f - z * z));
+			_vector3 dir{};
+
+			dir.x = xy * cosf(phi);
+			dir.y = xy * sinf(phi);
+			dir.z = z;
+
+			_float w = Helper::Get_Random_Float(0.f, 1.f);
+			_float distance = m_fRadius * cbrtf(w);
+
+			particle.vPosition = vWorldPos + dir * distance;
+
+		}break;
+		case Engine::CParticleSystem::SPAWN_SHAPE::BOX:
+		{
+			_vector3 vAreaMin = vWorldPos - m_vHalfBox;
+			_vector3 vAreaMax = vWorldPos + m_vHalfBox;
+
+			particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
+			particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
+			particle.vPosition.z = Helper::Get_Random_Float(vAreaMin.z, vAreaMax.z);
+		}break;
+		case Engine::CParticleSystem::SPAWN_SHAPE::CONE:
+			break;
+		default:
+			break;
+		}
 
 		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
-		_vector3 vDir = particle.vPosition - vWorldPos;
+		_vector3 vDir = particle.vPosition - vSpawnCenter;
 		vDir.Normalize();
 
 		particle.vVelocity = vDir * fSpeed;
 	}
 	else
 	{
-		particle.vPosition.x = Helper::Get_Random_Float(-m_vHalfBox.x, m_vHalfBox.x);
-		particle.vPosition.y = Helper::Get_Random_Float(-m_vHalfBox.y, m_vHalfBox.y);
-		particle.vPosition.z = Helper::Get_Random_Float(-m_vHalfBox.z, m_vHalfBox.z);
+		switch (m_eSpawnShape)
+		{
+		case Engine::CParticleSystem::SPAWN_SHAPE::SPHERE:
+		{
+			_float u = Helper::Get_Random_Float(0.f, 1.f);
+			_float v = Helper::Get_Random_Float(0.f, 1.f);
+
+			_float z = 1.f - 2.f * u;
+			_float phi = 2.f * XM_PI * v;
+
+			_float xy = sqrtf(max(0.f, 1.f - z * z));
+			_vector3 dir{};
+
+			dir.x = xy * cosf(phi);
+			dir.y = xy * sinf(phi);
+			dir.z = z;
+
+			_float w = Helper::Get_Random_Float(0.f, 1.f);
+			_float distance = m_fRadius * cbrtf(w);
+
+			particle.vPosition = dir * distance;
+		}break;
+		case Engine::CParticleSystem::SPAWN_SHAPE::BOX:
+		{
+			particle.vPosition.x = Helper::Get_Random_Float(-m_vHalfBox.x, m_vHalfBox.x);
+			particle.vPosition.y = Helper::Get_Random_Float(-m_vHalfBox.y, m_vHalfBox.y);
+			particle.vPosition.z = Helper::Get_Random_Float(-m_vHalfBox.z, m_vHalfBox.z);
+		}break;
+		case Engine::CParticleSystem::SPAWN_SHAPE::CONE:
+			break;
+		default:
+			break;
+		}
 
 		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
-		_vector3 vDir = particle.vPosition - _vector3(0.f, 0.f, 0.f);
+		_vector3 vDir = particle.vPosition - m_vCenter;
 		vDir.Normalize();
 
 		particle.vVelocity = vDir * fSpeed;
