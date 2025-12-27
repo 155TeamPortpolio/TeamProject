@@ -10,6 +10,7 @@ protected:
     virtual ~CStaticModel() DEFAULT;
 
 public:
+    virtual void PreCheck()override;
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
@@ -33,12 +34,17 @@ public:
     _bool isReadyToDraw()	override { return m_pData != nullptr; };
     void Hide_MehsByName(const string& name);
     _int Get_MeshIndexByName(const string& name);
+
 public:
     void Render_GUI();
 
 protected:
     vector<_bool> m_DrawableMeshes;
     class CModelData* m_pData = { nullptr };
+    class CResourceEntry* m_pEntry = { nullptr };
+
+protected:
+    void Check_Entry();
 
 public:
     static CStaticModel* Create();

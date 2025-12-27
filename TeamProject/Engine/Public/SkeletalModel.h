@@ -15,6 +15,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
+	virtual void PreCheck()override;
 
 public:
 	virtual HRESULT Link_Model(const string& levelKey, const string& modelDataKey);
@@ -54,8 +55,12 @@ protected:
 	vector<_float4x4> m_TransfromationMatrices = {};
 	vector<_float4x4> m_ManipulateMatrices = {};
 	vector<_float4x4> m_CombinedMatrices = {};
-	vector<_float4x4> m_FinalMatices = {};
+
 	class CModelData* m_pData = { nullptr };
+	class CResourceEntry* m_pEntry = { nullptr };
+	_uint m_LastGen = {};
+protected:
+	void Check_Entry();
 
 public:
 	static CSkeletalModel* Create();

@@ -33,10 +33,8 @@ CResourceThread::CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 HRESULT CResourceThread::Initiallize()
 {
     m_pThreadPool = CThreadPool::Create(4);
-
 	return S_OK;
 }
-
 
 HRESULT CResourceThread::Sync_To_Level()
 {
@@ -55,14 +53,13 @@ HRESULT CResourceThread::Sync_To_Level()
             Level_Resource newLevelResource;
             newLevelResource.resize(RESOURCE_TYPE_COUNT); // TEXTURE 인덱스 접근 가능하게
             auto inserted = m_LevelResources.emplace(name, move(newLevelResource));
-            return S_OK;
+            continue;
         }
 
         // 혹시 과거 데이터라면 안전하게 보정
         if (iteratorFound->second.size() < RESOURCE_TYPE_COUNT)
             iteratorFound->second.resize(RESOURCE_TYPE_COUNT);
 
-        return S_OK;
     }
 	return S_OK;
 }
@@ -74,7 +71,49 @@ CSoundData* CResourceThread::Load_Sound(const string& levelTag, const string& so
 
 CVIBuffer* CResourceThread::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
 {
-	return nullptr;
+    CResourceEntry* entry = nullptr;
+
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return nullptr;
+
+    Level_Resource& buffers = iteratorLevel->second;
+    if (buffers.size() < RESOURCE_TYPE_COUNT)
+        buffers.resize(RESOURCE_TYPE_COUNT);
+    auto iteratorEntry = buffers[ENUM(VI_BUFFER)].find(bufferKey);
+
+    CVIBuffer* buffer = nullptr;
+    switch (eType)
+    {
+    case Engine::BUFFER_TYPE::BASIC_RECT:
+        buffer = CVI_Rect::Create(m_pDevice, bufferKey);
+        break;
+    case Engine::BUFFER_TYPE::BASIC_CUBE:
+        break;
+    case Engine::BUFFER_TYPE::BASIC_SPHERE:
+        break;
+    case Engine::BUFFER_TYPE::BASIC_PLANE:
+        buffer = CVI_Plane::Create(m_pDevice, bufferKey);
+        break;
+    case Engine::BUFFER_TYPE::TERRAIN:{
+        auto pathIterator = m_PathByKey.find(bufferKey);
+        buffer = CVI_Terrain::Create(m_pDevice, bufferKey, pathIterator->second);
+    }
+        break;
+    case Engine::BUFFER_TYPE::BASIC_POINT:
+        buffer = CVI_Point::Create(m_pDevice, bufferKey);
+        break;
+    case Engine::BUFFER_TYPE::BASIC_INSTANCE_POINT:
+        buffer = CVI_InstancePoint::Create(m_pDevice, bufferKey);
+        break;
+    default:
+        break;
+    }
+
+    if (buffer)
+        map.emplace(bufferKey, buffer);
+
+    return buffer;
 }
 
 vector<CMaterialInstance*> CResourceThread::Load_MaterialFromFile(
@@ -95,7 +134,6 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
     const string entryKey = textureKey;
     CResourceEntry* entry = nullptr;
     
-    // 레벨 맵 찾기
     auto iteratorLevel = m_LevelResources.find(levelTag);
     if (iteratorLevel == m_LevelResources.end())
         return m_DefaultTexture;
@@ -122,11 +160,9 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
         entry = iteratorEntry->second;
     }
 
-    // 경로 없으면 default
     if (entry->GetSourcePathCopy().empty())
         return m_DefaultTexture;
 
-    // Unloaded일 때만 비동기 요청
     if (entry->GetState() == LoadState::Unloaded)
     {
         ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
@@ -157,7 +193,7 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
                     return monostate{};
                 }
 
-                std::error_code errorCode;
+                error_code errorCode;
                 if (!filesystem::exists(sourcePath, errorCode))
                 {
                     errorMsg = "Texture file not found: " + sourcePath;
@@ -219,7 +255,94 @@ CComputeShader* CResourceThread::Load_ComputeShader(const string& levelTag, cons
 
 CModelData* CResourceThread::Load_ModelData(const string& levelTag, const string& ModelKey)
 {
-	return nullptr;
+    const string entryKey = ModelKey;
+    CResourceEntry* entry = nullptr;
+
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return m_DefaultModel;
+
+    Level_Resource& ModelDatas = iteratorLevel->second;
+    if (ModelDatas.size() < RESOURCE_TYPE_COUNT)
+        ModelDatas.resize(RESOURCE_TYPE_COUNT);
+
+    auto iteratorEntry = ModelDatas[ENUM(MODELDATA)].find(entryKey);
+    if (iteratorEntry == ModelDatas[ENUM(MODELDATA)].end())
+    {
+        entry = CResourceEntry::Create();
+        entry->SetDebugName(entryKey);
+        entry->SetLevelTag(levelTag);
+
+        auto pathIterator = m_PathByKey.find(ModelKey);
+        if (pathIterator != m_PathByKey.end())
+            entry->SetSourcePath(pathIterator->second);
+
+        ModelDatas[ENUM(MODELDATA)].emplace(entryKey, entry);
+    }
+    else
+    {
+        entry = iteratorEntry->second;
+    }
+
+    if (entry->GetSourcePathCopy().empty())
+        return m_DefaultModel;
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+
+        LoaderFunc loaderFunc = [device, entryKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+                if (sourcePath.empty())
+                {
+                    errorMsg = "ModelDAta sourcePath is empty.";
+                    return monostate{};
+                }
+
+                const string extension = filesystem::path(sourcePath).extension().string();
+                if (extension != ".model" )
+                {
+                    errorMsg = "Unsupported ModelData extension: " + extension + " (path: " + sourcePath + ")";
+                    return monostate{};
+                }
+
+                std::error_code errorCode;
+                if (!filesystem::exists(sourcePath, errorCode))
+                {
+                    errorMsg = "ModelData file not found: " + sourcePath;
+                    return monostate{};
+                }
+
+                const wstring widePath = filesystem::path(sourcePath).wstring();
+
+                CModelData* createdModel = CModelData::Create(sourcePath,device);
+                if (createdModel == nullptr)
+                {
+                    errorMsg = "CTexture::Create failed: " + sourcePath;
+                    return monostate{};
+                }
+
+                return createdModel;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+
+    entry->Pump_CompletedOnly();
+
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CModelData* model = entry->Get_NoRef<CModelData>();
+        return model ? model : m_DefaultModel;
+    }
+
+    return m_DefaultModel;
 }
 
 string CResourceThread::Get_ResourcePath(const string& resourceKey)
@@ -228,7 +351,6 @@ string CResourceThread::Get_ResourcePath(const string& resourceKey)
     if (iter != m_PathByKey.end()) return iter->second;
     else return string();
 }
-
 HRESULT CResourceThread::Add_ResourcePath(const string& resourceKey, const string& resourcePath)
 {
     auto iter = m_PathByKey.find(resourceKey);
@@ -242,7 +364,6 @@ HRESULT CResourceThread::Add_ResourcePath(const string& resourceKey, const strin
     m_PathByKey.emplace(resourceKey, resourcePath);
     return S_OK;
 }
-
 void CResourceThread::Pump_AllEntries_MainThread()
 {
     for (auto& levelPair : m_LevelResources)
@@ -379,7 +500,6 @@ CResourceEntry* CResourceThread::Request_TextureEntry(const string& levelTag, co
 
     return entry;
 }
-
 CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, const string& modelKey)
 {
     const string entryKey = modelKey;
@@ -510,7 +630,6 @@ CResourceThread* CResourceThread::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 void CResourceThread::Free()
 {
-    
     vector<string> levelKeys;
     levelKeys.reserve(m_LevelResources.size());
     for (const auto& levelPair : m_LevelResources)
@@ -526,6 +645,7 @@ void CResourceThread::Free()
 
     /*디폴트 삭제*/
     Safe_Release(m_DefaultTexture);
+    Safe_Release(m_DefaultModel);
 
     Safe_Release(m_pThreadPool);
     __super::Free();

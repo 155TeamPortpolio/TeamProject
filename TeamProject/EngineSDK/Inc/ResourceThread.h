@@ -38,7 +38,6 @@ public:
 
 public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
-public:
 	void Pump_AllEntries_MainThread();
 public:
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;

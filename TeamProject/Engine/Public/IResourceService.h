@@ -26,6 +26,13 @@ public:
     virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) PURE;
     virtual void Clear_Resource(const string& levelTag)PURE;
     virtual HRESULT Sync_To_Level()PURE;
+
+
+public:
+    virtual class CResourceEntry* Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType = false) { return nullptr; };
+    virtual class CResourceEntry* Request_ModelEntry(const string& levelTag, const string& modelKey) { return nullptr; };
+    void Pump_AllEntries_MainThread() {};
+
 };
 
 NS_END

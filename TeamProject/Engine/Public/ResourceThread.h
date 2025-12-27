@@ -38,7 +38,6 @@ public:
 
 public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
-public:
 	void Pump_AllEntries_MainThread();
 public:
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
@@ -63,7 +62,7 @@ private:
 
 	CTexture* m_DefaultTexture = { nullptr };
 	CModelData* m_DefaultModel = { nullptr };
-
+	
 public:
 	static CResourceThread* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

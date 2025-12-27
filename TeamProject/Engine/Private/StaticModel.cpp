@@ -7,15 +7,26 @@
 #include"GameObject.h"
 #include "Transform.h"
 #include "Mesh.h"
+#include "ResourceEntry.h"
+
 CStaticModel::CStaticModel()
 {
 }
 
 CStaticModel::CStaticModel(const CStaticModel& rhs)
-    :CModel(rhs),	m_pData(rhs.m_pData),
-    m_DrawableMeshes(rhs.m_DrawableMeshes)
+    : CModel(rhs),
+    m_pData(rhs.m_pData),
+    m_pEntry(rhs.m_pEntry),
+    m_DrawableMeshes(rhs.m_DrawableMeshes),
+    m_LastGen(rhs.m_LastGen)
 {
     Safe_AddRef(m_pData);
+    Safe_AddRef(m_pEntry);
+}
+
+void CStaticModel::PreCheck()
+{
+    Check_Entry();
 }
 
 HRESULT CStaticModel::Initialize_Prototype()
@@ -32,13 +43,20 @@ HRESULT CStaticModel::Link_Model(const string& levelKey, const string& modelData
 {
     if(m_pData)
         Safe_Release(m_pData);
+    if (m_pEntry)
+        Safe_Release(m_pEntry);
 
-    m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(levelKey, modelDataKey);
+    m_pEntry = CGameInstance::GetInstance()->Get_ResourceMgr()->Request_ModelEntry(levelKey, modelDataKey);
+    if (!m_pEntry)
+        return E_FAIL;
 
+    Safe_AddRef(m_pEntry);  
+
+    m_LastGen = 0;                   
+    Check_Entry();                    
     if (!m_pData)
         return E_FAIL;
 
-    Safe_AddRef(m_pData);
     m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
     return S_OK;
 }
@@ -194,6 +212,25 @@ void CStaticModel::Render_GUI()
     ImGui::EndChild();
 }
 
+void CStaticModel::Check_Entry()
+{
+    if (!m_pEntry) return;
+
+    const uint64_t currentGen = m_pEntry->GetGenerationCopy();
+    if (m_LastGen == currentGen && m_pData)
+        return;
+
+    m_LastGen = currentGen;
+
+    Safe_Release(m_pData);
+
+    m_pData = m_pEntry->Acquire<CModelData>();
+    if (!m_pData)
+        return;
+
+    m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
+}
+
 CStaticModel* CStaticModel::Create()
 {
     CStaticModel* instance = new CStaticModel();
@@ -216,4 +253,5 @@ void CStaticModel::Free()
 {
     __super::Free();
     Safe_Release(m_pData);
+    Safe_Release(m_pEntry);
 }

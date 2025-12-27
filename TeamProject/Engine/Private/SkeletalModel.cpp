@@ -6,18 +6,22 @@
 #include"GameObject.h"
 #include "Transform.h"
 #include "Mesh.h"
+#include "ResourceEntry.h"
+
 CSkeletalModel::CSkeletalModel()
 {
 }
 
 CSkeletalModel::CSkeletalModel(const CSkeletalModel& rhs)
 	:CModel(rhs), m_pData(rhs.m_pData),
+	m_pEntry(rhs.m_pEntry),
 	m_DrawableMeshes(rhs.m_DrawableMeshes),
 	m_TransfromationMatrices(rhs.m_TransfromationMatrices),
 	m_CombinedMatrices(rhs.m_CombinedMatrices),
-	m_FinalMatices(rhs.m_FinalMatices)
+	m_LastGen(rhs.m_LastGen)
 {
 	Safe_AddRef(m_pData);
+	Safe_AddRef(m_pEntry);
 }
 
 HRESULT CSkeletalModel::Initialize_Prototype()
@@ -31,11 +35,29 @@ HRESULT CSkeletalModel::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+void CSkeletalModel::PreCheck()
+{
+	Check_Entry();
+}
+
 HRESULT CSkeletalModel::Link_Model(const string& levelKey, const string& modelDataKey)
 {
-	Safe_Release(m_pData);
-	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(levelKey, modelDataKey);
-	Safe_AddRef(m_pData);
+	 if (m_pData)
+		Safe_Release(m_pData);
+	if (m_pEntry)
+		Safe_Release(m_pEntry);
+
+	m_pEntry = CGameInstance::GetInstance()->Get_ResourceMgr()->Request_ModelEntry(levelKey, modelDataKey);
+	if (!m_pEntry)
+		return E_FAIL;
+
+	Safe_AddRef(m_pEntry);
+
+	m_LastGen = 0;
+	Check_Entry();
+	if (!m_pData)
+		return E_FAIL;
+
 	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 
 	_float4x4 IdentityMatrix;
@@ -43,7 +65,6 @@ HRESULT CSkeletalModel::Link_Model(const string& levelKey, const string& modelDa
 	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
@@ -61,11 +82,6 @@ HRESULT CSkeletalModel::Link_Model(const string& levelKey, const string& modelDa
 			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
-	}
-
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
 	}
 	 
 	return S_OK;
@@ -123,7 +139,7 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
  const vector<_float4x4>& CSkeletalModel::Get_BoneMatrices()
 {
 	 if (!m_bDirty) {
-		 return m_FinalMatices;
+		 return m_CombinedMatrices;
 	 }
 	 else{
 		 for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -145,11 +161,6 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 
 				 XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 			 }
-		 }
-
-		 for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-		 {
-			 XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
 		 }
 
 		 m_bDirty = false;
@@ -177,7 +188,7 @@ MINMAX_BOX CSkeletalModel::Get_LocalBoundingBox()
 	 _int Index = m_pData->Find_BoneIndexByName(boneName);
 	 if (Index == -1)  return nullptr;
 	 else {
-		 return &m_FinalMatices[Index];
+		 return &m_CombinedMatrices[Index];
 	 }
  }
 
@@ -308,6 +319,48 @@ void CSkeletalModel::Render_GUI()
 	ImGui::EndChild();
 }
 
+void CSkeletalModel::Check_Entry()
+{
+	if (!m_pEntry) return;
+
+	const _uint currentGen = m_pEntry->GetGenerationCopy();
+	if (m_LastGen == currentGen && m_pData)
+		return;
+
+	m_LastGen = currentGen;
+
+	Safe_Release(m_pData);
+
+	m_pData = m_pEntry->Acquire<CModelData>();
+	if (!m_pData)
+		return;
+
+	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
+
+	_float4x4 IdentityMatrix;
+	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
+	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		m_TransfromationMatrices[i] = m_pData->Get_TransformMatrix(i);
+	}
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		int parent = m_pData->Get_BoneParentIndex(i);
+
+		if (parent == -1) {
+			m_CombinedMatrices[i] = m_TransfromationMatrices[i];
+		}
+		else {
+			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
+			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
+			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
+		}
+	}
+}
 
 CSkeletalModel* CSkeletalModel::Create()
 {

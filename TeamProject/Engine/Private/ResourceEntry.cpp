@@ -149,6 +149,7 @@ void CResourceEntry::Pump()
     else
     {
         m_Resource = loadedVariant; // 엔트리가 소유(Release는 Reset/Free에서)
+        m_Generation++;
         m_State.store(LoadState::Ready, memory_order_release);
     }
 }

@@ -44,7 +44,8 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pLevelManager = CLevelMgr::Create();
 	m_pPrototypeManager = CPrototypeMgr::Create();
 	m_pObjectManager = CObjectMgr::Create();
-	m_pResourceManager = CResourceMgr::Create(m_pDevice, m_pDeviceContext);
+	//m_pResourceManager = CResourceMgr::Create(m_pDevice, m_pDeviceContext);
+	m_pResourceManager = CResourceThread::Create(m_pDevice, m_pDeviceContext);
 	m_pResourceManager->Load_InitialResource();
 	m_pCameraManager = CCameraMgr::Create();
 	m_pUIManager = CUI_Manager::Create();
@@ -56,8 +57,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pFontSystem = CFontSystem::Create(m_pDevice, m_pDeviceContext);
 	m_pEventSystem = CEventSystem::Create();
 	m_pClickManager = CClickManager::Create(engine.hWnd);
-	m_pResourceThread = CResourceThread::Create(m_pDevice,m_pDeviceContext);
-	m_pResourceThread->Load_InitialResource();
+
 
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
@@ -75,7 +75,6 @@ void CGameInstance::Notify_LevelSet()
 	m_pObjectManager->Sync_To_Level();
 	m_pResourceManager->Sync_To_Level();
 	m_pUIManager->Sync_To_Level();
-	m_pResourceThread->Sync_To_Level();
 }
 
 void CGameInstance::Update_EngineTimer()
@@ -115,7 +114,7 @@ void CGameInstance::Update_Engine(_float dt)
 
 	m_totalFrameCount++;
 
-	m_pResourceThread->Pump_AllEntries_MainThread();
+	m_pResourceManager->Pump_AllEntries_MainThread();
 	/*엔진 제어 업데이트 -> 동기화용*/
 	m_pObjectManager->Pre_EngineUpdate(realDt);
 	m_pUIManager->Pre_EngineUpdate(realDt);
@@ -175,7 +174,6 @@ void CGameInstance::Release_Engine()
 	Safe_Release(m_pPhysicsSystem);
 	Safe_Release(m_pEventSystem);
 	Safe_Release(m_pClickManager);
-	Safe_Release(m_pResourceThread);
 
 	DestroyInstance();
 }
