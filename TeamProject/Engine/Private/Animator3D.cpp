@@ -656,7 +656,6 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 		Layer.iClipIndex = Layer.iNextClipIndex;
 		Layer.iNextClipIndex = -1;
-		Layer.fBlendTrackPosition = 0.f;
 		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
 		Layer.fBlendElapsed = 0.f;
 		Layer.fBlendDuration = 0.f;

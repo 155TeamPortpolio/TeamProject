@@ -64,11 +64,6 @@ void CDemoShaderAnimModel::Priority_Update(_float dt)
 
 void CDemoShaderAnimModel::Update(_float dt)
 {
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_UP))
-		Get_Component<CAnimator3D>()->Change_Animation(0, 5)
-		.Loop(false);
-
-
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
