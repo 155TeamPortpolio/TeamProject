@@ -117,7 +117,7 @@ public://애니매이터 데이터
     //이벤트들 불러오는 함수
     const vector<EVENT_INST>& Get_EventBus() const;
     //"Root"라는 이름을 가진 본의 움직임 델타값
-    _vector Get_RootMotionDelta(_uint LayerIndex = 0);
+    _float3 Get_RootMotionDelta() const;
     //무브본 애니매이션 델타값
     _vector Get_MoveBoneMotionDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴

@@ -292,11 +292,13 @@ const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
 	return m_EventBus;
 }
 
-_vector CAnimator3D::Get_RootMotionDelta(_uint LayerIndex)
+_float3 CAnimator3D::Get_RootMotionDelta() const
 {
-	if (!isExistLayer(LayerIndex)) return XMVectorZero();
+	for(auto& Layer : m_AnimLayers)
+		if(Layer.BaseLayer)
+			return Layer.vRootDelta;
 
-	return XMVectorZero();
+	return _float3();
 }
 
 _vector CAnimator3D::Get_MoveBoneMotionDelta(_uint LayerIndex)
@@ -547,15 +549,21 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 
 	if (Layer.BaseLayer) {
-		if (Layer.bWrapped) {
+		auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
+		if (Layer.bWrapped) {
+			XMStoreFloat3(&Layer.vRootDelta,
+				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+					+ XMLoadFloat3(&vCurRootPos)));
 		}
 		else {
-			auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+
 			XMStoreFloat3(&Layer.vRootDelta,
 				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
 		}
+
+		Layer.vPrevRootPos = vCurRootPos;
 	}
 }
 
@@ -619,14 +627,22 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
-	//Eliminate Transform
-	if (-1 != Layer.iMoveBoneIndex) {
-		_float4x4& mat = Layer.LocalMatrices[Layer.iMoveBoneIndex];
-		//지금은 Transform만 가져오고 있지만 혹시 회전이나 크기가 필요하면 매트릭스 자체를 저장해도 무관
-		Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
-		if (!Layer.bUseBoneX) mat._41 = 0.f;
-		if (!Layer.bUseBoneY) mat._42 = 0.f;
-		if (!Layer.bUseBoneZ) mat._43 = 0.f;
+	if (Layer.BaseLayer) {
+		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
+		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+
+		if (Layer.bWrapped) {
+			XMStoreFloat3(&Layer.vRootDelta,
+				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+					+ XMLoadFloat3(&vCurRootPos)));
+		}
+		else {
+
+			XMStoreFloat3(&Layer.vRootDelta,
+				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+		}
+
+		Layer.vPrevRootPos = vCurRootPos;
 	}
 
 	//Convert End
@@ -694,7 +710,20 @@ void CAnimator3D::BuildBone()
 			break;
 		}
 	}
+	//Extract bone from BaseLayer
+	for (auto& Layer : m_AnimLayers) {
+		if (Layer.BaseLayer) {
+			if (-1 != Layer.iMoveBoneIndex) {
+				_float4x4& mat = m_TransformationMatrices[Layer.iMoveBoneIndex];
 
+				Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
+				if (!Layer.bUseBoneX) mat._41 = 0.f;
+				if (!Layer.bUseBoneY) mat._42 = 0.f;
+				if (!Layer.bUseBoneZ) mat._43 = 0.f;
+			}
+		}
+	}
+	
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -875,6 +904,9 @@ HRESULT SetAnimBuild::Apply()
 	//m_pOwner->Reset_Layer(m_iLayerIndex);
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
+	if (Layer.BaseLayer)
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
+
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
@@ -930,6 +962,9 @@ HRESULT ChangeAnimBuild::Apply()
 		return E_FAIL;
 
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
+
+	if (Layer.BaseLayer)
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
