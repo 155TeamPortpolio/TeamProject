@@ -53,6 +53,7 @@ void CCharacter::Update(_float dt)
 {
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
+	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -64,9 +65,7 @@ void CCharacter::Rotate(_vector3 vDirection)
 {
 	_vector3 vDir = vDirection;
 	vDir.y = 0.f;
-
 	if (vDir.Length() < 0.001f) return;
-
 	vDir.Normalize();
 
 	_vector3 vUp = _vector3::Up;
@@ -78,8 +77,9 @@ void CCharacter::Rotate(_vector3 vDirection)
 	mRot.Up(vUp);
 	mRot.Forward(vDir);
 
-	_quaternion qRot = _quaternion::CreateFromRotationMatrix(mRot);
-	m_pTransform->Set_Quaternion(qRot);
+	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
+	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
+	m_bIsRotate = true;
 }
 
 void CCharacter::Update_Input(_float dt)
@@ -97,8 +97,8 @@ void CCharacter::Update_Input(_float dt)
 		auto cam   = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 
-		Vector3 camLook  = camTf->Dir(STATE::LOOK);
-		Vector3 camRight = camTf->Dir(STATE::RIGHT);
+		_vector3 camLook  = camTf->Dir(STATE::LOOK);
+		_vector3 camRight = camTf->Dir(STATE::RIGHT);
 
 		camLook.y  = 0.f;
 		camRight.y = 0.f;
@@ -111,6 +111,22 @@ void CCharacter::Update_Input(_float dt)
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
+}
+
+void CCharacter::Update_Rotation(_float dt)
+{
+	if (!m_bIsRotate) return;
+	_float fSpeed = 20.f;
+	_float fDot = m_qCurrentRot.Dot(m_qTargetRot);
+	if (fDot > 0.99f)
+	{
+		m_pTransform->Set_Quaternion(m_qTargetRot);
+		m_bIsRotate = false;
+		return;
+	}
+
+	m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
+	m_pTransform->Set_Quaternion(m_qCurrentRot);
 }
 
 void CCharacter::Free()
