@@ -114,28 +114,27 @@ void CButtonUI::OnClick()
     CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
 }
 
-void CButtonUI::SavePrefab(json& data)
+void CButtonUI::FillElementData(UI_ELEMENT_DATA& data)
 {
-    __super::SavePrefab(data);
+    __super::FillElementData(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data.strTypeTag = m_strTypeTag;
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data["textureTag"] = szTextureKeys[m_iTextureKeyIndex];
-
-    data["eventMsg"] = m_szEventMsg;
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
+    data.strEventMsg = m_szEventMsg;
 }
 
-void CButtonUI::LoadPrefab(const json& data)
+void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
-    __super::LoadPrefab(data);
+    __super::ReadElementData(data);
 
     const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data["textureTag"]);
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
     if (-1 != m_iTextureKeyIndex)
         Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    strcpy_s(m_szEventMsg, sizeof(m_szEventMsg), data["eventMsg"].get<string>().c_str());
+    strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
 }
 
 CGameObject* CButtonUI::Create()

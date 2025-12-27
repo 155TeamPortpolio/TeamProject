@@ -30,6 +30,17 @@
 /* Character */
 #include "Miyabi.h"
 
+/* UI */
+#include "ButtonUI.h"
+#include "CanvasPanel.h" 
+#include "GaugeUI.h"
+#include "ImageUI.h"
+#include "SpriteAnimationUI.h"
+#include "TextUI.h"
+#include "UVAnimationUI.h"
+
+#include "HUD.h"
+
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
@@ -128,9 +139,13 @@ HRESULT CTestLevel::Awake()
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
 	miyabiCCT.bAutoFit = false;
-	miyabiCCT.fHeight = 1.28;
+	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
@@ -143,34 +158,63 @@ HRESULT CTestLevel::Awake()
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
 
+	//==================== UI =======================
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Button", CButtonUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Gauge", CGaugeUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Image", CImageUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Text", CTextUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());
+	//
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD", CHUD::Create());
+	//
+	//pResource->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/Image/PanelBox.dds");
+	//pResource->Add_ResourcePath("SkillBtnAImg.png", "../Bin/Resources/UI/Image/SkillBtnAImg.png");
+	//pResource->Add_ResourcePath("SkillBtnAOutline.png", "../Bin/Resources/UI/Image/SkillBtnAOutline.png");
+	//pResource->Add_ResourcePath("SkillCDMask.png", "../Bin/Resources/UI/Image/SkillCDMask.png"); 
+	//pResource->Add_ResourcePath("SkillEvade.png", "../Bin/Resources/UI/Image/SkillEvade.png");
+	//pResource->Add_ResourcePath("SkillSpecial.png", "../Bin/Resources/UI/Image/SkillSpecial.png");
+	//pResource->Add_ResourcePath("ZeroScreenLarge02.png", "../Bin/Resources/UI/Image/ZeroScreenLarge02.png");
+	//
+	//m_pGameInstance->Get_FontSystem()->Add_Font("Impact.spritefont", L"../Bin/Resources/UI/Font/Impact.spritefont");
+	//
+	//pResource->Add_ResourcePath("hud.json", "../Bin/Resources/UI/Data/hud.json");
+	//
+	//CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
+	//	.Asset("hud.json")
+	//	.Build("HUD");
+	//
+	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
+
+
+
+
 	return S_OK;
 }
 
 void CTestLevel::Update()
 {
-	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
-
 	if (KEY->Key_Down('1'))
 	{
-		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
-
 	if (KEY->Key_Down('2'))
 	{
-		m_pCamDirector->StopAll(0.25f);
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
-
 	if (KEY->Key_Down('3'))
+	{
 		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
+	}
+	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 }
 
 void CTestLevel::Ready_Camera()
 {
-	constexpr float aspect = static_cast<float>(g_iWinSizeX) / static_cast<float>(g_iWinSizeY);
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
 	auto sequenceCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
@@ -182,9 +226,12 @@ void CTestLevel::Ready_Camera()
 		.Position({0.f, 2.f, -3.f})                                       
 		.Build("FreeCam");
 
+	CCT_DESC desc;
+	desc.eGroup = COLLISION_GROUP::CAMERA;
+
 	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)
-		.CharacterController({})
+		.CharacterController(desc)
 		.Build("OrbitCam");
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 

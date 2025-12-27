@@ -145,6 +145,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	m_fSlopeLimit = pDesc->fSlopeLimit;
 	m_fMaxSpeed = pDesc->fMaxSpeed;
 
+	m_pQueryFilter = new CCCTQueryFilter(&m_FilterData);
+
 	return S_OK;
 }
 
@@ -533,14 +535,45 @@ void CCharacterController::Stop_Movement()
 	m_vVelocity = {};
 }
 
+void CCharacterController::Set_CollisionMask(_uint iMask)
+{
+	m_FilterData.word1 = iMask;
+
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
+	{
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
+}
+
+void CCharacterController::Set_CollisionGroup(COLLISION_GROUP eGroup)
+{
+	m_FilterData.word0 = 1 << ENUM(eGroup);
+
+	PxShape* pShape;
+	m_pController->getActor()->getShapes(&pShape, 1);
+	if (pShape)
+	{
+		pShape->setSimulationFilterData(m_FilterData);
+		pShape->setQueryFilterData(m_FilterData);
+	}
+}
+
 void CCharacterController::Move(_fvector vDisplacement, _float dt)
 {
 	_float3 vDisp;
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
+	// Scene Query 1차 필터용: 마스크를 word0에 설정
+	m_QueryFilterData.word0 = m_FilterData.word1;
+
 	PxControllerFilters filters;
-	filters.mFilterData = &m_FilterData;
+	filters.mFilterData = &m_QueryFilterData;
+	filters.mFilterCallback = m_pQueryFilter;
+	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
 	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.0001f, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
@@ -796,6 +829,12 @@ CComponent* CCharacterController::Clone()
 void CCharacterController::Free()
 {
 	CGameInstance::GetInstance()->Get_CollisionSystem()->UnRegisterCollidable(this, -1);
+
+	if (m_pQueryFilter)
+	{
+		delete m_pQueryFilter;
+		m_pQueryFilter = nullptr;
+	}
 
 	if (m_pController)
 	{

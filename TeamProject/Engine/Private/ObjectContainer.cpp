@@ -34,22 +34,79 @@ HRESULT CObjectContainer::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+void CObjectContainer::Pre_EngineUpdateChild(_float dt)
+{
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Pre_EngineUpdate(dt);
+	}
+}
+
+void CObjectContainer::Post_EngineUpdateChild(_float dt)
+{
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Post_EngineUpdate(dt);
+	}
+}
+
 void CObjectContainer::Priority_UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects)
-		if (child && child->Is_Alive()) child->Priority_Update(dt);
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Priority_Update(dt);
+	}
 }
 
 void CObjectContainer::UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects)
-		if (child && child->Is_Alive()) child->Update(dt);
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Update(dt);
+	}
 }
 
 void CObjectContainer::Late_UpdateChild(_float dt)
 {
-	for (auto& child : m_ChildrenObjects)
-		if (child && child->Is_Alive()) child->Late_Update(dt);
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->Late_Update(dt);
+	}
 }
 
 /*자식 전체 순회 -> 효율 떨어짐*/
@@ -106,9 +163,6 @@ _int CObjectContainer::Find_IndexByID(_uint ObjectID)
 	}
 }
 
-/*IParent-> vector<CGamObject*> m_CHilds*/
-/*UPdate_Child(dt)*/
-
 _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 {
 	if (nullptr == pObject) return -1;
@@ -119,9 +173,8 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 		/*이미 추가되어 있음.*/
 		return m_IndexByID[ObjectID];
 	}
-
 	_uint ObjectIndex = m_ChildrenObjects.size();
-
+	
 	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
 	{	//중간에 비어잇다면 널포인터
 		if (nullptr == m_ChildrenObjects[i]) {
@@ -131,13 +184,9 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	}
 
 	if (ObjectIndex == m_ChildrenObjects.size()) //마지막에 추가
-	{
 		m_ChildrenObjects.push_back(pObject);
-	}
-	else {
+	else
 		m_ChildrenObjects[ObjectIndex] = pObject;
-	}
-
 
 	CChild* child = pObject->Add_Component<CChild>(m_pOwner);
 	CUI_Object* ownerCast = dynamic_cast<CUI_Object*>(m_pOwner);
@@ -150,7 +199,13 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 
 	string name = pObject->Get_InstanceName();
 	m_ChildrensName.emplace(ObjectID, name);
-	m_IndexByID.emplace(ObjectID, ObjectIndex);
+	m_IndexByID[ObjectID] = ObjectIndex;
+	m_ChildrensName[ObjectID] = pObject->Get_InstanceName();
+
+	// 각 아이디 별로 들어온 순서 기록
+	m_OrderIndexByID[ObjectID] = (_uint)m_UpdateOrder.size();
+	m_UpdateOrder.push_back(ObjectID);
+
 	Safe_AddRef(pObject);
 
 	/*부모의 업데이트 동안에, 차일드가 추가됨*/
@@ -162,7 +217,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	}
 	else {
 		/*레이어가 있으면*/
-		if (m_pOwner->Get_Layer()) {
+		if (m_pOwner->Get_Layer()) { 
 			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObject, m_pOwner->Get_LayerDesc());
 		}
 	}
@@ -170,32 +225,52 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	return static_cast<int>(ObjectIndex);
 }
 
-void CObjectContainer::Destroy_Child(_uint ChildIndex)
+void CObjectContainer::Destroy_Child(_uint childIndex)
 {
-	if (m_ChildrenObjects.size() <= ChildIndex)
+	if (m_ChildrenObjects.size() <= childIndex)
 		return;
 
-	CGameObject* target = m_ChildrenObjects[ChildIndex];
+	CGameObject* targetObject = m_ChildrenObjects[childIndex];
+	if (targetObject == nullptr)
+		return;
 
-	auto nameIter = m_ChildrensName.find(target->Get_ObjectID());
-	m_ChildrensName.erase(nameIter);
-	auto IndexIter = m_IndexByID.find(target->Get_ObjectID());
-	m_IndexByID.erase(IndexIter);
+	const _uint objectId = targetObject->Get_ObjectID();
 
-	m_ChildrenObjects[ChildIndex] = nullptr;
+	auto orderIndexIter = m_OrderIndexByID.find(objectId);
+	if (orderIndexIter != m_OrderIndexByID.end())
+	{
+		const _uint orderIndex = orderIndexIter->second;
+		if (orderIndex < m_UpdateOrder.size())
+			m_UpdateOrder[orderIndex] = 0;
 
-	CUI_Object* uiCast = dynamic_cast<CUI_Object*>(target);
-	_bool isUI = (uiCast != nullptr);
-
-	if (isUI) {
-		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiCast);
-		Safe_Release(uiCast);
+		m_OrderIndexByID.erase(orderIndexIter);
 	}
-	else {
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(target);
-		Safe_Release(target);
+
+	auto nameIter = m_ChildrensName.find(objectId);
+	if (nameIter != m_ChildrensName.end())
+		m_ChildrensName.erase(nameIter);
+
+	auto indexIter = m_IndexByID.find(objectId);
+	if (indexIter != m_IndexByID.end())
+		m_IndexByID.erase(indexIter);
+
+	m_ChildrenObjects[childIndex] = nullptr;
+
+	CUI_Object* uiObject = dynamic_cast<CUI_Object*>(targetObject);
+	const _bool isUIObject = (uiObject != nullptr);
+
+	if (isUIObject)
+	{
+		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiObject);
+		Safe_Release(uiObject); 
+	}
+	else
+	{
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(targetObject);
+		Safe_Release(targetObject);
 	}
 }
+
 
 void CObjectContainer::Dettach_Child(_uint ChildIndex)
 {

@@ -140,10 +140,8 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 	else {
 		m_isRootObject = true;
 	}
-
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Pre_EngineUpdate(dt);
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Pre_EngineUpdateChild(dt);
 	}
 }
 
@@ -181,9 +179,9 @@ void CGameObject::Post_EngineUpdate(_float dt)
 
 		}
 	}
-	for (auto& child : Get_Children()) {
-		if (child && child->Is_Alive())
-			child->Post_EngineUpdate(dt);
+
+	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+		pObjContainer->Post_EngineUpdateChild(dt);
 	}
 }
 
@@ -210,7 +208,7 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 		(isSelected ? ImGuiTreeNodeFlags_Selected : 0) |
 		(Children.empty() ? (ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen) : 0);
 
-	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")";
+	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")"+ "##" + to_string(m_ObjectID) ;
 	bool opened = ImGui::TreeNodeEx(TreeNodeName.c_str(), flags);
 
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
