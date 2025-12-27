@@ -505,29 +505,41 @@ void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* 
 
 void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float dt)
 {
-	_vector vNormalized = XMVector3Normalize(vDir);
-	_vector vDisplacement = vNormalized * fSpeed * dt;
-
-	_float3 vDisp;
-	XMStoreFloat3(&vDisp, vDisplacement);
-	vDisp.y = m_vVelocity.y * dt;
-
-	Move(XMLoadFloat3(&vDisp), dt);
+	_vector3 vDirection = vDir;
+	vDirection.Normalize();
+	vDirection = vDirection * fSpeed * dt;
+	vDirection.y = m_vVelocity.y * dt;
+	Move(vDirection, dt);
 }
 
 void CCharacterController::Move_Velocity(_fvector vVelocity, _float dt)
 {
-	_float3 vVel;
-	XMStoreFloat3(&vVel, vVelocity);
+	_vector3 vVel = vVelocity;
 	vVel.y = m_vVelocity.y;
-
-	_float3 vDisplacement = vVel * dt;
-	Move(XMLoadFloat3(&vDisplacement), dt);
+	Move(vVel * dt, dt);
 }
 
 void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
 {
-	Move(vDisp, dt);
+	_vector3 vDisplacement = vDisp;
+	vDisplacement.y += m_vVelocity.y * dt;
+	Move(vDisplacement, dt);
+}
+
+void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotation, _float dt)
+{
+	const _float fRootMotionScale = 0.01f;
+
+	_vector3 vDelta = vLocalDelta;
+	_vector3 vLocalMotion = _vector3(vDelta.x, 0.f, -vDelta.z);
+
+	_smatrix matRot = _smatrix::CreateFromQuaternion(qRotation);
+	_vector3 vWorldMotion = _vector3::Transform(vLocalMotion, matRot);
+
+	vWorldMotion *= fRootMotionScale;
+	vWorldMotion.y = m_vVelocity.y * dt;
+
+	Move(vWorldMotion, 1.f);
 }
 
 void CCharacterController::Stop_Movement()

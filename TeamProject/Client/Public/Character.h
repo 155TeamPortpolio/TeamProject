@@ -75,7 +75,7 @@ protected:
     // È¸Àü
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
-    _bool           m_bIsRotate = { false };
+    _bool           m_bIsRotating = { false };
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
