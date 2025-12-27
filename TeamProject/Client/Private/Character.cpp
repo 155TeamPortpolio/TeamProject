@@ -53,7 +53,7 @@ void CCharacter::Update(_float dt)
 {
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
-	Update_Rotation(dt);
+	if(m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -79,7 +79,7 @@ void CCharacter::Rotate(_vector3 vDirection)
 
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
-	m_bIsRotate = true;
+	m_bIsRotating = true;
 }
 
 void CCharacter::Update_Input(_float dt)
@@ -115,13 +115,11 @@ void CCharacter::Update_Input(_float dt)
 
 void CCharacter::Update_Rotation(_float dt)
 {
-	if (!m_bIsRotate) return;
 	_float fSpeed = 20.f;
-	_float fDot = m_qCurrentRot.Dot(m_qTargetRot);
-	if (fDot > 0.99f)
+	if (m_qCurrentRot.Dot(m_qTargetRot) > 0.99f)
 	{
 		m_pTransform->Set_Quaternion(m_qTargetRot);
-		m_bIsRotate = false;
+		m_bIsRotating = false;
 		return;
 	}
 
