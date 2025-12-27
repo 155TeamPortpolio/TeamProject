@@ -46,9 +46,11 @@ public:
 private:
     HRESULT Bind_Matrix(const string& ConstantName, const _float4x4* pMatrix);
     HRESULT Bind_ShaderResource(const string& ConstantName, ID3D11ShaderResourceView* pSRV);
-    HRESULT Bind_ShaderResourceArray(const string& ConstantName, ID3D11ShaderResourceView* pSRVArr);
+    HRESULT Bind_ShaderResourceArray(const string& ConstantName, ID3D11ShaderResourceView* pSRVArr);    
+    HRESULT Bind_MatrixArray(const string& ConstantName, const _float4x4* pMatrices, _uint iCount);
 
-private: //Compile
+private:
+    //Compile
     void ReflectShader();
     HRESULT InitializeTechnique(wstring wPath);
     CompileState Check_Chached(wstring wPath);

@@ -42,8 +42,9 @@ private:
 	CGameInstance*			m_pGameInstance = { nullptr };
 	class CMapToolCore*		m_pMapToolCore = { nullptr };
 	class CSlotFieldGui*	m_pSlotFieldGui = { nullptr };
+	class CMapToolAssistant* m_pAssistant = { nullptr };
 	MAPTOOL_CONTEXT*		m_pMapToolContext = { nullptr };
-	//_int*					m_pVersion = { nullptr };
+
 
 	// Physics Ray
 	PHYSICS_RAY	m_PhysicsRay = {};

@@ -2,6 +2,10 @@
 
 float3 vRimLightColor;
 float fRimLightPower;
+vector vOutLineColor;
+float fOutLineThickness;
+float4x4 g_OutLineBoneMatrices[512];
+matrix g_worldMatrix;
 
 struct VS_IN
 {
@@ -50,19 +54,58 @@ VS_OUT VS_MAIN(VS_IN In)
     float3 worldPos = mul(vPosition, ObjectBufferArray[TransformIndex].Transform).xyz;
     float4 viewPos = mul(float4(worldPos, 1.f), matView);
     float4 projPos = mul(viewPos, matProjection);
-
+        
+    matrix matrixWV = mul(ObjectBufferArray[TransformIndex].Transform, matView);
+    matrix matrixWVP = mul(matrixWV, matProjection);
     Out.vPosition = projPos;
     
     Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, ObjectBufferArray[TransformIndex].Transform));
     Out.vProjPos = Out.vPosition;
 
-    Out.vNormal = normalize(mul(vNormal, ObjectBufferArray[TransformIndex].Transform));
     Out.vTangent = normalize(mul(vTangent, ObjectBufferArray[TransformIndex].Transform));
     Out.vBinormal = normalize(mul(vBinormal, ObjectBufferArray[TransformIndex].Transform));
     
     return Out;
 }
 
+
+VS_OUT VS_OUTLINE(VS_IN In)
+{
+    VS_OUT Out;
+    
+    float fWeightW = 1.0 - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
+
+    float4x4 BoneMatrix =
+        g_OutLineBoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
+        g_OutLineBoneMatrices[In.vBlendIndex.y] * In.vBlendWeight.y +
+        g_OutLineBoneMatrices[In.vBlendIndex.z] * In.vBlendWeight.z +
+        g_OutLineBoneMatrices[In.vBlendIndex.w] * fWeightW;
+    
+    vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
+    vector vNormal = mul(float4(In.vNormal, 0.f), BoneMatrix);
+    vector vTangent = mul(float4(In.vTangent, 0.f), BoneMatrix);
+    vector vBinormal = mul(float4(In.vBinormal, 0.f), BoneMatrix);
+    
+    float3 worldPos = mul(vPosition, g_worldMatrix).xyz;
+    vector worldNormal = normalize(mul(g_worldMatrix, vNormal));
+    
+    worldPos += worldNormal.xyz * fOutLineThickness;
+    
+    float4 viewPos = mul(float4(worldPos, 1.f), matView);
+    float4 projPos = mul(viewPos, matProjection);
+
+    Out.vPosition = projPos;
+    
+    Out.vTexcoord = In.vTexcoord;
+    Out.vNormal = normalize(mul(vNormal, g_worldMatrix));
+    Out.vProjPos = Out.vPosition;
+
+    Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
+    Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
+    
+    return Out;
+}
 
 struct PS_IN
 {
@@ -124,10 +167,18 @@ PS_OUT PS_MAIN(PS_IN In)
     }
     
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    if (vAmbient.g < 0.2)vAmbient.g = 1.f;
+    if (vAmbient.g < 0.2) vAmbient.g = 0.f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    return Out;
+}
+
+PS_OUT PS_OUTLINE(PS_IN In)
+{
+    PS_OUT Out;
+    
+    Out.vDiffuse = vOutLineColor;
     return Out;
 }
 
@@ -217,7 +268,7 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
+        SetDepthStencilState(DSS_WriteStencil,1);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
@@ -242,6 +293,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+    }
+
+    pass OutLine
+    {
+        SetRasterizerState(RS_CullFront);
+        SetDepthStencilState(DSS_OutlineStencil, 1);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_OUTLINE();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_OUTLINE();
     }
 }
 

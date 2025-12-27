@@ -38,7 +38,6 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final"))) return E_FAIL;
 	pPriorityPass->Execute(m_pContext, this);
-	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 
 	return S_OK;
 }
@@ -154,6 +153,7 @@ HRESULT CForwardRenderer::Render_RimLight()
 
 		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	}
+
 	return S_OK;
 }
 
@@ -200,6 +200,12 @@ HRESULT CForwardRenderer::Render_SSAO()
 	return S_OK;
 }
 
+HRESULT CForwardRenderer::Render_OutLine()
+{
+	Process_OutLineQueue();
+	return S_OK;
+}
+
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
@@ -240,12 +246,11 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 
 HRESULT CForwardRenderer::Render_Combined()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Final", false))) return E_FAIL;
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 
 	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Combined", &pLayout);
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "COMBINED", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
@@ -259,6 +264,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
 	m_pTargetManager->Bind_Target("Target_RimLightFinal", m_pShader, "g_RimLightFinalTexture");
+	m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
 
 	m_pShader->Bind_Value("g_RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
 
@@ -268,11 +274,16 @@ HRESULT CForwardRenderer::Render_Combined()
 	WorldMat.pData = &m_WorldMatrix;
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 
-	m_pShader->Apply("Combined", m_pContext);
+	m_pShader->Apply("COMBINED", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
-	m_pTargetManager->End_MRT();
+
 	return S_OK;
+}
+
+void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
+{
+	m_OutLineCommands.push_back(command);
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)
@@ -415,6 +426,43 @@ HRESULT CForwardRenderer::CreateSSAONoiseTexture()
 	}
 
 	Safe_Release(noiseTexture);
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Process_OutLineQueue()
+{
+	if (m_OutLineCommands.empty())
+	{
+		if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+
+		return S_OK;
+	}
+
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
+
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+
+	for (auto& cmd : m_OutLineCommands)
+	{
+		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
+		cmd.pShader->Bind_Value("g_OutLineBoneMatrices", { cmd.BoneParam.data(), cmd.typeName, cmd.iSize});
+
+		cmd.DrawCall(m_pContext, cmd.MeshIdx);
+	}
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
+
+	m_OutLineCommands.clear();
+
+	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	return S_OK;
 }
 

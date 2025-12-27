@@ -88,6 +88,7 @@ using namespace physx;
 #include "Engine_Typedef.h"
 #include "Engine_Function.h"
 #include "Engine_Struct.h"
+#include "Engine_RenderStruct.h"
 #include "Engine_Layouts.h"
 #include "Build_Struct.h"
 #include "Data_Packets.h"

@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "Helper_Func.h"
 
 CParticleNode_Edit::CParticleNode_Edit()
 	:CParticleNode()
@@ -321,43 +322,54 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	isDirty |= ImGui::DragFloat2("Start Life Time Min, Max", &m_vStartLifeTime.x);
 	isDirty |= ImGui::DragFloat2("Start Size", &m_vStartSize.x);
 
+	isDirty |= Helper::DrawEnumCombo("Spawn Shape", m_eSpawnShape, 100.f);
 	isDirty |= ImGui::DragFloat3("Center", &m_vCenter.x);
 	isDirty |= ImGui::DragFloat3("Half Box", &m_vHalfBox.x);
 	isDirty |= ImGui::DragFloat("Radius", &m_fRaidus);
 
-	ImGui::SeparatorText("Life Time Velocity");
-	isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
-
-	ImGui::SeparatorText("Life Time Size");
-	isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
-	isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
-
-	ImGui::SeparatorText("Life Time Color");
-	_float startColor[4] = { m_vStartColor.x,m_vStartColor.y,m_vStartColor.z,m_vStartColor.w };
-	_float endColor[4] = { m_vEndColor.x,m_vEndColor.y,m_vEndColor.z,m_vEndColor.w };
-
-	if (ImGui::ColorEdit4("Start Color", startColor))
+	if (ImGui::CollapsingHeader("Life Time Velocity"))
 	{
-		m_vStartColor = _float4(startColor[0], startColor[1], startColor[2], startColor[3]);
-		isDirty = true;
-	}
-	if (ImGui::ColorEdit4("End Color", endColor))
-	{
-		m_vEndColor = _float4(endColor[0], endColor[1], endColor[2], endColor[3]);
-		isDirty = true;
+		isDirty |= ImGui::DragFloat("Damp Scale", &m_fDampScale);
 	}
 
-	ImGui::SeparatorText("Texture Sheet Animation");
-	isDirty |= ImGui::Checkbox("Is Random Frame Index", &m_IsRandomFrameIndex);
-	isDirty |= ImGui::Checkbox("Is Particle Animated", &m_IsParticleAnimated);
-	isDirty |= ImGui::DragInt("Texture Col", reinterpret_cast<_int*>(&m_iCol));
-	isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
-	isDirty |= ImGui::DragInt("Max FrameIndex", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+	if (ImGui::CollapsingHeader("Life Time Size"))
+	{
+		isDirty |= ImGui::DragFloat2("Start Scale", &m_vStartScale.x);
+		isDirty |= ImGui::DragFloat2("End Scale", &m_vEndScale.x);
+	}
 
-	ImGui::SeparatorText("Noise");
-	isDirty |= ImGui::DragFloat3("Strength", &m_vStrength.x);
-	isDirty |= ImGui::DragFloat3("Frequency", &m_vFrequency.x);
-	isDirty |= ImGui::DragFloat3("Scroll Speed", &m_vScrollSpeed.x);
+	if(ImGui::CollapsingHeader("Life Time Color"))
+	{
+		_float startColor[4] = { m_vStartColor.x,m_vStartColor.y,m_vStartColor.z,m_vStartColor.w };
+		_float endColor[4] = { m_vEndColor.x,m_vEndColor.y,m_vEndColor.z,m_vEndColor.w };
+
+		if (ImGui::ColorEdit4("Start Color", startColor))
+		{
+			m_vStartColor = _float4(startColor[0], startColor[1], startColor[2], startColor[3]);
+			isDirty = true;
+		}
+		if (ImGui::ColorEdit4("End Color", endColor))
+		{
+			m_vEndColor = _float4(endColor[0], endColor[1], endColor[2], endColor[3]);
+			isDirty = true;
+		}
+	}
+
+	if (ImGui::CollapsingHeader("Texture Sheet Animation"))
+	{
+		isDirty |= ImGui::Checkbox("Is Random Frame Index", &m_IsRandomFrameIndex);
+		isDirty |= ImGui::Checkbox("Is Particle Animated", &m_IsParticleAnimated);
+		isDirty |= ImGui::DragInt("Texture Col", reinterpret_cast<_int*>(&m_iCol));
+		isDirty |= ImGui::DragInt("Texture Row", reinterpret_cast<_int*>(&m_iRow));
+		isDirty |= ImGui::DragInt("Max FrameIndex", reinterpret_cast<_int*>(&m_iMaxFrameIndex));
+	}
+
+	if (ImGui::CollapsingHeader("Noise"))
+	{
+		isDirty |= ImGui::DragFloat3("Strength", &m_vStrength.x);
+		isDirty |= ImGui::DragFloat3("Frequency", &m_vFrequency.x);
+		isDirty |= ImGui::DragFloat3("Scroll Speed", &m_vScrollSpeed.x);
+	}
 
 	if (isDirty)
 	{
@@ -373,6 +385,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.vStartLifeTime = m_vStartLifeTime;
 		node.vStartSize = m_vStartSize;
 
+		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.vCenter = m_vCenter;
 		node.vHalfBox = m_vHalfBox;
 		node.fRadius = m_fRaidus;

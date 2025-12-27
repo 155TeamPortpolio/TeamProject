@@ -38,11 +38,15 @@ vector g_vLightDir;
 vector g_vLightPos;
 float  g_fLightRange;
 float  g_fLightIntensity;
+int g_iLightSize;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
 vector g_vLightSpecular;
 vector g_vMtrlAmbient = 1.f;
 vector g_vMtrlSpecular = 1.f;
+
+float g_FogDensity;
+float4 g_FogColor;
 
 struct VS_IN
 {
@@ -188,6 +192,44 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_FOG(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vScene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fViewZ = vDepthDesc.y * zFar;
+    
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+    
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float3 vViewDir = vWorldPos.xyz - vCamPosition.xyz;
+    float fDistance = length(vViewDir);
+    
+    float fFogFactor = exp(-g_FogDensity * fDistance);
+    
+    fFogFactor = saturate(fFogFactor);
+    fFogFactor = lerp(0.3f, 1.0f, fFogFactor);
+    
+    float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
+  
+    if (vDepthDesc.x >= 0.9999f)
+    {
+        vFoggedColor = vScene;
+    }
+    
+    Out.vResult = vFoggedColor;
+    
+    return Out;
+}
 
 PS_OUT_RESULT PS_BACKRIMLIGHT(PS_IN In)
 {
@@ -568,11 +610,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     }
     else
     {
-        //float NdotL = dot(normalize(lightDir), worldNormal) * 0.5 + 0.5;
-        Out.vLight = float4(g_vLightDiffuse.rgb *vDiffuse.rgb  *NdotL * g_fLightIntensity * 0.3, 1.f) ;
+        Out.vLight = float4((g_vLightDiffuse.rgb * vDiffuse.rgb * NdotL * g_fLightIntensity) / g_iLightSize, 1.f);
     }
     
-    Out.fLightInfo = float2(NdotL, 0.f);
+   // Out.fLightInfo = float2(saturate(lightDir.x), saturate(lightDir.y));
+   Out.fLightInfo = float2(NdotL, 0.f);
 
     return Out;
 }
@@ -629,13 +671,14 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float ssao = g_SSAOBlurTexture.Sample(DefaultSampler, In.vTexcoord).r;
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = g_RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float OutLine = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f); 
     vector vRampSample = g_RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp;
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp *OutLine;
     //ambient = max(ambient, vDiffuse.rgb * 0.1);
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
@@ -805,7 +848,17 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
     }
 
-    pass Directional
+    pass FOG
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_FOG();
+    }
+
+    pass DIRECTIONAL
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -815,7 +868,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
     }
 
-    pass Point
+    pass POINT
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -825,17 +878,17 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
 
-    pass Combined
+    pass COMBINED
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Additive, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
 
-    pass Final
+    pass FINAL
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);

@@ -52,6 +52,18 @@ const vector<string> CSkeleton::Get_BoneNames()
     return names;
 }
 
+void CSkeleton::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex)
+{
+    for (_uint i = 0; i < m_Bones.size(); ++i)
+    {
+        if (m_Bones[i]->Get_ParentIndex() == StartBoneIndex)
+        {
+            outvec.push_back(i);
+            Get_AffectBoneIndices(outvec, i);
+        }
+    }
+}
+
 _int CSkeleton::Find_BoneIndexByName(const string& boneName)
 {
     auto iter = m_BoneMap.find(boneName);

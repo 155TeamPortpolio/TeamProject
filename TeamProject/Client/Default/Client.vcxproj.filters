@@ -37,6 +37,9 @@
     <Filter Include="02. GameObject\Camera\00. CamObject">
       <UniqueIdentifier>{e0bba242-799e-4a24-b080-7db510093c47}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\01. CamPanel">
+      <UniqueIdentifier>{f4256f6a-4439-4e31-9f91-f88406bd8821}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Camera\02. FreeCam">
       <UniqueIdentifier>{be87aa4e-607e-4972-bd9f-9f2d942322b4}</UniqueIdentifier>
     </Filter>
@@ -112,8 +115,44 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
       <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\01, CamPanel">
-      <UniqueIdentifier>{f4256f6a-4439-4e31-9f91-f88406bd8821}</UniqueIdentifier>
+    <Filter Include="02. GameObject\UI">
+      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIPrefab">
+      <UniqueIdentifier>{f5b975a3-e685-44f1-a1f3-e5ac454dac90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIPrefab\HUD">
+      <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -201,8 +240,9 @@
     <ClInclude Include="..\Public\TestFloor.h">
       <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\TestPlane.h" />
-    <ClInclude Include="..\public\TestPlane.h" />
+    <ClInclude Include="..\public\TestPlane.h">
+      <Filter>02. GameObject\Object</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MapData_Defines.h">
       <Filter>03. Utility\MapLoader</Filter>
     </ClInclude>
@@ -242,11 +282,44 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CanvasPanel.h">
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HUD.h">
+      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SpriteAnimationUI.h">
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UVAnimationUI.h">
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ImageUI.h">
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GaugeUI.h">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TextUI.h">
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIPrefab.h">
+      <Filter>02. GameObject\UI\UIPrefab</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ButtonUI.h">
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\OrbitCamData.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
-      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+      <Filter>02. GameObject\Camera\01. CamPanel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -338,7 +411,9 @@
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\TestPlane.cpp" />
+    <ClCompile Include="..\private\TestPlane.cpp">
+      <Filter>02. GameObject\Object</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MapDataCloud.cpp">
       <Filter>03. Utility\MapLoader\MapDataCloud</Filter>
     </ClCompile>
@@ -369,8 +444,41 @@
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\CanvasPanel.cpp">
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HUD.cpp">
+      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UVAnimationUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ImageUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GaugeUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ButtonUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TextUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UIPrefab.cpp">
+      <Filter>02. GameObject\UI\UIPrefab</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
-      <Filter>02. GameObject\Camera\01, CamPanel</Filter>
+      <Filter>02. GameObject\Camera\01. CamPanel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
