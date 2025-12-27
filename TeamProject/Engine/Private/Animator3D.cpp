@@ -548,6 +548,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 
+	//RootBone
 	if (Layer.BaseLayer) {
 		auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
@@ -556,6 +557,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			XMStoreFloat3(&Layer.vRootDelta,
 				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
 					+ XMLoadFloat3(&vCurRootPos)));
+
+			Layer.bWrapped = false;
 		}
 		else {
 
@@ -627,6 +630,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
+	//RootBone
 	if (Layer.BaseLayer) {
 		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
@@ -635,6 +639,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			XMStoreFloat3(&Layer.vRootDelta,
 				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
 					+ XMLoadFloat3(&vCurRootPos)));
+			Layer.bWrapped = false;
 		}
 		else {
 
@@ -650,6 +655,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.bBlending = false;
 
 		Layer.iClipIndex = Layer.iNextClipIndex;
+		Layer.iNextClipIndex = -1;
+		Layer.fBlendTrackPosition = 0.f;
 		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
 		Layer.fBlendElapsed = 0.f;
 		Layer.fBlendDuration = 0.f;
@@ -963,8 +970,10 @@ HRESULT ChangeAnimBuild::Apply()
 
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
-	if (Layer.BaseLayer)
+	if (Layer.BaseLayer) {
 		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
+		Layer.vPrevRootPos = _float3();
+	}
 
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
@@ -974,6 +983,14 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
+
+	//만약 블랜드 상태이면 바로 다음으로 블랜드될 수 있도록 얘내를 로컬로
+	if (Layer.bBlending) {
+		Layer.iClipIndex = Layer.iNextClipIndex;
+		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+		Layer.LocalMatrices = Layer.BlendMatrices;
+	}
+
 
 	Layer.bBlending = true;
 	Layer.bKeepTrackPos = m_bKeepTrackPos;
