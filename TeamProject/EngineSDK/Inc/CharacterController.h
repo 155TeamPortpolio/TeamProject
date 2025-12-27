@@ -96,6 +96,7 @@ public:
     void            Move_Direction(_fvector vDir, _float fSpeed, _float dt);
     void            Move_Velocity(_fvector vVelocity, _float dt);
     void            Move_Displacement(_fvector vDisp, _float dt);
+    void            Move_RootMotion(_fvector vLocalDelta, _fvector qRotation, _float dt);
     void            Stop_Movement();
     void            Jump(_float fJumpSpeed);
     void            Set_Position(_fvector vPos);
@@ -135,8 +136,8 @@ private:
     PxControllerManager*     m_pManager = { nullptr };
     PxMaterial*              m_pMaterial = { nullptr };
     PxFilterData             m_FilterData = {};
-    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     PxFilterData             m_QueryFilterData = {};
+    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
     Vector3                  m_vVelocity = { 0.f, 0.f, 0.f };

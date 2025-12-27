@@ -34,12 +34,15 @@ public:
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);
 	void Set_Blended(_bool blend) { m_IsBlended = blend; };
 	_bool IsBlened() { return m_IsBlended; }
+	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
+	_bool IsUseOutLine() { return m_IsUseOutLine; }
 
 public:
 	virtual void Render_GUI();
 
 private:
 	_bool m_IsBlended = { false };
+	_bool m_IsUseOutLine = { false };
 	vector<_uint> m_TextureIndexs;
 	unordered_map<string, SHADER_PARAM> m_DynamicSlots;
 

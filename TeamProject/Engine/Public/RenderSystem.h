@@ -28,7 +28,9 @@ public:
 
 public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
+	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;
+
 public:
 	virtual _bool GetOn() const  override{ return IsOn; }
 	virtual void SetOn(_bool On) override { IsOn = On; }
@@ -40,6 +42,7 @@ public:
 #pragma region RenderTarget
 public:
 	virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) override;
+	virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command) override;
 	virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)override;
 	virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) override;
 	virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) override;
