@@ -1,6 +1,24 @@
 #pragma once
 #include "Engine_Defines.h"
 
+#include "VIBuffer.h"
+#include "VI_Rect.h"
+#include "VI_Cube.h"
+#include "VI_Terrain.h"
+#include "VI_Plane.h"
+#include "VI_Point.h"
+#include "VI_InstancePoint.h"
+
+#include "Shader.h"
+#include "Material.h"
+#include "Texture.h"
+#include "SoundData.h"
+#include "MaterialData.h"
+#include "ModelData.h"
+#include "MaterialInstance.h"
+#include "AnimationClip.h"
+#include "AnimationLayout.h"
+#include "ComputeShader.h"
 namespace Engine {
 	enum class ResourceType : uint8_t { Texture, Model, Shader, Material, Audio, Animation, Unknown };
 	enum class LoadState : uint8_t { Unloaded, Loading, Committing, Ready, Failed };
@@ -21,32 +39,19 @@ namespace Engine {
 		}
 	};
 
-	struct TEX_CPU_MIP
-	{
-		_uint rowPitch = 0;
-		_uint slicePitch = 0;
-		vector<unsigned char> bytes;
-	};
-
-	struct TEX_CPU_DATA
-	{
-		_uint width = 0;
-		_uint height = 0;
-		_uint mipCount = 1;
-		DXGI_FORMAT format = DXGI_FORMAT_R8G8B8A8_UNORM; // ±âº»
-		vector<TEX_CPU_MIP> mips;
-		_bool isSRGB = false;
-	};
-
-
-	using ResourceVariant = variant<
+	using ResourceVariant = std::variant<
 		monostate,
 		class CTexture*,
 		class CModelData*,
 		class CShader*,
 		class CMaterialData*,
 		class CAnimationClip*,
-		class CSoundData*,
-		TEX_CPU_DATA
+		class CSoundData*
 	>;
+
+	using JobFunc = function<ResourceVariant()>;
+	using LoaderFunc = function<ResourceVariant(const string& sourcePath, string& outError)>;
+	using CommitFunc = function<_bool(const ResourceVariant& stagingVariant, ResourceVariant& finalVariant, string& errorMsg)>;
+	using ScheduleFunc = function<shared_future<ResourceVariant>(JobFunc)>;
+
 }

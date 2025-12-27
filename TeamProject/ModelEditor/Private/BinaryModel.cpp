@@ -13,6 +13,8 @@
 #include "AIModelData.h"
 #include "DebugRender.h"
 #include "Level.h"
+#include "ResourceThread.h"
+#include "Texture.h"
 
 CBinaryModel::CBinaryModel()
 {
@@ -33,7 +35,8 @@ HRESULT CBinaryModel::Initialize_Prototype()
 HRESULT CBinaryModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
+	m_pTexture = CGameInstance::GetInstance()->Get_Thread()->Load_Texture(G_GlobalLevelKey, "Grass.png", false);
+	// 처음엔 DefaultTexture가 오고, 몇 프레임 후 Ready되면 진짜 텍스처가 반환될 거야.
 	return S_OK;
 }
 
@@ -58,6 +61,8 @@ void CBinaryModel::Late_Update(_float dt)
 
 void CBinaryModel::Render_GUI()
 {
+	ImGui::Image((ImTextureID)m_pTexture->Get_SRV(), { 300,300 });
+
 	if(ImGui::Button("Load Model")) {
 		string path = Helper::OpenFile_Dialogue();
 		filesystem::path file(path);

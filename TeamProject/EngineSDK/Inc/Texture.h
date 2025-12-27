@@ -20,6 +20,7 @@ private:
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, const wstring& filePath, const string& textureKey, _bool sRGBType);
+	static CTexture* EmptyCreate();
 	virtual void Free() override;
 };
 NS_END

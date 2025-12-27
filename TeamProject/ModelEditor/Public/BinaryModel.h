@@ -23,8 +23,7 @@ public:
     void Render_GUI() override;
 
 private:
-    HRESULT Load_Binary(const string& filePath);
-
+    CTexture* m_pTexture = { nullptr };
 public:
     static CBinaryModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

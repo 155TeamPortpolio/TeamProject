@@ -5,38 +5,25 @@
 #include <mutex>
 #include <variant>
 #include <string>
+#include "Resource_Blobs.h"
 
 NS_BEGIN(Engine)
-
-class CTexture;
-class CModelData;
-class CShader;
-class CMaterialData;
-class CAnimationClip;
-class CSoundData;
-
 class CResourceEntry : public CBase
 {
-
 private:
     CResourceEntry();
     ~CResourceEntry() DEFAULT;
-
 public:
-    
-
-    // 엔트리 생존 범위 내에서 "잠깐 보기"(ref 증가 없음)
     template<typename TResource>
-    TResource* Get_NoRef() const
+    TResource* Get_NoRef() const /*레퍼런스 카운트 증가없이 반환하는 함수*/
     {
         lock_guard<mutex> lockGuard(m_Mutex);
         TResource* const* foundPointer = get_if<TResource*>(&m_Resource);
         return (foundPointer && *foundPointer) ? *foundPointer : nullptr;
     }
 
-    // 외부가 소유해서 들고 가야 하면 Acquire (AddRef + 반환)
     template<typename TResource>
-    TResource* Acquire() const
+    TResource* Acquire() const /*레퍼런스 카운트 있이 반환하는 함수*/
     {
         lock_guard<mutex> lockGuard(m_Mutex);
         TResource* const* foundPointer = get_if<TResource*>(&m_Resource);
@@ -44,28 +31,91 @@ public:
         Safe_AddRef(*foundPointer);
         return *foundPointer;
     }
-
-    using LoaderFunc = function<ResourceVariant(const string& sourcePath, string& outError)>;
-    //using CommitFunc = function<bool(ResourceVariant& inOutVariant, string& outError)>;
-    using CommitFunc = function<_bool(const ResourceVariant& stagingVariant,ResourceVariant& finalVariant,string& errorMsg)>;
-
-public:
-    
-    bool Begin_LoadAsync(const LoaderFunc& loaderFunc);
-    void Pump(const CommitFunc& commitFunc);  // 메인스레드에서 호출: Loading 완료되면 Committing으로 넘기고, Commit까지 끝나면 Ready/Failed 확정
+    bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
+    void Pump_CompletedOnly(); // 메인 스레드 전용
+    void Pump();
     void Reset();
 
-private:
-
-    static void AddRefVariant_NoLock(ResourceVariant& variantValue)
+public:
+    LoadState GetState() const { return m_State.load(memory_order_acquire); }
+    void SetKey(const ResourceKey& resourceKey)
     {
-        if (auto** pointerValue = get_if<CTexture*>(&variantValue)) Safe_AddRef(*pointerValue);
-        else if (auto** pointerValue = get_if<CModelData*>(&variantValue)) Safe_AddRef(*pointerValue);
-        else if (auto** pointerValue = get_if<CShader*>(&variantValue)) Safe_AddRef(*pointerValue);
-        else if (auto** pointerValue = get_if<CMaterialData*>(&variantValue)) Safe_AddRef(*pointerValue);
-        else if (auto** pointerValue = get_if<CAnimationClip*>(&variantValue)) Safe_AddRef(*pointerValue);
-        else if (auto** pointerValue = get_if<CSoundData*>(&variantValue)) Safe_AddRef(*pointerValue);
+        lock_guard<mutex> lockGuard(m_Mutex);
+        m_ID = resourceKey;
     }
+
+    void SetSourcePath(const string& sourcePath)
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        m_SourcePath = sourcePath;
+    }
+
+    void SetLevelTag(const string& levelTag)
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        m_LevelTag = levelTag;
+    }
+
+    void SetDebugName(const string& debugName)
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        m_DebugName = debugName;
+    }
+
+    void SetLastError(const string& errorMessage)
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        m_LastErrorMsg = errorMessage;
+    }
+
+    // ===== Getters (Copy) =====
+    ResourceKey GetKeyCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_ID;
+    }
+
+    string GetSourcePathCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_SourcePath;
+    }
+
+    string GetLevelTagCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_LevelTag;
+    }
+
+    string GetDebugNameCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_DebugName;
+    }
+
+    string GetLastErrorCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_LastErrorMsg;
+    }
+    // ===== Meta / Identification =====
+    ResourceKey  m_ID{};        // SetKey/GetKeyCopy에서 사용
+    string  m_SourcePath;  // SetSourcePath/GetSourcePathCopy에서 사용
+    string  m_LevelTag;    // SetLevelTag/GetLevelTagCopy에서 사용
+    string  m_DebugName;   // SetDebugName/GetDebugNameCopy에서 사용
+
+    // ===== State / Sync =====
+    atomic<LoadState> m_State{ LoadState::Unloaded };
+    mutable mutex     m_Mutex;
+
+    // ===== Resource Payload =====
+    ResourceVariant m_Resource{ monostate{} };
+    shared_future<ResourceVariant> m_LoadingTask;
+
+    // ===== Error / Control =====
+    string m_LastErrorMsg;
+    _uint m_Generation = 0; // Reset 중 결과 무효화용(쓰면 cpp에서도 체크)
+
 
     static void ReleaseVariant_NoLock(ResourceVariant& variantValue)
     {
@@ -75,45 +125,13 @@ private:
         else if (auto** pointerValue = get_if<CMaterialData*>(&variantValue)) Safe_Release(*pointerValue);
         else if (auto** pointerValue = get_if<CAnimationClip*>(&variantValue)) Safe_Release(*pointerValue);
         else if (auto** pointerValue = get_if<CSoundData*>(&variantValue)) Safe_Release(*pointerValue);
-        variantValue = std::monostate{};
+        variantValue = monostate{};
     }
 
-public:
-    void SetKey(const ResourceKey& resourceKey) {
-        lock_guard<mutex> lockGuard(m_Mutex);
-        m_ID = resourceKey;
-    }
-    ResourceKey GetKey() const { lock_guard<mutex> lock(m_Mutex); return m_ID; }
-
-    void SetSourcePath(const string& sourcePath) {
-        lock_guard<mutex> lockGuard(m_Mutex);
-        m_SourcePath = sourcePath;
-    }
-
-    LoadState GetState() const { return m_State.load(memory_order_acquire); }
-    const string& GetLastError() const { return m_LastErrorMsg; }
-    const string& GetDebugName() const { return m_DebugName; }
-    void SetDebugName(const string& debugName) { m_DebugName = debugName; }
-    private:
-    void Release_NoLock();
-
-private:
-    ResourceKey m_ID{};
-    string m_SourcePath;
-    atomic<LoadState> m_State{ LoadState::Unloaded };
-
-    mutable mutex m_Mutex;
-    ResourceVariant m_Resource{monostate{} };
-
-    // 로딩 결과 임시 보관(Commit 전)
-    ResourceVariant m_StagingResource{ monostate{} };
-   shared_future<ResourceVariant> m_LoadingTask;
-   string m_LastErrorMsg;
-   string m_DebugName;
-
-public:
-    static CResourceEntry* Create();
-    virtual void Free() override;
+    public:
+        static CResourceEntry* Create();
+        virtual void Free();
 };
+
 
 NS_END

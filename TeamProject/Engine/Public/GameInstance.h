@@ -57,6 +57,7 @@ public:
 	class IPhysicsService* Get_PhysicsSystem() { return m_pPhysicsSystem; }
 	class CEventSystem* Get_EventSystem() { return m_pEventSystem; }
 	class CClickManager* Get_ClickMgr() { return m_pClickManager; }
+	class CResourceThread* Get_Thread() { return m_pResourceThread; }
 
 private:
 	class IGraphicService* m_pGraphicDevice = { nullptr };
@@ -78,6 +79,8 @@ private:
 	class IPhysicsService* m_pPhysicsSystem = { nullptr };
 	class CEventSystem* m_pEventSystem = { nullptr };
 	class CClickManager* m_pClickManager = { nullptr };
+	class CResourceThread* m_pResourceThread = { nullptr };
+
 #pragma endregion
 
 private:
