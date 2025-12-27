@@ -105,6 +105,15 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 	}
 }
 
+_float3 CAnimationClip::Get_RootBone_EndPosition()
+{
+	for (auto Channel : m_Channels)
+		if ("Root" == Channel->Get_Name())
+			return Channel->Get_KeyFrames().back().vTranslation;
+
+	return _float3();
+}
+
 void CAnimationClip::Render_GUI()
 {
 	for (auto& channel : m_Channels)
