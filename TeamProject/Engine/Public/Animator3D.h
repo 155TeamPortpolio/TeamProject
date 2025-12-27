@@ -16,14 +16,23 @@ public:
 
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
+        _bool               BaseLayer = { false };
+       
+        _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
-        _bool               bPause = { true };
-        //루트본 관련
-        _bool   bUseTransform = { true };
+
+        //루트본 델타값 (베이스 레이어만 터치)
+        _bool               bWrapped = { false };
+        _int                iRootBoneIndex = { -1 };
+        _float3             vRootDelta{};
+        _float3             vPrevRootPos{};
+
+        //무브본 관련
         _int    iMoveBoneIndex = { -1 };
-        _float3 vPrevAnimPos{};
+        _bool   bUseBoneX, bUseBoneY, bUseBoneZ = { true };
+        _float3 vPrevMoveBonePos{};
 
         //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
@@ -81,7 +90,7 @@ public:
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
-    virtual HRESULT Stop_Animation(_uint LayerIndex); //(구현안됌)
+    virtual HRESULT Stop_Animation(_uint LayerIndex);
     virtual HRESULT StopAll_Animation(); //(구현안됌)
 
 public://애니매이터 데이터
@@ -106,8 +115,10 @@ public://애니매이터 데이터
     _int Get_NumLayer();
     //이벤트들 불러오는 함수
     const vector<EVENT_INST>& Get_EventBus() const;
-    //루트애니매이션 델타값
+    //"Root"라는 이름을 가진 본의 움직임 델타값
     _vector Get_RootMotionDelta(_uint LayerIndex = 0);
+    //무브본 애니매이션 델타값
+    _vector Get_MoveBoneMotionDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴
     _float Get_EaseDuration(_uint LayerIndex = 0);
     //현재 레이어 재생속도
@@ -117,10 +128,11 @@ public://애니매이터 데이터
 
     /*----- Setter -----*/
     
-    //애니매이션 트랜스폼을 제거
-    void Set_NoTransform(_int MoveBoneIndex = -1, _uint LayerIndex = 0);
-    //애니매이션 트랜스폼 사용
-    void Set_UseTransform(_uint LayerIndex = 0);
+    //애니매이션 트랜스폼을 제거 (false가 본 안따라감)
+    void Set_ExtractBoneMovement(_int MoveBoneIndex = -1,
+        _bool UseX = false, _bool UseY = false, _bool UseZ = false, _uint LayerIndex = 0);
+    void Reset_ExtractBoneMovement(_uint LayerIndex = 0);
+
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
     //애니매이션을 돌릴 본 설정
@@ -229,6 +241,7 @@ public:
     SetAnimBuild& TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear);
     //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
     SetAnimBuild& Pause(_bool bPause);
+
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;

@@ -15,11 +15,13 @@ public:
 	HRESULT Initialize(const string& animationPath);
 	void Set_Events(vector<ANIM_EVENT>& Events);
 
+	
+
 	//현재 애니매이션 클립을 재생함
 	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
-		_bool isLoop,
+		_bool isLoop, _bool* isWarpped,
 		_bool* isAnimEnd,
 		vector<EVENT_INST>& EventBus);
 

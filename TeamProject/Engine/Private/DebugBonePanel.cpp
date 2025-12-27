@@ -151,17 +151,19 @@ void CDebugBonePanel::Render_GUI()
 			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
 			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
 
-			_vector4 deltaTrans = pAnimator->Get_RootMotionDelta();
+			_vector4 deltaTrans = pAnimator->Get_MoveBoneMotionDelta();
 			_vector3 move(deltaTrans.x, deltaTrans.y, deltaTrans.z);
 			_vector3 dir = move;
 			dir.Normalize();
 
 			ImGui::Separator();
-			ImGui::Text("Delta Move");
+			ImGui::Text("MoveBone Movement");
 			ImGui::Text("% .4f % .4f % .4f % .4f", deltaTrans.x, deltaTrans.y, deltaTrans.z, deltaTrans.w);
-			ImGui::Text("Delta Direction");
+			ImGui::Text("MoveBone Direction");
 			ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
 			
+			//RootDelta 추가할것
+
 			ImGui::EndChild();
 		}
 	}

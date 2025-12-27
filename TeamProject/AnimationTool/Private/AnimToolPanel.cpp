@@ -219,12 +219,12 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	ImGui::SameLine();
 	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
 	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_NoTransform(RootBoneIndex);
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_ExtractBoneMovement(RootBoneIndex);
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
 	{
-		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_UseTransform();
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_ExtractBoneMovement();
 	}
 
 	Draw_ToolbarUI();

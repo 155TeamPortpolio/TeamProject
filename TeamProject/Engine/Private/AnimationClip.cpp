@@ -40,14 +40,17 @@ void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
-	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd,
+	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isWarpped, _bool* isAnimEnd,
 	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 
 	if (isLoop) {
-		if (RealTrackPosition > m_fDuration)
+		*isWarpped = false;
+		if (RealTrackPosition > m_fDuration) {
 			RealTrackPosition -= m_fDuration;
+			*isWarpped = true;
+		}
 	}
 	else {
 		if (RealTrackPosition > m_fDuration) {
