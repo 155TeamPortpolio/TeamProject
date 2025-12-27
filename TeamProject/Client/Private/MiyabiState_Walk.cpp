@@ -43,9 +43,15 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
-        //_vector3 vDelta = pOwner->Get_Animator()->Get_RootMotionDelta();
-        //pOwner->Get_CCT()->Move_Velocity(vInputDir * vDelta, dt);
+
+        _vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
+        _vector3 vDelta = vRootMotionDelta;
+
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        }
     }
 }
 
@@ -67,9 +73,15 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        pOwner->Get_CCT()->Move_Direction(vInputDir, pOwner->Get_Speed(), dt);
-        //_vector3 vDelta = pOwner->Get_Animator()->Get_RootMotionDelta();
-        //pOwner->Get_CCT()->Move_Velocity(vInputDir * vDelta, dt);
+
+        _vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
+        _vector3 vDelta = vRootMotionDelta;
+
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        }
     }
 }
 
