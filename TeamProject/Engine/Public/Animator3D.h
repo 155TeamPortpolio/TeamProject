@@ -25,10 +25,11 @@ public:
 
         //루트본 델타값 (베이스 레이어만 터치)
         _bool               bWrapped = { false };
-        _int                iRootBoneIndex = { -1 };
-        _float3             vRootDelta{};
-        _float3             vPrevRootPos{};
-
+        _int                iRootBoneIndex = { -1 }; //루트 본 
+        _float3             vRootEndPos{}; //그 클립의 제일마지막 위치
+        _float3             vPrevRootPos{};//이전 프레임 위치
+        _float3             vRootDelta{};  //이동값
+         
         //무브본 관련
         _int    iMoveBoneIndex = { -1 };
         _bool   bUseBoneX, bUseBoneY, bUseBoneZ = { true };

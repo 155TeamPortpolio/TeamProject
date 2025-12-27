@@ -554,7 +554,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
 			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 			XMStoreFloat3(&Layer.vRootDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos));
+				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
 		}
 	}
 }
