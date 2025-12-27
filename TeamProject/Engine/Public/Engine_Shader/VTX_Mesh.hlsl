@@ -77,7 +77,7 @@ PS_OUT PS_MAIN(PS_IN In)
     Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vNormalDesc.a > 0.f)
+    if (vNormalDesc.a > 0.2f)
     {
         float3 vNormal;
         vNormal.x = vNormalDesc.y * 2.f - 1.f;
@@ -141,7 +141,7 @@ PS_OUT PS_DEBUG(PS_IN In)
     
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
+    if (vAmbient.g < 0.2) vAmbient.g = 0.5f;
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;

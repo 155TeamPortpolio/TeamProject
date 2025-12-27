@@ -160,4 +160,15 @@ namespace Engine {
 		function<void(ID3D11DeviceContext*)> DrawCall;
 		_uint GetKey() const;
 	}POST_PROCESS_COMMAND;
+
+	typedef ENGINE_DLL struct RenderOutLineRequestCommand
+	{
+		class CShader* pShader = { nullptr };
+		_float4x4* pWorldMatrix = { nullptr };
+		vector<_float4x4> BoneParam = {};
+		string typeName = {};
+		_uint iSize = {};
+		_uint MeshIdx = {};
+		function<void(ID3D11DeviceContext*, _uint)> DrawCall;
+	}OUTLINE_COMMAND;
 }

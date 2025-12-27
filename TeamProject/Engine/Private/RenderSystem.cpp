@@ -65,22 +65,23 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_Shadow(m_pShadowPass);
 	m_pForward->Render_Forward(m_pOpaquePass, m_pInstancePass);
+
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_WeightOIT();
+
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
-	if (IsOn)
-	{
-		m_pForward->Render_RimLight();
-	}
+	m_pForward->Render_RimLight();
 	m_pForward->Render_Combined();
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
+	m_pForward->Render_OutLine();
+
 	m_pUI->Render_2D(m_pUIPass);
-	
-	m_pPost->Render_EffectBloom();
+	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
+	m_pPost->Render_EffectBloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
@@ -98,6 +99,11 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		Safe_Release(Instance);
 	}
 	return Instance;
+}
+
+void CRenderSystem::Set_FogDesc(FOG_DESC desc)
+{
+	m_pPost->Set_FogDesc(desc);
 }
 
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
@@ -148,6 +154,11 @@ void CRenderSystem::Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUST
 		m_pUI->Add_RenderCommand(command);
 		return;
 	}
+}
+
+void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
+{
+	m_pForward->Add_OutLineCommand(command);
 }
 
 void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
