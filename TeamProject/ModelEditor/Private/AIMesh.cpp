@@ -70,10 +70,10 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
 	}
 
 	//ÀúÀå¿ë
-	m_Indices.reserve(iNumIndices);
+	m_indices.reserve(iNumIndices);
 	for (_uint i = 0; i < iNumIndices; i++)
 	{
-		m_Indices.push_back(pIndices[i]);
+		m_indices.push_back(pIndices[i]);
 	}
 
 	D3D11_SUBRESOURCE_DATA      IndexInitialData{};
@@ -84,6 +84,165 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
 
 	Safe_Delete_Array(pIndices);
 #pragma endregion
+	if (iNumIndices == 0)
+		return E_FAIL; 
+	return S_OK;
+}
+
+HRESULT CAIMesh::Initialize_FromCooked_NonAnim(const string& newKey, _uint materialIndex, CAISkeleton* skeleton, const vector<VTXMESH>& cookedVertices, const vector<_uint>& cookedIndices, const unordered_map<_uint, _float4x4>& meshOffsetMap, const vector<_uint>& boneIndexList)
+{
+	if (cookedVertices.empty() || cookedIndices.empty())
+		return E_FAIL;
+
+	m_VIKey = newKey;
+	m_MaterialIndex = materialIndex;
+
+	m_iVertexBufferCount = 1;
+	m_iVerticesCount = (_uint)cookedVertices.size();
+
+	m_iIndicesCount = (_uint)cookedIndices.size();
+	m_iIndexStride = 4;
+	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+	m_ePrimitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_pSkeleton = skeleton;
+	Safe_AddRef(m_pSkeleton);
+
+	m_ElementCount = VTXMESH::iElementCount;
+	m_ElementKey = VTXMESH::Key;
+	m_ElementDesc = VTXMESH::Elements;
+	m_iVertexStride = sizeof(VTXMESH);
+
+	m_StaticVertex = cookedVertices;
+	m_indices = cookedIndices;
+
+	m_MeshOffset = meshOffsetMap;
+	m_OffsetCount = m_MeshOffset.size();
+	m_BoneIndices = boneIndexList;
+
+	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
+	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+	for (const auto& vertex : m_StaticVertex)
+	{
+		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, vertex.vPosition.x);
+		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, vertex.vPosition.y);
+		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, vertex.vPosition.z);
+
+		m_vMeshMaxLocal.x = max(m_vMeshMaxLocal.x, vertex.vPosition.x);
+		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, vertex.vPosition.y);
+		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, vertex.vPosition.z);
+	}
+
+	D3D11_BUFFER_DESC vbDesc{};
+	vbDesc.ByteWidth = m_iVerticesCount * m_iVertexStride;
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbDesc.CPUAccessFlags = 0;
+	vbDesc.MiscFlags = 0;
+	vbDesc.StructureByteStride = m_iVertexStride;
+
+	D3D11_SUBRESOURCE_DATA vbInit{};
+	vbInit.pSysMem = m_StaticVertex.data();
+
+	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&vbDesc, &vbInit, &m_pVB)))
+		return E_FAIL;
+
+	D3D11_BUFFER_DESC ibDesc{};
+	ibDesc.ByteWidth = m_iIndicesCount * m_iIndexStride;
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibDesc.CPUAccessFlags = 0;
+	ibDesc.MiscFlags = 0;
+	ibDesc.StructureByteStride = m_iIndexStride;
+
+	D3D11_SUBRESOURCE_DATA ibInit{};
+	ibInit.pSysMem = m_indices.data();
+
+	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&ibDesc, &ibInit, &m_pIB)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CAIMesh::Initialize_FromCooked_Anim(
+	const string& newKey,
+	_uint materialIndex,
+	CAISkeleton* skeleton,
+	const vector<VTXSKINMESH>& cookedVertices,
+	const vector<_uint>& cookedIndices,
+	const unordered_map<_uint, _float4x4>& meshOffsetMap,
+	const vector<_uint>& boneIndexList)
+{
+	if (cookedVertices.empty() || cookedIndices.empty())
+		return E_FAIL;
+
+	m_VIKey = newKey;
+	m_MaterialIndex = materialIndex;
+
+	m_iVertexBufferCount = 1;
+	m_iVerticesCount = (_uint)cookedVertices.size();
+
+	m_iIndicesCount = (_uint)cookedIndices.size();
+	m_iIndexStride = 4;
+	m_eIndexFormat = DXGI_FORMAT_R32_UINT;
+	m_ePrimitive = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+	m_pSkeleton = skeleton;
+	Safe_AddRef(m_pSkeleton);
+
+	m_ElementCount = VTXSKINMESH::iElementCount;
+	m_ElementKey = VTXSKINMESH::Key;
+	m_ElementDesc = VTXSKINMESH::Elements;
+	m_iVertexStride = sizeof(VTXSKINMESH);
+
+	m_Skined = cookedVertices;
+	m_indices = cookedIndices;
+	m_OffsetCount = m_MeshOffset.size();
+	m_MeshOffset = meshOffsetMap;
+	m_BoneIndices = boneIndexList;
+
+	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
+	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
+
+	for (const auto& vertex : m_Skined)
+	{
+		m_vMeshMinLocal.x = min(m_vMeshMinLocal.x, vertex.vPosition.x);
+		m_vMeshMinLocal.y = min(m_vMeshMinLocal.y, vertex.vPosition.y);
+		m_vMeshMinLocal.z = min(m_vMeshMinLocal.z, vertex.vPosition.z);
+
+		m_vMeshMaxLocal.x = max(m_vMeshMaxLocal.x, vertex.vPosition.x);
+		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, vertex.vPosition.y);
+		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, vertex.vPosition.z);
+	}
+
+	D3D11_BUFFER_DESC vbDesc{};
+	vbDesc.ByteWidth = m_iVerticesCount * m_iVertexStride;
+	vbDesc.Usage = D3D11_USAGE_DEFAULT;
+	vbDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vbDesc.CPUAccessFlags = 0;
+	vbDesc.MiscFlags = 0;
+	vbDesc.StructureByteStride = m_iVertexStride;
+
+	D3D11_SUBRESOURCE_DATA vbInit{};
+	vbInit.pSysMem = m_Skined.data();
+
+	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&vbDesc, &vbInit, &m_pVB)))
+		return E_FAIL;
+
+	D3D11_BUFFER_DESC ibDesc{};
+	ibDesc.ByteWidth = m_iIndicesCount * m_iIndexStride;
+	ibDesc.Usage = D3D11_USAGE_DEFAULT;
+	ibDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	ibDesc.CPUAccessFlags = 0;
+	ibDesc.MiscFlags = 0;
+	ibDesc.StructureByteStride = m_iIndexStride;
+
+	D3D11_SUBRESOURCE_DATA ibInit{};
+	ibInit.pSysMem = m_indices.data();
+
+	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&ibDesc, &ibInit, &m_pIB)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -98,7 +257,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 	VBDesc.CPUAccessFlags = 0;
 	VBDesc.MiscFlags = 0;
 	VBDesc.StructureByteStride = m_iVertexStride;
-	m_Meshes.reserve(m_iVerticesCount);
+	m_StaticVertex.reserve(m_iVerticesCount);
 	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
 	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
 
@@ -120,7 +279,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, mesh.vPosition.y);
 		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, mesh.vPosition.z);
 
-		m_Meshes.push_back(mesh);
+		m_StaticVertex.push_back(mesh);
 	}
 
 	if (m_vMeshMinLocal.x > m_vMeshMaxLocal.x) swap(m_vMeshMinLocal.x, m_vMeshMaxLocal.x);
@@ -128,10 +287,37 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 	if (m_vMeshMinLocal.z > m_vMeshMaxLocal.z) swap(m_vMeshMinLocal.z, m_vMeshMaxLocal.z);
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
-	VertexInitialData.pSysMem = m_Meshes.data();
+	VertexInitialData.pSysMem = m_StaticVertex.data();
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
 
+	// ===== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ß°ï¿½: "ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿? =====
+	m_BoneIndices.clear();
+	m_MeshOffset.clear();
+
+	if (m_pSkeleton)
+	{
+		_uint NumBones = _pAIMesh->mNumBones;
+
+		for (_uint i = 0; i < NumBones; i++)
+		{
+			aiBone* pAIBone = _pAIMesh->mBones[i];
+			if (nullptr == pAIBone)
+				return E_FAIL;
+
+			string BoneName = pAIBone->mName.C_Str();
+			BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+
+			if (BoneIndex < 0) continue;
+			m_BoneIndices.push_back(BoneIndex);
+
+			_float4x4 OffsetMatrix = {};
+			memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+			XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
+			m_MeshOffset.emplace((_uint)BoneIndex, OffsetMatrix);
+			}
+	}
+	m_OffsetCount = m_MeshOffset.size();
 	return S_OK;
 }
 
@@ -149,9 +335,8 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 	VBDesc.StructureByteStride = m_iVertexStride;
 
 	m_SkinMeshes.reserve(m_iVerticesCount);
-	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
-	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
-	//Á¤Á¡ÀúÀå
+
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (_uint i = 0; i < m_iVerticesCount; i++)
 	{
 		VTXSKINMESH mesh = {};
@@ -169,7 +354,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 		m_vMeshMaxLocal.x = max(m_vMeshMaxLocal.x, mesh.vPosition.x);
 		m_vMeshMaxLocal.y = max(m_vMeshMaxLocal.y, mesh.vPosition.y);
 		m_vMeshMaxLocal.z = max(m_vMeshMaxLocal.z, mesh.vPosition.z);
-		m_SkinMeshes.push_back(mesh);
+		m_Skined.push_back(mesh);
 	}
 
 	_uint NumBones = _pAIMesh->mNumBones;
@@ -196,28 +381,28 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 		{
 			aiVertexWeight     AIWeight = pAIBone->mWeights[j];
 
-			if (0.0f == m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.x)
+			if (0.0f == m_Skined[AIWeight.mVertexId].vBlendWeight.x)
 			{
-				m_SkinMeshes[AIWeight.mVertexId].vBlendIndex.x = BoneIndex;
-				m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.x = AIWeight.mWeight;
+				m_Skined[AIWeight.mVertexId].vBlendIndex.x = BoneIndex;
+				m_Skined[AIWeight.mVertexId].vBlendWeight.x = AIWeight.mWeight;
 			}
 
-			else if (0.0f == m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.y)
+			else if (0.0f == m_Skined[AIWeight.mVertexId].vBlendWeight.y)
 			{
-				m_SkinMeshes[AIWeight.mVertexId].vBlendIndex.y = BoneIndex;
-				m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.y = AIWeight.mWeight;
+				m_Skined[AIWeight.mVertexId].vBlendIndex.y = BoneIndex;
+				m_Skined[AIWeight.mVertexId].vBlendWeight.y = AIWeight.mWeight;
 			}
 
-			else if (0.0f == m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.z)
+			else if (0.0f == m_Skined[AIWeight.mVertexId].vBlendWeight.z)
 			{
-				m_SkinMeshes[AIWeight.mVertexId].vBlendIndex.z = BoneIndex;
-				m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.z = AIWeight.mWeight;
+				m_Skined[AIWeight.mVertexId].vBlendIndex.z = BoneIndex;
+				m_Skined[AIWeight.mVertexId].vBlendWeight.z = AIWeight.mWeight;
 			}
 
-			else if (0.0f == m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.w)
+			else if (0.0f == m_Skined[AIWeight.mVertexId].vBlendWeight.w)
 			{
-				m_SkinMeshes[AIWeight.mVertexId].vBlendIndex.w = BoneIndex;
-				m_SkinMeshes[AIWeight.mVertexId].vBlendWeight.w = AIWeight.mWeight;
+				m_Skined[AIWeight.mVertexId].vBlendIndex.w = BoneIndex;
+				m_Skined[AIWeight.mVertexId].vBlendWeight.w = AIWeight.mWeight;
 			}
 		}
 	}
@@ -231,7 +416,7 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 	}
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
-	VertexInitialData.pSysMem = m_SkinMeshes.data();
+	VertexInitialData.pSysMem = m_Skined.data();
 
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
@@ -251,7 +436,7 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(MESH_INFO_HEADER));
 
 	if (m_iVertexStride == sizeof(VTXSKINMESH)) {
-		for (VTXSKINMESH& vertex : m_SkinMeshes) {
+		for (VTXSKINMESH& vertex : m_Skined) {
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXSKINMESH));
 		}
 		for (auto& pair : m_MeshOffset)
@@ -264,7 +449,7 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	}
 
 	else if (m_iVertexStride == sizeof(VTXMESH)) {
-		for (VTXMESH& vertex : m_Meshes) {
+		for (VTXMESH& vertex : m_StaticVertex) {
 			XMStoreFloat3(&vertex.vPosition, XMVector3TransformCoord(XMLoadFloat3(&vertex.vPosition), PreTransform));
 			XMStoreFloat3(&vertex.vNormal, XMVector3TransformNormal(XMLoadFloat3(&vertex.vNormal), PreTransform));
 			XMStoreFloat3(&vertex.vTangent, XMVector3TransformNormal(XMLoadFloat3(&vertex.vTangent), PreTransform));
@@ -274,7 +459,7 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 		}
 	}
 
-	for (_uint indices : m_Indices)
+	for (_uint indices : m_indices)
 		ofs.write(reinterpret_cast<const char*>(&indices), sizeof(_uint));
 }
 
@@ -288,6 +473,12 @@ CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* 
 		return nullptr;
 	}
 	return pInstance;
+}
+
+CAIMesh* CAIMesh::Create()
+{
+	CAIMesh* instance = new CAIMesh();
+	return instance;
 }
 
 void CAIMesh::Free()

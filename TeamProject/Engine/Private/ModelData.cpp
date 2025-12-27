@@ -77,16 +77,22 @@ _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 
 _uint CModelData::Get_BoneCount()
 {
+	if (!m_pSkeleton)
+		return 0;
 	return m_pSkeleton->Get_BoneCount();
 }
 
 _int CModelData::Find_BoneIndexByName(const string& BoneName)
 {
+	if (!m_pSkeleton)
+		return -1;
 	return m_pSkeleton->Find_BoneIndexByName(BoneName);
 }
 
 const string& CModelData::Find_BoneNameByIndex(_uint BoneIndex)
 {
+	if (!m_pSkeleton)
+		return "";
 	return m_pSkeleton->Find_BoneNameByIndex(BoneIndex);
 }
 
@@ -161,6 +167,16 @@ HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
 	return S_OK;
 }
 
+HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex, _uint IslandIndex)
+{
+	if (MeshIndex >= m_Meshes.size()) return E_FAIL;
+
+	m_Meshes[MeshIndex]->Bind_Buffer(pContext);
+	m_Meshes[MeshIndex]->Render_Island(pContext, IslandIndex);
+
+	return S_OK;
+}
+
 _matrix CModelData::Get_OffsetMatrix(_uint BoneIndex)
 {
 	return m_pSkeleton->Get_OffsetMatrix(BoneIndex);
@@ -197,6 +213,12 @@ MINMAX_BOX CModelData::Get_MeshBoundingBox(_uint index)
 	box.vMax = m_Meshes[index]->Get_MaxVertexLocal();
 	box.vMin = m_Meshes[index]->Get_MinVertexLocal();
 	return box;
+}
+
+void CModelData::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex)
+{
+	outvec.clear();
+	m_pSkeleton->Get_AffectBoneIndices(outvec, StartBoneIndex);
 }
 
 _int CModelData::Get_BoneParentIndex(_uint i)

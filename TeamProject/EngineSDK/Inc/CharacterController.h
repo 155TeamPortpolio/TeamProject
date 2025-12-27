@@ -5,11 +5,57 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CCharacterController final : public ICollidable
 {
+private:
+    // CCT Query Filter Callback 내부 클래스
+    class CCCTQueryFilter : public PxQueryFilterCallback
+    {
+    public:
+        CCCTQueryFilter(PxFilterData* pFilterData) : m_pFilterData(pFilterData) {}
+        virtual ~CCCTQueryFilter() = default;
+
+        virtual PxQueryHitType::Enum preFilter(
+            const PxFilterData& filterData,
+            const PxShape* shape,
+            const PxRigidActor* actor,
+            PxHitFlags& queryFlags) override
+        {
+            if (!m_pFilterData || !shape)
+                return PxQueryHitType::eBLOCK;
+
+            // Shape에서 직접 QueryFilterData 가져오기
+            // (filterData 인자는 mFilterData가 전달되므로 사용하지 않음)
+            PxFilterData shapeFilterData = shape->getQueryFilterData();
+
+            PxU32 myGroup = m_pFilterData->word0;
+            PxU32 myMask = m_pFilterData->word1;
+            PxU32 otherGroup = shapeFilterData.word0;
+            PxU32 otherMask = shapeFilterData.word1;
+
+            // 양방향 검사
+            _bool bIAllowOther = (myMask & otherGroup) != 0;
+            _bool bOtherAllowMe = (otherMask & myGroup) != 0;
+
+            if (!bIAllowOther || !bOtherAllowMe)
+                return PxQueryHitType::eNONE;
+
+            return PxQueryHitType::eBLOCK;
+        }
+
+        virtual PxQueryHitType::Enum postFilter(
+            const PxFilterData& filterData,
+            const PxQueryHit& hit) override
+        {
+            return PxQueryHitType::eBLOCK;
+        }
+
+    private:
+        PxFilterData* m_pFilterData = nullptr;
+    };
 
 private:
-    CCharacterController();
-    CCharacterController(const CCharacterController& rhs);
-    virtual ~CCharacterController() override DEFAULT;
+    CCharacterController() {}
+    CCharacterController(const CCharacterController& rhs) :ICollidable(rhs) {}
+    virtual ~CCharacterController() DEFAULT;
 
 public:
     PxController*   Get_Controller() { return m_pController; }
@@ -20,7 +66,7 @@ public:
     _float          Get_Radius() const { return m_fRadius; }
     _float          Get_MaxSpeed() const { return m_fMaxSpeed; }
     void            Set_Gravity(_float fGravity) { m_fGravity = fGravity; }
-
+    _uint           Get_CollisionMask() const { return m_FilterData.word1; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -74,6 +120,9 @@ public:
 
     _float          Get_HalfSize()  const { return m_fHeight * 0.5f + m_fRadius * 0.5f; }
 
+    void            Set_CollisionMask(_uint iMask);
+    void            Set_CollisionGroup(COLLISION_GROUP eGroup);
+
 private:
     void            Move(_fvector vDisplacement, _float dt);
     void            Apply_Gravity(_float dt);
@@ -86,9 +135,11 @@ private:
     PxControllerManager*     m_pManager = { nullptr };
     PxMaterial*              m_pMaterial = { nullptr };
     PxFilterData             m_FilterData = {};
+    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
+    PxFilterData             m_QueryFilterData = {};
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
-    _float3                  m_vVelocity = { 0.f, 0.f, 0.f };
+    Vector3                  m_vVelocity = { 0.f, 0.f, 0.f };
     _float                   m_fHeight = { 0.f };
     _float                   m_fRadius = { 0.f };
     _float                   m_fStepOffset = { 0.5f };
@@ -112,7 +163,6 @@ public:
     static CCharacterController* Create();
     virtual CComponent* Clone() override;
     virtual void Free() override;
-
 };
 
 NS_END

@@ -343,6 +343,36 @@ void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].bPause = true;
 }
 
+void CAnimator3D::Set_StartBone(_int StartBoneIndex, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].iStartBoneIndex = StartBoneIndex;
+	m_pData->Get_AffectBoneIndices(
+		m_AnimLayers[LayerIndex].AffectedBonesIndices,
+		m_AnimLayers[LayerIndex].iStartBoneIndex);
+}
+
+void CAnimator3D::Reset_StartBone(_uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].iStartBoneIndex = -1;
+	m_AnimLayers[LayerIndex].AffectedBonesIndices.clear();
+}
+
+void CAnimator3D::Set_TPose()
+{
+	for (_uint i = 0; i < m_AnimLayers.size(); i++)
+	{
+		Reset_Layer(i);
+		if (0 < i)
+			m_AnimLayers[i].eLayerType = ANIM_LAYER_STATE::NONE;
+	}
+	
+	m_CombinedMatrices = m_TPose;
+}
+
 void CAnimator3D::Control_Bone(const string& boneName, _fmatrix BoneMatrix)
 {
 	_int Index = m_pData->Find_BoneIndexByName(boneName);
@@ -620,6 +650,8 @@ void CAnimator3D::BuildBone()
 	for (auto& Layer : m_AnimLayers) {
 		switch (Layer.eLayerType)
 		{
+		case Engine::ANIM_LAYER_STATE::NONE:
+			break;
 		case Engine::ANIM_LAYER_STATE::OVERRIDE:
 			Layer_Override(Layer);
 			break;
@@ -811,12 +843,13 @@ HRESULT SetAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	m_pOwner->Reset_Layer(m_iLayerIndex);
+	//m_pOwner->Reset_Layer(m_iLayerIndex);
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
+	Layer.fCurrentTrackPosition = 0.f;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 

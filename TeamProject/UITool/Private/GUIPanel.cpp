@@ -30,11 +30,14 @@ void CGUIPanel::Update_Panel(_float dt)
 
 		if (pGuiContext->pSelectedObject)
 		{
-			if (CUIObject_Tool* pSelectedUI = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
+			if (CUIObject_Tool* pSelected = dynamic_cast<CUIObject_Tool*>(pGuiContext->pSelectedObject))
 			{
-				pSelectedUI->Remove_SelfFromParent();						// 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
-				m_pGameInstance->Get_UIMgr()->Remove_UIObject(pSelectedUI);	// UI Mgr에서 자신을 제거 
-				pGuiContext->pSelectedObject = nullptr;						// Gui에 selectedObject를 nullptr로 
+				if (pSelected->Is_Root())
+					m_pGameInstance->Get_UIMgr()->Remove_UIObject(pSelected);	// 루트면 ui매니저에서 삭제
+				else
+					pSelected->Remove_SelfFromParent();							// 루트가 아니면 자신을 자식으로 가진 부모 컨테이너에서 자신을 지움
+
+				pGuiContext->pSelectedObject = nullptr;							// Gui에 selectedObject를 nullptr로 
 			}
 		}
 	}
@@ -192,7 +195,7 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 			if (!pChild)
 				return;
 
-			pObj->Get_Component<CObjectContainer>()->Add_Child(pChild);                                                       // 컨테이너에 자식 추가
+			pObj->Get_Component<CObjectContainer>()->Add_Child(pChild);                                                  // 컨테이너에 자식 추가
 		}
 
 	} 
@@ -204,31 +207,19 @@ CUI_Object* CGUIPanel::LoadPrefab()
 	if (filePath.empty())
 		return nullptr;
 
-	std::ifstream inputFile(filePath);
-	if (!inputFile.is_open())
-	{
-		MSG_BOX("Failed to open data file");
-		return nullptr;
-	}
-
-	json data;
-	inputFile >> data;
-	inputFile.close();
-
-	if (!data.contains("parent"))
-		return nullptr;
+	UI_ELEMENT_DATA elementData = Helper::LoadJson<UI_ELEMENT_DATA>(filePath);
 
 	const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-	const string& strTypeTag = data["parent"]["typeTag"].get<string>();
+	const string& strTypeTag = elementData.strTypeTag;
 	CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
 		.Build(strTypeTag);
 
 	if (!pObj)
 		return nullptr;
 
-	CUIObject_Tool* pUI = dynamic_cast<CUIObject_Tool*>(pObj);
-	if (pUI)
-		pUI->LoadPrefab(data["parent"]);
+	CUIObject_Tool* pUIObj = dynamic_cast<CUIObject_Tool*>(pObj);
+	if (pUIObj)
+		pUIObj->ReadElementData(elementData);
 
 	return pObj;
 }
@@ -238,18 +229,11 @@ void CGUIPanel::SavePrefab(CUIObject_Tool* pObj)
 	if (!pObj)
 		return;
 
-	json data;
+	UI_ELEMENT_DATA elementData = {};
+	pObj->FillElementData(elementData);
 
-	pObj->SavePrefab(data["parent"]);
-
-	std::ofstream outputFile(Helper::SaveFileDialogByWinAPI("prefab", "json"));
-
-	if (outputFile.is_open())
-	{
-		outputFile << data.dump(4);
-		outputFile << std::endl;
-		outputFile.close();
-	}
+	string filePath = Helper::SaveFileDialogByWinAPI("prefab", "json");
+	Helper::SaveJson<UI_ELEMENT_DATA>(elementData, filePath);
 }
 
 CGameObject* CGUIPanel::Get_SelectedObject()

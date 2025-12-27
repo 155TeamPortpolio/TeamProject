@@ -26,9 +26,9 @@ public:
     virtual void     Clear(_float blendSec = 0.25f)                  override;
 
 public:
-    virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
-    virtual void ClearShake(_float fadeOutSec = 0.f) override;
+    virtual void     SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
+    virtual void     ClearShake(_float fadeOutSec = 0.f) override;
 
 public:
     virtual void     Update(_float dt) override;

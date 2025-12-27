@@ -12,6 +12,7 @@ public:
 	HRESULT Initialize(const string& filePath, ID3D11Device* pDevice);
 #pragma region Rendering
 	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint Index);
+	HRESULT Render_Mesh(ID3D11DeviceContext* pContext, _uint MeshIndex,_uint IslandIndex);
 
 #pragma endregion 
 
@@ -43,6 +44,7 @@ public:
 	MINMAX_BOX Get_LocalBoundingBox();
 	MINMAX_BOX Get_MeshBoundingBox(_uint index);
 
+	void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
 #pragma endregion 
 	virtual void Render_GUI();
 #pragma region GUI

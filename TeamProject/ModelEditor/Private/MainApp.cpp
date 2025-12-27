@@ -9,7 +9,7 @@
 #include "EditorPanel.h"
 #include "FreeCam.h"
 #include "EditModel.h"
-
+#include "BinaryModel.h"
 #include "EditorSystem.h"
 
 CMainApp::CMainApp()
@@ -79,6 +79,7 @@ void CMainApp::ReadyBase()
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EditCamera", CFreeCam::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EditModel", CEditModel::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_BinaryModel", CBinaryModel::Create());
 
 	m_pSystem = CEditorSystem::GetInstance();
 

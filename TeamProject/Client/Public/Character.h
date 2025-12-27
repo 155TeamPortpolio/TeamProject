@@ -15,7 +15,7 @@ class CStateMachine;
 class CCharacter abstract : public CGameObject
 {
 protected:
-    CCharacter();
+    CCharacter() {}
     CCharacter(const CCharacter& rhs);
     virtual ~CCharacter() DEFAULT;
 

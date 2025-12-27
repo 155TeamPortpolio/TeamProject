@@ -7,6 +7,7 @@
 #include "AnimationLayout.h"
 #include "Channel.h"
 
+
 CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
 	: CBasePanel{pContext}
 	, m_pGameInstance{ CGameInstance::GetInstance() }
@@ -24,22 +25,39 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		Reset_Panel();
 	}
 	
-	if (nullptr == m_pSelectAnimator)
-		return;
+	if (nullptr != m_pSelectAnimator) {
+		float fPause = 1.f;
+		if (m_bPause) fPause = 0.f;
 
-	if (!m_bPause) {
-		m_fTrackPos += m_fTickPerSec * dt * m_fPlaySpeed;
-		
-		if (m_fDuration <= m_fTrackPos) {
-			if (m_bLoop)
-				m_fTrackPos = 0.f;
-			else
-				m_bPause = true;
+	
+		if (m_ePanelType == PANELTYPE::CLIP) {
+			m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
+		}
+		else if (m_ePanelType == PANELTYPE::PREVIEW) {
+			if (m_bPreviewPlay) {
+				m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
+
+				if (m_pSelectAnimator->isCurrentAnimEnd()) {
+					if (m_iCurrentPrevIndex < m_PreviewList.size() - 1) {
+						m_fTrackPos = 0.f;
+						m_pSelectAnimator->Set_Animation(m_PreviewList[++m_iCurrentPrevIndex])
+							.Loop(false);
+					}
+					else
+						m_bPreviewPlay = false;
+				}
+			}
 		}
 	}
 
-	if(!m_bPause)
-		m_pSelectAnimator->Update_Animation(m_fTrackPos);
+	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
+		if (nullptr != m_pSelectAnimator) {
+			m_pSelectAnimator->Resize_Layer(2);
+			m_pSelectAnimator->Set_StartBone(23, 1);
+			m_pSelectAnimator->Set_Animation(1, 5).
+				Loop(true);
+		}
+	}
 }
 
 void CAnimToolPanel::Render_GUI()
@@ -53,22 +71,35 @@ void CAnimToolPanel::Render_GUI()
 	{
 		const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 		const float childHeight = (textLineHeight + 2) + (ImGui::GetStyle().WindowPadding.y * 2);
-		
-		if (ImGui::BeginTabItem("Load Resources")) {
-			GUI_EventResources(childHeight);
-			ImGui::EndTabItem();
-		}
+
+		// 현재 프레임에서 활성화된 패널
+		PANELTYPE CurPanelType = m_ePanelType;
 
 		if (ImGui::BeginTabItem("Setting Clip"))
 		{
+			CurPanelType = PANELTYPE::CLIP;
 			GUI_Setting_Clips(childHeight);
+			ImGui::EndTabItem();
+		}
+
+		if (ImGui::BeginTabItem("Preview Animation"))
+		{
+			CurPanelType = PANELTYPE::PREVIEW;
+			GUI_Preview(childHeight);
 			ImGui::EndTabItem();
 		}
 
 		if (ImGui::BeginTabItem("Create Meta"))
 		{
+			CurPanelType = PANELTYPE::RESOURCE;
 			GUI_Create_MetaData(childHeight);
 			ImGui::EndTabItem();
+		}
+
+		if (CurPanelType != m_ePanelType)
+		{
+			m_bPause = true;
+			m_ePanelType = CurPanelType;
 		}
 
 		ImGui::EndTabBar();
@@ -100,14 +131,8 @@ void CAnimToolPanel::GUI_DefaultSetting()
 	Helper::DarkThemeStyle styleScope;
 }
 
-void CAnimToolPanel::GUI_EventResources(_float fChildHeight)
-{
-}
-
 void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 {
-	ImGui::SeparatorText("Play Animation");
-
 	ImGui::Text("ClipTag : "); ImGui::SameLine();
 	ImGui::SetNextItemWidth(300.f);
 	if (ImGui::BeginCombo("##Model Combo", m_CurClipTag.c_str())) //Model
@@ -123,14 +148,12 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					//새로운 클립을 눌렀다면
 					m_CurClipTag = ClipTag;
 					m_iCurClipIndex = iIndex;
-					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
+					m_pSelectAnimator->Set_Animation(0, iIndex)
+						.Loop(m_bLoop);
 					
 					//디버그용 레이어에 데이터넣기
-					m_pSelectAnimator->Get_AnimLayers()[0].iClipIndex = iIndex;
-
-					//가져온 애니매이션의 duration 가져옴
+					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
 					m_fTrackPos = 0.f;					
-					m_pSelectAnimator->Set_Animation(0, iIndex);
 					m_fTickPerSec = Clip->Get_TickPerSec();
 					m_fDuration = Clip->Get_Duration();
 				}
@@ -143,20 +166,65 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 		ImGui::EndCombo();
 	}
 
+	//Set Layer
 	ImGui::SameLine();
-	ImGui::Text("Extrack BoneMove : "); ImGui::SameLine();
+	ImGui::Text("	Layer : "); ImGui::SameLine();
 
-	static int BoneIndex = -1;
-	ImGui::PushItemWidth(120.f);
-	ImGui::InputInt("##ExtractBone", &BoneIndex); ImGui::SameLine();
-	if (ImGui::Button("Set", { 55.f, 0.f }))
+	static int LayerIndex = 0;
+	int LayerCount = m_pSelectAnimator ? m_pSelectAnimator->Get_NumLayer() : 0;
+
+	char preview[16];
+	sprintf_s(preview, "%d", LayerIndex);
+	ImGui::PushItemWidth(50.f);
+	if (ImGui::BeginCombo("##LayerCombo", preview))
 	{
-		m_pSelectAnimator->Set_NoTransform(BoneIndex);
+		for (int i = 0; i < LayerCount; ++i)
+		{
+			bool selected = (LayerIndex == i);
+			char label[16];
+			sprintf_s(label, "%d", i);
+
+			if (ImGui::Selectable(label, selected))
+				LayerIndex = i;
+
+			if (selected)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	//Start Bone
+	ImGui::SameLine();
+	ImGui::Text("	Start Bone : "); ImGui::SameLine();
+	static int StartBoneIndex = -1;
+	ImGui::PushItemWidth(50.f);
+	ImGui::InputInt("##StartBone", &StartBoneIndex, 0, 0);
+	ImGui::SameLine();
+	if (ImGui::Button("Set##StartBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_StartBone(StartBoneIndex);
 	}
 	ImGui::SameLine();
-	if (ImGui::Button("Reset", { 55.f, 0.f }))
+	if (ImGui::Button("Reset##StartBone", { 55.f, 0.f }))
 	{
-		m_pSelectAnimator->Set_UseTransform();
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Reset_StartBone();
+	}
+
+	//Extract Bone
+	ImGui::SameLine();
+	ImGui::Text("	Extrack Bone : "); ImGui::SameLine();
+	static int RootBoneIndex = -1;
+	ImGui::PushItemWidth(50.f);
+	ImGui::InputInt("##ExtractBone", &RootBoneIndex, 0, 0);
+	ImGui::SameLine();
+	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_NoTransform(RootBoneIndex);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
+	{
+		if (nullptr != m_pSelectAnimator) m_pSelectAnimator->Set_UseTransform();
 	}
 
 	Draw_ToolbarUI();
@@ -171,13 +239,15 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 	/* 버튼 */
 
-	if (ImGui::Button(m_bPause ? "Pause" : "Play", buttonSize))
+	if (ImGui::Button(m_bPause ? "Play" : "Pause", buttonSize)) {
 		m_bPause = !m_bPause;
+	}
 	ImGui::SameLine();
 	if (ImGui::Button("Stop", buttonSize))
 	{
 		m_bPause = true;
 		m_fTrackPos = 0.f;
+		if (m_pSelectAnimator) m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = 0.f;
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Snap", buttonSize))
@@ -223,7 +293,13 @@ void CAnimToolPanel::Draw_ToolbarUI()
 
 
 	//재생 바 UI
+	if (m_pSelectAnimator)
+		m_fTrackPos = m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition;
+
 	Draw_TimelineUI(m_fDuration, m_fTrackPos, "##AnimTimeline");
+	
+	if (m_pSelectAnimator)
+		m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = m_fTrackPos;
 
 	//저장버튼
 	ImGui::SameLine();
@@ -372,6 +448,67 @@ void CAnimToolPanel::Draw_EventListUI()
 	}
 
 	ImGui::EndTable();
+}
+
+void CAnimToolPanel::GUI_Preview(_float fChildHeight)
+{
+	const ImVec2 buttonSize(55.f, 0.f);
+
+	if (ImGui::Button(m_bPreviewPlay ? "Stop" : "Play", buttonSize)) {
+		if (!m_bPreviewPlay) // Play 눌렀을 때만
+		{
+			m_bPreviewPlay = true;
+			m_bPause = false;
+
+
+			if (m_pSelectAnimator && !m_PreviewList.empty())
+			{
+				m_iCurrentPrevIndex = 0;
+				m_fTrackPos = 0.f;
+				m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = 0.f;
+				m_pSelectAnimator
+					->Set_Animation(m_PreviewList[0])
+					.Loop(false);
+			}
+		}
+		else // Stop
+		{
+			m_bPreviewPlay = false;
+			m_bPause = true;
+		}
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Add", buttonSize)) {
+		m_PreviewList.push_back("");
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear", buttonSize)) {
+		m_PreviewList.clear();
+	}
+
+	for (int i = 0; i < m_PreviewList.size(); i++) {
+		string ComboTag = "##Preview Combo" + to_string(i);
+		if (ImGui::BeginCombo(ComboTag.c_str(), m_PreviewList[i].c_str())) //Model
+		{
+			if (!m_AnimClip.empty()) {
+				int iIndex = 0;
+				for (auto& Clip : m_AnimClip)
+				{
+					string ClipTag = Clip.ClipTag;
+					bool selected = (m_PreviewList[i] == ClipTag);
+					if (ImGui::Selectable(ClipTag.c_str(), selected))					{
+						//새로운 클립을 눌렀다면
+						m_PreviewList[i] = ClipTag;
+					}
+					if (selected)
+						ImGui::SetItemDefaultFocus();
+
+					iIndex++;
+				}
+			}
+			ImGui::EndCombo();
+		}
+	}
 }
 
 void CAnimToolPanel::GUI_Setting_Effect(_float fChildHeight)

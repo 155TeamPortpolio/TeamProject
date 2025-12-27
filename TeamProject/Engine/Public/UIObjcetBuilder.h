@@ -16,6 +16,7 @@ class ENGINE_DLL CUIObjcetBuilder
         CUIObjcetBuilder& Scale(const _float2 scale);
         CUIObjcetBuilder& Size(const _float2 size);
         CUIObjcetBuilder& Anchor(ANCHOR eAnchor);
+        CUIObjcetBuilder& Asset(const string& assetKey);
 
     private:
         class CGameInstance* m_pGameInstance = { nullptr };

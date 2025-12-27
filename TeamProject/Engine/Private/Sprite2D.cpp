@@ -198,6 +198,10 @@ bool CSprite2D::IsValid()
 
 void CSprite2D::Render_GUI()
 {
+	if (!m_pTextures.empty()) {
+		ImGui::Image((ImTextureID)m_pTextures.front()->Get_SRV(),
+			ImVec2(1280 / 5, 720 / 5));
+	}
 }
 
 CSprite2D* CSprite2D::Create()

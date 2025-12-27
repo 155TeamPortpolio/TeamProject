@@ -92,3 +92,9 @@ CUIObjcetBuilder& CUIObjcetBuilder::Anchor(ANCHOR eAnchor)
 	m_pObjDesc->eAnchor = eAnchor;
 	return *this;
 }
+
+CUIObjcetBuilder& CUIObjcetBuilder::Asset(const string& assetKey)
+{
+	m_pObjDesc->UIAssetKey = assetKey;
+	return *this;
+}
