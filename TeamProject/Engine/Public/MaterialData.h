@@ -4,6 +4,7 @@
 
 NS_BEGIN(Engine)
 using TEXTUERS = vector<class CTexture*>;
+using TextureKeyList = vector<string>;
 //using ShaderSelector = std::function<string(const string MaterialKey)>;
 
 class ENGINE_DLL CMaterialData :
@@ -15,6 +16,7 @@ protected:
 public:
 	HRESULT Initialize(const string& levelKey, ifstream& ifs, const string& directory);
 	virtual HRESULT Link_Texture(const string& levelKey, const string& textureKey, TEXTURE_TYPE eType);
+	HRESULT Resolve_Textures(const string& levelKey, TEXTURE_TYPE textureType);
 	virtual HRESULT Link_Shader(const string& levelKey, const string& shaderKey);
 
 public:
@@ -43,8 +45,11 @@ protected:
 	/*Fixed Material Data Property -> CAnnot Override*/
 	_uint m_MaterialDataID = {};
 	string m_MaterialKey = {};
+	string m_LevelKey = {};
 	class CShader* m_pShader = { nullptr };
 	map<TEXTURE_TYPE, TEXTUERS> m_Textures;
+	array<TextureKeyList, MAX_TEXTURE_TYPE_VALUE> m_TextureKeys;
+	map<TEXTURE_TYPE, _bool> m_TextureResolved;   // 해당 타입 키들을 한 번이라도 resolve 했는지
 
 	/*Default_Material Data Property -> Can Override*/
 	string m_passConstant = {};

@@ -312,17 +312,246 @@ CVIBuffer* CResourceThread::Load_WaitVIBuffer(const string& levelTag, const stri
 }
 
 vector<CMaterialInstance*> CResourceThread::Load_MaterialFromFile(
-	const string& levelTag,
-	const string& fileKey)
+    const string& levelTag,
+    const string& fileKey)
 {
-	return {};
+    vector<CMaterialInstance*> handles;
 
+    vector<CMaterialData*>* dataList = GetOrLoad_MaterialData(levelTag, fileKey);
+
+    if (!dataList)
+        dataList = GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat");
+
+    if (!dataList)
+    {
+        MSG_BOX("Default.mat is missing. Resource init problem.");
+        return handles;
+    }
+
+    return Make_MaterialHandles(*dataList);
+}
+
+vector<CMaterialInstance*> CResourceThread::Make_MaterialHandles(
+    const vector<CMaterialData*>& dataList)
+{
+    vector<CMaterialInstance*> handles;
+    handles.reserve(dataList.size());
+
+    for (CMaterialData* data : dataList)
+    {
+        CMaterialInstance* handle = CMaterialInstance::Make_Handle(data, m_pDevice);
+        handles.push_back(handle);
+    }
+    return handles;
+}
+
+vector<CMaterialData*>* CResourceThread::GetOrLoad_MaterialData(const string& levelTag, const string& fileKey, _bool wait)
+{
+    const string entryKey = fileKey;
+    CResourceEntry* entry = nullptr;
+
+    auto levelIterator = m_LevelResources.find(levelTag);
+    if (levelIterator == m_LevelResources.end())
+        return m_DefaultMaterial;
+
+    Level_Resource& levelResource = levelIterator->second;
+    if (levelResource.size() < RESOURCE_TYPE_COUNT)
+        levelResource.resize(RESOURCE_TYPE_COUNT);
+
+    auto& materialEntryMap = levelResource[ENUM(MATERIALS)];
+    auto entryIterator = materialEntryMap.find(entryKey);
+
+    if (entryIterator == materialEntryMap.end())
+    {
+        entry = CResourceEntry::Create();
+        entry->SetDebugName(entryKey);
+        entry->SetLevelTag(levelTag);
+
+        auto pathIterator = m_PathByKey.find(fileKey);
+        if (pathIterator != m_PathByKey.end())
+            entry->SetSourcePath(pathIterator->second);
+
+        materialEntryMap.emplace(entryKey, entry);
+    }
+    else
+    {
+        entry = entryIterator->second;
+    }
+
+    if (entry->GetSourcePathCopy().empty())
+        return m_DefaultMaterial;
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(std::move(jobFunc));
+            };
+
+        LoaderFunc loaderFunc = [levelTag](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+
+                if (sourcePath.empty())
+                {
+                    errorMsg = "MaterialData sourcePath is empty.";
+                    return monostate{};
+                }
+
+                std::error_code errorCode;
+                if (!filesystem::exists(sourcePath, errorCode))
+                {
+                    errorMsg = "MaterialData file not found: " + sourcePath;
+                    return monostate{};
+                }
+
+                ifstream inputStream(sourcePath, ios::binary);
+                if (!inputStream.is_open())
+                {
+                    errorMsg = "Failed to open material file: " + sourcePath;
+                    return monostate{};
+                }
+
+                MATERIAL_FILE_HEADER header{};
+                inputStream.read(reinterpret_cast<char*>(&header), sizeof(header));
+                if (!inputStream.good())
+                {
+                    errorMsg = "Failed to read MATERIAL_FILE_HEADER: " + sourcePath;
+                    return monostate{};
+                }
+
+                CMaterialDataList* createdList = new CMaterialDataList();
+                createdList->list.reserve(header.MaterialDataCount);
+                const string baseDirectory = filesystem::path(sourcePath).parent_path().string() + "/";
+
+                for (size_t materialIndex = 0; materialIndex < header.MaterialDataCount; ++materialIndex)
+                {
+                    CMaterialData* materialData = CMaterialData::Create(levelTag, inputStream, baseDirectory);
+                    if (!materialData)
+                    {
+                        for (CMaterialData* createdData : createdList->list)
+                            Safe_Release(createdData);
+
+                        Safe_Release(createdList);
+
+                        errorMsg = "CMaterialData::Create failed. path: " + sourcePath;
+                        return monostate{};
+                    }
+
+                    createdList->list.push_back(materialData);
+                }
+
+                if (createdList->list.empty())
+                {
+                    Safe_Release(createdList);
+                    errorMsg = "No materials loaded: " + sourcePath;
+                    return monostate{};
+                }
+
+                return createdList; // 엔트리가 소유(Release는 엔트리의 Variant 해제 로직으로)
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+    if(wait)
+        entry->Wait_AsyncDone();
+
+    entry->Pump_CompletedOnly();
+
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CMaterialDataList* loadedList = entry->Get_NoRef<CMaterialDataList>();
+        return loadedList ? &loadedList->list : m_DefaultMaterial;
+    }
+
+    return m_DefaultMaterial;
 }
 
 CShader* CResourceThread::Load_Shader(const string& levelTag, const string& shaderKey)
 {
-	return nullptr;
+    const string entryKey = shaderKey;
+    CResourceEntry* entry = nullptr;
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return nullptr;
+
+    Level_Resource& resources = iteratorLevel->second;
+    if (resources.size() < RESOURCE_TYPE_COUNT)
+        resources.resize(RESOURCE_TYPE_COUNT);
+
+    auto& shaderMap = resources[ENUM(SHADER)];
+    auto iteratorEntry = shaderMap.find(entryKey);
+
+    if (iteratorEntry == shaderMap.end())
+    {
+        entry = CResourceEntry::Create();
+        entry->SetDebugName(entryKey);
+        entry->SetLevelTag(levelTag);
+
+        auto pathIterator = m_PathByKey.find(shaderKey);
+        if (pathIterator != m_PathByKey.end())
+            entry->SetSourcePath(pathIterator->second);
+
+        shaderMap.emplace(entryKey, entry);
+    }
+    else
+    {
+        entry = iteratorEntry->second;
+    }
+
+    if (entry->GetSourcePathCopy().empty())
+        return nullptr;
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+
+        LoaderFunc loaderFunc = [device, entryKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+
+                if (sourcePath.empty())
+                {
+                    errorMsg = "Shader sourcePath is empty.";
+                    return monostate{};
+                }
+
+                error_code errorCode;
+                if (!filesystem::exists(sourcePath, errorCode))
+                {
+                    errorMsg = "Shader file not found: " + sourcePath;
+                    return monostate{};
+                }
+
+                CShader* createdShader = CShader::Create(device, sourcePath, entryKey);
+                if (!createdShader)
+                {
+                    errorMsg = "CShader::Create failed: " + sourcePath;
+                    return monostate{};
+                }
+
+                return createdShader;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+
+    // 셰이더는 여기서 "완료까지 대기 + 확정"
+    entry->Wait_AndPump();
+
+    if (entry->GetState() == LoadState::Ready)
+        return entry->Get_NoRef<CShader>();
+
+    return nullptr;
 }
+
+
+
 
 vector<CAnimationClip*> CResourceThread::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
 {
@@ -508,7 +737,7 @@ CModelData* CResourceThread::Load_ModelData(const string& levelTag, const string
                 CModelData* createdModel = CModelData::Create(sourcePath,device);
                 if (createdModel == nullptr)
                 {
-                    errorMsg = "CTexture::Create failed: " + sourcePath;
+                    errorMsg = "CModelData::Create failed: " + sourcePath;
                     return monostate{};
                 }
 
@@ -599,12 +828,47 @@ void CResourceThread::Pump_AllEntries_MainThread()
 
 void CResourceThread::Load_InitialResource()
 {
+
+    /* Default Shader */
+    Add_ResourcePath("VTX_TexPos.hlsl", "../Bin/ShaderFiles/VTX_TexPos.hlsl");
+    Add_ResourcePath("VTX_Mesh.hlsl", "../Bin/ShaderFiles/VTX_Mesh.hlsl");
+    Add_ResourcePath("VTX_NorTex.hlsl", "../Bin/ShaderFiles/VTX_NorTex.hlsl");
+    Add_ResourcePath("VTX_SkinMesh.hlsl", "../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
+    Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
+    Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
+    Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
+    Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
+    Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
+    Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
+    Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
+    Add_ResourcePath("Shader_WeightOIT.hlsl", "../Bin/ShaderFiles/Shader_WeightOIT.hlsl");
+    Add_ResourcePath("Default.mat", "../../DefaultSource/Default.mat"); 
+
+  Load_Shader(G_GlobalLevelKey,"VTX_TexPos.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_Mesh.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_NorTex.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_SkinMesh.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_UI.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_Debug.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_Point.hlsl");
+  Load_Shader(G_GlobalLevelKey,"VTX_EffectMesh.hlsl");
+  Load_Shader(G_GlobalLevelKey,"Shader_Deferred.hlsl");
+  Load_Shader(G_GlobalLevelKey,"Shader_PostProcess.hlsl");
+  Load_Shader(G_GlobalLevelKey,"Shader_WeightOIT.hlsl");
+
+
     m_DefaultTexture = CTexture::Create(m_pDevice, L"../../DefaultSource/Default.dds", "Default.dds", false);
     m_DefaultModel = CModelData::Create("../../DefaultSource/Default.model", m_pDevice);
     Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Rect", BUFFER_TYPE::BASIC_RECT);
     Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Plane", BUFFER_TYPE::BASIC_PLANE);
     Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Point", BUFFER_TYPE::BASIC_POINT);
     Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_InstancePoint", BUFFER_TYPE::BASIC_INSTANCE_POINT);
+
+    {
+        vector<CMaterialData*>* defaultData =
+            GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat",true);
+    }
+
 }
 
 CResourceEntry* CResourceThread::Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType)
@@ -711,7 +975,7 @@ CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, cons
             modelMap.erase(iteratorEntry);
 
         entry = CResourceEntry::Create();
-        entry->SetFallback(ResourceVariant{ m_DefaultTexture });
+        entry->SetFallback(ResourceVariant{ m_DefaultModel });
         if (!entry) return nullptr;
 
         entry->SetDebugName(entryKey);
@@ -757,7 +1021,7 @@ CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, cons
                 CModelData* createdModel = CModelData::Create(sourcePath,device);
                 if (!createdModel)
                 {
-                    errorMsg = "CTexture::Create failed: " + sourcePath;
+                    errorMsg = "CModelData::Create failed: " + sourcePath;
                     return monostate{};
                 }
 

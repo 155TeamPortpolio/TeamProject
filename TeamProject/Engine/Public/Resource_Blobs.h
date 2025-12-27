@@ -39,12 +39,24 @@ namespace Engine {
 		}
 	};
 
+	class CMaterialDataList final : public CBase
+	{
+	public:
+		vector<CMaterialData*> list;
+
+		~CMaterialDataList() override
+		{
+			for (CMaterialData* materialData : list)
+				Safe_Release(materialData);
+		}
+	};
+
 	using ResourceVariant = std::variant<
 		monostate,
 		class CTexture*,
 		class CModelData*,
 		class CShader*,
-		class CMaterialData*,
+		class CMaterialDataList*,
 		class CAnimationClip*,
 		class CVIBuffer*,
 		class CSoundData*

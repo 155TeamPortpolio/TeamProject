@@ -119,7 +119,6 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pObjectManager->Pre_EngineUpdate(realDt);
 	m_pUIManager->Pre_EngineUpdate(realDt);
 
-
 	/*클라 제어 업데이트 -> 게임 로직*/
 	m_pObjectManager->Priority_Update(dt);
 	m_pUIManager->Priority_Update(realDt);

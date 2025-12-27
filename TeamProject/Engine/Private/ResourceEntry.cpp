@@ -11,28 +11,28 @@ CResourceEntry::CResourceEntry()
 {
 }
 
-/*비동기로딩 시작 로더 펑션은 무엇을, 스케줄 펑션은 어디에다가*/
 bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc)
 {
-    {/*일단 로드가 되었는지 판별*/
-        LoadState expectedState = LoadState::Unloaded;
-        if (!m_State.compare_exchange_strong(expectedState, LoadState::Loading)) /*안되었으면 로딩중으로 바꾸고 로드 시작*/
-            return false;
+    LoadState expectedState = LoadState::Unloaded;
+    if (!m_State.compare_exchange_strong(expectedState, LoadState::Loading))
+        return false;
 
+    string capturedPath;
+    _uint capturedGeneration = 0;
 
-        string capturedPath;
-        uint64_t capturedGeneration = 0;
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        capturedPath = m_SourcePath;
+        m_LastErrorMsg.clear();
 
-        /*락-*/
-        {
-            lock_guard<mutex> lockGuard(m_Mutex);
-            capturedPath = m_SourcePath; /*소스 패스 넣어주기*/
-            m_LastErrorMsg.clear();
-            m_LoadingTask = shared_future<ResourceVariant>{};
-            capturedGeneration = ++m_Generation;
-        }
+        // 요청 세대
+        capturedGeneration = ++m_Generation;
 
-        m_LoadingTask = scheduleFunc([loaderFunc, capturedPath, capturedGeneration, this]() -> ResourceVariant
+        m_LoadingTask = shared_future<ResourceVariant>{};
+    }
+
+    shared_future<ResourceVariant> futureLocal =
+        scheduleFunc([loaderFunc, capturedPath, capturedGeneration, this]() -> ResourceVariant
             {
                 string errorMsgLocal;
                 ResourceVariant loadedVariant = loaderFunc(capturedPath, errorMsgLocal);
@@ -40,16 +40,25 @@ bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc, const Schedul
                 if (!errorMsgLocal.empty())
                 {
                     lock_guard<mutex> lockGuard(m_Mutex);
-                    // 세대가 바뀌었으면 Reset 
                     if (capturedGeneration == m_Generation)
                         m_LastErrorMsg = errorMsgLocal;
                 }
+
                 return loadedVariant;
             });
 
-        return true;
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+
+        if (capturedGeneration != m_Generation)
+            return false;
+
+        m_LoadingTask = std::move(futureLocal);
     }
+
+    return true;
 }
+
 
 void CResourceEntry::Wait_AsyncDone()
 {
@@ -62,6 +71,23 @@ void CResourceEntry::Wait_AsyncDone()
         taskCopy.wait();
 }
 
+void CResourceEntry::Wait_AndPump()
+{
+    shared_future<ResourceVariant> taskCopy;
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        taskCopy = m_LoadingTask;
+    }
+
+    if (!taskCopy.valid())
+        return; 
+
+    taskCopy.wait();
+
+   
+    Pump_CompletedOnly(); 
+}
+
 void CResourceEntry::Pump_CompletedOnly()
 {
     // Loading이 아니면 할 게 없음
@@ -71,14 +97,15 @@ void CResourceEntry::Pump_CompletedOnly()
     shared_future<ResourceVariant> loadingTaskCopy;
     {
         lock_guard<mutex> lockGuard(m_Mutex);
-        loadingTaskCopy = m_LoadingTask;
+        if (!m_LoadingTask.valid())
+            return;
+
+        if (m_LoadingTask.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+            return;
+
+        loadingTaskCopy = std::move(m_LoadingTask);
+        m_LoadingTask = std::shared_future<ResourceVariant>{};
     }
-
-    if (!loadingTaskCopy.valid())
-        return;
-
-    if (loadingTaskCopy.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
-        return;
 
     ResourceVariant loadedVariant = std::monostate{};
     string errorMsg;
@@ -101,7 +128,7 @@ void CResourceEntry::Pump_CompletedOnly()
     lock_guard<mutex> lockGuard(m_Mutex);
 
     // LoadingTask 정리
-    m_LoadingTask = shared_future<ResourceVariant>{};
+  //  m_LoadingTask = shared_future<ResourceVariant>{};
 
     // 기존 리소스 교체
     ReleaseVariant_NoLock(m_Resource);
@@ -113,7 +140,7 @@ void CResourceEntry::Pump_CompletedOnly()
         m_State.store(LoadState::Failed, memory_order_release);
         return;
     }
-
+    ++m_Generation;
     m_Resource = loadedVariant;
     m_State.store(LoadState::Ready, memory_order_release);
 }

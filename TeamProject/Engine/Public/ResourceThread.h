@@ -9,7 +9,7 @@ using Level_Resource = vector<unordered_map<string, CResourceEntry*>>;
 class ENGINE_DLL CResourceThread final :
 	public IResourceService
 {
-	enum RESOURCE { TEXTURE, MODELDATA, VI_BUFFER, RESOURCE_TYPE_COUNT };
+	enum RESOURCE { TEXTURE, MODELDATA, VI_BUFFER,MATERIALS, SHADER, RESOURCE_TYPE_COUNT };
 
 private:
 	CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -39,13 +39,17 @@ public:
 
 public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
-	void Pump_AllEntries_MainThread();
+	void Pump_AllEntries_MainThread() override;
 public:
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
 	virtual string Get_ResourcePath(const string& resourceKey) override;
-
+	
 public:
 	shared_future<ResourceVariant> Schedule(JobFunc jobFunc);
+
+private:
+	vector<CMaterialInstance*> Make_MaterialHandles(const vector<CMaterialData*>& dataList);
+	vector<CMaterialData*>* GetOrLoad_MaterialData(const string& levelTag, const string& fileKey,_bool wait = false);
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -63,7 +67,7 @@ private:
 
 	CTexture* m_DefaultTexture = { nullptr };
 	CModelData* m_DefaultModel = { nullptr };
-	
+	vector<CMaterialData*>* m_DefaultMaterial = { nullptr };
 public:
 	static CResourceThread* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

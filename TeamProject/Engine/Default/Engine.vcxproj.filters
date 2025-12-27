@@ -522,8 +522,8 @@
     </ClInclude>
     <ClInclude Include="..\Public\Resource_Blobs.h">
       <Filter>01. Utility\05. Resources\ThreadResource</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Engine_RenderStruct.h">
-        </ClInclude>
       <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
@@ -977,8 +977,8 @@
     </Filter>
     <Filter Include="01. Utility\05. Resources\ThreadResource\00. Manager">
       <UniqueIdentifier>{ba857d00-ea11-4520-a65d-af3d7bc5c87f}</UniqueIdentifier>
-     </Filter>
-     <Filter Include="01. Utility\06. RenderSystem\PipeLine">
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine">
       <UniqueIdentifier>{b267731d-cc26-43cc-b3ea-3edd1dee13eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>

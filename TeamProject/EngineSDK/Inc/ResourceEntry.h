@@ -51,6 +51,7 @@ public:
     }
     bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
     void Wait_AsyncDone();
+    void Wait_AndPump();
     void Pump_CompletedOnly(); // 메인 스레드 전용
     void Pump();
     void Reset();
@@ -143,7 +144,7 @@ public:
 
     // ===== Error / Control =====
     string m_LastErrorMsg;
-    _uint m_Generation = 0; // Reset 중 결과 무효화용(쓰면 cpp에서도 체크)
+    _uint m_Generation = 0;
 
 
     static void ReleaseVariant_NoLock(ResourceVariant& variantValue)

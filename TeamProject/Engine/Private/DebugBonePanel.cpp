@@ -31,8 +31,10 @@ void CDebugBonePanel::Render_GUI()
 	if (!pSkeletalModel) {
 		if (pStaticModel) {
 			pData = pStaticModel->Get_ModelData();
+			if(pData){
 			if (!pData->isSkinned())
 				return;
+			}
 		}
 		else
 		{

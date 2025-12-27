@@ -152,12 +152,13 @@ HRESULT CStaticModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 void CStaticModel::Render_GUI()
 {
     ImGui::SeparatorText("Static Model");
+    if (!m_pData)
+        return;
     const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
     const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4))
         + (ImGui::GetStyle().WindowPadding.y * 2);
 
     ImGui::BeginChild("##Static ModelChild", ImVec2{ 0, childHeight }, true);
-
     m_pData->Render_GUI();
 
     const size_t meshCount = m_pData->Get_MeshCount();
@@ -216,20 +217,22 @@ void CStaticModel::Check_Entry()
 {
     if (!m_pEntry) return;
 
-    const uint64_t currentGen = m_pEntry->GetGenerationCopy();
-    if (m_LastGen == currentGen && m_pData)
+    const _uint currentGen = m_pEntry->GetGenerationCopy();
+    if (m_LastGen == currentGen)
         return;
+
+    CModelData* newData = m_pEntry->Acquire<CModelData>();
+    if (!newData)
+        return; 
 
     m_LastGen = currentGen;
 
     Safe_Release(m_pData);
-
-    m_pData = m_pEntry->Acquire<CModelData>();
-    if (!m_pData)
-        return;
+    m_pData = newData;
 
     m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 }
+
 
 CStaticModel* CStaticModel::Create()
 {

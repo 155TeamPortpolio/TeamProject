@@ -7,13 +7,9 @@
 #include "Sprite2D.h"
 _uint CMaterialData::s_NextID = 1;
 
-
 CMaterialData::CMaterialData()
 	:m_MaterialDataID(s_NextID++)
 {
-	if (s_NextID > 4000) {
-		int i = 0;
-	}
 	m_DefaultMaterialConstant.vMtrlAmbient = { 0.5f,0.5f,0.5f,1.f };
 }
 
@@ -27,7 +23,7 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 	string parentFolder = filesystem::path(directory).parent_path().string();
 	string ParentName = filesystem::path(parentFolder).filename().string();
 	//string parentFolder = filesystem::path(directory).di.string();
-	
+	m_LevelKey = levelKey;
 	ifs.read(reinterpret_cast<char*>(&infoHeader), sizeof(infoHeader));
 
 	m_DefaultMaterialConstant = infoHeader.materialConstant;
@@ -40,7 +36,7 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 	{
 		TEXTURE_FILE_HEADER textureHeader = {};
 		ifs.read(reinterpret_cast<char*>(&textureHeader), sizeof(TEXTURE_FILE_HEADER));
-		for (size_t i = 0; i < textureHeader.TextureCount; i++)
+		for (size_t j = 0; j < textureHeader.TextureCount; j++)
 		{
 			TEXTURE_INFO_HEADER textureInfoHeader = {};
 			ifs.read(reinterpret_cast<char*>(&textureInfoHeader), sizeof(TEXTURE_INFO_HEADER));
@@ -55,35 +51,37 @@ HRESULT CMaterialData::Initialize(const string& levelKey, ifstream& ifs, const s
 	return S_OK;
 }
 
-void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>& TextureIndexs)
+void CMaterialData::ApplyData(ID3D11DeviceContext* pContext, const vector<_uint>& textureIndexList)
 {
-	if(TextureIndexs.size() < MAX_TEXTURE_TYPE_VALUE) return;
+	if (textureIndexList.size() < MAX_TEXTURE_TYPE_VALUE) return;
 
-	SHADER_PARAM param = {};
+	SHADER_PARAM param{};
 	param.typeName = "Texture2D";
 	param.iSize = 0;
 
-	for (_uint i = 0; i < MAX_TEXTURE_TYPE_VALUE; ++i)
+	for (_uint typeIndex = 0; typeIndex < MAX_TEXTURE_TYPE_VALUE; ++typeIndex)
 	{
-		param.pData = nullptr; // 루프 시작마다 리셋
-		auto it = m_Textures.find(static_cast<TEXTURE_TYPE>(i));
+		const TEXTURE_TYPE textureType = static_cast<TEXTURE_TYPE>(typeIndex);
 
-		if (it != m_Textures.end())
+		if (!m_TextureResolved[textureType])
+			Resolve_Textures(m_LevelKey, textureType);
+
+		ID3D11ShaderResourceView* srv = nullptr;
+
+		auto iteratorTextureVec = m_Textures.find(textureType);
+		if (iteratorTextureVec != m_Textures.end())
 		{
-			if (it->second.empty())
-				continue;
-			_uint texIndex = TextureIndexs[i];
-			if (texIndex < it->second.size())
-				param.pData = it->second[texIndex]->Get_SRV();
-			else
-				param.pData = it->second[0]->Get_SRV();
-		}
-		else
-		{
-			param.pData = nullptr;
+			const auto& textureVec = iteratorTextureVec->second;
+			if (!textureVec.empty())
+			{
+				const _uint wantedIndex = textureIndexList[typeIndex];
+				const _uint safeIndex = (wantedIndex < textureVec.size()) ? wantedIndex : 0;
+				srv = textureVec[safeIndex] ? textureVec[safeIndex]->Get_SRV() : nullptr;
+			}
 		}
 
-		m_pShader->Bind_Value(ConvertToConstant(static_cast<TEXTURE_TYPE>(i)), param);
+		param.pData = srv;
+		m_pShader->Bind_Value(ConvertToConstant(textureType), param);
 	}
 }
 
@@ -146,33 +144,86 @@ void CMaterialData::Render_GUI( vector<_uint>& TextureIndexs)
 			ImGui::Separator();
 		}
 	}
-
-
 }
-HRESULT CMaterialData::Link_Texture(const string& levelKey, const string& textureKey, TEXTURE_TYPE eType)
+
+//HRESULT CMaterialData::Link_Texture(const string& levelKey, const string& textureKey, TEXTURE_TYPE eType)
+//{
+//	auto& textureList = m_Textures[eType];
+//	for (auto* pTex : textureList)
+//	{
+//		if (pTex && pTex->Get_Key() == textureKey)
+//		{
+//			return S_OK;
+//		}
+//	}
+//
+//	// 새로운 텍스처 로드
+//	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey, eType==TEXTURE_TYPE::DIFFUSE);
+//	if (!pTexture)
+//	{
+//		//MSG_BOX("There is no Texture Key : Link_Texture");
+//		return E_FAIL;
+//	}
+//
+//	textureList.push_back(pTexture);
+//	Safe_AddRef(pTexture);
+//
+//	return S_OK;
+//}
+
+HRESULT CMaterialData::Link_Texture(const string& levelKey, const string& textureKey, TEXTURE_TYPE textureType)
 {
-	auto& textureList = m_Textures[eType];
-	for (auto* pTex : textureList)
+	const _uint textureTypeIndex = static_cast<_uint>(textureType);
+	auto& keyList = m_TextureKeys[textureTypeIndex];
+
+	for (const string& reservedKey : keyList)
 	{
-		if (pTex && pTex->Get_Key() == textureKey)
-		{
+		if (reservedKey == textureKey)
 			return S_OK;
-		}
 	}
 
-	// 새로운 텍스처 로드
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey, eType==TEXTURE_TYPE::DIFFUSE);
-	if (!pTexture)
-	{
-		//MSG_BOX("There is no Texture Key : Link_Texture");
-		return E_FAIL;
-	}
+	keyList.push_back(textureKey);
 
-	textureList.push_back(pTexture);
-	Safe_AddRef(pTexture);
+	const bool isSRGB = (textureType == TEXTURE_TYPE::DIFFUSE);
+	(void)CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, textureKey, isSRGB);
+	m_TextureResolved[textureType] = false;
 
 	return S_OK;
 }
+
+HRESULT CMaterialData::Resolve_Textures(const string& levelKey, TEXTURE_TYPE textureType)
+{
+	if (m_TextureResolved[textureType])
+		return S_OK;
+
+	auto& keyList = m_TextureKeys[ENUM(textureType)];
+	auto& textureList = m_Textures[textureType];
+
+	if (textureList.size() != keyList.size())
+		textureList.assign(keyList.size(), nullptr);
+
+	for (size_t keyIndex = 0; keyIndex < keyList.size(); ++keyIndex)
+	{
+		if (textureList[keyIndex] != nullptr)
+			continue;
+
+		const string& textureKey = keyList[keyIndex];
+
+		CTexture* loadedTexture =
+			CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(
+				levelKey, textureKey, textureType == TEXTURE_TYPE::DIFFUSE);
+
+		if (loadedTexture == nullptr)
+			continue;
+
+		textureList[keyIndex] = loadedTexture;
+		Safe_AddRef(loadedTexture);
+	}
+
+	m_TextureResolved[textureType] = true;
+	return S_OK;
+}
+
 
 HRESULT CMaterialData::Link_Shader(const string& levelKey, const string& shaderKey)
 {
@@ -185,7 +236,6 @@ HRESULT CMaterialData::Link_Shader(const string& levelKey, const string& shaderK
 	Safe_AddRef(m_pShader);
 	return S_OK;
 }
-
 
 string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 {
@@ -281,7 +331,6 @@ string CMaterialData::ConvertToConstant(TEXTURE_TYPE eType)
 	}
 	return string();
 }
-
 
 CMaterialData* CMaterialData::Create(const string& levelKey, ifstream& ifs, const string& directory)
 {

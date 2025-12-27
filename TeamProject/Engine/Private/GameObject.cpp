@@ -326,8 +326,12 @@ HRESULT CGameObject::Make_OpaquePacket()
 		if (!packet.pModel->isDrawable(i)) continue;
 		packet.DrawIndex = i;
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
+		CMaterialInstance* instance = packet.pMaterial
+			? packet.pMaterial->Get_MaterialInstance(packet.MaterialIndex)
+			: nullptr;
 
-		if (packet.pMaterial->Get_MaterialInstance(packet.MaterialIndex)->IsBlened()) {
+		if (instance && instance->IsBlened())
+		{
 			Make_BlendedPacket(packet);
 		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_OPAQUE)

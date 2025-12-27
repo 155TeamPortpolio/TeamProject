@@ -257,6 +257,9 @@ void CSkeletalModel::Hide_MehsByName(const string& name)
 void CSkeletalModel::Render_GUI()
 {
 	ImGui::SeparatorText("Skeletal Model");
+	if (!m_pData)
+		return;
+
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * (m_pData->Get_MeshCount() + 4))
 		+ (ImGui::GetStyle().WindowPadding.y * 2);
@@ -324,43 +327,51 @@ void CSkeletalModel::Check_Entry()
 	if (!m_pEntry) return;
 
 	const _uint currentGen = m_pEntry->GetGenerationCopy();
+
 	if (m_LastGen == currentGen && m_pData)
+		return;
+
+	CModelData* newData = m_pEntry->Acquire<CModelData>();
+	if (!newData)
+		return;
+
+	if (newData == m_pData && m_LastGen == currentGen)
 		return;
 
 	m_LastGen = currentGen;
 
 	Safe_Release(m_pData);
-
-	m_pData = m_pEntry->Acquire<CModelData>();
-	if (!m_pData)
-		return;
+	m_pData = newData;
 
 	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 
-	_float4x4 IdentityMatrix;
-	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
-	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	_float4x4 identityMatrix;
+	XMStoreFloat4x4(&identityMatrix, XMMatrixIdentity());
 
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		m_TransfromationMatrices[i] = m_pData->Get_TransformMatrix(i);
-	}
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		int parent = m_pData->Get_BoneParentIndex(i);
+	const size_t boneCount = m_pData->Get_BoneCount();
+	m_TransfromationMatrices.assign(boneCount, identityMatrix);
+	m_CombinedMatrices.assign(boneCount, identityMatrix);
+	m_ManipulateMatrices.assign(boneCount, identityMatrix);
 
-		if (parent == -1) {
-			m_CombinedMatrices[i] = m_TransfromationMatrices[i];
+	for (size_t boneIndex = 0; boneIndex < boneCount; ++boneIndex)
+		m_TransfromationMatrices[boneIndex] = m_pData->Get_TransformMatrix(boneIndex);
+
+	for (size_t boneIndex = 0; boneIndex < boneCount; ++boneIndex)
+	{
+		const int parentIndex = m_pData->Get_BoneParentIndex(boneIndex);
+		if (parentIndex == -1)
+		{
+			m_CombinedMatrices[boneIndex] = m_TransfromationMatrices[boneIndex];
 		}
-		else {
-			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
-			_matrix MyTransformation = XMLoadFloat4x4(&m_TransfromationMatrices[i]);
-			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
+		else
+		{
+			const _matrix parentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parentIndex]);
+			const _matrix myTransform = XMLoadFloat4x4(&m_TransfromationMatrices[boneIndex]);
+			XMStoreFloat4x4(&m_CombinedMatrices[boneIndex], myTransform * parentCombine);
 		}
 	}
 }
+
 
 CSkeletalModel* CSkeletalModel::Create()
 {
