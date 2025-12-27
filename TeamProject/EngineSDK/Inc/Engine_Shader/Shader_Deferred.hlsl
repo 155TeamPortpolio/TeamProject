@@ -45,6 +45,9 @@ vector g_vLightSpecular;
 vector g_vMtrlAmbient = 1.f;
 vector g_vMtrlSpecular = 1.f;
 
+float g_FogDensity;
+float4 g_FogColor;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -189,6 +192,44 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_FOG(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vScene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fViewZ = vDepthDesc.y * zFar;
+    
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+    
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float3 vViewDir = vWorldPos.xyz - vCamPosition.xyz;
+    float fDistance = length(vViewDir);
+    
+    float fFogFactor = exp(-g_FogDensity * fDistance);
+    
+    fFogFactor = saturate(fFogFactor);
+    fFogFactor = lerp(0.3f, 1.0f, fFogFactor);
+    
+    float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
+  
+    if (vDepthDesc.x >= 0.9999f)
+    {
+        vFoggedColor = vScene;
+    }
+    
+    Out.vResult = vFoggedColor;
+    
+    return Out;
+}
 
 PS_OUT_RESULT PS_BACKRIMLIGHT(PS_IN In)
 {
@@ -805,6 +846,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
+    }
+
+    pass Fog
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_FOG();
     }
 
     pass Directional

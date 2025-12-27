@@ -12,9 +12,13 @@ private:
     HRESULT Initialize(class CTarget_Manager* pTargetManager, class CPipeLine* pPipeLine);
 
 public:
+    void Set_FogDesc(FOG_DESC desc) { fogDesc = desc; };
+
+public:
     HRESULT Render_EffectBloom();
     HRESULT Render_HDRBloom();
     HRESULT Render_Distortion();
+    HRESULT Render_Fog();
     HRESULT Render_Final();
     void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command);
 
@@ -30,6 +34,7 @@ private:
 private:
     ID3D11ShaderResourceView* m_pDistortionNoiseTexture = { nullptr };
     vector<POST_PROCESS_COMMAND> m_PostCommands;
+    FOG_DESC fogDesc;
 
 public:
     static CPostRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

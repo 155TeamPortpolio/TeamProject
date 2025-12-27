@@ -73,7 +73,8 @@ HRESULT CPostRenderer::Render_HDRBloom()
 	{
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_HDR_Bright"))) return E_FAIL;
 
-		m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+		if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "g_FinalTexture");
+		else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
 
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "HDR_BRIGHT", &pLayout);
@@ -143,13 +144,40 @@ HRESULT CPostRenderer::Render_Distortion()
 	return S_OK;
 }
 
+HRESULT CPostRenderer::Render_Fog()
+{
+	if (fogDesc.IsUse == false) return S_OK;
+
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Fog"))) return E_FAIL;
+
+	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
+	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+
+	m_pShader->Bind_Value("g_FogDensity", { &fogDesc.fogDensity, "float", sizeof(_float) });
+	m_pShader->Bind_Value("g_FogColor", { &fogDesc.fogColor, "float4", sizeof(_float4) });
+
+	ID3D11InputLayout* pLayout;
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Fog", &pLayout);
+	m_pContext->IASetInputLayout(pLayout);
+
+	m_pShader->Apply("Fog", m_pContext);
+	m_pVIBuffer->Bind_Buffer(m_pContext);
+	m_pVIBuffer->Render(m_pContext);
+
+	m_pTargetManager->End_MRT();
+
+	return S_OK;
+}
+
 HRESULT CPostRenderer::Render_Final()
 {
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Final", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+	if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "g_FinalTexture");
+	else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "g_HDRBloomFinalTexture");
 	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
@@ -202,6 +230,9 @@ HRESULT CPostRenderer::Ready_Target()
 	RenderTargetDesc DistortionAddDesc = { "Target_Distortion_Add" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.5f, 0.5f, 0.5f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DistortionAddDesc);
 
+	RenderTargetDesc FogDesc = {"Target_Fog",DXGI_FORMAT_R16G16B16A16_FLOAT,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f),ViewportDesc.Width,ViewportDesc.Height};
+	m_pTargetManager->Create_Target(FogDesc);
+
 	return S_OK;
 }
 
@@ -216,6 +247,10 @@ HRESULT CPostRenderer::Ready_MRT()
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add"))) return E_FAIL;
+	}
+
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Fog", "Target_Fog"))) return E_FAIL;
 	}
 
 	{

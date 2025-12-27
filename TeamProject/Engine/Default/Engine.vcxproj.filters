@@ -511,6 +511,9 @@
     <ClInclude Include="..\Public\MeshEffectModule.h">
       <Filter>01. Utility\03. GameObject\Effect\Node\Mesh</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Engine_RenderStruct.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="99. Defines">
