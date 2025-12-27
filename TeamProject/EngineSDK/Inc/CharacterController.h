@@ -135,8 +135,8 @@ private:
     PxControllerManager*     m_pManager = { nullptr };
     PxMaterial*              m_pMaterial = { nullptr };
     PxFilterData             m_FilterData = {};
-    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     PxFilterData             m_QueryFilterData = {};
+    CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
     Vector3                  m_vVelocity = { 0.f, 0.f, 0.f };
