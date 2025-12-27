@@ -27,6 +27,7 @@ public:
 
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
+    virtual void Set_FogDesc(FOG_DESC desc)PURE;
 
 public:
     virtual class CPipeLine* Get_Pipeline()PURE;

@@ -40,6 +40,7 @@ private:
     class CTexture* m_pRampTexture;
     RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
+
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
         CTarget_Manager* pTargetManager, CPipeLine* pPipeLine);

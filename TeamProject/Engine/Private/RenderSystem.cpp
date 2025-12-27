@@ -79,8 +79,9 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_OutLine();
 
 	m_pUI->Render_2D(m_pUIPass);
-	m_pPost->Render_EffectBloom();
+	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
+	m_pPost->Render_EffectBloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
@@ -98,6 +99,11 @@ CRenderSystem* CRenderSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext*
 		Safe_Release(Instance);
 	}
 	return Instance;
+}
+
+void CRenderSystem::Set_FogDesc(FOG_DESC desc)
+{
+	m_pPost->Set_FogDesc(desc);
 }
 
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
