@@ -220,36 +220,38 @@ public:
 
 // ───────── Builder
 
-class ENGINE_DLL SetAnimBuild {
+template <typename T>
+class AnimBuild {
 public:
-    SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
-        :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
-    ~SetAnimBuild() { if (!m_bApplied) Apply(); };
-    
-    SetAnimBuild(const SetAnimBuild&) = delete;
-    SetAnimBuild& operator=(const SetAnimBuild&) = delete;
+    T& Loop(_bool bLoop) {
+        m_bLoop = bLoop;
+        return static_cast<T&>(*this);
+    }
 
-public:
-    virtual HRESULT Apply();
+    T& Speed(_float fSpeed) {
+        m_fSpeed = fSpeed;
+        return static_cast<T&>(*this);
+    }
 
-    //---------- 기본 속성
-    
-    //애니매이션을 반복재생할건지
-    SetAnimBuild& Loop(_bool bLoop);
-    //애니매이션 재생속도 (TransitionSpeed랑 마지막에 부른거로 덮어씌임)
-    SetAnimBuild& Speed(_float fSpeed);
-    //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
-    SetAnimBuild& TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear);
-    //애니매이션 속도를 보간변경 (무조건 변경시점부터 진행, Speed랑 겹침)
-    SetAnimBuild& Pause(_bool bPause);
+    T& TransitionSpeed(_float fStartSpeed,
+        _float fTargetSpeed,
+        _float fDuration,
+        EaseType eEaseType = EaseType::Linear)
+    {
+        m_fSpeed = fStartSpeed;
+        m_fTargetSpeed = fTargetSpeed;
+        m_fEaseDuration = fDuration;
+        m_ePlayEaseType = eEaseType;
 
+        return static_cast<T&>(*this);
+    }
+
+    T& Pause(_bool bPause) {
+        m_bPause = bPause;
+        return static_cast<T&>(*this);
+    }
+ 
 protected:
-    CAnimator3D* m_pOwner = nullptr;
-    _int m_iLayerIndex = -1;
-    _int m_iClipIndex = -1;
-    _bool m_bApplied = false;
-
-    //---------- 기본 속성
     _bool    m_bLoop = false;
     _bool    m_bPause = false;
     _float   m_fSpeed = 1.f;
@@ -258,27 +260,65 @@ protected:
     _float   m_fEaseDuration = { 0.f };
 };
 
-class ENGINE_DLL ChangeAnimBuild : public SetAnimBuild {
+
+class ENGINE_DLL SetAnimBuild
+    : public AnimBuild<SetAnimBuild> {
+public:
+    SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
+        :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
+    ~SetAnimBuild() DEFAULT;
+    
+    SetAnimBuild(const SetAnimBuild&) = delete;
+    SetAnimBuild& operator=(const SetAnimBuild&) = delete;
+
+public:
+    HRESULT Apply();
+
+protected:
+    CAnimator3D* m_pOwner = nullptr;
+    _int m_iLayerIndex = -1;
+    _int m_iClipIndex = -1;
+    _bool m_bApplied = false;
+
+};
+
+class ENGINE_DLL ChangeAnimBuild
+    : public AnimBuild<ChangeAnimBuild> {
 public:
     ChangeAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
-        :SetAnimBuild(LayerIndex, ClipIndex, Owner) {}
+        : m_iLayerIndex(LayerIndex), m_iClipIndex(ClipIndex), m_pOwner(Owner) {
+    }
     ~ChangeAnimBuild() DEFAULT;
 
     ChangeAnimBuild(const ChangeAnimBuild&) = delete;
     ChangeAnimBuild& operator=(const ChangeAnimBuild&) = delete;
 
 public:
-    virtual HRESULT Apply() override;
+    HRESULT Apply();
     //---------- 애니매이션 블랜드 속성
 
     //애니매이션 전환시간
-    ChangeAnimBuild& BlendDuration(_float fDuration);
+    ChangeAnimBuild& BlendDuration(_float fDuration) {
+        m_fBlendDuration = fDuration;
+        return *this;
+    }
     //애니매이션 전환 가중치 이징
-    ChangeAnimBuild& BlendWeightEaseType(EaseType eEaseType);
+    ChangeAnimBuild& BlendWeightEaseType(EaseType eEaseType) {
+        m_eBlendEaseType = eEaseType;
+        return *this;
+    }
     //애니매이션을 변경하면서 이전 클립의 트랙포지션을 같이 사용해서 섞을건지
-    ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos);
+    ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos) {
+        m_bKeepTrackPos = bKeepTrackPos;
+        return *this;
+    }
 
 protected:
+    CAnimator3D* m_pOwner = nullptr;
+    _int m_iLayerIndex = -1;
+    _int m_iClipIndex = -1;
+    _bool m_bApplied = false;
+
     _float      m_fBlendDuration = 0.2f;
     _bool       m_bKeepTrackPos = false;
     EaseType    m_eBlendEaseType = { EaseType::Linear };

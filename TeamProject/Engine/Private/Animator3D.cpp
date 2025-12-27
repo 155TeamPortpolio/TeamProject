@@ -927,38 +927,7 @@ HRESULT SetAnimBuild::Apply()
 
 	Layer.bisFinished = false;
 
-	m_bApplied = true;
 	return S_OK;
-}
-
-SetAnimBuild& SetAnimBuild::Loop(_bool bLoop)
-{
-	m_bLoop = bLoop;
-
-	return *this;
-}
-
-SetAnimBuild& SetAnimBuild::Speed(_float fSpeed)
-{
-	m_fSpeed = fSpeed;
-
-	return *this;
-}
-
-SetAnimBuild& SetAnimBuild::TransitionSpeed(_float fStartSpeed, _float fTargetSpeed, _float fDuration, EaseType eEaseType)
-{
-	m_fSpeed = fStartSpeed;
-	m_fTargetSpeed = fTargetSpeed;
-	m_fEaseDuration = fDuration;
-	m_ePlayEaseType = eEaseType;
-
-	return *this;
-}
-
-SetAnimBuild& SetAnimBuild::Pause(_bool bPause)
-{
-	m_bPause = bPause;
-	return *this;
 }
 
 //---------- ++ChangeAnim Options
@@ -1001,25 +970,5 @@ HRESULT ChangeAnimBuild::Apply()
 
 	Layer.bisFinished = false;
 
-	m_bApplied = true;
 	return S_OK;
 }
-
-ChangeAnimBuild& ChangeAnimBuild::BlendDuration(_float fDuration)
-{
-	m_fBlendDuration = fDuration;
-	return *this;
-}
-
-ChangeAnimBuild& ChangeAnimBuild::BlendWeightEaseType(EaseType eEaseType)
-{
-	m_eBlendEaseType = eEaseType;
-	return *this;
-}
-
-ChangeAnimBuild& ChangeAnimBuild::KeepTrackPos(_bool bKeepTrackPos)
-{
-	m_bKeepTrackPos = bKeepTrackPos;
-	return *this;
-}
-

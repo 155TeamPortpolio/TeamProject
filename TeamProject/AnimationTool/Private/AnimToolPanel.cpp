@@ -149,7 +149,8 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					m_CurClipTag = ClipTag;
 					m_iCurClipIndex = iIndex;
 					m_pSelectAnimator->Set_Animation(0, iIndex)
-						.Loop(m_bLoop);
+						.Loop(m_bLoop)
+						.Apply();
 					
 					//디버그용 레이어에 데이터넣기
 					auto& Clip = (*m_pSelectAnimator->Get_Clips())[iIndex];
@@ -469,7 +470,8 @@ void CAnimToolPanel::GUI_Preview(_float fChildHeight)
 				m_pSelectAnimator->Get_AnimLayers()[0].fCurrentTrackPosition = 0.f;
 				m_pSelectAnimator
 					->Set_Animation(m_PreviewList[0])
-					.Loop(false);
+					.Loop(false)
+					.Apply();
 			}
 		}
 		else // Stop
