@@ -40,6 +40,7 @@ public:
 #pragma region RenderTarget
 public:
 	virtual void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUSTOMTARGET eCustom) override;
+	virtual void Add_OutLineCommand(const OUTLINE_COMMAND& command) override;
 	virtual void Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)override;
 	virtual ID3D11ShaderResourceView* Get_CustomTargetSRV(const string strTag) override;
 	virtual ID3D11ShaderResourceView* Get_EngineTargetSRV(const string strTag) override;

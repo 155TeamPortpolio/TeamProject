@@ -150,6 +150,11 @@ void CRenderSystem::Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command, CUST
 	}
 }
 
+void CRenderSystem::Add_OutLineCommand(const OUTLINE_COMMAND& command)
+{
+	m_pForward->Add_OutLineCommand(command);
+}
+
 void CRenderSystem::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
 {
 	m_pPost->Add_PostProcessCommand(command);

@@ -38,7 +38,6 @@ private:
 private:
     ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
     class CTexture* m_pRampTexture;
-
     RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
 public:

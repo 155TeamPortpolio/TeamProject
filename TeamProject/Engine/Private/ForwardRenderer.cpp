@@ -438,12 +438,27 @@ HRESULT CForwardRenderer::Process_OutLineQueue()
 		return S_OK;
 	}
 
+	ID3D11DepthStencilView* pDeferredDSV =
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
+
+	ID3D11RenderTargetView* pPrevRTV = { nullptr };
+	ID3D11DepthStencilView* pPrevDSV = { nullptr };
+	m_pContext->OMGetRenderTargets(1, &pPrevRTV, &pPrevDSV);
+	m_pContext->OMSetRenderTargets(1, &pPrevRTV, pDeferredDSV);
+
 	for (auto& cmd : m_OutLineCommands)
 	{
 		cmd.pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		cmd.pShader->Bind_Value("g_worldMatrix", { cmd.pWorldMatrix, "float4x4", sizeof(_float4x4) });
-		cmd.DrawCall(m_pContext);
+		cmd.pShader->Bind_Value("g_OutLineBoneMatrices", { cmd.BoneParam.data(), cmd.typeName, cmd.iSize});
+
+		cmd.DrawCall(m_pContext, cmd.MeshIdx);
 	}
+	ID3D11RenderTargetView* pRTVs[8] = { pPrevRTV };
+	m_pContext->OMSetRenderTargets(8, pRTVs, pPrevDSV);
+
+	Safe_Release(pPrevRTV);
+	Safe_Release(pPrevDSV);
 
 	m_OutLineCommands.clear();
 

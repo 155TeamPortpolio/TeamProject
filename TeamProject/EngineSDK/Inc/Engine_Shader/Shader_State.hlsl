@@ -56,40 +56,38 @@ DepthStencilState DSS_None
     DepthWriteMask = zero;
 };
 
+
 DepthStencilState DSS_WriteStencil
 {
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-    
-    StencilEnable = true;
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+
+    StencilEnable = TRUE;
     StencilReadMask = 0xff;
     StencilWriteMask = 0xff;
-    
-    FrontFaceStencilFunc = always;
-    FrontFaceStencilPass = replace;
-    FrontFaceStencilFail = keep;
-    BackFaceStencilFunc = always;
-    BackFaceStencilPass = replace;
-    BackFaceStencilFail = keep;
+
+    FrontFaceStencilFunc = Always;
+    FrontFaceStencilPass = Replace;
+    BackFaceStencilFunc = Always;
+    BackFaceStencilPass = Replace;
 };
 
 DepthStencilState DSS_OutlineStencil
 {
-    DepthEnable = true;
-    DepthWriteMask = all;
-    DepthFunc = less_equal;
-    
-    StencilEnable = true;
+    DepthEnable = TRUE;
+    DepthWriteMask = ZERO;
+    DepthFunc = LESS_EQUAL;
+
+    StencilEnable = TRUE;
     StencilReadMask = 0xff;
-    StencilWriteMask = 0xff;
-    
-    FrontFaceStencilFunc = equal;
-    FrontFaceStencilPass = keep;
-    FrontFaceStencilFail = keep;
-    BackFaceStencilFunc = equal;
-    BackFaceStencilPass = keep;
-    BackFaceStencilFail = keep;
+    StencilWriteMask = 0x00;
+
+    FrontFaceStencilFunc = Not_Equal;
+    FrontFaceStencilPass = Keep;
+    BackFaceStencilFunc = Not_Equal;
+    BackFaceStencilPass = Keep;
+
 };
 
 DepthStencilState DSS_ReadOnly
