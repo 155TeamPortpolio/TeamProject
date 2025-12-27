@@ -35,8 +35,10 @@ HRESULT CBinaryModel::Initialize_Prototype()
 HRESULT CBinaryModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	m_pTexture = CGameInstance::GetInstance()->Get_Thread()->Load_Texture(G_GlobalLevelKey, "Grass.png", false);
 	// 처음엔 DefaultTexture가 오고, 몇 프레임 후 Ready되면 진짜 텍스처가 반환될 거야.
+	CGameInstance::GetInstance()->Get_Thread()->Add_ResourcePath("Common_Decal_Crack_01_01_D.png", "../../Resource/Common_Decal_Crack_01_01_D.png");
+	m_pEntry = CGameInstance::GetInstance()->Get_Thread()->Request_TextureEntry(G_GlobalLevelKey, "Common_Decal_Crack_01_01_D.png");
+	
 	return S_OK;
 }
 
@@ -61,7 +63,7 @@ void CBinaryModel::Late_Update(_float dt)
 
 void CBinaryModel::Render_GUI()
 {
-	ImGui::Image((ImTextureID)m_pTexture->Get_SRV(), { 300,300 });
+	ImGui::Image((ImTextureID)(m_pEntry->Get_NoRef<CTexture>()->Get_SRV()), { 300,300 });
 
 	if(ImGui::Button("Load Model")) {
 		string path = Helper::OpenFile_Dialogue();

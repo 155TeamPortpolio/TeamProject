@@ -57,6 +57,7 @@ _bool CGameInstance::Init_Engine(const ENGINE_DESC& engine)
 	m_pEventSystem = CEventSystem::Create();
 	m_pClickManager = CClickManager::Create(engine.hWnd);
 	m_pResourceThread = CResourceThread::Create(m_pDevice,m_pDeviceContext);
+	m_pResourceThread->Load_InitialResource();
 
 #if defined _USING_GUI
 	m_pGuiSystem = CGUISystem::Create(engine, m_pDevice, m_pDeviceContext);
@@ -74,6 +75,7 @@ void CGameInstance::Notify_LevelSet()
 	m_pObjectManager->Sync_To_Level();
 	m_pResourceManager->Sync_To_Level();
 	m_pUIManager->Sync_To_Level();
+	m_pResourceThread->Sync_To_Level();
 }
 
 void CGameInstance::Update_EngineTimer()

@@ -2,6 +2,10 @@
 #include "GameObject.h"
 #include "Assimps.h"
 
+NS_BEGIN(Engine)
+class CResourceEntry;
+NS_END
+
 NS_BEGIN(ModelEdit)
 class CBinaryModel :
     public CGameObject
@@ -23,7 +27,8 @@ public:
     void Render_GUI() override;
 
 private:
-    CTexture* m_pTexture = { nullptr };
+    //Resouce* m_pTexture = { nullptr };
+   CResourceEntry* m_pEntry = { nullptr };
 public:
     static CBinaryModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

@@ -9,7 +9,8 @@ using Level_Resource = vector<unordered_map<string, CResourceEntry*>>;
 class ENGINE_DLL CResourceThread final :
 	public IResourceService
 {
-	enum RESOURCE { TEXTURE, RESOURCE_TYPE_COUNT };
+	enum RESOURCE { TEXTURE, MODELDATA, RESOURCE_TYPE_COUNT };
+
 private:
 	CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CResourceThread() DEFAULT;
@@ -30,6 +31,11 @@ public:
 	virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectTag) override;
 	virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) override;
 	virtual void Load_InitialResource() override;
+
+public:
+	virtual CResourceEntry* Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType = false);
+	virtual CResourceEntry* Request_ModelEntry(const string& levelTag, const string& modelKey);
+
 public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
 public:
@@ -37,7 +43,6 @@ public:
 public:
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
 	virtual string Get_ResourcePath(const string& resourceKey) override;
-	string MakePath(const string& pathKey);
 
 public:
 	shared_future<ResourceVariant> Schedule(JobFunc jobFunc);
@@ -52,8 +57,12 @@ private:
 	vector<CResourceEntry*> m_PendingDestroyEntries;
 
 private:
-	CTexture* m_DefaultTexture = { nullptr };
 	CThreadPool* m_pThreadPool = { nullptr };
+
+private:
+
+	CTexture* m_DefaultTexture = { nullptr };
+	CModelData* m_DefaultModel = { nullptr };
 
 public:
 	static CResourceThread* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

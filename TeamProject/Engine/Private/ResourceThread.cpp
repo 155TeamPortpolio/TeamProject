@@ -94,13 +94,12 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
 {
     const string entryKey = textureKey;
     CResourceEntry* entry = nullptr;
-
+    
     // 레벨 맵 찾기
     auto iteratorLevel = m_LevelResources.find(levelTag);
     if (iteratorLevel == m_LevelResources.end())
         return m_DefaultTexture;
 
-    Level_Resource& textures = iteratorLevel->second;
     Level_Resource& textures = iteratorLevel->second;
     if (textures.size() < RESOURCE_TYPE_COUNT)
         textures.resize(RESOURCE_TYPE_COUNT);
@@ -140,7 +139,6 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
         LoaderFunc loaderFunc = [sRGBType, device, entryKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
             {
                 errorMsg.clear();
-
                 if (sourcePath.empty())
                 {
                     errorMsg = "Texture sourcePath is empty.";
@@ -193,7 +191,6 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
     return m_DefaultTexture;
 }
 
-
 shared_future<ResourceVariant> CResourceThread::Schedule(JobFunc jobFunc)
 {
     future<ResourceVariant> futureValue =
@@ -227,12 +224,23 @@ CModelData* CResourceThread::Load_ModelData(const string& levelTag, const string
 
 string CResourceThread::Get_ResourcePath(const string& resourceKey)
 {
-	return string();
+    auto iter = m_PathByKey.find(resourceKey);
+    if (iter != m_PathByKey.end()) return iter->second;
+    else return string();
 }
 
 HRESULT CResourceThread::Add_ResourcePath(const string& resourceKey, const string& resourcePath)
 {
-	return S_OK;
+    auto iter = m_PathByKey.find(resourceKey);
+
+    if (iter != m_PathByKey.end()) {
+        string msg = "directory Exist: " + resourceKey + "\n";
+        OutputDebugStringA(msg.c_str());
+        return E_FAIL;
+    }
+
+    m_PathByKey.emplace(resourceKey, resourcePath);
+    return S_OK;
 }
 
 void CResourceThread::Pump_AllEntries_MainThread()
@@ -282,17 +290,176 @@ void CResourceThread::Pump_AllEntries_MainThread()
     }
 }
 
-
 void CResourceThread::Load_InitialResource()
 {
+
     m_DefaultTexture = CTexture::Create(m_pDevice, L"../../DefaultSource/Default.dds", "Default.dds", false);
+    m_DefaultModel = CModelData::Create("../../DefaultSource/Default.model", m_pDevice);
+
 }
 
-string CResourceThread::MakePath(const string& pathKey)
+CResourceEntry* CResourceThread::Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType)
 {
-	return "";
+    const string entryKey = textureKey;
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return nullptr;
+
+    Level_Resource& levelResource = iteratorLevel->second;
+    if (levelResource.size() < RESOURCE_TYPE_COUNT)
+        levelResource.resize(RESOURCE_TYPE_COUNT);
+
+    auto& textureMap = levelResource[ENUM(TEXTURE)];
+
+    CResourceEntry* entry = nullptr;
+    auto iteratorEntry = textureMap.find(entryKey);
+
+    if (iteratorEntry == textureMap.end() || iteratorEntry->second == nullptr)
+    {
+        if (iteratorEntry != textureMap.end() && iteratorEntry->second == nullptr)
+            textureMap.erase(iteratorEntry);
+
+        entry = CResourceEntry::Create();
+        entry->SetFallback(ResourceVariant{ m_DefaultTexture }); 
+        if (!entry) return nullptr;
+
+        entry->SetDebugName(entryKey);
+        entry->SetLevelTag(levelTag);
+
+        auto pathIterator = m_PathByKey.find(textureKey);
+        if (pathIterator != m_PathByKey.end())
+            entry->SetSourcePath(pathIterator->second);
+
+        textureMap.emplace(entryKey, entry);
+    }
+    else
+    {
+        entry = iteratorEntry->second;
+    }
+
+    if (!entry)
+        return nullptr;
+
+    // 소스패스 없으면 디폴트
+    if (entry->GetSourcePathCopy().empty())
+        return nullptr;
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+
+        LoaderFunc loaderFunc = [sRGBType, device, entryKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+                error_code errorCode;
+                if (!filesystem::exists(sourcePath, errorCode))
+                {
+                    errorMsg = "Texture file not found: " + sourcePath;
+                    return monostate{};
+                }
+
+                const wstring widePath = filesystem::path(sourcePath).wstring();
+                CTexture* createdTexture = CTexture::Create(device, widePath.c_str(), entryKey, sRGBType);
+                if (!createdTexture)
+                {
+                    errorMsg = "CTexture::Create failed: " + sourcePath;
+                    return monostate{};
+                }
+
+                return createdTexture;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+
+    return entry;
 }
 
+CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, const string& modelKey)
+{
+    const string entryKey = modelKey;
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return nullptr;
+
+    Level_Resource& levelResource = iteratorLevel->second;
+    if (levelResource.size() < RESOURCE_TYPE_COUNT)
+        levelResource.resize(RESOURCE_TYPE_COUNT);
+
+    auto& modelMap = levelResource[ENUM(MODELDATA)];
+
+    CResourceEntry* entry = nullptr;
+    auto iteratorEntry = modelMap.find(entryKey);
+
+    if (iteratorEntry == modelMap.end() || iteratorEntry->second == nullptr)
+    {
+        if (iteratorEntry != modelMap.end() && iteratorEntry->second == nullptr)
+            modelMap.erase(iteratorEntry);
+
+        entry = CResourceEntry::Create();
+        entry->SetFallback(ResourceVariant{ m_DefaultTexture });
+        if (!entry) return nullptr;
+
+        entry->SetDebugName(entryKey);
+        entry->SetLevelTag(levelTag);
+
+        auto pathIterator = m_PathByKey.find(modelKey);
+        if (pathIterator != m_PathByKey.end())
+            entry->SetSourcePath(pathIterator->second);
+
+        modelMap.emplace(entryKey, entry);
+    }
+    else
+    {
+        entry = iteratorEntry->second;
+    }
+
+    if (!entry)
+        return nullptr;
+
+    // 소스패스 없으면 디폴트
+    if (entry->GetSourcePathCopy().empty())
+        return nullptr;
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+
+        LoaderFunc loaderFunc = [device, entryKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+                error_code errorCode;
+                if (!filesystem::exists(sourcePath, errorCode))
+                {
+                    errorMsg = "Model file not found: " + sourcePath;
+                    return monostate{};
+                }
+
+                CModelData* createdModel = CModelData::Create(sourcePath,device);
+                if (!createdModel)
+                {
+                    errorMsg = "CTexture::Create failed: " + sourcePath;
+                    return monostate{};
+                }
+
+                return createdModel;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+
+    return entry;
+}
 
 void CResourceThread::Clear_Resource(const string& levelTag)
 {
@@ -343,6 +510,23 @@ CResourceThread* CResourceThread::Create(ID3D11Device* pDevice, ID3D11DeviceCont
 
 void CResourceThread::Free()
 {
+    
+    vector<string> levelKeys;
+    levelKeys.reserve(m_LevelResources.size());
+    for (const auto& levelPair : m_LevelResources)
+        levelKeys.push_back(levelPair.first);
+
+    // 2) 레벨 리소스 정리
+    for (const auto& levelKey : levelKeys)
+        Clear_Resource(levelKey);
+
+    Safe_Release(m_pDevice);
+    Safe_Release(m_pContext);
+    Safe_Release(m_pInstance);
+
+    /*디폴트 삭제*/
+    Safe_Release(m_DefaultTexture);
+
     Safe_Release(m_pThreadPool);
-	__super::Free();
+    __super::Free();
 }

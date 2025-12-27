@@ -8,7 +8,7 @@
 #include "Resource_Blobs.h"
 
 NS_BEGIN(Engine)
-class CResourceEntry : public CBase
+class ENGINE_DLL CResourceEntry : public CBase
 {
 private:
     CResourceEntry();
@@ -18,24 +18,45 @@ public:
     TResource* Get_NoRef() const /*레퍼런스 카운트 증가없이 반환하는 함수*/
     {
         lock_guard<mutex> lockGuard(m_Mutex);
-        TResource* const* foundPointer = get_if<TResource*>(&m_Resource);
-        return (foundPointer && *foundPointer) ? *foundPointer : nullptr;
+
+        if (TResource* const* foundPointer = get_if<TResource*>(&m_Resource))
+            if (*foundPointer) return *foundPointer;
+
+        if (TResource* const* fallbackPointer = get_if<TResource*>(&m_FallbackResource))
+            return (fallbackPointer && *fallbackPointer) ? *fallbackPointer : nullptr;
+
+        return nullptr;
     }
 
     template<typename TResource>
     TResource* Acquire() const /*레퍼런스 카운트 있이 반환하는 함수*/
     {
         lock_guard<mutex> lockGuard(m_Mutex);
-        TResource* const* foundPointer = get_if<TResource*>(&m_Resource);
-        if (!foundPointer || !(*foundPointer)) return nullptr;
-        Safe_AddRef(*foundPointer);
-        return *foundPointer;
+
+        TResource* result = nullptr;
+
+        if (TResource* const* foundPointer = get_if<TResource*>(&m_Resource))
+            result = (foundPointer && *foundPointer) ? *foundPointer : nullptr;
+
+        if (!result)
+        {
+            if (TResource* const* fallbackPointer = get_if<TResource*>(&m_FallbackResource))
+                result = (fallbackPointer && *fallbackPointer) ? *fallbackPointer : nullptr;
+        }
+
+        if (!result) return nullptr;
+
+        Safe_AddRef(result);
+        return result;
     }
     bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
     void Pump_CompletedOnly(); // 메인 스레드 전용
     void Pump();
     void Reset();
-
+public:
+    void ForceSetReady(ResourceVariant resourceVariant);
+    void SetFallback(ResourceVariant fallbackVariant);
+ 
 public:
     LoadState GetState() const { return m_State.load(memory_order_acquire); }
     void SetKey(const ResourceKey& resourceKey)
@@ -110,6 +131,7 @@ public:
 
     // ===== Resource Payload =====
     ResourceVariant m_Resource{ monostate{} };
+    ResourceVariant m_FallbackResource{ std::monostate{} }; // 디폴트
     shared_future<ResourceVariant> m_LoadingTask;
 
     // ===== Error / Control =====
@@ -119,13 +141,28 @@ public:
 
     static void ReleaseVariant_NoLock(ResourceVariant& variantValue)
     {
-        if (auto** pointerValue = get_if<CTexture*>(&variantValue)) Safe_Release(*pointerValue);
-        else if (auto** pointerValue = get_if<CModelData*>(&variantValue)) Safe_Release(*pointerValue);
-        else if (auto** pointerValue = get_if<CShader*>(&variantValue)) Safe_Release(*pointerValue);
-        else if (auto** pointerValue = get_if<CMaterialData*>(&variantValue)) Safe_Release(*pointerValue);
-        else if (auto** pointerValue = get_if<CAnimationClip*>(&variantValue)) Safe_Release(*pointerValue);
-        else if (auto** pointerValue = get_if<CSoundData*>(&variantValue)) Safe_Release(*pointerValue);
-        variantValue = monostate{};
+        std::visit([](auto& heldValue)
+            {
+                using HeldType = std::decay_t<decltype(heldValue)>;
+                if constexpr (!std::is_same_v<HeldType, std::monostate>)
+                {
+                    if (heldValue) Safe_Release(heldValue);
+                }
+            }, variantValue);
+
+        variantValue = std::monostate{};
+    }
+
+    static void AddRefVariant_NoLock(ResourceVariant& variantValue)
+    {
+        std::visit([](auto& heldValue)
+            {
+                using HeldType = std::decay_t<decltype(heldValue)>;
+                if constexpr (!std::is_same_v<HeldType, std::monostate>)
+                {
+                    if (heldValue) Safe_AddRef(heldValue);
+                }
+            }, variantValue);
     }
 
     public:

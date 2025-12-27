@@ -163,11 +163,38 @@ void CResourceEntry::Reset()
 
     // 현재 보유 리소스 해제
     ReleaseVariant_NoLock(m_Resource);
+    ReleaseVariant_NoLock(m_FallbackResource);
 
     // 로딩 작업 핸들 정리(진행중이어도 결과는 세대 체크로 버려짐)
     m_LoadingTask = shared_future<ResourceVariant>{};
 
     m_State.store(LoadState::Unloaded, memory_order_release);
+}
+
+void CResourceEntry::ForceSetReady(ResourceVariant resourceVariant)
+
+{
+    lock_guard<mutex> lockGuard(m_Mutex);
+
+    // 기존 것 정리
+    ReleaseVariant_NoLock(m_Resource);
+
+    // 새 값 저장 + AddRef
+    m_Resource = resourceVariant;
+    AddRefVariant_NoLock(m_Resource);
+
+    m_LastErrorMsg.clear();
+    m_LoadingTask = std::shared_future<ResourceVariant>{};
+    m_State.store(LoadState::Ready, std::memory_order_release);
+}
+
+void CResourceEntry::SetFallback(ResourceVariant fallbackVariant)
+{
+        std::lock_guard<std::mutex> lockGuard(m_Mutex);
+
+        ReleaseVariant_NoLock(m_FallbackResource);
+        m_FallbackResource = fallbackVariant;
+        AddRefVariant_NoLock(m_FallbackResource);
 }
 
 CResourceEntry* CResourceEntry::Create() {
@@ -202,6 +229,7 @@ void CResourceEntry::Free() {
         {
             std::lock_guard<std::mutex> lockGuard(m_Mutex);
             ReleaseVariant_NoLock(m_Resource);
+            ReleaseVariant_NoLock(m_FallbackResource);
             m_LastErrorMsg.clear();
             m_SourcePath.clear();
             m_LevelTag.clear();
