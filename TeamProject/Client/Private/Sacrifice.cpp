@@ -8,6 +8,10 @@
 /* States */
 #include "StateMachine.h"
 #include "SacrificeState_Idle.h"
+#include "SacrificeState_Walk.h"
+#include "SacrificeState_Attack.h"
+#include "SacrificeState_Born.h"
+#include "SacrificeState_Hit.h"
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -44,22 +48,26 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pMaterial = Get_Component<CMaterial>();
 	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_SacrificeBringer.mat");
 
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
+
+	m_PartMeshIndices.resize(ENUM(PARTS::END));
+	m_PartMeshIndices[ENUM(PARTS::ICE)] = 7;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 11;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)] = 12;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_ROAD)] = 13;
+	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
+		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
 	return S_OK;
 }
 
-void CSacrifice::Post_EngineUpdate(_float dt)
-{
-	__super::Post_EngineUpdate(dt);
-}
-
 void CSacrifice::Awake()
 {
-	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
 }
 
 void CSacrifice::Priority_Update(_float dt)
@@ -70,6 +78,7 @@ void CSacrifice::Priority_Update(_float dt)
 void CSacrifice::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	m_pStateMachine->Update(dt);
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -122,7 +131,7 @@ HRESULT CSacrifice::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
-	m_pStateMachine->Set_DefaultState("Idle");
+	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
 	return S_OK;
@@ -131,11 +140,18 @@ HRESULT CSacrifice::Initialize_StateMachine()
 HRESULT CSacrifice::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CSacrificeState_Idle::Create());
+	m_pStateMachine->Register_State("Walk", CSacrificeState_Walk::Create());
+	m_pStateMachine->Register_State("Attack",CSacrificeState_Attack::Create());
+	m_pStateMachine->Register_State("Born",CSacrificeState_Born::Create());
+	m_pStateMachine->Register_State("Hit",CSacrificeState_Hit::Create());
 
 	return S_OK;
 }
 
 HRESULT CSacrifice::Initialize_Transitions()
 {
+	m_pStateMachine->Register_Transition("Born", "Idle",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+
 	return S_OK;
 }

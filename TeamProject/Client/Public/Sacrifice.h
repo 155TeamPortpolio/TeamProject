@@ -9,6 +9,7 @@ class CStateMachine;
 class CSacrifice final:
     public CEnemy
 {
+    enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_ROAD, END };
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -17,7 +18,6 @@ private:
 public:
     HRESULT Initialize_Prototype()override;
     HRESULT Initialize(INIT_DESC* pArg)override;
-    virtual void Post_EngineUpdate(_float dt) override;
     void    Awake() override;
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
@@ -35,5 +35,6 @@ private:
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine = { nullptr };
+    vector<_uint> m_PartMeshIndices;
 };
 NS_END

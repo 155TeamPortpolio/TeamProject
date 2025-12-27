@@ -33,7 +33,9 @@ void CSacrificeState_Idle::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Idle_Phase1::Enter(CSacrifice* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P1_Idle");
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P1_Idle")
+		.Loop(true)
+		.Apply();
 }
 
 void CSacrificeState_Idle_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -46,6 +48,9 @@ void CSacrificeState_Idle_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Idle_Phase2::Enter(CSacrifice* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P2_Idle")
+		.Loop(true)
+		.Apply();
 }
 
 void CSacrificeState_Idle_Phase2::Update(CSacrifice* pOwner, _float dt)

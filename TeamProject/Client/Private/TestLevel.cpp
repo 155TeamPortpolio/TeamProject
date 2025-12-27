@@ -158,9 +158,6 @@ HRESULT CTestLevel::Awake()
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-		.Build("Sacrifice");
-	objMgr->Add_Object(pSacrifice, { "Test_Level","Enemy_Layer" });
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -217,6 +214,13 @@ void CTestLevel::Update()
 		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
 	}
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
+
+	if (KEY->Key_Tap('4'))
+	{
+		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+			.Build("Sacrifice");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	}
 }
 
 void CTestLevel::Ready_Camera()

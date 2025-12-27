@@ -166,6 +166,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk">
       <UniqueIdentifier>{339582cb-f3e3-4bd9-a20e-6c8779f9e417}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Born">
+      <UniqueIdentifier>{c1cb0e5a-8a4e-40f3-b1e6-91462a7c29cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit">
+      <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -336,6 +342,18 @@
     <ClInclude Include="..\Public\SacrificeState_Idle.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Idle</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Walk.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Born.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -497,6 +515,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Walk.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
