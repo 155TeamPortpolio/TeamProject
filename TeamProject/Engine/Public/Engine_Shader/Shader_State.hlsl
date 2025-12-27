@@ -56,6 +56,40 @@ DepthStencilState DSS_None
     DepthWriteMask = zero;
 };
 
+
+DepthStencilState DSS_WriteStencil
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ALL;
+    DepthFunc = LESS_EQUAL;
+
+    StencilEnable = TRUE;
+    StencilReadMask = 0xff;
+    StencilWriteMask = 0xff;
+
+    FrontFaceStencilFunc = Always;
+    FrontFaceStencilPass = Replace;
+    BackFaceStencilFunc = Always;
+    BackFaceStencilPass = Replace;
+};
+
+DepthStencilState DSS_OutlineStencil
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ZERO;
+    DepthFunc = LESS_EQUAL;
+
+    StencilEnable = TRUE;
+    StencilReadMask = 0xff;
+    StencilWriteMask = 0x00;
+
+    FrontFaceStencilFunc = Not_Equal;
+    FrontFaceStencilPass = Keep;
+    BackFaceStencilFunc = Not_Equal;
+    BackFaceStencilPass = Keep;
+
+};
+
 DepthStencilState DSS_ReadOnly
 {
     DepthEnable = true;

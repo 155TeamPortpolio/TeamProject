@@ -29,7 +29,9 @@ public:
 		_uint materialIndex,
 		class CAISkeleton* skeleton,
 		const vector<VTXMESH>& cookedVertices,
-		const vector<_uint>& cookedIndices
+		const vector<_uint>& cookedIndices,
+		const unordered_map<_uint, _float4x4>& meshOffsetMap,
+		const vector<_uint>& boneIndexList
 	);
 
 	virtual HRESULT Initialize_FromCooked_Anim(
@@ -51,6 +53,10 @@ public:
 	const unordered_map<_uint, _float4x4>& Get_MeshOffset() { return m_MeshOffset; };
 	const vector<_uint>& Get_BoneIndices() { return m_BoneIndices; };
 private:
+	//�����
+	vector<VTXSKINMESH> m_SkinMeshes;
+	vector<VTXMESH>		m_Meshes;
+	vector<_uint>		m_Indices;
 	vector<_uint>		m_BoneIndices;
 
 	CSkeleton* m_pSkeleton = { nullptr };

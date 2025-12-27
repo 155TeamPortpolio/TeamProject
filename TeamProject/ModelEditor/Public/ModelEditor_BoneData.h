@@ -25,9 +25,10 @@ namespace ModelEdit {
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BONE_INFO, Index, TagBone, BoneOffsetMatrix);
 
     typedef struct tagBoneDataHeader {
+        string		TagDataFormat = {};
         string      TagModel = {};
         vector<BONE_INFO>   BoneInfos;
     }BONE_DATA_HEADER;
-    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BONE_DATA_HEADER, TagModel, BoneInfos);
+    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BONE_DATA_HEADER, TagDataFormat, TagModel, BoneInfos);
 
 }

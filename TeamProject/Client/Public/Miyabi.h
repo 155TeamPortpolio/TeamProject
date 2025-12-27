@@ -21,7 +21,7 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
-
+    void            Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
 private:
     virtual void Update_Input(_float dt) override;
 
@@ -29,6 +29,9 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    
+private:
+    HRESULT Add_OutLineRender();
 
 private:
     CStateMachine<CMiyabi>* m_pStateMachine = { nullptr };

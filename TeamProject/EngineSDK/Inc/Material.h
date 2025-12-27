@@ -17,6 +17,7 @@ public:
     HRESULT Link_Material(const string& levelKey, const string& materialKey);
     HRESULT Insert_MaterialInstance(class CMaterialInstance* pInstance, _uint* outIndex);
     HRESULT Set_RimLightInfo(_float3 RimColor, _float Power = 1.f);
+    HRESULT Set_OutLineInfo(_float4 OutLineColor= _float4(0.f, 0.f, 0.f, 0.f), _float OutLineThickness = 0.02);
 
 public:
     void Apply_Material(ID3D11DeviceContext* pContext, _uint Index);
@@ -39,6 +40,8 @@ protected:
     _bool m_bMaterialTabOpen = {false};
     _float3 m_vRimLightColor = _float3(0, 0, 0);
     _float  m_fRimLightPower = 0.f;
+    _float4 m_vOutLineColor = _float4(0.f, 0.f, 0.f, 0.f);
+    _float m_fOutLineThickness = 0.02f;
 
 public:
     static CMaterial* Create();

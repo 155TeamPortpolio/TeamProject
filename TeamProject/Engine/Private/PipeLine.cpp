@@ -246,8 +246,8 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	BoundingOrientedBox worldObb;
 	obb.Transform(worldObb, worldTransform);
 
-	//return true;
-	return m_Frustum.Intersects(worldObb);
+	return true;
+	//return m_Frustum.Intersects(worldObb);
 }
 
 
@@ -373,23 +373,29 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 		pShader->Bind_Value("g_fLightRange", LightParam);
 
 		LightParam.pData = &desc.fLightIntensity;
-		pShader->Bind_Value("g_fLightIntensity", LightParam);
+		pShader->Bind_Value("g_fLightIntensity", LightParam);		
+		
+		LightParam.iSize = sizeof(_int);
+		_int LightSize = LightSnapShots.size();
+		LightParam.typeName = "int";
+		LightParam.pData = &LightSize;
+		pShader->Bind_Value("g_iLightSize", LightParam);
 
 		ID3D11InputLayout* pLayout;
 
 		switch (desc.eType)
 		{
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
-			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "Directional", &pLayout);
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "DIRECTIONAL", &pLayout);
 			pContext->IASetInputLayout(pLayout);
-			pShader->Apply("Directional", pContext);
+			pShader->Apply("DIRECTIONAL", pContext);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
 		case Engine::LIGHT_TYPE::POINT:
-			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "Point", &pLayout);
+			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "POINT", &pLayout);
 			pContext->IASetInputLayout(pLayout);
-			pShader->Apply("Point", pContext);
+			pShader->Apply("POINT", pContext);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
