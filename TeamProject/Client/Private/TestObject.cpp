@@ -122,7 +122,7 @@ void CTestObject::Awake()
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
 	Get_Component<CAnimator3D>()->Set_Animation(0, 3);
-	Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(7); // << SharkBoo는 7번본이움직임
+	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(7); // << SharkBoo는 7번본이움직임
 
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 	Get_Component<CCharacterController>()->Set_Position({0.f, 1.f, 0.f});
