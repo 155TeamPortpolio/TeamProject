@@ -58,6 +58,9 @@
     <Filter Include="03. MapTool System\00. MapToolCore">
       <UniqueIdentifier>{a8b4769b-6ec7-4997-8b77-72d1dec39669}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. MapTool System\MapToolAssistant">
+      <UniqueIdentifier>{7f8ef5a4-0199-445c-a416-6e4b67451c34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -135,6 +138,9 @@
     <ClInclude Include="..\Public\MapTool_Context.h">
       <Filter>03. MapTool System\00. MapToolCore</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MapToolAssistant.h">
+      <Filter>03. MapTool System\MapToolAssistant</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -207,6 +213,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MapToolGui.cpp">
       <Filter>03. MapTool System\MapToolGui</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MapToolAssistant.cpp">
+      <Filter>03. MapTool System\MapToolAssistant</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

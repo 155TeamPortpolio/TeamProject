@@ -11,6 +11,7 @@
 #include "Helper_Func.h"
 #include "Helper_MapTool.h"
 #include "SlotFieldGui.h"
+#include "MapToolAssistant.h"
 
 CMapToolGui::CMapToolGui(GUI_CONTEXT* pContext)
     : CBasePanel(pContext)
@@ -26,11 +27,19 @@ HRESULT CMapToolGui::Initialize()
 {
     RakeResources();
 
+    /* For.SlotFieldGui */
     m_pSlotFieldGui = CSlotFieldGui::Create(m_pContext);
     if (nullptr == m_pSlotFieldGui)
         return E_FAIL;
     Safe_AddRef(m_pSlotFieldGui);
     CGameInstance::GetInstance()->Get_GUISystem()->Register_Panel(m_pSlotFieldGui);
+
+    /* For.MapToolAssistant */
+    m_pAssistant = CMapToolAssistant::Create(m_pContext);
+    if (nullptr == m_pAssistant)
+        return E_FAIL;
+    Safe_AddRef(m_pAssistant);
+    CGameInstance::GetInstance()->Get_GUISystem()->Register_Panel(m_pAssistant);
 
     m_pMapToolContext = m_pMapToolCore->Get_Context();
     
@@ -79,12 +88,12 @@ void CMapToolGui::Render_GUI()
     ImGui::Text(TagSelectedModelName.c_str());
 
     //ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
-    ImGui::InputFloat3(" Scale##Scale", reinterpret_cast<float*>(&m_vScale_PlacedObject), "%.1f");
+    //ImGui::InputFloat3(" Scale##Scale", reinterpret_cast<float*>(&m_vScale_PlacedObject), "%.1f");
 
     //ImGui::Text("");
-    if (ImGui::Checkbox("IsObjectPicking", &m_isObjectPicking)) {
-        Set_ObjectPicking(m_isObjectPicking);
-    }
+    //if (ImGui::Checkbox("IsObjectPicking", &m_isObjectPicking)) {
+    //    Set_ObjectPicking(m_isObjectPicking);
+    //}
 	ImGui::EndChild();
     if (ImGui::TreeNode("Model Setting")) {
         ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, childHeight }, true);
@@ -94,7 +103,12 @@ void CMapToolGui::Render_GUI()
         ImGui::EndChild();
         ImGui::TreePop();
     }
+    if (ImGui::TreeNode("Assistant")) {
+        if (ImGui::Button("Open Assistant"))
+            m_pAssistant->Set_isOpen(!m_pAssistant->IsOpen());
 
+        ImGui::TreePop();
+    }
 
     ImGui::Text("");/////////////////////////////////
 
@@ -267,12 +281,14 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
     ColDesc.strModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
 
+    string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedIndex].TagModelKey);
+
     CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
         .Position(pRayHit->vPoint)
         .Scale(m_vScale_PlacedObject)
         .Add_ObjDesc(Desc)
         .Collider(ColDesc)
-        .Build("Static_Model");
+        .Build(fileName);
 
 #ifdef _DEBUG
     pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
@@ -451,6 +467,7 @@ void CMapToolGui::Free()
 {
     __super::Free();
 
+    Safe_Release(m_pAssistant);
     Safe_Release(m_pMapToolCore);
     Safe_Release(m_pSlotFieldGui);
     Safe_Release(m_pGameInstance);

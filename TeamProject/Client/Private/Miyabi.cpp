@@ -11,6 +11,10 @@
 #include "MiyabiState_Walk.h"
 #include "MiyabiState_Attack.h"
 
+#include "Renderer.h"
+#include "SkeletalModel.h"
+#include "Shader.h"
+
 CMiyabi::CMiyabi()
 {
 }
@@ -55,14 +59,14 @@ void CMiyabi::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	Get_Component<CAnimator3D>()->Set_NoTransform(21);
+	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
 	Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();
 	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
 
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 1.0), 1.5f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::RIMLIGHT);
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 0.0), 0.1f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -75,13 +79,13 @@ void CMiyabi::Update(_float dt)
 	Update_Input(dt);
 
 	m_pStateMachine->Update(dt);
-
 	__super::Update(dt);
 }
 
 void CMiyabi::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
+	Add_OutLineRender();
 }
 
 void CMiyabi::Render_GUI()
@@ -98,6 +102,30 @@ void CMiyabi::Render_GUI()
 
 		m_pStateMachine->Render_GUI();
 	}
+}
+
+void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
+{
+	auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem()->GetRenderer(RENDERER_TYPE::FORWARD);
+	auto Model = Get_Component<CSkeletalModel>();
+	auto Material = Get_Component<CMaterial>();
+
+	_int Index = Model->Get_MaterialIndex(idx);
+	auto Shader = Material->Get_Shader(Index);
+	ID3D11InputLayout* pLayout;
+	RenderSys->Get_InputLayout(
+		Model,
+		Shader,
+		idx,
+		"OutLine",
+		&pLayout
+	);
+
+	Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
+
+	pContext->IASetInputLayout(pLayout);
+	Shader->Apply("OutLine", pContext);
+	Model->Draw(pContext, idx);
 }
 
 void CMiyabi::Update_Input(_float dt)
@@ -186,6 +214,31 @@ HRESULT CMiyabi::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
+	m_pStateMachine->Register_Transition("Attack", "Walk",
+		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
+
+	return S_OK;
+}
+HRESULT CMiyabi::Add_OutLineRender()
+{
+	auto Model = Get_Component<CSkeletalModel>();
+	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices().size();
+
+	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
+	{
+		vector<_float4x4> BoneMatrices = m_pAnimator->Get_BoneMatrices(i);
+		OUTLINE_COMMAND Command =
+		{
+			Get_Component<CMaterial>()->Get_Shader(Model->Get_MaterialIndex(i)),
+			m_pTransform->Get_WorldMatrix_Ptr(),
+			BoneMatrices,
+			"float4x4[]",
+			size ,
+			i,
+			[this](ID3D11DeviceContext* pContext, _uint index) {Render_OutLine(pContext,index); }
+		};
+		CGameInstance::GetInstance()->Get_RenderSystem()->Add_OutLineCommand(Command);
+	}
 	return S_OK;
 }
 

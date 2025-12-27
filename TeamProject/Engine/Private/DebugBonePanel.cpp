@@ -151,17 +151,30 @@ void CDebugBonePanel::Render_GUI()
 			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
 			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
 
-			_vector4 deltaTrans = pAnimator->Get_RootMotionDelta();
-			_vector3 move(deltaTrans.x, deltaTrans.y, deltaTrans.z);
+			_vector4 MoveTrans = pAnimator->Get_MoveBoneMotionDelta();
+			_vector3 move(MoveTrans.x, MoveTrans.y, MoveTrans.z);
 			_vector3 dir = move;
 			dir.Normalize();
 
 			ImGui::Separator();
-			ImGui::Text("Delta Move");
-			ImGui::Text("% .4f % .4f % .4f % .4f", deltaTrans.x, deltaTrans.y, deltaTrans.z, deltaTrans.w);
-			ImGui::Text("Delta Direction");
+			ImGui::Text("MoveBone Movement");
+			ImGui::Text("% .4f % .4f % .4f % .4f", MoveTrans.x, MoveTrans.y, MoveTrans.z, MoveTrans.w);
+			ImGui::Text("MoveBone Direction");
 			ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
 			
+			//RootDelta 추가할것
+			_vector3 RootTrans = pAnimator->Get_RootMotionDelta();
+			_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
+			_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
+			_vector3 RootDir = RootMove;
+			RootDir.Normalize();
+
+			ImGui::Separator();
+			ImGui::Text("RootBone Movement");
+			ImGui::Text("% .4f % .4f % .4f | % .4f ", RootTrans.x, RootTrans.y, RootTrans.z, RootMoveAmount);
+			ImGui::Text("RootBone Direction");
+			ImGui::Text("% .4f % .4f % .4f ", RootDir.x, RootDir.y, RootDir.z);
+
 			ImGui::EndChild();
 		}
 	}

@@ -90,18 +90,19 @@ HRESULT CShader::Bind_Value(const string& ConstantName, const SHADER_PARAM& para
 		if (iter == m_Variables.end())
 			return E_FAIL;
 
-		if (iter->second.typeName != parameter.typeName)
-			return E_FAIL;
 
-		if (iter->second.typeName == "float4x4")
+		if (parameter.typeName == "float4x4")
 			return Bind_Matrix(ConstantName, static_cast<const _float4x4*>(parameter.pData));
-		else if (iter->second.typeName == "Texture2D")
+		else if (parameter.typeName == "Texture2D")
 			return Bind_ShaderResource(ConstantName, static_cast<ID3D11ShaderResourceView*>(parameter.pData));
-		else if (iter->second.typeName == "Texture2DArray")
+		else if (parameter.typeName == "Texture2DArray")
 			return Bind_ShaderResourceArray(ConstantName, static_cast<ID3D11ShaderResourceView*>(parameter.pData));
-		else if (iter->second.typeName == "StructuredBuffer")
+		else if (parameter.typeName == "StructuredBuffer")
 			return Bind_ShaderResource(ConstantName, static_cast<ID3D11ShaderResourceView*>(parameter.pData));
-
+		else if (parameter.typeName == "float4x4[]") {
+			return Bind_MatrixArray(ConstantName,reinterpret_cast<const _float4x4*>(parameter.pData),parameter.iSize / sizeof(_float4x4)  // 배열 크기 계산
+			);
+		}
 		HRESULT hr = iter->second.pHandle->SetRawValue(parameter.pData, 0, parameter.iSize);
 		if (FAILED(hr)) {
 			return E_FAIL;
@@ -193,6 +194,33 @@ HRESULT CShader::Bind_ShaderResourceArray(const string& ConstantName, ID3D11Shad
 	return S_OK;
 }
 
+HRESULT CShader::Bind_MatrixArray(const string& ConstantName, const _float4x4* pMatrices, _uint iCount)
+{
+	auto iter = m_Variables.find(ConstantName);
+	if (iter == m_Variables.end()) {
+		MSG_BOX("Wrong Variable Name is Binding : CShader");
+		return E_FAIL;
+	}
+
+	ID3DX11EffectMatrixVariable* pMatrixVariable = iter->second.pHandle->AsMatrix();
+	if (!pMatrixVariable || !pMatrixVariable->IsValid()) {
+		MSG_BOX("Wrong Variable Type is Binding : CShader");
+		return E_FAIL;
+	}
+
+	HRESULT hr = pMatrixVariable->SetMatrixArray(
+		reinterpret_cast<const float*>(pMatrices),
+		0,
+		iCount
+	);
+
+	if (FAILED(hr)) {
+		MSG_BOX("Failed to bind Matrix Array : CShader");
+		return hr;
+	}
+
+	return S_OK;
+}
 
 void CShader::ReflectShader()
 {

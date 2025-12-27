@@ -16,6 +16,8 @@ CMaterial::CMaterial(const CMaterial& rhs)
 		m_MaterialInstances.emplace_back(move(cloned));
 		cloned->Set_Param("vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
 		cloned->Set_Param("fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+		cloned->Set_Param("vOutLineColor", { &m_vOutLineColor, "float4", sizeof(_float4) });
+		cloned->Set_Param("fOutLineThickness", { &m_fOutLineThickness, "float", sizeof(_float) });
 	}
 
 }
@@ -57,6 +59,14 @@ HRESULT CMaterial::Set_RimLightInfo(_float3 RimColor, _float Power)
 {
 	m_vRimLightColor = RimColor;
 	m_fRimLightPower = Power;
+
+	return S_OK;
+}
+
+HRESULT CMaterial::Set_OutLineInfo(_float4 OutLineColor, _float OutLineThickness)
+{
+	m_vOutLineColor = OutLineColor;
+	m_fOutLineThickness = OutLineThickness;
 
 	return S_OK;
 }

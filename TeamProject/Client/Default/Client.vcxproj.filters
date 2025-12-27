@@ -177,6 +177,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
       <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -362,6 +368,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Hand.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
+    </ClInclude>  
+    <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -539,6 +551,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Hand.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
