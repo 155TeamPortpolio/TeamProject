@@ -29,7 +29,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
-	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Anim/Monster_SacrificeBringer_Meta.json");
+	pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Anim/SacrificeBringer_Meta.json");
 
 	return S_OK;
 }
@@ -59,7 +59,7 @@ void CSacrifice::Awake()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
 }
 
 void CSacrifice::Priority_Update(_float dt)
@@ -106,6 +106,8 @@ CGameObject* CSacrifice::Clone(INIT_DESC* pArg)
 void CSacrifice::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pStateMachine);
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()
