@@ -31,7 +31,7 @@ void CSacrificeState_Born::Exit(CSacrifice* pOwner)
 void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_NoTransform(3);
+	pAnimator->Set_ExtractBoneMovement(3, false, true, false);
 	pAnimator->Set_Animation("SacrificeBringer_Ani_P1_Born")
 		.Speed(1.2f)
 		.Loop(false)
@@ -44,7 +44,6 @@ void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 void CSacrificeState_Born_Phase1::Exit(CSacrifice* pOwner)
 {
-
 }
 
 void CSacrificeState_Born_Phase2::Enter(CSacrifice* pOwner)

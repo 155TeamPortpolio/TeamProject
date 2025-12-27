@@ -33,7 +33,7 @@ void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start");
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
 }
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
@@ -45,13 +45,13 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
         pOwner->Rotate(vInputDir);
 
         //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        //_vector3 vDelta = vRootMotionDelta;
-        //
-        //if (vDelta.x != 0.f || vDelta.z != 0.f)
-        //{
-        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        //    pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-        //}
+        _vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
+
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        }
     }
 }
 
@@ -63,6 +63,7 @@ void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
         .Loop(true)
+        .Speed(1.2f)
         .Apply();
 }
 
@@ -75,13 +76,13 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         pOwner->Rotate(vInputDir);
 
         //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        //_vector3 vDelta = vRootMotionDelta;
-        //
-        //if (vDelta.x != 0.f || vDelta.z != 0.f)
-        //{
-        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        //    pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-        //}
+        _vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
+        
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        }
     }
 }
 

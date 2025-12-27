@@ -113,10 +113,10 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
-
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
@@ -147,7 +147,7 @@ HRESULT CTestLevel::Awake()
 	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	miyabiCCT.fBoundingMinY = -0.88f;
+	//miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
 		.CharacterController(miyabiCCT)
