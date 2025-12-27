@@ -439,9 +439,6 @@
     <ClInclude Include="..\Public\CamSequencePlayer.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamSequencePlayerData.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\OrbitArcData.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
     </ClInclude>

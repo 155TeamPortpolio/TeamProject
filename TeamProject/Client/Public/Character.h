@@ -64,7 +64,7 @@ protected:
     _float   m_fCurrentEnergy = { 0.f };
     _float   m_fAttackPower = { 10.f };
     _float   m_fDefense = { 5.f };
-    _float   m_fMoveSpeed = { 1.f };
+    _float   m_fMoveSpeed = { 5.f };
     _vector3 m_vInputDir = {};
     // 상태 플래그
     _bool  m_bIsMove = { false };

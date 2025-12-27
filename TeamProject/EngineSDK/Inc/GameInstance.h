@@ -33,7 +33,7 @@ public:
 public:
 	ID3D11Device* Get_Device() { return m_pDevice; };
 	ID3D11DeviceContext* Get_Context() { return m_pDeviceContext; };
-	_float2 Get_ClientSize() { return _float2((float)m_ClientRect.right, (float)m_ClientRect.bottom); }
+	_float2 Get_ClientSize() { return _float2(m_ClientRect.right, m_ClientRect.bottom); }
 	_uint Get_FrameCount() const { return m_totalFrameCount; }
 
 #pragma region Game_Managers

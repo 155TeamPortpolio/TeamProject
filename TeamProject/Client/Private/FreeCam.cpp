@@ -22,7 +22,6 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
     desc.vLightAmbient   = {0.6f,  0.6f, 0.6f, 1.0f};
     desc.vLightSpecular  = {1.0f,  1.0f, 1.0f, 1.0f};
     Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
-    SyncRotation();
     return S_OK;
 }
 
@@ -73,21 +72,6 @@ void CFreeCam::ApplyRotation(_float dt)
     m_qCurRot.Normalize();
 
     m_pTransform->Set_Quaternion(_vector4(m_qCurRot.x, m_qCurRot.y, m_qCurRot.z, m_qCurRot.w));
-}
-
-void CFreeCam::SyncRotation()
-{
-    const _vector4 look4 = m_pTransform->Dir(STATE::LOOK);
-    const _vector3 forward{ look4.x, look4.y, look4.z };
-
-    const float yawRad = atan2f(forward.x, forward.z);
-    const float pitchRad = asinf(clamp(-forward.y, -1.f, 1.f));
-
-    m_vRotDegTarget.x = XMConvertToDegrees(yawRad);
-    m_vRotDegTarget.y = clamp(XMConvertToDegrees(pitchRad), -89.f, 89.f);
-
-    m_qRotTarget = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-    m_qCurRot = m_qRotTarget;
 }
 
 CFreeCam* CFreeCam::Create()

@@ -15,6 +15,7 @@
 #include "OrbitCam.h"
 #include "SequenceCam.h"
 #include "CamPanel.h"
+#include "CamLoader.h"
 
 /* MapData */
 #include "MapDataCloud.h"
@@ -206,9 +207,8 @@ void CTestLevel::Update()
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
 	}
 	if (KEY->Key_Down('3'))
-	{
-		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
-	}
+		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.25f);
+
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 }
 
@@ -245,8 +245,9 @@ void CTestLevel::Ready_Camera()
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
 	m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
-	m_pCamDirector->Register("Intro", "../bin/Resources/Camera/Intro_2.cam");
 	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
+
+	CamLoader::Load();
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
