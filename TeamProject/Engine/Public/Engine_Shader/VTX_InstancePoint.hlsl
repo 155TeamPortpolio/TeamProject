@@ -233,7 +233,7 @@ PS_OUT PS_MAIN(PS_IN In)
     fWeight = max(fWeight, 1.f);
     float4 vBloomColor = float4(vColor, fAlpha) * fAlpha;
     
-    Out.vDiffuseAcc = float4(vColor* fAlpha * fAlpha, fAlpha) * fWeight;
+    Out.vDiffuseAcc = float4(vColor* fAlpha, fAlpha) * fWeight;
     Out.vBloomAcc = ExtractBright(vBloomColor, 0.6f, 0.5f, 1.5f) * fWeight;
     Out.vBloomAcc.a = fAlpha;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
