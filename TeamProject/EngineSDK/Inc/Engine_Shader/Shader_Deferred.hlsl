@@ -848,7 +848,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_DISTORTION_ADD();
     }
 
-    pass Fog
+    pass FOG
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -858,7 +858,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_FOG();
     }
 
-    pass Directional
+    pass DIRECTIONAL
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -868,7 +868,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_DIRECTIONAL();
     }
 
-    pass Point
+    pass POINT
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -878,7 +878,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_POINT();
     }
 
-    pass Combined
+    pass COMBINED
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
@@ -888,7 +888,7 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
 
-    pass Final
+    pass FINAL
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);

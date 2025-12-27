@@ -157,10 +157,10 @@ HRESULT CPostRenderer::Render_Fog()
 	m_pShader->Bind_Value("g_FogColor", { &fogDesc.fogColor, "float4", sizeof(_float4) });
 
 	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Fog", &pLayout);
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FOG", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	m_pShader->Apply("Fog", m_pContext);
+	m_pShader->Apply("FOG", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
@@ -172,7 +172,7 @@ HRESULT CPostRenderer::Render_Fog()
 HRESULT CPostRenderer::Render_Final()
 {
 	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Final", &pLayout);
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FINAL", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
 	if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "g_FinalTexture");
@@ -189,7 +189,7 @@ HRESULT CPostRenderer::Render_Final()
 	WorldMat.pData = &m_WorldMatrix;
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 
-	m_pShader->Apply("Final", m_pContext);
+	m_pShader->Apply("FINAL", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 	return S_OK;

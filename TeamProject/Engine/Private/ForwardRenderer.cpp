@@ -250,7 +250,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 
 	ID3D11InputLayout* pLayout;
-	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Combined", &pLayout);
+	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "COMBINED", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
 	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
@@ -274,7 +274,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	WorldMat.pData = &m_WorldMatrix;
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 
-	m_pShader->Apply("Combined", m_pContext);
+	m_pShader->Apply("COMBINED", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
