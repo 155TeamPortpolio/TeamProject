@@ -15,3 +15,16 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 NS_END
+
+/* Sub States */
+class CSacrificeState_Attack_01 : public IBaseState<CSacrifice>
+{
+public:
+	virtual void Enter(CSacrifice* pOwner) override;
+	virtual void Update(CSacrifice* pOwner, _float dt) override;
+	virtual void Exit(CSacrifice* pOwner) override;
+
+public:
+	static CSacrificeState_Attack_01* Create() { return new CSacrificeState_Attack_01(); }
+	virtual void Free() override { __super::Free(); }
+};

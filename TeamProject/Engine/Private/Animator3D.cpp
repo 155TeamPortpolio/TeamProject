@@ -596,7 +596,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		if (-1 != Layer.iMoveBoneIndex) {
 			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMoveBoneIndex];
 			Layer.vPrevAnimPos = _float3(mat._41, mat._42, mat._43);
+			_float y = mat._42;
 			mat._41 = mat._42 = mat._43 = 0;
+			mat._42 = y;
 		}
 	}
 

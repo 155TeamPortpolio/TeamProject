@@ -172,6 +172,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit">
       <UniqueIdentifier>{82010ee6-5be7-4dc2-b2fe-55411c9442cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand">
+      <UniqueIdentifier>{8fba8062-3d01-4a71-a27f-806808b2273d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -354,6 +357,9 @@
     <ClInclude Include="..\Public\SacrificeState_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Sacrifice_Hand.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -527,6 +533,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice_Hand.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

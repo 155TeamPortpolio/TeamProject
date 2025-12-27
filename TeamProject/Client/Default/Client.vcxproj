@@ -183,6 +183,7 @@
     <ClInclude Include="..\Public\SacrificeState_Hit.h" />
     <ClInclude Include="..\Public\SacrificeState_Idle.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk.h" />
+    <ClInclude Include="..\Public\Sacrifice_Hand.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk.cpp" />
+    <ClCompile Include="..\Private\Sacrifice_Hand.cpp" />
     <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />

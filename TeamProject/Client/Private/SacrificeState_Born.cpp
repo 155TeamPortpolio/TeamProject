@@ -2,6 +2,7 @@
 #include "SacrificeState_Born.h"
 #include "StateMachine.h"
 #include "Sacrifice.h"
+#include "SkeletalModel.h"
 
 void CSacrificeState_Born::Enter(CSacrifice* pOwner)
 {
@@ -29,7 +30,10 @@ void CSacrificeState_Born::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Set_Animation("SacrificeBringer_Ani_P1_Born")
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_NoTransform(3);
+	pAnimator->Set_Animation("SacrificeBringer_Ani_P1_Born")
+		.Speed(1.2f)
 		.Loop(false)
 		.Apply();
 }
@@ -40,6 +44,7 @@ void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 void CSacrificeState_Born_Phase1::Exit(CSacrifice* pOwner)
 {
+
 }
 
 void CSacrificeState_Born_Phase2::Enter(CSacrifice* pOwner)
