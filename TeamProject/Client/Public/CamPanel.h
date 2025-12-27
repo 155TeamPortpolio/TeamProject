@@ -21,6 +21,7 @@ public:
 
 private:
     void DrawMainCamSelector();
+    void DrawHelpPopup();
 
 private:
     struct CamCandidate

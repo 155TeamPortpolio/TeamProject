@@ -14,7 +14,7 @@ void CCamPanel::Render_GUI()
 {
     const ImGuiViewport* vp = ImGui::GetMainViewport();
 
-    const ImVec2 winSize(320.f, 75.f);
+    const ImVec2 winSize(320.f, 100.f);
     const float margin = 12.f;
     const float shiftLeft = 150.f;
 
@@ -29,20 +29,39 @@ void CCamPanel::Render_GUI()
     ImGuiWindowFlags flags =
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoCollapse;
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar;
 
     Helper::DarkThemeStyle style;
 
-    if (!ImGui::Begin("CamPanel", nullptr, flags))
+    if (!ImGui::Begin("CamPanel##CamPanelWindow", nullptr, flags))
     {
         ImGui::End();
         return;
     }
 
+    float y = ImGui::GetCursorPosY();
+    if (y > 2.f) ImGui::SetCursorPosY(y - 2.f);
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("CamPanel");
+    ImGui::SameLine(0.f, 10.f);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.f, 4.f));
+    bool openHelp = ImGui::SmallButton("Help");
+    ImGui::PopStyleVar();
+
+    if (openHelp) ImGui::OpenPopup("CamPanel_Help");
+
+    DrawHelpPopup();
+
+    ImGui::Separator();
+
     DrawMainCamSelector();
 
     ImGui::End();
 }
+
 
 void CCamPanel::RefreshCandidates()
 {
@@ -225,4 +244,28 @@ void CCamPanel::DrawMainCamSelector()
 
         ImGui::EndCombo();
     }
+}
+
+void CCamPanel::DrawHelpPopup()
+{
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+
+    if (!ImGui::BeginPopupModal("CamPanel_Help", nullptr, flags))
+        return;
+
+    ImGui::SeparatorText("Help");
+
+    ImGui::TextDisabled("Shortcuts");
+    ImGui::BulletText("Q / E : OrbitCam Zoom In/Out");
+    ImGui::BulletText("1 : FreeCam");
+    ImGui::BulletText("2 : OrbitCam");
+    ImGui::BulletText("3 : SequenceCam");
+
+    ImGui::Spacing();
+    ImGui::Separator();
+
+    if (ImGui::Button("Close", ImVec2(120.f, 0.f)))
+        ImGui::CloseCurrentPopup();
+
+    ImGui::EndPopup();
 }
