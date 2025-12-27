@@ -221,7 +221,8 @@ void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 
 void CAIModelData::Rake_SkeletonInfo(BONE_DATA_HEADER* pHeader)
 {
-    dynamic_cast<CAISkeleton*>(m_pSkeleton)->Rake_BoneInfo(pHeader);
+    //dynamic_cast<CAISkeleton*>(m_pSkeleton)->Rake_BoneInfo(pHeader);
+    
 }
 
 void CAIModelData::Free()
