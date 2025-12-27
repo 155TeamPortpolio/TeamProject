@@ -545,8 +545,7 @@ namespace Engine
 		vector<tagUIElementData> children;
 	}UI_ELEMENT_DATA;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_ELEMENT_DATA, strTypeTag, vColor, transform, strTextureTag, strText, strFontTag, fFontScale,
-		isOutlined, fOutlineThickness, vOutlineColor, strEventMsg, iFrameCountTotal, iFrameCountX, iFrameCountY, fFrameSpeed, isLoop, 
-		vUVOffsetSpeed, fDirection, fFillAmount, isRadial,
+		strEventMsg, iFrameCountTotal, iFrameCountX, iFrameCountY, fFrameSpeed, isLoop, vUVOffsetSpeed, fDirection, fFillAmount, isRadial,
 		animClips, children);
 }
 

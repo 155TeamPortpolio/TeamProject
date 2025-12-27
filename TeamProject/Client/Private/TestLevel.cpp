@@ -29,6 +29,7 @@
 
 /* Character */
 #include "Miyabi.h"
+#include "Sacrifice.h"
 
 /* UI */
 #include "ButtonUI.h"
@@ -154,6 +155,12 @@ HRESULT CTestLevel::Awake()
 	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 
 	m_miyabiHandle = Miyabi->Get_Handle();
+
+	/* Enemy */
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+		.Build("Sacrifice");
+	objMgr->Add_Object(pSacrifice, { "Test_Level","Enemy_Layer" });
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
