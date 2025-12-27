@@ -89,12 +89,7 @@ HRESULT CAIMesh::Initialize(const aiMesh* _pAIMesh, MESH_TYPE _eMeshType, CAISke
 	return S_OK;
 }
 
-HRESULT CAIMesh::Initialize_FromCooked_NonAnim(
-	const string& newKey,
-	_uint materialIndex,
-	CAISkeleton* skeleton,
-	const vector<VTXMESH>& cookedVertices,
-	const vector<_uint>& cookedIndices)
+HRESULT CAIMesh::Initialize_FromCooked_NonAnim(const string& newKey, _uint materialIndex, CAISkeleton* skeleton, const vector<VTXMESH>& cookedVertices, const vector<_uint>& cookedIndices, const unordered_map<_uint, _float4x4>& meshOffsetMap, const vector<_uint>& boneIndexList)
 {
 	if (cookedVertices.empty() || cookedIndices.empty())
 		return E_FAIL;
@@ -120,6 +115,10 @@ HRESULT CAIMesh::Initialize_FromCooked_NonAnim(
 
 	m_StaticVertex = cookedVertices;
 	m_indices = cookedIndices;
+
+	m_MeshOffset = meshOffsetMap;
+	m_OffsetCount = m_MeshOffset.size();
+	m_BoneIndices = boneIndexList;
 
 	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
 	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
@@ -199,7 +198,7 @@ HRESULT CAIMesh::Initialize_FromCooked_Anim(
 
 	m_Skined = cookedVertices;
 	m_indices = cookedIndices;
-
+	m_OffsetCount = m_MeshOffset.size();
 	m_MeshOffset = meshOffsetMap;
 	m_BoneIndices = boneIndexList;
 
@@ -292,6 +291,33 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh)
 	if (FAILED(CGameInstance::GetInstance()->Get_Device()->CreateBuffer(&VBDesc, &VertexInitialData, &m_pVB)))
 		return E_FAIL;
 
+	// ===== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿? ï¿½ß°ï¿½: "ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½" ï¿½ï¿½ï¿½ï¿½ Ã¤ï¿½ï¿½ï¿? =====
+	m_BoneIndices.clear();
+	m_MeshOffset.clear();
+
+	if (m_pSkeleton)
+	{
+		_uint NumBones = _pAIMesh->mNumBones;
+
+		for (_uint i = 0; i < NumBones; i++)
+		{
+			aiBone* pAIBone = _pAIMesh->mBones[i];
+			if (nullptr == pAIBone)
+				return E_FAIL;
+
+			string BoneName = pAIBone->mName.C_Str();
+			BoneIndex = m_pSkeleton->Find_BoneIndexByName(BoneName);
+
+			if (BoneIndex < 0) continue;
+			m_BoneIndices.push_back(BoneIndex);
+
+			_float4x4 OffsetMatrix = {};
+			memcpy(&OffsetMatrix, &pAIBone->mOffsetMatrix, sizeof(_float4x4));
+			XMStoreFloat4x4(&OffsetMatrix, XMMatrixTranspose(XMLoadFloat4x4(&OffsetMatrix)));
+			m_MeshOffset.emplace((_uint)BoneIndex, OffsetMatrix);
+			}
+	}
+	m_OffsetCount = m_MeshOffset.size();
 	return S_OK;
 }
 
@@ -308,10 +334,9 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 	VBDesc.MiscFlags = 0;
 	VBDesc.StructureByteStride = m_iVertexStride;
 
-	m_Skined.reserve(m_iVerticesCount);
-	m_vMeshMinLocal = { FLT_MAX, FLT_MAX, FLT_MAX };
-	m_vMeshMaxLocal = { -FLT_MAX, -FLT_MAX, -FLT_MAX };
-	//Á¤Á¡ÀúÀå
+	m_SkinMeshes.reserve(m_iVerticesCount);
+
+	//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	for (_uint i = 0; i < m_iVerticesCount; i++)
 	{
 		VTXSKINMESH mesh = {};

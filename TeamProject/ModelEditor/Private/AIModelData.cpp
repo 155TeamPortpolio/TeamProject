@@ -53,14 +53,14 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
             islands = Find_Island_ByPosition(sourceVertices, sourceIndices, epsilon);
         }
 
-        // Æø¹ß ¹æÁö: ¼¶ °³¼ö°¡ faceCount¿¡ °ÅÀÇ ±ÙÁ¢ÇÏ¸é(=»ï°¢Çü ´ÜÀ§ ºÐÇØ) ºÐÇØ ½ºÅµ
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½: ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ faceCountï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸ï¿½(=ï¿½ï°¢ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Åµ
         if (islands.empty() || islands.size() <= 1 || islands.size() >= (size_t)(faceCount * 9 / 10))
         {
             m_Meshes.push_back(pSourceMesh);
             continue;
         }
 
-        // ¼¶º° ¸Þ½¬ »ý¼º
+        // ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for (size_t islandIndex = 0; islandIndex < islands.size(); ++islandIndex)
         {
             string newKey = "Isl_" + string(srcMesh->mName.C_Str()) + to_string(islandIndex);
@@ -86,7 +86,9 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
                     pSourceMesh->Get_MaterialIndex(),
                     static_cast<CAISkeleton*>(m_pSkeleton),
                     cookedVertices,
-                    cookedIndices)))
+                    cookedIndices,
+                    pSourceMesh->Get_MeshOffset(),
+                    pSourceMesh->Get_BoneIndices())))
                 {
                     Safe_Release(islandMesh);
                     Safe_Release(pSourceMesh);
@@ -143,11 +145,11 @@ vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<
 
 	// vertex -> faces
 	for (_uint face = 0; face < faceCount; ++face) {
-		/*0¹øÂ° »ï°¢ÇüÀÏ ¶§*/
+		/*0ï¿½ï¿½Â° ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
 		_uint index0 = indices[face * 3 + 0];
 		_uint index1 = indices[face * 3 + 1];
 		_uint index2 = indices[face * 3 + 2];
-		/*°¢ ¹öÅØ½º ¹øÈ£¸¦ °¡Á®¿À°í ÆäÀÌ½ºÀÇ ¹øÈ£¸¦ ³Ö¾îÁÜ*/
+		/*ï¿½ï¿½ ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½*/
 		if (index0 < numVertices) vertexToFace[index0].push_back(face);
 		if (index1 < numVertices) vertexToFace[index1].push_back(face);
 		if (index2 < numVertices) vertexToFace[index2].push_back(face);
