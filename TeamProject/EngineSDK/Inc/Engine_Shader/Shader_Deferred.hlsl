@@ -583,6 +583,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
     float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+    float specular = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    
     float fLight = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
     float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
@@ -602,6 +604,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+    
+    float specBase = saturate(dot(worldNormal, lightDir));
+    float specularPower = lerp(50.0f, 5.0f, roughness);
+    specular = pow(specBase, specularPower) * specular * 0.2f;
 
     if (fSkin > 0.f)
     {
@@ -614,7 +620,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     }
     
    // Out.fLightInfo = float2(saturate(lightDir.x), saturate(lightDir.y));
-   Out.fLightInfo = float2(NdotL, 0.f);
+    Out.fLightInfo = float2(NdotL, specular);
 
     return Out;
 }
@@ -678,7 +684,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vRampSample = g_RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp *OutLine;
+    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp * OutLine;
     //ambient = max(ambient, vDiffuse.rgb * 0.1);
 
     Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
@@ -686,8 +692,12 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float rimIntensity = max(vRamp, 0.5f);
     Out.vBackBuffer.rgb += vRimLight.rgb * rimIntensity;
     
+    float3 specularColor = g_vLightDiffuse.rgb * fLightInfo.g;
+    Out.vBackBuffer.rgb += specularColor;
+    
     if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
     if (vEffect.a > 0.f) Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
+    
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
