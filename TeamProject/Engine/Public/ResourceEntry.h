@@ -50,6 +50,7 @@ public:
         return result;
     }
     bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
+    void Wait_AsyncDone();
     void Pump_CompletedOnly(); // 메인 스레드 전용
     void Pump();
     void Reset();

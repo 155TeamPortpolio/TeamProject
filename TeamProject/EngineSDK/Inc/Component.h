@@ -17,6 +17,8 @@ public:
     virtual void Render_GUI();
 
 public:
+    virtual void PreCheck() {};
+public:
     void Set_Owner(class CGameObject* owner) { m_pOwner = owner; }
     class CGameObject* Get_Owner() { return m_pOwner; }
 

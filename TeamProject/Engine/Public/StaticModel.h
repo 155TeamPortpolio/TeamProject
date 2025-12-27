@@ -42,7 +42,7 @@ protected:
     vector<_bool> m_DrawableMeshes;
     class CModelData* m_pData = { nullptr };
     class CResourceEntry* m_pEntry = { nullptr };
-
+    _uint m_LastGen = {  };
 protected:
     void Check_Entry();
 

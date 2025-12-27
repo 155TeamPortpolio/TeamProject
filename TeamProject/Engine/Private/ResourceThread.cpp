@@ -33,6 +33,12 @@ CResourceThread::CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 HRESULT CResourceThread::Initiallize()
 {
     m_pThreadPool = CThreadPool::Create(4);
+    auto& globalResources = m_LevelResources[G_GlobalLevelKey];
+
+    // TEXTURE/VI_BUFFER 등 인덱싱 가능하게 크기 보장
+    if (globalResources.size() < RESOURCE_TYPE_COUNT)
+        globalResources.resize(RESOURCE_TYPE_COUNT);
+
 	return S_OK;
 }
 
@@ -59,8 +65,8 @@ HRESULT CResourceThread::Sync_To_Level()
         // 혹시 과거 데이터라면 안전하게 보정
         if (iteratorFound->second.size() < RESOURCE_TYPE_COUNT)
             iteratorFound->second.resize(RESOURCE_TYPE_COUNT);
-
     }
+
 	return S_OK;
 }
 
@@ -69,7 +75,7 @@ CSoundData* CResourceThread::Load_Sound(const string& levelTag, const string& so
 	return nullptr;
 }
 
-CVIBuffer* CResourceThread::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
+CVIBuffer* CResourceThread::Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE bufferType)
 {
     CResourceEntry* entry = nullptr;
 
@@ -77,43 +83,232 @@ CVIBuffer* CResourceThread::Load_VIBuffer(const string& levelTag, const string& 
     if (iteratorLevel == m_LevelResources.end())
         return nullptr;
 
-    Level_Resource& buffers = iteratorLevel->second;
-    if (buffers.size() < RESOURCE_TYPE_COUNT)
-        buffers.resize(RESOURCE_TYPE_COUNT);
-    auto iteratorEntry = buffers[ENUM(VI_BUFFER)].find(bufferKey);
+    Level_Resource& buffersByType = iteratorLevel->second;
+    if (buffersByType.size() < RESOURCE_TYPE_COUNT)
+        buffersByType.resize(RESOURCE_TYPE_COUNT);
 
-    CVIBuffer* buffer = nullptr;
-    switch (eType)
+    auto& entryByKey = buffersByType[ENUM(VI_BUFFER)];
+
+    auto iteratorEntry = entryByKey.find(bufferKey);
+    if (iteratorEntry == entryByKey.end())
     {
-    case Engine::BUFFER_TYPE::BASIC_RECT:
-        buffer = CVI_Rect::Create(m_pDevice, bufferKey);
-        break;
-    case Engine::BUFFER_TYPE::BASIC_CUBE:
-        break;
-    case Engine::BUFFER_TYPE::BASIC_SPHERE:
-        break;
-    case Engine::BUFFER_TYPE::BASIC_PLANE:
-        buffer = CVI_Plane::Create(m_pDevice, bufferKey);
-        break;
-    case Engine::BUFFER_TYPE::TERRAIN:{
-        auto pathIterator = m_PathByKey.find(bufferKey);
-        buffer = CVI_Terrain::Create(m_pDevice, bufferKey, pathIterator->second);
+        entry = CResourceEntry::Create();
+        entry->SetDebugName(bufferKey);
+        entry->SetLevelTag(levelTag);
+
+        // TERRAIN이면 path 필요. 나머지는 굳이 없어도 됨.
+        auto iteratorPath = m_PathByKey.find(bufferKey);
+        if (iteratorPath != m_PathByKey.end())
+            entry->SetSourcePath(iteratorPath->second);
+
+        entryByKey.emplace(bufferKey, entry);
     }
-        break;
-    case Engine::BUFFER_TYPE::BASIC_POINT:
-        buffer = CVI_Point::Create(m_pDevice, bufferKey);
-        break;
-    case Engine::BUFFER_TYPE::BASIC_INSTANCE_POINT:
-        buffer = CVI_InstancePoint::Create(m_pDevice, bufferKey);
-        break;
-    default:
-        break;
+    else
+    {
+        entry = iteratorEntry->second;
     }
 
-    if (buffer)
-        map.emplace(bufferKey, buffer);
+    entry->Pump_CompletedOnly();
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CVIBuffer* loadedBuffer = entry->Get_NoRef<CVIBuffer>();
+        return loadedBuffer;
+    }
 
-    return buffer;
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(std::move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+        const BUFFER_TYPE capturedType = bufferType;
+        const string capturedKey = bufferKey;
+
+        LoaderFunc loaderFunc = [device, capturedType, capturedKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+
+                CVIBuffer* createdBuffer = nullptr;
+
+                switch (capturedType)
+                {
+                case BUFFER_TYPE::BASIC_RECT:
+                    createdBuffer = CVI_Rect::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_PLANE:
+                    createdBuffer = CVI_Plane::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_POINT:
+                    createdBuffer = CVI_Point::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_INSTANCE_POINT:
+                    createdBuffer = CVI_InstancePoint::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::TERRAIN:
+                {
+                    if (sourcePath.empty())
+                    {
+                        errorMsg = "Terrain sourcePath is empty. (key: " + capturedKey + ")";
+                        return std::monostate{};
+                    }
+                    createdBuffer = CVI_Terrain::Create(device, capturedKey, sourcePath);
+                }
+                break;
+
+                case BUFFER_TYPE::BASIC_CUBE:
+                    break;
+                case BUFFER_TYPE::BASIC_SPHERE:
+                    break;
+
+                default:
+                    errorMsg = "Unsupported BUFFER_TYPE in Load_VIBuffer. (key: " + capturedKey + ")";
+                    return std::monostate{};
+                }
+
+                if (createdBuffer == nullptr)
+                {
+                    errorMsg = "VIBuffer Create failed. (key: " + capturedKey + ")";
+                    return std::monostate{};
+                }
+
+                return createdBuffer;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+
+    entry->Pump_CompletedOnly();
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CVIBuffer* loadedBuffer = entry->Get_NoRef<CVIBuffer>();
+        return loadedBuffer;
+    }
+
+    return nullptr;
+}
+
+CVIBuffer* CResourceThread::Load_WaitVIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType)
+{
+    CResourceEntry* entry = nullptr;
+
+    auto iteratorLevel = m_LevelResources.find(levelTag);
+    if (iteratorLevel == m_LevelResources.end())
+        return nullptr;
+
+    Level_Resource& buffersByType = iteratorLevel->second;
+    if (buffersByType.size() < RESOURCE_TYPE_COUNT)
+        buffersByType.resize(RESOURCE_TYPE_COUNT);
+
+    auto& entryByKey = buffersByType[ENUM(VI_BUFFER)];
+
+    auto iteratorEntry = entryByKey.find(bufferKey);
+    if (iteratorEntry == entryByKey.end())
+    {
+        entry = CResourceEntry::Create();
+        entry->SetDebugName(bufferKey);
+        entry->SetLevelTag(levelTag);
+
+        // TERRAIN이면 path 필요. 나머지는 굳이 없어도 됨.
+        auto iteratorPath = m_PathByKey.find(bufferKey);
+        if (iteratorPath != m_PathByKey.end())
+            entry->SetSourcePath(iteratorPath->second);
+
+        entryByKey.emplace(bufferKey, entry);
+    }
+    else
+    {
+        entry = iteratorEntry->second;
+    }
+
+    entry->Pump_CompletedOnly();
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CVIBuffer* loadedBuffer = entry->Get_NoRef<CVIBuffer>();
+        return loadedBuffer;
+    }
+
+    if (entry->GetState() == LoadState::Unloaded)
+    {
+        ScheduleFunc scheduleFunc = [this](JobFunc jobFunc)
+            {
+                return Schedule(std::move(jobFunc));
+            };
+
+        ID3D11Device* device = m_pDevice;
+        const BUFFER_TYPE capturedType = eType;
+        const string capturedKey = bufferKey;
+
+        LoaderFunc loaderFunc = [device, capturedType, capturedKey](const string& sourcePath, string& errorMsg) -> ResourceVariant
+            {
+                errorMsg.clear();
+
+                CVIBuffer* createdBuffer = nullptr;
+
+                switch (capturedType)
+                {
+                case BUFFER_TYPE::BASIC_RECT:
+                    createdBuffer = CVI_Rect::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_PLANE:
+                    createdBuffer = CVI_Plane::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_POINT:
+                    createdBuffer = CVI_Point::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::BASIC_INSTANCE_POINT:
+                    createdBuffer = CVI_InstancePoint::Create(device, capturedKey);
+                    break;
+
+                case BUFFER_TYPE::TERRAIN:
+                {
+                    if (sourcePath.empty())
+                    {
+                        errorMsg = "Terrain sourcePath is empty. (key: " + capturedKey + ")";
+                        return std::monostate{};
+                    }
+                    createdBuffer = CVI_Terrain::Create(device, capturedKey, sourcePath);
+                }
+                break;
+
+                case BUFFER_TYPE::BASIC_CUBE:
+                    break;
+                case BUFFER_TYPE::BASIC_SPHERE:
+                    break;
+
+                default:
+                    errorMsg = "Unsupported BUFFER_TYPE in Load_VIBuffer. (key: " + capturedKey + ")";
+                    return std::monostate{};
+                }
+
+                if (createdBuffer == nullptr)
+                {
+                    errorMsg = "VIBuffer Create failed. (key: " + capturedKey + ")";
+                    return std::monostate{};
+                }
+
+                return createdBuffer;
+            };
+
+        entry->Begin_LoadAsync(loaderFunc, scheduleFunc);
+    }
+    entry->Wait_AsyncDone();
+    entry->Pump_CompletedOnly();
+    if (entry->GetState() == LoadState::Ready)
+    {
+        CVIBuffer* loadedBuffer = entry->Get_NoRef<CVIBuffer>();
+        return loadedBuffer;
+    }
+
+    return nullptr;
 }
 
 vector<CMaterialInstance*> CResourceThread::Load_MaterialFromFile(
@@ -129,11 +324,26 @@ CShader* CResourceThread::Load_Shader(const string& levelTag, const string& shad
 	return nullptr;
 }
 
+vector<CAnimationClip*> CResourceThread::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
+{
+	return {};
+}
+
+EFFECT_ASSET CResourceThread::Load_EffectAsset(const string& levelTag, const string& effectTag)
+{
+	return {};
+}
+
+CComputeShader* CResourceThread::Load_ComputeShader(const string& levelTag, const string& shaderKey)
+{
+	return nullptr;
+}
+
 CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType)
 {
     const string entryKey = textureKey;
     CResourceEntry* entry = nullptr;
-    
+
     auto iteratorLevel = m_LevelResources.find(levelTag);
     if (iteratorLevel == m_LevelResources.end())
         return m_DefaultTexture;
@@ -225,32 +435,6 @@ CTexture* CResourceThread::Load_Texture(const string& levelTag, const string& te
     }
 
     return m_DefaultTexture;
-}
-
-shared_future<ResourceVariant> CResourceThread::Schedule(JobFunc jobFunc)
-{
-    future<ResourceVariant> futureValue =
-        m_pThreadPool->enqueue([jobFunc = move(jobFunc)]() mutable -> ResourceVariant
-            {
-                return jobFunc();
-            });
-
-    return futureValue.share();
-}
-
-vector<CAnimationClip*> CResourceThread::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
-{
-	return {};
-}
-
-EFFECT_ASSET CResourceThread::Load_EffectAsset(const string& levelTag, const string& effectTag)
-{
-	return {};
-}
-
-CComputeShader* CResourceThread::Load_ComputeShader(const string& levelTag, const string& shaderKey)
-{
-	return nullptr;
 }
 
 CModelData* CResourceThread::Load_ModelData(const string& levelTag, const string& ModelKey)
@@ -351,6 +535,7 @@ string CResourceThread::Get_ResourcePath(const string& resourceKey)
     if (iter != m_PathByKey.end()) return iter->second;
     else return string();
 }
+
 HRESULT CResourceThread::Add_ResourcePath(const string& resourceKey, const string& resourcePath)
 {
     auto iter = m_PathByKey.find(resourceKey);
@@ -364,6 +549,7 @@ HRESULT CResourceThread::Add_ResourcePath(const string& resourceKey, const strin
     m_PathByKey.emplace(resourceKey, resourcePath);
     return S_OK;
 }
+
 void CResourceThread::Pump_AllEntries_MainThread()
 {
     for (auto& levelPair : m_LevelResources)
@@ -413,10 +599,12 @@ void CResourceThread::Pump_AllEntries_MainThread()
 
 void CResourceThread::Load_InitialResource()
 {
-
     m_DefaultTexture = CTexture::Create(m_pDevice, L"../../DefaultSource/Default.dds", "Default.dds", false);
     m_DefaultModel = CModelData::Create("../../DefaultSource/Default.model", m_pDevice);
-
+    Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Rect", BUFFER_TYPE::BASIC_RECT);
+    Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Plane", BUFFER_TYPE::BASIC_PLANE);
+    Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_Point", BUFFER_TYPE::BASIC_POINT);
+    Load_WaitVIBuffer(G_GlobalLevelKey, "Engine_Default_InstancePoint", BUFFER_TYPE::BASIC_INSTANCE_POINT);
 }
 
 CResourceEntry* CResourceThread::Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType)
@@ -500,6 +688,7 @@ CResourceEntry* CResourceThread::Request_TextureEntry(const string& levelTag, co
 
     return entry;
 }
+
 CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, const string& modelKey)
 {
     const string entryKey = modelKey;
@@ -579,6 +768,17 @@ CResourceEntry* CResourceThread::Request_ModelEntry(const string& levelTag, cons
     }
 
     return entry;
+}
+
+shared_future<ResourceVariant> CResourceThread::Schedule(JobFunc jobFunc)
+{
+    future<ResourceVariant> futureValue =
+        m_pThreadPool->enqueue([jobFunc = move(jobFunc)]() mutable -> ResourceVariant
+            {
+                return jobFunc();
+            });
+
+    return futureValue.share();
 }
 
 void CResourceThread::Clear_Resource(const string& levelTag)

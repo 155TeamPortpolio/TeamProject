@@ -46,6 +46,7 @@ namespace Engine {
 		class CShader*,
 		class CMaterialData*,
 		class CAnimationClip*,
+		class CVIBuffer*,
 		class CSoundData*
 	>;
 

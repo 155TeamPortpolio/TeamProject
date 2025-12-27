@@ -9,7 +9,7 @@ using Level_Resource = vector<unordered_map<string, CResourceEntry*>>;
 class ENGINE_DLL CResourceThread final :
 	public IResourceService
 {
-	enum RESOURCE { TEXTURE, MODELDATA, RESOURCE_TYPE_COUNT };
+	enum RESOURCE { TEXTURE, MODELDATA, VI_BUFFER, RESOURCE_TYPE_COUNT };
 
 private:
 	CResourceThread(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -35,6 +35,7 @@ public:
 public:
 	virtual CResourceEntry* Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType = false);
 	virtual CResourceEntry* Request_ModelEntry(const string& levelTag, const string& modelKey);
+	virtual class CVIBuffer* Load_WaitVIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType);
 
 public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);

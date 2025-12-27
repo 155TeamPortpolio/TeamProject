@@ -99,7 +99,6 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 	m_TransfromationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_FinalMatices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -121,11 +120,7 @@ HRESULT CAI_SKModel::Load_AIModel(const aiScene* pAIScene, string fileName)
 		}
 	}
 
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
-	{
-		XMStoreFloat4x4(&m_FinalMatices[i], m_pData->Get_OffsetMatrix(i) * XMLoadFloat4x4(&m_CombinedMatrices[i]));
-	}
-
+	
 	// -----------------------------
 	auto data = dynamic_cast<CAIModelData*>(m_pData);
 

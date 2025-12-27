@@ -50,6 +50,7 @@ public:
         return result;
     }
     bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
+    void Wait_AsyncDone();
     void Pump_CompletedOnly(); // 메인 스레드 전용
     void Pump();
     void Reset();
@@ -119,6 +120,12 @@ public:
         lock_guard<mutex> lockGuard(m_Mutex);
         return m_LastErrorMsg;
     }
+    _uint GetGenerationCopy() const
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        return m_Generation;
+    }
+
     // ===== Meta / Identification =====
     ResourceKey  m_ID{};        // SetKey/GetKeyCopy에서 사용
     string  m_SourcePath;  // SetSourcePath/GetSourcePathCopy에서 사용

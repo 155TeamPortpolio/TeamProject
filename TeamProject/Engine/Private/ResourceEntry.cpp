@@ -51,6 +51,17 @@ bool CResourceEntry::Begin_LoadAsync(const LoaderFunc& loaderFunc, const Schedul
     }
 }
 
+void CResourceEntry::Wait_AsyncDone()
+{
+    shared_future<ResourceVariant> taskCopy;
+    {
+        lock_guard<mutex> lockGuard(m_Mutex);
+        taskCopy = m_LoadingTask;
+    }
+    if (taskCopy.valid())
+        taskCopy.wait();
+}
+
 void CResourceEntry::Pump_CompletedOnly()
 {
     // Loading이 아니면 할 게 없음
