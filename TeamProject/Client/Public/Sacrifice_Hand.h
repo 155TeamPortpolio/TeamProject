@@ -29,6 +29,11 @@ public:
     virtual void Free() override;
 
 private:
+    HRESULT Initialize_StateMachine();
+    HRESULT Initialize_States();
+    HRESULT Initialize_Transitions();
+
+private:
     CStateMachine<CSacrifice_Hand>* m_pStateMachine = { nullptr };
 };
 NS_END

@@ -84,3 +84,18 @@ void CSacrifice_Hand::Free()
 
 	Safe_Release(m_pStateMachine);
 }
+
+HRESULT CSacrifice_Hand::Initialize_StateMachine()
+{
+	return S_OK;
+}
+
+HRESULT CSacrifice_Hand::Initialize_States()
+{
+	return S_OK;
+}
+
+HRESULT CSacrifice_Hand::Initialize_Transitions()
+{
+	return S_OK;
+}
