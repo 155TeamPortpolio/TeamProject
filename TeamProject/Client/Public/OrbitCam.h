@@ -1,79 +1,12 @@
 #pragma once
 
 #include "CamObject.h"
+#include "OrbitCamData.h"
 
 NS_BEGIN(Client)
-enum class OrbitPreset { Field, Battle };
 
 class COrbitCam final : public CCamObject
 {
-public:
-    struct Profile
-    {
-        _float minDist = 0.6f;
-        _float maxDist = 4.f;
-
-        _float pitchMin = -30.f;
-        _float pitchMax = 60.f;
-
-        _float rotSmoothSpeed = 18.f;
-        _float distSmoothSpeed = 18.f;
-        _float pivotSmoothSpeed = 15.f;
-
-        _float offsetY = 0.f;
-
-        _bool  usePitchAutoZoom = true;
-        _float pitchAutoZoomMax = 1.0f;
-        _float pitchAutoZoomStartN = 0.75f;
-        _float pitchAutoZoomSmooth = 18.f;
-
-        _float startDistance = 2.3f;
-        _float startPitchDeg = -15.f;
-        _float startHeightOffset = 0.4f;
-
-        _bool  useAutoYawFollow = true;
-        _float autoYawFollowSpeed = 0.4f;
-        _float autoYawFollowDelay = 0.6f;
-    };
-
-private:
-    _float  autoYawHoldTimer = 0.f;
-    Vector3 prevTargetFoot{};
-    _bool   hasPrevTargetFoot = false;
-
-private:
-    struct PoseState
-    {
-        Vector2 targetRotDeg{};
-        Vector2 curRotDeg{};
-
-        _float targetDist = 2.f;
-        _float curDist = 2.f;
-
-        _float targetPitchZoomOffset = 0.f;
-        _float curPitchZoomOffset = 0.f;
-
-        Vector3 targetPivot{};
-        Vector3 curPivot{};
-
-        Vector3 pivotOverrideOffset{};
-    };
-    struct InputState
-    {
-        _float sensitivityX = 0.12f;
-        _float sensitivityY = 0.08f;
-        _float zoomSpeed = 1.0f;
-    };
-
-private:
-    OrbitPreset       preset    = OrbitPreset::Field;
-    _bool             firstSnap = true;
-    OBJECT_HANDLE     targetHandle{};
-     
-    Profile           profile{};
-    PoseState         pose{};
-    InputState        input{};
-
 private:
     COrbitCam() = default;
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
@@ -89,11 +22,12 @@ public:
     virtual void    Render_GUI()                override { __super::Render_GUI(); }
 
 public:
-    void    SetPreset(OrbitPreset nextPreset, _bool keepZoomRatio, _bool snap);
+    void    SetPreset(OrbitPreset preset, _bool keepZoomRatio, _bool snap);
     void    SetTarget(CGameObject* obj);
-    void    ClearTarget() { targetHandle.Reset(); }
+    void    ClearTarget() { m_targetHandle.Reset(); }
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
+
     void    SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot);
 
 private:
@@ -101,13 +35,40 @@ private:
     void    ClampTargets();
     void    SmoothStates(_float dt);
 
-    Vector3 GetPivotPos()       const { return pose.curPivot;}
-    Vector3 GetPivotTargetPos() const;
-    float   GetEffectiveDist()  const;
+    Vector3 GetPivotPos()          const { return m_curPivot; }
+    Vector3 GetPivotTargetPos()    const;
+    float   GetEffectiveDist() const;
+
     void    ApplyOrbitPose(_float dt);
 
-    void    UpdateAutoYawFollow(_float dt);
-    Vector3 GetTargetFootPos() const;
+private:
+    OrbitPreset   m_preset = OrbitPreset::Field;
+    _bool         m_firstSnap = true;
+    OBJECT_HANDLE m_targetHandle{};
+
+    OrbitProfile           m_profile{};
+    OrbitCollisionProfile  m_colProfile{};
+    OrbitCollisionState    m_colState{};
+
+    Vector2  m_targetRotDeg{};
+    Vector2  m_curRotDeg{};
+
+    _float   m_targetDist = 2.f;
+    _float   m_curDist    = 2.f;
+
+    _float   m_sensitivityX = 0.12f;
+    _float   m_sensitivityY = 0.08f;
+    _float   m_zoomSpeed    = 1.0f;
+
+    _bool    m_usePitchDolly      = true;
+    _float   m_pitchDollyStrength = 0.25f;
+    _float   m_pitchDollyStartN   = 0.75f;
+
+    _float   m_targetPitchZoomOffset = 0.f;
+    _float   m_curPitchZoomOffset    = 0.f;
+
+    Vector3  m_targetPivot{};
+    Vector3  m_curPivot{};
 
 public:
     static COrbitCam* Create();

@@ -8,23 +8,10 @@ NS_BEGIN(Engine)
 
 class ENGINE_DLL CCamera final : public CComponent
 {
-	struct Lens
-	{
-		_float fov{};
-		_float zNear{};
-		_float zFar{};
-		_float aspect{};
-	};
-
-	Lens        m_lens{};
-	CamProjType m_projType  = CamProjType::Perspective;
-	_float      m_orthoSize = 10.f;
-	Vector3     m_viewOffset{};
-
 private:
-	CCamera() = default;
+	CCamera() DEFAULT;
 	CCamera(const CCamera& rhs) : CComponent(rhs) {}
-	~CCamera() = default;
+	~CCamera() DEFAULT;
 
 public:
 	HRESULT Initialize_Prototype()           override { return S_OK; }
@@ -34,18 +21,18 @@ public:
 	Matrix      Get_ViewMatrix() const;
 	Matrix      Get_ProjMatrix() const;			
 	_vector     Get_Pos()        const;
-	_float      Get_FOV()        const { return m_lens.fov;    }
-	_float      Get_Near()       const { return m_lens.zNear;  }
-	_float      Get_Far()        const { return m_lens.zFar;   }
-	_float      Get_Aspect()     const { return m_lens.aspect; }
-	CamProjType Get_ProjType()   const { return m_projType;    }
+	_float      Get_FOV()        const { return m_fov;      }
+	_float      Get_Near()       const { return m_zNear;    }
+	_float      Get_Far()        const { return m_zFar;     }
+	_float      Get_Aspect()     const { return m_aspect;   }
+	CamProjType Get_ProjType()   const { return m_projType; }
 
-	void        Set_FOV(_float fov)                { m_lens.fov    = fov;      }
-	void        Set_Far(_float zFar)               { m_lens.zFar   = zFar;     }
-	void        Set_Near(_float zNear)             { m_lens.zNear  = zNear;    }
-	void        Set_Aspect(_float aspect)          { m_lens.aspect = aspect;   }
-	void        Set_ProjType(CamProjType projType) { m_projType    = projType; }
-	void        Set_Lens(_float fov, _float aspect, _float zNear, _float zFar);
+	void        Set_FOV(_float _fov)                { m_fov      = _fov;      }
+	void        Set_Far(_float _zFar)               { m_zFar     = _zFar;     }
+	void        Set_Near(_float _zNear)             { m_zNear    = _zNear;    }
+	void        Set_Aspect(_float _aspect)          { m_aspect   = _aspect;   }
+	void        Set_ProjType(CamProjType _projType) { m_projType = _projType; }
+	void        Set_Lens(_float _fov, _float _aspect, _float _zNear, _float _zFar);
 
 	_bool       Lerp_FOV(_float dst, _float dt);
 
@@ -55,7 +42,18 @@ public:
 	void           Clear_ViewOffset() { m_viewOffset = Vector3::Zero; }
 
 public:
-	virtual void   Render_GUI() override;
+	void        Render_GUI();
+
+private:
+	_float      m_fov{};
+	_float      m_zNear{};
+	_float      m_zFar{};
+	_float      m_aspect{};
+
+	CamProjType m_projType  = CamProjType::Perspective;
+	_float      m_orthoSize = 10.f;
+
+	Vector3     m_viewOffset = Vector3::Zero;
 
 public:
 	static CCamera* Create();

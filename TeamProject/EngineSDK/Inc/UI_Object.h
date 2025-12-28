@@ -36,20 +36,20 @@ public:
 	}UI_ANIM_CLIP;
 
 protected:
-	CUI_Object();
+	CUI_Object() {}
 	CUI_Object(const CUI_Object& rhs);
 	virtual ~CUI_Object() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype()override;
+	virtual HRESULT Initialize_Prototype()               override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr)override;
 
-	virtual void Pre_EngineUpdate(_float dt)override;
-	virtual void Post_EngineUpdate(_float dt)override;
+	virtual void Pre_EngineUpdate(_float dt)             override;
+	virtual void Post_EngineUpdate(_float dt)            override;
 
-	virtual void Priority_Update(_float dt)override;
-	virtual void Update(_float dt)override;
-	virtual void Late_Update(_float dt)override;
+	virtual void Priority_Update(_float dt)              override {}
+	virtual void Update(_float dt)                       override {}
+	virtual void Late_Update(_float dt)                  override {}
 
 public:
 	/*활성 비활성에 대한 로직을 스스로*/
@@ -70,12 +70,12 @@ public:
 
 public:
 	void Update_UITransform();
-	void Set_LeftTop(_float2 desiredLT);
-	void Rotate_Left(_float _radian);
+	void Set_LeftTop(_float2 desiredLT) {}
+	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
-	_float2 Get_RectTopLeft_Screen() ;
+	_float2 Get_RectTopLeft_Screen();
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 
 	// Screen anchors
@@ -105,7 +105,7 @@ public:
 	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  1.f }, x, y); }
 
 
-	void Align_To(ANCHOR anchor);
+	void Align_To(ANCHOR anchor) { m_eAnchor = anchor; }
 	void Set_Pivot(_float2 newPivot);
 
 public:

@@ -3,6 +3,7 @@
 
 #include "MainApp.h"
 #include "GameInstance.h"
+#include "IResourceService.h"
 
 #include "UITool_Level.h"
 

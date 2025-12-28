@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "SpriteAnimationUI.h"
 
-#include "GameInstance.h"
-#include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
@@ -35,7 +33,9 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
     Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -83,19 +83,11 @@ void CSpriteAnimationUI::Render_GUI()
     __super::Render_GUI();
      
     // 텍스쳐
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     // 스프라이트 애니메이션
     ImGui::SeparatorText(u8"스프라이트 애니메이션");
@@ -143,7 +135,8 @@ void CSpriteAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data.strTextureTag = m_strTextureKey;
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
 
     data.isLoop = m_isLoop;
     data.iFrameCountX = m_iFrameCountX;
@@ -156,8 +149,10 @@ void CSpriteAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_isLoop = data.isLoop;
     m_iFrameCountX = data.iFrameCountX;

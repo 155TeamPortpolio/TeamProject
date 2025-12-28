@@ -14,6 +14,7 @@ namespace
 #define OBJ CGameInstance::GetInstance()->Get_ObjectMgr()
 }
 
+
 namespace
 {
     float WrapLoopTime(float t, float dur)
