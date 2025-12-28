@@ -2,6 +2,7 @@
 #include "UIDirector.h"
 #include "GameInstance.h"
 #include "UI_Object.h"
+#include "UILoader.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
 

@@ -160,6 +160,7 @@ HRESULT CTestLevel::Awake()
 		.Build("HUD");
 	
 	uiDirector->Register(hudUI);
+	//uiDirector->SetVisible("HUD", true);
 
 	return S_OK;
 }
