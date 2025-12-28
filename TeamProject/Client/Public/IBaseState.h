@@ -18,9 +18,9 @@ public:
 	virtual void  Update(Type* pOwner, _float dt) {}
 	virtual void  Exit(Type* pOwner) {}
 	// 상태 전환 관련
-	virtual bool  Handle_Transition(const string& strState) { return true; }
-	virtual void  Begin_Transition(Type* pOwner, const string& strNextState) {}
-	virtual void  End_Transition(Type* pOwner, const string& strPrevState) {}
+	virtual _bool  Handle_Transition(Type* pOwner, const string& strState) { return true; }
+	virtual void   Begin_Transition(Type* pOwner, const string& strNextState) {}
+	virtual void   End_Transition(Type* pOwner, const string& strPrevState) {}
 
 public:
 	const string&	  Get_StateName() const { return m_strState; }

@@ -1,6 +1,8 @@
 #ifndef __SHADER_PBRFUNCTION_HLSL__
 #define __SHADER_PBRFUNCTION_HLSL__
 
+#define PI 3.14159265359
+
 // material
 // 표면 거칠기 표현 (roughness가 낮으면 날카로운 반사, 높으면 넓은 반사)
 float DistributionGGX(float3 normal, float3 halfdir, float roughness)
@@ -12,8 +14,8 @@ float DistributionGGX(float3 normal, float3 halfdir, float roughness)
     float NdotH = saturate(dot(normal, halfdir)); //법선 하프벡터 내적
     
     float num = alpha2;
-    float denom = 3.14 * pow((pow(NdotH, 2) * (alpha2 - 1.0f) + 1.0f), 2);
-   
+    float denom = PI * pow((pow(NdotH, 2) * (alpha2 - 1.0f) + 1.0f), 2);
+    
     return num / denom; //높을수록 날카로운 반사 //GGX 분포값
 }
 
@@ -25,7 +27,7 @@ float GeometrySchlickGGX(float NdotV, float roughness)
     //NdotV - 법선 시선벡터 내적
     float r = roughness + 1.f;
     roughness = max(roughness, 0.04);
-    float k = (r * r) / 2.f;
+    float k = (r * r) / 8.0;
     
     float NdotV_clamped = max(NdotV, 0.001);
     float denom = NdotV_clamped * (1.f - k) + k;
@@ -56,7 +58,8 @@ float3 FresnelSchlick(float HdotV, float3 F0)
     //시선벡터와 하프벡터의 내적 - HdotV
     
     //슐릭 근사식
-    return F0 + (1.0 - F0) * pow(clamp(1.0 - HdotV, 0.0, 1.0), 5.0);
+    float cosTheta = saturate(HdotV); // 이미 max로 보장됨
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
 }
 
 
@@ -103,12 +106,12 @@ float3 view, float3 light, float3 lightcolor, float lightIntensity)
     float3 F = FresnelSchlick(VdotH, F0);
     
     float3 numerator = D * F * G;
-    float denominator = max(4.f * NdotV * NdotL, 0.001);
+    float denominator = max(4.0 * NdotV * NdotL, 0.0001);
     float3 specular = numerator / denominator;
     
     float3 kSpecular, kDiffuse;
     CalculateEnergyConservation(F, metalic, kSpecular, kDiffuse);
-    float3 diffuse = kDiffuse * albedo / 3.14;
+    float3 diffuse = kDiffuse * albedo / PI;
     
     float3 BRDF = diffuse + specular;
     

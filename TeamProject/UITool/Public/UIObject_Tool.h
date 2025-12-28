@@ -27,6 +27,7 @@ public:
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 protected:
+	virtual void Render_GUI_Property();
 	virtual void Render_GUI_Layout();				// (툴) GUI 앵커 오프셋, 사이즈
 	virtual void Render_GUI_Transform();			// (툴) GUI 스케일, 앵글, 피봇
 	virtual void Render_GUI_Animation();			// (툴)	GUI 애니메이션 추가

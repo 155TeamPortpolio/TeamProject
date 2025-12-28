@@ -156,7 +156,6 @@
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
-    <ClInclude Include="..\Public\HUD.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
@@ -167,7 +166,9 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h" />
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_Idle.h" />
+    <ClInclude Include="..\Public\MiyabiState_Move.h" />
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_Run.h" />
     <ClInclude Include="..\Public\MiyabiState_Walk.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
@@ -195,7 +196,6 @@
     <ClInclude Include="..\Public\TextUI.h" />
     <ClInclude Include="..\public\UIDirector.h" />
     <ClInclude Include="..\public\UILoader.h" />
-    <ClInclude Include="..\Public\UIPrefab.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -240,14 +240,15 @@
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
-    <ClCompile Include="..\Private\HUD.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Idle.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Move.cpp" />
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />
@@ -276,7 +277,6 @@
     <ClCompile Include="..\Private\TextUI.cpp" />
     <ClCompile Include="..\private\UIDirector.cpp" />
     <ClCompile Include="..\private\UILoader.cpp" />
-    <ClCompile Include="..\Private\UIPrefab.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
