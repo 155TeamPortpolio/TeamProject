@@ -27,14 +27,35 @@ void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("Start");
     }
+
+    if (m_pSubStateMachine)
+        m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+
     __super::Enter(pOwner);
 }
 
 void CMiyabiState_Walk::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
- 
+
+    if (m_pSubStateMachine)
+    {
+        _bool bIsMove = pOwner->Is_Move();
+        m_pSubStateMachine->Set_Bool("IsMove", bIsMove);
+
+        // µð¹ö±ë
+        auto pCurrent = m_pSubStateMachine->Get_CurrentState();
+        if (pCurrent)
+        {
+            char buffer[512];
+            sprintf_s(buffer, "Walk Sub: %s, Progress: %.2f, AnimEnd: %s, IsMove: %s\n",
+                m_pSubStateMachine->Get_CurrentStateName().c_str(),
+                pCurrent->Get_AnimProgress(),
+                pCurrent->Is_AnimEnd() ? "TRUE" : "FALSE",
+                bIsMove ? "TRUE" : "FALSE");
+            OutputDebugStringA(buffer);
+        }
+    }
 }
 
 void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
@@ -49,6 +70,7 @@ void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start")
+        .Loop(false)
         .Apply();
 }
 

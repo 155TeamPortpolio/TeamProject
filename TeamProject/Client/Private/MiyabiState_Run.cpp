@@ -6,21 +6,26 @@
 
 void CMiyabiState_Run::Enter(CMiyabi* pOwner)
 {
+    if(!m_pSubStateMachine)
+    {
+        m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+        m_pSubStateMachine->Register_State("Start", CMiyabiState_Run_Start::Create());
+        m_pSubStateMachine->Register_State("Loop", CMiyabiState_Run_Loop::Create());
+        m_pSubStateMachine->Register_State("End", CMiyabiState_Run_End::Create());
+        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
-    m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
-    m_pSubStateMachine->Register_State("Start", CMiyabiState_Run_Start::Create());
-    m_pSubStateMachine->Register_State("Loop", CMiyabiState_Run_Loop::Create());
-    m_pSubStateMachine->Register_State("End", CMiyabiState_Run_End::Create());
-    m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+        m_pSubStateMachine->Register_Transition("Start", "Loop",
+            CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+        m_pSubStateMachine->Register_Transition("Start", "End",
+            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+        m_pSubStateMachine->Register_Transition("Loop", "End",
+            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
-    m_pSubStateMachine->Register_Transition("Start", "Loop",
-        CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-    m_pSubStateMachine->Register_Transition("Start", "End",
-        CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
-    m_pSubStateMachine->Register_Transition("Loop", "End",
-        CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+        m_pSubStateMachine->Set_DefaultState("Start");
+    }
 
-    m_pSubStateMachine->Set_DefaultState("Start");
+    if (m_pSubStateMachine)
+        m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
 
     __super::Enter(pOwner);
 }
