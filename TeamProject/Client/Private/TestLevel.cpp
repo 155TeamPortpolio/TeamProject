@@ -184,16 +184,12 @@ HRESULT CTestLevel::Awake()
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD",             CHUD::Create());
 
 	auto uiDirector = CUIDirector::GetInstance();
-	auto resMgr     = CGameInstance::GetInstance()->Get_ResourceMgr();
-	auto uiMgr      = CGameInstance::GetInstance()->Get_UIMgr();
-
 	uiDirector->Initialize("Test_Level");
 
 	CUI_Object* hudUI = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_CanvasPanel" })
 		.Asset("hud.json")
 		.Build("HUD"); 
 	
-	uiMgr->Add_UIObject(hudUI, "Test_Level");
 	uiDirector->Register(hudUI);
 	//uiDirector.SetVisible("HUD", true);
 

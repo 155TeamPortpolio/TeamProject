@@ -16,6 +16,8 @@ void CUIDirector::Register(CUI_Object* uiObj)
 {
 	const string& tag = uiObj->Get_InstanceName();
 	auto [it, inserted] = m_uiByTag.emplace(tag, uiObj);
+
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, m_levelKey);
 }
 
 void CUIDirector::SetVisible(const string& tag, bool visible)
