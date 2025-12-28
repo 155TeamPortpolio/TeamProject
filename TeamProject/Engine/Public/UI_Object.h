@@ -121,14 +121,11 @@ public:
 
 public:
 	void Play_Animation(_float dt);					
-	void Set_Animation(_uint iIndex);				
+	void Set_Animation(_uint iIndex, _bool isLoop = false);				
 
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
-
-protected:
-	void Reset_Animation();
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -168,15 +165,17 @@ protected:
 	/*텍스쳐에 곱해지는 컬러*/
 	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
+	/*애니메이션*/
 	_bool m_isBlending = {};
 	_float m_fBlendTime = {};
-	_float m_fBlendDuration = {};
+	_float m_fBlendDuration = {}; 
 
 	vector<UI_ANIM_CLIP> m_AnimClips;
 	_int m_iCurrentClipIndex = { -1 };
+	_bool m_isAnimLoop = { false };
 
-	/*ui 애니메이션 위치 오프셋 값 m_vAnchorOffset에 더해지는 값*/
-	_float2 m_vTranslation = {};
+	/*애니메이션 위치 오프셋 값으로 m_vAnchorOffset에 더해지는 값*/
+	_float2 m_vAnimPosition = {};
 
 public:
 	virtual void Free() override;
