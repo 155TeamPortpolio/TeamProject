@@ -109,9 +109,6 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Idle">
       <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Walk">
-      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
       <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
     </Filter>
@@ -153,12 +150,21 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
       <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
       <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
       <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
+      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Walk">
+      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
+      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -280,7 +286,7 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Walk.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
@@ -323,12 +329,18 @@
     </ClInclude>
     <ClInclude Include="..\public\DebugCamTrace.h">
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Move.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MiyabiState_Run.h">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -448,7 +460,7 @@
       <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Walk</Filter>
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
@@ -485,12 +497,18 @@
     </ClCompile>
     <ClCompile Include="..\private\DebugCamTrace.cpp">
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Move.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MiyabiState_Run.cpp">
+      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

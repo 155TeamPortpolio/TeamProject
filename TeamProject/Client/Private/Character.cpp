@@ -94,13 +94,13 @@ void CCharacter::Update_Input(_float dt)
 
 	if (x || z)
 	{
-		auto cam   = CAM->Get_ActiveCam();
+		auto cam = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 
-		Vector3 look  = camTf->Dir(STATE::LOOK);
+		Vector3 look = camTf->Dir(STATE::LOOK);
 		Vector3 right = camTf->Dir(STATE::RIGHT);
 
-		look.y  = 0.f;
+		look.y = 0.f;
 		right.y = 0.f;
 
 		look.Normalize();
@@ -111,6 +111,7 @@ void CCharacter::Update_Input(_float dt)
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
+	m_bIsInput = m_bIsAttack || m_bIsMove;
 }
 
 void CCharacter::Update_Rotation(_float dt)

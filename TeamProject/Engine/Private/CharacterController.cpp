@@ -528,7 +528,7 @@ void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
 
 void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotation, _float dt)
 {
-	const _float fRootMotionScale = 0.01f;
+	const _float fRootMotionScale = 1.f;
 
 	_vector3 vDelta = vLocalDelta;
 	_vector3 vLocalMotion = _vector3(vDelta.x, 0.f, -vDelta.z);

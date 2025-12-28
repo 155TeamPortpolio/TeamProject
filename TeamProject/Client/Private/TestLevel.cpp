@@ -113,10 +113,10 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
