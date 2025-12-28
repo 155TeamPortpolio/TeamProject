@@ -34,10 +34,10 @@ void CTestState_Dash::Exit(CTestObject* pOwner)
 	pOwner->Get_StateMachine()->Set_Bool("DashFinished", false);
 }
 
-bool CTestState_Dash::Handle_Transition(const string& strState)
-{
-	if (strState == "Idle" || strState == "Walk")
-		return true;
-
-	return false;
-}
+//bool CTestState_Dash::Handle_Transition(const string& strState)
+//{
+//	if (strState == "Idle" || strState == "Walk")
+//		return true;
+//
+//	return false;
+//}

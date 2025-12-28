@@ -90,9 +90,11 @@ void CMiyabiState_Charge_Start::Enter(CMiyabi* pOwner)
         bFromCombo = (pAttack->Get_SubStateMachine()->Get_PrevStateName() == "NormalAttack");
 
     if (bFromCombo)
-        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_Front");
+        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_Front")
+        .Apply();
     else
-        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start");
+        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start")
+        .Apply();
 }
 void CMiyabiState_Charge_Start::Update(CMiyabi* pOwner, _float dt)
 {
@@ -108,7 +110,8 @@ void CMiyabiState_Charge_Start::Exit(CMiyabi* pOwner)
 // Charge_Start_02 (2단)
 void CMiyabiState_Charge_Start_02::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_02");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_02")
+        .Apply();
 }
 
 void CMiyabiState_Charge_Start_02::Update(CMiyabi* pOwner, _float dt)
@@ -125,7 +128,8 @@ void CMiyabiState_Charge_Start_02::Exit(CMiyabi* pOwner)
 // Charge_Start_03 (3단)
 void CMiyabiState_Charge_Start_03::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_03");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Start_03")
+        .Apply();
 }
 
 void CMiyabiState_Charge_Start_03::Update(CMiyabi* pOwner, _float dt)
@@ -142,13 +146,15 @@ void CMiyabiState_Charge_Start_03::Exit(CMiyabi* pOwner)
 // Charge_Attack01 (1~2단 공격)
 void CMiyabiState_Charge_Attack01::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01")
+        .Apply();
 }
 
 // Charge_Attack03 (3단 공격)
 void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03")
+        .Apply();
 }
 
 // Charge_End
@@ -158,7 +164,9 @@ void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
     _uint iLevel = pParent ? pParent->Get_ChargeLevel() : 1;
 
     if (iLevel >= 3)
-        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03_End");
+        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack03_End")
+        .Apply();
     else
-        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01_End");
+        pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01_End")
+        .Apply();
 }

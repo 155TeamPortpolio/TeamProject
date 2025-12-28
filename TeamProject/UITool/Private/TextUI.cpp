@@ -44,7 +44,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "canvas.png");
 #endif
 
     m_iCount++;
@@ -72,7 +72,9 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
-    __super::Render_GUI();
+    Render_GUI_Layout();
+    Render_GUI_Transform();
+    Render_GUI_Animation();
 
     // 텍스트
     ImGui::SeparatorText(u8"텍스트");

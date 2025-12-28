@@ -2,13 +2,14 @@
 #include "Miyabi.h"
 #include "GameInstance.h"
 
-#include "StateMachine.h"
+
 #include "Material.h"
 #include "Animator3D.h"
 #include "CharacterController.h"
 
+#include "StateMachine.h"
 #include "MiyabiState_Idle.h"
-#include "MiyabiState_Walk.h"
+#include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
 
 #include "Renderer.h"
@@ -77,7 +78,7 @@ void CMiyabi::Priority_Update(_float dt)
 void CMiyabi::Update(_float dt)
 {
 	Update_Input(dt);
-
+	Update_States();
 	m_pStateMachine->Update(dt);
 	__super::Update(dt);
 }
@@ -85,13 +86,13 @@ void CMiyabi::Update(_float dt)
 void CMiyabi::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	Add_OutLineRender();
+	//Add_OutLineRender();
 }
 
 void CMiyabi::Render_GUI()
 {
 	__super::Render_GUI();
-	// StateMachine µð¹ö±ë Á¤º¸
+	// StateMachine ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -132,27 +133,7 @@ void CMiyabi::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
-	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
-	// Attack ÀÔ·Â Ã³¸®
-	if (m_bIsAttack)
-	{
-		string strCurrent = m_pStateMachine->Get_CurrentStateName();
-		if (strCurrent == "Attack")
-		{
-			// Attack »óÅÂ¸é ¼­ºê ½ºÅ×ÀÌÆ®¸Ó½Å¿¡ Æ®¸®°Å Àü´Þ
-			CMiyabiState_Attack* pAttackState =
-				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
-			if (pAttackState && pAttackState->Get_SubStateMachine())
-				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
-		}
-		else
-		{
-			// ´Ù¸¥ »óÅÂ¸é Attack »óÅÂ·Î ÀüÀÌ
-			m_pStateMachine->Set_Trigger("Attack");
-		}
-	}
-
-	// µð¹ö±×¿ë ·¹ÀÌÄ³½ºÆ® (FÅ°)
+	// ï¿½ï¿½ï¿½ï¿½×¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® (FÅ°)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	if (input->Key_Hold('F'))
 	{
@@ -165,10 +146,34 @@ void CMiyabi::Update_Input(_float dt)
 		m_pCCT->Clear_DebugRay();
 	}
 
-	// Å×½ºÆ®¿ë Á¡ÇÁ (JÅ°)
+	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (JÅ°)
 	if (input->Key_Down('J'))
 	{
 		m_pCCT->Jump(3.f);
+	}
+}
+
+void CMiyabi::Update_States()
+{
+	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+
+	// Attack ï¿½Ô·ï¿½ Ã³ï¿½ï¿½
+	if (m_bIsAttack)
+	{
+		string strCurrent = m_pStateMachine->Get_CurrentStateName();
+		if (strCurrent == "Attack")
+		{
+			// Attack ï¿½ï¿½ï¿½Â¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½Ó½Å¿ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+			CMiyabiState_Attack* pAttackState =
+				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+			if (pAttackState && pAttackState->Get_SubStateMachine())
+				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+		}
+		else
+		{
+			// ï¿½Ù¸ï¿½ ï¿½ï¿½ï¿½Â¸ï¿½ Attack ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
+			m_pStateMachine->Set_Trigger("Attack");
+		}
 	}
 }
 
@@ -193,7 +198,7 @@ HRESULT CMiyabi::Initialize_StateMachine()
 HRESULT CMiyabi::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
-	m_pStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
+	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
 
 	return S_OK;
@@ -201,11 +206,10 @@ HRESULT CMiyabi::Initialize_States()
 
 HRESULT CMiyabi::Initialize_Transitions()
 {
-	// Idle <-> Walk
-	m_pStateMachine->Register_Transition("Idle", "Walk",
+	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
-	m_pStateMachine->Register_Transition("Walk", "Idle",
+	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
 	m_pStateMachine->Register_AnyStateTransition("Attack",
@@ -219,6 +223,7 @@ HRESULT CMiyabi::Initialize_Transitions()
 
 	return S_OK;
 }
+
 HRESULT CMiyabi::Add_OutLineRender()
 {
 	auto Model = Get_Component<CSkeletalModel>();

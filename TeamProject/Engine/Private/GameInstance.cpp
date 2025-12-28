@@ -237,9 +237,7 @@ HRESULT CGameInstance::Draw()
 {
 	m_pRenderSystem->Render();
 	m_pLevelManager->Render(m_pDeviceContext);
-#if defined _DEBUG
 	m_pCollisionSystem->Render_Debug();
-#endif
 #if defined _USING_GUI
 	m_pGuiSystem->Render_GUI();
 #endif

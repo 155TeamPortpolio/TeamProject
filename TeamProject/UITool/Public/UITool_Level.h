@@ -29,9 +29,6 @@ private:
     CGameInstance* m_pGameInstance = { nullptr };
 
 public:
-    static vector<string> m_strTextureKeys;
-    static vector<const _char*> m_szTextureKeys;
-
     static vector<string> m_strFontKeys;
     static vector<const _char*> m_szFontKeys;
 

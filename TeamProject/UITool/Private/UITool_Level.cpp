@@ -18,8 +18,6 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 
-vector<string> CUITool_Level::m_strTextureKeys;
-vector<const _char*> CUITool_Level::m_szTextureKeys;
 vector<string> CUITool_Level::m_strFontKeys;
 vector<const _char*> CUITool_Level::m_szFontKeys;
 
@@ -68,26 +66,19 @@ void CUITool_Level::PreLoad_Level()
 }
 
 HRESULT CUITool_Level::Ready_Textures()
-{ 
+{
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/UI/"))
 	{
-		if (entry.is_regular_file() && entry.path().extension() == ".png" ||
-			entry.is_regular_file() && entry.path().extension() == ".jpg" ||
-			entry.is_regular_file() && entry.path().extension() == ".dds")
+		if (entry.is_regular_file() && entry.path().extension() == ".dds" ||
+			entry.is_regular_file() && entry.path().extension() == ".png" ||
+			entry.is_regular_file() && entry.path().extension() == ".jpg")
 		{
-			filesystem::path filePath = entry.path();	
+			filesystem::path filePath = entry.path();
 
-			if (FAILED(pResourceMgr->Add_ResourcePath(filePath.filename().string(), filePath.string())))
-				break;
-
-			if(filePath.filename().string() != "PanelBox.dds")
-				m_strTextureKeys.push_back(filePath.filename().string());
+			m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(filePath.filename().string(),filePath.string());
 		}
 	}
-
-	for (const auto& Key : m_strTextureKeys)
-		m_szTextureKeys.push_back(Key.c_str());
 
 	return S_OK;
 }
@@ -102,7 +93,7 @@ HRESULT CUITool_Level::Ready_Fonts()
 			filesystem::path filePath = entry.path();
 
 			if (FAILED(m_pGameInstance->Get_FontSystem()->Add_Font(filePath.filename().string(), Helper::ConvertToWideString(filePath.string()))))
-				break;
+				continue;
 
 			m_strFontKeys.push_back(filePath.filename().string());
 		}

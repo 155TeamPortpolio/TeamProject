@@ -29,8 +29,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 
 void CUIObject_Tool::Render_GUI()
 {
-    ImGui::SeparatorText(u8"속성");
-    ImGui::Checkbox("Alive", &m_isAlive);
+    Render_GUI_Property();
 
     Render_GUI_Layout();
 
@@ -73,6 +72,7 @@ void CUIObject_Tool::Remove_SelfFromParent()
 void CUIObject_Tool::FillElementData(UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 저장
+    data.InstanceName = m_InstanceName;
     data.transform.iAnchor = static_cast<_uint>(m_eAnchor);
     data.transform.vAnchorOffset = { m_vAnchorOffset.x, m_vAnchorOffset.y };
     data.transform.vSize = { m_vSize.x, m_vSize.y };
@@ -126,6 +126,7 @@ void CUIObject_Tool::FillElementData(UI_ELEMENT_DATA& data)
 void CUIObject_Tool::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
+    m_InstanceName = data.InstanceName;
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
     m_vAnchorOffset = _float2(data.transform.vAnchorOffset[0], data.transform.vAnchorOffset[1]);
     m_vSize = _float2(data.transform.vSize[0], data.transform.vSize[1]);
@@ -178,6 +179,16 @@ void CUIObject_Tool::ReadElementData(const UI_ELEMENT_DATA& data)
             pContainer->Add_Child(pChildUI);
         }
     } 
+}
+
+void CUIObject_Tool::Render_GUI_Property()
+{
+    ImGui::SeparatorText(u8"속성");
+    ImGui::Checkbox("Alive", &m_isAlive);
+    _char szInstanceName[MAX_PATH] = {};
+    strcpy_s(szInstanceName, m_InstanceName.c_str());
+    if (ImGui::InputText(u8"인스턴스네임", szInstanceName, sizeof(szInstanceName)))
+        m_InstanceName = szInstanceName;
 }
 
 void CUIObject_Tool::Render_GUI_Layout()
@@ -310,9 +321,9 @@ void CUIObject_Tool::Render_GUI_Animation()
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                Set_Animation(iClipIndex);
+                Set_Animation(iClipIndex, &clip.isLoop);
             else
-                Reset_Animation();
+                m_isBlending = false;
         }
         ImGui::EndDisabled();
         ImGui::SameLine();

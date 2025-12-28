@@ -254,7 +254,6 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CamRotSlerpEvaluator.h" />
     <ClInclude Include="..\Public\CamRotSquadEvaluator.h" />
     <ClInclude Include="..\Public\CamSequencePlayer.h" />
-    <ClInclude Include="..\Public\CamSequencePlayerData.h" />
     <ClInclude Include="..\Public\CamUtil.h" />
     <ClInclude Include="..\Public\Channel.h" />
     <ClInclude Include="..\Public\CharacterController.h" />

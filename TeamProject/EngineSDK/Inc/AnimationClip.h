@@ -27,6 +27,9 @@ public:
 		_float TrackPosition,
 		vector<EVENT_INST>& EventBus);
 
+	void TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices,
+		_float MaxDuration);
+
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
 	_bool isLoop() { return m_bLoop; }
@@ -37,7 +40,8 @@ public:
 	void Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus);
 
 
-	_float3 Get_RootBone_EndPosition();
+	const KEYFRAME& Get_EndKeyFrameByBoneName(const string& BoneName) const;
+	const KEYFRAME& Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const;
 public:
 	virtual void Render_GUI();
 
