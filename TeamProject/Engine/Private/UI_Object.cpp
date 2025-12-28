@@ -249,8 +249,8 @@ void CUI_Object::Update_UITransform()
     _float2 anchorPoint = Calc_AnchorPoint();
 
     // pivotPos (내 pivot이 붙는 화면 좌표)
-    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x + m_vTranslation.x,
-                        anchorPoint.y + m_vAnchorOffset.y + m_vTranslation.y };
+    m_vScreenOffset = { anchorPoint.x + m_vAnchorOffset.x + m_vAnimPosition.x,
+                        anchorPoint.y + m_vAnchorOffset.y + m_vAnimPosition.y };
 
     // transform 원점이 center라고 가정한 centerPos
     _float2 centerPos = {
@@ -334,10 +334,13 @@ void CUI_Object::Play_Animation(_float dt)
         if (fRatio >= 1.f)
         {
             // 애니메이션 종료 처리
-            if (!clip.isLoop)
-                Reset_Animation();
+            if (false == clip.isLoop)
+            {
+                m_isBlending = false;
+                return;
+            }
 
-            return;
+            m_fBlendTime = 0.f;
         }
 
         // 현재 시간에 해당하는 키프레임 찾기
@@ -372,7 +375,7 @@ void CUI_Object::Play_Animation(_float dt)
             // 보간된 값 적용
             m_vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
             m_fRadian = XMConvertToRadians(Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio));
-            m_vTranslation = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
+            m_vAnimPosition = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
             _float4 vColor = {};
             XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
             m_vColor = vColor;
@@ -380,17 +383,13 @@ void CUI_Object::Play_Animation(_float dt)
     }
 }
 
-void CUI_Object::Set_Animation(_uint iIndex)
+void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
 {
-    if (m_iCurrentClipIndex == iIndex)//&& m_isAnimLoop == isLoop)
+    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop)
         return;
 
     m_iCurrentClipIndex = iIndex;
-}
-
-void CUI_Object::Reset_Animation()
-{
-    m_isBlending = false;
+    m_isBlending = true;
     m_fBlendTime = 0.f;
 }
 
