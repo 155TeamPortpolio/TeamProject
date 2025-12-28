@@ -24,6 +24,7 @@ public:
     void            Render_OutLine(ID3D11DeviceContext* pContext, _uint idx);
 private:
     virtual void Update_Input(_float dt) override;
+    void         Update_States();
 
 private:
     HRESULT Initialize_StateMachine();

@@ -72,7 +72,9 @@ void CTextUI::Late_Update(_float dt)
 
 void CTextUI::Render_GUI()
 {
-    __super::Render_GUI();
+    Render_GUI_Layout();
+    Render_GUI_Transform();
+    Render_GUI_Animation();
 
     // 텍스트
     ImGui::SeparatorText(u8"텍스트");

@@ -166,7 +166,9 @@
     <ClInclude Include="..\Public\MiyabiState_Attack.h" />
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h" />
     <ClInclude Include="..\Public\MiyabiState_Idle.h" />
+    <ClInclude Include="..\Public\MiyabiState_Move.h" />
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h" />
+    <ClInclude Include="..\Public\MiyabiState_Run.h" />
     <ClInclude Include="..\Public\MiyabiState_Walk.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
     <ClInclude Include="..\Public\Data_Struct.h" />
@@ -244,7 +246,9 @@
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Idle.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Move.cpp" />
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\MiyabiState_Run.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp" />
     <ClCompile Include="..\private\OrbitCam.cpp" />
     <ClCompile Include="..\Private\FreeCam.cpp" />

@@ -290,6 +290,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 	packet.pMaterial = Get_Component<CMaterial>();
 	if(!packet.pMaterial)return E_FAIL;
 
+	packet.LookVector = m_pTransform->Dir(STATE::LOOK);
 	packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 
 	packet.pModel = Get_Component<CModel>();

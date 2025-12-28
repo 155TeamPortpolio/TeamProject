@@ -13,7 +13,7 @@ public:
 	virtual void Enter(CTestObject* pOwner) override;
 	virtual void Update(CTestObject* pOwner, _float dt) override;
 	virtual void Exit(CTestObject* pOwner) override;
-	virtual bool Handle_Transition(const string& strState) override;
+	//virtual bool Handle_Transition(const string& strState) override;
 
 public:
 	static CTestState_Dash* Create() { return new CTestState_Dash(); }

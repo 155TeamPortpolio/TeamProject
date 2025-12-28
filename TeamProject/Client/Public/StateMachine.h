@@ -3,6 +3,8 @@
 #include "StateParameter.h"
 #include "IHState.h"
 #include "Animator3D.h"
+#include "GameObject.h"
+
 
 NS_BEGIN(Client)
 
@@ -226,7 +228,7 @@ void CStateMachine<Type>::Update_AnimProgress()
 	if (!m_pCurrentState || !m_pOwner)
 		return;
 
-	CGameObject* pGameObject = static_cast<CGameObject*>(m_pOwner);
+	CGameObject* pGameObject = reinterpret_cast<CGameObject*>(m_pOwner);
 	if (nullptr == pGameObject)
 		return;
 
@@ -378,8 +380,8 @@ void CStateMachine<Type>::Change_State(const string& strState)
 	auto iter = m_States.find(strState);
 	if (iter == m_States.end())
 		return;
-
-	if (m_pCurrentState && !m_pCurrentState->Handle_Transition(strState))
+	// 변경될 상태로 넘어가도 되는지 확인
+	if (m_pCurrentState && !m_pCurrentState->Handle_Transition(m_pOwner, strState))
 		return;
 
 	if (m_pCurrentState)
