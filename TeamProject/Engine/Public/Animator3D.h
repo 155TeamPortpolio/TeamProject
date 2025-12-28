@@ -26,14 +26,16 @@ public:
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
-        _float3             vRootEndPos{}; //그 클립의 제일마지막 위치
-        _float3             vPrevRootPos{};//이전 프레임 위치
-        _float3             vRootDelta{};  //이동값
+        _float3             vRootEndPos{};  //그 클립의 제일마지막 루트위치
+        _float3             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
+        _float3             vPrevRootPos{}; //이전 프레임 위치
+        _float3             vRootDelta{};   //이동값
          
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };
         _bool   bUseBoneX, bUseBoneY, bUseBoneZ = { true };
-        _float3 vPrevMotionBonePos{};
+        _float3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
+        _float3 vPrevMotionBonePos{};   //이전 프레임 위치
 
         //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
