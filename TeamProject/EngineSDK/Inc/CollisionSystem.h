@@ -44,6 +44,10 @@ private:
     virtual ~CCollisionSystem() DEFAULT;
 
 public:
+    void  Set_Render(_bool bRender) { m_bRender = bRender; }
+    _bool Get_Render() const { return m_bRender; }
+
+public:
     HRESULT Initialize();
     virtual void Update(_float dt) override;
     virtual void Late_Update(_float dt) override;
@@ -68,14 +72,15 @@ private:
 public:
     virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) override;
     virtual void UnRegisterCollidable(class ICollidable* pCollidable, _int Index) override;
-#ifdef _DEBUG
+// #ifdef _DEBUG
     virtual void Render_Debug() override;
 
 private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };
     BasicEffect* m_pEffect = { nullptr };
     PrimitiveBatch<VertexPositionColor>* m_pBatch = { nullptr };
-#endif 
+    _bool m_bRender = { false };
+// #endif 
 
 private:
     ID3D11Device*               m_pDevice = {nullptr};
