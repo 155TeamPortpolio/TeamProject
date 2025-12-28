@@ -4,7 +4,11 @@
 NS_BEGIN(Client)
 typedef struct tagAttackBlackBoard
 {
-
+    deque<string> stateQueue;
+    _bool isRequestNext = false;
+    _bool isChainOpen = false;
+    _float fAnimationProgress{};
+    string currentStateTag{};
 }ATTACK_BLACK_BOARD;
 
 class CEnemy abstract:

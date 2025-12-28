@@ -12,15 +12,39 @@ void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 
 		Register_States();
 		Register_Transitions();
-		m_pSubStateMachine->Set_DefaultState("Attack07_Phase1");
-	}
 
-	__super::Enter(pOwner);
+		ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+		blackBoard.isRequestNext = true;	
+		blackBoard.stateQueue.push_back("Attack07_Phase1");
+		blackBoard.stateQueue.push_back("Attack02_Phase1");
+
+		__super::Enter(pOwner);
+	}
 }
 
 void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	if (blackBoard.isRequestNext)
+	{
+		blackBoard.isRequestNext = false;
+		blackBoard.isChainOpen = false;
+
+		if (!blackBoard.stateQueue.empty())
+		{
+			string nextStateTag = blackBoard.stateQueue.front();
+			blackBoard.stateQueue.pop_front();
+
+			blackBoard.currentStateTag = nextStateTag;
+			m_pSubStateMachine->Change_State(nextStateTag);
+		}
+	}
+	else
+	{
+		/* idle 변환 또는 페이즈 변경 */
+	}
 }
 
 void CSacrificeState_Attack_Phase1::Exit(CSacrifice* pOwner)
@@ -47,11 +71,6 @@ void CSacrificeState_Attack_Phase1::Register_States()
 
 void CSacrificeState_Attack_Phase1::Register_Transitions()
 {
-	m_pSubStateMachine->Register_Transition("Attack07_Phase1", "Attack02_Phase1",
-		CStateMachine<CSacrifice>::CONDITION_BOOL_TRUE,"Change");
-
-	//m_pSubStateMachine->Register_Transition("Attack02_Phase1", "Attack07_Phase1",
-	//	CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 }
 
 
@@ -180,6 +199,15 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (m_fAnimProgress >= 0.7f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+	}
+
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
 	{
 		m_IsAttackStart = true;

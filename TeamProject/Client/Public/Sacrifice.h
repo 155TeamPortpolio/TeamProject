@@ -29,10 +29,12 @@ public:
     virtual void Free() override;
 
 public:
+    /* For State Machine */
     void ActiveSword();
     void DeactiveSword();
     void ActiveAxe();
     void DeactiveAxe();
+    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -42,5 +44,6 @@ private:
 private:
     CStateMachine<CSacrifice>* m_pStateMachine = { nullptr };
     vector<_uint> m_PartMeshIndices;
+    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
 };
 NS_END
