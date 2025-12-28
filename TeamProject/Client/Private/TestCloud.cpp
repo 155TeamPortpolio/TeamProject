@@ -43,6 +43,7 @@ HRESULT CTestCloud::Initialize(INIT_DESC* pArg)
 
 void CTestCloud::Awake()
 {
+	Get_Component<CModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
 }
 
 void CTestCloud::Priority_Update(_float dt)
