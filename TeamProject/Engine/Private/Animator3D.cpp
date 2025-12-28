@@ -233,14 +233,26 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (!isExistClip(Layer.iClipIndex))
-		return 0.f;
+	if (Layer.bBlending) { //Blending
+		if (!isExistClip(Layer.iNextClipIndex))
+			return 0.f;
 
-	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+		auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-	_float threshold = nowClip->Get_Duration() * percent;
+		_float threshold = nextClip->Get_Duration() * percent;
 
-	return Layer.fCurrentTrackPosition >= threshold;
+		return Layer.fBlendTrackPosition >= threshold;
+	}
+	else { //NonBlending
+		if (!isExistClip(Layer.iClipIndex))
+			return 0.f;
+
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+
+		_float threshold = nowClip->Get_Duration() * percent;
+
+		return Layer.fCurrentTrackPosition >= threshold;
+	}
 }
 
 _bool CAnimator3D::isBlending(_uint LayerIndex)
@@ -256,14 +268,25 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex))
 		return 0.f;
 
+	
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 	
-	if (!isExistClip(Layer.iClipIndex))
-		return 0.f;
+	if (Layer.bBlending) {
+		if (!isExistClip(Layer.iClipIndex))
+			return 0.f;
 
-	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+		auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-	return Layer.fCurrentTrackPosition / nowClip->Get_Duration();
+		return Layer.fBlendTrackPosition / nextClip->Get_Duration();
+	}
+	else {
+		if (!isExistClip(Layer.iClipIndex))
+			return 0.f;
+
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+
+		return Layer.fCurrentTrackPosition / nowClip->Get_Duration();
+	}
 }
 
 string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
@@ -272,14 +295,14 @@ string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 	
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (Layer.bBlending)
-		if(isExistClip(Layer.iNextClipIndex))
+	if (Layer.bBlending) {
+		if (isExistClip(Layer.iNextClipIndex))
 			return m_pAnimClips[Layer.iNextClipIndex]->Get_Name();
-	else
+	}
+	else {
 		if (isExistClip(Layer.iClipIndex))
 			return m_pAnimClips[Layer.iClipIndex]->Get_Name();
-
-	return "";
+	}
 }
 
 _int CAnimator3D::Get_CurAnimIndex(_uint LayerIndex)
