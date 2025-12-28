@@ -34,6 +34,7 @@ cbuffer LightBuffer : register(b1)
 cbuffer TransformPerDraw : register(b2)
 {
     uint TransformIndex;
+    float4 look;
 };
 
 cbuffer SkinningPerDraw : register(b4)

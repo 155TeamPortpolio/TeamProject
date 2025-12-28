@@ -32,13 +32,61 @@ HRESULT CMaterial::Initialize(COMPONENT_DESC* pArg)
 	return S_OK;
 }
 
+void CMaterial::PreCheck()
+{
+	if (m_MaterialKey.empty())
+		return;
+
+	/*요청 완료, 셰이더 바인딩 완료*/
+	if (m_ReadyResource && m_AlreadyBindParams)
+		return;
+
+	if (!m_ReadyResource)
+	{
+		if (!CGameInstance::GetInstance()->Get_ResourceMgr()->IsMaterialReady(m_LevelKey, m_MaterialKey))
+			return;
+
+		// 3) Ready 된 순간에만 “딱 1번” 핸들 생성
+		vector<CMaterialInstance*> newList =
+			CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(m_LevelKey, m_MaterialKey);
+
+		if (newList.empty())
+			return;
+
+		for (CMaterialInstance* oldInst : m_MaterialInstances)
+			Safe_Release(oldInst);
+		m_MaterialInstances.clear();
+
+		m_MaterialInstances = std::move(newList);
+		m_ReadyResource = true;
+		m_AlreadyBindParams = false;
+	}
+
+	if (!m_AlreadyBindParams && !m_MaterialInstances.empty())
+	{
+		for (CMaterialInstance* inst : m_MaterialInstances)
+		{
+			inst->Set_Param("vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+			inst->Set_Param("fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+			inst->Set_Param("vOutLineColor", { &m_vOutLineColor, "float4", sizeof(_float4) });
+			inst->Set_Param("fOutLineThickness", { &m_fOutLineThickness, "float", sizeof(_float) });
+		}
+		m_AlreadyBindParams = true;
+	}
+
+}
+
 
 HRESULT CMaterial::Link_Material(const string& levelKey, const string& materialKey)
 {
 	for (auto& data : m_MaterialInstances)
 		Safe_Release(data);
 
-	m_MaterialInstances = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(levelKey, materialKey);
+	m_LevelKey							= levelKey;
+	m_MaterialKey					= materialKey;
+	m_AlreadyBindParams		=	false;
+	m_ReadyResource = false;
+	(void)CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(m_LevelKey, m_MaterialKey);
 	return S_OK;
 }
 
@@ -94,7 +142,12 @@ _uint CMaterial::Get_MaterialDataID(_uint subsetIndex)
 
 void CMaterial::Apply_Material(ID3D11DeviceContext* pContext, _uint subsetIndex)
 {
-	if (subsetIndex >= m_MaterialInstances.size()) return;
+	if (m_MaterialInstances.empty())
+		return;
+
+	if (subsetIndex >= m_MaterialInstances.size())
+		subsetIndex = 0;
+
 	m_MaterialInstances[subsetIndex]->ApplyData(pContext);
 }
 

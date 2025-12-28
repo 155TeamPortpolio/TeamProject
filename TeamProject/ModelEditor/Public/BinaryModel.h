@@ -27,7 +27,6 @@ public:
     void Render_GUI() override;
 
 private:
-    //Resouce* m_pTexture = { nullptr };
    CResourceEntry* m_pEntry = { nullptr };
 public:
     static CBinaryModel* Create();

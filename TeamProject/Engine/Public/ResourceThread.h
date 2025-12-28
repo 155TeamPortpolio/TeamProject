@@ -24,7 +24,6 @@ public:
 	virtual class CSoundData* Load_Sound(const string& levelTag, const string& soundKey) override;
 	virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) override;
 	virtual class CVIBuffer* Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType) override;
-	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
 	virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) override;
 	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) override;
 	virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) override;
@@ -38,18 +37,21 @@ public:
 	virtual class CVIBuffer* Load_WaitVIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType);
 
 public:
+	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
+	virtual _bool IsMaterialReady(const string& levelTag, const string& fileKey) override;
+
+public:
 	bool Begin_LoadAsync(const LoaderFunc& loaderFunc, const ScheduleFunc& scheduleFunc);
 	void Pump_AllEntries_MainThread() override;
+
 public:
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	
-public:
-	shared_future<ResourceVariant> Schedule(JobFunc jobFunc);
-
 private:
 	vector<CMaterialInstance*> Make_MaterialHandles(const vector<CMaterialData*>& dataList);
 	vector<CMaterialData*>* GetOrLoad_MaterialData(const string& levelTag, const string& fileKey,_bool wait = false);
+	shared_future<ResourceVariant> Schedule(JobFunc jobFunc);
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -67,7 +69,6 @@ private:
 
 	CTexture* m_DefaultTexture = { nullptr };
 	CModelData* m_DefaultModel = { nullptr };
-	vector<CMaterialData*>* m_DefaultMaterial = { nullptr };
 public:
 	static CResourceThread* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

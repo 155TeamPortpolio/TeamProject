@@ -79,6 +79,7 @@ void CBinaryModel::Render_GUI()
 		CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, path);
 		Add_Component<CMaterial>()->Link_Material(m_LevelTag, fileName);
 	}
+	ImGui::Checkbox("Alive", &m_isAlive);
 	__super::Render_GUI();
 }
 

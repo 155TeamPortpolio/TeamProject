@@ -320,7 +320,7 @@ vector<CMaterialInstance*> CResourceThread::Load_MaterialFromFile(
     vector<CMaterialData*>* dataList = GetOrLoad_MaterialData(levelTag, fileKey);
 
     if (!dataList)
-        dataList = GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat");
+        dataList = GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat",true);
 
     if (!dataList)
     {
@@ -329,6 +329,30 @@ vector<CMaterialInstance*> CResourceThread::Load_MaterialFromFile(
     }
 
     return Make_MaterialHandles(*dataList);
+}
+
+_bool CResourceThread::IsMaterialReady(const string& levelTag, const string& fileKey)
+{
+    auto levelIterator = m_LevelResources.find(levelTag);
+    if (levelIterator == m_LevelResources.end())
+        return false;
+
+    Level_Resource& levelResource = levelIterator->second;
+    if (levelResource.size() < RESOURCE_TYPE_COUNT)
+        return false;
+
+    auto& materialEntryMap = levelResource[ENUM(MATERIALS)];
+    auto entryIterator = materialEntryMap.find(fileKey);
+    if (entryIterator == materialEntryMap.end())
+        return false;
+
+    CResourceEntry* entry = entryIterator->second;
+    if (!entry)
+        return false;
+
+    entry->Pump_CompletedOnly();
+
+    return (entry->GetState() == LoadState::Ready);
 }
 
 vector<CMaterialInstance*> CResourceThread::Make_MaterialHandles(
@@ -352,7 +376,7 @@ vector<CMaterialData*>* CResourceThread::GetOrLoad_MaterialData(const string& le
 
     auto levelIterator = m_LevelResources.find(levelTag);
     if (levelIterator == m_LevelResources.end())
-        return m_DefaultMaterial;
+        return nullptr;
 
     Level_Resource& levelResource = levelIterator->second;
     if (levelResource.size() < RESOURCE_TYPE_COUNT)
@@ -379,7 +403,7 @@ vector<CMaterialData*>* CResourceThread::GetOrLoad_MaterialData(const string& le
     }
 
     if (entry->GetSourcePathCopy().empty())
-        return m_DefaultMaterial;
+        return nullptr;
 
     if (entry->GetState() == LoadState::Unloaded)
     {
@@ -461,10 +485,10 @@ vector<CMaterialData*>* CResourceThread::GetOrLoad_MaterialData(const string& le
     if (entry->GetState() == LoadState::Ready)
     {
         CMaterialDataList* loadedList = entry->Get_NoRef<CMaterialDataList>();
-        return loadedList ? &loadedList->list : m_DefaultMaterial;
+        return loadedList ? &loadedList->list : nullptr;
     }
 
-    return m_DefaultMaterial;
+    return nullptr;
 }
 
 CShader* CResourceThread::Load_Shader(const string& levelTag, const string& shaderKey)

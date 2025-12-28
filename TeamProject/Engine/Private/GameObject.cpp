@@ -324,6 +324,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 	for (size_t i = 0; i < packet.pModel->Get_MeshCount(); i++)
 	{
 		if (!packet.pModel->isDrawable(i)) continue;
+		if (!packet.pMaterial->Get_Shader(i)) continue;
 		packet.DrawIndex = i;
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
 		CMaterialInstance* instance = packet.pMaterial

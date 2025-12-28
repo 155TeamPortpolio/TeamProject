@@ -13,7 +13,7 @@ protected:
 public:
    virtual HRESULT Initialize_Prototype() override;
    virtual HRESULT Initialize(COMPONENT_DESC* pArg) override;
-
+   void PreCheck() override;
     HRESULT Link_Material(const string& levelKey, const string& materialKey);
     HRESULT Insert_MaterialInstance(class CMaterialInstance* pInstance, _uint* outIndex);
     HRESULT Set_RimLightInfo(_float3 RimColor, _float Power = 1.f);
@@ -43,6 +43,11 @@ protected:
     _float4 m_vOutLineColor = _float4(0.f, 0.f, 0.f, 0.f);
     _float m_fOutLineThickness = 0.02f;
 
+
+    string m_MaterialKey = {};
+    string m_LevelKey = {};
+    _bool m_AlreadyBindParams = false;
+    _bool m_ReadyResource = false;
 public:
     static CMaterial* Create();
     virtual CComponent* Clone() override;

@@ -38,7 +38,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-   
+    
     return Out;
 }
 
@@ -184,7 +184,6 @@ PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHDOW In)
     PS_OUT_SHADOW Out;
  
     Out.vShadow = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zShadowFar, 0.f, 0.f);
-   
     return Out;
 }
 

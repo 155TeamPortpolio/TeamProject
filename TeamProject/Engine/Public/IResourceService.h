@@ -27,8 +27,8 @@ public:
     virtual void Clear_Resource(const string& levelTag)PURE;
     virtual HRESULT Sync_To_Level()PURE;
 
-
 public:
+    virtual _bool IsMaterialReady(const string& levelTag, const string& fileKey) { return false; };
     virtual class CResourceEntry* Request_TextureEntry(const string& levelTag, const string& textureKey, _bool sRGBType = false) { return nullptr; };
     virtual class CResourceEntry* Request_ModelEntry(const string& levelTag, const string& modelKey) { return nullptr; };
     virtual void Pump_AllEntries_MainThread() {};
