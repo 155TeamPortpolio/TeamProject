@@ -127,15 +127,20 @@ HRESULT CResourceMgr::Sync_To_Level()
 
 	vector<string> levelList = levelMgr->Get_LevelList();
 
-	m_LevelIndex.clear();
-	for (_uint i = 0; i < levelList.size(); ++i)
-		m_LevelIndex.emplace(levelList[i], i);
+	if (m_Resources.empty())
+		m_Resources.resize(1);
 
-	m_Resources.clear();
-	m_Resources.resize(levelList.size());
+	m_LevelIndex.clear();
+	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
+
+	m_Resources.resize(1 + levelList.size());
+
+	for (_uint i = 0; i < levelList.size(); ++i)
+		m_LevelIndex.emplace(levelList[i], 1 + i);
 
 	return S_OK;
 }
+
 
 
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)

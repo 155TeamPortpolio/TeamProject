@@ -65,8 +65,8 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
     }
 
     return true;
-
 }
+
 void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 {
     outCompleted.clear();
@@ -94,7 +94,7 @@ void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
         completed.key = task.key;
         completed.state = task.state;
         completed.errorMessage = task.errorMessage;
-        outCompleted.push_back(std::move(completed));
+        outCompleted.push_back(move(completed));
         ++m_done;
 
         it = m_tasks.erase(it);
