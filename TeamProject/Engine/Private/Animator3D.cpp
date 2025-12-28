@@ -76,19 +76,11 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 		return E_FAIL;
 	}
 
-	m_ClipEndMatrices.resize(m_pAnimClips.size());
-	//일단 갖고왔는데 확인할것 <<<<<<<<<<<<<<<<
-	for (_int i = 0; i < m_pAnimClips.size(); ++i) {
-		float fDuration = m_pAnimClips[i]->Get_Duration();
-		m_pAnimClips[i]->TranslateAnimateMatrixFromDurationNoEvent(m_TransformationMatrices, fDuration);
-		BuildBone();
+	for (auto& pClip : m_pAnimClips)
+		Safe_AddRef(pClip);
 
-
-		Safe_AddRef(m_pAnimClips[i]);
-	}
 
 	Resize_Layer(1);
-
 	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");

@@ -14,7 +14,7 @@ public:
 
 public:
     const string& Get_Name() { return m_ChannelName; }
-
+    _uint Get_BoneIndex() { return m_iBoneIndex; }
 public:
     virtual void Render_GUI();
 

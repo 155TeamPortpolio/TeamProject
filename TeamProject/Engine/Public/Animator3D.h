@@ -29,6 +29,7 @@ public:
         _float3             vRootEndPos{};  //그 클립의 제일마지막 루트위치
         _float4             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
         _float3             vPrevRootPos{}; //이전 프레임 위치
+        _float4             vPrevRootQuat{}; //이전 프레임 회전
         _float3             vRootDelta{};   //이동값
          
         //모션본 (애니매이션의 움직임을 담당하는 본)
@@ -203,7 +204,6 @@ protected:
  
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
-    vector<_float4x4>               m_ClipEndMatrices;
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */

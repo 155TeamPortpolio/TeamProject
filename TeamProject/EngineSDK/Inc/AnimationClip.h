@@ -40,7 +40,8 @@ public:
 	void Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus);
 
 
-	_float3 Get_RootBone_EndPosition();
+	const KEYFRAME& Get_EndKeyFrameByBoneName(const string& BoneName) const;
+	const KEYFRAME& Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const;
 public:
 	virtual void Render_GUI();
 
