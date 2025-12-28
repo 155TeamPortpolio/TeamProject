@@ -738,6 +738,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("CS_Particle_Basic.hlsl", "../Bin/ShaderFiles/CS_Particle_Basic.hlsl");
 	Add_ResourcePath("CS_Particle_DeadListInit.hlsl", "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl");
 	Add_ResourcePath("CS_Particle_BuildInstance.hlsl", "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl");
+	Add_ResourcePath("CS_Hi_Z.hlsl","../Bin/ShaderFiles/CS_Hi_Z.hlsl");
 
 	//Default
 	Add_ResourcePath("Default.dds", "../../DefaultSource/Default.dds");

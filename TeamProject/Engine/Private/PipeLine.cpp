@@ -227,6 +227,11 @@ void CPipeLine::Update_Frustum()
 	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
 }
 
+void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
+{
+	m_pHiZ->Update_HiZ(pContext);
+}
+
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 {
 	XMFLOAT3 center{

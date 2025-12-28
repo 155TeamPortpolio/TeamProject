@@ -61,6 +61,7 @@ public:
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
 	void Update_Frustum();
+	void Update_HiZ(ID3D11DeviceContext* pContext);
 
 	_uint Write_ObjectData(const _float4x4& worldMatrix);
 	HRESULT Begin_ObjectBuffer(ID3D11DeviceContext* pContext);

@@ -574,7 +574,12 @@ exit /b 0</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Public\Engine_Shader\CS_Hi_Z.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\CS_Hi_Z.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>
