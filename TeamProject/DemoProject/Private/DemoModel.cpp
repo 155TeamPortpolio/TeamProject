@@ -65,6 +65,18 @@ void CDemoModel::Priority_Update(_float dt)
 
 void CDemoModel::Update(_float dt)
 {
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('Q'))
+		Get_Component<CAnimator3D>()->Change_Animation(0, 5)
+		.Loop(true)
+		.Apply();
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('E'))
+		Get_Component<CAnimator3D>()->Change_Animation(0, 6)
+		.TransitionSpeed(1.f, 100.f, 2.f)
+		.BlendDuration(2.f)
+		.Loop(true)
+		.Apply();
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
