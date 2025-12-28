@@ -21,6 +21,7 @@ public:
 
 private:
     void DrawMainCamSelector();
+    void DrawHelpPopup();
 
 private:
     struct CamCandidate
@@ -37,6 +38,10 @@ private:
     vector<CamCandidate> m_candidates{};
     int                  m_selectedIndex = 0;
     _bool                m_needRefresh = true;
+
+    _bool traceEnabled = false;
+    int   traceA = 0;
+    int   traceB = 0;
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context) { return new CCamPanel(context); }

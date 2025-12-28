@@ -133,6 +133,7 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 	if (true == HelperMT::ExtractSRT(XMLoadFloat4x4(&matWorld), vScl, vRotQ, vTrans))
 		vRot = HelperMT::QuaternionToEuler(vRotQ);
 
+	string fileName = Helper::GetFileNameWithOutExtension(pData->TagModelResourceKey);
 
 	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
 		.Add_ObjDesc(PlacedObjDesc)
@@ -140,7 +141,7 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 		.Rotate(vRot)
 		.Position(vTrans)
 		.Collider(ColDesc)
-		.Build("Placed_Model");
+		.Build(fileName);
  
 #ifdef _DEBUG
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_tMapToolContext.isAllDebugRender);

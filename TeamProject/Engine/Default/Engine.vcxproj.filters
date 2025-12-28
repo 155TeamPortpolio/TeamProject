@@ -439,9 +439,6 @@
     <ClInclude Include="..\Public\CamSequencePlayer.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CamSequencePlayerData.h">
-      <Filter>01. Utility\04. Components\20. CamSequencePlayer</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\OrbitArcData.h">
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\01. CamPosEvaluator\05. OrbitArc</Filter>
     </ClInclude>
@@ -762,9 +759,6 @@
     <Filter Include="01. Utility\05. Resources\06. AnimationClip\Channel">
       <UniqueIdentifier>{98b66d3b-8979-414a-a3c7-380f48d45ee7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\PipeLine">
-      <UniqueIdentifier>{b267731d-cc26-43cc-b3ea-3edd1dee13eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\RenderPass">
       <UniqueIdentifier>{93d2fe97-017d-4bf0-8d44-479397e756d3}</UniqueIdentifier>
     </Filter>
@@ -956,6 +950,9 @@
     </Filter>
     <Filter Include="01. Utility\04. Components\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine">
+      <UniqueIdentifier>{b267731d-cc26-43cc-b3ea-3edd1dee13eb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

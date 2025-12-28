@@ -293,6 +293,9 @@ HRESULT CEditModel::ExportBoneInfo()
 {
 	BONE_DATA_HEADER header = {};
 
+	header.TagDataFormat = "BoneData";
+	header.TagModel = m_InstanceName;
+
 	CAIModelData* pModelData = { nullptr };
 
 	if (HasBones()) {
@@ -314,7 +317,6 @@ HRESULT CEditModel::ExportBoneInfo()
 	_uint IBoneCount = pModelData->Get_BoneCount();
 	auto pBoneNames = pModelData->Get_BoneNames();
 
-	header.TagModel = m_InstanceName;
 
 	pModelData->Rake_SkeletonInfo(&header);
 

@@ -22,7 +22,22 @@ namespace HelperMT {
         return oss.str(); // prefix_20251216_111530.json
     }
     
-    inline _bool ExtractSRT(const _matrix& mat, _float3& OutScale, _float4& OutRotQ, _float3& OutTrans) {
+    // string 경로 넣어도 됨
+    inline bool EnsureDirectoryExists(const filesystem::path& dir)
+    {
+        filesystem::path directory = dir;
+
+        error_code ec;
+
+        if (filesystem::exists(directory, ec))
+            return filesystem::is_directory(directory, ec); // 폴더면 true, 파일이면 false
+
+        filesystem::create_directories(directory, ec);      // 중간 경로까지 생성
+        return !ec && filesystem::is_directory(directory, ec);
+    }
+
+    inline _bool ExtractSRT(const _matrix& mat, _float3& OutScale, _float4& OutRotQ, _float3& OutTrans) 
+    {
         XMVECTOR S, R, T;
 
         if (!XMMatrixDecompose(&S, &R, &T, mat))
@@ -34,7 +49,8 @@ namespace HelperMT {
         return true;
     }
 
-    inline _float3 QuaternionToEuler(const _float4& q) {
+    inline _float3 QuaternionToEuler(const _float4& q) 
+    {
         const _float x = q.x, y = q.y, z = q.z, w = q.w;
 
         // pitch (x-axis)

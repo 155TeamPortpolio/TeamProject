@@ -310,9 +310,9 @@ void CUIObject_Tool::Render_GUI_Animation()
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                Set_Animation(iClipIndex);
+                Set_Animation(iClipIndex, &clip.isLoop);
             else
-                Reset_Animation();
+                m_isBlending = false;
         }
         ImGui::EndDisabled();
         ImGui::SameLine();
