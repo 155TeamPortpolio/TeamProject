@@ -10,8 +10,8 @@ protected:
 
 public:
     HRESULT Initialize(ifstream& ifs);
-    virtual HRESULT TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition , _bool Loop);
- 
+    virtual HRESULT TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition , _bool Loop);
+
 public:
     const string& Get_Name() { return m_ChannelName; }
 

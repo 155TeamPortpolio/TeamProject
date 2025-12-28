@@ -77,6 +77,15 @@ void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& trans
 		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, TrackPosition, false);
 	}
 
+	//Check_Event(CurrentTrackPosition, RealTrackPosition, EventBus);
+}
+
+void CAnimationClip::TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices, _float MaxDuration)
+{
+	for (size_t i = 0; i < m_iNumChannels; i++)
+	{
+		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, MaxDuration, false);
+	}
 }
 
 CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)

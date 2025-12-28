@@ -179,6 +179,8 @@ protected:
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
+    //Combined 연산
+
     //최종 뼈 계산
     void BuildBone();
 
@@ -197,6 +199,7 @@ protected:
  
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
+    vector<_float4x4>               m_ClipEndMatrices;
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */

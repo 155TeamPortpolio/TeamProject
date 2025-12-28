@@ -76,12 +76,20 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 		return E_FAIL;
 	}
 
-	for(auto& Clip : m_pAnimClips)
-		Safe_AddRef(Clip);
+	m_ClipEndMatrices.resize(m_pAnimClips.size());
+	//일단 갖고왔는데 확인할것 <<<<<<<<<<<<<<<<
+	for (_int i = 0; i < m_pAnimClips.size(); ++i) {
+		float fDuration = m_pAnimClips[i]->Get_Duration();
+		m_pAnimClips[i]->TranslateAnimateMatrixFromDurationNoEvent(m_TransformationMatrices, fDuration);
+		BuildBone();
+
+
+		Safe_AddRef(m_pAnimClips[i]);
+	}
 
 	Resize_Layer(1);
 
-	//0번 레이어는 베이스레이어, Layer.BaseLayer는 절대 건들지 말것
+	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
@@ -548,8 +556,9 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 
-	//RootBone
+	//Bone Extracter
 	if (Layer.BaseLayer) {
+		//Extract RootBone
 		auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
@@ -567,6 +576,16 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		}
 
 		Layer.vPrevRootPos = vCurRootPos;
+
+		//Extract MoveBone
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = m_TransformationMatrices[Layer.iMoveBoneIndex];
+
+			Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!Layer.bUseBoneX) mat._41 = 0.f;
+			if (!Layer.bUseBoneY) mat._42 = 0.f;
+			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+		}
 	}
 }
 
@@ -630,8 +649,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
-	//RootBone
+	//Bone Extracter
 	if (Layer.BaseLayer) {
+		//Extract RootBone
 		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
@@ -648,6 +668,17 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 
 		Layer.vPrevRootPos = vCurRootPos;
+
+
+		//Extract MoveBone
+		if (-1 != Layer.iMoveBoneIndex) {
+			_float4x4& mat = m_TransformationMatrices[Layer.iMoveBoneIndex];
+
+			Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!Layer.bUseBoneX) mat._41 = 0.f;
+			if (!Layer.bUseBoneY) mat._42 = 0.f;
+			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+		}
 	}
 
 	//Convert End
@@ -716,20 +747,7 @@ void CAnimator3D::BuildBone()
 			break;
 		}
 	}
-	//Extract bone from BaseLayer
-	for (auto& Layer : m_AnimLayers) {
-		if (Layer.BaseLayer) {
-			if (-1 != Layer.iMoveBoneIndex) {
-				_float4x4& mat = m_TransformationMatrices[Layer.iMoveBoneIndex];
 
-				Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
-				if (!Layer.bUseBoneX) mat._41 = 0.f;
-				if (!Layer.bUseBoneY) mat._42 = 0.f;
-				if (!Layer.bUseBoneZ) mat._43 = 0.f;
-			}
-		}
-	}
-	
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
