@@ -39,7 +39,6 @@ public:
 
 public:
 	virtual class CSoundData* Load_Sound(const string& levelTag, const string& soundKey) override;
-
 	virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) override;
 	virtual class CVIBuffer* Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType) override;
 	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
@@ -66,6 +65,7 @@ private:
 
 private:
 	void Init_PreLoader();
+
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };

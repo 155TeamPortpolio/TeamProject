@@ -67,39 +67,40 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
     return true;
 
 }
-
 void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 {
     outCompleted.clear();
 
     lock_guard<mutex> lockGuard(m_mutex);
 
-    for (auto& pair : m_tasks)
+    for (auto it = m_tasks.begin(); it != m_tasks.end(); )
     {
-        PreloadTask& task = pair.second;
-
-        if (task.state == PreloadState::Ready || task.state == PreloadState::Failed)
-            continue;
+        PreloadTask& task = it->second;
 
         if (!task.future.valid())
-            continue;
+        {
+            ++it; continue;
+        }
 
         if (task.future.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
-            continue;
+        {
+            ++it; continue;
+        }
 
         const _bool success = task.future.get();
-
         task.state = success ? PreloadState::Ready : PreloadState::Failed;
 
         PreloadCompleted completed{};
         completed.key = task.key;
         completed.state = task.state;
         completed.errorMessage = task.errorMessage;
-
         outCompleted.push_back(std::move(completed));
         ++m_done;
+
+        it = m_tasks.erase(it);
     }
 }
+
 
 void CPreloadScheduler::GetProgress(_uint& outDone, _uint& outTotal)
 {
@@ -121,6 +122,7 @@ void CPreloadScheduler::BindLoader(ResourceType type, LoaderFunc loader)
     lock_guard<mutex> lockGuard(m_loaderMutex);
     m_loaders[type] = move(loader);
 }
+
 void CPreloadScheduler::Reset()
 {
      lock_guard<mutex> lockGuard(m_mutex);

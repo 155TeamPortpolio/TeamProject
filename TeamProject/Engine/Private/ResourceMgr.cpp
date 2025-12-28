@@ -116,7 +116,8 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 		for (auto* node : pair.second.Nodes)
 			Safe_Delete(node);
 
-	for (auto& pair : computeShaders) Safe_Release(pair.second);
+	for (auto& pair : computeShaders) 
+		Safe_Release(pair.second);
 }
 
 HRESULT CResourceMgr::Sync_To_Level()
@@ -668,7 +669,7 @@ CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& M
 			return it->second;
 		}
 
-		pool.m_ComputeShaders.emplace(ModelKey, pData);
+		pool.m_ModelDatas.emplace(ModelKey, pData);
 		return pData;
 	}
 }
@@ -822,4 +823,5 @@ void CResourceMgr::Free()
 	Safe_Release(m_pInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pPreloader);
 }

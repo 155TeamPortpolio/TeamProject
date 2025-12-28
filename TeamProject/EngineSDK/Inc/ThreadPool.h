@@ -1,12 +1,5 @@
 #pragma once
 #include "Base.h"
-#include <atomic>                           // m_stop, m_active 같은 원자 변수
-#include <condition_variable>     // 작업 대기/깨우기
-#include <deque>                           // 작업 큐 (앞에서 pop)
-#include <future>                           // std::future / std::packaged_task
-#include <mutex>                            // 뮤텍스
-#include <thread>                           // 스레드 생성/join
-#include <type_traits>                  // std::invoke_result_t
 
 NS_BEGIN(Engine)
 class CThreadPool :
