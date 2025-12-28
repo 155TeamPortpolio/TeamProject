@@ -15,6 +15,7 @@
 #include "OrbitCam.h"
 #include "SequenceCam.h"
 #include "CamPanel.h"
+#include "CamLoader.h"
 
 /* MapData */
 #include "MapDataCloud.h"
@@ -38,8 +39,6 @@
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
 #include "UVAnimationUI.h"
-#include "UILoader.h"
-#include "UIDirector.h"
 
 #include "HUD.h"
 
@@ -161,41 +160,36 @@ HRESULT CTestLevel::Awake()
 	Ready_Camera();
 
 	//==================== UI =======================
-	
-	//pResource->Add_ResourcePath("PanelBox.dds",          "../Bin/Resources/UI/Image/PanelBox.dds");
-	//pResource->Add_ResourcePath("SkillBtnAImg.png",      "../Bin/Resources/UI/Image/SkillBtnAImg.png");
-	//pResource->Add_ResourcePath("SkillBtnAOutline.png",  "../Bin/Resources/UI/Image/SkillBtnAOutline.png");
-	//pResource->Add_ResourcePath("SkillCDMask.png",       "../Bin/Resources/UI/Image/SkillCDMask.png"); 
-	//pResource->Add_ResourcePath("SkillEvade.png",        "../Bin/Resources/UI/Image/SkillEvade.png");
-	//pResource->Add_ResourcePath("SkillSpecial.png",      "../Bin/Resources/UI/Image/SkillSpecial.png");
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Button", CButtonUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Gauge", CGaugeUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Image", CImageUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Text", CTextUI::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());
+	//
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD", CHUD::Create());
+	//
+	//pResource->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/Image/PanelBox.dds");
+	//pResource->Add_ResourcePath("SkillBtnAImg.png", "../Bin/Resources/UI/Image/SkillBtnAImg.png");
+	//pResource->Add_ResourcePath("SkillBtnAOutline.png", "../Bin/Resources/UI/Image/SkillBtnAOutline.png");
+	//pResource->Add_ResourcePath("SkillCDMask.png", "../Bin/Resources/UI/Image/SkillCDMask.png"); 
+	//pResource->Add_ResourcePath("SkillEvade.png", "../Bin/Resources/UI/Image/SkillEvade.png");
+	//pResource->Add_ResourcePath("SkillSpecial.png", "../Bin/Resources/UI/Image/SkillSpecial.png");
 	//pResource->Add_ResourcePath("ZeroScreenLarge02.png", "../Bin/Resources/UI/Image/ZeroScreenLarge02.png");
 	//
 	//m_pGameInstance->Get_FontSystem()->Add_Font("Impact.spritefont", L"../Bin/Resources/UI/Font/Impact.spritefont");
 	//
 	//pResource->Add_ResourcePath("hud.json", "../Bin/Resources/UI/Data/hud.json");
+	//
+	//CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
+	//	.Asset("hud.json")
+	//	.Build("HUD");
+	//
+	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
 
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Button",          CButtonUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel",     CCanvasPanel::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Gauge",           CGaugeUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Image",           CImageUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Text",            CTextUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_UVAnimation",     CUVAnimationUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD",             CHUD::Create());
 
-	auto uiDirector = CUIDirector::GetInstance();
-	auto resMgr     = CGameInstance::GetInstance()->Get_ResourceMgr();
-	auto uiMgr      = CGameInstance::GetInstance()->Get_UIMgr();
 
-	uiDirector->Initialize("Test_Level");
-
-	CUI_Object* hudUI = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_CanvasPanel" })
-		.Asset("hud.json")
-		.Build("HUD"); 
-	
-	uiMgr->Add_UIObject(hudUI, "Test_Level");
-	uiDirector->Register(hudUI);
-	//uiDirector.SetVisible("HUD", true);
 
 	return S_OK;
 }
@@ -205,17 +199,16 @@ void CTestLevel::Update()
 	if (KEY->Key_Down('1'))
 	{
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
+		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 	if (KEY->Key_Down('2'))
 	{
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.25f);
+		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 	if (KEY->Key_Down('3'))
-	{
-		m_pCamDirector->RequestSequence("Intro", 0.f, true, 0.25f);
-	}
+		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
+
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 }
 
@@ -252,8 +245,9 @@ void CTestLevel::Ready_Camera()
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
 	m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
-	m_pCamDirector->Register("Intro", "../bin/Resources/Camera/Intro_2.cam");
 	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
+
+	CamLoader::Load();
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 

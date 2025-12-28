@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Helper_Func.h"
+#include "DebugCamTrace.h"
 
 void CCamPanel::Update_Panel(_float dt)
 {
@@ -13,9 +14,9 @@ void CCamPanel::Render_GUI()
 {
     const ImGuiViewport* vp = ImGui::GetMainViewport();
 
-    const ImVec2 winSize(320.f, 80.f);
-    const float margin    = 12.f;
-    const float shiftLeft = 400.f;
+    const ImVec2 winSize(320.f, 100.f);
+    const float margin = 12.f;
+    const float shiftLeft = 150.f;
 
     const ImVec2 winPos(
         vp->WorkPos.x + vp->WorkSize.x - winSize.x - margin - shiftLeft,
@@ -28,18 +29,39 @@ void CCamPanel::Render_GUI()
     ImGuiWindowFlags flags =
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_NoMove |
-        ImGuiWindowFlags_NoCollapse;
+        ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoTitleBar;
 
     Helper::DarkThemeStyle style;
 
-    if (!ImGui::Begin("CamPanel", nullptr, flags))
+    if (!ImGui::Begin("CamPanel##CamPanelWindow", nullptr, flags))
     {
         ImGui::End();
         return;
     }
+
+    float y = ImGui::GetCursorPosY();
+    if (y > 2.f) ImGui::SetCursorPosY(y - 2.f);
+
+    ImGui::AlignTextToFramePadding();
+    ImGui::TextUnformatted("CamPanel");
+    ImGui::SameLine(0.f, 10.f);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8.f, 4.f));
+    bool openHelp = ImGui::SmallButton("Help");
+    ImGui::PopStyleVar();
+
+    if (openHelp) ImGui::OpenPopup("CamPanel_Help");
+
+    DrawHelpPopup();
+
+    ImGui::Separator();
+
     DrawMainCamSelector();
+
     ImGui::End();
 }
+
 
 void CCamPanel::RefreshCandidates()
 {
@@ -165,7 +187,10 @@ void CCamPanel::DrawMainCamSelector()
     auto selectedObj = OBJ->Request_Object(selected.handle);
     auto selectedCam = selectedObj ? selectedObj->Get_Component<CCamera>() : nullptr;
 
+    const bool selectedIsWip = selectedObj && selectedObj->Get_InstanceName() == "SequenceCam";
+
     string previewLabel = selected.displayName;
+    if (selectedIsWip) previewLabel += " (WIP)";
     if (selectedCam && selectedCam == curMain) previewLabel += " (Main)";
 
     ImGui::SetNextItemWidth(220.f);
@@ -178,19 +203,40 @@ void CCamPanel::DrawMainCamSelector()
             auto obj = OBJ->Request_Object(c.handle);
             auto cam = obj ? obj->Get_Component<CCamera>() : nullptr;
 
+            const bool isWip = obj && obj->Get_InstanceName() == "SequenceCam";
+
             string visible = c.displayName;
+            if (isWip) visible += " (WIP)";
             if (cam && cam == curMain) visible += " (Main)";
 
             string label = visible + "##" + c.uniqueId;
 
             const bool isSelected = (i == m_selectedIndex);
-            if (ImGui::Selectable(label.c_str(), isSelected))
+
+            if (isWip)
+                ImGui::PushStyleVar(ImGuiStyleVar_Alpha, ImGui::GetStyle().Alpha * 0.45f);
+
+            const bool clicked = ImGui::Selectable(label.c_str(), isSelected);
+
+            if (isWip)
+                ImGui::PopStyleVar();
+
+            if (isWip)
+            {
+                if (ImGui::IsItemHovered())
+                    ImGui::SetTooltip("WIP: SequenceCam is not selectable.");
+
+                if (isSelected) ImGui::SetItemDefaultFocus();
+                continue;
+            }
+
+            if (clicked)
             {
                 m_selectedIndex = i;
 
                 auto selObj = OBJ->Request_Object(m_candidates[m_selectedIndex].handle);
                 auto selCam = selObj ? selObj->Get_Component<CCamera>() : nullptr;
-                if (selCam) CAM->Set_MainCam(selCam);
+                if (selCam) CAM->Set_MainCam(selCam, 0.5f);
             }
 
             if (isSelected) ImGui::SetItemDefaultFocus();
@@ -198,4 +244,28 @@ void CCamPanel::DrawMainCamSelector()
 
         ImGui::EndCombo();
     }
+}
+
+void CCamPanel::DrawHelpPopup()
+{
+    ImGuiWindowFlags flags = ImGuiWindowFlags_AlwaysAutoResize;
+
+    if (!ImGui::BeginPopupModal("CamPanel_Help", nullptr, flags))
+        return;
+
+    ImGui::SeparatorText("Help");
+
+    ImGui::TextDisabled("Shortcuts");
+    ImGui::BulletText("Q / E : OrbitCam Zoom In/Out");
+    ImGui::BulletText("1 : FreeCam");
+    ImGui::BulletText("2 : OrbitCam");
+    ImGui::BulletText("3 : SequenceCam");
+
+    ImGui::Spacing();
+    ImGui::Separator();
+
+    if (ImGui::Button("Close", ImVec2(120.f, 0.f)))
+        ImGui::CloseCurrentPopup();
+
+    ImGui::EndPopup();
 }

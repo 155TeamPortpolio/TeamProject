@@ -7,6 +7,9 @@
 #include "Sprite2D.h"
 #include "Child.h"
 #include "ObjectContainer.h"
+CUI_Object::CUI_Object()
+{
+}
 
 CUI_Object::CUI_Object(const CUI_Object& rhs)
     :CGameObject(rhs)
@@ -50,6 +53,19 @@ HRESULT CUI_Object::Initialize(INIT_DESC* pArg)
 void CUI_Object::Pre_EngineUpdate(_float dt)
 {
     __super::Pre_EngineUpdate(dt);
+}
+
+void CUI_Object::Priority_Update(_float dt)
+{
+
+}
+
+void CUI_Object::Update(_float dt)
+{
+}
+
+void CUI_Object::Late_Update(_float dt)
+{
 }
 
 void CUI_Object::Post_EngineUpdate(_float dt)
@@ -253,6 +269,7 @@ void CUI_Object::Update_UITransform()
                    m_vScreenOffset.y - m_vPivot.y * sizePx.y };
 }
 
+
 _float2 CUI_Object::Calc_AnchorPoint() 
 {
     _float2 rectPos = { 0.f, 0.f };
@@ -279,6 +296,16 @@ _float2 CUI_Object::Calc_AnchorPoint()
     else                                                anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
 
     return anchorPoint;
+}
+
+void CUI_Object::Rotate_Left(_float _radian)
+{
+    m_fRadian += _radian;
+}
+
+void CUI_Object::Align_To(ANCHOR anchor)
+{
+    m_eAnchor = anchor;
 }
 
 void CUI_Object::Play_Animation(_float dt)
