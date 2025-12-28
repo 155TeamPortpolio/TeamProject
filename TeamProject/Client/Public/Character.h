@@ -27,6 +27,7 @@ public:
     _float Get_Speed() const { return m_fMoveSpeed; }
     _bool  Is_Move() const { return m_bIsMove; }
     _bool  Is_Attack() const { return m_bIsAttack; }
+    _bool  Is_Input() const { return m_bIsInput; }
     
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
@@ -72,6 +73,7 @@ protected:
     // 상태 플래그
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };
+    _bool           m_bIsInput = { false };
     // 회전
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};

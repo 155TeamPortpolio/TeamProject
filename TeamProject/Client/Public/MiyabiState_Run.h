@@ -5,7 +5,7 @@ NS_BEGIN(Client)
 
 class CMiyabi;
 
-class CMiyabiState_Walk : public IHState<CMiyabi>
+class CMiyabiState_Run final :  public IHState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
@@ -13,11 +13,11 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    static CMiyabiState_Walk* Create() { return new CMiyabiState_Walk(); }
+    static CMiyabiState_Run* Create() { return new CMiyabiState_Run(); }
     virtual void Free() override { __super::Free(); }
 };
 
-class CMiyabiState_Walk_Start : public IBaseState<CMiyabi>
+class CMiyabiState_Run_Start : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
@@ -25,11 +25,11 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    static CMiyabiState_Walk_Start* Create() { return new CMiyabiState_Walk_Start(); }
+    static CMiyabiState_Run_Start* Create() { return new CMiyabiState_Run_Start(); }
     virtual void Free() override { __super::Free(); }
 };
 
-class CMiyabiState_Walk_Loop : public IBaseState<CMiyabi>
+class CMiyabiState_Run_Loop : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
@@ -37,11 +37,11 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    static CMiyabiState_Walk_Loop* Create() { return new CMiyabiState_Walk_Loop(); }
+    static CMiyabiState_Run_Loop* Create() { return new CMiyabiState_Run_Loop(); }
     virtual void Free() override { __super::Free(); }
 };
 
-class CMiyabiState_Walk_End : public IBaseState<CMiyabi>
+class CMiyabiState_Run_End : public IBaseState<CMiyabi>
 {
 public:
     virtual void Enter(CMiyabi* pOwner) override;
@@ -49,7 +49,7 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
 
 public:
-    static CMiyabiState_Walk_End* Create() { return new CMiyabiState_Walk_End(); }
+    static CMiyabiState_Run_End* Create() { return new CMiyabiState_Run_End(); }
     virtual void Free() override { __super::Free(); }
 };
 
