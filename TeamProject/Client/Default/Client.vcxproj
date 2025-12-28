@@ -193,6 +193,8 @@
     <ClInclude Include="..\Public\TestState_Jump.h" />
     <ClInclude Include="..\Public\TestState_Walk.h" />
     <ClInclude Include="..\Public\TextUI.h" />
+    <ClInclude Include="..\public\UIDirector.h" />
+    <ClInclude Include="..\public\UILoader.h" />
     <ClInclude Include="..\Public\UIPrefab.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="Client.h" />
@@ -230,6 +232,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp" />
+    <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />
     <ClCompile Include="..\private\CamDirector.cpp" />
     <ClCompile Include="..\Private\CanvasPanel.cpp" />
@@ -271,6 +274,8 @@
     <ClCompile Include="..\Private\TestState_Jump.cpp" />
     <ClCompile Include="..\Private\TestState_Walk.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />
+    <ClCompile Include="..\private\UIDirector.cpp" />
+    <ClCompile Include="..\private\UILoader.cpp" />
     <ClCompile Include="..\Private\UIPrefab.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="Client.cpp" />
