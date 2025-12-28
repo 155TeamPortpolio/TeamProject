@@ -420,9 +420,16 @@ FodyWeavers.xsd
 **/Resource/**
 **/Resources/**
 
+# 하지만 폴더 유지를 위한 .gitkeep은 허용
+!**/Resource/**/.gitkeep
+!**/Resources/**/.gitkeep
+!**/Resources/Data/
+!**/Resources/Data/**
+
 # DemoResource는 예외로 추적 (어디에 있든)
 !**/DemoResource/
 !**/DemoResource/**
+
 
 # Maptool 리소스 추출 폴더(및 하위 전부) 무시
 **/ZZZOutput/**
