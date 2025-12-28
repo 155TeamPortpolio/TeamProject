@@ -86,7 +86,7 @@ void CMiyabi::Update(_float dt)
 void CMiyabi::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	Add_OutLineRender();
+	//Add_OutLineRender();
 }
 
 void CMiyabi::Render_GUI()
