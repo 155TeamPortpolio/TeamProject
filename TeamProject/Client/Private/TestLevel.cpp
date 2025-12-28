@@ -39,6 +39,7 @@
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
 #include "UVAnimationUI.h"
+#include "UIDirector.h"
 
 #include "HUD.h"
 
@@ -188,8 +189,14 @@ HRESULT CTestLevel::Awake()
 	//
 	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
 
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Initialize("Test_Level");
 
+	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
+		.Asset("hud.json")
+		.Build("HUD");
 
+	uiDirector->Register(hudUI);
 
 	return S_OK;
 }

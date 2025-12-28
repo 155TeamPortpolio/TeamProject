@@ -27,6 +27,7 @@ private:
 	unordered_map<string, CUI_Object*> m_uiByTag;
 
 public:
-	virtual void Free() override { __super::Free(); }
+	virtual void Free() override;
 };
+
 NS_END

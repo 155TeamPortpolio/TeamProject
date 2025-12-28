@@ -8,15 +8,12 @@ IMPLEMENT_SINGLETON(CUIDirector);
 void CUIDirector::Initialize(const string& levelKey)
 {
 	m_levelKey = levelKey;
-
-	UILoader::RegisterUI(m_levelKey);
+	UILoader::Load(m_levelKey);
 }
 
 void CUIDirector::Register(CUI_Object* uiObj)
 {
-	const string& tag = uiObj->Get_InstanceName();
-	auto [it, inserted] = m_uiByTag.emplace(tag, uiObj);
-
+	m_uiByTag.emplace(uiObj->Get_InstanceName(), uiObj);
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, m_levelKey);
 }
 
@@ -28,4 +25,9 @@ void CUIDirector::SetVisible(const string& tag, bool visible)
 		it->second->UI_Active();
 	else     
 		it->second->UI_DeActive();
+}
+
+void CUIDirector::Free()
+{
+	__super::Free();
 }
