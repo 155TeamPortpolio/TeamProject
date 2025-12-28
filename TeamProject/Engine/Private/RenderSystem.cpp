@@ -31,10 +31,11 @@ CRenderSystem::~CRenderSystem()
 
 HRESULT CRenderSystem::Initialize()
 {
-	/*pipeLine*/
-	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 	/*Render Target*/
 	m_pTargetManager = CTarget_Manager::Create(m_pDevice, m_pContext);
+
+	/*pipeLine*/
+	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 
 	/*RenderPass*/
 	m_pPriorityPass	= PriorityPass::Create(this);
@@ -136,6 +137,7 @@ void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 void CRenderSystem::Render_GUI()
 {
 	m_pTargetManager->Render_GUI();
+	m_pPipeLine->Render_GUI();
 }
 #endif // _USING_GUI
 

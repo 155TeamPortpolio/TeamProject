@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "Helper_Func.h"
+#include "HiZ_Culling.h"
 
 CPipeLine::CPipeLine()
 {
@@ -76,6 +77,7 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	m_pSystem = pSystem;
 
+	m_pHiZ = CHiZ_Culling::Create();
 	return S_OK;
 }
 
@@ -408,6 +410,13 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 	return S_OK;
 }
 
+#ifdef _USING_GUI
+void CPipeLine::Render_GUI()
+{
+	m_pHiZ->Render_GUI();
+}
+#endif // !_USING_GUI
+
 CPipeLine* CPipeLine::Create(ID3D11Device* pDevice, class CRenderSystem* pSystem)
 {
 	CPipeLine* instance = new CPipeLine();
@@ -422,6 +431,7 @@ CPipeLine* CPipeLine::Create(ID3D11Device* pDevice, class CRenderSystem* pSystem
 void CPipeLine::Free()
 {
 	__super::Free();
+
 	Safe_Release(m_pDeviceFrameBuffer);
 	Safe_Release(m_pDeviceObjectBuffer);
 	Safe_Release(m_pDeviceSkinningBuffer);
@@ -431,4 +441,5 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOBuffer);
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
+	Safe_Release(m_pHiZ);
 }
