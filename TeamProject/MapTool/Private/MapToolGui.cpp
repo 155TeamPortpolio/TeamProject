@@ -327,7 +327,7 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     MAPOBJ_TYPE eType = static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex);
 
     // 트리거를 제외한 타입에 모델이 선택되어있지 않으면 return
-    if (MAPOBJ_TYPE::TRIGGER == eType &&
+    if (MAPOBJ_TYPE::TRIGGER != eType &&
         -1 == m_iSelectedModelIndex)
         return;
 
@@ -362,18 +362,17 @@ void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
     case MAPOBJ_TYPE::TRIGGER:
     {
         COLLIDER_DESC ColDesc = {};
-        ColDesc.eType = {};
+        ColDesc.eType = m_TriggerTransform.eType;
         ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
-        ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
-        ColDesc.vCenter = pRayHit->vPoint;
-        //ColDesc.vSize = 
-        //ColDesc.vRotation =
+        ColDesc.vSize = m_TriggerTransform.vScale;
+        ColDesc.vRotation = { XMConvertToRadians(m_TriggerTransform.vRotation.x),
+                              XMConvertToRadians(m_TriggerTransform.vRotation.y),
+                              XMConvertToRadians(m_TriggerTransform.vRotation.z) };
 
-        string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
-
-        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_TriggerObject" })
             .Collider(ColDesc)
-            .Build(fileName);
+            .Position(pRayHit->vPoint)
+            .Build("Trigger_Object");
 
 #ifdef _DEBUG
         pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);

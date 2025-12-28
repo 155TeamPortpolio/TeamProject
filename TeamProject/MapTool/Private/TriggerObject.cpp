@@ -46,6 +46,7 @@ void CTriggerObject::Priority_Update(_float dt)
 
 void CTriggerObject::Update(_float dt)
 {
+	Get_Component<CCollider>()->Update(dt);
 }
 
 void CTriggerObject::Late_Update(_float dt)
