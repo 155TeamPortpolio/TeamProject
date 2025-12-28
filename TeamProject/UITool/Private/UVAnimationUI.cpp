@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "UVAnimationUI.h"
- 
-#include "GameInstance.h"
-#include "Helper_Func.h"
+
 #include "Sprite2D.h"
+#include "GameInstance.h"
+#include "Texture.h"
 #include "UITool_Level.h"
 
 _uint CUVAnimationUI::m_iCount = {};
@@ -32,7 +32,9 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->ChangePass("UVAnimation");
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -64,23 +66,32 @@ void CUVAnimationUI::Render_GUI()
     __super::Render_GUI();
 
     // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    ImGui::SeparatorText(u8"이미지"); 
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     // UV 애니메이션
-    ImGui::SeparatorText(u8"UV애니메이션");
-    ImGui::DragFloat2(u8"속도", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
+    ImGui::SeparatorText(u8"UV 애니메이션");
+    ImGui::DragFloat2(u8"u", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
+
+    // 마스크 텍스쳐
+    ImGui::SeparatorText(u8"마스크 이미지");
+    if (ImGui::Checkbox(u8"사용", &m_isUseMask))
+    {
+        Get_Component<CSprite2D>()->Set_Param("UseMask", { &m_isUseMask,"bool",sizeof(_bool) });
+        CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
+        Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
+    } 
+    ImGui::BeginDisabled(!m_isUseMask);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##마스크", &m_iMaskTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+    {
+        CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(G_GlobalLevelKey, szTextureKeys[m_iMaskTextureKeyIndex]);
+        Get_Component<CSprite2D>()->Set_Param("OpacityTexture", { pTexture->Get_SRV(), "Texture2D", 0 });
+    } 
+    ImGui::EndDisabled();
 }
 
 void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
@@ -89,18 +100,26 @@ void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data.strTextureTag = m_strTextureKey;
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
+
+    data.vUVOffsetSpeed = { m_vUVOffsetSpeed.x, m_vUVOffsetSpeed .y };
+
+    // 마스크는 아직
 }
 
 void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-    m_vUVOffsetSpeed.x = data.vUVOffsetSpeed[0];
-    m_vUVOffsetSpeed.y = data.vUVOffsetSpeed[1];
+    m_vUVOffsetSpeed = _float2(data.vUVOffsetSpeed[0], data.vUVOffsetSpeed[1]);
+
+    // 마스크는 아직
 }
 
 CGameObject* CUVAnimationUI::Create()

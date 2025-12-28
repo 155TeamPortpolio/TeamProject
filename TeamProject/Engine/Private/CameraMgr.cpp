@@ -72,13 +72,11 @@ _bool CCameraMgr::Pop(_uint handle, _float blendSec)
 {
     size_t idx = (size_t)-1;
     for (size_t i = 0; i < m_overrides.size(); ++i)
-    {
         if (m_overrides[i].handle == handle)
         {
             idx = i;
             break;
         }
-    }
 
     if (idx == (size_t)-1) return false;
 
@@ -280,8 +278,8 @@ void CCameraMgr::BeginBlendTo(CCamera* targetCam, _float blendSec)
 
     if (blendSec <= 0.f)
     {
-        m_isBlending    = false;
-        m_blendTime     = 0.f;
+        m_isBlending = false;
+        m_blendTime = 0.f;
         m_blendDuration = 0.f;
         ApplyOutputPose(CapturePose(targetCam));
         return;
@@ -290,9 +288,9 @@ void CCameraMgr::BeginBlendTo(CCamera* targetCam, _float blendSec)
     m_blendTargetCam = targetCam;
     Safe_AddRef(m_blendTargetCam);
 
-    m_blendFrom     = GetCurOutputPose();
-    m_isBlending    = true;
-    m_blendTime     = 0.f;
+    m_blendFrom = GetCurOutputPose();
+    m_isBlending = true;
+    m_blendTime = 0.f;
     m_blendDuration = blendSec;
 }
 

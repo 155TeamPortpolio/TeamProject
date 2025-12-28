@@ -28,7 +28,7 @@ public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
 	
 private:
-	const _float2		m_fChildCreateSize = { 100.f, 100.f };
+	const _float2		m_fChildCreateSize = { 100.f, 30.f };
 
 public:
 	static const string m_strTypeTag;

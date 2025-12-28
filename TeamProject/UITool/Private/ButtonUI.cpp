@@ -33,7 +33,9 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    if (szTextureKeys.size())
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     m_iCount++;
 
@@ -61,26 +63,18 @@ void CButtonUI::Render_GUI()
     __super::Render_GUI();
      
     // 텍스쳐
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
     ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
+    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
+    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-
-    // 이벤트 메시지
+    // 이벤트
     ImGui::SeparatorText(u8"이벤트");
     ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
-    // 버튼 상태
-    ImGui::SeparatorText(u8"버튼 상태");
+    // 상태 표시
+    ImGui::SeparatorText(u8"상태");
     string strState = {};
     switch (m_eState)
     { 
@@ -126,8 +120,8 @@ void CButtonUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    data.strTextureTag = m_strTextureKey;
-
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
     data.strEventMsg = m_szEventMsg;
 }
 
@@ -135,8 +129,10 @@ void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
+    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
+    if (-1 != m_iTextureKeyIndex)
+        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
 
     strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
 }

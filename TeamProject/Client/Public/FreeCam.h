@@ -21,6 +21,7 @@ public:
 
 public:
     void    ApplyRotation(_float dt);
+    void    SyncRotation();
 
 private:
     _float     m_fSpeed          = 5.f;

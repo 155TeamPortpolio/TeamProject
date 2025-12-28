@@ -97,16 +97,16 @@ void CCharacter::Update_Input(_float dt)
 		auto cam   = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 
-		Vector3 look  = camTf->Dir(STATE::LOOK);
-		Vector3 right = camTf->Dir(STATE::RIGHT);
+		_vector3 camLook  = camTf->Dir(STATE::LOOK);
+		_vector3 camRight = camTf->Dir(STATE::RIGHT);
 
-		look.y  = 0.f;
-		right.y = 0.f;
+		camLook.y  = 0.f;
+		camRight.y = 0.f;
 
-		look.Normalize();
-		right.Normalize();
+		camLook.Normalize();
+		camRight.Normalize();
 
-		m_vInputDir = right * (float)x + look * (float)z;
+		m_vInputDir = camRight * (float)x + camLook * (float)z;
 	}
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);

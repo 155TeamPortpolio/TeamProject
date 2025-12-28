@@ -79,6 +79,8 @@ uint Row;
 uint FrameIndex;
 
 float2 UVOffset;
+
+bool UseMask;
  
 float FillAmount;
 float Direction;
@@ -125,6 +127,13 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
 PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 {
     PS_OUT Out;
+    
+    if (UseMask)
+    {
+        vector vMask = OpacityTexture.Sample(LinearSampler, In.vTexcoord);  // 마스크 이미지가 알파로 되어있을 수도 있는데 그러면 수정
+        if (vMask.r < 0.1f)
+            discard;
+    } 
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
     if (vDiffuse.a < 0.1f)

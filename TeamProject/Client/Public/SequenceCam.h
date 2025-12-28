@@ -4,7 +4,7 @@
 #include "CamSequencePlayer.h"
 
 NS_BEGIN(Client)
-
+// Cinematic
 class CSequenceCam final : public CCamObject
 {
 private:

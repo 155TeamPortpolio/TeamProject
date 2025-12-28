@@ -31,7 +31,7 @@ private:
 	_float		m_fFillAmount = { 1.f };
 
 private:
-	string		m_strTextureKey = {};
+	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
 
 public:
 	static const string m_strTypeTag;
