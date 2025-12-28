@@ -48,7 +48,8 @@ void CSacrificeState_Attack_Phase1::Register_States()
 void CSacrificeState_Attack_Phase1::Register_Transitions()
 {
 	m_pSubStateMachine->Register_Transition("Attack07_Phase1", "Attack02_Phase1",
-		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+		CStateMachine<CSacrifice>::CONDITION_BOOL_TRUE,"Change");
+
 	//m_pSubStateMachine->Register_Transition("Attack02_Phase1", "Attack07_Phase1",
 	//	CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 }
@@ -57,7 +58,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_01").Loop(false).Speed(0.5f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_01").Loop(false).Speed(1.2f).Apply();
 }
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -71,10 +72,11 @@ void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(0.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.2f).Apply();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
+	m_fAnimProgress = 0.f;
 }
 
 void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -82,13 +84,13 @@ void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
 	{
 		m_IsAttackStart = true;
-		static_cast<CSacrifice*>(pOwner)->ActiveSword();
+		pOwner->ActiveSword();
 	}
 
 	if (!m_IsAttackEnd && m_fAnimProgress >= 0.15f)
 	{
 		m_IsAttackEnd = true;
-		static_cast<CSacrifice*>(pOwner)->DeactiveSword();
+		pOwner->DeactiveSword();
 	}
 }
 
@@ -169,10 +171,11 @@ void CSacrificeState_Attack_06_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(0.5f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.2f).Apply();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
+	m_fAnimProgress = 0.f;
 }
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -180,13 +183,13 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
 	{
 		m_IsAttackStart = true;
-		static_cast<CSacrifice*>(pOwner)->ActiveSword();
+		pOwner->ActiveSword();
 	}
 
 	if (!m_IsAttackEnd && m_fAnimProgress >= 0.6f)
 	{
 		m_IsAttackEnd = true;
-		static_cast<CSacrifice*>(pOwner)->DeactiveSword();
+		pOwner->DeactiveSword();
 	}
 }
 
@@ -209,13 +212,13 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.06f)
 	{
 		m_IsAttackStart = true;
-		static_cast<CSacrifice*>(pOwner)->ActiveAxe();
+		pOwner->ActiveAxe();
 	}
 
 	if (!m_IsAttackEnd && m_fAnimProgress >= 0.5f)
 	{
 		m_IsAttackEnd = true;
-		static_cast<CSacrifice*>(pOwner)->DeactiveAxe();
+		pOwner->DeactiveAxe();
 	}
 
 }

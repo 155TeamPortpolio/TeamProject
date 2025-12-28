@@ -250,12 +250,13 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 	
-	if (!isExistClip(Layer.iClipIndex))
+	if (!isExistClip(Layer.iClipIndex) && !isExistClip(Layer.iNextClipIndex))
 		return 0.f;
 
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-	return Layer.fCurrentTrackPosition / nowClip->Get_Duration();
+
+	return Layer.bBlending ? Layer.fBlendTrackPosition / m_pAnimClips[Layer.iNextClipIndex]->Get_Duration() : Layer.fCurrentTrackPosition / nowClip->Get_Duration();
 }
 
 string CAnimator3D::Get_CurAnimName(_uint LayerIndex)

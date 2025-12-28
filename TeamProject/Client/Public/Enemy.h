@@ -2,6 +2,11 @@
 #include "GameObject.h"
 
 NS_BEGIN(Client)
+typedef struct tagAttackBlackBoard
+{
+
+}ATTACK_BLACK_BOARD;
+
 class CEnemy abstract:
     public CGameObject
 {

@@ -20,7 +20,6 @@ private:
 };
 
 /* Phase1 States */
-
 class CSacrificeState_Attack_01_Phase1 : public IBaseState<CSacrifice>
 {
 public:
