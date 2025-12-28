@@ -37,7 +37,7 @@ namespace
 		for (const Entry& entry : entries)
 		{
 			const string protoTag = string("Proto_GameObject_") + entry.typeTag;
-			PROTO->Add_ProtoType(levelKey, protoTag, entry.createFunc());
+			CGameInstance::GetInstance()->Get_PrototypeMgr()->Add_ProtoType(levelKey, protoTag, entry.createFunc());
 		}
 	}
 
@@ -75,7 +75,7 @@ namespace
 
 			const fs::path path = entry.path();
 			if (!ExtAllowed(path, allowed)) continue;
-			RES->Add_ResourcePath(path.filename().string(), path.generic_string());
+			CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(path.filename().string(), path.generic_string());
 		}
 	}
 
@@ -91,7 +91,8 @@ namespace
 			const fs::path filePath = entry.path();
 			if (!ExtAllowed(filePath, allowed)) continue;
 
-			FONT->Add_Font(filePath.filename().string(), ConvertToWideString(filePath.generic_string()).c_str());
+			CGameInstance::GetInstance()->Get_FontSystem()->Add_Font(filePath.filename().string(), 
+				ConvertToWideString(filePath.generic_string()).c_str());
 		}
 	}
 }
