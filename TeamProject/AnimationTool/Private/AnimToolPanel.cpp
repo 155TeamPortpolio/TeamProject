@@ -24,7 +24,6 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		dynamic_cast<CAnimModel*>(m_pSelectModel)->Set_Panel(this);
 		Reset_Panel();
 	}
-	
 	if (nullptr != m_pSelectAnimator) {
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
