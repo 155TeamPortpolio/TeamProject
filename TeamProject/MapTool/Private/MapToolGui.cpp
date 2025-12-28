@@ -82,12 +82,20 @@ void CMapToolGui::Render_GUI()
     ImGui::Text("");/////////////////////////////////
 
     const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
-    ImGui::Text("Setting PLACED Object");
+    ImGui::Text("Setting Object");
     ImGui::BeginChild("##MapToolGuiObjectSettingChild", ImVec2{ 0, childHeight }, true);
-    string TagSelectedModelName = "Selected Model Name : " + m_TagSelectedModelName;
-    ImGui::Text(TagSelectedModelName.c_str());
     
     Select_PlaceType();
+    
+    if (ENUM(MAPOBJ_TYPE::TRIGGER) == m_iSelectedLayerIndex) {
+        Select_TriggerType();
+    }
+    else {
+        string TagSelectedModelName = "Selected Model Name : " + m_TagSelectedModelName;
+        ImGui::Text(TagSelectedModelName.c_str());
+    }
+    
+	ImGui::EndChild();
 
     //ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
     //ImGui::InputFloat3(" Scale##Scale", reinterpret_cast<float*>(&m_vScale_PlacedObject), "%.1f");
@@ -96,13 +104,55 @@ void CMapToolGui::Render_GUI()
     //if (ImGui::Checkbox("IsObjectPicking", &m_isObjectPicking)) {
     //    Set_ObjectPicking(m_isObjectPicking);
     //}
-	ImGui::EndChild();
-    if (ImGui::TreeNode("Model Setting")) {
-        ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, childHeight }, true);
-        PreSet_ModelResource();
+    if (ENUM(MAPOBJ_TYPE::TRIGGER) == m_iSelectedLayerIndex) {
+        if (ImGui::TreeNode("Trigger Setting")) {
+            ImGui::BeginChild("##MapToolGui_TriggerTranformSetting", ImVec2{ 0, childHeight + textLineHeight*2}, true);
 
-        ImGui::EndChild();
-        ImGui::TreePop();
+            switch (m_TriggerTransform.eType)
+            {
+            case COLLIDER_TYPE::BOX:
+            {
+                ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Box Scale ( HalfExtents(x,y,z) )");
+                ImGui::InputFloat3("##BoxScale", reinterpret_cast<float*>(&m_TriggerTransform.vScale), "%.1f");
+                break;
+            }
+            case COLLIDER_TYPE::SPHERE:
+            {
+                _float fRadius = m_TriggerTransform.vScale.x;
+                ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Sphere Radius ( Radius(x) )");
+                if (ImGui::InputFloat("##SphereScale", reinterpret_cast<float*>(&fRadius), 1.f))
+                    m_TriggerTransform.vScale = { fRadius,1.f,1.f };
+                break;
+            }
+            case COLLIDER_TYPE::CAPSULE:
+            {
+                _float2 vCapsuleScale = { m_TriggerTransform.vScale.x, m_TriggerTransform.vScale.y };
+                ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Capsule Scale ( Radius(x)/HalfHeight(y) )");
+                if (ImGui::InputFloat2("##CapsuleScale", reinterpret_cast<float*>(&vCapsuleScale), "%.1f")) {
+                    m_TriggerTransform.vScale = { vCapsuleScale.x, vCapsuleScale.y, 1.f };
+                }
+
+                break;
+            }
+            }
+
+            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Rotation");
+            ImGui::InputFloat3("##Rotation", reinterpret_cast<float*>(&m_TriggerTransform.vRotation), "%.1f");
+            ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Position");
+            ImGui::InputFloat3("##Position", reinterpret_cast<float*>(&m_TriggerTransform.vTranslation), "%.1f");
+            
+            ImGui::EndChild();
+            ImGui::TreePop();
+        }
+    }
+    else {
+        if (ImGui::TreeNode("Model Setting")) {
+            ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, childHeight }, true);
+            PreSet_ModelResource();
+
+            ImGui::EndChild();
+            ImGui::TreePop();
+        }
     }
     if (ImGui::TreeNode("Assistant")) {
         if (ImGui::Button("Open Assistant"))
@@ -269,33 +319,80 @@ void CMapToolGui::Compute_Ray()
 void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 {
     if (nullptr == pRayHit->pHitObject ||
-        -1 == m_iSelectedModelIndex)
+        m_iSelectedLayerIndex >= ENUM(MAPOBJ_TYPE::END))
         return;
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+    
+    MAPOBJ_TYPE eType = static_cast<MAPOBJ_TYPE>(m_iSelectedLayerIndex);
 
-    CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
-    Desc->TagModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
-    Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedModelIndex].TagMaterialKey;
+    // 트리거를 제외한 타입에 모델이 선택되어있지 않으면 return
+    if (MAPOBJ_TYPE::TRIGGER == eType &&
+        -1 == m_iSelectedModelIndex)
+        return;
 
-    COLLIDER_DESC ColDesc = {};
-    ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
-    ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+    switch (eType)
+    {
+    case MAPOBJ_TYPE::PLACED:
+    {
+        CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
+        Desc->TagModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+        Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedModelIndex].TagMaterialKey;
 
-    string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
+        COLLIDER_DESC ColDesc = {};
+        ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
+        ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
 
-    CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
-        .Position(pRayHit->vPoint)
-        .Scale(m_vScale_PlacedObject)
-        .Add_ObjDesc(Desc)
-        .Collider(ColDesc)
-        .Build(fileName);
+        string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
+
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
+            .Position(pRayHit->vPoint)
+            .Scale(m_vScale_PlacedObject)
+            .Add_ObjDesc(Desc)
+            .Collider(ColDesc)
+            .Build(fileName);
 
 #ifdef _DEBUG
-    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
 #endif // _DEBUG
-    
-    pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});
+
+        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+        break;
+    }
+    case MAPOBJ_TYPE::TRIGGER:
+    {
+        COLLIDER_DESC ColDesc = {};
+        ColDesc.eType = {};
+        ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+        ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+        ColDesc.vCenter = pRayHit->vPoint;
+        //ColDesc.vSize = 
+        //ColDesc.vRotation =
+
+        string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
+
+        CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
+            .Collider(ColDesc)
+            .Build(fileName);
+
+#ifdef _DEBUG
+        pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_pMapToolContext->isAllDebugRender);
+#endif // _DEBUG
+
+        pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_pMapToolContext->TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
+        break;
+    }
+    case MAPOBJ_TYPE::DECAL:
+        break;
+    case MAPOBJ_TYPE::ALL:
+        break;
+    case MAPOBJ_TYPE::END:
+        break;
+    default:
+        break;
+    }
+
+   
 }
 
 void CMapToolGui::Set_ObjectPicking(_bool is)
@@ -387,18 +484,47 @@ void CMapToolGui::Save_MapData()
 
 void CMapToolGui::Select_PlaceType()
 {
-    if (m_iSelectedLayerIndex < 0 || m_iSelectedLayerIndex >= (_int)m_pMapToolContext->TagLayers.size())
+    const _char* items[] = { "Placed Object", "Trigger Object","Decal Object","Ground Object" };
+
+    if (m_iSelectedLayerIndex < 0) 
         m_iSelectedLayerIndex = 0;
 
-    const _int PrevIndex = m_iSelectedLayerIndex;
-    const _char* preview = m_pMapToolContext->TagLayers[m_iSelectedLayerIndex].c_str();
+    if (m_iSelectedLayerIndex >= (_int)IM_ARRAYSIZE(items)) 
+        m_iSelectedLayerIndex = (_int)IM_ARRAYSIZE(items) - 1;
 
-    if (ImGui::BeginCombo("Type", preview)) {
-        for (int i = 0; i < (int)m_pMapToolContext->TagLayers.size(); ++i)
+    const _int iPrevIndex = m_iSelectedLayerIndex;
+    const _char* preview = items[m_iSelectedLayerIndex];
+
+    if (ImGui::BeginCombo("Type", preview))
+    {
+        for (_int i = 0; i < (_int)IM_ARRAYSIZE(items); ++i)
         {
-            const bool isSelected = (i == m_iSelectedLayerIndex);
-            if (ImGui::Selectable(m_pMapToolContext->TagLayers[i].c_str(), isSelected))
+            const _bool isSelected = (i == m_iSelectedLayerIndex);
+            if (ImGui::Selectable(items[i], isSelected))
                 m_iSelectedLayerIndex = i;
+
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
+
+void CMapToolGui::Select_TriggerType()
+{
+    const _char* items[] = { "Box", "Sphere", "Capsule" };
+
+    const _char* preview = items[ENUM(m_TriggerTransform.eType)];
+
+    if (ImGui::BeginCombo("Trigger Shape Type", preview))
+    {
+        for (_int i = 0; i < (_int)IM_ARRAYSIZE(items); ++i)
+        {
+            const _bool isSelected = (i == ENUM(m_TriggerTransform.eType));
+            if (ImGui::Selectable(items[i], isSelected)) {
+                m_TriggerTransform.eType = static_cast<COLLIDER_TYPE>(i);
+                m_TriggerTransform.vScale = { 1.f,1.f,1.f };
+            }
 
             if (isSelected)
                 ImGui::SetItemDefaultFocus();

@@ -176,6 +176,7 @@
     <ClInclude Include="..\public\pch.h" />
     <ClInclude Include="..\public\PlacedObject.h" />
     <ClInclude Include="..\public\SlotFieldGui.h" />
+    <ClInclude Include="..\public\TriggerObject.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="MapTool.h" />
     <ClInclude Include="Resource.h" />
@@ -228,6 +229,7 @@
     </ClCompile>
     <ClCompile Include="..\private\PlacedObject.cpp" />
     <ClCompile Include="..\private\SlotFieldGui.cpp" />
+    <ClCompile Include="..\private\TriggerObject.cpp" />
     <ClCompile Include="MapTool.cpp" />
   </ItemGroup>
   <ItemGroup>

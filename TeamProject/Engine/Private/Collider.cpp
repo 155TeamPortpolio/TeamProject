@@ -149,7 +149,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pShape->setFlag(PxShapeFlag::eVISUALIZATION, true);
 	m_pShape->setContactOffset(0.02f);  // 기본값: 0.02
 	m_pShape->setRestOffset(0.0f);      // 관통 허용 거리 최소화
-	if (pDesc->isTrigger) {
+	if (pDesc->bTrigger) {
 		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
@@ -181,7 +181,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_vCenter = pDesc->vCenter;
 	m_vSize = pDesc->vSize;
 	m_vRotation = pDesc->vRotation;
-	m_bTrigger = pDesc->isTrigger;
+	m_bTrigger = pDesc->bTrigger;
 	m_strMaterialTag = pDesc->strMaterialTag;
 
 	// 시스템 등록
