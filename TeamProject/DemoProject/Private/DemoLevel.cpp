@@ -30,6 +30,7 @@ HRESULT CDemoLevel::Initialize()
 
 HRESULT CDemoLevel::Awake()
 {
+	
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
