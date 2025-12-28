@@ -114,13 +114,13 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 	}
 }
 
-_float3 CAnimationClip::Get_RootBone_EndPosition()
+const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneName(const string& BoneName) const
 {
 	for (auto Channel : m_Channels)
-		if ("Root" == Channel->Get_Name())
-			return Channel->Get_KeyFrames().back().vTranslation;
+		if (BoneName == Channel->Get_Name())
+			return Channel->Get_KeyFrames().back();
 
-	return _float3();
+	return KEYFRAME{};
 }
 
 void CAnimationClip::Render_GUI()
