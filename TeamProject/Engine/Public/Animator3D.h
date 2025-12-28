@@ -27,7 +27,7 @@ public:
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
         _float3             vRootEndPos{};  //그 클립의 제일마지막 루트위치
-        _float3             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
+        _float4             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
         _float3             vPrevRootPos{}; //이전 프레임 위치
         _float3             vRootDelta{};   //이동값
          

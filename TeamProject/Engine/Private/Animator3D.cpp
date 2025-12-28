@@ -930,9 +930,16 @@ HRESULT SetAnimBuild::Apply()
 	//m_pOwner->Reset_Layer(m_iLayerIndex);
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
-	if (Layer.BaseLayer)
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
-
+	if (Layer.BaseLayer) {
+		Layer.vPrevRootPos = _float3{};
+		Layer.vPrevRootQuat = _float4{};
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+	}
 	Layer.iClipIndex = m_iClipIndex;
 
 	Layer.bLoop = m_bLoop;
@@ -959,8 +966,14 @@ HRESULT ChangeAnimBuild::Apply()
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
 	if (Layer.BaseLayer) {
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
-		Layer.vPrevRootPos = _float3();
+		Layer.vPrevRootPos = _float3{};
+
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
 
 	Layer.bLoop = m_bLoop;

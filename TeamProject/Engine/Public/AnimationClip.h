@@ -41,6 +41,7 @@ public:
 
 
 	const KEYFRAME& Get_EndKeyFrameByBoneName(const string& BoneName) const;
+	const KEYFRAME& Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const;
 public:
 	virtual void Render_GUI();
 
