@@ -27,6 +27,9 @@ public:
 		_float TrackPosition,
 		vector<EVENT_INST>& EventBus);
 
+	void TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices,
+		_float MaxDuration);
+
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
 	_bool isLoop() { return m_bLoop; }

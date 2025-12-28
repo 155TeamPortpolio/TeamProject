@@ -23,17 +23,17 @@ public:
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
-        //루트본 델타값 (베이스 레이어만 터치)
+        //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
         _float3             vRootEndPos{}; //그 클립의 제일마지막 위치
         _float3             vPrevRootPos{};//이전 프레임 위치
         _float3             vRootDelta{};  //이동값
          
-        //무브본 관련
-        _int    iMoveBoneIndex = { -1 };
+        //모션본 (애니매이션의 움직임을 담당하는 본)
+        _int    iMotionBoneIndex = { -1 };
         _bool   bUseBoneX, bUseBoneY, bUseBoneZ = { true };
-        _float3 vPrevMoveBonePos{};
+        _float3 vPrevMotionBonePos{};
 
         //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
@@ -62,6 +62,7 @@ public:
              
         //다음 매트릭스
         vector<_float4x4> BlendMatrices = {};
+
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
@@ -85,14 +86,15 @@ public:
     //즉시 애니매이션 변경
     class SetAnimBuild Set_Animation(AnimArg ClipArg);
     class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
-    //애니매이션 보간 변경 (아직 보간처리가 작동하지 않음)
+    //애니매이션 보간 변경
     class ChangeAnimBuild Change_Animation(AnimArg ClipArg);
     class ChangeAnimBuild Change_Animation(_uint LayerIndex, AnimArg ClipArg);
     //레이어 초기화
     virtual void Reset_Layer(_uint LayerIndex);
     //레이어 애니매이션을 멈춤 (초기화 x)
     virtual HRESULT Stop_Animation(_uint LayerIndex);
-    virtual HRESULT StopAll_Animation(); //(구현안됌)
+    //전체 레이어 애니매이션을 멈추되 다시 켜려면 각각 퍼즈를 풀어주어야함.
+    virtual HRESULT StopAll_Animation(); 
 
 public://애니매이터 데이터
     /*----- is -----*/
@@ -114,12 +116,12 @@ public://애니매이터 데이터
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
     //현재 레이어 개수
     _int Get_NumLayer();
-    //이벤트들 불러오는 함수
+    //이벤트들 불러오는 함수 (매 프레임 벡터 내용물이 지워짐)
     const vector<EVENT_INST>& Get_EventBus() const;
     //"Root"라는 이름을 가진 본의 움직임 델타값
-    _float3 Get_RootMotionDelta() const;
-    //무브본 애니매이션 델타값
-    _vector Get_MoveBoneMotionDelta(_uint LayerIndex = 0);
+    _float3 Get_RootBoneDelta() const;
+    //모션본 애니매이션 델타값
+    _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴
     _float Get_EaseDuration(_uint LayerIndex = 0);
     //현재 레이어 재생속도
@@ -179,6 +181,8 @@ protected:
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
+    //Combined 연산
+
     //최종 뼈 계산
     void BuildBone();
 
@@ -197,6 +201,7 @@ protected:
  
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
+    vector<_float4x4>               m_ClipEndMatrices;
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
