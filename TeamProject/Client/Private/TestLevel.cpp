@@ -105,10 +105,10 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
@@ -152,14 +152,15 @@ HRESULT CTestLevel::Awake()
 	Ready_Camera();
 
 	//==================== UI =======================
-	//auto uiDirector = CUIDirector::GetInstance();
-	//uiDirector->Initialize("Test_Level");
-	//
-	//CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-	//	.Asset("hud.json")
-	//	.Build("HUD");
-	//
-	//uiDirector->Register(hudUI);
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Initialize("Test_Level");
+	
+	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
+		.Asset("hud.json")
+		.Build("HUD");
+	
+	uiDirector->Register(hudUI);
+	//uiDirector->SetVisible("HUD", true);
 
 	return S_OK;
 }

@@ -39,10 +39,10 @@ namespace Engine {
 		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
 		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
 		_uint SkinningOffset = {};
+		_vector LookVector = {};
 
 		class CModel* pModel = { nullptr };
 		class CMaterial* pMaterial = { nullptr };
-
 		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*�߰������� �ְ� ���� �� �־�?*/
 
 		RENDERKEY GetKey() const;

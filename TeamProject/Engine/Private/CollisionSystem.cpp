@@ -524,9 +524,10 @@ void CCollisionSystem::UnRegisterCollidable(ICollidable* pCollidable, _int Index
 	}
 }
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 void CCollisionSystem::Render_Debug()
 {
+	if (!m_bRender)	return;
 	if (m_Collidables.empty()) return;
 
 	auto camMgr = CGameInstance::GetInstance()->Get_CameraMgr();
@@ -561,7 +562,7 @@ void CCollisionSystem::Render_Debug()
 
 	m_pBatch->End();
 }
-#endif 
+//#endif 
 
 CCollisionSystem* CCollisionSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

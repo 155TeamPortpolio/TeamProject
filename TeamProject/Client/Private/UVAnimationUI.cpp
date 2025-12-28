@@ -59,6 +59,7 @@ void CUVAnimationUI::Render_GUI()
 void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
+    m_InstanceName = data.InstanceName;
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
     m_vAnchorOffset = _float2(data.transform.vAnchorOffset[0], data.transform.vAnchorOffset[1]);
     m_vSize = _float2(data.transform.vSize[0], data.transform.vSize[1]);

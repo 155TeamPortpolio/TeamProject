@@ -508,6 +508,7 @@ namespace Engine
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_CLIP_DATA, strName, isLoop, fDuration, keyframes);
 
 	typedef struct tagUIElementData {
+		string InstanceName = {};
 		string strTypeTag = {};
 		UI_TRANSFORM_DATA transform = {};
 		array<_float, 4> vColor = {};
@@ -544,7 +545,7 @@ namespace Engine
 		vector<UI_CLIP_DATA> animClips;
 		vector<tagUIElementData> children;
 	}UI_ELEMENT_DATA;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_ELEMENT_DATA, strTypeTag, vColor, transform, strTextureTag, strText, strFontTag, fFontScale,
+	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_ELEMENT_DATA, InstanceName, strTypeTag, vColor, transform, strTextureTag, strText, strFontTag, fFontScale,
 		strEventMsg, iFrameCountTotal, iFrameCountX, iFrameCountY, fFrameSpeed, isLoop, vUVOffsetSpeed, fDirection, fFillAmount, isRadial,
 		animClips, children);
 }
