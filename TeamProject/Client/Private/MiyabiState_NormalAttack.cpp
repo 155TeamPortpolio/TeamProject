@@ -50,28 +50,32 @@ void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
 
     // 트리거 초기화
     m_pSubStateMachine->Reset_Trigger("NextCombo");
-
     __super::Enter(pOwner);
 }
 
 void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
 {
-    // 입력 시 콤보 트리거
     if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
     __super::Update(pOwner, dt);
 
-    // Attack_End 종료 시 NormalAttack 종료
     if (m_pSubStateMachine)
     {
-        IBaseState<CMiyabi>* pCurrent = m_pSubStateMachine->Get_CurrentState();
         string strCurrent = m_pSubStateMachine->Get_CurrentStateName();
+        IBaseState<CMiyabi>* pCurrent = m_pSubStateMachine->Get_CurrentState();
 
-        if (strCurrent == "Attack_End" && pCurrent && pCurrent->Is_AnimEnd())
-            m_fAnimProgress = 1.f;
-        else
-            m_fAnimProgress = 0.f;
+        _float currentSubProgress = pCurrent ? pCurrent->Get_AnimProgress() : -1.f;
+
+        OutputDebugStringA(("NormalAttack: CurrentSub=" + strCurrent +
+            ", SubProgress=" + to_string(currentSubProgress) +
+            ", MyProgress=" + to_string(m_fAnimProgress) + "\n").c_str());
+
+        if (strCurrent == "Attack_End")
+        {
+            if (pCurrent && pCurrent->Is_AnimEnd())
+                m_fAnimProgress = 1.f;
+        }
     }
 }
 
@@ -79,11 +83,12 @@ void CMiyabiState_NormalAttack::Exit(CMiyabi* pOwner)
 {
 }
 
-// ===================== Sub States =====================
+
 #pragma region SubStates
 void CMiyabiState_Attack_01::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_01");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_01")
+        .Apply();
 }
 
 void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
@@ -93,7 +98,8 @@ void CMiyabiState_Attack_01::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_02::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_02");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_02")
+        .Apply();
 }
 
 void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
@@ -103,7 +109,8 @@ void CMiyabiState_Attack_02::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_03::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_03");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_03")
+        .Apply();
 }
 
 void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
@@ -113,7 +120,8 @@ void CMiyabiState_Attack_03::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_04::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_04_02");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_04_02")
+        .Apply();
 }
 
 void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
@@ -123,7 +131,8 @@ void CMiyabiState_Attack_04::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_05::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_05");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_05")
+        .Apply();
 }
 
 void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
@@ -133,7 +142,8 @@ void CMiyabiState_Attack_05::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Attack_06::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_06");
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_06")
+        .Apply();
 }
 
 void CMiyabiState_Attack_06::Exit(CMiyabi* pOwner)
@@ -156,7 +166,8 @@ void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
         "Avatar_Female_Size02_Unagi_Ani_Attack_06_End"
     };
 
-    pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex]);
+    pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .Apply();
 }
 void CMiyabiState_Attack_End::Update(CMiyabi* pOwner, _float dt)
 {

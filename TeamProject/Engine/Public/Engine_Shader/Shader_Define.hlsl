@@ -20,20 +20,10 @@ cbuffer FrameBuffer : register(b0)
     float zFar;
 };
 
-cbuffer LightBuffer : register(b1)
-{
-    vector vLightPosition;
-    vector vLightDirection;
-    vector vLightDiffuse;
-    vector vLightAmbient;
-    vector vLightSpecular;
-    float   fLightRange;
-    float3 lightPadding;
-};
-
 cbuffer TransformPerDraw : register(b2)
 {
     uint TransformIndex;
+    vector vLookVector;
 };
 
 cbuffer SkinningPerDraw : register(b4)

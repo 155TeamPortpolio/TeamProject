@@ -27,7 +27,6 @@ HRESULT CChannel::Initialize(ifstream& ifs)
 /*현재 트랙 위치*/
 HRESULT CChannel::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition, _bool Loop)
 {
-
 	_uint iCurrentKeyIndex = { m_iNumKeyFrames - 1 };
 	for (size_t i = 0; i < m_iNumKeyFrames; i++)
 	{

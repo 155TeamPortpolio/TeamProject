@@ -2,13 +2,14 @@
 #include "Miyabi.h"
 #include "GameInstance.h"
 
-#include "StateMachine.h"
+
 #include "Material.h"
 #include "Animator3D.h"
 #include "CharacterController.h"
 
+#include "StateMachine.h"
 #include "MiyabiState_Idle.h"
-#include "MiyabiState_Walk.h"
+#include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
 
 #include "Renderer.h"
@@ -59,7 +60,7 @@ void CMiyabi::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
+	Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
 	Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();
@@ -77,7 +78,7 @@ void CMiyabi::Priority_Update(_float dt)
 void CMiyabi::Update(_float dt)
 {
 	Update_Input(dt);
-
+	Update_States();
 	m_pStateMachine->Update(dt);
 	__super::Update(dt);
 }
@@ -85,7 +86,7 @@ void CMiyabi::Update(_float dt)
 void CMiyabi::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	Add_OutLineRender();
+	//Add_OutLineRender();
 }
 
 void CMiyabi::Render_GUI()
@@ -132,26 +133,6 @@ void CMiyabi::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
-	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
-	// Attack 입력 처리
-	if (m_bIsAttack)
-	{
-		string strCurrent = m_pStateMachine->Get_CurrentStateName();
-		if (strCurrent == "Attack")
-		{
-			// Attack 상태면 서브 스테이트머신에 트리거 전달
-			CMiyabiState_Attack* pAttackState =
-				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
-			if (pAttackState && pAttackState->Get_SubStateMachine())
-				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
-		}
-		else
-		{
-			// 다른 상태면 Attack 상태로 전이
-			m_pStateMachine->Set_Trigger("Attack");
-		}
-	}
-
 	// 디버그용 레이캐스트 (F키)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	if (input->Key_Hold('F'))
@@ -169,6 +150,30 @@ void CMiyabi::Update_Input(_float dt)
 	if (input->Key_Down('J'))
 	{
 		m_pCCT->Jump(3.f);
+	}
+}
+
+void CMiyabi::Update_States()
+{
+	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+
+	// Attack 입력 처리
+	if (m_bIsAttack)
+	{
+		string strCurrent = m_pStateMachine->Get_CurrentStateName();
+		if (strCurrent == "Attack")
+		{
+			// Attack 상태면 서브 스테이트머신에 트리거 전달
+			CMiyabiState_Attack* pAttackState =
+				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+			if (pAttackState && pAttackState->Get_SubStateMachine())
+				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+		}
+		else
+		{
+			// 다른 상태면 Attack 상태로 전이
+			m_pStateMachine->Set_Trigger("Attack");
+		}
 	}
 }
 
@@ -193,7 +198,7 @@ HRESULT CMiyabi::Initialize_StateMachine()
 HRESULT CMiyabi::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CMiyabiState_Idle::Create());
-	m_pStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
+	m_pStateMachine->Register_State("Move", CMiyabiState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CMiyabiState_Attack::Create());
 
 	return S_OK;
@@ -201,11 +206,10 @@ HRESULT CMiyabi::Initialize_States()
 
 HRESULT CMiyabi::Initialize_Transitions()
 {
-	// Idle <-> Walk
-	m_pStateMachine->Register_Transition("Idle", "Walk",
+	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
-	m_pStateMachine->Register_Transition("Walk", "Idle",
+	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
 	m_pStateMachine->Register_AnyStateTransition("Attack",
@@ -219,6 +223,7 @@ HRESULT CMiyabi::Initialize_Transitions()
 
 	return S_OK;
 }
+
 HRESULT CMiyabi::Add_OutLineRender()
 {
 	auto Model = Get_Component<CSkeletalModel>();

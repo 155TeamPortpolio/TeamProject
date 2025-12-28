@@ -24,6 +24,7 @@ Texture2D g_BlurXTexture;
 Texture2D g_BloomFinal;
 Texture2D g_3DUITexture;
 Texture2D g_DistortionTexture;
+Texture2D g_LookTexture;
 Texture2D g_DistortionNoiseTexture;
 Texture2D g_DistortionAdd_Texture;
 Texture2D g_DistortionFinal;
@@ -36,8 +37,8 @@ Texture2D g_PostProcessTexture;
 
 vector g_vLightDir;
 vector g_vLightPos;
-float  g_fLightRange;
-float  g_fLightIntensity;
+float g_fLightRange;
+float g_fLightIntensity;
 int g_iLightSize;
 vector g_vLightDiffuse;
 vector g_vLightAmbient;
@@ -119,9 +120,9 @@ PS_OUT_RESULT PS_SSAO(PS_IN In)
 
     float3 fragPos = mul(vWorldPos, matView).xyz;
     
-    float2 noiseScale = float2(fScreenWidth / 4.0, fScreenHeight / 4.0);
+    float2 noiseScale = float2(fScreenWidth / 8.0, fScreenHeight / 8.0);
     float3 randomVec = g_SSAONoiseTexture.Sample(DefaultSampler, In.vTexcoord * noiseScale).xyz;
-    randomVec = randomVec * 2.0 - 1.0; 
+    randomVec = randomVec * 2.0 - 1.0;
     
     float3 T = normalize(randomVec - N * dot(randomVec, N));
     float3 B = cross(N, T);
@@ -269,15 +270,15 @@ PS_OUT_RESULT PS_BACKRIMLIGHT(PS_IN In)
     float NdotL = dot(worldNormal, lightDir);
 
     float backlightMask = saturate(-NdotL * 0.5 + 0.5);
-    backlightMask = pow(backlightMask, 2.0); 
+    backlightMask = pow(backlightMask, 2.0);
     
-    float rimThreshold = 0.5; 
-    float rimSmoothness = 0.05; 
+    float rimThreshold = 0.5;
+    float rimSmoothness = 0.05;
     float fRim = smoothstep(rimThreshold - rimSmoothness,
                            rimThreshold + rimSmoothness,
                            rimPower);
     
-    fRim *= lerp(0.3, 1.0, backlightMask); 
+    fRim *= lerp(0.3, 1.0, backlightMask);
 
     float3 vRimColor = vRimInfo.rgb * fRim;
     
@@ -408,7 +409,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         
         Out.vResult = float4(result, bright.a);
     }
-    else 
+    else
     {
         Out.vResult = bright;
     }
@@ -450,8 +451,8 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         dir = normalize(dir);
         
         float3 result = float3(0, 0, 0);
-        float samples = 15.0f;          //test�ϰ� �ʹٸ� �̰� ���� ����
-        float strength = 0.1f;          //test�ϰ� �ʹٸ� �̰� ���� ����
+        float samples = 15.0f; //test�ϰ� �ʹٸ� �̰� ���� ����
+        float strength = 0.1f; //test�ϰ� �ʹٸ� �̰� ���� ����
         
         for (float i = 0; i < samples; i++)
         {
@@ -580,10 +581,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-    float fLight = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+   
     float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float fViewZ = vDepthDesc.y * zFar;
@@ -602,20 +600,42 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-
-    if (fSkin > 0.f)
+    
+    if (fSkin > 0.5f)
     {
+        float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
+        float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
+        float specular = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
+
+        float3 halfVec = normalize(viewDir + lightDir);
+        float specBase = saturate(dot(worldNormal, halfVec));
+        float specularPower = lerp(50.0f, 5.0f, roughness);
+        specular = pow(specBase, specularPower) * specular * 0.2f;
+        
         float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
-        Out.vLight = float4(PBR, 1.f);
+        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
+        Out.fLightInfo = float2(NdotL, specular);
+        
     }
     else
     {
-        Out.vLight = float4((g_vLightDiffuse.rgb * vDiffuse.rgb * NdotL * g_fLightIntensity) / g_iLightSize, 1.f);
-    }
-    
-   // Out.fLightInfo = float2(saturate(lightDir.x), saturate(lightDir.y));
-   Out.fLightInfo = float2(NdotL, 0.f);
+        vector LightDesc = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord);
+        float3 vLookVector = normalize(g_LookTexture.Sample(DefaultSampler, In.vTexcoord).xyz * 2.f - 1.f);
+        
+        float3 headRight = normalize(cross(float3(0, 1, 0), vLookVector));
 
+        float RdotL = dot(headRight, lightDir);
+        float FdotL = dot(vLookVector, lightDir);
+        
+        float faceShadow = LightDesc.r;
+        float specularMask = LightDesc.g;
+    
+        faceShadow *= saturate(-FdotL);
+        float brightness = lerp(0.15f, 0.45f, faceShadow);
+
+        Out.vLight = float4(vDiffuse.rgb * g_vLightDiffuse.rgb * brightness * vNormalDesc.a, 1.f);
+        Out.fLightInfo = float2(brightness, 0);
+    }
     return Out;
 }
 
@@ -653,15 +673,14 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, g_vLightDiffuse.rgb,
     g_fLightIntensity, g_vLightPos.xyz, g_fLightRange, 1.0f);
     
-    Out.vLight = float4(PBR, 1.f);
+    Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
     Out.fLightInfo = float2(NdotL, 0.f);
     
     return Out;
 }
-
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
-    PS_OUT_BACKBUFFER Out; 
+    PS_OUT_BACKBUFFER Out;
     
     vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vLight = g_LightTexture.Sample(DefaultSampler, In.vTexcoord);
@@ -672,22 +691,35 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = g_RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float OutLine = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float NdotL = fLightInfo.r;
-    float2 vRampCoord = float2(1 - NdotL, 0.5f); 
+    float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = g_RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
-    float3 ambient = vDiffuse.rgb * vAmbient.g * ssao * vRamp *OutLine;
-    //ambient = max(ambient, vDiffuse.rgb * 0.1);
+    float3 ambient;
+    if(vAmbient.r >0.5)
+        ambient = g_vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g * ssao;
 
-    Out.vBackBuffer = float4(vLight.rgb + ambient, 1.f);
+    else
+        ambient = g_vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g * OutLine;
+    
+    ambient = max(ambient, vDiffuse.rgb * g_vLightAmbient.rgb * 0.05);
+    if(fSkin >0.5f) Out.vBackBuffer = float4(vLight.rgb * vRamp + ambient, 1.f);
+    else Out.vBackBuffer = float4(vLight.rgb , 1.f);
     
     float rimIntensity = max(vRamp, 0.5f);
     Out.vBackBuffer.rgb += vRimLight.rgb * rimIntensity;
     
-    if (vUI3D.a > 0.f) Out.vBackBuffer.rgb = vUI3D.rgb;
-    if (vEffect.a > 0.f) Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
+    float3 specularColor = g_vLightSpecular.rgb * fLightInfo.g;
+    Out.vBackBuffer.rgb += specularColor;
+    
+    if (vUI3D.a > 0.f)
+        Out.vBackBuffer.rgb = vUI3D.rgb;
+    if (vEffect.a > 0.f)
+        Out.vBackBuffer.rgb = lerp(Out.vBackBuffer.rgb, vEffect.rgb, vEffect.a);
+    
     
     vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float fViewZ = vDepthDesc.y * zFar;
@@ -720,7 +752,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 }
 
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
-{ 
+{
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 hdrBloom = g_HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
@@ -729,7 +761,8 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     //float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
     float3 hdrColor = scene.rgb;
     hdrColor += hdrBloom.rgb * 0.3;
-    if (effectbloom.a > 0.f) hdrColor += effectbloom.rgb * effectbloom.a;
+    if (effectbloom.a > 0.f)
+        hdrColor += effectbloom.rgb * effectbloom.a;
     
     float3 mapped = ACESFilm(hdrColor);
     float3 finalColor = lerp(mapped, ui.rgb, ui.a);

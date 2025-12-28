@@ -4,6 +4,7 @@
 #include "IResourceService.h"
 
 #include "TestLevel.h"
+#include "UIDirector.h"
 
 CMainApp::CMainApp()
 {
@@ -78,5 +79,6 @@ void CMainApp::Free()
 	__super::Free();
 	m_pGameInstance->Release_Engine();
 	m_pGameInstance->DestroyInstance();
+	CUIDirector::GetInstance()->DestroyInstance();
 }
 

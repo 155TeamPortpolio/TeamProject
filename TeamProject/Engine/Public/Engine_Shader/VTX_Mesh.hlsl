@@ -103,6 +103,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
+    vAmbient.r = 1.f;
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
