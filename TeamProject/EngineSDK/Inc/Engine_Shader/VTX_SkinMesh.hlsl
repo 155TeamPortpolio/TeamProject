@@ -158,7 +158,6 @@ PS_OUT PS_MAIN(PS_IN In)
         vNormal = mul(vNormal, WorldMatrix);
     
         Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
-        if (vAmbient.g < 0.2) vAmbient.g = 1.f;
     }
     else
     {
@@ -169,22 +168,10 @@ PS_OUT PS_MAIN(PS_IN In)
 
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
 
-        //if(vMetalic.a > 0.5f)
-        //{
-            vMetalic.a = 0.3f;
-            Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
-            if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
-        //}
-        //else
-        //{
-        //    if (vAmbient.g < 0.2) vAmbient.g = 0.f;
-        //    vMetalic.r = 0.15;
-        //    vMetalic.g = 0.f;
-        //    vMetalic.b = 1.0f;
-        //    vMetalic.a = 1.f;
-        //}
+        vMetalic.a = 0.3f;
+        Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
     }
-    
+    if (vAmbient.g < 0.2) vAmbient.g = 1.f;
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
