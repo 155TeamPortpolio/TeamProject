@@ -22,9 +22,9 @@ void CUIDirector::SetVisible(const string& tag, bool visible)
 	auto it = m_uiByTag.find(tag);
 
 	if (visible) 
-		it->second->UI_Active();
+		it->second->Set_Alive(true);
 	else     
-		it->second->UI_DeActive();
+		it->second->Set_Alive(false);
 }
 
 void CUIDirector::Free()
