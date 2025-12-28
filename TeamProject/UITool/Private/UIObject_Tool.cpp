@@ -72,6 +72,7 @@ void CUIObject_Tool::Remove_SelfFromParent()
 void CUIObject_Tool::FillElementData(UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 저장
+    data.InstanceName = m_InstanceName;
     data.transform.iAnchor = static_cast<_uint>(m_eAnchor);
     data.transform.vAnchorOffset = { m_vAnchorOffset.x, m_vAnchorOffset.y };
     data.transform.vSize = { m_vSize.x, m_vSize.y };
@@ -125,6 +126,7 @@ void CUIObject_Tool::FillElementData(UI_ELEMENT_DATA& data)
 void CUIObject_Tool::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
+    m_InstanceName = data.InstanceName;
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
     m_vAnchorOffset = _float2(data.transform.vAnchorOffset[0], data.transform.vAnchorOffset[1]);
     m_vSize = _float2(data.transform.vSize[0], data.transform.vSize[1]);
