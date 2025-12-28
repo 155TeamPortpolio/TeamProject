@@ -40,14 +40,17 @@ void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
-	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isAnimEnd,
+	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isWarpped, _bool* isAnimEnd,
 	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
 
 	if (isLoop) {
-		if (RealTrackPosition > m_fDuration)
+		*isWarpped = false;
+		if (RealTrackPosition > m_fDuration) {
 			RealTrackPosition -= m_fDuration;
+			*isWarpped = true;
+		}
 	}
 	else {
 		if (RealTrackPosition > m_fDuration) {
@@ -100,6 +103,15 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
 		}
 	}
+}
+
+_float3 CAnimationClip::Get_RootBone_EndPosition()
+{
+	for (auto Channel : m_Channels)
+		if ("Root" == Channel->Get_Name())
+			return Channel->Get_KeyFrames().back().vTranslation;
+
+	return _float3();
 }
 
 void CAnimationClip::Render_GUI()
