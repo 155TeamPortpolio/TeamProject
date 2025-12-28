@@ -6,6 +6,7 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "Collider.h"
+#include "MaterialInstance.h"
 
 #include "RayReceiver.h"
 
@@ -64,8 +65,13 @@ HRESULT CPlacedObject::Initialize(INIT_DESC* pArg)
 
 #pragma endregion
 	__super::Initialize(pArg);
-	
-	return S_OK;
+	static _float4 start;
+
+	auto pMaterialInstance = 	Get_Component<CMaterial>()->Get_MaterialInstance(0);
+	//pMaterialInstance->Set_Param("UVOffset", { &start ,"float4",sizeof(_float4) });
+
+
+	return S_OK; 
 }
 
 void CPlacedObject::Awake()
@@ -107,12 +113,6 @@ void CPlacedObject::Render_GUI()
 	__super::Render_GUI();
 
 	ImGui::PopID();
-}
-
-void CPlacedObject::Delete_Object()
-{
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Remove_Object(this);
-	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = nullptr;
 }
 
 CPlacedObject* CPlacedObject::Create()

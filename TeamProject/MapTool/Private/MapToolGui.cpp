@@ -346,8 +346,6 @@ void CMapToolGui::PreSet_ModelResource()
 
 void CMapToolGui::Save_MapData()
 {
-    
-
     m_Data.iVersion = m_pMapToolContext->iVersion;
     m_Data.TagArea = m_pMapToolContext->TagArea;
     m_Data.TagDataFormat = "Base";
