@@ -12,14 +12,13 @@ void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 
 		Register_States();
 		Register_Transitions();
-
-		ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-		blackBoard.isRequestNext = true;	
-		blackBoard.stateQueue.push_back("Attack07_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-
-		__super::Enter(pOwner);
 	}
+
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	BuildPattern(blackBoard);
+	blackBoard.isRequestNext = true;
+
+	__super::Enter(pOwner);
 }
 
 void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -41,10 +40,9 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
 	}
-	else
-	{
-		/* idle 변환 또는 페이즈 변경 */
-	}
+
+	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
+		pOwner->Idle();
 }
 
 void CSacrificeState_Attack_Phase1::Exit(CSacrifice* pOwner)
@@ -71,6 +69,39 @@ void CSacrificeState_Attack_Phase1::Register_States()
 
 void CSacrificeState_Attack_Phase1::Register_Transitions()
 {
+}
+
+void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
+{
+	_uint iRandIndex = Helper::Get_Random_Int(0, 4);
+	iRandIndex = 0;
+	switch (iRandIndex)
+	{
+	case 0:
+	{
+		blackBoard.stateQueue.push_back("Attack07_Phase1");
+		blackBoard.stateQueue.push_back("Attack02_Phase1");
+		blackBoard.stateQueue.push_back("Attack08_Phase1");
+	}break;
+	case 1:
+	{
+
+	}break;
+	case 2:
+	{
+
+	}break;
+	case 3:
+	{
+
+	}break;
+	case 4:
+	{
+
+	}break;
+	default:
+		break;
+	}
 }
 
 
@@ -100,6 +131,15 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (m_fAnimProgress >= 0.2f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+	}
+
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
 	{
 		m_IsAttackStart = true;
@@ -201,7 +241,7 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fAnimProgress >= 0.7f)
+	if (m_fAnimProgress >= 0.6f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -237,6 +277,20 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+		blackBoard.isChainOpen = true;
+	else
+	{
+		if (m_fAnimProgress >= 0.75f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
+
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.06f)
 	{
 		m_IsAttackStart = true;
