@@ -19,7 +19,7 @@ public:
 	_float TranslateAnimateMatrix( vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
-		_bool isLoop,
+		_bool isLoop, _bool* isWarpped,
 		_bool* isAnimEnd,
 		vector<EVENT_INST>& EventBus);
 
@@ -36,6 +36,8 @@ public:
 	const vector<ANIM_EVENT>& Get_Events() { return m_Events; }
 	void Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus);
 
+
+	_float3 Get_RootBone_EndPosition();
 public:
 	virtual void Render_GUI();
 
