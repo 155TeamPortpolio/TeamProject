@@ -170,3 +170,11 @@ void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
         pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01_End")
         .Apply();
 }
+
+void CMiyabiState_Charge_End::Update(CMiyabi* pOwner, _float dt)
+{
+    if (pOwner->Is_Input())
+    {
+        m_fAnimProgress = 1.f;
+    }
+}

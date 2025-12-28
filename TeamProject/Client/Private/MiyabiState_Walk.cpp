@@ -16,14 +16,13 @@ void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
 
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Start", "Loop",
-            CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-
         m_pSubStateMachine->Register_Transition("Start", "End",
             CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
-
         m_pSubStateMachine->Register_Transition("Loop", "End",
             CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+
+        m_pSubStateMachine->Register_Transition("Start", "Loop",
+            CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
         m_pSubStateMachine->Set_DefaultState("Start");
     }
@@ -147,6 +146,10 @@ void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_End::Update(CMiyabi* pOwner, _float dt)
 {
+    if (pOwner->Is_Input())
+    {
+        m_fAnimProgress = 1.f;        // 새로운 입력 시 즉시 End 완료 처리
+    }
 }
 
 void CMiyabiState_Walk_End::Exit(CMiyabi* pOwner)

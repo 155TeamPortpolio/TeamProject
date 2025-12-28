@@ -11,6 +11,7 @@
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
+#include "MiyabiState_NormalAttack.h"
 
 #include "Renderer.h"
 #include "SkeletalModel.h"
@@ -155,24 +156,77 @@ void CMiyabi::Update_Input(_float dt)
 
 void CMiyabi::Update_States()
 {
-	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+	// Move End 상태 체크
+	_bool bInMoveEnd = false;
+	_bool bInAttackEnd = false;
 
-	// Attack 입력 처리
-	if (m_bIsAttack)
+	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
-		string strCurrent = m_pStateMachine->Get_CurrentStateName();
-		if (strCurrent == "Attack")
+		CMiyabiState_Move* pMove =
+			static_cast<CMiyabiState_Move*>(m_pStateMachine->Get_CurrentState());
+
+		if (pMove && pMove->Get_SubStateMachine())
 		{
-			// Attack 상태면 서브 스테이트머신에 트리거 전달
-			CMiyabiState_Attack* pAttackState =
-				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
-			if (pAttackState && pAttackState->Get_SubStateMachine())
-				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+			IHState<CMiyabi>* pMoveType =
+				dynamic_cast<IHState<CMiyabi>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
+
+			if (pMoveType && pMoveType->Has_SubStateMachine())
+			{
+				IBaseState<CMiyabi>* pAnim =
+					pMoveType->Get_SubStateMachine()->Get_CurrentState();
+
+				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
+			}
 		}
-		else
+	}
+	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		CMiyabiState_Attack* pAttack =
+			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+
+		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			// 다른 상태면 Attack 상태로 전이
-			m_pStateMachine->Set_Trigger("Attack");
+			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+			if (strSub == "NormalAttack")
+			{
+				CMiyabiState_NormalAttack* pNormal =
+					static_cast<CMiyabiState_NormalAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+
+				if (pNormal && pNormal->Get_SubStateMachine())
+				{
+					bInAttackEnd = (pNormal->Get_SubStateMachine()->Get_CurrentStateName() == "Attack_End");
+				}
+			}
+		}
+	}
+
+	// End 상태에서 입력이 있으면 강제로 Idle 전환 유도
+	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
+	{
+		m_pStateMachine->Set_Bool("IsMove", false);
+		// Attack Trigger는 설정하지 않음 (다음 프레임 Idle에서 처리)
+	}
+	else
+	{
+		// 정상 로직
+		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+
+		if (m_bIsAttack)
+		{
+			string strCurrent = m_pStateMachine->Get_CurrentStateName();
+
+			if (strCurrent == "Idle")
+			{
+				m_pStateMachine->Set_Trigger("Attack");
+			}
+			else if (strCurrent == "Attack")
+			{
+				CMiyabiState_Attack* pAttackState =
+					static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+				if (pAttackState && pAttackState->Get_SubStateMachine())
+					pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+			}
 		}
 	}
 }
@@ -206,20 +260,20 @@ HRESULT CMiyabi::Initialize_States()
 
 HRESULT CMiyabi::Initialize_Transitions()
 {
+	// Idle <-> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
-	m_pStateMachine->Register_AnyStateTransition("Attack",
+	// Idle -> Attack
+	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
 
+	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-
-	m_pStateMachine->Register_Transition("Attack", "Walk",
-		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
 	return S_OK;
 }

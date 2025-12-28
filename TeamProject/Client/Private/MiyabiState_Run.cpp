@@ -103,6 +103,10 @@ void CMiyabiState_Run_End::Enter(CMiyabi* pOwner)
 
 void CMiyabiState_Run_End::Update(CMiyabi* pOwner, _float dt)
 {
+    if (pOwner->Is_Input())
+    {
+        m_fAnimProgress = 1.f;        // 새로운 입력 시 즉시 End 완료 처리
+    }
 }
 
 void CMiyabiState_Run_End::Exit(CMiyabi* pOwner)

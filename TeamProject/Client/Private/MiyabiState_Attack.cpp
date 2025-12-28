@@ -44,7 +44,6 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
     {
         string strCurrentSub = m_pSubStateMachine->Get_CurrentStateName();
 
-        // NormalAttack이나 ChargeAttack의 서브스테이트머신까지 확인
         if (strCurrentSub == "NormalAttack")
         {
             CMiyabiState_NormalAttack* pNormalAttack =
@@ -54,14 +53,25 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
             {
                 string strNormalSub = pNormalAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-                OutputDebugStringA(("Attack: NormalAttack_Sub=" + strNormalSub +
-                    ", NormalProgress=" + to_string(pNormalAttack->Get_AnimProgress()) + "\n").c_str());
+                // Attack_End의 진행도를 Attack에 전파
+                if (strNormalSub == "Attack_End")
+                {
+                    IBaseState<CMiyabi>* pAttackEnd =
+                        pNormalAttack->Get_SubStateMachine()->Get_CurrentState();
 
-                // Attack_End가 완료됐을 때만 Attack 종료
-                if (strNormalSub == "Attack_End" && pNormalAttack->Get_AnimProgress() >= 1.f)
-                    m_fAnimProgress = 1.f;
+                    if (pAttackEnd && (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input()))
+                    {
+                        m_fAnimProgress = 1.f;
+                    }
+                    else
+                    {
+                        m_fAnimProgress = 0.f;
+                    }
+                }
                 else
+                {
                     m_fAnimProgress = 0.f;
+                }
             }
         }
         else if (strCurrentSub == "ChargeAttack")
