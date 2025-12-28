@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "GaugeUI.h"
 
+#include "GameInstance.h"
+#include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
@@ -36,9 +38,7 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 
     Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    if (szTextureKeys.size())
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
 
     m_iCount++;
 
@@ -65,15 +65,23 @@ void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // 이미지
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    ImGui::Text(m_InstanceName.c_str());
+    // 텍스쳐
     ImGui::SeparatorText(u8"이미지");
-    ImGui::SetNextWindowSizeConstraints(ImVec2(300.f, 0), ImVec2(300.f, 200.f));
-    if (ImGui::Combo(u8"이미지##메인", &m_iTextureKeyIndex, szTextureKeys.data(), szTextureKeys.size()))
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    if (ImGui::Button(u8"선택"))
+    {
+        string filePath = Helper::OpenFile_Dialogue();
+        if (!filePath.empty())
+        {
+            string fileName = Helper::GetFileNameWithExtension(filePath);
+
+            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+            m_strTextureKey = fileName;
+            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+        }
+    }
 
     // 게이지
+    ImGui::SeparatorText(u8"게이지?"); 
     if (ImGui::Checkbox(u8"원형", &m_isRadial))
     {
         if (m_isRadial)
@@ -82,10 +90,10 @@ void CGaugeUI::Render_GUI()
             Get_Component<CSprite2D>()->ChangePass("LinearFill");
     }
 
-    if(ImGui::DragFloat(u8"게이지", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    if(ImGui::DragFloat(u8"채움 정도", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
 
-    if (ImGui::DragFloat(u8"방향 (0 또는 1)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
+    if (ImGui::DragFloat(u8"방향 (0 - 왼쪽 / 1 - 오른쪽)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
         Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
 }
 
@@ -95,8 +103,7 @@ void CGaugeUI::FillElementData(UI_ELEMENT_DATA& data)
 
     data.strTypeTag = m_strTypeTag;
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    data.strTextureTag = szTextureKeys[m_iTextureKeyIndex];
+    data.strTextureTag = m_strTextureKey;
 
     data.isRadial = m_isRadial;
     data.fDirection = m_fDirection;
@@ -107,10 +114,8 @@ void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    const auto& szTextureKeys = CUITool_Level::m_szTextureKeys;
-    m_iTextureKeyIndex = Find_TextureIndex(szTextureKeys, data.strTextureTag);
-    if (-1 != m_iTextureKeyIndex)
-        Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, szTextureKeys[m_iTextureKeyIndex]);
+    m_strTextureKey = data.strTextureTag;
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     m_isRadial = data.isRadial;
     m_fDirection = data.fDirection;

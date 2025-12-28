@@ -4,7 +4,6 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
-#include "UILoader.h"
 
 CCanvasPanel::CCanvasPanel()
 {
@@ -27,9 +26,6 @@ HRESULT CCanvasPanel::Initialize_Prototype()
 HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    auto resMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
-    ReadElementData(Helper::LoadJson<UI_ELEMENT_DATA>(resMgr->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey)));
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");

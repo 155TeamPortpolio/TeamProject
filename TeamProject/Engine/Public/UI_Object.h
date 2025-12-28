@@ -36,20 +36,20 @@ public:
 	}UI_ANIM_CLIP;
 
 protected:
-	CUI_Object() {}
+	CUI_Object();
 	CUI_Object(const CUI_Object& rhs);
 	virtual ~CUI_Object() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype()               override;
+	virtual HRESULT Initialize_Prototype()override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr)override;
 
-	virtual void Pre_EngineUpdate(_float dt)             override;
-	virtual void Post_EngineUpdate(_float dt)            override;
+	virtual void Pre_EngineUpdate(_float dt)override;
+	virtual void Post_EngineUpdate(_float dt)override;
 
-	virtual void Priority_Update(_float dt)              override {}
-	virtual void Update(_float dt)                       override {}
-	virtual void Late_Update(_float dt)                  override {}
+	virtual void Priority_Update(_float dt)override;
+	virtual void Update(_float dt)override;
+	virtual void Late_Update(_float dt)override;
 
 public:
 	/*활성 비활성에 대한 로직을 스스로*/
@@ -70,12 +70,12 @@ public:
 
 public:
 	void Update_UITransform();
-	void Set_LeftTop(_float2 desiredLT) {}
-	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
+	void Set_LeftTop(_float2 desiredLT);
+	void Rotate_Left(_float _radian);
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
-	_float2 Get_RectTopLeft_Screen();
+	_float2 Get_RectTopLeft_Screen() ;
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
 
 	// Screen anchors
@@ -105,7 +105,7 @@ public:
 	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  1.f }, x, y); }
 
 
-	void Align_To(ANCHOR anchor) { m_eAnchor = anchor; }
+	void Align_To(ANCHOR anchor);
 	void Set_Pivot(_float2 newPivot);
 
 public:
@@ -121,14 +121,11 @@ public:
 
 public:
 	void Play_Animation(_float dt);					
-	void Set_Animation(_uint iIndex);				
+	void Set_Animation(_uint iIndex, _bool isLoop = false);				
 
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
-
-protected:
-	void Reset_Animation();
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -168,15 +165,17 @@ protected:
 	/*텍스쳐에 곱해지는 컬러*/
 	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
+	/*애니메이션*/
 	_bool m_isBlending = {};
 	_float m_fBlendTime = {};
-	_float m_fBlendDuration = {};
+	_float m_fBlendDuration = {}; 
 
 	vector<UI_ANIM_CLIP> m_AnimClips;
 	_int m_iCurrentClipIndex = { -1 };
+	_bool m_isAnimLoop = { false };
 
-	/*ui 애니메이션 위치 오프셋 값 m_vAnchorOffset에 더해지는 값*/
-	_float2 m_vTranslation = {};
+	/*애니메이션 위치 오프셋 값으로 m_vAnchorOffset에 더해지는 값*/
+	_float2 m_vAnimPosition = {};
 
 public:
 	virtual void Free() override;

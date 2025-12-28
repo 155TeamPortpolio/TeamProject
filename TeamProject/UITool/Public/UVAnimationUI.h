@@ -24,14 +24,11 @@ public:
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
-	_bool		m_isUseMask = {};
-
 	_float2		m_vUVOffset = {};
 	_float2		m_vUVOffsetSpeed = {};
 
 private:
-	_int		m_iTextureKeyIndex = { 0 };		// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
-	_int		m_iMaskTextureKeyIndex = { 0 };	// gui에 콤보박스에서 텍스쳐 선택했을 때 인덱스
+	string		m_strTextureKey = {};
 
 public:
 	static const string m_strTypeTag;

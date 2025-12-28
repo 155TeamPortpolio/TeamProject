@@ -7,24 +7,6 @@
 #include "OrbitCam.h"
 #include "FreeCam.h"
 
-namespace
-{
-    inline void DecomposeMatrix(const Matrix& m, Vector3& outScale, Quaternion& outRot, Vector3& outPos)
-    {
-        XMVECTOR scale, rot, trans;
-        const XMMATRIX xm = m;
-
-        const bool ok = XMMatrixDecompose(&scale, &rot, &trans, xm);
-        assert(ok);
-
-        outScale = scale;
-        outRot = rot;
-        outPos = trans;
-
-        outRot.Normalize();
-    }
-}
-
 IMPLEMENT_SINGLETON(CCamDirector)
 
 CSequenceCam* CCamDirector::GetSequenceCam() const
@@ -109,7 +91,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     {
         auto refObj = OBJ->Request_Object(m_spaceRefHandle);
         auto cc = refObj->Get_Component<CCharacterController>();
-        camComp->Set_ViewOffset(Vector3(0.f, -cc->Get_HalfSize(), 0.f));
+        camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize(), 0.f});
     }
     else
         camComp->Clear_ViewOffset();
@@ -134,54 +116,34 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
-    assert(m_playing.handle == handle);
-
     const Matrix outWorld = *CAM->Get_InversedViewMatrix();
 
-    Vector3 outScale{}, outPos{};
-    Quaternion outRot = Quaternion::Identity;
-    DecomposeMatrix(outWorld, outScale, outRot, outPos);
+    Vector3 outPos = outWorld.Translation();
+    Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
     outRot.Normalize();
 
     auto sequenceCam = GetSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
-
-    sequencePlayer->Stop(resetTime);
     sequencePlayer->SetApplyEnabled(false);
+    sequencePlayer->Stop(false);
 
-    auto seqTf = sequenceCam->Get_Component<CTransform>();
-    auto seqCamComp = sequenceCam->Get_Component<CCamera>();
-
-    const Vector3 seqViewOffset = seqCamComp->Get_ViewOffset();
-    if (seqViewOffset.x != 0.f || seqViewOffset.y != 0.f || seqViewOffset.z != 0.f)
-    {
-        seqTf->Set_WorldPos(XMVectorSet(outPos.x, outPos.y,
-            outPos.z, 1.f));
-        seqCamComp->Clear_ViewOffset();
-    }
+    if (resetTime) sequencePlayer->SetTime(0.f);
 
     if (m_returnCamType != CamReturnType::None)
     {
         auto returnObj = OBJ->Request_Object(m_returnCamHandle);
+        auto viewOffset = sequenceCam->Get_Component<CCamera>()->Get_ViewOffset();
 
         if (m_returnCamType == CamReturnType::OrbitCam)
         {
-            auto orbit = static_cast<COrbitCam*>(returnObj);
-            orbit->SnapFromCamPose(outPos, outRot);
-        }
+            returnObj->Get_Component<CCamera>()->Set_ViewOffset(viewOffset);
 
-        if (m_returnCamType == CamReturnType::FreeCam)
-        {
-            auto returnTf = returnObj->Get_Component<CTransform>();
-            returnTf->TranslateMatrix(outWorld);
-
-            auto freeCam = static_cast<CFreeCam*>(returnObj);
-            freeCam->SyncRotation();
+            const Vector3 ownerPos = outPos - viewOffset;
+            static_cast<COrbitCam*>(returnObj)->SnapFromCamPose(ownerPos, outRot);
         }
     }
 
     const _bool ok = CAM->Pop(handle, blendOutSec);
-
     ClearPlayingState();
     return ok;
 }
