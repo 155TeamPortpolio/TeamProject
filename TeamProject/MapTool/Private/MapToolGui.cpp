@@ -1,4 +1,4 @@
-#include "pch.h"
+ #include "pch.h"
 #include "MapToolGui.h"
 #include "GameInstance.h"
 #include "MapToolCore.h"
@@ -86,6 +86,8 @@ void CMapToolGui::Render_GUI()
     ImGui::BeginChild("##MapToolGuiObjectSettingChild", ImVec2{ 0, childHeight }, true);
     string TagSelectedModelName = "Selected Model Name : " + m_TagSelectedModelName;
     ImGui::Text(TagSelectedModelName.c_str());
+    
+    Select_PlaceType();
 
     //ImGui::TextColored(ImVec4(1.f, 1.f, 1.f, 1.f), "Scale");
     //ImGui::InputFloat3(" Scale##Scale", reinterpret_cast<float*>(&m_vScale_PlacedObject), "%.1f");
@@ -97,7 +99,6 @@ void CMapToolGui::Render_GUI()
 	ImGui::EndChild();
     if (ImGui::TreeNode("Model Setting")) {
         ImGui::BeginChild("##MapToolRakeResourceList", ImVec2{ 0, childHeight }, true);
-
         PreSet_ModelResource();
 
         ImGui::EndChild();
@@ -268,20 +269,20 @@ void CMapToolGui::Compute_Ray()
 void CMapToolGui::Place_Object(PHYSICS_RAY_HIT* pRayHit)
 {
     if (nullptr == pRayHit->pHitObject ||
-        -1 == m_iSelectedIndex)
+        -1 == m_iSelectedModelIndex)
         return;
 
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
 
     CPlacedObject::MAPTOOL_OBJECT_DESC* Desc = new CPlacedObject::MAPTOOL_OBJECT_DESC;
-    Desc->TagModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
-    Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedIndex].TagMaterialKey;
+    Desc->TagModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
+    Desc->TagMaterialKey = m_ModelPathPack[m_iSelectedModelIndex].TagMaterialKey;
 
     COLLIDER_DESC ColDesc = {};
     ColDesc.bAutoFit = true; // 충돌 박스 생성하는 트리거
-    ColDesc.strModelKey = m_ModelPathPack[m_iSelectedIndex].TagModelKey;
+    ColDesc.strModelKey = m_ModelPathPack[m_iSelectedModelIndex].TagModelKey;
 
-    string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedIndex].TagModelKey);
+    string fileName = Helper::GetFileNameWithOutExtension(m_ModelPathPack[m_iSelectedModelIndex].TagModelKey);
 
     CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_PlacedObject" })
         .Position(pRayHit->vPoint)
@@ -322,13 +323,13 @@ void CMapToolGui::PreSet_ModelResource()
                 ImGuiTreeNodeFlags_Leaf |
                 ImGuiTreeNodeFlags_NoTreePushOnOpen |
                 ImGuiTreeNodeFlags_SpanFullWidth |
-                ((m_iSelectedIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+                ((m_iSelectedModelIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
             ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagResourceName.c_str());
 
             if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
             {
-                m_iSelectedIndex = i;
+                m_iSelectedModelIndex = i;
                 m_TagSelectedModelName = TagResourceName;
 
                 if (false == m_ModelPathPack[i].isLoaded) {
@@ -384,6 +385,28 @@ void CMapToolGui::Save_MapData()
         m_isShowSaveFinish = true;
 }
 
+void CMapToolGui::Select_PlaceType()
+{
+    if (m_iSelectedLayerIndex < 0 || m_iSelectedLayerIndex >= (_int)m_pMapToolContext->TagLayers.size())
+        m_iSelectedLayerIndex = 0;
+
+    const _int PrevIndex = m_iSelectedLayerIndex;
+    const _char* preview = m_pMapToolContext->TagLayers[m_iSelectedLayerIndex].c_str();
+
+    if (ImGui::BeginCombo("Type", preview)) {
+        for (int i = 0; i < (int)m_pMapToolContext->TagLayers.size(); ++i)
+        {
+            const bool isSelected = (i == m_iSelectedLayerIndex);
+            if (ImGui::Selectable(m_pMapToolContext->TagLayers[i].c_str(), isSelected))
+                m_iSelectedLayerIndex = i;
+
+            if (isSelected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+}
+
 void CMapToolGui::Render_ClearLayer()
 {
     auto pTagLayers = &m_pMapToolContext->TagLayers;
@@ -399,7 +422,7 @@ void CMapToolGui::Render_ClearLayer()
                 ImGuiTreeNodeFlags_Leaf |
                 ImGuiTreeNodeFlags_NoTreePushOnOpen |
                 ImGuiTreeNodeFlags_SpanFullWidth |
-                ((m_iSelectedIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
+                ((m_iSelectedModelIndex == i) ? ImGuiTreeNodeFlags_Selected : 0);
 
             ImGui::TreeNodeEx((void*)(intptr_t)i, flags, "%s", TagClearLayer.c_str());
 
