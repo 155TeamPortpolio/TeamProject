@@ -135,6 +135,8 @@ public://애니매이터 데이터
     /*----- Setter -----*/
     
     //애니매이션 트랜스폼을 제거 (false가 본 안따라감)
+    void Set_MotionBone(_int MoveBoneIndex);
+
     void Set_ExtractBoneMovement(_int MoveBoneIndex = -1,
         _bool UseX = false, _bool UseY = false, _bool UseZ = false, _uint LayerIndex = 0);
     void Reset_ExtractBoneMovement(_uint LayerIndex = 0);

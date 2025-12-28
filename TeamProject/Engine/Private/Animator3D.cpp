@@ -260,7 +260,6 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex))
 		return 0.f;
 
-	
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 	
 	if (Layer.bBlending) {
@@ -364,6 +363,10 @@ _bool CAnimator3D::Get_isPause(_uint LayerIndex)
 	if (!isExistLayer(LayerIndex)) return true;
 
 	return m_AnimLayers[LayerIndex].bPause;
+}
+
+void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
+{
 }
 
 void CAnimator3D::Set_ExtractBoneMovement(_int MoveBoneIndex, _bool UseX, _bool UseY, _bool UseZ, _uint LayerIndex)
@@ -596,7 +599,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = m_TransformationMatrices[Layer.iMotionBoneIndex];
+			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
 			if (!Layer.bUseBoneX) mat._41 = 0.f;
@@ -686,10 +689,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 		Layer.vPrevRootPos = vCurRootPos;
 
-
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = m_TransformationMatrices[Layer.iMotionBoneIndex];
+			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
 			if (!Layer.bUseBoneX) mat._41 = 0.f;
