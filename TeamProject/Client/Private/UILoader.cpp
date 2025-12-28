@@ -11,7 +11,6 @@
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
 #include "UVAnimationUI.h"
-#include "HUD.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -31,7 +30,6 @@ namespace
 			{"SpriteAnimation", &CSpriteAnimationUI::Create },
 			{"Text",            &CTextUI::Create            },
 			{"UVAnimation",     &CUVAnimationUI::Create     },
-			{"HUD",             &CHUD::Create               },
 		};
 
 		for (const Entry& entry : entries)

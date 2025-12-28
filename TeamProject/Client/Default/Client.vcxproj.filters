@@ -118,12 +118,6 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIPrefab">
-      <UniqueIdentifier>{f5b975a3-e685-44f1-a1f3-e5ac454dac90}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIPrefab\HUD">
-      <UniqueIdentifier>{081e67aa-7162-4428-83b7-05c2db26e869}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\UIElement">
       <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
     </Filter>
@@ -294,9 +288,6 @@
     <ClInclude Include="..\Public\CanvasPanel.h">
       <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\HUD.h">
-      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\SpriteAnimationUI.h">
       <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
     </ClInclude>
@@ -311,9 +302,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\TextUI.h">
       <Filter>02. GameObject\UI\UIElement\Text</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UIPrefab.h">
-      <Filter>02. GameObject\UI\UIPrefab</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ButtonUI.h">
       <Filter>02. GameObject\UI\UIElement\Button</Filter>
@@ -468,9 +456,6 @@
     <ClCompile Include="..\Private\CanvasPanel.cpp">
       <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\HUD.cpp">
-      <Filter>02. GameObject\UI\UIPrefab\HUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
       <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
     </ClCompile>
@@ -488,9 +473,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\TextUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Text</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\UIPrefab.cpp">
-      <Filter>02. GameObject\UI\UIPrefab</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>

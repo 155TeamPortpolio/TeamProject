@@ -32,16 +32,7 @@
 #include "Miyabi.h"
 
 /* UI */
-#include "ButtonUI.h"
-#include "CanvasPanel.h" 
-#include "GaugeUI.h"
-#include "ImageUI.h"
-#include "SpriteAnimationUI.h"
-#include "TextUI.h"
-#include "UVAnimationUI.h"
 #include "UIDirector.h"
-
-#include "HUD.h"
 
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -161,34 +152,6 @@ HRESULT CTestLevel::Awake()
 	Ready_Camera();
 
 	//==================== UI =======================
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Button", CButtonUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CanvasPanel", CCanvasPanel::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Gauge", CGaugeUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Image", CImageUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SpriteAnimation", CSpriteAnimationUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Text", CTextUI::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_UVAnimation", CUVAnimationUI::Create());
-	//
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_HUD", CHUD::Create());
-	//
-	//pResource->Add_ResourcePath("PanelBox.dds", "../Bin/Resources/UI/Image/PanelBox.dds");
-	//pResource->Add_ResourcePath("SkillBtnAImg.png", "../Bin/Resources/UI/Image/SkillBtnAImg.png");
-	//pResource->Add_ResourcePath("SkillBtnAOutline.png", "../Bin/Resources/UI/Image/SkillBtnAOutline.png");
-	//pResource->Add_ResourcePath("SkillCDMask.png", "../Bin/Resources/UI/Image/SkillCDMask.png"); 
-	//pResource->Add_ResourcePath("SkillEvade.png", "../Bin/Resources/UI/Image/SkillEvade.png");
-	//pResource->Add_ResourcePath("SkillSpecial.png", "../Bin/Resources/UI/Image/SkillSpecial.png");
-	//pResource->Add_ResourcePath("ZeroScreenLarge02.png", "../Bin/Resources/UI/Image/ZeroScreenLarge02.png");
-	//
-	//m_pGameInstance->Get_FontSystem()->Add_Font("Impact.spritefont", L"../Bin/Resources/UI/Font/Impact.spritefont");
-	//
-	//pResource->Add_ResourcePath("hud.json", "../Bin/Resources/UI/Data/hud.json");
-	//
-	//CUI_Object* pUIObj = Builder::Create_UIObject({ "Test_Level", "Proto_GameObject_HUD" })
-	//	.Asset("hud.json")
-	//	.Build("HUD");
-	//
-	//m_pGameInstance->Get_UIMgr()->Add_UIObject(pUIObj, "Test_Level");
-
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize("Test_Level");
 
