@@ -12,6 +12,7 @@
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
 #include "MiyabiState_NormalAttack.h"
+#include "MiyabiState_ChargeAttack.h"
 
 #include "Renderer.h"
 #include "SkeletalModel.h"
@@ -156,10 +157,10 @@ void CMiyabi::Update_Input(_float dt)
 
 void CMiyabi::Update_States()
 {
-	// Move End 상태 체크
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
 
+	// Move End 체크
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
 		CMiyabiState_Move* pMove =
@@ -179,6 +180,7 @@ void CMiyabi::Update_States()
 			}
 		}
 	}
+	// Attack End 체크 (수정)
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		CMiyabiState_Attack* pAttack =
@@ -187,6 +189,8 @@ void CMiyabi::Update_States()
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
 			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+			// NormalAttack End 체크
 			if (strSub == "NormalAttack")
 			{
 				CMiyabiState_NormalAttack* pNormal =
@@ -195,7 +199,21 @@ void CMiyabi::Update_States()
 
 				if (pNormal && pNormal->Get_SubStateMachine())
 				{
-					bInAttackEnd = (pNormal->Get_SubStateMachine()->Get_CurrentStateName() == "Attack_End");
+					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
+					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
+				}
+			}
+			// ChargeAttack End 체크
+			else if (strSub == "ChargeAttack")
+			{
+				CMiyabiState_ChargeAttack* pCharge =
+					static_cast<CMiyabiState_ChargeAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("ChargeAttack"));
+
+				if (pCharge && pCharge->Get_SubStateMachine())
+				{
+					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
+					bInAttackEnd = (pChargeSub && pChargeSub->Get_Tag() == "End");
 				}
 			}
 		}
@@ -205,11 +223,9 @@ void CMiyabi::Update_States()
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
 	{
 		m_pStateMachine->Set_Bool("IsMove", false);
-		// Attack Trigger는 설정하지 않음 (다음 프레임 Idle에서 처리)
 	}
 	else
 	{
-		// 정상 로직
 		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
 
 		if (m_bIsAttack)
@@ -225,7 +241,18 @@ void CMiyabi::Update_States()
 				CMiyabiState_Attack* pAttackState =
 					static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
 				if (pAttackState && pAttackState->Get_SubStateMachine())
-					pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+				{
+					// NormalAttack 중이면 NextCombo 트리거
+					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+					{
+						CMiyabiState_NormalAttack* pNormal =
+							static_cast<CMiyabiState_NormalAttack*>(
+								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+
+						if (pNormal && pNormal->Get_SubStateMachine())
+							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+					}
+				}
 			}
 		}
 	}
