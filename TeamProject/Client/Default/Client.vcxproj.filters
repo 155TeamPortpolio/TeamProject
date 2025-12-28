@@ -148,6 +148,12 @@
     <Filter Include="02. GameObject\UI\UIElement\Text">
       <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\CamLoader">
+      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
+      <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
+	</Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
       <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
     </Filter>
@@ -197,9 +203,6 @@
     </ClInclude>
     <ClInclude Include="..\public\CamObject.h">
       <Filter>02. GameObject\Camera\00. CamObject</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\SequenceCam.h">
-      <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamDirector.h">
       <Filter>02. GameObject\Camera\99. CamDirector</Filter>
@@ -309,12 +312,18 @@
     <ClInclude Include="..\Public\ButtonUI.h">
       <Filter>02. GameObject\UI\UIElement\Button</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\OrbitCamData.h">
-      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\SequenceCam.h">
+      <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CamLoader.h">
+      <Filter>03. Utility\CamLoader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\DebugCamTrace.h">
+      <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
+	</ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
     </ClInclude>
@@ -474,6 +483,9 @@
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\DebugCamTrace.cpp">
+      <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
+	</ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
     </ClCompile>

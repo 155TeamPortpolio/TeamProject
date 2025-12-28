@@ -2,23 +2,57 @@
 #include "OrbitCam.h"
 #include "GameInstance.h"
 #include "CharacterController.h"
-#include "IPhysicsService.h"
+#include "Character.h"
 
 namespace
 {
-    inline void DecomposeMatrix(const Matrix& m, Vector3& outScale, Quaternion& outRot, Vector3& outPos)
+    using Profile = COrbitCam::Profile;
+
+    float WrapDeg(float deg)
     {
-        XMVECTOR s, r, t;
-        const XMMATRIX xm = m;
+        while (deg > 180.f)  deg -= 360.f;
+        while (deg < -180.f) deg += 360.f;
+        return deg;
+    }
 
-        const bool ok = XMMatrixDecompose(&s, &r, &t, xm);
-        assert(ok);
+    Profile FieldPreset()
+    {
+        Profile p{};
+        p.minDist           = 0.6f;
+        p.maxDist           = 2.2f;
+        p.pitchMin          = -20.f;
+        p.pitchMax          = 55.f;
+        p.rotSmoothSpeed    = 22.f;
+        p.distSmoothSpeed   = 22.f;
+        p.pivotSmoothSpeed  = 18.f;
+        p.offsetY           = 0.2f;
+        p.startDistance     = 2.3f;
+        p.startPitchDeg     = -15.f;
+        p.startHeightOffset = 0.4f;
+        return p;
+    }
 
-        outScale = s;
-        outRot = r;
-        outPos = t;
+    Profile BattlePreset()
+    {
+        Profile p{};
+        p.minDist           = 1.2f;
+        p.maxDist           = 3.5f;
+        p.pitchMin          = -35.f;
+        p.pitchMax          = 70.f;
+        p.rotSmoothSpeed    = 16.f;
+        p.distSmoothSpeed   = 16.f;
+        p.pivotSmoothSpeed  = 14.f;
+        p.offsetY           = 0.2f;
+        p.startDistance     = 3.0f;
+        p.startPitchDeg     = -18.f;
+        p.startHeightOffset = 0.6f;
+        return p;
+    }
 
-        outRot.Normalize();
+    Profile GetPreset(OrbitPreset preset)
+    {
+        if (preset == OrbitPreset::Field) return FieldPreset();
+        return BattlePreset();
     }
 }
 
@@ -55,10 +89,9 @@ HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
-    SetPreset(m_preset, false, true);
-
-    m_curRotDeg = m_targetRotDeg;
-    m_curDist = m_targetDist;
+    SetPreset(preset, false, true);
+    pose.curRotDeg = pose.targetRotDeg;
+    pose.curDist = pose.targetDist;
 
     return S_OK;
 }
@@ -69,156 +102,135 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetPreset(OrbitPreset preset, _bool keepZoomRatio, _bool snap)
+void COrbitCam::SetPreset(OrbitPreset nextPreset, _bool keepZoomRatio, _bool snap)
 {
-    m_preset = preset;
+    preset = nextPreset;
 
-    const _float oldMin = m_profile.minDist;
-    const _float oldMax = m_profile.maxDist;
+    const _float oldMin = profile.minDist;
+    const _float oldMax = profile.maxDist;
 
-    m_profile = OrbitPresets::Get(preset);
+    profile = GetPreset(preset);
 
     if (keepZoomRatio)
     {
-        _float n = (m_targetDist - oldMin) / (oldMax - oldMin);
+        _float n = (pose.targetDist - oldMin) / (oldMax - oldMin);
         n = clamp(n, 0.f, 1.f);
 
-        const _float newDist = m_profile.minDist + (m_profile.maxDist - m_profile.minDist) * n;
-        m_targetDist = newDist;
-        if (snap) m_curDist = newDist;
+        const _float newDist = profile.minDist + (profile.maxDist - profile.minDist) * n;
+        pose.targetDist = newDist;
+        if (snap) pose.curDist = newDist;
     }
 
     ClampTargets();
 
     if (snap)
     {
-        m_targetRotDeg = m_curRotDeg;
-        m_targetDist = m_curDist;
-        m_targetPivot = m_curPivot;
+        pose.targetRotDeg = pose.curRotDeg;
+        pose.targetDist = pose.curDist;
+        pose.targetPivot = pose.curPivot;
 
-        m_targetPitchZoomOffset = 0.f;
-        m_curPitchZoomOffset = 0.f;
-
-        m_colState.targetDist = 9999.f;
-        m_colState.curDist = 9999.f;
+        pose.targetPitchZoomOffset = 0.f;
+        pose.curPitchZoomOffset = 0.f;
     }
 }
 
 void COrbitCam::SetTarget(CGameObject* obj)
 {
-    m_targetHandle = obj->Get_Handle();
+    targetHandle = obj->Get_Handle();
 
-    if (m_firstSnap)
+    if (firstSnap)
     {
-        const OrbitProfile p = OrbitPresets::Get(m_preset);
-        SetTargetFrontView(obj, p.startDistance, p.startPitchDeg, p.startHeightOffset);
-        m_firstSnap = false;
+        SetTargetFrontView(obj, profile.startDistance, profile.startPitchDeg, profile.startHeightOffset);
+        firstSnap = false;
         return;
     }
 
-    const Vector3 pivotTarget = GetPivotTargetPos();
-    m_targetPivot = pivotTarget;
-    m_curPivot = pivotTarget;
+    const Vector3 pivot = GetPivotTargetPos();
+    pose.targetPivot = pivot;
+    pose.curPivot = pivot;
 
     auto cc = Get_Component<CCharacterController>();
     const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
-    const Vector3 curPos((float)c.x, (float)c.y, (float)c.z);
+    const Vector3 camPos((float)c.x, (float)c.y, (float)c.z);
 
-    Vector3 toPivot = pivotTarget - curPos;
+    Vector3 toPivot = pivot - camPos;
     float dist = toPivot.Length();
-    if (dist == 0.f) dist = m_curDist;
 
-    m_curDist = dist;
-    m_targetDist = dist;
+    pose.curDist = dist;
+    pose.targetDist = dist;
 
-    toPivot.Normalize();
+    toPivot /= dist;
 
     const float yawRad = atan2f(toPivot.x, toPivot.z);
     const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
 
-    m_curRotDeg.x = XMConvertToDegrees(yawRad);
-    m_curRotDeg.y = XMConvertToDegrees(pitchRad);
+    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
+    pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
 
-    m_targetRotDeg = m_curRotDeg;
+    pose.targetRotDeg = pose.curRotDeg;
 
     ClampTargets();
 }
 
 void COrbitCam::SyncFromCurTransform()
 {
-    m_firstSnap = false;
+    firstSnap = false;
 
-    auto obj = OBJ->Request_Object(m_targetHandle);
-    assert(obj);
-
-    const Vector3 pivotTarget = GetPivotTargetPos();
-    m_targetPivot = pivotTarget;
-    m_curPivot = pivotTarget;
+    const Vector3 pivot = GetPivotTargetPos();
+    pose.targetPivot = pivot;
+    pose.curPivot = pivot;
 
     auto cc = Get_Component<CCharacterController>();
     const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
-    const Vector3 curPos((float)c.x, (float)c.y, (float)c.z);
+    const Vector3 camPos((float)c.x, (float)c.y, (float)c.z);
 
-    Vector3 toPivot = pivotTarget - curPos;
-    float rawDist = toPivot.Length();
-    assert(rawDist > 0.f);
-
+    Vector3 toPivot = pivot - camPos;
+    const float rawDist = toPivot.Length();
     toPivot /= rawDist;
 
     const float yawRad = atan2f(toPivot.x, toPivot.z);
     const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
 
-    m_curRotDeg.x = XMConvertToDegrees(yawRad);
-    m_curRotDeg.y = XMConvertToDegrees(pitchRad);
+    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
+    pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
 
-    m_targetRotDeg = m_curRotDeg;
+    pose.targetRotDeg = pose.curRotDeg;
 
     float zoomOffset = 0.f;
-    if (m_profile.usePitchAutoZoom)
+    if (profile.usePitchAutoZoom)
     {
-        const float pitchAbs = fabsf(m_curRotDeg.y);
-        const float pitchLimit = max(fabsf(m_profile.pitchMin), fabsf(m_profile.pitchMax));
+        const float pitchAbs = fabsf(pose.curRotDeg.y);
+        const float pitchLimit = max(fabsf(profile.pitchMin), fabsf(profile.pitchMax));
         float n = clamp(pitchAbs / pitchLimit, 0.f, 1.f);
 
         float k = 0.f;
-        if (n > m_profile.pitchAutoZoomStartN) k = (n - m_profile.pitchAutoZoomStartN) / (1.f - m_profile.pitchAutoZoomStartN);
+        if (n > profile.pitchAutoZoomStartN) k = (n - profile.pitchAutoZoomStartN) / (1.f - profile.pitchAutoZoomStartN);
 
         k = clamp(k, 0.f, 1.f);
         k = k * k * (3.f - 2.f * k);
 
-        zoomOffset = -m_profile.pitchAutoZoomMax * k;
+        zoomOffset = -profile.pitchAutoZoomMax * k;
     }
 
-    m_curPitchZoomOffset = zoomOffset;
-    m_targetPitchZoomOffset = zoomOffset;
+    pose.curPitchZoomOffset = zoomOffset;
+    pose.targetPitchZoomOffset = zoomOffset;
 
-    m_curDist = rawDist - zoomOffset;
-    m_targetDist = m_curDist;
-
-    const float prePitch = m_targetRotDeg.y;
-    const float preRawDist = rawDist;
+    pose.curDist = rawDist - zoomOffset;
+    pose.targetDist = pose.curDist;
 
     ClampTargets();
 
-    const float postEffDist = GetEffectiveDist();
-    const float distDiff = fabsf(postEffDist - preRawDist);
-
-    assert(fabsf(m_targetRotDeg.y - prePitch) < 0.001f);
-    assert(distDiff < 0.001f && "OrbitCam: dist got clamped (min/max or effectiveDist clamp). Increase maxDist or allow out-of-range on return.");
-
     m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
-    m_pTransform->LookAt(Vector4(pivotTarget.x, pivotTarget.y, pivotTarget.z, 1.f));
+    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
-
-
 
 void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset)
 {
-    m_targetHandle = obj->Get_Handle();
+    targetHandle = obj->Get_Handle();
 
     const Vector3 pivot = GetPivotTargetPos();
-    m_targetPivot = pivot;
-    m_curPivot = pivot;
+    pose.targetPivot = pivot;
+    pose.curPivot = pivot;
 
     auto targetTf = obj->Get_Component<CTransform>();
     Vector3 forward = targetTf->Dir(STATE::LOOK);
@@ -236,23 +248,21 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
 
     Vector3 toPivot = pivot - curPos;
     float dist = toPivot.Length();
-    if (dist == 0.f) dist = m_curDist;
 
-    m_curDist = dist;
-    m_targetDist = dist;
+    pose.curDist = dist;
+    pose.targetDist = dist;
 
-    toPivot.Normalize();
+    toPivot /= dist;
 
     const float yawRad = atan2f(toPivot.x, toPivot.z);
-    const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
 
-    m_curRotDeg.x = XMConvertToDegrees(yawRad);
-    m_curRotDeg.y = pitchDeg;
+    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
+    pose.curRotDeg.y = pitchDeg;
 
-    m_targetRotDeg = m_curRotDeg;
+    pose.targetRotDeg = pose.curRotDeg;
 
-    m_targetPitchZoomOffset = 0.f;
-    m_curPitchZoomOffset = 0.f;
+    pose.targetPitchZoomOffset = 0.f;
+    pose.curPitchZoomOffset = 0.f;
 
     ClampTargets();
 
@@ -262,47 +272,79 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
 
 void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
 {
-    m_firstSnap = false;
-
-    const Vector3 pivot = GetPivotTargetPos();
-    m_targetPivot = pivot;
-    m_curPivot = pivot;
+    firstSnap = false;
 
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
-    Vector3 toPivot = pivot - camPos;
-    float dist = toPivot.Length();
-    if (dist == 0.f) dist = m_curDist;
+    auto obj = OBJ->Request_Object(targetHandle);
+    auto targetCC = obj->Get_Component<CCharacterController>();
 
-    toPivot /= dist;
+    const Vector4 foot4 = targetCC->Get_FootPosition();
+    const Vector3 foot{foot4.x, foot4.y, foot4.z};
+
+    const Vector3 basePivot = foot + Vector3(0.f, targetCC->Get_HalfSize() * 1.5f + profile.offsetY, 0.f);
+
+    Vector3 forward = Vector3::Transform(Vector3(0.f, 0.f, 1.f), camRot);
+    forward.Normalize();
+
+    Vector3 toBase = basePivot - camPos;
+    float d = toBase.Length();
+    d = clamp(d, profile.minDist, profile.maxDist);
+
+    const Vector3 desiredPivot = camPos + forward * d;
+
+    pose.pivotOverrideOffset = desiredPivot - basePivot;
+
+    pose.targetPivot = desiredPivot;
+    pose.curPivot = desiredPivot;
+
+    Vector3 toPivot = desiredPivot - camPos;
+    const float rawDist = toPivot.Length();
+    toPivot /= rawDist;
 
     const float yawRad = atan2f(toPivot.x, toPivot.z);
     const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
 
-    m_curRotDeg.x = XMConvertToDegrees(yawRad);
-    m_curRotDeg.y = XMConvertToDegrees(pitchRad);
+    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
+    pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
+    pose.targetRotDeg = pose.curRotDeg;
 
-    m_targetRotDeg = m_curRotDeg;
+    float zoomOffset = 0.f;
+    if (profile.usePitchAutoZoom)
+    {
+        const float pitchAbs = fabsf(pose.curRotDeg.y);
+        const float pitchLimit = max(fabsf(profile.pitchMin), fabsf(profile.pitchMax));
+        float n = clamp(pitchAbs / pitchLimit, 0.f, 1.f);
 
-    m_curPitchZoomOffset = 0.f;
-    m_targetPitchZoomOffset = 0.f;
+        float k = 0.f;
+        if (n > profile.pitchAutoZoomStartN) k = (n - profile.pitchAutoZoomStartN) / (1.f - profile.pitchAutoZoomStartN);
 
-    m_curDist = dist;
-    m_targetDist = dist;
+        k = clamp(k, 0.f, 1.f);
+        k = k * k * (3.f - 2.f * k);
+
+        zoomOffset = -profile.pitchAutoZoomMax * k;
+    }
+
+    pose.curPitchZoomOffset = zoomOffset;
+    pose.targetPitchZoomOffset = zoomOffset;
+
+    pose.curDist = rawDist - zoomOffset;
+    pose.targetDist = pose.curDist;
 
     ClampTargets();
 
     const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
     m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
-    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+    m_pTransform->LookAt(Vector4(desiredPivot.x, desiredPivot.y, desiredPivot.z, 1.f));
 }
 
 void COrbitCam::Priority_Update(_float dt)
 {
-    m_targetPivot = GetPivotTargetPos();
-
+    pose.targetPivot = GetPivotTargetPos();
+    
     UpdateInput(dt);
+    UpdateAutoYawFollow(dt);
     ClampTargets();
     SmoothStates(dt);
     ApplyOrbitPose(dt);
@@ -312,77 +354,84 @@ void COrbitCam::UpdateInput(_float dt)
 {
     if (!ImGui::GetIO().WantCaptureMouse)
     {
-        m_targetRotDeg.x += KEY->Mouse_DeltaX() * m_sensitivityX;
-        m_targetRotDeg.y += KEY->Mouse_DeltaY() * m_sensitivityY;
+        const float dx = KEY->Mouse_DeltaX();
+        const float dy = KEY->Mouse_DeltaY();
+
+        pose.targetRotDeg.x += dx * input.sensitivityX;
+        pose.targetRotDeg.y += dy * input.sensitivityY;
+
+        if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
     }
 
-    const float zoomDelta = m_zoomSpeed * dt;
-    if (KEY->Key_Down('Q')) m_targetDist += zoomDelta;
-    if (KEY->Key_Down('E')) m_targetDist -= zoomDelta;
+    const float zoomDelta = input.zoomSpeed * dt;
+    if (KEY->Key_Down('Q')) pose.targetDist += zoomDelta;
+    if (KEY->Key_Down('E')) pose.targetDist -= zoomDelta;
 
-    if (!m_profile.usePitchAutoZoom) { m_targetPitchZoomOffset = 0.f; return; }
+    if (!profile.usePitchAutoZoom) { pose.targetPitchZoomOffset = 0.f; return; }
 
-    const float pitchAbs = fabsf(m_targetRotDeg.y);
-    const float pitchLimit = max(fabsf(m_profile.pitchMin), fabsf(m_profile.pitchMax));
+    const float pitchAbs = fabsf(pose.targetRotDeg.y);
+    const float pitchLimit = max(fabsf(profile.pitchMin), fabsf(profile.pitchMax));
 
     float n = clamp(pitchAbs / pitchLimit, 0.f, 1.f);
 
     float k = 0.f;
-    if (n > m_profile.pitchAutoZoomStartN) k = (n - m_profile.pitchAutoZoomStartN) / (1.f - m_profile.pitchAutoZoomStartN);
+    if (n > profile.pitchAutoZoomStartN) k = (n - profile.pitchAutoZoomStartN) / (1.f - profile.pitchAutoZoomStartN);
 
     k = clamp(k, 0.f, 1.f);
     k = k * k * (3.f - 2.f * k);
 
-    m_targetPitchZoomOffset = -m_profile.pitchAutoZoomMax * k;
+    pose.targetPitchZoomOffset = -profile.pitchAutoZoomMax * k;
 }
 
 void COrbitCam::ClampTargets()
 {
-    m_targetRotDeg.y = clamp(m_targetRotDeg.y, m_profile.pitchMin, m_profile.pitchMax);
-    m_targetDist = clamp(m_targetDist, m_profile.minDist, m_profile.maxDist);
+    pose.targetRotDeg.y = clamp(pose.targetRotDeg.y, profile.pitchMin, profile.pitchMax);
+    pose.targetDist = clamp(pose.targetDist, profile.minDist, profile.maxDist);
 }
 
 void COrbitCam::SmoothStates(_float dt)
 {
-    float rot = 1.f - expf(-m_profile.rotSmoothSpeed * dt);
+    float rot = 1.f - expf(-profile.rotSmoothSpeed * dt);
     rot = clamp(rot, 0.f, 1.f);
-    m_curRotDeg = m_curRotDeg + (m_targetRotDeg - m_curRotDeg) * rot;
+    pose.curRotDeg = pose.curRotDeg + (pose.targetRotDeg - pose.curRotDeg) * rot;
 
-    float dist = 1.f - expf(-m_profile.distSmoothSpeed * dt);
+    float dist = 1.f - expf(-profile.distSmoothSpeed * dt);
     dist = clamp(dist, 0.f, 1.f);
-    m_curDist = m_curDist + (m_targetDist - m_curDist) * dist;
+    pose.curDist = pose.curDist + (pose.targetDist - pose.curDist) * dist;
 
-    float zoom = 1.f - expf(-m_profile.pitchAutoZoomSmooth * dt);
+    float zoom = 1.f - expf(-profile.pitchAutoZoomSmooth * dt);
     zoom = clamp(zoom, 0.f, 1.f);
-    m_curPitchZoomOffset = m_curPitchZoomOffset + (m_targetPitchZoomOffset - m_curPitchZoomOffset) * zoom;
+    pose.curPitchZoomOffset = pose.curPitchZoomOffset + (pose.targetPitchZoomOffset - pose.curPitchZoomOffset) * zoom;
 
-    float pivot = 1.f - expf(-m_profile.pivotSmoothSpeed * dt);
+    float pivot = 1.f - expf(-profile.pivotSmoothSpeed * dt);
     pivot = clamp(pivot, 0.f, 1.f);
-    m_curPivot = m_curPivot + (m_targetPivot - m_curPivot) * pivot;
+    pose.curPivot = pose.curPivot + (pose.targetPivot - pose.curPivot) * pivot;
 }
 
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
-    auto obj = OBJ->Request_Object(m_targetHandle);
+    auto obj = OBJ->Request_Object(targetHandle);
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     const Vector3 foot{foot4.x, foot4.y, foot4.z};
 
-    return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + m_profile.offsetY, 0.f);
+    const Vector3 basePivot = foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + profile.offsetY, 0.f);
+
+    return basePivot + pose.pivotOverrideOffset;
 }
  
 float COrbitCam::GetEffectiveDist() const
 {
-    return clamp(m_curDist + m_curPitchZoomOffset, m_profile.minDist, m_profile.maxDist);
+    return clamp(pose.curDist + pose.curPitchZoomOffset, profile.minDist, profile.maxDist);
 }
 
 void COrbitCam::ApplyOrbitPose(_float dt)
 {
     const Vector3 pivot = GetPivotPos();
 
-    const float yawRad = XMConvertToRadians(m_curRotDeg.x);
-    const float pitchRad = XMConvertToRadians(m_curRotDeg.y);
+    const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
+    const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
     const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
     const float dist = GetEffectiveDist();
@@ -399,4 +448,65 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     const PxExtendedVec3& c1 = cc->Get_Controller()->getPosition();
     m_pTransform->Set_WorldPos(XMVectorSet((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+}
+
+void COrbitCam::UpdateAutoYawFollow(_float dt)
+{
+    if (!profile.useAutoYawFollow) return;
+
+    if (autoYawHoldTimer > 0.f)
+    {
+        autoYawHoldTimer -= dt;
+        return;
+    }
+
+    const Vector3 foot = GetTargetFootPos();
+
+    if (!hasPrevTargetFoot)
+    {
+        prevTargetFoot = foot;
+        hasPrevTargetFoot = true;
+        return;
+    }
+
+    Vector3 delta = foot - prevTargetFoot;
+    prevTargetFoot = foot;
+
+    delta.y = 0.f;
+
+    const float len = delta.Length();
+    if (len == 0.f) return;
+
+    delta /= len;
+
+    Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
+    Vector3 camRight = m_pTransform->Dir(STATE::RIGHT);
+
+    camLook.y = 0.f;
+    camRight.y = 0.f;
+
+    camLook.Normalize();
+    camRight.Normalize();
+
+    const float localZ = delta.Dot(camLook);
+    const float localX = delta.Dot(camRight);
+
+    if (localZ < 0.f && fabsf(localZ) > fabsf(localX)) return;
+
+    const float desiredYawDeg = XMConvertToDegrees(atan2f(delta.x, delta.z));
+    const float deltaYawDeg = WrapDeg(desiredYawDeg - pose.targetRotDeg.x);
+
+    float a = 1.f - expf(-profile.autoYawFollowSpeed * dt);
+    a = clamp(a, 0.f, 1.f);
+
+    pose.targetRotDeg.x += deltaYawDeg * a;
+}
+
+Vector3 COrbitCam::GetTargetFootPos() const
+{
+    auto obj = OBJ->Request_Object(targetHandle);
+    auto cc = obj->Get_Component<CCharacterController>();
+
+    const Vector4 foot4 = cc->Get_FootPosition();
+    return Vector3(foot4.x, foot4.y, foot4.z);
 }

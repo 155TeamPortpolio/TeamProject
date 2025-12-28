@@ -169,7 +169,10 @@ void CMapToolAssistant::SelectBoneData()
             {
                 if (nullptr != m_pContext->pSelectedObject) {
                     auto pTransform = m_pContext->pSelectedObject->Get_Component<CTransform>();
-                    pTransform->TranslateMatrix(pTransform->Get_WorldMatrix() * XMLoadFloat4x4(&BoneData[i].BoneOffsetMatrix));
+                    _matrix offsetinversemat = XMMatrixInverse(nullptr, XMLoadFloat4x4(&BoneData[i].BoneOffsetMatrix));
+                    _matrix FlipY = XMMatrixScaling(1.f, -1.f, 1.f);
+                    _matrix resultmat = FlipY * offsetinversemat * FlipY;
+                    pTransform->TranslateMatrix(resultmat);
                 }
 
             }
@@ -216,7 +219,10 @@ void CMapToolAssistant::RecommendList()
             {
                 if (nullptr != m_pContext->pSelectedObject) {
                     auto pTransform = m_pContext->pSelectedObject->Get_Component<CTransform>();
-                    pTransform->TranslateMatrix(pTransform->Get_WorldMatrix() * XMLoadFloat4x4(&m_RecommendList[i].BoneOffsetMatrix));
+                    _matrix offsetinversemat = XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_RecommendList[i].BoneOffsetMatrix));
+                    _matrix FlipY = XMMatrixScaling(1.f, -1.f, 1.f);
+                    _matrix resultmat = FlipY * offsetinversemat * FlipY;
+                    pTransform->TranslateMatrix(resultmat);
                 }
 
             }
