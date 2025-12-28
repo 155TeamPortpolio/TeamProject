@@ -29,8 +29,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 
 void CUIObject_Tool::Render_GUI()
 {
-    ImGui::SeparatorText(u8"속성");
-    ImGui::Checkbox("Alive", &m_isAlive);
+    Render_GUI_Property();
 
     Render_GUI_Layout();
 
@@ -178,6 +177,16 @@ void CUIObject_Tool::ReadElementData(const UI_ELEMENT_DATA& data)
             pContainer->Add_Child(pChildUI);
         }
     } 
+}
+
+void CUIObject_Tool::Render_GUI_Property()
+{
+    ImGui::SeparatorText(u8"속성");
+    ImGui::Checkbox("Alive", &m_isAlive);
+    _char szInstanceName[MAX_PATH] = {};
+    strcpy_s(szInstanceName, m_InstanceName.c_str());
+    if (ImGui::InputText(u8"인스턴스네임", szInstanceName, sizeof(szInstanceName)))
+        m_InstanceName = szInstanceName;
 }
 
 void CUIObject_Tool::Render_GUI_Layout()
