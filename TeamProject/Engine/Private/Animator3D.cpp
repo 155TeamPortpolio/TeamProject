@@ -550,23 +550,28 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 
 	//RootBone
 	if (Layer.BaseLayer) {
-		auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+		if (Layer.iRootBoneIndex != -1)
+		{
 
-		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootDelta,
-				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-					+ XMLoadFloat3(&vCurRootPos)));
+			auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
-			Layer.bWrapped = false;
+			if (Layer.bWrapped) {
+				XMStoreFloat3(&Layer.vRootDelta,
+					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+						+ XMLoadFloat3(&vCurRootPos)));
+
+				Layer.bWrapped = false;
+			}
+			else {
+
+				XMStoreFloat3(&Layer.vRootDelta,
+					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+			}
+
+			Layer.vPrevRootPos = vCurRootPos;
 		}
-		else {
 
-			XMStoreFloat3(&Layer.vRootDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-		}
-
-		Layer.vPrevRootPos = vCurRootPos;
 	}
 }
 
@@ -841,7 +846,7 @@ void CAnimator3D::GUI_SelectAnim()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Change_Animation(i).Loop(true);
+			Change_Animation(i).Loop(true).Apply();
 		}
 		ImGui::PopID();
 

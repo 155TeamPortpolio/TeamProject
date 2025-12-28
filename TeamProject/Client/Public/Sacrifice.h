@@ -28,6 +28,12 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
+public:
+    void ActiveSword();
+    void DeactiveSword();
+    void ActiveAxe();
+    void DeactiveAxe();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();

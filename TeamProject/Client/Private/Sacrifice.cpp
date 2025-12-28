@@ -4,6 +4,7 @@
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
+#include "CharacterController.h"
 
 /* States */
 #include "StateMachine.h"
@@ -29,6 +30,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CCharacterController>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
@@ -51,6 +53,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
+	pAnimator->Set_ExtractBoneMovement(3, false, true, false); //Bip001
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -78,12 +81,13 @@ void CSacrifice::Priority_Update(_float dt)
 void CSacrifice::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CCharacterController>()->Update(dt);
 	m_pStateMachine->Update(dt);
 }
 
 void CSacrifice::Late_Update(_float dt)
 {
-
+	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 CSacrifice* CSacrifice::Create()
@@ -119,6 +123,26 @@ void CSacrifice::Free()
 	Safe_Release(m_pStateMachine);
 }
 
+void CSacrifice::ActiveSword()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)], true);
+}
+
+void CSacrifice::DeactiveSword()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)], false);
+}
+
+void CSacrifice::ActiveAxe()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)], true);
+}
+
+void CSacrifice::DeactiveAxe()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)], false);
+}
+
 HRESULT CSacrifice::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrifice>::Create();
@@ -152,6 +176,10 @@ HRESULT CSacrifice::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+	m_pStateMachine->Register_Transition("Idle", "Attack",
+		CStateMachine<CSacrifice>::CONDITION_TIME_GREATER, "", 0.3f);
+	//m_pStateMachine->Register_Transition("Attack", "Idle",
+	//	CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }

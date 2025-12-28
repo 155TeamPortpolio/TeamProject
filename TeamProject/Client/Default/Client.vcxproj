@@ -181,6 +181,8 @@
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\Sacrifice.h" />
     <ClInclude Include="..\Public\SacrificeState_Attack.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase2.h" />
     <ClInclude Include="..\Public\SacrificeState_Born.h" />
     <ClInclude Include="..\Public\SacrificeState_Hit.h" />
     <ClInclude Include="..\Public\SacrificeState_Idle.h" />
@@ -267,6 +269,8 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Attack.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase2.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Born.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />

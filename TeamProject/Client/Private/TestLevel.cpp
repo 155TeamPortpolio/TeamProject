@@ -217,7 +217,17 @@ void CTestLevel::Update()
 
 	if (KEY->Key_Tap('4'))
 	{
+		CCT_DESC sacrificeCCT;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+		sacrificeCCT.bAutoFit = false;
+		sacrificeCCT.fHeight = 1.28f;
+		sacrificeCCT.fRadius = 0.2f;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+
 		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+			.CharacterController(sacrificeCCT)
 			.Build("Sacrifice");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
 	}
