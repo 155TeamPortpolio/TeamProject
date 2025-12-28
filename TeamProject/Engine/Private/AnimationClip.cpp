@@ -77,6 +77,15 @@ void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& trans
 		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, TrackPosition, false);
 	}
 
+	//Check_Event(CurrentTrackPosition, RealTrackPosition, EventBus);
+}
+
+void CAnimationClip::TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices, _float MaxDuration)
+{
+	for (size_t i = 0; i < m_iNumChannels; i++)
+	{
+		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, MaxDuration, false);
+	}
 }
 
 CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
@@ -105,13 +114,22 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 	}
 }
 
-_float3 CAnimationClip::Get_RootBone_EndPosition()
+const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneName(const string& BoneName) const
 {
 	for (auto Channel : m_Channels)
-		if ("Root" == Channel->Get_Name())
-			return Channel->Get_KeyFrames().back().vTranslation;
+		if (BoneName == Channel->Get_Name())
+			return Channel->Get_KeyFrames().back();
 
-	return _float3();
+	return KEYFRAME{};
+}
+
+const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const
+{
+	for (auto Channel : m_Channels)
+		if (BoneIndex == Channel->Get_BoneIndex())
+			return Channel->Get_KeyFrames().back();
+
+	return KEYFRAME{};
 }
 
 void CAnimationClip::Render_GUI()

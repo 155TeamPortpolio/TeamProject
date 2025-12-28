@@ -4,8 +4,8 @@
 #include <d3d11.h>
 
 namespace UITool {
-	static constexpr unsigned int g_iWinSizeX = 1920;
-	static constexpr unsigned int g_iWinSizeY = 1080;
+	static constexpr unsigned int g_iWinSizeX = 1600;
+	static constexpr unsigned int g_iWinSizeY = 900;
 	static constexpr unsigned int g_iMainFrame = 144;
 }
 

@@ -27,6 +27,9 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    auto resMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
+    ReadElementData(Helper::LoadJson<UI_ELEMENT_DATA>(resMgr->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey)));
+
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
@@ -63,6 +66,7 @@ void CCanvasPanel::Render_GUI()
 void CCanvasPanel::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     // 공통 데이터 읽기
+    m_InstanceName = data.InstanceName;
     m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
     m_vAnchorOffset = _float2(data.transform.vAnchorOffset[0], data.transform.vAnchorOffset[1]);
     m_vSize = _float2(data.transform.vSize[0], data.transform.vSize[1]);

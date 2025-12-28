@@ -78,6 +78,7 @@ HRESULT CForwardRenderer::Render_LightAcc()
 	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
 	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");
 	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
+	m_pTargetManager->Bind_Target("Target_FaceDir", m_pShader, "g_LookTexture");
 
 	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
 	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
@@ -313,6 +314,9 @@ HRESULT CForwardRenderer::Ready_Target()
 		RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.2f, 0.2f, 0.2f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(AmbiDesc);
 
+		RenderTargetDesc FaceDesc = { "Target_FaceDir" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(FaceDesc);
+
 		RenderTargetDesc RimDesc = { "Target_RimLight" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(RimDesc);
 
@@ -357,12 +361,14 @@ HRESULT CForwardRenderer::Ready_MRT()
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Metalic"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_Ambient"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_RimLight"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Deferred", "Target_FaceDir"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
 	}
 
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_RimLightFinal", "Target_RimLightFinal"))) return E_FAIL;
 	}
+
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_LightInfo")))return E_FAIL;

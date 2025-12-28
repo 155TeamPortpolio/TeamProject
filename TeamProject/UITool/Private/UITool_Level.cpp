@@ -66,11 +66,19 @@ void CUITool_Level::PreLoad_Level()
 }
 
 HRESULT CUITool_Level::Ready_Textures()
-{ 
+{
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/UI/"))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".dds" ||
+			entry.is_regular_file() && entry.path().extension() == ".png" ||
+			entry.is_regular_file() && entry.path().extension() == ".jpg")
+		{
+			filesystem::path filePath = entry.path();
 
-	pResourceMgr->Add_ResourcePath("empty.png", "../Bin/Resources/UI/empty.png");
-	pResourceMgr->Add_ResourcePath("canvas.png", "../Bin/Resources/UI/canvas.png");
+			m_pGameInstance->Get_ResourceMgr()->Add_ResourcePath(filePath.filename().string(),filePath.string());
+		}
+	}
 
 	return S_OK;
 }
@@ -85,7 +93,7 @@ HRESULT CUITool_Level::Ready_Fonts()
 			filesystem::path filePath = entry.path();
 
 			if (FAILED(m_pGameInstance->Get_FontSystem()->Add_Font(filePath.filename().string(), Helper::ConvertToWideString(filePath.string()))))
-				break;
+				continue;
 
 			m_strFontKeys.push_back(filePath.filename().string());
 		}

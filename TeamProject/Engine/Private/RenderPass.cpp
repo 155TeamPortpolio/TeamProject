@@ -128,6 +128,9 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
 
+		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
+		pCurShader->Bind_Value("vLookVector", LookParam);
+
 		if (packet.bSkinning) {
 			SHADER_PARAM SkinningBoneParam{ &packet.SkinningOffset , "uint",sizeof(UINT) };
 			pCurShader->Bind_Value("SkinningOffset", SkinningBoneParam);
