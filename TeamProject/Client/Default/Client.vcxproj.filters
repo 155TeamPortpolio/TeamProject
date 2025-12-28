@@ -156,7 +156,7 @@
     </Filter>
     <Filter Include="03. Utility\01. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
       <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
     </Filter>
@@ -165,6 +165,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestCloud">
+      <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -335,12 +338,15 @@
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
       <Filter>03. Utility\01. UILoader</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Move.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Run.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestCloud.h">
+      <Filter>02. GameObject\Object\TestCloud</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -506,12 +512,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\CamLoader.cpp">
       <Filter>03. Utility\00. CamLoader</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Move.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Run.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestCloud.cpp">
+      <Filter>02. GameObject\Object\TestCloud</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
