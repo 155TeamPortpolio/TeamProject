@@ -154,6 +154,12 @@
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
       <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\UIDirector">
+      <UniqueIdentifier>{290f3bf6-a11c-4411-b649-06a067b15fff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIDirector\UILoader">
+      <UniqueIdentifier>{f6b3069f-1a43-4793-9ee9-642d7e96a79f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -321,6 +327,12 @@
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\UIDirector.h">
+      <Filter>02. GameObject\UI\UIDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UILoader.h">
+      <Filter>02. GameObject\UI\UIDirector\UILoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -479,6 +491,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UIDirector.cpp">
+      <Filter>02. GameObject\UI\UIDirector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UILoader.cpp">
+      <Filter>02. GameObject\UI\UIDirector\UILoader</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
