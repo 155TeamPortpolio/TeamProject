@@ -11,15 +11,15 @@ namespace
 {
     inline void DecomposeMatrix(const Matrix& m, Vector3& outScale, Quaternion& outRot, Vector3& outPos)
     {
-        XMVECTOR s, r, t;
+        XMVECTOR scale, rot, trans;
         const XMMATRIX xm = m;
 
-        const bool ok = XMMatrixDecompose(&s, &r, &t, xm);
+        const bool ok = XMMatrixDecompose(&scale, &rot, &trans, xm);
         assert(ok);
 
-        outScale = s;
-        outRot = r;
-        outPos = t;
+        outScale = scale;
+        outRot = rot;
+        outPos = trans;
 
         outRot.Normalize();
     }
@@ -185,7 +185,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     ClearPlayingState();
     return ok;
 }
-
 
 void CCamDirector::StopAll(_float blendOutSec)
 {
