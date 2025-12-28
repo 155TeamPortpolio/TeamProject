@@ -79,7 +79,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 	{
 	case 0:
 	{
-		blackBoard.stateQueue.push_back("Attack07_Phase1");
+		blackBoard.stateQueue.push_back("Attack01_Phase1");
 		blackBoard.stateQueue.push_back("Attack02_Phase1");
 		blackBoard.stateQueue.push_back("Attack08_Phase1");
 	}break;
@@ -113,6 +113,22 @@ void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
@@ -133,11 +149,19 @@ void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fAnimProgress >= 0.2f)
+	if (blackBoard.stateQueue.empty())
 	{
-		blackBoard.isChainOpen = true;
-		if (!blackBoard.stateQueue.empty())
-			blackBoard.isRequestNext = true;
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.2f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
 	}
 
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
@@ -241,11 +265,19 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fAnimProgress >= 0.6f)
+	if (blackBoard.stateQueue.empty())
 	{
-		blackBoard.isChainOpen = true;
-		if (!blackBoard.stateQueue.empty())
-			blackBoard.isRequestNext = true;
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.6f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
 	}
 
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
@@ -280,7 +312,10 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (blackBoard.stateQueue.empty())
-		blackBoard.isChainOpen = true;
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
 	else
 	{
 		if (m_fAnimProgress >= 0.75f)
