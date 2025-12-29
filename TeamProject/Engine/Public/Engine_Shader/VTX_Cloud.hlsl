@@ -1,5 +1,10 @@
 #include "Shader_Define.hlsl"
 
+float3 g_CloudColor;
+float3 g_SkyColor;
+
+float g_Time;
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -59,18 +64,24 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vNoise = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+    float2 movingUV = In.vTexcoord + float2(g_Time * 0.002, g_Time * 0.001);
+   
+    vector vNoise = DiffuseTexture.Sample(LinearSampler, movingUV);
     float fbm = vNoise.r * 0.5 +
-                vNoise.g * 0.25 + 
+                vNoise.g * 0.25 +
                 vNoise.b * 0.125;
+
+    vector vNoise2 = DiffuseTexture.Sample(LinearSampler, movingUV * 2.3);
+    float detail = vNoise2.r * 0.1;
     
-    float clouds = smoothstep(0.3, 0.7, fbm);
+    vector vNoise3 = DiffuseTexture.Sample(LinearSampler, movingUV * 0.5);
+    float largeClouds = vNoise3.g * 0.3;
     
-    float3 skyColor = float3(0.3, 0.5, 0.9);
-    float3 cloudColor = float3(0.95, 0.95, 0.98);
+    fbm = fbm + detail + largeClouds;
     
-    float3 finalColor = lerp(skyColor, cloudColor, clouds);
+    float clouds = smoothstep(0.4, 0.65, fbm);
+    
+    float3 finalColor = lerp(g_SkyColor, g_CloudColor, clouds);
     
     Out.vDiffuse = float4(finalColor, 1.0);
     
