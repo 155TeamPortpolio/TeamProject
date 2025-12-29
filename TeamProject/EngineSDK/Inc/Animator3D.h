@@ -23,6 +23,7 @@ public:
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
+        //---------- 베이스 레이어 속성
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
@@ -30,11 +31,12 @@ public:
         _float4             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
         _float3             vPrevRootPos{}; //이전 프레임 위치
         _float4             vPrevRootQuat{}; //이전 프레임 회전
-        _float3             vRootMoveDelta{};   //이동값
+        _float3             vRootMoveDelta{}; //이동값
+        _float4             vRootQuatDelta{}; //회전값
 
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };
-        AXIS    eExtractAxis = { AXIS::NONE };
+        AXIS    eExtractAxis = { AXIS::NONE }; //움직임을 뺄 축
         _float3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
         _float3 vPrevMotionBonePos{};   //이전 프레임 위치
 
@@ -123,7 +125,7 @@ public://애니매이터 데이터
     const vector<EVENT_INST>& Get_EventBus() const;
     //"Root"라는 이름을 가진 본의 움직임 델타값
     _float3 Get_RootBoneMoveDelta() const;
-    _float3 Get_RootBoneQuatDelta() const;
+    _float4 Get_RootBoneQuatDelta() const;
     //모션본 애니매이션 델타값
     _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴

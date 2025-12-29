@@ -325,9 +325,13 @@ _float3 CAnimator3D::Get_RootBoneMoveDelta() const
 	return _float3();
 }
 
-_float3 CAnimator3D::Get_RootBoneQuatDelta() const
+_float4 CAnimator3D::Get_RootBoneQuatDelta() const
 {
-	return _float3();
+	for (auto& Layer : m_AnimLayers)
+		if (Layer.BaseLayer)
+			return Layer.vRootQuatDelta;
+
+	return _float4();
 }
 
 _vector CAnimator3D::Get_MotionBoneDelta(_uint LayerIndex)
@@ -589,8 +593,13 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	if (Layer.BaseLayer) {
 		//Extract RootBone
 		if (-1 != Layer.iRootBoneIndex) {
-			auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, RootMat);
+			
+			Vector3 vCurRootPos = T;
+			Vector4 vCurRootQuat = R;
 
 			if (Layer.bWrapped) { //Roop
 				XMStoreFloat3(&Layer.vRootMoveDelta,
@@ -602,8 +611,17 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			else {
 				XMStoreFloat3(&Layer.vRootMoveDelta,
 					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+
 			}
+
+			_vector quatDelta =
+				XMQuaternionMultiply(
+					XMQuaternionInverse(XMLoadFloat4(&Layer.vPrevRootQuat)), vCurRootQuat);
+
+			XMStoreFloat4(&Layer.vRootQuatDelta, quatDelta);
+
 			Layer.vPrevRootPos = vCurRootPos;
+			Layer.vPrevRootQuat = vCurRootQuat;
 		}
 
 		//Extract MoveBone
@@ -611,6 +629,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+
 			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
 			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
 			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
@@ -656,23 +675,38 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		auto RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
-		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+		if (-1 != Layer.iRootBoneIndex) {
+			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
 
-		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootMoveDelta,
-				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-					+ XMLoadFloat3(&vCurRootPos)));
-			Layer.bWrapped = false;
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, RootMat);
+
+			Vector3 vCurRootPos = T;
+			Vector4 vCurRootQuat = R;
+
+			if (Layer.bWrapped) { //Roop
+				XMStoreFloat3(&Layer.vRootMoveDelta,
+					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+						+ XMLoadFloat3(&vCurRootPos)));
+
+				Layer.bWrapped = false;
+			}
+			else {
+				XMStoreFloat3(&Layer.vRootMoveDelta,
+					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+
+			}
+
+			_vector quatDelta =
+				XMQuaternionMultiply(
+					XMQuaternionInverse(XMLoadFloat4(&Layer.vPrevRootQuat)), vCurRootQuat);
+
+			XMStoreFloat4(&Layer.vRootQuatDelta, quatDelta);
+
+			Layer.vPrevRootPos = vCurRootPos;
+			Layer.vPrevRootQuat = vCurRootQuat;
 		}
-		else {
-
-			XMStoreFloat3(&Layer.vRootMoveDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-		}
-
-		Layer.vPrevRootPos = vCurRootPos;
-
+		
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
 			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
@@ -720,7 +754,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendDuration = 0.f;
 
 		Layer.LocalMatrices = Layer.FinalLocalMatrices;
-	}
+	}	
 }
 
 void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
