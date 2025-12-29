@@ -236,7 +236,7 @@ void CStateMachine<Type>::Update_AnimProgress()
 	if (nullptr == pAnimator)
 		return;
 
-	_float fProgress = pAnimator->Get_CurAnimDuration(0);
+	_float fProgress = pAnimator->Get_CurAnimDuration();
 	m_pCurrentState->m_fAnimProgress = fProgress;
 }
 

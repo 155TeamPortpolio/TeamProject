@@ -59,7 +59,7 @@ HRESULT CPhysicsLevel::Awake()
 	COLLIDER_DESC floorColDesc = {};
 	floorColDesc.eType = COLLIDER_TYPE::BOX;
 	floorColDesc.vCenter = { 0.f, 0.f, 0.f };
-	floorColDesc.isTrigger = false;
+	floorColDesc.bTrigger = false;
 	floorColDesc.vRotation = { 0.f, 0.f, 0.f };
 	floorColDesc.bCooking = true;
 	floorColDesc.strModelKey = "Zero_Vehicle_Bus_01.model";
@@ -83,7 +83,7 @@ HRESULT CPhysicsLevel::Awake()
 	objColDesc.eType = COLLIDER_TYPE::BOX;
 	objColDesc.vSize = { 10.f, 10.f, 1.f };
 	objColDesc.vCenter = { 0.f, 0.f, 0.f };
-	objColDesc.isTrigger = false;
+	objColDesc.bTrigger = false;
 	objColDesc.vRotation = { 0.f, 0.f, 0.f };
 
 	CGameObject* FallingObj = Builder::Create_Object({ "Physics_Level" ,"Proto_GameObject_DemoModel" })

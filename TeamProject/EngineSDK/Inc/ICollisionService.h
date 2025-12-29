@@ -14,8 +14,9 @@ public:
     virtual PxUserControllerHitReport* Get_CCTCallback() PURE;
     virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
     virtual void UnRegisterCollidable(class ICollidable* pCollidable, _int Index) PURE;
-#ifdef _DEBUG
+   virtual void  Set_Render(_bool bRender) PURE;
+   virtual _bool Get_Render() const PURE;
+
     virtual void Render_Debug() PURE;
-#endif 
 };
 NS_END

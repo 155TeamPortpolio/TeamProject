@@ -59,15 +59,14 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        //_vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
-        //vDelta.y *= -1.f;
-        //
-        //if (vDelta.x != 0.f || vDelta.z != 0.f)
-        //{
-        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        //    pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        //}
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
+        _vector3 vDelta = vRootMotionDelta;
+        
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        }
     }
 }
 
@@ -91,15 +90,27 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        //_vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
-        //vDelta.y *= -1.f;
-        //
-        //if (vDelta.x != 0.f || vDelta.z != 0.f)
-        //{
-        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        //    pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        //}
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
+        _vector3 vDelta = vRootMotionDelta;
+
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        }
+    }
+
+    if (m_fAnimProgress >= 1.f)
+    {
+        CMiyabiState_Walk* pWalk = static_cast<CMiyabiState_Walk*>(this->Get_ParentState());
+        if (pWalk)
+        {
+            CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(pWalk->Get_ParentState());
+            if (pMove && pMove->Get_SubStateMachine())
+            {
+                pMove->Get_SubStateMachine()->Set_Bool("WalkFinish", true);
+            }
+        }
     }
 }
 

@@ -368,30 +368,29 @@ _bool CAnimator3D::Get_isPause(_uint LayerIndex)
 
 void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
 {
+	for (auto& Layer : m_AnimLayers) {
+		if (!Layer.BaseLayer) continue;
+
+		Layer.iMotionBoneIndex = MoveBoneIndex;
+	}
 }
 
-void CAnimator3D::Set_ExtractBoneMovement(_int MoveBoneIndex, _bool UseX, _bool UseY, _bool UseZ, _uint LayerIndex)
+void CAnimator3D::Set_RemoveAxisFromMotionBone(AXIS eAxis)
 {
-	if (!isExistLayer(LayerIndex)) return;
-
-	auto& Layer = m_AnimLayers[LayerIndex];
-
-	Layer.iMotionBoneIndex = MoveBoneIndex;
-	Layer.bUseBoneX = UseX;
-	Layer.bUseBoneY = UseY;
-	Layer.bUseBoneZ = UseZ;
+	for (auto& Layer : m_AnimLayers) {
+		if (!Layer.BaseLayer) continue;
+		
+		Layer.eExtractAxis = eAxis;
+	}
 }
 
-void CAnimator3D::Reset_ExtractBoneMovement(_uint LayerIndex)
+void CAnimator3D::Reset_ExtractBoneMovement()
 {
-	if (!isExistLayer(LayerIndex)) return;
+	for (auto& Layer : m_AnimLayers) {
+		if (!Layer.BaseLayer) continue;
 
-	auto& Layer = m_AnimLayers[LayerIndex];
-
-	Layer.iMotionBoneIndex = -1;
-	Layer.bUseBoneX = true;
-	Layer.bUseBoneY = true;
-	Layer.bUseBoneZ = true;
+		Layer.eExtractAxis = AXIS::NONE;
+	}
 }
 
 void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
@@ -544,6 +543,11 @@ _bool CAnimator3D::isExistClip(_int ClipIndex)
 	return !m_pAnimClips.empty() && ClipIndex < m_pAnimClips.size();
 }
 
+_bool CAnimator3D::hasAxis(AXIS eExtractAxis, AXIS Axis)
+{
+	return (eExtractAxis & Axis) != AXIS::NONE;
+}
+
 void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
 	//Empty Layer
@@ -603,9 +607,9 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (!Layer.bUseBoneX) mat._41 = 0.f;
-			if (!Layer.bUseBoneY) mat._42 = 0.f;
-			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
 }
@@ -670,9 +674,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (!Layer.bUseBoneX) mat._41 = 0.f;
-			if (!Layer.bUseBoneY) mat._42 = 0.f;
-			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
 
@@ -682,6 +686,38 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
 		Layer.fBlendElapsed / Layer.fBlendDuration);
 
+	//Bone Extracter
+	if (Layer.BaseLayer) {
+		//Extract RootBone
+		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
+		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+
+		if (Layer.bWrapped) {
+			XMStoreFloat3(&Layer.vRootDelta,
+				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+					+ XMLoadFloat3(&vCurRootPos)));
+			Layer.bWrapped = false;
+		}
+		else {
+
+			XMStoreFloat3(&Layer.vRootDelta,
+				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+		}
+
+		Layer.vPrevRootPos = vCurRootPos;
+
+		//Extract MoveBone
+		if (-1 != Layer.iMotionBoneIndex) {
+			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMotionBoneIndex];
+
+			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
+			if (!hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
+			if (!hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
+		}
+	}
+
+	//Lerp animation
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
 		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
@@ -702,7 +738,6 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
-	
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
 		Layer.bBlending = false;
@@ -963,6 +998,9 @@ HRESULT SetAnimBuild::Apply()
 									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 									->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+
+		XMStoreFloat4x4(&Layer.LocalMatrices[Layer.iRootBoneIndex], XMMatrixIdentity());
+		
 	}
 	
 	//�ִϸ��̼� �⺻
@@ -992,7 +1030,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//���̽� ���̾��� ��� ������ Ű������ ��ġ, ȸ���� ������
 	if (Layer.BaseLayer) {
-		Layer.vPrevRootPos = _float3{};
+		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;//_float3{};
 
 		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;

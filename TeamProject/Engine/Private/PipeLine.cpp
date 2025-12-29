@@ -246,8 +246,7 @@ _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
 	BoundingOrientedBox worldObb;
 	obb.Transform(worldObb, worldTransform);
 
-	return true;
-	//return m_Frustum.Intersects(worldObb);
+	return m_Frustum.Intersects(worldObb);
 }
 
 
