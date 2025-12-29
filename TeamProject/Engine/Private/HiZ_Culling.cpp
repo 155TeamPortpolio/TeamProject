@@ -72,7 +72,18 @@ HRESULT CHiZ_Culling::Initialize() {
 
 	m_pCopyBuffer = CreateDynamicCB(pDevice, sizeof(CB_CopyData));
 	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
+	m_pOcculsionBuffer = CreateDynamicCB(pDevice, sizeof(CB_OcclusionData));
 
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+		srvDesc.Texture2D.MostDetailedMip = 0;
+		srvDesc.Texture2D.MipLevels = m_mipCount;
+
+		hr = pDevice->CreateShaderResourceView(m_pHiZTex, &srvDesc, &m_pHiZSrv);
+		if (FAILED(hr)) return hr;
+	}
 
 	return S_OK;
 }
@@ -148,6 +159,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 		pContext->CSSetShaderResources(0, 1, nullSrv);
 		pContext->CSSetUnorderedAccessViews(0, 1, nullUav, nullptr);
 	}
+
 }
 
 void CHiZ_Culling::Check_Resource()
@@ -235,9 +247,9 @@ ID3D11Buffer* CHiZ_Culling::CreateDynamicCB(ID3D11Device* device, _uint byteSize
 void CHiZ_Culling::Update_CBuffer(ID3D11DeviceContext* context, ID3D11Buffer* buffer, const void* data, _uint size)
 {
 	D3D11_MAPPED_SUBRESOURCE ms = {};
-	ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
+	context->Map(buffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
 	memcpy(ms.pData, data, size);
-	ctx->Unmap(cb, 0);
+	context->Unmap(buffer, 0);
 }
 
 _float CHiZ_Culling::Clamp01(_float value)
@@ -290,73 +302,62 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	if (inputs.empty())
 		return result;
 
+	/*여기서 실제 오클루젼 진행*/
 	ID3D11DeviceContext* context = CGameInstance::GetInstance()->Get_Context();
 	ID3D11Device* device = CGameInstance::GetInstance()->Get_Device();
 
-	EnsureOcclusionResources(device, (uint)inputs.size()); // 너가 만들어야 하는 함수(리사이즈)
+	/*버퍼 리사이즈*/
+	EnsureOcclusionResources(device, inputs.size());
+	D3D11_BOX box = {};
+	box.left = 0;
+	box.right = (UINT)(inputs.size() * sizeof(OcclusionInput));
+	box.top = 0;
+	box.bottom = 1;
+	box.front = 0;
+	box.back = 1;
 
-	context->UpdateSubresource(m_pOcclusionBuffer, 0, nullptr, inputs.data(), 0, 0);
+	/*인풋 버퍼 삽입*/
+	context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
 
-	// 3) CS 바인딩
 	m_pOcclusionShader->Bind(context);
+	context->CSSetShaderResources(0, 1, &m_pHiZSrv);
 
-	// t0 = HiZ SRV
-	context->CSSetShaderResources(0, 1, &m_hizSrv);
-
-	// t1 = inputs SRV
-	context->CSSetShaderResources(1, 1, &m_occlusionInputSrv);
-
-	// u0 = visible flags UAV
-	context->CSSetUnorderedAccessViews(0, 1, &m_visibleFlagUav, nullptr);
-
-	// b0 = constants
-	struct CB_OcclusionData
-	{
-		uint32_t viewportW;
-		uint32_t viewportH;
-		uint32_t mipCount;
-		float    epsilon;
-		uint32_t inputCount;
-		float    pad0, pad1, pad2;
-	};
+	context->CSSetShaderResources(1, 1, &m_inputSrv);
+	context->CSSetUnorderedAccessViews(0, 1, &m_visibleUav, nullptr);
 
 	CB_OcclusionData cbData = {};
-	cbData.viewportW = viewportW;
-	cbData.viewportH = viewportH;
+	cbData.viewportSize = { viewportW, viewportH };
 	cbData.mipCount = m_mipCount;
-	cbData.epsilon = 5e-4f;
-	cbData.inputCount = (uint32_t)inputs.size();
-
-	m_pOcclusionShader->SetCB(context, 0, &cbData); // 네 SetCB가 내부에서 상수버퍼 업데이트/바인딩한다고 가정
+	cbData.epsilon = 1e-2;
+	cbData.inputCount = inputs.size();
+	Update_CBuffer(context, m_pOcculsionBuffer, &cbData, sizeof(cbData));
+	m_pOcclusionShader->SetCB(context, 0, m_pOcculsionBuffer);
 
 	// dispatch
-	uint32_t threadCount = (uint32_t)inputs.size();
-	uint32_t groupCountX = (threadCount + 64 - 1) / 64;
+	_uint threadCount = inputs.size();
+	_uint groupCountX = (threadCount + 64 - 1) / 64;
 	m_pOcclusionShader->Dispatch(context, groupCountX, 1, 1);
 
-	// 4) Unbind
+	// Unbind
 	ID3D11ShaderResourceView* nullSrvs[2] = { nullptr, nullptr };
 	ID3D11UnorderedAccessView* nullUavs[1] = { nullptr };
 	context->CSSetShaderResources(0, 2, nullSrvs);
 	context->CSSetUnorderedAccessViews(0, 1, nullUavs, nullptr);
 
-	// 5) 결과 readback
-	context->CopyResource(m_visibleFlagStaging, m_visibleFlagBuffer);
+	// 결과 readback
+	context->CopyResource(m_visibleStaging, m_visibleBuffer);
 
 	D3D11_MAPPED_SUBRESOURCE mapped = {};
-	HRESULT mapResult = context->Map(m_visibleFlagStaging, 0, D3D11_MAP_READ, 0, &mapped);
+	HRESULT mapResult = context->Map(m_visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
 	if (FAILED(mapResult))
 	{
-		// readback 실패면 보수적으로 다 보이게
 		for (const OPAQUE_PACKET& packet : frustums)
 			result.push_back(packet);
 		return result;
 	}
 
-	const uint32_t* flags = (const uint32_t*)mapped.pData;
+	const _uint* flags = (const _uint*)mapped.pData;
 
-	// 6) 필터링: inputs에 들어간 애들만 flags로 판단
-	// inputs에 안 들어간 애들은 위에서 이미 result에 넣었음
 	for (uint32_t inputIndex = 0; inputIndex < (uint32_t)inputs.size(); ++inputIndex)
 	{
 		if (flags[inputIndex] != 0)
@@ -366,7 +367,7 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 		}
 	}
 
-	context->Unmap(m_visibleFlagStaging, 0);
+	context->Unmap(m_visibleStaging, 0);
 	return result;
 }
 
@@ -466,6 +467,87 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 	return true;
 }
 
+/*번 프레임에 필요한 오브젝트 개수를 받아서, 그만큼 처리 가능한 버퍼를 재할당*/
+void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount)
+{
+	/*요청 개수가 0이면 없음*/
+	if (requiredCount == 0)
+		return;
+
+	const _bool hasAllResources =(m_inputBuffer) &&(m_inputSrv) &&(m_visibleBuffer) &&(m_visibleUav) &&(m_visibleStaging);
+	if (hasAllResources && m_capacity >= requiredCount)/*현재 용량이 충분하면 갠춘*/
+		return;
+
+	/*부족하면 더 생성 시킬 것 -> 넉넉하게 2배수로*/
+	_uint newCapacity = (m_capacity > 0) ? m_capacity : 256;
+	while (newCapacity < requiredCount) newCapacity *= 2;
+
+	/*기존 자원 해제*/
+	Safe_Release(m_inputSrv);
+	Safe_Release(m_inputBuffer);
+	Safe_Release(m_visibleUav);
+	Safe_Release(m_visibleBuffer);
+	Safe_Release(m_visibleStaging);
+	
+	/*인풋(구조체를 넣으려는) 용도의 SRV를 만드는 과정 ->셰이더는 이걸을 읽고*/
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.ByteWidth = sizeof(OcclusionInput) * newCapacity;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		bufferDesc.StructureByteStride = sizeof(OcclusionInput);
+		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_inputBuffer);
+		if (FAILED(result)) 
+			return;
+	}
+
+	{
+		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
+		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
+		srvDesc.Buffer.FirstElement = 0;
+		srvDesc.Buffer.NumElements = newCapacity; /*용량 만큼 넣을거임*/
+		HRESULT result = pDevice->CreateShaderResourceView(m_inputBuffer, &srvDesc, &m_inputSrv);
+		if (FAILED(result))
+			return;
+	}
+
+	/*VisibleFlags 를 아웃풋하는 용도의 UAV를 만드는 과정 -> 셰이더는 여기다 0혹은 1을 쓴다*/
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.ByteWidth = sizeof(_uint) * newCapacity;
+		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
+		bufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;        
+		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+		bufferDesc.StructureByteStride = sizeof(_uint);
+		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_visibleBuffer);
+		if (FAILED(result)) return;
+	}
+	{
+		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
+		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
+		uavDesc.Buffer.FirstElement = 0;
+		uavDesc.Buffer.NumElements = newCapacity;
+		HRESULT result = pDevice->CreateUnorderedAccessView(m_visibleBuffer, &uavDesc, &m_visibleUav);
+		if (FAILED(result)) return;
+	}
+
+	/*읽어내는 용의 버퍼 - GPU 결과를 CPU에서 Map()으로 읽기 위한 staging 버퍼*/
+	{
+		D3D11_BUFFER_DESC bufferDesc = {};
+		bufferDesc.ByteWidth = sizeof(uint32_t) * newCapacity;
+		bufferDesc.Usage = D3D11_USAGE_STAGING;
+		bufferDesc.BindFlags = 0;
+		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_visibleStaging);
+		if (FAILED(result)) return;
+	}
+
+	m_capacity = newCapacity;
+}
+
 CHiZ_Culling* CHiZ_Culling::Create()
 {
 	CHiZ_Culling* instance = new CHiZ_Culling;
@@ -487,7 +569,18 @@ void CHiZ_Culling::Free()
 
 	Safe_Release(m_pDepthSrv);
 	Safe_Release(m_pCopyShader);
-	Safe_Release(m_pReduceShader);
 	Safe_Release(m_pCopyBuffer);
+	Safe_Release(m_pReduceShader);
 	Safe_Release(m_pReduceBuffer);
+
+	Safe_Release(m_pOcclusionShader);
+	Safe_Release(m_pOcculsionBuffer);
+
+	Safe_Release(m_inputBuffer);
+	Safe_Release(m_inputSrv);
+	Safe_Release(m_visibleBuffer);
+	Safe_Release(m_visibleUav);
+	Safe_Release(m_visibleStaging);
+
+	Safe_Release(m_pHiZSrv);
 }

@@ -85,6 +85,7 @@ public:
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
 
 	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
+	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 
 private:
 	ID3D11Buffer* m_pDeviceFrameBuffer = { nullptr };
