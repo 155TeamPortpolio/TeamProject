@@ -93,6 +93,6 @@ void CMiyabiState_Run_End::Update(CMiyabi* pOwner, _float dt)
 {
     if (pOwner->Is_Input())
     {
-        m_fAnimProgress = 1.f;        // »õ·Î¿î ÀÔ·Â ½Ã Áï½Ã End ¿Ï·á Ã³¸®
+        m_fAnimProgress = 1.f;        // ï¿½ï¿½ï¿½Î¿ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ End ï¿½Ï·ï¿½ Ã³ï¿½ï¿½
     }
 }

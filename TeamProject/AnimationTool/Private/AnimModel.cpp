@@ -87,6 +87,7 @@ void CAnimModel::GUI_LoadResource(_float fChildHeight)
 {
 	ImGui::SeparatorText("Model & Material Load");
 	ImGui::BeginChild("##Loaded Data", ImVec2{ 0, fChildHeight }, true);
+
 	if (ImGui::Button("Load Resource")) {
 		Load_Resource();
 	}
@@ -94,6 +95,12 @@ void CAnimModel::GUI_LoadResource(_float fChildHeight)
 	if (ImGui::Button("Set Meta")) {
 		Set_Animator();
 	}
+
+	if (ImGui::Button("Load Effect")) {
+		Load_Resource();
+	}
+	ImGui::SameLine();
+
 	ImGui::EndChild();
 }
 

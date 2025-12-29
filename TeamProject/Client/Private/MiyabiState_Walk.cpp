@@ -44,8 +44,7 @@ void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start")
-        .Apply();
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
 }
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
@@ -67,7 +66,9 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
+        .Loop(true)
+        .Speed(1.2f)
         .Apply();
 }
 

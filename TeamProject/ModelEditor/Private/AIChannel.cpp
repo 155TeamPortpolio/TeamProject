@@ -80,7 +80,7 @@ void CAIChannel::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
 
 			_matrix Local = XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
 
-			_matrix Baked = W * Local; XMMatrixDecompose(&S, &R, &T, Baked);
+			_matrix Baked = Local * W ; XMMatrixDecompose(&S, &R, &T, Baked);
 
 			XMStoreFloat3(&RootFrame.vScale, S);
 			XMStoreFloat4(&RootFrame.vRotation, XMQuaternionNormalize(R));

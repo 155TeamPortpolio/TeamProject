@@ -31,6 +31,8 @@
 
 /* Character */
 #include "Miyabi.h"
+#include "Sacrifice.h"
+#include "SacrificeHand.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -141,11 +143,16 @@ HRESULT CTestLevel::Awake()
 	//miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.Position(_float3(3.f, 0.f, 0.f))
 		.CharacterController(miyabiCCT)
 		.Build("Miyabi");
 	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 
 	m_miyabiHandle = Miyabi->Get_Handle();
+
+	/* Enemy */
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -187,6 +194,24 @@ void CTestLevel::Update()
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
+
+	if (KEY->Key_Tap('4'))
+	{
+		CCT_DESC sacrificeCCT;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+		sacrificeCCT.bAutoFit = false;
+		sacrificeCCT.fHeight = 1.28f;
+		sacrificeCCT.fDensity = 0.00001f;
+		sacrificeCCT.fRadius = 0.2f;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+
+		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+			//.CharacterController(sacrificeCCT)
+			.Build("Sacrifice");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
