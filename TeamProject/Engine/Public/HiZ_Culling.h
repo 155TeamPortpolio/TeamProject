@@ -21,6 +21,7 @@ public:
 
 private:
     _uint CalcMipCount(_uint width, _uint height);
+
 private:
     _bool m_isReady = { false };
 
@@ -30,8 +31,8 @@ private:
     _uint3 m_groupCount = {};
 
     ID3D11Texture2D* m_pHiZTex = { nullptr };
-    vector<ID3D11UnorderedAccessView*> m_HiZUav;
-    std::vector<ID3D11ShaderResourceView*> m_HiZSrvMip; // mip slice SRVµé
+    vector<ID3D11UnorderedAccessView*> m_HiZUav;    /*¹Óº° UAVµé*/
+    vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*¹Ó¸Ê SRVµé*/
 
     ID3D11ShaderResourceView* m_pDepthSrv = { nullptr };
     class CComputeShader* m_pComputeShader = { nullptr };

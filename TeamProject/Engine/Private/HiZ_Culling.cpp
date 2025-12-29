@@ -5,6 +5,9 @@
 
 CHiZ_Culling::CHiZ_Culling()
 {
+	//	Copy pass : Depth SRV → HiZ mip0 UAV(그냥 복사)
+	//	Reduce loop : HiZ mip(src) SRV → HiZ mip(dst) UAV, dst = src + 1 (2×2 min)
+
 }
 
 HRESULT CHiZ_Culling::Initialize() {
@@ -20,6 +23,8 @@ HRESULT CHiZ_Culling::Initialize() {
 		(m_texSize.y + m_threadSize.y - 1) / m_threadSize.y,
 		1
 	};
+
+	//1by1될 때까지 2,2로 나눔
 	m_mipCount = CalcMipCount(m_texSize.x, m_texSize.y);
 
 	D3D11_TEXTURE2D_DESC desc = {};
@@ -41,7 +46,6 @@ HRESULT CHiZ_Culling::Initialize() {
 		return hr;
 
 	m_HiZUav.resize(m_mipCount, nullptr);
-
 	for (_uint mip = 0; mip < m_mipCount; ++mip)
 	{
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
@@ -52,8 +56,8 @@ HRESULT CHiZ_Culling::Initialize() {
 		HRESULT hr = pDevice->CreateUnorderedAccessView(m_pHiZTex, &uavDesc, &m_HiZUav[mip]);
 		if (FAILED(hr)) return hr;
 	}
-	m_HiZSrvMip.resize(m_mipCount, nullptr);
 
+	m_HiZSrvMip.resize(m_mipCount, nullptr);
 	for (_uint mipIndex = 0; mipIndex < m_mipCount; ++mipIndex)
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDescMip = {};
@@ -96,7 +100,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 		if (mip == 0)
 			m_pComputeShader->SetSRV(pContext, 0, m_pDepthSrv); 
 		else
-			m_pComputeShader->SetSRV(pContext, 0, m_pHiZSrv);
+			m_pComputeShader->SetSRV(pContext, 0, m_HiZSrvMip[mip]);
 
 		m_pComputeShader->SetUAV(pContext, 0, m_HiZUav[mip]);
 
@@ -107,7 +111,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 			groupCount.z
 		);
 
-		// 반드시 unbind (다음 패스 안전)
+	
 		ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
 		ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
 		pContext->CSSetShaderResources(0, 1, nullSrv);
@@ -117,18 +121,22 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 
 void CHiZ_Culling::Check_Resource()
 {
+	/*SRV하고 쉐이더 생성 타이밍이 달라서*/
 	if (m_isReady)
 		return;
 
-	if (!m_pComputeShader)
-		m_pComputeShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_Hi_Z.hlsl");
+	if (!m_pCopyShader)
+		m_pCopyShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Copy.hlsl");
+	if (!m_pReduceShader)
+		m_pReduceShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Reduce.hlsl");
 	if (!m_pDepthSrv)
 		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Depth");
 
 	if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
-	if (m_pComputeShader) Safe_AddRef(m_pComputeShader);
+	if (m_pCopyShader) Safe_AddRef(m_pCopyShader);
+	if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
 
-	if (m_pDepthSrv && m_pComputeShader)
+	if (m_pDepthSrv && m_pCopyShader&& m_pReduceShader)
 		m_isReady = true;
 }
 
@@ -174,13 +182,13 @@ CHiZ_Culling* CHiZ_Culling::Create()
 void CHiZ_Culling::Free()
 {
 	Safe_Release(m_pHiZTex);
+
 	for (auto& srvMip : m_HiZSrvMip)
 		Safe_Release(srvMip);
+	for (auto& uav : m_HiZUav)
+		Safe_Release(uav);
 
 	Safe_Release(m_pDepthSrv);
-	Safe_Release(m_pComputeShader);
-	for (auto& uav : m_HiZUav)
-	{
-		Safe_Release(uav);
-	}
+	Safe_Release(m_pCopyShader);
+	Safe_Release(m_pReduceShader);
 }
