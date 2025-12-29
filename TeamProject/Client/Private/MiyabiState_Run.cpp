@@ -36,10 +36,6 @@ void CMiyabiState_Run::Update(CMiyabi* pOwner, _float dt)
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
 }
 
-void CMiyabiState_Run::Exit(CMiyabi* pOwner)
-{
-}
-
 void CMiyabiState_Run_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start")
@@ -61,10 +57,6 @@ void CMiyabiState_Run_Start::Update(CMiyabi* pOwner, _float dt)
             pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
         }
     }
-}
-
-void CMiyabiState_Run_Start::Exit(CMiyabi* pOwner)
-{
 }
 
 void CMiyabiState_Run_Loop::Enter(CMiyabi* pOwner)
@@ -91,10 +83,6 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
     }
 }
 
-void CMiyabiState_Run_Loop::Exit(CMiyabi* pOwner)
-{
-}
-
 void CMiyabiState_Run_End::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_End")
@@ -107,8 +95,4 @@ void CMiyabiState_Run_End::Update(CMiyabi* pOwner, _float dt)
     {
         m_fAnimProgress = 1.f;        // 새로운 입력 시 즉시 End 완료 처리
     }
-}
-
-void CMiyabiState_Run_End::Exit(CMiyabi* pOwner)
-{
 }

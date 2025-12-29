@@ -37,6 +37,7 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
     }
 
     __super::Update(pOwner, dt);
+    Move_Motion(pOwner, dt);
 
     if (m_pSubStateMachine)
     {
@@ -182,19 +183,15 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
 
 void CMiyabiState_Attack::Move_Motion(CMiyabi* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
+    _vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+    if (vDir.Length() > 0.01f)
     {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        _vector3 vDelta = vRootMotionDelta;
-
+        vDir.Normalize();
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
         if (vDelta.x != 0.f || vDelta.z != 0.f)
         {
             _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
         }
     }
 }

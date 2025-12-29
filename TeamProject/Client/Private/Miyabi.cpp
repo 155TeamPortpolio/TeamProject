@@ -316,7 +316,7 @@ HRESULT CMiyabi::Initialize_Transitions()
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
 	// Idle -> Attack
-	m_pStateMachine->Register_Transition("Idle", "Attack",
+	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
 
 	// Attack -> Idle

@@ -88,21 +88,6 @@
     <Filter Include="02. GameObject\Object\TestObject\State\Dash">
       <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Character">
-      <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi">
-      <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State">
-      <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Idle">
-      <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack">
-      <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
@@ -133,12 +118,6 @@
     <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
       <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
-      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
-      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -147,15 +126,6 @@
     </Filter>
     <Filter Include="03. Utility\01. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
-      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Walk">
-      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
-      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\TestCloud">
       <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
@@ -174,6 +144,39 @@
     </Filter>
     <Filter Include="03. Utility\03. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player">
+      <UniqueIdentifier>{b9726592-5cfc-4ee2-a801-040f03747e42}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character">
+      <UniqueIdentifier>{eeb033b4-780f-4eeb-930b-50f8ab6baf67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi">
+      <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State">
+      <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Idle">
+      <UniqueIdentifier>{0e2be414-c839-48b9-ae2a-3ec0a387a47b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack">
+      <UniqueIdentifier>{30a2b6c6-b7dc-4baf-a8ad-c43cc5e2c1fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Normal">
+      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge">
+      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move">
+      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Walk">
+      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
+      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -283,22 +286,22 @@
       <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Character.h">
-      <Filter>02. GameObject\Object\Character</Filter>
+      <Filter>02. GameObject\Object\Player\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IHState.h">
       <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Miyabi.h">
-      <Filter>02. GameObject\Object\Character\Miyabi</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Idle.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Idle</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Walk.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Walk</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move\Walk</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Attack.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CanvasPanel.h">
       <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
@@ -334,10 +337,10 @@
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_NormalAttack.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
@@ -346,10 +349,10 @@
       <Filter>03. Utility\03. UILoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Move.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Run.h">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\public\TestCloud.h">
       <Filter>02. GameObject\Object\TestCloud</Filter>
@@ -463,19 +466,19 @@
       <Filter>02. GameObject\Object\TestObject\State\Dash</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Character.cpp">
-      <Filter>02. GameObject\Object\Character</Filter>
+      <Filter>02. GameObject\Object\Player\Character</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Miyabi.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Idle.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Idle</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Idle</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Walk.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Walk</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move\Walk</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CanvasPanel.cpp">
       <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
@@ -505,10 +508,10 @@
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Charge</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_NormalAttack.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Attack\Normal</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
@@ -520,10 +523,10 @@
       <Filter>03. Utility\02. CamLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Move.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Run.cpp">
-      <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+      <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\private\TestCloud.cpp">
       <Filter>02. GameObject\Object\TestCloud</Filter>

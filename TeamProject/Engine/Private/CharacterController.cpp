@@ -208,6 +208,9 @@ void CCharacterController::Late_Update(_float dt)
 		fTransformY,
 		(float)footPosition.z,
 		1.f));
+
+	m_vVelocity.x = 0.f;
+	m_vVelocity.z = 0.f;
 }
 
 void CCharacterController::Render_GUI()
@@ -535,6 +538,10 @@ void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotat
 	_vector3 vWorldMotion = _vector3::Transform(vLocalMotion, matRot);
 
 	vWorldMotion *= fRootMotionScale;
+
+	m_vVelocity.x = vWorldMotion.x / dt;
+	m_vVelocity.z = vWorldMotion.z / dt;
+
 	vWorldMotion.y = m_vVelocity.y * dt;
 
 	Move(vWorldMotion, 1.f);
