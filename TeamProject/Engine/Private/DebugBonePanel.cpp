@@ -167,7 +167,7 @@ void CDebugBonePanel::Render_GUI()
 				ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
 
 				//RootDelta
-				_vector3 RootTrans = pAnimator->Get_RootBoneDelta();
+				_vector3 RootTrans = pAnimator->Get_RootBoneMoveDelta();
 				_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
 				_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
 				_vector3 RootDir = RootMove;

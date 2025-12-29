@@ -114,6 +114,24 @@ void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector
 	}
 }
 
+const KEYFRAME& CAnimationClip::Get_StartKeyFrameByBoneName(const string& BoneName) const
+{
+	for (auto Channel : m_Channels)
+		if (BoneName == Channel->Get_Name())
+			return Channel->Get_KeyFrames().front();
+
+	return KEYFRAME{};
+}
+
+const KEYFRAME& CAnimationClip::Get_StartKeyFrameByBoneIndex(_uint BoneIndex) const
+{
+	for (auto Channel : m_Channels)
+		if (BoneIndex == Channel->Get_BoneIndex())
+			return Channel->Get_KeyFrames().front();
+
+	return KEYFRAME{};
+}
+
 const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneName(const string& BoneName) const
 {
 	for (auto Channel : m_Channels)
@@ -131,6 +149,7 @@ const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneIndex(_uint BoneIndex) cons
 
 	return KEYFRAME{};
 }
+
 
 void CAnimationClip::Render_GUI()
 {
