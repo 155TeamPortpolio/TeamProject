@@ -123,7 +123,7 @@ HRESULT CGraphicDevice::Ready_SwapChain(HWND hWnd, WINMODE isWindowed, _uint iWi
 
 	SwapChain.OutputWindow = hWnd;
 	SwapChain.Windowed = static_cast<BOOL>(isWindowed);
-	SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+	SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD; 
 
 	if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
 		return E_FAIL;
@@ -147,7 +147,7 @@ HRESULT CGraphicDevice::Ready_BackBufferRenderTargetView()
 	D3D11_RENDER_TARGET_VIEW_DESC desc{};
 	desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	desc.Texture2D.MipSlice = 0;
-	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 스왑체인 포맷과 동일하게
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 	if (FAILED(m_pDevice->CreateRenderTargetView(
 		pBackBufferTexture, &desc, &m_pBackBufferRTV)))
 		return E_FAIL;
