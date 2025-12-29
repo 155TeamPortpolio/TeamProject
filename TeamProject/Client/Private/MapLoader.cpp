@@ -37,7 +37,7 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCl
     if (false == isFindBaseData)
         return E_FAIL;
 
-    auto iter = m_SlotFormatData.find("COLLIDER_DESC");
+    auto iter = m_SlotFormatData.find("Collider");
     if (iter != m_SlotFormatData.end())
         m_hasColliderData = true;
 
@@ -83,7 +83,7 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     COLLIDER_DESC ColliderDesc = {};
 
     for (auto& tSlotData : m_SlotFormatData) {
-        if (tSlotData.first == "COLLIDER_DESC" && true == m_hasColliderData) {
+        if (tSlotData.first == "Collider" && true == m_hasColliderData) {
             // physics 데이터 넣는 부분. 개선의 여지가 있음
             for (auto& physicsData : tSlotData.second[pData->iObjID]) {
 

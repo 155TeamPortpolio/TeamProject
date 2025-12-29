@@ -1482,6 +1482,11 @@
     </FxCompile>
     <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_HiZ_Copy.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
+       </FxCompile>
+        <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl">
+     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
