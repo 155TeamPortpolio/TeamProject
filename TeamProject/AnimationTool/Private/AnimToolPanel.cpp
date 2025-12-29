@@ -214,14 +214,16 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	//Extract Bone
 	ImGui::SameLine();
 	ImGui::Text("	Extrack Bone : "); ImGui::SameLine();
-	static int RootBoneIndex = -1;
+	static int MoveBoneIndex = -1;
 	ImGui::PushItemWidth(50.f);
-	ImGui::InputInt("##ExtractBone", &RootBoneIndex, 0, 0);
+	ImGui::InputInt("##ExtractBone", &MoveBoneIndex, 0, 0);
 	ImGui::SameLine();
 	if (ImGui::Button("Set##ExtractBone", { 55.f, 0.f }))
 	{
-		if (nullptr != m_pSelectAnimator)
-			m_pSelectAnimator->Set_ExtractBoneMovement(RootBoneIndex, false, true, false);
+		if (nullptr != m_pSelectAnimator) {
+			m_pSelectAnimator->Set_MotionBone(MoveBoneIndex);
+			m_pSelectAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
+		}
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Reset##ExtractBone", { 55.f, 0.f }))
