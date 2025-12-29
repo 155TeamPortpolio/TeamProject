@@ -6,21 +6,51 @@
 
 void CMiyabiState_Move::Enter(CMiyabi* pOwner)
 {
-	m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
-
-	m_pSubStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
-	m_pSubStateMachine->Register_State("Run", CMiyabiState_Run::Create());
-    m_pSubStateMachine->Register_Transition("Walk", "Run",
-        CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "WalkFinish");
-
-	m_pSubStateMachine->Set_DefaultState("Walk");
+    if (!m_pSubStateMachine)  // 한 번만 생성
+    {
+        m_pSubStateMachine = CStateMachine<CMiyabi>::Create();
+        m_pSubStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
+        m_pSubStateMachine->Register_State("Run", CMiyabiState_Run::Create());
+        m_pSubStateMachine->Register_Transition("Walk", "Run",
+            CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "WalkFinish");
+        m_pSubStateMachine->Set_DefaultState("Walk");
+    }
 
     __super::Enter(pOwner);
 }
 
 void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
 {
+    __super::Update(pOwner, dt);
+    // Walk/Run의 End 상태를 Move의 AnimProgress에 반영
+    if (m_pSubStateMachine)
+    {
+        IHState<CMiyabi>* pMoveType =
+            dynamic_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_CurrentState());
 
+        if (pMoveType && pMoveType->Has_SubStateMachine())
+        {
+            CStateMachine<CMiyabi>* pAnimFSM = pMoveType->Get_SubStateMachine();
+            IBaseState<CMiyabi>* pCurrentAnim = pAnimFSM->Get_CurrentState();
+
+            if (pCurrentAnim && pCurrentAnim->Get_Tag() == "End")
+            {
+                // End 상태의 진행도를 Move에 전파
+                if (pCurrentAnim->Is_AnimEnd() || pCurrentAnim->Get_AnimProgress() >= 1.f)
+                {
+                    m_fAnimProgress = 1.f;
+                }
+                else
+                {
+                    m_fAnimProgress = 0.f;
+                }
+            }
+            else
+            {
+                m_fAnimProgress = 0.f;
+            }
+        }
+    }
 }
 
 void CMiyabiState_Move::Exit(CMiyabi* pOwner)
@@ -29,20 +59,17 @@ void CMiyabiState_Move::Exit(CMiyabi* pOwner)
 
 _bool CMiyabiState_Move::Handle_Transition(CMiyabi* pOwner, const string& strState)
 {
-    // Move에서 나가려는 경우
     if (strState != "Move")
     {
         if (!m_pSubStateMachine)
             return true;
 
-        // 현재 Walk 또는 Run 상태 확인
         IHState<CMiyabi>* pMoveType =
             dynamic_cast<IHState<CMiyabi>*>(m_pSubStateMachine->Get_CurrentState());
 
         if (!pMoveType || !pMoveType->Has_SubStateMachine())
             return true;
 
-        // Walk/Run의 서브 상태 확인
         CStateMachine<CMiyabi>* pAnimFSM = pMoveType->Get_SubStateMachine();
         IBaseState<CMiyabi>* pCurrentAnim = pAnimFSM->Get_CurrentState();
 
@@ -53,16 +80,15 @@ _bool CMiyabiState_Move::Handle_Transition(CMiyabi* pOwner, const string& strSta
         if (pCurrentAnim->Get_Tag() != "End")
             return false;
 
-        // End 상태에서:
-        // 1. 애니메이션 끝났으면 허용
-        if (pCurrentAnim->Is_AnimEnd())
-            return true;
+        // Idle로만 전환 허용
+        if (strState == "Idle")
+        {
+            // 애니메이션 끝났거나 새로운 입력이 있으면 허용
+            if (pCurrentAnim->Is_AnimEnd() || pOwner->Is_Input())
+                return true;
+        }
 
-        // 2. 입력(공격 등)이면 즉시 허용
-        if (strState == "Attack")
-            return true;
-
-        // 그 외는 거부
+        // Idle 외의 다른 상태로는 직접 전환 불가
         return false;
     }
 

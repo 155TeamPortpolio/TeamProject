@@ -37,6 +37,7 @@ private:
 
 private:
     void Render_DebugBtn();
+    void Render_CollisionBtn();
 private:
     bool m_bActiveGUI = {true};
     bool m_bUsingUI = {false};

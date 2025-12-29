@@ -26,6 +26,12 @@ public:
     virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) PURE;
     virtual void Clear_Resource(const string& levelTag)PURE;
     virtual HRESULT Sync_To_Level()PURE;
+
+
+    virtual _bool RequestPreload(const PreloadKey& key) PURE;
+    virtual void PumpPreloads(vector<PreloadCompleted>& outCompleted) PURE;
+    virtual void GetPreloadProgress(_uint& outDone, _uint& outTotal) const PURE;
+
 };
 
 NS_END

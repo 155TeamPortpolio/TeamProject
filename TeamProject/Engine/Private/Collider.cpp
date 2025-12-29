@@ -8,9 +8,8 @@
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 
-#ifdef _DEBUG
 #include "DebugDraw.h"
-#endif
+
 
 CCollider::CCollider()
 {
@@ -91,7 +90,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 			break;
 		}
 	}
-	
+
 	if (!pGeometry)
 	{
 		MSG_BOX("CCollider::Initialize : Failed to Create Geometry");
@@ -149,7 +148,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pShape->setFlag(PxShapeFlag::eVISUALIZATION, true);
 	m_pShape->setContactOffset(0.02f);  // 기본값: 0.02
 	m_pShape->setRestOffset(0.0f);      // 관통 허용 거리 최소화
-	if (pDesc->isTrigger) {
+	if (pDesc->bTrigger) {
 		m_pShape->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
 		m_pShape->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
 	}
@@ -181,7 +180,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_vCenter = pDesc->vCenter;
 	m_vSize = pDesc->vSize;
 	m_vRotation = pDesc->vRotation;
-	m_bTrigger = pDesc->isTrigger;
+	m_bTrigger = pDesc->bTrigger;
 	m_strMaterialTag = pDesc->strMaterialTag;
 
 	// 시스템 등록
@@ -392,12 +391,44 @@ void CCollider::Sync_Transform()
 	_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
 	_vector vScale, vRot, vTrans;
 	XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
+
 	PxTransform pose(
 		PxVec3(XMVectorGetX(vTrans), XMVectorGetY(vTrans), XMVectorGetZ(vTrans)),
 		PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot),
 			XMVectorGetZ(vRot), XMVectorGetW(vRot))
 	);
 	m_pStaticActor->setGlobalPose(pose);
+
+	if (m_bCooked)
+		return;
+
+	PxShape* shape = nullptr;
+	if (m_pStaticActor->getShapes(&shape, 1) > 0)
+	{
+		PxGeometryHolder geomHolder = shape->getGeometry();
+
+		switch (geomHolder.getType())
+		{
+		case PxGeometryType::eBOX:
+			geomHolder.box().halfExtents = PxVec3(
+				m_vSize.x * XMVectorGetX(vScale) * 0.5f,
+				m_vSize.y * XMVectorGetY(vScale) * 0.5f,
+				m_vSize.z * XMVectorGetZ(vScale) * 0.5f
+			);
+			break;
+		case PxGeometryType::eSPHERE:
+			geomHolder.sphere().radius = m_vSize.x * XMVectorGetX(vScale);
+			break;
+		case PxGeometryType::eCAPSULE:
+			geomHolder.capsule().radius = m_vSize.x * XMVectorGetX(vScale);
+			geomHolder.capsule().halfHeight = m_vSize.y * XMVectorGetY(vScale) * 0.5f;
+			break;
+		default:
+			return;
+		}
+
+		shape->setGeometry(geomHolder.any());
+	}
 }
 
 void CCollider::Render_GUI()
@@ -424,9 +455,7 @@ void CCollider::Render_GUI()
 			ImGui::Checkbox("MapTool Mode", &m_bMapTool);
 		}
 
-#ifdef _DEBUG
 		ImGui::Checkbox("Is Render", &m_bDebugRender);
-#endif
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
 		ImGui::Separator();
@@ -437,24 +466,26 @@ void CCollider::Render_GUI()
 		if (m_pStaticActor && !m_pAttachedRigidBody)
 		{
 			ImGui::Separator();
+
+			_vector3 vWorldPos = m_pOwnerTransform->Get_WorldPos();
+			_vector3 vScale = m_pOwnerTransform->Get_Scale();
+			_vector4 vRot = m_pOwnerTransform->Get_QuaternionRotate();
+
 			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "World Position");
+			_bool bPosChanged = ImGui::DragFloat3("##WorldPos", &vWorldPos.x, 0.1f);
 
-			_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
-			if (ImGui::DragFloat3("##WorldPos", &vWorldPos.x, 0.1f))
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "Scale");
+			_bool bScaleChanged = ImGui::DragFloat3("##Scale", &vScale.x, 0.01f);
+
+			ImGui::TextColored(ImVec4(1.f, 1.f, 0.f, 1.f), "Rotation");
+			_bool bRotChanged = ImGui::DragFloat4("##Rotation", &vRot.x, 0.01f);
+
+			if (bPosChanged || bScaleChanged || bRotChanged)
 			{
-				m_pOwnerTransform->Set_Pos(vWorldPos);
-
-				// StaticActor 즉시 동기화
-				_smatrix mWorldMat = m_pOwnerTransform->Get_WorldMatrix();
-				_vector vScale, vRot, vTrans;
-				XMMatrixDecompose(&vScale, &vRot, &vTrans, mWorldMat);
-
-				PxTransform pose(
-					PxVec3(vWorldPos.x, vWorldPos.y, vWorldPos.z),
-					PxQuat(XMVectorGetX(vRot), XMVectorGetY(vRot),
-						XMVectorGetZ(vRot), XMVectorGetW(vRot))
-				);
-				m_pStaticActor->setGlobalPose(pose);
+				if (bPosChanged) m_pOwnerTransform->Set_Pos(vWorldPos);
+				if (bScaleChanged) m_pOwnerTransform->Scale_Vector(vScale);
+				if (bRotChanged) m_pOwnerTransform->Set_Quaternion(vRot);
+				Sync_Transform();
 			}
 		}
 
@@ -533,7 +564,6 @@ void CCollider::Render_GUI()
 	ImGui::EndChild();
 }
 
-#ifdef _DEBUG
 void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
 	if (!m_pShape || !m_bDebugRender) return;
@@ -594,7 +624,6 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 		DX::Draw(pBatch, obb, vColor);
 	}
 }
-#endif
 
 CCollider* CCollider::Create()
 {
