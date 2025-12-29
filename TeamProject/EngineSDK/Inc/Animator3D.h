@@ -30,7 +30,7 @@ public:
         _float4             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
         _float3             vPrevRootPos{}; //이전 프레임 위치
         _float4             vPrevRootQuat{}; //이전 프레임 회전
-        _float3             vRootDelta{};   //이동값
+        _float3             vRootMoveDelta{};   //이동값
 
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };
@@ -122,7 +122,8 @@ public://애니매이터 데이터
     //이벤트들 불러오는 함수 (매 프레임 벡터 내용물이 지워짐)
     const vector<EVENT_INST>& Get_EventBus() const;
     //"Root"라는 이름을 가진 본의 움직임 델타값
-    _float3 Get_RootBoneDelta() const;
+    _float3 Get_RootBoneMoveDelta() const;
+    _float3 Get_RootBoneQuatDelta() const;
     //모션본 애니매이션 델타값
     _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴
