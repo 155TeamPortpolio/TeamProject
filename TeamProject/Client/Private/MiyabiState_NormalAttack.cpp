@@ -20,6 +20,9 @@ void CMiyabiState_NormalAttack::Enter(CMiyabi* pOwner)
         m_pSubStateMachine->Register_State("Attack_06", CMiyabiState_Attack_06::Create());
         m_pSubStateMachine->Register_State("Attack_End", CMiyabiState_Attack_End::Create());
 
+        m_pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
+
+
         // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
         vector<CStateMachine<CMiyabi>::CONDITION_INFO> comboConditions;
         comboConditions.push_back({ CStateMachine<CMiyabi>::CONDITION_TRIGGER, "NextCombo", 0.f });
@@ -171,7 +174,7 @@ void CMiyabiState_Attack_End::Enter(CMiyabi* pOwner)
 }
 void CMiyabiState_Attack_End::Update(CMiyabi* pOwner, _float dt)
 {
-    if (pOwner->Is_Move())
+    if (pOwner->Is_Input())
     {
         m_fAnimProgress = 1.f;
     }

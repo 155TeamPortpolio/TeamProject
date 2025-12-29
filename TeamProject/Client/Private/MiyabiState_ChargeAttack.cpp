@@ -22,6 +22,8 @@ void CMiyabiState_ChargeAttack::Enter(CMiyabi* pOwner)
         m_pSubStateMachine->Register_State("Charge_Attack03", CMiyabiState_Charge_Attack03::Create());
         m_pSubStateMachine->Register_State("Charge_End", CMiyabiState_Charge_End::Create());
 
+        m_pSubStateMachine->Get_State("Charge_End")->Set_Tag("End");
+
         // 충전 단계 전이: AnimEnd로 다음 단계
         m_pSubStateMachine->Register_Transition("Charge_Start", "Charge_Start_02",
             CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
@@ -169,4 +171,12 @@ void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
     else
         pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Attack_ChargeAttack_Attack01_End")
         .Apply();
+}
+
+void CMiyabiState_Charge_End::Update(CMiyabi* pOwner, _float dt)
+{
+    if (pOwner->Is_Input())
+    {
+        m_fAnimProgress = 1.f;
+    }
 }
