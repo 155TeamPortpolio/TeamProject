@@ -61,6 +61,7 @@ void CTextUI::Update(_float dt)
     if (!m_isAlive)
         return;
 
+    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     Get_Component<CTextSlot>()->Push_Text();
 
     Play_Animation(dt);
@@ -211,7 +212,7 @@ void CTextUI::Render_GUI_Layout()
     ImGui::TextDisabled("Selected: %u", (_uint)m_eAnchor);
 
     ImGui::DragFloat2(u8"À§Ä¡", reinterpret_cast<_float*>(&m_vAnchorOffset));
-    Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   ////////////////////////////////
+    //Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   ////////////////////////////////
 
     if (ImGui::BeginTable("TextAlign", 2, ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PadOuterX))
     {

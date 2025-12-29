@@ -79,6 +79,7 @@ void CGaugeUI::Render_GUI()
             Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
         }
     }
+    Get_Component<CSprite2D>()->Render_GUI();
 
     // 게이지
     ImGui::SeparatorText(u8"게이지?"); 
