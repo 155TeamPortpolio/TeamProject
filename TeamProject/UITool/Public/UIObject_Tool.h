@@ -8,11 +8,13 @@ NS_END
 
 NS_BEGIN(UITool)
 
+enum class UISizeMode { FHD, QHD, UHD };
+
 class CUIObject_Tool abstract : public CUI_Object
 {
 protected:
-	CUIObject_Tool();
-	CUIObject_Tool(const CUIObject_Tool& rhs);
+	CUIObject_Tool() {}
+	CUIObject_Tool(const CUIObject_Tool& rhs) : CUI_Object(rhs) {}
 	virtual ~CUIObject_Tool() DEFAULT;
 
 public:
@@ -41,6 +43,9 @@ protected:
 	_int Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag);	// (Åø)
 
 	_bool m_useOriginTexSize = true;
+
+	Vector2    m_sizeFHD  = {};
+	UISizeMode m_sizeMode = UISizeMode::FHD;
 
 public:
 	virtual void Free();
