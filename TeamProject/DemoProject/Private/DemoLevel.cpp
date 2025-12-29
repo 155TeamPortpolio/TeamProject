@@ -30,60 +30,68 @@ HRESULT CDemoLevel::Initialize()
 
 HRESULT CDemoLevel::Awake()
 {
+	auto* pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
+		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+
+	PreloadKey key{};
+	key.type = ResourceType::Texture;
+	key.levelKey = "Demo_Level";  
+	key.resourceKey = "Bangboo_Sharkboo_NPC (merge).model";   
+	key.options.isSRGB = true;
+	pRcsMgr->RequestPreload(key);
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
-	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
-	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoAnimModel", CDemoShaderAnimModel::Create());
-	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
-
+	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
+	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoAnimModel", CDemoShaderAnimModel::Create());
+	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
+	//
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
-
+	//IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
+	//
 	CGameObject* Camera = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
-
-	CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
-		.Scale({500,500})
-		.Offset({0,0,})
-		.Build("Demo_UI");
-
-	pUIMgr->Add_UIObject(UI, "Demo_Level");
+	//
+	//CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
+	//	.Scale({500,500})
+	//	.Offset({0,0,})
+	//	.Build("Demo_UI");
+	//
+	//pUIMgr->Add_UIObject(UI, "Demo_Level");
+	//
 
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
 	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
 	m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
-
+	
 	CGameObject* Camera2 = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
+	//
+	//pObjMgr->Add_Object(Camera2, { "Demo_Level","Camera_Layer" });
+	//
+	// pObjMgr = m_pGameInstance->Get_ObjectMgr();
+	// pUIMgr = m_pGameInstance->Get_UIMgr();
 
-	pObjMgr->Add_Object(Camera2, { "Demo_Level","Camera_Layer" });
-
-	 pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	 pUIMgr = m_pGameInstance->Get_UIMgr();
-
-	CGameObject* Model = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoModel" })
-		.Position({ 0, 0, 0 })
-		.Scale({ 1.f, 1.f, 1.f })
-		.Build("Demo_Model");
-
-	pObjMgr->Add_Object(Model, { "Demo_Level","Model_Layer" });
-
-
-	Model = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoAnimModel" })
-		.Position({ 0, 5, 0 })
-		.Scale({ 20.f, 20.f, 20.f })
-		.Build("Demo_Model");
-
-	pObjMgr->Add_Object(Model, { "Demo_Level","Model_Layer" });
 	return S_OK;
 }
 
 void CDemoLevel::Update()
 {
+	auto* rm = CGameInstance::GetInstance()->Get_ResourceMgr();
+	vector<PreloadCompleted> completed;
+	rm->PumpPreloads(completed);
+
+	_uint done = 0, total = 0;
+	rm->GetPreloadProgress(done, total);
 }
 
 HRESULT CDemoLevel::Render()

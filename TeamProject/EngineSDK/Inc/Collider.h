@@ -32,14 +32,13 @@ public:
     void            OnTriggerEnter(ICollidable* pOther) override;
     void            OnTriggerExit(ICollidable* pOther) override;
 
-#ifdef _DEBUG
 private:
     _bool           m_bDebugRender = { true };
 public:
     virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
     _bool           IsDebugRender() { return m_bDebugRender; }
     void            Set_DebugRender(_bool bDebugRender) { m_bDebugRender = bDebugRender; }
-#endif
+
 
 public:
     void            Set_Center(const _float3& vCenter);

@@ -11,6 +11,8 @@
 #include "MiyabiState_Idle.h"
 #include "MiyabiState_Move.h"
 #include "MiyabiState_Attack.h"
+#include "MiyabiState_NormalAttack.h"
+#include "MiyabiState_ChargeAttack.h"
 
 #include "Renderer.h"
 #include "SkeletalModel.h"
@@ -60,7 +62,9 @@ void CMiyabi::Awake()
 {
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21, false, true, false);
+	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
+	Get_Component<CAnimator3D>()->Set_MotionBone(21);
+	Get_Component<CAnimator3D>()->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
 	Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();
@@ -155,24 +159,124 @@ void CMiyabi::Update_Input(_float dt)
 
 void CMiyabi::Update_States()
 {
-	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+	_bool bInMoveEnd = false;
+	_bool bInAttackEnd = false;
 
-	// Attack �Է� ó��
-	if (m_bIsAttack)
+	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
-		string strCurrent = m_pStateMachine->Get_CurrentStateName();
-		if (strCurrent == "Attack")
+		CMiyabiState_Move* pMove =
+			static_cast<CMiyabiState_Move*>(m_pStateMachine->Get_CurrentState());
+
+		if (pMove && pMove->Get_SubStateMachine())
 		{
-			// Attack ���¸� ���� ������Ʈ�ӽſ� Ʈ���� ����
-			CMiyabiState_Attack* pAttackState =
-				static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
-			if (pAttackState && pAttackState->Get_SubStateMachine())
-				pAttackState->Get_SubStateMachine()->Set_Trigger("Attack");
+			IHState<CMiyabi>* pMoveType =
+				dynamic_cast<IHState<CMiyabi>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
+
+			if (pMoveType && pMoveType->Has_SubStateMachine())
+			{
+				IBaseState<CMiyabi>* pAnim =
+					pMoveType->Get_SubStateMachine()->Get_CurrentState();
+
+				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
+			}
 		}
-		else
+	}
+	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		CMiyabiState_Attack* pAttack =
+			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+
+		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			// �ٸ� ���¸� Attack ���·� ����
-			m_pStateMachine->Set_Trigger("Attack");
+			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+			if (strSub == "NormalAttack")
+			{
+				CMiyabiState_NormalAttack* pNormal =
+					static_cast<CMiyabiState_NormalAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+
+				if (pNormal && pNormal->Get_SubStateMachine())
+				{
+					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
+					if (pNormalSub)
+					{
+						string strTag = pNormalSub->Get_Tag();
+						bInAttackEnd = (strTag == "End");
+
+						// �����
+						char buffer[256];
+						sprintf_s(buffer, "Attack Check: Sub=%s, Tag=%s, bInEnd=%s\n",
+							pNormal->Get_SubStateMachine()->Get_CurrentStateName().c_str(),
+							strTag.c_str(),
+							bInAttackEnd ? "TRUE" : "FALSE");
+						OutputDebugStringA(buffer);
+					}
+				}
+			}
+			else if (strSub == "ChargeAttack")
+			{
+				CMiyabiState_ChargeAttack* pCharge =
+					static_cast<CMiyabiState_ChargeAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("ChargeAttack"));
+
+				if (pCharge && pCharge->Get_SubStateMachine())
+				{
+					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
+					if (pChargeSub)
+					{
+						bInAttackEnd = (pChargeSub->Get_Tag() == "End");
+					}
+				}
+			}
+		}
+	}
+
+	// �����
+	if (bInMoveEnd || bInAttackEnd)
+	{
+		char buffer[256];
+		sprintf_s(buffer, "End State Detected: MoveEnd=%s, AttackEnd=%s, Input=%s\n",
+			bInMoveEnd ? "TRUE" : "FALSE",
+			bInAttackEnd ? "TRUE" : "FALSE",
+			m_bIsInput ? "TRUE" : "FALSE");
+		OutputDebugStringA(buffer);
+	}
+
+	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
+	{
+		OutputDebugStringA("FORCING IsMove = false for End Cancel!\n");
+		m_pStateMachine->Set_Bool("IsMove", false);
+	}
+	else
+	{
+		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+
+		if (m_bIsAttack)
+		{
+			string strCurrent = m_pStateMachine->Get_CurrentStateName();
+
+			if (strCurrent == "Idle")
+			{
+				m_pStateMachine->Set_Trigger("Attack");
+			}
+			else if (strCurrent == "Attack")
+			{
+				CMiyabiState_Attack* pAttackState =
+					static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+				if (pAttackState && pAttackState->Get_SubStateMachine())
+				{
+					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+					{
+						CMiyabiState_NormalAttack* pNormal =
+							static_cast<CMiyabiState_NormalAttack*>(
+								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+
+						if (pNormal && pNormal->Get_SubStateMachine())
+							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+					}
+				}
+			}
 		}
 	}
 }
@@ -206,20 +310,20 @@ HRESULT CMiyabi::Initialize_States()
 
 HRESULT CMiyabi::Initialize_Transitions()
 {
+	// Idle <-> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
-	m_pStateMachine->Register_AnyStateTransition("Attack",
+	// Idle -> Attack
+	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
 
+	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
-
-	m_pStateMachine->Register_Transition("Attack", "Walk",
-		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "IsMove");
 
 	return S_OK;
 }

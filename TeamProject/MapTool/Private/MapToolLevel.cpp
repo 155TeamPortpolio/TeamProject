@@ -12,6 +12,7 @@
 #include "Camera.h"
 #include "Grid.h"
 #include "PlacedObject.h"
+#include "TriggerObject.h"
 
 /* MapTool Gui */
 #include "MapToolGui.h"
@@ -30,6 +31,7 @@ HRESULT CMapToolLevel::Initialize()
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_DummyModel", CDummyModel::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_Grid", CGrid::Create());
 	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_PlacedObject", CPlacedObject::Create());
+	pProto->Add_ProtoType("MapTool_Level", "Proto_GameObject_TriggerObject", CTriggerObject::Create());
 
 	return S_OK;
 }
