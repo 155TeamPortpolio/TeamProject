@@ -118,6 +118,8 @@ void CAnimator3D::Update_Animation(_float dt)
 
 	Clear_Events();
 
+	Update_Playlist();
+
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
 
@@ -810,6 +812,7 @@ void CAnimator3D::Render_GUI()
 	ImGui::SeparatorText("Animator 3D");
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
+	GUI_Playlist();
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()
@@ -910,6 +913,111 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
+void CAnimator3D::GUI_Playlist()
+{
+	ImGui::SeparatorText("Playlist");
+
+	if (m_bPlaylistPlaying) {
+		if (ImGui::Button("Stop##Playlist"))
+			Playlist_Stop();
+	}
+	else {
+		if (ImGui::Button("Play##Playlist"))
+			Playlist_Play();
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Clear##Playlist"))
+		Playlist_Clear();
+	ImGui::SameLine();
+	ImGui::Checkbox("Loop Playlist", &m_bPlaylistLoop);
+
+	if (m_bPlaylistPlaying && m_iPlaylistIndex >= 0 && m_iPlaylistIndex < (_int)m_Playlist.size()) {
+		string status = "Playing: " + to_string(m_iPlaylistIndex + 1) + "/" + to_string(m_Playlist.size());
+		ImGui::Text(status.c_str());
+	}
+
+	float childWidth = ImGui::GetContentRegionAvail().x;
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * 6) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+	ImGui::BeginChild("##PlaylistEntries", ImVec2{ 0, childHeight }, true);
+
+	static _int iSelectedPlaylistIndex = -1;
+
+	for (_int i = 0; i < (_int)m_Playlist.size(); ++i)
+	{
+		auto& entry = m_Playlist[i];
+
+		ImGui::PushID(i);
+
+		string label = to_string(i + 1) + ". ";
+		if (isExistClip(entry.iClipIndex))
+			label += m_pAnimClips[entry.iClipIndex]->Get_Name();
+		else
+			label += "[Invalid]";
+
+		if (m_bPlaylistPlaying && m_iPlaylistIndex == i)
+			label += " [Playing]";
+
+		if (entry.bLoop)
+			label += " (Loop)";
+
+		if (ImGui::Selectable(label.c_str(), iSelectedPlaylistIndex == i, 0, ImVec2{ childWidth * 0.65f, textLineHeight }))
+			iSelectedPlaylistIndex = i;
+
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Up"))
+			Playlist_MoveUp(i);
+		ImGui::SameLine();
+		if (ImGui::SmallButton("Dn"))
+			Playlist_MoveDown(i);
+		ImGui::SameLine();
+		if (ImGui::SmallButton("X")) {
+			Playlist_Remove(i);
+			ImGui::PopID();
+			break;
+		}
+
+		ImGui::PopID();
+	}
+
+	ImGui::EndChild();
+
+	ImGui::Text("Add Animation:");
+
+	static _int iAddClipIndex = 0;
+	static _bool bAddLoop = false;
+	static _float fAddSpeed = 1.f;
+	static _float fAddBlendDuration = 0.2f;
+
+	ImGui::SetNextItemWidth(200.f);
+	if (ImGui::BeginCombo("##AddClip",
+		isExistClip(iAddClipIndex) ? m_pAnimClips[iAddClipIndex]->Get_Name().c_str() : "Select"))
+	{
+		for (_int i = 0; i < (_int)m_pAnimClips.size(); ++i)
+		{
+			if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), iAddClipIndex == i))
+				iAddClipIndex = i;
+			if (iAddClipIndex == i)
+				ImGui::SetItemDefaultFocus();
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::SameLine();
+	ImGui::Checkbox("Loop##Add", &bAddLoop);
+
+	ImGui::SetNextItemWidth(100.f);
+	ImGui::DragFloat("Speed##Add", &fAddSpeed, 0.01f, 0.1f, 5.f);
+	ImGui::SameLine();
+	ImGui::SetNextItemWidth(100.f);
+	ImGui::DragFloat("Blend##Add", &fAddBlendDuration, 0.01f, 0.f, 2.f);
+	ImGui::SameLine();
+
+	if (ImGui::Button("Add to Playlist"))
+		Playlist_Add(iAddClipIndex, bAddLoop, fAddSpeed, fAddBlendDuration);
+}
+
 void CAnimator3D::Reset_Anim()
 {
 	unordered_map<string, _uint> m_pAnimNames;
@@ -945,6 +1053,7 @@ void CAnimator3D::Free()
 	}
 	m_pAnimClips.clear();
 	m_AnimLayers.clear();
+	m_Playlist.clear();
 }
 
 //BUILDER------------------------------------------------------------------------------------------
@@ -1044,4 +1153,106 @@ HRESULT ChangeAnimBuild::Apply()
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
 	return S_OK;
+}
+
+void CAnimator3D::Playlist_Add(_int iClipIndex, _bool bLoop, _float fSpeed, _float fBlendDuration)
+{
+	if (!isExistClip(iClipIndex)) return;
+
+	PLAYLIST_ENTRY entry{};
+	entry.iClipIndex = iClipIndex;
+	entry.bLoop = bLoop;
+	entry.fSpeed = fSpeed;
+	entry.fBlendDuration = fBlendDuration;
+
+	m_Playlist.push_back(entry);
+}
+
+void CAnimator3D::Playlist_Add(const string& ClipName, _bool bLoop, _float fSpeed, _float fBlendDuration)
+{
+	Playlist_Add(Find_Clip(ClipName), bLoop, fSpeed, fBlendDuration);
+}
+
+void CAnimator3D::Playlist_Remove(_int iPlaylistIndex)
+{
+	if (iPlaylistIndex < 0 || iPlaylistIndex >= (_int)m_Playlist.size()) return;
+
+	m_Playlist.erase(m_Playlist.begin() + iPlaylistIndex);
+
+	if (m_iPlaylistIndex >= (_int)m_Playlist.size())
+		m_iPlaylistIndex = (_int)m_Playlist.size() - 1;
+}
+
+void CAnimator3D::Playlist_Clear()
+{
+	m_Playlist.clear();
+	m_iPlaylistIndex = -1;
+	m_bPlaylistPlaying = false;
+}
+
+void CAnimator3D::Playlist_Play()
+{
+	if (m_Playlist.empty()) return;
+
+	m_bPlaylistPlaying = true;
+	m_iPlaylistIndex = 0;
+
+	auto& entry = m_Playlist[m_iPlaylistIndex];
+	Set_Animation(entry.iClipIndex)
+		.Loop(entry.bLoop)
+		.Speed(entry.fSpeed)
+		.Apply();
+}
+
+void CAnimator3D::Playlist_Stop()
+{
+	m_bPlaylistPlaying = false;
+	m_iPlaylistIndex = -1;
+}
+
+void CAnimator3D::Playlist_MoveUp(_int iPlaylistIndex)
+{
+	if (iPlaylistIndex <= 0 || iPlaylistIndex >= (_int)m_Playlist.size()) return;
+
+	std::swap(m_Playlist[iPlaylistIndex], m_Playlist[iPlaylistIndex - 1]);
+}
+
+void CAnimator3D::Playlist_MoveDown(_int iPlaylistIndex)
+{
+	if (iPlaylistIndex < 0 || iPlaylistIndex >= (_int)m_Playlist.size() - 1) return;
+
+	std::swap(m_Playlist[iPlaylistIndex], m_Playlist[iPlaylistIndex + 1]);
+}
+
+void CAnimator3D::Update_Playlist()
+{
+	if (!m_bPlaylistPlaying) return;
+	if (m_Playlist.empty()) return;
+	if (m_iPlaylistIndex < 0 || m_iPlaylistIndex >= (_int)m_Playlist.size()) return;
+
+	auto& curEntry = m_Playlist[m_iPlaylistIndex];
+
+	if (curEntry.bLoop) return;
+
+	if (!isCurrentAnimEnd(0)) return;
+
+	++m_iPlaylistIndex;
+
+	if (m_iPlaylistIndex >= (_int)m_Playlist.size()) {
+		if (m_bPlaylistLoop) {
+			m_iPlaylistIndex = 0;
+		}
+		else {
+			m_bPlaylistPlaying = false;
+			m_iPlaylistIndex = -1;
+			return;
+		}
+	}
+
+	auto& nextEntry = m_Playlist[m_iPlaylistIndex];
+	Change_Animation(nextEntry.iClipIndex)
+		.Loop(nextEntry.bLoop)
+		.Speed(nextEntry.fSpeed)
+		.BlendDuration(nextEntry.fBlendDuration)
+		.Apply();
 }
