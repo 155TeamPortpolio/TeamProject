@@ -17,7 +17,7 @@ public:
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
         _bool               BaseLayer = { false };
-       
+
         _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         _int                iStartBoneIndex = { -1 };
@@ -31,10 +31,10 @@ public:
         _float3             vPrevRootPos{}; //이전 프레임 위치
         _float4             vPrevRootQuat{}; //이전 프레임 회전
         _float3             vRootDelta{};   //이동값
-         
+
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };
-        _bool   bUseBoneX, bUseBoneY, bUseBoneZ = { true };
+        AXIS    eExtractAxis = { AXIS::NONE };
         _float3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
         _float3 vPrevMotionBonePos{};   //이전 프레임 위치
 
@@ -134,13 +134,12 @@ public://애니매이터 데이터
 
     /*----- Setter -----*/
     
-    //애니매이션 트랜스폼을 제거 (false가 본 안따라감)
+    //모션본 직접설정
     void Set_MotionBone(_int MoveBoneIndex);
-
-    void Set_ExtractBoneMovement(_int MoveBoneIndex = -1,
-        _bool UseX = false, _bool UseY = false, _bool UseZ = false, _uint LayerIndex = 0);
-    void Reset_ExtractBoneMovement(_uint LayerIndex = 0);
-
+    //애니매이션 축에 움직임 제거 (ex : (AXIS::X | AXIS::Z) = XZ축제거)
+    void Set_RemoveAxisFromMotionBone(AXIS eAxis);
+    //축 고정 리셋
+    void Reset_ExtractBoneMovement();
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
     //애니매이션을 돌릴 본 설정
@@ -177,6 +176,8 @@ protected://애니매이션 체크
     //존재하는지 여부
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
+    //축이 있는지 계산
+    _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
 
 protected:
     //애니매이션 연산
@@ -209,7 +210,7 @@ protected:
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
-    vector<_float4x4> m_TPose = {}; //T-Pose Matrices
+    vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스

@@ -628,6 +628,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
