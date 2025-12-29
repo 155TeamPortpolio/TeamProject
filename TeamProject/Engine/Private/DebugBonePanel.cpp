@@ -168,14 +168,17 @@ void CDebugBonePanel::Render_GUI()
 
 				//RootDelta
 				_vector3 RootTrans = pAnimator->Get_RootBoneMoveDelta();
+				_vector4 RootQuat = pAnimator->Get_RootBoneQuatDelta();
 				_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
 				_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
 				_vector3 RootDir = RootMove;
 				RootDir.Normalize();
-
+				
 				ImGui::Separator();
 				ImGui::Text("RootBone Movement");
 				ImGui::Text("% .4f % .4f % .4f | % .4f ", RootTrans.x, RootTrans.y, RootTrans.z, RootMoveAmount);
+				ImGui::Text("RootBone Rotaion");
+				ImGui::Text("% .4f % .4f % .4f % .4f ", RootQuat.x, RootQuat.y, RootQuat.z, RootQuat.w);
 				ImGui::Text("RootBone Direction");
 				ImGui::Text("% .4f % .4f % .4f ", RootDir.x, RootDir.y, RootDir.z);
 
