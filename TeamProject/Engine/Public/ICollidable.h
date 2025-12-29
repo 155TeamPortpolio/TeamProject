@@ -18,9 +18,8 @@ public:
 	virtual void OnTriggerEnter(ICollidable* pOther) PURE;
 	virtual void OnTriggerExit(ICollidable* pOther) PURE;
 
-#ifdef _DEBUG
 	virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;
-#endif
+
 	_bool IsColliding() const { return !m_CurrentCollisions.empty(); }
 	_bool IsCollidingWith(ICollidable* pOther) const
 	{
