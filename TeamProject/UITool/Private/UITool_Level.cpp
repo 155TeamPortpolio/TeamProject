@@ -93,7 +93,7 @@ HRESULT CUITool_Level::Ready_Fonts()
 {
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
-	const string filePath = "../Bin/Resources/UI/";
+	const string filePath = "../Bin/Resources/Font/";
 	const filesystem::path root = filesystem::path(filePath);
 	if (!filesystem::exists(root) || !filesystem::is_directory(root))
 		return E_FAIL;
