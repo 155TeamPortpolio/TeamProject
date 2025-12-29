@@ -102,6 +102,18 @@ CChannel* CAnimationClip::Find_ChannelByBoneName(const string& boneName)
 	}
 }
 
+void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus)
+{
+	for (auto& Event : m_Events)
+	{
+		//이전 프레임엔 작았고 현재프레임엔 크면
+		if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
+		{
+			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
+		}
+	}
+}
+
 const KEYFRAME& CAnimationClip::Get_StartKeyFrameByBoneName(const string& BoneName) const
 {
 	for (auto Channel : m_Channels)
@@ -118,18 +130,6 @@ const KEYFRAME& CAnimationClip::Get_StartKeyFrameByBoneIndex(_uint BoneIndex) co
 			return Channel->Get_KeyFrames().front();
 
 	return KEYFRAME{};
-}
-
-void CAnimationClip::Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus)
-{
-	for (auto& Event : m_Events)
-	{
-		//이전 프레임엔 작았고 현재프레임엔 크면
-		if (PrevTrackPos < Event.EventTime && Event.EventTime <= CurTrackPos)
-		{
-			EventBus.emplace_back(EVENT_INST{ Event.EventType, Event.EventTag });
-		}
-	}
 }
 
 const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneName(const string& BoneName) const

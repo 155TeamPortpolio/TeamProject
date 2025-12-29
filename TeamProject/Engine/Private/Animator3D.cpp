@@ -678,9 +678,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (!hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
-			if (!hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
-			if (!hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
+			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
 
@@ -970,8 +970,6 @@ HRESULT SetAnimBuild::Apply()
 		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 
-		Layer.vPrevMotionBonePos = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_StartKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
@@ -1012,8 +1010,6 @@ HRESULT ChangeAnimBuild::Apply()
 		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 
-		Layer.vPrevMotionBonePos = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_StartKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
