@@ -40,7 +40,7 @@ void CSacrificeState_Attack::Update(CSacrifice* pOwner, _float dt)
 	vDeltaMove.y = 0.f;
 	vDeltaMove = vRight * vDeltaMove.x + vLook * -1.f * vDeltaMove.z;
 
-	pCCT->Move_RootMotion(vDeltaMove, _vector4(0.f, 0.f, 0.f, 1.f), dt);
+	pCCT->Move_RootMotion(vDeltaMove * 0.5f, _vector4(0.f, 0.f, 0.f, 1.f), dt);
 }
 
 void CSacrificeState_Attack::Exit(CSacrifice* pOwner)

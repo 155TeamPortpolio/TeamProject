@@ -53,7 +53,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
-	pAnimator->Set_ExtractBoneMovement(3, false, true, false); //Bip001
+	pAnimator->Set_MotionBone(3); //Bip001
+	pAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;

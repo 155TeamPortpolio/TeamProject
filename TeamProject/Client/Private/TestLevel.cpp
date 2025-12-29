@@ -95,7 +95,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "TrainingRoom");
+	//Ready_Map("Test_Level", "TrainingRoom");
 
 	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
@@ -105,10 +105,10 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
-
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
@@ -167,11 +167,11 @@ HRESULT CTestLevel::Awake()
 	//uiDirector->SetVisible("HUD", true);
 
 	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Build("Test_Cloud");
-
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	//auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+	//	.Build("Test_Cloud");
+	//
+	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 	return S_OK;
 }
 
