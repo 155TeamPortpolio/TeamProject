@@ -73,8 +73,8 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
-	_uint iRandIndex = Helper::Get_Random_Int(0, 1);
-	iRandIndex = 0;
+	_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+	//iRandIndex = 1;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -93,11 +93,14 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 	{
 		blackBoard.stateQueue.push_back("Attack01_Phase1");
 		blackBoard.stateQueue.push_back("Attack02_Phase1");
+		blackBoard.stateQueue.push_back("Attack08_Phase1");
 
 	}break;
 	case 3:
-	{
-
+	{	/* Hand Pattern */
+		blackBoard.stateQueue.push_back("Attack10_Phase1");
+		blackBoard.stateQueue.push_back("Attack11_Phase1");
+		blackBoard.stateQueue.push_back("Attack12_Phase1");
 	}break;
 	case 4:
 	{
@@ -112,7 +115,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_01").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_01").Loop(false).Speed(1.4f).Apply();
 }
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -126,7 +129,7 @@ void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.3f)
+		if (m_fAnimProgress >= 0.25f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -142,7 +145,7 @@ void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.5f).Apply();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -292,7 +295,7 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.8f)
+		if (m_fAnimProgress >= 0.7f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -386,6 +389,22 @@ void CSacrificeState_Attack_10_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_10_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_10_Phase1::Exit(CSacrifice* pOwner)
@@ -400,6 +419,22 @@ void CSacrificeState_Attack_11_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_11_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_11_Phase1::Exit(CSacrifice* pOwner)
@@ -414,6 +449,22 @@ void CSacrificeState_Attack_12_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_12_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_12_Phase1::Exit(CSacrifice* pOwner)

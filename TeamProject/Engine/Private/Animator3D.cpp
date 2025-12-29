@@ -992,7 +992,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//���̽� ���̾��� ��� ������ Ű������ ��ġ, ȸ���� ������
 	if (Layer.BaseLayer) {
-		Layer.vPrevRootPos = _float3{};
+		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;//_float3{};
 
 		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;

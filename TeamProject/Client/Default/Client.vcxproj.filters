@@ -168,7 +168,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
       <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
       <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
     </Filter>
@@ -183,7 +183,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
       <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
@@ -192,7 +192,7 @@
     </Filter>
     <Filter Include="03. Utility\01. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
       <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
     </Filter>
@@ -201,6 +201,21 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
+      <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2">
+      <UniqueIdentifier>{860138ee-fd87-40e9-a69f-db72f7236676}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade">
+      <UniqueIdentifier>{1f8f9abe-ec4a-48eb-8296-cd0ffc5e4589}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2">
+      <UniqueIdentifier>{3baf88b9-da5e-4713-9eb3-f5b702528d02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1">
+      <UniqueIdentifier>{8bd7fbf8-b451-46fb-bc1b-63d0d0a4cb52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -374,7 +389,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Hand.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\public\SequenceCam.h">
       <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
     </ClInclude>
@@ -395,18 +410,27 @@
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Attack_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
       <Filter>03. Utility\01. UILoader</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Move.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Run.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Evade.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -578,7 +602,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Hand.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\private\DebugCamTrace.cpp">
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
     </ClCompile>
@@ -593,7 +617,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Attack_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClCompile>
@@ -602,12 +626,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\CamLoader.cpp">
       <Filter>03. Utility\00. CamLoader</Filter>
-          </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Move.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Run.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Evade.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
