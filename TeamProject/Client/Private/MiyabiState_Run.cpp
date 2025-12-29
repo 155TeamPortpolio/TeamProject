@@ -46,15 +46,15 @@ void CMiyabiState_Run_Start::Update(CMiyabi* pOwner, _float dt)
     _vector3 vInputDir = pOwner->Get_InputDir();
     if (vInputDir.Length() > 0.01f)
     {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
-
-        if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-        }
+        //vInputDir.Normalize();
+        //pOwner->Rotate(vInputDir);
+        //_vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
+        //
+        //if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
+        //{
+        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+        //    pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        //}
     }
 }
 
@@ -74,15 +74,15 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
     _vector3 vInputDir = pOwner->Get_InputDir();
     if (vInputDir.Length() > 0.01f)
     {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
-
-        if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-        }
+        //vInputDir.Normalize();
+        //pOwner->Rotate(vInputDir);
+        //_vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
+        //
+        //if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
+        //{
+        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+        //    pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        //}
     }
 }
 

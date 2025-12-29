@@ -60,14 +60,14 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
         pOwner->Rotate(vInputDir);
 
         //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        _vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
-        vDelta.y *= -1.f;
-
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
+        //_vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
+        //vDelta.y *= -1.f;
+        //
+        //if (vDelta.x != 0.f || vDelta.z != 0.f)
+        //{
+        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+        //    pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        //}
     }
 }
 
@@ -92,14 +92,14 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         pOwner->Rotate(vInputDir);
 
         //_vector vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta(0);
-        _vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
-        vDelta.y *= -1.f;
-
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
+        //_vector3 vDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootMotionDelta() * -50.f;
+        //vDelta.y *= -1.f;
+        //
+        //if (vDelta.x != 0.f || vDelta.z != 0.f)
+        //{
+        //    _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+        //    pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        //}
     }
 }
 

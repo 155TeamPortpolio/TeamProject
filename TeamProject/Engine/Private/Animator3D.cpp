@@ -645,6 +645,38 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.BlendMatrices, Layer.fBlendTrackPosition,
 		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 
+	//Bone Extracter
+	if (Layer.BaseLayer) {
+		//Extract RootBone
+		auto RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
+		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+
+		if (Layer.bWrapped) {
+			XMStoreFloat3(&Layer.vRootDelta,
+				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+					+ XMLoadFloat3(&vCurRootPos)));
+			Layer.bWrapped = false;
+		}
+		else {
+
+			XMStoreFloat3(&Layer.vRootDelta,
+				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+		}
+
+		Layer.vPrevRootPos = vCurRootPos;
+
+		//Extract MoveBone
+		if (-1 != Layer.iMotionBoneIndex) {
+			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
+
+			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!Layer.bUseBoneX) mat._41 = 0.f;
+			if (!Layer.bUseBoneY) mat._42 = 0.f;
+			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+		}
+	}
+
+
 	//Animation Blend
 	Layer.fBlendElapsed += dt;
 	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
@@ -670,37 +702,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
-	//Bone Extracter
-	if (Layer.BaseLayer) {
-		//Extract RootBone
-		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
-		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
-
-		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootDelta,
-				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-					+ XMLoadFloat3(&vCurRootPos)));
-			Layer.bWrapped = false;
-		}
-		else {
-
-			XMStoreFloat3(&Layer.vRootDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-		}
-
-		Layer.vPrevRootPos = vCurRootPos;
-
-		//Extract MoveBone
-		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMotionBoneIndex];
-
-			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (!Layer.bUseBoneX) mat._41 = 0.f;
-			if (!Layer.bUseBoneY) mat._42 = 0.f;
-			if (!Layer.bUseBoneZ) mat._43 = 0.f;
-		}
-	}
-
+	
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
 		Layer.bBlending = false;

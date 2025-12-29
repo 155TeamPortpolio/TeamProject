@@ -193,6 +193,7 @@ void CTestLevel::Update()
 		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
 		sacrificeCCT.bAutoFit = false;
 		sacrificeCCT.fHeight = 1.28f;
+		sacrificeCCT.fDensity = 0.00001f;
 		sacrificeCCT.fRadius = 0.2f;
 		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
 		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
