@@ -85,10 +85,10 @@ void CCharacter::Rotate(_vector3 vDirection)
 void CCharacter::Update_Input(_float dt)
 {
 	int x = 0, z = 0;
-	if (KEY->Key_Hold(VK_UP))    z += 1;
-	if (KEY->Key_Hold(VK_DOWN))  z -= 1;
-	if (KEY->Key_Hold(VK_RIGHT)) x += 1;
-	if (KEY->Key_Hold(VK_LEFT))  x -= 1;
+	if (KEY->Key_Hold('W'))    z += 1;
+	if (KEY->Key_Hold('S'))  z -= 1;
+	if (KEY->Key_Hold('D')) x += 1;
+	if (KEY->Key_Hold('A'))  x -= 1;
 
 	m_vInputDir = {};
 

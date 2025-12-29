@@ -77,6 +77,7 @@ void CUVAnimationUI::Render_GUI()
             Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
         }
     }
+    Get_Component<CSprite2D>()->Render_GUI();
 
     // UV 애니메이션
     ImGui::SeparatorText(u8"UV애니메이션");

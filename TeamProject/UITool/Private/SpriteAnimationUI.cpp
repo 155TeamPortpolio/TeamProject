@@ -96,6 +96,7 @@ void CSpriteAnimationUI::Render_GUI()
             Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
         }
     }
+    Get_Component<CSprite2D>()->Render_GUI();
 
     // 스프라이트 애니메이션
     ImGui::SeparatorText(u8"스프라이트 애니메이션");

@@ -370,9 +370,6 @@
     <ClInclude Include="..\Public\LifeTimeColor.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CharacterController.h">
-      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
@@ -522,6 +519,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\HiZ_Culling.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
+     </ClInclude>
+     <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

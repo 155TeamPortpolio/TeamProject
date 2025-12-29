@@ -5,6 +5,8 @@
 #include "MiyabiState_ChargeAttack.h"
 #include "Miyabi.h"
 
+#include "CharacterController.h"
+
 void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
 {
     if (!m_pSubStateMachine)
@@ -35,6 +37,7 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
     }
 
     __super::Update(pOwner, dt);
+    Move_Motion(pOwner, dt);
 
     if (m_pSubStateMachine)
     {
@@ -126,6 +129,7 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
                 IBaseState<CMiyabi>* pAttackEnd =
                     pNormalAttack->Get_SubStateMachine()->Get_CurrentState();
 
+                // Attack_End가 아니면 거부
                 if (strNormalSub != "Attack_End")
                     return false;
 
@@ -135,6 +139,7 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
                 // Attack_End에서 Idle로만 전환 허용
                 if (strState == "Idle")
                 {
+                    // 애니메이션 끝났거나 입력이 있으면 허용
                     if (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input())
                         return true;
                 }
@@ -174,4 +179,19 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
     }
 
     return true;
+}
+
+void CMiyabiState_Attack::Move_Motion(CMiyabi* pOwner, _float dt)
+{
+    _vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+    if (vDir.Length() > 0.01f)
+    {
+        vDir.Normalize();
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        }
+    }
 }
