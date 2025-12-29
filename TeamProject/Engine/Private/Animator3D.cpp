@@ -76,12 +76,12 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 		return E_FAIL;
 	}
 
-	for(auto& Clip : m_pAnimClips)
-		Safe_AddRef(Clip);
+	for (auto& pClip : m_pAnimClips)
+		Safe_AddRef(pClip);
+
 
 	Resize_Layer(1);
-
-	//0번 레이어는 베이스레이어, Layer.BaseLayer는 절대 건들지 말것
+	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
@@ -207,7 +207,7 @@ _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
 	if (!isExistClip(Layer.iClipIndex))
-		return 0.f;
+		return true;
 
 	if (Layer.bBlending)
 		return false;
@@ -225,14 +225,26 @@ _bool CAnimator3D::isOverClipTiming(_float percent, _uint LayerIndex)
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (!isExistClip(Layer.iClipIndex))
-		return 0.f;
+	if (Layer.bBlending) { //Blending
+		if (!isExistClip(Layer.iNextClipIndex))
+			return true;
 
-	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+		auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-	_float threshold = nowClip->Get_Duration() * percent;
+		_float threshold = nextClip->Get_Duration() * percent;
 
-	return Layer.fCurrentTrackPosition >= threshold;
+		return Layer.fBlendTrackPosition >= threshold;
+	}
+	else { //NonBlending
+		if (!isExistClip(Layer.iClipIndex))
+			return true;
+
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+
+		_float threshold = nowClip->Get_Duration() * percent;
+
+		return Layer.fCurrentTrackPosition >= threshold;
+	}
 }
 
 _bool CAnimator3D::isBlending(_uint LayerIndex)
@@ -249,14 +261,23 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 		return 0.f;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
+	
+	if (Layer.bBlending) {
+		if (!isExistClip(Layer.iNextClipIndex))
+			return 0.f;
 
-	if (!isExistClip(Layer.iClipIndex) && !isExistClip(Layer.iNextClipIndex))
-		return 0.f;
+		auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
-	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
+		return Layer.fBlendTrackPosition / nextClip->Get_Duration();
+	}
+	else {
+		if (!isExistClip(Layer.iClipIndex))
+			return 0.f;
 
+		auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-	return Layer.bBlending ? Layer.fBlendTrackPosition / m_pAnimClips[Layer.iNextClipIndex]->Get_Duration() : Layer.fCurrentTrackPosition / nowClip->Get_Duration();
+		return Layer.fCurrentTrackPosition / nowClip->Get_Duration();
+	}
 }
 
 string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
@@ -265,12 +286,14 @@ string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 	
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
-	if (Layer.bBlending)
-		if(isExistClip(Layer.iNextClipIndex))
+	if (Layer.bBlending) {
+		if (isExistClip(Layer.iNextClipIndex))
 			return m_pAnimClips[Layer.iNextClipIndex]->Get_Name();
-	else
+	}
+	else {
 		if (isExistClip(Layer.iClipIndex))
 			return m_pAnimClips[Layer.iClipIndex]->Get_Name();
+	}
 
 	return "";
 }
@@ -293,7 +316,7 @@ const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
 	return m_EventBus;
 }
 
-_float3 CAnimator3D::Get_RootMotionDelta() const
+_float3 CAnimator3D::Get_RootBoneDelta() const
 {
 	for(auto& Layer : m_AnimLayers)
 		if(Layer.BaseLayer)
@@ -302,19 +325,19 @@ _float3 CAnimator3D::Get_RootMotionDelta() const
 	return _float3();
 }
 
-_vector CAnimator3D::Get_MoveBoneMotionDelta(_uint LayerIndex)
+_vector CAnimator3D::Get_MotionBoneDelta(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return XMVectorZero(); 
 
-	if (-1 == m_AnimLayers[LayerIndex].iMoveBoneIndex)
+	if (-1 == m_AnimLayers[LayerIndex].iMotionBoneIndex)
 		return XMVectorZero();
 
 	_float4x4 MoveBoneMat =
-		m_AnimLayers[LayerIndex].LocalMatrices[m_AnimLayers[LayerIndex].iMoveBoneIndex];
+		m_AnimLayers[LayerIndex].LocalMatrices[m_AnimLayers[LayerIndex].iMotionBoneIndex];
 
 	_float3 fCurAnimPos = { MoveBoneMat._41, MoveBoneMat._42, MoveBoneMat._43 };
 
-	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&m_AnimLayers[LayerIndex].vPrevMoveBonePos));
+	return (XMLoadFloat3(&fCurAnimPos) - XMLoadFloat3(&m_AnimLayers[LayerIndex].vPrevMotionBonePos));
 }
 
 _float CAnimator3D::Get_EaseDuration(_uint LayerIndex)
@@ -342,13 +365,17 @@ _bool CAnimator3D::Get_isPause(_uint LayerIndex)
 	return m_AnimLayers[LayerIndex].bPause;
 }
 
+void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
+{
+}
+
 void CAnimator3D::Set_ExtractBoneMovement(_int MoveBoneIndex, _bool UseX, _bool UseY, _bool UseZ, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
 
 	auto& Layer = m_AnimLayers[LayerIndex];
 
-	Layer.iMoveBoneIndex = MoveBoneIndex;
+	Layer.iMotionBoneIndex = MoveBoneIndex;
 	Layer.bUseBoneX = UseX;
 	Layer.bUseBoneY = UseY;
 	Layer.bUseBoneZ = UseZ;
@@ -360,7 +387,7 @@ void CAnimator3D::Reset_ExtractBoneMovement(_uint LayerIndex)
 
 	auto& Layer = m_AnimLayers[LayerIndex];
 
-	Layer.iMoveBoneIndex = -1;
+	Layer.iMotionBoneIndex = -1;
 	Layer.bUseBoneX = true;
 	Layer.bUseBoneY = true;
 	Layer.bUseBoneZ = true;
@@ -369,7 +396,7 @@ void CAnimator3D::Reset_ExtractBoneMovement(_uint LayerIndex)
 void CAnimator3D::Set_Pause(_bool bPause, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
-	m_AnimLayers[LayerIndex].bPause = true;
+	m_AnimLayers[LayerIndex].bPause = bPause;
 }
 
 void CAnimator3D::Set_StartBone(_int StartBoneIndex, _uint LayerIndex)
@@ -549,25 +576,36 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 
-	//RootBone
+	//Bone Extracter
 	if (Layer.BaseLayer) {
-		auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
+		//Extract RootBone
+		if (-1 != Layer.iRootBoneIndex) {
+			auto RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
-		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootDelta,
-				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-					+ XMLoadFloat3(&vCurRootPos)));
+			if (Layer.bWrapped) { //Roop
+				XMStoreFloat3(&Layer.vRootDelta,
+					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
+						+ XMLoadFloat3(&vCurRootPos)));
 
-			Layer.bWrapped = false;
+				Layer.bWrapped = false;
+			}
+			else {
+				XMStoreFloat3(&Layer.vRootDelta,
+					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+			}
+			Layer.vPrevRootPos = vCurRootPos;
 		}
-		else {
 
-			XMStoreFloat3(&Layer.vRootDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
+		//Extract MoveBone
+		if (-1 != Layer.iMotionBoneIndex) {
+			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+
+			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!Layer.bUseBoneX) mat._41 = 0.f;
+			if (!Layer.bUseBoneY) mat._42 = 0.f;
+			if (!Layer.bUseBoneZ) mat._43 = 0.f;
 		}
-
-		Layer.vPrevRootPos = vCurRootPos;
 	}
 }
 
@@ -631,8 +669,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
-	//RootBone
+	//Bone Extracter
 	if (Layer.BaseLayer) {
+		//Extract RootBone
 		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
@@ -649,6 +688,16 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 
 		Layer.vPrevRootPos = vCurRootPos;
+
+		//Extract MoveBone
+		if (-1 != Layer.iMotionBoneIndex) {
+			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMotionBoneIndex];
+
+			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+			if (!Layer.bUseBoneX) mat._41 = 0.f;
+			if (!Layer.bUseBoneY) mat._42 = 0.f;
+			if (!Layer.bUseBoneZ) mat._43 = 0.f;
+		}
 	}
 
 	//Convert End
@@ -717,20 +766,7 @@ void CAnimator3D::BuildBone()
 			break;
 		}
 	}
-	//Extract bone from BaseLayer
-	for (auto& Layer : m_AnimLayers) {
-		if (Layer.BaseLayer) {
-			if (-1 != Layer.iMoveBoneIndex) {
-				_float4x4& mat = m_TransformationMatrices[Layer.iMoveBoneIndex];
 
-				Layer.vPrevMoveBonePos = _float3(mat._41, mat._42, mat._43);
-				if (!Layer.bUseBoneX) mat._41 = 0.f;
-				if (!Layer.bUseBoneY) mat._42 = 0.f;
-				if (!Layer.bUseBoneZ) mat._43 = 0.f;
-			}
-		}
-	}
-	
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
@@ -842,7 +878,9 @@ void CAnimator3D::GUI_SelectAnim()
 
 		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
 		{
-			Change_Animation(i).Loop(true);
+			Change_Animation(i)
+				.Loop(true)
+				.Apply();
 		}
 		ImGui::PopID();
 
@@ -908,26 +946,36 @@ HRESULT SetAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	//m_pOwner->Reset_Layer(m_iLayerIndex);
+	//레이어, 클립 적용
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-
-	if (Layer.BaseLayer)
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
-
 	Layer.iClipIndex = m_iClipIndex;
 
+	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
+	if (Layer.BaseLayer) {
+		Layer.vPrevRootPos = _float3{};
+		Layer.vPrevRootQuat = _float4{};
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+									->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+	}
+	
+	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
 	Layer.fCurrentTrackPosition = 0.f;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
+	//애니매이션 재생속도
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
+	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-
 	return S_OK;
 }
 
@@ -939,15 +987,24 @@ HRESULT ChangeAnimBuild::Apply()
 
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
+	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_RootBone_EndPosition();
-		Layer.vPrevRootPos = _float3();
+		Layer.vPrevRootPos = _float3{};
+
+		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
 
+	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
+	//애니매이션 재생속도
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
@@ -960,7 +1017,7 @@ HRESULT ChangeAnimBuild::Apply()
 		Layer.LocalMatrices = Layer.BlendMatrices;
 	}
 
-
+	//클립끼리의 블랜드 상태
 	Layer.bBlending = true;
 	Layer.bKeepTrackPos = m_bKeepTrackPos;
 	Layer.iNextClipIndex = m_iClipIndex;
@@ -969,7 +1026,7 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;
 
+	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-
 	return S_OK;
 }

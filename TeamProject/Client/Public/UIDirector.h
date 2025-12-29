@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Base.h"
-#include "UILoader.h"
 
 NS_BEGIN(Engine)
 class CGameInstance; class CUI_Object;

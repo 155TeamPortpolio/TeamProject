@@ -16,6 +16,16 @@ class CResourceMgr final :
 		unordered_map<string, vector<class CAnimationClip*>>	m_Animations;
 		unordered_map<string, EFFECT_ASSET>						m_EffectAssets;
 		unordered_map <string, class CComputeShader*>			m_ComputeShaders;
+
+		mutable mutex shaderMutex;
+		mutable mutex textureMutex;
+		mutable mutex soundMutex;
+		mutable mutex modelMutex;
+		mutable mutex materialMutex;
+		mutable mutex bufferMutex;
+		mutable mutex animMutex;
+		mutable mutex effectMutex;
+		mutable mutex computeMutex;
 	};
 
 private:
@@ -29,7 +39,6 @@ public:
 
 public:
 	virtual class CSoundData* Load_Sound(const string& levelTag, const string& soundKey) override;
-
 	virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) override;
 	virtual class CVIBuffer* Load_VIBuffer(const string& levelTag, const string& bufferKey, BUFFER_TYPE eType) override;
 	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
@@ -41,25 +50,38 @@ public:
 
 	virtual string Get_ResourcePath(const string& resourceKey) override;
 	virtual HRESULT Add_ResourcePath(const string& resourceKey, const string& resourcePath) override;
-
 	virtual void Load_InitialResource() override;
+
+public:
+	_bool RequestPreload(const PreloadKey& key);
+	void PumpPreloads(vector<PreloadCompleted>& outCompleted);
+	void GetPreloadProgress(_uint& outDone, _uint& outTotal) const;
+
 private:
 	_int ValidLevel(const string& levelKey);
+	string MakePath(const string& pathKey);
 	vector<CMaterialData*>* GetOrLoad_MaterialData(const string& levelTag, const string& fileKey);
 	vector<CMaterialInstance*> Make_MaterialHandles(const vector<CMaterialData*>& dataList);
+
 private:
-	string MakePath(const string& pathKey);
+	void Init_PreLoader();
 
 private:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 	class CGameInstance* m_pInstance = { nullptr };
 
-	vector<RS_Pool >m_Resources;
+	///vector<RS_Pool >m_Resources;
+	deque<RS_Pool> m_Resources; 
 	unordered_map<string, _uint> m_LevelIndex;
+
 	unordered_map<string, string>m_KeyPath;
+	mutable mutex m_keyPathMutex;
+
 	unordered_map<string, vector<string>>m_MateriaFileKeys;
 
+private:
+	class CPreloadScheduler* m_pPreloader = { nullptr };
 public:
 	static CResourceMgr* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual void Free() override;

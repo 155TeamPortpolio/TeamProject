@@ -61,6 +61,12 @@
     <Filter Include="03. MapTool System\MapToolAssistant">
       <UniqueIdentifier>{7f8ef5a4-0199-445c-a416-6e4b67451c34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\MapTool Object\Decal Object">
+      <UniqueIdentifier>{1e4c20c3-d695-4a2d-ba14-0e8f9b1a4aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. Object\MapTool Object\Trigger Object">
+      <UniqueIdentifier>{482d9679-a300-492c-b307-31deb48303cd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -141,6 +147,12 @@
     <ClInclude Include="..\public\MapToolAssistant.h">
       <Filter>03. MapTool System\MapToolAssistant</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DecalObject.h">
+      <Filter>02. Object\MapTool Object\Decal Object</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TriggerObject.h">
+      <Filter>02. Object\MapTool Object\Trigger Object</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
@@ -216,6 +228,12 @@
     </ClCompile>
     <ClCompile Include="..\private\MapToolAssistant.cpp">
       <Filter>03. MapTool System\MapToolAssistant</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DecalObject.cpp">
+      <Filter>02. Object\MapTool Object\Decal Object</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TriggerObject.cpp">
+      <Filter>02. Object\MapTool Object\Trigger Object</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

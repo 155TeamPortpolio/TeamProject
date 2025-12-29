@@ -139,43 +139,48 @@ void CDebugBonePanel::Render_GUI()
 
 	ImGui::EndChild();
 	ImGui::Text("Selected Bone: %d", m_iSelectedBone);
+	
+
 	if (m_bShowMatrix) {
-		if (CAnimator3D* pAnimator = pTarget->Get_Component<CAnimator3D>()) {
-			const _float4x4& nowTrans = pAnimator->Get_CombinedBoneMatrices()[m_iSelectedBone];
+		if (-1 != m_iSelectedBone) {
+			if (CAnimator3D* pAnimator = pTarget->Get_Component<CAnimator3D>()) {
+				const _float4x4& nowTrans = pAnimator->Get_CombinedBoneMatrices()[m_iSelectedBone];
 
-			ImGui::SeparatorText("Bone Matrix (Combined)");
-			ImGui::BeginChild("##MatView", ImVec2(0, 110), true);
+				ImGui::SeparatorText("Bone Matrix (Combined)");
+				ImGui::BeginChild("##MatView", ImVec2(0, 110), true);
 
-			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._11, nowTrans._12, nowTrans._13, nowTrans._14);
-			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._21, nowTrans._22, nowTrans._23, nowTrans._24);
-			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
-			ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
+				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._11, nowTrans._12, nowTrans._13, nowTrans._14);
+				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._21, nowTrans._22, nowTrans._23, nowTrans._24);
+				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
+				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
 
-			_vector4 MoveTrans = pAnimator->Get_MoveBoneMotionDelta();
-			_vector3 move(MoveTrans.x, MoveTrans.y, MoveTrans.z);
-			_vector3 dir = move;
-			dir.Normalize();
+				//MotionDelta
+				_vector4 MoveTrans = pAnimator->Get_MotionBoneDelta();
+				_vector3 move(MoveTrans.x, MoveTrans.y, MoveTrans.z);
+				_vector3 dir = move;
+				dir.Normalize();
 
-			ImGui::Separator();
-			ImGui::Text("MoveBone Movement");
-			ImGui::Text("% .4f % .4f % .4f % .4f", MoveTrans.x, MoveTrans.y, MoveTrans.z, MoveTrans.w);
-			ImGui::Text("MoveBone Direction");
-			ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
-			
-			//RootDelta 추가할것
-			_vector3 RootTrans = pAnimator->Get_RootMotionDelta();
-			_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
-			_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
-			_vector3 RootDir = RootMove;
-			RootDir.Normalize();
+				ImGui::Separator();
+				ImGui::Text("MoveBone Movement");
+				ImGui::Text("% .4f % .4f % .4f % .4f", MoveTrans.x, MoveTrans.y, MoveTrans.z, MoveTrans.w);
+				ImGui::Text("MoveBone Direction");
+				ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
 
-			ImGui::Separator();
-			ImGui::Text("RootBone Movement");
-			ImGui::Text("% .4f % .4f % .4f | % .4f ", RootTrans.x, RootTrans.y, RootTrans.z, RootMoveAmount);
-			ImGui::Text("RootBone Direction");
-			ImGui::Text("% .4f % .4f % .4f ", RootDir.x, RootDir.y, RootDir.z);
+				//RootDelta
+				_vector3 RootTrans = pAnimator->Get_RootBoneDelta();
+				_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
+				_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
+				_vector3 RootDir = RootMove;
+				RootDir.Normalize();
 
-			ImGui::EndChild();
+				ImGui::Separator();
+				ImGui::Text("RootBone Movement");
+				ImGui::Text("% .4f % .4f % .4f | % .4f ", RootTrans.x, RootTrans.y, RootTrans.z, RootMoveAmount);
+				ImGui::Text("RootBone Direction");
+				ImGui::Text("% .4f % .4f % .4f ", RootDir.x, RootDir.y, RootDir.z);
+
+				ImGui::EndChild();
+			}
 		}
 	}
 
