@@ -44,6 +44,10 @@ namespace Helper
 
 	/*해당 디렉토리에 있는지*/
 	ENGINE_DLL _bool IsUnderDirectory(const filesystem::path& file, const filesystem::path& dir);
+
+	//주소(디렉토리)가 있는지 체크하고 없다면 폴더 생성
+	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
+
 }
 
 //json 저장 및 불러오기

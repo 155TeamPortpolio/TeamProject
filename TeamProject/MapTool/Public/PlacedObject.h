@@ -23,7 +23,6 @@ public:
 
 public:
     void Render_GUI() override;
-    void Delete_Object();
 
 public:
     static CPlacedObject* Create();

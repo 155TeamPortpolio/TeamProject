@@ -28,6 +28,8 @@ const vector<MapData_Path_Packet>* CMapDataCloud::Get_MapDataPacket(const string
 
 void CMapDataCloud::Rake_MapData(const string& MapDataFolderPath)
 {
+	Helper::EnsureDirectoryExist(MapDataFolderPath);
+
 	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
 	{
 		if (entry.is_regular_file() && entry.path().extension() == ".json")
