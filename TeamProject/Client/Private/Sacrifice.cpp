@@ -58,6 +58,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_MotionBone(3); //Bip001
 	pAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
 
+	auto pCCT = Get_Component<CCharacterController>();
+	pCCT->Set_GravityEnabled(false);
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -188,6 +191,9 @@ HRESULT CSacrifice::Initialize_Transitions()
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Attack");
 	m_pStateMachine->Register_Transition("Idle", "Evade",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Evade");
+	m_pStateMachine->Register_Transition("Idle", "Walk",
+		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Walk");
+
 
 	return S_OK;
 }
@@ -199,6 +205,7 @@ void CSacrifice::Update_States(_float dt)
 		m_pStateMachine->Change_State("Idle");
 		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
 		m_pStateMachine->Reset_Trigger("Idle_To_Evade");
+		m_pStateMachine->Reset_Trigger("Idle_To_Walk");
 		m_RequestIdle = false;
 	}
 
@@ -212,6 +219,10 @@ void CSacrifice::Update_States(_float dt)
 			if (0 == iRandIndex)
 			{
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			else if (1 == iRandIndex)
+			{
+				m_pStateMachine->Set_Trigger("Idle_To_Walk");
 			}
 			else
 			{

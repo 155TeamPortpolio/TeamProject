@@ -207,7 +207,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1">
       <UniqueIdentifier>{8bd7fbf8-b451-46fb-bc1b-63d0d0a4cb52}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Object\TestCloud">
       <UniqueIdentifier>{25fda550-74fc-4087-a876-d429ed1ca86e}</UniqueIdentifier>
     </Filter>
@@ -387,9 +387,6 @@
     <ClInclude Include="..\Public\SacrificeState_Attack.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\SacrificeState_Walk.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Born.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Born</Filter>
     </ClInclude>
@@ -440,9 +437,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\public\TestCloud.h">
       <Filter>02. GameObject\Object\TestCloud</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Walk.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -653,7 +653,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase1</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\private\TestCloud.cpp">
       <Filter>02. GameObject\Object\TestCloud</Filter>
     </ClCompile>

@@ -51,6 +51,7 @@ void CSacrificeState_Attack_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_Phase1::Register_States()
 {
+	m_pSubStateMachine->Register_State("Arm_Recover", CSacrificeState_ArmRecover_Phase1::Create());
 	m_pSubStateMachine->Register_State("Attack01_Phase1", CSacrificeState_Attack_01_Phase1::Create());
 	m_pSubStateMachine->Register_State("Attack02_Phase1", CSacrificeState_Attack_02_Phase1::Create());
 	m_pSubStateMachine->Register_State("Attack03_Phase1", CSacrificeState_Attack_03_Phase1::Create());
@@ -88,6 +89,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 		blackBoard.stateQueue.push_back("Attack07_Phase1");
 		blackBoard.stateQueue.push_back("Attack02_Phase1");
 		blackBoard.stateQueue.push_back("Attack03_Phase1");
+		blackBoard.stateQueue.push_back("Arm_Recover");
 	}break;
 	case 2:
 	{
@@ -109,6 +111,36 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 	default:
 		break;
 	}
+}
+
+void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Arm_Recover").Loop(false).Speed(1.4f).Apply();
+}
+
+void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
+{
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.25f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
+}
+
+void CSacrificeState_ArmRecover_Phase1::Exit(CSacrifice* pOwner)
+{
 }
 
 
@@ -205,7 +237,7 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.2f)
+		if (m_fAnimProgress >= 0.3f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -277,7 +309,7 @@ void CSacrificeState_Attack_06_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.4f).Apply();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -484,4 +516,3 @@ void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)
 void CSacrificeState_Attack_Turn_Phase1::Exit(CSacrifice* pOwner)
 {
 }
-
