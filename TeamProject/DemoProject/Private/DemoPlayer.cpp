@@ -86,7 +86,7 @@ void CDemoPlayer::Update(_float dt)
 				.Apply();
 			b = true;
 		}
-		_float3 Root = Get_Component<CAnimator3D>()->Get_RootBoneDelta();
+		_float3 Root = Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
 		pCCT->Move_RootMotion(XMLoadFloat3(&Root), XMVectorSet(0, 1, 0, 0), dt);
 		//vMoveDir += ;
 	}

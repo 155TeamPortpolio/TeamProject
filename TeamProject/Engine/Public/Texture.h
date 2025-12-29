@@ -14,10 +14,16 @@ public:
 	void Set_Key(const string& imguiID) { m_TextureKey = imguiID; }
 	ID3D11ShaderResourceView* Get_SRV(){ return m_pShaderResourceView; };
 	void Render_GUI(_float Width);
+
+	_uint2 Get_Size() { return m_TextureSize; };
+
+private:
+	void Extract_Size();
 private:
 	string m_TextureKey = {};
+	_uint2 m_TextureSize = {};
 	ID3D11ShaderResourceView* m_pShaderResourceView = { nullptr };
-
+	ID3D11Resource* m_pResource = { nullptr };
 public:
 	static CTexture* Create(ID3D11Device* pDevice, const wstring& filePath, const string& textureKey, _bool sRGBType);
 	virtual void Free() override;
