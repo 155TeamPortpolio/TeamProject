@@ -10,6 +10,15 @@ NS_BEGIN(MapTool)
 
 class CMapToolGui final : public CBasePanel
 {
+public:
+	struct TriggerTransform {
+		COLLIDER_TYPE	eType = { COLLIDER_TYPE::BOX };
+
+		_float3 vScale = { 1.f, 1.f, 1.f };
+		_float3 vTranslation = { 0.f, 0.f, 0.f };
+		_float3	vRotation = { 0.f, 0.f, 0.f };
+	};
+
 private:
 	CMapToolGui(GUI_CONTEXT* pContext);
 	virtual ~CMapToolGui() = default;
@@ -29,6 +38,8 @@ private:
 	void			Set_ObjectPicking(_bool is);
 	void			PreSet_ModelResource();
 	void			Save_MapData();
+	void			Select_PlaceType();
+	void			Select_TriggerType();
 
 	void			Render_ClearLayer();
 	
@@ -54,11 +65,15 @@ private:
 	vector<ModelPathPack>		m_ModelPathPack;
 
 	/* For.Object */
-	_int		m_iSelectedIndex = { -1 };
+	_int		m_iSelectedModelIndex = { -1 };
 	string		m_TagSelectedModelName = {};
 	_bool		m_isObjectPicking = { true };
 	_float3		m_vScale_PlacedObject = { 1.f, 1.f, 1.f };
+	_int		m_iSelectedLayerIndex = {};
 	
+	/* For.Trigger */
+	TriggerTransform	m_TriggerTransform = {};
+
 	/* For.Data */
 	MapData_Header	m_Data = {};
 	//string			m_TagArea = {};

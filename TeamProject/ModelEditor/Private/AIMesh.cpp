@@ -457,6 +457,14 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 
 			ofs.write(reinterpret_cast<const char*>(&vertex), sizeof(VTXMESH));
 		}
+
+		for (auto& pair : m_MeshOffset)
+		{
+			MESH_OFFSET offset;
+			offset.BoneIndex = pair.first;
+			offset.offsetMat = pair.second;
+			ofs.write(reinterpret_cast<const char*>(&offset), sizeof(MESH_OFFSET));
+		}
 	}
 
 	for (_uint indices : m_indices)

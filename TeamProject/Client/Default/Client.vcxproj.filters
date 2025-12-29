@@ -67,17 +67,11 @@
     <Filter Include="03. Utility">
       <UniqueIdentifier>{29ed2e80-51e7-4b83-bf45-611f7b08c5f5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\MapLoader">
-      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\TestMap">
       <UniqueIdentifier>{114539f5-03f2-4556-955b-1a6e3209f1d2}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\TestFloor">
       <UniqueIdentifier>{9a786c78-55f1-4399-939f-533a9bc4aecf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\MapLoader\MapDataCloud">
-      <UniqueIdentifier>{044cb39a-140b-4e9d-877b-519ad3be00cc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\TestObject\State">
       <UniqueIdentifier>{085a852c-00e6-436e-a955-b9fee3ab278d}</UniqueIdentifier>
@@ -99,9 +93,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi">
       <UniqueIdentifier>{f1da9023-8152-4d5f-a7dc-5ffc3950a500}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\HFSM">
-      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State">
       <UniqueIdentifier>{c6366ece-2c84-438e-90c7-8a3fcceea1da}</UniqueIdentifier>
@@ -151,12 +142,6 @@
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\00. CamLoader">
-      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\01. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-          </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
       <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
     </Filter>
@@ -165,6 +150,21 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\00. MapLoader">
+      <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\00. MapLoader\MapDataCloud">
+      <UniqueIdentifier>{044cb39a-140b-4e9d-877b-519ad3be00cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\01. HFSM">
+      <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\02. CamLoader">
+      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03. Utility\03. UILoader">
+      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -229,7 +229,7 @@
       <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapLoader.h">
-      <Filter>03. Utility\MapLoader</Filter>
+      <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Data_Struct.h">
       <Filter>99. Defines</Filter>
@@ -238,13 +238,13 @@
       <Filter>02. GameObject\Object\TestMap</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IBaseState.h">
-      <Filter>03. Utility\HFSM</Filter>
+      <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StateParameter.h">
-      <Filter>03. Utility\HFSM</Filter>
+      <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\StateMachine.h">
-      <Filter>03. Utility\HFSM</Filter>
+      <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestFloor.h">
       <Filter>02. GameObject\Object\TestFloor</Filter>
@@ -253,13 +253,13 @@
       <Filter>02. GameObject\Object</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapData_Defines.h">
-      <Filter>03. Utility\MapLoader</Filter>
+      <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MapDataCloud.h">
-      <Filter>03. Utility\MapLoader\MapDataCloud</Filter>
+      <Filter>03. Utility\00. MapLoader\MapDataCloud</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapLoader_Helper.h">
-      <Filter>03. Utility\MapLoader</Filter>
+      <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestState_Idle.h">
       <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
@@ -277,7 +277,7 @@
       <Filter>02. GameObject\Object\Character</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IHState.h">
-      <Filter>03. Utility\HFSM</Filter>
+      <Filter>03. Utility\01. HFSM</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Miyabi.h">
       <Filter>02. GameObject\Object\Character\Miyabi</Filter>
@@ -319,7 +319,7 @@
       <Filter>02. GameObject\Camera\03. SequenceCam</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamLoader.h">
-      <Filter>03. Utility\00. CamLoader</Filter>
+      <Filter>03. Utility\02. CamLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\public\DebugCamTrace.h">
       <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
@@ -334,8 +334,8 @@
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
-      <Filter>03. Utility\01. UILoader</Filter>
-          </ClInclude>
+      <Filter>03. Utility\03. UILoader</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_Move.h">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClInclude>
@@ -421,13 +421,13 @@
       <Filter>02. GameObject\MapObject\02. MapTriggerObject</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapLoader.cpp">
-      <Filter>03. Utility\MapLoader</Filter>
+      <Filter>03. Utility\00. MapLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestMap.cpp">
       <Filter>02. GameObject\Object\TestMap</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\StateParameter.cpp">
-      <Filter>03. Utility\HFSM</Filter>
+      <Filter>03. Utility\01. HFSM</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
@@ -436,7 +436,7 @@
       <Filter>02. GameObject\Object</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapDataCloud.cpp">
-      <Filter>03. Utility\MapLoader\MapDataCloud</Filter>
+      <Filter>03. Utility\00. MapLoader\MapDataCloud</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TestState_Idle.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
@@ -502,11 +502,11 @@
       <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UILoader.cpp">
-      <Filter>03. Utility\01. UILoader</Filter>
+      <Filter>03. Utility\03. UILoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CamLoader.cpp">
-      <Filter>03. Utility\00. CamLoader</Filter>
-          </ClCompile>
+      <Filter>03. Utility\02. CamLoader</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_Move.cpp">
       <Filter>02. GameObject\Object\Character\Miyabi\State\Move</Filter>
     </ClCompile>
