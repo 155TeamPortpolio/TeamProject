@@ -1477,7 +1477,10 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\CS_Hi_Z.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\CS_HiZ_Reduce.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_HiZ_Copy.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
   </ItemGroup>

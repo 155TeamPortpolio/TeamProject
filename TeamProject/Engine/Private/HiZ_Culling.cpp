@@ -70,48 +70,78 @@ HRESULT CHiZ_Culling::Initialize() {
 		if (FAILED(hr)) return hr;
 	}
 
+	m_pCopyBuffer = CreateDynamicCB(pDevice, sizeof(CB_CopyData));
+	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
+
+
 	return S_OK;
 }
-
 void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 {
 	Check_Resource();
-	if (!m_isReady)
-		return;
-	_uint mipCount = m_mipCount; // CalcMipCount °á°ú
+	if (!m_isReady) return;
 
-	for (_uint mip = 0; mip < mipCount - 1; ++mip)
 	{
-		_uint srcW = max(1u, m_texSize.x >> mip);
-		_uint srcH = max(1u, m_texSize.y >> mip);
-
-		_uint dstW = max(1u, srcW >> 1);
-		_uint dstH = max(1u, srcH >> 1);
+		_uint dstWidth = m_texSize.x;
+		_uint dstHeight = m_texSize.y;
 
 		_uint3 groupCount =
 		{
-			(dstW + m_threadSize.x - 1) / m_threadSize.x,
-			(dstH + m_threadSize.y - 1) / m_threadSize.y,
+			(dstWidth + m_threadSize.x - 1) / m_threadSize.x,
+			(dstHeight + m_threadSize.y - 1) / m_threadSize.y,
 			1
 		};
 
-		m_pComputeShader->Bind(pContext);
+		m_pCopyShader->Bind(pContext);
 
-		if (mip == 0)
-			m_pComputeShader->SetSRV(pContext, 0, m_pDepthSrv); 
-		else
-			m_pComputeShader->SetSRV(pContext, 0, m_HiZSrvMip[mip]);
+		CB_CopyData cbCopy = {};
+		cbCopy.dstSize = { dstWidth ,dstHeight };
 
-		m_pComputeShader->SetUAV(pContext, 0, m_HiZUav[mip]);
+		Update_CBuffer(pContext, m_pCopyBuffer, &cbCopy, sizeof(cbCopy));
 
-		m_pComputeShader->Dispatch(
-			pContext,
-			groupCount.x,
-			groupCount.y,
-			groupCount.z
-		);
+		m_pCopyShader->SetCB(pContext, 0, m_pCopyBuffer);
+		m_pCopyShader->SetSRV(pContext, 0, m_pDepthSrv);
+		m_pCopyShader->SetUAV(pContext, 0, m_HiZUav[0]);
 
-	
+		m_pCopyShader->Dispatch(pContext, groupCount.x, groupCount.y, groupCount.z);
+
+		ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
+		ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
+		pContext->CSSetShaderResources(0, 1, nullSrv);
+		pContext->CSSetUnorderedAccessViews(0, 1, nullUav, nullptr);
+	}
+
+	for (_uint srcMipIndex = 0; srcMipIndex < m_mipCount - 1; ++srcMipIndex)
+	{
+		_uint srcWidth = max(1u, m_texSize.x >> srcMipIndex);
+		_uint srcHeight = max(1u, m_texSize.y >> srcMipIndex);
+
+		_uint dstWidth = max(1u, srcWidth >> 1);
+		_uint dstHeight = max(1u, srcHeight >> 1);
+
+		_uint dstMipIndex = srcMipIndex + 1;
+
+		_uint3 groupCount =
+		{
+			(dstWidth + m_threadSize.x - 1) / m_threadSize.x,
+			(dstHeight + m_threadSize.y - 1) / m_threadSize.y,
+			1
+		};
+
+		m_pReduceShader->Bind(pContext);
+		CB_ReduceData cbReduce = {};
+		cbReduce.srcSize = { srcWidth ,srcHeight};
+		cbReduce.dstSize = { dstWidth ,dstHeight };
+
+		Update_CBuffer(pContext, m_pReduceBuffer, &cbReduce, sizeof(cbReduce));
+		m_pReduceShader->SetCB(pContext, 0, m_pReduceBuffer);
+
+		// SRV = HiZ src mip (slice SRV), UAV = HiZ dst mip
+		m_pReduceShader->SetSRV(pContext, 0, m_HiZSrvMip[srcMipIndex]);
+		m_pReduceShader->SetUAV(pContext, 0, m_HiZUav[dstMipIndex]);
+
+		m_pReduceShader->Dispatch(pContext, groupCount.x, groupCount.y, groupCount.z);
+
 		ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
 		ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
 		pContext->CSSetShaderResources(0, 1, nullSrv);
@@ -145,16 +175,34 @@ void CHiZ_Culling::Render_GUI()
 {
 	if (ImGui::Begin("Hi_Z"))
 	{
-		//D3D11ShaderResourceView* pSRV = m_pHiZSrv;
-		//f (pSRV)
-		//
-		//	ImGui::Image((ImTextureID)pSRV,
-		//		ImVec2(1280 / 5, 720 / 5));
-		//
+		if (m_mipCount > 0)
+		{
+			ImGui::SliderInt("Mip", &m_DebugMip, 0, (int)m_mipCount - 1);
+
+			ID3D11ShaderResourceView* srv = nullptr;
+			if (!m_HiZSrvMip.empty() && m_DebugMip >= 0 && m_DebugMip < (int)m_HiZSrvMip.size())
+				srv = m_HiZSrvMip[m_DebugMip];
+
+			if (srv)
+			{
+				float scale = 0.25f; 
+				ImGui::Text("Mip %d", m_DebugMip);
+				ImGui::Image((ImTextureID)srv, ImVec2(1280.0f * scale, 720.0f * scale));
+			}
+			else
+			{
+				ImGui::Text("SRV is null.");
+			}
+		}
+		else
+		{
+			ImGui::Text("No mip chain.");
+		}
 	}
 	ImGui::End();
 }
-#endif // _USING_GUI
+#endif
+
 
 
 _uint CHiZ_Culling::CalcMipCount(_uint width, _uint height)
@@ -167,6 +215,27 @@ _uint CHiZ_Culling::CalcMipCount(_uint width, _uint height)
 		++mip;
 	}
 	return mip;
+}
+
+ID3D11Buffer* CHiZ_Culling::CreateDynamicCB(ID3D11Device* device, _uint byteSize)
+{
+	D3D11_BUFFER_DESC bd = {};
+	bd.ByteWidth = (byteSize + 15) & ~15u;      
+	bd.Usage = D3D11_USAGE_DYNAMIC;
+	bd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+	ID3D11Buffer* buffer = nullptr;
+	HRESULT hr = device->CreateBuffer(&bd, nullptr, &buffer);
+	return SUCCEEDED(hr) ? buffer : nullptr;
+}
+
+void CHiZ_Culling::Update_CBuffer(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, UINT size)
+{
+	D3D11_MAPPED_SUBRESOURCE ms = {};
+	ctx->Map(cb, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms);
+	memcpy(ms.pData, data, size);
+	ctx->Unmap(cb, 0);
 }
 
 CHiZ_Culling* CHiZ_Culling::Create()
@@ -191,4 +260,6 @@ void CHiZ_Culling::Free()
 	Safe_Release(m_pDepthSrv);
 	Safe_Release(m_pCopyShader);
 	Safe_Release(m_pReduceShader);
+	Safe_Release(m_pCopyBuffer);
+	Safe_Release(m_pReduceBuffer);
 }

@@ -5,6 +5,20 @@ NS_BEGIN(Engine)
 class CHiZ_Culling :
     public CBase
 {
+    struct CB_CopyData
+    {
+        _uint2 dstSize;
+        _uint2 padding;
+    };
+
+    struct CB_ReduceData
+    {
+        _uint2 srcSize;
+        _uint2 dstSize;
+        _uint srcMip;
+        _uint3 padding;
+    };
+
 private:
     CHiZ_Culling();
     ~CHiZ_Culling() DEFAULT;
@@ -21,10 +35,11 @@ public:
 
 private:
     _uint CalcMipCount(_uint width, _uint height);
-
+    ID3D11Buffer* CreateDynamicCB(ID3D11Device* device, _uint byteSize);
+    void Update_CBuffer(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, UINT size);
 private:
     _bool m_isReady = { false };
-
+    _int m_DebugMip = { 0 };
     _uint m_mipCount = {};
     _uint2 m_texSize = {};
     _uint3 m_threadSize = {};
@@ -35,8 +50,11 @@ private:
     vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*¹Ó¸Ê SRVµé*/
 
     ID3D11ShaderResourceView* m_pDepthSrv = { nullptr };
-    class CComputeShader* m_pComputeShader = { nullptr };
+    class CComputeShader* m_pCopyShader = { nullptr };
+    class CComputeShader* m_pReduceShader = { nullptr };
 
+    ID3D11Buffer* m_pCopyBuffer = { nullptr };
+    ID3D11Buffer* m_pReduceBuffer = { nullptr };
 private:
     _uint3 m_iGroup = {};
 
