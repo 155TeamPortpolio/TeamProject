@@ -56,6 +56,7 @@ void CGUISystem::Update(_float dt)
 {
 	if (m_pGameInstance->Get_InputDev()->Key_Tap(VK_F9))
 		m_bActiveGUI = !m_bActiveGUI;
+	if (!m_bActiveGUI) return;
 
 	m_tGuiContext.viewPort = m_pGameInstance->Get_ClientSize();
 	m_GuiIo->DisplaySize = ImVec2(m_tGuiContext.viewPort.x, m_tGuiContext.viewPort.y);
@@ -79,12 +80,12 @@ void CGUISystem::Set_Theme()
 	style.GrabRounding = 6.0f;
 
 	style.TreeLinesFlags = ImGuiTreeNodeFlags_DrawLinesToNodes;
-	style.TreeLinesSize = 1.5f;        
-	style.TreeLinesRounding = 5.0f;      
+	style.TreeLinesSize = 1.5f;
+	style.TreeLinesRounding = 5.0f;
 
-	style.FramePadding = ImVec2(4, 4);   
-	style.ItemSpacing = ImVec2(2, 4);  
-	
+	style.FramePadding = ImVec2(4, 4);
+	style.ItemSpacing = ImVec2(2, 4);
+
 	style.FrameBorderSize = 1.5f;
 	style.SelectableTextAlign = ImVec2(0.0f, 0.5f);
 	style.ButtonTextAlign = ImVec2(0.5f, 0.5f);
@@ -164,11 +165,12 @@ void CGUISystem::Render_GUI()
 	GUI_Begin();
 
 	for (auto& panel : m_Panels) {
-		if(panel->Get_Active())
+		if (panel->Get_Active())
 			panel->Render_GUI();
 	}
-	
+
 	Render_Frame();
+	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
 #endif // _USING_GUI
@@ -210,7 +212,7 @@ void CGUISystem::Register_Panel(CBasePanel* pPanel)
 
 void CGUISystem::Test()
 {
-	if (ImGui::Begin("Level Selector")) 
+	if (ImGui::Begin("Level Selector"))
 	{
 		ImGui::Separator();
 		const auto& levelList = CGameInstance::GetInstance()->Get_LevelMgr()->Get_LevelList();
@@ -221,17 +223,35 @@ void CGUISystem::Test()
 			});
 
 		static _vector vec = XMVectorSet(1, 1, 1, 1);
-		vec= GuiUtil::Vector4Float("TestVector", vec);
+		vec = GuiUtil::Vector4Float("TestVector", vec);
 	}
-	ImGui::End(); 
+	ImGui::End();
 }
 
 void CGUISystem::Render_DebugBtn()
 {
 	ImGui::Begin("Render TargetView");
-	if (ImGui::Button("Render_Debug")){
+	if (ImGui::Button("Render_Debug")) {
 		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
 		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
+	}
+	ImGui::End();
+}
+
+void CGUISystem::Render_CollisionBtn()
+{
+	ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
+	ImGui::Begin("Collision", nullptr,
+		ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_AlwaysAutoResize);
+
+	_bool Render = CGameInstance::GetInstance()->Get_CollisionSystem()->Get_Render();
+	if (ImGui::Button(Render?"Collision Show":"Collision Hide")) {
+		CGameInstance::GetInstance()->Get_CollisionSystem()->Set_Render(!Render);
 	}
 	ImGui::End();
 }

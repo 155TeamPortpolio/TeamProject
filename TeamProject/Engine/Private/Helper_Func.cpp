@@ -445,6 +445,19 @@ ENGINE_DLL _bool Helper::IsUnderDirectory(const filesystem::path& file, const fi
 	}
 	return true;
 }
+
+ENGINE_DLL _bool Helper::EnsureDirectoryExist(const filesystem::path& dir)
+{
+	filesystem::path directory = dir;
+
+	error_code ec;
+
+	if (filesystem::exists(directory, ec))
+		return filesystem::is_directory(directory, ec); // 폴더면 true, 파일이면 false
+
+	filesystem::create_directories(directory, ec);      // 중간 경로까지 생성
+	return !ec && filesystem::is_directory(directory, ec);
+}
 // -------------------------------------------------------------------------------------------------
 
 ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)

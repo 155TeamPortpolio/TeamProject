@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "TestLevel.h"
 #include "GameInstance.h"
+#include "Helper_Func.h"
 
 #include "TestMap.h"
 #include "TestObject.h"
@@ -92,13 +93,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
-	//// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-	//Map Loader Logic is going to Change
-	//CMapLoader* pMapLoader = CMapLoader::Create("Test_Level", m_pMapDataCloud, "Test");
-	//if (nullptr == pMapLoader)
-	//	MSG_BOX("Failed to Load MapData!");
-	//Safe_Release(pMapLoader);
+	//============== Map ============================
+	Ready_Map("Test_Level", "TrainingRoom");
 
 	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
@@ -155,14 +151,15 @@ HRESULT CTestLevel::Awake()
 	Ready_Camera();
 
 	//==================== UI ===============
-	/*auto uiDirector = CUIDirector::GetInstance();
+	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize("Test_Level");
 	
 	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
 		.Asset("hud.json")
 		.Build("HUD");========
 	
-	uiDirector->Register(hudUI);*/
+	uiDirector->Register(hudUI);
+	//uiDirector->SetVisible("HUD", true);
 
 	// =====================TestCloud=========================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
@@ -189,6 +186,40 @@ void CTestLevel::Update()
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
+}
+
+void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
+{
+	//// Ready MapObject key and path to ResourceMgr 
+	Rake_MapResources();
+	//Map Loader Logic is going to Change
+	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, m_pMapDataCloud, AreaTag);
+	if (nullptr == pMapLoader)
+		MSG_BOX("Failed to Load MapData!");
+	Safe_Release(pMapLoader);
+}
+
+void CTestLevel::Rake_MapResources()
+{
+	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
+	Helper::EnsureDirectoryExist(MapDataFolderPath);
+
+
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".model")
+		{
+			filesystem::path ModelPath = entry.path();
+			filesystem::path MaterialPath = ModelPath;
+			MaterialPath.replace_extension(".mat");
+
+
+			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
+			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
+
+		}
+	}
 }
 
 void CTestLevel::Ready_Camera()
@@ -234,25 +265,6 @@ void CTestLevel::Ready_Camera()
 	GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
-}
-
-void CTestLevel::Rake_MapResources()
-{
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/MapData/Model/"))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
-		}
-	}
 }
 
 HRESULT CTestLevel::Render()

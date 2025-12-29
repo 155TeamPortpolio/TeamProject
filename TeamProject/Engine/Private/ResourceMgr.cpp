@@ -23,6 +23,8 @@
 #include "AnimationClip.h"
 #include "AnimationLayout.h"
 #include "ComputeShader.h"
+#include "ThreadPool.h"
+#include "PreloadScheduler.h"
 
 CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }, m_pContext{ pContext }, m_pInstance(CGameInstance::GetInstance())
@@ -34,9 +36,10 @@ CResourceMgr::CResourceMgr(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CResourceMgr::Initiallize()
 {
+	m_pPreloader = CPreloadScheduler::Create(CThreadPool::Create());
+	Init_PreLoader();
 	return S_OK;
 }
-
 
 void CResourceMgr::Clear_Resource(const string& levelTag)
 {
@@ -46,60 +49,99 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 		return;
 	}
 
-	for (auto& pair : m_Resources[index].m_Sounds)
-		Safe_Release(pair.second);
+	RS_Pool& pool = m_Resources[index];
 
-	for (auto& pair : m_Resources[index].m_Buffers)
-		Safe_Release(pair.second);
+	unordered_map<string, CSoundData*> sounds;
+	unordered_map<string, CVIBuffer*> buffers;
+	unordered_map<string, CTexture*> textures;
+	unordered_map<string, CShader*> shaders;
+	unordered_map<string, CModelData*> models;
+	unordered_map<string, vector<CMaterialData*>> materials;
+	unordered_map<string, vector<CAnimationClip*>> anims;
+	unordered_map<string, EFFECT_ASSET> effects;
+	unordered_map<string, CComputeShader*> computeShaders;
 
-	for (auto& pair : m_Resources[index].m_Textures)
-		Safe_Release(pair.second);
+	{
+		lock_guard<mutex> lockGuard(pool.soundMutex);
+		sounds.swap(pool.m_Sounds);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.bufferMutex);
+		buffers.swap(pool.m_Buffers);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.textureMutex);
+		textures.swap(pool.m_Textures);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.shaderMutex);
+		shaders.swap(pool.m_Shaders);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.modelMutex);
+		models.swap(pool.m_ModelDatas);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.materialMutex);
+		materials.swap(pool.m_MaterialInstances);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.animMutex);
+		anims.swap(pool.m_Animations);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.effectMutex);
+		effects.swap(pool.m_EffectAssets);
+	}
+	{
+		lock_guard<mutex> lockGuard(pool.computeMutex);
+		computeShaders.swap(pool.m_ComputeShaders);
+	}
 
-	for (auto& pair : m_Resources[index].m_Shaders)
-		Safe_Release(pair.second);
+	for (auto& pair : sounds) Safe_Release(pair.second);
+	for (auto& pair : buffers) Safe_Release(pair.second);
+	for (auto& pair : textures) Safe_Release(pair.second);
+	for (auto& pair : shaders) Safe_Release(pair.second);
+	for (auto& pair : models) Safe_Release(pair.second);
 
-	for (auto& pair : m_Resources[index].m_ModelDatas)
-		Safe_Release(pair.second);
-
-	for (auto& pair : m_Resources[index].m_MaterialInstances)
-		for (auto& materialData : pair.second)
+	for (auto& pair : materials)
+		for (auto* materialData : pair.second)
 			Safe_Release(materialData);
 
-	for (auto& pair : m_Resources[index].m_Animations)
-		for (auto& clipData : pair.second)
+	for (auto& pair : anims)
+		for (auto* clipData : pair.second)
 			Safe_Release(clipData);
 
-	for (auto& pair : m_Resources[index].m_EffectAssets)
-		for (auto& node : pair.second.Nodes)
+	for (auto& pair : effects)
+		for (auto* node : pair.second.Nodes)
 			Safe_Delete(node);
 
-	for (auto& pair : m_Resources[index].m_ComputeShaders)
+	for (auto& pair : computeShaders) 
 		Safe_Release(pair.second);
-
-	m_Resources[index] = {};
 }
 
 HRESULT CResourceMgr::Sync_To_Level()
 {
-	ILevelService* pLevelMgr = m_pInstance->Get_LevelMgr();
+	ILevelService* levelMgr = m_pInstance->Get_LevelMgr();
+	if (!levelMgr) return E_FAIL;
 
-	if (!pLevelMgr) {
-		MSG_BOX("There is No Level in Level Manager : CResourceMgr");
-		return E_FAIL;
-	}
+	vector<string> levelList = levelMgr->Get_LevelList();
 
-	vector<string> LevelList = pLevelMgr->Get_LevelList();
-	int iCount = 0;
-	for (string& name : LevelList) {
-		//m_ResourcePool.emplace(name, ResourcePool());
-		auto iter = m_LevelIndex.emplace(name, iCount);
-		if (iter.second == true)
-			m_Resources.push_back(RS_Pool());
+	if (m_Resources.empty())
+		m_Resources.resize(1);
 
-		iCount++;
-	}
+	m_LevelIndex.clear();
+	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
+
+	m_Resources.resize(1 + levelList.size());
+
+	for (_uint i = 0; i < levelList.size(); ++i)
+		m_LevelIndex.emplace(levelList[i], 1 + i);
+
 	return S_OK;
 }
+
+
 
 CSoundData* CResourceMgr::Load_Sound(const string& levelTag, const string& soundKey)
 {
@@ -159,7 +201,7 @@ CVIBuffer* CResourceMgr::Load_VIBuffer(const string& levelTag, const string& buf
 
 	if (buffer)
 		map.emplace(bufferKey, buffer);
-	
+
 	return buffer;
 }
 
@@ -197,6 +239,106 @@ vector<CMaterialInstance*> CResourceMgr::Make_MaterialHandles(
 	return handles;
 }
 
+void CResourceMgr::Init_PreLoader()
+{
+	m_pPreloader->BindLoader(ResourceType::Texture,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			CTexture* texture = this->Load_Texture(key.levelKey, key.resourceKey, key.options.isSRGB);
+			if (!texture)
+			{
+				errorMessage = "Load_Texture failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Sound,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			CSoundData* sound = this->Load_Sound(key.levelKey, key.resourceKey);
+			if (!sound)
+			{
+				errorMessage = "Load_Sound failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Shader,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			CShader* shader = this->Load_Shader(key.levelKey, key.resourceKey);
+			if (!shader)
+			{
+				errorMessage = "Load_Shader failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Model,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			CModelData* model = this->Load_ModelData(key.levelKey, key.resourceKey);
+			if (!model)
+			{
+				errorMessage = "Load_Model failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Material,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			vector<CMaterialData*>* material = this->GetOrLoad_MaterialData(key.levelKey, key.resourceKey);
+			if (!material)
+			{
+				errorMessage = "Load_Material failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+
+	m_pPreloader->BindLoader(ResourceType::ComputeShader,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			CComputeShader* pComShader = this->Load_ComputeShader(key.levelKey, key.resourceKey);
+			if (!pComShader)
+			{
+				errorMessage = "Load_ComputeShader failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Animation,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			vector<CAnimationClip*> AnimClips = this->Load_MetaClip(key.levelKey, key.resourceKey);
+			if (AnimClips.empty())
+			{
+				errorMessage = "Load_Animation failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+
+	m_pPreloader->BindLoader(ResourceType::Effect,
+		[this](const PreloadKey& key, string& errorMessage) -> bool
+		{
+			EFFECT_ASSET AssetFile = this->Load_EffectAsset(key.levelKey, key.resourceKey);
+			if (AssetFile.iNodeCount == 0)
+			{
+				errorMessage = "Load_EffectAsse failed: " + key.resourceKey;
+				return false;
+			}
+			return true;
+		});
+}
+
 vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	const string& levelTag,
 	const string& fileKey)
@@ -205,13 +347,21 @@ vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	if (levelIndex == -1)
 		return nullptr;
 
-	auto& materialMap = m_Resources[levelIndex].m_MaterialInstances;
+	RS_Pool& pool = m_Resources[levelIndex];
+	auto& materialMap = pool.m_MaterialInstances;
 
-	auto it = materialMap.find(fileKey);
-	if (it != materialMap.end())
-		return &it->second;
+	{
+		lock_guard<mutex> lockGuard(pool.materialMutex);
+		auto it = materialMap.find(fileKey);
+		if (it != materialMap.end())
+			return &it->second;
+	}
 
-	ifstream ifs(MakePath(fileKey), ios::binary);
+	const string materialPath = MakePath(fileKey);
+	if (materialPath.empty())
+		return nullptr;
+
+	ifstream ifs(materialPath, ios::binary);
 	if (!ifs.is_open())
 		return nullptr;
 
@@ -223,19 +373,37 @@ vector<CMaterialData*>* CResourceMgr::GetOrLoad_MaterialData(
 	vector<CMaterialData*> container;
 	container.reserve(header.MaterialDataCount);
 
-	string filePath = MakePath(header.materialFileKey);
-	string directory = filesystem::path(filePath).parent_path().string() + "/";
+	const string baseFilePath = MakePath(header.materialFileKey);
+	const string directory = filesystem::path(baseFilePath).parent_path().string() + "/";
 
 	for (size_t i = 0; i < header.MaterialDataCount; ++i)
 	{
 		CMaterialData* data = CMaterialData::Create(levelTag, ifs, directory);
-		if (!data) return nullptr;
+		if (!data)
+		{
+			for (auto* created : container)
+				Safe_Release(created);
+			return nullptr;
+		}
 		container.push_back(data);
 	}
 
-	auto [insertIt, inserted] = materialMap.emplace(fileKey, std::move(container));
-	return &insertIt->second;
+	{
+		lock_guard<mutex> lockGuard(pool.materialMutex);
+
+		auto it = materialMap.find(fileKey);
+		if (it != materialMap.end())
+		{
+			for (auto* created : container)
+				Safe_Release(created);
+			return &it->second;
+		}
+
+		auto [insertIt, inserted] = materialMap.emplace(fileKey, std::move(container));
+		return &insertIt->second;
+	}
 }
+
 
 CShader* CResourceMgr::Load_Shader(const string& levelTag, const string& shaderKey)
 {
@@ -245,18 +413,36 @@ CShader* CResourceMgr::Load_Shader(const string& levelTag, const string& shaderK
 		return nullptr;
 	}
 
-	auto& map = m_Resources[index].m_Shaders;
-	auto iter = map.find(shaderKey);
+	RS_Pool& pool = m_Resources[index];
 
-	if (iter != map.end()) return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].shaderMutex);
+		auto it = pool.m_Shaders.find(shaderKey);
+		if (it != pool.m_Shaders.end())
+			return it->second;
+	}
 
 	if (MakePath(shaderKey).empty()) {
 		MSG_BOX("There is No Key : Load_Shader");
 	}
-	CShader* pData = CShader::Create(m_pDevice, MakePath(shaderKey), shaderKey);
-	map.emplace(shaderKey, pData);
 
-	return pData;
+	CShader* pData = CShader::Create(m_pDevice, MakePath(shaderKey), shaderKey);
+	if (!pData)
+		return nullptr;
+
+	{
+		lock_guard<mutex> lockGuard(pool.shaderMutex);
+
+		auto it = pool.m_Shaders.find(shaderKey);
+		if (it != pool.m_Shaders.end())
+		{
+			Safe_Release(pData);
+			return it->second;
+		}
+
+		pool.m_Shaders.emplace(shaderKey, pData);
+		return pData;
+	}
 }
 
 CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType)
@@ -266,18 +452,34 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 		MSG_BOX("Wrong Level Tag. :Load_Texture ");
 		return nullptr;
 	}
+	RS_Pool& pool = m_Resources[index];
 
-	auto& map = m_Resources[index].m_Textures;
-	auto iter = map.find(textureKey);
-
-	if (iter != map.end()) return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].textureMutex);
+		auto it = pool.m_Textures.find(textureKey);
+		if (it != pool.m_Textures.end())
+			return it->second;
+	}
 
 	wstring path = Helper::ConvertToWideString(MakePath(textureKey));
 	CTexture* pData = CTexture::Create(m_pDevice, path, textureKey, sRGBType);
-	if(pData)
-		map.emplace(textureKey, pData);
-	
-	return pData;
+
+	if (!pData)
+		return nullptr;
+
+	{
+		lock_guard<mutex> lockGuard(pool.textureMutex);
+
+		auto it = pool.m_Textures.find(textureKey);
+		if (it != pool.m_Textures.end())
+		{
+			Safe_Release(pData);
+			return it->second;
+		}
+
+		pool.m_Textures.emplace(textureKey, pData);
+		return pData;
+	}
 }
 
 vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
@@ -288,34 +490,50 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 		return vector<class CAnimationClip*>();
 	}
 
-	auto& map = m_Resources[index].m_Animations;
-	auto iter = map.find(MetaClipKey);
+	RS_Pool& pool = m_Resources[index];
 
-	if (iter != map.end()) {
-		if(!iter->second.empty())
-			return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].animMutex);
+		auto it = pool.m_Animations.find(MetaClipKey);
+		if (it != pool.m_Animations.end())
+			return it->second;
 	}
+	const string metaPath = Get_ResourcePath(MetaClipKey);
+	const string animDir = filesystem::path(metaPath).parent_path().string();
 
-	auto MetaData = Helper::LoadJson<vector<ANIM_CLIP>>(MakePath(MetaClipKey));
+	auto MetaData = Helper::LoadJson<vector<ANIM_CLIP>>(metaPath);
 
 	vector<CAnimationClip*> Clips;
+	Clips.reserve(MetaData.size());
+
 	for (auto& Meta : MetaData) {
 
-		string AnimPath = std::filesystem::path(Get_ResourcePath(MetaClipKey)).parent_path().string() + "\\";
-		AnimPath += Meta.ClipTag + ".anim";
+		string animPath = animDir + "\\" + Meta.ClipTag + ".anim";
+		CAnimationClip* pClip = CAnimationClip::Create(animPath);
 
-		CAnimationClip* pClip = CAnimationClip::Create(AnimPath);
-
-		if(!Meta.Events.empty())
+		if (!Meta.Events.empty())
 			pClip->Set_Events(Meta.Events);
-			
+
 		if (pClip)
 			Clips.push_back(pClip);
 	}
+	if (Clips.empty()) return {};
+	{
+		lock_guard<mutex> lockGuard(pool.animMutex);
 
-	map.emplace(MetaClipKey, Clips);
+		auto it = pool.m_Animations.find(MetaClipKey);
+		if (it != pool.m_Animations.end())
+		{
+			for (auto pData : Clips)
+			{
+				Safe_Release(pData);
+			}
+			return it->second;
+		}
 
-	return Clips;
+		pool.m_Animations.emplace(MetaClipKey, Clips);
+		return Clips;
+	}
 }
 
 EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string& effectTag)
@@ -329,10 +547,14 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 		return EFFECT_ASSET();
 	}
 
-	auto& map = m_Resources[index].m_EffectAssets;
-	auto iter = map.find(effectTag);
+	RS_Pool& pool = m_Resources[index];
 
-	if (iter != map.end()) return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].effectMutex);
+		auto it = pool.m_EffectAssets.find(effectTag);
+		if (it != pool.m_EffectAssets.end())
+			return it->second;
+	}
 
 	string filePath = MakePath(effectTag);
 	ifstream file(filePath);
@@ -369,9 +591,18 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 		}
 	}
 
-	map.emplace(effectTag, Effect);
+	{
+		lock_guard<mutex> lockGuard(pool.effectMutex);
 
-	return Effect;
+		auto it = pool.m_EffectAssets.find(effectTag);
+		if (it != pool.m_EffectAssets.end())
+		{
+			return it->second;
+		}
+
+		pool.m_EffectAssets.emplace(effectTag, Effect);
+		return Effect;
+	}
 }
 
 CComputeShader* CResourceMgr::Load_ComputeShader(const string& levelTag, const string& shaderKey)
@@ -382,18 +613,35 @@ CComputeShader* CResourceMgr::Load_ComputeShader(const string& levelTag, const s
 		return nullptr;
 	}
 
-	auto& map = m_Resources[index].m_ComputeShaders;
-	auto iter = map.find(shaderKey);
+	RS_Pool& pool = m_Resources[index];
 
-	if (iter != map.end()) return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].computeMutex);
+		auto it = pool.m_ComputeShaders.find(shaderKey);
+		if (it != pool.m_ComputeShaders.end())
+			return it->second;
+	}
 
 	if (MakePath(shaderKey).empty()) {
 		MSG_BOX("There is No Key : Load_ComputeShader");
 	}
-	CComputeShader* pData = CComputeShader::Create(m_pDevice, MakePath(shaderKey), shaderKey);
-	map.emplace(shaderKey, pData);
 
-	return pData;
+	CComputeShader* pData = CComputeShader::Create(m_pDevice, MakePath(shaderKey), shaderKey);
+	if (!pData)
+		return nullptr;
+
+	{
+		lock_guard<mutex> lockGuard(pool.computeMutex);
+		auto it = pool.m_ComputeShaders.find(shaderKey);
+		if (it != pool.m_ComputeShaders.end())
+		{
+			Safe_Release(pData);
+			return it->second;
+		}
+		pool.m_ComputeShaders.emplace(shaderKey, pData);
+
+		return pData;
+	}
 }
 
 CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& ModelKey)
@@ -404,30 +652,47 @@ CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& M
 		return nullptr;
 	}
 
-	auto& map = m_Resources[index].m_ModelDatas;
-	auto iter = map.find(ModelKey);
+	RS_Pool& pool = m_Resources[index];
 
-	if (iter != map.end()) return iter->second;
+	{
+		lock_guard<mutex> lockGuard(m_Resources[index].modelMutex);
+		auto it = pool.m_ModelDatas.find(ModelKey);
+		if (it != pool.m_ModelDatas.end())
+			return it->second;
+	}
 
 	CModelData* pData = CModelData::Create(MakePath(ModelKey), m_pDevice);
-	if (pData)
-		map.emplace(ModelKey, pData);
-	else
- 		pData = m_Resources[0].m_ModelDatas["Default.model"];
+	if (!pData)
+		pData = m_Resources[0].m_ModelDatas["Default.model"];
 
-	return pData;
+	{
+		lock_guard<mutex> lockGuard(pool.modelMutex);
+		auto it = pool.m_ModelDatas.find(ModelKey);
+		if (it != pool.m_ModelDatas.end())
+		{
+			Safe_Release(pData);
+			return it->second;
+		}
+
+		pool.m_ModelDatas.emplace(ModelKey, pData);
+		return pData;
+	}
 }
 
 
 string CResourceMgr::Get_ResourcePath(const string& resourceKey)
 {
-	auto iter = m_KeyPath.find(resourceKey);
-	if (iter != m_KeyPath.end()) return iter->second;
-	else return string();
+	lock_guard<std::mutex> lockGuard(m_keyPathMutex);
+
+	auto it = m_KeyPath.find(resourceKey);
+	if (it == m_KeyPath.end())
+		return string{};
+	return it->second;
 }
 
 HRESULT CResourceMgr::Add_ResourcePath(const string& resourceKey, const string& resourcePath)
 {
+	lock_guard<mutex> lockGuard(m_keyPathMutex);
 	auto iter = m_KeyPath.find(resourceKey);
 
 	if (iter != m_KeyPath.end()) {
@@ -451,8 +716,6 @@ _int CResourceMgr::ValidLevel(const string& levelKey)
 
 void CResourceMgr::Load_InitialResource()
 {
-	/*���ҽ� �δ� �ʿ�. �ʱ� �ε� �ʹ� ���� �ɸ�*/
-
 	m_LevelIndex.emplace(G_GlobalLevelKey, 0);
 	m_Resources.resize(1);
 
@@ -504,10 +767,10 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_DeadListInit.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl", "CS_Particle_DeadListInit.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_BuildInstance.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl", "CS_Particle_BuildInstance.hlsl"));
-	
+
 	/*Default*/
 	m_Resources[0].m_ModelDatas.emplace("Default.model", CModelData::Create("../../DefaultSource/Default.model", m_pDevice));
-	m_Resources[0].m_Textures.emplace("Default.dds", CTexture::Create(m_pDevice,L"../../DefaultSource/Default.dds","Default.dds",false));
+	m_Resources[0].m_Textures.emplace("Default.dds", CTexture::Create(m_pDevice, L"../../DefaultSource/Default.dds", "Default.dds", false));
 	{
 		vector<CMaterialData*>* defaultData =
 			GetOrLoad_MaterialData(G_GlobalLevelKey, "Default.mat");
@@ -515,6 +778,21 @@ void CResourceMgr::Load_InitialResource()
 		if (!defaultData)
 			MSG_BOX("Failed to preload Default.mat");
 	}
+}
+
+_bool CResourceMgr::RequestPreload(const PreloadKey& key)
+{
+	return m_pPreloader->Request(key);
+}
+
+void CResourceMgr::PumpPreloads(vector<PreloadCompleted>& outCompleted)
+{
+	m_pPreloader->Pump(outCompleted);
+}
+
+void CResourceMgr::GetPreloadProgress(_uint& outDone, _uint& outTotal) const
+{
+	m_pPreloader->GetProgress(outDone, outTotal);
 }
 
 
@@ -552,4 +830,5 @@ void CResourceMgr::Free()
 	Safe_Release(m_pInstance);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
+	Safe_Release(m_pPreloader);
 }

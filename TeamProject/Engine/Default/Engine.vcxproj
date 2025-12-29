@@ -353,6 +353,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\PlaneModel.h" />
     <ClInclude Include="..\public\PointModel.h" />
     <ClInclude Include="..\public\PostRenderer.h" />
+    <ClInclude Include="..\Public\PreloadScheduler.h" />
+    <ClInclude Include="..\Public\PreLoad_Struct.h" />
     <ClInclude Include="..\Public\PrototypeMgr.h" />
     <ClInclude Include="..\Public\RayReceiver.h" />
     <ClInclude Include="..\Public\RaySystem.h" />
@@ -377,6 +379,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
     <ClInclude Include="..\Public\Transform.h" />
@@ -491,6 +494,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\PlaneModel.cpp" />
     <ClCompile Include="..\private\PointModel.cpp" />
     <ClCompile Include="..\private\PostRenderer.cpp" />
+    <ClCompile Include="..\Private\PreloadScheduler.cpp" />
     <ClCompile Include="..\Private\PrototypeMgr.cpp" />
     <ClCompile Include="..\Private\RayReceiver.cpp" />
     <ClCompile Include="..\Private\RaySystem.cpp" />
@@ -515,6 +519,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\TextSlot.cpp" />
     <ClCompile Include="..\Private\Texture.cpp" />
     <ClCompile Include="..\Private\TextureSheetAnimation.cpp" />
+    <ClCompile Include="..\Private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
@@ -625,6 +630,7 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_EffectMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_DemoInstance.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_InstancePoint.hlsl" />
