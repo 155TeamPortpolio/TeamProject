@@ -4,15 +4,20 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
+#include "Texture.h"
 #include "Helper_Func.h"
 
-CUIObject_Tool::CUIObject_Tool()
+namespace
 {
-}
-
-CUIObject_Tool::CUIObject_Tool(const CUIObject_Tool& rhs)
-    : CUI_Object(rhs)
-{
+    _float GetSizeRatio(UISizeMode mode)
+    {
+        switch (mode)
+        {
+        case UISizeMode::FHD: return 1.f;
+        case UISizeMode::QHD: return 1920.f / 2560.f;
+        case UISizeMode::UHD: return 1920.f / 3840.f;
+        }
+    }
 }
 
 HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
@@ -236,8 +241,26 @@ void CUIObject_Tool::Render_GUI_Layout()
     ImGui::TextDisabled("Selected: %u", (_uint)m_eAnchor);
 
     ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&m_vAnchorOffset));
+    // -----------------------------------------------------------------------
+    if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
+        m_sizeFHD = m_vSize;
 
-    ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    const _float curRatio = GetSizeRatio(m_sizeMode);
+
+    if (ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
+        m_sizeFHD.x = m_vSize.x / curRatio;
+        m_sizeFHD.y = m_vSize.y / curRatio;
+    }
+
+    static const char* kModes[] = {"FHD (1920x1080)", "QHD (2560x1440)", "UHD (3840x2160)"};
+    int mode = (int)m_sizeMode;
+    if (ImGui::Combo(u8"기준 해상도", &mode, kModes, IM_ARRAYSIZE(kModes)))
+    {
+        m_sizeMode = (UISizeMode)mode;
+        const _float newRatio = GetSizeRatio(m_sizeMode);
+        m_vSize = {m_sizeFHD.x * newRatio, m_sizeFHD.y * newRatio};
+    }
 }
 
 void CUIObject_Tool::Render_GUI_Transform()
@@ -390,6 +413,24 @@ void CUIObject_Tool::Render_GUI_Color()
 {
     ImGui::SeparatorText(u8"컬러");
     ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
+}
+
+void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
+{
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Change_Texture(idx, levelKey, texKey);
+
+    if (!applyOriginSize || !Get_OriginTexSize()) return;
+
+    m_sizeMode = UISizeMode::FHD;
+
+    auto tex = sprite->Get_Texture(idx);
+    auto size = tex->Get_Size();
+
+    m_sizeFHD = {(float)size.x, (float)size.y};
+
+    const _float ratio = GetSizeRatio(m_sizeMode);
+    Set_Size({m_sizeFHD.x * ratio, m_sizeFHD.y * ratio});
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
