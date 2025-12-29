@@ -141,15 +141,6 @@ const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneName(const string& BoneName
 	return KEYFRAME{};
 }
 
-const KEYFRAME& CAnimationClip::Get_StartKeyFrameByBoneIndex(_uint BoneIndex) const
-{
-	for (auto Channel : m_Channels)
-		if (BoneIndex == Channel->Get_BoneIndex())
-			return Channel->Get_KeyFrames().front();
-
-	return KEYFRAME{};
-}
-
 const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const
 {
 	for (auto Channel : m_Channels)

@@ -95,7 +95,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "TrainingRoom");
+	//Ready_Map("Test_Level", "TrainingRoom");
 
 	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
@@ -105,10 +105,10 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
-
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
@@ -208,40 +208,6 @@ void CTestLevel::Update()
 			.CharacterController(sacrificeCCT)
 			.Build("Sacrifice");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
-	}
-}
-
-void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
-{
-	//// Ready MapObject key and path to ResourceMgr 
-	Rake_MapResources();
-	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, m_pMapDataCloud, AreaTag);
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
-}
-
-void CTestLevel::Rake_MapResources()
-{
-	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
-	Helper::EnsureDirectoryExist(MapDataFolderPath);
-
-
-	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
-	{
-		if (entry.is_regular_file() && entry.path().extension() == ".model")
-		{
-			filesystem::path ModelPath = entry.path();
-			filesystem::path MaterialPath = ModelPath;
-			MaterialPath.replace_extension(".mat");
-
-
-			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
-			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
-		}
 	}
 }
 
