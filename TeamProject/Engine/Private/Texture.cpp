@@ -6,48 +6,86 @@
 CTexture::CTexture()
 {
 }
+static std::wstring ToLowerExt(const std::filesystem::path& pathValue)
+{
+    std::wstring ext = pathValue.extension().wstring();
+    std::transform(ext.begin(), ext.end(), ext.begin(), ::towlower);
+    return ext;
+}
 HRESULT CTexture::Initialize(ID3D11Device* pDevice, const _tchar* filePath, _bool sRGBType)
 {
-    std::string extension = std::filesystem::path(filePath).extension().string();
-    HRESULT hr = E_FAIL;
+    if (!pDevice || !filePath)
+        return E_INVALIDARG;
 
-    const bool isDDS = (extension == ".dds");
-    const bool isTGA = (extension == ".tga");
+    Safe_Release(m_pShaderResourceView);
+    Safe_Release(m_pResource);
+
+    std::filesystem::path inputPath(filePath);
+    inputPath = inputPath.lexically_normal();
+
+    const std::wstring extensionLower = ToLowerExt(inputPath);
+    const bool isDDS = (extensionLower == L".dds");
+    const bool isTGA = (extensionLower == L".tga");
 
     if (isTGA)
-        return E_FAIL; // TODO: TGA ·Î´õ
+        return E_FAIL;
 
-    if (isDDS)
+    auto TryLoad = [&](const std::filesystem::path& candidatePath) -> HRESULT
+        {
+            std::error_code errorCode;
+            const bool exists = std::filesystem::exists(candidatePath, errorCode);
+
+            if (errorCode)
+                return HRESULT_FROM_WIN32(errorCode.value());
+
+            if (!exists)
+                return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
+
+            const wchar_t* resolvedPath = candidatePath.c_str();
+
+            if (isDDS)
+            {
+                auto ddsFlag = sRGBType ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
+                return CreateDDSTextureFromFileEx(
+                    pDevice,
+                    resolvedPath,
+                    0,
+                    D3D11_USAGE_DEFAULT,
+                    D3D11_BIND_SHADER_RESOURCE,
+                    0, 0,
+                    ddsFlag,
+                    &m_pResource,
+                    &m_pShaderResourceView
+                );
+            }
+
+            auto wicFlag = sRGBType ? WIC_LOADER_FORCE_SRGB : WIC_LOADER_DEFAULT;
+            return CreateWICTextureFromFileEx(
+                pDevice,
+                resolvedPath,
+                0,
+                D3D11_USAGE_DEFAULT,
+                D3D11_BIND_SHADER_RESOURCE,
+                0, 0,
+                wicFlag,
+                &m_pResource,
+                &m_pShaderResourceView
+            );
+        };
+
+    HRESULT hr = TryLoad(inputPath);
+    if (SUCCEEDED(hr))
     {
-        auto ddsFlag = sRGBType ? DDS_LOADER_FORCE_SRGB : DDS_LOADER_DEFAULT;
-
-        hr = CreateDDSTextureFromFileEx(
-            pDevice,
-            filePath,
-            0,
-            D3D11_USAGE_DEFAULT,
-            D3D11_BIND_SHADER_RESOURCE,
-            0, 0,
-            ddsFlag,
-            nullptr,
-            &m_pShaderResourceView
-        );
+        Extract_Size();
+        return hr;
     }
-    else
-    {
-        auto wicFlag = sRGBType ? WIC_LOADER_FORCE_SRGB : WIC_LOADER_DEFAULT;
 
-        hr = CreateWICTextureFromFileEx(
-            pDevice,
-            filePath,
-            0,
-            D3D11_USAGE_DEFAULT,
-            D3D11_BIND_SHADER_RESOURCE,
-            0, 0,
-            wicFlag,
-            nullptr,
-            &m_pShaderResourceView
-        );
+    std::filesystem::path absolutePath = std::filesystem::absolute(inputPath).lexically_normal();
+    hr = TryLoad(absolutePath);
+    if (SUCCEEDED(hr))
+    {
+        Extract_Size();
+        return hr;
     }
 
     return hr;
@@ -69,13 +107,41 @@ void CTexture::Render_GUI(_float Width)
 	ImGui::Text(m_TextureKey.c_str());
 }
 
+void CTexture::Extract_Size()
+{
+    if (!m_pResource)
+        return;
+
+    D3D11_RESOURCE_DIMENSION dimension = D3D11_RESOURCE_DIMENSION_UNKNOWN;
+    m_pResource->GetType(&dimension);
+
+    if (dimension != D3D11_RESOURCE_DIMENSION_TEXTURE2D)
+        return;
+
+    ID3D11Texture2D* texture2D = nullptr;
+    HRESULT hrQuery = m_pResource->QueryInterface(
+        __uuidof(ID3D11Texture2D),
+        reinterpret_cast<void**>(&texture2D)
+    );
+    if (FAILED(hrQuery) || !texture2D)
+        return;
+
+    D3D11_TEXTURE2D_DESC desc = {};
+    texture2D->GetDesc(&desc);
+
+    m_TextureSize.x = desc.Width;
+    m_TextureSize.y = desc.Height;
+
+    Safe_Release(texture2D);
+}
+
 CTexture* CTexture::Create(ID3D11Device* pDevice, const wstring& filePath, const string& textureKey,_bool sRGBType)
 {
 	CTexture* instance = new CTexture;
 
 	if (FAILED(instance->Initialize(pDevice, filePath.c_str(), sRGBType))) {
 		Safe_Release(instance);
-		//MSG_BOX("Texture Create Failed : CTexture");
+		MSG_BOX("Texture Create Failed : CTexture");
 	}
 	else {
 		instance->m_TextureKey = textureKey;
@@ -88,4 +154,5 @@ void CTexture::Free()
 {
 	__super::Free();
 	Safe_Release(m_pShaderResourceView);
+	Safe_Release(m_pResource);
 }
