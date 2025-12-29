@@ -5,6 +5,9 @@
 #include "CharacterController.h"
 #include "StaticModel.h"
 #include "RigidBody.h"
+#include "SkeletalModel.h"
+#include "Animator3D.h"
+#include "Material.h"
 
 CDemoPlayer::CDemoPlayer()
 {
@@ -21,6 +24,7 @@ HRESULT CDemoPlayer::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
 	//Add_Component<CStaticModel>();
+
 	return S_OK;
 }
 
@@ -35,11 +39,38 @@ HRESULT CDemoPlayer::Initialize(INIT_DESC* pArg)
 
 void CDemoPlayer::Awake()
 {
-	Get_Component<CCharacterController>()->Set_Position({ 0.f, 5.f, -2.5f });
+	Add_Component<CSkeletalModel>();
+	Add_Component<CAnimator3D>();
+	Add_Component<CMaterial>();
+
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	/*파일명과 키값은 일치*/
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).model",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).model");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_NPC (merge).mat",
+		"../../DemoResource/new/Bangboo_Sharkboo_NPC (merge).mat");
+	pRcsMgr->Add_ResourcePath("Bangboo_Sharkboo_Meta.json",
+		"../../DemoResource/new/Anim/Bangboo_Sharkboo_Meta.json");
+	Get_Component<CModel>()->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
+
+	Get_Component<CModel>()->Link_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CMaterial>()->Link_Material("Demo_Level", "Bangboo_Sharkboo_NPC (merge).mat");
+	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
+	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
+	Get_Component<CAnimator3D>()->Set_MotionBone(7);
+	Get_Component<CAnimator3D>()->Set_RemoveAxisFromMotionBone(AXIS::X |AXIS::Y |AXIS::Z);
+	Get_Component<CAnimator3D>()->Set_Animation(0, 16)
+		.Loop(true)
+		.Apply();
+
+	Get_Component<CCharacterController>()->Set_Position({ 0.f, 5.f, 2.5f });
+
+	Get_Component<CTransform>()->Rotation(XMVectorSet(0, 0, 1, 0), XMConvertToRadians(180));
 }
 
 void CDemoPlayer::Priority_Update(_float dt)
 {
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CDemoPlayer::Update(_float dt)
@@ -47,16 +78,34 @@ void CDemoPlayer::Update(_float dt)
 	CCharacterController* pCCT = Get_Component<CCharacterController>();
 	_vector3 vMoveDir = XMVectorZero();
 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_UP))
-		vMoveDir += m_pTransform->Dir(STATE::LOOK);
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_DOWN))
+	static _bool b = false;
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_UP)) {
+		if (b == false) {
+			Get_Component<CAnimator3D>()->Change_Animation(0, 6)
+				.Speed(0.2)
+				.Apply();
+			b = true;
+		}
+		_float3 Root = Get_Component<CAnimator3D>()->Get_RootBoneDelta();
+		pCCT->Move_RootMotion(XMLoadFloat3(&Root), XMVectorSet(0, 1, 0, 0), dt);
+		//vMoveDir += ;
+	}
+	else
+		b = false;
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_DOWN)) {
+		Get_Component<CAnimator3D>()->Change_Animation(0, 6).Apply();
 		vMoveDir -= m_pTransform->Dir(STATE::LOOK);
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_RIGHT))
-		vMoveDir += m_pTransform->Dir(STATE::RIGHT);
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LEFT))
+	}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_RIGHT)) {
+		Get_Component<CAnimator3D>()->Change_Animation(0, 6).Apply();
 		vMoveDir -= m_pTransform->Dir(STATE::RIGHT);
+	}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down(VK_LEFT)) {
+		Get_Component<CAnimator3D>()->Change_Animation(0, 6).Apply();
+		vMoveDir += m_pTransform->Dir(STATE::RIGHT);
+	}
 
-	pCCT->Move_Direction(vMoveDir, 5.0f, dt);
+	//pCCT->Move_Direction(vMoveDir, 5.0f, dt);
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('J'))
 		pCCT->Jump(10.f);

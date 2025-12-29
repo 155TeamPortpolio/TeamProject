@@ -1,76 +1,6 @@
 [
   {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Angry01",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Happy01",
-    "Events": [
-      {
-        "EventTime": 3.333333730697632,
-        "EventType": "Sound",
-        "EventTag": "Jump"
-      }
-    ]
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Idle",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Idle_04",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Charge01_Loop",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Cool01",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Dance01_Loop",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Spicy02",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Sweet01",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Run01",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_End",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_Loop",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_Start",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Sad01",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Sit",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Sit_Loop",
-    "Events": []
-  },
-  {
-    "ClipTag": "Bangboo_Sharkboo_Ani_Talk01",
+    "ClipTag": "Bangboo_Sharkboo_Ani_TurnAround01",
     "Events": []
   },
   {
@@ -78,7 +8,71 @@
     "Events": []
   },
   {
-    "ClipTag": "Bangboo_Sharkboo_Ani_TurnAround01",
+    "ClipTag": "Bangboo_Sharkboo_Ani_Talk01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Sit_Loop",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Sit",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Sad01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_Start",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_Loop",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Run02_End",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Run01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Sweet01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Spicy02",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Dance01_Loop",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Cool01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_MainCity_Charge01_Loop",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Idle_04",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Idle",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Happy01",
+    "Events": []
+  },
+  {
+    "ClipTag": "Bangboo_Sharkboo_Ani_Angry01",
     "Events": []
   }
 ]
