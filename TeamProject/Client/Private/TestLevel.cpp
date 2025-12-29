@@ -107,25 +107,25 @@ HRESULT CTestLevel::Awake()
 	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
 		.Build("Test_Map");
 
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+	//COLLIDER_DESC colDesc;
+	//colDesc.bCooking = true;
+	//colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
 
-	for (_int z = 0; z < 3; ++z)
-	{
-	for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.15f, 0.f, z * 6.15f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
+	//for (_int z = 0; z < 3; ++z)
+	//{
+	//for (_int x = 0; x < 3; ++x)
+	//	{
+	//		CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+	//			.Collider(colDesc)
+	//			.Position({ x * 6.15f, 0.f, z * 6.15f })
+	//			.Build("Test_Floor_" + to_string(z * 3 + x));
+	//		objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+	//	}
+	//}
 
 
 	/* Miyabi */
@@ -138,7 +138,7 @@ HRESULT CTestLevel::Awake()
 	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	miyabiCCT.fBoundingMinY = -0.88f;
+	//miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
 		.CharacterController(miyabiCCT)
