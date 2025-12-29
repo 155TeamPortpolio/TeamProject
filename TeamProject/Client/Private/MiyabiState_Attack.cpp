@@ -5,6 +5,8 @@
 #include "MiyabiState_ChargeAttack.h"
 #include "Miyabi.h"
 
+#include "CharacterController.h"
+
 void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
 {
     if (!m_pSubStateMachine)
@@ -176,4 +178,23 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
     }
 
     return true;
+}
+
+void CMiyabiState_Attack::Move_Motion(CMiyabi* pOwner, _float dt)
+{
+    _vector3 vInputDir = pOwner->Get_InputDir();
+    if (vInputDir.Length() > 0.01f)
+    {
+        vInputDir.Normalize();
+        pOwner->Rotate(vInputDir);
+
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
+        _vector3 vDelta = vRootMotionDelta;
+
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
+        {
+            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+        }
+    }
 }

@@ -39,11 +39,7 @@ void CMiyabiState_Walk::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 {
-    CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(this->Get_ParentState());
-    if (pMove && pMove->Get_SubStateMachine())
-    {
-        pMove->Get_SubStateMachine()->Set_Bool("WalkFinish", false);
-    }
+    Get_ParentState()->Get_SubStateMachine()->Set_Bool("WalkFinish", false);
 }
 
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
