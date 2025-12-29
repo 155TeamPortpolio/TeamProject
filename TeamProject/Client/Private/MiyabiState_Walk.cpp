@@ -59,7 +59,7 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
         _vector3 vDelta = vRootMotionDelta;
         
         if (vDelta.x != 0.f || vDelta.z != 0.f)
@@ -90,7 +90,7 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
         _vector3 vDelta = vRootMotionDelta;
 
         if (vDelta.x != 0.f || vDelta.z != 0.f)

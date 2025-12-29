@@ -39,10 +39,12 @@ public:
 	const vector<ANIM_EVENT>& Get_Events() { return m_Events; }
 	void Check_Event(_float PrevTrackPos, _float CurTrackPos, vector<EVENT_INST>& EventBus);
 
-
+	const KEYFRAME& Get_StartKeyFrameByBoneName(const string& BoneName) const;
+	const KEYFRAME& Get_StartKeyFrameByBoneIndex(_uint BoneIndex) const;
 	const KEYFRAME& Get_EndKeyFrameByBoneName(const string& BoneName) const;
 	const KEYFRAME& Get_StartKeyFrameByBoneIndex(_uint BoneIndex) const;
 	const KEYFRAME& Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const;
+
 public:
 	virtual void Render_GUI();
 

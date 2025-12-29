@@ -317,12 +317,17 @@ const vector<EVENT_INST>& CAnimator3D::Get_EventBus() const
 	return m_EventBus;
 }
 
-_float3 CAnimator3D::Get_RootBoneDelta() const
+_float3 CAnimator3D::Get_RootBoneMoveDelta() const
 {
-	for(auto& Layer : m_AnimLayers)
-		if(Layer.BaseLayer)
-			return Layer.vRootDelta;
+	for (auto& Layer : m_AnimLayers)
+		if (Layer.BaseLayer)
+			return Layer.vRootMoveDelta;
 
+	return _float3();
+}
+
+_float3 CAnimator3D::Get_RootBoneQuatDelta() const
+{
 	return _float3();
 }
 
@@ -589,14 +594,14 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
 			if (Layer.bWrapped) { //Roop
-				XMStoreFloat3(&Layer.vRootDelta,
+				XMStoreFloat3(&Layer.vRootMoveDelta,
 					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
 						+ XMLoadFloat3(&vCurRootPos)));
 
 				Layer.bWrapped = false;
 			}
 			else {
-				XMStoreFloat3(&Layer.vRootDelta,
+				XMStoreFloat3(&Layer.vRootMoveDelta,
 					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
 			}
 			Layer.vPrevRootPos = vCurRootPos;
@@ -656,14 +661,14 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
 
 		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootDelta,
+			XMStoreFloat3(&Layer.vRootMoveDelta,
 				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
 					+ XMLoadFloat3(&vCurRootPos)));
 			Layer.bWrapped = false;
 		}
 		else {
 
-			XMStoreFloat3(&Layer.vRootDelta,
+			XMStoreFloat3(&Layer.vRootMoveDelta,
 				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
 		}
 
@@ -680,44 +685,11 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 
-
 	//Animation Blend
 	Layer.fBlendElapsed += dt;
 	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
 		Layer.fBlendElapsed / Layer.fBlendDuration);
 
-	//Bone Extracter
-	if (Layer.BaseLayer) {
-		//Extract RootBone
-		auto RootMat = Layer.FinalLocalMatrices[Layer.iRootBoneIndex];
-		_float3 vCurRootPos = { RootMat._41, RootMat._42 ,RootMat._43 };
-
-		if (Layer.bWrapped) {
-			XMStoreFloat3(&Layer.vRootDelta,
-				((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-					+ XMLoadFloat3(&vCurRootPos)));
-			Layer.bWrapped = false;
-		}
-		else {
-
-			XMStoreFloat3(&Layer.vRootDelta,
-				(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-		}
-
-		Layer.vPrevRootPos = vCurRootPos;
-
-		//Extract MoveBone
-		if (-1 != Layer.iMotionBoneIndex) {
-			_float4x4& mat = Layer.FinalLocalMatrices[Layer.iMotionBoneIndex];
-
-			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (!hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
-			if (!hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
-			if (!hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
-		}
-	}
-
-	//Lerp animation
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
 		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
@@ -990,17 +962,17 @@ HRESULT SetAnimBuild::Apply()
 
 	//���̽� ���̾��� ��� ������ Ű������ ��ġ, ȸ���� ������
 	if (Layer.BaseLayer) {
-		Layer.vPrevRootPos = _float3{};
-		Layer.vPrevRootQuat = _float4{};
+		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-									->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-									->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 
-		XMStoreFloat4x4(&Layer.LocalMatrices[Layer.iRootBoneIndex], XMMatrixIdentity());
-		
+		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
 	
 	//�ִϸ��̼� �⺻
@@ -1030,12 +1002,15 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//���̽� ���̾��� ��� ������ Ű������ ��ġ, ȸ���� ������
 	if (Layer.BaseLayer) {
-		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;//_float3{};
-
+		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+		Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
 		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}

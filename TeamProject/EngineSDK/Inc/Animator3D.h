@@ -15,7 +15,7 @@ public:
     friend class ChangeAnimBuild;
 
     typedef struct AnimationLayer {
-        //---------- ·¹ÀÌ¾î ¼Ó¼º (·¹ÀÌ¾î ¿µ±¸º¯°æ)
+        //---------- ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Ó¼ï¿½ (ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
         _bool               BaseLayer = { false };
 
         _bool               bPause = { true };
@@ -23,38 +23,38 @@ public:
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
-        //·çÆ®º» µ¨Å¸°ª (º£ÀÌ½º ·¹ÀÌ¾î¸¸, ½ÇÁúÀûÀÎ ¿òÁ÷ÀÓÀ» ´ã´çÇÏ´Â º»)
+        //ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ (ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½Ì¾î¸¸, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½)
         _bool               bWrapped = { false };
-        _int                iRootBoneIndex = { -1 }; //·çÆ® º» 
-        _float3             vRootEndPos{};  //±× Å¬¸³ÀÇ Á¦ÀÏ¸¶Áö¸· ·çÆ®À§Ä¡
-        _float4             vRootEndQuat{}; //±× Å¬¸³ÀÇ Á¦ÀÏ¸¶Áö¸· ·çÆ®È¸Àü°ª
-        _float3             vPrevRootPos{}; //ÀÌÀü ÇÁ·¹ÀÓ À§Ä¡
-        _float4             vPrevRootQuat{}; //ÀÌÀü ÇÁ·¹ÀÓ È¸Àü
-        _float3             vRootDelta{};   //ÀÌµ¿°ª
+        _int                iRootBoneIndex = { -1 }; //ï¿½ï¿½Æ® ï¿½ï¿½ 
+        _float3             vRootEndPos{};  //ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½Ä¡
+        _float4             vRootEndQuat{}; //ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®È¸ï¿½ï¿½ï¿½ï¿½
+        _float3             vPrevRootPos{}; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
+        _float4             vPrevRootQuat{}; //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È¸ï¿½ï¿½
+        _float3             vRootMoveDelta{};   //ï¿½Ìµï¿½ï¿½ï¿½
 
-        //¸ð¼Çº» (¾Ö´Ï¸ÅÀÌ¼ÇÀÇ ¿òÁ÷ÀÓÀ» ´ã´çÇÏ´Â º»)
+        //ï¿½ï¿½Çºï¿½ (ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½)
         _int    iMotionBoneIndex = { -1 };
         AXIS    eExtractAxis = { AXIS::NONE };
-        _float3 vMotionEndPos{};        //±× Å¬¸³ÀÇ Á¦ÀÏ ¸¶Áö¸· ¸ð¼ÇÀ§Ä¡
-        _float3 vPrevMotionBonePos{};   //ÀÌÀü ÇÁ·¹ÀÓ À§Ä¡
+        _float3 vMotionEndPos{};        //ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡
+        _float3 vPrevMotionBonePos{};   //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡
 
-        //---------- ¾Ö´Ï¸ÅÀÌ¼Ç µ¥ÀÌÅÍ (º¯°æ½Ã ÃÊ±âÈ­)
+        //---------- ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­)
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
         _float  fAnimSpeed = { 1.f };
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
-        //Àç»ý ¼Óµµ°ü·Ã
+        //ï¿½ï¿½ï¿½ ï¿½Óµï¿½ï¿½ï¿½ï¿½ï¿½
         EaseType ePlayEaseType = { EaseType::None };
         _float  fTargetSpeed;
         _float  fEaseDuration = {};
         _float  fEaseElapsed = {};
 
-        //·ÎÄÃ ¸ÅÆ®¸¯½º
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
         vector<_float4x4> LocalMatrices = {};
  
-        //---------- ºí·»µå »óÅÂ (º¯°æ½Ã ÃÊ±âÈ­)
+        //---------- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­)
         _bool   bBlending = { false };
         _bool   bKeepTrackPos = { false };
         _int    iNextClipIndex = { -1 };
@@ -63,10 +63,10 @@ public:
         _float  fBlendDuration = {};
         EaseType eBlendEaseType = { EaseType::None };
              
-        //´ÙÀ½ ¸ÅÆ®¸¯½º
+        //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
         vector<_float4x4> BlendMatrices = {};
 
-        //º¸°£À» ´ÙÇÑ ÃÖÁ¾ ¸ÅÆ®¸¯½º
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
@@ -82,114 +82,115 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
-    HRESULT Resize_Layer(_uint iLayerCount); //·¹ÀÌ¾î Å©±â(°³¼ö) ÁöÁ¤ //º¤ÅÍresize¿Í µ¿ÀÏÇÑ ±â´É 
+    HRESULT Resize_Layer(_uint iLayerCount); //ï¿½ï¿½ï¿½Ì¾ï¿½ Å©ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½ï¿½ //ï¿½ï¿½ï¿½ï¿½resizeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ 
     virtual void Update_Animation(_float dt);
 
 public: 
-    //Áï½Ã ¾Ö´Ï¸ÅÀÌ¼Ç º¯°æ
+    //ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     class SetAnimBuild Set_Animation(AnimArg ClipArg);
     class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
-    //¾Ö´Ï¸ÅÀÌ¼Ç º¸°£ º¯°æ
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     class ChangeAnimBuild Change_Animation(AnimArg ClipArg);
     class ChangeAnimBuild Change_Animation(_uint LayerIndex, AnimArg ClipArg);
-    //·¹ÀÌ¾î ÃÊ±âÈ­
+    //ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Ê±ï¿½È­
     virtual void Reset_Layer(_uint LayerIndex);
-    //·¹ÀÌ¾î ¾Ö´Ï¸ÅÀÌ¼ÇÀ» ¸ØÃã (ÃÊ±âÈ­ x)
+    //ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½Ê±ï¿½È­ x)
     virtual HRESULT Stop_Animation(_uint LayerIndex);
-    //ÀüÃ¼ ·¹ÀÌ¾î ¾Ö´Ï¸ÅÀÌ¼ÇÀ» ¸ØÃßµÇ ´Ù½Ã ÄÑ·Á¸é °¢°¢ ÆÛÁî¸¦ Ç®¾îÁÖ¾î¾ßÇÔ.
+    //ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ßµï¿½ ï¿½Ù½ï¿½ ï¿½Ñ·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¸¦ Ç®ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½.
     virtual HRESULT StopAll_Animation(); 
 
-public://¾Ö´Ï¸ÅÀÌÅÍ µ¥ÀÌÅÍ
+public://ï¿½Ö´Ï¸ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /*----- is -----*/
 
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ ³¡³µ´ÂÁö
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _bool isCurrentAnimEnd(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ Å¬¸³ÀÌ 0~1»çÀÌÀÇ ºñÀ²À» ¹Þ°í, ±× °ªÀÇ ºñÀ²À» ³Ñ¾î¼¹´ÂÁö
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ 0~1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ°ï¿½, ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ¾î¼¹ï¿½ï¿½ï¿½ï¿½
     _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ ºí·£µå ÁßÀÎÁö
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _bool isBlending(_uint LayerIndex = 0);
 
     /*----- Getter -----*/
 
-    //ÇöÀç ·¹ÀÌ¾î Å¬¸³ÀÇ ÁøÇà·ü 0~1 ¹ÝÈ¯
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ 0~1 ï¿½ï¿½È¯
     _float Get_CurAnimDuration(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼Ç ÀÌ¸§
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Ì¸ï¿½
     string Get_CurAnimName(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ ¾Ö´Ï¸ÅÀÌ¼Ç ÀÎµ¦½º
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½Îµï¿½ï¿½ï¿½
     _int Get_CurAnimIndex(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾î °³¼ö
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
     _int Get_NumLayer();
-    //ÀÌº¥Æ®µé ºÒ·¯¿À´Â ÇÔ¼ö (¸Å ÇÁ·¹ÀÓ º¤ÅÍ ³»¿ë¹°ÀÌ Áö¿öÁü)
+    //ï¿½Ìºï¿½Æ®ï¿½ï¿½ ï¿½Ò·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ (ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ë¹°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     const vector<EVENT_INST>& Get_EventBus() const;
-    //"Root"¶ó´Â ÀÌ¸§À» °¡Áø º»ÀÇ ¿òÁ÷ÀÓ µ¨Å¸°ª
-    _float3 Get_RootBoneDelta() const;
-    //¸ð¼Çº» ¾Ö´Ï¸ÅÀÌ¼Ç µ¨Å¸°ª
+    //"Root"ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½
+    _float3 Get_RootBoneMoveDelta() const;
+    _float3 Get_RootBoneQuatDelta() const;
+    //ï¿½ï¿½Çºï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½
     _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾îÀÇ EaseÁßÀÌ¸é ±× ºñÀ²°¡Á®¿È
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ Easeï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _float Get_EaseDuration(_uint LayerIndex = 0);
-    //ÇöÀç ·¹ÀÌ¾î Àç»ý¼Óµµ
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½Óµï¿½
     _float Get_AnimSpeed(_uint LayerIndex = 0);
-    //ÆÛÁî »óÅÂÀÎÁö
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _bool Get_isPause(_uint LayerIndex = 0);
 
     /*----- Setter -----*/
     
-    //¸ð¼Çº» Á÷Á¢¼³Á¤
+    //ï¿½ï¿½Çºï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     void Set_MotionBone(_int MoveBoneIndex);
-    //¾Ö´Ï¸ÅÀÌ¼Ç Ãà¿¡ ¿òÁ÷ÀÓ Á¦°Å (ex : (AXIS::X | AXIS::Z) = XZÃàÁ¦°Å)
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½à¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ex : (AXIS::X | AXIS::Z) = XZï¿½ï¿½ï¿½ï¿½ï¿½ï¿½)
     void Set_RemoveAxisFromMotionBone(AXIS eAxis);
-    //Ãà °íÁ¤ ¸®¼Â
+    //ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void Reset_ExtractBoneMovement();
-    //¾Ö´Ï¸ÅÀÌ¼Ç ÆÛÁî
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
-    //¾Ö´Ï¸ÅÀÌ¼ÇÀ» µ¹¸± º» ¼³Á¤
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     void Set_StartBone(_int StartBoneIndex, _uint LayerIndex = 0);
     void Reset_StartBone(_uint LayerIndex = 0);
-    //¾Ö´Ï¸ÅÀÌ¼Ç Tpose·Î ¼³Á¤ (¡Ø ¾Ö´Ï¸ÅÀÌ¼Ç ·¹ÀÌ¾î »óÅÂ°¡ ÀüºÎ ³¯¾Æ°¨)
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ Tposeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½)
     void Set_TPose();
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
     void Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix);
     void Dettach_BoneRelation(_uint Index);
-    //ÀÌº¥Æ® Ãß°¡
+    //ï¿½Ìºï¿½Æ® ï¿½ß°ï¿½
     void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
     void Clear_Events();
 
 public:
-    //¿ùµå»óÀÇ ÃÖÁ¾ »À À§Ä¡¸¦ °¡Á®¿È
+    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     _float4x4 Get_BoneMatrix(const string& boneName);
     _float4x4 Get_BoneMatrix(_uint Index);
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
     const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
-    //·ÎÄÃ »À ÃÖÁ¾À§Ä¡¸¦ °¡Á®¿È
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
 
-protected://¾Ö´Ï¸ÅÀÌ¼Ç Ã¼Å©
-    //¹®ÀÚ¿­ ¹× ¼ýÀÚ¸¦ ÀÎµ¦½º·Î Àß ¹Ù²ãÁÖ´Â ÇÔ¼ö
+protected://ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ Ã¼Å©
+    //ï¿½ï¿½ï¿½Ú¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Ú¸ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ù²ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½
     _int Resolve_ClipIndex(AnimArg ClipArg);
-    //·¹ÀÌ¾î ÀÎµ¦½º¸¦ Ã£À½
+    //ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½Îµï¿½ï¿½ï¿½ï¿½ï¿½ Ã£ï¿½ï¿½
     _int Find_Clip(const string& ClipTag);
-    //Á¸ÀçÇÏ´ÂÁö ¿©ºÎ
+    //ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
     _bool isExistLayer(_int LayerIndex);
     _bool isExistClip(_int ClipIndex);
-    //ÃàÀÌ ÀÖ´ÂÁö °è»ê
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
     _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
 
 protected:
-    //¾Ö´Ï¸ÅÀÌ¼Ç ¿¬»ê
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
-    //·¹ÀÌ¾î ¿¬»ê
+    //ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-    //Combined ¿¬»ê
+    //Combined ï¿½ï¿½ï¿½ï¿½
 
-    //ÃÖÁ¾ »À °è»ê
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
     void BuildBone();
 
 public:
@@ -205,15 +206,15 @@ private:
 protected:
     class CModelData* m_pData = {};
  
-    vector<ANIM_LAYER>              m_AnimLayers;   //¾Ö´Ï¸ÅÀÌ¼Ç ·¹ÀÌ¾î
-    vector<class CAnimationClip*>   m_pAnimClips;   //¾Ö´Ï¸ÅÀÌ¼Ç Å¬¸³
-    vector<EVENT_INST>              m_EventBus;     //ÀÌº¥Æ® ¹ö½º
+    vector<ANIM_LAYER>              m_AnimLayers;   //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½
+    vector<class CAnimationClip*>   m_pAnimClips;   //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ Å¬ï¿½ï¿½
+    vector<EVENT_INST>              m_EventBus;     //ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½
 
-    /* ¾Æ·¡ 4°³ÀÇ °ª¸¸ Á¦´ë·Î µé¾î¿À¸é ¾Ö´Ï¸ÅÀÌ¼ÇÀÌ µ¹¾Æ°¨  */
+    /* ï¿½Æ·ï¿½ 4ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½  */
     vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
-    vector<_float4x4> m_TransformationMatrices = {};    //¾Ö´Ï¸ÅÀÌ¼Ç Å¬¸³À» ¾÷µ¥ÀÌÆ®ÇÑ ·ÎÄÃ ¸ÅÆ®¸¯½º
-    vector<_float4x4> m_ManipulateMatrices = {};        //°­Á¦·Î Ãß°¡ÇÒ ¸ÅÆ®¸¯½º
-    vector<_float4x4> m_CombinedMatrices = {};          //ºÎ¸ð·ÎºÎÅÍ ¾÷µ¥ÀÌÆ®‰Â ÃÖÁ¾ ¸ÅÆ®¸¯½º
+    vector<_float4x4> m_TransformationMatrices = {};    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+    vector<_float4x4> m_ManipulateMatrices = {};        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
+    vector<_float4x4> m_CombinedMatrices = {};          //ï¿½Î¸ï¿½Îºï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ®ï¿½ï¿½ï¿½ï¿½
     unordered_set<_uint> m_DettachedBone = {};
 
     _int m_iCurrentClipIndex = { -1 };
@@ -228,7 +229,7 @@ public:
     virtual void Free() override;
 };
 
-// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Builder
+// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Builder
 
 template <typename T>
 class AnimBuild {
@@ -305,19 +306,19 @@ public:
 
 public:
     HRESULT Apply();
-    //---------- ¾Ö´Ï¸ÅÀÌ¼Ç ºí·£µå ¼Ó¼º
+    //---------- ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó¼ï¿½
 
-    //¾Ö´Ï¸ÅÀÌ¼Ç ÀüÈ¯½Ã°£
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È¯ï¿½Ã°ï¿½
     ChangeAnimBuild& BlendDuration(_float fDuration) {
         m_fBlendDuration = fDuration;
         return *this;
     }
-    //¾Ö´Ï¸ÅÀÌ¼Ç ÀüÈ¯ °¡ÁßÄ¡ ÀÌÂ¡
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½ï¿½Â¡
     ChangeAnimBuild& BlendWeightEaseType(EaseType eEaseType) {
         m_eBlendEaseType = eEaseType;
         return *this;
     }
-    //¾Ö´Ï¸ÅÀÌ¼ÇÀ» º¯°æÇÏ¸é¼­ ÀÌÀü Å¬¸³ÀÇ Æ®·¢Æ÷Áö¼ÇÀ» °°ÀÌ »ç¿ëÇØ¼­ ¼¯À»°ÇÁö
+    //ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¸é¼­ ï¿½ï¿½ï¿½ï¿½ Å¬ï¿½ï¿½ï¿½ï¿½ Æ®ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos) {
         m_bKeepTrackPos = bKeepTrackPos;
         return *this;
