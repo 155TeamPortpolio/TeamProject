@@ -5,6 +5,7 @@
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
+#include "Helper_Func.h"
 
 /* States */
 #include "StateMachine.h"
@@ -13,6 +14,7 @@
 #include "SacrificeState_Attack.h"
 #include "SacrificeState_Born.h"
 #include "SacrificeState_Hit.h"
+#include "SacrificeState_Evade.h"
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -81,24 +83,10 @@ void CSacrifice::Priority_Update(_float dt)
 
 void CSacrifice::Update(_float dt)
 {
-	if (m_RequestIdle)
-	{
-		m_pStateMachine->Change_State("Idle");
-		m_RequestIdle = false;
-	}
-	if (m_RequestAttack)
-	{
-		m_pStateMachine->Change_State("Attack");
-		m_RequestAttack = false;
-	}
-	if (m_RequestWalk)
-	{
-		m_pStateMachine->Change_State("Walk");
-		m_RequestWalk = false;
-	}
-
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	
+	Update_States(dt);
 	m_pStateMachine->Update(dt);
 }
 
@@ -185,6 +173,7 @@ HRESULT CSacrifice::Initialize_States()
 	m_pStateMachine->Register_State("Attack",CSacrificeState_Attack::Create());
 	m_pStateMachine->Register_State("Born",CSacrificeState_Born::Create());
 	m_pStateMachine->Register_State("Hit",CSacrificeState_Hit::Create());
+	m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
 
 	return S_OK;
 }
@@ -193,10 +182,44 @@ HRESULT CSacrifice::Initialize_Transitions()
 {
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+
+	/* From Idle */
 	m_pStateMachine->Register_Transition("Idle", "Attack",
-		CStateMachine<CSacrifice>::CONDITION_TIME_GREATER, "", 2.3f);
-	//m_pStateMachine->Register_Transition("Attack", "Idle",
-	//	CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Attack");
+	m_pStateMachine->Register_Transition("Idle", "Evade",
+		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Evade");
 
 	return S_OK;
+}
+
+void CSacrifice::Update_States(_float dt)
+{
+	if (m_RequestIdle)
+	{
+		m_pStateMachine->Change_State("Idle");
+		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
+		m_pStateMachine->Reset_Trigger("Idle_To_Evade");
+		m_RequestIdle = false;
+	}
+
+	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
+	{
+		m_fIdleElasedTime += dt;
+		if (m_fIdleElasedTime >= m_fIdleDuration)
+		{
+			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+
+			if (0 == iRandIndex)
+			{
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			else
+			{
+				m_pStateMachine->Set_Trigger("Idle_To_Evade");
+			}
+
+			m_fIdleElasedTime = 0.f;
+		}
+	}
+	
 }

@@ -142,6 +142,7 @@ HRESULT CTestLevel::Awake()
 	//miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.Position(_float3(3.f, 0.f, 0.f))
 		.CharacterController(miyabiCCT)
 		.Build("Miyabi");
 	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
@@ -167,11 +168,11 @@ HRESULT CTestLevel::Awake()
 	//uiDirector->SetVisible("HUD", true);
 
 	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Build("Test_Cloud");
-
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	//auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+	//	.Build("Test_Cloud");
+	//
+	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 	return S_OK;
 }
 

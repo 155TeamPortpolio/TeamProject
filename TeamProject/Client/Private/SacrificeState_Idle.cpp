@@ -20,11 +20,6 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 void CSacrificeState_Idle::Update(CSacrifice* pOwner, _float dt)
 {
 	__super::Update(pOwner,dt);
-
-	if (m_pSubStateMachine)
-	{
-
-	}
 }
 
 void CSacrificeState_Idle::Exit(CSacrifice* pOwner)

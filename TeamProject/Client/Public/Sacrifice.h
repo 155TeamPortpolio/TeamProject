@@ -37,6 +37,7 @@ public:
     void Idle() { m_RequestIdle = true; }
     void Attack() { m_RequestAttack = true; }
     void Walk() { m_RequestWalk = true; }
+    void Evade() { m_RequestEvade = true; }
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
 
@@ -44,7 +45,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
-
+    void Update_States(_float dt);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine = { nullptr };
@@ -53,5 +54,9 @@ private:
     _bool m_RequestIdle = false;
     _bool m_RequestAttack = false;
     _bool m_RequestWalk = false;
+    _bool m_RequestEvade = false;
+
+    _float m_fIdleElasedTime{};
+    _float m_fIdleDuration = 0.3f;
 };
 NS_END

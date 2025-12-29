@@ -13,6 +13,9 @@ public:
 public:
 	static CSacrificeState_Evade_Phase1* Create() { return new CSacrificeState_Evade_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Register_States();
 };
 
 /* Sub States */
