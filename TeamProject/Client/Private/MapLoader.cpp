@@ -10,7 +10,7 @@
 #include "MapPlacedObject.h"
 
 CMapLoader::CMapLoader()
-    : m_TagLayers{ "PlacedObject_Layer", "FloorObject_Layer", "TriggerObject_Layer", "Navigation_Layer"}
+    : m_TagLayers{ "PlacedObject_Layer", "TriggerObject_Layer" }
 {
 }
 
@@ -56,9 +56,8 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCl
             case Client::CMapLoader::MAPOBJ_TYPE::PLACED:
                 Place_PlacedObjectFromLoadData(&objectdata);
                 break;
-            case Client::CMapLoader::MAPOBJ_TYPE::FLOOR:
-                break;
             case Client::CMapLoader::MAPOBJ_TYPE::TRIGGER:
+                Place_TriggerObjectFromLoadData(&objectdata);
                 break;
             }
         }
@@ -99,9 +98,6 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
         // 일단 데이터 다 때려넣기
         for (auto& FieldData : tSlotData.second[pData->iObjID]) 
             Desc->SlotDataValues[tSlotData.first].push_back(FieldData);
-
-
-
     }
   
 
@@ -125,7 +121,7 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
         .Rotate(vRot)
         .Position(vTrans)
         .Collider(ColliderDesc)
-        .Build("Placed_Model");
+        .Build(Helper::GetFileNameWithOutExtension(pData->TagModelResourceKey));
 
     if (nullptr == pStaticObject)
         return;
@@ -136,13 +132,47 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
     pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)]});
 }
 
+void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
+{
+    if (nullptr == pData)
+        return;
+
+    COLLIDER_TYPE eType = {};
+    if ("BOX" == pData->TagMaterialResourceKey)
+        eType = COLLIDER_TYPE::BOX;
+    else if ("SPHERE" == pData->TagMaterialResourceKey)
+        eType = COLLIDER_TYPE::SPHERE;
+    else if ("CAPSULE" == pData->TagMaterialResourceKey)
+        eType = COLLIDER_TYPE::CAPSULE;
+    else
+        return;
+
+
+    COLLIDER_DESC ColDesc = {};
+    ColDesc.eType = eType;
+    ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+    ColDesc.vCenter = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
+    ColDesc.vSize = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
+    ColDesc.vRotation = { XMConvertToRadians(pData->vLook[0]),
+                          XMConvertToRadians(pData->vLook[1]),
+                          XMConvertToRadians(pData->vLook[2]) };
+
+    CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapTriggerObject" })
+        .Collider(ColDesc)
+        .Position({ pData->vPos[0], pData->vPos[1], pData->vPos[2] })
+        .Build(pData->TagModelResourceKey);
+
+    pStaticObject->Get_Component<CCollider>()->Set_DebugRender(true);
+
+    IObjectService* pObjMgr = CGameInstance::GetInstance()->Get_ObjectMgr();
+    pObjMgr->Add_Object(pStaticObject, { m_TagLevel, m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+}
+
 CMapLoader::MAPOBJ_TYPE CMapLoader::Check_LayerTag(const string& TagLayer)
 {
     MAPOBJ_TYPE eType = {};
     if (m_TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] == TagLayer)
         eType = MAPOBJ_TYPE::PLACED;
-    else if (m_TagLayers[ENUM(MAPOBJ_TYPE::FLOOR)] == TagLayer)
-        eType = MAPOBJ_TYPE::FLOOR;
     else if (m_TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] == TagLayer)
         eType = MAPOBJ_TYPE::TRIGGER;
     else
