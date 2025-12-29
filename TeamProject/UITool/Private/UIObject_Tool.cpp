@@ -4,6 +4,7 @@
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
+#include "Texture.h"
 #include "Helper_Func.h"
 
 CUIObject_Tool::CUIObject_Tool()
@@ -390,6 +391,18 @@ void CUIObject_Tool::Render_GUI_Color()
 {
     ImGui::SeparatorText(u8"컬러");
     ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
+}
+
+void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
+{
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Change_Texture(idx, levelKey, texKey);
+
+    if (!applyOriginSize || !Get_OriginTexSize()) return;
+
+    auto tex  = sprite->Get_Texture(idx);
+    auto size = tex->Get_Size();
+    Set_Size({(float)size.x, (float)size.y});
 }
 
 _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)

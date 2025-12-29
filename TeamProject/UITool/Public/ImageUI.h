@@ -6,19 +6,17 @@ NS_BEGIN(UITool)
 class CImageUI final : public CUIObject_Tool
 {
 private:
-	CImageUI();
-	CImageUI(const CImageUI& rhs);
+	CImageUI() {}
+	CImageUI(const CImageUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CImageUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override {}
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override {}
+	virtual void    Render_GUI()                     override;
 
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
@@ -34,7 +32,7 @@ public:
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
