@@ -162,6 +162,7 @@ void CMiyabi::Update_States()
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
 
+	// Move End 체크 (기존과 동일)
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
 		CMiyabiState_Move* pMove =
@@ -181,6 +182,7 @@ void CMiyabi::Update_States()
 			}
 		}
 	}
+	// Attack End 체크
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		CMiyabiState_Attack* pAttack =
@@ -199,19 +201,7 @@ void CMiyabi::Update_States()
 				if (pNormal && pNormal->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					if (pNormalSub)
-					{
-						string strTag = pNormalSub->Get_Tag();
-						bInAttackEnd = (strTag == "End");
-
-						// 디버깅
-						char buffer[256];
-						sprintf_s(buffer, "Attack Check: Sub=%s, Tag=%s, bInEnd=%s\n",
-							pNormal->Get_SubStateMachine()->Get_CurrentStateName().c_str(),
-							strTag.c_str(),
-							bInAttackEnd ? "TRUE" : "FALSE");
-						OutputDebugStringA(buffer);
-					}
+					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
 				}
 			}
 			else if (strSub == "ChargeAttack")
@@ -223,30 +213,38 @@ void CMiyabi::Update_States()
 				if (pCharge && pCharge->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
-					if (pChargeSub)
-					{
-						bInAttackEnd = (pChargeSub->Get_Tag() == "End");
-					}
+					bInAttackEnd = (pChargeSub && pChargeSub->Get_Tag() == "End");
 				}
 			}
 		}
 	}
 
-	// 디버깅
-	if (bInMoveEnd || bInAttackEnd)
+	// ★ AttackEnd 파라미터 설정
+	if (bInAttackEnd)
 	{
-		char buffer[256];
-		sprintf_s(buffer, "End State Detected: MoveEnd=%s, AttackEnd=%s, Input=%s\n",
-			bInMoveEnd ? "TRUE" : "FALSE",
-			bInAttackEnd ? "TRUE" : "FALSE",
-			m_bIsInput ? "TRUE" : "FALSE");
-		OutputDebugStringA(buffer);
+		CMiyabiState_Attack* pAttack =
+			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+
+		if (pAttack)
+		{
+			// Attack의 AnimProgress가 1.0이면 AttackEnd = true
+			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
+			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
+		}
+	}
+	else
+	{
+		m_pStateMachine->Set_Bool("AttackEnd", false);
 	}
 
+	// End 캔슬 처리 (기존과 동일)
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
 	{
-		OutputDebugStringA("FORCING IsMove = false for End Cancel!\n");
 		m_pStateMachine->Set_Bool("IsMove", false);
+
+		// Attack End에서 입력 시 강제로 AttackEnd = true
+		if (bInAttackEnd)
+			m_pStateMachine->Set_Bool("AttackEnd", true);
 	}
 	else
 	{
@@ -323,7 +321,7 @@ HRESULT CMiyabi::Initialize_Transitions()
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
-		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "AttackEnd");
 
 	return S_OK;
 }

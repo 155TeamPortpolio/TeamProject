@@ -126,6 +126,7 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
                 IBaseState<CMiyabi>* pAttackEnd =
                     pNormalAttack->Get_SubStateMachine()->Get_CurrentState();
 
+                // Attack_End가 아니면 거부
                 if (strNormalSub != "Attack_End")
                     return false;
 
@@ -135,6 +136,7 @@ _bool CMiyabiState_Attack::Handle_Transition(CMiyabi* pOwner, const string& strS
                 // Attack_End에서 Idle로만 전환 허용
                 if (strState == "Idle")
                 {
+                    // 애니메이션 끝났거나 입력이 있으면 허용
                     if (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input())
                         return true;
                 }

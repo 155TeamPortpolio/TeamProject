@@ -119,7 +119,7 @@ void CMiyabiState_Walk_Loop::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
         .Apply();
 }
 
