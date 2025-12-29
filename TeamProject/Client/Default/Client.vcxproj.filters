@@ -243,7 +243,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
+	</Filter>
+	<Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
       <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
