@@ -162,7 +162,7 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Initialize("Test_Level");
 	
 	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
+		.Asset("loading.json")
 		.Build("HUD");
 	//========
 	

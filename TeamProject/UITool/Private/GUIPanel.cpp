@@ -207,6 +207,10 @@ CUI_Object* CGUIPanel::LoadPrefab()
 	if (filePath.empty())
 		return nullptr;
 
+	const string strExtension = filesystem::path(filePath).extension().string();
+	if (strExtension != ".json")
+		return nullptr;
+
 	UI_ELEMENT_DATA elementData = Helper::LoadJson<UI_ELEMENT_DATA>(filePath);
 
 	const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();

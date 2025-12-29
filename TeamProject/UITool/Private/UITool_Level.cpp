@@ -68,7 +68,13 @@ void CUITool_Level::PreLoad_Level()
 HRESULT CUITool_Level::Ready_Textures()
 {
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/UI/"))
+
+	const string filePath = "../Bin/Resources/UI/";
+	const filesystem::path root = filesystem::path(filePath);
+	if (!filesystem::exists(root) || !filesystem::is_directory(root))
+		return E_FAIL;
+
+	for (const auto& entry : filesystem::recursive_directory_iterator(filePath))
 	{
 		if (entry.is_regular_file() && entry.path().extension() == ".dds" ||
 			entry.is_regular_file() && entry.path().extension() == ".png" ||
@@ -86,7 +92,13 @@ HRESULT CUITool_Level::Ready_Textures()
 HRESULT CUITool_Level::Ready_Fonts()
 {
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/Font/"))
+
+	const string filePath = "../Bin/Resources/Font/";
+	const filesystem::path root = filesystem::path(filePath);
+	if (!filesystem::exists(root) || !filesystem::is_directory(root))
+		return E_FAIL;
+
+	for (const auto& entry : filesystem::recursive_directory_iterator(filePath))
 	{
 		if (entry.is_regular_file() && entry.path().extension() == ".spritefont")
 		{
