@@ -62,7 +62,8 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_TARGET4;
-    vector vRimLight : SV_Target5;
+    vector vRimLight : SV_TARGET5;
+    vector vBloom : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -108,6 +109,7 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
+    Out.vBloom = ExtractBright(vMtrlDiffuse, 2.f, 0.2, 5.f);
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }

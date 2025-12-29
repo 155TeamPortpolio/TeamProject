@@ -39,7 +39,7 @@ private:
     void Update_CBuffer(ID3D11DeviceContext* ctx, ID3D11Buffer* cb, const void* data, UINT size);
 private:
     _bool m_isReady = { false };
-    _int m_DebugMip;
+    _int m_DebugMip = { 0 };
     _uint m_mipCount = {};
     _uint2 m_texSize = {};
     _uint3 m_threadSize = {};

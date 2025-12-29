@@ -415,6 +415,11 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 	return S_OK;
 }
 
+vector<OPAQUE_PACKET> CPipeLine::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
+{
+	return vector<OPAQUE_PACKET>();
+}
+
 #ifdef _USING_GUI
 void CPipeLine::Render_GUI()
 {
