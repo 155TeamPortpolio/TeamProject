@@ -8,9 +8,8 @@
 #include "StaticModel.h"
 #include "SkeletalModel.h"
 
-#ifdef _DEBUG
 #include "DebugDraw.h"
-#endif
+
 
 CCollider::CCollider()
 {
@@ -456,9 +455,7 @@ void CCollider::Render_GUI()
 			ImGui::Checkbox("MapTool Mode", &m_bMapTool);
 		}
 
-#ifdef _DEBUG
 		ImGui::Checkbox("Is Render", &m_bDebugRender);
-#endif
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
 		ImGui::Separator();
@@ -567,7 +564,6 @@ void CCollider::Render_GUI()
 	ImGui::EndChild();
 }
 
-#ifdef _DEBUG
 void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
 	if (!m_pShape || !m_bDebugRender) return;
@@ -628,7 +624,6 @@ void CCollider::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vCo
 		DX::Draw(pBatch, obb, vColor);
 	}
 }
-#endif
 
 CCollider* CCollider::Create()
 {

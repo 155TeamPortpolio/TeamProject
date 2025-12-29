@@ -87,10 +87,10 @@ public:
         m_PreviousCollisions = m_CurrentCollisions;
         m_CurrentCollisions.clear();
     }
-#ifdef _DEBUG
+
     virtual void    Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) override;
     void            Render_DebugRay(PrimitiveBatch<VertexPositionColor>* pBatch);
-#endif
+
 
 public:
     void            Move_Direction(_fvector vDir, _float fSpeed, _float dt);
@@ -154,11 +154,9 @@ private:
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
 
-#ifdef _DEBUG
     // 디버그 레이 시각화용
     _float3                  m_vRayStart = {};
     _float3                  m_vRayEnd = {};
-#endif
 
 public:
     static CCharacterController* Create();
