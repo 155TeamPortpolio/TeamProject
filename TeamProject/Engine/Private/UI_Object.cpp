@@ -152,6 +152,13 @@ void CUI_Object::Render_GUI()
 {
     __super::Render_GUI();
 
+    ImGui::SeparatorText("Play Animation");
+    for (_int i = 0; i < m_AnimClips.size(); ++i)
+    {
+        if (ImGui::Button(to_string(i).c_str()))
+            Set_Animation(i);
+    }
+
     ImGui::Text("WinSize: %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 
     ImGui::SeparatorText("Layout");
