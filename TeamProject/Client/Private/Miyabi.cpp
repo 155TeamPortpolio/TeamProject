@@ -160,7 +160,6 @@ void CMiyabi::Update_States()
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
 
-	// Move End 체크
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
 		CMiyabiState_Move* pMove =
@@ -180,7 +179,6 @@ void CMiyabi::Update_States()
 			}
 		}
 	}
-	// Attack End 체크 (수정)
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		CMiyabiState_Attack* pAttack =
@@ -190,7 +188,6 @@ void CMiyabi::Update_States()
 		{
 			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-			// NormalAttack End 체크
 			if (strSub == "NormalAttack")
 			{
 				CMiyabiState_NormalAttack* pNormal =
@@ -200,10 +197,21 @@ void CMiyabi::Update_States()
 				if (pNormal && pNormal->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
+					if (pNormalSub)
+					{
+						string strTag = pNormalSub->Get_Tag();
+						bInAttackEnd = (strTag == "End");
+
+						// 디버깅
+						char buffer[256];
+						sprintf_s(buffer, "Attack Check: Sub=%s, Tag=%s, bInEnd=%s\n",
+							pNormal->Get_SubStateMachine()->Get_CurrentStateName().c_str(),
+							strTag.c_str(),
+							bInAttackEnd ? "TRUE" : "FALSE");
+						OutputDebugStringA(buffer);
+					}
 				}
 			}
-			// ChargeAttack End 체크
 			else if (strSub == "ChargeAttack")
 			{
 				CMiyabiState_ChargeAttack* pCharge =
@@ -213,15 +221,29 @@ void CMiyabi::Update_States()
 				if (pCharge && pCharge->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pChargeSub && pChargeSub->Get_Tag() == "End");
+					if (pChargeSub)
+					{
+						bInAttackEnd = (pChargeSub->Get_Tag() == "End");
+					}
 				}
 			}
 		}
 	}
 
-	// End 상태에서 입력이 있으면 강제로 Idle 전환 유도
+	// 디버깅
+	if (bInMoveEnd || bInAttackEnd)
+	{
+		char buffer[256];
+		sprintf_s(buffer, "End State Detected: MoveEnd=%s, AttackEnd=%s, Input=%s\n",
+			bInMoveEnd ? "TRUE" : "FALSE",
+			bInAttackEnd ? "TRUE" : "FALSE",
+			m_bIsInput ? "TRUE" : "FALSE");
+		OutputDebugStringA(buffer);
+	}
+
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
 	{
+		OutputDebugStringA("FORCING IsMove = false for End Cancel!\n");
 		m_pStateMachine->Set_Bool("IsMove", false);
 	}
 	else
@@ -242,7 +264,6 @@ void CMiyabi::Update_States()
 					static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
 				if (pAttackState && pAttackState->Get_SubStateMachine())
 				{
-					// NormalAttack 중이면 NextCombo 트리거
 					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
 					{
 						CMiyabiState_NormalAttack* pNormal =
