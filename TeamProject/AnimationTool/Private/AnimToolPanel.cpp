@@ -222,7 +222,7 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 	{
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Set_MotionBone(MoveBoneIndex);
-			m_pSelectAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
+			m_pSelectAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 		}
 	}
 	ImGui::SameLine();
