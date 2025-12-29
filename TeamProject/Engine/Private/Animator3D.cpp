@@ -383,12 +383,21 @@ void CAnimator3D::Set_MotionBone(_int MoveBoneIndex)
 	}
 }
 
-void CAnimator3D::Set_RemoveAxisFromMotionBone(AXIS eAxis)
+void CAnimator3D::Set_ExtractMotionboneMovement(AXIS eAxis)
 {
 	for (auto& Layer : m_AnimLayers) {
 		if (!Layer.BaseLayer) continue;
-		
-		Layer.eExtractAxis = eAxis;
+
+		Layer.eExtractMoveAxis = eAxis;
+	}
+}
+
+void CAnimator3D::Set_ExtractMotionboneRotation(AXIS eAxis)
+{
+	for (auto& Layer : m_AnimLayers) {
+		if (!Layer.BaseLayer) continue;
+
+		Layer.eExtractRotAxis = eAxis;
 	}
 }
 
@@ -397,7 +406,16 @@ void CAnimator3D::Reset_ExtractBoneMovement()
 	for (auto& Layer : m_AnimLayers) {
 		if (!Layer.BaseLayer) continue;
 
-		Layer.eExtractAxis = AXIS::NONE;
+		Layer.eExtractMoveAxis = AXIS::NONE;
+	}
+}
+
+void CAnimator3D::Reset_ExtractBoneRotation()
+{
+	for (auto& Layer : m_AnimLayers) {
+		if (!Layer.BaseLayer) continue;
+
+		Layer.eExtractRotAxis = AXIS::NONE;
 	}
 }
 
@@ -567,13 +585,13 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update Animation
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
-	//Calc Animation Speed;
+	//Calc Animation Speed
 	_float AnimSpeed = Layer.fAnimSpeed;
 	if (EaseType::None != Layer.ePlayEaseType) {
 		Layer.fEaseElapsed += dt;
 
-		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
 		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
 		if (1.f <= t) {
@@ -601,17 +619,15 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			Vector3 vCurRootPos = T;
 			Vector4 vCurRootQuat = R;
 
-			if (Layer.bWrapped) { //Roop
-				XMStoreFloat3(&Layer.vRootMoveDelta,
-					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-						+ XMLoadFloat3(&vCurRootPos)));
+			if (Layer.bWrapped) { //Roop 
+				_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]
+					->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 
+				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
 			else {
-				XMStoreFloat3(&Layer.vRootMoveDelta,
-					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-
+				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
 
 			_vector quatDelta =
@@ -628,11 +644,25 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		if (-1 != Layer.iMotionBoneIndex) {
 			_float4x4& mat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
-			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&mat));
+			Quaternion Q = static_cast<Quaternion>(R);
+			Q.Normalize();
 
-			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
-			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
-			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
+			_vector3 vEuler = Q.ToEuler();
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::X)) vEuler.x = 0.f;
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::Y)) vEuler.y = 0.f;
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::Z)) vEuler.z = 0.f;
+			Q = Quaternion::CreateFromYawPitchRoll(vEuler.y, vEuler.x, vEuler.z);
+			Q.Normalize();
+
+			mat = Matrix::CreateScale(S) * Matrix::CreateFromQuaternion(Q) * Matrix::CreateTranslation(T);
+
+			Layer.vPrevMotionBonePos = _vector3(mat._41, mat._42, mat._43);
+
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
 }
@@ -649,8 +679,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	if (EaseType::None != Layer.ePlayEaseType) {
 		Layer.fEaseElapsed += dt;
 
-		float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
 		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
 		if (1.f <= t) {
@@ -676,7 +706,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	if (Layer.BaseLayer) {
 		//Extract RootBone
 		if (-1 != Layer.iRootBoneIndex) {
-			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -684,19 +714,17 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			Vector3 vCurRootPos = T;
 			Vector4 vCurRootQuat = R;
 
-			if (Layer.bWrapped) { //Roop
-				XMStoreFloat3(&Layer.vRootMoveDelta,
-					((XMLoadFloat3(&Layer.vRootEndPos) - XMLoadFloat3(&Layer.vPrevRootPos))
-						+ XMLoadFloat3(&vCurRootPos)));
+			if (Layer.bWrapped) { //Roop 
+				_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]
+					->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 
+				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
 			else {
-				XMStoreFloat3(&Layer.vRootMoveDelta,
-					(XMLoadFloat3(&vCurRootPos) - XMLoadFloat3(&Layer.vPrevRootPos)));
-
+				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
-
+			
 			_vector quatDelta =
 				XMQuaternionMultiply(
 					XMQuaternionInverse(XMLoadFloat4(&Layer.vPrevRootQuat)), vCurRootQuat);
@@ -711,10 +739,24 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		if (-1 != Layer.iMotionBoneIndex) {
 			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
+			_vector S, R, T;
+			XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&mat));
+			Quaternion Q = static_cast<Quaternion>(R);
+			Q.Normalize();
+
+			_vector3 vEuler = Q.ToEuler();
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::X)) vEuler.x = 0.f;
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::Y)) vEuler.y = 0.f;
+			if (hasAxis(Layer.eExtractRotAxis, AXIS::Z)) vEuler.z = 0.f;
+			Q = Quaternion::CreateFromYawPitchRoll(vEuler.y, vEuler.x, vEuler.z);
+			Q.Normalize();
+
+			mat = Matrix::CreateScale(S) * Matrix::CreateFromQuaternion(Q) * Matrix::CreateTranslation(T);
+
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
-			if (hasAxis(Layer.eExtractAxis, AXIS::X)) mat._41 = 0.f;
-			if (hasAxis(Layer.eExtractAxis, AXIS::Y)) mat._42 = 0.f;
-			if (hasAxis(Layer.eExtractAxis, AXIS::Z)) mat._43 = 0.f;
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
+			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
 

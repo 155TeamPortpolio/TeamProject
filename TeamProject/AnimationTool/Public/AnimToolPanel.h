@@ -44,6 +44,7 @@ private:
     void GUI_Preview(_float fChildHeight);
     // -------------------------------------------------
     void GUI_Setting_Effect(_float fChildHeight); // << 이 칸 안에서 작업하고 클래스 추가하면 댐
+    void GUI_Create_MetaData(_float fChildHeight);
     // -------------------------------------------------
     void GUI_LoadResource(_float fChildHeight);
 
