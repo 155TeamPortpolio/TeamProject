@@ -1,5 +1,6 @@
 #pragma once
 #include "IHState.h"
+#include "Enemy.h"
 
 NS_BEGIN(Client)
 class CSacrifice;
@@ -17,6 +18,7 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
+	void BuildPattern(ATTACK_BLACK_BOARD& blackBoard);
 };
 
 /* Phase1 States */

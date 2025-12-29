@@ -12,14 +12,13 @@ void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 
 		Register_States();
 		Register_Transitions();
-
-		ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-		blackBoard.isRequestNext = true;	
-		blackBoard.stateQueue.push_back("Attack07_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-
-		__super::Enter(pOwner);
 	}
+
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	BuildPattern(blackBoard);
+	blackBoard.isRequestNext = true;
+
+	__super::Enter(pOwner);
 }
 
 void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -41,10 +40,9 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
 	}
-	else
-	{
-		/* idle 변환 또는 페이즈 변경 */
-	}
+
+	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
+		pOwner->Idle();
 }
 
 void CSacrificeState_Attack_Phase1::Exit(CSacrifice* pOwner)
@@ -73,6 +71,43 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 {
 }
 
+void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
+{
+	_uint iRandIndex = Helper::Get_Random_Int(0, 1);
+	iRandIndex = 2;
+	switch (iRandIndex)
+	{
+	case 0:
+	{
+		blackBoard.stateQueue.push_back("Attack07_Phase1");
+		blackBoard.stateQueue.push_back("Attack02_Phase1");
+		blackBoard.stateQueue.push_back("Attack08_Phase1");
+	}break;
+	case 1:
+	{
+		blackBoard.stateQueue.push_back("Attack07_Phase1");
+		blackBoard.stateQueue.push_back("Attack02_Phase1");
+		blackBoard.stateQueue.push_back("Attack03_Phase1");
+	}break;
+	case 2:
+	{
+		blackBoard.stateQueue.push_back("Attack01_Phase1");
+		blackBoard.stateQueue.push_back("Attack02_Phase1");
+
+	}break;
+	case 3:
+	{
+
+	}break;
+	case 4:
+	{
+
+	}break;
+	default:
+		break;
+	}
+}
+
 
 void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -82,6 +117,22 @@ void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
@@ -91,7 +142,7 @@ void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.1f).Apply();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -100,6 +151,23 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.2f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
+
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
 	{
 		m_IsAttackStart = true;
@@ -125,6 +193,22 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.2f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeState_Attack_03_Phase1::Exit(CSacrifice* pOwner)
@@ -201,11 +285,19 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fAnimProgress >= 0.7f)
+	if (blackBoard.stateQueue.empty())
 	{
-		blackBoard.isChainOpen = true;
-		if (!blackBoard.stateQueue.empty())
-			blackBoard.isRequestNext = true;
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.6f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
 	}
 
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
@@ -237,6 +329,23 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.75f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
+
 	if (!m_IsAttackStart && m_fAnimProgress >= 0.06f)
 	{
 		m_IsAttackStart = true;

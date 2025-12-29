@@ -7,7 +7,7 @@ typedef struct tagAttackBlackBoard
     deque<string> stateQueue;
     _bool isRequestNext = false;
     _bool isChainOpen = false;
-    _float fAnimationProgress{};
+    _bool isEnd = false;
     string currentStateTag{};
 }ATTACK_BLACK_BOARD;
 

@@ -80,6 +80,22 @@ void CSacrifice::Priority_Update(_float dt)
 
 void CSacrifice::Update(_float dt)
 {
+	if (m_RequestIdle)
+	{
+		m_pStateMachine->Change_State("Idle");
+		m_RequestIdle = false;
+	}
+	if (m_RequestAttack)
+	{
+		m_pStateMachine->Change_State("Attack");
+		m_RequestAttack = false;
+	}
+	if (m_RequestWalk)
+	{
+		m_pStateMachine->Change_State("Walk");
+		m_RequestWalk = false;
+	}
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 	m_pStateMachine->Update(dt);
@@ -177,7 +193,7 @@ HRESULT CSacrifice::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Born", "Idle",
 		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 	m_pStateMachine->Register_Transition("Idle", "Attack",
-		CStateMachine<CSacrifice>::CONDITION_TIME_GREATER, "", 0.3f);
+		CStateMachine<CSacrifice>::CONDITION_TIME_GREATER, "", 2.3f);
 	//m_pStateMachine->Register_Transition("Attack", "Idle",
 	//	CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
