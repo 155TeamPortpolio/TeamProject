@@ -16,45 +16,25 @@ void CMiyabiState_Walk::Enter(CMiyabi* pOwner)
 
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Start", "End",
-            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
-        m_pSubStateMachine->Register_Transition("Loop", "End",
-            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
-
         m_pSubStateMachine->Register_Transition("Start", "Loop",
             CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
 
+        m_pSubStateMachine->Register_Transition("Start", "End",
+            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+
+        m_pSubStateMachine->Register_Transition("Loop", "End",
+            CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
+
         m_pSubStateMachine->Set_DefaultState("Start");
     }
-
-    if (m_pSubStateMachine)
-        m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
-
     __super::Enter(pOwner);
 }
 
 void CMiyabiState_Walk::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-
-    if (m_pSubStateMachine)
-    {
-        _bool bIsMove = pOwner->Is_Move();
-        m_pSubStateMachine->Set_Bool("IsMove", bIsMove);
-
-        // 디버깅
-        auto pCurrent = m_pSubStateMachine->Get_CurrentState();
-        if (pCurrent)
-        {
-            char buffer[512];
-            sprintf_s(buffer, "Walk Sub: %s, Progress: %.2f, AnimEnd: %s, IsMove: %s\n",
-                m_pSubStateMachine->Get_CurrentStateName().c_str(),
-                pCurrent->Get_AnimProgress(),
-                pCurrent->Is_AnimEnd() ? "TRUE" : "FALSE",
-                bIsMove ? "TRUE" : "FALSE");
-            OutputDebugStringA(buffer);
-        }
-    }
+    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+ 
 }
 
 void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
@@ -69,27 +49,21 @@ void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start")
-        .Loop(false)
         .Apply();
 }
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 {
-    // 디버깅: IsMove 상태 확인
-    char buffer[256];
-    sprintf_s(buffer, "Walk_Start: IsMove=%s, Progress=%.2f\n",
-        pOwner->Is_Move() ? "TRUE" : "FALSE",
-        m_fAnimProgress);
-    OutputDebugStringA(buffer);
-
     _vector3 vInputDir = pOwner->Get_InputDir();
     if (vInputDir.Length() > 0.01f)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
 
-        if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
+        _vector3 vDelta = vRootMotionDelta;
+        
+        if (vDelta.x != 0.f || vDelta.z != 0.f)
         {
             _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
             pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
@@ -115,7 +89,7 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootMotionDelta() * -1.f;
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneDelta() * -1.f;
         _vector3 vDelta = vRootMotionDelta;
 
         if (vDelta.x != 0.f || vDelta.z != 0.f)
@@ -145,16 +119,12 @@ void CMiyabiState_Walk_Loop::Exit(CMiyabi* pOwner)
 
 void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
         .Apply();
 }
 
 void CMiyabiState_Walk_End::Update(CMiyabi* pOwner, _float dt)
 {
-    if (pOwner->Is_Input())
-    {
-        m_fAnimProgress = 1.f;        // 새로운 입력 시 즉시 End 완료 처리
-    }
 }
 
 void CMiyabiState_Walk_End::Exit(CMiyabi* pOwner)

@@ -447,7 +447,6 @@ void CCharacterController::Process_Response(const PxControllerShapeHit& hit)
 	}
 }
 
-#ifdef _DEBUG
 void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor)
 {
 	const PxExtendedVec3& pos = m_pController->getPosition();
@@ -466,6 +465,7 @@ void CCharacterController::Render(PrimitiveBatch<VertexPositionColor>* pBatch, _
 		Render_DebugRay(pBatch);
 	}
 }
+
 void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* pBatch)
 {
 	_vector vStart = XMLoadFloat3(&m_vRayStart);
@@ -500,8 +500,6 @@ void CCharacterController::Render_DebugRay(PrimitiveBatch<VertexPositionColor>* 
 		);
 	}
 }
-#endif
-
 
 void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float dt)
 {

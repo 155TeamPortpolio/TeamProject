@@ -184,6 +184,7 @@
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
     <ClInclude Include="..\Public\StateParameter.h" />
+    <ClInclude Include="..\public\TestCloud.h" />
     <ClInclude Include="..\Public\TestFloor.h" />
     <ClInclude Include="..\Public\TestLevel.h" />
     <ClInclude Include="..\Public\TestMap.h" />
@@ -265,6 +266,7 @@
     <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />
+    <ClCompile Include="..\private\TestCloud.cpp" />
     <ClCompile Include="..\Private\TestFloor.cpp" />
     <ClCompile Include="..\Private\TestLevel.cpp" />
     <ClCompile Include="..\Private\TestMap.cpp" />

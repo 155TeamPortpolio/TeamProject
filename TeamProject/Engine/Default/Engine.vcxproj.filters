@@ -1468,6 +1468,8 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl">
+     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>

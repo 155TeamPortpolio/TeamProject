@@ -726,6 +726,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_SkinMesh.hlsl", "../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
 	Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
 	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
+	Add_ResourcePath("VTX_Cloud.hlsl", "../Bin/ShaderFiles/VTX_Cloud.hlsl");
 	Add_ResourcePath("VTX_Point.hlsl", "../Bin/ShaderFiles/VTX_Point.hlsl");
 	Add_ResourcePath("VTX_InstancePoint.hlsl", "../Bin/ShaderFiles/VTX_InstancePoint.hlsl");
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
@@ -754,6 +755,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_NorTex.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_NorTex.hlsl", "VTX_NorTex.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_SkinMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_SkinMesh.hlsl", "VTX_SkinMesh.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_UI.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_UI.hlsl", "VTX_UI.hlsl"));
+	m_Resources[0].m_Shaders.emplace("VTX_Cloud.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Cloud.hlsl", "VTX_Cloud.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Debug.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Debug.hlsl", "VTX_Debug.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_Point.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Point.hlsl", "VTX_Point.hlsl"));
 	m_Resources[0].m_Shaders.emplace("VTX_EffectMesh.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_EffectMesh.hlsl", "VTX_EffectMesh.hlsl"));
