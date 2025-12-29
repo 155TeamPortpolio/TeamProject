@@ -56,7 +56,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
 	pAnimator->Set_MotionBone(3); //Bip001
-	pAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
+	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	auto pCCT = Get_Component<CCharacterController>();
 	pCCT->Set_GravityEnabled(false);

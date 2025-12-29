@@ -9,7 +9,6 @@ void CSacrificeHandState_Attack_Phase1::Enter(CSacrificeHand* pOwner)
 		m_pSubStateMachine = CStateMachine<CSacrificeHand>::Create();
 
 		Register_States();
-
 	}
 
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
@@ -22,6 +21,22 @@ void CSacrificeHandState_Attack_Phase1::Enter(CSacrificeHand* pOwner)
 void CSacrificeHandState_Attack_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
+
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	if (blackBoard.isRequestNext)
+	{
+		blackBoard.isRequestNext = false;
+		blackBoard.isChainOpen = false;
+
+		if (!blackBoard.stateQueue.empty())
+		{
+			string nextStateTag = blackBoard.stateQueue.front();
+			blackBoard.stateQueue.pop_front();
+
+			blackBoard.currentStateTag = nextStateTag;
+			m_pSubStateMachine->Change_State(nextStateTag);
+		}
+	}
 }
 
 void CSacrificeHandState_Attack_Phase1::Exit(CSacrificeHand* pOwner)
@@ -48,9 +63,9 @@ void CSacrificeHandState_Attack_Phase1::Register_Transitions()
 
 void CSacrificeHandState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
-	blackBoard.stateQueue.push_back("Attack02_Phase1");
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack10_Phase1");
+	blackBoard.stateQueue.push_back("Attack11_Phase1");
+	blackBoard.stateQueue.push_back("Attack12_Phase1");
 }
 
 void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
@@ -127,10 +142,28 @@ void CSacrificeHandState_Attack_06_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_10_Phase1::Enter(CSacrificeHand* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 }
 
 void CSacrificeHandState_Attack_10_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeHandState_Attack_10_Phase1::Exit(CSacrificeHand* pOwner)
@@ -139,10 +172,28 @@ void CSacrificeHandState_Attack_10_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_11_Phase1::Enter(CSacrificeHand* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
 }
 
 void CSacrificeHandState_Attack_11_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeHandState_Attack_11_Phase1::Exit(CSacrificeHand* pOwner)
@@ -151,10 +202,28 @@ void CSacrificeHandState_Attack_11_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_12_Phase1::Enter(CSacrificeHand* pOwner)
 {
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.2f).Apply();
 }
 
 void CSacrificeHandState_Attack_12_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	if (blackBoard.stateQueue.empty())
+	{
+		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
+			blackBoard.isChainOpen = true;
+	}
+	else
+	{
+		if (m_fAnimProgress >= 0.3f)
+		{
+			blackBoard.isChainOpen = true;
+			if (!blackBoard.stateQueue.empty())
+				blackBoard.isRequestNext = true;
+		}
+	}
 }
 
 void CSacrificeHandState_Attack_12_Phase1::Exit(CSacrificeHand* pOwner)
