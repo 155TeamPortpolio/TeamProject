@@ -22,6 +22,7 @@
 #include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
+#include "MapTriggerObject.h"
 
 /* Effect */
 #include "MeshNode.h"
@@ -76,57 +77,19 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
-	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
-	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
 	
-	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "glow_particle.json");
-	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//	.Asset("glow_particle.json")
-	//	.Position(_float3(0.f, 0.f, 0.f))
-	//	.Build("Test_Effect");
-	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	//===================================================
-
+	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//============== Map ============================
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+
+	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
-
-	//==============TestModel==========================
-	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-	//	.CharacterController({})
-	//	.Build("Test_Model");
-
-	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
-
-	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
-
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
-
-
-	// =====================TestFloor=========================
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
-	for (_int z = 0; z < 3; ++z)
-	{
-	for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.15f, 0.f, z * 6.15f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
-
 
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
@@ -138,7 +101,7 @@ HRESULT CTestLevel::Awake()
 	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	miyabiCCT.fBoundingMinY = -0.88f;
+	//miyabiCCT.fBoundingMinY = -0.88f;
 	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
 	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
 		.CharacterController(miyabiCCT)
@@ -162,12 +125,11 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Register(hudUI);
 	//uiDirector->SetVisible("HUD", true);
 
-	// =====================TestCloud=========================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-		.Build("Test_Cloud");
 
-	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	//====================Test=================
+	Ready_TestObject();
+
+
 	return S_OK;
 }
 
@@ -266,6 +228,61 @@ void CTestLevel::Ready_Camera()
 	GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+}
+
+void CTestLevel::Ready_TestObject()
+{
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+	auto objMgr = m_pGameInstance->Get_ObjectMgr();
+
+	//==============TestEffect==========================
+	//pResource->Add_ResourcePath("glow_particle.json", "../Bin/Resources/Effect/glow_particle.json");
+	//pResource->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Eff_Disorder_UU_23.png");
+
+	//EFFECT_ASSET EffectAsset = pResource->Load_EffectAsset(G_GlobalLevelKey, "glow_particle.json");
+	//auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//	.Asset("glow_particle.json")
+	//	.Position(_float3(0.f, 0.f, 0.f))
+	//	.Build("Test_Effect");
+	//objMgr->Add_Object(effect, { "Test_Level","Effect_Layer" });
+
+	//==============TestModel==========================
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
+	
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+	
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestMap" })
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, { "Test_Level", "Model_Layer" });
+
+
+	// =====================TestFloor=========================
+	//COLLIDER_DESC colDesc;
+	//colDesc.bCooking = true;
+	//colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+	//
+	//for (_int z = 0; z < 3; ++z)
+	//{
+	//	for (_int x = 0; x < 3; ++x)
+	//	{
+	//		CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+	//			.Collider(colDesc)
+	//			.Position({ x * 6.15f, 0.f, z * 6.15f })
+	//			.Build("Test_Floor_" + to_string(z * 3 + x));
+	//		objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+	//	}
+	//}
+
+	// =====================TestCloud=========================
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+		.Build("Test_Cloud");
+
+	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 HRESULT CTestLevel::Render()

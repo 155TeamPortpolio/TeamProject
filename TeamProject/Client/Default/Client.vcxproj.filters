@@ -142,12 +142,6 @@
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\00. CamLoader">
-      <UniqueIdentifier>{01fa8660-fa55-4073-9664-f30e02931412}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="03. Utility\01. UILoader">
-      <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
       <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
     </Filter>
