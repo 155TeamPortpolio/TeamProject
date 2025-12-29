@@ -95,7 +95,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//============== Map ============================
-	//Ready_Map("Test_Level", "TrainingRoom");
+	Ready_Map("Test_Level", "TrainingRoom");
 
 	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })

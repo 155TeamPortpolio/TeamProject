@@ -75,7 +75,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-	//iRandIndex = 1;
+	iRandIndex = 2;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -130,7 +130,7 @@ void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.25f)
+		if (m_fAnimProgress >= 0.5f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -161,7 +161,7 @@ void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.25f)
+		if (m_fAnimProgress >= 0.3f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())

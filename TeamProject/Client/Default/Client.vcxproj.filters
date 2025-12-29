@@ -226,6 +226,21 @@
     <Filter Include="03. Utility\03. UILoader">
       <UniqueIdentifier>{5142a8bf-9e06-4a8f-b695-a095b762835d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
+      <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
+      <UniqueIdentifier>{b0a4c5a3-595b-4977-8989-5129a6639450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
+      <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1">
+      <UniqueIdentifier>{3a046367-2f0c-4d32-ae9a-dcc6c15ecfa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
+      <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -393,7 +408,7 @@
     <ClInclude Include="..\Public\SacrificeState_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sacrifice_Hand.h">
+    <ClInclude Include="..\Public\SacrificeHand.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
     </ClInclude>
     <ClInclude Include="..\public\SequenceCam.h">
@@ -443,6 +458,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Walk.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeHandState_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeHandState_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeHandState_Hit.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -612,7 +642,7 @@
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Sacrifice_Hand.cpp">
+    <ClCompile Include="..\Private\SacrificeHand.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
     </ClCompile>
     <ClCompile Include="..\private\DebugCamTrace.cpp">
@@ -656,6 +686,21 @@
     </ClCompile>
     <ClCompile Include="..\private\TestCloud.cpp">
       <Filter>02. GameObject\Object\TestCloud</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeHandState_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeHandState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

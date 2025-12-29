@@ -35,9 +35,6 @@ public:
     void ActiveAxe();
     void DeactiveAxe();
     void Idle() { m_RequestIdle = true; }
-    void Attack() { m_RequestAttack = true; }
-    void Walk() { m_RequestWalk = true; }
-    void Evade() { m_RequestEvade = true; }
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
 
@@ -52,9 +49,6 @@ private:
     vector<_uint> m_PartMeshIndices;
     ATTACK_BLACK_BOARD m_AttackBlackBoard{};
     _bool m_RequestIdle = false;
-    _bool m_RequestAttack = false;
-    _bool m_RequestWalk = false;
-    _bool m_RequestEvade = false;
 
     _float m_fIdleElasedTime{};
     _float m_fIdleDuration = 0.3f;

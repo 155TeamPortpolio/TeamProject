@@ -6,14 +6,13 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-
-class CSacrifice_Hand :
+class CSacrificeHand :
     public CEnemy
 {
 private:
-    CSacrifice_Hand();
-    CSacrifice_Hand(const CSacrifice_Hand& rhg);
-    virtual ~CSacrifice_Hand() DEFAULT;
+    CSacrificeHand();
+    CSacrificeHand(const CSacrificeHand& rhg);
+    virtual ~CSacrificeHand() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -24,9 +23,12 @@ public:
     void    Late_Update(_float dt) override;
 
 public:
-    static CSacrifice_Hand* Create();
+    static CSacrificeHand* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
+
+public:
+    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -34,6 +36,7 @@ private:
     HRESULT Initialize_Transitions();
 
 private:
-    CStateMachine<CSacrifice_Hand>* m_pStateMachine = { nullptr };
+    CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };
+    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
 };
 NS_END

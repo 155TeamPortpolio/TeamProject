@@ -28,7 +28,7 @@ void CSacrificeState_Walk::Update(CSacrifice* pOwner, _float dt)
 	_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
 	vDeltaMove.y = 0.f;
-	vDeltaMove = vRight * vDeltaMove.x + vLook * -1.f * vDeltaMove.z;
+	vDeltaMove = (vRight * vDeltaMove.x + vLook * vDeltaMove.z) * -1.f;
 
 	pCCT->Move_RootMotion(vDeltaMove * 0.5f, _vector4(0.f, 0.f, 0.f, 1.f), dt);
 

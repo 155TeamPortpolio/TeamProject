@@ -215,7 +215,7 @@ void CSacrifice::Update_States(_float dt)
 		if (m_fIdleElasedTime >= m_fIdleDuration)
 		{
 			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-
+			iRandIndex = 0;
 			if (0 == iRandIndex)
 			{
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
