@@ -32,6 +32,13 @@ namespace Engine
 		Bottom = 8		// 1000
 	};
 
+	enum class AXIS : unsigned int {
+		None = 0,
+		X = 1,
+		Y = 2,
+		Z = 4,
+	};
+
 	inline ANCHOR operator | (ANCHOR a, ANCHOR b) {
 		return static_cast<ANCHOR>(static_cast<unsigned int>(a) | static_cast<unsigned int>(b));
 	}
