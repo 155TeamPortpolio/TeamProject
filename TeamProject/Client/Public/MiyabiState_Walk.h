@@ -10,7 +10,7 @@ class CMiyabiState_Walk : public IHState<CMiyabi>
 public:
     virtual void Enter(CMiyabi* pOwner) override;
     virtual void Update(CMiyabi* pOwner, _float dt) override;
-    virtual void Exit(CMiyabi* pOwner) override;
+    virtual void Exit(CMiyabi* pOwner) override {}
 
 public:
     static CMiyabiState_Walk* Create() { return new CMiyabiState_Walk(); }
