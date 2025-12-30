@@ -514,12 +514,14 @@
     <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EventListener.h" />
     <ClInclude Include="..\Public\ClickManager.h">
       <Filter>01. Utility\14.ClickManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\EventListener.h">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1395,9 +1397,11 @@
     <ClCompile Include="..\Private\HiZ_Culling.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EventListener.cpp" />
     <ClCompile Include="..\Private\ClickManager.cpp">
       <Filter>01. Utility\14.ClickManager</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\EventListener.cpp">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
