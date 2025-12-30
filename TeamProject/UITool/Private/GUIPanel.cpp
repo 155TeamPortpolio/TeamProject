@@ -188,8 +188,8 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 		{
 			string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-			CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType })         // UI Object »ý¼º
-				.Size({ 300.f, 200.f })
+			CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType })
+				.Anchor(ANCHOR::Center)
 				.Build(strType);
 
 			if (!pChild)
