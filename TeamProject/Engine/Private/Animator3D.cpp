@@ -81,8 +81,7 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 
 
 	Resize_Layer(1);
-
-	//0ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ï¿½Ì¾ï¿½, Layer.BaseLayerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Çµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//0¹ø ·¹ÀÌ¾î´Â º£ÀÌ½º·¹ÀÌ¾î, Layer.BaseLayer´Â À¢¸¸ÇÏ¸é °ÇµéÁö ¸»°Í
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
@@ -91,9 +90,9 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 
 HRESULT CAnimator3D::Resize_Layer(_uint iLayerCount)
 {
-	if(isExistLayer(iLayerCount))
+	if (isExistLayer(iLayerCount))
 		return S_OK;
-	
+
 	_int iCreateCount = iLayerCount - m_AnimLayers.size();
 	while (0 < iCreateCount)
 	{
@@ -119,14 +118,12 @@ void CAnimator3D::Update_Animation(_float dt)
 
 	Clear_Events();
 
-	Update_Playlist();
-
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
 
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
-		else	
+		else
 			Animation_Run(Layer, dt);
 	}
 
@@ -169,13 +166,13 @@ void CAnimator3D::Reset_Layer(_uint LayerIndex)
 	Layer.ePlayEaseType = { EaseType::None };
 	Layer.bLoop = false;
 	Layer.bisFinished = true;
-	
+
 	Layer.bBlending = { false };
 	Layer.iNextClipIndex = { -1 };
 	Layer.fBlendElapsed = 0.f;
 	Layer.fBlendDuration = 0.f;
 	Layer.eBlendEaseType = { EaseType::None };
-	
+
 	Matrix identityMat = XMMatrixIdentity();
 
 	_float4x4 IdentityMatrix;
@@ -264,7 +261,7 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 		return 0.f;
 
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
-	
+
 	if (Layer.bBlending) {
 		if (!isExistClip(Layer.iNextClipIndex))
 			return 0.f;
@@ -286,7 +283,7 @@ _float CAnimator3D::Get_CurAnimDuration(_uint LayerIndex)
 string CAnimator3D::Get_CurAnimName(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return "";
-	
+
 	ANIM_LAYER& Layer = m_AnimLayers[LayerIndex];
 
 	if (Layer.bBlending) {
@@ -341,14 +338,14 @@ _float4 CAnimator3D::Get_RootBoneEndQuat() const
 {
 	for (auto& Layer : m_AnimLayers)
 		if (Layer.BaseLayer)
- 			return Layer.vRootEndQuat;
+			return Layer.vRootEndQuat;
 
 	return Quaternion::Identity;
 }
 
 _vector CAnimator3D::Get_MotionBoneDelta(_uint LayerIndex)
 {
-	if (!isExistLayer(LayerIndex)) return XMVectorZero(); 
+	if (!isExistLayer(LayerIndex)) return XMVectorZero();
 
 	if (-1 == m_AnimLayers[LayerIndex].iMotionBoneIndex)
 		return XMVectorZero();
@@ -463,7 +460,7 @@ void CAnimator3D::Set_TPose()
 		if (0 < i)
 			m_AnimLayers[i].eLayerType = ANIM_LAYER_STATE::NONE;
 	}
-	
+
 	m_CombinedMatrices = m_TPose;
 }
 
@@ -503,7 +500,7 @@ void CAnimator3D::Dettach_BoneRelation(_uint Index)
 
 void CAnimator3D::Add_Event(CLIP_EVENT_TYPE EventType, string EventTag)
 {
-	m_EventBus.push_back(EVENT_INST{EventType, EventTag});
+	m_EventBus.push_back(EVENT_INST{ EventType, EventTag });
 }
 
 void CAnimator3D::Clear_Events()
@@ -601,7 +598,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
 	//Empty Layer
 	if (m_AnimLayers.empty()) return;
-	
+
 	//Empty Clip
 	if (-1 == Layer.iClipIndex) return;
 
@@ -624,7 +621,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	}
 
 	_float playSpeed = dt * AnimSpeed;
-	
+
 	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
@@ -638,7 +635,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
-			
+
 			_vector3 vCurRootPos = T;
 			_vector4 vCurRootQuat = R;
 
@@ -666,7 +663,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 
 		Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
 		Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
-		Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat* RootMat.Invert();
+		Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat * RootMat.Invert();
 
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
@@ -737,7 +734,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			else {
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
-			
+
 			_vector curQ = XMLoadFloat4(&vCurRootQuat);
 			_vector prevQ = XMLoadFloat4(&Layer.vPrevRootQuat);
 
@@ -762,7 +759,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
 			_float4x4& mat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
-		
+
 			Layer.vPrevMotionBonePos = _float3(mat._41, mat._42, mat._43);
 			if (hasAxis(Layer.eExtractMoveAxis, AXIS::X)) mat._41 = 0.f;
 			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Y)) mat._42 = 0.f;
@@ -788,7 +785,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		_vector FinalS = XMVectorLerp(baseS, blendS, fBlendRate);
 		_vector FinalT = XMVectorLerp(baseT, blendT, fBlendRate);
 		_vector FinalR;
-		
+
 		FinalR = Layer.bIgnoreRotation ?
 			FinalR = blendR :
 			XMQuaternionSlerp(baseR, blendR, fBlendRate);
@@ -812,13 +809,13 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendDuration = 0.f;
 
 		Layer.LocalMatrices = Layer.FinalLocalMatrices;
-	}	
+	}
 }
 
 void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
-		if(Layer.bBlending)
+		if (Layer.bBlending)
 			m_TransformationMatrices = Layer.FinalLocalMatrices;
 		else
 			m_TransformationMatrices = Layer.LocalMatrices;
@@ -917,17 +914,16 @@ void CAnimator3D::Render_GUI()
 	ImGui::SeparatorText("Animator 3D");
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
-	GUI_Playlist();
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()
 {
 	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Layer / Loop
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Layer / Loop
 	ImGui::Text("Layer");
 	ImGui::SameLine();
 
-	int layerCount = m_AnimLayers.size();   // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ ï¿½ï¿½
+	int layerCount = m_AnimLayers.size();   // ÇöÀç ·¹ÀÌ¾î ¼ö
 
 	static int curLayerIndex = 0;
 	ImGui::SetNextItemWidth(80);
@@ -953,26 +949,26 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	ImGui::Separator();
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Clip
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Clip
 
 	string AnimName{};
 
-	if(isExistClip(curLayer.iClipIndex))
+	if (isExistClip(curLayer.iClipIndex))
 		AnimName = m_pAnimClips[curLayer.iClipIndex]->Get_Name();
 
 	string AnimInfo = "Clip : " + to_string(curLayer.iClipIndex) + " | Name : " + AnimName;
 	ImGui::Text(AnimInfo.c_str());
 	ImGui::Separator();
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Play bar
-	if(ImGui::Button(curLayer.bPause ? "Play" : "Pause", ImVec2(60.f, 0.f))) {
+	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Play bar
+	if (ImGui::Button(curLayer.bPause ? "Play" : "Pause", ImVec2(60.f, 0.f))) {
 		curLayer.bPause = !curLayer.bPause;
 	}
 	ImGui::SameLine();
 
 
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
-	
+
 	int iDuration{};
 	if (isExistClip(curLayer.iClipIndex))
 		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
@@ -1018,111 +1014,6 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
-void CAnimator3D::GUI_Playlist()
-{
-	ImGui::SeparatorText("Playlist");
-
-	if (m_bPlaylistPlaying) {
-		if (ImGui::Button("Stop##Playlist"))
-			Playlist_Stop();
-	}
-	else {
-		if (ImGui::Button("Play##Playlist"))
-			Playlist_Play();
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Clear##Playlist"))
-		Playlist_Clear();
-	ImGui::SameLine();
-	ImGui::Checkbox("Loop Playlist", &m_bPlaylistLoop);
-
-	if (m_bPlaylistPlaying && m_iPlaylistIndex >= 0 && m_iPlaylistIndex < (_int)m_Playlist.size()) {
-		string status = "Playing: " + to_string(m_iPlaylistIndex + 1) + "/" + to_string(m_Playlist.size());
-		ImGui::Text(status.c_str());
-	}
-
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * 6) + (ImGui::GetStyle().WindowPadding.y * 2);
-
-	ImGui::BeginChild("##PlaylistEntries", ImVec2{ 0, childHeight }, true);
-
-	static _int iSelectedPlaylistIndex = -1;
-
-	for (_int i = 0; i < (_int)m_Playlist.size(); ++i)
-	{
-		auto& entry = m_Playlist[i];
-
-		ImGui::PushID(i);
-
-		string label = to_string(i + 1) + ". ";
-		if (isExistClip(entry.iClipIndex))
-			label += m_pAnimClips[entry.iClipIndex]->Get_Name();
-		else
-			label += "[Invalid]";
-
-		if (m_bPlaylistPlaying && m_iPlaylistIndex == i)
-			label += " [Playing]";
-
-		if (entry.bLoop)
-			label += " (Loop)";
-
-		if (ImGui::Selectable(label.c_str(), iSelectedPlaylistIndex == i, 0, ImVec2{ childWidth * 0.65f, textLineHeight }))
-			iSelectedPlaylistIndex = i;
-
-		ImGui::SameLine();
-		if (ImGui::SmallButton("Up"))
-			Playlist_MoveUp(i);
-		ImGui::SameLine();
-		if (ImGui::SmallButton("Dn"))
-			Playlist_MoveDown(i);
-		ImGui::SameLine();
-		if (ImGui::SmallButton("X")) {
-			Playlist_Remove(i);
-			ImGui::PopID();
-			break;
-		}
-
-		ImGui::PopID();
-	}
-
-	ImGui::EndChild();
-
-	ImGui::Text("Add Animation:");
-
-	static _int iAddClipIndex = 0;
-	static _bool bAddLoop = false;
-	static _float fAddSpeed = 1.f;
-	static _float fAddBlendDuration = 0.2f;
-
-	ImGui::SetNextItemWidth(200.f);
-	if (ImGui::BeginCombo("##AddClip",
-		isExistClip(iAddClipIndex) ? m_pAnimClips[iAddClipIndex]->Get_Name().c_str() : "Select"))
-	{
-		for (_int i = 0; i < (_int)m_pAnimClips.size(); ++i)
-		{
-			if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), iAddClipIndex == i))
-				iAddClipIndex = i;
-			if (iAddClipIndex == i)
-				ImGui::SetItemDefaultFocus();
-		}
-		ImGui::EndCombo();
-	}
-
-	ImGui::SameLine();
-	ImGui::Checkbox("Loop##Add", &bAddLoop);
-
-	ImGui::SetNextItemWidth(100.f);
-	ImGui::DragFloat("Speed##Add", &fAddSpeed, 0.01f, 0.1f, 5.f);
-	ImGui::SameLine();
-	ImGui::SetNextItemWidth(100.f);
-	ImGui::DragFloat("Blend##Add", &fAddBlendDuration, 0.01f, 0.f, 2.f);
-	ImGui::SameLine();
-
-	if (ImGui::Button("Add to Playlist"))
-		Playlist_Add(iAddClipIndex, bAddLoop, fAddSpeed, fAddBlendDuration);
-}
-
 void CAnimator3D::Reset_Anim()
 {
 	unordered_map<string, _uint> m_pAnimNames;
@@ -1130,7 +1021,7 @@ void CAnimator3D::Reset_Anim()
 	for (auto& Clip : m_pAnimClips) {
 		Safe_Release(Clip);
 	}
-	
+
 	m_pAnimClips.clear();
 	Safe_Release(m_pData);
 }
@@ -1158,7 +1049,6 @@ void CAnimator3D::Free()
 	}
 	m_pAnimClips.clear();
 	m_AnimLayers.clear();
-	m_Playlist.clear();
 }
 
 //BUILDER------------------------------------------------------------------------------------------
@@ -1169,11 +1059,11 @@ HRESULT SetAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 
-	//ï¿½ï¿½ï¿½Ì¾ï¿½, Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//·¹ÀÌ¾î, Å¬¸³ Àû¿ë
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 	Layer.iClipIndex = m_iClipIndex;
 
-	//ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//º£ÀÌ½º ·¹ÀÌ¾îÀÏ °æ¿ì ¸¶Áö¸· Å°ÇÁ·¹ÀÓ À§Ä¡, È¸ÀüÀ» °®°í¿È
 	if (Layer.BaseLayer) {
 		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
@@ -1187,20 +1077,20 @@ HRESULT SetAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
-	
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½âº»
+
+	//¾Ö´Ï¸ÅÀÌ¼Ç ±âº»
 	Layer.bLoop = m_bLoop;
 	Layer.fCurrentTrackPosition = 0.f;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½Óµï¿½
+	//¾Ö´Ï¸ÅÀÌ¼Ç Àç»ý¼Óµµ
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û‰ï¿½
+	//¾Ö´Ï¸ÅÀÌ¼ÇÀÌ »õ·Î ½ÃÀÛ‰Î
 	Layer.bisFinished = false;
 	return S_OK;
 }
@@ -1213,7 +1103,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 
-	//ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½Ì¾ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡, È¸ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	//º£ÀÌ½º ·¹ÀÌ¾îÀÏ °æ¿ì ¸¶Áö¸· Å°ÇÁ·¹ÀÓ À§Ä¡, È¸ÀüÀ» °®°í¿È
 	if (Layer.BaseLayer) {
 		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
@@ -1228,25 +1118,25 @@ HRESULT ChangeAnimBuild::Apply()
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
 
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½âº»
+	//¾Ö´Ï¸ÅÀÌ¼Ç ±âº»
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½Óµï¿½
+	//¾Ö´Ï¸ÅÀÌ¼Ç Àç»ý¼Óµµ
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ ï¿½Ù·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Öµï¿½ï¿½ï¿½ ï¿½ê³»ï¿½ï¿½ ï¿½ï¿½ï¿½Ã·ï¿½
+	//¸¸¾à ºí·£µå »óÅÂÀÌ¸é ¹Ù·Î ´ÙÀ½À¸·Î ºí·£µåµÉ ¼ö ÀÖµµ·Ï ¾ê³»¸¦ ·ÎÄÃ·Î
 	if (Layer.bBlending) {
 		Layer.iClipIndex = Layer.iNextClipIndex;
 		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
 		Layer.LocalMatrices = Layer.BlendMatrices;
 	}
 
-	//Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	//Å¬¸³³¢¸®ÀÇ ºí·£µå »óÅÂ
 	Layer.bBlending = true;
 	Layer.bKeepTrackPos = m_bKeepTrackPos;
 	Layer.bIgnoreRotation = m_bIgnoreRotation;
@@ -1256,109 +1146,7 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;
 
-	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û‰ï¿½
+	//¾Ö´Ï¸ÅÀÌ¼ÇÀÌ »õ·Î ½ÃÀÛ‰Î
 	Layer.bisFinished = false;
 	return S_OK;
-}
-
-void CAnimator3D::Playlist_Add(_int iClipIndex, _bool bLoop, _float fSpeed, _float fBlendDuration)
-{
-	if (!isExistClip(iClipIndex)) return;
-
-	PLAYLIST_ENTRY entry{};
-	entry.iClipIndex = iClipIndex;
-	entry.bLoop = bLoop;
-	entry.fSpeed = fSpeed;
-	entry.fBlendDuration = fBlendDuration;
-
-	m_Playlist.push_back(entry);
-}
-
-void CAnimator3D::Playlist_Add(const string& ClipName, _bool bLoop, _float fSpeed, _float fBlendDuration)
-{
-	Playlist_Add(Find_Clip(ClipName), bLoop, fSpeed, fBlendDuration);
-}
-
-void CAnimator3D::Playlist_Remove(_int iPlaylistIndex)
-{
-	if (iPlaylistIndex < 0 || iPlaylistIndex >= (_int)m_Playlist.size()) return;
-
-	m_Playlist.erase(m_Playlist.begin() + iPlaylistIndex);
-
-	if (m_iPlaylistIndex >= (_int)m_Playlist.size())
-		m_iPlaylistIndex = (_int)m_Playlist.size() - 1;
-}
-
-void CAnimator3D::Playlist_Clear()
-{
-	m_Playlist.clear();
-	m_iPlaylistIndex = -1;
-	m_bPlaylistPlaying = false;
-}
-
-void CAnimator3D::Playlist_Play()
-{
-	if (m_Playlist.empty()) return;
-
-	m_bPlaylistPlaying = true;
-	m_iPlaylistIndex = 0;
-
-	auto& entry = m_Playlist[m_iPlaylistIndex];
-	Set_Animation(entry.iClipIndex)
-		.Loop(entry.bLoop)
-		.Speed(entry.fSpeed)
-		.Apply();
-}
-
-void CAnimator3D::Playlist_Stop()
-{
-	m_bPlaylistPlaying = false;
-	m_iPlaylistIndex = -1;
-}
-
-void CAnimator3D::Playlist_MoveUp(_int iPlaylistIndex)
-{
-	if (iPlaylistIndex <= 0 || iPlaylistIndex >= (_int)m_Playlist.size()) return;
-
-	std::swap(m_Playlist[iPlaylistIndex], m_Playlist[iPlaylistIndex - 1]);
-}
-
-void CAnimator3D::Playlist_MoveDown(_int iPlaylistIndex)
-{
-	if (iPlaylistIndex < 0 || iPlaylistIndex >= (_int)m_Playlist.size() - 1) return;
-
-	std::swap(m_Playlist[iPlaylistIndex], m_Playlist[iPlaylistIndex + 1]);
-}
-
-void CAnimator3D::Update_Playlist()
-{
-	if (!m_bPlaylistPlaying) return;
-	if (m_Playlist.empty()) return;
-	if (m_iPlaylistIndex < 0 || m_iPlaylistIndex >= (_int)m_Playlist.size()) return;
-
-	auto& curEntry = m_Playlist[m_iPlaylistIndex];
-
-	if (curEntry.bLoop) return;
-
-	if (!isCurrentAnimEnd(0)) return;
-
-	++m_iPlaylistIndex;
-
-	if (m_iPlaylistIndex >= (_int)m_Playlist.size()) {
-		if (m_bPlaylistLoop) {
-			m_iPlaylistIndex = 0;
-		}
-		else {
-			m_bPlaylistPlaying = false;
-			m_iPlaylistIndex = -1;
-			return;
-		}
-	}
-
-	auto& nextEntry = m_Playlist[m_iPlaylistIndex];
-	Change_Animation(nextEntry.iClipIndex)
-		.Loop(nextEntry.bLoop)
-		.Speed(nextEntry.fSpeed)
-		.BlendDuration(nextEntry.fBlendDuration)
-		.Apply();
 }
