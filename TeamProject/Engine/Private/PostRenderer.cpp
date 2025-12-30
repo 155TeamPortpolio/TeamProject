@@ -7,6 +7,7 @@
 #include "Shader.h"
 #include "Helper_Func.h"
 #include "VIBuffer.h"
+#include "Texture.h"
 
 CPostRenderer::CPostRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CRenderer(pDevice, pContext)
@@ -24,8 +25,6 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	LoadShader("Shader_Deferred.hlsl");
 	Ready_Target();
 	Ready_MRT();
-
-	CreateDistortionNoiseTexture();
 
 	return S_OK;
 }
@@ -124,23 +123,23 @@ HRESULT CPostRenderer::Render_HDRBloom()
 
 HRESULT CPostRenderer::Render_Distortion()
 {
-	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
-
-		m_pTargetManager->Bind_Target("Target_Distortion", m_pShader,"g_DistortionTexture" );
-		m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
-
-		ID3D11InputLayout* pLayout;
-		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "DISTORTION_ADD", &pLayout);
-		m_pContext->IASetInputLayout(pLayout);
-
-		m_pShader->Apply("DISTORTION_ADD", m_pContext);
-		m_pVIBuffer->Bind_Buffer(m_pContext);
-		m_pVIBuffer->Render(m_pContext);
-
-		m_pTargetManager->End_MRT();
-	}
-
+	//{
+	//	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
+	//
+	//	m_pTargetManager->Bind_Target("Target_Distortion", m_pShader,"g_DistortionTexture" );
+	//	m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
+	//
+	//	ID3D11InputLayout* pLayout;
+	//	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "DISTORTION_ADD", &pLayout);
+	//	m_pContext->IASetInputLayout(pLayout);
+	//
+	//	m_pShader->Apply("DISTORTION_ADD", m_pContext);
+	//	m_pVIBuffer->Bind_Buffer(m_pContext);
+	//	m_pVIBuffer->Render(m_pContext);
+	//
+	//	m_pTargetManager->End_MRT();
+	//}
+	//
 	return S_OK;
 }
 
@@ -183,6 +182,8 @@ HRESULT CPostRenderer::Render_Final()
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
 
+	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
+
 	SHADER_PARAM WorldMat = {};
 	WorldMat.iSize = sizeof(_float4x4);
 	WorldMat.typeName = "float4x4";
@@ -198,6 +199,23 @@ HRESULT CPostRenderer::Render_Final()
 void CPostRenderer::Add_PostProcessCommand(const POST_PROCESS_COMMAND& command)
 {
 	m_PostCommands.push_back(command);
+}
+
+HRESULT CPostRenderer::Add_NoiseTexture(string strName, CTexture* noiseTexture)
+{
+	if (noiseTexture == nullptr) return E_FAIL;
+
+	m_pNoiseTextures.insert({ strName, noiseTexture });
+	return S_OK;
+}
+
+void CPostRenderer::Apply_Noise(vector<string> strNames, _float duration)
+{
+	for (auto& name : strNames)
+	{
+		m_pApplyNoiseTextures.push_back(m_pNoiseTextures[name]);
+	}
+	m_fNoiseDuration = duration;
 }
 
 HRESULT CPostRenderer::Ready_Target()
@@ -262,74 +280,17 @@ HRESULT CPostRenderer::Ready_MRT()
 	return S_OK;
 }
 
-HRESULT CPostRenderer::CreateDistortionNoiseTexture()
+HRESULT CPostRenderer::Bind_NoiseTexture()
 {
-	// heat haze��
-	vector<_float4> distortionNoise;
-	const _int noiseSize = 128;
-
-	for (_int y = 0; y < noiseSize; y++)
+	for (_int i = 0; i < m_pApplyNoiseTextures.size(); ++i)
 	{
-		for (_int x = 0; x < noiseSize; x++)
-		{
-			_float fx = (float)x / noiseSize;
-			_float fy = (float)y / noiseSize;
+		string textureName = "g_NoiseTexture" + to_string(i + 1);
 
-			// ���� ���ļ��� ������ �������� �ε巯�� ������ ����
-			_float noise1 = sin(fx * 3.14f * 8.0f) * cos(fy * 3.14f * 6.0f);
-			_float noise2 = sin(fx * 3.14f * 12.0f) * cos(fy * 3.14f * 10.0f);
-			_float noise3 = sin(fx * 3.14f * 5.0f) * cos(fy * 3.14f * 7.0f);
-
-			// �ٸ� ������ ������
-			_float noise4 = cos(fx * 3.14f * 9.0f) * sin(fy * 3.14f * 11.0f);
-			_float noise5 = cos(fx * 3.14f * 6.0f) * sin(fy * 3.14f * 8.0f);
-
-			// ���� �� ����ȭ
-			_float r = (noise1 * 0.5f + noise2 * 0.3f + noise3 * 0.2f);
-			_float g = (noise4 * 0.5f + noise5 * 0.3f + noise1 * 0.2f);
-
-			// 0~1 ������ ��ȯ
-			r = (r + 1.0f) * 0.5f;
-			g = (g + 1.0f) * 0.5f;
-
-			distortionNoise.push_back(_float4(r, g, 0.0f, 0.0f));
-		}
+		if (FAILED(m_pShader->Bind_Value(textureName.c_str(),{ m_pApplyNoiseTextures[i]->Get_SRV(), "Texture2D", 0})))
+			return E_FAIL;
 	}
-
-	D3D11_TEXTURE2D_DESC texDesc = {};
-	texDesc.Width = noiseSize;
-	texDesc.Height = noiseSize;
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
-	texDesc.SampleDesc.Count = 1;
-	texDesc.SampleDesc.Quality = 0;
-	texDesc.Usage = D3D11_USAGE_IMMUTABLE;
-	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA initData = {};
-	initData.pSysMem = distortionNoise.data();
-	initData.SysMemPitch = noiseSize * sizeof(_float4);
-	initData.SysMemSlicePitch = 0;
-
-	ID3D11Texture2D* noiseTexture = nullptr;
-	if (FAILED(m_pDevice->CreateTexture2D(&texDesc, &initData, &noiseTexture)))
+	if (FAILED(m_pShader->Bind_Value("g_Time", { &m_fNoiseDuration, "float", sizeof(_float) })))
 		return E_FAIL;
-
-	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-	srvDesc.Format = texDesc.Format;
-	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	srvDesc.Texture2D.MipLevels = 1;
-	srvDesc.Texture2D.MostDetailedMip = 0;
-
-	if (FAILED(m_pDevice->CreateShaderResourceView(noiseTexture, &srvDesc, &m_pDistortionNoiseTexture)))
-	{
-		Safe_Release(noiseTexture);
-		return E_FAIL;
-	}
-	Safe_Release(noiseTexture);
-
 	return S_OK;
 }
 

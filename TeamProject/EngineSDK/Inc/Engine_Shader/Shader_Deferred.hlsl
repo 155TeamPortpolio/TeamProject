@@ -34,6 +34,9 @@ Texture2D g_HDRBloomFinalTexture;
 Texture2D g_FinalTexture;
 Texture2D g_UITexture;
 Texture2D g_PostProcessTexture;
+Texture2D g_NoiseTexture1;
+Texture2D g_NoiseTexture2;
+Texture2D g_NoiseTexture3;
 
 vector g_vLightDir;
 vector g_vLightPos;
@@ -48,6 +51,7 @@ vector g_vMtrlSpecular = 1.f;
 
 float g_FogDensity;
 float4 g_FogColor;
+float g_Time;
 
 struct VS_IN
 {
@@ -601,7 +605,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
 
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
     
-    if (fSkin > 0.5f)
+    if (fSkin < 0.7f)
     {
         float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
         float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
@@ -610,7 +614,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float3 halfVec = normalize(viewDir + lightDir);
         float specBase = saturate(dot(worldNormal, halfVec));
         float specularPower = lerp(50.0f, 5.0f, roughness);
-        specular = pow(specBase, specularPower) * specular * 0.2f;
+        specular = pow(specBase, specularPower) * specular;
         
         float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, g_vLightDiffuse.rgb, g_fLightIntensity, 1.f);
         Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
@@ -691,7 +695,7 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vAmbient = g_AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = g_RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float OutLine = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vMetalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -699,14 +703,13 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
     float3 ambient;
-    if(vAmbient.r >0.5)
-        ambient = g_vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g * ssao;
-
+    if(vMetalic.a < 0.5)
+        ambient = g_vLightAmbient.rgb * vDiffuse.rgb * ssao;
     else
         ambient = g_vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g * OutLine;
     
     ambient = max(ambient, vDiffuse.rgb * g_vLightAmbient.rgb * 0.05);
-    if(fSkin >0.5f) Out.vBackBuffer = float4(vLight.rgb * vRamp + ambient, 1.f);
+    if (vMetalic.a < 0.7) Out.vBackBuffer = float4(vLight.rgb * vRamp + ambient, 1.f);
     else Out.vBackBuffer = float4(vLight.rgb , 1.f);
     
     float rimIntensity = max(vRamp, 0.5f);
@@ -755,10 +758,9 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
     float4 scene = g_FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 hdrBloom = g_HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
     float4 effectbloom = g_BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = g_UITexture.Sample(DefaultSampler, In.vTexcoord);
-    //float4 distortion = g_DistortionFinal.Sample(DefaultSampler, In.vTexcoord);
+    
     float3 hdrColor = scene.rgb;
     hdrColor += hdrBloom.rgb * 0.3;
     if (effectbloom.a > 0.f)
@@ -766,6 +768,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     float3 mapped = ACESFilm(hdrColor);
     float3 finalColor = lerp(mapped, ui.rgb, ui.a);
+    
     return float4(finalColor, 1.f);
 }
 

@@ -30,11 +30,11 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pParticlePass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
 
 	/* Color Acc Pass */
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_WeightOIT", true, pDeferredDSV, false))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_WeightOIT", 0xff, pDeferredDSV, false))) return E_FAIL;
 		pEffectPass->Execute(m_pContext, this);
 		pParticlePass->Execute(m_pContext, this);
 		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -42,7 +42,7 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 
 	/* Composite Pass */
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", 0xff, pDeferredDSV, false))) return E_FAIL;
 
 		SHADER_PARAM WorldMat = {};
 		WorldMat.iSize = sizeof(_float4x4);

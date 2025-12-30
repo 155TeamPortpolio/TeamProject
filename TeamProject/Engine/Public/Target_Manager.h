@@ -21,7 +21,7 @@ public:
 
 public:
 	HRESULT Add_MRT(const string& strMRTTag, const string& strTargetTag);
-	HRESULT Begin_MRT(const string& strMRTTag, _bool Clear = true, ID3D11DepthStencilView* pExternalDSV = nullptr, _bool DSVClear = true);
+	HRESULT Begin_MRT(const string& strMRTTag, _uint Clear = 0xFF, ID3D11DepthStencilView* pExternalDSV = nullptr, _bool DSVClear = true);
 	HRESULT End_MRT();
 	HRESULT Bind_Target(const string& strTargetTag, class CShader* pShader, const string& constantName);
 	vector<class CRenderTarget*>& Find_MRT(const string& strMRTTag);

@@ -14,7 +14,8 @@ private:
 public:
     HRESULT Render_Priority(class PriorityPass* pPriorityPass);
     HRESULT Render_Shadow(class ShadowPass* pShadowPass);
-    HRESULT Render_Forward(class OpaquePass* pOpaquePass, class InstancePass* pInstancePass);
+    HRESULT Render_StaticMesh(class StaticOpaquePass* pOpaquePass, class InstancePass* pInstancePass);
+    HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
     HRESULT Render_LightAcc();
     HRESULT Render_RimLight();
     HRESULT Render_SSAO();
@@ -22,24 +23,23 @@ public:
     HRESULT Render_Blended(class BlendedPass* pBlendPass);
     HRESULT Render_NonLight(class NonLightPass* pNonLightPass);
     HRESULT Render_Combined();
-    void Add_OutLineCommand(const OUTLINE_COMMAND& command);
+
+public:
+    void Update(_float dt);
 
 public:
     void SetRimLightMode(RIMLIGHT eMode);
+    void Add_OutLineCommand(const OUTLINE_COMMAND& command);
 
 private:
     virtual HRESULT Ready_Target() override;
     virtual HRESULT Ready_MRT() override;
 
 private:
-    HRESULT CreateSSAONoiseTexture();
-    HRESULT Process_OutLineQueue();
+    class CStaticMeshRenderer* m_pStaticRenderer;
+    class CSkinnedMeshRenderer* m_pSkinnedRenderer;
 
-private:
-    ID3D11ShaderResourceView* m_pSSAONoiseTexture = { nullptr };
     class CTexture* m_pRampTexture;
-    RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
-    vector<OUTLINE_COMMAND> m_OutLineCommands;
 
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

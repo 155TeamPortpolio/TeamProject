@@ -39,7 +39,8 @@ HRESULT CRenderSystem::Initialize()
 
 	/*RenderPass*/
 	m_pPriorityPass	= PriorityPass::Create(this);
-	m_pOpaquePass	= OpaquePass::Create(this);
+	m_pStaticPass	= StaticOpaquePass::Create(this);
+	m_pSkinnedPass	= SkinnedOpaquePass::Create(this);
 	m_pShadowPass	= ShadowPass::Create(this);
 	m_pInstancePass	= InstancePass::Create(this);
 	m_pBlendedPass	= BlendedPass::Create(this);
@@ -65,8 +66,10 @@ HRESULT CRenderSystem::Render()
 {
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_Shadow(m_pShadowPass);
-	m_pForward->Render_Forward(m_pOpaquePass, m_pInstancePass);
+	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);
+	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
+
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_WeightOIT();
@@ -131,6 +134,16 @@ CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 {
 	m_pForward->SetRimLightMode(eMode);
+}
+
+void CRenderSystem::Add_NoiseTexture(string strName, CTexture* noiseTexture)
+{
+	m_pPost->Add_NoiseTexture(strName, noiseTexture);
+}
+
+void CRenderSystem::Apply_Noise(vector<string> strNames, _float duration)
+{
+	m_pPost->Apply_Noise(strNames, duration);
 }
 
 #ifdef _USING_GUI
@@ -200,7 +213,8 @@ void CRenderSystem::Free()
 	Safe_Release(m_pTargetManager);
 
 	Safe_Release(m_pPriorityPass);
-	Safe_Release(m_pOpaquePass);
+	Safe_Release(m_pStaticPass);
+	Safe_Release(m_pSkinnedPass);
 	Safe_Release(m_pInstancePass);
 	Safe_Release(m_pUIPass);
 	Safe_Release(m_pUI3DPass);

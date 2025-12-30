@@ -61,9 +61,7 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
-    vector vAmbient : SV_TARGET4;
-    vector vRimLight : SV_TARGET5;
-    vector vBloom : SV_TARGET6;
+    vector vEmissive : SV_Target4;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -77,9 +75,10 @@ PS_OUT PS_MAIN(PS_IN In)
         discard;
     }
   
-    Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
+    Out.vDiffuse = vMtrlDiffuse;
+    
     if (vNormalDesc.a > 0.2f)
     {
         float3 vNormal;
@@ -101,16 +100,11 @@ PS_OUT PS_MAIN(PS_IN In)
         float3 vNormal = normalize(In.vNormal);
         Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
     }
+    
     float linearDepth = saturate(In.viewZ / zFar);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
-    vAmbient.r = 1.f;
-    if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
-    Out.vAmbient = vAmbient;
-    Out.vMetalic = vMetalic;
-    Out.vBloom = ExtractBright(vMtrlDiffuse, 2.f, 0.2, 5.f);
-    Out.vRimLight = float4(vRimLightColor, fRimLightPower);
+    Out.vMetalic = float4(vMetalic.rgb, 0.3f);
+    Out.vEmissive = vMtrlDiffuse * vMetalic.b * 3.f;
     return Out;
 }
 
@@ -125,7 +119,6 @@ PS_OUT PS_DEBUG(PS_IN In)
         vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
     }
   
-    Out.vDiffuse = vMtrlDiffuse;
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float3 vNormal;
     vNormal.x = vNormalDesc.y * 2.f - 1.f;
@@ -142,12 +135,7 @@ PS_OUT PS_DEBUG(PS_IN In)
     
     Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, 1.f);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    
-    vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
-    if (vAmbient.g < 0.2) vAmbient.g = 0.5f;
-    if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
-    Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
     return Out;
 }

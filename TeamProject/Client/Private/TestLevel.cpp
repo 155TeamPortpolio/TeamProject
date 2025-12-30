@@ -93,6 +93,38 @@ HRESULT CTestLevel::Awake()
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
+	//==============TestModel==========================
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
+
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+
+
+	// =====================TestFloor=========================
+	COLLIDER_DESC colDesc;
+	colDesc.bCooking = true;
+	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
+
+	for (_int z = 0; z < 3; ++z)
+	{
+	for (_int x = 0; x < 3; ++x)
+		{
+			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
+				.Collider(colDesc)
+				.Position({ x * 6.15f, 0.f, z * 6.15f })
+				.Build("Test_Floor_" + to_string(z * 3 + x));
+			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
+		}
+	}
+
+
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
@@ -114,22 +146,22 @@ HRESULT CTestLevel::Awake()
 	m_miyabiHandle = Miyabi->Get_Handle();
 
 	/* Enemy */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
 
 	//==================== UI ===============
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Test_Level");
-	
-	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
-		.Build("HUD");
-	//========
-	
-	uiDirector->Register(hudUI);
+	//auto uiDirector = CUIDirector::GetInstance();
+	//uiDirector->Initialize("Test_Level");
+	//
+	//CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
+	//	.Asset("hud.json")
+	//	.Build("HUD");
+	////========
+	//
+	//uiDirector->Register(hudUI);
 	//uiDirector->SetVisible("HUD", true);
 
 

@@ -261,6 +261,9 @@ _float CHiZ_Culling::Clamp01(_float value)
 
 vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
+	if (!m_isReady)
+		return frustums;
+
 	vector<OPAQUE_PACKET> result;
 
 	if (frustums.empty())
