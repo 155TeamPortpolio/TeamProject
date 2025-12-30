@@ -17,9 +17,16 @@ private:
 
 public:
 	void Initialize(const string& levelKey);
-
 	void Register(CUI_Object* uiObj);
-	
+
+public:
+	void Dispatch(UIEventType type, void* arg = {});
+
+private:
+	void EnterMonitor(void* arg);
+	void ExitMonitor(void* arg);
+
+private:
 	void SetActive(const string& tag, void* arg = {});
 	void SetActive(initializer_list<string> tags, void* arg = {});
 	

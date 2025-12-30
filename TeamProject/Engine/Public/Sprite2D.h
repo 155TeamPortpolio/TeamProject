@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 NS_BEGIN(Engine)
-class CTexture; class CShader; class CVI_Point; class C_VIBuffer;
+class CTexture; class CShader; class CVI_Point; class CVIBuffer;
 
 class ENGINE_DLL CSprite2D final : public CComponent
 {
@@ -28,8 +28,6 @@ public:
     void    Apply_Shader(ID3D11DeviceContext* pContext);
     void    Draw_Sprite(ID3D11DeviceContext* pContext);
     HRESULT ChangeSprite(_uint Index);
-
-    _bool   HitTest_AlphaUV(_float u, _float v, _float alphaThreshold);
 
 public:
     CShader*   Get_Shader()       { return m_pShader; }

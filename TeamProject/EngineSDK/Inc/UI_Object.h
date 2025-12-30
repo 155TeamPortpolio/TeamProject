@@ -182,7 +182,7 @@ protected:
 	_float2 m_vAnimPosition = {};
 	
 	// -------------------------------
-	_float m_alphaThreshold{};
+	_float m_alphaThreshold = 0.25f;
 
 public:
 	virtual void Free() override;

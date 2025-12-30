@@ -48,3 +48,29 @@ void CUIDirector::Free()
 {
 	__super::Free();
 }
+
+void CUIDirector::Dispatch(UIEventType type, void* arg)
+{
+	switch (type)
+	{
+	case UIEventType::Enter_Monitor:
+		EnterMonitor(arg);
+		break;
+
+	case UIEventType::Exit_Monitor:
+		ExitMonitor(arg);
+		break;
+	}
+}
+
+void CUIDirector::EnterMonitor(void* arg)
+{
+	SetDeactive("");
+	SetActive("");
+}
+
+void CUIDirector::ExitMonitor(void* arg)
+{
+	SetDeactive("");
+	SetActive("");
+}

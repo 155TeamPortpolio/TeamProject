@@ -11,12 +11,9 @@ namespace
 {
     _float GetSizeRatio(UISizeMode mode)
     {
-        switch (mode)
-        {
-        case UISizeMode::FHD: return 1.f;
-        case UISizeMode::QHD: return 1920.f / 2560.f;
-        case UISizeMode::UHD: return 1920.f / 3840.f;
-        }
+        if      (mode == UISizeMode::QHD) return 1920.f / 2560.f;
+        else if (mode == UISizeMode::UHD) return 1920.f / 3840.f;
+        else                              return 1.f;
     }
 }
 

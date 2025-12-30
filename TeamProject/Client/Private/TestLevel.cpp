@@ -130,7 +130,6 @@ HRESULT CTestLevel::Awake()
 	
 	uiDirector->Register(hudUI);
 
-
 	//====================Test=================
 	Ready_TestObject();
 
