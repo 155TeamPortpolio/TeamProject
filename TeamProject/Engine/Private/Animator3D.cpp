@@ -68,7 +68,8 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
 {
-	m_pAnimClips = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MetaClip(LevelKey, MetaClipKey);
+	m_pAnimClips = CGameInstance::GetInstance()->Get_ResourceMgr()->
+		Load_MetaClip(LevelKey, MetaClipKey);
 
 	if (m_pAnimClips.empty()) {
 		string msg = "Anim Add Failed: " + MetaClipKey + "\n";
