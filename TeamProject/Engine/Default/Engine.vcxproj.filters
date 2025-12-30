@@ -370,9 +370,6 @@
     <ClInclude Include="..\Public\LifeTimeColor.h">
       <Filter>01. Utility\04. Components\03. Model\ParticleSystem\Module\02. LifeTimeColor</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CharacterController.h">
-      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ICollidable.h">
       <Filter>01. Utility\10. CollisionSystem</Filter>
     </ClInclude>
@@ -388,8 +385,8 @@
     <ClInclude Include="..\Public\EventSystem.h">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EventListener.h">
-      <Filter>01. Utility\04. Components\22. EventListener</Filter>
+    <ClInclude Include="..\Public\EventListner.h">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ObjectPool.h">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
@@ -519,6 +516,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\PreloadScheduler.h">
       <Filter>01. Utility\05. Resources\09. PreLoad</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HiZ_Culling.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
+     </ClInclude>
+     <ClInclude Include="..\Public\CharacterController.h">
+      <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -828,6 +831,9 @@
     <Filter Include="01. Utility\04. Components\20. CamSequencePlayer\99. CamUtility">
       <UniqueIdentifier>{48f047a4-90c3-4c87-bbf2-0922436f4a95}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\22. EventListner">
+      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\04. Components\00. Transform">
       <UniqueIdentifier>{8abe59df-6f42-4200-84ba-2a8c8f5c440a}</UniqueIdentifier>
     </Filter>
@@ -966,8 +972,8 @@
     <Filter Include="01. Utility\14.ClickManager">
       <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\04. Components\22. EventListener">
-      <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\Hi_Z">
+      <UniqueIdentifier>{70f06feb-b4e3-4412-8ada-789498d0c592}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1289,8 +1295,8 @@
     <ClCompile Include="..\Private\EventSystem.cpp">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EventListener.cpp">
-      <Filter>01. Utility\04. Components\22. EventListener</Filter>
+    <ClCompile Include="..\Private\EventListner.cpp">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ObjectPool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
@@ -1394,6 +1400,9 @@
     <ClCompile Include="..\Private\PreloadScheduler.cpp">
       <Filter>01. Utility\05. Resources\09. PreLoad</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\HiZ_Culling.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
@@ -1468,10 +1477,19 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_HiZ_Reduce.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_HiZ_Copy.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl">
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl">
       <Filter>98. BasicShader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_OcclusionCull.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

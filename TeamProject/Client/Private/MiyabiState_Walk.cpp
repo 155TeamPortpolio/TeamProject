@@ -39,17 +39,12 @@ void CMiyabiState_Walk::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
 {
-    CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(this->Get_ParentState());
-    if (pMove && pMove->Get_SubStateMachine())
-    {
-        pMove->Get_SubStateMachine()->Set_Bool("WalkFinish", false);
-    }
+    Get_ParentState()->Get_SubStateMachine()->Set_Bool("WalkFinish", false);
 }
 
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start")
-        .Apply();
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
 }
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
@@ -60,24 +55,20 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
-        _vector3 vDelta = vRootMotionDelta;
-        
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
         if (vDelta.x != 0.f || vDelta.z != 0.f)
         {
             _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
         }
     }
 }
 
-void CMiyabiState_Walk_Start::Exit(CMiyabi* pOwner)
-{
-}
-
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
+    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
+        .Loop(true)
+        .Speed(1.2f)
         .Apply();
 }
 
@@ -89,13 +80,11 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
 
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
-        _vector3 vDelta = vRootMotionDelta;
-
+        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
         if (vDelta.x != 0.f || vDelta.z != 0.f)
         {
             _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
+            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
         }
     }
 
@@ -113,20 +102,8 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
     }
 }
 
-void CMiyabiState_Walk_Loop::Exit(CMiyabi* pOwner)
-{
-}
-
 void CMiyabiState_Walk_End::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start_End")
         .Apply();
-}
-
-void CMiyabiState_Walk_End::Update(CMiyabi* pOwner, _float dt)
-{
-}
-
-void CMiyabiState_Walk_End::Exit(CMiyabi* pOwner)
-{
 }

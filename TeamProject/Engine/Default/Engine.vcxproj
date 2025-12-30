@@ -277,6 +277,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\EventListener.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
+    <ClInclude Include="..\Public\HiZ_Culling.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
@@ -448,6 +449,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\EventListener.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
     <ClCompile Include="..\private\ForwardRenderer.cpp" />
+    <ClCompile Include="..\Private\HiZ_Culling.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
     <ClCompile Include="..\Private\Noise.cpp" />
     <ClCompile Include="..\Private\LifeTimeSize.cpp" />
@@ -572,6 +574,24 @@ exit /b 0</Command>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_HiZ_Copy.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_OcclusionCull.hlsl">
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_HiZ_Reduce.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
+      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
+    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle_Basic.hlsl">
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">CS_MAIN</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Compute</ShaderType>

@@ -23,20 +23,23 @@ public:
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
+        //---------- 베이스 레이어 속성
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
-        _float3             vRootEndPos{};  //그 클립의 제일마지막 루트위치
-        _float4             vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
-        _float3             vPrevRootPos{}; //이전 프레임 위치
-        _float4             vPrevRootQuat{}; //이전 프레임 회전
-        _float3             vRootMoveDelta{};   //이동값
+        _vector3            vRootEndPos{};  //그 클립의 제일마지막 루트위치
+        _vector4            vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
+        _vector3            vPrevRootPos{}; //이전 프레임 위치
+        _vector4            vPrevRootQuat{}; //이전 프레임 회전
+        _vector3            vRootMoveDelta{}; //이동값
+        _vector4            vRootQuatDelta{}; //회전값
 
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };
-        AXIS    eExtractAxis = { AXIS::NONE };
-        _float3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
-        _float3 vPrevMotionBonePos{};   //이전 프레임 위치
+        AXIS    eExtractMoveAxis = { AXIS::NONE }; //움직임을 뺄 축
+        AXIS    eExtractRotAxis = { AXIS::NONE }; //회전을 뺄 축
+        _vector3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
+        _vector3 vPrevMotionBonePos{};   //이전 프레임 위치
 
         //---------- 애니매이션 데이터 (변경시 초기화)
         _int    iClipIndex = { -1 };
@@ -69,6 +72,13 @@ public:
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
+
+    typedef struct PlaylistEntry {
+        _int    iClipIndex = { -1 };
+        _bool   bLoop = { false };
+        _float  fSpeed = { 1.f };
+        _float  fBlendDuration = { 0.2f };
+    }PLAYLIST_ENTRY;
 
 protected:
     CAnimator3D();
@@ -123,7 +133,7 @@ public://애니매이터 데이터
     const vector<EVENT_INST>& Get_EventBus() const;
     //"Root"라는 이름을 가진 본의 움직임 델타값
     _float3 Get_RootBoneMoveDelta() const;
-    _float3 Get_RootBoneQuatDelta() const;
+    _float4 Get_RootBoneQuatDelta() const;
     //모션본 애니매이션 델타값
     _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴
@@ -138,9 +148,13 @@ public://애니매이터 데이터
     //모션본 직접설정
     void Set_MotionBone(_int MoveBoneIndex);
     //애니매이션 축에 움직임 제거 (ex : (AXIS::X | AXIS::Z) = XZ축제거)
-    void Set_RemoveAxisFromMotionBone(AXIS eAxis);
-    //축 고정 리셋
+    void Set_ExtractMotionboneMovement(AXIS eAxis);
+    //애니매이션 축에 회전 제거 (ex : (AXIS::Y) =  Y축제거)
+    void Set_ExtractMotionboneRotation(AXIS eAxis);
+    //움직임 축 고정 리셋
     void Reset_ExtractBoneMovement();
+    //회전 축 고정 리셋
+    void Reset_ExtractBoneRotation();
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
     //애니매이션을 돌릴 본 설정
@@ -169,6 +183,20 @@ public:
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
 
+public:
+    // 플레이리스트 기능
+    void Playlist_Add(_int iClipIndex, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Add(const string& ClipName, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Remove(_int iPlaylistIndex);
+    void Playlist_Clear();
+    void Playlist_Play();
+    void Playlist_Stop();
+    void Playlist_MoveUp(_int iPlaylistIndex);
+    void Playlist_MoveDown(_int iPlaylistIndex);
+    _bool Playlist_isPlaying() const { return m_bPlaylistPlaying; }
+    _int Playlist_GetCurrentIndex() const { return m_iPlaylistIndex; }
+    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return m_Playlist; }
+
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
@@ -192,6 +220,7 @@ protected:
 
     //최종 뼈 계산
     void BuildBone();
+    void Update_Playlist();
 
 public:
     virtual void Render_GUI();
@@ -199,6 +228,7 @@ public:
 protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
+    void GUI_Playlist();
 
 private:
     void Reset_Anim();
@@ -222,6 +252,11 @@ protected:
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
+
+    vector<PLAYLIST_ENTRY>  m_Playlist;
+    _int                    m_iPlaylistIndex = { -1 };
+    _bool                   m_bPlaylistPlaying = { false };
+    _bool                   m_bPlaylistLoop = { false };
 
 public:
     static CAnimator3D* Create();

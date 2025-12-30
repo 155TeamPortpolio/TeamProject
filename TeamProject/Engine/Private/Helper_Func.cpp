@@ -369,7 +369,6 @@ ENGINE_DLL HRESULT Helper::SaveTextureToDDs(ID3D11DeviceContext* pContext, const
 
 	ID3D11Texture2D* pTexture2D;
 	HRESULT hr_cast = pResource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&pTexture2D);
-
 	if (SUCCEEDED(hr_cast))
 	{
 		D3D11_TEXTURE2D_DESC desc;
