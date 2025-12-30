@@ -20,6 +20,11 @@ public:
 
         _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
+        _float              fLayerWeight = { 1.f };
+        _float              fTargetWeight = { 1.f };
+        _float              fWeightDuration = {};
+        _float              fWeightElapsed = {};
+        EaseType            eLayerEaseType = { EaseType::None };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 

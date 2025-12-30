@@ -594,6 +594,9 @@ _bool CAnimator3D::hasAxis(AXIS eExtractAxis, AXIS Axis)
 	return (eExtractAxis & Axis) != AXIS::NONE;
 }
 
+										/*-----------------*/
+										/*  Run Animation  */
+										/*-----------------*/
 void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
 	//Empty Layer
@@ -650,7 +653,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
 
-			XMVECTOR quatDelta =
+			_vector quatDelta =
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
 
@@ -660,10 +663,6 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
 		}
-
-		Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-		Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
-		Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat * RootMat.Invert();
 
 		//Extract MoveBone
 		if (-1 != Layer.iMotionBoneIndex) {
@@ -676,7 +675,9 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 }
-
+											/*-----------------*/
+											/*Convert Animation*/
+											/*-----------------*/
 void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 {
 	if (-1 == Layer.iClipIndex) return;
@@ -748,7 +749,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 						XMQuaternionInverse(prevQ)
 					)
 				);
-
+			
 			// 저장
 			XMStoreFloat4(&Layer.vRootQuatDelta, quatDelta);
 
@@ -891,21 +892,6 @@ void CAnimator3D::BuildBone()
 
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
-	}
-
-	for (auto& Layer : m_AnimLayers) {
-		if (!Layer.BaseLayer) continue;
-		if (-1 == Layer.iMotionBoneIndex) continue;
-		// MotionBone의 Combined 행렬
-		Matrix mat = m_CombinedMatrices[Layer.iMotionBoneIndex];
-
-		// 1) 분해
-		_vector3 pos = _vector3(mat._41, mat._42, mat._43);
-		Matrix newmat;
-		newmat.Identity;
-		newmat.Translation(pos);
-
-		//m_CombinedMatrices[Layer.iMotionBoneIndex] = newmat;
 	}
 }
 
