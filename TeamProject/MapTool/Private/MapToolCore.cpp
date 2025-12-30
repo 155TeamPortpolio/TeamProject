@@ -116,9 +116,10 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 	PlacedObjDesc->TagModelKey = pData->TagModelResourceKey;
 	PlacedObjDesc->TagMaterialKey = pData->TagMaterialResourceKey;
 
+	// Load된 PlacedObject(통맵기준)는 배치가 끝났다 가정.(Trigger나 그 외 요소 편하게 붙이기 위해 cooking)
 	COLLIDER_DESC ColDesc = {};
-	//ColDesc.bCooking = true;
-	ColDesc.bAutoFit = true;
+	ColDesc.bCooking = true;
+	//ColDesc.bAutoFit = true;
 	ColDesc.strModelKey = pData->TagModelResourceKey;
 
 	_float3 vScl{}, vRot{}, vTrans{};
