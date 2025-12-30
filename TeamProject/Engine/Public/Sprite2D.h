@@ -29,6 +29,8 @@ public:
     void    Draw_Sprite(ID3D11DeviceContext* pContext);
     HRESULT ChangeSprite(_uint Index);
 
+    _bool   HitTest_AlphaUV(_float u, _float v, _float alphaThreshold);
+
 public:
     class CShader*   Get_Shader()       { return m_pShader; }
     class CVIBuffer* Get_Buffer();

@@ -22,10 +22,12 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 
     Set_Clickable(true);
 
+    Set_OriginTexSize(true);
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
     m_strTextureKey = "empty.png";
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
@@ -53,7 +55,8 @@ void CButtonUI::Render_GUI()
 
             CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
             m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+
+            ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
         }
     }
     Get_Component<CSprite2D>()->Render_GUI();

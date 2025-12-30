@@ -308,7 +308,7 @@
       <Filter>01. Utility\98. Services</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Helper_Func.h">
-      <Filter>01. Utility\97. Helper</Filter>
+      <Filter>97. Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Data_Packets.h">
       <Filter>99. Defines\Packet</Filter>
@@ -385,9 +385,6 @@
     <ClInclude Include="..\Public\EventSystem.h">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EventListner.h">
-      <Filter>01. Utility\04. Components\22. EventListner</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ObjectPool.h">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClInclude>
@@ -458,16 +455,13 @@
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Engine_Math.h">
-      <Filter>01. Utility\97. Helper</Filter>
+      <Filter>97. Helper</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AnimationLayout.h">
       <Filter>99. Defines\AnimationLayout</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\DebugBonePanel.h">
       <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ClickManager.h">
-      <Filter>01. Utility\14.ClickManager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Renderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer</Filter>
@@ -493,9 +487,6 @@
     <ClInclude Include="..\Public\StructuredBuffer.h">
       <Filter>01. Utility\05. Resources\08. Compute Shader\StructuredBuffer</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Sprite2D.h">
-      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.h">
       <Filter>00. System\02. Gui\IMGUI</Filter>
     </ClInclude>
@@ -519,9 +510,16 @@
     </ClInclude>
     <ClInclude Include="..\Public\HiZ_Culling.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
-     </ClInclude>
-     <ClInclude Include="..\Public\CharacterController.h">
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventListener.h" />
+    <ClInclude Include="..\Public\ClickManager.h">
+      <Filter>01. Utility\14.ClickManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Sprite2D.h">
+      <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -957,9 +955,6 @@
     <Filter Include="01. Utility\98. Services">
       <UniqueIdentifier>{5589ba4f-e40c-4352-93ae-56dc48021abb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\97. Helper">
-      <UniqueIdentifier>{97fbfa50-f769-4c33-8620-507af716e344}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\12. PhysicsSystem">
       <UniqueIdentifier>{eef3a17c-3067-4db4-9341-a57791e7f963}</UniqueIdentifier>
     </Filter>
@@ -974,6 +969,9 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\Hi_Z">
       <UniqueIdentifier>{70f06feb-b4e3-4412-8ada-789498d0c592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97. Helper">
+      <UniqueIdentifier>{97fbfa50-f769-4c33-8620-507af716e344}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1218,7 +1216,7 @@
       <Filter>01. Utility\11. FontSystem\Font</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Helper_Func.cpp">
-      <Filter>01. Utility\97. Helper</Filter>
+      <Filter>97. Helper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Data_Packets.cpp">
       <Filter>99. Defines\Packet</Filter>
@@ -1295,9 +1293,6 @@
     <ClCompile Include="..\Private\EventSystem.cpp">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EventListner.cpp">
-      <Filter>01. Utility\04. Components\22. EventListner</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ObjectPool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClCompile>
@@ -1356,13 +1351,10 @@
       <Filter>01. Utility\04. Components\20. CamSequencePlayer\03. CamFovEvaluator\00. Linear</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Engine_Math.cpp">
-      <Filter>01. Utility\97. Helper</Filter>
+      <Filter>97. Helper</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\DebugBonePanel.cpp">
       <Filter>00. System\02. Gui\GUI_Panel\DebugBonePanel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ClickManager.cpp">
-      <Filter>01. Utility\14.ClickManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
@@ -1402,6 +1394,10 @@
     </ClCompile>
     <ClCompile Include="..\Private\HiZ_Culling.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventListener.cpp" />
+    <ClCompile Include="..\Private\ClickManager.cpp">
+      <Filter>01. Utility\14.ClickManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
