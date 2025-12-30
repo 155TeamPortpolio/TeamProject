@@ -94,7 +94,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "TrainingRoom");
+	//Ready_Map("Test_Level", "TrainingRoom");
 
 	//==============TestModel==========================
 	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
@@ -104,17 +104,17 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
 
 	// =================TestMap==================
-	auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-		.Build("Test_Map");
-
-	objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 
 	// =====================TestFloor=========================
 	COLLIDER_DESC colDesc;
 	colDesc.bCooking = true;
 	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
+	
 	for (_int z = 0; z < 3; ++z)
 	{
 	for (_int x = 0; x < 3; ++x)

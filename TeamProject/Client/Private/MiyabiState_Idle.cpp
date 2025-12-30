@@ -7,6 +7,8 @@ void CMiyabiState_Idle::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
         .Loop(true)
+        .BlendDuration(0.008)
+        //.IgnoreRotation(true)
         .Apply();
 }
 
