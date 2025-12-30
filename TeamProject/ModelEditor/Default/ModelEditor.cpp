@@ -76,7 +76,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         timer->Update_Timer("Frame_Timer");
         fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
 
-        if (fTimeAcc >= step) {
+        if (true/*fTimeAcc >= step*/) {
             gameInstance->Update_EngineTimer();
             _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);
