@@ -14,7 +14,7 @@ void CMiyabiState_Move::Enter(CMiyabi* pOwner)
         m_pSubStateMachine->Register_State("Walk", CMiyabiState_Walk::Create());
         m_pSubStateMachine->Register_State("Run", CMiyabiState_Run::Create());
         m_pSubStateMachine->Register_Transition("Walk", "Run",
-            CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "WalkFinish");
+            CStateMachine<CMiyabi>::CONDITION_TRIGGER, "ToRun");
         m_pSubStateMachine->Set_DefaultState("Walk");
     }
 
