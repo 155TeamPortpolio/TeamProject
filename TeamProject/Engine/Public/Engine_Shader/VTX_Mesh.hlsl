@@ -101,7 +101,8 @@ PS_OUT PS_MAIN(PS_IN In)
         float3 vNormal = normalize(In.vNormal);
         Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
     }
-    float linearDepth = saturate(In.viewZ / zFar);
+    float linearDepth = saturate(saturate(In.viewZ / zFar));
+
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
