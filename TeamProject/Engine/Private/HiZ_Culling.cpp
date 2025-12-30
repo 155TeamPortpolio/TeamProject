@@ -250,6 +250,8 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 	if (frustums.empty())
 		return result;
+	if (!m_isReady) 		
+		return result;
 
 	vector<OcclusionInput> inputs;
 	inputs.reserve(frustums.size());

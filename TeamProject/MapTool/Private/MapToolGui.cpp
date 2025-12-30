@@ -224,8 +224,12 @@ void CMapToolGui::Render_GUI()
 
 void CMapToolGui::RakeResources()
 {
+    string openpath = "../Bin/Resources/Model/";
+
+    HelperMT::EnsureDirectoryExists(openpath);
+
     auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-    for (const auto& entry : filesystem::recursive_directory_iterator("../Bin/Resources/Model/"))
+    for (const auto& entry : filesystem::recursive_directory_iterator(openpath))
     {
         if (entry.is_regular_file() && entry.path().extension() == ".model")
         {
