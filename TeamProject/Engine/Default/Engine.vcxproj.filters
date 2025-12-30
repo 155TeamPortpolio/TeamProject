@@ -385,9 +385,6 @@
     <ClInclude Include="..\Public\EventSystem.h">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\EventListner.h">
-      <Filter>01. Utility\04. Components\22. EventListner</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\ObjectPool.h">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClInclude>
@@ -519,9 +516,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\HiZ_Culling.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
-     </ClInclude>
-     <ClInclude Include="..\Public\CharacterController.h">
+    </ClInclude>
+    <ClInclude Include="..\Public\CharacterController.h">
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\EventListener.h">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1295,9 +1295,6 @@
     <ClCompile Include="..\Private\EventSystem.cpp">
       <Filter>01. Utility\13. EventBus</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\EventListner.cpp">
-      <Filter>01. Utility\04. Components\22. EventListner</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ObjectPool.cpp">
       <Filter>01. Utility\03. GameObject\Managers\ObjectManager\ObjectPool</Filter>
     </ClCompile>
@@ -1402,6 +1399,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\HiZ_Culling.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EventListener.cpp">
+      <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
