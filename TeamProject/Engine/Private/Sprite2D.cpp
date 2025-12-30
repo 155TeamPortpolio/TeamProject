@@ -42,15 +42,15 @@ namespace
 		D3D11_TEXTURE2D_DESC desc{};
 		srcTex->GetDesc(&desc);
 
-		cache.width = desc.Width;
+		cache.width  = desc.Width;
 		cache.height = desc.Height;
 		cache.alpha.resize((size_t)cache.width * (size_t)cache.height);
 
 		D3D11_TEXTURE2D_DESC stagingDesc = desc;
-		stagingDesc.Usage = D3D11_USAGE_STAGING;
-		stagingDesc.BindFlags = 0;
+		stagingDesc.Usage          = D3D11_USAGE_STAGING;
+		stagingDesc.BindFlags      = 0;
 		stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		stagingDesc.MiscFlags = 0;
+		stagingDesc.MiscFlags      = 0;
 
 		ID3D11Device* dev{};
 		srcTex->GetDevice(&dev);
@@ -98,7 +98,7 @@ namespace
 				if (x >= (int)cache.width || y >= (int)cache.height) return;
 
 				size_t idx = (size_t)y * cache.width + (size_t)x;
-				if (cache.outside[idx]) return;
+				if (cache.outside[idx])    return;
 				if (cache.alpha[idx] != 0) return;
 
 				cache.outside[idx] = 1;
@@ -110,7 +110,6 @@ namespace
 			push_if_outside(x, 0);
 			push_if_outside(x, (int)cache.height - 1);
 		}
-
 		for (int y = 0; y < (int)cache.height; ++y)
 		{
 			push_if_outside(0, y);
@@ -139,27 +138,26 @@ namespace
 	{
 		if (cache.width == 0 || cache.height == 0) return true;
 
-		if (u < 0.f) u = 0.f;
-		if (v < 0.f) v = 0.f;
-		if (u > 1.f) u = 1.f;
-		if (v > 1.f) v = 1.f;
+		u = clamp(u, 0.f, 1.f);
+		v = clamp(v, 0.f, 1.f);
 
-		_uint x = (_uint)(u * (cache.width - 1));
-		_uint y = (_uint)(v * (cache.height - 1));
+		_uint x = (_uint)(u * (_float)(cache.width  - 1));
+		_uint y = (_uint)(v * (_float)(cache.height - 1));
+
+		x = clamp(x, (_uint)0, cache.width  - 1);
+		y = clamp(y, (_uint)0, cache.height - 1);
 
 		size_t idx = (size_t)y * cache.width + x;
 
 		_ubyte a8 = cache.alpha[idx];
-		_float a = (_float)a8 / 255.f;
+		_float a  = (_float)a8 / 255.f;
 
 		if (a > alphaThreshold) return true;
-
 		if (a8 == 0 && cache.outside[idx] == 0) return true;
 
 		return false;
 	}
 }
-
 
 _bool CSprite2D::HitTest_AlphaUV(_float u, _float v, _float alphaThreshold)
 {
