@@ -64,7 +64,7 @@ void CMiyabi::Awake()
 	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
 	//m_pAnimator()->Set_ExtractBoneMovement(21);
 	m_pAnimator ->Set_MotionBone(21);
-	m_pAnimator->Set_RemoveAxisFromMotionBone(AXIS::X | AXIS::Z);
+	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 	m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();

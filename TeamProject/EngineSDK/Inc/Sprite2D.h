@@ -1,6 +1,7 @@
 #pragma once
 #include "Component.h"
 NS_BEGIN(Engine)
+class CTexture; class CShader; class CVI_Point; class CVIBuffer;
 
 class ENGINE_DLL CSprite2D final : public CComponent
 {
@@ -20,18 +21,19 @@ public:
     HRESULT         ChangePass(const string& passConstant);
     HRESULT         Set_TextKey(const string& textKey);
     const string&   Get_TextKey() { return m_TextKey; }
-
-    class CTexture* Get_Texture(_uint idx) { return m_pTextures[idx]; }
-    class CTexture* Get_CurTexture()       { return m_pTextures[m_iDrawIndex];  }
+    CTexture*       Get_Texture(_uint idx) { return m_pTextures[idx]; }
+    CTexture*       Get_CurTexture()       { return m_pTextures[m_iDrawIndex];  }
 
 public:
     void    Apply_Shader(ID3D11DeviceContext* pContext);
     void    Draw_Sprite(ID3D11DeviceContext* pContext);
     HRESULT ChangeSprite(_uint Index);
 
+    _bool   HitTest_AlphaUV(_float u, _float v, _float alphaThreshold);
+
 public:
-    class CShader*   Get_Shader()       { return m_pShader; }
-    class CVIBuffer* Get_Buffer();
+    CShader*   Get_Shader()       { return m_pShader; }
+    CVIBuffer* Get_Buffer();
     const string&    Get_PassConstant() { return m_PassConstant; }
 
     HRESULT       Set_Param(const string& ConstantName, const SHADER_PARAM& parameter);
@@ -46,9 +48,9 @@ private:
     string m_PassConstant = {"Opaque"};
     string m_TextKey      = "";
 
-    class  CVI_Point* m_pPoint  = { nullptr };
-    class  CShader*   m_pShader = { nullptr };
-    vector<class CTexture*> m_pTextures;
+    CVI_Point* m_pPoint  = { nullptr };
+    CShader*   m_pShader = { nullptr };
+    vector<CTexture*> m_pTextures;
     unordered_map<string, SHADER_PARAM> m_DynamicSlots;
 
 public:
