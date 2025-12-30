@@ -32,6 +32,11 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CUIObject_Tool::Awake()
+{
+    m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
+}
+
 void CUIObject_Tool::Render_GUI()
 {
     Render_GUI_Property();
