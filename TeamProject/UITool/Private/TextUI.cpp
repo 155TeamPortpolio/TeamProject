@@ -87,7 +87,7 @@ void CTextUI::Render_GUI()
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
         Get_Component<CSprite2D>()->Set_TextKey(m_szText);
         Get_Component<CTextSlot>()->Set_TextKey(m_szText);
-        UpdateAnchorOffsetByAlign();
+        UpdateAnchorOffset_TextAlign();
     } 
     
     // 폰트 
@@ -103,14 +103,14 @@ void CTextUI::Render_GUI()
     {
         m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-        UpdateAnchorOffsetByAlign();
+        UpdateAnchorOffset_TextAlign();
     }
     ImGui::SameLine();
     if (ImGui::Button(u8"크기 -"))
     {
         m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-        UpdateAnchorOffsetByAlign();
+        UpdateAnchorOffset_TextAlign();
     }
 
     if(ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor)))
@@ -229,14 +229,14 @@ void CTextUI::Render_GUI_Layout()
 
         _bool isChanged = {};
 
-        isChanged |= ImGui::RadioButton(u8"왼쪽", &m_iAlign, 2);
+        isChanged |= ImGui::RadioButton(u8"왼쪽", &m_iTextAlign, static_cast<_int>(TEXTALIGN::LEFT));
         ImGui::SameLine();
-        isChanged |= ImGui::RadioButton(u8"가운데", &m_iAlign, 1);
+        isChanged |= ImGui::RadioButton(u8"가운데", &m_iTextAlign, static_cast<_int>(TEXTALIGN::CENTER));
         ImGui::SameLine();
-        isChanged |= ImGui::RadioButton(u8"오른쪽", &m_iAlign, 0);
+        isChanged |= ImGui::RadioButton(u8"오른쪽", &m_iTextAlign, static_cast<_int>(TEXTALIGN::RIGHT));
 
         if (isChanged)
-            UpdateAnchorOffsetByAlign();
+            UpdateAnchorOffset_TextAlign();
 
         ImGui::EndTable();
     }
@@ -271,14 +271,14 @@ void CTextUI::Render_GUI_Transform()
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 }
 
-void CTextUI::UpdateAnchorOffsetByAlign()
+void CTextUI::UpdateAnchorOffset_TextAlign()
 {
-    const float width = m_vSize.x * m_fFontScale;  // Get_Component<CTextSlot>()->Get_TextSize().x;
-    switch (m_iAlign)
+    const float width = m_vSize.x * m_fFontScale;
+    switch (static_cast<TEXTALIGN>(m_iTextAlign))
     {
-    case 0: m_vAnchorOffset.x = 0.f;            break;
-    case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
-    case 2: m_vAnchorOffset.x = -width;         break;
+    case TEXTALIGN::LEFT: m_vAnchorOffset.x = 0.f;           break;
+    case TEXTALIGN::CENTER: m_vAnchorOffset.x = -width * 0.5f;  break;
+    case TEXTALIGN::RIGHT: m_vAnchorOffset.x = -width;          break;
     }
 }
 

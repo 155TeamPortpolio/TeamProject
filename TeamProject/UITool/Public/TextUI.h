@@ -5,6 +5,9 @@ NS_BEGIN(UITool)
 
 class CTextUI final : public CUIObject_Tool
 {
+public:
+	enum class TEXTALIGN { LEFT, CENTER, RIGHT };
+
 private:
 	CTextUI();
 	CTextUI(const CTextUI& rhs);
@@ -32,7 +35,7 @@ private:
 	_float		m_fOutlineThickness = { 1.f };
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
-	_int		m_iAlign = {};
+	_int		m_iTextAlign = {};
 
 	_bool		m_isSizeToContent = { true };
 
@@ -49,7 +52,7 @@ private:
 	virtual void Render_GUI_Transform() override;
 
 private:
-	void UpdateAnchorOffsetByAlign();
+	void UpdateAnchorOffset_TextAlign();
 
 public:
 	static CGameObject* Create();
