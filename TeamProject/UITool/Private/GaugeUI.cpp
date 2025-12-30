@@ -9,15 +9,6 @@
 _uint CGaugeUI::m_iCount = {};
 const string CGaugeUI::m_strTypeTag = "Gauge";
 
-CGaugeUI::CGaugeUI()
-{
-}
-
-CGaugeUI::CGaugeUI(const CGaugeUI& rhs)
-	: CUIObject_Tool(rhs)
-{
-}
-
 HRESULT CGaugeUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -27,88 +18,67 @@ HRESULT CGaugeUI::Initialize_Prototype()
 
 HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+    __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    Set_OriginTexSize(true);
 
-    if (m_isRadial)    
-        Get_Component<CSprite2D>()->ChangePass("RadialFill");
-    else                
-        Get_Component<CSprite2D>()->ChangePass("LinearFill");
+    auto sprite = Get_Component<CSprite2D>();
 
-    Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    if (m_isRadial) sprite->ChangePass("RadialFill");
+    else            sprite->ChangePass("LinearFill");
+
+    sprite->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
+    sprite->Set_Param("Direction",  {&m_fDirection,  "float", sizeof(_float)});
+
+    m_strTextureKey = "empty.png";
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
-	return S_OK;
-}
-
-void CGaugeUI::Priority_Update(_float dt)
-{
+    return S_OK;
 }
 
 void CGaugeUI::Update(_float dt)
 {
-	if (!m_isAlive)
-		return;
+	if (!m_isAlive) return;
 
     Play_Animation(dt);
-}
-
-void CGaugeUI::Late_Update(_float dt)
-{
 }
 
 void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
+     
+    Render_GUI_Image(m_strTextureKey);
 
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-    Get_Component<CSprite2D>()->Render_GUI();
+    auto sprite = Get_Component<CSprite2D>();
 
     // 게이지
     ImGui::SeparatorText(u8"게이지?"); 
     if (ImGui::Checkbox(u8"원형", &m_isRadial))
     {
-        if (m_isRadial)
-            Get_Component<CSprite2D>()->ChangePass("RadialFill");
-        else
-            Get_Component<CSprite2D>()->ChangePass("LinearFill");
+        if (m_isRadial) sprite->ChangePass("RadialFill");
+        else            sprite->ChangePass("LinearFill");
     }
 
     if(ImGui::DragFloat(u8"채움 정도", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
-        Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
+        sprite->Set_Param("FillAmount", { &m_fFillAmount,"float", sizeof(_float) });
 
     if (ImGui::DragFloat(u8"방향 (0 - 왼쪽 / 1 - 오른쪽)", &m_fDirection, 1.f, 0.f, 1.f, "%.f", ImGuiSliderFlags_AlwaysClamp))
-        Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
+        sprite->Set_Param("Direction",  { &m_fDirection, "float", sizeof(_float) });
 }
 
 void CGaugeUI::FillElementData(UI_ELEMENT_DATA& data)
 {
     __super::FillElementData(data);
 
-    data.strTypeTag = m_strTypeTag;
-
+    data.strTypeTag    = m_strTypeTag;
     data.strTextureTag = m_strTextureKey;
-
-    data.isRadial = m_isRadial;
-    data.fDirection = m_fDirection;
-    data.fFillAmount = m_fFillAmount;
+    data.isRadial      = m_isRadial;
+    data.fDirection    = m_fDirection;
+    data.fFillAmount   = m_fFillAmount;
 }
 
 void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
@@ -116,47 +86,41 @@ void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
     __super::ReadElementData(data);
 
     m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 
     m_isRadial = data.isRadial;
     m_fDirection = data.fDirection;
     m_fFillAmount = data.fFillAmount;
 
-    if (m_isRadial) 
-        Get_Component<CSprite2D>()->ChangePass("RadialFill");
-    else            
-        Get_Component<CSprite2D>()->ChangePass("LinearFill"); 
-    Get_Component<CSprite2D>()->Set_Param("Direction", { &m_fDirection,"float",sizeof(_float) });
-    Get_Component<CSprite2D>()->Set_Param("FillAmount", { &m_fFillAmount,"float",sizeof(_float) });
+    auto sprite = Get_Component<CSprite2D>();
+
+    if (m_isRadial) sprite->ChangePass("RadialFill");
+    else            sprite->ChangePass("LinearFill");
+
+    sprite->Set_Param("Direction",  {&m_fDirection,  "float", sizeof(_float)});
+    sprite->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
 }
 
 CGameObject* CGaugeUI::Create()
 {
     CGaugeUI* pInstance = new CGaugeUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CGaugeUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CGaugeUI::Clone(INIT_DESC* pArg)
 {
     CGaugeUI* pInstance = new CGaugeUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CGaugeUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
-}
-
-void CGaugeUI::Free()
-{
-    __super::Free();
 }

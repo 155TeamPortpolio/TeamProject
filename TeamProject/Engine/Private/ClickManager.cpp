@@ -2,80 +2,76 @@
 #include "ClickManager.h"
 #include "GameInstance.h"
 #include "UI_Object.h"
-
-CClickManager::CClickManager(HWND hWnd)
-	: m_hWnd (hWnd)
-{
-}
-
-CClickManager::~CClickManager()
-{
-}
+#include "Sprite2D.h"
 
 void CClickManager::Update(_float dt)
 {
-	if (m_ClickableObjects.empty())
-		return;
+    if (m_ClickableObjects.empty()) return;
 
-	POINT ptMouse = {};
-	GetCursorPos(&ptMouse);
-	ScreenToClient(m_hWnd, &ptMouse);
+    auto input = CGameInstance::GetInstance()->Get_InputDev();
 
-	_float2 fMouse = _float2(static_cast<_float>(ptMouse.x), static_cast<_float>(ptMouse.y));
+    POINT ptMouse{};
+    GetCursorPos(&ptMouse);
+    ScreenToClient(m_hWnd, &ptMouse);
 
-	m_pNewHovered = nullptr;
+    Vector2 mousePos = {(float)ptMouse.x, (float)ptMouse.y};
 
-	while (!m_ClickableObjects.empty())
-	{
-		auto& pObj = m_ClickableObjects.back();
+    m_pNewHovered = {};
 
-		_float2 fCenter = pObj->Get_RectTopLeft_Screen();
-		_float2 fSize = pObj->Get_PxSize();
+    while (!m_ClickableObjects.empty())
+    {
+        auto obj = m_ClickableObjects.back();
+        m_ClickableObjects.pop_back();
 
-		if (fCenter.x <= fMouse.x && fCenter.x + fSize.x >= fMouse.x &&
-			fCenter.y <= fMouse.y && fCenter.y + fSize.y >= fMouse.y)
-		{
-			m_pNewHovered = pObj;
+        if (!obj) continue;
 
-			if(CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
-				pObj->OnClick();
+        Vector2 topLeft = obj->Get_RectTopLeft_Screen();
+        Vector2 sizePx = obj->Get_PxSize();
 
-			break;
-		}
+        if (mousePos.x < topLeft.x)            continue;
+        if (mousePos.y < topLeft.y)            continue;
+        if (mousePos.x > topLeft.x + sizePx.x) continue;
+        if (mousePos.y > topLeft.y + sizePx.y) continue;
 
-		m_ClickableObjects.pop_back();
-	}
+        auto sprite = obj->Get_Component<CSprite2D>();
 
-	if (m_pHovered != m_pNewHovered)
-	{
-		if (m_pHovered)
-			m_pHovered->Exit_Hover();
+        Vector2 local = mousePos - topLeft;
 
-		m_pHovered = m_pNewHovered;
+        _float u = local.x / sizePx.x;
+        _float v = local.y / sizePx.y;
 
-		if (m_pHovered)
-			m_pHovered->Enter_Hover();
-	}
+        if (!sprite->HitTest_AlphaUV(u, v, obj->Get_AlphaThreshold())) continue;
 
-	m_ClickableObjects.clear();
+        m_pNewHovered = obj;
+
+        if (input->Mouse_Tap(MOUSE_BTN::LB))
+            obj->OnClick();
+        break;
+    }
+
+    if (m_pHovered != m_pNewHovered)
+    {
+        if (m_pHovered)
+            m_pHovered->Exit_Hover();
+
+        m_pHovered = m_pNewHovered;
+
+        if (m_pHovered)
+            m_pHovered->Enter_Hover();
+    }
+
+    m_ClickableObjects.clear();
 }
 
 void CClickManager::Add_ClickableObject(CUI_Object* object)
 {
-	if (!object)
-		return;
+	if (!object) return;
 
 	m_ClickableObjects.push_back(object);
-}
-
-CClickManager* CClickManager::Create(HWND hWnd)
-{
-	return new CClickManager(hWnd);
 }
 
 void CClickManager::Free()
 {
 	__super::Free();
-
 	m_ClickableObjects.clear();
 }

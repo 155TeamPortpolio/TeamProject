@@ -13,23 +13,23 @@ public:
 	}BTN_EVENT;
 
 private:
-	CButtonUI();
-	CButtonUI(const CButtonUI& rhs);
+	CButtonUI() {}
+	CButtonUI(const CButtonUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CButtonUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
+	virtual HRESULT Initialize_Prototype()                override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
+	virtual void Priority_Update(_float dt) override {}
+	virtual void Update(_float dt)          override;
+	virtual void Late_Update(_float dt)     override {}
 
-	virtual void Render_GUI() override;
+	virtual void Render_GUI()  override;
 
 	virtual void Enter_Hover() override;
-	virtual void Exit_Hover() override;
-	virtual void OnClick() override;
+	virtual void Exit_Hover()  override;
+	virtual void OnClick()     override;
 
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
@@ -49,7 +49,7 @@ public:
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END

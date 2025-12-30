@@ -6,17 +6,17 @@ NS_BEGIN(UITool)
 class CSpriteAnimationUI final : public CUIObject_Tool
 {
 private:
-	CSpriteAnimationUI();
-	CSpriteAnimationUI(const CSpriteAnimationUI& rhs);
+	CSpriteAnimationUI() {}
+	CSpriteAnimationUI(const CSpriteAnimationUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CSpriteAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 
-	virtual void Priority_Update(_float dt) override;
+	virtual void Priority_Update(_float dt) override {}
 	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
+	virtual void Late_Update(_float dt) override {}
 	virtual void Render_GUI() override;
 
 public:
