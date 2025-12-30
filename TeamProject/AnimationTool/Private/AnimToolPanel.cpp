@@ -669,13 +669,13 @@ void CAnimToolPanel::Load_Clips()
 			bFirstFile = false;
 		}
 		//연속으로 들어온 데이터면 이름이 같은지 비교
-		else { 
-			if (MetaTag != nameTag) {
-				OutputDebugStringA("Different from other animation names");
-				hr = E_FAIL;
-				break;
-			}
-		}
+		//else { 
+		//	if (MetaTag != nameTag) {
+		//		OutputDebugStringA("Different from other animation names");
+		//		hr = E_FAIL;
+		//		break;
+		//	}
+		//}
 
 		//클립 데이터 하나씩 넣기
 		Create_Clips(MetaData, ClipTag, path);
