@@ -156,6 +156,7 @@
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
+    <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
