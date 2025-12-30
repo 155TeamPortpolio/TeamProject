@@ -1,7 +1,7 @@
 #pragma once
 #include "Component.h"
 NS_BEGIN(Engine)
-class CTexture; class CShader; class CVI_Point; class C_VIBuffer;
+class CTexture; class CShader; class CVI_Point; class CVIBuffer;
 
 class ENGINE_DLL CSprite2D final : public CComponent
 {
