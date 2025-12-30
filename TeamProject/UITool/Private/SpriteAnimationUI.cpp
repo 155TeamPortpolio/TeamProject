@@ -71,23 +71,9 @@ void CSpriteAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
+    Render_GUI_Image(m_strTextureKey);
+
     auto sprite = Get_Component<CSprite2D>();
-
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-
-            ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
-        }
-    }
-    sprite->Render_GUI();
 
     ImGui::SeparatorText(u8"스프라이트 애니메이션");
     if (ImGui::Button(m_isPlaying ? u8"정지" : u8"재생"))

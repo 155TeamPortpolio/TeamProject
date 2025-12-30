@@ -423,6 +423,29 @@ void CUIObject_Tool::Render_GUI_Color()
     ImGui::ColorEdit4(u8"컬러", reinterpret_cast<_float*>(&m_vColor));
 }
 
+void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
+{
+    ImGui::SeparatorText(u8"이미지");
+    if (ImGui::Button(u8"선택"))
+    {
+        string filePath = Helper::OpenFile_Dialogue();
+        if (filePath.empty())
+            return;
+
+      
+        string fileName = Helper::GetFileNameWithExtension(filePath);
+
+        CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+        strTextureKey = fileName;
+
+        ApplySpriteTexture(0, G_GlobalLevelKey, strTextureKey, true);
+
+        m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);  // 앵커에 맞춰서 자동 정렬
+    }
+
+    Get_Component<CSprite2D>()->Render_GUI();
+}
+
 void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
 {
     auto sprite = Get_Component<CSprite2D>();

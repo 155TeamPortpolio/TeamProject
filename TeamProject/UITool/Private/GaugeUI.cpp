@@ -50,25 +50,10 @@ void CGaugeUI::Update(_float dt)
 void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();
+     
+    Render_GUI_Image(m_strTextureKey);
 
     auto sprite = Get_Component<CSprite2D>();
-
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-
-            ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
-        }
-    }
-    sprite->Render_GUI();
 
     // 게이지
     ImGui::SeparatorText(u8"게이지?"); 
