@@ -5,11 +5,174 @@
 #include "Texture.h"
 #include "IResourceService.h"
 #include "VI_Point.h"
+#include "UI_Object.h"
 
-CSprite2D::CSprite2D()
+namespace
 {
+	struct AlphaCache
+	{
+		_uint width{};
+		_uint height{};
+		vector<_ubyte> alpha;
+		vector<_ubyte> outside;
+	};
+
+	unordered_map<ID3D11ShaderResourceView*, AlphaCache> g_alphaCache;
+
+	AlphaCache& GetAlphaCache(ID3D11ShaderResourceView* srv)
+	{
+		auto it = g_alphaCache.find(srv);
+		if (it != g_alphaCache.end()) return it->second;
+
+		AlphaCache cache{};
+
+		ID3D11Resource* res{};
+		srv->GetResource(&res);
+
+		ID3D11Texture2D* srcTex{};
+		HRESULT hr = res->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&srcTex);
+		Safe_Release(res);
+
+		if (FAILED(hr) || !srcTex)
+		{
+			auto r = g_alphaCache.emplace(srv, AlphaCache{});
+			return r.first->second;
+		}
+
+		D3D11_TEXTURE2D_DESC desc{};
+		srcTex->GetDesc(&desc);
+
+		cache.width  = desc.Width;
+		cache.height = desc.Height;
+		cache.alpha.resize((size_t)cache.width * (size_t)cache.height);
+
+		D3D11_TEXTURE2D_DESC stagingDesc = desc;
+		stagingDesc.Usage          = D3D11_USAGE_STAGING;
+		stagingDesc.BindFlags      = 0;
+		stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+		stagingDesc.MiscFlags      = 0;
+
+		ID3D11Device* dev{};
+		srcTex->GetDevice(&dev);
+
+		ID3D11Texture2D* stagingTex{};
+		hr = dev->CreateTexture2D(&stagingDesc, nullptr, &stagingTex);
+		if (FAILED(hr) || !stagingTex)
+		{
+			Safe_Release(dev);
+			Safe_Release(srcTex);
+
+			auto r = g_alphaCache.emplace(srv, AlphaCache{});
+			return r.first->second;
+		}
+
+		auto ctx = CGameInstance::GetInstance()->Get_Context();
+		ctx->CopyResource(stagingTex, srcTex);
+
+		D3D11_MAPPED_SUBRESOURCE mapped{};
+		hr = ctx->Map(stagingTex, 0, D3D11_MAP_READ, 0, &mapped);
+		if (SUCCEEDED(hr))
+		{
+			for (_uint y = 0; y < cache.height; ++y)
+			{
+				_ubyte* row = (_ubyte*)mapped.pData + (size_t)mapped.RowPitch * y;
+				for (_uint x = 0; x < cache.width; ++x)
+					cache.alpha[(size_t)y * cache.width + x] = row[x * 4 + 3];
+			}
+
+			ctx->Unmap(stagingTex, 0);
+		}
+
+		Safe_Release(stagingTex);
+		Safe_Release(dev);
+		Safe_Release(srcTex);
+
+		cache.outside.assign((size_t)cache.width * (size_t)cache.height, 0);
+
+		vector<size_t> stack;
+		stack.reserve((size_t)cache.width + (size_t)cache.height);
+
+		auto push_if_outside = [&](int x, int y)
+			{
+				if (x < 0 || y < 0) return;
+				if (x >= (int)cache.width || y >= (int)cache.height) return;
+
+				size_t idx = (size_t)y * cache.width + (size_t)x;
+				if (cache.outside[idx])    return;
+				if (cache.alpha[idx] != 0) return;
+
+				cache.outside[idx] = 1;
+				stack.push_back(idx);
+			};
+
+		for (int x = 0; x < (int)cache.width; ++x)
+		{
+			push_if_outside(x, 0);
+			push_if_outside(x, (int)cache.height - 1);
+		}
+		for (int y = 0; y < (int)cache.height; ++y)
+		{
+			push_if_outside(0, y);
+			push_if_outside((int)cache.width - 1, y);
+		}
+
+		while (!stack.empty())
+		{
+			size_t idx = stack.back();
+			stack.pop_back();
+
+			int x = (int)(idx % cache.width);
+			int y = (int)(idx / cache.width);
+
+			push_if_outside(x - 1, y);
+			push_if_outside(x + 1, y);
+			push_if_outside(x, y - 1);
+			push_if_outside(x, y + 1);
+		}
+
+		auto r = g_alphaCache.emplace(srv, move(cache));
+		return r.first->second;
+	}
+
+	_bool HitTestAlphaCache(const AlphaCache& cache, _float u, _float v, _float alphaThreshold)
+	{
+		if (cache.width == 0 || cache.height == 0) return true;
+
+		u = clamp(u, 0.f, 1.f);
+		v = clamp(v, 0.f, 1.f);
+
+		_uint x = (_uint)(u * (_float)(cache.width  - 1));
+		_uint y = (_uint)(v * (_float)(cache.height - 1));
+
+		x = clamp(x, (_uint)0, cache.width  - 1);
+		y = clamp(y, (_uint)0, cache.height - 1);
+
+		size_t idx = (size_t)y * cache.width + x;
+
+		_ubyte a8 = cache.alpha[idx];
+		_float a  = (_float)a8 / 255.f;
+
+		if (a > alphaThreshold) return true;
+		if (a8 == 0 && cache.outside[idx] == 0) return true;
+
+		return false;
+	}
 }
 
+_bool CSprite2D::HitTest_AlphaUV(_float u, _float v, _float alphaThreshold)
+{
+	if (m_pTextures.empty()) return true;
+
+	auto tex = m_pTextures[m_iDrawIndex];
+	if (!tex) return true;
+
+	auto srv = tex->Get_SRV();
+	if (!srv) return true;
+
+	const AlphaCache& cache = GetAlphaCache(srv);
+	return HitTestAlphaCache(cache, u, v, alphaThreshold);
+}
+// ------------------------------------------
 CSprite2D::CSprite2D(const CSprite2D& rhs)
 	:CComponent(rhs),
 	m_pShader(rhs.m_pShader),
@@ -20,13 +183,7 @@ CSprite2D::CSprite2D(const CSprite2D& rhs)
 	Safe_AddRef(m_pShader);
 	Safe_AddRef(m_pPoint);
 	for (auto tex : m_pTextures)
-	{
 		Safe_AddRef(tex);
-	}
-}
-
-CSprite2D::~CSprite2D()
-{
 }
 
 HRESULT CSprite2D::Initialize_Prototype()
@@ -35,7 +192,6 @@ HRESULT CSprite2D::Initialize_Prototype()
 
 	return S_OK;
 }
-
 
 HRESULT CSprite2D::Initialize(COMPONENT_DESC* pArg)
 {
@@ -63,9 +219,9 @@ void CSprite2D::Apply_Shader(ID3D11DeviceContext* pContext)
 		m_pShader->Bind_Value("SpriteTexture", param);
 	}
 
-	for (auto& Slot : m_DynamicSlots) {
+	for (auto& Slot : m_DynamicSlots) 
 		m_pShader->Bind_Value(Slot.first, Slot.second);
-	}
+
 
 	m_pShader->Apply(m_PassConstant, pContext);
 }
@@ -81,9 +237,9 @@ void CSprite2D::Draw_Sprite(ID3D11DeviceContext* pContext)
 
 HRESULT CSprite2D::ChangeSprite(_uint Index)
 {
-	if (Index >= m_pTextures.size()) {
+	if (Index >= m_pTextures.size()) 
 		return E_FAIL;
-	}
+	
 
 	if(m_pTextures[Index] == nullptr)
 		return E_FAIL;
@@ -97,9 +253,9 @@ CVIBuffer* CSprite2D::Get_Buffer()
 	return m_pPoint;
 }
 
-HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
+HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& texKey)
 {
-	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
+	CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
 
 	if (!pTexture)
 		return E_FAIL;
@@ -109,24 +265,23 @@ HRESULT CSprite2D::Add_Texture(const string& levelKey, const string& TextureKey)
 	return S_OK;
 }
 
-HRESULT CSprite2D::Change_Texture(_uint index, const string& levelKey, const string& TextureKey)
+HRESULT CSprite2D::Change_Texture(_uint idx, const string& levelKey, const string& texKey)
 {
-	if (index >= m_pTextures.size()){
-		Add_Texture(levelKey, TextureKey);
-		return S_OK;
-	}
-	else {
-		if (m_pTextures[index])
-			Safe_Release(m_pTextures[index]);
+	if (idx >= m_pTextures.size())
+		Add_Texture(levelKey, texKey);
+	else
+	{
+		if (m_pTextures[idx])
+			Safe_Release(m_pTextures[idx]);
 
-		CTexture* pTexture = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, TextureKey, true);
-
-		if (!pTexture)
+		auto tex = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Texture(levelKey, texKey, true);
+		if (!tex)
 			return E_FAIL;
-		m_pTextures[index] = pTexture;
-		Safe_AddRef(pTexture);
-		return S_OK;
+
+		m_pTextures[idx] = tex;
+		Safe_AddRef(tex);
 	}
+	return S_OK;
 }
 
 HRESULT CSprite2D::Link_Shader(const string& levelKey, const string& shaderKey)
@@ -195,10 +350,10 @@ bool CSprite2D::IsValid()
 	return false;
 }
 
-
 void CSprite2D::Render_GUI()
 {
-	if (!m_pTextures.empty()) {
+	if (!m_pTextures.empty()) 
+	{
 		ImGui::Image((ImTextureID)m_pTextures.front()->Get_SRV(),
 			ImVec2(1280 / 5, 720 / 5));
 	}
@@ -215,11 +370,6 @@ CSprite2D* CSprite2D::Create()
 	return instance;
 }
 
-CComponent* CSprite2D::Clone()
-{
-	return new CSprite2D(*this);
-}
-
 void CSprite2D::Free()
 {
 	__super::Free();
@@ -227,7 +377,5 @@ void CSprite2D::Free()
 	Safe_Release(m_pShader);
 
 	for (auto& texture : m_pTextures)
-	{
 		Safe_Release(texture);
-	}
 }

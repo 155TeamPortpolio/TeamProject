@@ -188,6 +188,9 @@ void CStateMachine<Type>::Update(_float dt)
 	Update_AnimProgress();
 
 	Check_AnyStateTransitions();
+	if (m_fStateTime == 0.f) // 방금 전환됨
+		return;
+
 	Check_Transitions();
 }
 
@@ -238,6 +241,14 @@ void CStateMachine<Type>::Update_AnimProgress()
 
 	_float fProgress = pAnimator->Get_CurAnimDuration();
 	m_pCurrentState->m_fAnimProgress = fProgress;
+
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(m_pCurrentState);
+	if (pHState && pHState->Has_SubStateMachine())
+	{
+		auto pSubFSM = pHState->Get_SubStateMachine();
+		if (pSubFSM->Get_CurrentState())
+			pSubFSM->Get_CurrentState()->m_fAnimProgress = fProgress;
+	}
 }
 
 template<typename Type>
@@ -407,9 +418,6 @@ void CStateMachine<Type>::Change_State(const string& strState)
 
 	m_pCurrentState->Enter(m_pOwner);
 	m_pCurrentState->End_Transition(m_pOwner, strPrevState);
-
-	for (auto& pair : m_Parameters)
-		pair.second.Reset_Trigger();
 }
 
 template<typename Type>
@@ -428,6 +436,11 @@ void CStateMachine<Type>::Check_Transitions()
 
 		if (Check_Transition(transition))
 		{
+			for (auto& condition : transition.Conditions)
+			{	// 트리거 소모
+				if (condition.eCondition == CONDITION_TRIGGER)
+					Reset_Trigger(condition.strParameter);
+			}
 			Change_State(transition.strToState);
 			return;
 		}
@@ -444,6 +457,11 @@ void CStateMachine<Type>::Check_AnyStateTransitions()
 
 		if (Check_Transition(transition))
 		{
+			for (auto& condition : transition.Conditions)
+			{	// 트리거 소모
+				if (condition.eCondition == CONDITION_TRIGGER)
+					Reset_Trigger(condition.strParameter);
+			}
 			Change_State(transition.strToState);
 			return;
 		}
@@ -889,6 +907,12 @@ void CStateMachine<Type>::Record_Transition(const string& strFrom, const string&
 	record.fTimestamp = m_fTotalTime;
 	record.fPrevStateTime = fPrevStateTime;
 	record.strTriggerReason = strReason;
+
+	IHState<Type>* pFromHState = dynamic_cast<IHState<Type>*>(Get_State(strFrom));
+	if (pFromHState && pFromHState->Get_ParentState())
+		record.strTriggerReason = pFromHState->Get_ParentState()->Get_StateName() + "::" + strReason;
+	else
+		record.strTriggerReason = strReason;
 
 	m_History.push_back(record);
 

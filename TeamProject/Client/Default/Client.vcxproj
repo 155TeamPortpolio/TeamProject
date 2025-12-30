@@ -154,7 +154,9 @@
     <ClInclude Include="..\Public\CanvasPanel.h" />
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
+    <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
@@ -180,6 +182,23 @@
     <ClInclude Include="..\public\MapPlacedObject.h" />
     <ClInclude Include="..\public\MapTriggerObject.h" />
     <ClInclude Include="..\Public\pch.h" />
+    <ClInclude Include="..\Public\Sacrifice.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Attack.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Hit.h" />
+    <ClInclude Include="..\Public\SacrificeHandState_Idle.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Attack_Phase2.h" />
+    <ClInclude Include="..\Public\SacrificeState_Born.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit.h" />
+    <ClInclude Include="..\Public\SacrificeState_Idle.h" />
+    <ClInclude Include="..\Public\SacrificeState_Walk.h" />
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeHand.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
@@ -239,6 +258,7 @@
     <ClCompile Include="..\Private\CanvasPanel.cpp" />
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
@@ -263,6 +283,23 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Attack.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp" />
+    <ClCompile Include="..\Private\SacrificeHandState_Idle.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Attack_Phase2.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Born.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Walk.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeHand.cpp" />
     <ClCompile Include="..\private\SequenceCam.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />

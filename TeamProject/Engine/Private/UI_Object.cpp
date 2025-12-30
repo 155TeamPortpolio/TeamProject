@@ -152,6 +152,13 @@ void CUI_Object::Render_GUI()
 {
     __super::Render_GUI();
 
+    ImGui::SeparatorText("Play Animation");
+    for (_int i = 0; i < m_AnimClips.size(); ++i)
+    {
+        if (ImGui::Button(to_string(i).c_str()))
+            Set_Animation(i);
+    }
+
     ImGui::Text("WinSize: %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 
     ImGui::SeparatorText("Layout");
@@ -310,76 +317,96 @@ void CUI_Object::Align_To(ANCHOR anchor)
 
 void CUI_Object::Play_Animation(_float dt)
 {
-    if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= m_AnimClips.size())
-        return;
+    if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= (_int)m_AnimClips.size()) return;
+    if (!m_isBlending) return;
 
-    if (m_isBlending)
+    const UI_ANIM_CLIP& clip = m_AnimClips[m_iCurrentClipIndex];
+
+    if (clip.keyframes.empty())
     {
-        const UI_ANIM_CLIP& clip = m_AnimClips[m_iCurrentClipIndex];
+        m_isBlending = false;
+        return;
+    }
 
-        if (clip.keyframes.empty())
+    m_fBlendTime += dt;
+
+    _float ratio = 1.f;
+    if (clip.fDuration > 0.f)
+        ratio = m_fBlendTime / clip.fDuration;
+
+    ratio = clamp(ratio, 0.f, 1.f);
+
+    const UI_KEYFRAME& firstKey = clip.keyframes.front();
+    const UI_KEYFRAME& lastKey = clip.keyframes.back();
+
+    _float firstT = 0.f;
+    _float lastT = 1.f;
+
+    if (clip.fDuration > 0.f)
+    {
+        firstT = firstKey.fTime / clip.fDuration;
+        lastT = lastKey.fTime / clip.fDuration;
+        firstT = clamp(firstT, 0.f, 1.f);
+        lastT = clamp(lastT, 0.f, 1.f);
+    }
+
+    if ((_int)clip.keyframes.size() == 1 || ratio <= firstT)
+    {
+        m_vScale = firstKey.vScale;
+        m_fRadian = XMConvertToRadians(firstKey.fAngle);
+        m_vAnimPosition = firstKey.vPosition;
+        m_vColor = firstKey.vColor;
+    }
+    else if (ratio >= lastT)
+    {
+        m_vScale = lastKey.vScale;
+        m_fRadian = XMConvertToRadians(lastKey.fAngle);
+        m_vAnimPosition = lastKey.vPosition;
+        m_vColor = lastKey.vColor;
+    }
+    else
+    {
+        _int keyIdx = -1;
+
+        for (_int i = 0; i < (_int)clip.keyframes.size() - 1; ++i)
         {
-            m_isBlending = false;
-            return;
-        }
+            _float t0 = clip.keyframes[i].fTime / clip.fDuration;
+            _float t1 = clip.keyframes[i + 1].fTime / clip.fDuration;
 
-        m_fBlendTime += dt;
-        _float fRatio = {};
-
-        if (clip.fDuration > 0.f)
-            fRatio = m_fBlendTime / clip.fDuration;
-
-        fRatio = clamp(fRatio, 0.f, 1.f);
-
-        if (fRatio >= 1.f)
-        {
-            // 애니메이션 종료 처리
-            if (false == clip.isLoop)
+            if (ratio >= t0 && ratio <= t1)
             {
-                m_isBlending = false;
-                return;
-            }
-
-            m_fBlendTime = 0.f;
-        }
-
-        // 현재 시간에 해당하는 키프레임 찾기
-        _int iCurrentKeyIdx = { -1 };
-
-        for (_int i = 0; i < clip.keyframes.size() - 1; ++i)
-        {
-            _float fNormalizedTime = clip.keyframes[i].fTime / clip.fDuration;
-            _float fNextNormalizedTime = clip.keyframes[i + 1].fTime / clip.fDuration;
-
-            if (fRatio >= fNormalizedTime && fRatio <= fNextNormalizedTime)
-            {
-                iCurrentKeyIdx = i;
+                keyIdx = i;
                 break;
             }
         }
 
-        if (iCurrentKeyIdx >= 0 && iCurrentKeyIdx + 1 >= 0)
+        if (keyIdx >= 0)
         {
-            const UI_KEYFRAME& fromKey = clip.keyframes[iCurrentKeyIdx];
-            const UI_KEYFRAME& toKey = clip.keyframes[iCurrentKeyIdx + 1];
+            const UI_KEYFRAME& fromKey = clip.keyframes[keyIdx];
+            const UI_KEYFRAME& toKey = clip.keyframes[keyIdx + 1];
 
-            _float fFromTime = fromKey.fTime / clip.fDuration;
-            _float fToTime = toKey.fTime / clip.fDuration;
+            _float fromT = fromKey.fTime / clip.fDuration;
+            _float toT = toKey.fTime / clip.fDuration;
 
-            _float fLocalRatio = (fRatio - fFromTime) / (fToTime - fFromTime);
-            fLocalRatio = clamp(fLocalRatio, 0.f, 1.f);
+            _float localRatio = 1.f;
+            if (toT != fromT)
+                localRatio = (ratio - fromT) / (toT - fromT);
 
-            // 이징 적용
-            _float fEaseRatio = Math::ApplyEase(fromKey.easeType, fLocalRatio);
+            localRatio = clamp(localRatio, 0.f, 1.f);
 
-            // 보간된 값 적용
-            m_vScale = Math::Lerp(fromKey.vScale, toKey.vScale, fEaseRatio);
-            m_fRadian = XMConvertToRadians(Math::Lerp(fromKey.fAngle, toKey.fAngle, fEaseRatio));
-            m_vAnimPosition = Math::Lerp(fromKey.vPosition, toKey.vPosition, fEaseRatio);
-            _float4 vColor = {};
-            XMStoreFloat4(&vColor, XMVectorLerp(XMLoadFloat4(&fromKey.vColor), XMLoadFloat4(&toKey.vColor), fEaseRatio));
-            m_vColor = vColor;
+            _float easeRatio = Math::ApplyEase(fromKey.easeType, localRatio);
+
+            m_vScale = Vector2::Lerp(fromKey.vScale, toKey.vScale, easeRatio);
+            m_fRadian = XMConvertToRadians(fromKey.fAngle + (toKey.fAngle - fromKey.fAngle) * easeRatio);
+            m_vAnimPosition = Vector2::Lerp(fromKey.vPosition, toKey.vPosition, easeRatio);
+            m_vColor = Vector4::Lerp(fromKey.vColor, toKey.vColor, easeRatio);
         }
+    }
+
+    if (ratio >= 1.f)
+    {
+        if (!clip.isLoop) m_isBlending = false;
+        else              m_fBlendTime = 0.f;
     }
 }
 

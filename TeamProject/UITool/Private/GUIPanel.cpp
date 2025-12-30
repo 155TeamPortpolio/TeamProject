@@ -188,8 +188,8 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 		{
 			string strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-			CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType })         // UI Object »ý¼º
-				.Size({ 300.f, 200.f })
+			CUI_Object* pChild = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strType })
+				.Anchor(ANCHOR::Center)
 				.Build(strType);
 
 			if (!pChild)
@@ -205,6 +205,10 @@ CUI_Object* CGUIPanel::LoadPrefab()
 {
 	string filePath(Helper::OpenFile_Dialogue());
 	if (filePath.empty())
+		return nullptr;
+
+	const string strExtension = filesystem::path(filePath).extension().string();
+	if (strExtension != ".json")
 		return nullptr;
 
 	UI_ELEMENT_DATA elementData = Helper::LoadJson<UI_ELEMENT_DATA>(filePath);

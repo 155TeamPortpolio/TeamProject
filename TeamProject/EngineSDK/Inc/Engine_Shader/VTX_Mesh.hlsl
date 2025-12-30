@@ -18,6 +18,7 @@ struct VS_OUT
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
 };
@@ -38,7 +39,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vProjPos = Out.vPosition;
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
-   
+    Out.viewZ = viewPos.z;
     return Out;
 }
 
@@ -49,6 +50,7 @@ struct PS_IN
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
 };
@@ -60,7 +62,8 @@ struct PS_OUT
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
     vector vAmbient : SV_TARGET4;
-    vector vRimLight : SV_Target5;
+    vector vRimLight : SV_TARGET5;
+    vector vBloom : SV_TARGET6;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -98,15 +101,16 @@ PS_OUT PS_MAIN(PS_IN In)
         float3 vNormal = normalize(In.vNormal);
         Out.vNormal = float4(vNormal * 0.5f + 0.5f, 1.f);
     }
+    float linearDepth = saturate(saturate(In.viewZ / zFar));
 
-    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, 0.f, 1.f);
-    
+    Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     if (vAmbient.g < 0.2) vAmbient.g = 1.0f;
     vAmbient.r = 1.f;
     if (vMetalic.b < 0.2) vMetalic.b = 0.5f;
     Out.vAmbient = vAmbient;
     Out.vMetalic = vMetalic;
+    Out.vBloom = ExtractBright(vMtrlDiffuse, 2.f, 0.2, 5.f);
     Out.vRimLight = float4(vRimLightColor, fRimLightPower);
     return Out;
 }

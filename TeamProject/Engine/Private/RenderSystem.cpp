@@ -31,10 +31,11 @@ CRenderSystem::~CRenderSystem()
 
 HRESULT CRenderSystem::Initialize()
 {
-	/*pipeLine*/
-	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 	/*Render Target*/
 	m_pTargetManager = CTarget_Manager::Create(m_pDevice, m_pContext);
+
+	/*pipeLine*/
+	m_pPipeLine = CPipeLine::Create(m_pDevice, this);
 
 	/*RenderPass*/
 	m_pPriorityPass	= PriorityPass::Create(this);
@@ -65,7 +66,7 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Priority(m_pPriorityPass);
 	m_pForward->Render_Shadow(m_pShadowPass);
 	m_pForward->Render_Forward(m_pOpaquePass, m_pInstancePass);
-
+	m_pPipeLine->Update_HiZ(m_pContext);
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
 	m_pEffect->Render_WeightOIT();
@@ -136,6 +137,7 @@ void CRenderSystem::SetRimLightMode(RIMLIGHT eMode)
 void CRenderSystem::Render_GUI()
 {
 	m_pTargetManager->Render_GUI();
+	m_pPipeLine->Render_GUI();
 }
 #endif // _USING_GUI
 

@@ -13,6 +13,9 @@ public:
     virtual void Exit(CMiyabi* pOwner) override;
     virtual _bool Handle_Transition(CMiyabi* pOwner, const string& strState) override;
 
+public:
+    void Move_Motion(CMiyabi* pOwner, _float dt);
+
 private:
     _float m_fHoldTime = 0.f;
 

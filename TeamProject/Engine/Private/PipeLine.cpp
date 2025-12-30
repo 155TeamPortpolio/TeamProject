@@ -12,6 +12,7 @@
 #include "Texture.h"
 #include "Renderer.h"
 #include "Helper_Func.h"
+#include "HiZ_Culling.h"
 
 CPipeLine::CPipeLine()
 {
@@ -76,6 +77,7 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	m_pSystem = pSystem;
 
+	m_pHiZ = CHiZ_Culling::Create();
 	return S_OK;
 }
 
@@ -223,6 +225,11 @@ void CPipeLine::Update_Frustum()
 	BoundingFrustum::CreateFromMatrix(frustum, proj);
 
 	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
+}
+
+void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
+{
+	m_pHiZ->Update_HiZ(pContext);
 }
 
 _bool CPipeLine::isVisible(MINMAX_BOX minMax, _fmatrix worldTransform)
@@ -408,6 +415,18 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 	return S_OK;
 }
 
+vector<OPAQUE_PACKET> CPipeLine::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
+{
+	return m_pHiZ->OcculsionCulling(frustums);
+}
+
+#ifdef _USING_GUI
+void CPipeLine::Render_GUI()
+{
+	m_pHiZ->Render_GUI();
+}
+#endif // !_USING_GUI
+
 CPipeLine* CPipeLine::Create(ID3D11Device* pDevice, class CRenderSystem* pSystem)
 {
 	CPipeLine* instance = new CPipeLine();
@@ -422,6 +441,7 @@ CPipeLine* CPipeLine::Create(ID3D11Device* pDevice, class CRenderSystem* pSystem
 void CPipeLine::Free()
 {
 	__super::Free();
+
 	Safe_Release(m_pDeviceFrameBuffer);
 	Safe_Release(m_pDeviceObjectBuffer);
 	Safe_Release(m_pDeviceSkinningBuffer);
@@ -431,4 +451,5 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOBuffer);
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
+	Safe_Release(m_pHiZ);
 }

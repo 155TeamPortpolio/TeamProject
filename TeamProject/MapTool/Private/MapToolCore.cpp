@@ -52,6 +52,7 @@ vector<LOADED_OBJECT> CMapToolCore::Load_MapData()
 				Place_PlacedObjectFromLoadData(&objectdata);
 				break;
 			case MAPOBJ_TYPE::TRIGGER:
+				Place_TriggerObjectFromLoadData(&objectdata);
 				break;
 			}
 			LOADED_OBJECT Desc = {};
@@ -115,9 +116,10 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 	PlacedObjDesc->TagModelKey = pData->TagModelResourceKey;
 	PlacedObjDesc->TagMaterialKey = pData->TagMaterialResourceKey;
 
+	// Load된 PlacedObject(통맵기준)는 배치가 끝났다 가정.(Trigger나 그 외 요소 편하게 붙이기 위해 cooking)
 	COLLIDER_DESC ColDesc = {};
-	//ColDesc.bCooking = true;
-	ColDesc.bAutoFit = true;
+	ColDesc.bCooking = true;
+	//ColDesc.bAutoFit = true;
 	ColDesc.strModelKey = pData->TagModelResourceKey;
 
 	_float3 vScl{}, vRot{}, vTrans{};
@@ -143,16 +145,48 @@ void CMapToolCore::Place_PlacedObjectFromLoadData(MapData_Object* pData)
 		.Collider(ColDesc)
 		.Build(fileName);
  
-#ifdef _DEBUG
 	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_tMapToolContext.isAllDebugRender);
-#endif // _DEBUG
 
 	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::PLACED)] });
 
 
 }
 
-#ifdef _DEBUG
+void CMapToolCore::Place_TriggerObjectFromLoadData(MapData_Object* pData)
+{
+	if (nullptr == pData)
+		return;
+
+	COLLIDER_TYPE eType = {};
+	if ("BOX" == pData->TagMaterialResourceKey)
+		eType = COLLIDER_TYPE::BOX;
+	else if ("SPHERE" == pData->TagMaterialResourceKey)
+		eType = COLLIDER_TYPE::SPHERE;
+	else if ("CAPSULE" == pData->TagMaterialResourceKey)
+		eType = COLLIDER_TYPE::CAPSULE;
+	else
+		return;
+
+
+	COLLIDER_DESC ColDesc = {};
+	ColDesc.eType = eType;
+	ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+	ColDesc.vCenter = { pData->vRight[0], pData->vRight[1], pData->vRight[2] };
+	ColDesc.vSize = { pData->vUp[0], pData->vUp[1], pData->vUp[2] };
+	ColDesc.vRotation = { XMConvertToRadians(pData->vLook[0]),
+						  XMConvertToRadians(pData->vLook[1]),
+						  XMConvertToRadians(pData->vLook[2]) };
+
+	CGameObject* pStaticObject = Builder::Create_Object({ g_TagMapToolLevel ,"Proto_GameObject_TriggerObject" })
+		.Collider(ColDesc)
+		.Position({ pData->vPos[0], pData->vPos[1], pData->vPos[2] })
+		.Build(pData->TagModelResourceKey);
+
+	pStaticObject->Get_Component<CCollider>()->Set_DebugRender(m_tMapToolContext.isAllDebugRender);
+
+	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
+	pObjMgr->Add_Object(pStaticObject, { g_TagMapToolLevel, m_tMapToolContext.TagLayers[ENUM(MAPOBJ_TYPE::TRIGGER)] });
+}
 
 void CMapToolCore::Set_AllObjectDebugRender(_bool is)
 {
@@ -165,8 +199,6 @@ void CMapToolCore::Set_AllObjectDebugRender(_bool is)
 		}
 	}
 }
-
-#endif // _DEBUG
 
 void CMapToolCore::Free()
 {

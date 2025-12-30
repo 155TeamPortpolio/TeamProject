@@ -112,6 +112,9 @@ void CPlacedObject::Render_GUI()
 
 	__super::Render_GUI();
 
+	string TagModelKey = "Model Key : " + m_TagModelKey;
+	ImGui::Text(TagModelKey.c_str());
+
 	ImGui::PopID();
 }
 

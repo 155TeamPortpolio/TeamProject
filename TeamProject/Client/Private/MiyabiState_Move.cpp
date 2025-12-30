@@ -4,6 +4,8 @@
 #include "MiyabiState_Run.h"
 #include "Miyabi.h"
 
+#include "CharacterController.h"
+
 void CMiyabiState_Move::Enter(CMiyabi* pOwner)
 {
     if (!m_pSubStateMachine)  // 한 번만 생성
@@ -22,6 +24,7 @@ void CMiyabiState_Move::Enter(CMiyabi* pOwner)
 void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
     // Walk/Run의 End 상태를 Move의 AnimProgress에 반영
     if (m_pSubStateMachine)
     {
@@ -35,7 +38,6 @@ void CMiyabiState_Move::Update(CMiyabi* pOwner, _float dt)
 
             if (pCurrentAnim && pCurrentAnim->Get_Tag() == "End")
             {
-                // End 상태의 진행도를 Move에 전파
                 if (pCurrentAnim->Is_AnimEnd() || pCurrentAnim->Get_AnimProgress() >= 1.f)
                 {
                     m_fAnimProgress = 1.f;

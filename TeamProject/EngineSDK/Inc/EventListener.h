@@ -3,14 +3,14 @@
 #include "EventSystem.h"
 
 NS_BEGIN(Engine)
-class ENGINE_DLL CEventListner :
+class ENGINE_DLL CEventListener :
     public CComponent
 {
 private:
-	CEventListner();
-	CEventListner(const CEventListner& rhs);
-	virtual ~CEventListner() DEFAULT;
-	CEventListner& operator=(const CEventListner&) = delete;
+	CEventListener();
+	CEventListener(const CEventListener& rhs);
+	virtual ~CEventListener() DEFAULT;
+	CEventListener& operator=(const CEventListener&) = delete;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -31,13 +31,13 @@ private:
 	CEventSystem* m_pSystem = { nullptr };
 	vector<CEventSystem::ListenerHandle> m_Handles;
 public:
-	static CEventListner* Create();
+	static CEventListener* Create();
 	virtual CComponent* Clone() override;
 	virtual void Free() override;
 };
 
 template<typename T>
-inline void CEventListner::Add_Listner(function<void(const T&)> callback)
+inline void CEventListener::Add_Listner(function<void(const T&)> callback)
 {
 	if (!m_pSystem) return;
 	CGameObject* owner = Get_Owner(); 
