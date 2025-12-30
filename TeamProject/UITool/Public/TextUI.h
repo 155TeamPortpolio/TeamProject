@@ -1,8 +1,6 @@
 #pragma once
 #include "UIObject_Tool.h"
 
-// 텍스트를 트랜스폼에 맞춰서 피봇 설정, 회전, 스케일하는 것 넣어야
-
 NS_BEGIN(UITool)
 
 class CTextUI final : public CUIObject_Tool
@@ -39,6 +37,7 @@ private:
 	_bool		m_isSizeToContent = { true };
 
 private:
+	string		m_strFontTag = {};
 	_int		m_iFontKeyIndex = { 0 }; 
 
 public:
@@ -51,7 +50,6 @@ private:
 
 private:
 	void UpdateAnchorOffsetByAlign();
-	_int Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag);
 
 public:
 	static CGameObject* Create();

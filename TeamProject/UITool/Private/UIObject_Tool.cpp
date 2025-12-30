@@ -441,15 +441,6 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
     Set_Size({m_sizeFHD.x * ratio, m_sizeFHD.y * ratio});
 }
 
-_int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
-{
-    for (_int i = 0; i < TextureKeys.size(); ++i)
-        if (TextureKeys[i] == strTextureTag)
-            return i;
-
-    return -1;
-}
-
 _float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
 {
     _uint iAnchor = static_cast<_uint>(eAnchor);

@@ -33,7 +33,10 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     const auto& szFontKeys = CUITool_Level::m_strFontKeys;
     if (szFontKeys.size())
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+    {
+        m_strFontTag = szFontKeys[m_iFontKeyIndex];
+        Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
+    }
 
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
@@ -91,7 +94,10 @@ void CTextUI::Render_GUI()
     ImGui::SeparatorText(u8"폰트");
     const auto& szFontKeys = CUITool_Level::m_szFontKeys;
     if (ImGui::Combo(u8"폰트", &m_iFontKeyIndex, szFontKeys.data(), szFontKeys.size()))
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+    {
+        m_strFontTag = szFontKeys[m_iFontKeyIndex];
+        Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
+    } 
     
     if (ImGui::Button(u8"크기 +"))
     {
@@ -133,8 +139,7 @@ void CTextUI::FillElementData(UI_ELEMENT_DATA& data)
     
     data.strTypeTag = m_strTypeTag;
 
-    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    data.strFontTag = szFontKeys[m_iFontKeyIndex];
+    data.strFontTag = m_strFontTag;
     data.strText = m_szText;
     data.fFontScale = m_fFontScale;
     data.isOutlined = m_isOutlined;
@@ -146,10 +151,8 @@ void CTextUI::ReadElementData(const UI_ELEMENT_DATA& data)
 {
     __super::ReadElementData(data);
 
-    const auto& szFontKeys = CUITool_Level::m_szFontKeys;
-    m_iFontKeyIndex = Find_TextureIndex(szFontKeys, data.strFontTag);
-    if (-1 != m_iFontKeyIndex)
-        Get_Component<CTextSlot>()->Set_Font(szFontKeys[m_iFontKeyIndex]);
+    m_strFontTag = data.strFontTag;
+    Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
 
     strcpy_s(m_szText, data.strText.c_str());
     m_fFontScale = data.fFontScale;
@@ -277,15 +280,6 @@ void CTextUI::UpdateAnchorOffsetByAlign()
     case 1: m_vAnchorOffset.x = -width * 0.5f;  break;
     case 2: m_vAnchorOffset.x = -width;         break;
     }
-}
-
-_int CTextUI::Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag)
-{
-    for (_int i = 0; i < FontKeys.size(); ++i)
-        if (FontKeys[i] == strFontTag)
-            return i;
-
-    return -1;
 }
 
 CGameObject* CTextUI::Create()
