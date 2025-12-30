@@ -64,8 +64,8 @@ void CMiyabi::Awake()
 	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
 	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
 	Get_Component<CAnimator3D>()->Set_MotionBone(21);
-	//Get_Component<CAnimator3D>()->Set_ExtractMotionboneMovement(AXIS::Z);
-	//Get_Component<CAnimator3D>()->Set_ExtractMotionboneRotation(AXIS::Y);
+	Get_Component<CAnimator3D>()->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
+	Get_Component<CAnimator3D>()->Set_ExtractMotionboneRotation(AXIS::Y);
 	Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();

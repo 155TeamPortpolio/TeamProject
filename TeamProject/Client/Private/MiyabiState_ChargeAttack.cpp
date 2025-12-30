@@ -4,7 +4,7 @@
 #include "Miyabi.h"
 #include "GameInstance.h"
 #include "Animator3D.h"
-#include "CharacterController.h"
+
 // ===================== ChargeAttack =====================
 
 void CMiyabiState_ChargeAttack::Enter(CMiyabi* pOwner)
@@ -159,23 +159,6 @@ void CMiyabiState_Charge_Attack03::Enter(CMiyabi* pOwner)
         .Apply();
 }
 
-void CMiyabiState_Charge_Attack03::Update(CMiyabi* pOwner, _float dt)
-{
-
-   _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
-   _vector4 vRootRotDelta = pOwner->Get_Animator()->Get_RootBoneQuatDelta();
-
-   if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
-   {
-       _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-       pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-       //_quaternion curQ = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-       //_quaternion delta = vRootRotDelta;
-       //pOwner->Get_Component<CTransform>()->Set_Quaternion(curQ * delta);
-   }
-   
-}
-
 // Charge_End
 void CMiyabiState_Charge_End::Enter(CMiyabi* pOwner)
 {
@@ -196,23 +179,4 @@ void CMiyabiState_Charge_End::Update(CMiyabi* pOwner, _float dt)
     {
         m_fAnimProgress = 1.f;
     }
-
-    if (pOwner->Get_Animator()->isCurrentAnimEnd())
-    {
-        //_quaternion curQ = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        //curQ.Normalize();
-        //_quaternion endAnimQ = pOwner->Get_Animator()->Get_RootBoneEndQuat(); // 마지막 상태
-        //endAnimQ.Normalize();
-        //_vector4 Rot = endAnimQ * curQ;
-        //// 현재 Transform에 마지막 애니 회전을 곱함
-        //pOwner->Get_Component<CTransform>()->Set_Quaternion(endAnimQ * curQ);
-        //Quaternion CalcQuat = pOwner->Get_Animator()->Calc_TransformFromEndAnim(
-        //    pOwner->Get_Component<CTransform>()->Get_QuaternionRotate());
-        //pOwner->Get_Component<CTransform>()->Set_Quaternion(CalcQuat);
-    }
-}
-
-void CMiyabiState_Charge_End::Exit(CMiyabi* pOwner)
-{
-
 }
