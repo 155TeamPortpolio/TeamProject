@@ -32,6 +32,11 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CUIObject_Tool::Awake()
+{
+    m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
+}
+
 void CUIObject_Tool::Render_GUI()
 {
     Render_GUI_Property();
@@ -232,7 +237,10 @@ void CUIObject_Tool::Render_GUI_Layout()
         if (selected) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
 
         if (ImGui::Button(presets[i].label, btnSize))
+        {
             m_eAnchor = presets[i].value;
+            m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);  // ¾ÞÄ¿¿¡ ¸ÂÃç¼­ ÀÚµ¿ Á¤·Ä
+        } 
 
         if (selected) ImGui::PopStyleColor();
         ImGui::PopStyleVar();
@@ -433,13 +441,26 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
     Set_Size({m_sizeFHD.x * ratio, m_sizeFHD.y * ratio});
 }
 
-_int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, const string strTextureTag)
+_float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
 {
-    for (_int i = 0; i < TextureKeys.size(); ++i)
-        if (TextureKeys[i] == strTextureTag)
-            return i;
+    _uint iAnchor = static_cast<_uint>(eAnchor);
+    _float2 fOffset = {};
 
-    return -1;
+    if (iAnchor & static_cast<_uint>(ANCHOR::Right))
+        fOffset.x = m_vSize.x * -1.f;
+    else if (iAnchor & static_cast<_uint>(ANCHOR::Left))
+        fOffset.x = 0.f;
+    else
+        fOffset.x = m_vSize.x * - 0.5f;
+
+    if (iAnchor & static_cast<_uint>(ANCHOR::Bottom))
+        fOffset.y = m_vSize.y * -1.f;
+    else if (iAnchor & static_cast<_uint>(ANCHOR::Top))
+        fOffset.y = 0.f;
+    else
+        fOffset.y = m_vSize.y * -0.5f;
+
+    return fOffset;
 }
 
 void CUIObject_Tool::Free()
