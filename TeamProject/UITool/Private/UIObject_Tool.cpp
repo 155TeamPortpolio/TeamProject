@@ -232,7 +232,10 @@ void CUIObject_Tool::Render_GUI_Layout()
         if (selected) ImGui::PushStyleColor(ImGuiCol_Button, ImGui::GetStyleColorVec4(ImGuiCol_ButtonHovered));
 
         if (ImGui::Button(presets[i].label, btnSize))
+        {
             m_eAnchor = presets[i].value;
+            m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);  // ¾ÞÄ¿¿¡ ¸ÂÃç¼­ ÀÚµ¿ Á¤·Ä
+        } 
 
         if (selected) ImGui::PopStyleColor();
         ImGui::PopStyleVar();
@@ -440,6 +443,28 @@ _int CUIObject_Tool::Find_TextureIndex(const vector<const _char*> TextureKeys, c
             return i;
 
     return -1;
+}
+
+_float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
+{
+    _uint iAnchor = static_cast<_uint>(eAnchor);
+    _float2 fOffset = {};
+
+    if (iAnchor & static_cast<_uint>(ANCHOR::Right))
+        fOffset.x = m_vSize.x * -1.f;
+    else if (iAnchor & static_cast<_uint>(ANCHOR::Left))
+        fOffset.x = 0.f;
+    else
+        fOffset.x = m_vSize.x * - 0.5f;
+
+    if (iAnchor & static_cast<_uint>(ANCHOR::Bottom))
+        fOffset.y = m_vSize.y * -1.f;
+    else if (iAnchor & static_cast<_uint>(ANCHOR::Top))
+        fOffset.y = 0.f;
+    else
+        fOffset.y = m_vSize.y * -0.5f;
+
+    return fOffset;
 }
 
 void CUIObject_Tool::Free()
