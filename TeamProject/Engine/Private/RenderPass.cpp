@@ -86,11 +86,11 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	/*패킷이 비어 있으면 리턴*/
 	if (m_Packets.empty())
 		return;
-	
+
 	/*상수 버퍼 및 SRV 세팅*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
-	  
+	vector<OPAQUE_PACKET> FrustumPacket;
 	for (auto& packet : m_Packets)     
 	{
 		if (!packet.bSkinning) {
@@ -112,11 +112,13 @@ void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		packet.TransformIndex = TransformIndex;
 		packet.SkinningOffset = SkinningOffset;
 
-		m_VisiblePackets.push_back(packet);
+		FrustumPacket.push_back(packet);
 	}
 
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
+
+	m_VisiblePackets = pPipeLine->OcculsionCulling(FrustumPacket);
 
 	/*드로우콜 시작*/
 	for (auto& packet : m_VisiblePackets)

@@ -16,20 +16,9 @@ private:
 	virtual ~CMapToolCore() = default;
 
 public:
-	//_int*			Get_Version_Ptr()					{ return &m_iVersion; }
-	//_int			Get_Version()						{ return m_iVersion; }
-	//void			Set_Version(_int iVersion)			{ m_iVersion = iVersion; }
-	//string			Get_TagLayer(MAPOBJ_TYPE eObjType)	{ return m_TagLayers[ENUM(eObjType)]; }
-	//vector<string>* Get_TagLayers()						{ return &m_TagLayers; }
-	//_bool			IsAllDebugRender()					{ return m_isAllDebugRender; }
-	MAPTOOL_CONTEXT* Get_Context() { return &m_tMapToolContext; }
 
-
-
-
-#ifdef _DEBUG
-	void			Set_AllObjectDebugRender(_bool is);
-#endif // _DEBUG
+	MAPTOOL_CONTEXT*	Get_Context() { return &m_tMapToolContext; }
+	void				Set_AllObjectDebugRender(_bool is);
 
 public:
 	vector<LOADED_OBJECT>	Load_MapData();
@@ -39,7 +28,7 @@ public:
 private:
 	MAPOBJ_TYPE		Check_LayerTag(const string& TagLayer);
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
-
+	void			Place_TriggerObjectFromLoadData(MapData_Object* pData);
 
 
 private:

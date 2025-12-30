@@ -42,7 +42,7 @@ CCollisionSystem::CCollisionSystem(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CCollisionSystem::Initialize()
 {
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<VertexPositionColor>(m_pContext);
 	m_pEffect = new BasicEffect(m_pDevice);
 
@@ -56,7 +56,7 @@ HRESULT CCollisionSystem::Initialize()
 	if (FAILED(m_pDevice->CreateInputLayout(VertexPositionColor::InputElements, VertexPositionColor::InputElementCount,
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
-#endif
+//#endif
 
 	m_Collidables.reserve(1000);
 
@@ -590,12 +590,12 @@ void CCollisionSystem::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 
-#ifdef _DEBUG
+//#ifdef _DEBUG
 	m_Collidables.clear();
 	Safe_Release(m_pInputLayout);
 	Safe_Delete(m_pEffect);
 	Safe_Delete(m_pBatch);
-#endif 
+//#endif 
 
 	__super::Free();
 }
