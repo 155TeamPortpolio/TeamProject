@@ -58,7 +58,7 @@ void CDemoPlayer::Awake()
 	Get_Component<CAnimator3D>()->LinkAnimate_Model("Demo_Level", "Bangboo_Sharkboo_NPC (merge).model");
 	Get_Component<CAnimator3D>()->Link_MetaData("Demo_Level", "Bangboo_Sharkboo_Meta.json");
 	Get_Component<CAnimator3D>()->Set_MotionBone(7);
-	Get_Component<CAnimator3D>()->Set_RemoveAxisFromMotionBone(AXIS::X |AXIS::Y |AXIS::Z);
+	Get_Component<CAnimator3D>()->Set_ExtractMotionboneMovement(AXIS::X |AXIS::Y |AXIS::Z);
 	Get_Component<CAnimator3D>()->Set_Animation(0, 16)
 		.Loop(true)
 		.Apply();
