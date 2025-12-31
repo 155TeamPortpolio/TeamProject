@@ -7,6 +7,7 @@
 
 /* Sub States */
 #include "SacrificeState_Evade_Phase1.h"
+#include "SacrificeState_Evade_Phase2.h"
 
 void CSacrificeState_Evade::Enter(CSacrifice* pOwner)
 {
@@ -15,7 +16,22 @@ void CSacrificeState_Evade::Enter(CSacrifice* pOwner)
 		m_pSubStateMachine = CStateMachine<CSacrifice>::Create();
 
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Evade_Phase1::Create());
-		m_pSubStateMachine->Set_DefaultState("Phase1");
+		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Evade_Phase2::Create());
+	}
+
+	CSacrifice::PHASE currPhase = pOwner->GetCurrPhase();
+	switch (currPhase)
+	{
+	case CSacrifice::PHASE::PHASE1:
+	{
+		m_pSubStateMachine->Change_State("Phase1");
+	}break;
+	case CSacrifice::PHASE::PHASE2:
+	{
+		m_pSubStateMachine->Change_State("Phase2");
+	}break;
+	default:
+		break;
 	}
 
 	__super::Enter(pOwner);

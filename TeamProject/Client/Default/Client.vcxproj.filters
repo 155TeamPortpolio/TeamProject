@@ -237,8 +237,8 @@
     </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Text">
       <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-       </Filter>
-        <Filter Include="02. GameObject\Object\Player\Character\Anbi">
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
@@ -261,6 +261,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
       <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
+      <UniqueIdentifier>{7a1fc845-f3d2-4172-b4a9-fc13f4ac91cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -498,10 +501,10 @@
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
       <Filter>02. GameObject\UI</Filter>
- </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
@@ -523,6 +526,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\AnbiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_ChangePhase.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -754,7 +763,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\Anbi.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
     </ClCompile>
@@ -775,6 +784,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
