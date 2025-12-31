@@ -60,9 +60,10 @@ void CAIAnimator3D::Render_GUI()
 
 HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* WorldMatrix)
 {
-	
 	string AnimSavePath = SavePath + "\\Anim\\";
 	std::filesystem::create_directories(AnimSavePath);
+
+	vector<ANIM_CLIP> Meta;
 
 	for (auto& Clip : m_pAnimClips) {
 		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
@@ -71,8 +72,17 @@ HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* W
 		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs, WorldMatrix);
 
 		ofs.close();
+
+		ANIM_CLIP tClip{};
+		tClip.ClipTag = Clip->Get_Name();
+		Meta.push_back(tClip);
 	}
-	
+
+	size_t pos = Meta.back().ClipTag.find("_Ani_");
+	string Name = Meta.back().ClipTag.substr(0, pos);
+
+	Helper::SaveJson<vector<ANIM_CLIP>>(Meta, SavePath + Name + "_Meta.json");
+
 	return S_OK;
 }
 
