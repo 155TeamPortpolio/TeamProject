@@ -512,7 +512,7 @@
       <Filter>01. Utility\04. Components\21. CharacterController</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ClickManager.h">
-      <Filter>01. Utility\14.ClickManager</Filter>
+      <Filter>01. Utility\14. ClickManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
@@ -966,14 +966,14 @@
     <Filter Include="01. Utility\13. EventBus">
       <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\14.ClickManager">
-      <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\Hi_Z">
       <UniqueIdentifier>{70f06feb-b4e3-4412-8ada-789498d0c592}</UniqueIdentifier>
     </Filter>
     <Filter Include="97. Helper">
       <UniqueIdentifier>{97fbfa50-f769-4c33-8620-507af716e344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\14. ClickManager">
+      <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1398,7 +1398,7 @@
       <Filter>01. Utility\06. RenderSystem\PipeLine\Hi_Z</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ClickManager.cpp">
-      <Filter>01. Utility\14.ClickManager</Filter>
+      <Filter>01. Utility\14. ClickManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\EventListener.cpp">
       <Filter>01. Utility\04. Components\22. EventListner</Filter>

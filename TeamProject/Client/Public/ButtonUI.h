@@ -31,7 +31,7 @@ public:
 	virtual void OnClick() override;
 
 public:
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
 
 private:
 	STATE		m_eState = {};
