@@ -32,6 +32,7 @@
 
 /* Character */
 #include "Miyabi.h"
+#include "Anbi.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 
@@ -94,7 +95,7 @@ HRESULT CTestLevel::Awake()
 	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CAnbi::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
