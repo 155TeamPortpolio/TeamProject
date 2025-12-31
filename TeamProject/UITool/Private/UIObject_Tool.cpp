@@ -107,12 +107,12 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
         for (const auto& keyframe : clip.keyframes)
         {
             json keyframeData = {};
-            keyframeData["fTime"]= keyframe.fTime;
-            keyframeData["vScale"] = { keyframe.vScale.x, keyframe.vScale.y };
-            keyframeData["fAngle"] = keyframe.fAngle;
-            keyframeData["vPosition"] = { keyframe.vPosition.x, keyframe.vPosition.y };
-            keyframeData["vColor"] = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
-            keyframeData["uEaseType"] = static_cast<_uint>(keyframe.easeType);
+            keyframeData["time"]= keyframe.fTime;
+            keyframeData["scale"] = { keyframe.vScale.x, keyframe.vScale.y };
+            keyframeData["angle"] = keyframe.fAngle;
+            keyframeData["position"] = { keyframe.vPosition.x, keyframe.vPosition.y };
+            keyframeData["color"] = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
+            keyframeData["easeType"] = static_cast<_uint>(keyframe.easeType);
 
             keyframesJson.push_back(keyframeData);
         }
@@ -188,20 +188,20 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
                 for (const auto& keyframeJson : keyframesJson)
                 {
                     UI_KEYFRAME keyframe;
-                    keyframe.fTime = keyframeJson.value("fTime", 0.0f);
+                    keyframe.fTime = keyframeJson.value("time", 0.0f);
 
-                    auto vScale = keyframeJson.value("vScale", json::array({ 1.0f, 1.0f }));
+                    auto vScale = keyframeJson.value("scale", json::array({ 1.0f, 1.0f }));
                     keyframe.vScale = { vScale[0], vScale[1] };
 
-                    keyframe.fAngle = keyframeJson.value("fAngle", 0.0f);
+                    keyframe.fAngle = keyframeJson.value("angle", 0.0f);
 
-                    auto vPosition = keyframeJson.value("vPosition", json::array({ 0.0f, 0.0f }));
+                    auto vPosition = keyframeJson.value("position", json::array({ 0.0f, 0.0f }));
                     keyframe.vPosition = { vPosition[0], vPosition[1] };
 
-                    auto vColor = keyframeJson.value("vColor", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
+                    auto vColor = keyframeJson.value("color", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
                     keyframe.vColor = { vColor[0], vColor[1], vColor[2], vColor[3] };
 
-                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("uEaseType", 0u));
+                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
 
                     clip.keyframes.push_back(keyframe);
                 }
