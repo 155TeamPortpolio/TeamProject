@@ -67,6 +67,7 @@ void CMiyabi::Awake()
 	//m_pAnimator()->Set_ExtractBoneMovement(21);
 	m_pAnimator ->Set_MotionBone(21);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
+	//m_pAnimator->Set_ExtractMotionboneRotation(AXIS::Y);
 	m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();
