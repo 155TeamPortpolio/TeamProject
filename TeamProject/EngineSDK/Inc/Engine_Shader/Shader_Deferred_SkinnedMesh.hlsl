@@ -120,6 +120,74 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     return Out;
 }
 
+//GaussianBlur
+static const float weights[9] =
+{
+    0.2270270270,
+    0.1945945946,
+    0.1216216216,
+    0.0540540541,
+    0.0162162162,
+    0.0081081081,
+    0.0040540541,
+    0.0020270270,
+    0.0010135135
+};
+
+PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 result = (vAmbient * vDiffuse).rgb * weights[0];
+    
+    float texelSize = 2.f / fScreenWidth;
+    
+    for (int i = 1; i < 9; ++i)
+    {
+        float2 offset = float2(texelSize * i, 0);
+        
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        result += (vAmbient * vDiffuse).rgb * weights[i];
+        
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        result += (vAmbient * vDiffuse).rgb * weights[i];
+    }
+        
+    Out.vResult = float4(result, 1.f);
+    return Out;
+}
+
+PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+    float3 result = (vAmbient * vDiffuse).rgb * weights[0];
+    
+    float texelSize = 2.f / fScreenHeight;
+    
+    for (int i = 1; i < 9; ++i)
+    {
+        float2 offset = float2(0, texelSize * i);
+        
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        result += (vAmbient * vDiffuse).rgb * weights[i];
+        
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        result += (vAmbient * vDiffuse).rgb * weights[i];
+    }
+    
+    Out.vResult = float4(result, 1.f);
+    return Out;
+}
+
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
@@ -255,6 +323,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vRimLight = RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -271,7 +340,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor;
+    Out.vResult.rgb += specularColor + vBloom.rgb;
 
     return Out;
 }
@@ -297,6 +366,26 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass BLOOM_BLURX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURX();
+    }
+
+    pass BLOOM_BLURY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
     }
 
     pass DIRECTIONAL

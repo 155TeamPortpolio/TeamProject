@@ -16,6 +16,7 @@ public:
 
 public:
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
+    HRESULT Render_SkinnedMesh_Bloom();
     HRESULT Render_RimLight();
     HRESULT Render_SkinnedMesh_LightAcc();
     HRESULT Render_SkinnedMesh_Combined();
