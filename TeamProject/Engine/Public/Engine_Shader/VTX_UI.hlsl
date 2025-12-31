@@ -85,6 +85,8 @@ float Direction;
 
 float4 vColor;
 
+float2 vFlip;
+
 struct PS_IN
 {
     float4 vPosition : SV_POSITION;
@@ -100,7 +102,9 @@ PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
     
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     if (vDiffuse.a < 0.1f)
         discard;
     
@@ -139,7 +143,7 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
     
-    float2 vTexcoord = lerp(In.vTexcoord, float2(1.f - In.vTexcoord.x, In.vTexcoord.y), Direction);
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y };
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     if (vDiffuse.a < 0.1f)
         discard;

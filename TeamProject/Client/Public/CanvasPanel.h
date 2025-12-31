@@ -23,7 +23,10 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
+
+private:
+	json LoadJson(const string& filePath);
 
 public:
 	static CGameObject* Create();
