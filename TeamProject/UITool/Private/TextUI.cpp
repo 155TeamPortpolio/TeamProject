@@ -140,6 +140,7 @@ void CTextUI::Save(nlohmann::ordered_json& data)
     data["typeTag"] = m_strTypeTag;
 
     auto& textJson = data["text"];
+    textJson["content"] = m_szText;
     textJson["fontTag"] = m_strFontTag;
     textJson["fontScale"] = m_fFontScale;
     textJson["outlined"] = m_isOutlined;
@@ -154,6 +155,8 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
     if (data.contains("text"))
     {
         const auto& textJson = data["text"];
+
+        strcpy_s(m_szText, textJson.value("content", "").c_str());
         m_strFontTag = textJson.value("fontTag", "DefaultFont");
         m_fFontScale = textJson.value("fontScale", 1.0f);
         m_isOutlined = textJson.value("outlined", false);
@@ -161,16 +164,16 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
 
         auto outlineColor = textJson.value("outlineColor", json::array({ 0.0f, 0.0f, 0.0f, 1.0f }));
         m_vOutlineColor = { outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3] };
-    }
 
-    Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
-    Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
-    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
-    Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
-    Get_Component<CTextSlot>()->Set_Color(m_vColor);
-    if (m_isOutlined)
-        Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+        Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
+        Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
+        Get_Component<CSprite2D>()->Set_TextKey(m_szText);
+        Get_Component<CTextSlot>()->Set_TextKey(m_szText);
+        Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
+        Get_Component<CTextSlot>()->Set_Color(m_vColor);
+        if (m_isOutlined)
+            Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+    } 
 }
 
 void CTextUI::Render_GUI_Layout()
