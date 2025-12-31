@@ -200,26 +200,31 @@ void CCollider::Update(_float dt)
 void CCollider::OnCollisionEnter(ICollidable* pOther)
 {
 	m_pOwner->OnCollisionEnter();
+	m_pOwner->OnCollisionEnter(pOther->Get_Owner());
 }
 
 void CCollider::OnCollisionStay(ICollidable* pOther)
 {
 	m_pOwner->OnCollisionStay();
+	m_pOwner->OnCollisionStay(pOther->Get_Owner());
 }
 
 void CCollider::OnCollisionExit(ICollidable* pOther)
 {
 	m_pOwner->OnCollisionExit();
+	m_pOwner->OnCollisionExit(pOther->Get_Owner());
 }
 
 void CCollider::OnTriggerEnter(ICollidable* pOther)
 {
 	m_pOwner->OnTriggerEnter();
+	m_pOwner->OnTriggerEnter(pOther->Get_Owner());
 }
 
 void CCollider::OnTriggerExit(ICollidable* pOther)
 {
 	m_pOwner->OnTriggerExit();
+	m_pOwner->OnTriggerExit(pOther->Get_Owner());
 }
 
 void CCollider::Set_Center(const _float3& vCenter)
