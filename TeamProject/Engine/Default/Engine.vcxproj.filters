@@ -519,9 +519,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\EventListener.h">
       <Filter>01. Utility\04. Components\22. EventListner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Engine_Json.h">
+      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1399,7 +1402,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\ClickManager.cpp">
       <Filter>01. Utility\14.ClickManager</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\EventListener.cpp">
       <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>

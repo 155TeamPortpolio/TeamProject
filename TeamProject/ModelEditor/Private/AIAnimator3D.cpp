@@ -10,6 +10,8 @@ CAIAnimator3D::CAIAnimator3D()
 
 HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIModelData)
 {
+	m_pAnimClips.reserve(0);
+
     for (_uint i = 0; i < pAIScene->mNumAnimations; i++) {
         CAIAnimationClip* AIClip = CAIAnimationClip::Create(pAIScene->mAnimations[i], pAIModelData);
         if (!AIClip)

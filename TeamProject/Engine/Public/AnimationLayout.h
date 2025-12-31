@@ -1,6 +1,5 @@
 #pragma once
-#include "Engine_Defines.h"
-#include "Json_Inc/json.hpp"
+#include "Engine_Json.h"
 
 namespace Engine
 {
@@ -19,11 +18,6 @@ namespace Engine
         string          EventTag;   //이벤트 태그 
     }ANIM_EVENT;
 
-    typedef struct EventInstance {
-        CLIP_EVENT_TYPE Type;
-        string Tag;
-    }EVENT_INST;
-
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_EVENT, EventTime, EventType, EventTag);
 
     typedef struct AnimationClip {
@@ -32,10 +26,23 @@ namespace Engine
     }ANIM_CLIP;
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_CLIP, ClipTag, Events);
 
+
     typedef struct AnimationMeta {
-        _float4x4          PreTransform; //애니매이션 이름
+        _float4x4          PreTransform;
         vector<ANIM_CLIP>  Clips;
     }ANIM_META;
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_META, PreTransform, Clips);
-    /* ------------------------ */
+}
+
+namespace Engine
+{
+    typedef struct EventInstance {
+        CLIP_EVENT_TYPE Type;
+        string Tag;
+    }EVENT_INST;
+
+    typedef struct AnimationRuntimeMeta {
+        _float4x4               PreTransform;
+        vector<class CAnimationClip*> pClips;
+    }ANIMATION_META;
 }

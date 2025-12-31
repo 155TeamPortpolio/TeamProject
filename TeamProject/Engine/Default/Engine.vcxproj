@@ -272,6 +272,7 @@ exit /b 0</Command>
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
     <ClInclude Include="..\public\EffectRenderer.h" />
+    <ClInclude Include="..\Public\Engine_Json.h" />
     <ClInclude Include="..\public\Engine_Math.h" />
     <ClInclude Include="..\Public\Engine_RenderStruct.h" />
     <ClInclude Include="..\Public\EventListener.h" />
