@@ -138,9 +138,9 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float4 vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
     float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 result = (vAmbient * vDiffuse).rgb * weights[0];
+    float3 result = vAmbient * vDiffuse.rgb * weights[0];
     
     float texelSize = 2.f / fScreenWidth;
     
@@ -148,13 +148,13 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     {
         float2 offset = float2(texelSize * i, 0);
         
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset).b;
         vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
-        result += (vAmbient * vDiffuse).rgb * weights[i];
+        result += vAmbient * vDiffuse.rgb * weights[i];
         
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset).b;
         vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
-        result += (vAmbient * vDiffuse).rgb * weights[i];
+        result += vAmbient * vDiffuse.rgb * weights[i];
     }
         
     Out.vResult = float4(result, 1.f);
@@ -165,9 +165,9 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float4 vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    float vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
     float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 result = (vAmbient * vDiffuse).rgb * weights[0];
+    float3 result = vAmbient * vDiffuse.rgb * weights[0];
     
     float texelSize = 2.f / fScreenHeight;
     
@@ -175,13 +175,13 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     {
         float2 offset = float2(0, texelSize * i);
         
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset);
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset).b;
         vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
-        result += (vAmbient * vDiffuse).rgb * weights[i];
+        result += vAmbient * vDiffuse.rgb * weights[i];
         
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset);
+        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset).b;
         vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
-        result += (vAmbient * vDiffuse).rgb * weights[i];
+        result += vAmbient * vDiffuse.rgb * weights[i];
     }
     
     Out.vResult = float4(result, 1.f);
