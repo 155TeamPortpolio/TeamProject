@@ -207,8 +207,8 @@ void CTestLevel::Update()
 		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
 		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
 
-		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
-			//.CharacterController(sacrificeCCT)
+		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+			.CharacterController(sacrificeCCT)
 			.Build("Sacrifice");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
 	}
