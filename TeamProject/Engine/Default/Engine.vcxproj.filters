@@ -214,9 +214,6 @@
     <ClInclude Include="..\Public\ResourceMgr.h">
       <Filter>01. Utility\05. Resources\00. Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Texture.h">
-      <Filter>01. Utility\05. Resources\01. Texture</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\SoundData.h">
       <Filter>01. Utility\05. Resources\02. SoundData</Filter>
     </ClInclude>
@@ -519,9 +516,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\Sprite2D.h">
       <Filter>01. Utility\04. Components\05. Sprite2D</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\EventListener.h">
       <Filter>01. Utility\04. Components\22. EventListner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Texture.h">
+      <Filter>01. Utility\05. Resources\01. Texture</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1399,7 +1399,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\ClickManager.cpp">
       <Filter>01. Utility\14.ClickManager</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\EventListener.cpp">
       <Filter>01. Utility\04. Components\22. EventListner</Filter>
     </ClCompile>

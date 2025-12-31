@@ -57,24 +57,31 @@ void CUVAnimationUI::Render_GUI()
     ImGui::DragFloat2(u8"¼Óµµ", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 }
 
-void CUVAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
+void CUVAnimationUI::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
+    __super::Save(data);
 
-    data.strTypeTag = m_strTypeTag;
+    data["typeTag"] = m_strTypeTag;
+    data["textureTag"] = m_strTextureKey;
 
-    data.strTextureTag = m_strTextureKey;
+    auto& uvAnimationJson = data["uvAnimation"];
+    uvAnimationJson["uvOffsetSpeed"] = { m_vUVOffsetSpeed.x, m_vUVOffsetSpeed.y };
 }
 
-void CUVAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
 {
-    __super::ReadElementData(data);
+    __super::Load(data);
 
-    m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    m_strTextureKey = data.value("textureTag", "");
 
-    m_vUVOffsetSpeed.x = data.vUVOffsetSpeed[0];
-    m_vUVOffsetSpeed.y = data.vUVOffsetSpeed[1];
+    if (data.contains("uvAnimation"))
+    {
+        const auto& uvAnimationJson = data["uvAnimation"];
+        auto uvOffsetSpeed = uvAnimationJson.value("uvOffsetSpeed", json::array({ 0.0f, 0.0f }));
+        m_vUVOffsetSpeed = { uvOffsetSpeed[0], uvOffsetSpeed[1] };
+    }
+
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CUVAnimationUI::Create()

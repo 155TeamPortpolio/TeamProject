@@ -31,7 +31,8 @@ public:
 		_float		fDuration = { 1.f };
 	
 		vector<UI_KEYFRAME>	keyframes;
-	
+
+		tagUIAnimationClip() {}
 		tagUIAnimationClip(string _strName) : strName(_strName) {}
 	}UI_ANIM_CLIP;
 
@@ -130,6 +131,8 @@ public:
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
+	virtual void Save(nlohmann::ordered_json& data) {}
+	virtual void Load(const nlohmann::ordered_json& data) {}
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -182,7 +185,7 @@ protected:
 	_float2 m_vAnimPosition = {};
 	
 	// -------------------------------
-	_float m_alphaThreshold{};
+	_float m_alphaThreshold = 0.25f;
 
 public:
 	virtual void Free() override;

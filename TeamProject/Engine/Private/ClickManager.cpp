@@ -3,75 +3,214 @@
 #include "GameInstance.h"
 #include "UI_Object.h"
 #include "Sprite2D.h"
+#include "Texture.h"
 
 void CClickManager::Update(_float dt)
 {
-    if (m_ClickableObjects.empty()) return;
+	if (m_clickableObjs.empty()) return;
 
-    auto input = CGameInstance::GetInstance()->Get_InputDev();
+	auto input = CGameInstance::GetInstance()->Get_InputDev();
+	Vector2 mousePos = input->Mouse_Pos();
 
-    POINT ptMouse{};
-    GetCursorPos(&ptMouse);
-    ScreenToClient(m_hWnd, &ptMouse);
+	m_pNewHovered = {};
 
-    Vector2 mousePos = {(float)ptMouse.x, (float)ptMouse.y};
+	while (!m_clickableObjs.empty())
+	{
+		auto obj = m_clickableObjs.back();
+		m_clickableObjs.pop_back();
 
-    m_pNewHovered = {};
+		Vector2 topLeft = obj->Get_RectTopLeft_Screen();
+		Vector2 sizePx  = obj->Get_PxSize();
 
-    while (!m_ClickableObjects.empty())
-    {
-        auto obj = m_ClickableObjects.back();
-        m_ClickableObjects.pop_back();
+		if (mousePos.x < topLeft.x)            continue;
+		if (mousePos.y < topLeft.y)            continue;
+		if (mousePos.x > topLeft.x + sizePx.x) continue;
+		if (mousePos.y > topLeft.y + sizePx.y) continue;
 
-        if (!obj) continue;
+		Vector2 local = mousePos - topLeft;
+		_float  u     = local.x / sizePx.x;
+		_float  v     = local.y / sizePx.y;
+        
+        _float alphaThreshold = obj->Get_AlphaThreshold();
 
-        Vector2 topLeft = obj->Get_RectTopLeft_Screen();
-        Vector2 sizePx = obj->Get_PxSize();
+        if (alphaThreshold > 0.f)
+        {
+            auto sprite = obj->Get_Component<CSprite2D>();
+            auto tex = sprite->Get_Texture(0);
+            const string& key = tex->Get_Key();
 
-        if (mousePos.x < topLeft.x)            continue;
-        if (mousePos.y < topLeft.y)            continue;
-        if (mousePos.x > topLeft.x + sizePx.x) continue;
-        if (mousePos.y > topLeft.y + sizePx.y) continue;
+            auto srv = tex->Get_SRV();
+            const AlphaCache& cache = GetOrBuildAlphaCache(key, srv);
 
-        auto sprite = obj->Get_Component<CSprite2D>();
+            if (!HitTestAlphaCache(cache, u, v, alphaThreshold)) continue;
+        }
 
-        Vector2 local = mousePos - topLeft;
+		m_pNewHovered = obj;
 
-        _float u = local.x / sizePx.x;
-        _float v = local.y / sizePx.y;
+		if (input->Mouse_Tap(MOUSE_BTN::LB))
+			obj->OnClick();
+		break;
+	}
+	if (m_pHovered != m_pNewHovered)
+	{
+		if (m_pHovered)
+			m_pHovered->Exit_Hover();
 
-        if (!sprite->HitTest_AlphaUV(u, v, obj->Get_AlphaThreshold())) continue;
+		m_pHovered = m_pNewHovered;
 
-        m_pNewHovered = obj;
-
-        if (input->Mouse_Tap(MOUSE_BTN::LB))
-            obj->OnClick();
-        break;
-    }
-
-    if (m_pHovered != m_pNewHovered)
-    {
-        if (m_pHovered)
-            m_pHovered->Exit_Hover();
-
-        m_pHovered = m_pNewHovered;
-
-        if (m_pHovered)
-            m_pHovered->Enter_Hover();
-    }
-
-    m_ClickableObjects.clear();
+		if (m_pHovered)
+			m_pHovered->Enter_Hover();
+	}
+	m_clickableObjs.clear();
 }
 
 void CClickManager::Add_ClickableObject(CUI_Object* object)
 {
-	if (!object) return;
+	m_clickableObjs.push_back(object);
+}
 
-	m_ClickableObjects.push_back(object);
+const CClickManager::AlphaCache& CClickManager::GetOrBuildAlphaCache(const string& key, ID3D11ShaderResourceView* srv)
+{
+	auto it = m_alphaCache.find(key);
+	if (it != m_alphaCache.end()) return it->second;
+
+	AlphaCache cache = BuildAlphaCache(srv);
+	auto r = m_alphaCache.emplace(key, move(cache));
+	return r.first->second;
+}
+
+CClickManager::AlphaCache CClickManager::BuildAlphaCache(ID3D11ShaderResourceView* srv)
+{
+    // 1. srcTex가 CPU에서 읽을 수 있는 DXGI_FORMAT_R8G8B8A8_UNORM, B8G8R8A8_UNORM 같은 32bpp 포맷이어여함.
+    AlphaCache cache{};
+
+    ID3D11Resource* res{};
+    srv->GetResource(&res);
+
+    ID3D11Texture2D* srcTex{};
+    HRESULT hr = res->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&srcTex);
+    Safe_Release(res);
+
+    if (FAILED(hr) || !srcTex) return cache;
+
+    D3D11_TEXTURE2D_DESC desc{};
+    srcTex->GetDesc(&desc);
+
+    cache.width = desc.Width;
+    cache.height = desc.Height;
+    cache.alpha.resize((size_t)cache.width * (size_t)cache.height);
+
+    D3D11_TEXTURE2D_DESC stagingDesc = desc;
+    stagingDesc.Usage          = D3D11_USAGE_STAGING;
+    stagingDesc.BindFlags      = 0;
+    stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+    stagingDesc.MiscFlags      = 0;
+
+    ID3D11Device* dev{};
+    srcTex->GetDevice(&dev);
+
+    ID3D11Texture2D* stagingTex{};
+    hr = dev->CreateTexture2D(&stagingDesc, nullptr, &stagingTex);
+    if (FAILED(hr) || !stagingTex)
+    {
+        Safe_Release(dev);
+        Safe_Release(srcTex);
+        return AlphaCache{};
+    }
+
+    auto context = CGameInstance::GetInstance()->Get_Context();
+    context->CopyResource(stagingTex, srcTex);
+
+    D3D11_MAPPED_SUBRESOURCE mapped{};
+    hr = context->Map(stagingTex, 0, D3D11_MAP_READ, 0, &mapped);
+    if (SUCCEEDED(hr))
+    {
+        for (_uint y = 0; y < cache.height; ++y)
+        {
+            _ubyte* row = (_ubyte*)mapped.pData + (size_t)mapped.RowPitch * y;
+            for (_uint x = 0; x < cache.width; ++x)
+                cache.alpha[(size_t)y * cache.width + x] = row[x * 4 + 3];
+        }
+        context->Unmap(stagingTex, 0);
+    }
+
+    Safe_Release(stagingTex);
+    Safe_Release(dev);
+    Safe_Release(srcTex);
+
+    cache.outside.assign((size_t)cache.width * (size_t)cache.height, 0);
+
+    vector<size_t> stack;
+    stack.reserve((size_t)cache.width + (size_t)cache.height);
+
+    auto push_if_outside = [&](int x, int y)
+        {
+            if (x < 0 || y < 0) return;
+            if (x >= (int)cache.width || y >= (int)cache.height) return;
+
+            size_t idx = (size_t)y * cache.width + (size_t)x;
+            if (cache.outside[idx]) return;
+            if (cache.alpha[idx] != 0) return;
+
+            cache.outside[idx] = 1;
+            stack.push_back(idx);
+        };
+
+    for (int x = 0; x < (int)cache.width; ++x)
+    {
+        push_if_outside(x, 0);
+        push_if_outside(x, (int)cache.height - 1);
+    }
+    for (int y = 0; y < (int)cache.height; ++y)
+    {
+        push_if_outside(0, y);
+        push_if_outside((int)cache.width - 1, y);
+    }
+
+    while (!stack.empty())
+    {
+        size_t idx = stack.back();
+        stack.pop_back();
+
+        int x = (int)(idx % cache.width);
+        int y = (int)(idx / cache.width);
+
+        push_if_outside(x - 1, y);
+        push_if_outside(x + 1, y);
+        push_if_outside(x, y - 1);
+        push_if_outside(x, y + 1);
+    }
+
+    return cache;
+}
+
+_bool CClickManager::HitTestAlphaCache(const AlphaCache& cache, _float u, _float v, _float alphaThreshold)
+{
+    if (cache.width == 0 || cache.height == 0) return true;
+
+    u = clamp(u, 0.f, 1.f);
+    v = clamp(v, 0.f, 1.f);
+
+    _uint x = (_uint)(u * (_float)(cache.width - 1));
+    _uint y = (_uint)(v * (_float)(cache.height - 1));
+
+    x = clamp(x, (_uint)0, cache.width - 1);
+    y = clamp(y, (_uint)0, cache.height - 1);
+
+    size_t idx = (size_t)y * cache.width + x;
+
+    _ubyte a8 = cache.alpha[idx];
+    _float a  = (_float)a8 / 255.f;
+
+    if (a > alphaThreshold) return true;
+    if (a8 == 0 && cache.outside[idx] == 0) return true;
+
+    return false;
 }
 
 void CClickManager::Free()
 {
 	__super::Free();
-	m_ClickableObjects.clear();
+	m_clickableObjs.clear();
+    m_alphaCache.clear();
 }
