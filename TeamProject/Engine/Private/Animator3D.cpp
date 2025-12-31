@@ -845,7 +845,8 @@ void CAnimator3D::BuildBone()
 		if (parent == -1) {
 			_matrix MyTransformation =
 				XMLoadFloat4x4(&m_ManipulateMatrices[i]) *
-				XMLoadFloat4x4(&m_TransformationMatrices[i]);
+				XMLoadFloat4x4(&m_TransformationMatrices[i]) *
+				XMLoadFloat4x4(&m_PreTransform);
 
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation);
 		}
