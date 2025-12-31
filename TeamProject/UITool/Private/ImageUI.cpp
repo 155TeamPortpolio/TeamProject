@@ -48,19 +48,19 @@ void CImageUI::Render_GUI()
     Render_GUI_Image(m_strTextureKey);
 }
 
-void CImageUI::FillElementData(UI_ELEMENT_DATA& data)
+void CImageUI::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
-    data.strTypeTag    = m_strTypeTag;
-    data.strTextureTag = m_strTextureKey;
+    __super::Save(data);
+
+    data["typeTag"] = m_strTypeTag;
+    data["textureTag"] = m_strTextureKey;
 }
 
-void CImageUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CImageUI::Load(const nlohmann::ordered_json& data)
 {
-    __super::ReadElementData(data);
+    __super::Load(data);
 
-    m_strTextureKey = data.strTextureTag;
-    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+    m_strTextureKey = data.value("textureTag", "");
 
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 }
