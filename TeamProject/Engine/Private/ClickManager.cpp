@@ -9,18 +9,18 @@ void CClickManager::Update(_float dt)
 {
 	if (m_clickableObjs.empty()) return;
 
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	Vector2 mousePos = input->Mouse_Pos();
+	auto pInput = CGameInstance::GetInstance()->Get_InputDev();
+	Vector2 mousePos = pInput->Mouse_Pos();
 
 	m_pNewHovered = {};
 
 	while (!m_clickableObjs.empty())
 	{
-		auto obj = m_clickableObjs.back();
+		auto pObj = m_clickableObjs.back();
 		m_clickableObjs.pop_back();
 
-		Vector2 topLeft = obj->Get_RectTopLeft_Screen();
-		Vector2 sizePx  = obj->Get_PxSize();
+		Vector2 topLeft = pObj->Get_RectTopLeft_Screen();
+		Vector2 sizePx  = pObj->Get_PxSize();
 
 		if (mousePos.x < topLeft.x)            continue;
 		if (mousePos.y < topLeft.y)            continue;
@@ -31,24 +31,25 @@ void CClickManager::Update(_float dt)
 		_float  u     = local.x / sizePx.x;
 		_float  v     = local.y / sizePx.y;
         
-        _float alphaThreshold = obj->Get_AlphaThreshold();
+        static constexpr _float alphaThreshold = 0.25f;
 
         if (alphaThreshold > 0.f)
         {
-            auto sprite = obj->Get_Component<CSprite2D>();
-            auto tex = sprite->Get_Texture(0);
-            const string& key = tex->Get_Key();
+            auto pSprite       = pObj->Get_Component<CSprite2D>();
+            auto pTex          = pSprite->Get_Texture(0);
+            if (!pTex) continue;
+            const string& key = pTex->Get_Key();
 
-            auto srv = tex->Get_SRV();
+            auto srv = pTex->Get_SRV();
             const AlphaCache& cache = GetOrBuildAlphaCache(key, srv);
 
             if (!HitTestAlphaCache(cache, u, v, alphaThreshold)) continue;
         }
 
-		m_pNewHovered = obj;
+		m_pNewHovered = pObj;
 
-		if (input->Mouse_Tap(MOUSE_BTN::LB))
-			obj->OnClick();
+		if (pInput->Mouse_Tap(MOUSE_BTN::LB))
+			pObj->OnClick();
 		break;
 	}
 	if (m_pHovered != m_pNewHovered)
