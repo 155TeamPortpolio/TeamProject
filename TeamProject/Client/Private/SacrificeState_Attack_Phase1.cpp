@@ -75,7 +75,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-	iRandIndex = 2;
+	//iRandIndex = 2;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -416,7 +416,7 @@ void CSacrificeState_Attack_09_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_10_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_10").Loop(false).Speed(1.4f).Apply();
 }
 
 void CSacrificeState_Attack_10_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -446,7 +446,7 @@ void CSacrificeState_Attack_10_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_11_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_11").Loop(false).Speed(1.4f).Apply();
 }
 
 void CSacrificeState_Attack_11_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -476,7 +476,7 @@ void CSacrificeState_Attack_11_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_12_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_12").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_12").Loop(false).Speed(1.4f).Apply();
 }
 
 void CSacrificeState_Attack_12_Phase1::Update(CSacrifice* pOwner, _float dt)

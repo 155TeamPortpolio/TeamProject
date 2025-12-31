@@ -17,12 +17,21 @@ void CSacrificeState_Attack::Enter(CSacrifice* pOwner)
 		/* States */
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Attack_Phase1::Create());
 		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Attack_Phase2::Create());
-		
-		/* Transitions */
-		m_pSubStateMachine->Register_Transition("Phase1", "Phase2",
-			CStateMachine<CSacrifice>::CONDITION_TRIGGER, "ChangePhase");
+	}
 
+	CSacrifice::PHASE currPhse = pOwner->GetCurrPhase();
+	switch (currPhse)
+	{
+	case CSacrifice::PHASE::PHASE1:
+	{
 		m_pSubStateMachine->Set_DefaultState("Phase1");
+	}break;
+	case CSacrifice::PHASE::PHASE2:
+	{
+		m_pSubStateMachine->Set_DefaultState("Phase2");
+	}break;
+	default:
+		break;
 	}
 
 	__super::Enter(pOwner);

@@ -209,6 +209,12 @@ void CSacrifice::Update_States(_float dt)
 		m_RequestIdle = false;
 	}
 
+	/* Phase Change */
+	m_fPhase1ElapseTime += dt;
+	if (m_fPhase1ElapseTime >= m_fPhase1Duration)
+		m_eCurrPhase = PHASE::PHASE2;
+
+	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
 		m_fIdleElasedTime += dt;

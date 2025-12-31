@@ -132,7 +132,7 @@ HRESULT CTestLevel::Awake()
 
 
 	//====================Test=================
-	Ready_TestObject();
+	//Ready_TestObject();
 
 
 	return S_OK;

@@ -9,7 +9,10 @@ class CStateMachine;
 class CSacrifice final :
     public CEnemy
 {
+public:
+    enum class PHASE { PHASE1, PHASE2, END };
     enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_ROAD, END };
+
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -37,6 +40,7 @@ public:
     void Idle() { m_RequestIdle = true; }
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    PHASE GetCurrPhase()const { return m_eCurrPhase; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -52,5 +56,8 @@ private:
 
     _float m_fIdleElasedTime{};
     _float m_fIdleDuration = 0.3f;
+    _float m_fPhase1ElapseTime{};
+    _float m_fPhase1Duration = 10.f;
+    PHASE m_eCurrPhase = PHASE::PHASE1;
 };
 NS_END

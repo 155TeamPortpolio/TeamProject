@@ -143,7 +143,9 @@ void CSacrificeHandState_Attack_06_Phase1::Exit(CSacrificeHand* pOwner)
 void CSacrificeHandState_Attack_10_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.4f).Apply();
+
+	pOwner->SetActive(true);
 }
 
 void CSacrificeHandState_Attack_10_Phase1::Update(CSacrificeHand* pOwner, _float dt)
@@ -157,7 +159,7 @@ void CSacrificeHandState_Attack_10_Phase1::Update(CSacrificeHand* pOwner, _float
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.3f)
+		if (m_fAnimProgress >= 0.2f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -173,7 +175,9 @@ void CSacrificeHandState_Attack_10_Phase1::Exit(CSacrificeHand* pOwner)
 void CSacrificeHandState_Attack_11_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.4f).Apply();
+
+	
 }
 
 void CSacrificeHandState_Attack_11_Phase1::Update(CSacrificeHand* pOwner, _float dt)
@@ -187,7 +191,7 @@ void CSacrificeHandState_Attack_11_Phase1::Update(CSacrificeHand* pOwner, _float
 	}
 	else
 	{
-		if (m_fAnimProgress >= 0.3f)
+		if (m_fAnimProgress >= 0.2f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
@@ -198,12 +202,15 @@ void CSacrificeHandState_Attack_11_Phase1::Update(CSacrificeHand* pOwner, _float
 
 void CSacrificeHandState_Attack_11_Phase1::Exit(CSacrificeHand* pOwner)
 {
+	pOwner->SetActive(false);
 }
 
 void CSacrificeHandState_Attack_12_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.4f).Apply();
+
+	pOwner->SetActive(true);
 }
 
 void CSacrificeHandState_Attack_12_Phase1::Update(CSacrificeHand* pOwner, _float dt)
@@ -228,4 +235,5 @@ void CSacrificeHandState_Attack_12_Phase1::Update(CSacrificeHand* pOwner, _float
 
 void CSacrificeHandState_Attack_12_Phase1::Exit(CSacrificeHand* pOwner)
 {
+	pOwner->SetActive(false);
 }
