@@ -31,5 +31,11 @@ namespace Engine
         vector<ANIM_EVENT>  Events;
     }ANIM_CLIP;
     NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_CLIP, ClipTag, Events);
+
+    typedef struct AnimationMeta {
+        _float4x4          PreTransform; //애니매이션 이름
+        vector<ANIM_CLIP>  Clips;
+    }ANIM_META;
+    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(ANIM_META, PreTransform, Clips);
     /* ------------------------ */
 }
