@@ -9,15 +9,6 @@
 _uint CButtonUI::m_iCount = {};
 const string CButtonUI::m_strTypeTag = "Button";
 
-CButtonUI::CButtonUI()
-{
-}
-
-CButtonUI::CButtonUI(const CButtonUI& rhs)
-    : CUIObject_Tool(rhs)
-{
-}
-
 HRESULT CButtonUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -31,63 +22,41 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 
     Set_Clickable(true);
 
+    Set_OriginTexSize(true);
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    m_strTextureKey = "empty.png";
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
     return S_OK;
 }
 
-void CButtonUI::Priority_Update(_float dt)
-{
-}
-
 void CButtonUI::Update(_float dt)
 {
-    if (!m_isAlive)
-        return;
+    if (!m_isAlive) return;
 
     Play_Animation(dt);
-}
-
-void CButtonUI::Late_Update(_float dt)
-{
 }
 
 void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
-     
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
 
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-    Get_Component<CSprite2D>()->Render_GUI();
+    Render_GUI_Image(m_strTextureKey);
 
-    // 이벤트 메시지
     ImGui::SeparatorText(u8"이벤트");
-    ImGui::InputText(u8"메시지",static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    ImGui::InputText(u8"메시지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
-    // 버튼 상태
     ImGui::SeparatorText(u8"버튼 상태");
     string strState = {};
     switch (m_eState)
-    { 
-    case STATE::NORMAL: strState = ENUM_TO_STRING(STATE::NORMAL); break;
-    case STATE::HOVERED: strState = ENUM_TO_STRING(STATE::HOVERED); break;
-    case STATE::CLICKED: strState = ENUM_TO_STRING(STATE::CLICKED); break;
+    {
+    case STATE::NORMAL:   strState = ENUM_TO_STRING(STATE::NORMAL);   break;
+    case STATE::HOVERED:  strState = ENUM_TO_STRING(STATE::HOVERED);  break;
+    case STATE::CLICKED:  strState = ENUM_TO_STRING(STATE::CLICKED);  break;
     case STATE::DISABLED: strState = ENUM_TO_STRING(STATE::DISABLED); break;
     }
     ImGui::TextDisabled(strState.c_str());
@@ -125,11 +94,9 @@ void CButtonUI::FillElementData(UI_ELEMENT_DATA& data)
 {
     __super::FillElementData(data);
 
-    data.strTypeTag = m_strTypeTag;
-
+    data.strTypeTag    = m_strTypeTag;
     data.strTextureTag = m_strTextureKey;
-
-    data.strEventMsg = m_szEventMsg;
+    data.strEventMsg   = m_szEventMsg;
 }
 
 void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
@@ -137,6 +104,8 @@ void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
     __super::ReadElementData(data);
 
     m_strTextureKey = data.strTextureTag;
+    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
     strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
@@ -145,30 +114,21 @@ void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
 CGameObject* CButtonUI::Create()
 {
     CButtonUI* pInstance = new CButtonUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CButtonUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CButtonUI::Clone(INIT_DESC* pArg)
 {
     CButtonUI* pInstance = new CButtonUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CButtonUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
-}
-
-void CButtonUI::Free()
-{
-    __super::Free();
 }

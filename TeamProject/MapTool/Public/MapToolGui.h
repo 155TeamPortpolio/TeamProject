@@ -42,11 +42,6 @@ private:
 	void			Select_TriggerType();
 
 	void			Render_ClearLayer();
-	
-#ifdef _DEBUG
-private:
-	//_bool			m_isAllDebugRender = { true };
-#endif // _DEBUG
 
 private:
 	/* Refernce */
@@ -73,6 +68,7 @@ private:
 	
 	/* For.Trigger */
 	TriggerTransform	m_TriggerTransform = {};
+	_int		m_iTriggerIndex = {};
 
 	/* For.Data */
 	MapData_Header	m_Data = {};

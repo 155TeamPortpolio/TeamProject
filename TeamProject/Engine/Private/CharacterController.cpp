@@ -178,13 +178,14 @@ void CCharacterController::OnTriggerExit(ICollidable* pOthter)
 void CCharacterController::Update(_float dt)
 {
 	if (!m_pController) return;
+
 	Apply_Gravity(dt);
 }
 
 void CCharacterController::Late_Update(_float dt)
 {
 	if (!m_pController) return;
-	// Apply_Move
+
 	_float3 vDisplacement = m_vVelocity * dt;
 	if (m_fMaxSpeed > 0.0f)
 	{
@@ -197,9 +198,11 @@ void CCharacterController::Late_Update(_float dt)
 			vDisplacement.z *= fScale;
 		}
 	}
+
+	m_vPrevVelocity = m_vVelocity;
+
 	Move(XMLoadFloat3(&vDisplacement), dt);
 
-	// Update Position
 	const PxExtendedVec3& footPosition = m_pController->getFootPosition();
 	_float fTransformY = (float)footPosition.y - m_fBoundingMinY;
 
@@ -208,6 +211,9 @@ void CCharacterController::Late_Update(_float dt)
 		fTransformY,
 		(float)footPosition.z,
 		1.f));
+
+	m_vVelocity.x = 0.f;
+	m_vVelocity.z = 0.f;
 }
 
 void CCharacterController::Render_GUI()
@@ -316,9 +322,11 @@ void CCharacterController::Render_GUI()
 
 			ImGui::Separator();
 			ImGui::Text("Velocity");
-			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f", m_vVelocity.x, m_vVelocity.y, m_vVelocity.z);
+			ImGui::Text("X: %.2f | Y: %.2f | Z: %.2f",
+				m_vPrevVelocity.x, m_vPrevVelocity.y, m_vPrevVelocity.z);
 
-			_float fSpeed = sqrtf(m_vVelocity.x * m_vVelocity.x + m_vVelocity.z * m_vVelocity.z);
+			_float fSpeed = sqrtf(m_vPrevVelocity.x * m_vPrevVelocity.x +
+				m_vPrevVelocity.z * m_vPrevVelocity.z);
 			ImGui::Text("Planar Speed: %.2f m/s", fSpeed);
 
 			_float fMaxSpeed = m_fMaxSpeed;
@@ -505,16 +513,15 @@ void CCharacterController::Move_Direction(_fvector vDir, _float fSpeed, _float d
 {
 	_vector3 vDirection = vDir;
 	vDirection.Normalize();
-	vDirection = vDirection * fSpeed * dt;
-	vDirection.y = m_vVelocity.y * dt;
-	Move(vDirection, dt);
+	m_vVelocity.x = vDirection.x * fSpeed;
+	m_vVelocity.z = vDirection.z * fSpeed;
 }
 
 void CCharacterController::Move_Velocity(_fvector vVelocity, _float dt)
 {
 	_vector3 vVel = vVelocity;
-	vVel.y = m_vVelocity.y;
-	Move(vVel * dt, dt);
+	m_vVelocity.x = vVel.x;
+	m_vVelocity.z = vVel.z;
 }
 
 void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
@@ -527,17 +534,14 @@ void CCharacterController::Move_Displacement(_fvector vDisp, _float dt)
 void CCharacterController::Move_RootMotion(_fvector vLocalDelta, _fvector qRotation, _float dt)
 {
 	const _float fRootMotionScale = 1.f;
-
 	_vector3 vDelta = vLocalDelta;
 	_vector3 vLocalMotion = _vector3(vDelta.x, 0.f, vDelta.z);
-
 	_smatrix matRot = _smatrix::CreateFromQuaternion(qRotation);
 	_vector3 vWorldMotion = _vector3::Transform(vLocalMotion, matRot);
-
 	vWorldMotion *= fRootMotionScale;
-	vWorldMotion.y = m_vVelocity.y * dt;
 
-	Move(vWorldMotion, 1.f);
+	m_vVelocity.x = vWorldMotion.x / dt;
+	m_vVelocity.z = vWorldMotion.z / dt;
 }
 
 void CCharacterController::Stop_Movement()

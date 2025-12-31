@@ -73,6 +73,13 @@ public:
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
+    typedef struct PlaylistEntry {
+        _int    iClipIndex = { -1 };
+        _bool   bLoop = { false };
+        _float  fSpeed = { 1.f };
+        _float  fBlendDuration = { 0.2f };
+    }PLAYLIST_ENTRY;
+
 protected:
     CAnimator3D();
     CAnimator3D(const CAnimator3D& rhs);
@@ -176,6 +183,20 @@ public:
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
 
+public:
+    // 플레이리스트 기능
+    void Playlist_Add(_int iClipIndex, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Add(const string& ClipName, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Remove(_int iPlaylistIndex);
+    void Playlist_Clear();
+    void Playlist_Play();
+    void Playlist_Stop();
+    void Playlist_MoveUp(_int iPlaylistIndex);
+    void Playlist_MoveDown(_int iPlaylistIndex);
+    _bool Playlist_isPlaying() const { return m_bPlaylistPlaying; }
+    _int Playlist_GetCurrentIndex() const { return m_iPlaylistIndex; }
+    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return m_Playlist; }
+
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
@@ -199,6 +220,7 @@ protected:
 
     //최종 뼈 계산
     void BuildBone();
+    void Update_Playlist();
 
 public:
     virtual void Render_GUI();
@@ -206,6 +228,7 @@ public:
 protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
+    void GUI_Playlist();
 
 private:
     void Reset_Anim();
@@ -229,6 +252,11 @@ protected:
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
+
+    vector<PLAYLIST_ENTRY>  m_Playlist;
+    _int                    m_iPlaylistIndex = { -1 };
+    _bool                   m_bPlaylistPlaying = { false };
+    _bool                   m_bPlaylistLoop = { false };
 
 public:
     static CAnimator3D* Create();

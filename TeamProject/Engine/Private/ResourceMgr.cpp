@@ -739,6 +739,9 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("CS_Particle_Basic.hlsl", "../Bin/ShaderFiles/CS_Particle_Basic.hlsl");
 	Add_ResourcePath("CS_Particle_DeadListInit.hlsl", "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl");
 	Add_ResourcePath("CS_Particle_BuildInstance.hlsl", "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl");
+	Add_ResourcePath("CS_HiZ_Copy.hlsl","../Bin/ShaderFiles/CS_HiZ_Copy.hlsl");
+	Add_ResourcePath("CS_HiZ_Reduce.hlsl","../Bin/ShaderFiles/CS_HiZ_Reduce.hlsl");
+	Add_ResourcePath("CS_OcclusionCull.hlsl","../Bin/ShaderFiles/CS_OcclusionCull.hlsl");
 
 	//Default
 	Add_ResourcePath("Default.dds", "../../DefaultSource/Default.dds");
@@ -767,6 +770,9 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_DeadListInit.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_DeadListInit.hlsl", "CS_Particle_DeadListInit.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_BuildInstance.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_BuildInstance.hlsl", "CS_Particle_BuildInstance.hlsl"));
+	m_Resources[0].m_ComputeShaders.emplace("CS_HiZ_Copy.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_HiZ_Copy.hlsl", "CS_HiZ_Copy.hlsl"));
+	m_Resources[0].m_ComputeShaders.emplace("CS_HiZ_Reduce.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_HiZ_Reduce.hlsl", "CS_HiZ_Reduce.hlsl"));
+	m_Resources[0].m_ComputeShaders.emplace("CS_OcclusionCull.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_OcclusionCull.hlsl", "CS_OcclusionCull.hlsl"));
 
 	/*Default*/
 	m_Resources[0].m_ModelDatas.emplace("Default.model", CModelData::Create("../../DefaultSource/Default.model", m_pDevice));

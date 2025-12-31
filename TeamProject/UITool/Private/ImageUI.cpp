@@ -4,20 +4,12 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "Sprite2D.h"
+#include "Texture.h"
 #include "UITool_Level.h"
 #include "Engine_Math.h"
 
 _uint CImageUI::m_iCount = {};
 const string CImageUI::m_strTypeTag = "Image";
-
-CImageUI::CImageUI()
-{
-}
-
-CImageUI::CImageUI(const CImageUI& rhs)
-    : CUIObject_Tool(rhs)
-{
-}
 
 HRESULT CImageUI::Initialize_Prototype()
 {
@@ -30,58 +22,36 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Set_OriginTexSize(true);
+
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    m_strTextureKey = "empty.png";
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
     return S_OK;
 }
 
-void CImageUI::Priority_Update(_float dt)
-{
-}
-
 void CImageUI::Update(_float dt)
 {
-    if (!m_isAlive)
-        return;
+    if (!m_isAlive) return;
 
     Play_Animation(dt);
-}
-
-void CImageUI::Late_Update(_float dt)
-{
 }
 
 void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
-
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-    Get_Component<CSprite2D>()->Render_GUI();
+    Render_GUI_Image(m_strTextureKey);
 }
 
 void CImageUI::FillElementData(UI_ELEMENT_DATA& data)
 {
     __super::FillElementData(data);
-
-    data.strTypeTag = m_strTypeTag;
-
+    data.strTypeTag    = m_strTypeTag;
     data.strTextureTag = m_strTextureKey;
 }
 
@@ -90,36 +60,29 @@ void CImageUI::ReadElementData(const UI_ELEMENT_DATA& data)
     __super::ReadElementData(data);
 
     m_strTextureKey = data.strTextureTag;
+    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+
     Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 }
 
 CGameObject* CImageUI::Create()
 {
     CImageUI* pInstance = new CImageUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CImageUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CImageUI::Clone(INIT_DESC* pArg)
 {
     CImageUI* pInstance = new CImageUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CImageUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
-}
-
-void CImageUI::Free()
-{
-    __super::Free();
 }

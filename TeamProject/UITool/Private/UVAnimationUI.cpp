@@ -9,15 +9,6 @@
 _uint CUVAnimationUI::m_iCount = {};
 const string CUVAnimationUI::m_strTypeTag = "UVAnimation";
 
-CUVAnimationUI::CUVAnimationUI()
-{
-}
-
-CUVAnimationUI::CUVAnimationUI(const CUVAnimationUI& rhs)
-	: CUIObject_Tool(rhs)
-{
-}
-
 HRESULT CUVAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -29,18 +20,20 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->ChangePass("UVAnimation");
+    Set_OriginTexSize(true);
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    auto sprite = Get_Component<CSprite2D>();
+
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    sprite->ChangePass("UVAnimation");
+    sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
+
+    m_strTextureKey = "empty.png";
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
-	return S_OK;
-}
-
-void CUVAnimationUI::Priority_Update(_float dt)
-{
+    return S_OK;
 }
 
 void CUVAnimationUI::Update(_float dt)
@@ -54,32 +47,12 @@ void CUVAnimationUI::Update(_float dt)
     m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;
     Get_Component<CSprite2D>()->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
 }
-
-void CUVAnimationUI::Late_Update(_float dt)
-{
-}
-
 void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
+    Render_GUI_Image(m_strTextureKey);
 
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-    Get_Component<CSprite2D>()->Render_GUI();
-
-    // UV 애니메이션
     ImGui::SeparatorText(u8"UV애니메이션");
     ImGui::DragFloat2(u8"속도", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 }

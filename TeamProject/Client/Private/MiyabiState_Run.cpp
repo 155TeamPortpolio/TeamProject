@@ -36,10 +36,6 @@ void CMiyabiState_Run::Update(CMiyabi* pOwner, _float dt)
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
 }
 
-void CMiyabiState_Run::Exit(CMiyabi* pOwner)
-{
-}
-
 void CMiyabiState_Run_Start::Enter(CMiyabi* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Run_Start")
@@ -53,7 +49,7 @@ void CMiyabiState_Run_Start::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
 
         if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
         {
@@ -61,10 +57,6 @@ void CMiyabiState_Run_Start::Update(CMiyabi* pOwner, _float dt)
             pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
         }
     }
-}
-
-void CMiyabiState_Run_Start::Exit(CMiyabi* pOwner)
-{
 }
 
 void CMiyabiState_Run_Loop::Enter(CMiyabi* pOwner)
@@ -81,7 +73,7 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
     {
         vInputDir.Normalize();
         pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta() * -1.f;
+        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
 
         if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
         {
@@ -89,10 +81,6 @@ void CMiyabiState_Run_Loop::Update(CMiyabi* pOwner, _float dt)
             pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
         }
     }
-}
-
-void CMiyabiState_Run_Loop::Exit(CMiyabi* pOwner)
-{
 }
 
 void CMiyabiState_Run_End::Enter(CMiyabi* pOwner)
@@ -105,10 +93,6 @@ void CMiyabiState_Run_End::Update(CMiyabi* pOwner, _float dt)
 {
     if (pOwner->Is_Input())
     {
-        m_fAnimProgress = 1.f;        // ���ο� �Է� �� ��� End �Ϸ� ó��
+        m_fAnimProgress = 1.f; 
     }
-}
-
-void CMiyabiState_Run_End::Exit(CMiyabi* pOwner)
-{
 }

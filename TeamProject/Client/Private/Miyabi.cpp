@@ -60,16 +60,16 @@ HRESULT CMiyabi::Initialize(INIT_DESC* pArg)
 
 void CMiyabi::Awake()
 {
-	Get_Component<CAnimator3D>()->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
-	Get_Component<CAnimator3D>()->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
-	//Get_Component<CAnimator3D>()->Set_ExtractBoneMovement(21);
-	Get_Component<CAnimator3D>()->Set_MotionBone(21);
-	Get_Component<CAnimator3D>()->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-	Get_Component<CAnimator3D>()->Set_ExtractMotionboneRotation(AXIS::Y);
-	Get_Component<CAnimator3D>()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
+	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
+	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Unagi_Meta.json");
+	//m_pAnimator()->Set_ExtractBoneMovement(21);
+	m_pAnimator ->Set_MotionBone(21);
+	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
+	//m_pAnimator->Set_ExtractMotionboneRotation(AXIS::Y);
+	m_pAnimator->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Idle")
 		.Loop(true)
 		.Apply();
-	Get_Component<CCharacterController>()->Set_GravityEnabled(true);
+	m_pCCT->Set_GravityEnabled(true);
 
 	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 0.0), 0.1f);
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
@@ -97,7 +97,7 @@ void CMiyabi::Late_Update(_float dt)
 void CMiyabi::Render_GUI()
 {
 	__super::Render_GUI();
-	// StateMachine ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// StateMachine µð¹ö±ë Á¤º¸
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -138,7 +138,7 @@ void CMiyabi::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
-	// ï¿½ï¿½ï¿½ï¿½×¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® (FÅ°)
+	// µð¹ö±×¿ë ·¹ÀÌÄ³½ºÆ® (FÅ°)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	if (input->Key_Hold('F'))
 	{
@@ -151,7 +151,7 @@ void CMiyabi::Update_Input(_float dt)
 		m_pCCT->Clear_DebugRay();
 	}
 
-	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (JÅ°)
+	// Å×½ºÆ®¿ë Á¡ÇÁ (JÅ°)
 	if (input->Key_Down('J'))
 	{
 		m_pCCT->Jump(3.f);
@@ -163,6 +163,7 @@ void CMiyabi::Update_States()
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
 
+	// Move End Ã¼Å© (±âÁ¸°ú µ¿ÀÏ)
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
 		CMiyabiState_Move* pMove =
@@ -182,6 +183,7 @@ void CMiyabi::Update_States()
 			}
 		}
 	}
+	// Attack End Ã¼Å©
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	{
 		CMiyabiState_Attack* pAttack =
@@ -200,19 +202,7 @@ void CMiyabi::Update_States()
 				if (pNormal && pNormal->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					if (pNormalSub)
-					{
-						string strTag = pNormalSub->Get_Tag();
-						bInAttackEnd = (strTag == "End");
-
-						// ï¿½ï¿½ï¿½ï¿½ï¿½
-						char buffer[256];
-						sprintf_s(buffer, "Attack Check: Sub=%s, Tag=%s, bInEnd=%s\n",
-							pNormal->Get_SubStateMachine()->Get_CurrentStateName().c_str(),
-							strTag.c_str(),
-							bInAttackEnd ? "TRUE" : "FALSE");
-						OutputDebugStringA(buffer);
-					}
+					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
 				}
 			}
 			else if (strSub == "ChargeAttack")
@@ -224,30 +214,38 @@ void CMiyabi::Update_States()
 				if (pCharge && pCharge->Get_SubStateMachine())
 				{
 					IBaseState<CMiyabi>* pChargeSub = pCharge->Get_SubStateMachine()->Get_CurrentState();
-					if (pChargeSub)
-					{
-						bInAttackEnd = (pChargeSub->Get_Tag() == "End");
-					}
+					bInAttackEnd = (pChargeSub && pChargeSub->Get_Tag() == "End");
 				}
 			}
 		}
 	}
 
-	// ï¿½ï¿½ï¿½ï¿½ï¿½
-	if (bInMoveEnd || bInAttackEnd)
+	// ¡Ú AttackEnd ÆÄ¶ó¹ÌÅÍ ¼³Á¤
+	if (bInAttackEnd)
 	{
-		char buffer[256];
-		sprintf_s(buffer, "End State Detected: MoveEnd=%s, AttackEnd=%s, Input=%s\n",
-			bInMoveEnd ? "TRUE" : "FALSE",
-			bInAttackEnd ? "TRUE" : "FALSE",
-			m_bIsInput ? "TRUE" : "FALSE");
-		OutputDebugStringA(buffer);
+		CMiyabiState_Attack* pAttack =
+			static_cast<CMiyabiState_Attack*>(m_pStateMachine->Get_CurrentState());
+
+		if (pAttack)
+		{
+			// AttackÀÇ AnimProgress°¡ 1.0ÀÌ¸é AttackEnd = true
+			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
+			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
+		}
+	}
+	else
+	{
+		m_pStateMachine->Set_Bool("AttackEnd", false);
 	}
 
+	// End Äµ½½ Ã³¸® (±âÁ¸°ú µ¿ÀÏ)
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
 	{
-		OutputDebugStringA("FORCING IsMove = false for End Cancel!\n");
 		m_pStateMachine->Set_Bool("IsMove", false);
+
+		// Attack End¿¡¼­ ÀÔ·Â ½Ã °­Á¦·Î AttackEnd = true
+		if (bInAttackEnd)
+			m_pStateMachine->Set_Bool("AttackEnd", true);
 	}
 	else
 	{
@@ -319,12 +317,12 @@ HRESULT CMiyabi::Initialize_Transitions()
 		CStateMachine<CMiyabi>::CONDITION_BOOL_FALSE, "IsMove");
 
 	// Idle -> Attack
-	m_pStateMachine->Register_Transition("Idle", "Attack",
+	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CMiyabi>::CONDITION_TRIGGER, "Attack");
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
-		CStateMachine<CMiyabi>::CONDITION_ANIMATION_END);
+		CStateMachine<CMiyabi>::CONDITION_BOOL_TRUE, "AttackEnd");
 
 	return S_OK;
 }

@@ -6,31 +6,26 @@ NS_BEGIN(UITool)
 class CGaugeUI final : public CUIObject_Tool
 {
 private:
-	CGaugeUI();
-	CGaugeUI(const CGaugeUI& rhs);
+	CGaugeUI() {}
+	CGaugeUI(const CGaugeUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CGaugeUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override {}
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override {}
+	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
+	virtual void FillElementData(UI_ELEMENT_DATA& data)       override;
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
 
 private:
-	_bool		m_isRadial = {};
-
-	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
-	_float		m_fFillAmount = { 1.f };
-
-private:
+	_bool		m_isRadial      = {};
+	_float		m_fDirection    = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
+	_float		m_fFillAmount   = {1.f};
 	string		m_strTextureKey = {};
 
 public:
@@ -39,8 +34,8 @@ public:
 
 public:
 	static CGameObject* Create();
-	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
