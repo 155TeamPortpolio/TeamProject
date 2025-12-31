@@ -197,13 +197,12 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 
 			pObj->Get_Component<CObjectContainer>()->Add_Child(pChild);                                                  // 컨테이너에 자식 추가
 		}
-
 	} 
 }
 
 CUI_Object* CGUIPanel::LoadPrefab()
 {
-	string filePath(Helper::OpenFile_Dialogue());
+	string filePath = Helper::OpenFile({{"JSON Files", "*.json"}}, "json");
 	if (filePath.empty())
 		return nullptr;
 
@@ -235,15 +234,18 @@ CUI_Object* CGUIPanel::LoadPrefab()
 
 void CGUIPanel::SavePrefab(CUIObject_Tool* pObj)
 {
-	if (!pObj)
-		return;
+	if (!pObj) return;
 
-	nlohmann::ordered_json data = {};
+	nlohmann::ordered_json data{};
 	pObj->Save(data);
 
-	string filePath = Helper::SaveFileDialogByWinAPI("prefab", "json");
+	string baseName = pObj->Get_InstanceName();
+	if (baseName.empty())
+		baseName = "prefab";
 
-	std::ofstream file(filePath);
+	string filePath = Helper::SaveFileDialogByWinAPI(baseName, "json");
+
+	ofstream file(filePath);
 	if (file.is_open())
 	{
 		file << data.dump(4);
