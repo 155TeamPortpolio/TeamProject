@@ -33,7 +33,7 @@ HRESULT CAnbi::Initialize_Prototype()
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Anbi.mat",
 		"../Bin/Resources/Model/skeletal/Anbi/Avatar_Female_Size02_Anbi.mat");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Anbi.json",
-		"../Bin/Resources/Model/skeletal/Anbi/Anim/Avatar_Female_Size02_Anbi_Meta.json");
+		"../Bin/Resources/Model/skeletal/Anbi/Avatar_Female_Size02_Anbi_Meta.json");
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Anbi.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Anbi.mat");
