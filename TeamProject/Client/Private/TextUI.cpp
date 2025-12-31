@@ -162,16 +162,16 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
 
     if (data.contains("text"))
     {
-        const auto& textJson = data["text"];
-
+        auto pSprite = Get_Component<CSprite2D>();
         auto pTextSlot = Get_Component<CTextSlot>();
 
-        pTextSlot->Set_Font(textJson.value("fontTag", "DefaultFont"));
-
-        string strText = textJson.value("text", "content");
+        const auto& textJson = data["text"];
+        
+        pTextSlot->Set_Font(textJson.value("fontTag", "Asap.spritefont"));
+        string strText = textJson.value("content", "content");
         pTextSlot->Set_Text(Helper::ConvertToWideString(strText));
         pTextSlot->Set_TextKey(strText);
-        pTextSlot->Set_TextKey(strText);
+        pSprite->Set_TextKey(strText);
         pTextSlot->Set_Size(textJson.value("fontScale", 1.f));
         pTextSlot->Set_Color(m_vColor);
          
