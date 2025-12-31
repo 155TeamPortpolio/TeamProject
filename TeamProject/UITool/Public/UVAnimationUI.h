@@ -6,22 +6,21 @@ NS_BEGIN(UITool)
 class CUVAnimationUI final : public CUIObject_Tool
 {
 private:
-	CUVAnimationUI();
-	CUVAnimationUI(const CUVAnimationUI& rhs);
+	CUVAnimationUI() {}
+	CUVAnimationUI(const CUVAnimationUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CUVAnimationUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override {}
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override {}
+	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
 	_float2		m_vUVOffset = {};

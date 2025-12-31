@@ -31,7 +31,8 @@ public:
 		_float		fDuration = { 1.f };
 	
 		vector<UI_KEYFRAME>	keyframes;
-	
+
+		tagUIAnimationClip() {}
 		tagUIAnimationClip(string _strName) : strName(_strName) {}
 	}UI_ANIM_CLIP;
 
@@ -120,12 +121,18 @@ public:
 	_bool Is_Clickable() { return m_isClickable; }
 
 public:
+	void   Set_AlphaThreshold(_float v) { m_alphaThreshold = v; }
+	_float Get_AlphaThreshold() const   { return m_alphaThreshold; }
+
+public:
 	void Play_Animation(_float dt);					
 	void Set_Animation(_uint iIndex, _bool isLoop = false);				
 
 public:
 	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
 	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
+	virtual void Save(nlohmann::ordered_json& data) {}
+	virtual void Load(const nlohmann::ordered_json& data) {}
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -176,6 +183,9 @@ protected:
 
 	/*애니메이션 위치 오프셋 값으로 m_vAnchorOffset에 더해지는 값*/
 	_float2 m_vAnimPosition = {};
+	
+	// -------------------------------
+	_float m_alphaThreshold = 0.25f;
 
 public:
 	virtual void Free() override;

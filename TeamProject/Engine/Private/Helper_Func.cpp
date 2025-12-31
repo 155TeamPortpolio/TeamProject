@@ -213,6 +213,92 @@ ENGINE_DLL vector<string> Helper::OpenMultiFiles()
 
 	return result;
 }
+
+ENGINE_DLL string Helper::OpenFile(const vector<pair<string, string>>& filters, const string& defaultExt)
+{
+	string result;
+	IFileOpenDialog* pFileOpen{};
+
+	HRESULT Initialize = CoInitializeEx(nullptr, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+	if (FAILED(Initialize))
+	{
+		MSG_BOX("Failed To Initialize Com Interface : CoInitializeEx");
+		return result;
+	}
+
+	HRESULT hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_IFileOpenDialog, reinterpret_cast<void**>(&pFileOpen));
+	if (FAILED(hr))
+	{
+		MSG_BOX("Failed To CReate Com Interface : CoCreateInstance");
+		CoUninitialize();
+		return result;
+	}
+
+	vector<wstring> wideLabels;
+	vector<wstring> widePatterns;
+	vector<COMDLG_FILTERSPEC> specs;
+
+	if (!filters.empty())
+	{
+		wideLabels.reserve(filters.size());
+		widePatterns.reserve(filters.size());
+		specs.reserve(filters.size());
+
+		for (const auto& f : filters)
+		{
+			wideLabels.push_back(ConvertToWideString(f.first));
+			widePatterns.push_back(ConvertToWideString(f.second));
+		}
+
+		for (size_t i = 0; i < filters.size(); ++i)
+		{
+			COMDLG_FILTERSPEC s = {wideLabels[i].c_str(), widePatterns[i].c_str()};
+			specs.push_back(s);
+		}
+
+		pFileOpen->SetFileTypes((UINT)specs.size(), specs.data());
+		pFileOpen->SetFileTypeIndex(1);
+
+		if (!defaultExt.empty())
+			pFileOpen->SetDefaultExtension(ConvertToWideString(defaultExt).c_str());
+	}
+
+	DWORD dwOptions;
+	pFileOpen->GetOptions(&dwOptions);
+	pFileOpen->SetOptions(dwOptions | FOS_FILEMUSTEXIST | FOS_PATHMUSTEXIST);
+
+	HRESULT openDialogue = pFileOpen->Show(0);
+
+	if (SUCCEEDED(openDialogue))
+	{
+		IShellItem* pItem{};
+		HRESULT openResult = pFileOpen->GetResult(&pItem);
+
+		if (SUCCEEDED(openResult))
+		{
+			PWSTR pszFilePath{};
+			if (SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath)))
+			{
+				string filePath = ConvertToString(pszFilePath);
+				CoTaskMemFree(pszFilePath);
+
+				if (Helper::ContainsNonAscii(filePath))
+					MSG_BOX("File Path Must Be English");
+				else if (!Helper::IsPathInProjectFolder(filePath))
+					MSG_BOX("Files outside the project folder cannot be selected");
+				else
+					result = filePath;
+			}
+			pItem->Release();
+		}
+	}
+
+	pFileOpen->Release();
+	CoUninitialize();
+
+	return result;
+}
+
 string Helper::SaveFileDialog()
 {
 	string savePath = "";

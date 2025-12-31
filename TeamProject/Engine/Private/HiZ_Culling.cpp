@@ -5,33 +5,33 @@
 
 CHiZ_Culling::CHiZ_Culling()
 {
-	//	Copy pass : Depth SRV → HiZ mip0 UAV(그냥 복사)
-	//	Reduce loop : HiZ mip(src) SRV → HiZ mip(dst) UAV, dst = src + 1 (2×2 min)
 
 }
 
 HRESULT CHiZ_Culling::Initialize() {
 
+	/*클라 사이즈*/
 	_float2 clientSize = CGameInstance::GetInstance()->Get_ClientSize();
 	m_viewport= clientSize;
-	m_texSize = { (_uint)clientSize.x, (_uint)clientSize.y };
-	m_threadSize = { 8, 8, 1 };
+	m_texSize = { (_uint)clientSize.x, (_uint)clientSize.y }; /*1차 밉 텍스처 사이즈*/
+	m_threadSize = { 8, 8, 1 }; /*쓰레드 8x8개*/
 
 	/*쓰레드가 픽셀 그룹을 지을 때 남는게 없게하려고 */
 	m_groupCount = {
 		(m_texSize.x + m_threadSize.x - 1) / m_threadSize.x,
 		(m_texSize.y + m_threadSize.y - 1) / m_threadSize.y,
 		1
-	};
+	};/*전체폭 + 방향 스레드 개수 -> 즉 위드를 8개씩 묶어서 처리할 그룹이 몇개나 되는가 올림을 위해 8개-1을 더해준거임*/
 
-	//1by1될 때까지 2,2로 나눔
+	//1by1될 때까지 2,2로 텍스처를 나눔
 	m_mipCount = CalcMipCount(m_texSize.x, m_texSize.y);
 
+	auto pDevice = CGameInstance::GetInstance()->Get_Device();
+	
+	/*밉 체인 생성 uav로 mip별로 쓰고, srv로 읽는 용도*/
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = m_texSize.x;
 	desc.Height = m_texSize.y;
-
-	auto pDevice = CGameInstance::GetInstance()->Get_Device();
 	desc.MipLevels = m_mipCount;
 	desc.ArraySize = 1;
 	desc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -45,46 +45,47 @@ HRESULT CHiZ_Culling::Initialize() {
 	if (FAILED(hr))
 		return hr;
 
+	/*밉별 uav, srv를 만드는 과정*/
 	m_HiZUav.resize(m_mipCount, nullptr);
 	for (_uint mip = 0; mip < m_mipCount; ++mip)
 	{
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 		uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-		uavDesc.Texture2D.MipSlice = mip;
-
+		uavDesc.Texture2D.MipSlice = mip;//HiZTex의 mip 한 장만 쓴다
 		HRESULT hr = pDevice->CreateUnorderedAccessView(m_pHiZTex, &uavDesc, &m_HiZUav[mip]);
 		if (FAILED(hr)) return hr;
 	}
 
 	m_HiZSrvMip.resize(m_mipCount, nullptr);
 	for (_uint mipIndex = 0; mipIndex < m_mipCount; ++mipIndex)
-	{
+	{ /*사실 상 디버깅 용도*/
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDescMip = {};
 		srvDescMip.Format = DXGI_FORMAT_R32_FLOAT;
 		srvDescMip.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDescMip.Texture2D.MostDetailedMip = mipIndex;
-		srvDescMip.Texture2D.MipLevels = 1;
+		srvDescMip.Texture2D.MipLevels = 1;//HiZTex의 mip 한 장만 본다
 
 		hr = pDevice->CreateShaderResourceView(m_pHiZTex, &srvDescMip, &m_HiZSrvMip[mipIndex]);
 		if (FAILED(hr)) return hr;
 	}
-
-	m_pCopyBuffer = CreateDynamicCB(pDevice, sizeof(CB_CopyData));
-	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
-	m_pOcculsionBuffer = CreateDynamicCB(pDevice, sizeof(CB_OcclusionData));
-
+	/*전체 밉체인에 해당하는 SRV-> */
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = m_mipCount;
-
 		hr = pDevice->CreateShaderResourceView(m_pHiZTex, &srvDesc, &m_pHiZSrv);
 		if (FAILED(hr)) return hr;
 	}
 
+	/*던져줄 상수 버퍼 생성*/
+	m_pCopyBuffer = CreateDynamicCB(pDevice, sizeof(CB_CopyData));
+	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
+	m_pOcculsionBuffer = CreateDynamicCB(pDevice, sizeof(CB_OcclusionData));
+
+	
 	return S_OK;
 }
 
@@ -93,29 +94,14 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 	Check_Resource();
 	if (!m_isReady) return;
 
-	{
-		_uint dstWidth = m_texSize.x;
-		_uint dstHeight = m_texSize.y;
-
-		_uint3 groupCount =
-		{
-			(dstWidth + m_threadSize.x - 1) / m_threadSize.x,
-			(dstHeight + m_threadSize.y - 1) / m_threadSize.y,
-			1
-		};
-
+	{ /*1차 뎁스 텍스처 그냥 복사*/
 		m_pCopyShader->Bind(pContext);
-
-		CB_CopyData cbCopy = {};
-		cbCopy.dstSize = { dstWidth ,dstHeight };
-
+		CB_CopyData cbCopy = { m_texSize };
 		Update_CBuffer(pContext, m_pCopyBuffer, &cbCopy, sizeof(cbCopy));
-
 		m_pCopyShader->SetCB(pContext, 0, m_pCopyBuffer);
 		m_pCopyShader->SetSRV(pContext, 0, m_pDepthSrv);
 		m_pCopyShader->SetUAV(pContext, 0, m_HiZUav[0]);
-
-		m_pCopyShader->Dispatch(pContext, groupCount.x, groupCount.y, groupCount.z);
+		m_pCopyShader->Dispatch(pContext, m_groupCount.x, m_groupCount.y, m_groupCount.z);
 
 		ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
 		ID3D11UnorderedAccessView* nullUav[1] = { nullptr };
@@ -123,8 +109,10 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 		pContext->CSSetUnorderedAccessViews(0, 1, nullUav, nullptr);
 	}
 
+	/*밉별로 단계별로 나아가기*/
 	for (_uint srcMipIndex = 0; srcMipIndex < m_mipCount - 1; ++srcMipIndex)
 	{
+		/*2,2 로 나눠나가기 시작*/
 		_uint srcWidth = max(1u, m_texSize.x >> srcMipIndex);
 		_uint srcHeight = max(1u, m_texSize.y >> srcMipIndex);
 
@@ -141,17 +129,13 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 		};
 
 		m_pReduceShader->Bind(pContext);
-		CB_ReduceData cbReduce = {};
-		cbReduce.srcSize = { srcWidth ,srcHeight };
-		cbReduce.dstSize = { dstWidth ,dstHeight };
-
+		CB_ReduceData cbReduce = { { srcWidth ,srcHeight } ,{ dstWidth ,dstHeight } ,srcMipIndex };
 		Update_CBuffer(pContext, m_pReduceBuffer, &cbReduce, sizeof(cbReduce));
 		m_pReduceShader->SetCB(pContext, 0, m_pReduceBuffer);
 
 		// SRV = HiZ src mip (slice SRV), UAV = HiZ dst mip
 		m_pReduceShader->SetSRV(pContext, 0, m_HiZSrvMip[srcMipIndex]);
 		m_pReduceShader->SetUAV(pContext, 0, m_HiZUav[dstMipIndex]);
-
 		m_pReduceShader->Dispatch(pContext, groupCount.x, groupCount.y, groupCount.z);
 
 		ID3D11ShaderResourceView* nullSrv[1] = { nullptr };
@@ -189,33 +173,33 @@ void CHiZ_Culling::Check_Resource()
 #ifdef _USING_GUI
 void CHiZ_Culling::Render_GUI()
 {
-	if (ImGui::Begin("Hi_Z"))
-	{
-		if (m_mipCount > 0)
-		{
-			ImGui::SliderInt("Mip", &m_DebugMip, 0, (int)m_mipCount - 1);
-
-			ID3D11ShaderResourceView* srv = nullptr;
-			if (!m_HiZSrvMip.empty() && m_DebugMip >= 0 && m_DebugMip < (int)m_HiZSrvMip.size())
-				srv = m_HiZSrvMip[m_DebugMip];
-
-			if (srv)
-			{
-				float scale = 0.25f;
-				ImGui::Text("Mip %d", m_DebugMip);
-				ImGui::Image((ImTextureID)srv, ImVec2(1280.0f * scale, 720.0f * scale));
-			}
-			else
-			{
-				ImGui::Text("SRV is null.");
-			}
-		}
-		else
-		{
-			ImGui::Text("No mip chain.");
-		}
-	}
-	ImGui::End();
+	//if (ImGui::Begin("Hi_Z"))
+	//{
+	//	if (m_mipCount > 0)
+	//	{
+	//		ImGui::SliderInt("Mip", &m_DebugMip, 0, (int)m_mipCount - 1);
+	//
+	//		ID3D11ShaderResourceView* srv = nullptr;
+	//		if (!m_HiZSrvMip.empty() && m_DebugMip >= 0 && m_DebugMip < (int)m_HiZSrvMip.size())
+	//			srv = m_HiZSrvMip[m_DebugMip];
+	//
+	//		if (srv)
+	//		{
+	//			float scale = 0.25f;
+	//			ImGui::Text("Mip %d", m_DebugMip);
+	//			ImGui::Image((ImTextureID)srv, ImVec2(1280.0f * scale, 720.0f * scale));
+	//		}
+	//		else
+	//		{
+	//			ImGui::Text("SRV is null.");
+	//		}
+	//	}
+	//	else
+	//	{
+	//		ImGui::Text("No mip chain.");
+	//	}
+	//}
+	//ImGui::End();
 }
 #endif
 
@@ -259,6 +243,7 @@ _float CHiZ_Culling::Clamp01(_float value)
 	return value;
 }
 
+/*실제 컬링을 시작*/
 vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
 	if (!m_isReady)
@@ -268,37 +253,32 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 	if (frustums.empty())
 		return result;
+	if (!m_isReady) 		
+		return result;
 
 	vector<OcclusionInput> inputs;
 	inputs.reserve(frustums.size());
 
 	auto cameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
 	_matrix viewMatrix =*cameraMgr->Get_ViewMatrix();
-	_float zFar = cameraMgr->Get_Far(); // 너 엔진에 맞게
-	_uint viewportW = (_uint)m_viewport.x; // 너가 가진 클라 크기
+	_float zFar = cameraMgr->Get_Far(); 
+	_uint viewportW = (_uint)m_viewport.x; 
 	_uint viewportH = (_uint)m_viewport.y;
 
 	for (_uint packetIndex = 0; packetIndex <frustums.size(); ++packetIndex)
 	{
 		const OPAQUE_PACKET& packet = frustums[packetIndex];
 
+		/*오브젝트의 오클루젼 데이터 생성*/
 		OcclusionInput inputData = {};
-		_bool ok = BuildOcclusionInput(
-			packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),              
-			_smatrix(*packet.pWorldMatrix),        
-			viewMatrix,
-			viewportW, viewportH,
-			zFar,
-			packetIndex,
-			inputData);
+		_bool ok = BuildOcclusionInput(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),_smatrix(*packet.pWorldMatrix),        
+			viewMatrix,viewportW, viewportH,zFar,packetIndex,inputData);
 
 		if (ok)
 			inputs.push_back(inputData);
 		else
 		{
-			// rect 계산 실패한 건 보수적으로 visible 처리
-			// 입력에 안 넣고 그냥 결과에 포함
-			result.push_back(packet);
+			result.push_back(packet); /*애매한거 -> ok 안떨어진건 그냥 보인다 처리 해버리기*/
 		}
 	}
 
@@ -311,6 +291,7 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 	/*버퍼 리사이즈*/
 	EnsureOcclusionResources(device, inputs.size());
+
 	D3D11_BOX box = {};
 	box.left = 0;
 	box.right = (UINT)(inputs.size() * sizeof(OcclusionInput));
@@ -323,16 +304,16 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
 
 	m_pOcclusionShader->Bind(context);
-	context->CSSetShaderResources(0, 1, &m_pHiZSrv);
-
-	context->CSSetShaderResources(1, 1, &m_inputSrv);
-	context->CSSetUnorderedAccessViews(0, 1, &m_visibleUav, nullptr);
-
+	m_pOcclusionShader->SetSRV(context, 0, m_pHiZSrv);
+	m_pOcclusionShader->SetSRV(context, 1, m_inputSrv);
+	m_pOcclusionShader->SetUAV(context, 0, m_visibleUav);
+	
 	CB_OcclusionData cbData = {};
 	cbData.viewportSize = { viewportW, viewportH };
 	cbData.mipCount = m_mipCount;
-	cbData.epsilon = 1e-2;
+	cbData.epsilon = 1e-4;
 	cbData.inputCount = inputs.size();
+
 	Update_CBuffer(context, m_pOcculsionBuffer, &cbData, sizeof(cbData));
 	m_pOcclusionShader->SetCB(context, 0, m_pOcculsionBuffer);
 
@@ -361,11 +342,11 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 	const _uint* flags = (const _uint*)mapped.pData;
 
-	for (uint32_t inputIndex = 0; inputIndex < (uint32_t)inputs.size(); ++inputIndex)
+	for (_uint inputIndex = 0; inputIndex < inputs.size(); ++inputIndex)
 	{
-		if (flags[inputIndex] != 0)
+		if (flags[inputIndex] != 0) /*이건 보인다고 적혔단느 뜻*/
 		{
-			uint32_t originalIndex = inputs[inputIndex].indexInList;
+			_uint originalIndex = inputs[inputIndex].indexInList;
 			result.push_back(frustums[originalIndex]);
 		}
 	}
@@ -406,32 +387,26 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 	float maxY = 0.0f;
 
 	float objMinDepth01 = 1.0f;
-	bool anyValid = false;
 
 	XMMATRIX projMatrix = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
 	XMMATRIX viewProjMatrix = XMMatrixMultiply(viewMatrix, projMatrix);
+	bool anyValid = false;
+	bool anyInvalid = false;
 
-	/*스크린 좌표로 코너를 보내는 중*/
 	for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 	{
 		_vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
 
-		// view space z
-		_vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
-		float viewZ = XMVectorGetZ(viewPos);
-
-		// 카메라 뒤(또는 0 이하)인 코너는 depth01 의미가 약함. 그래도 보수적으로 clamp.
-		float depth01 = Clamp01(viewZ / zFar);
-		if (depth01 < objMinDepth01) objMinDepth01 = depth01;
-
-		// clip -> ndc
 		_vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
 		float clipW = XMVectorGetW(clip);
 
 		if (clipW <= 1e-6f)
-			continue; /*Z나누기가 0이 나오지 않도록함*/
+		{
+			anyInvalid = true;
+			continue;
+		}
 
-		/*Z나누기 진행*/
+		// ndc
 		_vector ndc = XMVectorScale(clip, 1.0f / clipW);
 		float ndcX = XMVectorGetX(ndc);
 		float ndcY = XMVectorGetY(ndc);
@@ -439,17 +414,29 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 		float screenX = (ndcX * 0.5f + 0.5f) * (float)viewportW;
 		float screenY = (1.0f - (ndcY * 0.5f + 0.5f)) * (float)viewportH;
 
-		/*화면상 차지하는 영역의 민맥스 */
 		if (screenX < minX) minX = screenX;
 		if (screenY < minY) minY = screenY;
 		if (screenX > maxX) maxX = screenX;
 		if (screenY > maxY) maxY = screenY;
+
+		_vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
+		float viewZ = XMVectorGetZ(viewPos);
+
+		if (viewZ > 0.0f)
+		{
+			float depth01 = Clamp01(viewZ / zFar);
+			if (depth01 < objMinDepth01) objMinDepth01 = depth01;
+		}
 
 		anyValid = true;
 	}
 
 	if (!anyValid)
 		return false;
+
+	if (anyInvalid)
+		return false;
+
 
 	/*프러스텀에 걸린 것 같은 애들은 화면상 음수 좌표가 될 수 있으니까 클램핑*/
 	if (minX < 0.0f) minX = 0.0f;
@@ -460,10 +447,10 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 	if (maxX <= minX || maxY <= minY)
 		return false;
 
-	outInput.minX = (uint32_t)minX;
-	outInput.minY = (uint32_t)minY;
-	outInput.maxX = (uint32_t)maxX;
-	outInput.maxY = (uint32_t)maxY;
+	outInput.minX = (_uint)minX;
+	outInput.minY = (_uint)minY;
+	outInput.maxX = (_uint)maxX;
+	outInput.maxY = (_uint)maxY;
 	outInput.objMinDepth01 = objMinDepth01;
 	outInput.indexInList = indexInList;
 	outInput.padding = 0;
@@ -473,6 +460,7 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 /*번 프레임에 필요한 오브젝트 개수를 받아서, 그만큼 처리 가능한 버퍼를 재할당*/
 void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount)
 {
+	/*이번 오브젝트 요청*/
 	/*요청 개수가 0이면 없음*/
 	if (requiredCount == 0)
 		return;
@@ -493,7 +481,7 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 	Safe_Release(m_visibleStaging);
 	
 	/*인풋(구조체를 넣으려는) 용도의 SRV를 만드는 과정 ->셰이더는 이걸을 읽고*/
-	{
+	{	/*오브젝트의 인풋 데이터를 써서 셰이더로 던지는 용량을 만들어줌*/
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = sizeof(OcclusionInput) * newCapacity;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -505,7 +493,7 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			return;
 	}
 
-	{
+	{	/*오브젝트의 버퍼 통해서 지금 srv만들어줌*/
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;

@@ -9,15 +9,6 @@
 _uint CSpriteAnimationUI::m_iCount = {};
 const string CSpriteAnimationUI::m_strTypeTag = "SpriteAnimation";
 
-CSpriteAnimationUI::CSpriteAnimationUI()
-{
-}
-
-CSpriteAnimationUI::CSpriteAnimationUI(const CSpriteAnimationUI& rhs)
-	: CUIObject_Tool(rhs)
-{
-}
-
 HRESULT CSpriteAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -29,21 +20,23 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl"); 
-    Get_Component<CSprite2D>()->ChangePass("SpriteAnimation");
-    Get_Component<CSprite2D>()->Set_Param("FrameIndex", { &m_iCurrentFrameIndex,"uint",sizeof(_uint) });
-    Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
-    Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
+    Set_OriginTexSize(true);
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "empty.png");
+    auto sprite = Get_Component<CSprite2D>();
+
+    sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    sprite->ChangePass("SpriteAnimation");
+
+    sprite->Set_Param("FrameIndex", {&m_iCurrentFrameIndex, "uint", sizeof(_uint)});
+    sprite->Set_Param("Col",        {&m_iFrameCountX,       "uint", sizeof(_uint)});
+    sprite->Set_Param("Row",        {&m_iFrameCountY,       "uint", sizeof(_uint)});
+
+    m_strTextureKey = "empty.png";
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_iCount++;
 
-	return S_OK;
-}
-
-void CSpriteAnimationUI::Priority_Update(_float dt)
-{
+    return S_OK;
 }
 
 void CSpriteAnimationUI::Update(_float dt)
@@ -74,31 +67,14 @@ void CSpriteAnimationUI::Update(_float dt)
     } 
 }
 
-void CSpriteAnimationUI::Late_Update(_float dt)
-{
-}
-
 void CSpriteAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
-     
-    // 텍스쳐
-    ImGui::SeparatorText(u8"이미지");
-    if (ImGui::Button(u8"선택"))
-    {
-        string filePath = Helper::OpenFile_Dialogue();
-        if (!filePath.empty())
-        {
-            string fileName = Helper::GetFileNameWithExtension(filePath);
 
-            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strTextureKey = fileName;
-            Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-        }
-    }
-    Get_Component<CSprite2D>()->Render_GUI();
+    Render_GUI_Image(m_strTextureKey);
 
-    // 스프라이트 애니메이션
+    auto sprite = Get_Component<CSprite2D>();
+
     ImGui::SeparatorText(u8"스프라이트 애니메이션");
     if (ImGui::Button(m_isPlaying ? u8"정지" : u8"재생"))
     {
@@ -107,64 +83,71 @@ void CSpriteAnimationUI::Render_GUI()
         {
             m_fFrameAccTime = 0.f;
             m_iCurrentFrameIndex = 0;
+            sprite->Set_Param("FrameIndex", {&m_iCurrentFrameIndex, "uint", sizeof(_uint)});
         }
     }
 
     ImGui::Checkbox(u8"루프", &m_isLoop);
-    static _bool isCustomCount = { false };
+
+    static _bool isCustomCount = false;
     if (ImGui::Checkbox(u8"총 개수 바꾸기", &isCustomCount))
-    {
-        if(!isCustomCount)
-            m_iFrameCountTotal = m_iFrameCountX * m_iFrameCountY;
-    }
+        if (!isCustomCount) m_iFrameCountTotal = m_iFrameCountX * m_iFrameCountY;
+
     ImGui::BeginDisabled(!isCustomCount);
-    static _uint iTotalMin = m_iFrameCountX * (m_iFrameCountY -1);
+    static _uint iTotalMin = m_iFrameCountX * (m_iFrameCountY - 1);
     ImGui::DragScalar(u8"총 개수", ImGuiDataType_U32, &m_iFrameCountTotal, 1.f, &iTotalMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
     ImGui::EndDisabled();
 
-    _bool isChanged = {};
+    _bool changed = false;
     static _uint iMin = 1;
-    isChanged |= ImGui::DragScalar(u8"가로 개수", ImGuiDataType_U32, &m_iFrameCountX, 1.f, &iMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
-    isChanged |= ImGui::DragScalar(u8"세로 개수", ImGuiDataType_U32, &m_iFrameCountY, 1.f, &iMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
-    if (isChanged)
+    changed |= ImGui::DragScalar(u8"가로 개수", ImGuiDataType_U32, &m_iFrameCountX, 1.f, &iMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
+    changed |= ImGui::DragScalar(u8"세로 개수", ImGuiDataType_U32, &m_iFrameCountY, 1.f, &iMin, NULL, "%u", ImGuiSliderFlags_AlwaysClamp);
+
+    if (changed)
     {
-        Get_Component<CSprite2D>()->Set_Param("Col", { &m_iFrameCountX,"uint",sizeof(_uint) });
-        Get_Component<CSprite2D>()->Set_Param("Row", { &m_iFrameCountY,"uint",sizeof(_uint) });
+        sprite->Set_Param("Col", {&m_iFrameCountX, "uint", sizeof(_uint)});
+        sprite->Set_Param("Row", {&m_iFrameCountY, "uint", sizeof(_uint)});
+
         iTotalMin = m_iFrameCountX * (m_iFrameCountY - 1);
         if (!isCustomCount)
             m_iFrameCountTotal = m_iFrameCountX * m_iFrameCountY;
-    }     
+    }
 
     ImGui::DragFloat(u8"재생 속도", &m_fFrameSpeed, 1.f, 1.f, 120.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
 }
 
-void CSpriteAnimationUI::FillElementData(UI_ELEMENT_DATA& data)
+void CSpriteAnimationUI::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
+    __super::Save(data);
 
-    data.strTypeTag = m_strTypeTag;
+    data["typeTag"] = m_strTypeTag;
+    data["textureTag"] = m_strTextureKey;
 
-    data.strTextureTag = m_strTextureKey;
-
-    data.isLoop = m_isLoop;
-    data.iFrameCountX = m_iFrameCountX;
-    data.iFrameCountY = m_iFrameCountY;
-    data.iFrameCountTotal = m_iFrameCountTotal; 
-    data.fFrameSpeed = m_fFrameSpeed;
+    auto& spriteAnimationJson = data["spriteAnimation"];
+    spriteAnimationJson["loop"] = m_isLoop;
+    spriteAnimationJson["frameCountX"] = m_iFrameCountX;
+    spriteAnimationJson["frameCountY"] = m_iFrameCountY;
+    spriteAnimationJson["frameCountTotal"] = m_iFrameCountTotal;
+    spriteAnimationJson["frameSpeed"] = m_fFrameSpeed;
 }
 
-void CSpriteAnimationUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
 {
-    __super::ReadElementData(data);
+    __super::Load(data);
 
-    m_strTextureKey = data.strTextureTag;
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    m_strTextureKey = data.value("textureTag", "");
 
-    m_isLoop = data.isLoop;
-    m_iFrameCountX = data.iFrameCountX;
-    m_iFrameCountY = data.iFrameCountY;
-    m_iFrameCountTotal = data.iFrameCountTotal;
-    m_fFrameSpeed = data.fFrameSpeed;
+    if (data.contains("spriteAnimation"))
+    {
+        const auto& spriteAnimationJson = data["spriteAnimation"];
+        m_isLoop = spriteAnimationJson.value("loop", true);
+        m_iFrameCountX = spriteAnimationJson.value("frameCountX", 1);
+        m_iFrameCountY = spriteAnimationJson.value("frameCountY", 1);
+        m_iFrameCountTotal = spriteAnimationJson.value("frameCountTotal", 1);
+        m_fFrameSpeed = spriteAnimationJson.value("frameSpeed", 30.0f);
+    }
+
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CSpriteAnimationUI::Create()

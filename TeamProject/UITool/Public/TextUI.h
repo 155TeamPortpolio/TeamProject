@@ -1,12 +1,13 @@
 #pragma once
 #include "UIObject_Tool.h"
 
-// 텍스트를 트랜스폼에 맞춰서 피봇 설정, 회전, 스케일하는 것 넣어야
-
 NS_BEGIN(UITool)
 
 class CTextUI final : public CUIObject_Tool
 {
+public:
+	enum class TEXTALIGN { LEFT, CENTER, RIGHT };
+
 private:
 	CTextUI();
 	CTextUI(const CTextUI& rhs);
@@ -16,15 +17,15 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
+	virtual void	Priority_Update(_float dt) override;
+	virtual void	Update(_float dt) override;
+	virtual void	Late_Update(_float dt) override;
 
-	virtual void Render_GUI() override;
+	virtual void	Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
 	_char		m_szText[MAX_PATH] = {};
@@ -34,11 +35,12 @@ private:
 	_float		m_fOutlineThickness = { 1.f };
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
-	_int		m_iAlign = {};
+	_int		m_iTextAlign = {};
 
 	_bool		m_isSizeToContent = { true };
 
 private:
+	string		m_strFontTag = {};
 	_int		m_iFontKeyIndex = { 0 }; 
 
 public:
@@ -50,8 +52,7 @@ private:
 	virtual void Render_GUI_Transform() override;
 
 private:
-	void UpdateAnchorOffsetByAlign();
-	_int Find_FontIndex(const vector<const _char*> FontKeys, const string strFontTag);
+	void UpdateAnchorOffset_TextAlign();
 
 public:
 	static CGameObject* Create();

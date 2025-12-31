@@ -32,6 +32,7 @@
 
 /* Character */
 #include "Miyabi.h"
+#include "Anbi.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 
@@ -153,17 +154,14 @@ HRESULT CTestLevel::Awake()
 	Ready_Camera();
 
 	//==================== UI ===============
-	//auto uiDirector = CUIDirector::GetInstance();
-	//uiDirector->Initialize("Test_Level");
-	//
-	//CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-	//	.Asset("hud.json")
-	//	.Build("HUD");
-	////========
-	//
-	//uiDirector->Register(hudUI);
-	//uiDirector->SetVisible("HUD", true);
-
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Initialize("Test_Level");
+	
+	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
+		.Asset("hud.json")
+		.Build("HUD");
+	
+	uiDirector->Register(hudUI);
 
 	//====================Test=================
 	Ready_TestObject();

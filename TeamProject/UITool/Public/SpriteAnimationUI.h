@@ -6,22 +6,22 @@ NS_BEGIN(UITool)
 class CSpriteAnimationUI final : public CUIObject_Tool
 {
 private:
-	CSpriteAnimationUI();
-	CSpriteAnimationUI(const CSpriteAnimationUI& rhs);
+	CSpriteAnimationUI() {}
+	CSpriteAnimationUI(const CSpriteAnimationUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CSpriteAnimationUI() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-	virtual void Render_GUI() override;
+	virtual void	Priority_Update(_float dt) override {}
+	virtual void	Update(_float dt) override;
+	virtual void	Late_Update(_float dt) override {}
+	virtual void	Render_GUI() override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
 	_bool		m_isPlaying = { true };

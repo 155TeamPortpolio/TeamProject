@@ -6,26 +6,28 @@ NS_BEGIN(UITool)
 class CImageUI final : public CUIObject_Tool
 {
 private:
-	CImageUI();
-	CImageUI(const CImageUI& rhs);
+	CImageUI() {}
+	CImageUI(const CImageUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CImageUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override {}
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override {}
+	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
 	string		m_strTextureKey = {};
+
+	_bool		m_isFlipX = {};
+	_bool		m_isFlipY = {};
+	_float2		m_vFlip = {};
 
 public:
 	static const string m_strTypeTag;
@@ -34,7 +36,7 @@ public:
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
