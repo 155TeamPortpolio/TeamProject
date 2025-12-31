@@ -140,7 +140,8 @@ private:
     CCCTQueryFilter*         m_pQueryFilter = { nullptr };
     _bool                    m_bGrounded = { false };
     _bool                    m_bGravityEnabled = { true };
-    Vector3                  m_vVelocity = { 0.f, 0.f, 0.f };
+    _vector3                 m_vVelocity = { 0.f, 0.f, 0.f };
+    _vector3                 m_vPrevVelocity = { 0.f, 0.f, 0.f };
     _float                   m_fHeight = { 0.f };
     _float                   m_fRadius = { 0.f };
     _float                   m_fStepOffset = { 0.5f };

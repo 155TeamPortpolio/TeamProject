@@ -37,14 +37,9 @@ void CMiyabiState_Walk::Update(CMiyabi* pOwner, _float dt)
  
 }
 
-void CMiyabiState_Walk::Exit(CMiyabi* pOwner)
-{
-    Get_ParentState()->Get_SubStateMachine()->Set_Bool("WalkFinish", false);
-}
-
 void CMiyabiState_Walk_Start::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
 }
 
 void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
@@ -66,8 +61,8 @@ void CMiyabiState_Walk_Start::Update(CMiyabi* pOwner, _float dt)
 
 void CMiyabiState_Walk_Loop::Enter(CMiyabi* pOwner)
 {
-    pOwner->Get_Animator()->Set_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
-        .Loop(true)
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Unagi_Ani_Walk")
+        .Loop(false)
         .Speed(1.2f)
         .Apply();
 }
@@ -96,7 +91,7 @@ void CMiyabiState_Walk_Loop::Update(CMiyabi* pOwner, _float dt)
             CMiyabiState_Move* pMove = static_cast<CMiyabiState_Move*>(pWalk->Get_ParentState());
             if (pMove && pMove->Get_SubStateMachine())
             {
-                pMove->Get_SubStateMachine()->Set_Bool("WalkFinish", true);
+                pMove->Get_SubStateMachine()->Set_Trigger("ToRun");
             }
         }
     }
