@@ -90,7 +90,8 @@ void CAIChannel::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
 			continue;
 		}
 		
-	ofs.write(reinterpret_cast<const char*>(&keyFrame), sizeof(KEYFRAME)); }
+	ofs.write(reinterpret_cast<const char*>(&keyFrame), sizeof(KEYFRAME));
+	}
 }
 
 void CAIChannel::Set_Root()
