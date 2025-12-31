@@ -50,8 +50,11 @@ HRESULT CTestObject::Initialize_Prototype()
 		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.model");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi.mat",
 		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi.mat");
+	//pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
+//	"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Unagi_Meta.json",
-		"../Bin/Resources/Model/skeletal/Miyabi/Anim/Avatar_Female_Size02_Unagi_Meta.json");
+		"../Bin/Resources/Model/skeletal/Miyabi/Avatar_Female_Size02_Unagi_Meta.json");
+
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size02_Unagi.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size02_Unagi.mat");
