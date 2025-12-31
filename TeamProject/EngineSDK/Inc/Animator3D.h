@@ -157,12 +157,8 @@ public://애니매이터 데이터
     void Set_MotionBone(_int MoveBoneIndex);
     //애니매이션 축에 움직임 제거 (ex : (AXIS::X | AXIS::Z) = XZ축제거)
     void Set_ExtractMotionboneMovement(AXIS eAxis);
-    //애니매이션 축에 회전 제거 (ex : (AXIS::Y) =  Y축제거)
-    void Set_ExtractMotionboneRotation(AXIS eAxis);
     //움직임 축 고정 리셋
     void Reset_ExtractBoneMovement();
-    //회전 축 고정 리셋
-    void Reset_ExtractBoneRotation();
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
     //애니매이션을 돌릴 본 설정

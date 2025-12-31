@@ -402,30 +402,12 @@ void CAnimator3D::Set_ExtractMotionboneMovement(AXIS eAxis)
 	}
 }
 
-void CAnimator3D::Set_ExtractMotionboneRotation(AXIS eAxis)
-{
-	for (auto& Layer : m_AnimLayers) {
-		if (!Layer.BaseLayer) continue;
-
-		Layer.eExtractRotAxis = eAxis;
-	}
-}
-
 void CAnimator3D::Reset_ExtractBoneMovement()
 {
 	for (auto& Layer : m_AnimLayers) {
 		if (!Layer.BaseLayer) continue;
 
 		Layer.eExtractMoveAxis = AXIS::NONE;
-	}
-}
-
-void CAnimator3D::Reset_ExtractBoneRotation()
-{
-	for (auto& Layer : m_AnimLayers) {
-		if (!Layer.BaseLayer) continue;
-
-		Layer.eExtractRotAxis = AXIS::NONE;
 	}
 }
 
@@ -737,22 +719,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
 
-			_vector curQ = XMLoadFloat4(&vCurRootQuat);
-			_vector prevQ = XMLoadFloat4(&Layer.vPrevRootQuat);
-
-			curQ = XMQuaternionNormalize(curQ);
-			prevQ = XMQuaternionNormalize(prevQ);
-
-			XMVECTOR quatDelta =
-				XMQuaternionNormalize(
-					XMQuaternionMultiply(
-						curQ,
-						XMQuaternionInverse(prevQ)
-					)
-				);
-			
-			// ¿˙¿Â
-			XMStoreFloat4(&Layer.vRootQuatDelta, quatDelta);
+			_vector quatDelta =
+				XMQuaternionNormalize(XMQuaternionMultiply(
+					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
 
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
