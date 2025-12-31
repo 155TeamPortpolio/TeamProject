@@ -147,8 +147,8 @@ HRESULT CTestLevel::Awake()
 	m_miyabiHandle = Miyabi->Get_Handle();
 
 	/* Enemy */
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
