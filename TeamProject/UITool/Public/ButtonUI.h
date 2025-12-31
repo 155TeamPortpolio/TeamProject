@@ -32,8 +32,8 @@ public:
 	virtual void OnClick()     override;
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Save(nlohmann::ordered_json& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
 
 private:
 	STATE		m_eState = {};
@@ -41,6 +41,10 @@ private:
 
 private:
 	string		m_strTextureKey = {};
+
+	_bool		m_isFlipX = {};
+	_bool		m_isFlipY = {};
+	_float2		m_vFlip = {};
 
 public:
 	static const string m_strTypeTag;

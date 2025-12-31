@@ -211,11 +211,16 @@ CUI_Object* CGUIPanel::LoadPrefab()
 	if (strExtension != ".json")
 		return nullptr;
 
-	UI_ELEMENT_DATA elementData = Helper::LoadJson<UI_ELEMENT_DATA>(filePath);
+	ifstream file(filePath);
+	if (!file.is_open())
+		return nullptr;
 
-	const string& strCurrentLevelKey = m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-	const string& strTypeTag = elementData.strTypeTag;
-	CUI_Object* pObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
+	nlohmann::ordered_json data;
+	file >> data;
+	file.close();
+
+	string strTypeTag = data.value("typeTag", "");
+	CUI_Object* pObj = Builder::Create_UIObject({ m_pGameInstance->Get_LevelMgr()->Get_NowLevelKey() , "Proto_GameObject_" + strTypeTag })
 		.Build(strTypeTag);
 
 	if (!pObj)
@@ -223,7 +228,7 @@ CUI_Object* CGUIPanel::LoadPrefab()
 
 	CUIObject_Tool* pUIObj = dynamic_cast<CUIObject_Tool*>(pObj);
 	if (pUIObj)
-		pUIObj->ReadElementData(elementData);
+		pUIObj->Load(data);
 
 	return pObj;
 }
@@ -233,11 +238,17 @@ void CGUIPanel::SavePrefab(CUIObject_Tool* pObj)
 	if (!pObj)
 		return;
 
-	UI_ELEMENT_DATA elementData = {};
-	pObj->FillElementData(elementData);
+	nlohmann::ordered_json data = {};
+	pObj->Save(data);
 
 	string filePath = Helper::SaveFileDialogByWinAPI("prefab", "json");
-	Helper::SaveJson<UI_ELEMENT_DATA>(elementData, filePath);
+
+	std::ofstream file(filePath);
+	if (file.is_open())
+	{
+		file << data.dump(4);
+		file.close();
+	}
 }
 
 CGameObject* CGUIPanel::Get_SelectedObject()
