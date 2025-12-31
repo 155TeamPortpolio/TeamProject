@@ -20,6 +20,11 @@ public:
 
         _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
+        _float              fLayerWeight = { 1.f };
+        _float              fTargetWeight = { 1.f };
+        _float              fWeightDuration = {};
+        _float              fWeightElapsed = {};
+        EaseType            eLayerEaseType = { EaseType::None };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
@@ -60,6 +65,7 @@ public:
         //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
         _bool   bKeepTrackPos = { false };
+        _bool   bIgnoreRotation = { false };
         _int    iNextClipIndex = { -1 };
         _float  fBlendTrackPosition = {};
         _float  fBlendElapsed = {};
@@ -134,6 +140,8 @@ public://애니매이터 데이터
     //"Root"라는 이름을 가진 본의 움직임 델타값
     _float3 Get_RootBoneMoveDelta() const;
     _float4 Get_RootBoneQuatDelta() const;
+    //Root의 마지막 회전 쿼터니언값
+    _float4 Get_RootBoneEndQuat() const;
     //모션본 애니매이션 델타값
     _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
     //현재 레이어의 Ease중이면 그 비율가져옴
@@ -149,12 +157,8 @@ public://애니매이터 데이터
     void Set_MotionBone(_int MoveBoneIndex);
     //애니매이션 축에 움직임 제거 (ex : (AXIS::X | AXIS::Z) = XZ축제거)
     void Set_ExtractMotionboneMovement(AXIS eAxis);
-    //애니매이션 축에 회전 제거 (ex : (AXIS::Y) =  Y축제거)
-    void Set_ExtractMotionboneRotation(AXIS eAxis);
     //움직임 축 고정 리셋
     void Reset_ExtractBoneMovement();
-    //회전 축 고정 리셋
-    void Reset_ExtractBoneRotation();
     //애니매이션 퍼즈
     void Set_Pause(_bool bPause, _uint LayerIndex = 0);
     //애니매이션을 돌릴 본 설정
@@ -162,6 +166,9 @@ public://애니매이터 데이터
     void Reset_StartBone(_uint LayerIndex = 0);
     //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
     void Set_TPose();
+
+    /*----- Calculator -----*/
+    _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
 
 public:
     void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
@@ -296,10 +303,16 @@ public:
         m_bPause = bPause;
         return static_cast<T&>(*this);
     }
+
+    T& ResetRotation(_bool bResetRotation) {
+        m_bPause = bResetRotation;
+        return static_cast<T&>(*this);
+    }
  
 protected:
     _bool    m_bLoop = false;
     _bool    m_bPause = false;
+    _bool    m_bResetRotation = false;
     _float   m_fSpeed = 1.f;
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };
@@ -358,15 +371,20 @@ public:
         m_bKeepTrackPos = bKeepTrackPos;
         return *this;
     }
+    //애니매이션 보간시 회전을 제외할것인지
+    ChangeAnimBuild& IgnoreRotation(_bool bIgnoreRotation) {
+        m_bIgnoreRotation = bIgnoreRotation;
+        return *this;
+    }
 
 protected:
     CAnimator3D* m_pOwner = nullptr;
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
-    _bool m_bApplied = false;
 
     _float      m_fBlendDuration = 0.2f;
     _bool       m_bKeepTrackPos = false;
+    _bool       m_bIgnoreRotation = false;
     EaseType    m_eBlendEaseType = { EaseType::Linear };
 };
 
