@@ -42,6 +42,10 @@ private:
 private:
 	string		m_strTextureKey = {};
 
+	_bool		m_isFlipX = {};
+	_bool		m_isFlipY = {};
+	_float2		m_vFlip = {};
+
 public:
 	static const string m_strTypeTag;
 	static _uint m_iCount;
