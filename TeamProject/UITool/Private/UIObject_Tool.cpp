@@ -7,16 +7,6 @@
 #include "Texture.h"
 #include "Helper_Func.h"
 
-namespace
-{
-    _float GetSizeRatio(UISizeMode mode)
-    {
-        if      (mode == UISizeMode::QHD) return 1920.f / 2560.f;
-        else if (mode == UISizeMode::UHD) return 1920.f / 3840.f;
-        else                              return 1.f;
-    }
-}
-
 HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
@@ -299,25 +289,8 @@ void CUIObject_Tool::Render_GUI_Layout()
 
     ImGui::DragFloat2(u8"위치", reinterpret_cast<_float*>(&m_vAnchorOffset));
     // -----------------------------------------------------------------------
-    if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
-        m_sizeFHD = m_vSize;
-
-    const _float curRatio = GetSizeRatio(m_sizeMode);
-
-    if (ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
-    {
-        m_sizeFHD.x = m_vSize.x / curRatio;
-        m_sizeFHD.y = m_vSize.y / curRatio;
-    }
-
-    static const char* kModes[] = {"FHD (1920x1080)", "QHD (2560x1440)", "UHD (3840x2160)"};
-    int mode = (int)m_sizeMode;
-    if (ImGui::Combo(u8"기준 해상도", &mode, kModes, IM_ARRAYSIZE(kModes)))
-    {
-        m_sizeMode = (UISizeMode)mode;
-        const _float newRatio = GetSizeRatio(m_sizeMode);
-        m_vSize = {m_sizeFHD.x * newRatio, m_sizeFHD.y * newRatio};
-    }
+    
+    Render_GUI_SizeBlock();
 }
 
 void CUIObject_Tool::Render_GUI_Transform()
@@ -477,11 +450,10 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
     ImGui::SeparatorText(u8"이미지");
     if (ImGui::Button(u8"선택"))
     {
-        string filePath = Helper::OpenFile_Dialogue();
+        string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
         if (filePath.empty())
             return;
 
-      
         string fileName = Helper::GetFileNameWithExtension(filePath);
 
         CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
@@ -489,7 +461,7 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
 
         ApplySpriteTexture(0, G_GlobalLevelKey, strTextureKey, true);
 
-        m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);  // 앵커에 맞춰서 자동 정렬
+        m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
     }
 
     Get_Component<CSprite2D>()->Render_GUI();
@@ -499,8 +471,7 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 {
     auto sprite = Get_Component<CSprite2D>();
     sprite->Change_Texture(idx, levelKey, texKey);
-
-    if (!applyOriginSize || !Get_OriginTexSize()) return;
+     
 
     m_sizeMode = UISizeMode::FHD;
 
@@ -509,6 +480,7 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 
     m_sizeFHD = {(float)size.x, (float)size.y};
 
+    if (!applyOriginSize || !Get_OriginTexSize()) return;
     const _float ratio = GetSizeRatio(m_sizeMode);
     Set_Size({m_sizeFHD.x * ratio, m_sizeFHD.y * ratio});
 }
@@ -533,6 +505,41 @@ _float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
         fOffset.y = m_vSize.y * -0.5f;
 
     return fOffset;
+}
+
+_float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
+{
+    if      (mode == UISizeMode::Default) return 1.f;
+    else if (mode == UISizeMode::QHD)     return g_iWinSizeX / 2560.f;
+    else if (mode == UISizeMode::UHD)     return g_iWinSizeX / 3840.f;
+    else                                  return g_iWinSizeX / 1920.f;
+}
+
+void CUIObject_Tool::Render_GUI_SizeBlock()
+{
+    const _float curRatio = GetSizeRatio(m_sizeMode);
+
+    if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
+        m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+
+    if (ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+
+    static const char* kModes[] =
+    {
+        "Default",
+        "FHD (1920x1080)",
+        "QHD (2560x1440)",
+        "UHD (3840x2160)"
+    };
+
+    int mode = (int)m_sizeMode;
+    if (ImGui::Combo(u8"기준 해상도", &mode, kModes, IM_ARRAYSIZE(kModes)))
+    {
+        m_sizeMode = (UISizeMode)mode;
+        const _float newRatio = GetSizeRatio(m_sizeMode);
+        m_vSize = {m_sizeFHD.x * newRatio, m_sizeFHD.y * newRatio};
+    }
 }
 
 void CUIObject_Tool::Free()

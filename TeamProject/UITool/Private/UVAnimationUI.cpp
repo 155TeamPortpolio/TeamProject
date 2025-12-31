@@ -81,7 +81,7 @@ void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
         m_vUVOffsetSpeed = { uvOffsetSpeed[0], uvOffsetSpeed[1] };
     }
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CUVAnimationUI::Create()

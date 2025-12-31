@@ -147,7 +147,7 @@ void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
         m_fFrameSpeed = spriteAnimationJson.value("frameSpeed", 30.0f);
     }
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CSpriteAnimationUI::Create()
