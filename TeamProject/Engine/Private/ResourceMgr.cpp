@@ -508,7 +508,7 @@ vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, cons
 
 	for (auto& Meta : MetaData) {
 
-		string animPath = animDir + "\\" + Meta.ClipTag + ".anim";
+		string animPath = animDir + "\\Anim\\" + Meta.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
 
 		if (!Meta.Events.empty())

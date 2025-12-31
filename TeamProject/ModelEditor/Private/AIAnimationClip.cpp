@@ -32,8 +32,16 @@ HRESULT CAIAnimationClip::Initialize(const aiAnimation* pAIAnimation, CAIModelDa
 			RootChan = i;
 	}
 
+
 	if(-1 != RootChan)
 		dynamic_cast<CAIChannel*>(m_Channels[RootChan])->Set_Root();
+
+
+	if (m_Channels[RootChan]->Get_Name() == "Bip001") {
+		for (auto& Channel : m_Channels)
+			if (Channel->Get_Name() == "Root")
+				dynamic_cast<CAIChannel*>(Channel)->Set_Root();
+	}
 
 	return S_OK;
 }
