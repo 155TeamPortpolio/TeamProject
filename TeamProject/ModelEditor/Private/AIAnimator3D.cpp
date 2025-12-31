@@ -63,25 +63,27 @@ HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* W
 	string AnimSavePath = SavePath + "\\Anim\\";
 	std::filesystem::create_directories(AnimSavePath);
 
-	vector<ANIM_CLIP> Meta;
+	ANIM_META Meta;
 
 	for (auto& Clip : m_pAnimClips) {
 		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
 		std::ofstream ofs(filePath, std::ios::binary);
 
-		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs, WorldMatrix);
+		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);
 
 		ofs.close();
 
 		ANIM_CLIP tClip{};
 		tClip.ClipTag = Clip->Get_Name();
-		Meta.push_back(tClip);
+		Meta.Clips.push_back(tClip);
 	}
 
-	size_t pos = Meta.back().ClipTag.find("_Ani_");
-	string Name = Meta.back().ClipTag.substr(0, pos);
+	Meta.PreTransform = *WorldMatrix;
 
-	Helper::SaveJson<vector<ANIM_CLIP>>(Meta, SavePath + Name + "_Meta.json");
+	size_t pos = Meta.Clips.back().ClipTag.find("_Ani_");
+	string Name = Meta.Clips.back().ClipTag.substr(0, pos);
+
+	Helper::SaveJson<ANIM_META>(Meta, SavePath + Name + "_Meta.json");
 
 	return S_OK;
 }
