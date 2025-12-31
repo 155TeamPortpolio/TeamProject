@@ -19,12 +19,9 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_bool		m_isRadial = {};
-
-	_float		m_fDirection = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
 	_float		m_fFillAmount = { 1.f };
 
 public:
