@@ -61,11 +61,11 @@ void CCanvasPanel::Late_Update(_float dt)
     Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
-void CCanvasPanel::FillElementData(UI_ELEMENT_DATA& data)
+void CCanvasPanel::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
+    __super::Save(data);
 
-    data.strTypeTag = m_strTypeTag;
+    data["typeTag"] = m_strTypeTag;
 }
 
 CGameObject* CCanvasPanel::Create()

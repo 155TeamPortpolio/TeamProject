@@ -32,6 +32,9 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 	desc.ByteWidth = sizeof(ShadowBuffer);
 	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceShadowBuffer);
 
+	desc.ByteWidth = sizeof(LightBuffer);
+	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceLightBuffer);
+
 	desc.ByteWidth = sizeof(SSAOBuffer);
 	pDevice->CreateBuffer(&desc, nullptr, &m_pDeviceSSAOBuffer);
 	/*---------------------------------------------------------------------------------------------------- - */
@@ -144,6 +147,36 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 
 	memcpy(mappedResource.pData, &shadowBuffer, sizeof(ShadowBuffer));
 	pContext->Unmap(m_pDeviceShadowBuffer, 0);
+
+	return S_OK;
+}
+
+HRESULT CPipeLine::Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize)
+{
+	LightBuffer lightBuffer{};
+	lightBuffer.vLightDir = Desc.vLightDirection;
+	lightBuffer.vLightPos = Desc.vLightPosition;
+	lightBuffer.vLightDiffuse = Desc.vLightDiffuse;
+	lightBuffer.vLightAmbient = Desc.vLightAmbient;
+	lightBuffer.vLightSpecular = Desc.vLightSpecular;
+	lightBuffer.fLightRange = Desc.fLightRange;
+	lightBuffer.fLightIntensity = Desc.fLightIntensity;
+	lightBuffer.iLightSize = lightSize;
+
+	D3D11_MAPPED_SUBRESOURCE mappedResource;
+
+	HRESULT hr = pContext->Map(
+		m_pDeviceLightBuffer,
+		0,
+		D3D11_MAP_WRITE_DISCARD,
+		0,
+		&mappedResource
+	);
+	if (FAILED(hr))
+		return hr;
+
+	memcpy(mappedResource.pData, &lightBuffer, sizeof(LightBuffer));
+	pContext->Unmap(m_pDeviceLightBuffer, 0);
 
 	return S_OK;
 }
@@ -353,48 +386,50 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 
 	for (size_t i = 0; i < LightSnapShots.size(); i++)
 	{
-		LIGHT_DESC desc = LightSnapShots[i]; // 값 복사
-
-		SHADER_PARAM LightParam;
-		LightParam.iSize = sizeof(_float4);
-		LightParam.typeName = "float4";
-		LightParam.pData = &desc.vLightDiffuse;
-		pShader->Bind_Value("g_vLightDiffuse", LightParam);
-
-		LightParam.pData = &desc.vLightAmbient;
-		pShader->Bind_Value("g_vLightAmbient", LightParam);
-
-		LightParam.pData = &desc.vLightDirection;
-		pShader->Bind_Value("g_vLightDir", LightParam);
-
-		LightParam.pData = &desc.vLightPosition;
-		pShader->Bind_Value("g_vLightPos", LightParam);
-
-		LightParam.pData = &desc.vLightSpecular;
-		pShader->Bind_Value("g_vLightSpecular", LightParam);
-
-		LightParam.iSize = sizeof(_float);
-		LightParam.typeName = "float";
-		LightParam.pData = &desc.fLightRange;
-		pShader->Bind_Value("g_fLightRange", LightParam);
-
-		LightParam.pData = &desc.fLightIntensity;
-		pShader->Bind_Value("g_fLightIntensity", LightParam);		
-		
-		LightParam.iSize = sizeof(_int);
-		_int LightSize = LightSnapShots.size();
-		LightParam.typeName = "int";
-		LightParam.pData = &LightSize;
-		pShader->Bind_Value("g_iLightSize", LightParam);
-
+		Update_LightBuffer(pContext, LightSnapShots[i], LightSnapShots.size());
+		//LIGHT_DESC desc = LightSnapShots[i]; // 값 복사
+		//
+		//SHADER_PARAM LightParam;
+		//LightParam.iSize = sizeof(_float4);
+		//LightParam.typeName = "float4";
+		//LightParam.pData = &desc.vLightDiffuse;
+		//pShader->Bind_Value("g_vLightDiffuse", LightParam);
+		//
+		//LightParam.pData = &desc.vLightAmbient;
+		//pShader->Bind_Value("g_vLightAmbient", LightParam);
+		//
+		//LightParam.pData = &desc.vLightDirection;
+		//pShader->Bind_Value("g_vLightDir", LightParam);
+		//
+		//LightParam.pData = &desc.vLightPosition;
+		//pShader->Bind_Value("g_vLightPos", LightParam);
+		//
+		//LightParam.pData = &desc.vLightSpecular;
+		//pShader->Bind_Value("g_vLightSpecular", LightParam);
+		//
+		//LightParam.iSize = sizeof(_float);
+		//LightParam.typeName = "float";
+		//LightParam.pData = &desc.fLightRange;
+		//pShader->Bind_Value("g_fLightRange", LightParam);
+		//
+		//LightParam.pData = &desc.fLightIntensity;
+		//pShader->Bind_Value("g_fLightIntensity", LightParam);		
+		//
+		//LightParam.iSize = sizeof(_int);
+		//_int LightSize = LightSnapShots.size();
+		//LightParam.typeName = "int";
+		//LightParam.pData = &LightSize;
+		//pShader->Bind_Value("g_iLightSize", LightParam);
+		//
 		ID3D11InputLayout* pLayout;
 
-		switch (desc.eType)
+		switch (LightSnapShots[i].eType)
 		{
 		case Engine::LIGHT_TYPE::DIRECTIONAL:
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "DIRECTIONAL", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("DIRECTIONAL", pContext);
+			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
@@ -402,6 +437,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pRenderer->Get_BufferInputLayout(pBuffer, pShader, "POINT", &pLayout);
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("POINT", pContext);
+			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
@@ -449,6 +485,7 @@ void CPipeLine::Free()
 	Safe_Release(m_pObjectResource);
 	Safe_Release(m_pDeviceShadowBuffer);
 	Safe_Release(m_pDeviceSSAOBuffer);
+	Safe_Release(m_pDeviceLightBuffer);
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 	Safe_Release(m_pHiZ);

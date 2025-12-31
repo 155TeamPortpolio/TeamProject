@@ -19,19 +19,9 @@ public:
 	virtual void Render_GUI() override;
 
 public:
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_char		m_szText[MAX_PATH] = {};
-	_float		m_fFontScale = { 1.f };
-
-	_bool		m_isOutlined = {};
-	_float		m_fOutlineThickness = { 1.f };
-	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
-
-	_int		m_iAlign = {};
-
-	_bool		m_isSizeToContent = { true };
 
 public:
 	static CGameObject* Create();

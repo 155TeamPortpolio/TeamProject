@@ -1,4 +1,4 @@
-#include "Shader_Define.hlsl"
+#include "Shader_Deferred_Define.hlsl"
 
 matrix g_WorldMatrix;
 
