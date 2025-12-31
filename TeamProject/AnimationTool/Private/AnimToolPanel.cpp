@@ -668,7 +668,7 @@ void CAnimToolPanel::Load_Clips()
 			SavePath = filesystem::path(path).parent_path().string();
 			bFirstFile = false;
 		}
-		////연속으로 들어온 데이터면 이름이 같은지 비교
+		//연속으로 들어온 데이터면 이름이 같은지 비교
 		//else { 
 		//	if (MetaTag != nameTag) {
 		//		OutputDebugStringA("Different from other animation names");
