@@ -24,11 +24,11 @@ void CSacrificeState_Attack::Enter(CSacrifice* pOwner)
 	{
 	case CSacrifice::PHASE::PHASE1:
 	{
-		m_pSubStateMachine->Set_DefaultState("Phase1");
+		m_pSubStateMachine->Change_State("Phase1");
 	}break;
 	case CSacrifice::PHASE::PHASE2:
 	{
-		m_pSubStateMachine->Set_DefaultState("Phase2");
+		m_pSubStateMachine->Change_State("Phase2");
 	}break;
 	default:
 		break;

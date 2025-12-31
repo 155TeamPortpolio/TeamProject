@@ -194,6 +194,7 @@
     <ClInclude Include="..\Public\SacrificeState_Born.h" />
     <ClInclude Include="..\Public\SacrificeState_Evade.h" />
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h" />
     <ClInclude Include="..\Public\SacrificeState_Hit.h" />
     <ClInclude Include="..\Public\SacrificeState_Idle.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk.h" />
@@ -295,6 +296,7 @@
     <ClCompile Include="..\Private\SacrificeState_Born.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Evade.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk.cpp" />
