@@ -91,6 +91,30 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
     </Filter>
@@ -220,31 +244,7 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
       <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIElement">
-      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
-      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Button">
-      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Gauge">
-      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Image">
-      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
-      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
-      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Text">
-      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-       </Filter>
-        <Filter Include="02. GameObject\Object\Player\Character\Anbi">
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
@@ -267,6 +267,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
       <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin">
+      <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -501,9 +504,6 @@
     <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Struct.h">
-      <Filter>02. GameObject\UI</Filter>
- </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
@@ -525,6 +525,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\AnbiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Corin.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -774,6 +777,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Corin.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -161,6 +161,7 @@
     <ClInclude Include="..\Public\CanvasPanel.h" />
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\Corin.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="..\Private\CanvasPanel.cpp" />
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
+    <ClCompile Include="..\Private\Corin.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
