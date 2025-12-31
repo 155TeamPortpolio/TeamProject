@@ -70,37 +70,42 @@ void CGaugeUI::Render_GUI()
         sprite->Set_Param("Direction",  { &m_fDirection, "float", sizeof(_float) });
 }
 
-void CGaugeUI::FillElementData(UI_ELEMENT_DATA& data)
+void CGaugeUI::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
+    __super::Save(data);
 
-    data.strTypeTag    = m_strTypeTag;
-    data.strTextureTag = m_strTextureKey;
-    data.isRadial      = m_isRadial;
-    data.fDirection    = m_fDirection;
-    data.fFillAmount   = m_fFillAmount;
+    data["typeTag"] = m_strTypeTag;
+    data["textureTag"] = m_strTextureKey;
+
+    auto& gaugeJson = data["gauge"];
+    gaugeJson["radial"] = m_isRadial;
+    gaugeJson["direction"] = m_fDirection;
+    gaugeJson["fillAmount"] = m_fFillAmount;
 }
 
-void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CGaugeUI::Load(const nlohmann::ordered_json& data)
 {
-    __super::ReadElementData(data);
+    __super::Load(data);
 
-    m_strTextureKey = data.strTextureTag;
-    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+    m_strTextureKey = data.value("textureTag", "");
 
-    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
+    if (data.contains("gauge"))
+    {
+        const auto& gaugeJson = data["gauge"];
+        m_isRadial = gaugeJson.value("radial", false);
+        m_fDirection = gaugeJson.value("direction", 0.0f);
+        m_fFillAmount = gaugeJson.value("fillAmount", 1.0f);
+    }
 
-    m_isRadial = data.isRadial;
-    m_fDirection = data.fDirection;
-    m_fFillAmount = data.fFillAmount;
+    auto pSprite = Get_Component<CSprite2D>();
 
-    auto sprite = Get_Component<CSprite2D>();
+    pSprite->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
 
-    if (m_isRadial) sprite->ChangePass("RadialFill");
-    else            sprite->ChangePass("LinearFill");
+    if (m_isRadial) pSprite->ChangePass("RadialFill");
+    else            pSprite->ChangePass("LinearFill");
 
-    sprite->Set_Param("Direction",  {&m_fDirection,  "float", sizeof(_float)});
-    sprite->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
+    pSprite->Set_Param("Direction", { &m_fDirection,  "float", sizeof(_float) });
+    pSprite->Set_Param("FillAmount", { &m_fFillAmount, "float", sizeof(_float) });
 }
 
 CGameObject* CGaugeUI::Create()
