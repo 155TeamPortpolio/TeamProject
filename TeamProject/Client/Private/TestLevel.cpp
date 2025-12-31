@@ -32,6 +32,7 @@
 
 /* Character */
 #include "Miyabi.h"
+#include "Anbi.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 
