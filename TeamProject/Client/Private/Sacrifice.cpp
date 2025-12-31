@@ -37,8 +37,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
-	//pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Anim/SacrificeBringer_Meta.json");
-	pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer_Meta.json");
+	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer_Meta.json");
 
 	return S_OK;
 }
@@ -55,7 +54,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
 	pAnimator->Set_MotionBone(3); //Bip001
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
@@ -69,7 +68,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	m_PartMeshIndices[ENUM(PARTS::ICE)] = 7;
 	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 11;
 	m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)] = 12;
-	m_PartMeshIndices[ENUM(PARTS::WEAPON_ROAD)] = 13;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)] = 13;
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
@@ -150,6 +149,16 @@ void CSacrifice::ActiveAxe()
 void CSacrifice::DeactiveAxe()
 {
 	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)], false);
+}
+
+void CSacrifice::ActiveWhip()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], true);
+}
+
+void CSacrifice::DeactiveWhip()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], false);
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

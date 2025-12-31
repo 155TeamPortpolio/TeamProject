@@ -11,7 +11,7 @@ class CSacrifice final :
 {
 public:
     enum class PHASE { PHASE1, PHASE2, END };
-    enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_ROAD, END };
+    enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_WHIP, END };
 
 private:
     CSacrifice();
@@ -37,6 +37,8 @@ public:
     void DeactiveSword();
     void ActiveAxe();
     void DeactiveAxe();
+    void ActiveWhip();
+    void DeactiveWhip();
     void Idle() { m_RequestIdle = true; }
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
@@ -58,6 +60,6 @@ private:
     _float m_fIdleDuration = 0.3f;
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
-    PHASE m_eCurrPhase = PHASE::PHASE1;
+    PHASE m_eCurrPhase = PHASE::PHASE2;
 };
 NS_END

@@ -8,13 +8,26 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 	{
 		m_pSubStateMachine = CStateMachine<CSacrifice>::Create();
 
-		m_pSubStateMachine->Register_State("Idle_Phase1", CSacrificeState_Idle_Phase1::Create());
-		m_pSubStateMachine->Register_State("Idle_Phase2", CSacrificeState_Idle_Phase2::Create());
+		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Idle_Phase1::Create());
+		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Idle_Phase2::Create());
 
-		m_pSubStateMachine->Set_DefaultState("Idle_Phase1");
+		__super::Enter(pOwner);
 	}
 
-	__super::Enter(pOwner);
+	CSacrifice::PHASE currPhse = pOwner->GetCurrPhase();
+	switch (currPhse)
+	{
+	case CSacrifice::PHASE::PHASE1:
+	{
+		m_pSubStateMachine->Change_State("Phase1");
+	}break;
+	case CSacrifice::PHASE::PHASE2:
+	{
+		m_pSubStateMachine->Change_State("Phase2");
+	}break;
+	default:
+		break;
+	}
 }
 
 void CSacrificeState_Idle::Update(CSacrifice* pOwner, _float dt)
@@ -45,6 +58,7 @@ void CSacrificeState_Idle_Phase2::Enter(CSacrifice* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P2_Idle")
 		.Loop(true)
+		.BlendDuration(0.5f)
 		.Apply();
 }
 
