@@ -8,7 +8,7 @@ NS_END
 
 NS_BEGIN(UITool)
 
-enum class UISizeMode { FHD, QHD, UHD };
+enum class UISizeMode { Default, FHD, QHD, UHD };
 
 class CUIObject_Tool abstract : public CUI_Object
 {
@@ -43,6 +43,11 @@ protected:
 
 	/*앵커 기준점에 따라 자동정렬을 하기 위해 앵커오프셋 값을 반환 (사이즈를 반영한 픽셀 값 반환)*/
 	_float2 Get_AnchorOffset(ANCHOR eAnchor);
+	
+
+private:
+	_float  GetSizeRatio(UISizeMode mode);
+	void    Render_GUI_SizeBlock();
 
 protected:
 	_bool m_useOriginTexSize = true;

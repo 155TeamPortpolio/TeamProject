@@ -70,8 +70,7 @@ void CImageUI::Load(const nlohmann::ordered_json& data)
     __super::Load(data);
 
     m_strTextureKey = data.value("textureTag", "");
-
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CImageUI::Create()

@@ -115,10 +115,10 @@ void CButtonUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
 
-    m_strTextureKey = data.value("textureTag", "");
     strcpy_s(m_szEventMsg, data.value("eventMsgTag", "").c_str());
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
+    m_strTextureKey = data.value("textureTag", "");
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CButtonUI::Create()

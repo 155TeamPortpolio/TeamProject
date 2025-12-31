@@ -19,6 +19,10 @@ namespace Helper
 	ENGINE_DLL vector<string> OpenMultiFolders();
 	//여러 파일 가져오기
 	ENGINE_DLL vector<string> OpenMultiFiles();
+
+	// json 만 보이게 -> auto files = OpenMultiFiles({ { "JSON Files", "*.json" } }, "json");
+	ENGINE_DLL string OpenFile(const vector<pair<string, string>>& filters = {}, const string& defaultExt = "");
+
 	//파일 저장용 탐색기
 	ENGINE_DLL string SaveFileDialog();
 	//파일 저장용 탐색기 - nfd기반
@@ -47,7 +51,6 @@ namespace Helper
 
 	//주소(디렉토리)가 있는지 체크하고 없다면 폴더 생성
 	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
-
 }
 
 //json 저장 및 불러오기
