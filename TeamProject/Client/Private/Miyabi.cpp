@@ -70,7 +70,7 @@ void CMiyabi::Awake()
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
 
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 0.0), 0.1f);
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.f, 0.0), 0.1f);
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 

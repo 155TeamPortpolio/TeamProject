@@ -29,44 +29,6 @@ HRESULT CPostRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pP
 	return S_OK;
 }
 
-HRESULT CPostRenderer::Render_EffectBloom()
-{
-	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_H"))) return E_FAIL;
-
-		m_pTargetManager->Bind_Target("Target_BloomEffect", m_pShader, "g_BrightTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader,"g_BloomInfo" );
-
-		ID3D11InputLayout* pLayout;
-		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
-		m_pContext->IASetInputLayout(pLayout);
-
-		m_pShader->Apply("BLOOM_BLURX", m_pContext);
-		m_pVIBuffer->Bind_Buffer(m_pContext);
-		m_pVIBuffer->Render(m_pContext);
-
-		m_pTargetManager->End_MRT();
-	}
-
-	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_V"))) return E_FAIL;
-
-		m_pTargetManager->Bind_Target("Target_BloomBlurX", m_pShader, "g_BlurXTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "g_BloomInfo");
-
-		ID3D11InputLayout* pLayout;
-		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
-		m_pContext->IASetInputLayout(pLayout);
-
-		m_pShader->Apply("BLOOM_BLURY", m_pContext);
-		m_pVIBuffer->Bind_Buffer(m_pContext);
-		m_pVIBuffer->Render(m_pContext);
-
-		m_pTargetManager->End_MRT();
-	}
-	return S_OK;
-}
-
 HRESULT CPostRenderer::Render_HDRBloom()
 {
 	{
@@ -174,21 +136,16 @@ HRESULT CPostRenderer::Render_Final()
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "FINAL", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "g_FinalTexture");
-	else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "g_FinalTexture");
+	if (fogDesc.IsUse) m_pTargetManager->Bind_Target("Target_Fog", m_pShader, "FinalTexture");
+	else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
-	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "g_HDRBloomFinalTexture");
-	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "g_UITexture");
-	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
-	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "g_BloomFinal");
+	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
+	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UITexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "3DUITexture");
+	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "BloomFinal");
 
 	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
-
-	SHADER_PARAM WorldMat = {};
-	WorldMat.iSize = sizeof(_float4x4);
-	WorldMat.typeName = "float4x4";
-	WorldMat.pData = &m_WorldMatrix;
-	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+	Bind_WorldMatrix();
 
 	m_pShader->Apply("FINAL", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
@@ -224,18 +181,6 @@ HRESULT CPostRenderer::Ready_Target()
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
-	RenderTargetDesc BloomDesc = { "Target_Bloom" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomDesc);
-
-	RenderTargetDesc BloomInfoDesc = { "Target_BloomInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomInfoDesc);
-
-	RenderTargetDesc BloomBlurXDesc = { "Target_BloomBlurX" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomBlurXDesc);
-
-	RenderTargetDesc BloomBlurYDesc = { "Target_BloomBlurY" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomBlurYDesc);
-
 	RenderTargetDesc HDRBrightDesc = { "Target_HDR_Bright" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(HDRBrightDesc);
 
@@ -256,13 +201,6 @@ HRESULT CPostRenderer::Ready_Target()
 
 HRESULT CPostRenderer::Ready_MRT()
 {
-	{   
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_Bloom"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom", "Target_BloomInfo"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_H", "Target_BloomBlurX"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_V", "Target_BloomBlurY"))) return E_FAIL;
-	}
-
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Distortion_Add", "Target_Distortion_Add"))) return E_FAIL;
 	}
@@ -364,5 +302,9 @@ void CPostRenderer::Free()
 {
 	__super::Free();
 	
+	for (auto& texture : m_pNoiseTextures)
+		Safe_Release(texture.second);
+	m_pNoiseTextures.clear();
+
 	Safe_Release(m_pDistortionNoiseTexture);
 }

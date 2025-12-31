@@ -646,6 +646,9 @@ exit /b 0</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_StaticMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />

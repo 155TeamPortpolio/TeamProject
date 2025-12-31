@@ -15,7 +15,6 @@ public:
     void Set_FogDesc(FOG_DESC desc) { fogDesc = desc; };
 
 public:
-    HRESULT Render_EffectBloom();
     HRESULT Render_HDRBloom();
     HRESULT Render_Distortion();
     HRESULT Render_Fog();

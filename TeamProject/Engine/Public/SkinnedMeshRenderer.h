@@ -17,6 +17,8 @@ public:
 public:
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
     HRESULT Render_RimLight();
+    HRESULT Render_SkinnedMesh_LightAcc();
+    HRESULT Render_SkinnedMesh_Combined();
     HRESULT Process_OutLineQueue();
     void Add_OutLineCommand(const OUTLINE_COMMAND& command);
 public:

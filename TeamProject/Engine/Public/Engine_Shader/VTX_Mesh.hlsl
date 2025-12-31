@@ -61,7 +61,8 @@ struct PS_OUT
     vector vNormal : SV_TARGET1;
     vector vDepth : SV_TARGET2;
     vector vMetalic : SV_TARGET3;
-    vector vEmissive : SV_Target4;
+    vector vEmissive : SV_TARGET4;
+    float2 fEmissiveInfo : SV_TARGET5;
 };
 
 PS_OUT PS_MAIN(PS_IN In)
@@ -104,7 +105,8 @@ PS_OUT PS_MAIN(PS_IN In)
     float linearDepth = saturate(In.viewZ / zFar);
     Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zFar, linearDepth, 1.f);
     Out.vMetalic = float4(vMetalic.rgb, 0.3f);
-    Out.vEmissive = vMtrlDiffuse * vMetalic.b * 3.f;
+    Out.vEmissive = float4(vMtrlDiffuse.rgb * vMetalic.b * 1.f, vMetalic.a);
+    Out.fEmissiveInfo = float2(0.f, 2.f);
     return Out;
 }
 

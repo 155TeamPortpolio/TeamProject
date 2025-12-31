@@ -13,7 +13,10 @@ private:
 
 public:
     HRESULT Render_StaticMesh(class StaticOpaquePass* pOpaquePass, class InstancePass* pInstancePass);
+    HRESULT Render_StaticMesh_Bloom();
     HRESULT Render_SSAO();
+    HRESULT Render_StaticMesh_LightAcc();
+    HRESULT Render_StaticMesh_Combined();
 
 public:
     void Update(_float dt);

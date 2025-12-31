@@ -29,8 +29,7 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	LoadShader("Shader_Deferred.hlsl");
 	Ready_Target();
 	Ready_MRT();
-	m_pRampTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
-	
+
 	m_pStaticRenderer = CStaticMeshRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pSkinnedRenderer = CSkinnedMeshRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 
@@ -79,20 +78,8 @@ HRESULT CForwardRenderer::Render_SkinnedMesh(SkinnedOpaquePass* pOpaquePass)
 
 HRESULT CForwardRenderer::Render_LightAcc()
 {
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_LightAcc"))) return E_FAIL;
-
-	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
-	m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
-	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
-	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");
-	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
-	m_pTargetManager->Bind_Target("Target_FaceDir", m_pShader, "g_LookTexture");
-
-	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
-	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
-	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
-
-	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	m_pSkinnedRenderer->Render_SkinnedMesh_LightAcc();
+	m_pStaticRenderer->Render_StaticMesh_LightAcc();
 
 	return S_OK;
 }
@@ -118,7 +105,7 @@ HRESULT CForwardRenderer::Render_OutLine()
 HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
 	ID3D11RenderTargetView* pPrevRTV = { nullptr };
 	ID3D11DepthStencilView* pPrevDSV = { nullptr };
@@ -137,7 +124,7 @@ HRESULT CForwardRenderer::Render_Blended(BlendedPass* pBlendPass)
 HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
 	ID3D11RenderTargetView* pPrevRTV = { nullptr };
 	ID3D11DepthStencilView* pPrevDSV = { nullptr };
@@ -155,38 +142,33 @@ HRESULT CForwardRenderer::Render_NonLight(NonLightPass* pNonLightPass)
 
 HRESULT CForwardRenderer::Render_Combined()
 {
+	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
+	m_pStaticRenderer->Render_StaticMesh_Combined();
+
+	//m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "COMBINED", &pLayout);
 	m_pContext->IASetInputLayout(pLayout);
 
-	m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "g_DiffuseTexture");
-	m_pTargetManager->Bind_Target("Target_DiffuseEffect", m_pShader, "g_EffectDiffuseTexture");
-	m_pTargetManager->Bind_Target("Target_Depth", m_pShader, "g_DepthTexture");
-	m_pTargetManager->Bind_Target("Target_SSAO_Blur", m_pShader, "g_SSAOBlurTexture");
-	m_pTargetManager->Bind_Target("Target_Metalic", m_pShader, "g_MetalicTexture");
-	m_pTargetManager->Bind_Target("Target_Light", m_pShader, "g_LightTexture");
-	m_pTargetManager->Bind_Target("Target_LightInfo", m_pShader, "g_LightInfoTexture");
-	m_pTargetManager->Bind_Target("Target_Shadow", m_pShader, "g_ShadowTexture");
-	m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "g_AmbientTexture");
-	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "g_3DUITexture");
-	m_pTargetManager->Bind_Target("Target_RimLightFinal", m_pShader, "g_RimLightFinalTexture");
-	m_pTargetManager->Bind_Target("Target_Normal", m_pShader, "g_NormalTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
 
-	m_pShader->Bind_Value("g_RampTexture", { m_pRampTexture->Get_SRV(), "Texture2D", 0 });
-
-	SHADER_PARAM WorldMat = {};
-	WorldMat.iSize = sizeof(_float4x4);
-	WorldMat.typeName = "float4x4";
-	WorldMat.pData = &m_WorldMatrix;
-	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
+	Bind_WorldMatrix();
 
 	m_pShader->Apply("COMBINED", m_pContext);
 	m_pVIBuffer->Bind_Buffer(m_pContext);
 	m_pVIBuffer->Render(m_pContext);
 
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_Bloom()
+{
+	m_pStaticRenderer->Render_StaticMesh_Bloom();
 	return S_OK;
 }
 
@@ -211,29 +193,9 @@ HRESULT CForwardRenderer::Ready_Target()
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	{
-		RenderTargetDesc DiffuseDesc = { "Target_Diffuse" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(DiffuseDesc);
-
-		RenderTargetDesc NormalDesc = { "Target_Normal" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(NormalDesc);
-
-		RenderTargetDesc DepthlDesc = { "Target_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(DepthlDesc);
-
-		RenderTargetDesc MetalDesc = { "Target_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(MetalDesc);
-
 		RenderTargetDesc ShadowDesc = { "Target_Shadow" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(1.f, 1.f, 1.f, 1.f) ,g_iMaxWidth, g_iMaxHeight };
 		m_pTargetManager->Create_Target(ShadowDesc);
 	}
-
-	{
-		RenderTargetDesc LightDesc = { "Target_Light" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(LightDesc);
-		RenderTargetDesc LightInfoDesc = { "Target_LightInfo" , DXGI_FORMAT_R16G16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
-		m_pTargetManager->Create_Target(LightInfoDesc);
-	}
-
 	{
 		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(FianlDesc);
@@ -247,12 +209,6 @@ HRESULT CForwardRenderer::Ready_MRT()
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
 	}
-
-	{
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_Light")))return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_LightAcc", "Target_LightInfo")))return E_FAIL;
-	}
-
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Final", "Target_Final"))) return E_FAIL;
 	}
@@ -273,8 +229,6 @@ CForwardRenderer* CForwardRenderer::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 void CForwardRenderer::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pRampTexture);
 
 	Safe_Release(m_pSkinnedRenderer);
 	Safe_Release(m_pStaticRenderer);
