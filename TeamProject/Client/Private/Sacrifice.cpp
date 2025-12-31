@@ -244,7 +244,7 @@ void CSacrifice::Update_States(_float dt)
 			{
 				m_pStateMachine->Set_Trigger("Idle_To_Evade");
 			}
-
+	
 			m_fIdleElasedTime = 0.f;
 		}
 	}

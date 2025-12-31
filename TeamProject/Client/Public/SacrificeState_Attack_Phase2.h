@@ -18,7 +18,7 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
-	void BuildPattern(ATTACK_BLACK_BOARD& blackBoard);
+	void BuildPattern(CSacrifice* pOwner,ATTACK_BLACK_BOARD& blackBoard);
 };
 
 /* Phase2 State */
@@ -32,6 +32,9 @@ public:
 public:
 	static CSacrificeState_Attack_01_Phase2* Create() { return new CSacrificeState_Attack_01_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsAttackStart = false;
 
 };
 

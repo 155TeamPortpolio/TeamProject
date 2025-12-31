@@ -10,6 +10,7 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Idle_Phase1::Create());
 		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Idle_Phase2::Create());
+		m_pSubStateMachine->Register_State("OverDrive", CSacrificeState_Idle_OverDrive::Create());
 
 		__super::Enter(pOwner);
 	}
@@ -23,7 +24,10 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 	}break;
 	case CSacrifice::PHASE::PHASE2:
 	{
-		m_pSubStateMachine->Change_State("Phase2");
+		if(pOwner->IsOverDrive())
+			m_pSubStateMachine->Change_State("OverDrive");
+		else
+			m_pSubStateMachine->Change_State("Phase2");
 	}break;
 	default:
 		break;
@@ -58,7 +62,6 @@ void CSacrificeState_Idle_Phase2::Enter(CSacrifice* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P2_Idle")
 		.Loop(true)
-		.BlendDuration(0.5f)
 		.Apply();
 }
 
@@ -67,5 +70,20 @@ void CSacrificeState_Idle_Phase2::Update(CSacrifice* pOwner, _float dt)
 }
 
 void CSacrificeState_Idle_Phase2::Exit(CSacrifice* pOwner)
+{
+}
+
+void CSacrificeState_Idle_OverDrive::Enter(CSacrifice* pOwner)
+{
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack_Idle_Loop")
+		.Loop(true)
+		.Apply();
+}
+
+void CSacrificeState_Idle_OverDrive::Update(CSacrifice* pOwner, _float dt)
+{
+}
+
+void CSacrificeState_Idle_OverDrive::Exit(CSacrifice* pOwner)
 {
 }

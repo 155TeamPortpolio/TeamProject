@@ -39,6 +39,11 @@ public:
     void DeactiveAxe();
     void ActiveWhip();
     void DeactiveWhip();
+
+    _bool IsOverDrive()const { return m_IsOverDrive; }
+    void ActiveOverDrive() { m_IsOverDrive = true; }
+    void DeactiveOverDrive() { m_IsOverDrive = false; }
+
     void Idle() { m_RequestIdle = true; }
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
@@ -60,6 +65,8 @@ private:
     _float m_fIdleDuration = 0.3f;
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
+
     PHASE m_eCurrPhase = PHASE::PHASE2;
+    _bool m_IsOverDrive = true; /* Only Use Phase2 */
 };
 NS_END
