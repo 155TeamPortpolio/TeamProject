@@ -6,6 +6,29 @@ NS_BEGIN(Engine)
 class CCollisionSystem final : public ICollisionService
 {
 private:
+    struct COLLIDABLE_SLOT
+    {
+        enum class STATE : _uint
+        {
+            ACTIVE = 0,
+            INACTIVE = 1,
+            DEAD = 2,
+        };
+
+        ICollidable* pCollidable = nullptr;
+        STATE eState = STATE::ACTIVE;
+        _uint iGeneration = 0;
+
+        bool IsValid() const {
+            return eState != STATE::DEAD && pCollidable != nullptr;
+        }
+
+        bool IsActive() const {
+            return eState == STATE::ACTIVE && pCollidable != nullptr;
+        }
+    };
+
+private:
     // Collider/RigidBody용 프록시
     class CPhysXEventCallback : public PxSimulationEventCallback
     {
@@ -63,6 +86,10 @@ private:
     void Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
     void Process_CollisionEvents();
 
+    void  Remove_DeactiveSlots();
+    void  Clean_DeadSlots();
+    _bool Is_SlotActive(_int iIndex) const;
+
     ICollidable* Get_Collidable_Actor(PxRigidActor* pActor);
     ICollidable* Get_Collidable_Shape(PxShape* pShape, PxRigidActor* pActor);
 
@@ -87,7 +114,11 @@ private:
     ID3D11DeviceContext*        m_pContext = { nullptr };
     CPhysXEventCallback*        m_pPhysXCallback = { nullptr }; 
     CCCTHitCallback*            m_pCCTCallback = { nullptr };
-    vector<class ICollidable*>  m_Collidables;
+    vector<COLLIDABLE_SLOT>     m_Collidables;
+
+#ifdef USE_MULTITHREAD_PHYSICS
+    mutable recursive_mutex     m_SlotMutex;
+#endif
 
 public:
     static CCollisionSystem* Create(ID3D11Device* pDevice , ID3D11DeviceContext* pContext);
