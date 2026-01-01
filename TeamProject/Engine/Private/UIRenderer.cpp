@@ -43,31 +43,46 @@ HRESULT CUIRenderer::Render_2D(UIPass* pUIPass)
 	CGameInstance::GetInstance()->Get_FontSystem()->Clear_Texts();
 	return S_OK;
 }
-
 HRESULT CUIRenderer::Render_CustomTarget()
 {
+	sort(m_RenderCommands.begin(), m_RenderCommands.end(),
+		[&](RENDER_CUSTOM_COMMAND& lhs, RENDER_CUSTOM_COMMAND& rhs) {
+			return lhs.TargetKey < rhs.TargetKey;
+		});
+
+	string currentTargetKey = "";
+	CRenderTarget* pCurrentTarget = nullptr;
+
 	for (auto& cmd : m_RenderCommands)
 	{
-		CRenderTarget* pTarget = m_pTargetManager->Get_CustomTarget(cmd.TargetKey);
-
-		if (!pTarget)
+		if (currentTargetKey != cmd.TargetKey)
 		{
-			MSG_BOX("Invalid RenderCommand Target Key");
-			continue;
+			if (!currentTargetKey.empty())
+				m_pTargetManager->Pop_Target();
+
+			pCurrentTarget = m_pTargetManager->Get_CustomTarget(cmd.TargetKey);
+			if (!pCurrentTarget)
+			{
+				MSG_BOX("Invalid RenderCommand Target Key");
+				continue;
+			}
+
+			m_pTargetManager->Push_Target(cmd.TargetKey);
+			if (pCurrentTarget->Get_RTV()) pCurrentTarget->Clear();
+			if (pCurrentTarget->Get_DSV())
+				m_pContext->ClearDepthStencilView(pCurrentTarget->Get_DSV(),
+					D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
+
+			currentTargetKey = cmd.TargetKey;
 		}
 
-		m_pTargetManager->Push_Target(cmd.TargetKey);
-
-		if (pTarget->Get_RTV()) pTarget->Clear();
-		if (pTarget->Get_DSV()) m_pContext->ClearDepthStencilView(pTarget->Get_DSV(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.f, 0);
-
 		cmd.DrawCallback(m_pContext);
-
-		m_pTargetManager->Pop_Target();
 	}
 
-	m_RenderCommands.clear();
+	if (!currentTargetKey.empty())
+		m_pTargetManager->Pop_Target();
 
+	m_RenderCommands.clear();
 	return S_OK;
 }
 
