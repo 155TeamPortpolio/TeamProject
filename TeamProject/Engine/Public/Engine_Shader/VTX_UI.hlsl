@@ -108,7 +108,8 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }
@@ -121,7 +122,8 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }
@@ -134,7 +136,8 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }
@@ -182,7 +185,9 @@ PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
         vDiffuse.a *= maskA;
     }
 
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
+    
     return Out;
 }
 
@@ -259,7 +264,8 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
     if (vTexcoord.x > FillAmount)
         discard;
     
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }
@@ -282,7 +288,8 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     if (!fGauge)
         discard;
     
-    Out.vColor = vDiffuse * vColor;
+    float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }

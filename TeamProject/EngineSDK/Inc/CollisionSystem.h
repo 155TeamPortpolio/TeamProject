@@ -11,7 +11,8 @@ private:
         enum class STATE : _uint
         {
             ACTIVE = 0,
-            DEAD = 1,
+            INACTIVE = 1,
+            DEAD = 2,
         };
 
         ICollidable* pCollidable = nullptr;
@@ -20,6 +21,10 @@ private:
 
         bool IsValid() const {
             return eState != STATE::DEAD && pCollidable != nullptr;
+        }
+
+        bool IsActive() const {
+            return eState == STATE::ACTIVE && pCollidable != nullptr;
         }
     };
 
@@ -81,9 +86,9 @@ private:
     void Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
     void Process_CollisionEvents();
 
-    void  Remove_InvalidCollisions();
+    void  Remove_DeactiveSlots();
     void  Clean_DeadSlots();
-    _bool Is_SlotValid(_int iIndex) const;
+    _bool Is_SlotActive(_int iIndex) const;
 
     ICollidable* Get_Collidable_Actor(PxRigidActor* pActor);
     ICollidable* Get_Collidable_Shape(PxShape* pShape, PxRigidActor* pActor);
@@ -109,7 +114,11 @@ private:
     ID3D11DeviceContext*        m_pContext = { nullptr };
     CPhysXEventCallback*        m_pPhysXCallback = { nullptr }; 
     CCCTHitCallback*            m_pCCTCallback = { nullptr };
-    vector<COLLIDABLE_SLOT>  m_Collidables;
+    vector<COLLIDABLE_SLOT>     m_Collidables;
+
+#ifdef USE_MULTITHREAD_PHYSICS
+    mutable recursive_mutex     m_SlotMutex;
+#endif
 
 public:
     static CCollisionSystem* Create(ID3D11Device* pDevice , ID3D11DeviceContext* pContext);
