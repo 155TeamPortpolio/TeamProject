@@ -51,6 +51,7 @@ void CSacrificeState_Death_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 void CSacrificeState_Death_Phase1::Exit(CSacrifice* pOwner)
 {
+
 }
 
 void CSacrificeState_Death_Phase2::Enter(CSacrifice* pOwner)

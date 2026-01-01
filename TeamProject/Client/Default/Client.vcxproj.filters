@@ -268,6 +268,21 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Death">
       <UniqueIdentifier>{4aa0dc92-7d49-4159-86a4-91d13d5ba9a3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1">
+      <UniqueIdentifier>{7ae764fb-3cd5-47c3-81a7-8028f4595995}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2">
+      <UniqueIdentifier>{6161d558-f758-47c7-aaec-bff403ae3067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry">
+      <UniqueIdentifier>{beb90b94-c22f-4624-beb9-1487cb746eb6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1">
+      <UniqueIdentifier>{f8eca649-1a2f-416d-9070-0db8a1f8f641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2">
+      <UniqueIdentifier>{39ef22a4-9d41-4930-b9a9-d39e363778d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -539,6 +554,21 @@
     <ClInclude Include="..\Public\SacrificeState_Death.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -799,6 +829,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -15,7 +15,9 @@
 #include "SacrificeState_Born.h"
 #include "SacrificeState_Hit.h"
 #include "SacrificeState_Evade.h"
+#include "SacrificeState_Death.h"
 #include "SacrificeState_ChangePhase.h"
+#include "SacrificeState_Parry.h"
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -164,7 +166,8 @@ void CSacrifice::DeactiveWhip()
 
 void CSacrifice::ChangePhase()
 {
-
+	if (PHASE::PHASE1 == m_eCurrPhase)
+		m_pStateMachine->Change_State("ChangePhase");
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()
@@ -193,7 +196,9 @@ HRESULT CSacrifice::Initialize_States()
 	m_pStateMachine->Register_State("Born",CSacrificeState_Born::Create());
 	m_pStateMachine->Register_State("Hit",CSacrificeState_Hit::Create());
 	m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
+	m_pStateMachine->Register_State("Death", CSacrificeState_Death::Create());
 	m_pStateMachine->Register_State("ChangePhase", CSacrificeState_ChangePhase::Create());
+	m_pStateMachine->Register_State("Parry", CSacrificeState_Parry::Create());
 
 	return S_OK;
 }
@@ -213,10 +218,14 @@ HRESULT CSacrifice::Initialize_Transitions()
 
 	/* From Death */
 	m_pStateMachine->Register_Transition("Death", "ChangePhase",
-		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Death_To_ChangePhase");
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
 	/* From Change Phase */
 	m_pStateMachine->Register_Transition("ChangePhase", "Idle",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+
+	/* From Parry */
+	m_pStateMachine->Register_Transition("Parry", "Idle",
 		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
 	return S_OK;
@@ -233,12 +242,8 @@ void CSacrifice::Update_States(_float dt)
 		m_RequestIdle = false;
 	}
 
-	/* Phase Change */
-	m_fPhase1ElapseTime += dt;
-	if (m_fPhase1ElapseTime >= m_fPhase1Duration
-		&& "ChangePhase" != m_pStateMachine->Get_CurrentStateName()
-		&& PHASE::PHASE2 != m_eCurrPhase)
-		m_pStateMachine->Change_State("ChangePhase");
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_SPACE))
+		m_pStateMachine->Change_State("Parry");
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())

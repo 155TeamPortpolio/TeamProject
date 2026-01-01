@@ -205,7 +205,12 @@
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h" />
     <ClInclude Include="..\Public\SacrificeState_Hit.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase2.h" />
     <ClInclude Include="..\Public\SacrificeState_Idle.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase1.h" />
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase2.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase1.h" />
     <ClInclude Include="..\Public\SacrificeHand.h" />
@@ -317,7 +322,12 @@
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase1.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Hit.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase2.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase1.cpp" />
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase2.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase1.cpp" />
     <ClCompile Include="..\Private\SacrificeHand.cpp" />
