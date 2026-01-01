@@ -32,13 +32,21 @@ HRESULT CAIAnimationClip::Initialize(const aiAnimation* pAIAnimation, CAIModelDa
 			RootChan = i;
 	}
 
+
 	if(-1 != RootChan)
 		dynamic_cast<CAIChannel*>(m_Channels[RootChan])->Set_Root();
+
+
+	if (m_Channels[RootChan]->Get_Name() == "Bip001") {
+		for (auto& Channel : m_Channels)
+			if (Channel->Get_Name() == "Root")
+				dynamic_cast<CAIChannel*>(Channel)->Set_Root();
+	}
 
 	return S_OK;
 }
 
-void CAIAnimationClip::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
+void CAIAnimationClip::Save_File(ofstream& ofs)
 {
 	ANIMATION_CLIP_HEADER tClipHeader{};
 	strcpy_s(tClipHeader.ClipName, sizeof(tClipHeader.ClipName), m_ClipName.c_str());
@@ -49,7 +57,7 @@ void CAIAnimationClip::Save_File(ofstream& ofs, const _float4x4* WorldMatrix)
 	ofs.write(reinterpret_cast<const char*>(&tClipHeader), sizeof(tClipHeader));
 
 	for (_uint i = 0; i < m_iNumChannels; i++) {
-		static_cast<CAIChannel*>(m_Channels[i])->Save_File(ofs, WorldMatrix);
+		static_cast<CAIChannel*>(m_Channels[i])->Save_File(ofs);
 	}
 }
 

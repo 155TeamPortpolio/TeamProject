@@ -77,6 +77,7 @@ using json = nlohmann::json;
 #undef new 
 #include "PhysX_Inc/PxPhysicsAPI.h"
 #define USINGPHYSICS
+//#define USE_MULTITHREAD_PHYSICS
 using namespace physx;
 #pragma pop_macro("new")
 
@@ -93,6 +94,7 @@ using namespace physx;
 #include "Build_Struct.h"
 #include "Data_Packets.h"
 #include "PreLoad_Struct.h"
+#include "AnimationLayout.h"
 
 using namespace Engine;
 

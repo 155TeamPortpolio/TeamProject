@@ -2,6 +2,8 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+static constexpr _uint kFrameBuffered = 3;
+
 class CHiZ_Culling :
     public CBase
 {
@@ -36,6 +38,14 @@ class CHiZ_Culling :
         _uint       padding;
     };
 
+    struct OcclusionReadbackFrame
+    {
+        ID3D11Buffer* visibleBuffer = nullptr;              // UAV target
+        ID3D11UnorderedAccessView* visibleUav = nullptr;    // UAV
+        ID3D11Buffer* visibleStaging = nullptr;             // staging readback
+        ID3D11Query* copyDoneQuery = nullptr;               // event query
+    };
+
 private:
     CHiZ_Culling();
     ~CHiZ_Culling() DEFAULT;
@@ -52,10 +62,10 @@ public:
 
 private:
     void Check_Resource();
-    _uint CalcMipCount(_uint width, _uint height);
     ID3D11Buffer* CreateDynamicCB(ID3D11Device* device, _uint byteSize);
     void Update_CBuffer(ID3D11DeviceContext* context, ID3D11Buffer* buffer, const void* data, _uint size);
     _float Clamp01(_float value);
+    _uint CalcMipCount(_uint width, _uint height);
     
     _bool BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax,_fmatrix worldMatrix, _fmatrix viewMatrix,_uint viewportW,_uint viewportH,_float zFar, _uint indexInList,
         OcclusionInput& outInput);
@@ -88,15 +98,19 @@ private:
 private:
     ID3D11Buffer* m_inputBuffer = { nullptr };       
     ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs 버퍼를 읽는 SRV (t1)
-
-    ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags용 GPU 버퍼
-    ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags에 쓰는 UAV (u0)
-
-    ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback용 staging
     _uint                   m_capacity = 0;                                             // 현재 버퍼가 수용 가능한 최대 element 개수
 
 private:
     ID3D11ShaderResourceView* m_pHiZSrv = { nullptr };
+
+ private :
+    OcclusionReadbackFrame m_readbackFrames[kFrameBuffered];
+    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags용 GPU 버퍼
+   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags에 쓰는 UAV (u0)
+   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback용 staging
+
+    _uint m_frameCursor = 0;                               // 매 프레임 증가
+    vector<_uint> m_cachedVisibleFlags;         // 마지막으로 성공한 결과(스톨 회피용)
 
 public:
     static CHiZ_Culling* Create();

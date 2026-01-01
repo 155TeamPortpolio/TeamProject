@@ -10,6 +10,8 @@ CAIAnimator3D::CAIAnimator3D()
 
 HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIModelData)
 {
+	m_pAnimClips.reserve(0);
+
     for (_uint i = 0; i < pAIScene->mNumAnimations; i++) {
         CAIAnimationClip* AIClip = CAIAnimationClip::Create(pAIScene->mAnimations[i], pAIModelData);
         if (!AIClip)
@@ -60,19 +62,31 @@ void CAIAnimator3D::Render_GUI()
 
 HRESULT CAIAnimator3D::Save_Animation(const string& SavePath, const _float4x4* WorldMatrix)
 {
-	
 	string AnimSavePath = SavePath + "\\Anim\\";
 	std::filesystem::create_directories(AnimSavePath);
+
+	ANIM_META Meta;
 
 	for (auto& Clip : m_pAnimClips) {
 		std::filesystem::path filePath = std::filesystem::path(AnimSavePath) / (Clip->Get_Name() + ".anim");
 		std::ofstream ofs(filePath, std::ios::binary);
 
-		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs, WorldMatrix);
+		static_cast<CAIAnimationClip*>(Clip)->Save_File(ofs);
 
 		ofs.close();
+
+		ANIM_CLIP tClip{};
+		tClip.ClipTag = Clip->Get_Name();
+		Meta.Clips.push_back(tClip);
 	}
-	
+
+	Meta.PreTransform = *WorldMatrix;
+
+	size_t pos = Meta.Clips.back().ClipTag.find("_Ani_");
+	string Name = Meta.Clips.back().ClipTag.substr(0, pos);
+
+	Helper::SaveJson<ANIM_META>(Meta, SavePath + Name + "_Meta.json");
+
 	return S_OK;
 }
 

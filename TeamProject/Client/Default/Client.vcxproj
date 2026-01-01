@@ -147,6 +147,13 @@
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\backends\imgui_impl_win32.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\imgui.h" />
     <ClInclude Include="..\..\EngineSDK\Inc\GUI_Inc\ImGuizmo.h" />
+    <ClInclude Include="..\Public\Anbi.h" />
+    <ClInclude Include="..\Public\AnbiState_Attack.h" />
+    <ClInclude Include="..\Public\AnbiState_Idle.h" />
+    <ClInclude Include="..\Public\AnbiState_Move.h" />
+    <ClInclude Include="..\Public\AnbiState_NormalAttack.h" />
+    <ClInclude Include="..\Public\AnbiState_Run.h" />
+    <ClInclude Include="..\Public\AnbiState_Walk.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\public\CamLoader.h" />
     <ClInclude Include="..\public\CamObject.h" />
@@ -253,6 +260,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="..\Private\Anbi.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Attack.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Idle.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Move.cpp" />
+    <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Run.cpp" />
+    <ClCompile Include="..\Private\AnbiState_Walk.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />

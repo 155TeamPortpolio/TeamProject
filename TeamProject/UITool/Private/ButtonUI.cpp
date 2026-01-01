@@ -38,6 +38,8 @@ void CButtonUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
+    Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
+
     Play_Animation(dt);
 }
 
@@ -45,11 +47,20 @@ void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
 
+    // 이미지
     Render_GUI_Image(m_strTextureKey);
 
+    if (ImGui::Checkbox("flip X", &m_isFlipX))
+        m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
+    ImGui::SameLine();
+    if (ImGui::Checkbox("flip Y", &m_isFlipY))
+        m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
+
+    // 이벤트
     ImGui::SeparatorText(u8"이벤트");
     ImGui::InputText(u8"메시지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
+    // 버튼 상태
     ImGui::SeparatorText(u8"버튼 상태");
     string strState = {};
     switch (m_eState)
@@ -90,25 +101,24 @@ void CButtonUI::OnClick()
     CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<BTN_EVENT>({ event });
 }
 
-void CButtonUI::FillElementData(UI_ELEMENT_DATA& data)
+void CButtonUI::Save(nlohmann::ordered_json& data)
 {
-    __super::FillElementData(data);
+    __super::Save(data);
 
-    data.strTypeTag    = m_strTypeTag;
-    data.strTextureTag = m_strTextureKey;
-    data.strEventMsg   = m_szEventMsg;
+    data["typeTag"] = m_strTypeTag;
+    data["textureTag"] = m_strTextureKey;
+
+    data["eventMsgTag"] = m_szEventMsg;
 }
 
-void CButtonUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CButtonUI::Load(const nlohmann::ordered_json& data)
 {
-    __super::ReadElementData(data);
+    __super::Load(data);
 
-    m_strTextureKey = data.strTextureTag;
-    if (m_strTextureKey.empty()) m_strTextureKey = "empty.png";
+    strcpy_s(m_szEventMsg, data.value("eventMsgTag", "").c_str());
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, m_strTextureKey);
-
-    strcpy_s(m_szEventMsg, data.strEventMsg.c_str());
+    m_strTextureKey = data.value("textureTag", "");
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
 
 CGameObject* CButtonUI::Create()

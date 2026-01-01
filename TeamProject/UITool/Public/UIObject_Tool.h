@@ -8,7 +8,7 @@ NS_END
 
 NS_BEGIN(UITool)
 
-enum class UISizeMode { FHD, QHD, UHD };
+enum class UISizeMode { Default, FHD, QHD, UHD };
 
 class CUIObject_Tool abstract : public CUI_Object
 {
@@ -28,8 +28,8 @@ public:
 	_bool Get_OriginTexSize() const       { return m_useOriginTexSize; }
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) override;
+	virtual void Save(nlohmann::ordered_json& data) override;
+	virtual void Load(const nlohmann::ordered_json& data) override;
 
 protected:
 	virtual void Render_GUI_Property();
@@ -43,6 +43,11 @@ protected:
 
 	/*앵커 기준점에 따라 자동정렬을 하기 위해 앵커오프셋 값을 반환 (사이즈를 반영한 픽셀 값 반환)*/
 	_float2 Get_AnchorOffset(ANCHOR eAnchor);
+	
+
+private:
+	_float  GetSizeRatio(UISizeMode mode);
+	void    Render_GUI_SizeBlock();
 
 protected:
 	_bool m_useOriginTexSize = true;

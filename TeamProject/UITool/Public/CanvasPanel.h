@@ -23,7 +23,7 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 	
 public:
-	virtual void    FillElementData(UI_ELEMENT_DATA& data) override;
+	virtual void	Save(nlohmann::ordered_json& data) override;
 	
 private:
 	const _float2	m_fChildCreateSize = { 100.f, 100.f };

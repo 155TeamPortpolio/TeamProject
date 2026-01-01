@@ -19,15 +19,23 @@ public:
 	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void    FillElementData(UI_ELEMENT_DATA& data) override;
-	virtual void    ReadElementData(const UI_ELEMENT_DATA& data) override;
-
-private:
-	_float2		m_vUVOffset = {};
-	_float2		m_vUVOffsetSpeed = {};
+	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
 	string		m_strTextureKey = {};
+
+	_float2		m_vUVOffset = {};
+	_float2		m_vUVOffsetSpeed = {};
+
+	_bool       m_useMask          = false;
+	_float      m_fMaskThreshold   = 0.5f;
+	_float      m_fMaskSoftness    = 0.03f;
+	string      m_strMaskTexKey{};
+	_float2     m_vMaskTexSize{};
+
+	_bool       m_maskDebugRaw     = false;
+	_bool       m_maskDebugApplied = false;
 
 public:
 	static const string m_strTypeTag;

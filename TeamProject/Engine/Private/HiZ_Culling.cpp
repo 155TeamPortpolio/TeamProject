@@ -85,7 +85,18 @@ HRESULT CHiZ_Culling::Initialize() {
 	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
 	m_pOcculsionBuffer = CreateDynamicCB(pDevice, sizeof(CB_OcclusionData));
 
-	
+	/*3개 프레임 버퍼에 대한 읽기를 돌아가면서 할 것임*/
+	/*그래서 여기까지 끝났니?를  CPU가 물어볼 수 있는 이벤트*/
+	D3D11_QUERY_DESC queryDesc = {};
+	queryDesc.Query = D3D11_QUERY_EVENT;
+	queryDesc.MiscFlags = 0;
+
+	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
+	{
+		HRESULT queryResult = pDevice->CreateQuery(&queryDesc, &m_readbackFrames[frameIndex].copyDoneQuery);
+		if (FAILED(queryResult)) return queryResult;
+	}
+
 	return S_OK;
 }
 
@@ -152,20 +163,23 @@ void CHiZ_Culling::Check_Resource()
 	if (m_isReady)
 		return;
 
-	if (!m_pCopyShader)
+	if (!m_pCopyShader) {
 		m_pCopyShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Copy.hlsl");
-	if (!m_pReduceShader)
+		if (m_pCopyShader) Safe_AddRef(m_pCopyShader);
+	}
+	if (!m_pReduceShader) {
 		m_pReduceShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Reduce.hlsl");
-	if (!m_pOcclusionShader)
+		if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
+	}
+	if (!m_pOcclusionShader){
 		m_pOcclusionShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_OcclusionCull.hlsl");
-	if (!m_pDepthSrv)
-		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Depth");
-
-	if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
-	if (m_pCopyShader) Safe_AddRef(m_pCopyShader);
-	if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
-	if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
-
+		if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
+	}
+	if (!m_pDepthSrv) {
+		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Static_Depth");
+		if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
+	}
+	
 	if (m_pDepthSrv && m_pCopyShader && m_pReduceShader)
 		m_isReady = true;
 }
@@ -246,6 +260,9 @@ _float CHiZ_Culling::Clamp01(_float value)
 /*실제 컬링을 시작*/
 vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
+	if (!m_isReady)
+		return frustums;
+
 	vector<OPAQUE_PACKET> result;
 
 	if (frustums.empty())
@@ -299,12 +316,15 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 	/*인풋 버퍼 삽입*/
 	context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
+	// ---- 이번 프레임에 쓸 슬롯 ----
+	_uint writeFrameIndex = (m_frameCursor % kFrameBuffered);
+	OcclusionReadbackFrame& writeFrame = m_readbackFrames[writeFrameIndex];
 
 	m_pOcclusionShader->Bind(context);
 	m_pOcclusionShader->SetSRV(context, 0, m_pHiZSrv);
 	m_pOcclusionShader->SetSRV(context, 1, m_inputSrv);
-	m_pOcclusionShader->SetUAV(context, 0, m_visibleUav);
-	
+	m_pOcclusionShader->SetUAV(context, 0, writeFrame.visibleUav);
+
 	CB_OcclusionData cbData = {};
 	cbData.viewportSize = { viewportW, viewportH };
 	cbData.mipCount = m_mipCount;
@@ -326,29 +346,43 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	context->CSSetUnorderedAccessViews(0, 1, nullUavs, nullptr);
 
 	// 결과 readback
-	context->CopyResource(m_visibleStaging, m_visibleBuffer);
+	context->CopyResource(writeFrame.visibleStaging, writeFrame.visibleBuffer);
+	context->End(writeFrame.copyDoneQuery);
 
-	D3D11_MAPPED_SUBRESOURCE mapped = {};
-	HRESULT mapResult = context->Map(m_visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
-	if (FAILED(mapResult))
+	_uint readFrameIndex = ((m_frameCursor + kFrameBuffered - 1) % kFrameBuffered);
+	OcclusionReadbackFrame& readFrame = m_readbackFrames[readFrameIndex];
+
+	_bool isDone = false;
+	HRESULT doneResult = context->GetData(readFrame.copyDoneQuery, &isDone, sizeof(isDone), D3D11_ASYNC_GETDATA_DONOTFLUSH);
+
+	/*아직 못 읽음(완료가 안됨 , 그러면 그냥 넘어가겠다)*/
+	const _bool canRead = (doneResult == S_OK) && (isDone == TRUE);
+
+	if (canRead)
 	{
-		for (const OPAQUE_PACKET& packet : frustums)
-			result.push_back(packet);
-		return result;
-	}
+		D3D11_MAPPED_SUBRESOURCE mapped = {};
+		HRESULT mapResult = context->Map(readFrame.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
+		if (SUCCEEDED(mapResult))
+		{
+			const _uint* flags = (const _uint*)mapped.pData;
 
-	const _uint* flags = (const _uint*)mapped.pData;
+			// 캐시 갱신 (스톨 회피용 fallback)
+			memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * inputs.size());
+
+			context->Unmap(readFrame.visibleStaging, 0);
+		}
+	}
 
 	for (_uint inputIndex = 0; inputIndex < inputs.size(); ++inputIndex)
 	{
-		if (flags[inputIndex] != 0) /*이건 보인다고 적혔단느 뜻*/
+		if (m_cachedVisibleFlags[inputIndex] != 0)
 		{
 			_uint originalIndex = inputs[inputIndex].indexInList;
 			result.push_back(frustums[originalIndex]);
 		}
 	}
 
-	context->Unmap(m_visibleStaging, 0);
+	++m_frameCursor;
 	return result;
 }
 
@@ -461,9 +495,11 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 	/*요청 개수가 0이면 없음*/
 	if (requiredCount == 0)
 		return;
+	const _bool hasInputResources = (m_inputBuffer && m_inputSrv);
+	const _bool hasAllFrameResources =
+		(m_readbackFrames[0].visibleBuffer && m_readbackFrames[0].visibleUav && m_readbackFrames[0].visibleStaging);
 
-	const _bool hasAllResources =(m_inputBuffer) &&(m_inputSrv) &&(m_visibleBuffer) &&(m_visibleUav) &&(m_visibleStaging);
-	if (hasAllResources && m_capacity >= requiredCount)/*현재 용량이 충분하면 갠춘*/
+	if (hasAllFrameResources&& hasInputResources && m_capacity >= requiredCount)/*현재 용량이 충분하면 갠춘*/
 		return;
 
 	/*부족하면 더 생성 시킬 것 -> 넉넉하게 2배수로*/
@@ -473,10 +509,14 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 	/*기존 자원 해제*/
 	Safe_Release(m_inputSrv);
 	Safe_Release(m_inputBuffer);
-	Safe_Release(m_visibleUav);
-	Safe_Release(m_visibleBuffer);
-	Safe_Release(m_visibleStaging);
-	
+	// 프레임별 visible관련은 전부 다시 만들기
+	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
+	{
+		Safe_Release(m_readbackFrames[frameIndex].visibleUav);
+		Safe_Release(m_readbackFrames[frameIndex].visibleBuffer);
+		Safe_Release(m_readbackFrames[frameIndex].visibleStaging);
+	}
+
 	/*인풋(구조체를 넣으려는) 용도의 SRV를 만드는 과정 ->셰이더는 이걸을 읽고*/
 	{	/*오브젝트의 인풋 데이터를 써서 셰이더로 던지는 용량을 만들어줌*/
 		D3D11_BUFFER_DESC bufferDesc = {};
@@ -501,38 +541,49 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			return;
 	}
 
-	/*VisibleFlags 를 아웃풋하는 용도의 UAV를 만드는 과정 -> 셰이더는 여기다 0혹은 1을 쓴다*/
+	/*이제 프레임별 비지블 리소스 만드어줌*/
+	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
 	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.ByteWidth = sizeof(_uint) * newCapacity;
-		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
-		bufferDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;        
-		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
-		bufferDesc.StructureByteStride = sizeof(_uint);
-		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_visibleBuffer);
-		if (FAILED(result)) return;
-	}
-	{
-		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
-		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
-		uavDesc.Format = DXGI_FORMAT_UNKNOWN;
-		uavDesc.Buffer.FirstElement = 0;
-		uavDesc.Buffer.NumElements = newCapacity;
-		HRESULT result = pDevice->CreateUnorderedAccessView(m_visibleBuffer, &uavDesc, &m_visibleUav);
-		if (FAILED(result)) return;
+		// UAV 만들 버퍼
+		{
+			D3D11_BUFFER_DESC visibleDesc = {};
+			visibleDesc.ByteWidth = sizeof(_uint) * newCapacity;
+			visibleDesc.Usage = D3D11_USAGE_DEFAULT;
+			visibleDesc.BindFlags = D3D11_BIND_UNORDERED_ACCESS;
+			visibleDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+			visibleDesc.StructureByteStride = sizeof(_uint);
+
+			HRESULT visibleResult = pDevice->CreateBuffer(&visibleDesc, nullptr, &m_readbackFrames[frameIndex].visibleBuffer);
+			if (FAILED(visibleResult)) return;
+		}
+
+		// UAV 입력할 거
+		{
+			D3D11_UNORDERED_ACCESS_VIEW_DESC visibleUavDesc = {};
+			visibleUavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
+			visibleUavDesc.Format = DXGI_FORMAT_UNKNOWN;
+			visibleUavDesc.Buffer.FirstElement = 0;
+			visibleUavDesc.Buffer.NumElements = newCapacity;
+
+			HRESULT visibleUavResult = pDevice->CreateUnorderedAccessView(
+				m_readbackFrames[frameIndex].visibleBuffer, &visibleUavDesc, &m_readbackFrames[frameIndex].visibleUav);
+			if (FAILED(visibleUavResult)) return;
+		}
+
+		// staging
+		{
+			D3D11_BUFFER_DESC stagingDesc = {};
+			stagingDesc.ByteWidth = sizeof(_uint) * newCapacity;
+			stagingDesc.Usage = D3D11_USAGE_STAGING;
+			stagingDesc.BindFlags = 0;
+			stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+
+			HRESULT stagingResult = pDevice->CreateBuffer(&stagingDesc, nullptr, &m_readbackFrames[frameIndex].visibleStaging);
+			if (FAILED(stagingResult)) return;
+		}
 	}
 
-	/*읽어내는 용의 버퍼 - GPU 결과를 CPU에서 Map()으로 읽기 위한 staging 버퍼*/
-	{
-		D3D11_BUFFER_DESC bufferDesc = {};
-		bufferDesc.ByteWidth = sizeof(uint32_t) * newCapacity;
-		bufferDesc.Usage = D3D11_USAGE_STAGING;
-		bufferDesc.BindFlags = 0;
-		bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_visibleStaging);
-		if (FAILED(result)) return;
-	}
-
+	m_cachedVisibleFlags.assign(newCapacity, 1); // 기본은 보인다 처리
 	m_capacity = newCapacity;
 }
 
@@ -566,9 +617,14 @@ void CHiZ_Culling::Free()
 
 	Safe_Release(m_inputBuffer);
 	Safe_Release(m_inputSrv);
-	Safe_Release(m_visibleBuffer);
-	Safe_Release(m_visibleUav);
-	Safe_Release(m_visibleStaging);
+
+	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
+	{
+		Safe_Release(m_readbackFrames[frameIndex].visibleUav);
+		Safe_Release(m_readbackFrames[frameIndex].visibleBuffer);
+		Safe_Release(m_readbackFrames[frameIndex].visibleStaging);
+		Safe_Release(m_readbackFrames[frameIndex].copyDoneQuery);
+	}
 
 	Safe_Release(m_pHiZSrv);
 }

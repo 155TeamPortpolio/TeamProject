@@ -1,6 +1,7 @@
 #include "Engine_Defines.h"
 #include "Renderer.h"
 
+#include "Texture.h"
 #include "Model.h"
 #include "Shader.h"
 #include "VIBuffer.h"
@@ -32,6 +33,8 @@ HRESULT CRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pPipeL
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixScaling(ViewportDesc.Width, ViewportDesc.Height, 1.f));
+
+	m_pRampTexture = CTexture::Create(m_pDevice, L"../../DemoResource/RampTexture/RampTexture_2 1.png", "RampTexture", false);
 
 	return S_OK;
 }
@@ -76,6 +79,13 @@ HRESULT CRenderer::CreateVIBuffer()
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 	Safe_AddRef(m_pVIBuffer);
+	return S_OK;
+}
+
+HRESULT CRenderer::Bind_WorldMatrix()
+{
+	SHADER_PARAM WorldMat = { &m_WorldMatrix , "float4x4",sizeof(_float4x4) };
+	m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 	return S_OK;
 }
 
@@ -168,6 +178,7 @@ void CRenderer::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pVIBuffer);
+	Safe_Release(m_pRampTexture);
 
 	for (auto& pair : m_InputLayouts)
 		Safe_Release(pair.second);

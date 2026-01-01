@@ -39,6 +39,8 @@ void CGaugeUI::Update(_float dt)
     if (!m_isAlive)
         return;
 
+    Get_Component<CSprite2D>()->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
+
     Play_Animation(dt);
 }
 
@@ -51,62 +53,120 @@ void CGaugeUI::Render_GUI()
     __super::Render_GUI();
 }
 
-void CGaugeUI::ReadElementData(const UI_ELEMENT_DATA& data)
+void CGaugeUI::Load(const nlohmann::ordered_json& data)
 {
+    if (data.empty())
+        return;
+
     // 공통 데이터 읽기
-    m_InstanceName = data.InstanceName;
-    m_eAnchor = static_cast<ANCHOR>(data.transform.iAnchor);
-    m_vAnchorOffset = _float2(data.transform.vAnchorOffset[0], data.transform.vAnchorOffset[1]);
-    m_vSize = _float2(data.transform.vSize[0], data.transform.vSize[1]);
-    m_vScale = _float2(data.transform.vScale[0], data.transform.vScale[1]);
-    m_vPivot = _float2(data.transform.vPivot[0], data.transform.vPivot[1]);
-    m_fRadian = data.transform.fRadian;
-    m_vColor = _float4(data.vColor[0], data.vColor[1], data.vColor[2], data.vColor[3]);
+    m_InstanceName = data.value("instanceName", "");
 
-    // 애니메이션 데이터 읽기
-    for (auto& clipData : data.animClips)
+    // Transform 데이터 읽기
+    if (data.contains("transform"))
     {
-        UI_ANIM_CLIP clip = { clipData.strName };
-        clip.fDuration = clipData.fDuration;
-        clip.isLoop = clipData.isLoop;
+        const auto& transformJson = data["transform"];
 
-        for (auto& keyframeData : clipData.keyframes)
+        m_eAnchor = static_cast<ANCHOR>(transformJson.value("anchor", 0));
+        auto anchorOffset = transformJson.value("anchorOffset", json::array({ 0.0f, 0.0f }));
+        m_vAnchorOffset = { anchorOffset[0], anchorOffset[1] };
+        auto size = transformJson.value("size", json::array({ 100.0f, 100.0f }));
+        m_vSize = { size[0], size[1] };
+        auto scale = transformJson.value("scale", json::array({ 1.0f, 1.0f }));
+        m_vScale = { scale[0], scale[1] };
+        auto pivot = transformJson.value("pivot", json::array({ 0.5f, 0.5f }));
+        m_vPivot = { pivot[0], pivot[1] };
+        m_fRadian = transformJson.value("radian", 0.0f);
+    }
+
+    // Color 데이터 읽기
+    auto color = data.value("color", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
+    m_vColor = { color[0], color[1], color[2], color[3] };
+
+    // 애니메이션 클립 읽기
+    if (data.contains("animClips"))
+    {
+        const auto& animClipsJson = data["animClips"];
+        m_AnimClips.clear();
+
+        for (const auto& clipJson : animClipsJson)
         {
-            UI_KEYFRAME keyframe = {};
+            UI_ANIM_CLIP clip = {};
+            clip.strName = clipJson.value("name", "");
+            clip.fDuration = clipJson.value("duration", 1.0f);
+            clip.isLoop = clipJson.value("loop", false);
 
-            keyframe.fTime = keyframeData.fTime;
-            keyframe.vScale = { keyframeData.vScale[0], keyframeData.vScale[1] };
-            keyframe.fAngle = keyframeData.fAngle;
-            keyframe.vPosition = { keyframeData.vPosition[0], keyframeData.vPosition[1] };
-            keyframe.vColor = { keyframeData.vColor[0], keyframeData.vColor[1], keyframeData.vColor[2], keyframeData.vColor[3] };
-            keyframe.easeType = static_cast<EaseType>(keyframeData.uEaseType);
+            // 키프레임 읽기
+            if (clipJson.contains("keyframes"))
+            {
+                const auto& keyframesJson = clipJson["keyframes"];
+                for (const auto& keyframeJson : keyframesJson)
+                {
+                    UI_KEYFRAME keyframe;
+                    keyframe.fTime = keyframeJson.value("time", 0.0f);
 
-            clip.keyframes.push_back(keyframe);
+                    auto vScale = keyframeJson.value("scale", json::array({ 1.0f, 1.0f }));
+                    keyframe.vScale = { vScale[0], vScale[1] };
+
+                    keyframe.fAngle = keyframeJson.value("angle", 0.0f);
+
+                    auto vPosition = keyframeJson.value("position", json::array({ 0.0f, 0.0f }));
+                    keyframe.vPosition = { vPosition[0], vPosition[1] };
+
+                    auto vColor = keyframeJson.value("color", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
+                    keyframe.vColor = { vColor[0], vColor[1], vColor[2], vColor[3] };
+
+                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
+
+                    clip.keyframes.push_back(keyframe);
+                }
+            }
+
+            m_AnimClips.push_back(clip);
         }
-        m_AnimClips.push_back(clip);
     }
 
     // 자식 데이터 읽기
-    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
-    if (pContainer)
+    if (data.contains("children"))
     {
-        for (auto& childElementData : data.children)
+        const auto& childrenJson = data["children"];
+        CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+
+        for (const auto& childJson : childrenJson)
         {
+            // 자식 UI 객체 생성
+            string strTypeTag = childJson.value("typeTag", "");
+            if (strTypeTag.empty())
+                continue;
+
             const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-            const string& strTypeTag = childElementData.strTypeTag;
-            CUI_Object* pChildObj = Builder::Create_UIObject({ strCurrentLevelKey , "Proto_GameObject_" + strTypeTag })
+            CUI_Object* pChildObj = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strTypeTag })
                 .Build(strTypeTag);
 
             if (!pChildObj)
                 continue;
 
-            pChildObj->ReadElementData(childElementData);
+            pChildObj->Load(childJson);
 
-            pContainer->Add_Child(pChildObj);
+            if (pContainer)
+                pContainer->Add_Child(pChildObj);
         }
     }
 
-    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, data.strTextureTag);
+    auto pSprite = Get_Component<CSprite2D>();
+    pSprite->Change_Texture(0, G_GlobalLevelKey, data.value("textureTag", ""));
+
+    if (data.contains("gauge"))
+    {
+        const auto& gaugeJson = data["gauge"];
+
+        if(gaugeJson.value("direction", 0.f))
+            pSprite->ChangePass("RadialFill");
+        else
+            pSprite->ChangePass("LinearFill");
+
+        _float fDirection = gaugeJson.value("direction", 0.0f);
+        pSprite->Set_Param("Direction", { &fDirection, "float", sizeof(_float) });
+    }
 }
 
 CGameObject* CGaugeUI::Create()

@@ -12,7 +12,7 @@ private:
 
 public:
 	virtual HRESULT Initialize(const aiNodeAnim* pAIChannel, class CAIModelData* pAIModelData);
-	void Save_File(ofstream& ofs, const _float4x4* WorldMatrix);
+	void Save_File(ofstream& ofs);
 	void Set_Root();
 
 public:

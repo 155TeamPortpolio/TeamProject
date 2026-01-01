@@ -40,6 +40,12 @@ public:
 	virtual void OnTriggerEnter() {};
 	virtual void OnTriggerExit() {};
 
+	virtual void OnCollisionEnter(CGameObject* pOther) {};
+	virtual void OnCollisionStay(CGameObject* pOther) {};
+	virtual void OnCollisionExit(CGameObject* pOther) {};
+	virtual void OnTriggerEnter(CGameObject* pOther) {};
+	virtual void OnTriggerExit(CGameObject* pOther) {};
+
 public:
 	_bool Has_Tag(const string& tag) { return m_InstanceTag == tag; };
 	void Set_Tag(const string& tag) { m_InstanceTag = tag; };
