@@ -27,9 +27,9 @@ HRESULT CUIRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* pPip
 HRESULT CUIRenderer::Render_3D(UI3DPass* pUI3DPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_3DUI", 0xff, pDeferredDSV, false))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_3DUI", true, pDeferredDSV, false))) return E_FAIL;
 	pUI3DPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	return S_OK;

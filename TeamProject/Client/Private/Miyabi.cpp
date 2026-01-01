@@ -73,7 +73,7 @@ void CMiyabi::Awake()
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
 
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.f, 0.0), 0.1f);
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(0.f, 0.f, 0.0), 0.1f);
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
@@ -99,7 +99,7 @@ void CMiyabi::Late_Update(_float dt)
 void CMiyabi::Render_GUI()
 {
 	__super::Render_GUI();
-	// StateMachine ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// StateMachine µð¹ö±ë Á¤º¸
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
@@ -140,7 +140,7 @@ void CMiyabi::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
-	// ï¿½ï¿½ï¿½ï¿½×¿ï¿½ ï¿½ï¿½ï¿½ï¿½Ä³ï¿½ï¿½Æ® (FÅ°)
+	// µð¹ö±×¿ë ·¹ÀÌÄ³½ºÆ® (FÅ°)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	if (input->Key_Hold('F'))
 	{
@@ -153,7 +153,7 @@ void CMiyabi::Update_Input(_float dt)
 		m_pCCT->Clear_DebugRay();
 	}
 
-	// ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (JÅ°)
+	// Å×½ºÆ®¿ë Á¡ÇÁ (JÅ°)
 	if (input->Key_Down('J'))
 	{
 		m_pCCT->Jump(3.f);
@@ -165,7 +165,7 @@ void CMiyabi::Update_States()
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
 
-	// Move End Ã¼Å© (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	// Move End Ã¼Å© (±âÁ¸°ú µ¿ÀÏ)
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
 		CMiyabiState_Move* pMove =
@@ -222,7 +222,7 @@ void CMiyabi::Update_States()
 		}
 	}
 
-	// ï¿½ï¿½ AttackEnd ï¿½Ä¶ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	// ¡Ú AttackEnd ÆÄ¶ó¹ÌÅÍ ¼³Á¤
 	if (bInAttackEnd)
 	{
 		CMiyabiState_Attack* pAttack =
@@ -230,7 +230,7 @@ void CMiyabi::Update_States()
 
 		if (pAttack)
 		{
-			// Attackï¿½ï¿½ AnimProgressï¿½ï¿½ 1.0ï¿½Ì¸ï¿½ AttackEnd = true
+			// AttackÀÇ AnimProgress°¡ 1.0ÀÌ¸é AttackEnd = true
 			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
 			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
 		}
@@ -240,12 +240,12 @@ void CMiyabi::Update_States()
 		m_pStateMachine->Set_Bool("AttackEnd", false);
 	}
 
-	// End Äµï¿½ï¿½ Ã³ï¿½ï¿½ (ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	// End Äµ½½ Ã³¸® (±âÁ¸°ú µ¿ÀÏ)
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
 	{
 		m_pStateMachine->Set_Bool("IsMove", false);
 
-		// Attack Endï¿½ï¿½ï¿½ï¿½ ï¿½Ô·ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ AttackEnd = true
+		// Attack End¿¡¼­ ÀÔ·Â ½Ã °­Á¦·Î AttackEnd = true
 		if (bInAttackEnd)
 			m_pStateMachine->Set_Bool("AttackEnd", true);
 	}

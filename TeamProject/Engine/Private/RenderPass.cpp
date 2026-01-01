@@ -70,93 +70,34 @@ void RenderPass::Free()
 {
 }
 
-#pragma region STATICMESH_OPAQUE_PASS
-void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+#pragma region OPAQUE_PASS
+void OpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+{
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
-	pPipeLine->Begin_ObjectBuffer(pContext);
-
-	vector<OPAQUE_PACKET> frustums;
-	for (auto& packet : m_Packets)
-	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-			continue;
-		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
-		packet.TransformIndex = TransformIndex;
-		frustums.push_back(packet);
-	}
-
-	pPipeLine->End_ObjectBuffer(pContext);
-
-	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
-	for (auto& packet : m_VisiblePackets)
-	{
-		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
-			BindConstant(pContext, packet.pModel, packet.pMaterial, packet.DrawIndex, packet.MaterialIndex, pRenderer);
-		}
-
-		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
-		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-
-		SHADER_PARAM LookParam{ &packet.LookVector, "vector",sizeof(_vector) };
-		pCurShader->Bind_Value("vLookVector", LookParam);
-
-		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
-		packet.pModel->Draw(pContext, packet.DrawIndex);
-	}
-
-	m_Packets.clear();
-	m_VisiblePackets.clear();
-}
-
-void StaticOpaquePass::Submit(OPAQUE_PACKET packet)
-{
-	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
-}
-#pragma endregion
-
-#pragma region SKINNEDMESH_OPAQUE_PASS
-void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{
-	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
-
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
-	sort(m_Packets.begin(), m_Packets.end(),
-		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
-			return a.GetKey() < b.GetKey();
-		});
-
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
-	if (m_Packets.empty())
-		return;
-
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
-
-	for (auto& packet : m_Packets)
+	vector<OPAQUE_PACKET> FrustumPacket;
+	for (auto& packet : m_Packets)     
 	{
 		if (!packet.bSkinning) {
 			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
 				continue;
 		}
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -171,14 +112,15 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 		packet.TransformIndex = TransformIndex;
 		packet.SkinningOffset = SkinningOffset;
 
-		m_VisiblePackets.push_back(packet);
+		FrustumPacket.push_back(packet);
 	}
 
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
+	m_VisiblePackets = pPipeLine->OcculsionCulling(FrustumPacket);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -204,38 +146,39 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 	m_VisiblePackets.clear();
 }
 
-void SkinnedOpaquePass::Submit(OPAQUE_PACKET packet)
+void OpaquePass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
 	m_Packets.push_back(packet);
 }
+
 #pragma endregion
 
 #pragma region PRIORITY_PASS
 
 void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
 	for (auto& packet : m_Packets)
 	{
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -256,7 +199,7 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -290,21 +233,21 @@ void PriorityPass::Submit(OPAQUE_PACKET packet)
 
 void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const BLENDED_PACKET& a, const BLENDED_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
@@ -315,7 +258,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -336,7 +279,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -372,11 +315,11 @@ void BlendedPass::Submit(BLENDED_PACKET packet)
 
 void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ ï¿½ï¿½Æ¼Å¬ï¿½Ã½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+	/*°¢ ÆÄÆ¼Å¬½Ã½ºÅÛ ·»´õ¸µ*/
 	for (_uint i = 0; i < m_Packets.size(); ++i)
 	{
 		auto& packet = m_Packets[i];
@@ -415,11 +358,11 @@ void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
  	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_Packets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -458,11 +401,11 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
  	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	for (auto& packet : m_Packets)
 	{
@@ -571,21 +514,21 @@ void ShadowPass::SubmitInstance(INSTANCE_PACKET packet)
 
 void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
@@ -596,7 +539,7 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRender
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -616,7 +559,7 @@ void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRender
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -664,11 +607,11 @@ void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext, CRenderer* pRen
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_InstancePackets.empty())
 		return;
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_InstancePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -701,21 +644,21 @@ void ShadowPass::Execute_Instance(ID3D11DeviceContext* pContext, CRenderer* pRen
 
 void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
@@ -726,7 +669,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -747,7 +690,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -783,21 +726,21 @@ void NonLightPass::Submit(OPAQUE_PACKET packet)
 
 void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const EFFECT_PACKET& a, const EFFECT_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
@@ -808,7 +751,7 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -829,7 +772,7 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -863,21 +806,21 @@ void EffectPass::Submit(EFFECT_PACKET packet)
 
 #pragma region 3DUI_PASS
 void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{/*ï¿½Ì°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+{/*ÀÌ°Ç Àü¿ªÀûÀ¸·Î ¼ÎÀÌ´õ¿¡ °ª ³Ö¾îÁÖ´Â ¿ªÇÒ*/
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ ï¿½ðµ¨³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ */
+	/*°°Àº ¼ÎÀÌ´õ, °°Àº ¸ÓÆ¼¸®¾ó, °°Àº ¸ðµ¨³¢¸® Á¤·Ä */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*ï¿½ï¿½Å¶ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ÆÐÅ¶ÀÌ ºñ¾î ÀÖÀ¸¸é ¸®ÅÏ*/
 	if (m_Packets.empty())
 		return;
 
-	/*ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ SRV ï¿½ï¿½ï¿½ï¿½*/
+	/*»ó¼ö ¹öÆÛ ¹× SRV ¼¼ÆÃ*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	pPipeLine->Begin_SkinningBuffer(pContext);
 
@@ -888,7 +831,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 				continue;
 		}
 
-		//ï¿½ï¿½ï¿½â¼­ ï¿½Îµï¿½ï¿½ï¿½ ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+		//¿©±â¼­ ÀÎµ¦½º Ãß°¡ ÀúÀåÇØÁÜ
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -909,7 +852,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	pPipeLine->End_ObjectBuffer(pContext);
 	pPipeLine->End_SkinningBuffer(pContext);
 
-	/*ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*µå·Î¿ìÄÝ ½ÃÀÛ*/
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {

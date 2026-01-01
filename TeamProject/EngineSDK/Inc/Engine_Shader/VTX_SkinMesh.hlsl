@@ -156,7 +156,7 @@ PS_OUT PS_MAIN(PS_IN In)
         float3x3 WorldMatrix = float3x3(T, B, N);
         
         vNormal = mul(vNormal, WorldMatrix);
-        vMetalic.a = 0.6f;
+    
         Out.vNormal = vector(vNormal.xyz * 0.5f + 0.5f, vNormalDesc.z);
     }
     else
@@ -168,7 +168,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
         vMetalic = LightTexture.Sample(DefaultSampler, In.vTexcoord);
 
-        vMetalic.a = 0.8f;
+        vMetalic.a = 0.3f;
         Out.vLook = float4(vLookVector.xyz * 0.5f + 0.5f, 1.f);
     }
     if (vAmbient.g < 0.2) vAmbient.g = 1.f;

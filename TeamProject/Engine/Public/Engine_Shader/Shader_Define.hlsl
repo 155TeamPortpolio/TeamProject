@@ -6,6 +6,7 @@
 
 #include "Shader_State.hlsl"
 #include "Shader_Function.hlsl"
+#include "Shader_PBRFunction.hlsl"
 
 cbuffer FrameBuffer : register(b0)
 {
@@ -49,18 +50,18 @@ cbuffer ShadowBuffer : register(b8)
     float3 ShadowPadding;
 };
 
-cbuffer LightBuffer : register(b9)
+cbuffer SSAOBuffer : register(b10)
 {
-    vector vLightDir;
-    vector vLightPos;
-    vector vLightDiffuse;
-    vector vLightAmbient;
-    vector vLightSpecular;
-    float fLightRange;
-    float fLightIntensity;
-    int iLightSize;
-    float LightPadding;
-}
+    float fRadius;
+    float fBias;
+    float fScreenWidth;
+    float fScreenHeight;
+};
+
+cbuffer SSAOKernel : register(b11)
+{
+    float4 SSAOKernel[64];
+};
 
 struct BoneMatrix{matrix BoneMat;};
 struct TransfomMatrix{matrix Transform;};
@@ -93,4 +94,5 @@ StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t31);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t29);
+Texture2D MaskTex : register(t28);
 #endif // __SHADER_DEFINE_HLSL__

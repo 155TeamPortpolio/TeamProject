@@ -28,7 +28,7 @@ HRESULT CTarget_Manager::Add_MRT(const string& strMRTTag, const string& strTarge
 	return S_OK;
 }
 
-HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11DepthStencilView* pExternalDSV, _bool DSVClear)
+HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _bool Clear, ID3D11DepthStencilView* pExternalDSV, _bool DSVClear)
 {
 	vector<CRenderTarget*>& pMRTList = Find_MRT(strMRTTag);
 
@@ -64,7 +64,7 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11D
 
 	for (auto& pRenderTarget : pMRTList)
 	{
-		if (Clear & (1 << iNumRenderTargets)) pRenderTarget->Clear();
+		if (Clear) pRenderTarget->Clear();
 
 		pRenderTargets[iNumRenderTargets] = pRenderTarget->Get_RTV();
 		iNumRenderTargets++;

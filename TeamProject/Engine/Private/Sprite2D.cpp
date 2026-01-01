@@ -37,25 +37,33 @@ HRESULT CSprite2D::Initialize(COMPONENT_DESC* pArg)
 
 void CSprite2D::Apply_Shader(ID3D11DeviceContext* pContext)
 {
-	if (m_pShader == nullptr) return;
+	if (!m_pShader) return;
 
-	ID3D11ShaderResourceView* nullSRV[1] = { nullptr };
+	ID3D11ShaderResourceView* nullSRV[1]{};
 
-	for (UINT slot = 0; slot < MAX_TEXTURE_TYPE_VALUE; ++slot)
+	for (_uint slot = 0; slot < MAX_TEXTURE_TYPE_VALUE; ++slot)
 		pContext->PSSetShaderResources(slot, 1, nullSRV);
 
-	if (!m_pTextures.empty() && m_pTextures[m_iDrawIndex] != nullptr) {
-		SHADER_PARAM param = {};
+	if (!m_pTextures.empty() && m_pTextures[m_iDrawIndex] != nullptr)
+	{
+		SHADER_PARAM param{};
 		param.typeName = "Texture2D";
-		param.iSize = 0;
-		param.pData = m_pTextures[m_iDrawIndex]->Get_SRV();
-
+		param.iSize    = 0;
+		param.pData    = m_pTextures[m_iDrawIndex]->Get_SRV();
 		m_pShader->Bind_Value("SpriteTexture", param);
 	}
 
-	for (auto& Slot : m_DynamicSlots) 
-		m_pShader->Bind_Value(Slot.first, Slot.second);
+	if (m_pTextures.size() > 1 && m_pTextures[1] != nullptr)
+	{
+		SHADER_PARAM param{};
+		param.typeName = "Texture2D";
+		param.iSize    = 0;
+		param.pData    = m_pTextures[1]->Get_SRV();
+		m_pShader->Bind_Value("MaskTex", param);
+	}
 
+	for (auto& slot : m_DynamicSlots)
+		m_pShader->Bind_Value(slot.first, slot.second);
 
 	m_pShader->Apply(m_PassConstant, pContext);
 }

@@ -15,7 +15,6 @@ public:
     HRESULT Render_Effect(class EffectPass* pEffectPass, class ParticlePass* pParticlePass);
     HRESULT Render_WeightOIT();
     HRESULT Render_CustomTarget();
-    HRESULT Render_Effect_Bloom();
     void Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command);
 
 private:

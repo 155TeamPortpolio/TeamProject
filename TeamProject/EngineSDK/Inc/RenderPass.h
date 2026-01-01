@@ -63,11 +63,11 @@ public:
 };
 #pragma endregion
 
-#pragma region STATICMESH_OPAQUE_PASS
-class StaticOpaquePass final : public RenderPass {
+#pragma region OPAQUE_PASS
+class OpaquePass final : public RenderPass {
 private:
-	StaticOpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
-	virtual ~StaticOpaquePass() DEFAULT;
+	OpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	virtual ~OpaquePass() DEFAULT;
 public:
 	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
 	void Submit(OPAQUE_PACKET packet);
@@ -77,29 +77,11 @@ private:
 	vector<OPAQUE_PACKET> m_VisiblePackets;
 
 public:
-	static StaticOpaquePass* Create(class CRenderSystem* pRenderSystem) { return new StaticOpaquePass(pRenderSystem); }
+	static OpaquePass* Create(class CRenderSystem* pRenderSystem) { return new OpaquePass(pRenderSystem); }
 	virtual void Free() override {__super::Free(); m_Packets.clear();};
 };
 #pragma endregion
 
-#pragma region SKINNEDMESH_OPAQUE_PASS
-class SkinnedOpaquePass final : public RenderPass {
-private:
-	SkinnedOpaquePass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
-	virtual ~SkinnedOpaquePass() DEFAULT;
-public:
-	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
-	void Submit(OPAQUE_PACKET packet);
-
-private:
-	vector<OPAQUE_PACKET> m_Packets;
-	vector<OPAQUE_PACKET> m_VisiblePackets;
-
-public:
-	static SkinnedOpaquePass* Create(class CRenderSystem* pRenderSystem) { return new SkinnedOpaquePass(pRenderSystem); }
-	virtual void Free() override { __super::Free(); m_Packets.clear(); };
-};
-#pragma endregion
 
 #pragma region INSTANCE_PASS
 class InstancePass final : public RenderPass {
