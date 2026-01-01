@@ -325,7 +325,10 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_BlendedPacket(packet);
 		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_OPAQUE)
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Opaque(packet);
+		{
+			if(packet.bSkinning) CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedMesh_Opaque(packet);
+			else  CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticMesh_Opaque(packet);
+		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::PRIORITY)
 			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(packet);
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
