@@ -243,8 +243,8 @@
     </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Text">
       <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-       </Filter>
-        <Filter Include="02. GameObject\Object\Player\Character\Anbi">
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
@@ -267,6 +267,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
       <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Attack">
+      <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Born">
+      <UniqueIdentifier>{63ed3993-86eb-4107-8f07-e9924da6d1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Move">
+      <UniqueIdentifier>{0fb2fde1-7e61-4c17-ad5b-dafa2cef7fc6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -531,6 +540,15 @@
     <ClInclude Include="..\Public\AnbiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Move</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -759,7 +777,7 @@
     <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClCompile>
- <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
+    <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp">
@@ -785,6 +803,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Move</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

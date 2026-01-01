@@ -165,6 +165,7 @@
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
@@ -222,7 +223,9 @@
     <ClInclude Include="..\Public\TestState_Walk.h" />
     <ClInclude Include="..\Public\TextUI.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Attack.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Idle.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h" />
     <ClInclude Include="..\public\UIDirector.h" />
     <ClInclude Include="..\public\UILoader.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
@@ -331,7 +334,10 @@
     <ClCompile Include="..\Private\TestState_Walk.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Attack.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Born.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp" />
     <ClCompile Include="..\private\UIDirector.cpp" />
     <ClCompile Include="..\private\UILoader.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />

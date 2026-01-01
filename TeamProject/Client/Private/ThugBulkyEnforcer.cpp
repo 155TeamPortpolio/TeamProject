@@ -11,6 +11,8 @@
 /* States */
 #include "StateMachine.h"
 #include "ThugBulkyEnforcer_Idle.h"
+#include "ThugBulkyEnforcer_Born.h"
+#include "ThugBulkyEnforcer_Attack.h"
 
 
 
@@ -37,7 +39,7 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.model", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.model");
-	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Anim/ThugBulkyEnforcer_Meta.json");
+	pResourceMgr->Add_ResourcePath("ThugBulkyEnforcer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/ThugBulkyEnforcer_Meta.json");
 
 	return S_OK;
 }
@@ -133,11 +135,10 @@ HRESULT CThugBulkyEnforcer::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
-	m_pStateMachine->Set_DefaultState("Idle");
+	m_pStateMachine->Set_DefaultState("Born");
 	m_pStateMachine->Initialize(this);
 
-	Get_Component<CAnimator3D>()->Set_Animation("ThugBulkyEnforcer_Ani_Idle")
-		.Loop(true)
+	Get_Component<CAnimator3D>()->Set_Animation("ThugBulkyEnforcer_Ani_Born")
 		.Apply();
 
 	return S_OK;
@@ -145,15 +146,21 @@ HRESULT CThugBulkyEnforcer::Initialize_StateMachine()
 
 HRESULT CThugBulkyEnforcer::Initialize_States()
 {
+	m_pStateMachine->Register_State("Born", CThugBulkyEnforcer_Born::Create());
 	m_pStateMachine->Register_State("Idle", CThugBulkyEnforcer_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CThugBulkyEnforcer_Attack::Create());
+
 
 	return S_OK;
 }
 
 HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 {
-	//m_pStateMachine->Register_Transition("Born", "Idle",
-	//	CStateMachine<CThugBulkyEnforcer>::CONDITION_ANIMATION_END);
+	m_pStateMachine->Register_Transition("Born", "Idle",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_ANIMATION_END);
+
+	m_pStateMachine->Register_Transition("Idle", "Attack",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
