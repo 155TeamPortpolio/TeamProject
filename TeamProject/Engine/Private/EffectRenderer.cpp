@@ -30,7 +30,7 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pParticlePass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
 
 	/* Color Acc Pass */
 	{

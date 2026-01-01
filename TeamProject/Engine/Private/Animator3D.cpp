@@ -123,6 +123,7 @@ void CAnimator3D::Update_Animation(_float dt)
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
+		if (Layer.fLayerWeight <= 0) continue;
 
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
@@ -618,8 +619,9 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
 			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
+			Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -636,15 +638,52 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			}
 			else {
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
+				//Extract Movebone
+				// 이동 상쇄
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
 			}
 
-			_vector quatDelta =
+			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
 
+			// --- 위치(점) 변환: w = 1 ---
+			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
+			_vector posT = XMVector4Transform(pos, m_PreTransform);
 
-			XMStoreFloat4(&Layer.vRootQuatDelta, quatDelta);
+			Vector3 vPosOut;
+			vPosOut.x = XMVectorGetX(posT);
+			vPosOut.y = XMVectorGetY(posT);
+			vPosOut.z = XMVectorGetZ(posT);
+			Layer.vRootMoveDelta = vPosOut;
 
+			// --- 회전(컨주게이션) ---
+			_vector qCur = quatDeltaLocal;
+			//프리트랜스폼 이동값 제거
+			_matrix pRot = m_PreTransform;
+			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
+			//프리트랜스폼 회전 매트릭스 생성
+			_vector qP = XMQuaternionRotationMatrix(pRot);
+			//실질적으로 사용할 수 있는 회전델타로 변환 
+			_vector quatDeltaOut =
+				XMQuaternionNormalize(XMQuaternionMultiply(
+						qP,
+						XMQuaternionMultiply(quatDeltaLocal, XMQuaternionInverse(qP))
+					)
+				);
+			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
+
+
+			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
 		}
@@ -659,7 +698,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			if (hasAxis(Layer.eExtractMoveAxis, AXIS::Z)) mat._43 = 0.f;
 		}
 	}
-}
+}	
 											/*-----------------*/
 											/*Convert Animation*/
 											/*-----------------*/
@@ -701,8 +740,9 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
 			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
+			Matrix MotionMat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -721,9 +761,51 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 			}
 
-			_vector quatDelta =
+			// 이동 상쇄
+			MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+			// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+			_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+			_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+			// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+			MotionMat = MotionMat * invCurRootRot;
+			// 상쇄한 매트릭스 저장
+			Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
+
+			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
+
+			// --- 위치(점) 변환: w = 1 ---
+			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
+			_vector posT = XMVector4Transform(pos, m_PreTransform);
+
+			Vector3 vPosOut;
+			vPosOut.x = XMVectorGetX(posT);
+			vPosOut.y = XMVectorGetY(posT);
+			vPosOut.z = XMVectorGetZ(posT);
+			Layer.vRootMoveDelta = vPosOut;
+
+			// --- 회전(컨주게이션) ---
+			_vector qCur = quatDeltaLocal;
+			//프리트랜스폼 이동값 제거
+			_matrix pRot = m_PreTransform;
+			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
+			//프리트랜스폼 회전 매트릭스 생성
+			_vector qP = XMQuaternionRotationMatrix(pRot);
+			//실질적으로 사용할 수 있는 회전델타로 변환 
+			_vector quatDeltaOut =
+				XMQuaternionNormalize(XMQuaternionMultiply(
+					qP,
+					XMQuaternionMultiply(quatDeltaLocal, XMQuaternionInverse(qP))
+				)
+				);
+			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
+
+			//다음 프레임 대비
+			Layer.vPrevRootPos = vCurRootPos;
+			Layer.vPrevRootQuat = vCurRootQuat;
 
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
@@ -820,6 +902,8 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 void CAnimator3D::BuildBone()
 {
 	for (auto& Layer : m_AnimLayers) {
+		if (Layer.fLayerWeight <= 0) continue;
+
 		switch (Layer.eLayerType)
 		{
 		case Engine::ANIM_LAYER_STATE::NONE:
@@ -1036,6 +1120,14 @@ HRESULT SetAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
+	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
+	else { 
+		Layer.fLayerWeight = m_fLayerWeight;
+		Layer.fTargetWeight = m_fTargetWeight;
+		Layer.fWeightElapsed = 0.f;
+		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.eLayerEaseType = m_eLayerEaseType;
+	}
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
@@ -1076,6 +1168,14 @@ HRESULT ChangeAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
+	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
+	else {
+		Layer.fLayerWeight = m_fLayerWeight;
+		Layer.fTargetWeight = m_fTargetWeight;
+		Layer.fWeightElapsed = 0.f;
+		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.eLayerEaseType = m_eLayerEaseType;
+	}
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
@@ -1088,11 +1188,21 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//만약 블랜드 상태이면 바로 다음으로 블랜드될 수 있도록 얘내를 로컬로
-	if (Layer.bBlending) {
-		Layer.iClipIndex = Layer.iNextClipIndex;
-		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
-		Layer.LocalMatrices = Layer.BlendMatrices;
+	//먄약 시작클립이 없으면 여기서마무리
+	if (-1 == Layer.iClipIndex) {
+		Layer.iClipIndex = m_iClipIndex;
+		Layer.fCurrentTrackPosition = 0.f;
+		//애니매이션이 새로 시작됌
+		Layer.bisFinished = false;
+		return S_OK;
+	}
+	else {
+		//만약 블랜드 상태이면 바로 다음으로 블랜드될 수 있도록 얘내를 로컬로
+		if (Layer.bBlending) {
+			Layer.iClipIndex = Layer.iNextClipIndex;
+			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+			Layer.LocalMatrices = Layer.BlendMatrices;
+		}
 	}
 
 	//클립끼리의 블랜드 상태

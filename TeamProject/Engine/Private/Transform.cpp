@@ -164,6 +164,15 @@ void CTransform::Set_Quaternion(_fvector quaternion)
 	MarkDirty();
 }
 
+void CTransform::Add_Quaternion(_quaternion quaternion)
+{
+	_fvector myQuaternion = XMLoadFloat4(&m_qRotation);
+	_fvector newQuaternion = XMQuaternionMultiply(quaternion, myQuaternion);
+	_vector finalQuaternion = XMQuaternionNormalize(newQuaternion);
+	XMStoreFloat4(&m_qRotation, finalQuaternion);
+	MarkDirty();
+}
+
 void CTransform::Set_WorldQuaternion(_fvector quaternion)
 {
 	if (m_pParentTransform)
