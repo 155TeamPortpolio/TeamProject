@@ -128,8 +128,6 @@ static const float weights[3] =
     0.25
 };
 
-
-
 PS_OUT_RESULT PS_BRIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
