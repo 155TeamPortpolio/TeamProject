@@ -29,7 +29,7 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.mat");
-	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Anim/SacrificeBringerHand_Meta.json");
+	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
 	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
 
 	return S_OK;

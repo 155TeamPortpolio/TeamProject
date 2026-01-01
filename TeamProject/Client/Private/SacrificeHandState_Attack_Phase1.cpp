@@ -152,19 +152,11 @@ void CSacrificeHandState_Attack_10_Phase1::Update(CSacrificeHand* pOwner, _float
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (blackBoard.stateQueue.empty())
+	if (m_fAnimProgress >= 0.2)
 	{
-		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
-			blackBoard.isChainOpen = true;
-	}
-	else
-	{
-		if (m_fAnimProgress >= 0.2f)
-		{
-			blackBoard.isChainOpen = true;
-			if (!blackBoard.stateQueue.empty())
-				blackBoard.isRequestNext = true;
-		}
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
 	}
 }
 
@@ -176,27 +168,17 @@ void CSacrificeHandState_Attack_11_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.4f).Apply();
-
-	
 }
 
 void CSacrificeHandState_Attack_11_Phase1::Update(CSacrificeHand* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (blackBoard.stateQueue.empty())
+	if (m_fAnimProgress >= 0.2)
 	{
-		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
-			blackBoard.isChainOpen = true;
-	}
-	else
-	{
-		if (m_fAnimProgress >= 0.2f)
-		{
-			blackBoard.isChainOpen = true;
-			if (!blackBoard.stateQueue.empty())
-				blackBoard.isRequestNext = true;
-		}
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
 	}
 }
 
@@ -217,20 +199,13 @@ void CSacrificeHandState_Attack_12_Phase1::Update(CSacrificeHand* pOwner, _float
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (blackBoard.stateQueue.empty())
+	if (m_fAnimProgress >= 0.5)
 	{
-		if (pOwner->Get_Component<CAnimator3D>()->isCurrentAnimEnd(0))
-			blackBoard.isChainOpen = true;
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
 	}
-	else
-	{
-		if (m_fAnimProgress >= 0.3f)
-		{
-			blackBoard.isChainOpen = true;
-			if (!blackBoard.stateQueue.empty())
-				blackBoard.isRequestNext = true;
-		}
-	}
+
 }
 
 void CSacrificeHandState_Attack_12_Phase1::Exit(CSacrificeHand* pOwner)

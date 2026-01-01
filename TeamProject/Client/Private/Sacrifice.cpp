@@ -254,17 +254,17 @@ void CSacrifice::Update_States(_float dt)
 		m_fIdleElasedTime += dt;
 		if (m_fIdleElasedTime >= m_fIdleDuration)
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
 			if (m_IsOverDrive)
 				iRandIndex = 0;
 
 			if (0 == iRandIndex)
 			{
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
-			else if (1 == iRandIndex)
-			{
 				m_pStateMachine->Set_Trigger("Idle_To_Walk");
+			}
+			else
+			{
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
 	
 			m_fIdleElasedTime = 0.f;
