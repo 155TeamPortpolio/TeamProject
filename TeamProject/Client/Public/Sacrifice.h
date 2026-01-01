@@ -40,11 +40,13 @@ public:
     void ActiveWhip();
     void DeactiveWhip();
 
+    void SetPhase(PHASE phase) { m_eCurrPhase = phase; }
     _bool IsOverDrive()const { return m_IsOverDrive; }
     void ActiveOverDrive() { m_IsOverDrive = true; }
     void DeactiveOverDrive() { m_IsOverDrive = false; }
 
     void Idle() { m_RequestIdle = true; }
+    void ChangePhase();
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
@@ -66,7 +68,7 @@ private:
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
 
-    PHASE m_eCurrPhase = PHASE::PHASE2;
-    _bool m_IsOverDrive = true; /* Only Use Phase2 */
+    PHASE m_eCurrPhase = PHASE::PHASE1;
+    _bool m_IsOverDrive = false; /* Only Use Phase2 */
 };
 NS_END

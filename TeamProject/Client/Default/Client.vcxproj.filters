@@ -265,6 +265,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
       <UniqueIdentifier>{7a1fc845-f3d2-4172-b4a9-fc13f4ac91cc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Death">
+      <UniqueIdentifier>{4aa0dc92-7d49-4159-86a4-91d13d5ba9a3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -533,6 +536,9 @@
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -790,6 +796,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

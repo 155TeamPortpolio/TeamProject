@@ -15,6 +15,7 @@
 #include "SacrificeState_Born.h"
 #include "SacrificeState_Hit.h"
 #include "SacrificeState_Evade.h"
+#include "SacrificeState_ChangePhase.h"
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -161,6 +162,11 @@ void CSacrifice::DeactiveWhip()
 	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], false);
 }
 
+void CSacrifice::ChangePhase()
+{
+
+}
+
 HRESULT CSacrifice::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrifice>::Create();
@@ -187,6 +193,7 @@ HRESULT CSacrifice::Initialize_States()
 	m_pStateMachine->Register_State("Born",CSacrificeState_Born::Create());
 	m_pStateMachine->Register_State("Hit",CSacrificeState_Hit::Create());
 	m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
+	m_pStateMachine->Register_State("ChangePhase", CSacrificeState_ChangePhase::Create());
 
 	return S_OK;
 }
@@ -204,6 +211,13 @@ HRESULT CSacrifice::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Walk");
 
+	/* From Death */
+	m_pStateMachine->Register_Transition("Death", "ChangePhase",
+		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Death_To_ChangePhase");
+
+	/* From Change Phase */
+	m_pStateMachine->Register_Transition("ChangePhase", "Idle",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
@@ -221,8 +235,10 @@ void CSacrifice::Update_States(_float dt)
 
 	/* Phase Change */
 	m_fPhase1ElapseTime += dt;
-	if (m_fPhase1ElapseTime >= m_fPhase1Duration)
-		m_eCurrPhase = PHASE::PHASE2;
+	if (m_fPhase1ElapseTime >= m_fPhase1Duration
+		&& "ChangePhase" != m_pStateMachine->Get_CurrentStateName()
+		&& PHASE::PHASE2 != m_eCurrPhase)
+		m_pStateMachine->Change_State("ChangePhase");
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
