@@ -471,12 +471,11 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 {
     auto sprite = Get_Component<CSprite2D>();
     sprite->Change_Texture(idx, levelKey, texKey);
-     
 
     m_sizeMode = UISizeMode::FHD;
 
-    auto tex = sprite->Get_Texture(idx);
-    auto size = tex->Get_Size();
+    auto texture = sprite->Get_Texture(idx);
+    auto size    = texture->Get_Size();
 
     m_sizeFHD = {(float)size.x, (float)size.y};
 
@@ -540,9 +539,4 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
         const _float newRatio = GetSizeRatio(m_sizeMode);
         m_vSize = {m_sizeFHD.x * newRatio, m_sizeFHD.y * newRatio};
     }
-}
-
-void CUIObject_Tool::Free()
-{
-    __super::Free();
 }

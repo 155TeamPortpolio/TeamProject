@@ -1,5 +1,7 @@
 #include "Shader_Define.hlsl"
 
+#define PI 3.14159265359
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -105,8 +107,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    if (vDiffuse.a < 0.1f)
-        discard;
+    clip(vDiffuse.a - 0.1f);
     
     Out.vColor = vDiffuse * vColor;
     
@@ -118,8 +119,7 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     PS_OUT Out;
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord));
-    if (vDiffuse.a < 0.1f)
-        discard;
+    clip(vDiffuse.a - 0.1f);
     
     Out.vColor = vDiffuse * vColor;
     
@@ -131,133 +131,22 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     PS_OUT Out;
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
-    if (vDiffuse.a < 0.1f)
-        discard;
-    
-    Out.vColor = vDiffuse * vColor;
-    
-    return Out;
-}
-// ---------------------------------------------
-float  MaskThreshold;
-float  MaskSoftness;
-float2 MaskTexSize;
-
-PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
-{
-    PS_OUT Out;
-
-    float2 diffuseUV = float2(
-        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
-        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
-    );
-
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, diffuseUV + UVOffset);
     clip(vDiffuse.a - 0.1f);
-
-    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
-    float2 uiSizePx = float2(uiW, uiH);
-
-    float2 localUV = In.vTexcoord;
-    float2 localPx = (localUV - 0.5f) * uiSizePx;
-
-    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
-    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
-
-    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
-
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
-
-    float mask = 0.f;
-    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
-
-    if (MaskSoftness <= 0.f)
-        clip(mask - MaskThreshold);
-    else
-    {
-        float maskA = smoothstep(MaskThreshold - MaskSoftness, MaskThreshold + MaskSoftness, mask);
-        vDiffuse.a *= maskA;
-    }
-
+    
     Out.vColor = vDiffuse * vColor;
+    
     return Out;
 }
 
-PS_OUT PS_MAIN_MASK_DEBUG_RAW(PS_IN In)
-{
-    PS_OUT Out;
-
-    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
-    float2 uiSizePx = float2(uiW, uiH);
-
-    float2 localUV = In.vTexcoord;
-    float2 localPx = (localUV - 0.5f) * uiSizePx;
-
-    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
-    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
-
-    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
-
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
-
-    float mask = 0.f;
-    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
-
-    Out.vColor = float4(mask, mask, mask, 1.f);
-    return Out;
-}
-
-PS_OUT PS_MAIN_MASK_DEBUG_APPLIED(PS_IN In)
-{
-    PS_OUT Out;
-
-    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
-    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
-    float2 uiSizePx = float2(uiW, uiH);
-
-    float2 localUV = In.vTexcoord;
-    float2 localPx = (localUV - 0.5f) * uiSizePx;
-
-    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
-    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
-
-    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
-
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
-
-    float mask = 0.f;
-    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
-
-    float maskA = 0.f;
-    if (MaskSoftness <= 0.f)
-        maskA = step(MaskThreshold, mask);
-    else
-        maskA = smoothstep(MaskThreshold - MaskSoftness, MaskThreshold + MaskSoftness, mask);
-
-    Out.vColor = float4(maskA, maskA, maskA, 1.f);
-    return Out;
-}
-
-// ------------------------------------------
 PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
     
     float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y };
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    if (vDiffuse.a < 0.1f)
-        discard;
+    clip(vDiffuse.a - 0.1f);
     
-    if (vTexcoord.x > FillAmount)
-        discard;
+    clip(vTexcoord.x - FillAmount);
     
     Out.vColor = vDiffuse * vColor;
     
@@ -269,18 +158,14 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     PS_OUT Out;
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
-    if (vDiffuse.a < 0.1f)
-        discard;
+    clip(vDiffuse.a - 0.1f);
     
     float2 vTexcoord = In.vTexcoord - 0.5f;
-    float fAngle = atan2(vTexcoord.y, vTexcoord.x);
-    fAngle = fAngle / (3.14159265 * 2.f) + 0.5f;        // 0 ~ 1로 정규화
+    float  fAngle    = atan2(vTexcoord.y, vTexcoord.x);
+    fAngle = fAngle / (PI * 2.f) + 0.5f; // 0 ~ 1로 정규화
     fAngle = (1.f - Direction) - frac(fAngle - 0.25f) * (Direction * -2.f + 1.f);
     
-    float fGauge = step(fAngle, FillAmount);
-    
-    if (!fGauge)
-        discard;
+    clip(FillAmount - fAngle);
     
     Out.vColor = vDiffuse * vColor;
     
@@ -318,38 +203,6 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
-
-    pass UVAnimation_Mask
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION_MASK();
-    }
-
-    pass MaskDebugRaw
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_MASK_DEBUG_RAW();
-    }
-
-    pass MaskDebugApplied
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_MASK_DEBUG_APPLIED();
-    }
-
-
 // ----------------------------------------------------------
     pass LinearFill
     {

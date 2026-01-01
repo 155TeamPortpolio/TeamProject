@@ -28,15 +28,6 @@ private:
 	_float2		m_vUVOffset = {};
 	_float2		m_vUVOffsetSpeed = {};
 
-	_bool       m_useMask          = false;
-	_float      m_fMaskThreshold   = 0.5f;
-	_float      m_fMaskSoftness    = 0.03f;
-	string      m_strMaskTexKey{};
-	_float2     m_vMaskTexSize{};
-
-	_bool       m_maskDebugRaw     = false;
-	_bool       m_maskDebugApplied = false;
-
 public:
 	static const string m_strTypeTag;
 	static _uint m_iCount;
@@ -44,7 +35,7 @@ public:
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
