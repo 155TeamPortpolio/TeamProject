@@ -242,8 +242,14 @@ void CSacrifice::Update_States(_float dt)
 		m_RequestIdle = false;
 	}
 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_SPACE))
-		m_pStateMachine->Change_State("Parry");
+	m_fPhase1ElapseTime += dt;
+	if (m_fPhase1ElapseTime >= m_fPhase1Duration && m_eCurrPhase == PHASE::PHASE1 && m_pStateMachine->Get_CurrentStateName() == "Idle")
+		m_pStateMachine->Change_State("Death");
+
+	if (m_pStateMachine->Get_CurrentStateName() == "Idle"
+		&& m_eCurrPhase == PHASE::PHASE2
+		&& CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_SPACE))
+		m_IsOverDrive = true;
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
@@ -252,7 +258,9 @@ void CSacrifice::Update_States(_float dt)
 		if (m_fIdleElasedTime >= m_fIdleDuration)
 		{
 			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-			iRandIndex = 0;
+			if (m_IsOverDrive)
+				iRandIndex = 0;
+
 			if (0 == iRandIndex)
 			{
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");

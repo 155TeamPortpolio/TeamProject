@@ -194,6 +194,19 @@ public:
 
 };
 
+class CSacrificeState_OverDrive_Release_Loop_Phase2 : public IHState<CSacrifice>
+{
+public:
+	virtual void Enter(CSacrifice* pOwner) override;
+	virtual void Update(CSacrifice* pOwner, _float dt) override;
+	virtual void Exit(CSacrifice* pOwner) override;
+
+public:
+	static CSacrificeState_OverDrive_Release_Loop_Phase2* Create() { return new CSacrificeState_OverDrive_Release_Loop_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
 class CSacrificeState_OverDrive_Release_Attack01_Phase2 : public IHState<CSacrifice>
 {
 public:

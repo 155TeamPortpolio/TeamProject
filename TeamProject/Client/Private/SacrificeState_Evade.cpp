@@ -17,6 +17,8 @@ void CSacrificeState_Evade::Enter(CSacrifice* pOwner)
 
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Evade_Phase1::Create());
 		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Evade_Phase2::Create());
+
+		__super::Enter(pOwner);
 	}
 
 	CSacrifice::PHASE currPhase = pOwner->GetCurrPhase();
@@ -34,7 +36,6 @@ void CSacrificeState_Evade::Enter(CSacrifice* pOwner)
 		break;
 	}
 
-	__super::Enter(pOwner);
 }
 
 void CSacrificeState_Evade::Update(CSacrifice* pOwner, _float dt)

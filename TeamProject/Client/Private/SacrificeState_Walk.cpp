@@ -1,10 +1,11 @@
 #include "pch.h"
 #include "SacrificeState_Walk.h"
 #include "Sacrifice.h"
+#include "CharacterController.h"
 
 /* Sub States */
 #include "SacrificeState_Walk_Phase1.h"
-#include "CharacterController.h"
+#include "SacrificeState_Walk_Phase2.h"
 
 void CSacrificeState_Walk::Enter(CSacrifice* pOwner)
 {
@@ -13,9 +14,25 @@ void CSacrificeState_Walk::Enter(CSacrifice* pOwner)
 		m_pSubStateMachine = CStateMachine<CSacrifice>::Create();
 
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Walk_Phase1::Create());
-		m_pSubStateMachine->Set_DefaultState("Phase1");
+		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Walk_Phase2::Create());
+
+		__super::Enter(pOwner);
 	}
-	__super::Enter(pOwner);
+
+	CSacrifice::PHASE currPhase = pOwner->GetCurrPhase();
+	switch (currPhase)
+	{
+	case Client::CSacrifice::PHASE::PHASE1:
+	{
+		m_pSubStateMachine->Change_State("Phase1");
+	}break;
+	case Client::CSacrifice::PHASE::PHASE2:
+	{
+		m_pSubStateMachine->Change_State("Phase2");
+	}break;
+	default:
+		break;
+	}
 }
 
 void CSacrificeState_Walk::Update(CSacrifice* pOwner, _float dt)
@@ -30,7 +47,7 @@ void CSacrificeState_Walk::Update(CSacrifice* pOwner, _float dt)
 	vDeltaMove.y = 0.f;
 	vDeltaMove = (vRight * vDeltaMove.x + vLook * vDeltaMove.z) * -1.f;
 
-	pCCT->Move_RootMotion(vDeltaMove * 0.5f, _vector4(0.f, 0.f, 0.f, 1.f), dt);
+	pCCT->Move_RootMotion(vDeltaMove, _vector4(0.f, 0.f, 0.f, 1.f), dt);
 
 	if (m_fStateTime >= 1.5f)
 		pOwner->Idle();
