@@ -276,6 +276,28 @@ public:
 template <typename T>
 class AnimBuild {
 public:
+
+    //Layer
+    T& LayerBlend(_float fBlendWeight,
+        _float fTargetWeight,
+        _float fDuration,
+        EaseType eEaseType) {
+
+        m_fLayerWeight  = fBlendWeight;
+        m_fTargetWeight = fTargetWeight;
+        m_fWeightDuration = fDuration;
+        m_ePlayEaseType = eEaseType;
+
+        return static_cast<T&>(*this);
+    }
+
+    //레이어 애니매이션 업데이트가 멈춤
+    T& Pause(_bool bPause) {
+        m_bPause = bPause;
+        return static_cast<T&>(*this);
+    }
+
+    //Clip
     T& Loop(_bool bLoop) {
         m_bLoop = bLoop;
         return static_cast<T&>(*this);
@@ -299,10 +321,6 @@ public:
         return static_cast<T&>(*this);
     }
 
-    T& Pause(_bool bPause) {
-        m_bPause = bPause;
-        return static_cast<T&>(*this);
-    }
 
     T& ResetRotation(_bool bResetRotation) {
         m_bPause = bResetRotation;
@@ -310,13 +328,24 @@ public:
     }
  
 protected:
+    //레이어 가중치, 가중치가 0이면 업데이트 자체를 하지 않음
+    //레이어 가중치가 0이되지 않게 끝이나면 매 프레임마다 업데이트 하는거로 간주
+    _float   m_fLayerWeight = 0.f;
+    _float   m_fTargetWeight = 0.f;
+    _float   m_fWeightDuration = 0.f;
+    EaseType m_eLayerEaseType = { EaseType::None };
+    //반복
     _bool    m_bLoop = false;
+    //멈춤
     _bool    m_bPause = false;
+    //회전보간 끄기
     _bool    m_bResetRotation = false;
+    //애니매이션 속도
     _float   m_fSpeed = 1.f;
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };
     _float   m_fEaseDuration = { 0.f };
+
 };
 
 
@@ -338,7 +367,6 @@ protected:
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
     _bool m_bApplied = false;
-
 };
 
 class ENGINE_DLL ChangeAnimBuild
@@ -382,6 +410,7 @@ protected:
     _int m_iLayerIndex = -1;
     _int m_iClipIndex = -1;
 
+    //클립 블랜드
     _float      m_fBlendDuration = 0.2f;
     _bool       m_bKeepTrackPos = false;
     _bool       m_bIgnoreRotation = false;

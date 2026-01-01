@@ -121,6 +121,7 @@ void CAnimator3D::Update_Animation(_float dt)
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
+		if (Layer.fLayerWeight <= 0) continue;
 
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
@@ -818,6 +819,8 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 void CAnimator3D::BuildBone()
 {
 	for (auto& Layer : m_AnimLayers) {
+		if (Layer.fLayerWeight <= 0) continue;
+
 		switch (Layer.eLayerType)
 		{
 		case Engine::ANIM_LAYER_STATE::NONE:
@@ -1033,6 +1036,14 @@ HRESULT SetAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
+	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
+	else { 
+		Layer.fLayerWeight = m_fLayerWeight;
+		Layer.fTargetWeight = m_fTargetWeight;
+		Layer.fWeightElapsed = 0.f;
+		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.eLayerEaseType = m_eLayerEaseType;
+	}
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
@@ -1072,6 +1083,14 @@ HRESULT ChangeAnimBuild::Apply()
 
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+	}
+	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
+	else {
+		Layer.fLayerWeight = m_fLayerWeight;
+		Layer.fTargetWeight = m_fTargetWeight;
+		Layer.fWeightElapsed = 0.f;
+		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.eLayerEaseType = m_eLayerEaseType;
 	}
 
 	//애니매이션 기본
