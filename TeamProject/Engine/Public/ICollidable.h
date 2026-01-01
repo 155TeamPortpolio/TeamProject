@@ -28,11 +28,20 @@ public:
 	unordered_set<ICollidable*>& Get_CurrentCollisions() { return m_CurrentCollisions; }
 	unordered_set<ICollidable*>& Get_PreviousCollisions() { return m_PreviousCollisions; }
 	virtual void Update_Collisions() { m_PreviousCollisions = m_CurrentCollisions;}
-
+	
+	void Set_SlotInfo(_int iIndex, _uint iGeneration)
+	{
+		m_iSlotIndex = iIndex;
+		m_iSlotGeneration = iGeneration;
+	}
+	_int  Get_SlotIndex() const { return m_iSlotIndex; }
+	_uint Get_SlotGeneration() const { return m_iSlotGeneration; }
 
 protected:
 	unordered_set<ICollidable*> m_CurrentCollisions;
 	unordered_set<ICollidable*> m_PreviousCollisions;
+	_int  m_iSlotIndex = { -1 };
+	_uint m_iSlotGeneration = { 0 };
 
 public:
 	virtual void Free() override { __super::Free(); }
