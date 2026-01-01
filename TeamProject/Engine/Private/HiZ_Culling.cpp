@@ -165,7 +165,7 @@ void CHiZ_Culling::Check_Resource()
 		if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
 	}
 	if (!m_pDepthSrv) {
-		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Depth");
+		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Static_Depth");
 		if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
 	}
 	
@@ -561,13 +561,13 @@ void CHiZ_Culling::Free()
 	for (auto& uav : m_HiZUav)
 		Safe_Release(uav);
 
-	//Safe_Release(m_pDepthSrv);
-	//Safe_Release(m_pCopyShader);
+	Safe_Release(m_pDepthSrv);
+	Safe_Release(m_pCopyShader);
 	Safe_Release(m_pCopyBuffer);
-	//Safe_Release(m_pReduceShader);
+	Safe_Release(m_pReduceShader);
 	Safe_Release(m_pReduceBuffer);
 
-	//Safe_Release(m_pOcclusionShader);
+	Safe_Release(m_pOcclusionShader);
 	Safe_Release(m_pOcculsionBuffer);
 
 	Safe_Release(m_inputBuffer);
