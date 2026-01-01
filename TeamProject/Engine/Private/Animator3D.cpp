@@ -1188,11 +1188,21 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//만약 블랜드 상태이면 바로 다음으로 블랜드될 수 있도록 얘내를 로컬로
-	if (Layer.bBlending) {
-		Layer.iClipIndex = Layer.iNextClipIndex;
-		Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
-		Layer.LocalMatrices = Layer.BlendMatrices;
+	//먄약 시작클립이 없으면 여기서마무리
+	if (-1 == Layer.iClipIndex) {
+		Layer.iClipIndex = m_iClipIndex;
+		Layer.fCurrentTrackPosition = 0.f;
+		//애니매이션이 새로 시작됌
+		Layer.bisFinished = false;
+		return S_OK;
+	}
+	else {
+		//만약 블랜드 상태이면 바로 다음으로 블랜드될 수 있도록 얘내를 로컬로
+		if (Layer.bBlending) {
+			Layer.iClipIndex = Layer.iNextClipIndex;
+			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
+			Layer.LocalMatrices = Layer.BlendMatrices;
+		}
 	}
 
 	//클립끼리의 블랜드 상태
