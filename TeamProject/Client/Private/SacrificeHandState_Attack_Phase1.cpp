@@ -37,6 +37,9 @@ void CSacrificeHandState_Attack_Phase1::Update(CSacrificeHand* pOwner, _float dt
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
 	}
+
+	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
+		pOwner->SetActive(false);
 }
 
 void CSacrificeHandState_Attack_Phase1::Exit(CSacrificeHand* pOwner)
@@ -146,6 +149,4 @@ void CSacrificeHandState_Attack_12_Phase1::Update(CSacrificeHand* pOwner, _float
 
 void CSacrificeHandState_Attack_12_Phase1::Exit(CSacrificeHand* pOwner)
 {
-	pOwner->Set_Alive(false);
-	pOwner->SetActive(false);
 }

@@ -67,9 +67,8 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-
 	m_pStateMachine->Update(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
@@ -112,6 +111,7 @@ void CSacrificeHand::Free()
 void CSacrificeHand::Phase1Attack()
 {
 	m_isAlive = true;
+	SetActive(true);
 	m_pStateMachine->Change_State("Attack");
 }
 
