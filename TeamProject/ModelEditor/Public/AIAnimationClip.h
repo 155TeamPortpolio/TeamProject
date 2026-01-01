@@ -12,7 +12,7 @@ private:
 
 public:
 	HRESULT Initialize(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
-	void Save_File(ofstream& ofs, const _float4x4* WorldMatrix);
+	void Save_File(ofstream& ofs);
 
 public:
 	static CAIAnimationClip* Create(const aiAnimation* pAIAnimation, class CAIModelData* pAIModelData);
