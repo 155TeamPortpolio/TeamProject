@@ -138,7 +138,115 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     
     return Out;
 }
+// ---------------------------------------------
+float  MaskThreshold;
+float  MaskSoftness;
+float2 MaskTexSize;
 
+PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 diffuseUV = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, diffuseUV + UVOffset);
+    clip(vDiffuse.a - 0.1f);
+
+    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
+    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float2 uiSizePx = float2(uiW, uiH);
+
+    float2 localUV = In.vTexcoord;
+    float2 localPx = (localUV - 0.5f) * uiSizePx;
+
+    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
+    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
+
+    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
+
+    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
+    float2 maskUV = maskPx / MaskTexSize;
+
+    float mask = 0.f;
+    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
+        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+
+    if (MaskSoftness <= 0.f)
+        clip(mask - MaskThreshold);
+    else
+    {
+        float maskA = smoothstep(MaskThreshold - MaskSoftness, MaskThreshold + MaskSoftness, mask);
+        vDiffuse.a *= maskA;
+    }
+
+    Out.vColor = vDiffuse * vColor;
+    return Out;
+}
+
+PS_OUT PS_MAIN_MASK_DEBUG_RAW(PS_IN In)
+{
+    PS_OUT Out;
+
+    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
+    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float2 uiSizePx = float2(uiW, uiH);
+
+    float2 localUV = In.vTexcoord;
+    float2 localPx = (localUV - 0.5f) * uiSizePx;
+
+    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
+    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
+
+    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
+
+    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
+    float2 maskUV = maskPx / MaskTexSize;
+
+    float mask = 0.f;
+    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
+        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+
+    Out.vColor = float4(mask, mask, mask, 1.f);
+    return Out;
+}
+
+PS_OUT PS_MAIN_MASK_DEBUG_APPLIED(PS_IN In)
+{
+    PS_OUT Out;
+
+    float uiW = length(ObjectBufferArray[TransformIndex].Transform[0].xyz);
+    float uiH = length(ObjectBufferArray[TransformIndex].Transform[1].xyz);
+    float2 uiSizePx = float2(uiW, uiH);
+
+    float2 localUV = In.vTexcoord;
+    float2 localPx = (localUV - 0.5f) * uiSizePx;
+
+    float2 rightDir = normalize(ObjectBufferArray[TransformIndex].Transform[0].xy);
+    float2 upDir = normalize(ObjectBufferArray[TransformIndex].Transform[1].xy);
+
+    float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
+
+    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
+    float2 maskUV = maskPx / MaskTexSize;
+
+    float mask = 0.f;
+    if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
+        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+
+    float maskA = 0.f;
+    if (MaskSoftness <= 0.f)
+        maskA = step(MaskThreshold, mask);
+    else
+        maskA = smoothstep(MaskThreshold - MaskSoftness, MaskThreshold + MaskSoftness, mask);
+
+    Out.vColor = float4(maskA, maskA, maskA, 1.f);
+    return Out;
+}
+
+// ------------------------------------------
 PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;

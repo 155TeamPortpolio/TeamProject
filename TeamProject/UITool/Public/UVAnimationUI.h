@@ -23,6 +23,8 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
+	string		m_strTextureKey = {};
+
 	_float2		m_vUVOffset = {};
 	_float2		m_vUVOffsetSpeed = {};
 
