@@ -140,8 +140,8 @@ HRESULT CPostRenderer::Render_Final()
 	else m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
 	m_pTargetManager->Bind_Target("Target_HDR_BlurY", m_pShader, "HDRBloomFinalTexture");
-	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UITexture");
-	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "3DUITexture");
+	m_pTargetManager->Bind_Target("Target_UI", m_pShader, "UI2DTexture");
+	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UI3DTexture");
 	m_pTargetManager->Bind_Target("Target_BloomBlurY", m_pShader, "BloomFinal");
 
 	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
