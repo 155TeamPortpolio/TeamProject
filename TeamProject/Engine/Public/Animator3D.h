@@ -5,7 +5,7 @@
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
-enum class ANIM_LAYER_STATE { NONE, OVERRIDE, BLEND, ADDITIVE };
+enum class ANIM_LAYER_STATE { NONE, BASE, OVERRIDE, BLEND, ADDITIVE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
@@ -17,9 +17,9 @@ public:
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
         _bool               BaseLayer = { false };
-
-        _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
+        
+        _bool               bPause = { true };
         _float              fLayerWeight = {};
         _float              fTargetLayerWeight = {};
         _float              fLayerWeightElapsed = {};
@@ -166,7 +166,8 @@ public://애니매이터 데이터
     void Reset_StartBone(_uint LayerIndex = 0);
     //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
     void Set_TPose();
-
+    //
+    void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
     /*----- Calculator -----*/
     _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
 
@@ -216,15 +217,17 @@ protected://애니매이션 체크
     _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
     
     //매트릭스 보간
-    Matrix Calc_MatrixBlend(_float4x4& base, _float4x4& target, _float weight);
+    Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, _float weight);
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
     //레이어 연산
+    void Layer_Base(const ANIM_LAYER& Layer);
     void Layer_Override(const ANIM_LAYER& Layer);
-    void Layer_Blend(const ANIM_LAYER& Layer, _float fEase);
-    void Layer_Additive(const ANIM_LAYER& Layer, _float fEase);
+    void Layer_Blend(const ANIM_LAYER& Layer);
+    void Layer_Additive(const ANIM_LAYER& Layer);
     //Combined 연산
 
     //최종 뼈 계산
@@ -289,7 +292,7 @@ public:
         m_fLayerWeight  = fBlendWeight;
         m_fTargetWeight = fTargetWeight;
         m_fWeightDuration = fDuration;
-        m_ePlayEaseType = eEaseType;
+        m_eLayerEaseType = eEaseType;
 
         return static_cast<T&>(*this);
     }

@@ -86,6 +86,7 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 	Resize_Layer(1);
 	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
 	m_AnimLayers[0].BaseLayer = true;
+	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;
 	m_AnimLayers[0].fLayerWeight = 1.f;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
@@ -451,6 +452,14 @@ void CAnimator3D::Set_TPose()
 	m_CombinedMatrices = m_TPose;
 }
 
+void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+	if (m_AnimLayers[LayerIndex].BaseLayer) return;
+
+	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
+}
+
 _quaternion CAnimator3D::Calc_TransformFromEndAnim(const _vector4& vTransformQuat)
 {
 	_quaternion endAnimQ = Get_RootBoneEndQuat();
@@ -600,9 +609,39 @@ Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& tar
 	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
 }
 
-										/*-----------------*/
-										/*  Run Animation  */
-										/*-----------------*/
+Matrix CAnimator3D::Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, _float weight)
+{
+	Matrix baseMat = base;
+	Matrix targetMat = target;
+
+	_vector3 baseS, targetS;
+	_quaternion baseR, targetR;
+	_vector3 baseT, targetT;
+
+	baseMat.Decompose(baseS, baseR, baseT);
+	targetMat.Decompose(targetS, targetR, targetT);
+	_vector3	S = baseS + (targetS * weight);
+	_quaternion R =
+		XMQuaternionNormalize(
+			XMQuaternionMultiply(
+				baseR,
+				XMQuaternionSlerp(
+					Quaternion::Identity,
+					targetR,
+					weight
+				)
+			)
+		);
+	R.Normalize();
+
+	_vector3	T = baseT + (targetT * weight);
+	
+	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+}
+
+/*-----------------*/
+/*  Run Animation  */
+/*-----------------*/
 void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 {
 	//Empty Layer
@@ -719,9 +758,9 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 }	
-											/*-----------------*/
-											/*Convert Animation*/
-											/*-----------------*/
+/*-----------------*/
+/*Convert Animation*/
+/*-----------------*/
 void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 {
 	if (-1 == Layer.iClipIndex) return;
@@ -845,30 +884,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendElapsed / Layer.fBlendDuration);
 
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
-	{
 		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendRate);
-
-		//_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
-		//_matrix blend = XMLoadFloat4x4(&Layer.BlendMatrices[i]);
-		//_vector baseS, baseR, baseT;
-		//_vector blendS, blendR, blendT;
-		//
-		//XMMatrixDecompose(&baseS, &baseR, &baseT, base);
-		//XMMatrixDecompose(&blendS, &blendR, &blendT, blend);
-		//
-		//_vector FinalS = XMVectorLerp(baseS, blendS, fBlendRate);
-		//_vector FinalT = XMVectorLerp(baseT, blendT, fBlendRate);
-		//_vector FinalR;
-		//
-		//FinalR = Layer.bIgnoreRotation ?
-		//	FinalR = blendR :
-		//	XMQuaternionSlerp(baseR, blendR, fBlendRate);
-		//
-		//_matrix blendedM = XMMatrixAffineTransformation(
-		//	FinalS, XMVectorSet(0.f, 0.f, 0.f, 1.f), FinalR, FinalT);
-		//
-		//XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
-	}
 
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
@@ -886,6 +902,14 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	}
 }
 
+void CAnimator3D::Layer_Base(const ANIM_LAYER& Layer)
+{
+	if (Layer.bBlending)
+		m_TransformationMatrices = Layer.FinalLocalMatrices;
+	else
+		m_TransformationMatrices = Layer.LocalMatrices;
+}
+
 void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
@@ -896,6 +920,8 @@ void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 	}
 	else {
 		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (BoneIndex == Layer.iMotionBoneIndex || BoneIndex == Layer.iRootBoneIndex) continue;
+
 			if (Layer.bBlending)
 				m_TransformationMatrices[BoneIndex] = Layer.FinalLocalMatrices[BoneIndex];
 			else
@@ -904,16 +930,16 @@ void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 	}
 }
 
-void CAnimator3D::Layer_Blend(const ANIM_LAYER& Layer, _float fEase)
+void CAnimator3D::Layer_Blend(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
 		for (int i = 0; i < m_pData->Get_BoneCount(); i++) {
 			if (i == Layer.iMotionBoneIndex || i == Layer.iRootBoneIndex) continue;
 
 			if (Layer.bBlending)
-				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], fEase);
+				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], Layer.fLayerWeight);
 			else
-				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.LocalMatrices[i], fEase);
+				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.LocalMatrices[i], Layer.fLayerWeight);
 		}
 	}
 	else {
@@ -921,27 +947,33 @@ void CAnimator3D::Layer_Blend(const ANIM_LAYER& Layer, _float fEase)
 			if (BoneIndex == Layer.iMotionBoneIndex || BoneIndex == Layer.iRootBoneIndex) continue;
 
 			if (Layer.bBlending)
-				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], fEase);
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], Layer.fLayerWeight);
 			else
-				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], fEase);
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], Layer.fLayerWeight);
 		}
 	}
 }
 
-void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer, _float fEase)
+void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 {
 	if (-1 == Layer.iStartBoneIndex) {
-		if (Layer.bBlending)
-			m_TransformationMatrices = Layer.FinalLocalMatrices;
-		else
-			m_TransformationMatrices = Layer.LocalMatrices;
+		for (int i = 0; i < m_pData->Get_BoneCount(); i++) {
+			if (i == Layer.iMotionBoneIndex || i == Layer.iRootBoneIndex) continue;
+
+			if (Layer.bBlending)
+				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], Layer.fLayerWeight);
+			else
+				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.LocalMatrices[i], Layer.fLayerWeight);
+		}
 	}
 	else {
 		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (BoneIndex == Layer.iMotionBoneIndex || BoneIndex == Layer.iRootBoneIndex) continue;
+
 			if (Layer.bBlending)
-				m_TransformationMatrices[BoneIndex] = Layer.FinalLocalMatrices[BoneIndex];
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], Layer.fLayerWeight);
 			else
-				m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], Layer.fLayerWeight);
 		}
 	}
 }
@@ -951,29 +983,31 @@ void CAnimator3D::BuildBone(_float dt)
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.fLayerWeight <= 0) continue;
 
-		_float Ease = 0.f;
+		
 		if (EaseType::None != Layer.eLayerEaseType) {
+			_float Ease = 0.f;
 			Layer.fLayerWeightElapsed += dt;
 
 			_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
 			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
-
-			if (t <= 1.f)
-				Layer.eLayerEaseType = EaseType::None;
+			Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
 		}
 	
 		switch (Layer.eLayerType)
 		{
 		case Engine::ANIM_LAYER_STATE::NONE:
 			break;
+		case Engine::ANIM_LAYER_STATE::BASE:
+			Layer_Base(Layer);
+			break;
 		case Engine::ANIM_LAYER_STATE::OVERRIDE:
 			Layer_Override(Layer);
 			break;
 		case Engine::ANIM_LAYER_STATE::BLEND:
-			Layer_Blend(Layer, Ease);
+			Layer_Blend(Layer);
 			break;
 		case Engine::ANIM_LAYER_STATE::ADDITIVE:
-			Layer_Additive(Layer, Ease);
+			Layer_Additive(Layer);
 			break;
 		default:
 			break;

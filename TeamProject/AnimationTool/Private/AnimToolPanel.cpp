@@ -52,9 +52,13 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Resize_Layer(2);
-			m_pSelectAnimator->Set_StartBone(23, 1);
-			m_pSelectAnimator->Set_Animation(1, 5).
-				Loop(true);
+			m_pSelectAnimator->Set_LayerType(ANIM_LAYER_STATE::OVERRIDE, 1);
+			m_pSelectAnimator->Set_MotionBone(21);
+			m_pSelectAnimator->Set_StartBone(223, 1);
+			m_pSelectAnimator->Set_Animation(1, 4)
+				.LayerBlend(1.f, 0.f, 5.f, EaseType::InQuint)
+				.Loop(false)
+				.Apply();
 		}
 	}
 }
