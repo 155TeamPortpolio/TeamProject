@@ -2,8 +2,7 @@
 #include "UI_Object.h"
 
 NS_BEGIN(Engine)
-class IUI_Service;
-class Engine_Math;
+class IUI_Service; class Engine_Math;
 NS_END
 
 NS_BEGIN(UITool)
@@ -56,7 +55,7 @@ protected:
 	UISizeMode m_sizeMode = UISizeMode::FHD;
 
 public:
-	virtual void Free();
+	virtual void Free() { __super::Free(); }
 };
 
 NS_END
