@@ -39,13 +39,6 @@ void CSacrificeState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand* pO
 
 void CSacrificeState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHand* pOwner, _float dt)
 {
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.8f)
-	{
-		blackBoard.isChainOpen = true;
-		if (!blackBoard.stateQueue.empty())
-			blackBoard.isRequestNext = true;
-	}
 }
 
 void CSacrificeState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)

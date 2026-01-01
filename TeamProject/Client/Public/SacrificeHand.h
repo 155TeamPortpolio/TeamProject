@@ -29,6 +29,7 @@ public:
 
 public:
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    void Phase1Attack();
     void SetActive(_bool isActive);
 
 private:

@@ -52,6 +52,9 @@ public:
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
 
+    /* Hand */
+    void Phase1Attack();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
@@ -71,5 +74,8 @@ private:
 
     PHASE m_eCurrPhase = PHASE::PHASE1;
     _bool m_IsOverDrive = false; /* Only Use Phase2 */
+
+    _uint m_iHandID{};
+
 };
 NS_END

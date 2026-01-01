@@ -2,7 +2,9 @@
 #include "SacrificeState_Attack_Phase1.h"
 #include "Sacrifice.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 #include "Helper_Func.h"
+#include "SacrificeHand.h"
 
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -82,7 +84,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 7);
-	//iRandIndex = 6;
+	iRandIndex = 3;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -422,13 +424,15 @@ void CSacrificeState_Attack_10_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_10").Loop(false).Speed(1.4f).Apply();
+
+	pOwner->Phase1Attack();
 }
 
 void CSacrificeState_Attack_10_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fAnimProgress >= 0.3f)
+	if (m_fAnimProgress >= 0.2f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())

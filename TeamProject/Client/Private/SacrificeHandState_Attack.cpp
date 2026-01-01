@@ -14,7 +14,7 @@ void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeHandState_Attack_Phase1::Create());
 		m_pSubStateMachine->Register_State("Phase2", CSacrificeHandState_Attack_Phase2::Create());
-		m_pSubStateMachine->Set_DefaultState("Phase2");
+		m_pSubStateMachine->Set_DefaultState("Phase1");
 	}
 
 	__super::Enter(pOwner);

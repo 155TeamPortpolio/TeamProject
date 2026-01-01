@@ -6,6 +6,8 @@
 #include "SkeletalModel.h"
 #include "CharacterController.h"
 #include "Helper_Func.h"
+#include "SacrificeHand.h"
+#include "ObjectContainer.h"
 
 /* States */
 #include "StateMachine.h"
@@ -35,6 +37,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
@@ -63,6 +66,12 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pCCT = Get_Component<CCharacterController>();
 	pCCT->Set_GravityEnabled(false);
 
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+		.Build("Sacrifice_Hand");
+	pHand->Set_Alive(false);
+	m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -83,21 +92,23 @@ void CSacrifice::Awake()
 
 void CSacrifice::Priority_Update(_float dt)
 {
-
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CSacrifice::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	Get_Component<CCharacterController>()->Update(dt);
-	
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
+
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CCharacterController>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CSacrifice::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 CSacrifice* CSacrifice::Create()
@@ -177,6 +188,21 @@ void CSacrifice::ChangePhase()
 {
 	if (PHASE::PHASE1 == m_eCurrPhase)
 		m_pStateMachine->Change_State("ChangePhase");
+}
+
+void CSacrifice::Phase1Attack()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->Phase1Attack();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
+	vPosition -= vLook * 4.f;
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

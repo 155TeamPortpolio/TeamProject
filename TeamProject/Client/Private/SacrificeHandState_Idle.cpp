@@ -11,11 +11,16 @@ void CSacrificeHandState_Idle::Enter(CSacrificeHand* pOwner)
 
 		m_pSubStateMachine->Register_State("Idle_Air",CSacrificeHandState_Idle_Air::Create());
 		m_pSubStateMachine->Register_State("Idle_Ground",CSacrificeHandState_Idle_Ground::Create());
+
+		m_pSubStateMachine->Set_DefaultState("Idle_Ground");
 	}
+
+	__super::Enter(pOwner);
 }
 
 void CSacrificeHandState_Idle::Update(CSacrificeHand* pOwner, _float dt)
 {
+	__super::Update(pOwner, dt);
 }
 
 void CSacrificeHandState_Idle::Exit(CSacrificeHand* pOwner)

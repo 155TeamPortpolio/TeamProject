@@ -48,8 +48,6 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringerHand_Meta.json");
-	//pAnimator->Set_MotionBone(43);
-	//pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -109,6 +107,12 @@ void CSacrificeHand::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+}
+
+void CSacrificeHand::Phase1Attack()
+{
+	m_isAlive = true;
+	m_pStateMachine->Change_State("Attack");
 }
 
 void CSacrificeHand::SetActive(_bool isActive)
