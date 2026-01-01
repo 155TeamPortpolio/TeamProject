@@ -1,6 +1,6 @@
 #pragma once
 #include "MapTool_Defines.h"
-#include "Json_Inc/json.hpp"
+#include "Engine_Json.h"
 
 namespace MapTool {
 
@@ -74,7 +74,7 @@ namespace MapTool {
 		string		TagDataFormat = {};
 		string		TagArea = {};
 		_int		iVersion = 1;
-		vector<FIELD_DATA_DEFINE> values; 
+		vector<FIELD_DATA_DEFINE> values;
 	}MapData_Slot_Header;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(MapData_Slot_Header, TagDataFormat, TagArea, iVersion, values);
 
@@ -96,13 +96,4 @@ namespace MapTool {
 	}BONE_DATA_HEADER;
 	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(BONE_DATA_HEADER, TagDataFormat, TagModel, BoneInfos);
 
-}
-
-namespace DirectX {
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(XMFLOAT4X4,
-		_11, _12, _13, _14,
-		_21, _22, _23, _24,
-		_31, _32, _33, _34,
-		_41, _42, _43, _44
-	);
 }
