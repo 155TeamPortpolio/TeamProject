@@ -147,7 +147,7 @@ void CAnimToolPanel::GUI_Setting_Clips(_float fChildHeight)
 					//새로운 클립을 눌렀다면
 					m_CurClipTag = ClipTag;
 					m_iCurClipIndex = iIndex;
-					m_pSelectAnimator->Set_Animation(0, iIndex)
+					m_pSelectAnimator->Change_Animation(0, iIndex)
 						.Loop(m_bLoop)
 						.Apply();
 					
