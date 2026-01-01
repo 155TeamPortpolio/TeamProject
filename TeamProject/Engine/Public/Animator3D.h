@@ -242,7 +242,8 @@ private:
 
 protected:
     class CModelData* m_pData = {};
- 
+    Matrix m_PreTransform = { Matrix::Identity };
+
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
