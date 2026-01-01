@@ -26,8 +26,14 @@ private:
 	_float2		m_vUVOffset = {};
 	_float2		m_vUVOffsetSpeed = {};
 
-private:
-	string		m_strTextureKey = {};
+	_bool       m_useMask          = false;
+	_float      m_fMaskThreshold   = 0.5f;
+	_float      m_fMaskSoftness    = 0.03f;
+	string      m_strMaskTexKey{};
+	_float2     m_vMaskTexSize{};
+
+	_bool       m_maskDebugRaw     = false;
+	_bool       m_maskDebugApplied = false;
 
 public:
 	static const string m_strTypeTag;

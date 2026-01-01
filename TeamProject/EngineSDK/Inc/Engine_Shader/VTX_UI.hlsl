@@ -44,13 +44,13 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 offsetRight = right * ( scaleX*0.5f);
     float3 offsetUp = up * (scaleY * 0.5f);
 
-    // ¡§¡° 4∞≥ ¿ßƒ° ∞ËªÍ (ø˘µÂ ±‚¡ÿ)
+    // Ï†ïÏ†ê 4Í∞ú ÏúÑÏπò Í≥ÑÏÇ∞ (ÏõîÎìú Í∏∞Ï§Ä)
     float3 p0 = worldPos + (-offsetRight + offsetUp);
     float3 p1 = worldPos + (offsetRight + offsetUp);
     float3 p2 = worldPos + (offsetRight - offsetUp);
     float3 p3 = worldPos + (-offsetRight - offsetUp);
 
-    // ¡˜±≥ ≈ıøµ ªÁøÎ
+    // ÏßÅÍµê Ìà¨ÏòÅ ÏÇ¨Ïö©
     v[0].vPosition = mul(float4(p0, 1.f), matOrthograph);
     v[0].vTexcoord = float2(0, 0);
 
@@ -166,7 +166,7 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     
     float2 vTexcoord = In.vTexcoord - 0.5f;
     float fAngle = atan2(vTexcoord.y, vTexcoord.x);
-    fAngle = fAngle / (3.14159265 * 2.f) + 0.5f;        // 0 ~ 1∑Œ ¡§±‘»≠
+    fAngle = fAngle / (3.14159265 * 2.f) + 0.5f;        // 0 ~ 1Î°ú Ï†ïÍ∑úÌôî
     fAngle = (1.f - Direction) - frac(fAngle - 0.25f) * (Direction * -2.f + 1.f);
     
     float fGauge = step(fAngle, FillAmount);
@@ -200,7 +200,7 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
-
+// --------------------------------------------------------
     pass UVAnimation
     {
         SetRasterizerState(RS_Default);
@@ -211,6 +211,38 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
 
+    pass UVAnimation_Mask
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION_MASK();
+    }
+
+    pass MaskDebugRaw
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_MASK_DEBUG_RAW();
+    }
+
+    pass MaskDebugApplied
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader = compile ps_5_0 PS_MAIN_MASK_DEBUG_APPLIED();
+    }
+
+
+// ----------------------------------------------------------
     pass LinearFill
     {
         SetRasterizerState(RS_Default);
