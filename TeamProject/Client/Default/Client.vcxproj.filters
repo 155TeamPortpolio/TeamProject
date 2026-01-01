@@ -310,6 +310,9 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
       <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Dash">
+      <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
