@@ -328,16 +328,15 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
    // float4 effectbloom = BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+    ui.rgb *= ui.a; //premultiplied
     float3 hdrColor = scene.rgb;
     hdrColor += hdrBloom.rgb * 0.3;
-    //if (effectbloom.a > 0.f)
-    //    hdrColor += effectbloom.rgb * effectbloom.a;
+    //if (effectbloom.a > 0.f) hdrColor += effectbloom.rgb * effectbloom.a;
     
     float3 mapped = ACESFilm(hdrColor);
-    float3 finalColor = lerp(mapped, ui.rgb, ui.a);
+    if (ui.a > 0.01) mapped.rgb = ui.rgb;
     
-    return float4(finalColor, 1.f);
+    return float4(mapped, 1.f);
 }
 
 technique11 DefaultTechnique
