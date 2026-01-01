@@ -24,6 +24,7 @@ private:
     void Rake_MapResources();
     void Ready_Camera();
     void Ready_TestObject();
+    void Ready_ThugBulky();
 
 
 public:

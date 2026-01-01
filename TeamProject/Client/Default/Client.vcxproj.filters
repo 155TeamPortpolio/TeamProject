@@ -148,12 +148,6 @@
     <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
       <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Normal">
-      <UniqueIdentifier>{29853f99-a5fc-4258-b970-1b22da0e452b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Attack\Charge">
-      <UniqueIdentifier>{1bbdb708-2ec2-4e3c-877e-bca753a23843}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
       <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
     </Filter>
@@ -162,15 +156,6 @@
     </Filter>
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move">
-      <UniqueIdentifier>{434eb16a-3d33-4884-be7d-002d61e150c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Walk">
-      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
-      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
@@ -237,8 +222,8 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Miyabi\State\Move\Run">
       <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
-	</Filter>
-	<Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Idle">
       <UniqueIdentifier>{a674fc3d-8b1d-4da5-acd9-95c30ef10018}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack">
@@ -252,6 +237,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
       <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
+      <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Idle">
+      <UniqueIdentifier>{2d607a9a-fd47-4b46-94fc-9f05d30521e1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -486,6 +477,13 @@
     <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Struct.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Idle</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -713,6 +711,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Idle</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

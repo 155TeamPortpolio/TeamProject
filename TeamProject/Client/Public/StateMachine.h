@@ -264,7 +264,7 @@ HRESULT CStateMachine<Type>::Register_State(const string& strState, IBaseState<T
 	pState->Set_StateName(strState);
 	m_States[strState] = pState;
 
-	return S_OK;
+ 	return S_OK;
 }
 
 template<typename Type>
