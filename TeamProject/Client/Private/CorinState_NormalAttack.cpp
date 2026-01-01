@@ -16,6 +16,7 @@ void CCorinState_NormalAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_State("Attack_02", CCorinState_Attack_02::Create());
         m_pSubStateMachine->Register_State("Attack_03", CCorinState_Attack_03::Create());
         m_pSubStateMachine->Register_State("Attack_04", CCorinState_Attack_04::Create());
+        m_pSubStateMachine->Register_State("Attack_05", CCorinState_Attack_05::Create());
         m_pSubStateMachine->Register_State("Attack_End", CCorinState_Attack_End::Create());
 
         m_pSubStateMachine->Get_State("Attack_End")->Set_Tag("End");
@@ -29,6 +30,7 @@ void CCorinState_NormalAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
         m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
         m_pSubStateMachine->Register_Transition("Attack_03", "Attack_04", comboConditions);
+        m_pSubStateMachine->Register_Transition("Attack_04", "Attack_05", comboConditions);
 
 
         // End ÀüÀÌ
@@ -39,6 +41,8 @@ void CCorinState_NormalAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_Transition("Attack_03", "Attack_End",
             CStateMachine<CCorin>::CONDITION_ANIMATION_END);
         m_pSubStateMachine->Register_Transition("Attack_04", "Attack_End",
+            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+        m_pSubStateMachine->Register_Transition("Attack_05", "Attack_End",
             CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
         m_pSubStateMachine->Set_DefaultState("Attack_01");
