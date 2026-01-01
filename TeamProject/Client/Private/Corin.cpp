@@ -10,6 +10,8 @@
 #include "StateMachine.h"
 #include "CorinState_Idle.h"
 #include "CorinState_Move.h"
+#include "CorinState_Attack.h"
+#include "CorinState_NormalAttack.h"
 
 CCorin::CCorin()
 {
@@ -144,48 +146,48 @@ void CCorin::Update_States()
 			}
 		}
 	}
-	//// Attack End 체크
-	//else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
-	//{
-	//	CCorinState_Attack* pAttack =
-	//		static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+	// Attack End 체크
+	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
+	{
+		CCorinState_Attack* pAttack =
+			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 
-	//	if (pAttack && pAttack->Get_SubStateMachine())
-	//	{
-	//		string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
+		if (pAttack && pAttack->Get_SubStateMachine())
+		{
+			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
 
-	//		if (strSub == "NormalAttack")
-	//		{
-	//			CCorinState_NormalAttack* pNormal =
-	//				static_cast<CCorinState_NormalAttack*>(
-	//					pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+			if (strSub == "NormalAttack")
+			{
+				CCorinState_NormalAttack* pNormal =
+					static_cast<CCorinState_NormalAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
 
-	//			if (pNormal && pNormal->Get_SubStateMachine())
-	//			{
-	//				IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-	//				bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
-	//			}
-	//		}
-	//	}
-	//}
+				if (pNormal && pNormal->Get_SubStateMachine())
+				{
+					IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
+					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
+				}
+			}
+		}
+	}
 
-	//// AttackEnd 파라미터 설정
-	//if (bInAttackEnd)
-	//{
-	//	CCorinState_Attack* pAttack =
-	//		static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+	// AttackEnd 파라미터 설정
+	if (bInAttackEnd)
+	{
+		CCorinState_Attack* pAttack =
+			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 
-	//	if (pAttack)
-	//	{
-	//		// Attack의 AnimProgress가 1.0이면 AttackEnd = true
-	//		_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
-	//		m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
-	//	}
-	//}
-	//else
-	//{
-	//	m_pStateMachine->Set_Bool("AttackEnd", false);
-	//}
+		if (pAttack)
+		{
+			// Attack의 AnimProgress가 1.0이면 AttackEnd = true
+			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
+			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
+		}
+	}
+	else
+	{
+		m_pStateMachine->Set_Bool("AttackEnd", false);
+	}
 
 	// End 캔슬 처리 (기존과 동일)
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
@@ -210,20 +212,20 @@ void CCorin::Update_States()
 			}
 			else if (strCurrent == "Attack")
 			{
-				//CCorinState_Attack* pAttackState =
-				//	static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
-				//if (pAttackState && pAttackState->Get_SubStateMachine())
-				//{
-				//	if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
-				//	{
-				//		CCorinState_NormalAttack* pNormal =
-				//			static_cast<CCorinState_NormalAttack*>(
-				//				pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+				CCorinState_Attack* pAttackState =
+					static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+				if (pAttackState && pAttackState->Get_SubStateMachine())
+				{
+					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+					{
+						CCorinState_NormalAttack* pNormal =
+							static_cast<CCorinState_NormalAttack*>(
+								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
 
-				//		if (pNormal && pNormal->Get_SubStateMachine())
-				//			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
-				//	}
-				//}
+						if (pNormal && pNormal->Get_SubStateMachine())
+							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+					}
+				}
 			}
 		}
 	}
@@ -252,7 +254,7 @@ HRESULT CCorin::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
-	//m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
+	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
 
 	return S_OK;
 }

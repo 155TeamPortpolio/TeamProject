@@ -157,12 +157,6 @@
     <Filter Include="02. GameObject\UI\00. UIDirector">
       <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Walk">
-      <UniqueIdentifier>{5622f48f-6acc-4b8f-9937-5793c4b0237b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Character\Miyabi\State\Move\Run">
-      <UniqueIdentifier>{d4841ea4-4d18-48a2-a3e4-59f14bf25a74}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
     </Filter>
@@ -285,6 +279,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Run">
       <UniqueIdentifier>{88626d5b-dbf8-4f03-8ef2-2f7cae50254a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack">
+      <UniqueIdentifier>{c267d6c9-393b-43c1-9ef4-beee8a23263e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Normal">
+      <UniqueIdentifier>{884362e5-20d7-4daa-9187-9c9149289f96}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -519,7 +519,6 @@
     <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
     </ClInclude>
@@ -555,6 +554,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Attack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Struct.h">
+      <Filter>99. Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -819,6 +827,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Attack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
