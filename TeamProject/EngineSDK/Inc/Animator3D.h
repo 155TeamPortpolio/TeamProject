@@ -168,6 +168,14 @@ public://애니매이터 데이터
     void Set_TPose();
     //
     void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
+
+    /*----- Change -----*/
+
+    //현재 레이어 애니매이션 속도만 변경
+    void Speed(_float fSpeed, _uint LayerIndex = 0);
+    //현재 레이어 애니매이션 현재 속도에서부터 보간 변경
+    void TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear, _uint LayerIndex = 0);
+
     /*----- Calculator -----*/
     _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
 

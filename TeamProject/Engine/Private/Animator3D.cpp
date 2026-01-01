@@ -460,6 +460,22 @@ void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
 }
 
+void CAnimator3D::Speed(_float fSpeed, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].fAnimSpeed = fSpeed;
+}
+
+void CAnimator3D::TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType, _uint LayerIndex)
+{
+	if (!isExistLayer(LayerIndex)) return;
+
+	m_AnimLayers[LayerIndex].fTargetSpeed = fTargetSpeed;
+	m_AnimLayers[LayerIndex].fEaseDuration = fDuration;
+	m_AnimLayers[LayerIndex].ePlayEaseType = eEaseType;
+}
+
 _quaternion CAnimator3D::Calc_TransformFromEndAnim(const _vector4& vTransformQuat)
 {
 	_quaternion endAnimQ = Get_RootBoneEndQuat();
