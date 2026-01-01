@@ -8,8 +8,7 @@ protected:
     virtual  ~IRenderService() DEFAULT;
 public:
     virtual HRESULT Render() PURE;
-    virtual void Submit_StaticMesh_Opaque(const OPAQUE_PACKET& packet) PURE;
-    virtual void Submit_SkinnedMesh_Opaque(const OPAQUE_PACKET& packet) PURE;
+    virtual void Submit_Opaque(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Shadow(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Shadow(const INSTANCE_PACKET& packet) PURE;
     virtual void Submit_Instance(const INSTANCE_PACKET& packet) PURE;
@@ -29,9 +28,6 @@ public:
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
     virtual void Set_FogDesc(FOG_DESC desc)PURE;
-    
-    virtual void Add_NoiseTexture(string strName, class CTexture* noiseTexture) PURE;
-    virtual void Apply_Noise(vector<string> strNames, _float duration) PURE;
 
 public:
     virtual class CPipeLine* Get_Pipeline()PURE;

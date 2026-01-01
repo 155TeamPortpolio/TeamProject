@@ -68,6 +68,12 @@ void CMiyabiState_NormalAttack::Update(CMiyabi* pOwner, _float dt)
         string strCurrent = m_pSubStateMachine->Get_CurrentStateName();
         IBaseState<CMiyabi>* pCurrent = m_pSubStateMachine->Get_CurrentState();
 
+        _float currentSubProgress = pCurrent ? pCurrent->Get_AnimProgress() : -1.f;
+
+        OutputDebugStringA(("NormalAttack: CurrentSub=" + strCurrent +
+            ", SubProgress=" + to_string(currentSubProgress) +
+            ", MyProgress=" + to_string(m_fAnimProgress) + "\n").c_str());
+
         if (strCurrent == "Attack_End")
         {
             if (pCurrent && pCurrent->Is_AnimEnd())

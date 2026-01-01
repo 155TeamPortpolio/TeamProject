@@ -372,11 +372,9 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\SkeletalModel.h" />
     <ClInclude Include="..\Public\Skeleton.h" />
     <ClInclude Include="..\Public\SkeletonFollower.h" />
-    <ClInclude Include="..\public\SkinnedMeshRenderer.h" />
     <ClInclude Include="..\Public\SoundData.h" />
     <ClInclude Include="..\Public\Sprite2D.h" />
     <ClInclude Include="..\public\SpriteNode.h" />
-    <ClInclude Include="..\public\StaticMeshRenderer.h" />
     <ClInclude Include="..\Public\StaticModel.h" />
     <ClInclude Include="..\Public\StructuredBuffer.h" />
     <ClInclude Include="..\Public\Target_Manager.h" />
@@ -515,11 +513,9 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\SkeletalModel.cpp" />
     <ClCompile Include="..\Private\Skeleton.cpp" />
     <ClCompile Include="..\Private\SkeletonFollower.cpp" />
-    <ClCompile Include="..\private\SkinnedMeshRenderer.cpp" />
     <ClCompile Include="..\Private\SoundData.cpp" />
     <ClCompile Include="..\Private\Sprite2D.cpp" />
     <ClCompile Include="..\private\SpriteNode.cpp" />
-    <ClCompile Include="..\private\StaticMeshRenderer.cpp" />
     <ClCompile Include="..\Private\StaticModel.cpp" />
     <ClCompile Include="..\Private\StructuredBuffer.cpp" />
     <ClCompile Include="..\Private\Target_Manager.cpp" />
@@ -647,9 +643,6 @@ exit /b 0</Command>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_StaticMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Define.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
