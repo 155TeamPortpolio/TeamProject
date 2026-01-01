@@ -45,7 +45,8 @@ public:
     void ActiveOverDrive() { m_IsOverDrive = true; }
     void DeactiveOverDrive() { m_IsOverDrive = false; }
 
-    void Idle() { m_RequestIdle = true; }
+    void Idle();
+    void Evade();
     void ChangePhase();
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
@@ -64,7 +65,7 @@ private:
     _bool m_RequestIdle = false;
 
     _float m_fIdleElasedTime{};
-    _float m_fIdleDuration = 0.3f;
+    _float m_fIdleDuration = 0.1f;
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
 

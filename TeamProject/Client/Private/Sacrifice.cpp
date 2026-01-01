@@ -59,7 +59,6 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
 	pAnimator->Set_MotionBone(3); //Bip001
-	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	auto pCCT = Get_Component<CCharacterController>();
 	pCCT->Set_GravityEnabled(false);
@@ -164,6 +163,16 @@ void CSacrifice::DeactiveWhip()
 	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], false);
 }
 
+void CSacrifice::Idle()
+{
+	m_RequestIdle = true;
+}
+
+void CSacrifice::Evade()
+{
+	m_pStateMachine->Change_State("Evade");
+}
+
 void CSacrifice::ChangePhase()
 {
 	if (PHASE::PHASE1 == m_eCurrPhase)
@@ -211,8 +220,6 @@ HRESULT CSacrifice::Initialize_Transitions()
 	/* From Idle */
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Attack");
-	m_pStateMachine->Register_Transition("Idle", "Evade",
-		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Evade");
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Walk");
 
@@ -237,19 +244,9 @@ void CSacrifice::Update_States(_float dt)
 	{
 		m_pStateMachine->Change_State("Idle");
 		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
-		m_pStateMachine->Reset_Trigger("Idle_To_Evade");
 		m_pStateMachine->Reset_Trigger("Idle_To_Walk");
 		m_RequestIdle = false;
 	}
-
-	m_fPhase1ElapseTime += dt;
-	if (m_fPhase1ElapseTime >= m_fPhase1Duration && m_eCurrPhase == PHASE::PHASE1 && m_pStateMachine->Get_CurrentStateName() == "Idle")
-		m_pStateMachine->Change_State("Death");
-
-	if (m_pStateMachine->Get_CurrentStateName() == "Idle"
-		&& m_eCurrPhase == PHASE::PHASE2
-		&& CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_SPACE))
-		m_IsOverDrive = true;
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
@@ -268,10 +265,6 @@ void CSacrifice::Update_States(_float dt)
 			else if (1 == iRandIndex)
 			{
 				m_pStateMachine->Set_Trigger("Idle_To_Walk");
-			}
-			else
-			{
-				m_pStateMachine->Set_Trigger("Idle_To_Evade");
 			}
 	
 			m_fIdleElasedTime = 0.f;

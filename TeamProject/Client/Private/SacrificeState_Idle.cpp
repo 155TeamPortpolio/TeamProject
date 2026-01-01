@@ -47,6 +47,7 @@ void CSacrificeState_Idle_Phase1::Enter(CSacrifice* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P1_Idle")
 		.Loop(true)
+		.Speed(1.2f)
 		.Apply();
 }
 
@@ -62,6 +63,7 @@ void CSacrificeState_Idle_Phase2::Enter(CSacrifice* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("SacrificeBringer_Ani_P2_Idle")
 		.Loop(true)
+		.Speed(1.2f)
 		.Apply();
 }
 
@@ -77,6 +79,7 @@ void CSacrificeState_Idle_OverDrive::Enter(CSacrifice* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack_Idle_Loop")
 		.Loop(true)
+		.Speed(1.2f)
 		.Apply();
 }
 
