@@ -57,7 +57,7 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 	unordered_map<string, CShader*> shaders;
 	unordered_map<string, CModelData*> models;
 	unordered_map<string, vector<CMaterialData*>> materials;
-	unordered_map<string, vector<CAnimationClip*>> anims;
+	unordered_map<string, ANIMATION_META> metas;
 	unordered_map<string, EFFECT_ASSET> effects;
 	unordered_map<string, CComputeShader*> computeShaders;
 
@@ -87,7 +87,7 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 	}
 	{
 		lock_guard<mutex> lockGuard(pool.animMutex);
-		anims.swap(pool.m_Animations);
+		metas.swap(pool.m_AnimationMetas);
 	}
 	{
 		lock_guard<mutex> lockGuard(pool.effectMutex);
@@ -108,8 +108,8 @@ void CResourceMgr::Clear_Resource(const string& levelTag)
 		for (auto* materialData : pair.second)
 			Safe_Release(materialData);
 
-	for (auto& pair : anims)
-		for (auto* clipData : pair.second)
+	for (auto& pair : metas)
+		for (auto* clipData : pair.second.pClips)
 			Safe_Release(clipData);
 
 	for (auto& pair : effects)
@@ -317,8 +317,8 @@ void CResourceMgr::Init_PreLoader()
 	m_pPreloader->BindLoader(ResourceType::Animation,
 		[this](const PreloadKey& key, string& errorMessage) -> bool
 		{
-			vector<CAnimationClip*> AnimClips = this->Load_MetaClip(key.levelKey, key.resourceKey);
-			if (AnimClips.empty())
+			ANIMATION_META Meta = this->Load_MetaClip(key.levelKey, key.resourceKey);
+			if (Meta.pClips.empty())
 			{
 				errorMessage = "Load_Animation failed: " + key.resourceKey;
 				return false;
@@ -482,57 +482,58 @@ CTexture* CResourceMgr::Load_Texture(const string& levelTag, const string& textu
 	}
 }
 
-vector<CAnimationClip*> CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaClipKey)
+ANIMATION_META CResourceMgr::Load_MetaClip(const string& levelTag, const string& MetaKey)
 {
 	int index = ValidLevel(levelTag);
 	if (index == -1) {
 		MSG_BOX("Wrong Level Tag. : Load_AnimClip");
-		return vector<class CAnimationClip*>();
+		return ANIMATION_META();
 	}
 
 	RS_Pool& pool = m_Resources[index];
-
 	{
 		lock_guard<mutex> lockGuard(m_Resources[index].animMutex);
-		auto it = pool.m_Animations.find(MetaClipKey);
-		if (it != pool.m_Animations.end())
+		auto it = pool.m_AnimationMetas.find(MetaKey);
+		if (it != pool.m_AnimationMetas.end())
 			return it->second;
 	}
-	const string metaPath = Get_ResourcePath(MetaClipKey);
+
+	const string metaPath = Get_ResourcePath(MetaKey);
 	const string animDir = filesystem::path(metaPath).parent_path().string();
 
-	auto MetaData = Helper::LoadJson<vector<ANIM_CLIP>>(metaPath);
+	ANIM_META MetaData = Helper::LoadJson<ANIM_META>(metaPath);
 
-	vector<CAnimationClip*> Clips;
-	Clips.reserve(MetaData.size());
+	ANIMATION_META Meta;
+	Meta.PreTransform = MetaData.PreTransform;
+	Meta.pClips.reserve(MetaData.Clips.size());
 
-	for (auto& Meta : MetaData) {
+	for (auto& DataClip : MetaData.Clips) {
 
-		string animPath = animDir + "\\Anim\\" + Meta.ClipTag + ".anim";
+		string animPath = animDir + "\\Anim\\" + DataClip.ClipTag + ".anim";
 		CAnimationClip* pClip = CAnimationClip::Create(animPath);
 
-		if (!Meta.Events.empty())
-			pClip->Set_Events(Meta.Events);
+		if (!DataClip.Events.empty())
+			pClip->Set_Events(DataClip.Events);
 
 		if (pClip)
-			Clips.push_back(pClip);
+			Meta.pClips.push_back(pClip);
 	}
-	if (Clips.empty()) return {};
+	if (Meta.pClips.empty()) return {};
 	{
 		lock_guard<mutex> lockGuard(pool.animMutex);
 
-		auto it = pool.m_Animations.find(MetaClipKey);
-		if (it != pool.m_Animations.end())
+		auto it = pool.m_AnimationMetas.find(MetaKey);
+		if (it != pool.m_AnimationMetas.end())
 		{
-			for (auto pData : Clips)
+			for (auto pData : Meta.pClips)
 			{
 				Safe_Release(pData);
 			}
 			return it->second;
 		}
 
-		pool.m_Animations.emplace(MetaClipKey, Clips);
-		return Clips;
+		pool.m_AnimationMetas.emplace(MetaKey, Meta);
+		return Meta;
 	}
 }
 

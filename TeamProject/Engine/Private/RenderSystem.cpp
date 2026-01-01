@@ -86,6 +86,7 @@ HRESULT CRenderSystem::Render()
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
+	m_pUI->Render_CustomTarget();
 #ifdef _DEBUG
 	//m_pDebugPass->Execute(m_pContext);
 #endif // _DEBUG
