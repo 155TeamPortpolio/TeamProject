@@ -5,6 +5,7 @@
 #include "Helper_Func.h"
 #include "Sprite2D.h"
 #include "UITool_Level.h"
+#include "Texture.h"
 
 _uint CUVAnimationUI::m_iCount = {};
 const string CUVAnimationUI::m_strTypeTag = "UVAnimation";
@@ -29,11 +30,20 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
     sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
     sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
+    sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
 
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
     m_strMaskTexKey = "select_mask.png";
+    sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+
+    {
+        auto maskTex = sprite->Get_Texture(1);
+        auto sz = maskTex->Get_Size();
+        m_vMaskTexSize = {(float)sz.x, (float)sz.y};
+        sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+    }
 
     sprite->ChangePass("UVAnimation");
 
@@ -41,6 +51,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
     return S_OK;
 }
+
 
 void CUVAnimationUI::Update(_float dt)
 {
@@ -53,6 +64,7 @@ void CUVAnimationUI::Update(_float dt)
 
     Get_Component<CSprite2D>()->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
 }
+
 void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
@@ -65,18 +77,73 @@ void CUVAnimationUI::Render_GUI()
     ImGui::DragFloat2(u8"속도", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 
     ImGui::SeparatorText(u8"Mask");
+
     if (ImGui::Checkbox(u8"사용", &m_useMask))
     {
         if (m_useMask)
         {
-            sprite->ChangePass("UVAnimation_Mask");
             sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            {
+                auto maskTex = sprite->Get_Texture(1);
+                auto sz = maskTex->Get_Size();
+                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+            }
+            sprite->ChangePass("UVAnimation_Mask");
         }
         else
             sprite->ChangePass("UVAnimation");
     }
 
-    ImGui::BeginDisabled(!m_useMask);
+    if (ImGui::Checkbox(u8"디버그 Raw", &m_maskDebugRaw))
+    {
+        if (m_maskDebugRaw)
+        {
+            m_maskDebugApplied = false;
+            m_useMask = true;
+
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            {
+                auto maskTex = sprite->Get_Texture(1);
+                auto sz = maskTex->Get_Size();
+                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+            }
+
+            sprite->ChangePass("MaskDebugRaw");
+        }
+        else
+        {
+            if (m_useMask) sprite->ChangePass("UVAnimation_Mask");
+            else           sprite->ChangePass("UVAnimation");
+        }
+    }
+
+    if (ImGui::Checkbox(u8"디버그 Applied", &m_maskDebugApplied))
+    {
+        if (m_maskDebugApplied)
+        {
+            m_maskDebugRaw = false;
+            m_useMask = true;
+
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            {
+                auto maskTex = sprite->Get_Texture(1);
+                auto sz = maskTex->Get_Size();
+                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+            }
+
+            sprite->ChangePass("MaskDebugApplied");
+        }
+        else
+        {
+            if (m_useMask) sprite->ChangePass("UVAnimation_Mask");
+            else           sprite->ChangePass("UVAnimation");
+        }
+    }
+
+    ImGui::BeginDisabled(!m_useMask || m_maskDebugRaw || m_maskDebugApplied);
 
     if (ImGui::Button(u8"마스크 선택"))
     {
@@ -86,7 +153,14 @@ void CUVAnimationUI::Render_GUI()
             string fileName = Helper::GetFileNameWithExtension(filePath);
             CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
             m_strMaskTexKey = fileName;
+
             sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            {
+                auto maskTex = sprite->Get_Texture(1);
+                auto sz = maskTex->Get_Size();
+                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+            }
         }
     }
 
@@ -98,6 +172,7 @@ void CUVAnimationUI::Render_GUI()
 
     ImGui::EndDisabled();
 }
+
 
 void CUVAnimationUI::Save(nlohmann::ordered_json& data)
 {
