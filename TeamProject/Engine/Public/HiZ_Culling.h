@@ -52,10 +52,10 @@ public:
 
 private:
     void Check_Resource();
-    _uint CalcMipCount(_uint width, _uint height);
     ID3D11Buffer* CreateDynamicCB(ID3D11Device* device, _uint byteSize);
     void Update_CBuffer(ID3D11DeviceContext* context, ID3D11Buffer* buffer, const void* data, _uint size);
     _float Clamp01(_float value);
+    _uint CalcMipCount(_uint width, _uint height);
     
     _bool BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax,_fmatrix worldMatrix, _fmatrix viewMatrix,_uint viewportW,_uint viewportH,_float zFar, _uint indexInList,
         OcclusionInput& outInput);

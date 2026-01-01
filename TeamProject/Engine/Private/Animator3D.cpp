@@ -68,18 +68,20 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
 {
-	m_pAnimClips = CGameInstance::GetInstance()->Get_ResourceMgr()->
+	ANIMATION_META Meta = CGameInstance::GetInstance()->Get_ResourceMgr()->
 		Load_MetaClip(LevelKey, MetaClipKey);
 
-	if (m_pAnimClips.empty()) {
+	if (Meta.pClips.empty()) {
 		string msg = "Anim Add Failed: " + MetaClipKey + "\n";
 		OutputDebugStringA(msg.c_str());
 		return E_FAIL;
 	}
 
-	for (auto& pClip : m_pAnimClips)
-		Safe_AddRef(pClip);
+	m_PreTransform = Meta.PreTransform;
+	m_pAnimClips = Meta.pClips;
 
+	for (auto& pClip : Meta.pClips)
+		Safe_AddRef(pClip);
 
 	Resize_Layer(1);
 	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
@@ -843,7 +845,8 @@ void CAnimator3D::BuildBone()
 		if (parent == -1) {
 			_matrix MyTransformation =
 				XMLoadFloat4x4(&m_ManipulateMatrices[i]) *
-				XMLoadFloat4x4(&m_TransformationMatrices[i]);
+				XMLoadFloat4x4(&m_TransformationMatrices[i]) *
+				XMLoadFloat4x4(&m_PreTransform);
 
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation);
 		}

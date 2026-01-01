@@ -27,6 +27,13 @@ HRESULT CSkinnedMeshRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeL
 	Ready_Target();
 	Ready_MRT();
 
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	m_fScreenWidth = ViewportDesc.Width;
+	m_fScreenHeight = ViewportDesc.Height;
+
 	return S_OK;
 }
 
@@ -45,13 +52,32 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh(SkinnedOpaquePass* pOpaquePass)
 HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 {
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_H"))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bright_Skinned"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "AmbientTexture");
-		m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "DiffuseTexture");
+		m_pTargetManager->Bind_Target("Target_Skinned_Diffuse", m_pShader, "DiffuseTexture");
 
 		Bind_WorldMatrix();
 
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BRIGHT", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pShader->Apply("BRIGHT", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		m_pTargetManager->End_MRT();
+	}
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_H"))) return E_FAIL;
+
+		m_pTargetManager->Bind_Target("Target_Bright_SkinnedMesh", m_pShader, "MeshBrightTexture");
+
+		Bind_WorldMatrix();
+
+		m_pShader->Bind_Value("fScreenWidth", { &m_fScreenWidth, "float", sizeof(float)});
+		m_pShader->Bind_Value("fScreenHeight", { &m_fScreenHeight, "float", sizeof(float)});
 		ID3D11InputLayout* pLayout;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
@@ -67,8 +93,6 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_Bloom()
 		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Skinned_V"))) return E_FAIL;
 
 		m_pTargetManager->Bind_Target("Target_BloomBlurX_SkinnedMesh", m_pShader, "MeshBlurXTexture");
-		m_pTargetManager->Bind_Target("Target_Diffuse", m_pShader, "DiffuseTexture");
-		m_pTargetManager->Bind_Target("Target_Ambient", m_pShader, "AmbientTexture");
 
 		Bind_WorldMatrix();
 
@@ -205,6 +229,9 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 	RenderTargetDesc RimLightDesc = { "Target_RimLightFinal" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(RimLightDesc);
 
+	RenderTargetDesc Bright_SkinnedMeshDesc = { "Target_Bright_SkinnedMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	m_pTargetManager->Create_Target(Bright_SkinnedMeshDesc);
+
 	RenderTargetDesc BloomBlurX_SkinnedMeshDesc = { "Target_BloomBlurX_SkinnedMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurX_SkinnedMeshDesc);
 
@@ -236,6 +263,7 @@ HRESULT CSkinnedMeshRenderer::Ready_MRT()
 	}
 
 	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bright_Skinned", "Target_Bright_SkinnedMesh"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_Skinned_H", "Target_BloomBlurX_SkinnedMesh"))) return E_FAIL;
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_Skinned_V", "Target_BloomBlurY_SkinnedMesh"))) return E_FAIL;
 	}

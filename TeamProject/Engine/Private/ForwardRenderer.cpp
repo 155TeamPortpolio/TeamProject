@@ -169,8 +169,7 @@ HRESULT CForwardRenderer::Render_Combined()
 HRESULT CForwardRenderer::Render_Bloom()
 {
 	m_pStaticRenderer->Render_StaticMesh_Bloom();
-	//m_pSkinnedRenderer->Render_SkinnedMesh_Bloom();
-
+	m_pSkinnedRenderer->Render_SkinnedMesh_Bloom();
 	return S_OK;
 }
 
