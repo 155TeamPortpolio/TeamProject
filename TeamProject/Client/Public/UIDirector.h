@@ -12,7 +12,7 @@ class CUIDirector final : public CBase
 {
 	DECLARE_SINGLETON(CUIDirector);
 private:
-	CUIDirector() {}
+	CUIDirector();
 	virtual ~CUIDirector() = default;
 
 public:
@@ -36,9 +36,10 @@ private:
 private:
 	string                             m_levelKey;
 	unordered_map<string, CUI_Object*> m_uiByTag;
+	CGameInstance*                     m_game{};
 
 public:
-	virtual void Free() override { __super::Free(); }
+	virtual void Free() override;
 };
 
 NS_END

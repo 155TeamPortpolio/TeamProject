@@ -138,32 +138,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     
     return Out;
 }
-// ---------------------------------------------
-float MaskThreshold;
-float MaskSoftness;
 
-PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
-{
-    PS_OUT Out;
-    
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
-    clip(vDiffuse.a - 0.1f);
-
-    float mask = MaskTex.Sample(LinearSampler, In.vTexcoord).r;
-
-    if (MaskSoftness <= 0.f)
-        clip(mask - MaskThreshold);
-    else
-    {
-        float maskA = smoothstep(MaskThreshold - MaskSoftness, 
-        MaskThreshold + MaskSoftness, mask);
-        vDiffuse.a *= maskA;
-    }
-
-    Out.vColor = vDiffuse * vColor;
-    return Out;
-}
-// ------------------------------------------
 PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
@@ -236,16 +211,6 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
 
-    pass UVAnimation_Mask
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION_MASK();
-    }
-
     pass LinearFill
     {
         SetRasterizerState(RS_Default);
@@ -265,6 +230,5 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader = compile ps_5_0 PS_MAIN_RADIALFILL();
     }
-
 }
 
