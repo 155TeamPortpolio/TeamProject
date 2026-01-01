@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 class CSacrifice;
-class CSacrificeState_Hit : public IHState<CSacrifice>
+class CSacrificeState_Parry :public IHState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -11,8 +11,7 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Hit* Create() { return new CSacrificeState_Hit(); }
+	static CSacrificeState_Parry* Create() { return new CSacrificeState_Parry(); }
 	virtual void Free() override { __super::Free(); }
-
 };
 NS_END

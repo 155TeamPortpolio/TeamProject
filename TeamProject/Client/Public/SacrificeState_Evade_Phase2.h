@@ -2,10 +2,8 @@
 #include "IHState.h"
 
 NS_BEGIN(Client)
-
 class CSacrifice;
-
-class CSacrificeState_Idle : public IHState<CSacrifice>
+class CSacrificeState_Evade_Phase2 : public IHState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -13,12 +11,15 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Idle* Create() { return new CSacrificeState_Idle(); }
+	static CSacrificeState_Evade_Phase2* Create() { return new CSacrificeState_Evade_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Register_States();
 };
 
 /* Sub States */
-class CSacrificeState_Idle_Phase1 : public IBaseState<CSacrifice>
+class CSacrificeState_Evade_B_Phase2 : public IHState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -26,11 +27,12 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Idle_Phase1* Create() { return new CSacrificeState_Idle_Phase1(); }
+	static CSacrificeState_Evade_B_Phase2* Create() { return new CSacrificeState_Evade_B_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
 };
 
-class CSacrificeState_Idle_Phase2 : public IBaseState<CSacrifice>
+class CSacrificeState_Evade_R_Phase2 : public IHState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -38,11 +40,12 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Idle_Phase2* Create() { return new CSacrificeState_Idle_Phase2(); }
+	static CSacrificeState_Evade_R_Phase2* Create() { return new CSacrificeState_Evade_R_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
 };
 
-class CSacrificeState_Idle_OverDrive : public IBaseState<CSacrifice>
+class CSacrificeState_Evade_L_Phase2 : public IHState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -50,8 +53,8 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Idle_OverDrive* Create() { return new CSacrificeState_Idle_OverDrive(); }
+	static CSacrificeState_Evade_L_Phase2* Create() { return new CSacrificeState_Evade_L_Phase2(); }
 	virtual void Free() override { __super::Free(); }
-};
 
+};
 NS_END

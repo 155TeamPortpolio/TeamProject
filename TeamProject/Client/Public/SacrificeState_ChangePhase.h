@@ -1,9 +1,9 @@
 #pragma once
-#include "IHState.h"
+#include "IBaseState.h"
 
 NS_BEGIN(Client)
 class CSacrifice;
-class CSacrificeState_Hit : public IHState<CSacrifice>
+class CSacrificeState_ChangePhase : public IBaseState<CSacrifice>
 {
 public:
 	virtual void Enter(CSacrifice* pOwner) override;
@@ -11,8 +11,7 @@ public:
 	virtual void Exit(CSacrifice* pOwner) override;
 
 public:
-	static CSacrificeState_Hit* Create() { return new CSacrificeState_Hit(); }
+	static CSacrificeState_ChangePhase* Create() { return new CSacrificeState_ChangePhase(); }
 	virtual void Free() override { __super::Free(); }
-
 };
 NS_END

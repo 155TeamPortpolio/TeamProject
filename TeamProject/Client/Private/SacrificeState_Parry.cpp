@@ -1,19 +1,19 @@
-#include "pch.h"
-#include "SacrificeState_Hit.h"
+#include "pch.h"	
+#include "SacrificeState_Parry.h"`	
 #include "Sacrifice.h"
 
 /* Sub States */
-#include "SacrificeState_Hit_Phase1.h"
-#include "SacrificeState_Hit_Phase2.h"
+#include "SacrificeState_Parry_Phase1.h"
+#include "SacrificeState_Parry_Phase2.h"
 
-void CSacrificeState_Hit::Enter(CSacrifice* pOwner)
+void CSacrificeState_Parry::Enter(CSacrifice* pOwner)
 {
 	if (!m_pSubStateMachine)
 	{
 		m_pSubStateMachine = CStateMachine<CSacrifice>::Create();
 
-		m_pSubStateMachine->Register_State("Phase1",CSacrificeState_Hit_Phase1::Create());
-		m_pSubStateMachine->Register_State("Phase2",CSacrificeState_Hit_Phase2::Create());
+		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Parry_Phase1::Create());
+		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Parry_Phase2::Create());
 
 		__super::Enter(pOwner);
 	}
@@ -35,11 +35,11 @@ void CSacrificeState_Hit::Enter(CSacrifice* pOwner)
 	}
 }
 
-void CSacrificeState_Hit::Update(CSacrifice* pOwner, _float dt)
+void CSacrificeState_Parry::Update(CSacrifice* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 }
 
-void CSacrificeState_Hit::Exit(CSacrifice* pOwner)
+void CSacrificeState_Parry::Exit(CSacrifice* pOwner)
 {
 }
