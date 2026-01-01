@@ -93,6 +93,7 @@ using namespace physx;
 #include "Build_Struct.h"
 #include "Data_Packets.h"
 #include "PreLoad_Struct.h"
+#include "AnimationLayout.h"
 
 using namespace Engine;
 

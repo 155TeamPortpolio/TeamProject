@@ -120,6 +120,72 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
     return Out;
 }
 
+//GaussianBlur
+static const float weights[3] =
+{
+    0.5,
+    0.25,
+    0.25
+};
+
+PS_OUT_RESULT PS_BRIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float emissive = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+  
+    float3 vResult = vDiffuse.rgb * emissive;
+    
+    Out.vResult = float4(vResult, 1.f);
+    return Out;
+}
+
+PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 bright = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 result = bright.rgb * weights[0];
+    float texelSize = 1.f / fScreenWidth;
+    
+    float4 brightSample;
+    for (int i = 1; i < 3; ++i)
+    {
+        brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord + float2(texelSize * i, 0));
+        result += brightSample.rgb * weights[i];
+            
+        brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord - float2(texelSize * i, 0));
+        result += brightSample.rgb * weights[i];
+    }
+        
+    Out.vResult = float4(result, 1.f);
+   
+    return Out;
+}
+
+PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+
+    float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float3 result = BlurX.rgb * weights[0];
+    float texelSize = 1.f / fScreenHeight;
+        
+    for (int i = 1; i < 3; ++i)
+    {
+        result += MeshBlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
+        result += MeshBlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
+    }
+    Out.vResult = float4(result, 1.f);
+
+    return Out;
+}
+
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
@@ -255,6 +321,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vRimLight = RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
@@ -271,7 +338,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor;
+    Out.vResult.rgb += specularColor + vBloom.rgb;
 
     return Out;
 }
@@ -297,6 +364,36 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass BRIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BRIGHT();
+    }
+
+    pass BLOOM_BLURX
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURX();
+    }
+
+    pass BLOOM_BLURY
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
     }
 
     pass DIRECTIONAL

@@ -16,6 +16,7 @@ public:
 
 public:
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
+    HRESULT Render_SkinnedMesh_Bloom();
     HRESULT Render_RimLight();
     HRESULT Render_SkinnedMesh_LightAcc();
     HRESULT Render_SkinnedMesh_Combined();
@@ -31,6 +32,8 @@ private:
 private:
     RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
+    _float m_fScreenWidth;
+    _float m_fScreenHeight;
 
 public:
     static CSkinnedMeshRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,

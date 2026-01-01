@@ -16,7 +16,7 @@ public:
     virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) PURE;
     virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) PURE;	
     virtual class CModelData* Load_ModelData(const string& levelTag, const string& ModelKey) PURE;
-    virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) PURE;
+    virtual ANIMATION_META Load_MetaClip(const string& levelTag, const string& MetaKey) PURE;
     virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectKey) PURE;
     virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) PURE;
     virtual void Load_InitialResource() PURE;

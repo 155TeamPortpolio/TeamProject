@@ -13,7 +13,7 @@ class CResourceMgr final :
 		unordered_map<string, vector<class CMaterialData*>>		m_MaterialInstances;
 		unordered_map<string, class CTexture*>					m_Textures;
 		unordered_map<string, class CSoundData*>				m_Sounds;
-		unordered_map<string, vector<class CAnimationClip*>>	m_Animations;
+		unordered_map<string, ANIMATION_META>					m_AnimationMetas;
 		unordered_map<string, EFFECT_ASSET>						m_EffectAssets;
 		unordered_map <string, class CComputeShader*>			m_ComputeShaders;
 
@@ -44,7 +44,7 @@ public:
 	virtual vector<class CMaterialInstance*> Load_MaterialFromFile(const string& levelTag, const string& fileKey) override;
 	virtual class CShader* Load_Shader(const string& levelTag, const string& shaderKey) override;
 	virtual class CTexture* Load_Texture(const string& levelTag, const string& textureKey, _bool sRGBType = false) override;
-	virtual vector<class CAnimationClip*> Load_MetaClip(const string& levelTag, const string& MetaClipKey) override;
+	virtual ANIMATION_META Load_MetaClip(const string& levelTag, const string& MetaKey) override;
 	virtual EFFECT_ASSET Load_EffectAsset(const string& levelTag, const string& effectTag) override;
 	virtual class CComputeShader* Load_ComputeShader(const string& levelTag, const string& shaderKey) override;
 

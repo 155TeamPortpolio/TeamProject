@@ -1,5 +1,6 @@
 #include "Engine_Defines.h"
 #include "AnimationClip.h"
+#include "AnimationLayout.h"
 #include "Channel.h"
 
 CAnimationClip::CAnimationClip()
