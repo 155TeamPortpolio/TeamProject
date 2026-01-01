@@ -74,8 +74,8 @@ void CUVAnimationUI::Render_GUI()
     ImGui::SeparatorText(u8"UV¾Ö´Ï¸ÞÀÌ¼Ç");
     ImGui::DragFloat2(u8"¼Óµµ", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 
+    auto sprite =  Get_Component<CSprite2D>();
     ImGui::SeparatorText(u8"Mask");
-
     if (ImGui::Checkbox(u8"»ç¿ë", &m_useMask))
     {
         if (m_useMask)
