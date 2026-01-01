@@ -162,6 +162,10 @@
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
     <ClInclude Include="..\Public\Corin.h" />
+    <ClInclude Include="..\Public\CorinState_Idle.h" />
+    <ClInclude Include="..\Public\CorinState_Move.h" />
+    <ClInclude Include="..\Public\CorinState_Run.h" />
+    <ClInclude Include="..\Public\CorinState_Walk.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
@@ -274,6 +278,10 @@
     <ClCompile Include="..\private\CamPanel.cpp" />
     <ClCompile Include="..\Private\Character.cpp" />
     <ClCompile Include="..\Private\Corin.cpp" />
+    <ClCompile Include="..\Private\CorinState_Idle.cpp" />
+    <ClCompile Include="..\Private\CorinState_Move.cpp" />
+    <ClCompile Include="..\Private\CorinState_Run.cpp" />
+    <ClCompile Include="..\Private\CorinState_Walk.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />

@@ -271,6 +271,21 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin">
       <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State">
+      <UniqueIdentifier>{21c81c17-9dfd-4c09-8d83-5fb14ae316d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Idle">
+      <UniqueIdentifier>{7093ab03-2b34-47af-945d-34a78e349620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move">
+      <UniqueIdentifier>{2b4d6055-a07d-4723-a793-dae75c760383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Walk">
+      <UniqueIdentifier>{6066750f-d26d-4dcc-b9cb-95ff0891b101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Run">
+      <UniqueIdentifier>{88626d5b-dbf8-4f03-8ef2-2f7cae50254a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -529,6 +544,18 @@
     <ClInclude Include="..\Public\Corin.h">
       <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Idle.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Move.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Walk.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Run.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -780,6 +807,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Corin.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Idle.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Move.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Walk.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Run.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

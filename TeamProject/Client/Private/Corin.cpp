@@ -8,6 +8,8 @@
 #include "CharacterController.h"
 
 #include "StateMachine.h"
+#include "CorinState_Idle.h"
+#include "CorinState_Move.h"
 
 CCorin::CCorin()
 {
@@ -248,8 +250,8 @@ HRESULT CCorin::Initialize_StateMachine()
 
 HRESULT CCorin::Initialize_States()
 {
-	//m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
-	//m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
+	m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
+	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	//m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
 
 	return S_OK;
