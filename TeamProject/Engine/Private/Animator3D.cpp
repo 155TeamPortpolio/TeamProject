@@ -460,14 +460,14 @@ void CAnimator3D::Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex)
 	m_AnimLayers[LayerIndex].eLayerType = eLayerType;
 }
 
-void CAnimator3D::Speed(_float fSpeed, _uint LayerIndex)
+void CAnimator3D::Chagne_Speed(_float fSpeed, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
 
 	m_AnimLayers[LayerIndex].fAnimSpeed = fSpeed;
 }
 
-void CAnimator3D::TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType, _uint LayerIndex)
+void CAnimator3D::Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType, _uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex)) return;
 

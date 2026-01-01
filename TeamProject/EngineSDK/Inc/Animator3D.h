@@ -166,15 +166,15 @@ public://애니매이터 데이터
     void Reset_StartBone(_uint LayerIndex = 0);
     //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
     void Set_TPose();
-    //
+    //애니매이션 레이어 타입
     void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
 
     /*----- Change -----*/
 
     //현재 레이어 애니매이션 속도만 변경
-    void Speed(_float fSpeed, _uint LayerIndex = 0);
+    void Chagne_Speed(_float fSpeed, _uint LayerIndex = 0);
     //현재 레이어 애니매이션 현재 속도에서부터 보간 변경
-    void TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear, _uint LayerIndex = 0);
+    void Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear, _uint LayerIndex = 0);
 
     /*----- Calculator -----*/
     _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
