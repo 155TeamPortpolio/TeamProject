@@ -1405,9 +1405,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
-      <Filter>98. BasicShader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
@@ -1490,6 +1487,9 @@
     </FxCompile>
     <FxCompile Include="..\..\EngineSDK\Inc\Engine_Shader\CS_OcclusionCull.hlsl">
       <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

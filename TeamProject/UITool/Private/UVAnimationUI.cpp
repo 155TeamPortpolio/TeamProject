@@ -25,11 +25,17 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     auto sprite = Get_Component<CSprite2D>();
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    sprite->ChangePass("UVAnimation");
+
     sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
+    sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
+    sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
 
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
+
+    m_strMaskTexKey = "select_mask.png";
+
+    sprite->ChangePass("UVAnimation");
 
     m_iCount++;
 
@@ -38,23 +44,59 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
 void CUVAnimationUI::Update(_float dt)
 {
-    if (!m_isAlive)
-        return;
+    if (!m_isAlive) return;
 
     Play_Animation(dt);
 
     m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;
     m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;
-    Get_Component<CSprite2D>()->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
+
+    Get_Component<CSprite2D>()->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
 }
 void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
+    auto sprite = Get_Component<CSprite2D>();
+
     Render_GUI_Image(m_strTextureKey);
 
     ImGui::SeparatorText(u8"UV애니메이션");
     ImGui::DragFloat2(u8"속도", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
+
+    ImGui::SeparatorText(u8"Mask");
+    if (ImGui::Checkbox(u8"사용", &m_useMask))
+    {
+        if (m_useMask)
+        {
+            sprite->ChangePass("UVAnimation_Mask");
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+        }
+        else
+            sprite->ChangePass("UVAnimation");
+    }
+
+    ImGui::BeginDisabled(!m_useMask);
+
+    if (ImGui::Button(u8"마스크 선택"))
+    {
+        string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
+        if (!filePath.empty())
+        {
+            string fileName = Helper::GetFileNameWithExtension(filePath);
+            CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
+            m_strMaskTexKey = fileName;
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+        }
+    }
+
+    ImGui::DragFloat(u8"Threshold", &m_fMaskThreshold, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    ImGui::DragFloat(u8"Softness", &m_fMaskSoftness, 0.005f, 0.f, 0.2f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+
+    sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
+    sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
+
+    ImGui::EndDisabled();
 }
 
 void CUVAnimationUI::Save(nlohmann::ordered_json& data)
@@ -108,9 +150,4 @@ CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
     }
 
     return pInstance;
-}
-
-void CUVAnimationUI::Free()
-{
-    __super::Free();
 }
