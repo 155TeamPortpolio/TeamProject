@@ -126,6 +126,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 			(dstWidth + m_threadSize.x - 1) / m_threadSize.x,
 			(dstHeight + m_threadSize.y - 1) / m_threadSize.y,
 			1
+
 		};
 
 		m_pReduceShader->Bind(pContext);
