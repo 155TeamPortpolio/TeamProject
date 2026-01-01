@@ -172,7 +172,7 @@ PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+        mask = MaskTexture.Sample(LinearSampler, maskUV).r;
 
     if (MaskSoftness <= 0.f)
         clip(mask - MaskThreshold);
@@ -207,7 +207,7 @@ PS_OUT PS_MAIN_MASK_DEBUG_RAW(PS_IN In)
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+        mask = MaskTexture.Sample(LinearSampler, maskUV).r;
 
     Out.vColor = float4(mask, mask, mask, 1.f);
     return Out;
@@ -234,7 +234,7 @@ PS_OUT PS_MAIN_MASK_DEBUG_APPLIED(PS_IN In)
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
-        mask = MaskTex.Sample(LinearSampler, maskUV).r;
+        mask = MaskTexture.Sample(LinearSampler, maskUV).r;
 
     float maskA = 0.f;
     if (MaskSoftness <= 0.f)

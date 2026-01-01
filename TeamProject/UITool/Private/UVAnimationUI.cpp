@@ -27,22 +27,22 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     sprite->ChangePass("UVAnimation");
-    sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
-    sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
-    sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
-    sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+    sprite->Set_Param("UVOffset",        {&m_vUVOffset,       "float2", sizeof(_float2)});
+    sprite->Set_Param("MaskThreshold",   {&m_maskThreshold,   "float",  sizeof( _float)});
+    sprite->Set_Param("MaskSoftness",    {&m_maskSoftness,    "float",  sizeof( _float)});
+    sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
 
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
-    m_strMaskTexKey = "select_mask.png";
-    sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+    m_maskTextureKey = "empty.png";
+    sprite->Change_Texture(1, G_GlobalLevelKey, m_maskTextureKey);
 
     {
-        auto maskTex = sprite->Get_Texture(1);
-        auto sz = maskTex->Get_Size();
-        m_vMaskTexSize = {(float)sz.x, (float)sz.y};
-        sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+        auto maskTexture  = sprite->Get_Texture(1);
+        auto size         = maskTexture->Get_Size();
+        m_maskTextureSize = {(float)size.x, (float)size.y};
+        sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
     }
 
     sprite->ChangePass("UVAnimation");
@@ -80,12 +80,12 @@ void CUVAnimationUI::Render_GUI()
     {
         if (m_useMask)
         {
-            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_maskTextureKey);
             {
                 auto maskTex = sprite->Get_Texture(1);
                 auto sz = maskTex->Get_Size();
-                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
-                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+                m_maskTextureSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
             }
             sprite->ChangePass("UVAnimation_Mask");
         }
@@ -100,12 +100,12 @@ void CUVAnimationUI::Render_GUI()
             m_maskDebugApplied = false;
             m_useMask = true;
 
-            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_maskTextureKey);
             {
                 auto maskTex = sprite->Get_Texture(1);
                 auto sz = maskTex->Get_Size();
-                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
-                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+                m_maskTextureSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
             }
 
             sprite->ChangePass("MaskDebugRaw");
@@ -124,12 +124,12 @@ void CUVAnimationUI::Render_GUI()
             m_maskDebugRaw = false;
             m_useMask = true;
 
-            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_maskTextureKey);
             {
                 auto maskTex = sprite->Get_Texture(1);
                 auto sz = maskTex->Get_Size();
-                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
-                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+                m_maskTextureSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
             }
 
             sprite->ChangePass("MaskDebugApplied");
@@ -150,23 +150,23 @@ void CUVAnimationUI::Render_GUI()
         {
             string fileName = Helper::GetFileNameWithExtension(filePath);
             CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(fileName, filePath);
-            m_strMaskTexKey = fileName;
+            m_maskTextureKey = fileName;
 
-            sprite->Change_Texture(1, G_GlobalLevelKey, m_strMaskTexKey);
+            sprite->Change_Texture(1, G_GlobalLevelKey, m_maskTextureKey);
             {
                 auto maskTex = sprite->Get_Texture(1);
                 auto sz = maskTex->Get_Size();
-                m_vMaskTexSize = {(float)sz.x, (float)sz.y};
-                sprite->Set_Param("MaskTexSize", {&m_vMaskTexSize, "float2", sizeof(_float2)});
+                m_maskTextureSize = {(float)sz.x, (float)sz.y};
+                sprite->Set_Param("MaskTextureSize", {&m_maskTextureSize, "float2", sizeof(_float2)});
             }
         }
     }
 
-    ImGui::DragFloat(u8"Threshold", &m_fMaskThreshold, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp);
-    ImGui::DragFloat(u8"Softness", &m_fMaskSoftness, 0.005f, 0.f, 0.2f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
+    ImGui::DragFloat(u8"Threshold", &m_maskThreshold, 0.01f, 0.f, 1.f,  "%.2f", ImGuiSliderFlags_AlwaysClamp);
+    ImGui::DragFloat(u8"Softness",  &m_maskSoftness, 0.005f, 0.f, 0.2f, "%.3f", ImGuiSliderFlags_AlwaysClamp);
 
-    sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
-    sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
+    sprite->Set_Param("MaskThreshold", {&m_maskThreshold, "float", sizeof(_float)});
+    sprite->Set_Param("MaskSoftness",  {&m_maskSoftness,  "float", sizeof(_float)});
 
     ImGui::EndDisabled();
 }
@@ -223,9 +223,4 @@ CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
     }
 
     return pInstance;
-}
-
-void CUVAnimationUI::Free()
-{
-    __super::Free();
 }
