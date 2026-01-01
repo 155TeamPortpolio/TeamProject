@@ -28,19 +28,6 @@ class ENGINE_DLL CPipeLine :
 		_float3 ShadowPadding;
 	};
 
-	struct alignas(16)  LightBuffer
-	{
-		_float4 vLightDir;
-		_float4 vLightPos;
-		_float4 vLightDiffuse;
-		_float4 vLightAmbient;
-		_float4 vLightSpecular;
-		_float fLightRange;
-		_float fLightIntensity;
-		_int iLightSize;
-		_float LightPadding;
-	};
-
 	struct alignas(16)  SSAOBuffer
 	{
 		_float Radius;
@@ -71,7 +58,6 @@ public:
 public:
 	HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext);
-	HRESULT Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize);
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
 	void Update_Frustum();
@@ -94,7 +80,6 @@ public:
 	ID3D11Buffer* Get_ShadowBuffer() { return m_pDeviceShadowBuffer; };
 	ID3D11Buffer* Get_SSAOBuffer() { return m_pDeviceSSAOBuffer; };
 	ID3D11Buffer* Get_SSAOKernelBuffer() { return m_pDeviceSSAOKernelBuffer; };
-	ID3D11Buffer* Get_LightBuffer() { return m_pDeviceLightBuffer; };
 
 	ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
@@ -107,7 +92,6 @@ private:
 	ID3D11Buffer* m_pDeviceShadowBuffer = { nullptr };
 	ID3D11Buffer* m_pDeviceSSAOBuffer = { nullptr };
 	ID3D11Buffer* m_pDeviceSSAOKernelBuffer = { nullptr };
-	ID3D11Buffer* m_pDeviceLightBuffer = { nullptr };
 
 	/*Transform*/
 	_uint m_ObjectOffset = {};

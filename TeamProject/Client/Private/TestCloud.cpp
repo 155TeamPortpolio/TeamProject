@@ -4,7 +4,6 @@
 #include "StaticModel.h"
 #include "Material.h"
 #include "Shader.h"
-#include "Texture.h"
 
 #include "GameInstance.h"
 #include "MaterialInstance.h"
@@ -78,14 +77,6 @@ void CTestCloud::Awake()
 	auto instance =Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	instance->Set_Param("g_CloudColor", { &m_vCloudColor, "float3", sizeof(_float3) });
 	instance->Set_Param("g_SkyColor", { &m_vSkyColor, "float3", sizeof(_float3) });
-
-	//=====================Shader Test=========================
-	/*auto RenderSys = CGameInstance::GetInstance()->Get_RenderSystem();
-	auto pDevice = CGameInstance::GetInstance()->Get_Device();
-	auto newTexture = CTexture::Create(pDevice, L"../Bin/Resources/Noise/VX_Noise_XL_07.png","VX_Noise_XL_07.png", true);
-	RenderSys->Add_NoiseTexture("Noise1", newTexture);
-	RenderSys->Apply_Noise({ "Noise1" }, 5.f);
-	NoiseTextures.push_back(newTexture);*/
 }
 
 void CTestCloud::Priority_Update(_float dt)
@@ -132,6 +123,4 @@ CGameObject* CTestCloud::Clone(INIT_DESC* pArg)
 void CTestCloud::Free()
 {
 	__super::Free();
-	//for (auto& Texture : NoiseTextures) Safe_Release(Texture);
-	//NoiseTextures.clear();
 }

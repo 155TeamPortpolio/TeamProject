@@ -13,8 +13,7 @@ private:
 
 public: 
 	virtual HRESULT Render() override;
-	virtual void Submit_StaticMesh_Opaque(const OPAQUE_PACKET& packet) override { m_pStaticPass->Submit(packet); }
-	virtual void Submit_SkinnedMesh_Opaque(const OPAQUE_PACKET& packet) override { m_pSkinnedPass->Submit(packet); }
+	virtual void Submit_Opaque(const OPAQUE_PACKET& packet) override { m_pOpaquePass->Submit(packet); };
 	virtual void Submit_Shadow(const OPAQUE_PACKET& packet) override { m_pShadowPass->Submit(packet); };
 	virtual void Submit_Shadow(const INSTANCE_PACKET& packet) override { m_pShadowPass->SubmitInstance(packet); };
 	virtual void Submit_Instance(const INSTANCE_PACKET& packet) override { m_pInstancePass->Submit(packet); };
@@ -31,9 +30,6 @@ public:
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;
-
-	virtual void Add_NoiseTexture(string strName, class CTexture* noiseTexture) override;
-	virtual void Apply_Noise(vector<string> strNames, _float duration) override;
 
 public:
 	virtual _bool GetOn() const  override{ return IsOn; }
@@ -62,8 +58,7 @@ private:
 	class CTarget_Manager* m_pTargetManager = { nullptr };
 
 	PriorityPass* m_pPriorityPass = { nullptr};
-	StaticOpaquePass* m_pStaticPass = { nullptr};
-	SkinnedOpaquePass* m_pSkinnedPass = { nullptr};
+	OpaquePass* m_pOpaquePass = { nullptr};
 	ShadowPass* m_pShadowPass = { nullptr};
 	InstancePass* m_pInstancePass = { nullptr};
 	BlendedPass* m_pBlendedPass = { nullptr};

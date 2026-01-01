@@ -21,7 +21,6 @@ protected:
 	virtual HRESULT Ready_MRT() PURE;
 	HRESULT LoadShader(string shaderName);
 	HRESULT CreateVIBuffer();
-	HRESULT Bind_WorldMatrix();
 
 protected:
 	HRESULT Change_Viewport(_uint iWidth, _uint iHeight);
@@ -43,9 +42,6 @@ protected:
 	class CVIBuffer*		m_pVIBuffer = { nullptr };
 	class CShader*			m_pShader = { nullptr };
 	_float4x4				m_WorldMatrix;
-
-protected:
-	class CTexture* m_pRampTexture;
 
 public:
 	virtual void Free() override;

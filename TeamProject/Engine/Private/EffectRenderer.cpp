@@ -30,11 +30,11 @@ HRESULT CEffectRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine* 
 HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pParticlePass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
+		m_pTargetManager->Get_MTR_DSV("MRT_Deferred");
 
 	/* Color Acc Pass */
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_WeightOIT", 0xff, pDeferredDSV, false))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_WeightOIT", true, pDeferredDSV, false))) return E_FAIL;
 		pEffectPass->Execute(m_pContext, this);
 		pParticlePass->Execute(m_pContext, this);
 		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -42,7 +42,7 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 
 	/* Composite Pass */
 	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", 0xff, pDeferredDSV, false))) return E_FAIL;
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Effect", true, pDeferredDSV, false))) return E_FAIL;
 
 		SHADER_PARAM WorldMat = {};
 		WorldMat.iSize = sizeof(_float4x4);
@@ -52,9 +52,9 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 		
-		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "DiffuseEffectAccTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "BloomEffectAccTexture");
-		m_pTargetManager->Bind_Target("Target_Revealage", m_pShader, "RevealageTexture");
+		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "g_DiffuseEffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "g_BloomEffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_Revealage", m_pShader, "g_RevealageTexture");
 		
 		ID3D11InputLayout* pLayout = nullptr;
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "Composite", &pLayout);
@@ -104,48 +104,6 @@ HRESULT CEffectRenderer::Render_CustomTarget()
 	return S_OK;
 }
 
-HRESULT CEffectRenderer::Render_Effect_Bloom()
-{
-	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Effect_H"))) return E_FAIL;
-
-		m_pTargetManager->Bind_Target("Target_BloomEffect", m_pShader, "EffectBrightTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "EffectBloomInfo");
-
-		Bind_WorldMatrix();
-
-		ID3D11InputLayout* pLayout;
-		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
-		m_pContext->IASetInputLayout(pLayout);
-
-		m_pShader->Apply("BLOOM_BLURX", m_pContext);
-		m_pVIBuffer->Bind_Buffer(m_pContext);
-		m_pVIBuffer->Render(m_pContext);
-
-		m_pTargetManager->End_MRT();
-	}
-
-	{
-		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Bloom_Effect_V"))) return E_FAIL;
-
-		m_pTargetManager->Bind_Target("Target_BloomBlurX_Effect", m_pShader, "EffectBlurXTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectInfo", m_pShader, "EffectBloomInfo");
-		
-		Bind_WorldMatrix();
-
-		ID3D11InputLayout* pLayout;
-		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURY", &pLayout);
-		m_pContext->IASetInputLayout(pLayout);
-
-		m_pShader->Apply("BLOOM_BLURY", m_pContext);
-		m_pVIBuffer->Bind_Buffer(m_pContext);
-		m_pVIBuffer->Render(m_pContext);
-
-		m_pTargetManager->End_MRT();
-	}
-	return S_OK;
-}
-
 void CEffectRenderer::Add_RenderCommand(const RENDER_CUSTOM_COMMAND& command)
 {
 	m_RenderCommands.push_back(command);
@@ -180,12 +138,6 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc DepthlDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
 
-	RenderTargetDesc BloomBlurX_EffectDesc = { "Target_BloomBlurX_Effect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomBlurX_EffectDesc);
-
-	RenderTargetDesc BloomBlurY_EffectDesc = { "Target_BloomBlurY_Effect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
-	m_pTargetManager->Create_Target(BloomBlurY_EffectDesc);
-
 	return S_OK;
 }
 
@@ -211,10 +163,6 @@ HRESULT CEffectRenderer::Ready_MRT()
 		//	return E_FAIL;
 	}
 
-	{
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_Effect_H", "Target_BloomBlurX_Effect"))) return E_FAIL;
-		if (FAILED(m_pTargetManager->Add_MRT("MRT_Bloom_Effect_V", "Target_BloomBlurY_Effect"))) return E_FAIL;
-	}
 	return S_OK;
 }
 
