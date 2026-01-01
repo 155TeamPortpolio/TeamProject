@@ -20,10 +20,10 @@ public:
 
         _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
-        _float              fLayerWeight = { 1.f };
-        _float              fTargetWeight = { 1.f };
-        _float              fWeightDuration = {};
-        _float              fWeightElapsed = {};
+        _float              fLayerWeight = {};
+        _float              fTargetLayerWeight = {};
+        _float              fLayerWeightElapsed = {};
+        _float              fLayerWeightDuration = {};
         EaseType            eLayerEaseType = { EaseType::None };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
@@ -214,19 +214,21 @@ protected://애니매이션 체크
     _bool isExistClip(_int ClipIndex);
     //축이 있는지 계산
     _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
-
+    
+    //매트릭스 보간
+    Matrix Calc_MatrixBlend(_float4x4& base, _float4x4& target, _float weight);
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
     //레이어 연산
     void Layer_Override(const ANIM_LAYER& Layer);
-    void Layer_Blend(const ANIM_LAYER& Layer);
-    void Layer_Additive(const ANIM_LAYER& Layer);
+    void Layer_Blend(const ANIM_LAYER& Layer, _float fEase);
+    void Layer_Additive(const ANIM_LAYER& Layer, _float fEase);
     //Combined 연산
 
     //최종 뼈 계산
-    void BuildBone();
+    void BuildBone(_float dt);
     void Update_Playlist();
 
 public:
@@ -348,7 +350,6 @@ protected:
     _float   m_fEaseDuration = { 0.f };
 
 };
-
 
 class ENGINE_DLL SetAnimBuild
     : public AnimBuild<SetAnimBuild> {

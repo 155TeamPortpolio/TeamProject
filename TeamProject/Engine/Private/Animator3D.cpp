@@ -86,6 +86,7 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 	Resize_Layer(1);
 	//0번 레이어는 베이스레이어, Layer.BaseLayer는 웬만하면 건들지 말것
 	m_AnimLayers[0].BaseLayer = true;
+	m_AnimLayers[0].fLayerWeight = 1.f;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
 	return S_OK;
@@ -131,7 +132,7 @@ void CAnimator3D::Update_Animation(_float dt)
 			Animation_Run(Layer, dt);
 	}
 
-	BuildBone();
+	BuildBone(dt);
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -580,6 +581,25 @@ _bool CAnimator3D::hasAxis(AXIS eExtractAxis, AXIS Axis)
 	return (eExtractAxis & Axis) != AXIS::NONE;
 }
 
+Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight)
+{
+	Matrix baseMat = base;
+	Matrix targetMat = target;
+
+	_vector3 baseS, targetS;
+	_quaternion baseR, targetR;
+	_vector3 baseT, targetT;
+
+	baseMat.Decompose(baseS, baseR, baseT);
+	targetMat.Decompose(targetS, targetR, targetT);
+	_vector3	S = _vector3::Lerp(baseS, targetS, weight);
+	_quaternion R = _quaternion::Slerp(baseR, targetR, weight);
+	R.Normalize();
+	_vector3	T = _vector3::Lerp(baseT, targetT, weight);
+
+	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+}
+
 										/*-----------------*/
 										/*  Run Animation  */
 										/*-----------------*/
@@ -759,19 +779,19 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			}
 			else {
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
+				// 이동 상쇄
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
 			}
 
-			// 이동 상쇄
-			MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-			// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-			_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-			_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-			// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-			MotionMat = MotionMat * invCurRootRot;
-			// 상쇄한 매트릭스 저장
-			Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
 
 			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
@@ -806,9 +826,6 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
-
-			Layer.vPrevRootPos = vCurRootPos;
-			Layer.vPrevRootQuat = vCurRootQuat;
 		}
 
 		//Extract MoveBone
@@ -829,26 +846,28 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
-		_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
-		_matrix blend = XMLoadFloat4x4(&Layer.BlendMatrices[i]);
-		_vector baseS, baseR, baseT;
-		_vector blendS, blendR, blendT;
+		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendRate);
 
-		XMMatrixDecompose(&baseS, &baseR, &baseT, base);
-		XMMatrixDecompose(&blendS, &blendR, &blendT, blend);
-
-		_vector FinalS = XMVectorLerp(baseS, blendS, fBlendRate);
-		_vector FinalT = XMVectorLerp(baseT, blendT, fBlendRate);
-		_vector FinalR;
-
-		FinalR = Layer.bIgnoreRotation ?
-			FinalR = blendR :
-			XMQuaternionSlerp(baseR, blendR, fBlendRate);
-
-		_matrix blendedM = XMMatrixAffineTransformation(
-			FinalS, XMVectorSet(0.f, 0.f, 0.f, 1.f), FinalR, FinalT);
-
-		XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
+		//_matrix base = XMLoadFloat4x4(&Layer.LocalMatrices[i]);
+		//_matrix blend = XMLoadFloat4x4(&Layer.BlendMatrices[i]);
+		//_vector baseS, baseR, baseT;
+		//_vector blendS, blendR, blendT;
+		//
+		//XMMatrixDecompose(&baseS, &baseR, &baseT, base);
+		//XMMatrixDecompose(&blendS, &blendR, &blendT, blend);
+		//
+		//_vector FinalS = XMVectorLerp(baseS, blendS, fBlendRate);
+		//_vector FinalT = XMVectorLerp(baseT, blendT, fBlendRate);
+		//_vector FinalR;
+		//
+		//FinalR = Layer.bIgnoreRotation ?
+		//	FinalR = blendR :
+		//	XMQuaternionSlerp(baseR, blendR, fBlendRate);
+		//
+		//_matrix blendedM = XMMatrixAffineTransformation(
+		//	FinalS, XMVectorSet(0.f, 0.f, 0.f, 1.f), FinalR, FinalT);
+		//
+		//XMStoreFloat4x4(&Layer.FinalLocalMatrices[i], blendedM);
 	}
 
 	//Convert End
@@ -885,25 +904,64 @@ void CAnimator3D::Layer_Override(const ANIM_LAYER& Layer)
 	}
 }
 
-void CAnimator3D::Layer_Blend(const ANIM_LAYER& Layer)
+void CAnimator3D::Layer_Blend(const ANIM_LAYER& Layer, _float fEase)
 {
 	if (-1 == Layer.iStartBoneIndex) {
+		for (int i = 0; i < m_pData->Get_BoneCount(); i++) {
+			if (i == Layer.iMotionBoneIndex || i == Layer.iRootBoneIndex) continue;
 
+			if (Layer.bBlending)
+				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], fEase);
+			else
+				m_TransformationMatrices[i] = Calc_MatrixBlend(m_TransformationMatrices[i], Layer.LocalMatrices[i], fEase);
+		}
+	}
+	else {
+		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (BoneIndex == Layer.iMotionBoneIndex || BoneIndex == Layer.iRootBoneIndex) continue;
+
+			if (Layer.bBlending)
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], fEase);
+			else
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixBlend(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], fEase);
+		}
 	}
 }
 
-void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
+void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer, _float fEase)
 {
 	if (-1 == Layer.iStartBoneIndex) {
-
+		if (Layer.bBlending)
+			m_TransformationMatrices = Layer.FinalLocalMatrices;
+		else
+			m_TransformationMatrices = Layer.LocalMatrices;
+	}
+	else {
+		for (_int BoneIndex : Layer.AffectedBonesIndices) {
+			if (Layer.bBlending)
+				m_TransformationMatrices[BoneIndex] = Layer.FinalLocalMatrices[BoneIndex];
+			else
+				m_TransformationMatrices[BoneIndex] = Layer.LocalMatrices[BoneIndex];
+		}
 	}
 }
 
-void CAnimator3D::BuildBone()
+void CAnimator3D::BuildBone(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.fLayerWeight <= 0) continue;
 
+		_float Ease = 0.f;
+		if (EaseType::None != Layer.eLayerEaseType) {
+			Layer.fLayerWeightElapsed += dt;
+
+			_float t = min(Layer.fLayerWeightElapsed / Layer.fLayerWeightDuration, 1.f);
+			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
+
+			if (t <= 1.f)
+				Layer.eLayerEaseType = EaseType::None;
+		}
+	
 		switch (Layer.eLayerType)
 		{
 		case Engine::ANIM_LAYER_STATE::NONE:
@@ -912,10 +970,10 @@ void CAnimator3D::BuildBone()
 			Layer_Override(Layer);
 			break;
 		case Engine::ANIM_LAYER_STATE::BLEND:
-			Layer_Blend(Layer);
+			Layer_Blend(Layer, Ease);
 			break;
 		case Engine::ANIM_LAYER_STATE::ADDITIVE:
-			Layer_Additive(Layer);
+			Layer_Additive(Layer, Ease);
 			break;
 		default:
 			break;
@@ -1123,9 +1181,9 @@ HRESULT SetAnimBuild::Apply()
 	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
 	else { 
 		Layer.fLayerWeight = m_fLayerWeight;
-		Layer.fTargetWeight = m_fTargetWeight;
-		Layer.fWeightElapsed = 0.f;
-		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.fTargetLayerWeight = m_fTargetWeight;
+		Layer.fLayerWeightElapsed = 0.f;
+		Layer.fLayerWeightDuration = m_fWeightDuration;
 		Layer.eLayerEaseType = m_eLayerEaseType;
 	}
 
@@ -1171,9 +1229,9 @@ HRESULT ChangeAnimBuild::Apply()
 	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
 	else {
 		Layer.fLayerWeight = m_fLayerWeight;
-		Layer.fTargetWeight = m_fTargetWeight;
-		Layer.fWeightElapsed = 0.f;
-		Layer.fWeightDuration = m_fWeightDuration;
+		Layer.fTargetLayerWeight = m_fTargetWeight;
+		Layer.fLayerWeightElapsed = 0.f;
+		Layer.fLayerWeightDuration = m_fWeightDuration;
 		Layer.eLayerEaseType = m_eLayerEaseType;
 	}
 
