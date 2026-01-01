@@ -26,7 +26,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     auto sprite = Get_Component<CSprite2D>();
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-
+    sprite->ChangePass("UVAnimation");
     sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
     sprite->Set_Param("MaskThreshold", {&m_fMaskThreshold, "float", sizeof(_float)});
     sprite->Set_Param("MaskSoftness", {&m_fMaskSoftness, "float", sizeof(_float)});
@@ -55,30 +55,28 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
 void CUVAnimationUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
+    if (!m_isAlive)
+        return;
 
     Play_Animation(dt);
 
     m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;
     m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;
-
-    Get_Component<CSprite2D>()->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
+    Get_Component<CSprite2D>()->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
 }
 
 void CUVAnimationUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    auto sprite = Get_Component<CSprite2D>();
-
     Render_GUI_Image(m_strTextureKey);
 
-    ImGui::SeparatorText(u8"UV¾Ö´Ï¸ŞÀÌ¼Ç");
-    ImGui::DragFloat2(u8"¼Óµµ", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
+    ImGui::SeparatorText(u8"UVÂ¾Ã–Â´ÃÂ¸ÃÃ€ÃŒÂ¼Ã‡");
+    ImGui::DragFloat2(u8"Â¼Ã“ÂµÂµ", reinterpret_cast<_float*>(&m_vUVOffsetSpeed), 0.01f);
 
     ImGui::SeparatorText(u8"Mask");
 
-    if (ImGui::Checkbox(u8"»ç¿ë", &m_useMask))
+    if (ImGui::Checkbox(u8"Â»Ã§Â¿Ã«", &m_useMask))
     {
         if (m_useMask)
         {
@@ -95,7 +93,7 @@ void CUVAnimationUI::Render_GUI()
             sprite->ChangePass("UVAnimation");
     }
 
-    if (ImGui::Checkbox(u8"µğ¹ö±× Raw", &m_maskDebugRaw))
+    if (ImGui::Checkbox(u8"ÂµÃ°Â¹Ã¶Â±Ã— Raw", &m_maskDebugRaw))
     {
         if (m_maskDebugRaw)
         {
@@ -119,7 +117,7 @@ void CUVAnimationUI::Render_GUI()
         }
     }
 
-    if (ImGui::Checkbox(u8"µğ¹ö±× Applied", &m_maskDebugApplied))
+    if (ImGui::Checkbox(u8"ÂµÃ°Â¹Ã¶Â±Ã— Applied", &m_maskDebugApplied))
     {
         if (m_maskDebugApplied)
         {
@@ -145,7 +143,7 @@ void CUVAnimationUI::Render_GUI()
 
     ImGui::BeginDisabled(!m_useMask || m_maskDebugRaw || m_maskDebugApplied);
 
-    if (ImGui::Button(u8"¸¶½ºÅ© ¼±ÅÃ"))
+    if (ImGui::Button(u8"Â¸Â¶Â½ÂºÃ…Â© Â¼Â±Ã…Ãƒ"))
     {
         string filePath = Helper::OpenFile({{"PNG Files", "*.png"}}, "png");
         if (!filePath.empty())
@@ -225,4 +223,9 @@ CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
     }
 
     return pInstance;
+}
+
+void CUVAnimationUI::Free()
+{
+    __super::Free();
 }

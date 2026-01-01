@@ -23,9 +23,8 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_float2		m_vUVOffset{};
-	_float2		m_vUVOffsetSpeed{};
-	string		m_strTextureKey{};
+	_float2		m_vUVOffset = {};
+	_float2		m_vUVOffsetSpeed = {};
 
 	_bool       m_useMask          = false;
 	_float      m_fMaskThreshold   = 0.5f;
@@ -43,7 +42,7 @@ public:
 public:
 	static CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free() { __super::Free(); }
+	virtual void Free();
 };
 
 NS_END

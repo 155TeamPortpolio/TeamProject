@@ -733,6 +733,8 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_EffectMesh.hlsl", "../Bin/ShaderFiles/VTX_EffectMesh.hlsl");
 	Add_ResourcePath("Shader_Deferred.hlsl", "../Bin/ShaderFiles/Shader_Deferred.hlsl");
 	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
+	Add_ResourcePath("Shader_Deferred_SkinnedMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_SkinnedMesh.hlsl");
+	Add_ResourcePath("Shader_Deferred_StaticMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_StaticMesh.hlsl");
 	Add_ResourcePath("Shader_WeightOIT.hlsl", "../Bin/ShaderFiles/Shader_WeightOIT.hlsl");
 
 	/* Compute Shader */
