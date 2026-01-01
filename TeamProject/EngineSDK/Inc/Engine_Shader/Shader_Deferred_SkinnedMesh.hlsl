@@ -121,70 +121,70 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
 }
 
 //GaussianBlur
-static const float weights[9] =
+static const float weights[3] =
 {
-    0.2270270270,
-    0.1945945946,
-    0.1216216216,
-    0.0540540541,
-    0.0162162162,
-    0.0081081081,
-    0.0040540541,
-    0.0020270270,
-    0.0010135135
+    0.5,
+    0.25,
+    0.25
 };
+
+
+
+PS_OUT_RESULT PS_BRIGHT(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float emissive = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
+    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
+  
+    float3 vResult = vDiffuse.rgb * emissive;
+    
+    Out.vResult = float4(vResult, 1.f);
+    return Out;
+}
 
 PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
 {
     PS_OUT_RESULT Out;
     
-    float vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 result = vAmbient * vDiffuse.rgb * weights[0];
+    float4 bright = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float3 result = bright.rgb * weights[0];
+    float texelSize = 1.f / fScreenWidth;
     
-    float texelSize = 2.f / fScreenWidth;
-    
-    for (int i = 1; i < 9; ++i)
+    float4 brightSample;
+    for (int i = 1; i < 3; ++i)
     {
-        float2 offset = float2(texelSize * i, 0);
-        
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset).b;
-        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
-        result += vAmbient * vDiffuse.rgb * weights[i];
-        
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset).b;
-        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
-        result += vAmbient * vDiffuse.rgb * weights[i];
+        brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord + float2(texelSize * i, 0));
+        result += brightSample.rgb * weights[i];
+            
+        brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord - float2(texelSize * i, 0));
+        result += brightSample.rgb * weights[i];
     }
         
     Out.vResult = float4(result, 1.f);
+   
     return Out;
 }
 
 PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 {
     PS_OUT_RESULT Out;
+
+    float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord).b;
-    float4 vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    float3 result = vAmbient * vDiffuse.rgb * weights[0];
-    
-    float texelSize = 2.f / fScreenHeight;
-    
-    for (int i = 1; i < 9; ++i)
+    float3 result = BlurX.rgb * weights[0];
+    float texelSize = 1.f / fScreenHeight;
+        
+    for (int i = 1; i < 3; ++i)
     {
-        float2 offset = float2(0, texelSize * i);
-        
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord + offset).b;
-        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord + offset);
-        result += vAmbient * vDiffuse.rgb * weights[i];
-        
-        vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord - offset).b;
-        vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord - offset);
-        result += vAmbient * vDiffuse.rgb * weights[i];
+        result += MeshBlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
+        result += MeshBlurXTexture.Sample(DefaultSampler,
+                In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
     }
-    
     Out.vResult = float4(result, 1.f);
+
     return Out;
 }
 
@@ -366,6 +366,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_RIMLIGHT();
+    }
+
+    pass BRIGHT
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_BRIGHT();
     }
 
     pass BLOOM_BLURX

@@ -32,6 +32,8 @@ private:
 private:
     RIMLIGHT RimLightMode = RIMLIGHT::OUTLINE;
     vector<OUTLINE_COMMAND> m_OutLineCommands;
+    _float m_fScreenWidth;
+    _float m_fScreenHeight;
 
 public:
     static CSkinnedMeshRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
