@@ -243,6 +243,30 @@
     </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Text">
       <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+       </Filter>
+        <Filter Include="02. GameObject\Object\Player\Character\Anbi">
+      <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State">
+      <UniqueIdentifier>{dfac9681-7662-4fbe-9a33-6b8c0c1f4523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Idle">
+      <UniqueIdentifier>{bbb3b02e-8215-4c3e-949e-477f2aebc93a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move">
+      <UniqueIdentifier>{dd07b2d6-97a0-4174-96bd-a393455c7ffe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Run">
+      <UniqueIdentifier>{9d80b005-b1ae-40ed-8a50-737a1e4773fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Move\Walk">
+      <UniqueIdentifier>{163eb66f-f792-4771-9edc-bc73c07c6a7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack">
+      <UniqueIdentifier>{f9d7254f-2a79-45a1-98d8-f09062b2b873}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
+      <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -479,6 +503,28 @@
     </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
       <Filter>02. GameObject\UI</Filter>
+ </ClInclude>
+    <ClInclude Include="..\Public\Event_Struct.h" />
+    <ClInclude Include="..\Public\Anbi.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_Idle.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_Move.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_Run.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_Walk.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_Attack.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnbiState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -707,6 +753,27 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Anbi.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_Idle.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_Move.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_Run.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_Walk.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Move\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_Attack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
