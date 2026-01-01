@@ -168,6 +168,8 @@ protected:
 	/*텍스쳐에 곱해지는 컬러*/
 	_float4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
+	_float4 m_vColorLinear = {1.f, 1.f, 1.f, 1.f};
+
 	/*애니메이션*/
 	_bool m_isBlending = {};
 	_float m_fBlendTime = {};

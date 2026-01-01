@@ -11,7 +11,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
+    Get_Component<CSprite2D>()->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
 
     // GUI Inspector Ã¢¿¡ ¶ç¿ò
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;

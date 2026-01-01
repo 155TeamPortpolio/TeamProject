@@ -108,8 +108,10 @@ PS_OUT PS_MAIN(PS_IN In)
     if (vDiffuse.a < 0.1f)
         discard;
     
-    float3 vColorLinear = pow(vColor.rgb, 2.2f);
-    Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
+    Out.vColor = vDiffuse * vColor;
+
+    //float3 vColorLinear = pow(vColor.rgb, 2.2f);
+    //Out.vColor = vDiffuse * float4(vColorLinear, vColor.a);
     
     return Out;
 }
@@ -144,7 +146,7 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
 // ---------------------------------------------
 float  MaskThreshold;
 float  MaskSoftness;
-float2 MaskTexSize;
+float2 MaskTextureSize;
 
 PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
 {
@@ -170,8 +172,8 @@ PS_OUT PS_MAIN_UVANIMATION_MASK(PS_IN In)
 
     float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
 
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
+    float2 maskPx = worldDelta + 0.5f * MaskTextureSize;
+    float2 maskUV = maskPx / MaskTextureSize;
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
@@ -207,8 +209,8 @@ PS_OUT PS_MAIN_MASK_DEBUG_RAW(PS_IN In)
 
     float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
 
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
+    float2 maskPx = worldDelta + 0.5f * MaskTextureSize;
+    float2 maskUV = maskPx / MaskTextureSize;
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
@@ -234,8 +236,8 @@ PS_OUT PS_MAIN_MASK_DEBUG_APPLIED(PS_IN In)
 
     float2 worldDelta = rightDir * localPx.x + upDir * localPx.y;
 
-    float2 maskPx = worldDelta + 0.5f * MaskTexSize;
-    float2 maskUV = maskPx / MaskTexSize;
+    float2 maskPx = worldDelta + 0.5f * MaskTextureSize;
+    float2 maskUV = maskPx / MaskTextureSize;
 
     float mask = 0.f;
     if (maskUV.x >= 0.f && maskUV.x <= 1.f && maskUV.y >= 0.f && maskUV.y <= 1.f)
