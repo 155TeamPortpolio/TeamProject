@@ -1,5 +1,12 @@
 #pragma once
 #include "GameObject.h"
+
+NS_BEGIN(Engine)
+class CTexture;
+NS_END
+
+NS_BEGIN(Client)
+
 class CTestCloud :
     public CGameObject
 {
@@ -22,9 +29,12 @@ public:
     void Late_Update(_float dt) override;
 
 private:
-    _float3 m_vCloudColor = _float3(0.95, 0.95, 0.98);
-    _float3 m_vSkyColor =_float3(1.0,0.6,0.8);
+    _float3 m_vSkyColor = _float3(0.47f, 0.78f, 0.94f);    
+    _float3 m_vCloudColor = _float3(1.0f, 1.0f, 1.0f);
     _float m_fAccTime = 0.f;
+
+    //============ShaderTest================
+    //vector<CTexture*> NoiseTextures;
 
 public:
     static CTestCloud* Create();
@@ -32,3 +42,4 @@ public:
     virtual void Free();
 };
 
+NS_END

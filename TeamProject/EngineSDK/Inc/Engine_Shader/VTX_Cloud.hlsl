@@ -70,7 +70,6 @@ PS_OUT PS_MAIN(PS_IN In)
     float fbm = vNoise.r * 0.5 +
                 vNoise.g * 0.25 +
                 vNoise.b * 0.125;
-
     vector vNoise2 = DiffuseTexture.Sample(LinearSampler, movingUV * 2.3);
     float detail = vNoise2.r * 0.1;
     
@@ -79,8 +78,8 @@ PS_OUT PS_MAIN(PS_IN In)
     
     fbm = fbm + detail + largeClouds;
     
-    float clouds = smoothstep(0.4, 0.65, fbm);
-    
+    float clouds = smoothstep(0.5, 0.75, fbm);
+  
     float3 finalColor = lerp(g_SkyColor, g_CloudColor, clouds);
     
     Out.vDiffuse = float4(finalColor, 1.0);
