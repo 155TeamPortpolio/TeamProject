@@ -64,13 +64,6 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
     {
         string strCurrent = m_pSubStateMachine->Get_CurrentStateName();
         IBaseState<CCorin>* pCurrent = m_pSubStateMachine->Get_CurrentState();
-
-        _float currentSubProgress = pCurrent ? pCurrent->Get_AnimProgress() : -1.f;
-
-        OutputDebugStringA(("NormalAttack: CurrentSub=" + strCurrent +
-            ", SubProgress=" + to_string(currentSubProgress) +
-            ", MyProgress=" + to_string(m_fAnimProgress) + "\n").c_str());
-
         if (strCurrent == "Attack_End")
         {
             if (pCurrent && pCurrent->Is_AnimEnd())
@@ -88,6 +81,7 @@ void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 void CCorinState_Attack_01::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_01")
+        .Speed(2.f)
         .Apply();
 }
 
@@ -99,6 +93,7 @@ void CCorinState_Attack_01::Exit(CCorin* pOwner)
 void CCorinState_Attack_02::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_02")
+        .Speed(2.f)
         .Apply();
 }
 
@@ -110,6 +105,7 @@ void CCorinState_Attack_02::Exit(CCorin* pOwner)
 void CCorinState_Attack_03::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_03")
+        .Speed(1.5f)
         .Apply();
 }
 
@@ -121,6 +117,7 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_04")
+        .Speed(2.f)
         .Apply();
 }
 
@@ -132,6 +129,7 @@ void CCorinState_Attack_04::Exit(CCorin* pOwner)
 void CCorinState_Attack_05::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_05")
+        .Speed(1.5f)
         .Apply();
 }
 
@@ -155,6 +153,7 @@ void CCorinState_Attack_End::Enter(CCorin* pOwner)
     };
 
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
+        .Speed(1.2f)
         .Apply();
 }
 void CCorinState_Attack_End::Update(CCorin* pOwner, _float dt)
