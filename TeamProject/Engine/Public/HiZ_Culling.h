@@ -2,6 +2,8 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
+static constexpr _uint kFrameBuffered = 3;
+
 class CHiZ_Culling :
     public CBase
 {
@@ -34,6 +36,14 @@ class CHiZ_Culling :
         _float      objMinDepth01;                       // min(viewZ / zFar) in [0,1]
         _uint       indexInList;                                // frustums 벡터 인덱스
         _uint       padding;
+    };
+
+    struct OcclusionReadbackFrame
+    {
+        ID3D11Buffer* visibleBuffer = nullptr;              // UAV target
+        ID3D11UnorderedAccessView* visibleUav = nullptr;    // UAV
+        ID3D11Buffer* visibleStaging = nullptr;             // staging readback
+        ID3D11Query* copyDoneQuery = nullptr;               // event query
     };
 
 private:
@@ -97,6 +107,11 @@ private:
 
 private:
     ID3D11ShaderResourceView* m_pHiZSrv = { nullptr };
+
+ private :
+    OcclusionReadbackFrame m_readbackFrames[kFrameBuffered];
+    _uint m_frameCursor = 0;                               // 매 프레임 증가
+    vector<_uint> m_cachedVisibleFlags;         // 마지막으로 성공한 결과(스톨 회피용)
 
 public:
     static CHiZ_Culling* Create();
