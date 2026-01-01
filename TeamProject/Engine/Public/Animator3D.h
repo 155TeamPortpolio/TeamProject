@@ -32,12 +32,12 @@ public:
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
         _int                iRootBoneIndex = { -1 }; //루트 본 
-        _vector3            vRootEndPos{};  //그 클립의 제일마지막 루트위치
-        _vector4            vRootEndQuat{}; //그 클립의 제일마지막 루트회전값
-        _vector3            vPrevRootPos{}; //이전 프레임 위치
-        _vector4            vPrevRootQuat{}; //이전 프레임 회전
-        _vector3            vRootMoveDelta{}; //이동값
-        _vector4            vRootQuatDelta{}; //회전값
+        _vector3            vRootEndPos{};                          //그 클립의 제일마지막 루트위치
+        _vector4            vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값
+        _vector3            vPrevRootPos{};                         //이전 프레임 위치
+        _vector4            vPrevRootQuat{ _quaternion::Identity }; //이전 프레임 회전
+        _vector3            vRootMoveDelta{};                       //이동값
+        _vector4            vRootQuatDelta{ _quaternion::Identity };//회전값
 
         //모션본 (애니매이션의 움직임을 담당하는 본)
         _int    iMotionBoneIndex = { -1 };

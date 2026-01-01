@@ -26,6 +26,7 @@ public:
 	void Set_WorldPos(_fvector position);
 	void Set_Y(const _float& position);
 	void Set_Quaternion(_fvector quaternion);
+	void Add_Quaternion(_quaternion quaternion);
 	void Set_WorldQuaternion(_fvector quaternion);
 	void Rotate(const _float3& eular);
 	void Scale(const _float3& scale);
