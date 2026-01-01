@@ -152,20 +152,23 @@ void CHiZ_Culling::Check_Resource()
 	if (m_isReady)
 		return;
 
-	if (!m_pCopyShader)
+	if (!m_pCopyShader) {
 		m_pCopyShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Copy.hlsl");
-	if (!m_pReduceShader)
+		if (m_pCopyShader) Safe_AddRef(m_pCopyShader);
+	}
+	if (!m_pReduceShader) {
 		m_pReduceShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Reduce.hlsl");
-	if (!m_pOcclusionShader)
+		if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
+	}
+	if (!m_pOcclusionShader){
 		m_pOcclusionShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_OcclusionCull.hlsl");
-	if (!m_pDepthSrv)
-		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Depth");
-
-	if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
-	if (m_pCopyShader) Safe_AddRef(m_pCopyShader);
-	if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
-	if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
-
+		if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
+	}
+	if (!m_pDepthSrv) {
+		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Static_Depth");
+		if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
+	}
+	
 	if (m_pDepthSrv && m_pCopyShader && m_pReduceShader)
 		m_isReady = true;
 }
@@ -246,6 +249,9 @@ _float CHiZ_Culling::Clamp01(_float value)
 /*실제 컬링을 시작*/
 vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
+	if (!m_isReady)
+		return frustums;
+
 	vector<OPAQUE_PACKET> result;
 
 	if (frustums.empty())
