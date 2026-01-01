@@ -33,6 +33,7 @@
 /* Character */
 #include "Miyabi.h"
 #include "Anbi.h"
+#include "Corin.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 
@@ -107,27 +108,8 @@ HRESULT CTestLevel::Awake()
 	//
 	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
-
-	// =====================TestFloor=========================
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
-	for (_int z = 0; z < 3; ++z)
-	{
-	for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.15f, 0.f, z * 6.15f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
-
-
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;

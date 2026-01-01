@@ -41,7 +41,10 @@ void CCorinState_Walk::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Walk_Start").Loop(false).Speed(1.2f).Apply();
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Walk_Start")
+        .Loop(false)
+        .Speed(1.2f)
+        .Apply();
 }
 
 void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
@@ -63,7 +66,7 @@ void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Walk")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Walk")
         .Loop(false)
         .Speed(1.2f)
         .Apply();
@@ -101,6 +104,6 @@ void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Walk_End::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Run_Start_End")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_Start_End")
         .Apply();
 }

@@ -122,28 +122,28 @@ void CCorin::Update_Input(_float dt)
 
 void CCorin::Update_States()
 {
-	//_bool bInMoveEnd = false;
-	//_bool bInAttackEnd = false;
+	_bool bInMoveEnd = false;
+	_bool bInAttackEnd = false;
 
-	//if (m_pStateMachine->Get_CurrentStateName() == "Move")
-	//{
-	//	CCorinState_Move* pMove =
-	//		static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
+	if (m_pStateMachine->Get_CurrentStateName() == "Move")
+	{
+		CCorinState_Move* pMove =
+			static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
 
-	//	if (pMove && pMove->Get_SubStateMachine())
-	//	{
-	//		IHState<CCorin>* pMoveType =
-	//			dynamic_cast<IHState<CCorin>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
+		if (pMove && pMove->Get_SubStateMachine())
+		{
+			IHState<CCorin>* pMoveType =
+				dynamic_cast<IHState<CCorin>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
 
-	//		if (pMoveType && pMoveType->Has_SubStateMachine())
-	//		{
-	//			IBaseState<CCorin>* pAnim =
-	//				pMoveType->Get_SubStateMachine()->Get_CurrentState();
+			if (pMoveType && pMoveType->Has_SubStateMachine())
+			{
+				IBaseState<CCorin>* pAnim =
+					pMoveType->Get_SubStateMachine()->Get_CurrentState();
 
-	//			bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
-	//		}
-	//	}
-	//}
+				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
+			}
+		}
+	}
 	//// Attack End 체크
 	//else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
 	//{
@@ -187,46 +187,46 @@ void CCorin::Update_States()
 	//	m_pStateMachine->Set_Bool("AttackEnd", false);
 	//}
 
-	//// End 캔슬 처리 (기존과 동일)
-	//if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
-	//{
-	//	m_pStateMachine->Set_Bool("IsMove", false);
+	// End 캔슬 처리 (기존과 동일)
+	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
+	{
+		m_pStateMachine->Set_Bool("IsMove", false);
 
-	//	// Attack End에서 입력 시 강제로 AttackEnd = true
-	//	if (bInAttackEnd)
-	//		m_pStateMachine->Set_Bool("AttackEnd", true);
-	//}
-	//else
-	//{
-	//	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+		// Attack End에서 입력 시 강제로 AttackEnd = true
+		if (bInAttackEnd)
+			m_pStateMachine->Set_Bool("AttackEnd", true);
+	}
+	else
+	{
+		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
 
-	//	if (m_bIsAttack)
-	//	{
-	//		string strCurrent = m_pStateMachine->Get_CurrentStateName();
+		if (m_bIsAttack)
+		{
+			string strCurrent = m_pStateMachine->Get_CurrentStateName();
 
-	//		if (strCurrent == "Idle")
-	//		{
-	//			m_pStateMachine->Set_Trigger("Attack");
-	//		}
-	//		else if (strCurrent == "Attack")
-	//		{
-	//			CCorinState_Attack* pAttackState =
-	//				static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
-	//			if (pAttackState && pAttackState->Get_SubStateMachine())
-	//			{
-	//				if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
-	//				{
-	//					CCorinState_NormalAttack* pNormal =
-	//						static_cast<CCorinState_NormalAttack*>(
-	//							pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+			if (strCurrent == "Idle")
+			{
+				m_pStateMachine->Set_Trigger("Attack");
+			}
+			else if (strCurrent == "Attack")
+			{
+				//CCorinState_Attack* pAttackState =
+				//	static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+				//if (pAttackState && pAttackState->Get_SubStateMachine())
+				//{
+				//	if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
+				//	{
+				//		CCorinState_NormalAttack* pNormal =
+				//			static_cast<CCorinState_NormalAttack*>(
+				//				pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
 
-	//					if (pNormal && pNormal->Get_SubStateMachine())
-	//						pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
-	//				}
-	//			}
-	//		}
-	//	}
-	//}
+				//		if (pNormal && pNormal->Get_SubStateMachine())
+				//			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+				//	}
+				//}
+			}
+		}
+	}
 }
 
 

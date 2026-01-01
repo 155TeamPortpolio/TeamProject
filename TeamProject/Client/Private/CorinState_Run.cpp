@@ -38,7 +38,7 @@ void CCorinState_Run::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Run_Start::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Run_Start")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_Start")
         .Apply();
 }
 
@@ -61,7 +61,7 @@ void CCorinState_Run_Start::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Run_Loop::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Run")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run")
         .Loop(true)
         .Apply();
 }
@@ -85,7 +85,7 @@ void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Run_End::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size02_Corin_Ani_Run_End")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_End")
         .Apply();
 }
 
