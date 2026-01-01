@@ -42,4 +42,16 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+class CSacrificeState_Idle_OverDrive : public IBaseState<CSacrifice>
+{
+public:
+	virtual void Enter(CSacrifice* pOwner) override;
+	virtual void Update(CSacrifice* pOwner, _float dt) override;
+	virtual void Exit(CSacrifice* pOwner) override;
+
+public:
+	static CSacrificeState_Idle_OverDrive* Create() { return new CSacrificeState_Idle_OverDrive(); }
+	virtual void Free() override { __super::Free(); }
+};
+
 NS_END

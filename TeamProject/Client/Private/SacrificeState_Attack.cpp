@@ -17,15 +17,24 @@ void CSacrificeState_Attack::Enter(CSacrifice* pOwner)
 		/* States */
 		m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Attack_Phase1::Create());
 		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Attack_Phase2::Create());
-		
-		/* Transitions */
-		m_pSubStateMachine->Register_Transition("Phase1", "Phase2",
-			CStateMachine<CSacrifice>::CONDITION_TRIGGER, "ChangePhase");
 
-		m_pSubStateMachine->Set_DefaultState("Phase1");
+		__super::Enter(pOwner);
 	}
 
-	__super::Enter(pOwner);
+	CSacrifice::PHASE currPhse = pOwner->GetCurrPhase();
+	switch (currPhse)
+	{
+	case CSacrifice::PHASE::PHASE1:
+	{
+		m_pSubStateMachine->Change_State("Phase1");
+	}break;
+	case CSacrifice::PHASE::PHASE2:
+	{
+		m_pSubStateMachine->Change_State("Phase2");
+	}break;
+	default:
+		break;
+	}
 }
 
 void CSacrificeState_Attack::Update(CSacrifice* pOwner, _float dt)
@@ -37,10 +46,13 @@ void CSacrificeState_Attack::Update(CSacrifice* pOwner, _float dt)
 	_vector3 vRight = pOwner->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
+	_vector4 vDeltaQuat = pAnimator->Get_RootBoneQuatDelta();
+
 	vDeltaMove.y = 0.f;
-	vDeltaMove = (vRight * vDeltaMove.x + vLook * vDeltaMove.z) * -1.f;
+	vDeltaMove = vRight * vDeltaMove.x + vLook * vDeltaMove.z;
 
 	pCCT->Move_RootMotion(vDeltaMove, _vector4(0.f, 0.f, 0.f, 1.f), dt);
+	pOwner->Get_Component<CTransform>()->Add_Quaternion(vDeltaQuat);
 }
 
 void CSacrificeState_Attack::Exit(CSacrifice* pOwner)
