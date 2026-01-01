@@ -98,11 +98,6 @@ private:
 private:
     ID3D11Buffer* m_inputBuffer = { nullptr };       
     ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs 버퍼를 읽는 SRV (t1)
-
-    ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags용 GPU 버퍼
-    ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags에 쓰는 UAV (u0)
-
-    ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback용 staging
     _uint                   m_capacity = 0;                                             // 현재 버퍼가 수용 가능한 최대 element 개수
 
 private:
@@ -110,6 +105,10 @@ private:
 
  private :
     OcclusionReadbackFrame m_readbackFrames[kFrameBuffered];
+    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags용 GPU 버퍼
+   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags에 쓰는 UAV (u0)
+   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback용 staging
+
     _uint m_frameCursor = 0;                               // 매 프레임 증가
     vector<_uint> m_cachedVisibleFlags;         // 마지막으로 성공한 결과(스톨 회피용)
 
