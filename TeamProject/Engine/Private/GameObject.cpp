@@ -229,7 +229,7 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 		SelectedObject = this;
 
 	if (opened && !Children.empty()) {
-		Get_Component<CObjectContainer>()->RenderHierarchy(SelectedObject, isSelected);
+		Get_Component<CObjectContainer>()->RenderHierarchy(SelectedObject);
 		ImGui::TreePop();
 	}
 

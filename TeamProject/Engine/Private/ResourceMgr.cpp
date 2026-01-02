@@ -663,8 +663,6 @@ CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& M
 	}
 
 	CModelData* pData = CModelData::Create(MakePath(ModelKey), m_pDevice);
-	if (!pData)
-		pData = m_Resources[0].m_ModelDatas["Default.model"];
 
 	{
 		lock_guard<mutex> lockGuard(pool.modelMutex);
@@ -675,7 +673,10 @@ CModelData* CResourceMgr::Load_ModelData(const string& levelTag, const string& M
 			return it->second;
 		}
 
-		pool.m_ModelDatas.emplace(ModelKey, pData);
+		if (!pData)
+			pData = m_Resources[0].m_ModelDatas["Default.model"];
+		else
+			pool.m_ModelDatas.emplace(ModelKey, pData);
 		return pData;
 	}
 }

@@ -109,7 +109,7 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 	}
 }
 
-void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
+void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
 {
 	for (_uint id : m_UpdateOrder)
 	{
@@ -120,7 +120,7 @@ void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject, bool isSele
 
 		CGameObject* child = m_ChildrenObjects[indexIter->second];
 		if (child && child->Is_Alive())
-			child->RenderHierarchy(SelectedObject, isSelected);
+			child->RenderHierarchy(SelectedObject, child == SelectedObject);
 	}
 }
 
@@ -405,41 +405,41 @@ void CObjectContainer::Render_GUI()
 
 void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint targetIndex)
 {
-	if (!objectPtr)
-		return;
+	if (!objectPtr) return;
 
 	const _uint objectId = objectPtr->Get_ObjectID();
-	if (m_IndexByID.find(objectId) == m_IndexByID.end())
-		return;
+	if (m_IndexByID.find(objectId) == m_IndexByID.end()) return;
 
-	// 1) 현재 위치 찾고 제거
 	_bool found = false;
+	_uint currentIndex = 0;
+
 	for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
 	{
 		if (m_UpdateOrder[scanIndex] == objectId)
 		{
 			found = true;
+			currentIndex = scanIndex;
 			m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
 			break;
 		}
 	}
+	if (!found) return;
 
-	if (!found)
-		return; // 없는데 삽입하면 중복 생김
+	// 삭제로 인해 뒤쪽 인덱스가 당겨지는 보정
+	if (currentIndex < targetIndex)
+		targetIndex = (targetIndex == 0) ? 0 : (targetIndex );
 
-	// 2) 클램프 (제거 후 사이즈 기준)
 	if (targetIndex > (_uint)m_UpdateOrder.size())
 		targetIndex = (_uint)m_UpdateOrder.size();
 
-	// 3) 삽입
 	m_UpdateOrder.insert(m_UpdateOrder.begin() + targetIndex, objectId);
 
-	// 4) 맵 재빌드
 	m_OrderIndexByID.clear();
 	m_OrderIndexByID.reserve(m_UpdateOrder.size());
 	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
 		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
 }
+
 
 
 void CObjectContainer::Upper_Order(CGameObject* pObject)
