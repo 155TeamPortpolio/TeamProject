@@ -549,6 +549,9 @@
     <ClInclude Include="..\Public\Engine_Json.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CSMShadow.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1011,6 +1014,9 @@
     <Filter Include="98. BasicShader\Deferred">
       <UniqueIdentifier>{f3098dd3-dca9-4995-93c8-ba18cc0a7cb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
+      <UniqueIdentifier>{cd0242ae-f98d-4355-9652-d85f0117750b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1445,6 +1451,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CSMShadow.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

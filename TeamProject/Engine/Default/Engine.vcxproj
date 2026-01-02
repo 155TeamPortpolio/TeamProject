@@ -263,6 +263,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\public\CSMShadow.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
@@ -438,6 +439,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
+    <ClCompile Include="..\private\CSMShadow.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
