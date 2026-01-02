@@ -26,6 +26,8 @@ public:
     virtual bool Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     virtual _bool UsingUI() { return m_bUsingUI; }
 
+public:
+    //void Set_HierachyMode
 private:
     void Set_Theme();
     void Set_Panel();
