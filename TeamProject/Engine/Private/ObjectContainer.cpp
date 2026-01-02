@@ -109,7 +109,7 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 	}
 }
 
-void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
+void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
 {
 	for (_uint id : m_UpdateOrder)
 	{
@@ -120,7 +120,7 @@ void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject, bool isSele
 
 		CGameObject* child = m_ChildrenObjects[indexIter->second];
 		if (child && child->Is_Alive())
-			child->RenderHierarchy(SelectedObject, isSelected);
+			child->RenderHierarchy(SelectedObject, child == SelectedObject);
 	}
 }
 
