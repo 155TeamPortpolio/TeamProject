@@ -27,7 +27,7 @@ public:
 		vector<EVENT_INST>& EventBus);
 
 	void TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices,
-		_float MaxDuration);
+		_float Duration);
 
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
