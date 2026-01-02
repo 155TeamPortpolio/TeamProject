@@ -42,33 +42,6 @@ void CCorinState_Move::Enter(CCorin* pOwner)
 void CCorinState_Move::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    if (m_pSubStateMachine)
-    {
-        IHState<CCorin>* pMoveType =
-            dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
-
-        if (pMoveType && pMoveType->Has_SubStateMachine())
-        {
-            CStateMachine<CCorin>* pAnimFSM = pMoveType->Get_SubStateMachine();
-            IBaseState<CCorin>* pCurrentAnim = pAnimFSM->Get_CurrentState();
-
-            if (pCurrentAnim && pCurrentAnim->Get_Tag() == "End")
-            {
-                if (pCurrentAnim->Is_AnimEnd() || pCurrentAnim->Get_AnimProgress() >= 1.f)
-                {
-                    m_fAnimProgress = 1.f;
-                }
-                else
-                {
-                    m_fAnimProgress = 0.f;
-                }
-            }
-            else
-            {
-                m_fAnimProgress = 0.f;
-            }
-        }
-    }
 }
 
 _bool CCorinState_Move::Handle_Transition(CCorin* pOwner, const string& strState)
@@ -84,8 +57,7 @@ _bool CCorinState_Move::Handle_Transition(CCorin* pOwner, const string& strState
         if (!m_pSubStateMachine)
             return true;
 
-        IHState<CCorin>* pMoveType =
-            dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        IHState<CCorin>* pMoveType = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
 
         if (!pMoveType || !pMoveType->Has_SubStateMachine())
             return true;

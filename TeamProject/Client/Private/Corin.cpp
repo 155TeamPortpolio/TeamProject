@@ -135,7 +135,7 @@ void CCorin::Update_States()
 	_bool bInAttackEnd = false;
 
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
-	{	// Run중에 공격상태로 진입
+	{	// Move의 End 애니매이션 중인지 확인
 		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
 		if (pMove && pMove->Get_SubStateMachine())
 		{
@@ -144,41 +144,19 @@ void CCorin::Update_States()
 			{
 				IBaseState<CCorin>* pAnim = pMoveType->Get_SubStateMachine()->Get_CurrentState();
 				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
-				if (!bInMoveEnd && pMove->Get_SubStateMachine()->Get_CurrentStateName() == "Run" && m_bIsAttack)
-				{
-					m_pStateMachine->Set_Int("AttackEntryMode", 1);
-					m_pStateMachine->Set_Trigger("Attack");
-				}
 			}
 		}
 	}
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
-	{	// 공격이 끝났는지(공격의 End 애니매이션중인지) 확인
+	{	// Attack의 End 애니매이션 중인지 확인
 		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
-			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
-			if (strSub == "NormalAttack")	
+			IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(pAttack->Get_SubStateMachine()->Get_CurrentState());
+			if (pAttackType && pAttackType->Has_SubStateMachine())
 			{
-				CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
-						pAttack->Get_SubStateMachine()->Get_State("NormalAttack")
-					);
-				if (pNormal && pNormal->Get_SubStateMachine())
-				{
-					IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
-				}
-			}
-			else if (strSub == "RushAttack")
-			{
-				IHState<CCorin>* pRush = dynamic_cast<IHState<CCorin>*>(
-					pAttack->Get_SubStateMachine()->Get_State("RushAttack")
-					);
-				if (pRush && pRush->Get_SubStateMachine())
-				{
-					IBaseState<CCorin>* pRushSub = pRush->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pRushSub && pRushSub->Get_Tag() == "End");
-				}
+				IBaseState<CCorin>* pAnim = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+				bInAttackEnd = (pAnim && pAnim->Get_Tag() == "End");
 			}
 		}
 	}
@@ -223,6 +201,20 @@ void CCorin::Update_States()
 			else if (strCurrent == "Move")
 			{	// Move일때는 Move의 서브 상태를 가져와서 Walk인경우 EntryMode 0, Run인경우 1
 				// AttackEntryMode 0 : 노말어택, AttackEntryMode 1 : 러쉬어택
+				CCorinState_Move* pMoveState = static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
+				if (pMoveState && pMoveState->Get_SubStateMachine())
+				{
+					if (pMoveState->Get_SubStateMachine()->Get_CurrentStateName() == "Walk")
+					{
+						m_pStateMachine->Set_Int("AttackEntryMode", 0);
+						m_pStateMachine->Set_Trigger("Attack");
+					}
+					else if (pMoveState->Get_SubStateMachine()->Get_CurrentStateName() == "Run")
+					{
+						m_pStateMachine->Set_Int("AttackEntryMode", 1);
+						m_pStateMachine->Set_Trigger("Attack");
+					}
+				}
 			}
 			else if (strCurrent == "Attack")
 			{	// NormalAttack중일때는 콤보어택 
