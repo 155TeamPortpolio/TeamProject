@@ -25,12 +25,10 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     auto sprite = Get_Component<CSprite2D>();
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-
     if (m_isRadial) sprite->ChangePass("RadialFill");
     else            sprite->ChangePass("LinearFill");
-
-    sprite->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
-    sprite->Set_Param("Direction",  {&m_fDirection,  "float", sizeof(_float)});
+    sprite->Set_Param("Direction", { &m_fDirection, "float", sizeof(_float) });
+    sprite->Set_Param("FillAmount", { &m_fFillAmount,"float", sizeof(_float) }); 
 
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);

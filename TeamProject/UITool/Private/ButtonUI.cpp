@@ -20,8 +20,6 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Set_Clickable(true);
-
     Set_OriginTexSize(true);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
@@ -32,6 +30,13 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
     m_iCount++;
 
     return S_OK;
+}
+
+void CButtonUI::Awake()
+{
+    __super::Awake();
+
+    Set_Clickable(true);
 }
 
 void CButtonUI::Update(_float dt)
@@ -49,21 +54,31 @@ void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÀÌ¹ÌÁö
+    // ï¿½Ì¹ï¿½ï¿½ï¿½
     Render_GUI_Image(m_strTextureKey);
 
+    // flip
+    _bool isFlip = {};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
+    {
         m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
+        isFlip = true;
+    } 
     ImGui::SameLine();
     if (ImGui::Checkbox("flip Y", &m_isFlipY))
+    {
         m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
+        isFlip = true;
+    } 
+    if(isFlip)
+        Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 
-    // ÀÌº¥Æ®
-    ImGui::SeparatorText(u8"ÀÌº¥Æ®");
-    ImGui::InputText(u8"¸Þ½ÃÁö", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    // ï¿½Ìºï¿½Æ®
+    ImGui::SeparatorText(u8"ï¿½Ìºï¿½Æ®");
+    ImGui::InputText(u8"ï¿½Þ½ï¿½ï¿½ï¿½", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
-    // ¹öÆ° »óÅÂ
-    ImGui::SeparatorText(u8"¹öÆ° »óÅÂ");
+    // ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½
+    ImGui::SeparatorText(u8"ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½");
     string strState = {};
     switch (m_eState)
     {

@@ -17,14 +17,16 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     // GUI Inspector Ã¢¿¡ ¶ç¿ò
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
-    Set_Clickable(true);
-
     return S_OK;
 }
 
 void CUIObject_Tool::Awake()
 {
+    __super::Awake();
+
     m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
+
+    Set_Clickable(true);
 }
 
 void CUIObject_Tool::Render_GUI()

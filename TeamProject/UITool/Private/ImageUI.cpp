@@ -49,14 +49,24 @@ void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÀÌ¹ÌÁö
+    // ï¿½Ì¹ï¿½ï¿½ï¿½
     Render_GUI_Image(m_strTextureKey);
 
+    // flip
+    _bool isFlip = {};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
+    {
         m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
+        isFlip = true;
+    }
     ImGui::SameLine();
     if (ImGui::Checkbox("flip Y", &m_isFlipY))
+    {
         m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
+        isFlip = true;
+    }
+    if (isFlip)
+        Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 }
 
 void CImageUI::Save(nlohmann::ordered_json& data)

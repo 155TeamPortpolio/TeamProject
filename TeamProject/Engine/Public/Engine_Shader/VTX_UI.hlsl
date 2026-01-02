@@ -76,8 +76,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     triStream.RestartStrip();
 }
 
-uint Col;
-uint Row;
+uint Col = 1;
+uint Row = 1;
 uint FrameIndex;
 
 float2 UVOffset;
@@ -146,7 +146,7 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     clip(vDiffuse.a - 0.1f);
     
-    clip(vTexcoord.x - FillAmount);
+    clip(FillAmount - vTexcoord.x);
     
     Out.vColor = vDiffuse * vColor;
     
