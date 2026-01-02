@@ -73,6 +73,9 @@ void CCorinState_Move::Update(CCorin* pOwner, _float dt)
 
 _bool CCorinState_Move::Handle_Transition(CCorin* pOwner, const string& strState)
 {
+    if (strState == "Evade")
+        return true;
+
     if (strState != "Move")
     {
         if (!m_pSubStateMachine)

@@ -91,6 +91,9 @@ protected:
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
 
+    // 테스트용
+    _bool           m_bTest = { false };
+
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

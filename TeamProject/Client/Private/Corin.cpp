@@ -12,6 +12,7 @@
 #include "CorinState_Move.h"
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
+#include "CorinState_Evade.h"
 
 CCorin::CCorin()
 {
@@ -73,8 +74,11 @@ void CCorin::Priority_Update(_float dt)
 void CCorin::Update(_float dt)
 {
 	Update_Input(dt);
-	Update_States();
-	m_pStateMachine->Update(dt);
+	if(!m_bTest)
+	{
+		Update_States();
+		m_pStateMachine->Update(dt);
+	}
 	__super::Update(dt);
 }
 
@@ -89,13 +93,16 @@ void CCorin::Render_GUI()
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
+		ImGui::Checkbox("Animation Test", &m_bTest);
 		ImGui::Text("StateMachine: %s", m_pStateMachine->Get_CurrentStateName().c_str());
 
 		if (ImGui::Button("Open StateMachine"))
 			m_pStateMachine->Set_ShowWindow(true);
 
 		m_pStateMachine->Render_GUI();
+
 	}
+
 }
 
 void CCorin::Update_Input(_float dt)
@@ -245,6 +252,7 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
+	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
 
 	return S_OK;
 }

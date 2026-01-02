@@ -7,7 +7,8 @@
 
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Evade_Front")
+    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_Start")
+        .Speed(2.f)
         .Apply();
 
     _vector3 vDir = pOwner->Get_InputDir();

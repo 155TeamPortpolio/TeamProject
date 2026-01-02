@@ -33,16 +33,20 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
     __super::Update(pOwner, dt);
 
     IBaseState<CCorin>* pCurrent = m_pSubStateMachine->Get_CurrentState();
-    if (pCurrent && pCurrent->Is_AnimEnd())
+    _float fProgress = pCurrent->Get_AnimProgress();
+    _bool bCanExit = (fProgress >= 0.75f);
+    if (pCurrent->Get_Tag() == "Backstep")   bCanExit = (fProgress >= 0.5f);
+
+    if (bCanExit)
     {
         CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
 
         if (pCurrent->Get_Tag() == "Dash")
         {
             if (pOwner->Is_Move())
-                pRootFSM->Set_Int("MoveEntryMode", 2); // Run_Loop
+                pRootFSM->Set_Int("MoveEntryMode", 2);
             else
-                pRootFSM->Set_Int("MoveEntryMode", 1); // Run_End
+                pRootFSM->Set_Int("MoveEntryMode", 1);
 
             pRootFSM->Set_Trigger("ToMove");
         }

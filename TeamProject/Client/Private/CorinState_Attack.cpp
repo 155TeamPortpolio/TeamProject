@@ -74,6 +74,9 @@ void CCorinState_Attack::Exit(CCorin* pOwner)
 
 _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
 {
+    if (strState == "Evade")
+        return true;
+
     if (strState != "Attack")
     {
         if (!m_pSubStateMachine)
