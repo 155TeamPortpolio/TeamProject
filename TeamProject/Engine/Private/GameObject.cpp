@@ -210,9 +210,24 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 
 	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")"+ "##" + to_string(m_ObjectID) ;
 	bool opened = ImGui::TreeNodeEx(TreeNodeName.c_str(), flags);
+	if (isSelected)
+	{
+
+		ImDrawList* draw = ImGui::GetWindowDrawList();
+		ImVec2 minPos = ImGui::GetItemRectMin();
+		ImVec2 maxPos = ImGui::GetItemRectMax();
+
+		draw->AddRectFilled(
+			ImVec2(minPos.x, minPos.y),
+			ImVec2(minPos.x + 4.0f, maxPos.y),
+			IM_COL32(237, 0, 134, 255));
+
+		draw->AddRect(minPos, maxPos, IM_COL32(237, 0, 134, 255), 2.0f, 0, 1.0f);
+	}
 
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 		SelectedObject = this;
+
 	if (opened && !Children.empty()) {
 		for (auto& childObject : Children) {
 			if (!childObject) continue;
@@ -224,6 +239,7 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 	}
 
 	ImGui::PopID();
+
 }
 
 void CGameObject::Set_Layer(CLayer* pLayer)
