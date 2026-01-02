@@ -2,12 +2,7 @@
 #include "BasePanel.h"
 
 NS_BEGIN(Engine)
-class CGameInstance;
-class CGameObject;
-class CUI_Object;
-class IProtoService;
-class IObjectService;
-class IUI_Service; 
+class CGameInstance; class CGameObject; class CUI_Object; class IProtoService; class IObjectService; class IUI_Service; 
 NS_END
 
 NS_BEGIN(UITool)

@@ -49,6 +49,9 @@
     <Filter Include="02.Object\UI\Gauge">
       <UniqueIdentifier>{b55ddad8-36a3-44f4-9791-b48a45d5bb0a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.Object\UI\MaskUI">
+      <UniqueIdentifier>{42b8a1af-206a-4ae7-b0cf-d4a9d0c50b20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="UITool.h">
@@ -117,6 +120,9 @@
     <ClInclude Include="..\Public\GaugeUI.h">
       <Filter>02.Object\UI\Gauge</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02.Object\UI\MaskUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="UITool.cpp">
@@ -181,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\GaugeUI.cpp">
       <Filter>02.Object\UI\Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02.Object\UI\MaskUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

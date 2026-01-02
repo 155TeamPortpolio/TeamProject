@@ -38,6 +38,11 @@ HRESULT CUIRenderer::Render_3D(UI3DPass* pUI3DPass)
 HRESULT CUIRenderer::Render_2D(UIPass* pUIPass)
 {
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_2DUI"))) return E_FAIL;
+
+	ID3D11DepthStencilView* dsv = m_pTargetManager->Get_MTR_DSV("MRT_2DUI");
+	if (dsv)
+		m_pContext->ClearDepthStencilView(dsv, D3D11_CLEAR_STENCIL, 1.f, 0);
+
 	pUIPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	CGameInstance::GetInstance()->Get_FontSystem()->Clear_Texts();
