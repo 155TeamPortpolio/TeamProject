@@ -12,7 +12,7 @@ HRESULT CHiZ_Culling::Initialize() {
 
 	/*클라 사이즈*/
 	_float2 clientSize = CGameInstance::GetInstance()->Get_ClientSize();
-	m_viewport= clientSize;
+	m_viewport = clientSize;
 	m_texSize = { (_uint)clientSize.x, (_uint)clientSize.y }; /*1차 밉 텍스처 사이즈*/
 	m_threadSize = { 8, 8, 1 }; /*쓰레드 8x8개*/
 
@@ -27,7 +27,7 @@ HRESULT CHiZ_Culling::Initialize() {
 	m_mipCount = CalcMipCount(m_texSize.x, m_texSize.y);
 
 	auto pDevice = CGameInstance::GetInstance()->Get_Device();
-	
+
 	/*밉 체인 생성 uav로 mip별로 쓰고, srv로 읽는 용도*/
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = m_texSize.x;
@@ -96,7 +96,12 @@ HRESULT CHiZ_Culling::Initialize() {
 		HRESULT queryResult = pDevice->CreateQuery(&queryDesc, &m_readbackFrames[frameIndex].copyDoneQuery);
 		if (FAILED(queryResult)) return queryResult;
 	}
-
+	for (_uint i = 0; i < kFrameBuffered; ++i)
+	{
+		m_readbackFrames[i].keys.clear();
+	}
+	m_cachedKeys.clear();
+	m_cachedVisibleFlags.clear();
 	return S_OK;
 }
 
@@ -171,7 +176,7 @@ void CHiZ_Culling::Check_Resource()
 		m_pReduceShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_HiZ_Reduce.hlsl");
 		if (m_pReduceShader) Safe_AddRef(m_pReduceShader);
 	}
-	if (!m_pOcclusionShader){
+	if (!m_pOcclusionShader) {
 		m_pOcclusionShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ComputeShader(G_GlobalLevelKey, "CS_OcclusionCull.hlsl");
 		if (m_pOcclusionShader) Safe_AddRef(m_pOcclusionShader);
 	}
@@ -179,43 +184,42 @@ void CHiZ_Culling::Check_Resource()
 		m_pDepthSrv = CGameInstance::GetInstance()->Get_RenderSystem()->Get_EngineTargetSRV("Target_Static_Depth");
 		if (m_pDepthSrv)      Safe_AddRef(m_pDepthSrv);
 	}
-	
-	if (m_pDepthSrv && m_pCopyShader && m_pReduceShader)
-		m_isReady = true;
-}
 
+	if (m_pDepthSrv && m_pCopyShader && m_pReduceShader && m_pOcclusionShader)
+		m_isReady = true;
+
+}
 #ifdef _USING_GUI
 void CHiZ_Culling::Render_GUI()
 {
-	//if (ImGui::Begin("Hi_Z"))
-	//{
-	//	if (m_mipCount > 0)
-	//	{
-	//		ImGui::SliderInt("Mip", &m_DebugMip, 0, (int)m_mipCount - 1);
-	//
-	//		ID3D11ShaderResourceView* srv = nullptr;
-	//		if (!m_HiZSrvMip.empty() && m_DebugMip >= 0 && m_DebugMip < (int)m_HiZSrvMip.size())
-	//			srv = m_HiZSrvMip[m_DebugMip];
-	//
-	//		if (srv)
-	//		{
-	//			float scale = 0.25f;
-	//			ImGui::Text("Mip %d", m_DebugMip);
-	//			ImGui::Image((ImTextureID)srv, ImVec2(1280.0f * scale, 720.0f * scale));
-	//		}
-	//		else
-	//		{
-	//			ImGui::Text("SRV is null.");
-	//		}
-	//	}
-	//	else
-	//	{
-	//		ImGui::Text("No mip chain.");
-	//	}
-	//}
-	//ImGui::End();
+	if (ImGui::Begin("HiZ Occlusion"))
+	{
+		ImGui::Text("Frustum In      : %u", m_stats.frustumIn);
+		ImGui::Text("Tested (inputs) : %u", m_stats.tested);
+		ImGui::Text("Not Tested      : %u", m_stats.notTested);
+
+		ImGui::Separator();
+
+		ImGui::Text("Readback        : %s", m_stats.canRead ? "OK" : "MISS");
+		ImGui::Text("Occ Visible      : %u", m_stats.visibleByOcc);
+		ImGui::Text("Occ Culled       : %u", m_stats.culledByOcc);
+
+		ImGui::Separator();
+
+		ImGui::Text("Result Out       : %u", m_stats.outResult);
+
+		if (m_stats.frustumIn > 0)
+		{
+			float testedRatio = (float)m_stats.tested / (float)m_stats.frustumIn * 100.0f;
+			float culledRatio = (m_stats.tested > 0) ? (float)m_stats.culledByOcc / (float)m_stats.tested * 100.0f : 0.0f;
+			ImGui::Text("Tested Ratio     : %.1f%%", testedRatio);
+			ImGui::Text("Culled Ratio     : %.1f%% (of tested)", culledRatio);
+		}
+	}
+	ImGui::End();
 }
 #endif
+
 
 _uint CHiZ_Culling::CalcMipCount(_uint width, _uint height)
 {
@@ -264,48 +268,76 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 		return frustums;
 
 	vector<OPAQUE_PACKET> result;
-
 	if (frustums.empty())
 		return result;
-	if (!m_isReady) 		
-		return result;
 
+	/*----------DEBUG-------------------------*/
+#ifdef _USING_GUI
+	m_stats = {};
+	m_stats.frustumIn = (uint32_t)frustums.size();
+#endif
+	/*-----------------------------------------*/
 	vector<OcclusionInput> inputs;
 	inputs.reserve(frustums.size());
 
+	// 이번 프레임 inputs에 대응하는 키들 (writeFrame에 저장할 것)
+	vector<OcclusionKey> writeKeys;
+	writeKeys.reserve(frustums.size());
+
 	auto cameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
-	_matrix viewMatrix =*cameraMgr->Get_ViewMatrix();
-	_float zFar = cameraMgr->Get_Far(); 
-	_uint viewportW = (_uint)m_viewport.x; 
+	_matrix viewMatrix = *cameraMgr->Get_ViewMatrix();
+
+	_float zFar = cameraMgr->Get_Far();
+	_uint viewportW = (_uint)m_viewport.x;
 	_uint viewportH = (_uint)m_viewport.y;
 
-	for (_uint packetIndex = 0; packetIndex <frustums.size(); ++packetIndex)
+	// 이번 프레임 컬링 후보
+	unordered_map<OcclusionKey, const OPAQUE_PACKET*, OcclusionKeyHash, OcclusionKeyEq> currentCandidateMap;
+	currentCandidateMap.reserve(frustums.size() * 2);
+
+	for (_uint packetIndex = 0; packetIndex < frustums.size(); ++packetIndex)
 	{
 		const OPAQUE_PACKET& packet = frustums[packetIndex];
 
-		/*오브젝트의 오클루젼 데이터 생성*/
 		OcclusionInput inputData = {};
-		_bool ok = BuildOcclusionInput(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),_smatrix(*packet.pWorldMatrix),        
-			viewMatrix,viewportW, viewportH,zFar,packetIndex,inputData);
+		_uint compactIndex = (_uint)inputs.size();
+		_bool ok = BuildOcclusionInput(
+			packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),
+			_smatrix(*packet.pWorldMatrix),
+			viewMatrix, viewportW, viewportH, zFar,
+			compactIndex, inputData);
 
 		if (ok)
-			inputs.push_back(inputData);
-		else
 		{
-			result.push_back(packet); /*애매한거 -> ok 안떨어진건 그냥 보인다 처리 해버리기*/
+			inputs.push_back(inputData);
+
+			OcclusionKey key{};
+			key.worldPtr = packet.pWorldMatrix; // 포인터가 프레임 동안 안정적이라는 가정
+			key.drawIndex = packet.DrawIndex;
+			writeKeys.push_back(key);
+			currentCandidateMap.emplace(key, &packet);
+		}
+		else
+		{ /*검사 제외 대상이 되면 숨김 카운트 0처리*/
+			result.push_back(packet);
+
+			OcclusionKey key{};
+			key.worldPtr = packet.pWorldMatrix;
+			key.drawIndex = packet.DrawIndex;
+
+			auto it = m_hysteresis.find(key);
+			if (it != m_hysteresis.end())
+				it->second.hiddenStreak = 0; // 또는 erase
 		}
 	}
 
 	if (inputs.empty())
 		return result;
 
-	/*여기서 실제 오클루젼 진행*/
 	ID3D11DeviceContext* context = CGameInstance::GetInstance()->Get_Context();
 	ID3D11Device* device = CGameInstance::GetInstance()->Get_Device();
 
-	/*버퍼 리사이즈*/
-	EnsureOcclusionResources(device, inputs.size());
-
+	EnsureOcclusionResources(device, (_uint)inputs.size());
 	D3D11_BOX box = {};
 	box.left = 0;
 	box.right = (UINT)(inputs.size() * sizeof(OcclusionInput));
@@ -314,12 +346,28 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	box.front = 0;
 	box.back = 1;
 
-	/*인풋 버퍼 삽입*/
 	context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
-	// ---- 이번 프레임에 쓸 슬롯 ----
+
+
+	// ---- write frame ---- 6프레임 간격 (릴리즈 디버그 )
 	_uint writeFrameIndex = (m_frameCursor % kFrameBuffered);
 	OcclusionReadbackFrame& writeFrame = m_readbackFrames[writeFrameIndex];
 
+	//  writeFrame에 이번 프레임 inputs 배열 저장
+	writeFrame.keys = writeKeys;
+
+	{
+		_uint clearValue[4] = { 1,1,1,1 };
+		context->ClearUnorderedAccessViewUint(writeFrame.visibleUav, clearValue);
+	}
+
+	/*----------DEBUG-------------------------*/
+	m_stats.tested = (_uint)inputs.size();
+	m_stats.notTested = m_stats.frustumIn - m_stats.tested;
+	/*-----------------------------------------*/
+
+
+	/*컴퓨트 셰이더에 이번 프레임 결과 출력*/
 	m_pOcclusionShader->Bind(context);
 	m_pOcclusionShader->SetSRV(context, 0, m_pHiZSrv);
 	m_pOcclusionShader->SetSRV(context, 1, m_inputSrv);
@@ -328,71 +376,176 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	CB_OcclusionData cbData = {};
 	cbData.viewportSize = { viewportW, viewportH };
 	cbData.mipCount = m_mipCount;
-	cbData.epsilon = 1e-4;
-	cbData.inputCount = inputs.size();
+	cbData.epsilon = 3e-3;
+
+	cbData.inputCount = (_uint)inputs.size();
 
 	Update_CBuffer(context, m_pOcculsionBuffer, &cbData, sizeof(cbData));
 	m_pOcclusionShader->SetCB(context, 0, m_pOcculsionBuffer);
 
-	// dispatch
-	_uint threadCount = inputs.size();
+	_uint threadCount = (_uint)inputs.size();
 	_uint groupCountX = (threadCount + 64 - 1) / 64;
 	m_pOcclusionShader->Dispatch(context, groupCountX, 1, 1);
 
-	// Unbind
-	ID3D11ShaderResourceView* nullSrvs[2] = { nullptr, nullptr };
-	ID3D11UnorderedAccessView* nullUavs[1] = { nullptr };
-	context->CSSetShaderResources(0, 2, nullSrvs);
-	context->CSSetUnorderedAccessViews(0, 1, nullUavs, nullptr);
+	{
+		ID3D11ShaderResourceView* nullSrvs[2] = { nullptr, nullptr };
+		ID3D11UnorderedAccessView* nullUavs[1] = { nullptr };
+		context->CSSetShaderResources(0, 2, nullSrvs);
+		context->CSSetUnorderedAccessViews(0, 1, nullUavs, nullptr);
+	}
 
-	// 결과 readback
+	//이번 프레임 결과 읽어들이기 스테이징에 읽어들이기//
 	context->CopyResource(writeFrame.visibleStaging, writeFrame.visibleBuffer);
-	context->End(writeFrame.copyDoneQuery);
+	context->End(writeFrame.copyDoneQuery); /*일단 마커 찍고 이따가 확인*/
+	writeFrame.hasIssued = true;
 
-	_uint readFrameIndex = ((m_frameCursor + kFrameBuffered - 1) % kFrameBuffered);
+	// ---- read frame (2프레임 전) ----
+	_uint readFrameIndex = (m_frameCursor + kFrameBuffered - readLatency) % kFrameBuffered;
 	OcclusionReadbackFrame& readFrame = m_readbackFrames[readFrameIndex];
 
-	_bool isDone = false;
-	HRESULT doneResult = context->GetData(readFrame.copyDoneQuery, &isDone, sizeof(isDone), D3D11_ASYNC_GETDATA_DONOTFLUSH);
+	if (!readFrame.hasIssued) {// 아직 이 슬롯은 GPU 작업 발행된 적 없음
+		for (auto& kv : currentCandidateMap) result.push_back(*kv.second);
+		++m_frameCursor;
+		return result;
+	}
 
-	/*아직 못 읽음(완료가 안됨 , 그러면 그냥 넘어가겠다)*/
+	BOOL isDone = FALSE;
+	HRESULT doneResult = context->GetData(readFrame.copyDoneQuery, &isDone, sizeof(isDone), D3D11_ASYNC_GETDATA_DONOTFLUSH); 
+	/*아까 마커 찍은거 됐냐? */
+
 	const _bool canRead = (doneResult == S_OK) && (isDone == TRUE);
+	/*----------DEBUG-------------------------*/
+	m_stats.canRead = canRead ? 1u : 0u;
+	/*-----------------------------------------*/
 
-	if (canRead)
+	if (canRead) 
 	{
 		D3D11_MAPPED_SUBRESOURCE mapped = {};
 		HRESULT mapResult = context->Map(readFrame.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
 		if (SUCCEEDED(mapResult))
 		{
 			const _uint* flags = (const _uint*)mapped.pData;
+			const _uint count = (_uint)readFrame.keys.size();
 
-			// 캐시 갱신 (스톨 회피용 fallback)
-			memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * inputs.size());
+			if (m_cachedVisibleFlags.size() < m_capacity)
+				m_cachedVisibleFlags.resize(m_capacity, 1);
+
+			memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * count);
+			m_cachedKeys = readFrame.keys;
 
 			context->Unmap(readFrame.visibleStaging, 0);
 		}
+	}if (!canRead)
+	{
+		// 후보 전부 보이게 (중복 방지 위해 result에 이미 들어간 제외대상은 무시)
+		for (auto& kv : currentCandidateMap)
+			result.push_back(*kv.second);
+
+		++m_frameCursor;
+
+#ifdef _USING_GUI
+		m_stats.visibleByOcc = (uint32_t)currentCandidateMap.size();
+		m_stats.culledByOcc = 0;
+		m_stats.outResult = (uint32_t)result.size();
+#endif
+		return result;
 	}
 
-	for (_uint inputIndex = 0; inputIndex < inputs.size(); ++inputIndex)
+	/*이번 프레임에 실제로 처리한 애들 기록*/
+	unordered_set<OcclusionKey, OcclusionKeyHash, OcclusionKeyEq> touched;
+	touched.reserve(m_cachedKeys.size() * 2);
+
+	const _uint cachedCount = (_uint)m_cachedKeys.size(); /*전프레임에 처리했다고 판단된 애들*/
+	_uint visibleCount = 0;
+	_uint occludedCount = 0;
+
+	for (_uint cachedIndex = 0; cachedIndex < cachedCount; ++cachedIndex)
 	{
-		if (m_cachedVisibleFlags[inputIndex] != 0)
+		const OcclusionKey& key = m_cachedKeys[cachedIndex];
+		auto packetIter = currentCandidateMap.find(key);
+		if (packetIter == currentCandidateMap.end())
+			continue;
+
+		const _uint flag = m_cachedVisibleFlags[cachedIndex];
+
+		auto stateIter = m_hysteresis.find(key);
+		if (stateIter == m_hysteresis.end())
+			stateIter = m_hysteresis.emplace(key, OcclusionHysteresisState{}).first;
+
+		OcclusionHysteresisState& state = stateIter->second;
+
+		const _bool gpuVisible = (flag == 1);
+
+		if (gpuVisible)
 		{
-			_uint originalIndex = inputs[inputIndex].indexInList;
-			result.push_back(frustums[originalIndex]);
+			state.hiddenStreak = 0;
+			result.push_back(*packetIter->second);
+			++visibleCount;
+			touched.emplace(key);
 		}
+		else
+		{
+			if (state.hiddenStreak < 255) ++state.hiddenStreak;
+
+			if (state.hiddenStreak <3)   // 3번 가려짐 판정하기
+				result.push_back(*packetIter->second);
+
+			++occludedCount;
+		}    
+	}
+
+	/*----------DEBUG-------------------------*/
+	m_stats.visibleByOcc = visibleCount;
+	m_stats.culledByOcc = occludedCount;
+	/*-----------------------------------------*/
+
+	for (const OcclusionKey& key : writeKeys)
+	{
+		if (touched.find(key) != touched.end())
+			continue; /*이미 캐싱된 친구 건너 뛰기*/
+
+		auto packetIter = currentCandidateMap.find(key);
+		if (packetIter != currentCandidateMap.end())
+			result.push_back(*packetIter->second);
 	}
 
 	++m_frameCursor;
+
+	for (auto it = m_hysteresis.begin(); it != m_hysteresis.end(); )
+	{
+		if (currentCandidateMap.find(it->first) == currentCandidateMap.end())
+			it = m_hysteresis.erase(it);
+		else
+			++it;
+	}
+
+	/*----------DEBUG-------------------------*/
+	m_stats.outResult = (_uint)result.size();
+	/*-----------------------------------------*/
 	return result;
 }
 
+
 /*패킷 하나를 오클루젼으로 변환 시켜주는 함수*/
-_bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmatrix worldMatrix, _fmatrix viewMatrix, _uint viewportW, _uint viewportH, _float zFar, _uint indexInList, OcclusionInput& outInput)
+_bool CHiZ_Culling::BuildOcclusionInput(
+	const MINMAX_BOX& localAabbMinMax,
+	_fmatrix worldMatrix,
+	_fmatrix viewMatrix,
+	_uint viewportW,
+	_uint viewportH,
+	_float zFar,
+	_uint indexInList,
+	OcclusionInput& outInput)
 {
+	XMFLOAT3 size{
+		localAabbMinMax.vMax.x - localAabbMinMax.vMin.x,
+		localAabbMinMax.vMax.y - localAabbMinMax.vMin.y,
+		localAabbMinMax.vMax.z - localAabbMinMax.vMin.z
+	};
 	XMFLOAT3 center{
-		 (localAabbMinMax.vMin.x + localAabbMinMax.vMax.x) * 0.5f,
-		 (localAabbMinMax.vMin.y + localAabbMinMax.vMax.y) * 0.5f,
-		 (localAabbMinMax.vMin.z + localAabbMinMax.vMax.z) * 0.5f
+		(localAabbMinMax.vMin.x + localAabbMinMax.vMax.x) * 0.5f,
+		(localAabbMinMax.vMin.y + localAabbMinMax.vMax.y) * 0.5f,
+		(localAabbMinMax.vMin.z + localAabbMinMax.vMax.z) * 0.5f
 	};
 	XMFLOAT3 extents{
 		(localAabbMinMax.vMax.x - localAabbMinMax.vMin.x) * 0.5f,
@@ -400,83 +553,115 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 		(localAabbMinMax.vMax.z - localAabbMinMax.vMin.z) * 0.5f
 	};
 
+	/*일단 특이 사이즈 거르기*/
+	_float maxAxis = max(size.x, max(size.y, size.z));
+	_float minAxis = min(size.x, min(size.y, size.z));
+
+	_bool flatRisk = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.05f); // 평평한 것(지면/벽/간판/울타리류)
+	_bool hugeRisk = (maxAxis > 225.0f); // 씬 스케일에 맞게 튜닝(우선 25로 시작)
+	_bool thin = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.03f);
+
+	_uint flags = 0;
+
+	if (flatRisk || hugeRisk || thin) {
+		flags |= OCCL_FLAG_RISK_FLAT_OR_HUGE;
+		return false;
+	}
+
+	//  지면 접촉 추정: 
+	if (extents.y < 0.6f && maxAxis > 0.5f) 
+		flags |= OCCL_FLAG_RISK_GROUNDCONTACT;
+
+
 	BoundingBox localAabb(center, extents);
-
-	BoundingOrientedBox localObb;
-	BoundingOrientedBox::CreateFromBoundingBox(localObb, localAabb);
-
-	BoundingOrientedBox worldObb;
-	localObb.Transform(worldObb, worldMatrix);
+	BoundingBox worldAabb;
+	localAabb.Transform(worldAabb, worldMatrix);
 
 	XMFLOAT3 corners[8];
-	worldObb.GetCorners(corners);
+	worldAabb.GetCorners(corners);
 
+	const XMMATRIX projMatrix =
+		XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
+	const XMMATRIX viewProjMatrix = XMMatrixMultiply(viewMatrix, projMatrix);
 
-	float minX = (_float)viewportW;
-	float minY = (_float)viewportH;
-	float maxX = 0.0f;
-	float maxY = 0.0f;
+	_float minX = (_float)viewportW;
+	_float minY = (_float)viewportH;
+	_float maxX = 0.0f;
+	_float maxY = 0.0f;
 
-	float objMinDepth01 = 1.0f;
+	_float objMinDepth01 = FLT_MAX;
+	_bool anyValid = false;
 
-	XMMATRIX projMatrix = XMLoadFloat4x4(CGameInstance::GetInstance()->Get_CameraMgr()->Get_ProjMatrix());
-	XMMATRIX viewProjMatrix = XMMatrixMultiply(viewMatrix, projMatrix);
-	bool anyValid = false;
-	bool anyInvalid = false;
+	const _float nearMargin = 1e-5f;
+	const _float clipMargin = 1e-6f;
 
 	for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 	{
-		_vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
+		/*코너 돌면서 스크린 스페이스로*/
+		const _vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
+		const _vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
+		const _float viewZ = XMVectorGetZ(viewPos);
+		if (viewZ <= nearMargin)
+			return false;
 
-		_vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
-		float clipW = XMVectorGetW(clip);
+		const _float depth01 = Clamp01(viewZ / zFar);
 
-		if (clipW <= 1e-6f)
-		{
-			anyInvalid = true;
-			continue;
-		}
+		if (depth01 < objMinDepth01)
+			objMinDepth01 = depth01;
 
-		// ndc
-		_vector ndc = XMVectorScale(clip, 1.0f / clipW);
-		float ndcX = XMVectorGetX(ndc);
-		float ndcY = XMVectorGetY(ndc);
+		// 스크린 좌표 계산
+		const _vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
+		const _float clipW = XMVectorGetW(clip);
 
-		float screenX = (ndcX * 0.5f + 0.5f) * (float)viewportW;
-		float screenY = (1.0f - (ndcY * 0.5f + 0.5f)) * (float)viewportH;
+		if (clipW <= clipMargin)
+			return false; 
 
-		if (screenX < minX) minX = screenX;
-		if (screenY < minY) minY = screenY;
-		if (screenX > maxX) maxX = screenX;
-		if (screenY > maxY) maxY = screenY;
+		const _vector ndc = XMVectorScale(clip, 1.0f / clipW);
+		const _float ndcX = XMVectorGetX(ndc);
+		const _float ndcY = XMVectorGetY(ndc);
 
-		_vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
-		float viewZ = XMVectorGetZ(viewPos);
+		const _float screenX = (ndcX * 0.5f + 0.5f) * (_float)viewportW;
+		const _float screenY = (1.0f - (ndcY * 0.5f + 0.5f)) * (_float)viewportH;
 
-		if (viewZ > 0.0f)
-		{
-			float depth01 = Clamp01(viewZ / zFar);
-			if (depth01 < objMinDepth01) objMinDepth01 = depth01;
-		}
+		minX = (screenX < minX) ? screenX : minX;
+		minY = (screenY < minY) ? screenY : minY;
+		maxX = (screenX > maxX) ? screenX : maxX;
+		maxY = (screenY > maxY) ? screenY : maxY;
 
-		anyValid = true;
+		anyValid = true; /*유효한게 하나라도 있나?*/
 	}
 
-	if (!anyValid)
+	/*유효하지 않은 점이 하나라도 있다면*/
+	if (!anyValid || objMinDepth01 == FLT_MAX)
 		return false;
 
-	if (anyInvalid)
+	/*뎁스가 0.5 이상이라면*/
+	if (objMinDepth01 > 0.5f)
 		return false;
 
+	//내림 올림
+	minX = floorf(minX);
+	minY = floorf(minY);
+	maxX = ceilf(maxX);
+	maxY = ceilf(maxY);
 
-	/*프러스텀에 걸린 것 같은 애들은 화면상 음수 좌표가 될 수 있으니까 클램핑*/
+	/*팽창*/
+	const _float inflate = 2.0f;
+	minX -= inflate;			minY -= inflate;
+	maxX += inflate;		maxY += inflate;
+
 	if (minX < 0.0f) minX = 0.0f;
 	if (minY < 0.0f) minY = 0.0f;
-	if (maxX > (_float)viewportW) maxX	= (_float)viewportW;
-	if (maxY > (_float)viewportH) maxY		= (_float)viewportH;
+	if (maxX > (_float)viewportW) maxX = (_float)viewportW;
+	if (maxY > (_float)viewportH) maxY = (_float)viewportH;
 
 	if (maxX <= minX || maxY <= minY)
 		return false;
+
+	const _float rectW = maxX - minX;
+	const _float rectH = maxY - minY;
+	if (rectW < 1.0f || rectH < 1.0f) return false;
+
 
 	outInput.minX = (_uint)minX;
 	outInput.minY = (_uint)minY;
@@ -484,7 +669,8 @@ _bool CHiZ_Culling::BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax, _fmat
 	outInput.maxY = (_uint)maxY;
 	outInput.objMinDepth01 = objMinDepth01;
 	outInput.indexInList = indexInList;
-	outInput.padding = 0;
+	outInput.padding = flags; 
+
 	return true;
 }
 
@@ -499,10 +685,9 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 	const _bool hasAllFrameResources =
 		(m_readbackFrames[0].visibleBuffer && m_readbackFrames[0].visibleUav && m_readbackFrames[0].visibleStaging);
 
-	if (hasAllFrameResources&& hasInputResources && m_capacity >= requiredCount)/*현재 용량이 충분하면 갠춘*/
+	if (hasAllFrameResources && hasInputResources && m_capacity >= requiredCount)/*현재 용량이 충분하면 갠춘*/
 		return;
 
-	/*부족하면 더 생성 시킬 것 -> 넉넉하게 2배수로*/
 	_uint newCapacity = (m_capacity > 0) ? m_capacity : 256;
 	while (newCapacity < requiredCount) newCapacity *= 2;
 
@@ -526,7 +711,7 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 		bufferDesc.StructureByteStride = sizeof(OcclusionInput);
 		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_inputBuffer);
-		if (FAILED(result)) 
+		if (FAILED(result))
 			return;
 	}
 
@@ -577,7 +762,8 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			stagingDesc.Usage = D3D11_USAGE_STAGING;
 			stagingDesc.BindFlags = 0;
 			stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
-
+			stagingDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
+			stagingDesc.StructureByteStride = sizeof(_uint);
 			HRESULT stagingResult = pDevice->CreateBuffer(&stagingDesc, nullptr, &m_readbackFrames[frameIndex].visibleStaging);
 			if (FAILED(stagingResult)) return;
 		}
@@ -585,6 +771,47 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 
 	m_cachedVisibleFlags.assign(newCapacity, 1); // 기본은 보인다 처리
 	m_capacity = newCapacity;
+}
+
+_bool CHiZ_Culling::isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery)
+{
+	if (!pQuery) return false;
+
+	BOOL done = FALSE;
+	HRESULT hr = pContext->GetData(pQuery, &done, sizeof(done), D3D11_ASYNC_GETDATA_DONOTFLUSH);
+	return (hr == S_OK) && (done == TRUE);
+}
+
+void CHiZ_Culling::TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity)
+{
+	if (!readSlot.hasIssued)
+		return;
+
+	if (!isQueryComplete(pContext, readSlot.copyDoneQuery))
+		return; // 아직 준비 안 됨 -> 캐시 유지
+
+	D3D11_MAPPED_SUBRESOURCE mapped = {};
+	HRESULT hr = pContext->Map(readSlot.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
+	if (SUCCEEDED(hr))
+	{
+		const _uint* flags = (const _uint*)mapped.pData;
+		const _uint count = (_uint)readSlot.keys.size();
+
+		if (m_cachedVisibleFlags.size() < capacity)
+			m_cachedVisibleFlags.resize(capacity, 1);
+
+		// flags[0..count) 복사
+		memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * count);
+
+		// 키 순서도 확정 갱신
+		m_cachedKeys = readSlot.keys;
+
+		pContext->Unmap(readSlot.visibleStaging, 0);
+	}
+
+	// 슬롯 소비 완료 → 이제 재사용 가능
+	readSlot.hasIssued = false;
+	readSlot.keys.clear();
 }
 
 CHiZ_Culling* CHiZ_Culling::Create()
