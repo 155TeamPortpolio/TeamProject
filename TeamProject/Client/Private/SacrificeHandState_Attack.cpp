@@ -36,7 +36,7 @@ void CSacrificeHandState_Attack::Update(CSacrificeHand* pOwner, _float dt)
 	}
 
 	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
-		pOwner->SetVisable(false);
+		pOwner->Idle();
 }
 
 void CSacrificeHandState_Attack::Exit(CSacrificeHand* pOwner)
@@ -53,6 +53,12 @@ void CSacrificeHandState_Attack::Register_States()
 	/* OverDrive Start */
 	m_pSubStateMachine->Register_State("OverDrive_Start", CSacrificeHandState_OverDrive_Release_Start_Phase2::Create());
 	m_pSubStateMachine->Register_State("OverDrive_Loop", CSacrificeHandState_OverDrive_Release_Loop_Phase2::Create());
+	m_pSubStateMachine->Register_State("OverDrive_End", CSacrificeHandState_OverDrive_Release_End_Phase2::Create());
+
+	/* OverDrive Attack */
+	m_pSubStateMachine->Register_State("OverDrive_Attack01", CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Create());
+	m_pSubStateMachine->Register_State("OverDrive_Attack02", CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Create());
+	m_pSubStateMachine->Register_State("OverDrive_Attack03", CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Create());
 }
 
 void CSacrificeHandState_Attack::BuildPattern(CSacrificeHand* pOwner)
@@ -75,14 +81,16 @@ void CSacrificeHandState_Attack::BuildPattern(CSacrificeHand* pOwner)
 	}break;
 	case Client::CSacrificeHand::PATTERN::OVER_DRIVE_ATTACK01:
 	{
-
+		blackBoard.stateQueue.push_back("OverDrive_Attack01");
 	}break;
 	case Client::CSacrificeHand::PATTERN::OVER_DRIVE_ATTACK02:
 	{
-
+		blackBoard.stateQueue.push_back("OverDrive_Attack02");
 	}break;
 	case Client::CSacrificeHand::PATTERN::OVER_DRIVE_ATTACK03:
-		break;
+	{
+		blackBoard.stateQueue.push_back("OverDrive_Attack03");
+	}break;
 	default:
 		break;
 	}
@@ -133,7 +141,7 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		m_IsActiveHand = false;
 	}
 
-	if (m_fAnimProgress >= 0.3)
+	if (m_fAnimProgress >= 0.4)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -163,7 +171,7 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		m_IsActiveHand = true;
 	}
 
-	if (m_fAnimProgress >= 0.5)
+	if (m_fAnimProgress >= 0.6)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -179,13 +187,16 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Enter(CSacrificeHand* p
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->SetVisable(true);
 }
 
 void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update(CSacrificeHand* pOwner, _float dt)
 {
 	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	
-	if (m_fAnimProgress >= 0.9f)
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (pAnimator->isCurrentAnimEnd(0))
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -207,7 +218,7 @@ void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Update(CSacrificeHand* p
 {
 	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
-	if (m_fStateTime >= 1.5f)
+	if (m_fStateTime >= 3.5f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -216,5 +227,109 @@ void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Update(CSacrificeHand* p
 }
 
 void CSacrificeHandState_OverDrive_Release_Loop_Phase2::Exit(CSacrificeHand* pOwner)
+{
+}
+
+void CSacrificeHandState_OverDrive_Release_End_Phase2::Enter(CSacrificeHand* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Release_Start").Loop(false).Speed(1.2f).Apply();
+}
+
+void CSacrificeHandState_OverDrive_Release_End_Phase2::Update(CSacrificeHand* pOwner, _float dt)
+{
+	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (pAnimator->isCurrentAnimEnd(0))
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+	}
+}
+
+void CSacrificeHandState_OverDrive_Release_End_Phase2::Exit(CSacrificeHand* pOwner)
+{
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->SetVisable(true);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHand* pOwner, _float dt)
+{
+	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (m_fAnimProgress >= 0.9f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+
+		pOwner->SetVisable(false);
+	}
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)
+{
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->SetVisable(true);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHand* pOwner, _float dt)
+{
+	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (m_fAnimProgress >= 0.9f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+
+		pOwner->SetVisable(false);
+	}
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Exit(CSacrificeHand* pOwner)
+{
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack03").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->SetVisable(true);
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHand* pOwner, _float dt)
+{
+	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (m_fAnimProgress >= 0.9f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+
+		pOwner->SetVisable(false);
+	}
+}
+
+void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand* pOwner)
 {
 }

@@ -84,7 +84,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 7);
-	iRandIndex = 3;
+	//iRandIndex = 4;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -131,7 +131,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 	case 7:
 	{
 		blackBoard.stateQueue.push_back("Attack05_Phase1");
-	}
+	}break;
 	default:
 		break;
 	}
@@ -491,7 +491,7 @@ void CSacrificeState_Attack_12_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_Turn_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringer_Ani_P1_Attack_Turn").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_Turn").Loop(false).Speed(1.2f).Apply();
 }
 
 void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)

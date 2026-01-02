@@ -83,6 +83,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.1f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+
 	return S_OK;
 }
 
@@ -201,7 +204,7 @@ void CSacrifice::Phase1Attack()
 	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();
-	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_WorldPos(vPosition);
 	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
@@ -209,6 +212,45 @@ void CSacrifice::OverDrive_Start()
 {
 	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
 	static_cast<CSacrificeHand*>(pHand)->OverDrive_Start();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack1()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack1();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack2()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack2();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack3()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack3();
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
 	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
@@ -279,6 +321,8 @@ HRESULT CSacrifice::Initialize_Transitions()
 
 void CSacrifice::Update_States(_float dt)
 {
+	m_fIdleDuration = m_IsOverDriveCharged ? 2.f : 0.2f;
+
 	if (m_RequestIdle)
 	{
 		m_pStateMachine->Change_State("Idle");
@@ -286,6 +330,12 @@ void CSacrifice::Update_States(_float dt)
 		m_pStateMachine->Reset_Trigger("Idle_To_Walk");
 		m_RequestIdle = false;
 	}
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('P'))
+		m_pStateMachine->Change_State("Death");
+
+	if (PHASE::PHASE2 == m_eCurrPhase && CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('O'))
+		m_IsOverDrive = true;
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
@@ -298,16 +348,12 @@ void CSacrifice::Update_States(_float dt)
 				iRandIndex = 1;
 
 			if (0 == iRandIndex)
-			{
 				m_pStateMachine->Set_Trigger("Idle_To_Walk");
-			}
 			else
-			{
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
 	
 			m_fIdleElasedTime = 0.f;
 		}
 	}
-	
+
 }

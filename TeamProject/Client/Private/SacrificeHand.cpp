@@ -8,6 +8,7 @@
 /* State */
 #include "StateMachine.h"
 #include "SacrificeHandState_Attack.h"
+#include "SacrificeHandState_Idle.h"	
 
 CSacrificeHand::CSacrificeHand()
 	:CEnemy()
@@ -51,8 +52,6 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-
-	SetVisable(false);
 
 	return S_OK;
 }
@@ -126,6 +125,33 @@ void CSacrificeHand::OverDrive_Start()
 	m_pStateMachine->Change_State("Attack");
 }
 
+void CSacrificeHand::OverDrive_Attack1()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK01;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Attack2()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK02;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Attack3()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK03;
+	m_pStateMachine->Change_State("Attack");
+}
+
 void CSacrificeHand::SetVisable(_bool isActive)
 {
 	auto pModel = Get_Component<CSkeletalModel>();
@@ -143,6 +169,12 @@ void CSacrificeHand::SetVisable(_bool isActive)
 	}
 }
 
+void CSacrificeHand::Idle()
+{
+	m_pStateMachine->Change_State("Idle");
+	SetVisable(false);
+}
+
 HRESULT CSacrificeHand::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrificeHand>::Create();
@@ -155,7 +187,7 @@ HRESULT CSacrificeHand::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
-	m_pStateMachine->Set_DefaultState("Attack");
+	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 
 	return S_OK;
@@ -163,6 +195,7 @@ HRESULT CSacrificeHand::Initialize_StateMachine()
 
 HRESULT CSacrificeHand::Initialize_States()
 {
+	m_pStateMachine->Register_State("Idle", CSacrificeHandState_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CSacrificeHandState_Attack::Create());
 
 	return S_OK;

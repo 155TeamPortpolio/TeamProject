@@ -39,7 +39,12 @@ public:
     SACRIFICE_HAND_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     void Phase1Attack();
     void OverDrive_Start();
+    void OverDrive_Attack1();
+    void OverDrive_Attack2();
+    void OverDrive_Attack3();
     void SetVisable(_bool isActive);
+
+    void Idle();
 
 private:
     HRESULT Initialize_StateMachine();

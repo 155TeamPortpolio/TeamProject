@@ -89,5 +89,57 @@ public:
 
 };
 
+class CSacrificeHandState_OverDrive_Release_End_Phase2 : public IHState<CSacrificeHand>
+{
+public:
+	virtual void Enter(CSacrificeHand* pOwner) override;
+	virtual void Update(CSacrificeHand* pOwner, _float dt) override;
+	virtual void Exit(CSacrificeHand* pOwner) override;
+
+public:
+	static CSacrificeHandState_OverDrive_Release_End_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_End_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
+class CSacrificeHandState_OverDrive_Release_Attack01_Phase2 : public IHState<CSacrificeHand>
+{
+public:
+	virtual void Enter(CSacrificeHand* pOwner) override;
+	virtual void Update(CSacrificeHand* pOwner, _float dt) override;
+	virtual void Exit(CSacrificeHand* pOwner) override;
+
+public:
+	static CSacrificeHandState_OverDrive_Release_Attack01_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack01_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
+class CSacrificeHandState_OverDrive_Release_Attack02_Phase2 : public IHState<CSacrificeHand>
+{
+public:
+	virtual void Enter(CSacrificeHand* pOwner) override;
+	virtual void Update(CSacrificeHand* pOwner, _float dt) override;
+	virtual void Exit(CSacrificeHand* pOwner) override;
+
+public:
+	static CSacrificeHandState_OverDrive_Release_Attack02_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack02_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
+class CSacrificeHandState_OverDrive_Release_Attack03_Phase2 : public IHState<CSacrificeHand>
+{
+public:
+	virtual void Enter(CSacrificeHand* pOwner) override;
+	virtual void Update(CSacrificeHand* pOwner, _float dt) override;
+	virtual void Exit(CSacrificeHand* pOwner) override;
+
+public:
+	static CSacrificeHandState_OverDrive_Release_Attack03_Phase2* Create() { return new CSacrificeHandState_OverDrive_Release_Attack03_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
 
 NS_END
