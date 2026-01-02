@@ -22,6 +22,9 @@ public:
 	virtual void Render_GUI() override;
 
 public:
+	virtual void OnClick() override;
+
+public:
 	void  Remove_SelfFromParent();					
 	void  Set_OriginTexSize(_bool enable) { m_useOriginTexSize = enable; }
 	_bool Get_OriginTexSize() const       { return m_useOriginTexSize; }
@@ -42,7 +45,6 @@ protected:
 
 	/*앵커 기준점에 따라 자동정렬을 하기 위해 앵커오프셋 값을 반환 (사이즈를 반영한 픽셀 값 반환)*/
 	_float2 Get_AnchorOffset(ANCHOR eAnchor);
-	
 
 private:
 	_float  GetSizeRatio(UISizeMode mode);
