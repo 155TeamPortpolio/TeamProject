@@ -14,7 +14,7 @@ public:
     virtual _bool Handle_Transition(CCorin* pOwner, const string& strState) override;
 
 public:
-    void Move_Motion(CCorin* pOwner, _float dt);
+    void    Move_Motion(CCorin* pOwner, _float dt);
 
 public:
     static CCorinState_Attack* Create() { return new CCorinState_Attack(); }
