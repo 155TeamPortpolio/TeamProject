@@ -54,6 +54,7 @@ public:
 
     /* Hand */
     void Phase1Attack();
+    void OverDrive_Start();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -72,8 +73,8 @@ private:
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
 
-    PHASE m_eCurrPhase = PHASE::PHASE1;
-    _bool m_IsOverDrive = false; /* Only Use Phase2 */
+    PHASE m_eCurrPhase = PHASE::PHASE2;
+    _bool m_IsOverDrive = true; /* Only Use Phase2 */
 
     _uint m_iHandID{};
 

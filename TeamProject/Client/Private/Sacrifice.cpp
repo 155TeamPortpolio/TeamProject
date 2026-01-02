@@ -205,6 +205,19 @@ void CSacrifice::Phase1Attack()
 	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
+void CSacrifice::OverDrive_Start()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Start();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
 HRESULT CSacrifice::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrifice>::Create();
@@ -282,7 +295,7 @@ void CSacrifice::Update_States(_float dt)
 		{
 			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
 			if (m_IsOverDrive)
-				iRandIndex = 0;
+				iRandIndex = 1;
 
 			if (0 == iRandIndex)
 			{

@@ -12,6 +12,11 @@ class CSacrificeHand :
 public:
     enum class PATTERN { PHASE1, OVER_DRIVE_START, OVER_DRIVE_ATTACK01, OVER_DRIVE_ATTACK02, OVER_DRIVE_ATTACK03, END };
 
+    typedef struct tagSacrificeHandBlackBoard : public ATTACK_BLACK_BOARD
+    {
+        PATTERN eCurrPattern = PATTERN::END;
+    }SACRIFICE_HAND_BLACK_BOARD;
+
 private:
     CSacrificeHand();
     CSacrificeHand(const CSacrificeHand& rhg);
@@ -31,9 +36,9 @@ public:
     virtual void Free() override;
 
 public:
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
-    PATTERN GetCurrPattern()const { return m_eCurrPattern; }
+    SACRIFICE_HAND_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     void Phase1Attack();
+    void OverDrive_Start();
     void SetVisable(_bool isActive);
 
 private:
@@ -43,7 +48,6 @@ private:
 
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };
-    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
-    PATTERN m_eCurrPattern = PATTERN::END;
+    SACRIFICE_HAND_BLACK_BOARD m_AttackBlackBoard{};
 };
 NS_END

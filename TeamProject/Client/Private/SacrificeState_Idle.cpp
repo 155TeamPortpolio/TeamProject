@@ -24,10 +24,7 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 	}break;
 	case CSacrifice::PHASE::PHASE2:
 	{
-		if(pOwner->IsOverDrive())
-			m_pSubStateMachine->Change_State("OverDrive");
-		else
-			m_pSubStateMachine->Change_State("Phase2");
+		m_pSubStateMachine->Change_State("Phase2");
 	}break;
 	default:
 		break;
