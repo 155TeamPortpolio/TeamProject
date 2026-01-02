@@ -2,7 +2,8 @@
 #include "Base.h"
 
 NS_BEGIN(Engine)
-static constexpr _uint kFrameBuffered = 3;
+static constexpr _uint kFrameBuffered =8;
+static constexpr _uint readLatency =7;
 
 class CHiZ_Culling :
     public CBase
@@ -20,6 +21,7 @@ class CHiZ_Culling :
         _uint srcMip;
         _uint3 padding;
     };
+
     struct CB_OcclusionData
     {
         _uint2 viewportSize; 
@@ -38,13 +40,71 @@ class CHiZ_Culling :
         _uint       padding;
     };
 
+    struct OcclusionKey
+    {
+        const void* worldPtr; 
+        _uint drawIndex;      
+    };
+
+    struct OcclusionKeyHash
+    {
+        size_t operator()(const OcclusionKey& key) const noexcept
+        {
+            size_t h1 = hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(key.worldPtr));
+            size_t h2 =hash<_uint>{}(key.drawIndex);
+            return h1 ^ (h2 + 0x9e3779b97f4a7c15ull + (h1 << 6) + (h1 >> 2));
+        }
+    };
+
+    struct OcclusionKeyEq
+    {
+        bool operator()(const OcclusionKey& a, const OcclusionKey& b) const noexcept
+        {
+            return a.worldPtr == b.worldPtr && a.drawIndex == b.drawIndex;
+        }
+    };
     struct OcclusionReadbackFrame
     {
         ID3D11Buffer* visibleBuffer = nullptr;              // UAV target
         ID3D11UnorderedAccessView* visibleUav = nullptr;    // UAV
         ID3D11Buffer* visibleStaging = nullptr;             // staging readback
         ID3D11Query* copyDoneQuery = nullptr;               // event query
+        vector<OcclusionKey> keys;
+        _bool hasIssued = false;
     };
+    struct OcclusionHysteresisState
+    {
+        _uint hiddenStreak = 0;
+    };
+    enum OcclusionFlags : _uint
+    {
+        OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0, // 평평/거대(지면/벽/큰 구조물 가능성)
+        OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1 // 지면 접촉 추정(선택)
+    };
+
+#ifdef _USING_GUI
+    struct OcclDebugRect
+    {
+        float minX, minY, maxX, maxY;   // screen pixels
+        float depth01;                  // objMinDepth01
+        _uint flags;                 // outInput.padding
+        _uint drawIndex;
+    };
+    struct HiZStats
+    {
+        _uint frustumIn = 0;       // frustum pass 이후 들어온 패킷 수
+        _uint tested = 0;          // occlusion 테스트에 넣은 수(inputs.size)
+        _uint visibleByOcc = 0;    // occlusion 결과로 visible로 판정된 수
+        _uint culledByOcc = 0;     // occlusion 결과로 occluded로 판정된 수
+        _uint notTested = 0;       // BuildOcclusionInput 실패/제외 등으로 테스트 안 한 수
+        _uint outResult = 0;       // 최종 result 수
+        _uint canRead = 0;         // 이번 프레임 readback 성공(1/0)
+    };
+    vector<OcclDebugRect> m_dbgRects;
+    bool m_dbgDrawRects = true;
+    int  m_dbgRectLimit = 2000;
+    HiZStats m_stats; 
+#endif
 
 private:
     CHiZ_Culling();
@@ -66,11 +126,17 @@ private:
     void Update_CBuffer(ID3D11DeviceContext* context, ID3D11Buffer* buffer, const void* data, _uint size);
     _float Clamp01(_float value);
     _uint CalcMipCount(_uint width, _uint height);
-    
     _bool BuildOcclusionInput(const MINMAX_BOX& localAabbMinMax,_fmatrix worldMatrix, _fmatrix viewMatrix,_uint viewportW,_uint viewportH,_float zFar, _uint indexInList,
         OcclusionInput& outInput);
-
     void EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount);
+
+    _bool isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery);
+    void TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity);
+    void BuildResultFromCache(unordered_map<OcclusionKey, 
+        const OPAQUE_PACKET*, 
+        OcclusionKeyHash, OcclusionKeyEq>& currentCandidateMap,
+        vector<OcclusionKey>& writeKeys,
+        vector<OPAQUE_PACKET>& result);
 
 private:
     _bool m_isReady = { false };
@@ -111,7 +177,9 @@ private:
 
     _uint m_frameCursor = 0;                               // 매 프레임 증가
     vector<_uint> m_cachedVisibleFlags;         // 마지막으로 성공한 결과(스톨 회피용)
+    vector<OcclusionKey> m_cachedKeys;    // last read keys
 
+    unordered_map<OcclusionKey, OcclusionHysteresisState, OcclusionKeyHash, OcclusionKeyEq> m_hysteresis;
 public:
     static CHiZ_Culling* Create();
     void Free() override;
