@@ -377,11 +377,11 @@ void CObjectContainer::Render_GUI()
 
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::SmallButton("Up"))
-			Set_Order_Bottom(childObject);
+			Upper_Order(childObject);
 
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::SmallButton("Down"))
-			Set_Order_Top(childObject);
+			Lower_Order(childObject);
 
 		ImGui::SameLine(0.0f, spacing);
 		if (ImGui::SmallButton("Delete"))
@@ -442,7 +442,7 @@ void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint targetIndex
 }
 
 
-void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
+void CObjectContainer::Upper_Order(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -460,7 +460,7 @@ void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex - 1);
 }
 
-void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
+void CObjectContainer::Lower_Order(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -482,7 +482,7 @@ void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex + 1);
 }
 
-void CObjectContainer::Set_Order_Top(CGameObject* pObject)
+void CObjectContainer::Set_Order_First(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -497,7 +497,7 @@ void CObjectContainer::Set_Order_Top(CGameObject* pObject)
 	ReorderChildren(pObject, 0);
 }
 
-void CObjectContainer::Set_Order_Bottom(CGameObject* pObject)
+void CObjectContainer::Set_Order_Last(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
