@@ -37,7 +37,7 @@ public:
 	}UI_ANIM_CLIP;
 
 protected:
-	CUI_Object();
+	CUI_Object() {}
 	CUI_Object(const CUI_Object& rhs);
 	virtual ~CUI_Object() DEFAULT;
 
@@ -72,7 +72,7 @@ public:
 public:
 	void Update_UITransform();
 	void Set_LeftTop(_float2 desiredLT);
-	void Rotate_Left(_float _radian);
+	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
@@ -105,8 +105,7 @@ public:
 	_float2 Local_RC(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  0.5f }, x, y); }
 	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  1.f }, x, y); }
 
-
-	void Align_To(ANCHOR anchor);
+	void Align_To(ANCHOR anchor) { m_eAnchor = anchor; }
 	void Set_Pivot(_float2 newPivot);
 
 public:
@@ -182,6 +181,6 @@ protected:
 	_float2 m_vAnimPosition = {};
 
 public:
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
 NS_END

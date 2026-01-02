@@ -90,6 +90,43 @@ DepthStencilState DSS_OutlineStencil
 
 };
 
+DepthStencilState DSS_UIWriteStencil
+{
+    DepthEnable          = FALSE;
+    DepthWriteMask       = ZERO;
+                         
+    StencilEnable        = TRUE;
+    StencilReadMask      = 0xff;
+    StencilWriteMask     = 0xff;
+
+    FrontFaceStencilFunc = Always;
+    FrontFaceStencilPass = Replace;
+    BackFaceStencilFunc  = Always;
+    BackFaceStencilPass  = Replace;
+};
+
+DepthStencilState DSS_UIStencilTest
+{
+    DepthEnable          = FALSE;
+    DepthWriteMask       = ZERO;
+    DepthFunc            = LESS_EQUAL;
+                         
+    StencilEnable        = TRUE;
+    StencilReadMask      = 0xff;
+    StencilWriteMask     = 0x00;
+
+    FrontFaceStencilFunc = Equal;
+    FrontFaceStencilPass = Keep;
+    BackFaceStencilFunc  = Equal;
+    BackFaceStencilPass  = Keep;
+};
+
+BlendState BS_ColorWriteOff
+{
+    BlendEnable[0]           = false;
+    RenderTargetWriteMask[0] = 0x00;
+};
+
 DepthStencilState DSS_ReadOnly
 {
     DepthEnable = true;

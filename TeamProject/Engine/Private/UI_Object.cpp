@@ -7,9 +7,6 @@
 #include "Sprite2D.h"
 #include "Child.h"
 #include "ObjectContainer.h"
-CUI_Object::CUI_Object()
-{
-}
 
 CUI_Object::CUI_Object(const CUI_Object& rhs)
     :CGameObject(rhs)
@@ -310,16 +307,6 @@ _float2 CUI_Object::Calc_AnchorPoint()
     return anchorPoint;
 }
 
-void CUI_Object::Rotate_Left(_float _radian)
-{
-    m_fRadian += _radian;
-}
-
-void CUI_Object::Align_To(ANCHOR anchor)
-{
-    m_eAnchor = anchor;
-}
-
 void CUI_Object::Play_Animation(_float dt)
 {
     if (m_iCurrentClipIndex < 0 || m_iCurrentClipIndex >= (_int)m_AnimClips.size()) return;
@@ -440,9 +427,4 @@ _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
              m_vAnchorOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };
-}
-
-void CUI_Object::Free()
-{
-    __super::Free();
 }
