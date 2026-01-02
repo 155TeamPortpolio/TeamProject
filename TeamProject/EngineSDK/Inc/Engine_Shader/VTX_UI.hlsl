@@ -146,7 +146,7 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
     clip(vDiffuse.a - 0.1f);
     
-    clip(vTexcoord.x - FillAmount);
+    clip(FillAmount - vTexcoord.x);
     
     Out.vColor = vDiffuse * vColor;
     
