@@ -52,7 +52,7 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	SetActive(false);
+	SetVisable(false);
 
 	return S_OK;
 }
@@ -111,11 +111,12 @@ void CSacrificeHand::Free()
 void CSacrificeHand::Phase1Attack()
 {
 	m_isAlive = true;
-	SetActive(true);
+	SetVisable(true);
 	m_pStateMachine->Change_State("Attack");
+	m_eCurrPattern = PATTERN::PHASE1;
 }
 
-void CSacrificeHand::SetActive(_bool isActive)
+void CSacrificeHand::SetVisable(_bool isActive)
 {
 	auto pModel = Get_Component<CSkeletalModel>();
 	_uint iMeshCount = pModel->Get_MeshCount();

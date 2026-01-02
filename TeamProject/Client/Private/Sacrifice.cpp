@@ -197,7 +197,7 @@ void CSacrifice::Phase1Attack()
 
 	_vector3 vPosition = m_pTransform->Get_WorldPos();
 	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
-	vPosition -= vLook * 4.f;
+	vPosition -= vLook * 8.f;
 	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
 
 	auto pHandTransform = pHand->Get_Component<CTransform>();

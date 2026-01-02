@@ -9,6 +9,9 @@ class CStateMachine;
 class CSacrificeHand :
     public CEnemy
 {
+public:
+    enum class PATTERN { PHASE1, OVER_DRIVE_START, OVER_DRIVE_ATTACK01, OVER_DRIVE_ATTACK02, OVER_DRIVE_ATTACK03, END };
+
 private:
     CSacrificeHand();
     CSacrificeHand(const CSacrificeHand& rhg);
@@ -29,8 +32,9 @@ public:
 
 public:
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    PATTERN GetCurrPattern()const { return m_eCurrPattern; }
     void Phase1Attack();
-    void SetActive(_bool isActive);
+    void SetVisable(_bool isActive);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -40,5 +44,6 @@ private:
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD m_AttackBlackBoard{};
+    PATTERN m_eCurrPattern = PATTERN::END;
 };
 NS_END
