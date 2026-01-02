@@ -942,12 +942,6 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderPass">
       <UniqueIdentifier>{93d2fe97-017d-4bf0-8d44-479397e756d3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\RenderTarget">
-      <UniqueIdentifier>{c69e076e-98a5-42b6-913e-9cd198d43065}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
-      <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\Renderer">
       <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
     </Filter>
@@ -1016,6 +1010,12 @@
     </Filter>
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
       <UniqueIdentifier>{cd0242ae-f98d-4355-9652-d85f0117750b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderTarget">
+      <UniqueIdentifier>{c69e076e-98a5-42b6-913e-9cd198d43065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
+      <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
