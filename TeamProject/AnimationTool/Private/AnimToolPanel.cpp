@@ -28,7 +28,6 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		float fPause = 1.f;
 		if (m_bPause) fPause = 0.f;
 
-	
 		if (m_ePanelType == PANELTYPE::CLIP) {
 			m_pSelectAnimator->Update_Animation(dt * fPause * m_fPlaySpeed);
 		}
@@ -52,11 +51,11 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Resize_Layer(2);
-			m_pSelectAnimator->Set_LayerType(ANIM_LAYER_STATE::OVERRIDE, 1);
+			m_pSelectAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 			m_pSelectAnimator->Set_MotionBone(21);
-			m_pSelectAnimator->Set_StartBone(223, 1);
-			m_pSelectAnimator->Set_Animation(1, 4)
-				.LayerBlend(1.f, 0.f, 5.f, EaseType::InQuint)
+			//m_pSelectAnimator->Set_StartBone(24, 1);
+			m_pSelectAnimator->Set_Animation(1, 89)
+				.LayerBlend(1.f, 0.f, 1.f, EaseType::InQuint)
 				.Loop(false)
 				.Apply();
 		}

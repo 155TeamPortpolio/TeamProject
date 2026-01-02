@@ -64,6 +64,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	}
 
 	m_TPose = m_CombinedMatrices;
+	m_BasePose.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 }
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
@@ -625,34 +626,29 @@ Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& tar
 	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
 }
 
-Matrix CAnimator3D::Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, _float weight)
+Matrix CAnimator3D::Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose, _float weight)
 {
-	Matrix baseMat = base;
-	Matrix targetMat = target;
+	Vector3 baseS, targetS, refS;
+	Quaternion baseR, targetR, refR;
+	Vector3 baseT, targetT, refT;
 
-	_vector3 baseS, targetS;
-	_quaternion baseR, targetR;
-	_vector3 baseT, targetT;
+	Matrix(base).Decompose(baseS, baseR, baseT);
+	Matrix(target).Decompose(targetS, targetR, targetT);
+	Matrix(TPose).Decompose(refS, refR, refT);
 
-	baseMat.Decompose(baseS, baseR, baseT);
-	targetMat.Decompose(targetS, targetR, targetT);
-	_vector3	S = baseS + (targetS * weight);
-	_quaternion R =
-		XMQuaternionNormalize(
-			XMQuaternionMultiply(
-				baseR,
-				XMQuaternionSlerp(
-					Quaternion::Identity,
-					targetR,
-					weight
-				)
-			)
-		);
-	R.Normalize();
+	Vector3 deltaT = targetT - refT;
+	refR.Inverse(refR);
+	Quaternion deltaR = refR * targetR;
+	Vector3 deltaS = targetS - refS;
 
-	_vector3	T = baseT + (targetT * weight);
-	
-	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+
+	Vector3 outS = baseS;// +deltaS * weight;
+	Quaternion outR =
+		baseR * Quaternion::Slerp(Quaternion::Identity, deltaR, weight);
+	outR.Normalize();
+	Vector3 outT = baseT;// +deltaT * weight;
+
+	return XMMatrixAffineTransformation(outS, XMVectorZero(), outR, outT);
 }
 
 /*-----------------*/
@@ -975,11 +971,11 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 	if (-1 == Layer.iStartBoneIndex) {
 		for (int i = 0; i < m_pData->Get_BoneCount(); i++) {
 			if (i == Layer.iMotionBoneIndex || i == Layer.iRootBoneIndex) continue;
-
+			
 			if (Layer.bBlending)
-				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], Layer.fLayerWeight);
+				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.FinalLocalMatrices[i], m_BasePose[i], Layer.fLayerWeight);
 			else
-				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.LocalMatrices[i], Layer.fLayerWeight);
+				m_TransformationMatrices[i] = Calc_MatrixAdditive(m_TransformationMatrices[i], Layer.LocalMatrices[i], m_BasePose[i], Layer.fLayerWeight);
 		}
 	}
 	else {
@@ -987,9 +983,9 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 			if (BoneIndex == Layer.iMotionBoneIndex || BoneIndex == Layer.iRootBoneIndex) continue;
 
 			if (Layer.bBlending)
-				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], Layer.fLayerWeight);
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.FinalLocalMatrices[BoneIndex], m_BasePose[BoneIndex], Layer.fLayerWeight);
 			else
-				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], Layer.fLayerWeight);
+				m_TransformationMatrices[BoneIndex] = Calc_MatrixAdditive(m_TransformationMatrices[BoneIndex], Layer.LocalMatrices[BoneIndex], m_BasePose[BoneIndex], Layer.fLayerWeight);
 		}
 	}
 }
@@ -999,7 +995,6 @@ void CAnimator3D::BuildBone(_float dt)
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.fLayerWeight <= 0) continue;
 
-		
 		if (EaseType::None != Layer.eLayerEaseType) {
 			_float Ease = 0.f;
 			Layer.fLayerWeightElapsed += dt;
@@ -1066,6 +1061,7 @@ void CAnimator3D::Render_GUI()
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
 }
+
 
 void CAnimator3D::GUI_ShowLayerInfo()
 {
@@ -1235,6 +1231,9 @@ HRESULT SetAnimBuild::Apply()
 		Layer.fLayerWeightElapsed = 0.f;
 		Layer.fLayerWeightDuration = m_fWeightDuration;
 		Layer.eLayerEaseType = m_eLayerEaseType;
+
+		if (Layer.eLayerType == ANIM_LAYER_STATE::ADDITIVE)
+			m_pOwner->m_pAnimClips[m_iClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(m_pOwner->m_BasePose, 0.f);
 	}
 
 	//애니매이션 기본
@@ -1283,6 +1282,8 @@ HRESULT ChangeAnimBuild::Apply()
 		Layer.fLayerWeightElapsed = 0.f;
 		Layer.fLayerWeightDuration = m_fWeightDuration;
 		Layer.eLayerEaseType = m_eLayerEaseType;
+		if (Layer.eLayerType == ANIM_LAYER_STATE::ADDITIVE)
+			m_pOwner->m_pAnimClips[m_iClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(m_pOwner->m_BasePose, 0.f);
 	}
 
 	//애니매이션 기본
@@ -1311,6 +1312,7 @@ HRESULT ChangeAnimBuild::Apply()
 			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
 			Layer.LocalMatrices = Layer.BlendMatrices;
 		}
+		
 	}
 
 	//클립끼리의 블랜드 상태

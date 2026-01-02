@@ -226,7 +226,7 @@ protected://애니매이션 체크
     
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
-    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, _float weight);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
@@ -263,6 +263,7 @@ protected:
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
+    vector<_float4x4> m_BasePose = {};                  //Additive용 BasePose << 만약 애니매이션을 여러개 덧붙여야하면 이벡터 자체가 여러개필요
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
