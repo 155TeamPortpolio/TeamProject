@@ -369,7 +369,6 @@ void CTransform::LookAt(_fvector vAt)
 	XMStoreFloat4(&m_qRotation, vQuaternion);
 
 	MarkDirty();
-
 }
 
 void CTransform::Override_Rotation(_fvector vAxis, _float fRadian)

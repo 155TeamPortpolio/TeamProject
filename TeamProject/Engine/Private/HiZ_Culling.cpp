@@ -192,31 +192,43 @@ void CHiZ_Culling::Check_Resource()
 #ifdef _USING_GUI
 void CHiZ_Culling::Render_GUI()
 {
-	if (ImGui::Begin("HiZ Occlusion"))
-	{
-		ImGui::Text("Frustum In      : %u", m_stats.frustumIn);
-		ImGui::Text("Tested (inputs) : %u", m_stats.tested);
-		ImGui::Text("Not Tested      : %u", m_stats.notTested);
 
-		ImGui::Separator();
-
-		ImGui::Text("Readback        : %s", m_stats.canRead ? "OK" : "MISS");
-		ImGui::Text("Occ Visible      : %u", m_stats.visibleByOcc);
-		ImGui::Text("Occ Culled       : %u", m_stats.culledByOcc);
-
-		ImGui::Separator();
-
-		ImGui::Text("Result Out       : %u", m_stats.outResult);
-
-		if (m_stats.frustumIn > 0)
+	if (isTabOpen) {
+		ImGui::SetNextWindowPos(ImVec2(1200, 5));
+		if (ImGui::Begin("HiZ Occlusion",&isTabOpen))
 		{
-			float testedRatio = (float)m_stats.tested / (float)m_stats.frustumIn * 100.0f;
-			float culledRatio = (m_stats.tested > 0) ? (float)m_stats.culledByOcc / (float)m_stats.tested * 100.0f : 0.0f;
-			ImGui::Text("Tested Ratio     : %.1f%%", testedRatio);
-			ImGui::Text("Culled Ratio     : %.1f%% (of tested)", culledRatio);
+			ImGui::Text("Frustum In      : %u", m_stats.frustumIn);
+			ImGui::Text("Tested (inputs) : %u", m_stats.tested);
+			ImGui::Text("Not Tested      : %u", m_stats.notTested);
+
+			ImGui::Separator();
+
+			ImGui::Text("Readback        : %s", m_stats.canRead ? "OK" : "MISS");
+			ImGui::Text("Occ Visible      : %u", m_stats.visibleByOcc);
+			ImGui::Text("Occ Culled       : %u", m_stats.culledByOcc);
+
+			ImGui::Separator();
+
+			ImGui::Text("Result Out       : %u", m_stats.outResult);
+
+			if (m_stats.frustumIn > 0)
+			{
+				float testedRatio = (float)m_stats.tested / (float)m_stats.frustumIn * 100.0f;
+				float culledRatio = (m_stats.tested > 0) ? (float)m_stats.culledByOcc / (float)m_stats.tested * 100.0f : 0.0f;
+				ImGui::Text("Tested Ratio     : %.1f%%", testedRatio);
+				ImGui::Text("Culled Ratio     : %.1f%% (of tested)", culledRatio);
+			}
 		}
+		ImGui::End();
+
 	}
-	ImGui::End();
+	else {
+		ImGui::SetNextWindowPos(ImVec2(1200, 5));
+		ImGui::Begin("##HiZ Occlusion_btn", nullptr, ImGuiWindowFlags_NoDecoration|ImGuiWindowFlags_NoBackground);
+		if (ImGui::Button("HiZ result")) {isTabOpen = !isTabOpen;}
+		ImGui::End();
+	}
+
 }
 #endif
 
