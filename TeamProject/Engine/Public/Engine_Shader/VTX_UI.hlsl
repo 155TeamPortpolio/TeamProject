@@ -171,7 +171,25 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     
     return Out;
 }
+// ---------------------------------------------------------------------------------------
+float MaskThreshold = 0.1f;
 
+PS_OUT PS_STENCIL_WRITE_ALPHA(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 vTexcoord = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    clip(vDiffuse.a - MaskThreshold);
+
+    Out.vColor = 1;
+    return Out;
+}
+// -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
     pass Opaque
@@ -179,9 +197,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN();
     }  
 
     pass SpriteAnimation
@@ -189,9 +207,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
+        PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
 // --------------------------------------------------------
     pass UVAnimation
@@ -199,9 +217,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_UVANIMATION();
+        PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
 // ----------------------------------------------------------
     pass LinearFill
@@ -209,9 +227,9 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_LINEARFILL();
+        PixelShader    = compile ps_5_0 PS_MAIN_LINEARFILL();
     }
 
     pass RadialFill
@@ -219,9 +237,49 @@ technique11 DefaultTechnique
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
+        VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader = compile ps_5_0 PS_MAIN_RADIALFILL();
+        PixelShader    = compile ps_5_0 PS_MAIN_RADIALFILL();
+    }
+// ---------------------------------------------------------------
+    pass UI_StencilWrite
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_ColorWriteOff, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_STENCIL_WRITE_ALPHA();
+    }
+
+    pass Opaque_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN();
+    }
+
+    pass UVAnimation_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
+    }
+
+    pass UI_MaskPreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN();
     }
 }
 
