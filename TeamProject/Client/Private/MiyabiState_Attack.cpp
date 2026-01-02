@@ -20,6 +20,7 @@ void CMiyabiState_Attack::Enter(CMiyabi* pOwner)
             CStateMachine<CMiyabi>::CONDITION_TRIGGER, "StartCharge");
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
+
     __super::Enter(pOwner);
 }
 
@@ -29,7 +30,10 @@ void CMiyabiState_Attack::Update(CMiyabi* pOwner, _float dt)
     {
         m_fHoldTime += dt;
         if (m_fHoldTime >= 0.3f)
+        {
             m_pSubStateMachine->Set_Trigger("StartCharge");
+            m_fHoldTime = 0.f;
+        }
     }
     else
     {
