@@ -83,13 +83,7 @@ class CHiZ_Culling :
     };
 
 #ifdef _USING_GUI
-    struct OcclDebugRect
-    {
-        float minX, minY, maxX, maxY;   // screen pixels
-        float depth01;                  // objMinDepth01
-        _uint flags;                 // outInput.padding
-        _uint drawIndex;
-    };
+  
     struct HiZStats
     {
         _uint frustumIn = 0;       // frustum pass 이후 들어온 패킷 수
@@ -100,9 +94,7 @@ class CHiZ_Culling :
         _uint outResult = 0;       // 최종 result 수
         _uint canRead = 0;         // 이번 프레임 readback 성공(1/0)
     };
-    vector<OcclDebugRect> m_dbgRects;
-    bool m_dbgDrawRects = true;
-    int  m_dbgRectLimit = 2000;
+    _bool isTabOpen = { false };
     HiZStats m_stats; 
 #endif
 
@@ -132,12 +124,7 @@ private:
 
     _bool isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery);
     void TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity);
-    void BuildResultFromCache(unordered_map<OcclusionKey, 
-        const OPAQUE_PACKET*, 
-        OcclusionKeyHash, OcclusionKeyEq>& currentCandidateMap,
-        vector<OcclusionKey>& writeKeys,
-        vector<OPAQUE_PACKET>& result);
-
+ 
 private:
     _bool m_isReady = { false };
     _int m_DebugMip = { 0 };

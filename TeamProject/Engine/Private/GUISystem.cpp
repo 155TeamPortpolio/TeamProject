@@ -120,10 +120,12 @@ void CGUISystem::Set_Theme()
 
 void CGUISystem::Set_Panel()
 {
-	m_Panels.push_back(CHierarchyPanel::Create(&m_tGuiContext));
+	m_pHierachyPanel = CHierarchyPanel::Create(&m_tGuiContext);
+	m_Panels.push_back(m_pHierachyPanel);
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CDebugBonePanel::Create(&m_tGuiContext));
+
 }
 
 void CGUISystem::Render_Frame()
@@ -161,15 +163,14 @@ void CGUISystem::GUI_Begin()
 
 void CGUISystem::Render_GUI()
 {
-	if (!m_bActiveGUI) return;
 	GUI_Begin();
-
+	Render_Frame();
+	if (!m_bActiveGUI) { GUI_End();  return; };
 	for (auto& panel : m_Panels) {
 		if (panel->Get_Active())
 			panel->Render_GUI();
 	}
 
-	Render_Frame();
 	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
@@ -204,6 +205,11 @@ bool CGUISystem::Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	return ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam);
 }
 
+void CGUISystem::Set_UIMode()
+{
+	m_pHierachyPanel->Set_UI_Mode();
+}
+
 void CGUISystem::Register_Panel(CBasePanel* pPanel)
 {
 	m_Panels.push_back(pPanel);
@@ -230,8 +236,9 @@ void CGUISystem::Test()
 
 void CGUISystem::Render_DebugBtn()
 {
-	ImGui::Begin("Render TargetView");
-	if (ImGui::Button("Render_Debug")) {
+	ImGui::SetNextWindowPos(ImVec2(750, 5), ImGuiCond_Always);
+	ImGui::Begin("##Render_Debug_View",nullptr,ImGuiWindowFlags_NoDecoration);
+	if (ImGui::Button("RenderDebug")) {
 		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
 		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
 	}
