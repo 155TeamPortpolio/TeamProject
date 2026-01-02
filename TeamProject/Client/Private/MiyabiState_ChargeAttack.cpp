@@ -50,7 +50,7 @@ void CMiyabiState_ChargeAttack::Enter(CMiyabi* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("Charge_Start");
     }
-
+    m_pSubStateMachine->Reset_Trigger("Release");
     __super::Enter(pOwner);
 }
 
@@ -179,4 +179,9 @@ void CMiyabiState_Charge_End::Update(CMiyabi* pOwner, _float dt)
     {
         m_fAnimProgress = 1.f;
     }
+}
+
+void CMiyabiState_Charge_End::Exit(CMiyabi* pOwner)
+{
+
 }

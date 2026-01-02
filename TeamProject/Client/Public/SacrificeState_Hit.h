@@ -15,7 +15,4 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 };
-
-/* Sub States */
-
 NS_END

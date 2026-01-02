@@ -53,7 +53,6 @@ void IHState<Type>::Enter(Type* pOwner)
         }
         else
         {
-            // 재진입 시 DefaultState로 리셋
             m_pSubStateMachine->Change_State(m_pSubStateMachine->Get_DefaultStateName());
         }
     }

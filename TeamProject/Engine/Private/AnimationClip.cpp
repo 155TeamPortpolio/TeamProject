@@ -81,11 +81,11 @@ void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& trans
 	//Check_Event(CurrentTrackPosition, RealTrackPosition, EventBus);
 }
 
-void CAnimationClip::TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices, _float MaxDuration)
+void CAnimationClip::TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices, _float Duration)
 {
 	for (size_t i = 0; i < m_iNumChannels; i++)
 	{
-		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, MaxDuration, false);
+		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, Duration, false);
 	}
 }
 

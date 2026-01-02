@@ -17,8 +17,9 @@ public:
 public:
     virtual void     Set_BlendEase(EaseType ease)    override { m_easeType = ease; }
     virtual EaseType Get_BlendEase()           const override { return m_easeType; }                                                   
-    CCamera*         Get_BaseCam()             const override { return m_baseCam;  }
-    CCamera*         Get_ActiveCam()           const override;
+    virtual CCamera* Get_BaseCam()             const override { return m_baseCam;  }
+    virtual CCamera* Get_ActiveCam()           const override;
+    virtual CCamera* Get_ShadowCam()           const override { return m_shadowCam; }
 
 public:
     virtual _uint    Push(CCamera* camComp, _float blendSec = 0.25f) override;
@@ -47,6 +48,9 @@ public:
     virtual const Matrix* Get_InversedShadowProjMatrix() override { return &m_shadowInvProj; }
     virtual const Vector4 Get_ShadowCameraPos()          override { return m_shadowCamPos;   }
     virtual const _float  Get_ShadowFar()                override { return m_shadowCam ? m_shadowCam->Get_Far() : 0.f; }
+
+    virtual Lens Get_Lens()       const override;
+    virtual Lens Get_ShadowLens() const override;
 
 private:
     struct OverrideEntry
