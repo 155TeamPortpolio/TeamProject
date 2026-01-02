@@ -76,8 +76,8 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     triStream.RestartStrip();
 }
 
-uint Col;
-uint Row;
+uint Col = 1;
+uint Row = 1;
 uint FrameIndex;
 
 float2 UVOffset;
