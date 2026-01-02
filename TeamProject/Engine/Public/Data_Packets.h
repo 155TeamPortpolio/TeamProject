@@ -26,6 +26,7 @@ namespace Engine {
 	typedef struct DrawBasePacket {
 		_float4x4* pWorldMatrix;
 		_uint TransformIndex = {};
+		_float DistanceToCamera = 0.f;       // ���Ŀ� Key
 	}BASE_PACKET;
 
 	typedef struct DrawPriorityPacket {
@@ -86,7 +87,6 @@ namespace Engine {
 
 		variant<monostate, class CAnimator3D*, class CSkeletonFollower*> pPayLoad; /*�߰������� �ְ� ���� �� �־�?*/
 
-		_float DistanceToCamera = 0.f;       // ���Ŀ� Key
 		BLENDRENDERKEY GetKey() const;
 	}BLENDED_PACKET;
 

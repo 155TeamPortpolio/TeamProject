@@ -338,25 +338,25 @@ HRESULT CGameObject::Make_OpaquePacket()
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
 
 		if (packet.pMaterial->Get_MaterialInstance(packet.MaterialIndex)->IsBlened()) {
-			Make_BlendedPacket(packet);
+			Make_BlendedPacket(move(packet));
 		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_OPAQUE)
 		{
-			if(packet.bSkinning) CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedMesh_Opaque(packet);
-			else  CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticMesh_Opaque(packet);
+			if(packet.bSkinning) CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedMesh_Opaque(move(packet));
+			else  CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticMesh_Opaque(move(packet));
 		}
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::PRIORITY)
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(packet);
+			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Priority(move(packet));
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(packet);
+			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_NonLight(move(packet));
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_EFFECT)
-			Make_EffectPacket(packet);
+			Make_EffectPacket(move(packet));
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_3DUI)
-			Make_3DUIPacket(packet);
+			Make_3DUIPacket(move(packet));
 
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
 			if (packet.pModel->doShadowCast()) {
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
+				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(move(packet));
 			}
 	}
 	return S_OK;

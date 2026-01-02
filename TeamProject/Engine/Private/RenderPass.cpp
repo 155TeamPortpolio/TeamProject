@@ -72,24 +72,22 @@ void RenderPass::Free()
 
 #pragma region STATICMESH_OPAQUE_PASS
 void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{/*�̰� ���������� ���̴��� �� �־��ִ� ����*/
+{
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*���� ���̴�, ���� ��Ƽ����, ���� �𵨳��� ���� */
 	sort(m_Packets.begin(), m_Packets.end(),
 		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
 			return a.GetKey() < b.GetKey();
 		});
 
-	/*��Ŷ�� ��� ������ ����*/
 	if (m_Packets.empty())
 		return;
 
-	/*��� ���� �� SRV ����*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 
 	vector<OPAQUE_PACKET> frustums;
+	frustums.reserve(1000);
 	for (auto& packet : m_Packets)
 	{
 		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
@@ -126,7 +124,7 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 void StaticOpaquePass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -202,7 +200,7 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 void SkinnedOpaquePass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -277,7 +275,7 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void PriorityPass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -358,7 +356,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void BlendedPass::Submit(BLENDED_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 
 #pragma endregion
@@ -397,7 +395,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void ParticlePass::Submit(PARTICLE_PACKET packet)
 {
 	//if (packet.pSprite2D == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 
 #pragma endregion
@@ -443,7 +441,7 @@ void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void InstancePass::Submit(INSTANCE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-		m_Packets.push_back(packet);
+		m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -489,7 +487,7 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void UIPass::Submit(SPRITE_PACKET packet)
 {
 	if (packet.pSprite2D == nullptr ) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -541,7 +539,7 @@ void DebugPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void DebugPass::Submit(DEBUG_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pDebug == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 #pragma endregion
 
@@ -561,7 +559,7 @@ void ShadowPass::Submit(OPAQUE_PACKET packet)
 void ShadowPass::SubmitInstance(INSTANCE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-		m_InstancePackets.push_back(packet);
+		m_InstancePackets.push_back(move(packet));
 }
 
 void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRenderer)
@@ -769,7 +767,7 @@ void NonLightPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void NonLightPass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 
 #pragma endregion
@@ -851,7 +849,7 @@ void EffectPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void EffectPass::Submit(EFFECT_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 
 #pragma endregion
@@ -930,7 +928,7 @@ void UI3DPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void UI3DPass::Submit(OPAQUE_PACKET packet)
 {
 	if (packet.pModel == nullptr || packet.pMaterial == nullptr) return;
-	m_Packets.push_back(packet);
+	m_Packets.push_back(move(packet));
 }
 
 #pragma endregion
