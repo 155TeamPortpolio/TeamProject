@@ -31,6 +31,7 @@ public:
 
 public:
     void Render_GUI() override;
+    void RenderHierarchy(CGameObject*& outSelected, bool isSelected);
 
 public:
     void ReorderChildren(class CGameObject* pObject, _uint Index);
