@@ -235,24 +235,57 @@ void CObjectContainer::Destroy_Child(_uint childIndex)
 		return;
 
 	const _uint objectId = targetObject->Get_ObjectID();
-
-	auto orderIndexIter = m_OrderIndexByID.find(objectId);
-	if (orderIndexIter != m_OrderIndexByID.end())
 	{
-		const _uint orderIndex = orderIndexIter->second;
-		if (orderIndex < m_UpdateOrder.size())
-			m_UpdateOrder[orderIndex] = 0;
+		auto orderIndexIter = m_OrderIndexByID.find(objectId);
+		if (orderIndexIter != m_OrderIndexByID.end())
+		{
+			const _uint orderIndex = orderIndexIter->second;
 
-		m_OrderIndexByID.erase(orderIndexIter);
+			if (orderIndex < (_uint)m_UpdateOrder.size() && m_UpdateOrder[orderIndex] == objectId)
+			{
+				m_UpdateOrder.erase(m_UpdateOrder.begin() + orderIndex);
+			}
+			else
+			{
+				for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+				{
+					if (m_UpdateOrder[scanIndex] == objectId)
+					{
+						m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+						break;
+					}
+				}
+			}
+
+			m_OrderIndexByID.erase(orderIndexIter);
+		}
+		else
+		{
+			for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+			{
+				if (m_UpdateOrder[scanIndex] == objectId)
+				{
+					m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+					break;
+				}
+			}
+		}
+
+		m_OrderIndexByID.clear();
+		m_OrderIndexByID.reserve(m_UpdateOrder.size());
+		for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
+			m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
 	}
 
-	auto nameIter = m_ChildrensName.find(objectId);
-	if (nameIter != m_ChildrensName.end())
-		m_ChildrensName.erase(nameIter);
+	{
+		auto nameIter = m_ChildrensName.find(objectId);
+		if (nameIter != m_ChildrensName.end())
+			m_ChildrensName.erase(nameIter);
 
-	auto indexIter = m_IndexByID.find(objectId);
-	if (indexIter != m_IndexByID.end())
-		m_IndexByID.erase(indexIter);
+		auto indexIter = m_IndexByID.find(objectId);
+		if (indexIter != m_IndexByID.end())
+			m_IndexByID.erase(indexIter);
+	}
 
 	m_ChildrenObjects[childIndex] = nullptr;
 
@@ -262,7 +295,7 @@ void CObjectContainer::Destroy_Child(_uint childIndex)
 	if (isUIObject)
 	{
 		CGameInstance::GetInstance()->Get_UIMgr()->Remove_UIObject(uiObject);
-		Safe_Release(uiObject); 
+		Safe_Release(uiObject);
 	}
 	else
 	{
@@ -323,6 +356,127 @@ void CObjectContainer::Render_GUI()
 	ImGui::EndChild();
 }
 
+void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint index)
+{
+	if (!objectPtr)
+		return;
+	
+	const _uint objectId = objectPtr->Get_ObjectID();
+	if (m_IndexByID.find(objectId) == m_IndexByID.end())
+		return;
+
+	auto existingIter = m_OrderIndexByID.find(objectId);
+	if (existingIter != m_OrderIndexByID.end())
+	{
+		const _uint oldIndex = existingIter->second;
+
+		if (oldIndex < (_uint)m_UpdateOrder.size() && m_UpdateOrder[oldIndex] == objectId)
+		{
+			m_UpdateOrder.erase(m_UpdateOrder.begin() + oldIndex);
+			if (index > oldIndex) --index;
+		}
+		else
+		{
+			for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
+			{
+				if (m_UpdateOrder[scanIndex] == objectId)
+				{
+					m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+					if (index > scanIndex) --index;
+					break;
+				}
+			}
+		}
+	}
+
+	if (index > (_uint)m_UpdateOrder.size())
+		index = (_uint)m_UpdateOrder.size();
+
+	m_UpdateOrder.insert(m_UpdateOrder.begin() + index, objectId);
+
+	m_OrderIndexByID.clear();
+	m_OrderIndexByID.reserve(m_UpdateOrder.size());
+	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
+		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
+}
+
+void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it == m_OrderIndexByID.end())
+		return;
+
+	const _uint curIndex = it->second;
+	if (curIndex == 0)
+		return; // 이미 맨 위
+
+	ReorderChildren(pObject, curIndex - 1);
+}
+
+void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it == m_OrderIndexByID.end())
+		return;
+
+	const _uint curIndex = it->second;
+	const _uint count = (_uint)m_UpdateOrder.size();
+	if (count == 0)
+		return;
+
+	if (curIndex + 1 >= count)
+		return; // 이미 맨 아래
+
+	ReorderChildren(pObject, curIndex + 1);
+}
+
+void CObjectContainer::Set_Order_Top(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	// 이미 있는지 체크해서, 이미 맨 위면 조기 종료
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it != m_OrderIndexByID.end() && it->second == 0)
+		return;
+
+	ReorderChildren(pObject, 0);
+}
+
+void CObjectContainer::Set_Order_Bottom(CGameObject* pObject)
+{
+	if (!pObject)
+		return;
+
+	const _uint objectId = pObject->Get_ObjectID();
+
+	const _uint count = (_uint)m_UpdateOrder.size();
+	if (count == 0)
+	{
+		ReorderChildren(pObject, 0);
+		return;
+	}
+
+	// 이미 있는지 체크해서, 이미 맨 아래면 조기 종료
+	auto it = m_OrderIndexByID.find(objectId);
+	if (it != m_OrderIndexByID.end() && it->second + 1 == count)
+		return;
+
+	ReorderChildren(pObject, count);
+}
+
 CObjectContainer* CObjectContainer::Create()
 {
 	CObjectContainer* instance = new CObjectContainer();
@@ -355,4 +509,6 @@ void CObjectContainer::Free()
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();
+	 m_OrderIndexByID.clear();
+	m_UpdateOrder.clear();      
 }

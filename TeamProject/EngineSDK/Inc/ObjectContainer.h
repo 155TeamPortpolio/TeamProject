@@ -33,6 +33,12 @@ public:
     void Render_GUI() override;
 
 public:
+    void ReorderChildren(class CGameObject* pObject, _uint Index);
+    void Upper_Order_Children(class CGameObject* pObject);
+    void Lower_Order_Children(class CGameObject* pObject);
+    void Set_Order_Top(class CGameObject* pObject);
+    void Set_Order_Bottom(class CGameObject* pObject);
+public:
     const vector<class CGameObject*> Get_Children() { return m_ChildrenObjects; };
 
 private:    
