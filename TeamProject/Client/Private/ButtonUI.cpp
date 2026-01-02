@@ -32,6 +32,13 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CButtonUI::Awake()
+{
+    __super::Awake();
+
+    Set_Clickable(true);
+}
+
 void CButtonUI::Priority_Update(_float dt)
 {
 }
