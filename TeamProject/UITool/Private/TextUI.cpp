@@ -67,6 +67,8 @@ void CTextUI::Update(_float dt)
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     Get_Component<CTextSlot>()->Push_Text();
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 }
 

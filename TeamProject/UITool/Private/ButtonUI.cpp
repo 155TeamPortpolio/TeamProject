@@ -40,6 +40,8 @@ void CButtonUI::Update(_float dt)
 
     Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 }
 

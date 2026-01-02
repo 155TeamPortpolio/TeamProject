@@ -6,6 +6,7 @@
 #include "Sprite2D.h"
 #include "Texture.h"
 #include "Helper_Func.h"
+#include "Child.h"
 
 HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
@@ -516,6 +517,30 @@ _float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
         fOffset.y = m_vSize.y * -0.5f;
 
     return fOffset;
+}
+
+void CUIObject_Tool::KeyInput_ReorderChildren()
+{ 
+    auto pInput = CGameInstance::GetInstance()->Get_InputDev();
+
+    auto pChild = Get_Component<CChild>();
+    if (!pChild)
+        return;
+
+    if (pInput->Key_Down(VK_SHIFT) && pInput->Key_Tap(VK_OEM_4))    // [
+    {
+        if (pInput->Key_Down(VK_CONTROL))
+            pChild->Set_Order_First(this);
+        else
+            pChild->Lower_Order(this);
+    }
+    else if (pInput->Key_Down(VK_SHIFT) && pInput->Key_Tap(VK_OEM_6))   // ]
+    {
+        if (pInput->Key_Down(VK_CONTROL))
+            pChild->Set_Order_Last(this);
+        else
+            pChild->Upper_Order(this);
+    }
 }
 
 _float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
