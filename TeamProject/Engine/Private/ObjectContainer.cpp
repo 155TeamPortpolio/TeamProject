@@ -400,7 +400,7 @@ void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint index)
 		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
 }
 
-void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
+void CObjectContainer::Upper_Order(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -418,7 +418,7 @@ void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex - 1);
 }
 
-void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
+void CObjectContainer::Lower_Order(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -440,7 +440,7 @@ void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex + 1);
 }
 
-void CObjectContainer::Set_Order_Top(CGameObject* pObject)
+void CObjectContainer::Set_Order_First(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -455,7 +455,7 @@ void CObjectContainer::Set_Order_Top(CGameObject* pObject)
 	ReorderChildren(pObject, 0);
 }
 
-void CObjectContainer::Set_Order_Bottom(CGameObject* pObject)
+void CObjectContainer::Set_Order_Last(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
