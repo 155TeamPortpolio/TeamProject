@@ -23,9 +23,13 @@ class ENGINE_DLL CPipeLine :
 		_float4x4 matShadowProjection;
 		_float4x4 matShadowViewInverse;
 		_float4x4 matShadowProjectionInverse;
+		_float4x4 matLightViewProj[4];      // ∞¢ Cascade¿« Light VP
+		_vector vCascadeSplits;          // (split1, split2, split3, split4)
 		_float4 vShadowPosition;
 		_float zShadowFar;
-		_float3 ShadowPadding;
+		_int iCurrentCascade;
+
+		_float2 ShadowPadding;
 	};
 
 	struct alignas(16)  LightBuffer
@@ -70,7 +74,7 @@ public:
 	_bool isVisible(MINMAX_BOX minMax, _fmatrix worldTransform);
 public:
 	HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
-	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext);
+	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex);
 	HRESULT Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize);
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
@@ -84,6 +88,9 @@ public:
 	_uint Write_SkinningBuffer(vector<_float4x4> BoneMatrices);
 	HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
 	HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
+
+	void Begin_ShadowRender(_uint cascadeIndex);
+	void End_ShadowRender();
 
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -129,6 +136,7 @@ private:
 
 private:
 	class CHiZ_Culling* m_pHiZ = { nullptr };
+	class CCSMShadow* m_pCSM = { nullptr };
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, class CRenderSystem* pSystem);

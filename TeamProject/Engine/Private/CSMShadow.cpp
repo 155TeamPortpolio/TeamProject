@@ -1,5 +1,8 @@
 #include "Engine_Defines.h"
 #include "CSMShadow.h"
+
+#include "CameraMgr.h"
+#include "Transform.h"
 #include "GameInstance.h"
 
 CCSMShadow::CCSMShadow(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -20,8 +23,9 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     TextureDesc.Height = m_iShadowMapSize;
     TextureDesc.MipLevels = 1;
     TextureDesc.ArraySize = m_iNumCascades;
-    TextureDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+    TextureDesc.Format = DXGI_FORMAT_R32_TYPELESS;
     TextureDesc.SampleDesc.Count = 1;
+    TextureDesc.SampleDesc.Quality = 0;
     TextureDesc.Usage = D3D11_USAGE_DEFAULT;
     TextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 
@@ -29,9 +33,9 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
         return E_FAIL;
 
     D3D11_DEPTH_STENCIL_VIEW_DESC pDepthStencilTexture = {};
-    ZeroMemory(&TextureDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
+    ZeroMemory(&pDepthStencilTexture, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
-    pDepthStencilTexture.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+    pDepthStencilTexture.Format = DXGI_FORMAT_D32_FLOAT;
     pDepthStencilTexture.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
     pDepthStencilTexture.Texture2DArray.MipSlice = 0;
     pDepthStencilTexture.Texture2DArray.ArraySize = 1;
@@ -47,7 +51,7 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 
-    srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+    srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
     srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
     srvDesc.Texture2DArray.MipLevels = 1;
     srvDesc.Texture2DArray.ArraySize = m_iNumCascades;
@@ -65,43 +69,36 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     return S_OK;
 }
 
-void CCSMShadow::Update(const _vector& lightDir)
+void CCSMShadow::Update()
 {
     auto CamMgr = CGameInstance::GetInstance()->Get_CameraMgr();
+    if (!CamMgr->Get_ShadowCam()) return;
+
     _matrix view = *CamMgr->Get_ViewMatrix();
     _matrix proj = *CamMgr->Get_ProjMatrix();
 
     const _matrix shadowview = *CamMgr->Get_ShadowViewMatrix();
 
-    _float nearPlane = CamMgr->Get_Near();
-    _float farPlane = CamMgr->Get_Far();
+    Lens CamLens = CamMgr->Get_Lens();
+    CalculateCascadeSplits(CamLens.zNear, CamLens.zFar);
 
-     CalculateCascadeSplits(nearPlane, farPlane);
+    auto shadowTransform = CamMgr->Get_ShadowCam()->Get_Owner()->Get_Component<CTransform>();
+    _vector LightDir = shadowTransform->Dir(STATE::LOOK);
 
     for (_uint i = 0; i < m_iNumCascades; ++i)
     {
         _matrix cascadeProj = proj;
-        cascadeProj.r[2] = XMVectorSet(0, 0,
-            m_fCascadeSplits[i + 1] / (m_fCascadeSplits[i + 1] - m_fCascadeSplits[i]),
-            1.0f);
-        cascadeProj.r[3] = XMVectorSet(0, 0,
-            -m_fCascadeSplits[i] * m_fCascadeSplits[i + 1] /
-            (m_fCascadeSplits[i + 1] - m_fCascadeSplits[i]),
-            0);
+        cascadeProj.r[2] = XMVectorSet(0, 0, m_fCascadeSplits[i + 1] / (m_fCascadeSplits[i + 1] - m_fCascadeSplits[i]), 1.0f);
+        cascadeProj.r[3] = XMVectorSet(0, 0, -m_fCascadeSplits[i] * m_fCascadeSplits[i + 1] /(m_fCascadeSplits[i + 1] - m_fCascadeSplits[i]),0);
 
-        // 절두체 코너 계산
         _vector frustumCorners[8];
-        CalculateFrustumCorners(view * cascadeProj,
-            m_fCascadeSplits[i],
-            m_fCascadeSplits[i + 1],
-            frustumCorners);
+        CalculateFrustumCorners(view * cascadeProj, m_fCascadeSplits[i], m_fCascadeSplits[i + 1], frustumCorners);
 
-        // Light View-Projection 생성
-        m_lightViewProj[i] = CreateLightViewProj(frustumCorners, lightDir);
+        m_lightViewProj[i] = CreateLightViewProj(frustumCorners, LightDir);
     }
 }
 
-void CCSMShadow::Begin_ShadowRender(UINT cascadeIndex)
+void CCSMShadow::Begin_ShadowRender(_uint cascadeIndex)
 {
     m_pContext->ClearDepthStencilView(m_pDSV[cascadeIndex], D3D11_CLEAR_DEPTH, 1.0f, 0);
 
@@ -113,7 +110,8 @@ void CCSMShadow::Begin_ShadowRender(UINT cascadeIndex)
 void CCSMShadow::End_ShadowRender()
 {
     ID3D11RenderTargetView* nullRTV = nullptr;
-    m_pContext->OMSetRenderTargets(1, &nullRTV, nullptr);
+    ID3D11DepthStencilView* nullDSV = nullptr;
+    m_pContext->OMSetRenderTargets(1, &nullRTV, nullDSV);
 }
 
 const _matrix& CCSMShadow::GetLightViewProj(UINT cascadeIndex) const

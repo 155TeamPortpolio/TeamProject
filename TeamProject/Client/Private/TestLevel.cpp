@@ -14,6 +14,7 @@
 #include "FreeCam.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
+#include "ShadowCam.h"
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
@@ -71,6 +72,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
 	// =========================================================================
 
 	//==================== Effect =======================
@@ -265,6 +267,18 @@ void CTestLevel::Ready_Camera()
 	GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+}
+
+void CTestLevel::Ready_ShadowCamera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 2.f, -3.f })
+		.Build("ShadowCam");
+
+	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_TestObject()

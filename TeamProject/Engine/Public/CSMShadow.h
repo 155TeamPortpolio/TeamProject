@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 
+NS_BEGIN(Engine)
+
 class CCSMShadow :
     public CBase
 {
@@ -10,9 +12,9 @@ private:
 
 public:
     HRESULT Initialize(_uint shadowSize);
-    void Update(const _vector& lightDir);
+    void Update();
 
-    void Begin_ShadowRender(UINT cascadeIndex);
+    void Begin_ShadowRender(_uint cascadeIndex);
     void End_ShadowRender();
     
 public:
@@ -30,13 +32,13 @@ private:
 private:
     static const _uint MAX_CASCADES = 4;
 
-    _uint m_iNumCascades;
+    _uint m_iNumCascades = 4;
     _uint m_iShadowMapSize;
     _float m_fCascadeSplits[MAX_CASCADES + 1];
 
-    ID3D11Texture2D* m_pShadowMapArray;
-    ID3D11DepthStencilView* m_pDSV[MAX_CASCADES];
-    ID3D11ShaderResourceView* m_pShadowMapSRV;
+    ID3D11Texture2D* m_pShadowMapArray = nullptr;
+    ID3D11DepthStencilView* m_pDSV[MAX_CASCADES] = { nullptr };
+    ID3D11ShaderResourceView* m_pShadowMapSRV = nullptr;
 
     _matrix m_lightViewProj[MAX_CASCADES];
 
@@ -50,3 +52,4 @@ public:
     void Free() override;
 };
 
+NS_END

@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Helper_Func.h"
 #include "HiZ_Culling.h"
+#include "CSMShadow.h"
 
 CPipeLine::CPipeLine()
 {
@@ -80,7 +81,9 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	m_pSystem = pSystem;
 
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 	m_pHiZ = CHiZ_Culling::Create();
+	m_pCSM = CCSMShadow::Create(pDevice, pContext, 2048);
 	return S_OK;
 }
 
@@ -122,7 +125,7 @@ HRESULT CPipeLine::Update_FrameBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
+HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex)
 {
 	ShadowBuffer shadowBuffer{};
 
@@ -132,6 +135,20 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 	shadowBuffer.matShadowProjectionInverse = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedShadowProjMatrix();
 	shadowBuffer.vShadowPosition = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowCameraPos();
 	shadowBuffer.zShadowFar = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowFar();
+
+	if (m_pCSM)
+	{
+		for (UINT i = 0; i < 4; ++i)
+		{
+			Matrix lightVP = m_pCSM->GetLightViewProj(i);
+			shadowBuffer.matLightViewProj[i] = lightVP;
+		}
+
+		const float* splits = m_pCSM->GetCascadeSplits();
+		shadowBuffer.vCascadeSplits = Vector4(splits[1], splits[2], splits[3], splits[4]);
+
+		shadowBuffer.iCurrentCascade = cascadeIndex;
+	}
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -375,6 +392,16 @@ HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 	m_pSkinningArray = nullptr;
 	m_SkinningOffset = 0;
 	return S_OK;
+}
+
+void CPipeLine::Begin_ShadowRender(_uint cascadeIndex)
+{
+	m_pCSM->Begin_ShadowRender(cascadeIndex);
+}
+
+void CPipeLine::End_ShadowRender()
+{
+	m_pCSM->End_ShadowRender();
 }
 
 HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer)
