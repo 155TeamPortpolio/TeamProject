@@ -49,22 +49,22 @@ HRESULT CDemoLevel::Awake()
 	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoCamera", CDemoCamera::Create());
 	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoModel", CDemoShaderModel::Create());
 	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoAnimModel", CDemoShaderAnimModel::Create());
-	//pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
+	pProto->Add_ProtoType("Demo_Level", "Proto_GameObject_DemoUI", CDemoUI::Create());
 	//
 	IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
-	//IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
+	IUI_Service* pUIMgr = m_pGameInstance->Get_UIMgr();
 	//
 	CGameObject* Camera = Builder::Create_Object({ "Demo_Level" ,"Proto_GameObject_DemoCamera" })
 		.Camera({ (float)g_iWinSizeX / g_iWinSizeY })
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 	//
-	//CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
-	//	.Scale({500,500})
-	//	.Offset({0,0,})
-	//	.Build("Demo_UI");
-	//
-	//pUIMgr->Add_UIObject(UI, "Demo_Level");
+	CUI_Object* UI = Builder::Create_UIObject({ "Demo_Level" ,"Proto_GameObject_DemoUI" })
+		.Scale({500,500})
+		.Offset({0,0,})
+		.Build("Demo_UI");
+	
+	pUIMgr->Add_UIObject(UI, "Demo_Level");
 	//
 
 	pObjMgr->Add_Object(Camera, { "Demo_Level","Camera_Layer" });
