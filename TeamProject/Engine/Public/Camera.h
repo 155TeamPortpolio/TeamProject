@@ -6,21 +6,16 @@
 
 NS_BEGIN(Engine)
 
+struct Lens
+{
+	_float fov{};
+	_float zNear{};
+	_float zFar{};
+	_float aspect{};
+};
+
 class ENGINE_DLL CCamera final : public CComponent
 {
-	struct Lens
-	{
-		_float fov{};
-		_float zNear{};
-		_float zFar{};
-		_float aspect{};
-	};
-
-	Lens        m_lens{};
-	CamProjType m_projType  = CamProjType::Perspective;
-	_float      m_orthoSize = 10.f;
-	Vector3     m_viewOffset{};
-
 private:
 	CCamera() = default;
 	CCamera(const CCamera& rhs) : CComponent(rhs) {}
@@ -50,12 +45,16 @@ public:
 	_bool       Lerp_FOV(_float dst, _float dt);
 
 public:
-	const Vector3& Get_ViewOffset() const { return m_viewOffset; }
+	const Vector3& Get_ViewOffset() const           { return m_viewOffset; }
 	void           Set_ViewOffset(const Vector3& v) { m_viewOffset = v; }
-	void           Clear_ViewOffset() { m_viewOffset = Vector3::Zero; }
-
-public:
+	void           Clear_ViewOffset()               { m_viewOffset = Vector3::Zero; }
 	virtual void   Render_GUI() override;
+
+private:
+	Lens        m_lens{};
+	CamProjType m_projType = CamProjType::Perspective;
+	_float      m_orthoSize = 10.f;
+	Vector3     m_viewOffset{};
 
 public:
 	static CCamera* Create();

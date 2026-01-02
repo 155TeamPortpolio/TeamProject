@@ -385,3 +385,27 @@ void CCameraMgr::Free()
     m_shakes.clear();
     __super::Free();
 }
+
+Lens CCameraMgr::Get_Lens() const
+{
+    if (!m_baseCam) return {};
+
+    Lens out{};
+    out.fov    = m_outputPose.lens.fov;
+    out.zNear  = m_outputPose.lens.nearZ;
+    out.zFar   = m_outputPose.lens.farZ;
+    out.aspect = m_outputPose.lens.aspect;
+    return out;
+}
+
+Lens CCameraMgr::Get_ShadowLens() const
+{
+    if (!m_shadowCam) return {};
+
+    Lens out{};
+    out.fov    = m_shadowCam->Get_FOV();
+    out.zNear  = m_shadowCam->Get_Near();
+    out.zFar   = m_shadowCam->Get_Far();
+    out.aspect = m_shadowCam->Get_Aspect();
+    return out;
+}

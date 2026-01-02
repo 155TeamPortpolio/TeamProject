@@ -90,6 +90,8 @@ void CButtonUI::Exit_Hover()
 
 void CButtonUI::OnClick()
 {
+    __super::OnClick();
+
     if (STATE::DISABLED == m_eState)
         return;
 

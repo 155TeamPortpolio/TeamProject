@@ -9,7 +9,10 @@ class CStateMachine;
 class CSacrifice final :
     public CEnemy
 {
-    enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_ROAD, END };
+public:
+    enum class PHASE { PHASE1, PHASE2, END };
+    enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_WHIP, END };
+
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -34,9 +37,20 @@ public:
     void DeactiveSword();
     void ActiveAxe();
     void DeactiveAxe();
-    void Idle() { m_RequestIdle = true; }
+    void ActiveWhip();
+    void DeactiveWhip();
+
+    void SetPhase(PHASE phase) { m_eCurrPhase = phase; }
+    _bool IsOverDrive()const { return m_IsOverDrive; }
+    void ActiveOverDrive() { m_IsOverDrive = true; }
+    void DeactiveOverDrive() { m_IsOverDrive = false; }
+
+    void Idle();
+    void Evade();
+    void ChangePhase();
 
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    PHASE GetCurrPhase()const { return m_eCurrPhase; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -51,6 +65,11 @@ private:
     _bool m_RequestIdle = false;
 
     _float m_fIdleElasedTime{};
-    _float m_fIdleDuration = 0.3f;
+    _float m_fIdleDuration = 0.1f;
+    _float m_fPhase1ElapseTime{};
+    _float m_fPhase1Duration = 10.f;
+
+    PHASE m_eCurrPhase = PHASE::PHASE1;
+    _bool m_IsOverDrive = false; /* Only Use Phase2 */
 };
 NS_END
