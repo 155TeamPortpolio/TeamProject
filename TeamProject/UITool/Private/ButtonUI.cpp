@@ -43,8 +43,6 @@ void CButtonUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
-    Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
-
     KeyInput_ReorderChildren();
 
     Play_Animation(dt);
@@ -54,7 +52,7 @@ void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ï¿½Ì¹ï¿½ï¿½ï¿½
+    // ÀÌ¹ÌÁö
     Render_GUI_Image(m_strTextureKey);
 
     // flip
@@ -73,12 +71,12 @@ void CButtonUI::Render_GUI()
     if(isFlip)
         Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 
-    // ï¿½Ìºï¿½Æ®
-    ImGui::SeparatorText(u8"ï¿½Ìºï¿½Æ®");
-    ImGui::InputText(u8"ï¿½Þ½ï¿½ï¿½ï¿½", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    // ÀÌº¥Æ®
+    ImGui::SeparatorText(u8"ÀÌº¥Æ®");
+    ImGui::InputText(u8"¸Þ¼¼Áö", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
-    // ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½
-    ImGui::SeparatorText(u8"ï¿½ï¿½Æ° ï¿½ï¿½ï¿½ï¿½");
+    // ¹öÆ° »óÅÂ
+    ImGui::SeparatorText(u8"¹öÆ° »óÅÂ");
     string strState = {};
     switch (m_eState)
     {

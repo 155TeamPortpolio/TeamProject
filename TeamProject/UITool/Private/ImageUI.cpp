@@ -38,8 +38,6 @@ void CImageUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
-    Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
-
     KeyInput_ReorderChildren();
 
     Play_Animation(dt);
@@ -49,7 +47,7 @@ void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // �̹���
+    // 이미지
     Render_GUI_Image(m_strTextureKey);
 
     // flip
