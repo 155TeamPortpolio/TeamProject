@@ -527,14 +527,14 @@ void CUIObject_Tool::KeyInput_ReorderChildren()
     if (!pChild)
         return;
 
-    if (pInput->Key_Down(VK_SHIFT) && pInput->Key_Tap(VK_OEM_4))    // [
+    if (pInput->Key_Tap(VK_OEM_4))    // [
     {
         if (pInput->Key_Down(VK_CONTROL))
             pChild->Set_Order_First(this);
         else
             pChild->Lower_Order(this);
     }
-    else if (pInput->Key_Down(VK_SHIFT) && pInput->Key_Tap(VK_OEM_6))   // ]
+    else if (pInput->Key_Tap(VK_OEM_6))   // ]
     {
         if (pInput->Key_Down(VK_CONTROL))
             pChild->Set_Order_Last(this);
