@@ -152,11 +152,6 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 
 	for (auto& packet : m_Packets)
 	{
-		if (!packet.bSkinning) {
-			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-				continue;
-		}
-		//���⼭ �ε��� �߰� ��������
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
