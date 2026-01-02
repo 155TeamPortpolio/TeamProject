@@ -109,6 +109,21 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 	}
 }
 
+void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
+{
+	for (_uint id : m_UpdateOrder)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->RenderHierarchy(SelectedObject, isSelected);
+	}
+}
+
 /*자식 전체 순회 -> 효율 떨어짐*/
 CGameObject* CObjectContainer::Find_ObjectByName(const string& ObjectName)
 {
@@ -174,7 +189,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 		return m_IndexByID[ObjectID];
 	}
 	_uint ObjectIndex = m_ChildrenObjects.size();
-	
+
 	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
 	{	//중간에 비어잇다면 널포인터
 		if (nullptr == m_ChildrenObjects[i]) {
@@ -217,7 +232,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	}
 	else {
 		/*레이어가 있으면*/
-		if (m_pOwner->Get_Layer()) { 
+		if (m_pOwner->Get_Layer()) {
 			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObject, m_pOwner->Get_LayerDesc());
 		}
 	}
@@ -329,78 +344,105 @@ void CObjectContainer::Dettach_Child(_uint ChildIndex)
 void CObjectContainer::Render_GUI()
 {
 	ImGui::SeparatorText("Object_Container");
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * (m_ChildrenObjects.size() + 3)) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##AudioSourceChild", ImVec2{ 0, childHeight }, true);
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * ((float)m_UpdateOrder.size() + 3.0f)) + (ImGui::GetStyle().WindowPadding.y * 2.0f);
+
+	ImGui::BeginChild("##ObjectContainerChild", ImVec2{ 0, childHeight }, true);
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
-	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
+
+	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
 	{
-		if (m_ChildrenObjects[i] == nullptr)
+		const _uint objectId = m_UpdateOrder[orderIndex];
+		if (objectId == 0)
+			continue; // Destroy에서 0 박은 슬롯
+
+		auto indexIter = m_IndexByID.find(objectId);
+		if (indexIter == m_IndexByID.end())
 			continue;
 
-		string btnName = "Delete : " + m_ChildrenObjects[i]->Get_InstanceName() + to_string(i);
+		const _uint childIndex = indexIter->second;
+		CGameObject* childObject = (childIndex < (_uint)m_ChildrenObjects.size()) ? m_ChildrenObjects[childIndex] : nullptr;
+		if (!childObject)
+			continue;
 
-		if (ImGui::Button(btnName.c_str())) {
-			Destroy_Child(i);
-		}
+		ImGui::PushID((int)objectId);
 
-		if (ImGui::IsItemHovered()) {
+		const string labelText = childObject->Get_InstanceName() + "  (ID:" + to_string(objectId) + ")";
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(labelText.c_str());
+		ImGui::SameLine();
+
+		const float spacing = 6.0f;
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Up"))
+			Set_Order_Bottom(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Down"))
+			Set_Order_Top(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Delete"))
+			Destroy_Child(childIndex);
+
+		// 툴팁
+		if (ImGui::IsItemHovered())
+		{
 			ImGui::BeginTooltip();
-			ImGui::Text(btnName.c_str());
+			ImGui::Text("Delete : %s", childObject->Get_InstanceName().c_str());
 			ImGui::EndTooltip();
 		}
+
+		ImGui::PopID();
 	}
+
 	ImGui::PopStyleVar();
 	ImGui::EndChild();
 }
 
-void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint index)
+
+void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint targetIndex)
 {
 	if (!objectPtr)
 		return;
-	
+
 	const _uint objectId = objectPtr->Get_ObjectID();
 	if (m_IndexByID.find(objectId) == m_IndexByID.end())
 		return;
 
-	auto existingIter = m_OrderIndexByID.find(objectId);
-	if (existingIter != m_OrderIndexByID.end())
+	// 1) 현재 위치 찾고 제거
+	_bool found = false;
+	for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
 	{
-		const _uint oldIndex = existingIter->second;
-
-		if (oldIndex < (_uint)m_UpdateOrder.size() && m_UpdateOrder[oldIndex] == objectId)
+		if (m_UpdateOrder[scanIndex] == objectId)
 		{
-			m_UpdateOrder.erase(m_UpdateOrder.begin() + oldIndex);
-			if (index > oldIndex) --index;
-		}
-		else
-		{
-			for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
-			{
-				if (m_UpdateOrder[scanIndex] == objectId)
-				{
-					m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
-					if (index > scanIndex) --index;
-					break;
-				}
-			}
+			found = true;
+			m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+			break;
 		}
 	}
 
-	if (index > (_uint)m_UpdateOrder.size())
-		index = (_uint)m_UpdateOrder.size();
+	if (!found)
+		return; // 없는데 삽입하면 중복 생김
 
-	m_UpdateOrder.insert(m_UpdateOrder.begin() + index, objectId);
+	// 2) 클램프 (제거 후 사이즈 기준)
+	if (targetIndex > (_uint)m_UpdateOrder.size())
+		targetIndex = (_uint)m_UpdateOrder.size();
 
+	// 3) 삽입
+	m_UpdateOrder.insert(m_UpdateOrder.begin() + targetIndex, objectId);
+
+	// 4) 맵 재빌드
 	m_OrderIndexByID.clear();
 	m_OrderIndexByID.reserve(m_UpdateOrder.size());
 	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
 		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
 }
 
-void CObjectContainer::Upper_Order(CGameObject* pObject)
+
+void CObjectContainer::Upper_Order_Children(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -418,7 +460,7 @@ void CObjectContainer::Upper_Order(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex - 1);
 }
 
-void CObjectContainer::Lower_Order(CGameObject* pObject)
+void CObjectContainer::Lower_Order_Children(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -440,7 +482,7 @@ void CObjectContainer::Lower_Order(CGameObject* pObject)
 	ReorderChildren(pObject, curIndex + 1);
 }
 
-void CObjectContainer::Set_Order_First(CGameObject* pObject)
+void CObjectContainer::Set_Order_Top(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -455,7 +497,7 @@ void CObjectContainer::Set_Order_First(CGameObject* pObject)
 	ReorderChildren(pObject, 0);
 }
 
-void CObjectContainer::Set_Order_Last(CGameObject* pObject)
+void CObjectContainer::Set_Order_Bottom(CGameObject* pObject)
 {
 	if (!pObject)
 		return;
@@ -509,6 +551,6 @@ void CObjectContainer::Free()
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();
-	 m_OrderIndexByID.clear();
-	m_UpdateOrder.clear();      
+	m_OrderIndexByID.clear();
+	m_UpdateOrder.clear();
 }
