@@ -16,6 +16,8 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
     // GUI Inspector Ã¢¿¡ ¶ç¿ò
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
+    Set_Clickable(true);
+
     return S_OK;
 }
 
@@ -37,10 +39,20 @@ void CUIObject_Tool::Render_GUI()
     Render_GUI_Animation();
 }
 
+void CUIObject_Tool::OnClick()
+{
+    auto pGuiSystem = CGameInstance::GetInstance()->Get_GUISystem();
+
+    if (!pGuiSystem->UsingUI())
+        pGuiSystem->Get_Context()->pSelectedObject = this;
+}
+
 void CUIObject_Tool::Remove_SelfFromParent()
 {
-    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel); 
+    auto pGameInstance = CGameInstance::GetInstance();
+
+    const string& strCurrentLevel = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+    const auto& objects = pGameInstance ->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
 
     for (auto& pObj : objects)
     {
