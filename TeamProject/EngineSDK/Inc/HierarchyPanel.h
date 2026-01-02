@@ -22,6 +22,8 @@ private:
 	_bool ToggleButton(const char* str_id, bool* v);
 	vector<string> ConvertObjectNameList(class CLayer* layer);
 
+public:
+	void Set_UI_Mode() { m_bShowUI = true; }
 private:
 	_bool m_bOpened = { true };
 	_float m_fPosX = {};

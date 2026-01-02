@@ -25,9 +25,8 @@ public:
 public:
     virtual bool Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     virtual _bool UsingUI() { return m_bUsingUI; }
+    virtual void Set_UIMode() override;
 
-public:
-    //void Set_HierachyMode
 private:
     void Set_Theme();
     void Set_Panel();
@@ -40,6 +39,7 @@ private:
 private:
     void Render_DebugBtn();
     void Render_CollisionBtn();
+
 private:
     bool m_bActiveGUI = {true};
     bool m_bUsingUI = {false};
@@ -49,10 +49,11 @@ private:
     vector<class CBasePanel*> m_Panels;
     ImGuiIO* m_GuiIo;
 
+    class CHierarchyPanel* m_pHierachyPanel = { nullptr };
+
 public:
     static CGUISystem* Create(const ENGINE_DESC& engine, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     virtual void Free() override;
-
 };
 
 NS_END

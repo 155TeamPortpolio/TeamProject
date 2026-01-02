@@ -120,10 +120,12 @@ void CGUISystem::Set_Theme()
 
 void CGUISystem::Set_Panel()
 {
-	m_Panels.push_back(CHierarchyPanel::Create(&m_tGuiContext));
+	m_pHierachyPanel = CHierarchyPanel::Create(&m_tGuiContext);
+	m_Panels.push_back(m_pHierachyPanel);
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CDebugBonePanel::Create(&m_tGuiContext));
+
 }
 
 void CGUISystem::Render_Frame()
@@ -202,6 +204,11 @@ bool CGUISystem::Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 	}
 
 	return ImGui_ImplWin32_WndProcHandler(hWnd, message, wParam, lParam);
+}
+
+void CGUISystem::Set_UIMode()
+{
+	m_pHierachyPanel->Set_UI_Mode();
 }
 
 void CGUISystem::Register_Panel(CBasePanel* pPanel)
