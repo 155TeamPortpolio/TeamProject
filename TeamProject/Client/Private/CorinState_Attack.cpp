@@ -17,19 +17,22 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
 
         m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
         m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
 
-    CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
-    if (pRootFSM->Get_Trigger("RushAttack"))
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
+    pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
+
+    switch (iEntryMode)
     {
+    case 1:
         m_pSubStateMachine->Set_DefaultState("RushAttack");
-    }
-    else
-    {
+        break;
+    default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
+        break;
     }
-
     __super::Enter(pOwner);
 }
 
@@ -71,18 +74,34 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
                 }
             }
         }
-    }
-}
-
-void CCorinState_Attack::Exit(CCorin* pOwner)
-{
-    if (m_pSubStateMachine)
-    {
-        IHState<CCorin>* pNormalAttack = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_State("NormalAttack"));
-        if (pNormalAttack)
+        else if (strCurrentSub == "RushAttack")
         {
-            CCorinState_NormalAttack* pNA = static_cast<CCorinState_NormalAttack*>(pNormalAttack);
-            // 콤보 인덱스 리셋 로직 (Corin용 클래스에 맞게 수정)
+            CCorinState_RushAttack* pRushAttack =
+                static_cast<CCorinState_RushAttack*>(m_pSubStateMachine->Get_State("RushAttack"));
+
+            if (pRushAttack && pRushAttack->Get_SubStateMachine())
+            {
+                string strRushSub = pRushAttack->Get_SubStateMachine()->Get_CurrentStateName();
+
+                if (strRushSub == "Rush_End")
+                {
+                    IBaseState<CCorin>* pRushEnd =
+                        pRushAttack->Get_SubStateMachine()->Get_CurrentState();
+
+                    if (pRushEnd && (pRushEnd->Is_AnimEnd() || pRushEnd->Get_AnimProgress() >= 1.f))
+                    {
+                        m_fAnimProgress = 1.f;
+                    }
+                    else
+                    {
+                        m_fAnimProgress = 0.f;
+                    }
+                }
+                else
+                {
+                    m_fAnimProgress = 0.f;
+                }
+            }
         }
     }
 }
@@ -123,6 +142,31 @@ _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strSta
                 {
                     // 애니메이션 끝났거나 입력이 있으면 허용
                     if (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input())
+                        return true;
+                }
+                return false;
+            }
+        }
+        else if (strCurrentSub == "RushAttack")
+        {
+            CCorinState_RushAttack* pRushAttack =
+                static_cast<CCorinState_RushAttack*>(m_pSubStateMachine->Get_State("RushAttack"));
+
+            if (pRushAttack && pRushAttack->Get_SubStateMachine())
+            {
+                string strRushSub = pRushAttack->Get_SubStateMachine()->Get_CurrentStateName();
+                IBaseState<CCorin>* pRushEnd =
+                    pRushAttack->Get_SubStateMachine()->Get_CurrentState();
+
+                if (strRushSub != "Rush_End")
+                    return false;
+
+                if (!pRushEnd)
+                    return true;
+
+                if (strState == "Idle")
+                {
+                    if (pRushEnd->Is_AnimEnd() || pOwner->Is_Input())
                         return true;
                 }
                 return false;

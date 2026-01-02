@@ -148,7 +148,8 @@ void CCorin::Update_States()
 				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
 				if (!bInMoveEnd && pMove->Get_SubStateMachine()->Get_CurrentStateName() == "Run" && m_bIsAttack)
 				{
-					m_pStateMachine->Set_Trigger("RushAttack");
+					m_pStateMachine->Set_Int("AttackEntryMode", 1);
+					m_pStateMachine->Set_Trigger("Attack");
 				}
 			}
 		}
@@ -217,6 +218,7 @@ void CCorin::Update_States()
 			string strCurrent = m_pStateMachine->Get_CurrentStateName();
 			if (strCurrent == "Idle")
 			{
+				m_pStateMachine->Set_Int("AttackEntryMode", 0);
 				m_pStateMachine->Set_Trigger("Attack");
 			}
 			else if (strCurrent == "Attack")
@@ -273,21 +275,18 @@ HRESULT CCorin::Initialize_Transitions()
 	// Idle <-> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "IsMove");
-
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
 
-	// Idle -> Attack
+	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "Attack");
-	m_pStateMachine->Register_AnyStateTransition("Attack",
-		CStateMachine<CCorin>::CONDITION_TRIGGER, "RushAttack");
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "AttackEnd");
 
-	// AnyState ¡æ Evade
+	// Evade
 	m_pStateMachine->Register_AnyStateTransition("Evade",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToEvade");
 
