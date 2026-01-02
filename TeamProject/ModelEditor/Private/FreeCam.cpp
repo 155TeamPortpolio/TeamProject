@@ -12,6 +12,7 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
     SyncRotation();
+    Get_Component<CCamera>()->Set_Far(500);
     return S_OK;
 }
 
