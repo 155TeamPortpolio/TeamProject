@@ -53,6 +53,7 @@ void CCharacter::Update(_float dt)
 {
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
+	Update_Evade(dt);
 	if(m_bIsRotating)	Update_Rotation(dt);
 }
 
@@ -80,6 +81,25 @@ void CCharacter::Rotate(_vector3 vDirection)
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
+}
+
+_bool CCharacter::Can_Evade() const
+{
+	if (m_fEvadeCooldown > 0.f) return false;
+	return true;
+}
+
+void CCharacter::Use_Evade()
+{
+	++m_iEvadeCount;
+	m_fEvadeTimer = EVADE_COOLDOWN;
+
+	if (m_iEvadeCount >= EVADE_MAX_COUNT)
+	{
+		m_fEvadeCooldown = EVADE_COOLDOWN;
+		m_iEvadeCount = 0;
+		m_fEvadeTimer = 0.f;
+	}
 }
 
 void CCharacter::Update_Input(_float dt)
@@ -126,6 +146,29 @@ void CCharacter::Update_Rotation(_float dt)
 
 	m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
 	m_pTransform->Set_Quaternion(m_qCurrentRot);
+}
+
+void CCharacter::Update_Evade(_float dt)
+{
+	if (m_fEvadeCooldown > 0.f)
+	{
+		m_fEvadeCooldown -= dt;
+		if (m_fEvadeCooldown <= 0.f)
+		{
+			m_fEvadeCooldown = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
+
+	if (m_fEvadeTimer > 0.f)
+	{
+		m_fEvadeTimer -= dt;
+		if (m_fEvadeTimer <= 0.f)
+		{
+			m_fEvadeTimer = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
 }
 
 void CCharacter::Free()
