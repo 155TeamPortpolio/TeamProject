@@ -5,15 +5,15 @@ NS_BEGIN(Client)
 
 class CCorin;
 
-class CCorinState_Dash : public IBaseState<CCorin>
+class CCorinState_Evade : public IHState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
     virtual void Update(CCorin* pOwner, _float dt) override;
-    virtual void Exit(CCorin* pOwner) override {}
+    virtual void Exit(CCorin* pOwner) override;
 
 public:
-    static CCorinState_Dash* Create() { return new CCorinState_Dash(); }
+    static CCorinState_Evade* Create() { return new CCorinState_Evade(); }
     virtual void Free() override { __super::Free(); }
 };
 

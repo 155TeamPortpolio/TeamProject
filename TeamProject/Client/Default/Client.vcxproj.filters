@@ -316,6 +316,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
       <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
+      <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -624,6 +627,12 @@
     <ClInclude Include="..\Public\CorinState_Dash.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Backstep.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -923,6 +932,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Dash.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Evade.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Backstep.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

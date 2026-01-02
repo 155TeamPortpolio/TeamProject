@@ -130,8 +130,9 @@ void CCharacter::Update_Input(_float dt)
 	}
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
-	m_bIsInput = m_bIsAttack || m_bIsMove;
+	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 }
 
 void CCharacter::Update_Rotation(_float dt)

@@ -61,6 +61,15 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Attack::Exit(CCorin* pOwner)
 {
+    if (m_pSubStateMachine)
+    {
+        IHState<CCorin>* pNormalAttack = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_State("NormalAttack"));
+        if (pNormalAttack)
+        {
+            CCorinState_NormalAttack* pNA = static_cast<CCorinState_NormalAttack*>(pNormalAttack);
+            // 콤보 인덱스 리셋 로직 (Corin용 클래스에 맞게 수정)
+        }
+    }
 }
 
 _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
