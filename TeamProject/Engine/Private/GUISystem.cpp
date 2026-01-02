@@ -163,15 +163,14 @@ void CGUISystem::GUI_Begin()
 
 void CGUISystem::Render_GUI()
 {
-	if (!m_bActiveGUI) return;
 	GUI_Begin();
-
+	Render_Frame();
+	if (!m_bActiveGUI) { GUI_End();  return; };
 	for (auto& panel : m_Panels) {
 		if (panel->Get_Active())
 			panel->Render_GUI();
 	}
 
-	Render_Frame();
 	Render_CollisionBtn();
 #ifdef _USING_GUI
 	CGameInstance::GetInstance()->Get_RenderSystem()->Render_GUI();
@@ -237,8 +236,9 @@ void CGUISystem::Test()
 
 void CGUISystem::Render_DebugBtn()
 {
-	ImGui::Begin("Render TargetView");
-	if (ImGui::Button("Render_Debug")) {
+	ImGui::SetNextWindowPos(ImVec2(750, 5), ImGuiCond_Always);
+	ImGui::Begin("##Render_Debug_View",nullptr,ImGuiWindowFlags_NoDecoration);
+	if (ImGui::Button("RenderDebug")) {
 		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
 		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
 	}
