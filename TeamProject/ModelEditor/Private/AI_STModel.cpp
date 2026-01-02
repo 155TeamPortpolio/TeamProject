@@ -65,6 +65,7 @@ void CAI_STModel::Render_GUI()
 
 	if (data)
 	{
+		DrawToggleButton("Clear Normal Mesh", data->Get_NormalIndex());
 		DrawToggleButton("Clear Proxy Mesh", data->Get_ProxyIndex());
 		ImGui::SameLine();
 		DrawToggleButton("Clear LOD0 Mesh", data->Get_LOD0_Index());
