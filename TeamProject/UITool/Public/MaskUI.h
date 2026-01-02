@@ -18,8 +18,8 @@ public:
     virtual void    Render_GUI()                             override;
 
 public:
-    virtual void    Save(nlohmann::ordered_json& data)       override;
-    virtual void    Load(const nlohmann::ordered_json& data) override;
+    virtual void    Save(nlohmann::ordered_json& data)       override{}
+    virtual void    Load(const nlohmann::ordered_json& data) override{}
 
 public:
     inline static const string m_strTypeTag = "MaskUI";
@@ -27,7 +27,7 @@ public:
 
 private:
     string m_strTextureKey{};
-    _float m_maskThreshold = 0.1f; 
+    _bool  m_previewVisible = true;
 
 public:
     static  CGameObject* Create();

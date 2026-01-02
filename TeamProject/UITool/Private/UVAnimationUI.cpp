@@ -51,8 +51,6 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
-    Set_Priority(1);
-
     m_iCount++;
 
     return S_OK;

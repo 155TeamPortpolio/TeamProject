@@ -19,7 +19,7 @@ public:
 	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Save(nlohmann::ordered_json& data)       override;
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
