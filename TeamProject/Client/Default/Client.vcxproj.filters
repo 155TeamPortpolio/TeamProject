@@ -319,6 +319,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
       <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
+      <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -633,6 +636,9 @@
     <ClInclude Include="..\Public\CorinState_Backstep.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_RushAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -938,6 +944,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Backstep.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

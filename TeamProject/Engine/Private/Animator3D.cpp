@@ -1025,29 +1025,39 @@ void CAnimator3D::GUI_SelectAnim()
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	ImVec2 padding = ImGui::GetStyle().FramePadding;
 
 	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
+
 	for (int i = 0; i < m_pAnimClips.size(); i++)
 	{
 		bool isSelected = (m_iCurrentClipIndex == i);
+		string animName = m_pAnimClips[i]->Get_Name();
+
 		ImGui::PushID((int)i);
 
-		if (ImGui::Selectable(m_pAnimClips[i]->Get_Name().c_str(), isSelected, 0, ImVec2{ childWidth * 0.50f, textLineHeight }))
+		if (ImGui::Selectable(("##" + animName).c_str(), isSelected, 0, ImVec2{ 0, textLineHeight }))
 		{
 			Change_Animation(i)
 				.Loop(true)
 				.Apply();
 		}
+
+		ImVec2 itemMin = ImGui::GetItemRectMin();
+		ImVec2 itemMax = ImGui::GetItemRectMax();
+
+		ImVec2 textSize = ImGui::CalcTextSize(animName.c_str());
+		ImVec2 textPos = ImVec2(itemMax.x - textSize.x - padding.x, itemMin.y + padding.y);
+
+		// 텍스트 그리기
+		ImGui::GetWindowDrawList()->AddText(textPos, ImGui::GetColorU32(ImGuiCol_Text), animName.c_str());
+
 		ImGui::PopID();
 
-		ImGui::PushID(("##" + m_pAnimClips[i]->Get_Name() + "Loop").c_str());
-		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(ImGui::GetStyle().FramePadding.x, 0));
 		if (ImGui::IsItemHovered())
 		{
-			ImGui::SetTooltip("%s", m_pAnimClips[i]->Get_Name().c_str());
+			ImGui::SetTooltip("%s", animName.c_str());
 		}
-		ImGui::PopStyleVar();
-		ImGui::PopID();
 
 		if (isSelected) {
 			ImGui::SetItemDefaultFocus();

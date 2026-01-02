@@ -136,8 +136,7 @@ void CCorin::Update_States()
 
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
 	{
-		CCorinState_Move* pMove =
-			static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
+		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
 		if (pMove && pMove->Get_SubStateMachine())
 		{
 			IHState<CCorin>* pMoveType =
@@ -147,6 +146,10 @@ void CCorin::Update_States()
 				IBaseState<CCorin>* pAnim =
 					pMoveType->Get_SubStateMachine()->Get_CurrentState();
 				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
+				if (!bInMoveEnd && pMove->Get_SubStateMachine()->Get_CurrentStateName() == "Run" && m_bIsAttack)
+				{
+					m_pStateMachine->Set_Trigger("RushAttack");
+				}
 			}
 		}
 	}
@@ -166,6 +169,14 @@ void CCorin::Update_States()
 				{
 					IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
 					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
+				}
+			}
+			else if (strSub == "RushAttack")
+			{
+				IHState<CCorin>* pRush = dynamic_cast<IHState<CCorin>*>(pAttack->Get_SubStateMachine()->Get_State("RushAttack"));
+				if (pRush)
+				{
+					bInAttackEnd = (pRush->Get_AnimProgress() >= 1.f);
 				}
 			}
 		}
@@ -269,6 +280,8 @@ HRESULT CCorin::Initialize_Transitions()
 	// Idle -> Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "Attack");
+	m_pStateMachine->Register_AnyStateTransition("Attack",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "RushAttack");
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
