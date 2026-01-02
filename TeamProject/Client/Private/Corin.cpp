@@ -212,20 +212,20 @@ void CCorin::Update_States()
 	else
 	{
 		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
-		if (m_bIsAttack)
+		if (m_bIsAttack)	// 공격입력했을때
 		{
 			string strCurrent = m_pStateMachine->Get_CurrentStateName();
-			if (strCurrent == "Idle")
-			{	
+			if (strCurrent == "Idle")	
+			{	// Idle에서는 NormalAttack로 전환
 				m_pStateMachine->Set_Int("AttackEntryMode", 0);
 				m_pStateMachine->Set_Trigger("Attack");
 			}
 			else if (strCurrent == "Move")
-			{
-				//m_pStateMachine->Get_CurrentState()->
+			{	// Move일때는 Move의 서브 상태를 가져와서 Walk인경우 EntryMode 0, Run인경우 1
+				// AttackEntryMode 0 : 노말어택, AttackEntryMode 1 : 러쉬어택
 			}
 			else if (strCurrent == "Attack")
-			{
+			{	// NormalAttack중일때는 콤보어택 
 				CCorinState_Attack* pAttackState = static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 				if (pAttackState && pAttackState->Get_SubStateMachine())
 				{
