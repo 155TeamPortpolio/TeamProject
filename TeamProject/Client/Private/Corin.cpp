@@ -135,16 +135,14 @@ void CCorin::Update_States()
 	_bool bInAttackEnd = false;
 
 	if (m_pStateMachine->Get_CurrentStateName() == "Move")
-	{
+	{	// Run중에 공격상태로 진입
 		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
 		if (pMove && pMove->Get_SubStateMachine())
 		{
-			IHState<CCorin>* pMoveType =
-				dynamic_cast<IHState<CCorin>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
+			IHState<CCorin>* pMoveType = dynamic_cast<IHState<CCorin>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
 			if (pMoveType && pMoveType->Has_SubStateMachine())
 			{
-				IBaseState<CCorin>* pAnim =
-					pMoveType->Get_SubStateMachine()->Get_CurrentState();
+				IBaseState<CCorin>* pAnim = pMoveType->Get_SubStateMachine()->Get_CurrentState();
 				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
 				if (!bInMoveEnd && pMove->Get_SubStateMachine()->Get_CurrentStateName() == "Run" && m_bIsAttack)
 				{
@@ -155,17 +153,16 @@ void CCorin::Update_States()
 		}
 	}
 	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
-	{
-		CCorinState_Attack* pAttack =
-			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+	{	// 공격이 끝났는지(공격의 End 애니매이션중인지) 확인
+		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 		if (pAttack && pAttack->Get_SubStateMachine())
 		{
 			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
-			if (strSub == "NormalAttack")
+			if (strSub == "NormalAttack")	
 			{
-				CCorinState_NormalAttack* pNormal =
-					static_cast<CCorinState_NormalAttack*>(
-						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+				CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
+						pAttack->Get_SubStateMachine()->Get_State("NormalAttack")
+					);
 				if (pNormal && pNormal->Get_SubStateMachine())
 				{
 					IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
@@ -174,20 +171,23 @@ void CCorin::Update_States()
 			}
 			else if (strSub == "RushAttack")
 			{
-				IHState<CCorin>* pRush = dynamic_cast<IHState<CCorin>*>(pAttack->Get_SubStateMachine()->Get_State("RushAttack"));
-				if (pRush)
+				IHState<CCorin>* pRush = dynamic_cast<IHState<CCorin>*>(
+					pAttack->Get_SubStateMachine()->Get_State("RushAttack")
+					);
+				if (pRush && pRush->Get_SubStateMachine())
 				{
-					bInAttackEnd = (pRush->Get_AnimProgress() >= 1.f);
+					IBaseState<CCorin>* pRushSub = pRush->Get_SubStateMachine()->Get_CurrentState();
+					bInAttackEnd = (pRushSub && pRushSub->Get_Tag() == "End");
 				}
 			}
 		}
 	}
 
-	// AttackEnd 파라미터 설정
+	// AttackEnd 파라미터 업데이트
+	// End 애니매이션이 끝까지 재생되었으면 AttackEnd = true
 	if (bInAttackEnd)
 	{
-		CCorinState_Attack* pAttack =
-			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 		if (pAttack)
 		{
 			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
@@ -199,16 +199,15 @@ void CCorin::Update_States()
 		m_pStateMachine->Set_Bool("AttackEnd", false);
 	}
 
-	// Evade 트리거
+	// Evade 트리거 업데이트
 	if (m_bIsEvade)
 		m_pStateMachine->Set_Trigger("ToEvade");
 
-	// End 캔슬 처리
+
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
-	{
+	{	// End 재생중일때 인풋이 들어오면 캔슬
 		m_pStateMachine->Set_Bool("IsMove", false);
-		if (bInAttackEnd)
-			m_pStateMachine->Set_Bool("AttackEnd", true);
+		if (bInAttackEnd) m_pStateMachine->Set_Bool("AttackEnd", true);
 	}
 	else
 	{
@@ -217,21 +216,24 @@ void CCorin::Update_States()
 		{
 			string strCurrent = m_pStateMachine->Get_CurrentStateName();
 			if (strCurrent == "Idle")
-			{
+			{	
 				m_pStateMachine->Set_Int("AttackEntryMode", 0);
 				m_pStateMachine->Set_Trigger("Attack");
 			}
+			else if (strCurrent == "Move")
+			{
+				//m_pStateMachine->Get_CurrentState()->
+			}
 			else if (strCurrent == "Attack")
 			{
-				CCorinState_Attack* pAttackState =
-					static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
+				CCorinState_Attack* pAttackState = static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
 				if (pAttackState && pAttackState->Get_SubStateMachine())
 				{
 					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
 					{
-						CCorinState_NormalAttack* pNormal =
-							static_cast<CCorinState_NormalAttack*>(
-								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+						CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
+								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack")
+							);
 						if (pNormal && pNormal->Get_SubStateMachine())
 							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
 					}

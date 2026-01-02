@@ -31,7 +31,7 @@ void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Rush")
-        .Speed(1.f)
+        .Speed(2.f)
         .Apply();
 }
 
