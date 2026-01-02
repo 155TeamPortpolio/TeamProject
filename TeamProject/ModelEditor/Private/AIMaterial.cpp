@@ -276,7 +276,7 @@ void CAIMaterial::Render_MaterialAdd()
 			CTexture* pTexture = rm->Load_Texture(G_GlobalLevelKey, fileName);
 			if (!pTexture)
 			{
-				ImGui::TextUnformatted("Failed to load texture.");
+				ImGui::TextUnformatted("Failed to load texture.");  
 			}
 			else
 			{
