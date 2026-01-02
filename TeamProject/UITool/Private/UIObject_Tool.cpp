@@ -31,6 +31,9 @@ void CUIObject_Tool::Awake()
 
 void CUIObject_Tool::Render_GUI()
 {
+    if (auto pContainer = Get_Component<CObjectContainer>())
+        pContainer->Render_GUI();
+
     Render_GUI_Property();
 
     Render_GUI_Layout();
@@ -529,20 +532,15 @@ void CUIObject_Tool::KeyInput_ReorderChildren()
     if (!pChild)
         return;
 
-    if (pInput->Key_Tap(VK_OEM_4))    // [
+    if (pInput->Key_Tap('L'))    // [
     {
-        if (pInput->Key_Down(VK_CONTROL))
-            pChild->Set_Order_First(this);
-        else
-            pChild->Lower_Order(this);
+        pChild->Lower_Order(this);
     }
-    else if (pInput->Key_Tap(VK_OEM_6))   // ]
-    {
-        if (pInput->Key_Down(VK_CONTROL))
-            pChild->Set_Order_Last(this);
-        else
-            pChild->Upper_Order(this);
+    else if (pInput->Key_Tap('U'))   // ]
+    { 
+        pChild->Upper_Order(this);
     }
+
 }
 
 _float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
