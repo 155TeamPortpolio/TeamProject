@@ -51,6 +51,10 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 	}
 
 	Resize_Layer(1);
+	m_AnimLayers[0].BaseLayer = true;
+	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;
+	m_AnimLayers[0].fLayerWeight = 1.f;
+	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
 	return S_OK;
 }
