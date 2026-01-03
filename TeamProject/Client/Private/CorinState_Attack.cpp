@@ -21,8 +21,6 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
 
-    pOwner->Get_StateMachine()->Set_Bool("AttackEnd", false);   // ÃÊ±âÈ­
-
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
 
@@ -54,27 +52,3 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
         }
     }
 }
-
-//_bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
-//{
-//    if (strState == "Evade")
-//        return true;
-//
-//    if (strState != "Attack")
-//    {
-//        if (!m_pSubStateMachine) return true;
-//        IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
-//            m_pSubStateMachine->Get_CurrentState()
-//            );
-//
-//        if (!pAttackType) return true;
-//        if (!pAttackType->Is_EndState()) return false;
-//        if (strState == "Idle")
-//        {
-//            IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
-//            if (pEnd && (pEnd->Is_AnimEnd() || pOwner->Is_Input())) return true;
-//        }
-//        return false;
-//    }
-//    return true;
-//}

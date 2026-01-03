@@ -180,13 +180,6 @@ void CCorinState_Attack_End::Enter(CCorin* pOwner)
         .Speed(1.2f)
         .Apply();
 }
-void CCorinState_Attack_End::Update(CCorin* pOwner, _float dt)
-{
-    if (pOwner->Is_Input())
-    {
-        m_fAnimProgress = 1.f;
-    }
-}
 #pragma endregion
 
 

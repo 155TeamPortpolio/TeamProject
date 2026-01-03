@@ -61,11 +61,3 @@ void CCorinState_Run_End::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_End")
         .Apply();
 }
-
-void CCorinState_Run_End::Update(CCorin* pOwner, _float dt)
-{
-    if (pOwner->Is_Input())
-    {
-        m_fAnimProgress = 1.f;
-    }
-}
