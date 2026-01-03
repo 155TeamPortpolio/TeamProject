@@ -60,11 +60,11 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     float fElipson = 0.00001f;
     
     /* Diffuse */
-    Out.vDiffuseEffect.rgb = vDiffuseEffectDesc.rgb;
+    Out.vDiffuseEffect.rgb = vDiffuseEffectDesc.rgb / max(vDiffuseEffectDesc.a, fElipson);
     Out.vDiffuseEffect.a = saturate(1.f - fRevealage);
     
     /* Bloom */
-    Out.vBloomEffect.rgb = vBloomEffectDesc.rgb;
+    Out.vBloomEffect.rgb = vBloomEffectDesc.rgb / max(vBloomEffectDesc.a, fElipson);
     Out.vBloomEffect.a = saturate(1.f - fRevealage);
     
     return Out;

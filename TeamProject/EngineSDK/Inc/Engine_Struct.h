@@ -398,6 +398,9 @@ namespace Engine
 		_float4 vStartColor{};
 		_float4 vEndColor{};
 
+		/* Life Time Alpha */
+		_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
+
 		/*Texture Sheet Animation*/
 		_bool isParticleAnimated = false;
 		_bool isRandomFrameIndex = false;

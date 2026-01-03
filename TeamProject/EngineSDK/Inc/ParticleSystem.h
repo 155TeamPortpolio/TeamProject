@@ -78,6 +78,9 @@ public:
 		/*Life Time Color*/
 		_float4 vStartColor{};
 		_float4 vEndColor{};
+		
+		/*Life Time Alpha*/
+		_float4 vAlphaKey{};
 
 		/*Texture Sheet Animation*/
 		_uint isAnimated{};
@@ -203,6 +206,7 @@ private:
 	LIFE_TIME_VELOCITY m_LifeTimeVelocity{};
 	LIFE_TIME_SIZE m_LifeTimeSize{};
 	LIFE_TIME_COLOR m_LifeTimeColor{};
+	LIFE_TIME_ALPHA m_LifeTimeAlpha{};
 	TEXTURE_SHEET_ANIMATION m_TextureSheetAnimation{};
 	NOISE m_Noise{};
 

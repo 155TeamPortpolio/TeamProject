@@ -80,6 +80,11 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartColor.z = json.at("start_color").at("z").get<_float>();
 	node.vStartColor.w = json.at("start_color").at("w").get<_float>();
 
+	node.vAlphaKey.x = json.at("alpha_key").at("x").get<_float>();
+	node.vAlphaKey.y = json.at("alpha_key").at("y").get<_float>();
+	node.vAlphaKey.z = json.at("alpha_key").at("z").get<_float>();
+	node.vAlphaKey.w = json.at("alpha_key").at("w").get<_float>();
+
 	node.vEndColor.x = json.at("end_color").at("x").get<_float>();
 	node.vEndColor.y = json.at("end_color").at("y").get<_float>();
 	node.vEndColor.z = json.at("end_color").at("z").get<_float>();

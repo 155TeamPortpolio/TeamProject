@@ -60,6 +60,9 @@ cbuffer CBFrame : register(b0)
     float4 vStartColor;
     float4 vEndColor;
     
+    /*Life Time Alpha*/
+    float4 vAlphaKey;
+    
     /*Texture Sheet Animation*/
     uint IsAnimated;
     uint iMaxFrameIndex;

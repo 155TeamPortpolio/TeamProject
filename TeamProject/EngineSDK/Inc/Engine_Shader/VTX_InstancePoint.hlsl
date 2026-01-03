@@ -226,6 +226,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float3 vColor = vColorDesc.rgb;
     float fAlpha = vColorDesc.a;
     vColor = lerp(In.vColor.rgb, vColor, fAlpha);
+    fAlpha *= In.vColor.a;
 
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

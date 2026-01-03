@@ -98,6 +98,8 @@ void CParticleNode_Edit::Play()
 	node.vStartSpeed = m_vStartSpeed;
 	node.vStartLifeTime = m_vStartLifeTime;
 	node.vStartSize = m_vStartSize;
+
+	node.SpawnShape = ENUM(m_eSpawnShape);
 	node.vCenter = m_vCenter;
 	node.vHalfBox = m_vHalfBox;
 	node.fRadius = m_fRaidus;
@@ -170,6 +172,11 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_vStartColor.z = json.at("start_color").at("z").get<_float>();
 	m_vStartColor.w = json.at("start_color").at("w").get<_float>();
 
+	m_vAlphaKey.x = json.at("alpha_key").at("x").get<_float>();
+	m_vAlphaKey.y = json.at("alpha_key").at("y").get<_float>();
+	m_vAlphaKey.z = json.at("alpha_key").at("z").get<_float>();
+	m_vAlphaKey.w = json.at("alpha_key").at("w").get<_float>();
+
 	m_vEndColor.x = json.at("end_color").at("x").get<_float>();
 	m_vEndColor.y = json.at("end_color").at("y").get<_float>();
 	m_vEndColor.z = json.at("end_color").at("z").get<_float>();
@@ -239,6 +246,9 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		/* Life Time Color */
 		{"start_color",{{"x",m_vStartColor.x},{"y",m_vStartColor.y},{"z",m_vStartColor.z},{"w",m_vStartColor.w}}},
 		{"end_color",{{"x",m_vEndColor.x},{"y",m_vEndColor.y},{"z",m_vEndColor.z},{"w",m_vEndColor.w}}},
+
+		/* Life Time Alpha */
+		{"alpha_key",{{"x",m_vAlphaKey.x},{"y",m_vAlphaKey.y},{"z",m_vAlphaKey.z},{"w",m_vAlphaKey.w}}},
 
 		/* Texture Sheet Animation */
 		{"particle_animated",m_IsParticleAnimated},
@@ -355,6 +365,14 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		}
 	}
 
+	if (ImGui::CollapsingHeader("Life Time Alpha"))
+	{
+		isDirty |= ImGui::DragFloat("Alpha Start", &m_vAlphaKey.x, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 1/3", &m_vAlphaKey.y, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 2/3", &m_vAlphaKey.z, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha End", &m_vAlphaKey.w, 1.f, 0.f, 1.f);
+	}
+
 	if (ImGui::CollapsingHeader("Texture Sheet Animation"))
 	{
 		isDirty |= ImGui::Checkbox("Is Random Frame Index", &m_IsRandomFrameIndex);
@@ -400,6 +418,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		
 		node.vStartColor = m_vStartColor;
 		node.vEndColor = m_vEndColor;
+
+		node.vAlphaKey = m_vAlphaKey;
 
 		node.isRandomFrameIndex = m_IsRandomFrameIndex;
 		node.isParticleAnimated = m_IsParticleAnimated;
