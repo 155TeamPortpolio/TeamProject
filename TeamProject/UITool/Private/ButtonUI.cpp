@@ -38,11 +38,7 @@ void CButtonUI::Awake()
 
 void CButtonUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-
-    KeyInput_ReorderChildren();
-
-    Play_Animation(dt);
+    __super::Update(dt);
 }
 
 void CButtonUI::Render_GUI()

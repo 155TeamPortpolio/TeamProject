@@ -29,6 +29,13 @@ void CUIObject_Tool::Awake()
     Set_Clickable(true);
 }
 
+void CUIObject_Tool::Update(_float dt)
+{
+    KeyInput_ReorderChildren();
+
+    Play_Animation(dt);
+}
+
 void CUIObject_Tool::Render_GUI()
 {
     if (auto pContainer = Get_Component<CObjectContainer>())

@@ -61,15 +61,10 @@ void CTextUI::Priority_Update(_float dt)
 
 void CTextUI::Update(_float dt)
 {
-    if (!m_isAlive)
-        return;
+    __super::Update(dt);
 
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     Get_Component<CTextSlot>()->Push_Text();
-
-    KeyInput_ReorderChildren();
-
-    Play_Animation(dt);
 }
 
 void CTextUI::Late_Update(_float dt)

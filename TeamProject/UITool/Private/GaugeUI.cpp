@@ -37,11 +37,7 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
 
 void CGaugeUI::Update(_float dt)
 {
-	if (!m_isAlive) return;
-
-    KeyInput_ReorderChildren();
-
-    Play_Animation(dt);
+    __super::Update(dt);
 }
 
 void CGaugeUI::Render_GUI()

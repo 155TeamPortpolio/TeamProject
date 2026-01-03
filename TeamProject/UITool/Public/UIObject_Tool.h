@@ -19,6 +19,7 @@ protected:
 public:
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
 	virtual void Awake() override;
+	virtual void Update(_float dt) override;
 	virtual void Render_GUI() override;
 
 public:

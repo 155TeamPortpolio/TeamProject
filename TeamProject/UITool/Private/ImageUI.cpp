@@ -33,11 +33,7 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
 
 void CImageUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-
-    KeyInput_ReorderChildren();
-
-    Play_Animation(dt);
+    __super::Update(dt);
 }
 
 void CImageUI::Render_GUI()

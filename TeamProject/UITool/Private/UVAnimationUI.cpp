@@ -16,25 +16,6 @@ HRESULT CUVAnimationUI::Initialize_Prototype()
 
 HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 {
-    //__super::Initialize(pArg);
-
-    //Set_OriginTexSize(true);
-
-    //auto sprite = Get_Component<CSprite2D>();
-
-    //sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    //sprite->ChangePass("UVAnimation");
-    //sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
-
-    //m_strTextureKey = "empty.png";
-    //ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
-
-    //sprite->ChangePass("UVAnimation");
-
-    //m_iCount++;
-
-    //return S_OK;
-
     __super::Initialize(pArg);
 
     Set_OriginTexSize(true);
@@ -55,11 +36,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
 void CUVAnimationUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-
-    KeyInput_ReorderChildren();
-
-    Play_Animation(dt);
+    __super::Update(dt);
 
     m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;
     m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;

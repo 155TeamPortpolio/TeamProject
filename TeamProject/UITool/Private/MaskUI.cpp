@@ -31,8 +31,7 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 
 void CMaskUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-    Play_Animation(dt);
+    __super::Update(dt);
 }
 
 void CMaskUI::Render_GUI()

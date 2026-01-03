@@ -46,11 +46,9 @@ void CCanvasPanel::Priority_Update(_float dt)
 
 void CCanvasPanel::Update(_float dt)
 {
-    if (!m_isAlive)  return;
+    __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-    Play_Animation(dt);
 }
 
 void CCanvasPanel::Late_Update(_float dt)
