@@ -18,6 +18,8 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
     auto sprite = Get_Component<CSprite2D>();
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
 
+    sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
@@ -46,7 +48,34 @@ void CMaskUI::Render_GUI()
     if (ImGui::Checkbox("Preview Visible", &m_previewVisible))
         sprite->ChangePass(m_previewVisible ? "UI_StencilWritePreview" : "UI_StencilWrite");
 
+    if (ImGui::DragFloat("Preview Alpha", &m_previewAlpha, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+
     ImGui::TextDisabled(m_previewVisible ? "Pass: UI_StencilWritePreview" : "Pass: UI_StencilWrite");
+}
+
+void CMaskUI::Save(nlohmann::ordered_json& data)
+{
+    __super::Save(data);
+
+    data["typeTag"] = m_strTypeTag;
+    data["mask.textureKey"] = m_strTextureKey;
+}
+
+void CMaskUI::Load(const nlohmann::ordered_json& data)
+{
+    __super::Load(data);
+
+    m_strTextureKey = data.value("mask.textureKey", "empty.png");
+
+    ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
+
+    m_previewVisible = true;
+    m_previewAlpha = 0.5f;
+
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
+    sprite->ChangePass("UI_StencilWritePreview");
 }
 
 CGameObject* CMaskUI::Create()

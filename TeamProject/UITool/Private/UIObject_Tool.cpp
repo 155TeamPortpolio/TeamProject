@@ -86,41 +86,39 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
-    // 공통 데이터 저장
     data["instanceName"] = m_InstanceName;
 
-    auto& transformJson           = data["transform"];
-    transformJson["anchor"]       = ENUM(m_eAnchor);
+    auto& transformJson = data["transform"];
+    transformJson["anchor"] = ENUM(m_eAnchor);
     transformJson["anchorOffset"] = { m_vAnchorOffset.x, m_vAnchorOffset.y };
-    transformJson["size"]         = { m_vSize.x,  m_vSize.y };
-    transformJson["scale"]        = { m_vScale.x, m_vScale.y};
-    transformJson["pivot"]        = { m_vPivot.x, m_vPivot.y };
-    transformJson["radian"]       = m_fRadian;
-    
-    data["color"]   = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
-    data["pass"]    = Get_Component<CSprite2D>()->Get_PassConstant();
+    transformJson["size"] = { m_vSize.x, m_vSize.y };
+    transformJson["scale"] = { m_vScale.x, m_vScale.y };
+    transformJson["pivot"] = { m_vPivot.x, m_vPivot.y };
+    transformJson["radian"] = m_fRadian;
+
+    data["color"] = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
+    data["pass"] = m_basePass;
     data["useMask"] = m_useMask;
 
-    // 애니메이션 데이터 저장
     auto& animClipsJson = data["animClips"];
-    animClipsJson       = json::array();
+    animClipsJson = json::array();
     for (const auto& clip : m_AnimClips)
     {
         json clipData{};
-        clipData["name"]     = clip.strName;
+        clipData["name"] = clip.strName;
         clipData["duration"] = clip.fDuration;
-        clipData["loop"]     = clip.isLoop;
+        clipData["loop"] = clip.isLoop;
 
-        auto& keyframesJson  = clipData["keyframes"];
-        keyframesJson        = json::array();
+        auto& keyframesJson = clipData["keyframes"];
+        keyframesJson = json::array();
         for (const auto& keyframe : clip.keyframes)
         {
             json keyframeData{};
-            keyframeData["time"]     = keyframe.fTime;
-            keyframeData["scale"]    = { keyframe.vScale.x, keyframe.vScale.y };
-            keyframeData["angle"]    = keyframe.fAngle;
+            keyframeData["time"] = keyframe.fTime;
+            keyframeData["scale"] = { keyframe.vScale.x, keyframe.vScale.y };
+            keyframeData["angle"] = keyframe.fAngle;
             keyframeData["position"] = { keyframe.vPosition.x, keyframe.vPosition.y };
-            keyframeData["color"]    = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
+            keyframeData["color"] = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
             keyframeData["easeType"] = ENUM(keyframe.easeType);
 
             keyframesJson.push_back(keyframeData);
@@ -128,24 +126,21 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
         animClipsJson.push_back(clipData);
     }
 
-    // 자식 데이터 저장
     auto& childrenJson = data["children"];
-    childrenJson       = json::array();
-    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
-    if (pContainer && !pContainer->Get_Children().empty())
+    childrenJson = json::array();
+
+    auto pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer) return;
+
+    const auto& children = pContainer->Get_Children();
+    for (auto& pChild : children)
     {
-        const auto& children = pContainer->Get_Children();
-        for (auto& pChild : children)
-        {
-            if (!pChild) continue;
+        auto pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);
+        if (!pChildUI) continue;
 
-            CUIObject_Tool* pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);
-            if (!pChildUI) continue;
-
-            nlohmann::ordered_json childData{};
-            pChildUI->Save(childData);
-            childrenJson.push_back(childData);
-        }
+        nlohmann::ordered_json childData{};
+        pChildUI->Save(childData);
+        childrenJson.push_back(childData);
     }
 }
 
@@ -179,9 +174,8 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     m_useMask = data.value("useMask", false);
 
-    auto sprite = Get_Component<CSprite2D>();
-    string pass = data.value("pass", "");
-    if (!pass.empty()) sprite->ChangePass(pass);
+    string pass = data.value("pass", "Opaque");
+    Set_BasePass(NormalizeToBasePass(pass));
 
     if (data.contains("animClips"))
     {
@@ -252,10 +246,16 @@ void CUIObject_Tool::Render_GUI_Property()
 {
     ImGui::SeparatorText(u8"속성");
     ImGui::Checkbox("Alive", &m_isAlive);
+
     _char szInstanceName[MAX_PATH] = {};
     strcpy_s(szInstanceName, m_InstanceName.c_str());
     if (ImGui::InputText(u8"인스턴스네임", szInstanceName, sizeof(szInstanceName)))
         m_InstanceName = szInstanceName;
+
+    if (ImGui::Checkbox("Use Mask", &m_useMask))
+        Set_BasePass(m_basePass);
+
+    ImGui::TextDisabled(("BasePass : " + m_basePass).c_str());
 }
 
 void CUIObject_Tool::Render_GUI_Layout()
@@ -482,7 +482,12 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
         m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
     }
 
-    Get_Component<CSprite2D>()->Render_GUI();
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Render_GUI();
+
+    const string edited = NormalizeToBasePass(sprite->Get_PassConstant());
+    if (edited != m_basePass)
+        Set_BasePass(edited);
 }
 
 void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
@@ -553,6 +558,35 @@ void CUIObject_Tool::KeyInput_ReorderChildren()
             pChild->Lower_Order(this);
         }
     }
+}
+
+void CUIObject_Tool::Set_BasePass(const string& pass)
+{
+    m_basePass = pass;
+
+    auto sprite = Get_Component<CSprite2D>();
+    if (m_useMask) sprite->ChangePass(MapToStencilTestPass(m_basePass));
+    else           sprite->ChangePass(m_basePass);
+}
+
+string CUIObject_Tool::MapToStencilTestPass(const string& basePass)
+{
+    if (basePass == "Opaque")          return "Opaque_StencilTest";
+    if (basePass == "UVAnimation")     return "UVAnimation_StencilTest";
+    if (basePass == "LinearFill")      return "LinearFill_StencilTest";
+    if (basePass == "RadialFill")      return "RadialFill_StencilTest";
+    if (basePass == "SpriteAnimation") return "SpriteAnimation_StencilTest";
+    return basePass;
+}
+
+string CUIObject_Tool::NormalizeToBasePass(const string& pass)
+{
+    if (pass == "Opaque_StencilTest")          return "Opaque";
+    if (pass == "UVAnimation_StencilTest")     return "UVAnimation";
+    if (pass == "LinearFill_StencilTest")      return "LinearFill";
+    if (pass == "RadialFill_StencilTest")      return "RadialFill";
+    if (pass == "SpriteAnimation_StencilTest") return "SpriteAnimation";
+    return pass;
 }
 
 _float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
