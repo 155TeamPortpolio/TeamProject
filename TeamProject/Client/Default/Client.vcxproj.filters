@@ -232,12 +232,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
       <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1">
-      <UniqueIdentifier>{3a046367-2f0c-4d32-ae9a-dcc6c15ecfa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
-      <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
@@ -546,12 +540,6 @@
     <ClInclude Include="..\Public\SacrificeHandState_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
     </ClInclude>
@@ -857,12 +845,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Anbi.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>

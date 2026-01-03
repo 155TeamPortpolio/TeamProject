@@ -114,6 +114,9 @@ public:
 	static CSacrificeState_Attack_08_Phase2* Create() { return new CSacrificeState_Attack_08_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	_bool m_IsAttackStart = false;
+	_bool m_IsAttackEnd = false;
 };
 
 class CSacrificeState_Attack_Charge_Start_Phase2 : public IHState<CSacrifice>
@@ -207,6 +210,19 @@ public:
 
 };
 
+class CSacrificeState_OverDrive_Release_End_Phase2 : public IHState<CSacrifice>
+{
+public:
+	virtual void Enter(CSacrifice* pOwner) override;
+	virtual void Update(CSacrifice* pOwner, _float dt) override;
+	virtual void Exit(CSacrifice* pOwner) override;
+
+public:
+	static CSacrificeState_OverDrive_Release_End_Phase2* Create() { return new CSacrificeState_OverDrive_Release_End_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+};
+
 class CSacrificeState_OverDrive_Release_Attack01_Phase2 : public IHState<CSacrifice>
 {
 public:
@@ -243,6 +259,9 @@ public:
 public:
 	static CSacrificeState_OverDrive_Release_Attack03_Phase2* Create(){ return new CSacrificeState_OverDrive_Release_Attack03_Phase2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsHandSpawn = false;
 
 };
 
