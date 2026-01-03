@@ -46,6 +46,9 @@ protected:
 	/*앵커 기준점에 따라 자동정렬을 하기 위해 앵커오프셋 값을 반환 (사이즈를 반영한 픽셀 값 반환)*/
 	_float2 Get_AnchorOffset(ANCHOR eAnchor);
 
+	/*키 입력해서 자식 객체 업데이트 순서 조정*/
+	void KeyInput_ReorderChildren();
+
 private:
 	_float  GetSizeRatio(UISizeMode mode);
 	void    Render_GUI_SizeBlock();

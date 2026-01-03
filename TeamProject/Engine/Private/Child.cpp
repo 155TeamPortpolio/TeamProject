@@ -1,6 +1,7 @@
 #include "Engine_Defines.h"
 #include "Child.h"
 #include "GameObject.h"
+#include "ObjectContainer.h"
 //#include ""
 
 CChild::CChild(CGameObject* pParent)
@@ -35,6 +36,51 @@ void CChild::Sync_To_Parent(_bool SyncTransform)
 
 	if(SyncTransform)
 		myTransform->Set_ParentTransform(ParentTransform);
+}
+
+void CChild::ReorderChildren(class CGameObject* pObject, _uint index)
+{
+	if (!pObject || !m_pParent)
+		return;
+
+	if(auto pContainer = m_pParent->Get_Component<CObjectContainer>())
+		pContainer->ReorderChildren(pObject, index);
+}
+
+void CChild::Upper_Order(class CGameObject* pObject)
+{
+	if (!pObject || !m_pParent)
+		return;
+
+	if (auto pContainer = m_pParent->Get_Component<CObjectContainer>())
+		pContainer->Upper_Order(pObject);
+}
+
+void CChild::Lower_Order(class CGameObject* pObject)
+{
+	if (!pObject || !m_pParent)
+		return;
+
+	if (auto pContainer = m_pParent->Get_Component<CObjectContainer>())
+		pContainer->Lower_Order(pObject);
+}
+
+void CChild::Set_Order_First(class CGameObject* pObject)
+{
+	if (!pObject || !m_pParent)
+		return;
+
+	if (auto pContainer = m_pParent->Get_Component<CObjectContainer>())
+		pContainer->Set_Order_First(pObject);
+}
+
+void CChild::Set_Order_Last(CGameObject* pObject)
+{
+	if (!pObject || !m_pParent)
+		return;
+
+	if (auto pContainer = m_pParent->Get_Component<CObjectContainer>())
+		pContainer->Set_Order_Last(pObject);
 }
 
 void CChild::Set_Parent(CGameObject* pParent)

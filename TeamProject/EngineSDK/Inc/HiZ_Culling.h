@@ -34,9 +34,9 @@ class CHiZ_Culling :
 
     struct OcclusionInput
     {
-        _uint       minX, minY, maxX, maxY;     // È­ï¿½ï¿½ ï¿½È¼ï¿½ rect
+        _uint       minX, minY, maxX, maxY;     // È­¸é ÇÈ¼¿ rect
         _float      objMinDepth01;                       // min(viewZ / zFar) in [0,1]
-        _uint       indexInList;                                // frustums ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
+        _uint       indexInList;                                // frustums º¤ÅÍ ÀÎµ¦½º
         _uint       padding;
     };
 
@@ -78,21 +78,21 @@ class CHiZ_Culling :
     };
     enum OcclusionFlags : _uint
     {
-        OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0, // ï¿½ï¿½ï¿½ï¿½/ï¿½Å´ï¿½(ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½/Å« ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¼ï¿½)
-        OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1 // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
+        OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0, // ÆòÆò/°Å´ë(Áö¸é/º®/Å« ±¸Á¶¹° °¡´É¼º)
+        OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1 // Áö¸é Á¢ÃË ÃßÁ¤(¼±ÅÃ)
     };
 
 #ifdef _USING_GUI
   
     struct HiZStats
     {
-        _uint frustumIn = 0;       // frustum pass ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶ ï¿½ï¿½
-        _uint tested = 0;          // occlusion ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(inputs.size)
-        _uint visibleByOcc = 0;    // occlusion ï¿½ï¿½ï¿½ï¿½ï¿½ visibleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
-        _uint culledByOcc = 0;     // occlusion ï¿½ï¿½ï¿½ï¿½ï¿½ occludedï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
-        _uint notTested = 0;       // BuildOcclusionInput ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½
-        _uint outResult = 0;       // ï¿½ï¿½ï¿½ï¿½ result ï¿½ï¿½
-        _uint canRead = 0;         // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ readback ï¿½ï¿½ï¿½ï¿½(1/0)
+        _uint frustumIn = 0;       // frustum pass ÀÌÈÄ µé¾î¿Â ÆÐÅ¶ ¼ö
+        _uint tested = 0;          // occlusion Å×½ºÆ®¿¡ ³ÖÀº ¼ö(inputs.size)
+        _uint visibleByOcc = 0;    // occlusion °á°ú·Î visible·Î ÆÇÁ¤µÈ ¼ö
+        _uint culledByOcc = 0;     // occlusion °á°ú·Î occluded·Î ÆÇÁ¤µÈ ¼ö
+        _uint notTested = 0;       // BuildOcclusionInput ½ÇÆÐ/Á¦¿Ü µîÀ¸·Î Å×½ºÆ® ¾È ÇÑ ¼ö
+        _uint outResult = 0;       // ÃÖÁ¾ result ¼ö
+        _uint canRead = 0;         // ÀÌ¹ø ÇÁ·¹ÀÓ readback ¼º°ø(1/0)
     };
     _bool isTabOpen = { false };
     HiZStats m_stats; 
@@ -136,8 +136,8 @@ private:
     _uint3 m_groupCount = {};
 
     ID3D11Texture2D* m_pHiZTex = { nullptr };
-    vector<ID3D11UnorderedAccessView*> m_HiZUav;    /*ï¿½Óºï¿½ UAVï¿½ï¿½*/
-    vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*ï¿½Ó¸ï¿½ SRVï¿½ï¿½*/
+    vector<ID3D11UnorderedAccessView*> m_HiZUav;    /*¹Óº° UAVµé*/
+    vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*¹Ó¸Ê SRVµé*/
 
     ID3D11ShaderResourceView* m_pDepthSrv = { nullptr };
     class CComputeShader* m_pCopyShader = { nullptr };
@@ -150,20 +150,20 @@ private:
 
 private:
     ID3D11Buffer* m_inputBuffer = { nullptr };       
-    ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½Ð´ï¿½ SRV (t1)
-    _uint                   m_capacity = 0;                                             // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ element ï¿½ï¿½ï¿½ï¿½
+    ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs ¹öÆÛ¸¦ ÀÐ´Â SRV (t1)
+    _uint                   m_capacity = 0;                                             // ÇöÀç ¹öÆÛ°¡ ¼ö¿ë °¡´ÉÇÑ ÃÖ´ë element °³¼ö
 
 private:
     ID3D11ShaderResourceView* m_pHiZSrv = { nullptr };
 
  private :
     OcclusionReadbackFrame m_readbackFrames[kFrameBuffered];
-    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlagsï¿½ï¿½ GPU ï¿½ï¿½ï¿½ï¿½
-   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlagsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UAV (u0)
-   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readbackï¿½ï¿½ staging
+    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags¿ë GPU ¹öÆÛ
+   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags¿¡ ¾²´Â UAV (u0)
+   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback¿ë staging
 
-    _uint m_frameCursor = 0;                               // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
-    vector<_uint> m_cachedVisibleFlags;         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ È¸ï¿½Ç¿ï¿½)
+    _uint m_frameCursor = 0;                               // ¸Å ÇÁ·¹ÀÓ Áõ°¡
+    vector<_uint> m_cachedVisibleFlags;         // ¸¶Áö¸·À¸·Î ¼º°øÇÑ °á°ú(½ºÅç È¸ÇÇ¿ë)
     vector<OcclusionKey> m_cachedKeys;    // last read keys
 
     unordered_map<OcclusionKey, OcclusionHysteresisState, OcclusionKeyHash, OcclusionKeyEq> m_hysteresis;

@@ -36,7 +36,9 @@ HRESULT CObjectContainer::Initialize(COMPONENT_DESC* pArg)
 
 void CObjectContainer::Pre_EngineUpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	m_UpdateOrderSnapShot.reserve(m_UpdateOrder.size());
+	m_UpdateOrderSnapShot = m_UpdateOrder;
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -51,7 +53,7 @@ void CObjectContainer::Pre_EngineUpdateChild(_float dt)
 
 void CObjectContainer::Post_EngineUpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -66,7 +68,7 @@ void CObjectContainer::Post_EngineUpdateChild(_float dt)
 
 void CObjectContainer::Priority_UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -81,7 +83,7 @@ void CObjectContainer::Priority_UpdateChild(_float dt)
 
 void CObjectContainer::UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -96,7 +98,7 @@ void CObjectContainer::UpdateChild(_float dt)
 
 void CObjectContainer::Late_UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -111,7 +113,7 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 
 void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
