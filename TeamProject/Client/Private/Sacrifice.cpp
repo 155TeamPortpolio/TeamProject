@@ -6,6 +6,8 @@
 #include "SkeletalModel.h"
 #include "CharacterController.h"
 #include "Helper_Func.h"
+#include "SacrificeHand.h"
+#include "ObjectContainer.h"
 
 /* States */
 #include "StateMachine.h"
@@ -15,6 +17,9 @@
 #include "SacrificeState_Born.h"
 #include "SacrificeState_Hit.h"
 #include "SacrificeState_Evade.h"
+#include "SacrificeState_Death.h"
+#include "SacrificeState_ChangePhase.h"
+#include "SacrificeState_Parry.h"
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -32,13 +37,13 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
-	//pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Anim/SacrificeBringer_Meta.json");
-	pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer_Meta.json");
+	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer_Meta.json");
 
 	return S_OK;
 }
@@ -55,13 +60,18 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
 	pAnimator->Set_MotionBone(3); //Bip001
-	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	auto pCCT = Get_Component<CCharacterController>();
 	pCCT->Set_GravityEnabled(false);
 
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+		.Build("Sacrifice_Hand");
+	pHand->Set_Alive(false);
+	m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -69,9 +79,12 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	m_PartMeshIndices[ENUM(PARTS::ICE)] = 7;
 	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 11;
 	m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)] = 12;
-	m_PartMeshIndices[ENUM(PARTS::WEAPON_ROAD)] = 13;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)] = 13;
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
+
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.1f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 
 	return S_OK;
 }
@@ -82,21 +95,23 @@ void CSacrifice::Awake()
 
 void CSacrifice::Priority_Update(_float dt)
 {
-
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CSacrifice::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-	Get_Component<CCharacterController>()->Update(dt);
-	
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
+
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CCharacterController>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CSacrifice::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 CSacrifice* CSacrifice::Create()
@@ -152,6 +167,99 @@ void CSacrifice::DeactiveAxe()
 	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)], false);
 }
 
+void CSacrifice::ActiveWhip()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], true);
+}
+
+void CSacrifice::DeactiveWhip()
+{
+	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], false);
+}
+
+void CSacrifice::Idle()
+{
+	m_RequestIdle = true;
+}
+
+void CSacrifice::Evade()
+{
+	m_pStateMachine->Change_State("Evade");
+}
+
+void CSacrifice::ChangePhase()
+{
+	if (PHASE::PHASE1 == m_eCurrPhase)
+		m_pStateMachine->Change_State("ChangePhase");
+}
+
+void CSacrifice::Phase1Attack()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->Phase1Attack();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
+	vPosition -= vLook * 8.f;
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_WorldPos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Start()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Start();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack1()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack1();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack2()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack2();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::OverDrive_Attack3()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->OverDrive_Attack3();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_Pos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
 HRESULT CSacrifice::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrifice>::Create();
@@ -178,6 +286,9 @@ HRESULT CSacrifice::Initialize_States()
 	m_pStateMachine->Register_State("Born",CSacrificeState_Born::Create());
 	m_pStateMachine->Register_State("Hit",CSacrificeState_Hit::Create());
 	m_pStateMachine->Register_State("Evade", CSacrificeState_Evade::Create());
+	m_pStateMachine->Register_State("Death", CSacrificeState_Death::Create());
+	m_pStateMachine->Register_State("ChangePhase", CSacrificeState_ChangePhase::Create());
+	m_pStateMachine->Register_State("Parry", CSacrificeState_Parry::Create());
 
 	return S_OK;
 }
@@ -190,48 +301,59 @@ HRESULT CSacrifice::Initialize_Transitions()
 	/* From Idle */
 	m_pStateMachine->Register_Transition("Idle", "Attack",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Attack");
-	m_pStateMachine->Register_Transition("Idle", "Evade",
-		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Evade");
 	m_pStateMachine->Register_Transition("Idle", "Walk",
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Walk");
 
+	/* From Death */
+	m_pStateMachine->Register_Transition("Death", "ChangePhase",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+
+	/* From Change Phase */
+	m_pStateMachine->Register_Transition("ChangePhase", "Idle",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+
+	/* From Parry */
+	m_pStateMachine->Register_Transition("Parry", "Idle",
+		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
 
 void CSacrifice::Update_States(_float dt)
 {
+	m_fIdleDuration = m_IsOverDriveCharged ? 2.f : 0.2f;
+
 	if (m_RequestIdle)
 	{
 		m_pStateMachine->Change_State("Idle");
 		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
-		m_pStateMachine->Reset_Trigger("Idle_To_Evade");
 		m_pStateMachine->Reset_Trigger("Idle_To_Walk");
 		m_RequestIdle = false;
 	}
 
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('P'))
+		m_pStateMachine->Change_State("Death");
+
+	if (PHASE::PHASE2 == m_eCurrPhase && CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('O'))
+		m_IsOverDrive = true;
+
+	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
 	{
 		m_fIdleElasedTime += dt;
 		if (m_fIdleElasedTime >= m_fIdleDuration)
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-			iRandIndex = 0;
-			if (0 == iRandIndex)
-			{
-				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-			}
-			else if (1 == iRandIndex)
-			{
-				m_pStateMachine->Set_Trigger("Idle_To_Walk");
-			}
-			else
-			{
-				m_pStateMachine->Set_Trigger("Idle_To_Evade");
-			}
+			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
+			if (m_IsOverDrive)
+				iRandIndex = 1;
 
+			if (0 == iRandIndex)
+				m_pStateMachine->Set_Trigger("Idle_To_Walk");
+			else
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+	
 			m_fIdleElasedTime = 0.f;
 		}
 	}
-	
+
 }

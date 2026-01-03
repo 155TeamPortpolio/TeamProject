@@ -35,6 +35,10 @@ HRESULT CSkeletalModel::Link_Model(const string& levelKey, const string& modelDa
 {
 	Safe_Release(m_pData);
 	m_pData = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_ModelData(levelKey, modelDataKey);
+
+	if (!m_pData)
+		return E_FAIL;
+
 	Safe_AddRef(m_pData);
 	m_DrawableMeshes.resize(m_pData->Get_MeshCount(), true);
 

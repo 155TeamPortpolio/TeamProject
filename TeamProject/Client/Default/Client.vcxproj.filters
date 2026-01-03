@@ -91,6 +91,30 @@
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
     </Filter>
@@ -280,6 +304,66 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack">
       <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin">
+      <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State">
+      <UniqueIdentifier>{21c81c17-9dfd-4c09-8d83-5fb14ae316d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Idle">
+      <UniqueIdentifier>{7093ab03-2b34-47af-945d-34a78e349620}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move">
+      <UniqueIdentifier>{2b4d6055-a07d-4723-a793-dae75c760383}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Walk">
+      <UniqueIdentifier>{6066750f-d26d-4dcc-b9cb-95ff0891b101}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Run">
+      <UniqueIdentifier>{88626d5b-dbf8-4f03-8ef2-2f7cae50254a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack">
+      <UniqueIdentifier>{c267d6c9-393b-43c1-9ef4-beee8a23263e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Normal">
+      <UniqueIdentifier>{884362e5-20d7-4daa-9187-9c9149289f96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\TestPlane">
+      <UniqueIdentifier>{1bb9fb41-6674-49a3-9da6-bd39a0ff8454}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry">
+      <UniqueIdentifier>{b5d49ec4-f1e8-4445-9812-e3047fe53695}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1">
+      <UniqueIdentifier>{2a109206-ead3-44ef-b633-cd03e33507d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2">
+      <UniqueIdentifier>{3c8998bd-98ee-4cad-8976-9938d3c05a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1">
+      <UniqueIdentifier>{b50a1706-7716-416e-b556-536d12216321}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2">
+      <UniqueIdentifier>{3d74b083-6d12-4923-8093-4086952edfd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Death">
+      <UniqueIdentifier>{d3e2ed07-89f7-4d84-ad7a-697fced4917b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
+      <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade">
+      <UniqueIdentifier>{d03f6fe2-9042-45dc-ab55-125859fa9c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
+      <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
+      <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
+      <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -362,9 +446,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\TestFloor.h">
       <Filter>02. GameObject\Object\TestFloor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\TestPlane.h">
-      <Filter>02. GameObject\Object</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapData_Defines.h">
       <Filter>03. Utility\00. MapLoader</Filter>
@@ -551,6 +632,72 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
+   </ClInclude>
+    <ClInclude Include="..\Public\Corin.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Idle.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Move.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Walk.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Run.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Attack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Event_Struct.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\TestPlane.h">
+      <Filter>02. GameObject\Object\TestPlane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Parry_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Hit_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Evade_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Death.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_ChangePhase.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Dash.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Backstep.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_RushAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -641,9 +788,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\TestPlane.cpp">
-      <Filter>02. GameObject\Object</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapDataCloud.cpp">
       <Filter>03. Utility\00. MapLoader\MapDataCloud</Filter>
@@ -815,6 +959,69 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Attack.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Corin.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Idle.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Move.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Walk.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Run.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Attack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\TestPlane.cpp">
+      <Filter>02. GameObject\Object\TestPlane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Parry_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Parry\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Hit_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Hit\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Evade_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Evade\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Dash.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Evade.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Backstep.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -46,6 +46,7 @@ public:
 
 public:
 	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
+	vector<_uint> Get_NormalIndex() { return m_Normal; }
 	vector<_uint> Get_LOD0_Index() { return m_LOD0Marked;  }
 	vector<_uint> Get_LOD1_Index() { return m_LOD1Marked;  }
 	vector<_uint> Get_LOD2_Index() { return m_LOD2Marked;  }
@@ -72,6 +73,7 @@ private:
 private:
 	vector<_uint> m_NotProxy;
 	vector<_uint> m_ProxyMarked;
+	vector<_uint> m_Normal;
 	vector<_uint> m_LOD0Marked;
 	vector<_uint> m_LOD1Marked;
 	vector<_uint> m_LOD2Marked;

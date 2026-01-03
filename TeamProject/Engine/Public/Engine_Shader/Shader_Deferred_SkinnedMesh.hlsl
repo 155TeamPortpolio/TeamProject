@@ -121,13 +121,18 @@ PS_OUT_RESULT PS_RIMLIGHT(PS_IN In)
 }
 
 //GaussianBlur
-static const float weights[3] =
+static const float weights[9] =
 {
-    0.5,
-    0.25,
-    0.25
+    0.2270270270,
+    0.1945945946,
+    0.1216216216,
+    0.0540540541,
+    0.0162162162,
+    0.0081081081,
+    0.0040540541,
+    0.0020270270,
+    0.0010135135
 };
-
 PS_OUT_RESULT PS_BRIGHT(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -148,10 +153,10 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     float4 bright = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord);
 
     float3 result = bright.rgb * weights[0];
-    float texelSize = 1.f / fScreenWidth;
+    float texelSize = 0.5f / fScreenWidth;
     
     float4 brightSample;
-    for (int i = 1; i < 3; ++i)
+    for (int i = 1; i < 9; ++i)
     {
         brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord + float2(texelSize * i, 0));
         result += brightSample.rgb * weights[i];
@@ -172,9 +177,9 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     float4 BlurX = MeshBlurXTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = BlurX.rgb * weights[0];
-    float texelSize = 1.f / fScreenHeight;
+    float texelSize = 0.5f / fScreenHeight;
         
-    for (int i = 1; i < 3; ++i)
+    for (int i = 1; i < 9; ++i)
     {
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
@@ -332,13 +337,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     ambient = max(ambient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
     
     if (vMetalic.a < 0.7) Out.vResult = float4(vLight.rgb * vRamp + ambient, 1.f);
-    else Out.vResult = float4(vLight.rgb, 1.f);
+    else
+        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.3, 1.f);
     
     float rimIntensity = max(vRamp, 0.5f);
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor + vBloom.rgb;
+    Out.vResult.rgb += specularColor /*+ vBloom.rgb*/;
 
     return Out;
 }

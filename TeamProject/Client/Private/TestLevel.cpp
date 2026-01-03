@@ -33,6 +33,7 @@
 /* Character */
 #include "Miyabi.h"
 #include "Anbi.h"
+#include "Corin.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
@@ -134,7 +135,7 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Register(hudUI);
 
 	//====================Test=================
-	Ready_TestObject();
+	//Ready_TestObject();
 
 
 	return S_OK;

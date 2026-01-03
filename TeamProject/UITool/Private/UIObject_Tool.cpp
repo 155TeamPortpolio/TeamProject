@@ -11,7 +11,7 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CSprite2D>()->Set_Param("vColor", { &m_vColor, "float4",sizeof(_float4) });
+    Get_Component<CSprite2D>()->Set_Param("vColor", {&m_vColorLinear, "float4", sizeof(_float4)});
 
     // GUI Inspector Ã¢¿¡ ¶ç¿ò
     CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
@@ -471,12 +471,11 @@ void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const
 {
     auto sprite = Get_Component<CSprite2D>();
     sprite->Change_Texture(idx, levelKey, texKey);
-     
 
     m_sizeMode = UISizeMode::FHD;
 
-    auto tex = sprite->Get_Texture(idx);
-    auto size = tex->Get_Size();
+    auto texture = sprite->Get_Texture(idx);
+    auto size    = texture->Get_Size();
 
     m_sizeFHD = {(float)size.x, (float)size.y};
 
@@ -540,9 +539,4 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
         const _float newRatio = GetSizeRatio(m_sizeMode);
         m_vSize = {m_sizeFHD.x * newRatio, m_sizeFHD.y * newRatio};
     }
-}
-
-void CUIObject_Tool::Free()
-{
-    __super::Free();
 }

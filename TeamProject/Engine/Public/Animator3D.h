@@ -5,7 +5,7 @@
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
-enum class ANIM_LAYER_STATE { NONE, OVERRIDE, BLEND, ADDITIVE };
+enum class ANIM_LAYER_STATE { NONE, BASE, OVERRIDE, BLEND, ADDITIVE };
 
 class ENGINE_DLL CAnimator3D :
     public CComponent
@@ -17,13 +17,13 @@ public:
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
         _bool               BaseLayer = { false };
-
-        _bool               bPause = { true };
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
-        _float              fLayerWeight = { 1.f };
-        _float              fTargetWeight = { 1.f };
-        _float              fWeightDuration = {};
-        _float              fWeightElapsed = {};
+        
+        _bool               bPause = { true };
+        _float              fLayerWeight = {};
+        _float              fTargetLayerWeight = {};
+        _float              fLayerWeightElapsed = {};
+        _float              fLayerWeightDuration = {};
         EaseType            eLayerEaseType = { EaseType::None };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
@@ -166,6 +166,15 @@ public://애니매이터 데이터
     void Reset_StartBone(_uint LayerIndex = 0);
     //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
     void Set_TPose();
+    //애니매이션 레이어 타입
+    void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
+
+    /*----- Change -----*/
+
+    //현재 레이어 애니매이션 속도만 변경
+    void Chagne_Speed(_float fSpeed, _uint LayerIndex = 0);
+    //현재 레이어 애니매이션 현재 속도에서부터 보간 변경
+    void Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear, _uint LayerIndex = 0);
 
     /*----- Calculator -----*/
     _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
@@ -214,19 +223,23 @@ protected://애니매이션 체크
     _bool isExistClip(_int ClipIndex);
     //축이 있는지 계산
     _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
-
+    
+    //매트릭스 보간
+    Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
     void Animation_Convert(ANIM_LAYER& Layer, _float dt);
     //레이어 연산
+    void Layer_Base(const ANIM_LAYER& Layer);
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
     //Combined 연산
 
     //최종 뼈 계산
-    void BuildBone();
+    void BuildBone(_float dt);
     void Update_Playlist();
 
 public:
@@ -250,6 +263,7 @@ protected:
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
+    vector<_float4x4> m_BasePose = {};                  //Additive용 BasePose << 만약 애니매이션을 여러개 덧붙여야하면 이벡터 자체가 여러개필요
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
@@ -287,7 +301,7 @@ public:
         m_fLayerWeight  = fBlendWeight;
         m_fTargetWeight = fTargetWeight;
         m_fWeightDuration = fDuration;
-        m_ePlayEaseType = eEaseType;
+        m_eLayerEaseType = eEaseType;
 
         return static_cast<T&>(*this);
     }
@@ -348,7 +362,6 @@ protected:
     _float   m_fEaseDuration = { 0.f };
 
 };
-
 
 class ENGINE_DLL SetAnimBuild
     : public AnimBuild<SetAnimBuild> {
