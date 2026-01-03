@@ -38,14 +38,19 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
         m_pSubStateMachine->Reset_Trigger("Complete");
 
         CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
-        if (iExitMode > 0)
+        switch (iExitMode)
         {
-            pRootFSM->Set_Int("MoveEntryMode", iExitMode);
+        case 3: // RushAttack
+            pRootFSM->Set_Int("AttackEntryMode", 1);
+            pRootFSM->Set_Trigger("Attack");
+            break;
+        case 2: // Run
+            pRootFSM->Set_Int("MoveEntryMode", 2);
             pRootFSM->Set_Trigger("ToMove");
-        }
-        else
-        {
+            break;
+        default: // Idle
             pRootFSM->Set_Trigger("ToIdle");
+            break;
         }
     }
 }
