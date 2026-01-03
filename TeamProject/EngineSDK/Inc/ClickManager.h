@@ -13,6 +13,17 @@ private:
 		_uint height{};
 		vector<_ubyte> alpha;
 		vector<_ubyte> outside;
+	}; 
+	
+	enum class UISlotState {
+		NONE = 0,           // 비어 있음 (슬롯 미사용)
+		ACTIVE = 1,         // 사용 가능
+		DEAD = 2,           // 소유자가 삭제됨
+	};
+
+	struct UISlot {
+		class CUI_Object* pUI = { nullptr };
+		UISlotState eState = { UISlotState::NONE };
 	};
 
 private:
@@ -21,7 +32,8 @@ private:
 
 public:
 	void Update(_float dt);
-	void Add_ClickableObject(CUI_Object* object);
+	void Register_ClickableObject(CUI_Object* pObject);
+	void Unregister_ClickableObject(CUI_Object* pObject);
 
 private:
 	const AlphaCache& GetOrBuildAlphaCache(const string& key, ID3D11ShaderResourceView* srv);
@@ -30,9 +42,8 @@ private:
 
 private:
 	HWND				m_hWnd{};
-	vector<CUI_Object*>	m_clickableObjs{};
-	CUI_Object*         m_pHovered{};
-	CUI_Object*         m_pNewHovered{};
+	vector<UISlot>		m_clickableSlots;
+	UISlot				m_hoveredSlot = {};
 
 	unordered_map<string, AlphaCache> m_alphaCache{};
 

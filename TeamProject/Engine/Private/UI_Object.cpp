@@ -92,7 +92,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
             CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
 
         if (m_isClickable)
-            CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
+            CGameInstance::GetInstance()->Get_ClickMgr()->Register_ClickableObject(this);
     }
 
     if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
@@ -427,4 +427,12 @@ _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
              m_vAnchorOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };
+}
+
+void CUI_Object::Free()
+{
+    __super::Free();
+
+    if (m_isClickable)
+        CGameInstance::GetInstance()->Get_ClickMgr()->Unregister_ClickableObject(this);
 }
