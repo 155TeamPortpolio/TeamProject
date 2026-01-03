@@ -20,6 +20,7 @@ public:
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
+    virtual void Render_GUI() override;
 
 public:
     static CThugBulkyEnforcer* Create();
@@ -27,18 +28,28 @@ public:
     virtual void Free() override;
 
 public:
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
+    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
+    CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
+    void                Idle() { m_isIdle = true; }
 
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Ready_Rules();
     void Update_States(_float dt);
+    void Test_State();
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
-    ATTACK_BLACK_BOARD m_AttackBlackBoard{};
+    ATTACK_BLACK_BOARD  m_tAttackBlackBoard{};
+    _bool               m_isIdle = { false };
+    _float2             m_vIdleTime = {};
 
+
+
+    /* For.Test State*/
+    _bool               m_isAutoPatternPlay = { true };
 };
 
 NS_END
@@ -46,6 +57,17 @@ NS_END
 
 
 /*
+1. attack_1 + 위빙
+2. attack_2 + 백스텝
+3. attack_3 끊어서 써야함 (플라잉니킥 + 내려찍기)
+4. attack_4
+4. 오른쪽 위빙 + attack5_1
+5. 왼쪽 위빙 + attack5_2
+
+중간중간 위빙이나 백스텝(evade)섞임
+
+공격 2~3회 연속으로하고 플레이어 응시하면서 살짝 걸음
+
 
 ThugBulkyEnforcer_Ani_Born
 등장 모션(쪼그려있다가 일어남)

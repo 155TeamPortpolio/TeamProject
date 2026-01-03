@@ -95,38 +95,6 @@ HRESULT CTestLevel::Awake()
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
-	//==============TestModel==========================
-	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-	//	.CharacterController({})
-	//	.Build("Test_Model");
-
-	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
-
-	// =================TestMap==================
-	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-	//	.Build("Test_Map");
-	//
-	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
-
-
-	// =====================TestFloor=========================
-	COLLIDER_DESC colDesc;
-	colDesc.bCooking = true;
-	colDesc.strModelKey = "Concert_Ground_FloorTile_01.model";
-
-	for (_int z = 0; z < 3; ++z)
-	{
-	for (_int x = 0; x < 3; ++x)
-		{
-			CGameObject* pTestFloor = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestFloor" })
-				.Collider(colDesc)
-				.Position({ x * 6.15f, 0.f, z * 6.15f })
-				.Build("Test_Floor_" + to_string(z * 3 + x));
-			objMgr->Add_Object(pTestFloor, { "Test_Level", "Model_Layer" });
-		}
-	}
-
-
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
 	CCT_DESC miyabiCCT;
@@ -219,7 +187,7 @@ void CTestLevel::Update()
 		BulkyCCT.fRadius = 0.2f;
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		//BulkyCCT.fBoundingMinY = -0.88f;
-		BulkyCCT.vPos = { 0.f, 0.64f, -2.f };
+		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
 
 		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
 			.CharacterController(BulkyCCT)
@@ -360,10 +328,6 @@ void CTestLevel::Ready_TestObject()
 	//	.Build("Test_Cloud");
 	//
 	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
-}
-
-void CTestLevel::Ready_ThugBulky()
-{
 }
 
 HRESULT CTestLevel::Render()

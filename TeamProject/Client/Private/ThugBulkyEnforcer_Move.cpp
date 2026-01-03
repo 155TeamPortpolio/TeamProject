@@ -4,13 +4,56 @@
 #include "Helper_Func.h"
 
 #include "Animator3D.h" 
+#include "CharacterController.h"
 
 void CThugBulkyEnforcer_Move::Enter(CThugBulkyEnforcer* pOwner)
 {
+	if (nullptr == m_pSubStateMachine) {
+		m_pSubStateMachine = CStateMachine<CThugBulkyEnforcer>::Create();
+
+		Register_States();
+		Register_Transitions();
+	}
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+
+	if (true == pOwner->Get_StateMachine()->Get_Bool("FinishAttack")) {
+		RandomWalk(blackboard);
+		pOwner->Get_StateMachine()->Set_Bool("FinishAttack", false);
+	}
+
+	if (false != blackboard.stateQueue.empty()) {
+		pOwner->Idle();
+		return;
+	}
+
+	blackboard.isRequestNext = true;
+
+	__super::Enter(pOwner);
 }
 
 void CThugBulkyEnforcer_Move::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	__super::Update(pOwner, dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (true == blackboard.isRequestNext) {
+		blackboard.isRequestNext = false;
+		blackboard.isChainOpen = false;
+
+		if (!blackboard.stateQueue.empty()) {
+			string nextStateTag = blackboard.stateQueue.front();
+			blackboard.stateQueue.pop_front();
+
+			blackboard.currentStateTag = nextStateTag;
+			m_pSubStateMachine->Change_State(nextStateTag);
+		}
+	}
+
+	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
+		blackboard.currentStateTag = "";
+		pOwner->Idle();
+	}
 }
 
 void CThugBulkyEnforcer_Move::Exit(CThugBulkyEnforcer* pOwner)
@@ -20,7 +63,7 @@ void CThugBulkyEnforcer_Move::Exit(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Move::Register_States()
 {
 	m_pSubStateMachine->Register_State("Walk_Front", CThugBulkyEnforcer_Walk_Front::Create());
-	m_pSubStateMachine->Register_State("Walk_Left", CThugBulkyEnforcer_Walk_Left::Create());
+	m_pSubStateMachine->Register_State("Walk_Left", CThugBulkyEnforcer_Walk_Left::Create()); 
 	m_pSubStateMachine->Register_State("Walk_Right", CThugBulkyEnforcer_Walk_Right::Create());
 	m_pSubStateMachine->Register_State("Walk_Back", CThugBulkyEnforcer_Walk_Back::Create());
 	m_pSubStateMachine->Register_State("Run_Start", CThugBulkyEnforcer_Run_Start::Create());
@@ -36,6 +79,41 @@ void CThugBulkyEnforcer_Move::Register_States()
 
 void CThugBulkyEnforcer_Move::Register_Transitions()
 {
+}
+
+void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard)
+{
+	_int Index = Helper::Get_Random_Int(1, 5);
+	Index = 1;
+
+	switch (Index)
+	{
+	case 1:
+	{
+		blackBoard.stateQueue.push_back("Walk_Left");
+		break;
+	}
+	case 2:
+	{
+		blackBoard.stateQueue.push_back("Walk_Right");
+		break;
+	}
+	case 3:
+	{
+		blackBoard.stateQueue.push_back("Walk_RF_LFoot");
+		break;
+	}
+	case 4:
+	{
+		blackBoard.stateQueue.push_back("Walk_FR_RFoot");
+		break;
+	}
+	case 5:
+	{
+		blackBoard.stateQueue.push_back("Walk_LF_RFoot");
+		break;
+	}
+	}
 }
 
 /*============================================================================*/
@@ -57,11 +135,26 @@ void CThugBulkyEnforcer_Walk_Front::Exit(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Walk_Left::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Walk_L")
+		.BlendDuration(0.2f) // ¿Ö Æ¢Áö?
 		.Apply();
 }
 
 void CThugBulkyEnforcer_Walk_Left::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+	}
 }
 
 void CThugBulkyEnforcer_Walk_Left::Exit(CThugBulkyEnforcer* pOwner)
@@ -77,6 +170,20 @@ void CThugBulkyEnforcer_Walk_Right::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_Right::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+	}
 }
 
 void CThugBulkyEnforcer_Walk_Right::Exit(CThugBulkyEnforcer* pOwner)
@@ -197,6 +304,20 @@ void CThugBulkyEnforcer_Walk_RF_LFoot::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_RF_LFoot::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+	}
 }
 
 void CThugBulkyEnforcer_Walk_RF_LFoot::Exit(CThugBulkyEnforcer* pOwner)
@@ -212,6 +333,20 @@ void CThugBulkyEnforcer_Walk_FR_RFoot::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_FR_RFoot::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+	}
 }
 
 void CThugBulkyEnforcer_Walk_FR_RFoot::Exit(CThugBulkyEnforcer* pOwner)
@@ -227,6 +362,20 @@ void CThugBulkyEnforcer_Walk_FL_RFoot::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_FL_RFoot::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	if (m_fAnimProgress >= 0.99f)
+	{
+		blackboard.isChainOpen = true;
+		if (!blackboard.stateQueue.empty())
+			blackboard.isRequestNext = true;
+	}
 }
 
 void CThugBulkyEnforcer_Walk_FL_RFoot::Exit(CThugBulkyEnforcer* pOwner)

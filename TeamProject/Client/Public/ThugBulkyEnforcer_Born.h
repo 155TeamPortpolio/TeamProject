@@ -5,6 +5,7 @@ NS_BEGIN(Client)
 
 class CThugBulkyEnforcer;
 
+//등장 모션(쪼그려있다가 일어남)
 class CThugBulkyEnforcer_Born : public IBaseState<CThugBulkyEnforcer>
 {
 	public:

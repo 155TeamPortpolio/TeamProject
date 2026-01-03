@@ -1,5 +1,6 @@
 #pragma once
 #include "IHState.h"
+#include "Enemy.h"
 
 NS_BEGIN(Client)
 
@@ -19,6 +20,7 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
+	void RandomWalk(ATTACK_BLACK_BOARD& blackBoard);
 };
 
 class CThugBulkyEnforcer_Walk_Front : public IBaseState<CThugBulkyEnforcer>
@@ -105,6 +107,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+// 왼쪽 대각선으로 이동하며 위빙
 class CThugBulkyEnforcer_SideStep_L: public IBaseState<CThugBulkyEnforcer>
 {
 public:
@@ -117,6 +120,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+// 오른쪽 대각선으로 이동하며 위빙
 class CThugBulkyEnforcer_SideStep_R : public IBaseState<CThugBulkyEnforcer>
 {
 public:
@@ -129,6 +133,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
+// 백스텝으로 피하는 모션(공격 후 뒤로 빠질때 사용)
 class CThugBulkyEnforcer_Evade : public IBaseState<CThugBulkyEnforcer>
 {
 public:
