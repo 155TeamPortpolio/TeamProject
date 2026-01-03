@@ -11,7 +11,6 @@ public:
     virtual void Enter(CCorin* pOwner) override;
     virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override {}
-    //virtual _bool Handle_Transition(CCorin* pOwner, const string& strState) override;
 
 public:
     static CCorinState_Attack* Create() { return new CCorinState_Attack(); }
