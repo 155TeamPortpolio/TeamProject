@@ -77,7 +77,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         m_vColorLinear.x = powf(m_vColor.x, 2.2f);
         m_vColorLinear.y = powf(m_vColor.y, 2.2f);
         m_vColorLinear.z = powf(m_vColor.z, 2.2f);
-        m_vColorLinear.w = m_vColor.w;
+        m_vColorLinear.w = m_vCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
         SPRITE_PACKET packet;
         packet.pSprite2D = Get_Component<CSprite2D>();
@@ -237,7 +237,8 @@ void CUI_Object::Set_Pivot(_float2 newPivot)
 void CUI_Object::Update_UITransform()
 {
     _float2 parentScale = { 1.f, 1.f };
-    float parentRadian = {};
+    _float parentRadian = {};
+    _float parentAlpha = { 1.f };
 
     if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
     {
@@ -245,10 +246,12 @@ void CUI_Object::Update_UITransform()
         {
             parentScale = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
+            parentAlpha = pParentUI->m_vCombinedAlpha;
         }
     }
 
     m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+    m_vCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
 
     _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
