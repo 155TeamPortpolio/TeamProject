@@ -310,12 +310,15 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = vSkinned.rgb;
     
     if (vStatic.a > 0.01f) result = vStatic.rgb;
     
+    if (vEffect.a > 0.01f) result = vEffect.rgb;
+        
     if (vUI.a > 0.01f) result = vUI.rgb;
     
     Out.vBackBuffer = float4(result, 1.f);

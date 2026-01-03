@@ -137,6 +137,7 @@ Texture2D HDRBloomFinalTexture : register(t52);
 Texture2D SkinnedCombinedTexture : register(t53);
 Texture2D StaticCombinedTexture : register(t54);
 Texture2D UICombinedTexture : register(t55);
+Texture2D EffectCombinedTexture : register(t56);
 
 Texture2D FinalTexture : register(t56);
 

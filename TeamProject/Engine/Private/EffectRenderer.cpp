@@ -52,8 +52,8 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 		m_pShader->Bind_Value("g_WorldMatrix", WorldMat);
 		
-		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "DiffuseEffectAccTexture");
-		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "BloomEffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_DiffuseEffectAcc", m_pShader, "EffectAccTexture");
+		m_pTargetManager->Bind_Target("Target_BloomEffectAcc", m_pShader, "EffectBloomAccTextutre");
 		m_pTargetManager->Bind_Target("Target_Revealage", m_pShader, "RevealageTexture");
 		
 		ID3D11InputLayout* pLayout = nullptr;
@@ -180,6 +180,7 @@ HRESULT CEffectRenderer::Ready_Target()
 	RenderTargetDesc DepthlDesc = { "Target_Distortion" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
 
+	/*----------------------------*/
 	RenderTargetDesc BloomBlurX_EffectDesc = { "Target_BloomBlurX_Effect" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomBlurX_EffectDesc);
 

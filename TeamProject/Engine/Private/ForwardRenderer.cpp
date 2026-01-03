@@ -145,6 +145,7 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
 	m_pStaticRenderer->Render_StaticMesh_Combined();
 
+
 	//m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
