@@ -73,15 +73,6 @@ void CInputMgr::Update()
 
 	GetCursorPos(&m_pMousePos);
 	ScreenToClient(m_hWnd, &m_pMousePos);
-
-	if (m_Keyboard['A'].state == KEY_STATE::TAP)
-		OutputDebugStringA("A Key Down\n");
-
-	if (m_Keyboard['A'].state == KEY_STATE::HOLD)
-		OutputDebugStringA("A Key Hold\n");
-
-	if (m_Keyboard['A'].state == KEY_STATE::AWAY)
-		OutputDebugStringA("A Key Up\n");
 }
 
 const _float2& CInputMgr::Mouse_Pos()

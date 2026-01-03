@@ -8,6 +8,7 @@
 /* State */
 #include "StateMachine.h"
 #include "SacrificeHandState_Attack.h"
+#include "SacrificeHandState_Idle.h"	
 
 CSacrificeHand::CSacrificeHand()
 	:CEnemy()
@@ -29,7 +30,7 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.mat");
-	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Anim/SacrificeBringerHand_Meta.json");
+	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
 	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
 
 	return S_OK;
@@ -48,13 +49,9 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringerHand_Meta.json");
-	//pAnimator->Set_MotionBone(43);
-	//pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-
-	SetActive(false);
 
 	return S_OK;
 }
@@ -69,9 +66,8 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
-
 	m_pStateMachine->Update(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
@@ -111,7 +107,52 @@ void CSacrificeHand::Free()
 	Safe_Release(m_pStateMachine);
 }
 
-void CSacrificeHand::SetActive(_bool isActive)
+void CSacrificeHand::Phase1Attack()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE1;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Start()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_START;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Attack1()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK01;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Attack2()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK02;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::OverDrive_Attack3()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::OVER_DRIVE_ATTACK03;
+	m_pStateMachine->Change_State("Attack");
+}
+
+void CSacrificeHand::SetVisable(_bool isActive)
 {
 	auto pModel = Get_Component<CSkeletalModel>();
 	_uint iMeshCount = pModel->Get_MeshCount();
@@ -128,6 +169,12 @@ void CSacrificeHand::SetActive(_bool isActive)
 	}
 }
 
+void CSacrificeHand::Idle()
+{
+	m_pStateMachine->Change_State("Idle");
+	SetVisable(false);
+}
+
 HRESULT CSacrificeHand::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrificeHand>::Create();
@@ -140,7 +187,7 @@ HRESULT CSacrificeHand::Initialize_StateMachine()
 	if (FAILED(Initialize_Transitions()))
 		return E_FAIL;
 
-	m_pStateMachine->Set_DefaultState("Attack");
+	m_pStateMachine->Set_DefaultState("Idle");
 	m_pStateMachine->Initialize(this);
 
 	return S_OK;
@@ -148,6 +195,7 @@ HRESULT CSacrificeHand::Initialize_StateMachine()
 
 HRESULT CSacrificeHand::Initialize_States()
 {
+	m_pStateMachine->Register_State("Idle", CSacrificeHandState_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CSacrificeHandState_Attack::Create());
 
 	return S_OK;

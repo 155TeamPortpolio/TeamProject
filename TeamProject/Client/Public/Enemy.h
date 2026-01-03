@@ -5,8 +5,8 @@ NS_BEGIN(Client)
 typedef struct tagAttackBlackBoard
 {
     deque<string> stateQueue;
-    _bool isRequestNext = false;
-    _bool isChainOpen = false;
+    _bool isRequestNext = false;//다음 상태가 존재 할 때 상태 전환 요청
+    _bool isChainOpen = false;  //현재 상태에서 다음으로 진행 가능여부
     _bool isEnd = false;
     string currentStateTag{};
 }ATTACK_BLACK_BOARD;
