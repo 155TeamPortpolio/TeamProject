@@ -267,13 +267,3 @@ CGameObject* CGUIPanel::Get_SelectedObject()
 
 	return pGuiContext->pSelectedObject;
 }
-
-CGUIPanel* CGUIPanel::Create(GUI_CONTEXT* pContext)
-{
-	return new CGUIPanel(pContext);
-}
-
-void CGUIPanel::Free()
-{
-	__super::Free();
-}

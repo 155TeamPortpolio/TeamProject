@@ -29,8 +29,8 @@ private:
 	const _float2	m_fChildCreateSize = { 100.f, 100.f };
 
 public:
-	static const string m_strTypeTag;
-	static _uint        m_iCount;
+	inline static const string m_strTypeTag = "CanvasPanel";
+	inline static _uint        m_iCount{};
 
 public:
 	static CGameObject* Create();

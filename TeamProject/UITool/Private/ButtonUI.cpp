@@ -6,9 +6,6 @@
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
-_uint CButtonUI::m_iCount = {};
-const string CButtonUI::m_strTypeTag = "Button";
-
 HRESULT CButtonUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();

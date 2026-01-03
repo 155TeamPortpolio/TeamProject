@@ -49,15 +49,25 @@ protected:
 	/*키 입력해서 자식 객체 업데이트 순서 조정*/
 	void KeyInput_ReorderChildren();
 
+protected:
+	void Set_BasePass(const string& pass);
+
+private:
+	static string MapToStencilTestPass(const string& basePass);
+	static string NormalizeToBasePass(const string& pass);
+
 private:
 	_float  GetSizeRatio(UISizeMode mode);
 	void    Render_GUI_SizeBlock();
 
 protected:
-	_bool m_useOriginTexSize = true;
+	_bool      m_useOriginTexSize = true;
 
 	Vector2    m_sizeFHD  = {};
 	UISizeMode m_sizeMode = UISizeMode::FHD;
+
+	_bool      m_useMask  = false;
+	string     m_basePass = "Opaque";
 
 public:
 	virtual void Free() { __super::Free(); }

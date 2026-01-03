@@ -47,8 +47,8 @@ private:
 	_float2		m_vFlip = {};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "Button";
+	inline static       _uint  m_iCount{};
 
 public:
 	static CGameObject* Create();

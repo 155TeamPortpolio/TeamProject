@@ -189,6 +189,24 @@ PS_OUT PS_STENCIL_WRITE_ALPHA(PS_IN In)
     Out.vColor = 1;
     return Out;
 }
+
+float MaskPreviewAlpha = 0.5f;
+
+PS_OUT PS_MAIN_MASKPREVIEW(PS_IN In)
+{
+    PS_OUT Out;
+
+    float2 vTexcoord = float2(
+        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
+        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
+    );
+
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    clip(vDiffuse.a - 0.1f);
+
+    Out.vColor = (vDiffuse * vColor) * MaskPreviewAlpha;
+    return Out;
+}
 // -------------------------------------------------------------------------------------
 technique11 DefaultTechnique
 {
@@ -200,7 +218,7 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN();
-    }  
+    }
 
     pass SpriteAnimation
     {
@@ -211,7 +229,7 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
-// --------------------------------------------------------
+
     pass UVAnimation
     {
         SetRasterizerState(RS_Default);
@@ -221,7 +239,7 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
-// ----------------------------------------------------------
+
     pass LinearFill
     {
         SetRasterizerState(RS_Default);
@@ -241,7 +259,17 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN_RADIALFILL();
     }
-// ---------------------------------------------------------------
+
+    pass UI_MaskPreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_MASKPREVIEW();
+    }
+
     pass UI_StencilWrite
     {
         SetRasterizerState(RS_Default);
@@ -250,6 +278,16 @@ technique11 DefaultTechnique
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_STENCIL_WRITE_ALPHA();
+    }
+
+    pass UI_StencilWritePreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_MASKPREVIEW();
     }
 
     pass Opaque_StencilTest
@@ -272,14 +310,33 @@ technique11 DefaultTechnique
         PixelShader    = compile ps_5_0 PS_MAIN_UVANIMATION();
     }
 
-    pass UI_MaskPreview
+    pass LinearFill_StencilTest
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
         SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader   = compile vs_5_0 VS_MAIN();
         GeometryShader = compile gs_5_0 GS_MAIN();
-        PixelShader    = compile ps_5_0 PS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_LINEARFILL();
+    }
+
+    pass RadialFill_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_RADIALFILL();
+    }
+
+    pass SpriteAnimation_StencilTest
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIStencilTest, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN_SPRITEANIMATION();
     }
 }
-
