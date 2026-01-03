@@ -124,8 +124,6 @@ public:
 	void Set_Animation(_uint iIndex, _bool isLoop = false);				
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
 	virtual void Save(nlohmann::ordered_json& data) {}
 	virtual void Load(const nlohmann::ordered_json& data) {}
 
