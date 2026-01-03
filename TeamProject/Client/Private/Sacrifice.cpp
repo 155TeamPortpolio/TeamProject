@@ -208,6 +208,21 @@ void CSacrifice::Phase1Attack()
 	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
+void CSacrifice::Phase2Attack()
+{
+	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
+	static_cast<CSacrificeHand*>(pHand)->Phase2Attack();
+
+	_vector3 vPosition = m_pTransform->Get_WorldPos();
+	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
+	vPosition += vLook * 8.f;
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	auto pHandTransform = pHand->Get_Component<CTransform>();
+	pHandTransform->Set_WorldPos(vPosition);
+	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
 void CSacrifice::OverDrive_Start()
 {
 	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");

@@ -70,6 +70,7 @@ void CSacrificeState_Attack_Phase2::Register_States()
 	m_pSubStateMachine->Register_State("Attack_Charge_U_Loop_Phase2", CSacrificeState_Attack_Charge_U_Loop_Phase2::Create());
 	m_pSubStateMachine->Register_State("Attack_Charge_U_End_Phase2",CSacrificeState_Attack_Charge_U_End_Phase2::Create());
 
+	m_pSubStateMachine->Register_State("Attack_Roar_Phase2", CSacrificeState_Attack_Roar_Phase2::Create());
 	m_pSubStateMachine->Register_State("OverDrive_Start", CSacrificeState_OverDrive_Release_Start_Phase2::Create());
 	m_pSubStateMachine->Register_State("OverDrive_Loop", CSacrificeState_OverDrive_Release_Loop_Phase2::Create());
 	m_pSubStateMachine->Register_State("OverDrive_End", CSacrificeState_OverDrive_Release_End_Phase2::Create());
@@ -84,10 +85,15 @@ void CSacrificeState_Attack_Phase2::Register_Transitions()
 
 void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLACK_BOARD& blackBoard)
 {
+	blackBoard.stateQueue.clear();
+	blackBoard.isChainOpen = false;	
+	blackBoard.isRequestNext = false;	
+
 	if (pOwner->IsOverDrive())
 	{
 		if (!pOwner->IsOverDriveCharged())
 		{
+			blackBoard.stateQueue.push_back("Attack_Roar_Phase2");
 			blackBoard.stateQueue.push_back("OverDrive_Start");
 			blackBoard.stateQueue.push_back("OverDrive_Loop");
 		}
@@ -100,8 +106,8 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLAC
 	}
 	else
 	{
-		_uint iRandIndex = Helper::Get_Random_Int(0, 4);
-		iRandIndex = 5;
+		_uint iRandIndex = Helper::Get_Random_Int(0, 5);
+		iRandIndex = 2;
 		switch (iRandIndex)
 		{
 		case 0:
@@ -223,12 +229,20 @@ void CSacrificeState_Attack_04_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack04").Loop(false).Speed(1.2f).Apply();
+
+	m_IsHandSpawn = false;
 }
 
 void CSacrificeState_Attack_04_Phase2::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (!m_IsHandSpawn && m_fAnimProgress >= 0.4f)
+	{
+		pOwner->Phase2Attack();
+		m_IsHandSpawn = true;
+	}
 
 	if (pAnimator->isCurrentAnimEnd(0))
 	{
@@ -456,6 +470,29 @@ void CSacrificeState_Attack_Charge_U_End_Phase2::Update(CSacrifice* pOwner, _flo
 }
 
 void CSacrificeState_Attack_Charge_U_End_Phase2::Exit(CSacrifice* pOwner)
+{
+}
+
+void CSacrificeState_Attack_Roar_Phase2::Enter(CSacrifice* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Stun_Roar").Loop(false).Speed(1.2f).Apply();
+}
+
+void CSacrificeState_Attack_Roar_Phase2::Update(CSacrifice* pOwner, _float dt)
+{
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (pAnimator->isCurrentAnimEnd(0))
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+	}
+}
+
+void CSacrificeState_Attack_Roar_Phase2::Exit(CSacrifice* pOwner)
 {
 }
 
