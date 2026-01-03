@@ -181,41 +181,13 @@ void CCorin::Update_Input(_float dt)
 
 void CCorin::Update_States()
 {
-	if (m_bIsEvade)	// Evade 입력 업데이트
+	if (m_bIsEvade)
 		m_pStateMachine->Set_Trigger("ToEvade");
 
-	string strCurrent = m_pStateMachine->Get_CurrentStateName();
+	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
 
-	_bool bInMoveEnd = false;
-	_bool bInAttackEnd = false;
-	// End상태 체크
-	if (strCurrent == "Move")
-	{	// Move의 End상태 체크
-		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(
-			m_pStateMachine->Get_CurrentState());
-		if (pMove)
-			bInMoveEnd = pMove->Is_EndState();
-	}
-	else if (strCurrent == "Attack")
-	{	// Attack의 End상태 체크
-		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(
-			m_pStateMachine->Get_CurrentState());
-		if (pAttack)
-			bInAttackEnd = pAttack->Is_EndState();
-	}
-
-	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
-	{	// End상태일때 애니매이션 캔슬
-		m_pStateMachine->Set_Bool("IsMove", false);
-		if (bInAttackEnd)
-			m_pStateMachine->Set_Bool("AttackEnd", true);
-	}
-	else
-	{	// End상태가 아니라면 : 일반 업데이트
-		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
-		// 공격 입력 처리
-		if (m_bIsAttack) Process_AttackInput(strCurrent);
-	}
+	if (m_bIsAttack)
+		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());
 }
 
 void CCorin::Process_AttackInput(const string& strCurrentState)
@@ -292,11 +264,13 @@ HRESULT CCorin::Initialize_States()
 
 HRESULT CCorin::Initialize_Transitions()
 {
-	// Idle <-> Move
+	// Idle -> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "IsMove");
+
+	// Move -> Idle
 	m_pStateMachine->Register_Transition("Move", "Idle",
-		CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
@@ -304,17 +278,17 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
-		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "AttackEnd");
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	// Evade
 	m_pStateMachine->Register_AnyStateTransition("Evade",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToEvade");
 
-	// Evade → Move (Dash 종료)
+	// Evade -> Move (Dash)
 	m_pStateMachine->Register_Transition("Evade", "Move",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToMove");
 
-	// Evade → Idle (Backstep 종료)
+	// Evade -> Idle (Backstep)
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 

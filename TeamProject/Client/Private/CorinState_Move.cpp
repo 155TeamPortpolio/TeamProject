@@ -43,6 +43,18 @@ void CCorinState_Move::Enter(CCorin* pOwner)
 void CCorinState_Move::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+    if (!m_pSubStateMachine) return;
+    IHState<CCorin>* pMoveType = dynamic_cast<IHState<CCorin>*>(
+        m_pSubStateMachine->Get_CurrentState());
+
+    if (pMoveType && pMoveType->Is_EndState())
+    {
+        IBaseState<CCorin>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
+        if (pEnd && (pOwner->Is_Input() || pEnd->Is_AnimEnd()))
+        {
+            pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+        }
+    }
 }
 
 _bool CCorinState_Move::Handle_Transition(CCorin* pOwner, const string& strState)

@@ -21,6 +21,8 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
 
+    pOwner->Get_StateMachine()->Set_Bool("AttackEnd", false);   // ÃÊ±âÈ­
+
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
 
@@ -39,28 +41,40 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
 void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-}
+    if (!m_pSubStateMachine) return;
+    IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
+        m_pSubStateMachine->Get_CurrentState());
 
-_bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
-{
-    if (strState == "Evade")
-        return true;
-
-    if (strState != "Attack")
+    if (pAttackType && pAttackType->Is_EndState())
     {
-        if (!m_pSubStateMachine) return true;
-        IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
-            m_pSubStateMachine->Get_CurrentState()
-            );
-
-        if (!pAttackType) return true;
-        if (!pAttackType->Is_EndState()) return false;
-        if (strState == "Idle")
+        IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+        if (pEnd && (pOwner->Is_Input() || pEnd->Is_AnimEnd()))
         {
-            IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
-            if (pEnd && (pEnd->Is_AnimEnd() || pOwner->Is_Input())) return true;
+            pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
         }
-        return false;
     }
-    return true;
 }
+
+//_bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
+//{
+//    if (strState == "Evade")
+//        return true;
+//
+//    if (strState != "Attack")
+//    {
+//        if (!m_pSubStateMachine) return true;
+//        IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
+//            m_pSubStateMachine->Get_CurrentState()
+//            );
+//
+//        if (!pAttackType) return true;
+//        if (!pAttackType->Is_EndState()) return false;
+//        if (strState == "Idle")
+//        {
+//            IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+//            if (pEnd && (pEnd->Is_AnimEnd() || pOwner->Is_Input())) return true;
+//        }
+//        return false;
+//    }
+//    return true;
+//}
