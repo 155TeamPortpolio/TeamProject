@@ -39,16 +39,4 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
 void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    if (!m_pSubStateMachine) return;
-    IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
-        m_pSubStateMachine->Get_CurrentState());
-
-    if (pAttackType && pAttackType->Is_EndState())
-    {
-        IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
-        if (pEnd && (pOwner->Is_Input() || pEnd->Is_AnimEnd()))
-        {
-            pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
-        }
-    }
 }

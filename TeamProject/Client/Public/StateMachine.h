@@ -189,9 +189,7 @@ void CStateMachine<Type>::Update(_float dt)
 	Update_AnimProgress();
 
 	Check_AnyStateTransitions();
-	if (m_fStateTime == 0.f) // 방금 전환됨
-		return;
-
+	if (m_fStateTime == 0.f) return;	// 방금 전환됨
 	Check_Transitions();
 }
 

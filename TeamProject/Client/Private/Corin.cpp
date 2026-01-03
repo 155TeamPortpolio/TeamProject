@@ -188,6 +188,8 @@ void CCorin::Update_States()
 
 	if (m_bIsAttack)
 		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());
+
+	Process_EndState(m_pStateMachine->Get_CurrentStateName());
 }
 
 void CCorin::Process_AttackInput(const string& strCurrentState)
@@ -230,6 +232,42 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 		// NormalAttack : Combo
 		if (pNormal && pNormal->Get_SubStateMachine())
 			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
+	}
+}
+
+void CCorin::Process_EndState(const string& strCurrentState)
+{
+	if (strCurrentState == "Move")
+	{
+		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pMove) return;
+
+		IHState<CCorin>* pMoveType = dynamic_cast<IHState<CCorin>*>(
+			pMove->Get_SubStateMachine()->Get_CurrentState());
+		if (pMoveType && pMoveType->Is_EndState())
+		{
+			IBaseState<CCorin>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsAttack || m_bIsEvade) return;
+			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
+	else if (strCurrentState == "Attack")
+	{
+		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pAttack) return;
+
+		IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
+			pAttack->Get_SubStateMachine()->Get_CurrentState());
+		if (pAttackType && pAttackType->Is_EndState())
+		{
+			IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
 	}
 }
 
