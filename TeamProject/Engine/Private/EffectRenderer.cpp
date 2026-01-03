@@ -66,6 +66,28 @@ HRESULT CEffectRenderer::Render_Effect(EffectPass* pEffectPass, ParticlePass* pP
 		
 		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 	}
+
+	/* Combined Pass */
+	{
+		if (FAILED(m_pTargetManager->Begin_MRT("MRT_Combined_Static"))) return E_FAIL;
+
+		m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
+
+		ID3D11InputLayout* pLayout;
+		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "COMBINED", &pLayout);
+		m_pContext->IASetInputLayout(pLayout);
+
+		m_pTargetManager->Bind_Target("Target_DiffuseEffect", m_pShader, "DiffuseTexture");
+		m_pTargetManager->Bind_Target("Target_BloomBlurY_Effect", m_pShader, "EffectBloomFinalTexture");
+
+		Bind_WorldMatrix();
+
+		m_pShader->Apply("COMBINED", m_pContext);
+		m_pVIBuffer->Bind_Buffer(m_pContext);
+		m_pVIBuffer->Render(m_pContext);
+
+		if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
+	}
 	
 	return S_OK;
 }
