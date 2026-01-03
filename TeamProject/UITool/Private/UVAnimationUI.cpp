@@ -57,6 +57,8 @@ void CUVAnimationUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 
     m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;

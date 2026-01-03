@@ -35,6 +35,8 @@ void CImageUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 }
 
@@ -42,7 +44,7 @@ void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ÀÌ¹ÌÁö
+    // ì´ë¯¸ì§€
     Render_GUI_Image(m_strTextureKey);
 
     // flip

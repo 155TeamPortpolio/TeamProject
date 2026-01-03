@@ -39,6 +39,8 @@ void CGaugeUI::Update(_float dt)
 {
 	if (!m_isAlive) return;
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 }
 

@@ -37,6 +37,8 @@ void CSpriteAnimationUI::Update(_float dt)
     if (!m_isAlive)
         return;
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 
     if (m_isPlaying)

@@ -40,6 +40,8 @@ void CButtonUI::Update(_float dt)
 {
     if (!m_isAlive) return;
 
+    KeyInput_ReorderChildren();
+
     Play_Animation(dt);
 }
 
@@ -68,7 +70,7 @@ void CButtonUI::Render_GUI()
 
     // 이벤트
     ImGui::SeparatorText(u8"이벤트");
-    ImGui::InputText(u8"메시지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    ImGui::InputText(u8"메세지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
     // 버튼 상태
     ImGui::SeparatorText(u8"버튼 상태");
