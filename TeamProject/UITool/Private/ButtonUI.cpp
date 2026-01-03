@@ -20,8 +20,6 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Set_Clickable(true);
-
     Set_OriginTexSize(true);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
@@ -32,6 +30,13 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
     m_iCount++;
 
     return S_OK;
+}
+
+void CButtonUI::Awake()
+{
+    __super::Awake();
+
+    Set_Clickable(true);
 }
 
 void CButtonUI::Update(_float dt)

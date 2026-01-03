@@ -39,7 +39,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh(StaticOpaquePass* pOpaquePass, In
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Static", 0xFF, pDeferredDSV, false))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Static",  0xFF, pDeferredDSV, false))) return E_FAIL;
 	pOpaquePass->Execute(m_pContext, this);
 	pInstancePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
