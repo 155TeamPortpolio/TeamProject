@@ -59,14 +59,14 @@ void CMaskUI::Save(nlohmann::ordered_json& data)
     __super::Save(data);
 
     data["typeTag"] = m_strTypeTag;
-    data["mask.textureKey"] = m_strTextureKey;
+    data["maskTextureKey"] = m_strTextureKey;
 }
 
 void CMaskUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
 
-    m_strTextureKey = data.value("mask.textureKey", "empty.png");
+    m_strTextureKey = data.value("maskTextureKey", "empty.png");
 
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 
