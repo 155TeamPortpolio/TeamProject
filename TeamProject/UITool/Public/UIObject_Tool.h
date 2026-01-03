@@ -69,6 +69,8 @@ protected:
 	_bool      m_useMask  = false;
 	string     m_basePass = "Opaque";
 
+	_bool	   m_isAspectRatioLocked = {};
+
 public:
 	virtual void Free() { __super::Free(); }
 };

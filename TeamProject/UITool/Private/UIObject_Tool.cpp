@@ -603,9 +603,30 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
 
     if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
         m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+     
+    _uint2 vSize = Get_Component<CSprite2D>()->Get_Texture(0)->Get_Size();
+    float fAspectRatio = vSize.x / max(static_cast<_float>(vSize.y), 1.f);
 
-    if (ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
-        m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+    ImGui::Checkbox(u8"##lock", &m_isAspectRatioLocked);
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+        ImGui::SetTooltip(u8"종횡비 고정\n텍스쳐 가로/세로 비율로 유지합니다");
+
+    ImGui::SameLine();
+    ImGui::PushItemWidth(64.f);
+    if (ImGui::DragFloat(u8"##x", &m_vSize.x, 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
+        if (m_isAspectRatioLocked)
+            m_vSize.y = m_vSize.x / fAspectRatio;
+    }
+    ImGui::SameLine();
+    if (ImGui::DragFloat(u8"##y", &m_vSize.y, 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
+        if (m_isAspectRatioLocked)
+            m_vSize.x = m_vSize.y * fAspectRatio;
+    }
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    ImGui::Text(u8"사이즈");
 
     static const char* kModes[] =
     {
