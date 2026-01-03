@@ -7,9 +7,6 @@
 #include "UITool_Level.h"
 #include "Texture.h"
 
-_uint CUVAnimationUI::m_iCount = {};
-const string CUVAnimationUI::m_strTypeTag = "UVAnimation";
-
 HRESULT CUVAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -83,7 +80,7 @@ void CUVAnimationUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 
     auto& uvAnimationJson = data["uvAnimation"];
@@ -100,7 +97,7 @@ void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
     {
         const auto& uvAnimationJson = data["uvAnimation"];
         auto uvOffsetSpeed = uvAnimationJson.value("uvOffsetSpeed", json::array({0.0f, 0.0f}));
-        m_vUVOffsetSpeed = {uvOffsetSpeed[0], uvOffsetSpeed[1]};
+        m_vUVOffsetSpeed   = {uvOffsetSpeed[0], uvOffsetSpeed[1]};
     }
 
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);

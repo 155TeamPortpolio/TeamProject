@@ -281,5 +281,15 @@ technique11 DefaultTechnique
         GeometryShader = compile gs_5_0 GS_MAIN();
         PixelShader    = compile ps_5_0 PS_MAIN();
     }
+
+    pass UI_StencilWritePreview
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_UIWriteStencil, 1);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader   = compile vs_5_0 VS_MAIN();
+        GeometryShader = compile gs_5_0 GS_MAIN();
+        PixelShader    = compile ps_5_0 PS_MAIN();
+    }
 }
 

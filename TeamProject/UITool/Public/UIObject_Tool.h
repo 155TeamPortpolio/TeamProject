@@ -51,10 +51,12 @@ private:
 	void    Render_GUI_SizeBlock();
 
 protected:
-	_bool m_useOriginTexSize = true;
+	_bool      m_useOriginTexSize = true;
 
 	Vector2    m_sizeFHD  = {};
 	UISizeMode m_sizeMode = UISizeMode::FHD;
+
+	_bool      m_useMask = false;
 
 public:
 	virtual void Free() { __super::Free(); }

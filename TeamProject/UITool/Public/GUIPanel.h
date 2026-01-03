@@ -32,8 +32,8 @@ private:
     CGameObject* Get_SelectedObject();
 
 public:
-    static CGUIPanel* Create(GUI_CONTEXT* pContext);
-    virtual void Free() override;
+    static CGUIPanel* Create(GUI_CONTEXT* pContext) { return new CGUIPanel(pContext); }
+    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

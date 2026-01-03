@@ -93,8 +93,9 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     transformJson["pivot"]        = { m_vPivot.x, m_vPivot.y };
     transformJson["radian"]       = m_fRadian;
     
-    data["color"] = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
-    data["pass"]  = Get_Component<CSprite2D>()->Get_PassConstant();
+    data["color"]   = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
+    data["pass"]    = Get_Component<CSprite2D>()->Get_PassConstant();
+    data["useMask"] = m_useMask;
 
     // 애니메이션 데이터 저장
     auto& animClipsJson = data["animClips"];
@@ -171,6 +172,8 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
     auto color = data.value("color", nlohmann::ordered_json::array({1.0f, 1.0f, 1.0f, 1.0f}));
     m_vColor = {color[0], color[1], color[2], color[3]};
+
+    m_useMask = data.value("useMask", false);
 
     auto sprite = Get_Component<CSprite2D>();
     string pass = data.value("pass", "");

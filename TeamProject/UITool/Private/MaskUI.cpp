@@ -21,7 +21,7 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
-    sprite->ChangePass(m_previewVisible ? "UI_MaskPreview" : "UI_StencilWrite");
+    sprite->ChangePass(m_previewVisible ? "UI_StencilWritePreview" : "UI_StencilWrite");
 
     m_iCount++;
     return S_OK;
@@ -44,9 +44,9 @@ void CMaskUI::Render_GUI()
     auto sprite = Get_Component<CSprite2D>();
 
     if (ImGui::Checkbox("Preview Visible", &m_previewVisible))
-        sprite->ChangePass(m_previewVisible ? "UI_MaskPreview" : "UI_StencilWrite");
+        sprite->ChangePass(m_previewVisible ? "UI_StencilWritePreview" : "UI_StencilWrite");
 
-    ImGui::TextDisabled(m_previewVisible ? "Pass: UI_MaskPreview" : "Pass: UI_StencilWrite (Stencil)");
+    ImGui::TextDisabled(m_previewVisible ? "Pass: UI_StencilWritePreview" : "Pass: UI_StencilWrite");
 }
 
 CGameObject* CMaskUI::Create()
