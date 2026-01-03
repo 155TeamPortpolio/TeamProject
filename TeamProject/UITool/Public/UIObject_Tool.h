@@ -72,6 +72,8 @@ protected:
 
 	_bool	   m_isAspectRatioLocked = {};
 
+	_int	   m_iClipIndex = { -1 };
+
 public:
 	virtual void Free() { __super::Free(); }
 };

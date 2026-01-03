@@ -367,30 +367,32 @@ void CUIObject_Tool::Render_GUI_Animation()
         return;
 
     // 클립 선택
-    static _int iClipIndex = -1;
     string strCombined;
     for (_int i = 0; i < m_AnimClips.size(); ++i)
         strCombined += m_AnimClips[i].strName + '\0';
     strCombined += '\0';
     
-    ImGui::Combo(u8"클립", &iClipIndex, strCombined.c_str());
+    ImGui::Combo(u8"클립", &m_iClipIndex, strCombined.c_str());
     
     // 클립 선택 없으면 리턴
-    if (-1 == iClipIndex)
+    if (-1 == m_iClipIndex)
         return;
 
-    static bool showPopup = false;
-
     if (ImGui::Button(u8"클립 편집"))
-        showPopup = true;
-
-    if (showPopup)
     {
-        UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
+        if (m_iClipIndex >= 0 && m_iClipIndex < m_AnimClips.size())
+            ImGui::OpenPopup("clipEditor");
+    }
 
-        ImGui::SetNextWindowPos(ImVec2(g_iWinSizeX * 0.72f, 100), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(200, g_iWinSizeY * 0.8f), ImGuiCond_Once);
-        ImGui::Begin(clip.strName.c_str(), &showPopup);
+    ImGui::SetNextWindowPos(ImVec2(g_iWinSizeX * 0.7f, 100), ImGuiCond_Appearing);
+    ImGui::SetNextWindowSize(ImVec2(240.f, g_iWinSizeY * 0.8f), ImGuiCond_Appearing);
+
+    if (ImGui::BeginPopup("clipEditor"))
+    {
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        ImGui::BeginChild("Content", avail, false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+        UI_ANIM_CLIP& clip = m_AnimClips[m_iClipIndex];
 
         // 재생, 정지 
         ImGui::SeparatorText(u8"재생");
@@ -399,7 +401,7 @@ void CUIObject_Tool::Render_GUI_Animation()
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                Set_Animation(iClipIndex, &clip.isLoop);
+                Set_Animation(m_iClipIndex, &clip.isLoop);
             else
                 m_isBlending = false;
         }
@@ -460,7 +462,8 @@ void CUIObject_Tool::Render_GUI_Animation()
             ++idx;
         }
 
-        ImGui::End();
+        ImGui::EndChild();
+        ImGui::EndPopup();
     } 
 }
 
