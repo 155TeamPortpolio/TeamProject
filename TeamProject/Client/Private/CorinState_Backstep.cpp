@@ -6,7 +6,7 @@
 
 void CCorinState_Backstep::Enter(CCorin* pOwner)
 {
-	pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Evade_Back")
+	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
         .Speed(2.f)
 		.Apply();
 }

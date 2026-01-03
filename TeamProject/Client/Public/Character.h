@@ -29,6 +29,7 @@ public:
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsInput; }
+    const string& Get_Name() const { return m_strName; }
     
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
@@ -64,8 +65,7 @@ private:
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
-
-protected:
+    string                m_strName = "";
     // Ω∫≈»
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };

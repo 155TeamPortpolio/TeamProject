@@ -60,7 +60,9 @@ void CCorin::Awake()
 
 	m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-	m_pAnimator->Set_Animation("Avatar_Female_Size01_Corin_Ani_Idle")
+
+	m_strName = "Avatar_Female_Size01_Corin_Ani_";
+	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);

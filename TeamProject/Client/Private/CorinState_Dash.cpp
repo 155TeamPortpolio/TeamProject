@@ -7,7 +7,7 @@
 
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Evade_Front")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
         .Speed(2.f)
         .Apply();
 
