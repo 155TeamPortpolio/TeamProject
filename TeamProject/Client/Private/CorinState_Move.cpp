@@ -19,50 +19,45 @@ void CCorinState_Move::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("Walk");
     }
 
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("MoveEntryMode");
+    pOwner->Get_StateMachine()->Set_Int("MoveEntryMode", 0);
+
+    switch (iEntryMode)
+    {
+    case 2:
+        m_pSubStateMachine->Set_DefaultState("Run");
+        break;
+    case 1:
+        m_pSubStateMachine->Set_DefaultState("Run");
+        m_pSubStateMachine->Set_Trigger("SkipToEnd");
+        break;
+    default:
+        m_pSubStateMachine->Set_DefaultState("Walk");
+        break;
+    }
+
     __super::Enter(pOwner);
 }
 
 void CCorinState_Move::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    if (m_pSubStateMachine)
-    {
-        IHState<CCorin>* pMoveType =
-            dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
-
-        if (pMoveType && pMoveType->Has_SubStateMachine())
-        {
-            CStateMachine<CCorin>* pAnimFSM = pMoveType->Get_SubStateMachine();
-            IBaseState<CCorin>* pCurrentAnim = pAnimFSM->Get_CurrentState();
-
-            if (pCurrentAnim && pCurrentAnim->Get_Tag() == "End")
-            {
-                if (pCurrentAnim->Is_AnimEnd() || pCurrentAnim->Get_AnimProgress() >= 1.f)
-                {
-                    m_fAnimProgress = 1.f;
-                }
-                else
-                {
-                    m_fAnimProgress = 0.f;
-                }
-            }
-            else
-            {
-                m_fAnimProgress = 0.f;
-            }
-        }
-    }
 }
 
 _bool CCorinState_Move::Handle_Transition(CCorin* pOwner, const string& strState)
 {
+    if (strState == "Evade")
+        return true;
+
+    if (strState == "Attack")
+        return true;
+
     if (strState != "Move")
     {
         if (!m_pSubStateMachine)
             return true;
 
-        IHState<CCorin>* pMoveType =
-            dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
+        IHState<CCorin>* pMoveType = dynamic_cast<IHState<CCorin>*>(m_pSubStateMachine->Get_CurrentState());
 
         if (!pMoveType || !pMoveType->Has_SubStateMachine())
             return true;
