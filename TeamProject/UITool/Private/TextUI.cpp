@@ -65,6 +65,7 @@ void CTextUI::Update(_float dt)
 
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     Get_Component<CTextSlot>()->Push_Text();
+    Get_Component<CTextSlot>()->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
 }
 
 void CTextUI::Late_Update(_float dt)
@@ -111,8 +112,7 @@ void CTextUI::Render_GUI()
         UpdateAnchorOffset_TextAlign();
     }
 
-    if(ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor)))
-        Get_Component<CTextSlot>()->Set_Color(m_vColor);
+    ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor));
 
     // 외곽선
     ImGui::SeparatorText(u8"외곽선");
