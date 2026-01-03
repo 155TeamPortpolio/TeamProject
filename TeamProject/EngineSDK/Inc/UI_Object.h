@@ -162,9 +162,12 @@ protected:
 
 	_bool m_isClickable = {};
 
-	/*텍스쳐에 곱해지는 컬러*/
+	/*텍스쳐에 곱해지는 기본 컬러 (sRGB)*/
 	Vector4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	/*셰이더로 전달되는 컬러 (m_vColor를 감마 2.2 보정하여 Linear Space로 변환한 값)*/
 	Vector4 m_vColorLinear{};
+	/*부모 알파와 자신의 알파를 곱한 최종 알파 값*/
+	_float m_vCombinedAlpha = { 1.f };
 
 	/*애니메이션*/
 	_bool m_isBlending = {};
