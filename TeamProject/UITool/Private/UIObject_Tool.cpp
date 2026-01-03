@@ -525,22 +525,34 @@ _float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
 }
 
 void CUIObject_Tool::KeyInput_ReorderChildren()
-{ 
-    auto pInput = CGameInstance::GetInstance()->Get_InputDev();
+{
+    auto pGameInstance = CGameInstance::GetInstance();
 
+    auto pInput = pGameInstance->Get_InputDev();
+    auto pSelected = pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
     auto pChild = Get_Component<CChild>();
-    if (!pChild)
+
+    if (!pChild || !pSelected || (pSelected != this))
         return;
 
-    if (pInput->Key_Tap('L'))    // [
+    // 상단 ~ 하단 순서대로 그려짐
+    if (pInput->Key_Hold(VK_CONTROL))
     {
-        pChild->Lower_Order(this);
+        if (pInput->Key_Tap(VK_OEM_4))      //  ctrl + [ : 최상단으로 이동
+            pChild->Set_Order_First(this);
+        else if (pInput->Key_Tap(VK_OEM_6)) //  ctrl + ] : 최하단으로 이동
+            pChild->Set_Order_Last(this);
     }
-    else if (pInput->Key_Tap('U'))   // ]
-    { 
-        pChild->Upper_Order(this);
+    else
+    {
+        if (pInput->Key_Tap(VK_OEM_4))      //  [ : 한 단계 위로 이동
+            pChild->Upper_Order(this);
+        else if (pInput->Key_Tap(VK_OEM_6)) //  ] : 한 단계 아래로 이동
+        {
+            OutputDebugString(Helper::ConvertToWideString(m_InstanceName).c_str());
+            pChild->Lower_Order(this);
+        }
     }
-
 }
 
 _float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
