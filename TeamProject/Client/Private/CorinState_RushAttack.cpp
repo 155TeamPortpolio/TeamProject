@@ -35,11 +35,27 @@ void CCorinState_Rush_Start::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Rush_Start::Update(CCorin* pOwner, _float dt)
+{
+    CCorin::ROOTMOTION_DESC desc;
+    desc.iModeMask = ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION);
+    desc.fMoveWeight = 0.5f;
+    pOwner->Process_RootMotion(dt, desc);
+}
+
 void CCorinState_Rush_Explode::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Rush_Explode")
         .Speed(2.f)
         .Apply();
+}
+
+void CCorinState_Rush_Explode::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Rush_End::Enter(CCorin* pOwner)

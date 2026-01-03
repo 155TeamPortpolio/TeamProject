@@ -13,10 +13,17 @@ void CCorinState_Backstep::Enter(CCorin* pOwner)
 
 void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-    if (vDelta.x != 0.f || vDelta.z != 0.f)
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.5f)
     {
-        _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        IHState<CCorin>* pEvade = Get_ParentState();
+        if (pEvade && pEvade->Get_SubStateMachine())
+        {
+            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
+            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+        }
     }
 }

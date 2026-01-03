@@ -26,10 +26,11 @@ void CCorinState_Move::Enter(CCorin* pOwner)
     {
     case 2:
         m_pSubStateMachine->Set_DefaultState("Run");
+        m_pSubStateMachine->Set_Int("RunEntryMode", 0);
         break;
     case 1:
         m_pSubStateMachine->Set_DefaultState("Run");
-        m_pSubStateMachine->Set_Trigger("SkipToEnd");
+        m_pSubStateMachine->Set_Int("RunEntryMode", 1);
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("Walk");

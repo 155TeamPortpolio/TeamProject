@@ -59,17 +59,6 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
     __super::Update(pOwner, dt);
-
-    if (m_pSubStateMachine)
-    {
-        string strCurrent = m_pSubStateMachine->Get_CurrentStateName();
-        IBaseState<CCorin>* pCurrent = m_pSubStateMachine->Get_CurrentState();
-        if (strCurrent == "Attack_End")
-        {
-            if (pCurrent && pCurrent->Is_AnimEnd())
-                m_fAnimProgress = 1.f;
-        }
-    }
 }
 
 void CCorinState_NormalAttack::Exit(CCorin* pOwner)
@@ -85,6 +74,13 @@ void CCorinState_Attack_01::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CCorinState_Attack_01::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(0);
@@ -95,6 +91,13 @@ void CCorinState_Attack_02::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_02")
         .Speed(2.f)
         .Apply();
+}
+
+void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
@@ -109,6 +112,13 @@ void CCorinState_Attack_03::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(2);
@@ -121,6 +131,13 @@ void CCorinState_Attack_04::Enter(CCorin* pOwner)
         .Apply();
 }
 
+void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
 {
     static_cast<CCorinState_NormalAttack*>(m_pParentState)->Set_ComboIndex(3);
@@ -131,6 +148,13 @@ void CCorinState_Attack_05::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_05")
         .Speed(1.5f)
         .Apply();
+}
+
+void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_05::Exit(CCorin* pOwner)

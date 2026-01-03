@@ -39,7 +39,6 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
 void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    Move_Motion(pOwner, dt);
 }
 
 _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
@@ -49,81 +48,19 @@ _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strSta
 
     if (strState != "Attack")
     {
-        if (!m_pSubStateMachine)
-            return true;
+        if (!m_pSubStateMachine) return true;
+        IHState<CCorin>* pAttackType = dynamic_cast<IHState<CCorin>*>(
+            m_pSubStateMachine->Get_CurrentState()
+            );
 
-        string strCurrentSub = m_pSubStateMachine->Get_CurrentStateName();
-
-        // NormalAttack End 체크
-        if (strCurrentSub == "NormalAttack")
+        if (!pAttackType) return true;
+        if (!pAttackType->Is_EndState()) return false;
+        if (strState == "Idle")
         {
-            CCorinState_NormalAttack* pNormalAttack =
-                static_cast<CCorinState_NormalAttack*>(m_pSubStateMachine->Get_State("NormalAttack"));
-
-            if (pNormalAttack && pNormalAttack->Get_SubStateMachine())
-            {
-                string strNormalSub = pNormalAttack->Get_SubStateMachine()->Get_CurrentStateName();
-                IBaseState<CCorin>* pAttackEnd =
-                    pNormalAttack->Get_SubStateMachine()->Get_CurrentState();
-
-                // Attack_End가 아니면 거부
-                if (strNormalSub != "Attack_End")
-                    return false;
-
-                if (!pAttackEnd)
-                    return true;
-
-                // Attack_End에서 Idle로만 전환 허용
-                if (strState == "Idle")
-                {
-                    // 애니메이션 끝났거나 입력이 있으면 허용
-                    if (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input())
-                        return true;
-                }
-                return false;
-            }
+            IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
+            if (pEnd && (pEnd->Is_AnimEnd() || pOwner->Is_Input())) return true;
         }
-        else if (strCurrentSub == "RushAttack")
-        {
-            CCorinState_RushAttack* pRushAttack =
-                static_cast<CCorinState_RushAttack*>(m_pSubStateMachine->Get_State("RushAttack"));
-
-            if (pRushAttack && pRushAttack->Get_SubStateMachine())
-            {
-                string strRushSub = pRushAttack->Get_SubStateMachine()->Get_CurrentStateName();
-                IBaseState<CCorin>* pRushEnd =
-                    pRushAttack->Get_SubStateMachine()->Get_CurrentState();
-
-                if (strRushSub != "Rush_End")
-                    return false;
-
-                if (!pRushEnd)
-                    return true;
-
-                if (strState == "Idle")
-                {
-                    if (pRushEnd->Is_AnimEnd() || pOwner->Is_Input())
-                        return true;
-                }
-                return false;
-            }
-        }
-        return true;
+        return false;
     }
     return true;
-}
-
-void CCorinState_Attack::Move_Motion(CCorin* pOwner, _float dt)
-{
-    _vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-    if (vDir.Length() > 0.01f)
-    {
-        vDir.Normalize();
-        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
 }

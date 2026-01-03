@@ -59,19 +59,7 @@ void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 
 void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-
-        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
+    pOwner->Process_RootMotion(dt);
 }
 
 void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
@@ -84,19 +72,7 @@ void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 
 void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-
-        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
+    pOwner->Process_RootMotion(dt);
 }
 
 void CCorinState_Walk_End::Enter(CCorin* pOwner)
