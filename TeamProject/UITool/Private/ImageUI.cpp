@@ -8,9 +8,6 @@
 #include "UITool_Level.h"
 #include "Engine_Math.h"
 
-_uint CImageUI::m_iCount = {};
-const string CImageUI::m_strTypeTag = "Image";
-
 HRESULT CImageUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();

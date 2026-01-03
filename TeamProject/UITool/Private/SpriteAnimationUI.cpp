@@ -6,9 +6,6 @@
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
-_uint CSpriteAnimationUI::m_iCount = {};
-const string CSpriteAnimationUI::m_strTypeTag = "SpriteAnimation";
-
 HRESULT CSpriteAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();

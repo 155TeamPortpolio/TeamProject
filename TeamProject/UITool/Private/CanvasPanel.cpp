@@ -13,9 +13,6 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 
-_uint CCanvasPanel::m_iCount = {};
-const string CCanvasPanel::m_strTypeTag = "CanvasPanel";
-
 HRESULT CCanvasPanel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
