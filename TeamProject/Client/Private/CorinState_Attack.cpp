@@ -2,6 +2,7 @@
 #include "GameInstance.h"
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
+#include "CorinState_RushAttack.h"
 #include "Corin.h"
 
 #include "CharacterController.h"
@@ -12,8 +13,25 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
         m_pSubStateMachine->Register_State("NormalAttack", CCorinState_NormalAttack::Create());
+        m_pSubStateMachine->Register_State("RushAttack", CCorinState_RushAttack::Create());
+
         m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
+        m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
+    }
+
+    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
+    pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
+
+    switch (iEntryMode)
+    {
+    case 1:
+        m_pSubStateMachine->Set_DefaultState("RushAttack");
+        break;
+    default:
+        m_pSubStateMachine->Set_DefaultState("NormalAttack");
+        break;
     }
     __super::Enter(pOwner);
 }
@@ -22,49 +40,13 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
     Move_Motion(pOwner, dt);
-
-    if (m_pSubStateMachine)
-    {
-        string strCurrentSub = m_pSubStateMachine->Get_CurrentStateName();
-
-        if (strCurrentSub == "NormalAttack")
-        {
-            CCorinState_NormalAttack* pNormalAttack =
-                static_cast<CCorinState_NormalAttack*>(m_pSubStateMachine->Get_State("NormalAttack"));
-
-            if (pNormalAttack && pNormalAttack->Get_SubStateMachine())
-            {
-                string strNormalSub = pNormalAttack->Get_SubStateMachine()->Get_CurrentStateName();
-
-                if (strNormalSub == "Attack_End")
-                {
-                    IBaseState<CCorin>* pAttackEnd =
-                        pNormalAttack->Get_SubStateMachine()->Get_CurrentState();
-
-                    if (pAttackEnd && (pAttackEnd->Is_AnimEnd() || pAttackEnd->Get_AnimProgress() >= 1.f))
-                    {
-                        m_fAnimProgress = 1.f;
-                    }
-                    else
-                    {
-                        m_fAnimProgress = 0.f;
-                    }
-                }
-                else
-                {
-                    m_fAnimProgress = 0.f;
-                }
-            }
-        }
-    }
-}
-
-void CCorinState_Attack::Exit(CCorin* pOwner)
-{
 }
 
 _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strState)
 {
+    if (strState == "Evade")
+        return true;
+
     if (strState != "Attack")
     {
         if (!m_pSubStateMachine)
@@ -96,6 +78,31 @@ _bool CCorinState_Attack::Handle_Transition(CCorin* pOwner, const string& strSta
                 {
                     // 애니메이션 끝났거나 입력이 있으면 허용
                     if (pAttackEnd->Is_AnimEnd() || pOwner->Is_Input())
+                        return true;
+                }
+                return false;
+            }
+        }
+        else if (strCurrentSub == "RushAttack")
+        {
+            CCorinState_RushAttack* pRushAttack =
+                static_cast<CCorinState_RushAttack*>(m_pSubStateMachine->Get_State("RushAttack"));
+
+            if (pRushAttack && pRushAttack->Get_SubStateMachine())
+            {
+                string strRushSub = pRushAttack->Get_SubStateMachine()->Get_CurrentStateName();
+                IBaseState<CCorin>* pRushEnd =
+                    pRushAttack->Get_SubStateMachine()->Get_CurrentState();
+
+                if (strRushSub != "Rush_End")
+                    return false;
+
+                if (!pRushEnd)
+                    return true;
+
+                if (strState == "Idle")
+                {
+                    if (pRushEnd->Is_AnimEnd() || pOwner->Is_Input())
                         return true;
                 }
                 return false;

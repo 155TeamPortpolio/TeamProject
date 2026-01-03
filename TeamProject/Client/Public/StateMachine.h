@@ -87,7 +87,7 @@ public:
 	_int    Get_Int(const string& strParam) const;
 	_bool   Get_Bool(const string& strParam) const;
 	_bool   Get_Trigger(const string& strParam) const;
-
+	// For IMGUI
 	void	Set_ShowWindow(_bool bShow) { m_bShowWindow = bShow; }
 	_bool	Get_ShowWindow() const { return m_bShowWindow; }
 

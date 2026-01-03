@@ -337,13 +337,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     ambient = max(ambient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
     
     if (vMetalic.a < 0.7) Out.vResult = float4(vLight.rgb * vRamp + ambient, 1.f);
-    else Out.vResult = float4(vLight.rgb, 1.f);
+    else
+        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.3, 1.f);
     
     float rimIntensity = max(vRamp, 0.5f);
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor + vBloom.rgb;
+    Out.vResult.rgb += specularColor /*+ vBloom.rgb*/;
 
     return Out;
 }

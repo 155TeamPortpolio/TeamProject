@@ -37,6 +37,16 @@ void CCorinState_Walk::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+    if (m_pSubStateMachine->Get_CurrentStateName() == "Loop")
+    {
+        auto pLoop = m_pSubStateMachine->Get_CurrentState();
+        if (pLoop && pLoop->Is_AnimEnd())
+        {
+            auto pMoveState = Get_ParentState();
+            if (pMoveState && pMoveState->Get_SubStateMachine())
+                pMoveState->Get_SubStateMachine()->Set_Trigger("ToRun");
+        }
+    }
 }
 
 void CCorinState_Walk_Start::Enter(CCorin* pOwner)
@@ -85,19 +95,6 @@ void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
         {
             _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
             pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
-
-    if (m_fAnimProgress >= 1.f)
-    {
-        CCorinState_Walk* pWalk = static_cast<CCorinState_Walk*>(this->Get_ParentState());
-        if (pWalk)
-        {
-            CCorinState_Move* pMove = static_cast<CCorinState_Move*>(pWalk->Get_ParentState());
-            if (pMove && pMove->Get_SubStateMachine())
-            {
-                pMove->Get_SubStateMachine()->Set_Trigger("ToRun");
-            }
         }
     }
 }
