@@ -317,7 +317,8 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     if (vStatic.a > 0.01f) result = vStatic.rgb;
     
-    if (vEffect.a > 0.01f) result = vEffect.rgb;
+    if (vEffect.a > 0.01f)
+        result = vEffect.rgb * vEffect.a;
         
     if (vUI.a > 0.01f) result = vUI.rgb;
     
@@ -331,7 +332,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
    // float4 effectbloom = BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+   // scene.rgb *= scene.a;
     ui.rgb *= ui.a; //premultiplied
     float3 hdrColor = scene.rgb;
     hdrColor += hdrBloom.rgb * 0.3;

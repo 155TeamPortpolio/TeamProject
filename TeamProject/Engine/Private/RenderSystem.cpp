@@ -72,7 +72,8 @@ HRESULT CRenderSystem::Render()
 
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
-	m_pEffect->Render_WeightOIT();
+	m_pEffect->Render_Effect_Bloom();
+	m_pEffect->Render_EffectCombined();
 
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
@@ -86,7 +87,6 @@ HRESULT CRenderSystem::Render()
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
 	m_pForward->Render_Bloom();
-	m_pEffect->Render_Effect_Bloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 
