@@ -304,8 +304,17 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase">
       <UniqueIdentifier>{dabff24d-6d9c-4cdd-94e8-db0017cbbf65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Move\Dash">
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade">
+      <UniqueIdentifier>{d03f6fe2-9042-45dc-ab55-125859fa9c22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
       <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
+      <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
+      <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -606,6 +615,18 @@
     <ClInclude Include="..\Public\SacrificeState_ChangePhase.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Dash.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Backstep.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_RushAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -896,6 +917,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Dash.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Evade.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Backstep.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

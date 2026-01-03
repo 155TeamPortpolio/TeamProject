@@ -30,6 +30,7 @@ private:
 private:
     virtual void Update_Input(_float dt) override;
     void         Update_States();
+    void         Process_AttackInput(const string& strCurrentState);
 
 private:
     CStateMachine<CCorin>* m_pStateMachine = { nullptr };

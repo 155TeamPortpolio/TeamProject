@@ -27,6 +27,7 @@ public:
     _float Get_Speed() const { return m_fMoveSpeed; }
     _bool  Is_Move() const { return m_bIsMove; }
     _bool  Is_Attack() const { return m_bIsAttack; }
+    _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsInput; }
     
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
@@ -47,14 +48,18 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 public:
-    void Rotate(_vector3 vDirection);
+    void     Rotate(_vector3 vDirection);
+    _bool    Can_Evade() const;
+    void     Use_Evade();
+
 
 protected:
     // 입력 처리 - 파생 클래스에서 StateMachine 파라미터 설정에 사용
-    virtual void Update_Input(_float dt);
+    virtual void    Update_Input(_float dt);
 
 private:
-    void Update_Rotation(_float dt);
+    void    Update_Rotation(_float dt);
+    void    Update_Evade(_float dt);
 
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
@@ -74,10 +79,20 @@ protected:
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsInput = { false };
+    _bool           m_bIsEvade = { false };
+    // 회피 시스템
+    _uint                   m_iEvadeCount = { 0 };
+    _float                  m_fEvadeTimer = { 0.f };
+    _float                  m_fEvadeCooldown = { 0.f };
+    static constexpr _float EVADE_COOLDOWN = 1.f;
+    static constexpr _uint  EVADE_MAX_COUNT = 2;
     // 회전
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
+
+    // 테스트용
+    _bool           m_bTest = { false };
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

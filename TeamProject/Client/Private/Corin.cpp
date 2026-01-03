@@ -12,6 +12,7 @@
 #include "CorinState_Move.h"
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
+#include "CorinState_Evade.h"
 
 CCorin::CCorin()
 {
@@ -73,8 +74,11 @@ void CCorin::Priority_Update(_float dt)
 void CCorin::Update(_float dt)
 {
 	Update_Input(dt);
-	Update_States();
-	m_pStateMachine->Update(dt);
+	if(!m_bTest)
+	{
+		Update_States();
+		m_pStateMachine->Update(dt);
+	}
 	__super::Update(dt);
 }
 
@@ -89,13 +93,16 @@ void CCorin::Render_GUI()
 	if (m_pStateMachine)
 	{
 		ImGui::Separator();
+		ImGui::Checkbox("Animation Test", &m_bTest);
 		ImGui::Text("StateMachine: %s", m_pStateMachine->Get_CurrentStateName().c_str());
 
 		if (ImGui::Button("Open StateMachine"))
 			m_pStateMachine->Set_ShowWindow(true);
 
 		m_pStateMachine->Render_GUI();
+
 	}
+
 }
 
 void CCorin::Update_Input(_float dt)
@@ -124,110 +131,83 @@ void CCorin::Update_Input(_float dt)
 
 void CCorin::Update_States()
 {
+	if (m_bIsEvade)	// Evade 입력 업데이트
+		m_pStateMachine->Set_Trigger("ToEvade");
+
+	string strCurrent = m_pStateMachine->Get_CurrentStateName();
+
 	_bool bInMoveEnd = false;
 	_bool bInAttackEnd = false;
-
-	if (m_pStateMachine->Get_CurrentStateName() == "Move")
-	{
-		CCorinState_Move* pMove =
-			static_cast<CCorinState_Move*>(m_pStateMachine->Get_CurrentState());
-
-		if (pMove && pMove->Get_SubStateMachine())
-		{
-			IHState<CCorin>* pMoveType =
-				dynamic_cast<IHState<CCorin>*>(pMove->Get_SubStateMachine()->Get_CurrentState());
-
-			if (pMoveType && pMoveType->Has_SubStateMachine())
-			{
-				IBaseState<CCorin>* pAnim =
-					pMoveType->Get_SubStateMachine()->Get_CurrentState();
-
-				bInMoveEnd = (pAnim && pAnim->Get_Tag() == "End");
-			}
-		}
+	// End상태 체크
+	if (strCurrent == "Move")
+	{	// Move의 End상태 체크
+		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(
+			m_pStateMachine->Get_CurrentState());
+		if (pMove)
+			bInMoveEnd = pMove->Is_EndState();
 	}
-	// Attack End 체크
-	else if (m_pStateMachine->Get_CurrentStateName() == "Attack")
-	{
-		CCorinState_Attack* pAttack =
-			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
-
-		if (pAttack && pAttack->Get_SubStateMachine())
-		{
-			string strSub = pAttack->Get_SubStateMachine()->Get_CurrentStateName();
-
-			if (strSub == "NormalAttack")
-			{
-				CCorinState_NormalAttack* pNormal =
-					static_cast<CCorinState_NormalAttack*>(
-						pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
-
-				if (pNormal && pNormal->Get_SubStateMachine())
-				{
-					IBaseState<CCorin>* pNormalSub = pNormal->Get_SubStateMachine()->Get_CurrentState();
-					bInAttackEnd = (pNormalSub && pNormalSub->Get_Tag() == "End");
-				}
-			}
-		}
-	}
-
-	// AttackEnd 파라미터 설정
-	if (bInAttackEnd)
-	{
-		CCorinState_Attack* pAttack =
-			static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
-
+	else if (strCurrent == "Attack")
+	{	// Attack의 End상태 체크
+		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
 		if (pAttack)
-		{
-			// Attack의 AnimProgress가 1.0이면 AttackEnd = true
-			_bool bAttackFinished = (pAttack->Get_AnimProgress() >= 1.f);
-			m_pStateMachine->Set_Bool("AttackEnd", bAttackFinished);
-		}
-	}
-	else
-	{
-		m_pStateMachine->Set_Bool("AttackEnd", false);
+			bInAttackEnd = pAttack->Is_EndState();
 	}
 
-	// End 캔슬 처리 (기존과 동일)
 	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
-	{
+	{	// End상태일때 애니매이션 캔슬
 		m_pStateMachine->Set_Bool("IsMove", false);
-
-		// Attack End에서 입력 시 강제로 AttackEnd = true
 		if (bInAttackEnd)
 			m_pStateMachine->Set_Bool("AttackEnd", true);
 	}
 	else
-	{
+	{	// End상태가 아니라면 : 일반 업데이트
 		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+		// 공격 입력 처리
+		if (m_bIsAttack) Process_AttackInput(strCurrent);
+	}
+}
 
-		if (m_bIsAttack)
-		{
-			string strCurrent = m_pStateMachine->Get_CurrentStateName();
+void CCorin::Process_AttackInput(const string& strCurrentState)
+{
+	if (strCurrentState == "Idle")
+	{	// Idle -> NormalAttack
+		m_pStateMachine->Set_Int("AttackEntryMode", 0);
+		m_pStateMachine->Set_Trigger("Attack");
+	}
+	else if (strCurrentState == "Move")
+	{	// Move
+		CCorinState_Move* pMove = static_cast<CCorinState_Move*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pMove || !pMove->Get_SubStateMachine())
+			return;
 
-			if (strCurrent == "Idle")
-			{
-				m_pStateMachine->Set_Trigger("Attack");
-			}
-			else if (strCurrent == "Attack")
-			{
-				CCorinState_Attack* pAttackState =
-					static_cast<CCorinState_Attack*>(m_pStateMachine->Get_CurrentState());
-				if (pAttackState && pAttackState->Get_SubStateMachine())
-				{
-					if (pAttackState->Get_SubStateMachine()->Get_CurrentStateName() == "NormalAttack")
-					{
-						CCorinState_NormalAttack* pNormal =
-							static_cast<CCorinState_NormalAttack*>(
-								pAttackState->Get_SubStateMachine()->Get_State("NormalAttack"));
+		string strMoveType = pMove->Get_SubStateMachine()->Get_CurrentStateName();
 
-						if (pNormal && pNormal->Get_SubStateMachine())
-							pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
-					}
-				}
-			}
-		}
+		if (strMoveType == "Walk")	// Walk -> NormalAttack
+			m_pStateMachine->Set_Int("AttackEntryMode", 0);
+		else if (strMoveType == "Run")	// Run -> RushAttack
+			m_pStateMachine->Set_Int("AttackEntryMode", 1);
+		else
+			return;
+
+		m_pStateMachine->Set_Trigger("Attack");
+	}
+	else if (strCurrentState == "Attack")
+	{	// Attack
+		CCorinState_Attack* pAttack = static_cast<CCorinState_Attack*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pAttack || !pAttack->Get_SubStateMachine())
+			return;
+
+		if (pAttack->Get_SubStateMachine()->Get_CurrentStateName() != "NormalAttack")
+			return;
+
+		CCorinState_NormalAttack* pNormal = static_cast<CCorinState_NormalAttack*>(
+			pAttack->Get_SubStateMachine()->Get_State("NormalAttack"));
+		// NormalAttack : Combo
+		if (pNormal && pNormal->Get_SubStateMachine())
+			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
 	}
 }
 
@@ -255,6 +235,7 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CCorinState_Idle::Create());
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
+	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
 
 	return S_OK;
 }
@@ -264,17 +245,28 @@ HRESULT CCorin::Initialize_Transitions()
 	// Idle <-> Move
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "IsMove");
-
 	m_pStateMachine->Register_Transition("Move", "Idle",
 		CStateMachine<CCorin>::CONDITION_BOOL_FALSE, "IsMove");
 
-	// Idle -> Attack
+	// Attack
 	m_pStateMachine->Register_AnyStateTransition("Attack",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "Attack");
 
 	// Attack -> Idle
 	m_pStateMachine->Register_Transition("Attack", "Idle",
 		CStateMachine<CCorin>::CONDITION_BOOL_TRUE, "AttackEnd");
+
+	// Evade
+	m_pStateMachine->Register_AnyStateTransition("Evade",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToEvade");
+
+	// Evade → Move (Dash 종료)
+	m_pStateMachine->Register_Transition("Evade", "Move",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToMove");
+
+	// Evade → Idle (Backstep 종료)
+	m_pStateMachine->Register_Transition("Evade", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
