@@ -508,6 +508,20 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
     }
 }
 
+UI_HANDLE CUI_Object::Get_Handle()
+{
+    UI_HANDLE hObj = {};
+    if (m_LevelTag.empty()) {
+        hObj.Reset();
+        return hObj;
+    }
+
+    hObj.Level = m_LevelTag;
+    hObj.hObjID = m_SystemIndex;
+
+    return hObj;
+}
+
 _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)
 {
     _float2 size    = Get_PxSize(); 
