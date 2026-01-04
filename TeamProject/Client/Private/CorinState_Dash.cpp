@@ -21,9 +21,7 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
     IHState<CCorin>* pEvade = Get_ParentState();
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
 
-    CCorin::ROOTMOTION_DESC desc;
-    desc.fMoveWeight = 0.7f;
-    pOwner->Process_RootMotion(dt, desc);
+    pOwner->Process_RootMotion(dt);
 
     if (pOwner->Is_Attack())
     {   // RushAttack

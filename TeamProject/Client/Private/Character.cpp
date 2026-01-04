@@ -104,6 +104,8 @@ void CCharacter::Use_Evade()
 
 void CCharacter::Update_Input(_float dt)
 {
+	m_vPrevInputDir = m_vInputDir;
+
 	int x = 0, z = 0;
 	if (KEY->Key_Hold('W'))    z += 1;
 	if (KEY->Key_Hold('S'))  z -= 1;
@@ -111,18 +113,14 @@ void CCharacter::Update_Input(_float dt)
 	if (KEY->Key_Hold('A'))  x -= 1;
 
 	m_vInputDir = {};
-
 	if (x || z)
 	{
 		auto cam = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
-
 		Vector3 look = camTf->Dir(STATE::LOOK);
 		Vector3 right = camTf->Dir(STATE::RIGHT);
-
 		look.y = 0.f;
 		right.y = 0.f;
-
 		look.Normalize();
 		right.Normalize();
 

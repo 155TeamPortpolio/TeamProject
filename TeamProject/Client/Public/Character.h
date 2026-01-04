@@ -29,7 +29,6 @@ public:
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsInput; }
-    const string& Get_Name() const { return m_strName; }
     
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
@@ -38,8 +37,10 @@ public:
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
 
     _vector3              Get_InputDir() const { return m_vInputDir; }
+    _vector3              Get_PrevInputDir() const { return m_vPrevInputDir; }
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
+    const string&         Get_Name() const { return m_strName; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -75,6 +76,7 @@ protected:
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     _vector3        m_vInputDir = {};
+    _vector3        m_vPrevInputDir = {};
     // 상태 플래그
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };
