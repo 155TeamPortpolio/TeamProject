@@ -106,13 +106,14 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::TreePop();
 	}
 
+#pragma region State
 	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
 	string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
 	ImGui::Text(TagCurState.c_str());
 	string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
 	ImGui::Text(TagCurChildState.c_str());
 
-	ImGui::SeparatorText("BlackBoard");
+	ImGui::SeparatorText("Reseve State List");
 	for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
 	{
 		if (i == 0)
@@ -121,8 +122,25 @@ void CThugBulkyEnforcer::Render_GUI()
 			ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
 
 	}
+	ImGui::EndChild();
+#pragma endregion
+
+	ImGui::BeginChild("BlackBoard##ThugBulkyEnforcerBlackBoard", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
+	string TagBlackBoardCurState = "Current State : " + m_tAttackBlackBoard.currentStateTag;
+	ImGui::Text(TagBlackBoardCurState.c_str());
+	string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
+	ImGui::Text(TagStateQueueSize.c_str());
+
+	// bool 변수 확인용(수정 불가)
+	ImGui::BeginDisabled(true);
+	ImGui::Checkbox(u8"IsRequestNext(다음 상태 존재)", &m_tAttackBlackBoard.isRequestNext);
+	ImGui::Checkbox(u8"IsChainOpen(현재 상태 종료)", &m_tAttackBlackBoard.isChainOpen);
+	ImGui::Checkbox(u8"isEnd(Queue에 등록된 마지막 상태 여부)", &m_tAttackBlackBoard.isEnd);
+	ImGui::EndDisabled();
 
 	ImGui::EndChild();
+
+	
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
@@ -247,7 +265,7 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 
 HRESULT CThugBulkyEnforcer::Ready_Rules()
 {
-	m_vIdleTime = { 3.f, 0.f };
+	m_vIdleTime = { 0.2f, 0.f };
 
 	return S_OK;
 }
@@ -266,10 +284,17 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
 		
-		if (true == m_pStateMachine->Get_Bool("FinishAttack"))
-			m_pStateMachine->Set_Trigger("Idle_To_Move");
-		else
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		m_vIdleTime.y += dt;
+
+		if (m_vIdleTime.x <= m_vIdleTime.y) {
+			if (true == m_pStateMachine->Get_Bool("FinishAttack"))
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			else
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+
+			m_vIdleTime.y = 0.f;
+		}
+
 		
 	}
 }
