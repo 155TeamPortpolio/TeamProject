@@ -50,6 +50,9 @@ void CSacrificeHandState_Attack::Register_States()
 	m_pSubStateMachine->Register_State("Attack02_Phase1", CSacrificeHandState_Attack_02_Phase1::Create());
 	m_pSubStateMachine->Register_State("Attack03_Phase1", CSacrificeHandState_Attack_03_Phase1::Create());
 
+	/* Phase2 Attack */
+	m_pSubStateMachine->Register_State("Attack04_Phase2", CSacrificeHandState_Attack_04_Phase2::Create());
+
 	/* OverDrive Start */
 	m_pSubStateMachine->Register_State("OverDrive_Start", CSacrificeHandState_OverDrive_Release_Start_Phase2::Create());
 	m_pSubStateMachine->Register_State("OverDrive_Loop", CSacrificeHandState_OverDrive_Release_Loop_Phase2::Create());
@@ -73,6 +76,10 @@ void CSacrificeHandState_Attack::BuildPattern(CSacrificeHand* pOwner)
 		blackBoard.stateQueue.push_back("Attack01_Phase1");
 		blackBoard.stateQueue.push_back("Attack02_Phase1");
 		blackBoard.stateQueue.push_back("Attack03_Phase1");
+	}break;
+	case Client::CSacrificeHand::PATTERN::PHASE2:
+	{
+		blackBoard.stateQueue.push_back("Attack04_Phase2");
 	}break;
 	case Client::CSacrificeHand::PATTERN::OVER_DRIVE_START:
 	{
@@ -180,6 +187,33 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 }
 
 void CSacrificeHandState_Attack_03_Phase1::Exit(CSacrificeHand* pOwner)
+{
+}
+
+void CSacrificeHandState_Attack_04_Phase2::Enter(CSacrificeHand* pOwner)
+{
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_Attack_04").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->SetVisable(true);
+}
+
+void CSacrificeHandState_Attack_04_Phase2::Update(CSacrificeHand* pOwner, _float dt)
+{
+	CSacrificeHand::SACRIFICE_HAND_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	if (m_fAnimProgress >= 0.25f)
+	{
+		blackBoard.isChainOpen = true;
+		if (!blackBoard.stateQueue.empty())
+			blackBoard.isRequestNext = true;
+
+		pOwner->SetVisable(false);
+	}
+}
+
+void CSacrificeHandState_Attack_04_Phase2::Exit(CSacrificeHand* pOwner)
 {
 }
 
