@@ -59,17 +59,6 @@ void CCorinState_NormalAttack::Update(CCorin* pOwner, _float dt)
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
     __super::Update(pOwner, dt);
-
-    if (m_pSubStateMachine)
-    {
-        string strCurrent = m_pSubStateMachine->Get_CurrentStateName();
-        IBaseState<CCorin>* pCurrent = m_pSubStateMachine->Get_CurrentState();
-        if (strCurrent == "Attack_End")
-        {
-            if (pCurrent && pCurrent->Is_AnimEnd())
-                m_fAnimProgress = 1.f;
-        }
-    }
 }
 
 void CCorinState_NormalAttack::Exit(CCorin* pOwner)
@@ -80,9 +69,16 @@ void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 #pragma region SubStates
 void CCorinState_Attack_01::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_01")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_01")
         .Speed(2.f)
         .Apply();
+}
+
+void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_01::Exit(CCorin* pOwner)
@@ -92,9 +88,16 @@ void CCorinState_Attack_01::Exit(CCorin* pOwner)
 
 void CCorinState_Attack_02::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_02")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_02")
         .Speed(2.f)
         .Apply();
+}
+
+void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
@@ -104,9 +107,16 @@ void CCorinState_Attack_02::Exit(CCorin* pOwner)
 
 void CCorinState_Attack_03::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_03")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_03")
         .Speed(1.5f)
         .Apply();
+}
+
+void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
@@ -116,9 +126,16 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
 
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_04")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_04")
         .Speed(2.f)
         .Apply();
+}
+
+void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
@@ -128,9 +145,16 @@ void CCorinState_Attack_04::Exit(CCorin* pOwner)
 
 void CCorinState_Attack_05::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Attack_Normal_05")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_05")
         .Speed(1.5f)
         .Apply();
+}
+
+void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
@@ -145,23 +169,16 @@ void CCorinState_Attack_End::Enter(CCorin* pOwner)
 
     const string arrEndAnims[5] =
     {
-        "Avatar_Female_Size01_Corin_Ani_Attack_Normal_01_End",
-        "Avatar_Female_Size01_Corin_Ani_Attack_Normal_02_End",
-        "Avatar_Female_Size01_Corin_Ani_Attack_Normal_03_End",
-        "Avatar_Female_Size01_Corin_Ani_Attack_Normal_04_End",
-        "Avatar_Female_Size01_Corin_Ani_Attack_Normal_05_End"
+        pOwner->Get_Name() + "Attack_Normal_01_End",
+        pOwner->Get_Name() + "Attack_Normal_02_End",
+        pOwner->Get_Name() + "Attack_Normal_03_End",
+        pOwner->Get_Name() + "Attack_Normal_04_End",
+        pOwner->Get_Name() + "Attack_Normal_05_End"
     };
 
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
         .Speed(1.2f)
         .Apply();
-}
-void CCorinState_Attack_End::Update(CCorin* pOwner, _float dt)
-{
-    if (pOwner->Is_Input())
-    {
-        m_fAnimProgress = 1.f;
-    }
 }
 #pragma endregion
 

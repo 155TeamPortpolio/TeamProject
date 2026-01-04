@@ -101,6 +101,7 @@ public:
 
 private:
 	void    Update_AnimProgress();
+	void	Update_AnimProgress_Recursive(IBaseState<Type>* pState, _float fProgress);
 	void    Check_Transitions();
 	void    Check_AnyStateTransitions();
 	_bool   Check_Transition(const TRANSITION_INFO& transition);
@@ -188,9 +189,7 @@ void CStateMachine<Type>::Update(_float dt)
 	Update_AnimProgress();
 
 	Check_AnyStateTransitions();
-	if (m_fStateTime == 0.f) // ¹æ±Ý ÀüÈ¯µÊ
-		return;
-
+	if (m_fStateTime == 0.f) return;	// ¹æ±Ý ÀüÈ¯µÊ
 	Check_Transitions();
 }
 
@@ -230,24 +229,31 @@ void CStateMachine<Type>::Update_AnimProgress()
 {
 	if (!m_pCurrentState || !m_pOwner)
 		return;
-
 	CGameObject* pGameObject = reinterpret_cast<CGameObject*>(m_pOwner);
 	if (nullptr == pGameObject)
 		return;
-
 	CAnimator3D* pAnimator = pGameObject->template Get_Component<CAnimator3D>();
 	if (nullptr == pAnimator)
 		return;
 
 	_float fProgress = pAnimator->Get_CurAnimDuration();
-	m_pCurrentState->m_fAnimProgress = fProgress;
+	Update_AnimProgress_Recursive(m_pCurrentState, fProgress);
+}
 
-	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(m_pCurrentState);
+template<typename Type>
+void CStateMachine<Type>::Update_AnimProgress_Recursive(IBaseState<Type>* pState, _float fProgress)
+{
+	if (!pState)
+		return;
+
+	pState->m_fAnimProgress = fProgress;
+
+	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
 	if (pHState && pHState->Has_SubStateMachine())
 	{
 		auto pSubFSM = pHState->Get_SubStateMachine();
-		if (pSubFSM->Get_CurrentState())
-			pSubFSM->Get_CurrentState()->m_fAnimProgress = fProgress;
+		if (pSubFSM && pSubFSM->Get_CurrentState())
+			Update_AnimProgress_Recursive(pSubFSM->Get_CurrentState(), fProgress);
 	}
 }
 

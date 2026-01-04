@@ -21,8 +21,14 @@ void CCorinState_Run::Enter(CCorin* pOwner)
         m_pSubStateMachine->Set_DefaultState("Loop");
     }
 
-    CStateMachine<CCorin>* pMoveFSM = Get_ParentState()->Get_SubStateMachine();
-    if (pMoveFSM->Get_Trigger("SkipToEnd"))
+    IHState<CCorin>* pMoveState = Get_ParentState();
+    _int iRunEntryMode = 0;
+    if (pMoveState && pMoveState->Get_SubStateMachine())
+    {
+        iRunEntryMode = pMoveState->Get_SubStateMachine()->Get_Int("RunEntryMode");
+        pMoveState->Get_SubStateMachine()->Set_Int("RunEntryMode", 0);
+    }
+    if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("End");
     else
         m_pSubStateMachine->Set_DefaultState("Loop");
@@ -40,38 +46,18 @@ void CCorinState_Run::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Run_Loop::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
         .Apply();
 }
 
 void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-        _vector3 vRootMotionDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-
-        if (vRootMotionDelta.x != 0.f || vRootMotionDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vRootMotionDelta, qRot, dt);
-        }
-    }
+    pOwner->Process_RootMotion(dt);
 }
 
 void CCorinState_Run_End::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_End")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run_End")
         .Apply();
-}
-
-void CCorinState_Run_End::Update(CCorin* pOwner, _float dt)
-{
-    if (pOwner->Is_Input())
-    {
-        m_fAnimProgress = 1.f;
-    }
 }
