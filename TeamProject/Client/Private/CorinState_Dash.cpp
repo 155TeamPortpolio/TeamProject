@@ -8,7 +8,7 @@
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
-        .Speed(2.f)
+        .Speed(1.f)
         .Apply();
 
     _vector3 vDir = pOwner->Get_InputDir();
@@ -21,7 +21,9 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
     IHState<CCorin>* pEvade = Get_ParentState();
     if (!pEvade || !pEvade->Get_SubStateMachine()) return;
 
-    pOwner->Process_RootMotion(dt);
+    CCorin::ROOTMOTION_DESC desc;
+    desc.fMoveWeight = 0.7f;
+    pOwner->Process_RootMotion(dt, desc);
 
     if (pOwner->Is_Attack())
     {   // RushAttack
@@ -30,13 +32,29 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.75f)
+    if (m_fAnimProgress >= 0.2f)
     {
-        if (pOwner->Is_Move())  // Run
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
-        else                    // Idle
-            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
+        if (pOwner->Is_Evade())
+        {   // Idle -> Evade
+            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
+            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            return;
+        }
+    }
 
+    if (m_fAnimProgress >= 0.5f)
+    {   // Run
+        if (pOwner->Is_Move())
+        {
+            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
+            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            return;
+        }
+    }
+
+    if (m_fAnimProgress >= 0.7f)
+    {   // Idle
+        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
         pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
     }
 }
