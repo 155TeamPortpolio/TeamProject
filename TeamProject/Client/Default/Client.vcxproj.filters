@@ -370,6 +370,9 @@
     <Filter Include="01. Level\01. LoadingLevel">
       <UniqueIdentifier>{843e3c5c-413c-4e9b-a399-53d7346524d5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -705,6 +708,9 @@
     <ClInclude Include="..\Public\LoadingLevel.h">
       <Filter>01. Level\01. LoadingLevel</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1028,6 +1034,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\LoadingLevel.cpp">
       <Filter>01. Level\01. LoadingLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

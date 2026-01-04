@@ -69,9 +69,9 @@ void CThugBulkyEnforcer_Move::Register_States()
 	m_pSubStateMachine->Register_State("Run_Start", CThugBulkyEnforcer_Run_Start::Create());
 	m_pSubStateMachine->Register_State("Run", CThugBulkyEnforcer_Run::Create());
 	m_pSubStateMachine->Register_State("Run_End", CThugBulkyEnforcer_Run_End::Create());
-	m_pSubStateMachine->Register_State("Run_End", CThugBulkyEnforcer_SideStep_L::Create());
-	m_pSubStateMachine->Register_State("Run_End", CThugBulkyEnforcer_SideStep_R::Create());
-	m_pSubStateMachine->Register_State("Run_End", CThugBulkyEnforcer_Evade::Create());
+	m_pSubStateMachine->Register_State("SideStep_L", CThugBulkyEnforcer_SideStep_L::Create());
+	m_pSubStateMachine->Register_State("SideStep_R", CThugBulkyEnforcer_SideStep_R::Create());
+	m_pSubStateMachine->Register_State("Evade", CThugBulkyEnforcer_Evade::Create());
 	m_pSubStateMachine->Register_State("Walk_RF_LFoot", CThugBulkyEnforcer_Walk_RF_LFoot::Create());
 	m_pSubStateMachine->Register_State("Walk_FR_RFoot", CThugBulkyEnforcer_Walk_FR_RFoot::Create());
 	m_pSubStateMachine->Register_State("Walk_LF_RFoot", CThugBulkyEnforcer_Walk_FL_RFoot::Create());

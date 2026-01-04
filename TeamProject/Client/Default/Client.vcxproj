@@ -177,6 +177,7 @@
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\Public\LoadingLevel.h" />
+    <ClInclude Include="..\public\MaskUI.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
@@ -315,6 +316,7 @@
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\LogoLevel.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
+    <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp" />
