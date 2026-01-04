@@ -57,7 +57,7 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     float4 vBloomEffectDesc = EffectBloomAccTextutre.Sample(LinearSampler, In.vTexcoord);
     float fRevealage = RevealageTexture.Sample(LinearSampler, In.vTexcoord).r;
     
-    float fElipson = 0.00001f;
+    float fElipson = 0.000001f;
     
     /* Diffuse */
     Out.vDiffuseEffect.rgb = vDiffuseEffectDesc.rgb / max(vDiffuseEffectDesc.a, fElipson);
