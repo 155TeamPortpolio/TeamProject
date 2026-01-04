@@ -83,6 +83,7 @@ void CCorinState_Run_End::Enter(CCorin* pOwner)
 void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
+        .Speed(1.2f)
         .Apply();
 
     pOwner->Reset_LastValidKey();
@@ -90,11 +91,14 @@ void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 
 void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt,
-        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
-        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    _vector3 vInputDir = pOwner->Get_InputDir();
+    if (vInputDir.Length() > 0.01f)
+    {
+        vInputDir.Normalize();
+        pOwner->Rotate(vInputDir);
+    }
 
-    if (Is_AnimEnd() && pOwner->Is_Move())
+    if (m_fAnimProgress > 0.5f && pOwner->Is_Move())
     {
         IHState<CCorin>* pRunState = Get_ParentState();
         if (pRunState && pRunState->Get_SubStateMachine())
