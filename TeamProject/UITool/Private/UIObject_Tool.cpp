@@ -31,9 +31,9 @@ void CUIObject_Tool::Awake()
 
 void CUIObject_Tool::Update(_float dt)
 {
-    KeyInput_ReorderChildren();
+    __super::Update(dt);
 
-    Play_Animation(dt);
+    KeyInput_ReorderChildren();
 }
 
 void CUIObject_Tool::Render_GUI()
@@ -153,100 +153,12 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 
 void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 {
-    m_InstanceName = data.value("instanceName", "");
-
-    if (data.contains("transform"))
-    {
-        const auto& transformJson = data["transform"];
-
-        m_eAnchor = static_cast<ANCHOR>(transformJson.value("anchor", 0u));
-
-        auto anchorOffset = transformJson.value("anchorOffset", nlohmann::ordered_json::array({0.0f, 0.0f}));
-        m_vAnchorOffset = {anchorOffset[0], anchorOffset[1]};
-
-        auto size = transformJson.value("size", nlohmann::ordered_json::array({100.0f, 100.0f}));
-        m_vSize = {size[0], size[1]};
-
-        auto scale = transformJson.value("scale", nlohmann::ordered_json::array({1.0f, 1.0f}));
-        m_vScale = {scale[0], scale[1]};
-
-        auto pivot = transformJson.value("pivot", nlohmann::ordered_json::array({0.5f, 0.5f}));
-        m_vPivot = {pivot[0], pivot[1]};
-
-        m_fRadian = transformJson.value("radian", 0.0f);
-    }
-
-    auto color = data.value("color", nlohmann::ordered_json::array({1.0f, 1.0f, 1.0f, 1.0f}));
-    m_vColor = {color[0], color[1], color[2], color[3]};
+    __super::Load(data);
 
     m_useMask = data.value("useMask", false);
 
     string pass = data.value("pass", "Opaque");
     Set_BasePass(NormalizeToBasePass(pass));
-
-    if (data.contains("animClips"))
-    {
-        const auto& animClipsJson = data["animClips"];
-        m_AnimClips.clear();
-
-        for (const auto& clipJson : animClipsJson)
-        {
-            UI_ANIM_CLIP clip = {};
-            clip.strName = clipJson.value("name", "");
-            clip.fDuration = clipJson.value("duration", 1.0f);
-            clip.isLoop = clipJson.value("loop", false);
-
-            if (clipJson.contains("keyframes"))
-            {
-                const auto& keyframesJson = clipJson["keyframes"];
-                for (const auto& keyframeJson : keyframesJson)
-                {
-                    UI_KEYFRAME keyframe;
-                    keyframe.fTime = keyframeJson.value("time", 0.0f);
-
-                    auto vScale = keyframeJson.value("scale", nlohmann::ordered_json::array({1.0f, 1.0f}));
-                    keyframe.vScale = {vScale[0], vScale[1]};
-
-                    keyframe.fAngle = keyframeJson.value("angle", 0.0f);
-
-                    auto vPosition = keyframeJson.value("position", nlohmann::ordered_json::array({0.0f, 0.0f}));
-                    keyframe.vPosition = {vPosition[0], vPosition[1]};
-
-                    auto vColor = keyframeJson.value("color", nlohmann::ordered_json::array({1.0f, 1.0f, 1.0f, 1.0f}));
-                    keyframe.vColor = {vColor[0], vColor[1], vColor[2], vColor[3]};
-
-                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
-
-                    clip.keyframes.push_back(keyframe);
-                }
-            }
-
-            m_AnimClips.push_back(clip);
-        }
-    }
-
-    if (data.contains("children"))
-    {
-        const auto& childrenJson = data["children"];
-        CObjectContainer* pContainer = Get_Component<CObjectContainer>();
-
-        for (const auto& childJson : childrenJson)
-        {
-            string strTypeTag = childJson.value("typeTag", "");
-            if (strTypeTag.empty()) continue;
-
-            const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-            CUI_Object* pChildObj = Builder::Create_UIObject({strCurrentLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
-            if (!pChildObj) continue;
-
-            CUIObject_Tool* pChildUI = dynamic_cast<CUIObject_Tool*>(pChildObj);
-            if (pChildUI)
-            {
-                pChildUI->Load(childJson);
-                if (pContainer) pContainer->Add_Child(pChildUI);
-            }
-        }
-    }
 }
 
 void CUIObject_Tool::Render_GUI_Property()

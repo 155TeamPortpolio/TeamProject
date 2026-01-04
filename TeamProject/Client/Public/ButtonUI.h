@@ -13,35 +13,35 @@ public:
 	}BTN_EVENT;
 
 private:
-	CButtonUI();
-	CButtonUI(const CButtonUI& rhs);
+	CButtonUI() {}
+	CButtonUI(const CButtonUI& rhs) : CUI_Object(rhs) {}
 	virtual ~CButtonUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-	virtual void Awake() override;
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Awake()                          override;
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override { __super::Update(dt); }
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 public:
-	virtual void Enter_Hover() override;
-	virtual void Exit_Hover() override;
-	virtual void OnClick() override;
+	virtual void    Enter_Hover() override;
+	virtual void    Exit_Hover()  override;
+	virtual void    OnClick()     override;
 
 public:
-	virtual void Load(const nlohmann::ordered_json& data) override;
+	virtual void    Load(const nlohmann::ordered_json& data) override;
 
 private:
-	STATE		m_eState = {};
-	_char		m_szEventMsg[MAX_PATH] = {};	// 클릭했을 때 내보내는 메시지
+	STATE m_eState{};
+	_char m_szEventMsg[MAX_PATH]{};	
 
 public:
-	static CGameObject* Create();
-	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	static  CGameObject* Create();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END
