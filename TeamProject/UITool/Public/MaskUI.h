@@ -14,7 +14,9 @@ private:
 public:
     virtual HRESULT Initialize_Prototype()                   override;
     virtual HRESULT Initialize(INIT_DESC* pArg = {})         override;
-    virtual void    Update(_float dt)                        override;
+    virtual void    Priority_Update(_float dt)               override { __super::Priority_Update(dt); }
+    virtual void    Update(_float dt)                        override { __super::Update(dt); }
+    virtual void    Late_Update(_float dt)                   override { __super::Late_Update(dt); }
     virtual void    Render_GUI()                             override;
 
 public:

@@ -42,13 +42,9 @@ void CUIObject_Tool::Render_GUI()
         pContainer->Render_GUI();
 
     Render_GUI_Property();
-
     Render_GUI_Layout();
-
     Render_GUI_Transform();
-
     Render_GUI_Color();
-
     Render_GUI_Animation();
 }
 
@@ -97,15 +93,15 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 
     auto& transformJson = data["transform"];
     transformJson["anchor"] = ENUM(m_eAnchor);
-    transformJson["anchorOffset"] = { m_vAnchorOffset.x, m_vAnchorOffset.y };
-    transformJson["size"] = { m_vSize.x, m_vSize.y };
-    transformJson["scale"] = { m_vScale.x, m_vScale.y };
-    transformJson["pivot"] = { m_vPivot.x, m_vPivot.y };
+    transformJson["anchorOffset"] = {m_vAnchorOffset.x, m_vAnchorOffset.y};
+    transformJson["size"] = {m_vSize.x, m_vSize.y};
+    transformJson["scale"] = {m_vScale.x, m_vScale.y};
+    transformJson["pivot"] = {m_vPivot.x, m_vPivot.y};
     transformJson["radian"] = m_fRadian;
 
-    data["color"] = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
-    data["pass"] = m_basePass;
-    data["useMask"] = m_useMask;
+    data["color"] = {m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w};
+
+    data["pass"] = Get_Component<CSprite2D>()->Get_PassConstant();
 
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
@@ -122,10 +118,10 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
         {
             json keyframeData{};
             keyframeData["time"] = keyframe.fTime;
-            keyframeData["scale"] = { keyframe.vScale.x, keyframe.vScale.y };
+            keyframeData["scale"] = {keyframe.vScale.x, keyframe.vScale.y};
             keyframeData["angle"] = keyframe.fAngle;
-            keyframeData["position"] = { keyframe.vPosition.x, keyframe.vPosition.y };
-            keyframeData["color"] = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
+            keyframeData["position"] = {keyframe.vPosition.x, keyframe.vPosition.y};
+            keyframeData["color"] = {keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w};
             keyframeData["easeType"] = ENUM(keyframe.easeType);
 
             keyframesJson.push_back(keyframeData);
@@ -155,10 +151,10 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
 
-    m_useMask = data.value("useMask", false);
+    const string pass = Get_Component<CSprite2D>()->Get_PassConstant();
 
-    string pass = data.value("pass", "Opaque");
-    Set_BasePass(NormalizeToBasePass(pass));
+    m_basePass = NormalizeToBasePass(pass);
+    m_useMask = (pass != m_basePass);
 }
 
 void CUIObject_Tool::Render_GUI_Property()
@@ -183,7 +179,8 @@ void CUIObject_Tool::Render_GUI_Layout()
 
     ImGui::Text("Anchor");
     struct AnchorPreset { const char* label; ANCHOR value; };
-    static const AnchorPreset presets[9] = {
+    static const AnchorPreset presets[9] =
+    {
         {"##TL", (ANCHOR)((_uint)ANCHOR::Top | (_uint)ANCHOR::Left)},
         {"##TC", (ANCHOR)((_uint)ANCHOR::Top)},
         {"##TR", (ANCHOR)((_uint)ANCHOR::Top | (_uint)ANCHOR::Right)},
