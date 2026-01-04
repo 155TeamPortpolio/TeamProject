@@ -209,7 +209,7 @@ CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 			return true;
 		return false;
 		});
-	if (itDelete != DeleteUIs.end()) return nullptr;
+	if (itDelete == DeleteUIs.end()) return nullptr;
 
 	return itLevel->second[handle.hObjID];
 }

@@ -176,7 +176,6 @@
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
-    <ClInclude Include="..\Public\Logo.h" />
     <ClInclude Include="..\public\MaskUI.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
@@ -313,7 +312,6 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
-    <ClCompile Include="..\Private\Logo.cpp" />
     <ClCompile Include="..\Private\LogoLevel.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\MaskUI.cpp" />

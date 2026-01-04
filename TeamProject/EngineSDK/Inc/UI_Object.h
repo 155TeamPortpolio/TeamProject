@@ -127,9 +127,6 @@ public:
 	virtual void Save(nlohmann::ordered_json& data) {}
 	virtual void Load(const nlohmann::ordered_json& data);
 
-public:
-	UI_HANDLE Get_Handle();
-
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
 	_float2 Get_Point_Local(_float2 anchor, _float x = 0.f, _float y = 0.f);

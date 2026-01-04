@@ -35,9 +35,6 @@ HRESULT CMainApp::Initialize()
 	
 	Set_Levels();
 
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize(G_GlobalLevelKey);
-
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
@@ -66,7 +63,7 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Logo_Level", []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
 
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Logo_Level",false); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",false); 
 } 
 
 CMainApp* CMainApp::Create()
