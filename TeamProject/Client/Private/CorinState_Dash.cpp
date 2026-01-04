@@ -38,10 +38,7 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
             return;
         }
-    }
 
-    if (m_fAnimProgress >= 0.5f)
-    {   // Run
         if (pOwner->Is_Move())
         {
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);

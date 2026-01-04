@@ -38,6 +38,9 @@ void CCorinState_Run::Enter(CCorin* pOwner)
         iRunEntryMode = pMoveState->Get_SubStateMachine()->Get_Int("RunEntryMode");
         pMoveState->Get_SubStateMachine()->Set_Int("RunEntryMode", 0);
     }
+
+    pOwner->Reset_LastValidKey();
+
     if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("End");
     else
