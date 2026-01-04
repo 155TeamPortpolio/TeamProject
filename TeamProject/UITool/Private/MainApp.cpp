@@ -37,6 +37,8 @@ HRESULT CMainApp::Initialize()
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
 
+	m_pGameInstance->Get_GUISystem()->Set_UIMode();
+
 	return S_OK;
 }
 

@@ -7,9 +7,6 @@
 #include "Sprite2D.h"
 #include "Child.h"
 #include "ObjectContainer.h"
-CUI_Object::CUI_Object()
-{
-}
 
 CUI_Object::CUI_Object(const CUI_Object& rhs)
     :CGameObject(rhs)
@@ -80,7 +77,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         m_vColorLinear.x = powf(m_vColor.x, 2.2f);
         m_vColorLinear.y = powf(m_vColor.y, 2.2f);
         m_vColorLinear.z = powf(m_vColor.z, 2.2f);
-        m_vColorLinear.w = m_vColor.w;
+        m_vColorLinear.w = m_vCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
         SPRITE_PACKET packet;
         packet.pSprite2D = Get_Component<CSprite2D>();
@@ -95,7 +92,7 @@ void CUI_Object::Post_EngineUpdate(_float dt)
             CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
 
         if (m_isClickable)
-            CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
+            CGameInstance::GetInstance()->Get_ClickMgr()->Register_ClickableObject(this);
     }
 
     if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
@@ -240,7 +237,8 @@ void CUI_Object::Set_Pivot(_float2 newPivot)
 void CUI_Object::Update_UITransform()
 {
     _float2 parentScale = { 1.f, 1.f };
-    float parentRadian = {};
+    _float parentRadian = {};
+    _float parentAlpha = { 1.f };
 
     if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
     {
@@ -248,10 +246,12 @@ void CUI_Object::Update_UITransform()
         {
             parentScale = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
+            parentAlpha = pParentUI->m_vCombinedAlpha;
         }
     }
 
     m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+    m_vCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
 
     _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
@@ -308,16 +308,6 @@ _float2 CUI_Object::Calc_AnchorPoint()
     else                                                anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
 
     return anchorPoint;
-}
-
-void CUI_Object::Rotate_Left(_float _radian)
-{
-    m_fRadian += _radian;
-}
-
-void CUI_Object::Align_To(ANCHOR anchor)
-{
-    m_eAnchor = anchor;
 }
 
 void CUI_Object::Play_Animation(_float dt)
@@ -445,4 +435,7 @@ _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
 void CUI_Object::Free()
 {
     __super::Free();
+
+    if (m_isClickable)
+        CGameInstance::GetInstance()->Get_ClickMgr()->Unregister_ClickableObject(this);
 }

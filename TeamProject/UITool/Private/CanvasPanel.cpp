@@ -13,9 +13,6 @@
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
 
-_uint CCanvasPanel::m_iCount = {};
-const string CCanvasPanel::m_strTypeTag = "CanvasPanel";
-
 HRESULT CCanvasPanel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -49,11 +46,9 @@ void CCanvasPanel::Priority_Update(_float dt)
 
 void CCanvasPanel::Update(_float dt)
 {
-    if (!m_isAlive)  return;
+    __super::Update(dt);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-    Play_Animation(dt);
 }
 
 void CCanvasPanel::Late_Update(_float dt)

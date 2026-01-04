@@ -2,12 +2,7 @@
 #include "BasePanel.h"
 
 NS_BEGIN(Engine)
-class CGameInstance;
-class CGameObject;
-class CUI_Object;
-class IProtoService;
-class IObjectService;
-class IUI_Service; 
+class CGameInstance; class CGameObject; class CUI_Object; class IProtoService; class IObjectService; class IUI_Service; 
 NS_END
 
 NS_BEGIN(UITool)
@@ -37,8 +32,8 @@ private:
     CGameObject* Get_SelectedObject();
 
 public:
-    static CGUIPanel* Create(GUI_CONTEXT* pContext);
-    virtual void Free() override;
+    static CGUIPanel* Create(GUI_CONTEXT* pContext) { return new CGUIPanel(pContext); }
+    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

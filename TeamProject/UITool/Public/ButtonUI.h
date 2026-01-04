@@ -20,7 +20,7 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype()                override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
+	virtual void Awake() override;
 	virtual void Priority_Update(_float dt) override {}
 	virtual void Update(_float dt)          override;
 	virtual void Late_Update(_float dt)     override {}
@@ -47,8 +47,8 @@ private:
 	_float2		m_vFlip = {};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "Button";
+	inline static       _uint  m_iCount{};
 
 public:
 	static CGameObject* Create();

@@ -19,18 +19,18 @@ public:
 	virtual void    Render_GUI()                     override;
 
 public:
-	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Save(nlohmann::ordered_json& data)       override;
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	string		m_strTextureKey = {};
+	string	m_strTextureKey{};
 
-	_float2		m_vUVOffset = {};
-	_float2		m_vUVOffsetSpeed = {};
+	_float2	m_vUVOffset{};
+	_float2	m_vUVOffsetSpeed{};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "UVAnimation";
+	inline static      _uint   m_iCount{};
 
 public:
 	static CGameObject* Create();
