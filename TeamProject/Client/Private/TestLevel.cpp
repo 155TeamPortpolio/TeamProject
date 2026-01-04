@@ -36,6 +36,7 @@
 #include "Corin.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
+#include "ThugBulkyEnforcer.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -95,19 +96,6 @@ HRESULT CTestLevel::Awake()
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
-	//==============TestModel==========================
-	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-	//	.CharacterController({})
-	//	.Build("Test_Model");
-
-	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
-
-	// =================TestMap==================
-	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-	//	.Build("Test_Map");
-	//
-	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
-
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
 	CCT_DESC miyabiCCT;
@@ -131,6 +119,7 @@ HRESULT CTestLevel::Awake()
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -185,6 +174,26 @@ void CTestLevel::Update()
 			.CharacterController(sacrificeCCT)
 			.Build("Sacrifice");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	}
+
+	// [`] 
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
+
+		CCT_DESC BulkyCCT;
+		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
+		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
+		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
+		BulkyCCT.bAutoFit = false;
+		BulkyCCT.fHeight = 1.28f;
+		BulkyCCT.fRadius = 0.2f;
+		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
+		//BulkyCCT.fBoundingMinY = -0.88f;
+		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
+
+		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
+			.CharacterController(BulkyCCT)
+			.Build("ThugBulky");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });
 	}
 }
 
