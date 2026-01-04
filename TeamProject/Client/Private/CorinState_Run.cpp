@@ -43,14 +43,14 @@ void CCorinState_Run::Enter(CCorin* pOwner)
     else
         m_pSubStateMachine->Set_DefaultState("Loop");
 
-    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     __super::Enter(pOwner);
 }
 
 void CCorinState_Run::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
 }
 
 void CCorinState_Run_Loop::Enter(CCorin* pOwner)
@@ -62,24 +62,15 @@ void CCorinState_Run_Loop::Enter(CCorin* pOwner)
 
 void CCorinState_Run_Loop::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vPrevDir = pOwner->Get_PrevInputDir();
-    _vector3 vCurDir = pOwner->Get_InputDir();
-
-    if (vPrevDir.Length() > 0.01f && vCurDir.Length() > 0.01f)
+    if (pOwner->Is_OppositeInput())
     {
-        vPrevDir.Normalize();
-        vCurDir.Normalize();
-        if (vPrevDir.Dot(vCurDir) < -0.5f)
+        IHState<CCorin>* pRunState = Get_ParentState();
+        if (pRunState && pRunState->Get_SubStateMachine())
         {
-            IHState<CCorin>* pRunState = Get_ParentState();
-            if (pRunState && pRunState->Get_SubStateMachine())
-            {
-                pRunState->Get_SubStateMachine()->Set_Trigger("ToTurnback");
-                return;  // 이 프레임에서는 더 이상 처리 안 함
-            }
+            pRunState->Get_SubStateMachine()->Set_Trigger("ToTurnback");
+            return;
         }
     }
-
     pOwner->Process_RootMotion(dt);
 }
 
@@ -93,11 +84,15 @@ void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
         .Apply();
+
+    pOwner->Reset_LastValidKey();
 }
 
 void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (Is_AnimEnd() && pOwner->Is_Move())
     {

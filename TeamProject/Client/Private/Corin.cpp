@@ -186,7 +186,7 @@ void CCorin::Update_States()
 	if (m_bIsEvade)
 		m_pStateMachine->Set_Trigger("ToEvade");
 
-	m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
 
 	if (m_bIsAttack)
 		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());

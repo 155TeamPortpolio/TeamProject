@@ -102,15 +102,54 @@ void CCharacter::Use_Evade()
 	}
 }
 
+_bool CCharacter::Is_OppositeInput() const
+{
+	if (m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0)
+		return false;
+	if (m_iCurKeyX == 0 && m_iCurKeyZ == 0)
+		return false;
+
+	_bool bOppositeX = (m_iLastValidKeyX * m_iCurKeyX < 0);
+	_bool bOppositeZ = (m_iLastValidKeyZ * m_iCurKeyZ < 0);
+
+	return (bOppositeX || bOppositeZ);
+}
+
 void CCharacter::Update_Input(_float dt)
 {
 	m_vPrevInputDir = m_vInputDir;
+	m_iPrevKeyX = m_iCurKeyX;
+	m_iPrevKeyZ = m_iCurKeyZ;
 
-	int x = 0, z = 0;
+	_int x = 0, z = 0;
 	if (KEY->Key_Hold('W'))  z += 1;
 	if (KEY->Key_Hold('S'))  z -= 1;
 	if (KEY->Key_Hold('D'))  x += 1;
 	if (KEY->Key_Hold('A'))  x -= 1;
+
+	m_iCurKeyX = x;
+	m_iCurKeyZ = z;
+
+	if (x != 0 || z != 0)
+	{	// 이전에 유효한 입력이 없었거나, 버퍼 시간이 지난 경우에만 업데이트
+		if ((m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0) ||
+			m_fKeyReleaseTimer <= 0.f)
+		{
+			m_iLastValidKeyX = x;
+			m_iLastValidKeyZ = z;
+		}
+		m_fKeyReleaseTimer = KEY_BUFFER_TIME;
+	}
+	else
+	{	// 타이머가 0초가 될때 까지 Valid를 초기화시키지 않음
+		m_fKeyReleaseTimer -= dt;
+		if (m_fKeyReleaseTimer < 0.f)
+		{	// 버퍼시간 경과
+			m_fKeyReleaseTimer = 0.f;
+			m_iLastValidKeyX = 0;
+			m_iLastValidKeyZ = 0;
+		}
+	}
 
 	m_vInputDir = {};
 	if (x || z)
@@ -126,6 +165,9 @@ void CCharacter::Update_Input(_float dt)
 
 		m_vInputDir = right * (float)x + look * (float)z;
 	}
+
+	m_iPrevKeyX = x;
+	m_iPrevKeyZ = z;
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
