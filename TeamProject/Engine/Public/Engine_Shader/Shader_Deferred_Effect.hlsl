@@ -7,7 +7,7 @@ BlendState BS_OITComposite
     BlendEnable[0] = true;
     BlendEnable[1] = true;
 
-    SrcBlend = One;
+    SrcBlend = Src_Alpha;
     DestBlend = Inv_Src_Alpha;
     BlendOp = Add;
 };
