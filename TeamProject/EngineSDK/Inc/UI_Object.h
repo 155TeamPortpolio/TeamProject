@@ -71,7 +71,7 @@ public:
 
 public:
 	void Update_UITransform();
-	void Set_LeftTop(_float2 desiredLT);
+	void Set_LeftTop(_float2 desiredLT) {}
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
@@ -125,7 +125,7 @@ public:
 
 public:
 	virtual void Save(nlohmann::ordered_json& data) {}
-	virtual void Load(const nlohmann::ordered_json& data) {}
+	virtual void Load(const nlohmann::ordered_json& data);
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);

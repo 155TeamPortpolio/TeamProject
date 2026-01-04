@@ -364,6 +364,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
       <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -588,12 +591,6 @@
     <ClInclude Include="..\Public\SacrificeHandState_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase1.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\SacrificeHandState_Attack_Phase2.h">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
       <Filter>02. GameObject\UI</Filter>
     </ClInclude>
@@ -632,7 +629,7 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
-   </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\Corin.h">
       <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
     </ClInclude>
@@ -698,6 +695,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -915,12 +915,6 @@
     <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase1.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\SacrificeHandState_Attack_Phase2.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
     </ClCompile>
@@ -1022,6 +1016,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
