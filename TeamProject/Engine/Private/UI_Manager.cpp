@@ -199,6 +199,20 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 	return emptyVec;
 }
 
+CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
+{
+	auto itLevel = m_UIObjects.find(handle.Level);
+	if (itLevel == m_UIObjects.end()) return nullptr;
+
+	auto itDelete = find_if(DeleteUIs.begin(), DeleteUIs.end(), [&](CUI_Object* pUI) {
+		if (pUI->Get_SystemIndex() == handle.hObjID)
+			return true;
+		return false;
+		});
+	if (itDelete == DeleteUIs.end()) return nullptr;
+
+	return itLevel->second[handle.hObjID];
+}
 
 void CUI_Manager::Sort_UI()
 {
