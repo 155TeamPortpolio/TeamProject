@@ -234,6 +234,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float fWeight = clamp((fAlpha * 4.f + 0.01f) * fDepthBias, 0.01f, 1.f);
     float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
     
+    if(fAlpha<0.01f)
+        discard;
+    
     Out.vDiffuseAcc = vPremulColor * fWeight;
     Out.vBloomAcc.rgb = ExtractBright(vPremulColor, 0.6f, 0.5f, 1.5f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);

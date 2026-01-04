@@ -135,6 +135,7 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
+	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
 	m_fDuration = json.value("duration", m_fDuration);
 	m_IsLoop = json.value("is_loop", m_IsLoop);
@@ -223,6 +224,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 
+		{"color_mode",ENUM(m_eColorMode)},
 		{"delay_time",m_fDelayTime},
 		{"duration", m_fDuration},
 		{"is_loop",m_IsLoop},

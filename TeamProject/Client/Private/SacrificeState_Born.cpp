@@ -3,6 +3,8 @@
 #include "StateMachine.h"
 #include "Sacrifice.h"
 #include "SkeletalModel.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 void CSacrificeState_Born::Enter(CSacrifice* pOwner)
 {
@@ -35,10 +37,27 @@ void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 		.Speed(1.2f)
 		.Loop(false)
 		.Apply();
+
+	m_IsEffectSpawn = false;
 }
 
 void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	if (!m_IsEffectSpawn && m_fAnimProgress >= 0.07f)
+	{
+		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+		vPosition.y += 0.5f;
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("spawn_smoke.json")
+			.Position(vPosition)
+			.Build("SpawnSmoke");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+
+		m_IsEffectSpawn = true;
+	}
+
 }
 
 void CSacrificeState_Born_Phase1::Exit(CSacrifice* pOwner)

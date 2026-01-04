@@ -175,10 +175,10 @@ HRESULT CEffectRenderer::Ready_Target()
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
-	RenderTargetDesc AccumulationDesc = { "Target_DiffuseEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc AccumulationDesc = { "Target_DiffuseEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AccumulationDesc);
 
-	RenderTargetDesc BloomAccDesc = { "Target_BloomEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f, 0.f, 0.f, 1.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc BloomAccDesc = { "Target_BloomEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(BloomAccDesc);
 
 	RenderTargetDesc BloomInfoDesc = { "Target_BloomEffectInfo" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
