@@ -230,11 +230,11 @@ PS_OUT PS_MAIN(PS_IN In)
 
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;
-    float fWeight = clamp(0.03 / (1e-5 + pow(fLinearZ, 4.f)), 0.01f, 3e3);
-    fWeight = max(fWeight, 1.f);
-    float4 vBloomColor = float4(vColor, fAlpha) * fAlpha;
+    float fDepthBias = 1.f / (1.f + 4.f * fLinearZ * fLinearZ);
+    float fWeight = clamp((fAlpha * 8.f + 0.01f) * fDepthBias, 0.01f, 10.f);
+    float4 vBloomColor = float4(vColor * fAlpha, fAlpha);
     
-    Out.vDiffuseAcc = float4(vColor* fAlpha, fAlpha) * fWeight;
+    Out.vDiffuseAcc = float4(vColor* fAlpha, fAlpha);
     Out.vBloomAcc = ExtractBright(vBloomColor, 0.6f, 0.5f, 1.5f) * fWeight;
     Out.vBloomAcc.a = fAlpha;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);

@@ -114,6 +114,9 @@ void CParticleNode_Edit::Play()
 	node.vStartColor = m_vStartColor;
 	node.vEndColor = m_vEndColor;
 
+	node.vAlphaKey = m_vAlphaKey;
+	node.vRatio = m_vRatio;
+
 	node.isRandomFrameIndex = m_IsRandomFrameIndex;
 	node.isParticleAnimated = m_IsParticleAnimated;
 	node.iCol = m_iCol;
@@ -176,6 +179,9 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_vAlphaKey.y = json.at("alpha_key").at("y").get<_float>();
 	m_vAlphaKey.z = json.at("alpha_key").at("z").get<_float>();
 	m_vAlphaKey.w = json.at("alpha_key").at("w").get<_float>();
+	
+	m_vRatio.x = json.at("ratio").at("x").get<_float>();
+	m_vRatio.y = json.at("ratio").at("y").get<_float>();
 
 	m_vEndColor.x = json.at("end_color").at("x").get<_float>();
 	m_vEndColor.y = json.at("end_color").at("y").get<_float>();
@@ -249,6 +255,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Life Time Alpha */
 		{"alpha_key",{{"x",m_vAlphaKey.x},{"y",m_vAlphaKey.y},{"z",m_vAlphaKey.z},{"w",m_vAlphaKey.w}}},
+		{"ratio",{{"x",m_vAlphaKey.x},{"y",m_vAlphaKey.y},{"z",m_vAlphaKey.z},{"w",m_vAlphaKey.w}}},
 
 		/* Texture Sheet Animation */
 		{"particle_animated",m_IsParticleAnimated},
@@ -367,10 +374,13 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	if (ImGui::CollapsingHeader("Life Time Alpha"))
 	{
-		isDirty |= ImGui::DragFloat("Alpha Start", &m_vAlphaKey.x, 1.f, 0.f, 1.f);
-		isDirty |= ImGui::DragFloat("Alpha 1/3", &m_vAlphaKey.y, 1.f, 0.f, 1.f);
-		isDirty |= ImGui::DragFloat("Alpha 2/3", &m_vAlphaKey.z, 1.f, 0.f, 1.f);
-		isDirty |= ImGui::DragFloat("Alpha End", &m_vAlphaKey.w, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 0", &m_vAlphaKey.x, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 1", &m_vAlphaKey.y, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 2", &m_vAlphaKey.z, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Alpha 3", &m_vAlphaKey.w, 1.f, 0.f, 1.f);
+
+		isDirty |= ImGui::DragFloat("Ratio 0", &m_vRatio.x, 1.f, 0.f, 1.f);
+		isDirty |= ImGui::DragFloat("Ratio 1", &m_vRatio.y, 1.f, 0.f, 1.f);
 	}
 
 	if (ImGui::CollapsingHeader("Texture Sheet Animation"))

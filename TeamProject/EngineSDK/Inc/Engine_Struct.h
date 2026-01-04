@@ -400,6 +400,7 @@ namespace Engine
 
 		/* Life Time Alpha */
 		_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
+		_float2 vRatio{ 0.3f,0.6f };
 
 		/*Texture Sheet Animation*/
 		_bool isParticleAnimated = false;

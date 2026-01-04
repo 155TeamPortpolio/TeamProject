@@ -50,19 +50,19 @@ Particle LIFE_TIME_ALPHA(Particle p)
     
     t = saturate(t);
 
-    if (t <= 0.3f)
+    if (t <= vRatio.x)
     {
-        float u = t / 0.3f;
+        float u = t / vRatio.x;
         alpha = lerp(vAlphaKey.x, vAlphaKey.y, u);
     }
-    else if (t <= 0.6f)
+    else if (t <= vRatio.y)
     {
-        float u = (t - 0.3f) / 0.3f;
+        float u = (t - vRatio.x) / (vRatio.y - vRatio.x);
         alpha = lerp(vAlphaKey.y, vAlphaKey.z, u);
     }
     else
     {
-        float u = (t - 0.6f) / 0.4f;
+        float u = (t - vRatio.y) / (1.f - vRatio.y);
         alpha = lerp(vAlphaKey.z, vAlphaKey.w, u);
     }
     

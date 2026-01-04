@@ -62,15 +62,17 @@ cbuffer CBFrame : register(b0)
     
     /*Life Time Alpha*/
     float4 vAlphaKey;
+    float2 vRatio;
+    float2 framePad2;
     
     /*Texture Sheet Animation*/
     uint IsAnimated;
     uint iMaxFrameIndex;
-    float2 framePad2;
+    float2 framePad3;
     
     /*Noise*/
     float fElapsedTime;
-    float3 framePad3;
+    float3 framePad4;
     
     float4 vStrength;
     float4 vFrequency;

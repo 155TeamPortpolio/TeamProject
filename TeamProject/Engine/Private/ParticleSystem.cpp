@@ -310,6 +310,7 @@ void CParticleSystem::ApplyPending()
 	m_LifeTimeColor.vEndColor = m_PendingChanged.vEndColor;
 
 	m_LifeTimeAlpha.vAlphaKey = m_PendingChanged.vAlphaKey;
+	m_LifeTimeAlpha.vRatio = m_PendingChanged.vRatio;
 
 	m_TextureSheetAnimation.isParticleAnimated = m_PendingChanged.isParticleAnimated;
 	m_TextureSheetAnimation.isRandomFrameIndex = m_PendingChanged.isRandomFrameIndex;
@@ -578,6 +579,7 @@ void CParticleSystem::UpdateParticles(_float dt)
 
 		/* Life Time Alpha */
 		cbFrame.vAlphaKey = m_LifeTimeAlpha.vAlphaKey;
+		cbFrame.vRatio = m_LifeTimeAlpha.vRatio;
 
 		/* Texture Sheet Animation */
 		cbFrame.isAnimated = m_TextureSheetAnimation.isParticleAnimated ? 1 : 0;

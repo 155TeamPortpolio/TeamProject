@@ -81,15 +81,17 @@ public:
 		
 		/*Life Time Alpha*/
 		_float4 vAlphaKey{};
+		_float2 vRatio{};
+		_float2 pad2{};
 
 		/*Texture Sheet Animation*/
 		_uint isAnimated{};
 		_uint iMaxFrameIndex{};
-		_float2 pad2{};
+		_float2 pad3{};
 
 		/*Noise*/
 		_float fElapsedTime{};
-		_float3 pad3{};
+		_float3 pad4{};
 
 		_float4 vStrength{};
 		_float4 vFrequency{};
