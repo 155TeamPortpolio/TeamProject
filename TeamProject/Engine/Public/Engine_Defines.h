@@ -1,5 +1,6 @@
 #ifndef Engine_Define_h__
 #define Engine_Define_h__
+
 #include <Windows.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
@@ -100,7 +101,7 @@ using namespace Engine;
 
 #include <windowsx.h>
 
-#pragma warning(disable :4251) //맵 컨테이너 경고 무시
+//#pragma warning(disable :4251) //맵 컨테이너 경고 무시
 
 #define _USING_GUI
 

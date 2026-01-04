@@ -116,14 +116,18 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     g_hInstance = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-    RECT rc{ 0, 0, ModelEdit::g_iWinSizeX, ModelEdit::g_iWinSizeY };
-
+    RECT rc{0, 0, ModelEdit::g_iWinSizeX, ModelEdit::g_iWinSizeY};
     AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 
+    int w = rc.right - rc.left;
+    int h = rc.bottom - rc.top;
+
+    // 클라이언트 (0,0)이 화면 (0,0)에 오게 하려면 이렇게
+    int x = rc.left;  // 보통 음수
+    int y = rc.top;   // 보통 음수
+
     HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0,
-        rc.right - rc.left,
-        rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
+        x, y, w, h, nullptr, nullptr, hInstance, nullptr);
 
     if (!hWnd)
     {

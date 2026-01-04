@@ -23,7 +23,7 @@ HRESULT CAI_SKModel::Initialize(COMPONENT_DESC* pArg)
 
 void CAI_SKModel::Render_GUI()
 {
-	auto data = dynamic_cast<CAIModelData*>(m_pData);
+	/*auto data = dynamic_cast<CAIModelData*>(m_pData);
 
 	auto ToggleMarkedMeshes = [&](const vector<_uint>& indices)
 		{
@@ -75,7 +75,7 @@ void CAI_SKModel::Render_GUI()
 		DrawToggleButton("Clear LOD3 Mesh", data->Get_LOD3_Index());
 		ImGui::SameLine();
 		DrawToggleButton("Clear Eff  Mesh", data->Get_Eff_Index());
-	}
+	}*/
 
 	__super::Render_GUI();
 }

@@ -1,375 +1,334 @@
 #pragma once
+
 #include "Component.h"
 #include "Engine_Math.h"
 #include "AnimationLayout.h"
 
 NS_BEGIN(Engine)
+
 using AnimArg = variant<_int, string>;
+
 enum class ANIM_LAYER_STATE { NONE, BASE, OVERRIDE, BLEND, ADDITIVE };
 
-class ENGINE_DLL CAnimator3D :
-    public CComponent
+class ENGINE_DLL CAnimator3D : public CComponent
 {
 public:
     friend class SetAnimBuild;
     friend class ChangeAnimBuild;
 
-    typedef struct AnimationLayer {
-        //---------- 레이어 속성 (레이어 영구변경)
-        _bool               BaseLayer = { false };
-        ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
-        
-        _bool               bPause = { true };
-        _float              fLayerWeight = {};
-        _float              fTargetLayerWeight = {};
-        _float              fLayerWeightElapsed = {};
-        _float              fLayerWeightDuration = {};
-        EaseType            eLayerEaseType = { EaseType::None };
-        _int                iStartBoneIndex = { -1 };
-        vector<_int>        AffectedBonesIndices;
+    _float timeScale = 1.f;
 
-        //---------- 베이스 레이어 속성
-        //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
-        _bool               bWrapped = { false };
-        _int                iRootBoneIndex = { -1 }; //루트 본 
-        _vector3            vRootEndPos{};                          //그 클립의 제일마지막 루트위치
-        _vector4            vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값
-        _vector3            vPrevRootPos{};                         //이전 프레임 위치
-        _vector4            vPrevRootQuat{ _quaternion::Identity }; //이전 프레임 회전
-        _vector3            vRootMoveDelta{};                       //이동값
-        _vector4            vRootQuatDelta{ _quaternion::Identity };//회전값
+    struct ANIM_LAYER
+    {
+        _bool baseLayer = false;
+        ANIM_LAYER_STATE layerType = ANIM_LAYER_STATE::OVERRIDE;
 
-        //모션본 (애니매이션의 움직임을 담당하는 본)
-        _int    iMotionBoneIndex = { -1 };
-        AXIS    eExtractMoveAxis = { AXIS::NONE }; //움직임을 뺄 축
-        AXIS    eExtractRotAxis = { AXIS::NONE }; //회전을 뺄 축
-        _vector3 vMotionEndPos{};        //그 클립의 제일 마지막 모션위치
-        _vector3 vPrevMotionBonePos{};   //이전 프레임 위치
+        _bool paused = true;
 
-        //---------- 애니매이션 데이터 (변경시 초기화)
-        _int    iClipIndex = { -1 };
-        _float  fPrevTrackPosition = {};
-        _float  fCurrentTrackPosition = {};
-        _float  fAnimSpeed = { 1.f };
-        _bool   bLoop = { false };
-        _bool   bisFinished = { true };
-        //재생 속도관련
-        EaseType ePlayEaseType = { EaseType::None };
-        _float  fTargetSpeed;
-        _float  fEaseDuration = {};
-        _float  fEaseElapsed = {};
+        _float weight{};
+        _float targetWeight{};
+        _float weightElapsed{};
+        _float weightDur{};
+        EaseType weightEase = EaseType::None;
 
-        //로컬 매트릭스
-        vector<_float4x4> LocalMatrices = {};
- 
-        //---------- 블렌드 상태 (변경시 초기화)
-        _bool   bBlending = { false };
-        _bool   bKeepTrackPos = { false };
-        _bool   bIgnoreRotation = { false };
-        _int    iNextClipIndex = { -1 };
-        _float  fBlendTrackPosition = {};
-        _float  fBlendElapsed = {};
-        _float  fBlendDuration = {};
-        EaseType eBlendEaseType = { EaseType::None };
-             
-        //다음 매트릭스
-        vector<_float4x4> BlendMatrices = {};
+        _int startBoneIdx = -1;
+        vector<_int> affectedBoneIdxs;
 
-        //보간을 다한 최종 매트릭스
-        vector<_float4x4> FinalLocalMatrices = {};
-    }ANIM_LAYER;
+        _bool wrapped = false;
+        _int rootBoneIdx = -1;
 
-    typedef struct PlaylistEntry {
-        _int    iClipIndex = { -1 };
-        _bool   bLoop = { false };
-        _float  fSpeed = { 1.f };
-        _float  fBlendDuration = { 0.2f };
-    }PLAYLIST_ENTRY;
+        _vector3 rootEndPos{};
+        _vector4 rootEndQuat{_quaternion::Identity};
+
+        _vector3 prevRootPos{};
+        _vector4 prevRootQuat{_quaternion::Identity};
+
+        _vector3 rootMoveDelta{};
+        _vector4 rootQuatDelta{_quaternion::Identity};
+
+        _int motionBoneIdx = -1;
+        AXIS extractMoveAxis = AXIS::NONE;
+        AXIS extractRotAxis = AXIS::NONE;
+
+        _vector3 motionEndPos{};
+        _vector3 prevMotionPos{};
+
+        _int clipIdx = -1;
+
+        _float prevTrackPos{};
+        _float curTrackPos{};
+
+        _float animSpeed = 1.f;
+        _bool loop = false;
+        _bool finished = true;
+
+        EaseType playEase = EaseType::None;
+        _float targetSpeed = 1.f;
+        _float easeDur{};
+        _float easeElapsed{};
+
+        vector<_float4x4> localMats{};
+        _bool blending = false;
+        _bool keepTrackPos = false;
+        _bool ignoreRotation = false;
+
+        _int nextClipIdx = -1;
+        _float blendTrackPos{};
+        _float blendElapsed{};
+        _float blendDur{};
+        EaseType blendEase = EaseType::None;
+
+        vector<_float4x4> blendMats{};
+        vector<_float4x4> finalLocalMats{};
+    };
+
+    struct PLAYLIST_ENTRY
+    {
+        _int clipIdx = -1;
+        _bool loop = false;
+        _float speed = 1.f;
+        _float blendDur = 0.2f;
+    };
 
 protected:
-    CAnimator3D();
+    CAnimator3D() {}
     CAnimator3D(const CAnimator3D& rhs);
     ~CAnimator3D() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype() override;
-    HRESULT Initialize(COMPONENT_DESC* pArg) override;
+    HRESULT Initialize_Prototype() override { return S_OK; }
+    HRESULT Initialize(COMPONENT_DESC* pArg) override { return S_OK; }
 
 public:
-    void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
-    HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
-    HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
+    void    LinkAnimate_Model(const string& levelKey, const string& modelKey);
+    HRESULT Link_MetaData(const string& levelKey, const string& metaClipKey);
+    HRESULT Resize_Layer(_uint layerCount);
+
+public:
     virtual void Update_Animation(_float dt);
+    void         Scrub_Timeline(_uint layerIdx);
 
-public: 
-    //즉시 애니매이션 변경
-    class SetAnimBuild Set_Animation(AnimArg ClipArg);
-    class SetAnimBuild Set_Animation(_uint LayerIndex, AnimArg ClipArg);
-    //애니매이션 보간 변경
-    class ChangeAnimBuild Change_Animation(AnimArg ClipArg);
-    class ChangeAnimBuild Change_Animation(_uint LayerIndex, AnimArg ClipArg);
-    //레이어 초기화
-    virtual void Reset_Layer(_uint LayerIndex);
-    //레이어 애니매이션을 멈춤 (초기화 x)
-    virtual HRESULT Stop_Animation(_uint LayerIndex);
-    //전체 레이어 애니매이션을 멈추되 다시 켜려면 각각 퍼즈를 풀어주어야함.
-    virtual HRESULT StopAll_Animation(); 
+public:
+    class SetAnimBuild    Set_Animation(AnimArg clipArg);
+    class SetAnimBuild    Set_Animation(_uint layerIdx, AnimArg clipArg);
+    class ChangeAnimBuild Change_Animation(AnimArg clipArg);
+    class ChangeAnimBuild Change_Animation(_uint layerIdx, AnimArg clipArg);
 
-public://애니매이터 데이터
-    /*----- is -----*/
+public:
+    virtual void   Reset_Layer(_uint layerIdx);
+    virtual HRESULT Stop_Animation(_uint layerIdx);
+    virtual HRESULT StopAll_Animation();
 
-    //현재 레이어의 애니매이션이 끝났는지
-    _bool isCurrentAnimEnd(_uint LayerIndex = 0);
-    //현재 레이어의 클립이 0~1사이의 비율을 받고, 그 값의 비율을 넘어섰는지
-    _bool isOverClipTiming(_float percent, _uint LayerIndex = 0);
-    //현재 레이어의 애니매이션이 블랜드 중인지
-    _bool isBlending(_uint LayerIndex = 0);
+public:
+    _bool   isCurrentAnimEnd(_uint layerIdx = 0);
+    _bool   isOverClipTiming(_float percent, _uint layerIdx = 0);
+    _bool   isBlending(_uint layerIdx = 0);
 
-    /*----- Getter -----*/
+    _float  Get_CurAnimDuration(_uint layerIdx = 0);
+    string  Get_CurAnimName(_uint layerIdx = 0);
+    _int    Get_CurAnimIndex(_uint layerIdx = 0);
+    _int    Get_NumLayer();
 
-    //현재 레이어 클립의 진행률 0~1 반환
-    _float Get_CurAnimDuration(_uint LayerIndex = 0);
-    //현재 레이어의 애니매이션 이름
-    string Get_CurAnimName(_uint LayerIndex = 0);
-    //현재 레이어의 애니매이션 인덱스
-    _int Get_CurAnimIndex(_uint LayerIndex = 0);
-    //현재 레이어 개수
-    _int Get_NumLayer();
-    //이벤트들 불러오는 함수 (매 프레임 벡터 내용물이 지워짐)
-    const vector<EVENT_INST>& Get_EventBus() const;
-    //"Root"라는 이름을 가진 본의 움직임 델타값
     _float3 Get_RootBoneMoveDelta() const;
     _float4 Get_RootBoneQuatDelta() const;
-    //Root의 마지막 회전 쿼터니언값
     _float4 Get_RootBoneEndQuat() const;
-    //모션본 애니매이션 델타값
-    _vector Get_MotionBoneDelta(_uint LayerIndex = 0);
-    //현재 레이어의 Ease중이면 그 비율가져옴
-    _float Get_EaseDuration(_uint LayerIndex = 0);
-    //현재 레이어 재생속도
-    _float Get_AnimSpeed(_uint LayerIndex = 0);
-    //퍼즈 상태인지
-    _bool Get_isPause(_uint LayerIndex = 0);
 
-    /*----- Setter -----*/
-    
-    //모션본 직접설정
-    void Set_MotionBone(_int MoveBoneIndex);
-    //애니매이션 축에 움직임 제거 (ex : (AXIS::X | AXIS::Z) = XZ축제거)
-    void Set_ExtractMotionboneMovement(AXIS eAxis);
-    //움직임 축 고정 리셋
+    _vector Get_MotionBoneDelta(_uint layerIdx = 0);
+
+    _float  Get_EaseDuration(_uint layerIdx = 0);
+    _float  Get_AnimSpeed(_uint layerIdx = 0);
+    _bool   Get_isPause(_uint layerIdx = 0);
+
+public:
+    void Set_MotionBone(_int motionBoneIdx);
+    void Set_ExtractMotionboneMovement(AXIS axis);
     void Reset_ExtractBoneMovement();
-    //애니매이션 퍼즈
-    void Set_Pause(_bool bPause, _uint LayerIndex = 0);
-    //애니매이션을 돌릴 본 설정
-    void Set_StartBone(_int StartBoneIndex, _uint LayerIndex = 0);
-    void Reset_StartBone(_uint LayerIndex = 0);
-    //애니매이션 Tpose로 설정 (※ 애니매이션 레이어 상태가 전부 날아감)
+
+    void Set_Pause(_bool paused, _uint layerIdx = 0);
+
+    void Set_StartBone(_int startBoneIdx, _uint layerIdx = 0);
+    void Reset_StartBone(_uint layerIdx = 0);
+
     void Set_TPose();
-    //애니매이션 레이어 타입
-    void Set_LayerType(ANIM_LAYER_STATE eLayerType, _uint LayerIndex = 0);
+    void Set_LayerType(ANIM_LAYER_STATE layerType, _uint layerIdx = 0);
 
-    /*----- Change -----*/
-
-    //현재 레이어 애니매이션 속도만 변경
-    void Chagne_Speed(_float fSpeed, _uint LayerIndex = 0);
-    //현재 레이어 애니매이션 현재 속도에서부터 보간 변경
-    void Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, EaseType eEaseType = EaseType::Linear, _uint LayerIndex = 0);
-
-    /*----- Calculator -----*/
-    _quaternion Calc_TransformFromEndAnim(const _vector4& vTransformQuat);
+    void Chagne_Speed(_float speed, _uint layerIdx = 0);
+    void Change_TransitionSpeed(_float targetSpeed, _float dur, EaseType ease = EaseType::Linear, _uint layerIdx = 0);
 
 public:
-    void Control_Bone(const string& boneName, _fmatrix BoneMatrix);
-    void Control_BoneByIndex(_uint Index, _fmatrix BoneMatrix);
-    void Dettach_BoneRelation(_uint Index);
-    //이벤트 추가
-    void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
-    void Clear_Events();
+    const vector<EVENT_INST>& Get_EventBus() const;
+    _quaternion Calc_TransformFromEndAnim(const _vector4& transformQuat);
 
 public:
-    //월드상의 최종 뼈 위치를 가져옴
-    _float4x4 Get_BoneMatrix(const string& boneName);
-    _float4x4 Get_BoneMatrix(_uint Index);
+    void Control_Bone(const string& boneName, _fmatrix boneMat);
+    void Control_BoneByIndex(_uint idx, _fmatrix boneMat);
+    void Dettach_BoneRelation(_uint idx) { dettachedBone.insert(idx); }
+
+    void Add_Event(CLIP_EVENT_TYPE type, string tag) { eventBus.push_back(EVENT_INST{type, tag}); }
+    void Clear_Events() { eventBus.clear(); }
+
+public:
+    _float4x4  Get_BoneMatrix(const string& boneName);
+    _float4x4  Get_BoneMatrix(_uint idx);
+
     _float4x4* Get_BoneMatrixPtr(const string& boneName);
     _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
-    const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
-    vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
-    //로컬 뼈 최종위치를 가져옴
-    const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
-    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
+
+    const vector<_float4x4>& Get_BoneMatrices() { return combinedMats; }
+    vector<_float4x4>        Get_BoneMatrices(_uint meshIdx);
+
+    const vector<_float4x4>& Get_CombinedBoneMatrices() { return combinedMats; }
+    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &combinedMats; }
 
 public:
-    // 플레이리스트 기능
-    void Playlist_Add(_int iClipIndex, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
-    void Playlist_Add(const string& ClipName, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
-    void Playlist_Remove(_int iPlaylistIndex);
-    void Playlist_Clear();
-    void Playlist_Play();
-    void Playlist_Stop();
-    void Playlist_MoveUp(_int iPlaylistIndex);
-    void Playlist_MoveDown(_int iPlaylistIndex);
-    _bool Playlist_isPlaying() const { return m_bPlaylistPlaying; }
-    _int Playlist_GetCurrentIndex() const { return m_iPlaylistIndex; }
-    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return m_Playlist; }
+    _bool Playlist_isPlaying() const { return playlistPlaying; }
+    _int  Playlist_GetCurrentIndex() const { return playlistIdx; }
+    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return playlist; }
 
-protected://애니매이션 체크
-    //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
-    _int Resolve_ClipIndex(AnimArg ClipArg);
-    //레이어 인덱스를 찾음
-    _int Find_Clip(const string& ClipTag);
-    //존재하는지 여부
-    _bool isExistLayer(_int LayerIndex);
-    _bool isExistClip(_int ClipIndex);
-    //축이 있는지 계산
-    _bool hasAxis(AXIS eExtractAxis, AXIS Axis);
-    
-    //매트릭스 보간
-    Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
-    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
 protected:
-    //애니매이션 연산
-    void Animation_Run(ANIM_LAYER& Layer, _float dt);
-    void Animation_Convert(ANIM_LAYER& Layer, _float dt);
-    //레이어 연산
-    void Layer_Base(const ANIM_LAYER& Layer);
-    void Layer_Override(const ANIM_LAYER& Layer);
-    void Layer_Blend(const ANIM_LAYER& Layer);
-    void Layer_Additive(const ANIM_LAYER& Layer);
-    //Combined 연산
+    _int  Resolve_ClipIndex(AnimArg clipArg);
+    _int  Find_Clip(const string& clipTag);
 
-    //최종 뼈 계산
+    _bool isExistLayer(_int layerIdx);
+    _bool isExistClip(_int clipIdx);
+
+    _bool hasAxis(AXIS mask, AXIS axis);
+
+    Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float t);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& tPose, _float weight);
+
+protected:
+    void Animation_Run(ANIM_LAYER& layer, _float dt);
+    void Animation_Convert(ANIM_LAYER& layer, _float dt);
+
+    void Layer_Base(const ANIM_LAYER& layer);
+    void Layer_Override(const ANIM_LAYER& layer);
+    void Layer_Blend(const ANIM_LAYER& layer);
+    void Layer_Additive(const ANIM_LAYER& layer);
+
     void BuildBone(_float dt);
-    void Update_Playlist();
 
 public:
     virtual void Render_GUI();
 
 protected:
-    void GUI_ShowLayerInfo();
-    void GUI_SelectAnim();
-    void GUI_Playlist();
+    void GUI_ShowLayerInfo(_float height);
+    void GUI_SelectAnim(_float height);
 
 private:
     void Reset_Anim();
 
 protected:
-    class CModelData* m_pData = {};
-    Matrix m_PreTransform = { Matrix::Identity };
+    class CModelData* data = {};
+    int guiLayerIdx = 0;
 
-    vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
-    vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
-    vector<EVENT_INST>              m_EventBus;     //이벤트 버스
+    Matrix preTransform = {Matrix::Identity};
 
-    /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
-    vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
-    vector<_float4x4> m_BasePose = {};                  //Additive용 BasePose << 만약 애니매이션을 여러개 덧붙여야하면 이벡터 자체가 여러개필요
-    vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
-    vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
-    vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
-    unordered_set<_uint> m_DettachedBone = {};
+    vector<ANIM_LAYER> animLayers;
+    vector<class CAnimationClip*> animClips;
 
-    _int m_iCurrentClipIndex = { -1 };
+    vector<EVENT_INST> eventBus;
 
-    /*Managing*/
-    vector<_bool> m_pAnimLoops;
-    unordered_map<string, _uint> m_pAnimNames;
+    vector<_float4x4> tPose{};
+    vector<_float4x4> basePose{};
 
-    vector<PLAYLIST_ENTRY>  m_Playlist;
-    _int                    m_iPlaylistIndex = { -1 };
-    _bool                   m_bPlaylistPlaying = { false };
-    _bool                   m_bPlaylistLoop = { false };
+    vector<_float4x4> transMats{};
+    vector<_float4x4> manipulateMats{};
+    vector<_float4x4> combinedMats{};
+
+    unordered_set<_uint> dettachedBone{};
+
+    _int curClipIdx = -1;
+
+    vector<_bool> animLoops;
+    unordered_map<string, _uint> animNames;
+
+    vector<PLAYLIST_ENTRY> playlist;
+    _int  playlistIdx = -1;
+
+    _bool playlistPlaying = false;
+    _bool playlistLoop = false;
+
+    _bool forceTPose = false;
 
 public:
     static CAnimator3D* Create();
-    virtual CComponent* Clone();
+    virtual CComponent* Clone() { return new CAnimator3D(*this); }
     virtual void Free() override;
 };
 
-// ───────── Builder
-
 template <typename T>
-class AnimBuild {
+class AnimBuild
+{
 public:
-
-    //Layer
-    T& LayerBlend(_float fBlendWeight,
-        _float fTargetWeight,
-        _float fDuration,
-        EaseType eEaseType) {
-
-        m_fLayerWeight  = fBlendWeight;
-        m_fTargetWeight = fTargetWeight;
-        m_fWeightDuration = fDuration;
-        m_eLayerEaseType = eEaseType;
-
-        return static_cast<T&>(*this);
-    }
-
-    //레이어 애니매이션 업데이트가 멈춤
-    T& Pause(_bool bPause) {
-        m_bPause = bPause;
-        return static_cast<T&>(*this);
-    }
-
-    //Clip
-    T& Loop(_bool bLoop) {
-        m_bLoop = bLoop;
-        return static_cast<T&>(*this);
-    }
-
-    T& Speed(_float fSpeed) {
-        m_fSpeed = fSpeed;
-        return static_cast<T&>(*this);
-    }
-
-    T& TransitionSpeed(_float fStartSpeed,
-        _float fTargetSpeed,
-        _float fDuration,
-        EaseType eEaseType = EaseType::Linear)
+    T& LayerBlend(_float w, _float targetW, _float dur, EaseType ease)
     {
-        m_fSpeed = fStartSpeed;
-        m_fTargetSpeed = fTargetSpeed;
-        m_fEaseDuration = fDuration;
-        m_ePlayEaseType = eEaseType;
-
+        layerWeight = w;
+        layerTargetWeight = targetW;
+        layerWeightDur = dur;
+        layerEase = ease;
         return static_cast<T&>(*this);
     }
 
-
-    T& ResetRotation(_bool bResetRotation) {
-        m_bPause = bResetRotation;
+    T& Pause(_bool paused)
+    {
+        layerPause = paused;
         return static_cast<T&>(*this);
     }
- 
+
+    T& Loop(_bool loop)
+    {
+        layerLoop = loop;
+        return static_cast<T&>(*this);
+    }
+
+    T& Speed(_float speed)
+    {
+        layerSpeed = speed;
+        return static_cast<T&>(*this);
+    }
+
+    T& TransitionSpeed(_float startSpeed, _float targetSpeed, _float dur, EaseType ease = EaseType::Linear)
+    {
+        layerSpeed = startSpeed;
+        layerTargetSpeed = targetSpeed;
+        easeDur = dur;
+        playEase = ease;
+        return static_cast<T&>(*this);
+    }
+
+    T& ResetRotation(_bool resetRot)
+    {
+        resetRotation = resetRot;
+        return static_cast<T&>(*this);
+    }
+
 protected:
-    //레이어 가중치, 가중치가 0이면 업데이트 자체를 하지 않음
-    //레이어 가중치가 0이되지 않게 끝이나면 매 프레임마다 업데이트 하는거로 간주
-    _float   m_fLayerWeight = 0.f;
-    _float   m_fTargetWeight = 0.f;
-    _float   m_fWeightDuration = 0.f;
-    EaseType m_eLayerEaseType = { EaseType::None };
-    //반복
-    _bool    m_bLoop = false;
-    //멈춤
-    _bool    m_bPause = false;
-    //회전보간 끄기
-    _bool    m_bResetRotation = false;
-    //애니매이션 속도
-    _float   m_fSpeed = 1.f;
-    EaseType m_ePlayEaseType = { EaseType::None };
-    _float   m_fTargetSpeed = { 1.f };
-    _float   m_fEaseDuration = { 0.f };
+    _float   layerWeight = 0.f;
+    _float   layerTargetWeight = 0.f;
+    _float   layerWeightDur = 0.f;
+    EaseType layerEase = EaseType::None;
 
+    _bool layerLoop = false;
+    _bool layerPause = false;
+
+    _bool resetRotation = false;
+
+    _float   layerSpeed = 1.f;
+    EaseType playEase = EaseType::None;
+
+    _float layerTargetSpeed = 1.f;
+    _float easeDur = 0.f;
 };
 
-class ENGINE_DLL SetAnimBuild
-    : public AnimBuild<SetAnimBuild> {
+class ENGINE_DLL SetAnimBuild : public AnimBuild<SetAnimBuild>
+{
 public:
-    SetAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
-        :m_iLayerIndex{ LayerIndex }, m_iClipIndex{ ClipIndex }, m_pOwner{ Owner } {}
+    SetAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner)
+        : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
+
     ~SetAnimBuild() DEFAULT;
-    
+
     SetAnimBuild(const SetAnimBuild&) = delete;
     SetAnimBuild& operator=(const SetAnimBuild&) = delete;
 
@@ -377,18 +336,19 @@ public:
     HRESULT Apply();
 
 protected:
-    CAnimator3D* m_pOwner = nullptr;
-    _int m_iLayerIndex = -1;
-    _int m_iClipIndex = -1;
-    _bool m_bApplied = false;
+    CAnimator3D* owner = nullptr;
+    _int layerIdx = -1;
+    _int clipIdx = -1;
+
+    _bool applied = false;
 };
 
-class ENGINE_DLL ChangeAnimBuild
-    : public AnimBuild<ChangeAnimBuild> {
+class ENGINE_DLL ChangeAnimBuild : public AnimBuild<ChangeAnimBuild>
+{
 public:
-    ChangeAnimBuild(_int LayerIndex, _int ClipIndex, CAnimator3D* Owner)
-        : m_iLayerIndex(LayerIndex), m_iClipIndex(ClipIndex), m_pOwner(Owner) {
-    }
+    ChangeAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner)
+        : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
+
     ~ChangeAnimBuild() DEFAULT;
 
     ChangeAnimBuild(const ChangeAnimBuild&) = delete;
@@ -396,39 +356,22 @@ public:
 
 public:
     HRESULT Apply();
-    //---------- 애니매이션 블랜드 속성
 
-    //애니매이션 전환시간
-    ChangeAnimBuild& BlendDuration(_float fDuration) {
-        m_fBlendDuration = fDuration;
-        return *this;
-    }
-    //애니매이션 전환 가중치 이징
-    ChangeAnimBuild& BlendWeightEaseType(EaseType eEaseType) {
-        m_eBlendEaseType = eEaseType;
-        return *this;
-    }
-    //애니매이션을 변경하면서 이전 클립의 트랙포지션을 같이 사용해서 섞을건지
-    ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos) {
-        m_bKeepTrackPos = bKeepTrackPos;
-        return *this;
-    }
-    //애니매이션 보간시 회전을 제외할것인지
-    ChangeAnimBuild& IgnoreRotation(_bool bIgnoreRotation) {
-        m_bIgnoreRotation = bIgnoreRotation;
-        return *this;
-    }
+    ChangeAnimBuild& BlendDur(_float dur) { blendDur = dur; return *this; }
+    ChangeAnimBuild& BlendEase(EaseType ease) { blendEase = ease; return *this; }
+    ChangeAnimBuild& KeepTrackPos(_bool keep) { keepTrackPos = keep; return *this; }
+    ChangeAnimBuild& IgnoreRotation(_bool ignore) { ignoreRotation = ignore; return *this; }
 
 protected:
-    CAnimator3D* m_pOwner = nullptr;
-    _int m_iLayerIndex = -1;
-    _int m_iClipIndex = -1;
+    CAnimator3D* owner{};
+    _int layerIdx = -1;
+    _int clipIdx = -1;
 
-    //클립 블랜드
-    _float      m_fBlendDuration = 0.2f;
-    _bool       m_bKeepTrackPos = false;
-    _bool       m_bIgnoreRotation = false;
-    EaseType    m_eBlendEaseType = { EaseType::Linear };
+    _float blendDur = 0.2f;
+    _bool  keepTrackPos = false;
+    _bool  ignoreRotation = false;
+
+    EaseType blendEase = EaseType::Linear;
 };
 
 NS_END
