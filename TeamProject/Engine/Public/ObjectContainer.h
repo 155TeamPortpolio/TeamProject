@@ -48,6 +48,7 @@ private:
     vector<class CGameObject*> m_ChildrenObjects;
 
     vector<_uint> m_UpdateOrder;                 
+    vector<_uint> m_UpdateOrderSnapShot;                 
     unordered_map<_uint, _uint> m_OrderIndexByID; 
 
 public:

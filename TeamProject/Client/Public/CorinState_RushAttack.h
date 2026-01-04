@@ -21,7 +21,7 @@ class CCorinState_Rush_Start final : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override {}
 
 public:
@@ -33,7 +33,7 @@ class CCorinState_Rush_Explode final : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override {}
 
 public:

@@ -32,27 +32,25 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 
-    IBaseState<CCorin>* pCurrent = m_pSubStateMachine->Get_CurrentState();
-    _float fProgress = pCurrent->Get_AnimProgress();
-    _bool bCanExit = (fProgress >= 0.75f);
-    if (pCurrent->Get_Tag() == "Backstep")   bCanExit = (fProgress >= 0.5f);
-
-    if (bCanExit)
+    if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
+        _int iExitMode = m_pSubStateMachine->Get_Int("ExitMode");
+        m_pSubStateMachine->Reset_Trigger("Complete");
+
         CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
-
-        if (pCurrent->Get_Tag() == "Dash")
+        switch (iExitMode)
         {
-            if (pOwner->Is_Move())
-                pRootFSM->Set_Int("MoveEntryMode", 2);
-            else
-                pRootFSM->Set_Int("MoveEntryMode", 1);
-
+        case 3: // RushAttack
+            pRootFSM->Set_Int("AttackEntryMode", 1);
+            pRootFSM->Set_Trigger("Attack");
+            break;
+        case 2: // Run
+            pRootFSM->Set_Int("MoveEntryMode", 2);
             pRootFSM->Set_Trigger("ToMove");
-        }
-        else
-        {
+            break;
+        default: // Idle
             pRootFSM->Set_Trigger("ToIdle");
+            break;
         }
     }
 }

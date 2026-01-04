@@ -51,7 +51,7 @@ void CCorinState_Walk::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Walk_Start")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
         .Loop(false)
         .Speed(1.2f)
         .Apply();
@@ -59,24 +59,12 @@ void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 
 void CCorinState_Walk_Start::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-
-        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
+    pOwner->Process_RootMotion(dt);
 }
 
 void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Walk")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk")
         .Loop(false)
         .Speed(1.2f)
         .Apply();
@@ -84,23 +72,11 @@ void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 
 void CCorinState_Walk_Loop::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vInputDir = pOwner->Get_InputDir();
-    if (vInputDir.Length() > 0.01f)
-    {
-        vInputDir.Normalize();
-        pOwner->Rotate(vInputDir);
-
-        _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-        if (vDelta.x != 0.f || vDelta.z != 0.f)
-        {
-            _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-            pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
-        }
-    }
+    pOwner->Process_RootMotion(dt);
 }
 
 void CCorinState_Walk_End::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_Start_End")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run_Start_End")
         .Apply();
 }

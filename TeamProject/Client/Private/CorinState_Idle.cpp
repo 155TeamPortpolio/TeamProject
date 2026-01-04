@@ -7,7 +7,7 @@
 
 void CCorinState_Idle::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Idle")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Idle")
         .Loop(true)
         .Apply();
 }

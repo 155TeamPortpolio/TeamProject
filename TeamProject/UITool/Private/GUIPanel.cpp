@@ -14,6 +14,7 @@
 #include "SpriteAnimationUI.h"
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
+#include "MaskUI.h"
 
 CGUIPanel::CGUIPanel(GUI_CONTEXT* pContext)
 	: CBasePanel(pContext)
@@ -183,6 +184,13 @@ void CGUIPanel::Render_GUI_CanvasPanel()
 			strType = CGaugeUI::m_strTypeTag;
 		}
 
+		if (ImGui::Button(u8"마스크"))
+		{
+			isCreateChild = true;
+			strType = CMaskUI::m_strTypeTag;
+		}
+
+
 		// 자식 생성
 		if (isCreateChild)
 		{
@@ -258,14 +266,4 @@ CGameObject* CGUIPanel::Get_SelectedObject()
 	auto pGuiContext = m_pGameInstance->Get_GUISystem()->Get_Context();
 
 	return pGuiContext->pSelectedObject;
-}
-
-CGUIPanel* CGUIPanel::Create(GUI_CONTEXT* pContext)
-{
-	return new CGUIPanel(pContext);
-}
-
-void CGUIPanel::Free()
-{
-	__super::Free();
 }

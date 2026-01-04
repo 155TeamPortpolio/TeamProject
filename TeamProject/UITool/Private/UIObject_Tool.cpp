@@ -6,6 +6,7 @@
 #include "Sprite2D.h"
 #include "Texture.h"
 #include "Helper_Func.h"
+#include "Child.h"
 
 HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 {
@@ -21,11 +22,25 @@ HRESULT CUIObject_Tool::Initialize(INIT_DESC* pArg)
 
 void CUIObject_Tool::Awake()
 {
+    __super::Awake();
+
     m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
+
+    Set_Clickable(true);
+}
+
+void CUIObject_Tool::Update(_float dt)
+{
+    KeyInput_ReorderChildren();
+
+    Play_Animation(dt);
 }
 
 void CUIObject_Tool::Render_GUI()
 {
+    if (auto pContainer = Get_Component<CObjectContainer>())
+        pContainer->Render_GUI();
+
     Render_GUI_Property();
 
     Render_GUI_Layout();
@@ -37,10 +52,20 @@ void CUIObject_Tool::Render_GUI()
     Render_GUI_Animation();
 }
 
+void CUIObject_Tool::OnClick()
+{
+    auto pGuiSystem = CGameInstance::GetInstance()->Get_GUISystem();
+
+    if (!pGuiSystem->UsingUI())
+        pGuiSystem->Get_Context()->pSelectedObject = this;
+}
+
 void CUIObject_Tool::Remove_SelfFromParent()
 {
-    const string& strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    const auto& objects = CGameInstance::GetInstance()->Get_UIMgr()->Get_LevelUI(strCurrentLevel); 
+    auto pGameInstance = CGameInstance::GetInstance();
+
+    const string& strCurrentLevel = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
+    const auto& objects = pGameInstance ->Get_UIMgr()->Get_LevelUI(strCurrentLevel);
 
     for (auto& pObj : objects)
     {
@@ -68,23 +93,25 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
-    // 공통 데이터 저장
     data["instanceName"] = m_InstanceName;
+
     auto& transformJson = data["transform"];
-    transformJson["anchor"] = static_cast<_uint>(m_eAnchor);
+    transformJson["anchor"] = ENUM(m_eAnchor);
     transformJson["anchorOffset"] = { m_vAnchorOffset.x, m_vAnchorOffset.y };
     transformJson["size"] = { m_vSize.x, m_vSize.y };
-    transformJson["scale"] = {m_vScale.x, m_vScale.y};
+    transformJson["scale"] = { m_vScale.x, m_vScale.y };
     transformJson["pivot"] = { m_vPivot.x, m_vPivot.y };
     transformJson["radian"] = m_fRadian;
-    data["color"] = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
 
-    // 애니메이션 데이터 저장
+    data["color"] = { m_vColor.x, m_vColor.y, m_vColor.z, m_vColor.w };
+    data["pass"] = m_basePass;
+    data["useMask"] = m_useMask;
+
     auto& animClipsJson = data["animClips"];
     animClipsJson = json::array();
     for (const auto& clip : m_AnimClips)
     {
-        json clipData = {};
+        json clipData{};
         clipData["name"] = clip.strName;
         clipData["duration"] = clip.fDuration;
         clipData["loop"] = clip.isLoop;
@@ -93,69 +120,70 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
         keyframesJson = json::array();
         for (const auto& keyframe : clip.keyframes)
         {
-            json keyframeData = {};
-            keyframeData["time"]= keyframe.fTime;
+            json keyframeData{};
+            keyframeData["time"] = keyframe.fTime;
             keyframeData["scale"] = { keyframe.vScale.x, keyframe.vScale.y };
             keyframeData["angle"] = keyframe.fAngle;
             keyframeData["position"] = { keyframe.vPosition.x, keyframe.vPosition.y };
             keyframeData["color"] = { keyframe.vColor.x, keyframe.vColor.y, keyframe.vColor.z, keyframe.vColor.w };
-            keyframeData["easeType"] = static_cast<_uint>(keyframe.easeType);
+            keyframeData["easeType"] = ENUM(keyframe.easeType);
 
             keyframesJson.push_back(keyframeData);
         }
         animClipsJson.push_back(clipData);
     }
 
-    // 자식 데이터 저장
     auto& childrenJson = data["children"];
     childrenJson = json::array();
-    CObjectContainer* pContainer = Get_Component<CObjectContainer>();
-    if (pContainer && !pContainer->Get_Children().empty())
+
+    auto pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer) return;
+
+    const auto& children = pContainer->Get_Children();
+    for (auto& pChild : children)
     {
-        const auto& children = Get_Component<CObjectContainer>()->Get_Children();
-        for (auto& pChild : children)
-        {
-            if (!pChild)
-                continue;
+        auto pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);
+        if (!pChildUI) continue;
 
-            CUIObject_Tool* pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);
-            if (!pChildUI)
-                continue;
-
-            nlohmann::ordered_json childData = {};
-            pChildUI->Save(childData);
-            childrenJson.push_back(childData);
-        }
+        nlohmann::ordered_json childData{};
+        pChildUI->Save(childData);
+        childrenJson.push_back(childData);
     }
 }
 
 void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 {
-    // 공통 데이터 읽기
     m_InstanceName = data.value("instanceName", "");
 
-    // Transform 데이터 읽기
     if (data.contains("transform"))
     {
         const auto& transformJson = data["transform"];
 
-        m_eAnchor = static_cast<ANCHOR>(transformJson.value("anchor", 0));
-        auto anchorOffset = transformJson.value("anchorOffset", json::array({ 0.0f, 0.0f }));
-        m_vAnchorOffset = { anchorOffset[0], anchorOffset[1] };
-        auto size = transformJson.value("size", json::array({ 100.0f, 100.0f }));
-        m_vSize = { size[0], size[1] };
-        auto scale = transformJson.value("scale", json::array({ 1.0f, 1.0f }));
-        m_vScale = { scale[0], scale[1] };
-        auto pivot = transformJson.value("pivot", json::array({ 0.5f, 0.5f }));
-        m_vPivot = { pivot[0], pivot[1] };
+        m_eAnchor = static_cast<ANCHOR>(transformJson.value("anchor", 0u));
+
+        auto anchorOffset = transformJson.value("anchorOffset", nlohmann::ordered_json::array({0.0f, 0.0f}));
+        m_vAnchorOffset = {anchorOffset[0], anchorOffset[1]};
+
+        auto size = transformJson.value("size", nlohmann::ordered_json::array({100.0f, 100.0f}));
+        m_vSize = {size[0], size[1]};
+
+        auto scale = transformJson.value("scale", nlohmann::ordered_json::array({1.0f, 1.0f}));
+        m_vScale = {scale[0], scale[1]};
+
+        auto pivot = transformJson.value("pivot", nlohmann::ordered_json::array({0.5f, 0.5f}));
+        m_vPivot = {pivot[0], pivot[1]};
+
         m_fRadian = transformJson.value("radian", 0.0f);
     }
 
-    // Color 데이터 읽기
-    auto color = data.value("color", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
-    m_vColor = { color[0], color[1], color[2], color[3] };
+    auto color = data.value("color", nlohmann::ordered_json::array({1.0f, 1.0f, 1.0f, 1.0f}));
+    m_vColor = {color[0], color[1], color[2], color[3]};
 
-    // 애니메이션 클립 읽기
+    m_useMask = data.value("useMask", false);
+
+    string pass = data.value("pass", "Opaque");
+    Set_BasePass(NormalizeToBasePass(pass));
+
     if (data.contains("animClips"))
     {
         const auto& animClipsJson = data["animClips"];
@@ -168,7 +196,6 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
             clip.fDuration = clipJson.value("duration", 1.0f);
             clip.isLoop = clipJson.value("loop", false);
 
-            // 키프레임 읽기
             if (clipJson.contains("keyframes"))
             {
                 const auto& keyframesJson = clipJson["keyframes"];
@@ -177,16 +204,16 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
                     UI_KEYFRAME keyframe;
                     keyframe.fTime = keyframeJson.value("time", 0.0f);
 
-                    auto vScale = keyframeJson.value("scale", json::array({ 1.0f, 1.0f }));
-                    keyframe.vScale = { vScale[0], vScale[1] };
+                    auto vScale = keyframeJson.value("scale", nlohmann::ordered_json::array({1.0f, 1.0f}));
+                    keyframe.vScale = {vScale[0], vScale[1]};
 
                     keyframe.fAngle = keyframeJson.value("angle", 0.0f);
 
-                    auto vPosition = keyframeJson.value("position", json::array({ 0.0f, 0.0f }));
-                    keyframe.vPosition = { vPosition[0], vPosition[1] };
+                    auto vPosition = keyframeJson.value("position", nlohmann::ordered_json::array({0.0f, 0.0f}));
+                    keyframe.vPosition = {vPosition[0], vPosition[1]};
 
-                    auto vColor = keyframeJson.value("color", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
-                    keyframe.vColor = { vColor[0], vColor[1], vColor[2], vColor[3] };
+                    auto vColor = keyframeJson.value("color", nlohmann::ordered_json::array({1.0f, 1.0f, 1.0f, 1.0f}));
+                    keyframe.vColor = {vColor[0], vColor[1], vColor[2], vColor[3]};
 
                     keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
 
@@ -198,7 +225,6 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
         }
     }
 
-    // 자식 데이터 읽기
     if (data.contains("children"))
     {
         const auto& childrenJson = data["children"];
@@ -206,25 +232,18 @@ void CUIObject_Tool::Load(const nlohmann::ordered_json& data)
 
         for (const auto& childJson : childrenJson)
         {
-            // 자식 UI 객체 생성
             string strTypeTag = childJson.value("typeTag", "");
-            if (strTypeTag.empty())
-                continue;
+            if (strTypeTag.empty()) continue;
 
             const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-            CUI_Object* pChildObj = Builder::Create_UIObject({ strCurrentLevelKey, "Proto_GameObject_" + strTypeTag })
-                .Build(strTypeTag);
-
-            if (!pChildObj)
-                continue;
+            CUI_Object* pChildObj = Builder::Create_UIObject({strCurrentLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
+            if (!pChildObj) continue;
 
             CUIObject_Tool* pChildUI = dynamic_cast<CUIObject_Tool*>(pChildObj);
             if (pChildUI)
             {
-                pChildUI->Load(childJson);  // 재귀 호출
-
-                if (pContainer)
-                    pContainer->Add_Child(pChildUI);
+                pChildUI->Load(childJson);
+                if (pContainer) pContainer->Add_Child(pChildUI);
             }
         }
     }
@@ -234,10 +253,16 @@ void CUIObject_Tool::Render_GUI_Property()
 {
     ImGui::SeparatorText(u8"속성");
     ImGui::Checkbox("Alive", &m_isAlive);
+
     _char szInstanceName[MAX_PATH] = {};
     strcpy_s(szInstanceName, m_InstanceName.c_str());
     if (ImGui::InputText(u8"인스턴스네임", szInstanceName, sizeof(szInstanceName)))
         m_InstanceName = szInstanceName;
+
+    if (ImGui::Checkbox("Use Mask", &m_useMask))
+        Set_BasePass(m_basePass);
+
+    ImGui::TextDisabled(("BasePass : " + m_basePass).c_str());
 }
 
 void CUIObject_Tool::Render_GUI_Layout()
@@ -342,30 +367,32 @@ void CUIObject_Tool::Render_GUI_Animation()
         return;
 
     // 클립 선택
-    static _int iClipIndex = -1;
     string strCombined;
     for (_int i = 0; i < m_AnimClips.size(); ++i)
         strCombined += m_AnimClips[i].strName + '\0';
     strCombined += '\0';
     
-    ImGui::Combo(u8"클립", &iClipIndex, strCombined.c_str());
+    ImGui::Combo(u8"클립", &m_iClipIndex, strCombined.c_str());
     
     // 클립 선택 없으면 리턴
-    if (-1 == iClipIndex)
+    if (-1 == m_iClipIndex)
         return;
 
-    static bool showPopup = false;
-
     if (ImGui::Button(u8"클립 편집"))
-        showPopup = true;
-
-    if (showPopup)
     {
-        UI_ANIM_CLIP& clip = m_AnimClips[iClipIndex];
+        if (m_iClipIndex >= 0 && m_iClipIndex < m_AnimClips.size())
+            ImGui::OpenPopup("clipEditor");
+    }
 
-        ImGui::SetNextWindowPos(ImVec2(g_iWinSizeX * 0.72f, 100), ImGuiCond_Once);
-        ImGui::SetNextWindowSize(ImVec2(200, g_iWinSizeY * 0.8f), ImGuiCond_Once);
-        ImGui::Begin(clip.strName.c_str(), &showPopup);
+    ImGui::SetNextWindowPos(ImVec2(g_iWinSizeX * 0.7f, 100), ImGuiCond_Appearing);
+    ImGui::SetNextWindowSize(ImVec2(240.f, g_iWinSizeY * 0.8f), ImGuiCond_Appearing);
+
+    if (ImGui::BeginPopup("clipEditor"))
+    {
+        ImVec2 avail = ImGui::GetContentRegionAvail();
+        ImGui::BeginChild("Content", avail, false, ImGuiWindowFlags_AlwaysVerticalScrollbar);
+
+        UI_ANIM_CLIP& clip = m_AnimClips[m_iClipIndex];
 
         // 재생, 정지 
         ImGui::SeparatorText(u8"재생");
@@ -374,7 +401,7 @@ void CUIObject_Tool::Render_GUI_Animation()
         {
             m_isBlending = !m_isBlending;
             if (m_isBlending)
-                Set_Animation(iClipIndex, &clip.isLoop);
+                Set_Animation(m_iClipIndex, &clip.isLoop);
             else
                 m_isBlending = false;
         }
@@ -435,7 +462,8 @@ void CUIObject_Tool::Render_GUI_Animation()
             ++idx;
         }
 
-        ImGui::End();
+        ImGui::EndChild();
+        ImGui::EndPopup();
     } 
 }
 
@@ -464,7 +492,12 @@ void CUIObject_Tool::Render_GUI_Image(string& strTextureKey)
         m_vAnchorOffset = Get_AnchorOffset(m_eAnchor);
     }
 
-    Get_Component<CSprite2D>()->Render_GUI();
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Render_GUI();
+
+    const string edited = NormalizeToBasePass(sprite->Get_PassConstant());
+    if (edited != m_basePass)
+        Set_BasePass(edited);
 }
 
 void CUIObject_Tool::ApplySpriteTexture(_uint idx, const string& levelKey, const string& texKey, _bool applyOriginSize)
@@ -506,6 +539,66 @@ _float2 CUIObject_Tool::Get_AnchorOffset(ANCHOR eAnchor)
     return fOffset;
 }
 
+void CUIObject_Tool::KeyInput_ReorderChildren()
+{
+    auto pGameInstance = CGameInstance::GetInstance();
+
+    auto pInput = pGameInstance->Get_InputDev();
+    auto pSelected = pGameInstance->Get_GUISystem()->Get_Context()->pSelectedObject;
+    auto pChild = Get_Component<CChild>();
+
+    if (!pChild || !pSelected || (pSelected != this))
+        return;
+
+    // 상단 ~ 하단 순서대로 그려짐
+    if (pInput->Key_Hold(VK_CONTROL))
+    {
+        if (pInput->Key_Tap(VK_OEM_4))      //  ctrl + [ : 최상단으로 이동
+            pChild->Set_Order_First(this);
+        else if (pInput->Key_Tap(VK_OEM_6)) //  ctrl + ] : 최하단으로 이동
+            pChild->Set_Order_Last(this);
+    }
+    else
+    {
+        if (pInput->Key_Tap(VK_OEM_4))      //  [ : 한 단계 위로 이동
+            pChild->Upper_Order(this);
+        else if (pInput->Key_Tap(VK_OEM_6)) //  ] : 한 단계 아래로 이동
+        {
+            OutputDebugString(Helper::ConvertToWideString(m_InstanceName).c_str());
+            pChild->Lower_Order(this);
+        }
+    }
+}
+
+void CUIObject_Tool::Set_BasePass(const string& pass)
+{
+    m_basePass = pass;
+
+    auto sprite = Get_Component<CSprite2D>();
+    if (m_useMask) sprite->ChangePass(MapToStencilTestPass(m_basePass));
+    else           sprite->ChangePass(m_basePass);
+}
+
+string CUIObject_Tool::MapToStencilTestPass(const string& basePass)
+{
+    if (basePass == "Opaque")          return "Opaque_StencilTest";
+    if (basePass == "UVAnimation")     return "UVAnimation_StencilTest";
+    if (basePass == "LinearFill")      return "LinearFill_StencilTest";
+    if (basePass == "RadialFill")      return "RadialFill_StencilTest";
+    if (basePass == "SpriteAnimation") return "SpriteAnimation_StencilTest";
+    return basePass;
+}
+
+string CUIObject_Tool::NormalizeToBasePass(const string& pass)
+{
+    if (pass == "Opaque_StencilTest")          return "Opaque";
+    if (pass == "UVAnimation_StencilTest")     return "UVAnimation";
+    if (pass == "LinearFill_StencilTest")      return "LinearFill";
+    if (pass == "RadialFill_StencilTest")      return "RadialFill";
+    if (pass == "SpriteAnimation_StencilTest") return "SpriteAnimation";
+    return pass;
+}
+
 _float CUIObject_Tool::GetSizeRatio(UISizeMode mode)
 {
     if      (mode == UISizeMode::Default) return 1.f;
@@ -520,9 +613,30 @@ void CUIObject_Tool::Render_GUI_SizeBlock()
 
     if (m_sizeFHD.x == 0.f && m_sizeFHD.y == 0.f)
         m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+     
+    _uint2 vSize = Get_Component<CSprite2D>()->Get_Texture(0)->Get_Size();
+    float fAspectRatio = vSize.x / max(static_cast<_float>(vSize.y), 1.f);
 
-    if (ImGui::DragFloat2(u8"크기", reinterpret_cast<_float*>(&m_vSize), 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
-        m_sizeFHD = {m_vSize.x / curRatio, m_vSize.y / curRatio};
+    ImGui::Checkbox(u8"##lock", &m_isAspectRatioLocked);
+    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
+        ImGui::SetTooltip(u8"종횡비 고정\n텍스쳐 가로/세로 비율로 유지합니다");
+
+    ImGui::SameLine();
+    ImGui::PushItemWidth(64.f);
+    if (ImGui::DragFloat(u8"##x", &m_vSize.x, 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
+        if (m_isAspectRatioLocked)
+            m_vSize.y = m_vSize.x / fAspectRatio;
+    }
+    ImGui::SameLine();
+    if (ImGui::DragFloat(u8"##y", &m_vSize.y, 1.f, 0.f, FLT_MAX, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+    {
+        if (m_isAspectRatioLocked)
+            m_vSize.x = m_vSize.y * fAspectRatio;
+    }
+    ImGui::PopItemWidth();
+    ImGui::SameLine();
+    ImGui::Text(u8"사이즈");
 
     static const char* kModes[] =
     {

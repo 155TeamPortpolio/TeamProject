@@ -30,7 +30,7 @@ class CCorinState_Attack_01 : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
 public:
@@ -42,7 +42,7 @@ class CCorinState_Attack_02 : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
 public:
@@ -54,7 +54,7 @@ class CCorinState_Attack_03 : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
 public:
@@ -66,7 +66,7 @@ class CCorinState_Attack_04 : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
 public:
@@ -78,7 +78,7 @@ class CCorinState_Attack_05 : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override {}
+    virtual void Update(CCorin* pOwner, _float dt) override;
     virtual void Exit(CCorin* pOwner) override;
 
 public:
@@ -90,7 +90,7 @@ class CCorinState_Attack_End : public IBaseState<CCorin>
 {
 public:
     virtual void Enter(CCorin* pOwner) override;
-    virtual void Update(CCorin* pOwner, _float dt) override;
+    virtual void Update(CCorin* pOwner, _float dt) override {}
     virtual void Exit(CCorin* pOwner) override {}
 
 public:

@@ -63,6 +63,21 @@ private:
 	_bool m_IsActiveHand = false;
 };
 
+class CSacrificeHandState_Attack_04_Phase2 : public IHState<CSacrificeHand>
+{
+public:
+	virtual void Enter(CSacrificeHand* pOwner) override;
+	virtual void Update(CSacrificeHand* pOwner, _float dt) override;
+	virtual void Exit(CSacrificeHand* pOwner) override;
+
+public:
+	static CSacrificeHandState_Attack_04_Phase2* Create() { return new CSacrificeHandState_Attack_04_Phase2(); }
+	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsActiveHand = false;
+};
+
 class CSacrificeHandState_OverDrive_Release_Start_Phase2 : public IHState<CSacrificeHand>
 {
 public:

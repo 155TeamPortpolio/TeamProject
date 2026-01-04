@@ -97,7 +97,7 @@ HRESULT CTestLevel::Awake()
 	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;

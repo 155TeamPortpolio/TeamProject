@@ -13,6 +13,14 @@ public:
     HRESULT Initialize(COMPONENT_DESC* pArg) override;
     void Sync_To_Parent(_bool SyncTransform);
     class CGameObject* Get_Parent() { return m_pParent; };
+
+public:
+    void ReorderChildren(class CGameObject* pObject, _uint Index);
+    void Upper_Order(class CGameObject* pObject);
+    void Lower_Order(class CGameObject* pObject);
+    void Set_Order_First(class CGameObject* pObject);
+    void Set_Order_Last(class CGameObject* pObject);
+
 private:
     void Set_Parent(class CGameObject* pParent);
     void Dettach_Parent();

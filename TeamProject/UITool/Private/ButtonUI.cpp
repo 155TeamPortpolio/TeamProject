@@ -6,9 +6,6 @@
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
-_uint CButtonUI::m_iCount = {};
-const string CButtonUI::m_strTypeTag = "Button";
-
 HRESULT CButtonUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -19,8 +16,6 @@ HRESULT CButtonUI::Initialize_Prototype()
 HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    Set_Clickable(true);
 
     Set_OriginTexSize(true);
 
@@ -34,13 +29,16 @@ HRESULT CButtonUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
+void CButtonUI::Awake()
+{
+    __super::Awake();
+
+    Set_Clickable(true);
+}
+
 void CButtonUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-
-    Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
-
-    Play_Animation(dt);
+    __super::Update(dt);
 }
 
 void CButtonUI::Render_GUI()
@@ -50,15 +48,25 @@ void CButtonUI::Render_GUI()
     // 이미지
     Render_GUI_Image(m_strTextureKey);
 
+    // flip
+    _bool isFlip = {};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
+    {
         m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
+        isFlip = true;
+    } 
     ImGui::SameLine();
     if (ImGui::Checkbox("flip Y", &m_isFlipY))
+    {
         m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
+        isFlip = true;
+    } 
+    if(isFlip)
+        Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 
     // 이벤트
     ImGui::SeparatorText(u8"이벤트");
-    ImGui::InputText(u8"메시지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
+    ImGui::InputText(u8"메세지", static_cast<_char*>(m_szEventMsg), sizeof(m_szEventMsg));
 
     // 버튼 상태
     ImGui::SeparatorText(u8"버튼 상태");
@@ -90,6 +98,8 @@ void CButtonUI::Exit_Hover()
 
 void CButtonUI::OnClick()
 {
+    __super::OnClick();
+
     if (STATE::DISABLED == m_eState)
         return;
 
