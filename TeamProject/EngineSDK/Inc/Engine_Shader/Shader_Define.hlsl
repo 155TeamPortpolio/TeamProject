@@ -98,7 +98,4 @@ StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t31);
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t29);
 Texture2D MaskTexture   : register(t28);
-
-Texture2DArray g_ShadowMapArray : register(t50);
-SamplerComparisonState g_ShadowSampler : register(s0);
 #endif // __SHADER_DEFINE_HLSL__

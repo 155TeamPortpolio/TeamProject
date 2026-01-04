@@ -83,7 +83,7 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 	m_pHiZ = CHiZ_Culling::Create();
-	m_pCSM = CCSMShadow::Create(pDevice, pContext, 2048);
+	m_pCSM = CCSMShadow::Create(pDevice, pContext, 4096);
 	return S_OK;
 }
 
@@ -127,7 +127,11 @@ HRESULT CPipeLine::Update_FrameBuffer(ID3D11DeviceContext* pContext)
 
 HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex)
 {
+	char buf[512];
+	sprintf_s(buf, ">>> Update_ShadowBuffer: cascadeIndex=%d\n", cascadeIndex);
+
 	ShadowBuffer shadowBuffer{};
+	ZeroMemory(&shadowBuffer, sizeof(ShadowBuffer));
 
 	shadowBuffer.matShadowProjection = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowProjMatrix();
 	shadowBuffer.matShadowView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowViewMatrix();
@@ -138,10 +142,16 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int casca
 
 	if (m_pCSM)
 	{
-		for (UINT i = 0; i < 4; ++i)
+		for (_uint i = 0; i < 4; ++i)
 		{
 			Matrix lightVP = m_pCSM->GetLightViewProj(i);
 			shadowBuffer.matLightViewProj[i] = lightVP;
+
+			XMFLOAT4X4 lvpMat;
+			XMStoreFloat4x4(&lvpMat, XMLoadFloat4x4(&lightVP));
+			sprintf_s(buf, "  GetLightViewProj[%d]: _11=%.3f, _44=%.3f\n",
+				i, lvpMat._11, lvpMat._44);
+			OutputDebugStringA(buf);
 		}
 
 		const float* splits = m_pCSM->GetCascadeSplits();
@@ -277,6 +287,11 @@ void CPipeLine::Update_Frustum()
 	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
 }
 
+void CPipeLine::Update_CSM()
+{
+	m_pCSM->Update();
+}
+
 void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
 {
 	m_pHiZ->Update_HiZ(pContext);
@@ -404,6 +419,22 @@ void CPipeLine::End_ShadowRender()
 	m_pCSM->End_ShadowRender();
 }
 
+ID3D11DepthStencilView* CPipeLine::GetCSMDSV(_uint index) const
+{
+	return 	m_pCSM->GetDSV(index);
+}
+
+HRESULT CPipeLine::Bind_ShadowMap(CShader* pShader)
+{
+	pShader->Bind_Value("ShadowMapArray", { m_pCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+	return S_OK;
+}
+
+void CPipeLine::BindSampler(ID3D11DeviceContext* pContext, _uint slot)
+{
+	m_pCSM->BindSampler(pContext, slot);
+}
+
 HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 
@@ -414,40 +445,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 	for (size_t i = 0; i < LightSnapShots.size(); i++)
 	{
 		Update_LightBuffer(pContext, LightSnapShots[i], LightSnapShots.size());
-		//LIGHT_DESC desc = LightSnapShots[i]; // °ª º¹»ç
-		//
-		//SHADER_PARAM LightParam;
-		//LightParam.iSize = sizeof(_float4);
-		//LightParam.typeName = "float4";
-		//LightParam.pData = &desc.vLightDiffuse;
-		//pShader->Bind_Value("g_vLightDiffuse", LightParam);
-		//
-		//LightParam.pData = &desc.vLightAmbient;
-		//pShader->Bind_Value("g_vLightAmbient", LightParam);
-		//
-		//LightParam.pData = &desc.vLightDirection;
-		//pShader->Bind_Value("g_vLightDir", LightParam);
-		//
-		//LightParam.pData = &desc.vLightPosition;
-		//pShader->Bind_Value("g_vLightPos", LightParam);
-		//
-		//LightParam.pData = &desc.vLightSpecular;
-		//pShader->Bind_Value("g_vLightSpecular", LightParam);
-		//
-		//LightParam.iSize = sizeof(_float);
-		//LightParam.typeName = "float";
-		//LightParam.pData = &desc.fLightRange;
-		//pShader->Bind_Value("g_fLightRange", LightParam);
-		//
-		//LightParam.pData = &desc.fLightIntensity;
-		//pShader->Bind_Value("g_fLightIntensity", LightParam);		
-		//
-		//LightParam.iSize = sizeof(_int);
-		//_int LightSize = LightSnapShots.size();
-		//LightParam.typeName = "int";
-		//LightParam.pData = &LightSize;
-		//pShader->Bind_Value("g_iLightSize", LightParam);
-		//
+	
 		ID3D11InputLayout* pLayout;
 
 		switch (LightSnapShots[i].eType)
@@ -457,6 +455,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("DIRECTIONAL", pContext);
 			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
+			BindSampler(pContext, 10);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
@@ -516,4 +515,5 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 	Safe_Release(m_pHiZ);
+	Safe_Release(m_pCSM);
 }

@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "ShadowCam.h"
+#include "GameInstance.h"
+#include "Light.h"
 
 CShadowCam::CShadowCam()
 {
@@ -13,19 +15,35 @@ CShadowCam::CShadowCam(const CShadowCam& rhs)
 HRESULT CShadowCam::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+	Add_Component<CLight>();
 	return S_OK;
 }
 
 HRESULT CShadowCam::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
+	__super::Initialize(pArg);   
+
 	return S_OK;
 }
 
 void CShadowCam::Awake()
 {
-	auto camera = Get_Component<CTransform>();
-	camera->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+	auto camera = Get_Component<CCamera>();
+	camera->Set_ProjType(CamProjType::Orthographic);
+
+	auto transform = Get_Component<CTransform>();
+	transform->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
+
+	_vector LightDir = transform->Dir(STATE::LOOK);
+	LIGHT_DESC desc{};
+	desc.vLightPosition = {};
+	desc.fLightRange = {};
+	desc.fLightIntensity = 1.f;
+	XMStoreFloat4(&desc.vLightDirection, LightDir);
+	desc.vLightDiffuse = { 1.0f,  1.0f, 1.0f, 1.0f };
+	desc.vLightAmbient = { 0.6f,  0.6f, 0.6f, 1.0f };
+	desc.vLightSpecular = { 1.0f,  1.0f, 1.0f, 1.0f };
+	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 }
 
 void CShadowCam::Priority_Update(_float dt)

@@ -79,6 +79,7 @@ public:
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
 	void Update_Frustum();
+	void Update_CSM();
 	void Update_HiZ(ID3D11DeviceContext* pContext);
 
 	_uint Write_ObjectData(const _float4x4& worldMatrix);
@@ -105,7 +106,10 @@ public:
 
 	ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
+	ID3D11DepthStencilView* GetCSMDSV(_uint index) const;
 
+	HRESULT Bind_ShadowMap(class CShader* pShader);
+	void BindSampler(ID3D11DeviceContext* pContext, _uint slot);
 	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 

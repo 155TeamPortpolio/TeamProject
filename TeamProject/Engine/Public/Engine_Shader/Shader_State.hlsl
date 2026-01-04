@@ -203,4 +203,5 @@ SamplerState PointLinearSampler = sampler_state
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
+
 #endif // __SHADER_STATE_HLSL__

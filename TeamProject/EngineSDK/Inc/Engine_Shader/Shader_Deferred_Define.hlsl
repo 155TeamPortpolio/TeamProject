@@ -145,6 +145,7 @@ Texture2D UICombinedTexture : register(t55);
 Texture2D FinalTexture : register(t56);
 
 // 式式式式式式式式式式式式式  ETC 式式式式式式式式式式式式式
+Texture2DArray ShadowMapArray : register(t58);
 Texture2D RampTexture : register(t59);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
@@ -153,4 +154,10 @@ StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t61);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t70);
+
+
+// 式式式式式式式式式式式式式  Shadow 式式式式式式式式式式式式式
+SamplerComparisonState ShadowSampler : register(s10);
+
+
 #endif // __SHADER_DEFINE_HLSL__

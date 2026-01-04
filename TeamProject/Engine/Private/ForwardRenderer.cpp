@@ -49,23 +49,23 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 
 HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
 {
+	m_pPipeLine->Update_CSM();
+
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
-
+	
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-
+	
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
-
-	//if (FAILED(m_pTargetManager->Begin_MRT("MRT_Shadow"))) return E_FAIL;
+	
 	for (_uint i = 0; i < 4; ++i)
 	{
 		m_pPipeLine->Begin_ShadowRender(i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, i);
-
+	
 		pShadowPass->Execute(m_pContext, this);
 		m_pPipeLine->End_ShadowRender();
 	}
-	//if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 	return S_OK;
 }

@@ -553,7 +553,7 @@ void DebugPass::Submit(DEBUG_PACKET packet)
 #pragma region SHADOW_PASS
 void ShadowPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
-	Execute_Opaque(pContext,pRenderer);
+ 	Execute_Opaque(pContext,pRenderer);
 	Execute_Instance(pContext, pRenderer);
 }
 

@@ -2,6 +2,76 @@
 
 matrix g_WorldMatrix;
 
+int GetCascadeIndex(float fViewDepth)
+{
+    int cascadeIndex = 3;
+    if (fViewDepth < vCascadeSplits.x)
+        cascadeIndex = 0;
+    else if (fViewDepth < vCascadeSplits.y)
+        cascadeIndex = 1;
+    else if (fViewDepth < vCascadeSplits.z)
+        cascadeIndex = 2;
+    
+    return cascadeIndex;
+}
+
+float GetShadowBias(float3 normal, float3 lightDir, int cascadeIndex)
+{
+    float NdotL = saturate(dot(normal, -lightDir)); // 표면이 빛을 받는 정도
+    
+    // Cascade마다 다른 bias
+    float baseBias = 0.001f * (cascadeIndex + 1);
+    
+    // 경사면 bias
+    float slopeBias = baseBias * sqrt(1.0f - NdotL * NdotL) / max(NdotL, 0.001f);
+    
+    return clamp(baseBias + slopeBias, 0.0001f, 0.01f);
+}
+
+float SampleShadowMap(float3 shadowCoord, int cascadeIndex, float bias)
+{
+    float shadow = 0.0f;
+    float2 texelSize = 1.0f / 4096.f;
+    
+    [unroll]
+    for (int x = -1; x <= 1; x++)
+    {
+        [unroll]
+        for (int y = -1; y <= 1; y++)
+        {
+            float2 offset = float2(x, y) * texelSize;
+            shadow += ShadowMapArray.SampleCmpLevelZero(
+                ShadowSampler,
+                float3(shadowCoord.xy + offset, cascadeIndex),
+                shadowCoord.z - bias
+            );
+        }
+    }
+    
+    return shadow / 9.0f;
+}
+
+float CalculateShadow(float4 vLightSpacePos[4], float fViewDepth, float3 worldNormal, float3 lightDir)
+{
+    int cascadeIndex = GetCascadeIndex(fViewDepth);
+    
+    float4 shadowCoord = vLightSpacePos[cascadeIndex];
+    shadowCoord.xyz /= shadowCoord.w;
+    
+    shadowCoord.x = shadowCoord.x * 0.5f + 0.5f;
+    shadowCoord.y = shadowCoord.y * -0.5f + 0.5f;
+    
+    if (shadowCoord.x < 0.0f || shadowCoord.x > 1.0f ||
+        shadowCoord.y < 0.0f || shadowCoord.y > 1.0f ||
+        shadowCoord.z < 0.0f || shadowCoord.z > 1.0f)
+    {
+        return 1.0f;
+    }
+    
+    float bias = GetShadowBias(worldNormal, lightDir, cascadeIndex);
+    return SampleShadowMap(shadowCoord.xyz, cascadeIndex, bias);
+}
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -203,7 +273,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
-    float2 fLightInfo : SV_TARGET1;
+    vector fLightInfo : SV_TARGET1;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -220,9 +290,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float roughness = vMetalicDesc.r;
     float metalic = vMetalicDesc.g;
     float specular = vMetalicDesc.b;
-
+    float3 lightDir = normalize(vLightDir.xyz * -1);
+    
     float fViewZ = vDepthDesc.y * zFar;
+    
     vector vWorldPos;
+    
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
     vWorldPos.z = vDepthDesc.x;
@@ -232,20 +305,30 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float3 lightDir = normalize(vLightDir.xyz * -1);
+    float4 vLightSpacePos[4];
+    [unroll]
+    for (int i = 0; i < 4; i++)
+    {
+        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
+    }
+    int cascadeIndex = GetCascadeIndex(fViewZ);
+    
+    float shadow = CalculateShadow(vLightSpacePos, fViewZ, worldNormal, lightDir);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
-
+        
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-
+        
     float3 halfVec = normalize(viewDir + lightDir);
     float specBase = saturate(dot(worldNormal, halfVec));
     float specularPower = lerp(50.0f, 5.0f, roughness);
     specular = pow(specBase, specularPower) * specular;
-        
-    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
     
-    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
-    Out.fLightInfo = float2(NdotL, specular);
+    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
+        
+    //Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
+    Out.vLight = float4(cascadeIndex, 0, 0, 1.f);
+
+    Out.fLightInfo = float4(NdotL, specular, shadow, 1.f);
     
     return Out;
 }
@@ -287,7 +370,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
-    Out.fLightInfo = float2(NdotL, 0.f);
+    Out.fLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -301,10 +384,10 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vLight = LightTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float2 fLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord).rg;
+    vector vLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord);
     float ssao = SSAOFinalTexture.Sample(DefaultSampler, In.vTexcoord).r;
     
-    float NdotL = fLightInfo.r;
+    float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
@@ -313,10 +396,10 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vAmbient = max(vAmbient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
     float4 vResult = float4(vLight.rgb * vRamp + vAmbient, vDiffuse.a);
     
-    float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    vResult.rgb += specularColor + vBloom.rgb;
-   
-    Out.vResult = vResult;
+    float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
+   vResult.rgb += specularColor + vBloom.rgb;
+    
+    Out.vResult = vResult * vLightInfo.b;
     
     return Out;
 }

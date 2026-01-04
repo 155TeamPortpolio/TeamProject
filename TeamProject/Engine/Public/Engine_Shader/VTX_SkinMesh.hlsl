@@ -24,6 +24,7 @@ struct VS_OUT
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
+    float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
 };
@@ -65,7 +66,7 @@ VS_OUT VS_MAIN(VS_IN In)
 
     Out.vTangent = normalize(mul(vTangent, ObjectBufferArray[TransformIndex].Transform));
     Out.vBinormal = normalize(mul(vBinormal, ObjectBufferArray[TransformIndex].Transform));
-    
+    Out.viewZ = viewPos.z;
     return Out;
 }
 
@@ -103,7 +104,7 @@ VS_OUT VS_OUTLINE(VS_IN In)
 
     Out.vTangent = normalize(mul(vTangent, g_worldMatrix));
     Out.vBinormal = normalize(mul(vBinormal, g_worldMatrix));
-    
+
     return Out;
 }
 
@@ -113,7 +114,7 @@ struct PS_IN
     float4 vNormal : NORMAL;
     float2 vTexcoord : TEXCOORD0;
     float4 vProjPos : TEXCOORD1;
-    
+    float viewZ : TEXCOORD2;
     float3 vTangent : TANGENT;
     float3 vBinormal : BINORMAL;
 };
@@ -221,7 +222,7 @@ PS_OUT PS_DEBUG(PS_IN In)
 struct VS_OUT_SHADOW
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+   // float4 vProjPos : TEXCOORD0;
 };
 
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
@@ -239,11 +240,10 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     
     float3 worldPos = mul(vPosition, ObjectBufferArray[TransformIndex].Transform).xyz;
-    float4 viewPos = mul(float4(worldPos, 1.f), matShadowView);
-    float4 projPos = mul(viewPos, matShadowProjection);
+    float4 lightSpacePos = mul(float4(worldPos, 1.f), matLightViewProj[iCurrentCascade]);
     
-    Out.vPosition = projPos;
-    Out.vProjPos = Out.vPosition;
+    Out.vPosition = lightSpacePos;
+   // Out.vProjPos = Out.vPosition;
     
     return Out;
 }
@@ -251,21 +251,17 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 struct PS_IN_SHDOW
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    //float4 vProjPos : TEXCOORD0;
 };
 
 struct PS_OUT_SHADOW
 {
-    vector vShadow : SV_TARGET0;
+   // vector vShadow : SV_TARGET0;
 };
 
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHDOW In)
+void PS_MAIN_SHADOW(PS_IN_SHDOW In)
 {
-    PS_OUT_SHADOW Out;
- 
-    Out.vShadow = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zShadowFar, 0.f, 0.f);
-  
-    return Out;
+
 }
 
 technique11 DefaultTechnique

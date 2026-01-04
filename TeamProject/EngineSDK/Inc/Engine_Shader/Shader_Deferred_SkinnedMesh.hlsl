@@ -2,6 +2,70 @@
 
 matrix g_WorldMatrix;
 
+int GetCascadeIndex(float fViewDepth)
+{
+    int cascadeIndex = 3;
+    if (fViewDepth < vCascadeSplits.x)
+        cascadeIndex = 0;
+    else if (fViewDepth < vCascadeSplits.y)
+        cascadeIndex = 1;
+    else if (fViewDepth < vCascadeSplits.z)
+        cascadeIndex = 2;
+    
+    return cascadeIndex;
+}
+
+float GetShadowBias(float3 normal, float3 lightDir, int cascadeIndex)
+{
+    float cosTheta = saturate(dot(normal, lightDir));
+    float baseBias = 0.005f * (cascadeIndex + 1); // cascade별로 다른 bias
+    return baseBias * tan(acos(cosTheta));
+}
+
+float SampleShadowMap(float3 shadowCoord, int cascadeIndex, float bias)
+{
+    float shadow = 0.0f;
+    float2 texelSize = 1.0f / 2048.0f;
+    
+    [unroll]
+    for (int x = -1; x <= 1; x++)
+    {
+        [unroll]
+        for (int y = -1; y <= 1; y++)
+        {
+            float2 offset = float2(x, y) * texelSize;
+            shadow += ShadowMapArray.SampleCmpLevelZero(
+                ShadowSampler,
+                float3(shadowCoord.xy + offset, cascadeIndex),
+                shadowCoord.z - bias
+            );
+        }
+    }
+    
+    return shadow / 9.0f;
+}
+
+float CalculateShadow(float4 vLightSpacePos[4], float fViewDepth, float3 worldNormal, float3 lightDir)
+{
+    int cascadeIndex = GetCascadeIndex(fViewDepth);
+    
+    float4 shadowCoord = vLightSpacePos[cascadeIndex];
+    shadowCoord.xyz /= shadowCoord.w;
+    
+    shadowCoord.x = shadowCoord.x * 0.5f + 0.5f;
+    shadowCoord.y = shadowCoord.y * -0.5f + 0.5f;
+    
+    if (shadowCoord.x < 0.0f || shadowCoord.x > 1.0f ||
+        shadowCoord.y < 0.0f || shadowCoord.y > 1.0f ||
+        shadowCoord.z < 0.0f || shadowCoord.z > 1.0f)
+    {
+        return 1.0f;
+    }
+    
+    float bias = GetShadowBias(worldNormal, lightDir, cascadeIndex);
+    return SampleShadowMap(shadowCoord.xyz, cascadeIndex, bias);
+}
+
 struct VS_IN
 {
     float3 vPosition : POSITION;
@@ -215,20 +279,28 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float Skin = vMetalicDesc.a;
     
     float3 lightDir = normalize(vLightDir.xyz * -1);
+    float fViewZ = vDepthDesc.a;
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float4 vLightSpacePos[4];
+    [unroll]
+    for (int i = 0; i < 4; i++)
+    {
+        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
+    }
+    
+    float shadow = CalculateShadow(vLightSpacePos, fViewZ, worldNormal, lightDir);
     
     if (Skin < 0.7f)
     {
-        float fViewZ = vDepthDesc.y * zFar;
-        vector vWorldPos;
-        vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-        vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-        vWorldPos.z = vDepthDesc.x;
-        vWorldPos.w = 1.f;
-    
-        vWorldPos = vWorldPos * fViewZ;
-        vWorldPos = mul(vWorldPos, matProjectionInverse);
-        vWorldPos = mul(vWorldPos, matViewInverse);
-    
         float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
         float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
@@ -238,10 +310,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float specularPower = lerp(50.0f, 5.0f, roughness);
         specular = pow(specBase, specularPower) * specular;
         
-        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
     
-        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
+        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);      
         Out.fLightInfo = float2(NdotL, specular);
+        return Out;
     }
     else
     {
@@ -327,7 +400,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
@@ -344,7 +417,6 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
-
     return Out;
 }
 
