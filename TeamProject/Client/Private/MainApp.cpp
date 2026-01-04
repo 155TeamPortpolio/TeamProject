@@ -4,6 +4,8 @@
 #include "IResourceService.h"
 
 #include "TestLevel.h"
+#include "LogoLevel.h"
+
 #include "UIDirector.h"
 
 CMainApp::CMainApp()
@@ -58,6 +60,8 @@ HRESULT CMainApp::Render()
 void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 {
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Test_Level", []()->CLevel* {return CTestLevel::Create("Test_Level"); });
+	m_pGameInstance->Get_LevelMgr()->Register_Level("Logo_Level", []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
+
 	m_pGameInstance->Notify_LevelSet(); 
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",false); 
 } 

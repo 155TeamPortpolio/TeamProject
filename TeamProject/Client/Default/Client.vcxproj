@@ -180,6 +180,7 @@
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
+    <ClInclude Include="..\Public\LogoLevel.h" />
     <ClInclude Include="..\Public\MapData_Defines.h" />
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
     <ClInclude Include="..\public\MapDataCloud.h" />
@@ -310,6 +311,7 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\Private\LogoLevel.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />

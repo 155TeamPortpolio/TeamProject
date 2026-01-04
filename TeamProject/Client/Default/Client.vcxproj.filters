@@ -364,6 +364,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
       <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\00. LogoLevel">
+      <UniqueIdentifier>{a9a6f7a5-17f2-4dcf-924c-60e273e5003e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -699,6 +702,9 @@
     <ClInclude Include="..\Public\CorinState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LogoLevel.h">
+      <Filter>01. Level\00. LogoLevel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1022,6 +1028,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LogoLevel.cpp">
+      <Filter>01. Level\00. LogoLevel</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
