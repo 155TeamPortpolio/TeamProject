@@ -6,76 +6,53 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
-CUIDirector::CUIDirector()
-	:m_game(CGameInstance::GetInstance())
-{
-}
-
 void CUIDirector::Initialize(const string& levelKey)
 {
 	m_levelKey = levelKey;
 	UILoader::Load(m_levelKey);
 }
 
-void CUIDirector::Register(CUI_Object* uiObj)
+void CUIDirector::SetActive(UICanvas canvas, void* arg)
 {
-	m_uiByTag.emplace(uiObj->Get_InstanceName(), uiObj);
-	m_game->Get_UIMgr()->Add_UIObject(uiObj, m_levelKey);
+    auto& handle = m_canvasHandles[ENUM(canvas)];
+    if (!handle.isValid()) return;
+    handle.Get()->UI_Active(arg);
 }
 
-void CUIDirector::SetActive(const string& tag, void* arg)
+void CUIDirector::SetActive(initializer_list<UICanvas> canvases, void* arg)
 {
-	auto it = m_uiByTag.find(tag);
-	if (it == m_uiByTag.end()) return;
-	return it->second->UI_Active(arg);
+    for (auto canvas : canvases)
+        SetActive(canvas, arg);
 }
 
-void CUIDirector::SetActive(initializer_list<string> tags, void* arg)
+void CUIDirector::SetDeactive(UICanvas canvas)
 {
-	for (const auto& tag : tags)
-		SetActive(tag, arg);
+    auto& handle = m_canvasHandles[ENUM(canvas)];
+    if (!handle.isValid()) return;
+    handle.Get()->UI_DeActive();
 }
 
-void CUIDirector::SetDeactive(const string& tag, void* arg)
+void CUIDirector::SetDeactive(initializer_list<UICanvas> canvases)
 {
-	auto it = m_uiByTag.find(tag);
-	if (it == m_uiByTag.end()) return;
-	return it->second->UI_DeActive();
+    for (auto canvas : canvases)
+        SetDeactive(canvas);
 }
 
-void CUIDirector::SetDeactive(initializer_list<string> tags, void* arg)
+void CUIDirector::PushEvent(UIEventType type, void* arg)
 {
-	for (const auto& tag : tags)
-		SetDeactive(tag, arg);
+    switch (type)
+    {
+    case UIEventType::Enter_Monitor:
+        break;
+    case UIEventType::Exit_Monitor:
+        break;
+    }
 }
 
 void CUIDirector::Free()
 {
 	__super::Free();
-}
 
-void CUIDirector::Dispatch(UIEventType type, void* arg)
-{
-	switch (type)
-	{
-	case UIEventType::Enter_Monitor:
-		EnterMonitor(arg);
-		break;
-
-	case UIEventType::Exit_Monitor:
-		ExitMonitor(arg);
-		break;
-	}
-}
-
-void CUIDirector::EnterMonitor(void* arg)
-{
-	SetDeactive("");
-	SetActive("");
-}
-
-void CUIDirector::ExitMonitor(void* arg)
-{
-	SetDeactive("");
-	SetActive("");
+    for (auto& handle : m_canvasHandles)
+        handle.Reset();
 }
