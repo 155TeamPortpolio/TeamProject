@@ -60,6 +60,10 @@ void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
 			string nextStateTag = blackboard.stateQueue.front();
 			blackboard.stateQueue.pop_front();
 			
+			// 공격 테이블의 마지막 패턴일 때
+			if (blackboard.stateQueue.empty()) 
+				blackboard.isEnd = true;
+
 			blackboard.currentStateTag = nextStateTag;
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
@@ -68,6 +72,7 @@ void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
 		blackboard.currentStateTag = "";
 		pOwner->Get_StateMachine()->Set_Bool("FinishAttack", true);
+		blackboard.isEnd = false;
 		pOwner->Idle();
 	}
 
@@ -188,7 +193,8 @@ void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.47f) // 0.70f
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.47f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f)) // 0.70f
 	{
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
@@ -217,7 +223,9 @@ void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.65f)
+	//if (m_fAnimProgress >= 0.65f)
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.65f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f))
 	{
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
@@ -246,8 +254,9 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.45f)
-	{
+	//if (m_fAnimProgress >= 0.45f)
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.45f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f)) {
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
@@ -275,8 +284,9 @@ void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.59f)
-	{
+	//if (m_fAnimProgress >= 0.59f)
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.59f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f)) {
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
@@ -304,8 +314,9 @@ void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.47f)
-	{
+	//if (m_fAnimProgress >= 0.47f)
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.47f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f)) {
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
@@ -333,8 +344,9 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		dt);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.5f)
-	{
+	//if (m_fAnimProgress >= 0.5f)
+	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.65f) ||
+		(true == blackboard.isEnd && m_fAnimProgress >= 0.99f)) {
 		blackboard.isChainOpen = true;
 		if (!blackboard.stateQueue.empty())
 			blackboard.isRequestNext = true;
