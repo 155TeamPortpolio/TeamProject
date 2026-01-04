@@ -370,6 +370,9 @@
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\Logo">
+      <UniqueIdentifier>{391d5954-1dad-4d0f-84d1-ae2f1501f91c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -705,6 +708,9 @@
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Logo.h">
+      <Filter>02. GameObject\UI\Logo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1028,6 +1034,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Logo.cpp">
+      <Filter>02. GameObject\UI\Logo</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

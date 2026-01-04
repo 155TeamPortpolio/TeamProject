@@ -4,6 +4,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "Logo.h"
 
 CLogoLevel::CLogoLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -19,15 +20,11 @@ HRESULT CLogoLevel::Initialize()
 
 HRESULT CLogoLevel::Awake()
 {
+	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
+
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Logo_Level");
 
-	CUI_Object* uiObj = Builder::Create_UIObject({ "Logo_Level", "Proto_GameObject_CanvasPanel" })
-		.Asset("logo.json")
-		.Build("logo");
-
-	uiDirector->Register(uiObj);
 
 	return S_OK;
 }
