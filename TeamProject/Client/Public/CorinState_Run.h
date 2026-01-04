@@ -29,6 +29,18 @@ public:
     virtual void Free() override { __super::Free(); }
 };
 
+class CCorinState_Run_Turnback : public IBaseState<CCorin>
+{
+public:
+    virtual void Enter(CCorin* pOwner) override;
+    virtual void Update(CCorin* pOwner, _float dt) override;
+    virtual void Exit(CCorin* pOwner) override {}
+
+public:
+    static CCorinState_Run_Turnback* Create() { return new CCorinState_Run_Turnback(); }
+    virtual void Free() override { __super::Free(); }
+};
+
 class CCorinState_Run_End : public IBaseState<CCorin>
 {
 public:
