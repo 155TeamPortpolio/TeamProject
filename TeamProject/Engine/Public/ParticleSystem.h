@@ -118,6 +118,12 @@ public:
 	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, BUILD, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 	enum class SPAWN_SHAPE { SPHERE, BOX, CONE, END };
+	enum class COLOR_MODE : _uint
+	{
+		MULTIPLY = 0 ,
+		ADDITIVE = 1,
+		END = 3
+	};
 	
 protected:
 	CParticleSystem();
@@ -179,6 +185,7 @@ private:
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
 	MODULE_MASK m_eModuelMask{};
+	COLOR_MODE m_eColorMode = COLOR_MODE::ADDITIVE;
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};

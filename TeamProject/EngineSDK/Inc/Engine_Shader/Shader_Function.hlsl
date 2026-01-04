@@ -54,4 +54,26 @@ float3 ACESFilm(float3 color)
     
     return saturate((color * (a * color + b)) / (color * (c * color + d) + e));
 }
+
+float4 ApplyColorMode(uint ColorMode, float4 Diffuse, float4 Color)
+{
+    float4 vResult = Diffuse;
+    
+    if (0 == ColorMode) /* Multiply */
+    {
+        vResult = Diffuse * Color;
+        vResult.a = Diffuse.a * Color.a;
+    }
+    else if(1 == ColorMode) /* Additive */
+    {
+        vResult = Diffuse + Color;
+        vResult.a = Diffuse.a * Color.a;
+    }
+    else
+    {
+        vResult = Diffuse;
+    }
+    
+    return vResult;
+}
 #endif

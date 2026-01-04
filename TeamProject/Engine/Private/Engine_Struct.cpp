@@ -23,7 +23,7 @@ CGameObject* Engine::tagObjectHandle::Get()
 	return pObj;
 }
 
-void Engine::tagObjectHandle::Release()
+void Engine::tagObjectHandle::Delete()
 {
 
 auto mgr = CGameInstance::GetInstance()->Get_ObjectMgr();
@@ -40,6 +40,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	PARTICLE_NODE node{};
 
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
+	node.iColorMode = json.value("color_mode", node.iColorMode);
 	node.eType = json.value("effect_type", node.eType);
 	node.TextureKey = json.value("texture_key", node.TextureKey);
 	node.TexturePath = json.value("texture_path", node.TexturePath);

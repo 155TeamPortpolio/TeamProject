@@ -6,6 +6,7 @@ float4x4 g_WorldMatrix;
 
 uint Col;
 uint Row;
+uint ColorMode;
 
 BlendState BS_OITAccmulation
 {
@@ -225,8 +226,9 @@ PS_OUT PS_MAIN(PS_IN In)
     float4 vColorDesc = DiffuseTexture.Sample(LinearSampler, TexCoord);
     float3 vColor = vColorDesc.rgb;
     float fAlpha = vColorDesc.a;
-    vColor = lerp(In.vColor.rgb, vColor, fAlpha);
-    fAlpha *= In.vColor.a;
+    vColor = ApplyColorMode(ColorMode, vColorDesc, In.vColor);
+    //vColor = lerp(In.vColor.rgb, vColor, fAlpha);
+    //fAlpha *= In.vColor.a;
 
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

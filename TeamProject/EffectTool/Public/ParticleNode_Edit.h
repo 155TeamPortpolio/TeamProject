@@ -47,6 +47,7 @@ private:
 
     /*Main Params*/
     CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
+    CParticleSystem::COLOR_MODE m_eColorMode{};
     _bool m_IsWorld = true;
     _uint m_iBurstCount{};
 

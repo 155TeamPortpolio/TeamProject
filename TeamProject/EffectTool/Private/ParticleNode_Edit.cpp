@@ -327,6 +327,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
+	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
 	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
 	isDirty |= ImGui::Checkbox("Use Gravity", &m_UseGravity);
@@ -404,6 +405,7 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		PARTICLE_NODE node{};
 
 		node.SpawnShape = ENUM(m_eSpawnShape);
+		node.iColorMode = ENUM(m_eColorMode);
 		node.isWorld = m_IsWorld;
 		node.isLoop = m_IsLoop;
 		node.iBurstCount = m_iBurstCount;

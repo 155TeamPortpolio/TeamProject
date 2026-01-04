@@ -276,6 +276,7 @@ void CParticleSystem::ApplyPending()
 		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
 
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
+	m_eColorMode = static_cast<COLOR_MODE>(m_PendingChanged.iColorMode);
 	m_eParticleSpace = m_PendingChanged.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
 
 	m_fDelayDuration = m_PendingChanged.fDelayTime;
@@ -325,6 +326,8 @@ void CParticleSystem::ApplyPending()
 	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
 	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
+
+	customInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
 
 	m_IsChanged = false;
 }
