@@ -185,7 +185,7 @@ void CTestLevel::Update()
 		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
 		BulkyCCT.bAutoFit = false;
 		BulkyCCT.fHeight = 1.28f;
-		BulkyCCT.fRadius = 0.2f;
+		BulkyCCT.fRadius = 0.35f;
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		//BulkyCCT.fBoundingMinY = -0.88f;
 		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
