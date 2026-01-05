@@ -14,6 +14,7 @@ protected:
 public:
     HRESULT Initialize(class CAnimator3D* pAnimator);
 
+
 public:
     HRESULT Create_Chain(_int RootIndex);
 

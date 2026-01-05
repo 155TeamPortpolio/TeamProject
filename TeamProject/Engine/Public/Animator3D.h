@@ -222,6 +222,9 @@ public: //»À °ü·Ã
     void Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg);
     void Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
+    //TPose
+    const vector<_float4x4>& Get_TPose() { return &m_TPose; };
+
 public:
     class CDynamicBone* Get_DynamicBone_Ptr() { 
         if (nullptr == m_pDynamicBone) Link_DynamicBone();

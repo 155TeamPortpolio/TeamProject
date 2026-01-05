@@ -42,6 +42,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
+	m_BasePose.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
@@ -65,7 +66,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	}
 
 	m_TPose = m_CombinedMatrices;
-	m_BasePose.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 }
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)

@@ -42,13 +42,14 @@ HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 
 void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup)
 {
-	const _int iBoneCount = m_pAnimator->Get_ModelData()->Get_BoneCount();
+	auto pModelData = m_pAnimator->Get_ModelData();
 
+	const _int iBoneCount = pModelData->Get_BoneCount();
 	_int iParentIndex = Indices.back();
 	vector<_int> Childs;
 
 	for (_int i = iParentIndex + 1; i < iBoneCount; ++i) {
-		if (iParentIndex == m_pAnimator->Get_ModelData()->Get_BoneParentIndex(i))
+		if (iParentIndex == pModelData->Get_BoneParentIndex(i))
 			Childs.push_back(i);
 	}
 
@@ -58,6 +59,9 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 			DYNAMIC_NODE Node{};
 			Node.ParentIndex = Indices[i - 1];
 			Node.BoneIndex = Indices[i];
+
+			
+
 			chain.Nodes.push_back(Node);
 		}
 		ChineGroup.Chains.push_back(chain);
