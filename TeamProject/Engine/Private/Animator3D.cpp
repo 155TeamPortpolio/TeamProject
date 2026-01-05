@@ -208,6 +208,8 @@ HRESULT CAnimator3D::StopAll_Animation()
 	return S_OK;
 }
 
+#pragma region AnimationDatas
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint LayerIndex)
 {
 	if (!isExistLayer(LayerIndex))
@@ -523,14 +525,7 @@ void CAnimator3D::Clear_Events()
 	m_EventBus.clear();
 }
 
-_float4x4 CAnimator3D::Get_BoneMatrix(const string& boneName)
-{
-	_int Index = m_pData->Find_BoneIndexByName(boneName);
-	if (Index == -1)  return _float4x4{};
-	else {
-		return m_CombinedMatrices[Index];
-	}
-}
+#pragma endregion
 
 vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 {
@@ -547,31 +542,113 @@ vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 	return result;
 }
 
-_float4x4 CAnimator3D::Get_BoneMatrix(_uint Index)
+#pragma region GetTransformationBone
+
+_float4x4 CAnimator3D::Get_BoneTransformationMatrix(AnimArg BoneArg)
 {
-	if (Index >= m_ManipulateMatrices.size()) return _float4x4{};
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _float4x4{};
 	else {
-		return m_CombinedMatrices[Index];
+		return m_TransformationMatrices[Index];
 	}
 }
 
-_float4x4* CAnimator3D::Get_BoneMatrixPtr(const string& boneName)
+_float4x4* CAnimator3D::Get_BoneTransformationMatrixPtr(AnimArg BoneArg)
 {
-	_int Index = m_pData->Find_BoneIndexByName(boneName);
-	if (Index == -1)  return nullptr;
-	else {
-		return &m_CombinedMatrices[Index];
-	}
-}
-
-_float4x4* CAnimator3D::Get_BoneTransformMatrixPtr(const string& boneName)
-{
-	_int Index = m_pData->Find_BoneIndexByName(boneName);
+	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)  return nullptr;
 	else {
 		return &m_TransformationMatrices[Index];
 	}
 }
+
+_vector3 CAnimator3D::Get_BoneTransformationPosition(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _vector3{};
+	else {
+		Matrix matrix = m_TransformationMatrices[Index];
+		return _vector3(matrix._41, matrix._42, matrix._43);
+	}
+}
+
+_vector4 CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _quaternion::Identity;
+	else {
+		Matrix matrix = m_TransformationMatrices[Index];
+		_vector3 S, T;
+		_quaternion R;
+		matrix.Decompose(S, R, T);
+		return R;
+	}
+}
+
+void CAnimator3D::Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _float4x4{};
+	else {
+		return m_TransformationMatrices[Index];
+	}
+}
+
+void CAnimator3D::Get_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg)
+{
+	return _vector3();
+}
+
+void CAnimator3D::Get_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+{
+	return _vector4();
+}
+
+#pragma endregion
+
+#pragma region GetCombinedBone
+_float4x4 CAnimator3D::Get_BoneCombinedMatrix(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _float4x4{};
+	else {
+		return m_CombinedMatrices[Index];
+	}
+}
+
+_float4x4* CAnimator3D::Get_BoneCombinedMatrixPtr(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1) return nullptr;
+	else {
+		return &m_CombinedMatrices[Index];
+	}
+}
+
+_vector3 CAnimator3D::Get_BoneCombinedPosition(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _vector3{};
+	else {
+		Matrix matrix = m_CombinedMatrices[Index];
+		return _vector3(matrix._41, matrix._42, matrix._43);
+	}
+}
+
+_vector4 CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)  return _quaternion::Identity;
+	else {
+		Matrix matrix = m_CombinedMatrices[Index];
+		_vector3 S, T;
+		_quaternion R;
+		matrix.Decompose(S, R, T);
+		return R;
+	}
+}
+
+#pragma endregion
 
 _int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
 {
@@ -579,6 +656,17 @@ _int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
 		return get<_int>(ClipArg);
 
 	return Find_Clip(get<string>(ClipArg));
+}
+
+_int CAnimator3D::Resolve_BoneIndex(AnimArg BoneArg)
+{
+	if (holds_alternative<_int>(BoneArg))
+		if (get<_int>(BoneArg) < m_pData->Get_BoneCount())
+			return get<_int>(BoneArg);
+		else
+			return -1;
+
+	return m_pData->Find_BoneIndexByName(get<string>(BoneArg));
 }
 
 _int CAnimator3D::Find_Clip(const string& ClipTag)
@@ -630,25 +718,25 @@ Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& tar
 
 Matrix CAnimator3D::Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose, _float weight)
 {
-	Vector3 baseS, targetS, refS;
-	Quaternion baseR, targetR, refR;
-	Vector3 baseT, targetT, refT;
+	_vector3 baseS, targetS, refS;
+	_quaternion baseR, targetR, refR;
+	_vector3 baseT, targetT, refT;
 
 	Matrix(base).Decompose(baseS, baseR, baseT);
 	Matrix(target).Decompose(targetS, targetR, targetT);
 	Matrix(TPose).Decompose(refS, refR, refT);
 
-	Vector3 deltaT = targetT - refT;
+	_vector3 deltaT = targetT - refT;
 	refR.Inverse(refR);
-	Quaternion deltaR = refR * targetR;
-	Vector3 deltaS = targetS - refS;
+	_quaternion deltaR = refR * targetR;
+	_vector3 deltaS = targetS - refS;
 
 
-	Vector3 outS = baseS;// +deltaS * weight;
-	Quaternion outR =
-		baseR * Quaternion::Slerp(Quaternion::Identity, deltaR, weight);
+	_vector3 outS = baseS;// +deltaS * weight;
+	_quaternion outR =
+		baseR * _quaternion::Slerp(_quaternion::Identity, deltaR, weight);
 	outR.Normalize();
-	Vector3 outT = baseT;// +deltaT * weight;
+	_vector3 outT = baseT;// +deltaT * weight;
 
 	return XMMatrixAffineTransformation(outS, XMVectorZero(), outR, outT);
 }

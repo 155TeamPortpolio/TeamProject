@@ -155,7 +155,8 @@ public://애니매이터 데이터
     _float Get_AnimSpeed(_uint LayerIndex = 0);
     //퍼즈 상태인지
     _bool Get_isPause(_uint LayerIndex = 0);
-
+    //
+    class CModelData* Get_ModelData() { return m_pData; }
     /*----- Setter -----*/
     
     //모션본 직접설정
@@ -192,35 +193,33 @@ public:
     void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
     void Clear_Events();
 
-public:
-    //월드상의 최종 뼈 위치를 가져옴
-    _float4x4 Get_BoneMatrix(const string& boneName);
-    _float4x4 Get_BoneMatrix(_uint Index);
-    _float4x4* Get_BoneMatrixPtr(const string& boneName);
-    _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
-    const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
+    
+public: //뼈 관련
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
-    //로컬 뼈 최종위치를 가져옴
-    const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
-    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
 
-public:
-    // 플레이리스트 기능
-    void Playlist_Add(_int iClipIndex, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
-    void Playlist_Add(const string& ClipName, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
-    void Playlist_Remove(_int iPlaylistIndex);
-    void Playlist_Clear();
-    void Playlist_Play();
-    void Playlist_Stop();
-    void Playlist_MoveUp(_int iPlaylistIndex);
-    void Playlist_MoveDown(_int iPlaylistIndex);
-    _bool Playlist_isPlaying() const { return m_bPlaylistPlaying; }
-    _int Playlist_GetCurrentIndex() const { return m_iPlaylistIndex; }
-    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return m_Playlist; }
+    _float4x4 Get_BoneTransformationMatrix(AnimArg BoneArg);
+    _float4x4* Get_BoneTransformationMatrixPtr(AnimArg BoneArg);
+    _vector3 Get_BoneTransformationPosition(AnimArg BoneArg);
+    _vector4 Get_BoneTransformationQuaternion(AnimArg BoneArg);
+    const vector<_float4x4>& Get_TransformationMatrices() { return m_TransformationMatrices; };
+    vector<_float4x4>* Get_TransformationBoneMatrices_Ptr() { return &m_TransformationMatrices; };
+
+    void Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg);
+    void Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg);
+    void Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+
+    _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
+    _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
+    _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
+    _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
+    const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
+    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };    
 
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
+    _int Resolve_BoneIndex(AnimArg BoneArg);
+
     //레이어 인덱스를 찾음
     _int Find_Clip(const string& ClipTag);
     //존재하는지 여부
@@ -245,7 +244,6 @@ protected:
 
     //최종 뼈 계산
     void BuildBone(_float dt);
-    void Update_Playlist();
 
 public:
     virtual void Render_GUI();
@@ -253,7 +251,6 @@ public:
 protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
-    void GUI_Playlist();
 
 private:
     void Reset_Anim();
@@ -279,11 +276,6 @@ protected:
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
-
-    vector<PLAYLIST_ENTRY>  m_Playlist;
-    _int                    m_iPlaylistIndex = { -1 };
-    _bool                   m_bPlaylistPlaying = { false };
-    _bool                   m_bPlaylistLoop = { false };
 
 public:
     static CAnimator3D* Create();
