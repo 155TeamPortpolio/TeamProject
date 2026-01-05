@@ -29,6 +29,7 @@ void CS_MAIN(uint3 DispatchThreadID : SV_DispatchThreadID)
     p = LIFE_TIME_VELOCITY(p);
     p = LIFE_TIME_SIZE(p);
     p = LIFE_TIME_COLOR(p);
+    p = LIFE_TIME_ALPHA(p);
     p = TEXTURE_SHEET_ANIMATION(p);
     p = NOISE(p);
     

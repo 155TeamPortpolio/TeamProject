@@ -1551,7 +1551,7 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
