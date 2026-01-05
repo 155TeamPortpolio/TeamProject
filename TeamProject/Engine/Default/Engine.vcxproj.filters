@@ -549,6 +549,12 @@
     <ClInclude Include="..\public\UIRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IKSolver.h">
+      <Filter>01. Utility\15. IKSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FootIK.h">
+      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1011,6 +1017,12 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
       <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\15. IKSolver">
+      <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\15. IKSolver\FootIK">
+      <UniqueIdentifier>{552ed212-cfe0-4669-9f2a-f272f54e8c71}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1445,6 +1457,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FootIK.cpp">
+      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

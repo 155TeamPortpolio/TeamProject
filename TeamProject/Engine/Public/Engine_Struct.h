@@ -477,6 +477,24 @@ namespace Engine
 		class CGameObject* Get();
 		void Release();
 	}OBJECT_HANDLE;
+
+	struct IK_CONTEXT
+	{
+		class CAnimator3D*		pAnimator;    
+		vector<_uint>			BoneIndices; 
+		_vector3				vPoleVector;
+		_float					fWeight; 
+		vector<_quaternion>     OutRotations;
+		_bool					bSuccess;    
+
+		IK_CONTEXT()
+			: pAnimator(nullptr)
+			, vPoleVector(0.f, 0.f, 1.f)
+			, fWeight(1.f)
+			, bSuccess(false)
+		{
+		}
+	};
 }
 
 
