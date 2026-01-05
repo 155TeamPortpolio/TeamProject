@@ -55,7 +55,6 @@ private:
 
 private:
     CSequenceCam* GetSequenceCam() const;
-    void          ClearPlayingState() { m_playing = {}; }
 
 private:
     unordered_map<string, SeqEntry> m_seqs{};

@@ -129,7 +129,7 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Initialize("Test_Level");
 	
 	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
+		.Asset("CanvasPanel.json")
 		.Build("HUD");
 	
 	uiDirector->Register(hudUI);
@@ -143,17 +143,17 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
-	if (KEY->Key_Down('1'))
+	if (KEY->Key_Tap('1'))
 	{
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('2'))
+	if (KEY->Key_Tap('2'))
 	{
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('3'))
+	if (KEY->Key_Tap('3'))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
@@ -270,8 +270,8 @@ void CTestLevel::Ready_Camera()
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
-	auto camPanel = CCamPanel::Create(GUI->Get_Context());
-	GUI->Register_Panel(camPanel);
+	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
+	//GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 }

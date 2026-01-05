@@ -40,7 +40,7 @@ void CCamDirector::Update(_float dt)
 {
     if (!m_playing.active) return;
 
-    auto sequenceCam = GetSequenceCam();
+    auto sequenceCam    = GetSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     if (m_playing.pendingStart)
@@ -69,9 +69,9 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     if (m_playing.active)
         StopAll(blendOutSec);
 
-    auto& entry = m_seqs.at(key);
-    auto sequenceCam = GetSequenceCam();
-    auto seqPlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
+    auto& entry       = m_seqs.at(key);
+    auto  sequenceCam = GetSequenceCam();
+    auto  seqPlayer   = sequenceCam->Get_Component<CCamSequencePlayer>();
 
     seqPlayer->SetSequence(&entry.seq);
 
@@ -90,7 +90,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     if (entry.seq.space == CamSpace::Local)
     {
         auto refObj = OBJ->Request_Object(m_spaceRefHandle);
-        auto cc = refObj->Get_Component<CCharacterController>();
+        auto cc     = refObj->Get_Component<CCharacterController>();
         camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize(), 0.f});
     }
     else
@@ -118,11 +118,11 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 {
     const Matrix outWorld = *CAM->Get_InversedViewMatrix();
 
-    Vector3 outPos = outWorld.Translation();
+    Vector3    outPos = outWorld.Translation();
     Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
     outRot.Normalize();
 
-    auto sequenceCam = GetSequenceCam();
+    auto sequenceCam    = GetSequenceCam();
     auto sequencePlayer = sequenceCam->Get_Component<CCamSequencePlayer>();
     sequencePlayer->SetApplyEnabled(false);
     sequencePlayer->Stop(false);
@@ -131,20 +131,19 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     if (m_returnCamType != CamReturnType::None)
     {
-        auto returnObj = OBJ->Request_Object(m_returnCamHandle);
+        auto returnObj  = OBJ->Request_Object(m_returnCamHandle);
         auto viewOffset = sequenceCam->Get_Component<CCamera>()->Get_ViewOffset();
 
         if (m_returnCamType == CamReturnType::OrbitCam)
         {
             returnObj->Get_Component<CCamera>()->Set_ViewOffset(viewOffset);
-
             const Vector3 ownerPos = outPos - viewOffset;
             static_cast<COrbitCam*>(returnObj)->SnapFromCamPose(ownerPos, outRot);
         }
     }
 
     const _bool ok = CAM->Pop(handle, blendOutSec);
-    ClearPlayingState();
+    m_playing = {};
     return ok;
 }
 
