@@ -20,7 +20,7 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	UI_HANDLE		m_handle;
+	UI_HANDLE		m_hRoot = {};
 
 public:
 	static  CGameObject* Create();
