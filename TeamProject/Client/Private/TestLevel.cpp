@@ -297,7 +297,7 @@ void CTestLevel::Ready_ShadowCamera()
 
 	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
 		.Camera(aspect)
-		.Position({ 0.f, 100.f, 50.f })
+		.Position({ 0.f, 100.f, 100.f })
 		.Rotate({0.f, 0.f, 0.f})
 		.Build("ShadowCam");
 
