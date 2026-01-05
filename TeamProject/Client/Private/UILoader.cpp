@@ -13,7 +13,8 @@
 #include "UVAnimationUI.h"
 #include "MaskUI.h"
 
-#include "Logo.h"
+#include "UI_Logo.h"
+#include "UI_Loading.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -97,9 +98,10 @@ namespace
 void UILoader::Add_ResourcePath()
 {
 	const string uiRoot = "../Bin/Resources/UI";
+	const string jsonRoot = "../../Resources/Data/UI";
 
 	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
-	ScanDirectory(uiRoot + "/Data",  {".json"});
+	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
 }
 
@@ -117,7 +119,8 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"Text",            &CTextUI::Create            },
 		{"UVAnimation",     &CUVAnimationUI::Create     },
 		{"Mask",			&CMaskUI::Create			},
-		{"Logo",			&CLogo::Create				},
+		{"Logo",			&CUI_Logo::Create			},
+		{"Loading",			&CUI_Loading::Create		},
 	};
 
 	for (const Entry& entry : entries)

@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CLogo final : public CUI_Object
+class CUI_Logo final : public CUI_Object
 {
 private:
-	CLogo() {}
-	CLogo(const CLogo& rhs) : CUI_Object(rhs) {}
-	virtual ~CLogo() DEFAULT;
+	CUI_Logo() {}
+	CUI_Logo(const CUI_Logo& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_Logo() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
