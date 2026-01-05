@@ -12,6 +12,7 @@ CUI_Manager::CUI_Manager()
 
 CUI_Manager::~CUI_Manager()
 {
+	//Builder::Create_Object().
 }
 
 void CUI_Manager::Pre_EngineUpdate(_float dt)

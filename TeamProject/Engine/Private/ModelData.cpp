@@ -155,6 +155,7 @@ void CModelData::Render_GUI()
 		}
 	}
 
+
 }
 
 HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
