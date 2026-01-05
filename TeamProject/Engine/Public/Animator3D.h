@@ -260,10 +260,8 @@ protected:
 
     //√÷¡æ ª¿ ∞ËªÍ
     void Update_Layers(_float dt);
-    void Update_LocalMatrices(_float dt);
-    void Update_IKMatrices(_float dt);
-    void Update_CombinedMatrices(_float dt);
-
+    void BuildLocal(_float dt);
+    void BuildIKMatrices(_float dt);
     void BuildBone(_float dt);
 
 public:

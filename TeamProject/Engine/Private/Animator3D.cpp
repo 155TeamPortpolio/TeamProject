@@ -122,6 +122,7 @@ void CAnimator3D::Update_Animation(_float dt)
 {
 	if (m_pAnimClips.empty()) return;
 
+	/* Clear Clip Events */
 	Clear_Events();
 	
 	/* Update Animation Clips*/
