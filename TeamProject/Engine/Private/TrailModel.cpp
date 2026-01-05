@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "VI_Trail.h"
+#include "Material.h"
+#include "MaterialInstance.h"
 #include "GameInstance.h"
 
 CTrailModel::CTrailModel()
@@ -57,15 +59,26 @@ void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
 {
 	m_eMode = static_cast<POINT_MODE>(trailDesc.iMode);
 	m_eTextureMode = static_cast<TEXTURE_MODE>(trailDesc.iTextureMode);
+	m_eColorMode = static_cast<COLOR_MODE>(trailDesc.iColorMode);
 
 	m_fMaxLifeTime = trailDesc.fMaxLifeTime;
 	m_fWidth = trailDesc.fWidth;
 	m_fMinDistance = trailDesc.fMinDistance;
+	m_vUVSpeed = trailDesc.vUVSpeed;
 	m_fTile = trailDesc.fTile;
+
+	m_vUVOffset = _float2(0.f, 0.f);
+
+	auto pMaterialInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
+	pMaterialInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
+	pMaterialInstance->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
 }
 
 void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
 {
+	m_vUVOffset.x = m_vUVSpeed.x * dt;
+	m_vUVOffset.y = m_vUVSpeed.y * dt;
+
 	CENTER_POINT newPoint{};
 	newPoint.vPosition = position;
 	newPoint.fLifeTime = 0.f;
@@ -103,6 +116,9 @@ void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
 
 void CTrailModel::Update_SegmentPoint(_float3 position0, _float3 position1, _float dt)
 {
+	m_vUVOffset.x = m_vUVSpeed.x * dt;
+	m_vUVOffset.y = m_vUVSpeed.y * dt;
+
 	SEGMENT_POINT newPoint{};
 	newPoint.vPositionA = position0;
 	newPoint.vPositionB = position1;

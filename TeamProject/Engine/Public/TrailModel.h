@@ -23,6 +23,7 @@ class ENGINE_DLL CTrailModel :
 public:
 	enum class POINT_MODE { CENTER, SEGMENT, END };
 	enum class TEXTURE_MODE { STRETCH, TILE, END };
+	enum class COLOR_MODE : _uint { MULTIPLY = 0, ADDITIVE = 1, END = 2 };
 private:
 	CTrailModel();
 	CTrailModel(const CTrailModel& rhs);
@@ -63,6 +64,11 @@ private:
 
 	POINT_MODE m_eMode = POINT_MODE::CENTER;
 	TEXTURE_MODE m_eTextureMode = TEXTURE_MODE::STRETCH;
+	COLOR_MODE m_eColorMode = COLOR_MODE::MULTIPLY;
+
+	_float2 m_vUVSpeed{};
+	_float2 m_vUVOffset{};
+
 	_uint m_iAlivePointCount{};
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};

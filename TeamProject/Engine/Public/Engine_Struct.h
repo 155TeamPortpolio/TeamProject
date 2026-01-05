@@ -466,7 +466,10 @@ namespace Engine
 	{
 		_uint iMode{};
 		_uint iTextureMode{};
+		_uint iColorMode{};
 		_float fMaxLifeTime{};
+
+		_float2 vUVSpeed{};
 		_float fTile{};
 
 		/* Center Mode */

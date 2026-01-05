@@ -1,12 +1,14 @@
 #include "Shader_Define.hlsl"
 
 float2 UVOffset;
+uint ColorMode;
 
 struct VS_IN
 {
     float3 vPosition : POSITION;
     float2 vTexcoord : TEXCOORD0;
     float2 vLifeTime : TEXCOORD1;
+    float4 vColor : TEXCOORD2;
 };
 
 struct VS_OUT
@@ -14,7 +16,8 @@ struct VS_OUT
     float4 vPosition : SV_Position;
     float2 vTexcoord : TEXCOORD0;
     float2 vLifeTime : TEXCOORD1;
-    float4 vViewPosition : TEXCOORD2;
+    float4 vColor : TEXCOORD2;
+    float4 vViewPosition : TEXCOORD3;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -27,8 +30,9 @@ VS_OUT VS_MAIN(VS_IN In)
     
     Out.vPosition = projPos;
     Out.vTexcoord = In.vTexcoord;
-    Out.vViewPosition = viewPos;
     Out.vLifeTime = In.vLifeTime;
+    Out.vColor = In.vColor;
+    Out.vViewPosition = viewPos;
     
     return Out;
 }
@@ -38,7 +42,8 @@ struct PS_IN
     float4 vPosition : SV_Position;
     float2 vTexcoord : TEXCOORD0;
     float2 vLifeTime : TEXCOORD1;
-    float4 vViewPosition : TEXCOORD2;
+    float4 vColor : TEXCOORD2;
+    float4 vViewPosition : TEXCOORD3;
 };
 
 struct PS_OUT
