@@ -189,7 +189,7 @@ void CTestLevel::Update()
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		//BulkyCCT.fBoundingMinY = -0.88f;
 		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
-
+		
 		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
 			.CharacterController(BulkyCCT)
 			.Build("ThugBulky");

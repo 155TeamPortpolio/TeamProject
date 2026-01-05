@@ -549,6 +549,12 @@
     <ClInclude Include="..\public\UIRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TrailModel.h">
+      <Filter>01. Utility\04. Components\03. Model\TrailModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VI_Trail.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1011,6 +1017,12 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
       <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\TrailModel">
+      <UniqueIdentifier>{f0c16643-312d-4c10-8d76-d770bd532d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Trail">
+      <UniqueIdentifier>{37f4c8d6-6f7d-4de4-8f80-b3620e96ddbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1445,6 +1457,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TrailModel.cpp">
+      <Filter>01. Utility\04. Components\03. Model\TrailModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VI_Trail.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
