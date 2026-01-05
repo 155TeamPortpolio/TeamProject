@@ -1,29 +1,29 @@
 #include "pch.h"
-#include "Logo.h"
+#include "UI_Loading.h"
 
 #include "GameInstance.h"
 
-HRESULT CLogo::Initialize_Prototype()
+HRESULT CUI_Loading::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
     return S_OK;
 }
 
-HRESULT CLogo::Initialize(INIT_DESC* pArg)
+HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
     return S_OK;
 }
 
-void CLogo::Awake()
+void CUI_Loading::Awake()
 {
     string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();// m_LevelTag;
     CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset("logo.json")
+        .Asset("loading_default.json")
         .Build("prefabLogo");
-    
+
     if (uiObj)
     {
         CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
@@ -35,27 +35,27 @@ void CLogo::Awake()
         m_handle.Get()->Set_Animation(0);
 }
 
-void CLogo::Update(_float dt)
-{ 
+void CUI_Loading::Update(_float dt)
+{
 }
 
-CGameObject* CLogo::Create()
+CGameObject* CUI_Loading::Create()
 {
-    CLogo* pInstance = new CLogo();
+    CUI_Loading* pInstance = new CUI_Loading();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CLogo");
+        MSG_BOX("Failed to Create : CUI_Loading");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CLogo::Clone(INIT_DESC* pArg)
+CGameObject* CUI_Loading::Clone(INIT_DESC* pArg)
 {
-    CLogo* pInstance = new CLogo(*this);
+    CUI_Loading* pInstance = new CUI_Loading(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CLogo");
+        MSG_BOX("Failed to Clone : CUI_Loading");
         Safe_Release(pInstance);
     }
     return pInstance;
