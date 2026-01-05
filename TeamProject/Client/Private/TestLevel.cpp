@@ -77,19 +77,19 @@ HRESULT CTestLevel::Awake()
 	// =========================================================================
 
 	//==================== Effect =======================
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
-	//
-	//pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
-	//pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
-	//
-	//pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
-	//pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
-	//
-	//pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
-	//pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	
+	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
+	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	
+	pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
+	pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
+	
+	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
+	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());

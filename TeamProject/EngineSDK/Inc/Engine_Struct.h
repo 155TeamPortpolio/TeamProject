@@ -465,7 +465,9 @@ namespace Engine
 	typedef struct tagTrailNode : public tagEffectNode
 	{
 		_uint iMode{};
+		_uint iTextureMode{};
 		_float fMaxLifeTime{};
+		_float fTile{};
 
 		/* Center Mode */
 		_float fWidth{};

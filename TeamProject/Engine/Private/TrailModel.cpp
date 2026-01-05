@@ -55,7 +55,13 @@ HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 
 void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
 {
+	m_eMode = static_cast<POINT_MODE>(trailDesc.iMode);
+	m_eTextureMode = static_cast<TEXTURE_MODE>(trailDesc.iTextureMode);
 
+	m_fMaxLifeTime = trailDesc.fMaxLifeTime;
+	m_fWidth = trailDesc.fWidth;
+	m_fMinDistance = trailDesc.fMinDistance;
+	m_fTile = trailDesc.fTile;
 }
 
 void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
@@ -65,14 +71,20 @@ void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
 	newPoint.fLifeTime = 0.f;
 
 	if (m_CenterPoints.empty())
+	{
+		newPoint.fDistanceAcc = 0.f;
 		m_CenterPoints.push_back(newPoint);
+	}
 	else
 	{
 		CENTER_POINT lastPoint = m_CenterPoints.back();
 		_float fDistance = (_vector3(lastPoint.vPosition) - _vector3(position)).Length();
 
 		if (fDistance >= m_fMinDistance)
+		{
+			newPoint.fDistanceAcc = m_CenterPoints.back().fDistanceAcc + fDistance;
 			m_CenterPoints.push_back(newPoint);
+		}
 	}
 
 	for (auto& point : m_CenterPoints)
@@ -97,7 +109,10 @@ void CTrailModel::Update_SegmentPoint(_float3 position0, _float3 position1, _flo
 	newPoint.fLifeTime = 0.f;
 
 	if (m_SegmentPoints.empty())
+	{
+		newPoint.fDistanceAcc = 0.f;
 		m_SegmentPoints.push_back(newPoint);
+	}
 	else
 	{
 		SEGMENT_POINT lastPoint = m_SegmentPoints.back();
@@ -106,7 +121,10 @@ void CTrailModel::Update_SegmentPoint(_float3 position0, _float3 position1, _flo
 		_float fDistance = (vCenter - _vector3(vNewCenter)).Length();
 
 		if (fDistance >= m_fMinDistance)
+		{
+			newPoint.fDistanceAcc = m_SegmentPoints.back().fDistanceAcc + fDistance;
 			m_SegmentPoints.push_back(newPoint);
+		}
 	}
 
 	for (auto& point : m_SegmentPoints)
@@ -129,7 +147,7 @@ void CTrailModel::BuildVertices()
 
 	switch (m_eMode)
 	{
-	case Engine::CTrailModel::MODE::CENTER:
+	case Engine::CTrailModel::POINT_MODE::CENTER:
 	{
 		m_iAlivePointCount = m_CenterPoints.size();
 
@@ -172,11 +190,28 @@ void CTrailModel::BuildVertices()
 			p1.vLifeTime.x = pointA.fLifeTime;
 			p1.vLifeTime.y = m_fMaxLifeTime;
 
+			if (TEXTURE_MODE::STRETCH == m_eTextureMode)
+			{
+				p0.vTexcoord.x = static_cast<_float>(i / (m_iAlivePointCount - 1));
+				p0.vTexcoord.y = 0.f;
+
+				p1.vTexcoord.x = static_cast<_float>(i + 1 / (m_iAlivePointCount - 1));
+				p1.vTexcoord.y = 1.f;
+			}
+			else
+			{
+				p0.vTexcoord.x = pointA.fDistanceAcc * m_fTile;
+				p0.vTexcoord.y = 0.f;
+
+				p1.vTexcoord.x = pointA.fDistanceAcc * m_fTile;
+				p1.vTexcoord.y = 1.f;
+			}
+
 			m_TrailVertices.push_back(p0);
 			m_TrailVertices.push_back(p1);
 		}
 	}break;
-	case Engine::CTrailModel::MODE::SEGMENT:
+	case Engine::CTrailModel::POINT_MODE::SEGMENT:
 	{
 		m_iAlivePointCount = m_SegmentPoints.size();
 
@@ -194,6 +229,23 @@ void CTrailModel::BuildVertices()
 			p1.vPosition = point.vPositionB;
 			p1.vLifeTime.x = point.fLifeTime;
 			p1.vLifeTime.y = m_fMaxLifeTime;
+
+			if (TEXTURE_MODE::STRETCH == m_eTextureMode)
+			{
+				p0.vTexcoord.x = static_cast<_float>(i / (m_iAlivePointCount - 1));
+				p0.vTexcoord.y = 0.f;
+
+				p1.vTexcoord.x = static_cast<_float>(i + 1 / (m_iAlivePointCount - 1));
+				p1.vTexcoord.y = 1.f;
+			}
+			else
+			{
+				p0.vTexcoord.x = point.fDistanceAcc * m_fTile;
+				p0.vTexcoord.y = 0.f;
+
+				p1.vTexcoord.x = point.fDistanceAcc * m_fTile;
+				p1.vTexcoord.y = 1.f;
+			}
 
 			m_TrailVertices.push_back(p0);
 			m_TrailVertices.push_back(p1);

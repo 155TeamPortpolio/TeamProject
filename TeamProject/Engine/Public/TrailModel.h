@@ -9,6 +9,7 @@ class ENGINE_DLL CTrailModel :
 	{
 		_float3 vPosition{};
 		_float fLifeTime{};
+		_float fDistanceAcc{};
 	}CENTER_POINT;
 
 	typedef struct tagSegmentPoint
@@ -16,10 +17,12 @@ class ENGINE_DLL CTrailModel :
 		_float3 vPositionA{};
 		_float3 vPositionB{};
 		_float fLifeTime{};
+		_float fDistanceAcc{};
 	}SEGMENT_POINT;
 
 public:
-	enum class MODE { CENTER, SEGMENT, END };
+	enum class POINT_MODE { CENTER, SEGMENT, END };
+	enum class TEXTURE_MODE { STRETCH, TILE, END };
 private:
 	CTrailModel();
 	CTrailModel(const CTrailModel& rhs);
@@ -58,10 +61,12 @@ private:
 
 	class CVI_Trail* m_pBuffer = { nullptr };
 
-	MODE m_eMode = MODE::CENTER;
+	POINT_MODE m_eMode = POINT_MODE::CENTER;
+	TEXTURE_MODE m_eTextureMode = TEXTURE_MODE::STRETCH;
 	_uint m_iAlivePointCount{};
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};
+	_float m_fTile{};
 	vector<VTXTRAIL> m_TrailVertices;
 
 	/* Center Mode */

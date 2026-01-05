@@ -24,6 +24,7 @@ public:
     virtual void Free() override;
 
 protected:
-
+    _float2 m_vUVSpeed{};
+    _float2 m_vUVOffset{};
 };
 NS_END
