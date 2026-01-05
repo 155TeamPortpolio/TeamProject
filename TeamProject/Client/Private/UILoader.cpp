@@ -97,9 +97,10 @@ namespace
 void UILoader::Add_ResourcePath()
 {
 	const string uiRoot = "../Bin/Resources/UI";
+	const string jsonRoot = "../../Resources/Data/UI";
 
 	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
-	ScanDirectory(uiRoot + "/Data",  {".json"});
+	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
 }
 
