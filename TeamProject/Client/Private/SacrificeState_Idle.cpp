@@ -80,7 +80,7 @@ void CSacrificeState_Idle_OverDrive::Enter(CSacrifice* pOwner)
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack_Idle_Loop")
 		.Loop(true)
 		.Speed(1.2f)
-		.BlendDuration(0.7f)
+		//.BlendDuration(0.7f)
 		.Apply();
 }
 

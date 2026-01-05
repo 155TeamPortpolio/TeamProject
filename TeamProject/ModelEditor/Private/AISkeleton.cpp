@@ -2,10 +2,6 @@
 #include "AISkeleton.h"
 #include "AIBone.h"
 
-CAISkeleton::CAISkeleton()
-{
-}
-
 HRESULT CAISkeleton::Initialize(const aiNode* _pAINode)
 {
 	if (FAILED(Ready_Bones(_pAINode)))
@@ -16,17 +12,19 @@ HRESULT CAISkeleton::Initialize(const aiNode* _pAINode)
 
 void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 {
-	if (HasOffset[Index] == false) {
-		if (m_Bones[Index]->Get_ParentIndex() == -1) {
+	if (HasOffset[Index] == false) 
+	{
+		if (m_Bones[Index]->Get_ParentIndex() == -1) 
+		{
 			_matrix Offset = XMLoadFloat4x4(&offset);
 			XMStoreFloat4x4(&m_OffsetMatrices[Index], Offset);
 		}
-		else {
+		else 
 			m_OffsetMatrices[Index] = offset;
-		}
 		HasOffset[Index] = true;
 	}
-	else {
+	else
+	{
 		_smatrix newOne = (offset);
 		_smatrix oldOne = m_OffsetMatrices[Index];
 		if(newOne != oldOne)
@@ -44,7 +42,8 @@ void CAISkeleton::Render_GUI()
 		{
 			_int parentIndex = m_Bones[i]->Get_ParentIndex();
 
-			if (parentIndex != -1) {
+			if (parentIndex != -1) 
+			{
 				CBone* pParent = m_Bones[parentIndex];
 				ImGui::SetTooltip("Parent: %s", pParent->Get_Name().c_str());
 			}
@@ -54,10 +53,9 @@ void CAISkeleton::Render_GUI()
 	}
 
 	for (size_t i = 0; i < ErroredOffset.size(); i++)
-	{
 		ImGui::Text("Offset Overrided");
-	}
 }
+
 HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 {
 	if (!m_BoneMap.count(string(_pAINode->mName.C_Str()))) {
@@ -72,9 +70,7 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	_int iPIndex = m_Bones.size() - 1;
 
 	for (_uint i = 0; i < _pAINode->mNumChildren; ++i)
-	{
 		Ready_Bones(_pAINode->mChildren[i], iPIndex);
-	}
 
 	m_BoneMap.emplace(_pAINode->mName.C_Str(), iPIndex);
 	_float4x4 IdentityMat;
@@ -92,9 +88,7 @@ void CAISkeleton::Save_File(ofstream& ofs, _fmatrix PreTransform)
 	ofs.write(reinterpret_cast<const char*>(&skeleton), sizeof(SKELETON_FILE_HEADER));
 
 	for (size_t i = 0; i < m_Bones.size(); i++)
-	{
 		static_cast<CAIBone*>(m_Bones[i])->Save_File(ofs, PreTransform);
-	}
 
 	for (size_t i = 0; i < m_OffsetMatrices.size(); i++)
 	{
@@ -112,11 +106,9 @@ void CAISkeleton::Rake_BoneInfo(BONE_DATA_HEADER* pHeader)
 	for (size_t i = 0; i < m_OffsetMatrices.size(); i++)
 	{
 		BONE_INFO boneinfo = {};
-
 		boneinfo.Index = i;
 		boneinfo.BoneOffsetMatrix = m_Bones[i]->Get_TransformationMatrix();
 		boneinfo.TagBone = m_Bones[i]->Get_Name();
-
 		pHeader->BoneInfos.push_back(boneinfo);
 	}
 }
@@ -131,8 +123,4 @@ CAISkeleton* CAISkeleton::Create(const aiNode* _pAINode)
 	}
 
 	return pInstance;
-}
-void CAISkeleton::Free()
-{
-	__super::Free();
 }

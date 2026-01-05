@@ -7,7 +7,7 @@ NS_BEGIN(ModelEdit)
 class CAIBone final : public CBone
 {
 private:
-	CAIBone();
+	CAIBone() {}
 	virtual ~CAIBone() DEFAULT;
 
 public:
@@ -27,7 +27,7 @@ public:
 
 public:
 	static CAIBone* Create(const aiNode* _pAINode, _int _iParentIndex);
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

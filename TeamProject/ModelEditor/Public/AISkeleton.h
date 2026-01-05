@@ -8,7 +8,7 @@ NS_BEGIN(ModelEdit)
 class CAISkeleton final : public CSkeleton
 {
 private:
-	CAISkeleton();
+	CAISkeleton() {}
 	virtual ~CAISkeleton() = default;
 
 public:
@@ -25,11 +25,11 @@ private:
 	HRESULT Ready_Bones(const aiNode* _pAINode, _int _iParentIndex = -1);
 
 private:
-	vector<_bool> HasOffset;
+	vector<_bool>     HasOffset;
 	vector<_float4x4> ErroredOffset;
 public:
 	static CAISkeleton* Create(const aiNode* _pAINode);
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

@@ -80,6 +80,16 @@ public:
 
         vector<_float4x4> blendMats{};
         vector<_float4x4> finalLocalMats{};
+
+        _bool  useLoopRange = false;
+        _float loopBeginRatio = 0.f;
+        _float loopEndRatio = 1.f;
+
+        _vector3 loopStartRootPos{};
+        _vector4 loopStartRootQuat{_quaternion::Identity};
+
+        _vector3 loopEndRootPos{};
+        _vector4 loopEndRootQuat{_quaternion::Identity};
     };
 
     struct PLAYLIST_ENTRY
@@ -118,6 +128,10 @@ public:
     virtual void   Reset_Layer(_uint layerIdx);
     virtual HRESULT Stop_Animation(_uint layerIdx);
     virtual HRESULT StopAll_Animation();
+
+    void Set_LoopRangeRatio(_float beginRatio, _float endRatio, _uint layerIdx = 0);
+    void Clear_LoopRange(_uint layerIdx = 0);
+    void Refresh_LoopRangeCache(_uint layerIdx = 0);
 
 public:
     _bool   isCurrentAnimEnd(_uint layerIdx = 0);
@@ -219,7 +233,7 @@ private:
     void Reset_Anim();
 
 protected:
-    class CModelData* data = {};
+    class CModelData* data{};
     int guiLayerIdx = 0;
 
     Matrix preTransform = {Matrix::Identity};
@@ -324,11 +338,8 @@ protected:
 class ENGINE_DLL SetAnimBuild : public AnimBuild<SetAnimBuild>
 {
 public:
-    SetAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner)
-        : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
-
+    SetAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner) : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
     ~SetAnimBuild() DEFAULT;
-
     SetAnimBuild(const SetAnimBuild&) = delete;
     SetAnimBuild& operator=(const SetAnimBuild&) = delete;
 
@@ -336,7 +347,7 @@ public:
     HRESULT Apply();
 
 protected:
-    CAnimator3D* owner = nullptr;
+    CAnimator3D* owner{};
     _int layerIdx = -1;
     _int clipIdx = -1;
 
@@ -346,20 +357,17 @@ protected:
 class ENGINE_DLL ChangeAnimBuild : public AnimBuild<ChangeAnimBuild>
 {
 public:
-    ChangeAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner)
-        : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
-
+    ChangeAnimBuild(_int layerIdx, _int clipIdx, CAnimator3D* owner) : owner(owner), layerIdx(layerIdx), clipIdx(clipIdx) {}
     ~ChangeAnimBuild() DEFAULT;
-
     ChangeAnimBuild(const ChangeAnimBuild&) = delete;
     ChangeAnimBuild& operator=(const ChangeAnimBuild&) = delete;
 
 public:
     HRESULT Apply();
 
-    ChangeAnimBuild& BlendDur(_float dur) { blendDur = dur; return *this; }
-    ChangeAnimBuild& BlendEase(EaseType ease) { blendEase = ease; return *this; }
-    ChangeAnimBuild& KeepTrackPos(_bool keep) { keepTrackPos = keep; return *this; }
+    ChangeAnimBuild& BlendDur(_float dur)         { blendDur       = dur;    return *this; }
+    ChangeAnimBuild& BlendEase(EaseType ease)     { blendEase      = ease;   return *this; }
+    ChangeAnimBuild& KeepTrackPos(_bool keep)     { keepTrackPos   = keep;   return *this; }
     ChangeAnimBuild& IgnoreRotation(_bool ignore) { ignoreRotation = ignore; return *this; }
 
 protected:
@@ -367,7 +375,7 @@ protected:
     _int layerIdx = -1;
     _int clipIdx = -1;
 
-    _float blendDur = 0.2f;
+    _float blendDur = 0.05f;
     _bool  keepTrackPos = false;
     _bool  ignoreRotation = false;
 

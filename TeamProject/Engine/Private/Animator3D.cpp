@@ -193,6 +193,72 @@ HRESULT CAnimator3D::StopAll_Animation()
     return S_OK;
 }
 
+void CAnimator3D::Set_LoopRangeRatio(_float beginRatio, _float endRatio, _uint layerIdx)
+{
+    if (!isExistLayer(layerIdx)) return;
+
+    auto& layer = animLayers[layerIdx];
+
+    layer.useLoopRange = true;
+    layer.loopBeginRatio = beginRatio;
+    layer.loopEndRatio = endRatio;
+
+    if (!layer.baseLayer) return;
+    if (!isExistClip(layer.clipIdx)) return;
+
+    auto* clip = animClips[layer.clipIdx];
+    _float dur = clip->Get_Duration();
+
+    _float beginTime = dur * layer.loopBeginRatio;
+    _float endTime = dur * layer.loopEndRatio;
+
+    vector<_float4x4> tmp;
+    tmp.resize(data->Get_BoneCount());
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(tmp, beginTime);
+    {
+        Matrix rootMat = tmp[layer.rootBoneIdx];
+        _vector s, r, tr;
+        XMMatrixDecompose(&s, &r, &tr, rootMat);
+
+        layer.loopStartRootPos = _vector3(tr);
+        layer.loopStartRootQuat = _vector4(r);
+    }
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(tmp, endTime);
+    {
+        Matrix rootMat = tmp[layer.rootBoneIdx];
+        _vector s, r, tr;
+        XMMatrixDecompose(&s, &r, &tr, rootMat);
+
+        layer.loopEndRootPos = _vector3(tr);
+        layer.loopEndRootQuat = _vector4(r);
+    }
+
+    layer.curTrackPos = beginTime;
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(layer.localMats, layer.curTrackPos);
+
+    layer.wrapped = false;
+    layer.finished = false;
+
+    layer.prevRootPos = layer.loopStartRootPos;
+    layer.prevRootQuat = layer.loopStartRootQuat;
+
+    BuildBone(0.f);
+}
+
+void CAnimator3D::Clear_LoopRange(_uint layerIdx)
+{
+    if (!isExistLayer(layerIdx)) return;
+
+    auto& layer = animLayers[layerIdx];
+
+    layer.useLoopRange = false;
+    layer.loopBeginRatio = 0.f;
+    layer.loopEndRatio = 1.f;
+}
+
 _bool CAnimator3D::isCurrentAnimEnd(_uint layerIdx)
 {
     if (!isExistLayer(layerIdx)) return true;
@@ -582,15 +648,104 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& layer, _float dt)
 
     _float playSpeed = dt * animSpeed;
 
-    layer.curTrackPos = nowClip->TranslateAnimateMatrix(
-        layer.localMats,
-        layer.curTrackPos,
-        playSpeed,
-        layer.loop,
-        &layer.wrapped,
-        &layer.finished,
-        eventBus
-    );
+    if (layer.baseLayer && layer.useLoopRange)
+    {
+        _float dur = nowClip->Get_Duration();
+        _float beginTime = dur * layer.loopBeginRatio;
+        _float endTime = dur * layer.loopEndRatio;
+
+        if (layer.curTrackPos < beginTime)
+        {
+            layer.curTrackPos = beginTime;
+            nowClip->TranslateAnimateMatrixFromDurationNoEvent(layer.localMats, layer.curTrackPos);
+        }
+
+        if (endTime <= layer.curTrackPos)
+        {
+            if (layer.loop)
+            {
+                layer.wrapped = true;
+                layer.curTrackPos = beginTime;
+                nowClip->TranslateAnimateMatrixFromDurationNoEvent(layer.localMats, layer.curTrackPos);
+            }
+            else
+            {
+                layer.finished = true;
+            }
+        }
+
+        _float remaining = playSpeed;
+
+        while (0.f < remaining && !layer.finished)
+        {
+            _float seg = endTime - layer.curTrackPos;
+
+            if (seg <= 0.f)
+            {
+                if (layer.loop)
+                {
+                    layer.wrapped = true;
+                    layer.curTrackPos = beginTime;
+                    nowClip->TranslateAnimateMatrixFromDurationNoEvent(layer.localMats, layer.curTrackPos);
+                    continue;
+                }
+
+                layer.finished = true;
+                break;
+            }
+
+            if (remaining < seg)
+            {
+                layer.curTrackPos = nowClip->TranslateAnimateMatrix(
+                    layer.localMats,
+                    layer.curTrackPos,
+                    remaining,
+                    false,
+                    &layer.wrapped,
+                    &layer.finished,
+                    eventBus
+                );
+                remaining = 0.f;
+            }
+            else
+            {
+                layer.curTrackPos = nowClip->TranslateAnimateMatrix(
+                    layer.localMats,
+                    layer.curTrackPos,
+                    seg,
+                    false,
+                    &layer.wrapped,
+                    &layer.finished,
+                    eventBus
+                );
+
+                remaining -= seg;
+
+                if (!layer.loop)
+                {
+                    layer.finished = true;
+                    break;
+                }
+
+                layer.wrapped = true;
+                layer.curTrackPos = beginTime;
+                nowClip->TranslateAnimateMatrixFromDurationNoEvent(layer.localMats, layer.curTrackPos);
+                layer.finished = false;
+            }
+        }
+    }
+    else
+    {
+        layer.curTrackPos = nowClip->TranslateAnimateMatrix(
+            layer.localMats,
+            layer.curTrackPos,
+            playSpeed,
+            layer.loop,
+            &layer.wrapped,
+            &layer.finished,
+            eventBus
+        );
+    }
 
     if (!layer.baseLayer) return;
 
@@ -608,7 +763,15 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& layer, _float dt)
         if (layer.wrapped)
         {
             _vector3 startPos = animClips[layer.clipIdx]->Get_StartKeyFrameByBoneIndex(layer.rootBoneIdx).vTranslation;
-            layer.rootMoveDelta = (layer.rootEndPos - layer.prevRootPos) + (curRootPos - startPos);
+            _vector3 endPos = layer.rootEndPos;
+
+            if (layer.useLoopRange)
+            {
+                startPos = layer.loopStartRootPos;
+                endPos = layer.loopEndRootPos;
+            }
+
+            layer.rootMoveDelta = (endPos - layer.prevRootPos) + (curRootPos - startPos);
             layer.wrapped = false;
         }
         else
@@ -662,6 +825,70 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& layer, _float dt)
         if (hasAxis(layer.extractMoveAxis, AXIS::Z)) mat._43 = 0.f;
     }
 }
+
+void CAnimator3D::Refresh_LoopRangeCache(_uint layerIdx)
+{
+    if (!isExistLayer(layerIdx)) return;
+
+    auto& layer = animLayers[layerIdx];
+
+    if (!layer.baseLayer) return;
+    if (!layer.useLoopRange) return;
+    if (!isExistClip(layer.clipIdx)) return;
+
+    auto* clip = animClips[layer.clipIdx];
+
+    _float dur = clip->Get_Duration();
+    _float beginTime = dur * layer.loopBeginRatio;
+    _float endTime = dur * layer.loopEndRatio;
+
+    if (endTime < beginTime)
+    {
+        _float tmp = beginTime;
+        beginTime = endTime;
+        endTime = tmp;
+
+        layer.loopBeginRatio = beginTime / dur;
+        layer.loopEndRatio = endTime / dur;
+    }
+
+    if (layer.curTrackPos < beginTime) layer.curTrackPos = beginTime;
+    if (endTime <= layer.curTrackPos) layer.curTrackPos = beginTime;
+
+    vector<_float4x4> tmpMats;
+    tmpMats.resize(data->Get_BoneCount());
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(tmpMats, beginTime);
+    {
+        Matrix rootMat = tmpMats[layer.rootBoneIdx];
+        _vector s, r, tr;
+        XMMatrixDecompose(&s, &r, &tr, rootMat);
+
+        layer.loopStartRootPos = _vector3(tr);
+        layer.loopStartRootQuat = _vector4(r);
+    }
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(tmpMats, endTime);
+    {
+        Matrix rootMat = tmpMats[layer.rootBoneIdx];
+        _vector s, r, tr;
+        XMMatrixDecompose(&s, &r, &tr, rootMat);
+
+        layer.loopEndRootPos = _vector3(tr);
+        layer.loopEndRootQuat = _vector4(r);
+    }
+
+    clip->TranslateAnimateMatrixFromDurationNoEvent(tmpMats, layer.curTrackPos);
+    {
+        Matrix rootMat = tmpMats[layer.rootBoneIdx];
+        _vector s, r, tr;
+        XMMatrixDecompose(&s, &r, &tr, rootMat);
+
+        layer.prevRootPos = _vector3(tr);
+        layer.prevRootQuat = _vector4(r);
+    }
+}
+
 
 void CAnimator3D::Animation_Convert(ANIM_LAYER& layer, _float dt)
 {
@@ -941,7 +1168,7 @@ void CAnimator3D::Render_GUI()
 {
     ImGui::SeparatorText("Animator 3D");
 
-    GUI_ShowLayerInfo(160.f);
+    GUI_ShowLayerInfo(260.f);
     GUI_SelectAnim(800.f);
 }
 
@@ -1022,8 +1249,114 @@ void CAnimator3D::GUI_ShowLayerInfo(_float height)
     ImGui::SameLine();
     if (ImGui::Button("x1.00", ImVec2(60.f, 0.f))) timeScale = 1.00f;
 
+    ImGui::Separator();
+
+    bool canEditLoopRange = layer.baseLayer && isExistClip(layer.clipIdx);
+
+    ImGui::BeginDisabled(!canEditLoopRange);
+
+    bool prevUse = layer.useLoopRange;
+    bool use = layer.useLoopRange;
+
+    if (ImGui::Checkbox("Loop Range (Ratio)", &use))
+    {
+        layer.useLoopRange = use;
+
+        if (layer.useLoopRange) Set_LoopRangeRatio(layer.loopBeginRatio, layer.loopEndRatio, guiLayerIdx);
+        else Clear_LoopRange(guiLayerIdx);
+    }
+
+    float beginRatio = layer.loopBeginRatio;
+    float endRatio = layer.loopEndRatio;
+
+    if (!layer.useLoopRange)
+    {
+        beginRatio = 0.f;
+        endRatio = 1.f;
+    }
+
+    float prevBegin = beginRatio;
+    float prevEnd = endRatio;
+
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    if (ImGui::SliderFloat("Begin", &beginRatio, 0.f, 1.f, "%.3f"))
+    {
+        if (beginRatio < 0.f) beginRatio = 0.f;
+        if (1.f < beginRatio) beginRatio = 1.f;
+    }
+
+    ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
+    if (ImGui::SliderFloat("End", &endRatio, 0.f, 1.f, "%.3f"))
+    {
+        if (endRatio < 0.f) endRatio = 0.f;
+        if (1.f < endRatio) endRatio = 1.f;
+    }
+
+    if (endRatio < beginRatio)
+    {
+        float tmp = beginRatio;
+        beginRatio = endRatio;
+        endRatio = tmp;
+    }
+
+    float minGap = 0.001f;
+    if (endRatio - beginRatio < minGap) endRatio = min(beginRatio + minGap, 1.f);
+
+    bool changedRange = (prevBegin != beginRatio) || (prevEnd != endRatio);
+
+    float curRatio = 0.f;
+    if (0.f < dur) curRatio = layer.curTrackPos / dur;
+
+    if (ImGui::Button("Set Begin = Cur", ImVec2(120.f, 0.f)))
+    {
+        beginRatio = curRatio;
+        if (endRatio < beginRatio + minGap) endRatio = min(beginRatio + minGap, 1.f);
+        changedRange = true;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Set End = Cur", ImVec2(120.f, 0.f)))
+    {
+        endRatio = curRatio;
+        if (endRatio < beginRatio + minGap) beginRatio = max(endRatio - minGap, 0.f);
+        changedRange = true;
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Reset", ImVec2(80.f, 0.f)))
+    {
+        beginRatio = 0.f;
+        endRatio = 1.f;
+        changedRange = true;
+    }
+
+    if (layer.useLoopRange && changedRange)
+    {
+        layer.loopBeginRatio = beginRatio;
+        layer.loopEndRatio = endRatio;
+
+        Set_LoopRangeRatio(layer.loopBeginRatio, layer.loopEndRatio, guiLayerIdx);
+    }
+
+    if (layer.useLoopRange && 0.f < dur)
+    {
+        float beginTime = dur * layer.loopBeginRatio;
+        float endTime = dur * layer.loopEndRatio;
+
+        string info = "Range Time : " + to_string(beginTime) + " ~ " + to_string(endTime) + " (sec)";
+        ImGui::Text(info.c_str());
+    }
+
+    ImGui::EndDisabled();
+
+    if (!canEditLoopRange)
+        ImGui::Text("Loop Range: Base Layer + Valid Clip Only");
+
     ImGui::EndChild();
 }
+
 
 void CAnimator3D::GUI_SelectAnim(_float height)
 {
@@ -1230,6 +1563,8 @@ HRESULT SetAnimBuild::Apply()
         layer.rootEndQuat = owner->animClips[clipIdx]->Get_EndKeyFrameByBoneIndex(layer.rootBoneIdx).vRotation;
 
         layer.motionEndPos = owner->animClips[clipIdx]->Get_EndKeyFrameByBoneIndex(layer.motionBoneIdx).vTranslation;
+
+        owner->Refresh_LoopRangeCache(layerIdx);
     }
     else
     {
@@ -1262,6 +1597,7 @@ HRESULT SetAnimBuild::Apply()
     return S_OK;
 }
 
+
 HRESULT ChangeAnimBuild::Apply()
 {
     if (!owner) return E_FAIL;
@@ -1279,6 +1615,8 @@ HRESULT ChangeAnimBuild::Apply()
         layer.rootEndQuat = owner->animClips[clipIdx]->Get_EndKeyFrameByBoneIndex(layer.rootBoneIdx).vRotation;
 
         layer.motionEndPos = owner->animClips[clipIdx]->Get_EndKeyFrameByBoneIndex(layer.motionBoneIdx).vTranslation;
+
+        owner->Refresh_LoopRangeCache(layerIdx);
     }
     else
     {

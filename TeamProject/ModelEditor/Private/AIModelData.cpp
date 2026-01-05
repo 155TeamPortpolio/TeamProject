@@ -4,9 +4,6 @@
 #include "Helper_Func.h"
 #include "EditorSystem.h"
 
-CAIModelData::CAIModelData()
-{
-}
 HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
 {
     m_pSkeleton = CAISkeleton::Create(pAIScene->mRootNode);
@@ -59,7 +56,6 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
             continue;
         }
 
-        // ï¿½ï¿½ï¿½ï¿½ ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½
         for (size_t islandIndex = 0; islandIndex < islands.size(); ++islandIndex)
         {
             string newKey = "Isl_" + string(srcMesh->mName.C_Str()) + to_string(islandIndex);
@@ -127,19 +123,14 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
     for (size_t i = 0; i < m_Meshes.size(); i++)
     {
         string meshName = Helper::ToLower(m_Meshes[i]->Get_Key());
-        if (meshName.find("lod1") != string::npos) {
+        if (meshName.find("lod1") != string::npos) 
             m_LOD1Marked.push_back(i);
-        }
-        else if (meshName.find("lod2") != string::npos) {
+        else if (meshName.find("lod2") != string::npos) 
             m_LOD2Marked.push_back(i);
-        }
-        else if (meshName.find("lod3") != string::npos) {
+        else if (meshName.find("lod3") != string::npos) 
             m_LOD3Marked.push_back(i);
-        }
-        else {
+        else 
             m_Normal.push_back(i);
-        }
-
     }
 
     return S_OK;
@@ -152,7 +143,8 @@ vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
 
 vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<_uint>& indices)
 {
-	if (indices.size() % 3 != 0)  {
+	if (indices.size() % 3 != 0)
+    {
 		MSG_BOX("Not 3 vertex for Face");
 		return{};
 	};
@@ -160,47 +152,47 @@ vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<
 	vector<vector<_uint>> vertexToFace;
 	vertexToFace.resize(numVertices);
 
-	// vertex -> faces
-	for (_uint face = 0; face < faceCount; ++face) {
-		/*0ï¿½ï¿½Â° ï¿½ï°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½*/
+	for (_uint face = 0; face < faceCount; ++face)
+    {
 		_uint index0 = indices[face * 3 + 0];
 		_uint index1 = indices[face * 3 + 1];
 		_uint index2 = indices[face * 3 + 2];
-		/*ï¿½ï¿½ ï¿½ï¿½ï¿½Ø½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ï¿½ï¿½È£ï¿½ï¿½ ï¿½Ö¾ï¿½ï¿½ï¿½*/
 		if (index0 < numVertices) vertexToFace[index0].push_back(face);
 		if (index1 < numVertices) vertexToFace[index1].push_back(face);
 		if (index2 < numVertices) vertexToFace[index2].push_back(face);
 	}
-	/*ÀÌ·¯¸é Á¤Á¡ x°¡ Æ÷ÇÔµÈ ¸ðµç ÆäÀÌ½º¸¦ Ã£¾Æ¿Ã ¼ö ÀÖ´Ù. -> Á¤Á¡ 0¹ø¿¡ 1,2 / Á¤Á¡ 1¹ø¿¡ 2/3 ÀÌ·±½ÄÀ¸·Î*/
 
-	vector<_uint> visited(faceCount, 0); /*ÆäÀÌ½ºµéÀÌ ÀÌ¹Ì ±â·ÏÀÌ µÇ¾ú´ÂÁö Ã¼Å©ÇÏ´Â °Í. (Æ¯Á¤ ¼¶¿¡ Æ÷ÇÔµÇ¸é Áßº¹ Æ÷ÇÔ ¾ÈÇÏ°Ô)*/
-	vector<_uint> stack; /*´ÙÀ½¿¡ Ã³¸®ÇØº¼ ¸ñ·Ï*/
-	vector<vector<_uint>> islands; /*¼¶¿¡ Æ÷ÇÔµÈ ÆäÀÌ½º ¹øÈ£µé*/
+	vector<_uint> visited(faceCount, 0);
+	vector<_uint> stack;
+	vector<vector<_uint>> islands; 
 	islands.reserve(8);
 
-	for (_uint face = 0; face < faceCount; ++face) {
-		if (visited[face]) continue; /*1ÀÌ»óÀÌ¸é Æ®·ç ¶³¾îÁö´Ï±î ÀÌ¹Ì Æ÷ÇÔµÈ ÆäÀÌ½ºÀÓ*/
-		/*¾Æ´Ï¸é ¸¶Å·ÇØµÎ°í*/
+	for (_uint face = 0; face < faceCount; ++face)
+    {
+		if (visited[face]) continue;
 		visited[face] = 1;
 
-		islands.emplace_back(); /*ÇÏ³ª ¸¸µé¾îµÎ°í µÚ¿¡°Å °¡Á®¿À±â*/
+		islands.emplace_back();
 		auto& IslandFace = islands.back();
 		stack.clear();
-		stack.push_back(face); //ÀÏ´Ü ÆäÀÌ½º ÇÏ³ª ²¨³»±â
+		stack.push_back(face);
 
-		while (!stack.empty()) {
+		while (!stack.empty())
+        {
 			_uint faceNum = stack.back(); stack.pop_back();
-			IslandFace.push_back(faceNum); //ÀÌ¹ø ÆäÀÌ½º¸¦ ÇØ´ç ¼¶¿¡ ³Ö±â
+			IslandFace.push_back(faceNum);
 
 			_uint index0 = indices[faceNum * 3 + 0];
 			_uint index1 = indices[faceNum * 3 + 1];
 			_uint index2 = indices[faceNum * 3 + 2];
 
-			//ÇØ´ç ÆäÀÌ½ºÀÇ Á¤Á¡À» º¸°í, ±× Á¤Á¡À» °øÀ¯ÇÏ´Â ¸éµµ ÇÔ²² ¼¶¿¡ ³Ö±â
-			auto pushNeighbors = [&](_uint num) {
+			auto pushNeighbors = [&](_uint num) 
+                {
 				if (num >= numVertices) return;
-				for (_uint neighbor : vertexToFace[num]) {/*Á¤Á¡ ¹øÈ£¿¡ ¾î¶² ÆäÀÌ½º°¡ ÀÖ´ÂÁö À§¿¡ ÀúÀåÇßÀ¸´Ï*/
-					if (!visited[neighbor]) {
+				for (_uint neighbor : vertexToFace[num])
+                {
+					if (!visited[neighbor]) 
+                    {
 						visited[neighbor] = 1;
 						stack.push_back(neighbor);
 					}
@@ -219,32 +211,17 @@ vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<
 CModelData* CAIModelData::Create(MESH_TYPE _eType, const aiScene* pAIScene)
 {
 	CAIModelData* pInstance = new CAIModelData();
-
-	if (FAILED(pInstance->Initialize(_eType, pAIScene))) {
+	if (FAILED(pInstance->Initialize(_eType, pAIScene)))
+    {
 		MSG_BOX("Create Failed : Engine | CAIModelData");
 		return nullptr;
 	}
-
 	return pInstance;
 }
 
 void CAIModelData::Save_File(ofstream& ofs, _fmatrix PreTransform)
 {
 	for (size_t i = 0; i < m_Meshes.size(); i++)
-	{
 		static_cast<CAIMesh*>(m_Meshes[i])->Save_File(ofs, PreTransform);
-	}
-
 	static_cast<CAISkeleton*>(m_pSkeleton)->Save_File(ofs, PreTransform);
-}
-
-void CAIModelData::Rake_SkeletonInfo(BONE_DATA_HEADER* pHeader)
-{
-    //dynamic_cast<CAISkeleton*>(m_pSkeleton)->Rake_BoneInfo(pHeader);
-    
-}
-
-void CAIModelData::Free()
-{
-	__super::Free();
 }

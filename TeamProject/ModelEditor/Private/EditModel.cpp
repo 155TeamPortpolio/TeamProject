@@ -15,26 +15,15 @@
 #include "ModelEditor_BoneData.h"
 #include "Mesh.h"
 
-CEditModel::CEditModel()
-{
-}
-
-CEditModel::CEditModel(const CEditModel& rhs)
-	:CGameObject(rhs) 
-{
-}
-
 HRESULT CEditModel::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-
 	return S_OK;
 }
 
 HRESULT CEditModel::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-
 	return S_OK;
 }
 
@@ -43,18 +32,10 @@ void CEditModel::Awake()
 	Add_Component<CDebugRender>();
 }
 
-void CEditModel::Priority_Update(_float dt)
-{
-}
-
 void CEditModel::Update(_float dt)
 {
 	if(nullptr != Get_Component<CAnimator3D>())
 		Get_Component<CAnimator3D>()->Update_Animation(dt);
-}
-
-void CEditModel::Late_Update(_float dt)
-{
 }
 
 void CEditModel::Render_GUI()
@@ -72,7 +53,8 @@ void CEditModel::Render_GUI()
 	if (ImGui::Combo("##ImportMode", &cur, kModes, IM_ARRAYSIZE(kModes)))
 		m_eMode = static_cast<MODEL_IMPORT_MODE>(cur);
 
-	if (ImGui::Button("Model Load")) {
+	if (ImGui::Button("Model Load"))
+	{
 		string path = Helper::OpenFile_Dialogue();
 		if(!path.empty())
 			Load_AIScene(path);
@@ -80,14 +62,12 @@ void CEditModel::Render_GUI()
 
 	ImGui::SameLine();
 
-	if (ImGui::Button("Model Save")) {
+	if (ImGui::Button("Model Save")) 
 		if (nullptr != Get_Component<CModel>())
 			Save_AIScene();
-	}
-	if (ImGui::Button("Export BoneInfo")) {
+	if (ImGui::Button("Export BoneInfo")) 
 		if (nullptr != Get_Component<CModel>())
 			ExportBoneInfo();
-	}
 	ImGui::EndChild();
 
 	ImGui::SeparatorText("Object State");
@@ -102,25 +82,20 @@ void CEditModel::Render_GUI()
 	ImGui::SeparatorText("Position Reset");
 	ImGui::BeginChild("##Reset", ImVec2{0,  textLineHeight * 2 }, true);
 
-	if (ImGui::Button("Reset")) {
+	if (ImGui::Button("Reset")) 
 		Get_Component<CTransform>()->TranslateMatrix(XMMatrixRotationY(XMConvertToRadians(180.f)));
-	}
 
 	ImGui::EndChild();
 
 	Get_Component<CTransform>()->Render_GUI();
-	if (CAI_SKModel* pSkModel = Get_Component<CAI_SKModel>()) {
+	if (CAI_SKModel* pSkModel = Get_Component<CAI_SKModel>()) 
 		pSkModel->Render_GUI();
-	}
-	if (CAI_STModel* pStModel = Get_Component<CAI_STModel>()) {
+	if (CAI_STModel* pStModel = Get_Component<CAI_STModel>()) 
 		pStModel->Render_GUI();
-	}
-	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) {
+	if (CAI_Material* pMaterial = Get_Component<CAI_Material>()) 
 		pMaterial->Render_GUI();
-	}
-	if (CAnimator3D* pAnim = Get_Component<CAnimator3D>()) {
+	if (CAnimator3D* pAnim = Get_Component<CAnimator3D>()) 
 		pAnim->Render_GUI();
-	}
 }
 
 HRESULT CEditModel::Load_AIScene(const string& filePath)
@@ -129,18 +104,13 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 	//m_Importer.FreeScene();
 	m_pAIScene = nullptr;
 
-	_uint basFlag =
-		aiProcess_ConvertToLeftHanded |
-		aiProcessPreset_TargetRealtime_Fast | aiProcess_Triangulate| aiProcess_JoinIdenticalVertices;
+	_uint basFlag = aiProcess_ConvertToLeftHanded | aiProcessPreset_TargetRealtime_Fast | aiProcess_Triangulate| aiProcess_JoinIdenticalVertices;
 
-	/*메쉬 병합 플래그 끄게*/
 	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
 
 	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag);
 	if (!m_pAIScene)
 		return E_FAIL;
-
-	// 2)LOD 노드 탐색
 
 	auto HasLODNodes = [](const aiNode* root) -> bool
 		{
@@ -169,11 +139,9 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 			return recursvieNodeFind(root);
 		};
 
-	/*안에 노드 중에 LOD가 하나라도 있나?]*/
 	const _bool hasLOD = HasLODNodes(m_pAIScene->mRootNode);
 	_bool hasBones = HasBones();
 
-	/*LOD 없고 별거 없으면 그냥 원래 로직대로 로드*/
 	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones && !hasLOD)
 	{
 		//m_Importer.FreeScene();
@@ -235,9 +203,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		staticModel->Set_Owner(this);
 		pMaterial->LinkShader("VTX_Mesh.hlsl");
 	}
-
 	m_InstanceName = fileName;
-
 	return S_OK;
 }
 
@@ -247,16 +213,19 @@ HRESULT CEditModel::Save_AIScene()
 	string SavePath = Helper::OpenFolder_Dialogue() + "\\";
 	_matrix PreTransform = XMLoadFloat4x4(Get_Component<CTransform>()->Get_WorldMatrix_Ptr());
 
-	if (HasBones()) {
+	if (HasBones())
+	{
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
 		hr = pModel->Save_Model(SavePath, PreTransform);
 
-		if (m_pAIScene->HasAnimations()) {
+		if (m_pAIScene->HasAnimations()) 
+		{
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
 			hr = pAnimator3D->Save_Animation(SavePath, Get_WorldMatrix());
 		}
 	}
-	else {
+	else
+	{
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
 		hr = pModel->Save_Model(SavePath, PreTransform);
 	}
@@ -272,62 +241,51 @@ _bool CEditModel::HasBones()
 	if (nullptr == m_pAIScene)
 		return false;
 
-	if(m_eMode == MODEL_IMPORT_MODE::AUTO){
+	if(m_eMode == MODEL_IMPORT_MODE::AUTO)
+	{
 		for (size_t i = 0; i < m_pAIScene->mNumMeshes; ++i)
 		{
 			if (m_pAIScene->mMeshes[i]->HasBones())
 				return true;
 		}
-
 		return false;
 	}
-	else if (m_eMode == MODEL_IMPORT_MODE::FORCED_STATIC) {
+	else if (m_eMode == MODEL_IMPORT_MODE::FORCED_STATIC) 
 		return false;
-	}
-	else {
+	else 
 		return true;
-	}
 }
 
 HRESULT CEditModel::ExportBoneInfo()
 {
-	BONE_DATA_HEADER header = {};
+	BONE_DATA_HEADER header{};
 
 	header.TagDataFormat = "BoneData";
 	header.TagModel = m_InstanceName;
 
-	CAIModelData* pModelData = { nullptr };
+	CAIModelData* pModelData{};
 
-	if (HasBones()) {
+	if (HasBones())
+	{
 		CAI_SKModel* pModel = dynamic_cast<CAI_SKModel*>(Get_Component<CModel>());
 		pModelData = pModel->Get_AIModelData();
 		if (nullptr == pModelData)
 			return E_FAIL;
 		
 	}
-	else {
+	else
+	{
 		CAI_STModel* pModel = dynamic_cast<CAI_STModel*>(Get_Component<CStaticModel>());
 		pModelData = pModel->Get_AIModelData();
 		if (nullptr == pModelData)
 			return E_FAIL;
 	}
 
-
-
 	_uint IBoneCount = pModelData->Get_BoneCount();
 	auto pBoneNames = pModelData->Get_BoneNames();
-
-
-	pModelData->Rake_SkeletonInfo(&header);
-
-
 	string filename = m_InstanceName + ".BoneData";
 	string path = Helper::SaveFileDialogByWinAPI(filename, ".json");
-
 	Helper::SaveJson<BONE_DATA_HEADER>(header, path);
-
-	
-
 	return S_OK;
 }
 
@@ -349,26 +307,16 @@ CEditModel* CEditModel::Create()
 		MSG_BOX("Object Create Failed : CEditModel");
 		Safe_Release(instance);
 	}
-
 	return instance;
 }
 
 CGameObject* CEditModel::Clone(INIT_DESC* pArg)
 {
 	CEditModel* instance = new CEditModel(*this);
-
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		MSG_BOX("Object Clone Failed : CEditModel");
 		Safe_Release(instance);
 	}
-
 	return instance;
-}
-
-void CEditModel::Free()
-{
-	__super::Free();
-	//m_Importer.FreeScene();
-	//m_pAIScene = nullptr;
 }

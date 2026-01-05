@@ -1,10 +1,6 @@
 #include "pch.h"
 #include "AiBone.h"
 
-CAIBone::CAIBone()
-{
-}
-
 HRESULT CAIBone::Initialize(const aiNode* _pAINode, _int _iParentIndex)
 {
     m_iParentBoneIndex = _iParentIndex;
@@ -42,9 +38,4 @@ void CAIBone::Save_File(ofstream& ofs, _fmatrix PreTransform)
     XMStoreFloat4x4(&infoHeader.TransformationMatrix, SaveMatrix);
     infoHeader.ParentBoneIndex = { m_iParentBoneIndex };
     ofs.write(reinterpret_cast<const char*>(&infoHeader), sizeof(BONE_INFO_HEADER));
-}
-
-void CAIBone::Free()
-{
-    __super::Free();
 }

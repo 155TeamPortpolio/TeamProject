@@ -4,14 +4,11 @@
 #include "ModelEditor_BoneData.h"
 
 NS_BEGIN(ModelEdit)
-class CAIModelData :
-	public CModelData
+class CAIModelData : public CModelData
 {
 	struct PosKey
 	{
-		int xi;
-		int yi;
-		int zi;
+		int xi; int yi; int zi;
 
 		bool operator==(const PosKey& other) const
 		{
@@ -36,22 +33,21 @@ class CAIModelData :
 	};
 
 private:
-	CAIModelData();
+	CAIModelData() {}
 	virtual ~CAIModelData() DEFAULT;
 
 public:
 	HRESULT Initialize(MESH_TYPE _eType, const aiScene* pAIScene);
 	void	Save_File(ofstream& ofs, _fmatrix PreTransform);
-	void	Rake_SkeletonInfo(BONE_DATA_HEADER* pHeader);
 
 public:
-	vector<_uint> Get_ProxyIndex() { return m_ProxyMarked; }
+	vector<_uint> Get_ProxyIndex()  { return m_ProxyMarked; }
 	vector<_uint> Get_NormalIndex() { return m_Normal; }
-	vector<_uint> Get_LOD0_Index() { return m_LOD0Marked;  }
-	vector<_uint> Get_LOD1_Index() { return m_LOD1Marked;  }
-	vector<_uint> Get_LOD2_Index() { return m_LOD2Marked;  }
-	vector<_uint> Get_LOD3_Index() { return m_LOD3Marked;  }
-	vector<_uint> Get_Eff_Index()  { return m_EffMarked;   }
+	vector<_uint> Get_LOD0_Index()  { return m_LOD0Marked;  }
+	vector<_uint> Get_LOD1_Index()  { return m_LOD1Marked;  }
+	vector<_uint> Get_LOD2_Index()  { return m_LOD2Marked;  }
+	vector<_uint> Get_LOD3_Index()  { return m_LOD3Marked;  }
+	vector<_uint> Get_Eff_Index()   { return m_EffMarked;   }
 	vector<_uint> Get_MeshIndex_WithOutProxy();
 	
 private:
@@ -81,33 +77,27 @@ private:
 	vector<_uint> m_EffMarked;
 public:
 	static CModelData* Create(MESH_TYPE _eType, const aiScene* pAIScene);
-	virtual void Free() override;
+	virtual void Free() override { __super::Free(); }
 };
-
 NS_END
 
-
-
 template<typename TVertex>
-inline void CAIModelData::Build_IslandMesh(
-	_uint srcVertexCount, const vector<TVertex>& srcVertices, const vector<_uint>& srcIndices,
+inline void CAIModelData::Build_IslandMesh( _uint srcVertexCount, const vector<TVertex>& srcVertices, const vector<_uint>& srcIndices,
 	const vector<_uint>& islandFaces, vector<TVertex>& dstVertices, vector<_uint>& dstIndices)
 {
 	dstVertices.clear();
 	dstIndices.clear();
 	dstIndices.reserve(islandFaces.size() * 3);
 
-	//원본 정점 만큼 배열을 키워둠. (-1이면 아직 복사 안된 거)
 	vector<_int> remap(srcVertexCount, -1);
 
-	/*원본 메쉬에서 정점이 섬에서는 몇번쨰 정점인지 변환해주는 람다임*/
 	auto MapIndex = [&](_uint oldIndex) -> _uint
 		{
 			_int& mapped = remap[oldIndex];
-			if (mapped < 0) /*아직 복사 안된 정점이라면*/
+			if (mapped < 0)
 			{
-				mapped = (_int)dstVertices.size(); /*섬 정점 인덱스에 추가*/
-				dstVertices.push_back(srcVertices[oldIndex]);  //이점 정점의 정보(구조체)넣어줌
+				mapped = (_int)dstVertices.size();
+				dstVertices.push_back(srcVertices[oldIndex]);  
 			}
 			return (_uint)mapped;
 		};
@@ -133,7 +123,6 @@ inline vector<vector<_uint>> CAIModelData::Find_Island_ByPosition(const vector<T
 	const _uint vertexCount = (_uint)vertices.size();
 	const _uint faceCount = (_uint)(indices.size() / 3);
 
-	// 1) vertex -> groupId
 	unordered_map<PosKey, _uint, PosKeyHash> keyToGroup;
 	keyToGroup.reserve(vertexCount);
 
@@ -157,26 +146,25 @@ inline vector<vector<_uint>> CAIModelData::Find_Island_ByPosition(const vector<T
 			vertexToGroup[i] = groupCount;
 			++groupCount;
 		}
-		else {
+		else 
 			vertexToGroup[i] = it->second;
-		}
 	}
 
-	// 2) group -> faces
 	vector<vector<_uint>> groupToFace(groupCount);
-	for (_uint face = 0; face < faceCount; ++face) {
+	for (_uint face = 0; face < faceCount; ++face) 
+	{
 		_uint a = indices[face * 3 + 0], b = indices[face * 3 + 1], c = indices[face * 3 + 2];
 		if (a < vertexCount) groupToFace[vertexToGroup[a]].push_back(face);
 		if (b < vertexCount) groupToFace[vertexToGroup[b]].push_back(face);
 		if (c < vertexCount) groupToFace[vertexToGroup[c]].push_back(face);
 	}
 
-	// 3) BFS on faces
 	vector<uint8_t> visited(faceCount, 0);
 	vector<_uint> stack;
 	islands.reserve(8);
 
-	for (_uint start = 0; start < faceCount; ++start) {
+	for (_uint start = 0; start < faceCount; ++start) 
+	{
 		if (visited[start]) continue;
 		visited[start] = 1;
 		islands.emplace_back();
@@ -184,16 +172,20 @@ inline vector<vector<_uint>> CAIModelData::Find_Island_ByPosition(const vector<T
 		stack.clear();
 		stack.push_back(start);
 
-		while (!stack.empty()) {
+		while (!stack.empty()) 
+		{
 			_uint f = stack.back(); stack.pop_back();
 			comp.push_back(f);
 
 			_uint a = indices[f * 3 + 0], b = indices[f * 3 + 1], c = indices[f * 3 + 2];
-			auto push = [&](_uint vi) {
+			auto push = [&](_uint vi) 
+				{
 				if (vi >= vertexCount) return;
 				_uint g = vertexToGroup[vi];
-				for (_uint nb : groupToFace[g]) {
-					if (!visited[nb]) {
+				for (_uint nb : groupToFace[g])
+				{
+					if (!visited[nb]) 
+					{
 						visited[nb] = 1;
 						stack.push_back(nb);
 					}

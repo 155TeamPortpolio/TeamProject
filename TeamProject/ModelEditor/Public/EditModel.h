@@ -3,8 +3,7 @@
 #include "Assimps.h"
 
 NS_BEGIN(ModelEdit)
-class CEditModel :
-    public CGameObject
+class CEditModel : public CGameObject
 {
     enum class MODEL_IMPORT_MODE : int
     {
@@ -14,17 +13,17 @@ class CEditModel :
     };
 
 private:
-    CEditModel();
-    CEditModel(const CEditModel& rhs);
+    CEditModel() {}
+    CEditModel(const CEditModel& rhs) :CGameObject(rhs) {}
     virtual ~CEditModel() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
     void Awake() override;
-    void Priority_Update(_float dt) override;
+    void Priority_Update(_float dt) override {}
     void Update(_float dt) override;
-    void Late_Update(_float dt) override;
+    void Late_Update(_float dt) override {}
 
 public:
     void Render_GUI() override;
@@ -43,6 +42,6 @@ private:
 public:
     static CEditModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override;
+    virtual void Free() override { __super::Free(); }
 };
 NS_END
