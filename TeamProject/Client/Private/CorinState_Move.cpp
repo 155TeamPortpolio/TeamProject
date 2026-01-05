@@ -14,8 +14,12 @@ void CCorinState_Move::Enter(CCorin* pOwner)
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
         m_pSubStateMachine->Register_State("Walk", CCorinState_Walk::Create());
         m_pSubStateMachine->Register_State("Run", CCorinState_Run::Create());
+       
         m_pSubStateMachine->Register_Transition("Walk", "Run",
             CStateMachine<CCorin>::CONDITION_TRIGGER, "ToRun");
+        m_pSubStateMachine->Register_Transition("Run", "Walk",
+            CStateMachine<CCorin>::CONDITION_TRIGGER, "ToWalk");
+
         m_pSubStateMachine->Set_DefaultState("Walk");
     }
 

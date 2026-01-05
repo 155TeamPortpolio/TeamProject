@@ -31,19 +31,12 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CImageUI::Update(_float dt)
-{
-    __super::Update(dt);
-}
-
 void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // 이미지
     Render_GUI_Image(m_strTextureKey);
 
-    // flip
     _bool isFlip = {};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
     {
@@ -64,7 +57,7 @@ void CImageUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 }
 
