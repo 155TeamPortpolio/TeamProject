@@ -54,6 +54,10 @@ public:
 	vector<_uint> Get_Eff_Index()  { return m_EffMarked;   }
 	vector<_uint> Get_MeshIndex_WithOutProxy();
 	
+public:
+	void Render_GUI() override;
+	void Render_MeshTab();
+
 private:
 	vector<vector<_uint>> Find_Island(_uint numVertices, const vector<_uint>& indices);
 	template<typename TVertex>
@@ -79,6 +83,11 @@ private:
 	vector<_uint> m_LOD2Marked;
 	vector<_uint> m_LOD3Marked;
 	vector<_uint> m_EffMarked;
+
+	_bool isGui_MeshTabOpen = {false};
+	_bool isGui_MeshSubTabOpen = {false};
+	_bool isGui_MeshTableTabOpen = {false};
+	_uint	selectedMeshIndex = {};
 public:
 	static CModelData* Create(MESH_TYPE _eType, const aiScene* pAIScene);
 	virtual void Free() override;

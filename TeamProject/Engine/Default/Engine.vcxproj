@@ -279,6 +279,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\EventSystem.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\HiZ_Culling.h" />
+    <ClInclude Include="..\Public\Humanoid.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />

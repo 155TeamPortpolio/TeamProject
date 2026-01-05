@@ -36,28 +36,20 @@ void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 
 void CAISkeleton::Render_GUI()
 {
-	for (size_t i = 0; i < m_Bones.size(); i++)
-	{
-		string name = "(" + to_string(i) + ")" + m_Bones[i]->Get_Name();
-		ImGui::Text(name.c_str());
-		if (ImGui::IsItemHovered())
-		{
-			_int parentIndex = m_Bones[i]->Get_ParentIndex();
-
-			if (parentIndex != -1) {
-				CBone* pParent = m_Bones[parentIndex];
-				ImGui::SetTooltip("Parent: %s", pParent->Get_Name().c_str());
-			}
-			else
-				ImGui::SetTooltip("Parent: <None>");
-		}
+	if (ImGui::Button("Make_Humanoid")) {
+		isHumanoidTabOpened = !isHumanoidTabOpened;
 	}
-
-	for (size_t i = 0; i < ErroredOffset.size(); i++)
-	{
-		ImGui::Text("Offset Overrided");
+	if (isHumanoidTabOpened) {
+		Render_Humanoid();
 	}
 }
+void CAISkeleton::Render_Humanoid()
+{
+	ImGui::Begin("Humanoid Tab", &isHumanoidTabOpened);
+
+	ImGui::End();
+}
+
 HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 {
 	if (!m_BoneMap.count(string(_pAINode->mName.C_Str()))) {
