@@ -546,6 +546,9 @@
     <ClInclude Include="..\Public\Engine_Json.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CSMShadow.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UIRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
     </ClInclude>
@@ -1005,6 +1008,9 @@
     <Filter Include="98. BasicShader\Deferred">
       <UniqueIdentifier>{f3098dd3-dca9-4995-93c8-ba18cc0a7cb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
+      <UniqueIdentifier>{cd0242ae-f98d-4355-9652-d85f0117750b}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\RenderTarget">
       <UniqueIdentifier>{c69e076e-98a5-42b6-913e-9cd198d43065}</UniqueIdentifier>
     </Filter>
@@ -1446,6 +1452,9 @@
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CSMShadow.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1542,7 +1551,10 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl">
+      <Filter>98. BasicShader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
   </ItemGroup>

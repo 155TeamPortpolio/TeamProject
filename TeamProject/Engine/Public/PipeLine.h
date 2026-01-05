@@ -23,9 +23,13 @@ class ENGINE_DLL CPipeLine :
 		_float4x4 matShadowProjection;
 		_float4x4 matShadowViewInverse;
 		_float4x4 matShadowProjectionInverse;
+		_float4x4 matLightViewProj[4];     
+		_vector vCascadeSplits;          
 		_float4 vShadowPosition;
+		_int iCurrentCascade;
 		_float zShadowFar;
-		_float3 ShadowPadding;
+
+		_float2 ShadowPadding;
 	};
 
 	struct alignas(16)  LightBuffer
@@ -70,11 +74,12 @@ public:
 	_bool isVisible(MINMAX_BOX minMax, _fmatrix worldTransform);
 public:
 	HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
-	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext);
+	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex);
 	HRESULT Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize);
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
 	void Update_Frustum();
+	void Update_CSM();
 	void Update_HiZ(ID3D11DeviceContext* pContext);
 
 	_uint Write_ObjectData(const _float4x4& worldMatrix);
@@ -84,6 +89,9 @@ public:
 	_uint Write_SkinningBuffer(vector<_float4x4> BoneMatrices);
 	HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
 	HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
+
+	void Begin_ShadowRender(_uint cascadeIndex);
+	void End_ShadowRender();
 
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -98,7 +106,10 @@ public:
 
 	ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
+	ID3D11DepthStencilView* GetCSMDSV(_uint index) const;
 
+	HRESULT Bind_ShadowMap(class CShader* pShader);
+	void BindSampler(ID3D11DeviceContext* pContext, _uint slot);
 	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 
@@ -129,6 +140,7 @@ private:
 
 private:
 	class CHiZ_Culling* m_pHiZ = { nullptr };
+	class CCSMShadow* m_pCSM = { nullptr };
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, class CRenderSystem* pSystem);

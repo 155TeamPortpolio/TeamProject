@@ -78,15 +78,20 @@ public:
 		/*Life Time Color*/
 		_float4 vStartColor{};
 		_float4 vEndColor{};
+		
+		/*Life Time Alpha*/
+		_float4 vAlphaKey{};
+		_float2 vRatio{};
+		_float2 pad2{};
 
 		/*Texture Sheet Animation*/
 		_uint isAnimated{};
 		_uint iMaxFrameIndex{};
-		_float2 pad2{};
+		_float2 pad3{};
 
 		/*Noise*/
 		_float fElapsedTime{};
-		_float3 pad3{};
+		_float3 pad4{};
 
 		_float4 vStrength{};
 		_float4 vFrequency{};
@@ -113,6 +118,12 @@ public:
 	enum class SHADER { SPAWN, BASIC, INIT_DEAD_LIST, BUILD, END };
 	enum class PARTICLE_SPACE { LOCAL, WORLD, END };
 	enum class SPAWN_SHAPE { SPHERE, BOX, CONE, END };
+	enum class COLOR_MODE : _uint
+	{
+		MULTIPLY = 0 ,
+		ADDITIVE = 1,
+		END = 3
+	};
 	
 protected:
 	CParticleSystem();
@@ -174,6 +185,7 @@ private:
 	/*Main Params*/
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
 	MODULE_MASK m_eModuelMask{};
+	COLOR_MODE m_eColorMode = COLOR_MODE::ADDITIVE;
 
 	_float m_fDelayDuration{};
 	_float m_fElapsedTime{};
@@ -203,6 +215,7 @@ private:
 	LIFE_TIME_VELOCITY m_LifeTimeVelocity{};
 	LIFE_TIME_SIZE m_LifeTimeSize{};
 	LIFE_TIME_COLOR m_LifeTimeColor{};
+	LIFE_TIME_ALPHA m_LifeTimeAlpha{};
 	TEXTURE_SHEET_ANIMATION m_TextureSheetAnimation{};
 	NOISE m_Noise{};
 

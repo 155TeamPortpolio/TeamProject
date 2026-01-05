@@ -28,6 +28,9 @@ public:
 	static CSacrificeState_Born_Phase1* Create() { return new CSacrificeState_Born_Phase1(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	_bool m_IsEffectSpawn = false;
+
 };
 
 class CSacrificeState_Born_Phase2 : public IBaseState<CSacrifice>
