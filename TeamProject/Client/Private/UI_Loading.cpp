@@ -33,31 +33,22 @@ void CUI_Loading::Awake()
     else
         fileName = "loading_default";
 
-    fileName = "loading_hollow";
-
     // 다음레벨에 맞는 json 로드
     string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
+    CUI_Object* pPrefab = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
         .Asset(fileName + ".json")
         .Build("prefabLoading");
 
-    if (!uiObj)
+    if (!pPrefab)
         return;
 
     // 
-    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
-    m_hRoot = uiObj->Get_Handle();
+    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pPrefab, strCurrentLevel);
+    m_hRoot = pPrefab->Get_Handle();
 
-    const vector<CGameObject*> children = uiObj->Get_Component<CObjectContainer>()->Get_Children();
-
-    for (auto& pchild : children)
-    {
-        if ("prefab_nowLoading" == pchild->Get_InstanceName())
-        {
-            m_hChildren[PREFAB::NOW_LOADING] = dynamic_cast<CUI_Object*>(pchild)->Get_Handle();
-            break;
-        }
-    }
+    auto pNowLoading = dynamic_cast<CUI_Object*>(pPrefab->Get_Component<CObjectContainer>()->Find_Descendant("prefab_nowLoading"));
+    if(pNowLoading)
+        m_hChildren[PREFAB::NOW_LOADING] = pNowLoading->Get_Handle();
 
     // root의 0번 애니메이션 재생 (페이드인)
     if (m_hRoot.isValid())
