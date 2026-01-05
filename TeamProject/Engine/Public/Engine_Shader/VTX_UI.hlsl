@@ -107,9 +107,11 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
     
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
-    clip(vDiffuse.a - 0.1f);
+    //clip(vDiffuse.a - 0.1f);
     
-    Out.vColor = vDiffuse * vColor;
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
     
     return Out;
 }
