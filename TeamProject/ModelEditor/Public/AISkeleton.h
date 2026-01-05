@@ -22,12 +22,25 @@ public:
 public:
 	void Render_GUI();
 	void Render_Humanoid();
+
 private:
 	HRESULT Ready_Bones(const aiNode* _pAINode, _int _iParentIndex = -1);
 
 private:
+	const string SlotName(HumanoidBone boneType);
+	_bool IsRequiredSlot(HumanoidBone slot);
+	_bool CheckAncester(_int ancestorIndex, _int childIndex);
+
+private:
 	vector<_bool> HasOffset;
-	_bool isHumanoidTabOpened = { false };
+
+private: /*Humanoid*/
+	_bool m_isHumanoidTabOpened = { false };
+	_int m_SelectedBoneIndex = {-1};
+	_int m_SelectedSlotIndex = {-1};
+	HumanoidRigData m_RiggedData = {};
+	string m_BoneFilter = {};
+
 public:
 	static CAISkeleton* Create(const aiNode* _pAINode);
 	virtual void Free() override;

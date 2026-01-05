@@ -37,15 +37,27 @@ void CAISkeleton::Set_Offset(_uint Index, _float4x4 offset)
 void CAISkeleton::Render_GUI()
 {
 	if (ImGui::Button("Make_Humanoid")) {
-		isHumanoidTabOpened = !isHumanoidTabOpened;
+		m_isHumanoidTabOpened = !m_isHumanoidTabOpened;
 	}
-	if (isHumanoidTabOpened) {
+	if (m_isHumanoidTabOpened) {
 		Render_Humanoid();
 	}
 }
 void CAISkeleton::Render_Humanoid()
 {
-	ImGui::Begin("Humanoid Tab", &isHumanoidTabOpened);
+	ImGui::Begin("Humanoid Tab", &m_isHumanoidTabOpened);
+	_int requiredCount = 0;
+	_int mappedRequiredCount = 0;
+	for (_int slotIndex = 0; slotIndex < (_int)ENUM(HumanoidBone::Count); ++slotIndex)
+	{
+		HumanoidBone slot = (HumanoidBone)slotIndex;
+		if (!IsRequiredSlot(slot)) continue;
+		requiredCount++;
+		if (m_RiggedData.map.indexByRole[slotIndex] >= 0) 
+			mappedRequiredCount++;
+
+	}
+	ImGui::InputText("##filterText", &m_BoneFilter);
 
 	ImGui::End();
 }
@@ -75,6 +87,76 @@ HRESULT CAISkeleton::Ready_Bones(const aiNode* _pAINode, _int _iParentIndex)
 	HasOffset.resize(m_Bones.size(), false);
 
 	return S_OK;
+}
+
+const string CAISkeleton::SlotName(HumanoidBone boneType)
+{
+	switch (boneType)
+	{
+	case Engine::HumanoidBone::Pelvis:     return "Pelvis";
+	case Engine::HumanoidBone::Spine1:     return "Spine1";
+	case Engine::HumanoidBone::Spine2:     return "Spine2";
+	case Engine::HumanoidBone::Chest:      return "Chest";
+	case Engine::HumanoidBone::Neck:       return "Neck";
+	case Engine::HumanoidBone::Head:       return "Head";
+	case Engine::HumanoidBone::ClavicleL:  return "ClavicleL";
+	case Engine::HumanoidBone::UpperArmL:  return "UpperArmL";
+	case Engine::HumanoidBone::LowerArmL:  return "LowerArmL";
+	case Engine::HumanoidBone::HandL:      return "HandL";
+	case Engine::HumanoidBone::ClavicleR:  return "ClavicleR";
+	case Engine::HumanoidBone::UpperArmR:  return "UpperArmR";
+	case Engine::HumanoidBone::LowerArmR:  return "LowerArmR";
+	case Engine::HumanoidBone::HandR:      return "HandR";
+	case Engine::HumanoidBone::ThighL:     return "ThighL";
+	case Engine::HumanoidBone::CalfL:      return "CalfL";
+	case Engine::HumanoidBone::FootL:      return "FootL";
+	case Engine::HumanoidBone::ToeL:       return "ToeL";
+	case Engine::HumanoidBone::ThighR:     return "ThighR";
+	case Engine::HumanoidBone::CalfR:      return "CalfR";
+	case Engine::HumanoidBone::FootR:      return "FootR";
+	case Engine::HumanoidBone::ToeR:       return "ToeR";
+	default:                     return "Unknown";
+	}
+}
+
+_bool CAISkeleton::IsRequiredSlot(HumanoidBone slot)
+{
+	switch (slot)
+	{ /*ÇÊ¿ä ½½·Ô*/
+	case Engine::HumanoidBone::Pelvis:
+	case Engine::HumanoidBone::Spine1:
+	case Engine::HumanoidBone::Neck:
+	case Engine::HumanoidBone::Head:
+	case Engine::HumanoidBone::UpperArmL:
+	case Engine::HumanoidBone::LowerArmL:
+	case Engine::HumanoidBone::HandL:
+	case Engine::HumanoidBone::UpperArmR:
+	case Engine::HumanoidBone::LowerArmR:
+	case Engine::HumanoidBone::HandR:
+	case Engine::HumanoidBone::ThighL:
+	case Engine::HumanoidBone::CalfL:
+	case Engine::HumanoidBone::FootL:
+	case Engine::HumanoidBone::ThighR:
+	case Engine::HumanoidBone::CalfR:
+	case Engine::HumanoidBone::FootR:
+		return true;
+	default:
+		return false;
+	}
+}
+
+_bool CAISkeleton::CheckAncester(_int ancestorIndex, _int childIndex)
+{
+	if (ancestorIndex < 0 || childIndex < 0)
+		return false;
+
+	_int Chain = childIndex;
+	while (Chain >=0) {
+		if (Chain == ancestorIndex)
+			return true;
+		Chain = m_Bones[Chain]->Get_ParentIndex();
+	}
+	return false;
 }
 
 void CAISkeleton::Save_File(ofstream& ofs, _fmatrix PreTransform)

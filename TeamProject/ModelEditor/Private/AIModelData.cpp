@@ -156,7 +156,10 @@ void CAIModelData::Render_GUI()
         if(ImGui::Button("MeshOpen"))
         isGui_MeshTabOpen = !isGui_MeshTabOpen;
     }
-
+    if (m_pSkeleton) {
+      ImGui::SeparatorText("Humanoid");
+      m_pSkeleton->Render_GUI()l
+    }
     if (isGui_MeshTabOpen) {
         if (ImGui::Begin("Meshes", &isGui_MeshTabOpen, ImGuiWindowFlags_NoCollapse))
         {
@@ -179,6 +182,7 @@ void CAIModelData::Render_GUI()
         }
         ImGui::End();
     }
+
 }
 
 
