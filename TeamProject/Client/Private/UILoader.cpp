@@ -14,6 +14,7 @@
 #include "MaskUI.h"
 
 #include "Logo.h"
+#include "UI_Loading.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -119,6 +120,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"UVAnimation",     &CUVAnimationUI::Create     },
 		{"Mask",			&CMaskUI::Create			},
 		{"Logo",			&CLogo::Create				},
+		{"Loading",			&CUI_Loading::Create		},
 	};
 
 	for (const Entry& entry : entries)

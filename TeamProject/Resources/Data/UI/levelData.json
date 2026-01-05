@@ -12,8 +12,8 @@
     "Loading_Level": {
       "objects": [
         {
-          "prototypeTag": "Proto_GameObject_Logo",
-          "instanceName": "logo"
+          "prototypeTag": "Proto_GameObject_Loading",
+          "instanceName": "loading"
         }
       ]
     },

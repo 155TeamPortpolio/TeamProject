@@ -360,7 +360,7 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
       <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
     </Filter>
@@ -381,6 +381,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\Logo">
       <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Loading">
+      <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -729,6 +732,9 @@
     <ClInclude Include="..\Public\Logo.h">
       <Filter>02. GameObject\UI\Logo</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Loading.h">
+      <Filter>02. GameObject\UI\Loading</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1064,6 +1070,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Logo.cpp">
       <Filter>02. GameObject\UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Loading.cpp">
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
