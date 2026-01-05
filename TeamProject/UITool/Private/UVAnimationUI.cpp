@@ -62,7 +62,7 @@ void CUVAnimationUI::Save(nlohmann::ordered_json& data)
     data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 
-    auto& uvAnimationJson = data["uvAnimation"];
+    auto& uvAnimationJson            = data["uvAnimation"];
     uvAnimationJson["uvOffsetSpeed"] = {m_vUVOffsetSpeed.x, m_vUVOffsetSpeed.y};
 }
 
@@ -85,25 +85,21 @@ void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
 CGameObject* CUVAnimationUI::Create()
 {
     CUVAnimationUI* pInstance = new CUVAnimationUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CUVAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
 {
     CUVAnimationUI* pInstance = new CUVAnimationUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CUVAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }

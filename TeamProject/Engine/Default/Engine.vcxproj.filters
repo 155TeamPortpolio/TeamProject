@@ -552,6 +552,18 @@
     <ClInclude Include="..\Public\ThirdPartyCsv.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IKSolver.h">
+      <Filter>01. Utility\15. IKSolver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FootIK.h">
+      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\CSMShadow.h">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Humanoid.h">
+      <Filter>99. Defines\AnimationLayout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1014,6 +1026,165 @@
     <Filter Include="01. Utility\04. Components\22. EventListner">
       <UniqueIdentifier>{547d6618-91fb-4755-a756-17b271b63e88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\05. Resources">
+      <UniqueIdentifier>{542e2e0a-8bb6-4f09-b992-dd89ef1cb857}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\00. Manager">
+      <UniqueIdentifier>{80de3601-5204-46ee-bdb9-85ac3afb2bed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\01. Texture">
+      <UniqueIdentifier>{43d048a6-d769-4aa9-80b3-3e038add02d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\02. SoundData">
+      <UniqueIdentifier>{57701f84-ef8f-4f16-a591-9bb5838d995e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData">
+      <UniqueIdentifier>{d607a3d6-e514-468b-8d93-08634597566c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Mesh">
+      <UniqueIdentifier>{fedca390-db38-4137-b324-4ce643e29693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Skeleton">
+      <UniqueIdentifier>{0b55e2a3-5adf-4342-b1e7-da63393bf06a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\03. ModelData\Skeleton\Bone">
+      <UniqueIdentifier>{5a5eec08-36d3-476c-930b-3ff42fb682ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\04. Shader">
+      <UniqueIdentifier>{02f9fa71-9e4d-42fc-b7fd-6628cc5b4d98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\05. MaterialData">
+      <UniqueIdentifier>{552cbad7-3f49-4b99-b43a-da850b58a6e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\06. AnimationClip">
+      <UniqueIdentifier>{8c3d3f95-c3f4-46df-aebf-d3c9033acb0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\06. AnimationClip\Channel">
+      <UniqueIdentifier>{98b66d3b-8979-414a-a3c7-380f48d45ee7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer">
+      <UniqueIdentifier>{f6c58bb9-f270-4e86-9433-170daf447db2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Point">
+      <UniqueIdentifier>{e3d66b55-1bd6-4418-a337-0348b3d0aabf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Rect">
+      <UniqueIdentifier>{7f9fd853-bfaa-4610-9713-c09cd25f0eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Plane">
+      <UniqueIdentifier>{370a1942-9330-4291-b367-1fe6a39d6c1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Cube">
+      <UniqueIdentifier>{980b776e-dbb3-4401-a5d1-1a9f307ccf17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Terrain">
+      <UniqueIdentifier>{e63866bc-2dbc-4c2f-af3c-88e2b62b8006}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_InstancePoint">
+      <UniqueIdentifier>{39dbf45d-dfc2-4053-b4d7-bc4f01640cb2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\08. Compute Shader">
+      <UniqueIdentifier>{8656b1ff-5557-4ecc-80a5-bb4548941a1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\08. Compute Shader\StructuredBuffer">
+      <UniqueIdentifier>{221ce707-bd15-4e6b-919b-cc239e06a78f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\09. PreLoad">
+      <UniqueIdentifier>{f850dc48-032a-4303-b1b3-09ba6e0771f9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem">
+      <UniqueIdentifier>{e3429e65-ffaf-4cc0-b221-ab52d4cc0e33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine">
+      <UniqueIdentifier>{b267731d-cc26-43cc-b3ea-3edd1dee13eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\Hi_Z">
+      <UniqueIdentifier>{70f06feb-b4e3-4412-8ada-789498d0c592}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderPass">
+      <UniqueIdentifier>{93d2fe97-017d-4bf0-8d44-479397e756d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer">
+      <UniqueIdentifier>{3bb6f406-ad77-4896-a825-ecb33365a24b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward">
+      <UniqueIdentifier>{d07ca1cf-f099-45a3-8079-5d48aa1231f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\StaticMesh">
+      <UniqueIdentifier>{3399e2a4-5cf9-432a-ba40-e2ffb3a055d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Forward\SkinnedMesh">
+      <UniqueIdentifier>{670bb359-f507-4bc6-b88d-704ea5a7b37d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Post">
+      <UniqueIdentifier>{ad75717a-5ba0-4d76-955a-31788a101f9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub">
+      <UniqueIdentifier>{d06d10a8-d1f8-4aa2-9844-99b3c7525215}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\Effect">
+      <UniqueIdentifier>{16665c44-ae1f-468f-96fa-d751804f685f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\Renderer\Sub\UI">
+      <UniqueIdentifier>{f3a221f7-b0ac-45a0-97db-98e951bc6a32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\07. CameraManager">
+      <UniqueIdentifier>{f01bcb6b-de12-4966-85a7-81edbd40a0ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\08. LightManager">
+      <UniqueIdentifier>{5e780945-84b7-4e26-89e4-d79a2f092575}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\09. RaySystem">
+      <UniqueIdentifier>{d0e1a0f1-b51e-453e-b75c-935411983cbf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\10. CollisionSystem">
+      <UniqueIdentifier>{972c8ac5-0a1c-4829-bf69-85d5d318a687}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. FontSystem">
+      <UniqueIdentifier>{0bcbfc95-d2c4-4ce7-a599-e1067890b292}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\11. FontSystem\Font">
+      <UniqueIdentifier>{08e8bc38-e892-4de9-bc7b-4a7de073ce54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\12. PhysicsSystem">
+      <UniqueIdentifier>{eef3a17c-3067-4db4-9341-a57791e7f963}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\13. EventBus">
+      <UniqueIdentifier>{e9293fb8-521f-4679-845e-fe3a9bca0404}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\14.ClickManager">
+      <UniqueIdentifier>{320dcb5d-13ec-4fbd-9f95-10cc35c60c19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\97. Helper">
+      <UniqueIdentifier>{97fbfa50-f769-4c33-8620-507af716e344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\98. Services">
+      <UniqueIdentifier>{5589ba4f-e40c-4352-93ae-56dc48021abb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader">
+      <UniqueIdentifier>{4d73f3c7-aa2d-464b-ae01-4e68fd6a1fe9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Compute Shader">
+      <UniqueIdentifier>{f1430c7b-2cf0-40f4-832e-3c52075693be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. BasicShader\Deferred">
+      <UniqueIdentifier>{f3098dd3-dca9-4995-93c8-ba18cc0a7cb1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderTarget">
+      <UniqueIdentifier>{c69e076e-98a5-42b6-913e-9cd198d43065}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
+      <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\15. IKSolver">
+      <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\15. IKSolver\FootIK">
+      <UniqueIdentifier>{552ed212-cfe0-4669-9f2a-f272f54e8c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
+      <UniqueIdentifier>{19d9bc06-7c5b-41ab-a91a-64bb54394349}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1449,6 +1620,12 @@
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\FootIK.cpp">
+      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\CSMShadow.cpp">
+      <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1545,8 +1722,11 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

@@ -65,14 +65,15 @@ HRESULT CRenderSystem::Initialize()
 HRESULT CRenderSystem::Render()
 {
 	m_pForward->Render_Priority(m_pPriorityPass);
-	m_pForward->Render_Shadow(m_pShadowPass);
+	m_pForward->Render_Shadow(m_pShadowPass, !IsOn);
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);
 
 	m_pUI->Render_3D(m_pUI3DPass);
 	m_pEffect->Render_Effect(m_pEffectPass, m_pParticlePass);
-	m_pEffect->Render_WeightOIT();
+	m_pEffect->Render_Effect_Bloom();
+	m_pEffect->Render_EffectCombined();
 
 	m_pForward->Render_SSAO();
 	m_pForward->Render_LightAcc();
@@ -81,12 +82,11 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
-
 	m_pUI->Render_2D(m_pUIPass);
+
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
 	m_pForward->Render_Bloom();
-	m_pEffect->Render_Effect_Bloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
 

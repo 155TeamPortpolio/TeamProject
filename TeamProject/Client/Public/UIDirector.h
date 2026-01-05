@@ -12,31 +12,22 @@ class CUIDirector final : public CBase
 {
 	DECLARE_SINGLETON(CUIDirector);
 private:
-	CUIDirector();
+	CUIDirector() {}
 	virtual ~CUIDirector() = default;
 
 public:
-	void Initialize(const string& levelKey);
-	void Register(CUI_Object* uiObj);
-
-public:
-	void Dispatch(UIEventType type, void* arg = {});
-
-private:
-	void EnterMonitor(void* arg);
-	void ExitMonitor(void* arg);
+	/*모든 레벨에 필요한 공통 데이터 등록*/
+	void Initialize();
+	/*레벨별로 필요한 프로토타입, 게임 오브젝트 등록*/
+	void Load_LevelObjects(const string& levelKey);
 
 private:
-	void SetActive(const string& tag, void* arg = {});
-	void SetActive(initializer_list<string> tags, void* arg = {});
-	
-	void SetDeactive(const string& tag, void* arg = {});
-	void SetDeactive(initializer_list<string> tags, void* arg = {});
+	/*json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장*/
+	void Load_UILevelData(const string& resourceKey);
 
 private:
-	string                             m_levelKey;
-	unordered_map<string, CUI_Object*> m_uiByTag;
-	CGameInstance*                     m_game{};
+	string								m_levelKey;
+	nlohmann::json						m_json = {};
 
 public:
 	virtual void Free() override;

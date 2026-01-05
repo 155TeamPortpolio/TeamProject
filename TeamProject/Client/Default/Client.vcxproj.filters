@@ -358,17 +358,35 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Dash">
       <UniqueIdentifier>{c7ee365b-fe3f-4577-a882-c30dab07300f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\05. ShadowCam">
+      <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
       <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
       <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\00. LogoLevel">
+      <UniqueIdentifier>{a9a6f7a5-17f2-4dcf-924c-60e273e5003e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\01. LoadingLevel">
+      <UniqueIdentifier>{843e3c5c-413c-4e9b-a399-53d7346524d5}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Logo">
+      <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Loading">
+      <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -687,6 +705,9 @@
     <ClInclude Include="..\Public\SacrificeState_ChangePhase.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ShadowCam.h">
+      <Filter>02. GameObject\Camera\05. ShadowCam</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CorinState_Dash.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
     </ClInclude>
@@ -699,11 +720,26 @@
     <ClInclude Include="..\Public\CorinState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\LogoLevel.h">
+      <Filter>01. Level\00. LogoLevel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LoadingLevel.h">
+      <Filter>01. Level\01. LoadingLevel</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BattleSystem.h">
       <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Logo.h">
+      <Filter>02. GameObject\UI\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Loading.h">
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1011,6 +1047,9 @@
     <ClCompile Include="..\Private\SacrificeState_ChangePhase.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\ChangePhase</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ShadowCam.cpp">
+      <Filter>02. GameObject\Camera\05. ShadowCam</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\CorinState_Dash.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
     </ClCompile>
@@ -1023,11 +1062,26 @@
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\LogoLevel.cpp">
+      <Filter>01. Level\00. LogoLevel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LoadingLevel.cpp">
+      <Filter>01. Level\01. LoadingLevel</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BattleSystem.cpp">
       <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Logo.cpp">
+      <Filter>02. GameObject\UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Loading.cpp">
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

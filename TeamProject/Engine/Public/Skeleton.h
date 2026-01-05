@@ -22,6 +22,8 @@ public:
 
     const vector<string> Get_BoneNames();
     void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
+    _bool Get_RiggedData(HumanoidRigData& outData) { outData = m_RiggedData; return m_RiggedData.IsRigComplete(); }
+
 private:
     _int FindBoneIndexWithPrefix(const string& BonePrefixName);
 
@@ -32,6 +34,7 @@ protected:
     vector<class CBone*> m_Bones;
     vector<_float4x4> m_OffsetMatrices;
     unordered_map<string, _uint> m_BoneMap;//이름 검색용 컨테이너
+    HumanoidRigData m_RiggedData = {};
 
 public:
     static CSkeleton* Create(ifstream& ifs);

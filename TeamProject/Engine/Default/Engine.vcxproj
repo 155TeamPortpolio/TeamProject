@@ -263,6 +263,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\public\CSMShadow.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
@@ -277,9 +278,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Engine_RenderStruct.h" />
     <ClInclude Include="..\Public\EventListener.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\Public\FootIK.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\HiZ_Culling.h" />
+    <ClInclude Include="..\Public\Humanoid.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\IKSolver.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\Noise.h" />
@@ -439,6 +443,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
+    <ClCompile Include="..\private\CSMShadow.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
@@ -452,6 +457,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListener.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\Private\FootIK.cpp" />
     <ClCompile Include="..\private\ForwardRenderer.cpp" />
     <ClCompile Include="..\Private\HiZ_Culling.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
@@ -655,8 +661,9 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl" />

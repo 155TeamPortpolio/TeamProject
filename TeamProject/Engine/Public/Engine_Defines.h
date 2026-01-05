@@ -96,6 +96,7 @@ using namespace physx;
 #include "Data_Packets.h"
 #include "PreLoad_Struct.h"
 #include "AnimationLayout.h"
+#include "Humanoid.h"
 
 using namespace Engine;
 

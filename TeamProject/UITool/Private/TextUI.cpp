@@ -6,18 +6,6 @@
 #include "UITool_Level.h"
 #include "Helper_Func.h"
 
-_uint CTextUI::m_iCount = {};
-const string CTextUI::m_strTypeTag = "Text";
-
-CTextUI::CTextUI()
-{
-}
-
-CTextUI::CTextUI(const CTextUI& rhs)
-    : CUIObject_Tool(rhs)
-{
-}
-
 HRESULT CTextUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -42,7 +30,6 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
     Get_Component<CSprite2D>()->Set_TextKey(m_szText);
     Get_Component<CTextSlot>()->Set_TextKey(m_szText);
-
     Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
 #ifdef _DEBUG
@@ -55,10 +42,6 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CTextUI::Priority_Update(_float dt)
-{
-}
-
 void CTextUI::Update(_float dt)
 {
     __super::Update(dt);
@@ -66,10 +49,6 @@ void CTextUI::Update(_float dt)
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);
     Get_Component<CTextSlot>()->Push_Text();
     Get_Component<CTextSlot>()->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
-}
-
-void CTextUI::Late_Update(_float dt)
-{
 }
 
 void CTextUI::Render_GUI()
@@ -137,13 +116,13 @@ void CTextUI::Save(nlohmann::ordered_json& data)
 
     data["typeTag"] = m_strTypeTag;
 
-    auto& textJson = data["text"];
-    textJson["content"] = m_szText;
-    textJson["fontTag"] = m_strFontTag;
-    textJson["fontScale"] = m_fFontScale;
-    textJson["outlined"] = m_isOutlined;
+    auto& textJson               = data["text"];
+    textJson["content"]          = m_szText;
+    textJson["fontTag"]          = m_strFontTag;
+    textJson["fontScale"]        = m_fFontScale;
+    textJson["outlined"]         = m_isOutlined;
     textJson["outlineThickness"] = m_fOutlineThickness;
-    textJson["outlineColor"] = { m_vOutlineColor.x, m_vOutlineColor.y, m_vOutlineColor.z, m_vOutlineColor.w };
+    textJson["outlineColor"]     = { m_vOutlineColor.x, m_vOutlineColor.y, m_vOutlineColor.z, m_vOutlineColor.w };
 }
 
 void CTextUI::Load(const nlohmann::ordered_json& data)
@@ -155,13 +134,13 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         const auto& textJson = data["text"];
 
         strcpy_s(m_szText, textJson.value("content", "").c_str());
-        m_strFontTag = textJson.value("fontTag", "DefaultFont");
-        m_fFontScale = textJson.value("fontScale", 1.0f);
-        m_isOutlined = textJson.value("outlined", false);
+        m_strFontTag        = textJson.value("fontTag", "DefaultFont");
+        m_fFontScale        = textJson.value("fontScale", 1.0f);
+        m_isOutlined        = textJson.value("outlined", false);
         m_fOutlineThickness = textJson.value("outlineThickness", 1.0f);
 
         auto outlineColor = textJson.value("outlineColor", json::array({ 0.0f, 0.0f, 0.0f, 1.0f }));
-        m_vOutlineColor = { outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3] };
+        m_vOutlineColor   = { outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3] };
 
         Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
@@ -271,7 +250,6 @@ void CTextUI::Render_GUI_Transform()
         Set_Pivot(tmpPivot);
 
     ImGui::TextDisabled("LeftTop : %.1f, %.1f", m_vLeftTop.x, m_vLeftTop.y);
-
     ImGui::TextDisabled("WinSize : %.1f x %.1f", m_WinSize.x, m_WinSize.y);
 }
 
@@ -280,39 +258,30 @@ void CTextUI::UpdateAnchorOffset_TextAlign()
     const float width = m_vSize.x * m_fFontScale;
     switch (static_cast<TEXTALIGN>(m_iTextAlign))
     {
-    case TEXTALIGN::LEFT: m_vAnchorOffset.x = 0.f;           break;
+    case TEXTALIGN::LEFT:   m_vAnchorOffset.x = 0.f;            break;
     case TEXTALIGN::CENTER: m_vAnchorOffset.x = -width * 0.5f;  break;
-    case TEXTALIGN::RIGHT: m_vAnchorOffset.x = -width;          break;
+    case TEXTALIGN::RIGHT:  m_vAnchorOffset.x = -width;         break;
     }
 }
 
 CGameObject* CTextUI::Create()
 {
     CTextUI* pInstance = new CTextUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CTextUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CTextUI::Clone(INIT_DESC* pArg)
 {
     CTextUI* pInstance = new CTextUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CTextUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
-}
-
-void CTextUI::Free()
-{
-    __super::Free();
 }

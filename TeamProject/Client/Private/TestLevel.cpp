@@ -16,6 +16,7 @@
 #include "FreeCam.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
+#include "ShadowCam.h"
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
@@ -77,16 +78,23 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
 	// =========================================================================
 
 	//==================== Effect =======================
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
-	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
-	
-	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
-	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	//
+	//pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
+	//pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	//
+	//pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
+	//pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
+	//
+	//pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
+	//pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -100,6 +108,19 @@ HRESULT CTestLevel::Awake()
 
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
+
+	//==============TestModel==========================
+	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
+	//	.CharacterController({})
+	//	.Build("Test_Model");
+
+	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
+
+	// =================TestMap==================
+	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
+	//	.Build("Test_Map");
+	//	
+	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 	/* Miyabi */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
@@ -134,17 +155,11 @@ HRESULT CTestLevel::Awake()
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Test_Level");
-	
-	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
-		.Build("HUD");
-	
-	uiDirector->Register(hudUI);
+	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	//Ready_TestObject();
-
+	Ready_ShadowCamera();
 
 	return S_OK;
 }
@@ -283,10 +298,24 @@ void CTestLevel::Ready_Camera()
 
 	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
-	auto camPanel = CCamPanel::Create(GUI->Get_Context());
-	GUI->Register_Panel(camPanel);
+	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
+	//GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+}
+
+void CTestLevel::Ready_ShadowCamera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 100.f, 100.f })
+		.Rotate({0.f, 0.f, 0.f})
+		.Build("ShadowCam");
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, {"Test_Level", "Camera_Layer"});
+	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_TestObject()

@@ -51,7 +51,9 @@ private:
 	ID3D11DepthStencilView* m_pDSV = { nullptr };
 
 #ifdef _USING_GUI
+	_bool TargetFilter(const string& tag, const string& filter);
 	_float width, height;
+	string Filter = {};
 #endif // _USING_GUI
 
 	/*Client Target*/
