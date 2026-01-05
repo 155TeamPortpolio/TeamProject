@@ -48,6 +48,10 @@ public:
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(OBJECT_HANDLE hPlayer);
+
+private:
+	void	ClearBattleStage();
+
 private:
 	_bool	m_isActive = { false };
 

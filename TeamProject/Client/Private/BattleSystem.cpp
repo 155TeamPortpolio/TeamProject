@@ -2,6 +2,7 @@
 #include "BattleSystem.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "CharacterController.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -38,6 +39,7 @@ void CBattleSystem::Update()
 			info.TagInstanceName = m_Handles[eType][j].Get()->Get_InstanceName();
 			info.hObject = m_Handles[eType][j];
 			info.vPos = { mObjWorld._41, mObjWorld._42,mObjWorld._43 };
+			info.fRadius = pObject->Get_Component<CCharacterController>()->Get_Radius();
 			info.isOnField = true;
 
 			m_BattleObjInfos[eType].push_back(info);
@@ -141,6 +143,15 @@ void CBattleSystem::SetPlayer(OBJECT_HANDLE hPlayer)
 {
 	if (hPlayer.isValid())
 		m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+}
+
+void CBattleSystem::ClearBattleStage()
+{
+	for (auto& Pair : m_Handles) 
+		Pair.second.clear();
+
+	for (auto& Pair : m_BattleObjInfos)
+		Pair.second.clear();
 }
 
 void CBattleSystem::Free()
