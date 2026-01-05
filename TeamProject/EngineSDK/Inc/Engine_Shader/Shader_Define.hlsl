@@ -44,13 +44,9 @@ cbuffer ShadowBuffer : register(b8)
     matrix matShadowProjection;
     matrix matShadowViewInverse;
     matrix matShadowProjectionInverse;
-    matrix matLightViewProj[4];
-    float4 vCascadeSplits;
     float4 vShadowPosition;
-    int iCurrentCascade;
     float zShadowFar;
-    
-    float2 ShadowPadding;
+    float3 ShadowPadding;
 };
 
 cbuffer LightBuffer : register(b9)

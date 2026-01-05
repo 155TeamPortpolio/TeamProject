@@ -10,10 +10,6 @@ BlendState BS_OITComposite
     SrcBlend = One;
     DestBlend = Inv_Src_Alpha;
     BlendOp = Add;
-
-    SrcBlendAlpha = One;
-    DestBlendAlpha = Inv_Src_Alpha;
-    BlendOpAlpha = Add;
 };
 
 struct VS_IN
@@ -61,18 +57,15 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
     float4 vBloomEffectDesc = EffectBloomAccTextutre.Sample(LinearSampler, In.vTexcoord);
     float fRevealage = RevealageTexture.Sample(LinearSampler, In.vTexcoord).r;
     
-    float fElipson = 1e-8;
-    float fDiffuseAlpha = vDiffuseEffectDesc.a;
-    float fBloomAlpha = vBloomEffectDesc.a;
-    float fOutAlpha = saturate(1.f - fRevealage);
+    float fElipson = 0.00001f;
     
     /* Diffuse */
-    float3 vDiffuseColor = (fDiffuseAlpha > fElipson) ? (vDiffuseEffectDesc.rgb / fDiffuseAlpha) : 0.f;
-    Out.vDiffuseEffect = float4(vDiffuseColor * fOutAlpha, fOutAlpha);
+    Out.vDiffuseEffect.rgb = vDiffuseEffectDesc.rgb;
+    Out.vDiffuseEffect.a = saturate(1.f - fRevealage);
     
     /* Bloom */
-    float3 vBloomColor = (fBloomAlpha > fElipson) ? (vBloomEffectDesc.rgb / fBloomAlpha) : 0.f;
-    Out.vBloomEffect = float4(vBloomColor * fOutAlpha, fOutAlpha);
+    Out.vBloomEffect.rgb = vBloomEffectDesc.rgb;
+    Out.vBloomEffect.a = saturate(1.f - fRevealage);
     
     return Out;
 }
@@ -184,26 +177,13 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     return Out;
 }
 
-PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
-{
-    PS_OUT_RESULT Out;
-    
-    vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    vector vBloom = EffectBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-  
-    Out.vResult.rgb = vDiffuse.rgb + vBloom.rgb;
-    Out.vResult.a = vDiffuse.a;
-    
-    return Out;
-}
-
 technique11 DefaultTechnique
 {
-    pass COMPOSITE
+    pass Composite
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_Default, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_OITComposite, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMPOSITE();
@@ -227,15 +207,5 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_BLOOM_BLURY();
-    }
-
-    pass COMBINED
-    {
-        SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
-        VertexShader = compile vs_5_0 VS_MAIN();
-        GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
     }
 }

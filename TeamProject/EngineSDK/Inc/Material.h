@@ -32,7 +32,6 @@ public:
     const string& GetPassConstant(_uint Index);
     CMaterialInstance* Find_MaterialByName(const string& MaterialName);
 
-    _bool isValid(_uint index);
 public:
     virtual void Render_GUI() override;
 

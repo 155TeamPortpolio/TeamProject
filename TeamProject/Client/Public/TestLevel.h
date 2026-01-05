@@ -23,7 +23,6 @@ private:
     void Ready_Map(const string& LevelTag, const string& AreaTag);
     void Rake_MapResources();
     void Ready_Camera();
-    void Ready_ShadowCamera();
     void Ready_TestObject();
 
 

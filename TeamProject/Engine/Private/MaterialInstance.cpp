@@ -115,11 +115,6 @@ HRESULT CMaterialInstance::Reset_Pass()
 	return S_OK;
 }
 
-_bool CMaterialInstance::isValid()
-{
-	return m_pMaterialData->Has_Texture(TEXTURE_TYPE::DIFFUSE);
-}
-
 void CMaterialInstance::Render_GUI()
 {
 	m_pMaterialData->Render_GUI(m_TextureIndexs);

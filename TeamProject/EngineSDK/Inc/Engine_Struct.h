@@ -370,7 +370,6 @@ namespace Engine
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
 		_uint iModuleMask{};
-		_uint iColorMode{};
 		_bool isWorld = true;
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
@@ -398,10 +397,6 @@ namespace Engine
 		/*Life Time Color*/
 		_float4 vStartColor{};
 		_float4 vEndColor{};
-
-		/* Life Time Alpha */
-		_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
-		_float2 vRatio{ 0.3f,0.6f };
 
 		/*Texture Sheet Animation*/
 		_bool isParticleAnimated = false;
@@ -480,7 +475,7 @@ namespace Engine
 		_bool isValid();
 		void Reset();
 		class CGameObject* Get();
-		void Delete();
+		void Release();
 	}OBJECT_HANDLE;
 }
 

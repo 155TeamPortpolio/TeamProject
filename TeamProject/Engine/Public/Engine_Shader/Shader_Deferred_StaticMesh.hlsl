@@ -1,7 +1,6 @@
 #include "Shader_Deferred_Define.hlsl"
-#include "Shader_Shadow.hlsl"
-matrix g_WorldMatrix;
 
+matrix g_WorldMatrix;
 
 struct VS_IN
 {
@@ -19,7 +18,8 @@ VS_OUT VS_MAIN(VS_IN In)
 {
     VS_OUT Out;
     
-    matrix matWVP = mul(g_WorldMatrix, matOrthograph);
+    matrix matWV, matWVP;
+    matWVP = mul(g_WorldMatrix, matOrthograph);
     
     Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
     Out.vTexcoord = In.vTexcoord;
@@ -135,6 +135,7 @@ PS_OUT_RESULT PS_SSAO_BLUR(PS_IN In)
     return Out;
 }
 
+//GaussianBlur
 static const float weights[9] =
 {
     0.2270270270,
@@ -166,7 +167,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord + float2(texelSize * i, 0));
         result += brightSample.rgb * weights[i];
             
-        brightSample = MeshBrightTexture.Sample(DefaultSampler, In.vTexcoord - float2(texelSize * i, 0));
+        brightSample = MeshBrightTexture.Sample(DefaultSampler,In.vTexcoord - float2(texelSize * i, 0));
         result += brightSample.rgb * weights[i];
     }
         
@@ -193,8 +194,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
                 In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
-    }
-    
+    }  
     Out.vResult = float4(result, 1.f);
 
     return Out;
@@ -203,7 +203,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
-    vector fLightInfo : SV_TARGET1;
+    float2 fLightInfo : SV_TARGET1;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -220,11 +220,9 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float roughness = vMetalicDesc.r;
     float metalic = vMetalicDesc.g;
     float specular = vMetalicDesc.b;
-    float3 lightDir = normalize(vLightDir.xyz * -1);
+
     float fViewZ = vDepthDesc.y * zFar;
-    
     vector vWorldPos;
-    
     vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
     vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
     vWorldPos.z = vDepthDesc.x;
@@ -234,30 +232,20 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float4 vLightSpacePos[4];
-    [unroll]
-    for (int i = 0; i < 4; i++)
-    {
-        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
-    }
-    
-    float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
-    
+    float3 lightDir = normalize(vLightDir.xyz * -1);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
-        
+
     float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-        
+
     float3 halfVec = normalize(viewDir + lightDir);
     float specBase = saturate(dot(worldNormal, halfVec));
     float specularPower = lerp(50.0f, 5.0f, roughness);
     specular = pow(specBase, specularPower) * specular;
-    
-    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
         
-    Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-    //Out.vLight = float4(shadow, shadow, shadow, 1.f);
-
-    Out.fLightInfo = float4(NdotL, specular, shadow, 1.f);
+    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
+    
+    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+    Out.fLightInfo = float2(NdotL, specular);
     
     return Out;
 }
@@ -299,10 +287,11 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
-    Out.fLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+    Out.fLightInfo = float2(NdotL, 0.f);
     
     return Out;
 }
+
 
 PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
 {
@@ -312,24 +301,21 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vLight = LightTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    vector vLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord);
+    float2 fLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord).rg;
     float ssao = SSAOFinalTexture.Sample(DefaultSampler, In.vTexcoord).r;
     
-    float NdotL = vLightInfo.r;
+    float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
-    float shadowValue = vLightInfo.b;
-    shadowValue = saturate(shadowValue * 0.7f + 0.3f);
-    
-    float3 vAmbient = vLightAmbient.rgb * vDiffuse.rgb * ssao * shadowValue;
+    float3 vAmbient = vLightAmbient.rgb * vDiffuse.rgb * ssao;
     vAmbient = max(vAmbient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
     float4 vResult = float4(vLight.rgb * vRamp + vAmbient, vDiffuse.a);
     
-    float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
+    float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
     vResult.rgb += specularColor + vBloom.rgb;
-    
+   
     Out.vResult = vResult;
     
     return Out;

@@ -140,11 +140,6 @@ CMaterialInstance* CMaterial::Find_MaterialByName(const string& MaterialName)
 	return *iter;
 }
 
-_bool CMaterial::isValid(_uint index)
-{
-	return m_MaterialInstances[index]->isValid();
-}
-
 CMaterial* CMaterial::Create()
 {
 	CMaterial* instance = new CMaterial;

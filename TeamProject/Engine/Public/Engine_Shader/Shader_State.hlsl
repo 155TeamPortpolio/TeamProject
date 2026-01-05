@@ -43,17 +43,6 @@ RasterizerState RS_CullBack
     FrontCounterClockwise = false;
 };
 
-RasterizerState RS_Shadow
-{
-    FillMode = Solid;
-    CullMode = Back; 
-    FrontCounterClockwise = false;
-    DepthBias = 1000;
-    DepthBiasClamp = 0.01f;
-    SlopeScaledDepthBias = 2.0f; 
-    DepthClipEnable = true;
-};
-
 DepthStencilState DSS_Default
 {
     DepthEnable = true;
@@ -251,5 +240,4 @@ SamplerState PointLinearSampler = sampler_state
     AddressU = CLAMP;
     AddressV = CLAMP;
 };
-
 #endif // __SHADER_STATE_HLSL__

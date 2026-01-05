@@ -36,7 +36,7 @@ public:
 	_bool IsBlened() { return m_IsBlended; }
 	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
-	_bool isValid();
+
 public:
 	virtual void Render_GUI();
 

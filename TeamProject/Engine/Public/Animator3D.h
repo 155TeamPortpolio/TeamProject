@@ -20,7 +20,6 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         
         _bool               bPause = { true };
-        _bool               bApplied = { false };
         _float              fLayerWeight = {};
         _float              fTargetLayerWeight = {};
         _float              fLayerWeightElapsed = {};
@@ -28,8 +27,6 @@ public:
         EaseType            eLayerEaseType = { EaseType::None };
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
-
-        _bool               bUseFinalLocal = false; //마지막 로컬 기준으로 블랜드할건지
 
         //---------- 베이스 레이어 속성
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
@@ -68,8 +65,6 @@ public:
         //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
         _bool   bKeepTrackPos = { false };
-        _bool   bUpdate_PrevClip = { false };
-        _bool   bUpdate_NewClip = { false };
         _bool   bIgnoreRotation = { false };
         _int    iNextClipIndex = { -1 };
         _float  fBlendTrackPosition = {};
@@ -155,8 +150,7 @@ public://애니매이터 데이터
     _float Get_AnimSpeed(_uint LayerIndex = 0);
     //퍼즈 상태인지
     _bool Get_isPause(_uint LayerIndex = 0);
-    //
-    class CModelData* Get_ModelData() { return m_pData; }
+
     /*----- Setter -----*/
     
     //모션본 직접설정
@@ -193,33 +187,35 @@ public:
     void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
     void Clear_Events();
 
-    
-public: //뼈 관련
+public:
+    //월드상의 최종 뼈 위치를 가져옴
+    _float4x4 Get_BoneMatrix(const string& boneName);
+    _float4x4 Get_BoneMatrix(_uint Index);
+    _float4x4* Get_BoneMatrixPtr(const string& boneName);
+    _float4x4* Get_BoneTransformMatrixPtr(const string& boneName);
+    const vector<_float4x4>& Get_BoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
-
-    _float4x4 Get_BoneTransformationMatrix(AnimArg BoneArg);
-    _float4x4* Get_BoneTransformationMatrixPtr(AnimArg BoneArg);
-    _vector3 Get_BoneTransformationPosition(AnimArg BoneArg);
-    _vector4 Get_BoneTransformationQuaternion(AnimArg BoneArg);
-    const vector<_float4x4>& Get_TransformationMatrices() { return m_TransformationMatrices; };
-    vector<_float4x4>* Get_TransformationBoneMatrices_Ptr() { return &m_TransformationMatrices; };
-
-    void Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg);
-    void Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg);
-    void Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg);
-
-    _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
-    _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
-    _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
-    _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
+    //로컬 뼈 최종위치를 가져옴
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
-    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };    
+    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
+
+public:
+    // 플레이리스트 기능
+    void Playlist_Add(_int iClipIndex, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Add(const string& ClipName, _bool bLoop = false, _float fSpeed = 1.f, _float fBlendDuration = 0.2f);
+    void Playlist_Remove(_int iPlaylistIndex);
+    void Playlist_Clear();
+    void Playlist_Play();
+    void Playlist_Stop();
+    void Playlist_MoveUp(_int iPlaylistIndex);
+    void Playlist_MoveDown(_int iPlaylistIndex);
+    _bool Playlist_isPlaying() const { return m_bPlaylistPlaying; }
+    _int Playlist_GetCurrentIndex() const { return m_iPlaylistIndex; }
+    const vector<PLAYLIST_ENTRY>& Playlist_GetEntries() const { return m_Playlist; }
 
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
-    _int Resolve_BoneIndex(AnimArg BoneArg);
-
     //레이어 인덱스를 찾음
     _int Find_Clip(const string& ClipTag);
     //존재하는지 여부
@@ -244,6 +240,7 @@ protected:
 
     //최종 뼈 계산
     void BuildBone(_float dt);
+    void Update_Playlist();
 
 public:
     virtual void Render_GUI();
@@ -251,6 +248,7 @@ public:
 protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
+    void GUI_Playlist();
 
 private:
     void Reset_Anim();
@@ -277,6 +275,11 @@ protected:
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
 
+    vector<PLAYLIST_ENTRY>  m_Playlist;
+    _int                    m_iPlaylistIndex = { -1 };
+    _bool                   m_bPlaylistPlaying = { false };
+    _bool                   m_bPlaylistLoop = { false };
+
 public:
     static CAnimator3D* Create();
     virtual CComponent* Clone();
@@ -284,7 +287,7 @@ public:
 };
 
 // ───────── Builder
-#pragma region Builder
+
 template <typename T>
 class AnimBuild {
 public:
@@ -333,11 +336,12 @@ public:
         return static_cast<T&>(*this);
     }
 
+
     T& ResetRotation(_bool bResetRotation) {
         m_bPause = bResetRotation;
         return static_cast<T&>(*this);
     }
-
+ 
 protected:
     //레이어 가중치, 가중치가 0이면 업데이트 자체를 하지 않음
     //레이어 가중치가 0이되지 않게 끝이나면 매 프레임마다 업데이트 하는거로 간주
@@ -404,27 +408,11 @@ public:
         m_eBlendEaseType = eEaseType;
         return *this;
     }
-    //이전 클립의 트랙포지션 갖고올건지
+    //애니매이션을 변경하면서 이전 클립의 트랙포지션을 같이 사용해서 섞을건지
     ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos) {
         m_bKeepTrackPos = bKeepTrackPos;
         return *this;
     }
-    //보간하면서 이전 클립의 업데이트를 허용할건지
-    ChangeAnimBuild& Update_PrevClip(_bool bUpdate_PrevClip) {
-        m_bUpdate_PrevClip = bUpdate_PrevClip;
-        return *this;
-    }
-    //보간하면서 현재 클립의 업데이트를 허용할건지
-    ChangeAnimBuild& Update_NewClip(_bool bUpdate_NewClip) {
-        m_bUpdate_NewClip = bUpdate_NewClip;
-        return *this;
-    }
-
-    ChangeAnimBuild& UseFinalLocalPose(_bool b) {
-        m_bUseFinalLocal = b;
-        return *this;
-    }
-
     //애니매이션 보간시 회전을 제외할것인지
     ChangeAnimBuild& IgnoreRotation(_bool bIgnoreRotation) {
         m_bIgnoreRotation = bIgnoreRotation;
@@ -437,16 +425,10 @@ protected:
     _int m_iClipIndex = -1;
 
     //클립 블랜드
-    _float      m_fBlendDuration = { 0.2f };
-    _bool       m_bKeepTrackPos = { false };
-    _bool       m_bUpdate_PrevClip = { false };
-    _bool       m_bConvertCurMatrix = { false };
-    _bool       m_bUpdate_NewClip = { true };
-    _bool       m_bIgnoreRotation = { false };
+    _float      m_fBlendDuration = 0.2f;
+    _bool       m_bKeepTrackPos = false;
+    _bool       m_bIgnoreRotation = false;
     EaseType    m_eBlendEaseType = { EaseType::Linear };
-
-    _bool       m_bUseFinalLocal = false;
 };
-#pragma endregion
 
 NS_END

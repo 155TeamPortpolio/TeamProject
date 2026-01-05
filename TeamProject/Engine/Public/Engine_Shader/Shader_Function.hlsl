@@ -1,7 +1,6 @@
 #ifndef __SHADER_FUNCTION_HLSL__
 #define __SHADER_FUNCTION_HLSL__
 
-
 float2 CalculateFrameIndex(uint Col, uint Row, uint FrameIndex, float2 InTexcoord)
 {
     float2 FrameSize = float2(1.f / Col, 1.f / Row);
@@ -54,27 +53,5 @@ float3 ACESFilm(float3 color)
     float e = 0.14f;
     
     return saturate((color * (a * color + b)) / (color * (c * color + d) + e));
-}
-
-float4 ApplyColorMode(uint ColorMode, float4 Diffuse, float4 Color)
-{
-    float4 vResult = Diffuse;
-    
-    if (0 == ColorMode) /* Multiply */
-    {
-        vResult = Diffuse * Color;
-        vResult.a = Diffuse.a * Color.a;
-    }
-    else if(1 == ColorMode) /* Additive */
-    {
-        vResult = Diffuse + Color;
-        vResult.a = Diffuse.a * Color.a;
-    }
-    else
-    {
-        vResult = Diffuse;
-    }
-    
-    return vResult;
 }
 #endif

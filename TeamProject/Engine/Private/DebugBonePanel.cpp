@@ -250,7 +250,7 @@ void CDebugBonePanel::DrawSkeletonOverlay_ImGui(CGameObject* target, const ImVec
 	vector<_float4x4> boneModel;
 
 	if (Animating)
-		boneModel = pAnimator->Get_CombinedBoneMatrices();
+		boneModel = pAnimator->Get_BoneMatrices();
 	else
 		boneModel = pModel->Get_BoneMatrices();
 

@@ -276,7 +276,6 @@ void CParticleSystem::ApplyPending()
 		CreateStructuredBuffers(m_PendingChanged.iMaxSpawnParticleCount);
 
 	m_eModuelMask = static_cast<MODULE_MASK>(m_PendingChanged.iModuleMask);
-	m_eColorMode = static_cast<COLOR_MODE>(m_PendingChanged.iColorMode);
 	m_eParticleSpace = m_PendingChanged.isWorld ? PARTICLE_SPACE::WORLD : PARTICLE_SPACE::LOCAL;
 
 	m_fDelayDuration = m_PendingChanged.fDelayTime;
@@ -310,9 +309,6 @@ void CParticleSystem::ApplyPending()
 	m_LifeTimeColor.vStartColor = m_PendingChanged.vStartColor;
 	m_LifeTimeColor.vEndColor = m_PendingChanged.vEndColor;
 
-	m_LifeTimeAlpha.vAlphaKey = m_PendingChanged.vAlphaKey;
-	m_LifeTimeAlpha.vRatio = m_PendingChanged.vRatio;
-
 	m_TextureSheetAnimation.isParticleAnimated = m_PendingChanged.isParticleAnimated;
 	m_TextureSheetAnimation.isRandomFrameIndex = m_PendingChanged.isRandomFrameIndex;
 	m_TextureSheetAnimation.iCol = m_PendingChanged.iCol;
@@ -326,8 +322,6 @@ void CParticleSystem::ApplyPending()
 	auto customInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	customInstance->Set_Param("Col", { &m_TextureSheetAnimation.iCol,"uint",sizeof(_uint) });
 	customInstance->Set_Param("Row", { &m_TextureSheetAnimation.iRow,"uint",sizeof(_uint) });
-
-	customInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
 
 	m_IsChanged = false;
 }
@@ -580,10 +574,6 @@ void CParticleSystem::UpdateParticles(_float dt)
 		cbFrame.vStartColor = m_LifeTimeColor.vStartColor;
 		cbFrame.vEndColor = m_LifeTimeColor.vEndColor;
 
-		/* Life Time Alpha */
-		cbFrame.vAlphaKey = m_LifeTimeAlpha.vAlphaKey;
-		cbFrame.vRatio = m_LifeTimeAlpha.vRatio;
-
 		/* Texture Sheet Animation */
 		cbFrame.isAnimated = m_TextureSheetAnimation.isParticleAnimated ? 1 : 0;
 		cbFrame.iMaxFrameIndex = m_TextureSheetAnimation.iMaxFrameIndex;
@@ -736,11 +726,9 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 	particle.fMaxLifeTime = Helper::Get_Random_Float(m_vStartLifeTime.x, m_vStartLifeTime.y);
 
 	particle.vSize = m_vStartSize;
-	particle.vStartSize = particle.vSize * m_LifeTimeSize.vStartScale;
+	particle.vStartSize = particle.vSize;
 
-	particle.vColor = m_LifeTimeColor.vStartColor;
-	particle.vColor.w = m_LifeTimeAlpha.vAlphaKey.x;
-
+	particle.vColor = _float4(1.f, 1.f, 1.f, 1.f);
 	particle.fNoiseFrequency = Helper::Get_Random_Float(0.8f, 1.2f);
 
 	if (m_TextureSheetAnimation.isRandomFrameIndex)

@@ -20,7 +20,6 @@ Particle LIFE_TIME_SIZE(Particle p)
     Particle Out = p;
     
     float t = Out.fLifeTime / Out.fMaxLifeTime;
-    t = saturate(t);
     
     float2 vCurrScale = lerp(vStartScale, vEndScale, t);
     Out.vSize = Out.vStartSize * vCurrScale;
@@ -33,41 +32,9 @@ Particle LIFE_TIME_COLOR(Particle p)
     Particle Out = p;
     
     float t = Out.fLifeTime / Out.fMaxLifeTime;
-    t = saturate(t);
     
     float4 vCurrColor = lerp(vStartColor, vEndColor, t);
-    Out.vColor.rgb = vCurrColor.rgb;
-    
-    return Out;
-}
-
-Particle LIFE_TIME_ALPHA(Particle p)
-{
-    Particle Out = p;
-    
-    float t = Out.fLifeTime / Out.fMaxLifeTime;
-    float alpha = 1.f;
-    
-    t = saturate(t);
-
-    if (t <= vRatio.x)
-    {
-        float u = t / vRatio.x;
-        alpha = lerp(vAlphaKey.x, vAlphaKey.y, u);
-    }
-    else if (t <= vRatio.y)
-    {
-        float u = (t - vRatio.x) / (vRatio.y - vRatio.x);
-        alpha = lerp(vAlphaKey.y, vAlphaKey.z, u);
-    }
-    else
-    {
-        float u = (t - vRatio.y) / (1.f - vRatio.y);
-        alpha = lerp(vAlphaKey.z, vAlphaKey.w, u);
-    }
-    
-    alpha = saturate(alpha);
-    Out.vColor.a = alpha;
+    Out.vColor = vCurrColor;
     
     return Out;
 }
