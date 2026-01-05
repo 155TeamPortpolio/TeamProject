@@ -7,49 +7,36 @@ HRESULT CLogo::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
-	return S_OK;
+    return S_OK;
 }
 
 HRESULT CLogo::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    CUI_Object* pUI = Builder::Create_UIObject({ "Logo_Level", "Proto_GameObject_CanvasPanel" })
-        .Asset("loading.json")
-        .Build("loading");
-    
-    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pUI, "Logo_Level");
-
-    m_handle = pUI->Get_Handle();
-
-	return S_OK;
+    return S_OK;
 }
 
-void CLogo::Priority_Update(_float dt)
+void CLogo::Awake()
 {
+    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();// m_LevelTag;
+    CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
+        .Asset("logo.json")
+        .Build("prefabLogo");
+    
+    if (uiObj)
+    {
+        CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
+
+        m_handle = uiObj->Get_Handle();
+    }
+
+    if (m_handle.isValid())
+        m_handle.Get()->Set_Animation(0);
 }
 
 void CLogo::Update(_float dt)
-{
-    if (GetAsyncKeyState('P'))
-    {
-        if (m_handle.isValid())
-            m_handle.Get()->Set_Animation(1);
-    }
-
-    if (GetAsyncKeyState('O'))
-    {
-        if (m_handle.isValid())
-            m_handle.Get()->Set_Animation(0);
-    }
-}
-
-void CLogo::Late_Update(_float dt)
-{
-}
-
-void CLogo::Render_GUI()
-{
+{ 
 }
 
 CGameObject* CLogo::Create()

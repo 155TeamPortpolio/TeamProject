@@ -4,7 +4,6 @@
 
 /* UI */
 #include "UIDirector.h"
-#include "Logo.h"
 
 CLogoLevel::CLogoLevel(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -20,11 +19,9 @@ HRESULT CLogoLevel::Initialize()
 
 HRESULT CLogoLevel::Awake()
 {
-	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
-
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-
+	uiDirector->Load_LevelObjects("Logo_Level");
 
 	return S_OK;
 }

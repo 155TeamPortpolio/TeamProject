@@ -511,6 +511,7 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
 UI_HANDLE CUI_Object::Get_Handle()
 {
     UI_HANDLE hObj = {};
+
     if (m_LevelTag.empty()) {
         hObj.Reset();
         return hObj;

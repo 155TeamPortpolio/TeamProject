@@ -6,53 +6,54 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
-void CUIDirector::Initialize(const string& levelKey)
+void CUIDirector::Initialize()
+{
+	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
+	UILoader::Add_ResourcePath();
+
+	// json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장
+	Load_UILevelData("uiLevels.json");
+}
+
+void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
 	m_levelKey = levelKey;
-	UILoader::Load(m_levelKey);
+	// 레벨에 프로토타입 등록
+	UILoader::Add_Prototype(levelKey);
+
+	// json 데이터에서 레벨에 있어야하는 객체 생성
+	const json& levels = m_json["levels"];
+
+	if (!levels.contains(levelKey))
+		return;
+
+	const json& objects = levels[levelKey]["objects"];
+
+	for (const auto& obj : objects)
+	{
+		const string protoTag = obj["prototypeTag"];
+		const string instName = obj["instanceName"];
+
+		CUI_Object* uiObj = Builder::Create_UIObject({ levelKey, protoTag })
+			.Build(instName);
+
+		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey);
+	}
 }
 
-void CUIDirector::SetActive(UICanvas canvas, void* arg)
+void CUIDirector::Load_UILevelData(const string& resourceKey)
 {
-    auto& handle = m_canvasHandles[ENUM(canvas)];
-    if (!handle.isValid()) return;
-    handle.Get()->UI_Active(arg);
-}
+	string filePath = CGameInstance::GetInstance()->Get_ResourceMgr()->Get_ResourcePath(resourceKey);
 
-void CUIDirector::SetActive(initializer_list<UICanvas> canvases, void* arg)
-{
-    for (auto canvas : canvases)
-        SetActive(canvas, arg);
-}
+	ifstream file(filePath);
+	if (!file.is_open())
+		return;
 
-void CUIDirector::SetDeactive(UICanvas canvas)
-{
-    auto& handle = m_canvasHandles[ENUM(canvas)];
-    if (!handle.isValid()) return;
-    handle.Get()->UI_DeActive();
-}
-
-void CUIDirector::SetDeactive(initializer_list<UICanvas> canvases)
-{
-    for (auto canvas : canvases)
-        SetDeactive(canvas);
-}
-
-void CUIDirector::PushEvent(UIEventType type, void* arg)
-{
-    switch (type)
-    {
-    case UIEventType::Enter_Monitor:
-        break;
-    case UIEventType::Exit_Monitor:
-        break;
-    }
+	file >> m_json;
+	file.close();
 }
 
 void CUIDirector::Free()
 {
 	__super::Free();
-
-    for (auto& handle : m_canvasHandles)
-        handle.Reset();
 }

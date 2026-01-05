@@ -36,7 +36,7 @@ HRESULT CMainApp::Initialize()
 	Set_Levels();
 
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize(G_GlobalLevelKey);
+	uiDirector->Initialize();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());

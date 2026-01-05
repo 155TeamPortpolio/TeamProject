@@ -8,8 +8,6 @@ NS_END
 
 NS_BEGIN(Client)
 
-enum class UICanvas { Logo, End };
-
 class CUIDirector final : public CBase
 {
 	DECLARE_SINGLETON(CUIDirector);
@@ -18,21 +16,18 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
-	void Initialize(const string& levelKey);
-
-public:
-	void PushEvent(UIEventType type, void* arg = {});
-
-private:
-	void SetActive(UICanvas canvas, void* arg = {});
-	void SetActive(initializer_list<UICanvas> canvases, void* arg = {});
-
-	void SetDeactive(UICanvas canvas);
-	void SetDeactive(initializer_list<UICanvas> canvases);
+	/*모든 레벨에 필요한 공통 데이터 등록*/
+	void Initialize();
+	/*레벨별로 필요한 프로토타입, 게임 오브젝트 등록*/
+	void Load_LevelObjects(const string& levelKey);
 
 private:
-	string                                m_levelKey;
-	array<UI_HANDLE, ENUM(UICanvas::End)> m_canvasHandles{};
+	/*json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장*/
+	void Load_UILevelData(const string& resourceKey);
+
+private:
+	string								m_levelKey;
+	nlohmann::json						m_json = {};
 
 public:
 	virtual void Free() override;
