@@ -17,10 +17,12 @@ protected:
 	virtual ~CUIObject_Tool() DEFAULT;
 
 public:
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-	virtual void Awake() override;
-	virtual void Update(_float dt) override;
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Awake()                          override;
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Render_GUI()                     override;
 
 public:
 	virtual void OnClick() override;

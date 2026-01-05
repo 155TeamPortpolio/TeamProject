@@ -29,11 +29,6 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CMaskUI::Update(_float dt)
-{
-    __super::Update(dt);
-}
-
 void CMaskUI::Render_GUI()
 {
     __super::Render_GUI();
@@ -59,6 +54,12 @@ void CMaskUI::Save(nlohmann::ordered_json& data)
 
     data["typeTag"] = m_strTypeTag;
     data["maskTextureKey"] = m_strTextureKey;
+
+    auto sprite = Get_Component<CSprite2D>();
+    const string curPass = sprite->Get_PassConstant();
+
+    if (curPass == "UI_StencilWritePreview") data["pass"] = "UI_StencilWrite";
+    else                                     data["pass"] = curPass;
 }
 
 void CMaskUI::Load(const nlohmann::ordered_json& data)
@@ -66,7 +67,6 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
     __super::Load(data);
 
     m_strTextureKey = data.value("maskTextureKey", "empty.png");
-
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 
     m_previewVisible = true;
@@ -74,7 +74,6 @@ void CMaskUI::Load(const nlohmann::ordered_json& data)
 
     auto sprite = Get_Component<CSprite2D>();
     sprite->Set_Param("MaskPreviewAlpha", {&m_previewAlpha, "float", sizeof(_float)});
-    sprite->ChangePass("UI_StencilWritePreview");
 }
 
 CGameObject* CMaskUI::Create()

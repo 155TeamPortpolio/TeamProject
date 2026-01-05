@@ -45,11 +45,14 @@ cbuffer ShadowBuffer : register(b8)
     matrix matShadowProjection;
     matrix matShadowViewInverse;
     matrix matShadowProjectionInverse;
+    matrix matLightViewProj[4];
+    float4 vCascadeSplits;
     float4 vShadowPosition;
+    int iCurrentCascade;
     float zShadowFar;
-    float3 ShadowPadding;
+    
+    float2 ShadowPadding;
 };
-
 cbuffer LightBuffer : register(b9)
 {
     vector vLightDir;
@@ -137,10 +140,12 @@ Texture2D HDRBloomFinalTexture : register(t52);
 Texture2D SkinnedCombinedTexture : register(t53);
 Texture2D StaticCombinedTexture : register(t54);
 Texture2D UICombinedTexture : register(t55);
+Texture2D EffectCombinedTexture : register(t56);
 
 Texture2D FinalTexture : register(t56);
 
 // 式式式式式式式式式式式式式  ETC 式式式式式式式式式式式式式
+Texture2DArray ShadowMapArray : register(t58);
 Texture2D RampTexture : register(t59);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
@@ -149,4 +154,10 @@ StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t61);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t70);
+
+
+// 式式式式式式式式式式式式式  Shadow 式式式式式式式式式式式式式
+SamplerComparisonState ShadowSampler : register(s10);
+
+
 #endif // __SHADER_DEFINE_HLSL__

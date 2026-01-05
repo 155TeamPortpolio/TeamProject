@@ -349,10 +349,10 @@ HRESULT CGameObject::Make_OpaquePacket()
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_3DUI)
 			Make_3DUIPacket(packet);
 
-		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
-			if (packet.pModel->doShadowCast()) {
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-			}
+		 if (packet.pModel->doShadowCast()) {
+			if(packet.pMaterial->isValid(packet.MaterialIndex))
+				 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
+		 }
 	}
 	return S_OK;
 }

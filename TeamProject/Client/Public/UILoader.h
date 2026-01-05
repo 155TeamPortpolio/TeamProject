@@ -4,7 +4,8 @@ NS_BEGIN(Client)
 
 namespace UILoader
 {
-	void Load(const string& levelKey);
+	void Add_ResourcePath();
+	void Add_Prototype(const string& levelKey);
 }
 
 NS_END

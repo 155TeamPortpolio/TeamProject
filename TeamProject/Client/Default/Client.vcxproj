@@ -176,11 +176,14 @@
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
+    <ClInclude Include="..\Public\LoadingLevel.h" />
+    <ClInclude Include="..\Public\Logo.h" />
     <ClInclude Include="..\public\MaskUI.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h" />
     <ClInclude Include="..\Public\IBaseState.h" />
     <ClInclude Include="..\Public\IHState.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
+    <ClInclude Include="..\Public\LogoLevel.h" />
     <ClInclude Include="..\Public\MapData_Defines.h" />
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
     <ClInclude Include="..\public\MapDataCloud.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="..\Public\SacrificeHand.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
+    <ClInclude Include="..\public\ShadowCam.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
     <ClInclude Include="..\Public\StateParameter.h" />
@@ -311,6 +315,9 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\Private\LoadingLevel.cpp" />
+    <ClCompile Include="..\Private\Logo.cpp" />
+    <ClCompile Include="..\Private\LogoLevel.cpp" />
     <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
@@ -358,6 +365,7 @@
     <ClCompile Include="..\Private\SacrificeHand.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp" />
     <ClCompile Include="..\private\SequenceCam.cpp" />
+    <ClCompile Include="..\private\ShadowCam.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />
     <ClCompile Include="..\private\TestCloud.cpp" />

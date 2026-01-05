@@ -78,7 +78,7 @@ void CAnimationClip::TranslateAnimateMatrixFromDuration(vector<_float4x4>& trans
 		m_Channels[i]->TranslateAnimateMatrix(transfomationMatrices, TrackPosition, false);
 	}
 
-	//Check_Event(CurrentTrackPosition, RealTrackPosition, EventBus);
+	Check_Event(0, TrackPosition, EventBus);
 }
 
 void CAnimationClip::TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices, _float Duration)

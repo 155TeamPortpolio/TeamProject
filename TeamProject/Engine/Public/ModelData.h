@@ -43,11 +43,13 @@ public:
 	const vector<_int> GenerateFollowingIndices(class CModelData* pMasterData);
 	MINMAX_BOX Get_LocalBoundingBox();
 	MINMAX_BOX Get_MeshBoundingBox(_uint index);
+	_bool Get_RiggedData(HumanoidRigData& outData);
 
 	void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
 #pragma endregion 
-	virtual void Render_GUI();
 #pragma region GUI
+	virtual void Render_GUI();
+#pragma endregion 
 
 protected:
 	class CSkeleton* m_pSkeleton = { nullptr };
