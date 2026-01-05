@@ -313,17 +313,15 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float4 result = vSkinned;
+    float3 result = vSkinned.rgb;
     
     result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
-    result.a = max(result.a, vStatic.a);
     
-    result.rgb += vEffect.rgb * vEffect.a;
-
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
-    result.a = max(result.a, vUI.a);
     
-    Out.vBackBuffer = float4(result.rgb, 1.0f);
+    float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
+
+    Out.vBackBuffer = float4(finalColor, 1.f);
     
     return Out;
 }
