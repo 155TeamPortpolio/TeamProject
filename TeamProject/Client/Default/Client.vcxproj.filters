@@ -367,6 +367,9 @@
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\04. BattleSystem">
+      <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -699,6 +702,9 @@
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BattleSystem.h">
+      <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1019,6 +1025,9 @@
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattleSystem.cpp">
+      <Filter>03. Utility\04. BattleSystem</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

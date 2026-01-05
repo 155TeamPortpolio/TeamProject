@@ -10,40 +10,40 @@ class CCamDirector; class COrbitCam;
 class CTestLevel : public CLevel
 {
 private:
-    CTestLevel(const string& LevelKey);
-    virtual ~CTestLevel() DEFAULT;
+	CTestLevel(const string& LevelKey);
+	virtual ~CTestLevel() DEFAULT;
 
 public:
-    virtual HRESULT Initialize() override;
-    virtual HRESULT Awake()      override;
-    virtual void    Update()     override;
-    virtual HRESULT Render()     override;
+	virtual HRESULT Initialize() override;
+	virtual HRESULT Awake()      override;
+	virtual void    Update()     override;
+	virtual HRESULT Render()     override;
 
 private:
-    void Ready_Map(const string& LevelTag, const string& AreaTag);
-    void Rake_MapResources();
-    void Ready_Camera();
-    void Ready_TestObject();
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
+	void Rake_MapResources();
+	void Ready_Camera();
+	void Ready_TestObject();
 
 
 public:
-    static void PreLoad_Level();
+	static void PreLoad_Level();
 
 private:
-    CGameInstance* m_pGameInstance{};
-    CCamDirector*  m_pCamDirector{};
+	CGameInstance* m_pGameInstance{};
+	CCamDirector* m_pCamDirector{};
 
-    OBJECT_HANDLE  m_miyabiHandle{};
-    OBJECT_HANDLE  m_freeCamHandle{};
-    OBJECT_HANDLE  m_orbitCamHandle{};
-    OBJECT_HANDLE  m_seqCamHandle{};
+	OBJECT_HANDLE  m_miyabiHandle{};
+	OBJECT_HANDLE  m_freeCamHandle{};
+	OBJECT_HANDLE  m_orbitCamHandle{};
+	OBJECT_HANDLE  m_seqCamHandle{};
 
-    // 임시) 쓰레드풀 작업 후 개선 및 위치 이동예정 - 경인
-    class CMapDataCloud* m_pMapDataCloud = { nullptr };
+	// 임시) 쓰레드풀 작업 후 개선 및 위치 이동예정 - 경인
+	class CMapDataCloud* m_pMapDataCloud = { nullptr };
 
 public:
-    static CTestLevel* Create(const string& LevelKey);
-    virtual void Free() override;
+	static CTestLevel* Create(const string& LevelKey);
+	virtual void Free() override;
 };
 
 NS_END

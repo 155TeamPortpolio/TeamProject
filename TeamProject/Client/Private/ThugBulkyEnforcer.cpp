@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "ThugBulkyEnforcer.h"
 
+#include "Helper_Func.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
+/* Component */
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
-#include "Helper_Func.h"
 
 /* States */
 #include "StateMachine.h"
