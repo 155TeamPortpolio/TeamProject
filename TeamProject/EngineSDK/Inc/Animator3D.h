@@ -95,6 +95,7 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
+    HRESULT Link_DynamicBone();
     HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     virtual void Update_Animation(_float dt);
 
@@ -221,6 +222,12 @@ public: //뼈 관련
     void Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg);
     void Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
+public:
+    class CDynamicBone* Get_DynamicBone_Ptr() { 
+        if (nullptr == m_pDynamicBone) Link_DynamicBone();
+        return m_pDynamicBone;
+    };
+
 public://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
@@ -237,6 +244,7 @@ public://애니매이션 체크
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+
 
 protected:
     //애니매이션 연산
@@ -265,9 +273,10 @@ private:
     void Reset_Anim();
 
 protected:
-    class CModelData* m_pData = {};
-    Matrix m_PreTransform = { Matrix::Identity };
+    class CModelData*   m_pData = { nullptr };
+    class CDynamicBone* m_pDynamicBone = { nullptr };
 
+    Matrix m_PreTransform = { Matrix::Identity };
     _bool                           m_bUpdatedClip = { false };
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
@@ -280,6 +289,7 @@ protected:
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
+
 
     /*Managing*/
     vector<_bool> m_pAnimLoops;

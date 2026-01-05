@@ -4,6 +4,7 @@
 #include "ModelData.h"
 #include "GameInstance.h"
 #include "IResourceService.h"
+#include "DynamicBone.h"
 
 CAnimator3D::CAnimator3D()
 {
@@ -91,6 +92,16 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 	m_AnimLayers[0].fLayerWeight = 1.f;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
 
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Link_DynamicBone()
+{
+	CDynamicBone* pDynamicBone = CDynamicBone::Create(this);
+	if (nullptr == pDynamicBone)
+		return E_FAIL;
+
+	m_pDynamicBone = pDynamicBone;
 	return S_OK;
 }
 
@@ -1413,6 +1424,7 @@ void CAnimator3D::Free()
 {
 	__super::Free();
 	Safe_Release(m_pData);
+	Safe_Release(m_pDynamicBone);
 	for (auto& Clip : m_pAnimClips) {
 		Safe_Release(Clip);
 	}

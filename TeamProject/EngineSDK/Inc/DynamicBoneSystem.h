@@ -15,10 +15,9 @@ public:
 
 public:
     HRESULT Create_Chain(AnimArg BoneArg);
-    HRESULT Add_Chain();
 
 protected:
-
+    void Create_Node(_int iParentIndex, DYNAMIC_CHAIN Chain);
 
 protected:
     class CAnimator3D* m_pAnimator = { nullptr };
