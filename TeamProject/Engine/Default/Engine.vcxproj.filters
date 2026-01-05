@@ -552,6 +552,9 @@
     <ClInclude Include="..\public\UIRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Humanoid.h">
+      <Filter>99. Defines\AnimationLayout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->

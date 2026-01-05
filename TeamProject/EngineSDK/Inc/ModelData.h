@@ -46,8 +46,9 @@ public:
 
 	void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
 #pragma endregion 
-	virtual void Render_GUI();
 #pragma region GUI
+	virtual void Render_GUI();
+#pragma endregion 
 
 protected:
 	class CSkeleton* m_pSkeleton = { nullptr };
