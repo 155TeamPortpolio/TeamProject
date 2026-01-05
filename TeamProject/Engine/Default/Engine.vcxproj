@@ -387,6 +387,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThirdPartyCsv.h" />
     <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />

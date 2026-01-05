@@ -23,10 +23,16 @@ public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Priority_Update(_float dt) override {};
-    virtual void    Update(_float dt) override {};
+    virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override {};
 
+public:
+    BATTLEOBJ_INFO*     GetCharacterOnField();
+
 protected:
+    vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos; 
+ 
+protected: 
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
 };

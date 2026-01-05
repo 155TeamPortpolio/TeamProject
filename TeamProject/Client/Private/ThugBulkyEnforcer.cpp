@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "ThugBulkyEnforcer.h"
 
+#include "Helper_Func.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
+/* Component */
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
-#include "Helper_Func.h"
 
 /* States */
 #include "StateMachine.h"
@@ -80,9 +83,11 @@ void CThugBulkyEnforcer::Priority_Update(_float dt)
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 
+	__super::Update(dt);
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
@@ -101,11 +106,12 @@ void CThugBulkyEnforcer::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	// =======================================================
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
 		ImGui::TreePop();
 	}
-
+	// =======================================================
 #pragma region State
 	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
 	string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
@@ -124,7 +130,7 @@ void CThugBulkyEnforcer::Render_GUI()
 	}
 	ImGui::EndChild();
 #pragma endregion
-
+	// =======================================================
 	ImGui::BeginChild("BlackBoard##ThugBulkyEnforcerBlackBoard", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
 	string TagBlackBoardCurState = "Current State : " + m_tAttackBlackBoard.currentStateTag;
 	ImGui::Text(TagBlackBoardCurState.c_str());
@@ -139,10 +145,22 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::EndDisabled();
 
 	ImGui::EndChild();
+	// =======================================================
+	auto pCharacter = GetCharacterOnField();
+	if (nullptr != pCharacter) {
+		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerTracePlayer", ImVec2{ 0, childHeight /*+ textLineHeight * 6*/ }, true);
 
+		ImGui::Text("Character Name : %s", pCharacter->TagInstanceName);
+		ImGui::Text("Character Pos : %.2f, %.2f, %.2f", pCharacter->vPos.x, pCharacter->vPos.y, pCharacter->vPos.z);
+		ImGui::Text("Character CCT Radius : %.2f", pCharacter->fRadius);;
+
+	ImGui::EndChild();
+	}
+	// =======================================================
 	
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 
+	// =======================================================
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
 		ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 

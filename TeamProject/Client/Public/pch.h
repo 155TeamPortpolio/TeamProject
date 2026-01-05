@@ -18,5 +18,5 @@ using namespace Client;
 
 #include "Engine_Defines.h"
 
-#include "Data_Struct.h"
+#include "Client_Struct.h"
 #include "Event_Struct.h"
