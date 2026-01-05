@@ -42,8 +42,10 @@ public:
 
     void SetPhase(PHASE phase) { m_eCurrPhase = phase; }
     _bool IsOverDrive()const { return m_IsOverDrive; }
-    void ActiveOverDrive() { m_IsOverDrive = true; }
-    void DeactiveOverDrive() { m_IsOverDrive = false; }
+    _bool IsOverDriveCharged()const { return m_IsOverDriveCharged; }
+
+    void SetOverDrive(_bool overdrive) { m_IsOverDrive = overdrive; }
+    void SetOverDriveCharged(_bool charged) { m_IsOverDriveCharged = charged; }
 
     void Idle();
     void Evade();
@@ -52,6 +54,14 @@ public:
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_AttackBlackBoard; }
     PHASE GetCurrPhase()const { return m_eCurrPhase; }
 
+    /* Hand */
+    void Phase1Attack();
+    void Phase2Attack();
+    void OverDrive_Start();
+    void OverDrive_Attack1();
+    void OverDrive_Attack2();
+    void OverDrive_Attack3();
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
@@ -59,17 +69,21 @@ private:
     void Update_States(_float dt);
 
 private:
-    CStateMachine<CSacrifice>* m_pStateMachine = { nullptr };
+    CStateMachine<CSacrifice>* m_pStateMachine{};
     vector<_uint> m_PartMeshIndices;
     ATTACK_BLACK_BOARD m_AttackBlackBoard{};
     _bool m_RequestIdle = false;
 
     _float m_fIdleElasedTime{};
-    _float m_fIdleDuration = 0.1f;
+    _float m_fIdleDuration = 3.05f;
     _float m_fPhase1ElapseTime{};
     _float m_fPhase1Duration = 10.f;
 
     PHASE m_eCurrPhase = PHASE::PHASE1;
     _bool m_IsOverDrive = false; /* Only Use Phase2 */
+    _bool m_IsOverDriveCharged = false;
+
+    _uint m_iHandID{};
+
 };
 NS_END

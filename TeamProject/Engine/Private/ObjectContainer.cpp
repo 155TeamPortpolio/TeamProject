@@ -36,7 +36,9 @@ HRESULT CObjectContainer::Initialize(COMPONENT_DESC* pArg)
 
 void CObjectContainer::Pre_EngineUpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	m_UpdateOrderSnapShot.reserve(m_UpdateOrder.size());
+	m_UpdateOrderSnapShot = m_UpdateOrder;
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -51,7 +53,7 @@ void CObjectContainer::Pre_EngineUpdateChild(_float dt)
 
 void CObjectContainer::Post_EngineUpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -66,7 +68,7 @@ void CObjectContainer::Post_EngineUpdateChild(_float dt)
 
 void CObjectContainer::Priority_UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -81,7 +83,7 @@ void CObjectContainer::Priority_UpdateChild(_float dt)
 
 void CObjectContainer::UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -96,7 +98,7 @@ void CObjectContainer::UpdateChild(_float dt)
 
 void CObjectContainer::Late_UpdateChild(_float dt)
 {
-	for (_uint id : m_UpdateOrder)
+	for (_uint id : m_UpdateOrderSnapShot)
 	{
 		if (id == 0) continue;
 
@@ -106,6 +108,21 @@ void CObjectContainer::Late_UpdateChild(_float dt)
 		CGameObject* child = m_ChildrenObjects[indexIter->second];
 		if (child && child->Is_Alive())
 			child->Late_Update(dt);
+	}
+}
+
+void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
+{
+	for (_uint id : m_UpdateOrderSnapShot)
+	{
+		if (id == 0) continue;
+
+		auto indexIter = m_IndexByID.find(id);
+		if (indexIter == m_IndexByID.end()) continue;
+
+		CGameObject* child = m_ChildrenObjects[indexIter->second];
+		if (child && child->Is_Alive())
+			child->RenderHierarchy(SelectedObject, child == SelectedObject);
 	}
 }
 
@@ -174,7 +191,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 		return m_IndexByID[ObjectID];
 	}
 	_uint ObjectIndex = m_ChildrenObjects.size();
-	
+
 	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
 	{	//중간에 비어잇다면 널포인터
 		if (nullptr == m_ChildrenObjects[i]) {
@@ -217,7 +234,7 @@ _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 	}
 	else {
 		/*레이어가 있으면*/
-		if (m_pOwner->Get_Layer()) { 
+		if (m_pOwner->Get_Layer()) {
 			CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObject, m_pOwner->Get_LayerDesc());
 		}
 	}
@@ -329,76 +346,103 @@ void CObjectContainer::Dettach_Child(_uint ChildIndex)
 void CObjectContainer::Render_GUI()
 {
 	ImGui::SeparatorText("Object_Container");
-	float childWidth = ImGui::GetContentRegionAvail().x;
-	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * (m_ChildrenObjects.size() + 3)) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	ImGui::BeginChild("##AudioSourceChild", ImVec2{ 0, childHeight }, true);
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * ((float)m_UpdateOrder.size() + 3.0f)) + (ImGui::GetStyle().WindowPadding.y * 2.0f);
+
+	ImGui::BeginChild("##ObjectContainerChild", ImVec2{ 0, childHeight }, true);
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 8.0f);
-	for (size_t i = 0; i < m_ChildrenObjects.size(); i++)
+
+	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
 	{
-		if (m_ChildrenObjects[i] == nullptr)
+		const _uint objectId = m_UpdateOrder[orderIndex];
+		if (objectId == 0)
+			continue; // Destroy에서 0 박은 슬롯
+
+		auto indexIter = m_IndexByID.find(objectId);
+		if (indexIter == m_IndexByID.end())
 			continue;
 
-		string btnName = "Delete : " + m_ChildrenObjects[i]->Get_InstanceName() + to_string(i);
+		const _uint childIndex = indexIter->second;
+		CGameObject* childObject = (childIndex < (_uint)m_ChildrenObjects.size()) ? m_ChildrenObjects[childIndex] : nullptr;
+		if (!childObject)
+			continue;
 
-		if (ImGui::Button(btnName.c_str())) {
-			Destroy_Child(i);
-		}
+		ImGui::PushID((int)objectId);
 
-		if (ImGui::IsItemHovered()) {
+		const string labelText = childObject->Get_InstanceName() + "  (ID:" + to_string(objectId) + ")";
+		ImGui::AlignTextToFramePadding();
+		ImGui::TextUnformatted(labelText.c_str());
+		ImGui::SameLine();
+
+		const float spacing = 6.0f;
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Up"))
+			Upper_Order(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Down"))
+			Lower_Order(childObject);
+
+		ImGui::SameLine(0.0f, spacing);
+		if (ImGui::SmallButton("Delete"))
+			Destroy_Child(childIndex);
+
+		// 툴팁
+		if (ImGui::IsItemHovered())
+		{
 			ImGui::BeginTooltip();
-			ImGui::Text(btnName.c_str());
+			ImGui::Text("Delete : %s", childObject->Get_InstanceName().c_str());
 			ImGui::EndTooltip();
 		}
+
+		ImGui::PopID();
 	}
+
 	ImGui::PopStyleVar();
 	ImGui::EndChild();
 }
 
-void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint index)
+
+void CObjectContainer::ReorderChildren(CGameObject* objectPtr, _uint targetIndex)
 {
-	if (!objectPtr)
-		return;
-	
+	if (!objectPtr) return;
+
 	const _uint objectId = objectPtr->Get_ObjectID();
-	if (m_IndexByID.find(objectId) == m_IndexByID.end())
-		return;
+	if (m_IndexByID.find(objectId) == m_IndexByID.end()) return;
 
-	auto existingIter = m_OrderIndexByID.find(objectId);
-	if (existingIter != m_OrderIndexByID.end())
+	_bool found = false;
+	_uint currentIndex = 0;
+
+	for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
 	{
-		const _uint oldIndex = existingIter->second;
-
-		if (oldIndex < (_uint)m_UpdateOrder.size() && m_UpdateOrder[oldIndex] == objectId)
+		if (m_UpdateOrder[scanIndex] == objectId)
 		{
-			m_UpdateOrder.erase(m_UpdateOrder.begin() + oldIndex);
-			if (index > oldIndex) --index;
-		}
-		else
-		{
-			for (_uint scanIndex = 0; scanIndex < (_uint)m_UpdateOrder.size(); ++scanIndex)
-			{
-				if (m_UpdateOrder[scanIndex] == objectId)
-				{
-					m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
-					if (index > scanIndex) --index;
-					break;
-				}
-			}
+			found = true;
+			currentIndex = scanIndex;
+			m_UpdateOrder.erase(m_UpdateOrder.begin() + scanIndex);
+			break;
 		}
 	}
+	if (!found) return;
 
-	if (index > (_uint)m_UpdateOrder.size())
-		index = (_uint)m_UpdateOrder.size();
+	// 삭제로 인해 뒤쪽 인덱스가 당겨지는 보정
+	if (currentIndex < targetIndex)
+		targetIndex = (targetIndex == 0) ? 0 : (targetIndex );
 
-	m_UpdateOrder.insert(m_UpdateOrder.begin() + index, objectId);
+	if (targetIndex > (_uint)m_UpdateOrder.size())
+		targetIndex = (_uint)m_UpdateOrder.size();
+
+	m_UpdateOrder.insert(m_UpdateOrder.begin() + targetIndex, objectId);
 
 	m_OrderIndexByID.clear();
 	m_OrderIndexByID.reserve(m_UpdateOrder.size());
 	for (_uint orderIndex = 0; orderIndex < (_uint)m_UpdateOrder.size(); ++orderIndex)
 		m_OrderIndexByID[m_UpdateOrder[orderIndex]] = orderIndex;
 }
+
+
 
 void CObjectContainer::Upper_Order(CGameObject* pObject)
 {
@@ -509,6 +553,6 @@ void CObjectContainer::Free()
 	m_ChildrenObjects.clear();
 	m_ChildrensName.clear();
 	m_IndexByID.clear();
-	 m_OrderIndexByID.clear();
-	m_UpdateOrder.clear();      
+	m_OrderIndexByID.clear();
+	m_UpdateOrder.clear();
 }

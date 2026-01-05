@@ -132,14 +132,14 @@ _float CStateParameter::Get_Float() const
 {
 	if (m_eType == PARAM_FLOAT)
 		return m_fValue;
-	return 0.f;
+	return -1.f;
 }
 
 _int CStateParameter::Get_Int() const
 {
 	if (m_eType == PARAM_INT)
 		return m_iValue;
-	return 0;
+	return -1;
 }
 
 _bool CStateParameter::Get_Bool() const

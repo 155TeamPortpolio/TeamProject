@@ -499,6 +499,11 @@ static mt19937& RNG()
 	return rng;
 }
 
+ENGINE_DLL mt19937& Helper::Get_RNG()
+{
+	return RNG();
+}
+
 ENGINE_DLL _int Helper::Get_Random_Int(_int min, _int max)
 {
 	uniform_int_distribution<_int> dist(min, max);

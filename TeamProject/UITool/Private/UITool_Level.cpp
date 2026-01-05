@@ -17,6 +17,7 @@
 #include "SpriteAnimationUI.h"
 #include "UVAnimationUI.h"
 #include "GaugeUI.h"
+#include "MaskUI.h"
 
 vector<string> CUITool_Level::m_strFontKeys;
 vector<const _char*> CUITool_Level::m_szFontKeys;
@@ -155,6 +156,8 @@ HRESULT CUITool_Level::Ready_UIObjects()
 	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CUVAnimationUI::m_strTypeTag, CUVAnimationUI::Create());
 
 	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CGaugeUI::m_strTypeTag, CGaugeUI::Create());
+
+	pProto->Add_ProtoType("UITool_Level", "Proto_GameObject_" + CMaskUI::m_strTypeTag, CMaskUI::Create());
 
 	return S_OK;
 }

@@ -31,6 +31,7 @@ public:
 
 public:
     void Render_GUI() override;
+    void RenderHierarchy(CGameObject*& outSelected);
 
 public:
     void ReorderChildren(class CGameObject* pObject, _uint Index);
@@ -47,6 +48,7 @@ private:
     vector<class CGameObject*> m_ChildrenObjects;
 
     vector<_uint> m_UpdateOrder;                 
+    vector<_uint> m_UpdateOrderSnapShot;                 
     unordered_map<_uint, _uint> m_OrderIndexByID; 
 
 public:

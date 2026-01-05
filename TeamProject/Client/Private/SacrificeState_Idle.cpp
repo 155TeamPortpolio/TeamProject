@@ -24,7 +24,7 @@ void CSacrificeState_Idle::Enter(CSacrifice* pOwner)
 	}break;
 	case CSacrifice::PHASE::PHASE2:
 	{
-		if(pOwner->IsOverDrive())
+		if (pOwner->IsOverDrive() && pOwner->IsOverDriveCharged())
 			m_pSubStateMachine->Change_State("OverDrive");
 		else
 			m_pSubStateMachine->Change_State("Phase2");
@@ -80,6 +80,7 @@ void CSacrificeState_Idle_OverDrive::Enter(CSacrifice* pOwner)
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack_Idle_Loop")
 		.Loop(true)
 		.Speed(1.2f)
+		.BlendDuration(0.7f)
 		.Apply();
 }
 

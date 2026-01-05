@@ -37,7 +37,7 @@ public:
 	}UI_ANIM_CLIP;
 
 protected:
-	CUI_Object();
+	CUI_Object() {}
 	CUI_Object(const CUI_Object& rhs);
 	virtual ~CUI_Object() DEFAULT;
 
@@ -71,8 +71,8 @@ public:
 
 public:
 	void Update_UITransform();
-	void Set_LeftTop(_float2 desiredLT);
-	void Rotate_Left(_float _radian);
+	void Set_LeftTop(_float2 desiredLT) {}
+	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
@@ -105,8 +105,7 @@ public:
 	_float2 Local_RC(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  0.5f }, x, y); }
 	_float2 Local_RB(_float x = 0.f, _float y = 0.f) { return Get_Point_Local({ 1.f,  1.f }, x, y); }
 
-
-	void Align_To(ANCHOR anchor);
+	void Align_To(ANCHOR anchor) { m_eAnchor = anchor; }
 	void Set_Pivot(_float2 newPivot);
 
 public:
@@ -125,10 +124,8 @@ public:
 	void Set_Animation(_uint iIndex, _bool isLoop = false);				
 
 public:
-	virtual void FillElementData(UI_ELEMENT_DATA& data) {}
-	virtual void ReadElementData(const UI_ELEMENT_DATA& data) {}
 	virtual void Save(nlohmann::ordered_json& data) {}
-	virtual void Load(const nlohmann::ordered_json& data) {}
+	virtual void Load(const nlohmann::ordered_json& data);
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);
@@ -165,9 +162,12 @@ protected:
 
 	_bool m_isClickable = {};
 
-	/*텍스쳐에 곱해지는 컬러*/
+	/*텍스쳐에 곱해지는 기본 컬러 (sRGB)*/
 	Vector4 m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	/*셰이더로 전달되는 컬러 (m_vColor를 감마 2.2 보정하여 Linear Space로 변환한 값)*/
 	Vector4 m_vColorLinear{};
+	/*부모 알파와 자신의 알파를 곱한 최종 알파 값*/
+	_float m_vCombinedAlpha = { 1.f };
 
 	/*애니메이션*/
 	_bool m_isBlending = {};

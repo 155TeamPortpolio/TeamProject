@@ -456,9 +456,6 @@
     <ClInclude Include="..\public\EffectRenderer.h">
       <Filter>01. Utility\06. RenderSystem\Renderer\Sub\Effect</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\UIRenderer.h">
-      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
-    </ClInclude>
     <!-- 01. Utility\07~14 Systems -->
     <ClInclude Include="..\Public\CameraMgr.h">
       <Filter>01. Utility\07. CameraManager</Filter>
@@ -551,6 +548,9 @@
     </ClInclude>
     <ClInclude Include="..\public\CSMShadow.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UIRenderer.h">
+      <Filter>01. Utility\06. RenderSystem\Renderer\Sub\UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

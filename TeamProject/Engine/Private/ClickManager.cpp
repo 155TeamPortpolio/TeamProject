@@ -7,17 +7,19 @@
 
 void CClickManager::Update(_float dt)
 {
-	if (m_clickableObjs.empty()) return;
+	if (m_clickableSlots.empty()) return;
 
 	auto pInput = CGameInstance::GetInstance()->Get_InputDev();
 	Vector2 mousePos = pInput->Mouse_Pos();
 
-	m_pNewHovered = {};
+    UISlot m_newHoveredSlot = {};
 
-	while (!m_clickableObjs.empty())
+	while (!m_clickableSlots.empty())
 	{
-		auto pObj = m_clickableObjs.back();
-		m_clickableObjs.pop_back();
+        auto& slot = m_clickableSlots.back();
+
+		const auto pObj = slot.pUI;
+        m_clickableSlots.pop_back();
 
 		Vector2 topLeft = pObj->Get_RectTopLeft_Screen();
 		Vector2 sizePx  = pObj->Get_PxSize();
@@ -46,28 +48,44 @@ void CClickManager::Update(_float dt)
             if (!HitTestAlphaCache(cache, u, v, alphaThreshold)) continue;
         }
 
-		m_pNewHovered = pObj;
+        m_newHoveredSlot = slot;
 
 		if (pInput->Mouse_Tap(MOUSE_BTN::LB))
 			pObj->OnClick();
+
 		break;
 	}
-	if (m_pHovered != m_pNewHovered)
+
+	if (m_hoveredSlot.pUI != m_newHoveredSlot.pUI)
 	{
-		if (m_pHovered)
-			m_pHovered->Exit_Hover();
+		if (m_hoveredSlot.eState == UISlotState::ACTIVE)
+            m_hoveredSlot.pUI->Exit_Hover();
 
-		m_pHovered = m_pNewHovered;
+        m_hoveredSlot = m_newHoveredSlot;
 
-		if (m_pHovered)
-			m_pHovered->Enter_Hover();
+        if (m_hoveredSlot.eState == UISlotState::ACTIVE)
+            m_hoveredSlot.pUI->Enter_Hover();
 	}
-	m_clickableObjs.clear();
+
+    m_clickableSlots.clear();
 }
 
-void CClickManager::Add_ClickableObject(CUI_Object* object)
+void CClickManager::Register_ClickableObject(CUI_Object* pObject)
 {
-	m_clickableObjs.push_back(object);
+    UISlot slot = {};
+
+    slot.pUI = pObject;
+    slot.eState = UISlotState::ACTIVE;
+    m_clickableSlots.push_back(slot);
+}
+
+void CClickManager::Unregister_ClickableObject(CUI_Object* pObject)
+{
+    if (m_hoveredSlot.pUI == pObject)
+    {
+        m_hoveredSlot.pUI = nullptr;
+        m_hoveredSlot.eState = UISlotState::DEAD;
+    }
 }
 
 const CClickManager::AlphaCache& CClickManager::GetOrBuildAlphaCache(const string& key, ID3D11ShaderResourceView* srv)
@@ -212,6 +230,6 @@ _bool CClickManager::HitTestAlphaCache(const AlphaCache& cache, _float u, _float
 void CClickManager::Free()
 {
 	__super::Free();
-	m_clickableObjs.clear();
+    m_clickableSlots.clear();
     m_alphaCache.clear();
 }

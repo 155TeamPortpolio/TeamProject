@@ -654,17 +654,14 @@ _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHY
 	rayDesc.iCollisionMask = 0xFFFFFFFF;
 	rayDesc.bQueryTrigger = false;
 
-#ifdef _DEBUG
 	m_bShowDebugRay = true;
 	m_vRayStart = rayDesc.vOrigin;
 
 	_vector vEndPos = vOrigin + vDir * fDistance;
 	XMStoreFloat3(&m_vRayEnd, vEndPos);
-#endif
 
 	_bool bResult = pPhysics->Raycast(rayDesc, hit);
 
-#ifdef _DEBUG
 	if (bResult)
 	{
 		m_DebugRayHit = hit;
@@ -680,7 +677,6 @@ _bool CCharacterController::Shoot_Ray(_fvector vDirection, _float fDistance, PHY
 		m_DebugRayHit.pShape = nullptr;
 		// vRayEnd는 최대 거리 위치로 유지
 	}
-#endif
 
 	return bResult;
 }

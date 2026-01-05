@@ -152,11 +152,6 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 
 	for (auto& packet : m_Packets)
 	{
-		if (!packet.bSkinning) {
-			if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
-				continue;
-		}
-		//���⼭ �ε��� �߰� ��������
 		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		_uint SkinningOffset = 0;
 		if (packet.bSkinning) {
@@ -456,27 +451,22 @@ void InstancePass::Submit(INSTANCE_PACKET packet)
 void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
  	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	pCurShader = { nullptr };
+	pCurShader = {};
 
-	/*��Ŷ�� ��� ������ ����*/
-	if (m_Packets.empty())
-		return;
+	if (m_Packets.empty()) return;
 
-	/*��� ���� �� SRV ����*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 	for (auto& packet : m_Packets)
 	{
-		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		_uint TransformIndex  = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
 		packet.TransformIndex = TransformIndex;
 	}
 	pPipeLine->End_ObjectBuffer(pContext);
 
 	for (auto& packet : m_Packets)
 	{
-		if (packet.pSprite2D->Get_Shader() != pCurShader) {
-			
+		if (packet.pSprite2D->Get_Shader() != pCurShader) 
 			BindConstant(pContext, packet.pSprite2D, packet.pSprite2D->Get_PassConstant(), pRenderer);
-		}
 	
 		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
 		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
@@ -484,16 +474,14 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		packet.pSprite2D->Apply_Shader(pContext);
 		packet.pSprite2D->Draw_Sprite(pContext);
 
-
 		CGameInstance::GetInstance()->Get_FontSystem()->Render_TextFont(packet.pSprite2D->Get_TextKey());
 	}
-
 	m_Packets.clear();
 }
 
 void UIPass::Submit(SPRITE_PACKET packet)
 {
-	if (packet.pSprite2D == nullptr ) return;
+	if (!packet.pSprite2D) return;
 	m_Packets.push_back(packet);
 }
 #pragma endregion

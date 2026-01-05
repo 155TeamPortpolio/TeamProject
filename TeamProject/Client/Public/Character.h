@@ -26,9 +26,11 @@ public:
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
     _bool  Is_Move() const { return m_bIsMove; }
+    _bool  Is_Move_Buffer() const { return m_bIsMove || (m_fKeyReleaseTimer > 0.f); }
     _bool  Is_Attack() const { return m_bIsAttack; }
+    _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsInput; }
-    
+
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
@@ -36,8 +38,11 @@ public:
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
 
     _vector3              Get_InputDir() const { return m_vInputDir; }
+    _vector3              Get_PrevInputDir() const { return m_vPrevInputDir; }
+
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
+    const string&         Get_Name() const { return m_strName; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -47,20 +52,29 @@ public:
     virtual void    Late_Update(_float dt) override;
 
 public:
-    void Rotate(_vector3 vDirection);
+    void     Rotate(_vector3 vDirection);
+    _bool    Can_Evade() const;
+    void     Use_Evade();
+    _bool    Is_OppositeInput() const;
+    void     Reset_LastValidKey()
+    { 
+        m_iLastValidKeyX = m_iCurKeyX;
+        m_iLastValidKeyZ = m_iCurKeyZ;
+    }
+
 
 protected:
     // 입력 처리 - 파생 클래스에서 StateMachine 파라미터 설정에 사용
-    virtual void Update_Input(_float dt);
+    virtual void    Update_Input(_float dt);
 
 private:
-    void Update_Rotation(_float dt);
+    void    Update_Rotation(_float dt);
+    void    Update_Evade(_float dt);
 
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
-
-protected:
+    string                m_strName = "";
     // 스탯
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
@@ -69,15 +83,35 @@ protected:
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
+    // 입력
     _vector3        m_vInputDir = {};
+    _vector3        m_vPrevInputDir = {};
+    _int            m_iCurKeyX = 0;
+    _int            m_iCurKeyZ = 0;
+    _int            m_iPrevKeyX = {};
+    _int            m_iPrevKeyZ = {};
+    _int            m_iLastValidKeyX = {};
+    _int            m_iLastValidKeyZ = {};
+    _float          m_fKeyReleaseTimer = {};
+    static constexpr _float KEY_BUFFER_TIME = 0.15f;
     // 상태 플래그
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsInput = { false };
+    _bool           m_bIsEvade = { false };
+    // 회피 시스템
+    _uint                   m_iEvadeCount = { 0 };
+    _float                  m_fEvadeTimer = { 0.f };
+    _float                  m_fEvadeCooldown = { 0.f };
+    static constexpr _float EVADE_COOLDOWN = 1.f;
+    static constexpr _uint  EVADE_MAX_COUNT = 2;
     // 회전
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
+
+    // 테스트용
+    _bool           m_bTest = { false };
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

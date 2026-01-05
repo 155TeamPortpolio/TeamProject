@@ -53,6 +53,7 @@ void CCharacter::Update(_float dt)
 {
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
+	Update_Evade(dt);
 	if(m_bIsRotating)	Update_Rotation(dt);
 }
 
@@ -82,36 +83,99 @@ void CCharacter::Rotate(_vector3 vDirection)
 	m_bIsRotating = true;
 }
 
+_bool CCharacter::Can_Evade() const
+{
+	if (m_fEvadeCooldown > 0.f) return false;
+	return true;
+}
+
+void CCharacter::Use_Evade()
+{
+	++m_iEvadeCount;
+	m_fEvadeTimer = EVADE_COOLDOWN;
+
+	if (m_iEvadeCount >= EVADE_MAX_COUNT)
+	{
+		m_fEvadeCooldown = EVADE_COOLDOWN;
+		m_iEvadeCount = 0;
+		m_fEvadeTimer = 0.f;
+	}
+}
+
+_bool CCharacter::Is_OppositeInput() const
+{
+	if (m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0)
+		return false;
+	if (m_iCurKeyX == 0 && m_iCurKeyZ == 0)
+		return false;
+
+	_bool bOppositeX = (m_iLastValidKeyX * m_iCurKeyX < 0);
+	_bool bOppositeZ = (m_iLastValidKeyZ * m_iCurKeyZ < 0);
+
+	return (bOppositeX || bOppositeZ);
+}
+
 void CCharacter::Update_Input(_float dt)
 {
-	int x = 0, z = 0;
-	if (KEY->Key_Hold('W'))    z += 1;
+	m_vPrevInputDir = m_vInputDir;
+	m_iPrevKeyX = m_iCurKeyX;
+	m_iPrevKeyZ = m_iCurKeyZ;
+
+	_int x = 0, z = 0;
+	if (KEY->Key_Hold('W'))  z += 1;
 	if (KEY->Key_Hold('S'))  z -= 1;
-	if (KEY->Key_Hold('D')) x += 1;
+	if (KEY->Key_Hold('D'))  x += 1;
 	if (KEY->Key_Hold('A'))  x -= 1;
 
-	m_vInputDir = {};
+	m_iCurKeyX = x;
+	m_iCurKeyZ = z;
 
+	if (x != 0 || z != 0)
+	{	// 이전에 유효한 입력이 없었거나, 버퍼 시간이 지난 경우에만 업데이트
+		if ((m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0) ||
+			m_fKeyReleaseTimer <= 0.f)
+		{
+			m_iLastValidKeyX = x;
+			m_iLastValidKeyZ = z;
+		}
+		m_fKeyReleaseTimer = KEY_BUFFER_TIME;
+	}
+	else
+	{	// 타이머가 0초가 될때 까지 Valid를 초기화시키지 않음
+		m_fKeyReleaseTimer -= dt;
+		if (m_fKeyReleaseTimer < 0.f)
+		{	// 버퍼시간 경과
+			m_fKeyReleaseTimer = 0.f;
+			m_iLastValidKeyX = 0;
+			m_iLastValidKeyZ = 0;
+		}
+	}
+
+	m_vInputDir = {};
 	if (x || z)
 	{
 		auto cam = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
-
 		Vector3 look = camTf->Dir(STATE::LOOK);
 		Vector3 right = camTf->Dir(STATE::RIGHT);
-
 		look.y = 0.f;
 		right.y = 0.f;
-
 		look.Normalize();
 		right.Normalize();
 
 		m_vInputDir = right * (float)x + look * (float)z;
 	}
 
+	m_iPrevKeyX = x;
+	m_iPrevKeyZ = z;
+
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
 	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
-	m_bIsInput = m_bIsAttack || m_bIsMove;
+	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
+
+	// 테스트용(상태제어)
+	if (KEY->Key_Down(VK_F1))	m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)
@@ -126,6 +190,29 @@ void CCharacter::Update_Rotation(_float dt)
 
 	m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
 	m_pTransform->Set_Quaternion(m_qCurrentRot);
+}
+
+void CCharacter::Update_Evade(_float dt)
+{
+	if (m_fEvadeCooldown > 0.f)
+	{
+		m_fEvadeCooldown -= dt;
+		if (m_fEvadeCooldown <= 0.f)
+		{
+			m_fEvadeCooldown = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
+
+	if (m_fEvadeTimer > 0.f)
+	{
+		m_fEvadeTimer -= dt;
+		if (m_fEvadeTimer <= 0.f)
+		{
+			m_fEvadeTimer = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
 }
 
 void CCharacter::Free()

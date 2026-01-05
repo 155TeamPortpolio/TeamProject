@@ -6,9 +6,6 @@
 #include "Sprite2D.h"
 #include "UITool_Level.h"
 
-_uint CSpriteAnimationUI::m_iCount = {};
-const string CSpriteAnimationUI::m_strTypeTag = "SpriteAnimation";
-
 HRESULT CSpriteAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -27,10 +24,6 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
     sprite->ChangePass("SpriteAnimation");
 
-    sprite->Set_Param("FrameIndex", {&m_iCurrentFrameIndex, "uint", sizeof(_uint)});
-    sprite->Set_Param("Col",        {&m_iFrameCountX,       "uint", sizeof(_uint)});
-    sprite->Set_Param("Row",        {&m_iFrameCountY,       "uint", sizeof(_uint)});
-
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
 
@@ -41,10 +34,7 @@ HRESULT CSpriteAnimationUI::Initialize(INIT_DESC* pArg)
 
 void CSpriteAnimationUI::Update(_float dt)
 {
-    if (!m_isAlive)
-        return;
-
-    Play_Animation(dt);
+    __super::Update(dt);
 
     if (m_isPlaying)
     {
@@ -146,6 +136,11 @@ void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
         m_iFrameCountTotal = spriteAnimationJson.value("frameCountTotal", 1);
         m_fFrameSpeed = spriteAnimationJson.value("frameSpeed", 30.0f);
     }
+
+    auto sprite = Get_Component<CSprite2D>();
+    sprite->Set_Param("FrameIndex", { &m_iCurrentFrameIndex, "uint", sizeof(_uint) });
+    sprite->Set_Param("Col", { &m_iFrameCountX,       "uint", sizeof(_uint) });
+    sprite->Set_Param("Row", { &m_iFrameCountY,       "uint", sizeof(_uint) });
 
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
