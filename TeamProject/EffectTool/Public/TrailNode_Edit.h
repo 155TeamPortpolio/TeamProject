@@ -1,6 +1,7 @@
 #pragma once
 #include "TrailNode.h"
 #include "EffectContainer_Edit.h"
+#include "TrailModel.h"
 
 NS_BEGIN(EffectTool)
 class CTrailNode_Edit :
@@ -38,5 +39,25 @@ public:
 private:
     CEffectContainer_Edit::EFFECT_EDIT_CONTEXT* m_pContext = nullptr;
 
+    void AddTextures();
+    void SetUp_TrailEffect();
+
+    string m_TextureKey{};
+    CTrailModel::POINT_MODE m_eMode{};
+    CTrailModel::TEXTURE_MODE m_eTextureMode{};
+    CTrailModel::COLOR_MODE m_eColorMode{};
+
+    /* Texture Mode */
+    _float2 m_vUVSpeed{};
+    _float m_fTile{};
+
+    /* Color Mode */
+    _float4 m_vStartColor{};
+    _float4 m_vEndColor{};
+
+    _float m_fMaxLifeTime{};
+    _float m_fMinDistance{};
+
+    _float m_fWidth{};
 };
 NS_END

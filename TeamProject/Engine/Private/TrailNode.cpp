@@ -1,5 +1,7 @@
 #include "Engine_Defines.h"
 #include "TrailNode.h"
+#include "TrailModel.h"
+#include "Material.h"
 
 CTrailNode::CTrailNode()
 	:CEffectNode()
@@ -13,6 +15,9 @@ CTrailNode::CTrailNode(const CTrailNode& rhs)
 
 HRESULT CTrailNode::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
+	Add_Component<CTrailModel>();
+	Add_Component<CMaterial>();
 	return S_OK;
 }
 

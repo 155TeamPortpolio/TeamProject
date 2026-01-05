@@ -6,6 +6,7 @@
 #include "SpriteNode_Edit.h"
 #include "ParticleNode_Edit.h"
 #include "MeshNode_Edit.h"
+#include "TrailNode_Edit.h"
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
 #include "IEditable.h"
@@ -248,6 +249,14 @@ void CEffectContainer_Edit::AddNode()
 		pDesc->pContext = &m_Context;
 
 		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_MeshNode" }).Add_ObjDesc(pDesc).Build("MeshNode");
+		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+	}
+	if (ImGui::Button("Add Trail Node"))
+	{
+		CTrailNode_Edit::TRAIL_NODE_EDIT_DESC* pDesc = new CTrailNode_Edit::TRAIL_NODE_EDIT_DESC;
+		pDesc->pContext = &m_Context;
+
+		pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_TrailNode" }).Add_ObjDesc(pDesc).Build("TrailNode");
 		m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
 	}
 

@@ -52,7 +52,7 @@ HRESULT CTrailModel::Bind_Buffer(ID3D11DeviceContext* pContext)
 
 HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 {
-	return S_OK;
+	return m_pBuffer->Render(pContext);
 }
 
 void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
@@ -64,14 +64,21 @@ void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
 	m_fMaxLifeTime = trailDesc.fMaxLifeTime;
 	m_fWidth = trailDesc.fWidth;
 	m_fMinDistance = trailDesc.fMinDistance;
+
 	m_vUVSpeed = trailDesc.vUVSpeed;
 	m_fTile = trailDesc.fTile;
+
+	m_vStartColor = trailDesc.vStartColor;
+	m_vEndColor = trailDesc.vEndColor;
 
 	m_vUVOffset = _float2(0.f, 0.f);
 
 	auto pMaterialInstance = m_pOwner->Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	pMaterialInstance->Set_Param("ColorMode", { &m_eColorMode,"uint",sizeof(_uint) });
 	pMaterialInstance->Set_Param("UVOffset", { &m_vUVOffset,"float2",sizeof(_float2) });
+
+	m_CenterPoints.clear();
+	m_SegmentPoints.clear();
 }
 
 void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
@@ -201,10 +208,12 @@ void CTrailModel::BuildVertices()
 			p0.vPosition = vPositionA + vRight * m_fWidth * 0.5f;
 			p0.vLifeTime.x = pointA.fLifeTime;
 			p0.vLifeTime.y = m_fMaxLifeTime;
+			p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p0.vLifeTime.x / p0.vLifeTime.y);
 
 			p1.vPosition = vPositionA - vRight * m_fWidth * 0.5f;
 			p1.vLifeTime.x = pointA.fLifeTime;
 			p1.vLifeTime.y = m_fMaxLifeTime;
+			p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p1.vLifeTime.x / p1.vLifeTime.y);
 
 			if (TEXTURE_MODE::STRETCH == m_eTextureMode)
 			{
@@ -241,10 +250,12 @@ void CTrailModel::BuildVertices()
 			p0.vPosition = point.vPositionA;
 			p0.vLifeTime.x = point.fLifeTime;
 			p0.vLifeTime.y = m_fMaxLifeTime;
+			p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p0.vLifeTime.x / p0.vLifeTime.y);
 
 			p1.vPosition = point.vPositionB;
 			p1.vLifeTime.x = point.fLifeTime;
 			p1.vLifeTime.y = m_fMaxLifeTime;
+			p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p1.vLifeTime.x / p1.vLifeTime.y);
 
 			if (TEXTURE_MODE::STRETCH == m_eTextureMode)
 			{

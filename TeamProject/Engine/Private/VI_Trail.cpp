@@ -26,7 +26,7 @@ HRESULT CVI_Trail::Initialize(ID3D11Device* pDevice)
 	m_iVerticesCount = g_iMaxNumTrailPoints * 2;
 	m_iVertexStride = sizeof(VTXTRAIL);
 
-	m_iIndicesCount = (g_iMaxNumTrailPoints - 1) * 2;
+	m_iIndicesCount = (g_iMaxNumTrailPoints - 1) * 6;
 	m_iIndexStride = 2;
 	m_eIndexFormat = DXGI_FORMAT_R16_UINT;
 	m_ePrimitive = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -61,7 +61,7 @@ HRESULT CVI_Trail::Render(ID3D11DeviceContext* pContext)
 	if (m_iCurrPointCount < 2)
 		return S_OK;
 
-	pContext->DrawIndexed(m_iCurrPointCount * 6, 0, 0);
+	pContext->DrawIndexed((m_iCurrPointCount - 1) * 6, 0, 0);
 
 	return S_OK;
 }
@@ -78,7 +78,7 @@ void CVI_Trail::Update_Vertices(VTXTRAIL* pVertices, _uint iCount)
 
 	D3D11_MAPPED_SUBRESOURCE mapSubResource{};
 	pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
-	memcpy_s(mapSubResource.pData, sizeof(m_iVertexStride * m_iVerticesCount), pVertices, sizeof(m_iVertexStride * iVerticesCont));
+	memcpy_s(mapSubResource.pData, m_iVertexStride * m_iVerticesCount, pVertices, m_iVertexStride * iVerticesCont);
 	pContext->Unmap(m_pVB, 0);
 }
 
@@ -107,8 +107,27 @@ HRESULT CVI_Trail::Create_Index(ID3D11Device* pDevice)
 	IBDesc.MiscFlags = 0;
 	IBDesc.StructureByteStride = 0;
 
+	vector<_ushort> IBContainer;
+	IBContainer.reserve(m_iIndicesCount);
+
+	for (_uint i = 0; i < g_iMaxNumTrailPoints - 1; ++i)
+	{
+		_ushort a = i * 2;
+		_ushort b = i * 2 + 1;
+		_ushort c = (i + 1) * 2;
+		_ushort d = (i + 1) * 2 + 1;
+
+		IBContainer.push_back(a);
+		IBContainer.push_back(c);
+		IBContainer.push_back(b);
+
+		IBContainer.push_back(b);
+		IBContainer.push_back(c);
+		IBContainer.push_back(d);
+	}
+
 	D3D11_SUBRESOURCE_DATA subData{};
-	//subData.pSysMem = 
+	subData.pSysMem = IBContainer.data();
 
 	HRESULT hr = pDevice->CreateBuffer(&IBDesc, &subData, &m_pIB);
 

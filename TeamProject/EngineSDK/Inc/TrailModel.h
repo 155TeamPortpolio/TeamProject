@@ -66,13 +66,18 @@ private:
 	TEXTURE_MODE m_eTextureMode = TEXTURE_MODE::STRETCH;
 	COLOR_MODE m_eColorMode = COLOR_MODE::MULTIPLY;
 
+	/* Texture Mode */
 	_float2 m_vUVSpeed{};
 	_float2 m_vUVOffset{};
+	_float m_fTile{};
+
+	/* Color Mode */
+	_float4 m_vStartColor{};
+	_float4 m_vEndColor{};
 
 	_uint m_iAlivePointCount{};
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};
-	_float m_fTile{};
 	vector<VTXTRAIL> m_TrailVertices;
 
 	/* Center Mode */

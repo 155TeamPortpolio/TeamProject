@@ -469,8 +469,13 @@ namespace Engine
 		_uint iColorMode{};
 		_float fMaxLifeTime{};
 
+		/* Texture Mode */
 		_float2 vUVSpeed{};
 		_float fTile{};
+
+		/* Color Mode */
+		_float4 vStartColor{};
+		_float4 vEndColor{};
 
 		/* Center Mode */
 		_float fWidth{};
