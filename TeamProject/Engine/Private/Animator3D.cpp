@@ -123,6 +123,7 @@ void CAnimator3D::Update_Animation(_float dt)
 	if (m_pAnimClips.empty()) return;
 
 	Clear_Events();
+	m_bAnimationUpdated = false;
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
@@ -798,15 +799,20 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	_float playSpeed = dt * AnimSpeed;
 
 	//Update TrackPos
-	if (Layer.bKeepTrackPos) {
+	if (Layer.bUpdate_PrevClip) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
 			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 	}
 
-	Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
-		Layer.BlendMatrices, Layer.fBlendTrackPosition,
-		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+	if (Layer.bUseFinalLocal)
+		Layer.LocalMatrices = m_TransformationMatrices;
+
+	if (Layer.bUpdate_NewClip) {
+		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
+			Layer.BlendMatrices, Layer.fBlendTrackPosition,
+			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+	}
 
 	//Bone Extracter
 	if (Layer.BaseLayer) {
@@ -890,13 +896,16 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 
-	//Animation Blend
+	//Animation Blend --- d여기 차이
 	Layer.fBlendElapsed += dt;
-	_float fBlendRate = Math::ApplyEase(Layer.eBlendEaseType,
-		Layer.fBlendElapsed / Layer.fBlendDuration);
+	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType,
+		Layer.bUseFinalLocal ?dt:Layer.fBlendElapsed / Layer.fBlendDuration);
 
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
-		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendRate);
+		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendWeight);
+	
+	if (Layer.bUseFinalLocal)
+		m_TransformationMatrices = Layer.FinalLocalMatrices;
 
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
@@ -910,7 +919,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		Layer.fBlendElapsed = 0.f;
 		Layer.fBlendDuration = 0.f;
 
-		Layer.LocalMatrices = Layer.FinalLocalMatrices;
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;			
 	}
 }
 
@@ -1055,13 +1064,13 @@ void CAnimator3D::BuildBone(_float dt)
 	}
 }
 
+#pragma region GUI
 void CAnimator3D::Render_GUI()
 {
 	ImGui::SeparatorText("Animator 3D");
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
 }
-
 
 void CAnimator3D::GUI_ShowLayerInfo()
 {
@@ -1171,6 +1180,8 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
+#pragma endregion
+
 void CAnimator3D::Reset_Anim()
 {
 	unordered_map<string, _uint> m_pAnimNames;
@@ -1208,7 +1219,7 @@ void CAnimator3D::Free()
 	m_AnimLayers.clear();
 }
 
-//BUILDER------------------------------------------------------------------------------------------
+#pragma region Builder
 
 //----------  SetAnim Options
 HRESULT SetAnimBuild::Apply()
@@ -1307,7 +1318,7 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//먄약 시작클립이 없으면 여기서마무리
+	//먄약 호출시 클립이 없으면 새로시작
 	if (-1 == Layer.iClipIndex) {
 		Layer.iClipIndex = m_iClipIndex;
 		Layer.fCurrentTrackPosition = 0.f;
@@ -1322,12 +1333,17 @@ HRESULT ChangeAnimBuild::Apply()
 			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
 			Layer.LocalMatrices = Layer.BlendMatrices;
 		}
-		
+
+		if (Layer.bKeepTrackPos) {
+			Layer.fBlendTrackPosition = Layer.fCurrentTrackPosition;
+		}
 	}
 
 	//클립끼리의 블랜드 상태
 	Layer.bBlending = true;
 	Layer.bKeepTrackPos = m_bKeepTrackPos;
+	Layer.bUpdate_PrevClip = m_bUpdate_PrevClip;
+	Layer.bUpdate_NewClip = m_bUpdate_NewClip;
 	Layer.bIgnoreRotation = m_bIgnoreRotation;
 	Layer.iNextClipIndex = m_iClipIndex;
 	Layer.fBlendTrackPosition = 0.f;
@@ -1335,7 +1351,15 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;
 
+	Layer.bUseFinalLocal = m_bUseFinalLocal;
+
+	//클립을 업데이트 하지 않겠다면 다음 클립의 0초로 세팅
+	if (false == m_bUpdate_NewClip)
+		m_pOwner->m_pAnimClips[Layer.iNextClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(Layer.BlendMatrices, 0);
+
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
 	return S_OK;
 }
+
+#pragma endregion

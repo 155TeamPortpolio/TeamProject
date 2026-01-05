@@ -28,6 +28,8 @@ public:
         _int                iStartBoneIndex = { -1 };
         vector<_int>        AffectedBonesIndices;
 
+        _bool               bUseFinalLocal = false; //마지막 로컬 기준으로 블랜드할건지
+
         //---------- 베이스 레이어 속성
         //루트본 델타값 (베이스 레이어만, 실질적인 움직임을 담당하는 본)
         _bool               bWrapped = { false };
@@ -65,6 +67,8 @@ public:
         //---------- 블렌드 상태 (변경시 초기화)
         _bool   bBlending = { false };
         _bool   bKeepTrackPos = { false };
+        _bool   bUpdate_PrevClip = { false };
+        _bool   bUpdate_NewClip = { false };
         _bool   bIgnoreRotation = { false };
         _int    iNextClipIndex = { -1 };
         _float  fBlendTrackPosition = {};
@@ -260,6 +264,7 @@ protected:
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
+    _bool                           m_bAnimationUpdated = { false };
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
@@ -336,12 +341,11 @@ public:
         return static_cast<T&>(*this);
     }
 
-
     T& ResetRotation(_bool bResetRotation) {
         m_bPause = bResetRotation;
         return static_cast<T&>(*this);
     }
- 
+
 protected:
     //레이어 가중치, 가중치가 0이면 업데이트 자체를 하지 않음
     //레이어 가중치가 0이되지 않게 끝이나면 매 프레임마다 업데이트 하는거로 간주
@@ -408,11 +412,27 @@ public:
         m_eBlendEaseType = eEaseType;
         return *this;
     }
-    //애니매이션을 변경하면서 이전 클립의 트랙포지션을 같이 사용해서 섞을건지
+    //이전 클립의 트랙포지션 갖고올건지
     ChangeAnimBuild& KeepTrackPos(_bool bKeepTrackPos) {
         m_bKeepTrackPos = bKeepTrackPos;
         return *this;
     }
+    //보간하면서 이전 클립의 업데이트를 허용할건지
+    ChangeAnimBuild& Update_PrevClip(_bool bUpdate_PrevClip) {
+        m_bUpdate_PrevClip = bUpdate_PrevClip;
+        return *this;
+    }
+    //보간하면서 현재 클립의 업데이트를 허용할건지
+    ChangeAnimBuild& Update_NewClip(_bool bUpdate_NewClip) {
+        m_bUpdate_NewClip = bUpdate_NewClip;
+        return *this;
+    }
+
+    ChangeAnimBuild& UseFinalLocalPose(_bool b) {
+        m_bUseFinalLocal = b;
+        return *this;
+    }
+
     //애니매이션 보간시 회전을 제외할것인지
     ChangeAnimBuild& IgnoreRotation(_bool bIgnoreRotation) {
         m_bIgnoreRotation = bIgnoreRotation;
@@ -425,10 +445,15 @@ protected:
     _int m_iClipIndex = -1;
 
     //클립 블랜드
-    _float      m_fBlendDuration = 0.2f;
-    _bool       m_bKeepTrackPos = false;
-    _bool       m_bIgnoreRotation = false;
+    _float      m_fBlendDuration = { 0.2f };
+    _bool       m_bKeepTrackPos = { false };
+    _bool       m_bUpdate_PrevClip = { false };
+    _bool       m_bConvertCurMatrix = { false };
+    _bool       m_bUpdate_NewClip = { true };
+    _bool       m_bIgnoreRotation = { false };
     EaseType    m_eBlendEaseType = { EaseType::Linear };
+
+    _bool       m_bUseFinalLocal = false;
 };
 
 NS_END
