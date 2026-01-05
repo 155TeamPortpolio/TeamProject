@@ -9,43 +9,41 @@ public:
 	enum class TEXTALIGN { LEFT, CENTER, RIGHT };
 
 private:
-	CTextUI();
-	CTextUI(const CTextUI& rhs);
+	CTextUI() {}
+	CTextUI(const CTextUI& rhs) : CUIObject_Tool(rhs) {}
 	virtual ~CTextUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-
-	virtual void	Priority_Update(_float dt) override;
-	virtual void	Update(_float dt) override;
-	virtual void	Late_Update(_float dt) override;
-
-	virtual void	Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void	Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void	Update(_float dt)                override;
+	virtual void	Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void	Render_GUI()                     override;
 
 public:
-	virtual void	Save(nlohmann::ordered_json& data) override;
+	virtual void	Save(nlohmann::ordered_json& data)       override;
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_char		m_szText[MAX_PATH] = {};
-	_float		m_fFontScale = { 1.f }; 
+	_char		m_szText[MAX_PATH]{};
+	_float		m_fFontScale = 1.f; 
 
-	_bool		m_isOutlined = {};
-	_float		m_fOutlineThickness = { 1.f };
+	_bool		m_isOutlined{};
+	_float		m_fOutlineThickness = 1.f;
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
-	_int		m_iTextAlign = {};
+	_int		m_iTextAlign{};
 
-	_bool		m_isSizeToContent = { true };
+	_bool		m_isSizeToContent = true;
 
 private:
-	string		m_strFontTag = {};
-	_int		m_iFontKeyIndex = { 0 }; 
+	string		m_strFontTag{};
+	_int		m_iFontKeyIndex{};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "Text";
+	inline static       _uint  m_iCount{};
 
 private:
 	virtual void Render_GUI_Layout() override;
@@ -56,8 +54,8 @@ private:
 
 public:
 	static CGameObject* Create();
-	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

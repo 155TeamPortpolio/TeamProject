@@ -22,6 +22,8 @@ public:
 
     const vector<string> Get_BoneNames();
     void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
+    _bool Get_RiggedData(HumanoidRigData& outData) { outData = m_RiggedData; return m_RiggedData.IsRigComplete(); }
+
 private:
     _int FindBoneIndexWithPrefix(const string& BonePrefixName);
 

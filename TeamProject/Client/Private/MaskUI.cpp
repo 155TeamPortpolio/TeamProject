@@ -21,6 +21,9 @@ HRESULT CMaskUI::Initialize(INIT_DESC* pArg)
 void CMaskUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
+
+    const string maskTextureKey = data.value("maskTextureKey", "empty.png");
+    Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, maskTextureKey);
 }
 
 CGameObject* CMaskUI::Create()

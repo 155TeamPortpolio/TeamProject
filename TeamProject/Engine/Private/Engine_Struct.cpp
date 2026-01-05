@@ -183,3 +183,35 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 
 	return Effect;
 }
+
+_bool Engine::tagUIHandle::isValid()
+{
+	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
+	if (pUI)
+		return true;
+	return false;
+}
+
+void Engine::tagUIHandle::Reset()
+{
+	Level.clear();
+	hObjID = 0;
+	return;
+}
+
+CUI_Object* Engine::tagUIHandle::Get()
+{
+	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
+	return pUI;
+}
+
+void Engine::tagUIHandle::Release()
+{
+	auto mgr = CGameInstance::GetInstance()->Get_UIMgr();
+
+	CUI_Object* pUI = mgr->Request_UIObject({ Level, hObjID });
+	if (!pUI) { Reset(); return; }
+	
+	mgr->Remove_UIObject(pUI);
+	Reset();
+}
