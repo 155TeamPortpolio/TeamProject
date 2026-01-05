@@ -23,11 +23,11 @@ class ENGINE_DLL CPipeLine :
 		_float4x4 matShadowProjection;
 		_float4x4 matShadowViewInverse;
 		_float4x4 matShadowProjectionInverse;
-		_float4x4 matLightViewProj[4];      // ∞¢ Cascade¿« Light VP
-		_vector vCascadeSplits;          // (split1, split2, split3, split4)
+		_float4x4 matLightViewProj[4];     
+		_vector vCascadeSplits;          
 		_float4 vShadowPosition;
-		_float zShadowFar;
 		_int iCurrentCascade;
+		_float zShadowFar;
 
 		_float2 ShadowPadding;
 	};

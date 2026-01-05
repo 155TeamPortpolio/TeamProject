@@ -83,7 +83,7 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 	m_pHiZ = CHiZ_Culling::Create();
-	m_pCSM = CCSMShadow::Create(pDevice, pContext, 4096);
+	m_pCSM = CCSMShadow::Create(pDevice, pContext, 8192);
 	return S_OK;
 }
 
@@ -146,12 +146,6 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int casca
 		{
 			Matrix lightVP = m_pCSM->GetLightViewProj(i);
 			shadowBuffer.matLightViewProj[i] = lightVP;
-
-			XMFLOAT4X4 lvpMat;
-			XMStoreFloat4x4(&lvpMat, XMLoadFloat4x4(&lightVP));
-			sprintf_s(buf, "  GetLightViewProj[%d]: _11=%.3f, _44=%.3f\n",
-				i, lvpMat._11, lvpMat._44);
-			OutputDebugStringA(buf);
 		}
 
 		const float* splits = m_pCSM->GetCascadeSplits();

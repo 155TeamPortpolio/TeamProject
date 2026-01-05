@@ -62,8 +62,9 @@ HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
 	{
 		m_pPipeLine->Begin_ShadowRender(i);
 		m_pPipeLine->Update_ShadowBuffer(m_pContext, i);
-	
-		pShadowPass->Execute(m_pContext, this);
+
+		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		else pShadowPass->Execute(m_pContext, this, true);
 		m_pPipeLine->End_ShadowRender();
 	}
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
@@ -151,8 +152,6 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
 	m_pStaticRenderer->Render_StaticMesh_Combined();
 
-	//m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 	ID3D11InputLayout* pLayout;

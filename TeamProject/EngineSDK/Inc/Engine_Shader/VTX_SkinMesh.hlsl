@@ -287,7 +287,7 @@ technique11 DefaultTechnique
     }
     pass Shadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Shadow);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 

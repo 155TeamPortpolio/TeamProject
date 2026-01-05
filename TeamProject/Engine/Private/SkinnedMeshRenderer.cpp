@@ -155,7 +155,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_LightAcc()
 
 	
 	Bind_WorldMatrix();
-	m_pPipeLine->Update_ShadowBuffer(m_pContext,-1);
+	//m_pPipeLine->Update_ShadowBuffer(m_pContext,-1);
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pPipeLine->Bind_ShadowMap(m_pShader);
 	m_pPipeLine->BindSampler(m_pContext, 1);

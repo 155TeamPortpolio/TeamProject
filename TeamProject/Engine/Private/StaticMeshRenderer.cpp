@@ -142,7 +142,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_LightAcc()
 	m_pTargetManager->Bind_Target("Target_Static_Metalic", m_pShader, "MetalicTexture");
 
 	Bind_WorldMatrix();
-	m_pPipeLine->Update_ShadowBuffer(m_pContext, -1);
+	//m_pPipeLine->Update_ShadowBuffer(m_pContext, -1);
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pPipeLine->Bind_ShadowMap(m_pShader);
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);

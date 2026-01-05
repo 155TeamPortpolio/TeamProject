@@ -32,6 +32,8 @@ private:
     void CalculateFrustumCornersInViewSpace(
         float fovY, float aspect, float nearPlane, float farPlane, _vector* corners);
 
+    _matrix CreateLightViewProj(const _vector* frustumCorners, const _vector& lightDir, _uint cascadeIndex);
+
 private:
     static const _uint MAX_CASCADES = 4;
 

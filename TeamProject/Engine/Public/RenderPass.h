@@ -9,7 +9,7 @@ protected:
 	RenderPass(class CRenderSystem* pRenderSystem);
 	virtual ~RenderPass() DEFAULT;
 public:
-	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  PURE;
+	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) PURE;
 protected:
 	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex, class CRenderer* pRenderer);
 	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant, class CRenderer* pRenderer);
@@ -27,13 +27,14 @@ private:
 	ShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
 	virtual ~ShadowPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override {};
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
 	void Submit(OPAQUE_PACKET packet);
 	void SubmitInstance(INSTANCE_PACKET packet);
 
 private:
-	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
-	void Execute_Instance(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
+	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
+	void Execute_Instance(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
 
 private:
 	vector<OPAQUE_PACKET> m_Packets;

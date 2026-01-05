@@ -355,8 +355,9 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		 if (packet.pModel->doShadowCast()) {
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-			}
+			if(packet.pMaterial->isValid(packet.MaterialIndex))
+				 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
+		 }
 	}
 	return S_OK;
 }
