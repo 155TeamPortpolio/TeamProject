@@ -21,13 +21,7 @@ HRESULT CLoadingLevel::Awake()
 {
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Loading_Level");
-
-	CUI_Object* uiObj = Builder::Create_UIObject({ "Loading_Level", "Proto_GameObject_CanvasPanel" })
-		.Asset("loading.json")
-		.Build("loading");
-
-	uiDirector->Register(uiObj);
+	uiDirector->Load_LevelObjects("Loading_Level");
 
 	return S_OK;
 }
