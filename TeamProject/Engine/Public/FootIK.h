@@ -35,7 +35,7 @@ private:
     _bool        Find_GroundTarget(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal);
     void         Calculate_TwoBone(IK_CONTEXT& context, _vector3 vTargetPos);
     void         Align_FootToGround(IK_CONTEXT& context, _vector3 vGroundNormal);
-    _quaternion  WorldRotationToLocal(IK_CONTEXT& context, _uint iBoneIndex, _quaternion qWorldRotation);
+    _quaternion  WorldRotationToLocal(IK_CONTEXT& context, _int iBoneIndex, _quaternion qWorldRotation);
 
 private:
     // 본 길이 캐시

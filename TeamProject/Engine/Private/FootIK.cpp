@@ -3,6 +3,7 @@
 #include "Animator3D.h"
 #include "GameInstance.h"
 #include "PhysicsSystem.h"
+#include "ModelData.h"
 
 CFootIK::CFootIK()
 	: m_fUpperLength(0.f)
@@ -108,27 +109,22 @@ void CFootIK::Render_GUI()
 
 void CFootIK::Cache_BoneLengths(IK_CONTEXT& context)
 {
-    _uint iThigh = context.BoneIndices[0];
-    _uint iCalf = context.BoneIndices[1];
-    _uint iFoot = context.BoneIndices[2];
+    _int iThigh = context.BoneIndices[0];
+    _int iCalf = context.BoneIndices[1];
+    _int iFoot = context.BoneIndices[2];
+    // 로컬 행렬
+    _smatrix matCalf = context.pAnimator->Get_BoneTransformationMatrix(iCalf);
+    _smatrix matFoot = context.pAnimator->Get_BoneTransformationMatrix(iFoot);
 
-    // Animator에서 월드 매트릭스 가져오기
-    _smatrix matThigh = context.pAnimator->Get_BoneMatrix(iThigh);
-    _smatrix matCalf = context.pAnimator->Get_BoneMatrix(iCalf);
-    _smatrix matFoot = context.pAnimator->Get_BoneMatrix(iFoot);
-
-    // 위치 추출
-    _vector3 vThigh = matThigh.Translation();
-    _vector3 vCalf = matCalf.Translation();
-    _vector3 vFoot = matFoot.Translation();
-
+    // 위치 추출(부모 기준 상대 위치)
+    _vector3 vCalfLocal = matCalf.Translation();
+    _vector3 vFootLocal = matFoot.Translation();
     // 길이 계산
-    m_fUpperLength = _vector3::Distance(vThigh, vCalf);
-    m_fLowerLength = _vector3::Distance(vCalf, vFoot);
-
+    m_fUpperLength = vCalfLocal.Length();
+    m_fLowerLength = vFootLocal.Length();
     m_bLengthCached = true;
 
-    //// 디버깅 출력
+    // 디버깅 출력
     //string msg = "FootIK Length Cached - Upper: " + to_string(m_fUpperLength)
     //    + ", Lower: " + to_string(m_fLowerLength) + "\n";
     //OutputDebugStringA(msg.c_str());
@@ -137,10 +133,9 @@ void CFootIK::Cache_BoneLengths(IK_CONTEXT& context)
 _bool CFootIK::Find_GroundTarget(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal)
 {
     // 발목 본 위치 가져오기
-    _uint iFoot = context.BoneIndices[2];
-    _smatrix matFoot = context.pAnimator->Get_BoneMatrix(iFoot);
-
-    // 레이 설정
+    _int iFoot = context.BoneIndices[2];
+    // 월드 위치(For RayCast)
+    _smatrix matFoot = context.pAnimator->Get_BoneCombinedMatrix(iFoot);
     _vector3 vFootPos = matFoot.Translation();
     _vector3 vRayOrigin = vFootPos + _vector3::Up * m_Desc.fRayStartOffset;
     _vector3 vRayDir = _vector3::Down;
@@ -175,13 +170,11 @@ _bool CFootIK::Find_GroundTarget(IK_CONTEXT& context, _vector3& outTargetPos, _v
 void CFootIK::Calculate_TwoBone(IK_CONTEXT& context, _vector3 vTargetPos)
 {
     // 현재 본 위치들
-    _uint iThigh = context.BoneIndices[0];
-    _uint iCalf = context.BoneIndices[1];
-    _uint iFoot = context.BoneIndices[2];
+    _int iThigh = context.BoneIndices[0];
+    _int iCalf = context.BoneIndices[1];
 
-    _smatrix matThigh = context.pAnimator->Get_BoneMatrix(iThigh);
-    _smatrix matCalf = context.pAnimator->Get_BoneMatrix(iCalf);
-    _smatrix matFoot = context.pAnimator->Get_BoneMatrix(iFoot);
+    _smatrix matThigh = context.pAnimator->Get_BoneCombinedMatrix(iThigh);
+    _smatrix matCalf = context.pAnimator->Get_BoneCombinedMatrix(iCalf);
 
     _vector3 vHipPos = matThigh.Translation();
     _vector3 vKneePos = matCalf.Translation();
@@ -226,18 +219,10 @@ void CFootIK::Calculate_TwoBone(IK_CONTEXT& context, _vector3 vTargetPos)
     _vector3 vKneePlaneNormal = vTargetDir.Cross(vPole);
     vKneePlaneNormal.Normalize();
 
-    // 허벅지 회전
-    _quaternion qTargetDir = _quaternion::FromToRotation(
-        _vector3::Down,      // 본 기본 방향
-        vTargetDir
-    );
-    _quaternion qThighBend = _quaternion::CreateFromAxisAngle(
-        vKneePlaneNormal,
-        -fThighAngle
-    );
+    _quaternion qTargetDir = _quaternion::FromToRotation(_vector3::Down, vTargetDir);
+    _quaternion qThighBend = _quaternion::CreateFromAxisAngle(vKneePlaneNormal, -fThighAngle);
     _quaternion qThighWorld = qTargetDir * qThighBend;
 
-    // 종아리 회전
     _quaternion qCalfBend = _quaternion::CreateFromAxisAngle(
         vKneePlaneNormal,
         XM_PI - fKneeAngle
@@ -268,20 +253,19 @@ void CFootIK::Align_FootToGround(IK_CONTEXT& context, _vector3 vGroundNormal)
     context.OutRotations[2] = qLocal;
 }
 
-_quaternion CFootIK::WorldRotationToLocal(IK_CONTEXT& context, _uint iBoneIndex, _quaternion qWorldRotation)
+_quaternion CFootIK::WorldRotationToLocal(IK_CONTEXT& context, _int iBoneIndex, _quaternion qWorldRotation)
 {
     _smatrix matParentWorld = _smatrix::Identity;
     // 부모 본의 월드 매트릭스
-    _int iParent = 0; //context.pAnimator->m_pData->Get_BoneParentIndex(iBoneIndex);
+    _int iParent = context.pAnimator->Get_ModelData()->Get_BoneParentIndex(iBoneIndex);
     if (iParent != -1)
     {
-        _smatrix matParent = context.pAnimator->Get_BoneMatrix(iParent);
+        _smatrix matParent = context.pAnimator->Get_BoneCombinedMatrix(iParent);
         matParentWorld = matParent;
     }
 
     // 부모 역행렬
-    _smatrix matParentInv = XMMatrixInverse(nullptr, matParentWorld);
-
+    _smatrix matParentInv = matParentWorld.Invert();
     // 월드 회전 → 로컬 회전
     _smatrix matWorldRot = _smatrix::CreateFromQuaternion(qWorldRotation);
     _smatrix matLocalRot = matWorldRot * matParentInv;

@@ -555,6 +555,8 @@
     <ClInclude Include="..\Public\FootIK.h">
       <Filter>01. Utility\15. IKSolver\FootIK</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\CSMShadow.h" />
+    <ClInclude Include="..\Public\Humanoid.h" />
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1461,6 +1463,7 @@
     <ClCompile Include="..\Private\FootIK.cpp">
       <Filter>01. Utility\15. IKSolver\FootIK</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\CSMShadow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <!-- Shader Files -->
@@ -1557,8 +1560,11 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_SkinnedMesh.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl">
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
