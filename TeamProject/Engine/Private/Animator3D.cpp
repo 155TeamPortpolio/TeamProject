@@ -127,6 +127,7 @@ void CAnimator3D::Update_Animation(_float dt)
 	
 	/* Update Animation Clips*/
 	Update_Layers(dt);
+	if (false == m_bUpdatedClip) return;
 
 	/* Create TransformationMatrices */
 	BuildLocal(dt);
@@ -1174,6 +1175,8 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 
 void CAnimator3D::Update_Layers(_float dt)
 {
+	m_bUpdatedClip = false;
+
 	for (auto& Layer : m_AnimLayers) {
 		Layer.bApplied = false;
 
@@ -1185,6 +1188,8 @@ void CAnimator3D::Update_Layers(_float dt)
 			Animation_Convert(Layer, dt);
 		else
 			Animation_Run(Layer, dt);
+		
+		m_bUpdatedClip = true;
 	}
 }
 

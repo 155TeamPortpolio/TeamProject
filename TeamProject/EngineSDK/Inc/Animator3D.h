@@ -245,6 +245,7 @@ protected://애니매이션 체크
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
@@ -254,9 +255,6 @@ protected:
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-    //Combined 연산
-
-
 
     //최종 뼈 계산
     void Update_Layers(_float dt);
@@ -278,6 +276,7 @@ protected:
     class CModelData* m_pData = {};
     Matrix m_PreTransform = { Matrix::Identity };
 
+    _bool                           m_bUpdatedClip = { false };
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
@@ -289,7 +288,7 @@ protected:
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
-
+    
     _int m_iCurrentClipIndex = { -1 };
 
     /*Managing*/

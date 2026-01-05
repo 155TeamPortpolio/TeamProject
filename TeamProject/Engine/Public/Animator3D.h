@@ -276,6 +276,7 @@ protected:
     class CModelData* m_pData = {};
     Matrix m_PreTransform = { Matrix::Identity };
 
+    _bool                           m_bUpdatedClip = { false };
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
@@ -287,7 +288,7 @@ protected:
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
-
+    
     _int m_iCurrentClipIndex = { -1 };
 
     /*Managing*/
