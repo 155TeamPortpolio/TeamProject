@@ -152,14 +152,27 @@ vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
 
 void CAIModelData::Render_GUI()
 {
-    if (!m_Meshes.empty()) {
-        if(ImGui::Button("MeshOpen"))
-        isGui_MeshTabOpen = !isGui_MeshTabOpen;
-    }
+  
     if (m_pSkeleton) {
       ImGui::SeparatorText("Humanoid");
-      m_pSkeleton->Render_GUI()l
+      m_pSkeleton->Render_GUI();
     }
+
+    
+    ImGui::SeparatorText("Meshes");
+    if (!m_Meshes.empty()) {
+        if (ImGui::Button("MeshOpen"))
+            isGui_MeshTabOpen = !isGui_MeshTabOpen;
+    }
+
+    if (isGui_MeshTableTabOpen) {
+        if (ImGui::Begin("MeshTab", &isGui_MeshTableTabOpen, ImGuiWindowFlags_NoCollapse))
+        {
+            m_Meshes[selectedMeshIndex]->Render_GUI();
+        }
+        ImGui::End();
+    }
+
     if (isGui_MeshTabOpen) {
         if (ImGui::Begin("Meshes", &isGui_MeshTabOpen, ImGuiWindowFlags_NoCollapse))
         {
@@ -171,14 +184,6 @@ void CAIModelData::Render_GUI()
                     isGui_MeshTableTabOpen = true;
                 }
             }
-        }
-        ImGui::End();
-    }
-
-    if (isGui_MeshTableTabOpen) {
-        if (ImGui::Begin("MeshTab", &isGui_MeshTableTabOpen, ImGuiWindowFlags_NoCollapse))
-        {
-            m_Meshes[selectedMeshIndex]->Render_GUI();
         }
         ImGui::End();
     }

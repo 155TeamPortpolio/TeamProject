@@ -9,7 +9,7 @@ enum class HumanoidBone : _uint
     Root,
 
     Pelvis,
-    Spine1, Spine2, Chest,
+    Spine, Spine1, Spine2, Chest,
     Neck, Head,
 
     ClavicleL, UpperArmL, LowerArmL, HandL,
@@ -32,7 +32,7 @@ struct HumanoidMap
         indexByRole.fill(-1);
     }
 
-    _uint Get(HumanoidBone role) const { return indexByRole[static_cast<_uint>(role)]; }
+    _int Get(HumanoidBone role) const { return indexByRole[static_cast<_uint>(role)]; }
     void Set(HumanoidBone role, _uint boneIndex) { indexByRole[static_cast<uint32_t>(role)] = boneIndex; }
     bool Has(HumanoidBone role) const {return Get(role) >= 0; }
 };
@@ -134,6 +134,33 @@ struct HumanoidRigData
 
         weaponSocketParentIndex = map.Get(HumanoidBone::HandR);
     }
+
+    _bool IsRigComplete() const
+    {
+        if (!map.Has(HumanoidBone::Pelvis)) return false;
+        if (!map.Has(HumanoidBone::Spine1)) return false;
+        if (!map.Has(HumanoidBone::Neck))   return false;
+        if (!map.Has(HumanoidBone::Head))   return false;
+
+        if (!map.Has(HumanoidBone::UpperArmL)) return false;
+        if (!map.Has(HumanoidBone::LowerArmL)) return false;
+        if (!map.Has(HumanoidBone::HandL))     return false;
+
+        if (!map.Has(HumanoidBone::UpperArmR)) return false;
+        if (!map.Has(HumanoidBone::LowerArmR)) return false;
+        if (!map.Has(HumanoidBone::HandR))     return false;
+
+        if (!map.Has(HumanoidBone::ThighL)) return false;
+        if (!map.Has(HumanoidBone::CalfL))  return false;
+        if (!map.Has(HumanoidBone::FootL))  return false;
+
+        if (!map.Has(HumanoidBone::ThighR)) return false;
+        if (!map.Has(HumanoidBone::CalfR))  return false;
+        if (!map.Has(HumanoidBone::FootR))  return false;
+
+        return true;
+    }
+
 };
 
 NS_END
