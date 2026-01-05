@@ -229,6 +229,7 @@
     <ClInclude Include="..\Public\SacrificeHand.h" />
     <ClInclude Include="..\Public\SacrificeState_Walk_Phase2.h" />
     <ClInclude Include="..\public\SequenceCam.h" />
+    <ClInclude Include="..\public\ShadowCam.h" />
     <ClInclude Include="..\Public\SpriteAnimationUI.h" />
     <ClInclude Include="..\Public\StateMachine.h" />
     <ClInclude Include="..\Public\StateParameter.h" />
@@ -362,6 +363,7 @@
     <ClCompile Include="..\Private\SacrificeHand.cpp" />
     <ClCompile Include="..\Private\SacrificeState_Walk_Phase2.cpp" />
     <ClCompile Include="..\private\SequenceCam.cpp" />
+    <ClCompile Include="..\private\ShadowCam.cpp" />
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp" />
     <ClCompile Include="..\Private\StateParameter.cpp" />
     <ClCompile Include="..\private\TestCloud.cpp" />
