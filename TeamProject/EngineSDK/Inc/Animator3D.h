@@ -218,7 +218,6 @@ public: //»À °ü·Ã
     void Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
     //Combined
-
     _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
     _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
