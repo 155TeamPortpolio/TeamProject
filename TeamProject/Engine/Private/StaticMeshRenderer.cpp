@@ -144,8 +144,9 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_LightAcc()
 	Bind_WorldMatrix();
 	//m_pPipeLine->Update_ShadowBuffer(m_pContext, -1);
 	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
-	m_pPipeLine->Bind_ShadowMap(m_pShader);
-	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
+	m_pPipeLine->Bind_ShadowMap(false, m_pShader);
+	m_pPipeLine->BindSampler(m_pContext, true, 1);
+	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this,false);
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
 

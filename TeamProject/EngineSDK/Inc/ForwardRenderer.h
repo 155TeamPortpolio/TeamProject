@@ -13,7 +13,8 @@ private:
 
 public:
     HRESULT Render_Priority(class PriorityPass* pPriorityPass);
-    HRESULT Render_Shadow(class ShadowPass* pShadowPass, _bool clear = false);
+    HRESULT Render_StaticShadow(class StaticShadowPass* pShadowPass, _bool clear = false);
+    HRESULT Render_SkinnedShadow(class SkinnedShadowPass* pShadowPass, _bool clear = false);
     HRESULT Render_StaticMesh(class StaticOpaquePass* pOpaquePass, class InstancePass* pInstancePass);
     HRESULT Render_SkinnedMesh(class SkinnedOpaquePass* pOpaquePass);
     HRESULT Render_LightAcc();

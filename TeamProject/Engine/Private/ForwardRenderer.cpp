@@ -47,7 +47,7 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 	return S_OK;
 }
 
-HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass, _bool clear)
+HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bool clear)
 {
 	if (clear)
 	{
@@ -55,23 +55,53 @@ HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass, _bool clear)
 		return S_OK;
 	}
 
-	m_pPipeLine->Update_CSM();
+	m_pPipeLine->Update_StaticCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
-	
+
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
-	
+
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
-	
+
 	for (_uint i = 0; i < 4; ++i)
 	{
-		m_pPipeLine->Begin_ShadowRender(i);
-		m_pPipeLine->Update_ShadowBuffer(m_pContext, i);
+		m_pPipeLine->Begin_ShadowRender(false, i);
+		m_pPipeLine->Update_ShadowBuffer(m_pContext, false, i);
 
 		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
 		else pShadowPass->Execute(m_pContext, this, true);
-		m_pPipeLine->End_ShadowRender();
+		m_pPipeLine->End_ShadowRender(false);
+	}
+	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _bool clear)
+{
+	if (clear)
+	{
+		pShadowPass->Clear();
+		return S_OK;
+	}
+
+	m_pPipeLine->Update_SkinnedCSM();
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		m_pPipeLine->Begin_ShadowRender(true, i);
+		m_pPipeLine->Update_ShadowBuffer(m_pContext, true, i);
+
+		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		else pShadowPass->Execute(m_pContext, this, true);
+		m_pPipeLine->End_ShadowRender(true);
 	}
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 	return S_OK;

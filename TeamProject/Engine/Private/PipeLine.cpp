@@ -83,7 +83,9 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 	m_pHiZ = CHiZ_Culling::Create();
-	m_pCSM = CCSMShadow::Create(pDevice, pContext, 8192);
+
+	m_pSkinnedCSM = CCSMShadow::Create(pDevice, pContext, 8192);
+	m_pStaticCSM = CCSMShadow::Create(pDevice, pContext, 8192);
 	return S_OK;
 }
 
@@ -125,7 +127,7 @@ HRESULT CPipeLine::Update_FrameBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex)
+HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _int cascadeIndex)
 {
 	char buf[512];
 	sprintf_s(buf, ">>> Update_ShadowBuffer: cascadeIndex=%d\n", cascadeIndex);
@@ -140,15 +142,28 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int casca
 	shadowBuffer.vShadowPosition = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowCameraPos();
 	shadowBuffer.zShadowFar = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowFar();
 
-	if (m_pCSM)
+	if (IsSkinningMesh)
 	{
 		for (_uint i = 0; i < 4; ++i)
 		{
-			Matrix lightVP = m_pCSM->GetLightViewProj(i);
+			Matrix lightVP = m_pSkinnedCSM->GetLightViewProj(i);
 			shadowBuffer.matLightViewProj[i] = lightVP;
 		}
 
-		const float* splits = m_pCSM->GetCascadeSplits();
+		const float* splits = m_pSkinnedCSM->GetCascadeSplits();
+		shadowBuffer.vCascadeSplits = Vector4(splits[1], splits[2], splits[3], splits[4]);
+
+		shadowBuffer.iCurrentCascade = cascadeIndex;
+	}
+	else
+	{
+		for (_uint i = 0; i < 4; ++i)
+		{
+			Matrix lightVP = m_pStaticCSM->GetLightViewProj(i);
+			shadowBuffer.matLightViewProj[i] = lightVP;
+		}
+
+		const float* splits = m_pStaticCSM->GetCascadeSplits();
 		shadowBuffer.vCascadeSplits = Vector4(splits[1], splits[2], splits[3], splits[4]);
 
 		shadowBuffer.iCurrentCascade = cascadeIndex;
@@ -281,9 +296,14 @@ void CPipeLine::Update_Frustum()
 	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
 }
 
-void CPipeLine::Update_CSM()
+void CPipeLine::Update_StaticCSM()
 {
-	m_pCSM->Update();
+	m_pStaticCSM->Update();
+}
+
+void CPipeLine::Update_SkinnedCSM()
+{
+	m_pSkinnedCSM->Update();
 }
 
 void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
@@ -403,33 +423,45 @@ HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-void CPipeLine::Begin_ShadowRender(_uint cascadeIndex)
+void CPipeLine::Begin_ShadowRender(_bool IsSkinningMesh, _uint cascadeIndex)
 {
-	m_pCSM->Begin_ShadowRender(cascadeIndex);
+	if (IsSkinningMesh) m_pSkinnedCSM->Begin_ShadowRender(cascadeIndex);
+	else m_pStaticCSM->Begin_ShadowRender(cascadeIndex);
 }
 
-void CPipeLine::End_ShadowRender()
+void CPipeLine::End_ShadowRender(_bool IsSkinningMesh)
 {
-	m_pCSM->End_ShadowRender();
+	if (IsSkinningMesh) m_pSkinnedCSM->End_ShadowRender();
+	else m_pStaticCSM->End_ShadowRender();
 }
 
-ID3D11DepthStencilView* CPipeLine::GetCSMDSV(_uint index) const
+ID3D11DepthStencilView* CPipeLine::GetCSMDSV(_bool IsSkinningMesh, _uint index) const
 {
-	return 	m_pCSM->GetDSV(index);
+	ID3D11DepthStencilView* DSV = nullptr;
+
+	if (IsSkinningMesh) DSV = m_pSkinnedCSM->GetDSV(index);
+	else DSV = m_pStaticCSM->GetDSV(index);
+
+	return DSV;
 }
 
-HRESULT CPipeLine::Bind_ShadowMap(CShader* pShader)
+HRESULT CPipeLine::Bind_ShadowMap(_bool IsSkinningMesh, CShader* pShader)
 {
-	pShader->Bind_Value("ShadowMapArray", { m_pCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+	if(IsSkinningMesh)
+		pShader->Bind_Value("ShadowMapArray", { m_pSkinnedCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+	else 
+		pShader->Bind_Value("ShadowMapArray", { m_pStaticCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+
 	return S_OK;
 }
 
-void CPipeLine::BindSampler(ID3D11DeviceContext* pContext, _uint slot)
+void CPipeLine::BindSampler(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _uint slot)
 {
-	m_pCSM->BindSampler(pContext, slot);
+	if (IsSkinningMesh) m_pSkinnedCSM->BindSampler(pContext, slot);
+	else m_pStaticCSM->BindSampler(pContext, slot);
 }
 
-HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer)
+HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer, _bool IsSkinningMesh)
 {
 
 	auto LightSnapShots = CGameInstance::GetInstance()->Get_LightMgr()->Visible_Lights();
@@ -449,7 +481,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("DIRECTIONAL", pContext);
 			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
-			BindSampler(pContext, 10);
+			BindSampler(pContext, IsSkinningMesh, 10);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
@@ -509,5 +541,6 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 	Safe_Release(m_pHiZ);
-	Safe_Release(m_pCSM);
+	Safe_Release(m_pSkinnedCSM);
+	Safe_Release(m_pStaticCSM);
 }

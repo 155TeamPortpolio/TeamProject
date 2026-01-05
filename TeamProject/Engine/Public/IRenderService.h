@@ -10,8 +10,8 @@ public:
     virtual HRESULT Render() PURE;
     virtual void Submit_StaticMesh_Opaque(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_SkinnedMesh_Opaque(const OPAQUE_PACKET& packet) PURE;
-    virtual void Submit_Shadow(const OPAQUE_PACKET& packet) PURE;
-    virtual void Submit_Shadow(const INSTANCE_PACKET& packet) PURE;
+    virtual void Submit_StaticShadow(const OPAQUE_PACKET& packet) PURE;
+    virtual void Submit_SkinnedShadow(const OPAQUE_PACKET& packet) PURE;
     virtual void Submit_Instance(const INSTANCE_PACKET& packet) PURE;
     virtual void Submit_UI(const SPRITE_PACKET& packet) PURE;
     virtual void Submit_UI3D(const OPAQUE_PACKET& packet) PURE;

@@ -74,12 +74,13 @@ public:
 	_bool isVisible(MINMAX_BOX minMax, _fmatrix worldTransform);
 public:
 	HRESULT Update_FrameBuffer(ID3D11DeviceContext* pContext);
-	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext, _int cascadeIndex);
+	HRESULT Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _int cascadeIndex);
 	HRESULT Update_LightBuffer(ID3D11DeviceContext* pContext, const LIGHT_DESC& Desc, _int lightSize);
 	HRESULT Update_SSAOBuffer(ID3D11DeviceContext* pContext);
 	HRESULT Write_SSAOKernelBuffer(ID3D11Device* pDevice);
 	void Update_Frustum();
-	void Update_CSM();
+	void Update_StaticCSM();
+	void Update_SkinnedCSM();
 	void Update_HiZ(ID3D11DeviceContext* pContext);
 
 	_uint Write_ObjectData(const _float4x4& worldMatrix);
@@ -90,8 +91,8 @@ public:
 	HRESULT Begin_SkinningBuffer(ID3D11DeviceContext* pContext);
 	HRESULT End_SkinningBuffer(ID3D11DeviceContext* pContext);
 
-	void Begin_ShadowRender(_uint cascadeIndex);
-	void End_ShadowRender();
+	void Begin_ShadowRender(_bool IsSkinningMesh, _uint cascadeIndex);
+	void End_ShadowRender(_bool IsSkinningMesh);
 
 #ifdef _USING_GUI
 	void Render_GUI();
@@ -106,11 +107,11 @@ public:
 
 	ID3D11ShaderResourceView* Get_ObjectResource() { return m_pObjectResource; };
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
-	ID3D11DepthStencilView* GetCSMDSV(_uint index) const;
+	ID3D11DepthStencilView* GetCSMDSV(_bool IsSkinningMesh, _uint index) const;
 
-	HRESULT Bind_ShadowMap(class CShader* pShader);
-	void BindSampler(ID3D11DeviceContext* pContext, _uint slot);
-	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
+	HRESULT Bind_ShadowMap(_bool IsSkinningMesh, class CShader* pShader);
+	void BindSampler(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _uint slot);
+	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsSkinningMesh);
 	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 
 private:
@@ -140,7 +141,8 @@ private:
 
 private:
 	class CHiZ_Culling* m_pHiZ = { nullptr };
-	class CCSMShadow* m_pCSM = { nullptr };
+	class CCSMShadow* m_pStaticCSM = { nullptr };
+	class CCSMShadow* m_pSkinnedCSM = { nullptr };
 
 public:
 	static CPipeLine* Create(ID3D11Device* pDevice, class CRenderSystem* pSystem);

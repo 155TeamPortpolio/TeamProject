@@ -41,7 +41,8 @@ HRESULT CRenderSystem::Initialize()
 	m_pPriorityPass	= PriorityPass::Create(this);
 	m_pStaticPass	= StaticOpaquePass::Create(this);
 	m_pSkinnedPass	= SkinnedOpaquePass::Create(this);
-	m_pShadowPass	= ShadowPass::Create(this);
+	m_pStaticShadowPass = StaticShadowPass::Create(this);
+	m_pSkinnedShadowPass = SkinnedShadowPass::Create(this);
 	m_pInstancePass	= InstancePass::Create(this);
 	m_pBlendedPass	= BlendedPass::Create(this);
 	m_pParticlePass	= ParticlePass::Create(this);
@@ -65,7 +66,8 @@ HRESULT CRenderSystem::Initialize()
 HRESULT CRenderSystem::Render()
 {
 	m_pForward->Render_Priority(m_pPriorityPass);
-	m_pForward->Render_Shadow(m_pShadowPass, !IsOn);
+	m_pForward->Render_StaticShadow(m_pStaticShadowPass);
+	m_pForward->Render_SkinnedShadow(m_pSkinnedShadowPass);
 	m_pForward->Render_SkinnedMesh(m_pSkinnedPass);
 	m_pForward->Render_StaticMesh(m_pStaticPass, m_pInstancePass);
 	m_pPipeLine->Update_HiZ(m_pContext);
@@ -222,7 +224,8 @@ void CRenderSystem::Free()
 	Safe_Release(m_pUI3DPass);
 	Safe_Release(m_pEffectPass);
 	Safe_Release(m_pDebugPass);
-	Safe_Release(m_pShadowPass);
+	Safe_Release(m_pStaticShadowPass);
+	Safe_Release(m_pSkinnedShadowPass);
 	Safe_Release(m_pBlendedPass);
 	Safe_Release(m_pParticlePass);
 	Safe_Release(m_pNonLightPass);
