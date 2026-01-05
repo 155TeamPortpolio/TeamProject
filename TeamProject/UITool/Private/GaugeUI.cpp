@@ -35,11 +35,6 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CGaugeUI::Update(_float dt)
-{
-    __super::Update(dt);
-}
-
 void CGaugeUI::Render_GUI()
 {
     __super::Render_GUI();

@@ -482,6 +482,16 @@ namespace Engine
 		class CGameObject* Get();
 		void Delete();
 	}OBJECT_HANDLE;
+
+	typedef struct ENGINE_DLL tagUIHandle {
+		string Level = {};
+		_uint hObjID = {};
+
+		_bool isValid();
+		void Reset();
+		class CUI_Object* Get();
+		void Release();
+	}UI_HANDLE;
 }
 
 

@@ -4,7 +4,6 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "Sprite2D.h"
-#include "UITool_Level.h"
 
 HRESULT CButtonUI::Initialize_Prototype()
 {
@@ -36,11 +35,6 @@ void CButtonUI::Awake()
     Set_Clickable(true);
 }
 
-void CButtonUI::Update(_float dt)
-{
-    __super::Update(dt);
-}
-
 void CButtonUI::Render_GUI()
 {
     __super::Render_GUI();
@@ -49,17 +43,17 @@ void CButtonUI::Render_GUI()
     Render_GUI_Image(m_strTextureKey);
 
     // flip
-    _bool isFlip = {};
+    _bool isFlip{};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
     {
         m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
-        isFlip = true;
+        isFlip    = true;
     } 
     ImGui::SameLine();
     if (ImGui::Checkbox("flip Y", &m_isFlipY))
     {
         m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
-        isFlip = true;
+        isFlip    = true;
     } 
     if(isFlip)
         Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
@@ -70,7 +64,7 @@ void CButtonUI::Render_GUI()
 
     // 버튼 상태
     ImGui::SeparatorText(u8"버튼 상태");
-    string strState = {};
+    string strState{};
     switch (m_eState)
     {
     case STATE::NORMAL:   strState = ENUM_TO_STRING(STATE::NORMAL);   break;
@@ -83,8 +77,7 @@ void CButtonUI::Render_GUI()
 
 void CButtonUI::Enter_Hover()
 {
-    if (STATE::DISABLED == m_eState)
-        return;
+    if (STATE::DISABLED == m_eState) return;
 
     OutputDebugString(L"Enter_Hover\n");
     m_eState = STATE::HOVERED;
@@ -100,8 +93,7 @@ void CButtonUI::OnClick()
 {
     __super::OnClick();
 
-    if (STATE::DISABLED == m_eState)
-        return;
+    if (STATE::DISABLED == m_eState) return;
 
     OutputDebugString(L"Clicked\n");
     m_eState = STATE::CLICKED;
@@ -115,9 +107,8 @@ void CButtonUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
-    data["textureTag"] = m_strTextureKey;
-
+    data["typeTag"]     = m_strTypeTag;
+    data["textureTag"]  = m_strTextureKey;
     data["eventMsgTag"] = m_szEventMsg;
 }
 
