@@ -2,6 +2,7 @@
 #include "UI_Loading.h"
 
 #include "GameInstance.h"
+#include "ObjectContainer.h"
 
 HRESULT CUI_Loading::Initialize_Prototype()
 {
@@ -19,20 +20,50 @@ HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
 
 void CUI_Loading::Awake()
 {
-    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();// m_LevelTag;
+    m_hChildren.resize(PREFAB::END);
+
+    const string& strNextLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NextLevel();
+    string fileName = {};
+
+    // 다음레벨에 따라 분기
+    if (strNextLevelKey == "City_Level")
+        fileName = "loading_city";
+    else if (strNextLevelKey == "Hollow_Level")
+        fileName = "loading_hollow";
+    else
+        fileName = "loading_default";
+
+    // 다음레벨에 맞는 json 로드
+    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
     CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset("loading_default.json")
-        .Build("prefabLogo");
+        .Asset(fileName + ".json")
+        .Build("prefabLoading");
 
-    if (uiObj)
+    if (!uiObj)
+        return;
+
+    // 
+    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
+    m_hRoot = uiObj->Get_Handle();
+
+    const vector<CGameObject*> children = uiObj->Get_Component<CObjectContainer>()->Get_Children();
+
+    for (auto& pchild : children)
     {
-        CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
-
-        m_handle = uiObj->Get_Handle();
+        if ("prefab_nowLoading" == pchild->Get_InstanceName())
+        {
+            m_hChildren[PREFAB::NOW_LOADING] = dynamic_cast<CUI_Object*>(pchild)->Get_Handle();
+            break;
+        }
     }
 
-    if (m_handle.isValid())
-        m_handle.Get()->Set_Animation(0);
+    // root의 0번 애니메이션 재생 (페이드인)
+    if (m_hRoot.isValid())
+        m_hRoot.Get()->Set_Animation(0);
+
+    // now loading의 0번 애니메이션 재생 (각도 움직임)
+    if (m_hChildren[PREFAB::NOW_LOADING].isValid())
+        m_hChildren[PREFAB::NOW_LOADING].Get()->Set_Animation(0);
 }
 
 void CUI_Loading::Update(_float dt)

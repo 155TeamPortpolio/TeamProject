@@ -5,6 +5,8 @@ NS_BEGIN(Client)
 
 class CUI_Loading final : public CUI_Object
 {
+	enum PREFAB { NOW_LOADING, END };
+
 private:
 	CUI_Loading() {}
 	CUI_Loading(const CUI_Loading& rhs) : CUI_Object(rhs) {}
@@ -20,8 +22,9 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	UI_HANDLE		m_handle;
-
+	UI_HANDLE			m_hRoot;
+	vector<UI_HANDLE>	m_hChildren;
+	
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
