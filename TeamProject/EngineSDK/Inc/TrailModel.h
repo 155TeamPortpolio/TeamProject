@@ -5,6 +5,19 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CTrailModel :
     public CModel
 {
+	typedef struct tagCenterPoint
+	{
+		_float3 vPosition{};
+		_float fLifeTime{};
+	}CENTER_POINT;
+
+	typedef struct tagSegmentPoint
+	{
+		_float3 vPositionA{};
+		_float3 vPositionB{};
+		_float fLifeTime{};
+	}SEGMENT_POINT;
+
 public:
 	enum class MODE { CENTER, SEGMENT, END };
 private:
@@ -36,19 +49,32 @@ public:
 	virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index)override;
 
 public:
-	void UpdateTrail(_float dt);
+	void SetTrailParams(TRAIL_NODE trailDesc);
+	void Update_CenterPoint(_float3 position, _float dt);
+	void Update_SegmentPoint(_float3 position0, _float3 position1, _float dt);
 
 private:
 	void BuildVertices();
 
 	class CVI_Trail* m_pBuffer = { nullptr };
+
+	MODE m_eMode = MODE::CENTER;
 	_uint m_iAlivePointCount{};
+	_float m_fMaxLifeTime{};
+	_float m_fMinDistance{};
+	vector<VTXTRAIL> m_TrailVertices;
+
+	/* Center Mode */
+	_float m_fWidth{};
+	deque<CENTER_POINT> m_CenterPoints;
+
+	/* Segment Mode */
+	deque<SEGMENT_POINT> m_SegmentPoints;
 
 public:
 	static CTrailModel* Create();
 	CComponent* Clone() override;
 	virtual void Free() override;
-
 
 };
 NS_END

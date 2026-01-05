@@ -558,6 +558,9 @@
     <ClInclude Include="..\Public\VI_Trail.h">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TrailNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Trail</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1029,6 +1032,9 @@
     <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Trail">
       <UniqueIdentifier>{37f4c8d6-6f7d-4de4-8f80-b3620e96ddbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Trail">
+      <UniqueIdentifier>{49355ea0-e01f-4c1c-ac30-dbad506ba0de}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1469,9 +1475,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\VI_Trail.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\private\CSMShadow.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TrailNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Trail</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1574,6 +1583,9 @@
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
+      <Filter>98. BasicShader</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

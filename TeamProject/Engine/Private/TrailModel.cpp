@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "VI_Trail.h"
+#include "GameInstance.h"
 
 CTrailModel::CTrailModel()
 {
@@ -19,6 +20,11 @@ HRESULT CTrailModel::Initialize_Prototype()
 
 HRESULT CTrailModel::Initialize(COMPONENT_DESC* pArg)
 {
+	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
+
+	m_pBuffer = CVI_Trail::Create(pDevice, "Engine_Default_Trail");
+	m_TrailVertices.reserve(g_iMaxNumTrailPoints * 2);
+
 	return S_OK;
 }
 
@@ -45,6 +51,159 @@ HRESULT CTrailModel::Bind_Buffer(ID3D11DeviceContext* pContext)
 HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 {
 	return S_OK;
+}
+
+void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
+{
+
+}
+
+void CTrailModel::Update_CenterPoint(_float3 position, _float dt)
+{
+	CENTER_POINT newPoint{};
+	newPoint.vPosition = position;
+	newPoint.fLifeTime = 0.f;
+
+	if (m_CenterPoints.empty())
+		m_CenterPoints.push_back(newPoint);
+	else
+	{
+		CENTER_POINT lastPoint = m_CenterPoints.back();
+		_float fDistance = (_vector3(lastPoint.vPosition) - _vector3(position)).Length();
+
+		if (fDistance >= m_fMinDistance)
+			m_CenterPoints.push_back(newPoint);
+	}
+
+	for (auto& point : m_CenterPoints)
+		point.fLifeTime += dt;
+
+	if (m_CenterPoints.size() >= g_iMaxNumTrailPoints)
+		m_CenterPoints.pop_front();
+
+	while (!m_CenterPoints.empty() && m_CenterPoints.front().fLifeTime >= m_fMaxLifeTime)
+		m_CenterPoints.pop_front();
+
+	m_iAlivePointCount = m_CenterPoints.size();
+
+	BuildVertices();
+}
+
+void CTrailModel::Update_SegmentPoint(_float3 position0, _float3 position1, _float dt)
+{
+	SEGMENT_POINT newPoint{};
+	newPoint.vPositionA = position0;
+	newPoint.vPositionB = position1;
+	newPoint.fLifeTime = 0.f;
+
+	if (m_SegmentPoints.empty())
+		m_SegmentPoints.push_back(newPoint);
+	else
+	{
+		SEGMENT_POINT lastPoint = m_SegmentPoints.back();
+		_vector3 vCenter = (_vector3(lastPoint.vPositionA) + _vector3(lastPoint.vPositionB)) * 0.5f;
+		_vector3 vNewCenter = (_vector3(position0) + _vector3(position1)) * 0.5f;
+		_float fDistance = (vCenter - _vector3(vNewCenter)).Length();
+
+		if (fDistance >= m_fMinDistance)
+			m_SegmentPoints.push_back(newPoint);
+	}
+
+	for (auto& point : m_SegmentPoints)
+		point.fLifeTime += dt;
+
+	if (m_SegmentPoints.size() >= g_iMaxNumTrailPoints)
+		m_SegmentPoints.pop_front();
+
+	while (!m_SegmentPoints.empty() && m_SegmentPoints.front().fLifeTime >= m_fMaxLifeTime)
+		m_SegmentPoints.pop_front();
+
+	m_iAlivePointCount = m_SegmentPoints.size();
+
+	BuildVertices();
+}
+
+void CTrailModel::BuildVertices()
+{
+	m_TrailVertices.clear();
+
+	switch (m_eMode)
+	{
+	case Engine::CTrailModel::MODE::CENTER:
+	{
+		m_iAlivePointCount = m_CenterPoints.size();
+
+		if (m_iAlivePointCount < 2) return;
+
+		_vector3 vCamPosition = _vector3(CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos());
+		_vector3 vWorldUp(0.f, 1.f, 0.f);
+		for (_uint i = 0; i < m_iAlivePointCount - 1; ++i)
+		{
+			CENTER_POINT pointA = m_CenterPoints[i];
+			CENTER_POINT pointB = m_CenterPoints[i + 1];
+
+			_vector3 vPositionA = pointA.vPosition;
+			_vector3 vPositionB = pointB.vPosition;
+
+			_vector3 vViewLook = vCamPosition - vPositionA;
+			_vector3 vDir = vPositionB - vPositionA;
+
+			vViewLook.Normalize();
+			vDir.Normalize();
+			_vector3 vRight = vDir.Cross(vViewLook);
+
+			/* dir == look */
+			if (vRight.Dot(vRight) < 1e-6f)
+			{
+				vRight = vWorldUp.Cross(vDir);
+
+				if (vRight.Dot(vRight) < 1e-6f)
+					vRight = _vector3(1.f, 0.f, 0.f);
+			}
+
+			vRight.Normalize();
+
+			VTXTRAIL p0{}, p1{};
+			p0.vPosition = vPositionA + vRight * m_fWidth * 0.5f;
+			p0.vLifeTime.x = pointA.fLifeTime;
+			p0.vLifeTime.y = m_fMaxLifeTime;
+
+			p1.vPosition = vPositionA - vRight * m_fWidth * 0.5f;
+			p1.vLifeTime.x = pointA.fLifeTime;
+			p1.vLifeTime.y = m_fMaxLifeTime;
+
+			m_TrailVertices.push_back(p0);
+			m_TrailVertices.push_back(p1);
+		}
+	}break;
+	case Engine::CTrailModel::MODE::SEGMENT:
+	{
+		m_iAlivePointCount = m_SegmentPoints.size();
+
+		if (m_iAlivePointCount < 2) return;
+
+		for (_uint i = 0; i < m_iAlivePointCount; ++i)
+		{
+			SEGMENT_POINT point = m_SegmentPoints[i];
+			
+			VTXTRAIL p0{}, p1{};
+			p0.vPosition = point.vPositionA;
+			p0.vLifeTime.x = point.fLifeTime;
+			p0.vLifeTime.y = m_fMaxLifeTime;
+
+			p1.vPosition = point.vPositionB;
+			p1.vLifeTime.x = point.fLifeTime;
+			p1.vLifeTime.y = m_fMaxLifeTime;
+
+			m_TrailVertices.push_back(p0);
+			m_TrailVertices.push_back(p1);
+		}
+	}break;
+	default:
+		break;
+	}
+
+	m_pBuffer->Update_Vertices(m_TrailVertices.data(), m_iAlivePointCount);
 }
 
 HRESULT CTrailModel::Link_Model(const string& levelKey, const string& modelDataKey)
@@ -117,4 +276,6 @@ CComponent* CTrailModel::Clone()
 void CTrailModel::Free()
 {
 	__super::Free();
+
+	Safe_Release(m_pBuffer);
 }

@@ -132,15 +132,13 @@ namespace Engine {
 	typedef struct tagVertexRibbonTrail
 	{
 		_float3 vPosition{};
-		_float fWidth{};
 		_float2 vLifeTime{};
 
 		static constexpr string_view Key = "VTXTRAIL";
-		static constexpr unsigned int iElementCount = { 3 };
+		static constexpr unsigned int iElementCount = { 2 };
 		static constexpr D3D11_INPUT_ELEMENT_DESC Elements[iElementCount] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, 16, D3D11_INPUT_PER_VERTEX_DATA, 0}
+			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		};
 	}VTXTRAIL;
 };

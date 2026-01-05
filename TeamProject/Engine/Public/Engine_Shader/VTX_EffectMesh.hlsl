@@ -127,7 +127,7 @@ VS_OUT VS_MAIN(VS_IN In)
     Out.vTangent = normalize(mul(vector(In.vTangent, 0.f), ObjectBufferArray[TransformIndex].Transform)).xyz;
     Out.vBinormal = normalize(cross(Out.vNormal.xyz, Out.vTangent.xyz));
     Out.vViewPosition = viewPos;
-   
+    
     return Out;
 }
 
