@@ -11,34 +11,16 @@
 #include "SpriteAnimationUI.h"
 #include "TextUI.h"
 #include "UVAnimationUI.h"
+#include "MaskUI.h"
+
+#include "UI_Logo.h"
+#include "UI_Loading.h"
 
 namespace fs = filesystem;
 using namespace Helper;
 
 namespace
 {
-	void RegisterUIProtos(const string& levelKey)
-	{
-		struct Entry { const char* typeTag; CGameObject* (*createFunc)(); };
-
-		static const Entry entries[] =
-		{
-			{"Button",          &CButtonUI::Create          },
-			{"CanvasPanel",     &CCanvasPanel::Create       },
-			{"Gauge",           &CGaugeUI::Create           },
-			{"Image",           &CImageUI::Create           },
-			{"SpriteAnimation", &CSpriteAnimationUI::Create },
-			{"Text",            &CTextUI::Create            },
-			{"UVAnimation",     &CUVAnimationUI::Create     },
-		};
-
-		for (const Entry& entry : entries)
-		{
-			const string protoTag = string("Proto_GameObject_") + entry.typeTag;
-			CGameInstance::GetInstance()->Get_PrototypeMgr()->Add_ProtoType(levelKey, protoTag, entry.createFunc());
-		}
-	}
-
 	unordered_set<string> BuildExtSet(const vector<string>& exts)
 	{
 		unordered_set<string> out;
@@ -113,17 +95,37 @@ namespace
 	}
 }
 
-void UILoader::Load(const string& levelKey)
+void UILoader::Add_ResourcePath()
 {
-	static unordered_set<string> registeredLevels;
-	if (registeredLevels.find(levelKey) != registeredLevels.end()) return;
-	registeredLevels.insert(levelKey);
-
 	const string uiRoot = "../Bin/Resources/UI";
+	const string jsonRoot = "../../Resources/Data/UI";
 
 	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
-	ScanDirectory(uiRoot + "/Data",  {".json"});
+	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
+}
 
-	RegisterUIProtos(levelKey);
+void UILoader::Add_Prototype(const string& levelKey)
+{
+	struct Entry { const char* typeTag; CGameObject* (*createFunc)(); };
+
+	static const Entry entries[] =
+	{
+		{"Button",          &CButtonUI::Create          },
+		{"CanvasPanel",     &CCanvasPanel::Create       },
+		{"Gauge",           &CGaugeUI::Create           },
+		{"Image",           &CImageUI::Create           },
+		{"SpriteAnimation", &CSpriteAnimationUI::Create },
+		{"Text",            &CTextUI::Create            },
+		{"UVAnimation",     &CUVAnimationUI::Create     },
+		{"Mask",			&CMaskUI::Create			},
+		{"Logo",			&CUI_Logo::Create			},
+		{"Loading",			&CUI_Loading::Create		},
+	};
+
+	for (const Entry& entry : entries)
+	{
+		const string protoTag = string("Proto_GameObject_") + entry.typeTag;
+		CGameInstance::GetInstance()->Get_PrototypeMgr()->Add_ProtoType(levelKey, protoTag, entry.createFunc());
+	}
 }

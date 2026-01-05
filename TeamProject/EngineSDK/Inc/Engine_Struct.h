@@ -37,7 +37,7 @@ namespace Engine
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
 		_float			fLightRange = {};
-		_float			fLightIntensity = {3.f};
+		_float			fLightIntensity = { 3.f };
 		_float2		lightPadding = {};
 		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
 	}LIGHT_DESC;
@@ -80,7 +80,7 @@ namespace Engine
 		_float4 vMtrDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		_float4 vMtrlAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 		_float4 vMtrlSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
-		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);  
+		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
 		_float fSpecularPow = { 0.1f };
 		_float3 vPadding;
 	};
@@ -209,7 +209,7 @@ namespace Engine
 			_matrix world = XMLoadFloat4x4(&worldMat);
 			_vector min = XMLoadFloat3(&vMin);
 			_vector max = XMLoadFloat3(&vMax);
-			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min,world));
+			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min, world));
 			XMStoreFloat3(&newBox.vMax, XMVector3TransformCoord(min, world));
 			return newBox;
 		}
@@ -245,9 +245,9 @@ namespace Engine
 		_float				fDistance = 0.f;       // 충돌 지점까지의 거리
 		_float3				vPoint = {};           // 충돌 지점 월드 좌표
 		_float3				vNormal = {};          // 충돌 표면의 법선
-		class CGameObject*	pHitObject = nullptr;  // 충돌한 오브젝트
-		class ICollidable*	pCollidable = nullptr; // 충돌한 컴포넌트
-		PxShape*			pShape = nullptr;      // 충돌한 Shape
+		class CGameObject* pHitObject = nullptr;  // 충돌한 오브젝트
+		class ICollidable* pCollidable = nullptr; // 충돌한 컴포넌트
+		PxShape* pShape = nullptr;      // 충돌한 Shape
 	}PHYSICS_RAY_HIT;
 
 	// Physics Hits Info
@@ -310,7 +310,7 @@ namespace Engine
 		string FontTag;
 		_float Scale = 1.f;
 		_float Rotation = 0.f;
-		_float2 Origin = { 0.f, 0.f }; 
+		_float2 Origin = { 0.f, 0.f };
 
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
@@ -322,7 +322,7 @@ namespace Engine
 		_bool isLoop;
 		_float fDuration;
 		_float TickperSecond;
-		vector<_uint> AnimationKeyFrame; 
+		vector<_uint> AnimationKeyFrame;
 		vector<_float> FramePercent;
 	}MATERIAL_CLIP;
 
@@ -433,8 +433,8 @@ namespace Engine
 
 		/* Color */
 		_uint ColorEaseType{};
-		_float4 vStartColor{1.f,1.f,1.f,1.f};
-		_float4 vEndColor{1.f,1.f,1.f,1.f};
+		_float4 vStartColor{ 1.f,1.f,1.f,1.f };
+		_float4 vEndColor{ 1.f,1.f,1.f,1.f };
 
 		/* Scale */
 		_uint ScaleEaseType{};
@@ -496,6 +496,34 @@ namespace Engine
 		class CGameObject* Get();
 		void Delete();
 	}OBJECT_HANDLE;
+
+	typedef struct ENGINE_DLL tagUIHandle {
+		string Level = {};
+		_uint hObjID = {};
+
+		_bool isValid();
+		void Reset();
+		class CUI_Object* Get();
+		void Release();
+	}UI_HANDLE;
+
+	struct IK_CONTEXT
+	{
+		class CAnimator3D*		pAnimator;
+		vector<_int>			BoneIndices;
+		_vector3				vPoleVector;
+		_float					fWeight;
+		vector<_quaternion>     OutRotations;
+		_bool					bSuccess;
+
+		IK_CONTEXT()
+			: pAnimator(nullptr)
+			, vPoleVector(0.f, 0.f, 1.f)
+			, fWeight(1.f)
+			, bSuccess(false)
+		{
+		}
+	};
 }
 
 

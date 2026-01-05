@@ -110,15 +110,15 @@ void CSpriteAnimationUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 
-    auto& spriteAnimationJson = data["spriteAnimation"];
-    spriteAnimationJson["loop"] = m_isLoop;
-    spriteAnimationJson["frameCountX"] = m_iFrameCountX;
-    spriteAnimationJson["frameCountY"] = m_iFrameCountY;
+    auto& spriteAnimationJson              = data["spriteAnimation"];
+    spriteAnimationJson["loop"]            = m_isLoop;
+    spriteAnimationJson["frameCountX"]     = m_iFrameCountX;
+    spriteAnimationJson["frameCountY"]     = m_iFrameCountY;
     spriteAnimationJson["frameCountTotal"] = m_iFrameCountTotal;
-    spriteAnimationJson["frameSpeed"] = m_fFrameSpeed;
+    spriteAnimationJson["frameSpeed"]      = m_fFrameSpeed;
 }
 
 void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
@@ -130,17 +130,17 @@ void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
     if (data.contains("spriteAnimation"))
     {
         const auto& spriteAnimationJson = data["spriteAnimation"];
-        m_isLoop = spriteAnimationJson.value("loop", true);
-        m_iFrameCountX = spriteAnimationJson.value("frameCountX", 1);
-        m_iFrameCountY = spriteAnimationJson.value("frameCountY", 1);
+        m_isLoop           = spriteAnimationJson.value("loop", true);
+        m_iFrameCountX     = spriteAnimationJson.value("frameCountX", 1);
+        m_iFrameCountY     = spriteAnimationJson.value("frameCountY", 1);
         m_iFrameCountTotal = spriteAnimationJson.value("frameCountTotal", 1);
-        m_fFrameSpeed = spriteAnimationJson.value("frameSpeed", 30.0f);
+        m_fFrameSpeed      = spriteAnimationJson.value("frameSpeed", 30.0f);
     }
 
     auto sprite = Get_Component<CSprite2D>();
     sprite->Set_Param("FrameIndex", { &m_iCurrentFrameIndex, "uint", sizeof(_uint) });
-    sprite->Set_Param("Col", { &m_iFrameCountX,       "uint", sizeof(_uint) });
-    sprite->Set_Param("Row", { &m_iFrameCountY,       "uint", sizeof(_uint) });
+    sprite->Set_Param("Col",        { &m_iFrameCountX,       "uint", sizeof(_uint) });
+    sprite->Set_Param("Row",        { &m_iFrameCountY,       "uint", sizeof(_uint) });
 
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
 }
@@ -148,30 +148,21 @@ void CSpriteAnimationUI::Load(const nlohmann::ordered_json& data)
 CGameObject* CSpriteAnimationUI::Create()
 {
     CSpriteAnimationUI* pInstance = new CSpriteAnimationUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CSpriteAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CSpriteAnimationUI::Clone(INIT_DESC* pArg)
 {
     CSpriteAnimationUI* pInstance = new CSpriteAnimationUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CSpriteAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
-}
-
-void CSpriteAnimationUI::Free()
-{
-    __super::Free();
 }
