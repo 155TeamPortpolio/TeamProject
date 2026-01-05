@@ -20,6 +20,7 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         
         _bool               bPause = { true };
+        _bool               bApplied = { false };
         _float              fLayerWeight = {};
         _float              fTargetLayerWeight = {};
         _float              fLayerWeightElapsed = {};
@@ -264,7 +265,6 @@ protected:
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
-    _bool                           m_bAnimationUpdated = { false };
 
     /* 아래 4개의 값만 제대로 들어오면 애니매이션이 돌아감  */
     vector<_float4x4> m_TPose = {};                     //T-Pose Matrices
@@ -292,7 +292,7 @@ public:
 };
 
 // ───────── Builder
-
+#pragma region Builder
 template <typename T>
 class AnimBuild {
 public:
@@ -455,5 +455,6 @@ protected:
 
     _bool       m_bUseFinalLocal = false;
 };
+#pragma endregion
 
 NS_END

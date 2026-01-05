@@ -123,11 +123,12 @@ void CAnimator3D::Update_Animation(_float dt)
 	if (m_pAnimClips.empty()) return;
 
 	Clear_Events();
-	m_bAnimationUpdated = false;
 
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.bPause) continue;
 		if (Layer.fLayerWeight <= 0) continue;
+
+		Layer.bApplied = false;
 
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
@@ -1226,9 +1227,12 @@ HRESULT SetAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
-
+	
 	//레이어, 클립 적용
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
+	if (Layer.bApplied)
+		return S_OK;
+	
 	Layer.iClipIndex = m_iClipIndex;
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
@@ -1271,6 +1275,7 @@ HRESULT SetAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
+	Layer.bApplied = true;
 	return S_OK;
 }
 
@@ -1279,8 +1284,10 @@ HRESULT ChangeAnimBuild::Apply()
 {
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
-
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
+
+	if (Layer.bApplied)
+		return S_OK;
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
@@ -1359,6 +1366,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
+	Layer.bApplied = true;
 	return S_OK;
 }
 
