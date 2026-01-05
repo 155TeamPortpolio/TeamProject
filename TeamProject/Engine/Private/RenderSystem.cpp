@@ -82,8 +82,8 @@ HRESULT CRenderSystem::Render()
 	m_pForward->Render_Blended(m_pBlendedPass);
 	m_pForward->Render_NonLight(m_pNonLightPass);
 	m_pForward->Render_OutLine();
-
 	m_pUI->Render_2D(m_pUIPass);
+
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
 	m_pForward->Render_Bloom();

@@ -210,6 +210,10 @@ HRESULT CForwardRenderer::Ready_Target()
 		m_pTargetManager->Create_Target(ShadowDesc);
 	}
 	{
+		RenderTargetDesc CombinedDesc = { "Target_Combined" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(CombinedDesc);
+	}
+	{
 		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(FianlDesc);
 	}
@@ -221,6 +225,9 @@ HRESULT CForwardRenderer::Ready_MRT()
 {
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Combined", "Target_Combined"))) return E_FAIL;
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Final", "Target_Final"))) return E_FAIL;
