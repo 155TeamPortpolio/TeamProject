@@ -47,6 +47,7 @@ private:
 
     /*Main Params*/
     CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
+    CParticleSystem::COLOR_MODE m_eColorMode{};
     _bool m_IsWorld = true;
     _uint m_iBurstCount{};
 
@@ -75,6 +76,9 @@ private:
 
     _float4 m_vStartColor{ 1.f,1.f,1.f,1.f };
     _float4 m_vEndColor{ 1.f,1.f,1.f,1.f };
+
+    _float4 m_vAlphaKey{ 1.f,1.f,1.f,1.f };
+    _float2 m_vRatio{ 0.3f,0.6f };
 
     _bool m_IsRandomFrameIndex = false;
     _bool m_IsParticleAnimated = false;

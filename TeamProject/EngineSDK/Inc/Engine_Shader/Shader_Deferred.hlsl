@@ -310,12 +310,16 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     vector vSkinned = SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vStatic = StaticCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
+    vector vEffect = EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vUI = UICombinedTexture.Sample(DefaultSampler, In.vTexcoord);
     
     float3 result = vSkinned.rgb;
     
     if (vStatic.a > 0.01f) result = vStatic.rgb;
     
+    if (vEffect.a > 0.01f)
+        result = vEffect.rgb * vEffect.a;
+        
     if (vUI.a > 0.01f) result = vUI.rgb;
     
     Out.vBackBuffer = float4(result, 1.f);
@@ -328,7 +332,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
    // float4 effectbloom = BloomFinal.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+   // scene.rgb *= scene.a;
     ui.rgb *= ui.a; //premultiplied
     float3 hdrColor = scene.rgb;
     hdrColor += hdrBloom.rgb * 0.3;
@@ -341,6 +345,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     return float4(mapped, 1.f);
 }
 
+//pcl
 technique11 DefaultTechnique
 {
     pass HDR_BRIGHT

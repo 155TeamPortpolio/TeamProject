@@ -6,6 +6,7 @@ float4x4 g_WorldMatrix;
 
 uint Col;
 uint Row;
+uint ColorMode;
 
 BlendState BS_OITAccmulation
 {
@@ -223,19 +224,21 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
     
     float4 vColorDesc = DiffuseTexture.Sample(LinearSampler, TexCoord);
-    float3 vColor = vColorDesc.rgb;
-    float fAlpha = vColorDesc.a;
-    vColor = lerp(In.vColor.rgb, vColor, fAlpha);
+    float4 vResult = ApplyColorMode(ColorMode, vColorDesc, In.vColor);
+    float3 vColor = vResult.rgb;
+    float fAlpha = vResult.a;
 
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;
-    float fWeight = clamp(0.03 / (1e-5 + pow(fLinearZ, 4.f)), 0.01f, 3e3);
-    fWeight = max(fWeight, 1.f);
-    float4 vBloomColor = float4(vColor, fAlpha) * fAlpha;
+    float fDepthBias = 1.f / (1.f + fLinearZ * fLinearZ);
+    float fWeight = clamp((fAlpha * 4.f + 0.01f) * fDepthBias, 0.01f, 1.f);
+    float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
     
-    Out.vDiffuseAcc = float4(vColor* fAlpha, fAlpha) * fWeight;
-    Out.vBloomAcc = ExtractBright(vBloomColor, 0.6f, 0.5f, 1.5f) * fWeight;
-    Out.vBloomAcc.a = fAlpha;
+    //if (fAlpha < 0.1f)
+    //    discard;
+    
+    Out.vDiffuseAcc = vPremulColor * fWeight;
+    Out.vBloomAcc.rgb = ExtractBright(vPremulColor, 0.6f, 0.5f, 1.5f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     
