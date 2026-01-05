@@ -13,7 +13,7 @@
 #include "UVAnimationUI.h"
 #include "MaskUI.h"
 
-#include "Logo.h"
+#include "UI_Logo.h"
 #include "UI_Loading.h"
 
 namespace fs = filesystem;
@@ -119,7 +119,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"Text",            &CTextUI::Create            },
 		{"UVAnimation",     &CUVAnimationUI::Create     },
 		{"Mask",			&CMaskUI::Create			},
-		{"Logo",			&CLogo::Create				},
+		{"Logo",			&CUI_Logo::Create			},
 		{"Loading",			&CUI_Loading::Create		},
 	};
 

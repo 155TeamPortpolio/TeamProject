@@ -729,7 +729,7 @@
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Logo.h">
+    <ClInclude Include="..\Public\UI_Logo.h">
       <Filter>02. GameObject\UI\Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Loading.h">
@@ -1068,7 +1068,7 @@
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Logo.cpp">
+    <ClCompile Include="..\Private\UI_Logo.cpp">
       <Filter>02. GameObject\UI\Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Loading.cpp">
