@@ -256,7 +256,14 @@ protected:
     void Layer_Additive(const ANIM_LAYER& Layer);
     //Combined 연산
 
+
+
     //최종 뼈 계산
+    void Update_Layers(_float dt);
+    void Update_LocalMatrices(_float dt);
+    void Update_IKMatrices(_float dt);
+    void Update_CombinedMatrices(_float dt);
+
     void BuildBone(_float dt);
 
 public:

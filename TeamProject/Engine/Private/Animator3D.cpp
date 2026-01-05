@@ -123,19 +123,14 @@ void CAnimator3D::Update_Animation(_float dt)
 	if (m_pAnimClips.empty()) return;
 
 	Clear_Events();
+	
+	/* Update Animation Clips*/
+	Update_Layers(dt);
 
-	for (auto& Layer : m_AnimLayers) {
-		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
+	/* Create TransformationMatrices */
+	BuildLocal(dt);
 
-		Layer.bApplied = false;
-
-		if (Layer.bBlending)
-			Animation_Convert(Layer, dt);
-		else
-			Animation_Run(Layer, dt);
-	}
-
+	/* Create CombinedMatrices */
 	BuildBone(dt);
 }
 
@@ -1176,7 +1171,22 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 	}
 }
 
-void CAnimator3D::BuildBone(_float dt)
+void CAnimator3D::Update_Layers(_float dt)
+{
+	for (auto& Layer : m_AnimLayers) {
+		if (Layer.bPause) continue;
+		if (Layer.fLayerWeight <= 0) continue;
+
+		Layer.bApplied = false;
+
+		if (Layer.bBlending)
+			Animation_Convert(Layer, dt);
+		else
+			Animation_Run(Layer, dt);
+	}
+}
+
+void CAnimator3D::BuildLocal(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
 		if (Layer.fLayerWeight <= 0) continue;
@@ -1189,7 +1199,7 @@ void CAnimator3D::BuildBone(_float dt)
 			Ease = Math::ApplyEase(Layer.eLayerEaseType, t);
 			Layer.fLayerWeight = Math::Lerp(Layer.fLayerWeight, Layer.fTargetLayerWeight, Ease);
 		}
-	
+
 		switch (Layer.eLayerType)
 		{
 		case Engine::ANIM_LAYER_STATE::NONE:
@@ -1210,7 +1220,14 @@ void CAnimator3D::BuildBone(_float dt)
 			break;
 		}
 	}
+}
 
+void CAnimator3D::BuildIKMatrices(_float dt)
+{
+}
+
+void CAnimator3D::BuildBone(_float dt)
+{
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
 		int parent = m_pData->Get_BoneParentIndex(i);
