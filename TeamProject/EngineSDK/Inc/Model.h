@@ -38,7 +38,7 @@ public:
 	_bool doShadowCast() { return isShadowCast; };
 
 private:
-	_bool isShadowCast = { false };
+	_bool isShadowCast = { true };
 	RENDER_PASS_TYPE m_eType = { RENDER_PASS_TYPE::RENDER_OPAQUE };
 
 public:

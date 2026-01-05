@@ -163,7 +163,7 @@ void CCharacter::Update_Input(_float dt)
 		look.Normalize();
 		right.Normalize();
 
-		m_vInputDir = right * (float)x + look * (float)z;
+		m_vInputDir = -right * (_float)x + -look * (_float)z;
 	}
 
 	m_iPrevKeyX = x;

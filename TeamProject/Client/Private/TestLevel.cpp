@@ -250,6 +250,10 @@ void CTestLevel::Ready_Camera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
+	CAMERA_DESC camdesc;
+	camdesc.fFov = 75.f;
+	camdesc.fAspect = aspect;
+
 	auto sequenceCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
 		.Position({0.f, 2.f, -5.f})
@@ -264,7 +268,7 @@ void CTestLevel::Ready_Camera()
 	desc.eGroup = COLLISION_GROUP::CAMERA;
 
 	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
-		.Camera(aspect)
+		.Camera(camdesc)
 		.CharacterController(desc)
 		.Build("OrbitCam");
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
