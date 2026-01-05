@@ -18,5 +18,7 @@ public:
 	virtual HRESULT Add_UIObject(class CUI_Object* object, const string& level) PURE;
 	virtual void Remove_UIObject(class CUI_Object* object)PURE;
 	virtual const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag) PURE;
-	};
+	virtual class CUI_Object* Request_UIObject(const UI_HANDLE& handle) PURE;
+
+};
 NS_END

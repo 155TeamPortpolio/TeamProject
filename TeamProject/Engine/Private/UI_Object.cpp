@@ -152,6 +152,7 @@ _bool CUI_Object::Rotate_To(_float rad, _float Speed)
 
     return false;
 }
+
 void CUI_Object::Render_GUI()
 {
     __super::Render_GUI();
@@ -419,31 +420,30 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
 {
     if (data.empty()) return;
 
-    // 공통 데이터 읽기
     m_InstanceName = data.value("instanceName", "");
 
-    // Transform 데이터 읽기
     if (data.contains("transform"))
     {
         const auto& transformJson = data["transform"];
 
-        m_eAnchor = static_cast<ANCHOR>(transformJson.value("anchor", 0));
+        m_eAnchor         = static_cast<ANCHOR>(transformJson.value("anchor", 0));
         auto anchorOffset = transformJson.value("anchorOffset", json::array({0.0f, 0.0f}));
-        m_vAnchorOffset = {anchorOffset[0], anchorOffset[1]};
-        auto size = transformJson.value("size", json::array({100.0f, 100.0f}));
-        m_vSize = {size[0], size[1]};
-        auto scale = transformJson.value("scale", json::array({1.0f, 1.0f}));
-        m_vScale = {scale[0], scale[1]};
-        auto pivot = transformJson.value("pivot", json::array({0.5f, 0.5f}));
-        m_vPivot = {pivot[0], pivot[1]};
-        m_fRadian = transformJson.value("radian", 0.0f);
+        m_vAnchorOffset   = {anchorOffset[0], anchorOffset[1]};
+        auto size         = transformJson.value("size", json::array({100.0f, 100.0f}));
+        m_vSize           = {size[0], size[1]};
+        auto scale        = transformJson.value("scale", json::array({1.0f, 1.0f}));
+        m_vScale          = {scale[0], scale[1]};
+        auto pivot        = transformJson.value("pivot", json::array({0.5f, 0.5f}));
+        m_vPivot          = {pivot[0], pivot[1]};
+        m_fRadian         = transformJson.value("radian", 0.0f);
     }
 
-    // Color 데이터 읽기
     auto color = data.value("color", json::array({1.0f, 1.0f, 1.0f, 1.0f}));
     m_vColor   = {color[0], color[1], color[2], color[3]};
 
-    // 애니메이션 클립 읽기
+    const string pass = data.value("pass", "Opaque");
+    Get_Component<CSprite2D>()->ChangePass(pass);
+
     if (data.contains("animClips"))
     {
         const auto& animClipsJson = data["animClips"];
@@ -456,27 +456,26 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
             clip.fDuration = clipJson.value("duration", 1.0f);
             clip.isLoop    = clipJson.value("loop", false);
 
-            // 키프레임 읽기
             if (clipJson.contains("keyframes"))
             {
                 const auto& keyframesJson = clipJson["keyframes"];
                 for (const auto& keyframeJson : keyframesJson)
                 {
                     UI_KEYFRAME keyframe;
-                    keyframe.fTime     = keyframeJson.value("time", 0.0f);
+                    keyframe.fTime = keyframeJson.value("time", 0.0f);
 
-                    auto vScale        = keyframeJson.value("scale", json::array({1.0f, 1.0f}));
-                    keyframe.vScale    = {vScale[0], vScale[1]};
+                    auto vScale     = keyframeJson.value("scale", json::array({1.0f, 1.0f}));
+                    keyframe.vScale = {vScale[0], vScale[1]};
 
-                    keyframe.fAngle    = keyframeJson.value("angle", 0.0f);
+                    keyframe.fAngle = keyframeJson.value("angle", 0.0f);
 
                     auto vPosition     = keyframeJson.value("position", json::array({0.0f, 0.0f}));
                     keyframe.vPosition = {vPosition[0], vPosition[1]};
 
-                    auto vColor        = keyframeJson.value("color", json::array({1.0f, 1.0f, 1.0f, 1.0f}));
-                    keyframe.vColor    = {vColor[0], vColor[1], vColor[2], vColor[3]};
+                    auto vColor     = keyframeJson.value("color", json::array({1.0f, 1.0f, 1.0f, 1.0f}));
+                    keyframe.vColor = {vColor[0], vColor[1], vColor[2], vColor[3]};
 
-                    keyframe.easeType  = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
+                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
 
                     clip.keyframes.push_back(keyframe);
                 }
@@ -486,7 +485,6 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
         }
     }
 
-    // 자식 데이터 읽기
     if (data.contains("children"))
     {
         const auto& childrenJson = data["children"];
@@ -494,7 +492,6 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
 
         for (const auto& childJson : childrenJson)
         {
-            // 자식 UI 객체 생성
             string strTypeTag = childJson.value("typeTag", "");
             if (strTypeTag.empty()) continue;
 
@@ -511,9 +508,24 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
     }
 }
 
+UI_HANDLE CUI_Object::Get_Handle()
+{
+    UI_HANDLE hObj = {};
+
+    if (m_LevelTag.empty()) {
+        hObj.Reset();
+        return hObj;
+    }
+
+    hObj.Level = m_LevelTag;
+    hObj.hObjID = m_SystemIndex;
+
+    return hObj;
+}
+
 _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)
 {
-    _float2 size = Get_PxSize(); 
+    _float2 size    = Get_PxSize(); 
     _float2 TopLeft = { m_vScreenOffset.x - m_vPivot.x * size.x, m_vScreenOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };
@@ -521,7 +533,7 @@ _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)
 
 _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
 {
-    _float2 size = Get_PxSize();
+    _float2 size    = Get_PxSize();
     _float2 TopLeft = { m_vAnchorOffset.x - m_vPivot.x * size.x, m_vAnchorOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };

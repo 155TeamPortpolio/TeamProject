@@ -21,13 +21,7 @@ HRESULT CLogoLevel::Awake()
 {
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Logo_Level");
-
-	CUI_Object* uiObj = Builder::Create_UIObject({ "Logo_Level", "Proto_GameObject_CanvasPanel" })
-		.Asset("logo.json")
-		.Build("logo");
-
-	uiDirector->Register(uiObj);
+	uiDirector->Load_LevelObjects("Logo_Level");
 
 	return S_OK;
 }

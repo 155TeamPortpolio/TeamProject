@@ -6,9 +6,8 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
-class CCamDirector; class COrbitCam;
-
-class CLogoLevel : public CLevel
+class CLogoLevel : 
+    public CLevel
 {
 private:
     CLogoLevel(const string& LevelKey);
