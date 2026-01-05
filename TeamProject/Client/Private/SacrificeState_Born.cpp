@@ -43,20 +43,20 @@ void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	if (!m_IsEffectSpawn && m_fAnimProgress >= 0.07f)
-	{
-		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
-		vPosition.y += 0.5f;
-
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("spawn_smoke.json")
-			.Position(vPosition)
-			.Build("SpawnSmoke");
-
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-
-		m_IsEffectSpawn = true;
-	}
+	//if (!m_IsEffectSpawn && m_fAnimProgress >= 0.07f)
+	//{
+	//	_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+	//	vPosition.y += 0.5f;
+	//
+	//	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//		.Asset("spawn_smoke.json")
+	//		.Position(vPosition)
+	//		.Build("SpawnSmoke");
+	//
+	//	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//
+	//	m_IsEffectSpawn = true;
+	//}
 
 }
 
