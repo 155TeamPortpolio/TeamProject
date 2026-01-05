@@ -6,76 +6,54 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
-CUIDirector::CUIDirector()
-	:m_game(CGameInstance::GetInstance())
+void CUIDirector::Initialize()
 {
+	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
+	UILoader::Add_ResourcePath();
+
+	// json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장
+	Load_UILevelData("uiLevels.json");
 }
 
-void CUIDirector::Initialize(const string& levelKey)
+void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
 	m_levelKey = levelKey;
-	UILoader::Load(m_levelKey);
+	// 레벨에 프로토타입 등록
+	UILoader::Add_Prototype(levelKey);
+
+	// json 데이터에서 레벨에 있어야하는 객체 생성
+	const json& levels = m_json["levels"];
+
+	if (!levels.contains(levelKey))
+		return;
+
+	const json& objects = levels[levelKey]["objects"];
+
+	for (const auto& obj : objects)
+	{
+		const string protoTag = obj["prototypeTag"];
+		const string instName = obj["instanceName"];
+
+		CUI_Object* uiObj = Builder::Create_UIObject({ levelKey, protoTag })
+			.Build(instName);
+
+		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey);
+	}
 }
 
-void CUIDirector::Register(CUI_Object* uiObj)
+void CUIDirector::Load_UILevelData(const string& resourceKey)
 {
-	m_uiByTag.emplace(uiObj->Get_InstanceName(), uiObj);
-	m_game->Get_UIMgr()->Add_UIObject(uiObj, m_levelKey);
-}
+	string filePath = CGameInstance::GetInstance()->Get_ResourceMgr()->Get_ResourcePath(resourceKey);
 
-void CUIDirector::SetActive(const string& tag, void* arg)
-{
-	auto it = m_uiByTag.find(tag);
-	if (it == m_uiByTag.end()) return;
-	return it->second->UI_Active(arg);
-}
+	ifstream file(filePath);
+	if (!file.is_open())
+		return;
 
-void CUIDirector::SetActive(initializer_list<string> tags, void* arg)
-{
-	for (const auto& tag : tags)
-		SetActive(tag, arg);
-}
-
-void CUIDirector::SetDeactive(const string& tag, void* arg)
-{
-	auto it = m_uiByTag.find(tag);
-	if (it == m_uiByTag.end()) return;
-	return it->second->UI_DeActive();
-}
-
-void CUIDirector::SetDeactive(initializer_list<string> tags, void* arg)
-{
-	for (const auto& tag : tags)
-		SetDeactive(tag, arg);
+	file >> m_json;
+	file.close();
 }
 
 void CUIDirector::Free()
 {
 	__super::Free();
-}
-
-void CUIDirector::Dispatch(UIEventType type, void* arg)
-{
-	switch (type)
-	{
-	case UIEventType::Enter_Monitor:
-		EnterMonitor(arg);
-		break;
-
-	case UIEventType::Exit_Monitor:
-		ExitMonitor(arg);
-		break;
-	}
-}
-
-void CUIDirector::EnterMonitor(void* arg)
-{
-	SetDeactive("");
-	SetActive("");
-}
-
-void CUIDirector::ExitMonitor(void* arg)
-{
-	SetDeactive("");
-	SetActive("");
 }
