@@ -70,6 +70,9 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	return S_OK;
 }
 
+_bool CModelData::Get_RiggedData(HumanoidRigData& outData) {
+	 return m_pSkeleton->Get_RiggedData(outData); 
+}
 _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 {
 	return m_Meshes[meshIndex]->Get_MaterialIndex();
