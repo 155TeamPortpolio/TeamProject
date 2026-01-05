@@ -2,6 +2,7 @@
 #include "TrailModel.h"
 #include "GameObject.h"
 #include "Transform.h"
+#include "VI_Trail.h"
 
 CTrailModel::CTrailModel()
 {
@@ -13,37 +14,42 @@ CTrailModel::CTrailModel(const CTrailModel& rhs)
 
 HRESULT CTrailModel::Initialize_Prototype()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CTrailModel::Initialize(COMPONENT_DESC* pArg)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 const D3D11_INPUT_ELEMENT_DESC* CTrailModel::Get_ElementDesc(_uint DrawIndex)
 {
-	return nullptr;
+	return m_pBuffer->Get_ElementDesc();
 }
 
 const _uint CTrailModel::Get_ElementCount(_uint DrawIndex)
 {
-	return _uint();
+	return m_pBuffer->Get_ElementCount();
 }
 
 const string_view CTrailModel::Get_ElementKey(_uint DrawIndex)
 {
-	return string_view();
+	return m_pBuffer->Get_ElementKey();
+}
+
+HRESULT CTrailModel::Bind_Buffer(ID3D11DeviceContext* pContext)
+{
+	return m_pBuffer->Bind_Buffer(pContext);
 }
 
 HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CTrailModel::Link_Model(const string& levelKey, const string& modelDataKey)
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 _uint CTrailModel::Get_MeshCount()

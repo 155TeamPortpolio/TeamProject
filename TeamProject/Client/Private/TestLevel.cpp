@@ -197,6 +197,15 @@ void CTestLevel::Update()
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
 	}
 
+	if (KEY->Key_Tap('5'))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("core.json")
+			.Build("Core");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	}
+
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 

@@ -462,6 +462,11 @@ namespace Engine
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
 
+	typedef struct tagTrailNode : public tagEffectNode
+	{
+
+	}TRAIL_NODE;
+
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
 		_uint iNodeCount{};
