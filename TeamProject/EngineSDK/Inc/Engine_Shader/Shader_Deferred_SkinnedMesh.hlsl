@@ -1,5 +1,5 @@
 #include "Shader_Deferred_Define.hlsl"
-
+#include "Shader_Shadow.hlsl"
 matrix g_WorldMatrix;
 
 struct VS_IN
@@ -215,20 +215,28 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float Skin = vMetalicDesc.a;
     
     float3 lightDir = normalize(vLightDir.xyz * -1);
+    float fViewZ = vDepthDesc.a;
+    vector vWorldPos;
+    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
+    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
+    vWorldPos.z = vDepthDesc.x;
+    vWorldPos.w = 1.f;
+
+    vWorldPos = vWorldPos * fViewZ;
+    vWorldPos = mul(vWorldPos, matProjectionInverse);
+    vWorldPos = mul(vWorldPos, matViewInverse);
+    
+    float4 vLightSpacePos[4];
+    [unroll]
+    for (int i = 0; i < 4; i++)
+    {
+        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
+    }
+    
+    float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
     
     if (Skin < 0.7f)
     {
-        float fViewZ = vDepthDesc.y * zFar;
-        vector vWorldPos;
-        vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-        vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-        vWorldPos.z = vDepthDesc.x;
-        vWorldPos.w = 1.f;
-    
-        vWorldPos = vWorldPos * fViewZ;
-        vWorldPos = mul(vWorldPos, matProjectionInverse);
-        vWorldPos = mul(vWorldPos, matViewInverse);
-    
         float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
         float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
@@ -238,10 +246,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float specularPower = lerp(50.0f, 5.0f, roughness);
         specular = pow(specBase, specularPower) * specular;
         
-        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
     
-        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
+        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);      
         Out.fLightInfo = float2(NdotL, specular);
+        return Out;
     }
     else
     {
@@ -327,7 +336,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
-    
+
     float NdotL = fLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
@@ -344,7 +353,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor /*+ vBloom.rgb*/;
+    Out.vResult.rgb += specularColor + vBloom.rgb;
 
     return Out;
 }

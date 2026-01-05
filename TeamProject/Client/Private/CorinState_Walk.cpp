@@ -36,7 +36,7 @@ void CCorinState_Walk::Enter(CCorin* pOwner)
 void CCorinState_Walk::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
-    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move());
+    m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
     if (m_pSubStateMachine->Get_CurrentStateName() == "Loop")
     {
         auto pLoop = m_pSubStateMachine->Get_CurrentState();

@@ -736,7 +736,7 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("Shader_PostProcess.hlsl", "../Bin/ShaderFiles/Shader_PostProcess.hlsl");
 	Add_ResourcePath("Shader_Deferred_SkinnedMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_SkinnedMesh.hlsl");
 	Add_ResourcePath("Shader_Deferred_StaticMesh.hlsl", "../Bin/ShaderFiles/Shader_Deferred_StaticMesh.hlsl");
-	Add_ResourcePath("Shader_WeightOIT.hlsl", "../Bin/ShaderFiles/Shader_WeightOIT.hlsl");
+	Add_ResourcePath("Shader_Deferred_Effect.hlsl", "../Bin/ShaderFiles/Shader_Deferred_Effect.hlsl");
 
 	/* Compute Shader */
 	Add_ResourcePath("CS_Particle_Spawn.hlsl", "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl");
