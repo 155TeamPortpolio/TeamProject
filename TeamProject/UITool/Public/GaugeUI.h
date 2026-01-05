@@ -13,9 +13,9 @@ private:
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
-	virtual void    Priority_Update(_float dt)       override {}
-	virtual void    Update(_float dt)                override;
-	virtual void    Late_Update(_float dt)           override {}
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override { __super::Update(dt); }
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override;
 
 public:
@@ -23,19 +23,19 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_bool	m_isRadial      = {};
-	_float	m_fDirection    = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
-	_float	m_fFillAmount   = {1.f};
-	string	m_strTextureKey = {};
+	_bool	m_isRadial{};
+	_float	m_fDirection{};	// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
+	_float	m_fFillAmount = 1.f;
+	string	m_strTextureKey{};
 
 public:
 	inline static const string m_strTypeTag = "Gauge";
 	inline static       _uint  m_iCount{};
 
 public:
-	static CGameObject* Create();
+	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
-	virtual void Free() { __super::Free(); }
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END
