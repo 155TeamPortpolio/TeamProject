@@ -249,12 +249,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\ModelEditor_BoneData.h">
       <Filter>99. Defines</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\BinaryModel.h">
+       </ClInclude>
+       <ClInclude Include="..\Public\BinaryModel.h">
       <Filter>02. Obj\04. BinaryModel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\HumanoidRule.h">
-      <Filter>04. AIResource\AIModelData\AISkeleton</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

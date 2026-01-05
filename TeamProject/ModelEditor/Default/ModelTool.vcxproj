@@ -62,7 +62,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\EditorSystem.h" />
     <ClInclude Include="..\public\FreeCam.h" />
-    <ClInclude Include="..\Public\HumanoidRule.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MapParseLevel.h" />

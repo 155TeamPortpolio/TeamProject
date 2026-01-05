@@ -48,14 +48,10 @@ public:
 	HRESULT Ready_VertexBuffer_For_NonAnim(const aiMesh* _pAIMesh);
 	HRESULT Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISkeleton* _pSkeleton);
 	void Save_File(ofstream& ofs, _fmatrix PreTransform);
-	virtual void Render_GUI() override;
 
 public:
 	const unordered_map<_uint, _float4x4>& Get_MeshOffset() { return m_MeshOffset; };
 	const vector<_uint>& Get_BoneIndices() { return m_BoneIndices; };
-
-private:
-	void Update_SkinBuffer();
 private:
 	//�����
 	vector<VTXSKINMESH> m_SkinMeshes;

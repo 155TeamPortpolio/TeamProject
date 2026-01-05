@@ -150,48 +150,6 @@ vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
 	return m_NotProxy;
 }
 
-void CAIModelData::Render_GUI()
-{
-  
-    if (m_pSkeleton) {
-      ImGui::SeparatorText("Humanoid");
-      m_pSkeleton->Render_GUI();
-    }
-
-    
-    ImGui::SeparatorText("Meshes");
-    if (!m_Meshes.empty()) {
-        if (ImGui::Button("MeshOpen"))
-            isGui_MeshTabOpen = !isGui_MeshTabOpen;
-    }
-
-    if (isGui_MeshTableTabOpen) {
-        if (ImGui::Begin("MeshTab", &isGui_MeshTableTabOpen, ImGuiWindowFlags_NoCollapse))
-        {
-            m_Meshes[selectedMeshIndex]->Render_GUI();
-        }
-        ImGui::End();
-    }
-
-    if (isGui_MeshTabOpen) {
-        if (ImGui::Begin("Meshes", &isGui_MeshTabOpen, ImGuiWindowFlags_NoCollapse))
-        {
-            for (size_t i = 0; i < m_Meshes.size(); i++)
-            {
-                string meshBtn = m_Meshes[i]->Get_Key() + "##Btn" + to_string(i);
-                if (ImGui::Button(meshBtn.c_str())) {
-                    selectedMeshIndex = i;
-                    isGui_MeshTableTabOpen = true;
-                }
-            }
-        }
-        ImGui::End();
-    }
-
-}
-
-
-
 vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<_uint>& indices)
 {
 	if (indices.size() % 3 != 0)  {

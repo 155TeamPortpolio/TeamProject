@@ -407,13 +407,13 @@ HRESULT CAIMesh::Ready_VertexBuffer_For_Anim(const aiMesh* _pAIMesh, class CAISk
 		}
 	}
 
-	//if (0 == NumBones)
-	//{
-	//	_int BoneIndex = m_pSkeleton->Find_BoneIndexByName(m_VIKey);
-	//	_float4x4       OffsetMatrix;
-	//	XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
-	//	m_BoneIndices.push_back(BoneIndex);
-	//}
+	if (0 == NumBones)
+	{
+		_int BoneIndex = m_pSkeleton->Find_BoneIndexByName(m_VIKey);
+		_float4x4       OffsetMatrix;
+		XMStoreFloat4x4(&OffsetMatrix, XMMatrixIdentity());
+		m_BoneIndices.push_back(BoneIndex);
+	}
 
 	D3D11_SUBRESOURCE_DATA      VertexInitialData{};
 	VertexInitialData.pSysMem = m_Skined.data();
@@ -471,154 +471,7 @@ void CAIMesh::Save_File(ofstream& ofs, _fmatrix PreTransform)
 		ofs.write(reinterpret_cast<const char*>(&indices), sizeof(_uint));
 }
 
-void CAIMesh::Render_GUI()
-{
-	if (m_Skined.empty()) return;
 
-	static int maxRowsToShow = 128;
-	ImGui::SliderInt("Max Rows", &maxRowsToShow, 1, 2048);
-
-	const int vertexCount = (int)m_Skined.size();
-	int rowCount = vertexCount;
-	if (rowCount > maxRowsToShow) rowCount = maxRowsToShow;
-
-	// 편집중인 값 캐시(즉시 커밋 방식이면 필요없음)
-	bool isDirty = false;
-
-	if (!ImGui::BeginTable("SkinedVertexTable", 4,
-		ImGuiTableFlags_Borders | ImGuiTableFlags_RowBg | ImGuiTableFlags_Resizable | ImGuiTableFlags_ScrollY,
-		ImVec2(0, 320)))
-		return;
-
-	ImGui::TableSetupScrollFreeze(1, 1);
-	ImGui::TableSetupColumn("Vtx");
-	ImGui::TableSetupColumn("BlendIndex (edit)");
-	ImGui::TableSetupColumn("BlendWeight (edit)");
-	ImGui::TableSetupColumn("Sum");
-
-	ImGui::TableHeadersRow();
-
-	for (int vertexIndex = 0; vertexIndex < rowCount; ++vertexIndex)
-	{
-		auto& vertex = m_Skined[vertexIndex];
-
-		ImGui::TableNextRow();
-
-		ImGui::TableSetColumnIndex(0);
-		ImGui::Text("%d", vertexIndex);
-		ImGui::TableSetColumnIndex(1);
-		{
-			int indexArray[4] =
-			{
-				(int)vertex.vBlendIndex.x,
-				(int)vertex.vBlendIndex.y,
-				(int)vertex.vBlendIndex.z,
-				(int)vertex.vBlendIndex.w
-			};
-
-			ImGui::PushID(vertexIndex);
-
-			bool changed = ImGui::InputInt4("##BlendIndex (edit)", indexArray);
-
-			if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayNormal))
-			{
-				const CSkeleton* skeletonPtr = m_pSkeleton; // 네가 들고 있는 스켈레톤 포인터로 교체
-				ImGui::BeginTooltip();
-				ImGui::TextUnformatted("Blend Indices -> Bone Names");
-
-				for (int elementIndex = 0; elementIndex < 4; ++elementIndex)
-				{
-					int boneIndex = indexArray[elementIndex];
-					ImGui::Text("#%d : %d  %s", elementIndex, boneIndex, m_pSkeleton->Get_BoneNames()[boneIndex].c_str());
-				}
-
-				ImGui::EndTooltip();
-			}
-
-			if (changed)
-			{
-				for (int elementIndex = 0; elementIndex < 4; ++elementIndex)
-				{
-					if (indexArray[elementIndex] < 0) indexArray[elementIndex] = 0;
-					if (m_pSkeleton)
-					{
-						int boneCount = m_pSkeleton->Get_BoneCount();
-						if (indexArray[elementIndex] >= boneCount) indexArray[elementIndex] = boneCount - 1;
-					}
-				}
-
-				vertex.vBlendIndex = XMUINT4(
-					(uint32_t)indexArray[0],
-					(uint32_t)indexArray[1],
-					(uint32_t)indexArray[2],
-					(uint32_t)indexArray[3]
-				);
-				isDirty = true;
-			}
-
-			ImGui::PopID();
-		}
-
-		ImGui::TableSetColumnIndex(2);
-		{
-			float weightArray[4] =
-			{
-				vertex.vBlendWeight.x,
-				vertex.vBlendWeight.y,
-				vertex.vBlendWeight.z,
-				vertex.vBlendWeight.w
-			};
-
-			ImGui::PushID(vertexIndex + 100000);
-			if (ImGui::InputFloat4("##BlendWeight (edit)", weightArray, "%.4f"))
-			{
-				// 음수 방지
-				for (int elementIndex = 0; elementIndex < 4; ++elementIndex)
-				{
-					if (weightArray[elementIndex] < 0.0f) weightArray[elementIndex] = 0.0f;
-				}
-
-				vertex.vBlendWeight = XMFLOAT4(
-					weightArray[0], weightArray[1], weightArray[2], weightArray[3]
-				);
-
-				isDirty = true;
-			}
-			ImGui::PopID();
-		}
-
-		ImGui::TableSetColumnIndex(3);
-		{
-			float sum = vertex.vBlendWeight.x + vertex.vBlendWeight.y + vertex.vBlendWeight.z + vertex.vBlendWeight.w;
-			ImGui::Text("%.4f", sum);
-		}
-	}
-
-	ImGui::EndTable();
-
-	if (isDirty)
-	{
-		Update_SkinBuffer();
-		ImGui::Text("Dirty: vertex buffer needs update");
-	}
-}
-void CAIMesh::Update_SkinBuffer()
-{
-	if (!m_pVB) return;
-	if (m_Skined.empty()) return;
-
-	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
-	if (!pContext) return;
-
-	D3D11_MAPPED_SUBRESOURCE mapped = {};
-	HRESULT result = pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
-	if (FAILED(result) || !mapped.pData) return;
-
-	const size_t bytes = sizeof(m_Skined[0]) * m_Skined.size();
-	memcpy(mapped.pData, m_Skined.data(), bytes);
-
-	pContext->Unmap(m_pVB, 0);
-}
 CAIMesh* CAIMesh::Create(MESH_TYPE _eType, const aiMesh* _pAIMesh, CAISkeleton* _pSkeleton)
 {
 	CAIMesh* pInstance = new CAIMesh();
