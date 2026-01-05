@@ -27,11 +27,7 @@ public:
 
 private:
     void CalculateCascadeSplits(_float fNear, _float fFar);
-    void CalculateFrustumCorners(const _matrix& viewProj, _float nearPlane, _float farPlane, _vector* corners);
-    _matrix CreateLightViewProj(const _vector* frustumCorners, const _vector& lightDir);
-    void CalculateFrustumCornersInViewSpace(
-        float fovY, float aspect, float nearPlane, float farPlane, _vector* corners);
-
+    void CalculateFrustumCornersInViewSpace(_float fovY, _float aspect, _float nearPlane, _float farPlane, _vector* corners);
     _matrix CreateLightViewProj(const _vector* frustumCorners, const _vector& lightDir, _uint cascadeIndex);
 
 private:

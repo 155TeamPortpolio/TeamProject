@@ -16,7 +16,6 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
 {
     m_iShadowMapSize = shadowSize;
 
-    // 그림자 맵 텍스처 배열 생성
     D3D11_TEXTURE2D_DESC TextureDesc = {};
     ZeroMemory(&TextureDesc, sizeof(D3D11_TEXTURE2D_DESC));
 
@@ -33,7 +32,6 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, nullptr, &m_pShadowMapArray)))
         return E_FAIL;
 
-    // 각 cascade별 Depth Stencil View 생성
     D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
     ZeroMemory(&dsvDesc, sizeof(D3D11_DEPTH_STENCIL_VIEW_DESC));
 
@@ -49,7 +47,6 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
             return E_FAIL;
     }
 
-    // Shader Resource View 생성
     D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
     ZeroMemory(&srvDesc, sizeof(D3D11_SHADER_RESOURCE_VIEW_DESC));
 
@@ -63,7 +60,6 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     if (FAILED(m_pDevice->CreateShaderResourceView(m_pShadowMapArray, &srvDesc, &m_pShadowMapSRV)))
         return E_FAIL;
 
-    // Comparison Sampler 생성
     D3D11_SAMPLER_DESC samplerDesc = {};
     ZeroMemory(&samplerDesc, sizeof(D3D11_SAMPLER_DESC));
 
@@ -82,7 +78,6 @@ HRESULT CCSMShadow::Initialize(_uint shadowSize)
     if (FAILED(m_pDevice->CreateSamplerState(&samplerDesc, &m_pShadowSampler)))
         return E_FAIL;
 
-    // Viewport 설정
     m_viewPort.TopLeftX = 0.0f;
     m_viewPort.TopLeftY = 0.0f;
     m_viewPort.Width = static_cast<_float>(m_iShadowMapSize);
@@ -112,19 +107,15 @@ void CCSMShadow::Update()
 
     Lens camLens = CamMgr->Get_Lens();
 
-    // Cascade 분할 계산
     CalculateCascadeSplits(camLens.zNear, camLens.zFar);
 
-    // 라이트 방향 가져오기
     auto shadowTransform = CamMgr->Get_ShadowCam()->Get_Owner()->Get_Component<CTransform>();
     _vector lightDir = XMVector3Normalize(shadowTransform->Dir(STATE::LOOK));
 
-    // 각 Cascade별 Light View-Projection 행렬 계산
     for (_uint i = 0; i < m_iNumCascades; ++i)
     {
         _vector frustumCorners[8];
 
-        // 1. View Space에서 Frustum Corner 계산
         CalculateFrustumCornersInViewSpace(
             XMConvertToRadians(camLens.fov),
             camLens.aspect,
@@ -133,14 +124,12 @@ void CCSMShadow::Update()
             frustumCorners
         );
 
-        // 2. World Space로 변환
         _matrix invView = XMMatrixInverse(nullptr, mainCameraView);
         for (int j = 0; j < 8; ++j)
         {
             frustumCorners[j] = XMVector3TransformCoord(frustumCorners[j], invView);
         }
 
-        // 3. Light View-Projection 행렬 생성
         m_lightViewProj[i] = CreateLightViewProj(frustumCorners, lightDir, i);
     }
 }
@@ -172,7 +161,7 @@ const _matrix& CCSMShadow::GetLightViewProj(UINT cascadeIndex) const
 
 void CCSMShadow::CalculateCascadeSplits(_float fNear, _float fFar)
 {
-    _float lambda = 0.9f;
+    _float lambda = 0.75f;
 
     m_fCascadeSplits[0] = fNear;
     m_fCascadeSplits[m_iNumCascades] = fFar;
@@ -181,13 +170,10 @@ void CCSMShadow::CalculateCascadeSplits(_float fNear, _float fFar)
     {
         _float ratio = static_cast<_float>(i) / static_cast<_float>(m_iNumCascades);
 
-        // 로그 분할
         _float logSplit = fNear * pow(fFar / fNear, ratio);
 
-        // 균등 분할
         _float uniformSplit = fNear + (fFar - fNear) * ratio;
 
-        // 혼합
         m_fCascadeSplits[i] = lambda * logSplit + (1.0f - lambda) * uniformSplit;
     }
 }
@@ -261,12 +247,17 @@ _matrix CCSMShadow::CreateLightViewProj(const _vector* frustumCorners, const _ve
     maxY = ceil(maxY / worldUnitsPerTexel) * worldUnitsPerTexel;
 
     _float zRange = maxZ - minZ;
-    _float nearMargin = zRange * 2.f;  // 50% 여유
-    _float farMargin = zRange * 0.2f;   // 20% 여유
+    _float nearMargin = max(zRange * 2.f, 100.f);
+    _float farMargin = zRange * 0.2f;   
 
-    minZ = max(minZ - nearMargin, 0.1f); // 절대 음수 안됨
+    minZ = max(minZ - nearMargin, 0.1f); 
     maxZ = maxZ + farMargin;
 
+    char buffer[512];
+#ifdef _DEBUG
+    sprintf_s(buffer, "Cascade %d: Z range = %.2f\n", cascadeIndex, maxZ - minZ);
+    OutputDebugStringA(buffer);
+#endif
     _matrix lightProj = XMMatrixOrthographicOffCenterLH(minX, maxX,  minY, maxY, minZ, maxZ);
 
     _matrix result = lightView * lightProj;
