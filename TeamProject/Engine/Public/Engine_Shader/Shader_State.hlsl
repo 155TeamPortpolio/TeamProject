@@ -160,7 +160,7 @@ BlendState BS_AlphaBlend
 BlendState BS_Premultiplied
 {
     BlendEnable[0] = true;
-    SrcBlend = One; 
+    SrcBlend = One;
     DestBlend = Inv_Src_Alpha; 
     BlendOp = Add;
 
@@ -168,13 +168,19 @@ BlendState BS_Premultiplied
     DestBlendAlpha = Inv_Src_Alpha;
     BlendOpAlpha = Add;
 };
+
 BlendState BS_Additive
 {
     BlendEnable[0] = true;
     SrcBlend = One;
     DestBlend = One;
     BlendOp = Add;
+
+    SrcBlendAlpha = One;
+    DestBlendAlpha = One;
+    BlendOpAlpha = Add;
 };
+
 BlendState BS_SrcAdditive
 {
     BlendEnable[0] = true;
