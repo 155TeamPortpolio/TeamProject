@@ -9,6 +9,15 @@
       ]
     },
 
+    "Loading_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_Logo",
+          "instanceName": "logo"
+        }
+      ]
+    },
+
     "Test_Level": {
       "objects": [
         {
