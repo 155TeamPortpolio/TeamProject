@@ -561,6 +561,12 @@
     <ClInclude Include="..\Public\Humanoid.h">
       <Filter>99. Defines\AnimationLayout</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DynamicBoneSystem.h">
+      <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DynamicBone.h">
+      <Filter>99. Defines\AnimationLayout</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1032,6 +1038,9 @@
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
       <UniqueIdentifier>{19d9bc06-7c5b-41ab-a91a-64bb54394349}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\06. Animator3D\DynamicBone">
+      <UniqueIdentifier>{87a37212-8f96-4793-8ff9-e0f47af037b0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1472,6 +1481,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CSMShadow.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DynamicBoneSystem.cpp">
+      <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

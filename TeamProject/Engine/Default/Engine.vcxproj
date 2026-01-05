@@ -269,6 +269,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBoneSystem.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
@@ -448,6 +450,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBoneSystem.cpp" />
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />

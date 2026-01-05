@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "Engine_Math.h"
-#include "AnimationLayout.h"
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
@@ -83,13 +82,6 @@ public:
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
-
-    typedef struct PlaylistEntry {
-        _int    iClipIndex = { -1 };
-        _bool   bLoop = { false };
-        _float  fSpeed = { 1.f };
-        _float  fBlendDuration = { 0.2f };
-    }PLAYLIST_ENTRY;
 
 protected:
     CAnimator3D();
@@ -229,7 +221,7 @@ public: //뼈 관련
     void Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg);
     void Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
-protected://애니매이션 체크
+public://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
     _int Resolve_BoneIndex(AnimArg BoneArg);
@@ -288,12 +280,11 @@ protected:
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
-    
-    _int m_iCurrentClipIndex = { -1 };
 
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
+    _int m_iCurrentClipIndex{};
 
 public:
     static CAnimator3D* Create();
