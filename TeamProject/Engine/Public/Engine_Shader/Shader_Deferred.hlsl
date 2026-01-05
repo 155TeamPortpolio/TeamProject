@@ -341,6 +341,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     return float4(mapped, 1.f);
 }
 
+//pcl
 technique11 DefaultTechnique
 {
     pass HDR_BRIGHT
