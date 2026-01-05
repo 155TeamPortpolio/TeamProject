@@ -83,9 +83,11 @@ void CThugBulkyEnforcer::Priority_Update(_float dt)
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 
+	__super::Update(dt);
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);

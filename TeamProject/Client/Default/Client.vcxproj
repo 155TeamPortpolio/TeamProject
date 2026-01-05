@@ -194,7 +194,7 @@
     <ClInclude Include="..\Public\MiyabiState_Run.h" />
     <ClInclude Include="..\Public\MiyabiState_Walk.h" />
     <ClInclude Include="..\public\OrbitCam.h" />
-    <ClInclude Include="..\Public\Data_Struct.h" />
+    <ClInclude Include="..\Public\Client_Struct.h" />
     <ClInclude Include="..\Public\FreeCam.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\public\MapFloorObject.h" />

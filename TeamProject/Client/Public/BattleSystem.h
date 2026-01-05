@@ -1,7 +1,6 @@
 #pragma once
 #include "Base.h"
 
-
 NS_BEGIN(Engine)
 class CGameObject;
 NS_END
@@ -26,13 +25,6 @@ public:
 		COLLISION_GROUP CCT_eGroup = COLLISION_GROUP::MONSTER;
 	};
 
-	typedef struct BattleObjectInfo {
-		string			TagInstanceName = {};	// 오브젝트 인스턴스 이름
-		OBJECT_HANDLE	refHandle;				// 오브젝트 핸들
-		_bool			isOnField = { false };	// 현재 필드 위에 소환되어 있는지
-		_float3			vPos = {};				// 현재 오브젝트의 위치
-	}BATTLEOBJ_INFO;
-
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -53,7 +45,9 @@ public:
 	void	SetActive(_bool is) { m_isActive = is; }
 	HRESULT	LoadMonsterCreationTable(const string& csvPath);
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
-	
+
+	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
+	void	SetPlayer(OBJECT_HANDLE hPlayer);
 private:
 	_bool	m_isActive = { false };
 

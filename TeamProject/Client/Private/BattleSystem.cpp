@@ -36,20 +36,21 @@ void CBattleSystem::Update()
 
 			BATTLEOBJ_INFO info = {};
 			info.TagInstanceName = m_Handles[eType][j].Get()->Get_InstanceName();
-			info.refHandle = m_Handles[eType][j];
+			info.hObject = m_Handles[eType][j];
 			info.vPos = { mObjWorld._41, mObjWorld._42,mObjWorld._43 };
+			info.isOnField = true;
 
 			m_BattleObjInfos[eType].push_back(info);
 		}
 	}
 }
 
-const vector<CBattleSystem::BATTLEOBJ_INFO>& CBattleSystem::GetBattleObjects(BATTLE_OBJ_TYPE eType) const
+const vector<BATTLEOBJ_INFO>& CBattleSystem::GetBattleObjects(BATTLE_OBJ_TYPE eType) const
 {
 	return m_BattleObjInfos.at(eType);
 }
 
-vector<CBattleSystem::BATTLEOBJ_INFO> CBattleSystem::CopyBattleObjects(BATTLE_OBJ_TYPE eType)
+vector<BATTLEOBJ_INFO> CBattleSystem::CopyBattleObjects(BATTLE_OBJ_TYPE eType)
 {
 	return m_BattleObjInfos[eType];
 }
@@ -134,6 +135,12 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pMonster, { NowLevel, "Enemy_Layer"});
 
 	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
+}
+
+void CBattleSystem::SetPlayer(OBJECT_HANDLE hPlayer)
+{
+	if (hPlayer.isValid())
+		m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
 }
 
 void CBattleSystem::Free()

@@ -435,7 +435,7 @@
     <ClInclude Include="..\public\MapLoader.h">
       <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Data_Struct.h">
+    <ClInclude Include="..\Public\Client_Struct.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestMap.h">
