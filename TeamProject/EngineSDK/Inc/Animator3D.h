@@ -197,6 +197,7 @@ public:
 public: //뼈 관련
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
+    //Transformation
     _float4x4 Get_BoneTransformationMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneTransformationMatrixPtr(AnimArg BoneArg);
     _vector3 Get_BoneTransformationPosition(AnimArg BoneArg);
@@ -207,6 +208,16 @@ public: //뼈 관련
     void Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg);
     void Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg);
     void Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+    
+    //Manipulate
+    const vector<_float4x4>& Get_ManipulateMatrices() { return m_TransformationMatrices; };
+    vector<_float4x4>* Get_ManipulateBoneMatrices_Ptr() { return &m_TransformationMatrices; };
+
+    void Set_BoneManipulateMatrix(const _float4x4& Matrix, AnimArg BoneArg);
+    void Set_BoneManipulatePosition(_vector3 Position, AnimArg BoneArg);
+    void Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+
+    //Combined
 
     _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
@@ -214,6 +225,10 @@ public: //뼈 관련
     _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };    
+
+    void Set_BoneCombinedMatrix(const _float4x4& Matrix, AnimArg BoneArg);
+    void Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg);
+    void Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수

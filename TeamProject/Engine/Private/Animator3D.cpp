@@ -542,7 +542,7 @@ vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 	return result;
 }
 
-#pragma region GetTransformationBone
+#pragma region TransformationBone
 
 _float4x4 CAnimator3D::Get_BoneTransformationMatrix(AnimArg BoneArg)
 {
@@ -596,17 +596,70 @@ void CAnimator3D::Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg 
 
 void CAnimator3D::Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg)
 {
-	
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	m_TransformationMatrices[Index]._41 = Position.x;
+	m_TransformationMatrices[Index]._42 = Position.y;
+	m_TransformationMatrices[Index]._43 = Position.z;
 }
 
 void CAnimator3D::Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
 {
-	
-}
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
 
+	Matrix matrix = m_TransformationMatrices[Index];
+	_vector3 S, T;
+	_quaternion R;
+	matrix.Decompose(S, R, T);
+	
+	XMStoreFloat4x4(&m_TransformationMatrices[Index],
+		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
+}
 #pragma endregion
 
-#pragma region GetCombinedBone
+#pragma region Manipulate
+void CAnimator3D::Set_BoneManipulateMatrix(const _float4x4& Matrix, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	m_ManipulateMatrices[Index] = Matrix;
+}
+
+void CAnimator3D::Set_BoneManipulatePosition(_vector3 Position, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	m_ManipulateMatrices[Index]._41 = Position.x;
+	m_ManipulateMatrices[Index]._42 = Position.y;
+	m_ManipulateMatrices[Index]._43 = Position.z;
+}
+
+void CAnimator3D::Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	Matrix matrix = m_ManipulateMatrices[Index];
+	_vector3 S, T;
+	_quaternion R;
+	matrix.Decompose(S, R, T);
+
+	XMStoreFloat4x4(&m_ManipulateMatrices[Index],
+		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
+}
+#pragma endregion
+
+#pragma region CombinedBone
+
 _float4x4 CAnimator3D::Get_BoneCombinedMatrix(AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
@@ -646,6 +699,41 @@ _vector4 CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
 		matrix.Decompose(S, R, T);
 		return R;
 	}
+}
+
+void CAnimator3D::Set_BoneCombinedMatrix(const _float4x4& Matrix, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	m_CombinedMatrices[Index] = Matrix;
+}
+
+void CAnimator3D::Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	m_CombinedMatrices[Index]._41 = Position.x;
+	m_CombinedMatrices[Index]._42 = Position.y;
+	m_CombinedMatrices[Index]._43 = Position.z;
+}
+
+void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+{
+	_int Index = Resolve_BoneIndex(BoneArg);
+	if (Index == -1)
+		return;
+
+	Matrix matrix = m_CombinedMatrices[Index];
+	_vector3 S, T;
+	_quaternion R;
+	matrix.Decompose(S, R, T);
+
+	XMStoreFloat4x4(&m_CombinedMatrices[Index],
+		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
 #pragma endregion
