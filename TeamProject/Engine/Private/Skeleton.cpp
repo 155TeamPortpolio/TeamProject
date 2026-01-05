@@ -24,7 +24,7 @@ HRESULT CSkeleton::InitializeFromFile(ifstream& ifs)
         ifs.read(reinterpret_cast<char*>(&LoadFloat4x4), sizeof(_float4x4));
         m_OffsetMatrices.push_back(LoadFloat4x4);
     }
-
+      ifs.read(reinterpret_cast<char*>(&m_RiggedData), sizeof(HumanoidRigData));
 
 
     return S_OK;
