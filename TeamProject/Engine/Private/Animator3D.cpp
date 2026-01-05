@@ -588,20 +588,20 @@ _vector4 CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
 void CAnimator3D::Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
-	if (Index == -1)  return _float4x4{};
-	else {
-		return m_TransformationMatrices[Index];
-	}
+	if (Index == -1)
+		return;
+
+	m_TransformationMatrices[Index] = Matrix;
 }
 
-void CAnimator3D::Get_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg)
+void CAnimator3D::Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg)
 {
-	return _vector3();
+	
 }
 
-void CAnimator3D::Get_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+void CAnimator3D::Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
 {
-	return _vector4();
+	
 }
 
 #pragma endregion
