@@ -245,6 +245,7 @@ protected://애니매이션 체크
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
@@ -254,9 +255,6 @@ protected:
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-    //Combined 연산
-
-
 
     //최종 뼈 계산
     void Update_Layers(_float dt);

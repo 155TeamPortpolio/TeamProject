@@ -1175,11 +1175,12 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 void CAnimator3D::Update_Layers(_float dt)
 {
 	for (auto& Layer : m_AnimLayers) {
-		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
-
 		Layer.bApplied = false;
 
+		if (Layer.bPause) continue;
+		if (Layer.fLayerWeight <= 0) continue;
+		if (-1 == Layer.iClipIndex) continue;
+	
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else
