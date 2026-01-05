@@ -33,6 +33,8 @@ void CUI_Loading::Awake()
     else
         fileName = "loading_default";
 
+    fileName = "loading_hollow";
+
     // 다음레벨에 맞는 json 로드
     string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
     CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
