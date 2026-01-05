@@ -553,10 +553,10 @@
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\IKSolver.h">
-      <Filter>01. Utility\15. IKSolver</Filter>
+      <Filter>01. Utility\04. Components\06. Animator3D\IKSolver</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\FootIK.h">
-      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
+      <Filter>01. Utility\04. Components\06. Animator3D\IKSolver\FootIK</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CSMShadow.h">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
@@ -1176,14 +1176,14 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
       <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01. Utility\15. IKSolver">
-      <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Utility\15. IKSolver\FootIK">
-      <UniqueIdentifier>{552ed212-cfe0-4669-9f2a-f272f54e8c71}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
       <UniqueIdentifier>{19d9bc06-7c5b-41ab-a91a-64bb54394349}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\06. Animator3D\IKSolver">
+      <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\04. Components\06. Animator3D\IKSolver\FootIK">
+      <UniqueIdentifier>{552ed212-cfe0-4669-9f2a-f272f54e8c71}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1621,7 +1621,7 @@
       <Filter>99. Defines</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\FootIK.cpp">
-      <Filter>01. Utility\15. IKSolver\FootIK</Filter>
+      <Filter>01. Utility\04. Components\06. Animator3D\IKSolver\FootIK</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CSMShadow.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
