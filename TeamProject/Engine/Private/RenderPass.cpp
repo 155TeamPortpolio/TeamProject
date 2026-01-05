@@ -557,6 +557,12 @@ void ShadowPass::SubmitInstance(INSTANCE_PACKET packet)
 		m_InstancePackets.push_back(packet);
 }
 
+void ShadowPass::Clear()
+{
+	m_Packets.clear();
+	m_InstancePackets.clear();
+}
+
 void ShadowPass::Execute_Opaque(ID3D11DeviceContext* pContext,CRenderer* pRenderer, _bool IsFinal)
 {
 	/*�̰� ���������� ���̴��� �� �־��ִ� ����*/

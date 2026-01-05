@@ -47,8 +47,14 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 	return S_OK;
 }
 
-HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
+HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass, _bool clear)
 {
+	if (clear)
+	{
+		pShadowPass->Clear();
+		return S_OK;
+	}
+
 	m_pPipeLine->Update_CSM();
 
 	_uint				iNumViewports = { 1 };

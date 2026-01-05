@@ -31,6 +31,7 @@ public:
 	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
 	void Submit(OPAQUE_PACKET packet);
 	void SubmitInstance(INSTANCE_PACKET packet);
+	void Clear();
 
 private:
 	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);

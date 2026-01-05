@@ -354,6 +354,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     
     float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
     Out.vResult.rgb += specularColor + vBloom.rgb;
+
     return Out;
 }
 
