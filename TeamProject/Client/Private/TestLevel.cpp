@@ -118,7 +118,7 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
@@ -147,13 +147,7 @@ HRESULT CTestLevel::Awake()
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Test_Level");
-	
-	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
-		.Build("HUD");
-	
-	uiDirector->Register(hudUI);
+	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	//Ready_TestObject();

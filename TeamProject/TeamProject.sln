@@ -34,9 +34,6 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AnimationTool", "AnimationTool\Default\AnimationTool.vcxproj", "{65AB2E37-E093-4248-B214-0A43E09218C0}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Client", "Client\Default\Client.vcxproj", "{A13D6EF8-E4EA-44A8-A528-6AA4B1C2BD11}"
-	ProjectSection(ProjectDependencies) = postProject
-		{43577242-8126-479C-B342-5538FD29851E} = {43577242-8126-479C-B342-5538FD29851E}
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

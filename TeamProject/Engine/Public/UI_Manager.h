@@ -23,6 +23,8 @@ public:
 	HRESULT Add_UIObject(class CUI_Object* object, const string& level);
 	virtual void Remove_UIObject(class CUI_Object* object);
 	const vector<class CUI_Object*>& Get_LevelUI(const string& leveTag);
+	virtual class CUI_Object* Request_UIObject(const UI_HANDLE& handle) override;
+
 private:
 	void Add_Object_Recursive(const string& LevelTag, class CUI_Object* object);
 	void Sort_UI();
