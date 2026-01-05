@@ -16,6 +16,7 @@ public:
 
 
 public:
+    HRESULT Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups);
     HRESULT Create_Chain(_int RootIndex);
 
 protected:

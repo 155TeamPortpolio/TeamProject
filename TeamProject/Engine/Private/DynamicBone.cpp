@@ -18,6 +18,12 @@ HRESULT CDynamicBone::Initialize(CAnimator3D* pAnimator)
 	return S_OK;
 }
 
+HRESULT CDynamicBone::Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups)
+{
+	m_ChainGroups = ChainGrups;
+	return S_OK;
+}
+
 HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 {
 	if(-1 == RootIndex) return E_FAIL;
@@ -63,9 +69,14 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 			Matrix ParentMat = m_pAnimator->Get_TPose()[Node.ParentIndex];
 			Matrix NodeMat = m_pAnimator->Get_TPose()[Node.BoneIndex];
 
-			Node.RestLocalDir = NodeMat.Translation() - ParentMat.Translation();
+			Node.fLength = (NodeMat.Translation() - ParentMat.Translation()).Length();
 
-			Node.fLength = Node.RestLocalDir.Length();
+			Vector3 WorldDir = NodeMat.Translation() - ParentMat.Translation();
+			Matrix parentRot = ParentMat;
+			parentRot.Translation(Vector3::Zero);
+			Vector3 LocalDir =	Vector3::TransformNormal(WorldDir, parentRot.Invert());
+
+			Node.RestLocalDir = LocalDir;
 			Node.RestLocalDir.Normalize();
 
 			chain.Nodes.push_back(Node);

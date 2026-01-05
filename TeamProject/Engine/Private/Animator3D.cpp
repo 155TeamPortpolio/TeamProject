@@ -102,6 +102,9 @@ HRESULT CAnimator3D::Link_DynamicBone()
 		return E_FAIL;
 
 	m_pDynamicBone = pDynamicBone;
+
+	//if(m_pData->Get_DynamicBoneData) add
+
 	return S_OK;
 }
 
