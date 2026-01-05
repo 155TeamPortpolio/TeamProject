@@ -232,6 +232,39 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
       <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1">
+      <UniqueIdentifier>{3a046367-2f0c-4d32-ae9a-dcc6c15ecfa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
+      <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
+      <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
@@ -255,6 +288,21 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal">
       <UniqueIdentifier>{423c7918-5f74-4f2d-a48d-88523bd6c9fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State">
+      <UniqueIdentifier>{64c2622e-0b47-49ba-bc7e-57b653fe58a2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move">
+      <UniqueIdentifier>{0fb2fde1-7e61-4c17-ad5b-dafa2cef7fc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle">
+      <UniqueIdentifier>{2d607a9a-fd47-4b46-94fc-9f05d30521e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born">
+      <UniqueIdentifier>{63ed3993-86eb-4107-8f07-e9924da6d1af}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack">
+      <UniqueIdentifier>{88a8a2e8-e306-40ca-8395-0fc3b5fad5bd}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin">
       <UniqueIdentifier>{ee07f61e-61a1-42ab-bfcc-20cf8147b123}</UniqueIdentifier>
@@ -315,6 +363,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Rush">
       <UniqueIdentifier>{62b4d8c4-960f-4f1c-8937-3600f672702d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -540,6 +591,15 @@
     <ClInclude Include="..\Public\SacrificeHandState_Hit.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Event_Struct.h">
+      <Filter>02. GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Anbi.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
     </ClInclude>
@@ -560,6 +620,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\AnbiState_NormalAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Born.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Corin.h">
       <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
@@ -626,6 +695,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_RushAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -780,9 +852,6 @@
     <ClCompile Include="..\Private\SacrificeState_Idle.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Idle</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\SacrificeState_Attack.cpp">
-      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Walk.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Walk</Filter>
     </ClCompile>
@@ -846,6 +915,12 @@
     <ClCompile Include="..\Private\SacrificeHandState_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Idle</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\Anbi.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi</Filter>
     </ClCompile>
@@ -866,6 +941,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnbiState_NormalAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Anbi\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Born</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Corin.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin</Filter>
@@ -929,6 +1016,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -23,14 +23,14 @@ public:
 	virtual void	Load(const nlohmann::ordered_json& data) override;
 
 private:
-	_bool		m_isRadial      = {};
-	_float		m_fDirection    = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
-	_float		m_fFillAmount   = {1.f};
-	string		m_strTextureKey = {};
+	_bool	m_isRadial      = {};
+	_float	m_fDirection    = {};				// 0 : 오른쪽에서 왼쪽 / 1 : 왼쪽에서 오른쪽
+	_float	m_fFillAmount   = {1.f};
+	string	m_strTextureKey = {};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "Gauge";
+	inline static       _uint  m_iCount{};
 
 public:
 	static CGameObject* Create();

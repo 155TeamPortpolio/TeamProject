@@ -56,6 +56,7 @@ public:
 
     /* Hand */
     void Phase1Attack();
+    void Phase2Attack();
     void OverDrive_Start();
     void OverDrive_Attack1();
     void OverDrive_Attack2();

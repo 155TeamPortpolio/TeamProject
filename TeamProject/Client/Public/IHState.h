@@ -74,14 +74,20 @@ _bool IHState<Type>::Is_EndState() const
     if (!m_pSubStateMachine)
         return false;
 
-    IHState<Type>* pSubH = dynamic_cast<IHState<Type>*>(
-        m_pSubStateMachine->Get_CurrentState()
-        );
+    IBaseState<Type>* pCurrent = m_pSubStateMachine->Get_CurrentState();
+    if (!pCurrent)
+        return false;
 
+    // 현재 상태가 직접 End 태그를 가지고 있으면
+    if (pCurrent->Get_Tag() == "End")
+        return true;
+
+    // 현재 상태가 계층구조를 가지고 있으면 재귀 체크
+    IHState<Type>* pSubH = dynamic_cast<IHState<Type>*>(pCurrent);
     if (pSubH && pSubH->Has_SubStateMachine())
     {
-        IBaseState<Type>* pAnim = pSubH->Get_SubStateMachine()->Get_CurrentState();
-        return (pAnim && pAnim->Get_Tag() == "End");
+        IBaseState<Type>* pSubCurrent = pSubH->Get_SubStateMachine()->Get_CurrentState();
+        return (pSubCurrent && pSubCurrent->Get_Tag() == "End");
     }
 
     return false;

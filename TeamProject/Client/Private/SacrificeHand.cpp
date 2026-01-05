@@ -116,6 +116,15 @@ void CSacrificeHand::Phase1Attack()
 	m_pStateMachine->Change_State("Attack");
 }
 
+void CSacrificeHand::Phase2Attack()
+{
+	m_isAlive = true;
+	SetVisable(true);
+
+	m_AttackBlackBoard.eCurrPattern = PATTERN::PHASE2;
+	m_pStateMachine->Change_State("Attack");
+}
+
 void CSacrificeHand::OverDrive_Start()
 {
 	m_isAlive = true;

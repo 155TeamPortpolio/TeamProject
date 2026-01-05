@@ -137,6 +137,7 @@
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
       <AdditionalIncludeDirectories>../../EngineSDk/Inc/;../Public/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,6 +164,7 @@
     <ClInclude Include="..\Public\GUIPanel.h" />
     <ClInclude Include="..\Public\ImageUI.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\public\MaskUI.h" />
     <ClInclude Include="..\Public\pch.h" />
     <ClInclude Include="..\Public\TestUI.h" />
     <ClInclude Include="..\Public\TextUI.h" />
@@ -190,6 +192,7 @@
     <ClCompile Include="..\Private\GUIPanel.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\TestUI.cpp" />
     <ClCompile Include="..\Private\TextUI.cpp" />

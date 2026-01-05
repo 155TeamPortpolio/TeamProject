@@ -7,8 +7,8 @@
 
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation("Avatar_Female_Size01_Corin_Ani_Run_Start")
-        .Speed(2.f)
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
+        .Speed(1.f)
         .Apply();
 
     _vector3 vDir = pOwner->Get_InputDir();
@@ -18,10 +18,38 @@ void CCorinState_Dash::Enter(CCorin* pOwner)
 
 void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
 {
-    _vector3 vDelta = pOwner->Get_Animator()->Get_RootBoneMoveDelta();
-    if (vDelta.x != 0.f || vDelta.z != 0.f)
+    IHState<CCorin>* pEvade = Get_ParentState();
+    if (!pEvade || !pEvade->Get_SubStateMachine()) return;
+
+    pOwner->Process_RootMotion(dt);
+
+    if (pOwner->Is_Attack())
+    {   // RushAttack
+        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 3);
+        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+        return;
+    }
+
+    if (m_fAnimProgress >= 0.2f)
     {
-        _quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-        pOwner->Get_CCT()->Move_RootMotion(vDelta, qRot, dt);
+        if (pOwner->Is_Evade())
+        {   // Idle -> Evade
+            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
+            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            return;
+        }
+
+        if (pOwner->Is_Move())
+        {
+            pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 2);
+            pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
+            return;
+        }
+    }
+
+    if (m_fAnimProgress >= 0.7f)
+    {   // Idle
+        pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
+        pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
     }
 }

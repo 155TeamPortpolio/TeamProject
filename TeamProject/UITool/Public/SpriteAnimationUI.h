@@ -39,8 +39,8 @@ private:
 	string		m_strTextureKey = {};
 
 public:
-	static const string m_strTypeTag;
-	static _uint m_iCount;
+	inline static const string m_strTypeTag = "SpriteAnimation";
+	inline static       _uint  m_iCount{};
 
 public:
 	static CGameObject* Create();
