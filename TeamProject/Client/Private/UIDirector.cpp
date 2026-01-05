@@ -12,7 +12,7 @@ void CUIDirector::Initialize()
 	UILoader::Add_ResourcePath();
 
 	// json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장
-	Load_UILevelData("uiLevels.json");
+	Load_UILevelData("levelData.json");
 }
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)
