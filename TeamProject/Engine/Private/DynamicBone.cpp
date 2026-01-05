@@ -60,7 +60,13 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 			Node.ParentIndex = Indices[i - 1];
 			Node.BoneIndex = Indices[i];
 
-			
+			Matrix ParentMat = m_pAnimator->Get_TPose()[Node.ParentIndex];
+			Matrix NodeMat = m_pAnimator->Get_TPose()[Node.BoneIndex];
+
+			Node.RestLocalDir = NodeMat.Translation() - ParentMat.Translation();
+
+			Node.fLength = Node.RestLocalDir.Length();
+			Node.RestLocalDir.Normalize();
 
 			chain.Nodes.push_back(Node);
 		}
