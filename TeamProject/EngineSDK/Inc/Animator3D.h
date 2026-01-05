@@ -155,7 +155,8 @@ public://애니매이터 데이터
     _float Get_AnimSpeed(_uint LayerIndex = 0);
     //퍼즈 상태인지
     _bool Get_isPause(_uint LayerIndex = 0);
-
+    //
+    class CModelData* Get_ModelData() { return m_pData; }
     /*----- Setter -----*/
     
     //모션본 직접설정
@@ -196,13 +197,6 @@ public:
 public: //뼈 관련
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
-    _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
-    _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
-    _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
-    _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
-    const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
-    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };
-
     _float4x4 Get_BoneTransformationMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneTransformationMatrixPtr(AnimArg BoneArg);
     _vector3 Get_BoneTransformationPosition(AnimArg BoneArg);
@@ -210,6 +204,16 @@ public: //뼈 관련
     const vector<_float4x4>& Get_TransformationMatrices() { return m_TransformationMatrices; };
     vector<_float4x4>* Get_TransformationBoneMatrices_Ptr() { return &m_TransformationMatrices; };
 
+    void Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg);
+    void Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg);
+    void Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+
+    _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
+    _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
+    _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
+    _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
+    const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
+    vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };    
 
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
