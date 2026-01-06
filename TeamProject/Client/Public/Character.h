@@ -93,7 +93,7 @@ protected:
     _int            m_iLastValidKeyX = {};
     _int            m_iLastValidKeyZ = {};
     _float          m_fKeyReleaseTimer = {};
-    static constexpr _float KEY_BUFFER_TIME = 0.15f;
+    static constexpr _float KEY_BUFFER_TIME = 0.1f;
     // 상태 플래그
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };

@@ -196,15 +196,15 @@ void CCorin::Update_Input(_float dt)
 
 void CCorin::Update_States()
 {
+	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
+	
+	Process_EndState(m_pStateMachine->Get_CurrentStateName());
+
 	if (m_bIsEvade)
 		m_pStateMachine->Set_Trigger("ToEvade");
 
-	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
-
 	if (m_bIsAttack)
 		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());
-
-	Process_EndState(m_pStateMachine->Get_CurrentStateName());
 }
 
 void CCorin::Process_AttackInput(const string& strCurrentState)
@@ -225,8 +225,21 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 
 		if (strMoveType == "Walk")	// Walk -> NormalAttack
 			m_pStateMachine->Set_Int("AttackEntryMode", 0);
-		else if (strMoveType == "Run")	// Run -> RushAttack
-			m_pStateMachine->Set_Int("AttackEntryMode", 1);
+		else if (strMoveType == "Run")
+		{
+			IHState<CCorin>* pRun = dynamic_cast<IHState<CCorin>*>(
+				pMove->Get_SubStateMachine()->Get_CurrentState());
+			if (pRun && pRun->Get_SubStateMachine())
+			{
+				string strRunTag = pRun->Get_SubStateMachine()->Get_CurrentStateName();
+				if (strRunTag == "End")
+					m_pStateMachine->Set_Int("AttackEntryMode", 0);
+				else
+					m_pStateMachine->Set_Int("AttackEntryMode", 1);
+			}
+			else
+				return;
+		}
 		else
 			return;
 
