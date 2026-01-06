@@ -62,7 +62,7 @@ void CShadowCam::Update(_float dt)
 	desc.fLightIntensity = 1.f;
 	XMStoreFloat4(&desc.vLightDirection, LightDir);
 	desc.vLightDiffuse = { 1.0f,  1.0f, 1.0f, 1.0f };
-	desc.vLightAmbient = { 0.6f,  0.6f, 0.6f, 1.0f };
+	desc.vLightAmbient = { 1.0f,  1.0f, 1.0f, 1.0f };
 	desc.vLightSpecular = { 1.0f,  1.0f, 1.0f, 1.0f };
 	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
 }

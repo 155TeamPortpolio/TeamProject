@@ -16,9 +16,12 @@ public:
     HRESULT Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups);
     HRESULT Create_Chain(_int RootIndex);
 
+    const vector<DYNAMIC_CHAIN_GROUP>& Get_ChainGroups() { return m_ChainGroups; };
+
 public:
     void Init_Update();
     void Update(_float dt);
+
 
 protected:
     void SimulateNode(DYNAMIC_NODE& Node,
@@ -30,6 +33,7 @@ protected:
 
 protected:
     void Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup);
+
 
 protected:
     class CAnimator3D*          m_pAnimator = { nullptr };

@@ -142,7 +142,7 @@ PS_OUT_RESULT PS_BRIGHT(PS_IN In)
   
     float3 vResult = vDiffuse.rgb * emissive;
     
-    Out.vResult = float4(vResult, 1.f);
+    Out.vResult = float4(vResult, vDiffuse.a);
     return Out;
 }
 
@@ -165,7 +165,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         result += brightSample.rgb * weights[i];
     }
         
-    Out.vResult = float4(result, 1.f);
+    Out.vResult = float4(result, bright.a);
    
     return Out;
 }
@@ -186,7 +186,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
     }
-    Out.vResult = float4(result, 1.f);
+    Out.vResult = float4(result, BlurX.a);
 
     return Out;
 }
@@ -225,31 +225,23 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = vWorldPos * fViewZ;
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
-    
-    //float4 vLightSpacePos[4];
-    //[unroll]
-    //for (int i = 0; i < 4; i++)
-    //{
-    //    vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
-    //}
-    
-    //float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
-    
+     
     if (Skin < 0.7f)
     {
         float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
-        float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+        float NdotL = saturate(dot(worldNormal, lightDir)) /* * 0.5f + 0.5f*/;
 
         float3 halfVec = normalize(viewDir + lightDir);
         float specBase = saturate(dot(worldNormal, halfVec));
         float specularPower = lerp(50.0f, 5.0f, roughness);
         specular = pow(specBase, specularPower) * specular;
-        
-        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
+        float shadow = CalculateShadow(vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
+  
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
     
-        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);      
-        Out.vLightInfo = float4(NdotL, specular, 0.f, 0.f);
+        Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+        Out.vLightInfo = float4(NdotL, specular, shadow, 0.f);
         return Out;
     }
     else
@@ -266,10 +258,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float specularMask = LightDesc.g;
     
         faceShadow *= saturate(-FdotL);
-        float brightness = lerp(0.15f, 0.65f, faceShadow);
+        float brightness = lerp(0.15f, 0.45f, faceShadow);
 
-        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, 1.f);
-        Out.vLightInfo = float4(brightness, 0, 0, 0);
+        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, vDiffuse.a);
+        Out.vLightInfo = float4(brightness, 0, 1.f, 0);
     }
     
     return Out;
@@ -318,8 +310,8 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
-    Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+    Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -342,12 +334,16 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
     
-    float3 ambient = vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g * fOutLine;
-    ambient = max(ambient, vDiffuse.rgb * vLightAmbient.rgb * 0.05);
+    float shadowValue = vLightInfo.b;
+    shadowValue = saturate(shadowValue * 0.7f + 0.3f);
     
-    if (vMetalic.a < 0.7) Out.vResult = float4(vLight.rgb * vRamp + ambient, 1.f);
+    float3 ambient = vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g;
+    ambient = max(ambient, vDiffuse.rgb * vLightAmbient.rgb * 0.5) * fOutLine * shadowValue;
+    
+    if (vMetalic.a < 0.7)
+        Out.vResult = float4(vLight.rgb + ambient, vLight.a);
     else
-        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.3, 1.f);
+        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
     float rimIntensity = max(vRamp, 0.5f);
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
