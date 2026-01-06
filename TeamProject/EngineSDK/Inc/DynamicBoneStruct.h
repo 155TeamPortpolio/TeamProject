@@ -8,11 +8,12 @@ typedef struct DynamicBoneNode //모두 컴바인드 TPose 기준
     int BoneIndex = -1;
     int ParentIndex = -1;
 
-    float fLength = 0.f;                        // 부모뼈로부터 컴바인드 길이
-    _vector3 RestLocalDir = { 0.f, -1.f, 0.f }; // (부모 -> 나) 의방향벡터
+    // (부모가 원점 -> 부모원점기준 나) 부모로컬로부터 나를향하는 방향벡터
+    _vector3 RestLocalDir = { 0.f, -1.f, 0.f }; 
+    float fLength = 0.f; //그리고 그 방향의 길이
 
-    _vector3 WorldCurPos = { 0.f, 0.f, 0.f };
-    _vector3 WorldPrevPos = { 0.f, 0.f, 0.f };
+    _vector3 CombinedCurPos = { 0.f, 0.f, 0.f };
+    _vector3 CombinedPrevPos = { 0.f, 0.f, 0.f };
 }DYNAMIC_NODE;
 
 typedef struct DynamicBoneChainParam

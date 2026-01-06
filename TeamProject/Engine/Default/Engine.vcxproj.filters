@@ -564,6 +564,15 @@
     <ClInclude Include="..\Public\Humanoid.h">
       <Filter>99. Defines\AnimationLayout</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TrailModel.h">
+      <Filter>01. Utility\04. Components\03. Model\TrailModel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\VI_Trail.h">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TrailNode.h">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Trail</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\DynamicBone.h">
       <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
     </ClInclude>
@@ -1182,6 +1191,21 @@
     <Filter Include="01. Utility\06. RenderSystem\RenderTarget\Manager">
       <UniqueIdentifier>{a05faa22-8e0b-4be7-8434-0cc9c5c13ec6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\03. Model\TrailModel">
+      <UniqueIdentifier>{f0c16643-312d-4c10-8d76-d770bd532d23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\05. Resources\07. VIBuffer\VI_Trail">
+      <UniqueIdentifier>{37f4c8d6-6f7d-4de4-8f80-b3620e96ddbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\03. GameObject\Effect\Node\Trail">
+      <UniqueIdentifier>{49355ea0-e01f-4c1c-ac30-dbad506ba0de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\15. IKSolver">
+      <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Utility\15. IKSolver\FootIK">
+      <UniqueIdentifier>{552ed212-cfe0-4669-9f2a-f272f54e8c71}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
       <UniqueIdentifier>{19d9bc06-7c5b-41ab-a91a-64bb54394349}</UniqueIdentifier>
     </Filter>
@@ -1629,12 +1653,21 @@
     <ClCompile Include="..\Private\Engine_Struct.cpp">
       <Filter>99. Defines</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\TrailModel.cpp">
+      <Filter>01. Utility\04. Components\03. Model\TrailModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\VI_Trail.cpp">
+      <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\FootIK.cpp">
       <Filter>01. Utility\04. Components\06. Animator3D\IKSolver\FootIK</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CSMShadow.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\TrailNode.cpp">
+      <Filter>01. Utility\03. GameObject\Effect\Node\Trail</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\DynamicBone.cpp">
       <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
     </ClCompile>
@@ -1740,5 +1773,11 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
