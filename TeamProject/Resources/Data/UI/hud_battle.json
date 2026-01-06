@@ -1,5 +1,5 @@
 {
-    "instanceName": "battleHUD",
+    "instanceName": "hud_battle",
     "transform": {
         "anchor": 5,
         "anchorOffset": [
@@ -1226,7 +1226,7 @@
                     "typeTag": "Gauge",
                     "textureTag": "BossHPBg.png",
                     "gauge": {
-                        "direction": 0.0,
+                        "direction": 1.0,
                         "fillAmount": 1.0
                     }
                 },
@@ -1264,7 +1264,7 @@
                     "typeTag": "Gauge",
                     "textureTag": "BossHPFill.png",
                     "gauge": {
-                        "direction": 0.0,
+                        "direction": 1.0,
                         "fillAmount": 1.0
                     }
                 },
@@ -1336,7 +1336,7 @@
                     "typeTag": "Gauge",
                     "textureTag": "BossFillBg.png",
                     "gauge": {
-                        "direction": 0.0,
+                        "direction": 1.0,
                         "fillAmount": 1.0
                     }
                 }
