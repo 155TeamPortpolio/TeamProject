@@ -21,7 +21,7 @@ void CLogo::Awake()
 {
     string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();// m_LevelTag;
     CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset("logo.json")
+        .Asset("shaderTest1.json")
         .Build("prefabLogo");
     
     if (uiObj)
