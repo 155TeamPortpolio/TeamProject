@@ -100,7 +100,7 @@ namespace Engine
 	enum class IK_TYPE
 	{
 		TWO_BONE,
-		AIM
+		FOOT_IK,
 	};
 }
 #endif // Engine_Enum_h__

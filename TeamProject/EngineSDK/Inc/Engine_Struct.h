@@ -525,6 +525,7 @@ namespace Engine
 		_vector3				vPoleVector;
 		_float					fWeight;
 		vector<_quaternion>     OutRotations;
+		vector<_vector3>		OutPositions;
 		_bool					bSuccess;
 
 		IK_CONTEXT()

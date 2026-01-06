@@ -269,6 +269,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
+    <ClInclude Include="..\Public\DynamicBoneStruct.h" />
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
@@ -387,6 +389,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThirdPartyCsv.h" />
     <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
@@ -451,6 +454,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBone.cpp" />
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />

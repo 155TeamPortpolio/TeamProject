@@ -4,6 +4,8 @@
 #include "ModelData.h"
 #include "GameInstance.h"
 #include "IResourceService.h"
+#include "DynamicBone.h"
+#include "FootIK.h"
 
 CAnimator3D::CAnimator3D()
 {
@@ -41,6 +43,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	_float4x4 IdentityMatrix;
 	XMStoreFloat4x4(&IdentityMatrix, XMMatrixIdentity());
 
+	m_BasePose.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
@@ -64,7 +67,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	}
 
 	m_TPose = m_CombinedMatrices;
-	m_BasePose.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 }
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
@@ -85,11 +87,24 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 		Safe_AddRef(pClip);
 
 	Resize_Layer(1);
-	//0¹ø ·¹ÀÌ¾î´Â º£ÀÌ½º·¹ÀÌ¾î, Layer.BaseLayer´Â À¢¸¸ÇÏ¸é °ÇµéÁö ¸»°Í
+	//0ë²ˆ ë ˆì´ì–´ëŠ” ë² ì´ìŠ¤ë ˆì´ì–´, Layer.BaseLayerëŠ” ì›¬ë§Œí•˜ë©´ ê±´ë“¤ì§€ ë§ê²ƒ
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;
 	m_AnimLayers[0].fLayerWeight = 1.f;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
+
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Link_DynamicBone()
+{
+	CDynamicBone* pDynamicBone = CDynamicBone::Create(this);
+	if (nullptr == pDynamicBone)
+		return E_FAIL;
+
+	m_pDynamicBone = pDynamicBone;
+
+	//if(m_pData->Get_DynamicBoneData) add
 
 	return S_OK;
 }
@@ -127,11 +142,15 @@ void CAnimator3D::Update_Animation(_float dt)
 	
 	/* Update Animation Clips*/
 	Update_Layers(dt);
+	if (false == m_bUpdatedClip) return;
 
 	/* Create TransformationMatrices */
 	BuildLocal(dt);
 
 	/* Create CombinedMatrices */
+	BuildBone(dt);
+
+	Update_IK(dt);
 	BuildBone(dt);
 }
 
@@ -732,6 +751,89 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
+const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
+{
+	return m_pOwner->Get_WorldMatrix();
+}
+
+HRESULT CAnimator3D::Initialize_HumanoidRig()
+{
+	if (!m_pData) return E_FAIL;
+	m_HumanoidRig.Reset();
+	if (!m_pData->Get_RiggedData(m_HumanoidRig)) return E_FAIL;
+	m_HumanoidRig.RebuildChainsFromMap();
+
+	if (!m_HumanoidRig.IsRigComplete()) return E_FAIL;
+	//OutputDebugStringA("HumanoidRig Setup Success\n");
+
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Initialize_FootIK(void* pFootIKDesc)
+{
+	if (!m_HumanoidRig.IsRigComplete()) return E_FAIL;
+	if (!m_HumanoidRig.leftLeg.IsValid() || !m_HumanoidRig.rightLeg.IsValid()) return E_FAIL;
+	if (!m_HumanoidRig.spine.HasPelvis()) return E_FAIL;
+
+	CFootIK* pFootIK = CFootIK::Create(pFootIKDesc);
+	if (!pFootIK) return E_FAIL;
+
+	vector<_int> boneIndices = {
+		m_HumanoidRig.leftLeg.upperIndex,
+		m_HumanoidRig.leftLeg.lowerIndex,
+		m_HumanoidRig.leftLeg.endIndex,
+		m_HumanoidRig.rightLeg.upperIndex,
+		m_HumanoidRig.rightLeg.lowerIndex,
+		m_HumanoidRig.rightLeg.endIndex,
+		m_HumanoidRig.spine.pelvisIndex
+	};
+	_vector3 vPoleVector = _vector3::Zero;
+
+	if (FAILED(Add_IKChain(pFootIK, boneIndices, vPoleVector)))
+	{
+		Safe_Release(pFootIK);
+		return E_FAIL;
+	}
+
+	OutputDebugStringA("FootIK Setup Success\n");
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Add_IKChain(IIKSolver* pSolver, const vector<_int>& BoneIndices, _vector3 vPoleVector)
+{
+	if (!pSolver) return E_FAIL;
+
+	IK_CHAIN chain;
+	chain.pSolver = pSolver;
+	chain.BoneIndices = BoneIndices;
+	chain.vPoleVector = vPoleVector;
+	chain.fWeight = 1.f;
+	chain.bEnabled = true;
+
+	m_IKChains.push_back(chain);
+
+	return S_OK;
+}
+
+void CAnimator3D::Set_IKChainEnabled(_uint iChainIndex, _bool bEnabled)
+{
+	if (iChainIndex >= m_IKChains.size()) return;
+	m_IKChains[iChainIndex].bEnabled = bEnabled;
+}
+
+void CAnimator3D::Set_IKChainWeight(_uint iChainIndex, _float fWeight)
+{
+	if (iChainIndex >= m_IKChains.size()) return;
+	m_IKChains[iChainIndex].fWeight = clamp(fWeight, 0.f, 1.f);
+}
+
+void CAnimator3D::Clear_IKChains()
+{
+	for (auto& chain : m_IKChains)
+		Safe_Release(chain.pSolver);
+	m_IKChains.clear();
+}
+
 #pragma endregion
 
 _int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
@@ -884,16 +986,16 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			else {
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
 				//Extract Movebone
-				// ÀÌµ¿ »ó¼â
+				// ì´ë™ ìƒì‡„
 				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
 
-				// È¸Àü »ó¼â: ¸ğ¼Çº»¿¡¼­ ·çÆ®ÀÇ "ÇöÀç È¸Àü" Á¦°Å
+				// íšŒì „ ìƒì‡„: ëª¨ì…˜ë³¸ì—ì„œ ë£¨íŠ¸ì˜ "í˜„ì¬ íšŒì „" ì œê±°
 				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
 				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
 
-				// °ö ¼ø¼­´Â ¿£Áø ±Ô¾à¿¡ µû¶ó µÑ Áß ÇÏ³ª°¡ ¸ÂÀ½
+				// ê³± ìˆœì„œëŠ” ì—”ì§„ ê·œì•½ì— ë”°ë¼ ë‘˜ ì¤‘ í•˜ë‚˜ê°€ ë§ìŒ
 				MotionMat = MotionMat * invCurRootRot;
-				// »ó¼âÇÑ ¸ÅÆ®¸¯½º ÀúÀå
+				// ìƒì‡„í•œ ë§¤íŠ¸ë¦­ìŠ¤ ì €ì¥
 				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
 			}
 
@@ -901,7 +1003,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
 
-			// --- À§Ä¡(Á¡) º¯È¯: w = 1 ---
+			// --- ìœ„ì¹˜(ì ) ë³€í™˜: w = 1 ---
 			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
 			_vector posT = XMVector4Transform(pos, m_PreTransform);
 
@@ -911,14 +1013,14 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			vPosOut.z = XMVectorGetZ(posT);
 			Layer.vRootMoveDelta = vPosOut;
 
-			// --- È¸Àü(ÄÁÁÖ°ÔÀÌ¼Ç) ---
+			// --- íšŒì „(ì»¨ì£¼ê²Œì´ì…˜) ---
 			_vector qCur = quatDeltaLocal;
-			//ÇÁ¸®Æ®·£½ºÆû ÀÌµ¿°ª Á¦°Å
+			//í”„ë¦¬íŠ¸ëœìŠ¤í¼ ì´ë™ê°’ ì œê±°
 			_matrix pRot = m_PreTransform;
 			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
-			//ÇÁ¸®Æ®·£½ºÆû È¸Àü ¸ÅÆ®¸¯½º »ı¼º
+			//í”„ë¦¬íŠ¸ëœìŠ¤í¼ íšŒì „ ë§¤íŠ¸ë¦­ìŠ¤ ìƒì„±
 			_vector qP = XMQuaternionRotationMatrix(pRot);
-			//½ÇÁúÀûÀ¸·Î »ç¿ëÇÒ ¼ö ÀÖ´Â È¸Àüµ¨Å¸·Î º¯È¯ 
+			//ì‹¤ì§ˆì ìœ¼ë¡œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” íšŒì „ë¸íƒ€ë¡œ ë³€í™˜ 
 			_vector quatDeltaOut =
 				XMQuaternionNormalize(XMQuaternionMultiply(
 						qP,
@@ -928,7 +1030,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
 
 
-			//´ÙÀ½ ÇÁ·¹ÀÓ ´ëºñ
+			//ë‹¤ìŒ í”„ë ˆì„ ëŒ€ë¹„
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
 		}
@@ -978,9 +1080,6 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 	}
 
-	if (Layer.bUseFinalLocal)
-		Layer.LocalMatrices = m_TransformationMatrices;
-
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
@@ -1009,16 +1108,16 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			}
 			else {
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-				// ÀÌµ¿ »ó¼â
+				// ì´ë™ ìƒì‡„
 				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
 
-				// È¸Àü »ó¼â: ¸ğ¼Çº»¿¡¼­ ·çÆ®ÀÇ "ÇöÀç È¸Àü" Á¦°Å
+				// íšŒì „ ìƒì‡„: ëª¨ì…˜ë³¸ì—ì„œ ë£¨íŠ¸ì˜ "í˜„ì¬ íšŒì „" ì œê±°
 				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
 				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
 
-				// °ö ¼ø¼­´Â ¿£Áø ±Ô¾à¿¡ µû¶ó µÑ Áß ÇÏ³ª°¡ ¸ÂÀ½
+				// ê³± ìˆœì„œëŠ” ì—”ì§„ ê·œì•½ì— ë”°ë¼ ë‘˜ ì¤‘ í•˜ë‚˜ê°€ ë§ìŒ
 				MotionMat = MotionMat * invCurRootRot;
-				// »ó¼âÇÑ ¸ÅÆ®¸¯½º ÀúÀå
+				// ìƒì‡„í•œ ë§¤íŠ¸ë¦­ìŠ¤ ì €ì¥
 				Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
 			}
 
@@ -1027,7 +1126,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					vCurRootQuat, XMQuaternionInverse(Layer.vPrevRootQuat)));
 
-			// --- À§Ä¡(Á¡) º¯È¯: w = 1 ---
+			// --- ìœ„ì¹˜(ì ) ë³€í™˜: w = 1 ---
 			_vector pos = XMVectorSet(Layer.vRootMoveDelta.x, Layer.vRootMoveDelta.y, Layer.vRootMoveDelta.z, 1.0f);
 			_vector posT = XMVector4Transform(pos, m_PreTransform);
 
@@ -1037,14 +1136,14 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			vPosOut.z = XMVectorGetZ(posT);
 			Layer.vRootMoveDelta = vPosOut;
 
-			// --- È¸Àü(ÄÁÁÖ°ÔÀÌ¼Ç) ---
+			// --- íšŒì „(ì»¨ì£¼ê²Œì´ì…˜) ---
 			_vector qCur = quatDeltaLocal;
-			//ÇÁ¸®Æ®·£½ºÆû ÀÌµ¿°ª Á¦°Å
+			//í”„ë¦¬íŠ¸ëœìŠ¤í¼ ì´ë™ê°’ ì œê±°
 			_matrix pRot = m_PreTransform;
 			pRot.r[3] = XMVectorSet(0, 0, 0, 1);
-			//ÇÁ¸®Æ®·£½ºÆû È¸Àü ¸ÅÆ®¸¯½º »ı¼º
+			//í”„ë¦¬íŠ¸ëœìŠ¤í¼ íšŒì „ ë§¤íŠ¸ë¦­ìŠ¤ ìƒì„±
 			_vector qP = XMQuaternionRotationMatrix(pRot);
-			//½ÇÁúÀûÀ¸·Î »ç¿ëÇÒ ¼ö ÀÖ´Â È¸Àüµ¨Å¸·Î º¯È¯ 
+			//ì‹¤ì§ˆì ìœ¼ë¡œ ì‚¬ìš©í•  ìˆ˜ ìˆëŠ” íšŒì „ë¸íƒ€ë¡œ ë³€í™˜ 
 			_vector quatDeltaOut =
 				XMQuaternionNormalize(XMQuaternionMultiply(
 					qP,
@@ -1053,7 +1152,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				);
 			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
 
-			//´ÙÀ½ ÇÁ·¹ÀÓ ´ëºñ
+			//ë‹¤ìŒ í”„ë ˆì„ ëŒ€ë¹„
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
 		}
@@ -1069,16 +1168,12 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 
-	//Animation Blend --- d¿©±â Â÷ÀÌ
+	//Animation Blend
 	Layer.fBlendElapsed += dt;
-	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType,
-		Layer.bUseFinalLocal ?dt:Layer.fBlendElapsed / Layer.fBlendDuration);
+	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType, Layer.fBlendElapsed / Layer.fBlendDuration);
 
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendWeight);
-	
-	if (Layer.bUseFinalLocal)
-		m_TransformationMatrices = Layer.FinalLocalMatrices;
 
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
@@ -1174,16 +1269,21 @@ void CAnimator3D::Layer_Additive(const ANIM_LAYER& Layer)
 
 void CAnimator3D::Update_Layers(_float dt)
 {
-	for (auto& Layer : m_AnimLayers) {
-		if (Layer.bPause) continue;
-		if (Layer.fLayerWeight <= 0) continue;
+	m_bUpdatedClip = false;
 
+	for (auto& Layer : m_AnimLayers) {
 		Layer.bApplied = false;
 
+		if (Layer.bPause) continue;
+		if (Layer.fLayerWeight <= 0) continue;
+		if (-1 == Layer.iClipIndex) continue;
+	
 		if (Layer.bBlending)
 			Animation_Convert(Layer, dt);
 		else
 			Animation_Run(Layer, dt);
+		
+		m_bUpdatedClip = true;
 	}
 }
 
@@ -1227,6 +1327,14 @@ void CAnimator3D::BuildIKMatrices(_float dt)
 {
 }
 
+void CAnimator3D::Update_DynamicBone(_float dt)
+{
+	if (nullptr == m_pDynamicBone)
+		return;
+
+	//
+}
+
 void CAnimator3D::BuildBone(_float dt)
 {
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -1259,22 +1367,60 @@ void CAnimator3D::BuildBone(_float dt)
 	}
 }
 
+
 #pragma region GUI
 void CAnimator3D::Render_GUI()
 {
 	ImGui::SeparatorText("Animator 3D");
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
+	if (!m_IKChains.empty())
+	{
+		ImGui::Separator();
+		ImGui::TextColored(ImVec4(0, 1, 1, 1), "IK Chains");
+
+		for (size_t i = 0; i < m_IKChains.size(); ++i)
+		{
+			auto& chain = m_IKChains[i];
+
+			ImGui::PushID(i);
+
+			string label = "Chain " + to_string(i);
+			if (ImGui::TreeNode(label.c_str()))
+			{
+				ImGui::Checkbox("Enabled", &chain.bEnabled);
+				ImGui::DragFloat("Weight", &chain.fWeight, 0.01f, 0.f, 1.f);
+
+				ImGui::Text("Bone Indices:");
+				for (auto idx : chain.BoneIndices)
+				{
+					string boneName = m_pData->Find_BoneNameByIndex(idx);
+					ImGui::Text("  [%d] %s", idx, boneName.c_str());
+				}
+
+				// Solver GUI
+				if (chain.pSolver)
+				{
+					dynamic_cast<CFootIK*>(chain.pSolver)->Render_GUI();
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+	}
+
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()
 {
 	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
-	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Layer / Loop
+	// â”€â”€â”€â”€â”€â”€â”€â”€â”€ Layer / Loop
 	ImGui::Text("Layer");
 	ImGui::SameLine();
 
-	int layerCount = m_AnimLayers.size();   // ÇöÀç ·¹ÀÌ¾î ¼ö
+	int layerCount = m_AnimLayers.size();   // í˜„ì¬ ë ˆì´ì–´ ìˆ˜
 
 	static int curLayerIndex = 0;
 	ImGui::SetNextItemWidth(80);
@@ -1300,7 +1446,7 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	ImGui::Separator();
 
-	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Clip
+	// â”€â”€â”€â”€â”€â”€â”€â”€â”€ Clip
 
 	string AnimName{};
 
@@ -1311,7 +1457,7 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::Text(AnimInfo.c_str());
 	ImGui::Separator();
 
-	// ¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡¦¡ Play bar
+	// â”€â”€â”€â”€â”€â”€â”€â”€â”€ Play bar
 	if (ImGui::Button(curLayer.bPause ? "Play" : "Pause", ImVec2(60.f, 0.f))) {
 		curLayer.bPause = !curLayer.bPause;
 	}
@@ -1357,7 +1503,7 @@ void CAnimator3D::GUI_SelectAnim()
 		ImVec2 textSize = ImGui::CalcTextSize(animName.c_str());
 		ImVec2 textPos = ImVec2(itemMax.x - textSize.x - padding.x, itemMin.y + padding.y);
 
-		// ÅØ½ºÆ® ±×¸®±â
+		// í…ìŠ¤íŠ¸ ê·¸ë¦¬ê¸°
 		ImGui::GetWindowDrawList()->AddText(textPos, ImGui::GetColorU32(ImGuiCol_Text), animName.c_str());
 
 		ImGui::PopID();
@@ -1373,6 +1519,74 @@ void CAnimator3D::GUI_SelectAnim()
 	}
 
 	ImGui::EndChild();
+}
+
+void CAnimator3D::Update_IK(_float dt)
+{
+	for (auto& chain : m_IKChains)
+	{
+		if (!chain.bEnabled || chain.fWeight <= 0.f || !chain.pSolver)
+			continue;
+
+		IK_CONTEXT context;
+		context.pAnimator = this;
+		context.BoneIndices = chain.BoneIndices;
+		context.vPoleVector = chain.vPoleVector;
+		context.fWeight = chain.fWeight;
+
+		chain.pSolver->Solve(context);
+
+		if (!context.bSuccess)
+			continue;
+
+		Apply_IK(context);
+	}
+}
+
+void CAnimator3D::Apply_IK(IK_CONTEXT& context)
+{
+	for (size_t i = 0; i < context.BoneIndices.size(); ++i)
+	{
+		_int iBone = context.BoneIndices[i];
+		if (iBone < 0 || iBone >= m_TransformationMatrices.size())
+			continue;
+
+		_smatrix matCurrent = XMLoadFloat4x4(&m_TransformationMatrices[iBone]);
+		_vector3 S, T;
+		_quaternion R;
+		matCurrent.Decompose(S, R, T);
+
+		// íšŒì „ ì ìš©
+		if (i < context.OutRotations.size())
+		{
+			_quaternion R_IK = context.OutRotations[i];
+
+			// Identityê°€ ì•„ë‹Œ ê²½ìš°ë§Œ ì ìš©
+			_float fDiff = abs(R_IK.x) + abs(R_IK.y) + abs(R_IK.z) + abs(R_IK.w - 1.f);
+
+			if (fDiff > 0.01f)
+			{
+				R_IK.Normalize();
+
+				// IK íšŒì „ìœ¼ë¡œ ì™„ì „ ëŒ€ì²´ (Slerp)
+				R = _quaternion::Slerp(R, R_IK, context.fWeight);
+				R.Normalize();
+			}
+		}
+
+		// ìœ„ì¹˜ ì ìš©
+		if (i < context.OutPositions.size())
+		{
+			_vector3 T_Offset = context.OutPositions[i];
+			if (T_Offset.LengthSquared() > 0.0001f)
+			{
+				T += T_Offset * context.fWeight;
+			}
+		}
+
+		_smatrix matNew = XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+		XMStoreFloat4x4(&m_TransformationMatrices[iBone], matNew);
+	}
 }
 
 #pragma endregion
@@ -1406,7 +1620,9 @@ CComponent* CAnimator3D::Clone()
 void CAnimator3D::Free()
 {
 	__super::Free();
+	Clear_IKChains();
 	Safe_Release(m_pData);
+	Safe_Release(m_pDynamicBone);
 	for (auto& Clip : m_pAnimClips) {
 		Safe_Release(Clip);
 	}
@@ -1422,14 +1638,14 @@ HRESULT SetAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 	
-	//·¹ÀÌ¾î, Å¬¸³ Àû¿ë
+	//ë ˆì´ì–´, í´ë¦½ ì ìš©
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
 	if (Layer.bApplied)
 		return S_OK;
 	
 	Layer.iClipIndex = m_iClipIndex;
 
-	//º£ÀÌ½º ·¹ÀÌ¾îÀÏ °æ¿ì ¸¶Áö¸· Å°ÇÁ·¹ÀÓ À§Ä¡, È¸ÀüÀ» °®°í¿È
+	//ë² ì´ìŠ¤ ë ˆì´ì–´ì¼ ê²½ìš° ë§ˆì§€ë§‰ í‚¤í”„ë ˆì„ ìœ„ì¹˜, íšŒì „ì„ ê°–ê³ ì˜´
 	if (Layer.BaseLayer) {
 		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
@@ -1443,7 +1659,7 @@ HRESULT SetAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
-	//º£ÀÌ½º ·¹ÀÌ¾î°¡ ¾Æ´Ò°æ¿ì ·¹ÀÌ¾îºí·£µåÀÇ °ªÀ» ÀÌ¿ëÇÔ
+	//ë² ì´ìŠ¤ ë ˆì´ì–´ê°€ ì•„ë‹ê²½ìš° ë ˆì´ì–´ë¸”ëœë“œì˜ ê°’ì„ ì´ìš©í•¨
 	else { 
 		Layer.fLayerWeight = m_fLayerWeight;
 		Layer.fTargetLayerWeight = m_fTargetWeight;
@@ -1455,19 +1671,19 @@ HRESULT SetAnimBuild::Apply()
 			m_pOwner->m_pAnimClips[m_iClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(m_pOwner->m_BasePose, 0.f);
 	}
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç ±âº»
+	//ì• ë‹ˆë§¤ì´ì…˜ ê¸°ë³¸
 	Layer.bLoop = m_bLoop;
 	Layer.fCurrentTrackPosition = 0.f;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç Àç»ı¼Óµµ
+	//ì• ë‹ˆë§¤ì´ì…˜ ì¬ìƒì†ë„
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//¾Ö´Ï¸ÅÀÌ¼ÇÀÌ »õ·Î ½ÃÀÛ‰Î
+	//ì• ë‹ˆë§¤ì´ì…˜ì´ ìƒˆë¡œ ì‹œì‘ëŒ
 	Layer.bisFinished = false;
 	Layer.bApplied = true;
 	return S_OK;
@@ -1483,7 +1699,7 @@ HRESULT ChangeAnimBuild::Apply()
 	if (Layer.bApplied)
 		return S_OK;
 
-	//º£ÀÌ½º ·¹ÀÌ¾îÀÏ °æ¿ì ¸¶Áö¸· Å°ÇÁ·¹ÀÓ À§Ä¡, È¸ÀüÀ» °®°í¿È
+	//ë² ì´ìŠ¤ ë ˆì´ì–´ì¼ ê²½ìš° ë§ˆì§€ë§‰ í‚¤í”„ë ˆì„ ìœ„ì¹˜, íšŒì „ì„ ê°–ê³ ì˜´
 	if (Layer.BaseLayer) {
 		Layer.vPrevRootPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
@@ -1497,7 +1713,7 @@ HRESULT ChangeAnimBuild::Apply()
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
 	}
-	//º£ÀÌ½º ·¹ÀÌ¾î°¡ ¾Æ´Ò°æ¿ì ·¹ÀÌ¾îºí·£µåÀÇ °ªÀ» ÀÌ¿ëÇÔ
+	//ë² ì´ìŠ¤ ë ˆì´ì–´ê°€ ì•„ë‹ê²½ìš° ë ˆì´ì–´ë¸”ëœë“œì˜ ê°’ì„ ì´ìš©í•¨
 	else {
 		Layer.fLayerWeight = m_fLayerWeight;
 		Layer.fTargetLayerWeight = m_fTargetWeight;
@@ -1508,39 +1724,40 @@ HRESULT ChangeAnimBuild::Apply()
 			m_pOwner->m_pAnimClips[m_iClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(m_pOwner->m_BasePose, 0.f);
 	}
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç ±âº»
+	//ì• ë‹ˆë§¤ì´ì…˜ ê¸°ë³¸
 	Layer.bLoop = m_bLoop;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 
-	//¾Ö´Ï¸ÅÀÌ¼Ç Àç»ı¼Óµµ
+	//ì• ë‹ˆë§¤ì´ì…˜ ì¬ìƒì†ë„
 	Layer.ePlayEaseType = m_ePlayEaseType;
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
 
-	//Ã¾à È£Ãâ½Ã Å¬¸³ÀÌ ¾øÀ¸¸é »õ·Î½ÃÀÛ
+	//ë¨„ì•½ í˜¸ì¶œì‹œ í´ë¦½ì´ ì—†ìœ¼ë©´ ìƒˆë¡œì‹œì‘
 	if (-1 == Layer.iClipIndex) {
 		Layer.iClipIndex = m_iClipIndex;
 		Layer.fCurrentTrackPosition = 0.f;
-		//¾Ö´Ï¸ÅÀÌ¼ÇÀÌ »õ·Î ½ÃÀÛ‰Î
+		//ì• ë‹ˆë§¤ì´ì…˜ì´ ìƒˆë¡œ ì‹œì‘ëŒ
 		Layer.bisFinished = false;
 		return S_OK;
 	}
 	else {
-		//¸¸¾à ºí·£µå »óÅÂÀÌ¸é ¹Ù·Î ´ÙÀ½À¸·Î ºí·£µåµÉ ¼ö ÀÖµµ·Ï ¾ê³»¸¦ ·ÎÄÃ·Î
+		//ë§Œì•½ ë¸”ëœë“œ ìƒíƒœì´ë©´ ë°”ë¡œ ë‹¤ìŒìœ¼ë¡œ ë¸”ëœë“œë  ìˆ˜ ìˆë„ë¡ ì–˜ë‚´ë¥¼ ë¡œì»¬ë¡œ
 		if (Layer.bBlending) {
 			Layer.iClipIndex = Layer.iNextClipIndex;
 			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
-			Layer.LocalMatrices = Layer.BlendMatrices;
+			Layer.LocalMatrices = Layer.FinalLocalMatrices;
 		}
+
 
 		if (Layer.bKeepTrackPos) {
 			Layer.fBlendTrackPosition = Layer.fCurrentTrackPosition;
 		}
 	}
 
-	//Å¬¸³³¢¸®ÀÇ ºí·£µå »óÅÂ
+	//í´ë¦½ë¼ë¦¬ì˜ ë¸”ëœë“œ ìƒíƒœ
 	Layer.bBlending = true;
 	Layer.bKeepTrackPos = m_bKeepTrackPos;
 	Layer.bUpdate_PrevClip = m_bUpdate_PrevClip;
@@ -1552,13 +1769,15 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;
 
-	Layer.bUseFinalLocal = m_bUseFinalLocal;
+	//
+	if (m_bUseFinalLocal)
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
 
-	//Å¬¸³À» ¾÷µ¥ÀÌÆ® ÇÏÁö ¾Ê°Ú´Ù¸é ´ÙÀ½ Å¬¸³ÀÇ 0ÃÊ·Î ¼¼ÆÃ
+	//í´ë¦½ì„ ì—…ë°ì´íŠ¸ í•˜ì§€ ì•Šê² ë‹¤ë©´ ë‹¤ìŒ í´ë¦½ì˜ 0ì´ˆë¡œ ì„¸íŒ…
 	if (false == m_bUpdate_NewClip)
 		m_pOwner->m_pAnimClips[Layer.iNextClipIndex]->TranslateAnimateMatrixFromDurationNoEvent(Layer.BlendMatrices, 0);
 
-	//¾Ö´Ï¸ÅÀÌ¼ÇÀÌ »õ·Î ½ÃÀÛ‰Î
+	//ì• ë‹ˆë§¤ì´ì…˜ì´ ìƒˆë¡œ ì‹œì‘ëŒ
 	Layer.bisFinished = false;
 	Layer.bApplied = true;
 	return S_OK;

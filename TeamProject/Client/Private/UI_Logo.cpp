@@ -19,20 +19,19 @@ HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
 
 void CUI_Logo::Awake()
 {
-    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();// m_LevelTag;
-    CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
+    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    CUI_Object* pPrefab = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
         .Asset("logo.json")
-        .Build("prefabLogo");
+        .Build("prefab");
     
-    if (uiObj)
-    {
-        CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, strCurrentLevel);
+    if (!pPrefab)
+        return;
 
-        m_handle = uiObj->Get_Handle();
-    }
+    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pPrefab, strCurrentLevel);
+    m_hRoot = pPrefab->Get_Handle();
 
-    if (m_handle.isValid())
-        m_handle.Get()->Set_Animation(0);
+    if (m_hRoot.isValid())
+        m_hRoot.Get()->Set_Animation(0);
 }
 
 void CUI_Logo::Update(_float dt)
