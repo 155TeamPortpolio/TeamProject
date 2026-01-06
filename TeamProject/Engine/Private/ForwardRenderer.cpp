@@ -49,7 +49,7 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 
 HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bool clear)
 {
-	if (clear || StaticUpdate > 0.f)
+	if (clear || m_fStaticUpdateTimer > 0.f)
 	{
 		pShadowPass->Clear();
 		return S_OK;
@@ -75,7 +75,7 @@ HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bo
 	}
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 
-	StaticUpdate = 0.2f;
+	m_fStaticUpdateTimer = m_fStaticUpdateInterval;
 	return S_OK;
 }
 
@@ -224,7 +224,7 @@ void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 
 void CForwardRenderer::Update(_float dt)
 {
-	StaticUpdate -= dt;
+	m_fStaticUpdateTimer -= dt;
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)

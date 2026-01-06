@@ -41,7 +41,8 @@ private:
     class CStaticMeshRenderer* m_pStaticRenderer;
     class CSkinnedMeshRenderer* m_pSkinnedRenderer;
 
-    _float StaticUpdate = 0.f;
+    _float m_fStaticUpdateTimer = 0.f;
+    _float m_fStaticUpdateInterval = 0.2f;
 
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
