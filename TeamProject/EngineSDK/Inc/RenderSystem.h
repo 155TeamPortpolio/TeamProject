@@ -15,8 +15,8 @@ public:
 	virtual HRESULT Render() override;
 	virtual void Submit_StaticMesh_Opaque(const OPAQUE_PACKET& packet) override { m_pStaticPass->Submit(packet); }
 	virtual void Submit_SkinnedMesh_Opaque(const OPAQUE_PACKET& packet) override { m_pSkinnedPass->Submit(packet); }
-	virtual void Submit_Shadow(const OPAQUE_PACKET& packet) override { m_pShadowPass->Submit(packet); };
-	virtual void Submit_Shadow(const INSTANCE_PACKET& packet) override { m_pShadowPass->SubmitInstance(packet); };
+	virtual void Submit_StaticShadow(const OPAQUE_PACKET& packet) override { m_pStaticShadowPass->Submit(packet); };
+	virtual void Submit_SkinnedShadow(const OPAQUE_PACKET& packet) override { m_pSkinnedShadowPass->Submit(packet); };
 	virtual void Submit_Instance(const INSTANCE_PACKET& packet) override { m_pInstancePass->Submit(packet); };
 	virtual void Submit_Priority(const OPAQUE_PACKET& packet) override { m_pPriorityPass->Submit(packet); };
 	virtual void Submit_UI(const SPRITE_PACKET& packet) override {m_pUIPass->Submit(packet);};
@@ -28,6 +28,8 @@ public:
 	virtual void Submit_Effect(const EFFECT_PACKET& packet)override { m_pEffectPass->Submit(packet); }
 
 public:
+	virtual void Update(_float dt) override;
+
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;
@@ -64,7 +66,8 @@ private:
 	PriorityPass* m_pPriorityPass = { nullptr};
 	StaticOpaquePass* m_pStaticPass = { nullptr};
 	SkinnedOpaquePass* m_pSkinnedPass = { nullptr};
-	ShadowPass* m_pShadowPass = { nullptr};
+	StaticShadowPass* m_pStaticShadowPass = { nullptr};
+	SkinnedShadowPass* m_pSkinnedShadowPass = { nullptr};
 	InstancePass* m_pInstancePass = { nullptr};
 	BlendedPass* m_pBlendedPass = { nullptr};
 	NonLightPass* m_pNonLightPass = { nullptr };
