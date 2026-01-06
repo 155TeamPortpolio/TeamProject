@@ -3,6 +3,8 @@
 
 StructuredBuffer<InstanceData> InstanceDatas;
 float4x4 g_WorldMatrix;
+Texture2D StaticMeshDepthTexture;
+Texture2D SkinnedMeshDepthTexture;
 
 uint Col;
 uint Row;
@@ -68,6 +70,7 @@ struct GS_OUT
     float2 vLifeTime : TEXCOORD2;
     uint iFrameIndex : TEXCOORD3;
     float4 vViewPosition : TEXCOORD4;
+    float4 vProjPosition : TEXCOORD5;
 };
 
 [maxvertexcount(6)]
@@ -123,6 +126,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[0].vLifeTime = In[0].vLifeTime;
     v[0].iFrameIndex = In[0].iFrameIndex;
     v[0].vViewPosition = mul(float4(p0, 1.f), matView);
+    v[0].vProjPosition = mul(float4(p0, 1.f), matrixVP);
 
     v[1].vPosition = mul(float4(p1, 1.f), matrixVP);
     v[1].vTexcoord = float2(1, 0);
@@ -130,6 +134,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[1].vLifeTime = In[0].vLifeTime;
     v[1].iFrameIndex = In[0].iFrameIndex;
     v[1].vViewPosition = mul(float4(p1, 1.f), matView);
+    v[1].vProjPosition = mul(float4(p1, 1.f), matrixVP);
     
     v[2].vPosition = mul(float4(p2, 1.f), matrixVP);
     v[2].vTexcoord = float2(1, 1);
@@ -137,6 +142,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[2].vLifeTime = In[0].vLifeTime;
     v[2].iFrameIndex = In[0].iFrameIndex;
     v[2].vViewPosition = mul(float4(p2, 1.f), matView);
+    v[2].vProjPosition = mul(float4(p2, 1.f), matrixVP);
     
     v[3].vPosition = mul(float4(p3, 1.f), matrixVP);
     v[3].vTexcoord = float2(0, 1);
@@ -144,6 +150,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     v[3].vLifeTime = In[0].vLifeTime;
     v[3].iFrameIndex = In[0].iFrameIndex;
     v[3].vViewPosition = mul(float4(p3, 1.f), matView);
+    v[3].vProjPosition = mul(float4(p3, 1.f), matrixVP);
     
     triStream.Append(v[0]);
     triStream.Append(v[1]);
@@ -164,6 +171,7 @@ struct PS_IN
     float2 vLifeTime : TEXCOORD2;
     uint iFrameIndex : TEXCOORD3;
     float4 vViewPosition : TEXCOORD4;
+    float4 vProjPosition : TEXCOORD5;
 };
 
 struct PS_OUT
@@ -189,14 +197,22 @@ PS_OUT PS_MAIN(PS_IN In)
     float3 vColor = vResult.rgb;
     float fAlpha = vResult.a;
 
-    /* 깊이 기반 가중치 생성 */
+    /*---------------------------------Soft Particle-------------------------------------*/ 
+    float2 vDepthTexcoord;
+    vDepthTexcoord.x = In.vProjPosition.x / In.vProjPosition.w * 0.5f + 0.5f;
+    vDepthTexcoord.y = In.vProjPosition.y / In.vProjPosition.w * -0.5f + 0.5f;
+    
     float fLinearZ = In.vViewPosition.z;
+    float fStaticViewZ = StaticMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+    float fSkinnedViewZ = SkinnedMeshDepthTexture.Sample(DefaultSampler, vDepthTexcoord).y * zFar;
+    float fOldViewZ = (fStaticViewZ > fSkinnedViewZ) ? fSkinnedViewZ : fStaticViewZ;
+    fAlpha *= saturate(fOldViewZ - fLinearZ);
+    /*------------------------------------------------------------------------------------*/
+    
+    /* 깊이 기반 가중치 생성 */
     float fDepthBias = 1.f / (1.f + fLinearZ * fLinearZ);
     float fWeight = clamp((fAlpha * 4.f + 0.01f) * fDepthBias, 0.01f, 1.f);
     float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
-    
-    //if (fAlpha < 0.1f)
-    //    discard;
     
     Out.vDiffuseAcc = vPremulColor * fWeight;
     Out.vBloomAcc.rgb = ExtractBright(vPremulColor, 0.6f, 0.5f, 1.5f) * fWeight;

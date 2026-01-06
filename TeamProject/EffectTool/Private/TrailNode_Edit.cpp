@@ -83,9 +83,95 @@ void CTrailNode_Edit::Play()
 }
 void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
 {
+	m_TextureKey = json.value("texture_key", m_TextureKey);
+	m_TextureKey = json.value("texture_path", m_TextureKey);
+
+	m_fDelayTime = json.value("delay_time", m_fDelayTime);
+	m_fDuration = json.value("duration", m_fDuration);
+	m_IsLoop = json.value("is_loop", m_IsLoop);
+
+	m_eMode = static_cast<CTrailModel::POINT_MODE>(json.value("point_mode", 0));
+	m_eTextureMode = static_cast<CTrailModel::TEXTURE_MODE>(json.value("texture_mode", 0));
+	m_eColorMode = static_cast<CTrailModel::COLOR_MODE>(json.value("color_mode", 0));
+
+	m_vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
+	m_vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+
+	m_vStartColor.x = json.at("start_color").at("x").get<_float>();
+	m_vStartColor.y = json.at("start_color").at("y").get<_float>();
+	m_vStartColor.z = json.at("start_color").at("z").get<_float>();
+	m_vStartColor.w = json.at("start_color").at("w").get<_float>();
+
+	m_vEndColor.x = json.at("end_color").at("x").get<_float>();
+	m_vEndColor.y = json.at("end_color").at("y").get<_float>();
+	m_vEndColor.z = json.at("end_color").at("z").get<_float>();
+	m_vEndColor.w = json.at("end_color").at("w").get<_float>();
+	
+	m_fMaxLifeTime = json.value("max_life_time", m_fMaxLifeTime);
+	m_fMinDistance = json.value("min_distance", m_fMinDistance);
+
+	m_fStartWidth = json.value("start_width", m_fStartWidth);
+	m_fEndWidth = json.value("end_width", m_fEndWidth);
+
+	/* Set Texture */
+	{
+		auto pMaterialData = Get_Component<CMaterial>()->Get_MaterialInstance(0)->Get_MaterialData();
+		pMaterialData->Link_Texture("EffectEdit_Level", m_TextureKey, TEXTURE_TYPE::DIFFUSE);
+
+		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
+	}
+
+	/* Set Param */
+	auto pTrail = Get_Component<CTrailModel>();
+
+	TRAIL_NODE trailNode{};
+	trailNode.iMode = ENUM(m_eMode);
+	trailNode.iTextureMode = ENUM(m_eTextureMode);
+	trailNode.iColorMode = ENUM(m_eColorMode);
+
+	trailNode.vUVSpeed = m_vUVSpeed;
+	trailNode.fTile = m_fTile;
+
+	trailNode.fMaxLifeTime = m_fMaxLifeTime;
+	trailNode.fMinDistance = m_fMinDistance;
+
+	trailNode.vStartColor = m_vStartColor;
+	trailNode.vEndColor = m_vEndColor;
+
+	trailNode.fStartWidth = m_fStartWidth;
+	trailNode.fEndWidth = m_fEndWidth;
+
+	pTrail->SetTrailParams(trailNode);
 }
 void CTrailNode_Edit::Export(nlohmann::ordered_json& json)
 {
+	json =
+	{
+		{"effect_type",ENUM(EFFECT_TYPE::TRAIL)},
+		{"texture_key",m_TextureKey},
+		{"texture_path",m_TextureKey},
+
+		{"delay_time",m_fDelayTime},
+		{"duration",m_fDuration},
+		{"is_loop",m_IsLoop},
+
+		{"point_mode",ENUM(m_eMode)},
+		{"texture_mode",ENUM(m_eTextureMode)},
+		{"color_mode",ENUM(m_eColorMode)},
+
+		{"uv_speed",{{"x",m_vUVSpeed.x},{"y",m_vUVSpeed.y}}},
+		{"tile",m_fTile},
+
+		{"start_color",{{"x",m_vStartColor.x},{"y",m_vStartColor.y},{"z",m_vStartColor.z},{"w",m_vStartColor.w}}},
+		{"end_color",{{"x",m_vEndColor.x},{"y",m_vEndColor.y},{"z",m_vEndColor.z},{"w",m_vEndColor.w}}},
+
+		{"max_life_time",m_fMaxLifeTime},
+		{"min_distance", m_fMinDistance},
+
+		{"start_width",m_fStartWidth},
+		{"end_width",m_fEndWidth}
+	};
+
 }
 CTrailNode_Edit* CTrailNode_Edit::Create()
 {

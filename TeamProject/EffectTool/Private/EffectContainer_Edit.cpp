@@ -164,6 +164,16 @@ void CEffectContainer_Edit::Import()
 
 				m_Nodes.back()->Import(EffectData["nodes"][i]);
 			}break;
+			case Engine::EFFECT_TYPE::TRAIL:
+			{
+				CTrailNode_Edit::TRAIL_NODE_EDIT_DESC* pDesc = new CTrailNode_Edit::TRAIL_NODE_EDIT_DESC;
+				pDesc->pContext = &m_Context;
+
+				pNode = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_TrailNode" }).Add_ObjDesc(pDesc).Build("TrailNode");
+				m_Nodes.push_back(static_cast<CEffectNode*>(pNode));
+
+				m_Nodes.back()->Import(EffectData["nodes"][i]);
+			}break;
 			default:
 				break;
 			}
@@ -178,7 +188,7 @@ void CEffectContainer_Edit::Export()
 {
 	if (ImGui::Button("Export"))
 	{
-		string filePath = Helper::SaveFileDialogByWinAPI("", ".json");
+		string filePath = Helper::SaveFileDialogByWinAPI("", "json");
 
 		using namespace nlohmann;
 		namespace fs = std::filesystem;
