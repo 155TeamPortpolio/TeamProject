@@ -257,7 +257,7 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 
 		/* Life Time Alpha */
 		{"alpha_key",{{"x",m_vAlphaKey.x},{"y",m_vAlphaKey.y},{"z",m_vAlphaKey.z},{"w",m_vAlphaKey.w}}},
-		{"ratio",{{"x",m_vAlphaKey.x},{"y",m_vAlphaKey.y},{"z",m_vAlphaKey.z},{"w",m_vAlphaKey.w}}},
+		{"ratio",{{"x",m_vRatio.x},{"y",m_vRatio.y}}},
 
 		/* Texture Sheet Animation */
 		{"particle_animated",m_IsParticleAnimated},

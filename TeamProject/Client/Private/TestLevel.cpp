@@ -95,6 +95,9 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
 	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
+
+	pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/fog.json");
+	pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Eff_Smoke_006.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -206,8 +209,8 @@ void CTestLevel::Update()
 	if (KEY->Key_Tap('5'))
 	{
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("core.json")
-			.Build("Core");
+			.Asset("fog.json")
+			.Build("fog");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
 	}
