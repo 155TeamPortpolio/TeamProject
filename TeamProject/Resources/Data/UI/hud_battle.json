@@ -296,7 +296,8 @@
                             "textureTag": "RoleHPBg01.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.7099999785423279
+                                "fillAmount": 0.7099999785423279,
+                                "radial": false
                             }
                         },
                         {
@@ -334,7 +335,8 @@
                             "textureTag": "RoleHPFill01.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.41999998688697815
+                                "fillAmount": 0.41999998688697815,
+                                "radial": false
                             }
                         },
                         {
@@ -406,7 +408,8 @@
                             "textureTag": "RoleHPFill03.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.5899999737739563
+                                "fillAmount": 0.5899999737739563,
+                                "radial": false
                             }
                         }
                     ],
@@ -546,7 +549,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.7799999713897705
+                                "fillAmount": 0.7799999713897705,
+                                "radial": false
                             }
                         },
                         {
@@ -584,7 +588,8 @@
                             "textureTag": "RoleHPFill02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.6700000166893005
+                                "fillAmount": 0.6700000166893005,
+                                "radial": false
                             }
                         },
                         {
@@ -656,7 +661,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.4300000071525574
+                                "fillAmount": 0.4300000071525574,
+                                "radial": false
                             }
                         },
                         {
@@ -728,7 +734,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 1.0
+                                "fillAmount": 1.0,
+                                "radial": false
                             }
                         }
                     ],
@@ -868,7 +875,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.7799999713897705
+                                "fillAmount": 0.7799999713897705,
+                                "radial": false
                             }
                         },
                         {
@@ -906,7 +914,8 @@
                             "textureTag": "RoleHPFill02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.6700000166893005
+                                "fillAmount": 0.6700000166893005,
+                                "radial": false
                             }
                         },
                         {
@@ -978,7 +987,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 0.4300000071525574
+                                "fillAmount": 0.4300000071525574,
+                                "radial": false
                             }
                         },
                         {
@@ -1050,7 +1060,8 @@
                             "textureTag": "RoleHPBg02.png",
                             "gauge": {
                                 "direction": 0.0,
-                                "fillAmount": 1.0
+                                "fillAmount": 1.0,
+                                "radial": false
                             }
                         }
                     ],
@@ -1227,7 +1238,8 @@
                     "textureTag": "BossHPBg.png",
                     "gauge": {
                         "direction": 1.0,
-                        "fillAmount": 1.0
+                        "fillAmount": 1.0,
+                        "radial": false
                     }
                 },
                 {
@@ -1265,7 +1277,8 @@
                     "textureTag": "BossHPFill.png",
                     "gauge": {
                         "direction": 1.0,
-                        "fillAmount": 1.0
+                        "fillAmount": 1.0,
+                        "radial": false
                     }
                 },
                 {
@@ -1337,7 +1350,8 @@
                     "textureTag": "BossFillBg.png",
                     "gauge": {
                         "direction": 1.0,
-                        "fillAmount": 1.0
+                        "fillAmount": 1.0,
+                        "radial": false
                     }
                 }
             ],

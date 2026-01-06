@@ -68,6 +68,7 @@ void CGaugeUI::Save(nlohmann::ordered_json& data)
     auto& gaugeJson         = data["gauge"];
     gaugeJson["direction"]  = m_fDirection;
     gaugeJson["fillAmount"] = m_fFillAmount;
+    gaugeJson["radial"]     = m_isRadial;
 }
 
 void CGaugeUI::Load(const nlohmann::ordered_json& data)

@@ -54,7 +54,7 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
     {
         const auto& gaugeJson = data["gauge"];
 
-        if(gaugeJson.value("direction", 0.f))
+        if(gaugeJson.value("radial", 0.f))
             pSprite->ChangePass("RadialFill");
         else
             pSprite->ChangePass("LinearFill");
