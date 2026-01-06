@@ -65,8 +65,6 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
 		}
 	}
-
-	m_TPose = m_CombinedMatrices;
 }
 
 HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaClipKey)
@@ -92,6 +90,9 @@ HRESULT CAnimator3D::Link_MetaData(const string& LevelKey, const string& MetaCli
 	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;
 	m_AnimLayers[0].fLayerWeight = 1.f;
 	m_AnimLayers[0].iRootBoneIndex = m_pData->Find_BoneIndexByName("Root");
+
+	BuildBone();
+	m_TPose = m_CombinedMatrices;
 
 	return S_OK;
 }
@@ -135,23 +136,37 @@ HRESULT CAnimator3D::Resize_Layer(_uint iLayerCount)
 
 void CAnimator3D::Update_Animation(_float dt)
 {
-	if (m_pAnimClips.empty()) return;
+	if (!m_pAnimClips.empty()) {
 
-	/* Clear Clip Events */
-	Clear_Events();
-	
-	/* Update Animation Clips*/
-	Update_Layers(dt);
-	if (false == m_bUpdatedClip) return;
+		/* Clear Clip Events */
+		Clear_Events();
 
-	/* Create TransformationMatrices */
-	BuildLocal(dt);
+		/* Update Animation Clips*/
+		Update_Layers(dt);
 
-	/* Create CombinedMatrices */
-	BuildBone(dt);
+		if (m_bUpdatedClip) {
 
+			/* Create TransformationMatrices */
+			BuildLocal(dt);
+
+			/* Create CombinedMatrices */
+			BuildBone();
+		}
+
+	}
+
+	/* Update IK Bone */
 	Update_IK(dt);
-	BuildBone(dt);
+
+	/* Rebuild Combined */
+	BuildBone();
+
+	/* Update DynamicBone */
+	if(m_pDynamicBone)
+		m_pDynamicBone->Update(dt);
+
+	/* Final Combined */
+	BuildBone();
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -1335,7 +1350,7 @@ void CAnimator3D::Update_DynamicBone(_float dt)
 	//
 }
 
-void CAnimator3D::BuildBone(_float dt)
+void CAnimator3D::BuildBone()
 {
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
