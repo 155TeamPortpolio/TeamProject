@@ -123,7 +123,9 @@ PS_OUT PS_MAIN_SPRITEANIMATION(PS_IN In)
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord));
     clip(vDiffuse.a - 0.1f);
     
-    Out.vColor = vDiffuse * vColor;
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
     
     return Out;
 }
@@ -135,7 +137,9 @@ PS_OUT PS_MAIN_UVANIMATION(PS_IN In)
     vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord + UVOffset);
     clip(vDiffuse.a - 0.1f);
     
-    Out.vColor = vDiffuse * vColor;
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
     
     return Out;
 }
@@ -150,7 +154,9 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
     
     clip(FillAmount - vTexcoord.x);
     
-    Out.vColor = vDiffuse * vColor;
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
     
     return Out;
 }
@@ -169,7 +175,9 @@ PS_OUT PS_MAIN_RADIALFILL(PS_IN In)
     
     clip(FillAmount - fAngle);
     
-    Out.vColor = vDiffuse * vColor;
+    float4 color = vDiffuse * vColor;
+    Out.vColor.rgb = color.rgb * color.a;
+    Out.vColor.a = color.a;
     
     return Out;
 }
