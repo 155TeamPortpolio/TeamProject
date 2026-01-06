@@ -20,7 +20,7 @@ public:
     void Update(_float dt);
 
 protected:
-    void SimulateNode(DYNAMIC_NODE& Node, _vector3& ParentPos, _float dt);
+    void SimulateNode(DYNAMIC_NODE& Node, const _vector3& ParentPos, const CHAIN_PARAM& ChainParam, _float dt);
 
 protected:
     void Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup);

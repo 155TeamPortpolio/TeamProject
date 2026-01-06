@@ -34,16 +34,39 @@ void CDynamicBone::Update(_float dt)
 				if (i == 0)
 					parentPosWS = m_pAnimator->Get_BoneCombinedPosition(Chain.Nodes[i].ParentIndex); // 1번
 				else
-					parentPosWS = Chain.Nodes[i - 1].WorldCurPos;
+					parentPosWS = Chain.Nodes[i - 1].CombinedCurPos;
 
 				SimulateNode(
 					Chain.Nodes[i],
 					parentPosWS,
+					Group.ChainParam,
 					dt
 				);
 			}
 		}
 	}
+}
+
+void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node, const _vector3& ParentPos, const CHAIN_PARAM& ChainParam, _float dt)
+{
+	// 현재 / 이전 위치
+	_vector3 cur = Node.CombinedCurPos;
+	_vector3 prev = Node.CombinedPrevPos;
+
+	// 관성 (Verlet, 중력 없음)
+	_vector3 velocity = cur - prev;
+
+	_vector3 next = cur + velocity * (1.f - ChainParam.fDamping);
+
+	// 길이 제약
+	_vector3 dir = next - ParentPos;
+	dir.Normalize();
+
+	next = ParentPos + dir * Node.fLength;
+
+	// 상태 갱신
+	Node.CombinedPrevPos = cur;
+	Node.CombinedCurPos = next;
 }
 
 /* 이미 저장된 데이터가 있으면 갖고옴 */
@@ -76,12 +99,6 @@ HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 	return S_OK;
 }
 
-void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node, _vector3& ParentPos, _float dt)
-{
-
-
-}
-
 void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup)
 {
 	auto pModelData = m_pAnimator->Get_ModelData();
@@ -107,13 +124,16 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 
 			Node.fLength = (NodeMat.Translation() - ParentMat.Translation()).Length();
 
-			Vector3 WorldDir = NodeMat.Translation() - ParentMat.Translation();
+			_vector3 WorldDir = NodeMat.Translation() - ParentMat.Translation();
 			Matrix parentRot = ParentMat;
-			parentRot.Translation(Vector3::Zero);
-			Vector3 LocalDir =	Vector3::TransformNormal(WorldDir, parentRot.Invert());
+			parentRot.Translation(_vector3::Zero);
+			_vector3 LocalDir = _vector3::TransformNormal(WorldDir, parentRot.Invert());
 
 			Node.RestLocalDir = LocalDir;
 			Node.RestLocalDir.Normalize();
+
+			Node.CombinedPrevPos = Node.CombinedCurPos =
+				_vector3(NodeMat._41, NodeMat._42, NodeMat._43);
 
 			chain.Nodes.push_back(Node);
 		}
