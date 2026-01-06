@@ -60,6 +60,7 @@ protected:
 
 	_bool isGui_BoneTabOpen = { false };
 	vector<_uint> m_ProxyMarked;
+	
 public:
 	static CModelData* Create(const string& filePath, ID3D11Device* pDevice);
 	virtual void Free() override;
