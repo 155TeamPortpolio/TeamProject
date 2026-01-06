@@ -228,6 +228,7 @@
     <ClInclude Include="..\public\ToolCamera.h" />
     <ClInclude Include="..\Public\ToolGrid.h" />
     <ClInclude Include="..\Public\ToolLight.h" />
+    <ClInclude Include="..\Public\TrailNode_Edit.h" />
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="pch.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\private\ToolCamera.cpp" />
     <ClCompile Include="..\Private\ToolGrid.cpp" />
     <ClCompile Include="..\Private\ToolLight.cpp" />
+    <ClCompile Include="..\Private\TrailNode_Edit.cpp" />
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
