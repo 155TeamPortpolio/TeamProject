@@ -83,6 +83,23 @@ public:
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
+    struct IK_CHAIN
+    {
+        class IIKSolver* pSolver;
+        vector<_int>     BoneIndices;
+        _vector3         vPoleVector;
+        _float           fWeight;
+        _bool            bEnabled;
+
+        IK_CHAIN()
+            : pSolver(nullptr)
+            , vPoleVector(0.f, 0.f, 1.f)
+            , fWeight(1.f)
+            , bEnabled(true)
+        {
+        }
+    };
+
 protected:
     CAnimator3D();
     CAnimator3D(const CAnimator3D& rhs);
@@ -226,13 +243,23 @@ public: //뼈 관련
     const vector<_float4x4>& Get_TPose() { return m_TPose; };
     const _float4x4* Get_OwnerWorldMatrix() { return m_pOwner->Get_WorldMatrix(); }
 
-public:
+public: /* DynamicBone */
     class CDynamicBone* Get_DynamicBone_Ptr() { 
         if (nullptr == m_pDynamicBone) Link_DynamicBone();
         return m_pDynamicBone;
     };
 
-public://애니매이션 체크
+public: /* IKSolver */
+    HRESULT Initialize_HumanoidRig();
+    HRESULT Initialize_FootIK(void* pFootIKDesc = nullptr);
+    HRESULT Add_IKChain(IIKSolver* pSolver, const vector<_int>& BoneIndices,
+        _vector3 vPoleVector = _vector3(0.f, 0.f, 1.f));
+    void    Set_IKChainEnabled(_uint iChainIndex, _bool bEnabled);
+    void    Set_IKChainWeight(_uint iChainIndex, _float fWeight);
+    void    Clear_IKChains();
+    const HumanoidRigData& Get_HumanoidRig() const { return m_HumanoidRig; }
+
+protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
     _int Resolve_BoneIndex(AnimArg BoneArg);
@@ -275,6 +302,10 @@ protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
 
+private: /* IKSolver */
+    void Update_IK(_float dt);
+    void Apply_IK(IK_CONTEXT& context);
+
 private:
     void Reset_Anim();
 
@@ -301,6 +332,10 @@ protected:
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
     _int m_iCurrentClipIndex{};
+
+    /* IKSolver */
+    HumanoidRigData  m_HumanoidRig;
+    vector<IK_CHAIN> m_IKChains;
 
 public:
     static CAnimator3D* Create();

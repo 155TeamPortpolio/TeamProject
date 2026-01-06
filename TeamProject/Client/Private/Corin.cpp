@@ -14,6 +14,8 @@
 #include "CorinState_NormalAttack.h"
 #include "CorinState_Evade.h"
 
+#include "FootIK.h"
+
 CCorin::CCorin()
 {
 }
@@ -66,6 +68,17 @@ void CCorin::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
+
+	//m_pAnimator->Initialize_HumanoidRig();
+	//CFootIK::FOOTIK_DESC ikDesc;
+	//ikDesc.fRayStartOffset = 0.3f;
+	//ikDesc.fRayDistance = 1.0f;
+	//ikDesc.fMaxHeightDiff = 0.5f;
+	//ikDesc.fMaxPelvisOffset = 0.1f;
+	//ikDesc.iCollisionMask = 1 << ENUM(COLLISION_GROUP::COMMON);
+	//ikDesc.bDynamicPoleVector = false;  // ²ô±â
+	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
+	//m_pAnimator->Initialize_FootIK(&ikDesc);
 }
 
 void CCorin::Priority_Update(_float dt)
@@ -183,15 +196,15 @@ void CCorin::Update_Input(_float dt)
 
 void CCorin::Update_States()
 {
+	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
+	
+	Process_EndState(m_pStateMachine->Get_CurrentStateName());
+
 	if (m_bIsEvade)
 		m_pStateMachine->Set_Trigger("ToEvade");
 
-	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
-
 	if (m_bIsAttack)
 		Process_AttackInput(m_pStateMachine->Get_CurrentStateName());
-
-	Process_EndState(m_pStateMachine->Get_CurrentStateName());
 }
 
 void CCorin::Process_AttackInput(const string& strCurrentState)
@@ -212,8 +225,21 @@ void CCorin::Process_AttackInput(const string& strCurrentState)
 
 		if (strMoveType == "Walk")	// Walk -> NormalAttack
 			m_pStateMachine->Set_Int("AttackEntryMode", 0);
-		else if (strMoveType == "Run")	// Run -> RushAttack
-			m_pStateMachine->Set_Int("AttackEntryMode", 1);
+		else if (strMoveType == "Run")
+		{
+			IHState<CCorin>* pRun = dynamic_cast<IHState<CCorin>*>(
+				pMove->Get_SubStateMachine()->Get_CurrentState());
+			if (pRun && pRun->Get_SubStateMachine())
+			{
+				string strRunTag = pRun->Get_SubStateMachine()->Get_CurrentStateName();
+				if (strRunTag == "End")
+					m_pStateMachine->Set_Int("AttackEntryMode", 0);
+				else
+					m_pStateMachine->Set_Int("AttackEntryMode", 1);
+			}
+			else
+				return;
+		}
 		else
 			return;
 
