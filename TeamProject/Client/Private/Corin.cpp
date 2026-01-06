@@ -69,16 +69,16 @@ void CCorin::Awake()
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
 
-	m_pAnimator->Initialize_HumanoidRig();
-	CFootIK::FOOTIK_DESC ikDesc;
-	ikDesc.fRayStartOffset = 0.3f;
-	ikDesc.fRayDistance = 1.0f;
-	ikDesc.fMaxHeightDiff = 0.5f;
-	ikDesc.fMaxPelvisOffset = 0.1f;
-	ikDesc.iCollisionMask = 1 << ENUM(COLLISION_GROUP::COMMON);
-	ikDesc.bDynamicPoleVector = false;  // ²ô±â
-	ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
-	m_pAnimator->Initialize_FootIK(&ikDesc);
+	//m_pAnimator->Initialize_HumanoidRig();
+	//CFootIK::FOOTIK_DESC ikDesc;
+	//ikDesc.fRayStartOffset = 0.3f;
+	//ikDesc.fRayDistance = 1.0f;
+	//ikDesc.fMaxHeightDiff = 0.5f;
+	//ikDesc.fMaxPelvisOffset = 0.1f;
+	//ikDesc.iCollisionMask = 1 << ENUM(COLLISION_GROUP::COMMON);
+	//ikDesc.bDynamicPoleVector = false;  // ²ô±â
+	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
+	//m_pAnimator->Initialize_FootIK(&ikDesc);
 }
 
 void CCorin::Priority_Update(_float dt)
