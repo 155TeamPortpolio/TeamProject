@@ -92,7 +92,7 @@ void CAIDynamicBone::Render_GUI()
 		auto& group = m_ChainGroups[groupIndex];
 		ImGui::PushID(groupIndex);
 		const bool selected = (m_Gui.selectedGroupIndex == groupIndex);
-		string header = group.RootBone + "  [Chains: " + to_string(group.Chains.size()) + "]";
+		string header = to_string(group.RootBoneIndex) + "  [Chains: " + to_string(group.Chains.size()) + "]";
 		if (ImGui::Selectable(header.c_str(), selected))
 		{
 			m_Gui.selectedGroupIndex = groupIndex;
@@ -130,7 +130,7 @@ void CAIDynamicBone::Render_GUI()
 	{
 		auto& group = m_ChainGroups[m_Gui.selectedGroupIndex];
 
-		ImGui::Text("Selected Group: %s", group.RootBone.c_str());
+		ImGui::Text("Selected Group: %s", to_string(group.RootBoneIndex).c_str());
 		ImGui::Text("RootBoneIndex: %d", (int)group.RootBoneIndex);
 		ImGui::Separator();
 
@@ -224,7 +224,6 @@ HRESULT CAIDynamicBone::Create_Chain(_int RootIndex)
 	}
 
 	DYNAMIC_CHAIN_GROUP Group;
-	Group.RootBone = m_pSkeleton->Get_BoneNames()[RootIndex];
 	Group.RootBoneIndex = RootIndex;
 
 	vector<_int> Index;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "DynamicBoneStruct.h"
 NS_BEGIN(Engine)
 class ENGINE_DLL CModelData :
 	public CBase
@@ -46,6 +47,7 @@ public:
 	_bool Get_RiggedData(HumanoidRigData& outData);
 
 	void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
+	vector<DYNAMIC_CHAIN_GROUP> Get_ChaingGroups();
 #pragma endregion 
 #pragma region GUI
 	virtual void Render_GUI();
