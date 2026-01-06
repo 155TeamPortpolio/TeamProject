@@ -14,6 +14,9 @@ public:
         _float fMinKneeAngle = 0.1f;         // 최소 무릎 각도 (라디안)
         _float fMaxKneeAngle = XM_PI - 0.1f; // 최대 무릎 각도
         _uint  iCollisionMask = 0xFFFFFFFF;  // 레이캐스트 충돌 마스크
+        _float fMaxPelvisOffset = 0.3f;
+        _bool  bDynamicPoleVector = true;
+        _vector3 vPoleVector = _vector3(0.f, 0.f, 1.f);
     } FOOTIK_DESC;
 
 private:
@@ -32,18 +35,35 @@ public:
 
 private:
     void         Cache_BoneLengths(IK_CONTEXT& context);
-    _bool        Find_GroundTarget(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal);
-    void         Calculate_TwoBone(IK_CONTEXT& context, _vector3 vTargetPos);
-    void         Align_FootToGround(IK_CONTEXT& context, _vector3 vGroundNormal);
+    _vector3     Calculate_PoleVector(IK_CONTEXT& context, _int iThigh, _int iCalf, _int iFoot);
+    _bool        Find_GroundTarget_Left(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal);
+    _bool        Find_GroundTarget_Right(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal);
+    _float       Calculate_PelvisOffset(IK_CONTEXT& context, _vector3 vLeftTarget, _vector3 vRightTarget);
+    void         Calculate_TwoBone_Left(IK_CONTEXT& context, _vector3 vTargetPos, _float fPelvisOffset, _vector3 vPoleVector);
+    void         Calculate_TwoBone_Right(IK_CONTEXT& context, _vector3 vTargetPos, _float fPelvisOffset, _vector3 vPoleVector);
+    void         Apply_PelvisOffset(IK_CONTEXT& context, _float fOffset);
+    void         Align_Foot_Left(IK_CONTEXT& context, _vector3 vGroundNormal);
+    void         Align_Foot_Right(IK_CONTEXT& context, _vector3 vGroundNormal);
     _quaternion  WorldRotationToLocal(IK_CONTEXT& context, _int iBoneIndex, _quaternion qWorldRotation);
 
 private:
-    // 본 길이 캐시
-    _float  m_fUpperLength;     // 허벅지 길이
-    _float  m_fLowerLength;     // 종아리 길이
-    _bool   m_bLengthCached;    // 캐싱 완료 여부
-    // 레이캐스트 설정
+    _float      m_fLeftUpperLength;
+    _float      m_fLeftLowerLength;
+    _float      m_fRightUpperLength;
+    _float      m_fRightLowerLength;
+    _bool       m_bLengthCached;
+    _vector3    m_vLeftPole;
+    _vector3    m_vRightPole;
     FOOTIK_DESC m_Desc;
+
+    _float m_fDebugPelvisOffset;
+    _bool m_bDebugLeftGroundFound;
+    _bool m_bDebugRightGroundFound;
+    _vector4 m_vDebugLeftThighRot;
+    _vector4 m_vDebugLeftCalfRot;
+    _vector4 m_vDebugRightThighRot;
+    _vector4 m_vDebugRightCalfRot;
+
 public:
     static CFootIK* Create(void* pArg = nullptr);
     virtual void Free() override;

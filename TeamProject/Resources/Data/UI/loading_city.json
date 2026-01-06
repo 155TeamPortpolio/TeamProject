@@ -1,0 +1,534 @@
+{
+    "instanceName": "loading_mainCity_cam1",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [
+        {
+            "duration": 0.5,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 7,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.5
+                }
+            ],
+            "loop": false,
+            "name": "clip0"
+        },
+        {
+            "duration": 0.5,
+            "keyframes": [
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "easeType": 5,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.0
+                },
+                {
+                    "angle": 0.0,
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "easeType": 0,
+                    "position": [
+                        0.0,
+                        0.0
+                    ],
+                    "scale": [
+                        1.0,
+                        1.0
+                    ],
+                    "time": 0.5
+                }
+            ],
+            "loop": false,
+            "name": "clip1"
+        }
+    ],
+    "children": [
+        {
+            "instanceName": "prefab_bg",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    -450.0
+                ],
+                "size": [
+                    1600.0,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "instanceName": "maskBg",
+                    "transform": {
+                        "anchor": 2,
+                        "anchorOffset": [
+                            -1087.0,
+                            -450.0
+                        ],
+                        "size": [
+                            1087.0,
+                            900.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "UI_StencilWrite",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Mask",
+                    "maskTextureKey": "empty.png"
+                },
+                {
+                    "instanceName": "bg",
+                    "transform": {
+                        "anchor": 1,
+                        "anchorOffset": [
+                            -300.0,
+                            -450.0
+                        ],
+                        "size": [
+                            2862.11181640625,
+                            900.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque_StencilTest",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Loading_MainCity_Cam1.png"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "instanceName": "prefab_nowLoading",
+            "transform": {
+                "anchor": 10,
+                "anchorOffset": [
+                    -400.0,
+                    -140.0
+                ],
+                "size": [
+                    340.0,
+                    90.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 0.30000001192092896,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 7,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 2.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 2,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.10000000149011612
+                        },
+                        {
+                            "angle": -2.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 7,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.20000000298023224
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.30000001192092896
+                        }
+                    ],
+                    "loop": true,
+                    "name": "clip0"
+                }
+            ],
+            "children": [
+                {
+                    "instanceName": "nowLoading",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            0.0,
+                            -74.0
+                        ],
+                        "size": [
+                            234.52175903320313,
+                            58.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "LoadingText.png"
+                },
+                {
+                    "instanceName": "run",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -100.0,
+                            -100.0
+                        ],
+                        "size": [
+                            100.0,
+                            100.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "SpriteAnimation",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "SpriteAnimation",
+                    "textureTag": "Run2.png",
+                    "spriteAnimation": {
+                        "loop": true,
+                        "frameCountX": 6,
+                        "frameCountY": 5,
+                        "frameCountTotal": 30,
+                        "frameSpeed": 48.0
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "instanceName": "prefab_title",
+            "transform": {
+                "anchor": 0,
+                "anchorOffset": [
+                    -800.0,
+                    -450.0
+                ],
+                "size": [
+                    1600.0,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "instanceName": "title",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            58.0,
+                            52.0
+                        ],
+                        "size": [
+                            239.0,
+                            120.84269714355469
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Title_CityLogo.png"
+                },
+                {
+                    "instanceName": "subtitle",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            60.0,
+                            190.0
+                        ],
+                        "size": [
+                            405.99993896484375,
+                            141.86663818359375
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.6745098233222961,
+                        0.6745098233222961,
+                        0.6745098233222961,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "단골 손님들은 쵸퍼 대장이 경영하는 인기\n라면 가게 타키유-비단잉어를 비단잉어\n국숫집 이라고 부릅니다. 쵸퍼 대장의 요리를\n먹고 공동에서 행동하면 작업 효율이 눈에 \n띄게 높아집니다.",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999991059303284,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ]
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

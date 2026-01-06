@@ -50,6 +50,8 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 		}
 	}
 
+	m_TPose = m_CombinedMatrices;
+
 	Resize_Layer(1);
 	m_AnimLayers[0].BaseLayer = true;
 	m_AnimLayers[0].eLayerType = ANIM_LAYER_STATE::BASE;

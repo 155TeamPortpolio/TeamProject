@@ -489,8 +489,8 @@
                             190.0
                         ],
                         "size": [
-                            437.99993896484375,
-                            102.14398956298828
+                            364.99993896484375,
+                            85.11998748779297
                         ],
                         "scale": [
                             1.0,
@@ -515,7 +515,7 @@
                     "text": {
                         "content": "기어 코인은 공동 내의 전용 화폐로\nBanboo 상인과 각종 아이템 및 보급품\n거래를 할 수 있습니다.",
                         "fontTag": "NanumSquareNeo.spritefont",
-                        "fontScale": 0.5999999046325684,
+                        "fontScale": 0.49999991059303284,
                         "outlined": false,
                         "outlineThickness": 1.0,
                         "outlineColor": [
