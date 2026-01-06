@@ -249,6 +249,9 @@ public: /* DynamicBone */
         return m_pDynamicBone;
     };
 
+    vector<_float4x4>& Get_DynamicBoneMatricesPtr() { return m_DynamicBoneMatrices; };
+    void Reset_DynamicBoneMatrices();
+
 public: /* IKSolver */
     HRESULT Initialize_HumanoidRig();
     HRESULT Initialize_FootIK(void* pFootIKDesc = nullptr);
@@ -293,7 +296,7 @@ protected:
     void BuildIKMatrices(_float dt);
     void Update_DynamicBone(_float dt);
     void BuildBone();
-    
+    void BuildDynamicBone();
 
 public:
     virtual void Render_GUI();
@@ -324,6 +327,7 @@ protected:
     vector<_float4x4> m_BasePose = {};                  //Additive용 BasePose << 만약 애니매이션을 여러개 덧붙여야하면 이벡터 자체가 여러개필요
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
+    vector<_float4x4> m_DynamicBoneMatrices = {};       //다이나믹본 업데이트 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 

@@ -104,6 +104,7 @@ HRESULT CAnimator3D::Link_DynamicBone()
 		return E_FAIL;
 
 	m_pDynamicBone = pDynamicBone;
+	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
 
 	//if(m_pData->Get_DynamicBoneData) add
 
@@ -162,11 +163,10 @@ void CAnimator3D::Update_Animation(_float dt)
 	BuildBone();
 
 	/* Update DynamicBone */
-	if(m_pDynamicBone)
+	if (m_pDynamicBone) {
 		m_pDynamicBone->Update(dt);
-
-	/* Final Combined */
-	BuildBone();
+		BuildDynamicBone();
+	}
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -769,6 +769,11 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
 {
 	return m_pOwner->Get_WorldMatrix();
+}
+
+void CAnimator3D::Reset_DynamicBoneMatrices()
+{
+	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
 }
 
 HRESULT CAnimator3D::Initialize_HumanoidRig()
@@ -1382,6 +1387,30 @@ void CAnimator3D::BuildBone()
 	}
 }
 
+void CAnimator3D::BuildDynamicBone()
+{
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		int parent = m_pData->Get_BoneParentIndex(i);
+
+		if (parent == -1) {
+			_matrix MyTransformation =
+				XMLoadFloat4x4(&m_DynamicBoneMatrices[i]) *
+				XMLoadFloat4x4(&m_TransformationMatrices[i]) *
+				XMLoadFloat4x4(&m_PreTransform);
+
+			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation);
+		}
+		else {
+			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
+			_matrix MyTransformation =
+				XMLoadFloat4x4(&m_DynamicBoneMatrices[i])
+				* XMLoadFloat4x4(&m_TransformationMatrices[i]);
+
+			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
+		}
+	}
+}
 
 #pragma region GUI
 void CAnimator3D::Render_GUI()

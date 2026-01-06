@@ -44,6 +44,8 @@ void CDynamicBone::Update(_float dt)
 
 	/*업데이트가 안돌았으면 굳이 밑에 apply 시도할 필요가 없음*/
 	_bool bUpdatedOnce = false;
+	m_pAnimator->Reset_DynamicBoneMatrices();
+
 	for (auto& Group : m_ChainGroups) {
 		/* 루트가 없으면 없는 그룹인거임 */
 		if (-1 == Group.RootBoneIndex)
@@ -116,6 +118,7 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	Node.CombinedCurPos = next;
 }
 
+/* 계산된 값에대한 회전 델타를 넘기는 작업 */
 void CDynamicBone::ApplySimulatedNode()
 {
 	for (auto& Group : m_ChainGroups) {
@@ -153,8 +156,8 @@ void CDynamicBone::ApplySimulatedNode()
 					_quaternion::FromToRotation(baseDirection, simulatedDirection);
 				deltaRotation.Normalize();
 
-				auto& pManipulateMat = (*m_pAnimator->Get_ManipulateBoneMatrices_Ptr())[Node.BoneIndex];
-				pManipulateMat = Matrix::CreateFromQuaternion(deltaRotation);
+				auto& pDynamicBoneMatrix = m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex];
+				pDynamicBoneMatrix = Matrix::CreateFromQuaternion(deltaRotation);
 			}
 		}
 	}
@@ -179,7 +182,6 @@ HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 	}
 	
 	DYNAMIC_CHAIN_GROUP Group;
-	Group.RootBone = m_pAnimator->Get_ModelData()->Get_BoneNames()[RootIndex];
 	Group.RootBoneIndex = RootIndex;
 
 	/* 	노드 생성을 하기 위한 리스트를 저장한 벡터를 하나 만들어둠 그 데이터로 재귀*/
