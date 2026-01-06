@@ -68,18 +68,20 @@ HRESULT CVI_Trail::Render(ID3D11DeviceContext* pContext)
 
 void CVI_Trail::Update_Vertices(VTXTRAIL* pVertices, _uint iCount)
 {
-	m_iCurrPointCount = iCount;
+	m_iCurrPointCount = (iCount <= g_iMaxNumTrailPoints) ? iCount : g_iMaxNumTrailPoints;
+
 	if (m_iCurrPointCount < 2)
 		return;
 
-	_uint iVerticesCont = iCount * 2;
+	_uint iCurrVerticesCount = m_iCurrPointCount * 2;
 
 	auto pContext = CGameInstance::GetInstance()->Get_Context();
 
 	D3D11_MAPPED_SUBRESOURCE mapSubResource{};
 	pContext->Map(m_pVB, 0, D3D11_MAP_WRITE_DISCARD, 0, &mapSubResource);
-	memcpy_s(mapSubResource.pData, m_iVertexStride * m_iVerticesCount, pVertices, m_iVertexStride * iVerticesCont);
+	memcpy_s(mapSubResource.pData, m_iVertexStride * m_iVerticesCount, pVertices, m_iVertexStride * iCurrVerticesCount);
 	pContext->Unmap(m_pVB, 0);
+
 }
 
 HRESULT CVI_Trail::Create_Vertex(ID3D11Device* pDevice)

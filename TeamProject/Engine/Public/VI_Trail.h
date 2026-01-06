@@ -26,5 +26,6 @@ public:
 
 private:
 	_uint m_iCurrPointCount{};
+
 };
 NS_END

@@ -9,6 +9,7 @@ class ENGINE_DLL CTrailModel :
 	{
 		_float3 vPosition{};
 		_float fLifeTime{};
+		_float fWidth{};
 		_float fDistanceAcc{};
 	}CENTER_POINT;
 
@@ -49,7 +50,6 @@ public:
 	_bool isReadyToDraw()	override { return true; };
 
 public:
-	HRESULT Bind_Buffer(ID3D11DeviceContext* pContext);
 	virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index)override;
 
 public:
@@ -58,7 +58,10 @@ public:
 	void Update_SegmentPoint(_float3 position0, _float3 position1, _float dt);
 
 private:
-	void BuildVertices();
+	void Divide_CenterPoints(vector<CENTER_POINT>& dividePoints);
+	void Divide_SegmentPoints(vector<SEGMENT_POINT>& dividePoints);
+	void Build_CenterVertices(vector<CENTER_POINT>& points);
+	void Build_SegmentVertices(vector<SEGMENT_POINT>& points);
 
 	class CVI_Trail* m_pBuffer = { nullptr };
 
@@ -75,13 +78,14 @@ private:
 	_float4 m_vStartColor{};
 	_float4 m_vEndColor{};
 
-	_uint m_iAlivePointCount{};
+	_float m_fStartWidth{};
+	_float m_fEndWidth{};
+
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};
 	vector<VTXTRAIL> m_TrailVertices;
 
 	/* Center Mode */
-	_float m_fWidth{};
 	deque<CENTER_POINT> m_CenterPoints;
 
 	/* Segment Mode */

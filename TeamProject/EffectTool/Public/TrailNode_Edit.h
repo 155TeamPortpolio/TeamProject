@@ -58,6 +58,7 @@ private:
     _float m_fMaxLifeTime{};
     _float m_fMinDistance{};
 
-    _float m_fWidth{};
+    _float m_fStartWidth{};
+    _float m_fEndWidth{};
 };
 NS_END

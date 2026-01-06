@@ -478,7 +478,8 @@ namespace Engine
 		_float4 vEndColor{};
 
 		/* Center Mode */
-		_float fWidth{};
+		_float fStartWidth{};
+		_float fEndWidth{};
 
 		/* Segment Mode */
 		_float fMinDistance{};

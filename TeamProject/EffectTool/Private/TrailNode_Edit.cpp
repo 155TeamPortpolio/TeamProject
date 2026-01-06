@@ -59,6 +59,14 @@ void CTrailNode_Edit::Update(_float dt)
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
 		pTrail->Update_CenterPoint(vPosition, dt);
 	}
+	else
+	{
+		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
+		_vector3 vPosition1 = vPosition0;
+		vPosition1.y -= 5.f;
+
+		pTrail->Update_SegmentPoint(vPosition0, vPosition1, dt);
+	}
 }
 void CTrailNode_Edit::Late_Update(_float dt)
 {
@@ -159,7 +167,8 @@ void CTrailNode_Edit::SetUp_TrailEffect()
 
 	isDirty |= ImGui::DragFloat("Max Life Time", &m_fMaxLifeTime);
 	isDirty |= ImGui::DragFloat("Min Distance", &m_fMinDistance);
-	isDirty |= ImGui::DragFloat("Width", &m_fWidth);
+	isDirty |= ImGui::DragFloat("Start Width", &m_fStartWidth);
+	isDirty |= ImGui::DragFloat("End Width", &m_fEndWidth);
 
 	if (isDirty)
 	{
@@ -175,8 +184,13 @@ void CTrailNode_Edit::SetUp_TrailEffect()
 
 		trailNode.fMaxLifeTime = m_fMaxLifeTime;
 		trailNode.fMinDistance = m_fMinDistance;
+		
+		trailNode.vStartColor = m_vStartColor;
+		trailNode.vEndColor = m_vEndColor;
 
-		trailNode.fWidth = m_fWidth;
+		trailNode.fStartWidth = m_fStartWidth;
+		trailNode.fEndWidth = m_fEndWidth;
+
 		pTrail->SetTrailParams(trailNode);
 	}
 }

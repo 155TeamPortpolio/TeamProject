@@ -1040,7 +1040,7 @@
     </Filter>
     <Filter Include="01. Utility\03. GameObject\Effect\Node\Trail">
       <UniqueIdentifier>{49355ea0-e01f-4c1c-ac30-dbad506ba0de}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="01. Utility\15. IKSolver">
       <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
     </Filter>
@@ -1490,7 +1490,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\VI_Trail.cpp">
       <Filter>01. Utility\05. Resources\07. VIBuffer\VI_Trail</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\FootIK.cpp">
       <Filter>01. Utility\15. IKSolver\FootIK</Filter>
     </ClCompile>
@@ -1605,5 +1605,8 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
 </Project>
