@@ -564,6 +564,12 @@
     <ClInclude Include="..\Public\Humanoid.h">
       <Filter>99. Defines\AnimationLayout</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\DynamicBone.h">
+      <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\DynamicBoneStruct.h">
+      <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1179,6 +1185,9 @@
     <Filter Include="01. Utility\06. RenderSystem\PipeLine\CSM">
       <UniqueIdentifier>{19d9bc06-7c5b-41ab-a91a-64bb54394349}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\04. Components\06. Animator3D\DynamicBone">
+      <UniqueIdentifier>{ca4f34f8-0320-4e35-82e5-f487e533e3eb}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01. Utility\04. Components\06. Animator3D\IKSolver">
       <UniqueIdentifier>{c2b7e7bc-c6b6-45e5-9091-123f3772c5f5}</UniqueIdentifier>
     </Filter>
@@ -1625,6 +1634,9 @@
     </ClCompile>
     <ClCompile Include="..\private\CSMShadow.cpp">
       <Filter>01. Utility\06. RenderSystem\PipeLine\CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\DynamicBone.cpp">
+      <Filter>01. Utility\04. Components\06. Animator3D\DynamicBone</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
