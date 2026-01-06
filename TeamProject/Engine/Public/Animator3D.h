@@ -292,7 +292,7 @@ protected:
     void BuildLocal(_float dt);
     void BuildIKMatrices(_float dt);
     void Update_DynamicBone(_float dt);
-    void BuildBone(_float dt);
+    void BuildBone();
     
 
 public:
