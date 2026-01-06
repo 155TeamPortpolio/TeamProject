@@ -142,7 +142,7 @@ PS_OUT_RESULT PS_BRIGHT(PS_IN In)
   
     float3 vResult = vDiffuse.rgb * emissive;
     
-    Out.vResult = float4(vResult, 1.f);
+    Out.vResult = float4(vResult, vDiffuse.a);
     return Out;
 }
 
@@ -165,7 +165,7 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
         result += brightSample.rgb * weights[i];
     }
         
-    Out.vResult = float4(result, 1.f);
+    Out.vResult = float4(result, bright.a);
    
     return Out;
 }
@@ -186,7 +186,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
         result += MeshBlurXTexture.Sample(DefaultSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
     }
-    Out.vResult = float4(result, 1.f);
+    Out.vResult = float4(result, BlurX.a);
 
     return Out;
 }
@@ -240,7 +240,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
   
         float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
     
-        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);      
+        Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
         Out.vLightInfo = float4(NdotL, specular, shadow, 0.f);
         return Out;
     }
@@ -260,7 +260,7 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         faceShadow *= saturate(-FdotL);
         float brightness = lerp(0.15f, 0.45f, faceShadow);
 
-        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, 1.f);
+        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, vDiffuse.a);
         Out.vLightInfo = float4(brightness, 0, 1.f, 0);
     }
     
@@ -310,7 +310,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
-    Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
+    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
     Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
@@ -340,9 +340,10 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float3 ambient = vLightAmbient.rgb * vDiffuse.rgb * vAmbient.g;
     ambient = max(ambient, vDiffuse.rgb * vLightAmbient.rgb * 0.5) * fOutLine * shadowValue;
     
-    if (vMetalic.a < 0.7) Out.vResult = float4(vLight.rgb + ambient, 1.f);
+    if (vMetalic.a < 0.7)
+        Out.vResult = float4(vLight.rgb + ambient, vLight.a);
     else
-        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, 1.f);
+        Out.vResult = float4(vLight.rgb + vLightAmbient.rgb * vDiffuse.rgb * 0.5, vLight.a);
     
     float rimIntensity = max(vRamp, 0.5f);
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
