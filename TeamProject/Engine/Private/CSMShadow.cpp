@@ -253,11 +253,6 @@ _matrix CCSMShadow::CreateLightViewProj(const _vector* frustumCorners, const _ve
     minZ = max(minZ - nearMargin, 0.1f); 
     maxZ = maxZ + farMargin;
 
-    char buffer[512];
-#ifdef _DEBUG
-    sprintf_s(buffer, "Cascade %d: Z range = %.2f\n", cascadeIndex, maxZ - minZ);
-    OutputDebugStringA(buffer);
-#endif
     _matrix lightProj = XMMatrixOrthographicOffCenterLH(minX, maxX,  minY, maxY, minZ, maxZ);
 
     _matrix result = lightView * lightProj;

@@ -1,7 +1,6 @@
 #pragma once
 #include "Component.h"
 #include "Engine_Math.h"
-#include "AnimationLayout.h"
 
 NS_BEGIN(Engine)
 using AnimArg = variant<_int, string>;
@@ -84,12 +83,22 @@ public:
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
 
-    typedef struct PlaylistEntry {
-        _int    iClipIndex = { -1 };
-        _bool   bLoop = { false };
-        _float  fSpeed = { 1.f };
-        _float  fBlendDuration = { 0.2f };
-    }PLAYLIST_ENTRY;
+    struct IK_CHAIN
+    {
+        class IIKSolver* pSolver;
+        vector<_int>     BoneIndices;
+        _vector3         vPoleVector;
+        _float           fWeight;
+        _bool            bEnabled;
+
+        IK_CHAIN()
+            : pSolver(nullptr)
+            , vPoleVector(0.f, 0.f, 1.f)
+            , fWeight(1.f)
+            , bEnabled(true)
+        {
+        }
+    };
 
 protected:
     CAnimator3D();
@@ -103,6 +112,7 @@ public:
 public:
     void LinkAnimate_Model(const string& LevelKey, const string& ModelKey);
     HRESULT Link_MetaData(const string& LevelKey, const string& MetaClipKey);
+    HRESULT Link_DynamicBone();
     HRESULT Resize_Layer(_uint iLayerCount); //레이어 크기(개수) 지정 //벡터resize와 동일한 기능 
     virtual void Update_Animation(_float dt);
 
@@ -229,6 +239,26 @@ public: //뼈 관련
     void Set_BoneCombinedPosition(_vector3 Position, AnimArg BoneArg);
     void Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneArg);
 
+    //TPose
+    const vector<_float4x4>& Get_TPose() { return m_TPose; };
+    const _float4x4* Get_OwnerWorldMatrix();
+
+public: /* DynamicBone */
+    class CDynamicBone* Get_DynamicBone_Ptr() { 
+        if (nullptr == m_pDynamicBone) Link_DynamicBone();
+        return m_pDynamicBone;
+    };
+
+public: /* IKSolver */
+    HRESULT Initialize_HumanoidRig();
+    HRESULT Initialize_FootIK(void* pFootIKDesc = nullptr);
+    HRESULT Add_IKChain(IIKSolver* pSolver, const vector<_int>& BoneIndices,
+        _vector3 vPoleVector = _vector3(0.f, 0.f, 1.f));
+    void    Set_IKChainEnabled(_uint iChainIndex, _bool bEnabled);
+    void    Set_IKChainWeight(_uint iChainIndex, _float fWeight);
+    void    Clear_IKChains();
+    const HumanoidRigData& Get_HumanoidRig() const { return m_HumanoidRig; }
+
 protected://애니매이션 체크
     //문자열 및 숫자를 인덱스로 잘 바꿔주는 함수
     _int Resolve_ClipIndex(AnimArg ClipArg);
@@ -245,6 +275,8 @@ protected://애니매이션 체크
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
     Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+
+
 protected:
     //애니매이션 연산
     void Animation_Run(ANIM_LAYER& Layer, _float dt);
@@ -254,15 +286,14 @@ protected:
     void Layer_Override(const ANIM_LAYER& Layer);
     void Layer_Blend(const ANIM_LAYER& Layer);
     void Layer_Additive(const ANIM_LAYER& Layer);
-    //Combined 연산
-
-
 
     //최종 뼈 계산
     void Update_Layers(_float dt);
     void BuildLocal(_float dt);
     void BuildIKMatrices(_float dt);
+    void Update_DynamicBone(_float dt);
     void BuildBone(_float dt);
+    
 
 public:
     virtual void Render_GUI();
@@ -271,13 +302,19 @@ protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
 
+private: /* IKSolver */
+    void Update_IK(_float dt);
+    void Apply_IK(IK_CONTEXT& context);
+
 private:
     void Reset_Anim();
 
 protected:
-    class CModelData* m_pData = {};
-    Matrix m_PreTransform = { Matrix::Identity };
+    class CModelData*   m_pData = { nullptr };
+    class CDynamicBone* m_pDynamicBone = { nullptr };
 
+    Matrix m_PreTransform = { Matrix::Identity };
+    _bool                           m_bUpdatedClip = { false };
     vector<ANIM_LAYER>              m_AnimLayers;   //애니매이션 레이어
     vector<class CAnimationClip*>   m_pAnimClips;   //애니매이션 클립
     vector<EVENT_INST>              m_EventBus;     //이벤트 버스
@@ -290,11 +327,15 @@ protected:
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
-    _int m_iCurrentClipIndex = { -1 };
 
     /*Managing*/
     vector<_bool> m_pAnimLoops;
     unordered_map<string, _uint> m_pAnimNames;
+    _int m_iCurrentClipIndex{};
+
+    /* IKSolver */
+    HumanoidRigData  m_HumanoidRig;
+    vector<IK_CHAIN> m_IKChains;
 
 public:
     static CAnimator3D* Create();

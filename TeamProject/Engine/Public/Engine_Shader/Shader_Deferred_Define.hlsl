@@ -45,7 +45,8 @@ cbuffer ShadowBuffer : register(b8)
     matrix matShadowProjection;
     matrix matShadowViewInverse;
     matrix matShadowProjectionInverse;
-    matrix matLightViewProj[4];
+    matrix matStaticLightViewProj[4];
+    matrix matSkinnedLightViewProj[4];
     float4 vCascadeSplits;
     float4 vShadowPosition;
     int iCurrentCascade;
@@ -145,12 +146,13 @@ Texture2D EffectCombinedTexture : register(t56);
 Texture2D FinalTexture : register(t56);
 
 // 式式式式式式式式式式式式式  ETC 式式式式式式式式式式式式式
-Texture2DArray ShadowMapArray : register(t58);
-Texture2D RampTexture : register(t59);
+Texture2DArray StaticShadowMapArray : register(t58);
+Texture2DArray SkinnedShadowMapArray : register(t59);
+Texture2D RampTexture : register(t60);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
-StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t60);
-StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t61);
+StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t65);
+StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t66);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
 Texture2D SpriteTexture : register(t70);

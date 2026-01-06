@@ -126,6 +126,7 @@ void CGameInstance::Update_Engine(_float dt)
 	m_pUIManager->Update(realDt);
 	m_pRaySystem->Update(dt);
 	m_pSoundDevice->Update();
+	m_pRenderSystem->Update(dt);
 
 #ifdef USINGPHYSICS
 	m_pCollisionSystem->Update(dt);

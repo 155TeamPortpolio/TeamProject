@@ -180,6 +180,34 @@ _int CObjectContainer::Find_IndexByID(_uint ObjectID)
 	}
 }
 
+/*이름으로 재귀 돌음. 후손 중 만난 첫번째 조건 부합 자손 가져옴*/
+CGameObject* CObjectContainer::Find_Descendant(const string& instanceName)
+{
+	vector<CGameObject*> stackList;
+	stackList.reserve(64);
+
+	for (CGameObject* child : m_ChildrenObjects)   
+		if (child) stackList.push_back(child);
+
+	while (!stackList.empty())
+	{
+		CGameObject* node = stackList.back();
+		stackList.pop_back();
+
+		if (!node) continue;
+
+		if (node->Get_InstanceName() == instanceName)
+			return node;
+
+		const auto& children = node->Get_Children();
+		for (CGameObject* descent : children)
+			if (descent) 
+				stackList.push_back(descent);
+	}
+
+	return nullptr;
+}
+
 _int CObjectContainer::Add_Child(CGameObject* pObject, _bool SyncTransform)
 {
 	if (nullptr == pObject) return -1;
