@@ -4,6 +4,7 @@
 #include "ModelData.h"
 #include "GameInstance.h"
 #include "IResourceService.h"
+#include "FootIK.h"
 
 CAnimator3D::CAnimator3D()
 {
@@ -132,6 +133,9 @@ void CAnimator3D::Update_Animation(_float dt)
 	BuildLocal(dt);
 
 	/* Create CombinedMatrices */
+	BuildBone(dt);
+
+	Update_IK(dt);
 	BuildBone(dt);
 }
 
@@ -732,6 +736,84 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
+HRESULT CAnimator3D::Initialize_HumanoidRig()
+{
+	if (!m_pData) return E_FAIL;
+	m_HumanoidRig.Reset();
+	if (!m_pData->Get_RiggedData(m_HumanoidRig)) return E_FAIL;
+	m_HumanoidRig.RebuildChainsFromMap();
+
+	if (!m_HumanoidRig.IsRigComplete()) return E_FAIL;
+	//OutputDebugStringA("HumanoidRig Setup Success\n");
+
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Initialize_FootIK(void* pFootIKDesc)
+{
+	if (!m_HumanoidRig.IsRigComplete()) return E_FAIL;
+	if (!m_HumanoidRig.leftLeg.IsValid() || !m_HumanoidRig.rightLeg.IsValid()) return E_FAIL;
+	if (!m_HumanoidRig.spine.HasPelvis()) return E_FAIL;
+
+	CFootIK* pFootIK = CFootIK::Create(pFootIKDesc);
+	if (!pFootIK) return E_FAIL;
+
+	vector<_int> boneIndices = {
+		m_HumanoidRig.leftLeg.upperIndex,
+		m_HumanoidRig.leftLeg.lowerIndex,
+		m_HumanoidRig.leftLeg.endIndex,
+		m_HumanoidRig.rightLeg.upperIndex,
+		m_HumanoidRig.rightLeg.lowerIndex,
+		m_HumanoidRig.rightLeg.endIndex,
+		m_HumanoidRig.spine.pelvisIndex
+	};
+	_vector3 vPoleVector = _vector3::Zero;
+
+	if (FAILED(Add_IKChain(pFootIK, boneIndices, vPoleVector)))
+	{
+		Safe_Release(pFootIK);
+		return E_FAIL;
+	}
+
+	OutputDebugStringA("FootIK Setup Success\n");
+	return S_OK;
+}
+
+HRESULT CAnimator3D::Add_IKChain(IIKSolver* pSolver, const vector<_int>& BoneIndices, _vector3 vPoleVector)
+{
+	if (!pSolver) return E_FAIL;
+
+	IK_CHAIN chain;
+	chain.pSolver = pSolver;
+	chain.BoneIndices = BoneIndices;
+	chain.vPoleVector = vPoleVector;
+	chain.fWeight = 1.f;
+	chain.bEnabled = true;
+
+	m_IKChains.push_back(chain);
+
+	return S_OK;
+}
+
+void CAnimator3D::Set_IKChainEnabled(_uint iChainIndex, _bool bEnabled)
+{
+	if (iChainIndex >= m_IKChains.size()) return;
+	m_IKChains[iChainIndex].bEnabled = bEnabled;
+}
+
+void CAnimator3D::Set_IKChainWeight(_uint iChainIndex, _float fWeight)
+{
+	if (iChainIndex >= m_IKChains.size()) return;
+	m_IKChains[iChainIndex].fWeight = clamp(fWeight, 0.f, 1.f);
+}
+
+void CAnimator3D::Clear_IKChains()
+{
+	for (auto& chain : m_IKChains)
+		Safe_Release(chain.pSolver);
+	m_IKChains.clear();
+}
+
 #pragma endregion
 
 _int CAnimator3D::Resolve_ClipIndex(AnimArg ClipArg)
@@ -1265,6 +1347,43 @@ void CAnimator3D::Render_GUI()
 	ImGui::SeparatorText("Animator 3D");
 	GUI_ShowLayerInfo();
 	GUI_SelectAnim();
+	if (!m_IKChains.empty())
+	{
+		ImGui::Separator();
+		ImGui::TextColored(ImVec4(0, 1, 1, 1), "IK Chains");
+
+		for (size_t i = 0; i < m_IKChains.size(); ++i)
+		{
+			auto& chain = m_IKChains[i];
+
+			ImGui::PushID(i);
+
+			string label = "Chain " + to_string(i);
+			if (ImGui::TreeNode(label.c_str()))
+			{
+				ImGui::Checkbox("Enabled", &chain.bEnabled);
+				ImGui::DragFloat("Weight", &chain.fWeight, 0.01f, 0.f, 1.f);
+
+				ImGui::Text("Bone Indices:");
+				for (auto idx : chain.BoneIndices)
+				{
+					string boneName = m_pData->Find_BoneNameByIndex(idx);
+					ImGui::Text("  [%d] %s", idx, boneName.c_str());
+				}
+
+				// Solver GUI
+				if (chain.pSolver)
+				{
+					dynamic_cast<CFootIK*>(chain.pSolver)->Render_GUI();
+				}
+
+				ImGui::TreePop();
+			}
+
+			ImGui::PopID();
+		}
+	}
+
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()
@@ -1375,6 +1494,74 @@ void CAnimator3D::GUI_SelectAnim()
 	ImGui::EndChild();
 }
 
+void CAnimator3D::Update_IK(_float dt)
+{
+	for (auto& chain : m_IKChains)
+	{
+		if (!chain.bEnabled || chain.fWeight <= 0.f || !chain.pSolver)
+			continue;
+
+		IK_CONTEXT context;
+		context.pAnimator = this;
+		context.BoneIndices = chain.BoneIndices;
+		context.vPoleVector = chain.vPoleVector;
+		context.fWeight = chain.fWeight;
+
+		chain.pSolver->Solve(context);
+
+		if (!context.bSuccess)
+			continue;
+
+		Apply_IK(context);
+	}
+}
+
+void CAnimator3D::Apply_IK(IK_CONTEXT& context)
+{
+	for (size_t i = 0; i < context.BoneIndices.size(); ++i)
+	{
+		_int iBone = context.BoneIndices[i];
+		if (iBone < 0 || iBone >= m_TransformationMatrices.size())
+			continue;
+
+		_smatrix matCurrent = XMLoadFloat4x4(&m_TransformationMatrices[iBone]);
+		_vector3 S, T;
+		_quaternion R;
+		matCurrent.Decompose(S, R, T);
+
+		// 회전 적용
+		if (i < context.OutRotations.size())
+		{
+			_quaternion R_IK = context.OutRotations[i];
+
+			// Identity가 아닌 경우만 적용
+			_float fDiff = abs(R_IK.x) + abs(R_IK.y) + abs(R_IK.z) + abs(R_IK.w - 1.f);
+
+			if (fDiff > 0.01f)
+			{
+				R_IK.Normalize();
+
+				// IK 회전으로 완전 대체 (Slerp)
+				R = _quaternion::Slerp(R, R_IK, context.fWeight);
+				R.Normalize();
+			}
+		}
+
+		// 위치 적용
+		if (i < context.OutPositions.size())
+		{
+			_vector3 T_Offset = context.OutPositions[i];
+			if (T_Offset.LengthSquared() > 0.0001f)
+			{
+				T += T_Offset * context.fWeight;
+			}
+		}
+
+		_smatrix matNew = XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
+		XMStoreFloat4x4(&m_TransformationMatrices[iBone], matNew);
+	}
+}
+
 #pragma endregion
 
 void CAnimator3D::Reset_Anim()
@@ -1406,6 +1593,7 @@ CComponent* CAnimator3D::Clone()
 void CAnimator3D::Free()
 {
 	__super::Free();
+	Clear_IKChains();
 	Safe_Release(m_pData);
 	for (auto& Clip : m_pAnimClips) {
 		Safe_Release(Clip);
