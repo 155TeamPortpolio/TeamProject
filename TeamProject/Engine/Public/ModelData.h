@@ -2,6 +2,7 @@
 #include "Base.h"
 #include "DynamicBoneStruct.h"
 NS_BEGIN(Engine)
+
 class ENGINE_DLL CModelData :
 	public CBase
 {

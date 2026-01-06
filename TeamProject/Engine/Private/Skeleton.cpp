@@ -24,23 +24,29 @@ HRESULT CSkeleton::InitializeFromFile(ifstream& ifs)
 		ifs.read(reinterpret_cast<char*>(&LoadFloat4x4), sizeof(_float4x4));
 		m_OffsetMatrices.push_back(LoadFloat4x4);
 	}
-	_bool HasRigged = { false };
-	ifs.read(reinterpret_cast<char*>(&HasRigged), sizeof(_bool));
-	if (HasRigged)
-		ifs.read(reinterpret_cast<char*>(&m_RiggedData), sizeof(HumanoidRigData));
 
-	_bool HasDynamic = { false };
-	ifs.read(reinterpret_cast<char*>(&HasDynamic), sizeof(_bool));
+	if (modelDataVersion == 0106) {
+		_bool HasRigged = { false };
+		ifs.read(reinterpret_cast<char*>(&HasRigged), sizeof(_bool));
+		if (HasRigged)
+			ifs.read(reinterpret_cast<char*>(&m_RiggedData), sizeof(HumanoidRigData));
 
-	if (HasDynamic) {
-		_uint count = {};
-		ifs.read(reinterpret_cast<char*>(&count), sizeof(_uint));
-		for (size_t i = 0; i < count; i++)
-		{
-			DYNAMIC_CHAIN_GROUP group = {};
-			ifs.read(reinterpret_cast<char*>(&group), sizeof(DYNAMIC_CHAIN_GROUP));
-			m_ChainGroups.push_back(group);
+		_bool HasDynamic = { false };
+		ifs.read(reinterpret_cast<char*>(&HasDynamic), sizeof(_bool));
+
+		if (HasDynamic) {
+			_uint count = {};
+			ifs.read(reinterpret_cast<char*>(&count), sizeof(_uint));
+			for (size_t i = 0; i < count; i++)
+			{
+				DYNAMIC_CHAIN_GROUP group = {};
+				ifs.read(reinterpret_cast<char*>(&group), sizeof(DYNAMIC_CHAIN_GROUP));
+				m_ChainGroups.push_back(group);
+			}
 		}
+	}
+	else {
+		ifs.read(reinterpret_cast<char*>(&m_RiggedData), sizeof(HumanoidRigData));
 	}
 	return S_OK;
 }

@@ -64,6 +64,10 @@ namespace Engine
 	static constexpr _uint g_iMaxNumTrailPoints = 512;
 	const unsigned int g_iMaxWidth = 8192;
 	const unsigned int g_iMaxHeight = 8192;
+
+
+	static constexpr _uint modelDataVersion = 0107;
+
 }
 
 #endif // Engine_Typedef_h__
