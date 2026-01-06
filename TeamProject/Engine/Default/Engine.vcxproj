@@ -273,6 +273,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
+    <ClInclude Include="..\Public\DynamicBoneStruct.h" />
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
@@ -282,10 +284,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Engine_RenderStruct.h" />
     <ClInclude Include="..\Public\EventListener.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\Public\FootIK.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\HiZ_Culling.h" />
     <ClInclude Include="..\Public\Humanoid.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\IKSolver.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\Noise.h" />
@@ -389,6 +393,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThirdPartyCsv.h" />
     <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
@@ -450,6 +455,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBone.cpp" />
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
@@ -458,6 +464,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListener.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\Private\FootIK.cpp" />
     <ClCompile Include="..\private\ForwardRenderer.cpp" />
     <ClCompile Include="..\Private\HiZ_Culling.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />

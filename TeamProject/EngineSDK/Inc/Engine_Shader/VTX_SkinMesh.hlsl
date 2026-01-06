@@ -240,7 +240,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     vector vPosition = mul(float4(In.vPosition, 1.f), BoneMatrix);
     
     float3 worldPos = mul(vPosition, ObjectBufferArray[TransformIndex].Transform).xyz;
-    float4 lightSpacePos = mul(float4(worldPos, 1.f), matLightViewProj[iCurrentCascade]);
+    float4 lightSpacePos = mul(float4(worldPos, 1.f), matSkinnedLightViewProj[iCurrentCascade]);
     
     Out.vPosition = lightSpacePos;
    // Out.vProjPos = Out.vPosition;

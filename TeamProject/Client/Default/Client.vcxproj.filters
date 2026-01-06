@@ -360,7 +360,7 @@
     </Filter>
     <Filter Include="02. GameObject\Camera\05. ShadowCam">
       <UniqueIdentifier>{54711cba-0d76-43fd-b108-03e7250725a9}</UniqueIdentifier>
-          </Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep">
       <UniqueIdentifier>{cdf14c25-a07f-49d5-af1f-8d3e8f7862b1}</UniqueIdentifier>
     </Filter>
@@ -376,11 +376,17 @@
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\04. BattleSystem">
+      <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\Logo">
       <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Loading">
+      <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -447,7 +453,7 @@
     <ClInclude Include="..\public\MapLoader.h">
       <Filter>03. Utility\00. MapLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Data_Struct.h">
+    <ClInclude Include="..\Public\Client_Struct.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TestMap.h">
@@ -723,11 +729,17 @@
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\BattleSystem.h">
+      <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Logo.h">
+    <ClInclude Include="..\Public\UI_Logo.h">
       <Filter>02. GameObject\UI\Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Loading.h">
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1059,11 +1071,17 @@
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\BattleSystem.cpp">
+      <Filter>03. Utility\04. BattleSystem</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Logo.cpp">
+    <ClCompile Include="..\Private\UI_Logo.cpp">
       <Filter>02. GameObject\UI\Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Loading.cpp">
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -95,6 +95,12 @@ namespace Engine
 		MESH,
 		END
 	};
+
+	enum class IK_TYPE
+	{
+		TWO_BONE,
+		FOOT_IK,
+	};
 }
 #endif // Engine_Enum_h__
 

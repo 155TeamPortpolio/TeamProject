@@ -26,14 +26,16 @@ constexpr _uint HUMANOID_BONE_COUNT = static_cast<_uint>(HumanoidBone::Count);
 struct HumanoidMap
 {
     array<_int, HUMANOID_BONE_COUNT> indexByRole;
-
+    HumanoidMap() { Reset(); }
+    ~HumanoidMap()DEFAULT;
+    
     void Reset()
     {
         indexByRole.fill(-1);
     }
 
     _int Get(HumanoidBone role) const { return indexByRole[static_cast<_uint>(role)]; }
-    void Set(HumanoidBone role, _uint boneIndex) { indexByRole[static_cast<uint32_t>(role)] = boneIndex; }
+    void Set(HumanoidBone role, _uint boneIndex) { indexByRole[static_cast<_uint>(role)] = boneIndex; }
     bool Has(HumanoidBone role) const {return Get(role) >= 0; }
 };
 
@@ -65,7 +67,6 @@ struct SpineChain
 
 struct HumanoidRigData
 {
-   string skeletonName;
     HumanoidMap map;
 
     //역할 체인
@@ -86,7 +87,6 @@ struct HumanoidRigData
 
     void Reset()
     {
-        skeletonName.clear();
         map.Reset();
 
         spine = SpineChain{};

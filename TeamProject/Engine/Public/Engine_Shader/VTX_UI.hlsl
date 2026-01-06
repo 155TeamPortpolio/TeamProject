@@ -103,18 +103,16 @@ struct PS_OUT
 PS_OUT PS_MAIN(PS_IN In)
 {
     PS_OUT Out;
-
-    float2 vTexcoord = float2(
-        In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x,
-        In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y
-    );
-
-    float4 tex = SpriteTexture.Sample(LinearClampSampler, vTexcoord);
-
-    float4 color = tex * vColor;
+    
+    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * vFlip.x) + vFlip.x, In.vTexcoord.y * (1.f - 2.f * vFlip.y) + vFlip.y };
+    
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    //clip(vDiffuse.a - 0.1f);
+    
+    float4 color = vDiffuse * vColor;
     Out.vColor.rgb = color.rgb * color.a;
-    Out.vColor.a   = color.a;
-
+    Out.vColor.a = color.a;
+    
     return Out;
 }
 

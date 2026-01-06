@@ -194,7 +194,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
-    float2 fLightInfo : SV_TARGET1;
+    vector vLightInfo : SV_TARGET1;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -226,14 +226,14 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float4 vLightSpacePos[4];
-    [unroll]
-    for (int i = 0; i < 4; i++)
-    {
-        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
-    }
+    //float4 vLightSpacePos[4];
+    //[unroll]
+    //for (int i = 0; i < 4; i++)
+    //{
+    //    vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
+    //}
     
-    float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
+    //float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
     
     if (Skin < 0.7f)
     {
@@ -246,10 +246,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float specularPower = lerp(50.0f, 5.0f, roughness);
         specular = pow(specBase, specularPower) * specular;
         
-        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
     
         Out.vLight = float4(PBR * vNormalDesc.a, 1.f);      
-        Out.fLightInfo = float2(NdotL, specular);
+        Out.vLightInfo = float4(NdotL, specular, 0.f, 0.f);
         return Out;
     }
     else
@@ -266,10 +266,10 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
         float specularMask = LightDesc.g;
     
         faceShadow *= saturate(-FdotL);
-        float brightness = lerp(0.15f, 0.45f, faceShadow);
+        float brightness = lerp(0.15f, 0.65f, faceShadow);
 
         Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, 1.f);
-        Out.fLightInfo = float2(brightness, 0);
+        Out.vLightInfo = float4(brightness, 0, 0, 0);
     }
     
     return Out;
@@ -287,7 +287,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     if(vMetalicDesc.a > 0.7f)
     {
         Out.vLight = float4(0.f, 0.f, 0.f, 1.f);
-        Out.fLightInfo = float2(0.f, 0.f);
+        Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
         return Out;
     }
     
@@ -319,7 +319,7 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-    Out.fLightInfo = float2(NdotL, 0.f);
+    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -330,14 +330,14 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     
     vector vDiffuse = DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vLight = LightTexture.Sample(DefaultSampler, In.vTexcoord);
-    float2 fLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord).rg;
+    vector vLightInfo = LightInfoTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vRimLight = RimLightFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float fOutLine = NormalTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vMetalic = MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
     vector vBloom = MeshBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
 
-    float NdotL = fLightInfo.r;
+    float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
     float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
@@ -352,8 +352,8 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float rimIntensity = max(vRamp, 0.5f);
     Out.vResult.rgb += vRimLight.rgb * rimIntensity;
     
-    float3 specularColor = vLightSpecular.rgb * fLightInfo.g;
-    Out.vResult.rgb += specularColor; // + vBloom.rgb;
+    float3 specularColor = vLightSpecular.rgb * vLightInfo.g;
+    Out.vResult.rgb += specularColor/* + vBloom.rgb*/;
 
     return Out;
 }

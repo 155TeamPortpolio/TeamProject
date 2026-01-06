@@ -234,14 +234,8 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     vWorldPos = mul(vWorldPos, matProjectionInverse);
     vWorldPos = mul(vWorldPos, matViewInverse);
     
-    float4 vLightSpacePos[4];
-    [unroll]
-    for (int i = 0; i < 4; i++)
-    {
-        vLightSpacePos[i] = mul(vWorldPos, matLightViewProj[i]);
-    }
-    
-    float shadow = CalculateShadow(vLightSpacePos, vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
+
+    float shadow = CalculateShadow(vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
     
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
         
@@ -255,8 +249,6 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
         
     Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-    //Out.vLight = float4(shadow, shadow, shadow, 1.f);
-
     Out.fLightInfo = float4(NdotL, specular, shadow, 1.f);
     
     return Out;

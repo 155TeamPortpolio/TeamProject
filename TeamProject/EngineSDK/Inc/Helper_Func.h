@@ -65,7 +65,15 @@ namespace Helper
 
 		json j;
 		file >> j;
-		return j.get<T>();
+ try
+    {
+        return j.get<T>();
+    }
+    catch (const json::exception&)
+    {
+        // 타입 불일치 / 필드 누락 / 파싱 실패 전부 여기로 옴
+        return T{};
+    }
 	};
 
 	template <typename T>

@@ -315,14 +315,14 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     
     float3 result = vSkinned.rgb;
     
-    if (vStatic.a > 0.01f) result = vStatic.rgb;
+    result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
     
-    if (vEffect.a > 0.01f)
-        result = vEffect.rgb * vEffect.a;
-        
-    if (vUI.a > 0.01f) result = vUI.rgb;
+    result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
     
-    Out.vBackBuffer = float4(result, 1.f);
+    float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
+
+    Out.vBackBuffer = float4(finalColor, 1.f);
+    
     return Out;
 }
 
@@ -331,16 +331,18 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
-
-    float3 hdrColor = scene.rgb + hdrBloom.rgb * 0.3;
+    
+    float3 hdrColor = scene.rgb;
+    hdrColor += hdrBloom.rgb * 0.3;
+    
     float3 mapped = ACESFilm(hdrColor);
+    
+    float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    mapped = ui.rgb + mapped * (1.f - ui.a);
-
-    return float4(mapped, 1.f);
+    return float4(finalColor, 1.f);
 }
 
-//pcl
+
 technique11 DefaultTechnique
 {
     pass HDR_BRIGHT

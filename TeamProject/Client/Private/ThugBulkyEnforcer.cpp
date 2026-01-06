@@ -1,12 +1,15 @@
 #include "pch.h"
 #include "ThugBulkyEnforcer.h"
 
+#include "Helper_Func.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
+
+/* Component */
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
 #include "CharacterController.h"
-#include "Helper_Func.h"
 
 /* States */
 #include "StateMachine.h"
@@ -63,7 +66,7 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
-	
+
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
@@ -80,9 +83,11 @@ void CThugBulkyEnforcer::Priority_Update(_float dt)
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 
+	__super::Update(dt);
 
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
@@ -101,18 +106,28 @@ void CThugBulkyEnforcer::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
+	// =======================================================
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
 		ImGui::TreePop();
 	}
-
+	// =======================================================
 #pragma region State
-	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
+	ImGui::SeparatorText("State & BlackBoard");
+	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 8}, true);
 	string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
 	ImGui::Text(TagCurState.c_str());
 	string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
 	ImGui::Text(TagCurChildState.c_str());
+	string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
+	ImGui::Text(TagStateQueueSize.c_str());
 
+	// bool 변수 확인용(수정 불가)
+	ImGui::BeginDisabled(true);
+	ImGui::Checkbox(u8"IsRequestNext (다음 상태 존재)", &m_tAttackBlackBoard.isRequestNext);
+	ImGui::Checkbox(u8"IsChainOpen (현재 상태 종료)", &m_tAttackBlackBoard.isChainOpen);
+	ImGui::Checkbox(u8"isEnd (Queue에 등록된 마지막 상태 여부)", &m_tAttackBlackBoard.isEnd);
+	ImGui::EndDisabled();
 	ImGui::SeparatorText("Reseve State List");
 	for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
 	{
@@ -124,25 +139,30 @@ void CThugBulkyEnforcer::Render_GUI()
 	}
 	ImGui::EndChild();
 #pragma endregion
-
-	ImGui::BeginChild("BlackBoard##ThugBulkyEnforcerBlackBoard", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
-	string TagBlackBoardCurState = "Current State : " + m_tAttackBlackBoard.currentStateTag;
-	ImGui::Text(TagBlackBoardCurState.c_str());
-	string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
-	ImGui::Text(TagStateQueueSize.c_str());
-
-	// bool 변수 확인용(수정 불가)
-	ImGui::BeginDisabled(true);
-	ImGui::Checkbox(u8"IsRequestNext(다음 상태 존재)", &m_tAttackBlackBoard.isRequestNext);
-	ImGui::Checkbox(u8"IsChainOpen(현재 상태 종료)", &m_tAttackBlackBoard.isChainOpen);
-	ImGui::Checkbox(u8"isEnd(Queue에 등록된 마지막 상태 여부)", &m_tAttackBlackBoard.isEnd);
-	ImGui::EndDisabled();
-
-	ImGui::EndChild();
-
+	// =======================================================
+	//ImGui::SeparatorText("For Target Information");
+	//auto pCharacter = GetCharacterOnField();
+	//if (nullptr != pCharacter) {
+	//	ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerTracePlayer", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
+	//
+	//	ImGui::Text("Character Name : %s", pCharacter->TagInstanceName);
+	//	ImGui::Text("Character Pos : %.2f, %.2f, %.2f", pCharacter->vPos.x, pCharacter->vPos.y, pCharacter->vPos.z);
+	//	ImGui::Text("Character CCT Radius : %.2f", pCharacter->fRadius);;
+	//	ImGui::Text("Distance From Character : %.3f", m_tTargetingInfo.fDistance);
+	//	ImGui::Text("Dot with Target : %.2f", m_tTargetingInfo.fDotTarget);
+	//	ImGui::Text("Dir To Target : %.2f, %.2f, %.2f", m_tTargetingInfo.vDirToTarget.x, m_tTargetingInfo.vDirToTarget.y, m_tTargetingInfo.vDirToTarget.z);
+	//	ImGui::BeginDisabled(true);
+	//	ImGui::Checkbox(u8"isDetected (플레이어 감지)", &m_tTargetingInfo.isDetected);
+	//	ImGui::EndDisabled();
+	//
+	//ImGui::EndChild();
+	//}
+	Render_GUI_ForTargetInfo();
+	// =======================================================
 	
 	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
 
+	// =======================================================
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
 		ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
@@ -265,7 +285,11 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 
 HRESULT CThugBulkyEnforcer::Ready_Rules()
 {
+	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
 	m_vIdleTime = { 0.2f, 0.f };
+
+	// Target 감지 범위 (default = 5.f)
+	m_fDetectedRange = 10.f;
 
 	return S_OK;
 }
@@ -280,6 +304,7 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 		m_isIdle = false;
 	}
 
+	CheckDistanceFromPlayer();
 
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
@@ -299,8 +324,8 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	}
 }
 
-void CThugBulkyEnforcer::Test_State()
+void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
-	
-
+	if (true == m_tTargetingInfo.isDetected)
+		m_pStateMachine->Set_Bool("Chase", true);
 }

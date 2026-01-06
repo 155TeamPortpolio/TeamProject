@@ -9,6 +9,8 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 
+#include "BattleSystem.h"
+
 // Camera
 #include "Camera.h"
 #include "FreeCam.h"
@@ -59,6 +61,9 @@ HRESULT CTestLevel::Initialize()
 	if (nullptr == m_pMapDataCloud)
 		return E_FAIL;
 
+	if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
+		MSG_BOX("Failed to Load MonsterTable!");
+	CBattleSystem::GetInstance()->SetActive(true);
 
 	return S_OK;
 }
@@ -118,24 +123,27 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 	/* Miyabi */
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CMiyabi::Create());
-	//CCT_DESC miyabiCCT;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	////miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
-	//miyabiCCT.bAutoFit = false;
-	//miyabiCCT.fHeight = 1.28f;
-	//miyabiCCT.fRadius = 0.2f;
-	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	////miyabiCCT.fBoundingMinY = -0.88f;
-	//miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
-	//auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
-	//	.Position(_float3(3.f, 0.f, 0.f))
-	//	.CharacterController(miyabiCCT)
-	//	.Build("Miyabi");
-	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
+	CCT_DESC miyabiCCT;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
+	miyabiCCT.bAutoFit = false;
+	miyabiCCT.fHeight = 1.28f;
+	miyabiCCT.fRadius = 0.2f;
+	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	//miyabiCCT.fBoundingMinY = -0.88f;
+	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
+	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+		.Position(_float3(3.f, 0.f, 0.f))
+		.CharacterController(miyabiCCT)
+		.Build("Miyabi");
+	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 
-	//m_miyabiHandle = Miyabi->Get_Handle();
+	m_miyabiHandle = Miyabi->Get_Handle();
+	
+	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시. if Player's logic is complete, It will be changed.
+	CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
@@ -158,6 +166,9 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
+	//임시
+	CBattleSystem::GetInstance()->Update();
+
 	if (KEY->Key_Down('1'))
 	{
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
@@ -175,26 +186,27 @@ void CTestLevel::Update()
 
 	if (KEY->Key_Tap('4'))
 	{
-		CCT_DESC sacrificeCCT;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		sacrificeCCT.bAutoFit = false;
-		sacrificeCCT.fHeight = 1.28f;
-		sacrificeCCT.fDensity = 0.00001f;
-		sacrificeCCT.fRadius = 0.2f;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-
-		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-			.CharacterController(sacrificeCCT)
-			.Build("Sacrifice");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+		//CCT_DESC sacrificeCCT;
+		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+		//sacrificeCCT.bAutoFit = false;
+		//sacrificeCCT.fHeight = 1.28f;
+		//sacrificeCCT.fDensity = 0.00001f;
+		//sacrificeCCT.fRadius = 0.2f;
+		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+		//
+		//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+		//	.CharacterController(sacrificeCCT)
+		//	.Build("Sacrifice");
+		//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
 	}
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 
-		CCT_DESC BulkyCCT;
+		/*CCT_DESC BulkyCCT;
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
 		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
@@ -208,7 +220,8 @@ void CTestLevel::Update()
 		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
 			.CharacterController(BulkyCCT)
 			.Build("ThugBulky");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });*/
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { 0.f, 0.f,2.f });
 	}
 }
 
@@ -263,27 +276,27 @@ void CTestLevel::Ready_Camera()
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
 
-	//auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
-	//	.Camera(aspect)
-	//	.CharacterController(desc)
-	//	.Build("OrbitCam");
-	//static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
+	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
+		.Camera(aspect)
+		.CharacterController(desc)
+		.Build("OrbitCam");
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
-	//OBJ->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
+	OBJ->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
 	OBJ->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
 	OBJ->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
 	m_freeCamHandle  = freeCam->Get_Handle();
-	//m_orbitCamHandle = orbitCam->Get_Handle();
+	m_orbitCamHandle = orbitCam->Get_Handle();
 	m_seqCamHandle   = sequenceCam->Get_Handle();
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
-	//m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
+	m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
 	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
 
 	CamLoader::Load();
 
-	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
 	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	//GUI->Register_Panel(camPanel);
@@ -297,7 +310,7 @@ void CTestLevel::Ready_ShadowCamera()
 
 	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
 		.Camera(aspect)
-		.Position({ 0.f, 100.f, 100.f })
+		.Position({ 0.f, 100.f, 30.f })
 		.Rotate({0.f, 0.f, 0.f})
 		.Build("ShadowCam");
 
@@ -385,7 +398,9 @@ void CTestLevel::Free()
 {
 	__super::Free();
 
+
 	Safe_Release(m_pMapDataCloud);
+	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }
