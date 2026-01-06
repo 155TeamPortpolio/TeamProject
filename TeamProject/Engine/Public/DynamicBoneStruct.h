@@ -18,7 +18,7 @@ typedef struct DynamicBoneNode //모두 컴바인드 TPose 기준
 
 typedef struct DynamicBoneChainParam
 {
-    float fStiffness    = { 0.02f };     // 0~1 (복원력)
+    float fStiffness    = { 0.2f };     // 0~1 (복원력)
     float fDamping      = { 0.1f };     // 0~1 (감쇠)
     float fGravityScale = { 1.0f };     // 중력 배율
 }CHAIN_PARAM;

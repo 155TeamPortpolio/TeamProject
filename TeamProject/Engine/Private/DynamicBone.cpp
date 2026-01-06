@@ -47,24 +47,17 @@ void CDynamicBone::Update(_float dt)
 	m_pAnimator->Reset_DynamicBoneMatrices();
 
 	for (auto& Group : m_ChainGroups) {
-		/* 루트가 없으면 없는 그룹인거임 */
-		if (-1 == Group.RootBoneIndex)
+		/* 체인이 없으면 없는 그룹인거임 */
+		if (Group.Chains.empty())
 			continue;
 
 		/* 루트가 설정되었다면 무조건 하위 체인은 만들어졌다는 가정하에 업데이트 */
 		for (auto& Chain : Group.Chains) {
-			for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
 
 				/* 첫번째본의 부모본은 루트본이니 직접 루트에서 갖고옴 */
-				_vector3 parentPos =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedPosition(Group.RootBoneIndex)
-					: Chain.Nodes[i - 1].CombinedCurPos;
-
-				_quaternion parentQuat =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedQuaternion(Group.RootBoneIndex)
-					: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
+				_vector3 parentPos = Chain.Nodes[i - 1].CombinedCurPos;
+				_quaternion parentQuat = m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
 
 				/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
 				SimulateNode(
@@ -91,19 +84,23 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	_float dt)
 {
 	/* 현재 / 이전 위치 */
-	_vector3 cur = Node.CombinedCurPos;
-	_vector3 prev = Node.CombinedPrevPos;
+	_vector3 curPos = Node.CombinedCurPos;
+	_vector3 prevPos = Node.CombinedPrevPos;
 
-	/* 관성 : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
-	_vector3 velocity = cur - prev;
-	_vector3 next = cur + velocity * (1.f - ChainParam.fDamping);
+	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	_vector3 Velocity = curPos - prevPos;
+	_vector3 nextPos = curPos + Velocity * (1.f - ChainParam.fDamping);
+
+	/* 중력(Gravity) : */
+	_vector3 modelGravity(0.f, -1.f, 0.f);
+	Velocity += modelGravity * ChainParam.fGravityScale * dt;
 
 	/* 부모로부터 멀어지면 안되니 
 	(부모->노드)의 방향을 구하고 부모로부터 길이만큼 곱한 위치가 진짜 위치가 될거임*/
-	_vector3 dir = next - parentPos;
+	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
 
-	// 레스트 포즈로 복원
+	// 복원력(Stiffness) : 미리 구해둔 RestLocalDir로 점점 돌아오는 힘
 	_vector3 restDir =
 		_vector3::Transform(Node.RestLocalDir, parentQuat);
 	restDir.Normalize();
@@ -111,11 +108,11 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
 	dir.Normalize();
 
-	next = parentPos + dir * Node.fLength;
+	nextPos = parentPos + dir * Node.fLength;
 
 	// 상태 갱신
-	Node.CombinedPrevPos = cur;
-	Node.CombinedCurPos = next;
+	Node.CombinedPrevPos = curPos;
+	Node.CombinedCurPos = nextPos;
 }
 
 /* 계산된 값에대한 회전 델타를 넘기는 작업 */
@@ -123,37 +120,28 @@ void CDynamicBone::ApplySimulatedNode()
 {
 	for (auto& Group : m_ChainGroups) {
 		for (auto& Chain : Group.Chains) {
-			for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
 				/* *여기서의 계산은 모델 스페이스상 계산* */
 				auto& Node = Chain.Nodes[i];
 				
-				/* 이 노드는 어느 본에 매달려있는지?  ex) 0번노드 => 루트본에 매달림 */
-				_vector3 parentPos =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedPosition(Node.ParentIndex)
-					: Chain.Nodes[i - 1].CombinedCurPos;
+				/* 이 노드는 어느 본에 매달려있는지?  ex) 1번노드 => 0번노드(루트노드) 본에 매달림 */
+				_vector3 parentPos = Chain.Nodes[i - 1].CombinedCurPos;
 
 				/* 부모는 어느방향을 바라보고 있는지?*/
 				/* 부모->자식의 방향이 필요하기에 그냥 Combined에서 회전만 갖고와도 무방 */
-				_quaternion parentQuat =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedQuaternion(Group.RootBoneIndex)
-					: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
+				_quaternion parentQuat = m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
 
 				/* RestLocal은 부모 본 로컬기준이고 비교대상은 Combined 모델스페이스상 방향이기에 */
 				/* 실제로 부모가 회전한 만큼 기준을 돌려서 Combined 기준의 방향을 만들어줌 */
-				_vector3 baseDirection =
-					_vector3::Transform(Node.RestLocalDir, parentQuat);
+				_vector3 baseDirection = _vector3::Transform(Node.RestLocalDir, parentQuat);
 				baseDirection.Normalize();
 
 				/* 부모기준으로 노드가 실제로 움직이는 방향 (시뮬레이션 결과값)*/
-				_vector3 simulatedDirection =
-					Node.CombinedCurPos - parentPos;
+				_vector3 simulatedDirection = Node.CombinedCurPos - parentPos;
 				simulatedDirection.Normalize();
 
 				/* 두 회전의 델타값을 구함 */
-				_quaternion deltaRotation =
-					_quaternion::FromToRotation(baseDirection, simulatedDirection);
+				_quaternion deltaRotation = _quaternion::FromToRotation(baseDirection, simulatedDirection);
 				deltaRotation.Normalize();
 
 				auto& pDynamicBoneMatrix = m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex];
@@ -212,8 +200,16 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 	//자식노드가 더이상 없으니 만듬
 	if (Childs.empty()) {
 		DYNAMIC_CHAIN chain;
-		for (_int i = 1; i < Indices.size(); i++) {
+		for (_int i = 0; i < Indices.size(); i++) {
 			DYNAMIC_NODE Node{};
+
+			if (0 == i) {
+				Node.BoneIndex = Indices[i];
+				Matrix NodeMat = m_pAnimator->Get_TPose()[Node.BoneIndex];
+				chain.Nodes.push_back(Node);
+				continue;
+			}
+
 			Node.ParentIndex = Indices[i - 1];
 			Node.BoneIndex = Indices[i];
 
