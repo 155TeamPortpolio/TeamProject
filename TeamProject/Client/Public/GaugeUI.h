@@ -23,6 +23,7 @@ public:
 
 private:
 	_float m_fFillAmount = 1.f;
+	_float m_fDirection  = 1.f;
 
 public:
 	static  CGameObject* Create();

@@ -46,8 +46,8 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
         else
             pSprite->ChangePass("LinearFill");
 
-        _float fDirection = gaugeJson.value("direction", 0.0f);
-        pSprite->Set_Param("Direction", { &fDirection, "float", sizeof(_float) });
+        m_fDirection = gaugeJson.value("direction", 0.0f);
+        pSprite->Set_Param("Direction", { &m_fDirection, "float", sizeof(_float) });
     }
 }
 

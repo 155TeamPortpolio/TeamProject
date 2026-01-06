@@ -144,13 +144,12 @@ PS_OUT PS_MAIN_LINEARFILL(PS_IN In)
 {
     PS_OUT Out;
     
-    float2 vTexcoord = { In.vTexcoord.x * (1.f - 2.f * Direction) + Direction, In.vTexcoord.y };
-    vector vDiffuse = SpriteTexture.Sample(LinearSampler, vTexcoord);
+    vector vDiffuse = SpriteTexture.Sample(LinearSampler, In.vTexcoord);
     clip(vDiffuse.a - 0.1f);
     
-    clip(FillAmount - vTexcoord.x);
+    clip(FillAmount - In.vTexcoord.x);
     
-    Out.vColor = vDiffuse * vColor;
+     Out.vColor = vDiffuse * vColor;
     
     return Out;
 }
