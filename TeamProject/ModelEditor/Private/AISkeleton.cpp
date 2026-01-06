@@ -3,6 +3,7 @@
 #include "AIBone.h"
 #include "Helper_Func.h"
 #include "HumanoidRule.h"
+#include "AIDynamicBone.h"
 
 CAISkeleton::CAISkeleton()
 {
@@ -44,6 +45,13 @@ void CAISkeleton::Render_GUI()
 	}
 	if (m_isHumanoidTabOpened) {
 		Render_Humanoid();
+	}
+
+	if (ImGui::Button("Make_DynamicChain ")) {
+		m_isDynamicTabOpened = !m_isDynamicTabOpened;
+	}
+	if (m_isDynamicTabOpened) {
+		Render_DynamicChain();
 	}
 }
 
@@ -137,6 +145,24 @@ void CAISkeleton::Render_Humanoid()
 	
 
 	ImGui::End();                 
+}
+
+void CAISkeleton::Render_DynamicChain()
+{
+	ImGui::SetNextWindowSize(ImVec2(820, 520), ImGuiCond_FirstUseEver);
+	ImGui::SetNextWindowSizeConstraints(ImVec2(420, 360), ImVec2(10000, 10000));
+	ImGui::Begin("Dynamic Bone Tab", &m_isDynamicTabOpened);
+	
+	if (m_pDynamic == nullptr) {
+		if (ImGui::Button("Create")) {
+			m_pDynamic = CAIDynamicBone::Create(this);
+		}
+	}
+	else {
+		m_pDynamic->Render_GUI();
+	}
+
+	ImGui::End();
 }
 
  _bool CAISkeleton::BoneCombo_Filtered(
@@ -337,9 +363,16 @@ void CAISkeleton::Save_File(ofstream& ofs, _fmatrix PreTransform)
 		ofs.write(reinterpret_cast<const char*>(&SaveFloat4x4), sizeof(_float4x4));
 	}
 
-	if (m_RiggedData.IsRigComplete()) {
+	_bool hasRiggedData = m_RiggedData.IsRigComplete();
+	ofs.write(reinterpret_cast<const char*>(&hasRiggedData), sizeof(_bool));
+	if (hasRiggedData) {
 		ofs.write(reinterpret_cast<const char*>(&m_RiggedData), sizeof(HumanoidRigData));
 	}
+
+	_bool hasDynamic = (m_pDynamic != nullptr);
+	ofs.write(reinterpret_cast<const char*>(&hasDynamic), sizeof(_bool));
+	if (m_pDynamic)
+		m_pDynamic->Save_File(ofs);
 }
 
 void CAISkeleton::Rake_BoneInfo(BONE_DATA_HEADER* pHeader)

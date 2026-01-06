@@ -225,6 +225,11 @@ void CModelData::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex
 	m_pSkeleton->Get_AffectBoneIndices(outvec, StartBoneIndex);
 }
 
+vector<DYNAMIC_CHAIN_GROUP> CModelData::Get_ChaingGroups()
+{
+	return m_pSkeleton->Get_ChainGroups();
+}
+
 _int CModelData::Get_BoneParentIndex(_uint i)
 {
 	return m_pSkeleton->Get_BoneParentIndex(i);
