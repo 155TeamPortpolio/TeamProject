@@ -381,7 +381,7 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0, pRenderer);
 
 			auto pRenderSystem = CGameInstance::GetInstance()->Get_RenderSystem();
-
+			
 			ID3D11ShaderResourceView* pStaticDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Static_Depth");
 			ID3D11ShaderResourceView* pSkinnedDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Skinned_Depth");
 			
