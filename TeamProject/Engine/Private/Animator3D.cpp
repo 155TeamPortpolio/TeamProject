@@ -1247,6 +1247,14 @@ void CAnimator3D::BuildIKMatrices(_float dt)
 {
 }
 
+void CAnimator3D::Update_DynamicBone(_float dt)
+{
+	if (nullptr == m_pDynamicBone)
+		return;
+
+	//
+}
+
 void CAnimator3D::BuildBone(_float dt)
 {
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
@@ -1278,6 +1286,7 @@ void CAnimator3D::BuildBone(_float dt)
 		}
 	}
 }
+
 
 #pragma region GUI
 void CAnimator3D::Render_GUI()

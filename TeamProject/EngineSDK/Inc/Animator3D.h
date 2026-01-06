@@ -263,7 +263,9 @@ protected:
     void Update_Layers(_float dt);
     void BuildLocal(_float dt);
     void BuildIKMatrices(_float dt);
+    void Update_DynamicBone(_float dt);
     void BuildBone(_float dt);
+    
 
 public:
     virtual void Render_GUI();

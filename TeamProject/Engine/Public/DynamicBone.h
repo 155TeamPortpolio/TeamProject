@@ -13,11 +13,14 @@ protected:
 
 public:
     HRESULT Initialize(class CAnimator3D* pAnimator);
-
-
-public:
     HRESULT Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups);
     HRESULT Create_Chain(_int RootIndex);
+
+public:
+    void Update(_float dt);
+
+protected:
+    void SimulateNode(DYNAMIC_NODE& Node, _vector3& ParentPos, _float dt);
 
 protected:
     void Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup);

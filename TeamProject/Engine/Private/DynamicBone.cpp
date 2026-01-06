@@ -13,17 +13,47 @@ HRESULT CDynamicBone::Initialize(CAnimator3D* pAnimator)
 		return E_FAIL;
 
 	m_pAnimator = pAnimator;
-	Safe_AddRef(m_pAnimator);
-
 	return S_OK;
 }
 
+void CDynamicBone::Update(_float dt)
+{
+	if (m_ChainGroups.empty())
+		return;
+
+	for (auto& Group : m_ChainGroups) {
+		/* 루트가 없으면 없는 그룹인거임 */
+		if (-1 == Group.RootBoneIndex)
+			continue;
+
+		/* 루트가 설정되었다면 무조건 하위 체인은 만들어졌다는 가정하에 업데이트 */
+		for (auto& Chain : Group.Chains) {
+			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
+				_vector3 parentPosWS;
+
+				if (i == 0)
+					parentPosWS = m_pAnimator->Get_BoneCombinedPosition(Chain.Nodes[i].ParentIndex); // 1번
+				else
+					parentPosWS = Chain.Nodes[i - 1].WorldCurPos;
+
+				SimulateNode(
+					Chain.Nodes[i],
+					parentPosWS,
+					dt
+				);
+			}
+		}
+	}
+}
+
+/* 이미 저장된 데이터가 있으면 갖고옴 */
 HRESULT CDynamicBone::Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups)
 {
 	m_ChainGroups = ChainGrups;
 	return S_OK;
 }
 
+/* 체인을 새로 생성하는 함수 */
 HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 {
 	if(-1 == RootIndex) return E_FAIL;
@@ -44,6 +74,12 @@ HRESULT CDynamicBone::Create_Chain(_int RootIndex)
 	m_ChainGroups.push_back(Group);
 
 	return S_OK;
+}
+
+void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node, _vector3& ParentPos, _float dt)
+{
+
+
 }
 
 void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup)
