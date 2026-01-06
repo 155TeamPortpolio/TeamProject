@@ -751,6 +751,11 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
+const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
+{
+	return m_pOwner->Get_WorldMatrix();
+}
+
 HRESULT CAnimator3D::Initialize_HumanoidRig()
 {
 	if (!m_pData) return E_FAIL;
@@ -1075,9 +1080,6 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
 	}
 
-	if (Layer.bUseFinalLocal)
-		Layer.LocalMatrices = m_TransformationMatrices;
-
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
@@ -1166,16 +1168,12 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 		}
 	}
 
-	//Animation Blend --- d여기 차이
+	//Animation Blend
 	Layer.fBlendElapsed += dt;
-	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType,
-		Layer.bUseFinalLocal ?dt:Layer.fBlendElapsed / Layer.fBlendDuration);
+	_float fBlendWeight = Math::ApplyEase(Layer.eBlendEaseType, Layer.fBlendElapsed / Layer.fBlendDuration);
 
 	for (_uint i = 0; i < m_pData->Get_BoneCount(); ++i)
 		Layer.FinalLocalMatrices[i] = Calc_MatrixBlend(Layer.LocalMatrices[i], Layer.BlendMatrices[i], fBlendWeight);
-	
-	if (Layer.bUseFinalLocal)
-		m_TransformationMatrices = Layer.FinalLocalMatrices;
 
 	//Convert End
 	if (Layer.fBlendDuration < Layer.fBlendElapsed) {
@@ -1750,8 +1748,9 @@ HRESULT ChangeAnimBuild::Apply()
 		if (Layer.bBlending) {
 			Layer.iClipIndex = Layer.iNextClipIndex;
 			Layer.fCurrentTrackPosition = Layer.fBlendTrackPosition;
-			Layer.LocalMatrices = Layer.BlendMatrices;
+			Layer.LocalMatrices = Layer.FinalLocalMatrices;
 		}
+
 
 		if (Layer.bKeepTrackPos) {
 			Layer.fBlendTrackPosition = Layer.fCurrentTrackPosition;
@@ -1770,7 +1769,9 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fBlendDuration = m_fBlendDuration;
 	Layer.eBlendEaseType = m_eBlendEaseType;
 
-	Layer.bUseFinalLocal = m_bUseFinalLocal;
+	//
+	if (m_bUseFinalLocal)
+		Layer.LocalMatrices = Layer.FinalLocalMatrices;
 
 	//클립을 업데이트 하지 않겠다면 다음 클립의 0초로 세팅
 	if (false == m_bUpdate_NewClip)
