@@ -93,6 +93,7 @@ namespace Engine
 		SPRITE,
 		PARTICLE,
 		MESH,
+		TRAIL,
 		END
 	};
 

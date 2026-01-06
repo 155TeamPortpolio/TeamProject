@@ -376,8 +376,17 @@ void ParticlePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 	{
 		auto& packet = m_Packets[i];
 
-		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) {
+		if (m_Packets[i].pMaterial->Get_Shader(0) != pCurShader) 
+		{
 			BindConstant(pContext, packet.pParticleSystem, packet.pMaterial, 0, 0, pRenderer);
+
+			auto pRenderSystem = CGameInstance::GetInstance()->Get_RenderSystem();
+			
+			ID3D11ShaderResourceView* pStaticDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Static_Depth");
+			ID3D11ShaderResourceView* pSkinnedDepthSRV = pRenderSystem->Get_EngineTargetSRV("Target_Skinned_Depth");
+			
+			pCurShader->Bind_Value("StaticMeshDepthTexture", { pStaticDepthSRV,"Texture2D",0 });
+			pCurShader->Bind_Value("SkinnedMeshDepthTexture", { pSkinnedDepthSRV,"Texture2D",0 });
 		}
 
 		SHADER_PARAM param = {};

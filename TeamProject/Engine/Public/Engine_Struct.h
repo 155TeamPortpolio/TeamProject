@@ -462,6 +462,31 @@ namespace Engine
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
 
+	typedef struct tagTrailNode : public tagEffectNode
+	{
+		_uint iMode{};
+		_uint iTextureMode{};
+		_uint iColorMode{};
+		_float fMaxLifeTime{};
+
+		/* Texture Mode */
+		_float2 vUVSpeed{};
+		_float fTile{};
+
+		/* Color Mode */
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/* Center Mode */
+		_float fStartWidth{};
+		_float fEndWidth{};
+
+		/* Segment Mode */
+		_float fMinDistance{};
+
+		static tagTrailNode FromJson(nlohmann::ordered_json& json);
+	}TRAIL_NODE;
+
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
 		_uint iNodeCount{};
