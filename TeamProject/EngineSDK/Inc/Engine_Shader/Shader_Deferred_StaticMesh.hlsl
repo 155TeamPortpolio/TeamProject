@@ -203,7 +203,7 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
 struct PS_OUT_LIGHT
 {
     vector vLight : SV_TARGET0;
-    vector fLightInfo : SV_TARGET1;
+    vector vLightInfo : SV_TARGET1;
 };
 
 PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -239,17 +239,17 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
         
-    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-        
+    float NdotL = saturate(dot(worldNormal, lightDir));
+
     float3 halfVec = normalize(viewDir + lightDir);
     float specBase = saturate(dot(worldNormal, halfVec));
     float specularPower = lerp(50.0f, 5.0f, roughness);
     specular = pow(specBase, specularPower) * specular;
     
-    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
+    float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
         
     Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-    Out.fLightInfo = float4(NdotL, specular, shadow, 1.f);
+    Out.vLightInfo = float4(NdotL, specular, shadow, 1.f);
     
     return Out;
 }
@@ -284,14 +284,14 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
     float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
     
-    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
+    float NdotL = saturate(dot(worldNormal, lightDir));
     
     float3 PBR = CalculatePointLight
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
     Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
-    Out.fLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
+    Out.vLightInfo = float4(NdotL, 0.f, 0.f, 0.f);
     
     return Out;
 }
@@ -310,7 +310,7 @@ PS_OUT_RESULT PS_MAIN_COMBINED(PS_IN In)
     float NdotL = vLightInfo.r;
     float2 vRampCoord = float2(1 - NdotL, 0.5f);
     vector vRampSample = RampTexture.Sample(DefaultSampler, vRampCoord);
-    float vRamp = lerp(0.1f, 1.0f, vRampSample.g);
+    float vRamp = lerp(0.4f, 1.0f, vRampSample.g);
     
     float shadowValue = vLightInfo.b;
     shadowValue = saturate(shadowValue * 0.7f + 0.3f);

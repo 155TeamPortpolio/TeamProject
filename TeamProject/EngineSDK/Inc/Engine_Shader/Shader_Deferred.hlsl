@@ -316,12 +316,10 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
     float3 result = vSkinned.rgb;
     
     result.rgb = lerp(result.rgb, vStatic.rgb, vStatic.a);
-    
     result.rgb = lerp(result.rgb, vUI.rgb, vUI.a);
-    
     float3 finalColor = vEffect.rgb + result * (1.f - vEffect.a);
-
-    Out.vBackBuffer = float4(finalColor, 1.f);
+    float alpha = max(vEffect.a, max(vUI.a, max(vSkinned.a, vStatic.a)));
+    Out.vBackBuffer = float4(finalColor, alpha);
     
     return Out;
 }
@@ -398,8 +396,8 @@ technique11 DefaultTechnique
     pass COMBINED
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();
