@@ -28,6 +28,8 @@ public:
 	virtual void Submit_Effect(const EFFECT_PACKET& packet)override { m_pEffectPass->Submit(packet); }
 
 public:
+	virtual void Update(_float dt) override;
+
 	virtual class CRenderer* GetRenderer(RENDERER_TYPE eType) override;
 	virtual void Set_FogDesc(FOG_DESC desc)override;
 	virtual void SetRimLightMode(RIMLIGHT eMode) override;

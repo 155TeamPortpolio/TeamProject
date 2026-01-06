@@ -26,6 +26,8 @@ public:
     virtual _bool GetOn() const  PURE;
     virtual void SetOn(_bool On) PURE;
 
+    virtual void Update(_float dt) PURE;
+
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
     virtual void Set_FogDesc(FOG_DESC desc)PURE;

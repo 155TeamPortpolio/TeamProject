@@ -114,6 +114,11 @@ void CRenderSystem::Set_FogDesc(FOG_DESC desc)
 	m_pPost->Set_FogDesc(desc);
 }
 
+void CRenderSystem::Update(_float dt)
+{
+	m_pForward->Update(dt);
+}
+
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
 {
 	CRenderer* pRenderer = nullptr;

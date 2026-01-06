@@ -41,6 +41,8 @@ private:
     class CStaticMeshRenderer* m_pStaticRenderer;
     class CSkinnedMeshRenderer* m_pSkinnedRenderer;
 
+    _float StaticUpdate = 0.f;
+
 public:
     static CForwardRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
         CTarget_Manager* pTargetManager, CPipeLine* pPipeLine);

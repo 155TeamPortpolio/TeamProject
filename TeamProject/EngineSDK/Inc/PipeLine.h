@@ -23,7 +23,8 @@ class ENGINE_DLL CPipeLine :
 		_float4x4 matShadowProjection;
 		_float4x4 matShadowViewInverse;
 		_float4x4 matShadowProjectionInverse;
-		_float4x4 matLightViewProj[4];     
+		_float4x4 matStaticLightViewProj[4];     
+		_float4x4 matSkinnedLightViewProj[4];     
 		_vector vCascadeSplits;          
 		_float4 vShadowPosition;
 		_int iCurrentCascade;
@@ -109,9 +110,9 @@ public:
 	ID3D11ShaderResourceView* Get_SkinningResource() { return m_pSkinningResource; };
 	ID3D11DepthStencilView* GetCSMDSV(_bool IsSkinningMesh, _uint index) const;
 
-	HRESULT Bind_ShadowMap(_bool IsSkinningMesh, class CShader* pShader);
-	void BindSampler(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _uint slot);
-	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsSkinningMesh);
+	HRESULT Bind_ShadowMap(class CShader* pShader);
+	void BindSampler(ID3D11DeviceContext* pContext, _uint slot);
+	HRESULT Bind_Light(class CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
 	vector<OPAQUE_PACKET> OcculsionCulling(const vector<OPAQUE_PACKET>& frustums);
 
 private:
@@ -120,6 +121,7 @@ private:
 	ID3D11Buffer* m_pDeviceSSAOBuffer = { nullptr };
 	ID3D11Buffer* m_pDeviceSSAOKernelBuffer = { nullptr };
 	ID3D11Buffer* m_pDeviceLightBuffer = { nullptr };
+	ShadowBuffer PreShadowBuffer;
 
 	/*Transform*/
 	_uint m_ObjectOffset = {};
@@ -128,7 +130,6 @@ private:
 	ID3D11Buffer* m_pDeviceObjectBuffer = { nullptr };
 	ID3D11ShaderResourceView* m_pObjectResource = { nullptr };
 	D3D11_MAPPED_SUBRESOURCE m_mappedObjectBuffer = {};
-
 	/*Matrix*/
 	_uint m_SkinningOffset = {};
 	_float4x4* m_pSkinningArray = nullptr;

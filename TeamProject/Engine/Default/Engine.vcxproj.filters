@@ -1573,7 +1573,7 @@
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl">
-      <Filter>98. BasicShader</Filter>
+      <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>
