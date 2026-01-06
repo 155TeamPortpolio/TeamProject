@@ -38,7 +38,7 @@ private:
     HRESULT Initialize_Transitions();
     HRESULT Ready_Rules();
     void Update_States(_float dt);
-    void Test_State();
+    void CheckDistanceFromPlayer();
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
