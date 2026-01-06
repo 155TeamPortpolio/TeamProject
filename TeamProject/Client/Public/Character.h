@@ -15,6 +15,44 @@ class CStateMachine;
 class CCharacter abstract : public CGameObject
 {
 protected:
+    struct KeyInput
+    {
+        _int x = 0;
+        _int z = 0;
+
+        void  Reset() { x = 0; z = 0; }
+        _bool IsZero() const { return x == 0 && z == 0; }
+        _bool operator!=(const KeyInput& other) const
+        {
+            return x != other.x || z != other.z;
+        }
+    };
+
+    struct InputState
+    {
+        KeyInput current;
+        KeyInput previous;
+        KeyInput lastValid;
+        KeyInput currentMove;
+        KeyInput previousMove;
+        _vector3 direction = {};
+        _vector3 prevDirection = {};
+
+        _float bufferTimer = 0.f;
+        void ResetBuffer()
+        {
+            bufferTimer = 0.f;
+            lastValid.Reset();
+            previousMove.Reset();
+            currentMove.Reset();
+        }
+        _bool IsMoving() const
+        {
+            return direction.x != 0.f || direction.z != 0.f;
+        }
+    };
+
+protected:
     CCharacter() {}
     CCharacter(const CCharacter& rhs);
     virtual ~CCharacter() DEFAULT;
@@ -25,8 +63,8 @@ public:
     _float Get_MaxHP() const { return m_fMaxHP; }
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
-    _bool  Is_Move() const { return m_bIsMove; }
-    _bool  Is_Move_Buffer() const { return m_bIsMove || (m_fKeyReleaseTimer > 0.f); }
+    _bool  Is_Move() const { return m_input.IsMoving(); }
+    _bool  Is_Move_Buffer() const { return m_input.IsMoving() || m_input.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsInput; }
@@ -37,8 +75,8 @@ public:
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
 
-    _vector3              Get_InputDir() const { return m_vInputDir; }
-    _vector3              Get_PrevInputDir() const { return m_vPrevInputDir; }
+    _vector3    Get_InputDir() const { return m_input.direction; }
+    _vector3    Get_PrevInputDir() const { return m_input.prevDirection; }
 
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
@@ -57,9 +95,9 @@ public:
     void     Use_Evade();
     _bool    Is_OppositeInput() const;
     void     Reset_LastValidKey()
-    { 
-        m_iLastValidKeyX = m_iCurKeyX;
-        m_iLastValidKeyZ = m_iCurKeyZ;
+    {
+        m_input.lastValid = m_input.current;
+        m_input.previousMove = m_input.current;
     }
 
 
@@ -84,16 +122,9 @@ protected:
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     // 입력
-    _vector3        m_vInputDir = {};
-    _vector3        m_vPrevInputDir = {};
-    _int            m_iCurKeyX = 0;
-    _int            m_iCurKeyZ = 0;
-    _int            m_iPrevKeyX = {};
-    _int            m_iPrevKeyZ = {};
-    _int            m_iLastValidKeyX = {};
-    _int            m_iLastValidKeyZ = {};
-    _float          m_fKeyReleaseTimer = {};
+    InputState              m_input;
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
+    static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
     // 상태 플래그
     _bool           m_bIsMove = { false };
     _bool           m_bIsAttack = { false };
