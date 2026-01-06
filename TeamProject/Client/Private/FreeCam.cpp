@@ -16,7 +16,7 @@ HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 }
 
 void CFreeCam::Priority_Update(_float dt)
-{
+{ 
     if (KEY->Mouse_Down(MOUSE_BTN::RB))
     {
         m_vRotDegTarget.x += KEY->Mouse_DeltaX() * m_fSensitivity;
@@ -37,12 +37,12 @@ void CFreeCam::Priority_Update(_float dt)
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (KEY->Key_Down('W'))      move += look    *  speed;
-    if (KEY->Key_Down('S'))      move += look    * -speed;
-    if (KEY->Key_Down('D'))      move += right   *  speed;
-    if (KEY->Key_Down('A'))      move += right   * -speed;
-    if (KEY->Key_Down(VK_SPACE)) move += worldUp *  speed;
-    if (KEY->Key_Down(VK_SHIFT)) move += worldUp * -speed;
+    if (KEY->Key_Down(VK_UP))                                 move += look    *  speed;
+    if (KEY->Key_Down(VK_DOWN))                               move += look    * -speed;
+    if (KEY->Key_Down(VK_RIGHT))                              move += right   *  speed;
+    if (KEY->Key_Down(VK_LEFT))                               move += right   * -speed;
+    if (KEY->Key_Down(VK_SPACE) && KEY->Key_Down(VK_CONTROL)) move += worldUp *  speed;
+    if (KEY->Key_Down(VK_SHIFT) && KEY->Key_Down(VK_CONTROL)) move += worldUp * -speed;
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });

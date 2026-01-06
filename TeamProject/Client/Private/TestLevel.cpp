@@ -169,17 +169,17 @@ void CTestLevel::Update()
 	//юс╫ц
 	CBattleSystem::GetInstance()->Update();
 
-	if (KEY->Key_Down('1'))
+	if (KEY->Key_Down(VK_F1))
 	{
 		auto obj = OBJ->Request_Object(m_freeCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('2'))
+	if (KEY->Key_Down(VK_F2))
 	{
 		auto obj = OBJ->Request_Object(m_orbitCamHandle);
 		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('3'))
+	if (KEY->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());

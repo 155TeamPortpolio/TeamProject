@@ -10,7 +10,7 @@ namespace
 
     float WrapDeg(float deg)
     {
-        while (deg > 180.f)  deg -= 360.f;
+        while (deg >  180.f) deg -= 360.f;
         while (deg < -180.f) deg += 360.f;
         return deg;
     }
@@ -54,28 +54,6 @@ namespace
         if (preset == OrbitPreset::Field) return FieldPreset();
         return BattlePreset();
     }
-}
-
-COrbitCam* COrbitCam::Create()
-{
-    auto inst = new COrbitCam();
-    if (FAILED(inst->Initialize_Prototype()))
-    {
-        MSG_BOX("Object Create Failed : COrbitCam");
-        Safe_Release(inst);
-    }
-    return inst;
-}
-
-CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
-{
-    auto inst = new COrbitCam(*this);
-    if (FAILED(inst->Initialize(pArg)))
-    {
-        MSG_BOX("Object Clone Failed : COrbitCam");
-        Safe_Release(inst);
-    }
-    return inst;
 }
 
 void COrbitCam::Awake()
@@ -461,10 +439,10 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
     }
 
     const Vector3 foot = GetTargetFootPos();
-
+     
     if (!hasPrevTargetFoot)
     {
-        prevTargetFoot = foot;
+        prevTargetFoot    = foot;
         hasPrevTargetFoot = true;
         return;
     }
@@ -479,10 +457,10 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
 
     delta /= len;
 
-    Vector3 camLook = m_pTransform->Dir(STATE::LOOK);
+    Vector3 camLook  = m_pTransform->Dir(STATE::LOOK);
     Vector3 camRight = m_pTransform->Dir(STATE::RIGHT);
 
-    camLook.y = 0.f;
+    camLook.y  = 0.f;
     camRight.y = 0.f;
 
     camLook.Normalize();
@@ -505,8 +483,30 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
 Vector3 COrbitCam::GetTargetFootPos() const
 {
     auto obj = OBJ->Request_Object(targetHandle);
-    auto cc = obj->Get_Component<CCharacterController>();
+    auto cc  = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
     return Vector3(foot4.x, foot4.y, foot4.z);
+}
+
+COrbitCam* COrbitCam::Create()
+{
+    auto inst = new COrbitCam();
+    if (FAILED(inst->Initialize_Prototype()))
+    {
+        MSG_BOX("Object Create Failed : COrbitCam");
+        Safe_Release(inst);
+    }
+    return inst;
+}
+
+CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
+{
+    auto inst = new COrbitCam(*this);
+    if (FAILED(inst->Initialize(pArg)))
+    {
+        MSG_BOX("Object Clone Failed : COrbitCam");
+        Safe_Release(inst);
+    }
+    return inst;
 }
