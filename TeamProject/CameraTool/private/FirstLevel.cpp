@@ -17,34 +17,34 @@ HRESULT CFirstLevel::Awake()
 		.Position({ 0.f, 3.f, -5.f })
 		.Build("FreeCam");
 
-	CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_Unagi" })
+	/*CGameObject* demoModel = Builder::Create_Object({ "First_Level", "Proto_Unagi" })
 		.Rotate(Vector3{0.f, XMConvertToRadians(180.f), 0.f})
-		.Build("Unagi");
+		.Build("Unagi");*/
 
 	CGameObject* demoGrid = Builder::Create_Object({ "First_Level", "Proto_Grid" })
 		.Scale({ 50.f, 1.f, 50.f })
 		.Build("Grid");
 
 	OBJ->Add_Object(freeCam,   { "First_Level", "Camera_Layer" });
-	OBJ->Add_Object(demoModel, { "First_Level", "Model_Layer"  });
+	//OBJ->Add_Object(demoModel, { "First_Level", "Model_Layer"  });
 	OBJ->Add_Object(demoGrid,  { "First_Level", "Grid_Layer"   });
 
 	CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 
-	OBJECT_HANDLE objHandle = demoModel->Get_Handle();
+	//OBJECT_HANDLE objHandle = demoModel->Get_Handle();
 	
 	auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
-	camPanel->SetSpaceReference(objHandle);
-	camPanel->SetAvatarUI(Avatar::Corin);
+	//camPanel->SetSpaceReference(objHandle);
+	//camPanel->SetAvatarUI(Avatar::Corin);
 
-	auto avatar = static_cast<CUnagi*>(demoModel);
-	avatar->ApplyAvatar(Avatar::Corin);
+	//auto avatar = static_cast<CUnagi*>(demoModel);
+	//avatar->ApplyAvatar(Avatar::Corin);
 
-	camPanel->SetOnAvatarChanged([avatar](Avatar p)
-		{
-			avatar->ApplyAvatar(p);
-		});
+	//camPanel->SetOnAvatarChanged([avatar](Avatar p)
+	//	{
+	//		avatar->ApplyAvatar(p);
+	//	});
 
 	GUI->Register_Panel(camPanel);
 	return S_OK;

@@ -4,7 +4,7 @@
 
 NS_BEGIN(CameraTool)
 
-class CFirstLevel : public CLevel
+class CFirstLevel final : public CLevel
 {
 private:
     CFirstLevel(const string& key) : CLevel(key) {}

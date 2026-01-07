@@ -10,7 +10,7 @@ NS_END
 NS_BEGIN(Client)
 class CSequenceCam;
 
-enum class CamReturnType { None, OrbitCam ,FreeCam };
+enum class CamReturnType { None, OrbitCam , FreeCam };
 
 class CCamDirector final : public CBase
 {
@@ -55,7 +55,6 @@ private:
 
 private:
     CSequenceCam* GetSequenceCam() const;
-    void          ClearPlayingState() { m_playing = {}; }
 
 private:
     unordered_map<string, SeqEntry> m_seqs{};

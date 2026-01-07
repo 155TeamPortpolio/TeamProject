@@ -124,7 +124,7 @@ private:
 
 private:
     CamPoseFrame CapturePose(CCamera* cam) const;
-    CamPoseFrame GetCurOutputPose() const { return m_outputPose; }
+    CamPoseFrame GetCurOutputPose()        const { return m_outputPose; }
 
     CamPoseFrame BlendPose(const CamPoseFrame& a, const CamPoseFrame& b, _float t) const;
     void         ApplyOutputPose(const CamPoseFrame& pose);

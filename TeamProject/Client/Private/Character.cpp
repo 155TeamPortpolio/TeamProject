@@ -64,20 +64,17 @@ void CCharacter::Late_Update(_float dt)
 
 void CCharacter::Rotate(_vector3 vDirection)
 {
-	_vector3 vDir = vDirection;
-	vDir.y = 0.f;
-	if (vDir.Length() < 0.001f) return;
-	vDir.Normalize();
+	_vector3 dir = vDirection;
+	dir.y = 0.f;
+	dir.Normalize();
+	const _float lenSq = dir.LengthSquared();
+	const _float yaw = atan2f(dir.x, dir.z); 
 
-	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vUp.Cross(vDir);
-	vRight.Normalize();
-
-	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
-	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
+	m_qTargetRot = _quaternion::CreateFromAxisAngle(_vector3::Up, yaw);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
 }
+
 
 _bool CCharacter::Can_Evade() const
 {
@@ -120,10 +117,10 @@ void CCharacter::Update_Input(_float dt)
 	m_input.previous = m_input.current;
 
 	KeyInput key;
-	if (KEY->Key_Hold('W'))  key.z += 1;
-	if (KEY->Key_Hold('S'))  key.z -= 1;
-	if (KEY->Key_Hold('D'))  key.x += 1;
-	if (KEY->Key_Hold('A'))  key.x -= 1;
+	if (InputDevice()->Key_Hold('W'))  key.z += 1;
+	if (InputDevice()->Key_Hold('S'))  key.z -= 1;
+	if (InputDevice()->Key_Hold('D'))  key.x += 1;
+	if (InputDevice()->Key_Hold('A'))  key.x -= 1;
 
 	m_input.current = key;
 
@@ -155,7 +152,7 @@ void CCharacter::Update_Input(_float dt)
 	m_input.direction = {};
 	if (!key.IsZero())
 	{
-		auto cam = CAM->Get_ActiveCam();
+		auto cam = CameraManager()->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 		_vector3 look = camTf->Dir(STATE::LOOK);
 		look.y = 0.f;
@@ -166,12 +163,12 @@ void CCharacter::Update_Input(_float dt)
 		m_input.direction.Normalize();
 	}
 
-	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
-	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
+	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
-	if (KEY->Key_Down(VK_F1)) m_bTest = !m_bTest;
+	if (InputDevice()->Key_Down(VK_F1)) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)
