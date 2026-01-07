@@ -71,13 +71,12 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
         VisibleFlags[inputIndex] = 1u;
         return;
     }
-    if (rectMax0 >= 256u)
+    if (rectMax0 >= 300u)
     {
         VisibleFlags[inputIndex] = 1u;
         return;
     }
 
-    // ---- mip 선택 (Max-HiZ는 coarse로 갈수록 max가 커져서 "덜 가리게" 성향) ----
     int mipSel = (int) floor(log2((float) rectMax0)) - 1;
     mipSel = max(mipSel, 0);
 
@@ -105,7 +104,6 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
         return;
     }
 
-    // inclusive max -> mip 좌표
     uint maxXInclusive = (uint) (maxX - 1);
     uint maxYInclusive = (uint) (maxY - 1);
 
@@ -119,7 +117,6 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     pMin = clamp(pMin, uint2(0u, 0u), maxCoord);
     pMax = clamp(pMax, uint2(0u, 0u), maxCoord);
 
-    // 3x3 샘플(코너/중앙)
     uint2 pMid = (pMin + pMax) >> 1;
 
     uint x0 = pMin.x, x1 = pMid.x, x2 = pMax.x;
@@ -140,11 +137,10 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
                           max(max(max(z01, z11), z21),
                           max(max(z02, z12), z22)));
 
-    // ---- epsilon / bias (덜 가리게 방향) ----
     float obj = inData.objMinDepth01;
 
-    float epsLocal = epsilon;
-    float biasLocal = 0.0015f + 0.0008f * (float) mip;
+    float epsLocal = max(0.0f, epsilon * 0.5f);
+    float biasLocal = 0.0010f + 0.0004f * (float) mip;
 
     if ((inData.flags & OCCL_FLAG_RISK_FLAT_OR_HUGE) != 0u)
     {
@@ -154,10 +150,7 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
 
     // 덜 가리게: obj를 조금 더 가깝게
     obj = max(0.0f, obj - biasLocal);
-
-    // ---- 판정 (Max-HiZ) ----
-    // rect 안의 "가장 멀리 있는 깊이"마저도 물체보다 앞이면(작으면) 완전 가려짐으로 볼 수 있음
-    // => obj > hizMax + eps 이면 occluded
+    
     if (obj > hizMaxDepth01 + epsLocal)
         visible = 0u;
 
