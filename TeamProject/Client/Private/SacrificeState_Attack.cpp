@@ -40,19 +40,6 @@ void CSacrificeState_Attack::Enter(CSacrifice* pOwner)
 void CSacrificeState_Attack::Update(CSacrifice* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
-
-	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	auto pCCT = pOwner->Get_Component<CCharacterController>();
-	_vector3 vRight = pOwner->Get_Component<CTransform>()->Dir(STATE::RIGHT);
-	_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
-	_vector4 vDeltaQuat = pAnimator->Get_RootBoneQuatDelta();
-
-	vDeltaMove.y = 0.f;
-	vDeltaMove = vRight * vDeltaMove.x + vLook * vDeltaMove.z;
-
-	pCCT->Move_RootMotion(vDeltaMove, _vector4(0.f, 0.f, 0.f, 1.f), dt);
-	pOwner->Get_Component<CTransform>()->Add_Quaternion(vDeltaQuat);
 }
 
 void CSacrificeState_Attack::Exit(CSacrifice* pOwner)
