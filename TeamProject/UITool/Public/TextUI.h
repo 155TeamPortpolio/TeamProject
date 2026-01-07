@@ -33,6 +33,8 @@ private:
 	_float		m_fOutlineThickness = 1.f;
 	_float4		m_vOutlineColor = { 0.f, 0.f, 0.f, 1.f };
 
+	_float2		m_vShear = {};
+
 	_int		m_iTextAlign{};
 
 	_bool		m_isSizeToContent = true;

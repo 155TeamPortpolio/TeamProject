@@ -94,6 +94,9 @@ void CTextUI::Render_GUI()
 
     ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor));
 
+    if (ImGui::DragFloat2(u8"기울기", reinterpret_cast<_float*>(&m_vShear), 0.1f, -1.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        Get_Component<CTextSlot>()->Set_Shear(m_vShear);
+
     // 외곽선
     ImGui::SeparatorText(u8"외곽선");
 
