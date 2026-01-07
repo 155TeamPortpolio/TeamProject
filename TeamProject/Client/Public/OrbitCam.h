@@ -10,7 +10,7 @@ class COrbitCam final : public CCamObject
 public:
     struct Profile
     {
-        _float minDist             = 3.f;
+        _float minDist             = 0.5f;
         _float maxDist             = 6.f;
                                    
         _float pitchMin            = -30.f;

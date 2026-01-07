@@ -166,7 +166,6 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
-	//юс╫ц
 	CBattleSystem::GetInstance()->Update();
 
 	if (InputDevice()->Key_Down(VK_F1))
