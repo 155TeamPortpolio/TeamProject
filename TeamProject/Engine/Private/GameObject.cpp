@@ -305,7 +305,10 @@ _vector3 CGameObject::Get_WorldPos()
 
 _quaternion CGameObject::Get_WorldQuat()
 {
-	return m_pTransform->Get_QuaternionRotate();
+	_quaternion quat = m_pTransform->Get_QuaternionRotate();
+	quat.Normalize();
+
+	return quat;
 }
 
 HRESULT CGameObject::Make_OpaquePacket()
