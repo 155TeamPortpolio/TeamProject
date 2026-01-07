@@ -37,6 +37,7 @@
 #include "Miyabi.h"
 #include "Anbi.h"
 #include "Corin.h"
+#include "JaneDoe.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
@@ -123,7 +124,7 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CJaneDoe::Create());
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
