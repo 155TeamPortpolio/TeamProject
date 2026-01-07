@@ -7,9 +7,7 @@
 #include "Camera.h"
 
 NS_BEGIN(Engine)
-class CCamPosPerSegmentEvaluator;
-class CCamRotPerSegmentEvaluator;
-class CCamFovPerSegmentEvaluator;
+class CCamPosPerSegmentEvaluator; class CCamRotPerSegmentEvaluator; class CCamFovPerSegmentEvaluator;
 
 class ENGINE_DLL CCamSequencePlayer final : public CComponent
 {
@@ -52,7 +50,7 @@ private:
 	~CCamSequencePlayer() DEFAULT;
 
 public:
-	HRESULT Initialize_Prototype()           override;
+	HRESULT Initialize_Prototype()           override { return S_OK; }
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
@@ -87,7 +85,7 @@ private:
 
 public:
 	static CCamSequencePlayer* Create();
-	virtual void Free() override;
+	virtual void Free() override { Safe_Release(eval.evaluator); __super::Free();}
 	CComponent* Clone() override { return new CCamSequencePlayer(*this); }
 };
 

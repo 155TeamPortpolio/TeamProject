@@ -15,3 +15,9 @@ HRESULT CCamObject::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 	return S_OK;
 }
+
+void CCamObject::Render_GUI()
+{
+	__super::Render_GUI();
+
+}
