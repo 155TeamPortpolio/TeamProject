@@ -6,6 +6,7 @@
 #include "IResourceService.h"
 #include "DynamicBone.h"
 #include "FootIK.h"
+#include "Helper_Func.h"
 
 CAnimator3D::CAnimator3D()
 {
@@ -766,7 +767,7 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
-const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
+Matrix CAnimator3D::Get_OwnerWorldMatrix()
 {
 	return m_pOwner->Get_WorldMatrix();
 }
@@ -1287,8 +1288,6 @@ void CAnimator3D::Update_Layers(_float dt)
 	m_bUpdatedClip = false;
 
 	for (auto& Layer : m_AnimLayers) {
-		Layer.bApplied = false;
-
 		if (Layer.bPause) continue;
 		if (Layer.fLayerWeight <= 0) continue;
 		if (-1 == Layer.iClipIndex) continue;
@@ -1493,48 +1492,46 @@ void CAnimator3D::GUI_SelectAnim()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight * 15) + (ImGui::GetStyle().WindowPadding.y * 2);
 	ImVec2 padding = ImGui::GetStyle().FramePadding;
-
+	ImGui::Text("Search");
+	ImGui::InputTextWithHint("##AnimSearch", "Search...", &m_animFilter);
 	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
-
-	for (int i = 0; i < m_pAnimClips.size(); i++)
+	for (int index = 0; index < (int)m_pAnimClips.size(); ++index)
 	{
-		bool isSelected = (m_iCurrentClipIndex == i);
-		string animName = m_pAnimClips[i]->Get_Name();
+		const string& animName = m_pAnimClips[index]->Get_Name();
 
-		ImGui::PushID((int)i);
+		if (!m_animFilter.empty())
+		{
+			if (!Helper::ContainsCaseInsensitive(animName, m_animFilter))
+				continue;
+		}
+
+		bool isSelected = (m_iCurrentClipIndex == index);
+		ImGui::PushID(index);
 
 		if (ImGui::Selectable(("##" + animName).c_str(), isSelected, 0, ImVec2{ 0, textLineHeight }))
 		{
-			Change_Animation(i)
-				.Loop(true)
-				.Apply();
+			Change_Animation(index).Loop(true).Apply();
 		}
 
 		ImVec2 itemMin = ImGui::GetItemRectMin();
 		ImVec2 itemMax = ImGui::GetItemRectMax();
-
 		ImVec2 textSize = ImGui::CalcTextSize(animName.c_str());
 		ImVec2 textPos = ImVec2(itemMax.x - textSize.x - padding.x, itemMin.y + padding.y);
-
-		// 텍스트 그리기
 		ImGui::GetWindowDrawList()->AddText(textPos, ImGui::GetColorU32(ImGuiCol_Text), animName.c_str());
 
-		ImGui::PopID();
-
 		if (ImGui::IsItemHovered())
-		{
 			ImGui::SetTooltip("%s", animName.c_str());
-		}
 
-		if (isSelected) {
+		if (isSelected)
 			ImGui::SetItemDefaultFocus();
-		}
-	}
 
+		ImGui::PopID();
+	}
 	ImGui::EndChild();
 }
+
 
 void CAnimator3D::Update_IK(_float dt)
 {
@@ -1655,8 +1652,6 @@ HRESULT SetAnimBuild::Apply()
 	
 	//레이어, 클립 적용
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-	if (Layer.bApplied)
-		return S_OK;
 	
 	Layer.iClipIndex = m_iClipIndex;
 
@@ -1700,7 +1695,6 @@ HRESULT SetAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-	Layer.bApplied = true;
 	return S_OK;
 }
 
@@ -1710,9 +1704,6 @@ HRESULT ChangeAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-
-	if (Layer.bApplied)
-		return S_OK;
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
@@ -1794,7 +1785,6 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-	Layer.bApplied = true;
 	return S_OK;
 }
 

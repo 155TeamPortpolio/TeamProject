@@ -129,6 +129,7 @@ public:
 
 public:
 	UI_HANDLE Get_Handle();
+	UI_HANDLE Get_DescendantHandle(const string& instanceName);
 
 private:
 	_float2 Get_Point_Screen(_float2 anchor, _float x = 0.f, _float y = 0.f);

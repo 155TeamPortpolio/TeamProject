@@ -23,7 +23,7 @@ public:
     void    ApplyRotation(_float dt);
 
 private:
-    _float     m_fSpeed          = 5.f;
+    _float     m_fSpeed          = 10.f;
     _float     m_fSensitivity    = 0.5f;
     _float     m_fRotSmoothSpeed = 20.f;
 

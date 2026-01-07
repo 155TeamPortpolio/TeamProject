@@ -19,7 +19,6 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         
         _bool               bPause = { true };
-        _bool               bApplied = { false };
         _float              fLayerWeight = {};
         _float              fTargetLayerWeight = {};
         _float              fLayerWeightElapsed = {};
@@ -241,7 +240,7 @@ public: //»À °ü·Ã
 
     //TPose
     const vector<_float4x4>& Get_TPose() { return m_TPose; };
-    const _float4x4* Get_OwnerWorldMatrix();
+    Matrix Get_OwnerWorldMatrix();
 
 public: /* DynamicBone */
     class CDynamicBone* Get_DynamicBone_Ptr() { 
@@ -337,6 +336,7 @@ protected:
     HumanoidRigData  m_HumanoidRig;
     vector<IK_CHAIN> m_IKChains;
 
+    string m_animFilter;
 public:
     static CAnimator3D* Create();
     virtual CComponent* Clone();

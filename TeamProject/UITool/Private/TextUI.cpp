@@ -28,8 +28,11 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     strcpy_s(m_szText, sizeof(m_szText), u8"text");
     Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-    Get_Component<CSprite2D>()->Set_TextKey(m_szText);
-    Get_Component<CTextSlot>()->Set_TextKey(m_szText);
+
+    const string strObjectID = to_string(m_ObjectID).c_str();
+    Get_Component<CSprite2D>()->Set_TextKey(strObjectID);
+    Get_Component<CTextSlot>()->Set_TextKey(strObjectID);
+
     Get_Component<CTextSlot>()->Set_Color(m_vColor);
 
 #ifdef _DEBUG
@@ -63,8 +66,6 @@ void CTextUI::Render_GUI()
     if (ImGui::InputTextMultiline(u8"³»¿ë", static_cast<_char*>(m_szText), sizeof(m_szText), ImVec2(ImGui::GetContentRegionAvail().x, 50.f)))
     {
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-        Get_Component<CSprite2D>()->Set_TextKey(m_szText);
-        Get_Component<CTextSlot>()->Set_TextKey(m_szText);
         UpdateAnchorOffset_TextAlign();
     } 
     
@@ -144,8 +145,6 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
 
         Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
-        Get_Component<CSprite2D>()->Set_TextKey(m_szText);
-        Get_Component<CTextSlot>()->Set_TextKey(m_szText);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
         Get_Component<CTextSlot>()->Set_Color(m_vColor);
         if (m_isOutlined)

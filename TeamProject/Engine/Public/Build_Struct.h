@@ -152,4 +152,10 @@ namespace Engine {
 		tagEffectObjectDesc() DEFAULT;
 		virtual ~tagEffectObjectDesc() DEFAULT;
 	}EFFECT_DESC;
+
+	struct POOL_MARK
+	{
+		bool fromPool = false;
+		CLONE_DESC key;
+	};
 }

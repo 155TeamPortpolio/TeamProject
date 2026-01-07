@@ -1,5 +1,5 @@
 {
-    "instanceName": "loading_mainCity_cam2",
+    "instanceName": "loading_hollow",
     "transform": {
         "anchor": 5,
         "anchorOffset": [
@@ -121,16 +121,84 @@
     ],
     "children": [
         {
-            "instanceName": "prefab_bg",
+            "instanceName": "mask",
             "transform": {
-                "anchor": 0,
+                "anchor": 2,
                 "anchorOffset": [
-                    -800.0,
+                    -1087.0,
                     -450.0
                 ],
                 "size": [
-                    1600.0,
+                    1087.0,
                     900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "UI_StencilWrite",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Mask",
+            "maskTextureKey": "empty.png"
+        },
+        {
+            "instanceName": "bg",
+            "transform": {
+                "anchor": 1,
+                "anchorOffset": [
+                    -292.0,
+                    -450.0
+                ],
+                "size": [
+                    2862.11181640625,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque_StencilTest",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Loading_MainCity_Cam2.png"
+        },
+        {
+            "instanceName": "title",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    60.0,
+                    52.0
+                ],
+                "size": [
+                    402.6666564941406,
+                    120.0
                 ],
                 "scale": [
                     1.0,
@@ -150,80 +218,58 @@
             ],
             "pass": "Opaque",
             "animClips": [],
-            "children": [
-                {
-                    "instanceName": "maskBg",
-                    "transform": {
-                        "anchor": 2,
-                        "anchorOffset": [
-                            -1087.0,
-                            -450.0
-                        ],
-                        "size": [
-                            1087.0,
-                            900.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "UI_StencilWrite",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Mask",
-                    "maskTextureKey": "empty.png"
-                },
-                {
-                    "instanceName": "bg",
-                    "transform": {
-                        "anchor": 0,
-                        "anchorOffset": [
-                            -1090.0560302734375,
-                            -450.0
-                        ],
-                        "size": [
-                            2862.11181640625,
-                            900.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque_StencilTest",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "Loading_MainCity_Cam2.png"
-                }
-            ],
-            "typeTag": "CanvasPanel"
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Title_HollowLogo.png"
         },
         {
-            "instanceName": "prefab_nowLoading",
+            "instanceName": "subtitle",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    60.0,
+                    200.0
+                ],
+                "size": [
+                    391.99993896484375,
+                    85.11998748779297
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.7803921699523926,
+                0.7803921699523926,
+                0.7803921699523926,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "기어 코인은 공동 내의 전용 화폐로\nBangboo 상인과 각종 아이템 및 보급품 \n거래를 할 수 있습니다.",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.49999991059303284,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "instanceName": "nowLoading",
             "transform": {
                 "anchor": 10,
                 "anchorOffset": [
@@ -338,7 +384,7 @@
             ],
             "children": [
                 {
-                    "instanceName": "nowLoading",
+                    "instanceName": "logo",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -410,120 +456,6 @@
                         "frameCountY": 5,
                         "frameCountTotal": 30,
                         "frameSpeed": 48.0
-                    }
-                }
-            ],
-            "typeTag": "CanvasPanel"
-        },
-        {
-            "instanceName": "prefab_title",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -800.0,
-                    -450.0
-                ],
-                "size": [
-                    1600.0,
-                    900.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [
-                {
-                    "instanceName": "title",
-                    "transform": {
-                        "anchor": 5,
-                        "anchorOffset": [
-                            60.0,
-                            52.0
-                        ],
-                        "size": [
-                            402.6666564941406,
-                            120.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "Title_HollowLogo.png"
-                },
-                {
-                    "instanceName": "subtitle",
-                    "transform": {
-                        "anchor": 5,
-                        "anchorOffset": [
-                            60.0,
-                            190.0
-                        ],
-                        "size": [
-                            364.99993896484375,
-                            85.11998748779297
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.6745098233222961,
-                        0.6745098233222961,
-                        0.6745098233222961,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Text",
-                    "text": {
-                        "content": "기어 코인은 공동 내의 전용 화폐로\nBanboo 상인과 각종 아이템 및 보급품\n거래를 할 수 있습니다.",
-                        "fontTag": "NanumSquareNeo.spritefont",
-                        "fontScale": 0.49999991059303284,
-                        "outlined": false,
-                        "outlineThickness": 1.0,
-                        "outlineColor": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ]
                     }
                 }
             ],
