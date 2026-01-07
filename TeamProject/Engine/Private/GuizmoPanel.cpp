@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 #include "GameInstance.h"
+#include "Helper_Func.h"
 
 CGuizmoPanel::CGuizmoPanel(GUI_CONTEXT* context)
 	:CBasePanel{ context }
@@ -88,7 +89,6 @@ void CGuizmoPanel::Render_GUI()
     ImGui::End();
 }
 
-
 void CGuizmoPanel::ShowObject_Guizmo()
 {
 	ImGuizmo::BeginFrame();
@@ -102,8 +102,8 @@ void CGuizmoPanel::ShowObject_Guizmo()
 	);
 
 	CTransform* objTransform = m_pContext->pSelectedObject->Get_Component<CTransform>();
+    DrawLookVectorLine(objTransform);
 	_float4x4 temp = *objTransform->Get_WorldMatrix_Ptr();
-
 	ImGuizmo::Manipulate(
 		(float*)m_pContext->pCameraManager->Get_ViewMatrix(),
 		(float*)m_pContext->pCameraManager->Get_ProjMatrix(),
@@ -116,6 +116,37 @@ void CGuizmoPanel::ShowObject_Guizmo()
 		objTransform->TranslateMatrix(XMLoadFloat4x4(&temp));
 }
 
+void CGuizmoPanel::DrawLookVectorLine(CTransform* transform)
+{
+    if (!transform) return;
+
+    const float lineLength = 1.2f; 
+    const float thickness = 2.0f;
+    const ImU32 color = IM_COL32(0, 255, 120, 220);
+
+    const _vector4 pos4 = transform->Get_Pos();
+    const _vector4 look4 = transform->Dir(STATE::LOOK);
+
+    _float3 start{ pos4.x, pos4.y, pos4.z };
+    _float3 end{
+        start.x + look4.x * lineLength,
+        start.y + look4.y * lineLength,
+        start.z + look4.z * lineLength
+    };
+
+    _float4x4 view = *(_float4x4*)m_pContext->pCameraManager->Get_ViewMatrix();
+    _float4x4 proj = *(_float4x4*)m_pContext->pCameraManager->Get_ProjMatrix();
+
+    _float4 viewportXYWH{ 0.f, 0.f, (float)m_pContext->viewPort.x, (float)m_pContext->viewPort.y };
+
+    _float2 screenA{}, screenB{};
+    if (!Helper::WorldToScreen(start, screenA, view, proj, viewportXYWH)) return;
+    if (!Helper::WorldToScreen(end, screenB, view, proj, viewportXYWH)) return;
+
+    ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+    drawList->AddLine(ImVec2(screenA.x, screenA.y), ImVec2(screenB.x, screenB.y), color, thickness);
+    drawList->AddCircleFilled(ImVec2(screenB.x, screenB.y), 3.0f, color);
+}
 
 CGuizmoPanel* CGuizmoPanel::Create(GUI_CONTEXT* context)
 {
