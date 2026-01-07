@@ -19,11 +19,8 @@ namespace
     Profile FieldPreset()
     {
         Profile p{};
-        p.minDist = 1.4f;
+        p.minDist = 3.f;
         p.maxDist = 5.5f;
-
-        p.pitchMin = -25.f;
-        p.pitchMax = 40.f;
 
         p.rotSmoothSpeed = 22.f;
         p.distSmoothSpeed = 22.f;
@@ -41,11 +38,8 @@ namespace
     Profile BattlePreset()
     {
         Profile p{};
-        p.minDist = 1.8f;
+        p.minDist = 3.f;
         p.maxDist = 6.0f;
-
-        p.pitchMin = -35.f;
-        p.pitchMax = 35.f;
 
         p.rotSmoothSpeed = 16.f;
         p.distSmoothSpeed = 16.f;
@@ -70,15 +64,20 @@ namespace
 void COrbitCam::Awake()
 {
     auto cc = Get_Component<CCharacterController>();
-    cc->Resize(0.1f, 0.1f);
+
+    cc->Resize(0.1f, 0.2f);
     cc->Set_GravityEnabled(false);
+    cc->Set_StepOffset(0.f);
+    cc->Set_SlopeLimit(0.f);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
-    SetPreset(preset, false, true);
+   
+    SetPreset(preset);
+    
     pose.curRotDeg = pose.targetRotDeg;
     pose.curDist   = pose.targetDist;
 
@@ -95,33 +94,16 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetPreset(OrbitPreset nextPreset, _bool keepZoomRatio, _bool snap)
+void COrbitCam::SetPreset(OrbitPreset nextPreset)
 {
     preset = nextPreset;
-
-    const _float oldMin = profile.minDist;
-    const _float oldMax = profile.maxDist;
-
     profile = GetPreset(preset);
-
-    if (keepZoomRatio)
-    {
-        _float n = (pose.targetDist - oldMin) / (oldMax - oldMin);
-        n = clamp(n, 0.f, 1.f);
-
-        const _float newDist = profile.minDist + (profile.maxDist - profile.minDist) * n;
-        pose.targetDist = newDist;
-        if (snap) pose.curDist = newDist;
-    }
 
     ClampTargets();
 
-    if (snap)
-    {
-        pose.targetRotDeg = pose.curRotDeg;
-        pose.targetDist = pose.curDist;
-        pose.targetPivot = pose.curPivot;
-    }
+    pose.targetRotDeg = pose.curRotDeg;
+    pose.targetDist   = pose.curDist;
+    pose.targetPivot  = pose.curPivot;
 }
 
 void COrbitCam::SetTarget(CGameObject* obj)
@@ -208,7 +190,9 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
     forward.y = 0.f;
     forward.Normalize();
 
-    Vector3 camPos = pivot + forward * distance;
+    const float horizontalDist = sqrtf(distance * distance - heightOffset * heightOffset);
+
+    Vector3 camPos = pivot + forward * horizontalDist;
     camPos.y += heightOffset;
 
     auto cc = Get_Component<CCharacterController>();
@@ -310,11 +294,10 @@ void COrbitCam::UpdateInput(_float dt)
         pose.targetRotDeg.y += dy * input.sensitivityY;
 
         if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
-    }
 
-    const float zoomDelta = input.zoomSpeed * dt;
-    if (InputDevice()->Key_Down('Q')) pose.targetDist += zoomDelta;
-    if (InputDevice()->Key_Down('E')) pose.targetDist -= zoomDelta;
+        const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
+        if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
+    }
 }
 
 void COrbitCam::ClampTargets()
@@ -346,14 +329,16 @@ Vector3 COrbitCam::GetPivotTargetPos() const
     const Vector4 foot4 = cc->Get_FootPosition();
     const Vector3 foot{foot4.x, foot4.y, foot4.z};
 
-    const Vector3 basePivot = foot + Vector3(0.f, cc->Get_HalfSize() * 1.8f + profile.offsetY, 0.f);
+    const Vector3 basePivot = foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + profile.offsetY, 0.f);
 
     return basePivot + pose.pivotOverrideOffset;
 }
  
 float COrbitCam::GetEffectiveDist() const
 {
-    return clamp(pose.curDist, profile.minDist, profile.maxDist);
+    if (pose.curDist > profile.maxDist) 
+        return profile.maxDist;
+    return pose.curDist;
 }
 
 void COrbitCam::ApplyOrbitPose(_float dt)
@@ -376,6 +361,11 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     cc->Move_Displacement(XMVectorSet(disp.x, disp.y, disp.z, 0.f), dt);
 
     const PxExtendedVec3& c1 = cc->Get_Controller()->getPosition();
+    const Vector3 newPos((float)c1.x, (float)c1.y, (float)c1.z);
+
+    const Vector3 toPivot = pivot - newPos;
+    pose.curDist = toPivot.Length();
+
     m_pTransform->Set_WorldPos(XMVectorSet((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
@@ -476,9 +466,6 @@ void COrbitCam::Render_GUI()
 
     ImGui::SeparatorText("OrbitCam");
 
-    static bool keepZoomRatio = true;
-    static bool snapOnApply = false;
-
     {
         GuiUtil::BeginTwoColTable("##OrbitPresetTable");
 
@@ -488,14 +475,8 @@ void COrbitCam::Render_GUI()
         if (ImGui::Combo("##Preset", &presetIdx, presetNames, 2))
         {
             OrbitPreset nextPreset = (presetIdx == 0) ? OrbitPreset::Field : OrbitPreset::Battle;
-            SetPreset(nextPreset, keepZoomRatio, snapOnApply);
+            SetPreset(nextPreset);
         }
-
-        GuiUtil::RowLabel("KeepZoomRatio");
-        ImGui::Checkbox("##KeepZoomRatio", &keepZoomRatio);
-
-        GuiUtil::RowLabel("SnapOnApply");
-        ImGui::Checkbox("##SnapOnApply", &snapOnApply);
 
         GuiUtil::EndTwoColTable();
     }

@@ -289,6 +289,7 @@ void CTestLevel::Ready_Camera()
 		.Camera(aspect)
 		.CharacterController(desc)
 		.Build("OrbitCam");
+
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
 	ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});

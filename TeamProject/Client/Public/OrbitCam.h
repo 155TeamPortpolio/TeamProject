@@ -10,30 +10,30 @@ class COrbitCam final : public CCamObject
 public:
     struct Profile
     {
-        _float minDist = 1.f;
-        _float maxDist = 6.f;
+        _float minDist             = 3.f;
+        _float maxDist             = 6.f;
+                                   
+        _float pitchMin            = -30.f;
+        _float pitchMax            =  40.f;
+                                   
+        _float rotSmoothSpeed      = 12.f;
+        _float distSmoothSpeed     = 8.f;
+        _float pivotSmoothSpeed    = 15.f;
 
-        _float pitchMin = -30.f;
-        _float pitchMax =  40.f;
-
-        _float rotSmoothSpeed = 12.f;
-        _float distSmoothSpeed = 30.f;
-        _float pivotSmoothSpeed = 15.f;
-
-        _float offsetY = 0.f;
+        _float offsetY             = 0.f;
 
         _bool  usePitchAutoZoom    = true;
         _float pitchAutoZoomMax    = 0.f;
         _float pitchAutoZoomStartN = 0.75f;
         _float pitchAutoZoomSmooth = 18.f;
 
-        _float startDistance     = 4.f;
-        _float startPitchDeg     = -15.f;
-        _float startHeightOffset = 0.4f;
+        _float startDistance       = 4.5f;
+        _float startPitchDeg       = -15.f;
+        _float startHeightOffset   = 0.4f;
 
-        _bool  useAutoYawFollow = true;
-        _float autoYawFollowSpeed = 0.4f;
-        _float autoYawFollowDelay = 0.6f;
+        _bool  useAutoYawFollow    = true;
+        _float autoYawFollowSpeed  = 0.4f;
+        _float autoYawFollowDelay  = 0.6f;
     };
 
 private:
@@ -47,8 +47,8 @@ private:
         Vector2 targetRotDeg{};
         Vector2 curRotDeg{};
 
-        _float targetDist = 3.f;
-        _float curDist = 3.f;
+        _float targetDist{};
+        _float curDist{};
 
         Vector3 targetPivot{};
         Vector3 curPivot{};
@@ -59,7 +59,7 @@ private:
     {
         _float sensitivityX = 0.12f;
         _float sensitivityY = 0.08f;
-        _float zoomSpeed = 1.0f;
+        _float zoomSpeed    = 1.0f;
     };
 
 private:
@@ -90,7 +90,7 @@ public:
     virtual void    Render_GUI()                override;
 
 public:
-    void    SetPreset(OrbitPreset nextPreset, _bool keepZoomRatio, _bool snap);
+    void    SetPreset(OrbitPreset nextPreset);
     void    SetTarget(CGameObject* obj);
     void    ClearTarget() { targetHandle.Reset(); }
     void    SyncFromCurTransform();
@@ -111,7 +111,7 @@ private:
     Vector3 GetTargetFootPos() const;
 
 public:
-    static  COrbitCam* Create();
+    static  COrbitCam*   Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override { __super::Free(); }
 };
