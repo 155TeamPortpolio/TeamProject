@@ -52,6 +52,7 @@ namespace Helper
 
 	//주소(디렉토리)가 있는지 체크하고 없다면 폴더 생성
 	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
+	ENGINE_DLL _bool ContainsCaseInsensitive(const std::string& text, const std::string& pattern);
 }
 
 //json 저장 및 불러오기
