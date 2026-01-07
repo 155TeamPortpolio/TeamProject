@@ -52,7 +52,7 @@ void CDebugBonePanel::Render_GUI()
 	}
 	else
 	{
-		ImGui::SetNextWindowSize(ImVec2(420, 520), ImGuiCond_Always);
+		ImGui::SetNextWindowSize(ImVec2(420, 520), ImGuiCond_FirstUseEver);
 	}
 
 

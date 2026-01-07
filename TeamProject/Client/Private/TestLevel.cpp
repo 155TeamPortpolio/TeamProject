@@ -82,19 +82,19 @@ HRESULT CTestLevel::Awake()
 	// =========================================================================
 
 	//==================== Effect =======================
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
-	//pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
-	//
-	//pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
-	//pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
-	//
-	//pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
-	//pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
-	//
-	//pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
-	//pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	
+	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
+	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	
+	pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
+	pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
+	
+	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
+	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -158,7 +158,7 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
-	//Ready_TestObject();
+	Ready_TestObject();
 	Ready_ShadowCamera();
 
 	return S_OK;
@@ -203,6 +203,15 @@ void CTestLevel::Update()
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
 	}
 
+	if (KEY->Key_Tap('5'))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("core.json")
+			.Build("Core");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	}
+
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 
@@ -216,7 +225,7 @@ void CTestLevel::Update()
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		//BulkyCCT.fBoundingMinY = -0.88f;
 		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
-
+		
 		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
 			.CharacterController(BulkyCCT)
 			.Build("ThugBulky");
@@ -366,11 +375,11 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	//auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-	//	.Build("Test_Cloud");
-	//
-	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+		.Build("Test_Cloud");
+	
+	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 HRESULT CTestLevel::Render()

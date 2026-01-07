@@ -13,6 +13,9 @@ public:
 	virtual void Render_GUI() override;
 	virtual void Update_Panel(_float dt) override;
 
+public:
+	void Set_Bone(_int boneIndex) { m_iSelectedBone = boneIndex; };
+
 private:
 	_bool WorldToScreen(
 		const _float3& world,

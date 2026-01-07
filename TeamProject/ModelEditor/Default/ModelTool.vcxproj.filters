@@ -100,6 +100,9 @@
     <Filter Include="02. Obj\04. BinaryModel">
       <UniqueIdentifier>{9c105ecb-2c2a-4622-93c4-4a0649ae69fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04. AIResource\AIModelData\AISkeleton\AIDynamicBone">
+      <UniqueIdentifier>{5defc8e5-6fc3-4b7c-ae90-a2bcbbe25fe1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Image Include="ModelEditor.ico">
@@ -256,6 +259,9 @@
     <ClInclude Include="..\Public\HumanoidRule.h">
       <Filter>04. AIResource\AIModelData\AISkeleton</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\AIDynamicBone.h">
+      <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ModelEditor.cpp">
@@ -371,6 +377,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BinaryModel.cpp">
       <Filter>02. Obj\04. BinaryModel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Public\AIDynamicBone.cpp">
+      <Filter>04. AIResource\AIModelData\AISkeleton\AIDynamicBone</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
