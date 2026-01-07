@@ -80,14 +80,14 @@ void CTextUI::Render_GUI()
     
     if (ImGui::Button(u8"크기 +"))
     {
-        m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
+        m_fFontScale = min(m_fFontScale + 0.05f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
         UpdateAnchorOffset_TextAlign();
     }
     ImGui::SameLine();
     if (ImGui::Button(u8"크기 -"))
     {
-        m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
+        m_fFontScale = max(m_fFontScale - 0.05f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
         UpdateAnchorOffset_TextAlign();
     }
