@@ -2,6 +2,7 @@
 #include "DynamicBone.h"
 #include "Animator3D.h"
 #include "ModelData.h"
+#include "GameObject.h"
 
 CDynamicBone::CDynamicBone()
 {
@@ -20,11 +21,16 @@ void CDynamicBone::Init_Update()
 {
 	for (auto& Group : m_ChainGroups) {
 		for (auto& Chain : Group.Chains) {
-			for (auto& Node : Chain.Nodes) {
-				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+			// 앵커(0번)부터 부모포지션을 세팅해두면 편함
+			for (_int i = 0; i < (_int)Chain.Nodes.size(); ++i) {
+				auto& Node = Chain.Nodes[i];
 
+				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
 				Node.CombinedCurPos = curPos;
 				Node.CombinedPrevPos = curPos;
+
+				// 부모 위치 초기화 (월드 반응용)
+				//_vector3 parentPos = m_pAnimator->Get_BoneCombinedPosition(Chain.Nodes[i - 1].ParentIndex);
 			}
 		}
 	}
@@ -53,9 +59,11 @@ void CDynamicBone::Update(_float dt)
 
 		/* 루트가 설정되었다면 무조건 하위 체인은 만들어졌다는 가정하에 업데이트 */
 		for (auto& Chain : Group.Chains) {
-			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
+			/* 0번째인 앵커본은 움직이지 않으니 1번부터 효과를 받음 */
+			Update_AnchorNode(Chain.Nodes[0]);
 
-				/* 첫번째본의 부모본은 루트본이니 직접 루트에서 갖고옴 */
+			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
+				/* 부모의 Combined된 위치와 회전을 갖고옴 */
 				_vector3 parentPos = Chain.Nodes[i - 1].CombinedCurPos;
 				_quaternion parentQuat = m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
 
@@ -77,6 +85,12 @@ void CDynamicBone::Update(_float dt)
 		ApplySimulatedNode();
 }
 
+void CDynamicBone::Update_AnchorNode(DYNAMIC_NODE& AnchorNode)
+{
+	AnchorNode.CombinedPrevPos = AnchorNode.CombinedCurPos;
+	AnchorNode.CombinedCurPos = m_pAnimator->Get_BoneCombinedPosition(AnchorNode.BoneIndex);
+}
+
 void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,
 	const _quaternion& parentQuat,
@@ -87,15 +101,20 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	_vector3 curPos = Node.CombinedCurPos;
 	_vector3 prevPos = Node.CombinedPrevPos;
 
-	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	/* 속력 계산 */
 	_vector3 Velocity = curPos - prevPos;
-	_vector3 nextPos = curPos + Velocity * (1.f - ChainParam.fDamping);
+
+	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	Velocity *= (1.f - ChainParam.fDamping);
 
 	/* 중력(Gravity) : */
 	_vector3 modelGravity(0.f, -1.f, 0.f);
 	Velocity += modelGravity * ChainParam.fGravityScale * dt;
 
-	/* 부모로부터 멀어지면 안되니 
+	/* 위에 모든 계산을 한 예측된 다음 위치*/
+	_vector3 nextPos = curPos + Velocity;
+
+	/* 부모로부터 멀어지면 안되니 부모뼈 스페이스위치에서 계산
 	(부모->노드)의 방향을 구하고 부모로부터 길이만큼 곱한 위치가 진짜 위치가 될거임*/
 	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
@@ -108,6 +127,7 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
 	dir.Normalize();
 
+	/* 본의 길이는 달라지면 안되니 재계산*/
 	nextPos = parentPos + dir * Node.fLength;
 
 	// 상태 갱신
@@ -159,22 +179,22 @@ HRESULT CDynamicBone::Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGru
 }
 
 /* 체인을 새로 생성하는 함수 */
-HRESULT CDynamicBone::Create_Chain(_int RootIndex)
+HRESULT CDynamicBone::Create_Chain(_int AnchorIndex)
 {
-	if(-1 == RootIndex) return E_FAIL;
+	if(-1 == AnchorIndex) return E_FAIL;
 	
 	/* 이미 찍은 루트노드가 존재하면 무조건 체인이 만들어져있을것 */
 	for (auto Group : m_ChainGroups) {
-		if (RootIndex == Group.RootBoneIndex)
+		if (AnchorIndex == Group.AnchorBoneIndex)
 			return S_OK;
 	}
 	
 	DYNAMIC_CHAIN_GROUP Group;
-	Group.RootBoneIndex = RootIndex;
+	Group.AnchorBoneIndex = AnchorIndex;
 
 	/* 	노드 생성을 하기 위한 리스트를 저장한 벡터를 하나 만들어둠 그 데이터로 재귀*/
 	vector<_int> Index;
-	Index.push_back(RootIndex);
+	Index.push_back(AnchorIndex);
  	Create_Node(Index, Group);
 
 	m_ChainGroups.push_back(Group);

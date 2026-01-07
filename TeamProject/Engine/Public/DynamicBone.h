@@ -23,6 +23,7 @@ public:
     void Update(_float dt);
 
 protected:
+    void Update_AnchorNode(DYNAMIC_NODE& AnchorNode);
     void SimulateNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
         const _quaternion& parentQuat,

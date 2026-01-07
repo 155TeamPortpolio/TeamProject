@@ -106,7 +106,7 @@ HRESULT CAnimator3D::Link_DynamicBone()
 	m_pDynamicBone = pDynamicBone;
 	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
 
-	//if(m_pData->Get_DynamicBoneData) add
+	//m_pDynamicBone->Link_ChainData(m_pData->Get_ChaingGroups());
 
 	return S_OK;
 }
@@ -1391,24 +1391,10 @@ void CAnimator3D::BuildDynamicBone()
 {
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
-		int parent = m_pData->Get_BoneParentIndex(i);
+		Matrix CombinedBone = XMLoadFloat4x4(&m_CombinedMatrices[i]);
+		Matrix DynamicBone = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
 
-		if (parent == -1) {
-			_matrix MyTransformation =
-				XMLoadFloat4x4(&m_DynamicBoneMatrices[i]) *
-				XMLoadFloat4x4(&m_TransformationMatrices[i]) *
-				XMLoadFloat4x4(&m_PreTransform);
-
-			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation);
-		}
-		else {
-			_matrix ParentCombine = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
-			_matrix MyTransformation =
-				XMLoadFloat4x4(&m_DynamicBoneMatrices[i])
-				* XMLoadFloat4x4(&m_TransformationMatrices[i]);
-
-			XMStoreFloat4x4(&m_CombinedMatrices[i], MyTransformation * ParentCombine);
-		}
+		XMStoreFloat4x4(&m_CombinedMatrices[i], DynamicBone * CombinedBone);
 	}
 }
 
