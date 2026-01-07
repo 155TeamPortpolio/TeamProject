@@ -80,19 +80,22 @@ void CTextUI::Render_GUI()
     
     if (ImGui::Button(u8"크기 +"))
     {
-        m_fFontScale = min(m_fFontScale + 0.1f, 2.f);
+        m_fFontScale = min(m_fFontScale + 0.05f, 2.f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
         UpdateAnchorOffset_TextAlign();
     }
     ImGui::SameLine();
     if (ImGui::Button(u8"크기 -"))
     {
-        m_fFontScale = max(m_fFontScale - 0.1f, 0.1f);
+        m_fFontScale = max(m_fFontScale - 0.05f, 0.1f);
         Get_Component<CTextSlot>()->Set_Size(m_fFontScale);
         UpdateAnchorOffset_TextAlign();
     }
 
     ImGui::ColorEdit4(u8"폰트 컬러", reinterpret_cast<_float*>(&m_vColor));
+
+    if (ImGui::DragFloat2(u8"기울기", reinterpret_cast<_float*>(&m_vShear), 0.1f, -1.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        Get_Component<CTextSlot>()->Set_Shear(m_vShear);
 
     // 외곽선
     ImGui::SeparatorText(u8"외곽선");
@@ -124,6 +127,7 @@ void CTextUI::Save(nlohmann::ordered_json& data)
     textJson["outlined"]         = m_isOutlined;
     textJson["outlineThickness"] = m_fOutlineThickness;
     textJson["outlineColor"]     = { m_vOutlineColor.x, m_vOutlineColor.y, m_vOutlineColor.z, m_vOutlineColor.w };
+    textJson["shear"]            = { m_vShear.x, m_vShear.y };
 }
 
 void CTextUI::Load(const nlohmann::ordered_json& data)
@@ -138,10 +142,11 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         m_strFontTag        = textJson.value("fontTag", "DefaultFont");
         m_fFontScale        = textJson.value("fontScale", 1.0f);
         m_isOutlined        = textJson.value("outlined", false);
-        m_fOutlineThickness = textJson.value("outlineThickness", 1.0f);
-
-        auto outlineColor = textJson.value("outlineColor", json::array({ 0.0f, 0.0f, 0.0f, 1.0f }));
-        m_vOutlineColor   = { outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3] };
+        m_fOutlineThickness = textJson.value("outlineThickness", 1.0f); 
+        auto outlineColor   = textJson.value("outlineColor", json::array({ 0.0f, 0.0f, 0.0f, 1.0f }));
+        m_vOutlineColor     = { outlineColor[0], outlineColor[1], outlineColor[2], outlineColor[3] };
+        auto vShear         = textJson.value("shear", json::array({ 0.0f, 0.0f }));
+        m_vShear            = {vShear[0], vShear[1]};
 
         Get_Component<CTextSlot>()->Set_Font(m_strFontTag);
         Get_Component<CTextSlot>()->Set_Text(Helper::ConvertToWideString(m_szText));
@@ -149,6 +154,7 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         Get_Component<CTextSlot>()->Set_Color(m_vColor);
         if (m_isOutlined)
             Get_Component<CTextSlot>()->Set_OutLine(m_fOutlineThickness, m_vOutlineColor);
+        Get_Component<CTextSlot>()->Set_Shear(m_vShear);
     } 
 }
 

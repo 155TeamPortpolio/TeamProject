@@ -29,6 +29,7 @@ public:
     void Set_OutLine(_float Thickness, _float4 OutlineColor);
     void ReSet_OutLine() { m_Info.OutLined = false; };
     void Set_Origin(_float2 origin) { m_Info.Origin = origin; };
+    void Set_Shear(_float2 shear) { m_Info.vShear = shear; }
 
 public:
     void Push_Text();

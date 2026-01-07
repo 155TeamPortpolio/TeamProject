@@ -88,33 +88,6 @@
     <Filter Include="02. GameObject\Object\TestObject\State\Dash">
       <UniqueIdentifier>{2327218e-4663-4e02-baa7-6d285208b6dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI">
-      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement">
-      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
-      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Button">
-      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Gauge">
-      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Image">
-      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
-      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
-      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Text">
-      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy">
       <UniqueIdentifier>{b66aa194-a926-4d74-9e5d-a9dc4d525f95}</UniqueIdentifier>
     </Filter>
@@ -153,9 +126,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2">
       <UniqueIdentifier>{8080e445-1ea3-4f5c-9188-7ec8d37887e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\00. UIDirector">
-      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Walk\Phase1">
       <UniqueIdentifier>{a0d42fa8-de6c-4103-8f2b-ce937be8f959}</UniqueIdentifier>
@@ -373,19 +343,85 @@
     <Filter Include="01. Level\01. LoadingLevel">
       <UniqueIdentifier>{843e3c5c-413c-4e9b-a399-53d7346524d5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Mask">
-      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI\UIElement\Mask">
       <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Logo">
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe">
+      <UniqueIdentifier>{49f60698-ec23-4af5-83e4-adab20e62d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State">
+      <UniqueIdentifier>{403d0c4d-3060-433f-b472-ee41944ba1ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack">
+      <UniqueIdentifier>{fb4ea57e-07c2-46ab-9286-24e7c43d0dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade">
+      <UniqueIdentifier>{4af0f27e-613c-4ec9-93d0-a02b179d4cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Idle">
+      <UniqueIdentifier>{f840cc00-29c5-4f2a-af28-ad215bb153e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move">
+      <UniqueIdentifier>{768dd3dc-bf7d-41d0-bf00-7bfa5427a8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Normal">
+      <UniqueIdentifier>{5bbf7437-32d5-47a1-966e-349765d39f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Rush">
+      <UniqueIdentifier>{86ed22fe-2f06-41fb-962a-fc8b06ffe7e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\BackStep">
+      <UniqueIdentifier>{df848b43-9a07-4388-8751-ca8881084a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\Dash">
+      <UniqueIdentifier>{bba8e1a4-9597-4cac-969d-bf1a12aff66e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run">
+      <UniqueIdentifier>{a20207dd-12db-42a1-80ab-68f97d7d95c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk">
+      <UniqueIdentifier>{f4071147-49f7-4af9-aa74-d0612b847195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI">
+      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\00. UIDirector">
+      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\Logo">
       <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\Loading">
+    <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
@@ -517,25 +553,25 @@
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CanvasPanel.h">
-      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\CanvasPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SpriteAnimationUI.h">
-      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\SpriteAnimation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UVAnimationUI.h">
-      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\UVAnimation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImageUI.h">
-      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GaugeUI.h">
-      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Gauge</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextUI.h">
-      <Filter>02. GameObject\UI\UIElement\Text</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Text</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ButtonUI.h">
-      <Filter>02. GameObject\UI\UIElement\Button</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Button</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
@@ -583,7 +619,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
-      <Filter>02. GameObject\UI\00. UIDirector</Filter>
+      <Filter>02. GameObject\Object\UI\00. UIDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -619,7 +655,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
-      <Filter>02. GameObject\UI</Filter>
+      <Filter>02. GameObject\Object\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
@@ -717,9 +753,6 @@
     <ClInclude Include="..\Public\CorinState_Dash.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Dash</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CorinState_Evade.h">
-      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\CorinState_Backstep.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade\Backstep</Filter>
     </ClInclude>
@@ -733,7 +766,7 @@
       <Filter>01. Level\01. LoadingLevel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MaskUI.h">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\public\BattleSystem.h">
       <Filter>03. Utility\04. BattleSystem</Filter>
@@ -742,10 +775,46 @@
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Logo.h">
-      <Filter>02. GameObject\UI\Logo</Filter>
+      <Filter>02. GameObject\Object\UI\Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Loading.h">
-      <Filter>02. GameObject\UI\Loading</Filter>
+      <Filter>02. GameObject\Object\UI\Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoe.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Attack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_RushAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Rush</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_NormalAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Evade.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Dash.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade\Dash</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_BackStep.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade\BackStep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Idle.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Move.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Walk.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Run.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
@@ -874,25 +943,25 @@
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CanvasPanel.cpp">
-      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\CanvasPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\SpriteAnimation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UVAnimationUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\UVAnimation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ImageUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Image</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Image</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GaugeUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Gauge</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Button</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Button</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Text</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Text</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
@@ -934,7 +1003,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
-      <Filter>02. GameObject\UI\00. UIDirector</Filter>
+      <Filter>02. GameObject\Object\UI\00. UIDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UILoader.cpp">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -1081,7 +1150,7 @@
       <Filter>01. Level\01. LoadingLevel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
+      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BattleSystem.cpp">
       <Filter>03. Utility\04. BattleSystem</Filter>
@@ -1090,10 +1159,43 @@
       <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Logo.cpp">
-      <Filter>02. GameObject\UI\Logo</Filter>
+      <Filter>02. GameObject\Object\UI\Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Loading.cpp">
-      <Filter>02. GameObject\UI\Loading</Filter>
+      <Filter>02. GameObject\Object\UI\Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoe.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Attack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_RushAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Rush</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_NormalAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Evade.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Dash.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade\Dash</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_BackStep.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Evade\BackStep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Idle.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Move.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Walk.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Run.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
