@@ -10,25 +10,25 @@ CHiZ_Culling::CHiZ_Culling()
 
 HRESULT CHiZ_Culling::Initialize() {
 
-	/*Å¬¶ó »çÀÌÁî*/
+	/*Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
 	_float2 clientSize = CGameInstance::GetInstance()->Get_ClientSize();
 	m_viewport = clientSize;
-	m_texSize = { (_uint)clientSize.x, (_uint)clientSize.y }; /*1Â÷ ¹Ó ÅØ½ºÃ³ »çÀÌÁî*/
-	m_threadSize = { 8, 8, 1 }; /*¾²·¹µå 8x8°³*/
+	m_texSize = { (_uint)clientSize.x, (_uint)clientSize.y }; /*1ï¿½ï¿½ ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½*/
+	m_threadSize = { 8, 8, 1 }; /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 8x8ï¿½ï¿½*/
 
-	/*¾²·¹µå°¡ ÇÈ¼¿ ±×·ìÀ» ÁöÀ» ¶§ ³²´Â°Ô ¾ø°ÔÇÏ·Á°í */
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½å°¡ ï¿½È¼ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ */
 	m_groupCount = {
 		(m_texSize.x + m_threadSize.x - 1) / m_threadSize.x,
 		(m_texSize.y + m_threadSize.y - 1) / m_threadSize.y,
 		1
-	};/*ÀüÃ¼Æø + ¹æÇâ ½º·¹µå °³¼ö -> Áï À§µå¸¦ 8°³¾¿ ¹­¾î¼­ Ã³¸®ÇÒ ±×·ìÀÌ ¸î°³³ª µÇ´Â°¡ ¿Ã¸²À» À§ÇØ 8°³-1À» ´õÇØÁØ°ÅÀÓ*/
+	};/*ï¿½ï¿½Ã¼ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ -> ï¿½ï¿½ ï¿½ï¿½ï¿½å¸¦ 8ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½î¼­ Ã³ï¿½ï¿½ï¿½ï¿½ ï¿½×·ï¿½ï¿½ï¿½ ï¿½î°³ï¿½ï¿½ ï¿½Ç´Â°ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ 8ï¿½ï¿½-1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø°ï¿½ï¿½ï¿½*/
 
-	//1by1µÉ ¶§±îÁö 2,2·Î ÅØ½ºÃ³¸¦ ³ª´®
+	//1by1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 2,2ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	m_mipCount = CalcMipCount(m_texSize.x, m_texSize.y);
 
 	auto pDevice = CGameInstance::GetInstance()->Get_Device();
 
-	/*¹Ó Ã¼ÀÎ »ý¼º uav·Î mipº°·Î ¾²°í, srv·Î ÀÐ´Â ¿ëµµ*/
+	/*ï¿½ï¿½ Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ uavï¿½ï¿½ mipï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½, srvï¿½ï¿½ ï¿½Ð´ï¿½ ï¿½ëµµ*/
 	D3D11_TEXTURE2D_DESC desc = {};
 	desc.Width = m_texSize.x;
 	desc.Height = m_texSize.y;
@@ -45,31 +45,31 @@ HRESULT CHiZ_Culling::Initialize() {
 	if (FAILED(hr))
 		return hr;
 
-	/*¹Óº° uav, srv¸¦ ¸¸µå´Â °úÁ¤*/
+	/*ï¿½Óºï¿½ uav, srvï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	m_HiZUav.resize(m_mipCount, nullptr);
 	for (_uint mip = 0; mip < m_mipCount; ++mip)
 	{
 		D3D11_UNORDERED_ACCESS_VIEW_DESC uavDesc = {};
 		uavDesc.Format = DXGI_FORMAT_R32_FLOAT;
 		uavDesc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
-		uavDesc.Texture2D.MipSlice = mip;//HiZTexÀÇ mip ÇÑ Àå¸¸ ¾´´Ù
+		uavDesc.Texture2D.MipSlice = mip;//HiZTexï¿½ï¿½ mip ï¿½ï¿½ ï¿½å¸¸ ï¿½ï¿½ï¿½ï¿½
 		HRESULT hr = pDevice->CreateUnorderedAccessView(m_pHiZTex, &uavDesc, &m_HiZUav[mip]);
 		if (FAILED(hr)) return hr;
 	}
 
 	m_HiZSrvMip.resize(m_mipCount, nullptr);
 	for (_uint mipIndex = 0; mipIndex < m_mipCount; ++mipIndex)
-	{ /*»ç½Ç »ó µð¹ö±ë ¿ëµµ*/
+	{ /*ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ëµµ*/
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDescMip = {};
 		srvDescMip.Format = DXGI_FORMAT_R32_FLOAT;
 		srvDescMip.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 		srvDescMip.Texture2D.MostDetailedMip = mipIndex;
-		srvDescMip.Texture2D.MipLevels = 1;//HiZTexÀÇ mip ÇÑ Àå¸¸ º»´Ù
+		srvDescMip.Texture2D.MipLevels = 1;//HiZTexï¿½ï¿½ mip ï¿½ï¿½ ï¿½å¸¸ ï¿½ï¿½ï¿½ï¿½
 
 		hr = pDevice->CreateShaderResourceView(m_pHiZTex, &srvDescMip, &m_HiZSrvMip[mipIndex]);
 		if (FAILED(hr)) return hr;
 	}
-	/*ÀüÃ¼ ¹ÓÃ¼ÀÎ¿¡ ÇØ´çÇÏ´Â SRV-> */
+	/*ï¿½ï¿½Ã¼ ï¿½ï¿½Ã¼ï¿½Î¿ï¿½ ï¿½Ø´ï¿½ï¿½Ï´ï¿½ SRV-> */
 	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -80,13 +80,13 @@ HRESULT CHiZ_Culling::Initialize() {
 		if (FAILED(hr)) return hr;
 	}
 
-	/*´øÁ®ÁÙ »ó¼ö ¹öÆÛ »ý¼º*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	m_pCopyBuffer = CreateDynamicCB(pDevice, sizeof(CB_CopyData));
 	m_pReduceBuffer = CreateDynamicCB(pDevice, sizeof(CB_ReduceData));
 	m_pOcculsionBuffer = CreateDynamicCB(pDevice, sizeof(CB_OcclusionData));
 
-	/*3°³ ÇÁ·¹ÀÓ ¹öÆÛ¿¡ ´ëÇÑ ÀÐ±â¸¦ µ¹¾Æ°¡¸é¼­ ÇÒ °ÍÀÓ*/
-	/*±×·¡¼­ ¿©±â±îÁö ³¡³µ´Ï?¸¦  CPU°¡ ¹°¾îº¼ ¼ö ÀÖ´Â ÀÌº¥Æ®*/
+	/*3ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ð±â¸¦ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½é¼­ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
+	/*ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½?ï¿½ï¿½  CPUï¿½ï¿½ ï¿½ï¿½ï¿½îº¼ ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½Ìºï¿½Æ®*/
 	D3D11_QUERY_DESC queryDesc = {};
 	queryDesc.Query = D3D11_QUERY_EVENT;
 	queryDesc.MiscFlags = 0;
@@ -102,6 +102,7 @@ HRESULT CHiZ_Culling::Initialize() {
 	}
 	m_cachedKeys.clear();
 	m_cachedVisibleFlags.clear();
+	m_frameCursor = 0; 
 	return S_OK;
 }
 
@@ -110,7 +111,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 	Check_Resource();
 	if (!m_isReady) return;
 
-	{ /*1Â÷ µª½º ÅØ½ºÃ³ ±×³É º¹»ç*/
+	{ /*1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ø½ï¿½Ã³ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 		m_pCopyShader->Bind(pContext);
 		CB_CopyData cbCopy = { m_texSize };
 		Update_CBuffer(pContext, m_pCopyBuffer, &cbCopy, sizeof(cbCopy));
@@ -125,10 +126,10 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 		pContext->CSSetUnorderedAccessViews(0, 1, nullUav, nullptr);
 	}
 
-	/*¹Óº°·Î ´Ü°èº°·Î ³ª¾Æ°¡±â*/
+	/*ï¿½Óºï¿½ï¿½ï¿½ ï¿½Ü°èº°ï¿½ï¿½ ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½*/
 	for (_uint srcMipIndex = 0; srcMipIndex < m_mipCount - 1; ++srcMipIndex)
 	{
-		/*2,2 ·Î ³ª´²³ª°¡±â ½ÃÀÛ*/
+		/*2,2 ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 		_uint srcWidth = max(1u, m_texSize.x >> srcMipIndex);
 		_uint srcHeight = max(1u, m_texSize.y >> srcMipIndex);
 
@@ -164,7 +165,7 @@ void CHiZ_Culling::Update_HiZ(ID3D11DeviceContext* pContext)
 
 void CHiZ_Culling::Check_Resource()
 {
-	/*SRVÇÏ°í ½¦ÀÌ´õ »ý¼º Å¸ÀÌ¹ÖÀÌ ´Þ¶ó¼­*/
+	/*SRVï¿½Ï°ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¹ï¿½ï¿½ï¿½ ï¿½Þ¶ï¿½*/
 	if (m_isReady)
 		return;
 
@@ -273,7 +274,7 @@ _float CHiZ_Culling::Clamp01(_float value)
 	return value;
 }
 
-/*½ÇÁ¦ ÄÃ¸µÀ» ½ÃÀÛ*/
+/*ï¿½ï¿½ï¿½ï¿½ ï¿½Ã¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>& frustums)
 {
 	if (!m_isReady)
@@ -283,16 +284,14 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	if (frustums.empty())
 		return result;
 
-	/*----------DEBUG-------------------------*/
 #ifdef _USING_GUI
 	m_stats = {};
 	m_stats.frustumIn = (uint32_t)frustums.size();
 #endif
-	/*-----------------------------------------*/
+
 	vector<OcclusionInput> inputs;
 	inputs.reserve(frustums.size());
 
-	// ÀÌ¹ø ÇÁ·¹ÀÓ inputs¿¡ ´ëÀÀÇÏ´Â Å°µé (writeFrame¿¡ ÀúÀåÇÒ °Í)
 	vector<OcclusionKey> writeKeys;
 	writeKeys.reserve(frustums.size());
 
@@ -303,7 +302,6 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	_uint viewportW = (_uint)m_viewport.x;
 	_uint viewportH = (_uint)m_viewport.y;
 
-	// ÀÌ¹ø ÇÁ·¹ÀÓ ÄÃ¸µ ÈÄº¸
 	unordered_map<OcclusionKey, const OPAQUE_PACKET*, OcclusionKeyHash, OcclusionKeyEq> currentCandidateMap;
 	currentCandidateMap.reserve(frustums.size() * 2);
 
@@ -313,34 +311,37 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 		OcclusionInput inputData = {};
 		_uint compactIndex = (_uint)inputs.size();
+
 		_bool ok = BuildOcclusionInput(
 			packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),
 			_smatrix(*packet.pWorldMatrix),
 			viewMatrix, viewportW, viewportH, zFar,
 			compactIndex, inputData);
 
-		if (ok)
+		if (!ok)
 		{
-			inputs.push_back(inputData);
-
-			OcclusionKey key{};
-			key.worldPtr = packet.pWorldMatrix; // Æ÷ÀÎÅÍ°¡ ÇÁ·¹ÀÓ µ¿¾È ¾ÈÁ¤ÀûÀÌ¶ó´Â °¡Á¤
-			key.drawIndex = packet.DrawIndex;
-			writeKeys.push_back(key);
-			currentCandidateMap.emplace(key, &packet);
-		}
-		else
-		{ /*°Ë»ç Á¦¿Ü ´ë»óÀÌ µÇ¸é ¼û±è Ä«¿îÆ® 0Ã³¸®*/
+			// ï¿½Ë»ï¿½ ï¿½ï¿½ï¿½Ü´ï¿½ ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ + ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½ï¿½Ã½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
 			result.push_back(packet);
 
 			OcclusionKey key{};
-			key.worldPtr = packet.pWorldMatrix;
+			key.ObjID = packet.ObjID;
 			key.drawIndex = packet.DrawIndex;
 
 			auto it = m_hysteresis.find(key);
 			if (it != m_hysteresis.end())
-				it->second.hiddenStreak = 0; // ¶Ç´Â erase
+				it->second.hiddenStreak = 0;
+
+			continue;
 		}
+
+		inputs.push_back(inputData);
+
+		OcclusionKey key{};
+		key.ObjID = packet.ObjID;
+		key.drawIndex = packet.DrawIndex;
+
+		writeKeys.push_back(key);
+		currentCandidateMap.emplace(key, &packet);
 	}
 
 	if (inputs.empty())
@@ -350,46 +351,46 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 	ID3D11Device* device = CGameInstance::GetInstance()->Get_Device();
 
 	EnsureOcclusionResources(device, (_uint)inputs.size());
-	D3D11_BOX box = {};
-	box.left = 0;
-	box.right = (UINT)(inputs.size() * sizeof(OcclusionInput));
-	box.top = 0;
-	box.bottom = 1;
-	box.front = 0;
-	box.back = 1;
 
-	context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
+	// input buffer update
+	{
+		D3D11_BOX box = {};
+		box.left = 0;
+		box.right = (UINT)(inputs.size() * sizeof(OcclusionInput));
+		box.top = 0;
+		box.bottom = 1;
+		box.front = 0;
+		box.back = 1;
 
+		context->UpdateSubresource(m_inputBuffer, 0, &box, inputs.data(), 0, 0);
+	}
 
-	// ---- write frame ---- 6ÇÁ·¹ÀÓ °£°Ý (¸±¸®Áî µð¹ö±× )
-	_uint writeFrameIndex = (m_frameCursor % kFrameBuffered);
-	OcclusionReadbackFrame& writeFrame = m_readbackFrames[writeFrameIndex];
+	// ---- write slot ----
+	const _uint writeFrameIndex = (_uint)(m_frameCounter % kFrameBuffered);
+	OcclusionReadbackFrame& writeSlot = m_readbackFrames[writeFrameIndex];
 
-	//  writeFrame¿¡ ÀÌ¹ø ÇÁ·¹ÀÓ inputs ¹è¿­ ÀúÀå
-	writeFrame.keys = writeKeys;
+	writeSlot.keys = writeKeys;
 
 	{
 		_uint clearValue[4] = { 1,1,1,1 };
-		context->ClearUnorderedAccessViewUint(writeFrame.visibleUav, clearValue);
+		context->ClearUnorderedAccessViewUint(writeSlot.visibleUav, clearValue);
 	}
 
-	/*----------DEBUG-------------------------*/
+#ifdef _USING_GUI
 	m_stats.tested = (_uint)inputs.size();
 	m_stats.notTested = m_stats.frustumIn - m_stats.tested;
-	/*-----------------------------------------*/
+#endif
 
-
-	/*ÄÄÇ»Æ® ¼ÎÀÌ´õ¿¡ ÀÌ¹ø ÇÁ·¹ÀÓ °á°ú Ãâ·Â*/
+	// dispatch
 	m_pOcclusionShader->Bind(context);
 	m_pOcclusionShader->SetSRV(context, 0, m_pHiZSrv);
 	m_pOcclusionShader->SetSRV(context, 1, m_inputSrv);
-	m_pOcclusionShader->SetUAV(context, 0, writeFrame.visibleUav);
+	m_pOcclusionShader->SetUAV(context, 0, writeSlot.visibleUav);
 
 	CB_OcclusionData cbData = {};
 	cbData.viewportSize = { viewportW, viewportH };
 	cbData.mipCount = m_mipCount;
 	cbData.epsilon = 3e-3;
-
 	cbData.inputCount = (_uint)inputs.size();
 
 	Update_CBuffer(context, m_pOcculsionBuffer, &cbData, sizeof(cbData));
@@ -406,54 +407,32 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 		context->CSSetUnorderedAccessViews(0, 1, nullUavs, nullptr);
 	}
 
-	//ÀÌ¹ø ÇÁ·¹ÀÓ °á°ú ÀÐ¾îµéÀÌ±â ½ºÅ×ÀÌÂ¡¿¡ ÀÐ¾îµéÀÌ±â//
-	context->CopyResource(writeFrame.visibleStaging, writeFrame.visibleBuffer);
-	context->End(writeFrame.copyDoneQuery); /*ÀÏ´Ü ¸¶Ä¿ Âï°í ÀÌµû°¡ È®ÀÎ*/
-	writeFrame.hasIssued = true;
+	// readback issue
+	context->CopyResource(writeSlot.visibleStaging, writeSlot.visibleBuffer);
+	context->End(writeSlot.copyDoneQuery);
 
-	// ---- read frame (2ÇÁ·¹ÀÓ Àü) ----
-	_uint readFrameIndex = (m_frameCursor + kFrameBuffered - readLatency) % kFrameBuffered;
-	OcclusionReadbackFrame& readFrame = m_readbackFrames[readFrameIndex];
+	writeSlot.hasIssued = true;
+	writeSlot.issuedFrame = m_frameCounter;
 
-	if (!readFrame.hasIssued) {// ¾ÆÁ÷ ÀÌ ½½·ÔÀº GPU ÀÛ¾÷ ¹ßÇàµÈ Àû ¾øÀ½
-		for (auto& kv : currentCandidateMap) result.push_back(*kv.second);
-		++m_frameCursor;
-		return result;
+	// ---- IMPORTANT: ï¿½Ï·ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Äµï¿½Ø¼ï¿½ Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ----
+	_bool anyRead = false;
+	for (_uint slotIndex = 0; slotIndex < kFrameBuffered; ++slotIndex)
+	{
+		if (TryReadbackOne(context, m_readbackFrames[slotIndex]))
+			anyRead = true;
 	}
 
-	BOOL isDone = FALSE;
-	HRESULT doneResult = context->GetData(readFrame.copyDoneQuery, &isDone, sizeof(isDone), D3D11_ASYNC_GETDATA_DONOTFLUSH); 
-	/*¾Æ±î ¸¶Ä¿ ÂïÀº°Å µÆ³Ä? */
+#ifdef _USING_GUI
+	m_stats.canRead = anyRead ? 1u : 0u;
+#endif
 
-	const _bool canRead = (doneResult == S_OK) && (isDone == TRUE);
-	/*----------DEBUG-------------------------*/
-	m_stats.canRead = canRead ? 1u : 0u;
-	/*-----------------------------------------*/
-
-	if (canRead) 
+	// Ä³ï¿½Ã°ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½
+	if (m_cachedKeys.empty())
 	{
-		D3D11_MAPPED_SUBRESOURCE mapped = {};
-		HRESULT mapResult = context->Map(readFrame.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
-		if (SUCCEEDED(mapResult))
-		{
-			const _uint* flags = (const _uint*)mapped.pData;
-			const _uint count = (_uint)readFrame.keys.size();
-
-			if (m_cachedVisibleFlags.size() < m_capacity)
-				m_cachedVisibleFlags.resize(m_capacity, 1);
-
-			memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * count);
-			m_cachedKeys = readFrame.keys;
-
-			context->Unmap(readFrame.visibleStaging, 0);
-		}
-	}if (!canRead)
-	{
-		// ÈÄº¸ ÀüºÎ º¸ÀÌ°Ô (Áßº¹ ¹æÁö À§ÇØ result¿¡ ÀÌ¹Ì µé¾î°£ Á¦¿Ü´ë»óÀº ¹«½Ã)
 		for (auto& kv : currentCandidateMap)
 			result.push_back(*kv.second);
 
-		++m_frameCursor;
+		++m_frameCounter;
 
 #ifdef _USING_GUI
 		m_stats.visibleByOcc = (uint32_t)currentCandidateMap.size();
@@ -463,22 +442,24 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 		return result;
 	}
 
-	/*ÀÌ¹ø ÇÁ·¹ÀÓ¿¡ ½ÇÁ¦·Î Ã³¸®ÇÑ ¾Öµé ±â·Ï*/
+	// ---- apply cached results (hysteresis) ----
 	unordered_set<OcclusionKey, OcclusionKeyHash, OcclusionKeyEq> touched;
 	touched.reserve(m_cachedKeys.size() * 2);
 
-	const _uint cachedCount = (_uint)m_cachedKeys.size(); /*ÀüÇÁ·¹ÀÓ¿¡ Ã³¸®Çß´Ù°í ÆÇ´ÜµÈ ¾Öµé*/
 	_uint visibleCount = 0;
 	_uint occludedCount = 0;
 
+	const _uint cachedCount = (_uint)m_cachedKeys.size();
 	for (_uint cachedIndex = 0; cachedIndex < cachedCount; ++cachedIndex)
 	{
 		const OcclusionKey& key = m_cachedKeys[cachedIndex];
+
 		auto packetIter = currentCandidateMap.find(key);
 		if (packetIter == currentCandidateMap.end())
 			continue;
 
 		const _uint flag = m_cachedVisibleFlags[cachedIndex];
+		const _bool gpuVisible = (flag == 1);
 
 		auto stateIter = m_hysteresis.find(key);
 		if (stateIter == m_hysteresis.end())
@@ -486,43 +467,45 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 
 		OcclusionHysteresisState& state = stateIter->second;
 
-		const _bool gpuVisible = (flag == 1);
+		touched.emplace(key);
 
 		if (gpuVisible)
 		{
 			state.hiddenStreak = 0;
-			result.push_back(*packetIter->second);
+			if (state.visibleStreak < 255) ++state.visibleStreak;
+
+			if (state.isHidden && state.visibleStreak >= showAfter)
+				state.isHidden = false;
+
 			++visibleCount;
-			touched.emplace(key);
 		}
 		else
 		{
+			state.visibleStreak = 0;
 			if (state.hiddenStreak < 255) ++state.hiddenStreak;
 
-			if (state.hiddenStreak <3)   // 3¹ø °¡·ÁÁü ÆÇÁ¤ÇÏ±â
-				result.push_back(*packetIter->second);
+			if (!state.isHidden && state.hiddenStreak >= hideAfter)
+				state.isHidden = true;
 
 			++occludedCount;
-		}    
+		}
+
+		if (!state.isHidden)
+			result.push_back(*packetIter->second);
 	}
 
-	/*----------DEBUG-------------------------*/
-	m_stats.visibleByOcc = visibleCount;
-	m_stats.culledByOcc = occludedCount;
-	/*-----------------------------------------*/
-
+	// ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Ä³ï¿½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½Öµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì°ï¿½ ï¿½Ö±ï¿½
 	for (const OcclusionKey& key : writeKeys)
 	{
 		if (touched.find(key) != touched.end())
-			continue; /*ÀÌ¹Ì Ä³½ÌµÈ Ä£±¸ °Ç³Ê ¶Ù±â*/
+			continue;
 
 		auto packetIter = currentCandidateMap.find(key);
 		if (packetIter != currentCandidateMap.end())
 			result.push_back(*packetIter->second);
 	}
 
-	++m_frameCursor;
-
+	// ï¿½Äºï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ Å°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½×¸ï¿½ï¿½Ã½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	for (auto it = m_hysteresis.begin(); it != m_hysteresis.end(); )
 	{
 		if (currentCandidateMap.find(it->first) == currentCandidateMap.end())
@@ -531,14 +514,20 @@ vector<OPAQUE_PACKET> CHiZ_Culling::OcculsionCulling(const vector<OPAQUE_PACKET>
 			++it;
 	}
 
-	/*----------DEBUG-------------------------*/
+	++m_frameCounter;
+
+#ifdef _USING_GUI
+	m_stats.visibleByOcc = visibleCount;
+	m_stats.culledByOcc = occludedCount;
 	m_stats.outResult = (_uint)result.size();
-	/*-----------------------------------------*/
+#endif
+
 	return result;
 }
 
 
-/*ÆÐÅ¶ ÇÏ³ª¸¦ ¿ÀÅ¬·çÁ¯À¸·Î º¯È¯ ½ÃÄÑÁÖ´Â ÇÔ¼ö*/
+
+/*ï¿½ï¿½Å¶ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½ï¿½Å¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ô¼ï¿½*/
 _bool CHiZ_Culling::BuildOcclusionInput(
 	const MINMAX_BOX& localAabbMinMax,
 	_fmatrix worldMatrix,
@@ -565,25 +554,23 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 		(localAabbMinMax.vMax.z - localAabbMinMax.vMin.z) * 0.5f
 	};
 
-	/*ÀÏ´Ü Æ¯ÀÌ »çÀÌÁî °Å¸£±â*/
 	_float maxAxis = max(size.x, max(size.y, size.z));
 	_float minAxis = min(size.x, min(size.y, size.z));
 
-	_bool flatRisk = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.05f); // ÆòÆòÇÑ °Í(Áö¸é/º®/°£ÆÇ/¿ïÅ¸¸®·ù)
-	_bool hugeRisk = (maxAxis > 225.0f); // ¾À ½ºÄÉÀÏ¿¡ ¸Â°Ô Æ©´×(¿ì¼± 25·Î ½ÃÀÛ)
-	_bool thin = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.03f);
-
+	// --- flagsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ "ï¿½Ù·ï¿½ Å»ï¿½ï¿½"ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½ ---
 	_uint flags = 0;
+	{
+		const _bool flatRisk = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.05f);
+		const _bool hugeRisk = (maxAxis > 225.0f);
+		const _bool thinRisk = (maxAxis > 0.02f) && ((minAxis / maxAxis) < 0.03f);
 
-	if (flatRisk || hugeRisk || thin) {
-		flags |= OCCL_FLAG_RISK_FLAT_OR_HUGE;
-		return false;
+		if (flatRisk || hugeRisk || thinRisk)
+			flags |= OCCL_FLAG_RISK_FLAT_OR_HUGE;
+
+		// ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+		if (extents.y < 0.6f && maxAxis > 0.5f)
+			flags |= OCCL_FLAG_RISK_GROUNDCONTACT;
 	}
-
-	//  Áö¸é Á¢ÃË ÃßÁ¤: 
-	if (extents.y < 0.6f && maxAxis > 0.5f) 
-		flags |= OCCL_FLAG_RISK_GROUNDCONTACT;
-
 
 	BoundingBox localAabb(center, extents);
 	BoundingBox worldAabb;
@@ -601,32 +588,31 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	_float maxX = 0.0f;
 	_float maxY = 0.0f;
 
-	_float objMinDepth01 = FLT_MAX;
+	_float objMinDepth01 = 1.0f;  // ï¿½Ê±â°ªï¿½ï¿½ 1ï¿½ï¿½ (ï¿½Ö¸ï¿½)
 	_bool anyValid = false;
+	_uint validCount = 0;
 
 	const _float nearMargin = 1e-5f;
 	const _float clipMargin = 1e-6f;
 
 	for (int cornerIndex = 0; cornerIndex < 8; ++cornerIndex)
 	{
-		/*ÄÚ³Ê µ¹¸é¼­ ½ºÅ©¸° ½ºÆäÀÌ½º·Î*/
 		const _vector worldPos = XMLoadFloat3(&corners[cornerIndex]);
+
+		// viewZ Ã¼Å© (ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ú´ï¿½ ï¿½ï¿½ï¿½ï¿½)
 		const _vector viewPos = XMVector3TransformCoord(worldPos, viewMatrix);
 		const _float viewZ = XMVectorGetZ(viewPos);
 		if (viewZ <= nearMargin)
-			return false;
+			continue; // << ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ return false ï¿½ï¿½ï¿½Âµï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ "ï¿½Ú³ï¿½ ï¿½Ï³ï¿½"ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 
 		const _float depth01 = Clamp01(viewZ / zFar);
+		objMinDepth01 = min(objMinDepth01, depth01);
 
-		if (depth01 < objMinDepth01)
-			objMinDepth01 = depth01;
-
-		// ½ºÅ©¸° ÁÂÇ¥ °è»ê
+		// clip -> ndc
 		const _vector clip = XMVector4Transform(XMVectorSetW(worldPos, 1.0f), viewProjMatrix);
 		const _float clipW = XMVectorGetW(clip);
-
 		if (clipW <= clipMargin)
-			return false; 
+			continue;
 
 		const _vector ndc = XMVectorScale(clip, 1.0f / clipW);
 		const _float ndcX = XMVectorGetX(ndc);
@@ -635,32 +621,51 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 		const _float screenX = (ndcX * 0.5f + 0.5f) * (_float)viewportW;
 		const _float screenY = (1.0f - (ndcY * 0.5f + 0.5f)) * (_float)viewportH;
 
-		minX = (screenX < minX) ? screenX : minX;
-		minY = (screenY < minY) ? screenY : minY;
-		maxX = (screenX > maxX) ? screenX : maxX;
-		maxY = (screenY > maxY) ? screenY : maxY;
+		minX = min(minX, screenX);
+		minY = min(minY, screenY);
+		maxX = max(maxX, screenX);
+		maxY = max(maxY, screenY);
 
-		anyValid = true; /*À¯È¿ÇÑ°Ô ÇÏ³ª¶óµµ ÀÖ³ª?*/
+		anyValid = true;
+		++validCount;
 	}
 
-	/*À¯È¿ÇÏÁö ¾ÊÀº Á¡ÀÌ ÇÏ³ª¶óµµ ÀÖ´Ù¸é*/
-	if (!anyValid || objMinDepth01 == FLT_MAX)
+	// ï¿½ï¿½È¿ ï¿½Ú³Ê°ï¿½ ï¿½Ê¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Ä«ï¿½Þ¶ï¿½ ï¿½ï¿½/Å¬ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½) ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¶ï¿½
+	// => ï¿½Ã¸ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+	if (!anyValid || validCount < 2)
 		return false;
 
-	/*µª½º°¡ 0.5 ÀÌ»óÀÌ¶ó¸é*/
-	if (objMinDepth01 > 0.5f)
-		return false;
-
-	//³»¸² ¿Ã¸²
+	// ï¿½ï¿½ï¿½ï¿½/ï¿½Ã¸ï¿½
 	minX = floorf(minX);
 	minY = floorf(minY);
 	maxX = ceilf(maxX);
 	maxY = ceilf(maxY);
 
-	/*ÆØÃ¢*/
-	const _float inflate = 2.0f;
-	minX -= inflate;			minY -= inflate;
-	maxX += inflate;		maxY += inflate;
+	_float rectW = maxX - minX;
+	_float rectH = maxY - minY;
+	if (rectW < 1.0f || rectH < 1.0f)
+		return false;
+
+	const float areaPx = rectW * rectH;
+
+	if (areaPx <= 4.0f)
+		return false;
+
+	float inflate = 2.0f;
+
+	const float thinPx = min(rectW, rectH);
+	if (thinPx <= 4.0f)
+		inflate = 4.0f;
+
+	const float screenCover = areaPx / (float(viewportW) * float(viewportH));
+	if (screenCover >= 0.50f)
+		return false;
+	if (screenCover >= 0.25f)
+		flags |= OCCL_FLAG_RISK_FLAT_OR_HUGE; // "Å« È­ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½"ï¿½ï¿½ ï¿½ï¿½ï¿½è±º ï¿½ï¿½ï¿½
+
+	// inflate ï¿½ï¿½ï¿½ï¿½
+	minX -= inflate; minY -= inflate;
+	maxX += inflate; maxY += inflate;
 
 	if (minX < 0.0f) minX = 0.0f;
 	if (minY < 0.0f) minY = 0.0f;
@@ -670,78 +675,77 @@ _bool CHiZ_Culling::BuildOcclusionInput(
 	if (maxX <= minX || maxY <= minY)
 		return false;
 
-	const _float rectW = maxX - minX;
-	const _float rectH = maxY - minY;
-	if (rectW < 1.0f || rectH < 1.0f) return false;
-
-
 	outInput.minX = (_uint)minX;
 	outInput.minY = (_uint)minY;
 	outInput.maxX = (_uint)maxX;
 	outInput.maxY = (_uint)maxY;
+
+	// objMinDepth01ï¿½ï¿½ 1.0ï¿½ï¿½ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×´ï¿½ï¿½ OK
 	outInput.objMinDepth01 = objMinDepth01;
+
 	outInput.indexInList = indexInList;
-	outInput.padding = flags; 
+	outInput.padding = flags;
 
 	return true;
 }
 
-/*¹ø ÇÁ·¹ÀÓ¿¡ ÇÊ¿äÇÑ ¿ÀºêÁ§Æ® °³¼ö¸¦ ¹Þ¾Æ¼­, ±×¸¸Å­ Ã³¸® °¡´ÉÇÑ ¹öÆÛ¸¦ ÀçÇÒ´ç*/
+
+/*ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ó¿ï¿½ ï¿½Ê¿ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ¾Æ¼ï¿½, ï¿½×¸ï¿½Å­ Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½Ò´ï¿½*/
 void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount)
 {
-	/*ÀÌ¹ø ¿ÀºêÁ§Æ® ¿äÃ»*/
-	/*¿äÃ» °³¼ö°¡ 0ÀÌ¸é ¾øÀ½*/
-	if (requiredCount == 0)
-		return;
+	if (requiredCount == 0) return;
+
 	const _bool hasInputResources = (m_inputBuffer && m_inputSrv);
 	const _bool hasAllFrameResources =
 		(m_readbackFrames[0].visibleBuffer && m_readbackFrames[0].visibleUav && m_readbackFrames[0].visibleStaging);
 
-	if (hasAllFrameResources && hasInputResources && m_capacity >= requiredCount)/*ÇöÀç ¿ë·®ÀÌ ÃæºÐÇÏ¸é °µÃá*/
+	if (hasAllFrameResources && hasInputResources && m_capacity >= requiredCount)
 		return;
 
 	_uint newCapacity = (m_capacity > 0) ? m_capacity : 256;
 	while (newCapacity < requiredCount) newCapacity *= 2;
 
-	/*±âÁ¸ ÀÚ¿ø ÇØÁ¦*/
 	Safe_Release(m_inputSrv);
 	Safe_Release(m_inputBuffer);
-	// ÇÁ·¹ÀÓº° visible°ü·ÃÀº ÀüºÎ ´Ù½Ã ¸¸µé±â
+
 	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
 	{
 		Safe_Release(m_readbackFrames[frameIndex].visibleUav);
 		Safe_Release(m_readbackFrames[frameIndex].visibleBuffer);
 		Safe_Release(m_readbackFrames[frameIndex].visibleStaging);
+
+		m_readbackFrames[frameIndex].hasIssued = false;
+		m_readbackFrames[frameIndex].issuedFrame = 0;
+		m_readbackFrames[frameIndex].keys.clear();
 	}
 
-	/*ÀÎÇ²(±¸Á¶Ã¼¸¦ ³ÖÀ¸·Á´Â) ¿ëµµÀÇ SRV¸¦ ¸¸µå´Â °úÁ¤ ->¼ÎÀÌ´õ´Â ÀÌ°ÉÀ» ÀÐ°í*/
-	{	/*¿ÀºêÁ§Æ®ÀÇ ÀÎÇ² µ¥ÀÌÅÍ¸¦ ½á¼­ ¼ÎÀÌ´õ·Î ´øÁö´Â ¿ë·®À» ¸¸µé¾îÁÜ*/
+	// input structured buffer
+	{
 		D3D11_BUFFER_DESC bufferDesc = {};
 		bufferDesc.ByteWidth = sizeof(OcclusionInput) * newCapacity;
 		bufferDesc.Usage = D3D11_USAGE_DEFAULT;
 		bufferDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 		bufferDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 		bufferDesc.StructureByteStride = sizeof(OcclusionInput);
+
 		HRESULT result = pDevice->CreateBuffer(&bufferDesc, nullptr, &m_inputBuffer);
-		if (FAILED(result))
-			return;
+		if (FAILED(result)) return;
 	}
 
-	{	/*¿ÀºêÁ§Æ®ÀÇ ¹öÆÛ ÅëÇØ¼­ Áö±Ý srv¸¸µé¾îÁÜ*/
+	{
 		D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.ViewDimension = D3D11_SRV_DIMENSION_BUFFER;
 		srvDesc.Format = DXGI_FORMAT_UNKNOWN;
 		srvDesc.Buffer.FirstElement = 0;
-		srvDesc.Buffer.NumElements = newCapacity; /*¿ë·® ¸¸Å­ ³ÖÀ»°ÅÀÓ*/
+		srvDesc.Buffer.NumElements = newCapacity;
+
 		HRESULT result = pDevice->CreateShaderResourceView(m_inputBuffer, &srvDesc, &m_inputSrv);
-		if (FAILED(result))
-			return;
+		if (FAILED(result)) return;
 	}
 
-	/*ÀÌÁ¦ ÇÁ·¹ÀÓº° ºñÁöºí ¸®¼Ò½º ¸¸µå¾îÁÜ*/
+	// per-frame visible buffers
 	for (_uint frameIndex = 0; frameIndex < kFrameBuffered; ++frameIndex)
 	{
-		// UAV ¸¸µé ¹öÆÛ
 		{
 			D3D11_BUFFER_DESC visibleDesc = {};
 			visibleDesc.ByteWidth = sizeof(_uint) * newCapacity;
@@ -754,7 +758,6 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			if (FAILED(visibleResult)) return;
 		}
 
-		// UAV ÀÔ·ÂÇÒ °Å
 		{
 			D3D11_UNORDERED_ACCESS_VIEW_DESC visibleUavDesc = {};
 			visibleUavDesc.ViewDimension = D3D11_UAV_DIMENSION_BUFFER;
@@ -767,7 +770,6 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			if (FAILED(visibleUavResult)) return;
 		}
 
-		// staging
 		{
 			D3D11_BUFFER_DESC stagingDesc = {};
 			stagingDesc.ByteWidth = sizeof(_uint) * newCapacity;
@@ -776,14 +778,19 @@ void CHiZ_Culling::EnsureOcclusionResources(ID3D11Device* pDevice, _uint require
 			stagingDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
 			stagingDesc.MiscFlags = D3D11_RESOURCE_MISC_BUFFER_STRUCTURED;
 			stagingDesc.StructureByteStride = sizeof(_uint);
+
 			HRESULT stagingResult = pDevice->CreateBuffer(&stagingDesc, nullptr, &m_readbackFrames[frameIndex].visibleStaging);
 			if (FAILED(stagingResult)) return;
 		}
 	}
 
-	m_cachedVisibleFlags.assign(newCapacity, 1); // ±âº»Àº º¸ÀÎ´Ù Ã³¸®
+	m_cachedVisibleFlags.assign(newCapacity, 1);
+	m_cachedKeys.clear();
+	m_cachedFrame = 0;
+
 	m_capacity = newCapacity;
 }
+
 
 _bool CHiZ_Culling::isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery)
 {
@@ -794,37 +801,45 @@ _bool CHiZ_Culling::isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* 
 	return (hr == S_OK) && (done == TRUE);
 }
 
-void CHiZ_Culling::TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity)
+_bool CHiZ_Culling::TryReadbackOne(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& slot)
 {
-	if (!readSlot.hasIssued)
-		return;
+	if (!slot.hasIssued)
+		return false;
 
-	if (!isQueryComplete(pContext, readSlot.copyDoneQuery))
-		return; // ¾ÆÁ÷ ÁØºñ ¾È µÊ -> Ä³½Ã À¯Áö
+	BOOL done = FALSE;
+	HRESULT hr = pContext->GetData(slot.copyDoneQuery, &done, sizeof(done), D3D11_ASYNC_GETDATA_DONOTFLUSH);
+	if (!(hr == S_OK && done == TRUE))
+		return false;
 
 	D3D11_MAPPED_SUBRESOURCE mapped = {};
-	HRESULT hr = pContext->Map(readSlot.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
-	if (SUCCEEDED(hr))
+	HRESULT mapHr = pContext->Map(slot.visibleStaging, 0, D3D11_MAP_READ, 0, &mapped);
+	if (FAILED(mapHr))
+		return false;
+
+	const _uint* flags = (const _uint*)mapped.pData;
+	const _uint count = (_uint)slot.keys.size();
+
+	if (m_cachedVisibleFlags.size() < m_capacity)
+		m_cachedVisibleFlags.resize(m_capacity, 1);
+
+	// Ä³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (slot.issuedFrameï¿½ï¿½ ï¿½ï¿½ ï¿½Ö½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½)
+	if (slot.issuedFrame >= m_cachedFrame)
 	{
-		const _uint* flags = (const _uint*)mapped.pData;
-		const _uint count = (_uint)readSlot.keys.size();
-
-		if (m_cachedVisibleFlags.size() < capacity)
-			m_cachedVisibleFlags.resize(capacity, 1);
-
-		// flags[0..count) º¹»ç
 		memcpy(m_cachedVisibleFlags.data(), flags, sizeof(_uint) * count);
-
-		// Å° ¼ø¼­µµ È®Á¤ °»½Å
-		m_cachedKeys = readSlot.keys;
-
-		pContext->Unmap(readSlot.visibleStaging, 0);
+		m_cachedKeys = slot.keys;
+		m_cachedFrame = slot.issuedFrame;
 	}
 
-	// ½½·Ô ¼Òºñ ¿Ï·á ¡æ ÀÌÁ¦ Àç»ç¿ë °¡´É
-	readSlot.hasIssued = false;
-	readSlot.keys.clear();
+	pContext->Unmap(slot.visibleStaging, 0);
+
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Òºï¿½ ï¿½Ï·ï¿½
+	slot.hasIssued = false;
+	slot.keys.clear();
+	slot.issuedFrame = 0;
+
+	return true;
 }
+
 
 CHiZ_Culling* CHiZ_Culling::Create()
 {

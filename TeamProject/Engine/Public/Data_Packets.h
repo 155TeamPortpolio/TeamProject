@@ -24,6 +24,7 @@ namespace Engine {
 	}SHADOWKEY;
 
 	typedef struct DrawBasePacket {
+		_uint ObjID = {};
 		_float4x4* pWorldMatrix;
 		_uint TransformIndex = {};
 	}BASE_PACKET;
