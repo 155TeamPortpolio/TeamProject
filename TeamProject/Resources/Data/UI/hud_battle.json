@@ -319,7 +319,7 @@
                             "textureTag": "IconRoleGeneral10.png"
                         },
                         {
-                            "instanceName": "hpBg1",
+                            "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -353,7 +353,7 @@
                             "textureTag": "RoleHPBg01.png"
                         },
                         {
-                            "instanceName": "hpFillDelay1",
+                            "instanceName": "hpBack1",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -392,7 +392,7 @@
                             }
                         },
                         {
-                            "instanceName": "hpFill1",
+                            "instanceName": "hpFront1",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -431,7 +431,7 @@
                             }
                         },
                         {
-                            "instanceName": "manaBg1",
+                            "instanceName": "ultimateBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -465,7 +465,7 @@
                             "textureTag": "RoleHPFill03.png"
                         },
                         {
-                            "instanceName": "manaFill1",
+                            "instanceName": "ultimate1",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -572,7 +572,7 @@
                             "textureTag": "IconRoleGeneral13.png"
                         },
                         {
-                            "instanceName": "hpBg2",
+                            "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -606,7 +606,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "hpFillDelay2",
+                            "instanceName": "hpBack2",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -645,7 +645,7 @@
                             }
                         },
                         {
-                            "instanceName": "hpFill2",
+                            "instanceName": "hpFront2",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -684,7 +684,7 @@
                             }
                         },
                         {
-                            "instanceName": "ultimateBg2",
+                            "instanceName": "ultimateBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -718,7 +718,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "ultimateFill2",
+                            "instanceName": "ultimate2",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -757,7 +757,7 @@
                             }
                         },
                         {
-                            "instanceName": "manaBg2",
+                            "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -791,7 +791,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "manaFill2",
+                            "instanceName": "special2",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -837,7 +837,7 @@
                     "transform": {
                         "anchor": 10,
                         "anchorOffset": [
-                            -154.0,
+                            -162.0,
                             -42.0
                         ],
                         "size": [
@@ -898,7 +898,7 @@
                             "textureTag": "IconRoleGeneral29.png"
                         },
                         {
-                            "instanceName": "hpBg3",
+                            "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -932,7 +932,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "hpFillDelay3",
+                            "instanceName": "hpBack3",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -971,7 +971,7 @@
                             }
                         },
                         {
-                            "instanceName": "hpFill3",
+                            "instanceName": "hpFront3",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -1010,7 +1010,7 @@
                             }
                         },
                         {
-                            "instanceName": "ultimateBg3",
+                            "instanceName": "ultimateBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -1044,7 +1044,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "ultimateFill3",
+                            "instanceName": "ultimate3",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -1083,7 +1083,7 @@
                             }
                         },
                         {
-                            "instanceName": "manaBg3",
+                            "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -1117,7 +1117,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
-                            "instanceName": "manaFill3",
+                            "instanceName": "special3",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -1295,7 +1295,7 @@
                     "textureTag": "BossHPBg.png"
                 },
                 {
-                    "instanceName": "bossHpFillDelay",
+                    "instanceName": "bossHpBack",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -1334,7 +1334,7 @@
                     }
                 },
                 {
-                    "instanceName": "bossHpFill",
+                    "instanceName": "bossHpFront",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -1373,7 +1373,7 @@
                     }
                 },
                 {
-                    "instanceName": "bossManaBg",
+                    "instanceName": "bossGroggyBg",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -1407,7 +1407,7 @@
                     "textureTag": "BossFillBg.png"
                 },
                 {
-                    "instanceName": "bossManaFill",
+                    "instanceName": "bossGroggy",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [

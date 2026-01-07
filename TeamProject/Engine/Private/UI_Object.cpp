@@ -523,6 +523,19 @@ UI_HANDLE CUI_Object::Get_Handle()
     return hObj;
 }
 
+UI_HANDLE CUI_Object::Get_DescendantHandle(const string& instanceName)
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer)
+        return UI_HANDLE();
+
+    auto pDescendant = dynamic_cast<CUI_Object*>(pContainer->Find_Descendant(instanceName));
+    if (!pDescendant)
+        return UI_HANDLE();
+
+    return pDescendant->Get_Handle();
+}
+
 _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)
 {
     _float2 size    = Get_PxSize(); 
