@@ -166,51 +166,50 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
-	//юс╫ц
 	CBattleSystem::GetInstance()->Update();
 
-	if (KEY->Key_Down('1'))
+	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = OBJ->Request_Object(m_freeCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+		auto obj = ObjectManger()->Request_Object(m_freeCamHandle);
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('2'))
+	if (InputDevice()->Key_Down(VK_F2))
 	{
-		auto obj = OBJ->Request_Object(m_orbitCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+		auto obj = ObjectManger()->Request_Object(m_orbitCamHandle);
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('3'))
+	if (InputDevice()->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
-	if (KEY->Key_Tap('4'))
-	{
-		//CCT_DESC sacrificeCCT;
-		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		//sacrificeCCT.bAutoFit = false;
-		//sacrificeCCT.fHeight = 1.28f;
-		//sacrificeCCT.fDensity = 0.00001f;
-		//sacrificeCCT.fRadius = 0.2f;
-		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-		//
-		//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-		//	.CharacterController(sacrificeCCT)
-		//	.Build("Sacrifice");
-		//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
+	//if (KEY->Key_Tap('4'))
+	//{
+	//	//CCT_DESC sacrificeCCT;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+	//	//sacrificeCCT.bAutoFit = false;
+	//	//sacrificeCCT.fHeight = 1.28f;
+	//	//sacrificeCCT.fDensity = 0.00001f;
+	//	//sacrificeCCT.fRadius = 0.2f;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+	//	//
+	//	//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+	//	//	.CharacterController(sacrificeCCT)
+	//	//	.Build("Sacrifice");
+	//	//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 
-	if (KEY->Key_Tap('5'))
-	{
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("core.json")
-			.Build("Core");
+	//if (KEY->Key_Tap('5'))
+	//{
+	//	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//		.Asset("core.json")
+	//		.Build("Core");
 
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	}
+	//	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//}
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
@@ -289,11 +288,12 @@ void CTestLevel::Ready_Camera()
 		.Camera(aspect)
 		.CharacterController(desc)
 		.Build("OrbitCam");
+
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
-	OBJ->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
-	OBJ->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	OBJ->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
 	m_freeCamHandle  = freeCam->Get_Handle();
 	m_orbitCamHandle = orbitCam->Get_Handle();
@@ -305,7 +305,7 @@ void CTestLevel::Ready_Camera()
 
 	CamLoader::Load();
 
-	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
+	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
 	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	//GUI->Register_Panel(camPanel);

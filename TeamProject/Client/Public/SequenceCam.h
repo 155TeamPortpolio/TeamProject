@@ -22,16 +22,15 @@ public:
 
 public:
     void    Stop(_bool resetTime = true) { m_seqPlayer->Stop(resetTime); }
-    _bool   IsPlaying() const { return m_seqPlayer->IsPlaying(); }
+    _bool   IsPlaying() const            { return m_seqPlayer->IsPlaying(); }
 
 private:
     CCamSequencePlayer* m_seqPlayer{};
     CamSequenceDesc     m_seqDesc{};
-    filesystem::path    m_LastPath{};
 
 public:
-    static CSequenceCam* Create();
-    CGameObject* Clone(INIT_DESC* pArg) override;
+    static  CSequenceCam* Create();
+    virtual CGameObject*  Clone(INIT_DESC* pArg) override;
     virtual void Free() override { __super::Free(); }
 };
 

@@ -5,6 +5,8 @@
 #include "Material.h"
 #include "Animator3D.h"
 
+#include "ObjectContainer.h"
+
 namespace
 {
 	struct AvatarAssetDesc
@@ -18,14 +20,14 @@ namespace
 		static const AvatarAssetDesc table[] =
 		{
 			{"Unagi",   "Avatar_Female_Size02_Unagi"          },
-			{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
-			{"Corin",   "Avatar_Female_Size01_Corin"          },
-			{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
-			{"Alice",   "Avatar_Female_Size02_Alice"          },
-			{"Astra",   "Avatar_Female_Size03_Astra"          },
-			{"Burnice", "Avatar_Female_Size02_Burnice"        },
-			{"Yixuan",  "Avatar_Female_Size03_YiXuan"         },
-			{"Yuzuha",  "Avatar_Female_Size02_Yuzuha"         },
+			//{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
+			//{"Corin",   "Avatar_Female_Size01_Corin"          },
+			//{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
+			//{"Alice",   "Avatar_Female_Size02_Alice"          },
+			//{"Astra",   "Avatar_Female_Size03_Astra"          },
+			//{"Burnice", "Avatar_Female_Size02_Burnice"        },
+			//{"Yixuan",  "Avatar_Female_Size03_YiXuan"         },
+			//{"Yuzuha",  "Avatar_Female_Size02_Yuzuha"         },
 		};
 		return table[(int)v];
 	};
@@ -33,7 +35,7 @@ namespace
 	fs::path GetPlayerBaseDir(Avatar v)
 	{
 		const auto& d = GetAvatarAssetDesc(v);
-		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder / "Anim";
+		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder;
 	}
 }
 
@@ -42,7 +44,9 @@ HRESULT CUnagi::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
+	//Add_Component<CCharacterController>();
 	return S_OK;
 }
 
@@ -67,14 +71,14 @@ void CUnagi::ApplyAvatar(Avatar avatar)
 	m_avatar = avatar;
 
 	const string levelName = "First_Level";
-	const auto& desc = GetAvatarAssetDesc(avatar);
-	const string fileName = desc.fileName;
+	const auto&  desc      = GetAvatarAssetDesc(avatar);
+	const string fileName  = desc.fileName;
 
 	const fs::path baseDir = GetPlayerBaseDir(avatar);
 
-	const string modelKey = fileName + ".model";
-	const string matKey   = fileName + ".mat";
-	const string jsonKey  = fileName + "_Meta.json";
+	const string modelKey  = fileName + ".model";
+	const string matKey    = fileName + ".mat";
+	const string jsonKey   = fileName + "_Meta.json";
 
 	const string modelPath = (baseDir / modelKey).string();
 	const string matPath   = (baseDir / matKey).string();

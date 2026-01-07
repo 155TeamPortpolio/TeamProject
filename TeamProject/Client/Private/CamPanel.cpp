@@ -70,13 +70,13 @@ void CCamPanel::RefreshCandidates()
         prevSelected = m_candidates[m_selectedIndex].handle;
 
     OBJECT_HANDLE mainSelected{};
-    auto curMainCam = CAM->Get_BaseCam();
+    auto curMainCam = CameraManager()->Get_BaseCam();
     if (curMainCam)
         mainSelected = curMainCam->Get_Owner()->Get_Handle();
 
     m_candidates.clear();
 
-    auto layer = OBJ->Get_Layer({m_levelTag, m_layerTag});
+    auto layer = ObjectManger()->Get_Layer({m_levelTag, m_layerTag});
     if (!layer)
     {
         m_selectedIndex = 0;
@@ -180,11 +180,11 @@ void CCamPanel::DrawMainCamSelector()
     if (m_selectedIndex < 0) m_selectedIndex = 0;
     if (m_selectedIndex >= (int)m_candidates.size()) m_selectedIndex = (int)m_candidates.size() - 1;
 
-    auto curMain = CAM->Get_BaseCam();
+    auto curMain = CameraManager()->Get_BaseCam();
 
     const auto& selected = m_candidates[m_selectedIndex];
 
-    auto selectedObj = OBJ->Request_Object(selected.handle);
+    auto selectedObj = ObjectManger()->Request_Object(selected.handle);
     auto selectedCam = selectedObj ? selectedObj->Get_Component<CCamera>() : nullptr;
 
     const bool selectedIsWip = selectedObj && selectedObj->Get_InstanceName() == "SequenceCam";
@@ -200,7 +200,7 @@ void CCamPanel::DrawMainCamSelector()
         {
             const auto& c = m_candidates[i];
 
-            auto obj = OBJ->Request_Object(c.handle);
+            auto obj = ObjectManger()->Request_Object(c.handle);
             auto cam = obj ? obj->Get_Component<CCamera>() : nullptr;
 
             const bool isWip = obj && obj->Get_InstanceName() == "SequenceCam";
@@ -234,9 +234,9 @@ void CCamPanel::DrawMainCamSelector()
             {
                 m_selectedIndex = i;
 
-                auto selObj = OBJ->Request_Object(m_candidates[m_selectedIndex].handle);
+                auto selObj = ObjectManger()->Request_Object(m_candidates[m_selectedIndex].handle);
                 auto selCam = selObj ? selObj->Get_Component<CCamera>() : nullptr;
-                if (selCam) CAM->Set_MainCam(selCam, 0.5f);
+                if (selCam) CameraManager()->Set_MainCam(selCam, 0.5f);
             }
 
             if (isSelected) ImGui::SetItemDefaultFocus();
