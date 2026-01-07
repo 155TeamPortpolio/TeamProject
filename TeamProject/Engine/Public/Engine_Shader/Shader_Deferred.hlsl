@@ -337,7 +337,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
-    return float4(finalColor, 1.f);
+    return float4(finalColor, scene.a);
 }
 
 
