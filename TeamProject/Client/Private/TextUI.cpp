@@ -25,7 +25,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "canvas.dds");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "canvas.png");
 #endif
 
     return S_OK;
