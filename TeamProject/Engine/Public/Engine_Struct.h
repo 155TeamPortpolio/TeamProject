@@ -543,6 +543,7 @@ namespace Engine
 		_bool KeepResource = { false };
 		void Reset() { nextLevelKey.clear(); useLoading = false; KeepResource = false; }
 	}LEVEL_TRANS_DESC;
+
 }
 
 
