@@ -251,7 +251,7 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.17f)
+	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.18f)
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
