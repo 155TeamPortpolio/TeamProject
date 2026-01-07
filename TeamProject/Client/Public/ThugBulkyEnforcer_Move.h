@@ -71,42 +71,6 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-class CThugBulkyEnforcer_Run_Start : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run_Start* Create() { return new CThugBulkyEnforcer_Run_Start(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CThugBulkyEnforcer_Run : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run* Create() { return new CThugBulkyEnforcer_Run(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CThugBulkyEnforcer_Run_End : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run_End* Create() { return new CThugBulkyEnforcer_Run_End(); }
-	virtual void Free() override { __super::Free(); }
-};
-
 // 왼쪽 대각선으로 이동하며 위빙
 class CThugBulkyEnforcer_SideStep_L: public IBaseState<CThugBulkyEnforcer>
 {

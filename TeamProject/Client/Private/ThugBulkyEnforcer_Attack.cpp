@@ -41,7 +41,6 @@ void CThugBulkyEnforcer_Attack::Enter(CThugBulkyEnforcer* pOwner)
 		pOwner->Idle();
 		return;
 	}
-
 	blackboard.isRequestNext = true;
 
 	__super::Enter(pOwner);
@@ -67,6 +66,7 @@ void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
 			blackboard.currentStateTag = nextStateTag;
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
+		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 	}
 	
 	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
@@ -107,7 +107,6 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	{  
 	case 1:
 	{
-		//blackBoard.stateQueue.push_back("AttackSideStep_R");
 		blackBoard.stateQueue.push_back("Attack01");
 	}break;
 	case 2:
@@ -136,6 +135,16 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	{
 		blackBoard.stateQueue.push_back("AttackSideStep_L");
 		blackBoard.stateQueue.push_back("Attack05_02");
+		break;
+	}
+	case 7:
+	{
+		blackBoard.stateQueue.push_back("AttackSideStep_L");
+		break;
+	}
+	case 8:
+	{
+		blackBoard.stateQueue.push_back("AttackSideStep_R");
 		break;
 	}
 	default:

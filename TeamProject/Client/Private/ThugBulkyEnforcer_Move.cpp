@@ -66,9 +66,6 @@ void CThugBulkyEnforcer_Move::Register_States()
 	m_pSubStateMachine->Register_State("Walk_Left", CThugBulkyEnforcer_Walk_Left::Create()); 
 	m_pSubStateMachine->Register_State("Walk_Right", CThugBulkyEnforcer_Walk_Right::Create());
 	m_pSubStateMachine->Register_State("Walk_Back", CThugBulkyEnforcer_Walk_Back::Create());
-	m_pSubStateMachine->Register_State("Run_Start", CThugBulkyEnforcer_Run_Start::Create());
-	m_pSubStateMachine->Register_State("Run", CThugBulkyEnforcer_Run::Create());
-	m_pSubStateMachine->Register_State("Run_End", CThugBulkyEnforcer_Run_End::Create());
 	m_pSubStateMachine->Register_State("SideStep_L", CThugBulkyEnforcer_SideStep_L::Create());
 	m_pSubStateMachine->Register_State("SideStep_R", CThugBulkyEnforcer_SideStep_R::Create());
 	m_pSubStateMachine->Register_State("Evade", CThugBulkyEnforcer_Evade::Create());
@@ -202,51 +199,6 @@ void CThugBulkyEnforcer_Walk_Back::Update(CThugBulkyEnforcer* pOwner, _float dt)
 }
 
 void CThugBulkyEnforcer_Walk_Back::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
-
-/*============================================================================*/
-void CThugBulkyEnforcer_Run_Start::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Run_Start")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_Run_Start::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-}
-
-void CThugBulkyEnforcer_Run_Start::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
-
-/*============================================================================*/
-void CThugBulkyEnforcer_Run::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Run")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_Run::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-}
-
-void CThugBulkyEnforcer_Run::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
-
-/*============================================================================*/
-void CThugBulkyEnforcer_Run_End::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Run_End")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_Run_End::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-}
-
-void CThugBulkyEnforcer_Run_End::Exit(CThugBulkyEnforcer* pOwner)
 {
 }
 

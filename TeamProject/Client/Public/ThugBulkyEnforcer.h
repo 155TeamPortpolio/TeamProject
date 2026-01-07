@@ -28,9 +28,10 @@ public:
     virtual void Free() override;
 
 public:
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
-    CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
-    void                Idle() { m_isIdle = true; }
+    CStateMachine<CThugBulkyEnforcer>*  Get_StateMachine() { return m_pStateMachine; }
+    ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }
+    void                                Idle() { m_isIdle = true; }
+    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed);
 
 private:
     HRESULT Initialize_StateMachine();
@@ -39,6 +40,7 @@ private:
     HRESULT Ready_Rules();
     void Update_States(_float dt);
     void CheckDistanceFromPlayer();
+    void RotateToPlayer(const _float dt);
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
@@ -46,10 +48,10 @@ private:
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
-
-
-    /* For.Test State*/
     _bool               m_isAutoPatternPlay = { true };
+    _bool               m_isLookPlayer = { false };
+    _float3             m_vDirToLookCapture = {};
+    _float              m_fRotateSpeed = {};
 };
 
 NS_END

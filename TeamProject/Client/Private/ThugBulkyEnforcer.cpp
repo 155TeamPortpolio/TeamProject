@@ -17,6 +17,7 @@
 #include "ThugBulkyEnforcer_Born.h"
 #include "ThugBulkyEnforcer_Attack.h"
 #include "ThugBulkyEnforcer_Move.h"
+#include "ThugBulkyEnforcer_Chase.h"
 
 
 
@@ -115,12 +116,12 @@ void CThugBulkyEnforcer::Render_GUI()
 #pragma region State
 	ImGui::SeparatorText("State & BlackBoard");
 	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 8}, true);
-	string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
-	ImGui::Text(TagCurState.c_str());
-	string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
-	ImGui::Text(TagCurChildState.c_str());
-	string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
-	ImGui::Text(TagStateQueueSize.c_str());
+	//string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
+	//string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
+	ImGui::Text("Current ChildState : %s", m_tAttackBlackBoard.currentStateTag.c_str());
+	//string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
+	ImGui::Text("StateQueue Size : %d", (_int)m_tAttackBlackBoard.stateQueue.size());
 
 	// bool 변수 확인용(수정 불가)
 	ImGui::BeginDisabled(true);
@@ -140,23 +141,21 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::EndChild();
 #pragma endregion
 	// =======================================================
-	//ImGui::SeparatorText("For Target Information");
-	//auto pCharacter = GetCharacterOnField();
-	//if (nullptr != pCharacter) {
-	//	ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerTracePlayer", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
-	//
-	//	ImGui::Text("Character Name : %s", pCharacter->TagInstanceName);
-	//	ImGui::Text("Character Pos : %.2f, %.2f, %.2f", pCharacter->vPos.x, pCharacter->vPos.y, pCharacter->vPos.z);
-	//	ImGui::Text("Character CCT Radius : %.2f", pCharacter->fRadius);;
-	//	ImGui::Text("Distance From Character : %.3f", m_tTargetingInfo.fDistance);
-	//	ImGui::Text("Dot with Target : %.2f", m_tTargetingInfo.fDotTarget);
-	//	ImGui::Text("Dir To Target : %.2f, %.2f, %.2f", m_tTargetingInfo.vDirToTarget.x, m_tTargetingInfo.vDirToTarget.y, m_tTargetingInfo.vDirToTarget.z);
-	//	ImGui::BeginDisabled(true);
-	//	ImGui::Checkbox(u8"isDetected (플레이어 감지)", &m_tTargetingInfo.isDetected);
-	//	ImGui::EndDisabled();
-	//
-	//ImGui::EndChild();
-	//}
+	ImGui::SeparatorText("Status");
+	auto pCharacter = GetCharacterOnField();
+	if (nullptr != pCharacter) {
+		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
+		
+		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
+		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
+		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
+
+		ImGui::BeginDisabled(true);
+		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
+		ImGui::EndDisabled();
+	
+	ImGui::EndChild();
+	}
 	Render_GUI_ForTargetInfo();
 	// =======================================================
 	
@@ -190,13 +189,20 @@ void CThugBulkyEnforcer::Render_GUI()
 			m_pStateMachine->Set_Int("AttackPattern", 6);
 			m_pStateMachine->Set_Trigger("Idle_To_Attack");
 		}
-
-
+		if (ImGui::Button(u8"7.왼쪽 위빙")) {
+			m_pStateMachine->Set_Int("AttackPattern", 7);
+			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		}
+		if (ImGui::Button(u8"8.오른쪽 위빙")) {
+			m_pStateMachine->Set_Int("AttackPattern", 8);
+			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		}
 		ImGui::EndChild();
 		ImGui::TreePop();
 	}
-
-
+	if (ImGui::Button("Open StateMachine"))
+		m_pStateMachine->Set_ShowWindow(true);
+	m_pStateMachine->Render_GUI();
 	ImGui::PopID();
 }
 
@@ -233,6 +239,13 @@ void CThugBulkyEnforcer::Free()
 	Safe_Release(m_pStateMachine);
 }
 
+void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
+{
+	m_isLookPlayer = true;
+	m_vDirToLookCapture = vTargetDir;
+	m_fRotateSpeed = fSpeed;
+}
+
 /* For.State Machine */
 HRESULT CThugBulkyEnforcer::Initialize_StateMachine()
 {
@@ -264,6 +277,8 @@ HRESULT CThugBulkyEnforcer::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CThugBulkyEnforcer_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CThugBulkyEnforcer_Attack::Create());
 	m_pStateMachine->Register_State("Move", CThugBulkyEnforcer_Move::Create());
+	m_pStateMachine->Register_State("Chase", CThugBulkyEnforcer_Chase::Create());
+
 
 
 	return S_OK;
@@ -280,6 +295,9 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Move");
 
+	m_pStateMachine->Register_Transition("Idle", "Chase",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Chase");
+
 	return S_OK;
 }
 
@@ -289,7 +307,7 @@ HRESULT CThugBulkyEnforcer::Ready_Rules()
 	m_vIdleTime = { 0.2f, 0.f };
 
 	// Target 감지 범위 (default = 5.f)
-	m_fDetectedRange = 10.f;
+	m_fDetectedRange = 5.f;
 
 	return S_OK;
 }
@@ -305,6 +323,7 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 	}
 
 	CheckDistanceFromPlayer();
+	RotateToPlayer(dt);
 
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
@@ -312,20 +331,55 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 		m_vIdleTime.y += dt;
 
 		if (m_vIdleTime.x <= m_vIdleTime.y) {
-			if (true == m_pStateMachine->Get_Bool("FinishAttack"))
+			if (true == m_pStateMachine->Get_Bool("Chase")) {
+				m_pStateMachine->Set_Bool("FinishAttack", false);
+				m_tAttackBlackBoard = {};
+				m_pStateMachine->Set_Trigger("Idle_To_Chase");
+			}
+			else if (true == m_pStateMachine->Get_Bool("FinishAttack")) {
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
+
+			}
 			else
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 
 			m_vIdleTime.y = 0.f;
 		}
-
-		
 	}
+
 }
 
 void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
 	if (true == m_tTargetingInfo.isDetected)
+		m_pStateMachine->Set_Bool("Chase", false);
+	else
 		m_pStateMachine->Set_Bool("Chase", true);
+
+}
+
+void CThugBulkyEnforcer::RotateToPlayer(const _float dt)
+{
+	if (false == m_isLookPlayer)
+		return;
+
+	_vector vTargetDir = XMLoadFloat3(&m_vDirToLookCapture);
+	_vector	vSelfDir = m_pTransform->Dir(Engine::STATE::LOOK);
+	vTargetDir = XMVector3Normalize(vTargetDir);
+	vSelfDir = XMVector3Normalize(vSelfDir);
+
+	_float fDot = XMVectorGetX(XMVector3Dot(vSelfDir, vTargetDir));
+	fDot = max(-1, min(1.f, fDot));
+	_float fAngle = acosf(fDot);
+
+	_float fCross = XMVectorGetY(XMVector3Cross(vSelfDir, vTargetDir));
+	if (0 > fCross)
+		fAngle = -fAngle;
+
+	if (fDot > 0.99f) {
+		m_isLookPlayer = false;
+		return;
+	}
+
+	m_pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle) * m_fRotateSpeed);
 }
