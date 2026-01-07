@@ -177,6 +177,16 @@
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
+    <ClInclude Include="..\public\JaneDoeState_Attack.h" />
+    <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
+    <ClInclude Include="..\public\JaneDoeState_Dash.h" />
+    <ClInclude Include="..\public\JaneDoeState_Evade.h" />
+    <ClInclude Include="..\public\JaneDoeState_Idle.h" />
+    <ClInclude Include="..\public\JaneDoeState_Move.h" />
+    <ClInclude Include="..\public\JaneDoeState_NormalAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Run.h" />
+    <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\UI_Loading.h" />
     <ClInclude Include="..\Public\LoadingLevel.h" />
     <ClInclude Include="..\Public\UI_Logo.h" />
@@ -254,6 +264,7 @@
     <ClInclude Include="..\public\UIDirector.h" />
     <ClInclude Include="..\public\UILoader.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
+    <ClInclude Include="..\public\JaneDoe.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -318,6 +329,16 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Dash.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Evade.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Idle.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Move.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_NormalAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Run.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_RushAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Walk.cpp" />
     <ClCompile Include="..\Private\UI_Loading.cpp" />
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />
@@ -391,6 +412,7 @@
     <ClCompile Include="..\private\UIDirector.cpp" />
     <ClCompile Include="..\private\UILoader.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
+    <ClCompile Include="..\private\JaneDoe.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>
   <ItemGroup>

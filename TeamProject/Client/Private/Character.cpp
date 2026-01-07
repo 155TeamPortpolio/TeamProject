@@ -167,7 +167,7 @@ void CCharacter::Update_Input(_float dt)
 		right.y = 0.f;
 		look.Normalize();
 		right.Normalize();
-		m_input.direction = right * (float)key.x + look * (float)key.z;
+		m_input.direction = -right * (float)key.x - look * (float)key.z;
 		m_input.direction.Normalize();
 	}
 

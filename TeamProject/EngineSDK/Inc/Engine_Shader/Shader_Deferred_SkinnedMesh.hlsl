@@ -142,7 +142,10 @@ PS_OUT_RESULT PS_BRIGHT(PS_IN In)
   
     float3 vResult = vDiffuse.rgb * emissive;
     
-    Out.vResult = float4(vResult, vDiffuse.a);
+    float alpha = 0.f;
+    if (length(vDiffuse.rgb) > 0.f) alpha = 1.f;
+    
+    Out.vResult = float4(vResult, alpha);
     return Out;
 }
 
@@ -240,7 +243,11 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
   
         float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
     
-        Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+        float alpha = 0.f;
+        if (length(vDiffuse.rgb) > 0.f)
+            alpha = 1.f;
+        
+        Out.vLight = float4(PBR * vNormalDesc.a, alpha);
         Out.vLightInfo = float4(NdotL, specular, shadow, 0.f);
         return Out;
     }
@@ -259,8 +266,12 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     
         faceShadow *= saturate(-FdotL);
         float brightness = lerp(0.15f, 0.45f, faceShadow);
-
-        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, vDiffuse.a);
+        
+        float alpha = 0.f;
+        if (length(vDiffuse.rgb) > 0.f)
+            alpha = 1.f;
+        
+        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, alpha);
         Out.vLightInfo = float4(brightness, 0, 1.f, 0);
     }
     
@@ -278,7 +289,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     
     if(vMetalicDesc.a > 0.7f)
     {
-        Out.vLight = float4(0.f, 0.f, 0.f, 1.f);
+        float alpha = 0.f;
+        if (length(vDiffuse.rgb) > 0.f)
+            alpha = 1.f;
+        Out.vLight = float4(0.f, 0.f, 0.f, alpha);
         Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
         return Out;
     }
@@ -310,7 +324,10 @@ PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
     (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
     fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
     
-    Out.vLight = float4(PBR * vNormalDesc.a, vDiffuse.a);
+    float alpha = 0.f;
+    if (length(vDiffuse.rgb) > 0.f)
+        alpha = 1.f;
+    Out.vLight = float4(PBR * vNormalDesc.a, alpha);
     Out.vLightInfo = float4(0.f, 0.f, 0.f, 0.f);
     
     return Out;
