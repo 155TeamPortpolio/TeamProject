@@ -91,9 +91,9 @@ void CThugBulkyEnforcer_Attack::Register_States()
 	m_pSubStateMachine->Register_State("Attack04", CThugBulkyEnforcer_Attack4::Create());
 	m_pSubStateMachine->Register_State("Attack05_01", CThugBulkyEnforcer_Attack5_1::Create());
 	m_pSubStateMachine->Register_State("Attack05_02", CThugBulkyEnforcer_Attack5_2::Create());
-	m_pSubStateMachine->Register_State("AttackSideStep_L", CThugBulkyEnforcer_AttackSideStep_L::Create());
-	m_pSubStateMachine->Register_State("AttackSideStep_R", CThugBulkyEnforcer_AttackSideStep_R::Create());
-	m_pSubStateMachine->Register_State("AttackEvade", CThugBulkyEnforcer_AttackEvade::Create());
+	//m_pSubStateMachine->Register_State("AttackSideStep_L", CThugBulkyEnforcer_AttackSideStep_L::Create());
+	//m_pSubStateMachine->Register_State("AttackSideStep_R", CThugBulkyEnforcer_AttackSideStep_R::Create());
+	//m_pSubStateMachine->Register_State("AttackEvade", CThugBulkyEnforcer_AttackEvade::Create());
 }
 
 void CThugBulkyEnforcer_Attack::Register_Transitions()
@@ -112,7 +112,7 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	case 2:
 	{
 		blackBoard.stateQueue.push_back("Attack02");
-		blackBoard.stateQueue.push_back("AttackEvade");
+		//blackBoard.stateQueue.push_back("AttackEvade");
 
 	}break;
 	case 3:
@@ -126,32 +126,32 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	}break;
 	case 5:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_R");
+		//blackBoard.stateQueue.push_back("AttackSideStep_R");
 		blackBoard.stateQueue.push_back("Attack05_01");
 
 		break;
 	}
 	case 6:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_L");
+		//blackBoard.stateQueue.push_back("AttackSideStep_L");
 		blackBoard.stateQueue.push_back("Attack05_02");
 		break;
 	}
 	case 7:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_L");
+		//blackBoard.stateQueue.push_back("AttackSideStep_L");
 		break;
 	}
 	case 8:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_R");
+		//blackBoard.stateQueue.push_back("AttackSideStep_R");
 		break;
 	}
 	default:
 		break;
 	}
 
-	if (true == isAdditionalMoveState) {
+	/*if (true == isAdditionalMoveState) {
 		_int iMoveIndex = Helper::Get_Random_Int(0, 3);
 
 		switch (iMoveIndex)
@@ -170,7 +170,7 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 			break;
 		}
 		}
-	}
+	}*/
 
 }
 
@@ -367,88 +367,88 @@ void CThugBulkyEnforcer_Attack5_2::Exit(CThugBulkyEnforcer* pOwner)
 }
 
 /*============================================================================*/
-void CThugBulkyEnforcer_AttackSideStep_L::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_SideStep_L")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_AttackSideStep_L::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
-	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
-		vRootBoneMoveDelta,
-		qRot,
-		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.18f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
-}
-
-void CThugBulkyEnforcer_AttackSideStep_L::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
-
-/*============================================================================*/
-void CThugBulkyEnforcer_AttackSideStep_R::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_SideStep_R")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_AttackSideStep_R::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
-	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
-		vRootBoneMoveDelta,
-		qRot,
-		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.18f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
-}
-
-void CThugBulkyEnforcer_AttackSideStep_R::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
-
-/*============================================================================*/
-void CThugBulkyEnforcer_AttackEvade::Enter(CThugBulkyEnforcer* pOwner)
-{
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Evade")
-		.Apply();
-}
-
-void CThugBulkyEnforcer_AttackEvade::Update(CThugBulkyEnforcer* pOwner, _float dt)
-{
-	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
-	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
-	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
-		vRootBoneMoveDelta,
-		qRot,
-		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.24f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
-}
-
-void CThugBulkyEnforcer_AttackEvade::Exit(CThugBulkyEnforcer* pOwner)
-{
-}
+//void CThugBulkyEnforcer_AttackSideStep_L::Enter(CThugBulkyEnforcer* pOwner)
+//{
+//	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_SideStep_L")
+//		.Apply();
+//}
+//
+//void CThugBulkyEnforcer_AttackSideStep_L::Update(CThugBulkyEnforcer* pOwner, _float dt)
+//{
+//	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+//	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+//	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+//		vRootBoneMoveDelta,
+//		qRot,
+//		dt);
+//
+//	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+//	if (m_fAnimProgress >= 0.18f)
+//	{
+//		blackboard.isChainOpen = true;
+//		if (!blackboard.stateQueue.empty())
+//			blackboard.isRequestNext = true;
+//	}
+//}
+//
+//void CThugBulkyEnforcer_AttackSideStep_L::Exit(CThugBulkyEnforcer* pOwner)
+//{
+//}
+//
+///*============================================================================*/
+//void CThugBulkyEnforcer_AttackSideStep_R::Enter(CThugBulkyEnforcer* pOwner)
+//{
+//	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_SideStep_R")
+//		.Apply();
+//}
+//
+//void CThugBulkyEnforcer_AttackSideStep_R::Update(CThugBulkyEnforcer* pOwner, _float dt)
+//{
+//	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+//	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+//	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+//		vRootBoneMoveDelta,
+//		qRot,
+//		dt);
+//
+//	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+//	if (m_fAnimProgress >= 0.18f)
+//	{
+//		blackboard.isChainOpen = true;
+//		if (!blackboard.stateQueue.empty())
+//			blackboard.isRequestNext = true;
+//	}
+//}
+//
+//void CThugBulkyEnforcer_AttackSideStep_R::Exit(CThugBulkyEnforcer* pOwner)
+//{
+//}
+//
+///*============================================================================*/
+//void CThugBulkyEnforcer_AttackEvade::Enter(CThugBulkyEnforcer* pOwner)
+//{
+//	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Evade")
+//		.Apply();
+//}
+//
+//void CThugBulkyEnforcer_AttackEvade::Update(CThugBulkyEnforcer* pOwner, _float dt)
+//{
+//	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+//	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+//	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+//		vRootBoneMoveDelta,
+//		qRot,
+//		dt);
+//
+//	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+//	if (m_fAnimProgress >= 0.24f)
+//	{
+//		blackboard.isChainOpen = true;
+//		if (!blackboard.stateQueue.empty())
+//			blackboard.isRequestNext = true;
+//	}
+//}
+//
+//void CThugBulkyEnforcer_AttackEvade::Exit(CThugBulkyEnforcer* pOwner)
+//{
+//}

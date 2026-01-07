@@ -163,43 +163,83 @@ void CThugBulkyEnforcer::Render_GUI()
 
 	// =======================================================
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
-		ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
+		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
-		if (ImGui::Button(u8"1.¿À¸¥ÂÊ À§ºù ÈÄ ¿À¸¥ÂÊ ÈÅ")) {
-			m_pStateMachine->Set_Int("AttackPattern", 1);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		if (ImGui::TreeNode("AttackState##ThugBulkyEnforcerTestState_Attack")) {
+			if (ImGui::Button(u8"1.¿À¸¥ÂÊ ÈÅ")) {
+				m_pStateMachine->Set_Int("AttackPattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"2.¿À¸¥¼Õ ¾îÆÛ ÈÄ ¿Þ¼Õ ³»·ÁÂï±â")) {
+				m_pStateMachine->Set_Int("AttackPattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"3.ÇÃ¶óÀ× ´ÏÅ± ÈÄ ¾ç¼Õ ³»·ÁÂïÀ¸¸ç ÂøÁö")) {
+				m_pStateMachine->Set_Int("AttackPattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"4.Å©°Ô ¿òÁ÷ÀÌ¸ç ¾ç¼ÕÀ¸·Î ¹Ù´Ú ³»·ÁÂï±â")) {
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"5.¿ÞÂÊ À§ºùÇÏ¸é¼­ ¿Þ¼Õ ÈÅ")) {
+				m_pStateMachine->Set_Int("AttackPattern", 5);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"6.¿À¸¥¼Õ ¾îÆÛ + ¿Þ¼Õ ³»·ÁÂï±â")) {
+				m_pStateMachine->Set_Int("AttackPattern", 6);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			ImGui::TreePop();
 		}
-		if (ImGui::Button(u8"2.¿À¸¥¼Õ ¾îÆÛ ÈÄ ¿Þ¼Õ ³»·ÁÂï±â")) {
-			m_pStateMachine->Set_Int("AttackPattern", 2);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		if (ImGui::TreeNode("MoveState##ThugBulkyEnforcerTestState_Move")) {
+
+			if (ImGui::Button(u8"1.Walk_Left")) {
+				m_pStateMachine->Set_Int("MovePattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"2.Walk_Right")) {
+				m_pStateMachine->Set_Int("MovePattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"3.Walk_Front")) {
+				m_pStateMachine->Set_Int("MovePattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"4.Walk_Back")) {
+				m_pStateMachine->Set_Int("MovePattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"5.Walk_RF_LFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 5);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"6.Walk_FR_RFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 6);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"7.Walk_LF_RFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 7);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"8.SideStep_L")) {
+				m_pStateMachine->Set_Int("MovePattern", 8);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"9.SideStep_R")) {
+				m_pStateMachine->Set_Int("MovePattern", 9);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"10.Evade")) {
+				m_pStateMachine->Set_Int("MovePattern", 10);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			ImGui::TreePop();
 		}
-		if (ImGui::Button(u8"3.ÇÃ¶óÀ× ´ÏÅ± ÈÄ ¾ç¼Õ ³»·ÁÂïÀ¸¸ç ÂøÁö")) {
-			m_pStateMachine->Set_Int("AttackPattern", 3);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"4.Å©°Ô ¿òÁ÷ÀÌ¸ç ¾ç¼ÕÀ¸·Î ¹Ù´Ú ³»·ÁÂï±â")) {
-			m_pStateMachine->Set_Int("AttackPattern", 4);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"5.¿À¸¥ÂÊ À§ºù ÈÄ ¿ÞÂÊ À§ºùÇÏ¸é¼­ ¿Þ¼Õ ÈÅ")) {
-			m_pStateMachine->Set_Int("AttackPattern", 5);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"6.¿ÞÂÊ À§ºù ÈÄ ¿À¸¥¼Õ ¾îÆÛ + ¿Þ¼Õ ³»·ÁÂï±â")) {
-			m_pStateMachine->Set_Int("AttackPattern", 6);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"7.¿ÞÂÊ À§ºù")) {
-			m_pStateMachine->Set_Int("AttackPattern", 7);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"8.¿À¸¥ÂÊ À§ºù")) {
-			m_pStateMachine->Set_Int("AttackPattern", 8);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		ImGui::EndChild();
+		//ImGui::EndChild();
 		ImGui::TreePop();
 	}
+
 	if (ImGui::Button("Open StateMachine"))
 		m_pStateMachine->Set_ShowWindow(true);
 	m_pStateMachine->Render_GUI();

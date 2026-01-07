@@ -103,42 +103,42 @@ public:
 };
 
 // 왼쪽 대각선으로 이동하며 위빙
-class CThugBulkyEnforcer_AttackSideStep_L : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_AttackSideStep_L* Create() { return new CThugBulkyEnforcer_AttackSideStep_L(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-// 오른쪽 대각선으로 이동하며 위빙
-class CThugBulkyEnforcer_AttackSideStep_R : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_AttackSideStep_R* Create() { return new CThugBulkyEnforcer_AttackSideStep_R(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-// 백스텝으로 피하는 모션(공격 후 뒤로 빠질때 사용)
-class CThugBulkyEnforcer_AttackEvade : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_AttackEvade* Create() { return new CThugBulkyEnforcer_AttackEvade(); }
-	virtual void Free() override { __super::Free(); }
-};
+//class CThugBulkyEnforcer_AttackSideStep_L : public IBaseState<CThugBulkyEnforcer>
+//{
+//public:
+//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+//
+//public:
+//	static CThugBulkyEnforcer_AttackSideStep_L* Create() { return new CThugBulkyEnforcer_AttackSideStep_L(); }
+//	virtual void Free() override { __super::Free(); }
+//};
+//
+//// 오른쪽 대각선으로 이동하며 위빙
+//class CThugBulkyEnforcer_AttackSideStep_R : public IBaseState<CThugBulkyEnforcer>
+//{
+//public:
+//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+//
+//public:
+//	static CThugBulkyEnforcer_AttackSideStep_R* Create() { return new CThugBulkyEnforcer_AttackSideStep_R(); }
+//	virtual void Free() override { __super::Free(); }
+//};
+//
+//// 백스텝으로 피하는 모션(공격 후 뒤로 빠질때 사용)
+//class CThugBulkyEnforcer_AttackEvade : public IBaseState<CThugBulkyEnforcer>
+//{
+//public:
+//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+//
+//public:
+//	static CThugBulkyEnforcer_AttackEvade* Create() { return new CThugBulkyEnforcer_AttackEvade(); }
+//	virtual void Free() override { __super::Free(); }
+//};
 
 NS_END

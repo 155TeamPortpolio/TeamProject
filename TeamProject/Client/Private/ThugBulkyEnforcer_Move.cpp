@@ -13,47 +13,65 @@ void CThugBulkyEnforcer_Move::Enter(CThugBulkyEnforcer* pOwner)
 
 		Register_States();
 		Register_Transitions();
+
+		__super::Enter(pOwner);
 	}
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 
-	if (true == pOwner->Get_StateMachine()->Get_Bool("FinishAttack")) {
-		RandomWalk(blackboard);
-		pOwner->Get_StateMachine()->Set_Bool("FinishAttack", false);
+	_int iMovePatternIndex = pOwner->Get_StateMachine()->Get_Int("MovePattern");
+	if (0 != iMovePatternIndex) {
+		ChangeMovePatternFromIndex(iMovePatternIndex);
+		pOwner->Get_StateMachine()->Set_Int("MovePattern", -1);
 	}
+	
+	
 
-	if (false != blackboard.stateQueue.empty()) {
-		pOwner->Idle();
-		return;
-	}
 
-	blackboard.isRequestNext = true;
 
-	__super::Enter(pOwner);
+	
+	//ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+
+	//if (true == pOwner->Get_StateMachine()->Get_Bool("FinishAttack")) {
+	//	RandomWalk(blackboard);
+	//	pOwner->Get_StateMachine()->Set_Bool("FinishAttack", false);
+	//}
+
+	//if (false != blackboard.stateQueue.empty()) {
+	//	pOwner->Idle();
+	//	return;
+	//}
+
+	//blackboard.isRequestNext = true;
+
 }
 
 void CThugBulkyEnforcer_Move::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (true == blackboard.isRequestNext) {
-		blackboard.isRequestNext = false;
-		blackboard.isChainOpen = false;
-
-		if (!blackboard.stateQueue.empty()) {
-			string nextStateTag = blackboard.stateQueue.front();
-			blackboard.stateQueue.pop_front();
-
-			blackboard.currentStateTag = nextStateTag;
-			m_pSubStateMachine->Change_State(nextStateTag);
-		}
-	}
-
-	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
-		blackboard.currentStateTag = "";
+	if (m_fAnimProgress >= 0.99f) {
 		pOwner->Idle();
 	}
+
+	//ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	//if (true == blackboard.isRequestNext) {
+	//	blackboard.isRequestNext = false;
+	//	blackboard.isChainOpen = false;
+	//
+	//	if (!blackboard.stateQueue.empty()) {
+	//		string nextStateTag = blackboard.stateQueue.front();
+	//		blackboard.stateQueue.pop_front();
+	//
+	//		blackboard.currentStateTag = nextStateTag;
+	//		m_pSubStateMachine->Change_State(nextStateTag);
+	//	}
+	//}
+	//
+	//if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
+	//	blackboard.currentStateTag = "";
+	//	pOwner->Idle();
+	//}
 }
 
 void CThugBulkyEnforcer_Move::Exit(CThugBulkyEnforcer* pOwner)
@@ -78,10 +96,51 @@ void CThugBulkyEnforcer_Move::Register_Transitions()
 {
 }
 
-void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard)
+void CThugBulkyEnforcer_Move::ChangeMovePatternFromIndex(_int iMoveIndex)
 {
-	_int Index = Helper::Get_Random_Int(1, 5);
-	Index = 1;
+	switch (static_cast<MOVEINDEX>(iMoveIndex))
+	{
+	case Client::CThugBulkyEnforcer_Move::Walk_Left:
+		m_pSubStateMachine->Change_State("Walk_Left");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_Right:
+		m_pSubStateMachine->Change_State("Walk_Right");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_Front:
+		m_pSubStateMachine->Change_State("Walk_Front");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_Back:
+		m_pSubStateMachine->Change_State("Walk_Back");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_RF_LFoot:
+		m_pSubStateMachine->Change_State("Walk_RF_LFoot");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_FR_RFoot:
+		m_pSubStateMachine->Change_State("Walk_FR_RFoot");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_LF_RFoot:
+		m_pSubStateMachine->Change_State("Walk_LF_RFoot");
+		break;
+	case Client::CThugBulkyEnforcer_Move::SideStep_L:
+		m_pSubStateMachine->Change_State("SideStep_L");
+		break;
+	case Client::CThugBulkyEnforcer_Move::SideStep_R:
+		m_pSubStateMachine->Change_State("SideStep_R");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Evade:
+		m_pSubStateMachine->Change_State("Evade");
+		break;
+	}
+}
+
+void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard, _int iWalkIndex)
+{
+	_int Index = {};
+
+	if (0 == iWalkIndex)
+		Index = Helper::Get_Random_Int(1, 5);
+	else
+		Index = iWalkIndex;
 
 	switch (Index)
 	{
@@ -93,6 +152,8 @@ void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard)
 	case 2:
 	{
 		blackBoard.stateQueue.push_back("Walk_Right");
+		blackBoard.stateQueue.push_back("Walk_Front");
+		blackBoard.stateQueue.push_back("Walk_Back");
 		break;
 	}
 	case 3:
@@ -108,6 +169,21 @@ void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard)
 	case 5:
 	{
 		blackBoard.stateQueue.push_back("Walk_LF_RFoot");
+		break;
+	}
+	case 6:
+	{
+		blackBoard.stateQueue.push_back("SideStep_L");
+		break;
+	}
+	case 7:
+	{
+		blackBoard.stateQueue.push_back("SideStep_R");
+		break;
+	}
+	case 8:
+	{
+		blackBoard.stateQueue.push_back("Evade");
 		break;
 	}
 	}
@@ -132,7 +208,7 @@ void CThugBulkyEnforcer_Walk_Front::Exit(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Walk_Left::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Walk_L")
-		.BlendDuration(0.2f) // ¿Ö Æ¢Áö?
+		//.BlendDuration(0.2f) // ¿Ö Æ¢Áö?
 		.Apply();
 }
 
@@ -196,6 +272,12 @@ void CThugBulkyEnforcer_Walk_Back::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_Back::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
 }
 
 void CThugBulkyEnforcer_Walk_Back::Exit(CThugBulkyEnforcer* pOwner)
@@ -211,6 +293,12 @@ void CThugBulkyEnforcer_SideStep_L::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_SideStep_L::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
 }
 
 void CThugBulkyEnforcer_SideStep_L::Exit(CThugBulkyEnforcer* pOwner)
@@ -226,6 +314,12 @@ void CThugBulkyEnforcer_SideStep_R::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_SideStep_R::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
 }
 
 void CThugBulkyEnforcer_SideStep_R::Exit(CThugBulkyEnforcer* pOwner)
@@ -241,6 +335,12 @@ void CThugBulkyEnforcer_Evade::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Evade::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
 }
 
 void CThugBulkyEnforcer_Evade::Exit(CThugBulkyEnforcer* pOwner)

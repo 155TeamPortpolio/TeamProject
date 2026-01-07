@@ -31,7 +31,7 @@ public:
     CStateMachine<CThugBulkyEnforcer>*  Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }
     void                                Idle() { m_isIdle = true; }
-    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed);
+    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
 
 private:
     HRESULT Initialize_StateMachine();

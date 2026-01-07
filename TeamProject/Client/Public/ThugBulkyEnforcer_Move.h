@@ -8,6 +8,20 @@ class CThugBulkyEnforcer;
 
 class CThugBulkyEnforcer_Move : public IHState<CThugBulkyEnforcer>
 {
+private:
+	enum MOVEINDEX : _int{
+		Walk_Left = 1,
+		Walk_Right, 
+		Walk_Front, 
+		Walk_Back,
+		Walk_RF_LFoot,
+		Walk_FR_RFoot,
+		Walk_LF_RFoot,
+		SideStep_L, 
+		SideStep_R, 
+		Evade 
+	};
+
 public:
 	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
 	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
@@ -20,7 +34,8 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
-	void RandomWalk(ATTACK_BLACK_BOARD& blackBoard);
+	void ChangeMovePatternFromIndex(_int iMoveIndex = 0);
+	void RandomWalk(ATTACK_BLACK_BOARD& blackBoard, _int iWalkIndex = 0);
 };
 
 class CThugBulkyEnforcer_Walk_Front : public IBaseState<CThugBulkyEnforcer>
