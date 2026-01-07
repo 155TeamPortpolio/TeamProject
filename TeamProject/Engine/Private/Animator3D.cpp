@@ -6,6 +6,7 @@
 #include "IResourceService.h"
 #include "DynamicBone.h"
 #include "FootIK.h"
+#include "Helper_Func.h"
 
 CAnimator3D::CAnimator3D()
 {
@@ -1493,48 +1494,46 @@ void CAnimator3D::GUI_SelectAnim()
 {
 	float childWidth = ImGui::GetContentRegionAvail().x;
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
-	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+	const float childHeight = (textLineHeight * 15) + (ImGui::GetStyle().WindowPadding.y * 2);
 	ImVec2 padding = ImGui::GetStyle().FramePadding;
-
+	ImGui::Text("Search");
+	ImGui::InputTextWithHint("##AnimSearch", "Search...", &m_animFilter);
 	ImGui::BeginChild("##Animator Animation", ImVec2{ 0, childHeight }, true);
-
-	for (int i = 0; i < m_pAnimClips.size(); i++)
+	for (int index = 0; index < (int)m_pAnimClips.size(); ++index)
 	{
-		bool isSelected = (m_iCurrentClipIndex == i);
-		string animName = m_pAnimClips[i]->Get_Name();
+		const string& animName = m_pAnimClips[index]->Get_Name();
 
-		ImGui::PushID((int)i);
+		if (!m_animFilter.empty())
+		{
+			if (!Helper::ContainsCaseInsensitive(animName, m_animFilter))
+				continue;
+		}
+
+		bool isSelected = (m_iCurrentClipIndex == index);
+		ImGui::PushID(index);
 
 		if (ImGui::Selectable(("##" + animName).c_str(), isSelected, 0, ImVec2{ 0, textLineHeight }))
 		{
-			Change_Animation(i)
-				.Loop(true)
-				.Apply();
+			Change_Animation(index).Loop(true).Apply();
 		}
 
 		ImVec2 itemMin = ImGui::GetItemRectMin();
 		ImVec2 itemMax = ImGui::GetItemRectMax();
-
 		ImVec2 textSize = ImGui::CalcTextSize(animName.c_str());
 		ImVec2 textPos = ImVec2(itemMax.x - textSize.x - padding.x, itemMin.y + padding.y);
-
-		// 텍스트 그리기
 		ImGui::GetWindowDrawList()->AddText(textPos, ImGui::GetColorU32(ImGuiCol_Text), animName.c_str());
 
-		ImGui::PopID();
-
 		if (ImGui::IsItemHovered())
-		{
 			ImGui::SetTooltip("%s", animName.c_str());
-		}
 
-		if (isSelected) {
+		if (isSelected)
 			ImGui::SetItemDefaultFocus();
-		}
-	}
 
+		ImGui::PopID();
+	}
 	ImGui::EndChild();
 }
+
 
 void CAnimator3D::Update_IK(_float dt)
 {
