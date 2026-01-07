@@ -536,6 +536,13 @@ namespace Engine
 		{
 		}
 	};
+
+	typedef struct tagLevelTransitionArgument {
+		string nextLevelKey = {};
+		_bool useLoading = { false };
+		_bool KeepResource = { false };
+		void Reset() { nextLevelKey.clear(); useLoading = false; KeepResource = false; }
+	}LEVEL_TRANS_DESC;
 }
 
 
