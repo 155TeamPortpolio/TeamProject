@@ -211,9 +211,6 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
       <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIElement">
-      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
       <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
     </Filter>
@@ -423,9 +420,6 @@
     </Filter>
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\BattleHUD">
-      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -813,9 +807,7 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1191,8 +1183,6 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
   </ItemGroup>
 </Project>

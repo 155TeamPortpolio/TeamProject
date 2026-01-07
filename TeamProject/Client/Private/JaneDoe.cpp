@@ -30,11 +30,11 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.model",
-		"../Bin/Resources/Model/skeletal/ZaneDoe/Avatar_Female_Size03_JaneDoe.model");
+		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.model");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/ZaneDoe/Avatar_Female_Size03_JaneDoe.mat");
+		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.mat");
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.json",
-		"../Bin/Resources/Model/skeletal/ZaneDoe/Avatar_Female_Size03_JaneDoe_Meta.json");
+		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe_Meta.json");
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size03_JaneDoe.mat");
