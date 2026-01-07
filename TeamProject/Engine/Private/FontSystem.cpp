@@ -143,11 +143,25 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	CCustomFont* pFont = m_Fonts[Text.systemIndex];
 
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
+	
+	/*xÃà shear Çà·Ä*/
+	_float2 vSize = {};
+	XMStoreFloat2(&vSize, pFont->TextSize(Text.info.Text));
+	_float2 vCenter = { Text.info.TextPos.x + vSize.x * 0.5f, Text.info.TextPos.y + vSize.y * 0.5f };
+
+	_matrix matShear =
+		XMMatrixTranslation(-vCenter.x, -vCenter.y, 0.f) *
+		XMMatrixSet(
+			1.f, Text.info.vShear.y, 0.f, 0.f,
+			Text.info.vShear.x, 1.f, 0.f, 0.f,
+			0.f, 0.f, 1.f, 0.f,
+			0.f, 0.f, 0.f, 1.f) *
+		XMMatrixTranslation(vCenter.x, vCenter.y, 0.f);
 
 	m_pBatch->Begin(
 		SpriteSortMode_Deferred,
 		m_pStates->AlphaBlend(),
-		nullptr, nullptr, nullptr, nullptr, XMMatrixIdentity()
+		nullptr, nullptr, nullptr, nullptr, matShear
 	);
 
 	if (Text.info.OutLined) {

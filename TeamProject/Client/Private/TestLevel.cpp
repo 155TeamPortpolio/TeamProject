@@ -37,6 +37,7 @@
 #include "Miyabi.h"
 #include "Anbi.h"
 #include "Corin.h"
+#include "JaneDoe.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"

@@ -315,6 +315,8 @@ namespace Engine
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
 		_float4 OutLineColor = {};
+
+		_float2 vShear = {};
 	}TEXT_INFO;
 
 
