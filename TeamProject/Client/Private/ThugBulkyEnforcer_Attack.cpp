@@ -13,68 +13,69 @@ void CThugBulkyEnforcer_Attack::Enter(CThugBulkyEnforcer* pOwner)
 
 		Register_States();
 		Register_Transitions();
+
+		__super::Enter(pOwner);
 	}
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 
-	auto pStateMachine = pOwner->Get_StateMachine();
-	if (nullptr == pStateMachine)
-		return;
-	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
-	if (0 != iAttackPatternIndex) {
-		pStateMachine->Set_Int("AttackPattern", 0);
-		BuildPattern(blackboard, iAttackPatternIndex);
-	}
-	else {
-		auto RandomNums = Pick3RandomIndex();
+	//auto pStateMachine = pOwner->Get_StateMachine();
+	//if (nullptr == pStateMachine)
+	//	return;
+	//_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
+	//if (0 != iAttackPatternIndex) {
+	//	pStateMachine->Set_Int("AttackPattern", 0);
+	//	BuildPattern(blackboard, iAttackPatternIndex);
+	//}
+	//else {
+	//	auto RandomNums = Pick3RandomIndex();
+	//
+	//	for (size_t i = 0; i < RandomNums.size(); i++)
+	//	{
+	//		if (i < RandomNums.size() - 1)
+	//			BuildPattern(blackboard, RandomNums[i], true);
+	//		else
+	//			BuildPattern(blackboard, RandomNums[i], false);
+	//	}
+	//}
+	//
+	//if (false != blackboard.stateQueue.empty()) {
+	//	pOwner->Idle();
+	//	return;
+	//}
+	//blackboard.isRequestNext = true;
 
-		for (size_t i = 0; i < RandomNums.size(); i++)
-		{
-			if (i < RandomNums.size() - 1)
-				BuildPattern(blackboard, RandomNums[i], true);
-			else
-				BuildPattern(blackboard, RandomNums[i], false);
-		}
-	}
-
-	if (false != blackboard.stateQueue.empty()) {
-		pOwner->Idle();
-		return;
-	}
-	blackboard.isRequestNext = true;
-
-	__super::Enter(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
 	__super::Update(pOwner, dt);
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (true == blackboard.isRequestNext) {
-		blackboard.isRequestNext = false;
-		blackboard.isChainOpen = false;
-
-		if (!blackboard.stateQueue.empty()) {
-			string nextStateTag = blackboard.stateQueue.front();
-			blackboard.stateQueue.pop_front();
-			
-			// 공격 테이블의 마지막 패턴일 때
-			if (blackboard.stateQueue.empty()) 
-				blackboard.isEnd = true;
-
-			blackboard.currentStateTag = nextStateTag;
-			m_pSubStateMachine->Change_State(nextStateTag);
-		}
-		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
-	}
+	//ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	//if (true == blackboard.isRequestNext) {
+	//	blackboard.isRequestNext = false;
+	//	blackboard.isChainOpen = false;
+	//
+	//	if (!blackboard.stateQueue.empty()) {
+	//		string nextStateTag = blackboard.stateQueue.front();
+	//		blackboard.stateQueue.pop_front();
+	//		
+	//		// 공격 테이블의 마지막 패턴일 때
+	//		if (blackboard.stateQueue.empty()) 
+	//			blackboard.isEnd = true;
+	//
+	//		blackboard.currentStateTag = nextStateTag;
+	//		m_pSubStateMachine->Change_State(nextStateTag);
+	//	}
+	//	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+	//}
 	
-	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
-		blackboard.currentStateTag = "";
-		pOwner->Get_StateMachine()->Set_Bool("FinishAttack", true);
-		blackboard.isEnd = false;
-		pOwner->Idle();
-	}
+	//if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
+	//	blackboard.currentStateTag = "";
+	//	pOwner->Get_StateMachine()->Set_Bool("FinishAttack", true);
+	//	blackboard.isEnd = false;
+	//	pOwner->Idle();
+	//}
 
 }
 

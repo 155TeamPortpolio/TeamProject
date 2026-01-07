@@ -226,8 +226,18 @@ void CThugBulkyEnforcer::Render_GUI()
 				m_pStateMachine->Set_Int("MovePattern", 8);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
+			if (ImGui::Button(u8"8.SideStep_L(Shortly)")) {
+				m_pStateMachine->Set_Int("MovePattern", 8);
+				m_pStateMachine->Set_Bool("ShortlyMove", true);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
 			if (ImGui::Button(u8"9.SideStep_R")) {
 				m_pStateMachine->Set_Int("MovePattern", 9);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"9.SideStep_R(Shortly)")) {
+				m_pStateMachine->Set_Int("MovePattern", 9);
+				m_pStateMachine->Set_Bool("ShortlyMove", true);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
 			if (ImGui::Button(u8"10.Evade")) {

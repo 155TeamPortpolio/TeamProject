@@ -198,6 +198,12 @@ void CThugBulkyEnforcer_Walk_Front::Enter(CThugBulkyEnforcer* pOwner)
 
 void CThugBulkyEnforcer_Walk_Front::Update(CThugBulkyEnforcer* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
 }
 
 void CThugBulkyEnforcer_Walk_Front::Exit(CThugBulkyEnforcer* pOwner)
@@ -220,14 +226,6 @@ void CThugBulkyEnforcer_Walk_Left::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.99f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
 }
 
 void CThugBulkyEnforcer_Walk_Left::Exit(CThugBulkyEnforcer* pOwner)
@@ -249,14 +247,6 @@ void CThugBulkyEnforcer_Walk_Right::Update(CThugBulkyEnforcer* pOwner, _float dt
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.99f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
 }
 
 void CThugBulkyEnforcer_Walk_Right::Exit(CThugBulkyEnforcer* pOwner)
@@ -299,6 +289,14 @@ void CThugBulkyEnforcer_SideStep_L::Update(CThugBulkyEnforcer* pOwner, _float dt
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+
+	if (true == pOwner->Get_StateMachine()->Get_Bool("ShortlyMove") &&
+		m_fAnimProgress >= 0.18f) {
+		pOwner->Get_StateMachine()->Set_Bool("ShortlyMove", false);
+		pOwner->Idle();
+	}
 }
 
 void CThugBulkyEnforcer_SideStep_L::Exit(CThugBulkyEnforcer* pOwner)
@@ -320,6 +318,14 @@ void CThugBulkyEnforcer_SideStep_R::Update(CThugBulkyEnforcer* pOwner, _float dt
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+
+	if (true == pOwner->Get_StateMachine()->Get_Bool("ShortlyMove") &&
+		m_fAnimProgress >= 0.18f) {
+		pOwner->Get_StateMachine()->Set_Bool("ShortlyMove", false);
+		pOwner->Idle();
+	}
 }
 
 void CThugBulkyEnforcer_SideStep_R::Exit(CThugBulkyEnforcer* pOwner)
@@ -362,14 +368,6 @@ void CThugBulkyEnforcer_Walk_RF_LFoot::Update(CThugBulkyEnforcer* pOwner, _float
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.99f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
 }
 
 void CThugBulkyEnforcer_Walk_RF_LFoot::Exit(CThugBulkyEnforcer* pOwner)
@@ -392,13 +390,6 @@ void CThugBulkyEnforcer_Walk_FR_RFoot::Update(CThugBulkyEnforcer* pOwner, _float
 		qRot,
 		dt);
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.99f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
 }
 
 void CThugBulkyEnforcer_Walk_FR_RFoot::Exit(CThugBulkyEnforcer* pOwner)
@@ -421,13 +412,6 @@ void CThugBulkyEnforcer_Walk_FL_RFoot::Update(CThugBulkyEnforcer* pOwner, _float
 		qRot,
 		dt);
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.99f)
-	{
-		blackboard.isChainOpen = true;
-		if (!blackboard.stateQueue.empty())
-			blackboard.isRequestNext = true;
-	}
 }
 
 void CThugBulkyEnforcer_Walk_FL_RFoot::Exit(CThugBulkyEnforcer* pOwner)
