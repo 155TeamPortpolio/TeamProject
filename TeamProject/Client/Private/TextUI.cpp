@@ -37,6 +37,7 @@ void CTextUI::Update(_float dt)
 
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   
     Get_Component<CTextSlot>()->Push_Text();
+    Get_Component<CTextSlot>()->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
 }
 
 void CTextUI::Load(const nlohmann::ordered_json& data)
