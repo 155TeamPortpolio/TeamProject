@@ -77,6 +77,15 @@ public:
 	void Set_Alive(_bool alive) { m_isAlive = alive; };
 
 public:
+	void Set_FromPool(_bool fromPool) { m_PoolMark.fromPool = fromPool; }
+	bool IsFromPool() const { return m_PoolMark.fromPool; }
+	void Set_PoolKey(CLONE_DESC key) { m_PoolMark.key = key; }
+	const CLONE_DESC& Get_PoolKey() const { return m_PoolMark.key; }
+
+	virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}		// 풀에서 꺼낼 때
+	virtual void OnPooledRelease() {}														// 풀로 돌아갈 때
+
+public:
 	void SetRenderLayer(RENDER_LAYER layer) { m_eRenderLayer = layer; };
 	RENDER_LAYER GetRenderLayer() const {return m_eRenderLayer; };
 
@@ -105,6 +114,7 @@ protected:
 
 protected:
 	RENDER_LAYER m_eRenderLayer = { RENDER_LAYER::Default };
+	POOL_MARK m_PoolMark;
 
 public:
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr)PURE;
