@@ -19,7 +19,6 @@ public:
         ANIM_LAYER_STATE    eLayerType = { ANIM_LAYER_STATE::OVERRIDE };
         
         _bool               bPause = { true };
-        _bool               bApplied = { false };
         _float              fLayerWeight = {};
         _float              fTargetLayerWeight = {};
         _float              fLayerWeightElapsed = {};
