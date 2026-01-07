@@ -32,6 +32,8 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 
 	auto pModel = Get_Component<CStaticModel>();
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
+	pModel->ShadowCast(false);
+
 	m_InstanceName = "MeshNode";
 
 	return S_OK;
