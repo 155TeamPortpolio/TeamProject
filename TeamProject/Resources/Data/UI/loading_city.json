@@ -1,5 +1,5 @@
 {
-    "instanceName": "loading_mainCity_cam1",
+    "instanceName": "loading_city1",
     "transform": {
         "anchor": 5,
         "anchorOffset": [
@@ -27,110 +27,87 @@
         1.0
     ],
     "pass": "Opaque",
-    "animClips": [
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 7,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip0"
-        },
-        {
-            "duration": 0.5,
-            "keyframes": [
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "easeType": 5,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.0
-                },
-                {
-                    "angle": 0.0,
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        0.0
-                    ],
-                    "easeType": 0,
-                    "position": [
-                        0.0,
-                        0.0
-                    ],
-                    "scale": [
-                        1.0,
-                        1.0
-                    ],
-                    "time": 0.5
-                }
-            ],
-            "loop": false,
-            "name": "clip1"
-        }
-    ],
+    "animClips": [],
     "children": [
         {
-            "instanceName": "prefab_bg",
+            "instanceName": "mask",
             "transform": {
-                "anchor": 0,
+                "anchor": 2,
                 "anchorOffset": [
-                    -800.0,
+                    -1087.0,
                     -450.0
                 ],
                 "size": [
-                    1600.0,
+                    1087.0,
                     900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "UI_StencilWrite",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Mask",
+            "maskTextureKey": "empty.png"
+        },
+        {
+            "instanceName": "bg",
+            "transform": {
+                "anchor": 1,
+                "anchorOffset": [
+                    -288.0,
+                    -450.0
+                ],
+                "size": [
+                    2862.11181640625,
+                    900.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque_StencilTest",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Loading_MainCity_Cam1.png"
+        },
+        {
+            "instanceName": "title",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    60.0,
+                    52.0
+                ],
+                "size": [
+                    237.3333282470703,
+                    120.0
                 ],
                 "scale": [
                     1.0,
@@ -150,80 +127,58 @@
             ],
             "pass": "Opaque",
             "animClips": [],
-            "children": [
-                {
-                    "instanceName": "maskBg",
-                    "transform": {
-                        "anchor": 2,
-                        "anchorOffset": [
-                            -1087.0,
-                            -450.0
-                        ],
-                        "size": [
-                            1087.0,
-                            900.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "UI_StencilWrite",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Mask",
-                    "maskTextureKey": "empty.png"
-                },
-                {
-                    "instanceName": "bg",
-                    "transform": {
-                        "anchor": 1,
-                        "anchorOffset": [
-                            -300.0,
-                            -450.0
-                        ],
-                        "size": [
-                            2862.11181640625,
-                            900.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque_StencilTest",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "Loading_MainCity_Cam1.png"
-                }
-            ],
-            "typeTag": "CanvasPanel"
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Title_CityLogo.png"
         },
         {
-            "instanceName": "prefab_nowLoading",
+            "instanceName": "subtitle",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    60.0,
+                    200.0
+                ],
+                "size": [
+                    405.99993896484375,
+                    141.86663818359375
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.7803921699523926,
+                0.7803921699523926,
+                0.7803921699523926,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "단골 손님들은 쵸퍼 대장이 경영하는 인기\n라면 가게 타키유-비단잉어를 비단잉어\n국숫집 이라고 부릅니다. 쵸퍼 대장의 요리를\n먹고 공동에서 행동하면 작업 효율이 눈에\n띄게 높아집니다.",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.49999991059303284,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ]
+            }
+        },
+        {
+            "instanceName": "nowLoading",
             "transform": {
                 "anchor": 10,
                 "anchorOffset": [
@@ -338,7 +293,7 @@
             ],
             "children": [
                 {
-                    "instanceName": "nowLoading",
+                    "instanceName": "logo",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -410,120 +365,6 @@
                         "frameCountY": 5,
                         "frameCountTotal": 30,
                         "frameSpeed": 48.0
-                    }
-                }
-            ],
-            "typeTag": "CanvasPanel"
-        },
-        {
-            "instanceName": "prefab_title",
-            "transform": {
-                "anchor": 0,
-                "anchorOffset": [
-                    -800.0,
-                    -450.0
-                ],
-                "size": [
-                    1600.0,
-                    900.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [
-                {
-                    "instanceName": "title",
-                    "transform": {
-                        "anchor": 5,
-                        "anchorOffset": [
-                            58.0,
-                            52.0
-                        ],
-                        "size": [
-                            239.0,
-                            120.84269714355469
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "Title_CityLogo.png"
-                },
-                {
-                    "instanceName": "subtitle",
-                    "transform": {
-                        "anchor": 5,
-                        "anchorOffset": [
-                            60.0,
-                            190.0
-                        ],
-                        "size": [
-                            405.99993896484375,
-                            141.86663818359375
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.6745098233222961,
-                        0.6745098233222961,
-                        0.6745098233222961,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Text",
-                    "text": {
-                        "content": "단골 손님들은 쵸퍼 대장이 경영하는 인기\n라면 가게 타키유-비단잉어를 비단잉어\n국숫집 이라고 부릅니다. 쵸퍼 대장의 요리를\n먹고 공동에서 행동하면 작업 효율이 눈에 \n띄게 높아집니다.",
-                        "fontTag": "NanumSquareNeo.spritefont",
-                        "fontScale": 0.49999991059303284,
-                        "outlined": false,
-                        "outlineThickness": 1.0,
-                        "outlineColor": [
-                            0.0,
-                            0.0,
-                            0.0,
-                            1.0
-                        ]
                     }
                 }
             ],

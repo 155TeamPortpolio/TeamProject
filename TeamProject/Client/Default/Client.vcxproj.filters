@@ -424,6 +424,9 @@
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD">
+      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -810,6 +813,9 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1184,6 +1190,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

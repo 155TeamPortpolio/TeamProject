@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h" />
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\UI_Loading.h" />
     <ClInclude Include="..\Public\LoadingLevel.h" />
     <ClInclude Include="..\Public\UI_Logo.h" />
@@ -339,6 +340,7 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp" />
     <ClCompile Include="..\private\JaneDoeState_RushAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Walk.cpp" />
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\UI_Loading.cpp" />
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />

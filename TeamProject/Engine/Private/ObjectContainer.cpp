@@ -121,7 +121,7 @@ void CObjectContainer::RenderHierarchy(CGameObject*& SelectedObject)
 		if (indexIter == m_IndexByID.end()) continue;
 
 		CGameObject* child = m_ChildrenObjects[indexIter->second];
-		if (child && child->Is_Alive())
+		if (child)
 			child->RenderHierarchy(SelectedObject, child == SelectedObject);
 	}
 }
