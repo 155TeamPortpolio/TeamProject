@@ -145,7 +145,6 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
 	
 	/*xÃà shear Çà·Ä*/
-	_float fShear = 0.f;// -0.4f;
 	_float2 vSize = {};
 	XMStoreFloat2(&vSize, pFont->TextSize(Text.info.Text));
 	_float2 vCenter = { Text.info.TextPos.x + vSize.x * 0.5f, Text.info.TextPos.y + vSize.y * 0.5f };
@@ -153,8 +152,8 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 	_matrix matShear =
 		XMMatrixTranslation(-vCenter.x, -vCenter.y, 0.f) *
 		XMMatrixSet(
-			1.f, 0.f, 0.f, 0.f,
-			fShear, 1.f, 0.f, 0.f,
+			1.f, Text.info.vShear.y, 0.f, 0.f,
+			Text.info.vShear.x, 1.f, 0.f, 0.f,
 			0.f, 0.f, 1.f, 0.f,
 			0.f, 0.f, 0.f, 1.f) *
 		XMMatrixTranslation(vCenter.x, vCenter.y, 0.f);
