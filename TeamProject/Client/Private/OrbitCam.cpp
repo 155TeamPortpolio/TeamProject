@@ -245,7 +245,7 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
-    auto obj = OBJ->Request_Object(targetHandle);
+    auto obj = ObjectManger()->Request_Object(targetHandle);
     auto targetCC = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = targetCC->Get_FootPosition();
@@ -303,8 +303,8 @@ void COrbitCam::UpdateInput(_float dt)
 {
     if (!ImGui::GetIO().WantCaptureMouse)
     {
-        const float dx = KEY->Mouse_DeltaX();
-        const float dy = KEY->Mouse_DeltaY();
+        const float dx = InputDevice()->Mouse_DeltaX();
+        const float dy = InputDevice()->Mouse_DeltaY();
 
         pose.targetRotDeg.x += dx * input.sensitivityX;
         pose.targetRotDeg.y += dy * input.sensitivityY;
@@ -313,8 +313,8 @@ void COrbitCam::UpdateInput(_float dt)
     }
 
     const float zoomDelta = input.zoomSpeed * dt;
-    if (KEY->Key_Down('Q')) pose.targetDist += zoomDelta;
-    if (KEY->Key_Down('E')) pose.targetDist -= zoomDelta;
+    if (InputDevice()->Key_Down('Q')) pose.targetDist += zoomDelta;
+    if (InputDevice()->Key_Down('E')) pose.targetDist -= zoomDelta;
 }
 
 void COrbitCam::ClampTargets()
@@ -340,7 +340,7 @@ void COrbitCam::SmoothStates(_float dt)
 
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
-    auto obj = OBJ->Request_Object(targetHandle);
+    auto obj = ObjectManger()->Request_Object(targetHandle);
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
@@ -434,7 +434,7 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
 
 Vector3 COrbitCam::GetTargetFootPos() const
 {
-    auto obj = OBJ->Request_Object(targetHandle);
+    auto obj = ObjectManger()->Request_Object(targetHandle);
     auto cc  = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
@@ -588,7 +588,7 @@ void COrbitCam::Render_GUI()
 
     if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
     {
-        ImGui::Text("Active: %s", (Get_Component<CCamera>() == CAM->Get_ActiveCam()) ? "YES" : "NO");
+        ImGui::Text("Active: %s", (Get_Component<CCamera>() == CameraManager()->Get_ActiveCam()) ? "YES" : "NO");
         ImGui::Text("TargetRotDeg: (%.2f, %.2f)", pose.targetRotDeg.x, pose.targetRotDeg.y);
         ImGui::Text("CurRotDeg:    (%.2f, %.2f)", pose.curRotDeg.x, pose.curRotDeg.y);
         ImGui::Text("TargetDist:   %.3f", pose.targetDist);

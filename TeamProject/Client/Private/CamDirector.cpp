@@ -10,7 +10,7 @@ IMPLEMENT_SINGLETON(CCamDirector)
 
 CSequenceCam* CCamDirector::GetSequenceCam() const
 {
-    return static_cast<CSequenceCam*>(OBJ->Request_Object(m_seqHandle));
+    return static_cast<CSequenceCam*>(ObjectManger()->Request_Object(m_seqHandle));
 }
 
 void CCamDirector::Bind(CSequenceCam* sequenceCam)
@@ -88,14 +88,14 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
     if (entry.seq.space == CamSpace::Local)
     {
-        auto refObj = OBJ->Request_Object(m_spaceRefHandle);
+        auto refObj = ObjectManger()->Request_Object(m_spaceRefHandle);
         auto cc     = refObj->Get_Component<CCharacterController>();
         camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize(), 0.f});
     }
     else
         camComp->Clear_ViewOffset();
 
-    const _uint handle = CAM->Push(camComp, blendInSec);
+    const _uint handle = CameraManager()->Push(camComp, blendInSec);
 
     m_playing.handle             = handle;
     m_playing.key                = key;
@@ -115,7 +115,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
-    const Matrix outWorld = *CAM->Get_InversedViewMatrix();
+    const Matrix outWorld = *CameraManager()->Get_InversedViewMatrix();
 
     Vector3    outPos = outWorld.Translation();
     Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
@@ -130,7 +130,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     if (m_returnCamType != CamReturnType::None)
     {
-        auto returnObj  = OBJ->Request_Object(m_returnCamHandle);
+        auto returnObj  = ObjectManger()->Request_Object(m_returnCamHandle);
         auto viewOffset = sequenceCam->Get_Component<CCamera>()->Get_ViewOffset();
 
         if (m_returnCamType == CamReturnType::OrbitCam)
@@ -142,7 +142,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         }
     }
 
-    const _bool ok = CAM->Pop(handle, blendOutSec);
+    const _bool ok = CameraManager()->Pop(handle, blendOutSec);
     m_playing = {};
     return ok;
 }

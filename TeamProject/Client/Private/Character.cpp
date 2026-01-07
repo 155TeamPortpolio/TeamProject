@@ -124,10 +124,10 @@ void CCharacter::Update_Input(_float dt)
 	m_input.previous = m_input.current;
 
 	KeyInput key;
-	if (KEY->Key_Hold('W'))  key.z += 1;
-	if (KEY->Key_Hold('S'))  key.z -= 1;
-	if (KEY->Key_Hold('D'))  key.x += 1;
-	if (KEY->Key_Hold('A'))  key.x -= 1;
+	if (InputDevice()->Key_Hold('W'))  key.z += 1;
+	if (InputDevice()->Key_Hold('S'))  key.z -= 1;
+	if (InputDevice()->Key_Hold('D'))  key.x += 1;
+	if (InputDevice()->Key_Hold('A'))  key.x -= 1;
 
 	m_input.current = key;
 
@@ -159,7 +159,7 @@ void CCharacter::Update_Input(_float dt)
 	m_input.direction = {};
 	if (!key.IsZero())
 	{
-		auto cam = CAM->Get_ActiveCam();
+		auto cam = CameraManager()->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 		_vector3 look = camTf->Dir(STATE::LOOK);
 		_vector3 right = camTf->Dir(STATE::RIGHT);
@@ -171,12 +171,12 @@ void CCharacter::Update_Input(_float dt)
 		m_input.direction.Normalize();
 	}
 
-	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
-	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
+	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
-	if (KEY->Key_Down(VK_F1)) m_bTest = !m_bTest;
+	if (InputDevice()->Key_Down(VK_F1)) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)
