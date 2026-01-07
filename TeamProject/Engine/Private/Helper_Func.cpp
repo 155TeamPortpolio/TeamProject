@@ -548,6 +548,18 @@ ENGINE_DLL _bool Helper::EnsureDirectoryExist(const filesystem::path& dir)
 	filesystem::create_directories(directory, ec);      // 중간 경로까지 생성
 	return !ec && filesystem::is_directory(directory, ec);
 }
+ENGINE_DLL _bool Helper::ContainsCaseInsensitive(const std::string& text, const std::string& pattern)
+{
+	auto ToLower = [](unsigned char c) { return (char)std::tolower(c); };
+
+	string textLower(text.size(), '\0');
+	transform(text.begin(), text.end(), textLower.begin(), ToLower);
+
+	string patLower(pattern.size(), '\0');
+	transform(pattern.begin(), pattern.end(), patLower.begin(), ToLower);
+
+	return textLower.find(patLower) != std::string::npos;
+}
 // -------------------------------------------------------------------------------------------------
 
 ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)

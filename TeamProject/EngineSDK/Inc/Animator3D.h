@@ -337,6 +337,7 @@ protected:
     HumanoidRigData  m_HumanoidRig;
     vector<IK_CHAIN> m_IKChains;
 
+    string m_animFilter;
 public:
     static CAnimator3D* Create();
     virtual CComponent* Clone();
