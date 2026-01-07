@@ -127,7 +127,7 @@ HRESULT CTestLevel::Awake()
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 	miyabiCCT.bAutoFit = false;
 	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
@@ -218,7 +218,7 @@ void CTestLevel::Update()
 		/*CCT_DESC BulkyCCT;
 		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
 		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
-		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
+		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 		BulkyCCT.bAutoFit = false;
 		BulkyCCT.fHeight = 1.28f;
 		BulkyCCT.fRadius = 0.35f;

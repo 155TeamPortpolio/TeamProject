@@ -16,13 +16,14 @@ public:
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
 	virtual void    Update(_float dt)                override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
-	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+	virtual void    Render_GUI()                     override;
 
 public:
 	virtual void Load(const nlohmann::ordered_json& data) override;
 
 private:
 	_float m_fFillAmount = 1.f;
+	_float m_fDirection  = 1.f;
 
 public:
 	static  CGameObject* Create();
