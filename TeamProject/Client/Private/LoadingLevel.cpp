@@ -63,6 +63,7 @@ void CLoadingLevel::PreLoadLevel()
 CLoadingLevel* CLoadingLevel::Create(const string& LevelKey)
 {
 	CLoadingLevel* instance = new CLoadingLevel(LevelKey);
+
 	if (FAILED(instance->Initialize())) {
 		MSG_BOX("Laoding level Create Failed");
 		Safe_Release(instance);
