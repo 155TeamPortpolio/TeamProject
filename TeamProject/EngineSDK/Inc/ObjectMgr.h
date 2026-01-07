@@ -33,18 +33,23 @@ public:
 
 public:
 	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
-
+	virtual class CGameObject* Acquire(const CLONE_DESC& desc) override;
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
+	 void Prune_Queues_ByLevel(const string& levelTag);
 
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
+	class CObjectPool* m_pObjectPool = { nullptr };
 	unordered_map<string, LAYERS> m_Layers; //(레벨 태그 / (레이어 태그/레이어))
 
 	/*object Array to Delete*/
-	vector<CGameObject*> DeleteObjs;
-	unordered_set<_uint> DeleteIDs;
+	vector<CGameObject*> m_DeleteObjs;
+	unordered_set<_uint> m_DeleteIDs;
+
+	vector<CGameObject*> m_ReleaseObjs;
+	unordered_set<_uint> m_ReleaseIDs;
 public:
 	static CObjectMgr* Create();
 	virtual void Free() override;

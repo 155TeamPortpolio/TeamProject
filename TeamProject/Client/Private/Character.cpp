@@ -68,12 +68,11 @@ void CCharacter::Rotate(_vector3 vDirection)
 	vDir.y = 0.f;
 	if (vDir.Length() < 0.001f) return;
 	vDir.Normalize();
-
 	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vDir.Cross(vUp);
+	_vector3 vRight = vUp.Cross(vDir); /*¿ÞÂÊ*/
 	vRight.Normalize();
 
-	_smatrix mRot = _smatrix::Identity;
+	_smatrix mRot = _smatrix::CreateWorld({0,0,0}, vDir, vUp);
 	mRot.Right(vRight);
 	mRot.Up(vUp);
 	mRot.Forward(vDir);

@@ -28,15 +28,17 @@ public:
 
 
     CGameObjectBuilder& Add_ObjDesc(GAMEOBJECT_DESC* pArg);
+    /*동적 생성 아님*/
+    CGameObjectBuilder& FromPool();
 
 private:
     class CGameInstance* m_pGameInstance = { nullptr };
     LAYER_DESC* m_layerDesc = { nullptr };
-    //CLONE_DESC* m_CloneDesc = {nullptr};
     CLONE_DESC m_CloneDesc = {};
     GAMEOBJECT_DESC* m_pObjDesc = { nullptr };
-
     unordered_map<type_index, COMPONENT_DESC*> m_CompDesc;
+
+    _bool m_isFromPool = { false };
 };
 
 NS_END
