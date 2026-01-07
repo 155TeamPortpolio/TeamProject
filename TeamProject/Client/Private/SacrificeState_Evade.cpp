@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SacrificeState_Evade.h"
 #include "Sacrifice.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 /* Component */
 #include "CharacterController.h"
@@ -36,6 +38,7 @@ void CSacrificeState_Evade::Enter(CSacrifice* pOwner)
 		break;
 	}
 
+	m_IsSpawnEffect = false;
 }
 
 void CSacrificeState_Evade::Update(CSacrifice* pOwner, _float dt)
@@ -51,6 +54,19 @@ void CSacrificeState_Evade::Update(CSacrifice* pOwner, _float dt)
 	else
 	{
 		pOwner->MoveByRootMotion(dt);
+	}
+
+	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.1f)
+	{
+		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vPosition)
+			.Build("Smoke");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pEffect, { "Test_Level","Effect_Layer" });
+
+		m_IsSpawnEffect = true;
 	}
 }
 

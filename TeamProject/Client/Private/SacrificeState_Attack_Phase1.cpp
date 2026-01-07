@@ -5,6 +5,8 @@
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
 #include "SacrificeHand.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -46,6 +48,7 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
 	{
 		_uint iRandIndex = Helper::Get_Random_Int(0, 1);
+		iRandIndex = 1;
 		if (0 == iRandIndex)
 			pOwner->Idle();
 		else
@@ -84,7 +87,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 7);
-	//iRandIndex = 0;
+	iRandIndex = 1;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -233,6 +236,8 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_03").Loop(false).Speed(1.2f).Apply();
+
+	m_IsSpawnEffect = false;
 }
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -244,6 +249,23 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.17f)
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BoneCombinedPosition("Skn_Finger2_03");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+
+		m_IsSpawnEffect = true;
 	}
 
 	pOwner->RotateToTarget(dt, 10.f);

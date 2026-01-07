@@ -413,8 +413,13 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 		node.iBurstCount = m_iBurstCount;
 		node.fSpawnPerSec = m_fSpawnPerSec;
 		node.iMaxSpawnParticleCount = m_iMaxSpawnParticleCount;
-		node.vStartSpeed = m_vStartSpeed;
-		node.vStartLifeTime = m_vStartLifeTime;
+
+		if (m_vStartSpeed.x <= m_vStartSpeed.y)
+			node.vStartSpeed = m_vStartSpeed;
+
+		if(m_vStartLifeTime.x<=m_vStartLifeTime.y)
+			node.vStartLifeTime = m_vStartLifeTime;
+
 		node.vStartSize = m_vStartSize;
 
 		node.SpawnShape = ENUM(m_eSpawnShape);
