@@ -220,6 +220,7 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 			auto Animator3D = CAIAnimator3D::Create(m_pAIScene, skeletal->Get_AIModelData());
 			m_Components.emplace(type_index(typeid(CAnimator3D)), Animator3D);
 			Animator3D->Set_Owner(this);
+			Animator3D->Link_DynamicBone();
 		}
 	}
 	else

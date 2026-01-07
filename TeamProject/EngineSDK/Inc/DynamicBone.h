@@ -22,6 +22,7 @@ public:
     void Init_Update();
     void Update(_float dt);
 
+
 protected:
     void SimulateNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,

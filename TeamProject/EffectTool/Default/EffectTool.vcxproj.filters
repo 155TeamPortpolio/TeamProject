@@ -46,6 +46,9 @@
     <Filter Include="02. Object\EffectContainer_Edit\EffectNode\MeshNode">
       <UniqueIdentifier>{7d25f85e-bf2d-454f-8c76-5978ff6c0f8a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\EffectContainer_Edit\EffectNode\TrailNode">
+      <UniqueIdentifier>{bdd3d4d3-e76c-42f3-b79d-ebd85a239607}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -138,6 +141,9 @@
     <ClInclude Include="..\Public\IEditable.h">
       <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\TrailNode_Edit.h">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -211,6 +217,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\IEditable.cpp">
       <Filter>02. Object\EffectContainer_Edit\EffectNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TrailNode_Edit.cpp">
+      <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
