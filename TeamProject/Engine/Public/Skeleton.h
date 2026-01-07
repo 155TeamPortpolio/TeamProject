@@ -1,5 +1,6 @@
 #pragma once
 #include "Base.h"
+#include "DynamicBoneStruct.h"
 
 NS_BEGIN(Engine)
 using MESHBONE = vector<class CBone*>;
@@ -23,7 +24,7 @@ public:
     const vector<string> Get_BoneNames();
     void Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex);
     _bool Get_RiggedData(HumanoidRigData& outData) { outData = m_RiggedData; return m_RiggedData.IsRigComplete(); }
-
+    vector<DYNAMIC_CHAIN_GROUP> Get_ChainGroups() { return m_ChainGroups; }
 private:
     _int FindBoneIndexWithPrefix(const string& BonePrefixName);
 
@@ -35,6 +36,7 @@ protected:
     vector<_float4x4> m_OffsetMatrices;
     unordered_map<string, _uint> m_BoneMap;//이름 검색용 컨테이너
     HumanoidRigData m_RiggedData = {};
+    vector<DYNAMIC_CHAIN_GROUP> m_ChainGroups;
 
 public:
     static CSkeleton* Create(ifstream& ifs);
