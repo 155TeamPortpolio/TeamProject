@@ -4,6 +4,8 @@
 NS_BEGIN(Engine)
 static constexpr _uint kFrameBuffered =8;
 static constexpr _uint readLatency =7;
+static constexpr _uint hideAfter = 3;
+static constexpr _uint showAfter = 2;
 
 class CHiZ_Culling :
     public CBase
@@ -42,27 +44,27 @@ class CHiZ_Culling :
 
     struct OcclusionKey
     {
-        const void* worldPtr; 
-        _uint drawIndex;      
+        _uint ObjID = 0;
+        _uint drawIndex = 0;
     };
 
     struct OcclusionKeyHash
     {
         size_t operator()(const OcclusionKey& key) const noexcept
         {
-            size_t h1 = hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(key.worldPtr));
-            size_t h2 =hash<_uint>{}(key.drawIndex);
-            return h1 ^ (h2 + 0x9e3779b97f4a7c15ull + (h1 << 6) + (h1 >> 2));
+            uint64_t packed = (uint64_t(key.ObjID) << 32) | uint64_t(key.drawIndex);
+            return hash<uint64_t>{}(packed);
         }
     };
 
     struct OcclusionKeyEq
     {
-        bool operator()(const OcclusionKey& a, const OcclusionKey& b) const noexcept
+        bool operator()(const OcclusionKey& lhs, const OcclusionKey& rhs) const noexcept
         {
-            return a.worldPtr == b.worldPtr && a.drawIndex == b.drawIndex;
+            return lhs.ObjID == rhs.ObjID && lhs.drawIndex == rhs.drawIndex;
         }
     };
+
     struct OcclusionReadbackFrame
     {
         ID3D11Buffer* visibleBuffer = nullptr;              // UAV target
@@ -71,10 +73,13 @@ class CHiZ_Culling :
         ID3D11Query* copyDoneQuery = nullptr;               // event query
         vector<OcclusionKey> keys;
         _bool hasIssued = false;
+        _uint issuedFrame = 0;
     };
     struct OcclusionHysteresisState
     {
         _uint hiddenStreak = 0;
+        uint8_t visibleStreak = 0;
+        bool isHidden = false;
     };
     enum OcclusionFlags : _uint
     {
@@ -122,7 +127,7 @@ private:
     void EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount);
 
     _bool isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery);
-    void TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity);
+    _bool TryReadbackOne(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& slot);
  
 private:
     _bool m_isReady = { false };
@@ -162,6 +167,9 @@ private:
    //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback용 staging
 
     _uint m_frameCursor = 0;                               // 매 프레임 증가
+    _uint m_frameCounter = {};
+    _uint m_cachedFrame = {};
+
     vector<_uint> m_cachedVisibleFlags;         // 마지막으로 성공한 결과(스톨 회피용)
     vector<OcclusionKey> m_cachedKeys;    // last read keys
 

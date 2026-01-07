@@ -15,18 +15,16 @@ struct OcclusionInput
     uint minX, minY, maxX, maxY; // [min, max) 픽셀 rect
     float objMinDepth01; // 0..1 선형, 작을수록 가까움
     uint indexInList;
-    uint flags; // C++에서 플래그 전달 (기존 padding 자리)
+    uint flags;
 };
 
-Texture2D<float> HiZTex : register(t0); // 전체 밉 SRV
+Texture2D<float> HiZTex : register(t0); // 전체 밉 SRV (Max-HiZ)
 StructuredBuffer<OcclusionInput> Inputs : register(t1);
 RWStructuredBuffer<uint> VisibleFlags : register(u0);
 
-// flags bits (C++와 동일하게 맞추기)
-static const uint OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0; // 평평/거대 위험군
-static const uint OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1; // 지면접촉 추정(선택)
+static const uint OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0;
+static const uint OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1;
 
-// 1: visible, 2: occluded
 uint ClampMip(uint mip)
 {
     return (mip < mipCount) ? mip : (mipCount - 1);
@@ -41,53 +39,55 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
 
     OcclusionInput inData = Inputs[inputIndex];
 
-    // ---- sanity ----
+    // 기본은 보이게
+    uint visible = 1u;
+
+    // ---- sanity / early-out ----
     if (inData.maxX <= inData.minX || inData.maxY <= inData.minY)
     {
-        VisibleFlags[inputIndex] = 1;
+        VisibleFlags[inputIndex] = 1u;
         return;
     }
-    if (inData.flags & OCCL_FLAG_RISK_GROUNDCONTACT)
+
+    // 지면접촉 위험군은 통과(원하면 완화)
+    if ((inData.flags & OCCL_FLAG_RISK_GROUNDCONTACT) != 0u)
     {
-        VisibleFlags[inputIndex] = 1;
+        VisibleFlags[inputIndex] = 1u;
         return;
     }
+
     uint rectW0 = inData.maxX - inData.minX;
     uint rectH0 = inData.maxY - inData.minY;
     uint rectMax0 = (rectW0 > rectH0) ? rectW0 : rectH0;
 
-    if (rectW0 < 1 || rectH0 < 1)
+    // 너무 작거나 너무 큰 rect는 보수적으로 통과
+    if (rectW0 < 1u || rectH0 < 1u)
     {
-        VisibleFlags[inputIndex] = 1;
-        return;
-    }
-
-    // 큰 rect는 태그 없이도 위험하므로 보수적으로 visible
-    // (너 씬에 맞춰 256/512/1024로 튜닝)
-    if (rectMax0 >= 256)
-    {
-        VisibleFlags[inputIndex] = 1;
+        VisibleFlags[inputIndex] = 1u;
         return;
     }
     if (rectMax0 <= 4u)
     {
-        VisibleFlags[inputIndex] = 1;
+        VisibleFlags[inputIndex] = 1u;
         return;
-    } // 2~8 사이 튜닝
+    }
+    if (rectMax0 >= 256u)
+    {
+        VisibleFlags[inputIndex] = 1u;
+        return;
+    }
 
-    // ---- mip 선택 (원본 rect 기준) ----
-    int mipSel = (int) ceil(log2((float) rectMax0));
+    // ---- mip 선택 (Max-HiZ는 coarse로 갈수록 max가 커져서 "덜 가리게" 성향) ----
+    int mipSel = (int) floor(log2((float) rectMax0)) - 1;
     mipSel = max(mipSel, 0);
 
     uint mip = ClampMip((uint) mipSel);
-
-    // mip 상한(큰 밉일수록 지면 영향이 커짐)
     mip = min(mip, 4u);
 
     uint mipScale = 1u << mip;
 
-    // ---- mip 기반 inflate (샘플 안정화용: mip 재계산 X) ----
-    uint inflate = 2u + (1u << mip);
+    // ---- inflate ----
+    uint inflate = 2u + (mip > 0u ? 2u : 0u);
 
     int minX = (int) inData.minX - (int) inflate;
     int minY = (int) inData.minY - (int) inflate;
@@ -101,11 +101,11 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
 
     if (maxX <= minX || maxY <= minY)
     {
-        VisibleFlags[inputIndex] = 1;
+        VisibleFlags[inputIndex] = 1u;
         return;
     }
 
-    // inclusive max
+    // inclusive max -> mip 좌표
     uint maxXInclusive = (uint) (maxX - 1);
     uint maxYInclusive = (uint) (maxY - 1);
 
@@ -115,9 +115,9 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     uint mipW, mipH, mipLevels;
     HiZTex.GetDimensions(mip, mipW, mipH, mipLevels);
 
-    uint2 maxCoord = uint2(max(1u, mipW) - 1, max(1u, mipH) - 1);
-    pMin = clamp(pMin, uint2(0, 0), maxCoord);
-    pMax = clamp(pMax, uint2(0, 0), maxCoord);
+    uint2 maxCoord = uint2(max(1u, mipW) - 1u, max(1u, mipH) - 1u);
+    pMin = clamp(pMin, uint2(0u, 0u), maxCoord);
+    pMax = clamp(pMax, uint2(0u, 0u), maxCoord);
 
     // 3x3 샘플(코너/중앙)
     uint2 pMid = (pMin + pMax) >> 1;
@@ -135,40 +135,31 @@ void CS_MAIN(uint3 tid : SV_DispatchThreadID)
     float z12 = HiZTex.Load(int3(uint2(x1, y2), mip));
     float z22 = HiZTex.Load(int3(uint2(x2, y2), mip));
 
-    float hizMinDepth01 =
-        min(min(min(z00, z10), z20),
-        min(min(min(z01, z11), z21),
-        min(min(z02, z12), z22)));
+    // ---- Max-HiZ: 9개 중 최댓값 ----
+    float hizMaxDepth01 = max(max(max(z00, z10), z20),
+                          max(max(max(z01, z11), z21),
+                          max(max(z02, z12), z22)));
 
-    // ---- bias/epsilon (위험군은 더 보수적으로) ----
+    // ---- epsilon / bias (덜 가리게 방향) ----
     float obj = inData.objMinDepth01;
-   
-    float epsLocal = epsilon;
-    float biasLocal = 0.003f + 0.0015f * mip;
 
-    // 위험군(평평/거대)일 때는 "잘 안 가리게"
+    float epsLocal = epsilon;
+    float biasLocal = 0.0015f + 0.0008f * (float) mip;
+
     if ((inData.flags & OCCL_FLAG_RISK_FLAT_OR_HUGE) != 0u)
     {
-        // 너무 세게 보수 처리하고 싶으면 여기서 바로 visible 처리 가능
-        // VisibleFlags[inputIndex] = 1; return;
-
-        biasLocal *= 3.0f;
-        epsLocal *= 3.0f;
-    }
-
-    // 지면접촉 추정이면 추가로 더 보수 처리
-    if ((inData.flags & OCCL_FLAG_RISK_GROUNDCONTACT) != 0u)
-    {
-        biasLocal += 0.01f;
+        biasLocal *= 2.0f;
         epsLocal *= 2.0f;
     }
 
-    obj += biasLocal;
+    // 덜 가리게: obj를 조금 더 가깝게
+    obj = max(0.0f, obj - biasLocal);
 
-    // ---- 판정 (min-pyramid) ----
-    uint visible = 1;
-    if (obj > hizMinDepth01 + epsLocal)
-        visible = 2;
+    // ---- 판정 (Max-HiZ) ----
+    // rect 안의 "가장 멀리 있는 깊이"마저도 물체보다 앞이면(작으면) 완전 가려짐으로 볼 수 있음
+    // => obj > hizMax + eps 이면 occluded
+    if (obj > hizMaxDepth01 + epsLocal)
+        visible = 0u;
 
     VisibleFlags[inputIndex] = visible;
 }

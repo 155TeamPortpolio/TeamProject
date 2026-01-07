@@ -4,6 +4,8 @@
 NS_BEGIN(Engine)
 static constexpr _uint kFrameBuffered =8;
 static constexpr _uint readLatency =7;
+static constexpr _uint hideAfter = 3;
+static constexpr _uint showAfter = 2;
 
 class CHiZ_Culling :
     public CBase
@@ -34,35 +36,35 @@ class CHiZ_Culling :
 
     struct OcclusionInput
     {
-        _uint       minX, minY, maxX, maxY;     // È­¸é ÇÈ¼¿ rect
+        _uint       minX, minY, maxX, maxY;     // È­ï¿½ï¿½ ï¿½È¼ï¿½ rect
         _float      objMinDepth01;                       // min(viewZ / zFar) in [0,1]
-        _uint       indexInList;                                // frustums º¤ÅÍ ÀÎµ¦½º
+        _uint       indexInList;                                // frustums ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½ï¿½ï¿½
         _uint       padding;
     };
 
     struct OcclusionKey
     {
-        const void* worldPtr; 
-        _uint drawIndex;      
+        _uint ObjID = 0;
+        _uint drawIndex = 0;
     };
 
     struct OcclusionKeyHash
     {
         size_t operator()(const OcclusionKey& key) const noexcept
         {
-            size_t h1 = hash<uintptr_t>{}(reinterpret_cast<uintptr_t>(key.worldPtr));
-            size_t h2 =hash<_uint>{}(key.drawIndex);
-            return h1 ^ (h2 + 0x9e3779b97f4a7c15ull + (h1 << 6) + (h1 >> 2));
+            uint64_t packed = (uint64_t(key.ObjID) << 32) | uint64_t(key.drawIndex);
+            return hash<uint64_t>{}(packed);
         }
     };
 
     struct OcclusionKeyEq
     {
-        bool operator()(const OcclusionKey& a, const OcclusionKey& b) const noexcept
+        bool operator()(const OcclusionKey& lhs, const OcclusionKey& rhs) const noexcept
         {
-            return a.worldPtr == b.worldPtr && a.drawIndex == b.drawIndex;
+            return lhs.ObjID == rhs.ObjID && lhs.drawIndex == rhs.drawIndex;
         }
     };
+
     struct OcclusionReadbackFrame
     {
         ID3D11Buffer* visibleBuffer = nullptr;              // UAV target
@@ -71,15 +73,18 @@ class CHiZ_Culling :
         ID3D11Query* copyDoneQuery = nullptr;               // event query
         vector<OcclusionKey> keys;
         _bool hasIssued = false;
+        _uint issuedFrame = 0;
     };
     struct OcclusionHysteresisState
     {
         _uint hiddenStreak = 0;
+        uint8_t visibleStreak = 0;
+        bool isHidden = false;
     };
     enum OcclusionFlags : _uint
     {
-        OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0, // ÆòÆò/°Å´ë(Áö¸é/º®/Å« ±¸Á¶¹° °¡´É¼º)
-        OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1 // Áö¸é Á¢ÃË ÃßÁ¤(¼±ÅÃ)
+        OCCL_FLAG_RISK_FLAT_OR_HUGE = 1u << 0, // ï¿½ï¿½ï¿½ï¿½/ï¿½Å´ï¿½(ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½/Å« ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½É¼ï¿½)
+        OCCL_FLAG_RISK_GROUNDCONTACT = 1u << 1 // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½)
     };
 
 #ifdef _USING_GUI
@@ -92,13 +97,13 @@ class CHiZ_Culling :
     };
     struct HiZStats
     {
-        _uint frustumIn = 0;       // frustum pass ÀÌÈÄ µé¾î¿Â ÆÐÅ¶ ¼ö
-        _uint tested = 0;          // occlusion Å×½ºÆ®¿¡ ³ÖÀº ¼ö(inputs.size)
-        _uint visibleByOcc = 0;    // occlusion °á°ú·Î visible·Î ÆÇÁ¤µÈ ¼ö
-        _uint culledByOcc = 0;     // occlusion °á°ú·Î occluded·Î ÆÇÁ¤µÈ ¼ö
-        _uint notTested = 0;       // BuildOcclusionInput ½ÇÆÐ/Á¦¿Ü µîÀ¸·Î Å×½ºÆ® ¾È ÇÑ ¼ö
-        _uint outResult = 0;       // ÃÖÁ¾ result ¼ö
-        _uint canRead = 0;         // ÀÌ¹ø ÇÁ·¹ÀÓ readback ¼º°ø(1/0)
+        _uint frustumIn = 0;       // frustum pass ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å¶ ï¿½ï¿½
+        _uint tested = 0;          // occlusion ï¿½×½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½(inputs.size)
+        _uint visibleByOcc = 0;    // occlusion ï¿½ï¿½ï¿½ï¿½ï¿½ visibleï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        _uint culledByOcc = 0;     // occlusion ï¿½ï¿½ï¿½ï¿½ï¿½ occludedï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½
+        _uint notTested = 0;       // BuildOcclusionInput ï¿½ï¿½ï¿½ï¿½/ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×½ï¿½Æ® ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½
+        _uint outResult = 0;       // ï¿½ï¿½ï¿½ï¿½ result ï¿½ï¿½
+        _uint canRead = 0;         // ï¿½Ì¹ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ readback ï¿½ï¿½ï¿½ï¿½(1/0)
     };
     vector<OcclDebugRect> m_dbgRects;
     bool m_dbgDrawRects = true;
@@ -131,13 +136,8 @@ private:
     void EnsureOcclusionResources(ID3D11Device* pDevice, _uint requiredCount);
 
     _bool isQueryComplete(ID3D11DeviceContext* pContext, ID3D11Query* pQuery);
-    void TryReadback(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& readSlot, _uint capacity);
-    void BuildResultFromCache(unordered_map<OcclusionKey, 
-        const OPAQUE_PACKET*, 
-        OcclusionKeyHash, OcclusionKeyEq>& currentCandidateMap,
-        vector<OcclusionKey>& writeKeys,
-        vector<OPAQUE_PACKET>& result);
-
+    _bool TryReadbackOne(ID3D11DeviceContext* pContext, OcclusionReadbackFrame& slot);
+ 
 private:
     _bool m_isReady = { false };
     _int m_DebugMip = { 0 };
@@ -149,8 +149,8 @@ private:
     _uint3 m_groupCount = {};
 
     ID3D11Texture2D* m_pHiZTex = { nullptr };
-    vector<ID3D11UnorderedAccessView*> m_HiZUav;    /*¹Óº° UAVµé*/
-    vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*¹Ó¸Ê SRVµé*/
+    vector<ID3D11UnorderedAccessView*> m_HiZUav;    /*ï¿½Óºï¿½ UAVï¿½ï¿½*/
+    vector<ID3D11ShaderResourceView*> m_HiZSrvMip; /*ï¿½Ó¸ï¿½ SRVï¿½ï¿½*/
 
     ID3D11ShaderResourceView* m_pDepthSrv = { nullptr };
     class CComputeShader* m_pCopyShader = { nullptr };
@@ -163,20 +163,23 @@ private:
 
 private:
     ID3D11Buffer* m_inputBuffer = { nullptr };       
-    ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs ¹öÆÛ¸¦ ÀÐ´Â SRV (t1)
-    _uint                   m_capacity = 0;                                             // ÇöÀç ¹öÆÛ°¡ ¼ö¿ë °¡´ÉÇÑ ÃÖ´ë element °³¼ö
+    ID3D11ShaderResourceView* m_inputSrv = { nullptr };           // Inputs ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½Ð´ï¿½ SRV (t1)
+    _uint                   m_capacity = 0;                                             // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ element ï¿½ï¿½ï¿½ï¿½
 
 private:
     ID3D11ShaderResourceView* m_pHiZSrv = { nullptr };
 
  private :
     OcclusionReadbackFrame m_readbackFrames[kFrameBuffered];
-    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlags¿ë GPU ¹öÆÛ
-   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlags¿¡ ¾²´Â UAV (u0)
-   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readback¿ë staging
+    //ID3D11Buffer* m_visibleBuffer = { nullptr };                                    // VisibleFlagsï¿½ï¿½ GPU ï¿½ï¿½ï¿½ï¿½
+   //ID3D11UnorderedAccessView* m_visibleUav = { nullptr };         // VisibleFlagsï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ UAV (u0)
+   //ID3D11Buffer* m_visibleStaging = { nullptr };                   // CPU readbackï¿½ï¿½ staging
 
-    _uint m_frameCursor = 0;                               // ¸Å ÇÁ·¹ÀÓ Áõ°¡
-    vector<_uint> m_cachedVisibleFlags;         // ¸¶Áö¸·À¸·Î ¼º°øÇÑ °á°ú(½ºÅç È¸ÇÇ¿ë)
+    _uint m_frameCursor = 0;                               // ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    _uint m_frameCounter = {};
+    _uint m_cachedFrame = {};
+
+    vector<_uint> m_cachedVisibleFlags;         // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ È¸ï¿½Ç¿ï¿½)
     vector<OcclusionKey> m_cachedKeys;    // last read keys
 
     unordered_map<OcclusionKey, OcclusionHysteresisState, OcclusionKeyHash, OcclusionKeyEq> m_hysteresis;

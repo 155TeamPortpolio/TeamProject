@@ -288,6 +288,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 	packet.pModel = { nullptr };
 	packet.bSkinning = false;
 	packet.pMaterial = Get_Component<CMaterial>();
+	packet.ObjID = m_ObjectID;
 	if(!packet.pMaterial)return E_FAIL;
 
 	packet.LookVector = m_pTransform->Dir(STATE::LOOK);
@@ -357,6 +358,7 @@ HRESULT CGameObject::Make_BlendedPacket(OPAQUE_PACKET packet)
 	newPacket.pMaterial = packet.pMaterial;
 	newPacket.pPayLoad = packet.pPayLoad;
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
+	newPacket.ObjID = m_ObjectID;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
 
@@ -385,6 +387,7 @@ HRESULT CGameObject::Make_InstancePacket()
 	INSTANCE_PACKET packet;
 	packet.pModel = Get_Component<CInstanceModel>();
 	packet.pMaterial = Get_Component<CMaterial>();
+	packet.ObjID = m_ObjectID;
 
 	if (!packet.pModel || !packet.pModel->Get_CompActive()) return E_FAIL;
 	for (size_t i = 0; i < packet.pModel->Get_MeshCount(); i++)
@@ -411,7 +414,7 @@ HRESULT CGameObject::Make_ParticlePacket()
 		packet.WorldMatrix = _smatrix::Identity;
 	else
 		packet.WorldMatrix = m_pTransform->Get_WorldMatrix();
-
+	packet.ObjID = m_ObjectID;
 	packet.pParticleSystem = Get_Component<CParticleSystem>();
 	packet.pMaterial = Get_Component<CMaterial>();
 	if (!packet.pParticleSystem || !packet.pMaterial) return E_FAIL;
@@ -434,6 +437,7 @@ HRESULT CGameObject::Make_EffectPacket(OPAQUE_PACKET packet)
 	newPacket.pWorldMatrix = packet.pWorldMatrix;
 	//float3 toObj = objWorldPos - cameraPos;
 	//float dist = dot(toObj, cameraForward);
+	packet.ObjID = m_ObjectID;
 
 	const _float4x4* viewInverseMat = CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedViewMatrix();
 	_matrix viewInverse = XMLoadFloat4x4(viewInverseMat);
