@@ -122,7 +122,7 @@
     ],
     "children": [
         {
-            "instanceName": "prefab_nowLoading",
+            "instanceName": "nowLoading",
             "transform": {
                 "anchor": 10,
                 "anchorOffset": [
