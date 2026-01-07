@@ -69,7 +69,7 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 		instance->OnPooledAcquire(m_pObjDesc);
 	}
 	else{
-		CGameObject* instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
+		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
 			m_CloneDesc.OriginLevel, m_CloneDesc.protoTag,
 			m_pObjDesc);
 			if (!instance) return nullptr;
