@@ -64,20 +64,17 @@ void CCharacter::Late_Update(_float dt)
 
 void CCharacter::Rotate(_vector3 vDirection)
 {
-	_vector3 vDir = vDirection;
-	vDir.y = 0.f;
-	if (vDir.Length() < 0.001f) return;
-	vDir.Normalize();
+	_vector3 dir = vDirection;
+	dir.y = 0.f;
+	dir.Normalize();
+	const _float lenSq = dir.LengthSquared();
+	const _float yaw = atan2f(dir.x, dir.z); 
 
-	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vUp.Cross(vDir);
-	vRight.Normalize();
-
-	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
-	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
+	m_qTargetRot = _quaternion::CreateFromAxisAngle(_vector3::Up, yaw);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
 }
+
 
 _bool CCharacter::Can_Evade() const
 {

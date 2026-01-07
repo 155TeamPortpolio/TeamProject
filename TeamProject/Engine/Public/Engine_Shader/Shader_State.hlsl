@@ -220,6 +220,19 @@ BlendState BS_UI_AlphaBlend
     BlendOp = Add;
 };
 
+BlendState BS_OITCompositeCombined
+{
+    BlendEnable[0] = true;
+
+    SrcBlend = One;
+    DestBlend = Inv_Src_Alpha;
+    BlendOp = Add;
+
+    SrcBlendAlpha = One;
+    DestBlendAlpha = Inv_Src_Alpha;
+    BlendOpAlpha = Add;
+};
+
 BlendState BS_OITAccmulation
 {
     /* Diffuse Effect */
