@@ -158,7 +158,7 @@ HRESULT CTestLevel::Awake()
 	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
-	//Ready_TestObject();
+	Ready_TestObject();
 	Ready_ShadowCamera();
 
 	return S_OK;
@@ -375,11 +375,11 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	//auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-	//	.Build("Test_Cloud");
-	//
-	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+		.Build("Test_Cloud");
+	
+	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 HRESULT CTestLevel::Render()

@@ -89,4 +89,26 @@ public:
 	virtual void Free() override;
 };
 
+inline auto* GraphicDevice() { return CGameInstance::GetInstance()->Get_GraphicDev(); }
+inline auto* InputDevice() { return CGameInstance::GetInstance()->Get_InputDev(); }
+inline auto* AudioDevice() { return CGameInstance::GetInstance()->Get_AudioDev(); }
+
+inline auto* TimeManger() { return CGameInstance::GetInstance()->Get_TimeMgr(); }
+inline auto* LevelManger() { return CGameInstance::GetInstance()->Get_LevelMgr(); }
+inline auto* PrototypeManger() { return CGameInstance::GetInstance()->Get_PrototypeMgr(); }
+inline auto* ObjectManger() { return CGameInstance::GetInstance()->Get_ObjectMgr(); }
+inline auto* UIManager() { return CGameInstance::GetInstance()->Get_UIMgr(); }
+inline auto* ResourceManger() { return CGameInstance::GetInstance()->Get_ResourceMgr(); }
+inline auto* CameraManager() { return CGameInstance::GetInstance()->Get_CameraMgr(); }
+inline auto* LightManager() { return CGameInstance::GetInstance()->Get_LightMgr(); }
+inline auto* ClickManager() { return CGameInstance::GetInstance()->Get_ClickMgr(); }
+
+inline auto* GUISystem() { return CGameInstance::GetInstance()->Get_GUISystem(); }
+inline auto* RenderSystem() { return CGameInstance::GetInstance()->Get_RenderSystem(); }
+inline auto* RaySystem() { return CGameInstance::GetInstance()->Get_RayMgr(); }
+inline auto* CollisionSystem() { return CGameInstance::GetInstance()->Get_CollisionSystem(); }
+inline auto* PhysicsSystem() { return CGameInstance::GetInstance()->Get_PhysicsSystem(); }
+inline auto* FontSystem() { return CGameInstance::GetInstance()->Get_FontSystem(); }
+inline auto* EventSystem() { return CGameInstance::GetInstance()->Get_EventSystem(); }
+
 NS_END

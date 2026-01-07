@@ -407,20 +407,30 @@ float CalculateShadow(float4 vWorldPos, float fViewDepth,
 {
     int cascadeIndex = GetCascadeIndex(fViewDepth);
     
-    float shadow = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
+    float shadowRaw = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
                                                      worldNormal, lightDir, screenPos);
-    return shadow;
+    
+    float NdotL = dot(worldNormal, lightDir);
+    float halfLambert = NdotL * 0.5 + 0.5;
+    
+    float toon;
+    if (halfLambert < 0.8) toon = 0.8;
+    else toon = 1.0;
+    
+    float shadowToon = shadowRaw > 0.5 ? 1.0 : 0.3;
+    
+    return toon * shadowToon;
     
     // Cascade Blending
-    float blendFactor = GetCascadeBlendFactor(fViewDepth, cascadeIndex);
-    
-    if (blendFactor < 1.0f && cascadeIndex < 3)
-    {
-        float nextShadow = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
-                                                            worldNormal, lightDir, screenPos);
-        shadow = lerp(nextShadow, shadow, blendFactor);
-    }
-    
-    return shadow;
+    //float blendFactor = GetCascadeBlendFactor(fViewDepth, cascadeIndex);
+    //
+    //if (blendFactor < 1.0f && cascadeIndex < 3)
+    //{
+    //    float nextShadow = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
+    //                                                        worldNormal, lightDir, screenPos);
+    //    shadow = lerp(nextShadow, shadow, blendFactor);
+    //}
+    //
+    //return shadow;
 }
 #endif

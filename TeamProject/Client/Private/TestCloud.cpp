@@ -73,7 +73,9 @@ HRESULT CTestCloud::Initialize(INIT_DESC* pArg)
 
 void CTestCloud::Awake()
 {
-	Get_Component<CModel>()->Set_RenderType(RENDER_PASS_TYPE::NONLIGHT_OPAQUE);
+	auto model = Get_Component<CModel>();
+	model->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
+	model->ShadowCast(false);
 
 	auto instance =Get_Component<CMaterial>()->Get_MaterialInstance(0);
 	instance->Set_Param("g_CloudColor", { &m_vCloudColor, "float3", sizeof(_float3) });

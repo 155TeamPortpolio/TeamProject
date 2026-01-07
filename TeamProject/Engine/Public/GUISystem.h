@@ -26,6 +26,7 @@ public:
     virtual bool Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
     virtual _bool UsingUI() { return m_bUsingUI; }
     virtual void Set_UIMode() override;
+    virtual void Set_Bone(_int boneIndex);
 
 private:
     void Set_Theme();
@@ -50,6 +51,7 @@ private:
     ImGuiIO* m_GuiIo;
 
     class CHierarchyPanel* m_pHierachyPanel = { nullptr };
+    class CDebugBonePanel* m_pBonePanel = { nullptr };
 
 public:
     static CGUISystem* Create(const ENGINE_DESC& engine, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
