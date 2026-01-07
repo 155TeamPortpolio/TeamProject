@@ -220,6 +220,45 @@ BlendState BS_UI_AlphaBlend
     BlendOp = Add;
 };
 
+BlendState BS_OITAccmulation
+{
+    /* Diffuse Effect */
+    BlendEnable[0] = true;
+    SrcBlend[0] = One;
+    DestBlend[0] = One;
+    BlendOp[0] = Add;
+    SrcBlendAlpha[0] = One;
+    DestBlendAlpha[0] = One;
+    BlendOpAlpha[0] = Add;
+
+    /* Bloom Effect */
+    BlendEnable[1] = true;
+    SrcBlend[1] = One;
+    DestBlend[1] = One;
+    BlendOp[1] = Add;
+    SrcBlendAlpha[1] = One;
+    DestBlendAlpha[1] = One;
+    BlendOpAlpha[1] = Add;
+
+    /* Bloom Info */
+    BlendEnable[2] = true;
+    SrcBlend[2] = One;
+    DestBlend[2] = One;
+    BlendOp[2] = Add;
+    SrcBlendAlpha[2] = One;
+    DestBlendAlpha[2] = One;
+    BlendOpAlpha[2] = Add;
+
+    /* Revealage */
+    BlendEnable[3] = true;
+    SrcBlend[3] = Zero;
+    DestBlend[3] = Inv_Src_Alpha;
+    BlendOp[3] = Add;
+    SrcBlendAlpha[3] = Zero;
+    DestBlendAlpha[3] = Inv_Src_Alpha;
+    BlendOpAlpha[3] = Add;
+};
+
 SamplerState DefaultSampler = sampler_state
 {
     Filter = MIN_MAG_MIP_LINEAR;

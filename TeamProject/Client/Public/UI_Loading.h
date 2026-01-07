@@ -24,7 +24,10 @@ public:
 private:
 	UI_HANDLE			m_hRoot;
 	vector<UI_HANDLE>	m_hChildren;
-	
+
+private:
+	void CacheHandle(CUI_Object* pRoot);
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

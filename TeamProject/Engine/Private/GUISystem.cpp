@@ -121,11 +121,15 @@ void CGUISystem::Set_Theme()
 void CGUISystem::Set_Panel()
 {
 	m_pHierachyPanel = CHierarchyPanel::Create(&m_tGuiContext);
+	m_pBonePanel = CDebugBonePanel::Create(&m_tGuiContext);
 	m_Panels.push_back(m_pHierachyPanel);
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
-	m_Panels.push_back(CDebugBonePanel::Create(&m_tGuiContext));
-
+	m_Panels.push_back(m_pBonePanel);
+}
+void CGUISystem::Set_Bone(_int boneIndex)
+{
+	m_pBonePanel->Set_Bone(boneIndex);
 }
 
 void CGUISystem::Render_Frame()

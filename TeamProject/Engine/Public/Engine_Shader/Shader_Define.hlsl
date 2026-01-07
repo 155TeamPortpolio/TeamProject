@@ -44,7 +44,8 @@ cbuffer ShadowBuffer : register(b8)
     matrix matShadowProjection;
     matrix matShadowViewInverse;
     matrix matShadowProjectionInverse;
-    matrix matLightViewProj[4];
+    matrix matStaticLightViewProj[4];
+    matrix matSkinnedLightViewProj[4];
     float4 vCascadeSplits;
     float4 vShadowPosition;
     int iCurrentCascade;

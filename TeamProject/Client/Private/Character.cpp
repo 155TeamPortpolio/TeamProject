@@ -54,7 +54,7 @@ void CCharacter::Update(_float dt)
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
-	if(m_bIsRotating)	Update_Rotation(dt);
+	if (m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -70,14 +70,10 @@ void CCharacter::Rotate(_vector3 vDirection)
 	vDir.Normalize();
 
 	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vDir.Cross(vUp);
+	_vector3 vRight = vUp.Cross(vDir);
 	vRight.Normalize();
 
-	_smatrix mRot = _smatrix::Identity;
-	mRot.Right(vRight);
-	mRot.Up(vUp);
-	mRot.Forward(vDir);
-
+	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
@@ -104,78 +100,78 @@ void CCharacter::Use_Evade()
 
 _bool CCharacter::Is_OppositeInput() const
 {
-	if (m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0)
-		return false;
-	if (m_iCurKeyX == 0 && m_iCurKeyZ == 0)
+	if (m_input.previousMove.IsZero() || m_input.currentMove.IsZero())
 		return false;
 
-	_bool bOppositeX = (m_iLastValidKeyX * m_iCurKeyX < 0);
-	_bool bOppositeZ = (m_iLastValidKeyZ * m_iCurKeyZ < 0);
+	_vector2 vPrev((_float)m_input.previousMove.x, (_float)m_input.previousMove.z);
+	_vector2 vCur((_float)m_input.currentMove.x, (_float)m_input.currentMove.z);
+	vPrev.Normalize();
+	vCur.Normalize();
 
-	return (bOppositeX || bOppositeZ);
+	_float fDot = vPrev.Dot(vCur);
+	_float fAngle = XMConvertToDegrees(acosf(fDot));
+
+	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
 void CCharacter::Update_Input(_float dt)
 {
-	m_vPrevInputDir = m_vInputDir;
-	m_iPrevKeyX = m_iCurKeyX;
-	m_iPrevKeyZ = m_iCurKeyZ;
+	m_input.prevDirection = m_input.direction;
+	m_input.previous = m_input.current;
 
-	_int x = 0, z = 0;
-	if (KEY->Key_Hold('W'))  z += 1;
-	if (KEY->Key_Hold('S'))  z -= 1;
-	if (KEY->Key_Hold('D'))  x += 1;
-	if (KEY->Key_Hold('A'))  x -= 1;
+	KeyInput key;
+	if (KEY->Key_Hold('W'))  key.z += 1;
+	if (KEY->Key_Hold('S'))  key.z -= 1;
+	if (KEY->Key_Hold('D'))  key.x += 1;
+	if (KEY->Key_Hold('A'))  key.x -= 1;
 
-	m_iCurKeyX = x;
-	m_iCurKeyZ = z;
+	m_input.current = key;
 
-	if (x != 0 || z != 0)
-	{	// 이전에 유효한 입력이 없었거나, 버퍼 시간이 지난 경우에만 업데이트
-		if ((m_iLastValidKeyX == 0 && m_iLastValidKeyZ == 0) ||
-			m_fKeyReleaseTimer <= 0.f)
+	if (!key.IsZero())
+	{
+		if (m_input.lastValid.IsZero() || m_input.bufferTimer <= 0.f)
+			m_input.lastValid = key;
+
+		m_input.bufferTimer = KEY_BUFFER_TIME;
+
+		if (key != m_input.currentMove)
 		{
-			m_iLastValidKeyX = x;
-			m_iLastValidKeyZ = z;
+			m_input.previousMove = m_input.currentMove;
+			m_input.currentMove = key;
 		}
-		m_fKeyReleaseTimer = KEY_BUFFER_TIME;
 	}
 	else
-	{	// 타이머가 0초가 될때 까지 Valid를 초기화시키지 않음
-		m_fKeyReleaseTimer -= dt;
-		if (m_fKeyReleaseTimer < 0.f)
-		{	// 버퍼시간 경과
-			m_fKeyReleaseTimer = 0.f;
-			m_iLastValidKeyX = 0;
-			m_iLastValidKeyZ = 0;
+	{
+		m_input.bufferTimer -= dt;
+		if (m_input.bufferTimer < 0.f)
+		{
+			m_input.bufferTimer = 0.f;
+			m_input.lastValid.Reset();
+			m_input.previousMove.Reset();
+			m_input.currentMove.Reset();
 		}
 	}
 
-	m_vInputDir = {};
-	if (x || z)
+	m_input.direction = {};
+	if (!key.IsZero())
 	{
 		auto cam = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
-		Vector3 look = camTf->Dir(STATE::LOOK);
-		Vector3 right = camTf->Dir(STATE::RIGHT);
+		_vector3 look = camTf->Dir(STATE::LOOK);
 		look.y = 0.f;
-		right.y = 0.f;
 		look.Normalize();
+		_vector3 right = _vector3::Up.Cross(look);
 		right.Normalize();
-
-		m_vInputDir = right * (float)x + look * (float)z;
+		m_input.direction = look * (float)key.z + right * (float)key.x;
+		m_input.direction.Normalize();
 	}
-
-	m_iPrevKeyX = x;
-	m_iPrevKeyZ = z;
 
 	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
-	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
+	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
-	// 테스트용(상태제어)
-	if (KEY->Key_Down(VK_F1))	m_bTest = !m_bTest;
+	if (KEY->Key_Down(VK_F1)) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)

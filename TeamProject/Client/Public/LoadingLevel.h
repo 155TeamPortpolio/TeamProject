@@ -18,9 +18,15 @@ public:
     virtual HRESULT Awake()      override;
     virtual void    Update()     override;
     virtual HRESULT Render()     override;
+    
+private:
+    CGameInstance* m_pGameInstance{}; 
 
 private:
-    CGameInstance* m_pGameInstance{};
+    void PreLoadLevel();
+
+private:
+    string m_NextLevel = {};
 
 public:
     static CLoadingLevel* Create(const string& LevelKey);

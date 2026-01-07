@@ -117,7 +117,7 @@ static const float2 PoissonDisk64[64] =
 };
 
 
-float SampleShadowMapAdaptivePCF(float3 shadowCoord, int cascadeIndex, float bias)
+float StaticSampleShadowMapAdaptivePCF(float3 shadowCoord, int cascadeIndex, float bias)
 {
     float shadow = 0.0f;
     
@@ -129,7 +129,7 @@ float SampleShadowMapAdaptivePCF(float3 shadowCoord, int cascadeIndex, float bia
     for (int i = 0; i < 64; i++)
     {
         float2 offset = PoissonDisk64[i] * texelSize;
-        shadow += ShadowMapArray.SampleCmpLevelZero(
+        shadow += StaticShadowMapArray.SampleCmpLevelZero(
             ShadowSampler,
             float3(shadowCoord.xy + offset, cascadeIndex),
             shadowCoord.z - bias
@@ -139,7 +139,29 @@ float SampleShadowMapAdaptivePCF(float3 shadowCoord, int cascadeIndex, float bia
     return shadow / 64.0f;
 }
 
-float SampleShadowMapRotatedGrid(float3 shadowCoord, int cascadeIndex, float bias, float2 screenPos)
+float SkinnedSampleShadowMapAdaptivePCF(float3 shadowCoord, int cascadeIndex, float bias)
+{
+    float shadow = 0.0f;
+    
+    float baseFilterSize = 6.0f;
+    float filterSize = baseFilterSize * (cascadeIndex + 1);
+    float2 texelSize = filterSize / 8192.0f;
+    
+    [unroll]
+    for (int i = 0; i < 64; i++)
+    {
+        float2 offset = PoissonDisk64[i] * texelSize;
+        shadow += SkinnedShadowMapArray.SampleCmpLevelZero(
+            ShadowSampler,
+            float3(shadowCoord.xy + offset, cascadeIndex),
+            shadowCoord.z - bias
+        );
+    }
+    
+    return shadow / 64.0f;
+}
+
+float StaticSampleShadowMapRotatedGrid(float3 shadowCoord, int cascadeIndex, float bias, float2 screenPos)
 {
     float shadow = 0.0f;
     
@@ -158,7 +180,7 @@ float SampleShadowMapRotatedGrid(float3 shadowCoord, int cascadeIndex, float bia
         for (int y = -3; y <= 3; y++)
         {
             float2 offset = mul(float2(x, y), rotationMatrix) * texelSize;
-            shadow += ShadowMapArray.SampleCmpLevelZero(
+            shadow += StaticShadowMapArray.SampleCmpLevelZero(
                 ShadowSampler,
                 float3(shadowCoord.xy + offset, cascadeIndex),
                 shadowCoord.z - bias
@@ -169,8 +191,37 @@ float SampleShadowMapRotatedGrid(float3 shadowCoord, int cascadeIndex, float bia
     return shadow / 49.0f;
 }
 
+float SkinnedSampleShadowMapRotatedGrid(float3 shadowCoord, int cascadeIndex, float bias, float2 screenPos)
+{
+    float shadow = 0.0f;
+    
+    float angle = frac(sin(dot(screenPos, float2(12.9898, 78.233))) * 43758.5453) * 6.28318530718;
+    float s = sin(angle);
+    float c = cos(angle);
+    float2x2 rotationMatrix = float2x2(c, -s, s, c);
+    
+    float filterSize = 2.5f * (cascadeIndex + 1);
+    float2 texelSize = filterSize / 8192.0f;
+    
+    [unroll]
+    for (int x = -3; x <= 3; x++)
+    {
+        [unroll]
+        for (int y = -3; y <= 3; y++)
+        {
+            float2 offset = mul(float2(x, y), rotationMatrix) * texelSize;
+            shadow += SkinnedShadowMapArray.SampleCmpLevelZero(
+                ShadowSampler,
+                float3(shadowCoord.xy + offset, cascadeIndex),
+                shadowCoord.z - bias
+            );
+        }
+    }
+    
+    return shadow / 49.0f;
+}
 
-float FindBlockerDistance(float3 shadowCoord, int cascadeIndex, float bias)
+float StaticFindBlockerDistance(float3 shadowCoord, int cascadeIndex, float bias)
 {
     float blockerSum = 0.0f;
     int blockerCount = 0;
@@ -180,7 +231,7 @@ float FindBlockerDistance(float3 shadowCoord, int cascadeIndex, float bias)
     for (int i = 0; i < 16; i++)
     {
         float2 offset = PoissonDisk64[i * 4] * searchRadius;
-        float depth = ShadowMapArray.SampleLevel(
+        float depth = StaticShadowMapArray.SampleLevel(
             DefaultSampler,
             float3(shadowCoord.xy + offset, cascadeIndex),
             0
@@ -199,10 +250,38 @@ float FindBlockerDistance(float3 shadowCoord, int cascadeIndex, float bias)
     return blockerSum / float(blockerCount);
 }
 
-// PCSS Main
-float SampleShadowMapPCSS(float3 shadowCoord, int cascadeIndex, float bias)
+float SkinnedFindBlockerDistance(float3 shadowCoord, int cascadeIndex, float bias)
 {
-    float avgBlockerDepth = FindBlockerDistance(shadowCoord, cascadeIndex, bias);
+    float blockerSum = 0.0f;
+    int blockerCount = 0;
+    
+    float searchRadius = 5.0f / 8192.0f;
+    
+    for (int i = 0; i < 16; i++)
+    {
+        float2 offset = PoissonDisk64[i * 4] * searchRadius;
+        float depth = SkinnedShadowMapArray.SampleLevel(
+            DefaultSampler,
+            float3(shadowCoord.xy + offset, cascadeIndex),
+            0
+        ).r;
+        
+        if (depth < shadowCoord.z - bias)
+        {
+            blockerSum += depth;
+            blockerCount++;
+        }
+    }
+    
+    if (blockerCount == 0)
+        return -1.0f;
+    
+    return blockerSum / float(blockerCount);
+}
+// PCSS Main
+float StaticSampleShadowMapPCSS(float3 shadowCoord, int cascadeIndex, float bias)
+{
+    float avgBlockerDepth = StaticFindBlockerDistance(shadowCoord, cascadeIndex, bias);
     
     if (avgBlockerDepth < 0.0f)
         return 1.0f;
@@ -216,7 +295,7 @@ float SampleShadowMapPCSS(float3 shadowCoord, int cascadeIndex, float bias)
     for (int i = 0; i < 64; i++)
     {
         float2 offset = PoissonDisk64[i] * texelSize;
-        shadow += ShadowMapArray.SampleCmpLevelZero(
+        shadow += StaticShadowMapArray.SampleCmpLevelZero(
             ShadowSampler,
             float3(shadowCoord.xy + offset, cascadeIndex),
             shadowCoord.z - bias
@@ -226,8 +305,33 @@ float SampleShadowMapPCSS(float3 shadowCoord, int cascadeIndex, float bias)
     return shadow / 64.0f;
 }
 
+float SkinnedSampleShadowMapPCSS(float3 shadowCoord, int cascadeIndex, float bias)
+{
+    float avgBlockerDepth = SkinnedFindBlockerDistance(shadowCoord, cascadeIndex, bias);
+    
+    if (avgBlockerDepth < 0.0f)
+        return 1.0f;
+    
+    float penumbraWidth = (shadowCoord.z - avgBlockerDepth) / avgBlockerDepth;
+    penumbraWidth = clamp(penumbraWidth * 20.0f, 1.0f, 10.0f);
+    
+    float shadow = 0.0f;
+    float2 texelSize = penumbraWidth / 8192.0f;
+    
+    for (int i = 0; i < 64; i++)
+    {
+        float2 offset = PoissonDisk64[i] * texelSize;
+        shadow += SkinnedShadowMapArray.SampleCmpLevelZero(
+            ShadowSampler,
+            float3(shadowCoord.xy + offset, cascadeIndex),
+            shadowCoord.z - bias
+        );
+    }
+    
+    return shadow / 64.0f;
+}
 
-float CalculateShadowWithNormalOffset(float4 vLightSpacePos[4], float4 vWorldPos, float fViewDepth,
+float CalculateShadowWithNormalOffset(float4 vWorldPos, float fViewDepth,
                                        float3 worldNormal, float3 lightDir, float2 screenPos)
 {
     int cascadeIndex = GetCascadeIndex(fViewDepth);
@@ -239,14 +343,22 @@ float CalculateShadowWithNormalOffset(float4 vLightSpacePos[4], float4 vWorldPos
     float4 offsetWorldPos = vWorldPos;
     offsetWorldPos.xyz += biasResult.normalOffset;
     
-    float4 shadowCoord = mul(offsetWorldPos, matLightViewProj[cascadeIndex]);
-    shadowCoord.xyz /= shadowCoord.w;
-    shadowCoord.x = shadowCoord.x * 0.5f + 0.5f;
-    shadowCoord.y = shadowCoord.y * -0.5f + 0.5f;
+    float4 staticshadowCoord = mul(offsetWorldPos, matStaticLightViewProj[cascadeIndex]);
+    staticshadowCoord.xyz /= staticshadowCoord.w;
+    staticshadowCoord.x = staticshadowCoord.x * 0.5f + 0.5f;
+    staticshadowCoord.y = staticshadowCoord.y * -0.5f + 0.5f;
+    
+    float4 skinnedshadowCoord = mul(offsetWorldPos, matSkinnedLightViewProj[cascadeIndex]);
+    skinnedshadowCoord.xyz /= skinnedshadowCoord.w;
+    skinnedshadowCoord.x = skinnedshadowCoord.x * 0.5f + 0.5f;
+    skinnedshadowCoord.y = skinnedshadowCoord.y * -0.5f + 0.5f;
 
-    if (shadowCoord.x < 0.0f || shadowCoord.x > 1.0f ||
-        shadowCoord.y < 0.0f || shadowCoord.y > 1.0f ||
-        shadowCoord.z < 0.0f || shadowCoord.z > 1.0f)
+    if (staticshadowCoord.x < 0.0f || staticshadowCoord.x > 1.0f ||
+        staticshadowCoord.y < 0.0f || staticshadowCoord.y > 1.0f ||
+        staticshadowCoord.z < 0.0f || staticshadowCoord.z > 1.0f ||
+        skinnedshadowCoord.x < 0.0f || skinnedshadowCoord.x > 1.0f ||
+        skinnedshadowCoord.y < 0.0f || skinnedshadowCoord.y > 1.0f ||
+        skinnedshadowCoord.z < 0.0f || skinnedshadowCoord.z > 1.0f)
     {
         return 1.0f;
     }
@@ -259,9 +371,12 @@ float CalculateShadowWithNormalOffset(float4 vLightSpacePos[4], float4 vWorldPos
     //float shadow = SampleShadowMapRotatedGrid(shadowCoord.xyz, cascadeIndex, biasResult.depthBias, screenPos);
     
     // PCSS 
-    float shadow = SampleShadowMapPCSS(shadowCoord.xyz, cascadeIndex, biasResult.depthBias);
+    float fStatic = StaticSampleShadowMapPCSS(staticshadowCoord.xyz, cascadeIndex, biasResult.depthBias);
+    float fSkinned = SkinnedSampleShadowMapPCSS(skinnedshadowCoord.xyz, cascadeIndex, biasResult.depthBias);
     
-    return shadow;
+    float finalShadow = fStatic * fSkinned;
+    
+    return finalShadow;
 }
 
 float GetCascadeBlendFactor(float fViewDepth, int cascadeIndex)
@@ -287,25 +402,35 @@ float GetCascadeBlendFactor(float fViewDepth, int cascadeIndex)
     return 1.0f;
 }
 
-float CalculateShadow(float4 vLightSpacePos[4], float4 vWorldPos, float fViewDepth,
+float CalculateShadow(float4 vWorldPos, float fViewDepth,
                      float3 worldNormal, float3 lightDir, float2 screenPos)
 {
     int cascadeIndex = GetCascadeIndex(fViewDepth);
     
-    float shadow = CalculateShadowWithNormalOffset(vLightSpacePos, vWorldPos, fViewDepth,
+    float shadowRaw = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
                                                      worldNormal, lightDir, screenPos);
-    return shadow;
+    
+    float NdotL = dot(worldNormal, lightDir);
+    float halfLambert = NdotL * 0.5 + 0.5;
+    
+    float toon;
+    if (halfLambert < 0.8) toon = 0.8;
+    else toon = 1.0;
+    
+    float shadowToon = shadowRaw > 0.5 ? 1.0 : 0.3;
+    
+    return toon * shadowToon;
     
     // Cascade Blending
-    float blendFactor = GetCascadeBlendFactor(fViewDepth, cascadeIndex);
-    
-    if (blendFactor < 1.0f && cascadeIndex < 3)
-    {
-        float nextShadow = CalculateShadowWithNormalOffset(vLightSpacePos, vWorldPos, fViewDepth,
-                                                            worldNormal, lightDir, screenPos);
-        shadow = lerp(nextShadow, shadow, blendFactor);
-    }
-    
-    return shadow;
+    //float blendFactor = GetCascadeBlendFactor(fViewDepth, cascadeIndex);
+    //
+    //if (blendFactor < 1.0f && cascadeIndex < 3)
+    //{
+    //    float nextShadow = CalculateShadowWithNormalOffset(vWorldPos, fViewDepth,
+    //                                                        worldNormal, lightDir, screenPos);
+    //    shadow = lerp(nextShadow, shadow, blendFactor);
+    //}
+    //
+    //return shadow;
 }
 #endif

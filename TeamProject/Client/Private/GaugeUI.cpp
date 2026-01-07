@@ -30,6 +30,19 @@ void CGaugeUI::Update(_float dt)
     Play_Animation(dt);
 }
 
+void CGaugeUI::Render_GUI()
+{
+    __super::Render_GUI();
+    
+    auto pSprite = Get_Component<CSprite2D>();
+
+    ImGui::Text(u8"게이지 방향 : ");
+    ImGui::SameLine();
+    (m_fDirection == 0) ? ImGui::Text(u8"오른쪽에서 왼쪽으로") : ImGui::Text(u8"왼쪽에서 오른쪽으로");
+
+    if (ImGui::DragFloat("FillAmount", &m_fFillAmount, 0.01f, 0.f, 1.f, "%.2f", ImGuiSliderFlags_AlwaysClamp))
+        pSprite->Set_Param("FillAmount", { &m_fFillAmount,"float", sizeof(_float) });
+}
 void CGaugeUI::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
@@ -41,13 +54,13 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
     {
         const auto& gaugeJson = data["gauge"];
 
-        if(gaugeJson.value("direction", 0.f))
+        if(gaugeJson.value("radial", 0.f))
             pSprite->ChangePass("RadialFill");
         else
             pSprite->ChangePass("LinearFill");
 
-        _float fDirection = gaugeJson.value("direction", 0.0f);
-        pSprite->Set_Param("Direction", { &fDirection, "float", sizeof(_float) });
+        m_fDirection = gaugeJson.value("direction", 0.0f);
+        pSprite->Set_Param("Direction", { &m_fDirection, "float", sizeof(_float) });
     }
 }
 

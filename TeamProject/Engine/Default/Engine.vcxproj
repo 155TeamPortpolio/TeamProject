@@ -269,6 +269,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
+    <ClInclude Include="..\Public\DynamicBoneStruct.h" />
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
@@ -391,6 +393,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
+    <ClInclude Include="..\Public\TrailModel.h" />
+    <ClInclude Include="..\Public\TrailNode.h" />
     <ClInclude Include="..\Public\Transform.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
     <ClInclude Include="..\public\UIRenderer.h" />
@@ -403,6 +407,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
+    <ClInclude Include="..\Public\VI_Trail.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
@@ -449,6 +454,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBone.cpp" />
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
@@ -536,6 +542,8 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
+    <ClCompile Include="..\Private\TrailModel.cpp" />
+    <ClCompile Include="..\Private\TrailNode.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
     <ClCompile Include="..\private\UIRenderer.cpp" />
@@ -548,6 +556,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
+    <ClCompile Include="..\Private\VI_Trail.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -676,12 +685,16 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
       <FileType>Document</FileType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

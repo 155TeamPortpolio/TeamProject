@@ -155,7 +155,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     float3 worldPos = mul(float4(In.vPosition, 1.f),
                          ObjectBufferArray[TransformIndex].Transform).xyz;
     
-    float4 lightSpacePos = mul(float4(worldPos, 1.f), matLightViewProj[iCurrentCascade]);
+    float4 lightSpacePos = mul(float4(worldPos, 1.f), matStaticLightViewProj[iCurrentCascade]);
     Out.vPosition = lightSpacePos;
     
     return Out;

@@ -60,20 +60,26 @@ CGameObject* CGameObjectBuilder::Build(const string& instanceKey, _uint* id)
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//프로토 매니저에서 가져오기
-	CGameObject* instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
-		m_CloneDesc.OriginLevel, m_CloneDesc.protoTag, 
-		m_pObjDesc);
-
-	if (!instance) {
-		return nullptr;
+	CGameObject* instance = nullptr;
+	if (m_isFromPool)
+	{
+		instance = ObjectManger()->Acquire(m_CloneDesc);
+		if (!instance) return nullptr;
+		instance->Set_FromPool(true);
+		instance->OnPooledAcquire(m_pObjDesc);
 	}
-	/*즉 -> 클론 후에 레이어에서 삽입하고 있는 중임*/
+	else{
+		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
+			m_CloneDesc.OriginLevel, m_CloneDesc.protoTag,
+			m_pObjDesc);
+			if (!instance) return nullptr;
+			instance->Set_FromPool(false);
+			instance->Awake();
+	}
 	
 	if (instance && id) {
 		*id = instance->Get_ObjectID();
 	}
-	instance->Awake();
 	return instance;
 }
 
@@ -178,6 +184,13 @@ CGameObjectBuilder& CGameObjectBuilder::Add_ObjDesc(GAMEOBJECT_DESC* pArg)
 	if (pArg == nullptr) return *this;
 	m_pObjDesc = pArg;
 	return *this;
+}
+
+CGameObjectBuilder& CGameObjectBuilder::FromPool()
+{
+	m_isFromPool = true;
+	return *this;
+	// TODO: 여기에 return 문을 삽입합니다.
 }
 
 CGameObjectBuilder& CGameObjectBuilder::Camera(const CAMERA_DESC& camera)

@@ -350,8 +350,14 @@ HRESULT CGameObject::Make_OpaquePacket()
 			Make_3DUIPacket(packet);
 
 		 if (packet.pModel->doShadowCast()) {
-			if(packet.pMaterial->isValid(packet.MaterialIndex))
-				 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
+			 if (packet.pMaterial->isValid(packet.MaterialIndex))
+			 {
+				 if (packet.bSkinning)
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedShadow(packet);
+				 else
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticShadow(packet);
+
+			 }
 		 }
 	}
 	return S_OK;
@@ -405,9 +411,6 @@ HRESULT CGameObject::Make_InstancePacket()
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
 		packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 		CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Instance(packet);
-		if (packet.pModel->doShadowCast()) {
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-		}
 	}
 
 	return S_OK;

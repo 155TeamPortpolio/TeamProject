@@ -22,7 +22,7 @@ public:
 public:
 	void Render_GUI();
 	void Render_Humanoid();
-
+	void Render_DynamicChain();
 
 private:
 	HRESULT Ready_Bones(const aiNode* _pAINode, _int _iParentIndex = -1);
@@ -36,9 +36,11 @@ private:
 
 private:
 	vector<_bool> HasOffset;
+	class CAIDynamicBone* m_pDynamic = { nullptr };
 
 private: /*Humanoid*/
 	_bool m_isHumanoidTabOpened = { false };
+	_bool m_isDynamicTabOpened = { false };
 	_int m_SelectedBoneIndex = {-1};
 	_int m_SelectedSlotIndex = {-1};
 	string m_BoneFilter = {};

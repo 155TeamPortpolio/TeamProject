@@ -16,7 +16,15 @@ namespace Engine
 
 	enum class COLLIDER_TYPE { BOX, SPHERE, CAPSULE, END };
 	// 0 ~ 31¹üÀ§
-	enum class COLLISION_GROUP { COMMON, PLAYER, MONSTER, PLAYER_ATTACK, MONSTER_ATTACK, CAMERA, END};
+	enum class COLLISION_GROUP { 
+		COMMON = 1<<0,
+		PLAYER = 1<<1,
+		MONSTER = 1<<2,
+		PLAYER_ATTACK = 1<<3,
+		MONSTER_ATTACK = 1<<4,
+		CAMERA = 1<<5,
+		END = 1<<31 
+	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDERER_TYPE {FORWARD, POST, EFFECT, UI};
@@ -93,13 +101,14 @@ namespace Engine
 		SPRITE,
 		PARTICLE,
 		MESH,
+		TRAIL,
 		END
 	};
 
 	enum class IK_TYPE
 	{
 		TWO_BONE,
-		AIM
+		FOOT_IK,
 	};
 }
 #endif // Engine_Enum_h__

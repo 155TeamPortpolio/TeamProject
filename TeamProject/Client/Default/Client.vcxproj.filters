@@ -391,6 +391,9 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
       <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD">
+      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -747,6 +750,9 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1091,6 +1097,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
