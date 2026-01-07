@@ -87,6 +87,7 @@ private:
 	_uint m_totalFrameCount = {};
 public:
 	virtual void Free() override;
+
 };
 
 NS_END
