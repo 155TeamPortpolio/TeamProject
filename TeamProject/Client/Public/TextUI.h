@@ -6,27 +6,25 @@ NS_BEGIN(Client)
 class CTextUI final : public CUI_Object
 {
 private:
-	CTextUI();
-	CTextUI(const CTextUI& rhs);
+	CTextUI() {}
+	CTextUI(const CTextUI& rhs) : CUI_Object(rhs) {}
 	virtual ~CTextUI() DEFAULT;
 
 public:
-	virtual HRESULT Initialize_Prototype() override;
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-	virtual void Priority_Update(_float dt) override;
-	virtual void Update(_float dt) override;
-	virtual void Late_Update(_float dt) override;
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize_Prototype()           override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 public:
-	virtual void Load(const nlohmann::ordered_json& data) override;
-
-private:
+	virtual void    Load(const nlohmann::ordered_json& data) override;
 
 public:
-	static CGameObject* Create();
-	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free();
+	static  CGameObject* Create();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

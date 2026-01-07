@@ -39,10 +39,7 @@ HRESULT CSkinnedMeshRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeL
 
 HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh(SkinnedOpaquePass* pOpaquePass)
 {
-	ID3D11DepthStencilView* pDeferredDSV =
-		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Static");
-
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Skinned", 0xFF/*, pDeferredDSV, false*/))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Skinned", 0xFF))) return E_FAIL;
 	pOpaquePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
 
@@ -153,6 +150,7 @@ HRESULT CSkinnedMeshRenderer::Render_SkinnedMesh_LightAcc()
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "DepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Metalic", m_pShader, "MetalicTexture");
 
+	
 	Bind_WorldMatrix();
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
 
@@ -210,14 +208,14 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 		RenderTargetDesc NormalDesc = { "Target_Skinned_Normal" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(NormalDesc);
 
-		RenderTargetDesc DepthlDesc = { "Target_Skinned_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc DepthlDesc = { "Target_Skinned_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 1.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(DepthlDesc);
 
-		RenderTargetDesc MetalDesc = { "Target_Skinned_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+		RenderTargetDesc MetalDesc = { "Target_Skinned_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(MetalDesc);
 	}
 
-	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.2f, 0.2f, 0.2f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc AmbiDesc = { "Target_Ambient" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AmbiDesc);
 
 	RenderTargetDesc FaceDesc = { "Target_FaceDir" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.f, 0.f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -241,7 +239,7 @@ HRESULT CSkinnedMeshRenderer::Ready_Target()
 	RenderTargetDesc LightAcc_SkinnedMeshDesc = { "Target_LightAcc_SkinnedMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightAcc_SkinnedMeshDesc);
 
-	RenderTargetDesc LightInfoDesc = { "Target_LightInfo_SkinnedMesh" , DXGI_FORMAT_R16G16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc LightInfoDesc = { "Target_LightInfo_SkinnedMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightInfoDesc);
 
 	RenderTargetDesc Combined_SkinnedMeshDesc = { "Target_Combined_SkinnedMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };

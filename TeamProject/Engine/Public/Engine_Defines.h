@@ -19,6 +19,7 @@
 #include "DirectXTK_Inc/Effects.h"
 #include <DirectXTK_Inc/CommonStates.h>
 #include <DirectXTK_Inc/SimpleMath.h>
+#include "ThirdPartyCsv.h"
 
 #include <vector>
 #include <list>
@@ -95,6 +96,7 @@ using namespace physx;
 #include "Data_Packets.h"
 #include "PreLoad_Struct.h"
 #include "AnimationLayout.h"
+#include "Humanoid.h"
 
 using namespace Engine;
 

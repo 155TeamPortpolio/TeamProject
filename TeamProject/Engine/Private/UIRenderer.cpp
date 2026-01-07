@@ -40,9 +40,11 @@ HRESULT CUIRenderer::Render_2D(UIPass* pUIPass)
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_2DUI"))) return E_FAIL;
 	pUIPass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+
 	CGameInstance::GetInstance()->Get_FontSystem()->Clear_Texts();
 	return S_OK;
 }
+
 HRESULT CUIRenderer::Render_CustomTarget()
 {
 	sort(m_RenderCommands.begin(), m_RenderCommands.end(),

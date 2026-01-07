@@ -53,6 +53,12 @@ typedef struct tagLifeTimeColor
 	_float4 vEndColor{};
 }LIFE_TIME_COLOR;
 
+typedef struct tagLifeTimeAlpha
+{
+	_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
+	_float2 vRatio{ 0.3f,0.6f };
+}LIFE_TIME_ALPHA;
+
 typedef struct tagSizeBySpeed
 {
 

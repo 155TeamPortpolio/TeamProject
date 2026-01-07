@@ -2,6 +2,7 @@
 #include "Target_Manager.h"
 #include "RenderTarget.h"
 #include "Shader.h"
+#include "Helper_Func.h"
 
 CTarget_Manager::CTarget_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: m_pDevice{ pDevice }
@@ -64,7 +65,8 @@ HRESULT CTarget_Manager::Begin_MRT(const string& strMRTTag, _uint Clear, ID3D11D
 
 	for (auto& pRenderTarget : pMRTList)
 	{
-		if (Clear & (1 << iNumRenderTargets)) pRenderTarget->Clear();
+		if (Clear & (1 << iNumRenderTargets))
+			pRenderTarget->Clear();
 
 		pRenderTargets[iNumRenderTargets] = pRenderTarget->Get_RTV();
 		iNumRenderTargets++;
@@ -156,11 +158,17 @@ void CTarget_Manager::Render_GUI()
 	if (TabOpen) {
 		if (ImGui::Begin("RenderTargets", &TabOpen))
 		{
+			ImGui::Text("Filter"); ImGui::SameLine();
+			ImGui::InputText("##FilterText", &Filter);
+
+
 			for (auto& rtPair : m_EngineRenderTargets)
 			{
 				const string& tag = rtPair.first;
 				CRenderTarget* pRT = rtPair.second;
 				if (!pRT) continue;
+				if (!TargetFilter(tag, Filter))
+					continue;
 
 				if (ImGui::TreeNode(tag.c_str()))
 				{
@@ -374,6 +382,17 @@ vector<CRenderTarget*>& CTarget_Manager::Find_MRT(const string& strMRTTag)
 	}
 
 	return iter->second;
+}
+
+_bool CTarget_Manager::TargetFilter(const string& tag, const string& filter)
+{
+	if (filter.empty())
+		return true;
+
+	string tagLower = Helper::ToLower(tag);
+	string filterLower = Helper::ToLower(filter);
+
+	return tagLower.find(filterLower) != string::npos;
 }
 
 CTarget_Manager* CTarget_Manager::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -43,15 +43,10 @@ namespace
     }
 }
 
-HRESULT CCamSequencePlayer::Initialize_Prototype()
-{
-    return S_OK;
-}
-
 HRESULT CCamSequencePlayer::Initialize(COMPONENT_DESC* pArg)
 {
     apply.transform = m_pOwner->Get_Component<CTransform>();
-    apply.cam = m_pOwner->Get_Component<CCamera>();
+    apply.cam       = m_pOwner->Get_Component<CCamera>();
 
     if (!eval.evaluator)
         eval.evaluator = CCamEvaluator::Create();
@@ -102,9 +97,7 @@ void CCamSequencePlayer::SetTime(_float t)
 {
     playback.playTime = t;
 
-    if (!target.seq) return;
-    if (!apply.applyEnabled) return;
-    if (target.seq->keyframes.empty()) return;
+    if (!target.seq || !apply.applyEnabled || target.seq->keyframes.empty()) return;               
 
     RebuildIfNeeded();
 
@@ -117,22 +110,18 @@ void CCamSequencePlayer::SetApplyEnabled(_bool enabled)
 {
     apply.applyEnabled = enabled;
 
-    if (!apply.applyEnabled) return;
-    if (!target.seq) return;
-    if (target.seq->keyframes.empty()) return;
+    if (!apply.applyEnabled || !target.seq || target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
 
     const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, eval.evaluator->GetDuration());
-    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    const float easedTime  = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
     ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
 void CCamSequencePlayer::Update(_float dt)
 {
-    if (!target.seq) return;
-    if (!apply.applyEnabled) return;
-    if (target.seq->keyframes.empty()) return;
+    if (!target.seq || !apply.applyEnabled || target.seq->keyframes.empty()) return;
 
     RebuildIfNeeded();
 
@@ -160,7 +149,7 @@ void CCamSequencePlayer::Update(_float dt)
     }
 
     const float sampleTime = CalcSampleTime(target.seq->playbackMode, playback.playTime, dur);
-    const float easedTime = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
+    const float easedTime  = eval.evaluator->RemapTimeBySegmentEasing(sampleTime);
     ApplyPose(eval.evaluator->Evaluate(easedTime));
 }
 
@@ -185,9 +174,9 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     if (target.seq && target.seq->space == CamSpace::Local)
     {
         auto refObj = OBJ->Request_Object(apply.spaceRefHandle);
-        auto refTr = refObj->Get_Component<CTransform>();
+        auto refTf  = refObj->Get_Component<CTransform>();
 
-        Matrix refWorld = Matrix(refTr->Get_WorldMatrix());
+        Matrix refWorld = Matrix(refTf->Get_WorldMatrix());
 
         Vector3 refS{};
         Vector3 refT{};
@@ -200,8 +189,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         const Matrix localM = Matrix::CreateFromQuaternion(pose.rot) * Matrix::CreateTranslation(pose.pos);
         Matrix worldM = localM * refRT;
 
-        Vector3 s{};
-        Vector3 t{};
+        Vector3 s{}, t{};
         Quaternion r = Quaternion::Identity;
         worldM.Decompose(s, r, t);
         r.Normalize();
@@ -219,7 +207,6 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
         apply.cam->Set_FOV(pose.fov);
 }
 
-
 CCamSequencePlayer* CCamSequencePlayer::Create()
 {
     auto inst = new CCamSequencePlayer();
@@ -229,10 +216,4 @@ CCamSequencePlayer* CCamSequencePlayer::Create()
         Safe_Release(inst);
     }
     return inst;
-}
-
-void CCamSequencePlayer::Free()
-{
-    Safe_Release(eval.evaluator);
-    __super::Free();
 }

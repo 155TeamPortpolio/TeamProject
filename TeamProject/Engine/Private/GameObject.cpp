@@ -210,20 +210,31 @@ void CGameObject::RenderHierarchy(CGameObject*& SelectedObject, bool isSelected)
 
 	string TreeNodeName = m_InstanceName + " (" + to_string(Children.empty() ? 0 : Children.size()) + ")"+ "##" + to_string(m_ObjectID) ;
 	bool opened = ImGui::TreeNodeEx(TreeNodeName.c_str(), flags);
+	if (isSelected)
+	{
+
+		ImDrawList* draw = ImGui::GetWindowDrawList();
+		ImVec2 minPos = ImGui::GetItemRectMin();
+		ImVec2 maxPos = ImGui::GetItemRectMax();
+
+		draw->AddRectFilled(
+			ImVec2(minPos.x, minPos.y),
+			ImVec2(minPos.x + 4.0f, maxPos.y),
+			IM_COL32(237, 0, 134, 255));
+
+		draw->AddRect(minPos, maxPos, IM_COL32(237, 0, 134, 255), 2.0f, 0, 1.0f);
+	}
 
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
 		SelectedObject = this;
-	if (opened && !Children.empty()) {
-		for (auto& childObject : Children) {
-			if (!childObject) continue;
-			bool childSelected = (SelectedObject == childObject);
-			childObject->RenderHierarchy(SelectedObject, childSelected);
-		}
 
+	if (opened && !Children.empty()) {
+		Get_Component<CObjectContainer>()->RenderHierarchy(SelectedObject);
 		ImGui::TreePop();
 	}
 
 	ImGui::PopID();
+
 }
 
 void CGameObject::Set_Layer(CLayer* pLayer)
@@ -270,7 +281,7 @@ OBJECT_HANDLE CGameObject::Get_Handle()
 	return hObj;
 }
 
-_float4x4* CGameObject::Get_WorldMatrix()
+_float4x4* CGameObject::Get_WorldMatrix_Ptr()
 {
 	return m_pTransform->Get_WorldMatrix_Ptr();
 }
@@ -280,6 +291,21 @@ _float4 CGameObject::Get_Position()
 	_float4 pos;
 	XMStoreFloat4(&pos, m_pTransform->Get_WorldPos());
 	return pos;
+}
+
+Matrix CGameObject::Get_WorldMatrix()
+{
+	return m_pTransform->Get_WorldMatrix();
+}
+
+_vector3 CGameObject::Get_WorldPos()
+{
+	return m_pTransform->Get_WorldPos();
+}
+
+_quaternion CGameObject::Get_WorldQuat()
+{
+	return m_pTransform->Get_QuaternionRotate();
 }
 
 HRESULT CGameObject::Make_OpaquePacket()
@@ -339,10 +365,16 @@ HRESULT CGameObject::Make_OpaquePacket()
 		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::RENDER_3DUI)
 			Make_3DUIPacket(packet);
 
-		else if (packet.pModel->Get_RenderType() == RENDER_PASS_TYPE::NONLIGHT_OPAQUE)
-			if (packet.pModel->doShadowCast()) {
-				CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-			}
+		 if (packet.pModel->doShadowCast()) {
+			 if (packet.pMaterial->isValid(packet.MaterialIndex))
+			 {
+				 if (packet.bSkinning)
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_SkinnedShadow(packet);
+				 else
+					 CGameInstance::GetInstance()->Get_RenderSystem()->Submit_StaticShadow(packet);
+
+			 }
+		 }
 	}
 	return S_OK;
 }
@@ -397,9 +429,6 @@ HRESULT CGameObject::Make_InstancePacket()
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
 		packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
 		CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Instance(packet);
-		if (packet.pModel->doShadowCast()) {
-			CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Shadow(packet);
-		}
 	}
 
 	return S_OK;

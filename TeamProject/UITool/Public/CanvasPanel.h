@@ -29,13 +29,13 @@ private:
 	const _float2	m_fChildCreateSize = { 100.f, 100.f };
 
 public:
-	static const string m_strTypeTag;
-	static _uint        m_iCount;
+	inline static const string m_strTypeTag = "CanvasPanel";
+	inline static _uint        m_iCount{};
 
 public:
-	static CGameObject* Create();
-	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
-	virtual void Free() { __super::Free(); }
+	static  CGameObject* Create();
+	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
+	virtual void Free() override { __super::Free(); }
 };
 
 NS_END

@@ -19,6 +19,8 @@ public:
     virtual void Register_Panel(class CBasePanel* pPanel)PURE;
     virtual bool Set_ProcHandler(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)PURE;
     virtual _bool UsingUI()PURE;
+    virtual void Set_UIMode() PURE;
+    virtual void Set_Bone(_int boneIndex)PURE;
 };
 
 NS_END

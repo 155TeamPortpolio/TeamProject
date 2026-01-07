@@ -1,0 +1,30 @@
+{
+  "levels": {
+    "Logo_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_Logo",
+          "instanceName": "logo"
+        }
+      ]
+    },
+
+    "Loading_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_Loading",
+          "instanceName": "loading"
+        }
+      ]
+    },
+
+    "Test_Level": {
+      "objects": [
+        {
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "hud"
+        }
+      ]
+    }
+  }
+}

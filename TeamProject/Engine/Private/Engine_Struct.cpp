@@ -23,7 +23,7 @@ CGameObject* Engine::tagObjectHandle::Get()
 	return pObj;
 }
 
-void Engine::tagObjectHandle::Release()
+void Engine::tagObjectHandle::Delete()
 {
 
 auto mgr = CGameInstance::GetInstance()->Get_ObjectMgr();
@@ -40,6 +40,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	PARTICLE_NODE node{};
 
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
+	node.iColorMode = json.value("color_mode", node.iColorMode);
 	node.eType = json.value("effect_type", node.eType);
 	node.TextureKey = json.value("texture_key", node.TextureKey);
 	node.TexturePath = json.value("texture_path", node.TexturePath);
@@ -79,6 +80,14 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartColor.y = json.at("start_color").at("y").get<_float>();
 	node.vStartColor.z = json.at("start_color").at("z").get<_float>();
 	node.vStartColor.w = json.at("start_color").at("w").get<_float>();
+
+	node.vAlphaKey.x = json.at("alpha_key").at("x").get<_float>();
+	node.vAlphaKey.y = json.at("alpha_key").at("y").get<_float>();
+	node.vAlphaKey.z = json.at("alpha_key").at("z").get<_float>();
+	node.vAlphaKey.w = json.at("alpha_key").at("w").get<_float>();
+	
+	node.vRatio.x = json.at("ratio").at("x").get<_float>();
+	node.vRatio.y = json.at("ratio").at("y").get<_float>();
 
 	node.vEndColor.x = json.at("end_color").at("x").get<_float>();
 	node.vEndColor.y = json.at("end_color").at("y").get<_float>();
@@ -182,4 +191,36 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 	Effect.isLoop = json.value("is_loop", Effect.isLoop);
 
 	return Effect;
+}
+
+_bool Engine::tagUIHandle::isValid()
+{
+	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
+	if (pUI)
+		return true;
+	return false;
+}
+
+void Engine::tagUIHandle::Reset()
+{
+	Level.clear();
+	hObjID = 0;
+	return;
+}
+
+CUI_Object* Engine::tagUIHandle::Get()
+{
+	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
+	return pUI;
+}
+
+void Engine::tagUIHandle::Release()
+{
+	auto mgr = CGameInstance::GetInstance()->Get_UIMgr();
+
+	CUI_Object* pUI = mgr->Request_UIObject({ Level, hObjID });
+	if (!pUI) { Reset(); return; }
+	
+	mgr->Remove_UIObject(pUI);
+	Reset();
 }

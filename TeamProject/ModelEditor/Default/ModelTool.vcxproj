@@ -45,6 +45,7 @@
     <ClInclude Include="..\public\AIBone.h" />
     <ClInclude Include="..\public\AIAnimator3D.h" />
     <ClInclude Include="..\public\AIChannel.h" />
+    <ClInclude Include="..\Public\AIDynamicBone.h" />
     <ClInclude Include="..\Public\AIMaterial.h" />
     <ClInclude Include="..\public\AIMesh.h" />
     <ClInclude Include="..\public\AIModelData.h" />
@@ -62,6 +63,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\EditorSystem.h" />
     <ClInclude Include="..\public\FreeCam.h" />
+    <ClInclude Include="..\Public\HumanoidRule.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\EditModel.h" />
     <ClInclude Include="..\Public\MapParseLevel.h" />
@@ -117,6 +119,7 @@
     <ClCompile Include="..\Private\ModelHelper.cpp" />
     <ClCompile Include="..\Private\pch.cpp" />
     <ClCompile Include="..\Private\RayCaster.cpp" />
+    <ClCompile Include="..\Public\AIDynamicBone.cpp" />
     <ClCompile Include="ModelEditor.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

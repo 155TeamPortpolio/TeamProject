@@ -37,7 +37,7 @@ namespace Engine
 		_float4		vLightAmbient = {};
 		_float4		vLightSpecular = {};
 		_float			fLightRange = {};
-		_float			fLightIntensity = {3.f};
+		_float			fLightIntensity = { 3.f };
 		_float2		lightPadding = {};
 		LIGHT_TYPE eType = { LIGHT_TYPE::DIRECTIONAL };
 	}LIGHT_DESC;
@@ -80,7 +80,7 @@ namespace Engine
 		_float4 vMtrDiffuse = _float4(1.f, 1.f, 1.f, 1.f);
 		_float4 vMtrlAmbient = _float4(0.3f, 0.3f, 0.3f, 1.f);
 		_float4 vMtrlSpecular = _float4(1.0f, 1.0f, 1.0f, 1.f);
-		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);  
+		_float4 vEmissive = _float4(0.f, 0.f, 0.f, 0.f);
 		_float fSpecularPow = { 0.1f };
 		_float3 vPadding;
 	};
@@ -209,7 +209,7 @@ namespace Engine
 			_matrix world = XMLoadFloat4x4(&worldMat);
 			_vector min = XMLoadFloat3(&vMin);
 			_vector max = XMLoadFloat3(&vMax);
-			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min,world));
+			XMStoreFloat3(&newBox.vMin, XMVector3TransformCoord(min, world));
 			XMStoreFloat3(&newBox.vMax, XMVector3TransformCoord(min, world));
 			return newBox;
 		}
@@ -245,9 +245,9 @@ namespace Engine
 		_float				fDistance = 0.f;       // 충돌 지점까지의 거리
 		_float3				vPoint = {};           // 충돌 지점 월드 좌표
 		_float3				vNormal = {};          // 충돌 표면의 법선
-		class CGameObject*	pHitObject = nullptr;  // 충돌한 오브젝트
-		class ICollidable*	pCollidable = nullptr; // 충돌한 컴포넌트
-		PxShape*			pShape = nullptr;      // 충돌한 Shape
+		class CGameObject* pHitObject = nullptr;  // 충돌한 오브젝트
+		class ICollidable* pCollidable = nullptr; // 충돌한 컴포넌트
+		PxShape* pShape = nullptr;      // 충돌한 Shape
 	}PHYSICS_RAY_HIT;
 
 	// Physics Hits Info
@@ -310,7 +310,7 @@ namespace Engine
 		string FontTag;
 		_float Scale = 1.f;
 		_float Rotation = 0.f;
-		_float2 Origin = { 0.f, 0.f }; 
+		_float2 Origin = { 0.f, 0.f };
 
 		_bool OutLined = { false };
 		_float Thickness = 0.f;
@@ -322,7 +322,7 @@ namespace Engine
 		_bool isLoop;
 		_float fDuration;
 		_float TickperSecond;
-		vector<_uint> AnimationKeyFrame; 
+		vector<_uint> AnimationKeyFrame;
 		vector<_float> FramePercent;
 	}MATERIAL_CLIP;
 
@@ -370,6 +370,7 @@ namespace Engine
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
 		_uint iModuleMask{};
+		_uint iColorMode{};
 		_bool isWorld = true;
 		_uint iBurstCount{};
 		_float fSpawnPerSec;
@@ -397,6 +398,10 @@ namespace Engine
 		/*Life Time Color*/
 		_float4 vStartColor{};
 		_float4 vEndColor{};
+
+		/* Life Time Alpha */
+		_float4 vAlphaKey{ 1.f,1.f,1.f,1.f };
+		_float2 vRatio{ 0.3f,0.6f };
 
 		/*Texture Sheet Animation*/
 		_bool isParticleAnimated = false;
@@ -428,8 +433,8 @@ namespace Engine
 
 		/* Color */
 		_uint ColorEaseType{};
-		_float4 vStartColor{1.f,1.f,1.f,1.f};
-		_float4 vEndColor{1.f,1.f,1.f,1.f};
+		_float4 vStartColor{ 1.f,1.f,1.f,1.f };
+		_float4 vEndColor{ 1.f,1.f,1.f,1.f };
 
 		/* Scale */
 		_uint ScaleEaseType{};
@@ -457,6 +462,31 @@ namespace Engine
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;
 
+	typedef struct tagTrailNode : public tagEffectNode
+	{
+		_uint iMode{};
+		_uint iTextureMode{};
+		_uint iColorMode{};
+		_float fMaxLifeTime{};
+
+		/* Texture Mode */
+		_float2 vUVSpeed{};
+		_float fTile{};
+
+		/* Color Mode */
+		_float4 vStartColor{};
+		_float4 vEndColor{};
+
+		/* Center Mode */
+		_float fStartWidth{};
+		_float fEndWidth{};
+
+		/* Segment Mode */
+		_float fMinDistance{};
+
+		static tagTrailNode FromJson(nlohmann::ordered_json& json);
+	}TRAIL_NODE;
+
 	typedef struct tagEffectAsset : public INIT_DESC
 	{
 		_uint iNodeCount{};
@@ -475,79 +505,45 @@ namespace Engine
 		_bool isValid();
 		void Reset();
 		class CGameObject* Get();
-		void Release();
+		void Delete();
 	}OBJECT_HANDLE;
-	
-	typedef struct tagUITransformData {
-		_uint iAnchor = {};
-		array<_float, 2> vAnchorOffset = {};
-		array<_float, 2> vSize = {};
-		array<_float, 2> vScale = {};
-		array<_float, 2> vPivot = {};
-		_float fRadian = {};
-	}UI_TRANSFORM_DATA;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_TRANSFORM_DATA, iAnchor, vAnchorOffset, vSize, vScale, vPivot, fRadian);
 
-	typedef struct tagUIKeyframeData {
-		_float fTime = {};
-		array<_float, 2> vScale = {};
-		_float fAngle = {};
-		array<_float, 2> vPosition = {};
-		array<_float, 4> vColor = {};
-		_uint uEaseType = {};
-	}UI_KEYFRAME_DATA;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_KEYFRAME_DATA, fTime, vScale, fAngle, vPosition, vColor, uEaseType);
+	typedef struct ENGINE_DLL tagUIHandle {
+		string Level = {};
+		_uint hObjID = {};
 
-	typedef struct tagUIClipData {
-		string strName = {};
-		_bool isLoop = {};
-		_float fDuration = {};
+		_bool isValid();
+		void Reset();
+		class CUI_Object* Get();
+		void Release();
+	}UI_HANDLE;
 
-		vector<UI_KEYFRAME_DATA> keyframes;
-	}UI_CLIP_DATA;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_CLIP_DATA, strName, isLoop, fDuration, keyframes);
+	struct IK_CONTEXT
+	{
+		class CAnimator3D*		pAnimator;
+		vector<_int>			BoneIndices;
+		_vector3				vPoleVector;
+		_float					fWeight;
+		vector<_quaternion>     OutRotations;
+		vector<_vector3>		OutPositions;
+		_bool					bSuccess;
 
-	typedef struct tagUIElementData {
-		string InstanceName = {};
-		string strTypeTag = {};
-		UI_TRANSFORM_DATA transform = {};
-		array<_float, 4> vColor = {};
+		IK_CONTEXT()
+			: pAnimator(nullptr)
+			, vPoleVector(0.f, 0.f, 1.f)
+			, fWeight(1.f)
+			, bSuccess(false)
+		{
+		}
+	};
 
-		// 타입별 선택적 속성들
-		string strTextureTag = {};
+	typedef struct tagLevelTransitionArgument {
+		string nextLevelKey = {};
+		_bool useLoading = { false };
+		_bool KeepResource = { false };
+		void Reset() { nextLevelKey.clear(); useLoading = false; KeepResource = false; }
+	}LEVEL_TRANS_DESC;
 
-		// Text
-		string strText = {};
-		string strFontTag = {};
-		_float fFontScale = {};
-		_bool isOutlined = {};
-		_float fOutlineThickness = {};
-		array<_float, 4> vOutlineColor = {};
-
-		// Button
-		string strEventMsg = {};
-
-		// SpriteAnimation
-		_int iFrameCountTotal = {};
-		_int iFrameCountX = {};
-		_int iFrameCountY = {};
-		_float fFrameSpeed = {};
-		_bool isLoop = {};
-
-		// UVAnimation
-		array<_float, 2> vUVOffsetSpeed = {};
-
-		// Gauge
-		_float fDirection = {};
-		_float fFillAmount = {};
-		_bool isRadial = {};
-
-		vector<UI_CLIP_DATA> animClips;
-		vector<tagUIElementData> children;
-	}UI_ELEMENT_DATA;
-	NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(UI_ELEMENT_DATA, InstanceName, strTypeTag, vColor, transform, strTextureTag, strText, strFontTag, fFontScale,
-		strEventMsg, iFrameCountTotal, iFrameCountX, iFrameCountY, fFrameSpeed, isLoop, vUVOffsetSpeed, fDirection, fFillAmount, isRadial,
-		animClips, children);
 }
 
 

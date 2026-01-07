@@ -99,6 +99,7 @@ class CHiZ_Culling :
         _uint outResult = 0;       // 최종 result 수
         _uint canRead = 0;         // 이번 프레임 readback 성공(1/0)
     };
+    _bool isTabOpen = { false };
     HiZStats m_stats; 
 #endif
 

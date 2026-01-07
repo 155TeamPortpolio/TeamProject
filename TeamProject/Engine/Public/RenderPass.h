@@ -9,7 +9,7 @@ protected:
 	RenderPass(class CRenderSystem* pRenderSystem);
 	virtual ~RenderPass() DEFAULT;
 public:
-	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  PURE;
+	virtual void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) PURE;
 protected:
 	void BindConstant(ID3D11DeviceContext* pContext,class CModel* pModel, class CMaterial* pMaterial , _uint DrawIndex, _uint MaterialIndex, class CRenderer* pRenderer);
 	void BindConstant(ID3D11DeviceContext* pContext,class CSprite2D* pSprite , string passConstant, class CRenderer* pRenderer);
@@ -21,26 +21,50 @@ public:
 	virtual void Free();
 };
 
-#pragma region SHADOW_PASS
-class ShadowPass final : public RenderPass {
+#pragma region STATIC_SHADOW_PASS
+class StaticShadowPass final : public RenderPass {
 private:
-	ShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
-	virtual ~ShadowPass() DEFAULT;
+	StaticShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	virtual ~StaticShadowPass() DEFAULT;
 public:
-	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer)  override;
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override {};
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
 	void Submit(OPAQUE_PACKET packet);
-	void SubmitInstance(INSTANCE_PACKET packet);
+	void Clear();
 
 private:
-	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
-	void Execute_Instance(ID3D11DeviceContext* pContext, class CRenderer* pRenderer);
+	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
+	
+private:
+	vector<OPAQUE_PACKET> m_Packets;
+	vector<OPAQUE_PACKET> m_VisiblePackets;
+
+public:
+	static StaticShadowPass* Create(class CRenderSystem* pRenderSystem) { return new StaticShadowPass(pRenderSystem); }
+	virtual void Free() override { __super::Free(); m_Packets.clear(); };
+};
+#pragma endregion
+
+#pragma region SKINNED_SHADOW_PASS
+class SkinnedShadowPass final : public RenderPass {
+private:
+	SkinnedShadowPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
+	virtual ~SkinnedShadowPass() DEFAULT;
+public:
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override {};
+	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
+	void Submit(OPAQUE_PACKET packet);
+	void Clear();
+
+private:
+	void Execute_Opaque(ID3D11DeviceContext* pContext, class CRenderer* pRenderer, _bool IsFinal);
 
 private:
 	vector<OPAQUE_PACKET> m_Packets;
 	vector<OPAQUE_PACKET> m_VisiblePackets;
-	vector<INSTANCE_PACKET> m_InstancePackets;
+
 public:
-	static ShadowPass* Create(class CRenderSystem* pRenderSystem) { return new ShadowPass(pRenderSystem); }
+	static SkinnedShadowPass* Create(class CRenderSystem* pRenderSystem) { return new SkinnedShadowPass(pRenderSystem); }
 	virtual void Free() override { __super::Free(); m_Packets.clear(); };
 };
 #pragma endregion

@@ -39,7 +39,7 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh(StaticOpaquePass* pOpaquePass, In
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Static", 0xFF, pDeferredDSV, false))) return E_FAIL;
+	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Deferred_Static",  0xFF, pDeferredDSV, false))) return E_FAIL;
 	pOpaquePass->Execute(m_pContext, this);
 	pInstancePass->Execute(m_pContext, this);
 	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
@@ -142,6 +142,9 @@ HRESULT CStaticMeshRenderer::Render_StaticMesh_LightAcc()
 	m_pTargetManager->Bind_Target("Target_Static_Metalic", m_pShader, "MetalicTexture");
 
 	Bind_WorldMatrix();
+	m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
+	m_pPipeLine->Bind_ShadowMap(m_pShader);
+	m_pPipeLine->BindSampler(m_pContext, 10);
 	m_pPipeLine->Bind_Light(m_pShader, m_pVIBuffer, m_pContext, this);
 
 	if (FAILED(m_pTargetManager->End_MRT()))return E_FAIL;
@@ -196,7 +199,7 @@ HRESULT CStaticMeshRenderer::Ready_Target()
 	RenderTargetDesc NormalDesc = { "Target_Static_Normal" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(NormalDesc);
 
-	RenderTargetDesc DepthlDesc = { "Target_Static_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 1.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc DepthlDesc = { "Target_Static_Depth" , DXGI_FORMAT_R32G32B32A32_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 1.f, 1.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(DepthlDesc);
 
 	RenderTargetDesc MetalDesc = { "Target_Static_Metalic" , DXGI_FORMAT_R16G16B16A16_UNORM , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.5f, 1.0f, 1.0f) ,ViewportDesc.Width, ViewportDesc.Height };
@@ -223,10 +226,10 @@ HRESULT CStaticMeshRenderer::Ready_Target()
 	RenderTargetDesc LightAcc_StaticMeshDesc = { "Target_LightAcc_StaticMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightAcc_StaticMeshDesc);
 
-	RenderTargetDesc LightInfoDesc = { "Target_LightInfo_StaticMesh" , DXGI_FORMAT_R16G16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc LightInfoDesc = { "Target_LightInfo_StaticMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT  , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(LightInfoDesc);
 
-	RenderTargetDesc Combined_StaticMeshDesc = { "Target_Combined_StaticMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.0f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
+	RenderTargetDesc Combined_StaticMeshDesc = { "Target_Combined_StaticMesh" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT, _float4(0.f, 0.0f, 0.0f, 0.0f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(Combined_StaticMeshDesc);
 
 	return S_OK;

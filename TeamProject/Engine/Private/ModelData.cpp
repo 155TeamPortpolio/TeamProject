@@ -70,6 +70,9 @@ HRESULT CModelData::Initialize(const string& filePath, ID3D11Device* pDevice)
 	return S_OK;
 }
 
+_bool CModelData::Get_RiggedData(HumanoidRigData& outData) {
+	 return m_pSkeleton->Get_RiggedData(outData); 
+}
 _uint CModelData::Get_MaterialIndex(_uint meshIndex)
 {
 	return m_Meshes[meshIndex]->Get_MaterialIndex();
@@ -155,6 +158,7 @@ void CModelData::Render_GUI()
 		}
 	}
 
+
 }
 
 HRESULT CModelData::Render_Mesh(ID3D11DeviceContext* pContext, _uint Index)
@@ -219,6 +223,11 @@ void CModelData::Get_AffectBoneIndices(vector<_int>& outvec, _int StartBoneIndex
 {
 	outvec.clear();
 	m_pSkeleton->Get_AffectBoneIndices(outvec, StartBoneIndex);
+}
+
+vector<DYNAMIC_CHAIN_GROUP> CModelData::Get_ChaingGroups()
+{
+	return m_pSkeleton->Get_ChainGroups();
 }
 
 _int CModelData::Get_BoneParentIndex(_uint i)

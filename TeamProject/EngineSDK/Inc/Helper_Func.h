@@ -43,6 +43,7 @@ namespace Helper
 	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const string& filePath, ID3D11ShaderResourceView* pSRV);
 	ENGINE_DLL HRESULT SaveTextureToDDs(ID3D11DeviceContext* pContext, const wstring& filePath, ID3D11ShaderResourceView* pSRV);
 	//랜덤 함수
+	ENGINE_DLL mt19937& Get_RNG();
 	ENGINE_DLL _int Get_Random_Int(_int min, _int max);
 	ENGINE_DLL _float Get_Random_Float(_float min, _float max);
 
@@ -51,6 +52,7 @@ namespace Helper
 
 	//주소(디렉토리)가 있는지 체크하고 없다면 폴더 생성
 	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
+	ENGINE_DLL _bool ContainsCaseInsensitive(const std::string& text, const std::string& pattern);
 }
 
 //json 저장 및 불러오기
@@ -64,7 +66,15 @@ namespace Helper
 
 		json j;
 		file >> j;
-		return j.get<T>();
+ try
+    {
+        return j.get<T>();
+    }
+    catch (const json::exception&)
+    {
+        // 타입 불일치 / 필드 누락 / 파싱 실패 전부 여기로 옴
+        return T{};
+    }
 	};
 
 	template <typename T>

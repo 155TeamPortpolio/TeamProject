@@ -17,9 +17,15 @@ protected:
 	virtual ~CUIObject_Tool() DEFAULT;
 
 public:
-	virtual HRESULT Initialize(INIT_DESC* pArg = nullptr) override;
-	virtual void Awake() override;
-	virtual void Render_GUI() override;
+	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
+	virtual void    Awake()                          override;
+	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
+	virtual void    Update(_float dt)                override;
+	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
+	virtual void    Render_GUI()                     override;
+
+public:
+	virtual void OnClick() override;
 
 public:
 	void  Remove_SelfFromParent();					
@@ -42,17 +48,33 @@ protected:
 
 	/*앵커 기준점에 따라 자동정렬을 하기 위해 앵커오프셋 값을 반환 (사이즈를 반영한 픽셀 값 반환)*/
 	_float2 Get_AnchorOffset(ANCHOR eAnchor);
-	
+
+	/*키 입력해서 자식 객체 업데이트 순서 조정*/
+	void KeyInput_ReorderChildren();
+
+protected:
+	void Set_BasePass(const string& pass);
+
+private:
+	static string MapToStencilTestPass(const string& basePass);
+	static string NormalizeToBasePass(const string& pass);
 
 private:
 	_float  GetSizeRatio(UISizeMode mode);
 	void    Render_GUI_SizeBlock();
 
 protected:
-	_bool m_useOriginTexSize = true;
+	_bool      m_useOriginTexSize = true;
 
 	Vector2    m_sizeFHD  = {};
 	UISizeMode m_sizeMode = UISizeMode::FHD;
+
+	_bool      m_useMask  = false;
+	string     m_basePass = "Opaque";
+
+	_bool	   m_isAspectRatioLocked = {};
+
+	_int	   m_iClipIndex = { -1 };
 
 public:
 	virtual void Free() { __super::Free(); }

@@ -25,13 +25,22 @@ public:
     _int Find_IndexByName(const string& ObjectName);
     _int Find_IndexByID(_uint ObjectID);
 
+public:
+    class CGameObject* Find_Descendant(const string& instanceName);
     _int Add_Child(class CGameObject* pObject, _bool SyncTransform = true);
     void Destroy_Child(_uint ChildIndex);
     void Dettach_Child(_uint ChildIndex);
 
 public:
     void Render_GUI() override;
+    void RenderHierarchy(CGameObject*& outSelected);
 
+public:
+    void ReorderChildren(class CGameObject* pObject, _uint Index);
+    void Upper_Order(class CGameObject* pObject);
+    void Lower_Order(class CGameObject* pObject);
+    void Set_Order_First(class CGameObject* pObject);
+    void Set_Order_Last(class CGameObject* pObject);
 public:
     const vector<class CGameObject*> Get_Children() { return m_ChildrenObjects; };
 
@@ -41,6 +50,7 @@ private:
     vector<class CGameObject*> m_ChildrenObjects;
 
     vector<_uint> m_UpdateOrder;                 
+    vector<_uint> m_UpdateOrderSnapShot;                 
     unordered_map<_uint, _uint> m_OrderIndexByID; 
 
 public:

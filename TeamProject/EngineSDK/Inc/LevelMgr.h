@@ -13,6 +13,7 @@ private:
 public: 
     HRESULT Initialize();
     virtual  HRESULT Request_ChangeLevel(string levelID, _bool Load = true) override;/*레벨 체인지 요청*/
+    virtual  HRESULT Request_ChangeLevel(string levelID, LEVEL_TRANS_DESC desc) override;/*레벨 체인지 요청*/
     virtual void Update(_float dt)override;
     virtual HRESULT Render(ID3D11DeviceContext* pContext)override;
 
@@ -29,7 +30,8 @@ public :
 
 #pragma region For_LoadingLevel
     virtual void Set_LoadingLevel(const string& LoadingKey)override; //로딩 역할을 하는 레벨이 있는지.
-    virtual const string& Get_NextLevel() override { return m_NextLevelTag; } //로딩 이후 레벨은 무엇인지
+    virtual const string& Get_NextLevel() override { return m_TransDesc.nextLevelKey; } //로딩 이후 레벨은 무엇인지
+    virtual const LEVEL_TRANS_DESC& Get_TransitionDesc() override { return m_TransDesc; } //로딩 이후 레벨은 무엇인지
     virtual void Notify_LoadComplete()override; //로딩이 다되었다면 호출
 #pragma endregion
 private:
@@ -41,8 +43,7 @@ private:
     class CLevel* m_pCurrentLevel = { nullptr }; //현재 레벨 포인터
     class CLevel* m_pReadyLevel = { nullptr };      //대기중 레벨 포인터
     LEVEL_STATE m_eState = {}; //현재 레벨 전환 과정 상태
-    string m_NextLevelTag = { }; //전환될 레벨 태그(키)
-    
+    LEVEL_TRANS_DESC m_TransDesc = {};
     unordered_map<string, LEVEL_CREATOR> m_LevelCreators;/*레벨 생성자*/
 public:
     static CLevelMgr* Create();

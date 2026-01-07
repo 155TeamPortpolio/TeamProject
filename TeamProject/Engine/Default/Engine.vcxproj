@@ -115,12 +115,14 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/deb;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmodL_vc.lib;d3d11.lib;dxguid.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc143-mtd.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>@echo off
@@ -175,12 +177,14 @@ exit /b 0</Command>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>Engine_Defines.h</PrecompiledHeaderFile>
+      <AdditionalOptions>/wd4005 /wd4251 /wd4819 /wd4267 /wd4244 /wd4172 /wd4018 /wd4838 /wd4305 /wd4101 /wd4129 /wd4715 /wd4067 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>../ThirdPartyLib/;../ThirdPartyLib/PhysX/rel;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>fmod_vc.lib;d3d11.lib;dxguid.lib;Effects11.lib;DirectXTK.lib;assimp-vc143-mt.lib;PhysX_64.lib;PhysXCommon_64.lib;PhysXFoundation_64.lib;PhysXCooking_64.lib;PhysXExtensions_static_64.lib;PhysXCharacterKinematic_static_64.lib;PhysXPvdSDK_static_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>/IGNORE:4099 %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <PostBuildEvent>
       <Command>@echo off
@@ -263,11 +267,14 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\CollisionSystem.h" />
     <ClInclude Include="..\Public\Component.h" />
     <ClInclude Include="..\Public\ComputeShader.h" />
+    <ClInclude Include="..\public\CSMShadow.h" />
     <ClInclude Include="..\Public\CustomFont.h" />
     <ClInclude Include="..\Public\Data_Packets.h" />
     <ClInclude Include="..\Public\DebugBonePanel.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
     <ClInclude Include="..\Public\DebugRender.h" />
+    <ClInclude Include="..\Public\DynamicBone.h" />
+    <ClInclude Include="..\Public\DynamicBoneStruct.h" />
     <ClInclude Include="..\Public\EffectBuilder.h" />
     <ClInclude Include="..\public\EffectContainer.h" />
     <ClInclude Include="..\public\EffectNode.h" />
@@ -277,9 +284,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\Engine_RenderStruct.h" />
     <ClInclude Include="..\Public\EventListener.h" />
     <ClInclude Include="..\Public\EventSystem.h" />
+    <ClInclude Include="..\Public\FootIK.h" />
     <ClInclude Include="..\public\ForwardRenderer.h" />
     <ClInclude Include="..\Public\HiZ_Culling.h" />
+    <ClInclude Include="..\Public\Humanoid.h" />
     <ClInclude Include="..\Public\ICamEvaluator.h" />
+    <ClInclude Include="..\Public\IKSolver.h" />
     <ClInclude Include="..\Public\LifeTimeColor.h" />
     <ClInclude Include="..\Public\MeshEffectModule.h" />
     <ClInclude Include="..\Public\Noise.h" />
@@ -383,9 +393,12 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\TextSlot.h" />
     <ClInclude Include="..\Public\Texture.h" />
     <ClInclude Include="..\Public\TextureSheetAnimation.h" />
+    <ClInclude Include="..\Public\ThirdPartyCsv.h" />
     <ClInclude Include="..\Public\ThreadPool.h" />
     <ClInclude Include="..\Public\TimeMgr.h" />
     <ClInclude Include="..\Public\Timer.h" />
+    <ClInclude Include="..\Public\TrailModel.h" />
+    <ClInclude Include="..\Public\TrailNode.h" />
     <ClInclude Include="..\Public\Transform.h" />
     <ClInclude Include="..\Public\UIObjcetBuilder.h" />
     <ClInclude Include="..\public\UIRenderer.h" />
@@ -398,6 +411,7 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\VI_Point.h" />
     <ClInclude Include="..\Public\VI_Rect.h" />
     <ClInclude Include="..\Public\VI_Terrain.h" />
+    <ClInclude Include="..\Public\VI_Trail.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\EngineSDK\Inc\GUI_Inc\imgui_stdlib.cpp">
@@ -438,11 +452,13 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\CollisionSystem.cpp" />
     <ClCompile Include="..\Private\Component.cpp" />
     <ClCompile Include="..\Private\ComputeShader.cpp" />
+    <ClCompile Include="..\private\CSMShadow.cpp" />
     <ClCompile Include="..\Private\CustomFont.cpp" />
     <ClCompile Include="..\Private\Data_Packets.cpp" />
     <ClCompile Include="..\Private\DebugBonePanel.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DebugRender.cpp" />
+    <ClCompile Include="..\Private\DynamicBone.cpp" />
     <ClCompile Include="..\Private\EffectBuilder.cpp" />
     <ClCompile Include="..\private\EffectContainer.cpp" />
     <ClCompile Include="..\private\EffectNode.cpp" />
@@ -451,6 +467,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\Engine_Struct.cpp" />
     <ClCompile Include="..\Private\EventListener.cpp" />
     <ClCompile Include="..\Private\EventSystem.cpp" />
+    <ClCompile Include="..\Private\FootIK.cpp" />
     <ClCompile Include="..\private\ForwardRenderer.cpp" />
     <ClCompile Include="..\Private\HiZ_Culling.cpp" />
     <ClCompile Include="..\Private\LifeTimeColor.cpp" />
@@ -529,6 +546,8 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\ThreadPool.cpp" />
     <ClCompile Include="..\Private\TimeMgr.cpp" />
     <ClCompile Include="..\Private\Timer.cpp" />
+    <ClCompile Include="..\Private\TrailModel.cpp" />
+    <ClCompile Include="..\Private\TrailNode.cpp" />
     <ClCompile Include="..\Private\Transform.cpp" />
     <ClCompile Include="..\Private\UIObjcetBuilder.cpp" />
     <ClCompile Include="..\private\UIRenderer.cpp" />
@@ -541,6 +560,7 @@ exit /b 0</Command>
     <ClCompile Include="..\Private\VI_Point.cpp" />
     <ClCompile Include="..\Private\VI_Rect.cpp" />
     <ClCompile Include="..\Private\VI_Terrain.cpp" />
+    <ClCompile Include="..\Private\VI_Trail.cpp" />
     <ClCompile Include="..\Public\GUI_Inc\backends\imgui_impl_dx11.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
@@ -654,8 +674,9 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Function.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PBRFunction.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Shadow.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\Shader_State.hlsl" />
-    <FxCompile Include="..\Public\Engine_Shader\Shader_WeightOIT.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Effect.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Cloud.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_Debug.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_DecalMesh.hlsl" />
@@ -668,12 +689,16 @@ exit /b 0</Command>
     <FxCompile Include="..\Public\Engine_Shader\VTX_Point.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_SkinMesh.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_TexPos.hlsl" />
+    <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\VTX_UI.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Public\Engine_Shader\CS_Particle.hlsli">
       <FileType>Document</FileType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="cpp.hint" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

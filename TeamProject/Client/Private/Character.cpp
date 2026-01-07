@@ -53,7 +53,8 @@ void CCharacter::Update(_float dt)
 {
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
-	if(m_bIsRotating)	Update_Rotation(dt);
+	Update_Evade(dt);
+	if (m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -69,49 +70,108 @@ void CCharacter::Rotate(_vector3 vDirection)
 	vDir.Normalize();
 
 	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vDir.Cross(vUp);
+	_vector3 vRight = vUp.Cross(vDir);
 	vRight.Normalize();
 
-	_smatrix mRot = _smatrix::Identity;
-	mRot.Right(vRight);
-	mRot.Up(vUp);
-	mRot.Forward(vDir);
-
+	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
 }
 
+_bool CCharacter::Can_Evade() const
+{
+	if (m_fEvadeCooldown > 0.f) return false;
+	return true;
+}
+
+void CCharacter::Use_Evade()
+{
+	++m_iEvadeCount;
+	m_fEvadeTimer = EVADE_COOLDOWN;
+
+	if (m_iEvadeCount >= EVADE_MAX_COUNT)
+	{
+		m_fEvadeCooldown = EVADE_COOLDOWN;
+		m_iEvadeCount = 0;
+		m_fEvadeTimer = 0.f;
+	}
+}
+
+_bool CCharacter::Is_OppositeInput() const
+{
+	if (m_input.previousMove.IsZero() || m_input.currentMove.IsZero())
+		return false;
+
+	_vector2 vPrev((_float)m_input.previousMove.x, (_float)m_input.previousMove.z);
+	_vector2 vCur((_float)m_input.currentMove.x, (_float)m_input.currentMove.z);
+	vPrev.Normalize();
+	vCur.Normalize();
+
+	_float fDot = vPrev.Dot(vCur);
+	_float fAngle = XMConvertToDegrees(acosf(fDot));
+
+	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+}
+
 void CCharacter::Update_Input(_float dt)
 {
-	int x = 0, z = 0;
-	if (KEY->Key_Hold('W'))    z += 1;
-	if (KEY->Key_Hold('S'))  z -= 1;
-	if (KEY->Key_Hold('D')) x += 1;
-	if (KEY->Key_Hold('A'))  x -= 1;
+	m_input.prevDirection = m_input.direction;
+	m_input.previous = m_input.current;
 
-	m_vInputDir = {};
+	KeyInput key;
+	if (InputDevice()->Key_Hold('W'))  key.z += 1;
+	if (InputDevice()->Key_Hold('S'))  key.z -= 1;
+	if (InputDevice()->Key_Hold('D'))  key.x += 1;
+	if (InputDevice()->Key_Hold('A'))  key.x -= 1;
 
-	if (x || z)
+	m_input.current = key;
+
+	if (!key.IsZero())
 	{
-		auto cam = CAM->Get_ActiveCam();
-		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
+		if (m_input.lastValid.IsZero() || m_input.bufferTimer <= 0.f)
+			m_input.lastValid = key;
 
-		Vector3 look = camTf->Dir(STATE::LOOK);
-		Vector3 right = camTf->Dir(STATE::RIGHT);
+		m_input.bufferTimer = KEY_BUFFER_TIME;
 
-		look.y = 0.f;
-		right.y = 0.f;
-
-		look.Normalize();
-		right.Normalize();
-
-		m_vInputDir = right * (float)x + look * (float)z;
+		if (key != m_input.currentMove)
+		{
+			m_input.previousMove = m_input.currentMove;
+			m_input.currentMove = key;
+		}
+	}
+	else
+	{
+		m_input.bufferTimer -= dt;
+		if (m_input.bufferTimer < 0.f)
+		{
+			m_input.bufferTimer = 0.f;
+			m_input.lastValid.Reset();
+			m_input.previousMove.Reset();
+			m_input.currentMove.Reset();
+		}
 	}
 
-	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
-	m_bIsMove = (m_vInputDir.x != 0.f || m_vInputDir.z != 0.f);
-	m_bIsInput = m_bIsAttack || m_bIsMove;
+	m_input.direction = {};
+	if (!key.IsZero())
+	{
+		auto cam = CameraManager()->Get_ActiveCam();
+		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
+		_vector3 look = camTf->Dir(STATE::LOOK);
+		look.y = 0.f;
+		look.Normalize();
+		_vector3 right = _vector3::Up.Cross(look);
+		right.Normalize();
+		m_input.direction = look * (float)key.z + right * (float)key.x;
+		m_input.direction.Normalize();
+	}
+
+	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
+	m_bIsMove = m_input.IsMoving();
+	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
+
+	if (InputDevice()->Key_Down(VK_F1)) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)
@@ -126,6 +186,29 @@ void CCharacter::Update_Rotation(_float dt)
 
 	m_qCurrentRot = _quaternion::Slerp(m_qCurrentRot, m_qTargetRot, dt * fSpeed);
 	m_pTransform->Set_Quaternion(m_qCurrentRot);
+}
+
+void CCharacter::Update_Evade(_float dt)
+{
+	if (m_fEvadeCooldown > 0.f)
+	{
+		m_fEvadeCooldown -= dt;
+		if (m_fEvadeCooldown <= 0.f)
+		{
+			m_fEvadeCooldown = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
+
+	if (m_fEvadeTimer > 0.f)
+	{
+		m_fEvadeTimer -= dt;
+		if (m_fEvadeTimer <= 0.f)
+		{
+			m_fEvadeTimer = 0.f;
+			m_iEvadeCount = 0;
+		}
+	}
 }
 
 void CCharacter::Free()

@@ -47,19 +47,64 @@ HRESULT CForwardRenderer::Render_Priority(PriorityPass* pPriorityPass)
 	return S_OK;
 }
 
-HRESULT CForwardRenderer::Render_Shadow(ShadowPass* pShadowPass)
+HRESULT CForwardRenderer::Render_StaticShadow(StaticShadowPass* pShadowPass, _bool clear)
 {
-	m_pPipeLine->Update_ShadowBuffer(m_pContext);
+	if (clear || m_fStaticUpdateTimer > 0.f)
+	{
+		pShadowPass->Clear();
+		return S_OK;
+	}
+
+	m_pPipeLine->Update_StaticCSM();
 
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
 
-	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Shadow"))) return E_FAIL;
 	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
-	pShadowPass->Execute(m_pContext, this);
-	if (FAILED(m_pTargetManager->End_MRT())) return E_FAIL;
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		m_pPipeLine->Begin_ShadowRender(false, i);
+		m_pPipeLine->Update_ShadowBuffer(m_pContext, false, i);
+
+		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		else pShadowPass->Execute(m_pContext, this, true);
+		m_pPipeLine->End_ShadowRender(false);
+	}
+	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
+
+	m_fStaticUpdateTimer = m_fStaticUpdateInterval;
+	return S_OK;
+}
+
+HRESULT CForwardRenderer::Render_SkinnedShadow(SkinnedShadowPass* pShadowPass, _bool clear)
+{
+	if (clear)
+	{
+		pShadowPass->Clear();
+		return S_OK;
+	}
+
+	m_pPipeLine->Update_SkinnedCSM();
+
+	_uint				iNumViewports = { 1 };
+	D3D11_VIEWPORT		ViewportDesc{};
+
+	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	Change_Viewport(g_iMaxWidth, g_iMaxHeight);
+
+	for (_uint i = 0; i < 4; ++i)
+	{
+		m_pPipeLine->Begin_ShadowRender(true, i);
+		m_pPipeLine->Update_ShadowBuffer(m_pContext, true, i);
+
+		if (i < 3) pShadowPass->Execute(m_pContext, this, false);
+		else pShadowPass->Execute(m_pContext, this, true);
+		m_pPipeLine->End_ShadowRender(true);
+	}
 	Change_Viewport(ViewportDesc.Width, ViewportDesc.Height);
 	return S_OK;
 }
@@ -145,8 +190,6 @@ HRESULT CForwardRenderer::Render_Combined()
 	m_pSkinnedRenderer->Render_SkinnedMesh_Combined();
 	m_pStaticRenderer->Render_StaticMesh_Combined();
 
-	//m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
-	//m_pShader->SetConstantBuffer("ShadowBuffer", m_pPipeLine->Get_ShadowBuffer());
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 	ID3D11InputLayout* pLayout;
@@ -155,6 +198,7 @@ HRESULT CForwardRenderer::Render_Combined()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Combined_StaticMesh", m_pShader, "StaticCombinedTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_DiffuseUI", m_pShader, "UICombinedTexture");
 
 	Bind_WorldMatrix();
@@ -180,6 +224,7 @@ void CForwardRenderer::Add_OutLineCommand(const OUTLINE_COMMAND& command)
 
 void CForwardRenderer::Update(_float dt)
 {
+	m_fStaticUpdateTimer -= dt;
 }
 
 void CForwardRenderer::SetRimLightMode(RIMLIGHT eMode)
@@ -198,6 +243,10 @@ HRESULT CForwardRenderer::Ready_Target()
 		m_pTargetManager->Create_Target(ShadowDesc);
 	}
 	{
+		RenderTargetDesc CombinedDesc = { "Target_Combined" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
+		m_pTargetManager->Create_Target(CombinedDesc);
+	}
+	{
 		RenderTargetDesc FianlDesc = { "Target_Final" , DXGI_FORMAT_R16G16B16A16_FLOAT ,DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 		m_pTargetManager->Create_Target(FianlDesc);
 	}
@@ -209,6 +258,9 @@ HRESULT CForwardRenderer::Ready_MRT()
 {
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Shadow", "Target_Shadow"))) return E_FAIL;
+	}
+	{
+		if (FAILED(m_pTargetManager->Add_MRT("MRT_Combined", "Target_Combined"))) return E_FAIL;
 	}
 	{
 		if (FAILED(m_pTargetManager->Add_MRT("MRT_Final", "Target_Final"))) return E_FAIL;

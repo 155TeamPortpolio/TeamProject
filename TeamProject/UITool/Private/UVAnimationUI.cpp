@@ -7,9 +7,6 @@
 #include "UITool_Level.h"
 #include "Texture.h"
 
-_uint CUVAnimationUI::m_iCount = {};
-const string CUVAnimationUI::m_strTypeTag = "UVAnimation";
-
 HRESULT CUVAnimationUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -26,13 +23,11 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
     auto sprite = Get_Component<CSprite2D>();
 
     sprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    sprite->ChangePass("UVAnimation");
+    sprite->ChangePass("UVAnimation_StencilTest");
     sprite->Set_Param("UVOffset", {&m_vUVOffset, "float2", sizeof(_float2)});
 
     m_strTextureKey = "empty.png";
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, true);
-
-    sprite->ChangePass("UVAnimation");
 
     m_iCount++;
 
@@ -41,9 +36,7 @@ HRESULT CUVAnimationUI::Initialize(INIT_DESC* pArg)
 
 void CUVAnimationUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
-
-    Play_Animation(dt);
+    __super::Update(dt);
 
     m_vUVOffset.x += m_vUVOffsetSpeed.x * dt;
     m_vUVOffset.y += m_vUVOffsetSpeed.y * dt;
@@ -66,10 +59,10 @@ void CUVAnimationUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 
-    auto& uvAnimationJson = data["uvAnimation"];
+    auto& uvAnimationJson            = data["uvAnimation"];
     uvAnimationJson["uvOffsetSpeed"] = {m_vUVOffsetSpeed.x, m_vUVOffsetSpeed.y};
 }
 
@@ -83,7 +76,7 @@ void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
     {
         const auto& uvAnimationJson = data["uvAnimation"];
         auto uvOffsetSpeed = uvAnimationJson.value("uvOffsetSpeed", json::array({0.0f, 0.0f}));
-        m_vUVOffsetSpeed = {uvOffsetSpeed[0], uvOffsetSpeed[1]};
+        m_vUVOffsetSpeed   = {uvOffsetSpeed[0], uvOffsetSpeed[1]};
     }
 
     ApplySpriteTexture(0, G_GlobalLevelKey, m_strTextureKey, false);
@@ -92,25 +85,21 @@ void CUVAnimationUI::Load(const nlohmann::ordered_json& data)
 CGameObject* CUVAnimationUI::Create()
 {
     CUVAnimationUI* pInstance = new CUVAnimationUI();
-
     if (FAILED(pInstance->Initialize_Prototype()))
     {
         MSG_BOX("Failed to Create : CUVAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }
 
 CGameObject* CUVAnimationUI::Clone(INIT_DESC* pArg)
 {
     CUVAnimationUI* pInstance = new CUVAnimationUI(*this);
-
     if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Clone : CUVAnimationUI");
         Safe_Release(pInstance);
     }
-
     return pInstance;
 }

@@ -163,6 +163,8 @@
     <ClInclude Include="..\public\DebugCamData.h" />
     <ClInclude Include="..\public\FreeCam.h" />
     <ClInclude Include="..\public\Grid.h" />
+    <ClInclude Include="..\public\RecPanel.h" />
+    <ClInclude Include="..\public\SecondLevel.h" />
     <ClInclude Include="..\public\Unagi.h" />
     <ClInclude Include="..\public\FirstLevel.h" />
     <ClInclude Include="..\public\MainApp.h">
@@ -190,6 +192,8 @@
     <ClCompile Include="..\private\CamPanelUtil.cpp" />
     <ClCompile Include="..\private\FreeCam.cpp" />
     <ClCompile Include="..\private\Grid.cpp" />
+    <ClCompile Include="..\private\RecPanel.cpp" />
+    <ClCompile Include="..\private\SecondLevel.cpp" />
     <ClCompile Include="..\private\Unagi.cpp" />
     <ClCompile Include="..\private\FirstLevel.cpp" />
     <ClCompile Include="..\private\MainApp.cpp">

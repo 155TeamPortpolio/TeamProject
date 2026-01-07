@@ -88,13 +88,7 @@ class CHiZ_Culling :
     };
 
 #ifdef _USING_GUI
-    struct OcclDebugRect
-    {
-        float minX, minY, maxX, maxY;   // screen pixels
-        float depth01;                  // objMinDepth01
-        _uint flags;                 // outInput.padding
-        _uint drawIndex;
-    };
+  
     struct HiZStats
     {
         _uint frustumIn = 0;       // frustum pass ���� ���� ��Ŷ ��
@@ -105,9 +99,7 @@ class CHiZ_Culling :
         _uint outResult = 0;       // ���� result ��
         _uint canRead = 0;         // �̹� ������ readback ����(1/0)
     };
-    vector<OcclDebugRect> m_dbgRects;
-    bool m_dbgDrawRects = true;
-    int  m_dbgRectLimit = 2000;
+    _bool isTabOpen = { false };
     HiZStats m_stats; 
 #endif
 

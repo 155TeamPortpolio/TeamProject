@@ -499,6 +499,11 @@ static mt19937& RNG()
 	return rng;
 }
 
+ENGINE_DLL mt19937& Helper::Get_RNG()
+{
+	return RNG();
+}
+
 ENGINE_DLL _int Helper::Get_Random_Int(_int min, _int max)
 {
 	uniform_int_distribution<_int> dist(min, max);
@@ -542,6 +547,18 @@ ENGINE_DLL _bool Helper::EnsureDirectoryExist(const filesystem::path& dir)
 
 	filesystem::create_directories(directory, ec);      // 중간 경로까지 생성
 	return !ec && filesystem::is_directory(directory, ec);
+}
+ENGINE_DLL _bool Helper::ContainsCaseInsensitive(const std::string& text, const std::string& pattern)
+{
+	auto ToLower = [](unsigned char c) { return (char)std::tolower(c); };
+
+	string textLower(text.size(), '\0');
+	transform(text.begin(), text.end(), textLower.begin(), ToLower);
+
+	string patLower(pattern.size(), '\0');
+	transform(pattern.begin(), pattern.end(), patLower.begin(), ToLower);
+
+	return textLower.find(patLower) != std::string::npos;
 }
 // -------------------------------------------------------------------------------------------------
 

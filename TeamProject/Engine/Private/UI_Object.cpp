@@ -7,20 +7,16 @@
 #include "Sprite2D.h"
 #include "Child.h"
 #include "ObjectContainer.h"
-CUI_Object::CUI_Object()
-{
-}
 
-CUI_Object::CUI_Object(const CUI_Object& rhs)
-    :CGameObject(rhs)
+CUI_Object::CUI_Object(const CUI_Object& rhs) : CGameObject(rhs)
 {
-    m_WinSize = rhs.m_WinSize;
+    m_WinSize       = rhs.m_WinSize;
     m_vAnchorOffset = rhs.m_vAnchorOffset;
     m_vScreenOffset = rhs.m_vScreenOffset;
-    m_vSize = rhs.m_vSize;
-    m_vScale = rhs.m_vScale;
-    m_fRadian = rhs.m_fRadian;
-    m_vPivot = rhs.m_vPivot;
+    m_vSize         = rhs.m_vSize;
+    m_vScale        = rhs.m_vScale;
+    m_fRadian       = rhs.m_fRadian;
+    m_vPivot        = rhs.m_vPivot;
 }
 
 HRESULT CUI_Object::Initialize_Prototype()
@@ -38,12 +34,13 @@ HRESULT CUI_Object::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
      UI_DESC* uiDesc = static_cast<UI_DESC*>(pArg);
 
-     if (pArg != nullptr) {
+     if (pArg) 
+     {
         m_vAnchorOffset = uiDesc->AnchorOffset;
-        m_vScale = uiDesc->Scale;
-        m_vSize = uiDesc->Size;
-        m_fRadian = uiDesc->fRadian;
-        m_eAnchor = uiDesc->eAnchor;
+        m_vScale        = uiDesc->Scale;
+        m_vSize         = uiDesc->Size;
+        m_fRadian       = uiDesc->fRadian;
+        m_eAnchor       = uiDesc->eAnchor;
         Update_UITransform();
      }
     return S_OK;
@@ -62,16 +59,17 @@ void CUI_Object::Priority_Update(_float dt)
 
 void CUI_Object::Update(_float dt)
 {
+    Play_Animation(dt);
 }
 
 void CUI_Object::Late_Update(_float dt)
 {
+
 }
 
 void CUI_Object::Post_EngineUpdate(_float dt)
 {
-    if (!m_isAlive)
-        return;
+    if (!m_isAlive) return;
 
     Update_UITransform();
 
@@ -80,27 +78,26 @@ void CUI_Object::Post_EngineUpdate(_float dt)
         m_vColorLinear.x = powf(m_vColor.x, 2.2f);
         m_vColorLinear.y = powf(m_vColor.y, 2.2f);
         m_vColorLinear.z = powf(m_vColor.z, 2.2f);
-        m_vColorLinear.w = m_vColor.w;
+        m_vColorLinear.w = m_vCombinedAlpha;        // m_vCombinedAlpha = 부모 알파 * 내 알파
 
         SPRITE_PACKET packet;
-        packet.pSprite2D = Get_Component<CSprite2D>();
+        packet.pSprite2D    = Get_Component<CSprite2D>();
         packet.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-        packet.pColor = &m_vColorLinear;
+        packet.pColor       = &m_vColorLinear;
 
-        _bool isUI = (packet.pSprite2D != nullptr);
-        _bool isValid = (packet.pSprite2D->IsValid());
+        _bool isUI     = (packet.pSprite2D != nullptr);
+        _bool isValid  = (packet.pSprite2D->IsValid());
         _bool isActive = (packet.pSprite2D->Get_CompActive());
 
         if(isUI && isValid && isActive)
             CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI(packet);
 
         if (m_isClickable)
-            CGameInstance::GetInstance()->Get_ClickMgr()->Add_ClickableObject(this);
+            CGameInstance::GetInstance()->Get_ClickMgr()->Register_ClickableObject(this);
     }
 
-    if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
+    if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) 
         pObjContainer->Post_EngineUpdateChild(dt);
-    }
 }
 
 _bool CUI_Object::Size_To(_fvector size, _float Speed)
@@ -108,14 +105,15 @@ _bool CUI_Object::Size_To(_fvector size, _float Speed)
     _vector length = XMVector2Length(size - XMLoadFloat2(&m_vSize));
     _vector nextSize;
 
-    if (XMVectorGetX(length) < 5.0f) {
+    if (XMVectorGetX(length) < 5.0f) 
+    {
         nextSize = size;
         XMStoreFloat2(&m_vSize, nextSize);
         return true;
     }
-    else {
+    else 
         nextSize = XMVectorLerp(XMLoadFloat2(&m_vSize), size, Speed);
-    }
+
     XMStoreFloat2(&m_vSize, nextSize);
     return false;
 }
@@ -125,7 +123,8 @@ _bool CUI_Object::Move_To(_fvector offset, _float Speed)
 {
     _vector length = XMVector2Length(offset - m_vAnchorOffset);
 
-    if (XMVectorGetX(length) < 0.2f) {
+    if (XMVectorGetX(length) < 0.2f)
+    {
         XMStoreFloat2(&m_vAnchorOffset, offset);
         return true;
     }
@@ -153,6 +152,7 @@ _bool CUI_Object::Rotate_To(_float rad, _float Speed)
 
     return false;
 }
+
 void CUI_Object::Render_GUI()
 {
     __super::Render_GUI();
@@ -222,8 +222,7 @@ void CUI_Object::Render_GUI()
 _float2 CUI_Object::Get_RectTopLeft_Screen() 
 {
     _float2 size = Get_PxSize();
-    return { m_vScreenOffset.x - m_vPivot.x * size.x,
-             m_vScreenOffset.y - m_vPivot.y * size.y };
+    return { m_vScreenOffset.x - m_vPivot.x * size.x, m_vScreenOffset.y - m_vPivot.y * size.y };
 }
 
 void CUI_Object::Set_Pivot(_float2 newPivot)
@@ -239,19 +238,22 @@ void CUI_Object::Set_Pivot(_float2 newPivot)
 
 void CUI_Object::Update_UITransform()
 {
-    _float2 parentScale = { 1.f, 1.f };
-    float parentRadian = {};
+    _float2 parentScale  = { 1.f, 1.f };
+    _float  parentRadian = {};
+    _float  parentAlpha  = { 1.f };
 
     if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
     {
         if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
         {
-            parentScale = pParentUI->Get_CombinedScale();
+            parentScale  = pParentUI->Get_CombinedScale();
             parentRadian = pParentUI->m_fRadian;
+            parentAlpha  = pParentUI->m_vCombinedAlpha;
         }
     }
 
     m_vCombinedScale = parentScale * m_vScale;  // 콤바인드 스케일 = 부모 스케일 * 내 스케일
+    m_vCombinedAlpha = parentAlpha * m_vColor.w;    // 콤바인드 알파 = 부모의 콤바인드 알파 * 내 알파
 
     _float2 sizePx = { m_vSize.x * m_vCombinedScale.x, m_vSize.y * m_vCombinedScale.y };    // 사이즈 * 콤바인드 스케일
 
@@ -284,40 +286,30 @@ void CUI_Object::Update_UITransform()
 
 _float2 CUI_Object::Calc_AnchorPoint() 
 {
-    _float2 rectPos = { 0.f, 0.f };
+    _float2 rectPos  = { 0.f, 0.f };
     _float2 rectSize = m_WinSize;
 
     if (auto pChild = const_cast<CUI_Object*>(this)->Get_Component<CChild>())
     {
         if (auto pParentUI = dynamic_cast<CUI_Object*>(pChild->Get_Parent()))
         {
-            rectPos = pParentUI->Get_RectTopLeft_Screen();
+            rectPos  = pParentUI->Get_RectTopLeft_Screen();
             rectSize = pParentUI->Get_PxSize();
         }
     }
 
-    const _uint flag = static_cast<_uint>(m_eAnchor);
+    const _uint flag = ENUM(m_eAnchor);
     _float2 anchorPoint = rectPos;
 
-    if (flag & static_cast<_uint>(ANCHOR::Left))        anchorPoint.x = rectPos.x;
-    else if (flag & static_cast<_uint>(ANCHOR::Right))  anchorPoint.x = rectPos.x + rectSize.x;
-    else                                                anchorPoint.x = rectPos.x + rectSize.x * 0.5f;
+    if      (flag & ENUM(ANCHOR::Left))   anchorPoint.x = rectPos.x;
+    else if (flag & ENUM(ANCHOR::Right))  anchorPoint.x = rectPos.x + rectSize.x;
+    else                                  anchorPoint.x = rectPos.x + rectSize.x * 0.5f;
 
-    if (flag & static_cast<_uint>(ANCHOR::Top))         anchorPoint.y = rectPos.y;
-    else if (flag & static_cast<_uint>(ANCHOR::Bottom)) anchorPoint.y = rectPos.y + rectSize.y;
-    else                                                anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
+    if      (flag & ENUM(ANCHOR::Top))    anchorPoint.y = rectPos.y;
+    else if (flag & ENUM(ANCHOR::Bottom)) anchorPoint.y = rectPos.y + rectSize.y;
+    else                                  anchorPoint.y = rectPos.y + rectSize.y * 0.5f;
 
     return anchorPoint;
-}
-
-void CUI_Object::Rotate_Left(_float _radian)
-{
-    m_fRadian += _radian;
-}
-
-void CUI_Object::Align_To(ANCHOR anchor)
-{
-    m_eAnchor = anchor;
 }
 
 void CUI_Object::Play_Animation(_float dt)
@@ -417,27 +409,145 @@ void CUI_Object::Play_Animation(_float dt)
 
 void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
 {
-    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop)
-        return;
+    if (m_iCurrentClipIndex == iIndex && m_isAnimLoop == isLoop) return;
 
     m_iCurrentClipIndex = iIndex;
     m_isBlending = true;
     m_fBlendTime = 0.f;
 }
 
+void CUI_Object::Load(const nlohmann::ordered_json& data)
+{
+    if (data.empty()) return;
+
+    m_InstanceName = data.value("instanceName", "");
+
+    if (data.contains("transform"))
+    {
+        const auto& transformJson = data["transform"];
+
+        m_eAnchor         = static_cast<ANCHOR>(transformJson.value("anchor", 0));
+        auto anchorOffset = transformJson.value("anchorOffset", json::array({0.0f, 0.0f}));
+        m_vAnchorOffset   = {anchorOffset[0], anchorOffset[1]};
+        auto size         = transformJson.value("size", json::array({100.0f, 100.0f}));
+        m_vSize           = {size[0], size[1]};
+        auto scale        = transformJson.value("scale", json::array({1.0f, 1.0f}));
+        m_vScale          = {scale[0], scale[1]};
+        auto pivot        = transformJson.value("pivot", json::array({0.5f, 0.5f}));
+        m_vPivot          = {pivot[0], pivot[1]};
+        m_fRadian         = transformJson.value("radian", 0.0f);
+    }
+
+    auto color = data.value("color", json::array({1.0f, 1.0f, 1.0f, 1.0f}));
+    m_vColor   = {color[0], color[1], color[2], color[3]};
+
+    const string pass = data.value("pass", "Opaque");
+    Get_Component<CSprite2D>()->ChangePass(pass);
+
+    if (data.contains("animClips"))
+    {
+        const auto& animClipsJson = data["animClips"];
+        m_AnimClips.clear();
+
+        for (const auto& clipJson : animClipsJson)
+        {
+            UI_ANIM_CLIP clip{};
+            clip.strName   = clipJson.value("name", "");
+            clip.fDuration = clipJson.value("duration", 1.0f);
+            clip.isLoop    = clipJson.value("loop", false);
+
+            if (clipJson.contains("keyframes"))
+            {
+                const auto& keyframesJson = clipJson["keyframes"];
+                for (const auto& keyframeJson : keyframesJson)
+                {
+                    UI_KEYFRAME keyframe;
+                    keyframe.fTime = keyframeJson.value("time", 0.0f);
+
+                    auto vScale     = keyframeJson.value("scale", json::array({1.0f, 1.0f}));
+                    keyframe.vScale = {vScale[0], vScale[1]};
+
+                    keyframe.fAngle = keyframeJson.value("angle", 0.0f);
+
+                    auto vPosition     = keyframeJson.value("position", json::array({0.0f, 0.0f}));
+                    keyframe.vPosition = {vPosition[0], vPosition[1]};
+
+                    auto vColor     = keyframeJson.value("color", json::array({1.0f, 1.0f, 1.0f, 1.0f}));
+                    keyframe.vColor = {vColor[0], vColor[1], vColor[2], vColor[3]};
+
+                    keyframe.easeType = static_cast<EaseType>(keyframeJson.value("easeType", 0u));
+
+                    clip.keyframes.push_back(keyframe);
+                }
+            }
+
+            m_AnimClips.push_back(clip);
+        }
+    }
+
+    if (data.contains("children"))
+    {
+        const auto& childrenJson = data["children"];
+        CObjectContainer* pContainer = Get_Component<CObjectContainer>();
+
+        for (const auto& childJson : childrenJson)
+        {
+            string strTypeTag = childJson.value("typeTag", "");
+            if (strTypeTag.empty()) continue;
+
+            const string& strCurrentLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+            CUI_Object* pChildObj = Builder::Create_UIObject({strCurrentLevelKey, "Proto_GameObject_" + strTypeTag}).Build(strTypeTag);
+
+            if (!pChildObj) continue;
+
+            pChildObj->Load(childJson);
+
+            if (pContainer)
+                pContainer->Add_Child(pChildObj);
+        }
+    }
+}
+
+UI_HANDLE CUI_Object::Get_Handle()
+{
+    UI_HANDLE hObj = {};
+
+    if (m_LevelTag.empty()) {
+        hObj.Reset();
+        return hObj;
+    }
+
+    hObj.Level = m_LevelTag;
+    hObj.hObjID = m_SystemIndex;
+
+    return hObj;
+}
+
+UI_HANDLE CUI_Object::Get_DescendantHandle(const string& instanceName)
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+    if (!pContainer)
+        return UI_HANDLE();
+
+    auto pDescendant = dynamic_cast<CUI_Object*>(pContainer->Find_Descendant(instanceName));
+    if (!pDescendant)
+        return UI_HANDLE();
+
+    return pDescendant->Get_Handle();
+}
+
 _float2 CUI_Object::Get_Point_Screen(_float2 anchor, _float x, _float y)
 {
-    _float2 size = Get_PxSize(); 
-    _float2 TopLeft = { m_vScreenOffset.x - m_vPivot.x * size.x,m_vScreenOffset.y - m_vPivot.y * size.y };
+    _float2 size    = Get_PxSize(); 
+    _float2 TopLeft = { m_vScreenOffset.x - m_vPivot.x * size.x, m_vScreenOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };
 }
 
 _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
 {
-    _float2 size = Get_PxSize();
-    _float2 TopLeft = { m_vAnchorOffset.x - m_vPivot.x * size.x,
-             m_vAnchorOffset.y - m_vPivot.y * size.y };
+    _float2 size    = Get_PxSize();
+    _float2 TopLeft = { m_vAnchorOffset.x - m_vPivot.x * size.x, m_vAnchorOffset.y - m_vPivot.y * size.y };
 
     return { TopLeft.x + size.x * anchor.x + x, TopLeft.y + size.y * anchor.y + y };
 }
@@ -445,4 +555,7 @@ _float2 CUI_Object::Get_Point_Local(_float2 anchor, _float x, _float y)
 void CUI_Object::Free()
 {
     __super::Free();
+
+    if (m_isClickable)
+        CGameInstance::GetInstance()->Get_ClickMgr()->Unregister_ClickableObject(this);
 }

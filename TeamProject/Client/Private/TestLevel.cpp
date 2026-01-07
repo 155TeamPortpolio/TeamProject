@@ -9,11 +9,14 @@
 #include "RigidBody.h"
 #include "CharacterController.h"
 
+#include "BattleSystem.h"
+
 // Camera
 #include "Camera.h"
 #include "FreeCam.h"
 #include "CamDirector.h"
 #include "OrbitCam.h"
+#include "ShadowCam.h"
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
@@ -36,6 +39,7 @@
 #include "Corin.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
+#include "ThugBulkyEnforcer.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -57,6 +61,9 @@ HRESULT CTestLevel::Initialize()
 	if (nullptr == m_pMapDataCloud)
 		return E_FAIL;
 
+	if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
+		MSG_BOX("Failed to Load MonsterTable!");
+	CBattleSystem::GetInstance()->SetActive(true);
 
 	return S_OK;
 }
@@ -71,6 +78,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
 	// =========================================================================
 
 	//==================== Effect =======================
@@ -81,6 +89,12 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
+	
+	pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
+	pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
+	
+	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
+	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -105,7 +119,7 @@ HRESULT CTestLevel::Awake()
 	// =================TestMap==================
 	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
 	//	.Build("Test_Map");
-	//
+	//	
 	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
 
 	/* Miyabi */
@@ -113,7 +127,7 @@ HRESULT CTestLevel::Awake()
 	CCT_DESC miyabiCCT;
 	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
 	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~(1 << ENUM(COLLISION_GROUP::COMMON));
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
 	miyabiCCT.bAutoFit = false;
 	miyabiCCT.fHeight = 1.28f;
 	miyabiCCT.fRadius = 0.2f;
@@ -127,64 +141,95 @@ HRESULT CTestLevel::Awake()
 	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 
 	m_miyabiHandle = Miyabi->Get_Handle();
+	
+	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시. if Player's logic is complete, It will be changed.
+	CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Initialize("Test_Level");
-	
-	CUI_Object* hudUI = Builder::Create_UIObject({"Test_Level", "Proto_GameObject_CanvasPanel"})
-		.Asset("hud.json")
-		.Build("HUD");
-	
-	uiDirector->Register(hudUI);
+	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
-	//Ready_TestObject();
-
+	Ready_TestObject();
+	Ready_ShadowCamera();
 
 	return S_OK;
 }
 
 void CTestLevel::Update()
 {
-	if (KEY->Key_Down('1'))
+	CBattleSystem::GetInstance()->Update();
+
+	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = OBJ->Request_Object(m_freeCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+		auto obj = ObjectManger()->Request_Object(m_freeCamHandle);
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('2'))
+	if (InputDevice()->Key_Down(VK_F2))
 	{
-		auto obj = OBJ->Request_Object(m_orbitCamHandle);
-		CAM->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+		auto obj = ObjectManger()->Request_Object(m_orbitCamHandle);
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
-	if (KEY->Key_Down('3'))
+	if (InputDevice()->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
-	if (KEY->Key_Tap('4'))
-	{
-		CCT_DESC sacrificeCCT;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		sacrificeCCT.bAutoFit = false;
-		sacrificeCCT.fHeight = 1.28f;
-		sacrificeCCT.fDensity = 0.00001f;
-		sacrificeCCT.fRadius = 0.2f;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+	//if (KEY->Key_Tap('4'))
+	//{
+	//	//CCT_DESC sacrificeCCT;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+	//	//sacrificeCCT.bAutoFit = false;
+	//	//sacrificeCCT.fHeight = 1.28f;
+	//	//sacrificeCCT.fDensity = 0.00001f;
+	//	//sacrificeCCT.fRadius = 0.2f;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+	//	//
+	//	//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+	//	//	.CharacterController(sacrificeCCT)
+	//	//	.Build("Sacrifice");
+	//	//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 
-		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-			.CharacterController(sacrificeCCT)
-			.Build("Sacrifice");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	//if (KEY->Key_Tap('5'))
+	//{
+	//	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//		.Asset("core.json")
+	//		.Build("Core");
+
+	//	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//}
+
+	// [`] 
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
+
+		/*CCT_DESC BulkyCCT;
+		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
+		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
+		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+		BulkyCCT.bAutoFit = false;
+		BulkyCCT.fHeight = 1.28f;
+		BulkyCCT.fRadius = 0.35f;
+		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
+		//BulkyCCT.fBoundingMinY = -0.88f;
+		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
+		
+		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
+			.CharacterController(BulkyCCT)
+			.Build("ThugBulky");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });*/
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { 0.f, 0.f,2.f });
 	}
 }
 
@@ -243,11 +288,12 @@ void CTestLevel::Ready_Camera()
 		.Camera(aspect)
 		.CharacterController(desc)
 		.Build("OrbitCam");
+
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
-	OBJ->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
-	OBJ->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	OBJ->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
 	m_freeCamHandle  = freeCam->Get_Handle();
 	m_orbitCamHandle = orbitCam->Get_Handle();
@@ -259,12 +305,26 @@ void CTestLevel::Ready_Camera()
 
 	CamLoader::Load();
 
-	CAM->Set_MainCam(orbitCam->Get_Component<CCamera>());
+	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 
-	auto camPanel = CCamPanel::Create(GUI->Get_Context());
-	GUI->Register_Panel(camPanel);
+	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
+	//GUI->Register_Panel(camPanel);
 
 	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
+}
+
+void CTestLevel::Ready_ShadowCamera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 100.f, 30.f })
+		.Rotate({0.f, 0.f, 0.f})
+		.Build("ShadowCam");
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, {"Test_Level", "Camera_Layer"});
+	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_TestObject()
@@ -315,11 +375,11 @@ void CTestLevel::Ready_TestObject()
 	//}
 
 	// =====================TestCloud=========================
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
-	//auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
-	//	.Build("Test_Cloud");
-	//
-	//objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
+	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+		.Build("Test_Cloud");
+	
+	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
 }
 
 HRESULT CTestLevel::Render()
@@ -347,7 +407,9 @@ void CTestLevel::Free()
 {
 	__super::Free();
 
+
 	Safe_Release(m_pMapDataCloud);
+	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

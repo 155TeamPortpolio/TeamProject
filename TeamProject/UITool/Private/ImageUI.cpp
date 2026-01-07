@@ -8,9 +8,6 @@
 #include "UITool_Level.h"
 #include "Engine_Math.h"
 
-_uint CImageUI::m_iCount = {};
-const string CImageUI::m_strTypeTag = "Image";
-
 HRESULT CImageUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -34,34 +31,33 @@ HRESULT CImageUI::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CImageUI::Update(_float dt)
-{
-    if (!m_isAlive) return;
-
-    Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
-
-    Play_Animation(dt);
-}
-
 void CImageUI::Render_GUI()
 {
     __super::Render_GUI();
 
-    // ¿ÃπÃ¡ˆ
     Render_GUI_Image(m_strTextureKey);
 
+    _bool isFlip = {};
     if (ImGui::Checkbox("flip X", &m_isFlipX))
+    {
         m_vFlip.x = (m_isFlipX) ? 1.f : 0.f;
+        isFlip = true;
+    }
     ImGui::SameLine();
     if (ImGui::Checkbox("flip Y", &m_isFlipY))
+    {
         m_vFlip.y = (m_isFlipY) ? 1.f : 0.f;
+        isFlip = true;
+    }
+    if (isFlip)
+        Get_Component<CSprite2D>()->Set_Param("vFlip", { &m_vFlip, "float2", sizeof(_float2) });
 }
 
 void CImageUI::Save(nlohmann::ordered_json& data)
 {
     __super::Save(data);
 
-    data["typeTag"] = m_strTypeTag;
+    data["typeTag"]    = m_strTypeTag;
     data["textureTag"] = m_strTextureKey;
 }
 

@@ -18,9 +18,12 @@ public:
     _bool                Has_SubStateMachine() const { return m_pSubStateMachine != nullptr; }
 
 public:
-    virtual void Enter(Type* pOwner) override;
-    virtual void Update(Type* pOwner, _float dt) override;
-    virtual void Exit(Type* pOwner) override {}
+    virtual void    Enter(Type* pOwner) override;
+    virtual void    Update(Type* pOwner, _float dt) override;
+    virtual void    Exit(Type* pOwner) override {}
+
+public:
+    virtual _bool   Is_EndState() const;
 
 protected:
     CStateMachine<Type>* m_pSubStateMachine = { nullptr };
@@ -63,6 +66,31 @@ void IHState<Type>::Update(Type* pOwner, _float dt)
 {
     if (m_pSubStateMachine)
         m_pSubStateMachine->Update(dt);
+}
+
+template<typename Type>
+_bool IHState<Type>::Is_EndState() const
+{
+    if (!m_pSubStateMachine)
+        return false;
+
+    IBaseState<Type>* pCurrent = m_pSubStateMachine->Get_CurrentState();
+    if (!pCurrent)
+        return false;
+
+    // 현재 상태가 직접 End 태그를 가지고 있으면
+    if (pCurrent->Get_Tag() == "End")
+        return true;
+
+    // 현재 상태가 계층구조를 가지고 있으면 재귀 체크
+    IHState<Type>* pSubH = dynamic_cast<IHState<Type>*>(pCurrent);
+    if (pSubH && pSubH->Has_SubStateMachine())
+    {
+        IBaseState<Type>* pSubCurrent = pSubH->Get_SubStateMachine()->Get_CurrentState();
+        return (pSubCurrent && pSubCurrent->Get_Tag() == "End");
+    }
+
+    return false;
 }
 
 template<typename Type>

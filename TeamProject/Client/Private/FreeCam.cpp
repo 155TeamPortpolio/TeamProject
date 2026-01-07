@@ -6,31 +6,21 @@
 HRESULT CFreeCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    Add_Component<CLight>();
     return S_OK;
 }
 
 HRESULT CFreeCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-    LIGHT_DESC desc{};
-    desc.vLightPosition  = {};
-    desc.fLightRange     = {};
-    desc.fLightIntensity = 1.f;
-    desc.vLightDirection = {0.0f, -1.0f, 1.0f, 0.0f};
-    desc.vLightDiffuse   = {1.0f,  1.0f, 1.0f, 1.0f};
-    desc.vLightAmbient   = {0.6f,  0.6f, 0.6f, 1.0f};
-    desc.vLightSpecular  = {1.0f,  1.0f, 1.0f, 1.0f};
-    Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
     return S_OK;
 }
 
 void CFreeCam::Priority_Update(_float dt)
-{
-    if (KEY->Mouse_Down(MOUSE_BTN::RB))
+{ 
+    if (InputDevice()->Mouse_Down(MOUSE_BTN::RB))
     {
-        m_vRotDegTarget.x += KEY->Mouse_DeltaX() * m_fSensitivity;
-        m_vRotDegTarget.y += KEY->Mouse_DeltaY() * m_fSensitivity;
+        m_vRotDegTarget.x += InputDevice()->Mouse_DeltaX() * m_fSensitivity;
+        m_vRotDegTarget.y += InputDevice()->Mouse_DeltaY() * m_fSensitivity;
         m_vRotDegTarget.y = clamp(m_vRotDegTarget.y, -89.f, 89.f);
     }
 
@@ -47,12 +37,12 @@ void CFreeCam::Priority_Update(_float dt)
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (KEY->Key_Down('W'))      move += look    *  speed;
-    if (KEY->Key_Down('S'))      move += look    * -speed;
-    if (KEY->Key_Down('D'))      move += right   *  speed;
-    if (KEY->Key_Down('A'))      move += right   * -speed;
-    if (KEY->Key_Down(VK_SPACE)) move += worldUp *  speed;
-    if (KEY->Key_Down(VK_SHIFT)) move += worldUp * -speed;
+    if (InputDevice()->Key_Down(VK_UP))                                 move += look    *  speed;
+    if (InputDevice()->Key_Down(VK_DOWN))                               move += look    * -speed;
+    if (InputDevice()->Key_Down(VK_RIGHT))                              move += right   *  speed;
+    if (InputDevice()->Key_Down(VK_LEFT))                               move += right   * -speed;
+    if (InputDevice()->Key_Down(VK_SPACE) && InputDevice()->Key_Down(VK_CONTROL)) move += worldUp *  speed;
+    if (InputDevice()->Key_Down(VK_SHIFT) && InputDevice()->Key_Down(VK_CONTROL)) move += worldUp * -speed;
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });
@@ -105,12 +95,12 @@ void CFreeCam::Render_GUI()
         ImGui::PushID("FreeCam_RenderGUI");
 
         auto myCam = Get_Component<CCamera>();
-        bool isMain = (CAM->Get_BaseCam() == myCam);
+        bool isMain = (CameraManager()->Get_BaseCam() == myCam);
 
         if (ImGui::Checkbox(u8"MainCam", &isMain))
         {
             if (isMain)
-                CAM->Set_MainCam(myCam);
+                CameraManager()->Set_MainCam(myCam);
         }
 
         ImGui::DragFloat(u8"이동 속도", &m_fSpeed, 0.1f, 0.f, 5000.f);

@@ -13,6 +13,7 @@
 #include "Renderer.h"
 #include "Helper_Func.h"
 #include "HiZ_Culling.h"
+#include "CSMShadow.h"
 
 CPipeLine::CPipeLine()
 {
@@ -80,7 +81,14 @@ HRESULT CPipeLine::Initialize(ID3D11Device* pDevice, class CRenderSystem* pSyste
 
 	m_pSystem = pSystem;
 
+	ID3D11DeviceContext* pContext = CGameInstance::GetInstance()->Get_Context();
 	m_pHiZ = CHiZ_Culling::Create();
+
+	m_pSkinnedCSM = CCSMShadow::Create(pDevice, pContext, 8192);
+	m_pStaticCSM = CCSMShadow::Create(pDevice, pContext, 8192);
+
+	ZeroMemory(&PreShadowBuffer, sizeof(ShadowBuffer));
+
 	return S_OK;
 }
 
@@ -122,9 +130,10 @@ HRESULT CPipeLine::Update_FrameBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
-HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
+HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext, _bool IsSkinningMesh, _int cascadeIndex)
 {
 	ShadowBuffer shadowBuffer{};
+	ZeroMemory(&shadowBuffer, sizeof(ShadowBuffer));
 
 	shadowBuffer.matShadowProjection = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowProjMatrix();
 	shadowBuffer.matShadowView = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowViewMatrix();
@@ -132,6 +141,37 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 	shadowBuffer.matShadowProjectionInverse = *CGameInstance::GetInstance()->Get_CameraMgr()->Get_InversedShadowProjMatrix();
 	shadowBuffer.vShadowPosition = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowCameraPos();
 	shadowBuffer.zShadowFar = CGameInstance::GetInstance()->Get_CameraMgr()->Get_ShadowFar();
+
+	if (IsSkinningMesh)
+	{
+		for (_uint i = 0; i < 4; ++i)
+		{
+			Matrix lightVP = m_pSkinnedCSM->GetLightViewProj(i);
+			shadowBuffer.matSkinnedLightViewProj[i] = lightVP;
+			shadowBuffer.matStaticLightViewProj[i] = PreShadowBuffer.matStaticLightViewProj[i];
+			PreShadowBuffer.matSkinnedLightViewProj[i] = shadowBuffer.matSkinnedLightViewProj[i];
+		}
+
+		const float* splits = m_pSkinnedCSM->GetCascadeSplits();
+		shadowBuffer.vCascadeSplits = Vector4(splits[1], splits[2], splits[3], splits[4]);
+
+		shadowBuffer.iCurrentCascade = cascadeIndex;
+	}
+	else
+	{
+		for (_uint i = 0; i < 4; ++i)
+		{
+			Matrix lightVP = m_pStaticCSM->GetLightViewProj(i);
+			shadowBuffer.matStaticLightViewProj[i] = lightVP;
+			shadowBuffer.matSkinnedLightViewProj[i] = PreShadowBuffer.matSkinnedLightViewProj[i];
+			PreShadowBuffer.matStaticLightViewProj[i] = shadowBuffer.matStaticLightViewProj[i];
+		}
+
+		const float* splits = m_pStaticCSM->GetCascadeSplits();
+		shadowBuffer.vCascadeSplits = Vector4(splits[1], splits[2], splits[3], splits[4]);
+
+		shadowBuffer.iCurrentCascade = cascadeIndex;
+	}
 
 	D3D11_MAPPED_SUBRESOURCE mappedResource;
 
@@ -147,7 +187,7 @@ HRESULT CPipeLine::Update_ShadowBuffer(ID3D11DeviceContext* pContext)
 
 	memcpy(mappedResource.pData, &shadowBuffer, sizeof(ShadowBuffer));
 	pContext->Unmap(m_pDeviceShadowBuffer, 0);
-
+	
 	return S_OK;
 }
 
@@ -258,6 +298,16 @@ void CPipeLine::Update_Frustum()
 	BoundingFrustum::CreateFromMatrix(frustum, proj);
 
 	frustum.Transform(m_Frustum, XMMatrixInverse(nullptr, view));
+}
+
+void CPipeLine::Update_StaticCSM()
+{
+	m_pStaticCSM->Update();
+}
+
+void CPipeLine::Update_SkinnedCSM()
+{
+	m_pSkinnedCSM->Update();
 }
 
 void CPipeLine::Update_HiZ(ID3D11DeviceContext* pContext)
@@ -377,6 +427,40 @@ HRESULT CPipeLine::End_SkinningBuffer(ID3D11DeviceContext* pContext)
 	return S_OK;
 }
 
+void CPipeLine::Begin_ShadowRender(_bool IsSkinningMesh, _uint cascadeIndex)
+{
+	if (IsSkinningMesh) m_pSkinnedCSM->Begin_ShadowRender(cascadeIndex);
+	else m_pStaticCSM->Begin_ShadowRender(cascadeIndex);
+}
+
+void CPipeLine::End_ShadowRender(_bool IsSkinningMesh)
+{
+	if (IsSkinningMesh) m_pSkinnedCSM->End_ShadowRender();
+	else m_pStaticCSM->End_ShadowRender();
+}
+
+ID3D11DepthStencilView* CPipeLine::GetCSMDSV(_bool IsSkinningMesh, _uint index) const
+{
+	ID3D11DepthStencilView* DSV = nullptr;
+
+	if (IsSkinningMesh) DSV = m_pSkinnedCSM->GetDSV(index);
+	else DSV = m_pStaticCSM->GetDSV(index);
+
+	return DSV;
+}
+
+HRESULT CPipeLine::Bind_ShadowMap(CShader* pShader)
+{
+	pShader->Bind_Value("SkinnedShadowMapArray", { m_pSkinnedCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+	pShader->Bind_Value("StaticShadowMapArray", { m_pStaticCSM->GetShadowMapSRV(), "Texture2DArray", 0 });
+	return S_OK;
+}
+
+void CPipeLine::BindSampler(ID3D11DeviceContext* pContext, _uint slot)
+{
+	m_pSkinnedCSM->BindSampler(pContext, slot);
+}
+
 HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 {
 
@@ -387,40 +471,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 	for (size_t i = 0; i < LightSnapShots.size(); i++)
 	{
 		Update_LightBuffer(pContext, LightSnapShots[i], LightSnapShots.size());
-		//LIGHT_DESC desc = LightSnapShots[i]; // °ª º¹»ç
-		//
-		//SHADER_PARAM LightParam;
-		//LightParam.iSize = sizeof(_float4);
-		//LightParam.typeName = "float4";
-		//LightParam.pData = &desc.vLightDiffuse;
-		//pShader->Bind_Value("g_vLightDiffuse", LightParam);
-		//
-		//LightParam.pData = &desc.vLightAmbient;
-		//pShader->Bind_Value("g_vLightAmbient", LightParam);
-		//
-		//LightParam.pData = &desc.vLightDirection;
-		//pShader->Bind_Value("g_vLightDir", LightParam);
-		//
-		//LightParam.pData = &desc.vLightPosition;
-		//pShader->Bind_Value("g_vLightPos", LightParam);
-		//
-		//LightParam.pData = &desc.vLightSpecular;
-		//pShader->Bind_Value("g_vLightSpecular", LightParam);
-		//
-		//LightParam.iSize = sizeof(_float);
-		//LightParam.typeName = "float";
-		//LightParam.pData = &desc.fLightRange;
-		//pShader->Bind_Value("g_fLightRange", LightParam);
-		//
-		//LightParam.pData = &desc.fLightIntensity;
-		//pShader->Bind_Value("g_fLightIntensity", LightParam);		
-		//
-		//LightParam.iSize = sizeof(_int);
-		//_int LightSize = LightSnapShots.size();
-		//LightParam.typeName = "int";
-		//LightParam.pData = &LightSize;
-		//pShader->Bind_Value("g_iLightSize", LightParam);
-		//
+	
 		ID3D11InputLayout* pLayout;
 
 		switch (LightSnapShots[i].eType)
@@ -430,6 +481,7 @@ HRESULT CPipeLine::Bind_Light(CShader* pShader, class CVIBuffer* pBuffer, ID3D11
 			pContext->IASetInputLayout(pLayout);
 			pShader->Apply("DIRECTIONAL", pContext);
 			pShader->SetConstantBuffer("LightBuffer", Get_LightBuffer());
+			BindSampler(pContext, 10);
 			pBuffer->Bind_Buffer(pContext);
 			pBuffer->Render(pContext);
 			break;
@@ -489,4 +541,6 @@ void CPipeLine::Free()
 	Safe_Release(m_pDeviceSSAOKernelBuffer);
 
 	Safe_Release(m_pHiZ);
+	Safe_Release(m_pSkinnedCSM);
+	Safe_Release(m_pStaticCSM);
 }

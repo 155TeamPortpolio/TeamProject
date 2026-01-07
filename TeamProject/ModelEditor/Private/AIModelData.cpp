@@ -53,8 +53,7 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
             islands = Find_Island_ByPosition(sourceVertices, sourceIndices, epsilon);
         }
 
-        // ���� ����: �� ������ faceCount�� ���� �����ϸ�(=�ﰢ�� ���� ����) ���� ��ŵ
-        if (islands.empty() || islands.size() <= 1 || islands.size() >= (size_t)(faceCount * 9 / 10))
+       if (islands.empty() || islands.size() <= 1 || islands.size() >= (size_t)(faceCount * 9 / 10))
         {
             m_Meshes.push_back(pSourceMesh);
             continue;
@@ -120,9 +119,27 @@ HRESULT CAIModelData::Initialize(MESH_TYPE _eType, const aiScene* pAIScene)
             }
 
             m_Meshes.push_back(islandMesh);
+
         }
 
         Safe_Release(pSourceMesh);
+    }
+    for (size_t i = 0; i < m_Meshes.size(); i++)
+    {
+        string meshName = Helper::ToLower(m_Meshes[i]->Get_Key());
+        if (meshName.find("lod1") != string::npos) {
+            m_LOD1Marked.push_back(i);
+        }
+        else if (meshName.find("lod2") != string::npos) {
+            m_LOD2Marked.push_back(i);
+        }
+        else if (meshName.find("lod3") != string::npos) {
+            m_LOD3Marked.push_back(i);
+        }
+        else {
+            m_Normal.push_back(i);
+        }
+
     }
 
     return S_OK;
@@ -132,6 +149,48 @@ vector<_uint> CAIModelData::Get_MeshIndex_WithOutProxy()
 {
 	return m_NotProxy;
 }
+
+void CAIModelData::Render_GUI()
+{
+  
+    if (m_pSkeleton) {
+      ImGui::SeparatorText("Humanoid");
+      m_pSkeleton->Render_GUI();
+    }
+
+    
+    ImGui::SeparatorText("Meshes");
+    if (!m_Meshes.empty()) {
+        if (ImGui::Button("MeshOpen"))
+            isGui_MeshTabOpen = !isGui_MeshTabOpen;
+    }
+
+    if (isGui_MeshTableTabOpen) {
+        if (ImGui::Begin("MeshTab", &isGui_MeshTableTabOpen, ImGuiWindowFlags_NoCollapse))
+        {
+            m_Meshes[selectedMeshIndex]->Render_GUI();
+        }
+        ImGui::End();
+    }
+
+    if (isGui_MeshTabOpen) {
+        if (ImGui::Begin("Meshes", &isGui_MeshTabOpen, ImGuiWindowFlags_NoCollapse))
+        {
+            for (size_t i = 0; i < m_Meshes.size(); i++)
+            {
+                string meshBtn = m_Meshes[i]->Get_Key() + "##Btn" + to_string(i);
+                if (ImGui::Button(meshBtn.c_str())) {
+                    selectedMeshIndex = i;
+                    isGui_MeshTableTabOpen = true;
+                }
+            }
+        }
+        ImGui::End();
+    }
+
+}
+
+
 
 vector<vector<_uint>> CAIModelData::Find_Island(_uint numVertices, const vector<_uint>& indices)
 {

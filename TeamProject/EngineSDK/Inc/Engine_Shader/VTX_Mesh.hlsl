@@ -145,19 +145,18 @@ PS_OUT PS_DEBUG(PS_IN In)
 struct VS_OUT_SHADOW
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+    //float4 vProjPos : TEXCOORD0;
 };
 
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 {
     VS_OUT_SHADOW Out;
     
-    float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
-    float4 viewPos = mul(float4(worldPos, 1.f), matShadowView);
-    float4 projPos = mul(viewPos, matShadowProjection);
+    float3 worldPos = mul(float4(In.vPosition, 1.f),
+                         ObjectBufferArray[TransformIndex].Transform).xyz;
     
-    Out.vPosition = projPos;
-    Out.vProjPos = Out.vPosition;
+    float4 lightSpacePos = mul(float4(worldPos, 1.f), matStaticLightViewProj[iCurrentCascade]);
+    Out.vPosition = lightSpacePos;
     
     return Out;
 }
@@ -165,21 +164,16 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 struct PS_IN_SHDOW
 {
     float4 vPosition : SV_POSITION;
-    float4 vProjPos : TEXCOORD0;
+   // float4 vProjPos : TEXCOORD0;
 };
 
 struct PS_OUT_SHADOW
 {
-    vector vShadow : SV_TARGET0;
+   //vector vShadow : SV_TARGET0;
 };
 
-PS_OUT_SHADOW PS_MAIN_SHADOW(PS_IN_SHDOW In)
+void PS_MAIN_SHADOW(PS_IN_SHDOW In)
 {
-    PS_OUT_SHADOW Out;
- 
-    Out.vShadow = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / zShadowFar, 0.f, 0.f);
-   
-    return Out;
 }
 
 technique11 DefaultTechnique
@@ -204,7 +198,7 @@ technique11 DefaultTechnique
     }  
     pass Shadow
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_Shadow);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
