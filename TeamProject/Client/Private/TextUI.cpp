@@ -19,9 +19,13 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    const string strObjectID = to_string(m_ObjectID).c_str();
+    Get_Component<CSprite2D>()->Set_TextKey(strObjectID);
+    Get_Component<CTextSlot>()->Set_TextKey(strObjectID);
+
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "PanelBox.dds");
+    Get_Component<CSprite2D>()->Add_Texture(G_GlobalLevelKey, "canvas.png");
 #endif
 
     return S_OK;
@@ -33,6 +37,7 @@ void CTextUI::Update(_float dt)
 
     Get_Component<CTextSlot>()->Set_Position(m_vLeftTop);   
     Get_Component<CTextSlot>()->Push_Text();
+    Get_Component<CTextSlot>()->Set_Color(_float4(m_vColor.x, m_vColor.y, m_vColor.z, m_vCombinedAlpha));
 }
 
 void CTextUI::Load(const nlohmann::ordered_json& data)
@@ -49,8 +54,6 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
         pTextSlot->Set_Font(textJson.value("fontTag", "Asap.spritefont"));
         string strText = textJson.value("content", "content");
         pTextSlot->Set_Text(Helper::ConvertToWideString(strText));
-        pTextSlot->Set_TextKey(strText);
-        pSprite->Set_TextKey(strText);
         pTextSlot->Set_Size(textJson.value("fontScale", 1.f));
         pTextSlot->Set_Color(m_vColor);
          

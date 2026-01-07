@@ -155,8 +155,8 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 			m_pBatch,
 			Text.info.Text,
 			Text.info.TextPos,
-			XMLoadFloat4(&Text.info.OutLineColor),
-			XMLoadFloat4(&Text.info.TextColor),
+			PremultipledColor(Text.info.OutLineColor),
+			PremultipledColor(Text.info.TextColor),
 			Text.info.Thickness,
 			Text.info.Rotation,
 			Text.info.Origin,
@@ -168,7 +168,7 @@ HRESULT CFontSystem::Render_TextFont(string TextKey)
 			m_pBatch,
 			Text.info.Text,
 			Text.info.TextPos,
-			XMLoadFloat4(&Text.info.TextColor),
+			PremultipledColor(Text.info.TextColor),
 			Text.info.Rotation,
 			Text.info.Origin,
 			Text.info.Scale
@@ -187,6 +187,11 @@ HRESULT CFontSystem::Clear_Texts()
 {
 	m_Texts.clear();
 	return S_OK;
+}
+
+_vector CFontSystem::PremultipledColor(_float4 vColor)
+{
+	return XMVectorSet(vColor.x * vColor.w, vColor.y * vColor.w, vColor.z * vColor.w, vColor.w);
 }
 
 CFontSystem* CFontSystem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
