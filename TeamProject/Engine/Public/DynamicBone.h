@@ -23,12 +23,22 @@ public:
     void Update(_float dt);
 
 protected:
-    void Update_AnchorNode(DYNAMIC_NODE& AnchorNode);
-    void SimulateNode(DYNAMIC_NODE& Node,
+    void WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
+    void Update_WorldAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
+    void Simulate_WorldNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
         const _quaternion& parentQuat,
         const CHAIN_PARAM& ChainParam,
         _float dt);
+
+    void LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
+    void Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
+    void Simulate_LocalNode(DYNAMIC_NODE& Node,
+        const _vector3& parentPos,
+        const _quaternion& parentQuat,
+        const CHAIN_PARAM& ChainParam,
+        _float dt);
+
     void ApplySimulatedNode();
 
 protected:
@@ -36,7 +46,9 @@ protected:
 
 
 protected:
+    class CGameObject*          m_pOwner = { nullptr };
     class CAnimator3D*          m_pAnimator = { nullptr };
+
     vector<DYNAMIC_CHAIN_GROUP> m_ChainGroups;
     _bool                       m_bInitUpdated = { false };
 

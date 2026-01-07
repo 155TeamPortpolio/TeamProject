@@ -3,25 +3,31 @@
 
 NS_BEGIN(Engine)
 
-typedef struct DynamicBoneNode //모두 컴바인드 TPose 기준
+typedef struct DynamicBoneNode 
 {
-    int BoneIndex = { -1 };
-    int ParentIndex = { -1 };
+    _int BoneIndex = { -1 };
+    _int ParentIndex = { -1 };
 
     // (부모가 원점 -> 부모원점기준 나) 부모로컬로부터 나를향하는 방향벡터
     _vector3 RestLocalDir = { 0.f, -1.f, 0.f }; 
-    float fLength = { 0.f }; //그리고 그 방향의 길이
+    _float   fLength = { 0.f }; //그리고 그 방향의 길이
 
     /* RunTime */
+    /* 로컬 모델기준 */
     _vector3 CombinedCurPos{};
     _vector3 CombinedPrevPos{};
+    /* 월드 위치기준 */
+    _vector3    WorldCurPos{};
+    _quaternion WorldCurQuat{};
+    _vector3    WorldPrevPos{};
+    _quaternion WorldPrevQuat{};
 }DYNAMIC_NODE;
 
 typedef struct DynamicBoneChainParam
 {
-    float fStiffness    = { 0.2f };     // 0~1 (복원력)
-    float fDamping      = { 0.1f };     // 0~1 (감쇠)
-    float fGravityScale = { 1.0f };     // 중력 배율
+    _float fStiffness    = { 0.2f };     // 0~1 (복원력)
+    _float fDamping      = { 0.1f };     // 0~1 (감쇠)
+    _float fGravityScale = { 1.0f };     // 중력 배율
 }CHAIN_PARAM;
 
 typedef struct DynamicBoneChain {
@@ -31,11 +37,16 @@ typedef struct DynamicBoneChain {
 typedef struct DynamicBoneChainGroup {
     _int    AnchorBoneIndex = { -1 };
     vector<DYNAMIC_CHAIN> Chains;
-    CHAIN_PARAM ChainParam;
+
+    _bool       bWorldSpace = { true };    // 월드상 계산을 이용하는지
+    CHAIN_PARAM ChainParam{};
 
     /* RunTime */
-    _vector3 PrevAnchorWorldPos{};
-    _quaternion PrevAnchorWorldQuat{};
+    _vector3 AnchorCombinedPos{};
+    _quaternion AnchorCombinedQuat{};
+    _vector3 AnchorWorldPos{};
+    _quaternion AnchorWorldQuat{};
+
 }DYNAMIC_CHAIN_GROUP;
 
 NS_END

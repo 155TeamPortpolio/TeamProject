@@ -146,6 +146,7 @@ void CAnimator3D::Update_Animation(_float dt)
 		/* Update Animation Clips*/
 		Update_Layers(dt);
 
+		/* Has Been Updated Even Once */
 		if (m_bUpdatedClip) {
 
 			/* Create TransformationMatrices */
@@ -154,7 +155,6 @@ void CAnimator3D::Update_Animation(_float dt)
 			/* Create CombinedMatrices */
 			BuildBone();
 		}
-
 	}
 
 	/* Update IK Bone */
@@ -163,9 +163,13 @@ void CAnimator3D::Update_Animation(_float dt)
 	/* Rebuild Combined */
 	BuildBone();
 
-	/* Update DynamicBone */
+	/* If Linked DynamicBone */
 	if (m_pDynamicBone) {
+
+		/* Update DynamicBone */
 		m_pDynamicBone->Update(dt);
+
+		/* Additive Combined */
 		BuildDynamicBone();
 	}
 }
@@ -603,7 +607,7 @@ _vector3 CAnimator3D::Get_BoneTransformationPosition(AnimArg BoneArg)
 	}
 }
 
-_vector4 CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
+_quaternion CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)  return _quaternion::Identity;
@@ -636,7 +640,7 @@ void CAnimator3D::Set_BoneTransformationPosition(_vector3 Position, AnimArg Bone
 	m_TransformationMatrices[Index]._43 = Position.z;
 }
 
-void CAnimator3D::Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+void CAnimator3D::Set_BoneTransformationQuaternion(_quaternion Quaternion, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)
@@ -673,7 +677,7 @@ void CAnimator3D::Set_BoneManipulatePosition(_vector3 Position, AnimArg BoneArg)
 	m_ManipulateMatrices[Index]._43 = Position.z;
 }
 
-void CAnimator3D::Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+void CAnimator3D::Set_BoneManipulateQuaternion(_quaternion Quaternion, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)
@@ -719,7 +723,7 @@ _vector3 CAnimator3D::Get_BoneCombinedPosition(AnimArg BoneArg)
 	}
 }
 
-_vector4 CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
+_quaternion CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)  return _quaternion::Identity;

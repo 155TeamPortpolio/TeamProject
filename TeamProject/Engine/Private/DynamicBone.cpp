@@ -14,23 +14,36 @@ HRESULT CDynamicBone::Initialize(CAnimator3D* pAnimator)
 		return E_FAIL;
 
 	m_pAnimator = pAnimator;
+	m_pOwner = m_pAnimator->Get_Owner();
+
 	return S_OK;
 }
 
 void CDynamicBone::Init_Update()
 {
 	for (auto& Group : m_ChainGroups) {
+		//앵커
+		Matrix OwnerWorldMat = m_pOwner->Get_WorldMatrix();
+
+		Group.AnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+		Group.AnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+		
+		Group.AnchorWorldPos = _vector3::Transform(Group.AnchorCombinedPos, OwnerWorldMat);
+		Group.AnchorWorldQuat = m_pOwner->Get_WorldQuat() * Group.AnchorCombinedQuat;
+
 		for (auto& Chain : Group.Chains) {
 			// 앵커(0번)부터 부모포지션을 세팅해두면 편함
 			for (_int i = 0; i < (_int)Chain.Nodes.size(); ++i) {
 				auto& Node = Chain.Nodes[i];
 
 				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
-				Node.CombinedCurPos = curPos;
-				Node.CombinedPrevPos = curPos;
+				Node.CombinedPrevPos = Node.CombinedCurPos = curPos;
 
-				// 부모 위치 초기화 (월드 반응용)
-				//_vector3 parentPos = m_pAnimator->Get_BoneCombinedPosition(Chain.Nodes[i - 1].ParentIndex);
+				if (Group.bWorldSpace) {
+					Node.WorldPrevPos = Node.WorldCurPos = _vector3::Transform(curPos, OwnerWorldMat);
+					Node.WorldCurQuat =
+						m_pOwner->Get_WorldQuat() * _quaternion(m_pAnimator->Get_BoneCombinedQuaternion(Node.BoneIndex));
+				}
 			}
 		}
 	}
@@ -43,55 +56,153 @@ void CDynamicBone::Update(_float dt)
 	if (m_ChainGroups.empty())
 		return;
 
+	/* *무조건* 이전프레임과 차이값으로 움직이기에 첫번째는 무조건 업데이트를 돌지 않음 */
 	if (false == m_bInitUpdated) {
 		Init_Update();
 		return;
 	}
 
-	/*업데이트가 안돌았으면 굳이 밑에 apply 시도할 필요가 없음*/
+	/* 업데이트가 안돌았으면 굳이 밑에 apply 시도할 필요가 없음 */
 	_bool bUpdatedOnce = false;
 	m_pAnimator->Reset_DynamicBoneMatrices();
 
 	for (auto& Group : m_ChainGroups) {
-		/* 체인이 없으면 없는 그룹인거임 */
-		if (Group.Chains.empty())
+		/* 앵커본이 설정되었다면 무조건 하위 체인은 만들어졌다는 가정하에 업데이트 */
+		if (Group.AnchorBoneIndex == -1)
 			continue;
 
-		/* 루트가 설정되었다면 무조건 하위 체인은 만들어졌다는 가정하에 업데이트 */
-		for (auto& Chain : Group.Chains) {
-			/* 0번째인 앵커본은 움직이지 않으니 1번부터 효과를 받음 */
-			Update_AnchorNode(Chain.Nodes[0]);
+		if (Group.bWorldSpace)
+			WorldChain(Group, dt);
+		else
+			LocalChain(Group, dt);
 
-			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
-				/* 부모의 Combined된 위치와 회전을 갖고옴 */
-				_vector3 parentPos = Chain.Nodes[i - 1].CombinedCurPos;
-				_quaternion parentQuat = m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
-
-				/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
-				SimulateNode(
-					Chain.Nodes[i],
-					parentPos,
-					parentQuat,
-					Group.ChainParam,
-					dt
-				);
-			}	
-		}
 		bUpdatedOnce = true;
 	}
 
-	/* 애니매이터 Manipulate에 직접 델타 매트릭스 추가*/
+	/* 애니매이터 DynamicBoneMatrices에 회전 델타 매트릭스 추가*/
 	if (bUpdatedOnce)
 		ApplySimulatedNode();
 }
 
-void CDynamicBone::Update_AnchorNode(DYNAMIC_NODE& AnchorNode)
+#pragma region WorldChain
+void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 {
-	AnchorNode.CombinedPrevPos = AnchorNode.CombinedCurPos;
-	AnchorNode.CombinedCurPos = m_pAnimator->Get_BoneCombinedPosition(AnchorNode.BoneIndex);
+	/* 앵커 노드 위치 업데이트 */
+	Update_WorldAnchorNode(Group);
+
+	/* 하위 체인들 시뮬레이션 */
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			/* 부모의 월드 위치와 회전을 갖고옴 */
+			_vector3 parentPos =
+				(i == 0) ?
+				Group.AnchorWorldPos :
+				Chain.Nodes[i - 1].WorldCurPos;
+
+			_quaternion parentQuat =
+				(i == 0) ? 
+				Group.AnchorWorldQuat :
+				Chain.Nodes[i - 1].WorldCurQuat;
+
+			/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
+			Simulate_WorldNode(
+				Chain.Nodes[i],
+				parentPos,
+				parentQuat,
+				Group.ChainParam,
+				dt
+			);
+		}
+	}
 }
 
-void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
+void CDynamicBone::Update_WorldAnchorNode(DYNAMIC_CHAIN_GROUP& Group)
+{
+	Group.AnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+	Group.AnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+
+	Group.AnchorWorldPos = _vector3::Transform(Group.AnchorCombinedPos, m_pOwner->Get_WorldMatrix());
+	Group.AnchorWorldQuat = m_pOwner->Get_WorldQuat() * Group.AnchorCombinedQuat;
+}
+
+void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parentPos, const _quaternion& parentQuat, const CHAIN_PARAM& ChainParam, _float dt)
+{
+	/* 현재 / 이전 위치 */
+	_vector3 curPos = Node.CombinedCurPos;
+	_vector3 prevPos = Node.CombinedPrevPos;
+
+	/* 속력 계산 */
+	_vector3 Velocity = curPos - prevPos;
+
+	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	Velocity *= (1.f - ChainParam.fDamping);
+
+	/* 중력(Gravity) : */
+	_vector3 modelGravity(0.f, -1.f, 0.f);
+	Velocity += modelGravity * ChainParam.fGravityScale * dt;
+
+	/* 위에 모든 계산을 한 예측된 다음 위치*/
+	_vector3 nextPos = curPos + Velocity;
+
+	/* 부모로부터 멀어지면 안되니 부모뼈 스페이스위치에서 계산
+	(부모->노드)의 방향을 구하고 부모로부터 길이만큼 곱한 위치가 진짜 위치가 될거임*/
+	_vector3 dir = nextPos - parentPos;
+	dir.Normalize();
+
+	// 복원력(Stiffness) : 미리 구해둔 RestLocalDir로 점점 돌아오는 힘
+	_vector3 restDir =
+		_vector3::Transform(Node.RestLocalDir, parentQuat);
+	restDir.Normalize();
+
+	dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
+	dir.Normalize();
+
+	/* 본의 길이는 달라지면 안되니 재계산*/
+	nextPos = parentPos + dir * Node.fLength;
+
+	// 상태 갱신
+	Node.CombinedPrevPos = curPos;
+	Node.CombinedCurPos = nextPos;
+}
+#pragma endregion
+
+#pragma region LocalChain
+void CDynamicBone::LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
+{
+	/* 앵커 노드 위치 업데이트 */
+	Update_LocalAnchorNode(Group);
+
+	/* 하위 체인들 시뮬레이션 */
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			/* 부모의 Combined된 위치와 회전을 갖고옴 */
+			_vector3 parentPos =
+				(i == 0) ?
+				m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+				Chain.Nodes[i - 1].CombinedCurPos;
+
+			_quaternion parentQuat =
+				m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+
+			/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
+			Simulate_LocalNode(
+				Chain.Nodes[i],
+				parentPos,
+				parentQuat,
+				Group.ChainParam,
+				dt
+			);
+		}
+	}
+}
+
+void CDynamicBone::Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group)
+{
+	Group.AnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+	Group.AnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+}
+
+void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,
 	const _quaternion& parentQuat,
 	const CHAIN_PARAM& ChainParam,
@@ -134,22 +245,27 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	Node.CombinedPrevPos = curPos;
 	Node.CombinedCurPos = nextPos;
 }
+#pragma endregion
 
 /* 계산된 값에대한 회전 델타를 넘기는 작업 */
 void CDynamicBone::ApplySimulatedNode()
 {
 	for (auto& Group : m_ChainGroups) {
 		for (auto& Chain : Group.Chains) {
-			for (_int i = 1; i < Chain.Nodes.size(); ++i) {
+			for (_int i = 0; i < Chain.Nodes.size(); ++i) {
 				/* *여기서의 계산은 모델 스페이스상 계산* */
 				auto& Node = Chain.Nodes[i];
 				
 				/* 이 노드는 어느 본에 매달려있는지?  ex) 1번노드 => 0번노드(루트노드) 본에 매달림 */
-				_vector3 parentPos = Chain.Nodes[i - 1].CombinedCurPos;
+				_vector3 parentPos =
+					(i == 0) ?
+					m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+					Chain.Nodes[i - 1].CombinedCurPos;
 
 				/* 부모는 어느방향을 바라보고 있는지?*/
 				/* 부모->자식의 방향이 필요하기에 그냥 Combined에서 회전만 갖고와도 무방 */
-				_quaternion parentQuat = m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
+				_quaternion parentQuat =
+					m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
 
 				/* RestLocal은 부모 본 로컬기준이고 비교대상은 Combined 모델스페이스상 방향이기에 */
 				/* 실제로 부모가 회전한 만큼 기준을 돌려서 Combined 기준의 방향을 만들어줌 */
@@ -220,15 +336,8 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 	//자식노드가 더이상 없으니 만듬
 	if (Childs.empty()) {
 		DYNAMIC_CHAIN chain;
-		for (_int i = 0; i < Indices.size(); i++) {
+		for (_int i = 1; i < Indices.size(); i++) {
 			DYNAMIC_NODE Node{};
-
-			if (0 == i) {
-				Node.BoneIndex = Indices[i];
-				Matrix NodeMat = m_pAnimator->Get_TPose()[Node.BoneIndex];
-				chain.Nodes.push_back(Node);
-				continue;
-			}
 
 			Node.ParentIndex = Indices[i - 1];
 			Node.BoneIndex = Indices[i];
@@ -248,6 +357,9 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 
 			Node.CombinedPrevPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
 			Node.CombinedCurPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
+
+			Node.WorldPrevPos = _vector3::Transform(Node.CombinedPrevPos, m_pOwner->Get_WorldMatrix());
+			Node.WorldCurPos = _vector3::Transform(Node.CombinedCurPos, m_pOwner->Get_WorldMatrix());
 
 			chain.Nodes.push_back(Node);
 		}
