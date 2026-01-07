@@ -184,33 +184,33 @@ void CTestLevel::Update()
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
-	if (KEY->Key_Tap('4'))
-	{
-		//CCT_DESC sacrificeCCT;
-		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		//sacrificeCCT.bAutoFit = false;
-		//sacrificeCCT.fHeight = 1.28f;
-		//sacrificeCCT.fDensity = 0.00001f;
-		//sacrificeCCT.fRadius = 0.2f;
-		//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-		//
-		//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-		//	.CharacterController(sacrificeCCT)
-		//	.Build("Sacrifice");
-		//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	}
+	//if (KEY->Key_Tap('4'))
+	//{
+	//	//CCT_DESC sacrificeCCT;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+	//	//sacrificeCCT.bAutoFit = false;
+	//	//sacrificeCCT.fHeight = 1.28f;
+	//	//sacrificeCCT.fDensity = 0.00001f;
+	//	//sacrificeCCT.fRadius = 0.2f;
+	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+	//	//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+	//	//
+	//	//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+	//	//	.CharacterController(sacrificeCCT)
+	//	//	.Build("Sacrifice");
+	//	//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
+	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	//}
 
-	if (KEY->Key_Tap('5'))
-	{
-		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("core.json")
-			.Build("Core");
+	//if (KEY->Key_Tap('5'))
+	//{
+	//	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+	//		.Asset("core.json")
+	//		.Build("Core");
 
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	}
+	//	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+	//}
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {

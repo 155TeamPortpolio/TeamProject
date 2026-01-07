@@ -30,6 +30,7 @@ public:
 	virtual void    Priority_Update(_float dt)  override PURE;
 	virtual void    Update(_float dt)           override PURE;
 	virtual void    Late_Update(_float dt)      override PURE;
+	virtual void    Render_GUI()                override;
 
 public:
 	virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
