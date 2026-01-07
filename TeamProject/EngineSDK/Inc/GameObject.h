@@ -67,8 +67,14 @@ public:
 public:
 	const string& Get_InstanceName() { return m_InstanceName; }
 	const _uint Get_ObjectID() { return m_ObjectID; }
-	_float4x4* Get_WorldMatrix();
+	/*----------------------------------------*/
+	_float4x4* Get_WorldMatrix_Ptr();
 	_float4 Get_Position();
+
+	Matrix Get_WorldMatrix();
+	_vector3 Get_WorldPos();
+	_quaternion Get_WorldQuat();
+	/*----------------------------------------*/
  	_bool Is_Root() { return m_isRootObject; };
 	const vector<CGameObject*> Get_Children();
 

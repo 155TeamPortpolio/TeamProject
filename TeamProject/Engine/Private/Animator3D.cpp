@@ -766,7 +766,7 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
-const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
+Matrix CAnimator3D::Get_OwnerWorldMatrix()
 {
 	return m_pOwner->Get_WorldMatrix();
 }

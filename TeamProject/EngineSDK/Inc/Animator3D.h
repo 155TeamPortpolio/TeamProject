@@ -241,7 +241,7 @@ public: //»À °ü·Ã
 
     //TPose
     const vector<_float4x4>& Get_TPose() { return m_TPose; };
-    const _float4x4* Get_OwnerWorldMatrix();
+    Matrix Get_OwnerWorldMatrix();
 
 public: /* DynamicBone */
     class CDynamicBone* Get_DynamicBone_Ptr() { 
