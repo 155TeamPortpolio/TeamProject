@@ -20,6 +20,8 @@ HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
 void CUI_Logo::Awake()
 {
     string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+
+    // Logo 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
     CUI_Object* pPrefab = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
         .Asset("logo.json")
         .Build("prefab");
@@ -27,9 +29,13 @@ void CUI_Logo::Awake()
     if (!pPrefab)
         return;
 
+    // 생성된 루트 UI를 uiMgr에 등록
     CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pPrefab, strCurrentLevel);
+
+    // 루트 핸들 캐싱
     m_hRoot = pPrefab->Get_Handle();
 
+    // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
 }

@@ -8,6 +8,13 @@ enum class ConfirmResult
 
 namespace GuiUtil
 {
+	ENGINE_DLL void BeginTwoColTable(const char* id);
+	ENGINE_DLL void EndTwoColTable();
+	ENGINE_DLL void RowLabel(const char* label);
+
+	ENGINE_DLL bool DrawFloatRow(const char* label, const char* id, float* v, float init, float speed, float minV, float maxV, const char* fmt);
+	ENGINE_DLL bool DrawBoolRow(const char* label, const char* id, bool* v, bool init);
+
      void ShowListButton(const vector<string>& vector, function<void(const string&)> callback);
      void ShowListString(const vector<string>& vector, function<void(const string&)> callback);
      void ShowListInt(const vector<string>& vector, function<void(_uint)> callback);
@@ -24,4 +31,6 @@ namespace GuiUtil
 	 // 단순 확인(Ok만) 팝업(본문이 string). bodyText를 출력하고, Ok를 눌러 닫히면 true(그외엔 false)
 	 ENGINE_DLL bool DrawOkPopupModalText(const char* popupId, const char* title, const string& bodyText,
 		 const char* okLabel = "OK", float buttonW = 120.f);
+
+
 }

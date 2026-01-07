@@ -38,7 +38,7 @@ namespace
 
     void CaptureOutput(Vector3& outPos, Quaternion& outRot)
     {
-        Matrix world = *CAM->Get_InversedViewMatrix();
+        Matrix world = *CameraManager()->Get_InversedViewMatrix();
 
         Vector3 scale{}, trans{};
         Quaternion rot = Quaternion::Identity;

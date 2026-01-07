@@ -54,7 +54,7 @@ void CCharacter::Update(_float dt)
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
-	if(m_bIsRotating)	Update_Rotation(dt);
+	if (m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -70,14 +70,10 @@ void CCharacter::Rotate(_vector3 vDirection)
 	vDir.Normalize();
 
 	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vDir.Cross(vUp);
+	_vector3 vRight = vUp.Cross(vDir);
 	vRight.Normalize();
 
-	_smatrix mRot = _smatrix::Identity;
-	mRot.Right(vRight);
-	mRot.Up(vUp);
-	mRot.Forward(vDir);
-
+	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
@@ -124,10 +120,10 @@ void CCharacter::Update_Input(_float dt)
 	m_input.previous = m_input.current;
 
 	KeyInput key;
-	if (KEY->Key_Hold('W'))  key.z += 1;
-	if (KEY->Key_Hold('S'))  key.z -= 1;
-	if (KEY->Key_Hold('D'))  key.x += 1;
-	if (KEY->Key_Hold('A'))  key.x -= 1;
+	if (InputDevice()->Key_Hold('W'))  key.z += 1;
+	if (InputDevice()->Key_Hold('S'))  key.z -= 1;
+	if (InputDevice()->Key_Hold('D'))  key.x += 1;
+	if (InputDevice()->Key_Hold('A'))  key.x -= 1;
 
 	m_input.current = key;
 
@@ -159,24 +155,23 @@ void CCharacter::Update_Input(_float dt)
 	m_input.direction = {};
 	if (!key.IsZero())
 	{
-		auto cam = CAM->Get_ActiveCam();
+		auto cam = CameraManager()->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 		_vector3 look = camTf->Dir(STATE::LOOK);
-		_vector3 right = camTf->Dir(STATE::RIGHT);
 		look.y = 0.f;
-		right.y = 0.f;
 		look.Normalize();
+		_vector3 right = _vector3::Up.Cross(look);
 		right.Normalize();
-		m_input.direction = right * (float)key.x + look * (float)key.z;
+		m_input.direction = look * (float)key.z + right * (float)key.x;
 		m_input.direction.Normalize();
 	}
 
-	m_bIsAttack = KEY->Mouse_Tap(MOUSE_BTN::LB);
-	m_bIsEvade = KEY->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
+	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
+	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
-	if (KEY->Key_Down(VK_F1)) m_bTest = !m_bTest;
+	if (InputDevice()->Key_Down(VK_F1)) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)

@@ -11,7 +11,7 @@ CEffectBuilder::CEffectBuilder(const CLONE_DESC& cloneDesc)
 		MSG_BOX("Origin Level Tag is Invalidate : Builder");
 	}
 	else {
-		m_CloneDesc = new CLONE_DESC(cloneDesc);
+		m_CloneDesc = cloneDesc;
 	}
 
 	Safe_AddRef(m_pGameInstance);
@@ -24,7 +24,6 @@ CEffectBuilder::~CEffectBuilder()
 		delete(pair.second);
 
 	m_CompDesc.clear();
-	Safe_Delete(m_CloneDesc);
 	Safe_Delete(m_pObjDesc);
 
 	Safe_Release(m_pGameInstance);
@@ -32,7 +31,7 @@ CEffectBuilder::~CEffectBuilder()
 
 CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 {
-	if (m_CloneDesc->OriginLevel.empty())
+	if (m_CloneDesc.OriginLevel.empty())
 	{
 		MSG_BOX("CLONE_DESC is missing : CEffectBuilder ");
 		return nullptr;
@@ -46,22 +45,31 @@ CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 	for (auto& pair : m_CompDesc)
 		m_pObjDesc->CompDesc[pair.first] = pair.second;
 
-	//프로토 매니저에서 가져오기
-	CGameObject* object = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
-		m_CloneDesc->OriginLevel, m_CloneDesc->protoTag,
-		m_pObjDesc);
-	CEffectContainer* instance = dynamic_cast<CEffectContainer*>(object);
+	CGameObject* instance = nullptr;
 
-	if (!instance) {
-		return nullptr;
+	if (m_isFromPool)
+	{
+		instance = ObjectManger()->Acquire(m_CloneDesc);
+		if (!instance) return nullptr;
+		instance->Set_FromPool(true);
+		instance->OnPooledAcquire(m_pObjDesc);
 	}
-	/*즉 -> 클론 후에 레이어에서 삽입하고 있는 중임*/
+	else {
+		instance = m_pGameInstance->Get_PrototypeMgr()->Clone_Prototype(
+			m_CloneDesc.OriginLevel, m_CloneDesc.protoTag,
+			m_pObjDesc);
+		if (!instance) return nullptr;
+		instance->Set_FromPool(false);
+		instance->Awake();
+	}
+	
+	CEffectContainer* container = dynamic_cast<CEffectContainer*>(instance);
 
-	if (instance && id) {
-		*id = instance->Get_ObjectID();
+	if (container && id) {
+		*id = container->Get_ObjectID();
 	}
-	instance->Awake();
-	return instance;
+	container->Awake();
+	return container;
 }
 
 CEffectBuilder& CEffectBuilder::Asset(const string& assetKey)

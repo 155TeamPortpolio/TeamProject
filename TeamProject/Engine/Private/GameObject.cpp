@@ -281,7 +281,7 @@ OBJECT_HANDLE CGameObject::Get_Handle()
 	return hObj;
 }
 
-_float4x4* CGameObject::Get_WorldMatrix()
+_float4x4* CGameObject::Get_WorldMatrix_Ptr()
 {
 	return m_pTransform->Get_WorldMatrix_Ptr();
 }
@@ -291,6 +291,21 @@ _float4 CGameObject::Get_Position()
 	_float4 pos;
 	XMStoreFloat4(&pos, m_pTransform->Get_WorldPos());
 	return pos;
+}
+
+Matrix CGameObject::Get_WorldMatrix()
+{
+	return m_pTransform->Get_WorldMatrix();
+}
+
+_vector3 CGameObject::Get_WorldPos()
+{
+	return m_pTransform->Get_WorldPos();
+}
+
+_quaternion CGameObject::Get_WorldQuat()
+{
+	return m_pTransform->Get_QuaternionRotate();
 }
 
 HRESULT CGameObject::Make_OpaquePacket()
