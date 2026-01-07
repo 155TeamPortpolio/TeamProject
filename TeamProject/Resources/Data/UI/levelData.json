@@ -21,8 +21,8 @@
     "Test_Level": {
       "objects": [
         {
-          "prototypeTag": "Proto_GameObject_Logo",
-          "instanceName": "logo"
+          "prototypeTag": "Proto_GameObject_BattleHUD",
+          "instanceName": "hud"
         }
       ]
     }
