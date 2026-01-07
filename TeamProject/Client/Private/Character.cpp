@@ -54,7 +54,7 @@ void CCharacter::Update(_float dt)
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
-	if(m_bIsRotating)	Update_Rotation(dt);
+	if (m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -68,15 +68,12 @@ void CCharacter::Rotate(_vector3 vDirection)
 	vDir.y = 0.f;
 	if (vDir.Length() < 0.001f) return;
 	vDir.Normalize();
+
 	_vector3 vUp = _vector3::Up;
-	_vector3 vRight = vUp.Cross(vDir); /*¿ÞÂÊ*/
+	_vector3 vRight = vUp.Cross(vDir);
 	vRight.Normalize();
 
-	_smatrix mRot = _smatrix::CreateWorld({0,0,0}, vDir, vUp);
-	mRot.Right(vRight);
-	mRot.Up(vUp);
-	mRot.Forward(vDir);
-
+	_smatrix mRot = _smatrix::CreateWorld(_vector3::Zero, vDir, _vector3::Up);
 	m_qTargetRot = _quaternion::CreateFromRotationMatrix(mRot);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
@@ -161,12 +158,11 @@ void CCharacter::Update_Input(_float dt)
 		auto cam = CAM->Get_ActiveCam();
 		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
 		_vector3 look = camTf->Dir(STATE::LOOK);
-		_vector3 right = camTf->Dir(STATE::RIGHT);
 		look.y = 0.f;
-		right.y = 0.f;
 		look.Normalize();
+		_vector3 right = _vector3::Up.Cross(look);
 		right.Normalize();
-		m_input.direction = -right * (float)key.x - look * (float)key.z;
+		m_input.direction = look * (float)key.z + right * (float)key.x;
 		m_input.direction.Normalize();
 	}
 
