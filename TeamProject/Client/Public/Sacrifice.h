@@ -67,6 +67,9 @@ public:
     void OverDrive_Attack2();
     void OverDrive_Attack3();
 
+    /* Effect */
+    void Active_AttackSign()override;
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();

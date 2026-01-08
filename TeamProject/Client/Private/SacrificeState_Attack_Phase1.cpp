@@ -160,10 +160,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
-	//blackBoard.stateQueue.clear();
-	//blackBoard.stateQueue.push_back("Attack10_Phase1");
-	//blackBoard.stateQueue.push_back("Attack11_Phase1");
-	//blackBoard.stateQueue.push_back("Attack12_Phase1");
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack07_Phase1");
+	blackBoard.stateQueue.push_back("Attack02_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -223,6 +223,8 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).TransitionSpeed(1.f, 1.4f, 3.f, EaseType::OutQuint).Apply();
+	
+	pOwner->Active_AttackSign();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -308,6 +310,8 @@ void CSacrificeState_Attack_04_1_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_04_1").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->Active_AttackSign();
 }
 
 void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -404,6 +408,8 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.4f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
 	m_fAnimProgress = 0.f;
@@ -447,6 +453,8 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_08").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
 	m_IsJumpStart = false;	
@@ -486,6 +494,8 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
 	{
+		pOwner->Active_AttackSign();
+
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;

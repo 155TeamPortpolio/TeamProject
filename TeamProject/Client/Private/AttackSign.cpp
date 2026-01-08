@@ -5,6 +5,7 @@
 #include "Material.h"
 #include "MaterialInstance.h"
 #include "MaterialData.h"
+#include "BoneFollower.h"
 
 CAttackSign::CAttackSign()
 	:CGameObject()
@@ -21,6 +22,7 @@ HRESULT CAttackSign::Initialize_Prototype()
 	__super::Initialize_Prototype();
 	Add_Component<CPointModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CBoneFollower>();
 	return S_OK;
 }
 
@@ -49,6 +51,8 @@ HRESULT CAttackSign::Initialize(INIT_DESC* pArg)
 
 	pMaterial->Insert_MaterialInstance(pMaterialInstance, nullptr);
 
+	m_isAlive = false;
+
 	return S_OK;
 }
 
@@ -58,19 +62,37 @@ void CAttackSign::Priority_Update(_float dt)
 
 void CAttackSign::Update(_float dt)
 {
-	if (m_fElapsedTime < m_fDuration)
+	auto pBoneFollower = Get_Component<CBoneFollower>();
+	pBoneFollower->Sync_Transform(dt, m_pTransform);
+
+	if (m_IsActive)
 	{
-		m_fElapsedTime += dt;
-		_float t = m_fElapsedTime / m_fDuration;
+		if (m_fElapsedTime >= m_fDuration)
+		{
+			m_isAlive = false;
+			m_IsActive = false;
+		}
+		else
+		{
+			m_fElapsedTime += dt;
+			_float t = m_fElapsedTime / m_fDuration;
 		
-		m_fAlpha = Math::Lerp(1.f, 0.f, Math::EaseInQuad(t));
-		m_fWidth = Math::Lerp(600.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
-		m_fHeight = Math::Lerp(50.f, 1.f, Math::EaseInOutCubic(t));
+			m_fAlpha = Math::Lerp(1.f, 0.f, Math::EaseInQuad(t));
+			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
+			m_fHeight = Math::Lerp(60.f, 1.f, Math::EaseOutSine(t));
+		}
 	}
 }
 
 void CAttackSign::Late_Update(_float dt)
 {
+}
+
+void CAttackSign::Active()
+{
+	m_isAlive = true;
+	m_IsActive = true;
+	m_fElapsedTime = 0.f;
 }
 
 CAttackSign* CAttackSign::Create()

@@ -9,6 +9,7 @@
 #include "SacrificeHand.h"
 #include "ObjectContainer.h"
 #include "MaterialInstance.h"
+#include "BoneFollower.h"
 
 /* States */
 #include "StateMachine.h"
@@ -21,7 +22,7 @@
 #include "SacrificeState_Death.h"
 #include "SacrificeState_ChangePhase.h"                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 #include "SacrificeState_Parry.h"
-
+#include <AttackSign.h>
 
 CSacrifice::CSacrifice()
 	:CEnemy()
@@ -71,15 +72,12 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
 	pAnimator->Set_MotionBone(3); //Bip001
+	pAnimator->Resize_Layer(3);
+	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
+	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
 
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
-		.Build("Sacrifice_Hand");
-	pHand->Set_Alive(false);
-	m_iHandID = pObjectContainer->Add_Child(pHand, false);
-	
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -93,6 +91,18 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.1f);
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+		.Build("Sacrifice_Hand");
+	pHand->Set_Alive(false);
+	m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	
+	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+		.Build("AttackSign");
+	pObjectContainer->Add_Child(pAttackSign, false);
+	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
 
 	return S_OK;
 }
@@ -121,6 +131,21 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('7'))
+	{
+		//Get_Component<CAnimator3D>()->Change_Animation(1, "SacrificeBringer_Ani_P1_Hit_Shake")
+		//	.Loop(false)
+		//	.Speed(1.5f)
+		//	.LayerBlend(1.f, 1.f, 0.5f, EaseType::None)
+		//	.Apply();
+		//
+		//Get_Component<CAnimator3D>()->Change_Animation(2, "SacrificeBringer_Ani_P1_Hit_Shake")
+		//	.Loop(false)
+		//	.Speed(1.5f)
+		//	.LayerBlend(1.f, 1.f, 1.f, EaseType::None)
+		//	.Apply();
+	}
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -331,6 +356,12 @@ void CSacrifice::OverDrive_Attack3()
 	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
+void CSacrifice::Active_AttackSign()
+{
+	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
+	static_cast<CAttackSign*>(pAttackSign)->Active();
+}
+
 HRESULT CSacrifice::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CSacrifice>::Create();
@@ -417,12 +448,12 @@ void CSacrifice::Update_States(_float dt)
 			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
 			if (m_IsOverDrive)
 				iRandIndex = 1;
-
+		
 			if (0 == iRandIndex)
 				m_pStateMachine->Set_Trigger("Idle_To_Walk");
 			else
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
-	
+		
 			m_fIdleElasedTime = 0.f;
 		}
 	}

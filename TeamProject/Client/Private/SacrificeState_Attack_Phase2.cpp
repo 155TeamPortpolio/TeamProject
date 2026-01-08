@@ -153,6 +153,8 @@ void CSacrificeState_Attack_01_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_01").Loop(false).Speed(1.4f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 }
 
@@ -186,6 +188,8 @@ void CSacrificeState_Attack_02_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_02").Loop(false).Speed(1.4f).Apply();
+
+	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
 }
 
@@ -212,6 +216,8 @@ void CSacrificeState_Attack_03_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_03").Loop(false).Speed(1.4f).Apply();
+
+	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
 }
 
@@ -271,6 +277,7 @@ void CSacrificeState_Attack_05_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_05").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Active_AttackSign();
 }
 
 void CSacrificeState_Attack_05_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -323,6 +330,8 @@ void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_08").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false; 
 	m_IsJumpStart = false;
@@ -362,6 +371,8 @@ void CSacrificeState_Attack_08_Phase2::Update(CSacrifice* pOwner, _float dt)
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
 	{
+		pOwner->Active_AttackSign();
+
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
