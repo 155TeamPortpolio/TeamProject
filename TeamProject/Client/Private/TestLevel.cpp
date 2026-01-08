@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 
 #include "BattleSystem.h"
+#include "DataBase.h"
 
 // Camera
 #include "Camera.h"
@@ -41,6 +42,7 @@
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
+#include "Player.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -62,8 +64,11 @@ HRESULT CTestLevel::Initialize()
 	if (nullptr == m_pMapDataCloud)
 		return E_FAIL;
 
-	if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
-		MSG_BOX("Failed to Load MonsterTable!");
+	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
+	//	MSG_BOX("Failed to Load MonsterTable!");
+
+	CDataBase::GetInstance()->CreateTable();
+	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 
 	return S_OK;
@@ -107,7 +112,11 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlayer", CPlayer::Create());
+	auto Player = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestPlayer" })
+		.Build("Test_Player");
 
+	objMgr->Add_Object(Player, { "Test_Level", "Model_Layer" });
 	//============== Map ============================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
@@ -292,8 +301,8 @@ void CTestLevel::Ready_Camera()
 	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
 	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
-	m_freeCamHandle  = freeCam->Get_Handle();
 	m_orbitCamHandle = orbitCam->Get_Handle();
+	m_freeCamHandle  = freeCam->Get_Handle();
 	m_seqCamHandle   = sequenceCam->Get_Handle();
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
@@ -407,6 +416,7 @@ void CTestLevel::Free()
 
 	Safe_Release(m_pMapDataCloud);
 	CBattleSystem::GetInstance()->DestroyInstance();
+	CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 }

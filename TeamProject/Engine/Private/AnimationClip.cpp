@@ -41,7 +41,8 @@ void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
-	_float CurrentTrackPosition, _float dt, _bool isLoop, _bool* isWarpped, _bool* isAnimEnd,
+	_float CurrentTrackPosition, _float dt, _bool isLoop,
+	_bool* isWarpped, _bool* isAnimEnd, _float* outProgress,
 	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
@@ -66,6 +67,9 @@ _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMa
 	}
 	
 	Check_Event(CurrentTrackPosition, RealTrackPosition, EventBus);
+
+	if(outProgress)
+		*outProgress = RealTrackPosition / m_fDuration;
 
 	return RealTrackPosition;
 }

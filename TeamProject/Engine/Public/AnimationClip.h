@@ -18,8 +18,10 @@ public:
 	_float TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
-		_bool isLoop, _bool* isWarpped,
+		_bool isLoop,
+		_bool* isWarpped,
 		_bool* isAnimEnd,
+		_float* outProgress,
 		vector<EVENT_INST>& EventBus);
 
 	void TranslateAnimateMatrixFromDuration(vector<_float4x4>& transfomationMatrices,
