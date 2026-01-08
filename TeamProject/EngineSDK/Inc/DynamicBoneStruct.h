@@ -17,16 +17,17 @@ typedef struct DynamicBoneNode
     _vector3 CombinedCurPos{};
     _vector3 CombinedPrevPos{};
     /* 월드 위치기준 */
-    _vector3    WorldCurPos{};
-    _quaternion WorldCurQuat{};
-    _vector3    WorldPrevPos{};
-    _quaternion WorldPrevQuat{};
+    _vector3 AnimWorldPos;
+    _vector3 DynamicCurPos{};
+    _vector3 DynamicPrevPos{};
 }DYNAMIC_NODE;
 
 typedef struct DynamicBoneChainParam
 {
-    _float fStiffness    = { 0.2f };     // 0~1 (복원력)
-    _float fDamping      = { 0.1f };     // 0~1 (감쇠)
+    _float fStiffness    = { 0.1f };     // 0~1 (강성)
+    _float fDamping      = { 0.2f };     // 0~1 (점성)
+    _float fElasticity   = { 0.1f };     // 
+    _float fInert        = { 0.1f };     // 0~1 (감쇠)
     _float fGravityScale = { 1.0f };     // 중력 배율
 }CHAIN_PARAM;
 
@@ -42,10 +43,15 @@ typedef struct DynamicBoneChainGroup {
     CHAIN_PARAM ChainParam{};
 
     /* RunTime */
-    _vector3 AnchorCombinedPos{};
-    _quaternion AnchorCombinedQuat{};
-    _vector3 AnchorWorldPos{};
-    _quaternion AnchorWorldQuat{};
+    _vector3    CurAnchorCombinedPos{};
+    _vector3    PrevAnchorCombinedPos{};
+    _quaternion CurAnchorCombinedQuat{};
+    _quaternion PrevAnchorCombinedQuat{};
+
+    _vector3    CurAnchorWorldPos{};
+    _quaternion CurAnchorWorldQuat{};
+    _vector3    PrevAnchorWorldPos{};
+    _quaternion PrevAnchorWorldQuat{};
 
 }DYNAMIC_CHAIN_GROUP;
 

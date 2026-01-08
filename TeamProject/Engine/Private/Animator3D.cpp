@@ -158,10 +158,10 @@ void CAnimator3D::Update_Animation(_float dt)
 	}
 
 	/* Update IK Bone */
-	Update_IK(dt);
+	//Update_IK(dt);
 
 	/* Rebuild Combined */
-	BuildBone();
+	//BuildBone();
 
 	/* If Linked DynamicBone */
 	if (m_pDynamicBone) {
@@ -1444,6 +1444,8 @@ void CAnimator3D::Render_GUI()
 		}
 	}
 
+	if (m_pDynamicBone)
+		m_pDynamicBone->Render_GUI();
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()

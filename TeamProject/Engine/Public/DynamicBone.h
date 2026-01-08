@@ -4,7 +4,7 @@
 
 NS_BEGIN(Engine)
 
-class ENGINE_DLL CDynamicBone:
+class ENGINE_DLL CDynamicBone :
     public CBase
 {
 protected:
@@ -23,14 +23,25 @@ public:
     void Update(_float dt);
 
 protected:
+    /* World */
     void WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
-    void Update_WorldAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
+    void Update_WorldAnchor(DYNAMIC_CHAIN_GROUP& Group);
+    void Update_WorldNodes(DYNAMIC_CHAIN_GROUP& Group);
+    void Calc_AnchorDelta(DYNAMIC_CHAIN_GROUP& Group,
+        _vector3& outDeltaPos,
+        _quaternion& outDeltaQuat);
+    void Calc_DynamicPos(_vector3& DynamicPos,
+        const _vector3& AnchorPrevPos,
+        const _vector3& AnchorDeltaPos,
+        const _quaternion& AnchorDeltaQuat);
     void Simulate_WorldNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
-        const _quaternion& parentQuat,
+        const _vector3& AnchorDelta,
         const CHAIN_PARAM& ChainParam,
         _float dt);
+    void ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group);
 
+    /* Local */
     void LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
     void Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
     void Simulate_LocalNode(DYNAMIC_NODE& Node,
@@ -39,11 +50,14 @@ protected:
         const CHAIN_PARAM& ChainParam,
         _float dt);
 
-    void ApplySimulatedNode();
+    void ApplySimulatedLocalNode(DYNAMIC_CHAIN_GROUP& Group);
 
 protected:
     void Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup);
 
+public:
+    virtual void Render_GUI();
+    void Render_DynamicBone(_vector3 vPos, ImU32 color = IM_COL32(255, 0, 0, 255));
 
 protected:
     class CGameObject*          m_pOwner = { nullptr };
