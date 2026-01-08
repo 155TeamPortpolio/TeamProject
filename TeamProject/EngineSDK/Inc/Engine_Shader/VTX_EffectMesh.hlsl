@@ -166,20 +166,17 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
         color = vBaseColor * fValue;
     }
     
-    /* 깊이 기반 가중치 생성 */
-    float fLinearZ = In.vViewPosition.z;
-    float fWeight = clamp(0.03 / (1e-5 + pow(fLinearZ, 4.f)), 0.01f, 3e3);
-    fWeight = max(fWeight, 1.f);
-    
     float3 vColor = color.rgb;
     float fAlpha = color.a;
     
-    if (fAlpha < 0.01f)
-        discard;
+    /* 깊이 기반 가중치 생성 */
+    float fLinearZ = In.vViewPosition.z;
+    float fDepthBias = 1.f / (1.f + fLinearZ * fLinearZ);
+    float fWeight = clamp((fAlpha * 4.f + 0.01f) * fDepthBias, 0.01f, 1.f);
+    float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
     
-    Out.vDiffuseAcc = float4(vColor, fAlpha);
-    Out.vDiffuseAcc.a = fAlpha;
-    Out.vBloomAcc = SoftExtractBright(float4(vColor, fAlpha), BloomThreshold, BloomSoftness, BloomIntensity);
+    Out.vDiffuseAcc = vPremulColor * fWeight;
+    Out.vBloomAcc = SoftExtractBright(vPremulColor, BloomThreshold, BloomSoftness, BloomIntensity);
     Out.vBloomAcc.a = fAlpha;
     Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);

@@ -62,7 +62,7 @@ CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 		instance->Set_FromPool(false);
 		instance->Awake();
 	}
-	
+
 	CEffectContainer* container = dynamic_cast<CEffectContainer*>(instance);
 
 	if (container && id) {
@@ -71,7 +71,6 @@ CEffectContainer* CEffectBuilder::Build(const string& instanceKey, _uint* id)
 	container->Awake();
 	return container;
 }
-
 CEffectBuilder& CEffectBuilder::Asset(const string& assetKey)
 {
 	if (!m_pObjDesc)

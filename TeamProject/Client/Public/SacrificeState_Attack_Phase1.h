@@ -34,7 +34,6 @@ public:
 	virtual void Free() override { __super::Free(); }
 };
 
-
 class CSacrificeState_Attack_01_Phase1 : public IBaseState<CSacrifice>
 {
 public:
@@ -73,6 +72,9 @@ public:
 public:
 	static CSacrificeState_Attack_03_Phase1* Create() { return new CSacrificeState_Attack_03_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsSpawnEffect = false;
 };
 
 class CSacrificeState_Attack_04_1_Phase1 : public IBaseState<CSacrifice>
@@ -153,6 +155,10 @@ public:
 private:
 	_bool m_IsAttackStart = false;
 	_bool m_IsAttackEnd = false;
+	_bool m_IsJumpStart = false;
+
+	_float3 m_vFirstTargetPosition{};
+	_float3 m_vSecondTargetPosition{};
 };
 
 class CSacrificeState_Attack_09_Phase1 : public IBaseState<CSacrifice>

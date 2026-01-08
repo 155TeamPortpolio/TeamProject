@@ -2,6 +2,7 @@
 #include "SacrificeState_Attack_Phase2.h"
 #include "Sacrifice.h"
 #include "Helper_Func.h"
+#include "CharacterController.h"
 
 void CSacrificeState_Attack_Phase2::Enter(CSacrifice* pOwner)
 {
@@ -107,7 +108,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLAC
 	else
 	{
 		_uint iRandIndex = Helper::Get_Random_Int(0, 5);
-		iRandIndex = 2;
+		//iRandIndex = 2;
 		switch (iRandIndex)
 		{
 		case 0:
@@ -172,6 +173,9 @@ void CSacrificeState_Attack_01_Phase2::Update(CSacrifice* pOwner, _float dt)
 
 		pOwner->DeactiveWhip();
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_01_Phase2::Exit(CSacrifice* pOwner)
@@ -195,6 +199,9 @@ void CSacrificeState_Attack_02_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 		pOwner->DeactiveWhip();
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_02_Phase2::Exit(CSacrifice* pOwner)
@@ -218,6 +225,9 @@ void CSacrificeState_Attack_03_Phase2::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 		pOwner->DeactiveWhip();
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_03_Phase2::Exit(CSacrifice* pOwner)
@@ -273,6 +283,10 @@ void CSacrificeState_Attack_05_Phase2::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if(m_fAnimProgress<0.4f)
+		pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_05_Phase2::Exit(CSacrifice* pOwner)
@@ -295,6 +309,9 @@ void CSacrificeState_Attack_05_1_Phase2::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_05_1_Phase2::Exit(CSacrifice* pOwner)
@@ -307,7 +324,12 @@ void CSacrificeState_Attack_08_Phase2::Enter(CSacrifice* pOwner)
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Attack_08").Loop(false).Speed(1.2f).Apply();
 
 	m_IsAttackStart = false;
-	m_IsAttackEnd = false;
+	m_IsAttackEnd = false; 
+	m_IsJumpStart = false;
+
+	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
 }
 
 void CSacrificeState_Attack_08_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -332,6 +354,36 @@ void CSacrificeState_Attack_08_Phase2::Update(CSacrifice* pOwner, _float dt)
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	if (m_fAnimProgress < 0.5f)
+		pOwner->RotateToTarget(dt, 10.f);
+
+	auto pCCT = pOwner->Get_Component<CCharacterController>();
+	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
+	{
+		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
+		m_IsJumpStart = true;
+	}
+
+	if (m_IsAttackStart)
+	{
+		if (m_fAnimProgress < 0.2f)
+		{
+			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vFirstTargetPosition, dt * 3.f);
+			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
+			pCCT->Move_Velocity(vVelocity, dt);
+		}
+		else if (m_fAnimProgress < 0.5f)
+		{
+			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vSecondTargetPosition, dt * 3.f);
+			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
+			pCCT->Move_Velocity(vVelocity, dt);
+		}
 	}
 }
 
@@ -363,6 +415,9 @@ void CSacrificeState_Attack_Charge_Start_Phase2::Update(CSacrifice* pOwner, _flo
 				blackBoard.isRequestNext = true;
 		}
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_Charge_Start_Phase2::Exit(CSacrifice* pOwner)
@@ -393,6 +448,9 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 				blackBoard.isRequestNext = true;
 		}
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_Charge_Loop_Phase2::Exit(CSacrifice* pOwner)

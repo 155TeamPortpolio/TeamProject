@@ -581,7 +581,6 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	XMStoreFloat3(&vDisp, vDisplacement);
 	PxVec3 pxDisp(vDisp.x, vDisp.y, vDisp.z);
 
-	// Scene Query 1차 필터용: 마스크를 word0에 설정
 	m_QueryFilterData.word0 = m_FilterData.word1;
 
 	PxControllerFilters filters;
@@ -589,7 +588,10 @@ void CCharacterController::Move(_fvector vDisplacement, _float dt)
 	filters.mFilterCallback = m_pQueryFilter;
 	filters.mFilterFlags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC | PxQueryFlag::ePREFILTER;
 
-	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, 0.0001f, dt, filters);
+	const float dispLen = pxDisp.magnitude();
+	const float minDist = min(m_fMinMoveDist, dispLen * 0.25f);
+
+	const PxControllerCollisionFlags flags = m_pController->move(pxDisp, minDist, dt, filters);
 	m_bGrounded = (flags & PxControllerCollisionFlag::eCOLLISION_DOWN);
 }
 

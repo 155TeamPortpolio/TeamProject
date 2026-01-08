@@ -37,6 +37,7 @@
 #include "Miyabi.h"
 #include "Anbi.h"
 #include "Corin.h"
+#include "JaneDoe.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
@@ -95,6 +96,11 @@ HRESULT CTestLevel::Awake()
 	
 	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
 	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
+
+	pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/fog.json");
+	pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Eff_Smoke_006.png");
+	
+	pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/hit_ground_smoke.json");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -142,7 +148,7 @@ HRESULT CTestLevel::Awake()
 
 	m_miyabiHandle = Miyabi->Get_Handle();
 	
-	// ÇÃ·¹ÀÌ¾î(Ä³¸¯ÅÍµé) ·ÎÁ÷ Á¤ÇØÁö±â Àü±îÁö ÀÓ½Ã. if Player's logic is complete, It will be changed.
+	// ï¿½Ã·ï¿½ï¿½Ì¾ï¿½(Ä³ï¿½ï¿½ï¿½Íµï¿½) ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ó½ï¿½. if Player's logic is complete, It will be changed.
 	CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
 
 	/* Enemy */
@@ -183,33 +189,24 @@ void CTestLevel::Update()
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
-	//if (KEY->Key_Tap('4'))
-	//{
-	//	//CCT_DESC sacrificeCCT;
-	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-	//	//sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-	//	//sacrificeCCT.bAutoFit = false;
-	//	//sacrificeCCT.fHeight = 1.28f;
-	//	//sacrificeCCT.fDensity = 0.00001f;
-	//	//sacrificeCCT.fRadius = 0.2f;
-	//	//sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-	//	//sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-	//	//
-	//	//auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-	//	//	.CharacterController(sacrificeCCT)
-	//	//	.Build("Sacrifice");
-	//	//CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pSacrifice, {"Test_Level","Enemy_Layer"});
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	//}
+	if (InputDevice()->Key_Tap(VK_F4))
+	{
+		CCT_DESC sacrificeCCT;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
+		sacrificeCCT.bAutoFit = false;
+		sacrificeCCT.fHeight = 1.28f;
+		sacrificeCCT.fDensity = 0.00001f;
+		sacrificeCCT.fRadius = 0.2f;
+		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
+		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
+		
+		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
+			.CharacterController(sacrificeCCT)
+			.Build("Sacrifice");
 
-	//if (KEY->Key_Tap('5'))
-	//{
-	//	auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//		.Asset("core.json")
-	//		.Build("Core");
-
-	//	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	//}
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
@@ -295,8 +292,8 @@ void CTestLevel::Ready_Camera()
 	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
 	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
-	m_freeCamHandle  = freeCam->Get_Handle();
 	m_orbitCamHandle = orbitCam->Get_Handle();
+	m_freeCamHandle  = freeCam->Get_Handle();
 	m_seqCamHandle   = sequenceCam->Get_Handle();
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));

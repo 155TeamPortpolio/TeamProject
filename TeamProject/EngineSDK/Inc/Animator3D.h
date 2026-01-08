@@ -13,6 +13,12 @@ public:
     friend class SetAnimBuild;
     friend class ChangeAnimBuild;
 
+    typedef struct ReserveSpeed
+    {
+        _float Start, End, TargetSpeed;
+        EaseType Ease = { EaseType::None };
+    }RESERVE_SPEED;
+
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
         _bool               BaseLayer = { false };
@@ -51,14 +57,20 @@ public:
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
+        _float  fProgress = { 0.f };
         _float  fAnimSpeed = { 1.f };
+        _float  fAppliedAnimSpeed = { 1.f };
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
         //재생 속도관련
         EaseType ePlayEaseType = { EaseType::None };
-        _float  fTargetSpeed;
-        _float  fEaseDuration = {};
-        _float  fEaseElapsed = {};
+        _float  fTargetSpeed{};
+        _float  fEaseDuration{};
+        _float  fEaseElapsed{};
+        _bool   isUpdateByTime = { true }; //시간으로 애니매이션 속도를 조절하는지
+        _float  fStartProgress{};
+        _float  fEndProgress{};
+        queue<RESERVE_SPEED> ReservedSpeeds;
 
         //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
@@ -81,6 +93,7 @@ public:
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
+
 
     struct IK_CHAIN
     {
@@ -397,6 +410,26 @@ public:
         return static_cast<T&>(*this);
     }
 
+    //시작 0~1, 끝 0~1, 목표속도 (주의 : 넣은순서대로 실행, 실행중이던 속도보간 무시)
+    T& ReserveSpeed(_float fStartPercent, _float fEndPercent, _float fTargetSpeed, EaseType eEaseType) {
+        CAnimator3D::RESERVE_SPEED Reserve{};
+
+        Reserve.Start = clamp(fStartPercent, 0.f, 1.f);
+        Reserve.End = clamp(fEndPercent, 0.f, 1.f);
+        Reserve.TargetSpeed = fTargetSpeed;
+        Reserve.Ease = eEaseType;
+
+        if (Reserve.End <= Reserve.Start)
+            return static_cast<T&>(*this);
+
+        if (Reserve.Ease == EaseType::None)
+            Reserve.Ease = EaseType::Linear;
+
+        m_Reserves.push(Reserve);
+
+        return static_cast<T&>(*this);
+    }
+
     T& ResetRotation(_bool bResetRotation) {
         m_bPause = bResetRotation;
         return static_cast<T&>(*this);
@@ -420,7 +453,7 @@ protected:
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };
     _float   m_fEaseDuration = { 0.f };
-
+    queue<CAnimator3D::RESERVE_SPEED> m_Reserves;
 };
 
 class ENGINE_DLL SetAnimBuild
