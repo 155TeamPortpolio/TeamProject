@@ -13,18 +13,6 @@ class CBattleSystem final : public CBase
 public:
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
 
-	struct MonsterCreationDesc {
-		string	ProtoTag = {};
-		string	DisplayName = {};
-		_float	CCT_fHeight = {};
-		_float	CCT_fRadius = {};
-		_float3 CCT_vPos = {};
-
-		_uint	CCT_iCollisionMask = 0xFFFFFFFF;
-		_bool	CCT_bAutoFit = { false };
-		COLLISION_GROUP CCT_eGroup = COLLISION_GROUP::MONSTER;
-	};
-
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -33,6 +21,8 @@ public:
 	void Update();
 
 public:
+	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
+
 	_bool	GetActive() { return m_isActive; }
 	/* PLAYER, MONSTER, ENVOBJECT
 	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보들을 반환함 (읽기전용) */
@@ -43,11 +33,12 @@ public:
 
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
-	HRESULT	LoadMonsterCreationTable(const string& csvPath);
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(OBJECT_HANDLE hPlayer);
+	// UI에서 캐릭터 선택시 부를 함수
+	void	SetBattleCharacters(vector<_uint> battleCharacters);
 
 private:
 	void	ClearBattleStage();
@@ -61,6 +52,8 @@ private:
 	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;
 	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
 	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;
+	// 배틀 플레이어
+	class CBattlePlayer*									m_pBattlePlayer;
 
 public:
 	virtual void Free() override;
