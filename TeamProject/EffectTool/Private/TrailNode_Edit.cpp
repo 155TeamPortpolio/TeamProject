@@ -30,6 +30,7 @@ HRESULT CTrailNode_Edit::Initialize(INIT_DESC* pArg)
 	CTrailModel* pTrail = Get_Component<CTrailModel>();
 	pTrail->Initialize(nullptr);
 	pTrail->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
+	pTrail->ShadowCast(false);
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();

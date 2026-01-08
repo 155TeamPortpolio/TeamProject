@@ -64,7 +64,6 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	pAnimator->Set_MotionBone(3); //Bip001
 
 	auto pCCT = Get_Component<CCharacterController>();
-	pCCT->Set_GravityEnabled(false);
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
@@ -100,6 +99,8 @@ void CSacrifice::Priority_Update(_float dt)
 
 void CSacrifice::Update(_float dt)
 {
+	__super::Update(dt);
+
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
 
@@ -145,6 +146,36 @@ void CSacrifice::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+}
+
+void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
+{
+	_vector3 vPosition = m_pTransform->Get_Pos();
+	_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
+	_vector3 vTargetDir = m_tTargetingInfo.vDirToTarget;
+	vCurrDir.Normalize();
+	vTargetDir.Normalize();
+
+	if (vCurrDir.Dot(vTargetDir) >= 0.99f)
+		return;
+
+	vCurrDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * rotateSpeed);
+	_vector3 vAt = vPosition + vCurrDir;
+
+	m_pTransform->LookAt(vAt);
+}
+
+void CSacrifice::MoveByRootMotion(_float dt, _float moveScale)
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+	auto pCCT = Get_Component<CCharacterController>();
+
+	_vector3 vDeltaMove = pAnimator->Get_RootBoneMoveDelta();
+	_vector4 vDeltaQuat = pAnimator->Get_RootBoneQuatDelta();
+	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
+
+	Get_Component<CTransform>()->Add_Quaternion(vDeltaQuat);
+	pCCT->Move_RootMotion(vDeltaMove * moveScale, vQuaternion, dt);
 }
 
 void CSacrifice::ActiveSword()

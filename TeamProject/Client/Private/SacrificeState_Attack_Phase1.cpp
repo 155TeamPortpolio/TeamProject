@@ -5,6 +5,8 @@
 #include "ObjectContainer.h"
 #include "Helper_Func.h"
 #include "SacrificeHand.h"
+#include "GameInstance.h"
+#include "EffectContainer.h"
 
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -46,6 +48,7 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
 	{
 		_uint iRandIndex = Helper::Get_Random_Int(0, 1);
+		iRandIndex = 1;
 		if (0 == iRandIndex)
 			pOwner->Idle();
 		else
@@ -84,7 +87,7 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
 {
 	_uint iRandIndex = Helper::Get_Random_Int(0, 7);
-	//iRandIndex = 4;
+	iRandIndex = 1;
 	switch (iRandIndex)
 	{
 	case 0:
@@ -147,6 +150,9 @@ void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
+
 	if (m_fAnimProgress >= 0.6f)
 	{
 		blackBoard.isChainOpen = true;
@@ -168,6 +174,9 @@ void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
+
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 
 	if (m_fAnimProgress >= 0.3f)
@@ -214,6 +223,9 @@ void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 		m_IsAttackEnd = true;
 		pOwner->DeactiveSword();
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_02_Phase1::Exit(CSacrifice* pOwner)
@@ -224,6 +236,8 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_03").Loop(false).Speed(1.2f).Apply();
+
+	m_IsSpawnEffect = false;
 }
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -236,6 +250,26 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.18f)
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BoneCombinedPosition("Skn_Finger2_03");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+
+		m_IsSpawnEffect = true;
+	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_03_Phase1::Exit(CSacrifice* pOwner)
@@ -258,6 +292,10 @@ void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (m_fAnimProgress < 0.1f)
+		pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_04_1_Phase1::Exit(CSacrifice* pOwner)
@@ -294,6 +332,9 @@ void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_05_Phase1::Exit(CSacrifice* pOwner)
@@ -311,7 +352,7 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (m_fAnimProgress > 0.2f && m_fAnimProgress <= 0.65f)
 	{
 		auto pTransform = pOwner->Get_Component<CTransform>();
-		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(120.f) * dt, 0.f, 0.f);
+		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
 		pTransform->Add_Quaternion(vRot);
 	}
 
@@ -322,6 +363,8 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_06_Phase1::Exit(CSacrifice* pOwner)
@@ -360,6 +403,10 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 		m_IsAttackEnd = true;
 		pOwner->DeactiveSword();
 	}
+
+	if (m_fAnimProgress < 0.3f)
+		pOwner->RotateToTarget(dt, 20.f);
+	pOwner->MoveByRootMotion(dt, 1.2f);
 }
 
 void CSacrificeState_Attack_07_Phase1::Exit(CSacrifice* pOwner)
@@ -374,6 +421,11 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
+	m_IsJumpStart = false;	
+
+	_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+	_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+	m_vFirstTargetPosition = vTargetPos - vCurrDir * 2.f;
 }
 
 void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -393,12 +445,42 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 		pOwner->ActiveAxe();
 	}
 
-	if (!m_IsAttackEnd && m_fAnimProgress >= 0.5f)
+	if (!m_IsAttackEnd && m_fAnimProgress >= 0.6f)
 	{
 		m_IsAttackEnd = true;
 		pOwner->DeactiveAxe();
 	}
 
+	/* Move Update */
+	if (m_fAnimProgress < 0.5f)
+		pOwner->RotateToTarget(dt, 10.f);
+
+	auto pCCT = pOwner->Get_Component<CCharacterController>();
+	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
+	{
+		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
+		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
+		m_IsJumpStart = true;
+	}
+
+	if (m_IsAttackStart)
+	{
+		if (m_fAnimProgress < 0.2f)
+		{
+			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vFirstTargetPosition, dt * 3.f);
+			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
+			pCCT->Move_Velocity(vVelocity, dt);
+		}
+		else if (m_fAnimProgress < 0.5f)
+		{
+			_vector3 vCurrPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+			_vector3 vNextPosition = _vector3::Lerp(vCurrPosition, m_vSecondTargetPosition, dt * 3.f);
+			_vector3 vVelocity = (vNextPosition - vCurrPosition) / dt;
+			pCCT->Move_Velocity(vVelocity, dt);
+		}
+	}
 }
 
 void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
@@ -438,6 +520,8 @@ void CSacrificeState_Attack_10_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
 }
 
 void CSacrificeState_Attack_10_Phase1::Exit(CSacrifice* pOwner)
@@ -460,6 +544,8 @@ void CSacrificeState_Attack_11_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
 }
 
 void CSacrificeState_Attack_11_Phase1::Exit(CSacrifice* pOwner)
@@ -482,6 +568,8 @@ void CSacrificeState_Attack_12_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->RotateToTarget(dt, 10.f);
 }
 
 void CSacrificeState_Attack_12_Phase1::Exit(CSacrifice* pOwner)
@@ -503,6 +591,12 @@ void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+	
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	_quaternion vDeltaQuaternion = pAnimator->Get_RootBoneQuatDelta();
+	pTransform->Add_Quaternion(vDeltaQuaternion);
 }
 
 void CSacrificeState_Attack_Turn_Phase1::Exit(CSacrifice* pOwner)

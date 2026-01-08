@@ -560,6 +560,27 @@ ENGINE_DLL _bool Helper::ContainsCaseInsensitive(const std::string& text, const 
 
 	return textLower.find(patLower) != std::string::npos;
 }
+
+ENGINE_DLL _bool Helper::WorldToScreen(const _float3& worldPos, _float2& outScreen, const _float4x4& view, const _float4x4& proj, const _float4& viewportXYWH)
+{
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+
+	_vector pos = XMVectorSet(worldPos.x, worldPos.y, worldPos.z, 1.f);
+	_vector clip = XMVector4Transform(pos, viewMat * projMat);
+
+	float clipW = XMVectorGetW(clip);
+	if (clipW <= 1e-6f) return false; // 카메라 뒤
+
+	_vector ndc = clip / clipW;
+	float ndcX = XMVectorGetX(ndc);
+	float ndcY = XMVectorGetY(ndc);
+
+	outScreen.x = viewportXYWH.x + (ndcX * 0.5f + 0.5f) * viewportXYWH.z;
+	outScreen.y = viewportXYWH.y + (-ndcY * 0.5f + 0.5f) * viewportXYWH.w;
+	return true;
+}
+
 // -------------------------------------------------------------------------------------------------
 
 ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
