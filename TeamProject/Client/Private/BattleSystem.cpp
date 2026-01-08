@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "CharacterController.h"
+#include "BattlePlayer.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -143,6 +144,11 @@ void CBattleSystem::SetPlayer(OBJECT_HANDLE hPlayer)
 {
 	if (hPlayer.isValid())
 		m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+}
+
+void CBattleSystem::SetBattleCharacters(vector<_uint> battleCharacters)
+{
+	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
 }
 
 void CBattleSystem::ClearBattleStage()

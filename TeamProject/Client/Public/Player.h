@@ -18,9 +18,10 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
     virtual void    Render_GUI() override;
+
 private:
     //class CFieldPlayer*   m_pFieldPlayer;
-    //class CBattlePlayer*  m_pBattlePlayer;
+    class CBattlePlayer*  m_pBattlePlayer;
 
 public:
     static CPlayer* Create();
