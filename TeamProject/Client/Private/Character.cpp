@@ -21,6 +21,57 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
+{
+	auto pTransform = Get_Component<CTransform>();
+	_vector3 vRootDelta = m_pAnimator->Get_RootBoneMoveDelta();
+	_vector4 vQuatDelta = m_pAnimator->Get_RootBoneQuatDelta();
+	_vector3 vInputDir = Get_InputDir();
+
+	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
+	{
+		if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
+		else if (desc.fRotateWeight > 0.01f)
+		{
+			_quaternion qWeighted = _quaternion::Slerp(_quaternion::Identity, vQuatDelta, desc.fRotateWeight);
+			pTransform->Add_Quaternion(qWeighted);
+		}
+	}
+	else
+	{
+		if (vInputDir.Length() > 0.01f)
+		{
+			vInputDir.Normalize();
+			Rotate(vInputDir);
+		}
+	}
+
+	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::MOVE)) != 0)
+	{
+		if (vRootDelta.x != 0.f || vRootDelta.z != 0.f)
+		{
+			_vector3 vWeightedDelta = vRootDelta * desc.fMoveWeight;
+			_quaternion qRot = pTransform->Get_QuaternionRotate();
+			m_pCCT->Move_RootMotion(vWeightedDelta, qRot, dt);
+		}
+	}
+	else
+	{
+		if (vInputDir.Length() > 0.01f)
+		{
+			vInputDir.Normalize();
+			m_pCCT->Move_Direction(vInputDir, desc.fMoveSpeed, dt);
+		}
+	}
+}
+
+void CCharacter::Process_RootMotion(_float dt, _uint iModeMask)
+{
+	ROOTMOTION_DESC desc;
+	desc.iModeMask = iModeMask;
+	Process_RootMotion(dt, desc);
+}
+
 HRESULT CCharacter::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
