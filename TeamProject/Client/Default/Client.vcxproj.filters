@@ -415,6 +415,12 @@
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Effect">
+      <UniqueIdentifier>{5ed6b41d-6c27-48c7-8c25-a26c610b028e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\AttackSign">
+      <UniqueIdentifier>{ce06088b-9ea7-4333-9bf6-688c797a0bb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -802,6 +808,9 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\AttackSign.h">
+      <Filter>02. GameObject\Effect\AttackSign</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1178,5 +1187,8 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\Private\AttackSign.cpp">
+      <Filter>02. GameObject\Effect\AttackSign</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

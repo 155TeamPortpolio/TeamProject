@@ -587,6 +587,10 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 
 			Effect.Nodes.push_back(pMeshNode);
 		}break;
+		case Engine::EFFECT_TYPE::TRAIL:
+		{
+
+		}break;
 		default:
 			break;
 		}

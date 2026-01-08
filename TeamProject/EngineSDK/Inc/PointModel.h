@@ -1,7 +1,7 @@
 #pragma once
 #include "Model.h"
 NS_BEGIN(Engine)
-class CPointModel :
+class ENGINE_DLL CPointModel :
     public CModel
 {
 protected:
