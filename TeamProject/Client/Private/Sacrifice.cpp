@@ -115,6 +115,13 @@ void CSacrifice::Late_Update(_float dt)
 	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
+void CSacrifice::Render_GUI()
+{
+	__super::Render_GUI();
+
+	ImGui::Text("Distance to target : %lf", m_tTargetingInfo.fDistance);
+}
+
 CSacrifice* CSacrifice::Create()
 {
 	CSacrifice* instance = new CSacrifice();
