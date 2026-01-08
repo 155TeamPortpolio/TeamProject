@@ -18,13 +18,9 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype()      override;
 	virtual HRESULT Initialize(INIT_DESC* pArg) override;
-	virtual void    Priority_Update(_float dt)  override PURE;
-	virtual void    Update(_float dt)           override PURE;
-	virtual void    Late_Update(_float dt)      override PURE;
-	virtual void    Render_GUI()                override;
-
-public:
-	virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
-	virtual void Free()                         override { __super::Free(); }
+	virtual void    Priority_Update(_float dt)  override {};
+	virtual void    Update(_float dt)           override {};
+	virtual void    Late_Update(_float dt)      override {};
+	virtual void    Render_GUI()                override { __super::Render_GUI(); }
 };
 NS_END

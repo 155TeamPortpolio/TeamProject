@@ -105,8 +105,9 @@ HRESULT CAnimator3D::Link_DynamicBone()
 		return E_FAIL;
 
 	m_pDynamicBone = pDynamicBone;
+	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
 
-	//if(m_pData->Get_DynamicBoneData) add
+	//m_pDynamicBone->Link_ChainData(m_pData->Get_ChaingGroups());
 
 	return S_OK;
 }
@@ -145,6 +146,7 @@ void CAnimator3D::Update_Animation(_float dt)
 		/* Update Animation Clips*/
 		Update_Layers(dt);
 
+		/* Has Been Updated Even Once */
 		if (m_bUpdatedClip) {
 
 			/* Create TransformationMatrices */
@@ -153,21 +155,23 @@ void CAnimator3D::Update_Animation(_float dt)
 			/* Create CombinedMatrices */
 			BuildBone();
 		}
-
 	}
 
 	/* Update IK Bone */
-	Update_IK(dt);
+	//Update_IK(dt);
 
 	/* Rebuild Combined */
-	BuildBone();
+	//BuildBone();
 
-	/* Update DynamicBone */
-	if(m_pDynamicBone)
+	/* If Linked DynamicBone */
+	if (m_pDynamicBone) {
+
+		/* Update DynamicBone */
 		m_pDynamicBone->Update(dt);
 
-	/* Final Combined */
-	BuildBone();
+		/* Additive Combined */
+		BuildDynamicBone();
+	}
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -510,6 +514,9 @@ void CAnimator3D::Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, 
 	m_AnimLayers[LayerIndex].fTargetSpeed = fTargetSpeed;
 	m_AnimLayers[LayerIndex].fEaseDuration = fDuration;
 	m_AnimLayers[LayerIndex].ePlayEaseType = eEaseType;
+
+	m_AnimLayers[LayerIndex].fAnimSpeed = m_AnimLayers[LayerIndex].fAppliedAnimSpeed;
+	m_AnimLayers[LayerIndex].isUpdateByTime = true;
 }
 
 _quaternion CAnimator3D::Calc_TransformFromEndAnim(const _vector4& vTransformQuat)
@@ -603,7 +610,7 @@ _vector3 CAnimator3D::Get_BoneTransformationPosition(AnimArg BoneArg)
 	}
 }
 
-_vector4 CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
+_quaternion CAnimator3D::Get_BoneTransformationQuaternion(AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)  return _quaternion::Identity;
@@ -636,7 +643,7 @@ void CAnimator3D::Set_BoneTransformationPosition(_vector3 Position, AnimArg Bone
 	m_TransformationMatrices[Index]._43 = Position.z;
 }
 
-void CAnimator3D::Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+void CAnimator3D::Set_BoneTransformationQuaternion(_quaternion Quaternion, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)
@@ -673,7 +680,7 @@ void CAnimator3D::Set_BoneManipulatePosition(_vector3 Position, AnimArg BoneArg)
 	m_ManipulateMatrices[Index]._43 = Position.z;
 }
 
-void CAnimator3D::Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg)
+void CAnimator3D::Set_BoneManipulateQuaternion(_quaternion Quaternion, AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)
@@ -719,7 +726,7 @@ _vector3 CAnimator3D::Get_BoneCombinedPosition(AnimArg BoneArg)
 	}
 }
 
-_vector4 CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
+_quaternion CAnimator3D::Get_BoneCombinedQuaternion(AnimArg BoneArg)
 {
 	_int Index = Resolve_BoneIndex(BoneArg);
 	if (Index == -1)  return _quaternion::Identity;
@@ -770,6 +777,11 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 Matrix CAnimator3D::Get_OwnerWorldMatrix()
 {
 	return m_pOwner->Get_WorldMatrix();
+}
+
+void CAnimator3D::Reset_DynamicBoneMatrices()
+{
+	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
 }
 
 HRESULT CAnimator3D::Initialize_HumanoidRig()
@@ -957,27 +969,58 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update Animation
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
+	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
+
 	//Calc Animation Speed
-	_float AnimSpeed = Layer.fAnimSpeed;
 	if (EaseType::None != Layer.ePlayEaseType) {
-		Layer.fEaseElapsed += dt;
+		if (Layer.isUpdateByTime) {
+			//Change speed by time
+			Layer.fEaseElapsed += dt;
 
-		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+			_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
-		if (1.f <= t) {
-			Layer.fAnimSpeed = AnimSpeed;
-			Layer.ePlayEaseType = EaseType::None;
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+			}
+		}
+		else {
+			//Change speed by Progress
+			_float percent = (Layer.fProgress - Layer.fStartProgress) / (Layer.fEndProgress - Layer.fStartProgress);
+			_float t = min(percent, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+				Layer.isUpdateByTime = false;
+			}
 		}
 	}
 
-	_float playSpeed = dt * AnimSpeed;
+	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
 
 	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+
+	//Reserved Speed
+	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
+		auto Reserve = Layer.ReservedSpeeds.front();
+		Layer.fStartProgress = Reserve.Start;
+		Layer.fEndProgress = Reserve.End;
+		Layer.fTargetSpeed = Reserve.TargetSpeed;
+		Layer.ePlayEaseType = Reserve.Ease;
+		
+		Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+		
+		Layer.ReservedSpeeds.pop();
+		Layer.isUpdateByTime = true;
+	}
 
 	//Bone Extracter
 	if (Layer.BaseLayer) {
@@ -1073,33 +1116,64 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
 	//Calc Animation Speed;
-	_float AnimSpeed = Layer.fAnimSpeed;
+	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
+
 	if (EaseType::None != Layer.ePlayEaseType) {
-		Layer.fEaseElapsed += dt;
+		if (Layer.isUpdateByTime) {
+			//Change speed by time
+			Layer.fEaseElapsed += dt;
 
-		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+			_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
-		if (1.f <= t) {
-			Layer.fAnimSpeed = AnimSpeed;
-			Layer.ePlayEaseType = EaseType::None;
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+			}
+		}
+		else {
+			//Change speed by Progress
+			_float percent = (Layer.fProgress - Layer.fStartProgress) / (Layer.fEndProgress - Layer.fStartProgress);
+			_float t = min(percent, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+				Layer.isUpdateByTime = false;
+			}
 		}
 	}
 
-	_float playSpeed = dt * AnimSpeed;
+	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
 
 	//Update TrackPos
 	if (Layer.bUpdate_PrevClip) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, nullptr, m_EventBus);
 	}
 
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+	}
+
+	//Reserved Speed
+	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
+		auto Reserve = Layer.ReservedSpeeds.front();
+		Layer.fStartProgress = Reserve.Start;
+		Layer.fEndProgress = Reserve.End;
+		Layer.fTargetSpeed = Reserve.TargetSpeed;
+		Layer.ePlayEaseType = Reserve.Ease;
+
+		Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+
+		Layer.ReservedSpeeds.pop();
+		Layer.isUpdateByTime = true;
 	}
 
 	//Bone Extracter
@@ -1381,6 +1455,16 @@ void CAnimator3D::BuildBone()
 	}
 }
 
+void CAnimator3D::BuildDynamicBone()
+{
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	{
+		Matrix CombinedBone = XMLoadFloat4x4(&m_CombinedMatrices[i]);
+		Matrix DynamicBone = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
+
+		XMStoreFloat4x4(&m_CombinedMatrices[i], DynamicBone * CombinedBone);
+	}
+}
 
 #pragma region GUI
 void CAnimator3D::Render_GUI()
@@ -1425,6 +1509,8 @@ void CAnimator3D::Render_GUI()
 		}
 	}
 
+	if (m_pDynamicBone)
+		m_pDynamicBone->Render_GUI();
 }
 
 void CAnimator3D::GUI_ShowLayerInfo()
@@ -1696,6 +1782,8 @@ HRESULT SetAnimBuild::Apply()
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
+	Layer.isUpdateByTime = true;
+	Layer.ReservedSpeeds = m_Reserves;
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
@@ -1744,6 +1832,8 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
+	Layer.isUpdateByTime = true;
+	Layer.ReservedSpeeds = m_Reserves;
 
 	//먄약 호출시 클립이 없으면 새로시작
 	if (-1 == Layer.iClipIndex) {

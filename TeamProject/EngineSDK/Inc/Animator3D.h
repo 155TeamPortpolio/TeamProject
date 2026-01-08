@@ -13,6 +13,12 @@ public:
     friend class SetAnimBuild;
     friend class ChangeAnimBuild;
 
+    typedef struct ReserveSpeed
+    {
+        _float Start, End, TargetSpeed;
+        EaseType Ease = { EaseType::None };
+    }RESERVE_SPEED;
+
     typedef struct AnimationLayer {
         //---------- 레이어 속성 (레이어 영구변경)
         _bool               BaseLayer = { false };
@@ -51,14 +57,20 @@ public:
         _int    iClipIndex = { -1 };
         _float  fPrevTrackPosition = {};
         _float  fCurrentTrackPosition = {};
+        _float  fProgress = { 0.f };
         _float  fAnimSpeed = { 1.f };
+        _float  fAppliedAnimSpeed = { 1.f };
         _bool   bLoop = { false };
         _bool   bisFinished = { true };
         //재생 속도관련
         EaseType ePlayEaseType = { EaseType::None };
-        _float  fTargetSpeed;
-        _float  fEaseDuration = {};
-        _float  fEaseElapsed = {};
+        _float  fTargetSpeed{};
+        _float  fEaseDuration{};
+        _float  fEaseElapsed{};
+        _bool   isUpdateByTime = { true }; //시간으로 애니매이션 속도를 조절하는지
+        _float  fStartProgress{};
+        _float  fEndProgress{};
+        queue<RESERVE_SPEED> ReservedSpeeds;
 
         //로컬 매트릭스
         vector<_float4x4> LocalMatrices = {};
@@ -81,6 +93,7 @@ public:
         //보간을 다한 최종 매트릭스
         vector<_float4x4> FinalLocalMatrices = {};
     }ANIM_LAYER;
+
 
     struct IK_CHAIN
     {
@@ -210,13 +223,13 @@ public: //뼈 관련
     _float4x4 Get_BoneTransformationMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneTransformationMatrixPtr(AnimArg BoneArg);
     _vector3 Get_BoneTransformationPosition(AnimArg BoneArg);
-    _vector4 Get_BoneTransformationQuaternion(AnimArg BoneArg);
+    _quaternion Get_BoneTransformationQuaternion(AnimArg BoneArg);
     const vector<_float4x4>& Get_TransformationMatrices() { return m_TransformationMatrices; };
     vector<_float4x4>* Get_TransformationBoneMatrices_Ptr() { return &m_TransformationMatrices; };
 
     void Set_BoneTransformationMatrix(const _float4x4& Matrix, AnimArg BoneArg);
     void Set_BoneTransformationPosition(_vector3 Position, AnimArg BoneArg);
-    void Set_BoneTransformationQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+    void Set_BoneTransformationQuaternion(_quaternion Quaternion, AnimArg BoneArg);
     
     //Manipulate
     const vector<_float4x4>& Get_ManipulateMatrices() { return m_TransformationMatrices; };
@@ -224,13 +237,13 @@ public: //뼈 관련
 
     void Set_BoneManipulateMatrix(const _float4x4& Matrix, AnimArg BoneArg);
     void Set_BoneManipulatePosition(_vector3 Position, AnimArg BoneArg);
-    void Set_BoneManipulateQuaternion(_vector4 Quaternion, AnimArg BoneArg);
+    void Set_BoneManipulateQuaternion(_quaternion Quaternion, AnimArg BoneArg);
 
     //Combined
     _float4x4 Get_BoneCombinedMatrix(AnimArg BoneArg);
     _float4x4* Get_BoneCombinedMatrixPtr(AnimArg BoneArg);
     _vector3 Get_BoneCombinedPosition(AnimArg BoneArg);
-    _vector4 Get_BoneCombinedQuaternion(AnimArg BoneArg);
+    _quaternion Get_BoneCombinedQuaternion(AnimArg BoneArg);
     const vector<_float4x4>& Get_CombinedBoneMatrices() { return m_CombinedMatrices; };
     vector<_float4x4>* Get_CombinedBoneMatrices_Ptr() { return &m_CombinedMatrices; };    
 
@@ -247,6 +260,9 @@ public: /* DynamicBone */
         if (nullptr == m_pDynamicBone) Link_DynamicBone();
         return m_pDynamicBone;
     };
+
+    vector<_float4x4>& Get_DynamicBoneMatricesPtr() { return m_DynamicBoneMatrices; };
+    void Reset_DynamicBoneMatrices();
 
 public: /* IKSolver */
     HRESULT Initialize_HumanoidRig();
@@ -292,7 +308,7 @@ protected:
     void BuildIKMatrices(_float dt);
     void Update_DynamicBone(_float dt);
     void BuildBone();
-    
+    void BuildDynamicBone();
 
 public:
     virtual void Render_GUI();
@@ -323,6 +339,7 @@ protected:
     vector<_float4x4> m_BasePose = {};                  //Additive용 BasePose << 만약 애니매이션을 여러개 덧붙여야하면 이벡터 자체가 여러개필요
     vector<_float4x4> m_TransformationMatrices = {};    //애니매이션 클립을 업데이트한 로컬 매트릭스
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
+    vector<_float4x4> m_DynamicBoneMatrices = {};       //다이나믹본 업데이트 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
@@ -393,6 +410,26 @@ public:
         return static_cast<T&>(*this);
     }
 
+    //시작 0~1, 끝 0~1, 목표속도 (주의 : 넣은순서대로 실행, 실행중이던 속도보간 무시)
+    T& ReserveSpeed(_float fStartPercent, _float fEndPercent, _float fTargetSpeed, EaseType eEaseType) {
+        CAnimator3D::RESERVE_SPEED Reserve{};
+
+        Reserve.Start = clamp(fStartPercent, 0.f, 1.f);
+        Reserve.End = clamp(fEndPercent, 0.f, 1.f);
+        Reserve.TargetSpeed = fTargetSpeed;
+        Reserve.Ease = eEaseType;
+
+        if (Reserve.End <= Reserve.Start)
+            return static_cast<T&>(*this);
+
+        if (Reserve.Ease == EaseType::None)
+            Reserve.Ease = EaseType::Linear;
+
+        m_Reserves.push(Reserve);
+
+        return static_cast<T&>(*this);
+    }
+
     T& ResetRotation(_bool bResetRotation) {
         m_bPause = bResetRotation;
         return static_cast<T&>(*this);
@@ -416,7 +453,7 @@ protected:
     EaseType m_ePlayEaseType = { EaseType::None };
     _float   m_fTargetSpeed = { 1.f };
     _float   m_fEaseDuration = { 0.f };
-
+    queue<CAnimator3D::RESERVE_SPEED> m_Reserves;
 };
 
 class ENGINE_DLL SetAnimBuild

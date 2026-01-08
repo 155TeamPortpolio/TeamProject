@@ -29,6 +29,8 @@ private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
 
+
+
 public:
 	virtual void Free() override;
 };
