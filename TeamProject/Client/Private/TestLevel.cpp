@@ -230,7 +230,7 @@ void CTestLevel::Update()
 			.CharacterController(BulkyCCT)
 			.Build("ThugBulky");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });*/
-		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { 0.f, 0.f,2.f });
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
 	}
 }
 

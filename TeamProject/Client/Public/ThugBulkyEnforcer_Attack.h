@@ -22,6 +22,10 @@ private:
 	void Register_Transitions();
 	void BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _int iPatternIndex = 0, _bool isAdditionalMoveState = false);	// 0일때 랜덤
 	array<_int, 3>	Pick3RandomIndex();
+	void DecideAttackPattern(CThugBulkyEnforcer* pOwner);
+
+private:
+	deque<_int>		m_AttackHistory;
 };
 
 //앞으로 나오면서 오른손 강펀치

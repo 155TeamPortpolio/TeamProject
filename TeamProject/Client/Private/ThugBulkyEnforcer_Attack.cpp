@@ -17,7 +17,10 @@ void CThugBulkyEnforcer_Attack::Enter(CThugBulkyEnforcer* pOwner)
 		__super::Enter(pOwner);
 	}
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	
+
+
+	//ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 
 	//auto pStateMachine = pOwner->Get_StateMachine();
 	//if (nullptr == pStateMachine)
@@ -182,6 +185,17 @@ array<_int, 3> CThugBulkyEnforcer_Attack::Pick3RandomIndex()
 	shuffle(nums.begin(), nums.end(), Helper::Get_RNG());
 
 	return { nums[0], nums[1] ,nums[2] };
+}
+
+void CThugBulkyEnforcer_Attack::DecideAttackPattern(CThugBulkyEnforcer* pOwner)
+{
+	TARGETING_INFO tInfo = pOwner->GetTargetingInfo();
+
+	_float fDistanceToPlayer = tInfo.fDistance;
+	
+	
+
+
 }
 
 /*============================================================================*/
