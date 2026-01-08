@@ -6,6 +6,7 @@ NS_BEGIN(Client)
 
 class CThugBulkyEnforcer;
 
+
 class CThugBulkyEnforcer_Attack : public IHState<CThugBulkyEnforcer>
 {
 public:
@@ -22,10 +23,10 @@ private:
 	void Register_Transitions();
 	void BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _int iPatternIndex = 0, _bool isAdditionalMoveState = false);	// 0일때 랜덤
 	array<_int, 3>	Pick3RandomIndex();
-	void DecideAttackPattern(CThugBulkyEnforcer* pOwner);
+	_bool DecideAttackPattern(CThugBulkyEnforcer* pOwner);
 
 private:
-	deque<_int>		m_AttackHistory;
+	_bool			m_isEndAttack = { false };
 };
 
 //앞으로 나오면서 오른손 강펀치
@@ -107,42 +108,42 @@ public:
 };
 
 // 왼쪽 대각선으로 이동하며 위빙
-//class CThugBulkyEnforcer_AttackSideStep_L : public IBaseState<CThugBulkyEnforcer>
-//{
-//public:
-//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-//
-//public:
-//	static CThugBulkyEnforcer_AttackSideStep_L* Create() { return new CThugBulkyEnforcer_AttackSideStep_L(); }
-//	virtual void Free() override { __super::Free(); }
-//};
-//
-//// 오른쪽 대각선으로 이동하며 위빙
-//class CThugBulkyEnforcer_AttackSideStep_R : public IBaseState<CThugBulkyEnforcer>
-//{
-//public:
-//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-//
-//public:
-//	static CThugBulkyEnforcer_AttackSideStep_R* Create() { return new CThugBulkyEnforcer_AttackSideStep_R(); }
-//	virtual void Free() override { __super::Free(); }
-//};
-//
-//// 백스텝으로 피하는 모션(공격 후 뒤로 빠질때 사용)
-//class CThugBulkyEnforcer_AttackEvade : public IBaseState<CThugBulkyEnforcer>
-//{
-//public:
-//	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-//	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-//	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-//
-//public:
-//	static CThugBulkyEnforcer_AttackEvade* Create() { return new CThugBulkyEnforcer_AttackEvade(); }
-//	virtual void Free() override { __super::Free(); }
-//};
+class CThugBulkyEnforcer_AttackSideStep_L : public IBaseState<CThugBulkyEnforcer>
+{
+public:
+	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+
+public:
+	static CThugBulkyEnforcer_AttackSideStep_L* Create() { return new CThugBulkyEnforcer_AttackSideStep_L(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+// 오른쪽 대각선으로 이동하며 위빙
+class CThugBulkyEnforcer_AttackSideStep_R : public IBaseState<CThugBulkyEnforcer>
+{
+public:
+	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+
+public:
+	static CThugBulkyEnforcer_AttackSideStep_R* Create() { return new CThugBulkyEnforcer_AttackSideStep_R(); }
+	virtual void Free() override { __super::Free(); }
+};
+
+// 백스텝으로 피하는 모션(공격 후 뒤로 빠질때 사용)
+class CThugBulkyEnforcer_AttackEvade : public IBaseState<CThugBulkyEnforcer>
+{
+public:
+	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
+	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
+	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
+
+public:
+	static CThugBulkyEnforcer_AttackEvade* Create() { return new CThugBulkyEnforcer_AttackEvade(); }
+	virtual void Free() override { __super::Free(); }
+};
 
 NS_END

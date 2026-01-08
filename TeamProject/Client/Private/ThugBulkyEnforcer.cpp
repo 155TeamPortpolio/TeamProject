@@ -115,13 +115,14 @@ void CThugBulkyEnforcer::Render_GUI()
 	// =======================================================
 #pragma region State
 	ImGui::SeparatorText("State & BlackBoard");
-	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 8}, true);
+	ImGui::BeginChild("##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
 	//string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 	//string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
 	ImGui::Text("Current ChildState : %s", m_tAttackBlackBoard.currentStateTag.c_str());
 	//string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
-	ImGui::Text("StateQueue Size : %d", (_int)m_tAttackBlackBoard.stateQueue.size());
+	//ImGui::Text("StateQueue Size : %d", (_int)m_tAttackBlackBoard.stateQueue.size());
+	ImGui::Text("AttackCombo : %d", m_iAttackCombo);
 
 	// bool 변수 확인용(수정 불가)
 	ImGui::BeginDisabled(true);
@@ -130,21 +131,30 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::Checkbox(u8"isEnd (Queue에 등록된 마지막 상태 여부)", &m_tAttackBlackBoard.isEnd);
 	ImGui::EndDisabled();
 	ImGui::SeparatorText("Reseve State List");
-	for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
+	for (size_t i = 0; i < m_AttackHistory.size(); i++)
 	{
-		if (i == 0)
-			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), m_tAttackBlackBoard.stateQueue[i].c_str());
-		else
-			ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
 
+		if (i == 0)
+			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "%d", m_AttackHistory[i]);
+		else
+			ImGui::Text("%d", m_AttackHistory[i]);
 	}
+	
+	//for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
+	//{
+	//	if (i == 0)
+	//		ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), m_tAttackBlackBoard.stateQueue[i].c_str());
+	//	else
+	//		ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
+	//
+	//}
 	ImGui::EndChild();
 #pragma endregion
 	// =======================================================
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
+		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 3 }, true);
 		
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -194,19 +204,19 @@ void CThugBulkyEnforcer::Render_GUI()
 		}
 		if (ImGui::TreeNode("MoveState##ThugBulkyEnforcerTestState_Move")) {
 
-			if (ImGui::Button(u8"1.Walk_Left")) {
+			if (ImGui::Button(u8"1.Walk_Front")) {
 				m_pStateMachine->Set_Int("MovePattern", 1);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
-			if (ImGui::Button(u8"2.Walk_Right")) {
+			if (ImGui::Button(u8"2.Walk_Back")) {
 				m_pStateMachine->Set_Int("MovePattern", 2);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
-			if (ImGui::Button(u8"3.Walk_Front")) {
+			if (ImGui::Button(u8"3.Walk_Left")) {
 				m_pStateMachine->Set_Int("MovePattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
-			if (ImGui::Button(u8"4.Walk_Back")) {
+			if (ImGui::Button(u8"4.Walk_Right")) {
 				m_pStateMachine->Set_Int("MovePattern", 4);
 				m_pStateMachine->Set_Trigger("Idle_To_Move");
 			}
@@ -359,6 +369,14 @@ HRESULT CThugBulkyEnforcer::Ready_Rules()
 	// Target 감지 범위 (default = 5.f)
 	m_fDetectedRange = 5.f;
 
+	m_tHysteriesis.fEvadEnter = 2.f;
+	m_tHysteriesis.fComboEnter = 3.f;
+	m_tHysteriesis.fComboExit = 4.f;
+	m_tHysteriesis.fChaseEnter = 7.f;
+	m_tHysteriesis.fChaseExit = 5.f;
+
+	m_pStateMachine->Set_Int("MovePattern", -1);
+
 	return S_OK;
 }
 
@@ -372,40 +390,88 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 		m_isIdle = false;
 	}
 
+	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
+	
+	//================================
+	ControlState(dt);
+	//================================
+}
 
+void CThugBulkyEnforcer::ControlState(const _float dt)
+{
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
-		
+
 		m_vIdleTime.y += dt;
 
 		if (m_vIdleTime.x <= m_vIdleTime.y) {
+
+			const _float fDistanceToPlayer = m_tTargetingInfo.fDistance;
+
 			if (true == m_pStateMachine->Get_Bool("Chase")) {
-				m_pStateMachine->Set_Bool("FinishAttack", false);
-				m_tAttackBlackBoard = {};
+				if (2 == m_iAttackCombo)
+					m_iAttackCombo = 0;
 				m_pStateMachine->Set_Trigger("Idle_To_Chase");
 			}
-			else if (true == m_pStateMachine->Get_Bool("FinishAttack")) {
-				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			else if ("Attack" == m_pStateMachine->Get_PrevStateName()) {
+				
+				// 콤보 사이에 위빙 할지 말지 정하기. 안하면 공격으로 바로 이동
+				if (3 > m_iAttackCombo) {
+					_int iSidestepIndex = Helper::Get_Random_Int(0, 3);
+					switch (iSidestepIndex)
+					{
+					case 0:
+					case 1:
+					{
+						m_pStateMachine->Set_Bool("Sidestep", true);
+						m_pStateMachine->Set_Bool("ShortlyMove", true);
+						m_pStateMachine->Set_Trigger("Idle_To_Move");
+						break;
+					}
+					case 2:
+					case 3:
+					{
+						if (m_tTargetingInfo.fDistance <= m_tHysteriesis.fEvadEnter) {
+							m_pStateMachine->Set_Bool("Evade", true);
+							m_pStateMachine->Set_Trigger("Idle_To_Move");
+						}
+						else {
+							m_pStateMachine->Set_Trigger("Idle_To_Attack");
+							if (2 == m_iAttackCombo)
+								m_tAttackBlackBoard.isEnd = true;
+							m_iAttackCombo++;
+						}
+					}
+					}
 
+				}
+				else {	// 콤보(3회)가 끝났을 때 설렁설렁 걸어다님(휴식)
+					m_iAttackCombo = 0;
+					m_pStateMachine->Set_Trigger("Idle_To_Move");
+				}
 			}
-			else
+			else {		// 첫 딜사이클 들어갈때
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+				m_iAttackCombo++;
+			}
 
 			m_vIdleTime.y = 0.f;
 		}
 	}
-
 }
 
 void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
-	if (true == m_tTargetingInfo.isDetected)
-		m_pStateMachine->Set_Bool("Chase", false);
-	else
+	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
+		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
 		m_pStateMachine->Set_Bool("Chase", true);
 
+	
+	if (true == m_pStateMachine->Get_Bool("Chase") &&
+		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
+		m_pStateMachine->Set_Bool("Chase", false);
 }
 
 void CThugBulkyEnforcer::RotateToPlayer(const _float dt)
@@ -432,4 +498,11 @@ void CThugBulkyEnforcer::RotateToPlayer(const _float dt)
 	}
 
 	m_pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle) * m_fRotateSpeed);
+}
+
+void CThugBulkyEnforcer::ManageAttackHistory()
+{
+	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
+	if (5 <= iSize)
+		m_AttackHistory.pop_back();
 }

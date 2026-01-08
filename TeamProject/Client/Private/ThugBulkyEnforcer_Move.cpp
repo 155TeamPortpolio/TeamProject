@@ -19,16 +19,42 @@ void CThugBulkyEnforcer_Move::Enter(CThugBulkyEnforcer* pOwner)
 
 	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 
-	_int iMovePatternIndex = pOwner->Get_StateMachine()->Get_Int("MovePattern");
-	if (0 != iMovePatternIndex) {
-		ChangeMovePatternFromIndex(iMovePatternIndex);
+	auto pOwnerStateMachine = pOwner->Get_StateMachine();
+
+	_int iMovePatternIndex = -1;
+
+	if (-1 != pOwner->Get_StateMachine()->Get_Int("MovePattern")) {
+		iMovePatternIndex = pOwner->Get_StateMachine()->Get_Int("MovePattern");
 		pOwner->Get_StateMachine()->Set_Int("MovePattern", -1);
 	}
-	
-	
+	else if (true == pOwnerStateMachine->Get_Bool("Sidestep")) {
+		auto& info = pOwner->GetTargetingInfo();
+		_vector vSelfRight = XMVector3Normalize(pOwner->Get_Component<CTransform>()->Dir(Engine::STATE::RIGHT));
+		_vector vDirToTarget = XMVector3Normalize(XMLoadFloat3(&info.vDirToTarget));
+		_float fDot = XMVectorGetX(XMVector3Dot(vSelfRight, vDirToTarget));
 
+		if (fDot >= 0.f)
+			iMovePatternIndex = MOVEINDEX::SideStep_L;
+		else
+			iMovePatternIndex = MOVEINDEX::SideStep_R;
 
+		pOwnerStateMachine->Set_Bool("Sidestep", false);
+	}
+	else if (true == pOwnerStateMachine->Get_Bool("Evade")) {
+		iMovePatternIndex = MOVEINDEX::Evade;
+		pOwnerStateMachine->Set_Bool("Evade", false);
+	}
+	else {
+		iMovePatternIndex = Helper::Get_Random_Int(3, 7);
+	}
 
+	ChangeMovePatternFromIndex(iMovePatternIndex);
+
+	//iMovePatternIndex = pOwner->Get_StateMachine()->Get_Int("MovePattern");
+	//if (0 != iMovePatternIndex) {
+	//	ChangeMovePatternFromIndex(iMovePatternIndex);
+	//	pOwner->Get_StateMachine()->Set_Int("MovePattern", -1);
+	//}
 	
 	//ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 
@@ -100,17 +126,17 @@ void CThugBulkyEnforcer_Move::ChangeMovePatternFromIndex(_int iMoveIndex)
 {
 	switch (static_cast<MOVEINDEX>(iMoveIndex))
 	{
-	case Client::CThugBulkyEnforcer_Move::Walk_Left:
-		m_pSubStateMachine->Change_State("Walk_Left");
-		break;
-	case Client::CThugBulkyEnforcer_Move::Walk_Right:
-		m_pSubStateMachine->Change_State("Walk_Right");
-		break;
 	case Client::CThugBulkyEnforcer_Move::Walk_Front:
 		m_pSubStateMachine->Change_State("Walk_Front");
 		break;
 	case Client::CThugBulkyEnforcer_Move::Walk_Back:
 		m_pSubStateMachine->Change_State("Walk_Back");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_Left:
+		m_pSubStateMachine->Change_State("Walk_Left");
+		break;
+	case Client::CThugBulkyEnforcer_Move::Walk_Right:
+		m_pSubStateMachine->Change_State("Walk_Right");
 		break;
 	case Client::CThugBulkyEnforcer_Move::Walk_RF_LFoot:
 		m_pSubStateMachine->Change_State("Walk_RF_LFoot");
@@ -187,6 +213,11 @@ void CThugBulkyEnforcer_Move::RandomWalk(ATTACK_BLACK_BOARD& blackBoard, _int iW
 		break;
 	}
 	}
+}
+
+_int CThugBulkyEnforcer_Move::DecideSidestep(CThugBulkyEnforcer* pOwner)
+{
+	return _int();
 }
 
 /*============================================================================*/
