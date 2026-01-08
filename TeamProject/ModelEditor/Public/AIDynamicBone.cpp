@@ -92,7 +92,7 @@ void CAIDynamicBone::Render_GUI()
 		auto& group = m_ChainGroups[groupIndex];
 		ImGui::PushID(groupIndex);
 		const bool selected = (m_Gui.selectedGroupIndex == groupIndex);
-		string header = to_string(group.RootBoneIndex) + "  [Chains: " + to_string(group.Chains.size()) + "]";
+		string header = to_string(group.AnchorBoneIndex) + "  [Chains: " + to_string(group.Chains.size()) + "]";
 		if (ImGui::Selectable(header.c_str(), selected))
 		{
 			m_Gui.selectedGroupIndex = groupIndex;
@@ -130,8 +130,8 @@ void CAIDynamicBone::Render_GUI()
 	{
 		auto& group = m_ChainGroups[m_Gui.selectedGroupIndex];
 
-		ImGui::Text("Selected Group: %s", to_string(group.RootBoneIndex).c_str());
-		ImGui::Text("RootBoneIndex: %d", (int)group.RootBoneIndex);
+		ImGui::Text("Selected Group: %s", to_string(group.AnchorBoneIndex).c_str());
+		ImGui::Text("AnchorBoneIndex: %d", (int)group.AnchorBoneIndex);
 		ImGui::Separator();
 
 		// --- 그룹 파라미터 ---
@@ -214,20 +214,20 @@ _bool CAIDynamicBone::FilterBone(const string& name)
 }
 
 /* 체인을 새로 생성하는 함수 */
-HRESULT CAIDynamicBone::Create_Chain(_int RootIndex)
+HRESULT CAIDynamicBone::Create_Chain(_int AnchorIndex)
 {
-	if (-1 == RootIndex) return E_FAIL;
+	if (-1 == AnchorIndex) return E_FAIL;
 
 	for (auto Group : m_ChainGroups) {
-		if (RootIndex == Group.RootBoneIndex)
+		if (AnchorIndex == Group.AnchorBoneIndex)
 			return S_OK;
 	}
 
 	DYNAMIC_CHAIN_GROUP Group;
-	Group.RootBoneIndex = RootIndex;
+	Group.AnchorBoneIndex = AnchorIndex;
 
 	vector<_int> Index;
-	Index.push_back(RootIndex);
+	Index.push_back(AnchorIndex);
 
 	Create_Node(Index, Group);
 	m_ChainGroups.push_back(Group);
