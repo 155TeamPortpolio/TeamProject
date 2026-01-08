@@ -2,7 +2,7 @@
 #include "UI_BattleHUD.h"
 
 #include "GameInstance.h"
-#include "TextSlot.h"
+#include "ObjectContainer.h"
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
@@ -38,15 +38,17 @@ void CUI_BattleHUD::Awake()
     CacheHandle(pRoot);
 
     /////////////////////////////////
+    // 데시벨 객체 (클라이언트) 생성해서 루트 프리팹에 자식으로 추가하고 핸들 캐싱
     CUI_Object* pDecibel = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_Decibel" })
         .Offset(_float2(68.f, 136.f))
         .Build("decibel");
     if (pDecibel)
     {
-        pGameInstance->Get_UIMgr()->Add_UIObject(pDecibel, strCurrentLevel);
+        pRoot->Get_Component<CObjectContainer>()->Add_Child(pDecibel);
         m_hChildren[PREFAB::ULTIMATE1] = pDecibel->Get_Handle();
     } 
-
+    /////////////////////////////////
+  
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
