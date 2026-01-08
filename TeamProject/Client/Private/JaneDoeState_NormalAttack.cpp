@@ -26,7 +26,7 @@ void CJaneDoeState_NormalAttack::Enter(CJaneDoe* pOwner)
         // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
         vector<CStateMachine<CJaneDoe>::CONDITION_INFO> comboConditions;
         comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "NextCombo", 0.f });
-        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END, "", 0.f });
+        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TIME_GREATER, "", 0.6f });
 
         m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
         m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
@@ -74,6 +74,7 @@ void CJaneDoeState_Attack_01::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_01")
         .Speed(2.f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
@@ -93,6 +94,7 @@ void CJaneDoeState_Attack_02::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_02")
         .Speed(2.f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
@@ -112,6 +114,7 @@ void CJaneDoeState_Attack_03::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_03")
         .Speed(1.5f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
@@ -131,6 +134,7 @@ void CJaneDoeState_Attack_04::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_04")
         .Speed(2.f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
@@ -150,6 +154,7 @@ void CJaneDoeState_Attack_05::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_05")
         .Speed(1.5f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
@@ -170,6 +175,7 @@ void CJaneDoeState_Attack_06::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_06")
         .Speed(1.5f)
+        .ReserveSpeed(0.6, 1.0, 0.6, EaseType::Linear)
         .Apply();
 }
 
