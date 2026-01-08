@@ -178,6 +178,7 @@
     <ClInclude Include="..\Public\CorinState_Run.h" />
     <ClInclude Include="..\Public\CorinState_RushAttack.h" />
     <ClInclude Include="..\Public\CorinState_Walk.h" />
+    <ClInclude Include="..\public\DataBase.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="..\Private\CorinState_Run.cpp" />
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />

@@ -13,18 +13,6 @@ class CBattleSystem final : public CBase
 public:
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
 
-	struct MonsterCreationDesc {
-		string	ProtoTag = {};
-		string	DisplayName = {};
-		_float	CCT_fHeight = {};
-		_float	CCT_fRadius = {};
-		_float3 CCT_vPos = {};
-
-		_uint	CCT_iCollisionMask = 0xFFFFFFFF;
-		_bool	CCT_bAutoFit = { false };
-		COLLISION_GROUP CCT_eGroup = COLLISION_GROUP::MONSTER;
-	};
-
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -33,7 +21,7 @@ public:
 	void Update();
 
 public:
-	void SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
+	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 
 	_bool	GetActive() { return m_isActive; }
 	/* PLAYER, MONSTER, ENVOBJECT
@@ -45,7 +33,6 @@ public:
 
 public:
 	void	SetActive(_bool is) { m_isActive = is; }
-	HRESULT	LoadMonsterCreationTable(const string& csvPath);
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시

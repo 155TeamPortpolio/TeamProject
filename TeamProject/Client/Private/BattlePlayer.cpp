@@ -2,6 +2,7 @@
 #include "BattlePlayer.h"
 
 #include "BattleSystem.h"
+#include "DataBase.h"
 #include "Character.h"
 
 CBattlePlayer::CBattlePlayer()
@@ -16,6 +17,7 @@ void CBattlePlayer::SetBattleCharacters(vector<_uint> battleCharacters)
 HRESULT CBattlePlayer::Initialize()
 {
 	CBattleSystem::GetInstance()->SetBattlePlayer(this);
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc("Miyabi");
 	return S_OK;
 }
 

@@ -400,6 +400,9 @@
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03. Utility\05. DataBase">
+      <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -793,6 +796,9 @@
     <ClInclude Include="..\public\BattlePlayer.h">
       <Filter>02. GameObject\Object\Player\BattlePlayer</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\DataBase.h">
+      <Filter>03. Utility\05. DataBase</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1174,6 +1180,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BattlePlayer.cpp">
       <Filter>02. GameObject\Object\Player\BattlePlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\DataBase.cpp">
+      <Filter>03. Utility\05. DataBase</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -25,7 +25,7 @@ public:
 
 private:
     unordered_map<string, class CCharacter*> m_BattleCharacters;
-    CCharacter* m_pCurrentCharacter = nullptr;
+    class CCharacter* m_pCurrentCharacter = nullptr;
 
 public:
     static CBattlePlayer* Create();

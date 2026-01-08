@@ -21,7 +21,7 @@ public:
 
 private:
     //class CFieldPlayer*   m_pFieldPlayer;
-    class CBattlePlayer*  m_pBattlePlayer;
+    class CBattlePlayer*  m_pBattlePlayer = nullptr;
 
 public:
     static CPlayer* Create();
