@@ -27,10 +27,12 @@ void CDynamicBone::Init_Update()
 		Matrix OwnerWorldMat = m_pOwner->Get_WorldMatrix();
 
 		Group.PrevAnchorCombinedPos = Group.CurAnchorCombinedPos =
-			m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+			//m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+			m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
 
 		Group.PrevAnchorCombinedQuat = Group.CurAnchorCombinedQuat =
-			m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+			//m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+			m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
 		
 		if (Group.bWorldSpace) {
 			Group.PrevAnchorWorldPos = Group.CurAnchorWorldPos =
@@ -44,7 +46,8 @@ void CDynamicBone::Init_Update()
 			for (_int i = 0; i < (_int)Chain.Nodes.size(); ++i) {
 				auto& Node = Chain.Nodes[i];
 
-				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+				//_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+				_vector3 curPos = m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Node.BoneIndex);
 				Node.CombinedPrevPos = Node.CombinedCurPos = curPos;
 
 				if (Group.bWorldSpace) {
@@ -135,8 +138,8 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 
 void CDynamicBone::Update_WorldAnchor(DYNAMIC_CHAIN_GROUP& Group)
 {
-	Group.CurAnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
-	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedPos = m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
 
 	Group.PrevAnchorWorldPos = Group.CurAnchorWorldPos;
 	Group.PrevAnchorWorldQuat = Group.CurAnchorWorldQuat;
@@ -156,7 +159,7 @@ void CDynamicBone::Update_WorldNodes(DYNAMIC_CHAIN_GROUP& Group)
 
 			// 애니메이션 로컬 위치
 			Node.CombinedCurPos =
-				m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+				m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED,Node.BoneIndex);
 
 			// 이번프레임 그 본의 월드위치
 			Node.AnimWorldPos =
@@ -240,7 +243,7 @@ void CDynamicBone::ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group)
 			_quaternion parentWorldQuat =
 				(i == 0)
 				? Group.CurAnchorWorldQuat
-				: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+				: m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Chain.Nodes[i].ParentIndex);
 			
 			parentWorldQuat.Normalize(); parentWorldQuat;
 			/* ---------- 기준 방향 ---------- */
@@ -284,11 +287,11 @@ void CDynamicBone::LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 			/* 부모의 Combined된 위치와 회전을 갖고옴 */
 			_vector3 parentPos =
 				(i == 0) ?
-				m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+				m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex) :
 				Chain.Nodes[i - 1].CombinedCurPos;
 
 			_quaternion parentQuat =
-				m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+				m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Chain.Nodes[i].ParentIndex);
 
 			/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
 			Simulate_LocalNode(
@@ -307,8 +310,8 @@ void CDynamicBone::LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 
 void CDynamicBone::Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group)
 {
-	Group.CurAnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
-	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedPos = m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
 }
 
 void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
@@ -367,13 +370,13 @@ void CDynamicBone::ApplySimulatedLocalNode(DYNAMIC_CHAIN_GROUP& Group)
 			/* 이 노드는 어느 본에 매달려있는지?  ex) 1번노드 => 0번노드(루트노드) 본에 매달림 */
 			_vector3 parentPos =
 				(i == 0) ?
-				m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+				m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex) :
 				Chain.Nodes[i - 1].CombinedCurPos;
 
 			/* 부모는 어느방향을 바라보고 있는지?*/
 			/* 부모->자식의 방향이 필요하기에 그냥 Combined에서 회전만 갖고와도 무방 */
 			_quaternion parentQuat =
-				m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+				m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Chain.Nodes[i].ParentIndex);
 
 			/* RestLocal은 부모 본 로컬기준이고 비교대상은 Combined 모델스페이스상 방향이기에 */
 			/* 실제로 부모가 회전한 만큼 기준을 돌려서 Combined 기준의 방향을 만들어줌 */

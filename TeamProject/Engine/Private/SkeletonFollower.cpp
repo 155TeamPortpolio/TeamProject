@@ -105,8 +105,11 @@ HRESULT CSkeletonFollower::ReLink_WithMaster()
 
 void CSkeletonFollower::Sync_Bones(_float dt)
 {
-	auto& masterFinalVec = m_pMasterAnimator->Get_CombinedBoneMatrices();        // SkinMatrix (World*Offset)
-	auto& masterCombinedVec = m_pMasterAnimator->Get_CombinedBoneMatrices(); // Combined (World)
+	//auto& masterFinalVec = m_pMasterAnimator->Get_CombinedBoneMatrices();        // SkinMatrix (World*Offset)
+	//auto& masterCombinedVec = m_pMasterAnimator->Get_CombinedBoneMatrices(); // Combined (World)
+
+	auto& masterFinalVec = m_pMasterAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED);    // SkinMatrix (World*Offset)
+	auto& masterCombinedVec = m_pMasterAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED); // Combined (World)
 
 	for (size_t i = 0; i < m_ReflectedIndices.size(); i++)
 	{
