@@ -1485,6 +1485,10 @@ void CAnimator3D::GUI_ShowLayerInfo()
 		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
 
 	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, iDuration);
+
+	ImGui::Text("Speed ");
+	ImGui::SameLine();
+	ImGui::DragFloat("##Speed", &curLayer.fAnimSpeed, 0.01f, 0.f, 10.f, "%.2f");
 	ImGui::EndChild();
 }
 
