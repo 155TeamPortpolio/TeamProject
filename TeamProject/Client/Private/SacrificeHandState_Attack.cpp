@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SacrificeHandState_Attack.h"
 #include "SacrificeHand.h"
+#include "Sacrifice.h"
+#include "Child.h"
 
 void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 {
@@ -164,6 +166,14 @@ void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.4f).Apply();
+
+	auto pTrasform = pOwner->Get_Component<CTransform>();
+	CSacrifice* pParent = static_cast<CSacrifice*>(pOwner->Get_Component<CChild>()->Get_Parent());
+
+	_vector3 vTargetPosition = pParent->GetTargetingInfo().vTargetPos;
+	pTrasform->LookAt(vTargetPosition);
+	_vector3 vLook = pTrasform->Dir(STATE::LOOK);
+	pTrasform->Set_Pos(vTargetPosition - vLook * 16.f);
 
 	m_IsActiveHand = false;
 }

@@ -14,9 +14,7 @@ void CSacrificeState_Attack_Phase2::Enter(CSacrifice* pOwner)
 		Register_Transitions();
 	}
 
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	BuildPattern(pOwner, blackBoard);
-	blackBoard.isRequestNext = true;
+	BuildPattern(pOwner);
 
 	__super::Enter(pOwner);
 }
@@ -84,11 +82,12 @@ void CSacrificeState_Attack_Phase2::Register_Transitions()
 {
 }
 
-void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLACK_BOARD& blackBoard)
+void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 {
-	blackBoard.stateQueue.clear();
-	blackBoard.isChainOpen = false;	
-	blackBoard.isRequestNext = false;	
+	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+
+	blackBoard.stateQueue.clear();	
 
 	if (pOwner->IsOverDrive())
 	{
@@ -107,8 +106,7 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLAC
 	}
 	else
 	{
-		_uint iRandIndex = Helper::Get_Random_Int(0, 5);
-		//iRandIndex = 2;
+		_uint iRandIndex = Helper::Get_Random_Int(0, 3);
 		switch (iRandIndex)
 		{
 		case 0:
@@ -146,6 +144,8 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner, ATTACK_BLAC
 			break;
 		}
 	}
+
+	blackBoard.isRequestNext = true;
 }
 
 void CSacrificeState_Attack_01_Phase2::Enter(CSacrifice* pOwner)

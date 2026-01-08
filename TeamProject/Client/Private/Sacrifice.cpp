@@ -236,14 +236,18 @@ void CSacrifice::Phase1Attack()
 	auto pHand = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Hand");
 	static_cast<CSacrificeHand*>(pHand)->Phase1Attack();
 
-	_vector3 vPosition = m_pTransform->Get_WorldPos();
-	_vector3 vLook = m_pTransform->Dir(STATE::LOOK);
-	vPosition -= vLook * 8.f;
-	_vector4 vQuaternion = m_pTransform->Get_QuaternionRotate();
-
 	auto pHandTransform = pHand->Get_Component<CTransform>();
-	pHandTransform->Set_WorldPos(vPosition);
-	pHandTransform->Set_Quaternion(vQuaternion);
+
+	_vector3 vCurrPosition = m_pTransform->Get_Pos();
+	_vector3 vTargetPosition = m_tTargetingInfo.vTargetPos;
+	pHandTransform->Set_Pos(vCurrPosition);
+	pHandTransform->LookAt(vTargetPosition);
+
+	_vector3 vHandLook = pHandTransform->Dir(STATE::LOOK);
+	_vector3 vPosition = vTargetPosition - vHandLook * 8.f;
+	vPosition.y -= 1.f;
+
+	pHandTransform->Set_Pos(vPosition);
 }
 
 void CSacrifice::Phase2Attack()

@@ -202,12 +202,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
       <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1">
-      <UniqueIdentifier>{3a046367-2f0c-4d32-ae9a-dcc6c15ecfa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
-      <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
       <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
     </Filter>
