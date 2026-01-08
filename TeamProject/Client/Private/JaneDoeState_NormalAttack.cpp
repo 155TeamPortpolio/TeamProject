@@ -26,7 +26,7 @@ void CJaneDoeState_NormalAttack::Enter(CJaneDoe* pOwner)
         // 콤보 전이: Trigger + AnimEnd : 애니매이션중 마우스가 눌렸고 애니매이션이 끝나면 다음 재생
         vector<CStateMachine<CJaneDoe>::CONDITION_INFO> comboConditions;
         comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "NextCombo", 0.f });
-        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_TIME_GREATER, "", 0.6f });
+        comboConditions.push_back({ CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.7f });
 
         m_pSubStateMachine->Register_Transition("Attack_01", "Attack_02", comboConditions);
         m_pSubStateMachine->Register_Transition("Attack_02", "Attack_03", comboConditions);
