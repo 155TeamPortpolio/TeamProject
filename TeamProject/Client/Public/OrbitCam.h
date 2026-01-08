@@ -85,8 +85,6 @@ public:
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake()                     override;
     virtual void    Priority_Update(_float dt)  override;
-    virtual void    Update(_float dt)           override {}
-    virtual void    Late_Update(_float dt)      override {}
     virtual void    Render_GUI()                override;
 
 public:
@@ -113,7 +111,6 @@ private:
 public:
     static  COrbitCam*   Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() override { __super::Free(); }
 };
 
 NS_END

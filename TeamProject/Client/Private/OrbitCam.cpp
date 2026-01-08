@@ -4,17 +4,11 @@
 #include "CharacterController.h"
 #include "Character.h"
 #include "GUIUtil.h"
+#include "Helper_Func.h"
 
 namespace
 {
     using Profile = COrbitCam::Profile;
-
-    float WrapDeg(float deg)
-    {
-        while (deg >  180.f) deg -= 360.f;
-        while (deg < -180.f) deg += 360.f;
-        return deg;
-    }
 
     Profile FieldPreset()
     {
@@ -69,6 +63,7 @@ void COrbitCam::Awake()
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
     cc->Set_SlopeLimit(0.f);
+    cc->Set_MinMoveDist(0.01f);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
@@ -414,7 +409,7 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
     if (localZ < 0.f && fabsf(localZ) > fabsf(localX)) return;
 
     const float desiredYawDeg = XMConvertToDegrees(atan2f(delta.x, delta.z));
-    const float deltaYawDeg = WrapDeg(desiredYawDeg - pose.targetRotDeg.x);
+    const float deltaYawDeg = Math::WrapDeg(desiredYawDeg - pose.targetRotDeg.x);
 
     float a = 1.f - expf(-profile.autoYawFollowSpeed * dt);
     a = clamp(a, 0.f, 1.f);
