@@ -118,9 +118,12 @@ public:
 
 private:
 	_bool m_IsAttackStart = false;
-	_bool m_IsAttackEnd = false;
-};
+	_bool m_IsAttackEnd = false;	
+	_bool m_IsJumpStart = false;
 
+	_float3 m_vFirstTargetPosition{};
+	_float3 m_vSecondTargetPosition{};
+};
 class CSacrificeState_Attack_Charge_Start_Phase2 : public IHState<CSacrifice>
 {
 public:
