@@ -56,6 +56,12 @@ void CAnimModel::Priority_Update(_float dt)
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 	if (input->Key_Down(VK_UP))
 		m_pTransform->Translate(m_pTransform->Dir(STATE::LOOK) * dt);
+	if (input->Key_Down(VK_DOWN))
+		m_pTransform->Translate(-m_pTransform->Dir(STATE::LOOK) * dt);
+	if (input->Key_Down(VK_RIGHT))
+		m_pTransform->Translate(m_pTransform->Dir(STATE::RIGHT) * dt);
+	if (input->Key_Down(VK_LEFT))
+		m_pTransform->Translate(-m_pTransform->Dir(STATE::RIGHT) * dt);
 }
 
 void CAnimModel::Update(_float dt)
