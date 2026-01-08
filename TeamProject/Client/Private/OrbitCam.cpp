@@ -13,7 +13,7 @@ namespace
     Profile FieldPreset()
     {
         Profile p{};
-        p.minDist = 3.f;
+        p.minDist = 1.f;
         p.maxDist = 5.5f;
 
         p.rotSmoothSpeed = 22.f;
@@ -32,7 +32,7 @@ namespace
     Profile BattlePreset()
     {
         Profile p{};
-        p.minDist = 3.f;
+        p.minDist = 1.f;
         p.maxDist = 6.0f;
 
         p.rotSmoothSpeed = 16.f;
@@ -57,9 +57,11 @@ namespace
 
 void COrbitCam::Awake()
 {
+    //CCÀÌÁö¶ö¤»
     auto cc = Get_Component<CCharacterController>();
+    //Á¦Çö¾Æ free() »©¸Ô¾ú´Ù.
 
-    cc->Resize(0.1f, 0.2f);
+    cc->Resize(0.2f, 0.2f);
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
     cc->Set_SlopeLimit(0.f);
@@ -358,12 +360,22 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     const PxExtendedVec3& c1 = cc->Get_Controller()->getPosition();
     const Vector3 newPos((float)c1.x, (float)c1.y, (float)c1.z);
 
-    const Vector3 toPivot = pivot - newPos;
-    pose.curDist = toPivot.Length();
+    float actualDist = (pivot - newPos).Length();
+    actualDist = clamp(actualDist, profile.minDist, profile.maxDist);
+
+    float delta = actualDist - pose.curDist;
+
+    float maxStep = 0.f;
+    if (delta < 0.f) maxStep = profile.collisionZoomInSpeed * dt;
+    else maxStep = profile.collisionZoomOutSpeed * dt;
+
+    delta = clamp(delta, -maxStep, maxStep);
+    pose.curDist += delta;
 
     m_pTransform->Set_WorldPos(XMVectorSet((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
+
 
 void COrbitCam::UpdateAutoYawFollow(_float dt)
 {
