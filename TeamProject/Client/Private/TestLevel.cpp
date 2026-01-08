@@ -292,8 +292,8 @@ void CTestLevel::Ready_Camera()
 	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
 	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
-	m_freeCamHandle  = freeCam->Get_Handle();
 	m_orbitCamHandle = orbitCam->Get_Handle();
+	m_freeCamHandle  = freeCam->Get_Handle();
 	m_seqCamHandle   = sequenceCam->Get_Handle();
 
 	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));

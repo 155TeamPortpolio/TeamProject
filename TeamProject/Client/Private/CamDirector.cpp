@@ -90,7 +90,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     {
         auto refObj = ObjectManger()->Request_Object(m_spaceRefHandle);
         auto cc     = refObj->Get_Component<CCharacterController>();
-        camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize(), 0.f});
+        camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
     }
     else
         camComp->Clear_ViewOffset();
