@@ -37,6 +37,16 @@ void CUI_BattleHUD::Awake()
     // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
     CacheHandle(pRoot);
 
+    /////////////////////////////////
+    CUI_Object* pDecibel = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_Decibel" })
+        .Offset(_float2(68.f, 136.f))
+        .Build("decibel");
+    if (pDecibel)
+    {
+        pGameInstance->Get_UIMgr()->Add_UIObject(pDecibel, strCurrentLevel);
+        m_hChildren[PREFAB::ULTIMATE1] = pDecibel->Get_Handle();
+    } 
+
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);

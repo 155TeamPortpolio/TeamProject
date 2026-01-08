@@ -431,7 +431,7 @@
                             }
                         },
                         {
-                            "instanceName": "ultimateBg",
+                            "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
@@ -465,7 +465,7 @@
                             "textureTag": "RoleHPFill03.png"
                         },
                         {
-                            "instanceName": "ultimate1",
+                            "instanceName": "special1",
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
