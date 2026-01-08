@@ -211,27 +211,6 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
       <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
-      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Button">
-      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Gauge">
-      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Image">
-      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
-      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
-      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Text">
-      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Anbi">
       <UniqueIdentifier>{15fd906f-39ec-473b-adfa-7de7028bbd2e}</UniqueIdentifier>
     </Filter>
@@ -343,9 +322,6 @@
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\UIElement\Mask">
-      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe">
       <UniqueIdentifier>{49f60698-ec23-4af5-83e4-adab20e62d31}</UniqueIdentifier>
     </Filter>
@@ -420,6 +396,9 @@
     </Filter>
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\BattlePlayer">
+      <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -808,6 +787,12 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\Player.h">
+      <Filter>02. GameObject\Object\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BattlePlayer.h">
+      <Filter>02. GameObject\Object\Player\BattlePlayer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1184,5 +1169,11 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\Private\Player.cpp">
+      <Filter>02. GameObject\Object\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BattlePlayer.cpp">
+      <Filter>02. GameObject\Object\Player\BattlePlayer</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
