@@ -25,7 +25,7 @@ typedef struct DynamicBoneNode
 typedef struct DynamicBoneChainParam
 {
     _float fStiffness    = { 0.1f };     // 0~1 (강성)
-    _float fDamping      = { 0.2f };     // 0~1 (점성)
+    _float fDamping      = { 0.1f };     // 0~1 (점성)
     _float fElasticity   = { 0.1f };     // 
     _float fInert        = { 0.1f };     // 0~1 (감쇠)
     _float fGravityScale = { 1.0f };     // 중력 배율

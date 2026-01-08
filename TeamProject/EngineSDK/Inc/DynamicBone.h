@@ -36,7 +36,6 @@ protected:
         const _quaternion& AnchorDeltaQuat);
     void Simulate_WorldNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
-        const _vector3& AnchorDelta,
         const CHAIN_PARAM& ChainParam,
         _float dt);
     void ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group);

@@ -103,14 +103,9 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 		for (auto& Node : Chain.Nodes) {
 			/* 부모의 월드 위치와 회전을 갖고옴 */
 			/* 이전 포지션도을 돌리는 이유는 앵커의 회전속도는 월드 변한거라
-				다이나믹본의 계산 속도에 섞이면 안됌 */
+				다이나믹본의 계산 속도에 섞이면 안됌 같은 좌표계에 일치시키기 위해 둘다 이전 앵커포즈로 */
 			/* ex) 기차에서 공굴릴때 기차속도가 공이 굴러가는 속도에 영향이 가면안됌 */
 			Calc_DynamicPos(Node.DynamicCurPos,
-				Group.PrevAnchorWorldPos,
-				AnchorDeltaPos,
-				AnchorDeltaQuat);
-
-			Calc_DynamicPos(Node.DynamicPrevPos,
 				Group.PrevAnchorWorldPos,
 				AnchorDeltaPos,
 				AnchorDeltaQuat);
@@ -121,15 +116,13 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 	for (auto& Chain : Group.Chains) {
 		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
 			_vector3 parentPos =
-				(i == 0) ?
-				Group.CurAnchorWorldPos :
-				Chain.Nodes[i - 1].DynamicCurPos;
+				(i == 0) ?	Group.CurAnchorWorldPos :
+							Chain.Nodes[i - 1].DynamicCurPos;
 
 			/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
 			Simulate_WorldNode(
 				Chain.Nodes[i],
 				parentPos,
-				Chain.Nodes[i].AnimWorldPos,
 				Group.ChainParam,
 				dt
 			);
@@ -194,7 +187,7 @@ void CDynamicBone::Calc_DynamicPos(_vector3& DynamicPos, const _vector3& AnchorP
 	DynamicPos = pivot + v + AnchorDeltaPos;
 }
 
-void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parentPos, const _vector3& AnchorDelta, const CHAIN_PARAM& ChainParam, _float dt)
+void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parentPos, const CHAIN_PARAM& ChainParam, _float dt)
 {
 	/* 현재 / 이전 위치 */
 	_vector3 curPos = Node.DynamicCurPos;
@@ -206,6 +199,10 @@ void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parent
 	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
 	Velocity *= (1.f - ChainParam.fDamping);
 
+	/* 복원력(Stiffness) : 미리 구해둔 RestLocalDir로 점점 돌아오는 힘 */
+	Vector3 follow = Node.AnimWorldPos - curPos;
+	Velocity += follow * ChainParam.fStiffness;
+
 	/* 중력(Gravity) : y축으로 아래로 떨어질 수 있도록*/
 	//vector3 worldGravity = _vector3::TransformNormal(_vector3(0.f, -1.f, 0.f), m_pOwner->Get_WorldMatrix());
 	//Velocity += worldGravity * ChainParam.fGravityScale * dt;
@@ -213,21 +210,12 @@ void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parent
 	/* 위에 모든 계산을 한 예측된 다음 위치*/
 	_vector3 nextPos = curPos + Velocity;
 
-	/* 부모로부터 멀어지면 안되니 부모뼈 위치에서 계산 뼈가 길어지면 안돼잖음
+	/* 부모로부터 멀어지면 안되니 부모뼈 위치에서 계산 뼈가 길어지면 안돼잖음 그래서 길이제한을 함
 	(부모->노드)의 방향을 구하고 부모로부터 길이만큼 곱한 위치가 진짜 위치가 될거임*/
 	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
 
-	/* 복원력(Stiffness) : 미리 구해둔 RestLocalDir로 점점 돌아오는 힘 */
-	/* 여기 들어오기 전 init때 월드를 곱했기에 별도로 부모에 월드를 곱할필요가없음 */
-	//_vector3 restDir =
-	//	_vector3::Transform(Node.RestLocalDir, parentQuat);
-	//restDir.Normalize();
-	//
-	//dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
-	//dir.Normalize();
-
-	/* 본의 길이는 달라지면 안되니 재계산*/
+	/* 본의 길이는 달라지면 안되니 재계산 */
 	nextPos = parentPos + dir * Node.fLength;
 
 	// 상태 갱신
@@ -597,14 +585,15 @@ void CDynamicBone::Render_GUI()
 	{
 		ImGuizmo::SetGizmoSizeClipSpace(0.005f);
 
-		for (auto& Chain : m_ChainGroups[0].Chains) {
+		for (auto Group : m_ChainGroups) {
 			Render_DynamicBone(
-				m_ChainGroups[0].CurAnchorWorldPos,
+				Group.CurAnchorWorldPos,
 				IM_COL32(255, 255, 0, 255)
 			);
-
-			for (auto& Node : Chain.Nodes) {
-				Render_DynamicBone(Node.DynamicCurPos);
+			for (auto& Chain : Group.Chains) {
+				for (auto& Node : Chain.Nodes) {
+					Render_DynamicBone(Node.DynamicCurPos);
+				}
 			}
 		}
 
