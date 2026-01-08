@@ -39,6 +39,8 @@ HRESULT CToolGrid::Initialize(INIT_DESC* pArg)
 
 	__super::Initialize(pArg);
 	CPlaneModel* pModel = Get_Component<CPlaneModel>();
+	pModel->ShadowCast(false);
+
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Grid_Material", "Opaque", m_pDevice);
 

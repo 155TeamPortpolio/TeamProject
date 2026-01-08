@@ -33,6 +33,9 @@ public:
 
 public:
     /* For State Machine */
+    void RotateToTarget(_float dt, _float rotateSpeed);
+    void MoveByRootMotion(_float dt, _float moveScale = 1.f);
+
     void ActiveSword();
     void DeactiveSword();
     void ActiveAxe();

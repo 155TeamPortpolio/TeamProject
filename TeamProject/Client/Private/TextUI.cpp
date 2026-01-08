@@ -62,6 +62,8 @@ void CTextUI::Load(const nlohmann::ordered_json& data)
             auto color = textJson.value("outlineColor", json::array({ 1.0f, 1.0f, 1.0f, 1.0f }));
             pTextSlot->Set_OutLine(textJson.value("outlineThickness", 1.f), { color[0], color[1], color[2], color[3] });
         } 
+        auto vShear = textJson.value("shear", json::array({ 0.0f, 0.0f }));
+        Get_Component<CTextSlot>()->Set_Shear({vShear[0], vShear[1]});
     }
 }
 

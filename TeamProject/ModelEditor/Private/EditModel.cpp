@@ -133,14 +133,14 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 		aiProcess_ConvertToLeftHanded |
 		aiProcessPreset_TargetRealtime_Fast | aiProcess_Triangulate| aiProcess_JoinIdenticalVertices;
 
-	/*¸Þ½¬ º´ÇÕ ÇÃ·¡±× ²ô°Ô*/
+	/*ï¿½Þ½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	basFlag &= ~(aiProcess_OptimizeMeshes | aiProcess_OptimizeGraph);
 
 	m_pAIScene = m_Importer.ReadFile(filePath.c_str(), basFlag);
 	if (!m_pAIScene)
 		return E_FAIL;
 
-	// 2)LOD ³ëµå Å½»ö
+	// 2)LOD ï¿½ï¿½ï¿½ Å½ï¿½ï¿½
 
 	auto HasLODNodes = [](const aiNode* root) -> bool
 		{
@@ -169,11 +169,11 @@ HRESULT CEditModel::Load_AIScene(const string& filePath)
 			return recursvieNodeFind(root);
 		};
 
-	/*¾È¿¡ ³ëµå Áß¿¡ LOD°¡ ÇÏ³ª¶óµµ ÀÖ³ª?]*/
+	/*ï¿½È¿ï¿½ ï¿½ï¿½ï¿½ ï¿½ß¿ï¿½ LODï¿½ï¿½ ï¿½Ï³ï¿½ï¿½ï¿½ ï¿½Ö³ï¿½?]*/
 	const _bool hasLOD = HasLODNodes(m_pAIScene->mRootNode);
 	_bool hasBones = HasBones();
 
-	/*LOD ¾ø°í º°°Å ¾øÀ¸¸é ±×³É ¿ø·¡ ·ÎÁ÷´ë·Î ·Îµå*/
+	/*LOD ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½×³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Îµï¿½*/
 	if (m_eMode == MODEL_IMPORT_MODE::AUTO && !hasBones && !hasLOD)
 	{
 		//m_Importer.FreeScene();
@@ -254,7 +254,7 @@ HRESULT CEditModel::Save_AIScene()
 
 		if (m_pAIScene->HasAnimations()) {
 			CAIAnimator3D* pAnimator3D = static_cast<CAIAnimator3D*>(Get_Component<CAnimator3D>());
-			hr = pAnimator3D->Save_Animation(SavePath, Get_WorldMatrix());
+			hr = pAnimator3D->Save_Animation(SavePath, m_pTransform->Get_WorldMatrix_Ptr());
 		}
 	}
 	else {

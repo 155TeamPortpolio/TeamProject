@@ -13,5 +13,8 @@ public:
 public:
 	static CSacrificeState_Evade* Create() { return new CSacrificeState_Evade(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsSpawnEffect = false;
 };
 NS_END

@@ -767,7 +767,7 @@ void CAnimator3D::Set_BoneCombinedQuaternion(_vector4 Quaternion, AnimArg BoneAr
 		XMMatrixAffineTransformation(S, XMVectorZero(), Quaternion, T));
 }
 
-const _float4x4* CAnimator3D::Get_OwnerWorldMatrix()
+Matrix CAnimator3D::Get_OwnerWorldMatrix()
 {
 	return m_pOwner->Get_WorldMatrix();
 }
@@ -1288,8 +1288,6 @@ void CAnimator3D::Update_Layers(_float dt)
 	m_bUpdatedClip = false;
 
 	for (auto& Layer : m_AnimLayers) {
-		Layer.bApplied = false;
-
 		if (Layer.bPause) continue;
 		if (Layer.fLayerWeight <= 0) continue;
 		if (-1 == Layer.iClipIndex) continue;
@@ -1654,8 +1652,6 @@ HRESULT SetAnimBuild::Apply()
 	
 	//레이어, 클립 적용
 	CAnimator3D::ANIM_LAYER& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-	if (Layer.bApplied)
-		return S_OK;
 	
 	Layer.iClipIndex = m_iClipIndex;
 
@@ -1699,7 +1695,6 @@ HRESULT SetAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-	Layer.bApplied = true;
 	return S_OK;
 }
 
@@ -1709,9 +1704,6 @@ HRESULT ChangeAnimBuild::Apply()
 	if (!m_pOwner || !m_pOwner->isExistLayer(m_iLayerIndex) || !m_pOwner->isExistClip(m_iClipIndex))
 		return E_FAIL;
 	auto& Layer = m_pOwner->m_AnimLayers[m_iLayerIndex];
-
-	if (Layer.bApplied)
-		return S_OK;
 
 	//베이스 레이어일 경우 마지막 키프레임 위치, 회전을 갖고옴
 	if (Layer.BaseLayer) {
@@ -1793,7 +1785,6 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
-	Layer.bApplied = true;
 	return S_OK;
 }
 
