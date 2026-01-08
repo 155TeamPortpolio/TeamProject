@@ -76,17 +76,11 @@
     <ClInclude Include="..\public\FirstLevel.h">
       <Filter>01. Level\00. FirstLevel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\SecondLevel.h">
-      <Filter>01. Level\01. SecondLevel</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. Panel\00. CamPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanelData.h">
       <Filter>02. Panel\00. CamPanel</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\RecPanel.h">
-      <Filter>02. Panel\01. RecPanel</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -133,9 +127,6 @@
     </Filter>
     <Filter Include="01. Level\00. FirstLevel">
       <UniqueIdentifier>{e1559102-528c-4204-9823-cea2ba202453}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01. Level\01. SecondLevel">
-      <UniqueIdentifier>{a6cd962e-4b2d-4ae2-9001-8ec1fd792f47}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. Panel\00. CamPanel">
       <UniqueIdentifier>{4223fa56-42b5-4389-a1b8-76b42e1dcf5b}</UniqueIdentifier>
@@ -205,14 +196,8 @@
     <ClCompile Include="..\private\FirstLevel.cpp">
       <Filter>01. Level\00. FirstLevel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\SecondLevel.cpp">
-      <Filter>01. Level\01. SecondLevel</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. Panel\00. CamPanel</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\RecPanel.cpp">
-      <Filter>02. Panel\01. RecPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

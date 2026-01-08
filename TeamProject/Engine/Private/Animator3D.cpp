@@ -510,6 +510,9 @@ void CAnimator3D::Change_TransitionSpeed(_float fTargetSpeed, _float fDuration, 
 	m_AnimLayers[LayerIndex].fTargetSpeed = fTargetSpeed;
 	m_AnimLayers[LayerIndex].fEaseDuration = fDuration;
 	m_AnimLayers[LayerIndex].ePlayEaseType = eEaseType;
+
+	m_AnimLayers[LayerIndex].fAnimSpeed = m_AnimLayers[LayerIndex].fAppliedAnimSpeed;
+	m_AnimLayers[LayerIndex].isUpdateByTime = true;
 }
 
 _quaternion CAnimator3D::Calc_TransformFromEndAnim(const _vector4& vTransformQuat)
@@ -957,27 +960,58 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update Animation
 	auto& nowClip = m_pAnimClips[Layer.iClipIndex];
 
+	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
+
 	//Calc Animation Speed
-	_float AnimSpeed = Layer.fAnimSpeed;
 	if (EaseType::None != Layer.ePlayEaseType) {
-		Layer.fEaseElapsed += dt;
+		if (Layer.isUpdateByTime) {
+			//Change speed by time
+			Layer.fEaseElapsed += dt;
 
-		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+			_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
-		if (1.f <= t) {
-			Layer.fAnimSpeed = AnimSpeed;
-			Layer.ePlayEaseType = EaseType::None;
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+			}
+		}
+		else {
+			//Change speed by Progress
+			_float percent = (Layer.fProgress - Layer.fStartProgress) / (Layer.fEndProgress - Layer.fStartProgress);
+			_float t = min(percent, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+				Layer.isUpdateByTime = false;
+			}
 		}
 	}
 
-	_float playSpeed = dt * AnimSpeed;
+	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
 
 	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+
+	//Reserved Speed
+	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
+		auto Reserve = Layer.ReservedSpeeds.front();
+		Layer.fStartProgress = Reserve.Start;
+		Layer.fEndProgress = Reserve.End;
+		Layer.fTargetSpeed = Reserve.TargetSpeed;
+		Layer.ePlayEaseType = Reserve.Ease;
+		
+		Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+		
+		Layer.ReservedSpeeds.pop();
+		Layer.isUpdateByTime = true;
+	}
 
 	//Bone Extracter
 	if (Layer.BaseLayer) {
@@ -1073,33 +1107,64 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	auto& nextClip = m_pAnimClips[Layer.iNextClipIndex];
 
 	//Calc Animation Speed;
-	_float AnimSpeed = Layer.fAnimSpeed;
+	Layer.fAppliedAnimSpeed = Layer.fAnimSpeed;
+
 	if (EaseType::None != Layer.ePlayEaseType) {
-		Layer.fEaseElapsed += dt;
+		if (Layer.isUpdateByTime) {
+			//Change speed by time
+			Layer.fEaseElapsed += dt;
 
-		_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
-		_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
-		AnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+			_float t = min(Layer.fEaseElapsed / Layer.fEaseDuration, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
 
-		if (1.f <= t) {
-			Layer.fAnimSpeed = AnimSpeed;
-			Layer.ePlayEaseType = EaseType::None;
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+			}
+		}
+		else {
+			//Change speed by Progress
+			_float percent = (Layer.fProgress - Layer.fStartProgress) / (Layer.fEndProgress - Layer.fStartProgress);
+			_float t = min(percent, 1.f);
+			_float Ease = Math::ApplyEase(Layer.ePlayEaseType, t);
+			Layer.fAppliedAnimSpeed = Math::Lerp(Layer.fAnimSpeed, Layer.fTargetSpeed, Ease);
+
+			if (1.f <= t) {
+				Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+				Layer.ePlayEaseType = EaseType::None;
+				Layer.isUpdateByTime = false;
+			}
 		}
 	}
 
-	_float playSpeed = dt * AnimSpeed;
+	_float playSpeed = dt * Layer.fAppliedAnimSpeed;
 
 	//Update TrackPos
 	if (Layer.bUpdate_PrevClip) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, nullptr, m_EventBus);
 	}
 
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, m_EventBus);
+			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+	}
+
+	//Reserved Speed
+	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
+		auto Reserve = Layer.ReservedSpeeds.front();
+		Layer.fStartProgress = Reserve.Start;
+		Layer.fEndProgress = Reserve.End;
+		Layer.fTargetSpeed = Reserve.TargetSpeed;
+		Layer.ePlayEaseType = Reserve.Ease;
+
+		Layer.fAnimSpeed = Layer.fAppliedAnimSpeed;
+
+		Layer.ReservedSpeeds.pop();
+		Layer.isUpdateByTime = true;
 	}
 
 	//Bone Extracter
@@ -1696,6 +1761,8 @@ HRESULT SetAnimBuild::Apply()
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
+	Layer.isUpdateByTime = true;
+	Layer.ReservedSpeeds = m_Reserves;
 
 	//애니매이션이 새로 시작됌
 	Layer.bisFinished = false;
@@ -1744,6 +1811,8 @@ HRESULT ChangeAnimBuild::Apply()
 	Layer.fTargetSpeed = m_fTargetSpeed;
 	Layer.fEaseElapsed = 0.f;
 	Layer.fEaseDuration = m_fEaseDuration;
+	Layer.isUpdateByTime = true;
+	Layer.ReservedSpeeds = m_Reserves;
 
 	//먄약 호출시 클립이 없으면 새로시작
 	if (-1 == Layer.iClipIndex) {

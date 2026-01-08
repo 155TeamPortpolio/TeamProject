@@ -37,12 +37,16 @@ void CFreeCam::Priority_Update(_float dt)
     const float speed = m_fSpeed * dt;
 
     _vector3 move{};
-    if (InputDevice()->Key_Down(VK_UP))                                 move += look    *  speed;
-    if (InputDevice()->Key_Down(VK_DOWN))                               move += look    * -speed;
-    if (InputDevice()->Key_Down(VK_RIGHT))                              move += right   *  speed;
-    if (InputDevice()->Key_Down(VK_LEFT))                               move += right   * -speed;
-    if (InputDevice()->Key_Down(VK_SPACE) && InputDevice()->Key_Down(VK_CONTROL)) move += worldUp *  speed;
-    if (InputDevice()->Key_Down(VK_SHIFT) && InputDevice()->Key_Down(VK_CONTROL)) move += worldUp * -speed;
+    if (InputDevice()->Key_Down(VK_UP))    move += look    *  speed;
+    if (InputDevice()->Key_Down(VK_DOWN))  move += look    * -speed;
+    if (InputDevice()->Key_Down(VK_RIGHT)) move += right   *  speed;
+    if (InputDevice()->Key_Down(VK_LEFT))  move += right   * -speed;
+
+    if (InputDevice()->Key_Down(VK_CONTROL))
+    {
+        if (InputDevice()->Key_Down(VK_SPACE)) move += worldUp *  speed;
+        if (InputDevice()->Key_Down(VK_SHIFT)) move += worldUp * -speed;
+    }
 
     if (move.LengthSquared() > 0.f)
         m_pTransform->Translate({ move.x, move.y, move.z, 0.f });

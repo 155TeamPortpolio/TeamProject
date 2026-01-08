@@ -11,6 +11,13 @@ ENGINE_DLL _vector2 Math::Lerp(_vector2 x, _vector2 y, _float t)
 	return x + (y - x) * t;
 }
 
+ENGINE_DLL _float Math::WrapDeg(_float deg)
+{
+	while (deg > 180.f)  deg -= 360.f;
+	while (deg < -180.f) deg += 360.f;
+	return deg;
+}
+
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 {
 	t = clamp(t, 0.f, 1.f);

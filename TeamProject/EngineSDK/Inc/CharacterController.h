@@ -116,6 +116,9 @@ public:
     _float          Get_RestOffset();
     void            Set_BoundingMinY(_float fMinY);
 
+    void            Set_MinMoveDist(_float fMinMoveDist) { m_fMinMoveDist = fMinMoveDist; }
+    _float          Get_MinMoveDist() const { return m_fMinMoveDist; }
+
     _bool           Shoot_Ray(_fvector vDirection, _float fDistance, PHYSICS_RAY_HIT& hit);
     void            Clear_DebugRay() { m_bShowDebugRay = false; m_DebugRayHit.bHit = false; }
 
@@ -154,6 +157,7 @@ private:
     _float                   m_fBoundingMinY = 0.f;
     _bool                    m_bShowDebugRay = { false };
     PHYSICS_RAY_HIT          m_DebugRayHit = {};
+    _float                   m_fMinMoveDist = 0.0001f;
 
     // 디버그 레이 시각화용
     _float3                  m_vRayStart = {};
