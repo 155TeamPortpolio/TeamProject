@@ -42,6 +42,9 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
+	if (!m_pObjDesc)
+		m_pObjDesc = new UI_DESC;
+
 	m_pObjDesc->InstanceName = instanceKey;
 
 	for (auto& pair : m_CompDesc)
@@ -96,5 +99,12 @@ CUIObjcetBuilder& CUIObjcetBuilder::Anchor(ANCHOR eAnchor)
 CUIObjcetBuilder& CUIObjcetBuilder::Asset(const string& assetKey)
 {
 	m_pObjDesc->UIAssetKey = assetKey;
+	return *this;
+}
+
+CUIObjcetBuilder& CUIObjcetBuilder::Add_UIDesc(UI_DESC* pArg)
+{
+	if (pArg == nullptr) return *this;
+	m_pObjDesc = pArg;
 	return *this;
 }
