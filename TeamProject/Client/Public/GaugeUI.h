@@ -25,6 +25,12 @@ private:
 	_float m_fFillAmount = 1.f;
 	_float m_fDirection  = 1.f;
 
+	GAUGE_OWNER	m_eOwner = { GAUGE_OWNER::END };
+	GAUGE_TYPE	m_eType = { GAUGE_TYPE::END };
+
+private:
+	void Set_Gauge(const GAUGE_DESC& desc);
+
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
