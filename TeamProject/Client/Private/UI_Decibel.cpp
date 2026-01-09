@@ -3,18 +3,45 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Sprite2D.h"
-#include "Texture.h"
 
-const CUI_Decibel::tagUIDesc CUI_Decibel::UIDescs[] =
+#include "UI_DecibelKanji.h"
+#include "UI_DecibelDigits.h"
+
+void CUI_Decibel::Set_Decibel(_int iDecibel)
 {
-    { KANJI,      "CombatUproar.png", 50.f,   0.f, END },
-    { DIGIT_1000, "00.png", 30.f,    0.f,  KANJI },
-    { DIGIT_100,  "01.png", 30.f,     0.f,  DIGIT_1000 },
-    { DIGIT_10,   "02.png", 30.f,   0.f,   DIGIT_100 },
-    { DIGIT_1,    "03.png", 30.f ,   0.f,    DIGIT_10 },
-    { POINT,      "CombatPTS.png", 20.f,  12.f,  DIGIT_1 },
-};
+    if (iDecibel < 0 || iDecibel > 9999)
+        return;
+
+    m_iDecibel = iDecibel;
+
+    auto pKanji = dynamic_cast<CUI_DecibelKanji*>(Get_Slot(ChildSlot::KANJI));
+    auto pDigits = dynamic_cast<CUI_DecibelDigits*>(Get_Slot(ChildSlot::DIGITS));
+
+    // 간지 텍스쳐 셋 하고 (간지에서 분기하는게 나은가?)
+    CUI_DecibelKanji::State kanjiState = { CUI_DecibelKanji::State::NONE };
+
+    if (m_iDecibel >= 3000)
+    {
+        kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;
+    }
+    else if (m_iDecibel >= 2000)
+    {
+        kanjiState = CUI_DecibelKanji::State::COMBAT_BLASTING;
+    }
+    else if (m_iDecibel >= 2000)
+    {
+        kanjiState = CUI_DecibelKanji::State::COMBAT_UPROAR;
+    }
+    else
+    {
+        kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;   //None 처리해야
+    }
+    
+    pKanji->Set_Kanji(kanjiState);      // 데시벨 보내고 안에서 분길하는게 나은가
+    pDigits->Set_Digits(m_iDecibel);
+
+    pDigits->Set_AnchorOffset(_float2(Get_Slot(ChildSlot::KANJI)->Get_PxSize().x, 0.f));
+}
 
 HRESULT CUI_Decibel::Initialize_Prototype()
 {
@@ -29,32 +56,42 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 
     Add_Component<CObjectContainer>();
 
-    auto pGameInstance = CGameInstance::GetInstance();
-    
-    // 높이 50에 맞춰 // 높이 30에 맞춰
-    string strCurrentLevel = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-    for (_int i = 0; i < UI::END; ++i)
-    {
-        CUI_Object* uiObj = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_Image" })
-            .Offset(_float2(i * 200.f, 0.f))
-            .Build("Image");
-    
-        uiObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, CUI_Decibel::UIDescs[i].strTextureTag);
-        _float fRatioAspect = uiObj->Get_Component<CSprite2D>()->Get_CurTexture()->Get_AspectRatio();
-        uiObj->Set_Size(_float2(UIDescs[i].fHeight * fRatioAspect, UIDescs[i].fHeight));
+    Ready_PartObjects();
 
-        Get_Component<CObjectContainer>()->Add_Child(uiObj);
-    }
+    Set_Decibel(m_iDecibel);
 
 	return S_OK;
 }
 
-void CUI_Decibel::Awake()
-{
-}
-
 void CUI_Decibel::Update(_float dt)
 {
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
+        Set_Decibel(m_iDecibel + 12);
+
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
+        Set_Decibel(m_iDecibel - 12);
+}
+
+void CUI_Decibel::Ready_PartObjects()
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    pContainer->Add_Child(
+        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelKanji" })
+        .Build("decibelKanji"));
+
+    pContainer->Add_Child(
+        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelCounter" })
+        .Build("decibelCounter"));
+}
+
+CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
+{
+    auto pContainer = Get_Component<CObjectContainer>();
+
+    return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
 }
 
 CGameObject* CUI_Decibel::Create()

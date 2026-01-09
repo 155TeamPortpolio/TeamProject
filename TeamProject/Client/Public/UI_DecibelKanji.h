@@ -3,18 +3,23 @@
 
 NS_BEGIN(Client)
 
-class CUI_Decibel final : public CUI_Object
+class CUI_DecibelKanji final : public CUI_Object
 {
+public:
+	enum class State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
+
 private:
-	enum class ChildSlot { KANJI, DIGITS, PTS, TEXT, END };
-	
+	static const string KANJI_TEXTURES[ENUM(State::END)];
+
+	enum class ChildSlot { BG, KANJI, END };
+
 private:
-	CUI_Decibel() {}
-	CUI_Decibel(const CUI_Decibel& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Decibel() DEFAULT;
+	CUI_DecibelKanji() {}
+	CUI_DecibelKanji(const CUI_DecibelKanji& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_DecibelKanji() DEFAULT;
 
 public:
-	void Set_Decibel(_int iDecibel);
+	void Set_Kanji(State texture);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,14 +30,12 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	_int			m_iDecibel = {};
+	const _float	m_fHeight = 50.f;
+	const _vector2	m_vPadding = { 10.f, 10.f };
 
-	_vector4		m_vCurrentColor = {};
-	_vector4		m_vTargetColor = {};
-	_float			m_fColorLerpSpeed = { 8.f };
-
-private: 
-	void Ready_PartObjects();
+private:
+	void Set_KanjiTexture(CUI_Object* pKanji, string textureKey);
+	void Set_Layout(CUI_Object* pKanji, CUI_Object* pBg);
 
 	CUI_Object* Get_Slot(ChildSlot slot);
 

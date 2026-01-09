@@ -403,6 +403,12 @@
     <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel">
       <UniqueIdentifier>{c542421d-60e5-4730-a35f-bea8858b044b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Kanji">
+      <UniqueIdentifier>{a85e8ea6-80fb-4ef4-b1db-8cb70354bfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Digits">
+      <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -741,9 +747,6 @@
     <ClInclude Include="..\public\BattleSystem.h">
       <Filter>03. Utility\04. BattleSystem</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MaskUI.h">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Logo.h">
       <Filter>02. GameObject\Object\UI\Logo</Filter>
     </ClInclude>
@@ -794,6 +797,13 @@
     </ClInclude>
     <ClInclude Include="..\public\MaskUI.h">
       <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h" />
+    <ClInclude Include="..\Public\UI_DecibelKanji.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelDigits.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1125,9 +1135,6 @@
     <ClCompile Include="..\private\BattleSystem.cpp">
       <Filter>03. Utility\04. BattleSystem</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MaskUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Logo.cpp">
       <Filter>02. GameObject\Object\UI\Logo</Filter>
     </ClCompile>
@@ -1175,6 +1182,13 @@
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
       <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelKanji.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelDigits.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -17,6 +17,8 @@
 #include "UI_Loading.h"
 #include "UI_BattleHUD.h"
 #include "UI_Decibel.h"
+#include "UI_DecibelKanji.h"
+#include "UI_DecibelDigits.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -125,6 +127,8 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"Loading",			&CUI_Loading::Create		},
 		{"BattleHUD",		&CUI_BattleHUD::Create		},
 		{"Decibel",			&CUI_Decibel::Create		},
+		{"DecibelKanji",	&CUI_DecibelKanji::Create	},
+		{"DecibelDigits",	&CUI_DecibelDigits::Create	},
 	};
 
 	for (const Entry& entry : entries)
