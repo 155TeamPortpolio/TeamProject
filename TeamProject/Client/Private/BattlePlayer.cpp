@@ -35,6 +35,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 		m_BattleCharacters.push({ strCharacter,newCharacter });
 		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
+
 	m_pCurrentCharacter = m_BattleCharacters.front().second;
 
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
@@ -61,6 +62,8 @@ void CBattlePlayer::Priority_Update(_float dt)
 
 void CBattlePlayer::Update(_float dt)
 {
+	_float CurHP = m_pCurrentCharacter->Get_HP();
+	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
 }
 
 void CBattlePlayer::Late_Update(_float dt)

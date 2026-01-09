@@ -12,6 +12,7 @@
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
+#include "JaneDoeState_Switch.h"
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Evade.h"
 
@@ -51,6 +52,9 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Stat()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -62,13 +66,12 @@ void CJaneDoe::Awake()
 	m_pAnimator->Set_MotionBone(16);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
-	m_strName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strName = "JaneDoe";
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
-
-	Initialize_Stat();
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -133,6 +136,7 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
+	m_pStateMachine->Register_State("Switch", CJaneDoeState_Switch::Create());
 
 	return S_OK;
 }
@@ -167,14 +171,19 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	// Switch
+	m_pStateMachine->Register_AnyStateTransition("Switch",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Switch");
+
 	return S_OK;
 }
 
 HRESULT CJaneDoe::Initialize_Stat()
 {
-	auto Desc = CDataBase::GetInstance()->GetPlayerDesc("JaneDoe");
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
 	m_fSpecialGauge = Desc.SpecialAttack;
-	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(Desc.LV);
+
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;

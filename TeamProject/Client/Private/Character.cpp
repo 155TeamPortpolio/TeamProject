@@ -21,8 +21,14 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
-void CCharacter::Process_HP(_float fHP)
+void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 {
+	UI_STATUS_DESC desc = {};
+	desc.eOwner = owner;
+	desc.eType = UI_STATUS_TYPE::HP;
+	desc.fCurValue = fHP;
+	desc.fMaxValue = m_fMaxHP;
+	EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
 
 	Set_HP(fHP);
 }
@@ -139,6 +145,11 @@ _bool CCharacter::Can_Evade() const
 	return true;
 }
 
+_bool CCharacter::Can_Switch() const
+{
+	return _bool();
+}
+
 void CCharacter::Use_Evade()
 {
 	++m_iEvadeCount;
@@ -222,6 +233,7 @@ void CCharacter::Update_Input(_float dt)
 
 	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
+	m_bIsSwitch = InputDevice()->Key_Tap(VK_SPACE) && Can_Switch();
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
