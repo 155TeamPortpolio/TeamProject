@@ -11,6 +11,9 @@ private:
 	virtual ~CGaugeUI() DEFAULT;
 
 public:
+	void Set_Status(UI_STATUS_OWNER eOwner, UI_STATUS_TYPE eType);
+
+public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
@@ -24,6 +27,12 @@ public:
 private:
 	_float m_fFillAmount = 1.f;
 	_float m_fDirection  = 1.f;
+
+	UI_STATUS_OWNER	m_eOwner = { UI_STATUS_OWNER::END };
+	UI_STATUS_TYPE	m_eType = { UI_STATUS_TYPE::END };
+
+private:
+	void Set_FillAmount(const UI_STATUS_DESC& desc);
 
 public:
 	static  CGameObject* Create();

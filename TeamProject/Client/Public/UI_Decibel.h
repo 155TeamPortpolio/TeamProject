@@ -31,7 +31,7 @@ private:
 	_vector4		m_vTargetColor = {};
 	_float			m_fColorLerpSpeed = { 8.f };
 
-private: 
+private:
 	void Ready_PartObjects();
 
 	CUI_Object* Get_Slot(ChildSlot slot);

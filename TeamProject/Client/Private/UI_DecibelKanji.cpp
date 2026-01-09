@@ -66,12 +66,7 @@ void CUI_DecibelKanji::Set_KanjiTexture(CUI_Object* pKanji, string textureKey)
 {
     pKanji->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
 
-    //auto pTexture = pKanji->Get_Component<CSprite2D>()->Get_CurTexture();
-    //if (!pTexture)
-    //    return;
-    //
-    //const _float fAspect = pTexture->Get_AspectRatio();
-    //pKanji->Set_Size(_float2(m_fHeight * fAspect, m_fHeight));
+    pKanji->Set_Size(_float2(m_fHeight * pKanji->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
 }
 
 void CUI_DecibelKanji::Set_Layout(CUI_Object* pKanji, CUI_Object* pBg)
