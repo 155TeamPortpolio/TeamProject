@@ -6,7 +6,7 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 
-void CGaugeUI::Set_GaugeDesc(GAUGE_OWNER eOwner, GAUGE_TYPE eType)
+void CGaugeUI::Set_Status(UI_STATUS_OWNER eOwner, UI_STATUS_TYPE eType)
 {
     m_eOwner = eOwner;
     m_eType = eType;
@@ -26,11 +26,22 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CEventListener>()->Add_Listner<GAUGE_DESC>([&](const GAUGE_DESC& desc) 
+    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         { 
-            if(desc.owner == m_eOwner && 
-            desc.type == m_eType)   
-            Set_Gauge(desc); 
+            if(desc.eOwner == m_eOwner && 
+            desc.eType == m_eType)
+                Set_FillAmount(desc);
+
+            // ~초 뒤에 실행되게 해야함
+            //if (desc.type == GAUGE_TYPE::HP)
+            //{
+            //    GAUGE_DESC backDesc = {};
+            //
+            //    backDesc.owner = desc.owner;
+            //    backDesc.type = GAUGE_TYPE::HP_BACK;
+            //    backDesc.fFillAmount = desc.fFillAmount;
+            //    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<GAUGE_DESC>({ backDesc });
+            //} 
         });
 
     return S_OK;
@@ -77,9 +88,9 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
     }
 }
 
-void CGaugeUI::Set_Gauge(const GAUGE_DESC& desc)
-{
-    m_fFillAmount = desc.fFillAmount;
+void CGaugeUI::Set_FillAmount(const UI_STATUS_DESC& desc)
+{ 
+    m_fFillAmount = clamp(desc.fCurValue / max(desc.fMaxValue, 1.f), 0.f, 1.f);
 }
 
 CGameObject* CGaugeUI::Create()
