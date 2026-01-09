@@ -30,12 +30,13 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	for (auto& character : battleCharacters)
 	{
 		string strCharacter = Helper::EnumToString(character);
+		auto newCharacter = dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
 
-		m_BattleCharacters[strCharacter] =
-			dynamic_cast<CCharacter*>(CreateBattleCharacter(character));
-		m_CharacterHandles.push_back(
-			m_BattleCharacters[strCharacter]->Get_Handle());
+		m_BattleCharacters.push({ strCharacter,newCharacter });
+		m_CharacterHandles.push_back(newCharacter->Get_Handle());
 	}
+	m_pCurrentCharacter = m_BattleCharacters.front().second;
+
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
 
@@ -47,7 +48,6 @@ HRESULT CBattlePlayer::Initialize()
 	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
-	m_pCurrentCharacter = m_BattleCharacters["JaneDoe"];
 	return S_OK;
 }
 
@@ -56,6 +56,7 @@ void CBattlePlayer::Priority_Update(_float dt)
 	if (m_pCurrentCharacter == nullptr) 
 		return;
 	m_pCurrentCharacter->Update_Input(dt);
+	Update_Input(dt);
 }
 
 void CBattlePlayer::Update(_float dt)
@@ -64,6 +65,19 @@ void CBattlePlayer::Update(_float dt)
 
 void CBattlePlayer::Late_Update(_float dt)
 {
+}
+
+void CBattlePlayer::Update_Input(_float dt)
+{
+	if (InputDevice()->Key_Tap(VK_SPACE))
+	{
+		if (true/*m_bCanSwitch()*/)
+		{
+			NotifyCharacterSwitchOut();
+			SwitchCharacter();
+			NotifyCharacterSwitchIn();
+		}
+	}
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
@@ -114,9 +128,40 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	return nullptr;
 }
 
+void CBattlePlayer::NotifyCharacterSwitchIn()
+{
+	//m_pCurrentCharacter->SwitchIn();
+}
+
+void CBattlePlayer::NotifyCharacterSwitchOut()
+{
+	//m_pCurrentCharacter->SwitchOut();
+}
+
+void CBattlePlayer::RotateCharacterQueue()
+{
+	auto ReplacedPlayer = m_BattleCharacters.front();
+	m_BattleCharacters.pop();
+	m_BattleCharacters.push(ReplacedPlayer);
+}
+
 HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 {
-	return E_NOTIMPL;
+	if (character == CHARACTER::END)
+	{
+		RotateCharacterQueue();
+	}
+	else
+	{
+		string targetName = Helper::EnumToString(character);
+		while (m_BattleCharacters.front().first != targetName)
+		{
+			RotateCharacterQueue();
+		}
+	}
+
+	m_pCurrentCharacter = m_BattleCharacters.front().second;
+	return S_OK;
 }
 
 CBattlePlayer* CBattlePlayer::Create()

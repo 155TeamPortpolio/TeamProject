@@ -15,9 +15,9 @@ private:
     virtual ~CBattlePlayer() DEFAULT;
 
 public:
-    OBJECT_HANDLE GetCurCharacterHandle();
-
-    void SetBattleCharacters(vector<CHARACTER> battleCharacters);
+    OBJECT_HANDLE   GetCurCharacterHandle();
+    HRESULT         SwitchCharacter(CHARACTER character = CHARACTER::END);
+    void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
 
 public:
     HRESULT Initialize();
@@ -26,14 +26,27 @@ public:
     void Late_Update(_float dt);
 
 private:
-    HRESULT Initialize_CharacterPrototype();
-    CGameObject* CreateBattleCharacter(CHARACTER character);
-    HRESULT SwitchCharacter(CHARACTER character);
+    void    Update_Input(_float dt);
 
 private:
-    unordered_map<string, class CCharacter*>    m_BattleCharacters;
-    class CCharacter*                           m_pCurrentCharacter = nullptr;
-    vector<OBJECT_HANDLE>                       m_CharacterHandles{};
+    HRESULT Initialize_CharacterPrototype();
+    CGameObject* CreateBattleCharacter(CHARACTER character);
+
+    void RotateCharacterQueue();
+    void NotifyCharacterSwitchIn();
+    void NotifyCharacterSwitchOut();
+
+private:
+    queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
+    class CCharacter*                               m_pCurrentCharacter = nullptr;
+    vector<OBJECT_HANDLE>                           m_CharacterHandles{};
+
+private:
+    _uint   m_iParryingCount = 6;
+    _bool   m_bIsParrying = { false };
+    _bool   m_bIsSwitching = { false };
+
+    static constexpr _float SWITCH_COOLDOWN = 1.f;
 
 public:
     static CBattlePlayer* Create();

@@ -21,6 +21,12 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+void CCharacter::Process_HP(_float fHP)
+{
+
+	Set_HP(fHP);
+}
+
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 {
 	auto pTransform = Get_Component<CTransform>();

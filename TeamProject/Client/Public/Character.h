@@ -90,6 +90,8 @@ public:
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
     void   Set_SpecialGauge(_float fSpecialGauge) { m_fSpecialGauge = fSpecialGauge; } //*스페셜 게이지*
 
+    void   Process_HP(_float fHP); //*이벤트 버스를 보내는 함수 Set_HP를 ProcessHP 함수 내부에서 호출*
+
     _vector3    Get_InputDir() const { return m_input.direction; }
     _vector3    Get_PrevInputDir() const { return m_input.prevDirection; }
 
