@@ -16,6 +16,8 @@ public:
 	{
 		CONDITION_NONE = 0,
 		CONDITION_ANIMATION_END,
+		CONDITION_ANIMATION_GREATER,
+		CONDITION_ANIMATION_LESS,
 		CONDITION_TIME_GREATER,
 		CONDITION_TIME_LESS,
 		CONDITION_BOOL_TRUE,
@@ -835,6 +837,12 @@ string CStateMachine<Type>::Get_Condition(const TRANSITION_INFO& transition)
 		case CONDITION_ANIMATION_END:
 			strResult += "AnimEnd";
 			break;
+		case CONDITION_ANIMATION_GREATER:
+			strResult += "AnimGreater";
+			break;
+		case CONDITION_ANIMATION_LESS:
+			strResult += "AnimLess";
+			break;
 		case CONDITION_TIME_GREATER:
 			strResult += "Time > " + to_string(cond.fTimer);
 			break;
@@ -869,6 +877,12 @@ _bool CStateMachine<Type>::Evaluate_SingleCondition(const CONDITION_INFO& condit
 
 	case CONDITION_ANIMATION_END:
 		return m_pCurrentState && m_pCurrentState->Is_AnimEnd();
+
+	case CONDITION_ANIMATION_GREATER:
+		return m_pCurrentState->Get_AnimProgress() > condition.fTimer;
+
+	case CONDITION_ANIMATION_LESS:
+		return m_pCurrentState->Get_AnimProgress() < condition.fTimer;
 
 	case CONDITION_TIME_GREATER:
 		return m_fStateTime > condition.fTimer;
