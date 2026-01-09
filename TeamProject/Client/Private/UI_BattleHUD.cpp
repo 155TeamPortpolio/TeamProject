@@ -57,6 +57,15 @@ void CUI_BattleHUD::Awake()
 
 void CUI_BattleHUD::Update(_float dt)
 {
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('G'))
+    //{
+    //    UI_STATUS_DESC desc = {};
+    //    desc.eOwner = UI_STATUS_OWNER::ROLE1;
+    //    desc.eType = UI_STATUS_TYPE::HP;
+    //    desc.fCurValue = 50.f;
+    //    desc.fMaxValue = 80.f;
+    //    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<UI_STATUS_DESC>({ desc });
+    //}
 }
 
 void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
@@ -99,7 +108,7 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
 
         if (auto pGauge = dynamic_cast<CGaugeUI*>(handle.Get()))
         {
-            pGauge->Set_GaugeDesc(bind.eGaugeOwner, bind.eGaugeType);
+            pGauge->Set_Status(bind.eOwner, bind.eType);
         }
     }
 }
