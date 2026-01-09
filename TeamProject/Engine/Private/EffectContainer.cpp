@@ -53,6 +53,8 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 		case Engine::EFFECT_TYPE::MESH:
 			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_MeshNode", pNodeDesc);
 			break;
+		case Engine::EFFECT_TYPE::TRAIL:
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_TrailNode", pNodeDesc);
 		case Engine::EFFECT_TYPE::END:
 			break;
 		default:
