@@ -1,6 +1,10 @@
 #pragma once
 #include "GameObject.h"
 
+NS_BEGIN(Engine)
+class CEffectContainer;
+NS_END
+
 NS_BEGIN(Client)
 
 class CSacrifice_Laser :
@@ -18,7 +22,6 @@ public:
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
-    void    Render_GUI() override;
 
 public:
     static CSacrifice_Laser* Create();
@@ -26,7 +29,7 @@ public:
     void Free() override;
 
 private:
-    /* 레이저 시작 지점, 레이저 본체, 레이저 끝*/
+    CEffectContainer* m_pLaserEffect = { nullptr };
 };
 
 NS_END

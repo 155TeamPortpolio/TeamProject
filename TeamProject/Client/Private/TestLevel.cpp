@@ -32,6 +32,7 @@
 #include "MeshNode.h"
 #include "SpriteNode.h"
 #include "ParticleNode.h"
+#include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
@@ -42,6 +43,7 @@
 #include "JaneDoe.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
+#include "Sacrifice_Laser.h"
 #include "ThugBulkyEnforcer.h"
 #include "Player.h"
 
@@ -92,6 +94,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
 	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/attack_sign.png");
@@ -166,6 +169,7 @@ HRESULT CTestLevel::Awake()
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 
 	// --------------------------- Camera -------------------------------------------------
@@ -188,12 +192,12 @@ void CTestLevel::Update()
 
 	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = ObjectManger()->Request_Object(m_freeCamHandle);
+		auto obj = ObjectManager()->Request_Object(m_freeCamHandle);
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 	if (InputDevice()->Key_Down(VK_F2))
 	{
-		auto obj = ObjectManger()->Request_Object(m_orbitCamHandle);
+		auto obj = ObjectManager()->Request_Object(m_orbitCamHandle);
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 	if (InputDevice()->Key_Down(VK_F3))
@@ -204,6 +208,14 @@ void CTestLevel::Update()
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
+
+	if(InputDevice()->Key_Tap(VK_F5))
+	{
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+			.Build("Laser");
+
+		ObjectManager()->Add_Object(pLaser, { "Test_Level","Laser_Layer" });
 	}
 
 	// [`] 
@@ -286,9 +298,9 @@ void CTestLevel::Ready_Camera()
 
 	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
 
-	ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
 
 	m_orbitCamHandle = orbitCam->Get_Handle();
 	m_freeCamHandle  = freeCam->Get_Handle();

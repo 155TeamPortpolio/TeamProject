@@ -10,7 +10,7 @@ IMPLEMENT_SINGLETON(CCamDirector)
 
 CSequenceCam* CCamDirector::GetSequenceCam() const
 {
-    return static_cast<CSequenceCam*>(ObjectManger()->Request_Object(m_seqHandle));
+    return static_cast<CSequenceCam*>(ObjectManager()->Request_Object(m_seqHandle));
 }
 
 void CCamDirector::Bind(CSequenceCam* sequenceCam)
@@ -88,7 +88,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
     if (entry.seq.space == CamSpace::Local)
     {
-        auto refObj = ObjectManger()->Request_Object(m_spaceRefHandle);
+        auto refObj = ObjectManager()->Request_Object(m_spaceRefHandle);
         auto cc     = refObj->Get_Component<CCharacterController>();
         camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
     }
@@ -130,7 +130,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
     if (m_returnCamType != CamReturnType::None)
     {
-        auto returnObj  = ObjectManger()->Request_Object(m_returnCamHandle);
+        auto returnObj  = ObjectManager()->Request_Object(m_returnCamHandle);
         auto viewOffset = sequenceCam->Get_Component<CCamera>()->Get_ViewOffset();
 
         if (m_returnCamType == CamReturnType::OrbitCam)

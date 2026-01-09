@@ -72,7 +72,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
     
     Out.vDiffuseAcc = vPremulColor * fWeight;
-    Out.vBloomAcc = SoftExtractBright(vPremulColor, 0.8f, 0.5f, 4.f) * fWeight;
+    Out.vBloomAcc = SoftExtractBright(vPremulColor, 0.8f, 0.5f, 1.f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     

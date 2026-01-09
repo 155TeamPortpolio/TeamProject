@@ -41,7 +41,7 @@ HRESULT CTrailNode::Initialize(INIT_DESC* pArg)
 	CMaterial* pMaterial = Get_Component<CMaterial>();
 	CMaterialInstance* customInstance = CMaterialInstance::Create_Handle("Trail_Effect_Base", "Opaque", pDevice);
 	customInstance->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
-	customInstance->Set_Blended(true);
+	//customInstance->Set_Blended(true);
 
 	pMaterial->Insert_MaterialInstance(customInstance, nullptr);
 

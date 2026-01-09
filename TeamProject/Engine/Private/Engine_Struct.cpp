@@ -182,7 +182,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	return node;
 }
 
-TRAIL_NODE Engine::TRAIL_NODE::FromJson(nlohmann::ordered_json& json)
+TRAIL_NODE Engine::tagTrailNode::FromJson(nlohmann::ordered_json& json)
 {
 	TRAIL_NODE node{};
 
