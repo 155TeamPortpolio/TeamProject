@@ -79,7 +79,7 @@ void CAttackSign::Update(_float dt)
 		
 			m_fAlpha = Math::Lerp(1.f, 0.f, Math::EaseInQuad(t));
 			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
-			m_fHeight = Math::Lerp(60.f, 1.f, Math::EaseOutSine(t));
+			m_fHeight = Math::Lerp(30.f, 1.f, Math::EaseOutSine(t));
 		}
 	}
 }

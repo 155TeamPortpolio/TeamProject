@@ -206,15 +206,6 @@ void CTestLevel::Update()
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
 	}
 
-	if (InputDevice()->Key_Tap(VK_F5))
-	{
-		auto effect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Position(_float3(0.f,10.f,0.f))
-			.Build("Core");
-
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
-	}
-
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 

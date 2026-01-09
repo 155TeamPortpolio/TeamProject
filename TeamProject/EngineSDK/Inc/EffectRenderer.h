@@ -24,6 +24,8 @@ private:
 
 private:
     vector<RENDER_CUSTOM_COMMAND> m_RenderCommands;
+    _float m_fBloomScreenWidth{};
+    _float m_fBloomScreenHeight{};
 
 public:
     static CEffectRenderer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext,
