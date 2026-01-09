@@ -33,6 +33,7 @@
 #include "SpriteNode.h"
 #include "ParticleNode.h"
 #include "EffectContainer.h"
+#include "AttackSign.h"
 
 /* Character */
 #include "Miyabi.h"
@@ -92,6 +93,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/attack_sign.png");
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
@@ -200,21 +203,16 @@ void CTestLevel::Update()
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
-		CCT_DESC sacrificeCCT;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		sacrificeCCT.bAutoFit = false;
-		sacrificeCCT.fHeight = 1.28f;
-		sacrificeCCT.fDensity = 0.00001f;
-		sacrificeCCT.fRadius = 0.2f;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-		
-		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-			.CharacterController(sacrificeCCT)
-			.Build("Sacrifice");
-
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
+
+	if (InputDevice()->Key_Tap(VK_F5))
+	{
+		auto effect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Position(_float3(0.f,10.f,0.f))
+			.Build("Core");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
 	}
 
 	// [`] 
