@@ -62,7 +62,13 @@ void CUI_DecibelDigits::Set_Digit(ChildSlot slot, DigitTexture texture)
         return;
 
     pSlot->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, DIGIT_TEXTURES[ENUM(texture)]);
-    pSlot->Set_Size(_float2(m_fDigitHeight * pSlot->Get_Component<CSprite2D>()->Get_CurTexture()->Get_AspectRatio(), m_fDigitHeight));
+
+    //auto pTexture = pSlot->Get_Component<CSprite2D>()->Get_CurTexture();
+    //if (!pTexture)
+    //    return;
+    //
+    //const _float fAspect = pTexture->Get_AspectRatio();
+    //pSlot->Set_Size(_float2(m_fDigitHeight * fAspect, m_fDigitHeight));
 }
 
 void CUI_DecibelDigits::Set_LayoutBg()
