@@ -202,6 +202,9 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 {
+	if (handle.Level == "")
+		return nullptr;
+
 	auto itLevel = m_UIObjects.find(handle.Level);
 	if (itLevel == m_UIObjects.end()) return nullptr;
 

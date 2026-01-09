@@ -6,6 +6,12 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 
+void CGaugeUI::Set_GaugeDesc(GAUGE_OWNER eOwner, GAUGE_TYPE eType)
+{
+    m_eOwner = eOwner;
+    m_eType = eType;
+}
+
 HRESULT CGaugeUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -73,7 +79,7 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
 
 void CGaugeUI::Set_Gauge(const GAUGE_DESC& desc)
 {
-    m_fFillAmount = desc.state.fCurrent / max(desc.state.fMax, 1.f);
+    m_fFillAmount = desc.fFillAmount;
 }
 
 CGameObject* CGaugeUI::Create()
