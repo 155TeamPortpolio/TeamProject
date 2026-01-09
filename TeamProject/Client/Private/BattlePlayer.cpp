@@ -17,7 +17,8 @@ void CBattlePlayer::SetBattleCharacters(vector<_uint> battleCharacters)
 HRESULT CBattlePlayer::Initialize()
 {
 	CBattleSystem::GetInstance()->SetBattlePlayer(this);
-	auto Desc = CDataBase::GetInstance()->GetPlayerDesc("Miyabi");
+	auto PlayerDesc = CDataBase::GetInstance()->GetPlayerDesc("Miyabi");
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(10);
 	return S_OK;
 }
 
