@@ -508,6 +508,25 @@ namespace Engine
 		void Reset();
 		class CGameObject* Get();
 		void Delete();
+		_bool operator==(const tagObjectHandle& rhs) {
+			return hObjID == rhs.hObjID;
+		}
+		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
+			Level = rhs.Level;
+			Layer = rhs.Layer;
+			hObjID = rhs.hObjID;
+			return *this;
+		}
+		class CGameObject* operator()() { return Get(); }
+		template<typename TObject>
+		TObject* GetAs() const
+		{
+			static_assert(std::is_pointer_v<TObject*> == false, "TObject must be a type, not a pointer type.");
+			CGameObject* objectPtr = Get();
+			if (!objectPtr) return nullptr;
+			return dynamic_cast<TObject*>(objectPtr);
+		}
+
 	}OBJECT_HANDLE;
 
 	typedef struct ENGINE_DLL tagUIHandle {
