@@ -19,6 +19,9 @@ public:
 	void Late_Update(_float dt) override;
 
 public:
+	_bool IsLoop()const { return m_IsLoop; }
+
+public:
 	static CEffectContainer* Create();
 	CGameObject* Clone(INIT_DESC* pArg) override;
 	virtual void Free();
@@ -29,5 +32,6 @@ protected:
 	_float m_fElapsedTime{};
 	_uint m_iNumNodes{};
 	vector<class CEffectNode*> m_Nodes;
+
 };
 NS_END

@@ -107,11 +107,6 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CSacrifice::Post_EngineUpdate(_float dt)
-{
-	__super::Post_EngineUpdate(dt);
-}
-
 void CSacrifice::Awake()
 {
 }

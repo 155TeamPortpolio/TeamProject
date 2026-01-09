@@ -394,20 +394,20 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
       <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\BattleHUD">
-      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Effect">
       <UniqueIdentifier>{5ed6b41d-6c27-48c7-8c25-a26c610b028e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Effect\AttackSign">
       <UniqueIdentifier>{ce06088b-9ea7-4333-9bf6-688c797a0bb1}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
+      <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -798,13 +798,10 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClInclude>
@@ -813,6 +810,10 @@
     </ClInclude>
     <ClInclude Include="..\public\DataBase.h">
       <Filter>03. Utility\05. DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\Sacrifice_Laser.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1192,7 +1193,7 @@
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\AttackSign.cpp">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClCompile>
@@ -1207,6 +1208,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

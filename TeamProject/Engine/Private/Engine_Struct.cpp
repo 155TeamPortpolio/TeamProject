@@ -182,6 +182,44 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	return node;
 }
 
+TRAIL_NODE Engine::TRAIL_NODE::FromJson(nlohmann::ordered_json& json)
+{
+	TRAIL_NODE node{};
+
+	node.eType = json.value("effect_type", node.eType);
+	node.TextureKey = json.value("texture_key", node.TextureKey);
+	node.TexturePath = json.value("texture_path", node.TexturePath);
+
+	node.fDelayTime = json.value("delay_time", node.fDelayTime);
+	node.fDuration = json.value("duration", node.fDuration);
+	node.isLoop = json.value("is_loop", node.isLoop);
+
+	node.iMode = json.value("point_mode", 0);
+	node.iTextureMode = json.value("texture_mode", 0);
+	node.iColorMode = json.value("color_mode", 0);
+	
+	node.vUVSpeed.x = json.at("uv_speed").at("x").get<_float>();
+	node.vUVSpeed.y = json.at("uv_speed").at("y").get<_float>();
+	
+	node.vStartColor.x = json.at("start_color").at("x").get<_float>();
+	node.vStartColor.y = json.at("start_color").at("y").get<_float>();
+	node.vStartColor.z = json.at("start_color").at("z").get<_float>();
+	node.vStartColor.w = json.at("start_color").at("w").get<_float>();
+	
+	node.vEndColor.x = json.at("end_color").at("x").get<_float>();
+	node.vEndColor.y = json.at("end_color").at("y").get<_float>();
+	node.vEndColor.z = json.at("end_color").at("z").get<_float>();
+	node.vEndColor.w = json.at("end_color").at("w").get<_float>();
+	
+	node.fMaxLifeTime = json.value("max_life_time", node.fMaxLifeTime);
+	node.fMinDistance = json.value("min_distance", node.fMinDistance);
+	
+	node.fStartWidth = json.value("start_width", node.fStartWidth);
+	node.fEndWidth = json.value("end_width", node.fEndWidth);
+
+	return node;
+}
+
 EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 {
 	EFFECT_ASSET Effect{};
@@ -224,3 +262,4 @@ void Engine::tagUIHandle::Release()
 	mgr->Remove_UIObject(pUI);
 	Reset();
 }
+
