@@ -135,6 +135,7 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 			Simulate_WorldNode(
 				Chain.Nodes[i],
 				parentPos,
+				parentQuat,
 				AnchorDeltaPos,
 				Group.ChainParam,
 				dt
@@ -214,6 +215,7 @@ void CDynamicBone::Calc_DynamicNode(DYNAMIC_NODE& Node, const _vector3& AnchorPr
 
 void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,
+	const _quaternion& parentQuat,
 	const _vector3& AnchorDeltaPos, 
 	const CHAIN_PARAM& ChainParam,
 	_float dt)
@@ -225,19 +227,19 @@ void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
 	/* 속력 계산 (이 속도 그대로면 그냥 애니매이션 위치겠죠?) */
 	_vector3 Velocity = curPos - prevPos - AnchorDeltaPos;
 
-	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
-	Velocity *= (1.f - ChainParam.fDamping);
-	
-	/* 복원력(Stiffness) : 미리 구해둔 위치로 점점 돌아오는 힘 */
-	Vector3 follow = Node.AnimWorldPos - curPos;
-	Velocity += follow * ChainParam.fStiffness;
-	
+	/* 1. 관성(Inert) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	Velocity *= (1.f + ChainParam.Inert);
 
-	///* 중력(Gravity) : y축으로 아래로 떨어질 수 있도록*/
-	_vector3 worldGravity = _vector3(0.f, -1.f, 0.f);
-	Velocity += worldGravity * ChainParam.fGravityScale;
+	/* 2. 감쇄(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	Velocity *= (1.f - ChainParam.Damping);
+	
+	/* 3. 중력(Gravity) : 중력 방향으로 이동 (월드기준) */
+	Velocity += ChainParam.GravityDir * ChainParam.GravityScale;
 
-	/* 위에 모든 계산을 한 예측된 다음 위치*/
+	// 4. 탄성 (애니메이션 / rest 위치로 당김)
+	Velocity += (Node.AnimWorldPos - curPos) * ChainParam.Elasticity;
+
+	/* 5. 위에 모든 계산을 한 예측된 다음 위치 예측 */
 	_vector3 nextPos = curPos + Velocity;
 
 	/* 부모로부터 멀어지면 안되니 부모뼈 위치에서 계산 뼈가 길어지면 안돼잖음 그래서 길이제한을 함
@@ -245,10 +247,18 @@ void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
 	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
 
-	/* 본의 길이는 달라지면 안되니 재계산 */
+	/* 6. 본의 길이는 달라지면 안되니 재계산해서 길이 제한 */
 	nextPos = parentPos + dir * Node.fLength;
 
-	// 상태 갱신
+	// 7. 강성 (Stiffness)
+	Vector3 restDir = Vector3::TransformNormal(Node.RestLocalDir, Matrix::CreateFromQuaternion(parentQuat));
+	restDir.Normalize();
+
+	dir = Vector3::Lerp(dir, restDir, ChainParam.Stiffness);
+	dir.Normalize();
+	nextPos = parentPos + dir * Node.fLength;
+
+	// 8. 상태 갱신
 	Node.DynamicPrevPos = curPos;
 	Node.DynamicCurPos = nextPos;
 }
@@ -353,11 +363,11 @@ void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 	_vector3 Velocity = curPos - prevPos;
 
 	/* 관성(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
-	Velocity *= (1.f - ChainParam.fDamping);
+	Velocity *= (1.f - ChainParam.Damping);
 
 	/* 중력(Gravity) : */
 	_vector3 modelGravity(0.f, -1.f, 0.f);
-	Velocity += modelGravity * ChainParam.fGravityScale * dt;
+	Velocity += modelGravity * ChainParam.GravityScale * dt;
 
 	/* 위에 모든 계산을 한 예측된 다음 위치*/
 	_vector3 nextPos = curPos + Velocity;
@@ -372,7 +382,7 @@ void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 		_vector3::Transform(Node.RestLocalDir, parentQuat);
 	restDir.Normalize();
 
-	dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
+	dir = _vector3::Lerp(dir, restDir, ChainParam.Stiffness);
 	dir.Normalize();
 
 	/* 본의 길이는 달라지면 안되니 재계산*/
@@ -551,11 +561,11 @@ void CDynamicBone::Render_GUI()
 	ImGui::Separator();
 	ImGui::Text("Chain Parameters");
 
-	ImGui::DragFloat("Damping",	&Group.ChainParam.fDamping,	0.001f, 0.f, 1.f, "%.3f");
+	ImGui::DragFloat("Damping",	&Group.ChainParam.Damping,	0.001f, 0.f, 1.f, "%.3f");
 
-	ImGui::DragFloat("Stiffness", &Group.ChainParam.fStiffness, 0.001f, 0.f, 1.f, "%.3f");
+	ImGui::DragFloat("Stiffness", &Group.ChainParam.Stiffness, 0.001f, 0.f, 1.f, "%.3f");
 
-	ImGui::DragFloat("Gravity Scale", &Group.ChainParam.fGravityScale, 0.001f, 0.f, 10.f, "%.3f");
+	ImGui::DragFloat("Gravity Scale", &Group.ChainParam.GravityScale, 0.001f, 0.f, 10.f, "%.3f");
 
 	ImGui::Checkbox("World Space",
 		&Group.bWorldSpace);
