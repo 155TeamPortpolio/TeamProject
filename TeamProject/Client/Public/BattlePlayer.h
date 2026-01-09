@@ -15,7 +15,8 @@ private:
     virtual ~CBattlePlayer() DEFAULT;
 
 public:
-    OBJECT_HANDLE GetCurrentCharacter();
+    OBJECT_HANDLE GetCurCharacterHandle();
+
     void SetBattleCharacters(vector<CHARACTER> battleCharacters);
 
 public:

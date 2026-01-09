@@ -24,8 +24,9 @@ public:
     void ClearCam(CamType type)                     { m_camHandles[ENUM(type)].Reset(); }
 
 public:
-    void SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
-    void SetReturnCam(CamType type)        { m_returnCamType  = type; }
+    void SetSpaceRef(OBJECT_HANDLE handle)         { m_spaceRefHandle = handle; }
+    void SetReturnCam(CamType type)                { m_returnCamType  = type;   }
+    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
 
 public:
     _bool Register(const string& key, const filesystem::path& path);

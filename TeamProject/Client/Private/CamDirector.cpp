@@ -66,7 +66,6 @@ void CCamDirector::Update(_float dt)
 		StopAll(m_playing.defaultBlendOutSec);
 }
 
-
 _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec)
 {
 	if (m_playing.active)

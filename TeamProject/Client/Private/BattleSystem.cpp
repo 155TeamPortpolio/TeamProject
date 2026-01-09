@@ -49,6 +49,11 @@ void CBattleSystem::Update()
 	}
 }
 
+OBJECT_HANDLE CBattleSystem::GetCurCharacterHandle() const
+{
+	return m_pBattlePlayer->GetCurCharacterHandle();
+}
+
 const vector<BATTLEOBJ_INFO>& CBattleSystem::GetBattleObjects(BATTLE_OBJ_TYPE eType) const
 {
 	return m_BattleObjInfos.at(eType);

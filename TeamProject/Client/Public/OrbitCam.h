@@ -83,6 +83,8 @@ public:
 public:
     void    SetPreset(OrbitPreset nextPreset);
     void    SetTarget(CGameObject* obj);
+    void    SetTarget(OBJECT_HANDLE handle);
+
     void    ClearTarget() { targetHandle.Reset(); }
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);

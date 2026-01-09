@@ -186,16 +186,36 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
+	static OBJECT_HANDLE prevPlayer{};
+
+	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
+	{
+		prevPlayer = curPlayer;
+
+		m_pCamDirector->SetSpaceRef(curPlayer);
+
+		auto orbitObj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
+	}
+
 	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = ObjectManger()->Request_Object(m_freeCamHandle);
+		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
+
 	if (InputDevice()->Key_Down(VK_F2))
 	{
-		auto obj = ObjectManger()->Request_Object(m_orbitCamHandle);
+		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
+
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
+
 	if (InputDevice()->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
@@ -275,7 +295,7 @@ void CTestLevel::Ready_Camera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
-	auto sequenceCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
+	auto seqCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
 		.Position({0.f, 2.f, -5.f})
 		.Build("SequenceCam");
@@ -293,20 +313,18 @@ void CTestLevel::Ready_Camera()
 		.CharacterController(desc)
 		.Build("OrbitCam");
 
-	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(freeCam, {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(seqCam,   {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(freeCam,  {"Test_Level", "Camera_Layer"});
 	ObjectManger()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
 
-	m_freeCamHandle  = freeCam->Get_Handle();
-	m_seqCamHandle   = sequenceCam->Get_Handle();
-	m_orbitCamHandle = orbitCam->Get_Handle();
+	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Free,     freeCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Orbit,    orbitCam->Get_Handle());
 
-	m_pCamDirector->SetCam(CamType::Sequence, m_seqCamHandle);
-	m_pCamDirector->SetCam(CamType::Free, m_freeCamHandle);
-	m_pCamDirector->SetCam(CamType::Orbit, m_orbitCamHandle);
-
-	m_pCamDirector->SetSpaceRef(m_miyabiHandle);
 	m_pCamDirector->SetReturnCam(CamType::Orbit);
+
+	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
 
 	CamLoader::Load();
 

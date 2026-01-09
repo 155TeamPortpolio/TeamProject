@@ -6,6 +6,7 @@ class CGameObject;
 NS_END
 
 NS_BEGIN(Client)
+class CBattlePlayer;
 
 class CBattleSystem final : public CBase
 {
@@ -21,6 +22,9 @@ public:
 	void Update();
 
 public:
+	CBattlePlayer* GetBattlePlayer() const {return m_pBattlePlayer;}
+	OBJECT_HANDLE GetCurCharacterHandle() const;
+
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 
 	_bool	GetActive() { return m_isActive; }
