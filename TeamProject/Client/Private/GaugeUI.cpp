@@ -31,6 +31,17 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
             if(desc.owner == m_eOwner && 
             desc.type == m_eType)   
             Set_Gauge(desc); 
+
+            // ~초 뒤에 실행되게 해야함
+            //if (desc.type == GAUGE_TYPE::HP)
+            //{
+            //    GAUGE_DESC backDesc = {};
+            //
+            //    backDesc.owner = desc.owner;
+            //    backDesc.type = GAUGE_TYPE::HP_BACK;
+            //    backDesc.fFillAmount = desc.fFillAmount;
+            //    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<GAUGE_DESC>({ backDesc });
+            //} 
         });
 
     return S_OK;

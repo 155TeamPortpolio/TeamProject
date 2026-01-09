@@ -90,7 +90,7 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
     //m_hChildren[PREFAB::BTN_SWITCH] = ;
     //m_hChildren[PREFAB::BTN_ULTIMATE] = ;
 
-    // 플레이어 게이지 정보(주인, 타입) 설정
+    // 게이지 정보(소유자, 게이지 타입) 설정
     for(const auto& bind : GaugeBindings)
     {
         auto& handle = m_hChildren[bind.ePrefab];
@@ -102,7 +102,6 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
             pGauge->Set_GaugeDesc(bind.eGaugeOwner, bind.eGaugeType);
         }
     }
-    // 보스 게이지 정보 설정 해야함
 }
 
 CGameObject* CUI_BattleHUD::Create()
