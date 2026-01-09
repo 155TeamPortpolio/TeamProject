@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "GaugeUI.h"
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
@@ -33,7 +34,7 @@ void CUI_BattleHUD::Awake()
 
     // 생성된 루트 UI를 uiMgr에 등록
     pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strCurrentLevel);
-   
+
     // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
     CacheHandle(pRoot);
 
@@ -88,6 +89,20 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
     //m_hChildren[PREFAB::BTN_SPECIAL] = ;
     //m_hChildren[PREFAB::BTN_SWITCH] = ;
     //m_hChildren[PREFAB::BTN_ULTIMATE] = ;
+
+    // 플레이어 게이지 정보(주인, 타입) 설정
+    for(const auto& bind : GaugeBindings)
+    {
+        auto& handle = m_hChildren[bind.ePrefab];
+        if (!handle.isValid())
+            continue;
+
+        if (auto pGauge = dynamic_cast<CGaugeUI*>(handle.Get()))
+        {
+            pGauge->Set_GaugeDesc(bind.eGaugeOwner, bind.eGaugeType);
+        }
+    }
+    // 보스 게이지 정보 설정 해야함
 }
 
 CGameObject* CUI_BattleHUD::Create()

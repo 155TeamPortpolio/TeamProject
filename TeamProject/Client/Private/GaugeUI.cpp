@@ -4,10 +4,19 @@
 #include "Sprite2D.h"
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
+
+void CGaugeUI::Set_GaugeDesc(GAUGE_OWNER eOwner, GAUGE_TYPE eType)
+{
+    m_eOwner = eOwner;
+    m_eType = eType;
+}
 
 HRESULT CGaugeUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -17,17 +26,21 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+    Get_Component<CEventListener>()->Add_Listner<GAUGE_DESC>([&](const GAUGE_DESC& desc) 
+        { 
+            if(desc.owner == m_eOwner && 
+            desc.type == m_eType)   
+            Set_Gauge(desc); 
+        });
 
     return S_OK;
 }
 
 void CGaugeUI::Update(_float dt)
 {
-    if (!m_isAlive) return;
+    __super::Update(dt);
 
     Get_Component<CSprite2D>()->Set_Param("FillAmount", {&m_fFillAmount, "float", sizeof(_float)});
-
-    Play_Animation(dt);
 }
 
 void CGaugeUI::Render_GUI()
@@ -62,6 +75,11 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
         m_fDirection = gaugeJson.value("direction", 0.0f);
         pSprite->Set_Param("Direction", { &m_fDirection, "float", sizeof(_float) });
     }
+}
+
+void CGaugeUI::Set_Gauge(const GAUGE_DESC& desc)
+{
+    m_fFillAmount = desc.fFillAmount;
 }
 
 CGameObject* CGaugeUI::Create()

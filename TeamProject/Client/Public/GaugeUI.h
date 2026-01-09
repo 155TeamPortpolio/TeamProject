@@ -11,6 +11,9 @@ private:
 	virtual ~CGaugeUI() DEFAULT;
 
 public:
+	void Set_GaugeDesc(GAUGE_OWNER eOwner, GAUGE_TYPE eType);
+
+public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
 	virtual void    Priority_Update(_float dt)       override { __super::Priority_Update(dt); }
@@ -24,6 +27,12 @@ public:
 private:
 	_float m_fFillAmount = 1.f;
 	_float m_fDirection  = 1.f;
+
+	GAUGE_OWNER	m_eOwner = { GAUGE_OWNER::END };
+	GAUGE_TYPE	m_eType = { GAUGE_TYPE::END };
+
+private:
+	void Set_Gauge(const GAUGE_DESC& desc);
 
 public:
 	static  CGameObject* Create();
