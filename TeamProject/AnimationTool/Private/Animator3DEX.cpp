@@ -60,7 +60,7 @@ vector<class CAnimationClip*>* CAnimator3DEX::Get_Clips()
 	return &m_pAnimClips;
 }
 
-vector<CAnimator3D::ANIM_LAYER>& CAnimator3DEX::Get_AnimLayers()
+vector<ANIM_LAYER>& CAnimator3DEX::Get_AnimLayers()
 {
 	return m_AnimLayers;
 }

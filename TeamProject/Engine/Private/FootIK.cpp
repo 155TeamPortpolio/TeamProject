@@ -149,10 +149,15 @@ void CFootIK::Cache_BoneLengths(IK_CONTEXT& context)
     _int iRightCalf = context.BoneIndices[4];
     _int iRightFoot = context.BoneIndices[5];
     // 로컬 행렬
-    _smatrix matLeftCalf = context.pAnimator->Get_BoneTransformationMatrix(iLeftCalf);
-    _smatrix matLeftFoot = context.pAnimator->Get_BoneTransformationMatrix(iLeftFoot);
-    _smatrix matRightCalf = context.pAnimator->Get_BoneTransformationMatrix(iRightCalf);
-    _smatrix matRightFoot = context.pAnimator->Get_BoneTransformationMatrix(iRightFoot);
+    //_smatrix matLeftCalf = context.pAnimator->Get_BoneTransformationMatrix(iLeftCalf);
+    //_smatrix matLeftFoot = context.pAnimator->Get_BoneTransformationMatrix(iLeftFoot);
+    //_smatrix matRightCalf = context.pAnimator->Get_BoneTransformationMatrix(iRightCalf);
+    //_smatrix matRightFoot = context.pAnimator->Get_BoneTransformationMatrix(iRightFoot);
+    _smatrix matLeftCalf = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::TRANSFORMATION, iLeftCalf);
+    _smatrix matLeftFoot = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::TRANSFORMATION, iLeftFoot);
+    _smatrix matRightCalf = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::TRANSFORMATION, iRightCalf);
+    _smatrix matRightFoot = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::TRANSFORMATION, iRightFoot);
+    
     // 위치 추출(부모 기준 상대 위치),길이 계산
     m_fLeftUpperLength = matLeftCalf.Translation().Length();
     m_fLeftLowerLength = matLeftFoot.Translation().Length();
@@ -170,7 +175,8 @@ _vector3 CFootIK::Calculate_PoleVector(IK_CONTEXT& context, _int iThigh, _int iC
 _bool CFootIK::Find_GroundTarget_Left(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal)
 {
     _int iLeftFoot = context.BoneIndices[2];
-    _smatrix matFoot = context.pAnimator->Get_BoneCombinedMatrix(iLeftFoot);
+    //_smatrix matFoot = context.pAnimator->Get_BoneCombinedMatrix(iLeftFoot);
+    _smatrix matFoot = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED ,iLeftFoot);
     _vector3 vFootPos = matFoot.Translation();
     _vector3 vRayOrigin = vFootPos + _vector3::Up * m_Desc.fRayStartOffset;
     _vector3 vRayDir = _vector3::Down;
@@ -201,7 +207,8 @@ _bool CFootIK::Find_GroundTarget_Left(IK_CONTEXT& context, _vector3& outTargetPo
 _bool CFootIK::Find_GroundTarget_Right(IK_CONTEXT& context, _vector3& outTargetPos, _vector3& outGroundNormal)
 {
     _int iRightFoot = context.BoneIndices[5];
-    _smatrix matFoot = context.pAnimator->Get_BoneCombinedMatrix(iRightFoot);
+    //_smatrix matFoot = context.pAnimator->Get_BoneCombinedMatrix(iRightFoot);
+    _smatrix matFoot = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, iRightFoot);
     _vector3 vFootPos = matFoot.Translation();
     _vector3 vRayOrigin = vFootPos + _vector3::Up * m_Desc.fRayStartOffset;
     _vector3 vRayDir = _vector3::Down;
@@ -234,8 +241,11 @@ _float CFootIK::Calculate_PelvisOffset(IK_CONTEXT& context, _vector3 vLeftTarget
     _int iLeftFoot = context.BoneIndices[2];
     _int iRightFoot = context.BoneIndices[5];
 
-    _vector3 vLeftFootPos = context.pAnimator->Get_BoneCombinedPosition(iLeftFoot);
-    _vector3 vRightFootPos = context.pAnimator->Get_BoneCombinedPosition(iRightFoot);
+    //_vector3 vLeftFootPos = context.pAnimator->Get_BoneCombinedPosition(iLeftFoot);
+    //_vector3 vRightFootPos = context.pAnimator->Get_BoneCombinedPosition(iRightFoot);
+
+    _vector3 vLeftFootPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iLeftFoot);
+    _vector3 vRightFootPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iRightFoot);
 
     _float fMinGroundY = min(vLeftTarget.y, vRightTarget.y);
     _float fMinFootY = min(vLeftFootPos.y, vRightFootPos.y);
@@ -253,9 +263,13 @@ void CFootIK::Calculate_TwoBone_Left(IK_CONTEXT& context, _vector3 vTargetPos, _
     _int iFoot = context.BoneIndices[2];
 
     // 현재 본 위치들 (월드 공간)
-    _vector3 vHipPos = context.pAnimator->Get_BoneCombinedPosition(iThigh);
-    _vector3 vKneePos = context.pAnimator->Get_BoneCombinedPosition(iCalf);
-    _vector3 vFootPos = context.pAnimator->Get_BoneCombinedPosition(iFoot);
+    //_vector3 vHipPos = context.pAnimator->Get_BoneCombinedPosition(iThigh);
+    //_vector3 vKneePos = context.pAnimator->Get_BoneCombinedPosition(iCalf);
+    //_vector3 vFootPos = context.pAnimator->Get_BoneCombinedPosition(iFoot);
+
+    _vector3 vHipPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iThigh);
+    _vector3 vKneePos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iCalf);
+    _vector3 vFootPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iFoot);
 
     vHipPos.y += fPelvisOffset;
 
@@ -341,7 +355,9 @@ void CFootIK::Calculate_TwoBone_Left(IK_CONTEXT& context, _vector3 vTargetPos, _
     }
     else
     {
-        matThighParent = context.pAnimator->Get_BoneCombinedMatrix(iThighParent);
+        //matThighParent = context.pAnimator->Get_BoneCombinedMatrix(iThighParent);
+        matThighParent = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, iThighParent);
+        
     }
 
     // 무릎 평면 법선을 로컬 공간으로
@@ -367,9 +383,13 @@ void CFootIK::Calculate_TwoBone_Right(IK_CONTEXT& context, _vector3 vTargetPos, 
     _int iCalf = context.BoneIndices[4];
     _int iFoot = context.BoneIndices[5];
 
-    _vector3 vHipPos = context.pAnimator->Get_BoneCombinedPosition(iThigh);
-    _vector3 vKneePos = context.pAnimator->Get_BoneCombinedPosition(iCalf);
-    _vector3 vFootPos = context.pAnimator->Get_BoneCombinedPosition(iFoot);
+    //_vector3 vHipPos = context.pAnimator->Get_BoneCombinedPosition(iThigh);
+    //_vector3 vKneePos = context.pAnimator->Get_BoneCombinedPosition(iCalf);
+    //_vector3 vFootPos = context.pAnimator->Get_BoneCombinedPosition(iFoot);
+
+    _vector3 vHipPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iThigh);
+    _vector3 vKneePos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iCalf);
+    _vector3 vFootPos = context.pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, iFoot);
 
     vHipPos.y += fPelvisOffset;
 
@@ -442,7 +462,8 @@ void CFootIK::Calculate_TwoBone_Right(IK_CONTEXT& context, _vector3 vTargetPos, 
     }
     else
     {
-        matThighParentWorld = context.pAnimator->Get_BoneCombinedMatrix(iThighParent);
+        //matThighParentWorld = context.pAnimator->Get_BoneCombinedMatrix(iThighParent);
+        matThighParentWorld = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, iThighParent);
     }
 
     _quaternion qThighParentWorld;
@@ -514,7 +535,9 @@ _quaternion CFootIK::WorldRotationToLocal(IK_CONTEXT& context, _int iBoneIndex, 
     if (iParent == -1)
         return qWorldRotation;
 
-    _smatrix matParentWorld = context.pAnimator->Get_BoneCombinedMatrix(iParent);
+    //_smatrix matParentWorld = context.pAnimator->Get_BoneCombinedMatrix(iParent);
+    _smatrix matParentWorld = context.pAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, iParent);
+    
     _quaternion qParent;
     _vector3 scale, trans;
     matParentWorld.Decompose(scale, qParent, trans);

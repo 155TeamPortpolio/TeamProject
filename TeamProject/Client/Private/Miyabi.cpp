@@ -332,7 +332,8 @@ HRESULT CMiyabi::Initialize_Transitions()
 HRESULT CMiyabi::Add_OutLineRender()
 {
 	auto Model = Get_Component<CSkeletalModel>();
-	_uint size = sizeof(_float4x4) * m_pAnimator->Get_CombinedBoneMatrices().size();
+	//_uint size = sizeof(_float4x4) * m_pAnimator->Get_CombinedBoneMatrices().size();
+	_uint size = sizeof(_float4x4) * m_pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED).size();
 
 	for (_int i = 0; i < Model->Get_MeshCount(); ++i)
 	{

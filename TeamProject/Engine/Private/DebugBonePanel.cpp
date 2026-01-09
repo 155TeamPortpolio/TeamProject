@@ -144,7 +144,7 @@ void CDebugBonePanel::Render_GUI()
 	if (m_bShowMatrix) {
 		if (-1 != m_iSelectedBone) {
 			if (CAnimator3D* pAnimator = pTarget->Get_Component<CAnimator3D>()) {
-				const _float4x4& nowTrans = pAnimator->Get_CombinedBoneMatrices()[m_iSelectedBone];
+				const _float4x4& nowTrans = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED)[m_iSelectedBone];
 
 				ImGui::SeparatorText("Bone Matrix (Combined)");
 				ImGui::BeginChild("##MatView", ImVec2(0, 110), true);
@@ -264,7 +264,7 @@ void CDebugBonePanel::DrawSkeletonOverlay_ImGui(CGameObject* target, const ImVec
 	vector<_float4x4> boneModel;
 
 	if (Animating)
-		boneModel = pAnimator->Get_CombinedBoneMatrices();
+		boneModel = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED);
 	else
 		boneModel = pModel->Get_BoneMatrices();
 

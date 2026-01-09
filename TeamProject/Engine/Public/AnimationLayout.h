@@ -1,7 +1,6 @@
 #pragma once
 #include "Engine_Json.h"
 
-
 namespace Engine
 {
     enum class CLIP_EVENT_TYPE { NOTIFY, EFFECT, SOUND };
