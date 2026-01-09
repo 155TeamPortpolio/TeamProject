@@ -19,7 +19,6 @@ CUIObjcetBuilder::CUIObjcetBuilder(const CLONE_DESC& cloneDesc)
 	}
 
 	Safe_AddRef(m_pGameInstance);
-	m_pObjDesc = new UI_DESC;
 }
 
 CUIObjcetBuilder::~CUIObjcetBuilder()
