@@ -54,6 +54,11 @@ namespace Helper
 	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
 	ENGINE_DLL _bool ContainsCaseInsensitive(const string& text, const string& pattern);
 	ENGINE_DLL _bool WorldToScreen(const _float3& worldPos,_float2& outScreen,const _float4x4& view,const _float4x4& proj,const _float4& viewportXYWH);
+
+	/*주어진 값 (value)에서 지정한 자리(place) 의 숫자를 반환. place : 0이면 1의자리, 1이면 10의 자리, 2면 100의 자리 ...*/
+	ENGINE_DLL _uint Get_Digit(_int value, _int place);
+	/*Hex 색상 문자열을 _float4 컬러로 변환 #RRGGBB 또는 #RRGGBBAA*/
+	ENGINE_DLL _vector4 HexToColor(const string& hex);
 }
 
 //json 저장 및 불러오기

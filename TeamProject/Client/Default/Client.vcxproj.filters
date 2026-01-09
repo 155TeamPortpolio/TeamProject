@@ -202,12 +202,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit">
       <UniqueIdentifier>{9c64e158-5809-4bdf-b0bc-b248f585b1f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase1">
-      <UniqueIdentifier>{3a046367-2f0c-4d32-ae9a-dcc6c15ecfa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State\Attack\Phase2">
-      <UniqueIdentifier>{0a4065be-1850-4381-8712-3d645de8c2eb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer">
       <UniqueIdentifier>{9ecf22bd-6ec3-4d22-b39a-bc4242f18996}</UniqueIdentifier>
     </Filter>
@@ -397,6 +391,27 @@
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD">
+      <UniqueIdentifier>{081bece2-a822-4ea3-898c-7bcc24923da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel">
+      <UniqueIdentifier>{c542421d-60e5-4730-a35f-bea8858b044b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Kanji">
+      <UniqueIdentifier>{a85e8ea6-80fb-4ef4-b1db-8cb70354bfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Digits">
+      <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
+      <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect">
+      <UniqueIdentifier>{5ed6b41d-6c27-48c7-8c25-a26c610b028e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Effect\AttackSign">
+      <UniqueIdentifier>{ce06088b-9ea7-4333-9bf6-688c797a0bb1}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
@@ -738,14 +753,8 @@
     <ClInclude Include="..\Public\LoadingLevel.h">
       <Filter>01. Level\01. LoadingLevel</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MaskUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\BattleSystem.h">
       <Filter>03. Utility\04. BattleSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MaskUI.h">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Logo.h">
       <Filter>02. GameObject\Object\UI\Logo</Filter>
@@ -789,7 +798,27 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Decibel.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\MaskUI.h">
+      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelKanji.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelDigits.h">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AttackSign.h">
+      <Filter>02. GameObject\Effect\AttackSign</Filter>
+    </ClInclude>  
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClInclude>
@@ -1126,14 +1155,8 @@
     <ClCompile Include="..\Private\LoadingLevel.cpp">
       <Filter>01. Level\01. LoadingLevel</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MaskUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\BattleSystem.cpp">
       <Filter>03. Utility\04. BattleSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MaskUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Logo.cpp">
       <Filter>02. GameObject\Object\UI\Logo</Filter>
@@ -1174,7 +1197,24 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Decibel.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\MaskUI.cpp">
+      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelKanji.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelDigits.cpp">
+      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AttackSign.cpp">
+      <Filter>02. GameObject\Effect\AttackSign</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClCompile>
@@ -1183,6 +1223,9 @@
     </ClCompile>
     <ClCompile Include="..\private\DataBase.cpp">
       <Filter>03. Utility\05. DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

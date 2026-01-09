@@ -6,6 +6,7 @@ NS_BEGIN(Client)
 
 class CThugBulkyEnforcer;
 
+
 class CThugBulkyEnforcer_Attack : public IHState<CThugBulkyEnforcer>
 {
 public:
@@ -22,6 +23,10 @@ private:
 	void Register_Transitions();
 	void BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _int iPatternIndex = 0, _bool isAdditionalMoveState = false);	// 0일때 랜덤
 	array<_int, 3>	Pick3RandomIndex();
+	_bool DecideAttackPattern(CThugBulkyEnforcer* pOwner);
+
+private:
+	_bool			m_isEndAttack = { false };
 };
 
 //앞으로 나오면서 오른손 강펀치

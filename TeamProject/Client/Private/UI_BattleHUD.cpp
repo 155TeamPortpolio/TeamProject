@@ -2,6 +2,7 @@
 #include "UI_BattleHUD.h"
 
 #include "GameInstance.h"
+#include "ObjectContainer.h"
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
@@ -36,6 +37,18 @@ void CUI_BattleHUD::Awake()
     // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
     CacheHandle(pRoot);
 
+    /////////////////////////////////
+    // 데시벨 객체 (클라이언트) 생성해서 루트 프리팹에 자식으로 추가하고 핸들 캐싱
+    CUI_Object* pDecibel = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_Decibel" })
+        .Offset(_float2(68.f, 136.f))
+        .Build("decibel");
+    if (pDecibel)
+    {
+        pRoot->Get_Component<CObjectContainer>()->Add_Child(pDecibel);
+        m_hChildren[PREFAB::ULTIMATE1] = pDecibel->Get_Handle();
+    } 
+    /////////////////////////////////
+  
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
@@ -61,14 +74,14 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
         m_hChildren[ULTIMATE_PREFABS[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
     }
 
-    //m_hChildren[PREFAB::CUR_HP_TEXT] = ;
-    //m_hChildren[PREFAB::MAX_HP_TEXT] = ;
+    m_hChildren[PREFAB::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
+    m_hChildren[PREFAB::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
 
     m_hChildren[PREFAB::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
     m_hChildren[PREFAB::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
     m_hChildren[PREFAB::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
     m_hChildren[PREFAB::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
-    //m_hChildren[PREFAB::BOSS_GROGGY_TEXT] = pPrefab->Get_DescendantHandle("bossGroggyText");
+    m_hChildren[PREFAB::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
 
     //m_hChildren[PREFAB::BTN_NORMAL] = ;
     //m_hChildren[PREFAB::BTN_EVADE] = ;

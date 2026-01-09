@@ -8,6 +8,20 @@ class CThugBulkyEnforcer;
 
 class CThugBulkyEnforcer_Move : public IHState<CThugBulkyEnforcer>
 {
+private:
+	enum MOVEINDEX : _int{
+		Walk_Front = 1,
+		Walk_Back,
+		Walk_Left,
+		Walk_Right, 
+		Walk_RF_LFoot,
+		Walk_FR_RFoot,
+		Walk_LF_RFoot,
+		SideStep_L, 
+		SideStep_R, 
+		Evade 
+	};
+
 public:
 	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
 	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
@@ -20,7 +34,9 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
-	void RandomWalk(ATTACK_BLACK_BOARD& blackBoard);
+	void ChangeMovePatternFromIndex(_int iMoveIndex = 0);
+	void RandomWalk(ATTACK_BLACK_BOARD& blackBoard, _int iWalkIndex = 0);
+	_int DecideSidestep(CThugBulkyEnforcer* pOwner);
 };
 
 class CThugBulkyEnforcer_Walk_Front : public IBaseState<CThugBulkyEnforcer>
@@ -68,42 +84,6 @@ public:
 
 public:
 	static CThugBulkyEnforcer_Walk_Back* Create() { return new CThugBulkyEnforcer_Walk_Back(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CThugBulkyEnforcer_Run_Start : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run_Start* Create() { return new CThugBulkyEnforcer_Run_Start(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CThugBulkyEnforcer_Run : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run* Create() { return new CThugBulkyEnforcer_Run(); }
-	virtual void Free() override { __super::Free(); }
-};
-
-class CThugBulkyEnforcer_Run_End : public IBaseState<CThugBulkyEnforcer>
-{
-public:
-	virtual void Enter(CThugBulkyEnforcer* pOwner) override;
-	virtual void Update(CThugBulkyEnforcer* pOwner, _float dt) override;
-	virtual void Exit(CThugBulkyEnforcer* pOwner) override;
-
-public:
-	static CThugBulkyEnforcer_Run_End* Create() { return new CThugBulkyEnforcer_Run_End(); }
 	virtual void Free() override { __super::Free(); }
 };
 
