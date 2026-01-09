@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UI_DecibelDigits.h"
+#include "UI_Decibel.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
@@ -9,34 +10,56 @@
 const string CUI_DecibelDigits::DIGIT_TEXTURES[ENUM(DigitTexture::END)] = { "00.png", "01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png" };
 CUI_DecibelDigits::DigitSlot CUI_DecibelDigits::digitOrder[] = { DigitSlot::DIGIT_1000, DigitSlot::DIGIT_100, DigitSlot::DIGIT_10, DigitSlot::DIGIT_1 };
 
-void CUI_DecibelDigits::Set_Digits(_int iDecibel)
-{
-    Set_Digit(ChildSlot::DIGIT_1000, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 3)));
-    Set_Digit(ChildSlot::DIGIT_100, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 2)));
-    Set_Digit(ChildSlot::DIGIT_10, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 1)));
-    Set_Digit(ChildSlot::DIGIT_1, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 0)));
-
-    Set_LayoutDigits();
-    Set_LayoutBg();
-}
-
 HRESULT CUI_DecibelDigits::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CObjectContainer>();
 
     return S_OK;
 }
 
 HRESULT CUI_DecibelDigits::Initialize(INIT_DESC* pArg)
 {
+    DIGITS_DESC* pDesc = static_cast<DIGITS_DESC*>(pArg);
+    m_pDecibel = pDesc->pDecibel;
+    m_pColor = pDesc->pColor;
+    m_pOffsetX = pDesc->pOffsetX;
+
     __super::Initialize(pArg);
 
-    Add_Component<CObjectContainer>();
+    Ready_PartObjects();
 
+    return S_OK;
+}
+
+void CUI_DecibelDigits::Update(_float dt)
+{
+    Set_Digit(ChildSlot::DIGIT_1000, static_cast<DigitTexture>(Helper::Get_Digit(*m_pDecibel, 3)));
+    Set_Digit(ChildSlot::DIGIT_100, static_cast<DigitTexture>(Helper::Get_Digit(*m_pDecibel, 2)));
+    Set_Digit(ChildSlot::DIGIT_10, static_cast<DigitTexture>(Helper::Get_Digit(*m_pDecibel, 1)));
+    Set_Digit(ChildSlot::DIGIT_1, static_cast<DigitTexture>(Helper::Get_Digit(*m_pDecibel, 0)));
+
+    for (_int i = 0; i < _countof(digitOrder); ++i)
+    {
+        auto pSlot = Get_DigitSlot(digitOrder[i]);
+        if (!pSlot)
+            continue;
+
+        pSlot->Set_Color(*m_pColor);
+    }
+
+    Set_AnchorOffset(_float2(*m_pOffsetX, 0.f));
+    Set_LayoutDigits();
+    Set_LayoutBg();
+}
+
+void CUI_DecibelDigits::Ready_PartObjects()
+{
     for (_int i = 0; i < ENUM(ChildSlot::END); ++i)
     {
         CUI_Object* pSlot = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
-            .Build("decibelNumber" + to_string(i));
+            .Build("decibelDigits" + to_string(i));
 
         Get_Component<CObjectContainer>()->Add_Child(pSlot);
     }
@@ -47,12 +70,6 @@ HRESULT CUI_DecibelDigits::Initialize(INIT_DESC* pArg)
         pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
         pBg->Set_Color(_float4(0.f, 0.f, 0.f, 1.f));
     }
-
-    return S_OK;
-}
-
-void CUI_DecibelDigits::Update(_float dt)
-{
 }
 
 void CUI_DecibelDigits::Set_Digit(ChildSlot slot, DigitTexture texture)
