@@ -25,10 +25,16 @@ namespace Client {
 
 	struct PlayerDesc {
 		string	strPlayerName = {};
-		_float	MaxHp = {};
-		_float	Attack = {};
+		_uint	LV = {};
+		_float	SpecialAttack = {};
 		string	ExType = {};
 		_float	Ultimate = {};
-		_float	SpecialAttack = {};
+	};
+
+	struct PlayerLVDesc {
+		_uint	LV = {};
+		_float	MaxHP = {};
+		_float	Attack = {};
+		_float	Defend = {};
 	};
 }
