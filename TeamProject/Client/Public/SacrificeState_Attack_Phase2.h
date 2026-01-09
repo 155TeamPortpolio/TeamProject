@@ -18,7 +18,7 @@ public:
 private:
 	void Register_States();
 	void Register_Transitions();
-	void BuildPattern(CSacrifice* pOwner,ATTACK_BLACK_BOARD& blackBoard);
+	void BuildPattern(CSacrifice* pOwner);
 };
 
 /* Phase2 State */

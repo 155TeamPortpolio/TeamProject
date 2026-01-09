@@ -3,6 +3,8 @@
 #include "GameInstance.h"
 #include "Helper_Func.h"
 #include "CharacterController.h"
+#include "BattlePlayer.h"
+#include "DataBase.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -57,64 +59,11 @@ vector<BATTLEOBJ_INFO> CBattleSystem::CopyBattleObjects(BATTLE_OBJ_TYPE eType)
 	return m_BattleObjInfos[eType];
 }
 
-HRESULT CBattleSystem::LoadMonsterCreationTable(const string& csvPath)
-{
-	/*  
-	column_count = read_header에 넣는 컬럼 수(헤더 개수)
-	trim_chars = 앞 뒤 공백 제거
-	double_quote_escape = "..." 안의 쉼표 및 따옴표 처리 */
-	io::CSVReader<
-		7,
-		io::trim_chars<' ', '\t'>,
-		io::double_quote_escape<',', '"'>
-	>in(csvPath);
-
-	/* 
-	헤더 이름으로 매핑(컬럼 순서 바뀌어도 무관)
-	파일에 다른 컬럼이 더 있거나 누락된 컬럼이 있어도 무시함
-	*/
-	in.read_header(
-		io::ignore_extra_column | io::ignore_missing_column,
-		"ProtoTag", "DisplayName", 
-		"CCT_fHeight", "CCT_fRadius", "CCT_vPos_X", "CCT_vPos_Y", "CCT_vPos_Z"
-	);
-
-	string	ProtoTag{}, DisplayName{};
-	_float	CCT_fHeight{}, CCT_fRadius{};
-	_float	CCT_vPos_X{}, CCT_vPos_Y{}, CCT_vPos_Z{};
-	
-	while (in.read_row(
-		ProtoTag, DisplayName,
-		CCT_fHeight, CCT_fRadius, CCT_vPos_X, CCT_vPos_Y, CCT_vPos_Z
-	))
-	{
-		if (ProtoTag.empty())
-			continue;
-
-		MonsterCreationDesc desc = {};
-		desc.ProtoTag = ProtoTag;
-		desc.DisplayName = DisplayName;
-		desc.CCT_fHeight = CCT_fHeight;
-		desc.CCT_fRadius = CCT_fRadius;
-		desc.CCT_vPos = { CCT_vPos_X, CCT_vPos_Y, CCT_vPos_Z };
-
-		auto [iter, inserted] = m_MonsterCreationTables.emplace(desc.ProtoTag, move(desc));
-		if (false == inserted) {
-			wstring ErrorMsg = L"Duplicate MonsterKey in CSV : " + Helper::ConvertToWideString(ProtoTag);
-			MessageBox(NULL, ErrorMsg.c_str(), L"System Message", MB_OK);
-		}
-	}
-
-	return S_OK;
-}
-
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos)
 {
-	auto iter = m_MonsterCreationTables.find(MonsterProtoTag);
-	if (iter == m_MonsterCreationTables.end())
+	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);
+	if (true == MonsterTableDesc.ProtoTag.empty())
 		return;
-
-	auto MonsterTableDesc = iter->second;
 
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
@@ -143,6 +92,11 @@ void CBattleSystem::SetPlayer(OBJECT_HANDLE hPlayer)
 {
 	if (hPlayer.isValid())
 		m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+}
+
+void CBattleSystem::SetBattleCharacters(vector<_uint> battleCharacters)
+{
+	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
 }
 
 void CBattleSystem::ClearBattleStage()

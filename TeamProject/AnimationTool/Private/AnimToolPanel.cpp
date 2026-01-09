@@ -51,7 +51,15 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(41);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(41);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(143);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(146);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(149);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(154);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(155);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(158);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(161);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(164);
 		}
 	}
 
@@ -59,10 +67,10 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Resize_Layer(2);
 			m_pSelectAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-			m_pSelectAnimator->Set_MotionBone(21);
+			m_pSelectAnimator->Set_MotionBone(12);
 			//m_pSelectAnimator->Set_StartBone(24, 1);
-			m_pSelectAnimator->Set_Animation(1, 89)
-				.LayerBlend(1.f, 0.f, 1.f, EaseType::InQuint)
+			m_pSelectAnimator->Set_Animation(1, 76)
+				.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 				.Loop(false)
 				.Apply();
 		}

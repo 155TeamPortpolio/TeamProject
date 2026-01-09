@@ -11,6 +11,24 @@ namespace Client {
 		_float			fRadius = {};			// CCT 로컬 원점으로부터 반지름
 	}BATTLEOBJ_INFO;
 
+	struct MonsterCreationDesc {
+		string	ProtoTag = {};
+		string	DisplayName = {};
+		_float	CCT_fHeight = {};
+		_float	CCT_fRadius = {};
+		_float3 CCT_vPos = {};
 
+		_uint	CCT_iCollisionMask = 0xFFFFFFFF;
+		_bool	CCT_bAutoFit = { false };
+		COLLISION_GROUP CCT_eGroup = COLLISION_GROUP::MONSTER;
+	};
 
+	struct PlayerDesc {
+		string	strPlayerName = {};
+		_float	MaxHp = {};
+		_float	Attack = {};
+		string	ExType = {};
+		_float	Ultimate = {};
+		_float	SpecialAttack = {};
+	};
 }

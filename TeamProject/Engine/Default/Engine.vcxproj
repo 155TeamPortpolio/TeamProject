@@ -231,6 +231,8 @@ exit /b 0</Command>
     <ClInclude Include="..\Public\AnimationClip.h" />
     <ClInclude Include="..\Public\AnimationLayout.h" />
     <ClInclude Include="..\Public\Animator3D.h" />
+    <ClInclude Include="..\Public\AnimatorStruct.h" />
+    <ClInclude Include="..\Public\AnimBuilder.h" />
     <ClInclude Include="..\Public\AudioDevice.h" />
     <ClInclude Include="..\Public\AudioSource.h" />
     <ClInclude Include="..\Public\Base.h" />
@@ -420,6 +422,7 @@ exit /b 0</Command>
     </ClCompile>
     <ClCompile Include="..\Private\AnimationClip.cpp" />
     <ClCompile Include="..\Private\Animator3D.cpp" />
+    <ClCompile Include="..\Private\AnimBuilder.cpp" />
     <ClCompile Include="..\Private\AudioDevice.cpp" />
     <ClCompile Include="..\Private\AudioSource.cpp" />
     <ClCompile Include="..\Private\Base.cpp" />

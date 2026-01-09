@@ -33,8 +33,6 @@ public:
     void  StopAll(_float blendOutSec = 0.25f);
     void  Update(_float dt);
 
-    virtual void  Free()   override { __super::Free(); }
-
 private:
     struct SeqEntry
     {
