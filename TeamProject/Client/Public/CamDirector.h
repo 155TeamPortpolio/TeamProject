@@ -1,16 +1,11 @@
 #pragma once
 
-#include "Base.h"
 #include "CameraMgr.h"
-
-NS_BEGIN(Engine)
-class ICameraService;
-NS_END
 
 NS_BEGIN(Client)
 class CSequenceCam;
 
-enum class CamType { None, Free, Orbit, Sequence, End };
+enum class CamType { Free, Orbit, Sequence, End };
 
 class CCamDirector final : public CBase
 {
@@ -65,7 +60,7 @@ private:
     PlayingState                             m_playing{};
     array<OBJECT_HANDLE, ENUM(CamType::End)> m_camHandles{};
     OBJECT_HANDLE                            m_spaceRefHandle{};
-    CamType                                  m_returnCamType = CamType::None;
+    OBJECT_HANDLE                            m_returnCamHandle{};
 };
 
 NS_END
