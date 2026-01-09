@@ -17,6 +17,9 @@ void CUI_Decibel::Set_Decibel(_int iDecibel)
     auto pKanji = dynamic_cast<CUI_DecibelKanji*>(Get_Slot(ChildSlot::KANJI));
     auto pDigits = dynamic_cast<CUI_DecibelDigits*>(Get_Slot(ChildSlot::DIGITS));
 
+    if (!pKanji || !pDigits)
+        return;
+
     // 간지 텍스쳐 셋 하고 (간지에서 분기하는게 나은가?)
     CUI_DecibelKanji::State kanjiState = { CUI_DecibelKanji::State::NONE };
 
@@ -65,13 +68,13 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 
 void CUI_Decibel::Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
-        Set_Decibel(m_iDecibel + 12);
-
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
-        Set_Decibel(m_iDecibel - 12);
+    //Get_Component<CObjectContainer>()->UpdateChild(dt);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
+    //    Set_Decibel(m_iDecibel + 12);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
+    //    Set_Decibel(m_iDecibel - 12);
 }
 
 void CUI_Decibel::Ready_PartObjects()
@@ -83,8 +86,8 @@ void CUI_Decibel::Ready_PartObjects()
         .Build("decibelKanji"));
 
     pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelCounter" })
-        .Build("decibelCounter"));
+        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelDigits" })
+        .Build("decibelDigits"));
 }
 
 CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
