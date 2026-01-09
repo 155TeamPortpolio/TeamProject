@@ -282,39 +282,35 @@ void CTestLevel::Ready_Camera()
 
 	auto freeCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_FreeCam"})
 		.Camera(aspect)
-		.Position({0.f, 2.f, -3.f})                                       
+		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
 
-	//auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
-	//	.Camera(aspect)
-	//	.CharacterController(desc)
-	//	.Build("OrbitCam");
+	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
+		.Camera(aspect)
+		.CharacterController(desc)
+		.Build("OrbitCam");
 
-	//static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
-
-	//ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
 	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(freeCam, {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
 
-	//m_orbitCamHandle = orbitCam->Get_Handle();
 	m_freeCamHandle  = freeCam->Get_Handle();
 	m_seqCamHandle   = sequenceCam->Get_Handle();
+	m_orbitCamHandle = orbitCam->Get_Handle();
 
-	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
-	//m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
-	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
+	m_pCamDirector->SetCam(CamType::Sequence, m_seqCamHandle);
+	m_pCamDirector->SetCam(CamType::Free, m_freeCamHandle);
+	m_pCamDirector->SetCam(CamType::Orbit, m_orbitCamHandle);
+
+	m_pCamDirector->SetSpaceRef(m_miyabiHandle);
+	m_pCamDirector->SetReturnCam(CamType::Orbit);
 
 	CamLoader::Load();
 
-	//CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-
-	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
-	//GUI->Register_Panel(camPanel);
-
-	CameraManager()->Set_MainCam(freeCam->Get_Component<CCamera>());
+	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_ShadowCamera()
