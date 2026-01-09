@@ -25,6 +25,7 @@ public:
     virtual const _float& Mouse_DeltaW()PURE;
     virtual const _float2& Mouse_Pos() PURE;
 
+    virtual vector<KEY_DESC> GetPressedKeys() PURE;
 };
 
 NS_END
