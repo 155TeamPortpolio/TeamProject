@@ -1,14 +1,63 @@
 #include "pch.h"
 #include "UI_DecibelKanji.h"
+#include "UI_Decibel.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 #include "Sprite2D.h"
-#include "Texture.h"
+#include "Texture.h" 
 
-const string CUI_DecibelKanji::KANJI_TEXTURES[ENUM(State::END)] = { "CombatMaximum.png", "CombatUproar.png", "CombatBlasting.png", "CombatMaximum.png" };
+const string CUI_DecibelKanji::KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)] = { "CombatMaximum.png", "CombatUproar.png", "CombatBlasting.png", "CombatMaximum.png" };
 
-void CUI_DecibelKanji::Set_Kanji(State texture)
+HRESULT CUI_DecibelKanji::Initialize_Prototype()
+{
+    __super::Initialize_Prototype();
+
+    Add_Component<CObjectContainer>();
+
+	return S_OK;
+}
+
+HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
+{
+    KANJI_DESC* pDesc = static_cast<KANJI_DESC*>(pArg);
+    m_pState = pDesc->pState;
+    m_pColor = pDesc->pColor;
+
+    __super::Initialize(pArg);
+
+    Ready_PartObjects();
+
+	return S_OK;
+}
+
+void CUI_DecibelKanji::Update(_float dt)
+{
+    if (auto pKanji = Get_Slot(ChildSlot::KANJI))
+        pKanji->Set_Color(*m_pColor);
+
+    Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
+}
+
+void CUI_DecibelKanji::Ready_PartObjects()
+{
+    for (_int i = 0; i < ENUM(ChildSlot::END); ++i)
+    {
+        CUI_Object* pSlot = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
+            .Build("kanji" + to_string(i));
+        Get_Component<CObjectContainer>()->Add_Child(pSlot);
+    }
+
+    auto pBg = Get_Slot(ChildSlot::BG);
+
+    if (pBg)
+    {
+        pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+        pBg->Set_Color(Helper::HexToColor("#000000"));
+    }
+}
+
+void CUI_DecibelKanji::Set_Kanji(CUI_Decibel::State texture)
 {
     auto pKanji = Get_Slot(ChildSlot::KANJI);
     auto pBg = Get_Slot(ChildSlot::BG);
@@ -18,48 +67,6 @@ void CUI_DecibelKanji::Set_Kanji(State texture)
 
     Set_KanjiTexture(pKanji, KANJI_TEXTURES[ENUM(texture)]);
     Set_Layout(pKanji, pBg);
-}
-
-HRESULT CUI_DecibelKanji::Initialize_Prototype()
-{
-    __super::Initialize_Prototype();
-
-	return S_OK;
-}
-
-HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
-{
-    __super::Initialize(pArg);
-
-    Add_Component<CObjectContainer>();
-
-    for (_int i = 0; i < ENUM(ChildSlot::END); ++i)
-    {
-        CUI_Object* pSlot = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
-            .Build("dd");
-        Get_Component<CObjectContainer>()->Add_Child(pSlot);
-    }
-
-    auto pKanji = Get_Slot(ChildSlot::KANJI);
-    auto pBg = Get_Slot(ChildSlot::BG);
-
-    if (pKanji)
-    {
-        pKanji->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatMaximum.png");
-        pKanji->Set_Color(Helper::HexToColor("#FFFFFF"));
-    }
-
-    if (pBg)
-    {
-        pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
-        pBg->Set_Color(Helper::HexToColor("#000000"));
-    } 
-
-	return S_OK;
-}
-
-void CUI_DecibelKanji::Update(_float dt)
-{
 }
 
 void CUI_DecibelKanji::Set_KanjiTexture(CUI_Object* pKanji, string textureKey)
