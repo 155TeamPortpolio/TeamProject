@@ -352,57 +352,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk">
       <UniqueIdentifier>{f4071147-49f7-4af9-aa74-d0612b847195}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\UI">
-      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement">
-      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\CanvasPanel">
-      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\Button">
-      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\Gauge">
-      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\Image">
-      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\SpriteAnimation">
-      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\UVAnimation">
-      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\Text">
-      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\UIElement\Mask">
-      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\00. UIDirector">
-      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\Logo">
-      <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\Loading">
-      <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\BattleHUD">
-      <UniqueIdentifier>{081bece2-a822-4ea3-898c-7bcc24923da6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel">
-      <UniqueIdentifier>{c542421d-60e5-4730-a35f-bea8858b044b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Kanji">
-      <UniqueIdentifier>{a85e8ea6-80fb-4ef4-b1db-8cb70354bfff}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\UI\BattleHUD\Decibel\Digits">
-      <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
       <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
     </Filter>
@@ -411,12 +360,63 @@
     </Filter>
     <Filter Include="02. GameObject\Effect\AttackSign">
       <UniqueIdentifier>{ce06088b-9ea7-4333-9bf6-688c797a0bb1}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI">
+      <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement">
+      <UniqueIdentifier>{e0279bdd-3ed8-410d-a3d2-fa068d857c77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\CanvasPanel">
+      <UniqueIdentifier>{a36103d8-1e1f-485e-9ca8-f6b8fd7515c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Button">
+      <UniqueIdentifier>{fdd7078b-475a-4b9d-bfac-435a6b1227a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Gauge">
+      <UniqueIdentifier>{440caa2a-4a52-4688-9cdd-214e76981c97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Image">
+      <UniqueIdentifier>{37b87e55-63fb-4bdb-9840-3af2b355936c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\SpriteAnimation">
+      <UniqueIdentifier>{b53662a7-9d76-4c99-a002-586240dcd115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\UVAnimation">
+      <UniqueIdentifier>{590af0ed-d031-467b-917d-070b9874c21e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Text">
+      <UniqueIdentifier>{056c2db3-e608-4c70-8c71-acf3a6fa7bbb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\UIElement\Mask">
+      <UniqueIdentifier>{c6e5c432-29ad-4bd2-803f-1593e2c33281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\00. UIDirector">
+      <UniqueIdentifier>{42edd944-ef6d-4efd-b82d-9cadbc7ddc9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Logo">
+      <UniqueIdentifier>{acdbf6b6-e528-43aa-8ff9-849bc24d3edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\Loading">
+      <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD">
+      <UniqueIdentifier>{081bece2-a822-4ea3-898c-7bcc24923da6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel">
+      <UniqueIdentifier>{c542421d-60e5-4730-a35f-bea8858b044b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Kanji">
+      <UniqueIdentifier>{a85e8ea6-80fb-4ef4-b1db-8cb70354bfff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Digits">
+      <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -541,25 +541,25 @@
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CanvasPanel.h">
-      <Filter>02. GameObject\Object\UI\UIElement\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SpriteAnimationUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\SpriteAnimation</Filter>
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UVAnimationUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\UVAnimation</Filter>
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImageUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Image</Filter>
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GaugeUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Gauge</Filter>
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\TextUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Text</Filter>
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ButtonUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Button</Filter>
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
     </ClInclude>
     <ClInclude Include="..\public\CamPanel.h">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
@@ -607,7 +607,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UIDirector.h">
-      <Filter>02. GameObject\Object\UI\00. UIDirector</Filter>
+      <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UILoader.h">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -643,7 +643,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand\State\Hit</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Event_Struct.h">
-      <Filter>02. GameObject\Object\UI</Filter>
+      <Filter>02. GameObject\UI</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer</Filter>
@@ -757,10 +757,10 @@
       <Filter>03. Utility\04. BattleSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Logo.h">
-      <Filter>02. GameObject\Object\UI\Logo</Filter>
+      <Filter>02. GameObject\UI\Logo</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Loading.h">
-      <Filter>02. GameObject\Object\UI\Loading</Filter>
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClInclude>
     <ClInclude Include="..\public\JaneDoe.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe</Filter>
@@ -799,26 +799,26 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\Object\UI\BattleHUD</Filter>
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Decibel.h">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClInclude>
     <ClInclude Include="..\public\MaskUI.h">
-      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_DecibelKanji.h">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Kanji</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_DecibelDigits.h">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Digits</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClInclude>
@@ -949,25 +949,25 @@
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CanvasPanel.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\CanvasPanel</Filter>
+      <Filter>02. GameObject\UI\UIElement\CanvasPanel</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SpriteAnimationUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\SpriteAnimation</Filter>
+      <Filter>02. GameObject\UI\UIElement\SpriteAnimation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UVAnimationUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\UVAnimation</Filter>
+      <Filter>02. GameObject\UI\UIElement\UVAnimation</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ImageUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Image</Filter>
+      <Filter>02. GameObject\UI\UIElement\Image</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GaugeUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Gauge</Filter>
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Button</Filter>
+      <Filter>02. GameObject\UI\UIElement\Button</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\TextUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Text</Filter>
+      <Filter>02. GameObject\UI\UIElement\Text</Filter>
     </ClCompile>
     <ClCompile Include="..\private\CamPanel.cpp">
       <Filter>02. GameObject\Camera\01. CamPanel</Filter>
@@ -1009,7 +1009,7 @@
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase2</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UIDirector.cpp">
-      <Filter>02. GameObject\Object\UI\00. UIDirector</Filter>
+      <Filter>02. GameObject\UI\00. UIDirector</Filter>
     </ClCompile>
     <ClCompile Include="..\private\UILoader.cpp">
       <Filter>03. Utility\03. UILoader</Filter>
@@ -1159,10 +1159,10 @@
       <Filter>03. Utility\04. BattleSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Logo.cpp">
-      <Filter>02. GameObject\Object\UI\Logo</Filter>
+      <Filter>02. GameObject\UI\Logo</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Loading.cpp">
-      <Filter>02. GameObject\Object\UI\Loading</Filter>
+      <Filter>02. GameObject\UI\Loading</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoe.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe</Filter>
@@ -1198,23 +1198,23 @@
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\Object\UI\BattleHUD</Filter>
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Decibel.cpp">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MaskUI.cpp">
-      <Filter>02. GameObject\Object\UI\UIElement\Mask</Filter>
+      <Filter>02. GameObject\UI\UIElement\Mask</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelKanji.cpp">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Kanji</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Kanji</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelDigits.cpp">
-      <Filter>02. GameObject\Object\UI\BattleHUD\Decibel\Digits</Filter>
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Digits</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AttackSign.cpp">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClCompile>
