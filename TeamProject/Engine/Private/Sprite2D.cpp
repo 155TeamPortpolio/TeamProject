@@ -193,6 +193,19 @@ void CSprite2D::Render_GUI()
 	}
 }
 
+_float CSprite2D::Get_AspectRatio()
+{
+	if (m_pTextures.empty() || m_pTextures.size() <= m_iDrawIndex || !m_pTextures[m_iDrawIndex])
+		return 1.f;
+
+	const _uint2 vSize = m_pTextures[m_iDrawIndex]->Get_Size();
+
+	if (vSize.x == 0 || vSize.y == 0)
+		return 1.f;
+
+	return vSize.x / static_cast<_float>(vSize.y);
+}
+
 CSprite2D* CSprite2D::Create()
 {
 	CSprite2D* instance = new CSprite2D();
