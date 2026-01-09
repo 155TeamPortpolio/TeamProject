@@ -18,17 +18,20 @@ typedef struct DynamicBoneNode
     _vector3 CombinedPrevPos{};
     /* 월드 위치기준 */
     _vector3 AnimWorldPos;
+    _quaternion AnimWorldQuat{};
     _vector3 DynamicCurPos{};
     _vector3 DynamicPrevPos{};
+    _quaternion DynamicCurQuat{};
+    _quaternion DynamicPrevQuat{};
 }DYNAMIC_NODE;
 
 typedef struct DynamicBoneChainParam
 {
-    _float fStiffness    = { 0.1f };     // 0~1 (강성)
-    _float fDamping      = { 0.1f };     // 0~1 (점성)
-    _float fElasticity   = { 0.1f };     // 
+    _float fStiffness    = { 0.03f };     // 0~1 (강성)
+    _float fDamping      = { 0.5f };     // 0~1 (점성)
+    _float fElasticity   = { 0.1f };     // 0~1 (탄성)
     _float fInert        = { 0.1f };     // 0~1 (감쇠)
-    _float fGravityScale = { 1.0f };     // 중력 배율
+    _float fGravityScale = { 0.002f };     // 중력 배율
 }CHAIN_PARAM;
 
 typedef struct DynamicBoneChain {

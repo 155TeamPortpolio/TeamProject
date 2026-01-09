@@ -1377,13 +1377,6 @@ void CAnimator3D::BuildIKMatrices(_float dt)
 {
 }
 
-void CAnimator3D::Update_DynamicBone(_float dt)
-{
-	if (nullptr == m_pDynamicBone)
-		return;
-
-	//
-}
 
 void CAnimator3D::BuildBone()
 {
@@ -1419,15 +1412,36 @@ void CAnimator3D::BuildBone()
 
 void CAnimator3D::BuildDynamicBone()
 {
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
-		Matrix CombinedBone = XMLoadFloat4x4(&m_CombinedMatrices[i]);
-		Matrix DynamicBone = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
+		int parent = m_pData->Get_BoneParentIndex(i);
 
-		XMStoreFloat4x4(&m_CombinedMatrices[i], DynamicBone * CombinedBone);
+		Matrix local = XMLoadFloat4x4(&m_TransformationMatrices[i]);
+
+		Matrix animLocal = XMLoadFloat4x4(&m_TransformationMatrices[i]);
+		Matrix manipulate = XMLoadFloat4x4(&m_ManipulateMatrices[i]);
+		Matrix dynamic = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
+
+		Matrix localFinal = dynamic * manipulate * animLocal;
+
+		if (parent == -1)
+		{
+			XMStoreFloat4x4(
+				&m_CombinedMatrices[i],
+				localFinal * m_PreTransform
+			);
+		}
+		else
+		{
+			Matrix parentCombined = XMLoadFloat4x4(&m_CombinedMatrices[parent]);
+
+			XMStoreFloat4x4(
+				&m_CombinedMatrices[i],
+				localFinal * parentCombined
+			);
+		}
 	}
 }
-
 #pragma region GUI
 void CAnimator3D::Render_GUI()
 {

@@ -30,12 +30,13 @@ protected:
     void Calc_AnchorDelta(DYNAMIC_CHAIN_GROUP& Group,
         _vector3& outDeltaPos,
         _quaternion& outDeltaQuat);
-    void Calc_DynamicPos(_vector3& DynamicPos,
+    void Calc_DynamicNode(DYNAMIC_NODE& Node,
         const _vector3& AnchorPrevPos,
         const _vector3& AnchorDeltaPos,
         const _quaternion& AnchorDeltaQuat);
     void Simulate_WorldNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
+        const _vector3& AnchorDeltaPos,
         const CHAIN_PARAM& ChainParam,
         _float dt);
     void ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group);

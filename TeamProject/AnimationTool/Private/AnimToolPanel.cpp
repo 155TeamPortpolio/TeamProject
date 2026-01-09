@@ -51,7 +51,10 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(41);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(18);
+
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(41);
+			
 			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(143);
 			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(146);
 			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(149);

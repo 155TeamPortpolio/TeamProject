@@ -192,7 +192,7 @@ protected://애니매이션 체크
     
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
-    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& ref,  _float weight);
 
 
 protected:
@@ -209,7 +209,6 @@ protected:
     void Update_Layers(_float dt);
     void BuildLocal(_float dt);
     void BuildIKMatrices(_float dt);
-    void Update_DynamicBone(_float dt);
     void BuildBone();
     void BuildDynamicBone();
 
