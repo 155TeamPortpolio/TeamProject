@@ -26,18 +26,22 @@ void CUI_Decibel::Set_Decibel(_int iDecibel)
     if (m_iDecibel >= 3000)
     {
         kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;
+        m_vTargetColor = Helper::HexToColor("#FF9A22");
     }
     else if (m_iDecibel >= 2000)
     {
         kanjiState = CUI_DecibelKanji::State::COMBAT_BLASTING;
+        m_vTargetColor = Helper::HexToColor("#FFFF3E");
     }
     else if (m_iDecibel >= 2000)
     {
         kanjiState = CUI_DecibelKanji::State::COMBAT_UPROAR;
+        m_vTargetColor = Helper::HexToColor("#41FDFE");
     }
     else
     {
         kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;   //None 처리해야
+        m_vTargetColor = Helper::HexToColor("#FFFFFF");
     }
     
     pKanji->Set_Kanji(kanjiState);      // 데시벨 보내고 안에서 분길하는게 나은가
@@ -75,6 +79,9 @@ void CUI_Decibel::Update(_float dt)
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
     //    Set_Decibel(m_iDecibel - 12);
+
+    _float fLerpAmount = min(1.f, dt * m_fColorLerpSpeed);
+    XMStoreFloat4(&m_vCurrentColor, XMVectorLerp(XMLoadFloat4(&m_vCurrentColor), XMLoadFloat4(&m_vTargetColor), fLerpAmount));
 }
 
 void CUI_Decibel::Ready_PartObjects()

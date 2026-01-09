@@ -41,6 +41,9 @@ public:
     _bool IsValid();
     void  Render_GUI();
 
+public:
+    _float Get_AspectRatio();
+
 private:
     _uint  m_iDrawIndex   = {};
     string m_PassConstant = {"Opaque"};
