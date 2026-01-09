@@ -400,14 +400,17 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
       <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\UI\BattleHUD">
-      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
+      <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
+      <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -798,9 +801,6 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClInclude>
@@ -809,6 +809,13 @@
     </ClInclude>
     <ClInclude Include="..\public\DataBase.h">
       <Filter>03. Utility\05. DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1197,8 +1204,12 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

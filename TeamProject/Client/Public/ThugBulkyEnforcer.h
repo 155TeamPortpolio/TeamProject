@@ -40,6 +40,7 @@ public:
     ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }
     HYSTERIESIS&                        GetHysteriesis() { return m_tHysteriesis; }
     _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
+    _int                                GetGroggyValue() { return m_iGroggyValue; }
 
     void                                Idle() { m_isIdle = true; }
     void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
@@ -55,23 +56,31 @@ private:
     void CheckDistanceFromPlayer();
     void RotateToPlayer(const _float dt);
     void ManageAttackHistory();
+    void ManageGroggy(const _float dt);
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
+    
+    _bool               m_isAutoPatternPlay = { true };
 
+    /*For.AttackAlgorithm*/
     deque<_int>		    m_AttackHistory;
     _int                m_iAttackCombo = {};
 
-    _bool               m_isAutoPatternPlay = { true };
-
+    /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /*For.Rotate*/
     _bool               m_isLookPlayer = { false };
     _float3             m_vDirToLookCapture = {};
     _float              m_fRotateSpeed = {};
+
+    /*For.Groggy*/
+    _int                m_iGroggyValue = {};
+    _float              m_fGroggyDecreaseTime = {};
 };
 
 NS_END

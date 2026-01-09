@@ -168,7 +168,7 @@ void CCharacter::Update_Input(_float dt)
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 
-	if (InputDevice()->Key_Down(VK_F1)) m_bTest = !m_bTest;
+	if (InputDevice()->Key_Down('T')) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)
