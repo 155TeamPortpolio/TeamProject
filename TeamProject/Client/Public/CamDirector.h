@@ -10,7 +10,7 @@ NS_END
 NS_BEGIN(Client)
 class CSequenceCam;
 
-enum class CamReturnType { None, OrbitCam , FreeCam };
+enum class CamType { None, Free, Orbit, Sequence, End };
 
 class CCamDirector final : public CBase
 {
@@ -20,24 +20,33 @@ private:
     virtual ~CCamDirector() = default;
 
 public:
-    void  Bind(CSequenceCam* sequenceCam);
+    void SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
+    void ClearCam(CamType type)                     { m_camHandles[ENUM(type)].Reset(); }
+
+public:
+    void SetSpaceRef(OBJECT_HANDLE handle)         { m_spaceRefHandle = handle; }
+    void SetReturnCam(CamType type)                { m_returnCamType  = type;   }
+    OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
+
+public:
     _bool Register(const string& key, const filesystem::path& path);
     void  UnRegister(const string& key);
 
 public:
-    void  SetSpaceReference(OBJECT_HANDLE handle) { m_spaceRefHandle = handle; }
-    void  SetReturnCam(OBJECT_HANDLE handle, CamReturnType type) { m_returnCamHandle = handle; m_returnCamType = type; }
-
     _uint RequestSequence(const string& key, _float blendInSec = 0.25f, _bool resetTime = true, _float blendOutSec = 0.25f);
     _bool StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void  StopAll(_float blendOutSec = 0.25f);
     void  Update(_float dt);
 
 private:
+    CGameObject* GetCamObj(CamType type)  const;
+    CCamera*     GetCamComp(CamType type) const;
+
+private:
     struct SeqEntry
     {
         filesystem::path path{};
-        CamSequenceDesc  seq{};
+        CamSequenceDesc  seqDesc{};
     };
     struct PlayingState
     {
@@ -52,15 +61,11 @@ private:
     };
 
 private:
-    CSequenceCam* GetSequenceCam() const;
-
-private:
-    unordered_map<string, SeqEntry> m_seqs{};
-    PlayingState                    m_playing{};
-    OBJECT_HANDLE                   m_seqHandle{};
-    OBJECT_HANDLE                   m_spaceRefHandle{};
-    OBJECT_HANDLE                   m_returnCamHandle{};
-    CamReturnType                   m_returnCamType = CamReturnType::None;
+    unordered_map<string, SeqEntry>          m_seqs{};
+    PlayingState                             m_playing{};
+    array<OBJECT_HANDLE, ENUM(CamType::End)> m_camHandles{};
+    OBJECT_HANDLE                            m_spaceRefHandle{};
+    CamType                                  m_returnCamType = CamType::None;
 };
 
 NS_END

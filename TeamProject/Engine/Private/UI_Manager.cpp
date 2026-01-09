@@ -45,41 +45,61 @@ void CUI_Manager::Pre_EngineUpdate(_float dt)
 	DeleteUIs.clear();
 
 	m_nowLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Pre_EngineUpdate(dt);
+	
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return; 
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Pre_EngineUpdate(dt);
 }
 
 void CUI_Manager::Post_EngineUpdate(_float dt)
 {
 	Sort_UI();
 
-	for (auto& UI : m_UIObjects[m_nowLevelKey]) {
-		if (UI && UI->Is_Root())
-			UI->Post_EngineUpdate(dt);
-	}
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Post_EngineUpdate(dt);
 }
 
 void CUI_Manager::Priority_Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey]) {
-		if (UI && UI->Is_Root())
-			UI->Priority_Update(dt);
-	}
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Priority_Update(dt);
 }
 
 void CUI_Manager::Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Update(dt);
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Update(dt);
 }
 
 void CUI_Manager::Late_Update(_float dt)
 {
-	for (auto& UI : m_UIObjects[m_nowLevelKey])
-		if (UI && UI->Is_Root())
-			UI->Late_Update(dt);
+
+	auto itLevel = m_UIObjects.find(m_nowLevelKey);
+	if (itLevel == m_UIObjects.end())
+		return;
+
+	for (auto* uiObj : itLevel->second)
+		if (uiObj && uiObj->Is_Root())
+			uiObj->Late_Update(dt);
 }
 
 void CUI_Manager::Clear(const string& LevelTag)
@@ -202,6 +222,9 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 {
+	if (handle.Level == "")
+		return nullptr;
+
 	auto itLevel = m_UIObjects.find(handle.Level);
 	if (itLevel == m_UIObjects.end()) return nullptr;
 

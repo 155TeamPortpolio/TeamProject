@@ -24,7 +24,7 @@ class COrbitCam final : public CCamObject
     {
         _float sensitivityX = 0.12f;
         _float sensitivityY = 0.08f;
-        _float zoomSpeed = 1.0f;
+        _float zoomSpeed    = 1.0f;
     };
 
 public:
@@ -83,6 +83,8 @@ public:
 public:
     void    SetPreset(OrbitPreset nextPreset);
     void    SetTarget(CGameObject* obj);
+    void    SetTarget(OBJECT_HANDLE handle);
+
     void    ClearTarget() { targetHandle.Reset(); }
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);

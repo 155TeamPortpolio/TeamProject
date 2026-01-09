@@ -51,12 +51,12 @@ void CLoadingLevel::PreLoadLevel()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 
 	/*쓰레드에게 미리 요청 큐를 넣어두는 작업*/
-	PreloadKey key{};
-	key.type = ResourceType::Texture;
-	key.levelKey = "Demo_Level";
-	key.resourceKey = "Bangboo_Sharkboo_NPC (merge).model";
-	key.options.isSRGB = true;
-	pRcsMgr->RequestPreload(key);
+	//PreloadKey key{};
+	//key.type = ResourceType::Texture;
+	//key.levelKey = "Demo_Level";
+	//key.resourceKey = "Bangboo_Sharkboo_NPC (merge).model";
+	//key.options.isSRGB = true;
+	//pRcsMgr->RequestPreload(key);
 
 }
 

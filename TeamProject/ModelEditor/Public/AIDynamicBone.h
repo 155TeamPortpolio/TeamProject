@@ -27,7 +27,7 @@ public:
 
 public:
     void Render_GUI();
-    HRESULT Create_Chain(_int RootIndex);
+    HRESULT Create_Chain(_int AnchorIndex);
     void Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineGroup);
 
 public: 

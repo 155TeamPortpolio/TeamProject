@@ -33,6 +33,7 @@
 #include "SpriteNode.h"
 #include "ParticleNode.h"
 #include "EffectContainer.h"
+#include "AttackSign.h"
 
 /* Character */
 #include "Miyabi.h"
@@ -93,6 +94,8 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/attack_sign.png");
 	
 	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
 	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
@@ -126,27 +129,27 @@ HRESULT CTestLevel::Awake()
 	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
-	CCT_DESC miyabiCCT;
-	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	miyabiCCT.iCollisionMask = 0xFFFFFFFF;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-	miyabiCCT.bAutoFit = false;
-	miyabiCCT.fHeight = 1.28f;
-	miyabiCCT.fRadius = 0.2f;
-	miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
-	//miyabiCCT.fBoundingMinY = -0.88f;
-	miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
-	auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
-		.Position(_float3(3.f, 0.f, 0.f))
-		.CharacterController(miyabiCCT)
-		.Build("Miyabi");
-	objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
-
-	m_miyabiHandle = Miyabi->Get_Handle();
-	
-	// �÷��̾�(ĳ���͵�) ���� �������� ������ �ӽ�. if Player's logic is complete, It will be changed.
-	CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
+	//CCT_DESC miyabiCCT;
+	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF;
+	////miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	//miyabiCCT.bAutoFit = false;
+	//miyabiCCT.fHeight = 1.28f;
+	//miyabiCCT.fRadius = 0.2f;
+	//miyabiCCT.eGroup = COLLISION_GROUP::PLAYER;
+	////miyabiCCT.fBoundingMinY = -0.88f;
+	//miyabiCCT.vPos = { 0.f, 1.5f, 0.f };
+	//auto Miyabi = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Miyabi" })
+	//	.Position(_float3(3.f, 0.f, 0.f))
+	//	.CharacterController(miyabiCCT)
+	//	.Build("Miyabi");
+	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
+	//
+	//m_miyabiHandle = Miyabi->Get_Handle();
+	//
+	//// �÷��̾�(ĳ���͵�) ���� �������� ������ �ӽ�. if Player's logic is complete, It will be changed.
+	//CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
@@ -172,16 +175,36 @@ void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
 
+	static OBJECT_HANDLE prevPlayer{};
+
+	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
+	{
+		prevPlayer = curPlayer;
+
+		m_pCamDirector->SetSpaceRef(curPlayer);
+
+		auto orbitObj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
+	}
+
 	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = ObjectManger()->Request_Object(m_freeCamHandle);
+		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
+
 	if (InputDevice()->Key_Down(VK_F2))
 	{
-		auto obj = ObjectManger()->Request_Object(m_orbitCamHandle);
+		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
+
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
+
 	if (InputDevice()->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
@@ -189,21 +212,16 @@ void CTestLevel::Update()
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
-		CCT_DESC sacrificeCCT;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.iCollisionMask = 0xFFFFFFFF;
-		sacrificeCCT.bAutoFit = false;
-		sacrificeCCT.fHeight = 1.28f;
-		sacrificeCCT.fDensity = 0.00001f;
-		sacrificeCCT.fRadius = 0.2f;
-		sacrificeCCT.eGroup = COLLISION_GROUP::MONSTER;
-		sacrificeCCT.vPos = { 0.f, 1.5f, 0.f };
-		
-		auto pSacrifice = Builder::Create_Object({ "Test_Level","Proto_GameObject_Sacrifice" })
-			.CharacterController(sacrificeCCT)
-			.Build("Sacrifice");
-
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
+
+	if (InputDevice()->Key_Tap(VK_F5))
+	{
+		auto effect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Position(_float3(0.f,10.f,0.f))
+			.Build("Core");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
 	}
 
 	// [`] 
@@ -266,14 +284,14 @@ void CTestLevel::Ready_Camera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
-	auto sequenceCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
+	auto seqCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
 		.Position({0.f, 2.f, -5.f})
 		.Build("SequenceCam");
 
 	auto freeCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_FreeCam"})
 		.Camera(aspect)
-		.Position({0.f, 2.f, -3.f})                                       
+		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
 
 	CCT_DESC desc;
@@ -284,28 +302,22 @@ void CTestLevel::Ready_Camera()
 		.CharacterController(desc)
 		.Build("OrbitCam");
 
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(m_miyabiHandle.Get());
+	ObjectManger()->Add_Object(seqCam,   {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(freeCam,  {"Test_Level", "Camera_Layer"});
+	ObjectManger()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
 
-	ObjectManger()->Add_Object(orbitCam,    {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(sequenceCam, {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(freeCam,     {"Test_Level", "Camera_Layer"});
+	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Free,     freeCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Orbit,    orbitCam->Get_Handle());
 
-	m_orbitCamHandle = orbitCam->Get_Handle();
-	m_freeCamHandle  = freeCam->Get_Handle();
-	m_seqCamHandle   = sequenceCam->Get_Handle();
+	m_pCamDirector->SetReturnCam(CamType::Orbit);
 
-	m_pCamDirector->Bind(static_cast<CSequenceCam*>(sequenceCam));
-	m_pCamDirector->SetReturnCam(orbitCam->Get_Handle(), CamReturnType::OrbitCam);
-	m_pCamDirector->SetSpaceReference(m_miyabiHandle);
+	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
 
 	CamLoader::Load();
 
 	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-
-	//auto camPanel = CCamPanel::Create(GUI->Get_Context());
-	//GUI->Register_Panel(camPanel);
-
-	//CAM->Set_MainCam(freeCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_ShadowCamera()
