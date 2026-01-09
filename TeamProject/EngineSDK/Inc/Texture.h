@@ -16,6 +16,7 @@ public:
 	void Render_GUI(_float Width);
 
 	_uint2 Get_Size() { return m_TextureSize; };
+	_float Get_AspectRatio() { return m_TextureSize.x / static_cast<_float>(m_TextureSize.y); }
 
 private:
 	void Extract_Size();

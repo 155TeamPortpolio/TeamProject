@@ -13,38 +13,59 @@ void CThugBulkyEnforcer_Attack::Enter(CThugBulkyEnforcer* pOwner)
 
 		Register_States();
 		Register_Transitions();
+
+		__super::Enter(pOwner);
+		
+		// 전 공격 패턴 비교 위해 0 넣기
+		pOwner->AddAttackHistoryFront(0);
 	}
 
-	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+	m_isEndAttack = false;
 
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	auto pStateMachine = pOwner->Get_StateMachine();
-	if (nullptr == pStateMachine)
+	if (nullptr == pStateMachine) 
 		return;
+
+	// Attack확인용
 	_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
 	if (0 != iAttackPatternIndex) {
 		pStateMachine->Set_Int("AttackPattern", 0);
 		BuildPattern(blackboard, iAttackPatternIndex);
 	}
 	else {
-		auto RandomNums = Pick3RandomIndex();
-
-		for (size_t i = 0; i < RandomNums.size(); i++)
-		{
-			if (i < RandomNums.size() - 1)
-				BuildPattern(blackboard, RandomNums[i], true);
-			else
-				BuildPattern(blackboard, RandomNums[i], false);
+		if (false == DecideAttackPattern(pOwner)) {
+			pOwner->Idle();
+			return;
 		}
 	}
 
+	//auto pStateMachine = pOwner->Get_StateMachine();
+	//if (nullptr == pStateMachine)
+	//	return;
+	//_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
+	//if (0 != iAttackPatternIndex) {
+	//	pStateMachine->Set_Int("AttackPattern", 0);
+	//	BuildPattern(blackboard, iAttackPatternIndex);
+	//}
+	//else {
+	//	auto RandomNums = Pick3RandomIndex();
+	//
+	//	for (size_t i = 0; i < RandomNums.size(); i++)
+	//	{
+	//		if (i < RandomNums.size() - 1)
+	//			BuildPattern(blackboard, RandomNums[i], true);
+	//		else
+	//			BuildPattern(blackboard, RandomNums[i], false);
+	//	}
+	//}
+	
 	if (false != blackboard.stateQueue.empty()) {
 		pOwner->Idle();
 		return;
 	}
-
 	blackboard.isRequestNext = true;
 
-	__super::Enter(pOwner);
 }
 
 void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -55,18 +76,19 @@ void CThugBulkyEnforcer_Attack::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	if (true == blackboard.isRequestNext) {
 		blackboard.isRequestNext = false;
 		blackboard.isChainOpen = false;
-
+	
 		if (!blackboard.stateQueue.empty()) {
 			string nextStateTag = blackboard.stateQueue.front();
 			blackboard.stateQueue.pop_front();
 			
 			// 공격 테이블의 마지막 패턴일 때
-			if (blackboard.stateQueue.empty()) 
-				blackboard.isEnd = true;
-
+			//if (blackboard.stateQueue.empty()) 
+			//	blackboard.isEnd = true;
+	
 			blackboard.currentStateTag = nextStateTag;
 			m_pSubStateMachine->Change_State(nextStateTag);
 		}
+		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 	}
 	
 	if (true == blackboard.isChainOpen && false == blackboard.isRequestNext) {
@@ -107,13 +129,12 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	{  
 	case 1:
 	{
-		//blackBoard.stateQueue.push_back("AttackSideStep_R");
 		blackBoard.stateQueue.push_back("Attack01");
 	}break;
 	case 2:
 	{
 		blackBoard.stateQueue.push_back("Attack02");
-		blackBoard.stateQueue.push_back("AttackEvade");
+		//blackBoard.stateQueue.push_back("AttackEvade");
 
 	}break;
 	case 3:
@@ -127,41 +148,51 @@ void CThugBulkyEnforcer_Attack::BuildPattern(ATTACK_BLACK_BOARD& blackBoard, _in
 	}break;
 	case 5:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_R");
+		//blackBoard.stateQueue.push_back("AttackSideStep_R");
 		blackBoard.stateQueue.push_back("Attack05_01");
 
 		break;
 	}
 	case 6:
 	{
-		blackBoard.stateQueue.push_back("AttackSideStep_L");
+		//blackBoard.stateQueue.push_back("AttackSideStep_L");
 		blackBoard.stateQueue.push_back("Attack05_02");
 		break;
 	}
+	//case 7:
+	//{
+	//	blackBoard.stateQueue.push_back("AttackSideStep_L");
+	//	break;
+	//}
+	//case 8:
+	//{
+	//	blackBoard.stateQueue.push_back("AttackSideStep_R");
+	//	break;
+	//}
 	default:
 		break;
 	}
 
-	if (true == isAdditionalMoveState) {
-		_int iMoveIndex = Helper::Get_Random_Int(0, 3);
-
-		switch (iMoveIndex)
-		{
-		case 0:
-		case 1:
-			break;
-		case 2:
-		{
-			blackBoard.stateQueue.push_back("AttackSideStep_L");
-			break;
-		}
-		case 3:
-		{
-			blackBoard.stateQueue.push_back("AttackSideStep_R");
-			break;
-		}
-		}
-	}
+	//if (true == isAdditionalMoveState) {
+	//	_int iMoveIndex = Helper::Get_Random_Int(0, 3);
+	//
+	//	switch (iMoveIndex)
+	//	{
+	//	case 0:
+	//	case 1:
+	//		break;
+	//	case 2:
+	//	{
+	//		blackBoard.stateQueue.push_back("AttackSideStep_L");
+	//		break;
+	//	}
+	//	case 3:
+	//	{
+	//		blackBoard.stateQueue.push_back("AttackSideStep_R");
+	//		break;
+	//	}
+	//	}
+	//}
 
 }
 
@@ -172,6 +203,92 @@ array<_int, 3> CThugBulkyEnforcer_Attack::Pick3RandomIndex()
 	shuffle(nums.begin(), nums.end(), Helper::Get_RNG());
 
 	return { nums[0], nums[1] ,nums[2] };
+}
+
+_bool CThugBulkyEnforcer_Attack::DecideAttackPattern(CThugBulkyEnforcer* pOwner)
+{
+	const TARGETING_INFO tInfo = pOwner->GetTargetingInfo();
+	const HYSTERIESIS tHysteriesis = pOwner->GetHysteriesis();
+	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
+
+	const _float fDistanceToPlayer = tInfo.fDistance;
+	_int iAttackIndex = {};
+
+	if (fDistanceToPlayer <= tHysteriesis.fComboEnter) {
+		iAttackIndex = Helper::Get_Random_Int(1, 5);
+
+		while (iAttackIndex == pOwner->GetAttackHistoryFront())
+			iAttackIndex = Helper::Get_Random_Int(1, 5);
+
+		switch (iAttackIndex) {
+		case 1:
+		{
+			blackboard.stateQueue.push_back("Attack01");
+			//m_pSubStateMachine->Change_State("Attack01");
+			break;
+		}
+		case 2:
+		{
+			blackboard.stateQueue.push_back("Attack02");
+			//m_pSubStateMachine->Change_State("Attack02");
+			break;
+		}
+		case 3:
+		{
+			blackboard.stateQueue.push_back("Attack04");
+			//m_pSubStateMachine->Change_State("Attack04");
+			break;
+		}
+		case 4:
+		{
+			blackboard.stateQueue.push_back("Attack05_01");
+			//m_pSubStateMachine->Change_State("Attack05_01");
+			break;
+		}
+		case 5:
+		{
+			blackboard.stateQueue.push_back("Attack05_02");
+			//m_pSubStateMachine->Change_State("Attack05_02");
+			break;
+		}
+		}
+	}
+	else if (fDistanceToPlayer <= tHysteriesis.fChaseExit)
+	{
+		iAttackIndex = Helper::Get_Random_Int(6, 8);
+
+		while (iAttackIndex == pOwner->GetAttackHistoryFront())
+			iAttackIndex = Helper::Get_Random_Int(6, 8);
+
+
+		switch (iAttackIndex) {
+		case 6:
+		{
+			blackboard.stateQueue.push_back("Attack03");
+			//m_pSubStateMachine->Change_State("Attack03");
+			break;
+		}
+		case 7:
+		{
+			blackboard.stateQueue.push_back("AttackSideStep_R");
+			blackboard.stateQueue.push_back("Attack05_01");
+			//m_pSubStateMachine->Change_State("Attack03");
+			break;
+		}
+		case 8:
+		{
+			blackboard.stateQueue.push_back("AttackSideStep_L");
+			blackboard.stateQueue.push_back("Attack05_02");
+			//m_pSubStateMachine->Change_State("Attack03");
+			break;
+		}
+		}
+	}
+	else
+		return false;
+
+	pOwner->AddAttackHistoryFront(iAttackIndex);
+	return true;
 }
 
 /*============================================================================*/
@@ -373,6 +490,8 @@ void CThugBulkyEnforcer_AttackSideStep_L::Update(CThugBulkyEnforcer* pOwner, _fl
 		qRot,
 		dt);
 
+	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.18f)
 	{
@@ -401,6 +520,8 @@ void CThugBulkyEnforcer_AttackSideStep_R::Update(CThugBulkyEnforcer* pOwner, _fl
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.18f)

@@ -581,6 +581,39 @@ ENGINE_DLL _bool Helper::WorldToScreen(const _float3& worldPos, _float2& outScre
 	return true;
 }
 
+ENGINE_DLL _uint Helper::Get_Digit(_int value, _int place)
+{
+	_int temp = 1;
+	for (_int i = 0; i < place; ++i)
+		temp *= 10;
+
+	return (abs(value) / temp) % 10;
+}
+
+ENGINE_DLL _vector4 Helper::HexToColor(const string& hex)
+{
+	_vector4 vColor = { 1.f, 1.f, 1.f, 1.f };
+
+	if (hex[0] != '#')
+		return vColor;
+
+	if (hex.size() == 9)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+		vColor.w = stoi(hex.substr(7, 2), nullptr, 16) / 255.f;
+	}
+	else if (hex.size() == 7)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+	}
+
+	return vColor;
+}
+
 // -------------------------------------------------------------------------------------------------
 
 ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
