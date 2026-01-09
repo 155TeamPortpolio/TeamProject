@@ -397,6 +397,12 @@
     <Filter Include="02. GameObject\Object\UI\Loading">
       <UniqueIdentifier>{0601fdca-69fb-4745-b9a6-2c04bb8d29ae}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
+      <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD">
+      <UniqueIdentifier>{79b7aabe-83be-4d8b-bc92-cb6df77d1439}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\BattlePlayer">
       <UniqueIdentifier>{45cb19da-f007-4f0d-bdc3-7535ba09aeb5}</UniqueIdentifier>
     </Filter>
@@ -789,7 +795,12 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClInclude>
@@ -1174,7 +1185,6 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02. GameObject\Object\Player</Filter>
     </ClCompile>
@@ -1183,6 +1193,12 @@
     </ClCompile>
     <ClCompile Include="..\private\DataBase.cpp">
       <Filter>03. Utility\05. DataBase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

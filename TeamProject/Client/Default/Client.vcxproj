@@ -193,6 +193,7 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h" />
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\UI_Loading.h" />
@@ -339,6 +340,7 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Dash.cpp" />

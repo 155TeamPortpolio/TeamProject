@@ -17,6 +17,7 @@
 #include "ThugBulkyEnforcer_Born.h"
 #include "ThugBulkyEnforcer_Attack.h"
 #include "ThugBulkyEnforcer_Move.h"
+#include "ThugBulkyEnforcer_Chase.h"
 
 
 
@@ -114,13 +115,14 @@ void CThugBulkyEnforcer::Render_GUI()
 	// =======================================================
 #pragma region State
 	ImGui::SeparatorText("State & BlackBoard");
-	ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 8}, true);
-	string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
-	ImGui::Text(TagCurState.c_str());
-	string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
-	ImGui::Text(TagCurChildState.c_str());
-	string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
-	ImGui::Text(TagStateQueueSize.c_str());
+	ImGui::BeginChild("##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
+	//string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
+	//string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
+	ImGui::Text("Current ChildState : %s", m_tAttackBlackBoard.currentStateTag.c_str());
+	//string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
+	//ImGui::Text("StateQueue Size : %d", (_int)m_tAttackBlackBoard.stateQueue.size());
+	ImGui::Text("AttackCombo : %d", m_iAttackCombo);
 
 	// bool 변수 확인용(수정 불가)
 	ImGui::BeginDisabled(true);
@@ -129,34 +131,41 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::Checkbox(u8"isEnd (Queue에 등록된 마지막 상태 여부)", &m_tAttackBlackBoard.isEnd);
 	ImGui::EndDisabled();
 	ImGui::SeparatorText("Reseve State List");
-	for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
+	for (size_t i = 0; i < m_AttackHistory.size(); i++)
 	{
-		if (i == 0)
-			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), m_tAttackBlackBoard.stateQueue[i].c_str());
-		else
-			ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
 
+		if (i == 0)
+			ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), "%d", m_AttackHistory[i]);
+		else
+			ImGui::Text("%d", m_AttackHistory[i]);
 	}
+	
+	//for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
+	//{
+	//	if (i == 0)
+	//		ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), m_tAttackBlackBoard.stateQueue[i].c_str());
+	//	else
+	//		ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
+	//
+	//}
 	ImGui::EndChild();
 #pragma endregion
 	// =======================================================
-	//ImGui::SeparatorText("For Target Information");
-	//auto pCharacter = GetCharacterOnField();
-	//if (nullptr != pCharacter) {
-	//	ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerTracePlayer", ImVec2{ 0, childHeight + textLineHeight * 6 }, true);
-	//
-	//	ImGui::Text("Character Name : %s", pCharacter->TagInstanceName);
-	//	ImGui::Text("Character Pos : %.2f, %.2f, %.2f", pCharacter->vPos.x, pCharacter->vPos.y, pCharacter->vPos.z);
-	//	ImGui::Text("Character CCT Radius : %.2f", pCharacter->fRadius);;
-	//	ImGui::Text("Distance From Character : %.3f", m_tTargetingInfo.fDistance);
-	//	ImGui::Text("Dot with Target : %.2f", m_tTargetingInfo.fDotTarget);
-	//	ImGui::Text("Dir To Target : %.2f, %.2f, %.2f", m_tTargetingInfo.vDirToTarget.x, m_tTargetingInfo.vDirToTarget.y, m_tTargetingInfo.vDirToTarget.z);
-	//	ImGui::BeginDisabled(true);
-	//	ImGui::Checkbox(u8"isDetected (플레이어 감지)", &m_tTargetingInfo.isDetected);
-	//	ImGui::EndDisabled();
-	//
-	//ImGui::EndChild();
-	//}
+	ImGui::SeparatorText("Status");
+	auto pCharacter = GetCharacterOnField();
+	if (nullptr != pCharacter) {
+		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 3 }, true);
+		
+		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
+		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
+		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
+
+		ImGui::BeginDisabled(true);
+		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
+		ImGui::EndDisabled();
+	
+	ImGui::EndChild();
+	}
 	Render_GUI_ForTargetInfo();
 	// =======================================================
 	
@@ -164,39 +173,96 @@ void CThugBulkyEnforcer::Render_GUI()
 
 	// =======================================================
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
-		ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
+		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
-		if (ImGui::Button(u8"1.오른쪽 위빙 후 오른쪽 훅")) {
-			m_pStateMachine->Set_Int("AttackPattern", 1);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		if (ImGui::TreeNode("AttackState##ThugBulkyEnforcerTestState_Attack")) {
+			if (ImGui::Button(u8"1.오른쪽 훅")) {
+				m_pStateMachine->Set_Int("AttackPattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"2.오른손 어퍼 후 왼손 내려찍기")) {
+				m_pStateMachine->Set_Int("AttackPattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"3.플라잉 니킥 후 양손 내려찍으며 착지")) {
+				m_pStateMachine->Set_Int("AttackPattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"4.크게 움직이며 양손으로 바닥 내려찍기")) {
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"5.왼쪽 위빙하면서 왼손 훅")) {
+				m_pStateMachine->Set_Int("AttackPattern", 5);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"6.오른손 어퍼 + 왼손 내려찍기")) {
+				m_pStateMachine->Set_Int("AttackPattern", 6);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			ImGui::TreePop();
 		}
-		if (ImGui::Button(u8"2.오른손 어퍼 후 왼손 내려찍기")) {
-			m_pStateMachine->Set_Int("AttackPattern", 2);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"3.플라잉 니킥 후 양손 내려찍으며 착지")) {
-			m_pStateMachine->Set_Int("AttackPattern", 3);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"4.크게 움직이며 양손으로 바닥 내려찍기")) {
-			m_pStateMachine->Set_Int("AttackPattern", 4);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"5.오른쪽 위빙 후 왼쪽 위빙하면서 왼손 훅")) {
-			m_pStateMachine->Set_Int("AttackPattern", 5);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
-		if (ImGui::Button(u8"6.왼쪽 위빙 후 오른손 어퍼 + 왼손 내려찍기")) {
-			m_pStateMachine->Set_Int("AttackPattern", 6);
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
-		}
+		if (ImGui::TreeNode("MoveState##ThugBulkyEnforcerTestState_Move")) {
 
-
-		ImGui::EndChild();
+			if (ImGui::Button(u8"1.Walk_Front")) {
+				m_pStateMachine->Set_Int("MovePattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"2.Walk_Back")) {
+				m_pStateMachine->Set_Int("MovePattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"3.Walk_Left")) {
+				m_pStateMachine->Set_Int("MovePattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"4.Walk_Right")) {
+				m_pStateMachine->Set_Int("MovePattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"5.Walk_RF_LFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 5);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"6.Walk_FR_RFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 6);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"7.Walk_LF_RFoot")) {
+				m_pStateMachine->Set_Int("MovePattern", 7);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"8.SideStep_L")) {
+				m_pStateMachine->Set_Int("MovePattern", 8);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"8.SideStep_L(Shortly)")) {
+				m_pStateMachine->Set_Int("MovePattern", 8);
+				m_pStateMachine->Set_Bool("ShortlyMove", true);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"9.SideStep_R")) {
+				m_pStateMachine->Set_Int("MovePattern", 9);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"9.SideStep_R(Shortly)")) {
+				m_pStateMachine->Set_Int("MovePattern", 9);
+				m_pStateMachine->Set_Bool("ShortlyMove", true);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			if (ImGui::Button(u8"10.Evade")) {
+				m_pStateMachine->Set_Int("MovePattern", 10);
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
+			}
+			ImGui::TreePop();
+		}
+		//ImGui::EndChild();
 		ImGui::TreePop();
 	}
 
-
+	if (ImGui::Button("Open StateMachine"))
+		m_pStateMachine->Set_ShowWindow(true);
+	m_pStateMachine->Render_GUI();
 	ImGui::PopID();
 }
 
@@ -233,6 +299,13 @@ void CThugBulkyEnforcer::Free()
 	Safe_Release(m_pStateMachine);
 }
 
+void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
+{
+	m_isLookPlayer = true;
+	m_vDirToLookCapture = vTargetDir;
+	m_fRotateSpeed = fSpeed;
+}
+
 /* For.State Machine */
 HRESULT CThugBulkyEnforcer::Initialize_StateMachine()
 {
@@ -264,6 +337,8 @@ HRESULT CThugBulkyEnforcer::Initialize_States()
 	m_pStateMachine->Register_State("Idle", CThugBulkyEnforcer_Idle::Create());
 	m_pStateMachine->Register_State("Attack", CThugBulkyEnforcer_Attack::Create());
 	m_pStateMachine->Register_State("Move", CThugBulkyEnforcer_Move::Create());
+	m_pStateMachine->Register_State("Chase", CThugBulkyEnforcer_Chase::Create());
+
 
 
 	return S_OK;
@@ -280,6 +355,9 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Idle", "Move",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Move");
 
+	m_pStateMachine->Register_Transition("Idle", "Chase",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Chase");
+
 	return S_OK;
 }
 
@@ -289,7 +367,15 @@ HRESULT CThugBulkyEnforcer::Ready_Rules()
 	m_vIdleTime = { 0.2f, 0.f };
 
 	// Target 감지 범위 (default = 5.f)
-	m_fDetectedRange = 10.f;
+	m_fDetectedRange = 5.f;
+
+	m_tHysteriesis.fEvadEnter = 2.f;
+	m_tHysteriesis.fComboEnter = 3.f;
+	m_tHysteriesis.fComboExit = 4.f;
+	m_tHysteriesis.fChaseEnter = 7.f;
+	m_tHysteriesis.fChaseExit = 5.f;
+
+	m_pStateMachine->Set_Int("MovePattern", -1);
 
 	return S_OK;
 }
@@ -304,28 +390,119 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 		m_isIdle = false;
 	}
 
+	ManageAttackHistory();
 	CheckDistanceFromPlayer();
+	RotateToPlayer(dt);
+	
+	//================================
+	ControlState(dt);
+	//================================
+}
 
+void CThugBulkyEnforcer::ControlState(const _float dt)
+{
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
-		
+
 		m_vIdleTime.y += dt;
 
 		if (m_vIdleTime.x <= m_vIdleTime.y) {
-			if (true == m_pStateMachine->Get_Bool("FinishAttack"))
-				m_pStateMachine->Set_Trigger("Idle_To_Move");
-			else
+
+			const _float fDistanceToPlayer = m_tTargetingInfo.fDistance;
+
+			if (true == m_pStateMachine->Get_Bool("Chase")) {
+				if (2 == m_iAttackCombo)
+					m_iAttackCombo = 0;
+				m_pStateMachine->Set_Trigger("Idle_To_Chase");
+			}
+			else if ("Attack" == m_pStateMachine->Get_PrevStateName()) {
+				
+				// 콤보 사이에 위빙 할지 말지 정하기. 안하면 공격으로 바로 이동
+				if (3 > m_iAttackCombo) {
+					_int iSidestepIndex = Helper::Get_Random_Int(0, 3);
+					switch (iSidestepIndex)
+					{
+					case 0:
+					case 1:
+					{
+						m_pStateMachine->Set_Bool("Sidestep", true);
+						m_pStateMachine->Set_Bool("ShortlyMove", true);
+						m_pStateMachine->Set_Trigger("Idle_To_Move");
+						break;
+					}
+					case 2:
+					case 3:
+					{
+						if (m_tTargetingInfo.fDistance <= m_tHysteriesis.fEvadEnter) {
+							m_pStateMachine->Set_Bool("Evade", true);
+							m_pStateMachine->Set_Trigger("Idle_To_Move");
+						}
+						else {
+							m_pStateMachine->Set_Trigger("Idle_To_Attack");
+							if (2 == m_iAttackCombo)
+								m_tAttackBlackBoard.isEnd = true;
+							m_iAttackCombo++;
+						}
+					}
+					}
+
+				}
+				else {	// 콤보(3회)가 끝났을 때 설렁설렁 걸어다님(휴식)
+					m_iAttackCombo = 0;
+					m_pStateMachine->Set_Trigger("Idle_To_Move");
+				}
+			}
+			else {		// 첫 딜사이클 들어갈때
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+				m_iAttackCombo++;
+			}
 
 			m_vIdleTime.y = 0.f;
 		}
-
-		
 	}
 }
 
 void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
-	if (true == m_tTargetingInfo.isDetected)
+	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
+		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
 		m_pStateMachine->Set_Bool("Chase", true);
+
+	
+	if (true == m_pStateMachine->Get_Bool("Chase") &&
+		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
+		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CThugBulkyEnforcer::RotateToPlayer(const _float dt)
+{
+	if (false == m_isLookPlayer)
+		return;
+
+	_vector vTargetDir = XMLoadFloat3(&m_vDirToLookCapture);
+	_vector	vSelfDir = m_pTransform->Dir(Engine::STATE::LOOK);
+	vTargetDir = XMVector3Normalize(vTargetDir);
+	vSelfDir = XMVector3Normalize(vSelfDir);
+
+	_float fDot = XMVectorGetX(XMVector3Dot(vSelfDir, vTargetDir));
+	fDot = max(-1, min(1.f, fDot));
+	_float fAngle = acosf(fDot);
+
+	_float fCross = XMVectorGetY(XMVector3Cross(vSelfDir, vTargetDir));
+	if (0 > fCross)
+		fAngle = -fAngle;
+
+	if (fDot > 0.99f) {
+		m_isLookPlayer = false;
+		return;
+	}
+
+	m_pTransform->Rotation(XMVectorSet(0.f, 1.f, 0.f, 0.f), XMConvertToRadians(fAngle) * m_fRotateSpeed);
+}
+
+void CThugBulkyEnforcer::ManageAttackHistory()
+{
+	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
+	if (5 <= iSize)
+		m_AttackHistory.pop_back();
 }
