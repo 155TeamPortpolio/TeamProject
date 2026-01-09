@@ -88,7 +88,7 @@ void CCorin::Priority_Update(_float dt)
 
 void CCorin::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if(!m_bTest)
 	{
 		Update_States();

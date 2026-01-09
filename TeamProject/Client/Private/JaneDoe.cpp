@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "JaneDoe.h"
 #include "GameInstance.h"
+#include "DataBase.h"
 
 #include "Material.h"
 
@@ -66,6 +67,8 @@ void CJaneDoe::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
+
+	Initialize_Stat();
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -75,7 +78,7 @@ void CJaneDoe::Priority_Update(_float dt)
 
 void CJaneDoe::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if (!m_bTest)
 	{
 		Update_States();
@@ -214,6 +217,18 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	// Evade -> Idle (Backstep)
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Stat()
+{
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc("JaneDoe");
+	m_fSpecialGauge = Desc.SpecialAttack;
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(Desc.LV);
+	m_fMaxHP = LVDesc.MaxHP;
+	m_fDefense = LVDesc.Defend;
+	m_fAttackPower = LVDesc.Attack;
 
 	return S_OK;
 }

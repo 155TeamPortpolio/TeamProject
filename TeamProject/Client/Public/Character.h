@@ -74,6 +74,7 @@ public:
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
     void   Set_Move(_bool bMoving) { m_bIsMove = bMoving; }
+    void   Set_SpecialGauge(_float fSpecialGauge) { m_fSpecialGauge = fSpecialGauge; } //*스페셜 게이지*
 
     _vector3    Get_InputDir() const { return m_input.direction; }
     _vector3    Get_PrevInputDir() const { return m_input.prevDirection; }
@@ -101,7 +102,7 @@ public:
     }
 
 
-protected:
+public:
     // 입력 처리 - 파생 클래스에서 StateMachine 파라미터 설정에 사용
     virtual void    Update_Input(_float dt);
 
@@ -121,6 +122,7 @@ protected:
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
+    _float          m_fSpecialGauge = { 60.f };         //*스페셜 게이지*
     // 입력
     InputState              m_input;
     static constexpr _float KEY_BUFFER_TIME = 0.1f;

@@ -27,6 +27,7 @@ public:
 private:
     HRESULT Initialize_CharacterPrototype();
     CGameObject* CreateBattleCharacter(CHARACTER character);
+    HRESULT SwitchCharacter(CHARACTER character);
 
 private:
     unordered_map<string, class CCharacter*>    m_BattleCharacters;

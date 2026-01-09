@@ -43,10 +43,8 @@ HRESULT CBattlePlayer::Initialize()
 {
 	CBattleSystem::GetInstance()->SetBattlePlayer(this);
 	Initialize_CharacterPrototype();
-	//auto PlayerDesc = CDataBase::GetInstance()->GetPlayerDesc("Miyabi");
-	//auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(10);
 
-	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe/*, CHARACTER::Corin*/};
+	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
 	m_pCurrentCharacter = m_BattleCharacters["JaneDoe"];
@@ -55,6 +53,9 @@ HRESULT CBattlePlayer::Initialize()
 
 void CBattlePlayer::Priority_Update(_float dt)
 {
+	if (m_pCurrentCharacter == nullptr) 
+		return;
+	m_pCurrentCharacter->Update_Input(dt);
 }
 
 void CBattlePlayer::Update(_float dt)
@@ -111,6 +112,11 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	}
 	}
 	return nullptr;
+}
+
+HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
+{
+	return E_NOTIMPL;
 }
 
 CBattlePlayer* CBattlePlayer::Create()
