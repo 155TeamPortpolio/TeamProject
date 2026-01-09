@@ -585,6 +585,9 @@
     <ClInclude Include="..\Public\AnimatorStruct.h">
       <Filter>01. Utility\04. Components\06. Animator3D</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IInputService.h">
+      <Filter>01. Utility\98. Services</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
