@@ -9,7 +9,9 @@
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
+#include "ObjectContainer.h"
 #include "CharacterController.h"
+#include "BoneFollower.h"
 
 /* States */
 #include "StateMachine.h"
@@ -18,8 +20,10 @@
 #include "ThugBulkyEnforcer_Attack.h"
 #include "ThugBulkyEnforcer_Move.h"
 #include "ThugBulkyEnforcer_Chase.h"
+#include "ThugBulkyEnforcer_Groggy.h"
+#include "ThugBulkyEnforcer_Death.h"
 
-
+#include "ThugBulkyEnforcer_Collider.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
 	: CEnemy()
@@ -39,6 +43,7 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
@@ -64,6 +69,12 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "ThugBulkyEnforcer_Meta.json");
 	pAnimator->Set_MotionBone(3);	//Bip001
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
+	pAnimator->Resize_Layer(2);
+	for (size_t i = 1; i < 2; i++)
+		pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, i);
+
+	if (FAILED(Ready_Children(pArg)))
+		return E_FAIL;
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
@@ -80,13 +91,14 @@ void CThugBulkyEnforcer::Awake()
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
-
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	__super::Update(dt);
 
@@ -97,6 +109,7 @@ void CThugBulkyEnforcer::Update(_float dt)
 void CThugBulkyEnforcer::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CThugBulkyEnforcer::Render_GUI()
@@ -159,6 +172,7 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
+		ImGui::Text("Groggy Value : %d", m_iGroggyValue);
 
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
@@ -256,6 +270,45 @@ void CThugBulkyEnforcer::Render_GUI()
 			}
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Hit & Groggy##ThugBulkyEnforcerTestHitAndGroggy")) {
+			
+			if (ImGui::Button("Increase Groggy value 30"))
+				m_iGroggyValue += 30;
+			if (ImGui::Button("Hit")) {
+				if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
+					//for (size_t i = 9; i < 10; i++)
+					//{
+						Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Stun_Hit_Stay")
+							.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+							.Loop(false)
+							.Apply();
+					//}
+				}
+				else {
+					//for (size_t i = 1; i < 10; i++)
+					//{
+						Get_Component<CAnimator3D>()->Set_Animation(1, "ThugBulkyEnforcer_Ani_Hit_Shake")
+							.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+							.Loop(false)
+							.Apply();
+					//}
+				}
+			}
+
+			ImGui::TreePop();
+		}
+
+		if (ImGui::TreeNode("Death##ThugBulkyEnforcerTestDeath")) {
+			if (ImGui::Button("Death Front")) 
+				m_pStateMachine->Change_State("Death");
+			if (ImGui::Button("Death Back")) {
+				m_pStateMachine->Set_Bool("DeathBack", true);
+				m_pStateMachine->Change_State("Death");
+			}
+			
+			ImGui::TreePop();
+		}
+
 		//ImGui::EndChild();
 		ImGui::TreePop();
 	}
@@ -286,7 +339,7 @@ CGameObject* CThugBulkyEnforcer::Clone(INIT_DESC* pArg)
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CSacrificeHand");
+		MSG_BOX("Failed to clone : CThugBulkyEnforcer");
 	}
 
 	return instance;
@@ -297,6 +350,51 @@ void CThugBulkyEnforcer::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+}
+
+HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	RIGIDBODY_DESC rigidbodyDesc = {};
+	rigidbodyDesc.bEnableGravity = false;
+	rigidbodyDesc.isKinematic = true;
+	rigidbodyDesc.bLockY = true;
+	
+	COLLIDER_DESC colliderDesc = {};
+	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+
+	colliderDesc.vSize = { 0.3f,0.f,0.f };
+	colliderDesc.bAutoFit = false;
+
+	auto pWeapon_L = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(colliderDesc)
+		.Build("ThugBulkyEnforcer_Weapon_Left");
+
+	pObjectContainer->Add_Child(pWeapon_L, false);
+
+	pWeapon_L->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_L_Weapon_3");
+
+	auto pWeapon_R = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(colliderDesc)
+		.Build("ThugBulkyEnforcer_Weapon_Right");
+
+	pObjectContainer->Add_Child(pWeapon_R, false);
+
+	pWeapon_R->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
+
+
+
+
+	//"Ctr_R_Weapon_3"
+	//"Ctr_L_Weapon_3"
+
+
+	return S_OK;
 }
 
 void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
@@ -338,8 +436,8 @@ HRESULT CThugBulkyEnforcer::Initialize_States()
 	m_pStateMachine->Register_State("Attack", CThugBulkyEnforcer_Attack::Create());
 	m_pStateMachine->Register_State("Move", CThugBulkyEnforcer_Move::Create());
 	m_pStateMachine->Register_State("Chase", CThugBulkyEnforcer_Chase::Create());
-
-
+	m_pStateMachine->Register_State("Groggy", CThugBulkyEnforcer_Groggy::Create());
+	m_pStateMachine->Register_State("Death", CThugBulkyEnforcer_Death::Create());
 
 	return S_OK;
 }
@@ -357,6 +455,12 @@ HRESULT CThugBulkyEnforcer::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("Idle", "Chase",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Chase");
+
+	m_pStateMachine->Register_Transition("Idle", "Groggy",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Groggy");
+
+	m_pStateMachine->Register_Transition("Idle", "Death",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Idle_To_Death");
 
 	return S_OK;
 }
@@ -386,10 +490,14 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 		m_pStateMachine->Change_State("Idle");
 		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
 		m_pStateMachine->Reset_Trigger("Idle_To_Move");
+		m_pStateMachine->Reset_Trigger("Idle_To_Chase");
+		m_pStateMachine->Reset_Trigger("Idle_To_Groggy");
+		m_pStateMachine->Reset_Trigger("Idle_To_Death");
 
 		m_isIdle = false;
 	}
 
+	ManageGroggy(dt);
 	ManageAttackHistory();
 	CheckDistanceFromPlayer();
 	RotateToPlayer(dt);
@@ -401,6 +509,10 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 
 void CThugBulkyEnforcer::ControlState(const _float dt)
 {
+	if (100 == m_iGroggyValue) {
+		m_pStateMachine->Change_State("Groggy");
+	}
+
 	if (true == m_isAutoPatternPlay &&
 		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
 
@@ -505,4 +617,22 @@ void CThugBulkyEnforcer::ManageAttackHistory()
 	_uint iSize = static_cast<_uint>(m_AttackHistory.size());
 	if (5 <= iSize)
 		m_AttackHistory.pop_back();
+}
+
+void CThugBulkyEnforcer::ManageGroggy(const _float dt)
+{
+	if (100 < m_iGroggyValue)
+		m_iGroggyValue = 100;
+
+	if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
+		m_fGroggyDecreaseTime += dt;
+
+		if (0.1f <= m_fGroggyDecreaseTime) {
+			--m_iGroggyValue;
+			m_fGroggyDecreaseTime = 0.f;
+		}
+
+		if (0 > m_iGroggyValue)
+			m_iGroggyValue = 0;
+	}
 }
