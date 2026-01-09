@@ -5,6 +5,9 @@ NS_BEGIN(Client)
 
 class CUI_Decibel final : public CUI_Object
 {
+public:
+	enum State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
+
 private:
 	enum class ChildSlot { KANJI, DIGITS, PTS, TEXT, END };
 	
@@ -12,9 +15,6 @@ private:
 	CUI_Decibel() {}
 	CUI_Decibel(const CUI_Decibel& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_Decibel() DEFAULT;
-
-public:
-	void Set_Decibel(_int iDecibel);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,14 +25,18 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	_int			m_iDecibel = {};
+	_bool			m_initLayout = {};
 
-	_vector4		m_vCurrentColor = {};
+	_int			m_iDecibel = {};
+	_uint			m_iState = {};
+	_float			m_fDigitsOffsetX = {};
+
 	_vector4		m_vTargetColor = {};
 	_float			m_fColorLerpSpeed = { 8.f };
 
 private:
 	void Ready_PartObjects();
+	void Set_Decibel(_int iDecibel);
 
 	CUI_Object* Get_Slot(ChildSlot slot);
 
