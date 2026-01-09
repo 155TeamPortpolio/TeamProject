@@ -11,6 +11,7 @@
 #include "SkeletalModel.h"
 #include "ObjectContainer.h"
 #include "CharacterController.h"
+#include "BoneFollower.h"
 
 /* States */
 #include "StateMachine.h"
@@ -90,12 +91,14 @@ void CThugBulkyEnforcer::Awake()
 
 void CThugBulkyEnforcer::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	__super::Update(dt);
 
@@ -106,6 +109,7 @@ void CThugBulkyEnforcer::Update(_float dt)
 void CThugBulkyEnforcer::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CThugBulkyEnforcer::Render_GUI()
@@ -364,7 +368,13 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 		.Collider(colliderDesc)
 		.Build("ThugBulkyEnforcer_Weapon_Left");
 
-	pObjectContainer->Add_Child(pWeapon_L);
+	pObjectContainer->Add_Child(pWeapon_L, false);
+
+	pWeapon_L->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
+
+	//"Ctr_R_Weapon_3"
+	//"Ctr_L_Weapon_3"
+
 
 	return S_OK;
 }

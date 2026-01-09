@@ -7,6 +7,7 @@
 /* Component */
 #include "RigidBody.h"
 #include "Collider.h"
+#include "BoneFollower.h"
 
 CThugBulkyEnforcer_Collider::CThugBulkyEnforcer_Collider()
 	: CGameObject()
@@ -25,6 +26,7 @@ HRESULT CThugBulkyEnforcer_Collider::Initialize_Prototype()
 
 	Add_Component<CRigidBody>();
 	Add_Component<CCollider>();
+	Add_Component<CBoneFollower>();
 
 	return S_OK;
 }
@@ -47,7 +49,8 @@ void CThugBulkyEnforcer_Collider::Priority_Update(_float dt)
 
 void CThugBulkyEnforcer_Collider::Update(_float dt)
 {
-
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
+	//Get_Component<CCollider>()->
 }
 
 void CThugBulkyEnforcer_Collider::Late_Update(_float dt)
