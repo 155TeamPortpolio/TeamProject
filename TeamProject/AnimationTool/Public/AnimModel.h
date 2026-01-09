@@ -34,6 +34,7 @@ private: //GUI Func
     void GUI_SetModel(_float fChildHeight);
 
 private: //Model Logic
+    void Load_ModelOnce();
     void Load_Resource();
     void Set_Model(string ModelTag, string MaterialTag);
     void Set_Animator();
