@@ -52,6 +52,20 @@ protected:
         }
     };
 
+public:
+    enum class ROOTMOTION_MASK
+    {
+        MOVE = 1 << 0,  // 0x01 - 루트 모션 이동 사용
+        QUATERNION = 1 << 1,  // 0x02 - 루트 모션 회전 사용
+    };
+    struct ROOTMOTION_DESC
+    {
+        _uint  iModeMask = ENUM(ROOTMOTION_MASK::MOVE);
+        _float fMoveWeight = 1.f;
+        _float fRotateWeight = 1.f;
+        _float fMoveSpeed = 10.f;
+        _float fRotateSpeed = 10.f;
+    };
 protected:
     CCharacter() {}
     CCharacter(const CCharacter& rhs);
@@ -82,6 +96,10 @@ public:
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string&         Get_Name() const { return m_strName; }
+
+public:
+    void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
+    void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
 
 public:
     virtual HRESULT Initialize_Prototype() override;
