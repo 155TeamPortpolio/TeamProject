@@ -3,6 +3,8 @@
 
 namespace Client {
 	
+	enum class CHARACTER { JaneDoe, Corin, END };
+
 	typedef struct BattleObjectInfo {
 		string			TagInstanceName = {};	// 오브젝트 인스턴스 이름
 		OBJECT_HANDLE	hObject;				// 오브젝트 핸들
