@@ -358,10 +358,16 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 
 	RIGIDBODY_DESC rigidbodyDesc = {};
 	rigidbodyDesc.bEnableGravity = false;
+	rigidbodyDesc.isKinematic = true;
+	rigidbodyDesc.bLockY = true;
 	
 	COLLIDER_DESC colliderDesc = {};
 	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-	colliderDesc.vSize = { 0.5f,0.f,0.f };
+	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+
+	colliderDesc.vSize = { 0.3f,0.f,0.f };
+	colliderDesc.bAutoFit = false;
 
 	auto pWeapon_L = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
 		.RigidBody(rigidbodyDesc)
@@ -370,7 +376,19 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 
 	pObjectContainer->Add_Child(pWeapon_L, false);
 
-	pWeapon_L->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
+	pWeapon_L->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_L_Weapon_3");
+
+	auto pWeapon_R = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(colliderDesc)
+		.Build("ThugBulkyEnforcer_Weapon_Right");
+
+	pObjectContainer->Add_Child(pWeapon_R, false);
+
+	pWeapon_R->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
+
+
+
 
 	//"Ctr_R_Weapon_3"
 	//"Ctr_L_Weapon_3"

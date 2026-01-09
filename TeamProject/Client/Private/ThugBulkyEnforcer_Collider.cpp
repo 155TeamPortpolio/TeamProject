@@ -50,7 +50,9 @@ void CThugBulkyEnforcer_Collider::Priority_Update(_float dt)
 void CThugBulkyEnforcer_Collider::Update(_float dt)
 {
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-	//Get_Component<CCollider>()->
+
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(),m_pTransform->Get_QuaternionRotate());
+	Get_Component<CCollider>()->Update(dt);
 }
 
 void CThugBulkyEnforcer_Collider::Late_Update(_float dt)
@@ -71,6 +73,21 @@ void CThugBulkyEnforcer_Collider::Render_GUI()
 	}
 
 	ImGui::PopID();
+}
+
+void CThugBulkyEnforcer_Collider::OnCollisionEnter(CGameObject* pOther)
+{
+	int a = 9;
+}
+
+void CThugBulkyEnforcer_Collider::OnCollisionStay(CGameObject* pOther)
+{
+	int a = 9;
+}
+
+void CThugBulkyEnforcer_Collider::OnCollisionExit(CGameObject* pOther)
+{
+	int a = 9;
 }
 
 CGameObject* CThugBulkyEnforcer_Collider::Clone(INIT_DESC* pArg)

@@ -18,6 +18,10 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
+    virtual void OnCollisionEnter(CGameObject* pOther) override;
+    virtual void OnCollisionStay(CGameObject* pOther) override;
+    virtual void OnCollisionExit(CGameObject* pOther) override;
+
 
 public:
     static CThugBulkyEnforcer_Collider* Create();
