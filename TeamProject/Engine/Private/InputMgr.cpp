@@ -1,5 +1,6 @@
 #include "Engine_Defines.h"
 #include "InputMgr.h"
+#include "Helper_Func.h"
 
 CInputMgr::CInputMgr()
 {
@@ -17,6 +18,7 @@ HRESULT CInputMgr::Initialize(HWND hwnd)
 	for (size_t i = 0; i < m_Keyboard.size(); i++)
 	{
 		m_Keyboard[i].VK_Input = i;
+		m_Keyboard[i].VK_Name = Helper::VK_ToString(i);
 	}
     RAWINPUTDEVICE rid[2];
 
