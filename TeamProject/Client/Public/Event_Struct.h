@@ -12,10 +12,16 @@ enum class UI_STATUS_TYPE { HP, HP_BACK, SPECIAL, ULTIMATE, EX_GAUGE, EX_SKILL, 
 
 /* UI로 전달되는 상태 정보를 정의하는 구조체 */
 typedef struct tagUIStatusDesc {
-	UI_STATUS_OWNER	eOwner;
-	UI_STATUS_TYPE	eType;
-	_float			fCurValue;
-	_float			fMaxValue;
+	UI_STATUS_OWNER	eOwner = {};
+	UI_STATUS_TYPE	eType = {};
+	_float			fCurValue = {};
+	_float			fMaxValue = {};
 }UI_STATUS_DESC;
+
+/* UI로 전달되는 캐릭터 순서를 정의하는 구조체 */
+typedef struct tagUICharacterOrder {
+	_uint				iCount = {};
+	array<CHARACTER, 3>	characters = {};
+}UI_CHARACTER_ORDER;
 
 NS_END
