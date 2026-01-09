@@ -20,7 +20,7 @@ CBattlePlayer::CBattlePlayer()
 {
 }
 
-OBJECT_HANDLE CBattlePlayer::GetCurrentCharacter()
+OBJECT_HANDLE CBattlePlayer::GetCurCharacterHandle()
 {
 	return m_pCurrentCharacter->Get_Handle(); 
 }
