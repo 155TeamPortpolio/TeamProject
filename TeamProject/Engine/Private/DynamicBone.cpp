@@ -1,7 +1,9 @@
-#include "Engine_Defines.h"
+ï»¿#include "Engine_Defines.h"
 #include "DynamicBone.h"
 #include "Animator3D.h"
 #include "ModelData.h"
+#include "GameObject.h"
+#include "GameInstance.h"
 
 CDynamicBone::CDynamicBone()
 {
@@ -13,18 +15,42 @@ HRESULT CDynamicBone::Initialize(CAnimator3D* pAnimator)
 		return E_FAIL;
 
 	m_pAnimator = pAnimator;
+	m_pOwner = m_pAnimator->Get_Owner();
+
 	return S_OK;
 }
 
 void CDynamicBone::Init_Update()
 {
 	for (auto& Group : m_ChainGroups) {
-		for (auto& Chain : Group.Chains) {
-			for (auto& Node : Chain.Nodes) {
-				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+		//ì•µì»¤
+		Matrix OwnerWorldMat = m_pOwner->Get_WorldMatrix();
 
-				Node.CombinedCurPos = curPos;
-				Node.CombinedPrevPos = curPos;
+		Group.PrevAnchorCombinedPos = Group.CurAnchorCombinedPos =
+			m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+
+		Group.PrevAnchorCombinedQuat = Group.CurAnchorCombinedQuat =
+			m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+		
+		if (Group.bWorldSpace) {
+			Group.PrevAnchorWorldPos = Group.CurAnchorWorldPos =
+				_vector3::Transform(Group.CurAnchorCombinedPos, OwnerWorldMat);
+			Group.PrevAnchorWorldQuat = Group.CurAnchorWorldQuat =
+				m_pOwner->Get_WorldQuat() * Group.CurAnchorCombinedQuat;
+		}
+
+		for (auto& Chain : Group.Chains) {
+			// ì•µì»¤(0ë²ˆ)ë¶€í„° ë¶€ëª¨í¬ì§€ì…˜ì„ ì„¸íŒ…í•´ë‘ë©´ í¸í•¨
+			for (_int i = 0; i < (_int)Chain.Nodes.size(); ++i) {
+				auto& Node = Chain.Nodes[i];
+
+				_vector3 curPos = m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+				Node.CombinedPrevPos = Node.CombinedCurPos = curPos;
+
+				if (Group.bWorldSpace) {
+					Node.DynamicPrevPos = Node.DynamicCurPos = Node.AnimWorldPos =
+						_vector3::Transform(curPos, OwnerWorldMat);
+				}
 			}
 		}
 	}
@@ -37,71 +63,283 @@ void CDynamicBone::Update(_float dt)
 	if (m_ChainGroups.empty())
 		return;
 
+	/* *ë¬´ì¡°ê±´* ì´ì „í”„ë ˆì„ê³¼ ì°¨ì´ê°’ìœ¼ë¡œ ì›€ì§ì´ê¸°ì— ì²«ë²ˆì§¸ëŠ” ë¬´ì¡°ê±´ ì—…ë°ì´íŠ¸ë¥¼ ëŒì§€ ì•ŠìŒ */
 	if (false == m_bInitUpdated) {
 		Init_Update();
 		return;
 	}
 
-	/*¾÷µ¥ÀÌÆ®°¡ ¾Èµ¹¾ÒÀ¸¸é ±»ÀÌ ¹Ø¿¡ apply ½ÃµµÇÒ ÇÊ¿ä°¡ ¾øÀ½*/
-	_bool bUpdatedOnce = false;
+	/* ì—…ë°ì´íŠ¸ê°€ ì•ˆëŒì•˜ìœ¼ë©´ êµ³ì´ ë°‘ì— apply ì‹œë„í•  í•„ìš”ê°€ ì—†ìŒ */
+	m_pAnimator->Reset_DynamicBoneMatrices();
+
 	for (auto& Group : m_ChainGroups) {
-		/* ·çÆ®°¡ ¾øÀ¸¸é ¾ø´Â ±×·ìÀÎ°ÅÀÓ */
-		if (-1 == Group.RootBoneIndex)
+		/* ì•µì»¤ë³¸ì´ ì„¤ì •ë˜ì—ˆë‹¤ë©´ ë¬´ì¡°ê±´ í•˜ìœ„ ì²´ì¸ì€ ë§Œë“¤ì–´ì¡Œë‹¤ëŠ” ê°€ì •í•˜ì— ì—…ë°ì´íŠ¸ */
+		if (Group.AnchorBoneIndex == -1)
 			continue;
 
-		/* ·çÆ®°¡ ¼³Á¤µÇ¾ú´Ù¸é ¹«Á¶°Ç ÇÏÀ§ Ã¼ÀÎÀº ¸¸µé¾îÁ³´Ù´Â °¡Á¤ÇÏ¿¡ ¾÷µ¥ÀÌÆ® */
-		for (auto& Chain : Group.Chains) {
-			for (_int i = 0; i < Chain.Nodes.size(); ++i) {
-
-				/* Ã¹¹øÂ°º»ÀÇ ºÎ¸ğº»Àº ·çÆ®º»ÀÌ´Ï Á÷Á¢ ·çÆ®¿¡¼­ °®°í¿È */
-				_vector3 parentPos =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedPosition(Group.RootBoneIndex)
-					: Chain.Nodes[i - 1].CombinedCurPos;
-
-				_quaternion parentQuat =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedQuaternion(Group.RootBoneIndex)
-					: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
-
-				/* °è»êÀ» ¹Ì¸®ÇØº½ ¼ø¼­´Â ¹«Á¶°Ç º»ÀÇ À§¿¡¼­ ¾Æ·¡·Î*/
-				SimulateNode(
-					Chain.Nodes[i],
-					parentPos,
-					parentQuat,
-					Group.ChainParam,
-					dt
-				);
-			}	
-		}
-		bUpdatedOnce = true;
-	}
-
-	/* ¾Ö´Ï¸ÅÀÌÅÍ Manipulate¿¡ Á÷Á¢ µ¨Å¸ ¸ÅÆ®¸¯½º Ãß°¡*/
-	if (bUpdatedOnce)
-		ApplySimulatedNode();
+		if (Group.bWorldSpace)
+			WorldChain(Group, dt);
+		else
+			LocalChain(Group, dt);
+	}		
 }
 
-void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
+#pragma region WorldChain
+void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
+{
+	/* ì•µì»¤ ì›”ë“œ ì—…ë°ì´íŠ¸ */
+	Update_WorldAnchor(Group);
+
+	/* ì•µì»¤ ë…¸ë“œ ì—…ë°ì´íŠ¸ */
+	Update_WorldNodes(Group);
+
+	/* ì•µì»¤ì˜ ë¸íƒ€ê°’ì„ êµ¬í•´ì˜´ */
+	_vector3 AnchorDeltaPos{};
+	_quaternion AnchorDeltaQuat{};
+	Calc_AnchorDelta(Group, AnchorDeltaPos, AnchorDeltaQuat);
+
+	/* ì›”ë“œ ì¢Œí‘œê³„ ì •ë ¬ */
+	for (auto& Chain : Group.Chains) {
+		for (auto& Node : Chain.Nodes) {
+			/* ë¶€ëª¨ì˜ ì›”ë“œ ìœ„ì¹˜ì™€ íšŒì „ì„ ê°–ê³ ì˜´ */
+			/* ì´ì „ í¬ì§€ì…˜ë„ì„ ëŒë¦¬ëŠ” ì´ìœ ëŠ” ì•µì»¤ì˜ íšŒì „ì†ë„ëŠ” ì›”ë“œ ë³€í•œê±°ë¼
+				ë‹¤ì´ë‚˜ë¯¹ë³¸ì˜ ê³„ì‚° ì†ë„ì— ì„ì´ë©´ ì•ˆëŒ ê°™ì€ ì¢Œí‘œê³„ì— ì¼ì¹˜ì‹œí‚¤ê¸° ìœ„í•´ ë‘˜ë‹¤ ì´ì „ ì•µì»¤í¬ì¦ˆë¡œ */
+			/* ex) ê¸°ì°¨ì—ì„œ ê³µêµ´ë¦´ë•Œ ê¸°ì°¨ì†ë„ê°€ ê³µì´ êµ´ëŸ¬ê°€ëŠ” ì†ë„ì— ì˜í–¥ì´ ê°€ë©´ì•ˆëŒ */
+			Calc_DynamicPos(Node.DynamicCurPos,
+				Group.PrevAnchorWorldPos,
+				AnchorDeltaPos,
+				AnchorDeltaQuat);
+		}
+	}
+
+	/* í•˜ìœ„ ì²´ì¸ë“¤ ì‹œë®¬ë ˆì´ì…˜ */
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			_vector3 parentPos =
+				(i == 0) ?	Group.CurAnchorWorldPos :
+							Chain.Nodes[i - 1].DynamicCurPos;
+
+			/* ê³„ì‚°ì„ ë¯¸ë¦¬í•´ë´„ ìˆœì„œëŠ” ë¬´ì¡°ê±´ ë³¸ì˜ ìœ„ì—ì„œ ì•„ë˜ë¡œ*/
+			Simulate_WorldNode(
+				Chain.Nodes[i],
+				parentPos,
+				Group.ChainParam,
+				dt
+			);
+		}
+	}
+
+	/* ì• ë‹ˆë§¤ì´í„° DynamicBoneMatricesì— íšŒì „ ë¸íƒ€ ë§¤íŠ¸ë¦­ìŠ¤ ì¶”ê°€*/
+	ApplySimulatedWorldNode(Group);
+}
+
+void CDynamicBone::Update_WorldAnchor(DYNAMIC_CHAIN_GROUP& Group)
+{
+	Group.CurAnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+
+	Group.PrevAnchorWorldPos = Group.CurAnchorWorldPos;
+	Group.PrevAnchorWorldQuat = Group.CurAnchorWorldQuat;
+
+	Group.CurAnchorWorldPos = _vector3::Transform(Group.CurAnchorCombinedPos, m_pOwner->Get_WorldMatrix());
+	Group.CurAnchorWorldQuat = m_pOwner->Get_WorldQuat() * Group.CurAnchorCombinedQuat;
+}
+
+void CDynamicBone::Update_WorldNodes(DYNAMIC_CHAIN_GROUP& Group)
+{
+	Matrix OwnerWorldMat = m_pOwner->Get_WorldMatrix();
+	_quaternion OwnerWorldQuat = m_pOwner->Get_WorldQuat();
+
+	for (auto& Chain : Group.Chains) {
+		for (auto& Node : Chain.Nodes) {
+			Node.CombinedPrevPos = Node.CombinedCurPos;
+
+			// ì• ë‹ˆë©”ì´ì…˜ ë¡œì»¬ ìœ„ì¹˜
+			Node.CombinedCurPos =
+				m_pAnimator->Get_BoneCombinedPosition(Node.BoneIndex);
+
+			// ì´ë²ˆí”„ë ˆì„ ê·¸ ë³¸ì˜ ì›”ë“œìœ„ì¹˜
+			Node.AnimWorldPos =
+				_vector3::Transform(Node.CombinedCurPos, OwnerWorldMat);
+		}
+	}
+}
+
+void CDynamicBone::Calc_AnchorDelta(DYNAMIC_CHAIN_GROUP& Group, _vector3& outDeltaPos, _quaternion& outDeltaQuat)
+{
+	outDeltaPos = Group.CurAnchorWorldPos - Group.PrevAnchorWorldPos;
+
+	_quaternion prevInv;
+	Group.PrevAnchorWorldQuat.Inverse(prevInv);
+
+	outDeltaQuat = Group.CurAnchorWorldQuat * prevInv;
+	outDeltaQuat.Normalize();
+}
+
+void CDynamicBone::Calc_DynamicPos(_vector3& DynamicPos, const _vector3& AnchorPrevPos, const _vector3& AnchorDeltaPos, const _quaternion& AnchorDeltaQuat)
+{
+	// íšŒì „ ê¸°ì¤€ì  = ì´ì „ í”„ë ˆì„ ì•µì»¤ ìœ„ì¹˜
+	// ì•µì»¤ì˜ ì´ì „í¬ì§€ì…˜ì´ ê³§ íšŒì „ì´ ì–¼ë§ˆë‚˜ë¬ëƒì˜ ì¶•ì´ ë ê±°ì„
+	_vector3 pivot = AnchorPrevPos; 
+
+	_vector3 v = DynamicPos - pivot;
+	v = _vector3::Transform(v, AnchorDeltaQuat);
+	DynamicPos = pivot + v + AnchorDeltaPos;
+}
+
+void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node, const _vector3& parentPos, const CHAIN_PARAM& ChainParam, _float dt)
+{
+	/* í˜„ì¬ / ì´ì „ ìœ„ì¹˜ */
+	_vector3 curPos = Node.DynamicCurPos;
+	_vector3 prevPos = Node.DynamicPrevPos;
+
+	/* ì†ë ¥ ê³„ì‚° (ì´ ì†ë„ ê·¸ëŒ€ë¡œë©´ ê·¸ëƒ¥ ì• ë‹ˆë§¤ì´ì…˜ ìœ„ì¹˜ê² ì£ ?) */
+	_vector3 Velocity = curPos - prevPos;
+
+	/* ê´€ì„±(Damping) : ë‹¤ìŒ ìœ„ì¹˜ëŠ” í˜„ì¬ì—ì„œ ì†ë„ì™€ ê°ì†ë§Œí¼ ê³±í•œ ìœ„ì¹˜ë¥¼ ë¯¸ë¦¬ê³„ì‚° */
+	Velocity *= (1.f - ChainParam.fDamping);
+
+	/* ë³µì›ë ¥(Stiffness) : ë¯¸ë¦¬ êµ¬í•´ë‘” RestLocalDirë¡œ ì ì  ëŒì•„ì˜¤ëŠ” í˜ */
+	Vector3 follow = Node.AnimWorldPos - curPos;
+	Velocity += follow * ChainParam.fStiffness;
+
+	/* ì¤‘ë ¥(Gravity) : yì¶•ìœ¼ë¡œ ì•„ë˜ë¡œ ë–¨ì–´ì§ˆ ìˆ˜ ìˆë„ë¡*/
+	//vector3 worldGravity = _vector3::TransformNormal(_vector3(0.f, -1.f, 0.f), m_pOwner->Get_WorldMatrix());
+	//Velocity += worldGravity * ChainParam.fGravityScale * dt;
+
+	/* ìœ„ì— ëª¨ë“  ê³„ì‚°ì„ í•œ ì˜ˆì¸¡ëœ ë‹¤ìŒ ìœ„ì¹˜*/
+	_vector3 nextPos = curPos + Velocity;
+
+	/* ë¶€ëª¨ë¡œë¶€í„° ë©€ì–´ì§€ë©´ ì•ˆë˜ë‹ˆ ë¶€ëª¨ë¼ˆ ìœ„ì¹˜ì—ì„œ ê³„ì‚° ë¼ˆê°€ ê¸¸ì–´ì§€ë©´ ì•ˆë¼ì–ìŒ ê·¸ë˜ì„œ ê¸¸ì´ì œí•œì„ í•¨
+	(ë¶€ëª¨->ë…¸ë“œ)ì˜ ë°©í–¥ì„ êµ¬í•˜ê³  ë¶€ëª¨ë¡œë¶€í„° ê¸¸ì´ë§Œí¼ ê³±í•œ ìœ„ì¹˜ê°€ ì§„ì§œ ìœ„ì¹˜ê°€ ë ê±°ì„*/
+	_vector3 dir = nextPos - parentPos;
+	dir.Normalize();
+
+	/* ë³¸ì˜ ê¸¸ì´ëŠ” ë‹¬ë¼ì§€ë©´ ì•ˆë˜ë‹ˆ ì¬ê³„ì‚° */
+	nextPos = parentPos + dir * Node.fLength;
+
+	// ìƒíƒœ ê°±ì‹ 
+	Node.DynamicPrevPos = curPos;
+	Node.DynamicCurPos = nextPos;
+}
+
+void CDynamicBone::ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group)
+{
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			/* *ì—¬ê¸°ì„œì˜ ê³„ì‚°ì€ ëª¨ë¸ ìŠ¤í˜ì´ìŠ¤ìƒ ê³„ì‚°* */
+			auto& Node = Chain.Nodes[i];
+
+			/* ---------- ë¶€ëª¨ ìœ„ì¹˜ ---------- */
+
+			_vector3 parentWorldPos =
+				(i == 0)
+				? Group.CurAnchorWorldPos
+				: Chain.Nodes[i - 1].DynamicCurPos;
+
+			_quaternion parentWorldQuat =
+				(i == 0)
+				? Group.CurAnchorWorldQuat
+				: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+			
+			parentWorldQuat.Normalize(); parentWorldQuat;
+			/* ---------- ê¸°ì¤€ ë°©í–¥ ---------- */
+
+			// 1) ì• ë‹ˆë©”ì´ì…˜ ê¸°ì¤€ ë°©í–¥ (Rest â†’ Anim â†’ World)
+			_vector3 animDir =
+				_vector3::Transform(Node.RestLocalDir, parentWorldQuat);
+			animDir.Normalize();
+
+			// 2) ì›”ë“œ ì‹œë®¬ë ˆì´ì…˜ ê²°ê³¼ ë°©í–¥
+			_vector3 worldDir =
+				Node.DynamicCurPos - parentWorldPos;
+			worldDir.Normalize();
+
+			/* ---------- ë¸íƒ€ íšŒì „ ---------- */
+
+			_quaternion deltaRotation =
+				_quaternion::FromToRotation(animDir, worldDir);
+			deltaRotation.Normalize();
+
+			/* ---------- ì ìš© ---------- */
+
+			auto& dynamicMat =
+				m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex];
+
+			dynamicMat = Matrix::CreateFromQuaternion(deltaRotation);
+		}
+	}
+}
+#pragma endregion
+
+#pragma region LocalChain
+void CDynamicBone::LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
+{
+	/* ì•µì»¤ ìœ„ì¹˜ ì—…ë°ì´íŠ¸ */
+	Update_LocalAnchorNode(Group);
+
+	/* í•˜ìœ„ ì²´ì¸ë“¤ ì‹œë®¬ë ˆì´ì…˜ */
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			/* ë¶€ëª¨ì˜ Combinedëœ ìœ„ì¹˜ì™€ íšŒì „ì„ ê°–ê³ ì˜´ */
+			_vector3 parentPos =
+				(i == 0) ?
+				m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+				Chain.Nodes[i - 1].CombinedCurPos;
+
+			_quaternion parentQuat =
+				m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
+
+			/* ê³„ì‚°ì„ ë¯¸ë¦¬í•´ë´„ ìˆœì„œëŠ” ë¬´ì¡°ê±´ ë³¸ì˜ ìœ„ì—ì„œ ì•„ë˜ë¡œ*/
+			Simulate_LocalNode(
+				Chain.Nodes[i],
+				parentPos,
+				parentQuat,
+				Group.ChainParam,
+				dt
+			);
+		}
+	}
+
+	/* ì• ë‹ˆë§¤ì´í„° DynamicBoneMatricesì— íšŒì „ ë¸íƒ€ ë§¤íŠ¸ë¦­ìŠ¤ ì¶”ê°€*/
+	ApplySimulatedLocalNode(Group);
+}
+
+void CDynamicBone::Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group)
+{
+	Group.CurAnchorCombinedPos = m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex);
+	Group.CurAnchorCombinedQuat = m_pAnimator->Get_BoneCombinedQuaternion(Group.AnchorBoneIndex);
+}
+
+void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,
 	const _quaternion& parentQuat,
 	const CHAIN_PARAM& ChainParam,
 	_float dt)
 {
-	/* ÇöÀç / ÀÌÀü À§Ä¡ */
-	_vector3 cur = Node.CombinedCurPos;
-	_vector3 prev = Node.CombinedPrevPos;
+	/* í˜„ì¬ / ì´ì „ ìœ„ì¹˜ */
+	_vector3 curPos = Node.CombinedCurPos;
+	_vector3 prevPos = Node.CombinedPrevPos;
 
-	/* °ü¼º : ´ÙÀ½ À§Ä¡´Â ÇöÀç¿¡¼­ ¼Óµµ¿Í °¨¼Ó¸¸Å­ °öÇÑ À§Ä¡¸¦ ¹Ì¸®°è»ê */
-	_vector3 velocity = cur - prev;
-	_vector3 next = cur + velocity * (1.f - ChainParam.fDamping);
+	/* ì†ë ¥ ê³„ì‚° */
+	_vector3 Velocity = curPos - prevPos;
 
-	/* ºÎ¸ğ·ÎºÎÅÍ ¸Ö¾îÁö¸é ¾ÈµÇ´Ï 
-	(ºÎ¸ğ->³ëµå)ÀÇ ¹æÇâÀ» ±¸ÇÏ°í ºÎ¸ğ·ÎºÎÅÍ ±æÀÌ¸¸Å­ °öÇÑ À§Ä¡°¡ ÁøÂ¥ À§Ä¡°¡ µÉ°ÅÀÓ*/
-	_vector3 dir = next - parentPos;
+	/* ê´€ì„±(Damping) : ë‹¤ìŒ ìœ„ì¹˜ëŠ” í˜„ì¬ì—ì„œ ì†ë„ì™€ ê°ì†ë§Œí¼ ê³±í•œ ìœ„ì¹˜ë¥¼ ë¯¸ë¦¬ê³„ì‚° */
+	Velocity *= (1.f - ChainParam.fDamping);
+
+	/* ì¤‘ë ¥(Gravity) : */
+	_vector3 modelGravity(0.f, -1.f, 0.f);
+	Velocity += modelGravity * ChainParam.fGravityScale * dt;
+
+	/* ìœ„ì— ëª¨ë“  ê³„ì‚°ì„ í•œ ì˜ˆì¸¡ëœ ë‹¤ìŒ ìœ„ì¹˜*/
+	_vector3 nextPos = curPos + Velocity;
+
+	/* ë¶€ëª¨ë¡œë¶€í„° ë©€ì–´ì§€ë©´ ì•ˆë˜ë‹ˆ ë¶€ëª¨ë¼ˆ ìŠ¤í˜ì´ìŠ¤ìœ„ì¹˜ì—ì„œ ê³„ì‚°
+	(ë¶€ëª¨->ë…¸ë“œ)ì˜ ë°©í–¥ì„ êµ¬í•˜ê³  ë¶€ëª¨ë¡œë¶€í„° ê¸¸ì´ë§Œí¼ ê³±í•œ ìœ„ì¹˜ê°€ ì§„ì§œ ìœ„ì¹˜ê°€ ë ê±°ì„*/
+	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
 
-	// ·¹½ºÆ® Æ÷Áî·Î º¹¿ø
+	// ë³µì›ë ¥(Stiffness) : ë¯¸ë¦¬ êµ¬í•´ë‘” RestLocalDirë¡œ ì ì  ëŒì•„ì˜¤ëŠ” í˜
 	_vector3 restDir =
 		_vector3::Transform(Node.RestLocalDir, parentQuat);
 	restDir.Normalize();
@@ -109,82 +347,78 @@ void CDynamicBone::SimulateNode(DYNAMIC_NODE& Node,
 	dir = _vector3::Lerp(dir, restDir, ChainParam.fStiffness);
 	dir.Normalize();
 
-	next = parentPos + dir * Node.fLength;
+	/* ë³¸ì˜ ê¸¸ì´ëŠ” ë‹¬ë¼ì§€ë©´ ì•ˆë˜ë‹ˆ ì¬ê³„ì‚°*/
+	nextPos = parentPos + dir * Node.fLength;
 
-	// »óÅÂ °»½Å
-	Node.CombinedPrevPos = cur;
-	Node.CombinedCurPos = next;
+	// ìƒíƒœ ê°±ì‹ 
+	Node.CombinedPrevPos = curPos;
+	Node.CombinedCurPos = nextPos;
 }
 
-void CDynamicBone::ApplySimulatedNode()
+
+/* ê³„ì‚°ëœ ê°’ì—ëŒ€í•œ íšŒì „ ë¸íƒ€ë¥¼ ë„˜ê¸°ëŠ” ì‘ì—… */
+void CDynamicBone::ApplySimulatedLocalNode(DYNAMIC_CHAIN_GROUP& Group)
 {
-	for (auto& Group : m_ChainGroups) {
-		for (auto& Chain : Group.Chains) {
-			for (_int i = 0; i < Chain.Nodes.size(); ++i) {
-				/* *¿©±â¼­ÀÇ °è»êÀº ¸ğµ¨ ½ºÆäÀÌ½º»ó °è»ê* */
-				auto& Node = Chain.Nodes[i];
-				
-				/* ÀÌ ³ëµå´Â ¾î´À º»¿¡ ¸Å´Ş·ÁÀÖ´ÂÁö?  ex) 0¹ø³ëµå => ·çÆ®º»¿¡ ¸Å´Ş¸² */
-				_vector3 parentPos =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedPosition(Node.ParentIndex)
-					: Chain.Nodes[i - 1].CombinedCurPos;
+	for (auto& Chain : Group.Chains) {
+		for (_int i = 0; i < Chain.Nodes.size(); ++i) {
+			/* *ì—¬ê¸°ì„œì˜ ê³„ì‚°ì€ ëª¨ë¸ ìŠ¤í˜ì´ìŠ¤ìƒ ê³„ì‚°* */
+			auto& Node = Chain.Nodes[i];
+			
+			/* ì´ ë…¸ë“œëŠ” ì–´ëŠ ë³¸ì— ë§¤ë‹¬ë ¤ìˆëŠ”ì§€?  ex) 1ë²ˆë…¸ë“œ => 0ë²ˆë…¸ë“œ(ë£¨íŠ¸ë…¸ë“œ) ë³¸ì— ë§¤ë‹¬ë¦¼ */
+			_vector3 parentPos =
+				(i == 0) ?
+				m_pAnimator->Get_BoneCombinedPosition(Group.AnchorBoneIndex) :
+				Chain.Nodes[i - 1].CombinedCurPos;
 
-				/* ºÎ¸ğ´Â ¾î´À¹æÇâÀ» ¹Ù¶óº¸°í ÀÖ´ÂÁö?*/
-				/* ºÎ¸ğ->ÀÚ½ÄÀÇ ¹æÇâÀÌ ÇÊ¿äÇÏ±â¿¡ ±×³É Combined¿¡¼­ È¸Àü¸¸ °®°í¿Íµµ ¹«¹æ */
-				_quaternion parentQuat =
-					(i == 0)
-					? m_pAnimator->Get_BoneCombinedQuaternion(Group.RootBoneIndex)
-					: m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i - 1].BoneIndex);
+			/* ë¶€ëª¨ëŠ” ì–´ëŠë°©í–¥ì„ ë°”ë¼ë³´ê³  ìˆëŠ”ì§€?*/
+			/* ë¶€ëª¨->ìì‹ì˜ ë°©í–¥ì´ í•„ìš”í•˜ê¸°ì— ê·¸ëƒ¥ Combinedì—ì„œ íšŒì „ë§Œ ê°–ê³ ì™€ë„ ë¬´ë°© */
+			_quaternion parentQuat =
+				m_pAnimator->Get_BoneCombinedQuaternion(Chain.Nodes[i].ParentIndex);
 
-				/* RestLocalÀº ºÎ¸ğ º» ·ÎÄÃ±âÁØÀÌ°í ºñ±³´ë»óÀº Combined ¸ğµ¨½ºÆäÀÌ½º»ó ¹æÇâÀÌ±â¿¡ */
-				/* ½ÇÁ¦·Î ºÎ¸ğ°¡ È¸ÀüÇÑ ¸¸Å­ ±âÁØÀ» µ¹·Á¼­ Combined ±âÁØÀÇ ¹æÇâÀ» ¸¸µé¾îÁÜ */
-				_vector3 baseDirection =
-					_vector3::Transform(Node.RestLocalDir, parentQuat);
-				baseDirection.Normalize();
+			/* RestLocalì€ ë¶€ëª¨ ë³¸ ë¡œì»¬ê¸°ì¤€ì´ê³  ë¹„êµëŒ€ìƒì€ Combined ëª¨ë¸ìŠ¤í˜ì´ìŠ¤ìƒ ë°©í–¥ì´ê¸°ì— */
+			/* ì‹¤ì œë¡œ ë¶€ëª¨ê°€ íšŒì „í•œ ë§Œí¼ ê¸°ì¤€ì„ ëŒë ¤ì„œ Combined ê¸°ì¤€ì˜ ë°©í–¥ì„ ë§Œë“¤ì–´ì¤Œ */
+			_vector3 baseDirection = _vector3::Transform(Node.RestLocalDir, parentQuat);
+			baseDirection.Normalize();
 
-				/* ºÎ¸ğ±âÁØÀ¸·Î ³ëµå°¡ ½ÇÁ¦·Î ¿òÁ÷ÀÌ´Â ¹æÇâ (½Ã¹Ä·¹ÀÌ¼Ç °á°ú°ª)*/
-				_vector3 simulatedDirection =
-					Node.CombinedCurPos - parentPos;
-				simulatedDirection.Normalize();
+			/* ë¶€ëª¨ê¸°ì¤€ìœ¼ë¡œ ë…¸ë“œê°€ ì‹¤ì œë¡œ ì›€ì§ì´ëŠ” ë°©í–¥ (ì‹œë®¬ë ˆì´ì…˜ ê²°ê³¼ê°’)*/
+			_vector3 simulatedDirection = Node.CombinedCurPos - parentPos;
+			simulatedDirection.Normalize();
 
-				/* µÎ È¸ÀüÀÇ µ¨Å¸°ªÀ» ±¸ÇÔ */
-				_quaternion deltaRotation =
-					_quaternion::FromToRotation(baseDirection, simulatedDirection);
-				deltaRotation.Normalize();
+			/* ë‘ íšŒì „ì˜ ë¸íƒ€ê°’ì„ êµ¬í•¨ */
+			_quaternion deltaRotation = _quaternion::FromToRotation(baseDirection, simulatedDirection);
+			deltaRotation.Normalize();
 
-				auto& pManipulateMat = (*m_pAnimator->Get_ManipulateBoneMatrices_Ptr())[Node.BoneIndex];
-				pManipulateMat = Matrix::CreateFromQuaternion(deltaRotation);
-			}
+			auto& pDynamicBoneMatrix = m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex];
+			pDynamicBoneMatrix = Matrix::CreateFromQuaternion(deltaRotation);
 		}
 	}
 }
+#pragma endregion
 
-/* ÀÌ¹Ì ÀúÀåµÈ µ¥ÀÌÅÍ°¡ ÀÖÀ¸¸é °®°í¿È */
+/* ì´ë¯¸ ì €ì¥ëœ ë°ì´í„°ê°€ ìˆìœ¼ë©´ ê°–ê³ ì˜´ */
 HRESULT CDynamicBone::Link_ChainData(const vector<DYNAMIC_CHAIN_GROUP>& ChainGrups)
 {
 	m_ChainGroups = ChainGrups;
 	return S_OK;
 }
 
-/* Ã¼ÀÎÀ» »õ·Î »ı¼ºÇÏ´Â ÇÔ¼ö */
-HRESULT CDynamicBone::Create_Chain(_int RootIndex)
+/* ì²´ì¸ì„ ìƒˆë¡œ ìƒì„±í•˜ëŠ” í•¨ìˆ˜ */
+HRESULT CDynamicBone::Create_Chain(_int AnchorIndex)
 {
-	if(-1 == RootIndex) return E_FAIL;
+	if(-1 == AnchorIndex) return E_FAIL;
 	
-	/* ÀÌ¹Ì ÂïÀº ·çÆ®³ëµå°¡ Á¸ÀçÇÏ¸é ¹«Á¶°Ç Ã¼ÀÎÀÌ ¸¸µé¾îÁ®ÀÖÀ»°Í */
+	/* ì´ë¯¸ ì°ì€ ë£¨íŠ¸ë…¸ë“œê°€ ì¡´ì¬í•˜ë©´ ë¬´ì¡°ê±´ ì²´ì¸ì´ ë§Œë“¤ì–´ì ¸ìˆì„ê²ƒ */
 	for (auto Group : m_ChainGroups) {
-		if (RootIndex == Group.RootBoneIndex)
+		if (AnchorIndex == Group.AnchorBoneIndex)
 			return S_OK;
 	}
 	
 	DYNAMIC_CHAIN_GROUP Group;
-	Group.RootBone = m_pAnimator->Get_ModelData()->Get_BoneNames()[RootIndex];
-	Group.RootBoneIndex = RootIndex;
+	Group.AnchorBoneIndex = AnchorIndex;
 
-	/* 	³ëµå »ı¼ºÀ» ÇÏ±â À§ÇÑ ¸®½ºÆ®¸¦ ÀúÀåÇÑ º¤ÅÍ¸¦ ÇÏ³ª ¸¸µé¾îµÒ ±× µ¥ÀÌÅÍ·Î Àç±Í*/
+	/* 	ë…¸ë“œ ìƒì„±ì„ í•˜ê¸° ìœ„í•œ ë¦¬ìŠ¤íŠ¸ë¥¼ ì €ì¥í•œ ë²¡í„°ë¥¼ í•˜ë‚˜ ë§Œë“¤ì–´ë‘  ê·¸ ë°ì´í„°ë¡œ ì¬ê·€*/
 	vector<_int> Index;
-	Index.push_back(RootIndex);
+	Index.push_back(AnchorIndex);
  	Create_Node(Index, Group);
 
 	m_ChainGroups.push_back(Group);
@@ -197,21 +431,22 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 	auto pModelData = m_pAnimator->Get_ModelData();
 	const _int iBoneCount = pModelData->Get_BoneCount();
 
-	//ÀÎµ¦½ºÁß ¸¶Áö¸·°Ô °è»êÇÏ´Â ºÎ¸ğ³ëµå°¡ µÉ°Í
+	//ì¸ë±ìŠ¤ì¤‘ ë§ˆì§€ë§‰ê²Œ ê³„ì‚°í•˜ëŠ” ë¶€ëª¨ë…¸ë“œê°€ ë ê²ƒ
 	_int iParentIndex = Indices.back();
 	vector<_int> Childs;
 
-	//Æ®¸®°èÃşÀÌ±â¿¡ ¹«Á¶°Ç ÀÚ½ÄÀÎµ¦½º´Â ºÎ¸ğº¸´Ù ³ôÀº¼ıÀÚÀÓ
+	//íŠ¸ë¦¬ê³„ì¸µì´ê¸°ì— ë¬´ì¡°ê±´ ìì‹ì¸ë±ìŠ¤ëŠ” ë¶€ëª¨ë³´ë‹¤ ë†’ì€ìˆ«ìì„
 	for (_int i = iParentIndex + 1; i < iBoneCount; ++i) {
 		if (iParentIndex == pModelData->Get_BoneParentIndex(i))
 			Childs.push_back(i);
 	}
 
-	//ÀÚ½Ä³ëµå°¡ ´õÀÌ»ó ¾øÀ¸´Ï ¸¸µë
+	//ìì‹ë…¸ë“œê°€ ë”ì´ìƒ ì—†ìœ¼ë‹ˆ ë§Œë“¬
 	if (Childs.empty()) {
 		DYNAMIC_CHAIN chain;
 		for (_int i = 1; i < Indices.size(); i++) {
 			DYNAMIC_NODE Node{};
+
 			Node.ParentIndex = Indices[i - 1];
 			Node.BoneIndex = Indices[i];
 
@@ -228,8 +463,11 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 			Node.RestLocalDir = LocalDir;
 			Node.RestLocalDir.Normalize();
 
-			Node.CombinedPrevPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
-			Node.CombinedCurPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
+			//Node.CombinedPrevPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
+			//Node.CombinedCurPos = _vector3(NodeMat._41, NodeMat._42, NodeMat._43);
+			
+			//Node.WorldPrevPos = _vector3::Transform(Node.CombinedPrevPos, m_pOwner->Get_WorldMatrix());
+			//Node.WorldCurPos = _vector3::Transform(Node.CombinedCurPos, m_pOwner->Get_WorldMatrix());
 
 			chain.Nodes.push_back(Node);
 		}
@@ -237,13 +475,169 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 		return;
 	}
 
-	//ÀÚ½ÄÀÌ ÀÖÀ¸¸é ¹Ş¾Æ¿Â ÀÎµ¦½ºµéÀ» ±×´ë·Î º¹»çÇØ¼­ Àç±Í
+	//ìì‹ì´ ìˆìœ¼ë©´ ë°›ì•„ì˜¨ ì¸ë±ìŠ¤ë“¤ì„ ê·¸ëŒ€ë¡œ ë³µì‚¬í•´ì„œ ì¬ê·€
 	for (_int i = 0; i < Childs.size(); i++) {
 		vector<_int> newIndices = Indices;
 		newIndices.push_back(Childs[i]);
 		Create_Node(newIndices, ChineGroup);
 	}
 }
+
+#pragma region GUI
+void CDynamicBone::Render_GUI()
+{
+	ImGui::SeparatorText("DynamicBone");
+	if (m_ChainGroups.empty())
+		return;
+
+	auto& Group = m_ChainGroups[0];
+
+	if (!ImGui::Begin("DynamicBone Debug"))
+	{
+		ImGui::End();
+		return;
+	}
+
+	ImGui::Text("=== ChainGroup[0] ===");
+
+	/* ---------------- Anchor ---------------- */
+	ImGui::Separator();
+	ImGui::Text("Anchor : %d", Group.AnchorBoneIndex);
+	ImGui::Text("CombPos : %.3f %.3f %.3f",
+		Group.CurAnchorCombinedPos.x,
+		Group.CurAnchorCombinedPos.y,
+		Group.CurAnchorCombinedPos.z);
+
+	ImGui::Text("Pos : %.3f %.3f %.3f",
+		Group.CurAnchorWorldPos.x,
+		Group.CurAnchorWorldPos.y,
+		Group.CurAnchorWorldPos.z);
+
+	ImGui::Text("Quat: %.3f %.3f %.3f %.3f",
+		Group.CurAnchorWorldQuat.x,
+		Group.CurAnchorWorldQuat.y,
+		Group.CurAnchorWorldQuat.z,
+		Group.CurAnchorWorldQuat.w);
+
+	/* ---------------- Chain Param ---------------- */
+	ImGui::Separator();
+	ImGui::Text("Chain Parameters");
+
+	ImGui::SliderFloat("Damping",
+		&Group.ChainParam.fDamping, 0.f, 1.f);
+
+	ImGui::SliderFloat("Stiffness",
+		&Group.ChainParam.fStiffness, 0.f, 1.f);
+
+	ImGui::SliderFloat("Gravity Scale",
+		&Group.ChainParam.fGravityScale, 0.f, 10.f);
+
+	ImGui::Checkbox("World Space",
+		&Group.bWorldSpace);
+
+	static bool bDrawDebugPoints = true;
+	ImGui::Checkbox("Draw DynamicBone Points",
+		&bDrawDebugPoints);
+
+	/* ---------------- Nodes ---------------- */
+	ImGui::Separator();
+	ImGui::Text("Nodes (World)");
+
+	for (size_t c = 0; c < Group.Chains.size(); ++c)
+	{
+		auto& Chain = Group.Chains[c];
+
+		if (ImGui::TreeNode((void*)(intptr_t)c, "Chain %zu", c))
+		{
+			for (size_t i = 0; i < Chain.Nodes.size(); ++i)
+			{
+				auto& Node = Chain.Nodes[i];
+
+				ImGui::PushID((int)i);
+
+				ImGui::Text("Node %zu (Bone %d)", i, Node.BoneIndex);
+
+				ImGui::Text("Prev Pos : %.3f %.3f %.3f",
+					Node.DynamicPrevPos.x,
+					Node.DynamicPrevPos.y,
+					Node.DynamicPrevPos.z);
+
+				ImGui::Text("Cur Pos : %.3f %.3f %.3f",
+					Node.DynamicCurPos.x,
+					Node.DynamicCurPos.y,
+					Node.DynamicCurPos.z);
+
+				ImGui::Text("Anim Pos : %.3f %.3f %.3f",
+					Node.AnimWorldPos.x,
+					Node.AnimWorldPos.y,
+					Node.AnimWorldPos.z);
+
+				ImGui::Text("Len : %.3f", Node.fLength);
+
+				ImGui::Separator();
+				ImGui::PopID();
+			}
+			ImGui::TreePop();
+		}
+	}
+
+	if (bDrawDebugPoints)
+	{
+		ImGuizmo::SetGizmoSizeClipSpace(0.005f);
+
+		for (auto Group : m_ChainGroups) {
+			Render_DynamicBone(
+				Group.CurAnchorWorldPos,
+				IM_COL32(255, 255, 0, 255)
+			);
+			for (auto& Chain : Group.Chains) {
+				for (auto& Node : Chain.Nodes) {
+					Render_DynamicBone(Node.DynamicCurPos);
+				}
+			}
+		}
+
+		ImGuizmo::SetGizmoSizeClipSpace(0.1f);
+	}
+
+
+
+	ImGui::End();
+}
+
+void CDynamicBone::Render_DynamicBone(_vector3 vPos, ImU32 color)
+{
+	ImGuizmo::BeginFrame();
+	ImGuizmo::SetDrawlist(ImGui::GetBackgroundDrawList());
+
+	GUI_CONTEXT* Context = CGameInstance::GetInstance()->Get_GUISystem()->Get_Context();
+
+	const Matrix& view = *Context->pCameraManager->Get_ViewMatrix();
+	const Matrix& proj = *Context->pCameraManager->Get_ProjMatrix();
+
+	// World â†’ Clip
+	Vector4 clip = Vector4::Transform(_vector4(vPos.x, vPos.y, vPos.z, 1.f), view * proj);
+
+	// ì¹´ë©”ë¼ ë’¤ë©´ ë¬´ì‹œ
+	if (clip.w <= 0.f)
+		return;
+
+	// NDC
+	float ndcX = clip.x / clip.w;
+	float ndcY = clip.y / clip.w;
+
+	// Screen ì¢Œí‘œ
+	float sx = (ndcX * 0.5f + 0.5f) * Context->viewPort.x;
+	float sy = (-ndcY * 0.5f + 0.5f) * Context->viewPort.y;
+
+	// ì  ì°ê¸°
+	ImGui::GetBackgroundDrawList()->AddCircleFilled(
+		ImVec2(sx, sy),
+		4.f,     // ì  í¬ê¸°
+		color    // ìƒ‰
+	);
+}
+#pragma endregion
 
 CDynamicBone* CDynamicBone::Create(CAnimator3D* pAnimator)
 {
