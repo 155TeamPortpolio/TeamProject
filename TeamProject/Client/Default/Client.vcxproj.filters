@@ -412,6 +412,9 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
       <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider">
+      <UniqueIdentifier>{c366ca93-e53b-4a12-b0c6-e746a4a1953e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -817,6 +820,9 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1210,6 +1216,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

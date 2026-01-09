@@ -35,6 +35,9 @@ public:
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
+private:
+    HRESULT Ready_Children(INIT_DESC* pArg);
+
 public:
     CStateMachine<CThugBulkyEnforcer>*  Get_StateMachine() { return m_pStateMachine; }
     ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }

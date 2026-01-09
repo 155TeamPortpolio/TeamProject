@@ -9,6 +9,7 @@
 #include "Material.h"
 #include "Animator3D.h"
 #include "SkeletalModel.h"
+#include "ObjectContainer.h"
 #include "CharacterController.h"
 
 /* States */
@@ -21,7 +22,7 @@
 #include "ThugBulkyEnforcer_Groggy.h"
 #include "ThugBulkyEnforcer_Death.h"
 
-
+#include "ThugBulkyEnforcer_Collider.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
 	: CEnemy()
@@ -41,6 +42,7 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
+	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
@@ -70,6 +72,9 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	for (size_t i = 1; i < 2; i++)
 		pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, i);
 
+	if (FAILED(Ready_Children(pArg)))
+		return E_FAIL;
+
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
@@ -89,7 +94,6 @@ void CThugBulkyEnforcer::Priority_Update(_float dt)
 
 void CThugBulkyEnforcer::Update(_float dt)
 {
-
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 
@@ -331,7 +335,7 @@ CGameObject* CThugBulkyEnforcer::Clone(INIT_DESC* pArg)
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CSacrificeHand");
+		MSG_BOX("Failed to clone : CThugBulkyEnforcer");
 	}
 
 	return instance;
@@ -342,6 +346,27 @@ void CThugBulkyEnforcer::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+}
+
+HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	RIGIDBODY_DESC rigidbodyDesc = {};
+	rigidbodyDesc.bEnableGravity = false;
+	
+	COLLIDER_DESC colliderDesc = {};
+	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+	colliderDesc.vSize = { 0.5f,0.f,0.f };
+
+	auto pWeapon_L = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(colliderDesc)
+		.Build("ThugBulkyEnforcer_Weapon_Left");
+
+	pObjectContainer->Add_Child(pWeapon_L);
+
+	return S_OK;
 }
 
 void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
