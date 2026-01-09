@@ -95,6 +95,18 @@ void CInputMgr::Process_Input(LPARAM lParam)
 	}
 }
 
+vector<KEY_DESC> CInputMgr::GetPressedKeys()
+{
+	vector<KEY_DESC> result;
+	for (size_t i = 0; i < m_Keyboard.size(); i++)
+	{
+		if (Key_Down(i)) {
+			result.push_back(m_Keyboard[i]);
+		}
+	}
+	return result;
+}
+
 void CInputMgr::Process_RawInput(RAWINPUT* raw)
 {
 		if (raw == nullptr)

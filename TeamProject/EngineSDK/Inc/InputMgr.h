@@ -28,6 +28,9 @@ public:
     virtual const _float2& Mouse_Pos() override;
 
     void Process_Input(LPARAM lParam);
+
+    virtual vector<KEY_DESC> GetPressedKeys() override;
+
 private:
     void Process_RawInput(RAWINPUT* raw);
 
