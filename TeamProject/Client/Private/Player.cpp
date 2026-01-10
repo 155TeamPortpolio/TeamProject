@@ -52,7 +52,7 @@ void CPlayer::Render_GUI()
 
 void CPlayer::Update_KeyInput()
 {
-	InputDevice()->
+	//InputDevice()->
 }
 
 CPlayer* CPlayer::Create()
