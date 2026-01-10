@@ -3,6 +3,7 @@
 
 #include "BattlePlayer.h"
 
+#include "GameInstance.h"
 #include "BattleSystem.h"
 
 CPlayer::CPlayer(const CPlayer& rhs)
@@ -47,6 +48,11 @@ void CPlayer::Late_Update(_float dt)
 
 void CPlayer::Render_GUI()
 {
+}
+
+void CPlayer::Update_KeyInput()
+{
+	//InputDevice()->
 }
 
 CPlayer* CPlayer::Create()

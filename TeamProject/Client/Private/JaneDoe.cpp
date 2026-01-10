@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "JaneDoe.h"
 #include "GameInstance.h"
+#include "DataBase.h"
 
 #include "Material.h"
 
@@ -11,6 +12,8 @@
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
+#include "JaneDoeState_SwitchIn.h"
+#include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Evade.h"
 
@@ -50,6 +53,9 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Stat()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -61,7 +67,8 @@ void CJaneDoe::Awake()
 	m_pAnimator->Set_MotionBone(16);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
-	m_strName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strName = "JaneDoe";
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
@@ -75,7 +82,7 @@ void CJaneDoe::Priority_Update(_float dt)
 
 void CJaneDoe::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if (!m_bTest)
 	{
 		Update_States();
@@ -106,6 +113,17 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::On_SwitchIn(SWITCH eType)
+{
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
+}
+
+void CJaneDoe::On_SwitchOut()
+{
+	m_pStateMachine->Set_Trigger("SwitchOut");
+}
+
 HRESULT CJaneDoe::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -130,6 +148,8 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -163,6 +183,26 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	// Evade -> Idle (Backstep)
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchIn");
+
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Stat()
+{
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_fSpecialGauge = Desc.SpecialAttack;
+
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
+	m_fMaxHP = LVDesc.MaxHP;
+	m_fDefense = LVDesc.Defend;
+	m_fAttackPower = LVDesc.Attack;
 
 	return S_OK;
 }

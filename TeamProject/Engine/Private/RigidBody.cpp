@@ -99,8 +99,7 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 void CRigidBody::Late_Update(_float dt)
 {
 	if (!m_pActor) return;
-	if (!m_bKinematic)
-		Update_RigidBody();
+	Update_RigidBody();
 }
 
 void CRigidBody::Render_GUI()

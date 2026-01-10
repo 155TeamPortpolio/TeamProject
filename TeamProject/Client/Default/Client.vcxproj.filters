@@ -427,6 +427,27 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Digits">
       <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch">
+      <UniqueIdentifier>{e300c58d-4dd8-4058-ab2e-ecbc5ba5b758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
+      <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut">
+      <UniqueIdentifier>{ee4ce36f-881a-4c28-bb3d-2128c9d40faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -807,9 +828,6 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Decibel.h">
       <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClInclude>
@@ -846,6 +864,21 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Client_Enum.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchIn.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoe_SwitchInNormal.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1216,9 +1249,6 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Decibel.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClCompile>
@@ -1255,6 +1285,18 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoe_SwitchInNormal.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
