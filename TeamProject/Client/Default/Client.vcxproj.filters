@@ -880,6 +880,9 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\JaneDoe_SwitchInAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1297,6 +1300,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoe_SwitchInAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -3,6 +3,7 @@
 
 #include "JaneDoe.h"
 #include "JaneDoe_SwitchInNormal.h"
+#include "JaneDoe_SwitchInAttack.h"
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
@@ -10,12 +11,12 @@ void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
         m_pSubStateMachine->Register_State("Normal", CJaneDoe_SwitchInNormal::Create());
-        //m_pSubStateMachine->Register_State("Attack", CJaneDoeState_BackStep::Create());
+        m_pSubStateMachine->Register_State("Attack", CJaneDoe_SwitchInAttack::Create());
         //m_pSubStateMachine->Register_State("ExAttack", CJaneDoeState_BackStep::Create());
         //m_pSubStateMachine->Register_State("ParryAid", CJaneDoeState_BackStep::Create());
 
         m_pSubStateMachine->Get_State("Normal")->Set_Tag("Normal");
-        //m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
+        m_pSubStateMachine->Get_State("Attack")->Set_Tag("Attack");
         //m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
         //m_pSubStateMachine->Get_State("ParryAid")->Set_Tag("ParryAid");
     }
