@@ -114,7 +114,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 	{
 		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
-			.Build("Laser");
+			.Build("Sacrifice_Laser");
 		pObjectContainer->Add_Child(pLaser, false);
 		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
 	}
@@ -366,15 +366,15 @@ void CSacrifice::OverDrive_Attack3()
 	pHandTransform->Set_Quaternion(vQuaternion);
 }
 
-void CSacrifice::ActiveLaser()
+void CSacrifice::ActiveLaser(_uint mode)
 {
-	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
-	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser();
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
+	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
 }
 
 void CSacrifice::DeactiveLaser()
 {
-	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
 }
 

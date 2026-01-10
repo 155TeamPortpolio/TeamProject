@@ -111,6 +111,11 @@ public:
 public:
 	static CSacrificeState_Attack_05_Phase1* Create() { return new CSacrificeState_Attack_05_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsLaserActive = false;
+	_bool m_IsLaserDeactive = false;
+
 };
 
 class CSacrificeState_Attack_06_Phase1 : public IBaseState<CSacrifice>
@@ -123,6 +128,10 @@ public:
 public:
 	static CSacrificeState_Attack_06_Phase1* Create() { return new CSacrificeState_Attack_06_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_IsLaserActive = false;
+	_bool m_IsLaserDeactive = false;
 };
 
 class CSacrificeState_Attack_07_Phase1 : public IBaseState<CSacrifice>

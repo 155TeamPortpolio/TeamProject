@@ -140,6 +140,7 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 	else {
 		m_isRootObject = true;
 	}
+
 	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
 		pObjContainer->Pre_EngineUpdateChild(dt);
 	}

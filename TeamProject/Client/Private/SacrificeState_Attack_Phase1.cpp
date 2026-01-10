@@ -160,10 +160,6 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
-	blackBoard.stateQueue.push_back("Attack06_Phase1");
-
 	blackBoard.isRequestNext = true;
 }
 
@@ -353,6 +349,9 @@ void CSacrificeState_Attack_05_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_05").Loop(false).Speed(1.4f).Apply();
+
+	m_IsLaserActive = false;
+	m_IsLaserDeactive = false;
 }
 
 void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -364,6 +363,18 @@ void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+	}
+
+	if (!m_IsLaserActive && m_fAnimProgress >= 0.56f)
+	{
+		pOwner->ActiveLaser(1);
+		m_IsLaserActive = true;
+	}
+
+	if (!m_IsLaserDeactive && m_fAnimProgress >= 0.565f)
+	{
+		pOwner->DeactiveLaser();
+		m_IsLaserDeactive = true;
 	}
 
 	pOwner->RotateToTarget(dt, 10.f);
@@ -379,7 +390,8 @@ void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(true).Speed(1.2f).Apply();
 
-	pOwner->ActiveLaser();
+	m_IsLaserActive = false;
+	m_IsLaserDeactive = false;
 }
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -389,6 +401,18 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		auto pTransform = pOwner->Get_Component<CTransform>();
 		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
 		pTransform->Add_Quaternion(vRot);
+
+		if (!m_IsLaserActive)
+		{
+			pOwner->ActiveLaser(0);
+			m_IsLaserActive = true;
+		}
+	}
+
+	if (!m_IsLaserDeactive && m_fAnimProgress >= 0.63f)
+	{
+		pOwner->DeactiveLaser();
+		m_IsLaserDeactive = true;
 	}
 
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
@@ -397,8 +421,6 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
-
-		pOwner->DeactiveLaser();
 	}
 
 	pOwner->MoveByRootMotion(dt);

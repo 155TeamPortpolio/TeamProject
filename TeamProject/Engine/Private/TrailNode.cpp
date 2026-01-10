@@ -72,12 +72,15 @@ void CTrailNode::Update(_float dt)
 {
 	auto pTrail = Get_Component<CTrailModel>();
 
+	auto pEffectContainer = Get_Component<CChild>()->Get_Parent();
+	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
+
 	switch (m_eMode)
 	{
 	case Engine::CTrailModel::POINT_MODE::CENTER:
 	{
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
-		pTrail->Update_CenterPoint(vPosition, dt);
+		pTrail->Update_CenterPoint(context.vLinePoint0, dt);
 
 	}break;
 	case Engine::CTrailModel::POINT_MODE::SEGMENT:
@@ -86,22 +89,18 @@ void CTrailNode::Update(_float dt)
 		_vector3 vPosition1 = vPosition0;
 		vPosition1.y -= 5.f;
 
-		pTrail->Update_SegmentPoint(vPosition0, vPosition1, dt);
+		pTrail->Update_SegmentPoint(context.vLinePoint0, context.vLinePoint1, dt);
 
 	}break;
 	case Engine::CTrailModel::POINT_MODE::LINE:
 	{
 		auto pCild = Get_Component<CChild>();
 		auto pEffectContainer = static_cast<CEffectContainer*>(pCild->Get_Parent());
+		
+		if (!m_IsEffectActive)
+			pTrail->SetFadeOut(true);
 
-		if (m_IsEffectActive)
-		{
-			_vector3 vRight = m_pTransform->Dir(STATE::RIGHT);
-			_vector3 vPosition = m_pTransform->Get_WorldPos();
-			_vector3 vNextPostion = vPosition + vRight * 100.f;
-			pTrail->Add_LinePoint(vPosition, vNextPostion);
-		}
-
+		pTrail->Add_LinePoint(context.vLinePoint0, context.vLinePoint1);
 		pTrail->Update_LinePoint(dt);
 
 	}break;
@@ -118,11 +117,20 @@ void CTrailNode::Play()
 {
 	m_IsEffectActive = true;
 	m_fElpasedTime = 0.f;
+
+	if (CTrailModel::POINT_MODE::LINE == m_eMode)
+	{
+		Get_Component<CTrailModel>()->Reset();
+		Get_Component<CTrailModel>()->SetFadeOut(false);
+	}
 }
 
 void CTrailNode::Stop()
 {
 	m_IsEffectActive = false;
+
+	if (CTrailModel::POINT_MODE::LINE == m_eMode)
+		Get_Component<CTrailModel>()->SetFadeOut(true);
 }
 
 CTrailNode* CTrailNode::Create()

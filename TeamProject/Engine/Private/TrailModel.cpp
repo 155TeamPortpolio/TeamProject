@@ -55,6 +55,16 @@ HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 	return m_pBuffer->Render(pContext);
 }
 
+void CTrailModel::Reset()
+{
+	m_IsLineFadeOut = false;
+	m_fLineFadeOutElapsedTime = 0.f;
+
+	m_CenterPoints.clear();
+	m_SegmentPoints.clear();
+	m_LinePoints.clear();
+}
+
 void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
 {
 	m_eMode = static_cast<POINT_MODE>(trailDesc.iMode);
@@ -196,11 +206,14 @@ void CTrailModel::Add_LinePoint(_float3 position0, _float3 position1)
 
 void CTrailModel::Update_LinePoint(_float dt)
 {
+	if (m_IsLineFadeOut)
+		m_fLineFadeOutElapsedTime += dt;
+
 	m_vUVOffset.x += m_vUVSpeed.x * dt;
 	m_vUVOffset.y += m_vUVSpeed.y * dt;
 
 	for (auto& point : m_LinePoints)
-		point.fLifeTime += dt;
+		point.fLifeTime = m_fLineFadeOutElapsedTime;
 
 	while (!m_LinePoints.empty() && m_LinePoints.front().fLifeTime >= m_fMaxLifeTime)
 		m_LinePoints.pop_front();
@@ -462,24 +475,27 @@ void CTrailModel::Build_LineVertices()
 
 	vRight.Normalize();
 
+	_float t = point.fLifeTime / m_fMaxLifeTime;
+	t = clamp(t, 0.f, 1.f);
+
 	p0.vPosition = _vector3(point.vPositionA) + vRight * 0.5f * point.fWidth;
 	p0.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
-	p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p0.vLifeTime.x / p0.vLifeTime.y);
+	p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 	p0.vTexcoord = _float2(0.f, 0.f);
 
 	p1.vPosition = _vector3(point.vPositionA) - vRight * 0.5f * point.fWidth;
 	p1.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
-	p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p1.vLifeTime.x / p1.vLifeTime.y);
+	p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 	p1.vTexcoord = _float2(0.f, 1.f);
 	
 	p2.vPosition = _vector3(point.vPositionB) + vRight * 0.5f * point.fWidth;
 	p2.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
-	p2.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p2.vLifeTime.x / p2.vLifeTime.y);
+	p2.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 	p2.vTexcoord = _float2(1.f, 0.f);
 
 	p3.vPosition = _vector3(point.vPositionB) - vRight * 0.5f * point.fWidth;
 	p3.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
-	p3.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, p3.vLifeTime.x / p3.vLifeTime.y);
+	p3.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
 	p3.vTexcoord = _float2(1.f, 1.f);
 
 	m_TrailVertices.push_back(p0);

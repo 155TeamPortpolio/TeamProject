@@ -61,10 +61,13 @@ public:
 	virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index)override;
 
 public:
+	void Reset();
 	void SetTrailParams(TRAIL_NODE trailDesc);
 	void Update_CenterPoint(_float3 position, _float dt);
 	void Update_SegmentPoint(_float3 position0, _float3 position1, _float dt);
 
+	void SetFadeOut(_bool fadeOut) { m_IsLineFadeOut = fadeOut; }
+	_bool IsLineFadeOut()const { return m_IsLineFadeOut; }
 	void Add_LinePoint(_float3 position0, _float3 position1);
 	void Update_LinePoint(_float dt);
 
@@ -93,7 +96,9 @@ private:
 	_float m_fStartWidth{};
 	_float m_fEndWidth{};
 
-	_float m_fLineWidth{};	/* Only Use Line Mode */
+	/* Only Use Line Mode */
+	_bool m_IsLineFadeOut = false;
+	_float m_fLineFadeOutElapsedTime{};
 
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};

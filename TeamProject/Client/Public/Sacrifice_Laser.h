@@ -24,7 +24,7 @@ public:
     void    Late_Update(_float dt) override;
 
 public:
-    void ActiveLaser();
+    void ActiveLaser(_uint mode);
     void DeactiveLaser();
 
 public:
@@ -34,8 +34,9 @@ public:
 
 private:
     _bool m_IsPendingDeactive = false;
+    _uint m_iLaserMode{};
     _float m_fElapseTime{};
-    _float m_fDuration = 0.5f;
+    _float m_fDuration = 0.1f;
 };
 
 NS_END

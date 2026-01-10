@@ -158,6 +158,7 @@ public:
 public:
 	void SetParticleParams(PARTICLE_NODE particleDesc);
 	void Simulation_Particle(_float dt);
+	void Reset();
 
 public:
 	virtual void Render_GUI() override;

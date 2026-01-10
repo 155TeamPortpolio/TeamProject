@@ -85,6 +85,8 @@ void CParticleNode::Play()
 {
 	m_IsEffectActive = true;
 	m_fElpasedTime = 0.f;
+
+	Get_Component<CParticleSystem>()->Reset();
 }
 
 void CParticleNode::Stop()

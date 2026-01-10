@@ -67,7 +67,7 @@ public:
     void OverDrive_Attack3();
 
     /* Laser */
-    void ActiveLaser();
+    void ActiveLaser(_uint mode);
     void DeactiveLaser();
 
     /* Effect */

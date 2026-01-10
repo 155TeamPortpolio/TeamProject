@@ -102,6 +102,17 @@ void CEffectContainer::Late_Update(_float dt)
 {
 }
 
+CEffectContainer::EFFECT_CONTAINER_CONTEXT& CEffectContainer::GetEffectContext()
+{
+	return m_EffectContext;
+}
+
+void CEffectContainer::SetLinePoints(_float3 point0, _float3 point1)
+{
+	m_EffectContext.vLinePoint0 = point0;
+	m_EffectContext.vLinePoint1 = point1;
+}
+
 void CEffectContainer::Play()
 {
 	for (const auto& node : m_Nodes)

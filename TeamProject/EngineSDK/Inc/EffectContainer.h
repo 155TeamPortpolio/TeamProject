@@ -5,6 +5,13 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CEffectContainer :
     public CGameObject
 {
+public:
+	typedef struct tagEffectContainerContext
+	{
+		_float3 vLinePoint0{};
+		_float3 vLinePoint1{};
+
+	}EFFECT_CONTAINER_CONTEXT;
 protected:
 	CEffectContainer();
 	CEffectContainer(const CEffectContainer& rhs);
@@ -17,6 +24,10 @@ public:
 	void Priority_Update(_float dt) override;
 	void Update(_float dt) override;
 	void Late_Update(_float dt) override;
+
+public:
+	EFFECT_CONTAINER_CONTEXT& GetEffectContext();
+	void SetLinePoints(_float3 point0, _float3 point1);
 
 public:
 	void Play();
@@ -33,6 +44,7 @@ protected:
 	_float m_fDuration{};
 	_float m_fElapsedTime{};
 	_uint m_iNumNodes{};
+	EFFECT_CONTAINER_CONTEXT m_EffectContext{};
 	vector<class CEffectNode*> m_Nodes;
 
 };
