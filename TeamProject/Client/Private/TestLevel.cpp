@@ -162,7 +162,7 @@ HRESULT CTestLevel::Awake()
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	//uiDirector->Load_LevelObjects("Test_Level");
+	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	Ready_TestObject();
