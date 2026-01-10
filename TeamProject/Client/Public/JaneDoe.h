@@ -27,6 +27,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Initialize_Stat();
 
 private:
     virtual void Update_Input(_float dt) override;

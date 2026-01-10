@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\CanvasPanel.h" />
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Corin.h" />
     <ClInclude Include="..\Public\CorinState_Attack.h" />
     <ClInclude Include="..\Public\CorinState_Backstep.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="..\public\JaneDoeState_NormalAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Run.h" />
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_Switch.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
@@ -348,6 +350,7 @@
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_Switch.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />

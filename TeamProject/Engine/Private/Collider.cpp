@@ -154,7 +154,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	}
 
 	PxFilterData filterData;
-	filterData.word0 = 1 << ENUM(pDesc->eGroup);
+	filterData.word0 = ENUM(pDesc->eGroup);
 	filterData.word1 = pDesc->iCollisionMask;
 	m_pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	m_pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터

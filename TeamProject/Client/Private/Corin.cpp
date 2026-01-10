@@ -63,7 +63,9 @@ void CCorin::Awake()
 	m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
-	m_strName = "Avatar_Female_Size01_Corin_Ani_";
+	//*name change*
+	m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
+	m_strName = "Corin";
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
@@ -88,7 +90,7 @@ void CCorin::Priority_Update(_float dt)
 
 void CCorin::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if(!m_bTest)
 	{
 		Update_States();
