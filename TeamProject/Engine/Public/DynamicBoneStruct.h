@@ -27,10 +27,10 @@ typedef struct DynamicBoneNode
 
 typedef struct DynamicBoneChainParam
 {
-    _float Stiffness    = { 0.03f };            // 0~1 (강성)
-    _float Damping      = { 0.03f };            // 0~1 (점성)
-    _float Elasticity   = { 0.1f };             // 0~1 (탄성)
-    _float Inert        = { 0.1f };             // 0~1 (감쇠)
+    _float Inert        = { 0.0f };             // 0~1 (월드영향)
+    _float Damping      = { 0.2f };             // 0~1 (감쇠)
+    _float Elasticity   = { 0.002f };           // 0~1 (탄성)
+    _float Stiffness    = { 0.1f };             // 0~1 (강성)
     _float GravityScale = { 0.002f };           // 중력 배율
     _vector3 GravityDir = { 0.f, -1.f, 0.f };   // 중력 방향
 }CHAIN_PARAM;
@@ -42,11 +42,14 @@ typedef struct DynamicBoneChain {
 typedef struct DynamicBoneChainGroup {
     _int    AnchorBoneIndex = { -1 };
     vector<DYNAMIC_CHAIN> Chains;
+    _float UpdateRate = { 60.f };
 
     _bool       bWorldSpace = { true };    // 월드상 계산을 이용하는지
     CHAIN_PARAM ChainParam{};
 
     /* RunTime */
+    _float UpdateElapsed{};
+
     _vector3    CurAnchorCombinedPos{};
     _vector3    PrevAnchorCombinedPos{};
     _quaternion CurAnchorCombinedQuat{};

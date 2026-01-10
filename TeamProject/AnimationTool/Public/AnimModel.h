@@ -50,6 +50,8 @@ private:
     string m_CurModelTag = { "Select Model" };
     string m_CurMaterialTag = { "Select Material" };
 
+    _float m_fDegree = 0.f;
+
 public:
     static CAnimModel* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

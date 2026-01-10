@@ -105,7 +105,7 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 	_quaternion AnchorDeltaQuat{};
 	Calc_AnchorDelta(Group, AnchorDeltaPos, AnchorDeltaQuat);
 
-	/* 월드 좌표계 -> 앵커 좌표계로 정렬 */
+	/* 월드 좌표계 -> 앵커(다이나믹본상 루트) 좌표계로 정렬 */
 	for (auto& Chain : Group.Chains) {
 		for (auto& Node : Chain.Nodes) {
 			/* 부모의 월드 위치와 회전을 갖고옴 */
@@ -131,15 +131,31 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 				(i == 0) ? Group.CurAnchorWorldQuat:
 						   Chain.Nodes[i - 1].DynamicCurQuat;
 
-			/* 계산을 미리해봄 순서는 무조건 본의 위에서 아래로*/
+			if (i == 0)
+			{
+				Chain.Nodes[i].DynamicCurPos = Chain.Nodes[i].AnimWorldPos;
+				Chain.Nodes[i].DynamicPrevPos = Chain.Nodes[i].AnimWorldPos;
+				continue;
+			}
+
+			// Inert : 얼마나 월드 위치변환에 영향을 받을것인가 
+			Chain.Nodes[i].DynamicCurPos += AnchorDeltaPos * Group.ChainParam.Inert;
+			Chain.Nodes[i].DynamicPrevPos += AnchorDeltaPos * Group.ChainParam.Inert;
+
+			/* 월드기준의 위치를 예측하는 계산을 함 */
 			Simulate_WorldNode(
 				Chain.Nodes[i],
 				parentPos,
 				parentQuat,
-				AnchorDeltaPos,
 				Group.ChainParam,
 				dt
 			);
+			//
+			//Simulate_WorldQuat(
+			//	Chain.Nodes[i],
+			//	parentQuat,
+			//	Group.ChainParam
+			//);
 		}
 	}
 
@@ -180,6 +196,7 @@ void CDynamicBone::Update_WorldNodes(DYNAMIC_CHAIN_GROUP& Group)
 			Node.AnimWorldQuat =
 				m_pOwner->Get_WorldQuat() *
 				m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Node.BoneIndex);
+			Node.AnimWorldQuat.Normalize();
 		}
 	}
 }
@@ -207,16 +224,11 @@ void CDynamicBone::Calc_DynamicNode(DYNAMIC_NODE& Node, const _vector3& AnchorPr
 	/* 월드 이동값을 제외해야 추가 이동속도 계산이 안됌 */
 	Node.DynamicCurPos = pivot + v + AnchorDeltaPos;
 	Node.DynamicPrevPos += AnchorDeltaPos;
-
-	//회전계산
-	//Node.DynamicCurQuat = AnchorDeltaQuat * Node.DynamicCurQuat;
-	//Node.DynamicCurQuat.Normalize();
 }
 
 void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,
 	const _quaternion& parentQuat,
-	const _vector3& AnchorDeltaPos, 
 	const CHAIN_PARAM& ChainParam,
 	_float dt)
 {
@@ -224,43 +236,86 @@ void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
 	_vector3 curPos = Node.DynamicCurPos;
 	_vector3 prevPos = Node.DynamicPrevPos;
 
-	/* 속력 계산 (이 속도 그대로면 그냥 애니매이션 위치겠죠?) */
-	_vector3 Velocity = curPos - prevPos - AnchorDeltaPos;
+	/* 1. 관성(Verlet) : 속력 계산 */
+	_vector3 Velocity = curPos - prevPos;
 
-	/* 1. 관성(Inert) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
-	Velocity *= (1.f + ChainParam.Inert);
+	/* 2. 중력(Gravity) : 중력 방향으로 이동 (월드기준) */
+	Velocity += ChainParam.GravityDir * (ChainParam.GravityScale);
 
-	/* 2. 감쇄(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
+	// 3. 탄성(Elasticity) : 애니매이션으로 돌아오는 힘
+	Velocity += (Node.AnimWorldPos - curPos) * (ChainParam.Elasticity);
+
+	/* 4. 감쇄(Damping) : 다음 위치는 현재에서 속도와 감속만큼 곱한 위치를 미리계산 */
 	Velocity *= (1.f - ChainParam.Damping);
-	
-	/* 3. 중력(Gravity) : 중력 방향으로 이동 (월드기준) */
-	Velocity += ChainParam.GravityDir * ChainParam.GravityScale;
-
-	// 4. 탄성 (애니메이션 / rest 위치로 당김)
-	Velocity += (Node.AnimWorldPos - curPos) * ChainParam.Elasticity;
 
 	/* 5. 위에 모든 계산을 한 예측된 다음 위치 예측 */
 	_vector3 nextPos = curPos + Velocity;
 
 	/* 부모로부터 멀어지면 안되니 부모뼈 위치에서 계산 뼈가 길어지면 안돼잖음 그래서 길이제한을 함
 	(부모->노드)의 방향을 구하고 부모로부터 길이만큼 곱한 위치가 진짜 위치가 될거임*/
+	/* 6. 본의 길이는 달라지면 안되니 재계산해서 길이 제한 */
 	_vector3 dir = nextPos - parentPos;
 	dir.Normalize();
 
-	/* 6. 본의 길이는 달라지면 안되니 재계산해서 길이 제한 */
-	nextPos = parentPos + dir * Node.fLength;
 
 	// 7. 강성 (Stiffness)
+	Vector3 animDir = (Node.AnimWorldPos - parentPos);
+	animDir.Normalize();
+
 	Vector3 restDir = Vector3::TransformNormal(Node.RestLocalDir, Matrix::CreateFromQuaternion(parentQuat));
 	restDir.Normalize();
 
-	dir = Vector3::Lerp(dir, restDir, ChainParam.Stiffness);
+	Vector3 targetDir;
+	(m_pAnimator->Get_CurAnimIndex() == -1) ? targetDir = restDir : targetDir = animDir;
+
+	dir = Vector3::Lerp(dir, targetDir, ChainParam.Stiffness);
 	dir.Normalize();
+
 	nextPos = parentPos + dir * Node.fLength;
 
 	// 8. 상태 갱신
 	Node.DynamicPrevPos = curPos;
 	Node.DynamicCurPos = nextPos;
+}
+
+void CDynamicBone::Simulate_WorldQuat(DYNAMIC_NODE& Node, const _quaternion& parentQuat, const CHAIN_PARAM& ChainParam)
+{
+	// 1. 현재 / 이전 다이나믹 회전
+	Quaternion curQuat = Node.DynamicCurQuat;
+	Quaternion InvcurQuat; curQuat.Inverse(InvcurQuat);
+
+	Quaternion prevQuat = Node.DynamicPrevQuat;
+	Quaternion InvprevQuat; prevQuat.Inverse(InvprevQuat);
+
+	// 2. 각속도 (회전 베를레)
+	Quaternion angularVel = curQuat * InvprevQuat;
+	angularVel.Normalize();
+
+	// 3. 회전 감쇠 (관성 유지)
+	angularVel = Quaternion::Slerp(Quaternion::Identity, angularVel, 1.f - ChainParam.Damping);
+	angularVel.Normalize();
+
+	// 4. 애니메이션 목표 회전 (부모 기준)
+	_quaternion InvParentQuat;
+	parentQuat.Inverse(InvParentQuat);
+
+	Quaternion target =	Node.AnimWorldQuat * InvParentQuat;
+	target.Normalize();
+
+	// 5. 현재 → 목표 회전 스프링
+	Quaternion toTarget = target * curQuat;
+	toTarget.Normalize();
+
+	Quaternion spring = Quaternion::Slerp(Quaternion::Identity,	toTarget, ChainParam.Stiffness);
+	spring.Normalize();
+
+	// 6. 다음 회전 예측
+	Quaternion nextQuat = spring * angularVel * curQuat;
+	nextQuat.Normalize();
+
+	// 7. 상태 갱신
+	Node.DynamicPrevQuat = curQuat;
+	Node.DynamicCurQuat = nextQuat;
 }
 
 void CDynamicBone::ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group)
@@ -485,8 +540,18 @@ void CDynamicBone::Create_Node(vector<_int> Indices, DYNAMIC_CHAIN_GROUP& ChineG
 		for (_int i = 1; i < Indices.size(); i++) {
 			DYNAMIC_NODE Node{};
 
-			Node.ParentIndex = Indices[i - 1];
+			Node.ParentIndex = (i == 0) ?  -1 : Indices[i - 1];
 			Node.BoneIndex = Indices[i];
+
+			//if (Node.ParentIndex == -1) {
+			//	Node.ParentIndex = -1;
+			//	Node.fLength = 0.f;
+			//	Node.RestLocalDir = _vector3::Zero;
+			//
+			//	chain.Nodes.push_back(Node);
+			//
+			//	continue;
+			//}
 
 			Matrix ParentMat = m_pAnimator->Get_TPose()[Node.ParentIndex];
 			Matrix NodeMat = m_pAnimator->Get_TPose()[Node.BoneIndex];
@@ -561,10 +626,10 @@ void CDynamicBone::Render_GUI()
 	ImGui::Separator();
 	ImGui::Text("Chain Parameters");
 
+	ImGui::DragFloat("Inert", &Group.ChainParam.Inert, 0.001f, 0.f, 1.f, "%.3f");
 	ImGui::DragFloat("Damping",	&Group.ChainParam.Damping,	0.001f, 0.f, 1.f, "%.3f");
-
+	ImGui::DragFloat("Elasticity", &Group.ChainParam.Elasticity, 0.001f, 0.f, 1.f, "%.3f");
 	ImGui::DragFloat("Stiffness", &Group.ChainParam.Stiffness, 0.001f, 0.f, 1.f, "%.3f");
-
 	ImGui::DragFloat("Gravity Scale", &Group.ChainParam.GravityScale, 0.001f, 0.f, 10.f, "%.3f");
 
 	ImGui::Checkbox("World Space",
@@ -573,6 +638,10 @@ void CDynamicBone::Render_GUI()
 	static bool bDrawDebugPoints = true;
 	ImGui::Checkbox("Draw DynamicBone Points",
 		&bDrawDebugPoints);
+
+	for (auto& Group : m_ChainGroups) {
+		Group.ChainParam = m_ChainGroups[0].ChainParam;
+	}
 
 	/* ---------------- Nodes ---------------- */
 	ImGui::Separator();
@@ -648,7 +717,7 @@ void CDynamicBone::Render_GUI()
 		ImGuizmo::SetGizmoSizeClipSpace(0.1f);
 	}
 
-
+	
 
 	ImGui::End();
 }

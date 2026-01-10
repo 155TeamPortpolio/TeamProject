@@ -261,89 +261,178 @@ void CDebugBonePanel::DrawSkeletonOverlay_ImGui(CGameObject* target, const ImVec
 		proj = *CamMgr->Get_ProjMatrix();
 	}
 
-	vector<_float4x4> boneModel;
+	
+	if(pAnimator->isUsingDynamicBone()){
+		vector<_float4x4> boneModel;
 
-	if (Animating)
-		boneModel = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED);
-	else
-		boneModel = pModel->Get_BoneMatrices();
+		if (Animating)
+			boneModel = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::FINAL);
+		else
+			boneModel = pModel->Get_BoneMatrices();
 
-	Matrix ownerWorld = pTransform->Get_WorldMatrix();
+		Matrix ownerWorld = pTransform->Get_WorldMatrix();
 
-	vector<uint8_t> isAncestor(boneCount, 0);
-	if (m_iSelectedBone >= 0 && m_iSelectedBone < boneCount)
-	{
-		int parent = pData->Get_BoneParentIndex(m_iSelectedBone);
-		while (parent != -1)
+		vector<uint8_t> isAncestor(boneCount, 0);
+		if (m_iSelectedBone >= 0 && m_iSelectedBone < boneCount)
 		{
-			if (parent < 0 || parent >= boneCount) break;
-			isAncestor[parent] = 1;
-			parent = pData->Get_BoneParentIndex(parent);
-		}
-	}
-
-	ImDrawList* drawList = ImGui::GetBackgroundDrawList();
-	drawList->PushClipRect(vpPos, ImVec2(vpPos.x + vpSize.x, vpPos.y + vpSize.y), true);
-
-	vector<ImVec2> screen(boneCount);
-	vector<_bool>   isOk(boneCount, false);
-
-	for (int i = 0; i < boneCount; ++i)
-	{
-		Matrix boneWorld = boneModel[i] * ownerWorld;
-
-		Vector3 pos(boneWorld._41, boneWorld._42, boneWorld._43);
-		isOk[i] = WorldToScreen(pos, view, proj, vpPos, vpSize, screen[i]);
-	}
-
-	for (int i = 0; i < boneCount; ++i)
-	{
-		const int parent = pData->Get_BoneParentIndex(i);
-		if (parent < 0) continue;
-		if (!isOk[i] || !isOk[parent]) continue;
-
-		const bool sel = (i == m_iSelectedBone);
-		const bool anc = (!sel && isAncestor[i]);
-
-		ImU32 color = m_bOnlySelect ? IM_COL32(0, 0, 0, 0) : IM_COL32(255, 230, 90, 255);
-		if (anc) color = IM_COL32(255, 200, 80, 255);
-		if (sel) color = IM_COL32(255, 120, 120, 255);
-
-		float thick = m_fLineThickness + (sel ? 1.2f : 0.f);
-
-		drawList->AddLine(screen[i], screen[parent], color, thick);
-	}
-
-	for (int i = 0; i < boneCount; ++i)
-	{
-		if (!isOk[i]) continue;
-
-		const _bool sel = (i == m_iSelectedBone);
-		const _bool anc = (!sel && isAncestor[i]);
-
-		if (m_bDrawJoints)
-		{
-			ImU32 color = IM_COL32(90, 220, 255, 255);     // ±âº»: ÇÏ´Ã»ö
-			if (anc) color = IM_COL32(255, 220, 120, 255); // Á¶»ó: ¿¬³ë¶û
-			if (sel) color = IM_COL32(255, 120, 120, 255); // ¼±ÅÃ: »¡°­
-
-			float radius = m_fJointRadius + (sel ? 1.5f : 0.f);
-			drawList->AddCircleFilled(screen[i], radius, color);
+			int parent = pData->Get_BoneParentIndex(m_iSelectedBone);
+			while (parent != -1)
+			{
+				if (parent < 0 || parent >= boneCount) break;
+				isAncestor[parent] = 1;
+				parent = pData->Get_BoneParentIndex(parent);
+			}
 		}
 
-		if (m_bDrawNames)
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+		drawList->PushClipRect(vpPos, ImVec2(vpPos.x + vpSize.x, vpPos.y + vpSize.y), true);
+
+		vector<ImVec2> screen(boneCount);
+		vector<_bool>   isOk(boneCount, false);
+
+		for (int i = 0; i < boneCount; ++i)
 		{
-			if (m_bOnlySelect && !sel)
-				continue;
+			Matrix boneWorld = boneModel[i] * ownerWorld;
 
-			ImU32 tcol = sel ? IM_COL32(255, 140, 140, 255)
-				: IM_COL32(255, 255, 255, 220);
-
-			drawList->AddText(ImVec2(screen[i].x + 4, screen[i].y - 6), tcol, boneNames[i].c_str());
+			Vector3 pos(boneWorld._41, boneWorld._42, boneWorld._43);
+			isOk[i] = WorldToScreen(pos, view, proj, vpPos, vpSize, screen[i]);
 		}
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			const int parent = pData->Get_BoneParentIndex(i);
+			if (parent < 0) continue;
+			if (!isOk[i] || !isOk[parent]) continue;
+
+			const bool sel = (i == m_iSelectedBone);
+			const bool anc = (!sel && isAncestor[i]);
+
+			ImU32 color = m_bOnlySelect ? IM_COL32(0, 0, 0, 0) : IM_COL32(255, 230, 90, 255);
+			if (anc) color = IM_COL32(255, 200, 80, 255);
+			if (sel) color = IM_COL32(255, 120, 120, 255);
+
+			float thick = m_fLineThickness + (sel ? 1.2f : 0.f);
+
+			drawList->AddLine(screen[i], screen[parent], color, thick);
+		}
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			if (!isOk[i]) continue;
+
+			const _bool sel = (i == m_iSelectedBone);
+			const _bool anc = (!sel && isAncestor[i]);
+
+			if (m_bDrawJoints)
+			{
+				ImU32 color = IM_COL32(100, 255, 255, 255);     // ±âº»: ÇÏ´Ã»ö
+				if (anc) color = IM_COL32(255, 220, 120, 255); // Á¶»ó: ¿¬³ë¶û
+				if (sel) color = IM_COL32(255, 120, 120, 255); // ¼±ÅÃ: »¡°­
+
+				float radius = m_fJointRadius + (sel ? 1.5f : 0.f);
+				drawList->AddCircleFilled(screen[i], radius, color);
+			}
+
+			if (m_bDrawNames)
+			{
+				if (m_bOnlySelect && !sel)
+					continue;
+
+				ImU32 tcol = sel ? IM_COL32(255, 140, 140, 255)
+					: IM_COL32(255, 255, 255, 220);
+
+				drawList->AddText(ImVec2(screen[i].x + 4, screen[i].y - 6), tcol, boneNames[i].c_str());
+			}
+		}
+
+		drawList->PopClipRect();
 	}
 
-	drawList->PopClipRect();
+	{
+		vector<_float4x4> boneModel;
+
+		if (Animating)
+			boneModel = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED);
+		else
+			boneModel = pModel->Get_BoneMatrices();
+
+		Matrix ownerWorld = pTransform->Get_WorldMatrix();
+
+		vector<uint8_t> isAncestor(boneCount, 0);
+		if (m_iSelectedBone >= 0 && m_iSelectedBone < boneCount)
+		{
+			int parent = pData->Get_BoneParentIndex(m_iSelectedBone);
+			while (parent != -1)
+			{
+				if (parent < 0 || parent >= boneCount) break;
+				isAncestor[parent] = 1;
+				parent = pData->Get_BoneParentIndex(parent);
+			}
+		}
+
+		ImDrawList* drawList = ImGui::GetBackgroundDrawList();
+		drawList->PushClipRect(vpPos, ImVec2(vpPos.x + vpSize.x, vpPos.y + vpSize.y), true);
+
+		vector<ImVec2> screen(boneCount);
+		vector<_bool>   isOk(boneCount, false);
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			Matrix boneWorld = boneModel[i] * ownerWorld;
+
+			Vector3 pos(boneWorld._41, boneWorld._42, boneWorld._43);
+			isOk[i] = WorldToScreen(pos, view, proj, vpPos, vpSize, screen[i]);
+		}
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			const int parent = pData->Get_BoneParentIndex(i);
+			if (parent < 0) continue;
+			if (!isOk[i] || !isOk[parent]) continue;
+
+			const bool sel = (i == m_iSelectedBone);
+			const bool anc = (!sel && isAncestor[i]);
+
+			ImU32 color = m_bOnlySelect ? IM_COL32(0, 0, 0, 0) : IM_COL32(255, 230, 90, 255);
+			if (anc) color = IM_COL32(255, 200, 80, 255);
+			if (sel) color = IM_COL32(255, 120, 120, 255);
+
+			float thick = m_fLineThickness + (sel ? 1.2f : 0.f);
+
+			drawList->AddLine(screen[i], screen[parent], color, thick);
+		}
+
+		for (int i = 0; i < boneCount; ++i)
+		{
+			if (!isOk[i]) continue;
+
+			const _bool sel = (i == m_iSelectedBone);
+			const _bool anc = (!sel && isAncestor[i]);
+
+			if (m_bDrawJoints)
+			{
+				ImU32 color = IM_COL32(90, 220, 255, 255);     // ±âº»: ÇÏ´Ã»ö
+				if (anc) color = IM_COL32(255, 220, 120, 255); // Á¶»ó: ¿¬³ë¶û
+				if (sel) color = IM_COL32(255, 120, 120, 255); // ¼±ÅÃ: »¡°­
+
+				float radius = m_fJointRadius + (sel ? 1.5f : 0.f);
+				drawList->AddCircleFilled(screen[i], radius, color);
+			}
+
+			if (m_bDrawNames)
+			{
+				if (m_bOnlySelect && !sel)
+					continue;
+
+				ImU32 tcol = sel ? IM_COL32(255, 140, 140, 255)
+					: IM_COL32(255, 255, 255, 220);
+
+				drawList->AddText(ImVec2(screen[i].x + 4, screen[i].y - 6), tcol, boneNames[i].c_str());
+			}
+		}
+
+		drawList->PopClipRect();
+	}
 	return;
 }
 

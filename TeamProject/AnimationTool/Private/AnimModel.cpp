@@ -62,6 +62,14 @@ void CAnimModel::Priority_Update(_float dt)
 		m_pTransform->Translate(m_pTransform->Dir(STATE::RIGHT) * dt);
 	if (input->Key_Down(VK_LEFT))
 		m_pTransform->Translate(-m_pTransform->Dir(STATE::RIGHT) * dt);
+	if (input->Key_Down(VK_OEM_COMMA)) { // <
+		m_fDegree -= 30.f * dt;
+		m_pTransform->Rotate(_float3(0.f, XMConvertToRadians(m_fDegree), 0.f));
+	}
+	if (input->Key_Down(VK_OEM_PERIOD)) { // >
+		m_fDegree += 30.f * dt;
+		m_pTransform->Rotate(_float3(0.f, XMConvertToRadians(m_fDegree), 0.f));
+	}
 }
 
 void CAnimModel::Update(_float dt)

@@ -9,7 +9,7 @@
 #include "Channel.h"
 
 
-CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext)
+CAnimToolPanel::CAnimToolPanel(GUI_CONTEXT* pContext) 
 	: CBasePanel{pContext}
 	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
@@ -51,18 +51,19 @@ void CAnimToolPanel::Update_Panel(_float dt)
 
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('I')) {
 		if (nullptr != m_pSelectAnimator) {
-			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(18);
+			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(18);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(14);
 
 			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(41);
 			
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(143);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(146);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(149);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(152);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(155);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(158);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(161);
-			m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(164);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(143);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(146);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(149);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(152);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(155);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(158);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(161);
+			//m_pSelectAnimator->Get_DynamicBone_Ptr()->Create_Chain(164);
 		}
 	}
 
