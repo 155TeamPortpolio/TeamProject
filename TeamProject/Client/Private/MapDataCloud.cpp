@@ -35,7 +35,6 @@ void CMapDataCloud::Rake_MapData(const string& MapDataFolderPath)
 		if (entry.is_regular_file() && entry.path().extension() == ".json")
 		{
 			filesystem::path FilePath = entry.path();
-
 			// ../MapData.MainCity.Base.1.json
 			// ../MapData.MainCity.SlotA.1.json
 			// ../MapData.MainCity.SlotB.1.json

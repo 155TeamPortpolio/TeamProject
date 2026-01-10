@@ -1,12 +1,16 @@
 #include "Engine_Defines.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "UI_Object.h"
 
 _bool Engine::tagObjectHandle::isValid()
 {
 	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
-	if(pObj)
+	if (pObj) {
+		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
+		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
 		return true;
+	}
 	return false;
 }
 void Engine::tagObjectHandle::Reset()
@@ -20,12 +24,14 @@ void Engine::tagObjectHandle::Reset()
 CGameObject* Engine::tagObjectHandle::Get()
 {
 	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
+
+	if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
+	if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
 	return pObj;
 }
 
 void Engine::tagObjectHandle::Delete()
 {
-
 auto mgr = CGameInstance::GetInstance()->Get_ObjectMgr();
 
 CGameObject* pObj = mgr->Request_Object({ Level, Layer, hObjID });
@@ -195,9 +201,12 @@ EFFECT_ASSET Engine::tagEffectAsset::FromJson(nlohmann::ordered_json& json)
 
 _bool Engine::tagUIHandle::isValid()
 {
-	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
-	if (pUI)
+	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID, SystemIndex });
+	if (pUI) {
+		Level = pUI->Get_Level();
+		SystemIndex = pUI->Get_SystemIndex();
 		return true;
+	}
 	return false;
 }
 
@@ -205,12 +214,17 @@ void Engine::tagUIHandle::Reset()
 {
 	Level.clear();
 	hObjID = 0;
+	SystemIndex = -1;
 	return;
 }
 
 CUI_Object* Engine::tagUIHandle::Get()
 {
 	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
+	if(pUI){
+		Level = pUI->Get_Level();
+		SystemIndex = pUI->Get_SystemIndex();
+	}
 	return pUI;
 }
 
