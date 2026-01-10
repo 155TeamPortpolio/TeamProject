@@ -7,6 +7,47 @@
 
 IMPLEMENT_SINGLETON(CUIDirector);
 
+void CUIDirector::Set_BulkStatus(const vector<UI_STATUS_BULK_DESC>& bulkStatus)
+{
+	auto pEventSystem = CGameInstance::GetInstance()->Get_EventSystem();
+
+	for (const auto& status : bulkStatus)
+	{
+		UI_STATUS_DESC desc = {};
+		desc.eOwner = status.eOwner;
+
+		for (const auto& value : status.statusValues)
+		{
+			desc.eType = value.first;
+			desc.fCurValue = value.second.fCurValue;
+			desc.fMaxValue = value.second.fMaxValue;
+			pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
+		} 
+	} 
+}
+
+void CUIDirector::Set_PlayerStatus(const vector<UI_PLAYER_STATUS_DESC>& playerStatus)
+{
+	auto pEventSystem = CGameInstance::GetInstance()->Get_EventSystem();
+
+	for (const auto& status : playerStatus)
+	{
+		UI_STATUS_DESC desc = {};
+
+		auto send = [&](UI_STATUS_TYPE type, const UI_STATUS_VALUE& value) 
+			{
+				desc.eType = type;
+				desc.fCurValue = value.fCurValue;
+				desc.fMaxValue = value.fMaxValue;
+				pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
+			};
+
+		send(UI_STATUS_TYPE::HP, status.hp);
+		send(UI_STATUS_TYPE::SPECIAL, status.special);
+		send(UI_STATUS_TYPE::ULTIMATE, status.ultimate);
+	}
+}
+
 void CUIDirector::Initialize()
 {
 	// ui 관련 이미지, 폰트, json 파일 리소스 매니저에 등록
