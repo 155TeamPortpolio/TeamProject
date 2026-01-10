@@ -8,6 +8,7 @@
 #include "UI_DecibelKanji.h"
 #include "UI_DecibelDigits.h"
 #include "UI_DecibelPts.h"
+#include "UI_DecibelText.h"
 
 HRESULT CUI_Decibel::Initialize_Prototype()
 {
@@ -75,6 +76,14 @@ void CUI_Decibel::Ready_PartObjects()
         Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelPts" })
         .Add_UIDesc(pPts)
         .Build("decibelPts"));
+
+    CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
+    pText->pState = & m_iState;
+    pText->pColor = &m_vColor;
+    pContainer->Add_Child(
+        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelText" })
+        .Add_UIDesc(pText)
+        .Build("decibelText"));
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)

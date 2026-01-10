@@ -433,6 +433,9 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Points">
       <UniqueIdentifier>{2f6b3c7c-f5fc-4725-a995-bc8d4b2949db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Text">
+      <UniqueIdentifier>{ae23e854-0941-42b9-bf8b-40a3919109a0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -862,6 +865,9 @@
     <ClInclude Include="..\Public\UI_DecibelPts.h">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelText.h">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1276,6 +1282,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelText.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -4,17 +4,18 @@
 
 NS_BEGIN(Client)
 
-class CUI_DecibelPts final : public CUI_Object
+class CUI_DecibelText final : public CUI_Object
 {
 public:
-	typedef struct tagPtsDesc : public UI_DESC {
+	typedef struct tagTextDesc : public UI_DESC {
+		const _uint*	pState = { nullptr };
 		const _float4*	pColor = { nullptr };
-	}PTS_DESC;
+	}TEXT_DESC;
 
 private:
-	CUI_DecibelPts() {}
-	CUI_DecibelPts(const CUI_DecibelPts& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_DecibelPts() DEFAULT;
+	CUI_DecibelText() {}
+	CUI_DecibelText(const CUI_DecibelText& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_DecibelText() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,9 +26,10 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	const _float	m_fHeight = 20.f;
+	const _float	m_fHeight = 12.f;
 	const _vector2	m_vPadding = { 5.f, 5.f };
 
+	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 
 	UI_HANDLE		m_handle = {};
