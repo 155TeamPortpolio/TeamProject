@@ -2,8 +2,6 @@
 #include "Engine_Defines.h"
 
 namespace Client {
-	
-	enum class CHARACTER { JaneDoe, Corin, END };
 
 	typedef struct BattleObjectInfo {
 		string			TagInstanceName = {};	// 오브젝트 인스턴스 이름
