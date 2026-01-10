@@ -37,7 +37,28 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 		CUI_Object* uiObj = Builder::Create_UIObject({ levelKey, protoTag })
 			.Build(instName);
 
-		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey);
+		if (!uiObj)
+		{
+			MSG_BOX("Failed to Create UI Object : UI Director");
+			continue;
+		}
+
+		UI_HANDLE handle = uiObj->Get_Handle();
+		if (!handle.isValid())
+		{
+			MSG_BOX("Handle is not Vaild : UI Director");
+			continue;
+		}
+
+		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey)))
+		{
+			MSG_BOX("Failed to Add_UIObject : UI Director");
+			continue;
+		}
+
+		auto result = m_handles.emplace(instName, handle);
+		if (!result.second)
+			MSG_BOX("UI Object Already Exists : UI Director");
 	}
 }
 
