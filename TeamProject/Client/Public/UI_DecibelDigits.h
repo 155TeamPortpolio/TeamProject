@@ -33,7 +33,7 @@ public:
 
 private:
 	const _float	m_fHeight = 32.f;
-	const _vector2	m_vPadding = { 10.f, 10.f }; 
+	const _vector2	m_vPadding = { 5.f, 5.f }; 
 
 	const _float*	m_pDecibel = { nullptr };
 	const _float4*	m_pColor = { nullptr };

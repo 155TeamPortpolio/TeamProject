@@ -111,7 +111,7 @@ void CUI_Decibel::Set_Decibel(_float fDecibel)
 
     m_fPtsOffsetX = m_fDigitsOffsetX + ((Get_Slot(ChildSlot::DIGITS)) ? Get_Slot(ChildSlot::DIGITS)->Get_PxSize().x * 0.9f : 0.f);
     if (CUI_Object* pObj = Get_Slot(ChildSlot::PTS))
-        pObj->Set_AnchorOffset(_float2(m_fPtsOffsetX, 12.f));
+        pObj->Set_AnchorOffset(_float2(m_fPtsOffsetX, 10.f));
 }
 
 CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
