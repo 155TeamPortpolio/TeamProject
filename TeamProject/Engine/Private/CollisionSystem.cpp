@@ -444,21 +444,30 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 	CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
 	if (pCollider && pCollider->IsTrigger())
 	{
+		auto& cctCurrent = pCCT->Get_CurrentCollisions();
 		auto& cctPrevious = pCCT->Get_PreviousCollisions();
+		auto& otherCurrent = pOther->Get_CurrentCollisions();
+		auto& otherPrevious = pOther->Get_PreviousCollisions();
 
 		if (cctPrevious.find(pOther) == cctPrevious.end())
 		{
 			pCCT->OnTriggerEnter(pOther);
 
-			// Enter 후 재검증
 			if (!Is_SlotActive(idxCCT) || !Is_SlotActive(idxOther))
 				return;
 
-			pOther->OnTriggerEnter(pCCT);
+			if (otherPrevious.find(pCCT) == otherPrevious.end())
+			{
+				pOther->OnTriggerEnter(pCCT);
+			}
 		}
 
-		pCCT->Get_CurrentCollisions().insert(pOther);
-		pOther->Get_CurrentCollisions().insert(pCCT);
+		cctCurrent.insert(pOther);
+
+		if (!Is_SlotActive(idxOther))
+			return;
+
+		otherCurrent.insert(pCCT);
 
 		return;
 	}
@@ -466,27 +475,32 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 	// 일반 Collision 처리
 	auto& cctCurrent = pCCT->Get_CurrentCollisions();
 	auto& cctPrevious = pCCT->Get_PreviousCollisions();
+	auto& otherCurrent = pOther->Get_CurrentCollisions();
+	auto& otherPrevious = pOther->Get_PreviousCollisions();
 
-	cctCurrent.insert(pOther);
-
+	// CCT Enter 체크 (Previous 기준)
 	if (cctPrevious.find(pOther) == cctPrevious.end())
 	{
 		pCCT->OnCollisionEnter(pOther);
 
-		// Enter 후 재검증
 		if (!Is_SlotActive(idxCCT) || !Is_SlotActive(idxOther))
 			return;
 
-		pOther->OnCollisionEnter(pCCT);
+		// Other Enter 체크 (Other의 Previous 기준)
+		if (otherPrevious.find(pCCT) == otherPrevious.end())
+		{
+			pOther->OnCollisionEnter(pCCT);
+		}
 	}
 
-	// 재검증
+	// Current에 추가
+	cctCurrent.insert(pOther);
+
 	if (!Is_SlotActive(idxOther))
 		return;
 
-	pOther->Get_CurrentCollisions().insert(pCCT);
+	otherCurrent.insert(pCCT);
 
-	// 재검증
 	if (!Is_SlotActive(idxCCT))
 		return;
 
@@ -628,6 +642,13 @@ void CCollisionSystem::Process_CollisionEvents()
 				else
 				{
 					pCollidable->OnCollisionExit(pOther);
+				}
+
+				// Exit 호출 후 상대방의 충돌 목록에서도 즉시 제거
+				if (Is_SlotActive(otherIdx))
+				{
+					pOther->Get_CurrentCollisions().erase(pCollidable);
+					pOther->Get_PreviousCollisions().erase(pCollidable);
 				}
 
 				if (!slot.IsActive() || !pCollidable->Get_Owner())
