@@ -233,7 +233,7 @@ void CCharacter::Update_Input(_float dt)
 
 	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
 	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
-	m_bIsSwitch = InputDevice()->Key_Tap(VK_SPACE) && Can_Switch();
+	//m_bIsSwitch = InputDevice()->Key_Tap(VK_SPACE) && Can_Switch();
 	m_bIsMove = m_input.IsMoving();
 	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
 

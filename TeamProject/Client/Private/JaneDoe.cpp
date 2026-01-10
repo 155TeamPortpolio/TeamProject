@@ -12,7 +12,8 @@
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
-#include "JaneDoeState_Switch.h"
+#include "JaneDoeState_SwitchIn.h"
+#include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Evade.h"
 
@@ -112,6 +113,17 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
+void CJaneDoe::On_SwitchIn(SWITCH eType)
+{
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
+}
+
+void CJaneDoe::On_SwitchOut()
+{
+	m_pStateMachine->Set_Trigger("SwitchOut");
+}
+
 HRESULT CJaneDoe::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -136,7 +148,8 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
-	m_pStateMachine->Register_State("Switch", CJaneDoeState_Switch::Create());
+	m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -171,10 +184,13 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
-	// Switch
-	m_pStateMachine->Register_AnyStateTransition("Switch",
-		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Switch");
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchIn");
 
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
 	return S_OK;
 }
 
