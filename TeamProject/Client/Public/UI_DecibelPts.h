@@ -30,10 +30,12 @@ private:
 
 	const _float4*	m_pColor = { nullptr };
 
-	UI_HANDLE		m_handle = {};
+	UI_HANDLE		m_hPts = {};
 
 private:
 	void Ready_PartObjects();
+	void Init_PtsObject(CUI_Object* pPts);
+	void Init_BgObject(CUI_Object* pBg, CUI_Object* pPts); 
 
 public:
 	static  CGameObject* Create();

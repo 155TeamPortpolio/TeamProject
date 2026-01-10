@@ -32,10 +32,12 @@ private:
 	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 
-	UI_HANDLE		m_handle = {};
+	UI_HANDLE		m_hText = {};
 
 private:
 	void Ready_PartObjects();
+	void Init_TextObject(CUI_Object* pText);
+	void Init_BgObject(CUI_Object* pBg, CUI_Object* pText);
 
 public:
 	static  CGameObject* Create();

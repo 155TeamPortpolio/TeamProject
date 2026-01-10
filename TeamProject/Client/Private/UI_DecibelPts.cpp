@@ -28,47 +28,50 @@ HRESULT CUI_DecibelPts::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelPts::Update(_float dt)
 {
-    if (m_handle.isValid())
-        m_handle.Get()->Set_Color(*m_pColor);
+    if (m_hPts.isValid())
+        m_hPts.Get()->Set_Color(*m_pColor);
 }
 
 void CUI_DecibelPts::Ready_PartObjects()
 {
-    CUI_Object* pBg = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
-        .Build("ptsBg");
+    auto pGameInstance = CGameInstance::GetInstance();
+    const auto& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 
-    CUI_Object* pPts = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
-        .Build("pts");
+    CUI_Object* pPts = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" }).Build("pts");
+    CUI_Object* pBg = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" }).Build("ptsBg"); 
 
-    if (pPts)
+    if (!pPts || !pBg)
+        return;
+     
+    // 포인트 이미지 먼저 띄우고나서 배경 사이즈 정해야해서 순서 이렇게
+    Init_PtsObject(pPts);
+    Init_BgObject(pBg, pPts);
+
+    auto pContainer = Get_Component<CObjectContainer>();
+    pContainer->Add_Child(pBg);
+    pContainer->Add_Child(pPts);
+}
+
+void CUI_DecibelPts::Init_PtsObject(CUI_Object* pPts)
+{
+    if (auto pSprite = pPts->Get_Component<CSprite2D>())
     {
-        auto pSprite = pPts->Get_Component<CSprite2D>();
         pSprite->Change_Texture(0, G_GlobalLevelKey, "CombatPTS.png");
         pPts->Set_Size(_float2(m_fHeight * pSprite->Get_AspectRatio(), m_fHeight));
-        pPts->Set_AnchorOffset(m_vPadding);
-        m_handle = pPts->Get_Handle();
     }
+    pPts->Set_AnchorOffset(m_vPadding);
+    m_hPts = pPts->Get_Handle();
+}
 
-    if (pBg)
+void CUI_DecibelPts::Init_BgObject(CUI_Object* pBg, CUI_Object* pPts)
+{
+    if (auto pSprite = pBg->Get_Component<CSprite2D>())
     {
-        pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
-        pBg->Set_Color(Helper::HexToColor("#000000"));
-        const _float2 pSize = pPts->Get_PxSize();
-        pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });
+        pSprite->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
     }
-
-    if(pBg)
-        Get_Component<CObjectContainer>()->Add_Child(pBg);
-
-    if (pPts)
-    {
-        Get_Component<CObjectContainer>()->Add_Child(pPts);
-        UI_HANDLE handle = pPts->Get_Handle();
-        if (!handle.isValid())
-            return;
-
-        m_handle = handle;
-    } 
+    const _float2 pSize = pPts->Get_PxSize();
+    pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });
+    pBg->Set_Color(Helper::HexToColor("#000000"));
 }
 
 CGameObject* CUI_DecibelPts::Create()

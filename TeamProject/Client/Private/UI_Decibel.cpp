@@ -52,38 +52,27 @@ void CUI_Decibel::Update(_float dt)
 
 void CUI_Decibel::Ready_PartObjects()
 {
-    auto pContainer = Get_Component<CObjectContainer>();;
+    auto pContainer = Get_Component<CObjectContainer>();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
     CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
     pKanji->pState = &m_iState;
-    pKanji->pColor = &m_vColor; 
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelKanji" })
-        .Add_UIDesc(pKanji)
-        .Build("decibelKanji"));
+    pKanji->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, pContainer, &m_handles[ENUM(Child::KANJI)]);
 
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelDigits" })
-        .Add_UIDesc(pDigits)
-        .Build("decibelDigits"));
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, pContainer, &m_handles[ENUM(Child::DIGITS)]);
 
     CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
     pPts->pColor = &m_vColor;
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelPts" })
-        .Add_UIDesc(pPts)
-        .Build("decibelPts"));
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, pContainer, &m_handles[ENUM(Child::PTS)]);
 
     CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
     pText->pState = & m_iState;
     pText->pColor = &m_vColor;
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelText" })
-        .Add_UIDesc(pText)
-        .Build("decibelText"));
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, pContainer, &m_handles[ENUM(Child::TEXTS)]);
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)
@@ -114,20 +103,40 @@ void CUI_Decibel::Set_Decibel(_float fDecibel)
         m_vTargetColor = Helper::HexToColor("#FFFFFF");
     }
 
-    m_fDigitsOffsetX = (Get_Slot(ChildSlot::KANJI)) ? Get_Slot(ChildSlot::KANJI)->Get_PxSize().x * 0.9f : 0.f;
-    if (CUI_Object* pObj = Get_Slot(ChildSlot::DIGITS))
-        pObj->Set_AnchorOffset(_float2(m_fDigitsOffsetX, 0.f));
-
-    m_fPtsOffsetX = m_fDigitsOffsetX + ((Get_Slot(ChildSlot::DIGITS)) ? Get_Slot(ChildSlot::DIGITS)->Get_PxSize().x * 0.9f : 0.f);
-    if (CUI_Object* pObj = Get_Slot(ChildSlot::PTS))
-        pObj->Set_AnchorOffset(_float2(m_fPtsOffsetX, 10.f));
+    Layout();
 }
 
-CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
+void CUI_Decibel::Layout()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    if (!m_handles[ENUM(Child::KANJI)].isValid() ||
+        !m_handles[ENUM(Child::DIGITS)].isValid() ||
+        !m_handles[ENUM(Child::PTS)].isValid() ||
+        !m_handles[ENUM(Child::TEXTS)].isValid())
+        return;
 
-    return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
+    _float2 vKanjiSize = m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize();
+    _float2 vDigitsSize = m_handles[ENUM(Child::DIGITS)].Get()->Get_PxSize();
+
+    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x, 0.f));
+    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x + vDigitsSize.x, 0.f));
+    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x, vDigitsSize.y));
+}
+
+void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CObjectContainer* pContainer, UI_HANDLE* pHandleOut)
+{
+    auto builder = Builder::Create_UIObject({ strLevelKey, strPrototypeTag });
+
+    if (pDesc)
+        builder.Add_UIDesc(pDesc);
+
+    CUI_Object* pObj = builder.Build(strInstanceName);
+    if (!pObj)
+        return;
+
+    pContainer->Add_Child(pObj);
+
+    if (pHandleOut)
+        *pHandleOut = pObj->Get_Handle();
 }
 
 CGameObject* CUI_Decibel::Create()

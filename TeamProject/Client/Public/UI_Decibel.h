@@ -1,6 +1,10 @@
 #pragma once
 #include "UI_Object.h"
 
+NS_BEGIN(Engine)
+class CObjectContainer;
+NS_END
+
 NS_BEGIN(Client)
 
 class CUI_Decibel final : public CUI_Object
@@ -9,7 +13,7 @@ public:
 	enum State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
 
 private:
-	enum class ChildSlot { KANJI, DIGITS, PTS, TEXT, END };
+	enum class Child { KANJI, DIGITS, PTS, TEXTS, END };
 	
 private:
 	CUI_Decibel() {}
@@ -36,6 +40,8 @@ private:
 	_vector4		m_vTargetColor = {};
 	_float			m_fColorLerpSpeed = { 8.f };
 
+	UI_HANDLE		m_handles[ENUM(Child::END)];
+
 private:
 	UI_STATUS_OWNER		m_eOwner = { UI_STATUS_OWNER::ROLE1 };
 	UI_STATUS_TYPE		m_eType = { UI_STATUS_TYPE::HP };
@@ -43,9 +49,10 @@ private:
 private:
 	void Ready_PartObjects();
 	void Set_Decibel(_float fDecibel);
+	void Layout();
 
-	CUI_Object* Get_Slot(ChildSlot slot);
-
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CObjectContainer* pContainer, UI_HANDLE* pHandleOut = nullptr);
+	
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
