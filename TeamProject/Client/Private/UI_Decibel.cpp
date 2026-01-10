@@ -3,6 +3,7 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 
 #include "UI_DecibelKanji.h"
 #include "UI_DecibelDigits.h"
@@ -11,14 +12,22 @@ HRESULT CUI_Decibel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
+    Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
+
 	return S_OK;
 }
 
 HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    Add_Component<CObjectContainer>();
+     
+    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+        {
+            if (desc.eOwner == m_eOwner &&
+                desc.eType == m_eType)
+                Set_Decibel(desc.value.fCurValue);
+        });
 
     Ready_PartObjects();
 
@@ -27,8 +36,6 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 
 void CUI_Decibel::Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
-
     if (!m_initLayout)
     {
         Set_Decibel(0);
@@ -38,12 +45,7 @@ void CUI_Decibel::Update(_float dt)
     _float fLerpAmount = min(1.f, dt * m_fColorLerpSpeed);
     XMStoreFloat4(&m_vColor, XMVectorLerp(XMLoadFloat4(&m_vColor), XMLoadFloat4(&m_vTargetColor), fLerpAmount));
 
-    /*테스트 코드*/
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
-        Set_Decibel(m_iDecibel + 12);
-
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
-        Set_Decibel(m_iDecibel - 12);
+    Get_Component<CObjectContainer>()->UpdateChild(dt); 
 }
 
 void CUI_Decibel::Ready_PartObjects()
@@ -59,7 +61,7 @@ void CUI_Decibel::Ready_PartObjects()
         .Build("decibelKanji"));
 
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
-    pDigits->pDecibel = &m_iDecibel;
+    pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
     pDigits->pOffsetX = &m_fDigitsOffsetX;
     pContainer->Add_Child(
@@ -68,24 +70,24 @@ void CUI_Decibel::Ready_PartObjects()
         .Build("decibelDigits"));
 }
 
-void CUI_Decibel::Set_Decibel(_int iDecibel)
+void CUI_Decibel::Set_Decibel(_float fDecibel)
 {
-    if (iDecibel < 0 || iDecibel > 9999)
+    if (fDecibel < 0.f || fDecibel > 9999.f)
         return;
 
-    m_iDecibel = iDecibel;
+    m_fDecibel = fDecibel;
 
-    if (m_iDecibel >= 3000)
+    if (m_fDecibel >= 3000)
     {
         m_iState = State::COMBAT_MAXIMUM;
         m_vTargetColor = Helper::HexToColor("#FF9A22");
     }
-    else if (m_iDecibel >= 2000)
+    else if (m_fDecibel >= 2000)
     {
         m_iState = State::COMBAT_BLASTING;
         m_vTargetColor = Helper::HexToColor("#FFFF3E");
     }
-    else if (m_iDecibel >= 1000)
+    else if (m_fDecibel >= 1000)
     {
         m_iState = State::COMBAT_UPROAR;
         m_vTargetColor = Helper::HexToColor("#41FDFE");

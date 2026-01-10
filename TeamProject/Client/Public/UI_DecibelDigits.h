@@ -8,7 +8,7 @@ class CUI_DecibelDigits final : public CUI_Object
 public:
 	typedef struct tagDigitsDesc : public UI_DESC {
 		const _float4*	pColor = { nullptr };
-		const _int*		pDecibel = { nullptr };
+		const _float*	pDecibel = { nullptr };
 		const _float*	pOffsetX = { nullptr };
 	}DIGITS_DESC;
 
@@ -24,8 +24,6 @@ private:
 	CUI_DecibelDigits(const CUI_DecibelDigits& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_DecibelDigits() DEFAULT;
 
-public: 
-
 public:
 	virtual HRESULT Initialize_Prototype()           override;
 	virtual HRESULT Initialize(INIT_DESC* pArg = {}) override;
@@ -38,9 +36,11 @@ private:
 	const _float	m_fHeight = 32.f;
 	const _vector2	m_vPadding = { 10.f, 10.f }; 
 
-	const _int*		m_pDecibel = { nullptr };
+	const _float*	m_pDecibel = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 	const _float*	m_pOffsetX = { nullptr };
+
+	_int			m_iPrevDecibel = {};
 
 	_float			m_fDigitTotalWidth = {};
 
@@ -49,6 +49,9 @@ private:
 
 private:
 	void Ready_PartObjects();
+	void Update_Digits(_int iDecibel);
+	void Update_Layout(); 
+
 	void Set_Digit(ChildSlot slot, DigitTexture texture);
 	void Set_LayoutBg();
 	void Set_LayoutDigits();

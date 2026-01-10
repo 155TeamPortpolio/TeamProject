@@ -27,7 +27,7 @@ public:
 private:
 	_bool			m_initLayout = {};
 
-	_int			m_iDecibel = {};
+	_float			m_fDecibel = {};
 	_uint			m_iState = {};
 	_float			m_fDigitsOffsetX = {};
 
@@ -35,8 +35,12 @@ private:
 	_float			m_fColorLerpSpeed = { 8.f };
 
 private:
+	UI_STATUS_OWNER		m_eOwner = { UI_STATUS_OWNER::ROLE1 };
+	UI_STATUS_TYPE		m_eType = { UI_STATUS_TYPE::HP };
+
+private:
 	void Ready_PartObjects();
-	void Set_Decibel(_int iDecibel);
+	void Set_Decibel(_float fDecibel);
 
 	CUI_Object* Get_Slot(ChildSlot slot);
 

@@ -65,7 +65,7 @@ public:
 
 private:
 	UI_HANDLE			m_hRoot;
-	vector<UI_HANDLE>	m_hChildren;
+	vector<UI_HANDLE>	m_hChildren; 
 
 private:
 	CUI_Object* Ready_Prefab(const string& strLevelKey);

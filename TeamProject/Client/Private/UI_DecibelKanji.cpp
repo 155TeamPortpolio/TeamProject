@@ -33,8 +33,11 @@ HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelKanji::Update(_float dt)
 {
-    if (auto pKanji = Get_Slot(ChildSlot::KANJI))
-        pKanji->Set_Color(*m_pColor);
+    ////상태 바뀌었을 때만 실행하고 싶은데, 컬러가 바로 안 바뀜
+    //if (*m_pState == m_iPrevState)
+    //    return;
+    //
+    //m_iPrevState = *m_pState;
 
     Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
 }
@@ -66,13 +69,13 @@ void CUI_DecibelKanji::Set_Kanji(CUI_Decibel::State texture)
         return;
 
     Set_KanjiTexture(pKanji, KANJI_TEXTURES[ENUM(texture)]);
+    pKanji->Set_Color(*m_pColor);
     Set_Layout(pKanji, pBg);
 }
 
 void CUI_DecibelKanji::Set_KanjiTexture(CUI_Object* pKanji, string textureKey)
 {
     pKanji->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
-
     pKanji->Set_Size(_float2(m_fHeight * pKanji->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
 }
 
@@ -89,7 +92,6 @@ void CUI_DecibelKanji::Set_Layout(CUI_Object* pKanji, CUI_Object* pBg)
 CUI_Object* CUI_DecibelKanji::Get_Slot(ChildSlot slot)
 {
     auto pContainer = Get_Component<CObjectContainer>();
-
     return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
 }
 
