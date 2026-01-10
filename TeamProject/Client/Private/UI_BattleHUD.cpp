@@ -86,7 +86,7 @@ void CUI_BattleHUD::Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, 
     if (!handle.isValid())
         return;
 
-    m_hChildren[prefab] = pObj->Get_Handle();
+    m_hChildren[prefab] = handle;
 }
 
 void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)

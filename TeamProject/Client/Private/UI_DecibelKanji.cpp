@@ -81,8 +81,8 @@ void CUI_DecibelKanji::Set_KanjiTexture(CUI_Object* pKanji, string textureKey)
 
 void CUI_DecibelKanji::Set_Layout(CUI_Object* pKanji, CUI_Object* pBg)
 {
-    const _float2 vKanjiSize = pKanji->Get_PxSize();
-    pBg->Set_Size({vKanjiSize.x + m_vPadding.x * 2.f, vKanjiSize.y + m_vPadding.y * 2.f});
+    const _float2 vSize = pKanji->Get_PxSize();
+    pBg->Set_Size({ vSize.x + m_vPadding.x * 2.f, vSize.y + m_vPadding.y * 2.f});
 
     pBg->Set_AnchorOffset({ 0.f, 0.f });
     pKanji->Set_AnchorOffset(m_vPadding);

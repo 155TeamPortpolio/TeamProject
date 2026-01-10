@@ -1,20 +1,23 @@
 #pragma once
 #include "UI_Object.h"
+#include "UI_Decibel.h"
 
 NS_BEGIN(Client)
 
-class CUI_Decibel final : public CUI_Object
+class CUI_DecibelPts final : public CUI_Object
 {
 public:
-	enum State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
+	typedef struct tagPtsDesc : public UI_DESC {
+		const _float4*	pColor = { nullptr };
+	}PTS_DESC;
 
 private:
-	enum class ChildSlot { KANJI, DIGITS, PTS, TEXT, END };
-	
+	enum class ChildSlot { BG, PTS, END };
+
 private:
-	CUI_Decibel() {}
-	CUI_Decibel(const CUI_Decibel& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_Decibel() DEFAULT;
+	CUI_DecibelPts() {}
+	CUI_DecibelPts(const CUI_DecibelPts& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_DecibelPts() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,26 +28,15 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	_bool			m_initLayout = {};
+	const _float	m_fHeight = 20.f;
+	const _vector2	m_vPadding = { 5.f, 5.f };
 
-	_float			m_fDecibel = {};
-	_uint			m_iState = {};
+	const _float4*	m_pColor = { nullptr };
 
-	_float			m_fDigitsOffsetX = {};
-	_float			m_fPtsOffsetX = {};
-
-	_vector4		m_vTargetColor = {};
-	_float			m_fColorLerpSpeed = { 8.f };
-
-private:
-	UI_STATUS_OWNER		m_eOwner = { UI_STATUS_OWNER::ROLE1 };
-	UI_STATUS_TYPE		m_eType = { UI_STATUS_TYPE::HP };
+	UI_HANDLE		m_handle = {};
 
 private:
 	void Ready_PartObjects();
-	void Set_Decibel(_float fDecibel);
-
-	CUI_Object* Get_Slot(ChildSlot slot);
 
 public:
 	static  CGameObject* Create();

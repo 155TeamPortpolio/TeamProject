@@ -24,7 +24,6 @@ HRESULT CUI_DecibelDigits::Initialize(INIT_DESC* pArg)
     DIGITS_DESC* pDesc = static_cast<DIGITS_DESC*>(pArg);
     m_pDecibel = pDesc->pDecibel;
     m_pColor = pDesc->pColor;
-    m_pOffsetX = pDesc->pOffsetX;
 
     __super::Initialize(pArg);
 
@@ -85,7 +84,6 @@ void CUI_DecibelDigits::Update_Digits(_int iDecibel)
 
 void CUI_DecibelDigits::Update_Layout()
 {
-    Set_AnchorOffset(_float2(*m_pOffsetX, 0.f));
     Set_LayoutDigits();
     Set_LayoutBg();
 }
@@ -110,6 +108,7 @@ void CUI_DecibelDigits::Set_LayoutBg()
         return;
 
     pSlot->Set_Size({ m_fDigitTotalWidth + m_vPadding.x * 2.f, m_fHeight + m_vPadding.y * 2.f });
+    Set_Size(pSlot->Get_PxSize());
 }
 
 void CUI_DecibelDigits::Set_LayoutDigits()

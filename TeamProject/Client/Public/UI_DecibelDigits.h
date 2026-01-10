@@ -9,7 +9,6 @@ public:
 	typedef struct tagDigitsDesc : public UI_DESC {
 		const _float4*	pColor = { nullptr };
 		const _float*	pDecibel = { nullptr };
-		const _float*	pOffsetX = { nullptr };
 	}DIGITS_DESC;
 
 private:
@@ -38,7 +37,6 @@ private:
 
 	const _float*	m_pDecibel = { nullptr };
 	const _float4*	m_pColor = { nullptr };
-	const _float*	m_pOffsetX = { nullptr };
 
 	_int			m_iPrevDecibel = {};
 

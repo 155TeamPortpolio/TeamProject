@@ -7,6 +7,7 @@
 
 #include "UI_DecibelKanji.h"
 #include "UI_DecibelDigits.h"
+#include "UI_DecibelPts.h"
 
 HRESULT CUI_Decibel::Initialize_Prototype()
 {
@@ -63,11 +64,17 @@ void CUI_Decibel::Ready_PartObjects()
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    pDigits->pOffsetX = &m_fDigitsOffsetX;
     pContainer->Add_Child(
         Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelDigits" })
         .Add_UIDesc(pDigits)
         .Build("decibelDigits"));
+
+    CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
+    pPts->pColor = &m_vColor;
+    pContainer->Add_Child(
+        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelPts" })
+        .Add_UIDesc(pPts)
+        .Build("decibelPts"));
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)
@@ -98,7 +105,13 @@ void CUI_Decibel::Set_Decibel(_float fDecibel)
         m_vTargetColor = Helper::HexToColor("#FFFFFF");
     }
 
-    m_fDigitsOffsetX = (Get_Slot(ChildSlot::KANJI)) ? Get_Slot(ChildSlot::KANJI)->Get_PxSize().x * 0.9f : 100.f;
+    m_fDigitsOffsetX = (Get_Slot(ChildSlot::KANJI)) ? Get_Slot(ChildSlot::KANJI)->Get_PxSize().x * 0.9f : 0.f;
+    if (CUI_Object* pObj = Get_Slot(ChildSlot::DIGITS))
+        pObj->Set_AnchorOffset(_float2(m_fDigitsOffsetX, 0.f));
+
+    m_fPtsOffsetX = m_fDigitsOffsetX + ((Get_Slot(ChildSlot::DIGITS)) ? Get_Slot(ChildSlot::DIGITS)->Get_PxSize().x * 0.9f : 0.f);
+    if (CUI_Object* pObj = Get_Slot(ChildSlot::PTS))
+        pObj->Set_AnchorOffset(_float2(m_fPtsOffsetX, 12.f));
 }
 
 CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
