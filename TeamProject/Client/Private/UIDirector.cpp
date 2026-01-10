@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UIDirector.h"
+
 #include "GameInstance.h"
 #include "UI_Object.h"
 #include "UILoader.h"
@@ -43,16 +44,16 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 			continue;
 		}
 
+		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey)))
+		{
+			MSG_BOX("Failed to Add_UIObject : UI Director");
+			continue;
+		}
+
 		UI_HANDLE handle = uiObj->Get_Handle();
 		if (!handle.isValid())
 		{
 			MSG_BOX("Handle is not Vaild : UI Director");
-			continue;
-		}
-
-		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey)))
-		{
-			MSG_BOX("Failed to Add_UIObject : UI Director");
 			continue;
 		}
 
