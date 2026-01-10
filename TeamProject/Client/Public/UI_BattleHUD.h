@@ -68,7 +68,10 @@ private:
 	vector<UI_HANDLE>	m_hChildren;
 
 private:
-	void CacheHandle(CUI_Object* pRoot);
+	CUI_Object* Ready_Prefab(const string& strLevelKey);
+	void Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
+
+	void Cache_Handles(CUI_Object* pRoot);
 
 public:
 	static  CGameObject* Create();

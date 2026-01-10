@@ -76,22 +76,22 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 		const string protoTag = obj["prototypeTag"];
 		const string instName = obj["instanceName"];
 
-		CUI_Object* uiObj = Builder::Create_UIObject({ levelKey, protoTag })
+		CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
 			.Build(instName);
 
-		if (!uiObj)
+		if (!pObj)
 		{
 			MSG_BOX("Failed to Create UI Object : UI Director");
 			continue;
 		}
 
-		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey)))
+		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, levelKey)))
 		{
 			MSG_BOX("Failed to Add_UIObject : UI Director");
 			continue;
 		}
 
-		UI_HANDLE handle = uiObj->Get_Handle();
+		UI_HANDLE handle = pObj->Get_Handle();
 		if (!handle.isValid())
 		{
 			MSG_BOX("Handle is not Vaild : UI Director");
