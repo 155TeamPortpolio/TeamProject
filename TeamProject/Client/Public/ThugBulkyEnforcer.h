@@ -6,6 +6,14 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
+typedef struct tagHysteresis {
+    _float fEvadEnter{};
+    _float fComboEnter{};
+    _float fComboExit{};
+    _float fChaseEnter{};
+    _float fChaseExit{};
+}HYSTERIESIS;
+
 class CThugBulkyEnforcer final : public CEnemy
 {
 private:
@@ -21,35 +29,62 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
-
+    void    Active_AttackSign() override;
+      
 public:
     static CThugBulkyEnforcer* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
+private:
+    HRESULT Ready_Children(INIT_DESC* pArg);
+
 public:
-    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
-    CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
-    void                Idle() { m_isIdle = true; }
+    CStateMachine<CThugBulkyEnforcer>*  Get_StateMachine() { return m_pStateMachine; }
+    ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }
+    HYSTERIESIS&                        GetHysteriesis() { return m_tHysteriesis; }
+    _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
+    _int                                GetGroggyValue() { return m_iGroggyValue; }
+
+    void                                Idle() { m_isIdle = true; }
+    void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
+    void                                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
 
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     HRESULT Ready_Rules();
-    void Update_States(_float dt);
+    void Update_States(const _float dt);
+    void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
+    void RotateToPlayer(const _float dt);
+    void ManageAttackHistory();
+    void ManageGroggy(const _float dt);
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
-    ATTACK_BLACK_BOARD  m_tAttackBlackBoard{};
+    ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
+    HYSTERIESIS         m_tHysteriesis = {};
+    
+    _bool               m_isAutoPatternPlay = { true };
+
+    /*For.AttackAlgorithm*/
+    deque<_int>		    m_AttackHistory;
+    _int                m_iAttackCombo = {};
+
+    /*For.Idle*/
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+    /*For.Rotate*/
+    _bool               m_isLookPlayer = { false };
+    _float3             m_vDirToLookCapture = {};
+    _float              m_fRotateSpeed = {};
 
-
-    /* For.Test State*/
-    _bool               m_isAutoPatternPlay = { true };
+    /*For.Groggy*/
+    _int                m_iGroggyValue = {};
+    _float              m_fGroggyDecreaseTime = {};
 };
 
 NS_END

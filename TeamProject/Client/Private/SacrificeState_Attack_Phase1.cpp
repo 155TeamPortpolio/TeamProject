@@ -18,9 +18,7 @@ void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 		Register_Transitions();
 	}
 
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	BuildPattern(blackBoard);
-	blackBoard.isRequestNext = true;
+	BuildPattern(pOwner);
 
 	__super::Enter(pOwner);
 }
@@ -84,60 +82,90 @@ void CSacrificeState_Attack_Phase1::Register_Transitions()
 {
 }
 
-void CSacrificeState_Attack_Phase1::BuildPattern(ATTACK_BLACK_BOARD& blackBoard)
+void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 {
-	_uint iRandIndex = Helper::Get_Random_Int(0, 7);
-	iRandIndex = 1;
-	switch (iRandIndex)
-	{
-	case 0:
-	{
-		blackBoard.stateQueue.push_back("Attack07_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-		blackBoard.stateQueue.push_back("Attack08_Phase1");
-	}break;
-	case 1:
-	{
-		blackBoard.stateQueue.push_back("Attack07_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-		blackBoard.stateQueue.push_back("Attack03_Phase1");
-		blackBoard.stateQueue.push_back("Arm_Recover");
-	}break;
-	case 2:
-	{
-		blackBoard.stateQueue.push_back("Attack01_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-		blackBoard.stateQueue.push_back("Attack08_Phase1");
+	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	TARGETING_INFO& targetInfo = pOwner->GetTargetingInfo();
 
-	}break;
-	case 3:
-	{	/* Hand Pattern */
-		blackBoard.stateQueue.push_back("Attack10_Phase1");
-		blackBoard.stateQueue.push_back("Attack11_Phase1");
-		blackBoard.stateQueue.push_back("Attack12_Phase1");
-	}break;
-	case 4:
+	blackBoard.stateQueue.clear();
+
+	if (targetInfo.fDistance < 5.f)
 	{
-		blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-	}break;
-	case 5:
-	{
-		blackBoard.stateQueue.push_back("Attack02_Phase1");
-		blackBoard.stateQueue.push_back("Attack04_1_Phase1");
-	}break;
-	case 6:
-	{
-		blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
-		blackBoard.stateQueue.push_back("Attack06_Phase1");
-	}break;
-	case 7:
-	{
-		blackBoard.stateQueue.push_back("Attack05_Phase1");
-	}break;
-	default:
-		break;
+		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+		_vector3 vTargetDir = targetInfo.vDirToTarget;
+		if (vLook.Dot(vTargetDir) < 0.f)
+		{
+			blackBoard.stateQueue.push_back("Attack_Turn_Phase1");
+			blackBoard.stateQueue.push_back("Attack02_Phase1");
+		}
+		else
+		{
+			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
+			//iRandIndex = 1;
+			switch (iRandIndex)
+			{
+			case 0:
+			{
+				blackBoard.stateQueue.push_back("Attack01_Phase1");
+				blackBoard.stateQueue.push_back("Attack02_Phase1");
+				blackBoard.stateQueue.push_back("Attack08_Phase1");
+			}break;
+			case 1:
+			{
+				/* Hand Pattern */
+				blackBoard.stateQueue.push_back("Attack10_Phase1");
+				blackBoard.stateQueue.push_back("Attack11_Phase1");
+				blackBoard.stateQueue.push_back("Attack12_Phase1");
+			}break;
+			case 2:
+			{
+				blackBoard.stateQueue.push_back("Attack05_Phase1");
+			
+			}break;
+			case 3:
+			{	
+				blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
+				blackBoard.stateQueue.push_back("Attack06_Phase1");
+			}break;
+			default:
+				break;
+			}
+		}
 	}
+	else
+	{
+		_uint iRandIndex = Helper::Get_Random_Int(0, 2);
+		switch (iRandIndex)
+		{
+		case 0:
+		{
+			blackBoard.stateQueue.push_back("Attack07_Phase1");
+			blackBoard.stateQueue.push_back("Attack02_Phase1");
+			blackBoard.stateQueue.push_back("Attack08_Phase1");
+		}break;
+		case 1:
+		{
+			blackBoard.stateQueue.push_back("Attack07_Phase1");
+			blackBoard.stateQueue.push_back("Attack02_Phase1");
+			blackBoard.stateQueue.push_back("Attack03_Phase1");
+			blackBoard.stateQueue.push_back("Arm_Recover");
+		}break;
+		case 2:
+		{
+			blackBoard.stateQueue.push_back("Attack04_1_Phase1");
+			blackBoard.stateQueue.push_back("Attack02_Phase1");
+		}break;
+		default:
+			break;
+		}
+	}
+
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack07_Phase1");
+	blackBoard.stateQueue.push_back("Attack02_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
+
+	blackBoard.isRequestNext = true;
 }
 
 void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
@@ -195,6 +223,8 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).TransitionSpeed(1.f, 1.4f, 3.f, EaseType::OutQuint).Apply();
+	
+	pOwner->Active_AttackSign();
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -281,6 +311,8 @@ void CSacrificeState_Attack_04_1_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_04_1").Loop(false).Speed(1.2f).Apply();
+
+	pOwner->Active_AttackSign();
 }
 
 void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -377,6 +409,8 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.4f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
 	m_fAnimProgress = 0.f;
@@ -420,6 +454,8 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_08").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Active_AttackSign();
+
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
 	m_IsJumpStart = false;	
@@ -459,6 +495,8 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
 	{
+		pOwner->Active_AttackSign();
+
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;

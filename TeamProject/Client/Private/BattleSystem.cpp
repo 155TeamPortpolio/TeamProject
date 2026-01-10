@@ -49,6 +49,11 @@ void CBattleSystem::Update()
 	}
 }
 
+OBJECT_HANDLE CBattleSystem::GetCurCharacterHandle() const
+{
+	return m_pBattlePlayer->GetCurCharacterHandle();
+}
+
 const vector<BATTLEOBJ_INFO>& CBattleSystem::GetBattleObjects(BATTLE_OBJ_TYPE eType) const
 {
 	return m_BattleObjInfos.at(eType);
@@ -67,7 +72,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-	MonsterCCT.iCollisionMask = 0xFFFFFFFF;
+	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
 	MonsterCCT.bAutoFit = false;
 	MonsterCCT.fHeight = MonsterTableDesc.CCT_fHeight;
 	MonsterCCT.fRadius = MonsterTableDesc.CCT_fRadius;
@@ -88,13 +93,16 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
 }
 
-void CBattleSystem::SetPlayer(OBJECT_HANDLE hPlayer)
+void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
-	if (hPlayer.isValid())
-		m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+	for (auto& hPlayer : hPlayers)
+	{
+		if (hPlayer.isValid())
+			m_Handles[BATTLE_OBJ_TYPE::PLAYER].push_back(hPlayer);
+	}
 }
 
-void CBattleSystem::SetBattleCharacters(vector<_uint> battleCharacters)
+void CBattleSystem::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 {
 	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
 }

@@ -11,7 +11,7 @@ _bool Helper::ContainsNonAscii(const string& str)
 	}
 	return false;
 }
- 
+
 _bool Helper::IsPathInProjectFolder(const string& path)
 {
 	//현재 솔루션 Path
@@ -252,7 +252,7 @@ ENGINE_DLL string Helper::OpenFile(const vector<pair<string, string>>& filters, 
 
 		for (size_t i = 0; i < filters.size(); ++i)
 		{
-			COMDLG_FILTERSPEC s = {wideLabels[i].c_str(), widePatterns[i].c_str()};
+			COMDLG_FILTERSPEC s = { wideLabels[i].c_str(), widePatterns[i].c_str() };
 			specs.push_back(s);
 		}
 
@@ -579,6 +579,98 @@ ENGINE_DLL _bool Helper::WorldToScreen(const _float3& worldPos, _float2& outScre
 	outScreen.x = viewportXYWH.x + (ndcX * 0.5f + 0.5f) * viewportXYWH.z;
 	outScreen.y = viewportXYWH.y + (-ndcY * 0.5f + 0.5f) * viewportXYWH.w;
 	return true;
+}
+
+ENGINE_DLL _uint Helper::Get_Digit(_int value, _int place)
+{
+	_int temp = 1;
+	for (_int i = 0; i < place; ++i)
+		temp *= 10;
+
+	return (abs(value) / temp) % 10;
+}
+
+ENGINE_DLL _vector4 Helper::HexToColor(const string& hex)
+{
+	_vector4 vColor = { 1.f, 1.f, 1.f, 1.f };
+
+	if (hex[0] != '#')
+		return vColor;
+
+	if (hex.size() == 9)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+		vColor.w = stoi(hex.substr(7, 2), nullptr, 16) / 255.f;
+	}
+	else if (hex.size() == 7)
+	{
+		vColor.x = stoi(hex.substr(1, 2), nullptr, 16) / 255.f;
+		vColor.y = stoi(hex.substr(3, 2), nullptr, 16) / 255.f;
+		vColor.z = stoi(hex.substr(5, 2), nullptr, 16) / 255.f;
+	}
+
+	return vColor;
+}
+
+ENGINE_DLL string Helper::VK_ToString(_int vk)
+{
+	if (vk >= 'A' && vk <= 'Z')
+		return string(1, char(vk));
+
+	// 숫자
+	if (vk >= '0' && vk <= '9')
+		return string(1, char(vk));
+
+	// VK → ScanCode
+	UINT scanCode = MapVirtualKeyW(vk, MAPVK_VK_TO_VSC);
+	if (scanCode == 0)
+		return "VK_" + std::to_string(vk);
+
+	// 확장키(E0) 판정
+	bool isExtended =
+		vk == VK_LEFT || vk == VK_RIGHT ||
+		vk == VK_UP || vk == VK_DOWN ||
+		vk == VK_INSERT || vk == VK_DELETE ||
+		vk == VK_HOME || vk == VK_END ||
+		vk == VK_PRIOR || vk == VK_NEXT ||
+		vk == VK_DIVIDE ||
+		vk == VK_RCONTROL || vk == VK_RMENU;
+
+	LONG lParam = (LONG)(scanCode << 16);
+	if (isExtended)
+		lParam |= (1 << 24);
+
+	wchar_t buffer[64] = {};
+	if (GetKeyNameTextW(lParam, buffer, 64) > 0)
+		return WideToUtf8(buffer);
+
+	// 최종 폴백
+	return "VK_" + to_string(vk);
+}
+
+ENGINE_DLL string Helper::WideToUtf8(const wchar_t* wideText)
+{
+	if (!wideText || !*wideText)
+		return {};
+
+	int length = WideCharToMultiByte(
+		CP_UTF8, 0,
+		wideText, -1,
+		nullptr, 0,
+		nullptr, nullptr);
+
+	std::string utf8;
+	utf8.resize(length - 1);
+
+	WideCharToMultiByte(
+		CP_UTF8, 0,
+		wideText, -1,
+		utf8.data(), length,
+		nullptr, nullptr);
+
+	return utf8;
 }
 
 // -------------------------------------------------------------------------------------------------

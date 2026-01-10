@@ -19,7 +19,6 @@ CMaterial::CMaterial(const CMaterial& rhs)
 		cloned->Set_Param("vOutLineColor", { &m_vOutLineColor, "float4", sizeof(_float4) });
 		cloned->Set_Param("fOutLineThickness", { &m_fOutLineThickness, "float", sizeof(_float) });
 	}
-
 }
 
 HRESULT CMaterial::Initialize_Prototype()
@@ -39,6 +38,14 @@ HRESULT CMaterial::Link_Material(const string& levelKey, const string& materialK
 		Safe_Release(data);
 
 	m_MaterialInstances = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(levelKey, materialKey);
+	if (!m_MaterialInstances.empty()) {
+		for (auto& instance : m_MaterialInstances) {
+			instance->Set_Param("vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+			instance->Set_Param("fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+			instance->Set_Param("vOutLineColor", { &m_vOutLineColor, "float4", sizeof(_float4) });
+			instance->Set_Param("fOutLineThickness", { &m_fOutLineThickness, "float", sizeof(_float) });
+		}
+	}
 	return S_OK;
 }
 

@@ -2,7 +2,7 @@
 #include "Engine_Defines.h"
 
 namespace Client {
-	
+
 	typedef struct BattleObjectInfo {
 		string			TagInstanceName = {};	// 오브젝트 인스턴스 이름
 		OBJECT_HANDLE	hObject;				// 오브젝트 핸들
@@ -25,10 +25,16 @@ namespace Client {
 
 	struct PlayerDesc {
 		string	strPlayerName = {};
-		_float	MaxHp = {};
-		_float	Attack = {};
+		_uint	LV = {};
+		_float	SpecialAttack = {};
 		string	ExType = {};
 		_float	Ultimate = {};
-		_float	SpecialAttack = {};
+	};
+
+	struct PlayerLVDesc {
+		_uint	LV = {};
+		_float	MaxHP = {};
+		_float	Attack = {};
+		_float	Defend = {};
 	};
 }

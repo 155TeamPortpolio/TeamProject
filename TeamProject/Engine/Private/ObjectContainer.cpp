@@ -549,6 +549,19 @@ void CObjectContainer::Set_Order_Last(CGameObject* pObject)
 	ReorderChildren(pObject, count);
 }
 
+CGameObject* CObjectContainer::Get_ChildByOrder(_uint Index)
+{
+	if (Index >= m_UpdateOrder.size())
+		return nullptr;
+
+	_uint objectId = m_UpdateOrder[Index];
+	auto it = m_IndexByID.find(objectId);
+	if (it == m_IndexByID.end())
+		return nullptr;
+
+	return m_ChildrenObjects[it->second];
+}
+
 CObjectContainer* CObjectContainer::Create()
 {
 	CObjectContainer* instance = new CObjectContainer();

@@ -6,6 +6,7 @@ class CGameObject;
 NS_END
 
 NS_BEGIN(Client)
+class CBattlePlayer;
 
 class CBattleSystem final : public CBase
 {
@@ -21,6 +22,9 @@ public:
 	void Update();
 
 public:
+	CBattlePlayer* GetBattlePlayer() const {return m_pBattlePlayer;}
+	OBJECT_HANDLE GetCurCharacterHandle() const;
+
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 
 	_bool	GetActive() { return m_isActive; }
@@ -36,9 +40,9 @@ public:
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
 
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
-	void	SetPlayer(OBJECT_HANDLE hPlayer);
+	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
 	// UI에서 캐릭터 선택시 부를 함수
-	void	SetBattleCharacters(vector<_uint> battleCharacters);
+	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 
 private:
 	void	ClearBattleStage();

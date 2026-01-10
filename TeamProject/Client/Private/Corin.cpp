@@ -25,6 +25,15 @@ CCorin::CCorin(const CCorin& rhs)
 {
 }
 
+void CCorin::On_SwitchIn(SWITCH eType)
+{
+	Set_Switch(eType);
+}
+
+void CCorin::On_SwitchOut()
+{
+}
+
 HRESULT CCorin::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -63,7 +72,9 @@ void CCorin::Awake()
 	m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
-	m_strName = "Avatar_Female_Size01_Corin_Ani_";
+	//*name change*
+	m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
+	m_strName = "Corin";
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
@@ -88,7 +99,7 @@ void CCorin::Priority_Update(_float dt)
 
 void CCorin::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if(!m_bTest)
 	{
 		Update_States();
@@ -117,57 +128,6 @@ void CCorin::Render_GUI()
 		m_pStateMachine->Render_GUI();
 
 	}
-}
-
-void CCorin::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
-{
-	auto pTransform = Get_Component<CTransform>();
-	_vector3 vRootDelta = m_pAnimator->Get_RootBoneMoveDelta();
-	_vector4 vQuatDelta = m_pAnimator->Get_RootBoneQuatDelta();
-	_vector3 vInputDir = Get_InputDir();
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
-	{
-		if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
-		else if (desc.fRotateWeight > 0.01f)
-		{
-			_quaternion qWeighted = _quaternion::Slerp(_quaternion::Identity, vQuatDelta, desc.fRotateWeight);
-			pTransform->Add_Quaternion(qWeighted);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			Rotate(vInputDir);
-		}
-	}
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::MOVE)) != 0)
-	{
-		if (vRootDelta.x != 0.f || vRootDelta.z != 0.f)
-		{
-			_vector3 vWeightedDelta = vRootDelta * desc.fMoveWeight;
-			_quaternion qRot = pTransform->Get_QuaternionRotate();
-			m_pCCT->Move_RootMotion(vWeightedDelta, qRot, dt);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			m_pCCT->Move_Direction(vInputDir, desc.fMoveSpeed, dt);
-		}
-	}
-}
-
-void CCorin::Process_RootMotion(_float dt, _uint iModeMask)
-{
-	ROOTMOTION_DESC desc;
-	desc.iModeMask = iModeMask;
-	Process_RootMotion(dt, desc);
 }
 
 void CCorin::Update_Input(_float dt)

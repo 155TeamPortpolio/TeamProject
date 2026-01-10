@@ -46,6 +46,8 @@ public:
 protected:
     // Target(Player-Character)이 있을 때, Target의 정보와 Target으로 부터의 정보 GUI에 렌더
     void                Render_GUI_ForTargetInfo();
+    // 몬스터 공격 시 attack sign 이펙트 활성화 함수
+    virtual void        Active_AttackSign() {};
 
 protected:
     // BattleSystem으로 부터 얻어온 Character정보

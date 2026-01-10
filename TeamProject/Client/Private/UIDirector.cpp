@@ -1,10 +1,52 @@
 #include "pch.h"
 #include "UIDirector.h"
+
 #include "GameInstance.h"
 #include "UI_Object.h"
 #include "UILoader.h"
 
 IMPLEMENT_SINGLETON(CUIDirector);
+
+void CUIDirector::Set_BulkStatus(const vector<UI_STATUS_BULK_DESC>& bulkStatus)
+{
+	auto pEventSystem = CGameInstance::GetInstance()->Get_EventSystem();
+
+	for (const auto& status : bulkStatus)
+	{
+		UI_STATUS_DESC desc = {};
+		desc.eOwner = status.eOwner;
+
+		for (const auto& value : status.statusValues)
+		{
+			desc.eType = value.first;
+			desc.value.fCurValue = value.second.fCurValue;
+			desc.value.fMaxValue = value.second.fMaxValue;
+			pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
+		} 
+	} 
+}
+
+void CUIDirector::Set_PlayerStatus(const vector<UI_PLAYER_STATUS_DESC>& playerStatus)
+{
+	auto pEventSystem = CGameInstance::GetInstance()->Get_EventSystem();
+
+	for (const auto& status : playerStatus)
+	{
+		UI_STATUS_DESC desc = {};
+
+		auto send = [&](UI_STATUS_TYPE type, const UI_STATUS_VALUE& value) 
+			{
+				desc.eType = type;
+				desc.value.fCurValue = value.fCurValue;
+				desc.value.fMaxValue = value.fMaxValue;
+				pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
+			};
+
+		send(UI_STATUS_TYPE::HP, status.hp);
+		send(UI_STATUS_TYPE::SPECIAL, status.special);
+		send(UI_STATUS_TYPE::ULTIMATE, status.ultimate);
+	}
+}
 
 void CUIDirector::Initialize()
 {
@@ -34,10 +76,31 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 		const string protoTag = obj["prototypeTag"];
 		const string instName = obj["instanceName"];
 
-		CUI_Object* uiObj = Builder::Create_UIObject({ levelKey, protoTag })
+		CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
 			.Build(instName);
 
-		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(uiObj, levelKey);
+		if (!pObj)
+		{
+			MSG_BOX("Failed to Create UI Object : UI Director");
+			continue;
+		}
+
+		if (FAILED(CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, levelKey)))
+		{
+			MSG_BOX("Failed to Add_UIObject : UI Director");
+			continue;
+		}
+
+		UI_HANDLE handle = pObj->Get_Handle();
+		if (!handle.isValid())
+		{
+			MSG_BOX("Handle is not Vaild : UI Director");
+			continue;
+		}
+
+		auto result = m_handles.emplace(instName, handle);
+		if (!result.second)
+			MSG_BOX("UI Object Already Exists : UI Director");
 	}
 }
 

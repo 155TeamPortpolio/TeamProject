@@ -17,11 +17,37 @@ class CUI_BattleHUD final : public CUI_Object
 		BTN_NORMAL, BTN_EVADE, BTN_SPECIAL, BTN_SWITCH, BTN_ULTIMATE, 
 		END };
 
+	struct tagGaugeBindDesc {
+		PREFAB			ePrefab;
+		UI_STATUS_OWNER	eOwner;
+		UI_STATUS_TYPE	eType;
+	};
+
 	inline static constexpr PREFAB ICON_PREFABS[] = { ICON1, ICON2, ICON3 };
 	inline static constexpr PREFAB HPBACK_PREFABS[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
 	inline static constexpr PREFAB HPFRONT_PREFABS[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
 	inline static constexpr PREFAB SPECIAL_PREFABS[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
 	inline static constexpr PREFAB ULTIMATE_PREFABS[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
+	inline static constexpr tagGaugeBindDesc GaugeBindings[] = {
+		{ HP_BACK1, UI_STATUS_OWNER::ROLE1, UI_STATUS_TYPE::HP_BACK },
+		{ HP_BACK2, UI_STATUS_OWNER::ROLE2, UI_STATUS_TYPE::HP_BACK },
+		{ HP_BACK3, UI_STATUS_OWNER::ROLE3, UI_STATUS_TYPE::HP_BACK },
+
+		{ HP_FRONT1, UI_STATUS_OWNER::ROLE1, UI_STATUS_TYPE::HP },
+		{ HP_FRONT2, UI_STATUS_OWNER::ROLE2, UI_STATUS_TYPE::HP },
+		{ HP_FRONT3, UI_STATUS_OWNER::ROLE3, UI_STATUS_TYPE::HP },
+
+		{ SPECIAL1, UI_STATUS_OWNER::ROLE1, UI_STATUS_TYPE::SPECIAL },
+		{ SPECIAL2, UI_STATUS_OWNER::ROLE2, UI_STATUS_TYPE::SPECIAL },
+		{ SPECIAL3, UI_STATUS_OWNER::ROLE3, UI_STATUS_TYPE::SPECIAL },
+
+		{ ULTIMATE1, UI_STATUS_OWNER::ROLE1, UI_STATUS_TYPE::ULTIMATE },
+		{ ULTIMATE2, UI_STATUS_OWNER::ROLE2, UI_STATUS_TYPE::ULTIMATE },
+		{ ULTIMATE3, UI_STATUS_OWNER::ROLE3, UI_STATUS_TYPE::ULTIMATE },
+
+		{ BOSS_HP_FRONT, UI_STATUS_OWNER::BOSS, UI_STATUS_TYPE::HP },
+		{ BOSS_GROGGY, UI_STATUS_OWNER::BOSS, UI_STATUS_TYPE::GROGGY },
+	};
 
 private:
 	CUI_BattleHUD() {}
@@ -39,10 +65,18 @@ public:
 
 private:
 	UI_HANDLE			m_hRoot;
-	vector<UI_HANDLE>	m_hChildren;
+	vector<UI_HANDLE>	m_hChildren; 
 
 private:
-	void CacheHandle(CUI_Object* pRoot);
+	CUI_Object* Ready_Prefab(const string& strLevelKey);
+	void Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
+
+	void Set_HPText(const UI_STATUS_VALUE& value);
+	void Set_GroggyText(const UI_STATUS_VALUE& value);
+
+	void Cache_Handles(CUI_Object* pRoot);
+
+	void Set_Text(PREFAB prefab, const wstring& strText);
 
 public:
 	static  CGameObject* Create();

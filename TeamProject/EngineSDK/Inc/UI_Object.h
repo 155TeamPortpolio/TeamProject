@@ -72,12 +72,15 @@ public:
 public:
 	void Update_UITransform();
 	void Set_LeftTop(_float2 desiredLT) {}
+	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
+	void Set_Color(_float4 vColor) { m_vColor = vColor; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/
 	_float2 Get_PxSize() { return m_vSize * m_vScale; }
 	_float2 Half_PxSize() { return Get_PxSize() * 0.5f; }
 	_float2 Get_RectTopLeft_Screen() ;
 	_float2 Get_CombinedScale() { return m_vCombinedScale; }
+	_float2 Get_AnchorOffset() { return m_vAnchorOffset; }
 
 	// Screen anchors
 	_float2 LT(_float x = 0.f, _float y = 0.f) { return Get_Point_Screen({ 0.f,   0.f }, x, y); }
@@ -162,7 +165,7 @@ protected:
 	_float m_fRadian = {};
 	_uint m_iPriority = {UINT_MAX};
 
-	_int m_SystemIndex = {-1};
+	_int m_SystemIndex = {-1}; /* 유아이 매니저에서 배정한 벡터의 인덱스*/
 
 	_bool m_isClickable = {};
 

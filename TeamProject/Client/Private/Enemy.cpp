@@ -102,7 +102,7 @@ void CEnemy::Render_GUI_ForTargetInfo()
 	if (nullptr != pCharacter) {
 		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerTracePlayer", ImVec2{ 0, childHeight }, true);
 
-		ImGui::Text("Character Name : %s", pCharacter->TagInstanceName);
+		ImGui::Text("Character Name : %s", pCharacter->TagInstanceName.c_str());
 		ImGui::Text("Character Pos : %.2f, %.2f, %.2f", m_tTargetingInfo.vTargetPos.x, m_tTargetingInfo.vTargetPos.y, m_tTargetingInfo.vTargetPos.z);
 		ImGui::Text("Character CCT Radius : %.2f", pCharacter->fRadius);;
 		ImGui::Text("Distance From Character : %.3f", m_tTargetingInfo.fDistance);

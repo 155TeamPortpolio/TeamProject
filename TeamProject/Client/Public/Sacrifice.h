@@ -21,10 +21,12 @@ private:
 public:
     HRESULT Initialize_Prototype()override;
     HRESULT Initialize(INIT_DESC* pArg)override;
+    void Post_EngineUpdate(_float dt) override;
     void    Awake() override;
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
+    void    Render_GUI() override;
 
 public:
     static CSacrifice* Create();
@@ -64,6 +66,9 @@ public:
     void OverDrive_Attack1();
     void OverDrive_Attack2();
     void OverDrive_Attack3();
+
+    /* Effect */
+    void Active_AttackSign()override;
 
 private:
     HRESULT Initialize_StateMachine();
