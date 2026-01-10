@@ -66,6 +66,10 @@ public:
         _float fMoveSpeed = 10.f;
         _float fRotateSpeed = 10.f;
     };
+
+public:
+    enum class SWITCH { NORMAL, ATTACK, EXATTACK, PARRYAID, END };
+
 protected:
     CCharacter() {}
     CCharacter(const CCharacter& rhs);
@@ -99,6 +103,9 @@ public:
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string&         Get_Name() const { return m_strAnimName; }
 
+    SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine에서 가져갈 switchtype*
+    void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
+
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
@@ -109,6 +116,10 @@ public:
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
+
+public:
+    virtual void    On_SwitchIn(SWITCH eType)   PURE;   //*스위치 인 콜*
+    virtual void    On_SwitchOut()              PURE;   //*스위치 아웃 콜*
 
 public:
     void     Rotate(_vector3 vDirection);
@@ -155,7 +166,7 @@ protected:
     _bool           m_bIsAttack = { false };
     _bool           m_bIsInput = { false };
     _bool           m_bIsEvade = { false };
-    _bool           m_bIsSwitch = { false };        //*스위치*
+    // _bool           m_bIsSwitch = { false };        //*스위치* 안씀 제거
     // 회피 시스템
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };
@@ -163,9 +174,7 @@ protected:
     static constexpr _float EVADE_COOLDOWN = 1.f;
     static constexpr _uint  EVADE_MAX_COUNT = 2;
     //*스위치 시스템*
-    _float                  m_fSwitchTimer = { 0.f };
-    _float                  m_fSwitchCooldown = { 0.f };
-    static constexpr _float SWITCH_COOLDOWN = 1.f;
+    SWITCH                  m_eSwitchType = SWITCH::END;
     // 회전
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};

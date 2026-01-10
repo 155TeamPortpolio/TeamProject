@@ -25,6 +25,15 @@ CCorin::CCorin(const CCorin& rhs)
 {
 }
 
+void CCorin::On_SwitchIn(SWITCH eType)
+{
+	Set_Switch(eType);
+}
+
+void CCorin::On_SwitchOut()
+{
+}
+
 HRESULT CCorin::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

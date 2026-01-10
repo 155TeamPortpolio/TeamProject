@@ -436,6 +436,24 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Text">
       <UniqueIdentifier>{ae23e854-0941-42b9-bf8b-40a3919109a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
+      <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut">
+      <UniqueIdentifier>{ee4ce36f-881a-4c28-bb3d-2128c9d40faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -843,9 +861,6 @@
     <ClInclude Include="..\public\DataBase.h">
       <Filter>03. Utility\05. DataBase</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\JaneDoeState_Switch.h">
-      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
@@ -867,6 +882,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_DecibelText.h">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchIn.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoe_SwitchInNormal.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1264,9 +1288,6 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\JaneDoeState_Switch.cpp">
-      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
@@ -1285,6 +1306,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelText.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoe_SwitchInNormal.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
