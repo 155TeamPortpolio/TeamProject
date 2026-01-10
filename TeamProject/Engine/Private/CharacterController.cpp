@@ -131,7 +131,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setRestOffset(pDesc->fRestOffset);
 
 	PxFilterData filterData;
-	filterData.word0 = 1 << ENUM(pDesc->eGroup);
+	filterData.word0 = ENUM(pDesc->eGroup);
 	filterData.word1 = pDesc->iCollisionMask;
 	pShape->setSimulationFilterData(filterData); // 시뮬레이션용 필터
 	pShape->setQueryFilterData(filterData);      // 레이캐스팅용 필터
@@ -564,7 +564,7 @@ void CCharacterController::Set_CollisionMask(_uint iMask)
 
 void CCharacterController::Set_CollisionGroup(COLLISION_GROUP eGroup)
 {
-	m_FilterData.word0 = 1 << ENUM(eGroup);
+	m_FilterData.word0 = ENUM(eGroup);
 
 	PxShape* pShape;
 	m_pController->getActor()->getShapes(&pShape, 1);

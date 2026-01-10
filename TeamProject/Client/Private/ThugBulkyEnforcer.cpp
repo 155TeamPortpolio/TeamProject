@@ -364,8 +364,7 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	COLLIDER_DESC colliderDesc = {};
 	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
 	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-	//colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
 	colliderDesc.vSize = { 0.3f,0.f,0.f };
 	colliderDesc.bAutoFit = false;
 

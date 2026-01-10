@@ -57,6 +57,7 @@ void CThugBulkyEnforcer_Collider::Update(_float dt)
 
 void CThugBulkyEnforcer_Collider::Late_Update(_float dt)
 {
+	Get_Component<CRigidBody>()->Late_Update(dt);
 }
 
 void CThugBulkyEnforcer_Collider::Render_GUI()
