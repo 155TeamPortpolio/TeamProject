@@ -17,8 +17,6 @@ class CCharacter abstract : public CGameObject
 public:
     struct InputInfo
     {
-        _int x = 0;
-        _int z = 0;
         _vector3 direction = {};
         _vector3 prevDirection = {};
         _float   bufferTimer = 0.f;

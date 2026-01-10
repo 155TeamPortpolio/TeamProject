@@ -86,6 +86,8 @@ void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
         .Speed(1.2f)
         .Apply();
+    pOwner->Reset_InputBuffer();
+    pOwner->Set_ResetMove(true);
 }
 
 void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)

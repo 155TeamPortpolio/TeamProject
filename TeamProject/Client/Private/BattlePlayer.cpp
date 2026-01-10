@@ -147,8 +147,6 @@ void CBattlePlayer::Update_Input(_float dt)
 void CBattlePlayer::Process_Movement(_float dt)
 {
 	CCharacter::InputInfo inputInfo;
-	inputInfo.x = m_input.current.x;
-	inputInfo.z = m_input.current.z;
 	inputInfo.direction = m_input.direction;
 	inputInfo.prevDirection = m_input.prevDirection;
 	inputInfo.bufferTimer = m_input.bufferTimer;
