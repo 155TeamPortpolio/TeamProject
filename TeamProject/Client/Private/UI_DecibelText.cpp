@@ -98,10 +98,7 @@ void CUI_DecibelText::Set_Text(const wstring& wstrText)
     if (auto pTextSlot = pText->Get_Component<CTextSlot>())
     {
         pTextSlot->Set_Text(wstrText);
-        string strText = Helper::ConvertToString(wstrText);
-        pTextSlot->Set_TextKey(strText);
-        pText->Get_Component<CSprite2D>()->Set_TextKey(strText);
-        auto textSize = pTextSlot->Get_TextSize() * m_fTextScale;
+        auto textSize = pTextSlot->Get_TextSize() * m_fTextScale;   //  ??
         _float fShearX = fabs(pTextSlot->Get_Shear().x);
         textSize.x += fShearX * textSize.y * 2.f;
         pText->Set_Size(textSize);

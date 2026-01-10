@@ -71,7 +71,12 @@ private:
 	CUI_Object* Ready_Prefab(const string& strLevelKey);
 	void Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
 
+	void Set_HPText(const UI_STATUS_VALUE& value);
+	void Set_GroggyText(const UI_STATUS_VALUE& value);
+
 	void Cache_Handles(CUI_Object* pRoot);
+
+	void Set_Text(PREFAB prefab, const wstring& strText);
 
 public:
 	static  CGameObject* Create();

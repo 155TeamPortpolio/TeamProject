@@ -21,7 +21,7 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
 
     const string strObjectID = to_string(m_ObjectID).c_str();
     auto pSprite = Get_Component<CSprite2D>();
-    pSprite->Set_TextKey(strObjectID);
+    Get_Component<CTextSlot>()->Set_TextKey(strObjectID);
     pSprite->Set_TextKey(strObjectID);
 
 #ifdef _DEBUG

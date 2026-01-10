@@ -1024,9 +1024,6 @@
     <ClCompile Include="..\Private\ImageUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Image</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GaugeUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Button</Filter>
     </ClCompile>
@@ -1315,6 +1312,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GaugeUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

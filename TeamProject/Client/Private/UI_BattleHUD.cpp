@@ -3,11 +3,15 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "GaugeUI.h"
+#include "EventListener.h"
+#include "TextSlot.h"
+#include "GaugeUI.h" 
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -15,6 +19,14 @@ HRESULT CUI_BattleHUD::Initialize_Prototype()
 HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+
+    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+        {
+            if (desc.eType == UI_STATUS_TYPE::HP && desc.eOwner == UI_STATUS_OWNER::ROLE1)
+                Set_HPText(desc.value);
+            else if (desc.eType == UI_STATUS_TYPE::GROGGY && desc.eOwner == UI_STATUS_OWNER::BOSS)
+                Set_GroggyText(desc.value);
+        });
 
     return S_OK;
 }
@@ -80,6 +92,23 @@ void CUI_BattleHUD::Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, 
     m_hChildren[prefab] = handle;
 }
 
+void CUI_BattleHUD::Set_HPText(const UI_STATUS_VALUE& value)
+{
+    if (!m_hChildren[PREFAB::CUR_HP_TEXT].isValid() || !m_hChildren[PREFAB::MAX_HP_TEXT].isValid())
+        return;
+
+    Set_Text(PREFAB::CUR_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fCurValue))));
+    Set_Text(PREFAB::MAX_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fMaxValue))));
+}
+
+void CUI_BattleHUD::Set_GroggyText(const UI_STATUS_VALUE& value)
+{
+    if (!m_hChildren[PREFAB::BOSS_GROGGY_TEXT].isValid())
+        return;
+
+    Set_Text(PREFAB::BOSS_GROGGY_TEXT, Helper::ConvertToWideString(to_string(value.fCurValue)));
+}
+
 void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
 { 
     // 루트 핸들 캐싱
@@ -123,6 +152,19 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
             pGauge->Set_Status(bind.eOwner, bind.eType);
         }
     }
+}
+
+void CUI_BattleHUD::Set_Text(PREFAB prefab, const wstring& strText)
+{
+    auto pObj = m_hChildren[ENUM(prefab)].Get();
+    if (!pObj)
+        return;
+
+    auto pTextSlot = pObj->Get_Component<CTextSlot>();
+    if (!pTextSlot)
+        return;
+
+    pTextSlot->Set_Text(strText);
 }
 
 CGameObject* CUI_BattleHUD::Create()
