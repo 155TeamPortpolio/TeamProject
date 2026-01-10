@@ -25,8 +25,10 @@ CGameObject* Engine::tagObjectHandle::Get()
 {
 	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
 
-	if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-	if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
+	if(pObj){
+		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
+		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
+	}
 	return pObj;
 }
 
