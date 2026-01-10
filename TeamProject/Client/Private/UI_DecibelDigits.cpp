@@ -8,7 +8,7 @@
 #include "Texture.h"
 
 const string CUI_DecibelDigits::DIGIT_TEXTURES[ENUM(DigitTexture::END)] = { "00.png", "01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png" };
-CUI_DecibelDigits::DigitSlot CUI_DecibelDigits::digitOrder[] = { DigitSlot::DIGIT_1000, DigitSlot::DIGIT_100, DigitSlot::DIGIT_10, DigitSlot::DIGIT_1 };
+CUI_DecibelDigits::Digit CUI_DecibelDigits::digitOrder[] = { Digit::DIGIT_1000, Digit::DIGIT_100, Digit::DIGIT_10, Digit::DIGIT_1 };
 
 HRESULT CUI_DecibelDigits::Initialize_Prototype()
 {
@@ -48,37 +48,38 @@ void CUI_DecibelDigits::Update(_float dt)
 void CUI_DecibelDigits::Ready_PartObjects()
 {
     auto pContainer = Get_Component<CObjectContainer>();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-    for (_int i = 0; i < ENUM(ChildSlot::END); ++i)
+    for (_int i = 0; i < ENUM(Child::END); ++i)
     {
-        CUI_Object* pSlot = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
+        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
             .Build("decibelDigits" + to_string(i));
 
-        pContainer->Add_Child(pSlot);
-    }
-
-    auto pBg = Get_Slot(ChildSlot::BG);
-    if (pBg)
-    {
-        pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
-        pBg->Set_Color(_float4(0.f, 0.f, 0.f, 1.f));
+        if (i == ENUM(Child::BG))
+        {
+            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+            pObj->Set_Color(Helper::HexToColor("#000000"));
+        }
+        
+        pContainer->Add_Child(pObj);
+        m_handles[i] = pObj->Get_Handle();
     }
 }
 
 void CUI_DecibelDigits::Update_Digits(_int iDecibel)
 {
-    Set_Digit(ChildSlot::DIGIT_1000, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 3)));
-    Set_Digit(ChildSlot::DIGIT_100, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 2)));
-    Set_Digit(ChildSlot::DIGIT_10, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 1)));
-    Set_Digit(ChildSlot::DIGIT_1, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 0)));
+    Set_Digit(Child::DIGIT_1000, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 3)));
+    Set_Digit(Child::DIGIT_100, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 2)));
+    Set_Digit(Child::DIGIT_10, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 1)));
+    Set_Digit(Child::DIGIT_1, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 0)));
 
     for (_int i = 0; i < _countof(digitOrder); ++i)
     {
-        auto pSlot = Get_DigitSlot(digitOrder[i]);
-        if (!pSlot)
+        auto pDigit = Get_Digit(digitOrder[i]);
+        if (!pDigit)
             continue;
-
-        pSlot->Set_Color(*m_pColor);
+        
+        pDigit->Set_Color(*m_pColor);
     }
 }
 
@@ -88,27 +89,18 @@ void CUI_DecibelDigits::Update_Layout()
     Set_LayoutBg();
 }
 
-void CUI_DecibelDigits::Set_Digit(ChildSlot slot, DigitTexture texture)
+void CUI_DecibelDigits::Set_Digit(Child child, DigitTexture texture)
 {
-    auto pSlot = Get_Slot(slot);
-    if (!pSlot)
+    if (!m_handles[ENUM(child)].isValid())
         return;
 
-    auto pSprite = pSlot->Get_Component<CSprite2D>();
+    auto pObj = m_handles[ENUM(child)].Get();
+    if (!pObj)
+        return;
+
+    auto pSprite = pObj->Get_Component<CSprite2D>();
     pSprite->Change_Texture(0, G_GlobalLevelKey, DIGIT_TEXTURES[ENUM(texture)]);
-    pSlot->Set_Size(_float2(m_fHeight * pSprite->Get_AspectRatio(), m_fHeight));
-}
-
-void CUI_DecibelDigits::Set_LayoutBg()
-{
-    auto pContainer = Get_Component<CObjectContainer>();
-
-    auto pSlot = dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(ChildSlot::BG)));
-    if (!pSlot)
-        return;
-
-    pSlot->Set_Size({ m_fDigitTotalWidth + m_vPadding.x * 2.f, m_fHeight + m_vPadding.y * 2.f });
-    Set_Size(pSlot->Get_PxSize());
+    pObj->Set_Size(_float2(m_fHeight * pSprite->Get_AspectRatio(), m_fHeight));
 }
 
 void CUI_DecibelDigits::Set_LayoutDigits()
@@ -118,34 +110,40 @@ void CUI_DecibelDigits::Set_LayoutDigits()
 
     for (_int i = 0; i < _countof(digitOrder); ++i)
     {
-        auto pSlot = Get_DigitSlot(digitOrder[i]);
-        if (!pSlot)
+        auto pDigit = Get_Digit(digitOrder[i]);
+        if (!pDigit)
             continue;
-         
-        pSlot->Set_AnchorOffset(vPos);
-        _float fOffsetX = pSlot->Get_PxSize().x * 0.9f;
+
+        pDigit->Set_AnchorOffset(vPos);
+        _float fOffsetX = pDigit->Get_PxSize().x * 0.9f;
         vPos.x += fOffsetX;
         m_fDigitTotalWidth += fOffsetX;
     }
 }
 
-CUI_Object* CUI_DecibelDigits::Get_Slot(ChildSlot slot)
+void CUI_DecibelDigits::Set_LayoutBg()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
-    return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
+    if (!m_handles[ENUM(Child::BG)].isValid())
+        return;
+
+    auto pBg = m_handles[ENUM(Child::BG)].Get();
+    pBg->Set_Size({ m_fDigitTotalWidth + m_vPadding.x * 2.f, m_fHeight + m_vPadding.y * 2.f });
+    Set_Size(pBg->Get_PxSize());
 }
 
-CUI_Object* CUI_DecibelDigits::Get_DigitSlot(DigitSlot slot)
+CUI_Object* CUI_DecibelDigits::Get_Digit(Digit digit)
 {
-    switch (slot)
+    UI_HANDLE handle = {};
+
+    switch (digit)
     {
-    case DigitSlot::DIGIT_1000: return Get_Slot(ChildSlot::DIGIT_1000);
-    case DigitSlot::DIGIT_100:  return Get_Slot(ChildSlot::DIGIT_100);
-    case DigitSlot::DIGIT_10:   return Get_Slot(ChildSlot::DIGIT_10);
-    case DigitSlot::DIGIT_1:    return Get_Slot(ChildSlot::DIGIT_1);
+    case Digit::DIGIT_1000: handle = m_handles[ENUM(Child::DIGIT_1000)]; break;
+    case Digit::DIGIT_100:  handle = m_handles[ENUM(Child::DIGIT_100)]; break;
+    case Digit::DIGIT_10:   handle = m_handles[ENUM(Child::DIGIT_10)]; break;
+    case Digit::DIGIT_1:    handle = m_handles[ENUM(Child::DIGIT_1)]; break;
     }
 
-    return nullptr;
+    return (handle.isValid()) ? handle.Get() : nullptr ;
 }
 
 CGameObject* CUI_DecibelDigits::Create()

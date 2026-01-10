@@ -15,8 +15,8 @@ private:
 	enum class DigitTexture { DIGIT0, DIGIT1, DIGIT2, DIGIT3, DIGIT4, DIGIT5, DIGIT6, DIGIT7, DIGIT8, DIGIT9, END };
 	static const string DIGIT_TEXTURES[ENUM(DigitTexture::END)];
 
-	enum class ChildSlot { BG, DIGIT_1000, DIGIT_100, DIGIT_10, DIGIT_1, END };
-	enum class DigitSlot { DIGIT_1000, DIGIT_100, DIGIT_10, DIGIT_1, END };
+	enum class Child { BG, DIGIT_1000, DIGIT_100, DIGIT_10, DIGIT_1, END };
+	enum class Digit { DIGIT_1000, DIGIT_100, DIGIT_10, DIGIT_1, END };
 
 private:
 	CUI_DecibelDigits() {}
@@ -42,20 +42,21 @@ private:
 
 	_float			m_fDigitTotalWidth = {};
 
+	UI_HANDLE		m_handles[ENUM(Child::END)];
+
 private:
-	static DigitSlot digitOrder[];
+	static Digit digitOrder[];
 
 private:
 	void Ready_PartObjects();
 	void Update_Digits(_int iDecibel);
 	void Update_Layout(); 
 
-	void Set_Digit(ChildSlot slot, DigitTexture texture);
-	void Set_LayoutBg();
+	void Set_Digit(Child child, DigitTexture texture);
 	void Set_LayoutDigits();
+	void Set_LayoutBg(); 
 
-	CUI_Object* Get_Slot(ChildSlot slot);
-	CUI_Object* Get_DigitSlot(DigitSlot slot);
+	CUI_Object* Get_Digit(Digit digit);
 
 public:
 	static  CGameObject* Create();
