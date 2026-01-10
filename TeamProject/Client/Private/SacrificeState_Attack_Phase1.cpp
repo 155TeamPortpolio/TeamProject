@@ -161,9 +161,8 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
-	blackBoard.stateQueue.push_back("Attack02_Phase1");
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
+	blackBoard.stateQueue.push_back("Attack06_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -378,7 +377,9 @@ void CSacrificeState_Attack_05_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(true).Speed(1.2f).Apply();
+
+	pOwner->ActiveLaser();
 }
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -396,6 +397,8 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
+
+		pOwner->DeactiveLaser();
 	}
 
 	pOwner->MoveByRootMotion(dt);

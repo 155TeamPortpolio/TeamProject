@@ -55,6 +55,7 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 			break;
 		case Engine::EFFECT_TYPE::TRAIL:
 			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_TrailNode", pNodeDesc);
+			break;
 		case Engine::EFFECT_TYPE::END:
 			break;
 		default:
@@ -99,6 +100,18 @@ void CEffectContainer::Update(_float dt)
 
 void CEffectContainer::Late_Update(_float dt)
 {
+}
+
+void CEffectContainer::Play()
+{
+	for (const auto& node : m_Nodes)
+		static_cast<CEffectNode*>(node)->Play();
+}
+
+void CEffectContainer::Stop()
+{
+	for (const auto& node : m_Nodes)
+		static_cast<CEffectNode*>(node)->Stop();
 }
 
 CEffectContainer* CEffectContainer::Create()

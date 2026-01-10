@@ -66,6 +66,10 @@ public:
     void OverDrive_Attack2();
     void OverDrive_Attack3();
 
+    /* Laser */
+    void ActiveLaser();
+    void DeactiveLaser();
+
     /* Effect */
     void Active_AttackSign()override;
 

@@ -94,7 +94,7 @@ void CTrailNode::Update(_float dt)
 		auto pCild = Get_Component<CChild>();
 		auto pEffectContainer = static_cast<CEffectContainer*>(pCild->Get_Parent());
 
-		if (pEffectContainer->IsLoop())
+		if (m_IsEffectActive)
 		{
 			_vector3 vRight = m_pTransform->Dir(STATE::RIGHT);
 			_vector3 vPosition = m_pTransform->Get_WorldPos();
@@ -112,6 +112,17 @@ void CTrailNode::Update(_float dt)
 
 void CTrailNode::Late_Update(_float dt)
 {
+}
+
+void CTrailNode::Play()
+{
+	m_IsEffectActive = true;
+	m_fElpasedTime = 0.f;
+}
+
+void CTrailNode::Stop()
+{
+	m_IsEffectActive = false;
 }
 
 CTrailNode* CTrailNode::Create()

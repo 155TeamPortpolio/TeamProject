@@ -62,8 +62,9 @@ PS_OUT PS_MAIN(PS_IN In)
     
     float4 vDiffuse = DiffuseTexture.Sample(LinearSampler, vTexcoord);
     float4 vResult = ApplyColorMode(ColorMode, vDiffuse, In.vColor);
+    float fColorMask = max(vDiffuse.b, max(vDiffuse.r, vDiffuse.g));
     float3 vColor = vResult.rgb;
-    float fAlpha = vResult.a * (1.f - In.vLifeTime.x / In.vLifeTime.y) * max(vDiffuse.b, max(vDiffuse.r, vDiffuse.g));
+    float fAlpha = vResult.a * (1.f - In.vLifeTime.x / In.vLifeTime.y) * fColorMask;
     
      /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;
@@ -72,7 +73,7 @@ PS_OUT PS_MAIN(PS_IN In)
     float4 vPremulColor = float4(vColor * fAlpha, fAlpha);
     
     Out.vDiffuseAcc = vPremulColor * fWeight;
-    Out.vBloomAcc = SoftExtractBright(vPremulColor, 0.8f, 0.5f, 1.f) * fWeight;
+    Out.vBloomAcc = float4(0.f, 0.f, 0.f, 0.f); //SoftExtractBright(vPremulColor, 0.8f, 0.5f, 1.f) * fWeight;
     Out.vBloomInfo = float4(0.f, 1.f, 0.f, 0.f);
     Out.vRevealage = float4(fAlpha, fAlpha, fAlpha, fAlpha);
     

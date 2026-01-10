@@ -52,6 +52,8 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 	m_InstanceName = "ParticleNode";
 
 	pParticle->SetParticleParams(*pParticleNode);
+	if (m_IsLoop)
+		m_IsEffectActive = true;
 
 	return S_OK;
 }
@@ -77,6 +79,17 @@ void CParticleNode::Update(_float dt)
 
 void CParticleNode::Late_Update(_float dt)
 {
+}
+
+void CParticleNode::Play()
+{
+	m_IsEffectActive = true;
+	m_fElpasedTime = 0.f;
+}
+
+void CParticleNode::Stop()
+{
+	m_IsEffectActive = false;
 }
 
 CParticleNode* CParticleNode::Create()

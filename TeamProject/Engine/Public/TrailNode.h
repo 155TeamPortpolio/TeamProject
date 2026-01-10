@@ -20,6 +20,10 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    virtual void Play() override;
+    virtual void Stop() override;
+
+public:
     static CTrailNode* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;

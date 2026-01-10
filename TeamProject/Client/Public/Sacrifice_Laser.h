@@ -24,12 +24,18 @@ public:
     void    Late_Update(_float dt) override;
 
 public:
+    void ActiveLaser();
+    void DeactiveLaser();
+
+public:
     static CSacrifice_Laser* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     void Free() override;
 
 private:
-    CEffectContainer* m_pLaserEffect = { nullptr };
+    _bool m_IsPendingDeactive = false;
+    _float m_fElapseTime{};
+    _float m_fDuration = 0.5f;
 };
 
 NS_END

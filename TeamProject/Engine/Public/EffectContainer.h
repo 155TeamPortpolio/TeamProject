@@ -19,6 +19,8 @@ public:
 	void Late_Update(_float dt) override;
 
 public:
+	void Play();
+	void Stop();
 	_bool IsLoop()const { return m_IsLoop; }
 
 public:
