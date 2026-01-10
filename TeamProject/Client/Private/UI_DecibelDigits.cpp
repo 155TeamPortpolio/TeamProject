@@ -131,7 +131,7 @@ void CUI_DecibelDigits::Set_LayoutBg()
     Set_Size(pBg->Get_PxSize());
 }
 
-CUI_Object* CUI_DecibelDigits::Get_Digit(Digit digit)
+CUI_Object* CUI_DecibelDigits::Get_Digit(Digit digit) const
 {
     UI_HANDLE handle = {};
 

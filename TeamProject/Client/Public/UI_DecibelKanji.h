@@ -15,7 +15,7 @@ public:
 private:
 	static const string KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)];
 
-	enum class ChildSlot { BG, KANJI, END };
+	enum class Child { BG, KANJI, END };
 
 private:
 	CUI_DecibelKanji() {}
@@ -32,21 +32,22 @@ public:
 
 private:
 	const _float	m_fHeight = 50.f;
-	const _vector2	m_vPadding = { 5.f, 5.f };
+	const _vector2	m_vPadding = { 10.f, 10.f };
 
 	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 
 	_uint			m_iPrevState = { 999 };
 
+	UI_HANDLE		m_handles[ENUM(Child::END)];
+
 private:
 	void Ready_PartObjects();
-	void Set_Kanji(CUI_Decibel::State texture);
+	void Set_Color();
+	void Set_Kanji(CUI_Decibel::State texture); 
 
-	void Set_KanjiTexture(CUI_Object* pKanji, string textureKey);
-	void Set_Layout(CUI_Object* pKanji, CUI_Object* pBg);
-
-	CUI_Object* Get_Slot(ChildSlot slot);
+	void Set_KanjiTexture(string textureKey);
+	void Set_Layout();
 
 public:
 	static  CGameObject* Create();

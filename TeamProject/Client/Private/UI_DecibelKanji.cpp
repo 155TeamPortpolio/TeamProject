@@ -33,66 +33,71 @@ HRESULT CUI_DecibelKanji::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelKanji::Update(_float dt)
 {
-    ////상태 바뀌었을 때만 실행하고 싶은데, 컬러가 바로 안 바뀜
-    //if (*m_pState == m_iPrevState)
-    //    return;
-    //
-    //m_iPrevState = *m_pState;
+    Set_Color();
 
-    Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
+    if (*m_pState != m_iPrevState)
+    {
+        m_iPrevState = *m_pState;
+        Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
+    } 
 }
 
 void CUI_DecibelKanji::Ready_PartObjects()
 {
-    for (_int i = 0; i < ENUM(ChildSlot::END); ++i)
-    {
-        CUI_Object* pSlot = Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_Image" })
-            .Build("kanji" + to_string(i));
-        Get_Component<CObjectContainer>()->Add_Child(pSlot);
-    }
+    auto pContainer = Get_Component<CObjectContainer>();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-    auto pBg = Get_Slot(ChildSlot::BG);
-
-    if (pBg)
+    for (_int i = 0; i < ENUM(Child::END); ++i)
     {
-        pBg->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
-        pBg->Set_Color(Helper::HexToColor("#000000"));
+        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" })
+            .Build("decibelKanji" + to_string(i));
+
+        if (i == ENUM(Child::BG))
+        {
+            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+            pObj->Set_Color(Helper::HexToColor("#000000"));
+        }
+
+        pContainer->Add_Child(pObj);
+        m_handles[i] = pObj->Get_Handle();
     }
+}
+
+void CUI_DecibelKanji::Set_Color()
+{
+    if (m_handles[ENUM(Child::KANJI)].isValid())
+        m_handles[ENUM(Child::KANJI)].Get()->Set_Color(*m_pColor);
+
+    m_vColor.w = (*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f ;
 }
 
 void CUI_DecibelKanji::Set_Kanji(CUI_Decibel::State texture)
 {
-    auto pKanji = Get_Slot(ChildSlot::KANJI);
-    auto pBg = Get_Slot(ChildSlot::BG);
+    Set_KanjiTexture(KANJI_TEXTURES[ENUM(texture)]);
+    Set_Layout();
+}
 
-    if (!pKanji || !pBg)
+void CUI_DecibelKanji::Set_KanjiTexture(string textureKey)
+{
+    if (!m_handles[ENUM(Child::KANJI)].isValid())
         return;
 
-    Set_KanjiTexture(pKanji, KANJI_TEXTURES[ENUM(texture)]);
-    pKanji->Set_Color(*m_pColor);
-    Set_Layout(pKanji, pBg);
+    auto pObj = m_handles[ENUM(Child::KANJI)].Get();
+    pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
+    pObj->Set_Size(_float2(m_fHeight * pObj->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
+    pObj->Set_AnchorOffset(m_vPadding);
 }
 
-void CUI_DecibelKanji::Set_KanjiTexture(CUI_Object* pKanji, string textureKey)
+void CUI_DecibelKanji::Set_Layout()
 {
-    pKanji->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
-    pKanji->Set_Size(_float2(m_fHeight * pKanji->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
-}
+    if (!m_handles[ENUM(Child::BG)].isValid())
+        return;
 
-void CUI_DecibelKanji::Set_Layout(CUI_Object* pKanji, CUI_Object* pBg)
-{
-    const _float2 vSize = pKanji->Get_PxSize();
-    pBg->Set_Size({ vSize.x + m_vPadding.x * 2.f, vSize.y + m_vPadding.y * 2.f});
-
-    pBg->Set_AnchorOffset({ 0.f, 0.f });
-    pKanji->Set_AnchorOffset(m_vPadding);
-    m_vSize = pBg->Get_PxSize();
-}
-
-CUI_Object* CUI_DecibelKanji::Get_Slot(ChildSlot slot)
-{
-    auto pContainer = Get_Component<CObjectContainer>();
-    return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
+    auto pObj = m_handles[ENUM(Child::BG)].Get();
+    const _float2 vSize = m_handles[ENUM(Child::KANJI)].isValid() ? m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize() : _float2();
+    pObj->Set_Size({ vSize.x + m_vPadding.x * 2.f, vSize.y + m_vPadding.y * 2.f});
+    pObj->Set_AnchorOffset({ 0.f, 0.f });
+    m_vSize = pObj->Get_PxSize();
 }
 
 CGameObject* CUI_DecibelKanji::Create()
