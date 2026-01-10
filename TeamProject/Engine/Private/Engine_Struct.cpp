@@ -25,20 +25,22 @@ CGameObject* Engine::tagObjectHandle::Get()
 {
 	CGameObject* pObj = CGameInstance::GetInstance()->Get_ObjectMgr()->Request_Object({ Level,Layer,hObjID });
 
-	if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
-	if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
+	if (pObj) {
+		if (Level.empty()) Level = pObj->Get_LayerDesc().LevelTag;
+		if (Layer.empty()) Layer = pObj->Get_LayerDesc().LayerTag;
+	}
 	return pObj;
 }
 
 void Engine::tagObjectHandle::Delete()
 {
-auto mgr = CGameInstance::GetInstance()->Get_ObjectMgr();
+	auto mgr = CGameInstance::GetInstance()->Get_ObjectMgr();
 
-CGameObject* pObj = mgr->Request_Object({ Level, Layer, hObjID });
-if (!pObj) { Reset(); return; }
+	CGameObject* pObj = mgr->Request_Object({ Level, Layer, hObjID });
+	if (!pObj) { Reset(); return; }
 
-mgr->Remove_Object(pObj);
-Reset();
+	mgr->Remove_Object(pObj);
+	Reset();
 }
 
 PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
@@ -58,7 +60,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.iBurstCount = json.value("burst_count", node.iBurstCount);
 	node.fSpawnPerSec = json.value("spawn_per_sec", node.fSpawnPerSec);
 	node.iMaxSpawnParticleCount = json.value("max_spawn_particle_count", node.iMaxSpawnParticleCount);
-	
+
 	node.vStartSpeed.x = json.at("start_speed").at("x").get<_float>();
 	node.vStartSpeed.y = json.at("start_speed").at("y").get<_float>();
 	node.vStartLifeTime.x = json.at("start_life_time").at("x").get<_float>();
@@ -91,7 +93,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vAlphaKey.y = json.at("alpha_key").at("y").get<_float>();
 	node.vAlphaKey.z = json.at("alpha_key").at("z").get<_float>();
 	node.vAlphaKey.w = json.at("alpha_key").at("w").get<_float>();
-	
+
 	node.vRatio.x = json.at("ratio").at("x").get<_float>();
 	node.vRatio.y = json.at("ratio").at("y").get<_float>();
 
@@ -160,7 +162,7 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartScale.x = json.at("start_scale").at("x").get<_float>();
 	node.vStartScale.y = json.at("start_scale").at("y").get<_float>();
 	node.vStartScale.z = json.at("start_scale").at("z").get<_float>();
-	
+
 	node.vEndScale.x = json.at("end_scale").at("x").get<_float>();
 	node.vEndScale.y = json.at("end_scale").at("y").get<_float>();
 	node.vEndScale.z = json.at("end_scale").at("z").get<_float>();
@@ -221,7 +223,7 @@ void Engine::tagUIHandle::Reset()
 CUI_Object* Engine::tagUIHandle::Get()
 {
 	CUI_Object* pUI = CGameInstance::GetInstance()->Get_UIMgr()->Request_UIObject({ Level, hObjID });
-	if(pUI){
+	if (pUI) {
 		Level = pUI->Get_Level();
 		SystemIndex = pUI->Get_SystemIndex();
 	}
@@ -234,7 +236,7 @@ void Engine::tagUIHandle::Release()
 
 	CUI_Object* pUI = mgr->Request_UIObject({ Level, hObjID });
 	if (!pUI) { Reset(); return; }
-	
+
 	mgr->Remove_UIObject(pUI);
 	Reset();
 }
