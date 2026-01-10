@@ -2,14 +2,6 @@
 
 NS_BEGIN(Client)
 
-enum class UIEventType
-{ 
-	Enter_Monitor, Exit_Monitor
-};
-
-enum class UI_STATUS_OWNER { ROLE1, ROLE2, ROLE3, BOSS, END };
-enum class UI_STATUS_TYPE { HP, HP_BACK, SPECIAL, ULTIMATE, EX_GAUGE, EX_SKILL, GROGGY, END };
-
 typedef struct tagUIStatusValue {
 	_float			fCurValue = {};
 	_float			fMaxValue = {};
