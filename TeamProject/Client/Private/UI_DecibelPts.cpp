@@ -72,6 +72,7 @@ void CUI_DecibelPts::Init_BgObject(CUI_Object* pBg, CUI_Object* pPts)
     const _float2 pSize = pPts->Get_PxSize();
     pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });
     pBg->Set_Color(Helper::HexToColor("#000000"));
+    Set_Size(pBg->Get_PxSize());
 }
 
 CGameObject* CUI_DecibelPts::Create()

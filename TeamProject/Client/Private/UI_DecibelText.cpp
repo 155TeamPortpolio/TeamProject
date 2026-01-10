@@ -6,6 +6,8 @@
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
+const wstring CUI_DecibelText::TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)] = { L"", L"UPROAR", L"콤보", L"극한회피" };
+
 HRESULT CUI_DecibelText::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
@@ -30,59 +32,85 @@ HRESULT CUI_DecibelText::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelText::Update(_float dt)
 {
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+    Set_Color();
 
-    if (m_hText.isValid())
-        m_hText.Get()->Set_Color(*m_pColor);
+    if (*m_pState != m_iPrevState)
+    {
+        m_iPrevState = *m_pState;
+
+        Set_Text(TEXT_CONTENTS[*m_pState]);
+    }
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_DecibelText::Ready_PartObjects()
 {
     auto pGameInstance = CGameInstance::GetInstance();
     const auto& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-
-    CUI_Object* pText = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Text" }).Build("text");
-    CUI_Object* pBg = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_Image" }).Build("textBg"); 
-
-    if (!pText || !pBg)
-        return;
-
-    // 텍스트 먼저 띄우고나서 배경 사이즈 정해야해서 순서 이렇게
-    Init_TextObject(pText);
-    Init_BgObject(pBg, pText);
-
     auto pContainer = Get_Component<CObjectContainer>();
-    pContainer->Add_Child(pBg);
-    pContainer->Add_Child(pText);
+
+    for (_int i = 0; i < ENUM(Child::END); ++i)
+    {
+        string strPrototypeTag = "Proto_GameObject_Image";
+        if (i == ENUM(Child::TEXTS)) 
+            strPrototypeTag = "Proto_GameObject_Text";
+
+        CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
+            .Build("decibelText" + to_string(i));
+
+        if (i == ENUM(Child::BG))
+        {
+            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+            pObj->Set_Color(Helper::HexToColor("#000000"));
+        }
+        else if (i == ENUM(Child::TEXTS))
+        {
+            if (auto pTextSlot = pObj->Get_Component<CTextSlot>())
+            {
+                pTextSlot->Set_Font("NanumSquareNeo.spritefont");
+                pTextSlot->Set_Size(m_fTextScale);
+                pTextSlot->Set_Shear(_float2(-0.4f, 0.f));
+
+                pObj->Set_AnchorOffset(m_vPadding);
+            }
+        }
+
+        pContainer->Add_Child(pObj);
+        m_handles[i] = pObj->Get_Handle();
+    }
 }
 
-void CUI_DecibelText::Init_TextObject(CUI_Object* pText)
+void CUI_DecibelText::Set_Color()
 {
+    if (m_handles[ENUM(Child::TEXTS)].isValid())
+        m_handles[ENUM(Child::TEXTS)].Get()->Set_Color(*m_pColor);
+
+    m_vColor.w = (*m_pState == ENUM(CUI_Decibel::State::NONE)) ? 0.f : 1.f;
+}
+
+void CUI_DecibelText::Set_Text(const wstring& wstrText)
+{
+    if (!m_handles[ENUM(Child::TEXTS)].isValid() || !m_handles[ENUM(Child::BG)].isValid())
+        return;
+    
+    auto pText = m_handles[ENUM(Child::TEXTS)].Get();
     if (auto pTextSlot = pText->Get_Component<CTextSlot>())
     {
-        pTextSlot->Set_Font("NanumSquareNeo.spritefont");
-        pTextSlot->Set_Text(L"abcdefg");
-        pTextSlot->Set_Size(1.f);
-        //pTextSlot->Set_Color(Helper::HexToColor("#FFFFFF"));
-        pTextSlot->Set_Shear(_float2(-0.4f, 0.f));
-
-        pText->Set_Size(pTextSlot->Get_TextSize());
+        pTextSlot->Set_Text(wstrText);
+        string strText = Helper::ConvertToString(wstrText);
+        pTextSlot->Set_TextKey(strText);
+        pText->Get_Component<CSprite2D>()->Set_TextKey(strText);
+        auto textSize = pTextSlot->Get_TextSize() * m_fTextScale;
+        _float fShearX = fabs(pTextSlot->Get_Shear().x);
+        textSize.x += fShearX * textSize.y * 2.f;
+        pText->Set_Size(textSize);
     }
 
-    pText->Set_Color(Helper::HexToColor("#FFFF3E"));
-    pText->Set_AnchorOffset(m_vPadding);
-    m_hText = pText->Get_Handle();
-}
-
-void CUI_DecibelText::Init_BgObject(CUI_Object* pBg, CUI_Object* pText)
-{
-    if (auto pSprite = pBg->Get_Component<CSprite2D>())
-    {
-        pSprite->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
-    } 
+    auto pBg = m_handles[ENUM(Child::BG)].Get();
     const _float2 pSize = pText->Get_PxSize();
     pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });
-    pBg->Set_Color(Helper::HexToColor("#000000"));
+    Set_Size(pBg->Get_PxSize());
 }
 
 CGameObject* CUI_DecibelText::Create()

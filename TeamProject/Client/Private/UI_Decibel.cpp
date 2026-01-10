@@ -100,7 +100,7 @@ void CUI_Decibel::Set_Decibel(_float fDecibel)
     else
     {
         m_iState = State::NONE;
-        m_vTargetColor = Helper::HexToColor("#FFFFFF");
+        m_vTargetColor = Helper::HexToColor("#D8D1D5");
     }
 
     Layout();
@@ -116,10 +116,12 @@ void CUI_Decibel::Layout()
 
     _float2 vKanjiSize = m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize();
     _float2 vDigitsSize = m_handles[ENUM(Child::DIGITS)].Get()->Get_PxSize();
+    _float2 vPtsSize = m_handles[ENUM(Child::PTS)].Get()->Get_PxSize();
+    _float2 vTextsSize = m_handles[ENUM(Child::TEXTS)].Get()->Get_PxSize();
 
-    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x, 0.f));
-    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x + vDigitsSize.x, 0.f));
-    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x, vDigitsSize.y));
+    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, 0.f));
+    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.9f, vDigitsSize.y - vPtsSize.y));
+    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, vKanjiSize.y - vTextsSize.y));
 }
 
 void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CObjectContainer* pContainer, UI_HANDLE* pHandleOut)

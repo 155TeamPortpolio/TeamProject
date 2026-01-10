@@ -29,7 +29,7 @@ void CUI_BattleHUD::Awake()
     if (!pRoot)
         return;
 
-    Ready_Decibel(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(68.f, 136.f));
+    Ready_Decibel(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(50.f, 136.f));
   
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
@@ -38,15 +38,6 @@ void CUI_BattleHUD::Awake()
 
 void CUI_BattleHUD::Update(_float dt)
 {
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('G'))
-    //{
-    //    UI_STATUS_DESC desc = {};
-    //    desc.eOwner = UI_STATUS_OWNER::ROLE1;
-    //    desc.eType = UI_STATUS_TYPE::HP;
-    //    desc.fCurValue = 50.f;
-    //    desc.fMaxValue = 80.f;
-    //    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<UI_STATUS_DESC>({ desc });
-    //}
 }
 
 CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)

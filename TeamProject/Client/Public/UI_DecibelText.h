@@ -13,6 +13,11 @@ public:
 	}TEXT_DESC;
 
 private:
+	static const wstring TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)];
+
+	enum class Child { BG, TEXTS, END };
+
+private:
 	CUI_DecibelText() {}
 	CUI_DecibelText(const CUI_DecibelText& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_DecibelText() DEFAULT;
@@ -26,18 +31,20 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	const _float	m_fHeight = 12.f;
-	const _vector2	m_vPadding = { 10.f, 10.f };
-
+	const _float	m_fHeight = { 12.f };
+	const _float	m_fTextScale = { 0.32f };
+	const _vector2	m_vPadding = { 5.f, 5.f };
 	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 
-	UI_HANDLE		m_hText = {};
+	_uint			m_iPrevState = { 999 };
+
+	UI_HANDLE		m_handles[ENUM(Child::END)] = {};
 
 private:
 	void Ready_PartObjects();
-	void Init_TextObject(CUI_Object* pText);
-	void Init_BgObject(CUI_Object* pBg, CUI_Object* pText);
+	void Set_Color();
+	void Set_Text(const wstring& wstrText);
 
 public:
 	static  CGameObject* Create();
