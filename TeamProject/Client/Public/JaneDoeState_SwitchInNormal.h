@@ -5,7 +5,7 @@ NS_BEGIN(Client)
 
 class CJaneDoe;
 
-class CJaneDoe_SwitchInNormal :
+class CJaneDoeState_SwitchInNormal :
     public IHState<CJaneDoe>
 {
 public:
@@ -14,7 +14,7 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
-    static CJaneDoe_SwitchInNormal* Create() { return new CJaneDoe_SwitchInNormal(); }
+    static CJaneDoeState_SwitchInNormal* Create() { return new CJaneDoeState_SwitchInNormal(); }
     virtual void Free() override { __super::Free(); }
 };
 

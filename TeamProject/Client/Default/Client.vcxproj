@@ -195,9 +195,11 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h" />
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchIn.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
-    <ClInclude Include="..\public\JaneDoe_SwitchInNormal.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h" />
@@ -355,8 +357,10 @@
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp" />
-    <ClCompile Include="..\private\JaneDoe_SwitchInNormal.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInNormal.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />

@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "JaneDoe_SwitchInNormal.h"
+#include "JaneDoeState_SwitchInNormal.h"
 #include "JaneDoe.h"
 
-void CJaneDoe_SwitchInNormal::Enter(CJaneDoe* pOwner)
+void CJaneDoeState_SwitchInNormal::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Normal")
         .Speed(1.f)
@@ -13,7 +13,7 @@ void CJaneDoe_SwitchInNormal::Enter(CJaneDoe* pOwner)
         pOwner->Rotate(vDir);
 }
 
-void CJaneDoe_SwitchInNormal::Update(CJaneDoe* pOwner, _float dt)
+void CJaneDoeState_SwitchInNormal::Update(CJaneDoe* pOwner, _float dt)
 {
     IHState<CJaneDoe>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;
