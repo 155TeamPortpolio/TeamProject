@@ -39,8 +39,6 @@ void CJaneDoeState_Run::Enter(CJaneDoe* pOwner)
         pMoveState->Get_SubStateMachine()->Set_Int("RunEntryMode", 0);
     }
 
-    pOwner->Reset_LastValidKey();
-
     if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("End");
     else
@@ -88,8 +86,7 @@ void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
         .Speed(1.2f)
         .Apply();
-
-    pOwner->Reset_LastValidKey();
+    pOwner->Reset_InputBuffer();
 }
 
 void CJaneDoeState_Run_Turnback::Update(CJaneDoe* pOwner, _float dt)
