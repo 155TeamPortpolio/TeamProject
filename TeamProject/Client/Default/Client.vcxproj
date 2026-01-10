@@ -168,6 +168,7 @@
     <ClInclude Include="..\Public\CanvasPanel.h" />
     <ClInclude Include="..\public\CamPanel.h" />
     <ClInclude Include="..\Public\Character.h" />
+    <ClInclude Include="..\Public\Client_Enum.h" />
     <ClInclude Include="..\Public\Corin.h" />
     <ClInclude Include="..\Public\CorinState_Attack.h" />
     <ClInclude Include="..\Public\CorinState_Backstep.h" />
