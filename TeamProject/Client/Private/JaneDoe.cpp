@@ -188,6 +188,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchIn");
 
+	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
@@ -211,6 +214,7 @@ void CJaneDoe::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
+	//if (InputDevice()->Key_Tap(VK_SPACE)) On_SwitchIn(SWITCH::ATTACK);
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 }
 
