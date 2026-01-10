@@ -807,9 +807,6 @@
     <ClInclude Include="..\public\JaneDoeState_Run.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_Decibel.h">
       <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClInclude>
@@ -846,6 +843,9 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1216,9 +1216,6 @@
     <ClCompile Include="..\private\JaneDoeState_Run.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_Decibel.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel</Filter>
     </ClCompile>
@@ -1255,6 +1252,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
