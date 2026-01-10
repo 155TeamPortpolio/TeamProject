@@ -2,16 +2,16 @@
 #include "JaneDoeState_SwitchIn.h"
 
 #include "JaneDoe.h"
-#include "JaneDoe_SwitchInNormal.h"
-#include "JaneDoe_SwitchInAttack.h"
+#include "JaneDoeState_SwitchInAttack.h"
+#include "JaneDoeState_SwitchInNormal.h"
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
-        m_pSubStateMachine->Register_State("Normal", CJaneDoe_SwitchInNormal::Create());
-        m_pSubStateMachine->Register_State("Attack", CJaneDoe_SwitchInAttack::Create());
+        m_pSubStateMachine->Register_State("Normal", CJaneDoeState_SwitchInNormal::Create());
+        m_pSubStateMachine->Register_State("Attack", CJaneDoeState_SwitchInAttack::Create());
         //m_pSubStateMachine->Register_State("ExAttack", CJaneDoeState_BackStep::Create());
         //m_pSubStateMachine->Register_State("ParryAid", CJaneDoeState_BackStep::Create());
 

@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "JaneDoe_SwitchInAttack.h"
+#include "JaneDoeState_SwitchInAttack.h"
 
 #include "JaneDoe.h"
 
-void CJaneDoe_SwitchInAttack::Enter(CJaneDoe* pOwner)
+void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
 {
     if (!m_pSubStateMachine)
     {
@@ -20,7 +20,7 @@ void CJaneDoe_SwitchInAttack::Enter(CJaneDoe* pOwner)
     __super::Enter(pOwner);
 }
 
-void CJaneDoe_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
+void CJaneDoeState_SwitchInAttack::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 }

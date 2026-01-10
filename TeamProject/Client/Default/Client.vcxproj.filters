@@ -874,13 +874,13 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchIn.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\JaneDoe_SwitchInNormal.h">
+    <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\JaneDoe_SwitchInAttack.h">
+    <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1295,13 +1295,13 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\JaneDoe_SwitchInNormal.cpp">
+    <ClCompile Include="..\private\JaneDoeState_SwitchInNormal.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\JaneDoe_SwitchInAttack.cpp">
+    <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClCompile>
   </ItemGroup>
