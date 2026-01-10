@@ -129,7 +129,10 @@ void CCharacter::Late_Update(_float dt)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
+	_bool prevResetMove = m_inputInfo.resetMove;  // 기존 값 백업
+
 	m_inputInfo = inputInfo;
+	m_inputInfo.resetMove = prevResetMove;  // 복원
 
 	if (inputInfo.direction.LengthSquared() > 0.01f)
 	{
@@ -187,12 +190,11 @@ void CCharacter::Use_Evade()
 
 _bool CCharacter::Is_OppositeInput() const
 {
-	if (m_inputInfo.prevDirection.LengthSquared() < 0.01f ||
-		m_inputInfo.direction.LengthSquared() < 0.01f)
-		return false;
+	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
+	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
 
-	_vector3 vPrev = m_inputInfo.prevDirection;
-	_vector3 vCur = m_inputInfo.direction;
+	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
+	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
 	vPrev.Normalize();
 	vCur.Normalize();
 

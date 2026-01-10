@@ -87,6 +87,7 @@ void CJaneDoeState_Run_Turnback::Enter(CJaneDoe* pOwner)
         .Speed(1.2f)
         .Apply();
     pOwner->Reset_InputBuffer();
+    pOwner->Set_ResetMove(true);
 }
 
 void CJaneDoeState_Run_Turnback::Update(CJaneDoe* pOwner, _float dt)

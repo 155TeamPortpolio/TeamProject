@@ -21,7 +21,13 @@ public:
         _int z = 0;
         _vector3 direction = {};
         _vector3 prevDirection = {};
-        _float bufferTimer = 0.f;
+        _float   bufferTimer = 0.f;
+        // Turnback 판정용 추가
+        _int  prevMoveX = 0;
+        _int  prevMoveZ = 0;
+        _int  curMoveX = 0;
+        _int  curMoveZ = 0;
+        _bool resetMove = false;
     };
     enum class ROOTMOTION_MASK
     {
@@ -67,7 +73,9 @@ public:
 
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
     _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
+    _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
     void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
+    void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
     
     CAnimator3D*          Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }

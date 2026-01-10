@@ -153,7 +153,17 @@ void CBattlePlayer::Process_Movement(_float dt)
 	inputInfo.prevDirection = m_input.prevDirection;
 	inputInfo.bufferTimer = m_input.bufferTimer;
 
+	inputInfo.prevMoveX = m_input.previousMove.x;
+	inputInfo.prevMoveZ = m_input.previousMove.z;
+	inputInfo.curMoveX = m_input.currentMove.x;
+	inputInfo.curMoveZ = m_input.currentMove.z;
+
 	m_pCurrentCharacter->On_Move(inputInfo);
+	if (m_pCurrentCharacter->Get_InputReset())
+	{
+		m_input.previousMove = m_input.currentMove;
+		m_pCurrentCharacter->Set_ResetMove(false);
+	}
 }
 
 void CBattlePlayer::Process_Attack()
