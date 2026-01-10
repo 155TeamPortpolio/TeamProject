@@ -19,8 +19,8 @@ void CUIDirector::Set_BulkStatus(const vector<UI_STATUS_BULK_DESC>& bulkStatus)
 		for (const auto& value : status.statusValues)
 		{
 			desc.eType = value.first;
-			desc.fCurValue = value.second.fCurValue;
-			desc.fMaxValue = value.second.fMaxValue;
+			desc.value.fCurValue = value.second.fCurValue;
+			desc.value.fMaxValue = value.second.fMaxValue;
 			pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
 		} 
 	} 
@@ -37,8 +37,8 @@ void CUIDirector::Set_PlayerStatus(const vector<UI_PLAYER_STATUS_DESC>& playerSt
 		auto send = [&](UI_STATUS_TYPE type, const UI_STATUS_VALUE& value) 
 			{
 				desc.eType = type;
-				desc.fCurValue = value.fCurValue;
-				desc.fMaxValue = value.fMaxValue;
+				desc.value.fCurValue = value.fCurValue;
+				desc.value.fMaxValue = value.fMaxValue;
 				pEventSystem->Broadcast<UI_STATUS_DESC>({ desc });
 			};
 

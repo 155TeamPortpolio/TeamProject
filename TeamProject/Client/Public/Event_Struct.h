@@ -11,8 +11,7 @@ typedef struct tagUIStatusValue {
 typedef struct tagUIStatusDesc {
 	UI_STATUS_OWNER	eOwner = {};
 	UI_STATUS_TYPE	eType = {};
-	_float			fCurValue = {};
-	_float			fMaxValue = {};
+	UI_STATUS_VALUE	value = {};
 }UI_STATUS_DESC;
 
 /* UI로 전달되는 상태 정보를 정의하는 구조체 : status 일괄 */
