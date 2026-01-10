@@ -24,6 +24,7 @@
 #include "ThugBulkyEnforcer_Death.h"
 
 #include "ThugBulkyEnforcer_Collider.h"
+#include "AttackSign.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
 	: CEnemy()
@@ -319,6 +320,12 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::PopID();
 }
 
+void CThugBulkyEnforcer::Active_AttackSign()
+{
+	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
+	static_cast<CAttackSign*>(pAttackSign)->Active();
+}
+
 CThugBulkyEnforcer* CThugBulkyEnforcer::Create()
 {
 	CThugBulkyEnforcer* instance = new CThugBulkyEnforcer();
@@ -387,7 +394,10 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	pWeapon_R->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
 
 
-
+	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+		.Build("AttackSign");
+	pObjectContainer->Add_Child(pAttackSign, false);
+	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bip001 Head");
 
 	//"Ctr_R_Weapon_3"
 	//"Ctr_L_Weapon_3"

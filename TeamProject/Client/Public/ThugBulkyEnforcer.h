@@ -29,7 +29,8 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
-
+    void    Active_AttackSign() override;
+      
 public:
     static CThugBulkyEnforcer* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
