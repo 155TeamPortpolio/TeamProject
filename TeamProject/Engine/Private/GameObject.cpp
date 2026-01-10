@@ -264,7 +264,7 @@ LAYER_DESC CGameObject::Get_LayerDesc()
 OBJECT_HANDLE CGameObject::Get_Handle()
 {
 	OBJECT_HANDLE hObj = {};
-	if (m_LevelTag.empty() || m_pLayer) {
+	if (m_LevelTag.empty() || !m_pLayer) {
 		hObj.Layer = "";
 		hObj.Level = "";
 		hObj.hObjID = m_ObjectID;
