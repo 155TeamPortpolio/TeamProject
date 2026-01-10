@@ -427,6 +427,9 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Digits">
       <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch">
+      <UniqueIdentifier>{e300c58d-4dd8-4058-ab2e-ecbc5ba5b758}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -833,6 +836,9 @@
     </ClInclude>
     <ClInclude Include="..\public\DataBase.h">
       <Filter>03. Utility\05. DataBase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Switch.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
@@ -1242,6 +1248,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Switch.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp">
