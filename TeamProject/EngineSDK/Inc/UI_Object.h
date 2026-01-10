@@ -165,7 +165,7 @@ protected:
 	_float m_fRadian = {};
 	_uint m_iPriority = {UINT_MAX};
 
-	_int m_SystemIndex = {-1};
+	_int m_SystemIndex = {-1}; /* 유아이 매니저에서 배정한 벡터의 인덱스*/
 
 	_bool m_isClickable = {};
 

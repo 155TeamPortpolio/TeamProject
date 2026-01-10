@@ -222,20 +222,59 @@ const vector<CUI_Object*>& CUI_Manager::Get_LevelUI(const string& leveTag)
 
 CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 {
-	if (handle.Level == "")
+	// 삭제 예정이면 실패
+	auto itDelete = std::find_if(DeleteUIs.begin(), DeleteUIs.end(),
+		[&](CUI_Object* uiPtr)
+		{
+			return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+		});
+
+	if (itDelete != DeleteUIs.end())
 		return nullptr;
 
-	auto itLevel = m_UIObjects.find(handle.Level);
-	if (itLevel == m_UIObjects.end()) return nullptr;
+	const bool hasLevel = !handle.Level.empty();
 
-	auto itDelete = find_if(DeleteUIs.begin(), DeleteUIs.end(), [&](CUI_Object* pUI) {
-		if (pUI->Get_SystemIndex() == handle.hObjID)
-			return true;
-		return false;
-		});
-	if (itDelete != DeleteUIs.end()) return nullptr;
+	if (hasLevel)
+	{
+		auto itLevel = m_UIObjects.find(handle.Level);
+		if (itLevel != m_UIObjects.end())
+		{
+			UIobjects& uiList = itLevel->second;
 
-	return itLevel->second[handle.hObjID];
+			if (handle.SystemIndex >= 0 &&
+				handle.SystemIndex < static_cast<_int>(uiList.size()))
+			{
+				CUI_Object* candidate = uiList[handle.SystemIndex];
+				if (candidate && candidate->Get_ObjectID() == handle.hObjID)
+					return candidate;
+			}
+
+			auto itUI = std::find_if(uiList.begin(), uiList.end(),
+				[&](CUI_Object* uiPtr)
+				{
+					return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+				});
+
+			if (itUI != uiList.end())
+				return *itUI;
+		}
+	}
+
+	for (auto& levelPair : m_UIObjects)
+	{
+		UIobjects& uiList = levelPair.second;
+
+		auto itUI = std::find_if(uiList.begin(), uiList.end(),
+			[&](CUI_Object* uiPtr)
+			{
+				return uiPtr && uiPtr->Get_ObjectID() == handle.hObjID;
+			});
+
+		if (itUI != uiList.end())
+			return *itUI;
+	}
+
+	return nullptr;
 }
 
 void CUI_Manager::Sort_UI()

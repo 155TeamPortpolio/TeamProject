@@ -523,7 +523,8 @@ namespace Engine
 		template<typename TObject>
 		TObject* GetAs() const
 		{
-			static_assert(is_pointer_v<TObject*> == false, "TObject must be a type, not a pointer type.");
+			static_assert(std::is_pointer_v<TObject> == false, "TObject must be a type, not a pointer type.");
+
 			CGameObject* objectPtr = Get();
 			if (!objectPtr) return nullptr;
 			return dynamic_cast<TObject*>(objectPtr);
@@ -534,11 +535,13 @@ namespace Engine
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};
 		_uint hObjID = {};
+		_int SystemIndex = { -1 };
 
 		_bool isValid();
 		void Reset();
 		class CUI_Object* Get();
 		void Release();
+
 	}UI_HANDLE;
 
 	struct IK_CONTEXT
