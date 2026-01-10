@@ -11,6 +11,8 @@ namespace Engine
 
 	/* Key Input struct*/
 	typedef struct tagKeyDesc {
+		_int VK_Input = {-1};
+		string VK_Name = {};
 		_bool PrevDown = false;
 		_bool CurrDown = false;
 		KEY_STATE state = KEY_STATE::NONE_KEY;

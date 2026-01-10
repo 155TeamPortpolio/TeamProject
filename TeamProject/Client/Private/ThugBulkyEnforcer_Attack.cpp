@@ -104,7 +104,6 @@ void CThugBulkyEnforcer_Attack::Exit(CThugBulkyEnforcer* pOwner)
 {
 }
 
-
 void CThugBulkyEnforcer_Attack::Register_States()
 {
 	m_pSubStateMachine->Register_State("Attack01", CThugBulkyEnforcer_Attack1::Create());

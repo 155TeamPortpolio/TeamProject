@@ -43,6 +43,7 @@
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
+#include "ThugBulkyEnforcer_Collider.h"
 #include "Player.h"
 
 /* UI */
@@ -127,19 +128,6 @@ HRESULT CTestLevel::Awake()
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
-	//==============TestModel==========================
-	//auto testModel = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestModel" })
-	//	.CharacterController({})
-	//	.Build("Test_Model");
-
-	//objMgr->Add_Object(testModel, { "Test_Level", "Model_Layer"});
-
-	// =================TestMap==================
-	//auto testMap = Builder::Create_Object({"Test_Level", "Proto_GameObject_TestMap"})
-	//	.Build("Test_Map");
-	//	
-	//objMgr->Add_Object(testMap, {"Test_Level", "Model_Layer"});
-
 	/* Miyabi */
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
 	//CCT_DESC miyabiCCT;
@@ -167,13 +155,14 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider", CThugBulkyEnforcer_Collider::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Test_Level");
+	//uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	Ready_TestObject();
