@@ -59,6 +59,9 @@ namespace Helper
 	ENGINE_DLL _uint Get_Digit(_int value, _int place);
 	/*Hex 색상 문자열을 _float4 컬러로 변환 #RRGGBB 또는 #RRGGBBAA*/
 	ENGINE_DLL _vector4 HexToColor(const string& hex);
+	ENGINE_DLL string VK_ToString(_int vk);
+	ENGINE_DLL string WideToUtf8(const wchar_t* wideText);
+
 }
 
 //json 저장 및 불러오기

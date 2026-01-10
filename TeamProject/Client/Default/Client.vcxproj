@@ -197,6 +197,9 @@
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
+    <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\UI_Decibel.h" />
     <ClInclude Include="..\Public\UI_DecibelDigits.h" />
@@ -359,6 +362,9 @@
     <ClCompile Include="..\private\JaneDoeState_RushAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Walk.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp" />
+    <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\UI_Decibel.cpp" />
     <ClCompile Include="..\Private\UI_DecibelDigits.cpp" />
