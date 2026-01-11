@@ -14,6 +14,7 @@
 #include "CorinState_NormalAttack.h"
 #include "CorinState_Evade.h"
 #include "CorinState_SwitchIn.h"
+#include "CorinState_SwitchOut.h"
 
 #include "FootIK.h"
 
@@ -276,6 +277,7 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CCorinState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CCorinState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -323,6 +325,9 @@ HRESULT CCorin::Initialize_Transitions()
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+
+	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }

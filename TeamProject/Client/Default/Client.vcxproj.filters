@@ -474,7 +474,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut">
       <UniqueIdentifier>{73d70924-6c57-481c-a659-6b948073dd3f}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\EnemyCollider">
       <UniqueIdentifier>{837c0ff3-8790-45d5-9369-91e3ff5f8b08}</UniqueIdentifier>
     </Filter>
@@ -982,7 +982,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_SwitchInAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\public\Npc.h">
       <Filter>02. GameObject\Object\Npc</Filter>
     </ClInclude>
@@ -1006,6 +1006,9 @@
     </ClInclude>
     <ClInclude Include="..\public\BangBooAskState_Idle.h">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1454,7 +1457,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_SwitchInAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\private\Npc.cpp">
       <Filter>02. GameObject\Object\Npc</Filter>
     </ClCompile>
@@ -1478,6 +1481,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
