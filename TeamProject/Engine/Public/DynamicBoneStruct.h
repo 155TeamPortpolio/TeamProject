@@ -27,12 +27,12 @@ typedef struct DynamicBoneNode
 
 typedef struct DynamicBoneChainParam
 {
-    _float Inert        = { 0.0f };             // 0~1 (월드영향)
-    _float Damping      = { 0.2f };             // 0~1 (감쇠)
-    _float Elasticity   = { 0.002f };           // 0~1 (탄성)
-    _float Stiffness    = { 0.1f };             // 0~1 (강성)
-    _float GravityScale = { 0.002f };           // 중력 배율
-    _vector3 GravityDir = { 0.f, -1.f, 0.f };   // 중력 방향
+    _float Inert        = { 0.0f };           // 0~1 (월드영향)
+    _float Damping      = { 0.0f };           // 0~1 (감쇠)
+    _float Elasticity   = { 0.0f };           // 0~1 (탄성)
+    _float Stiffness    = { 0.0f };           // 0~1 (강성)
+    _float GravityScale = { 0.0f };           // 중력 배율
+    _vector3 GravityDir = { 0.f, -1.f, 0.f }; // 중력 방향
 }CHAIN_PARAM;
 
 typedef struct DynamicBoneChain {

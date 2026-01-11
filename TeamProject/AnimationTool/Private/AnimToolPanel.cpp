@@ -67,6 +67,12 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		}
 	}
 
+	if (m_pGameInstance->Get_InputDev()->Key_Tap('O')) {
+		if (nullptr != m_pSelectAnimator) {
+			m_pSelectAnimator->Delete_DB();
+		}
+	}
+
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('P')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Resize_Layer(2);

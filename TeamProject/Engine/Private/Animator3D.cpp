@@ -169,10 +169,13 @@ void CAnimator3D::Update_Animation(_float dt)
 	if (m_pDynamicBone) {
 
 		/* Update DynamicBone */
-		m_pDynamicBone->Update(dt);
+ 		m_pDynamicBone->Update(dt);
 
 		/* Additive Combined */
-		BuildDynamicBone();
+		if(m_pDynamicBone->isInitUpdated())
+			BuildDynamicBone();
+		else
+			m_FinalMatrices = m_CombinedMatrices;
 	}
 	else /* If Not Exist DynamicBone */
 		m_FinalMatrices = m_CombinedMatrices;
@@ -763,6 +766,11 @@ Matrix CAnimator3D::Get_OwnerWorldMatrix()
 void CAnimator3D::Reset_DynamicBoneMatrices()
 {
 	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
+}
+
+void CAnimator3D::Delete_DB()
+{
+	Safe_Release(m_pDynamicBone);
 }
 
 HRESULT CAnimator3D::Initialize_HumanoidRig()

@@ -21,7 +21,7 @@ public:
 public:
     void Init_Update();
     void Update(_float dt);
-
+    bool isInitUpdated() { return m_bInitUpdated; }
 protected:
     /* World */
     void WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);

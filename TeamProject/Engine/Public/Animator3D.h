@@ -166,6 +166,7 @@ public: /* DynamicBone */
     vector<_float4x4>& Get_DynamicBoneMatricesPtr() { return m_DynamicBoneMatrices; };
     void Reset_DynamicBoneMatrices();
     _bool isUsingDynamicBone() { return (m_pDynamicBone != nullptr); }
+    void Delete_DB();
 
 public: /* IKSolver */
     HRESULT Initialize_HumanoidRig();

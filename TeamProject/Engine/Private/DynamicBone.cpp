@@ -56,7 +56,7 @@ void CDynamicBone::Init_Update()
 						m_pAnimator->Get_BoneQuaternion(CAnimator3D::BoneSpace::COMBINED, Node.BoneIndex);
 					Node.AnimWorldQuat.Normalize();
 
-					Node.DynamicPrevQuat = Node.DynamicCurQuat = Node.AnimWorldQuat;
+					Node.DynamicPrevQuat = Node.DynamicCurQuat;//= Node.AnimWorldQuat;
 				}
 			}
 		}
@@ -134,7 +134,8 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 			if (i == 0)
 			{
 				Chain.Nodes[i].DynamicCurPos = Chain.Nodes[i].AnimWorldPos;
-				Chain.Nodes[i].DynamicPrevPos = Chain.Nodes[i].AnimWorldPos;
+				//Chain.Nodes[i].DynamicPrevPos = Chain.Nodes[i].AnimWorldPos;
+				Chain.Nodes[i].DynamicCurQuat = parentQuat;
 				continue;
 			}
 
@@ -150,12 +151,12 @@ void CDynamicBone::WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt)
 				Group.ChainParam,
 				dt
 			);
-			//
-			//Simulate_WorldQuat(
-			//	Chain.Nodes[i],
-			//	parentQuat,
-			//	Group.ChainParam
-			//);
+			
+			Simulate_WorldQuat(
+				Chain.Nodes[i],
+				parentQuat,
+				Group.ChainParam
+			);
 		}
 	}
 
@@ -222,8 +223,8 @@ void CDynamicBone::Calc_DynamicNode(DYNAMIC_NODE& Node, const _vector3& AnchorPr
 	_vector3 v = Node.DynamicCurPos - pivot;
 	v = _vector3::Transform(v, AnchorDeltaQuat);
 	/* 월드 이동값을 제외해야 추가 이동속도 계산이 안됌 */
-	Node.DynamicCurPos = pivot + v + AnchorDeltaPos;
-	Node.DynamicPrevPos += AnchorDeltaPos;
+	Node.DynamicCurPos = pivot + v;
+	//Node.DynamicPrevPos += AnchorDeltaPos;
 }
 
 void CDynamicBone::Simulate_WorldNode(DYNAMIC_NODE& Node,
@@ -303,10 +304,14 @@ void CDynamicBone::Simulate_WorldQuat(DYNAMIC_NODE& Node, const _quaternion& par
 	target.Normalize();
 
 	// 5. 현재 → 목표 회전 스프링
-	Quaternion toTarget = target * curQuat;
+	Quaternion InvCurQuat;
+	curQuat.Inverse(InvCurQuat);
+
+	Quaternion toTarget = target * InvCurQuat;
 	toTarget.Normalize();
 
-	Quaternion spring = Quaternion::Slerp(Quaternion::Identity,	toTarget, ChainParam.Stiffness);
+	Quaternion spring =
+		Quaternion::Slerp(Quaternion::Identity, toTarget, ChainParam.Stiffness);
 	spring.Normalize();
 
 	// 6. 다음 회전 예측
@@ -344,20 +349,21 @@ void CDynamicBone::ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group)
 			parentInv.Inverse(parentInv);
 
 			// 애니메이션 기준 방향 (부모 로컬)
-			Vector3 animDirL = Vector3::Transform(Node.AnimWorldPos - parentWorldPos, parentInv);
+			_vector3 animDirL = _vector3::Transform(Node.AnimWorldPos - parentWorldPos, parentInv);
 			animDirL.Normalize();
 
 			// 시뮬레이션 결과 방향 (부모 로컬)
-			Vector3 simDirL = Vector3::Transform(Node.DynamicCurPos - parentWorldPos, parentInv);
+			_vector3 simDirL = _vector3::Transform(Node.DynamicCurPos - parentWorldPos, parentInv);
 			simDirL.Normalize();
 
 			/* --- 로컬 기준 회전 델타 --- */
-			Quaternion deltaLocal =	Quaternion::FromToRotation(animDirL, simDirL);
+			_quaternion deltaLocal = _quaternion::FromToRotation(animDirL, simDirL);
 			deltaLocal.Normalize();
 
 			/* --- Additive용 로컬 델타 저장 --- */
 			m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex] =
 				Matrix::CreateFromQuaternion(deltaLocal);
+			//m_pAnimator->Get_DynamicBoneMatricesPtr()[Node.BoneIndex] = Matrix::Identity;
 		}
 	}
 }
@@ -447,7 +453,6 @@ void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 	Node.CombinedPrevPos = curPos;
 	Node.CombinedCurPos = nextPos;
 }
-
 
 /* 계산된 값에대한 회전 델타를 넘기는 작업 */
 void CDynamicBone::ApplySimulatedLocalNode(DYNAMIC_CHAIN_GROUP& Group)
