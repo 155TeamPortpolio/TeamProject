@@ -169,6 +169,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	COLLIDER_DESC AttackcolliderDesc = {};
 	AttackcolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
 	AttackcolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	AttackcolliderDesc.bTrigger = true;
 	AttackcolliderDesc.bAutoFit = false;
 	AttackcolliderDesc.eType = pDesc->eColliderType;
 	AttackcolliderDesc.vSize = pDesc->vAttackSize;
@@ -309,6 +310,14 @@ _bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject,
 		return false;
 
 	return pBattleCol->Get_Component<CCollider>()->Get_CompActive();
+}
+
+void CEnemy::Render_GUI_ForShowBattleColliderHit()
+{
+	ImGui::BeginDisabled(true);
+	ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
+	ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
+	ImGui::EndDisabled();
 }
 
 void CEnemy::Free()
