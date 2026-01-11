@@ -194,6 +194,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
+
+	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 	return S_OK;
 }
 
