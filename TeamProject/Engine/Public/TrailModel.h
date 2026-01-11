@@ -21,8 +21,16 @@ class ENGINE_DLL CTrailModel :
 		_float fDistanceAcc{};
 	}SEGMENT_POINT;
 
+	typedef struct tagLinePoint
+	{
+		_float3 vPositionA{};
+		_float3 vPositionB{};
+		_float fLifeTime{};
+		_float fWidth{};
+	}LINE_POINT;
+
 public:
-	enum class POINT_MODE { CENTER, SEGMENT, END };
+	enum class POINT_MODE { CENTER, SEGMENT, LINE, END };
 	enum class TEXTURE_MODE { STRETCH, TILE, END };
 	enum class COLOR_MODE : _uint { MULTIPLY = 0, ADDITIVE = 1, END = 2 };
 private:
@@ -53,15 +61,22 @@ public:
 	virtual HRESULT Draw(ID3D11DeviceContext* pContext, _uint Index)override;
 
 public:
+	void Reset();
 	void SetTrailParams(TRAIL_NODE trailDesc);
 	void Update_CenterPoint(_float3 position, _float dt);
 	void Update_SegmentPoint(_float3 position0, _float3 position1, _float dt);
+
+	void SetFadeOut(_bool fadeOut) { m_IsLineFadeOut = fadeOut; }
+	_bool IsLineFadeOut()const { return m_IsLineFadeOut; }
+	void Add_LinePoint(_float3 position0, _float3 position1);
+	void Update_LinePoint(_float dt);
 
 private:
 	void Divide_CenterPoints(vector<CENTER_POINT>& dividePoints);
 	void Divide_SegmentPoints(vector<SEGMENT_POINT>& dividePoints);
 	void Build_CenterVertices(vector<CENTER_POINT>& points);
 	void Build_SegmentVertices(vector<SEGMENT_POINT>& points);
+	void Build_LineVertices();
 
 	class CVI_Trail* m_pBuffer = { nullptr };
 
@@ -81,6 +96,10 @@ private:
 	_float m_fStartWidth{};
 	_float m_fEndWidth{};
 
+	/* Only Use Line Mode */
+	_bool m_IsLineFadeOut = false;
+	_float m_fLineFadeOutElapsedTime{};
+
 	_float m_fMaxLifeTime{};
 	_float m_fMinDistance{};
 	vector<VTXTRAIL> m_TrailVertices;
@@ -90,6 +109,9 @@ private:
 
 	/* Segment Mode */
 	deque<SEGMENT_POINT> m_SegmentPoints;
+
+	/* Line Mode */
+	deque<LINE_POINT> m_LinePoints;
 
 public:
 	static CTrailModel* Create();

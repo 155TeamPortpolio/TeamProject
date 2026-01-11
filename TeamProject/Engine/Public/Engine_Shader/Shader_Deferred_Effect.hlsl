@@ -1,6 +1,8 @@
 #include "Shader_Deferred_Define.hlsl"
 
 matrix g_WorldMatrix;
+float BloomScreenWidth;
+float BloomScreenHeight;
 
 BlendState BS_OITComposite
 {
@@ -78,17 +80,21 @@ PS_OUT_COMPOSITE PS_MAIN_COMPOSITE(PS_IN In)    //여기서 가중치 합성 후 원래 타�
 }
 
 //GaussianBlur
-static const float weights[9] =
+static const float weights[13] =
 {
-    0.2270270270,
-    0.1945945946,
-    0.1216216216,
-    0.0540540541,
-    0.0162162162,
-    0.0081081081,
-    0.0040540541,
-    0.0020270270,
-    0.0010135135
+    0.0999083581,
+    0.0968345011,
+    0.0881688166,
+    0.0754147853,
+    0.0605974824,
+    0.0457413795,
+    0.0324354950,
+    0.0216066977,
+    0.0135211259,
+    0.0079486599,
+    0.0043896669,
+    0.0022773292,
+    0.0011098816
 };
 
 struct PS_OUT_RESULT
@@ -110,15 +116,15 @@ PS_OUT_RESULT PS_BLOOM_BLURX(PS_IN In)
     if (bloomType < 0.5f) // Gaussian
     {
         float3 result = bright.rgb * weights[0];
-        float texelSize = bloomStrength / fScreenWidth;
+        float texelSize = bloomStrength / BloomScreenWidth;
         
-        for (int i = 1; i < 9; ++i)
+        for (int i = 1; i < 13; ++i)
         {
-            float4 brightSample = EffectBrightTexture.Sample(DefaultSampler,
+            float4 brightSample = EffectBrightTexture.Sample(LinearSampler,
                 In.vTexcoord + float2(texelSize * i, 0));
             result += brightSample.rgb * weights[i];
             
-            brightSample = EffectBrightTexture.Sample(DefaultSampler,
+            brightSample = EffectBrightTexture.Sample(LinearSampler,
                 In.vTexcoord - float2(texelSize * i, 0));
             result += brightSample.rgb* weights[i];
         }
@@ -149,13 +155,13 @@ PS_OUT_RESULT PS_BLOOM_BLURY(PS_IN In)
     if (bloomType < 0.5f) // Gaussian
     {
         float3 result = blurX.rgb * weights[0];
-        float texelSize = bloomStrength / fScreenHeight;
+        float texelSize = bloomStrength / BloomScreenHeight;
         
-        for (int i = 1; i < 9; ++i)
+        for (int i = 1; i < 13; ++i)
         {
-            result += EffectBlurXTexture.Sample(DefaultSampler,
+            result += EffectBlurXTexture.Sample(LinearSampler,
                 In.vTexcoord + float2(0, texelSize * i)).rgb * weights[i];
-            result += EffectBlurXTexture.Sample(DefaultSampler,
+            result += EffectBlurXTexture.Sample(LinearSampler,
                 In.vTexcoord - float2(0, texelSize * i)).rgb * weights[i];
         }
         
@@ -233,7 +239,7 @@ technique11 DefaultTechnique
     {
         SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_None, 0);
-        SetBlendState(BS_Premultiplied, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN_COMBINED();

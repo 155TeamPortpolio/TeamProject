@@ -17,6 +17,10 @@ public:
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
+    
+public:
+    virtual void Play() override;
+    virtual void Stop() override;
 
 public:
     static CParticleNode* Create();

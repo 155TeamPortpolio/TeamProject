@@ -94,12 +94,12 @@ inline auto* GraphicDevice() { return CGameInstance::GetInstance()->Get_GraphicD
 inline auto* InputDevice() { return CGameInstance::GetInstance()->Get_InputDev(); }
 inline auto* AudioDevice() { return CGameInstance::GetInstance()->Get_AudioDev(); }
 
-inline auto* TimeManger() { return CGameInstance::GetInstance()->Get_TimeMgr(); }
-inline auto* LevelManger() { return CGameInstance::GetInstance()->Get_LevelMgr(); }
-inline auto* PrototypeManger() { return CGameInstance::GetInstance()->Get_PrototypeMgr(); }
-inline auto* ObjectManger() { return CGameInstance::GetInstance()->Get_ObjectMgr(); }
+inline auto* TimeManager() { return CGameInstance::GetInstance()->Get_TimeMgr(); }
+inline auto* LevelManager() { return CGameInstance::GetInstance()->Get_LevelMgr(); }
+inline auto* PrototypeManager() { return CGameInstance::GetInstance()->Get_PrototypeMgr(); }
+inline auto* ObjectManager() { return CGameInstance::GetInstance()->Get_ObjectMgr(); }
 inline auto* UIManager() { return CGameInstance::GetInstance()->Get_UIMgr(); }
-inline auto* ResourceManger() { return CGameInstance::GetInstance()->Get_ResourceMgr(); }
+inline auto* ResourceManager() { return CGameInstance::GetInstance()->Get_ResourceMgr(); }
 inline auto* CameraManager() { return CGameInstance::GetInstance()->Get_CameraMgr(); }
 inline auto* LightManager() { return CGameInstance::GetInstance()->Get_LightMgr(); }
 inline auto* ClickManager() { return CGameInstance::GetInstance()->Get_ClickMgr(); }

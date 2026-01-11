@@ -210,14 +210,6 @@ HRESULT CJaneDoe::Initialize_Stat()
 	return S_OK;
 }
 
-void CJaneDoe::Update_Input(_float dt)
-{
-	__super::Update_Input(dt);
-
-	//if (InputDevice()->Key_Tap(VK_SPACE)) On_SwitchIn(SWITCH::ATTACK);
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-}
-
 void CJaneDoe::Update_States()
 {
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
@@ -297,7 +289,7 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CJaneDoe>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsAttack || m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
@@ -313,7 +305,7 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CJaneDoe>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}

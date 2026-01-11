@@ -3,6 +3,40 @@
 
 NS_BEGIN(Engine)
 
+class CRaycastFilterCallback : public PxQueryFilterCallback
+{
+public:
+    CRaycastFilterCallback(_uint iMask) : m_iTargetMask(iMask) {}
+
+    virtual PxQueryHitType::Enum preFilter(
+        const PxFilterData& filterData,
+        const PxShape* shape,
+        const PxRigidActor* actor,
+        PxHitFlags& queryFlags) override
+    {
+        // shape의 그룹이 레이의 마스크에 포함되는지 확인
+        PxU32 shapeGroup = filterData.word0;
+
+        if ((m_iTargetMask & shapeGroup) == 0)
+            return PxQueryHitType::eNONE;  // 무시
+
+        // 트리거 처리
+        if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
+            return PxQueryHitType::eTOUCH;  // 트리거는 Touch
+
+        return PxQueryHitType::eBLOCK;  // 일반 충돌은 Block
+    }
+
+    virtual PxQueryHitType::Enum postFilter(
+        const PxFilterData& filterData,
+        const PxQueryHit& hit) override
+    {
+        return PxQueryHitType::eNONE;
+    }
+private:
+    _uint m_iTargetMask;
+};
+
 class CPhysicsSystem final : public IPhysicsService
 {
 #ifdef USINGPHYSICS 
@@ -32,7 +66,6 @@ public:
 
 private:
     void Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT& outHit);
-    PxQueryFilterData Create_FilterData(const PHYSICS_RAY& desc);
 
     static PxFilterFlags SimulationFilterShader(
         PxFilterObjectAttributes attributes0, PxFilterData filterData0,

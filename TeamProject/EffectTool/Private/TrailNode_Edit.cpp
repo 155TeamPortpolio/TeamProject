@@ -7,6 +7,7 @@
 #include "MaterialData.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "Child.h"
 
 CTrailNode_Edit::CTrailNode_Edit()
 	:CTrailNode()
@@ -55,18 +56,40 @@ void CTrailNode_Edit::Update(_float dt)
 {
 	auto pTrail = Get_Component<CTrailModel>();
 
-	if (CTrailModel::POINT_MODE::CENTER == m_eMode)
+	switch (m_eMode)
+	{
+	case Engine::CTrailModel::POINT_MODE::CENTER:
 	{
 		_vector3 vPosition = m_pTransform->Get_WorldPos();
 		pTrail->Update_CenterPoint(vPosition, dt);
-	}
-	else
+
+	}break;
+	case Engine::CTrailModel::POINT_MODE::SEGMENT:
 	{
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
 		_vector3 vPosition1 = vPosition0;
 		vPosition1.y -= 5.f;
 
 		pTrail->Update_SegmentPoint(vPosition0, vPosition1, dt);
+
+	}break;
+	case Engine::CTrailModel::POINT_MODE::LINE:
+	{
+		auto pCild = Get_Component<CChild>();
+		auto pEffectContainer = static_cast<CEffectContainer*>(pCild->Get_Parent());
+
+		if (!pEffectContainer->IsLoop())
+			pTrail->SetFadeOut(true);
+
+		_vector3 vRight = m_pTransform->Dir(STATE::RIGHT);
+		_vector3 vPosition = m_pTransform->Get_WorldPos();
+		_vector3 vNextPostion = vPosition + vRight * 100.f;
+		pTrail->Add_LinePoint(vPosition, vNextPostion);
+		pTrail->Update_LinePoint(dt);
+
+	}break;
+	default:
+		break;
 	}
 }
 void CTrailNode_Edit::Late_Update(_float dt)
@@ -79,9 +102,12 @@ void CTrailNode_Edit::Render_GUI()
 	SetUp_TrailEffect();
 	ImGui::PopID();
 }
+
 void CTrailNode_Edit::Play()
 {
+
 }
+
 void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
 {
 	m_TextureKey = json.value("texture_key", m_TextureKey);

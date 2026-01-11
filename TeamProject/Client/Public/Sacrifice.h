@@ -21,7 +21,6 @@ private:
 public:
     HRESULT Initialize_Prototype()override;
     HRESULT Initialize(INIT_DESC* pArg)override;
-    void Post_EngineUpdate(_float dt) override;
     void    Awake() override;
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
@@ -66,6 +65,10 @@ public:
     void OverDrive_Attack1();
     void OverDrive_Attack2();
     void OverDrive_Attack3();
+
+    /* Laser */
+    void ActiveLaser(_uint mode);
+    void DeactiveLaser();
 
     /* Effect */
     void Active_AttackSign()override;

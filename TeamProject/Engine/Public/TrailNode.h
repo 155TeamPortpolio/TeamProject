@@ -1,5 +1,6 @@
 #pragma once
 #include "EffectNode.h"
+#include "TrailModel.h"
 
 NS_BEGIN(Engine)
 class ENGINE_DLL CTrailNode :
@@ -19,12 +20,16 @@ public:
     void Late_Update(_float dt) override;
 
 public:
+    virtual void Play() override;
+    virtual void Stop() override;
+
+public:
     static CTrailNode* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 
 protected:
-    _float2 m_vUVSpeed{};
-    _float2 m_vUVOffset{};
+    CTrailModel::POINT_MODE m_eMode{};
+
 };
 NS_END
