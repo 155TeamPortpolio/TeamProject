@@ -143,7 +143,7 @@ void COrbitCam::SetTarget(CGameObject* obj)
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
-    SetTarget(ObjectManger()->Request_Object(handle));
+    SetTarget(ObjectManager()->Request_Object(handle));
 }
 
 void COrbitCam::SyncFromCurTransform()

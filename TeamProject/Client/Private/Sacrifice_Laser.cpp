@@ -97,7 +97,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
