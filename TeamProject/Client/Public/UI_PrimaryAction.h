@@ -37,6 +37,7 @@ private:
 	void Set_InteractActive(_bool isActive);
 
 	void Set_Alive(Child child, _bool isAlive);
+	void Set_Color(Child child, _float4 vColor);
 	void Set_Animation(Child child, _int iIndex);
 
 	template<typename Func>

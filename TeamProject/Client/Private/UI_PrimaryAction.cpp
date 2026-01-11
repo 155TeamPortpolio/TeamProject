@@ -34,25 +34,23 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 
 void CUI_PrimaryAction::Update(_float dt)
 {
-    __super::Update(dt);
-
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //    Set_ActionMode(MODE::ATTACK);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //    Set_ActionMode(MODE::INTERACT);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //    Set_AttackActive(false);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-    //    Set_AttackActive(true);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-    //    Set_InteractActive(true);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
-    //    Set_InteractActive(false);
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+        Set_ActionMode(MODE::ATTACK);
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+        Set_ActionMode(MODE::INTERACT);
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+        Set_AttackActive(true);
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+        Set_AttackActive(false);
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
+        Set_InteractActive(true);
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
+        Set_InteractActive(false);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -87,9 +85,18 @@ void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
     if (m_eMode != MODE::ATTACK)
         return;
 
-    Set_Animation(Child::ATTACK_BG, isActive);
-    Set_Animation(Child::ATTACK_ICON, isActive);
-    Set_Animation(Child::ATTACK_MOUSE, isActive);
+    if (isActive)
+    {
+        Set_Color(Child::ATTACK_BG, UI_GRAY_DARKEST);
+        Set_Color(Child::ATTACK_ICON, UI_GRAY_LIGHTEST);
+        Set_Color(Child::ATTACK_MOUSE, UI_WHITE);
+    }
+    else
+    {
+        Set_Color(Child::ATTACK_BG, UI_GRAY_MEDIUM);
+        Set_Color(Child::ATTACK_ICON, UI_GRAY_DARK);
+        Set_Color(Child::ATTACK_MOUSE, UI_TRANSPARENT);
+    }
 }
 
 void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
@@ -111,6 +118,11 @@ void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
 void CUI_PrimaryAction::Set_Alive(Child child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
+}
+
+void CUI_PrimaryAction::Set_Color(Child child, _float4 vColor)
+{
+    ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }
 
 void CUI_PrimaryAction::Set_Animation(Child child, _int iIndex)

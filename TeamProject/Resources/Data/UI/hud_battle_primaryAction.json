@@ -152,12 +152,12 @@
                     "transform": {
                         "anchor": 4,
                         "anchorOffset": [
-                            -27.0,
-                            9.0
+                            -34.0,
+                            2.0
                         ],
                         "size": [
-                            54.0,
-                            54.0
+                            68.0,
+                            68.0
                         ],
                         "scale": [
                             1.0,
@@ -170,9 +170,9 @@
                         "radian": 0.0
                     },
                     "color": [
-                        1.0,
-                        1.0,
-                        1.0,
+                        0.5882353186607361,
+                        0.5882353186607361,
+                        0.5882353186607361,
                         1.0
                     ],
                     "pass": "Opaque",
@@ -232,7 +232,7 @@
                     ],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "SkillBtnAImg.png"
+                    "textureTag": "Eff_SkillUp_18.png"
                 },
                 {
                     "instanceName": "outline",
