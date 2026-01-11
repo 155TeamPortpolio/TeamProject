@@ -134,7 +134,9 @@ namespace nlohmann
                 if constexpr (std::is_same_v<T, double>)              return "Float";
                 if constexpr (std::is_same_v<T, bool>)                return "Bool";
                 if constexpr (std::is_same_v<T, std::string>)         return "String";
+                if constexpr (std::is_same_v<T, DirectX::XMFLOAT2>)   return "Float2";
                 if constexpr (std::is_same_v<T, DirectX::XMFLOAT3>)   return "Float3";
+                if constexpr (std::is_same_v<T, DirectX::XMFLOAT4>)   return "Float4";
                 return "END";
             }, value);
     }
@@ -163,7 +165,9 @@ namespace nlohmann
             else if (t == "Float")  value = j.at("value").template get<double>();
             else if (t == "Bool")   value = j.at("value").template get<bool>();
             else if (t == "String") value = j.at("value").template get<std::string>();
+            else if (t == "Float2") value = j.at("value").template get<DirectX::XMFLOAT2>();
             else if (t == "Float3") value = j.at("value").template get<DirectX::XMFLOAT3>();
+            else if (t == "Float4") value = j.at("value").template get<DirectX::XMFLOAT4>();
             else                    value = int64_t{ 0 };
         }
     };
