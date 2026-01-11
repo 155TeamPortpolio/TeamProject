@@ -34,23 +34,23 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 
 void CUI_PrimaryAction::Update(_float dt)
 {
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-        Set_ActionMode(MODE::ATTACK);
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-        Set_ActionMode(MODE::INTERACT);
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-        Set_AttackActive(true);
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-        Set_AttackActive(false);
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-        Set_InteractActive(true);
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
-        Set_InteractActive(false);
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //    Set_ActionMode(MODE::ATTACK);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //    Set_ActionMode(MODE::INTERACT);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+    //    Set_AttackActive(true);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+    //    Set_AttackActive(false);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
+    //    Set_InteractActive(true);
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
+    //    Set_InteractActive(false);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }

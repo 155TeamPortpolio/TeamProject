@@ -28,21 +28,21 @@ void CUI_BattleHUDAction::Update(_float dt)
 {
     __super::Update(dt);
 
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
-    {
-        for (_int i = 0; i < ENUM(Child::END); ++i)
-        {
-            Set_Active(static_cast<Child>(i), true);
-        }
-    }
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
-    {
-        for (_int i = 0; i < ENUM(Child::END); ++i)
-        {
-            Set_Active(static_cast<Child>(i), false);
-        }
-    }
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
+    //{
+    //    for (_int i = 0; i < ENUM(Child::END); ++i)
+    //    {
+    //        Set_Active(static_cast<Child>(i), true);
+    //    }
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
+    //{
+    //    for (_int i = 0; i < ENUM(Child::END); ++i)
+    //    {
+    //        Set_Active(static_cast<Child>(i), false);
+    //    }
+    //}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
