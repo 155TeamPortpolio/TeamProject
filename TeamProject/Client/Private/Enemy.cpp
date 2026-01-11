@@ -35,9 +35,9 @@ void CEnemy::Update(_float dt)
 
 BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
 {
-	// 추후에 캐릭터 여러명 나올 때 로직 나왔을 때 변경 예정
 	for (auto& info : m_PlayerCharacterInfos) {
-		if (true == info.isOnField)
+		if (true == info.isOnField && 
+			info.hObject == CBattleSystem::GetInstance()->GetCurCharacterHandle())
 			return &info;
 	}
 	return nullptr;

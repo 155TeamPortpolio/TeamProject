@@ -21,13 +21,10 @@ private:
 public:
 	void Update();
 
-public:
-	CBattlePlayer* GetBattlePlayer() const {return m_pBattlePlayer;}
-	OBJECT_HANDLE GetCurCharacterHandle() const;
-
-	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
-
-	_bool	GetActive() { return m_isActive; }
+public: //getter  
+	CBattlePlayer*					GetBattlePlayer() const {return m_pBattlePlayer;}
+	OBJECT_HANDLE					GetCurCharacterHandle() const;
+	_bool							GetActive() { return m_isActive; }
 	/* PLAYER, MONSTER, ENVOBJECT
 	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보들을 반환함 (읽기전용) */
 	const vector<BATTLEOBJ_INFO>&	GetBattleObjects(BATTLE_OBJ_TYPE eType) const;
@@ -35,14 +32,14 @@ public:
 	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보 컨테이너를 복사반환함 */
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);
 
-public:
+public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
-
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
 	// UI에서 캐릭터 선택시 부를 함수
 	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
+	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 
 private:
 	void	ClearBattleStage();
