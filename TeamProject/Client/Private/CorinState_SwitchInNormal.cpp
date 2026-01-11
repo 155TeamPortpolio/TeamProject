@@ -20,11 +20,30 @@ void CCorinState_SwitchInNormal::Update(CCorin* pOwner, _float dt)
 
     pOwner->Process_RootMotion(dt);
 
+    if (pOwner->Is_Attack())
+    {
+        pSwitch->Get_SubStateMachine()->Set_Int("ExitMode", 2);
+        pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
+        return;
+    }
+
+    if (pOwner->Is_Evade())
+    {
+        pSwitch->Get_SubStateMachine()->Set_Int("ExitMode", 3);
+        pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
+        return;
+    }
+
+    if (pOwner->Is_Move_Buffer())
+    {
+        pSwitch->Get_SubStateMachine()->Set_Int("ExitMode", 1);
+        pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
+        return;
+    }
+
     if (m_fAnimProgress >= 1.0f)
     {
         pSwitch->Get_SubStateMachine()->Set_Int("ExitMode", 0);
         pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
     }
-
-    
 }

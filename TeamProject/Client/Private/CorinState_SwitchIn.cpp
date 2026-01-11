@@ -49,8 +49,27 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
         m_pSubStateMachine->Reset_Trigger("Complete");
+
+        _int iExitMode = m_pSubStateMachine->Get_Int("ExitMode");
+        m_pSubStateMachine->Set_Int("ExitMode", 0);
+
         CStateMachine<CCorin>* pRootFSM = pOwner->Get_StateMachine();
-        pRootFSM->Set_Trigger("ToIdle");
+
+        switch (iExitMode)
+        {
+        case 1:
+            pRootFSM->Set_Trigger("ToMove");
+            break;
+        case 2:
+            pRootFSM->Set_Trigger("Attack");
+            break;
+        case 3:
+            pRootFSM->Set_Trigger("ToEvade");
+            break;
+        default:
+            pRootFSM->Set_Trigger("ToIdle");
+            break;
+        }
     }
 }
 
