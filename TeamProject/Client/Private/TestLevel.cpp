@@ -40,12 +40,14 @@
 #include "Anbi.h"
 #include "Corin.h"
 #include "JaneDoe.h"
-#include "Sacrifice.h"
+#include "Player.h"
+
+/* Enemy */
+#include "Sacrifice.h" 
 #include "SacrificeHand.h"
 #include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
-#include "Player.h"
 
 /* UI */
 #include "UIDirector.h"
