@@ -104,6 +104,8 @@ public:
     void     Rotate(_vector3 vDirection);
     _bool    Can_Evade() const;
     void     Use_Evade();
+    void     Buffer_Evade() { m_bEvadeBuffer = true; }
+    _bool    Use_EvadeBuffer();
     _bool    Is_OppositeInput() const;
 
 private:
@@ -130,6 +132,7 @@ protected:
 
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
+    _bool           m_bEvadeBuffer = { false };
     // 회피 시스템
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };

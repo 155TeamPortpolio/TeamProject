@@ -177,6 +177,7 @@ void CBattlePlayer::Process_Evade()
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 	{
 		m_pCurrentCharacter->On_Evade();
+		m_pCurrentCharacter->Buffer_Evade();
 	}
 }
 

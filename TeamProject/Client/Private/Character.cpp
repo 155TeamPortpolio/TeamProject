@@ -125,6 +125,7 @@ void CCharacter::Late_Update(_float dt)
 	m_pCCT->Late_Update(dt);
 	m_bIsAttack = false;
 	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
 }
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
@@ -186,6 +187,16 @@ void CCharacter::Use_Evade()
 		m_iEvadeCount = 0;
 		m_fEvadeTimer = 0.f;
 	}
+}
+
+_bool CCharacter::Use_EvadeBuffer()
+{
+	if (m_bEvadeBuffer)
+	{
+		m_bEvadeBuffer = false;
+		return true;
+	}
+	return false;
 }
 
 _bool CCharacter::Is_OppositeInput() const
