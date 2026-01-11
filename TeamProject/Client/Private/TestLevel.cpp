@@ -404,6 +404,7 @@ void CTestLevel::Ready_Npc()
 	auto pProto = PrototypeManager();
 	auto objMgr = ObjectManager();
 
+
 	/*Npc*/
 	CCT_DESC meowCCT;
 	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
