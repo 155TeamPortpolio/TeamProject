@@ -110,8 +110,12 @@ SlotValue CSlotFieldGui::MakeDefaultValue(SLOT_DATA_TYPE eType)
         return _bool(false);
     case MapTool::SLOT_DATA_TYPE::String:
         return string{};
+    case MapTool::SLOT_DATA_TYPE::Float2:
+        return XMFLOAT2{ 0.f, 0.f };
     case MapTool::SLOT_DATA_TYPE::Float3:
         return XMFLOAT3{ 0.f, 0.f, 0.f };
+    case MapTool::SLOT_DATA_TYPE::Float4:
+        return XMFLOAT4{ 0.f, 0.f, 0.f, 0.f };
     }
 
     return _int(0);
@@ -138,7 +142,9 @@ const char* CSlotFieldGui::FieldDataTypeName(SLOT_DATA_TYPE eType)
     case SLOT_DATA_TYPE::Float:  return "Float";
     case SLOT_DATA_TYPE::Bool:   return "Bool";
     case SLOT_DATA_TYPE::String: return "String";
+    case SLOT_DATA_TYPE::Float2: return "Float2";
     case SLOT_DATA_TYPE::Float3: return "Float3";
+    case SLOT_DATA_TYPE::Float4: return "Float4";
     default:                      return "END";
     }
 }
@@ -191,8 +197,14 @@ SlotValue& CSlotFieldGui::EnsureValue(_int iObjIndex, const FIELD_DATA_DEFINE& T
     case SLOT_DATA_TYPE::String:
         if (!std::holds_alternative<std::string>(it->second)) it->second = std::string{};
         break;
+    case SLOT_DATA_TYPE::Float2:
+        if (!std::holds_alternative<XMFLOAT2>(it->second)) it->second = XMFLOAT2{ 0,0 };
+        break;
     case SLOT_DATA_TYPE::Float3:
         if (!std::holds_alternative<XMFLOAT3>(it->second)) it->second = XMFLOAT3{ 0,0,0 };
+        break;
+    case SLOT_DATA_TYPE::Float4:
+        if (!std::holds_alternative<XMFLOAT4>(it->second)) it->second = XMFLOAT4{ 0,0,0,0 };
         break;
     default:
         break;
@@ -234,7 +246,9 @@ void CSlotFieldGui::from_json(const MTjson& j, SlotValue& value)
     else if (t == "Float")  value = j.at("value").get<_double>();
     else if (t == "Bool")   value = (_bool)j.at("value").get<bool>();
     else if (t == "String") value = j.at("value").get<std::string>();
+    else if (t == "Float2") value = j.at("value").get<DirectX::XMFLOAT2>();
     else if (t == "Float3") value = j.at("value").get<DirectX::XMFLOAT3>();
+    else if (t == "Float4") value = j.at("value").get<DirectX::XMFLOAT4>();
     else                    value = int64_t{ 0 };
 }
 
@@ -329,12 +343,28 @@ void CSlotFieldGui::DrawDefaultEditor(FIELD_DATA_DEFINE& def)
             def.defaultvalue = v;
         break;
     }
+    case MapTool::SLOT_DATA_TYPE::Float2:
+    {
+        XMFLOAT2 v = std::get<XMFLOAT2>(def.defaultvalue);
+        float arr[2] = { v.x, v.y };
+        if (ImGui::DragFloat2("##def_v2", arr, 0.01f))
+            def.defaultvalue = XMFLOAT2{ arr[0], arr[1] };
+        break;
+    }
     case MapTool::SLOT_DATA_TYPE::Float3:
     {
         XMFLOAT3 v = std::get<XMFLOAT3>(def.defaultvalue);
         float arr[3] = { v.x, v.y, v.z };
         if (ImGui::DragFloat3("##def_v3", arr, 0.01f))
             def.defaultvalue = XMFLOAT3{ arr[0], arr[1], arr[2] };
+        break;
+    }
+    case MapTool::SLOT_DATA_TYPE::Float4: 
+    {
+        XMFLOAT4 v = std::get<XMFLOAT4>(def.defaultvalue);
+        float arr[4] = { v.x, v.y, v.z, v.w };
+        if (ImGui::DragFloat4("##def_v4", arr, 0.01f))
+            def.defaultvalue = XMFLOAT4{ arr[0], arr[1], arr[2], arr[3] };
         break;
     }
     }
@@ -384,6 +414,14 @@ void CSlotFieldGui::DrawValueEditor(const FIELD_DATA_DEFINE& tab, SlotValue& v)
         ImGui::InputText("##s", p);
     } break;
 
+    case SLOT_DATA_TYPE::Float2:
+    {
+        auto* p = std::get_if<XMFLOAT2>(&v);
+        XMFLOAT2 cur = p ? *p : XMFLOAT2{ 0,0 };
+        float arr[2] = { cur.x, cur.y }; // XMFLOAT2 ¸â¹ö °¡Á¤
+        if (ImGui::DragFloat2("##v2", arr, 0.01f))
+            v = XMFLOAT2{ arr[0], arr[1] };
+    } break;
     case SLOT_DATA_TYPE::Float3:
     {
         auto* p = std::get_if<XMFLOAT3>(&v);
@@ -391,6 +429,14 @@ void CSlotFieldGui::DrawValueEditor(const FIELD_DATA_DEFINE& tab, SlotValue& v)
         float arr[3] = { cur.x, cur.y, cur.z }; // XMFLOAT3 ¸â¹ö °¡Á¤
         if (ImGui::DragFloat3("##v3", arr, 0.01f))
             v = XMFLOAT3{ arr[0], arr[1], arr[2] };
+    } break;
+    case SLOT_DATA_TYPE::Float4:
+    {
+        auto* p = std::get_if<XMFLOAT4>(&v);
+        XMFLOAT4 cur = p ? *p : XMFLOAT4{ 0,0,0,0 };
+        float arr[4] = { cur.x, cur.y, cur.z, cur.w }; // XMFLOAT3 ¸â¹ö °¡Á¤
+        if (ImGui::DragFloat4("##v4", arr, 0.01f))
+            v = XMFLOAT4{ arr[0], arr[1], arr[2], arr[3] };
     } break;
 
     default:
@@ -452,7 +498,7 @@ void CSlotFieldGui::DrawLeftPanel()
         ImGuiTableFlags_Resizable |
         ImGuiTableFlags_ScrollY;
 
-    const char* typeNames[] = { "Int","Float","Bool","String","Float3" };
+    const char* typeNames[] = { "Int","Float","Bool","String","Float2","Float3","Float4" };
 
     int deleteIdx = -1;
 

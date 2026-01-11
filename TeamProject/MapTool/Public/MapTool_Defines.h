@@ -12,7 +12,7 @@ namespace MapTool {
 	static constexpr unsigned int g_iMainFrame = 144;
 
 	enum class MAPOBJ_TYPE { PLACED, TRIGGER, DECAL, ALL, END};
-	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float3, END };
+	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float2, Float3, Float4, END };
 	static std::string g_TagMapToolLevel = "MapTool_Level";
 	static std::string g_TagFileName_MapData = "MapData";
 	using MTjson = nlohmann::ordered_json;
