@@ -373,6 +373,7 @@ namespace Engine
 		string TexturePath{};
 
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
+		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
 		_uint iColorMode{};
 		_bool isWorld = true;

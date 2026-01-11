@@ -47,6 +47,7 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.iColorMode = json.value("color_mode", node.iColorMode);
 	node.eType = json.value("effect_type", node.eType);

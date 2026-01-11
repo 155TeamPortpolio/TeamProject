@@ -74,6 +74,7 @@ public:
     void Active_AttackSign()override;
 
 private:
+    void Create_Children();
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();

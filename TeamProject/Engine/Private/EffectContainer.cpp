@@ -5,6 +5,7 @@
 #include "IResourceService.h"
 #include "IProtoService.h"
 #include "EffectNode.h"
+#include "BoneFollower.h"
 #include "ObjectContainer.h"
 
 CEffectContainer::CEffectContainer()

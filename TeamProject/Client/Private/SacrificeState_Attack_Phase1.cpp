@@ -160,10 +160,12 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack01_Phase1");
+	blackBoard.stateQueue.clear(); 
+	blackBoard.stateQueue.push_back("Attack07_Phase1");
 	blackBoard.stateQueue.push_back("Attack02_Phase1");
+	blackBoard.stateQueue.push_back("Attack03_Phase1");
 	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Arm_Recover");
 
 	blackBoard.isRequestNext = true;
 }
@@ -307,7 +309,14 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Asset("hit_ground_smoke.json")
 			.Position(vBonePosition)
 			.Build("Smoke");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+
+		auto flare = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hit_ground_flare.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
 
 	}
 }
@@ -462,7 +471,7 @@ void CSacrificeState_Attack_07_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_08").Loop(false).Speed(0.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_08").Loop(false).Speed(1.2f).Apply();
 
 	pOwner->Active_AttackSign();
 
@@ -498,14 +507,14 @@ void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 {
-	if (IsCrossAnimProgress(0.18f))
+	if (IsCrossAnimProgress(0.12f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
-		vBonePosition.y -= 1.f;
+		vBonePosition.y -= 0.2f;
 
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("hit_ground_smoke.json")
@@ -515,14 +524,14 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
 	}
 	
-	if (IsCrossAnimProgress(0.35f))
+	if (IsCrossAnimProgress(0.358f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001 L Hand");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
-		vBonePosition.y -= 1.f;
+		vBonePosition.y -= 0.2f;
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("hit_ground_smoke_strong.json")
 			.Position(vBonePosition)

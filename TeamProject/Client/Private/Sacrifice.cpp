@@ -11,6 +11,7 @@
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
 #include "Sacrifice_Laser.h"
+#include "EffectContainer.h"
 
 /* States */
 #include "StateMachine.h"
@@ -96,28 +97,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 
 	/* Child Object */
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-
-	{
-		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
-			.Build("Sacrifice_Hand");
-		pHand->Set_Alive(false);
-		m_iHandID = pObjectContainer->Add_Child(pHand, false);
-	}
-	
-	{
-		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Build("AttackSign");
-		pObjectContainer->Add_Child(pAttackSign, false);
-		pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
-	}
-
-	{
-		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
-			.Build("Sacrifice_Laser");
-		pObjectContainer->Add_Child(pLaser, false);
-		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
-	}
+	Create_Children();
 
 	return S_OK;
 }
@@ -141,6 +121,9 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
+	auto pSpark = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Spark");
+	pSpark->Get_Component<CBoneFollower>()->Sync_Transform(dt, pSpark->Get_Component<CTransform>());
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('7'))
 	{
@@ -382,6 +365,43 @@ void CSacrifice::Active_AttackSign()
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
 	static_cast<CAttackSign*>(pAttackSign)->Active();
+}
+
+void CSacrifice::Create_Children()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	{
+		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+			.Build("Sacrifice_Hand");
+		pHand->Set_Alive(false);
+		m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	}
+
+	{
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
+		pObjectContainer->Add_Child(pAttackSign, false);
+		pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
+	}
+
+	{
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+			.Build("Sacrifice_Laser");
+		pObjectContainer->Add_Child(pLaser, false);
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
+	}
+
+	{
+		auto pSpark = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_spark.json")
+			.Build("Sacrifice_Spark");
+		pObjectContainer->Add_Child(pSpark, false);
+		auto pSparkBoneFollower = pSpark->Add_Component<CBoneFollower>();
+		pSparkBoneFollower->Initialize(nullptr);
+		pSparkBoneFollower->Link_Bone(pAnimator, "Ctr_Limbs_03");
+	}
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()
