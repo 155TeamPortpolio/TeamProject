@@ -290,6 +290,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Move.h" />
     <ClInclude Include="..\public\UIDirector.h" />
     <ClInclude Include="..\public\UILoader.h" />
+    <ClInclude Include="..\Public\UI_PrimaryAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
     <ClInclude Include="Client.h" />
@@ -460,6 +461,7 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Move.cpp" />
     <ClCompile Include="..\private\UIDirector.cpp" />
     <ClCompile Include="..\private\UILoader.cpp" />
+    <ClCompile Include="..\Private\UI_PrimaryAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
     <ClCompile Include="Client.cpp" />

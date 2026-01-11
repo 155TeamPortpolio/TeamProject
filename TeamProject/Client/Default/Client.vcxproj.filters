@@ -460,6 +460,9 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Action">
       <UniqueIdentifier>{cb851a6e-7183-44e9-8306-456dc1efa230}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Primary">
+      <UniqueIdentifier>{79d806fe-e497-42b9-914f-cbe266d6aa46}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -914,6 +917,9 @@
     <ClInclude Include="..\Public\UI_BattleHUDAction.h">
       <Filter>02. GameObject\UI\BattleHUD\Action</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_PrimaryAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Primary</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1352,6 +1358,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PrimaryAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Primary</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
