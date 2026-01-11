@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "BangBooAsk.h"
+#include "BangBooPay.h"
 
 #include "GameInstance.h"
 
@@ -11,26 +11,26 @@
 
 //state
 #include "StateMachine.h"
-#include "BangBooAskState_Idle.h"
+#include "BangBooPayState_Idle.h"
 
-CBangBooAsk::CBangBooAsk()
+CBangBooPay::CBangBooPay()
     :CServiceNpc()
 {
 }
 
-CBangBooAsk::CBangBooAsk(const CBangBooAsk& rhs)
+CBangBooPay::CBangBooPay(const CBangBooPay& rhs)
     :CServiceNpc(rhs)
 {
 }
 
-HRESULT CBangBooAsk::Initialize_Prototype()
+HRESULT CBangBooPay::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Modelout.model");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Modelout.mat");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Idle_Start_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Idle_Start_Meta.json");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.model");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Modelout.mat");
+	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Idle_Start_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Pay/NPC_CashierBangbooPay_Idle_Start_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.model");
@@ -40,7 +40,7 @@ HRESULT CBangBooAsk::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CBangBooAsk::Initialize(INIT_DESC* pArg)
+HRESULT CBangBooPay::Initialize(INIT_DESC* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -51,7 +51,7 @@ HRESULT CBangBooAsk::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CBangBooAsk::Awake()
+void CBangBooPay::Awake()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.model");
@@ -66,25 +66,25 @@ void CBangBooAsk::Awake()
 		.Apply();
 }
 
-void CBangBooAsk::Priority_Update(_float dt)
+void CBangBooPay::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
 }
 
-void CBangBooAsk::Update(_float dt)
+void CBangBooPay::Update(_float dt)
 {
 	__super::Update(dt);
 	m_pStateMachine->Update(dt);
 }
 
-void CBangBooAsk::Late_Update(_float dt)
+void CBangBooPay::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
 }
 
-HRESULT CBangBooAsk::Initialize_StateMachine()
+HRESULT CBangBooPay::Initialize_StateMachine()
 {
-	m_pStateMachine = CStateMachine<CBangBooAsk>::Create();
+	m_pStateMachine = CStateMachine<CBangBooPay>::Create();
 	if (!m_pStateMachine)
 		return E_FAIL;
 
@@ -97,38 +97,38 @@ HRESULT CBangBooAsk::Initialize_StateMachine()
 	return S_OK;
 }
 
-HRESULT CBangBooAsk::Initialize_States()
+HRESULT CBangBooPay::Initialize_States()
 {
-	m_pStateMachine->Register_State("Idle", CBangBooAskState_Idle::Create());
+	m_pStateMachine->Register_State("Idle", CBangBooPayState_Idle::Create());
     return S_OK;
 }
 
-CBangBooAsk* CBangBooAsk::Create()
+CBangBooPay* CBangBooPay::Create()
 {
-	CBangBooAsk* instance = new CBangBooAsk();
+	CBangBooPay* instance = new CBangBooPay();
 
 	if (FAILED(instance->Initialize_Prototype()))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to create : CBangBooAsk");
+		MSG_BOX("Failed to create : CBangBooPay");
 	}
 
 	return instance;
 }
 
-CGameObject* CBangBooAsk::Clone(INIT_DESC* pArg)
+CGameObject* CBangBooPay::Clone(INIT_DESC* pArg)
 {
-	CBangBooAsk* instance = new CBangBooAsk(*this);
+	CBangBooPay* instance = new CBangBooPay(*this);
 
 	if (FAILED(instance->Initialize(pArg)))
 	{
 		Safe_Release(instance);
-		MSG_BOX("Failed to clone : CBangBooAsk");
+		MSG_BOX("Failed to clone : CBangBooPay");
 	}
 	return instance;
 }
 
-void CBangBooAsk::Free()
+void CBangBooPay::Free()
 {
 	__super::Free();
 

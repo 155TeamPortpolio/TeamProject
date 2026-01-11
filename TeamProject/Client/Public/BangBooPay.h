@@ -5,16 +5,16 @@ NS_BEGIN(Client)
 
 template<typename Type>
 class CStateMachine;
-class CBangBooAsk :
+class CBangBooPay :
     public CServiceNpc
 {
 private:
-    CBangBooAsk();
-    CBangBooAsk(const CBangBooAsk& rhs);
-    virtual ~CBangBooAsk() DEFAULT;
+    CBangBooPay();
+    CBangBooPay(const CBangBooPay& rhs);
+    virtual ~CBangBooPay() DEFAULT;
 
 public:
-    CStateMachine<CBangBooAsk>* Get_StateMachine() { return m_pStateMachine; }
+    CStateMachine<CBangBooPay>* Get_StateMachine() { return m_pStateMachine; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -29,10 +29,10 @@ private:
     HRESULT Initialize_States();
 
 private:
-    CStateMachine<CBangBooAsk>* m_pStateMachine{};
+    CStateMachine<CBangBooPay>* m_pStateMachine{};
 
 public:
-    static CBangBooAsk* Create();
+    static CBangBooPay* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
 };

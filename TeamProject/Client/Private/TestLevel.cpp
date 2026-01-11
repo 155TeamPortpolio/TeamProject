@@ -53,7 +53,7 @@
 
 /*npc*/
 #include "OfficeMeow.h"
-#include "BangBooAsk.h"
+#include "BangBooPay.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -433,7 +433,7 @@ void CTestLevel::Ready_Npc()
 	bangbooCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	bangbooCCT.vPos = { 22.5f, 1.5f, -30.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooAsk::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooPay::Create());
 	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
 		.CharacterController(bangbooCCT)
 		.Build("Test_Meow");

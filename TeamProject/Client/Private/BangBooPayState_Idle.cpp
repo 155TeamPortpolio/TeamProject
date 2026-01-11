@@ -21,12 +21,12 @@ void CBangBooPayState_Idle::Enter(CBangBooPay* pOwner)
     __super::Enter(pOwner);
 }
 
-void CBangBooPayState_Idle::Update(CBangBooAsk* pOwner, _float dt)
+void CBangBooPayState_Idle::Update(CBangBooPay* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 }
 
-void CBangBooPayState_Idle_Start::Enter(CBangBooAsk* pOwner)
+void CBangBooPayState_Idle_Start::Enter(CBangBooPay* pOwner)
 {
     auto pAnimator = pOwner->Get_Component<CAnimator3D>();
     pAnimator->Change_Animation(pOwner->Get_AnimName() + "Idle_Start")
@@ -34,7 +34,7 @@ void CBangBooPayState_Idle_Start::Enter(CBangBooAsk* pOwner)
         .Apply();
 }
 
-void CBangBooAskState_Idle_Loop::Enter(CBangBooAsk* pOwner)
+void CBangBooPayState_Idle_Loop::Enter(CBangBooPay* pOwner)
 {
     auto pAnimator = pOwner->Get_Component<CAnimator3D>();
     pAnimator->Change_Animation(pOwner->Get_AnimName() + "Idle_Loop")

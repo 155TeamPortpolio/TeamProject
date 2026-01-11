@@ -971,10 +971,10 @@
     <ClInclude Include="..\public\OfficeMeowState_Welcome.h">
       <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BangBooAsk.h">
+    <ClInclude Include="..\public\BangBooPay.h">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\BangBooAskState_Idle.h">
+    <ClInclude Include="..\public\BangBooPayState_Idle.h">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1434,10 +1434,10 @@
     <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp">
       <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BangBooAsk.cpp">
+    <ClCompile Include="..\private\BangBooPay.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
+    <ClCompile Include="..\private\BangBooPayState_Idle.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClCompile>
   </ItemGroup>
