@@ -34,11 +34,6 @@ private:
 	CGameInstance* m_pGameInstance{};
 	CCamDirector* m_pCamDirector{};
 
-	OBJECT_HANDLE  m_miyabiHandle{};
-	OBJECT_HANDLE  m_freeCamHandle{};
-	OBJECT_HANDLE  m_orbitCamHandle{};
-	OBJECT_HANDLE  m_seqCamHandle{};
-
 	// 임시) 쓰레드풀 작업 후 개선 및 위치 이동예정 - 경인
 	class CMapDataCloud* m_pMapDataCloud = { nullptr };
 

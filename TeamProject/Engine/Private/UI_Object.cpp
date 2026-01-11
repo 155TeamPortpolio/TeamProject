@@ -514,11 +514,16 @@ UI_HANDLE CUI_Object::Get_Handle()
 
     if (m_LevelTag.empty()) {
         hObj.Reset();
+        hObj.Level = m_LevelTag;
+        hObj.hObjID = m_ObjectID;
+        hObj.SystemIndex = m_SystemIndex;
+
         return hObj;
     }
 
     hObj.Level = m_LevelTag;
-    hObj.hObjID = m_SystemIndex;
+    hObj.hObjID = m_ObjectID;
+    hObj.SystemIndex = m_SystemIndex;
 
     return hObj;
 }

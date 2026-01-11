@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "JaneDoe.h"
 #include "GameInstance.h"
+#include "DataBase.h"
 
 #include "Material.h"
 
@@ -11,6 +12,8 @@
 #include "JaneDoeState_Idle.h"
 #include "JaneDoeState_Move.h"
 #include "JaneDoeState_Attack.h"
+#include "JaneDoeState_SwitchIn.h"
+#include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
 #include "JaneDoeState_Evade.h"
 
@@ -50,6 +53,9 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Initialize_Stat()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -61,7 +67,8 @@ void CJaneDoe::Awake()
 	m_pAnimator->Set_MotionBone(16);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
-	m_strName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
+	m_strName = "JaneDoe";
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();
@@ -75,7 +82,7 @@ void CJaneDoe::Priority_Update(_float dt)
 
 void CJaneDoe::Update(_float dt)
 {
-	Update_Input(dt);
+	//Update_Input(dt);
 	if (!m_bTest)
 	{
 		Update_States();
@@ -106,55 +113,15 @@ void CJaneDoe::Render_GUI()
 	}
 }
 
-void CJaneDoe::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
+void CJaneDoe::On_SwitchIn(SWITCH eType)
 {
-	auto pTransform = Get_Component<CTransform>();
-	_vector3 vRootDelta = m_pAnimator->Get_RootBoneMoveDelta();
-	_vector4 vQuatDelta = m_pAnimator->Get_RootBoneQuatDelta();
-	_vector3 vInputDir = Get_InputDir();
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::QUATERNION)) != 0)
-	{
-		if (desc.fRotateWeight >= 0.99f) pTransform->Add_Quaternion(vQuatDelta);
-		else if (desc.fRotateWeight > 0.01f)
-		{
-			_quaternion qWeighted = _quaternion::Slerp(_quaternion::Identity, vQuatDelta, desc.fRotateWeight);
-			pTransform->Add_Quaternion(qWeighted);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			Rotate(vInputDir);
-		}
-	}
-
-	if ((desc.iModeMask & ENUM(ROOTMOTION_MASK::MOVE)) != 0)
-	{
-		if (vRootDelta.x != 0.f || vRootDelta.z != 0.f)
-		{
-			_vector3 vWeightedDelta = vRootDelta * desc.fMoveWeight;
-			_quaternion qRot = pTransform->Get_QuaternionRotate();
-			m_pCCT->Move_RootMotion(vWeightedDelta, qRot, dt);
-		}
-	}
-	else
-	{
-		if (vInputDir.Length() > 0.01f)
-		{
-			vInputDir.Normalize();
-			m_pCCT->Move_Direction(vInputDir, desc.fMoveSpeed, dt);
-		}
-	}
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
 }
 
-void CJaneDoe::Process_RootMotion(_float dt, _uint iModeMask)
+void CJaneDoe::On_SwitchOut()
 {
-	ROOTMOTION_DESC desc;
-	desc.iModeMask = iModeMask;
-	Process_RootMotion(dt, desc);
+	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
@@ -181,6 +148,8 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Move", CJaneDoeState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CJaneDoeState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -215,6 +184,29 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Evade", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchIn");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Stat()
+{
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_fSpecialGauge = Desc.SpecialAttack;
+
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
+	m_fMaxHP = LVDesc.MaxHP;
+	m_fDefense = LVDesc.Defend;
+	m_fAttackPower = LVDesc.Attack;
+
 	return S_OK;
 }
 
@@ -222,6 +214,7 @@ void CJaneDoe::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
+	//if (InputDevice()->Key_Tap(VK_SPACE)) On_SwitchIn(SWITCH::EXATTACK);
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 }
 

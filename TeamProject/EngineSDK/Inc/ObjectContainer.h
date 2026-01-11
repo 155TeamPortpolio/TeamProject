@@ -44,6 +44,9 @@ public:
 public:
     const vector<class CGameObject*> Get_Children() { return m_ChildrenObjects; };
 
+public:
+    CGameObject* Get_ChildByOrder(_uint Index);
+
 private:    
     map<_uint, string> m_ChildrensName; /*오브젝트  ID, 이름*/
     map<_uint, _uint> m_IndexByID; /*오브젝트  ID, 인덱스*/

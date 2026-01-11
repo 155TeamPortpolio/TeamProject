@@ -141,6 +141,11 @@ void COrbitCam::SetTarget(CGameObject* obj)
     ClampTargets();
 }
 
+void COrbitCam::SetTarget(OBJECT_HANDLE handle)
+{
+    SetTarget(ObjectManger()->Request_Object(handle));
+}
+
 void COrbitCam::SyncFromCurTransform()
 {
     firstSnap = false;

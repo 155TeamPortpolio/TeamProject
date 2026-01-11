@@ -11,6 +11,8 @@ namespace Engine
 
 	/* Key Input struct*/
 	typedef struct tagKeyDesc {
+		_int VK_Input = {-1};
+		string VK_Name = {};
 		_bool PrevDown = false;
 		_bool CurrDown = false;
 		KEY_STATE state = KEY_STATE::NONE_KEY;
@@ -511,16 +513,38 @@ namespace Engine
 		void Reset();
 		class CGameObject* Get();
 		void Delete();
+		_bool operator==(const tagObjectHandle& rhs) {
+			return hObjID == rhs.hObjID;
+		}
+		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
+			Level = rhs.Level;
+			Layer = rhs.Layer;
+			hObjID = rhs.hObjID;
+			return *this;
+		}
+		class CGameObject* operator()() { return Get(); }
+		template<typename TObject>
+		TObject* GetAs() const
+		{
+			static_assert(std::is_pointer_v<TObject> == false, "TObject must be a type, not a pointer type.");
+
+			CGameObject* objectPtr = Get();
+			if (!objectPtr) return nullptr;
+			return dynamic_cast<TObject*>(objectPtr);
+		}
+
 	}OBJECT_HANDLE;
 
 	typedef struct ENGINE_DLL tagUIHandle {
 		string Level = {};
 		_uint hObjID = {};
+		_int SystemIndex = { -1 };
 
 		_bool isValid();
 		void Reset();
 		class CUI_Object* Get();
 		void Release();
+
 	}UI_HANDLE;
 
 	struct IK_CONTEXT
