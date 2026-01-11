@@ -59,7 +59,7 @@ void CBangBooPay::Awake()
 	pAnimator->Set_MotionBone(13); //Bip001
 
 	m_strAnimName = "NPC_CashierBangbooPay_";
-	m_strName = "Ask";
+	m_strName = "Pay";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
 		.Loop(false)
