@@ -32,7 +32,6 @@ private:
     HRESULT Initialize_Transitions();
 
 private:
-    virtual void Update_Input(_float dt) override;
     void         Update_States();
 
 private:

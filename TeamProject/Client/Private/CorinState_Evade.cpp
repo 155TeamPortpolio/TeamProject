@@ -7,7 +7,7 @@
 
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
-    pOwner->Use_Evade();
+   // pOwner->Use_Evade();
 
     if (!m_pSubStateMachine)
     {

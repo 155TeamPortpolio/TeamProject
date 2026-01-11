@@ -123,6 +123,37 @@ void CCharacter::Update(_float dt)
 void CCharacter::Late_Update(_float dt)
 {
 	m_pCCT->Late_Update(dt);
+	m_bIsAttack = false;
+	m_bIsEvade = false;
+	m_bEvadeBuffer = false;
+}
+
+void CCharacter::On_Move(const InputInfo& inputInfo)
+{
+	_bool prevResetMove = m_inputInfo.resetMove;  // 기존 값 백업
+
+	m_inputInfo = inputInfo;
+	m_inputInfo.resetMove = prevResetMove;  // 복원
+
+	if (inputInfo.direction.LengthSquared() > 0.01f)
+	{
+		_vector3 dir = inputInfo.direction;
+		dir.Normalize();
+		Rotate(dir);
+	}
+}
+
+void CCharacter::On_Attack()
+{
+	m_bIsAttack = true;
+}
+
+void CCharacter::On_Evade()
+{
+	if (!Can_Evade()) return;
+
+	m_bIsEvade = true;
+	Use_Evade();
 }
 
 void CCharacter::Rotate(_vector3 vDirection)
@@ -145,11 +176,6 @@ _bool CCharacter::Can_Evade() const
 	return true;
 }
 
-_bool CCharacter::Can_Switch() const
-{
-	return _bool();
-}
-
 void CCharacter::Use_Evade()
 {
 	++m_iEvadeCount;
@@ -163,13 +189,23 @@ void CCharacter::Use_Evade()
 	}
 }
 
+_bool CCharacter::Use_EvadeBuffer()
+{
+	if (m_bEvadeBuffer)
+	{
+		m_bEvadeBuffer = false;
+		return true;
+	}
+	return false;
+}
+
 _bool CCharacter::Is_OppositeInput() const
 {
-	if (m_input.previousMove.IsZero() || m_input.currentMove.IsZero())
-		return false;
+	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
+	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
 
-	_vector2 vPrev((_float)m_input.previousMove.x, (_float)m_input.previousMove.z);
-	_vector2 vCur((_float)m_input.currentMove.x, (_float)m_input.currentMove.z);
+	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
+	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
 	vPrev.Normalize();
 	vCur.Normalize();
 
@@ -177,67 +213,6 @@ _bool CCharacter::Is_OppositeInput() const
 	_float fAngle = XMConvertToDegrees(acosf(fDot));
 
 	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
-}
-
-void CCharacter::Update_Input(_float dt)
-{
-	m_input.prevDirection = m_input.direction;
-	m_input.previous = m_input.current;
-
-	KeyInput key;
-	if (InputDevice()->Key_Hold('W'))  key.z += 1;
-	if (InputDevice()->Key_Hold('S'))  key.z -= 1;
-	if (InputDevice()->Key_Hold('D'))  key.x += 1;
-	if (InputDevice()->Key_Hold('A'))  key.x -= 1;
-
-	m_input.current = key;
-
-	if (!key.IsZero())
-	{
-		if (m_input.lastValid.IsZero() || m_input.bufferTimer <= 0.f)
-			m_input.lastValid = key;
-
-		m_input.bufferTimer = KEY_BUFFER_TIME;
-
-		if (key != m_input.currentMove)
-		{
-			m_input.previousMove = m_input.currentMove;
-			m_input.currentMove = key;
-		}
-	}
-	else
-	{
-		m_input.bufferTimer -= dt;
-		if (m_input.bufferTimer < 0.f)
-		{
-			m_input.bufferTimer = 0.f;
-			m_input.lastValid.Reset();
-			m_input.previousMove.Reset();
-			m_input.currentMove.Reset();
-		}
-	}
-
-	m_input.direction = {};
-	if (!key.IsZero())
-	{
-		auto cam = CameraManager()->Get_ActiveCam();
-		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
-		_vector3 look = camTf->Dir(STATE::LOOK);
-		look.y = 0.f;
-		look.Normalize();
-		_vector3 right = _vector3::Up.Cross(look);
-		right.Normalize();
-		m_input.direction = look * (float)key.z + right * (float)key.x;
-		m_input.direction.Normalize();
-	}
-
-	m_bIsAttack = InputDevice()->Mouse_Tap(MOUSE_BTN::LB);
-	m_bIsEvade = InputDevice()->Mouse_Tap(MOUSE_BTN::RB) && Can_Evade();
-	//m_bIsSwitch = InputDevice()->Key_Tap(VK_SPACE) && Can_Switch();
-	m_bIsMove = m_input.IsMoving();
-	m_bIsInput = m_bIsAttack || m_bIsMove || m_bIsEvade;
-
-	if (InputDevice()->Key_Down('T')) m_bTest = !m_bTest;
 }
 
 void CCharacter::Update_Rotation(_float dt)

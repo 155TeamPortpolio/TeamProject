@@ -134,30 +134,6 @@ void CCorin::Render_GUI()
 	}
 }
 
-void CCorin::Update_Input(_float dt)
-{
-	__super::Update_Input(dt);
-
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	// 디버그용 레이캐스트
-	//if (input->Key_Hold('F'))
-	//{
-	//	PHYSICS_RAY_HIT hit;
-	//	_vector vLook = m_pTransform->Dir(STATE::LOOK);
-	//	m_pCCT->Shoot_Ray(vLook, 100.f, hit);
-	//}
-	//else
-	//{
-	//	m_pCCT->Clear_DebugRay();
-	//}
-
-	// 테스트용 점프 (J키)
-	if (input->Key_Down('J'))
-	{
-		m_pCCT->Jump(3.f);
-	}
-}
-
 void CCorin::Update_States()
 {
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
@@ -241,7 +217,7 @@ void CCorin::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CCorin>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsAttack || m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
@@ -257,7 +233,7 @@ void CCorin::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
