@@ -77,7 +77,6 @@ void CAttackSign::Update(_float dt)
 			m_fElapsedTime += dt;
 			_float t = m_fElapsedTime / m_fDuration;
 		
-			m_fAlpha = Math::Lerp(1.f, 0.f, Math::EaseInQuad(t));
 			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
 			m_fHeight = Math::Lerp(40.f, 1.f, Math::EaseOutSine(t));
 		}

@@ -49,7 +49,21 @@ void CEffectContainer_Edit::Priority_Update(_float dt)
 
 void CEffectContainer_Edit::Update(_float dt)
 {
-    __super::Update(dt);
+    //__super::Update(dt);
+
+	if (m_IsLoop)
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	else
+	{
+		m_fElapsedTime += dt;
+		if (m_fElapsedTime >= m_fDuration)
+		{
+			m_isAlive = false;
+			return;
+		}
+
+		Get_Component<CObjectContainer>()->UpdateChild(dt);
+	}
 }
 
 void CEffectContainer_Edit::Late_Update(_float dt)

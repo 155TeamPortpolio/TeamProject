@@ -122,8 +122,8 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-	auto pSpark = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Spark");
-	pSpark->Get_Component<CBoneFollower>()->Sync_Transform(dt, pSpark->Get_Component<CTransform>());
+	//auto pSpark = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Spark");
+	//pSpark->Get_Component<CBoneFollower>()->Sync_Transform(dt, pSpark->Get_Component<CTransform>());
 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('7'))
 	{

@@ -1,12 +1,17 @@
 #include "pch.h"
 #include "SacrificeState_Attack_Phase1.h"
+#include "Helper_Func.h"
+#include "GameInstance.h"
+
+/* Object */
+#include "SacrificeHand.h"
+#include "EffectContainer.h"
 #include "Sacrifice.h"
+
+/* Component */
 #include "CharacterController.h"
 #include "ObjectContainer.h"
-#include "Helper_Func.h"
-#include "SacrificeHand.h"
-#include "GameInstance.h"
-#include "EffectContainer.h"
+#include "BoneFollower.h"
 
 void CSacrificeState_Attack_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -324,7 +329,6 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(flare, { pOwner->Get_Level(),"Effect_Layer" });
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(smoke, { pOwner->Get_Level(),"Effect_Layer" });
-
 	}
 }
 
@@ -459,6 +463,8 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
+	Update_Effects(pOwner);
+
 	if (IsCrossAnimProgress(0.05f))
 		pOwner->ActiveSword();	
 
@@ -473,6 +479,22 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 void CSacrificeState_Attack_07_Phase1::Exit(CSacrifice* pOwner)
 {
 	static_cast<CSacrifice*>(pOwner)->DeactiveSword();
+}
+
+void CSacrificeState_Attack_07_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	if (IsCrossAnimProgress(0.05f))
+	{
+		auto smokeTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_trail.json")
+			.Build("Smoke");
+
+		auto smokeBoneFollower = smokeTrail->Add_Component<CBoneFollower>();
+		smokeBoneFollower->Initialize(nullptr);
+		smokeBoneFollower->Link_Bone(pOwner->Get_Component<CAnimator3D>(), "RootNode");
+
+		ObjectManager()->Add_Object(smokeTrail, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
@@ -514,6 +536,7 @@ void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 {
+	/* Jump Start */
 	if (IsCrossAnimProgress(0.12f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
@@ -528,7 +551,13 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 			.Position(vBonePosition)
 			.Build("Smoke");
 
+		auto pRockParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("rock_particle.json")
+			.Position(vBonePosition)
+			.Build("Rock");
+
 		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(pRockParticle, { pOwner->Get_Level(),"Effect_Layer" });
 	}
 	
 	if (IsCrossAnimProgress(0.358f))

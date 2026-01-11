@@ -83,6 +83,11 @@ void CEffectContainer::Priority_Update(_float dt)
 
 void CEffectContainer::Update(_float dt)
 {
+	/* Bone Follwer는 외부에서 부착해줌 */
+	auto pBoneFollwer = Get_Component<CBoneFollower>();
+	if (pBoneFollwer)
+		pBoneFollwer->Sync_Transform(dt, m_pTransform);
+
 	if (m_IsLoop)
 		Get_Component<CObjectContainer>()->UpdateChild(dt);
 	else

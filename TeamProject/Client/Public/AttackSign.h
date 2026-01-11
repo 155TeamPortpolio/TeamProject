@@ -37,7 +37,7 @@ private:
 
     _bool m_IsActive = false;
     _float m_fElapsedTime{};
-    _float m_fDuration = 0.35f;
+    _float m_fDuration = 0.65f;
 
 };
 
