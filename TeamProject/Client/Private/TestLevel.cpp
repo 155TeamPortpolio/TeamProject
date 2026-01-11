@@ -41,12 +41,15 @@
 #include "Anbi.h"
 #include "Corin.h"
 #include "JaneDoe.h"
-#include "Sacrifice.h"
+#include "Player.h"
+
+/* Enemy */
+#include "Sacrifice.h" 
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "ThugBulkyEnforcer.h"
-#include "ThugBulkyEnforcer_Collider.h"
-#include "Player.h"
+#include "EnemyAttackCollider.h"
+#include "EnemyTriggerCollider.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -154,16 +157,15 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 	//
 	//m_miyabiHandle = Miyabi->Get_Handle();
-	//
-	//// �÷��̾�(ĳ���͵�) ���� �������� ������ �ӽ�. if Player's logic is complete, It will be changed.
-	//CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
+
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider", CThugBulkyEnforcer_Collider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	
 	/*Npc*/
 	CCT_DESC meowCCT;

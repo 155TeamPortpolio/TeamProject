@@ -49,6 +49,9 @@ public:
     void                                Idle() { m_isIdle = true; }
     void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
     void                                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
+    void                                TurnOnAttackCollider(_bool isWeaponL = true);
+    void                                TurnOnTriggerCollider(_bool isWeaponL = true);
+    void                                FinishWeaponCollider();
 
 private:
     HRESULT Initialize_StateMachine();
@@ -68,6 +71,7 @@ private:
     HYSTERIESIS         m_tHysteriesis = {};
     
     _bool               m_isAutoPatternPlay = { true };
+    _bool               m_isShowBattleColliderObject = { true };
 
     /*For.AttackAlgorithm*/
     deque<_int>		    m_AttackHistory;
