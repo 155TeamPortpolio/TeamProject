@@ -214,7 +214,7 @@ void CJaneDoe::Update_Input(_float dt)
 {
 	__super::Update_Input(dt);
 
-	//if (InputDevice()->Key_Tap(VK_SPACE)) On_SwitchIn(SWITCH::ATTACK);
+	//if (InputDevice()->Key_Tap(VK_SPACE)) On_SwitchIn(SWITCH::EXATTACK);
 	auto input = CGameInstance::GetInstance()->Get_InputDev();
 }
 
