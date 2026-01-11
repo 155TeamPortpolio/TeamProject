@@ -24,10 +24,17 @@ public:
 private:
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 
+	const _float2	m_vOffset = { 91.f, 116.f };
+
 private:
 	void Ready_PartObjects();
 
-	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut = nullptr);
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut = nullptr, _float2 vOffset = {});
+
+	void Set_Active(Child child, _bool isActive);
+
+	template<typename Func>
+	void ForChild(Child child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -36,3 +43,13 @@ public:
 };
 
 NS_END
+
+template<typename Func>
+inline void CUI_BattleHUDAction::ForChild(Child child, Func&& func)
+{
+	auto& handle = m_handles[ENUM(child)];
+	if (!handle.isValid())
+		return;
+
+	func(handle.Get());
+}

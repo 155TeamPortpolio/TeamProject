@@ -6,6 +6,11 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 
+void CGaugeUI::Set_FillAmount(_float fFillAmount)
+{
+    m_fFillAmount = clamp(fFillAmount, 0.f, 1.f);
+}
+
 void CGaugeUI::Set_Status(UI_STATUS_OWNER eOwner, UI_STATUS_TYPE eType)
 {
     m_eOwner = eOwner;

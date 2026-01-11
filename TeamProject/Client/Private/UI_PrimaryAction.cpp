@@ -57,6 +57,16 @@ void CUI_PrimaryAction::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
+void CUI_PrimaryAction::UI_Active(void* pArg)
+{
+    Set_AttackActive(true);
+}
+
+void CUI_PrimaryAction::UI_DeActive(void* pArg)
+{
+    Set_AttackActive(false);
+}
+
 void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
 {
     if (m_eMode == eMode)

@@ -207,6 +207,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
+    <ClInclude Include="..\Public\UIDesign_Macro.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\UI_BattleHUDAction.h" />
     <ClInclude Include="..\Public\UI_Decibel.h" />
@@ -214,6 +215,7 @@
     <ClInclude Include="..\Public\UI_DecibelKanji.h" />
     <ClInclude Include="..\Public\UI_DecibelPts.h" />
     <ClInclude Include="..\Public\UI_DecibelText.h" />
+    <ClInclude Include="..\Public\UI_EvadeAction.h" />
     <ClInclude Include="..\Public\UI_Loading.h" />
     <ClInclude Include="..\Public\LoadingLevel.h" />
     <ClInclude Include="..\Public\UI_Logo.h" />
@@ -389,6 +391,7 @@
     <ClCompile Include="..\Private\UI_DecibelKanji.cpp" />
     <ClCompile Include="..\Private\UI_DecibelPts.cpp" />
     <ClCompile Include="..\Private\UI_DecibelText.cpp" />
+    <ClCompile Include="..\Private\UI_EvadeAction.cpp" />
     <ClCompile Include="..\Private\UI_Loading.cpp" />
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />

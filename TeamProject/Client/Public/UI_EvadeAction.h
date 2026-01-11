@@ -3,19 +3,17 @@
 
 NS_BEGIN(Client)
 
-class CUI_PrimaryAction final : public CUI_Object
+class CUI_EvadeAction final : public CUI_Object
 {
 private:
-	enum class MODE { ATTACK, INTERACT, END };
-
-	enum class Child { ATTACK, ATTACK_BG, ATTACK_ICON, ATTACK_MOUSE, INTERACT, INTERACT_GRADIENT, END };
+	enum class Child { BG, ICON, GAUGE_BG, GAUGE, MOUSE, END };
 
 	static const string INSTANCENAMES[ENUM(Child::END)];
 
 private:
-	CUI_PrimaryAction() {}
-	CUI_PrimaryAction(const CUI_PrimaryAction& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_PrimaryAction() DEFAULT;
+	CUI_EvadeAction() {}
+	CUI_EvadeAction(const CUI_EvadeAction& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_EvadeAction() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -28,17 +26,16 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	MODE			m_eMode = {};
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+	UI_HANDLE		m_hChildren[ENUM(Child::END)];
 
 private:
-	void Set_ActionMode(MODE eMode);
-	void Set_AttackActive(_bool isActive);
-	void Set_InteractActive(_bool isActive);
+	void Set_Active(_bool isActive);
+	void Set_FillAmount(_float fFillAmount);
 
 	void Set_Alive(Child child, _bool isAlive);
-	void Set_Animation(Child child, _int iIndex);
+	void Set_Color(Child child, _float4 vColor);
 
+private:
 	template<typename Func>
 	void ForChild(Child child, Func&& func);
 
@@ -51,9 +48,9 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_PrimaryAction::ForChild(Child child, Func&& func)
+inline void CUI_EvadeAction::ForChild(Child child, Func&& func)
 {
-	auto& handle = m_handles[ENUM(child)];
+	auto& handle = m_hChildren[ENUM(child)];
 	if (!handle.isValid())
 		return;
 

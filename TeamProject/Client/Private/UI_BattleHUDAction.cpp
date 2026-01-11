@@ -26,6 +26,24 @@ HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
 
 void CUI_BattleHUDAction::Update(_float dt)
 {
+    __super::Update(dt);
+
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //{
+    //    for (_int i = 0; i < ENUM(Child::END); ++i)
+    //    {
+    //        Set_Active(static_cast<Child>(i), true);
+    //    }
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //{
+    //    for (_int i = 0; i < ENUM(Child::END); ++i)
+    //    {
+    //        Set_Active(static_cast<Child>(i), false);
+    //    }
+    //}
+
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
@@ -34,24 +52,32 @@ void CUI_BattleHUDAction::Ready_PartObjects()
     auto pContainer = Get_Component<CObjectContainer>();
     const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-    Attach_Child(strLevelKey, "Proto_GameObject_PrimaryAction", "primary", nullptr, &m_handles[ENUM(Child::PRIMARY)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_PrimaryAction", "primary", &m_handles[ENUM(Child::PRIMARY)], _float2(0.f, m_vOffset.y));
+    Attach_Child(strLevelKey, "Proto_GameObject_EvadeAction", "evade", &m_handles[ENUM(Child::EVADE)], m_vOffset);
 }
 
-void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut)
+void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset)
 {
-    auto builder = Builder::Create_UIObject({ strLevelKey, strPrototypeTag });
+    CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
+            .Build(strInstanceName);
 
-    if (pDesc)
-        builder.Add_UIDesc(pDesc);
-
-    CUI_Object* pObj = builder.Build(strInstanceName);
     if (!pObj)
         return;
 
     Get_Component<CObjectContainer>()->Add_Child(pObj);
 
+    pObj->Set_AnchorOffset(vOffset);
+
     if (pHandleOut)
         *pHandleOut = pObj->Get_Handle();
+}
+
+void CUI_BattleHUDAction::Set_Active(Child child, _bool isActive)
+{
+    if(isActive)    
+        ForChild(child, [](CUI_Object* ui) { ui->UI_Active(); });
+    else
+        ForChild(child, [](CUI_Object* ui) { ui->UI_DeActive(); });
 }
 
 CGameObject* CUI_BattleHUDAction::Create()
