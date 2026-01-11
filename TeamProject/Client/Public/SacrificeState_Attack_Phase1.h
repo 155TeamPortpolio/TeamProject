@@ -74,7 +74,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
-	_bool m_IsSpawnEffect = false;
+	void Update_Effects(CSacrifice* pOwner);
 };
 
 class CSacrificeState_Attack_04_1_Phase1 : public IBaseState<CSacrifice>
@@ -113,8 +113,6 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
-	_bool m_IsLaserActive = false;
-	_bool m_IsLaserDeactive = false;
 
 };
 
@@ -130,8 +128,6 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
-	_bool m_IsLaserActive = false;
-	_bool m_IsLaserDeactive = false;
 };
 
 class CSacrificeState_Attack_07_Phase1 : public IBaseState<CSacrifice>
@@ -162,7 +158,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
-	void Update_Effects();
+	void Update_Effects(CSacrifice* pOwner);
 	void Update_Weapons(CSacrifice* pOwner);
 	void Update_Move(CSacrifice* pOwner, _float dt);
 
