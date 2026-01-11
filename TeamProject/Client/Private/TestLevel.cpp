@@ -50,6 +50,7 @@
 
 /*npc*/
 #include "OfficeMeow.h"
+#include "BangBooAsk.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -175,9 +176,10 @@ HRESULT CTestLevel::Awake()
 	meowCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	meowCCT.vPos = { 0.f, 1.5f, 0.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", CBangBooAsk::Create());
 	auto testMeow = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OfficeMeow" })
 		.CharacterController(meowCCT)
+		//.Scale(_float3(0.01, 0.01,0.01))
 		.Build("Test_Meow");
 
 	objMgr->Add_Object(testMeow, { "Test_Level", "Npc_Layer" });
