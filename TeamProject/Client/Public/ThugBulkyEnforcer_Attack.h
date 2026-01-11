@@ -66,6 +66,8 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack3* Create() { return new CThugBulkyEnforcer_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+	_bool	m_isSecondAttack = { false };
 };
 
 // 바닥 짚기 ? 내려찍기 ? 3과 이어지는 착지하는 모션으로 추정

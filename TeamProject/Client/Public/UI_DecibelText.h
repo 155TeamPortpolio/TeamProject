@@ -4,23 +4,23 @@
 
 NS_BEGIN(Client)
 
-class CUI_DecibelKanji final : public CUI_Object
+class CUI_DecibelText final : public CUI_Object
 {
 public:
-	typedef struct tagKanjiDesc : public UI_DESC {
+	typedef struct tagTextDesc : public UI_DESC {
 		const _uint*	pState = { nullptr };
 		const _float4*	pColor = { nullptr };
-	}KANJI_DESC;
+	}TEXT_DESC;
 
 private:
-	static const string KANJI_TEXTURES[ENUM(CUI_Decibel::State::END)];
+	static const wstring TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)];
 
-	enum class Child { BG, KANJI, END };
+	enum class Child { BG, TEXTS, END };
 
 private:
-	CUI_DecibelKanji() {}
-	CUI_DecibelKanji(const CUI_DecibelKanji& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_DecibelKanji() DEFAULT;
+	CUI_DecibelText() {}
+	CUI_DecibelText(const CUI_DecibelText& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_DecibelText() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -31,23 +31,20 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	const _float	m_fHeight = 50.f;
-	const _vector2	m_vPadding = { 10.f, 10.f };
-
+	const _float	m_fHeight = { 12.f };
+	const _float	m_fTextScale = { 0.32f };
+	const _vector2	m_vPadding = { 5.f, 5.f };
 	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
 
 	_uint			m_iPrevState = { 999 };
 
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+	UI_HANDLE		m_handles[ENUM(Child::END)] = {};
 
 private:
 	void Ready_PartObjects();
 	void Set_Color();
-	void Set_Kanji(CUI_Decibel::State texture); 
-
-	void Set_KanjiTexture(string textureKey);
-	void Set_Layout();
+	void Set_Text(const wstring& wstrText);
 
 public:
 	static  CGameObject* Create();

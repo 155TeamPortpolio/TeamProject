@@ -90,7 +90,7 @@ void CGaugeUI::Load(const nlohmann::ordered_json& data)
 
 void CGaugeUI::Set_FillAmount(const UI_STATUS_DESC& desc)
 { 
-    m_fFillAmount = clamp(desc.fCurValue / max(desc.fMaxValue, 1.f), 0.f, 1.f);
+    m_fFillAmount = clamp(desc.value.fCurValue / max(desc.value.fMaxValue, 1.f), 0.f, 1.f);
 }
 
 CGameObject* CGaugeUI::Create()

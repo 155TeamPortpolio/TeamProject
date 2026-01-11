@@ -40,26 +40,6 @@ void CThugBulkyEnforcer_Attack::Enter(CThugBulkyEnforcer* pOwner)
 		}
 	}
 
-	//auto pStateMachine = pOwner->Get_StateMachine();
-	//if (nullptr == pStateMachine)
-	//	return;
-	//_int iAttackPatternIndex = pStateMachine->Get_Int("AttackPattern");
-	//if (0 != iAttackPatternIndex) {
-	//	pStateMachine->Set_Int("AttackPattern", 0);
-	//	BuildPattern(blackboard, iAttackPatternIndex);
-	//}
-	//else {
-	//	auto RandomNums = Pick3RandomIndex();
-	//
-	//	for (size_t i = 0; i < RandomNums.size(); i++)
-	//	{
-	//		if (i < RandomNums.size() - 1)
-	//			BuildPattern(blackboard, RandomNums[i], true);
-	//		else
-	//			BuildPattern(blackboard, RandomNums[i], false);
-	//	}
-	//}
-	
 	if (false != blackboard.stateQueue.empty()) {
 		pOwner->Idle();
 		return;
@@ -295,6 +275,7 @@ void CThugBulkyEnforcer_Attack1::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_01")
 		.Apply();
+	pOwner->Active_AttackSign(); 
 }
 
 void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -327,6 +308,7 @@ void CThugBulkyEnforcer_Attack2::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_02")
 		.Apply();
+	pOwner->Active_AttackSign();
 }
 
 void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -358,6 +340,8 @@ void CThugBulkyEnforcer_Attack3::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_03")
 		.Apply();
+	pOwner->Active_AttackSign();
+	m_isSecondAttack = false;
 }
 
 void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -368,6 +352,12 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	if (false == m_isSecondAttack && m_fAnimProgress > 0.22f) {
+		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
+		pOwner->Active_AttackSign();
+		m_isSecondAttack = true;
+	}
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.45f)
@@ -388,6 +378,7 @@ void CThugBulkyEnforcer_Attack4::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_04")
 		.Apply();
+	pOwner->Active_AttackSign();
 }
 
 void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -417,7 +408,9 @@ void CThugBulkyEnforcer_Attack4::Exit(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Attack5_1::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_05_01")
+		.Speed(1.2f)
 		.Apply();
+	pOwner->Active_AttackSign();
 }
 
 void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -447,7 +440,9 @@ void CThugBulkyEnforcer_Attack5_1::Exit(CThugBulkyEnforcer* pOwner)
 void CThugBulkyEnforcer_Attack5_2::Enter(CThugBulkyEnforcer* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugBulkyEnforcer_Ani_Attack_05_02")
+		.Speed(1.2f)
 		.Apply();
+	pOwner->Active_AttackSign();
 }
 
 void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)

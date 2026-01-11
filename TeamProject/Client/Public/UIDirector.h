@@ -1,9 +1,8 @@
 #pragma once
-
 #include "Base.h"
 
 NS_BEGIN(Engine)
-class CGameInstance; class CUI_Object; class IUI_Service;
+class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
@@ -16,20 +15,25 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
-	/*모든 레벨에 필요한 공통 데이터 등록*/
+	/* 일괄로 전달된 상태 데이터를 개별 UI 상태 이벤트로 브로드캐스트 */
+	void Set_BulkStatus(const vector<UI_STATUS_BULK_DESC>& bulkStatus);
+	/* 플레이어의 모든 상태(HP, Special, Ultimate)를 개별 UI 상태 이벤트로 브로드캐스트 */
+	void Set_PlayerStatus(const vector<UI_PLAYER_STATUS_DESC>& playerStatus);
+
+public:
+	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
-	/*레벨별로 필요한 프로토타입, 게임 오브젝트 등록*/
+	/* 레벨별로 필요한 프로토타입, 게임 오브젝트 등록 */
 	void Load_LevelObjects(const string& levelKey);
 
 private:
-	/*json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장*/
+	/* json 파일에 저장된 레벨별 오브젝트 데이터를 읽고 저장 */
 	void Load_UILevelData(const string& resourceKey);
 
 private:
 	string								m_levelKey;
 	nlohmann::json						m_json = {};
-
-
+	unordered_map<string, UI_HANDLE>	m_handles = {};
 
 public:
 	virtual void Free() override;

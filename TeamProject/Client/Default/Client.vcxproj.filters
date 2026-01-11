@@ -430,6 +430,12 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch">
       <UniqueIdentifier>{e300c58d-4dd8-4058-ab2e-ecbc5ba5b758}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Points">
+      <UniqueIdentifier>{2f6b3c7c-f5fc-4725-a995-bc8d4b2949db}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Text">
+      <UniqueIdentifier>{ae23e854-0941-42b9-bf8b-40a3919109a0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
       <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
     </Filter>
@@ -871,6 +877,12 @@
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelPts.h">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_DecibelText.h">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchIn.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
     </ClInclude>
@@ -885,6 +897,9 @@
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1017,9 +1032,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\ImageUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Image</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\GaugeUI.cpp">
-      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ButtonUI.cpp">
       <Filter>02. GameObject\UI\UIElement\Button</Filter>
@@ -1295,6 +1307,12 @@
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelPts.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_DecibelText.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Decibel\Text</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn</Filter>
     </ClCompile>
@@ -1304,11 +1322,17 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\GaugeUI.cpp">
+      <Filter>02. GameObject\UI\UIElement\Gauge</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack</Filter>
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

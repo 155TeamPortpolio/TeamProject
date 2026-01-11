@@ -196,6 +196,7 @@
     <ClInclude Include="..\public\JaneDoeState_RushAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchIn.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h" />
+    <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
@@ -209,6 +210,8 @@
     <ClInclude Include="..\Public\UI_Decibel.h" />
     <ClInclude Include="..\Public\UI_DecibelDigits.h" />
     <ClInclude Include="..\Public\UI_DecibelKanji.h" />
+    <ClInclude Include="..\Public\UI_DecibelPts.h" />
+    <ClInclude Include="..\Public\UI_DecibelText.h" />
     <ClInclude Include="..\Public\UI_Loading.h" />
     <ClInclude Include="..\Public\LoadingLevel.h" />
     <ClInclude Include="..\Public\UI_Logo.h" />
@@ -356,6 +359,7 @@
     <ClCompile Include="..\Private\ImageUI.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInNormal.cpp" />
@@ -378,6 +382,8 @@
     <ClCompile Include="..\Private\UI_Decibel.cpp" />
     <ClCompile Include="..\Private\UI_DecibelDigits.cpp" />
     <ClCompile Include="..\Private\UI_DecibelKanji.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelPts.cpp" />
+    <ClCompile Include="..\Private\UI_DecibelText.cpp" />
     <ClCompile Include="..\Private\UI_Loading.cpp" />
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />
