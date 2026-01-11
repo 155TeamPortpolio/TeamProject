@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CThugBulkyEnforcer_Collider final : public CGameObject
+class CEnemyAttackCollider : public CGameObject
 {
 private:
-    CThugBulkyEnforcer_Collider();
-    CThugBulkyEnforcer_Collider(const CThugBulkyEnforcer_Collider& rhg);
-    virtual ~CThugBulkyEnforcer_Collider() = default;
+    CEnemyAttackCollider();
+    CEnemyAttackCollider(const CEnemyAttackCollider& rhg);
+    virtual ~CEnemyAttackCollider() = default;
 
 public:
     HRESULT Initialize_Prototype()override;
@@ -24,10 +24,9 @@ public:
 
 
 public:
-    static CThugBulkyEnforcer_Collider* Create();
+    static CEnemyAttackCollider* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
-
 
 };
 

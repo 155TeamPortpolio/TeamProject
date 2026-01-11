@@ -12,7 +12,7 @@ IMPLEMENT_SINGLETON(CCamDirector)
 CGameObject* CCamDirector::GetCamObj(CamType type) const
 {
 	OBJECT_HANDLE handle = m_camHandles[ENUM(type)];
-	return handle.isValid() ? ObjectManger()->Request_Object(handle) : nullptr;
+	return handle.isValid() ? ObjectManager()->Request_Object(handle) : nullptr;
 }
 
 CCamera* CCamDirector::GetCamComp(CamType type) const
@@ -92,7 +92,7 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
 	if (entry.seqDesc.space == CamSpace::Local)
 	{
-		auto refObj = ObjectManger()->Request_Object(m_spaceRefHandle);
+		auto refObj = ObjectManager()->Request_Object(m_spaceRefHandle);
 		auto cc = refObj->Get_Component<CCharacterController>();
 		camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
 	}

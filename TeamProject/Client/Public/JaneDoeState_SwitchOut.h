@@ -9,7 +9,7 @@ class CJaneDoeState_SwitchOut final :
 {
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
-    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:

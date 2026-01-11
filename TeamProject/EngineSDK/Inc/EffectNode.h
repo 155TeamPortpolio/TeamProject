@@ -22,6 +22,7 @@ public:
 public:
     void Render_GUI() override;
     virtual void Play() {};
+    virtual void Stop() {};
     virtual void Import(nlohmann::ordered_json& json) {};
     virtual void Export(nlohmann::ordered_json& json) {};
 public:

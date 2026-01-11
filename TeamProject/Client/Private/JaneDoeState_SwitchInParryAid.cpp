@@ -47,7 +47,9 @@ void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid_Start::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
@@ -60,7 +62,9 @@ void CJaneDoeState_SwitchInParryAid_L_Loop::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid_L_Loop::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInParryAid_L_End::Enter(CJaneDoe* pOwner)
@@ -92,7 +96,9 @@ void CJaneDoeState_SwitchInParryAid_H_Loop::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid_H_Loop::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInParryAid_H_End::Enter(CJaneDoe* pOwner)
@@ -105,7 +111,9 @@ void CJaneDoeState_SwitchInParryAid_H_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInParryAid_H_End::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     IHState<CJaneDoe>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;
