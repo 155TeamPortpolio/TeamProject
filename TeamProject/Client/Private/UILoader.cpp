@@ -21,6 +21,7 @@
 #include "UI_DecibelDigits.h"
 #include "UI_DecibelPts.h"
 #include "UI_DecibelText.h"
+#include "UI_BattleHUDAction.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -133,6 +134,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"DecibelDigits",	&CUI_DecibelDigits::Create	},
 		{"DecibelPts",		&CUI_DecibelPts::Create		},
 		{"DecibelText",		&CUI_DecibelText::Create	},
+		{"BattleHUDAction",	&CUI_BattleHUDAction::Create},
 	};
 
 	for (const Entry& entry : entries)

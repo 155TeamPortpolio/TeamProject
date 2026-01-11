@@ -208,6 +208,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\UI_BattleHUDAction.h" />
     <ClInclude Include="..\Public\UI_Decibel.h" />
     <ClInclude Include="..\Public\UI_DecibelDigits.h" />
     <ClInclude Include="..\Public\UI_DecibelKanji.h" />
@@ -353,6 +354,7 @@
     <ClCompile Include="..\Private\CorinState_Run.cpp" />
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
     <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\private\DebugCamTrace.cpp" />
