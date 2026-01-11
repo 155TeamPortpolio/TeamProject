@@ -1,6 +1,10 @@
 #include "pch.h"
 #include "Enemy.h"
+#include "GameInstance.h"
 #include "BattleSystem.h"
+
+#include "ObjectContainer.h"
+#include "BoneFollower.h"
 
 CEnemy::CEnemy()
 	:CGameObject()
@@ -16,6 +20,8 @@ HRESULT CEnemy::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
+	Add_Component<CObjectContainer>();
+
 	return S_OK;
 }
 
@@ -28,9 +34,16 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 
 void CEnemy::Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 	ComputeTargetingInfo();
+}
+
+void CEnemy::Late_Update(_float dt)
+{
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 BATTLEOBJ_INFO* CEnemy::GetCharacterOnField()
@@ -115,6 +128,187 @@ void CEnemy::Render_GUI_ForTargetInfo()
 		ImGui::EndChild();
 	}
 	ImGui::PopID();
+}
+
+HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
+{
+	//_bool           isAttachBone = { true };                // 뼈에 붙이는지
+	//string          tagBone = "";                           // 뼈에 붙일때, 붙일 뼈의 이름
+	//CAnimator3D* pOwnerAnimator3D = { nullptr };           // 뼈에 붙일때, Owner의 애니메이터 포인터
+	//COLLIDER_TYPE   eColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
+	///* 실제 Hit처리될 Attack용 콜라이더의 사이즈
+	//Box: HalfExtents(x, y, z),
+	//Sphere : Radius(x),
+	//Capsule : Radius(x) / HalfHeight(y)*/
+	//_float3         vAttackSize = { 1.f, 1.f, 1.f };
+	///* Parrying 및 회피용 콜라이더의 사이즈. Attack용보다 사이즈 크게 할 것
+	//Box: HalfExtents(x, y, z),
+	//Sphere : Radius(x),
+	//Capsule : Radius(x) / HalfHeight(y)*/
+	//_float3         vTriggerSize = { 1.f, 1.f, 1.f };
+
+	if (nullptr == pDesc)
+		return E_FAIL;
+
+	// 본에 붙일건데 애니메이터 안가져오면 BOOM! 다시가져오렴
+	if (true == pDesc->isAttachBone && nullptr == pDesc->pOwnerAnimator3D)
+		return E_FAIL;
+
+	string tagNowLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	if (nullptr == pObjectContainer)
+		return E_FAIL;
+
+	RIGIDBODY_DESC rigidbodyDesc = {};
+	rigidbodyDesc.bEnableGravity = false;
+	rigidbodyDesc.isKinematic = true;
+	rigidbodyDesc.bLockY = true;
+
+#pragma region AttackCollider
+	COLLIDER_DESC AttackcolliderDesc = {};
+	AttackcolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	AttackcolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	AttackcolliderDesc.bAutoFit = false;
+	AttackcolliderDesc.eType = pDesc->eColliderType;
+	AttackcolliderDesc.vSize = pDesc->vAttackSize;
+	AttackcolliderDesc.fSizeScale = pDesc->fSizeScale;
+	AttackcolliderDesc.vCenter = pDesc->vCenter;
+	AttackcolliderDesc.vRotation = pDesc->vRotation;
+
+	string tagAttackInstance = pDesc->tagName + "_AttackCollider";
+
+	auto pAttackCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyAttackCollider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(AttackcolliderDesc)
+		.Build(tagAttackInstance);
+
+	if (nullptr == pAttackCollider)
+		return E_FAIL;
+
+	_int iAttackColliderChildIndex = { -1 };
+	// 뼈에 붙일 때
+	if (true == pDesc->isAttachBone) {
+		iAttackColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, false);
+		pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
+	}
+	else
+		iAttackColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, true);
+
+	m_BattleColliderChildrenIndex.emplace(tagAttackInstance , iAttackColliderChildIndex);
+#pragma endregion	
+
+#pragma region TriggerCollider
+	COLLIDER_DESC TriggercolliderDesc = {};
+	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	TriggercolliderDesc.bTrigger = true;
+	TriggercolliderDesc.bAutoFit = false;
+	TriggercolliderDesc.eType = pDesc->eColliderType;
+	TriggercolliderDesc.vSize = pDesc->vTriggerSize;
+	TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
+	TriggercolliderDesc.vCenter = pDesc->vCenter;
+	TriggercolliderDesc.vRotation = pDesc->vRotation;
+
+	string tagTriggerInstance = pDesc->tagName + "_TriggerCollider";
+
+	auto pTriggerCollider = Builder::Create_Object({ tagNowLevel, "Proto_GameObject_EnemyTriggerCollider" })
+		.RigidBody(rigidbodyDesc)
+		.Collider(TriggercolliderDesc)
+		.Build(tagTriggerInstance);
+
+	if (nullptr == pTriggerCollider)
+		return E_FAIL;
+
+	_int iTriggerColliderChildIndex = { -1 };
+	// 뼈에 붙일 때
+	if (true == pDesc->isAttachBone) {
+		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, false);
+		pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
+	}
+	else
+		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, true);
+
+	m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
+#pragma endregion	
+
+	return S_OK;
+}
+
+void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is)
+{
+	string tagBattleCol = tagBattleColliderObject;
+
+	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
+		tagBattleCol += "_AttackCollider";
+	else
+		tagBattleCol += "_TriggerCollider";
+
+	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
+	if (iter == m_BattleColliderChildrenIndex.end())
+		return;
+
+	auto pBattleCol = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
+	if (nullptr == pBattleCol)
+		return;
+
+	pBattleCol->Get_Component<CCollider>()->Set_CompActive(is);
+}
+
+void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
+{
+	string tagAttackCol = tagBattleColliderObject + "_AttackCollider";
+	string tagTriggerCol = tagBattleColliderObject + "_TriggerCollider";
+
+	auto iterAttack = m_BattleColliderChildrenIndex.find(tagAttackCol);
+	if (iterAttack == m_BattleColliderChildrenIndex.end())
+		return;
+
+	auto iterTrigger = m_BattleColliderChildrenIndex.find(tagTriggerCol);
+	if (iterTrigger == m_BattleColliderChildrenIndex.end())
+		return;
+
+	const auto children = Get_Component<CObjectContainer>()->Get_Children();
+
+	if (nullptr == children[iterAttack->second] ||
+		nullptr == children[iterTrigger->second])
+		return;
+
+	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
+	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
+}
+
+void CEnemy::ShowBattleColliderForCheck(_bool is)
+{
+	auto pContainerCom = Get_Component<CObjectContainer>();
+	if (nullptr != pContainerCom)
+		for (auto& PAIR : m_BattleColliderChildrenIndex) {
+			auto pColliderObject = pContainerCom->Get_ChildByOrder(PAIR.second);
+			if (nullptr == pColliderObject)
+				continue;
+
+			pColliderObject->Get_Component<CCollider>()->Set_CompActive(is);
+		}
+}
+
+_bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType)
+{
+	string tagBattleCol = tagBattleColliderObject;
+
+	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
+		tagBattleCol += "_AttackCollider";
+	else
+		tagBattleCol += "_TriggerCollider";
+
+	auto iter = m_BattleColliderChildrenIndex.find(tagBattleCol);
+	if (iter == m_BattleColliderChildrenIndex.end())
+		return false;
+
+	auto pBattleCol = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
+	if (nullptr == pBattleCol)
+		return false;
+
+	return pBattleCol->Get_Component<CCollider>()->Get_CompActive();
 }
 
 void CEnemy::Free()

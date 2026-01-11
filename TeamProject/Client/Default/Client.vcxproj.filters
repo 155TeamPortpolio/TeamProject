@@ -373,9 +373,6 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
       <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider">
-      <UniqueIdentifier>{c366ca93-e53b-4a12-b0c6-e746a4a1953e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
     </Filter>
@@ -453,6 +450,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider">
+      <UniqueIdentifier>{837c0ff3-8790-45d5-9369-91e3ff5f8b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForAttack">
+      <UniqueIdentifier>{75e23847-cf22-47ae-a93c-4d4236adb329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForTrigger">
+      <UniqueIdentifier>{232277b9-5418-438c-90df-4f1894d61ba0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -868,9 +874,6 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClInclude>
@@ -897,6 +900,12 @@
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyAttackCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyTriggerCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1298,9 +1307,6 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
@@ -1327,6 +1333,12 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyAttackCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyTriggerCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

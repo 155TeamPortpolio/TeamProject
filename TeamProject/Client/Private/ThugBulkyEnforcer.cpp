@@ -23,7 +23,6 @@
 #include "ThugBulkyEnforcer_Groggy.h"
 #include "ThugBulkyEnforcer_Death.h"
 
-#include "ThugBulkyEnforcer_Collider.h"
 #include "AttackSign.h"
 
 CThugBulkyEnforcer::CThugBulkyEnforcer()
@@ -44,8 +43,8 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	Add_Component<CAnimator3D>();
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
-	Add_Component<CObjectContainer>();
 	Add_Component<CCharacterController>();
+	//Add_Component<CObjectContainer>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
@@ -99,7 +98,7 @@ void CThugBulkyEnforcer::Update(_float dt)
 {
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
+	//Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	__super::Update(dt);
 
@@ -110,7 +109,7 @@ void CThugBulkyEnforcer::Update(_float dt)
 void CThugBulkyEnforcer::Late_Update(_float dt)
 {
 	Get_Component<CCharacterController>()->Late_Update(dt);
-	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+	//Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CThugBulkyEnforcer::Render_GUI()
@@ -121,21 +120,18 @@ void CThugBulkyEnforcer::Render_GUI()
 	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
 	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
 
-	// =======================================================
+#pragma region Component Inspector
 	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
 		__super::Render_GUI();
 		ImGui::TreePop();
 	}
-	// =======================================================
+#pragma endregion
+
 #pragma region State
 	ImGui::SeparatorText("State & BlackBoard");
 	ImGui::BeginChild("##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6}, true);
-	//string TagCurState = "Current State : " + m_pStateMachine->Get_CurrentStateName();
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
-	//string TagCurChildState = "Current ChildState : " + m_tAttackBlackBoard.currentStateTag;
 	ImGui::Text("Current ChildState : %s", m_tAttackBlackBoard.currentStateTag.c_str());
-	//string TagStateQueueSize = "StateQueue Size : " + to_string(m_tAttackBlackBoard.stateQueue.size());
-	//ImGui::Text("StateQueue Size : %d", (_int)m_tAttackBlackBoard.stateQueue.size());
 	ImGui::Text("AttackCombo : %d", m_iAttackCombo);
 
 	// bool 변수 확인용(수정 불가)
@@ -153,18 +149,10 @@ void CThugBulkyEnforcer::Render_GUI()
 		else
 			ImGui::Text("%d", m_AttackHistory[i]);
 	}
-	
-	//for (size_t i = 0; i < m_tAttackBlackBoard.stateQueue.size(); i++)
-	//{
-	//	if (i == 0)
-	//		ImGui::TextColored(ImVec4(1.f, 0.f, 0.f, 1.f), m_tAttackBlackBoard.stateQueue[i].c_str());
-	//	else
-	//		ImGui::Text(m_tAttackBlackBoard.stateQueue[i].c_str());
-	//
-	//}
 	ImGui::EndChild();
 #pragma endregion
-	// =======================================================
+
+#pragma region Status
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
@@ -181,12 +169,17 @@ void CThugBulkyEnforcer::Render_GUI()
 	
 	ImGui::EndChild();
 	}
-	Render_GUI_ForTargetInfo();
-	// =======================================================
-	
-	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
+#pragma endregion
 
-	// =======================================================
+#pragma region TargetInfo
+	Render_GUI_ForTargetInfo();
+#pragma endregion
+
+#pragma region AutoPattern
+	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
+#pragma endregion
+
+#pragma region CheckState
 	if(ImGui::TreeNode("Test State##ThugBulkyEnforcerTestState")) {
 		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
@@ -313,10 +306,36 @@ void CThugBulkyEnforcer::Render_GUI()
 		//ImGui::EndChild();
 		ImGui::TreePop();
 	}
+#pragma endregion
 
+#pragma region CheckBattleCollider
+	if (ImGui::TreeNode("BattleCollider##ThugBulkyBattleCollider")) {
+		if (ImGui::Checkbox("SetBattleAlive", &m_isShowBattleColliderObject)) {
+			ShowBattleColliderForCheck(m_isShowBattleColliderObject);
+		}
+		if (ImGui::Button("Weapon_L_AttackCollider")) 
+			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK,
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK));
+		if (ImGui::Button("Weapon_R_AttackCollider")) 
+			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK,
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK));
+	
+		if (ImGui::Button("Weapon_L_TriggerCollider")) 
+			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER,
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER));
+		if (ImGui::Button("Weapon_R_TriggerCollider")) 
+			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER,
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER));
+		ImGui::TreePop();
+	}
+#pragma endregion
+
+#pragma region StateMachine
 	if (ImGui::Button("Open StateMachine"))
 		m_pStateMachine->Set_ShowWindow(true);
 	m_pStateMachine->Render_GUI();
+#pragma endregion
+
 	ImGui::PopID();
 }
 
@@ -363,36 +382,31 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
-	RIGIDBODY_DESC rigidbodyDesc = {};
-	rigidbodyDesc.bEnableGravity = false;
-	rigidbodyDesc.isKinematic = true;
-	rigidbodyDesc.bLockY = true;
-	
-	COLLIDER_DESC colliderDesc = {};
-	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
-	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
-	colliderDesc.vSize = { 0.3f,0.f,0.f };
-	colliderDesc.bAutoFit = false;
+	BATTLE_COLLIDER_DESC WeaponLDesc = {};
 
-	auto pWeapon_L = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
-		.RigidBody(rigidbodyDesc)
-		.Collider(colliderDesc)
-		.Build("ThugBulkyEnforcer_Weapon_Left");
+	WeaponLDesc.tagName = "Weapon_L";
+	WeaponLDesc.isAttachBone = true;
+	WeaponLDesc.tagBone = "Ctr_L_Weapon_3";
+	WeaponLDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponLDesc.vAttackSize = { 0.3f, 0.f, 0.f };
+	WeaponLDesc.vTriggerSize = { 2.f,0.f,0.f };
 
-	pObjectContainer->Add_Child(pWeapon_L, false);
+	if(FAILED(AttachBattleColliderObject(&WeaponLDesc)))
+		return E_FAIL;
 
-	pWeapon_L->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_L_Weapon_3");
+	BATTLE_COLLIDER_DESC WeaponRDesc = {};
 
-	auto pWeapon_R = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider" })
-		.RigidBody(rigidbodyDesc)
-		.Collider(colliderDesc)
-		.Build("ThugBulkyEnforcer_Weapon_Right");
+	WeaponRDesc.tagName = "Weapon_R";
+	WeaponRDesc.isAttachBone = true;
+	WeaponRDesc.tagBone = "Ctr_R_Weapon_3";
+	WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponRDesc.vAttackSize = { 0.3f, 0.f, 0.f };
+	WeaponRDesc.vTriggerSize = { 2.f,0.f,0.f };
 
-	pObjectContainer->Add_Child(pWeapon_R, false);
+	if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
+		return E_FAIL;
 
-	pWeapon_R->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Ctr_R_Weapon_3");
-
+	ShowBattleColliderForCheck(m_isShowBattleColliderObject);
 
 	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
 		.Build("AttackSign");
@@ -411,6 +425,28 @@ void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
 	m_isLookPlayer = true;
 	m_vDirToLookCapture = vTargetDir;
 	m_fRotateSpeed = fSpeed;
+}
+
+void CThugBulkyEnforcer::TurnOnAttackCollider(_bool isWeaponL)
+{
+	if (true == isWeaponL)
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true);
+	else
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true);
+}
+
+void CThugBulkyEnforcer::TurnOnTriggerCollider(_bool isWeaponL)
+{
+	if (true == isWeaponL)
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true);
+	else
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true);
+}
+
+void CThugBulkyEnforcer::FinishWeaponCollider()
+{
+	FinishBattleColliderObject("Weapon_L");
+	FinishBattleColliderObject("Weapon_R");
 }
 
 /* For.State Machine */
