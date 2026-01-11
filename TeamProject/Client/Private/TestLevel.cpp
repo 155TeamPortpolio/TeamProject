@@ -46,6 +46,9 @@
 #include "ThugBulkyEnforcer_Collider.h"
 #include "Player.h"
 
+/*npc*/
+#include "OfficeMeow.h"
+
 /* UI */
 #include "UIDirector.h"
 
@@ -156,6 +159,24 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider", CThugBulkyEnforcer_Collider::Create());
+	
+	/*Npc*/
+	CCT_DESC meowCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	meowCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	meowCCT.bAutoFit = false;
+	meowCCT.fHeight = 1.6f;
+	meowCCT.fRadius = 0.4f;
+	meowCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	meowCCT.vPos = { 0.f, 1.5f, 0.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	auto testMeow = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OfficeMeow" })
+		.CharacterController(meowCCT)
+		.Build("Test_Meow");
+
+	objMgr->Add_Object(testMeow, { "Test_Level", "Npc_Layer" });
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();

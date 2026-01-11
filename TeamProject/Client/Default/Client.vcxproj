@@ -201,6 +201,12 @@
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
+    <ClInclude Include="..\public\Npc.h" />
+    <ClInclude Include="..\public\OfficeMeow.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Idle.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Think.h" />
+    <ClInclude Include="..\public\OfficeMeowState_Welcome.h" />
+    <ClInclude Include="..\public\ServiceNpc.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h" />
@@ -363,6 +369,12 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchOut.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInNormal.cpp" />
+    <ClCompile Include="..\private\Npc.cpp" />
+    <ClCompile Include="..\private\OfficeMeow.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Idle.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Think.cpp" />
+    <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp" />
+    <ClCompile Include="..\private\ServiceNpc.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Attack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_BackStep.cpp" />
