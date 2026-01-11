@@ -156,7 +156,7 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::SeparatorText("Status");
 	auto pCharacter = GetCharacterOnField();
 	if (nullptr != pCharacter) {
-		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 3 }, true);
+		ImGui::BeginChild("TracePlayer##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight + textLineHeight * 6.f }, true);
 		
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
@@ -165,6 +165,10 @@ void CThugBulkyEnforcer::Render_GUI()
 
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
+		ImGui::Checkbox(u8"Hit용 트리거 활성화", &m_isBattleAttackOn);
+		ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
+		ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
+		ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
 		ImGui::EndDisabled();
 	
 	ImGui::EndChild();
@@ -388,8 +392,8 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	WeaponLDesc.isAttachBone = true;
 	WeaponLDesc.tagBone = "Ctr_L_Weapon_3";
 	WeaponLDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponLDesc.vAttackSize = { 0.3f, 0.f, 0.f };
-	WeaponLDesc.vTriggerSize = { 2.f,0.f,0.f };
+	WeaponLDesc.vAttackSize = { 1.5f, 0.f, 0.f };
+	WeaponLDesc.vTriggerSize = { 3.f,0.f,0.f };
 
 	if(FAILED(AttachBattleColliderObject(&WeaponLDesc)))
 		return E_FAIL;
@@ -400,22 +404,20 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	WeaponRDesc.isAttachBone = true;
 	WeaponRDesc.tagBone = "Ctr_R_Weapon_3";
 	WeaponRDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
-	WeaponRDesc.vAttackSize = { 0.3f, 0.f, 0.f };
-	WeaponRDesc.vTriggerSize = { 2.f,0.f,0.f };
+	WeaponRDesc.vAttackSize = { 1.5f, 0.f, 0.f };
+	WeaponRDesc.vTriggerSize = { 3.f,0.f,0.f };
 
 	if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
 		return E_FAIL;
 
 	ShowBattleColliderForCheck(m_isShowBattleColliderObject);
 
+	// ================================================================================================
+
 	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
 		.Build("AttackSign");
 	pObjectContainer->Add_Child(pAttackSign, false);
 	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bip001 Head");
-
-	//"Ctr_R_Weapon_3"
-	//"Ctr_L_Weapon_3"
-
 
 	return S_OK;
 }
@@ -427,26 +429,38 @@ void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
 	m_fRotateSpeed = fSpeed;
 }
 
-void CThugBulkyEnforcer::TurnOnAttackCollider(_bool isWeaponL)
+void CThugBulkyEnforcer::TurnOnAttackCollider(BATTLE_PART ePart)
 {
-	if (true == isWeaponL)
+	if (BATTLE_PART::LEFT == ePart)
 		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true);
-	else
+	else if (BATTLE_PART::RIGHT == ePart)
 		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true);
+	//else if (BATTLE_PART::KNEE == ePart)
+	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::ATTACK, true); 
+
+
+	m_isBattleAttackOn = true;
 }
 
-void CThugBulkyEnforcer::TurnOnTriggerCollider(_bool isWeaponL)
+void CThugBulkyEnforcer::TurnOnTriggerCollider(BATTLE_PART ePart)
 {
-	if (true == isWeaponL)
+	if (BATTLE_PART::LEFT == ePart)
 		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true);
-	else
+	else if (BATTLE_PART::RIGHT == ePart)
 		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true);
+	//else if (BATTLE_PART::KNEE == ePart)
+	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::TRIGGER, true); 
+
+	m_isBattleTriggerOn = true;
 }
 
 void CThugBulkyEnforcer::FinishWeaponCollider()
 {
 	FinishBattleColliderObject("Weapon_L");
 	FinishBattleColliderObject("Weapon_R");
+
+	m_isBattleAttackOn = false;
+	m_isBattleTriggerOn = false;
 }
 
 /* For.State Machine */

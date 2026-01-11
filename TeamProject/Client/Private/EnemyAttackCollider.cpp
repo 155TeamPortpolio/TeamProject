@@ -4,10 +4,13 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 
+#include "Enemy.h"
+
 /* Component */
 #include "RigidBody.h"
 #include "Collider.h"
 #include "BoneFollower.h"
+#include "Child.h"
 
 CEnemyAttackCollider::CEnemyAttackCollider()
 	: CGameObject()
@@ -70,6 +73,7 @@ void CEnemyAttackCollider::Render_GUI()
 
 void CEnemyAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
+	MSG_BOX("HIT");
 }
 
 void CEnemyAttackCollider::OnCollisionStay(CGameObject* pOther)
@@ -78,6 +82,16 @@ void CEnemyAttackCollider::OnCollisionStay(CGameObject* pOther)
 
 void CEnemyAttackCollider::OnCollisionExit(CGameObject* pOther)
 {
+}
+
+void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
+{
+	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterAttackHit(true);
+}
+
+void CEnemyAttackCollider::OnTriggerExit(CGameObject* pOther)
+{
+	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterAttackHit(false);
 }
 
 CEnemyAttackCollider* CEnemyAttackCollider::Create()

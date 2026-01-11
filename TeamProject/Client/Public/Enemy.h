@@ -88,6 +88,17 @@ protected:
     _bool               IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType);
 
     unordered_map<string, _int> m_BattleColliderChildrenIndex;
+
+    // For.Debug
+    
+public:
+    void                SetEnterAttackHit(_bool is) { m_isEnterAttackHit = is; }
+    void                SetEnterTriggerHit(_bool is) { m_isEnterTriggerHit = is; }
+protected:
+    void                Render_GUI_ForShowBattleColliderHit();
+protected:
+    _bool               m_isEnterAttackHit = { false };
+    _bool               m_isEnterTriggerHit = { false };
 #pragma endregion
 
 protected:

@@ -3,11 +3,13 @@
 
 #include "Helper_Func.h"
 #include "GameInstance.h"
+#include "Enemy.h"
 
 /* Component */
 #include "RigidBody.h"
 #include "Collider.h"
 #include "BoneFollower.h"
+#include "Child.h"
 
 CEnemyTriggerCollider::CEnemyTriggerCollider()
 	: CGameObject()
@@ -70,10 +72,12 @@ void CEnemyTriggerCollider::Render_GUI()
 
 void CEnemyTriggerCollider::OnTriggerEnter(CGameObject* pOther)
 {
+	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterTriggerHit(true);
 }
 
 void CEnemyTriggerCollider::OnTriggerExit(CGameObject* pOther)
 {
+	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterTriggerHit(false);
 }
 
 CEnemyTriggerCollider* CEnemyTriggerCollider::Create()

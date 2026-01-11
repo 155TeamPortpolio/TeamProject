@@ -21,6 +21,8 @@ public:
     virtual void OnCollisionEnter(CGameObject* pOther) override;
     virtual void OnCollisionStay(CGameObject* pOther) override;
     virtual void OnCollisionExit(CGameObject* pOther) override;
+    virtual void OnTriggerEnter(CGameObject* pOther) override;
+    virtual void OnTriggerExit(CGameObject* pOther) override;
 
 
 public:

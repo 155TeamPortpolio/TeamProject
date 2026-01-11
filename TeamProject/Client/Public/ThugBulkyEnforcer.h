@@ -16,6 +16,8 @@ typedef struct tagHysteresis {
 
 class CThugBulkyEnforcer final : public CEnemy
 {
+public:
+    enum class BATTLE_PART { LEFT, RIGHT, KNEE };
 private:
     CThugBulkyEnforcer();
     CThugBulkyEnforcer(const CThugBulkyEnforcer& rhg);
@@ -30,7 +32,7 @@ public:
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
     void    Active_AttackSign() override;
-      
+
 public:
     static CThugBulkyEnforcer* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
@@ -40,18 +42,22 @@ private:
     HRESULT Ready_Children(INIT_DESC* pArg);
 
 public:
-    CStateMachine<CThugBulkyEnforcer>*  Get_StateMachine() { return m_pStateMachine; }
-    ATTACK_BLACK_BOARD&                 GetBlackBoard() { return m_tAttackBlackBoard; }
-    HYSTERIESIS&                        GetHysteriesis() { return m_tHysteriesis; }
+    CStateMachine<CThugBulkyEnforcer>* Get_StateMachine() { return m_pStateMachine; }
+    ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
+    HYSTERIESIS& GetHysteriesis() { return m_tHysteriesis; }
     _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
     _int                                GetGroggyValue() { return m_iGroggyValue; }
+    _bool                               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
+    _bool                               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
 
     void                                Idle() { m_isIdle = true; }
     void                                CaptureRotateDir(_float3 vTargetDir, _float fSpeed = 10.f);
     void                                AddAttackHistoryFront(_int i) { m_AttackHistory.push_front(i); }
-    void                                TurnOnAttackCollider(_bool isWeaponL = true);
-    void                                TurnOnTriggerCollider(_bool isWeaponL = true);
+    void                                TurnOnAttackCollider(BATTLE_PART ePart);
+    void                                TurnOnTriggerCollider(BATTLE_PART ePart);
     void                                FinishWeaponCollider();
+    void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
+    void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
 
 private:
     HRESULT Initialize_StateMachine();
@@ -69,13 +75,15 @@ private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
     ATTACK_BLACK_BOARD  m_tAttackBlackBoard = {};
     HYSTERIESIS         m_tHysteriesis = {};
-    
+
     _bool               m_isAutoPatternPlay = { true };
-    _bool               m_isShowBattleColliderObject = { true };
+    _bool               m_isShowBattleColliderObject = { false };
 
     /*For.AttackAlgorithm*/
     deque<_int>		    m_AttackHistory;
     _int                m_iAttackCombo = {};
+    _bool               m_isBattleTriggerOn = { false };
+    _bool               m_isBattleAttackOn = { false };
 
     /*For.Idle*/
     _bool               m_isIdle = { false };
