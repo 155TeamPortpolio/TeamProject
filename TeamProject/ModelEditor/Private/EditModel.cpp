@@ -49,8 +49,8 @@ void CEditModel::Priority_Update(_float dt)
 
 void CEditModel::Update(_float dt)
 {
-	if(nullptr != Get_Component<CAIAnimator3D>())
-		Get_Component<CAIAnimator3D>()->Update_Animation(dt);
+	if(nullptr != Get_Component<CAnimator3D>())
+		Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CEditModel::Late_Update(_float dt)
