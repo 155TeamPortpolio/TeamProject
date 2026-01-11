@@ -22,7 +22,12 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
+	UI_HANDLE		m_handles[ENUM(Child::END)];
+
+private:
 	void Ready_PartObjects();
+
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut = nullptr);
 
 public:
 	static  CGameObject* Create();
