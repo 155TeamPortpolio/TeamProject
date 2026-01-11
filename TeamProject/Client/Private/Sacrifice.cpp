@@ -10,6 +10,7 @@
 #include "ObjectContainer.h"
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
+#include "Sacrifice_Laser.h"
 
 /* States */
 #include "StateMachine.h"
@@ -48,6 +49,12 @@ HRESULT CSacrifice::Initialize_Prototype()
 	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
 	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer_Meta.json");
 
+	auto pModel = Get_Component<CSkeletalModel>();
+	pModel->Link_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_SacrificeBringer.mat");
+
 	return S_OK;
 }
 
@@ -55,12 +62,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_SacrificeBringer.mat");
-
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
 	//for (auto& instance : materialInstances)
 	//{
@@ -81,6 +83,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	auto pModel = Get_Component<CSkeletalModel>();
 	m_PartMeshIndices.resize(ENUM(PARTS::END));
 	m_PartMeshIndices[ENUM(PARTS::ICE)] = 7;
 	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 11;
@@ -89,27 +92,34 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.1f);
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
 	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 
+	/* Child Object */
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 
-	auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
-		.Build("Sacrifice_Hand");
-	pHand->Set_Alive(false);
-	m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	{
+		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+			.Build("Sacrifice_Hand");
+		pHand->Set_Alive(false);
+		m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	}
 	
-	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-		.Build("AttackSign");
-	pObjectContainer->Add_Child(pAttackSign, false);
-	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
+	{
+		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+			.Build("AttackSign");
+		pObjectContainer->Add_Child(pAttackSign, false);
+		pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
+	}
+
+	{
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+			.Build("Sacrifice_Laser");
+		pObjectContainer->Add_Child(pLaser, false);
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
+	}
 
 	return S_OK;
-}
-
-void CSacrifice::Post_EngineUpdate(_float dt)
-{
-	__super::Post_EngineUpdate(dt);
 }
 
 void CSacrifice::Awake()
@@ -354,6 +364,18 @@ void CSacrifice::OverDrive_Attack3()
 	auto pHandTransform = pHand->Get_Component<CTransform>();
 	pHandTransform->Set_Pos(vPosition);
 	pHandTransform->Set_Quaternion(vQuaternion);
+}
+
+void CSacrifice::ActiveLaser(_uint mode)
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
+	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
+}
+
+void CSacrifice::DeactiveLaser()
+{
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
+	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
 }
 
 void CSacrifice::Active_AttackSign()

@@ -46,6 +46,8 @@ HRESULT CParticleNode_Edit::Initialize(INIT_DESC* pArg)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_InstancePoint.hlsl");
 
 	m_InstanceName = "ParticleNode";
+	m_IsEffectActive = false;
+
 	return S_OK;
 }
 
@@ -90,6 +92,7 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
+	node.iColorMode = ENUM(m_eColorMode);
 	node.isWorld = m_IsWorld;
 	node.isLoop = m_IsLoop;
 	node.iBurstCount = m_iBurstCount;
@@ -214,6 +217,7 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 
 		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	}
+
 }
 
 void CParticleNode_Edit::Export(nlohmann::ordered_json& json)

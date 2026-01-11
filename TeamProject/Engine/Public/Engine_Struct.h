@@ -468,6 +468,9 @@ namespace Engine
 
 	typedef struct tagTrailNode : public tagEffectNode
 	{
+		string TextureKey{};
+		string TexturePath{};
+
 		_uint iMode{};
 		_uint iTextureMode{};
 		_uint iColorMode{};

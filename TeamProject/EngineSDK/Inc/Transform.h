@@ -37,10 +37,16 @@ public:
 	void Reset_Rotation();
 
 public:
-	_vector Get_Pos() { return XMLoadFloat4(&m_vPosition); };
 	_vector Get_WorldPos();
-	_vector Get_QuaternionRotate() { return XMLoadFloat4(&m_qRotation); };
-	_vector Get_Scale() { return XMLoadFloat4(&m_vScale); };
+	_vector Get_Pos() {
+		if (Check_Dirty())
+			Update_Transform(); return XMLoadFloat4(&m_vPosition); };
+	_vector Get_QuaternionRotate() {
+		if (Check_Dirty())
+			Update_Transform(); return XMLoadFloat4(&m_qRotation); };
+	_vector Get_Scale() {
+		if (Check_Dirty())
+			Update_Transform(); return XMLoadFloat4(&m_vScale); };
 	 _vector Dir(STATE eState);
 
 	 _float4x4* Get_WorldMatrix_Ptr();

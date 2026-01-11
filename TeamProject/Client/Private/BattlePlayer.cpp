@@ -202,7 +202,7 @@ _bool CBattlePlayer::Can_Switch() const
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
-	auto pProto = PrototypeManger();
+	auto pProto = PrototypeManager();
 
 	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Corin", CCorin::Create())))
 		return E_FAIL;
@@ -232,7 +232,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("JaneDoe");
-		ObjectManger()->Add_Object(JaneDoe, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(JaneDoe, { "Test_Level", "Model_Layer" });
 		return JaneDoe;
 	}
 	case CHARACTER::Corin:
@@ -241,7 +241,7 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("Corin");
-		ObjectManger()->Add_Object(Corin, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(Corin, { "Test_Level", "Model_Layer" });
 		return Corin;
 	}
 	}

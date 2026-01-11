@@ -55,6 +55,16 @@ HRESULT CTrailModel::Draw(ID3D11DeviceContext* pContext, _uint Index)
 	return m_pBuffer->Render(pContext);
 }
 
+void CTrailModel::Reset()
+{
+	m_IsLineFadeOut = false;
+	m_fLineFadeOutElapsedTime = 0.f;
+
+	m_CenterPoints.clear();
+	m_SegmentPoints.clear();
+	m_LinePoints.clear();
+}
+
 void CTrailModel::SetTrailParams(TRAIL_NODE trailDesc)
 {
 	m_eMode = static_cast<POINT_MODE>(trailDesc.iMode);
@@ -179,6 +189,37 @@ void CTrailModel::Update_SegmentPoint(_float3 position0, _float3 position1, _flo
 	}
 
 	m_pBuffer->Update_Vertices(m_TrailVertices.data(), dividePoints.size());
+}
+
+void CTrailModel::Add_LinePoint(_float3 position0, _float3 position1)
+{
+	m_LinePoints.clear();
+
+	LINE_POINT newPoint{};
+	newPoint.vPositionA = position0;
+	newPoint.vPositionB = position1;
+	newPoint.fWidth = m_fStartWidth;
+	newPoint.fLifeTime = 0.f;
+
+	m_LinePoints.push_back(newPoint);
+}
+
+void CTrailModel::Update_LinePoint(_float dt)
+{
+	if (m_IsLineFadeOut)
+		m_fLineFadeOutElapsedTime += dt;
+
+	m_vUVOffset.x += m_vUVSpeed.x * dt;
+	m_vUVOffset.y += m_vUVSpeed.y * dt;
+
+	for (auto& point : m_LinePoints)
+		point.fLifeTime = m_fLineFadeOutElapsedTime;
+
+	while (!m_LinePoints.empty() && m_LinePoints.front().fLifeTime >= m_fMaxLifeTime)
+		m_LinePoints.pop_front();
+
+	Build_LineVertices();
+	m_pBuffer->Update_Vertices(m_TrailVertices.data(), m_LinePoints.size() * 2);
 }
 
 void CTrailModel::Divide_CenterPoints(vector<CENTER_POINT>& dividePoints)
@@ -400,6 +441,67 @@ void CTrailModel::Build_SegmentVertices(vector<SEGMENT_POINT>& points)
 		m_TrailVertices.push_back(p0);
 		m_TrailVertices.push_back(p1);
 	}
+}
+
+void CTrailModel::Build_LineVertices()
+{
+	m_TrailVertices.clear();
+
+	if (m_LinePoints.empty())
+		return;
+
+	LINE_POINT point = m_LinePoints.front();
+
+	_vector3 vCamPosition = _vector3(CameraManager()->Get_CameraPos());
+	_vector3 vWorldUp(0.f, 1.f, 0.f);
+	VTXTRAIL p0{}, p1{}, p2{}, p3{};
+	
+	_vector3 vDir = _vector3(point.vPositionB) - _vector3(point.vPositionA);
+	_vector3 vViewLook = vCamPosition - (_vector3(point.vPositionA) + _vector3(point.vPositionB)) * 0.5f;
+
+	vDir.Normalize();
+	vViewLook.Normalize();
+
+	_vector3 vRight = vDir.Cross(vViewLook);
+
+	/* dir == look */
+	if (vRight.Dot(vRight) < 1e-6f)
+	{
+		vRight = vWorldUp.Cross(vDir);
+
+		if (vRight.Dot(vRight) < 1e-6f)
+			vRight = _vector3(1.f, 0.f, 0.f);
+	}
+
+	vRight.Normalize();
+
+	_float t = point.fLifeTime / m_fMaxLifeTime;
+	t = clamp(t, 0.f, 1.f);
+
+	p0.vPosition = _vector3(point.vPositionA) + vRight * 0.5f * point.fWidth;
+	p0.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
+	p0.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
+	p0.vTexcoord = _float2(0.f, 0.f);
+
+	p1.vPosition = _vector3(point.vPositionA) - vRight * 0.5f * point.fWidth;
+	p1.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
+	p1.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
+	p1.vTexcoord = _float2(0.f, 1.f);
+	
+	p2.vPosition = _vector3(point.vPositionB) + vRight * 0.5f * point.fWidth;
+	p2.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
+	p2.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
+	p2.vTexcoord = _float2(1.f, 0.f);
+
+	p3.vPosition = _vector3(point.vPositionB) - vRight * 0.5f * point.fWidth;
+	p3.vLifeTime = _float2(point.fLifeTime, m_fMaxLifeTime);
+	p3.vColor = _vector4::Lerp(m_vStartColor, m_vEndColor, t);
+	p3.vTexcoord = _float2(1.f, 1.f);
+
+	m_TrailVertices.push_back(p0);
+	m_TrailVertices.push_back(p1);
+	m_TrailVertices.push_back(p2);
+	m_TrailVertices.push_back(p3);
 }
 
 HRESULT CTrailModel::Link_Model(const string& levelKey, const string& modelDataKey)
