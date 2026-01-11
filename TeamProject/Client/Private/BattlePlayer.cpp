@@ -15,6 +15,8 @@
 #include "Corin.h"
 #include "JaneDoe.h"
 
+#include "Camera.h"
+
 
 CBattlePlayer::CBattlePlayer()
 {
@@ -54,14 +56,21 @@ HRESULT CBattlePlayer::Initialize()
 
 void CBattlePlayer::Priority_Update(_float dt)
 {
-	if (m_pCurrentCharacter == nullptr) 
+	if (m_pCurrentCharacter == nullptr)
 		return;
-	m_pCurrentCharacter->Update_Input(dt);
+
 	Update_Input(dt);
 }
 
 void CBattlePlayer::Update(_float dt)
 {
+	if (m_fSwitchCooldown > 0.f)
+	{
+		m_fSwitchCooldown -= dt;
+		if (m_fSwitchCooldown <= 0.f)
+			m_fSwitchCooldown = 0.f;
+	}
+
 	_float CurHP = m_pCurrentCharacter->Get_HP();
 	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
 }
@@ -72,15 +81,123 @@ void CBattlePlayer::Late_Update(_float dt)
 
 void CBattlePlayer::Update_Input(_float dt)
 {
-	if (InputDevice()->Key_Tap(VK_SPACE))
+	m_input.prevDirection = m_input.direction;
+	m_input.previous = m_input.current;
+
+	KeyInput key;
+	if (InputDevice()->Key_Hold('W')) key.z += 1;
+	if (InputDevice()->Key_Hold('S')) key.z -= 1;
+	if (InputDevice()->Key_Hold('D')) key.x += 1;
+	if (InputDevice()->Key_Hold('A')) key.x -= 1;
+
+	m_input.current = key;
+
+	if (!key.IsZero())
 	{
-		if (true/*m_bCanSwitch()*/)
+		if (m_input.lastValid.IsZero() || m_input.bufferTimer <= 0.f)
+			m_input.lastValid = key;
+
+		m_input.bufferTimer = KEY_BUFFER_TIME;
+
+		if (key != m_input.currentMove)
 		{
-			NotifyCharacterSwitchOut();
-			SwitchCharacter();
-			NotifyCharacterSwitchIn();
+			m_input.previousMove = m_input.currentMove;
+			m_input.currentMove = key;
 		}
 	}
+	else
+	{
+		m_input.bufferTimer -= dt;
+		if (m_input.bufferTimer < 0.f)
+		{
+			m_input.bufferTimer = 0.f;
+			m_input.lastValid.Reset();
+			m_input.previousMove.Reset();
+			m_input.currentMove.Reset();
+		}
+	}
+
+	m_input.direction = {};
+	if (!key.IsZero())
+	{
+		auto cam = CameraManager()->Get_ActiveCam();
+		auto camTf = cam->Get_Owner()->Get_Component<CTransform>();
+		_vector3 look = camTf->Dir(STATE::LOOK);
+		look.y = 0.f;
+		look.Normalize();
+		_vector3 right = _vector3::Up.Cross(look);
+		right.Normalize();
+		m_input.direction = look * (_float)key.z + right * (_float)key.x;
+		m_input.direction.Normalize();
+	}
+
+	if (!m_pCurrentCharacter) return;
+
+	Process_Movement(dt);
+	Process_Attack();
+	Process_Evade();
+	Process_Switch();
+
+	if (InputDevice()->Key_Down('T'))
+	{
+		// 테스트 코드
+	}
+}
+
+void CBattlePlayer::Process_Movement(_float dt)
+{
+	CCharacter::InputInfo inputInfo;
+	inputInfo.direction = m_input.direction;
+	inputInfo.prevDirection = m_input.prevDirection;
+	inputInfo.bufferTimer = m_input.bufferTimer;
+
+	inputInfo.prevMoveX = m_input.previousMove.x;
+	inputInfo.prevMoveZ = m_input.previousMove.z;
+	inputInfo.curMoveX = m_input.currentMove.x;
+	inputInfo.curMoveZ = m_input.currentMove.z;
+
+	m_pCurrentCharacter->On_Move(inputInfo);
+	if (m_pCurrentCharacter->Get_InputReset())
+	{
+		m_input.previousMove = m_input.currentMove;
+		m_pCurrentCharacter->Set_ResetMove(false);
+	}
+}
+
+void CBattlePlayer::Process_Attack()
+{
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	{
+		m_pCurrentCharacter->On_Attack();
+	}
+}
+
+void CBattlePlayer::Process_Evade()
+{
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+	{
+		m_pCurrentCharacter->On_Evade();
+		m_pCurrentCharacter->Buffer_Evade();
+	}
+}
+
+void CBattlePlayer::Process_Switch()
+{
+	if (InputDevice()->Key_Tap(VK_SPACE))
+	{
+		if (Can_Switch())
+		{
+			SwitchCharacter();
+			m_fSwitchCooldown = SWITCH_COOLDOWN;
+		}
+	}
+}
+
+_bool CBattlePlayer::Can_Switch() const
+{
+	if (m_fSwitchCooldown > 0.f) return false;
+	if (m_BattleCharacters.size() <= 1) return false;
+	return true;
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
@@ -133,12 +250,12 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
-	//m_pCurrentCharacter->SwitchIn();
+	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
 }
 
 void CBattlePlayer::NotifyCharacterSwitchOut()
 {
-	//m_pCurrentCharacter->SwitchOut();
+	m_pCurrentCharacter->On_SwitchOut();
 }
 
 void CBattlePlayer::RotateCharacterQueue()
@@ -150,6 +267,7 @@ void CBattlePlayer::RotateCharacterQueue()
 
 HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 {
+	NotifyCharacterSwitchOut();
 	if (character == CHARACTER::END)
 	{
 		RotateCharacterQueue();
@@ -162,8 +280,8 @@ HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 			RotateCharacterQueue();
 		}
 	}
-
 	m_pCurrentCharacter = m_BattleCharacters.front().second;
+	NotifyCharacterSwitchIn();
 	return S_OK;
 }
 
