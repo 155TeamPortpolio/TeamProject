@@ -250,6 +250,10 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+	if (m_pCurrentCharacter->Can_Parry())
+	{
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+	}
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::ATTACK);
 }
 
