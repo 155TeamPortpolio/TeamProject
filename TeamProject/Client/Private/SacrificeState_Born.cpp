@@ -43,7 +43,7 @@ void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Born_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	if (!m_IsEffectSpawn && m_fAnimProgress >= 0.07f)
+	if (IsCrossAnimProgress(0.07f))
 	{
 		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 		vPosition.y += 0.5f;

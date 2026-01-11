@@ -162,6 +162,9 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects();
+	void Update_Weapons(CSacrifice* pOwner);
+	void Update_Move(CSacrifice* pOwner, _float dt);
 
 	_bool m_IsAttackStart = false;
 	_bool m_IsAttackEnd = false;

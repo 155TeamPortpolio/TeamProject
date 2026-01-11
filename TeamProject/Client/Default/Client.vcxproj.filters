@@ -853,7 +853,6 @@
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
-    </ClInclude>
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
     </ClInclude>

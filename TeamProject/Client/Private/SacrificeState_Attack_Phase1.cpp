@@ -402,7 +402,7 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 	{
 		auto pTransform = pOwner->Get_Component<CTransform>();
 		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
-		//pTransform->Add_Quaternion(vRot);
+		pTransform->Add_Quaternion(vRot);
 
 		if (!m_IsLaserActive)
 		{
@@ -411,11 +411,17 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		}
 	}
 
-	if (!m_IsLaserDeactive && m_fAnimProgress >= 0.63f)
-	{
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->ActiveLaser(0);
+
+	if (IsCrossAnimProgress(0.63f))
 		pOwner->DeactiveLaser();
-		m_IsLaserDeactive = true;
-	}
+
+	//if (!m_IsLaserDeactive && m_fAnimProgress >= 0.63f)
+	//{
+	//	pOwner->DeactiveLaser();
+	//	m_IsLaserDeactive = true;
+	//}
 
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.9f)
@@ -504,7 +510,23 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	if (!m_IsAttackStart && m_fAnimProgress >= 0.06f)
+	Update_Weapons(pOwner);
+	Update_Move(pOwner, dt);
+}
+
+void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
+{
+	
+}
+
+void CSacrificeState_Attack_08_Phase1::Update_Effects()
+{
+
+}
+
+void CSacrificeState_Attack_08_Phase1::Update_Weapons(CSacrifice* pOwner)
+{
+	if (IsCrossAnimProgress(0.06f))
 	{
 		m_IsAttackStart = true;
 		pOwner->ActiveAxe();
@@ -515,7 +537,10 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 		m_IsAttackEnd = true;
 		pOwner->DeactiveAxe();
 	}
+}
 
+void CSacrificeState_Attack_08_Phase1::Update_Move(CSacrifice* pOwner, _float dt)
+{
 	/* Move Update */
 	if (m_fAnimProgress < 0.5f)
 		pOwner->RotateToTarget(dt, 10.f);
@@ -548,11 +573,6 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 			pCCT->Move_Velocity(vVelocity, dt);
 		}
 	}
-}
-
-void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
-{
-	
 }
 
 void CSacrificeState_Attack_09_Phase1::Enter(CSacrifice* pOwner)
