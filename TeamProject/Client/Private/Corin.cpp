@@ -13,6 +13,8 @@
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
 #include "CorinState_Evade.h"
+#include "CorinState_SwitchIn.h"
+#include "CorinState_SwitchOut.h"
 
 #include "FootIK.h"
 
@@ -22,15 +24,6 @@ CCorin::CCorin()
 
 CCorin::CCorin(const CCorin& rhs)
 	: CCharacter(rhs)
-{
-}
-
-void CCorin::On_SwitchIn(SWITCH eType)
-{
-	Set_Switch(eType);
-}
-
-void CCorin::On_SwitchOut()
 {
 }
 
@@ -132,6 +125,17 @@ void CCorin::Render_GUI()
 		m_pStateMachine->Render_GUI();
 
 	}
+}
+
+void CCorin::On_SwitchIn(SWITCH eType)
+{
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
+}
+
+void CCorin::On_SwitchOut()
+{
+	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CCorin::Update_States()
@@ -237,6 +241,14 @@ void CCorin::Process_EndState(const string& strCurrentState)
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
+	else if (strCurrentState == "SwitchIn")
+	{
+		//CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
+		//	m_pStateMachine->Get_CurrentState()
+		//	);
+		//if (!pSwitchIn)	return;
+		//IHState<CCorin>* pSwitchInType = 
+	}
 }
 
 
@@ -264,6 +276,8 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CCorinState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CCorinState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -296,6 +310,23 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// Evade -> Idle (Backstep)
 	m_pStateMachine->Register_Transition("Evade", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchIn");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToMove");
+
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+
+	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;

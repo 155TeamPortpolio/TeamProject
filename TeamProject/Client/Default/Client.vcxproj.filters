@@ -397,6 +397,45 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Text">
       <UniqueIdentifier>{ae23e854-0941-42b9-bf8b-40a3919109a0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
+      <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut">
+      <UniqueIdentifier>{ee4ce36f-881a-4c28-bb3d-2128c9d40faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch">
+      <UniqueIdentifier>{c00031fc-f368-4e17-be14-52a66af8850a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn">
+      <UniqueIdentifier>{d3852098-efbf-4ae5-a917-bbcd53ca4dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{8755a55d-a018-43f5-b708-c909154bdd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{179f59ca-f54a-4ba2-b82d-47b3b92b18f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{d7c0714a-11fa-43dc-a7e6-4c109a0c3ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{57371434-3357-45bf-bacc-1dd1d120577f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut">
+      <UniqueIdentifier>{73d70924-6c57-481c-a659-6b948073dd3f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\EnemyCollider">
       <UniqueIdentifier>{837c0ff3-8790-45d5-9369-91e3ff5f8b08}</UniqueIdentifier>
     </Filter>
@@ -965,6 +1004,15 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchIn.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInNormal.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\Npc.h">
       <Filter>02. GameObject\Object\Npc</Filter>
     </ClInclude>
@@ -1000,6 +1048,9 @@
     </ClInclude>
     <ClInclude Include="..\public\BangBooDeliverState_Idle.h">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State</Filter>
+       </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1440,6 +1491,15 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchIn.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchInAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\Npc.cpp">
       <Filter>02. GameObject\Object\Npc</Filter>
     </ClCompile>
@@ -1470,11 +1530,15 @@
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClCompile>
+
     <ClCompile Include="..\private\BangBooDeliver.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver</Filter>
     </ClCompile>
     <ClCompile Include="..\private\BangBooDeliverState_Idle.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -185,6 +185,10 @@
     <ClInclude Include="..\Public\CorinState_NormalAttack.h" />
     <ClInclude Include="..\Public\CorinState_Run.h" />
     <ClInclude Include="..\Public\CorinState_RushAttack.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchIn.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchInAttack.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchInNormal.h" />
+    <ClInclude Include="..\Public\CorinState_SwitchOut.h" />
     <ClInclude Include="..\Public\CorinState_Walk.h" />
     <ClInclude Include="..\public\DataBase.h" />
     <ClInclude Include="..\Public\Enemy.h" />
@@ -371,6 +375,10 @@
     <ClCompile Include="..\Private\CorinState_NormalAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_Run.cpp" />
     <ClCompile Include="..\Private\CorinState_RushAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchIn.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInAttack.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
     <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
