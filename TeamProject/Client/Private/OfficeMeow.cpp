@@ -29,7 +29,7 @@ HRESULT COfficeMeow::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	auto pResource = ResourceManger();
+	auto pResource = ResourceManager();
 	pResource->Add_ResourcePath("NPC_OfficerMeowji.model", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.model");
 	pResource->Add_ResourcePath("NPC_OfficerMeowji.mat", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_OfficerMeowji.mat");
 	pResource->Add_ResourcePath("NPC_Male_OfficerMeowji_Meta.json", "../Bin/Resources/Model/skeletal/NPC/OfficeMeowji/NPC_Male_OfficerMeowji_Meta.json");
