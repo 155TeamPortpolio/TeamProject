@@ -60,7 +60,7 @@ protected:
 
 public:
     virtual void Render_GUI();
-    void Render_DynamicBone(_vector3 vPos, ImU32 color = IM_COL32(255, 0, 0, 255));
+    void Render_DynamicBone(_vector3 vPos, _float dotSize, ImU32 color = IM_COL32(255, 0, 0, 255));
 
 protected:
     class CGameObject*          m_pOwner = { nullptr };

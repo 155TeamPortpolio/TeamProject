@@ -1447,7 +1447,7 @@ void CAnimator3D::BuildDynamicBone()
 		Matrix manipulate = XMLoadFloat4x4(&m_ManipulateMatrices[i]);
 		Matrix dynamic = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
 
-		Matrix localFinal = dynamic * manipulate * animLocal;
+		Matrix localFinal = manipulate * animLocal * dynamic;
 
 		if (parent == -1)
 		{

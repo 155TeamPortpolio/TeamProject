@@ -47,6 +47,7 @@ protected:
     /* Local */
     void LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
     void Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
+    void Calc_Distribution(_int NodeCount, DISTRIB& Distrib);
     void Simulate_LocalNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
         const _quaternion& parentQuat,
@@ -60,7 +61,7 @@ protected:
 
 public:
     virtual void Render_GUI();
-    void Render_DynamicBone(_vector3 vPos, ImU32 color = IM_COL32(255, 0, 0, 255));
+    void Render_DynamicBone(_vector3 vPos, _float dotSize, ImU32 color = IM_COL32(255, 0, 0, 255));
 
 protected:
     class CGameObject*          m_pOwner = { nullptr };
