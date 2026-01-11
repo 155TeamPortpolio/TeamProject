@@ -9,3 +9,11 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
         .Loop(false)
         .Apply();
 }
+
+void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt);
+
+    if (m_fAnimProgress >= 1.f)
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+}
