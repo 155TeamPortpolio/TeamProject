@@ -369,7 +369,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
       <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
       <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
     </Filter>
@@ -483,6 +483,15 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Think">
       <UniqueIdentifier>{048167fd-ce16-4db6-8827-3802c7d9d79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos">
+      <UniqueIdentifier>{5a6bfa1a-6ef4-445a-89c4-348cf6a98b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
+      <UniqueIdentifier>{ff91eec2-210f-4d57-aa6a-268e38678df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
+      <UniqueIdentifier>{e60a7be8-cc43-46e5-bd64-3f11a1262199}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -895,7 +904,7 @@
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClInclude>
@@ -952,6 +961,12 @@
     </ClInclude>
     <ClInclude Include="..\public\OfficeMeowState_Welcome.h">
       <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAsk.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAskState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1361,7 +1376,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
     </ClCompile>
@@ -1406,6 +1421,12 @@
     </ClCompile>
     <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp">
       <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAsk.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
