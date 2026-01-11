@@ -93,6 +93,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+    virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerExit(CGameObject* pOther) override;
+
 public:
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
@@ -107,6 +110,7 @@ public:
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
     _bool    Is_OppositeInput() const;
+    _bool    Can_Parry() const;
 
 private:
     void    Update_Rotation(_float dt);
@@ -129,11 +133,10 @@ protected:
     _uint           m_iCurrentLevel = { 1 };            //*캐릭터 레벨*
     // 입력
     InputInfo       m_inputInfo;
-
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
-    _bool           m_bEvadeBuffer = { false };
     // 회피 시스템
+    _bool           m_bEvadeBuffer = { false };
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };
     _float                  m_fEvadeCooldown = { 0.f };
@@ -145,7 +148,8 @@ protected:
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
-
+    // 패링
+    unordered_set<CGameObject*>  m_ParryableTargets;
     // 테스트용
     _bool           m_bTest = { false };
 

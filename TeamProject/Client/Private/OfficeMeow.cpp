@@ -76,7 +76,6 @@ void COfficeMeow::Priority_Update(_float dt)
 void COfficeMeow::Update(_float dt)
 {
 	__super::Update(dt);
-	Get_Component<CCharacterController>()->Update(dt);
 	Update_States(dt);
 	m_pStateMachine->Update(dt);
 }
@@ -84,7 +83,6 @@ void COfficeMeow::Update(_float dt)
 void COfficeMeow::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 HRESULT COfficeMeow::Initialize_StateMachine()

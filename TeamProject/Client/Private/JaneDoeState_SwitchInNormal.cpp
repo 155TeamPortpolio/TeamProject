@@ -18,7 +18,9 @@ void CJaneDoeState_SwitchInNormal::Update(CJaneDoe* pOwner, _float dt)
     IHState<CJaneDoe>* pSwitch = Get_ParentState();
     if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;
 
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt, 
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
     if (m_fAnimProgress >= 1.0f)
     {   

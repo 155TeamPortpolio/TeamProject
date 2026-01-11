@@ -53,6 +53,7 @@
 
 /*npc*/
 #include "OfficeMeow.h"
+#include "BangBooAsk.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -165,24 +166,6 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
-	
-	/*Npc*/
-	CCT_DESC meowCCT;
-	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
-	meowCCT.iCollisionMask = 0xFFFFFFFF;
-	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-	meowCCT.bAutoFit = false;
-	meowCCT.fHeight = 1.6f;
-	meowCCT.fRadius = 0.4f;
-	meowCCT.eGroup = COLLISION_GROUP::COMMON;
-	//meowCCT.fBoundingMinY = -0.83f;
-	meowCCT.vPos = { 0.f, 1.5f, 0.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
-	auto testMeow = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OfficeMeow" })
-		.CharacterController(meowCCT)
-		.Build("Test_Meow");
-
-	objMgr->Add_Object(testMeow, { "Test_Level", "Npc_Layer" });
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -194,6 +177,7 @@ HRESULT CTestLevel::Awake()
 	//====================Test=================
 	Ready_TestObject();
 	Ready_ShadowCamera();
+	Ready_Npc();
 
 	return S_OK;
 }
@@ -413,6 +397,47 @@ void CTestLevel::Ready_TestObject()
 		.Build("Test_Cloud");
 	
 	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+}
+
+void CTestLevel::Ready_Npc()
+{
+	auto pProto = PrototypeManager();
+	auto objMgr = ObjectManager();
+
+	/*Npc*/
+	CCT_DESC meowCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	meowCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	meowCCT.bAutoFit = false;
+	meowCCT.fHeight = 1.6f;
+	meowCCT.fRadius = 0.4f;
+	meowCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	meowCCT.vPos = { 25.f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	auto testMeow = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OfficeMeow" })
+		.CharacterController(meowCCT)
+		.Build("Test_Meow");
+
+	objMgr->Add_Object(testMeow, { "Test_Level", "Npc_Layer" });
+
+	CCT_DESC bangbooCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	bangbooCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	bangbooCCT.bAutoFit = false;
+	bangbooCCT.fHeight = 0.6f;
+	bangbooCCT.fRadius = 0.4f;
+	bangbooCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	bangbooCCT.vPos = { 22.5f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooAsk::Create());
+	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Meow");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
 }
 
 HRESULT CTestLevel::Render()

@@ -45,12 +45,13 @@ void CServiceNpc::Priority_Update(_float dt)
 void CServiceNpc::Update(_float dt)
 {
 	__super::Update(dt);
-
+	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CServiceNpc::Late_Update(_float dt)
 {
+	Get_Component<CCharacterController>()->Late_Update(dt);
 }
 
 void CServiceNpc::Free()
