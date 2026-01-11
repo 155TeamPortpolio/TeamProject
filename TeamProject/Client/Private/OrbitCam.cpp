@@ -143,7 +143,7 @@ void COrbitCam::SetTarget(CGameObject* obj)
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
-    SetTarget(ObjectManger()->Request_Object(handle));
+    SetTarget(ObjectManager()->Request_Object(handle));
 }
 
 void COrbitCam::SyncFromCurTransform()
@@ -231,7 +231,7 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
-    auto obj = ObjectManger()->Request_Object(targetHandle);
+    auto obj = ObjectManager()->Request_Object(targetHandle);
     auto targetCC = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = targetCC->Get_FootPosition();
@@ -325,7 +325,7 @@ void COrbitCam::SmoothStates(_float dt)
 
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
-    auto obj = ObjectManger()->Request_Object(targetHandle);
+    auto obj = ObjectManager()->Request_Object(targetHandle);
     auto cc = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();
@@ -436,7 +436,7 @@ void COrbitCam::UpdateAutoYawFollow(_float dt)
 
 Vector3 COrbitCam::GetTargetFootPos() const
 {
-    auto obj = ObjectManger()->Request_Object(targetHandle);
+    auto obj = ObjectManager()->Request_Object(targetHandle);
     auto cc  = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = cc->Get_FootPosition();

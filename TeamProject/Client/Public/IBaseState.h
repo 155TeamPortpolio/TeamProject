@@ -12,6 +12,7 @@ class IHState;
 template<typename Type>
 class IBaseState abstract : public CBase
 {
+
 public:
 	virtual ~IBaseState() DEFAULT;
 
@@ -34,13 +35,18 @@ public:
 	_bool			  Is_AnimEnd() const { return m_fAnimProgress >= 1.f; }
 	void			  Set_ParentState(IHState<Type>* pParent) { m_pParentState = pParent; }
 	IHState<Type>*	  Get_ParentState() { return m_pParentState; }
+
+	//인자로 들어온 progress가 prev를 지났는지 체크하는 함수
+	_bool			  IsCrossAnimProgress(_float fProgress) { return (m_fPrevAnimProgress < fProgress && m_fAnimProgress >= fProgress); }
 	
 protected:
 	IHState<Type>*	  m_pParentState = { nullptr };
 	string			  m_strState = "";
-	string			  m_strTag = "";			 // 상태 그룹
-	_float			  m_fStateTime = { 0.f };	 // 상태 진입 후 경과 시간
-	_float			  m_fAnimProgress = { 0.f }; // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
+	string			  m_strTag = "";			     // 상태 그룹
+	_float			  m_fStateTime = { 0.f };	     // 상태 진입 후 경과 시간
+	_float			  m_fAnimProgress = { 0.f };     // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
+	_float			  m_fPrevAnimProgress = { 0.f }; // 이전 프레임의 애니메이션 진행도
+	_bool		      m_IsAnimProgressUpdate = { false };
 
 	friend class CStateMachine<Type>;
 

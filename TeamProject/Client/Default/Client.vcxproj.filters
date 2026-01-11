@@ -367,6 +367,9 @@
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
+      <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
+    </Filter>  
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
       <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
     </Filter>
@@ -876,6 +879,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
     </ClInclude>
@@ -889,6 +893,9 @@
       <Filter>03. Utility\05. DataBase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\Sacrifice_Laser.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
+    </ClInclude>  
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClInclude>
@@ -1352,6 +1359,9 @@
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
+    </ClCompile>  
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
     </ClCompile>

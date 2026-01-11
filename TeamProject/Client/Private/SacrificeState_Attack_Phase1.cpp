@@ -161,7 +161,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
+	blackBoard.stateQueue.push_back("Attack01_Phase1");
 	blackBoard.stateQueue.push_back("Attack02_Phase1");
 	blackBoard.stateQueue.push_back("Attack08_Phase1");
 
@@ -172,6 +172,8 @@ void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Arm_Recover").Loop(false).Speed(1.4f).Apply();
+
+	pAnimator->Get_EventBus();
 }
 
 void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -267,7 +269,6 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_03").Loop(false).Speed(1.2f).Apply();
 
-	m_IsSpawnEffect = false;
 }
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -281,12 +282,24 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	if (!m_IsSpawnEffect && m_fAnimProgress >= 0.18f)
+	Update_Effects(pOwner);
+
+	pOwner->RotateToTarget(dt, 10.f);
+	pOwner->MoveByRootMotion(dt);
+}
+
+void CSacrificeState_Attack_03_Phase1::Exit(CSacrifice* pOwner)
+{
+}
+
+void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	/* Hit ground smoke */
+	if (IsCrossAnimProgress(0.18f))
 	{
 		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 		auto pTransform = pOwner->Get_Component<CTransform>();
 
-		//_vector3 vBonePosition = pAnimator->Get_BoneCombinedPosition("Skn_Finger2_03");
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
 
@@ -296,16 +309,9 @@ void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
 			.Build("Smoke");
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
 
-		m_IsSpawnEffect = true;
 	}
-
-	pOwner->RotateToTarget(dt, 10.f);
-	pOwner->MoveByRootMotion(dt);
 }
 
-void CSacrificeState_Attack_03_Phase1::Exit(CSacrifice* pOwner)
-{
-}
 
 void CSacrificeState_Attack_04_1_Phase1::Enter(CSacrifice* pOwner)
 {
@@ -353,6 +359,7 @@ void CSacrificeState_Attack_05_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_05").Loop(false).Speed(1.4f).Apply();
+
 }
 
 void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -366,6 +373,12 @@ void CSacrificeState_Attack_05_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
+	if (IsCrossAnimProgress(0.56f))
+		pOwner->ActiveLaser(1);
+
+	if (IsCrossAnimProgress(0.565f))
+		pOwner->DeactiveLaser();
+
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 }
@@ -377,7 +390,8 @@ void CSacrificeState_Attack_05_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(true).Speed(1.2f).Apply();
+
 }
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -388,6 +402,12 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
 		pTransform->Add_Quaternion(vRot);
 	}
+
+	if (IsCrossAnimProgress(0.2f))
+		pOwner->ActiveLaser(0);
+
+	if (IsCrossAnimProgress(0.63f))
+		pOwner->DeactiveLaser();
 
 	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
 	if (m_fAnimProgress >= 0.9f)
@@ -410,10 +430,6 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.4f).Apply();
 
 	pOwner->Active_AttackSign();
-
-	m_IsAttackStart = false;
-	m_IsAttackEnd = false;
-	m_fAnimProgress = 0.f;
 }
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -427,17 +443,11 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	if (!m_IsAttackStart && m_fAnimProgress >= 0.05f)
-	{
-		m_IsAttackStart = true;
-		pOwner->ActiveSword();
-	}
+	if (IsCrossAnimProgress(0.05f))
+		pOwner->ActiveSword();	
 
-	if (!m_IsAttackEnd && m_fAnimProgress >= 0.6f)
-	{
-		m_IsAttackEnd = true;
+	if (IsCrossAnimProgress(0.6f))
 		pOwner->DeactiveSword();
-	}
 
 	if (m_fAnimProgress < 0.3f)
 		pOwner->RotateToTarget(dt, 20.f);
@@ -476,7 +486,54 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 			blackBoard.isRequestNext = true;
 	}
 
-	if (!m_IsAttackStart && m_fAnimProgress >= 0.06f)
+	Update_Effects(pOwner);
+	Update_Weapons(pOwner);
+	Update_Move(pOwner, dt);
+}
+
+void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
+{
+	
+}
+
+void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	if (IsCrossAnimProgress(0.1f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+	
+	if (IsCrossAnimProgress(0.35f))
+	{
+		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+		auto pTransform = pOwner->Get_Component<CTransform>();
+
+		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001 L Hand");
+		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
+
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke_strong.json")
+			.Position(vBonePosition)
+			.Build("Smoke");
+
+		ObjectManager()->Add_Object(pEffect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+}
+
+void CSacrificeState_Attack_08_Phase1::Update_Weapons(CSacrifice* pOwner)
+{
+	if (IsCrossAnimProgress(0.06f))
 	{
 		m_IsAttackStart = true;
 		pOwner->ActiveAxe();
@@ -487,7 +544,10 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 		m_IsAttackEnd = true;
 		pOwner->DeactiveAxe();
 	}
+}
 
+void CSacrificeState_Attack_08_Phase1::Update_Move(CSacrifice* pOwner, _float dt)
+{
 	/* Move Update */
 	if (m_fAnimProgress < 0.5f)
 		pOwner->RotateToTarget(dt, 10.f);
@@ -520,11 +580,6 @@ void CSacrificeState_Attack_08_Phase1::Update(CSacrifice* pOwner, _float dt)
 			pCCT->Move_Velocity(vVelocity, dt);
 		}
 	}
-}
-
-void CSacrificeState_Attack_08_Phase1::Exit(CSacrifice* pOwner)
-{
-	
 }
 
 void CSacrificeState_Attack_09_Phase1::Enter(CSacrifice* pOwner)

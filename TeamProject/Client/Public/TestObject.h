@@ -35,7 +35,7 @@ public:
     void               Render_GUI() override;
 
     void               Rotate_Horizontal(const _vector3& vDirection);
-
+    void                FireEffeect();
 private:
     CTestStateMachine*          m_pStateMachine = { nullptr };
     _vector3                    m_vInputDir = {};

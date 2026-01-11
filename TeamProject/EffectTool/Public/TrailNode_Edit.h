@@ -43,7 +43,7 @@ private:
     void SetUp_TrailEffect();
 
     string m_TextureKey{};
-    CTrailModel::POINT_MODE m_eMode{};
+
     CTrailModel::TEXTURE_MODE m_eTextureMode{};
     CTrailModel::COLOR_MODE m_eColorMode{};
 

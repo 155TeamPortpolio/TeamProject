@@ -76,7 +76,7 @@ void CCamPanel::RefreshCandidates()
 
     m_candidates.clear();
 
-    auto layer = ObjectManger()->Get_Layer({m_levelTag, m_layerTag});
+    auto layer = ObjectManager()->Get_Layer({m_levelTag, m_layerTag});
     if (!layer)
     {
         m_selectedIndex = 0;
@@ -184,7 +184,7 @@ void CCamPanel::DrawMainCamSelector()
 
     const auto& selected = m_candidates[m_selectedIndex];
 
-    auto selectedObj = ObjectManger()->Request_Object(selected.handle);
+    auto selectedObj = ObjectManager()->Request_Object(selected.handle);
     auto selectedCam = selectedObj ? selectedObj->Get_Component<CCamera>() : nullptr;
 
     const bool selectedIsWip = selectedObj && selectedObj->Get_InstanceName() == "SequenceCam";
@@ -200,7 +200,7 @@ void CCamPanel::DrawMainCamSelector()
         {
             const auto& c = m_candidates[i];
 
-            auto obj = ObjectManger()->Request_Object(c.handle);
+            auto obj = ObjectManager()->Request_Object(c.handle);
             auto cam = obj ? obj->Get_Component<CCamera>() : nullptr;
 
             const bool isWip = obj && obj->Get_InstanceName() == "SequenceCam";
@@ -234,7 +234,7 @@ void CCamPanel::DrawMainCamSelector()
             {
                 m_selectedIndex = i;
 
-                auto selObj = ObjectManger()->Request_Object(m_candidates[m_selectedIndex].handle);
+                auto selObj = ObjectManager()->Request_Object(m_candidates[m_selectedIndex].handle);
                 auto selCam = selObj ? selObj->Get_Component<CCamera>() : nullptr;
                 if (selCam) CameraManager()->Set_MainCam(selCam, 0.5f);
             }

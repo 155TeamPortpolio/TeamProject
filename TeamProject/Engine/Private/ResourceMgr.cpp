@@ -589,7 +589,10 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 		}break;
 		case Engine::EFFECT_TYPE::TRAIL:
 		{
+			TRAIL_NODE* pTrailNode = new TRAIL_NODE();
+			*pTrailNode = TRAIL_NODE::FromJson(EffectData["nodes"][i]);
 
+			Effect.Nodes.push_back(pTrailNode);
 		}break;
 		default:
 			break;

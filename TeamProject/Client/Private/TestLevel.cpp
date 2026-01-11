@@ -32,6 +32,7 @@
 #include "MeshNode.h"
 #include "SpriteNode.h"
 #include "ParticleNode.h"
+#include "TrailNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
@@ -42,6 +43,7 @@
 #include "JaneDoe.h"
 #include "Sacrifice.h"
 #include "SacrificeHand.h"
+#include "Sacrifice_Laser.h"
 #include "ThugBulkyEnforcer.h"
 #include "ThugBulkyEnforcer_Collider.h"
 #include "Player.h"
@@ -96,23 +98,24 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
-	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/attack_sign.png");
-	
-	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/test_particle.json");
-	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Eff_Particle_044.png");
-	
-	pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/spawn_smoke.json");
-	pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Eff_Smoke_046_LB_01.png");
-	
-	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/core.json");
-	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Eff_Smoke_218.png");
 
-	pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/fog.json");
-	pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Eff_Smoke_006.png");
-	
-	pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/hit_ground_smoke.json");
+	/* Assets */
+	pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/Data/test_particle.json");
+	pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/Data/spawn_smoke.json");
+	pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/Data/fog.json");
+	pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/Data/hit_ground_smoke.json");
+	pResource->Add_ResourcePath("hit_ground_smoke_strong.json", "../Bin/Resources/Effect/Data/hit_ground_smoke_strong.json");
+	pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/Data/core.json");
+
+	/* Textures */
+	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
+	pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Texture/Eff_Particle_044.png");
+	pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_046_LB_01.png");
+	pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_218.png");
+	pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_006.png");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -157,6 +160,7 @@ HRESULT CTestLevel::Awake()
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider", CThugBulkyEnforcer_Collider::Create());
 	
@@ -206,13 +210,13 @@ void CTestLevel::Update()
 
 		m_pCamDirector->SetSpaceRef(curPlayer);
 
-		auto orbitObj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		auto orbitObj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
 		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
 	}
 
 	if (InputDevice()->Key_Down(VK_F1))
 	{
-		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
+		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 
@@ -220,7 +224,7 @@ void CTestLevel::Update()
 	{
 		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
 
-		auto obj = ObjectManger()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
 		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
 
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
@@ -236,13 +240,12 @@ void CTestLevel::Update()
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
 	}
 
-	if (InputDevice()->Key_Tap(VK_F5))
+	if(InputDevice()->Key_Tap(VK_F5))
 	{
-		auto effect = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Position(_float3(0.f,10.f,0.f))
-			.Build("Core");
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+			.Build("Laser");
 
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(effect, { "Test_Level","Effect_Layer" });
+		ObjectManager()->Add_Object(pLaser, { "Test_Level","Laser_Layer" });
 	}
 
 	// [`] 
@@ -323,9 +326,9 @@ void CTestLevel::Ready_Camera()
 		.CharacterController(desc)
 		.Build("OrbitCam");
 
-	ObjectManger()->Add_Object(seqCam,   {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(freeCam,  {"Test_Level", "Camera_Layer"});
-	ObjectManger()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(seqCam,   {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(freeCam,  {"Test_Level", "Camera_Layer"});
+	ObjectManager()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
 
 	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
 	m_pCamDirector->SetCam(CamType::Free,     freeCam->Get_Handle());
