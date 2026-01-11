@@ -369,15 +369,12 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
       <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
       <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
       <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider">
-      <UniqueIdentifier>{c366ca93-e53b-4a12-b0c6-e746a4a1953e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
@@ -456,6 +453,51 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider">
+      <UniqueIdentifier>{837c0ff3-8790-45d5-9369-91e3ff5f8b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForAttack">
+      <UniqueIdentifier>{75e23847-cf22-47ae-a93c-4d4236adb329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForTrigger">
+      <UniqueIdentifier>{232277b9-5418-438c-90df-4f1894d61ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc">
+      <UniqueIdentifier>{79bba1fb-58bb-4669-a74a-54e083c8c10d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background">
+      <UniqueIdentifier>{74c2a9bd-d86d-4bb7-8336-f027d17151f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service">
+      <UniqueIdentifier>{210a1075-7fe0-417a-8c56-982a1dbb01ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Conversation">
+      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow">
+      <UniqueIdentifier>{ff2cc5c8-e319-4641-8d0c-2bbd0faf386d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State">
+      <UniqueIdentifier>{07c9ca2b-6bb8-4335-afcf-49ac96c3c324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle">
+      <UniqueIdentifier>{23d244f3-37f9-46b1-8c87-aaded287259a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome">
+      <UniqueIdentifier>{f8ea08ba-6569-496d-8e22-eeba2c8a260d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Think">
+      <UniqueIdentifier>{048167fd-ce16-4db6-8827-3802c7d9d79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos">
+      <UniqueIdentifier>{5a6bfa1a-6ef4-445a-89c4-348cf6a98b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
+      <UniqueIdentifier>{ff91eec2-210f-4d57-aa6a-268e38678df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
+      <UniqueIdentifier>{e60a7be8-cc43-46e5-bd64-3f11a1262199}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -868,15 +910,12 @@
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
-    </ClInclude>  
+    </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
@@ -905,8 +944,38 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EnemyAttackCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyTriggerCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Npc.h">
+      <Filter>02. GameObject\Object\Npc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ServiceNpc.h">
+      <Filter>02. GameObject\Object\Npc\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeow.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Think.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Think</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Welcome.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAsk.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAskState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1308,15 +1377,12 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
     </ClCompile>
@@ -1341,8 +1407,38 @@
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EnemyAttackCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyTriggerCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc.cpp">
+      <Filter>02. GameObject\Object\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ServiceNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeow.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Think.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Think</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAsk.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
