@@ -161,6 +161,10 @@
     <ClInclude Include="..\Public\AttackSign.h" />
     <ClInclude Include="..\public\BangBooAsk.h" />
     <ClInclude Include="..\public\BangBooAskState_Idle.h" />
+    <ClInclude Include="..\public\BangBooDeliver.h" />
+    <ClInclude Include="..\public\BangBooDeliverState_Idle.h" />
+    <ClInclude Include="..\public\BangBooPay.h" />
+    <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
@@ -348,6 +352,10 @@
     <ClCompile Include="..\Private\AttackSign.cpp" />
     <ClCompile Include="..\private\BangBooAsk.cpp" />
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp" />
+    <ClCompile Include="..\private\BangBooDeliver.cpp" />
+    <ClCompile Include="..\private\BangBooDeliverState_Idle.cpp" />
+    <ClCompile Include="..\private\BangBooPay.cpp" />
+    <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
