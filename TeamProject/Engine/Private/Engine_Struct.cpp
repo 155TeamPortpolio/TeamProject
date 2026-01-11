@@ -69,6 +69,10 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartSize.x = json.at("start_size").at("x").get<_float>();
 	node.vStartSize.y = json.at("start_size").at("y").get<_float>();
 
+	node.vCenter.x = json.at("center").at("x").get<_float>();
+	node.vCenter.y = json.at("center").at("y").get<_float>();
+	node.vCenter.z = json.at("center").at("z").get<_float>();
+
 	node.SpawnShape = json.value("spawn_shape", node.SpawnShape);
 	node.vHalfBox.x = json.at("half_box").at("x").get<_float>();
 	node.vHalfBox.y = json.at("half_box").at("y").get<_float>();

@@ -109,6 +109,7 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("rock_particle.json", "../Bin/Resources/Effect/Data/rock_particle.json");
 	pResource->Add_ResourcePath("sacrifice_spark.json", "../Bin/Resources/Effect/Data/sacrifice_spark.json");
 	pResource->Add_ResourcePath("sacrifice_hit_ground_flare.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare.json");
+	pResource->Add_ResourcePath("sacrifice_hit_ground_flare_smoke.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare_smoke.json");
 
 	/* Textures */
 	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -121,6 +122,7 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("lightning7.png", "../Bin/Resources/Effect/Texture/lightning7.png");
 	pResource->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 	pResource->Add_ResourcePath("Eff_Burn_LYX_28.png", "../Bin/Resources/Effect/Texture/Eff_Burn_LYX_28.png");
+	pResource->Add_ResourcePath("Eff_Smoke_259.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_259.png");
 
 	
 	//============== Test =================================
@@ -230,10 +232,11 @@ void CTestLevel::Update()
 
 	if(InputDevice()->Key_Tap(VK_F5))
 	{
-		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
-			.Build("Laser");
+		auto smoke = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hit_ground_flare_smoke.json")
+			.Build("FlareSmoke");
 
-		ObjectManager()->Add_Object(pLaser, { "Test_Level","Laser_Layer" });
+		ObjectManager()->Add_Object(smoke, { "Test_Level","Effect_Layer" });
 	}
 
 	// [`] 

@@ -91,6 +91,7 @@ void CEffectContainer::Update(_float dt)
 		if (m_fElapsedTime >= m_fDuration)
 		{
 			m_isAlive = false;
+			ObjectManager()->Remove_Object(this);
 			return;
 		}
 
