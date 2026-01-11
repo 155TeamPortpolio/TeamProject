@@ -13,6 +13,14 @@ template<typename Type>
 class IBaseState abstract : public CBase
 {
 public:
+	struct tagAnimTrigger
+	{
+		_float fProgress{};
+		string EffectKey{};
+		_bool isFired = false;
+	}ANIM_TRIGGER;
+
+public:
 	virtual ~IBaseState() DEFAULT;
 
 public:
@@ -38,9 +46,10 @@ public:
 protected:
 	IHState<Type>*	  m_pParentState = { nullptr };
 	string			  m_strState = "";
-	string			  m_strTag = "";			 // 상태 그룹
-	_float			  m_fStateTime = { 0.f };	 // 상태 진입 후 경과 시간
-	_float			  m_fAnimProgress = { 0.f }; // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
+	string			  m_strTag = "";			     // 상태 그룹
+	_float			  m_fStateTime = { 0.f };	     // 상태 진입 후 경과 시간
+	_float			  m_fAnimProgress = { 0.f };     // 애니매이션 진행도 : 애니매이터에서 가져와 동기화
+	_float			  m_fPrevAnimProgress = { 0.f }; //이전 프레임의 애니메이션 진행도
 
 	friend class CStateMachine<Type>;
 

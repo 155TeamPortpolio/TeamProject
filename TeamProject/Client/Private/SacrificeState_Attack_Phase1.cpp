@@ -160,6 +160,8 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
+	blackBoard.stateQueue.clear(); blackBoard.stateQueue.push_back("Attack06_Phase1");
+
 	blackBoard.isRequestNext = true;
 }
 
@@ -400,7 +402,7 @@ void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 	{
 		auto pTransform = pOwner->Get_Component<CTransform>();
 		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
-		pTransform->Add_Quaternion(vRot);
+		//pTransform->Add_Quaternion(vRot);
 
 		if (!m_IsLaserActive)
 		{

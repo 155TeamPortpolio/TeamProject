@@ -102,9 +102,12 @@ void CTrailNode_Edit::Render_GUI()
 	SetUp_TrailEffect();
 	ImGui::PopID();
 }
+
 void CTrailNode_Edit::Play()
 {
+
 }
+
 void CTrailNode_Edit::Import(nlohmann::ordered_json& json)
 {
 	m_TextureKey = json.value("texture_key", m_TextureKey);

@@ -23,13 +23,19 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	Add_Component<CObjectContainer>();
 	Add_Component<CBoneFollower>();
 
+	/* Effect Asset */
+	ResourceManager()->Add_ResourcePath("laser_start.json", "../Bin/Resources/Effect/Data/laser_start.json");
+	ResourceManager()->Add_ResourcePath("laser3.json", "../Bin/Resources/Effect/Data/laser3.json");
+	ResourceManager()->Add_ResourcePath("laser_hit_point.json", "../Bin/Resources/Effect/Data/laser_hit_point.json");
+
+	/* Textures */
 	ResourceManager()->Add_ResourcePath("laser_core2.png", "../Bin/Resources/Effect/Texture/laser_core2.png");
 	ResourceManager()->Add_ResourcePath("laser_wide.png", "../Bin/Resources/Effect/Texture/laser_wide.png");
 	ResourceManager()->Add_ResourcePath("Eff_Disorder_UU_23.png", "../Bin/Resources/Effect/Texture/Eff_Disorder_UU_23.png");
 	ResourceManager()->Add_ResourcePath("lightning6.png", "../Bin/Resources/Effect/Texture/lightning6.png");
+	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
+	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 
-	ResourceManager()->Add_ResourcePath("laser_start.json", "../Bin/Resources/Effect/Data/laser_start.json");
-	ResourceManager()->Add_ResourcePath("laser3.json", "../Bin/Resources/Effect/Data/laser3.json");
 
 	return S_OK;
 }
@@ -46,6 +52,10 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Asset("laser_start.json")
 		.Build("LaserStart");
 
+	auto pLaserHitPoint = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+		.Asset("laser_hit_point.json")
+		.Build("LaserHitPoint");
+
 	_smatrix offsetMatrix = _smatrix::Identity;
 	offsetMatrix.Translation(_vector3(1.f, 0.f, 0.f));
 
@@ -55,6 +65,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pLaser, true);
 	pObjectContainer->Add_Child(pLaserStart,true);
+	pObjectContainer->Add_Child(pLaserHitPoint, false);
 
 	m_isAlive = false;
 	
@@ -86,6 +97,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
+		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::COMMON);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
@@ -139,6 +151,9 @@ void CSacrifice_Laser::Update(_float dt)
 	}
 
 	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
+	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
+	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
+
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	if (m_IsPendingDeactive)
@@ -163,11 +178,14 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 	m_isAlive = true;
 	m_iLaserMode = mode;
 
-	auto pEffect = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
-	static_cast<CEffectContainer*>(pEffect)->Play();
+	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
+	static_cast<CEffectContainer*>(pLaser)->Play();
 
-	auto pEffect2 = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserStart");
-	static_cast<CEffectContainer*>(pEffect2)->Play();
+	auto pLaserStart = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserStart");
+	static_cast<CEffectContainer*>(pLaserStart)->Play();
+
+	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
+	static_cast<CEffectContainer*>(pLaserHitPoint)->Play();
 }
 
 void CSacrifice_Laser::DeactiveLaser()
@@ -180,6 +198,9 @@ void CSacrifice_Laser::DeactiveLaser()
 
 	auto pEffect2 = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserStart");
 	static_cast<CEffectContainer*>(pEffect2)->Stop();
+
+	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
+	static_cast<CEffectContainer*>(pLaserHitPoint)->Stop();
 }
 
 CSacrifice_Laser* CSacrifice_Laser::Create()
