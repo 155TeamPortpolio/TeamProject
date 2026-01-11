@@ -54,6 +54,7 @@ void CUI_BattleHUDAction::Ready_PartObjects()
 
     Attach_Child(strLevelKey, "Proto_GameObject_PrimaryAction", "primary", &m_handles[ENUM(Child::PRIMARY)], _float2(0.f, m_vOffset.y));
     Attach_Child(strLevelKey, "Proto_GameObject_EvadeAction", "evade", &m_handles[ENUM(Child::EVADE)], m_vOffset);
+    Attach_Child(strLevelKey, "Proto_GameObject_SpecialAction", "special", &m_handles[ENUM(Child::SPECIAL)], _float2(m_vOffset.x * 2.f, m_vOffset.y));
 }
 
 void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset)

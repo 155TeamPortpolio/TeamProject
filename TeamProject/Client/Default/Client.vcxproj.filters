@@ -466,6 +466,9 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Action\Evade">
       <UniqueIdentifier>{fb3401db-8c84-4472-8f77-5dfa3d1afc9b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Special">
+      <UniqueIdentifier>{1ee0db62-e96c-4492-aab7-d9103a3cc53a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -929,6 +932,9 @@
     <ClInclude Include="..\Public\UIDesign_Macro.h">
       <Filter>99. Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_SpecialAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Special</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1373,6 +1379,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_EvadeAction.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Action\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SpecialAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Special</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
