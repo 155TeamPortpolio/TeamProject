@@ -131,7 +131,10 @@ void CParticleNode_Edit::Play()
 	node.vFrequency = m_vFrequency;
 	node.vScrollSpeed = m_vScrollSpeed;
 
-	Get_Component<CParticleSystem>()->SetParticleParams(node);
+	auto pParticle = Get_Component<CParticleSystem>();
+	pParticle->SetParticleParams(node);
+	pParticle->Reset();
+	
 }
 
 void CParticleNode_Edit::Import(nlohmann::ordered_json& json)

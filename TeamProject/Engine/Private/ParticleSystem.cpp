@@ -650,8 +650,10 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 
 	if (m_eParticleSpace == PARTICLE_SPACE::WORLD)
 	{
-		_vector3 vWorldPos = m_pOwner->Get_Component<CTransform>()->Get_WorldPos();
-		_vector3 vSpawnCenter = vWorldPos + m_vCenter;
+		auto pTransform = m_pOwner->Get_Component<CTransform>();
+
+		_vector3 vWorldPos = pTransform->Get_WorldPos();
+		_vector3 vWorldCenter = _vector3::Transform(m_vCenter, pTransform->Get_WorldMatrix());
 		_vector3 vPosition{};
 
 		switch (m_eSpawnShape)
@@ -679,12 +681,14 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 		}break;
 		case Engine::CParticleSystem::SPAWN_SHAPE::BOX:
 		{
-			_vector3 vAreaMin = vWorldPos - m_vHalfBox;
-			_vector3 vAreaMax = vWorldPos + m_vHalfBox;
+			_vector3 vAreaMin = -1.f * m_vHalfBox;
+			_vector3 vAreaMax = m_vHalfBox;
 
 			particle.vPosition.x = Helper::Get_Random_Float(vAreaMin.x, vAreaMax.x);
 			particle.vPosition.y = Helper::Get_Random_Float(vAreaMin.y, vAreaMax.y);
 			particle.vPosition.z = Helper::Get_Random_Float(vAreaMin.z, vAreaMax.z);
+			particle.vPosition = _vector3::Transform(particle.vPosition, pTransform->Get_WorldMatrix());
+	
 		}break;
 		case Engine::CParticleSystem::SPAWN_SHAPE::CONE:
 			break;
@@ -693,7 +697,7 @@ void CParticleSystem::SetUpParticle(PARTICLE_GPU& particle) const
 		}
 
 		_float fSpeed = Helper::Get_Random_Float(m_vStartSpeed.x, m_vStartSpeed.y);
-		_vector3 vDir = particle.vPosition - vSpawnCenter;
+		_vector3 vDir = particle.vPosition - vWorldCenter;
 		vDir.Normalize();
 
 		particle.vVelocity = vDir * fSpeed;

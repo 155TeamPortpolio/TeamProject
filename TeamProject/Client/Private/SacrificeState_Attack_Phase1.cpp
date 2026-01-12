@@ -483,17 +483,26 @@ void CSacrificeState_Attack_07_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_07_Phase1::Update_Effects(CSacrifice* pOwner)
 {
-	if (IsCrossAnimProgress(0.05f))
+	if (IsCrossAnimProgress(0.35f))
 	{
 		auto smokeTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_smoke_trail.json")
 			.Build("Smoke");
+		
+		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
+		auto smokeConeTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_trail_cone.json")
+			.Build("SmokeCone");
+		auto pSmokeConeTransform = smokeConeTrail->Get_Component<CTransform>();
+		pSmokeConeTransform->Set_Quaternion(pOwner->Get_Component<CTransform>()->Get_QuaternionRotate());
+		pSmokeConeTransform->Set_Pos(vPosition + _vector3(pSmokeConeTransform->Dir(STATE::LOOK) * 4.f));
 
 		auto smokeBoneFollower = smokeTrail->Add_Component<CBoneFollower>();
 		smokeBoneFollower->Initialize(nullptr);
 		smokeBoneFollower->Link_Bone(pOwner->Get_Component<CAnimator3D>(), "RootNode");
 
 		ObjectManager()->Add_Object(smokeTrail, { pOwner->Get_Level(),"Effect_Layer" });
+		ObjectManager()->Add_Object(smokeConeTrail, { pOwner->Get_Level(),"Effect_Layer" });
 	}
 }
 

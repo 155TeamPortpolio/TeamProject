@@ -2,6 +2,8 @@
 
 float4x4 g_worldMatrix;
 
+uint RGBMask;
+uint ColorMode;
 float Progress;
 
 /* Texture */
@@ -28,6 +30,27 @@ float GetChannelValue(float4 vTexSample, uint iTargetUsage)
         return vTexSample.a;
     
     return 0.f;
+}
+
+float4 ApplySamplerMode(uint samplerMode,float2 texCoord ,Texture2D sampleTexture)
+{
+    float4 vResult;
+
+    if(0 == samplerMode)
+    {
+        vResult = sampleTexture.Sample(LinearSampler, texCoord);
+    }
+    else if(1 == samplerMode)
+    {
+        vResult = sampleTexture.Sample(LinearClampSampler, texCoord);
+    }
+    else
+    {
+        vResult = float4(1.f, 1.f, 1.f, 1.f);
+    }
+    
+    return vResult;
+    
 }
 
 /*Color*/
@@ -118,56 +141,49 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float2 Texcoord = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
     Texcoord += UVOffset;
     
-    vector vTexSample = vector(1.f, 1.f, 1.f, 1.f);
+    vector vDiffuse = vector(1.f, 1.f, 1.f, 1.f);
     float fDissolveMask = 1.f;
-
-    if(SamplerMode == 0)
-    {
-       vTexSample = DiffuseTexture.Sample(LinearSampler, Texcoord);
-       //fDissolveMask = DissolveTexture.Sample(LinearSampler, Texcoord).r;
-    }
-    else if(SamplerMode == 1)
-    {
-       vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
-       //fDissolveMask = DissolveTexture.Sample(LinearClampSampler, Texcoord).r;
-    }
     
-    //if (fDissolveMask < DissolveProgress)
-    //    discard;
+    vDiffuse = ApplySamplerMode(SamplerMode, Texcoord, DiffuseTexture);
+    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).r;
     
-    float4 color = float4(1.f, 1.f, 1.f, 1.f);
+    if (fDissolveMask < DissolveProgress)
+        discard;
     
-    if (MainUsage == 0)  //as color
+    float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
+    
+    if (MainUsage == 0)  //as color mode
     {
-        color = vTexSample;
+        vResult = ApplyColorMode(ColorMode, vDiffuse, vBaseColor);
+        
+        if(1 == RGBMask)
+        {
+            float fColorMask = max(vDiffuse.r, max(vDiffuse.g, vDiffuse.b));
+            vResult.a *= fColorMask;
+        }
     }
     else if (MainUsage == 1) //as channel
     {
-        float fShapeMask = GetChannelValue(vTexSample, SHAPE_MASK);
-        float fEmission = GetChannelValue(vTexSample, EMISSION);
-        float fDistortion = GetChannelValue(vTexSample, DISTORTION);
+        float fShapeMask = GetChannelValue(vDiffuse, SHAPE_MASK);
+        float fEmission = GetChannelValue(vDiffuse, EMISSION);
+        float fDistortion = GetChannelValue(vDiffuse, DISTORTION);
         
         if (fDistortion > 0.f)
         {
             float2 vDistortionOffset = (fDistortion - 0.5f) * 2.f;
             Texcoord += vDistortionOffset;
             
-            vTexSample = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
-            fShapeMask = GetChannelValue(vTexSample, SHAPE_MASK);
-            fEmission = GetChannelValue(vTexSample, EMISSION);
+            vDiffuse = DiffuseTexture.Sample(LinearClampSampler, Texcoord);
+            fShapeMask = GetChannelValue(vDiffuse, SHAPE_MASK);
+            fEmission = GetChannelValue(vDiffuse, EMISSION);
         }
         
-        color = vBaseColor + fEmission * vBaseColor;
-        color.a = fShapeMask;
-    }
-    else if (MainUsage == 2) //as grayscale
-    {
-        float fValue = vTexSample.r;
-        color = vBaseColor * fValue;
+        vResult = vBaseColor + fEmission * vBaseColor;
+        vResult.a = fShapeMask;
     }
     
-    float3 vColor = color.rgb;
-    float fAlpha = color.a;
+    float3 vColor = vResult.rgb;
+    float fAlpha = vResult.a;
     
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

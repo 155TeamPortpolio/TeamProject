@@ -435,6 +435,8 @@ namespace Engine
 		_uint Green{};
 		_uint Blue{};
 		_uint Alpha{};
+		_uint iColorMode{};
+		_uint iRGBMask{};
 
 		/* Color */
 		_uint ColorEaseType{};

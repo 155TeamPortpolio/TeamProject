@@ -147,6 +147,8 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.Green = json.at("channel_usage").at("y").get<_uint>();
 	node.Blue = json.at("channel_usage").at("z").get<_uint>();
 	node.Alpha = json.at("channel_usage").at("w").get<_uint>();
+	node.iColorMode = json.value("color_mode", node.iColorMode);
+	node.iRGBMask = json.value("rgb_mask", node.iRGBMask);
 
 	/* Color */
 	node.ColorEaseType = json.value("color_ease_type", 0);
