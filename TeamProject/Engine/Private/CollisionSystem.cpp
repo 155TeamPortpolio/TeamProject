@@ -376,21 +376,31 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		if (!pTrigger || !pOther) continue;
 		if (!pTrigger->Get_CompActive() || !pOther->Get_CompActive()) continue;
 
+		auto& triggerCurrent = pTrigger->Get_CurrentCollisions();
+		auto& otherCurrent = pOther->Get_CurrentCollisions();
+
 		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			pTrigger->OnTriggerEnter(pOther);
 
-			// Enter 후 재검증
 			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
 				continue;
 
 			pOther->OnTriggerEnter(pTrigger);
+
+			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
+				continue;
+
+			triggerCurrent.insert(pOther);
+			otherCurrent.insert(pTrigger);
 		}
 		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
+			triggerCurrent.erase(pOther);
+			otherCurrent.erase(pTrigger);
+
 			pTrigger->OnTriggerExit(pOther);
 
-			// Exit 후 재검증
 			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
 				continue;
 
@@ -459,6 +469,8 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 			if (otherPrevious.find(pCCT) == otherPrevious.end())
 			{
 				pOther->OnTriggerEnter(pCCT);
+				if (!Is_SlotActive(idxCCT) || !Is_SlotActive(idxOther))
+					return;
 			}
 		}
 
@@ -675,17 +687,23 @@ void CCollisionSystem::Process_CollisionEvents()
 			if (!otherSlot.IsActive()) continue;
 			if (!pOther->Get_Owner()) continue;
 
-			// Previous에도 있으면 Stay
+			// Previous에도 있으면 Stay (Enter 다음 프레임부터)
 			if (previous.find(pOther) != previous.end())
 			{
 				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (!pCollider || !pCollider->IsTrigger())
+				if (pCollider && pCollider->IsTrigger())
 				{
-					pCollidable->OnCollisionStay(pOther);
-
-					if (!slot.IsActive() || !pCollidable->Get_Owner())
-						break;
+					// 트리거는 여기서 Stay 처리 (TOUCH_PERSISTS 미지원)
+					pCollidable->OnTriggerStay(pOther);
 				}
+				else
+				{
+					// 일반 충돌 Stay
+					pCollidable->OnCollisionStay(pOther);
+				}
+
+				if (!slot.IsActive() || !pCollidable->Get_Owner())
+					break;
 			}
 		}
 	}
