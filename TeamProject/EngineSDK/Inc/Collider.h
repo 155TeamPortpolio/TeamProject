@@ -31,6 +31,7 @@ public:
     virtual void    OnCollisionStay(ICollidable* pOther) override;
     virtual void    OnCollisionExit(ICollidable* pOther) override;
     void            OnTriggerEnter(ICollidable* pOther) override;
+    void            OnTriggerStay(ICollidable* pOther) override;
     void            OnTriggerExit(ICollidable* pOther) override;
 
 private:

@@ -76,6 +76,7 @@ public:
     virtual void    OnCollisionStay(ICollidable* pOther) override;
     virtual void    OnCollisionExit(ICollidable* pOther) override;
     virtual void    OnTriggerEnter(ICollidable* pOther) override;
+    virtual void    OnTriggerStay(ICollidable* pOther) override;
     virtual void    OnTriggerExit(ICollidable* pOthter) override;
 
     void            Update(_float dt);

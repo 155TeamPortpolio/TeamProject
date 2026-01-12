@@ -101,7 +101,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+    virtual void    OnCollisionExit(CGameObject* pOther) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerStay(CGameObject* pOher) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
