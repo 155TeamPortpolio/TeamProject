@@ -53,6 +53,9 @@ HRESULT CEffectContainer::Initialize(INIT_DESC* pArg)
 		case Engine::EFFECT_TYPE::MESH:
 			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_MeshNode", pNodeDesc);
 			break;
+		case Engine::EFFECT_TYPE::TRAIL:
+			pNode = proto->Clone_Prototype(G_GlobalLevelKey, "Proto_GameObject_TrailNode", pNodeDesc);
+			break;
 		case Engine::EFFECT_TYPE::END:
 			break;
 		default:
@@ -97,6 +100,29 @@ void CEffectContainer::Update(_float dt)
 
 void CEffectContainer::Late_Update(_float dt)
 {
+}
+
+CEffectContainer::EFFECT_CONTAINER_CONTEXT& CEffectContainer::GetEffectContext()
+{
+	return m_EffectContext;
+}
+
+void CEffectContainer::SetLinePoints(_float3 point0, _float3 point1)
+{
+	m_EffectContext.vLinePoint0 = point0;
+	m_EffectContext.vLinePoint1 = point1;
+}
+
+void CEffectContainer::Play()
+{
+	for (const auto& node : m_Nodes)
+		static_cast<CEffectNode*>(node)->Play();
+}
+
+void CEffectContainer::Stop()
+{
+	for (const auto& node : m_Nodes)
+		static_cast<CEffectNode*>(node)->Stop();
 }
 
 CEffectContainer* CEffectContainer::Create()

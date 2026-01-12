@@ -257,6 +257,9 @@ _float4x4* CTransform::Get_InverseWorldMatrix_Ptr()
 
 _vector CTransform::Get_WorldPos()
 {
+	if (Check_Dirty())
+		Update_Transform();
+
 	if (m_pParentTransform) {
 		_vector worldpos = XMVector3Transform(XMLoadFloat4(&m_vPosition), XMLoadFloat4x4(m_pParentTransform->Get_WorldMatrix_Ptr()));
 		return worldpos;
@@ -388,7 +391,7 @@ void CTransform::Reset_Rotation()
 
 void CTransform::Update_Transform()
 {
-	if (m_pParentTransform && m_pParentTransform->m_bDirty)
+	if (m_pParentTransform/* && m_pParentTransform->m_bDirty*/)
 		m_pParentTransform->Update_Transform();
 
 	_matrix matScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);

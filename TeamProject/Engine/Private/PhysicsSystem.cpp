@@ -147,23 +147,17 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
     direction.normalize();
 
     PxRaycastBuffer hit;
-    PxQueryFilterData filterData = Create_FilterData(desc);
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC;
+
+    CRaycastFilterCallback filterCallback(desc.iCollisionMask);
 
     _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
-        PxHitFlag::eDEFAULT, filterData);
+        PxHitFlag::eDEFAULT, filterData, &filterCallback);
 
     if (bResult && hit.hasBlock)
     {
         Setup_RayHitInfo(hit.block, outHit);
-        if (!desc.bQueryTrigger && outHit.pCollidable)
-        {
-            CCollider* pCollider = dynamic_cast<CCollider*>(outHit.pCollidable);
-            if (pCollider && pCollider->IsTrigger())
-            {
-                // 트리거는 무시하고 다음 검사 (구현 복잡)
-                return false;
-            }
-        }
         return true;
     }
 
@@ -183,10 +177,14 @@ _bool CPhysicsSystem::Raycast_Multiple(const PHYSICS_RAY& desc, PHYSICS_RAY_HITS
     const PxU32 bufferSize = desc.iMaxHits > 0 ? desc.iMaxHits : 128;
     PxRaycastHit* hitBuffer = new PxRaycastHit[bufferSize];
     PxRaycastBuffer hit(hitBuffer, bufferSize);
-    PxQueryFilterData filterData = Create_FilterData(desc);
+
+    PxQueryFilterData filterData;
+    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC;
+
+    CRaycastFilterCallback filterCallback(desc.iCollisionMask);
 
     _bool bResult = m_pScene->raycast(origin, direction, desc.fMaxDistance, hit,
-        PxHitFlag::eDEFAULT, filterData);
+        PxHitFlag::eDEFAULT, filterData, &filterCallback);
 
     if (bResult)
     {
@@ -276,15 +274,6 @@ void CPhysicsSystem::Setup_RayHitInfo(const PxRaycastHit& pxHit, PHYSICS_RAY_HIT
                 outHit.pCollidable = outHit.pHitObject->Get_Component<CCharacterController>();
         }
     }
-}
-
-PxQueryFilterData CPhysicsSystem::Create_FilterData(const PHYSICS_RAY& desc)
-{
-    PxQueryFilterData filterData;
-    filterData.data.word0 = desc.iCollisionMask;
-    filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC |
-        PxQueryFlag::ePREFILTER;
-    return filterData;
 }
 
 PxFilterFlags CPhysicsSystem::SimulationFilterShader(

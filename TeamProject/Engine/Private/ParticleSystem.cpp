@@ -223,6 +223,11 @@ void CParticleSystem::Simulation_Particle(_float dt)
 	}
 }
 
+void CParticleSystem::Reset()
+{
+	m_fSpawnAcc = 0.f;
+}
+
 HRESULT CParticleSystem::Bind_Buffer(ID3D11DeviceContext* pContext)
 {
 	if (m_iAliveCount <= 0)
@@ -491,7 +496,7 @@ void CParticleSystem::SpawnParticles(_float dt)
 
 		if (iSpawnCount > 0)
 		{
-			m_fSpawnAcc -= static_cast<_float>(iSpawnCount);
+			m_fSpawnAcc = 0.f;// -= static_cast<_float>(iSpawnCount);
 
 			if(!m_IsLoop) /*루프가 아닐때만 누적*/
 				m_iSpawnParticleCount += iSpawnCount;

@@ -238,6 +238,7 @@ void CStateMachine<Type>::Update_AnimProgress()
 	if (nullptr == pAnimator)
 		return;
 
+	m_pCurrentState->m_IsAnimProgressUpdate = false;	
 	_float fProgress = pAnimator->Get_CurAnimDuration();
 	Update_AnimProgress_Recursive(m_pCurrentState, fProgress);
 }
@@ -248,7 +249,15 @@ void CStateMachine<Type>::Update_AnimProgress_Recursive(IBaseState<Type>* pState
 	if (!pState)
 		return;
 
-	pState->m_fAnimProgress = fProgress;
+	/* prev progress에 기존 anim progress 대입 */
+
+	if (!pState->m_IsAnimProgressUpdate)
+	{
+		pState->m_fPrevAnimProgress = pState->m_fAnimProgress;
+		pState->m_fAnimProgress = fProgress;
+
+		pState->m_IsAnimProgressUpdate = true;
+	}
 
 	IHState<Type>* pHState = dynamic_cast<IHState<Type>*>(pState);
 	if (pHState && pHState->Has_SubStateMachine())

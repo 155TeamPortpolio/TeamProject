@@ -45,7 +45,9 @@ void CJaneDoeState_SwitchInExAttack_Start::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInExAttack_Start::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInExAttack_Loop::Enter(CJaneDoe* pOwner)
@@ -58,7 +60,9 @@ void CJaneDoeState_SwitchInExAttack_Loop::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInExAttack_Loop::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 }
 
 void CJaneDoeState_SwitchInExAttack_End::Enter(CJaneDoe* pOwner)
@@ -71,5 +75,13 @@ void CJaneDoeState_SwitchInExAttack_End::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchInExAttack_End::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Process_RootMotion(dt);
+    pOwner->Process_RootMotion(dt,
+        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
+        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    IHState<CJaneDoe>* pSwitch = Get_ParentState();
+    if (!pSwitch || !pSwitch->Get_SubStateMachine()) return;
+
+    if (m_fAnimProgress >= 0.75f)
+        pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");    
 }

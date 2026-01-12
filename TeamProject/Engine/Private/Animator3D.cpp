@@ -1575,7 +1575,10 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	ImGui::Text("Speed ");
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(40.f);
 	ImGui::DragFloat("##Speed", &curLayer.fAnimSpeed, 0.01f, 0.f, 10.f, "%.2f");
+	ImGui::SameLine();
+	ImGui::Text("Progress : %.2f", curLayer.fProgress);
 	ImGui::EndChild();
 }
 

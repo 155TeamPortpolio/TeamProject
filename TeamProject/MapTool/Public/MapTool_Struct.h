@@ -45,14 +45,16 @@ namespace MapTool {
 
 	/* Field Data */
 	// int64_t(= int) , double(= float)
-	using SlotValue = std::variant<int64_t, _double, _bool, std::string, XMFLOAT3>;
+	using SlotValue = std::variant<int64_t, _double, _bool, string, XMFLOAT2, XMFLOAT3, XMFLOAT4>;
 
 	NLOHMANN_JSON_SERIALIZE_ENUM(SLOT_DATA_TYPE, {
 	{ SLOT_DATA_TYPE::Int,    "Int" },
 	{ SLOT_DATA_TYPE::Float,  "Float" },
 	{ SLOT_DATA_TYPE::Bool,   "Bool" },
 	{ SLOT_DATA_TYPE::String, "String" },
+	{ SLOT_DATA_TYPE::Float2, "Float2" },
 	{ SLOT_DATA_TYPE::Float3, "Float3" },
+	{ SLOT_DATA_TYPE::Float4, "Float4" },
 	{ SLOT_DATA_TYPE::END,    "END" }
 		});
 

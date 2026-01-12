@@ -13,6 +13,8 @@
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
 #include "CorinState_Evade.h"
+#include "CorinState_SwitchIn.h"
+#include "CorinState_SwitchOut.h"
 
 #include "FootIK.h"
 
@@ -22,15 +24,6 @@ CCorin::CCorin()
 
 CCorin::CCorin(const CCorin& rhs)
 	: CCharacter(rhs)
-{
-}
-
-void CCorin::On_SwitchIn(SWITCH eType)
-{
-	Set_Switch(eType);
-}
-
-void CCorin::On_SwitchOut()
 {
 }
 
@@ -90,6 +83,10 @@ void CCorin::Awake()
 	//ikDesc.bDynamicPoleVector = false;  // 끄기
 	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // 고정
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
+
+
+	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.6f);
+	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CCorin::Priority_Update(_float dt)
@@ -130,28 +127,15 @@ void CCorin::Render_GUI()
 	}
 }
 
-void CCorin::Update_Input(_float dt)
+void CCorin::On_SwitchIn(SWITCH eType)
 {
-	__super::Update_Input(dt);
+	Set_Switch(eType);
+	m_pStateMachine->Set_Trigger("SwitchIn");
+}
 
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	// 디버그용 레이캐스트
-	//if (input->Key_Hold('F'))
-	//{
-	//	PHYSICS_RAY_HIT hit;
-	//	_vector vLook = m_pTransform->Dir(STATE::LOOK);
-	//	m_pCCT->Shoot_Ray(vLook, 100.f, hit);
-	//}
-	//else
-	//{
-	//	m_pCCT->Clear_DebugRay();
-	//}
-
-	// 테스트용 점프 (J키)
-	if (input->Key_Down('J'))
-	{
-		m_pCCT->Jump(3.f);
-	}
+void CCorin::On_SwitchOut()
+{
+	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
 void CCorin::Update_States()
@@ -237,7 +221,7 @@ void CCorin::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CCorin>* pEnd = pMoveType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsAttack || m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
@@ -253,9 +237,17 @@ void CCorin::Process_EndState(const string& strCurrentState)
 		{
 			IBaseState<CCorin>* pEnd = pAttackType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (m_bIsInput || pEnd->Is_AnimEnd()))
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
+	}
+	else if (strCurrentState == "SwitchIn")
+	{
+		//CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
+		//	m_pStateMachine->Get_CurrentState()
+		//	);
+		//if (!pSwitchIn)	return;
+		//IHState<CCorin>* pSwitchInType = 
 	}
 }
 
@@ -284,6 +276,8 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Move", CCorinState_Move::Create());
 	m_pStateMachine->Register_State("Attack", CCorinState_Attack::Create());
 	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
+	m_pStateMachine->Register_State("SwitchIn", CCorinState_SwitchIn::Create());	//*SwitchIn*
+	m_pStateMachine->Register_State("SwitchOut", CCorinState_SwitchOut::Create());//*SwtichOut*
 
 	return S_OK;
 }
@@ -316,6 +310,23 @@ HRESULT CCorin::Initialize_Transitions()
 
 	// Evade -> Idle (Backstep)
 	m_pStateMachine->Register_Transition("Evade", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	// SwitchIn
+	m_pStateMachine->Register_AnyStateTransition("SwitchIn",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchIn");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToMove");
+
+	// SwitchOut
+	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "SwitchOut");
+
+	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;

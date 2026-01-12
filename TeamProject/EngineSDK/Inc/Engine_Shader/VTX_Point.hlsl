@@ -311,10 +311,12 @@ PS_OUT_SCREEN_EFFECT PS_MAIN_SCREENEFFECT(PS_IN In)
     
     vector vResult = ApplyColorMode(0, vDiffuse, float4(Color, Alpha));
     vector vPremulColor = vector(vResult.rgb * vResult.a, vResult.a);
+    vector vBloomColor = float4(1.f, 0.3f, 0.f, 1.f);
+    vector vBloomPremul = float4(vBloomColor.rgb * vResult.a, vResult.a);
     
-    Out.vDiffuseAcc =vPremulColor;
-    Out.vBloomAcc = ExtractBright(vPremulColor, 0.2f, 0.5f, 20.f);
-    Out.vBloomInfo = float4(0.f, 1.5f, 0.f, 0.f);
+    Out.vDiffuseAcc = vPremulColor;
+    Out.vBloomAcc = ExtractBright(vBloomColor, 0.3f, 0.5f, 10.f);
+    Out.vBloomInfo = float4(0.f, 100.5f, 0.f, 0.f);
     Out.vRevealage = vResult.a;
     
     return Out;

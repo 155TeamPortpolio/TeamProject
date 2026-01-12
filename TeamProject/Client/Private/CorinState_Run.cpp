@@ -39,8 +39,6 @@ void CCorinState_Run::Enter(CCorin* pOwner)
         pMoveState->Get_SubStateMachine()->Set_Int("RunEntryMode", 0);
     }
 
-    pOwner->Reset_LastValidKey();
-
     if (iRunEntryMode == 1)
         m_pSubStateMachine->Set_DefaultState("End");
     else
@@ -88,8 +86,8 @@ void CCorinState_Run_Turnback::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "TurnBack")
         .Speed(1.2f)
         .Apply();
-
-    pOwner->Reset_LastValidKey();
+    pOwner->Reset_InputBuffer();
+    pOwner->Set_ResetMove(true);
 }
 
 void CCorinState_Run_Turnback::Update(CCorin* pOwner, _float dt)

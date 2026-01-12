@@ -316,42 +316,6 @@
     <Filter Include="03. Utility\04. BattleSystem">
       <UniqueIdentifier>{b180e495-0af6-48a7-9aa3-dd8d6b302e10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe">
-      <UniqueIdentifier>{49f60698-ec23-4af5-83e4-adab20e62d31}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State">
-      <UniqueIdentifier>{403d0c4d-3060-433f-b472-ee41944ba1ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack">
-      <UniqueIdentifier>{fb4ea57e-07c2-46ab-9286-24e7c43d0dd8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade">
-      <UniqueIdentifier>{4af0f27e-613c-4ec9-93d0-a02b179d4cfe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Idle">
-      <UniqueIdentifier>{f840cc00-29c5-4f2a-af28-ad215bb153e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move">
-      <UniqueIdentifier>{768dd3dc-bf7d-41d0-bf00-7bfa5427a8df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Normal">
-      <UniqueIdentifier>{5bbf7437-32d5-47a1-966e-349765d39f76}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Rush">
-      <UniqueIdentifier>{86ed22fe-2f06-41fb-962a-fc8b06ffe7e7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\BackStep">
-      <UniqueIdentifier>{df848b43-9a07-4388-8751-ca8881084a06}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\Dash">
-      <UniqueIdentifier>{bba8e1a4-9597-4cac-969d-bf1a12aff66e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run">
-      <UniqueIdentifier>{a20207dd-12db-42a1-80ab-68f97d7d95c8}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk">
-      <UniqueIdentifier>{f4071147-49f7-4af9-aa74-d0612b847195}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase">
       <UniqueIdentifier>{554e8518-5554-4620-9031-ace06e5b45b3}</UniqueIdentifier>
     </Filter>
@@ -367,14 +331,14 @@
     <Filter Include="03. Utility\05. DataBase">
       <UniqueIdentifier>{63a6de62-07b4-44f0-a0b6-7c116f8319b7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser">
+      <UniqueIdentifier>{1e80cf8b-3c80-481d-a79c-f8493cb8d192}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy">
       <UniqueIdentifier>{53d0665b-37f7-4401-8a18-08aa3a171864}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death">
       <UniqueIdentifier>{4e479452-37df-462b-be77-f24a8066c872}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider">
-      <UniqueIdentifier>{c366ca93-e53b-4a12-b0c6-e746a4a1953e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\UI">
       <UniqueIdentifier>{55bb7252-7639-4270-b550-e55db163b9f0}</UniqueIdentifier>
@@ -427,9 +391,6 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Digits">
       <UniqueIdentifier>{9165850c-7252-4980-a097-4ec68aeca04e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch">
-      <UniqueIdentifier>{e300c58d-4dd8-4058-ab2e-ecbc5ba5b758}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\UI\BattleHUD\Decibel\Points">
       <UniqueIdentifier>{2f6b3c7c-f5fc-4725-a995-bc8d4b2949db}</UniqueIdentifier>
     </Filter>
@@ -453,6 +414,141 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch">
+      <UniqueIdentifier>{c00031fc-f368-4e17-be14-52a66af8850a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn">
+      <UniqueIdentifier>{d3852098-efbf-4ae5-a917-bbcd53ca4dc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{8755a55d-a018-43f5-b708-c909154bdd2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{179f59ca-f54a-4ba2-b82d-47b3b92b18f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{d7c0714a-11fa-43dc-a7e6-4c109a0c3ef8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{57371434-3357-45bf-bacc-1dd1d120577f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut">
+      <UniqueIdentifier>{73d70924-6c57-481c-a659-6b948073dd3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider">
+      <UniqueIdentifier>{837c0ff3-8790-45d5-9369-91e3ff5f8b08}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForAttack">
+      <UniqueIdentifier>{75e23847-cf22-47ae-a93c-4d4236adb329}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\EnemyCollider\ForTrigger">
+      <UniqueIdentifier>{232277b9-5418-438c-90df-4f1894d61ba0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc">
+      <UniqueIdentifier>{79bba1fb-58bb-4669-a74a-54e083c8c10d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Background">
+      <UniqueIdentifier>{74c2a9bd-d86d-4bb7-8336-f027d17151f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service">
+      <UniqueIdentifier>{210a1075-7fe0-417a-8c56-982a1dbb01ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Conversation">
+      <UniqueIdentifier>{0bafe532-d8a7-4715-bb85-07a6f77d204c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow">
+      <UniqueIdentifier>{ff2cc5c8-e319-4641-8d0c-2bbd0faf386d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State">
+      <UniqueIdentifier>{07c9ca2b-6bb8-4335-afcf-49ac96c3c324}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle">
+      <UniqueIdentifier>{23d244f3-37f9-46b1-8c87-aaded287259a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome">
+      <UniqueIdentifier>{f8ea08ba-6569-496d-8e22-eeba2c8a260d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\OfficeMeow\State\Think">
+      <UniqueIdentifier>{048167fd-ce16-4db6-8827-3802c7d9d79e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos">
+      <UniqueIdentifier>{5a6bfa1a-6ef4-445a-89c4-348cf6a98b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Pay">
+      <UniqueIdentifier>{ff91eec2-210f-4d57-aa6a-268e38678df7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Pay\State">
+      <UniqueIdentifier>{e60a7be8-cc43-46e5-bd64-3f11a1262199}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
+      <UniqueIdentifier>{2c23461a-2765-4480-ad3f-f2645e65df1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe">
+      <UniqueIdentifier>{49f60698-ec23-4af5-83e4-adab20e62d31}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State">
+      <UniqueIdentifier>{403d0c4d-3060-433f-b472-ee41944ba1ca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack">
+      <UniqueIdentifier>{fb4ea57e-07c2-46ab-9286-24e7c43d0dd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Normal">
+      <UniqueIdentifier>{5bbf7437-32d5-47a1-966e-349765d39f76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Rush">
+      <UniqueIdentifier>{86ed22fe-2f06-41fb-962a-fc8b06ffe7e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade">
+      <UniqueIdentifier>{4af0f27e-613c-4ec9-93d0-a02b179d4cfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\BackStep">
+      <UniqueIdentifier>{df848b43-9a07-4388-8751-ca8881084a06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Evade\Dash">
+      <UniqueIdentifier>{bba8e1a4-9597-4cac-969d-bf1a12aff66e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Idle">
+      <UniqueIdentifier>{f840cc00-29c5-4f2a-af28-ad215bb153e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move">
+      <UniqueIdentifier>{768dd3dc-bf7d-41d0-bf00-7bfa5427a8df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Run">
+      <UniqueIdentifier>{a20207dd-12db-42a1-80ab-68f97d7d95c8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Move\Walk">
+      <UniqueIdentifier>{f4071147-49f7-4af9-aa74-d0612b847195}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch">
+      <UniqueIdentifier>{e300c58d-4dd8-4058-ab2e-ecbc5ba5b758}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn">
+      <UniqueIdentifier>{b1f53003-7c24-4dfd-8b11-f92265e814c7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Normal">
+      <UniqueIdentifier>{17ac199c-689b-4292-beb7-f0b1a28e89d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\Attack">
+      <UniqueIdentifier>{3b25628b-24fb-4600-ba33-add740b3d93e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack">
+      <UniqueIdentifier>{cfb004a7-4664-4a91-9c59-083d3b491dc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
+      <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchOut">
+      <UniqueIdentifier>{ee4ce36f-881a-4c28-bb3d-2128c9d40faa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
+      <UniqueIdentifier>{ae74ad50-97c1-4208-aed1-096698c72e90}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver">
+      <UniqueIdentifier>{159cee01-0044-41fd-9521-d9a74640ff69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State">
+      <UniqueIdentifier>{3b5df14e-cbb1-4af9-a5e4-666952e7c0f0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -849,6 +945,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
     </ClInclude>
@@ -862,14 +959,14 @@
       <Filter>03. Utility\05. DataBase</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
+    <ClInclude Include="..\Public\Sacrifice_Laser.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\ThugBulkyEnforcer_Collider.h">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
@@ -897,6 +994,63 @@
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyAttackCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\EnemyTriggerCollider.h">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchIn.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInNormal.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Npc.h">
+      <Filter>02. GameObject\Object\Npc</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ServiceNpc.h">
+      <Filter>02. GameObject\Object\Npc\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeow.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Think.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Think</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\OfficeMeowState_Welcome.h">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooPay.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Pay</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooPayState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Pay\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAsk.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooAskState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooDeliver.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\BangBooDeliverState_Idle.h">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State</Filter>
+       </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchOut.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1298,11 +1452,11 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\ThugBulkyEnforcer_Collider.cpp">
-      <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\Collider</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_DecibelPts.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Decibel\Points</Filter>
@@ -1327,6 +1481,64 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ExAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyAttackCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForAttack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EnemyTriggerCollider.cpp">
+      <Filter>02. GameObject\Object\Enemy\EnemyCollider\ForTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchIn.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchInAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Npc.cpp">
+      <Filter>02. GameObject\Object\Npc</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ServiceNpc.cpp">
+      <Filter>02. GameObject\Object\Npc\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeow.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Think.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Think</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\OfficeMeowState_Welcome.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\OfficeMeow\State\Welcome</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooPay.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Pay</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooPayState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Pay\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAsk.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
+    </ClCompile>
+
+    <ClCompile Include="..\private\BangBooDeliver.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\BangBooDeliverState_Idle.cpp">
+      <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
