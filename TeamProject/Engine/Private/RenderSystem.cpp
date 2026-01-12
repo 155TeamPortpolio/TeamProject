@@ -51,9 +51,6 @@ HRESULT CRenderSystem::Initialize()
 	m_pUI3DPass		= UI3DPass::Create(this);
 	m_pEffectPass	= EffectPass::Create(this);
 
-#ifdef _DEBUG
-	m_pDebugPass = DebugPass::Create(this);
-#endif // _DEBUG
 
 	m_pForward = CForwardRenderer::Create(m_pDevice,m_pContext, m_pTargetManager,m_pPipeLine);
 	m_pPost = CPostRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
@@ -93,9 +90,7 @@ HRESULT CRenderSystem::Render()
 	m_pPost->Render_Final();
 
 	m_pUI->Render_CustomTarget();
-#ifdef _DEBUG
-	//m_pDebugPass->Execute(m_pContext);
-#endif // _DEBUG
+
 	return S_OK;
 }
 
@@ -228,7 +223,6 @@ void CRenderSystem::Free()
 	Safe_Release(m_pUIPass);
 	Safe_Release(m_pUI3DPass);
 	Safe_Release(m_pEffectPass);
-	Safe_Release(m_pDebugPass);
 	Safe_Release(m_pStaticShadowPass);
 	Safe_Release(m_pSkinnedShadowPass);
 	Safe_Release(m_pBlendedPass);

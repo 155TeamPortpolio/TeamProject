@@ -1,5 +1,6 @@
 #pragma once
 #include "Engine_Defines.h"
+#include "Helper_Func.h"
 
 NS_BEGIN(Engine)
 
@@ -13,22 +14,29 @@ typedef struct DynamicBoneNode
     _float   fLength = { 0.f }; //그리고 그 방향의 길이
 
     /* RunTime */
-    /* 로컬 모델기준 */
-    _vector3 CombinedCurPos{};
-    _vector3 CombinedPrevPos{};
-    /* 월드 위치기준 */
-    _vector3 AnimWorldPos;
-    _vector3 DynamicCurPos{};
-    _vector3 DynamicPrevPos{};
+    Vector3 TipPrevCombinedPos;
+    Vector3 TipCurCombinedPos;
 }DYNAMIC_NODE;
+
+typedef struct DistributionParam
+{
+    EaseType Ease = EaseType::Linear;
+    float    Start = 1.f;
+    float    End = 0.f;
+}DISTRIB;
 
 typedef struct DynamicBoneChainParam
 {
-    _float fStiffness    = { 0.1f };     // 0~1 (강성)
-    _float fDamping      = { 0.1f };     // 0~1 (점성)
-    _float fElasticity   = { 0.1f };     // 
-    _float fInert        = { 0.1f };     // 0~1 (감쇠)
-    _float fGravityScale = { 1.0f };     // 중력 배율
+    _float  Inert        = { 0.0f };           // 0~1 (월드영향)
+    DISTRIB Inert_Distrib{};
+    _float  Damping      = { 0.0f };           // 0~1 (감쇠)
+    DISTRIB Damping_Distrib{};
+    _float  Elasticity   = { 0.0f };           // 0~1 (탄성)
+    DISTRIB Elasticity_Distrib{};
+    _float  Stiffness    = { 0.0f };           // 0~1 (강성)
+    DISTRIB Stiffness_Distrib{};
+    _float GravityScale = { 0.0f };           // 중력 배율
+    _vector3 GravityDir = { 0.f, -1.f, 0.f }; // 중력 방향
 }CHAIN_PARAM;
 
 typedef struct DynamicBoneChain {
@@ -38,21 +46,14 @@ typedef struct DynamicBoneChain {
 typedef struct DynamicBoneChainGroup {
     _int    AnchorBoneIndex = { -1 };
     vector<DYNAMIC_CHAIN> Chains;
-
-    _bool       bWorldSpace = { true };    // 월드상 계산을 이용하는지
+    _float UpdateRate = { 60.f };
     CHAIN_PARAM ChainParam{};
 
     /* RunTime */
+    _float UpdateElapsed{};
+
     _vector3    CurAnchorCombinedPos{};
     _vector3    PrevAnchorCombinedPos{};
-    _quaternion CurAnchorCombinedQuat{};
-    _quaternion PrevAnchorCombinedQuat{};
-
-    _vector3    CurAnchorWorldPos{};
-    _quaternion CurAnchorWorldQuat{};
-    _vector3    PrevAnchorWorldPos{};
-    _quaternion PrevAnchorWorldQuat{};
-
 }DYNAMIC_CHAIN_GROUP;
 
 NS_END

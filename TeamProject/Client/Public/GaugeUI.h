@@ -11,6 +11,7 @@ private:
 	virtual ~CGaugeUI() DEFAULT;
 
 public:
+	void Set_FillAmount(_float fFillAmount);
 	void Set_Status(UI_STATUS_OWNER eOwner, UI_STATUS_TYPE eType);
 
 public:

@@ -72,9 +72,6 @@ void CMiyabi::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
-
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.f, 0.0), 0.1f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -128,7 +125,7 @@ void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
 		&pLayout
 	);
 
-	Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
+	//Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
 
 	pContext->IASetInputLayout(pLayout);
 	Shader->Apply("OutLine", pContext);

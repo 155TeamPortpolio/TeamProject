@@ -21,6 +21,17 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+void CCharacter::Update_DissolveProgress(_float dt)
+{
+	m_fDissolveProgress += dt;
+}
+
+void CCharacter::Reset_DissolveProgress()
+{
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::None);
+}
+
 void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 {
 	UI_STATUS_DESC desc = {};
@@ -108,6 +119,18 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
+void CCharacter::Awake()
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+	}
+}
+
 void CCharacter::Priority_Update(_float dt)
 {
 }
@@ -126,6 +149,20 @@ void CCharacter::Late_Update(_float dt)
 	m_bIsAttack = false;
 	m_bIsEvade = false;
 	m_bEvadeBuffer = false;
+}
+
+void CCharacter::OnTriggerEnter(CGameObject* pOther)
+{
+	CCollider* pCollider = pOther->Get_Component<CCollider>();
+	if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
+	{
+		m_ParryableTargets.insert(pOther);
+	}
+}
+
+void CCharacter::OnTriggerExit(CGameObject* pOther)
+{
+	m_ParryableTargets.erase(pOther);
 }
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
@@ -213,6 +250,12 @@ _bool CCharacter::Is_OppositeInput() const
 	_float fAngle = XMConvertToDegrees(acosf(fDot));
 
 	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+}
+
+_bool CCharacter::Can_Parry() const
+{
+	if (m_ParryableTargets.empty())	return false;
+	return true;
 }
 
 void CCharacter::Update_Rotation(_float dt)

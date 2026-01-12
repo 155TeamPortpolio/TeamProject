@@ -14,12 +14,12 @@
 #include "BangBooAskState_Idle.h"
 
 CBangBooAsk::CBangBooAsk()
-    :CServiceNpc()
+	:CServiceNpc()
 {
 }
 
 CBangBooAsk::CBangBooAsk(const CBangBooAsk& rhs)
-    :CServiceNpc(rhs)
+	:CServiceNpc(rhs)
 {
 }
 
@@ -28,14 +28,14 @@ HRESULT CBangBooAsk::Initialize_Prototype()
 	__super::Initialize_Prototype();
 
 	auto pResource = ResourceManager();
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Modelout.model");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Modelout.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Modelout.mat");
-	pResource->Add_ResourcePath("NPC_CashierBangbooPay_Idle_Start_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooPay_Idle_Start_Meta.json");
+	pResource->Add_ResourcePath("CashierBangbooAsk.model", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.model");
+	pResource->Add_ResourcePath("CashierBangbooAsk.mat", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/CashierBangbooAsk.mat");
+	pResource->Add_ResourcePath("NPC_CashierBangbooAsk_Meta.json", "../Bin/Resources/Model/skeletal/NPC/141BangBoo/Ask/NPC_CashierBangbooAsk_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.model");
+	pModel->Link_Model(G_GlobalLevelKey, "CashierBangbooAsk.model");
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "CashierBangbooAsk.mat");
 
 	return S_OK;
 }
@@ -54,11 +54,11 @@ HRESULT CBangBooAsk::Initialize(INIT_DESC* pArg)
 void CBangBooAsk::Awake()
 {
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "NPC_CashierBangbooPay_Modelout.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_CashierBangbooPay_Idle_Start_Meta.json");
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "CashierBangbooAsk.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "NPC_CashierBangbooAsk_Meta.json");
 	pAnimator->Set_MotionBone(13); //Bip001
 
-	m_strAnimName = "NPC_CashierBangbooPay_";
+	m_strAnimName = "NPC_CashierBangbooAsk_Ani_";
 	m_strName = "Ask";
 
 	pAnimator->Set_Animation(Get_AnimName() + "Idle_Start")
@@ -100,7 +100,7 @@ HRESULT CBangBooAsk::Initialize_StateMachine()
 HRESULT CBangBooAsk::Initialize_States()
 {
 	m_pStateMachine->Register_State("Idle", CBangBooAskState_Idle::Create());
-    return S_OK;
+	return S_OK;
 }
 
 CBangBooAsk* CBangBooAsk::Create()

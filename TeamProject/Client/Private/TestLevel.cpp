@@ -53,7 +53,9 @@
 
 /*npc*/
 #include "OfficeMeow.h"
+#include "BangBooPay.h"
 #include "BangBooAsk.h"
+#include "BangBooDeliver.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -454,6 +456,26 @@ void CTestLevel::Ready_Npc()
 	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
 		.CharacterController(bangbooCCT)
 		.Build("Test_Meow");
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooPay", CBangBooPay::Create());
+	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooPay" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Pay");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	bangbooCCT.vPos = { 21.7f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooAsk::Create());
+	testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Ask");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	bangbooCCT.vPos = { 20.9f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooDeliver", CBangBooDeliver::Create());
+	testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooDeliver" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Deliver");
 
 	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
 }

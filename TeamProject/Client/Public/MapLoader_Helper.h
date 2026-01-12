@@ -13,7 +13,9 @@ namespace Client {
         if (tagType == "Float")  return SLOT_DATA_TYPE::Float;
         if (tagType == "Bool")   return SLOT_DATA_TYPE::Bool;
         if (tagType == "String") return SLOT_DATA_TYPE::String;
+        if (tagType == "Float2") return SLOT_DATA_TYPE::Float2;
         if (tagType == "Float3") return SLOT_DATA_TYPE::Float3;
+        if (tagType == "Float4") return SLOT_DATA_TYPE::Float4;
         return SLOT_DATA_TYPE::END;
     }
 
@@ -83,6 +85,35 @@ namespace Client {
         return false;
     }
 
+    inline _bool TryParseFloat2(const json& j, _float2& out)
+    {
+        if (j.is_array() && j.size() >= 2)
+        {
+            try {
+                out = _float2{
+                    j.at(0).get<float>(),
+                    j.at(1).get<float>(),
+                };
+                return true;
+            }
+            catch (...) {
+                return false;
+            }
+        }
+
+        if (j.is_object())
+        {
+            _float x, y;
+            if (TryGetFloat(j, "x", x) && TryGetFloat(j, "y", y))
+            {
+                out = _float2{ x, y };
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
     inline _bool TryParseFloat3(const json& j, _float3& out)
     {
         if (j.is_array() && j.size() >= 3)
@@ -106,6 +137,37 @@ namespace Client {
             if (TryGetFloat(j, "x", x) && TryGetFloat(j, "y", y) && TryGetFloat(j, "z", z))
             {
                 out = _float3{ x, y, z };
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    inline _bool TryParseFloat4(const json& j, _float4& out)
+    {
+        if (j.is_array() && j.size() >= 4)
+        {
+            try {
+                out = _float4{
+                    j.at(0).get<float>(),
+                    j.at(1).get<float>(),
+                    j.at(2).get<float>(),
+                    j.at(3).get<float>()
+                };
+                return true;
+            }
+            catch (...) {
+                return false;
+            }
+        }
+
+        if (j.is_object())
+        {
+            _float x, y, z, w;
+            if (TryGetFloat(j, "x", x) && TryGetFloat(j, "y", y) && TryGetFloat(j, "z", z) && TryGetFloat(j, "w", w))
+            {
+                out = _float4{ x, y, z, w };
                 return true;
             }
         }
@@ -151,11 +213,25 @@ namespace Client {
                 out.value = v.get<std::string>();
                 return true;
 
+            case SLOT_DATA_TYPE::Float2: {
+                XMFLOAT2 f2{};
+                if (!TryParseFloat2(v, f2))
+                    return false;
+                out.value = f2;
+                return true;
+            }
             case SLOT_DATA_TYPE::Float3: {
                 XMFLOAT3 f3{};
                 if (!TryParseFloat3(v, f3))
                     return false;
                 out.value = f3;
+                return true;
+            }
+            case SLOT_DATA_TYPE::Float4: {
+                XMFLOAT4 f4{};
+                if (!TryParseFloat4(v, f4))
+                    return false;
+                out.value = f4;
                 return true;
             }
 
@@ -203,7 +279,9 @@ namespace Client {
     template<> struct SlotTypeTag<float> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float; };
     template<> struct SlotTypeTag<bool> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Bool; };
     template<> struct SlotTypeTag<std::string> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::String; };
+    template<> struct SlotTypeTag<DirectX::XMFLOAT2> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float2; };
     template<> struct SlotTypeTag<DirectX::XMFLOAT3> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float3; };
+    template<> struct SlotTypeTag<DirectX::XMFLOAT4> { static constexpr SLOT_DATA_TYPE tag = SLOT_DATA_TYPE::Float4; };
 
     template<typename T>
     optional<T> GetSlotValue(const SlotValue& sv)
@@ -214,7 +292,9 @@ namespace Client {
             std::is_same_v<T, _float> ||
             std::is_same_v<T, _bool> ||
             std::is_same_v<T, std::string> ||
-            std::is_same_v<T, _float3>,
+            std::is_same_v<T, _float2> ||
+            std::is_same_v<T, _float3> ||
+            std::is_same_v<T, _float4>,
             "Func<T>: unsupported type"
             );
 

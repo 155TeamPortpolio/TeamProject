@@ -38,8 +38,6 @@ struct PS_IN
 struct PS_OUT
 {
     vector vDiffuse : SV_TARGET0;
-    vector vNormal : SV_TARGET1;
-    vector vDepth : SV_TARGET2;
 };
 
 
@@ -50,6 +48,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector GridCol = DiffuseTexture.Sample(LinearSampler, newTexcoord);
             
     Out.vDiffuse = GridCol;
+    
     return Out;
 }
 
@@ -62,6 +61,7 @@ technique11 DefaultTechnique
         SetDepthStencilState(DSS_ReadOnly, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 }
