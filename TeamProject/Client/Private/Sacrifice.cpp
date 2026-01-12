@@ -93,8 +93,6 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
-	
-
 	/* Child Object */
 	Create_Children();
 
@@ -132,24 +130,6 @@ void CSacrifice::Update(_float dt)
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-	//auto pSpark = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Spark");
-	//pSpark->Get_Component<CBoneFollower>()->Sync_Transform(dt, pSpark->Get_Component<CTransform>());
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('7'))
-	{
-		//Get_Component<CAnimator3D>()->Change_Animation(1, "SacrificeBringer_Ani_P1_Hit_Shake")
-		//	.Loop(false)
-		//	.Speed(1.5f)
-		//	.LayerBlend(1.f, 1.f, 0.5f, EaseType::None)
-		//	.Apply();
-		//
-		//Get_Component<CAnimator3D>()->Change_Animation(2, "SacrificeBringer_Ani_P1_Hit_Shake")
-		//	.Loop(false)
-		//	.Speed(1.5f)
-		//	.LayerBlend(1.f, 1.f, 1.f, EaseType::None)
-		//	.Apply();
-	}
 }
 
 void CSacrifice::Late_Update(_float dt)
