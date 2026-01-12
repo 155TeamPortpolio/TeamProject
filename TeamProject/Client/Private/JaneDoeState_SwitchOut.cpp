@@ -16,6 +16,8 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 {
+    pOwner->Update_DissolveProgress();
+
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));

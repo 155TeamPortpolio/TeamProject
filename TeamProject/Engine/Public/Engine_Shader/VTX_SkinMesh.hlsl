@@ -146,7 +146,7 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float fNoise = NoiseTexture.Sample(DefaultSampler, In.vTexcoord).r;
+    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * 4.f).r;
     
     if (fNoise < fDissolveProgress)
         discard;

@@ -21,6 +21,16 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
+void CCharacter::Update_DissolveProgress()
+{
+	m_fDissolveProgress += DISSOLVE_SPEED;
+	if (m_fDissolveProgress >= 1.f)
+	{
+		m_fDissolveProgress = 0.f;
+		SetRenderLayer(RENDER_LAYER::None);
+	}
+}
+
 void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 {
 	UI_STATUS_DESC desc = {};
@@ -106,6 +116,18 @@ HRESULT CCharacter::Initialize(INIT_DESC* pArg)
 	if (pArg == nullptr) return S_OK;
 	GAMEOBJECT_DESC* pCharacterDesc = static_cast<GAMEOBJECT_DESC*>(pArg);
 	return S_OK;
+}
+
+void CCharacter::Awake()
+{
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+	}
 }
 
 void CCharacter::Priority_Update(_float dt)
