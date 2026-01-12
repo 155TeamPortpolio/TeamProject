@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_SpecialAction final : public CUI_Object
 {
 private:
-	enum class Child { SPECIAL, END };
+	enum class Child { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
 
 	static const string INSTANCENAMES[ENUM(Child::END)];
 
@@ -27,9 +27,17 @@ public:
 
 private:
 	UI_HANDLE		m_handles[ENUM(Child::END)];
+	_bool			m_isEnabled = {};
+	_bool			m_isReady = {};
 
 private:
-	void Set_Active(_bool isActive);
+	void Set_Enabled(_bool isEnabled);
+	void Set_Ready();
+	void Use();
+
+	void Set_Alive(Child child, _bool isAlive);
+	void Set_Animation(Child child, _int iIndex);
+	void Set_Color(Child child, _float4 vColor);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);

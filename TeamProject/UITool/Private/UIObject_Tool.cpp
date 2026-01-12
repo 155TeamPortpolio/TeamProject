@@ -89,6 +89,8 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
+    data["alive"] = m_isAlive;
+
     data["instanceName"] = m_InstanceName;
 
     auto& transformJson = data["transform"];

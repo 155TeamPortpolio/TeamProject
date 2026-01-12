@@ -425,6 +425,8 @@ void CUI_Object::Load(const nlohmann::ordered_json& data)
 {
     if (data.empty()) return;
 
+    m_isAlive = data.value("alive", true);
+
     m_InstanceName = data.value("instanceName", "");
 
     if (data.contains("transform"))
