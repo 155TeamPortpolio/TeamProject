@@ -3,17 +3,17 @@
 
 NS_BEGIN(Client)
 
-class CUI_SpecialAction final : public CUI_Object
+class CUI_SwitchAction final : public CUI_Object
 {
 private:
-	enum class Child { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
+	enum class Child { BG, END };
 
 	static const string INSTANCENAMES[ENUM(Child::END)];
 
 private:
-	CUI_SpecialAction() {}
-	CUI_SpecialAction(const CUI_SpecialAction& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_SpecialAction() DEFAULT;
+	CUI_SwitchAction() {}
+	CUI_SwitchAction(const CUI_SwitchAction& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_SwitchAction() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -33,9 +33,9 @@ private:
 private:
 	/*액션을 사용할 수 있는, 없는 상태로 전환*/
 	void Set_Enabled(_bool isEnabled);
-	/*스페셜 액션을 사용할 수 있는 준비 상태로 전환*/
+	/*스위치 액션을 사용할 수 있는 준비 상태로 전환*/
 	void Set_Ready();
-	/*스페셜 액션을 사용*/
+	/*스위치 액션을 사용*/
 	void Use();
 
 	void Set_Alive(Child child, _bool isAlive);
@@ -54,7 +54,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_SpecialAction::ForChild(Child child, Func&& func)
+inline void CUI_SwitchAction::ForChild(Child child, Func&& func)
 {
 	auto& handle = m_handles[ENUM(child)];
 	if (!handle.isValid())

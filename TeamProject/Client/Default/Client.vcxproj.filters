@@ -562,6 +562,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State">
       <UniqueIdentifier>{3b5df14e-cbb1-4af9-a5e4-666952e7c0f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Switch">
+      <UniqueIdentifier>{0e324cad-57c5-488b-b658-80cacb86b738}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1075,9 +1078,12 @@
     </ClInclude>
     <ClInclude Include="..\public\BangBooDeliverState_Idle.h">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State</Filter>
-       </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\CorinState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1569,7 +1575,6 @@
     <ClCompile Include="..\private\BangBooAskState_Idle.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State</Filter>
     </ClCompile>
-
     <ClCompile Include="..\private\BangBooDeliver.cpp">
       <Filter>02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver</Filter>
     </ClCompile>
@@ -1578,6 +1583,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
