@@ -12,13 +12,14 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
-    pOwner->Update_DissolveProgress(dt);
+    if (m_fAnimProgress >= 0.2f)
+        pOwner->Update_DissolveProgress(dt);
 
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 0.4f)
+    if (m_fAnimProgress >= 0.6f)
     {
         pOwner->Reset_DissolveProgress();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
