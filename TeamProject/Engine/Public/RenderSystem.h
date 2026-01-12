@@ -21,7 +21,6 @@ public:
 	virtual void Submit_Priority(const OPAQUE_PACKET& packet) override { m_pPriorityPass->Submit(packet); };
 	virtual void Submit_UI(const SPRITE_PACKET& packet) override {m_pUIPass->Submit(packet);};
 	virtual void Submit_UI3D(const OPAQUE_PACKET& packet)override { m_pUI3DPass->Submit(packet); }
-	virtual void Submit_Debug(const DEBUG_PACKET& packet) override { m_pDebugPass->Submit(packet); };
 	virtual void Submit_Blend(const BLENDED_PACKET& packet)override { m_pBlendedPass->Submit(packet); }; ;
 	virtual void Submit_NonLight(const OPAQUE_PACKET& packet)override { m_pNonLightPass->Submit(packet); };
 	virtual void Submit_Particle(const PARTICLE_PACKET& packet)override { m_pParticlePass->Submit(packet); }
@@ -73,7 +72,6 @@ private:
 	NonLightPass* m_pNonLightPass = { nullptr };
 	ParticlePass* m_pParticlePass = { nullptr };
 	UIPass* m_pUIPass = { nullptr };
-	DebugPass* m_pDebugPass = { nullptr };
 	UI3DPass* m_pUI3DPass = { nullptr };
 	EffectPass* m_pEffectPass = { nullptr };
 

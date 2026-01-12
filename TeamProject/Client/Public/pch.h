@@ -23,3 +23,4 @@ using namespace Client;
 #include "Client_Struct.h"
 #include "Client_Enum.h"
 #include "Event_Struct.h"
+#include "UIDesign_Macro.h"

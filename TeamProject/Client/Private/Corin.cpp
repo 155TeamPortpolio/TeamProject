@@ -59,6 +59,8 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
 
 void CCorin::Awake()
 {
+	__super::Awake();
+
 	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size01_Corin.model");
 	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size01_Corin.json");
 
@@ -83,10 +85,6 @@ void CCorin::Awake()
 	//ikDesc.bDynamicPoleVector = false;  // ²ô±â
 	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
-
-
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.6f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CCorin::Priority_Update(_float dt)
@@ -129,6 +127,9 @@ void CCorin::Render_GUI()
 
 void CCorin::On_SwitchIn(SWITCH eType)
 {
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::Default);
+
 	Set_Switch(eType);
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }

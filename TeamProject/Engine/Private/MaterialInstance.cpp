@@ -39,7 +39,7 @@ void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 
 	pMaterialShader->Apply(Get_PassConstant(), pContext);
 
-	ClearDynamicSlotsBound(pMaterialShader);
+	//ClearDynamicSlotsBound(pMaterialShader);
 }
 
 void CMaterialInstance::ClearDynamicSlotsBound(CShader* materialShader)
@@ -117,6 +117,17 @@ HRESULT CMaterialInstance::Reset_Constant()
 {
 	overrides_Constant = m_pMaterialData->Get_DefaultMaterialConstant();
 	return S_OK;
+}
+
+void CMaterialInstance::Reset_DynamicSlot()
+{
+	CShader* pShader =m_pMaterialData->Get_Shader();
+	for (auto& pair : m_DynamicSlots)
+	{
+		SHADER_PARAM param = pair.second;
+		param.pData = nullptr;
+		pShader->Bind_Value(pair.first, param);
+	}
 }
 
 void CMaterialInstance::ChangeTexture(TEXTURE_TYPE type, _uint index)

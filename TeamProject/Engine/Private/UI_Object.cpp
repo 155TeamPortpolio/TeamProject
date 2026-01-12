@@ -402,8 +402,13 @@ void CUI_Object::Play_Animation(_float dt)
 
     if (ratio >= 1.f)
     {
-        if (!clip.isLoop) m_isBlending = false;
-        else              m_fBlendTime = 0.f;
+        if (!clip.isLoop)
+        {
+            m_iCurrentClipIndex = -1;
+            m_isBlending = false;
+        }
+        else              
+            m_fBlendTime = 0.f;
     }
 }
 

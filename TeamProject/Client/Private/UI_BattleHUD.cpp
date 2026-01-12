@@ -41,8 +41,6 @@ void CUI_BattleHUD::Awake()
     if (!pRoot)
         return;
 
-    Ready_Decibel(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(50.f, 136.f));
-  
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
@@ -64,6 +62,9 @@ CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
     if (!pRoot)
         return nullptr;
 
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_BattleHUDAction", "action", PREFAB::ACTION, _float2(1178.f, 655.f));
+
     // 생성된 루트 UI를 uiMgr에 등록
     if (FAILED(pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strLevelKey)))
         return nullptr;
@@ -74,7 +75,7 @@ CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
     return pRoot;
 }
 
-void CUI_BattleHUD::Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset)
+void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset)
 {
     CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
         .Offset(vOffset)

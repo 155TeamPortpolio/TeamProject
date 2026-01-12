@@ -34,6 +34,7 @@ private: //GUI Func
     void GUI_SetModel(_float fChildHeight);
 
 private: //Model Logic
+    void Load_ModelOnce();
     void Load_Resource();
     void Set_Model(string ModelTag, string MaterialTag);
     void Set_Animator();
@@ -48,6 +49,8 @@ private:
     //Show Selected Tags
     string m_CurModelTag = { "Select Model" };
     string m_CurMaterialTag = { "Select Material" };
+
+    _float m_fDegree = 0.f;
 
 public:
     static CAnimModel* Create();

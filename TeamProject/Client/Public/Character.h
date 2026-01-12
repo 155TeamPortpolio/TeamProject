@@ -61,6 +61,7 @@ public:
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
 
+
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
@@ -82,6 +83,9 @@ public:
     SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine에서 가져갈 switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
+    void        Update_DissolveProgress(_float dt); /*dissolve*/
+    void        Reset_DissolveProgress();
+
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
@@ -89,6 +93,7 @@ public:
 public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Awake() override;
     virtual void    Priority_Update(_float dt) override;
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
@@ -152,7 +157,10 @@ protected:
     unordered_set<CGameObject*>  m_ParryableTargets;
     // 테스트용
     _bool           m_bTest = { false };
-
+    //셰이더
+    _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
+    _float      m_fRimLightPower = { 0.f };
+    _float      m_fDissolveProgress = { 0.f };
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
 
 public:

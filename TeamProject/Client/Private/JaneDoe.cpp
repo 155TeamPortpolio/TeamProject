@@ -4,6 +4,7 @@
 #include "DataBase.h"
 
 #include "Material.h"
+#include "MaterialInstance.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -61,6 +62,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 
 void CJaneDoe::Awake()
 {
+	__super::Awake();
+
 	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
 	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size03_JaneDoe.json");
 
@@ -115,6 +118,9 @@ void CJaneDoe::Render_GUI()
 
 void CJaneDoe::On_SwitchIn(SWITCH eType)
 {
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::Default);
+
 	Set_Switch(eType);
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
