@@ -28,7 +28,7 @@ HRESULT CAIAnimator3D::Initialize(const aiScene* pAIScene, CAIModelData* pAIMode
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	
+	m_FinalMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	/*뼈 개수만큼 뼈의 로컬상태를 가져옴*/
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)

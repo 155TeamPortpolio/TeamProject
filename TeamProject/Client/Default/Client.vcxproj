@@ -211,6 +211,8 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
+    <ClInclude Include="..\public\MapAnimObject.h" />
+    <ClInclude Include="..\public\MapInvisibleWall.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
@@ -394,6 +396,8 @@
     <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
+    <ClCompile Include="..\Private\MapAnimObject.cpp" />
+    <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />

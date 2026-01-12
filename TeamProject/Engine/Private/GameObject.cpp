@@ -165,22 +165,6 @@ void CGameObject::Post_EngineUpdate(_float dt)
 				Make_OpaquePacket();
 			}
 
-#ifdef _DEBUG
-			DEBUG_PACKET debugPacket = {};
-			debugPacket.pModel = Get_Component<CModel>();
-			debugPacket.pDebug = Get_Component<CDebugRender>();
-			debugPacket.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-			if (debugPacket.pDebug) {
-				for (size_t i = 0; i < debugPacket.pDebug->Get_DebugBoxCount(); i++)
-				{
-					if (!debugPacket.pModel->isDrawable(i)) continue;
-					debugPacket.DrawIndex = i;
-					CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Debug(debugPacket);
-				}
-			}
-
-#endif // _DEBUG
-
 		}
 	}
 

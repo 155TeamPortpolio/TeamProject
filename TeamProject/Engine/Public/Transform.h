@@ -33,6 +33,7 @@ public:
 	void Scale_Vector(_fvector scale);
 
 	void LookAt(_fvector vAt);
+	void Set_Look(_fvector vAt);
 	void Override_Rotation(_fvector vAxis, _float fRadian);
 	void Reset_Rotation();
 

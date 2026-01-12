@@ -13,6 +13,7 @@ private:
 public:
 	void ApplyData(ID3D11DeviceContext* pContext);
 
+
 public:
 	const string& Get_PassConstant();
 	class CShader* Get_Shader();
@@ -28,7 +29,7 @@ public:
 	HRESULT Reset_Pass();
 	HRESULT Override_Constant(const MaterialConstants& materialConstant);
 	HRESULT Reset_Constant();
-
+	void Reset_DynamicSlot();
 public:
 	vector<_uint>& Get_TextureIndex() { return m_TextureIndexs; }
 	void ChangeTexture(TEXTURE_TYPE type, _uint index);
@@ -37,8 +38,11 @@ public:
 	void Set_OutLine(_bool outline) { m_IsUseOutLine = outline; }
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
+
 public:
 	virtual void Render_GUI();
+private:
+	void ClearDynamicSlotsBound(CShader* materialShader);
 
 private:
 	_bool m_IsBlended = { false };

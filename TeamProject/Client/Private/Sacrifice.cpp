@@ -92,8 +92,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
+	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 
 	/* Child Object */
 	auto pObjectContainer = Get_Component<CObjectContainer>();

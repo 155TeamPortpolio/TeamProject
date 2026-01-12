@@ -4,6 +4,8 @@ float3 vRimLightColor;
 float fRimLightPower;
 vector vOutLineColor;
 float fOutLineThickness;
+float fDissolveProgress;
+float fDissolveTiling;
 float4x4 g_OutLineBoneMatrices[512];
 matrix g_worldMatrix;
 
@@ -144,6 +146,12 @@ PS_OUT PS_MAIN(PS_IN In)
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vMetalic = MetalnessTexture.Sample(DefaultSampler, In.vTexcoord);
     vector vAmbient = AmbientTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
+    
+    if (fNoise < fDissolveProgress)
+        discard;
+  
     vAmbient.r = 0.f;
     if(vNormalDesc.a > 0.f)
     {

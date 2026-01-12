@@ -264,6 +264,8 @@ void CGUISystem::Render_CollisionBtn()
 	if (ImGui::Button(Render?"Collision Show":"Collision Hide")) {
 		CGameInstance::GetInstance()->Get_CollisionSystem()->Set_Render(!Render);
 	}
+	if (Render)
+		CollisionSystem()->Render_GUI();
 	ImGui::End();
 }
 

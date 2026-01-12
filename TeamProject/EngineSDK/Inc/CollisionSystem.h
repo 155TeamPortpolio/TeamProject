@@ -29,7 +29,7 @@ private:
     };
 
 private:
-    // Collider/RigidBody¿ë ÇÁ·Ï½Ã
+    // Collider/RigidBodyï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
     class CPhysXEventCallback : public PxSimulationEventCallback
     {
     public:
@@ -47,7 +47,7 @@ private:
         CCollisionSystem* m_pOwner = nullptr;
     };
 
-    // CCT¿ë ÇÁ·Ï½Ã
+    // CCTï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
     class CCCTHitCallback : public PxUserControllerHitReport
     {
     public:
@@ -79,16 +79,19 @@ public:
     PxUserControllerHitReport* Get_CCTCallback() override { return m_pCCTCallback; }
 
 private:
-    void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
-    void Process_Trigger(PxTriggerPair* pairs, PxU32 count);
-    void Process_CCT_ShapeHit(const PxControllerShapeHit& hit);
-    void Process_CCT_ControllerHit(const PxControllersHit& hit);
-    void Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
-    void Process_CollisionEvents();
+    void    Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
+    void    Process_Trigger(PxTriggerPair* pairs, PxU32 count);
+    void    Process_CCT_ShapeHit(const PxControllerShapeHit& hit);
+    void    Process_CCT_ControllerHit(const PxControllersHit& hit);
+    void    Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
+    void    Process_CollisionEvents();
 
-    void  Remove_DeactiveSlots();
-    void  Clean_DeadSlots();
-    _bool Is_SlotActive(_int iIndex) const;
+    void    Check_Initial_Overlap(ICollidable* pCollidable);
+    void    Stay_TriggerCollisions();
+    void    Exit_TriggerCollisions(ICollidable* pCollidable);
+    void    Remove_DeactiveSlots();
+    void    Clean_DeadSlots();
+    _bool   Is_SlotActive(_int iIndex) const;
 
     ICollidable* Get_Collidable_Actor(PxRigidActor* pActor);
     ICollidable* Get_Collidable_Shape(PxShape* pShape, PxRigidActor* pActor);

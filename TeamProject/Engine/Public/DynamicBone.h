@@ -21,7 +21,7 @@ public:
 public:
     void Init_Update();
     void Update(_float dt);
-
+    bool isInitUpdated() { return m_bInitUpdated; }
 protected:
     /* World */
     void WorldChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
@@ -30,19 +30,24 @@ protected:
     void Calc_AnchorDelta(DYNAMIC_CHAIN_GROUP& Group,
         _vector3& outDeltaPos,
         _quaternion& outDeltaQuat);
-    void Calc_DynamicPos(_vector3& DynamicPos,
+    void Calc_DynamicNode(DYNAMIC_NODE& Node,
         const _vector3& AnchorPrevPos,
         const _vector3& AnchorDeltaPos,
         const _quaternion& AnchorDeltaQuat);
     void Simulate_WorldNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
+        const _quaternion& parentQuat,
         const CHAIN_PARAM& ChainParam,
         _float dt);
+    void Simulate_WorldQuat(DYNAMIC_NODE& Node,
+        const _quaternion& parentQuat,
+        const CHAIN_PARAM& ChainParam);
     void ApplySimulatedWorldNode(DYNAMIC_CHAIN_GROUP& Group);
 
     /* Local */
     void LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
     void Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
+    //void Calc_Distribution(_int NodeCount, DISTRIB& Distrib);
     void Simulate_LocalNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
         const _quaternion& parentQuat,
@@ -56,7 +61,7 @@ protected:
 
 public:
     virtual void Render_GUI();
-    void Render_DynamicBone(_vector3 vPos, ImU32 color = IM_COL32(255, 0, 0, 255));
+    void Render_DynamicBone(_vector3 vPos, _float dotSize, ImU32 color = IM_COL32(255, 0, 0, 255));
 
 protected:
     class CGameObject*          m_pOwner = { nullptr };

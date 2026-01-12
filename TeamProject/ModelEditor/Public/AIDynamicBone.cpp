@@ -136,14 +136,21 @@ void CAIDynamicBone::Render_GUI()
 
 		// --- 그룹 파라미터 ---
 		ImGui::Text("Chain Param");
-		ImGui::SetNextItemWidth(240.0f);
-		ImGui::SliderFloat("Stiffness", &group.ChainParam.fStiffness, 0.0f, 1.0f);
 
 		ImGui::SetNextItemWidth(240.0f);
-		ImGui::SliderFloat("Damping", &group.ChainParam.fDamping, 0.0f, 1.0f);
+		ImGui::SliderFloat("Inert", &group.ChainParam.Inert, 0.0f, 1.0f);
 
 		ImGui::SetNextItemWidth(240.0f);
-		ImGui::SliderFloat("GravityScale", &group.ChainParam.fGravityScale, 0.0f, 3.0f);
+		ImGui::SliderFloat("Damping", &group.ChainParam.Damping, 0.0f, 1.0f);
+
+		ImGui::SetNextItemWidth(240.0f);
+		ImGui::SliderFloat("Elasticity", &group.ChainParam.Elasticity, 0.0f, 1.0f);
+
+		ImGui::SetNextItemWidth(240.0f);
+		ImGui::SliderFloat("Stiffness", &group.ChainParam.Stiffness, 0.0f, 1.0f);
+
+		ImGui::SetNextItemWidth(240.0f);
+		ImGui::SliderFloat("GravityScale", &group.ChainParam.GravityScale, 0.0f, 3.0f);
 
 		ImGui::Separator();
 

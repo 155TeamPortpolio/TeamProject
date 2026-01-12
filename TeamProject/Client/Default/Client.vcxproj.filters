@@ -565,6 +565,12 @@
     <Filter Include="02. GameObject\UI\BattleHUD\Action\Switch">
       <UniqueIdentifier>{0e324cad-57c5-488b-b658-80cacb86b738}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
+      <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\MapObject\04. MapAnimObject">
+      <UniqueIdentifier>{e27cbe5a-363f-497d-9eed-e754ea9d0f34}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1085,6 +1091,12 @@
     <ClInclude Include="..\Public\UI_SwitchAction.h">
       <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MapAnimObject.h">
+      <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MapInvisibleWall.h">
+      <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1586,6 +1598,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_SwitchAction.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapAnimObject.cpp">
+      <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MapInvisibleWall.cpp">
+      <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
