@@ -24,6 +24,7 @@ public:
     vector<class CMaterialInstance*>& Get_MaterialInstances() { return m_MaterialInstances; }
     class CMaterialInstance* Get_MaterialInstanceByName(const string& MaterialName);
     class CMaterialInstance* Get_MaterialInstance(_uint Index);
+    void ResetMaterial(_uint Index);
 
 public:
     class CShader* Get_Shader(_uint Index);

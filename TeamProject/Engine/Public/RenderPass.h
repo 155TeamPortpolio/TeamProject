@@ -265,19 +265,4 @@ public:
 };
 #pragma endregion
 
-#pragma region DEBUG_PASS
-class DebugPass final : public RenderPass {
-private:
-	DebugPass(class CRenderSystem* pRenderSystem) :RenderPass{ pRenderSystem } {};
-	virtual ~DebugPass() DEFAULT;
-public:
-	void Execute(ID3D11DeviceContext* pContext, class CRenderer* pRenderer) override;
-	void Submit(DEBUG_PACKET packet);
-private:
-	vector<DEBUG_PACKET> m_Packets;
-public:
-	static DebugPass* Create(class CRenderSystem* pRenderSystem) { return new DebugPass(pRenderSystem); }
-	virtual void Free() override { __super::Free(); m_Packets.clear(); };
-};
-#pragma endregion
 NS_END
