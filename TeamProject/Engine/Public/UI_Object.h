@@ -126,6 +126,7 @@ public:
 public:
 	void Play_Animation(_float dt);					
 	void Set_Animation(_uint iIndex, _bool isLoop = false);				
+	_bool Is_AnimFinished();
 
 public:
 	virtual void Save(nlohmann::ordered_json& data) {}

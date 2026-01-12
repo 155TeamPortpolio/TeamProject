@@ -421,6 +421,11 @@ void CUI_Object::Set_Animation(_uint iIndex, _bool isLoop)
     m_fBlendTime = 0.f;
 }
 
+_bool CUI_Object::Is_AnimFinished()
+{
+    return !m_isBlending;
+}
+
 void CUI_Object::Load(const nlohmann::ordered_json& data)
 {
     if (data.empty()) return;

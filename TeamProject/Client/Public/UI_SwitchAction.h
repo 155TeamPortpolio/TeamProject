@@ -6,9 +6,14 @@ NS_BEGIN(Client)
 class CUI_SwitchAction final : public CUI_Object
 {
 private:
-	enum class Child { BG, END };
+	enum class CHILD { GROUP, BG, GAUGEBG, GAUGE, ICONBG, ICON, OUTLINE, SPACE, END };
 
-	static const string INSTANCENAMES[ENUM(Child::END)];
+	static const string INSTANCENAMES[ENUM(CHILD::END)];
+
+	enum class INTERACT_STATE { DISABLED, ENABLED };
+	enum class ACTION_STATE { UNAVAILABLE, READY };
+	enum class EXECUTE_STATE { IDLE, EXECUTING };
+	enum class EXECUTE_MODE { ANIM, NONANIM };
 
 private:
 	CUI_SwitchAction() {}
@@ -26,24 +31,32 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_handles[ENUM(Child::END)];
-	_bool			m_isEnabled = {};
-	_bool			m_isReady = {};
+	UI_HANDLE		m_handles[ENUM(CHILD::END)];
 
-private:
-	/*액션을 사용할 수 있는, 없는 상태로 전환*/
-	void Set_Enabled(_bool isEnabled);
-	/*스위치 액션을 사용할 수 있는 준비 상태로 전환*/
-	void Set_Ready();
-	/*스위치 액션을 사용*/
-	void Use();
+	INTERACT_STATE	m_interactState = INTERACT_STATE::ENABLED;
+	ACTION_STATE	m_actionState = ACTION_STATE::READY;
+	EXECUTE_STATE	m_executeState = EXECUTE_STATE::IDLE;
 
-	void Set_Alive(Child child, _bool isAlive);
-	void Set_Animation(Child child, _int iIndex);
-	void Set_Color(Child child, _float4 vColor);
+private: 
+	void Set_InteractState(INTERACT_STATE state);
+	void Set_ActionState(ACTION_STATE state);
+	void Start_Execute(EXECUTE_MODE mode, _uint iCount);
+	void Finish_Execute();
+
+	void RefreshVisual();			// 상태 변경시에만 호출
+
+	void ApplyDisableVisual();
+	void ApplyExecuteVisual();
+	void ApplyReadyVisual();
+	void ApplyUnavailableVisual();
+
+	void Set_Alive(CHILD child, _bool isAlive);
+	void Set_Animation(CHILD child, _int iIndex);
+	void Set_Color(CHILD child, _float4 vColor);
+	_bool Is_AnimFinished(CHILD child);
 
 	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void ForChild(CHILD child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -54,7 +67,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_SwitchAction::ForChild(Child child, Func&& func)
+inline void CUI_SwitchAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_handles[ENUM(child)];
 	if (!handle.isValid())
