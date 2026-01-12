@@ -79,17 +79,18 @@ public:
     PxUserControllerHitReport* Get_CCTCallback() override { return m_pCCTCallback; }
 
 private:
-    void Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
-    void Process_Trigger(PxTriggerPair* pairs, PxU32 count);
-    void Process_CCT_ShapeHit(const PxControllerShapeHit& hit);
-    void Process_CCT_ControllerHit(const PxControllersHit& hit);
-    void Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
-    void Process_CollisionEvents();
+    void    Process_Contact(const PxContactPairHeader& pairHeader, const PxContactPair* pairs, PxU32 nbPairs);
+    void    Process_Trigger(PxTriggerPair* pairs, PxU32 count);
+    void    Process_CCT_ShapeHit(const PxControllerShapeHit& hit);
+    void    Process_CCT_ControllerHit(const PxControllersHit& hit);
+    void    Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
+    void    Process_CollisionEvents();
 
-    void  Maintain_TriggerCollisions();
-    void  Remove_DeactiveSlots();
-    void  Clean_DeadSlots();
-    _bool Is_SlotActive(_int iIndex) const;
+    void    Maintain_TriggerCollisions();
+    void    Exit_TriggerCollisions(ICollidable* pCollidable);
+    void    Remove_DeactiveSlots();
+    void    Clean_DeadSlots();
+    _bool   Is_SlotActive(_int iIndex) const;
 
     ICollidable* Get_Collidable_Actor(PxRigidActor* pActor);
     ICollidable* Get_Collidable_Shape(PxShape* pShape, PxRigidActor* pActor);

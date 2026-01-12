@@ -69,34 +69,11 @@ void CEnemyAttackCollider::Render_GUI()
 	__super::Render_GUI();
 	ImGui::SeparatorText("Trigger Debug");
 
-	// 패링 트리거 Collider
-	CCollider* pParryTrigger = Get_Component<CCollider>();
-	if (pParryTrigger && pParryTrigger->IsTrigger())
-	{
-		auto& current = pParryTrigger->Get_CurrentCollisions();
-		auto& previous = pParryTrigger->Get_PreviousCollisions();
-
-		ImGui::Text("Trigger Current: %d, Previous: %d",
-			current.size(), previous.size());
-
-		ImGui::Text("Currently Triggering:");
-		for (auto pOther : current)
-		{
-			if (pOther && pOther->Get_Owner())
-			{
-				_bool bInPrev = (previous.find(pOther) != previous.end());
-				ImGui::BulletText("%s [%s]",
-					pOther->Get_Owner()->Get_InstanceName().c_str(),
-					bInPrev ? "STAY" : "ENTER");
-			}
-		}
-	}
 	ImGui::PopID();
 }
 
 void CEnemyAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
-	MSG_BOX("HIT");
 }
 
 void CEnemyAttackCollider::OnCollisionStay(CGameObject* pOther)

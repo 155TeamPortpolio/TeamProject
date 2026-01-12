@@ -128,6 +128,11 @@ void CCharacter::Late_Update(_float dt)
 	m_bEvadeBuffer = false;
 }
 
+void CCharacter::OnCollisionExit(CGameObject* pOther)
+{
+	//MSG_BOX("Exit");
+}
+
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
 	CCollider* pCollider = pOther->Get_Component<CCollider>();

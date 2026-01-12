@@ -96,6 +96,7 @@ void CCollisionSystem::Update(_float dt)
 		{
 			if (slot.eState == COLLIDABLE_SLOT::STATE::ACTIVE)
 			{	// 비활성화 시 충돌목록 초기화
+				Exit_TriggerCollisions(slot.pCollidable);
 				slot.eState = COLLIDABLE_SLOT::STATE::INACTIVE;
 				slot.pCollidable->Get_CurrentCollisions().clear();
 				slot.pCollidable->Get_PreviousCollisions().clear();
@@ -117,7 +118,7 @@ void CCollisionSystem::Late_Update(_float dt)
 #ifdef USE_MULTITHREAD_PHYSICS
 	lock_guard<recursive_mutex> lock(m_SlotMutex);
 #endif
-	Maintain_TriggerCollisions();
+	Stay_TriggerCollisions();
 	Process_CollisionEvents();
 	Remove_DeactiveSlots();
 	Clean_DeadSlots();
@@ -720,7 +721,7 @@ void CCollisionSystem::Process_CollisionEvents()
 	}
 }
 
-void CCollisionSystem::Maintain_TriggerCollisions()
+void CCollisionSystem::Stay_TriggerCollisions()
 {
 	for (auto& slot : m_Collidables)
 	{
@@ -741,6 +742,42 @@ void CCollisionSystem::Maintain_TriggerCollisions()
 			auto& otherCurrent = pOther->Get_CurrentCollisions();
 			otherCurrent.insert(pCollider);  // 다시 추가!
 		}
+	}
+}
+
+void CCollisionSystem::Exit_TriggerCollisions(ICollidable* pCollidable)
+{
+	if (!pCollidable) return;
+
+	auto& current = pCollidable->Get_CurrentCollisions();
+	vector<ICollidable*> snapshot(current.begin(), current.end());
+
+	for (auto pOther : snapshot)
+	{
+		if (!pOther || !Is_SlotActive(pOther->Get_SlotIndex()))
+			continue;
+
+		// 트리거 여부 확인
+		CCollider* pThisCol = dynamic_cast<CCollider*>(pCollidable);
+		CCollider* pOtherCol = dynamic_cast<CCollider*>(pOther);
+
+		_bool bThisTrigger = (pThisCol && pThisCol->IsTrigger());
+		_bool bOtherTrigger = (pOtherCol && pOtherCol->IsTrigger());
+
+		// 양방향 Exit 호출
+		if (bThisTrigger)
+			pOther->OnTriggerExit(pCollidable);
+		else
+			pOther->OnCollisionExit(pCollidable);
+
+		if (bOtherTrigger)
+			pCollidable->OnCollisionExit(pOther);
+		else
+			pCollidable->OnTriggerExit(pOther);
+
+		// 상대방 목록에서 제거
+		pOther->Get_CurrentCollisions().erase(pCollidable);
+		pOther->Get_PreviousCollisions().erase(pCollidable);
 	}
 }
 
