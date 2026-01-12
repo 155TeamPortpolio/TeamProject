@@ -83,10 +83,6 @@ void CCorin::Awake()
 	//ikDesc.bDynamicPoleVector = false;  // ²ô±â
 	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
-
-
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.6f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CCorin::Priority_Update(_float dt)

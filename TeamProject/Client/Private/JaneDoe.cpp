@@ -4,6 +4,7 @@
 #include "DataBase.h"
 
 #include "Material.h"
+#include "MaterialInstance.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
@@ -73,11 +74,21 @@ void CJaneDoe::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto MaterialInstances = pMaterial->Get_MaterialInstances();
+	for (auto& Instance : MaterialInstances)
+	{
+		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
+		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+	}
 }
 
 void CJaneDoe::Priority_Update(_float dt)
 {
 	__super::Priority_Update(dt);
+	m_fDissolveProgress += 0.01;
 }
 
 void CJaneDoe::Update(_float dt)

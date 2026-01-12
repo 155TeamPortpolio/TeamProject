@@ -41,6 +41,11 @@ private:
 private:
     CStateMachine<CJaneDoe>* m_pStateMachine = { nullptr };
 
+private:
+    _float3     m_vRimLightColor = _float3(1.f, 0.f, 0.f);
+    _float      m_fRimLightPower = 0.1f;
+    _float      m_fDissolveProgress = 0.f;
+
 public:
     static CJaneDoe* Create();
     virtual CGameObject* Clone(INIT_DESC* pArg) override;
