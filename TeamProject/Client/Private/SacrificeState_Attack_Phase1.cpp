@@ -492,10 +492,12 @@ void CSacrificeState_Attack_07_Phase1::Update_Effects(CSacrifice* pOwner)
 		_vector3 vPosition = pOwner->Get_Component<CTransform>()->Get_Pos();
 		auto smokeConeTrail = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_smoke_trail_cone.json")
+			.Position(vPosition)
 			.Build("SmokeCone");
+
 		auto pSmokeConeTransform = smokeConeTrail->Get_Component<CTransform>();
 		pSmokeConeTransform->Set_Quaternion(pOwner->Get_Component<CTransform>()->Get_QuaternionRotate());
-		pSmokeConeTransform->Set_Pos(vPosition + _vector3(pSmokeConeTransform->Dir(STATE::LOOK) * 4.f));
+		//pSmokeConeTransform->Set_Pos(vPosition + _vector3(pSmokeConeTransform->Dir(STATE::LOOK) * 4.f));
 
 		auto smokeBoneFollower = smokeTrail->Add_Component<CBoneFollower>();
 		smokeBoneFollower->Initialize(nullptr);

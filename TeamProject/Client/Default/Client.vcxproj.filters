@@ -487,12 +487,6 @@
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos">
       <UniqueIdentifier>{5a6bfa1a-6ef4-445a-89c4-348cf6a98b4a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask">
-      <UniqueIdentifier>{ff91eec2-210f-4d57-aa6a-268e38678df7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Ask\State">
-      <UniqueIdentifier>{e60a7be8-cc43-46e5-bd64-3f11a1262199}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Pay">
       <UniqueIdentifier>{ff91eec2-210f-4d57-aa6a-268e38678df7}</UniqueIdentifier>
     </Filter>
@@ -1091,9 +1085,6 @@
     <ClInclude Include="..\Public\CorinState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\MapInvisibleWall.h">
-      <Filter>02. GameObject\MapObject\03. MapInvWall</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\MapAnimObject.h">
       <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
     </ClInclude>
@@ -1595,9 +1586,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\MapInvisibleWall.cpp">
-      <Filter>02. GameObject\MapObject\03. MapInvWall</Filter>
     </ClCompile>
     <ClCompile Include="..\private\MapAnimObject.cpp">
       <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>

@@ -137,8 +137,8 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("Eff_Smoke_259.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_259.png");
 
 	/* Models */
-	pResource->Add_ResourcePath("Smoke_Cone.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone.model");
-	pResource->Add_ResourcePath("Smoke_Cone.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone.mat");
+	pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
+	pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -452,10 +452,7 @@ void CTestLevel::Ready_Npc()
 	bangbooCCT.eGroup = COLLISION_GROUP::COMMON;
 	//meowCCT.fBoundingMinY = -0.83f;
 	bangbooCCT.vPos = { 22.5f, 1.5f, -30.f };
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooAsk::Create());
-	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
-		.CharacterController(bangbooCCT)
-		.Build("Test_Meow");
+
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooPay", CBangBooPay::Create());
 	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooPay" })
 		.CharacterController(bangbooCCT)
