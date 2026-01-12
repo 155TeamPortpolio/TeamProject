@@ -22,7 +22,7 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 1.f)
+    if (m_fAnimProgress >= 0.4f)
     {
         pOwner->Reset_DissolveProgress();
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");

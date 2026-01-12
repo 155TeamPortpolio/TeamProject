@@ -18,5 +18,9 @@ void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 1.f) pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+    if (m_fAnimProgress >= 0.4f)
+    {
+        pOwner->Reset_DissolveProgress();
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+    }
 }
