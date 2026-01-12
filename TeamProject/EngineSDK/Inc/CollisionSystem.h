@@ -29,7 +29,7 @@ private:
     };
 
 private:
-    // Collider/RigidBody¿ë ÇÁ·Ï½Ã
+    // Collider/RigidBodyï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
     class CPhysXEventCallback : public PxSimulationEventCallback
     {
     public:
@@ -47,7 +47,7 @@ private:
         CCollisionSystem* m_pOwner = nullptr;
     };
 
-    // CCT¿ë ÇÁ·Ï½Ã
+    // CCTï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
     class CCCTHitCallback : public PxUserControllerHitReport
     {
     public:
@@ -86,6 +86,7 @@ private:
     void    Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
     void    Process_CollisionEvents();
 
+    void    Check_Initial_Overlap(ICollidable* pCollidable);
     void    Stay_TriggerCollisions();
     void    Exit_TriggerCollisions(ICollidable* pCollidable);
     void    Remove_DeactiveSlots();
