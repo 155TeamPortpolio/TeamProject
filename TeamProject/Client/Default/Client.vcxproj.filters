@@ -415,6 +415,18 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid">
       <UniqueIdentifier>{4b65cf7d-c3b5-4826-8da1-334e9b9c6ca9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action">
+      <UniqueIdentifier>{cb851a6e-7183-44e9-8306-456dc1efa230}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Primary">
+      <UniqueIdentifier>{79d806fe-e497-42b9-914f-cbe266d6aa46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Evade">
+      <UniqueIdentifier>{fb3401db-8c84-4472-8f77-5dfa3d1afc9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Special">
+      <UniqueIdentifier>{1ee0db62-e96c-4492-aab7-d9103a3cc53a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch">
       <UniqueIdentifier>{c00031fc-f368-4e17-be14-52a66af8850a}</UniqueIdentifier>
     </Filter>
@@ -1010,6 +1022,21 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUDAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_PrimaryAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Primary</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_EvadeAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Evade</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UIDesign_Macro.h">
+      <Filter>99. Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_SpecialAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Special</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CorinState_SwitchIn.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>
     </ClInclude>
@@ -1502,6 +1529,18 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUDAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_PrimaryAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Primary</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_EvadeAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Evade</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_SpecialAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Special</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_SwitchIn.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn</Filter>

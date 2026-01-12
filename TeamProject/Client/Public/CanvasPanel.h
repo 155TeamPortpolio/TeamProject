@@ -25,9 +25,6 @@ public:
 public:
 	virtual void    Load(const nlohmann::ordered_json& data) override;
 
-private:
-	json LoadJson(const string& filePath);
-
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = nullptr) override;
