@@ -34,23 +34,23 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 
 void CUI_SwitchAction::Update(_float dt)
 {
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-		Set_InteractState(INTERACT_STATE::ENABLED);
-	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-		Set_InteractState(INTERACT_STATE::DISABLED);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-		Set_ActionState(ACTION_STATE::READY);
-	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-		Set_ActionState(ACTION_STATE::UNAVAILABLE);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-		Start_Execute(EXECUTE_MODE::ANIM, 5);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
-		Start_Execute(EXECUTE_MODE::NONANIM, 3);
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+	//	Set_InteractState(INTERACT_STATE::ENABLED);
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+	//	Set_InteractState(INTERACT_STATE::DISABLED);
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+	//	Set_ActionState(ACTION_STATE::READY);
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+	//	Set_ActionState(ACTION_STATE::UNAVAILABLE);
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
+	//	Start_Execute(EXECUTE_MODE::ANIM, 5);
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
+	//	Start_Execute(EXECUTE_MODE::NONANIM, 3);
 
 	if (m_executeState == EXECUTE_STATE::EXECUTING)
 		if (Is_AnimFinished(CHILD::ICON))
@@ -61,10 +61,12 @@ void CUI_SwitchAction::Update(_float dt)
 
 void CUI_SwitchAction::UI_Active(void* pArg)
 {
+	Set_InteractState(INTERACT_STATE::ENABLED);
 }
 
 void CUI_SwitchAction::UI_DeActive(void* pArg)
 {
+	Set_InteractState(INTERACT_STATE::DISABLED);
 }
 
 void CUI_SwitchAction::Set_InteractState(INTERACT_STATE state)
@@ -135,7 +137,7 @@ void CUI_SwitchAction::RefreshVisual()
 
 void CUI_SwitchAction::ApplyDisableVisual()
 {
-	Set_Color(CHILD::BG, UI_GRAY_LIGHT);
+	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
 	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
 	Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
 	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);

@@ -6,9 +6,9 @@ NS_BEGIN(Client)
 class CUI_SpecialAction final : public CUI_Object
 {
 private:
-	enum class Child { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
+	enum class CHILD { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
 
-	static const string INSTANCENAMES[ENUM(Child::END)];
+	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
 private:
 	CUI_SpecialAction() {}
@@ -26,7 +26,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+	UI_HANDLE		m_handles[ENUM(CHILD::END)];
 	_bool			m_isEnabled = {};
 	_bool			m_isReady = {};
 
@@ -38,12 +38,12 @@ private:
 	/*스페셜 액션을 사용*/
 	void Use();
 
-	void Set_Alive(Child child, _bool isAlive);
-	void Set_Animation(Child child, _int iIndex);
-	void Set_Color(Child child, _float4 vColor);
+	void Set_Alive(CHILD child, _bool isAlive);
+	void Set_Animation(CHILD child, _int iIndex);
+	void Set_Color(CHILD child, _float4 vColor);
 
 	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void ForChild(CHILD child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -54,7 +54,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_SpecialAction::ForChild(Child child, Func&& func)
+inline void CUI_SpecialAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_handles[ENUM(child)];
 	if (!handle.isValid())

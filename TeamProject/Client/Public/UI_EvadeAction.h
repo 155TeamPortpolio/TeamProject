@@ -6,9 +6,9 @@ NS_BEGIN(Client)
 class CUI_EvadeAction final : public CUI_Object
 {
 private:
-	enum class Child { BG, ICON, GAUGE_BG, GAUGE, MOUSE, END };
+	enum class CHILD { BG, ICON, GAUGE_BG, GAUGE, MOUSE, END };
 
-	static const string INSTANCENAMES[ENUM(Child::END)];
+	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
 private:
 	CUI_EvadeAction() {}
@@ -26,18 +26,18 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_hChildren[ENUM(Child::END)];
+	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
 private:
 	void Set_Active(_bool isActive);
 	void Set_FillAmount(_float fFillAmount);
 
-	void Set_Alive(Child child, _bool isAlive);
-	void Set_Color(Child child, _float4 vColor);
+	void Set_Alive(CHILD child, _bool isAlive);
+	void Set_Color(CHILD child, _float4 vColor);
 
 private:
 	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void ForChild(CHILD child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -48,7 +48,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_EvadeAction::ForChild(Child child, Func&& func)
+inline void CUI_EvadeAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_hChildren[ENUM(child)];
 	if (!handle.isValid())

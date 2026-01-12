@@ -5,7 +5,7 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 
-const string CUI_PrimaryAction::INSTANCENAMES[ENUM(Child::END)] = { "attack", "attackBg", "attackIcon", "attackMouse", "interact", "interactGradient" };
+const string CUI_PrimaryAction::INSTANCENAMES[ENUM(CHILD::END)] = { "attack", "attackBg", "attackIcon", "attackMouse", "interact", "interactGradient" };
 
 HRESULT CUI_PrimaryAction::Initialize_Prototype()
 {
@@ -25,7 +25,7 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
     const string& filePath = pResourceMgr->Get_ResourcePath("hud_battle_primaryAction.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    for (_int i = 0; i < ENUM(Child::END); ++i)
+    for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
 	return S_OK;
@@ -72,11 +72,11 @@ void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
     m_eMode = eMode;
     _bool isAttackMode = (m_eMode == MODE::ATTACK) ? true : false;
 
-    Set_Alive(Child::ATTACK, isAttackMode);
-    Set_Alive(Child::INTERACT, !isAttackMode);
+    Set_Alive(CHILD::ATTACK, isAttackMode);
+    Set_Alive(CHILD::INTERACT, !isAttackMode);
 
     if (!isAttackMode)
-        Set_Animation(Child::INTERACT, 0);
+        Set_Animation(CHILD::INTERACT, 0);
 }
 
 void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
@@ -86,15 +86,15 @@ void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
 
     if (isActive)
     {
-        Set_Color(Child::ATTACK_BG, UI_GRAY_DARKEST);
-        Set_Color(Child::ATTACK_ICON, UI_GRAY_LIGHTEST);
-        Set_Color(Child::ATTACK_MOUSE, UI_WHITE);
+        Set_Color(CHILD::ATTACK_BG, UI_GRAY_DARKEST);
+        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_LIGHTEST);
+        Set_Color(CHILD::ATTACK_MOUSE, UI_WHITE);
     }
     else
     {
-        Set_Color(Child::ATTACK_BG, UI_GRAY_MEDIUM);
-        Set_Color(Child::ATTACK_ICON, UI_GRAY_DARK);
-        Set_Color(Child::ATTACK_MOUSE, UI_TRANSPARENT);
+        Set_Color(CHILD::ATTACK_BG, UI_GRAY_MEDIUM);
+        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_DARK);
+        Set_Color(CHILD::ATTACK_MOUSE, UI_TRANSPARENT);
     }
 }
 
@@ -105,26 +105,26 @@ void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
 
     if (isActive)
     {
-        Set_Alive(Child::INTERACT_GRADIENT, true);
-        Set_Animation(Child::INTERACT_GRADIENT, 0);
+        Set_Alive(CHILD::INTERACT_GRADIENT, true);
+        Set_Animation(CHILD::INTERACT_GRADIENT, 0);
     } 
     else
     {
-        Set_Alive(Child::INTERACT_GRADIENT, false);
+        Set_Alive(CHILD::INTERACT_GRADIENT, false);
     } 
 }
 
-void CUI_PrimaryAction::Set_Alive(Child child, _bool isAlive)
+void CUI_PrimaryAction::Set_Alive(CHILD child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
 }
 
-void CUI_PrimaryAction::Set_Color(Child child, _float4 vColor)
+void CUI_PrimaryAction::Set_Color(CHILD child, _float4 vColor)
 {
     ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }
 
-void CUI_PrimaryAction::Set_Animation(Child child, _int iIndex)
+void CUI_PrimaryAction::Set_Animation(CHILD child, _int iIndex)
 {
     ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
 }

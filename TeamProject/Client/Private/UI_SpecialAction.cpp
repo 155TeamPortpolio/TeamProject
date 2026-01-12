@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "UI_SwitchAction.h"
 
-const string CUI_SpecialAction::INSTANCENAMES[ENUM(Child::END)] = { "bg", "icon", "group", "mask", "uv", "active", "blink", "e" };
+const string CUI_SpecialAction::INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "icon", "group", "mask", "uv", "active", "blink", "e" };
 
 HRESULT CUI_SpecialAction::Initialize_Prototype()
 {
@@ -26,7 +26,7 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 	const string& filePath = pResourceMgr->Get_ResourcePath("hud_battle_specialAction.json");
 	Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-	for (_int i = 0; i < ENUM(Child::END); ++i)
+	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 	
 	return S_OK;
@@ -65,18 +65,18 @@ void CUI_SpecialAction::Set_Enabled(_bool isEnabled)
 
 	if (isEnabled)
 	{
-		Set_Color(Child::BG, UI_GRAY_DARKEST);
-		Set_Color(Child::ICON, UI_WHITE);
-		Set_Color(Child::E, UI_WHITE);
+		Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+		Set_Color(CHILD::ICON, UI_WHITE);
+		Set_Color(CHILD::E, UI_WHITE);
 	}
 	else
 	{
-		Set_Color(Child::BG, UI_GRAY_MEDIUM);
-		Set_Color(Child::ICON, UI_GRAY_LIGHT);
-		Set_Color(Child::E, UI_GRAY_LIGHTEST);
+		Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+		Set_Color(CHILD::ICON, UI_GRAY_LIGHT);
+		Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
 	}
 
-	Set_Alive(Child::ACTIVE, false);
+	Set_Alive(CHILD::ACTIVE, false);
 }
 
 void CUI_SpecialAction::Set_Ready()
@@ -85,11 +85,11 @@ void CUI_SpecialAction::Set_Ready()
 		return;
 
 	m_isReady = true;
-	Set_Animation(Child::GROUP, 0);
-	Set_Animation(Child::UV, 0);
-	Set_Alive(Child::ACTIVE, false);
-	Set_Alive(Child::MASK, true);
-	Set_Animation(Child::BLINK, 0);
+	Set_Animation(CHILD::GROUP, 0);
+	Set_Animation(CHILD::UV, 0);
+	Set_Alive(CHILD::ACTIVE, false);
+	Set_Alive(CHILD::MASK, true);
+	Set_Animation(CHILD::BLINK, 0);
 }
 
 void CUI_SpecialAction::Use()
@@ -98,22 +98,22 @@ void CUI_SpecialAction::Use()
 		return;
 
 	m_isReady = false;
-	Set_Alive(Child::ACTIVE, true);
-	Set_Alive(Child::MASK, false);
-	Set_Animation(Child::BLINK, 0);
+	Set_Alive(CHILD::ACTIVE, true);
+	Set_Alive(CHILD::MASK, false);
+	Set_Animation(CHILD::BLINK, 0);
 }
 
-void CUI_SpecialAction::Set_Alive(Child child, _bool isAlive)
+void CUI_SpecialAction::Set_Alive(CHILD child, _bool isAlive)
 {
 	ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
 }
 
-void CUI_SpecialAction::Set_Animation(Child child, _int iIndex)
+void CUI_SpecialAction::Set_Animation(CHILD child, _int iIndex)
 {
 	ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
 }
 
-void CUI_SpecialAction::Set_Color(Child child, _float4 vColor)
+void CUI_SpecialAction::Set_Color(CHILD child, _float4 vColor)
 {
 	ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }
