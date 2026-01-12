@@ -59,6 +59,11 @@ private:
 
 public:
     PxController*   Get_Controller() { return m_pController; }
+    PxRigidActor* Get_PxActor()
+    {
+        if (!m_pController) return nullptr;
+        return m_pController->getActor();
+    }
     PxShape*        Get_Shape();
     _bool           Is_Grounded() const { return m_bGrounded; }
     _float3         Get_Velocity() const { return m_vVelocity; }

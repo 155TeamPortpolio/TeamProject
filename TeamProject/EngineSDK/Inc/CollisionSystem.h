@@ -86,7 +86,8 @@ private:
     void    Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
     void    Process_CollisionEvents();
 
-    void    Maintain_TriggerCollisions();
+    void    Check_Initial_Overlap(ICollidable* pCollidable);
+    void    Stay_TriggerCollisions();
     void    Exit_TriggerCollisions(ICollidable* pCollidable);
     void    Remove_DeactiveSlots();
     void    Clean_DeadSlots();

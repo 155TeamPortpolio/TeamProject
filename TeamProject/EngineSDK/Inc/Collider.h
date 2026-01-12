@@ -1,5 +1,6 @@
 #pragma once
 #include "ICollidable.h"
+#include "RigidBody.h"
 
 NS_BEGIN(Engine)
 
@@ -11,6 +12,14 @@ private:
     virtual ~CCollider() DEFAULT;
 
 public:
+    PxRigidActor* Get_PxActor()
+    {
+        // 리지드바디가 붙어있다면 동적 Actor 반환
+        if (m_pAttachedRigidBody)
+            return m_pAttachedRigidBody->Get_Body();
+        // 없다면 정적 Actor 반환 (Static Collider)
+        return m_pStaticActor;
+    }
     PxShape*        Get_Shape() { return m_pShape; }
     _bool           IsTrigger() const { return m_bTrigger; }
     COLLIDER_TYPE   Get_Type() const { return m_eType; }
