@@ -128,7 +128,10 @@ void CCharacter::Awake()
 		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
 		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
 		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveTiling", { &m_fDissolveTiling, "float", sizeof(_float) });
 	}
+
+	SetRenderLayer(RENDER_LAYER::None);
 }
 
 void CCharacter::Priority_Update(_float dt)
