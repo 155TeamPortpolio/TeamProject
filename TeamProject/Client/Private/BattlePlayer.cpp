@@ -10,6 +10,7 @@
 #include "DataBase.h"
 #include "Helper_Func.h"
 #include "CharacterController.h"
+#include "StateMachine.h"
 
 //character class
 #include "Character.h"
@@ -62,6 +63,7 @@ void CBattlePlayer::Priority_Update(_float dt)
 		return;
 
 	Update_Input(dt);
+	Update_Target();
 }
 
 void CBattlePlayer::Update(_float dt)
@@ -148,6 +150,8 @@ void CBattlePlayer::Update_Input(_float dt)
 
 void CBattlePlayer::Process_Movement(_float dt)
 {
+	//if ("Attack" == dynamic_cast<CJaneDoe*>(m_pCurrentCharacter)->Get_StateMachine()->Get_CurrentStateName())
+	//	return;
 	CCharacter::InputInfo inputInfo;
 	inputInfo.direction = m_input.direction;
 	inputInfo.prevDirection = m_input.prevDirection;
@@ -202,6 +206,32 @@ _bool CBattlePlayer::Can_Switch() const
 	return true;
 }
 
+void CBattlePlayer::Update_Target()
+{
+	if (m_TargetHandle.isValid())
+	{
+		if((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+			< TARGET_MAXDISTANCE)
+			return;
+	}
+
+	auto Monsters = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER);
+
+	_float fminDistance = FLT_MAX;
+	for (auto& monster : Monsters)
+	{
+		_vector3 vToMonster = monster.vPos - m_pCurrentCharacter->Get_WorldPos();
+		_float fDistance = vToMonster.Length();
+
+		if (fDistance < fminDistance)
+		{
+			fminDistance = fDistance;
+			m_TargetHandle = monster.hObject;
+		}
+	}
+	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+}
+
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
@@ -254,6 +284,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 {
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
+	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
 	if (m_pCurrentCharacter->Can_Parry())
 	{
