@@ -40,6 +40,7 @@ void CBattlePlayer::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	}
 
 	m_pCurrentCharacter = m_BattleCharacters.front().second;
+	m_pCurrentCharacter->SetRenderLayer(RENDER_LAYER::Default);
 
 	CBattleSystem::GetInstance()->SetPlayer(m_CharacterHandles);
 }
@@ -251,11 +252,9 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
-	auto pController = m_pCurrentCharacter->Get_Component<CCharacterController>();
-	pController->Set_Position(m_vSwitchPosition);
+	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
+	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 
-	//pTransform->Set(m_vSwitchPosition);
-	//m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	if (m_pCurrentCharacter->Can_Parry())
 	{
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
