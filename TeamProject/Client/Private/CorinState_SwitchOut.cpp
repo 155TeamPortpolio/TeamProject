@@ -12,6 +12,8 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
+    pOwner->Update_DissolveProgress(dt);
+
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));

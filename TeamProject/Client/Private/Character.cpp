@@ -21,14 +21,15 @@ CCharacter::CCharacter(const CCharacter& rhs)
 {
 }
 
-void CCharacter::Update_DissolveProgress()
+void CCharacter::Update_DissolveProgress(_float dt)
 {
-	m_fDissolveProgress += DISSOLVE_SPEED;
-	if (m_fDissolveProgress >= 1.f)
-	{
-		m_fDissolveProgress = 0.f;
-		SetRenderLayer(RENDER_LAYER::None);
-	}
+	m_fDissolveProgress += dt;
+}
+
+void CCharacter::Reset_DissolveProgress()
+{
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::None);
 }
 
 void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)

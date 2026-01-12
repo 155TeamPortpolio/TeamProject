@@ -16,11 +16,15 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
 
 void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 {
-    pOwner->Update_DissolveProgress();
+    pOwner->Update_DissolveProgress(dt);
 
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
 
-    if (m_fAnimProgress >= 1.f) pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+    if (m_fAnimProgress >= 1.f)
+    {
+        pOwner->Reset_DissolveProgress();
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+    }
 }

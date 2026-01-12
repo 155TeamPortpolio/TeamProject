@@ -83,7 +83,8 @@ public:
     SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine에서 가져갈 switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
-    void        Update_DissolveProgress(); /*dissolve*/
+    void        Update_DissolveProgress(_float dt); /*dissolve*/
+    void        Reset_DissolveProgress();
 
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
@@ -160,7 +161,6 @@ protected:
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
-    static constexpr _float DISSOLVE_SPEED = 0.05f;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
 
 public:

@@ -59,6 +59,8 @@ HRESULT CCorin::Initialize(INIT_DESC* pArg)
 
 void CCorin::Awake()
 {
+	__super::Awake();
+
 	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size01_Corin.model");
 	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size01_Corin.json");
 
@@ -125,6 +127,9 @@ void CCorin::Render_GUI()
 
 void CCorin::On_SwitchIn(SWITCH eType)
 {
+	m_fDissolveProgress = 0.f;
+	SetRenderLayer(RENDER_LAYER::Default);
+
 	Set_Switch(eType);
 	m_pStateMachine->Set_Trigger("SwitchIn");
 }
