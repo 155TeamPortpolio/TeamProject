@@ -28,6 +28,6 @@ private:
 public:
     static CMapAnimObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() {};
+    virtual void Free();
 };
 NS_END
