@@ -148,6 +148,9 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 
 void CGameObject::Post_EngineUpdate(_float dt)
 {
+	if (m_eRenderLayer ==RENDER_LAYER::None)
+		return;
+
 	/*패킷은 용도별로 따로 만든다.*/
 	if (m_isAlive) {
 		if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
