@@ -67,13 +67,13 @@ void CEnemyAttackCollider::Render_GUI()
 	ImGui::PushID(this);
 
 	__super::Render_GUI();
+	ImGui::SeparatorText("Trigger Debug");
 
 	ImGui::PopID();
 }
 
 void CEnemyAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
-	MSG_BOX("HIT");
 }
 
 void CEnemyAttackCollider::OnCollisionStay(CGameObject* pOther)

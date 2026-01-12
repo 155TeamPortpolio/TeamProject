@@ -16,6 +16,7 @@ public:
     virtual void OnCollisionStay(ICollidable* pOther) PURE;
     virtual void OnCollisionExit(ICollidable* pOther) PURE;
 	virtual void OnTriggerEnter(ICollidable* pOther) PURE;
+	virtual void OnTriggerStay(ICollidable* pOther) PURE;
 	virtual void OnTriggerExit(ICollidable* pOther) PURE;
 
 	virtual void Render(PrimitiveBatch<VertexPositionColor>* pBatch, _fvector vColor) PURE;

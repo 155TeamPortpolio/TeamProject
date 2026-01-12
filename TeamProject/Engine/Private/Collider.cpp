@@ -221,6 +221,11 @@ void CCollider::OnTriggerEnter(ICollidable* pOther)
 	m_pOwner->OnTriggerEnter(pOther->Get_Owner());
 }
 
+void CCollider::OnTriggerStay(ICollidable* pOther)
+{
+	m_pOwner->OnTriggerStay(pOther->Get_Owner());
+}
+
 void CCollider::OnTriggerExit(ICollidable* pOther)
 {
 	m_pOwner->OnTriggerExit();

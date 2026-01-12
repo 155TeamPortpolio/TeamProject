@@ -154,6 +154,11 @@ void CCharacter::Late_Update(_float dt)
 	m_bEvadeBuffer = false;
 }
 
+void CCharacter::OnCollisionExit(CGameObject* pOther)
+{
+	//MSG_BOX("Exit");
+}
+
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
 	CCollider* pCollider = pOther->Get_Component<CCollider>();
@@ -161,6 +166,12 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	{
 		m_ParryableTargets.insert(pOther);
 	}
+	//MSG_BOX("OnTriggerEnter");
+}
+
+void CCharacter::OnTriggerStay(CGameObject* pOher)
+{
+	//MSG_BOX("OnTriggerStay");
 }
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
