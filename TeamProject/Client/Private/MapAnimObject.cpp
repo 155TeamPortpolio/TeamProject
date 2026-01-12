@@ -9,6 +9,9 @@
 #include "Material.h"
 #include "Animator3D.h"
 
+#include "EffectContainer.h"
+
+
 CMapAnimObject::CMapAnimObject()
 {
 }
@@ -50,4 +53,9 @@ void CMapAnimObject::Render_GUI()
 CGameObject* CMapAnimObject::Clone(INIT_DESC* pArg)
 {
     return nullptr;
+}
+
+void CMapAnimObject::Free()
+{
+    __super::Free();
 }

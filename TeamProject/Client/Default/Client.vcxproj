@@ -394,7 +394,8 @@
     <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
-    <ClCompile Include="..\private\MapAnimObject.cpp" />
+    <ClCompile Include="..\Private\MapAnimObject.cpp" />
+    <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchInExAttack.cpp" />

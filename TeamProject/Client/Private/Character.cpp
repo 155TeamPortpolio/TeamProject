@@ -129,6 +129,8 @@ void CCharacter::Awake()
 		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
 		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
 	}
+
+	SetRenderLayer(RENDER_LAYER::None);
 }
 
 void CCharacter::Priority_Update(_float dt)

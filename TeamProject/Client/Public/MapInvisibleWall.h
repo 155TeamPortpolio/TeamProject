@@ -2,13 +2,13 @@
 #include "MapObject.h"
 
 NS_BEGIN(Client)
-class CMapAnimObject :
+class CMapInvisibleWall :
     public CMapObject
 {
 private:
-    CMapAnimObject();
-    CMapAnimObject(const CMapAnimObject& rhs);
-    virtual ~CMapAnimObject() DEFAULT;
+    CMapInvisibleWall();
+    CMapInvisibleWall(const CMapInvisibleWall& rhs);
+    virtual ~CMapInvisibleWall() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;
@@ -22,12 +22,13 @@ public:
     void Render_GUI() override;
 
 private:
-    string  m_TagModelKey = {};
-    string  m_TagMaterialKey = {};
-
+    _bool    bCollided{};
+    _vector2 FenceOffset{};
+    _vector2 ImageSize{};
+    
 public:
-    static CMapAnimObject* Create();
+    static CMapInvisibleWall* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
-    virtual void Free() {};
+    virtual void Free();
 };
 NS_END
