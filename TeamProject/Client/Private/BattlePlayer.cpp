@@ -9,6 +9,7 @@
 #include "BattleSystem.h"
 #include "DataBase.h"
 #include "Helper_Func.h"
+#include "CharacterController.h"
 
 //character class
 #include "Character.h"
@@ -250,6 +251,11 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
+	auto pController = m_pCurrentCharacter->Get_Component<CCharacterController>();
+	pController->Set_Position(m_vSwitchPosition);
+
+	//pTransform->Set(m_vSwitchPosition);
+	//m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	if (m_pCurrentCharacter->Can_Parry())
 	{
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
@@ -259,6 +265,9 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 
 void CBattlePlayer::NotifyCharacterSwitchOut()
 {
+	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition();
+	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
+
 	m_pCurrentCharacter->On_SwitchOut();
 }
 
