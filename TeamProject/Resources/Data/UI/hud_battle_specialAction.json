@@ -1,10 +1,10 @@
 {
     "instanceName": "hud_battle_specialAction",
     "transform": {
-        "anchor": 0,
+        "anchor": 5,
         "anchorOffset": [
-            -36.0,
-            -54.0
+            0.0,
+            0.0
         ],
         "size": [
             72.0,
@@ -64,7 +64,159 @@
             "textureTag": "Circle72.png"
         },
         {
-            "instanceName": "icon",
+            "instanceName": "deactive",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -31.0,
+                    5.0
+                ],
+                "size": [
+                    62.0,
+                    62.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "SkillBtnBranch2.png"
+        },
+        {
+            "instanceName": "mask",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -31.0,
+                    5.0
+                ],
+                "size": [
+                    62.0,
+                    62.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "UI_StencilWrite",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Mask",
+            "maskTextureKey": "SkillBtnBranch2.png"
+        },
+        {
+            "instanceName": "e",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -8.0,
+                    -27.0
+                ],
+                "size": [
+                    13.599994659423828,
+                    22.698659896850586
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.5882353186607361,
+                0.5882353186607361,
+                0.5882353186607361,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "E",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.39999985694885254,
+                "outlined": false,
+                "outlineThickness": 1.0,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ]
+            }
+        },
+        {
+            "instanceName": "Image",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -34.0,
+                    2.0
+                ],
+                "size": [
+                    68.0,
+                    68.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque_StencilTest",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_SkillUp_08.png"
+        },
+        {
+            "instanceName": "active",
             "transform": {
                 "anchor": 4,
                 "anchorOffset": [
@@ -96,6 +248,40 @@
             "children": [],
             "typeTag": "Image",
             "textureTag": "Eff_SkillUp_15.png"
+        },
+        {
+            "instanceName": "keyBg",
+            "transform": {
+                "anchor": 8,
+                "anchorOffset": [
+                    -15.0,
+                    -30.0
+                ],
+                "size": [
+                    30.0,
+                    30.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "KeyboardIcon.png"
         }
     ],
     "typeTag": "CanvasPanel"
