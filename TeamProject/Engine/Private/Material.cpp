@@ -200,6 +200,7 @@ void CMaterial::Render_GUI()
 				CMaterialInstance* hMaterial = m_MaterialInstances[i];
 				if (ImGui::BeginTabItem(hMaterial->Get_MaterialName().c_str()))
 				{
+
 					hMaterial->Render_GUI();
 					ImGui::EndTabItem();
 				}

@@ -38,6 +38,21 @@ void CMaterialInstance::ApplyData(ID3D11DeviceContext* pContext)
 	}
 
 	pMaterialShader->Apply(Get_PassConstant(), pContext);
+
+	ClearDynamicSlotsBound(pMaterialShader);
+}
+
+void CMaterialInstance::ClearDynamicSlotsBound(CShader* materialShader)
+{
+	for (const auto& slotPair : m_DynamicSlots)
+	{
+		const string& slotName = slotPair.first;
+		SHADER_PARAM prevValue = slotPair.second;
+		prevValue.pData = nullptr;
+		materialShader->Bind_Value(slotName, prevValue);
+	}
+
+	m_DynamicSlots.clear();
 }
 
 const string& CMaterialInstance::Get_PassConstant()
