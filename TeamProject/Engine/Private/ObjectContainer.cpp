@@ -562,6 +562,20 @@ CGameObject* CObjectContainer::Get_ChildByOrder(_uint Index)
 	return m_ChildrenObjects[it->second];
 }
 
+vector<CGameObject*> CObjectContainer::Get_ChildrenByOrder()
+{
+	vector<CGameObject*> objects;
+	objects.reserve(m_UpdateOrder.size());
+
+	for (size_t i = 0; i < m_UpdateOrder.size(); ++i)
+	{
+		if (auto pObj = Get_ChildByOrder(i))
+			objects.push_back(pObj);
+	}
+
+	return objects;
+}
+
 CObjectContainer* CObjectContainer::Create()
 {
 	CObjectContainer* instance = new CObjectContainer();
