@@ -25,6 +25,7 @@ private:
     void Ready_Camera();
     void Ready_ShadowCamera();
     void Ready_TestObject();
+	void Ready_Npc();
 
 
 public:

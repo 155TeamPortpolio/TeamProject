@@ -128,6 +128,20 @@ void CCharacter::Late_Update(_float dt)
 	m_bEvadeBuffer = false;
 }
 
+void CCharacter::OnTriggerEnter(CGameObject* pOther)
+{
+	CCollider* pCollider = pOther->Get_Component<CCollider>();
+	if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
+	{
+		m_ParryableTargets.insert(pOther);
+	}
+}
+
+void CCharacter::OnTriggerExit(CGameObject* pOther)
+{
+	m_ParryableTargets.erase(pOther);
+}
+
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
 	_bool prevResetMove = m_inputInfo.resetMove;  // 기존 값 백업
@@ -213,6 +227,12 @@ _bool CCharacter::Is_OppositeInput() const
 	_float fAngle = XMConvertToDegrees(acosf(fDot));
 
 	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
+}
+
+_bool CCharacter::Can_Parry() const
+{
+	if (m_ParryableTargets.empty())	return false;
+	return true;
 }
 
 void CCharacter::Update_Rotation(_float dt)

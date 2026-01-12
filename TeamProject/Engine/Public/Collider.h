@@ -14,6 +14,7 @@ public:
     PxShape*        Get_Shape() { return m_pShape; }
     _bool           IsTrigger() const { return m_bTrigger; }
     COLLIDER_TYPE   Get_Type() const { return m_eType; }
+    COLLISION_GROUP Get_Group() const { return m_eGroup; }
     _float3         Get_Center() const { return m_vCenter; }
     _float3         Get_Size() const { return m_vSize; }
     _float3         Get_Rotation() const { return m_vRotation; }

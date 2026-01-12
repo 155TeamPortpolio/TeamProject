@@ -41,12 +41,21 @@
 #include "Anbi.h"
 #include "Corin.h"
 #include "JaneDoe.h"
-#include "Sacrifice.h"
+#include "Player.h"
+
+/* Enemy */
+#include "Sacrifice.h" 
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "ThugBulkyEnforcer.h"
-#include "ThugBulkyEnforcer_Collider.h"
-#include "Player.h"
+#include "EnemyAttackCollider.h"
+#include "EnemyTriggerCollider.h"
+
+/*npc*/
+#include "OfficeMeow.h"
+#include "BangBooPay.h"
+#include "BangBooAsk.h"
+#include "BangBooDeliver.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -150,16 +159,15 @@ HRESULT CTestLevel::Awake()
 	//objMgr->Add_Object(Miyabi, { "Test_Level", "Model_Layer" });
 	//
 	//m_miyabiHandle = Miyabi->Get_Handle();
-	//
-	//// �÷��̾�(ĳ���͵�) ���� �������� ������ �ӽ�. if Player's logic is complete, It will be changed.
-	//CBattleSystem::GetInstance()->SetPlayer(m_miyabiHandle);
+
 
 	/* Enemy */
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer_Collider", CThugBulkyEnforcer_Collider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -171,6 +179,7 @@ HRESULT CTestLevel::Awake()
 	//====================Test=================
 	Ready_TestObject();
 	Ready_ShadowCamera();
+	Ready_Npc();
 
 	return S_OK;
 }
@@ -390,6 +399,64 @@ void CTestLevel::Ready_TestObject()
 		.Build("Test_Cloud");
 	
 	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
+}
+
+void CTestLevel::Ready_Npc()
+{
+	auto pProto = PrototypeManager();
+	auto objMgr = ObjectManager();
+
+
+	/*Npc*/
+	CCT_DESC meowCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	meowCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	meowCCT.bAutoFit = false;
+	meowCCT.fHeight = 1.6f;
+	meowCCT.fRadius = 0.4f;
+	meowCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	meowCCT.vPos = { 25.f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OfficeMeow", COfficeMeow::Create());
+	auto testMeow = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OfficeMeow" })
+		.CharacterController(meowCCT)
+		.Build("Test_Meow");
+
+	objMgr->Add_Object(testMeow, { "Test_Level", "Npc_Layer" });
+
+	CCT_DESC bangbooCCT;
+	//meowCCT.eGroup = COLLISION_GROUP::PLAYER;
+	bangbooCCT.iCollisionMask = 0xFFFFFFFF;
+	//miyabiCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
+	bangbooCCT.bAutoFit = false;
+	bangbooCCT.fHeight = 0.6f;
+	bangbooCCT.fRadius = 0.4f;
+	bangbooCCT.eGroup = COLLISION_GROUP::COMMON;
+	//meowCCT.fBoundingMinY = -0.83f;
+	bangbooCCT.vPos = { 22.5f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooPay", CBangBooPay::Create());
+	auto testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooPay" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Pay");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	bangbooCCT.vPos = { 21.7f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooAsk", CBangBooAsk::Create());
+	testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooAsk" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Ask");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
+
+	bangbooCCT.vPos = { 20.9f, 1.5f, -30.f };
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_BangBooDeliver", CBangBooDeliver::Create());
+	testBoo = Builder::Create_Object({ "Test_Level", "Proto_GameObject_BangBooDeliver" })
+		.CharacterController(bangbooCCT)
+		.Build("Test_Deliver");
+
+	objMgr->Add_Object(testBoo, { "Test_Level", "Npc_Layer" });
 }
 
 HRESULT CTestLevel::Render()
