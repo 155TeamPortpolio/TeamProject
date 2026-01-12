@@ -93,8 +93,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
-	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
-	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+	
 
 	/* Child Object */
 	Create_Children();
@@ -104,6 +103,18 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 
 void CSacrifice::Awake()
 {
+	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
+	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
+	m_fRimLightPower = 2.f;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	for (const auto& instance : materialInstances)
+	{
+		pMaterial->Add_MaterialData(instance, "vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		pMaterial->Add_MaterialData(instance, "fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+	}
 }
 
 void CSacrifice::Priority_Update(_float dt)
