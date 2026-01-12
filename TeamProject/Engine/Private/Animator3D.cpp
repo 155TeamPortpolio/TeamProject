@@ -598,7 +598,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices[Index];
-	case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices[Index];
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices[Index];
 	default:												return _float4x4();
 	}
 }
@@ -613,7 +613,7 @@ _float4x4* CAnimator3D::Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return &m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return &m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return &m_CombinedMatrices[Index];
-	case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices[Index];
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices[Index];
 	default:												return nullptr;
 	}
 }
@@ -629,7 +629,7 @@ _vector3 CAnimator3D::Get_BonePosition(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
-	case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _vector3();
 	}
 
@@ -647,7 +647,7 @@ _quaternion CAnimator3D::Get_BoneQuaternion(BoneSpace eBoneSpace, AnimArg BoneAr
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
-	case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _quaternion::Identity;
 	}
 
@@ -665,7 +665,7 @@ const vector<_float4x4>& CAnimator3D::Get_BoneMatrices(BoneSpace eBoneSpace)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices;
-	case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices;
 	default:												return vector<_float4x4>();
 	}
 }
@@ -677,7 +677,7 @@ vector<_float4x4>* CAnimator3D::Get_BoneMatrices_Ptr(BoneSpace eBoneSpace)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return &m_TransformationMatrices;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return &m_ManipulateMatrices;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return &m_CombinedMatrices;
-	case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices;
 	default:												return nullptr;
 	}
 }
@@ -692,7 +692,7 @@ void CAnimator3D::Set_BoneMatrix(BoneSpace eBoneSpace, const _float4x4& Matrix, 
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	m_TransformationMatrices[Index] = Matrix;	return;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		m_ManipulateMatrices[Index] = Matrix;		return;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			m_CombinedMatrices[Index] = Matrix;			return;
-	case Engine::CAnimator3D::BoneSpace::FINAL:				m_FinalMatrices[Index] = Matrix;			return;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				m_FinalMatrices[Index] = Matrix;			return;
 	default:												return;
 	}
 }
@@ -719,11 +719,11 @@ void CAnimator3D::Set_BonePosition(BoneSpace eBoneSpace, _vector3 Position, Anim
 		m_CombinedMatrices[Index]._42 = Position.y;
 		m_CombinedMatrices[Index]._43 = Position.z;
 		return;
-	case Engine::CAnimator3D::BoneSpace::FINAL:
-		m_FinalMatrices[Index]._41 = Position.x;
-		m_FinalMatrices[Index]._42 = Position.y;
-		m_FinalMatrices[Index]._43 = Position.z;
-		return;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:
+	//	m_FinalMatrices[Index]._41 = Position.x;
+	//	m_FinalMatrices[Index]._42 = Position.y;
+	//	m_FinalMatrices[Index]._43 = Position.z;
+	//	return;
 	default:												
 		return;
 	}
@@ -742,7 +742,7 @@ void CAnimator3D::Set_BoneQuaternion(BoneSpace eBoneSpace, _quaternion Quaternio
 	case BoneSpace::TRANSFORMATION:	pMat = &m_TransformationMatrices[Index];	break;
 	case BoneSpace::MANIPULATE:		pMat = &m_ManipulateMatrices[Index];		break;
 	case BoneSpace::COMBINED:		pMat = &m_CombinedMatrices[Index];			break;
-	case BoneSpace::FINAL:			pMat = &m_FinalMatrices[Index];			break;
+	//case BoneSpace::FINAL:			pMat = &m_FinalMatrices[Index];			break;
 	default:						return;
 	}
 

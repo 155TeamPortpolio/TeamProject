@@ -21,19 +21,20 @@ typedef struct DynamicBoneNode
 typedef struct DistributionParam
 {
     EaseType Ease = EaseType::Linear;
-    float    Strength = 1.f;
-}DISTRUB;
+    float    Start = 1.f;
+    float    End = 0.f;
+}DISTRIB;
 
 typedef struct DynamicBoneChainParam
 {
     _float  Inert        = { 0.0f };           // 0~1 (월드영향)
-    DISTRUB Inert_Distrub{};
+    DISTRIB Inert_Distrib{};
     _float  Damping      = { 0.0f };           // 0~1 (감쇠)
-    DISTRUB Damping_Distrub{};
+    DISTRIB Damping_Distrib{};
     _float  Elasticity   = { 0.0f };           // 0~1 (탄성)
-    DISTRUB Elasticity_Distrub{};
+    DISTRIB Elasticity_Distrib{};
     _float  Stiffness    = { 0.0f };           // 0~1 (강성)
-    DISTRUB Stiffness_Distrub{};
+    DISTRIB Stiffness_Distrib{};
     _float GravityScale = { 0.0f };           // 중력 배율
     _vector3 GravityDir = { 0.f, -1.f, 0.f }; // 중력 방향
 }CHAIN_PARAM;

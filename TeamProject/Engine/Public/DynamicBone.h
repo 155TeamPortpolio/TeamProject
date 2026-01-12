@@ -47,7 +47,7 @@ protected:
     /* Local */
     void LocalChain(DYNAMIC_CHAIN_GROUP& Group, _float dt);
     void Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group);
-    void Calc_Distribution(_int NodeCount, DISTRIB& Distrib);
+    //void Calc_Distribution(_int NodeCount, DISTRIB& Distrib);
     void Simulate_LocalNode(DYNAMIC_NODE& Node,
         const _vector3& parentPos,
         const _quaternion& parentQuat,

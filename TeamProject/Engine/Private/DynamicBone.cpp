@@ -413,11 +413,11 @@ void CDynamicBone::Update_LocalAnchorNode(DYNAMIC_CHAIN_GROUP& Group)
 	Group.CurAnchorCombinedPos = m_pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, Group.AnchorBoneIndex);
 }
 
-void CDynamicBone::Calc_Distribution(_int NodeCount, DYNAMIC_CHAIN_GROUP& Group)
-{
-	float eased = Math::ApplyEase(d.Ease, t); // Linear, EaseIn, EaseOut 등
-	return eased * d.Strength;
-}
+//void CDynamicBone::Calc_Distribution(_int NodeCount, DYNAMIC_CHAIN_GROUP& Group)
+//{
+//	float eased = Math::ApplyEase(d.Ease, t); // Linear, EaseIn, EaseOut 등
+//	return eased * d.Strength;
+//}
 
 void CDynamicBone::Simulate_LocalNode(DYNAMIC_NODE& Node,
 	const _vector3& parentPos,

@@ -140,7 +140,7 @@ public:
 public: //»À °ü·Ã
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
-    enum class BoneSpace { TRANSFORMATION , MANIPULATE , COMBINED, FINAL };
+    enum class BoneSpace { TRANSFORMATION, MANIPULATE, COMBINED };//, FINAL };
 
     _float4x4 Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg);
     _float4x4* Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg);
