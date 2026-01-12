@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_EvadeAction::INSTANCENAMES[ENUM(Child::END)] = { "bg", "icon", "gaugeBg", "gauge", "mouse" };
+const string CUI_EvadeAction::INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "icon", "gaugeBg", "gauge", "mouse" };
 
 HRESULT CUI_EvadeAction::Initialize_Prototype()
 {
@@ -26,24 +26,54 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
 	const string& filePath = pResourceMgr->Get_ResourcePath("hud_battle_evadeAction.json");
 	Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-	for (_int i = 0; i < ENUM(Child::END); ++i)
+	for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
-    // 이벤트 추가 필요 (활성, 비활성 / 게이지)
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::EVADE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_Active(false);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_Active(true);
+            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+                Set_FillAmount(desc.fFillAmount);
+        });
 
 	return S_OK;
 }
 
 void CUI_EvadeAction::Update(_float dt)
 {
+    // 이벤트 테스트 코드
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //    Set_Active(true);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //    Set_Active(false);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //    Set_FillAmount(0.7f);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::EXECUTING;
+    //    desc.fFillAmount = 0.75f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -62,27 +92,27 @@ void CUI_EvadeAction::Set_Active(_bool isActive)
 {
     if (isActive)
     {
-        Set_Color(Child::BG, UI_GRAY_DARKEST);
-        Set_Color(Child::ICON, UI_GRAY_LIGHTEST);
-        Set_Color(Child::GAUGE_BG, UI_GRAY_MEDIUM);
-        Set_Color(Child::GAUGE, UI_GRAY_LIGHTEST);
+        Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+        Set_Color(CHILD::ICON, UI_GRAY_LIGHTEST);
+        Set_Color(CHILD::GAUGE_BG, UI_GRAY_MEDIUM);
+        Set_Color(CHILD::GAUGE, UI_GRAY_LIGHTEST);
     } 
     else
     {
-        Set_Color(Child::BG, UI_GRAY_MEDIUM);
-        Set_Color(Child::ICON, UI_GRAY_DARK);
-        Set_Color(Child::GAUGE_BG, UI_GRAY_DARKEST);
-        Set_Color(Child::GAUGE, UI_GRAY_DARK);
+        Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+        Set_Color(CHILD::ICON, UI_GRAY_DARK);
+        Set_Color(CHILD::GAUGE_BG, UI_GRAY_DARKEST);
+        Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
     }    
 
-    Set_Alive(Child::MOUSE, isActive);
+    Set_Alive(CHILD::MOUSE, isActive);
 }
 
 void CUI_EvadeAction::Set_FillAmount(_float fFillAmount)
 {
-    if (m_hChildren[ENUM(Child::GAUGE)].isValid())
+    if (m_hChildren[ENUM(CHILD::GAUGE)].isValid())
     {
-        auto pGauge = dynamic_cast<CGaugeUI*>(m_hChildren[ENUM(Child::GAUGE)].Get());
+        auto pGauge = dynamic_cast<CGaugeUI*>(m_hChildren[ENUM(CHILD::GAUGE)].Get());
         if (!pGauge)
             return;
 
@@ -90,12 +120,12 @@ void CUI_EvadeAction::Set_FillAmount(_float fFillAmount)
     }
 }
 
-void CUI_EvadeAction::Set_Alive(Child child, _bool isAlive)
+void CUI_EvadeAction::Set_Alive(CHILD child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
 }
 
-void CUI_EvadeAction::Set_Color(Child child, _float4 vColor)
+void CUI_EvadeAction::Set_Color(CHILD child, _float4 vColor)
 {
     ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }

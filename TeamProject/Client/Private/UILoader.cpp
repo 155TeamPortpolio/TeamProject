@@ -25,6 +25,7 @@
 #include "UI_PrimaryAction.h"
 #include "UI_EvadeAction.h"
 #include "UI_SpecialAction.h"
+#include "UI_SwitchAction.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -141,6 +142,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"PrimaryAction",	&CUI_PrimaryAction::Create	},
 		{"EvadeAction",		&CUI_EvadeAction::Create	},
 		{"SpecialAction",	&CUI_SpecialAction::Create	},
+		{"SwitchAction",	&CUI_SwitchAction::Create	},
 	};
 
 	for (const Entry& entry : entries)
