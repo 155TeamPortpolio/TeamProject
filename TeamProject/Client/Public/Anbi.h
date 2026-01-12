@@ -14,6 +14,10 @@ public:
 	CStateMachine<CAnbi>* Get_StateMachine() { return m_pStateMachine; }
 
 public:
+    virtual void    On_SwitchIn(SWITCH eType) {};   //*스위치 인 콜*
+    virtual void    On_SwitchOut()            {};   //*스위치 아웃 콜*
+
+public:
     virtual HRESULT Initialize_Prototype() override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
     virtual void    Awake() override;
@@ -28,7 +32,6 @@ private:
     HRESULT Initialize_Transitions();
 
 private:
-    virtual void Update_Input(_float dt) override;
     void         Update_States();
 
 private:

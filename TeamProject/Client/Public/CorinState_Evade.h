@@ -15,6 +15,9 @@ public:
 public:
     static CCorinState_Evade* Create() { return new CCorinState_Evade(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    _bool m_bEvade = false;
 };
 
 NS_END

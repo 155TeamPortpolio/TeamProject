@@ -74,7 +74,7 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
-	_bool m_IsSpawnEffect = false;
+	void Update_Effects(CSacrifice* pOwner);
 };
 
 class CSacrificeState_Attack_04_1_Phase1 : public IBaseState<CSacrifice>
@@ -111,6 +111,9 @@ public:
 public:
 	static CSacrificeState_Attack_05_Phase1* Create() { return new CSacrificeState_Attack_05_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+
 };
 
 class CSacrificeState_Attack_06_Phase1 : public IBaseState<CSacrifice>
@@ -123,6 +126,8 @@ public:
 public:
 	static CSacrificeState_Attack_06_Phase1* Create() { return new CSacrificeState_Attack_06_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
 };
 
 class CSacrificeState_Attack_07_Phase1 : public IBaseState<CSacrifice>
@@ -153,6 +158,10 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CSacrifice* pOwner);
+	void Update_Weapons(CSacrifice* pOwner);
+	void Update_Move(CSacrifice* pOwner, _float dt);
+
 	_bool m_IsAttackStart = false;
 	_bool m_IsAttackEnd = false;
 	_bool m_IsJumpStart = false;

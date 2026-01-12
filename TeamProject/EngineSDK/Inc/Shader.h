@@ -33,6 +33,7 @@ public:
     void Apply(const string& m_passConstant,ID3D11DeviceContext* pContext);
     HRESULT Reset_Value();
     HRESULT Bind_Value(const string& ConstantName, const SHADER_PARAM& parameter);
+    HRESULT SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize);
     HRESULT SetConstantBuffer(const string& ConstantName, ID3D11Buffer* pData);
 
 public:

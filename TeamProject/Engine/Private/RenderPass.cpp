@@ -117,6 +117,7 @@ void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRender
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -193,6 +194,7 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -268,6 +270,7 @@ void PriorityPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -348,6 +351,7 @@ void BlendedPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 
 	m_Packets.clear();
@@ -445,6 +449,7 @@ void InstancePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 		packet.pMaterial->Apply_Material(pContext, packet.MaterialIndex);
 		packet.pModel->Bind_Buffer(pContext, packet.DrawIndex);
 		packet.pModel->Draw(pContext, packet.DrawIndex);
+		packet.pMaterial->ResetMaterial(packet.DrawIndex);
 	}
 	m_Packets.clear();
 }
@@ -491,58 +496,6 @@ void UIPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
 void UIPass::Submit(SPRITE_PACKET packet)
 {
 	if (!packet.pSprite2D) return;
-	m_Packets.push_back(packet);
-}
-#pragma endregion
-
-#pragma region DEBUG_PASS
-void DebugPass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{
-	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
-	if (pCurShader == nullptr) {
-		pCurShader = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_Shader(G_GlobalLevelKey, "VTX_Debug.hlsl");
-	}
-	if (m_Packets.empty())
-		return;
-
-	CModel* pCurModel = { nullptr };
-	pPipeLine->Begin_ObjectBuffer(pContext);
-	for (auto& packet : m_Packets)
-	{
-		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
-		packet.TransformIndex = TransformIndex;
-	}
-	pPipeLine->End_ObjectBuffer(pContext);
-
-	SHADER_PARAM ObjectMaticedParam = {};
-	ObjectMaticedParam.iSize = sizeof(_float4x4) * g_iMaxTransform;
-	ObjectMaticedParam.typeName = "StructuredBuffer";
-	ObjectMaticedParam.pData = pPipeLine->Get_ObjectResource();
-	pCurShader->Bind_Value("ObjectBufferArray", ObjectMaticedParam);
-	pCurShader->SetConstantBuffer("FrameBuffer", pPipeLine->Get_FrameBuffer());
-
-	for (auto& packet : m_Packets)
-	{
-		if (packet.pModel != pCurModel) {
-		ID3D11InputLayout* pLayout;
-		pRenderer->Get_InputLayout(packet.pModel, pCurShader,
-			0, "Debug", &pLayout);
-   		pContext->IASetInputLayout(pLayout);
-			pCurModel = packet.pModel;
-		}
-		
-		SHADER_PARAM WorldMatParam{ &packet.TransformIndex, "uint",sizeof(UINT) };
-		pCurShader->Bind_Value("TransformIndex", WorldMatParam);
-		pCurShader->Apply("Debug", pContext);
-		packet.pDebug->Render_DebugBox(pContext, packet.DrawIndex);
-	}
-
-	m_Packets.clear();
-}
-
-void DebugPass::Submit(DEBUG_PACKET packet)
-{
-	if (packet.pModel == nullptr || packet.pDebug == nullptr) return;
 	m_Packets.push_back(packet);
 }
 #pragma endregion

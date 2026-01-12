@@ -58,6 +58,8 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 
 void CSacrificeHand::Awake()
 {
+	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.6f);
+	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CSacrificeHand::Priority_Update(_float dt)

@@ -402,8 +402,13 @@ void CUI_Object::Play_Animation(_float dt)
 
     if (ratio >= 1.f)
     {
-        if (!clip.isLoop) m_isBlending = false;
-        else              m_fBlendTime = 0.f;
+        if (!clip.isLoop)
+        {
+            m_iCurrentClipIndex = -1;
+            m_isBlending = false;
+        }
+        else              
+            m_fBlendTime = 0.f;
     }
 }
 
@@ -514,11 +519,16 @@ UI_HANDLE CUI_Object::Get_Handle()
 
     if (m_LevelTag.empty()) {
         hObj.Reset();
+        hObj.Level = m_LevelTag;
+        hObj.hObjID = m_ObjectID;
+        hObj.SystemIndex = m_SystemIndex;
+
         return hObj;
     }
 
     hObj.Level = m_LevelTag;
-    hObj.hObjID = m_SystemIndex;
+    hObj.hObjID = m_ObjectID;
+    hObj.SystemIndex = m_SystemIndex;
 
     return hObj;
 }

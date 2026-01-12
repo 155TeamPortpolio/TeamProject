@@ -32,7 +32,7 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.2f)
     {
-        if (pOwner->Is_Evade())
+        if (pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");

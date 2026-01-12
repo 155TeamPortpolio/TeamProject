@@ -4,12 +4,12 @@
 
 namespace Client {
 	/* Map Data */
-	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float3, END };
+	enum class SLOT_DATA_TYPE { Int, Float, Bool, String, Float2, Float3, Float4, END };
 
 	struct SlotValue {
 		SLOT_DATA_TYPE type = SLOT_DATA_TYPE::END;
 		//variant<monostate, int64_t, double, bool, string, XMFLOAT3> value;
-		variant<monostate, _int, _float, _bool, string, _float3> value;
+		variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4> value;
 	};
 
 	typedef struct tagMapDataFilePacket {

@@ -73,7 +73,6 @@ void CAnbi::Priority_Update(_float dt)
 
 void CAnbi::Update(_float dt)
 {
-	Update_Input(dt);
 	Update_States();
 	m_pStateMachine->Update(dt);
 	__super::Update(dt);
@@ -96,30 +95,6 @@ void CAnbi::Render_GUI()
 			m_pStateMachine->Set_ShowWindow(true);
 
 		m_pStateMachine->Render_GUI();
-	}
-}
-
-void CAnbi::Update_Input(_float dt)
-{
-	__super::Update_Input(dt);
-
-	// 디버그용 레이캐스트 (F키)
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	if (input->Key_Hold('F'))
-	{
-		PHYSICS_RAY_HIT hit;
-		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		m_pCCT->Shoot_Ray(vLook, 100.f, hit);
-	}
-	else
-	{
-		m_pCCT->Clear_DebugRay();
-	}
-
-	// 테스트용 점프 (J키)
-	if (input->Key_Down('J'))
-	{
-		m_pCCT->Jump(3.f);
 	}
 }
 
@@ -191,7 +166,7 @@ void CAnbi::Update_States()
 	}
 
 	// End 캔슬 처리 (기존과 동일)
-	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
+	if ((bInMoveEnd || bInAttackEnd) && Is_Input())
 	{
 		m_pStateMachine->Set_Bool("IsMove", false);
 
@@ -201,7 +176,7 @@ void CAnbi::Update_States()
 	}
 	else
 	{
-		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+		m_pStateMachine->Set_Bool("IsMove", Is_Move());
 
 		if (m_bIsAttack)
 		{

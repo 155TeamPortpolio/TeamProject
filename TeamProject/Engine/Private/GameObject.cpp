@@ -140,6 +140,7 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 	else {
 		m_isRootObject = true;
 	}
+
 	if (CObjectContainer* pObjContainer = Get_Component<CObjectContainer>()) {
 		pObjContainer->Pre_EngineUpdateChild(dt);
 	}
@@ -147,6 +148,9 @@ void CGameObject::Pre_EngineUpdate(_float dt)
 
 void CGameObject::Post_EngineUpdate(_float dt)
 {
+	if (m_eRenderLayer ==RENDER_LAYER::None)
+		return;
+
 	/*패킷은 용도별로 따로 만든다.*/
 	if (m_isAlive) {
 		if (m_eRenderLayer != RENDER_LAYER::CustomOnly) {
@@ -160,22 +164,6 @@ void CGameObject::Post_EngineUpdate(_float dt)
 			else {
 				Make_OpaquePacket();
 			}
-
-#ifdef _DEBUG
-			DEBUG_PACKET debugPacket = {};
-			debugPacket.pModel = Get_Component<CModel>();
-			debugPacket.pDebug = Get_Component<CDebugRender>();
-			debugPacket.pWorldMatrix = m_pTransform->Get_WorldMatrix_Ptr();
-			if (debugPacket.pDebug) {
-				for (size_t i = 0; i < debugPacket.pDebug->Get_DebugBoxCount(); i++)
-				{
-					if (!debugPacket.pModel->isDrawable(i)) continue;
-					debugPacket.DrawIndex = i;
-					CGameInstance::GetInstance()->Get_RenderSystem()->Submit_Debug(debugPacket);
-				}
-			}
-
-#endif // _DEBUG
 
 		}
 	}
@@ -264,12 +252,10 @@ LAYER_DESC CGameObject::Get_LayerDesc()
 OBJECT_HANDLE CGameObject::Get_Handle()
 {
 	OBJECT_HANDLE hObj = {};
-	if (m_LevelTag.empty()) {
-		hObj.Reset();
-		return hObj;
-	}
-
-	if (!m_pLayer) {
+	if (m_LevelTag.empty() || !m_pLayer) {
+		hObj.Layer = "";
+		hObj.Level = "";
+		hObj.hObjID = m_ObjectID;
 		hObj.Reset();
 		return hObj;
 	}

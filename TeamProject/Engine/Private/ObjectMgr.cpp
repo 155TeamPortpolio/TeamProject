@@ -235,17 +235,42 @@ CLayer* CObjectMgr::Get_Layer(const LAYER_DESC& SrcLayer)
 
 CGameObject* CObjectMgr::Request_Object(const OBJECT_HANDLE& handle)
 {
-	auto it = m_Layers.find(handle.Level);
-	if (it == m_Layers.end()) return nullptr;
+	if (m_DeleteIDs.count(handle.hObjID))
+		return nullptr;
 
-	auto& layers = it->second;
-	auto lit = layers.find(handle.Layer);
-	if (lit == layers.end()) return nullptr;
+	const bool hasLevel = !handle.Level.empty();
+	const bool hasLayer = !handle.Layer.empty();
 
-	if (m_DeleteIDs.count(handle.hObjID)) return nullptr;
+	if (hasLevel && hasLayer)
+	{
+		auto levelIter = m_Layers.find(handle.Level);
+		if (levelIter == m_Layers.end())
+			return nullptr;
 
-	return lit->second->Find_ObjectByID(handle.hObjID);
+		auto& layerMap = levelIter->second;
+		auto layerIter = layerMap.find(handle.Layer);
+		if (layerIter == layerMap.end())
+			return nullptr;
+
+		return layerIter->second->Find_ObjectByID(handle.hObjID);
+	}
+
+	for (auto& levelPair : m_Layers)
+	{
+		auto& layerMap = levelPair.second;
+
+		for (auto& layerPair : layerMap)
+		{
+			CGameObject* foundObject =
+				layerPair.second->Find_ObjectByID(handle.hObjID);
+
+			if (foundObject)
+				return foundObject;
+		}
+	}
+	return nullptr;
 }
+
 
 CGameObject* CObjectMgr::Acquire(const CLONE_DESC& desc)
 {

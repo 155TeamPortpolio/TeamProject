@@ -103,13 +103,41 @@ HRESULT CShader::Bind_Value(const string& ConstantName, const SHADER_PARAM& para
 			return Bind_MatrixArray(ConstantName,reinterpret_cast<const _float4x4*>(parameter.pData),parameter.iSize / sizeof(_float4x4)  // 배열 크기 계산
 			);
 		}
-		HRESULT hr = iter->second.pHandle->SetRawValue(parameter.pData, 0, parameter.iSize);
+		HRESULT hr = SetRawValueOrClear(iter->second.pHandle, parameter.pData, parameter.iSize);
 		if (FAILED(hr)) {
 			return E_FAIL;
 		}
 		return hr;
 
 	}
+}
+
+ HRESULT CShader::SetRawValueOrClear(ID3DX11EffectVariable* effectVariable, const void* dataPtr, UINT byteSize)
+{
+	if (!effectVariable || !effectVariable->IsValid())
+		return E_FAIL;
+
+	if (dataPtr && byteSize > 0)
+		return effectVariable->SetRawValue(dataPtr, 0, byteSize);
+
+	UINT resolvedSize = byteSize;
+	if (resolvedSize == 0)
+	{
+		ID3DX11EffectType* effectType = effectVariable->GetType();
+		if (!effectType || !effectType->IsValid())
+			return E_FAIL;
+
+		D3DX11_EFFECT_TYPE_DESC typeDesc = {};
+		HRESULT hr = effectType->GetDesc(&typeDesc);
+		if (FAILED(hr) || typeDesc.PackedSize == 0)
+			return E_FAIL;
+
+		resolvedSize = typeDesc.PackedSize;
+	}
+
+	// 0 버퍼 만들어서 덮어쓰기
+	vector<unsigned char> zeroBuffer(resolvedSize, 0);
+	return effectVariable->SetRawValue(zeroBuffer.data(), 0, resolvedSize);
 }
 
 HRESULT CShader::SetConstantBuffer(const string& ConstantName, ID3D11Buffer* pData)

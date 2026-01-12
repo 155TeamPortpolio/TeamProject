@@ -72,6 +72,7 @@ public:
 public:
 	void Update_UITransform();
 	void Set_LeftTop(_float2 desiredLT) {}
+	void Set_Anchor(ANCHOR eAnchor) { m_eAnchor = eAnchor; }
 	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
@@ -165,7 +166,7 @@ protected:
 	_float m_fRadian = {};
 	_uint m_iPriority = {UINT_MAX};
 
-	_int m_SystemIndex = {-1};
+	_int m_SystemIndex = {-1}; /* 유아이 매니저에서 배정한 벡터의 인덱스*/
 
 	_bool m_isClickable = {};
 

@@ -144,6 +144,7 @@ namespace Engine {
 		string UIAssetKey = {};
 		tagUIObjectDesc() DEFAULT;
 		virtual ~tagUIObjectDesc() DEFAULT;
+		tagUIObjectDesc& operator=(const tagUIObjectDesc& rhs) DEFAULT;
 	}UI_DESC;
 
 	typedef struct tagEffectObjectDesc : public GAMEOBJECT_DESC {

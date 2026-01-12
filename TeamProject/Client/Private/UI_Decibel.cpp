@@ -3,52 +3,19 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 
 #include "UI_DecibelKanji.h"
 #include "UI_DecibelDigits.h"
-
-void CUI_Decibel::Set_Decibel(_int iDecibel)
-{
-    if (iDecibel < 0 || iDecibel > 9999)
-        return;
-
-    m_iDecibel = iDecibel;
-
-    auto pKanji = dynamic_cast<CUI_DecibelKanji*>(Get_Slot(ChildSlot::KANJI));
-    auto pDigits = dynamic_cast<CUI_DecibelDigits*>(Get_Slot(ChildSlot::DIGITS));
-
-    if (!pKanji || !pDigits)
-        return;
-
-    // 간지 텍스쳐 셋 하고 (간지에서 분기하는게 나은가?)
-    CUI_DecibelKanji::State kanjiState = { CUI_DecibelKanji::State::NONE };
-
-    if (m_iDecibel >= 3000)
-    {
-        kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;
-    }
-    else if (m_iDecibel >= 2000)
-    {
-        kanjiState = CUI_DecibelKanji::State::COMBAT_BLASTING;
-    }
-    else if (m_iDecibel >= 2000)
-    {
-        kanjiState = CUI_DecibelKanji::State::COMBAT_UPROAR;
-    }
-    else
-    {
-        kanjiState = CUI_DecibelKanji::State::COMBAT_MAXIMUM;   //None 처리해야
-    }
-    
-    pKanji->Set_Kanji(kanjiState);      // 데시벨 보내고 안에서 분길하는게 나은가
-    pDigits->Set_Digits(m_iDecibel);
-
-    pDigits->Set_AnchorOffset(_float2(Get_Slot(ChildSlot::KANJI)->Get_PxSize().x, 0.f));
-}
+#include "UI_DecibelPts.h"
+#include "UI_DecibelText.h"
 
 HRESULT CUI_Decibel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -56,45 +23,121 @@ HRESULT CUI_Decibel::Initialize_Prototype()
 HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-
-    Add_Component<CObjectContainer>();
+     
+    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+        {
+            if (desc.eOwner == m_eOwner &&
+                desc.eType == m_eType)
+                Set_Decibel(desc.value.fCurValue);
+        });
 
     Ready_PartObjects();
-
-    Set_Decibel(m_iDecibel);
 
 	return S_OK;
 }
 
 void CUI_Decibel::Update(_float dt)
 {
-    //Get_Component<CObjectContainer>()->UpdateChild(dt);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
-    //    Set_Decibel(m_iDecibel + 12);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('Q'))
-    //    Set_Decibel(m_iDecibel - 12);
+    if (!m_initLayout)
+    {
+        Set_Decibel(0);
+        m_initLayout = true;
+    }
+
+    _float fLerpAmount = min(1.f, dt * m_fColorLerpSpeed);
+    XMStoreFloat4(&m_vColor, XMVectorLerp(XMLoadFloat4(&m_vColor), XMLoadFloat4(&m_vTargetColor), fLerpAmount));
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt); 
 }
 
 void CUI_Decibel::Ready_PartObjects()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelKanji" })
-        .Build("decibelKanji"));
+    CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
+    pKanji->pState = &m_iState;
+    pKanji->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, &m_handles[ENUM(Child::KANJI)]);
 
-    pContainer->Add_Child(
-        Builder::Create_UIObject({ CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey(), "Proto_GameObject_DecibelDigits" })
-        .Build("decibelDigits"));
+    CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
+    pDigits->pDecibel = &m_fDecibel;
+    pDigits->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, &m_handles[ENUM(Child::DIGITS)]);
+
+    CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
+    pPts->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, &m_handles[ENUM(Child::PTS)]);
+
+    CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
+    pText->pState = & m_iState;
+    pText->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, &m_handles[ENUM(Child::TEXTS)]);
 }
 
-CUI_Object* CUI_Decibel::Get_Slot(ChildSlot slot)
+void CUI_Decibel::Set_Decibel(_float fDecibel)
 {
-    auto pContainer = Get_Component<CObjectContainer>();
+    if (fDecibel < 0.f || fDecibel > 9999.f)
+        return;
 
-    return (pContainer) ? dynamic_cast<CUI_Object*>(pContainer->Get_ChildByOrder(ENUM(slot))) : nullptr;
+    m_fDecibel = fDecibel;
+
+    if (m_fDecibel >= 3000)
+    {
+        m_iState = State::COMBAT_MAXIMUM;
+        m_vTargetColor = Helper::HexToColor("#FF9A22");
+    }
+    else if (m_fDecibel >= 2000)
+    {
+        m_iState = State::COMBAT_BLASTING;
+        m_vTargetColor = Helper::HexToColor("#FFFF3E");
+    }
+    else if (m_fDecibel >= 1000)
+    {
+        m_iState = State::COMBAT_UPROAR;
+        m_vTargetColor = Helper::HexToColor("#41FDFE");
+    }
+    else
+    {
+        m_iState = State::NONE;
+        m_vTargetColor = Helper::HexToColor("#D8D1D5");
+    }
+
+    Layout();
+}
+
+void CUI_Decibel::Layout()
+{
+    if (!m_handles[ENUM(Child::KANJI)].isValid() ||
+        !m_handles[ENUM(Child::DIGITS)].isValid() ||
+        !m_handles[ENUM(Child::PTS)].isValid() ||
+        !m_handles[ENUM(Child::TEXTS)].isValid())
+        return;
+
+    _float2 vKanjiSize = m_handles[ENUM(Child::KANJI)].Get()->Get_PxSize();
+    _float2 vDigitsSize = m_handles[ENUM(Child::DIGITS)].Get()->Get_PxSize();
+    _float2 vPtsSize = m_handles[ENUM(Child::PTS)].Get()->Get_PxSize();
+    _float2 vTextsSize = m_handles[ENUM(Child::TEXTS)].Get()->Get_PxSize();
+
+    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, 0.f));
+    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.9f, vDigitsSize.y - vPtsSize.y));
+    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, vKanjiSize.y - vTextsSize.y));
+}
+
+void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut)
+{
+    auto builder = Builder::Create_UIObject({ strLevelKey, strPrototypeTag });
+
+    if (pDesc)
+        builder.Add_UIDesc(pDesc);
+
+    CUI_Object* pObj = builder.Build(strInstanceName);
+    if (!pObj)
+        return;
+
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    if (pHandleOut)
+        *pHandleOut = pObj->Get_Handle();
 }
 
 CGameObject* CUI_Decibel::Create()

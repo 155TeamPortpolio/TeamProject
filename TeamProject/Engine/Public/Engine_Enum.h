@@ -22,13 +22,14 @@ namespace Engine
 		MONSTER = 1<<2,
 		PLAYER_ATTACK = 1<<3,
 		MONSTER_ATTACK = 1<<4,
-		CAMERA = 1<<5,
+		MONSTER_PARRY = 1<<5,
+		CAMERA = 1<<6,
 		END = 1<<31 
 	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
 	enum class RENDER_PASS_TYPE { PRIORITY, RENDER_OPAQUE, NONLIGHT_OPAQUE, RENDER_EFFECT, RENDER_3DUI  };
 	enum class RENDERER_TYPE {FORWARD, POST, EFFECT, UI};
-	enum class RENDER_LAYER { Default, CustomOnly, Both };
+	enum class RENDER_LAYER { Default, CustomOnly, Both, None };
 	enum class POSTPROCESS { MRT_Bloom, MRT_Distortion, MRT_RimLight, END};
 	enum class RIMLIGHT {OUTLINE, BACKLIGHT, RIMLIGHT, END};
 	enum class CUSTOMTARGET { EFFECT, UI, ETC, END };

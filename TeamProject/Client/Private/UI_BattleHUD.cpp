@@ -3,10 +3,15 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
+#include "TextSlot.h"
+#include "GaugeUI.h" 
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
+
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -15,6 +20,14 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+        {
+            if (desc.eType == UI_STATUS_TYPE::HP && desc.eOwner == UI_STATUS_OWNER::ROLE1)
+                Set_HPText(desc.value);
+            else if (desc.eType == UI_STATUS_TYPE::GROGGY && desc.eOwner == UI_STATUS_OWNER::BOSS)
+                Set_GroggyText(desc.value);
+        });
+
     return S_OK;
 }
 
@@ -22,33 +35,12 @@ void CUI_BattleHUD::Awake()
 {
     auto pGameInstance = CGameInstance::GetInstance();
 
-    string strCurrentLevel = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-    // Battle HUD 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
-    CUI_Object* pRoot = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset("hud_battle.json")
-        .Build("prefab");
+    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 
+    auto pRoot = Ready_Prefab(strLevelKey);
     if (!pRoot)
         return;
 
-    // 생성된 루트 UI를 uiMgr에 등록
-    pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strCurrentLevel);
-   
-    // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
-    CacheHandle(pRoot);
-
-    /////////////////////////////////
-    // 데시벨 객체 (클라이언트) 생성해서 루트 프리팹에 자식으로 추가하고 핸들 캐싱
-    CUI_Object* pDecibel = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_Decibel" })
-        .Offset(_float2(68.f, 136.f))
-        .Build("decibel");
-    if (pDecibel)
-    {
-        pRoot->Get_Component<CObjectContainer>()->Add_Child(pDecibel);
-        m_hChildren[PREFAB::ULTIMATE1] = pDecibel->Get_Handle();
-    } 
-    /////////////////////////////////
-  
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
@@ -58,7 +50,67 @@ void CUI_BattleHUD::Update(_float dt)
 {
 }
 
-void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
+CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
+{
+    auto pGameInstance = CGameInstance::GetInstance();
+
+    // Battle HUD 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
+    CUI_Object* pRoot = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_CanvasPanel" })
+        .Asset("hud_battle.json")
+        .Build("prefab");
+
+    if (!pRoot)
+        return nullptr;
+
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_BattleHUDAction", "action", PREFAB::ACTION, _float2(1178.f, 655.f));
+
+    // 생성된 루트 UI를 uiMgr에 등록
+    if (FAILED(pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strLevelKey)))
+        return nullptr;
+
+    // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
+    Cache_Handles(pRoot);
+
+    return pRoot;
+}
+
+void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset)
+{
+    CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
+        .Offset(vOffset)
+        .Build(strInstanceName);
+
+    if (!pObj)
+        return;
+
+    pRoot->Get_Component<CObjectContainer>()->Add_Child(pObj);
+
+    UI_HANDLE handle = pObj->Get_Handle();
+    if (!handle.isValid())
+        return;
+
+    m_hChildren[prefab] = handle;
+}
+
+void CUI_BattleHUD::Set_HPText(const UI_STATUS_VALUE& value)
+{
+    if (!m_hChildren[PREFAB::CUR_HP_TEXT].isValid() || !m_hChildren[PREFAB::MAX_HP_TEXT].isValid())
+        return;
+
+    Set_Text(PREFAB::CUR_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fCurValue))));
+    Set_Text(PREFAB::MAX_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fMaxValue))));
+}
+
+void CUI_BattleHUD::Set_GroggyText(const UI_STATUS_VALUE& value)
+{
+    if (!m_hChildren[PREFAB::BOSS_GROGGY_TEXT].isValid())
+        return;
+
+    Set_Text(PREFAB::BOSS_GROGGY_TEXT, Helper::ConvertToWideString(to_string(value.fCurValue)));
+}
+
+void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
 { 
     // 루트 핸들 캐싱
     m_hRoot = pRoot->Get_Handle();
@@ -88,6 +140,32 @@ void CUI_BattleHUD::CacheHandle(CUI_Object* pRoot)
     //m_hChildren[PREFAB::BTN_SPECIAL] = ;
     //m_hChildren[PREFAB::BTN_SWITCH] = ;
     //m_hChildren[PREFAB::BTN_ULTIMATE] = ;
+
+    // 게이지 정보(소유자, 게이지 타입) 설정
+    for(const auto& bind : GaugeBindings)
+    {
+        auto& handle = m_hChildren[bind.ePrefab];
+        if (!handle.isValid())
+            continue;
+
+        if (auto pGauge = dynamic_cast<CGaugeUI*>(handle.Get()))
+        {
+            pGauge->Set_Status(bind.eOwner, bind.eType);
+        }
+    }
+}
+
+void CUI_BattleHUD::Set_Text(PREFAB prefab, const wstring& strText)
+{
+    auto pObj = m_hChildren[ENUM(prefab)].Get();
+    if (!pObj)
+        return;
+
+    auto pTextSlot = pObj->Get_Component<CTextSlot>();
+    if (!pTextSlot)
+        return;
+
+    pTextSlot->Set_Text(strText);
 }
 
 CGameObject* CUI_BattleHUD::Create()

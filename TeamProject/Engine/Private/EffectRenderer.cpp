@@ -136,6 +136,10 @@ HRESULT CEffectRenderer::Render_Effect_Bloom()
 		Get_BufferInputLayout(m_pVIBuffer, m_pShader, "BLOOM_BLURX", &pLayout);
 		m_pContext->IASetInputLayout(pLayout);
 
+
+		m_pShader->Bind_Value("BloomScreenWidth", { &m_fBloomScreenWidth, "float", sizeof(float) });
+		m_pShader->Bind_Value("BloomScreenHeight", { &m_fBloomScreenHeight, "float", sizeof(float) });
+
 		m_pShader->Apply("BLOOM_BLURX", m_pContext);
 		m_pVIBuffer->Bind_Buffer(m_pContext);
 		m_pVIBuffer->Render(m_pContext);
@@ -174,6 +178,9 @@ HRESULT CEffectRenderer::Ready_Target()
 	_uint				iNumViewports = { 1 };
 	D3D11_VIEWPORT		ViewportDesc{};
 	m_pContext->RSGetViewports(&iNumViewports, &ViewportDesc);
+
+	m_fBloomScreenWidth = ViewportDesc.Width;
+	m_fBloomScreenHeight = ViewportDesc.Height;
 
 	RenderTargetDesc AccumulationDesc = { "Target_DiffuseEffectAcc" , DXGI_FORMAT_R16G16B16A16_FLOAT , DXGI_FORMAT_D24_UNORM_S8_UINT,_float4(0.0f, 0.f, 0.f, 0.f) ,ViewportDesc.Width, ViewportDesc.Height };
 	m_pTargetManager->Create_Target(AccumulationDesc);

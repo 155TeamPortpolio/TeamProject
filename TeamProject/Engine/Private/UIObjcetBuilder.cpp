@@ -17,9 +17,9 @@ CUIObjcetBuilder::CUIObjcetBuilder(const CLONE_DESC& cloneDesc)
 	else {
 		m_CloneDesc = new CLONE_DESC(cloneDesc);
 	}
+	m_pObjDesc = new UI_DESC;
 
 	Safe_AddRef(m_pGameInstance);
-	m_pObjDesc = new UI_DESC;
 }
 
 CUIObjcetBuilder::~CUIObjcetBuilder()
@@ -42,8 +42,6 @@ CUI_Object* CUIObjcetBuilder::Build(const string& instanceKey, _uint* id)
 		return nullptr;
 	}
 
-	if (!m_pObjDesc)
-		m_pObjDesc = new UI_DESC;
 
 	m_pObjDesc->InstanceName = instanceKey;
 
@@ -104,7 +102,16 @@ CUIObjcetBuilder& CUIObjcetBuilder::Asset(const string& assetKey)
 
 CUIObjcetBuilder& CUIObjcetBuilder::Add_UIDesc(UI_DESC* pArg)
 {
+	//pArg
 	if (pArg == nullptr) return *this;
+
+	if (m_pObjDesc)
+	{
+		*pArg = *m_pObjDesc;
+		Safe_Delete(m_pObjDesc);
+		m_pObjDesc = pArg; 
+	} 
+		
 	m_pObjDesc = pArg;
 	return *this;
 }

@@ -9,17 +9,12 @@ CMaterial::CMaterial()
 }
 
 CMaterial::CMaterial(const CMaterial& rhs)
-	:CComponent(rhs), m_vRimLightColor(rhs.m_vRimLightColor), m_fRimLightPower(rhs.m_fRimLightPower)
+	:CComponent(rhs)
 {
 	for (auto& instance : rhs.m_MaterialInstances) {
 		CMaterialInstance* cloned = instance->Clone();
 		m_MaterialInstances.emplace_back(move(cloned));
-		cloned->Set_Param("vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
-		cloned->Set_Param("fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
-		cloned->Set_Param("vOutLineColor", { &m_vOutLineColor, "float4", sizeof(_float4) });
-		cloned->Set_Param("fOutLineThickness", { &m_fOutLineThickness, "float", sizeof(_float) });
 	}
-
 }
 
 HRESULT CMaterial::Initialize_Prototype()
@@ -39,6 +34,7 @@ HRESULT CMaterial::Link_Material(const string& levelKey, const string& materialK
 		Safe_Release(data);
 
 	m_MaterialInstances = CGameInstance::GetInstance()->Get_ResourceMgr()->Load_MaterialFromFile(levelKey, materialKey);
+
 	return S_OK;
 }
 
@@ -51,22 +47,6 @@ HRESULT CMaterial::Insert_MaterialInstance(CMaterialInstance* pInstance, _uint* 
 	//Safe_AddRef(pInstance);
 	if(outIndex)
 		*outIndex = m_MaterialInstances.size() - 1;
-
-	return S_OK;
-}
-
-HRESULT CMaterial::Set_RimLightInfo(_float3 RimColor, _float Power)
-{
-	m_vRimLightColor = RimColor;
-	m_fRimLightPower = Power;
-
-	return S_OK;
-}
-
-HRESULT CMaterial::Set_OutLineInfo(_float4 OutLineColor, _float OutLineThickness)
-{
-	m_vOutLineColor = OutLineColor;
-	m_fOutLineThickness = OutLineThickness;
 
 	return S_OK;
 }
@@ -90,6 +70,12 @@ _uint CMaterial::Get_MaterialDataID(_uint subsetIndex)
 	if (subsetIndex >= m_MaterialInstances.size()) return 0;
 
 	return m_MaterialInstances[subsetIndex]->Get_MaterialDataID();
+}
+
+void CMaterial::Add_MaterialData(CMaterialInstance* pInstance, string strDataName, SHADER_PARAM param)
+{
+	if (pInstance == nullptr) return;
+	pInstance->Set_Param(strDataName, param);
 }
 
 void CMaterial::Apply_Material(ID3D11DeviceContext* pContext, _uint subsetIndex)
@@ -122,6 +108,12 @@ CMaterialInstance* CMaterial::Get_MaterialInstance(_uint Index)
 		return nullptr;
 
 	return m_MaterialInstances[Index];
+}
+
+void CMaterial::ResetMaterial(_uint Index)
+{
+	if (Index >= m_MaterialInstances.size()) return;
+	m_MaterialInstances[Index]->Reset_DynamicSlot();
 }
 
 const string& CMaterial::GetPassConstant(_uint subsetIndex)
@@ -193,6 +185,7 @@ void CMaterial::Render_GUI()
 				CMaterialInstance* hMaterial = m_MaterialInstances[i];
 				if (ImGui::BeginTabItem(hMaterial->Get_MaterialName().c_str()))
 				{
+
 					hMaterial->Render_GUI();
 					ImGui::EndTabItem();
 				}

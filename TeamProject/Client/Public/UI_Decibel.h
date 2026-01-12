@@ -5,16 +5,16 @@ NS_BEGIN(Client)
 
 class CUI_Decibel final : public CUI_Object
 {
+public:
+	enum State { NONE, COMBAT_UPROAR, COMBAT_BLASTING, COMBAT_MAXIMUM, END };
+
 private:
-	enum class ChildSlot { KANJI, DIGITS, PTS, TEXT, END };
+	enum class Child { KANJI, DIGITS, PTS, TEXTS, END };
 	
 private:
 	CUI_Decibel() {}
 	CUI_Decibel(const CUI_Decibel& rhs) : CUI_Object(rhs) {}
 	virtual ~CUI_Decibel() DEFAULT;
-
-public:
-	void Set_Decibel(_int iDecibel);
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -25,17 +25,30 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	_int			m_iDecibel = {};
+	_bool			m_initLayout = {};
 
-	_vector4		m_vCurrentColor = {};
+	_float			m_fDecibel = {};
+	_uint			m_iState = {};
+
+	_float			m_fDigitsOffsetX = {};
+	_float			m_fPtsOffsetX = {};
+
 	_vector4		m_vTargetColor = {};
 	_float			m_fColorLerpSpeed = { 8.f };
 
-private: 
+	UI_HANDLE		m_handles[ENUM(Child::END)];
+
+private:
+	UI_STATUS_OWNER		m_eOwner = { UI_STATUS_OWNER::ROLE1 };
+	UI_STATUS_TYPE		m_eType = { UI_STATUS_TYPE::HP };
+
+private:
 	void Ready_PartObjects();
+	void Set_Decibel(_float fDecibel);
+	void Layout();
 
-	CUI_Object* Get_Slot(ChildSlot slot);
-
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut = nullptr);
+	
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;

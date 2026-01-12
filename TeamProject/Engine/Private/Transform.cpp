@@ -257,6 +257,9 @@ _float4x4* CTransform::Get_InverseWorldMatrix_Ptr()
 
 _vector CTransform::Get_WorldPos()
 {
+	if (Check_Dirty())
+		Update_Transform();
+
 	if (m_pParentTransform) {
 		_vector worldpos = XMVector3Transform(XMLoadFloat4(&m_vPosition), XMLoadFloat4x4(m_pParentTransform->Get_WorldMatrix_Ptr()));
 		return worldpos;
@@ -371,6 +374,24 @@ void CTransform::LookAt(_fvector vAt)
 	MarkDirty();
 }
 
+void CTransform::Set_Look(_fvector vAt)
+{
+	_fvector vLookDir = XMVector3Normalize(vAt);
+	_vector vPos = XMLoadFloat4(&m_vPosition);
+	_fvector vWorldUp = XMVectorSet(0.f, 1.f, 0.f, 0.f);
+	_fvector vRight = XMVector3Normalize(XMVector3Cross(vWorldUp, vLookDir));
+	_fvector vUp = XMVector3Cross(vLookDir, vRight);
+	_matrix vRotmat = XMMatrixIdentity();
+	vRotmat.r[0] = vRight;
+	vRotmat.r[1] = vUp;
+	vRotmat.r[2] = vLookDir;
+
+	_vector vQuaternion = XMQuaternionRotationMatrix(vRotmat);
+	XMStoreFloat4(&m_qRotation, vQuaternion);
+
+	MarkDirty();
+}
+
 void CTransform::Override_Rotation(_fvector vAxis, _float fRadian)
 {
 	_fvector newQuaternion = XMQuaternionRotationAxis(vAxis, fRadian);
@@ -388,7 +409,7 @@ void CTransform::Reset_Rotation()
 
 void CTransform::Update_Transform()
 {
-	if (m_pParentTransform && m_pParentTransform->m_bDirty)
+	if (m_pParentTransform/* && m_pParentTransform->m_bDirty*/)
 		m_pParentTransform->Update_Transform();
 
 	_matrix matScale = XMMatrixScaling(m_vScale.x, m_vScale.y, m_vScale.z);

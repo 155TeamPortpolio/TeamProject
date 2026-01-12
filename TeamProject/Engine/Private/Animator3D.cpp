@@ -49,6 +49,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	m_FinalMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
@@ -168,11 +169,17 @@ void CAnimator3D::Update_Animation(_float dt)
 	if (m_pDynamicBone) {
 
 		/* Update DynamicBone */
-		m_pDynamicBone->Update(dt);
+ 		m_pDynamicBone->Update(dt);
 
 		/* Additive Combined */
-		BuildDynamicBone();
+		if(m_pDynamicBone->isInitUpdated())
+			BuildDynamicBone();
+		else
+			m_FinalMatrices = m_CombinedMatrices;
 	}
+	else /* If Not Exist DynamicBone */
+		m_FinalMatrices = m_CombinedMatrices;
+
 }
 
 SetAnimBuild CAnimator3D::Set_Animation(AnimArg ClipArg)
@@ -573,7 +580,7 @@ vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 
 	for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
 	{
-		_smatrix final = m_CombinedMatrices[i];
+		_smatrix final = m_FinalMatrices[i];
 		_smatrix offset = m_pData->Get_Offset(meshIndex, i);
 
 		result.push_back(offset * final);
@@ -591,6 +598,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices[Index];
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices[Index];
 	default:												return _float4x4();
 	}
 }
@@ -605,6 +613,7 @@ _float4x4* CAnimator3D::Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return &m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return &m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return &m_CombinedMatrices[Index];
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices[Index];
 	default:												return nullptr;
 	}
 }
@@ -620,6 +629,7 @@ _vector3 CAnimator3D::Get_BonePosition(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _vector3();
 	}
 
@@ -637,6 +647,7 @@ _quaternion CAnimator3D::Get_BoneQuaternion(BoneSpace eBoneSpace, AnimArg BoneAr
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _quaternion::Identity;
 	}
 
@@ -654,6 +665,7 @@ const vector<_float4x4>& CAnimator3D::Get_BoneMatrices(BoneSpace eBoneSpace)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices;
 	default:												return vector<_float4x4>();
 	}
 }
@@ -665,6 +677,7 @@ vector<_float4x4>* CAnimator3D::Get_BoneMatrices_Ptr(BoneSpace eBoneSpace)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return &m_TransformationMatrices;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return &m_ManipulateMatrices;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return &m_CombinedMatrices;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				return &m_FinalMatrices;
 	default:												return nullptr;
 	}
 }
@@ -679,6 +692,7 @@ void CAnimator3D::Set_BoneMatrix(BoneSpace eBoneSpace, const _float4x4& Matrix, 
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	m_TransformationMatrices[Index] = Matrix;	return;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		m_ManipulateMatrices[Index] = Matrix;		return;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			m_CombinedMatrices[Index] = Matrix;			return;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:				m_FinalMatrices[Index] = Matrix;			return;
 	default:												return;
 	}
 }
@@ -705,6 +719,11 @@ void CAnimator3D::Set_BonePosition(BoneSpace eBoneSpace, _vector3 Position, Anim
 		m_CombinedMatrices[Index]._42 = Position.y;
 		m_CombinedMatrices[Index]._43 = Position.z;
 		return;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:
+	//	m_FinalMatrices[Index]._41 = Position.x;
+	//	m_FinalMatrices[Index]._42 = Position.y;
+	//	m_FinalMatrices[Index]._43 = Position.z;
+	//	return;
 	default:												
 		return;
 	}
@@ -723,6 +742,7 @@ void CAnimator3D::Set_BoneQuaternion(BoneSpace eBoneSpace, _quaternion Quaternio
 	case BoneSpace::TRANSFORMATION:	pMat = &m_TransformationMatrices[Index];	break;
 	case BoneSpace::MANIPULATE:		pMat = &m_ManipulateMatrices[Index];		break;
 	case BoneSpace::COMBINED:		pMat = &m_CombinedMatrices[Index];			break;
+	//case BoneSpace::FINAL:			pMat = &m_FinalMatrices[Index];			break;
 	default:						return;
 	}
 
@@ -746,6 +766,11 @@ Matrix CAnimator3D::Get_OwnerWorldMatrix()
 void CAnimator3D::Reset_DynamicBoneMatrices()
 {
 	m_DynamicBoneMatrices.resize(m_pData->Get_BoneCount(), Matrix::Identity);
+}
+
+void CAnimator3D::Delete_DB()
+{
+	Safe_Release(m_pDynamicBone);
 }
 
 HRESULT CAnimator3D::Initialize_HumanoidRig()
@@ -885,8 +910,7 @@ Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& tar
 	baseMat.Decompose(baseS, baseR, baseT);
 	targetMat.Decompose(targetS, targetR, targetT);
 	_vector3	S = _vector3::Lerp(baseS, targetS, weight);
-	_quaternion R = _quaternion::Slerp(baseR, targetR, weight);
-	R.Normalize();
+	_quaternion R = _quaternion::Slerp(baseR, targetR, weight); R.Normalize();
 	_vector3	T = _vector3::Lerp(baseT, targetT, weight);
 
 	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
@@ -987,9 +1011,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex) {
 			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-			Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -1004,21 +1027,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
-			else {
+			else 
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-				//Extract Movebone
-				// 이동 상쇄
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
 
 			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
@@ -1050,10 +1060,24 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				);
 			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
 
-
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
+
+			//Extract Movebone
+			if (-1 != Layer.iMotionBoneIndex) {
+				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
+			}
 		}
 
 		//Extract MoveBone
@@ -1141,9 +1165,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex) {
 			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
-			Matrix MotionMat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -1158,21 +1181,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
-			else {
+			else
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-				// 이동 상쇄
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
-
 
 			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
@@ -1207,6 +1217,21 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
+
+			//Extract Movebone
+			if (-1 != Layer.iMotionBoneIndex) {
+				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
+			}
 		}
 
 		//Extract MoveBone
@@ -1377,13 +1402,6 @@ void CAnimator3D::BuildIKMatrices(_float dt)
 {
 }
 
-void CAnimator3D::Update_DynamicBone(_float dt)
-{
-	if (nullptr == m_pDynamicBone)
-		return;
-
-	//
-}
 
 void CAnimator3D::BuildBone()
 {
@@ -1419,15 +1437,36 @@ void CAnimator3D::BuildBone()
 
 void CAnimator3D::BuildDynamicBone()
 {
-	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
+	for (size_t i = 0; i < m_pData->Get_BoneCount(); ++i)
 	{
-		Matrix CombinedBone = XMLoadFloat4x4(&m_CombinedMatrices[i]);
-		Matrix DynamicBone = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
+		int parent = m_pData->Get_BoneParentIndex(i);
 
-		XMStoreFloat4x4(&m_CombinedMatrices[i], DynamicBone * CombinedBone);
+		Matrix local = XMLoadFloat4x4(&m_TransformationMatrices[i]);
+
+		Matrix animLocal = XMLoadFloat4x4(&m_TransformationMatrices[i]);
+		Matrix manipulate = XMLoadFloat4x4(&m_ManipulateMatrices[i]);
+		Matrix dynamic = XMLoadFloat4x4(&m_DynamicBoneMatrices[i]);
+
+		Matrix localFinal = manipulate * animLocal * dynamic;
+
+		if (parent == -1)
+		{
+			XMStoreFloat4x4(
+				&m_FinalMatrices[i],
+				localFinal * m_PreTransform
+			);
+		}
+		else
+		{
+			Matrix parentCombined = XMLoadFloat4x4(&m_FinalMatrices[parent]);
+
+			XMStoreFloat4x4(
+				&m_FinalMatrices[i],
+				localFinal * parentCombined
+			);
+		}
 	}
 }
-
 #pragma region GUI
 void CAnimator3D::Render_GUI()
 {
@@ -1536,7 +1575,10 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	ImGui::Text("Speed ");
 	ImGui::SameLine();
+	ImGui::SetNextItemWidth(40.f);
 	ImGui::DragFloat("##Speed", &curLayer.fAnimSpeed, 0.01f, 0.f, 10.f, "%.2f");
+	ImGui::SameLine();
+	ImGui::Text("Progress : %.2f", curLayer.fProgress);
 	ImGui::EndChild();
 }
 

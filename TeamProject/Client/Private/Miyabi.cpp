@@ -72,9 +72,6 @@ void CMiyabi::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
-
-	Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.f, 0.0), 0.1f);
-	CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 }
 
 void CMiyabi::Priority_Update(_float dt)
@@ -84,7 +81,6 @@ void CMiyabi::Priority_Update(_float dt)
 
 void CMiyabi::Update(_float dt)
 {
-	Update_Input(dt);
 	Update_States();
 	m_pStateMachine->Update(dt);
 	__super::Update(dt);
@@ -129,35 +125,11 @@ void CMiyabi::Render_OutLine(ID3D11DeviceContext* pContext, _uint idx)
 		&pLayout
 	);
 
-	Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
+	//Get_Component<CMaterial>()->Set_OutLineInfo(_float4(0.27f, 0.27f, 0.27f, 1.0f), 0.001f);
 
 	pContext->IASetInputLayout(pLayout);
 	Shader->Apply("OutLine", pContext);
 	Model->Draw(pContext, idx);
-}
-
-void CMiyabi::Update_Input(_float dt)
-{
-	__super::Update_Input(dt);
-
-	// ����׿� ����ĳ��Ʈ (FŰ)
-	auto input = CGameInstance::GetInstance()->Get_InputDev();
-	if (input->Key_Hold('F'))
-	{
-		PHYSICS_RAY_HIT hit;
-		_vector vLook = m_pTransform->Dir(STATE::LOOK);
-		m_pCCT->Shoot_Ray(vLook, 100.f, hit);
-	}
-	else
-	{
-		m_pCCT->Clear_DebugRay();
-	}
-
-	// �׽�Ʈ�� ���� (JŰ)
-	if (input->Key_Down('J'))
-	{
-		m_pCCT->Jump(3.f);
-	}
 }
 
 void CMiyabi::Update_States()
@@ -241,7 +213,7 @@ void CMiyabi::Update_States()
 	}
 
 	// End ĵ�� ó�� (������ ����)
-	if ((bInMoveEnd || bInAttackEnd) && m_bIsInput)
+	if ((bInMoveEnd || bInAttackEnd) && Is_Input())
 	{
 		m_pStateMachine->Set_Bool("IsMove", false);
 
@@ -251,7 +223,7 @@ void CMiyabi::Update_States()
 	}
 	else
 	{
-		m_pStateMachine->Set_Bool("IsMove", m_bIsMove);
+		m_pStateMachine->Set_Bool("IsMove", Is_Move());
 
 		if (m_bIsAttack)
 		{

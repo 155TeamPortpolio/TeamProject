@@ -46,6 +46,7 @@ public:
 
 public:
     CGameObject* Get_ChildByOrder(_uint Index);
+    vector<CGameObject*> Get_ChildrenByOrder();
 
 private:    
     map<_uint, string> m_ChildrensName; /*오브젝트  ID, 이름*/
