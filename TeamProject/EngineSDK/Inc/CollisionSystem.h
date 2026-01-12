@@ -86,6 +86,7 @@ private:
     void Process_CCT_ObstacleHit(const PxControllerObstacleHit& hit);
     void Process_CollisionEvents();
 
+    void  Maintain_TriggerCollisions();
     void  Remove_DeactiveSlots();
     void  Clean_DeadSlots();
     _bool Is_SlotActive(_int iIndex) const;

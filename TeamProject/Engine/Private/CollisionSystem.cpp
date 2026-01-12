@@ -117,6 +117,7 @@ void CCollisionSystem::Late_Update(_float dt)
 #ifdef USE_MULTITHREAD_PHYSICS
 	lock_guard<recursive_mutex> lock(m_SlotMutex);
 #endif
+	Maintain_TriggerCollisions();
 	Process_CollisionEvents();
 	Remove_DeactiveSlots();
 	Clean_DeadSlots();
@@ -368,6 +369,18 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		if (pairs[i].otherShape->userData)
 		{
 			pOther = static_cast<ICollidable*>(pairs[i].otherShape->userData);
+		}
+		else if (pairs[i].otherActor && pairs[i].otherActor->userData)
+		{
+			// CCT의 경우 Actor에 GameObject가 저장되어 있음
+			CGameObject* pOwner = static_cast<CGameObject*>(pairs[i].otherActor->userData);
+			pOther = pOwner ? pOwner->Get_Component<CCharacterController>() : nullptr;
+			if (!pOther)
+				pOther = pOwner ? pOwner->Get_Component<CCollider>() : nullptr;
+		}
+
+		if (pOther)
+		{
 			idxOther = pOther->Get_SlotIndex();
 			if (!Is_SlotActive(idxOther))
 				pOther = nullptr;
@@ -654,15 +667,13 @@ void CCollisionSystem::Process_CollisionEvents()
 				else
 				{
 					pCollidable->OnCollisionExit(pOther);
+					// 일반 충돌만 상대방 Current/Previous 제거
+					if (Is_SlotActive(otherIdx))
+					{
+						pOther->Get_CurrentCollisions().erase(pCollidable);
+						pOther->Get_PreviousCollisions().erase(pCollidable);
+					}
 				}
-
-				// Exit 호출 후 상대방의 충돌 목록에서도 즉시 제거
-				if (Is_SlotActive(otherIdx))
-				{
-					pOther->Get_CurrentCollisions().erase(pCollidable);
-					pOther->Get_PreviousCollisions().erase(pCollidable);
-				}
-
 				if (!slot.IsActive() || !pCollidable->Get_Owner())
 					break;
 			}
@@ -705,6 +716,30 @@ void CCollisionSystem::Process_CollisionEvents()
 				if (!slot.IsActive() || !pCollidable->Get_Owner())
 					break;
 			}
+		}
+	}
+}
+
+void CCollisionSystem::Maintain_TriggerCollisions()
+{
+	for (auto& slot : m_Collidables)
+	{
+		if (!slot.IsActive()) continue;
+
+		CCollider* pCollider = dynamic_cast<CCollider*>(slot.pCollidable);
+		if (!pCollider || !pCollider->IsTrigger()) continue;
+
+		// 트리거의 Current 목록
+		auto& triggerCurrent = pCollider->Get_CurrentCollisions();
+
+		// 상대방의 Current에 트리거 다시 추가
+		for (auto pOther : triggerCurrent)
+		{
+			if (!pOther) continue;
+			if (!Is_SlotActive(pOther->Get_SlotIndex())) continue;
+
+			auto& otherCurrent = pOther->Get_CurrentCollisions();
+			otherCurrent.insert(pCollider);  // 다시 추가!
 		}
 	}
 }

@@ -135,6 +135,12 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	{
 		m_ParryableTargets.insert(pOther);
 	}
+	//MSG_BOX("OnTriggerEnter");
+}
+
+void CCharacter::OnTriggerStay(CGameObject* pOher)
+{
+	//MSG_BOX("OnTriggerStay");
 }
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
