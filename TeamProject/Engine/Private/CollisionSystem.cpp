@@ -82,7 +82,6 @@ void CCollisionSystem::Update(_float dt)
 	for (auto& slot : m_Collidables)
 	{
 		if (!slot.pCollidable) continue;
-
 		if (slot.pCollidable->Get_CompActive())
 		{
 			if (slot.eState == COLLIDABLE_SLOT::STATE::INACTIVE)
