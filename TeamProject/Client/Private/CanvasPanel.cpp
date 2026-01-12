@@ -19,8 +19,8 @@ HRESULT CCanvasPanel::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     auto pResourceMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
-    string filePath = pResourceMgr->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey);
-    Load(LoadJson(filePath));
+    const string& filePath = pResourceMgr->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey);
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
 #ifdef _DEBUG
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
@@ -50,22 +50,6 @@ void CCanvasPanel::Late_Update(_float dt)
 void CCanvasPanel::Load(const nlohmann::ordered_json& data)
 {
     __super::Load(data);
-}
-
-json CCanvasPanel::LoadJson(const string& filePath)
-{
-    if (filePath.empty())
-        return json();
-
-    ifstream file(filePath);
-    if (!file.is_open())
-        return json();
-
-    nlohmann::ordered_json data;
-    file >> data;
-    file.close();
-
-    return data;
 }
 
 CGameObject* CCanvasPanel::Create()

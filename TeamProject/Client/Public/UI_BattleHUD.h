@@ -14,7 +14,7 @@ class CUI_BattleHUD final : public CUI_Object
 		CUR_HP_TEXT, MAX_HP_TEXT,
 		 
 		BOSS_ICON, BOSS_HP_BACK, BOSS_HP_FRONT, BOSS_GROGGY, BOSS_GROGGY_TEXT,
-		BTN_NORMAL, BTN_EVADE, BTN_SPECIAL, BTN_SWITCH, BTN_ULTIMATE, 
+		ACTION,
 		END };
 
 	struct tagGaugeBindDesc {
@@ -69,7 +69,8 @@ private:
 
 private:
 	CUI_Object* Ready_Prefab(const string& strLevelKey);
-	void Ready_Decibel(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
+
+	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
 
 	void Set_HPText(const UI_STATUS_VALUE& value);
 	void Set_GroggyText(const UI_STATUS_VALUE& value);

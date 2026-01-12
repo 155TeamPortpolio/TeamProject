@@ -140,7 +140,7 @@ public:
 public: //뼈 관련
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
-    enum class BoneSpace { TRANSFORMATION , MANIPULATE , COMBINED };
+    enum class BoneSpace { TRANSFORMATION, MANIPULATE, COMBINED };//, FINAL };
 
     _float4x4 Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg);
     _float4x4* Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg);
@@ -152,7 +152,6 @@ public: //뼈 관련
     void Set_BoneMatrix(BoneSpace eBoneSpace, const _float4x4& Matrix, AnimArg BoneArg);
     void Set_BonePosition(BoneSpace eBoneSpace, _vector3 Position, AnimArg BoneArg);
     void Set_BoneQuaternion(BoneSpace eBoneSpace, _quaternion Quaternion, AnimArg BoneArg);
-
 
     //Exception
     const vector<_float4x4>& Get_TPose() { return m_TPose; };
@@ -166,6 +165,8 @@ public: /* DynamicBone */
 
     vector<_float4x4>& Get_DynamicBoneMatricesPtr() { return m_DynamicBoneMatrices; };
     void Reset_DynamicBoneMatrices();
+    _bool isUsingDynamicBone() { return (m_pDynamicBone != nullptr); }
+    void Delete_DB();
 
 public: /* IKSolver */
     HRESULT Initialize_HumanoidRig();
@@ -192,7 +193,7 @@ protected://애니매이션 체크
     
     //매트릭스 보간
     Matrix Calc_MatrixBlend(const _float4x4& base, const _float4x4& target, _float weight);
-    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& TPose,  _float weight);
+    Matrix Calc_MatrixAdditive(const _float4x4& base, const _float4x4& target, const _float4x4& ref,  _float weight);
 
 
 protected:
@@ -209,7 +210,6 @@ protected:
     void Update_Layers(_float dt);
     void BuildLocal(_float dt);
     void BuildIKMatrices(_float dt);
-    void Update_DynamicBone(_float dt);
     void BuildBone();
     void BuildDynamicBone();
 
@@ -244,6 +244,7 @@ protected:
     vector<_float4x4> m_ManipulateMatrices = {};        //강제로 추가할 매트릭스
     vector<_float4x4> m_DynamicBoneMatrices = {};       //다이나믹본 업데이트용 매트릭스
     vector<_float4x4> m_CombinedMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
+    vector<_float4x4> m_FinalMatrices = {};          //부모로부터 업데이트됀 최종 매트릭스
     unordered_set<_uint> m_DettachedBone = {};
 
 

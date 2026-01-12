@@ -1,10 +1,6 @@
 #pragma once
 #include "UI_Object.h"
 
-NS_BEGIN(Engine)
-class CObjectContainer;
-NS_END
-
 NS_BEGIN(Client)
 
 class CUI_Decibel final : public CUI_Object
@@ -51,7 +47,7 @@ private:
 	void Set_Decibel(_float fDecibel);
 	void Layout();
 
-	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CObjectContainer* pContainer, UI_HANDLE* pHandleOut = nullptr);
+	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut = nullptr);
 	
 public:
 	static  CGameObject* Create();

@@ -1,0 +1,102 @@
+{
+    "instanceName": "hud_battle_specialAction",
+    "transform": {
+        "anchor": 0,
+        "anchorOffset": [
+            -36.0,
+            -54.0
+        ],
+        "size": [
+            72.0,
+            108.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "instanceName": "bg",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -36.0,
+                    0.0
+                ],
+                "size": [
+                    72.0,
+                    72.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Circle72.png"
+        },
+        {
+            "instanceName": "icon",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -31.0,
+                    5.0
+                ],
+                "size": [
+                    62.0,
+                    62.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "Eff_SkillUp_15.png"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}

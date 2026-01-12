@@ -52,27 +52,26 @@ void CUI_Decibel::Update(_float dt)
 
 void CUI_Decibel::Ready_PartObjects()
 {
-    auto pContainer = Get_Component<CObjectContainer>();
     const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
 
     CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
     pKanji->pState = &m_iState;
     pKanji->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, pContainer, &m_handles[ENUM(Child::KANJI)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelKanji", "decibelKanji", pKanji, &m_handles[ENUM(Child::KANJI)]);
 
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, pContainer, &m_handles[ENUM(Child::DIGITS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, &m_handles[ENUM(Child::DIGITS)]);
 
     CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
     pPts->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, pContainer, &m_handles[ENUM(Child::PTS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, &m_handles[ENUM(Child::PTS)]);
 
     CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
     pText->pState = & m_iState;
     pText->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, pContainer, &m_handles[ENUM(Child::TEXTS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelText", "decibelText", pText, &m_handles[ENUM(Child::TEXTS)]);
 }
 
 void CUI_Decibel::Set_Decibel(_float fDecibel)
@@ -124,7 +123,7 @@ void CUI_Decibel::Layout()
     m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, vKanjiSize.y - vTextsSize.y));
 }
 
-void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, CObjectContainer* pContainer, UI_HANDLE* pHandleOut)
+void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut)
 {
     auto builder = Builder::Create_UIObject({ strLevelKey, strPrototypeTag });
 
@@ -135,7 +134,7 @@ void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strProto
     if (!pObj)
         return;
 
-    pContainer->Add_Child(pObj);
+    Get_Component<CObjectContainer>()->Add_Child(pObj);
 
     if (pHandleOut)
         *pHandleOut = pObj->Get_Handle();
