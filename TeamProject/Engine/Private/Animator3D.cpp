@@ -885,8 +885,7 @@ Matrix CAnimator3D::Calc_MatrixBlend(const _float4x4& base, const _float4x4& tar
 	baseMat.Decompose(baseS, baseR, baseT);
 	targetMat.Decompose(targetS, targetR, targetT);
 	_vector3	S = _vector3::Lerp(baseS, targetS, weight);
-	_quaternion R = _quaternion::Slerp(baseR, targetR, weight);
-	R.Normalize();
+	_quaternion R = _quaternion::Slerp(baseR, targetR, weight); R.Normalize();
 	_vector3	T = _vector3::Lerp(baseT, targetT, weight);
 
 	return XMMatrixAffineTransformation(S, XMVectorZero(), R, T);
@@ -987,9 +986,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex) {
 			Matrix RootMat = Layer.LocalMatrices[Layer.iRootBoneIndex];
-			Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -1004,21 +1002,8 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
-			else {
+			else 
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-				//Extract Movebone
-				// 이동 상쇄
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
 
 			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
@@ -1050,10 +1035,24 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 				);
 			XMStoreFloat4(&Layer.vRootQuatDelta, quatDeltaOut);
 
-
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
+
+			//Extract Movebone
+			if (-1 != Layer.iMotionBoneIndex) {
+				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
+			}
 		}
 
 		//Extract MoveBone
@@ -1141,9 +1140,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	//Bone Extracter
 	if (Layer.BaseLayer) {
 		//Extract RootBone
-		if (-1 != Layer.iRootBoneIndex && -1 != Layer.iMotionBoneIndex) {
+		if (-1 != Layer.iRootBoneIndex) {
 			Matrix RootMat = Layer.BlendMatrices[Layer.iRootBoneIndex];
-			Matrix MotionMat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
 
 			_vector S, R, T;
 			XMMatrixDecompose(&S, &R, &T, RootMat);
@@ -1158,21 +1156,8 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
 			}
-			else {
+			else
 				Layer.vRootMoveDelta = vCurRootPos - Layer.vPrevRootPos;
-				// 이동 상쇄
-				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
-
-				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
-				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
-				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
-
-				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
-				MotionMat = MotionMat * invCurRootRot;
-				// 상쇄한 매트릭스 저장
-				Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
-			}
-
 
 			_vector quatDeltaLocal =
 				XMQuaternionNormalize(XMQuaternionMultiply(
@@ -1207,6 +1192,21 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			//다음 프레임 대비
 			Layer.vPrevRootPos = vCurRootPos;
 			Layer.vPrevRootQuat = vCurRootQuat;
+
+			//Extract Movebone
+			if (-1 != Layer.iMotionBoneIndex) {
+				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
+				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
+
+				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
+				_vector invCurRootQuat = XMQuaternionInverse(vCurRootQuat);
+				_matrix invCurRootRot = XMMatrixRotationQuaternion(invCurRootQuat);
+
+				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
+				MotionMat = MotionMat * invCurRootRot;
+				// 상쇄한 매트릭스 저장
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
+			}
 		}
 
 		//Extract MoveBone
