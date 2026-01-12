@@ -119,6 +119,17 @@ HRESULT CMaterialInstance::Reset_Constant()
 	return S_OK;
 }
 
+void CMaterialInstance::Reset_DynamicSlot()
+{
+	CShader* pShader =m_pMaterialData->Get_Shader();
+	for (auto& pair : m_DynamicSlots)
+	{
+		SHADER_PARAM param = pair.second;
+		param.pData = nullptr;
+		pShader->Bind_Value(pair.first, param);
+	}
+}
+
 void CMaterialInstance::ChangeTexture(TEXTURE_TYPE type, _uint index)
 {
 	m_TextureIndexs[static_cast<_uint>(type)]= index;
