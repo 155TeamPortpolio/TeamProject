@@ -135,7 +135,7 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     auto pContainer = Get_Component<CObjectContainer>();
     if (!pContainer) return;
 
-    const auto& children = pContainer->Get_Children();
+    const auto& children = pContainer->Get_ChildrenByOrder();
     for (auto& pChild : children)
     {
         auto pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);
