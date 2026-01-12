@@ -29,28 +29,66 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+	// 액션 이벤트
+	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+		{
+			if (desc.eType != UI_ACTION_TYPE::SWITCH)
+				return;
+
+			if (desc.eState == UI_ACTION_STATE::DISABLE)
+				Set_InteractState(INTERACT_STATE::DISABLED);
+			else if (desc.eState == UI_ACTION_STATE::ENABLE)
+			{
+				Set_InteractState(INTERACT_STATE::ENABLED);
+				Set_ActionState(ACTION_STATE::UNAVAILABLE);
+			}
+			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+			{
+				Set_InteractState(INTERACT_STATE::ENABLED);
+				Set_ActionState(ACTION_STATE::READY);
+			}
+			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+				Start_Execute(EXECUTE_MODE::ANIM, desc.fFillAmount);
+		});
+
 	return S_OK;
 }
 
 void CUI_SwitchAction::Update(_float dt)
 {
+	// 이벤트 테스트 코드
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-	//	Set_InteractState(INTERACT_STATE::ENABLED);
+	//{
+	//    UI_ACTION_DESC desc = {};
+	//    desc.eType = UI_ACTION_TYPE::SWITCH;
+	//    desc.eState = UI_ACTION_STATE::DISABLE;
+	//    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 	//
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-	//	Set_InteractState(INTERACT_STATE::DISABLED);
+	//{
+	//    UI_ACTION_DESC desc = {};
+	//    desc.eType = UI_ACTION_TYPE::SWITCH;
+	//    desc.eState = UI_ACTION_STATE::ENABLE;
+	//    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 	//
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-	//	Set_ActionState(ACTION_STATE::READY);
-	//
+	//{
+	//    UI_ACTION_DESC desc = {};
+	//    desc.eType = UI_ACTION_TYPE::SWITCH;
+	//    desc.eState = UI_ACTION_STATE::AVAILABLE;
+	//    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
+	// 
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-	//	Set_ActionState(ACTION_STATE::UNAVAILABLE);
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-	//	Start_Execute(EXECUTE_MODE::ANIM, 5);
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
-	//	Start_Execute(EXECUTE_MODE::NONANIM, 3);
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SWITCH;
+	//	desc.eState = UI_ACTION_STATE::EXECUTING;
+	//	desc.fFillAmount = 0.75f;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 
 	if (m_executeState == EXECUTE_STATE::EXECUTING)
 		if (Is_AnimFinished(CHILD::ICON))
@@ -84,7 +122,7 @@ void CUI_SwitchAction::Set_ActionState(ACTION_STATE state)
 	RefreshVisual();
 }
 
-void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _uint iCount)
+void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _float fFillAmount)
 {
 	if (m_interactState != INTERACT_STATE::ENABLED)
 		return;
@@ -92,10 +130,9 @@ void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _uint iCount)
 	if (m_actionState != ACTION_STATE::READY)
 		return;
 
-	_float fFillamount = iCount / 6.f;
 	auto& handle = m_handles[ENUM(CHILD::GAUGE)];
 	if (handle.isValid())
-		dynamic_cast<CGaugeUI*>(handle.Get())->Set_FillAmount(fFillamount);
+		dynamic_cast<CGaugeUI*>(handle.Get())->Set_FillAmount(fFillAmount);
 
 	if (EXECUTE_MODE::NONANIM == mode)
 		return;

@@ -27,16 +27,16 @@ public:
 
 private:
 	UI_HANDLE		m_handles[ENUM(CHILD::END)];
-	_bool			m_isEnabled = {};
-	_bool			m_isReady = {};
+	_bool			m_isEnabled = { true };
+	_bool			m_isAvailable = {};
 
 private:
 	/*액션을 사용할 수 있는, 없는 상태로 전환*/
 	void Set_Enabled(_bool isEnabled);
 	/*스페셜 액션을 사용할 수 있는 준비 상태로 전환*/
-	void Set_Ready();
+	void Set_Available();
 	/*스페셜 액션을 사용*/
-	void Use();
+	void Execute();
 
 	void Set_Alive(CHILD child, _bool isAlive);
 	void Set_Animation(CHILD child, _int iIndex);

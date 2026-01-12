@@ -29,22 +29,58 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 	
+	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+		{
+			if (desc.eType != UI_ACTION_TYPE::SPECIAL)
+				return;
+
+			if (desc.eState == UI_ACTION_STATE::DISABLE)
+				Set_Enabled(false);
+			else if (desc.eState == UI_ACTION_STATE::ENABLE)
+				Set_Enabled(true);
+			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+				Set_Available();
+			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+				Execute();
+		});
+
 	return S_OK;
 }
 
 void CUI_SpecialAction::Update(_float dt)
 {
+	// 이벤트 테스트 코드
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-	//	Set_Enabled(true);
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::DISABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 	//
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-	//	Set_Enabled(false);
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::ENABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 	//
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-	//	Set_Ready();
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::AVAILABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 	//
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-	//	Use();
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::EXECUTING;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -79,27 +115,27 @@ void CUI_SpecialAction::Set_Enabled(_bool isEnabled)
 	Set_Alive(CHILD::ACTIVE, false);
 }
 
-void CUI_SpecialAction::Set_Ready()
+void CUI_SpecialAction::Set_Available()
 {
 	if (!m_isEnabled)
 		return;
 
-	m_isReady = true;
+	m_isAvailable = false;
+	Set_Alive(CHILD::ACTIVE, true);
+	Set_Alive(CHILD::MASK, false);
+	Set_Animation(CHILD::BLINK, 0);
+}
+
+void CUI_SpecialAction::Execute()
+{
+	if (!m_isEnabled)
+		return;
+
+	m_isAvailable = true;
 	Set_Animation(CHILD::GROUP, 0);
 	Set_Animation(CHILD::UV, 0);
 	Set_Alive(CHILD::ACTIVE, false);
 	Set_Alive(CHILD::MASK, true);
-	Set_Animation(CHILD::BLINK, 0);
-}
-
-void CUI_SpecialAction::Use()
-{
-	if (!m_isEnabled || !m_isReady)
-		return;
-
-	m_isReady = false;
-	Set_Alive(CHILD::ACTIVE, true);
-	Set_Alive(CHILD::MASK, false);
 	Set_Animation(CHILD::BLINK, 0);
 }
 

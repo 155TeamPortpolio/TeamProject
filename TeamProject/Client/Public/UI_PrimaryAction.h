@@ -28,7 +28,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	MODE			m_eMode = {};
+	MODE			m_mode = {};
 	UI_HANDLE		m_handles[ENUM(CHILD::END)];
 
 private:

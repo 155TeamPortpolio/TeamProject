@@ -31,7 +31,8 @@ private:
 
 	void Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut = nullptr, _float2 vOffset = {});
 
-	void Set_Active(Child child, _bool isActive);
+	void Set_EnableAll(_bool isActive);
+	void Set_Enable(Child child, _bool isActive);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);

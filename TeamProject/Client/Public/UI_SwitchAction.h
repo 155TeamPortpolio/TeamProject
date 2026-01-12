@@ -40,7 +40,7 @@ private:
 private: 
 	void Set_InteractState(INTERACT_STATE state);
 	void Set_ActionState(ACTION_STATE state);
-	void Start_Execute(EXECUTE_MODE mode, _uint iCount);
+	void Start_Execute(EXECUTE_MODE mode, _float fFillAmount);
 	void Finish_Execute();
 
 	void RefreshVisual();			// 상태 변경시에만 호출

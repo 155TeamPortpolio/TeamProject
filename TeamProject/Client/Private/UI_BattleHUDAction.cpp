@@ -3,12 +3,14 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
 
 HRESULT CUI_BattleHUDAction::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
 	return S_OK;
 }
@@ -18,8 +20,19 @@ HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Set_Size(_float2(340.f, 224.f));
-
     Ready_PartObjects();
+
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::ALL)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_EnableAll(false);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_EnableAll(true);
+        });
 
     return S_OK;
 }
@@ -28,20 +41,21 @@ void CUI_BattleHUDAction::Update(_float dt)
 {
     __super::Update(dt);
 
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
+    // 이벤트 테스트 코드
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
     //{
-    //    for (_int i = 0; i < ENUM(Child::END); ++i)
-    //    {
-    //        Set_Active(static_cast<Child>(i), true);
-    //    }
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::ALL;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
     //{
-    //    for (_int i = 0; i < ENUM(Child::END); ++i)
-    //    {
-    //        Set_Active(static_cast<Child>(i), false);
-    //    }
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::ALL;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
@@ -74,7 +88,13 @@ void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& 
         *pHandleOut = pObj->Get_Handle();
 }
 
-void CUI_BattleHUDAction::Set_Active(Child child, _bool isActive)
+void CUI_BattleHUDAction::Set_EnableAll(_bool isActive)
+{
+    for (_int i = 0; i < ENUM(Child::END); ++i)
+        Set_Enable(static_cast<Child>(i), isActive);
+}
+
+void CUI_BattleHUDAction::Set_Enable(Child child, _bool isActive)
 {
     if(isActive)    
         ForChild(child, [](CUI_Object* ui) { ui->UI_Active(); });

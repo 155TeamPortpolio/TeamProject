@@ -29,21 +29,51 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
-    // 이벤트 추가 필요 (활성, 비활성 / 게이지)
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::EVADE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_Active(false);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_Active(true);
+            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+                Set_FillAmount(desc.fFillAmount);
+        });
 
 	return S_OK;
 }
 
 void CUI_EvadeAction::Update(_float dt)
 {
+    // 이벤트 테스트 코드
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //    Set_Active(true);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //    Set_Active(false);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //    Set_FillAmount(0.7f);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::EXECUTING;
+    //    desc.fFillAmount = 0.75f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }

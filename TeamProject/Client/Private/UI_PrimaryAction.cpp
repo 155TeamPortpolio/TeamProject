@@ -28,28 +28,86 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+    // 모드 변경 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+        {
+            switch (desc.eMode)
+            {
+            case UI_ACTION_PRIMARY_MODE::ATTACK:
+                Set_ActionMode(MODE::ATTACK);
+                break;
+            case UI_ACTION_PRIMARY_MODE::INTERACT:
+                Set_ActionMode(MODE::INTERACT);
+                break;
+            }
+        });
+
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::PRIMARY)
+                return;
+
+            switch (m_mode)
+            {
+            case MODE::ATTACK:
+                if (desc.eState == UI_ACTION_STATE::DISABLE)
+                    Set_AttackActive(false);
+                else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                    Set_AttackActive(true);
+                break;
+            case MODE::INTERACT:
+                if (desc.eState == UI_ACTION_STATE::ENABLE)
+                    Set_InteractActive(false);
+                else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+                    Set_InteractActive(true);
+                break;
+            }
+        });
+
 	return S_OK;
 }
 
 void CUI_PrimaryAction::Update(_float dt)
 {
+    // 이벤트 테스트 코드
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //    Set_ActionMode(MODE::ATTACK);
+    //{
+    //    UI_ACTION_PRIMARY_DESC desc = {};
+    //    desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+    //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //    Set_ActionMode(MODE::INTERACT);
+    //{
+    //    UI_ACTION_PRIMARY_DESC desc = {};
+    //    desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
+    //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //    Set_AttackActive(true);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-    //    Set_AttackActive(false);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-    //    Set_InteractActive(true);
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('X'))
-    //    Set_InteractActive(false);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
+    //    desc.eState = UI_ACTION_STATE::AVAILABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -66,11 +124,11 @@ void CUI_PrimaryAction::UI_DeActive(void* pArg)
 
 void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
 {
-    if (m_eMode == eMode)
+    if (m_mode == eMode)
         return;
 
-    m_eMode = eMode;
-    _bool isAttackMode = (m_eMode == MODE::ATTACK) ? true : false;
+    m_mode = eMode;
+    _bool isAttackMode = (m_mode == MODE::ATTACK) ? true : false;
 
     Set_Alive(CHILD::ATTACK, isAttackMode);
     Set_Alive(CHILD::INTERACT, !isAttackMode);
@@ -81,7 +139,7 @@ void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
 
 void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
 {
-    if (m_eMode != MODE::ATTACK)
+    if (m_mode != MODE::ATTACK)
         return;
 
     if (isActive)
@@ -100,7 +158,7 @@ void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
 
 void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
 {
-    if (m_eMode != MODE::INTERACT)
+    if (m_mode != MODE::INTERACT)
         return;
 
     if (isActive)
