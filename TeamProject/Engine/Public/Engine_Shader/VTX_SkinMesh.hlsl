@@ -151,7 +151,7 @@ PS_OUT PS_MAIN(PS_IN In)
     
     if (fNoise < fDissolveProgress)
         discard;
-    
+  
     vAmbient.r = 0.f;
     if(vNormalDesc.a > 0.f)
     {
