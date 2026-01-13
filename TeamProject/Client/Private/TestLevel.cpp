@@ -144,8 +144,10 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
 	pResource->Add_ResourcePath("Sacrifice_Orb.model", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.model");
 	pResource->Add_ResourcePath("Sacrifice_Orb.mat", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.mat");
-	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash/Sacrifice_Smoke_Slash.model");
-	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash/Sacrifice_Smoke_Slash.mat");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.model");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -259,6 +261,9 @@ void CTestLevel::Update()
 			.Asset("sacrifice_smoke_slash.json")
 			.Build("Orb");
 
+		auto pTransform = pOrb->Get_Component<CTransform>();
+		_quaternion q = _quaternion::CreateFromYawPitchRoll(_vector3(0.f, 0.f, XMConvertToRadians(180.f)));
+		pTransform->Set_Quaternion(q);
 		ObjectManager()->Add_Object(pOrb, { "Test_Level","Effect_Layer" });
 	}
 

@@ -318,8 +318,10 @@ void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 		vWorldPosition.y += 2.f;
 		vWorldPosition += vRight * 0.5f;
 		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
-		_quaternion localQuaternion = _quaternion::CreateFromYawPitchRoll(_vector3(0.f, XMConvertToRadians(90.f), 0.f));
+		_quaternion localQuaternion = _quaternion::CreateFromYawPitchRoll(0.f, 0.f, XMConvertToRadians(180.f));
+		_float4 finalQuaternion{};
 		worldQuaternion.Normalize();
+		localQuaternion.Normalize();
 		worldQuaternion *= localQuaternion;
 
 		auto pEffectTransform = effect->Get_Component<CTransform>();
