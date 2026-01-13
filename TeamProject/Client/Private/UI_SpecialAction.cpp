@@ -35,11 +35,11 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
-				Set_Enabled(false);
+				Set_InteractState(INTERACT_STATE::DISABLED);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
-				Set_Enabled(true);
+				Set_InteractState(INTERACT_STATE::ENABLED);
 			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-				Set_Available();
+				Set_InteractState(INTERACT_STATE::AVAILABLE);
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
 				Execute();
 		});
@@ -50,92 +50,110 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 void CUI_SpecialAction::Update(_float dt)
 {
 	// 이벤트 테스트 코드
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::DISABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::ENABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::AVAILABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::EXECUTING;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::DISABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::ENABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_SpecialAction::UI_Active(void* pArg)
 {
-	Set_Enabled(true);
+	Set_InteractState(INTERACT_STATE::ENABLED);
 }
 
 void CUI_SpecialAction::UI_DeActive(void* pArg)
 {
-	Set_Enabled(false);
+	Set_InteractState(INTERACT_STATE::DISABLED);
 }
 
-void CUI_SpecialAction::Set_Enabled(_bool isEnabled)
+void CUI_SpecialAction::Set_InteractState(INTERACT_STATE state)
 {
-	m_isEnabled = isEnabled;
-
-	if (isEnabled)
-	{
-		Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-		Set_Color(CHILD::ICON, UI_WHITE);
-		Set_Color(CHILD::E, UI_WHITE);
-	}
-	else
-	{
-		Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-		Set_Color(CHILD::ICON, UI_GRAY_LIGHT);
-		Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
-	}
-
-	Set_Alive(CHILD::ACTIVE, false);
-}
-
-void CUI_SpecialAction::Set_Available()
-{
-	if (!m_isEnabled)
-		return;
-
-	m_isAvailable = false;
-	Set_Alive(CHILD::ACTIVE, true);
-	Set_Alive(CHILD::MASK, false);
-	Set_Animation(CHILD::BLINK, 0);
+	m_interactState = state;
+	Refresh_Visual();
 }
 
 void CUI_SpecialAction::Execute()
 {
-	if (!m_isEnabled)
-		return;
+	//if (m_interactState != INTERACT_STATE::AVAILABLE)
+	//    return;
 
-	m_isAvailable = true;
+	m_interactState = INTERACT_STATE::AVAILABLE;
+	Refresh_Visual();
 	Set_Animation(CHILD::GROUP, 0);
 	Set_Animation(CHILD::UV, 0);
 	Set_Alive(CHILD::ACTIVE, false);
 	Set_Alive(CHILD::MASK, true);
+}
+
+void CUI_SpecialAction::Refresh_Visual()
+{
+	if (m_interactState == INTERACT_STATE::DISABLED)
+	{
+		Apply_DisableVisual();
+		return;
+	}
+
+	if (m_interactState == INTERACT_STATE::AVAILABLE)
+	{
+		Apply_AvailableVisual();
+		return;
+	}
+
+	Apply_EnableVisual();
+}
+
+void CUI_SpecialAction::Apply_DisableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+	Set_Color(CHILD::ICON, UI_GRAY_LIGHT);
+	Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
+	Set_Alive(CHILD::ACTIVE, false);
+}
+
+void CUI_SpecialAction::Apply_EnableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+	Set_Color(CHILD::ICON, UI_WHITE);
+	Set_Color(CHILD::E, UI_WHITE);
+	Set_Alive(CHILD::ACTIVE, false);
+}
+
+void CUI_SpecialAction::Apply_AvailableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+	Set_Color(CHILD::ICON, UI_WHITE);
+	Set_Color(CHILD::E, UI_WHITE);
+	Set_Alive(CHILD::ACTIVE, true);
+	Set_Alive(CHILD::MASK, false);
 	Set_Animation(CHILD::BLINK, 0);
 }
 

@@ -10,6 +10,8 @@ private:
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
+	enum class INTERACT_STATE { DISABLED, ENABLED, AVAILABLE };
+
 private:
 	CUI_SpecialAction() {}
 	CUI_SpecialAction(const CUI_SpecialAction& rhs) : CUI_Object(rhs) {}
@@ -30,13 +32,17 @@ private:
 	_bool			m_isEnabled = { true };
 	_bool			m_isAvailable = {};
 
+	INTERACT_STATE	m_interactState = INTERACT_STATE::ENABLED;
+
 private:
-	/*액션을 사용할 수 있는, 없는 상태로 전환*/
-	void Set_Enabled(_bool isEnabled);
-	/*스페셜 액션을 사용할 수 있는 준비 상태로 전환*/
-	void Set_Available();
-	/*스페셜 액션을 사용*/
+	void Set_InteractState(INTERACT_STATE state);
 	void Execute();
+
+	void Refresh_Visual();			// 상태 변경시에만 호출
+
+	void Apply_DisableVisual();
+	void Apply_EnableVisual();
+	void Apply_AvailableVisual();
 
 	void Set_Alive(CHILD child, _bool isAlive);
 	void Set_Animation(CHILD child, _int iIndex);
