@@ -197,6 +197,7 @@
     <ClInclude Include="..\public\EnemyTriggerCollider.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
+    <ClInclude Include="..\Public\IStage.h" />
     <ClInclude Include="..\public\JaneDoeState_Attack.h" />
     <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
     <ClInclude Include="..\public\JaneDoeState_Dash.h" />
@@ -392,6 +393,7 @@
     <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\Private\IStage.cpp" />
     <ClCompile Include="..\Private\MainCity_Level.cpp" />
     <ClCompile Include="..\Private\Scott_Level.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />

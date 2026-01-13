@@ -80,7 +80,7 @@ HRESULT CTestLevel::Initialize()
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
-	CDataBase::GetInstance()->CreateTable();
+
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 

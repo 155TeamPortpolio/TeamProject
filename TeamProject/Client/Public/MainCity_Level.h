@@ -22,7 +22,12 @@ public:
 	static void PreLoad_Level();
 
 private:
-	CGameInstance* m_pGameInstance{};
+	void ReadyMap();
+	void ReadyCamera();
+private:
+	CGameInstance* m_pGameInstance={nullptr};
+	class CCamDirector* m_pCamDirector = { nullptr };
+	class CMapDataCloud* m_pMapDataCloud = { nullptr };
 
 public:
 	static CMainCity_Level* Create(const string& LevelKey);

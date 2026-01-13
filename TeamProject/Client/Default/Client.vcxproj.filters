@@ -592,6 +592,9 @@
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Super">
+      <UniqueIdentifier>{069c5663-a3e9-4aed-8f60-91591246d0a8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1130,6 +1133,9 @@
     <ClInclude Include="..\Public\Zero_Level.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\IStage.h">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1649,6 +1655,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Zero_Level.cpp">
       <Filter>01. Level\04. Zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\IStage.cpp">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
