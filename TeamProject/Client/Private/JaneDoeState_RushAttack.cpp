@@ -8,14 +8,11 @@ void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();
         m_pSubStateMachine->Register_State("Rush_Start", CJaneDoeState_Rush_Start::Create());
-        m_pSubStateMachine->Register_State("Rush_Explode", CJaneDoeState_Rush_Explode::Create());
         m_pSubStateMachine->Register_State("Rush_End", CJaneDoeState_Rush_End::Create());
 
         m_pSubStateMachine->Get_State("Rush_End")->Set_Tag("End");
 
-        m_pSubStateMachine->Register_Transition("Rush_Start", "Rush_Explode",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
-        m_pSubStateMachine->Register_Transition("Rush_Explode", "Rush_End",
+        m_pSubStateMachine->Register_Transition("Rush_Start", "Rush_End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
         m_pSubStateMachine->Set_DefaultState("Rush_Start");
@@ -44,23 +41,9 @@ void CJaneDoeState_Rush_Start::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt, desc);
 }
 
-void CJaneDoeState_Rush_Explode::Enter(CJaneDoe* pOwner)
-{
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_Explode")
-        .Speed(2.f)
-        .Apply();
-}
-
-void CJaneDoeState_Rush_Explode::Update(CJaneDoe* pOwner, _float dt)
-{
-    pOwner->Process_RootMotion(dt,
-        ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
-        ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
-}
-
 void CJaneDoeState_Rush_End::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_End")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01_End")
         .Speed(2.f)
         .Apply();
 }

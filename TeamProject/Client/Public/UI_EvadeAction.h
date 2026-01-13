@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_EvadeAction final : public CUI_Object
 {
 private:
-	enum class CHILD { BG, ICON, GAUGE_BG, GAUGE, MOUSE, END };
+	enum class CHILD { BG, GAUGE_BG, GAUGE, ICON, TEXT, MOUSE, END };
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
@@ -31,6 +31,7 @@ private:
 	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
+	_bool			m_isPerfect = {};
 
 private:
 	void Set_InteractState(INTERACT_STATE state);
