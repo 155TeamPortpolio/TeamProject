@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "q" };
+const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "star3", "q" };
 
 HRESULT CUI_UltimateAction::Initialize_Prototype()
 {
@@ -37,10 +37,10 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 
             if (desc.eState == UI_ACTION_STATE::DISABLE)
                 Set_InteractState(INTERACT_STATE::DISABLE);
-            else if (desc.eState == UI_ACTION_STATE::ENABLE)
-                Set_InteractState(INTERACT_STATE::ENABLE);
-            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+            else if (desc.eState == UI_ACTION_STATE::ENABLE || desc.eState == UI_ACTION_STATE::AVAILABLE)
                 Execute();
+            else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+                Set_InteractState(INTERACT_STATE::DISABLE);
         });
 
     return S_OK;
@@ -48,7 +48,7 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 
 void CUI_UltimateAction::Update(_float dt)
 {
-    //// 이벤트 테스트 코드
+    // 이벤트 테스트 코드
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
     //{
     //    UI_ACTION_DESC desc = {};
@@ -102,7 +102,10 @@ void CUI_UltimateAction::Execute()
     Set_Animation(CHILD::GROUP1, 0);
     Set_Animation(CHILD::GROUP2, 0);
     Set_Animation(CHILD::BLACK, 0);
-    Set_Animation(CHILD::STAR, 0); 
+    Set_Animation(CHILD::STAR, 0);
+    Set_Animation(CHILD::STAR1, 0);
+    Set_Animation(CHILD::STAR2, 0);
+    Set_Animation(CHILD::STAR3, 0);
 }
 
 void CUI_UltimateAction::Refresh_Visual()
@@ -119,12 +122,14 @@ void CUI_UltimateAction::Refresh_Visual()
 void CUI_UltimateAction::Apply_DisableVisual()
 {
     Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+    Set_Color(CHILD::Q, UI_GRAY_LIGHTEST);
     Set_Alive(CHILD::UV, false);
 }
 
 void CUI_UltimateAction::Apply_EnableVisual()
 {
     Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+    Set_Color(CHILD::Q, UI_WHITE);
     Set_Alive(CHILD::UV, true);
 }
 

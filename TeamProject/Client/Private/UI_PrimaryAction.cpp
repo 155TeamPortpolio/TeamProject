@@ -62,21 +62,21 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 void CUI_PrimaryAction::Update(_float dt)
 {
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('L'))
     //{
     //    UI_ACTION_PRIMARY_DESC desc = {};
     //    desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('K'))
     //{
     //    UI_ACTION_PRIMARY_DESC desc = {};
     //    desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
     //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;
@@ -84,7 +84,7 @@ void CUI_PrimaryAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;
@@ -92,7 +92,7 @@ void CUI_PrimaryAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;

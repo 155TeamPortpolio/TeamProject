@@ -70,39 +70,39 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
 void CUI_EvadeAction::Update(_float dt)
 {
     // 이벤트 테스트 코드
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    {
-        UI_ACTION_DESC desc = {};
-        desc.eType = UI_ACTION_TYPE::EVADE;
-        desc.eState = UI_ACTION_STATE::DISABLE;
-        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    }
-    
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    {
-        UI_ACTION_DESC desc = {};
-        desc.eType = UI_ACTION_TYPE::EVADE;
-        desc.eState = UI_ACTION_STATE::ENABLE;
-        desc.fFillAmount = 0.55f;
-        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    }
-
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    {
-        UI_ACTION_DESC desc = {};
-        desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
-        desc.eState = UI_ACTION_STATE::DISABLE;
-        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    }
-
-    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-    {
-        UI_ACTION_DESC desc = {};
-        desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
-        desc.eState = UI_ACTION_STATE::ENABLE;
-        desc.fFillAmount = 0.35f;
-        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    }
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    desc.fFillAmount = 0.55f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
+    //
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    desc.fFillAmount = 0.35f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
