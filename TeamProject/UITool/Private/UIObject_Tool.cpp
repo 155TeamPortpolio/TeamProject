@@ -89,6 +89,8 @@ void CUIObject_Tool::Remove_SelfFromParent()
 
 void CUIObject_Tool::Save(nlohmann::ordered_json& data)
 {
+    data["alive"] = m_isAlive;
+
     data["instanceName"] = m_InstanceName;
 
     auto& transformJson = data["transform"];
@@ -135,7 +137,7 @@ void CUIObject_Tool::Save(nlohmann::ordered_json& data)
     auto pContainer = Get_Component<CObjectContainer>();
     if (!pContainer) return;
 
-    const auto& children = pContainer->Get_Children();
+    const auto& children = pContainer->Get_ChildrenByOrder();
     for (auto& pChild : children)
     {
         auto pChildUI = dynamic_cast<CUIObject_Tool*>(pChild);

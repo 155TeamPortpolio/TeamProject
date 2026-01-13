@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_EvadeAction::INSTANCENAMES[ENUM(Child::END)] = { "bg", "icon", "gaugeBg", "gauge", "mouse" };
+const string CUI_EvadeAction::INSTANCENAMES[ENUM(CHILD::END)] = { "bg", "icon", "gaugeBg", "gauge", "mouse" };
 
 HRESULT CUI_EvadeAction::Initialize_Prototype()
 {
@@ -26,63 +26,84 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
 	const string& filePath = pResourceMgr->Get_ResourcePath("hud_battle_evadeAction.json");
 	Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-	for (_int i = 0; i < ENUM(Child::END); ++i)
+	for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
-    // 이벤트 추가 필요 (활성, 비활성 / 게이지)
+    // 액션 이벤트
+    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::EVADE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::DISABLE)
+            {
+                Set_InteractState(INTERACT_STATE::DISABLE);
+                Set_FillAmount(desc.fFillAmount);
+            } 
+            else if (desc.eState == UI_ACTION_STATE::ENABLE || desc.eState == UI_ACTION_STATE::EXECUTING)
+            {
+                Set_InteractState(INTERACT_STATE::ENABLE);
+                Set_FillAmount(desc.fFillAmount);
+            } 
+        });
 
 	return S_OK;
 }
 
 void CUI_EvadeAction::Update(_float dt)
 {
+    // 이벤트 테스트 코드
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //    Set_Active(true);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::DISABLE;
+    //    desc.fFillAmount = 0.15f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //    Set_Active(false);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::ENABLE;
+    //    desc.fFillAmount = 0.55f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
     //
     //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //    Set_FillAmount(0.7f);
+    //{
+    //    UI_ACTION_DESC desc = {};
+    //    desc.eType = UI_ACTION_TYPE::EVADE;
+    //    desc.eState = UI_ACTION_STATE::EXECUTING;
+    //    desc.fFillAmount = 0.75f;
+    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    //}
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_EvadeAction::UI_Active(void* pArg)
 {
-    Set_Active(true);
+    Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_EvadeAction::UI_DeActive(void* pArg)
 {
-    Set_Active(false);
+    Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
-void CUI_EvadeAction::Set_Active(_bool isActive)
+void CUI_EvadeAction::Set_InteractState(INTERACT_STATE state)
 {
-    if (isActive)
-    {
-        Set_Color(Child::BG, UI_GRAY_DARKEST);
-        Set_Color(Child::ICON, UI_GRAY_LIGHTEST);
-        Set_Color(Child::GAUGE_BG, UI_GRAY_MEDIUM);
-        Set_Color(Child::GAUGE, UI_GRAY_LIGHTEST);
-    } 
-    else
-    {
-        Set_Color(Child::BG, UI_GRAY_MEDIUM);
-        Set_Color(Child::ICON, UI_GRAY_DARK);
-        Set_Color(Child::GAUGE_BG, UI_GRAY_DARKEST);
-        Set_Color(Child::GAUGE, UI_GRAY_DARK);
-    }    
-
-    Set_Alive(Child::MOUSE, isActive);
+    m_interactState = state;
+    Refresh_Visual();
 }
 
 void CUI_EvadeAction::Set_FillAmount(_float fFillAmount)
 {
-    if (m_hChildren[ENUM(Child::GAUGE)].isValid())
+    if (m_hChildren[ENUM(CHILD::GAUGE)].isValid())
     {
-        auto pGauge = dynamic_cast<CGaugeUI*>(m_hChildren[ENUM(Child::GAUGE)].Get());
+        auto pGauge = dynamic_cast<CGaugeUI*>(m_hChildren[ENUM(CHILD::GAUGE)].Get());
         if (!pGauge)
             return;
 
@@ -90,12 +111,41 @@ void CUI_EvadeAction::Set_FillAmount(_float fFillAmount)
     }
 }
 
-void CUI_EvadeAction::Set_Alive(Child child, _bool isAlive)
+void CUI_EvadeAction::Refresh_Visual()
+{
+    if (m_interactState == INTERACT_STATE::DISABLE)
+    {
+        Apply_DisableVisual();
+        return;
+    }
+
+    Apply_EnableVisual();
+}
+
+void CUI_EvadeAction::Apply_DisableVisual()
+{
+    Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+    Set_Color(CHILD::ICON, UI_GRAY_DARK);
+    Set_Color(CHILD::GAUGE_BG, UI_GRAY_DARKEST);
+    Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
+    Set_Alive(CHILD::MOUSE, false);
+}
+
+void CUI_EvadeAction::Apply_EnableVisual()
+{
+    Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+    Set_Color(CHILD::ICON, UI_GRAY_LIGHTEST);
+    Set_Color(CHILD::GAUGE_BG, UI_GRAY_MEDIUM);
+    Set_Color(CHILD::GAUGE, UI_GRAY_LIGHTEST);
+    Set_Alive(CHILD::MOUSE, true);
+}
+
+void CUI_EvadeAction::Set_Alive(CHILD child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
 }
 
-void CUI_EvadeAction::Set_Color(Child child, _float4 vColor)
+void CUI_EvadeAction::Set_Color(CHILD child, _float4 vColor)
 {
     ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }

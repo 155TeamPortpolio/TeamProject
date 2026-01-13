@@ -86,6 +86,9 @@ public:
     void        Update_DissolveProgress(_float dt); /*dissolve*/
     void        Reset_DissolveProgress();
 
+    OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
+    void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
+
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
@@ -98,7 +101,9 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+    virtual void    OnCollisionExit(CGameObject* pOther) override;
     virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerStay(CGameObject* pOher) override;
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
@@ -162,6 +167,8 @@ protected:
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
     _float      m_fDissolveTiling = { 4.f };
+    // ∏ÛΩ∫≈Õ
+    OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
 
 public:
