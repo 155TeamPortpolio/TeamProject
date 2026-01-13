@@ -27,6 +27,16 @@ CJaneDoe::CJaneDoe(const CJaneDoe& rhs)
 {
 }
 
+void CJaneDoe::ProcessPassion(_float fPassionGauge)
+{
+	m_fPassionGauge = fPassionGauge;
+}
+
+void CJaneDoe::ProcessPassionSkill(_bool bAvailable)
+{
+	m_bPassionSkillAvailable = bAvailable;
+}
+
 HRESULT CJaneDoe::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
@@ -215,6 +225,8 @@ HRESULT CJaneDoe::Initialize_Stat()
 	m_fMaxHP = LVDesc.MaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
+
+	m_iEvadeMax = 3;
 
 	return S_OK;
 }
