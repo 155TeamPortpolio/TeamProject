@@ -598,6 +598,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices[Index];
+	case Engine::CAnimator3D::BoneSpace::WORLD:				return m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix();
 	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices[Index];
 	default:												return _float4x4();
 	}
@@ -629,6 +630,7 @@ _vector3 CAnimator3D::Get_BonePosition(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
+	case Engine::CAnimator3D::BoneSpace::WORLD:				mat = m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix(); break;
 	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _vector3();
 	}
@@ -647,7 +649,8 @@ _quaternion CAnimator3D::Get_BoneQuaternion(BoneSpace eBoneSpace, AnimArg BoneAr
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
-	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
+	case Engine::CAnimator3D::BoneSpace::WORLD:				mat = m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix(); break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:			mat = m_FinalMatrices[Index];			break;
 	default:												return _quaternion::Identity;
 	}
 
@@ -1644,9 +1647,9 @@ void CAnimator3D::GUI_SelectAnim()
 
 		ImGui::PopID();
 	}
+
 	ImGui::EndChild();
 }
-
 
 void CAnimator3D::Update_IK(_float dt)
 {

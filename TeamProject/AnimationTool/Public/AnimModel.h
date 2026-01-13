@@ -40,6 +40,8 @@ private: //Model Logic
     void Set_Animator();
     void Clear_Model();
 
+    void Render_BonePoint(_vector3 vPos, _float dotSize, ImU32 color);
+
 private:
     CGameInstance* m_pGameInstance = { nullptr };
     class CAnimToolPanel* m_pAnimToolPanel = { nullptr };
@@ -51,6 +53,9 @@ private:
     string m_CurMaterialTag = { "Select Material" };
 
     _float m_fDegree = 0.f;
+
+    Matrix testMat;
+    _vector3 testVector;
 
 public:
     static CAnimModel* Create();
