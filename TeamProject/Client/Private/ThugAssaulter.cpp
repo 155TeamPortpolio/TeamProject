@@ -1,0 +1,356 @@
+#include "pch.h"
+#include "ThugAssaulter.h"
+
+#include "Helper_Func.h"
+#include "GameInstance.h"
+#include "BattleSystem.h"
+
+/* Component */
+#include "Material.h"
+#include "Animator3D.h"
+#include "SkeletalModel.h"
+#include "ObjectContainer.h"
+#include "CharacterController.h"
+#include "BoneFollower.h"
+
+/* States */
+#include "StateMachine.h"
+#include "ThugAssaulter_Born.h"
+#include "ThugAssaulter_Idle.h"
+#include "ThugAssaulter_Attack.h"
+#include "ThugAssaulter_Chase.h"
+#include "ThugAssaulter_Death.h"
+#include "ThugAssaulter_Move.h"
+
+#include "AttackSign.h"
+
+CThugAssaulter::CThugAssaulter()
+	: CEnemyNormal()
+{
+}
+
+CThugAssaulter::CThugAssaulter(const CThugAssaulter& rhg)
+	: CEnemyNormal(rhg)
+{
+}
+
+HRESULT CThugAssaulter::Initialize_Prototype()
+{
+	if (FAILED(__super::Initialize_Prototype()))
+		return E_FAIL;
+
+	Add_Component<CAnimator3D>();
+	Add_Component<CSkeletalModel>();
+	Add_Component<CMaterial>();
+	Add_Component<CCharacterController>();
+
+	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	pResourceMgr->Add_ResourcePath("ThugAssaulter.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.mat");
+	pResourceMgr->Add_ResourcePath("ThugAssaulter.model", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/ThugAssaulter.model");
+	pResourceMgr->Add_ResourcePath("Monster_ThugAssaulter_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/ThugAssaulter/Monster_ThugAssaulter_Meta.json");
+
+}
+
+HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
+{
+	__super::Initialize(pArg);
+
+	//m_pTransform->Scale({ 0.01f,0.01f,0.01f });
+
+	auto pModel = Get_Component<CSkeletalModel>();
+ 	pModel->Link_Model(G_GlobalLevelKey, "ThugAssaulter.model");
+
+	auto pMaterial = Get_Component<CMaterial>();
+	pMaterial->Link_Material(G_GlobalLevelKey, "ThugAssaulter.mat");
+
+	auto pAnimator = Get_Component<CAnimator3D>();
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugAssaulter.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_ThugAssaulter_Meta.json");
+	//pAnimator->Set_MotionBone(3);	//Bip001
+	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
+	//pAnimator->Resize_Layer(2);
+	//for (size_t i = 1; i < 2; i++)
+	//	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, i);
+
+	if (FAILED(Ready_Children(pArg)))
+		return E_FAIL;
+
+	if (FAILED(Initialize_StateMachine()))
+		return E_FAIL;
+
+	// 임시 확인용
+	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+
+	return S_OK;
+}
+
+void CThugAssaulter::Awake()
+{
+}
+
+void CThugAssaulter::Priority_Update(_float dt)
+{
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
+}
+
+void CThugAssaulter::Update(_float dt)
+{
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CCharacterController>()->Update(dt);
+
+	__super::Update(dt);
+
+	Update_States(dt);
+	m_pStateMachine->Update(dt);
+
+}
+
+void CThugAssaulter::Late_Update(_float dt)
+{
+	Get_Component<CCharacterController>()->Late_Update(dt);
+	
+	__super::Late_Update(dt);
+}
+
+void CThugAssaulter::Render_GUI()
+{
+	ImGui::PushID(this);
+
+	float childWidth = ImGui::GetContentRegionAvail().x;
+	const float textLineHeight = ImGui::GetTextLineHeightWithSpacing();
+	const float childHeight = (textLineHeight * 5) + (ImGui::GetStyle().WindowPadding.y * 2);
+
+#pragma region Component Inspector
+	if (ImGui::TreeNode("Inspector##ThugBulkyInspector")) {
+		__super::Render_GUI();
+		ImGui::TreePop();
+	}
+#pragma endregion
+
+#pragma region State
+	ImGui::SeparatorText("State & BlackBoard");
+	ImGui::BeginChild("##ThugAssaulterStatus", ImVec2{ 0, childHeight }, true);
+	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
+
+	// bool 변수 확인용(수정 불가)
+	ImGui::BeginDisabled(true);
+	ImGui::EndDisabled();
+
+	ImGui::EndChild();
+#pragma endregion
+
+#pragma region Status
+	ImGui::SeparatorText("Status");
+	auto pCharacter = GetCharacterOnField();
+	if (nullptr != pCharacter) {
+		ImGui::BeginChild("TracePlayer##ThugAssaulterStatus", ImVec2{ 0, childHeight + textLineHeight * 2.f }, true);
+
+		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
+		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
+		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
+
+		ImGui::BeginDisabled(true);
+		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
+		//ImGui::Checkbox(u8"Hit용 트리거 활성화", &m_isBattleAttackOn);
+		//ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
+		//ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
+		//ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
+		ImGui::EndDisabled();
+
+		ImGui::EndChild();
+	}
+#pragma endregion
+
+#pragma region TargetInfo
+	Render_GUI_ForTargetInfo();
+#pragma endregion
+
+#pragma region CheckState
+	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
+		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
+
+		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack")) {
+			if (ImGui::Button(u8"1. Attack01")) {
+				m_pStateMachine->Set_Int("AttackPattern", 1);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"2. Attack02")) {
+				m_pStateMachine->Set_Int("AttackPattern", 2);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"3. Attack03")) {
+				m_pStateMachine->Set_Int("AttackPattern", 3);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			if (ImGui::Button(u8"4. Attack04")) {
+				m_pStateMachine->Set_Int("AttackPattern", 4);
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			}
+			ImGui::TreePop();
+		}
+		ImGui::TreePop();
+	}
+#pragma endregion
+
+#pragma region AutoPattern
+	ImGui::Checkbox("Auto Pattern", &m_isAutoPatternPlay);
+#pragma endregion
+
+#pragma region StateMachine
+	if (ImGui::Button("Open StateMachine"))
+		m_pStateMachine->Set_ShowWindow(true);
+	m_pStateMachine->Render_GUI();
+#pragma endregion
+
+	ImGui::PopID();
+}
+
+void CThugAssaulter::Active_AttackSign()
+{
+}
+
+HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
+{
+	return S_OK;
+}
+
+CThugAssaulter* CThugAssaulter::Create()
+{
+	CThugAssaulter* instance = new CThugAssaulter();
+
+	if (FAILED(instance->Initialize_Prototype()))
+	{
+		Safe_Release(instance);
+		MSG_BOX("Failed to create : CThugAssaulter");
+	}
+
+	return instance;
+}
+
+CGameObject* CThugAssaulter::Clone(INIT_DESC* pArg)
+{
+	CThugAssaulter* instance = new CThugAssaulter(*this);
+
+	if (FAILED(instance->Initialize(pArg)))
+	{
+		Safe_Release(instance);
+		MSG_BOX("Failed to clone : CThugAssaulter");
+	}
+
+	return instance;
+}
+
+void CThugAssaulter::Free()
+{
+	__super::Free();
+
+	Safe_Release(m_pStateMachine);
+}
+
+/* For.State Machine */
+HRESULT CThugAssaulter::Initialize_StateMachine()
+{
+	m_pStateMachine = CStateMachine<CThugAssaulter>::Create();
+	if (nullptr == m_pStateMachine)
+		return E_FAIL;
+
+	if (FAILED(Initialize_States()))
+		return E_FAIL;
+
+	if (FAILED(Initialize_Transitions()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Rules()))
+		return E_FAIL;
+
+	m_pStateMachine->Set_DefaultState("Born");
+	m_pStateMachine->Initialize(this);
+	
+	Get_Component<CAnimator3D>()->Set_Animation("ThugAssaulter_Ani_Born")
+		.Apply();
+
+	return S_OK;
+}
+
+HRESULT CThugAssaulter::Initialize_States()
+{
+	m_pStateMachine->Register_State("Born", CThugAssaulter_Born::Create());
+	m_pStateMachine->Register_State("Idle", CThugAssaulter_Idle::Create());
+	m_pStateMachine->Register_State("Attack", CThugAssaulter_Attack::Create());
+	m_pStateMachine->Register_State("Move", CThugAssaulter_Move::Create());
+	m_pStateMachine->Register_State("Chase", CThugAssaulter_Chase::Create());
+	m_pStateMachine->Register_State("Death", CThugAssaulter_Death::Create());
+
+	return S_OK;
+}
+
+HRESULT CThugAssaulter::Initialize_Transitions()
+{
+	m_pStateMachine->Register_Transition("Born", "Idle",
+		CStateMachine<CThugAssaulter>::CONDITION_ANIMATION_END);
+	
+	m_pStateMachine->Register_Transition("Idle", "Attack",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Attack");
+	
+	m_pStateMachine->Register_Transition("Idle", "Move",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Move");
+	
+	m_pStateMachine->Register_Transition("Idle", "Chase",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Chase");
+	
+	m_pStateMachine->Register_Transition("Idle", "Death",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Death");
+
+	return S_OK;
+}
+
+HRESULT CThugAssaulter::Ready_Rules()
+{
+	// x = Idle에서 다음 상태로 넘어가는 쿨타임, y = dt 더한 타이머용
+	m_vIdleTime = { 2.f, 0.f };
+	
+	//// Target 감지 범위 (default = 5.f)
+	//m_fDetectedRange = 5.f;
+	
+	m_tHysteriesis.fEvadeEnter = 2.f;
+	m_tHysteriesis.fComboEnter = 3.f;
+	m_tHysteriesis.fComboExit = 4.f;
+	m_tHysteriesis.fChaseEnter = 7.f;
+	m_tHysteriesis.fChaseExit = 5.f;
+	
+	return S_OK;
+}
+
+void CThugAssaulter::Update_States(_float dt)
+{
+	if (true == m_isIdle) {
+		m_pStateMachine->Change_State("Idle");
+		m_pStateMachine->Reset_Trigger("Idle_To_Attack");
+		m_pStateMachine->Reset_Trigger("Idle_To_Move");
+		m_pStateMachine->Reset_Trigger("Idle_To_Chase");
+		m_pStateMachine->Reset_Trigger("Idle_To_Death");
+	
+		m_isIdle = false;
+	}
+	
+	//================================
+	ControlState(dt);
+	//================================
+}
+
+void CThugAssaulter::ControlState(const _float dt)
+{
+	if (true == m_isAutoPatternPlay &&
+		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
+
+		m_vIdleTime.y += dt;
+
+		if (m_vIdleTime.x <= m_vIdleTime.y) {
+
+			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+
+
+			m_vIdleTime.y = 0.f;
+		}
+	}
+}
