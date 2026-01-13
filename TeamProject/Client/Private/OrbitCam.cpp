@@ -106,6 +106,8 @@ void COrbitCam::SetPreset(OrbitPreset nextPreset)
 
 void COrbitCam::SetTarget(CGameObject* obj)
 {
+    const float keepTargetDist = pose.targetDist;
+
     targetHandle = obj->Get_Handle();
 
     autoYawHoldTimer = profile.autoYawFollowDelay;
@@ -127,18 +129,15 @@ void COrbitCam::SetTarget(CGameObject* obj)
 
     pose.targetRotDeg = pose.curRotDeg;
 
-    float dist = pose.curDist;
-    dist = clamp(dist, profile.minDist, profile.maxDist);
-
-    pose.curDist = dist;
-    pose.targetDist = dist;
+    pose.targetDist = clamp(keepTargetDist, profile.minDist, profile.maxDist);
+    pose.curDist = clamp(pose.curDist, profile.minDist, profile.maxDist);
 
     const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
     const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
     const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
     const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
-    const Vector3 camPos = pivot + backDir * dist;
+    const Vector3 camPos = pivot + backDir * pose.curDist;
 
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
