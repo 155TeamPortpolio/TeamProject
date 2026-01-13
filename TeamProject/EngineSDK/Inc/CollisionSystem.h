@@ -29,7 +29,7 @@ private:
     };
 
 private:
-    // Collider/RigidBodyï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
+    // Collider/RigidBody¿ë ÇÁ·Ï½Ã
     class CPhysXEventCallback : public PxSimulationEventCallback
     {
     public:
@@ -47,7 +47,7 @@ private:
         CCollisionSystem* m_pOwner = nullptr;
     };
 
-    // CCTï¿½ï¿½ ï¿½ï¿½ï¿½Ï½ï¿½
+    // CCT¿ë ÇÁ·Ï½Ã
     class CCCTHitCallback : public PxUserControllerHitReport
     {
     public:
