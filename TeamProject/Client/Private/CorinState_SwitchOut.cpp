@@ -8,19 +8,14 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchOut_Normal")
         .Loop(false)
         .Apply();
-
-    _vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-    if (vDir.Length() > 0.01f)
-        pOwner->Rotate(-vDir);
 }
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
-    if (m_fAnimProgress >= 0.2f)
+    if (m_fAnimProgress >= 0.3f)
         pOwner->Update_DissolveProgress(dt * 5.f);
 
-    pOwner->Process_RootMotion(dt,
-        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+    pOwner->Process_RootMotion(-dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (m_fAnimProgress >= 0.6f)
