@@ -1,4 +1,5 @@
 {
+    "alive": true,
     "instanceName": "hud_battle_primaryAction",
     "transform": {
         "anchor": 5,
@@ -30,6 +31,7 @@
     "animClips": [],
     "children": [
         {
+            "alive": true,
             "instanceName": "attack",
             "transform": {
                 "anchor": 0,
@@ -61,6 +63,7 @@
             "animClips": [],
             "children": [
                 {
+                    "alive": true,
                     "instanceName": "attackBg",
                     "transform": {
                         "anchor": 4,
@@ -95,6 +98,7 @@
                     "textureTag": "Circle72.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "attackIcon",
                     "transform": {
                         "anchor": 4,
@@ -129,6 +133,7 @@
                     "textureTag": "Eff_SkillUp_18.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "outline",
                     "transform": {
                         "anchor": 4,
@@ -163,6 +168,7 @@
                     "textureTag": "SkillBtnAOutline.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "image",
                     "transform": {
                         "anchor": 8,
@@ -197,6 +203,7 @@
                     "textureTag": "MouseLIconBlack.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "attackMouse",
                     "transform": {
                         "anchor": 8,
@@ -234,6 +241,7 @@
             "typeTag": "CanvasPanel"
         },
         {
+            "alive": true,
             "instanceName": "interact",
             "transform": {
                 "anchor": 0,
@@ -330,6 +338,7 @@
             ],
             "children": [
                 {
+                    "alive": true,
                     "instanceName": "interactBg",
                     "transform": {
                         "anchor": 4,
@@ -364,6 +373,7 @@
                     "textureTag": "Circle72.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "mask",
                     "transform": {
                         "anchor": 4,
@@ -398,6 +408,7 @@
                     "maskTextureKey": "BtnCommon.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "image",
                     "transform": {
                         "anchor": 4,
@@ -432,6 +443,7 @@
                     "textureTag": "Circle72.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "interactGradient",
                     "transform": {
                         "anchor": 4,
@@ -512,6 +524,7 @@
                     "textureTag": "Eff_SkillUp_27.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "outline",
                     "transform": {
                         "anchor": 4,
@@ -546,16 +559,17 @@
                     "textureTag": "SkillBtnAOutline.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "interactKey",
                     "transform": {
                         "anchor": 8,
                         "anchorOffset": [
                             0.0,
-                            -14.5
+                            -15.0
                         ],
                         "size": [
-                            29.0,
-                            29.0
+                            30.0,
+                            30.0
                         ],
                         "scale": [
                             1.0,
@@ -577,7 +591,58 @@
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
-                    "textureTag": "KeyboardFIcon.png"
+                    "textureTag": "KeyboardIcon.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "f",
+                    "transform": {
+                        "anchor": 8,
+                        "anchorOffset": [
+                            -0.22500276565551758,
+                            -15.569336891174316
+                        ],
+                        "size": [
+                            11.549994468688965,
+                            19.861326217651367
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.5,
+                            0.5
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.5882353186607361,
+                        0.5882353186607361,
+                        0.5882353186607361,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "F",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.3499998450279236,
+                        "outlined": false,
+                        "outlineThickness": 1.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ]
+                    }
                 }
             ],
             "typeTag": "CanvasPanel"

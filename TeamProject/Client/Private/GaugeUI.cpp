@@ -31,7 +31,7 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         { 
             if(desc.eOwner == m_eOwner && 
             desc.eType == m_eType)

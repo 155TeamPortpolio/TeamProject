@@ -33,7 +33,7 @@ HRESULT CDemoUI::Initialize_Prototype()
 HRESULT CDemoUI::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
-	Get_Component<CEventListener>()->Add_Listner<ExampleEvt>([this](const ExampleEvt& evt) {Listen(evt); });
+	Get_Component<CEventListener>()->Add_Listener<ExampleEvt>([this](const ExampleEvt& evt) {Listen(evt); });
 
 	return S_OK;
 }

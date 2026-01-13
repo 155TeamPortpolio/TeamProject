@@ -24,9 +24,12 @@ HRESULT CTextUI::Initialize(INIT_DESC* pArg)
     Get_Component<CTextSlot>()->Set_TextKey(strObjectID);
     pSprite->Set_TextKey(strObjectID);
 
-#ifdef _DEBUG
     pSprite->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
+
+#ifdef _DEBUG
     pSprite->Add_Texture(G_GlobalLevelKey, "canvas.png");
+#else
+    pSprite->Add_Texture(G_GlobalLevelKey, "transparent.png");
 #endif
 
     return S_OK;

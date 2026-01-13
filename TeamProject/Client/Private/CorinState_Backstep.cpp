@@ -6,6 +6,7 @@
 
 void CCorinState_Backstep::Enter(CCorin* pOwner)
 {
+    pOwner->Use_Evade();
 	pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back")
         .Speed(1.f)
 		.Apply();
@@ -27,10 +28,10 @@ void CCorinState_Backstep::Update(CCorin* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.3f)
+    if (m_fAnimProgress >= 0.25f)
     {
-        if (pOwner->Use_EvadeBuffer())
-        {   // Idle -> Evade
+        if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
+        {
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
             return;

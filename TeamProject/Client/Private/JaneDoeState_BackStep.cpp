@@ -6,6 +6,7 @@
 
 void CJaneDoeState_BackStep::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Use_Evade();
     m_bEvadeType = !m_bEvadeType;
 
     string strEvade = m_bEvadeType ? "Evade_Back_01" : "Evade_Back_02";
@@ -32,7 +33,7 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.3f)
     {
-        if (pOwner->Use_EvadeBuffer())
+        if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
