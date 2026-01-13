@@ -41,10 +41,10 @@ public:
         _float fRotateSpeed = 10.f;
     };
 
-private:
     struct GaugeDesc
     {
         _float      fCurrentGauge = { 0.f };
+        _float      fPrevGauge = { 0.f };
         _float      fGaugeWeight = { 1.f };
         _float      fSpecialGauge = { 60.f };
         void        Set_CurrentGauge(_float fGauge) { fCurrentGauge = fGauge; }
@@ -63,30 +63,32 @@ protected:
 public:
     // 게이지 시스템
     const GaugeDesc& Get_GaugeDesc() const { return m_tGauge; }
-    void  Set_GaugeDesc(GaugeDesc desc) { m_tGauge = desc; }
+    void    Set_GaugeDesc(GaugeDesc desc) { m_tGauge = desc; }
+    _float  Get_MaxGauge() { return MAX_SPECIALGAUGE; }
 
-    // 상태 접근
-    _float Get_HP() const { return m_fCurrentHP; }
-    _float Get_MaxHP() const { return m_fMaxHP; }
-    _float Get_Energy() const { return m_fCurrentEnergy; }
+    // 스탯
+    _float  Get_HP() const { return m_fCurrentHP; }
+    _float  Get_MaxHP() const { return m_fMaxHP; }
+    void    Set_HP(_float fHp) { m_fCurrentHP = fHp; }
+    void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
+
+    _float  Get_Decibel() const { return m_fDecibel; }
+    _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
+    void    Set_Decibel(_float fDecibel) { m_fDecibel = fDecibel; }
+
     _float Get_Speed() const { return m_fMoveSpeed; }
 
+    // 상태
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
-
     _float Get_EvadeTimer() const { return m_fEvadeTimer; }
     _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
 
-
-    void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
-    void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
-    void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
     void   Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
-
 
     void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*이벤트 버스를 보내는 함수 Set_HP를 ProcessHP 함수 내부에서 호출*
 
@@ -148,6 +150,7 @@ private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
     void    Update_Gauge(_float dt);
+    void    Update_Decibel(_float dt);
 
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
@@ -156,18 +159,16 @@ protected:
     string                m_strName = "";       //*캐릭터 이름*
 
     // 스탯
-    GaugeDesc   m_tGauge;
+    GaugeDesc   m_tGauge = {};
     static  constexpr _float    MAX_SPECIALGAUGE = { 120.f };
-    
-
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
-    _float          m_fMaxEnergy = { 100.f };
-    _float          m_fCurrentEnergy = { 0.f };
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     _uint           m_iCurrentLevel = { 1 };            //*캐릭터 레벨*
+    _float          m_fDecibel = {};
+    static constexpr _float MAX_DECIBEL = { 3000 };
     // 입력
     InputInfo       m_inputInfo;
     _bool           m_bIsAttack = { false };
@@ -193,7 +194,7 @@ protected:
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
-    _float      m_fDissolveTiling = { 4.f };
+    _float      m_fDissolveTiling = { 10.f };
     // 몬스터
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
