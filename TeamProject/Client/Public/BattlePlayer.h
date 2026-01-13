@@ -71,6 +71,7 @@ private:
     void    Process_Evade();
     void    Process_Switch();
     _bool   Can_Switch() const;
+    void    Update_Target();
 
 private:
     HRESULT      Initialize_CharacterPrototype();
@@ -83,6 +84,7 @@ private:
     queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
     class CCharacter*                               m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>                           m_CharacterHandles{};
+    OBJECT_HANDLE                                   m_TargetHandle;
 
     InputState  m_input;
     _uint       m_iParryingCount = 6;
@@ -93,6 +95,7 @@ private:
 
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
     static constexpr _float SWITCH_COOLDOWN = 1.f;
+    static constexpr _float TARGET_MAXDISTANCE = 10.f;
 
 public:
     static CBattlePlayer* Create();

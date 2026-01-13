@@ -4,6 +4,7 @@
 #include "ICameraService.h"
 #include "Collider.h"
 #include "CharacterController.h"
+#include "RigidBody.h"
 
 #pragma region CALLBACK_FUNCTION
 // Collider
@@ -89,6 +90,7 @@ void CCollisionSystem::Update(_float dt)
 				slot.eState = COLLIDABLE_SLOT::STATE::ACTIVE;
 				slot.pCollidable->Get_CurrentCollisions().clear();
 				slot.pCollidable->Get_PreviousCollisions().clear();
+				Check_Initial_Overlap(slot.pCollidable);
 			}
 		}
 		else
@@ -715,6 +717,107 @@ void CCollisionSystem::Process_CollisionEvents()
 
 				if (!slot.IsActive() || !pCollidable->Get_Owner())
 					break;
+			}
+		}
+	}
+}
+
+void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
+{
+	if (!pCollidable) return;
+
+	// Actor 가져오기 (CCollider 또는 CCT)
+	PxRigidActor* pActor = nullptr;
+	_bool bIsTrigger = false;
+
+	if (auto pCollider = dynamic_cast<CCollider*>(pCollidable))
+	{
+		pActor = pCollider->Get_PxActor();
+		bIsTrigger = pCollider->IsTrigger();
+	}
+	else if (auto pCCT = dynamic_cast<CCharacterController*>(pCollidable))
+	{
+		pActor = pCCT->Get_PxActor();
+		bIsTrigger = false; // CCT
+	}
+
+	if (!pActor) return;
+
+	// CCT와 트리거검사 : 일반Collider는 Persist로 대응
+	if (!bIsTrigger && !dynamic_cast<CCharacterController*>(pCollidable))
+		return;
+
+	PxScene* pScene = pActor->getScene();
+	if (!pScene) return;
+
+	PxShape* shapes[16];
+	PxU32 nShapes = pActor->getShapes(shapes, 16);
+	for (PxU32 i = 0; i < nShapes; ++i)
+	{
+		PxShape* pShape = shapes[i];
+		if (!pShape) continue;
+
+		// 트리거가 활성화된 경우: 트리거 쉐이프만 검사
+		// CCT가 활성화된 경우: CCT 쉐이프(보통 Trigger flag 없음)로 검사
+		if (bIsTrigger && !(pShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
+			continue;
+
+		PxGeometryHolder geom = pShape->getGeometry();
+		PxTransform globalPose = PxShapeExt::getGlobalPose(*pShape, *pActor);
+
+		const PxU32 bufferSize = 32;
+		PxOverlapHit hitBuffer[bufferSize];
+		PxOverlapBuffer buf(hitBuffer, bufferSize);
+
+		PxQueryFilterData filterData;
+		filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+
+		if (pScene->overlap(geom.any(), globalPose, buf, filterData))
+		{
+			for (PxU32 k = 0; k < buf.nbTouches; ++k)
+			{
+				PxActor* pOtherActor = buf.touches[k].actor;
+				PxShape* pOtherShape = buf.touches[k].shape;
+
+				if (pOtherActor == pActor) continue;
+
+				// 형변환
+				PxRigidActor* pOtherRigidActor = pOtherActor->is<PxRigidActor>();
+				if (!pOtherRigidActor) continue;
+
+				ICollidable* pOtherCollidable = Get_Collidable_Shape(pOtherShape, pOtherRigidActor);
+				if (!pOtherCollidable) continue;
+
+				_int idxOther = pOtherCollidable->Get_SlotIndex();
+				if (!Is_SlotActive(idxOther)) continue;
+
+				// 상대방이 트리거인지 확인
+				// 내가 트리거라면 -> 누구든 들어오면 Enter
+				// 내가 CCT라면 -> 상대가 트리거일 때만 Enter (일반 벽이랑은 물리 충돌 하니까 제외)
+				CCollider* pOtherCol = dynamic_cast<CCollider*>(pOtherCollidable);
+				_bool bOtherIsTrigger = (pOtherCol && pOtherCol->IsTrigger());
+
+				if (!bIsTrigger && !bOtherIsTrigger) continue; // 둘 다 일반 콜라이더면 패스
+
+				// 강제 Enter 처리
+				auto& current = pCollidable->Get_CurrentCollisions();
+				if (current.find(pOtherCollidable) == current.end())
+				{
+					// 로직상 Trigger Enter 호출
+					if (bIsTrigger) pCollidable->OnTriggerEnter(pOtherCollidable);
+					else pCollidable->OnCollisionEnter(pOtherCollidable); // 상대가 트리거면 TriggerEnter로 유도됨
+
+					// 리스트 등록
+					current.insert(pOtherCollidable);
+
+					// 상대방 처리
+					auto& otherCurrent = pOtherCollidable->Get_CurrentCollisions();
+					if (otherCurrent.find(pCollidable) == otherCurrent.end())
+					{
+						otherCurrent.insert(pCollidable);
+						if (bOtherIsTrigger) pOtherCollidable->OnTriggerEnter(pCollidable);
+					}
+				}
 			}
 		}
 	}

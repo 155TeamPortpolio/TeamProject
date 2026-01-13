@@ -5,12 +5,13 @@ NS_BEGIN(Client)
 
 class CUI_PrimaryAction final : public CUI_Object
 {
-private:
-	enum class MODE { ATTACK, INTERACT, END };
+private: 
+	enum class CHILD { ATTACK, ATTACK_BG, ATTACK_ICON, ATTACK_MOUSE, INTERACT, INTERACT_GRADIENT, END };
 
-	enum class Child { ATTACK, ATTACK_BG, ATTACK_ICON, ATTACK_MOUSE, INTERACT, INTERACT_GRADIENT, END };
+	enum class MODE { ATTACK, INTERACT };
+	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
 
-	static const string INSTANCENAMES[ENUM(Child::END)];
+	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
 private:
 	CUI_PrimaryAction() {}
@@ -27,21 +28,28 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
-private:
-	MODE			m_eMode = {};
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+private: 
+	UI_HANDLE		m_handles[ENUM(CHILD::END)];
+
+	MODE			m_mode = { MODE::ATTACK };
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
 	void Set_ActionMode(MODE eMode);
-	void Set_AttackActive(_bool isActive);
-	void Set_InteractActive(_bool isActive);
+	void Set_InteractState(INTERACT_STATE state);
+	 
+	void Refresh_Visual();
 
-	void Set_Alive(Child child, _bool isAlive);
-	void Set_Color(Child child, _float4 vColor);
-	void Set_Animation(Child child, _int iIndex);
+	void Apply_DisableVisual();
+	void Apply_EnableVisual();
+	void Apply_AvailableVisual();
+
+	void Set_Alive(CHILD child, _bool isAlive);
+	void Set_Color(CHILD child, _float4 vColor);
+	void Set_Animation(CHILD child, _int iIndex);
 
 	template<typename Func>
-	void ForChild(Child child, Func&& func);
+	void ForChild(CHILD child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -52,7 +60,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_PrimaryAction::ForChild(Child child, Func&& func)
+inline void CUI_PrimaryAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_handles[ENUM(child)];
 	if (!handle.isValid())
