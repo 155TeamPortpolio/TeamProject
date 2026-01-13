@@ -7,6 +7,7 @@
 
 void CCorinState_Dash::Enter(CCorin* pOwner)
 {
+    pOwner->Use_Evade();
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
         .Speed(1.f)
         .Apply();
@@ -30,9 +31,9 @@ void CCorinState_Dash::Update(CCorin* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.2f)
+    if (m_fAnimProgress >= 0.15f)
     {
-        if (pOwner->Use_EvadeBuffer())
+        if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
