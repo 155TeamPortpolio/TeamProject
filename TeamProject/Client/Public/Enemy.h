@@ -74,8 +74,12 @@ public:
 protected:
     // Target(Player-Character)이 있을 때, Target의 정보와 Target으로 부터의 정보 GUI에 렌더
     void                Render_GUI_ForTargetInfo();
+
+public:
+    // Attack Sign 객체 추가 및 부착 본 지정
+    virtual void        Create_AttackSign(string boneTag);
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
-    virtual void        Active_AttackSign() {};
+    virtual void        Active_AttackSign();
 
 protected:
 #pragma region BattleCollider
