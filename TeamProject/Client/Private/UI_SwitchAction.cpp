@@ -29,8 +29,14 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+	// 모드 변경 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+		{
+			Set_InteractState(INTERACT_STATE::DISABLE);
+		});
+
 	// 액션 이벤트
-	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
 			if (desc.eType != UI_ACTION_TYPE::SWITCH)
 				return;
@@ -39,10 +45,11 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 				Set_InteractState(INTERACT_STATE::DISABLE);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
 				Set_InteractState(INTERACT_STATE::ENABLE);
-			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)	// Executing 애니메이션 실행 중에 들어오면 애니메이션이 덮어써버리는 문제 있음
 				Set_InteractState(INTERACT_STATE::AVAILABLE);
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
 			{
+				Set_InteractState(INTERACT_STATE::ENABLE);
 				Execute(EXECUTE_MODE::ANIM);
 				Set_FillAmount(desc.fFillAmount);
 			}
@@ -92,7 +99,7 @@ void CUI_SwitchAction::Update(_float dt)
 
 void CUI_SwitchAction::UI_Active(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::ENABLE);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SwitchAction::UI_DeActive(void* pArg)
@@ -114,7 +121,7 @@ void CUI_SwitchAction::Execute(EXECUTE_MODE mode)
 	if (EXECUTE_MODE::NONANIM == mode)
 		return;
 
-	m_interactState = INTERACT_STATE::AVAILABLE;
+	//m_interactState = INTERACT_STATE::ENABLE;
 	Refresh_Visual();
 	Set_Animation(CHILD::GROUP, 0);
 	Set_Animation(CHILD::ICON, 0); 

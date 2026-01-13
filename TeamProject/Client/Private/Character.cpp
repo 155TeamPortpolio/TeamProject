@@ -144,6 +144,7 @@ void CCharacter::Update(_float dt)
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
 	if (m_bIsRotating)	Update_Rotation(dt);
+	Update_Gauge(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -202,9 +203,7 @@ void CCharacter::On_Attack()
 void CCharacter::On_Evade()
 {
 	if (!Can_Evade()) return;
-
 	m_bIsEvade = true;
-	Use_Evade();
 }
 
 void CCharacter::Rotate(_vector3 vDirection)
@@ -232,7 +231,7 @@ void CCharacter::Use_Evade()
 	++m_iEvadeCount;
 	m_fEvadeTimer = EVADE_COOLDOWN;
 
-	if (m_iEvadeCount >= EVADE_MAX_COUNT)
+	if (m_iEvadeCount >= m_iEvadeMax)
 	{
 		m_fEvadeCooldown = EVADE_COOLDOWN;
 		m_iEvadeCount = 0;
@@ -307,6 +306,16 @@ void CCharacter::Update_Evade(_float dt)
 			m_iEvadeCount = 0;
 		}
 	}
+}
+
+void CCharacter::Update_Gauge(_float dt)
+{
+	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
+	{
+		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
+		return;
+	}
+	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt;
 }
 
 void CCharacter::Free()

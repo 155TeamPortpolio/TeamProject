@@ -20,7 +20,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    Get_Component<CEventListener>()->Add_Listner<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         {
             if (desc.eType == UI_STATUS_TYPE::HP && desc.eOwner == UI_STATUS_OWNER::ROLE1)
                 Set_HPText(desc.value);

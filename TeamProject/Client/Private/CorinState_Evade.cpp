@@ -7,8 +7,6 @@
 
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
-   // pOwner->Use_Evade();
-
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();

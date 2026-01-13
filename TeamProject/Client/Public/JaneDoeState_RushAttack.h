@@ -31,19 +31,6 @@ public:
     virtual void Free() override { __super::Free(); }
 };
 
-class CJaneDoeState_Rush_Explode final
-    : public IBaseState<CJaneDoe>
-{
-public:
-    virtual void Enter(CJaneDoe* pOwner) override;
-    virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override {}
-
-public:
-    static CJaneDoeState_Rush_Explode* Create() { return new CJaneDoeState_Rush_Explode(); }
-    virtual void Free() override { __super::Free(); }
-};
-
 class CJaneDoeState_Rush_End final
     : public IBaseState<CJaneDoe>
 {

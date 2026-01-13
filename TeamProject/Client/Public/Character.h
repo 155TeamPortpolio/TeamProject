@@ -41,6 +41,17 @@ public:
         _float fRotateSpeed = 10.f;
     };
 
+private:
+    struct GaugeDesc
+    {
+        _float      fCurrentGauge = { 0.f };
+        _float      fGaugeWeight = { 1.f };
+        _float      fSpecialGauge = { 60.f };
+        void        Set_CurrentGauge(_float fGauge) { fCurrentGauge = fGauge; }
+        void        Set_GaugeWeight(_float fWeight) { fGaugeWeight = fWeight; }
+        void        Set_SpecialGauge(_float fGauge) { fSpecialGauge = fGauge; }
+    };
+
 public:
     enum class SWITCH { NORMAL, ATTACK, EXATTACK, PARRYAID, END };
 
@@ -50,23 +61,32 @@ protected:
     virtual ~CCharacter() DEFAULT;
 
 public:
+    // 게이지 시스템
+    const GaugeDesc& Get_GaugeDesc() const { return m_tGauge; }
+    void  Set_GaugeDesc(GaugeDesc desc) { m_tGauge = desc; }
+
     // 상태 접근
     _float Get_HP() const { return m_fCurrentHP; }
     _float Get_MaxHP() const { return m_fMaxHP; }
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
+
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
 
+    _float Get_EvadeTimer() const { return m_fEvadeTimer; }
+    _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
+
 
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
-    void   Set_SpecialGauge(_float fSpecialGauge) { m_fSpecialGauge = fSpecialGauge; } //*스페셜 게이지*
+    void   Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
+
 
     void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*이벤트 버스를 보내는 함수 Set_HP를 ProcessHP 함수 내부에서 호출*
 
@@ -115,23 +135,31 @@ public:
 
 public:
     void     Rotate(_vector3 vDirection);
+
+    _bool    Is_OppositeInput() const;
+    _bool    Can_Parry() const;
+
     _bool    Can_Evade() const;
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
-    _bool    Is_OppositeInput() const;
-    _bool    Can_Parry() const;
 
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
+    void    Update_Gauge(_float dt);
 
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
     string                m_strAnimName = "";   //*애니메이션 전용이름*
     string                m_strName = "";       //*캐릭터 이름*
+
     // 스탯
+    GaugeDesc   m_tGauge;
+    static  constexpr _float    MAX_SPECIALGAUGE = { 120.f };
+    
+
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
     _float          m_fMaxEnergy = { 100.f };
@@ -139,19 +167,18 @@ protected:
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
-    _float          m_fSpecialGauge = { 60.f };         //*스페셜 게이지*
     _uint           m_iCurrentLevel = { 1 };            //*캐릭터 레벨*
     // 입력
     InputInfo       m_inputInfo;
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
     // 회피 시스템
-    _bool           m_bEvadeBuffer = { false };
+    _bool                   m_bEvadeBuffer = { false };
+    _uint                   m_iEvadeMax = 2;
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };
     _float                  m_fEvadeCooldown = { 0.f };
     static constexpr _float EVADE_COOLDOWN = 1.f;
-    static constexpr _uint  EVADE_MAX_COUNT = 2;
     //*스위치 시스템*
     SWITCH                  m_eSwitchType = SWITCH::END;
     // 회전
