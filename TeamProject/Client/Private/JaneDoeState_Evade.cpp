@@ -7,7 +7,7 @@
 
 void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Use_Evade();
+    //pOwner->Use_Evade();
 
     if (!m_pSubStateMachine)
     {

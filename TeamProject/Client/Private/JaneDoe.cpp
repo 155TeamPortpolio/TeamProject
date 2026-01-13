@@ -67,7 +67,7 @@ void CJaneDoe::Awake()
 	m_pAnimator->LinkAnimate_Model("Test_Level", "JaneDoe.model");
 	m_pAnimator->Link_MetaData("Test_Level", "JaneDoe_Meta.json");
 
-	m_pAnimator->Set_MotionBone(262);
+	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
