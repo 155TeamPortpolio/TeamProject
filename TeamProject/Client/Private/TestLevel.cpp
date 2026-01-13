@@ -164,7 +164,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "Zero_Boss1");
+	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Miyabi", CCorin::Create());
