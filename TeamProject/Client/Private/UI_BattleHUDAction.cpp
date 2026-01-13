@@ -42,7 +42,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     __super::Update(dt);
 
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;
@@ -50,7 +50,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;

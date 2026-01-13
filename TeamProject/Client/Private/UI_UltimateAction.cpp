@@ -29,6 +29,12 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
     for (_int i = 0; i < ENUM(CHILD::END); ++i)
         m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+    // 모드 변경 이벤트
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+        {
+            Set_InteractState(INTERACT_STATE::DISABLE);
+        });
+
     // 액션 이벤트
     Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
@@ -78,7 +84,7 @@ void CUI_UltimateAction::Update(_float dt)
 
 void CUI_UltimateAction::UI_Active(void* pArg)
 {
-    Set_InteractState(INTERACT_STATE::ENABLE);
+    Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_UltimateAction::UI_DeActive(void* pArg)
@@ -94,7 +100,7 @@ void CUI_UltimateAction::Set_InteractState(INTERACT_STATE state)
 
 void CUI_UltimateAction::Execute()
 {
-    //if (m_interactState != INTERACT_STATE::ENABLED)
+    //if (m_interactState == INTERACT_STATE::DISABLE)
     //    return;
 
     m_interactState = INTERACT_STATE::ENABLE;

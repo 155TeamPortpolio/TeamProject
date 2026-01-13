@@ -29,6 +29,12 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+	// 모드 변경 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+		{
+			Set_InteractState(INTERACT_STATE::DISABLE);
+		});
+
 	// 액션 이벤트
 	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
@@ -93,7 +99,7 @@ void CUI_SwitchAction::Update(_float dt)
 
 void CUI_SwitchAction::UI_Active(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::ENABLE);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SwitchAction::UI_DeActive(void* pArg)

@@ -29,6 +29,16 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 	
+	// 모드 변경 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+		{
+			if (desc.eMode == UI_ACTION_PRIMARY_MODE::INTERACT)
+				Set_InteractState(INTERACT_STATE::DISABLE);
+			else
+				Set_InteractState(INTERACT_STATE::ENABLE);
+		});
+
+	// 액션 이벤트
 	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
 			if (desc.eType != UI_ACTION_TYPE::SPECIAL)
