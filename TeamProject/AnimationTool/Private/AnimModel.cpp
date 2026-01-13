@@ -75,7 +75,7 @@ void CAnimModel::Priority_Update(_float dt)
 void CAnimModel::Update(_float dt)
 {
 	if (auto pAnimator = Get_Component<CAnimator3D>()) {
-		//m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta()));
+		m_pTransform->Translate(_vector3(pAnimator->Get_RootBoneMoveDelta() * 0.5f));
 		_quaternion dq = pAnimator->Get_RootBoneQuatDelta(); // 반환 타입이 XMFLOAT4라고 가정
 		//m_pTransform->(dq);
 		m_pTransform->Add_Quaternion(dq);
