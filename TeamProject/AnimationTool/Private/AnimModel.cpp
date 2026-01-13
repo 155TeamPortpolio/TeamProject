@@ -108,13 +108,13 @@ void CAnimModel::Set_Panel(CAnimToolPanel* pAnimToolPanel)
 
 void CAnimModel::GUI_LoadResource(_float fChildHeight)
 {
-	if (Get_Component<CAnimator3D>()) {
-		Matrix mat = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::WORLD, 0);
-		ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._11, mat._12, mat._13, mat._14);
-		ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._21, mat._22, mat._23, mat._24);
-		ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._31, mat._32, mat._33, mat._34);
-		ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._41, mat._42, mat._43, mat._44);
-	}
+	//if (Get_Component<CAnimator3D>()) {
+	//	Matrix mat = Get_Component<CAnimator3D>()->Get_BoneMatrix(CAnimator3D::BoneSpace::WORLD, 230);
+	//	ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._11, mat._12, mat._13, mat._14);
+	//	ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._21, mat._22, mat._23, mat._24);
+	//	ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._31, mat._32, mat._33, mat._34);
+	//	ImGui::Text("%.2f\t%.2f\t%.2f\t%.2f", mat._41, mat._42, mat._43, mat._44);
+	//}
 
 	ImGui::SeparatorText("Model & Material Load");
 	ImGui::BeginChild("##Loaded Data", ImVec2{ 0, fChildHeight }, true);
