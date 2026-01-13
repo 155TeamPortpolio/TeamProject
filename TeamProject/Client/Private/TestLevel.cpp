@@ -262,7 +262,8 @@ void CTestLevel::Update()
 			.Build("Orb");
 
 		auto pTransform = pOrb->Get_Component<CTransform>();
-		_quaternion q = _quaternion::CreateFromYawPitchRoll(_vector3(0.f, 0.f, XMConvertToRadians(180.f)));
+		_quaternion q(0.07f, 0.06f, 0.99f, 0.12f);
+		q.Normalize();
 		pTransform->Set_Quaternion(q);
 		ObjectManager()->Add_Object(pOrb, { "Test_Level","Effect_Layer" });
 	}

@@ -36,6 +36,7 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
+
 	return S_OK;
 }
 
