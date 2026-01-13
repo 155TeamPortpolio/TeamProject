@@ -74,7 +74,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
-	//pAnimator->Set_MotionBone(3); //Bip001
+	pAnimator->Set_MotionBone(3); //Bip001
 	pAnimator->Resize_Layer(3);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);

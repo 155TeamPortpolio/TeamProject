@@ -29,7 +29,7 @@ public:
     void Late_Update(_float dt) override;
 
 private:
-    _float3 m_vSkyColor = _float3(0.87f, 0.28f, 0.54f);    
+    _float3 m_vSkyColor = _float3(20.f/255.f, 15.f/255.f, 17.f/255.f);     //_float3(0.47f, 0.78f, 0.94f);   
     _float3 m_vCloudColor = _float3(1.0f, 1.0f, 1.0f);
     _float m_fAccTime = 0.f;
 
