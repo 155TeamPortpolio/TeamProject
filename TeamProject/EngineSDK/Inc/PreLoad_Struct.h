@@ -65,5 +65,7 @@ namespace Engine {
         PreloadState state = PreloadState::Queued;
         int priority = 0;
         string errorMessage;
+        chrono::steady_clock::time_point startTime = chrono::steady_clock::now();
+        chrono::steady_clock::time_point loadingTime = chrono::steady_clock::now();
     };
 }

@@ -22,13 +22,20 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
         task.key = requestKey;
         task.priority = requestKey.options.priority;
         task.state = PreloadState::Queued;
-
+        task.startTime = std::chrono::steady_clock::now(); 
         m_tasks.emplace(requestKey,move(task));
         ++m_total;
     }
 
     auto loadFunction = [this, requestKey]() -> _bool
         {
+            {
+                lock_guard<mutex> lockGuard(m_mutex);
+                auto itTask = m_tasks.find(requestKey);
+                if (itTask != m_tasks.end())
+                    itTask->second.loadingTime = std::chrono::steady_clock::now();
+            }
+
             SetState(requestKey, PreloadState::Loading, "");
 
             string errorMessage;
@@ -58,22 +65,29 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
         };
 
     future<_bool> jobFuture = m_threadPool->enqueue(move(loadFunction));
-
+    
     {
         lock_guard<mutex> lockGuard(m_mutex);
         auto iteratorTask = m_tasks.find(requestKey);
-        if (iteratorTask != m_tasks.end())
+        if (iteratorTask != m_tasks.end()) {
             iteratorTask->second.future = move(jobFuture);
+        }
     }
 
     return true;
 }
+
 void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 {
     outCompleted.clear();
 
+    size_t completedCount = 0;
+
     for (;;)
     {
+        if (completedCount >= kMaxCompletePerPump)
+            break;
+
         PreloadKey doneKey{};
         future<_bool> doneFuture;
         string doneError;
@@ -82,14 +96,26 @@ void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
         { // m_mutex scope
             lock_guard<mutex> lockGuard(m_mutex);
 
+            const auto now = std::chrono::steady_clock::now();
+            size_t scanned = 0;
+
             for (auto it = m_tasks.begin(); it != m_tasks.end(); ++it)
             {
+                if (scanned++ >= kMaxScanPerPump)
+                    break;
+
                 PreloadTask& task = it->second;
+
                 if (!task.future.valid())
                     continue;
 
                 if (task.future.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+                {
+                    // (선택) 병목 체크 로깅은 여기
+                    // const auto queuedMs = ...
+                    // const bool started = ...
                     continue;
+                }
 
                 doneKey = task.key;
                 doneError = task.errorMessage;
@@ -112,9 +138,18 @@ void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 
         outCompleted.push_back(std::move(completed));
         ++m_done;
+        ++completedCount;
     }
 }
 
+
+
+_bool CPreloadScheduler::IsAllDone() const
+{
+    const _uint total = m_total.load();
+    if (total == 0) return true; 
+    return (m_done.load() >= total);
+}
 
 
 void CPreloadScheduler::GetProgress(_uint& outDone, _uint& outTotal)

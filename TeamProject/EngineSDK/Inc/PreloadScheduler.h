@@ -1,6 +1,8 @@
 #pragma once
 #include "Base.h"
 #include "PreLoad_Struct.h"
+static constexpr size_t kMaxScanPerPump = 512;     
+static constexpr size_t kMaxCompletePerPump = 64;  
 
 NS_BEGIN(Engine)
 class CPreloadScheduler :
@@ -13,6 +15,7 @@ private:
 public:
     _bool Request(const PreloadKey& requestKey);
     void Pump(vector<PreloadCompleted>& outCompleted);
+    _bool IsAllDone() const;
     void GetProgress(_uint& outDone, _uint& outTotal);
     PreloadState GetState(const PreloadKey& requestKey) const;
     using LoaderFunc = function<bool(const PreloadKey&, string&)>;

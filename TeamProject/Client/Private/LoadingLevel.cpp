@@ -26,7 +26,7 @@ HRESULT CLoadingLevel::Awake()
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
-	PreLoadLevel();
+	//PreLoadLevel();
 	return S_OK;
 }
 
@@ -40,7 +40,7 @@ void CLoadingLevel::Update()
 	/*쓰레드에게 미리 넣어둔 요청 큐의 완료 상태 반환 받는 법! 퍼센트 가능*/
 	_uint done = 0, total = 0;
 	pRcsMgr->GetPreloadProgress(done, total);
-	if (done == total)
+	if (ResourceManager()->isLoadComplete())
 	{
 		LevelManager()->Notify_LoadComplete();
 	}
