@@ -10,8 +10,6 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 	if (!pOwnerLevel)
 		return E_FAIL;
 
-
-
 	return S_OK;
 }
 
@@ -24,22 +22,17 @@ void CZeroStage_Boss::Update()
 {
 }
 
-HRESULT CZeroStage_Boss::Render()
+HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 {
 	return S_OK;
 }
 
-HRESULT CZeroStage_Boss::Ready_Stage()
+HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
 {
 	return S_OK;
 }
 
-HRESULT CZeroStage_Boss::Enter_Stage()
-{
-	return S_OK;
-}
-
-HRESULT CZeroStage_Boss::Exit_Stage()
+HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
 {
 	return S_OK;
 }
