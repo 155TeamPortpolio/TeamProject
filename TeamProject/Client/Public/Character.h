@@ -79,7 +79,7 @@ public:
 
     _float Get_EvadeTimer() const { return m_fEvadeTimer; }
     _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
-
+    _uint  Get_EvadeCount() const { return m_iEvadeCount; }
 
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
