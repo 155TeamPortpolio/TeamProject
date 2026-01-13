@@ -571,6 +571,9 @@
     <Filter Include="02. GameObject\MapObject\04. MapAnimObject">
       <UniqueIdentifier>{e27cbe5a-363f-497d-9eed-e754ea9d0f34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Ultimate">
+      <UniqueIdentifier>{0482ff2d-216c-4a8a-aa1b-5293b6620271}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1097,6 +1100,9 @@
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_UltimateAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Ultimate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1604,6 +1610,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapInvisibleWall.cpp">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_UltimateAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

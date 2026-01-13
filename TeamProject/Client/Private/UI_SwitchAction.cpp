@@ -138,9 +138,9 @@ void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _float fFillAmount)
 		return;
 
 	m_executeState = EXECUTE_STATE::EXECUTING;
-	Set_Animation(CHILD::GROUP, 0);
-	Set_Animation(CHILD::ICON, 0);
 	RefreshVisual();
+	Set_Animation(CHILD::GROUP, 0);
+	Set_Animation(CHILD::ICON, 0); 
 }
 
 void CUI_SwitchAction::Finish_Execute()

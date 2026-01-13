@@ -314,6 +314,7 @@
     <ClInclude Include="..\Public\UI_PrimaryAction.h" />
     <ClInclude Include="..\Public\UI_SpecialAction.h" />
     <ClInclude Include="..\Public\UI_SwitchAction.h" />
+    <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
     <ClInclude Include="Client.h" />
@@ -507,6 +508,7 @@
     <ClCompile Include="..\Private\UI_PrimaryAction.cpp" />
     <ClCompile Include="..\Private\UI_SpecialAction.cpp" />
     <ClCompile Include="..\Private\UI_SwitchAction.cpp" />
+    <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
     <ClCompile Include="Client.cpp" />
