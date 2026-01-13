@@ -571,6 +571,24 @@
     <Filter Include="02. GameObject\MapObject\04. MapAnimObject">
       <UniqueIdentifier>{e27cbe5a-363f-497d-9eed-e754ea9d0f34}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\02. MainCity">
+      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\03. Scott">
+      <UniqueIdentifier>{03ec8d80-58c9-41e7-aaed-48aa852601f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero">
+      <UniqueIdentifier>{2919c196-c81c-4f75-ad4d-2c04c9bfcfdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Normal">
+      <UniqueIdentifier>{1226f0c5-6d2d-4250-bdf1-550358cdcc52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Elite">
+      <UniqueIdentifier>{40342a9d-dc90-4d37-a405-f5c062f6e3d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Boss">
+      <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1097,6 +1115,15 @@
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\MainCity_Level.h">
+      <Filter>01. Level\02. MainCity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Scott_Level.h">
+      <Filter>01. Level\03. Scott</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Zero_Level.h">
+      <Filter>01. Level\04. Zero</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1604,6 +1631,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\MapInvisibleWall.cpp">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainCity_Level.cpp">
+      <Filter>01. Level\02. MainCity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Scott_Level.cpp">
+      <Filter>01. Level\03. Scott</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Zero_Level.cpp">
+      <Filter>01. Level\04. Zero</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

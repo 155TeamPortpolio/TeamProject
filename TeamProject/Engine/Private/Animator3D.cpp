@@ -1220,7 +1220,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 
 			//Extract Movebone
 			if (-1 != Layer.iMotionBoneIndex) {
-				Matrix MotionMat = Layer.BlendMatrices[Layer.iMotionBoneIndex];
+				Matrix MotionMat = Layer.LocalMatrices[Layer.iMotionBoneIndex];
 				MotionMat.Translation(MotionMat.Translation() - vCurRootPos);
 
 				// 회전 상쇄: 모션본에서 루트의 "현재 회전" 제거
@@ -1230,7 +1230,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 				// 곱 순서는 엔진 규약에 따라 둘 중 하나가 맞음
 				MotionMat = MotionMat * invCurRootRot;
 				// 상쇄한 매트릭스 저장
-				Layer.BlendMatrices[Layer.iMotionBoneIndex] = MotionMat;
+				Layer.LocalMatrices[Layer.iMotionBoneIndex] = MotionMat;
 			}
 		}
 
