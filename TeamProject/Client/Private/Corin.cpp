@@ -106,7 +106,7 @@ void CCorin::Update(_float dt)
 void CCorin::Late_Update(_float dt)
 {
 	__super::Late_Update(dt);
-	Get_Component<CAnimator3D>()->Change_Speed(0.1f);
+	//Get_Component<CAnimator3D>()->Change_Speed(0.1f);
 }
 
 void CCorin::Render_GUI()
