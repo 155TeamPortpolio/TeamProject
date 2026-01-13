@@ -153,7 +153,7 @@ void CUI_SpecialAction::Apply_EnableVisual()
 {
 	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
 	Set_Color(CHILD::ICON, UI_WHITE);
-	Set_Color(CHILD::E, UI_WHITE);
+	Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
 	Set_Alive(CHILD::ACTIVE, false);
 }
 
