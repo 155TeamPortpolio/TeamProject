@@ -291,7 +291,7 @@ void CCharacter::Update_Evade(_float dt)
 	UI_ACTION_DESC desc{};
 	desc.eType = UI_ACTION_TYPE::EVADE;
 	desc.eState = UI_ACTION_STATE::EXECUTING;
-	desc.fFillAmount = m_fEvadeTimer / EVADE_COOLDOWN;
+	desc.fFillAmount = 1- m_fEvadeTimer / EVADE_COOLDOWN;
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 
 	if (m_fEvadeCooldown > 0.f)
