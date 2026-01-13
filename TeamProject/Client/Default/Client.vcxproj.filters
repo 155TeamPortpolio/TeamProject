@@ -595,6 +595,12 @@
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex">
+      <UniqueIdentifier>{06deeb01-99d7-4481-ad85-781283a743fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate">
+      <UniqueIdentifier>{326635e2-7f00-483f-94bf-563eacfe15d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1133,6 +1139,12 @@
     <ClInclude Include="..\Public\Zero_Level.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_ExAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1655,6 +1667,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Zero_Level.cpp">
       <Filter>01. Level\04. Zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_UltimateAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
