@@ -23,7 +23,6 @@
 #include "CamLoader.h"
 
 /* MapData */
-#include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
@@ -74,10 +73,6 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-	m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
-	if (nullptr == m_pMapDataCloud)
-		return E_FAIL;
-
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
@@ -295,7 +290,7 @@ void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
 	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, m_pMapDataCloud, AreaTag);
+	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
@@ -518,7 +513,6 @@ void CTestLevel::Free()
 	__super::Free();
 
 
-	Safe_Release(m_pMapDataCloud);
 	CBattleSystem::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
