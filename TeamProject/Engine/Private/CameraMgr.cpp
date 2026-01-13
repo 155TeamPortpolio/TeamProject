@@ -49,8 +49,8 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
 {
     m_baseCamObj = camObjHandle;
 
-    if (!m_overrides.empty()) return;
-    BeginBlendTo(m_baseCamObj, blendSec);
+    //if (!m_overrides.empty()) return;
+    //BeginBlendTo(m_baseCamObj, blendSec);
 }
 
 void CCameraMgr::SetShadowCamObj(OBJECT_HANDLE camObjHandle)
@@ -203,8 +203,11 @@ void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
 
 void CCameraMgr::UpdateShadowCache()
 {
-    CamPoseFrame pose = CapturePose(ResolveCam(m_shadowCamObj));
-    ApplyCache(shadow, pose);
+    if (m_shadowCamObj.isValid())
+    {
+        CamPoseFrame pose = CapturePose(ResolveCam(m_shadowCamObj));
+        ApplyCache(shadow, pose);
+    }
 }
 
 void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
