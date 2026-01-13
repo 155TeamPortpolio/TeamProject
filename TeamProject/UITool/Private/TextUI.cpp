@@ -223,8 +223,8 @@ void CTextUI::Render_GUI_Layout()
         ImGui::SameLine();
         isChanged |= ImGui::RadioButton(u8"¿À¸¥ÂÊ", &m_iTextAlign, static_cast<_int>(TEXTALIGN::RIGHT));
 
-        if (isChanged)
-            UpdateAnchorOffset_TextAlign();
+        //if (isChanged)
+        //    UpdateAnchorOffset_TextAlign();
 
         ImGui::EndTable();
     }

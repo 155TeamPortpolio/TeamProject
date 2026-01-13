@@ -24,9 +24,11 @@ private:
 
 private:
     void PreLoadLevel();
-
+    ResourceType CheckResourceType(const string& fileName);
+    _bool isSRGB(const string& filePath);
 private:
     string m_NextLevel = {};
+    unordered_map<ResourceType, queue<PreloadKey>> m_LoadQue;
 
 public:
     static CLoadingLevel* Create(const string& LevelKey);

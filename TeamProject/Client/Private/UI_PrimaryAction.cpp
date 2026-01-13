@@ -48,21 +48,12 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
             if (desc.eType != UI_ACTION_TYPE::PRIMARY)
                 return;
 
-            switch (m_mode)
-            {
-            case MODE::ATTACK:
-                if (desc.eState == UI_ACTION_STATE::DISABLE)
-                    Set_AttackActive(false);
-                else if (desc.eState == UI_ACTION_STATE::ENABLE)
-                    Set_AttackActive(true);
-                break;
-            case MODE::INTERACT:
-                if (desc.eState == UI_ACTION_STATE::ENABLE)
-                    Set_InteractActive(false);
-                else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-                    Set_InteractActive(true);
-                break;
-            }
+            if(desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_InteractState(INTERACT_STATE::DISABLE);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_InteractState(INTERACT_STATE::ENABLE);
+            else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+                Set_InteractState(INTERACT_STATE::AVAILABLE);
         });
 
 	return S_OK;
@@ -114,12 +105,12 @@ void CUI_PrimaryAction::Update(_float dt)
 
 void CUI_PrimaryAction::UI_Active(void* pArg)
 {
-    Set_AttackActive(true);
+    Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_PrimaryAction::UI_DeActive(void* pArg)
 {
-    Set_AttackActive(false);
+    Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
@@ -137,39 +128,70 @@ void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
         Set_Animation(CHILD::INTERACT, 0);
 }
 
-void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
+void CUI_PrimaryAction::Set_InteractState(INTERACT_STATE state)
 {
-    if (m_mode != MODE::ATTACK)
-        return;
+    m_interactState = state;
+    Refresh_Visual();
+}
 
-    if (isActive)
+void CUI_PrimaryAction::Refresh_Visual()
+{
+    if (m_interactState == INTERACT_STATE::DISABLE)
     {
-        Set_Color(CHILD::ATTACK_BG, UI_GRAY_DARKEST);
-        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_LIGHTEST);
-        Set_Color(CHILD::ATTACK_MOUSE, UI_WHITE);
+        Apply_DisableVisual();
+        return;
     }
-    else
+
+    if (m_interactState == INTERACT_STATE::AVAILABLE)
     {
+        Apply_AvailableVisual();
+        return;
+    }
+
+    Apply_EnableVisual();
+}
+
+void CUI_PrimaryAction::Apply_DisableVisual()
+{
+    switch (m_mode)
+    {
+    case MODE::ATTACK:
         Set_Color(CHILD::ATTACK_BG, UI_GRAY_MEDIUM);
         Set_Color(CHILD::ATTACK_ICON, UI_GRAY_DARK);
         Set_Color(CHILD::ATTACK_MOUSE, UI_TRANSPARENT);
+        break;
+    case MODE::INTERACT:
+        Set_Alive(CHILD::INTERACT_GRADIENT, false);
+        break;
     }
 }
 
-void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
+void CUI_PrimaryAction::Apply_EnableVisual()
 {
-    if (m_mode != MODE::INTERACT)
-        return;
-
-    if (isActive)
+    switch (m_mode)
     {
+    case MODE::ATTACK:
+        Set_Color(CHILD::ATTACK_BG, UI_GRAY_DARKEST);
+        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_LIGHTEST);
+        Set_Color(CHILD::ATTACK_MOUSE, UI_WHITE);
+        break;
+    case MODE::INTERACT:
+        Set_Alive(CHILD::INTERACT_GRADIENT, false);
+        break;
+    }
+}
+
+void CUI_PrimaryAction::Apply_AvailableVisual()
+{
+    switch (m_mode)
+    {
+    case MODE::ATTACK:
+        break;
+    case MODE::INTERACT:
         Set_Alive(CHILD::INTERACT_GRADIENT, true);
         Set_Animation(CHILD::INTERACT_GRADIENT, 0);
-    } 
-    else
-    {
-        Set_Alive(CHILD::INTERACT_GRADIENT, false);
-    } 
+        break;
+    }
 }
 
 void CUI_PrimaryAction::Set_Alive(CHILD child, _bool isAlive)

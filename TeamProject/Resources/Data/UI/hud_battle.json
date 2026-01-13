@@ -1,4 +1,5 @@
 {
+    "alive": true,
     "instanceName": "hud_battle",
     "transform": {
         "anchor": 5,
@@ -121,6 +122,7 @@
     ],
     "children": [
         {
+            "alive": true,
             "instanceName": "playerHp",
             "transform": {
                 "anchor": 5,
@@ -152,6 +154,7 @@
             "animClips": [],
             "children": [
                 {
+                    "alive": true,
                     "instanceName": "bg",
                     "transform": {
                         "anchor": 10,
@@ -186,6 +189,7 @@
                     "textureTag": "RoleBg.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "pauseBg",
                     "transform": {
                         "anchor": 10,
@@ -220,6 +224,7 @@
                     "textureTag": "IconPauseBtnBG.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "pause",
                     "transform": {
                         "anchor": 10,
@@ -254,6 +259,7 @@
                     "textureTag": "IconPauseBtn.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "role1",
                     "transform": {
                         "anchor": 10,
@@ -285,6 +291,7 @@
                     "animClips": [],
                     "children": [
                         {
+                            "alive": true,
                             "instanceName": "icon1",
                             "transform": {
                                 "anchor": 5,
@@ -319,6 +326,7 @@
                             "textureTag": "IconRoleGeneral10.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
@@ -353,6 +361,7 @@
                             "textureTag": "RoleHPBg01.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBack1",
                             "transform": {
                                 "anchor": 6,
@@ -392,6 +401,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpFront1",
                             "transform": {
                                 "anchor": 6,
@@ -431,6 +441,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
@@ -465,6 +476,7 @@
                             "textureTag": "RoleHPFill03.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "special1",
                             "transform": {
                                 "anchor": 6,
@@ -504,6 +516,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "curHpText",
                             "transform": {
                                 "anchor": 5,
@@ -554,6 +567,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "text",
                             "transform": {
                                 "anchor": 5,
@@ -604,6 +618,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "maxHpText",
                             "transform": {
                                 "anchor": 5,
@@ -657,6 +672,7 @@
                     "typeTag": "CanvasPanel"
                 },
                 {
+                    "alive": true,
                     "instanceName": "role2",
                     "transform": {
                         "anchor": 10,
@@ -688,6 +704,7 @@
                     "animClips": [],
                     "children": [
                         {
+                            "alive": true,
                             "instanceName": "icon2",
                             "transform": {
                                 "anchor": 5,
@@ -722,6 +739,7 @@
                             "textureTag": "IconRoleGeneral13.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
@@ -756,6 +774,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBack2",
                             "transform": {
                                 "anchor": 6,
@@ -795,6 +814,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpFront2",
                             "transform": {
                                 "anchor": 6,
@@ -834,6 +854,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "ultimateBg",
                             "transform": {
                                 "anchor": 6,
@@ -868,6 +889,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "ultimate2",
                             "transform": {
                                 "anchor": 6,
@@ -907,6 +929,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
@@ -941,6 +964,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "special2",
                             "transform": {
                                 "anchor": 6,
@@ -983,6 +1007,7 @@
                     "typeTag": "CanvasPanel"
                 },
                 {
+                    "alive": true,
                     "instanceName": "role3",
                     "transform": {
                         "anchor": 10,
@@ -1014,6 +1039,7 @@
                     "animClips": [],
                     "children": [
                         {
+                            "alive": true,
                             "instanceName": "icon3",
                             "transform": {
                                 "anchor": 5,
@@ -1048,6 +1074,7 @@
                             "textureTag": "IconRoleGeneral29.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBg",
                             "transform": {
                                 "anchor": 6,
@@ -1082,6 +1109,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpBack3",
                             "transform": {
                                 "anchor": 6,
@@ -1121,6 +1149,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "hpFront3",
                             "transform": {
                                 "anchor": 6,
@@ -1160,6 +1189,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "ultimateBg",
                             "transform": {
                                 "anchor": 6,
@@ -1194,6 +1224,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "ultimate3",
                             "transform": {
                                 "anchor": 6,
@@ -1233,6 +1264,7 @@
                             }
                         },
                         {
+                            "alive": true,
                             "instanceName": "specialBg",
                             "transform": {
                                 "anchor": 6,
@@ -1267,6 +1299,7 @@
                             "textureTag": "RoleHPBg02.png"
                         },
                         {
+                            "alive": true,
                             "instanceName": "special3",
                             "transform": {
                                 "anchor": 6,
@@ -1312,6 +1345,7 @@
             "typeTag": "CanvasPanel"
         },
         {
+            "alive": true,
             "instanceName": "bossHp",
             "transform": {
                 "anchor": 6,
@@ -1343,6 +1377,7 @@
             "animClips": [],
             "children": [
                 {
+                    "alive": true,
                     "instanceName": "bg",
                     "transform": {
                         "anchor": 9,
@@ -1377,6 +1412,7 @@
                     "textureTag": "BossBg.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossIcon",
                     "transform": {
                         "anchor": 9,
@@ -1411,6 +1447,7 @@
                     "textureTag": "IconMonster_SacrificeBringer.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossHpBg",
                     "transform": {
                         "anchor": 9,
@@ -1445,6 +1482,7 @@
                     "textureTag": "BossHPBg.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossHpBack",
                     "transform": {
                         "anchor": 9,
@@ -1484,6 +1522,7 @@
                     }
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossHpFront",
                     "transform": {
                         "anchor": 9,
@@ -1523,6 +1562,7 @@
                     }
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossGroggyBg",
                     "transform": {
                         "anchor": 9,
@@ -1557,6 +1597,7 @@
                     "textureTag": "BossFillBg.png"
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossGroggy",
                     "transform": {
                         "anchor": 9,
@@ -1596,6 +1637,7 @@
                     }
                 },
                 {
+                    "alive": true,
                     "instanceName": "bossGroggyText",
                     "transform": {
                         "anchor": 1,
@@ -1644,584 +1686,6 @@
                             0.0
                         ]
                     }
-                }
-            ],
-            "typeTag": "CanvasPanel"
-        },
-        {
-            "instanceName": "skills",
-            "transform": {
-                "anchor": 10,
-                "anchorOffset": [
-                    -424.0,
-                    -245.0
-                ],
-                "size": [
-                    424.0,
-                    245.0
-                ],
-                "scale": [
-                    1.0,
-                    1.0
-                ],
-                "pivot": [
-                    0.0,
-                    0.0
-                ],
-                "radian": 0.0
-            },
-            "color": [
-                1.0,
-                1.0,
-                1.0,
-                1.0
-            ],
-            "pass": "Opaque",
-            "animClips": [],
-            "children": [
-                {
-                    "instanceName": "normal",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -424.0,
-                            -128.0
-                        ],
-                        "size": [
-                            72.0,
-                            108.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "instanceName": "bg",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "bg.png"
-                        },
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillBtnAOutline.png"
-                        },
-                        {
-                            "instanceName": "icon",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -27.0,
-                                    9.0
-                                ],
-                                "size": [
-                                    54.0,
-                                    54.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillBtnAImg.png"
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "instanceName": "evade",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -332.0,
-                            -129.0
-                        ],
-                        "size": [
-                            72.0,
-                            108.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "instanceName": "bg",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "bg.png"
-                        },
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -31.0,
-                                    5.0
-                                ],
-                                "size": [
-                                    62.0,
-                                    62.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillBtnD.png"
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "instanceName": "special",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -242.0,
-                            -130.0
-                        ],
-                        "size": [
-                            72.0,
-                            108.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "bg.png"
-                        },
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -31.0,
-                                    5.0
-                                ],
-                                "size": [
-                                    62.0,
-                                    62.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillBtnBranch2.png"
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "instanceName": "switch",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -154.0,
-                            -130.0
-                        ],
-                        "size": [
-                            72.0,
-                            108.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "bg.png"
-                        },
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -31.0,
-                                    5.0
-                                ],
-                                "size": [
-                                    62.0,
-                                    62.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillSwitch.png"
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "instanceName": "ultimate",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -154.0,
-                            -245.0
-                        ],
-                        "size": [
-                            72.0,
-                            108.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -36.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    72.0,
-                                    72.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                0.0941176488995552,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "bg.png"
-                        },
-                        {
-                            "instanceName": "Image",
-                            "transform": {
-                                "anchor": 4,
-                                "anchorOffset": [
-                                    -31.0,
-                                    5.0
-                                ],
-                                "size": [
-                                    62.0,
-                                    62.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "SkillBtnUlt.png"
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
                 }
             ],
             "typeTag": "CanvasPanel"

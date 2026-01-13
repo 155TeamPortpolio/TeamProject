@@ -814,17 +814,24 @@ void CResourceMgr::GetPreloadProgress(_uint& outDone, _uint& outTotal) const
 	m_pPreloader->GetProgress(outDone, outTotal);
 }
 
+_bool CResourceMgr::isLoadComplete() const
+{
+	return m_pPreloader->IsAllDone();
+}
 
 string CResourceMgr::MakePath(const string& pathKey)
 {
-	auto iter = m_KeyPath.find(pathKey);
-	if (iter != m_KeyPath.end()) {
-		return iter->second;
-	}
+	lock_guard<mutex> lockGuard(m_keyPathMutex);
+
+	auto it = m_KeyPath.find(pathKey);
+	if (it != m_KeyPath.end())
+		return it->second;
+
 	string msg = "Cant Find Path: " + pathKey + "\n";
 	OutputDebugStringA(msg.c_str());
-	return string();
+	return {};
 }
+
 
 
 CResourceMgr* CResourceMgr::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
