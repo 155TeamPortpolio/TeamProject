@@ -49,7 +49,7 @@ private:
     void         Process_EndState(const string& strCurrentState);
 
 private: /* Passion */
-    COMBATSTATE             m_eCombatState = COMBATSTATE::PASSION;
+    COMBATSTATE             m_eCombatState = COMBATSTATE::NORMAL;
     _bool                   m_bPassionSkillAvailable = false;
     _float                  m_fPassionGauge = 0.f;
     static constexpr _float MAX_PASSIONGAUGE = 100.f;
