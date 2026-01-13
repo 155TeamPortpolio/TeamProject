@@ -86,7 +86,7 @@ void CUI_EvadeAction::Update(_float dt)
         desc.fFillAmount = 0.55f;
         EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     }
-
+    
     if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
     {
         UI_ACTION_DESC desc = {};
@@ -94,7 +94,7 @@ void CUI_EvadeAction::Update(_float dt)
         desc.eState = UI_ACTION_STATE::DISABLE;
         EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     }
-
+    
     if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
     {
         UI_ACTION_DESC desc = {};

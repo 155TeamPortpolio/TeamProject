@@ -6,7 +6,7 @@ NS_BEGIN(Client)
 class CUI_UltimateAction final : public CUI_Object
 {
 private:
-	enum class CHILD { GROUP1, BG, UV, GROUP2, BLACK, STAR, Q, END };
+	enum class CHILD { GROUP1, BG, UV, GROUP2, BLACK, STAR, STAR1, STAR2, Q, END };
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 

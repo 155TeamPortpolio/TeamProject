@@ -62,43 +62,43 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 void CUI_PrimaryAction::Update(_float dt)
 {
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-    //{
-    //    UI_ACTION_PRIMARY_DESC desc = {};
-    //    desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
-    //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-    //{
-    //    UI_ACTION_PRIMARY_DESC desc = {};
-    //    desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
-    //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
-    //    desc.eState = UI_ACTION_STATE::DISABLE;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
-    //    desc.eState = UI_ACTION_STATE::ENABLE;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
-    //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
-    //{
-    //    UI_ACTION_DESC desc = {};
-    //    desc.eType = UI_ACTION_TYPE::PRIMARY;
-    //    desc.eState = UI_ACTION_STATE::AVAILABLE;
-    //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-    //}
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('L'))
+    {
+        UI_ACTION_PRIMARY_DESC desc = {};
+        desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
+        EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+    }
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('K'))
+    {
+        UI_ACTION_PRIMARY_DESC desc = {};
+        desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
+        EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
+    }
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    {
+        UI_ACTION_DESC desc = {};
+        desc.eType = UI_ACTION_TYPE::PRIMARY;
+        desc.eState = UI_ACTION_STATE::DISABLE;
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    {
+        UI_ACTION_DESC desc = {};
+        desc.eType = UI_ACTION_TYPE::PRIMARY;
+        desc.eState = UI_ACTION_STATE::ENABLE;
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
+    
+    if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+    {
+        UI_ACTION_DESC desc = {};
+        desc.eType = UI_ACTION_TYPE::PRIMARY;
+        desc.eState = UI_ACTION_STATE::AVAILABLE;
+        EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+    }
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }

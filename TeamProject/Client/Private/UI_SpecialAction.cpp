@@ -50,37 +50,37 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 void CUI_SpecialAction::Update(_float dt)
 {
 	// 이벤트 테스트 코드
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::DISABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::ENABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::AVAILABLE;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
-	//
-	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-	//{
-	//	UI_ACTION_DESC desc = {};
-	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	//	desc.eState = UI_ACTION_STATE::EXECUTING;
-	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	//}
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::DISABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::ENABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+	{
+		UI_ACTION_DESC desc = {};
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
