@@ -29,7 +29,7 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 	
-	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
 			if (desc.eType != UI_ACTION_TYPE::SPECIAL)
 				return;

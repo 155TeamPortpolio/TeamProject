@@ -23,7 +23,7 @@ HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
     Ready_PartObjects();
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::ALL)
                 return;

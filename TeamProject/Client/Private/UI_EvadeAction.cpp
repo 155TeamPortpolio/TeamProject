@@ -31,7 +31,7 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
         m_hChildren[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::EVADEPERFECT)
                 return;
@@ -48,7 +48,7 @@ HRESULT CUI_EvadeAction::Initialize(INIT_DESC* pArg)
         });
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::EVADE)
                 return;
