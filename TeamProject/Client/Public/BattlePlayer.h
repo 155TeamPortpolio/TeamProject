@@ -73,6 +73,7 @@ private:
     void    Process_Switch();
     _bool   Can_Switch() const;
     void    Update_Target();
+    void    Update_Status();
 
 private:
     HRESULT      Initialize_CharacterPrototype();

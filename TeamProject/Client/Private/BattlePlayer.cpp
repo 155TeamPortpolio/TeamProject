@@ -103,9 +103,7 @@ void CBattlePlayer::Update(_float dt)
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	
-
-	_float CurHP = m_pCurrentCharacter->Get_HP();
-	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
+	Update_Status();
 }
 
 void CBattlePlayer::Late_Update(_float dt)
@@ -266,6 +264,26 @@ void CBattlePlayer::Update_Target()
 		}
 	}
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+}
+
+void CBattlePlayer::Update_Status()
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
+		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
+		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	{
+		CCharacter* pCharacter = tempQueue.front().second;
+		tempQueue.pop();
+
+		UI_PLAYER_STATUS_DESC desc;
+		desc.eOwner = eOwner;
+		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
+		desc.special = { pCharacter->Get_GaugeDesc().fCurrentGauge, pCharacter->Get_MaxGauge() };
+		desc.ultimate = { pCharacter->Get_Decibel(), pCharacter->Get_MaxDecibel() };
+
+		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
+	}
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
