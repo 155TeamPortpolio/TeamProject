@@ -1,39 +1,33 @@
 #pragma once
 
+#include "GameObject.h"
 #include "Component.h"
-#include "Transform.h"
 #include "CamUtil.h"
 
 NS_BEGIN(Engine)
 
-struct Lens
-{
-	_float fov{};
-	_float zNear{};
-	_float zFar{};
-	_float aspect{};
-};
-
 class ENGINE_DLL CCamera final : public CComponent
 {
 private:
-	CCamera() = default;
+	CCamera() DEFAULT;
 	CCamera(const CCamera& rhs) : CComponent(rhs) {}
-	~CCamera() = default;
+	~CCamera() DEFAULT;
 
 public:
 	HRESULT Initialize_Prototype()           override { return S_OK; }
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
-	Matrix      Get_ViewMatrix() const;
-	Matrix      Get_ProjMatrix() const;			
-	_vector     Get_Pos()        const;
-	_float      Get_FOV()        const { return m_lens.fov;    }
-	_float      Get_Near()       const { return m_lens.zNear;  }
-	_float      Get_Far()        const { return m_lens.zFar;   }
-	_float      Get_Aspect()     const { return m_lens.aspect; }
-	CamProjType Get_ProjType()   const { return m_projType;    }
+	Matrix        Get_ViewMatrix()  const;
+	Matrix        Get_ProjMatrix()  const;			
+	_vector       Get_Pos()         const;
+	_float        Get_FOV()         const { return m_lens.fov;    }
+	_float        Get_Near()        const { return m_lens.zNear;  }
+	_float        Get_Far()         const { return m_lens.zFar;   }
+	_float        Get_Aspect()      const { return m_lens.aspect; }
+	CamProjType   Get_ProjType()    const { return m_projType;    }
+	OBJECT_HANDLE Get_OwnerHandle() const { return m_pOwner->Get_Handle(); }
+	_float        Get_OrthoSize()   const { return m_orthoSize; }
 
 	void        Set_FOV(_float fov)                { m_lens.fov    = fov;      }
 	void        Set_Far(_float zFar)               { m_lens.zFar   = zFar;     }
@@ -57,8 +51,7 @@ private:
 	Vector3     m_viewOffset{};
 
 public:
-	static CCamera* Create();
+	static  CCamera*    Create();
 	virtual CComponent* Clone() { return new CCamera(*this); }
-	void Free() override { __super::Free(); }
 };
 NS_END

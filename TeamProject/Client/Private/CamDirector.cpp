@@ -11,14 +11,12 @@ IMPLEMENT_SINGLETON(CCamDirector)
 
 CGameObject* CCamDirector::GetCamObj(CamType type) const
 {
-	OBJECT_HANDLE handle = m_camHandles[ENUM(type)];
-	return handle.isValid() ? ObjectManager()->Request_Object(handle) : nullptr;
+	return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
 }
 
-CCamera* CCamDirector::GetCamComp(CamType type) const
+CGameObject* CCamDirector::GetSeqObj() const
 {
-	auto obj = GetCamObj(type);
-	return obj ? obj->Get_Component<CCamera>() : nullptr;
+	return GetCamObj(CamType::Sequence);
 }
 
 _bool CCamDirector::Register(const string& key, const filesystem::path& path)
@@ -42,15 +40,12 @@ void CCamDirector::Update(_float dt)
 {
 	if (!m_playing.active) return;
 
-	auto seqObj    = GetCamObj(CamType::Sequence);
+	auto seqObj    = GetSeqObj();
 	auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
 
 	if (m_playing.pendingStart)
 	{
 		m_playing.blendInRemain -= dt;
-
-		if (m_playing.resetTimeOnStart)
-			seqPlayer->SetTime(0.f);
 
 		if (m_playing.blendInRemain <= 0.f)
 		{
@@ -73,8 +68,9 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 
 	auto& entry = m_seqs.at(key);
 
-	auto seqObj = GetCamObj(CamType::Sequence);
+	auto seqObj    = GetSeqObj();
 	auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+	auto seqCam    = seqObj->Get_Component<CCamera>();
 
 	seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -88,26 +84,27 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 	if (resetTime)
 		seqPlayer->SetTime(0.f);
 
-	auto camComp = seqObj->Get_Component<CCamera>();
-
 	if (entry.seqDesc.space == CamSpace::Local)
 	{
 		auto refObj = ObjectManager()->Request_Object(m_spaceRefHandle);
 		auto cc = refObj->Get_Component<CCharacterController>();
-		camComp->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
+		seqCam->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
 	}
 	else
-		camComp->Clear_ViewOffset();
+		seqCam->Clear_ViewOffset();
 
-	const _uint handle = CameraManager()->Push(camComp, blendInSec);
+	const _uint handle = CameraManager()->Push(seqCam, blendInSec);
 
-	m_playing.handle             = handle;
-	m_playing.key                = key;
-	m_playing.active             = true;
+	m_playing.handle = handle;
+	m_playing.key = key;
+	m_playing.active = true;
 	m_playing.defaultBlendOutSec = blendOutSec;
-	m_playing.pendingStart       = (blendInSec > 0.f);
-	m_playing.blendInRemain      = blendInSec;
-	m_playing.resetTimeOnStart   = resetTime;
+	m_playing.pendingStart = (blendInSec > 0.f);
+	m_playing.blendInRemain = blendInSec;
+
+	m_playing.returnCamType = m_defaultReturnCamType;
+	if (m_defaultReturnCamType != CamType::None)
+		m_playing.returnCamHandle = GetCamHandle(m_defaultReturnCamType);
 
 	if (m_playing.pendingStart)
 		seqPlayer->Pause();
@@ -125,20 +122,22 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 	Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
 	outRot.Normalize();
 
-	auto seqObj = GetCamObj(CamType::Sequence);
+	auto seqObj    = GetSeqObj();
 	auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+	auto seqCam    = seqObj->Get_Component<CCamera>();
+
 	seqPlayer->SetApplyEnabled(false);
 	seqPlayer->Stop(false);
 
 	if (resetTime)
 		seqPlayer->SetTime(0.f);
 
-	if (m_returnCamType != CamType::None)
+	if (m_playing.returnCamType != CamType::None)
 	{
-		auto returnObj = GetCamObj(m_returnCamType);
-		auto viewOffset = seqObj->Get_Component<CCamera>()->Get_ViewOffset();
+		auto returnObj = ObjectManager()->Request_Object(m_playing.returnCamHandle);
+		const Vector3 viewOffset = seqCam->Get_ViewOffset();
 
-		if (m_returnCamType == CamType::Orbit)
+		if (m_playing.returnCamType == CamType::Orbit)
 		{
 			returnObj->Get_Component<CCamera>()->Set_ViewOffset(viewOffset);
 
@@ -154,5 +153,6 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 
 void CCamDirector::StopAll(_float blendOutSec)
 {
+	if (!m_playing.active) return;
 	StopRequest(m_playing.handle, blendOutSec, true);
 }
