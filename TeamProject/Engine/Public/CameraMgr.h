@@ -100,7 +100,7 @@ private:
 
 private:
     void         SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
-    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle);
+    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle) { m_shadowCamObj = camObjHandle; }
     _uint        PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
 
 private:

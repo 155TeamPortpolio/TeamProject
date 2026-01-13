@@ -219,7 +219,7 @@ void CTestLevel::Update()
 	}
 
 	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
+		m_pCamDirector->RequestSequence("Intro_4", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 

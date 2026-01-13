@@ -53,11 +53,6 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     BeginBlendTo(m_baseCamObj, blendSec);
 }
 
-void CCameraMgr::SetShadowCamObj(OBJECT_HANDLE camObjHandle)
-{
-    m_shadowCamObj = camObjHandle;
-}
-
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
 {
     const _uint handle = m_nextHandle++;
@@ -146,14 +141,18 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 
 void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 {
-    m_isBlending     = (blendSec > 0.f);
-    m_blendTime      = 0.f;
-    m_blendDuration  = blendSec;
-    m_blendFrom      = m_outputPose;
+    m_isBlending = (blendSec > 0.f);
+    m_blendTime = 0.f;
+    m_blendDuration = blendSec;
+    m_blendFrom = m_outputPose;
     m_blendTargetObj = targetObj;
 
     if (!m_isBlending)
-        m_outputPose = CapturePose(ResolveCam(m_blendTargetObj));
+    {
+        auto cam = ResolveCam(m_blendTargetObj);
+        if (cam)
+            m_outputPose = CapturePose(cam);
+    }
 }
 
 void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
@@ -268,7 +267,9 @@ void CCameraMgr::Update(_float dt)
 
     ApplyShake(m_outputPose, dt);
     ApplyCache(main, m_outputPose);
-    UpdateShadowCache();
+
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
 
 Lens CCameraMgr::Get_Lens() const
