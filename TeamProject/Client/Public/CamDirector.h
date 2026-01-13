@@ -20,12 +20,10 @@ private:
 
 public:
     void SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
+    void SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
+    void SetReturnCam(CamType type)                 { m_defaultReturnCamType   = type; }
+    void ClearReturnCam()                           { m_defaultReturnCamType   = CamType::None; }
     void ClearCam(CamType type)                     { m_camHandles[ENUM(type)].Reset(); }
-
-public:
-    void SetSpaceRef(OBJECT_HANDLE handle) { m_spaceRefHandle       = handle; }
-    void SetReturnCam(CamType type)        { m_defaultReturnCamType = type; }
-    void ClearReturnCam()                  { m_defaultReturnCamType = CamType::None; }
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)]; }
 

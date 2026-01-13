@@ -6,6 +6,8 @@
 #include "GUIUtil.h"
 #include "Helper_Func.h"
 
+#include "EventListener.h"
+
 namespace
 {
     using Profile = COrbitCam::Profile;
@@ -57,9 +59,7 @@ namespace
 
 void COrbitCam::Awake()
 {
-    //CCÀÌÁö¶ö¤»
     auto cc = Get_Component<CCharacterController>();
-    //Á¦Çö¾Æ free() »©¸Ô¾ú´Ù.
 
     cc->Resize(0.2f, 0.2f);
     cc->Set_GravityEnabled(false);
@@ -71,7 +71,8 @@ void COrbitCam::Awake()
 HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    Add_Component<CCharacterController>();
+    auto cc            = Add_Component<CCharacterController>();
+    auto eventListener = Add_Component<CEventListener>();
    
     SetPreset(preset);
     
@@ -107,39 +108,46 @@ void COrbitCam::SetTarget(CGameObject* obj)
 {
     targetHandle = obj->Get_Handle();
 
+    autoYawHoldTimer = profile.autoYawFollowDelay;
+    hasPrevTargetFoot = false;
+
     if (firstSnap)
     {
+        pose.pivotOverrideOffset = Vector3::Zero;
         SetTargetFrontView(obj, profile.startDistance, profile.startPitchDeg, profile.startHeightOffset);
         firstSnap = false;
         return;
     }
 
+    pose.pivotOverrideOffset = Vector3::Zero;
+
     const Vector3 pivot = GetPivotTargetPos();
     pose.targetPivot = pivot;
     pose.curPivot = pivot;
 
-    auto cc = Get_Component<CCharacterController>();
-    const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
-    const Vector3 camPos((float)c.x, (float)c.y, (float)c.z);
+    pose.targetRotDeg = pose.curRotDeg;
 
-    Vector3 toPivot = pivot - camPos;
-    float dist = toPivot.Length();
+    float dist = pose.curDist;
+    dist = clamp(dist, profile.minDist, profile.maxDist);
 
     pose.curDist = dist;
     pose.targetDist = dist;
 
-    toPivot /= dist;
+    const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
+    const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
+    const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
 
-    const float yawRad = atan2f(toPivot.x, toPivot.z);
-    const float pitchRad = asinf(clamp(-toPivot.y, -1.f, 1.f));
+    const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+    const Vector3 camPos = pivot + backDir * dist;
 
-    pose.curRotDeg.x = XMConvertToDegrees(yawRad);
-    pose.curRotDeg.y = XMConvertToDegrees(pitchRad);
+    auto cc = Get_Component<CCharacterController>();
+    cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
-    pose.targetRotDeg = pose.curRotDeg;
-
-    ClampTargets();
+    const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
+    m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
+    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
+
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {

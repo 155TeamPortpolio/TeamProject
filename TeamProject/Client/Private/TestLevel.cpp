@@ -308,6 +308,7 @@ void CTestLevel::Ready_Camera()
 
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 
 	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)
