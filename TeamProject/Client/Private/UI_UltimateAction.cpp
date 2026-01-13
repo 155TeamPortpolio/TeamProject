@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "q" };
+const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "star3", "q" };
 
 HRESULT CUI_UltimateAction::Initialize_Prototype()
 {
@@ -105,6 +105,7 @@ void CUI_UltimateAction::Execute()
     Set_Animation(CHILD::STAR, 0);
     Set_Animation(CHILD::STAR1, 0);
     Set_Animation(CHILD::STAR2, 0);
+    Set_Animation(CHILD::STAR3, 0);
 }
 
 void CUI_UltimateAction::Refresh_Visual()
