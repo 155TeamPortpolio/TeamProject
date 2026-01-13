@@ -18,7 +18,7 @@ public:
 
 public:
 	template <typename T>
-	void Add_Listner(function<void(const T&)> callback);
+	void Add_Listener(function<void(const T&)> callback);
 	void Clear(){m_Handles.clear(); }
 
 public:
@@ -37,7 +37,7 @@ public:
 };
 
 template<typename T>
-inline void CEventListener::Add_Listner(function<void(const T&)> callback)
+inline void CEventListener::Add_Listener(function<void(const T&)> callback)
 {
 	if (!m_pSystem) return;
 	CGameObject* owner = Get_Owner(); 

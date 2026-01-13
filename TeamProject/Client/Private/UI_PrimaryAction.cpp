@@ -29,7 +29,7 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
         m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
     // 모드 변경 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
         {
             switch (desc.eMode)
             {
@@ -43,7 +43,7 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
         });
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::PRIMARY)
                 return;
