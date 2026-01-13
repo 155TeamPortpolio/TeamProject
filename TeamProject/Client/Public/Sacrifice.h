@@ -74,6 +74,7 @@ public:
     void Active_AttackSign()override;
 
 private:
+    void Create_Children();
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
@@ -93,6 +94,9 @@ private:
     PHASE m_eCurrPhase = PHASE::PHASE1;
     _bool m_IsOverDrive = false; /* Only Use Phase2 */
     _bool m_IsOverDriveCharged = false;
+
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
 
     _uint m_iHandID{};
 
