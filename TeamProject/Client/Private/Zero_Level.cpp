@@ -2,6 +2,8 @@
 #include "Zero_Level.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "IStage.h"
+#include "ZeroStage_Boss.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -12,6 +14,7 @@ CZero_Level::CZero_Level(const string& LevelKey)
 
 HRESULT CZero_Level::Initialize()
 {
+	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
 	return S_OK;
 }
 
@@ -27,12 +30,12 @@ void CZero_Level::Update()
 
 HRESULT CZero_Level::Render()
 {
-	SetWindowText(g_hWnd, TEXT("Welcome To TestLevel"));
 	return S_OK;
 }
 
 void CZero_Level::PreLoad_Level()
 {
+	/*여기에 Add ResourcePath 넣기*/
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)

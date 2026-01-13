@@ -9,7 +9,6 @@ protected:
     ~IStage() DEFAULT;
 
 public:
-	virtual HRESULT Initialize() PURE;
 	virtual HRESULT Awake()PURE;
 	virtual void    Update()PURE;
 	virtual HRESULT Render()PURE;

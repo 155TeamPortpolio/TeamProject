@@ -1136,6 +1136,9 @@
     <ClInclude Include="..\Public\IStage.h">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Boss.h">
+      <Filter>01. Level\04. Zero\Stage_Boss</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1658,6 +1661,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\IStage.cpp">
       <Filter>01. Level\04. Zero\Stage_Super</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ZeroStage_Boss.cpp">
+      <Filter>01. Level\04. Zero\Stage_Boss</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

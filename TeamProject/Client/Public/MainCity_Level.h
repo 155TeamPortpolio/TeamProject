@@ -24,6 +24,7 @@ public:
 private:
 	void ReadyMap();
 	void ReadyCamera();
+	void ReadyShadowCamera();
 private:
 	CGameInstance* m_pGameInstance={nullptr};
 	class CCamDirector* m_pCamDirector = { nullptr };
