@@ -33,15 +33,15 @@ HRESULT CCorin::Initialize_Prototype()
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin.model",
-		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin.model");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin.mat",
-		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin.json",
-		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin_Meta.json");
+	pRcsMgr->Add_ResourcePath("Corin.model",
+		"../Bin/Resources/Model/skeletal/Corin/Corin.model");
+	pRcsMgr->Add_ResourcePath("Corin.mat",
+		"../Bin/Resources/Model/skeletal/Corin/Corin.mat");
+	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Corin_Meta.json",
+		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size02_Corin_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size01_Corin.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size01_Corin.mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "Corin.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "Corin.mat");
 
 	return S_OK;
 }
@@ -61,10 +61,10 @@ void CCorin::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size01_Corin.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size01_Corin.json");
+	m_pAnimator->LinkAnimate_Model("Test_Level", "Corin.model");
+	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size02_Corin_Meta.json");
 
-	m_pAnimator->Set_MotionBone(12);
+	//m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	//*name change*
