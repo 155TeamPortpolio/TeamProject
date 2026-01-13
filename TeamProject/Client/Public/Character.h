@@ -41,10 +41,10 @@ public:
         _float fRotateSpeed = 10.f;
     };
 
-private:
     struct GaugeDesc
     {
         _float      fCurrentGauge = { 0.f };
+        _float      fPrevGauge = { 0.f };
         _float      fGaugeWeight = { 1.f };
         _float      fSpecialGauge = { 60.f };
         void        Set_CurrentGauge(_float fGauge) { fCurrentGauge = fGauge; }
@@ -156,10 +156,9 @@ protected:
     string                m_strName = "";       //*캐릭터 이름*
 
     // 스탯
-    GaugeDesc   m_tGauge;
+    GaugeDesc   m_tGauge = {};
     static  constexpr _float    MAX_SPECIALGAUGE = { 120.f };
     
-
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
     _float          m_fMaxEnergy = { 100.f };

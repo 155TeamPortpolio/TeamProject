@@ -87,10 +87,10 @@ private:
     vector<OBJECT_HANDLE>                           m_CharacterHandles{};
     OBJECT_HANDLE                                   m_TargetHandle;
 
-    InputState  m_input;
-    _uint       m_iParryingCount = 6;
-    _bool       m_bIsParrying = { false };
-    _float      m_fSwitchCooldown = { 0.f };
+    InputState   m_input;
+    _uint        m_iParryingCount = 6;
+    _bool        m_bIsParrying = { false };
+    _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
 

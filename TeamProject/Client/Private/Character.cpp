@@ -310,12 +310,12 @@ void CCharacter::Update_Evade(_float dt)
 
 void CCharacter::Update_Gauge(_float dt)
 {
+	m_tGauge.fPrevGauge = m_tGauge.fCurrentGauge;
 	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
 	{
 		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
-		return;
 	}
-	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt;
+	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt * 10.f;
 }
 
 void CCharacter::Free()

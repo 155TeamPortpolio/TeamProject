@@ -75,6 +75,7 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	/* Evade & EvadePerfect */
 	UI_ACTION_DESC desc{};
 	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
 	{
@@ -90,7 +91,18 @@ void CBattlePlayer::Update(_float dt)
 		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
+	
+	/* Special Gauge */
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	CCharacter::GaugeDesc tGauge = m_pCurrentCharacter->Get_GaugeDesc();
 
+	if (tGauge.fCurrentGauge > tGauge.fSpecialGauge &&
+		tGauge.fPrevGauge <= tGauge.fSpecialGauge)
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
 
 	_float CurHP = m_pCurrentCharacter->Get_HP();
 	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
