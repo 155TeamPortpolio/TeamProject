@@ -209,7 +209,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
-	m_fSpecialGauge = Desc.SpecialAttack;
+	m_tGauge.Set_SpecialGauge(Desc.SpecialAttack);
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;

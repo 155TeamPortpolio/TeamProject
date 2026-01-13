@@ -75,6 +75,23 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	UI_ACTION_DESC desc{};
+	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
+	{
+		desc.eType = UI_ACTION_TYPE::EVADE;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeCooldown() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eType = UI_ACTION_TYPE::EVADE;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+
+
 	_float CurHP = m_pCurrentCharacter->Get_HP();
 	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
 }
@@ -178,14 +195,12 @@ void CBattlePlayer::Process_Attack()
 	}
 }
 
+void CBattlePlayer::Process_SpecialAttack()
+{
+}
+
 void CBattlePlayer::Process_Evade()
 {
-	UI_ACTION_DESC desc{};
-	desc.eType = UI_ACTION_TYPE::EVADE;
-	desc.eState = UI_ACTION_STATE::EXECUTING;
-	desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
-	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 	{
 		m_pCurrentCharacter->On_Evade();

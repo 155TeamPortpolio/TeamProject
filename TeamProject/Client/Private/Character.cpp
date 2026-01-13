@@ -144,6 +144,7 @@ void CCharacter::Update(_float dt)
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
 	if (m_bIsRotating)	Update_Rotation(dt);
+	Update_Gauge(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -307,6 +308,16 @@ void CCharacter::Update_Evade(_float dt)
 			m_iEvadeCount = 0;
 		}
 	}
+}
+
+void CCharacter::Update_Gauge(_float dt)
+{
+	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
+	{
+		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
+		return;
+	}
+	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt;
 }
 
 void CCharacter::Free()

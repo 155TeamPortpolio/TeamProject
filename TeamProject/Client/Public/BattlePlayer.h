@@ -68,6 +68,7 @@ private:
     void    Update_Input(_float dt);
     void    Process_Movement(_float dt);
     void    Process_Attack();
+    void    Process_SpecialAttack();
     void    Process_Evade();
     void    Process_Switch();
     _bool   Can_Switch() const;
