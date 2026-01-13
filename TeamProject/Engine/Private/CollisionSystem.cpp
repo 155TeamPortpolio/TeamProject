@@ -4,6 +4,7 @@
 #include "ICameraService.h"
 #include "Collider.h"
 #include "CharacterController.h"
+#include "RigidBody.h"
 
 #pragma region CALLBACK_FUNCTION
 // Collider
@@ -82,7 +83,6 @@ void CCollisionSystem::Update(_float dt)
 	for (auto& slot : m_Collidables)
 	{
 		if (!slot.pCollidable) continue;
-
 		if (slot.pCollidable->Get_CompActive())
 		{
 			if (slot.eState == COLLIDABLE_SLOT::STATE::INACTIVE)
@@ -90,12 +90,14 @@ void CCollisionSystem::Update(_float dt)
 				slot.eState = COLLIDABLE_SLOT::STATE::ACTIVE;
 				slot.pCollidable->Get_CurrentCollisions().clear();
 				slot.pCollidable->Get_PreviousCollisions().clear();
+				Check_Initial_Overlap(slot.pCollidable);
 			}
 		}
 		else
 		{
 			if (slot.eState == COLLIDABLE_SLOT::STATE::ACTIVE)
 			{	// 비활성화 시 충돌목록 초기화
+				Exit_TriggerCollisions(slot.pCollidable);
 				slot.eState = COLLIDABLE_SLOT::STATE::INACTIVE;
 				slot.pCollidable->Get_CurrentCollisions().clear();
 				slot.pCollidable->Get_PreviousCollisions().clear();
@@ -117,6 +119,7 @@ void CCollisionSystem::Late_Update(_float dt)
 #ifdef USE_MULTITHREAD_PHYSICS
 	lock_guard<recursive_mutex> lock(m_SlotMutex);
 #endif
+	Stay_TriggerCollisions();
 	Process_CollisionEvents();
 	Remove_DeactiveSlots();
 	Clean_DeadSlots();
@@ -368,6 +371,18 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		if (pairs[i].otherShape->userData)
 		{
 			pOther = static_cast<ICollidable*>(pairs[i].otherShape->userData);
+		}
+		else if (pairs[i].otherActor && pairs[i].otherActor->userData)
+		{
+			// CCT의 경우 Actor에 GameObject가 저장되어 있음
+			CGameObject* pOwner = static_cast<CGameObject*>(pairs[i].otherActor->userData);
+			pOther = pOwner ? pOwner->Get_Component<CCharacterController>() : nullptr;
+			if (!pOther)
+				pOther = pOwner ? pOwner->Get_Component<CCollider>() : nullptr;
+		}
+
+		if (pOther)
+		{
 			idxOther = pOther->Get_SlotIndex();
 			if (!Is_SlotActive(idxOther))
 				pOther = nullptr;
@@ -376,21 +391,31 @@ void CCollisionSystem::Process_Trigger(PxTriggerPair* pairs, PxU32 count)
 		if (!pTrigger || !pOther) continue;
 		if (!pTrigger->Get_CompActive() || !pOther->Get_CompActive()) continue;
 
+		auto& triggerCurrent = pTrigger->Get_CurrentCollisions();
+		auto& otherCurrent = pOther->Get_CurrentCollisions();
+
 		if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_FOUND)
 		{
 			pTrigger->OnTriggerEnter(pOther);
 
-			// Enter 후 재검증
 			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
 				continue;
 
 			pOther->OnTriggerEnter(pTrigger);
+
+			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
+				continue;
+
+			triggerCurrent.insert(pOther);
+			otherCurrent.insert(pTrigger);
 		}
 		else if (pairs[i].status == PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{
+			triggerCurrent.erase(pOther);
+			otherCurrent.erase(pTrigger);
+
 			pTrigger->OnTriggerExit(pOther);
 
-			// Exit 후 재검증
 			if (!Is_SlotActive(idxTrigger) || !Is_SlotActive(idxOther))
 				continue;
 
@@ -459,6 +484,8 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 			if (otherPrevious.find(pCCT) == otherPrevious.end())
 			{
 				pOther->OnTriggerEnter(pCCT);
+				if (!Is_SlotActive(idxCCT) || !Is_SlotActive(idxOther))
+					return;
 			}
 		}
 
@@ -642,15 +669,13 @@ void CCollisionSystem::Process_CollisionEvents()
 				else
 				{
 					pCollidable->OnCollisionExit(pOther);
+					// 일반 충돌만 상대방 Current/Previous 제거
+					if (Is_SlotActive(otherIdx))
+					{
+						pOther->Get_CurrentCollisions().erase(pCollidable);
+						pOther->Get_PreviousCollisions().erase(pCollidable);
+					}
 				}
-
-				// Exit 호출 후 상대방의 충돌 목록에서도 즉시 제거
-				if (Is_SlotActive(otherIdx))
-				{
-					pOther->Get_CurrentCollisions().erase(pCollidable);
-					pOther->Get_PreviousCollisions().erase(pCollidable);
-				}
-
 				if (!slot.IsActive() || !pCollidable->Get_Owner())
 					break;
 			}
@@ -675,19 +700,186 @@ void CCollisionSystem::Process_CollisionEvents()
 			if (!otherSlot.IsActive()) continue;
 			if (!pOther->Get_Owner()) continue;
 
-			// Previous에도 있으면 Stay
+			// Previous에도 있으면 Stay (Enter 다음 프레임부터)
 			if (previous.find(pOther) != previous.end())
 			{
 				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (!pCollider || !pCollider->IsTrigger())
+				if (pCollider && pCollider->IsTrigger())
 				{
+					// 트리거는 여기서 Stay 처리 (TOUCH_PERSISTS 미지원)
+					pCollidable->OnTriggerStay(pOther);
+				}
+				else
+				{
+					// 일반 충돌 Stay
 					pCollidable->OnCollisionStay(pOther);
+				}
 
-					if (!slot.IsActive() || !pCollidable->Get_Owner())
-						break;
+				if (!slot.IsActive() || !pCollidable->Get_Owner())
+					break;
+			}
+		}
+	}
+}
+
+void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
+{
+	if (!pCollidable) return;
+
+	// Actor 가져오기 (CCollider 또는 CCT)
+	PxRigidActor* pActor = nullptr;
+	_bool bIsTrigger = false;
+
+	if (auto pCollider = dynamic_cast<CCollider*>(pCollidable))
+	{
+		pActor = pCollider->Get_PxActor();
+		bIsTrigger = pCollider->IsTrigger();
+	}
+	else if (auto pCCT = dynamic_cast<CCharacterController*>(pCollidable))
+	{
+		pActor = pCCT->Get_PxActor();
+		bIsTrigger = false; // CCT
+	}
+
+	if (!pActor) return;
+
+	// CCT와 트리거검사 : 일반Collider는 Persist로 대응
+	if (!bIsTrigger && !dynamic_cast<CCharacterController*>(pCollidable))
+		return;
+
+	PxScene* pScene = pActor->getScene();
+	if (!pScene) return;
+
+	PxShape* shapes[16];
+	PxU32 nShapes = pActor->getShapes(shapes, 16);
+	for (PxU32 i = 0; i < nShapes; ++i)
+	{
+		PxShape* pShape = shapes[i];
+		if (!pShape) continue;
+
+		// 트리거가 활성화된 경우: 트리거 쉐이프만 검사
+		// CCT가 활성화된 경우: CCT 쉐이프(보통 Trigger flag 없음)로 검사
+		if (bIsTrigger && !(pShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
+			continue;
+
+		PxGeometryHolder geom = pShape->getGeometry();
+		PxTransform globalPose = PxShapeExt::getGlobalPose(*pShape, *pActor);
+
+		const PxU32 bufferSize = 32;
+		PxOverlapHit hitBuffer[bufferSize];
+		PxOverlapBuffer buf(hitBuffer, bufferSize);
+
+		PxQueryFilterData filterData;
+		filterData.flags = PxQueryFlag::eDYNAMIC | PxQueryFlag::eSTATIC;
+
+		if (pScene->overlap(geom.any(), globalPose, buf, filterData))
+		{
+			for (PxU32 k = 0; k < buf.nbTouches; ++k)
+			{
+				PxActor* pOtherActor = buf.touches[k].actor;
+				PxShape* pOtherShape = buf.touches[k].shape;
+
+				if (pOtherActor == pActor) continue;
+
+				// 형변환
+				PxRigidActor* pOtherRigidActor = pOtherActor->is<PxRigidActor>();
+				if (!pOtherRigidActor) continue;
+
+				ICollidable* pOtherCollidable = Get_Collidable_Shape(pOtherShape, pOtherRigidActor);
+				if (!pOtherCollidable) continue;
+
+				_int idxOther = pOtherCollidable->Get_SlotIndex();
+				if (!Is_SlotActive(idxOther)) continue;
+
+				// 상대방이 트리거인지 확인
+				// 내가 트리거라면 -> 누구든 들어오면 Enter
+				// 내가 CCT라면 -> 상대가 트리거일 때만 Enter (일반 벽이랑은 물리 충돌 하니까 제외)
+				CCollider* pOtherCol = dynamic_cast<CCollider*>(pOtherCollidable);
+				_bool bOtherIsTrigger = (pOtherCol && pOtherCol->IsTrigger());
+
+				if (!bIsTrigger && !bOtherIsTrigger) continue; // 둘 다 일반 콜라이더면 패스
+
+				// 강제 Enter 처리
+				auto& current = pCollidable->Get_CurrentCollisions();
+				if (current.find(pOtherCollidable) == current.end())
+				{
+					// 로직상 Trigger Enter 호출
+					if (bIsTrigger) pCollidable->OnTriggerEnter(pOtherCollidable);
+					else pCollidable->OnCollisionEnter(pOtherCollidable); // 상대가 트리거면 TriggerEnter로 유도됨
+
+					// 리스트 등록
+					current.insert(pOtherCollidable);
+
+					// 상대방 처리
+					auto& otherCurrent = pOtherCollidable->Get_CurrentCollisions();
+					if (otherCurrent.find(pCollidable) == otherCurrent.end())
+					{
+						otherCurrent.insert(pCollidable);
+						if (bOtherIsTrigger) pOtherCollidable->OnTriggerEnter(pCollidable);
+					}
 				}
 			}
 		}
+	}
+}
+
+void CCollisionSystem::Stay_TriggerCollisions()
+{
+	for (auto& slot : m_Collidables)
+	{
+		if (!slot.IsActive()) continue;
+
+		CCollider* pCollider = dynamic_cast<CCollider*>(slot.pCollidable);
+		if (!pCollider || !pCollider->IsTrigger()) continue;
+
+		// 트리거의 Current 목록
+		auto& triggerCurrent = pCollider->Get_CurrentCollisions();
+
+		// 상대방의 Current에 트리거 다시 추가
+		for (auto pOther : triggerCurrent)
+		{
+			if (!pOther) continue;
+			if (!Is_SlotActive(pOther->Get_SlotIndex())) continue;
+
+			auto& otherCurrent = pOther->Get_CurrentCollisions();
+			otherCurrent.insert(pCollider);  // 다시 추가!
+		}
+	}
+}
+
+void CCollisionSystem::Exit_TriggerCollisions(ICollidable* pCollidable)
+{
+	if (!pCollidable) return;
+
+	auto& current = pCollidable->Get_CurrentCollisions();
+	vector<ICollidable*> snapshot(current.begin(), current.end());
+
+	for (auto pOther : snapshot)
+	{
+		if (!pOther || !Is_SlotActive(pOther->Get_SlotIndex()))
+			continue;
+
+		// 트리거 여부 확인
+		CCollider* pThisCol = dynamic_cast<CCollider*>(pCollidable);
+		CCollider* pOtherCol = dynamic_cast<CCollider*>(pOther);
+
+		_bool bThisTrigger = (pThisCol && pThisCol->IsTrigger());
+		_bool bOtherTrigger = (pOtherCol && pOtherCol->IsTrigger());
+
+		// 양방향 Exit 호출
+		if (bThisTrigger)
+			pOther->OnTriggerExit(pCollidable);
+		else
+			pOther->OnCollisionExit(pCollidable);
+
+		if (bOtherTrigger)
+			pCollidable->OnCollisionExit(pOther);
+		else
+			pCollidable->OnTriggerExit(pOther);
+
+		// 상대방 목록에서 제거
+		pOther->Get_CurrentCollisions().erase(pCollidable);
+		pOther->Get_PreviousCollisions().erase(pCollidable);
 	}
 }
 

@@ -6,6 +6,9 @@
 #include "TestLevel.h"
 #include "LogoLevel.h"
 #include "LoadingLevel.h"
+#include "MainCity_Level.h"
+#include "Scott_Level.h"
+#include "Zero_Level.h"
 
 #include "UIDirector.h"
 
@@ -66,6 +69,9 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Test_Level", []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Logo_Level", []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
 	m_pGameInstance->Get_LevelMgr()->Register_Level("Loading_Level", []()->CLevel* {return CLoadingLevel::Create("Loading_Level"); });
+	m_pGameInstance->Get_LevelMgr()->Register_Level("MainCity_Level", []()->CLevel* {return CMainCity_Level::Create("MainCity_Level"); });
+	m_pGameInstance->Get_LevelMgr()->Register_Level("Scott_Level", []()->CLevel* {return CScott_Level::Create("Scott_Level"); });
+	m_pGameInstance->Get_LevelMgr()->Register_Level("Zero_Level", []()->CLevel* {return CZero_Level::Create("Zero_Level"); });
 
 	m_pGameInstance->Notify_LevelSet(); 
 	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",false); 

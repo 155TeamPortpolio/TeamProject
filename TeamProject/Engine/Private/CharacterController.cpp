@@ -152,27 +152,32 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 
 void CCharacterController::OnCollisionEnter(ICollidable* pOther)
 {
-	m_pOwner->OnCollisionEnter();
+	m_pOwner->OnCollisionEnter(pOther->Get_Owner());
 }
 
 void CCharacterController::OnCollisionStay(ICollidable* pOther)
 {
-	m_pOwner->OnCollisionStay();
+	m_pOwner->OnCollisionStay(pOther->Get_Owner());
 }
 
 void CCharacterController::OnCollisionExit(ICollidable* pOther)
 {
-	m_pOwner->OnCollisionExit();
+	m_pOwner->OnCollisionExit(pOther->Get_Owner());
 }
 
 void CCharacterController::OnTriggerEnter(ICollidable* pOther)
 {
-	m_pOwner->OnTriggerEnter();
+	m_pOwner->OnTriggerEnter(pOther->Get_Owner());
 }
 
-void CCharacterController::OnTriggerExit(ICollidable* pOthter)
+void CCharacterController::OnTriggerStay(ICollidable* pOther)
 {
-	m_pOwner->OnTriggerExit();
+	m_pOwner->OnTriggerStay(pOther->Get_Owner());
+}
+
+void CCharacterController::OnTriggerExit(ICollidable* pOther)
+{
+	m_pOwner->OnTriggerExit(pOther->Get_Owner());
 }
 
 void CCharacterController::Update(_float dt)

@@ -562,6 +562,9 @@
     <Filter Include="02. GameObject\Object\Npc\Service\ShopBangBoos\Deliver\State">
       <UniqueIdentifier>{3b5df14e-cbb1-4af9-a5e4-666952e7c0f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Switch">
+      <UniqueIdentifier>{0e324cad-57c5-488b-b658-80cacb86b738}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\MapObject\03. MapInvisibleWall">
       <UniqueIdentifier>{b312b594-fbbd-4c58-99ff-ef3b7b832dfe}</UniqueIdentifier>
     </Filter>
@@ -570,6 +573,27 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb">
       <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
+    </Filter>  
+    <Filter Include="02. GameObject\UI\BattleHUD\Action\Ultimate">
+      <UniqueIdentifier>{0482ff2d-216c-4a8a-aa1b-5293b6620271}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\02. MainCity">
+      <UniqueIdentifier>{5c06b70c-30b5-443f-8830-698352a45197}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\03. Scott">
+      <UniqueIdentifier>{03ec8d80-58c9-41e7-aaed-48aa852601f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero">
+      <UniqueIdentifier>{2919c196-c81c-4f75-ad4d-2c04c9bfcfdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Normal">
+      <UniqueIdentifier>{1226f0c5-6d2d-4250-bdf1-550358cdcc52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Elite">
+      <UniqueIdentifier>{40342a9d-dc90-4d37-a405-f5c062f6e3d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Boss">
+      <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1088,11 +1112,26 @@
     <ClInclude Include="..\Public\CorinState_SwitchOut.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_SwitchAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\MapAnimObject.h">
       <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Sacrifice_Orb.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_UltimateAction.h">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Ultimate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainCity_Level.h">
+      <Filter>01. Level\02. MainCity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Scott_Level.h">
+      <Filter>01. Level\03. Scott</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Zero_Level.h">
+      <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1593,6 +1632,9 @@
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchOut</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_SwitchAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Switch</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\MapAnimObject.cpp">
       <Filter>02. GameObject\MapObject\04. MapAnimObject</Filter>
     </ClCompile>
@@ -1601,6 +1643,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
+    </ClCompile>  
+    <ClCompile Include="..\Private\UI_UltimateAction.cpp">
+      <Filter>02. GameObject\UI\BattleHUD\Action\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainCity_Level.cpp">
+      <Filter>01. Level\02. MainCity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Scott_Level.cpp">
+      <Filter>01. Level\03. Scott</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Zero_Level.cpp">
+      <Filter>01. Level\04. Zero</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

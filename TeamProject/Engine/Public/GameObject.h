@@ -44,6 +44,7 @@ public:
 	virtual void OnCollisionStay(CGameObject* pOther) {};
 	virtual void OnCollisionExit(CGameObject* pOther) {};
 	virtual void OnTriggerEnter(CGameObject* pOther) {};
+	virtual void OnTriggerStay(CGameObject* pOther) {};
 	virtual void OnTriggerExit(CGameObject* pOther) {};
 
 public:

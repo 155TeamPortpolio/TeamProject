@@ -3,19 +3,20 @@
 
 NS_BEGIN(Client)
 
-class CUI_SpecialAction final : public CUI_Object
+class CUI_SwitchAction final : public CUI_Object
 {
 private:
-	enum class CHILD { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
+	enum class CHILD { GROUP, BG, GAUGEBG, GAUGE, ICONBG, ICON, OUTLINE, SPACE, END };
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
 	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
+	enum class EXECUTE_MODE { ANIM, NONANIM };
 
 private:
-	CUI_SpecialAction() {}
-	CUI_SpecialAction(const CUI_SpecialAction& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_SpecialAction() DEFAULT;
+	CUI_SwitchAction() {}
+	CUI_SwitchAction(const CUI_SwitchAction& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_SwitchAction() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -29,14 +30,13 @@ public:
 
 private:
 	UI_HANDLE		m_handles[ENUM(CHILD::END)];
-	_bool			m_isEnabled = { true };
-	_bool			m_isAvailable = {};
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
-private:
+private: 
 	void Set_InteractState(INTERACT_STATE state);
-	void Execute();
+	void Execute(EXECUTE_MODE mode);
+	void Set_FillAmount(_float fFillAmount);
 
 	void Refresh_Visual();			// 상태 변경시에만 호출
 
@@ -60,7 +60,7 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_SpecialAction::ForChild(CHILD child, Func&& func)
+inline void CUI_SwitchAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_handles[ENUM(child)];
 	if (!handle.isValid())

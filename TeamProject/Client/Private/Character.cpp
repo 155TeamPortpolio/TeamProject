@@ -128,6 +128,7 @@ void CCharacter::Awake()
 		pMaterial->Add_MaterialData(Instance, "vRimLightColor", { &m_vRimLightColor, "float3", sizeof(_float3) });
 		pMaterial->Add_MaterialData(Instance, "fRimLightPower", { &m_fRimLightPower, "float", sizeof(_float) });
 		pMaterial->Add_MaterialData(Instance, "fDissolveProgress", { &m_fDissolveProgress, "float", sizeof(_float) });
+		pMaterial->Add_MaterialData(Instance, "fDissolveTiling", { &m_fDissolveTiling, "float", sizeof(_float) });
 	}
 
 	SetRenderLayer(RENDER_LAYER::None);
@@ -153,6 +154,11 @@ void CCharacter::Late_Update(_float dt)
 	m_bEvadeBuffer = false;
 }
 
+void CCharacter::OnCollisionExit(CGameObject* pOther)
+{
+	//MSG_BOX("Exit");
+}
+
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
 	CCollider* pCollider = pOther->Get_Component<CCollider>();
@@ -160,6 +166,12 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	{
 		m_ParryableTargets.insert(pOther);
 	}
+	//MSG_BOX("OnTriggerEnter");
+}
+
+void CCharacter::OnTriggerStay(CGameObject* pOher)
+{
+	//MSG_BOX("OnTriggerStay");
 }
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
