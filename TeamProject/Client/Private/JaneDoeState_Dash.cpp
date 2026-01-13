@@ -7,6 +7,7 @@
 
 void CJaneDoeState_Dash::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Use_Evade();
     if (pOwner->IsPassion())
     {
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front_03")
@@ -44,7 +45,7 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.15f)
     {
-        if (pOwner->Use_EvadeBuffer())
+        if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
             pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 4);
             pEvade->Get_SubStateMachine()->Set_Trigger("Complete");

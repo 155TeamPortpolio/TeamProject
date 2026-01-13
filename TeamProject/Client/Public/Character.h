@@ -85,6 +85,7 @@ public:
     void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
     void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
+    void   Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
 
 
     void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*이벤트 버스를 보내는 함수 Set_HP를 ProcessHP 함수 내부에서 호출*
@@ -173,11 +174,11 @@ protected:
     _bool           m_bIsEvade = { false };
     // 회피 시스템
     _bool                   m_bEvadeBuffer = { false };
+    _uint                   m_iEvadeMax = 2;
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };
     _float                  m_fEvadeCooldown = { 0.f };
     static constexpr _float EVADE_COOLDOWN = 1.f;
-    static constexpr _uint  EVADE_MAX_COUNT = 2;
     //*스위치 시스템*
     SWITCH                  m_eSwitchType = SWITCH::END;
     // 회전

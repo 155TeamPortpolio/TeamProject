@@ -23,7 +23,7 @@ HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
     Ready_PartObjects();
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::ALL)
                 return;
@@ -42,7 +42,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     __super::Update(dt);
 
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;
@@ -50,7 +50,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;
