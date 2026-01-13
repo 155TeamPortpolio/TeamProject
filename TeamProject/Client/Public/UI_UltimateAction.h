@@ -3,19 +3,19 @@
 
 NS_BEGIN(Client)
 
-class CUI_SpecialAction final : public CUI_Object
+class CUI_UltimateAction final : public CUI_Object
 {
 private:
-	enum class CHILD { BG, ICON, GROUP, MASK, UV, ACTIVE, BLINK, E, END };
+	enum class CHILD { GROUP1, BG, UV, GROUP2, BLACK, STAR, Q, END };
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
-	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
+	enum class INTERACT_STATE { DISABLE, ENABLE };
 
 private:
-	CUI_SpecialAction() {}
-	CUI_SpecialAction(const CUI_SpecialAction& rhs) : CUI_Object(rhs) {}
-	virtual ~CUI_SpecialAction() DEFAULT;
+	CUI_UltimateAction() {}
+	CUI_UltimateAction(const CUI_UltimateAction& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_UltimateAction() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
@@ -28,9 +28,7 @@ public:
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
 private:
-	UI_HANDLE		m_handles[ENUM(CHILD::END)];
-	_bool			m_isEnabled = { true };
-	_bool			m_isAvailable = {};
+	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
@@ -42,12 +40,12 @@ private:
 
 	void Apply_DisableVisual();
 	void Apply_EnableVisual();
-	void Apply_AvailableVisual();
 
 	void Set_Alive(CHILD child, _bool isAlive);
-	void Set_Animation(CHILD child, _int iIndex);
 	void Set_Color(CHILD child, _float4 vColor);
+	void Set_Animation(CHILD child, _int iIndex);
 
+private:
 	template<typename Func>
 	void ForChild(CHILD child, Func&& func);
 
@@ -60,9 +58,9 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_SpecialAction::ForChild(CHILD child, Func&& func)
+inline void CUI_UltimateAction::ForChild(CHILD child, Func&& func)
 {
-	auto& handle = m_handles[ENUM(child)];
+	auto& handle = m_hChildren[ENUM(child)];
 	if (!handle.isValid())
 		return;
 

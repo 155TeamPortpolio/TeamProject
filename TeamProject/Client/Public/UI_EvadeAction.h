@@ -10,6 +10,8 @@ private:
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
+	enum class INTERACT_STATE { DISABLE, ENABLE };
+
 private:
 	CUI_EvadeAction() {}
 	CUI_EvadeAction(const CUI_EvadeAction& rhs) : CUI_Object(rhs) {}
@@ -28,9 +30,16 @@ public:
 private:
 	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
+
 private:
-	void Set_Active(_bool isActive);
+	void Set_InteractState(INTERACT_STATE state);
 	void Set_FillAmount(_float fFillAmount);
+
+	void Refresh_Visual();			// 상태 변경시에만 호출
+
+	void Apply_DisableVisual();
+	void Apply_EnableVisual();
 
 	void Set_Alive(CHILD child, _bool isAlive);
 	void Set_Color(CHILD child, _float4 vColor);

@@ -5,10 +5,11 @@ NS_BEGIN(Client)
 
 class CUI_PrimaryAction final : public CUI_Object
 {
-private:
-	enum class MODE { ATTACK, INTERACT, END };
-
+private: 
 	enum class CHILD { ATTACK, ATTACK_BG, ATTACK_ICON, ATTACK_MOUSE, INTERACT, INTERACT_GRADIENT, END };
+
+	enum class MODE { ATTACK, INTERACT };
+	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
@@ -27,14 +28,21 @@ public:
 	virtual void	UI_Active(void* pArg = nullptr)  override;
 	virtual void	UI_DeActive(void* pArg = nullptr)override;
 
-private:
-	MODE			m_mode = {};
+private: 
 	UI_HANDLE		m_handles[ENUM(CHILD::END)];
+
+	MODE			m_mode = { MODE::ATTACK };
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
 	void Set_ActionMode(MODE eMode);
-	void Set_AttackActive(_bool isActive);
-	void Set_InteractActive(_bool isActive);
+	void Set_InteractState(INTERACT_STATE state);
+	 
+	void Refresh_Visual();
+
+	void Apply_DisableVisual();
+	void Apply_EnableVisual();
+	void Apply_AvailableVisual();
 
 	void Set_Alive(CHILD child, _bool isAlive);
 	void Set_Color(CHILD child, _float4 vColor);
