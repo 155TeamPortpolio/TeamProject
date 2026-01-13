@@ -250,7 +250,6 @@
     <ClInclude Include="..\Public\LogoLevel.h" />
     <ClInclude Include="..\Public\MapData_Defines.h" />
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
-    <ClInclude Include="..\public\MapDataCloud.h" />
     <ClInclude Include="..\Public\Miyabi.h" />
     <ClInclude Include="..\Public\MiyabiState_Attack.h" />
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h" />
@@ -447,7 +446,6 @@
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />
     <ClCompile Include="..\Private\LogoLevel.cpp" />
-    <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />

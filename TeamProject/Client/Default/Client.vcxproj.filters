@@ -148,9 +148,6 @@
     <Filter Include="03. Utility\00. MapLoader">
       <UniqueIdentifier>{b225c53e-224c-4830-98f3-48fbbeb76845}</UniqueIdentifier>
     </Filter>
-    <Filter Include="03. Utility\00. MapLoader\MapDataCloud">
-      <UniqueIdentifier>{044cb39a-140b-4e9d-877b-519ad3be00cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="03. Utility\01. HFSM">
       <UniqueIdentifier>{6600c1e3-1d7c-4379-8e66-d55cb9799a70}</UniqueIdentifier>
     </Filter>
@@ -573,7 +570,7 @@
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb">
       <UniqueIdentifier>{68fc2704-df5f-4515-afc4-be9016f4d9a1}</UniqueIdentifier>
-    </Filter>  
+    </Filter>
     <Filter Include="02. GameObject\UI\BattleHUD\Action\Ultimate">
       <UniqueIdentifier>{0482ff2d-216c-4a8a-aa1b-5293b6620271}</UniqueIdentifier>
     </Filter>
@@ -686,9 +683,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\MapData_Defines.h">
       <Filter>03. Utility\00. MapLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\MapDataCloud.h">
-      <Filter>03. Utility\00. MapLoader\MapDataCloud</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\MapLoader_Helper.h">
       <Filter>03. Utility\00. MapLoader</Filter>
@@ -1235,9 +1229,6 @@
     <ClCompile Include="..\Private\TestFloor.cpp">
       <Filter>02. GameObject\Object\TestFloor</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\MapDataCloud.cpp">
-      <Filter>03. Utility\00. MapLoader\MapDataCloud</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\TestState_Idle.cpp">
       <Filter>02. GameObject\Object\TestObject\State\Idle</Filter>
     </ClCompile>
@@ -1655,7 +1646,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Orb</Filter>
-    </ClCompile>  
+    </ClCompile>
     <ClCompile Include="..\Private\UI_UltimateAction.cpp">
       <Filter>02. GameObject\UI\BattleHUD\Action\Ultimate</Filter>
     </ClCompile>
