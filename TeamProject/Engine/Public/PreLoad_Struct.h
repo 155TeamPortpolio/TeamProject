@@ -10,6 +10,7 @@ namespace Engine {
         ComputeShader,
         Animation,
         Effect,
+        None
     };
 
     enum class PreloadState : _uint

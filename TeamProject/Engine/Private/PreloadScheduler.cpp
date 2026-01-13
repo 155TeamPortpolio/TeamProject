@@ -31,20 +31,22 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
         {
             SetState(requestKey, PreloadState::Loading, "");
 
-            _bool success = false;
             string errorMessage;
+            LoaderFunc loaderFunc;
             {
                 lock_guard<mutex> lockGuard(m_loaderMutex);
-                auto iteratorLoader = m_loaders.find(requestKey.type);
-                if (iteratorLoader == m_loaders.end())
+                auto it = m_loaders.find(requestKey.type);
+                if (it == m_loaders.end())
                 {
-                    errorMessage = "No loader registered for type.";
+                    SetError(requestKey, "No loader registered for type.");
+                    return false;
                 }
-                else
-                {
-                    success = iteratorLoader->second(requestKey, errorMessage);
-                }
-            }
+                loaderFunc = it->second; // 복사
+            } // 여기서 m_loaderMutex 해제
+
+            // 락 없는 상태에서 실제 로딩 실행
+            _bool success = loaderFunc(requestKey, errorMessage);
+
 
             if (!success && errorMessage.empty())
                 errorMessage = "Load failed.";
@@ -66,40 +68,53 @@ _bool CPreloadScheduler::Request(const PreloadKey& requestKey)
 
     return true;
 }
-
 void CPreloadScheduler::Pump(vector<PreloadCompleted>& outCompleted)
 {
     outCompleted.clear();
 
-    lock_guard<mutex> lockGuard(m_mutex);
-
-    for (auto it = m_tasks.begin(); it != m_tasks.end(); )
+    for (;;)
     {
-        PreloadTask& task = it->second;
+        PreloadKey doneKey{};
+        future<_bool> doneFuture;
+        string doneError;
+        bool found = false;
 
-        if (!task.future.valid())
-        {
-            ++it; continue;
-        }
+        { // m_mutex scope
+            lock_guard<mutex> lockGuard(m_mutex);
 
-        if (task.future.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
-        {
-            ++it; continue;
-        }
+            for (auto it = m_tasks.begin(); it != m_tasks.end(); ++it)
+            {
+                PreloadTask& task = it->second;
+                if (!task.future.valid())
+                    continue;
 
-        const _bool success = task.future.get();
-        task.state = success ? PreloadState::Ready : PreloadState::Failed;
+                if (task.future.wait_for(std::chrono::seconds(0)) != std::future_status::ready)
+                    continue;
+
+                doneKey = task.key;
+                doneError = task.errorMessage;
+                doneFuture = std::move(task.future);
+                m_tasks.erase(it);
+                found = true;
+                break;
+            }
+        } // m_mutex 해제
+
+        if (!found)
+            break;
+
+        const _bool success = doneFuture.get();
 
         PreloadCompleted completed{};
-        completed.key = task.key;
-        completed.state = task.state;
-        completed.errorMessage = task.errorMessage;
-        outCompleted.push_back(move(completed));
-        ++m_done;
+        completed.key = doneKey;
+        completed.state = success ? PreloadState::Ready : PreloadState::Failed;
+        completed.errorMessage = doneError;
 
-        it = m_tasks.erase(it);
+        outCompleted.push_back(std::move(completed));
+        ++m_done;
     }
 }
+
 
 
 void CPreloadScheduler::GetProgress(_uint& outDone, _uint& outTotal)
