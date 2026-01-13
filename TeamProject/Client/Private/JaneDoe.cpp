@@ -54,8 +54,7 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Stat()))
-		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -76,6 +75,9 @@ void CJaneDoe::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
+
+	Initialize_Stat();
+
 }
 
 void CJaneDoe::Priority_Update(_float dt)
