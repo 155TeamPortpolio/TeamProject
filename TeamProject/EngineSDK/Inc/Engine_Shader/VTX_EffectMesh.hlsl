@@ -145,7 +145,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float fDissolveMask = 1.f;
     
     vDiffuse = ApplySamplerMode(SamplerMode, Texcoord, DiffuseTexture);
-    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).r;
+    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).a;
     
     if (fDissolveMask < DissolveProgress)
         discard;
@@ -204,7 +204,7 @@ technique11 DefaultTechnique
 {
     pass Opaque
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_NoCull);
         SetDepthStencilState(DSS_ReadOnly, 0);
         SetBlendState(BS_OITAccmulation, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

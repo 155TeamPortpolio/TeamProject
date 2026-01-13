@@ -129,7 +129,6 @@ void CSacrifice::Update(_float dt)
 
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CSacrifice::Late_Update(_float dt)

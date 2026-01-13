@@ -62,7 +62,7 @@ void CSacrifice_Orb::Update(_float dt)
 		auto battle = CBattleSystem::GetInstance();
 
 		auto& battleInfos = battle->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		_vector3 vCurrPosition = m_pTransform->Get_Pos();
+		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
 		_vector3 vNextPosition{};
 
 		_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
@@ -78,10 +78,10 @@ void CSacrifice_Orb::Update(_float dt)
 		}
 
 		vTargetDir = vTargetPos - vCurrPosition;
-		vTargetDir.y = 0.f;
+		//vTargetDir.y = 0.f;
 		vTargetDir.Normalize();
 
-		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 5.f);
+		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
 		vNextPosition = vCurrPosition + (m_fSpeed * vTargetDir * dt);
 
 		m_pTransform->Set_Look(vTargetDir);
