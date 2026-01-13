@@ -18,7 +18,7 @@ public:
 
 };
 
-class CJaneDoeState_Rush_Start final 
+class CJaneDoeState_Rush01_Start final 
     : public IBaseState<CJaneDoe>
 {
 public:
@@ -27,11 +27,11 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
-    static CJaneDoeState_Rush_Start* Create() { return new CJaneDoeState_Rush_Start(); }
+    static CJaneDoeState_Rush01_Start* Create() { return new CJaneDoeState_Rush01_Start(); }
     virtual void Free() override { __super::Free(); }
 };
 
-class CJaneDoeState_Rush_End final
+class CJaneDoeState_Rush01_End final
     : public IBaseState<CJaneDoe>
 {
 public:
@@ -40,7 +40,59 @@ public:
     virtual void Exit(CJaneDoe* pOwner) override {}
 
 public:
-    static CJaneDoeState_Rush_End* Create() { return new CJaneDoeState_Rush_End(); }
+    static CJaneDoeState_Rush01_End* Create() { return new CJaneDoeState_Rush01_End(); }
+    virtual void Free() override { __super::Free(); }
+};
+
+class CJaneDoeState_Rush02_Start final
+    : public IBaseState<CJaneDoe>
+{
+public:
+    virtual void Enter(CJaneDoe* pOwner) override;
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
+
+public:
+    static CJaneDoeState_Rush02_Start* Create() { return new CJaneDoeState_Rush02_Start(); }
+    virtual void Free() override { __super::Free(); }
+};
+
+class CJaneDoeState_Rush02_End final
+    : public IBaseState<CJaneDoe>
+{
+public:
+    virtual void Enter(CJaneDoe* pOwner) override;
+    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Exit(CJaneDoe* pOwner) override {}
+
+public:
+    static CJaneDoeState_Rush02_End* Create() { return new CJaneDoeState_Rush02_End(); }
+    virtual void Free() override { __super::Free(); }
+};
+
+class CJaneDoeState_Rush03_Start final
+    : public IBaseState<CJaneDoe>
+{
+public:
+    virtual void Enter(CJaneDoe* pOwner) override;
+    virtual void Update(CJaneDoe* pOwner, _float dt) override;
+    virtual void Exit(CJaneDoe* pOwner) override {}
+
+public:
+    static CJaneDoeState_Rush03_Start* Create() { return new CJaneDoeState_Rush03_Start(); }
+    virtual void Free() override { __super::Free(); }
+};
+
+class CJaneDoeState_Rush03_End final
+    : public IBaseState<CJaneDoe>
+{
+public:
+    virtual void Enter(CJaneDoe* pOwner) override;
+    virtual void Update(CJaneDoe* pOwner, _float dt) override {}
+    virtual void Exit(CJaneDoe* pOwner) override {}
+
+public:
+    static CJaneDoeState_Rush03_End* Create() { return new CJaneDoeState_Rush03_End(); }
     virtual void Free() override { __super::Free(); }
 };
 NS_END
