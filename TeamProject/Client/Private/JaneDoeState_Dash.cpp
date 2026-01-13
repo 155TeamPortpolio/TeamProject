@@ -7,9 +7,21 @@
 
 void CJaneDoeState_Dash::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front")
-        .Speed(1.f)
-        .Apply();
+    if (pOwner->IsPassion())
+    {
+        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front_03")
+            .Speed(1.f)
+            .Apply();
+    }
+    else
+    {
+        m_bEvadeType = !m_bEvadeType;
+
+        string strEvade = m_bEvadeType ? "Evade_Front_01" : "Evade_Front_02";
+        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + strEvade)
+            .Speed(1.f)
+            .Apply();
+    }
 
     _vector3 vDir = pOwner->Get_InputDir();
     if (vDir.Length() > 0.01f)
@@ -30,7 +42,7 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.2f)
+    if (m_fAnimProgress >= 0.15f)
     {
         if (pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade

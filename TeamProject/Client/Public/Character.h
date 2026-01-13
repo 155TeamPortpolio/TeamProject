@@ -192,7 +192,7 @@ protected:
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
-    _float      m_fDissolveTiling = { 4.f };
+    _float      m_fDissolveTiling = { 10.f };
     // ∏ÛΩ∫≈Õ
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;

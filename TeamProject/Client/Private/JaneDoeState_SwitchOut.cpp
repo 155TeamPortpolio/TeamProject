@@ -9,15 +9,15 @@ void CJaneDoeState_SwitchOut::Enter(CJaneDoe* pOwner)
         .Loop(false)
         .Apply();
 
-    //_vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
-    //if (vDir.Length() > 0.01f)
-    //    pOwner->Rotate(vDir);
+    _vector3 vDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
+    if (vDir.Length() > 0.01f)
+        pOwner->Rotate(-vDir);
 }
 
 void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
 {
     if (m_fAnimProgress >= 0.2f)
-        pOwner->Update_DissolveProgress(dt);
+        pOwner->Update_DissolveProgress(dt * 5.f);
 
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |

@@ -27,6 +27,16 @@ CJaneDoe::CJaneDoe(const CJaneDoe& rhs)
 {
 }
 
+void CJaneDoe::ProcessPassion(_float fPassionGauge)
+{
+	m_fPassionGauge = fPassionGauge;
+}
+
+void CJaneDoe::ProcessPassionSkill(_bool bAvailable)
+{
+	m_bPassionSkillAvailable = bAvailable;
+}
+
 HRESULT CJaneDoe::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
