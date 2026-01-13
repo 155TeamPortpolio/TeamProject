@@ -180,6 +180,12 @@ void CBattlePlayer::Process_Attack()
 
 void CBattlePlayer::Process_Evade()
 {
+	UI_ACTION_DESC desc{};
+	desc.eType = UI_ACTION_TYPE::EVADE;
+	desc.eState = UI_ACTION_STATE::EXECUTING;
+	desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 	{
 		m_pCurrentCharacter->On_Evade();

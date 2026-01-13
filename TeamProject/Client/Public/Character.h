@@ -55,6 +55,7 @@ public:
     _float Get_MaxHP() const { return m_fMaxHP; }
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
+    _float Get_EvadeTimer() const { return m_fEvadeTimer; }
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
