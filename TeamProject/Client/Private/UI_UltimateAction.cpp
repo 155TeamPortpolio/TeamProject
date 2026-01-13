@@ -36,9 +36,9 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
                 return;
 
             if (desc.eState == UI_ACTION_STATE::DISABLE)
-                Set_InteractState(INTERACT_STATE::DISABLED);
+                Set_InteractState(INTERACT_STATE::DISABLE);
             else if (desc.eState == UI_ACTION_STATE::ENABLE)
-                Set_InteractState(INTERACT_STATE::ENABLED);
+                Set_InteractState(INTERACT_STATE::ENABLE);
             else if (desc.eState == UI_ACTION_STATE::EXECUTING)
                 Execute();
         });
@@ -78,12 +78,12 @@ void CUI_UltimateAction::Update(_float dt)
 
 void CUI_UltimateAction::UI_Active(void* pArg)
 {
-    Set_InteractState(INTERACT_STATE::ENABLED);
+    Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_UltimateAction::UI_DeActive(void* pArg)
 {
-    Set_InteractState(INTERACT_STATE::DISABLED);
+    Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_UltimateAction::Set_InteractState(INTERACT_STATE state)
@@ -97,7 +97,7 @@ void CUI_UltimateAction::Execute()
     //if (m_interactState != INTERACT_STATE::ENABLED)
     //    return;
 
-    m_interactState = INTERACT_STATE::ENABLED;
+    m_interactState = INTERACT_STATE::ENABLE;
     Refresh_Visual();
     Set_Animation(CHILD::GROUP1, 0);
     Set_Animation(CHILD::GROUP2, 0);
@@ -107,7 +107,7 @@ void CUI_UltimateAction::Execute()
 
 void CUI_UltimateAction::Refresh_Visual()
 {
-    if (m_interactState == INTERACT_STATE::DISABLED)
+    if (m_interactState == INTERACT_STATE::DISABLE)
     {
         Apply_DisableVisual();
         return;

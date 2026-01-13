@@ -10,7 +10,7 @@ private:
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
-	enum class INTERACT_STATE { DISABLED, ENABLED };
+	enum class INTERACT_STATE { DISABLE, ENABLE };
 	enum class ACTION_STATE { UNAVAILABLE, READY };
 	enum class EXECUTE_STATE { IDLE, EXECUTING };
 	enum class EXECUTE_MODE { ANIM, NONANIM };
@@ -33,7 +33,7 @@ public:
 private:
 	UI_HANDLE		m_handles[ENUM(CHILD::END)];
 
-	INTERACT_STATE	m_interactState = INTERACT_STATE::ENABLED;
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 	ACTION_STATE	m_actionState = ACTION_STATE::READY;
 	EXECUTE_STATE	m_executeState = EXECUTE_STATE::IDLE;
 

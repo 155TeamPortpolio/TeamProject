@@ -36,15 +36,15 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
-				Set_InteractState(INTERACT_STATE::DISABLED);
+				Set_InteractState(INTERACT_STATE::DISABLE);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
 			{
-				Set_InteractState(INTERACT_STATE::ENABLED);
+				Set_InteractState(INTERACT_STATE::ENABLE);
 				Set_ActionState(ACTION_STATE::UNAVAILABLE);
 			}
 			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
 			{
-				Set_InteractState(INTERACT_STATE::ENABLED);
+				Set_InteractState(INTERACT_STATE::ENABLE);
 				Set_ActionState(ACTION_STATE::READY);
 			}
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
@@ -99,12 +99,12 @@ void CUI_SwitchAction::Update(_float dt)
 
 void CUI_SwitchAction::UI_Active(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::ENABLED);
+	Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_SwitchAction::UI_DeActive(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::DISABLED);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SwitchAction::Set_InteractState(INTERACT_STATE state)
@@ -115,7 +115,7 @@ void CUI_SwitchAction::Set_InteractState(INTERACT_STATE state)
 
 void CUI_SwitchAction::Set_ActionState(ACTION_STATE state)
 {
-	if (m_interactState != INTERACT_STATE::ENABLED)
+	if (m_interactState != INTERACT_STATE::ENABLE)
 		return;
 
 	m_actionState = state;
@@ -124,7 +124,7 @@ void CUI_SwitchAction::Set_ActionState(ACTION_STATE state)
 
 void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _float fFillAmount)
 {
-	if (m_interactState != INTERACT_STATE::ENABLED)
+	if (m_interactState != INTERACT_STATE::ENABLE)
 		return;
 
 	if (m_actionState != ACTION_STATE::READY)
@@ -154,7 +154,7 @@ void CUI_SwitchAction::Finish_Execute()
 
 void CUI_SwitchAction::RefreshVisual()
 {
-	if (m_interactState == INTERACT_STATE::DISABLED)
+	if (m_interactState == INTERACT_STATE::DISABLE)
 	{
 		ApplyDisableVisual();
 		return;

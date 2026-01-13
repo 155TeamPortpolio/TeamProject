@@ -10,7 +10,7 @@ private:
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
-	enum class INTERACT_STATE { DISABLED, ENABLED, AVAILABLE };
+	enum class INTERACT_STATE { DISABLE, ENABLE, AVAILABLE };
 
 private:
 	CUI_SpecialAction() {}
@@ -32,7 +32,7 @@ private:
 	_bool			m_isEnabled = { true };
 	_bool			m_isAvailable = {};
 
-	INTERACT_STATE	m_interactState = INTERACT_STATE::ENABLED;
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
 	void Set_InteractState(INTERACT_STATE state);

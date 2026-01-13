@@ -10,7 +10,7 @@ private:
 
 	static const string INSTANCENAMES[ENUM(CHILD::END)];
 
-	enum class INTERACT_STATE { DISABLED, ENABLED };
+	enum class INTERACT_STATE { DISABLE, ENABLE };
 
 private:
 	CUI_UltimateAction() {}
@@ -30,7 +30,7 @@ public:
 private:
 	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
-	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLED };
+	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
 
 private:
 	void Set_InteractState(INTERACT_STATE state);

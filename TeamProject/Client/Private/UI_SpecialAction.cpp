@@ -35,9 +35,9 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
-				Set_InteractState(INTERACT_STATE::DISABLED);
+				Set_InteractState(INTERACT_STATE::DISABLE);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
-				Set_InteractState(INTERACT_STATE::ENABLED);
+				Set_InteractState(INTERACT_STATE::ENABLE);
 			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
 				Set_InteractState(INTERACT_STATE::AVAILABLE);
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
@@ -50,49 +50,49 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 void CUI_SpecialAction::Update(_float dt)
 {
 	// 이벤트 테스트 코드
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
-	{
-		UI_ACTION_DESC desc = {};
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::DISABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
-	{
-		UI_ACTION_DESC desc = {};
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::ENABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
-	{
-		UI_ACTION_DESC desc = {};
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::AVAILABLE;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
-	
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
-	{
-		UI_ACTION_DESC desc = {};
-		desc.eType = UI_ACTION_TYPE::SPECIAL;
-		desc.eState = UI_ACTION_STATE::EXECUTING;
-		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-	}
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::DISABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::ENABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::AVAILABLE;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
+	//
+	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+	//{
+	//	UI_ACTION_DESC desc = {};
+	//	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	//	desc.eState = UI_ACTION_STATE::EXECUTING;
+	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	//}
 
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_SpecialAction::UI_Active(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::ENABLED);
+	Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_SpecialAction::UI_DeActive(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::DISABLED);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SpecialAction::Set_InteractState(INTERACT_STATE state)
@@ -116,7 +116,7 @@ void CUI_SpecialAction::Execute()
 
 void CUI_SpecialAction::Refresh_Visual()
 {
-	if (m_interactState == INTERACT_STATE::DISABLED)
+	if (m_interactState == INTERACT_STATE::DISABLE)
 	{
 		Apply_DisableVisual();
 		return;
