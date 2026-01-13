@@ -78,8 +78,8 @@ void CBattlePlayer::Update(_float dt)
 	UI_ACTION_DESC desc{};
 	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
 	{
-		desc.eType = UI_ACTION_TYPE::EVADE;
-		desc.eState = UI_ACTION_STATE::EXECUTING;
+		desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
+		desc.eState = UI_ACTION_STATE::ENABLE;
 		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeCooldown() / 1.0f;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
@@ -161,7 +161,7 @@ void CBattlePlayer::Update_Input(_float dt)
 
 	if (InputDevice()->Key_Down('T'))
 	{
-		// Å×½ºÆ® ÄÚµå
+		// ï¿½×½ï¿½Æ® ï¿½Úµï¿½
 	}
 }
 
