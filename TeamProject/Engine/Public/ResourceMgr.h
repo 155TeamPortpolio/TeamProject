@@ -56,6 +56,7 @@ public:
 	_bool RequestPreload(const PreloadKey& key);
 	void PumpPreloads(vector<PreloadCompleted>& outCompleted);
 	void GetPreloadProgress(_uint& outDone, _uint& outTotal) const;
+	virtual _bool isLoadComplete() const override;
 
 private:
 	_int ValidLevel(const string& levelKey);

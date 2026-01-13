@@ -75,8 +75,35 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
-	_float CurHP = m_pCurrentCharacter->Get_HP();
-	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
+	/* Evade & EvadePerfect */
+	UI_ACTION_DESC desc{};
+	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
+	{
+		desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
+		desc.eState = UI_ACTION_STATE::ENABLE;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeCooldown() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eType = UI_ACTION_TYPE::EVADE;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	/* Special Gauge */
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	CCharacter::GaugeDesc tGauge = m_pCurrentCharacter->Get_GaugeDesc();
+
+	if (tGauge.fCurrentGauge > tGauge.fSpecialGauge &&
+		tGauge.fPrevGauge <= tGauge.fSpecialGauge)
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	Update_Status();
 }
 
 void CBattlePlayer::Late_Update(_float dt)
@@ -144,7 +171,7 @@ void CBattlePlayer::Update_Input(_float dt)
 
 	if (InputDevice()->Key_Down('T'))
 	{
-		// Å×½ºÆ® ÄÚµå
+		// ï¿½×½ï¿½Æ® ï¿½Úµï¿½
 	}
 }
 
@@ -178,12 +205,19 @@ void CBattlePlayer::Process_Attack()
 	}
 }
 
+void CBattlePlayer::Process_SpecialAttack()
+{
+}
+
 void CBattlePlayer::Process_Evade()
 {
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 	{
-		m_pCurrentCharacter->On_Evade();
-		m_pCurrentCharacter->Buffer_Evade();
+		if (m_pCurrentCharacter->Can_Evade())
+		{
+			m_pCurrentCharacter->On_Evade();
+			m_pCurrentCharacter->Buffer_Evade();
+		}
 	}
 }
 
@@ -230,6 +264,26 @@ void CBattlePlayer::Update_Target()
 		}
 	}
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+}
+
+void CBattlePlayer::Update_Status()
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
+		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
+		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	{
+		CCharacter* pCharacter = tempQueue.front().second;
+		tempQueue.pop();
+
+		UI_PLAYER_STATUS_DESC desc;
+		desc.eOwner = eOwner;
+		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
+		desc.special = { pCharacter->Get_GaugeDesc().fCurrentGauge, pCharacter->Get_MaxGauge() };
+		desc.ultimate = { pCharacter->Get_Decibel(), pCharacter->Get_MaxDecibel() };
+
+		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
+	}
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
@@ -297,8 +351,10 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 {
 	auto vRight = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
-	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition() 
-		+ vRight* 0.5 - m_vSwitchLook * 4;
+	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
+		+ XMVectorScale(vRight, 0.5f)
+		- XMVectorScale(m_vSwitchLook, 4.f)
+		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
 	m_pCurrentCharacter->On_SwitchOut();
 }

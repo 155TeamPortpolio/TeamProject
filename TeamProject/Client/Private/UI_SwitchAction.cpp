@@ -29,26 +29,30 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
+	// 모드 변경 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+		{
+			Set_InteractState(INTERACT_STATE::DISABLE);
+		});
+
 	// 액션 이벤트
-	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
 			if (desc.eType != UI_ACTION_TYPE::SWITCH)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
-				Set_InteractState(INTERACT_STATE::DISABLED);
+				Set_InteractState(INTERACT_STATE::DISABLE);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
-			{
-				Set_InteractState(INTERACT_STATE::ENABLED);
-				Set_ActionState(ACTION_STATE::UNAVAILABLE);
-			}
-			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-			{
-				Set_InteractState(INTERACT_STATE::ENABLED);
-				Set_ActionState(ACTION_STATE::READY);
-			}
+				Set_InteractState(INTERACT_STATE::ENABLE);
+			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)	// Executing 애니메이션 실행 중에 들어오면 애니메이션이 덮어써버리는 문제 있음
+				Set_InteractState(INTERACT_STATE::AVAILABLE);
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
-				Start_Execute(EXECUTE_MODE::ANIM, desc.fFillAmount);
+			{
+				Set_InteractState(INTERACT_STATE::ENABLE);
+				Execute(EXECUTE_MODE::ANIM);
+				Set_FillAmount(desc.fFillAmount);
+			}
 		});
 
 	return S_OK;
@@ -90,89 +94,64 @@ void CUI_SwitchAction::Update(_float dt)
 	//	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	//}
 
-	if (m_executeState == EXECUTE_STATE::EXECUTING)
-		if (Is_AnimFinished(CHILD::ICON))
-			Finish_Execute();
-
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 void CUI_SwitchAction::UI_Active(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::ENABLED);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SwitchAction::UI_DeActive(void* pArg)
 {
-	Set_InteractState(INTERACT_STATE::DISABLED);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_SwitchAction::Set_InteractState(INTERACT_STATE state)
 {
 	m_interactState = state;
-	RefreshVisual();
+	Refresh_Visual();
 }
 
-void CUI_SwitchAction::Set_ActionState(ACTION_STATE state)
+void CUI_SwitchAction::Execute(EXECUTE_MODE mode)
 {
-	if (m_interactState != INTERACT_STATE::ENABLED)
-		return;
-
-	m_actionState = state;
-	RefreshVisual();
-}
-
-void CUI_SwitchAction::Start_Execute(EXECUTE_MODE mode, _float fFillAmount)
-{
-	if (m_interactState != INTERACT_STATE::ENABLED)
-		return;
-
-	if (m_actionState != ACTION_STATE::READY)
-		return;
-
-	auto& handle = m_handles[ENUM(CHILD::GAUGE)];
-	if (handle.isValid())
-		dynamic_cast<CGaugeUI*>(handle.Get())->Set_FillAmount(fFillAmount);
+	//if (m_interactState != INTERACT_STATE::ENABLE)
+	//	return;
 
 	if (EXECUTE_MODE::NONANIM == mode)
 		return;
 
-	m_executeState = EXECUTE_STATE::EXECUTING;
+	//m_interactState = INTERACT_STATE::ENABLE;
+	Refresh_Visual();
 	Set_Animation(CHILD::GROUP, 0);
-	Set_Animation(CHILD::ICON, 0);
-	RefreshVisual();
+	Set_Animation(CHILD::ICON, 0); 
 }
 
-void CUI_SwitchAction::Finish_Execute()
+void CUI_SwitchAction::Set_FillAmount(_float fFillAmount)
 {
-	if (m_executeState != EXECUTE_STATE::EXECUTING)
-		return;
-
-	m_executeState = EXECUTE_STATE::IDLE;
-	RefreshVisual();
+	auto& handle = m_handles[ENUM(CHILD::GAUGE)];
+	if (handle.isValid())
+		dynamic_cast<CGaugeUI*>(handle.Get())->Set_FillAmount(fFillAmount);
 }
 
-void CUI_SwitchAction::RefreshVisual()
+void CUI_SwitchAction::Refresh_Visual()
 {
-	if (m_interactState == INTERACT_STATE::DISABLED)
+	if (m_interactState == INTERACT_STATE::DISABLE)
 	{
-		ApplyDisableVisual();
+		Apply_DisableVisual();
 		return;
 	}
 
-	if (m_executeState == EXECUTE_STATE::EXECUTING)
+	if (m_interactState == INTERACT_STATE::AVAILABLE)
 	{
-		ApplyExecuteVisual();
+		Apply_AvailableVisual();
 		return;
 	}
 
-	if (m_actionState == ACTION_STATE::READY)
-		ApplyReadyVisual();
-	else
-		ApplyUnavailableVisual();
+	Apply_EnableVisual();
 }
 
-void CUI_SwitchAction::ApplyDisableVisual()
+void CUI_SwitchAction::Apply_DisableVisual()
 {
 	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
 	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
@@ -182,11 +161,10 @@ void CUI_SwitchAction::ApplyDisableVisual()
 	Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
 	Set_Alive(CHILD::OUTLINE, true);
 }
-
-void CUI_SwitchAction::ApplyExecuteVisual()
+void CUI_SwitchAction::Apply_EnableVisual()
 {
 	Set_Color(CHILD::BG, UI_GRAY_LIGHT);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK); 
+	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
 	Set_Color(CHILD::GAUGE, UI_GRAY_LIGHTEST);
 	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
 	Set_Color(CHILD::ICON, UI_GRAY_DARK);
@@ -194,25 +172,14 @@ void CUI_SwitchAction::ApplyExecuteVisual()
 	Set_Alive(CHILD::OUTLINE, false);
 }
 
-void CUI_SwitchAction::ApplyReadyVisual()
+void CUI_SwitchAction::Apply_AvailableVisual()
 {
 	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_MEDIUM); 
+	Set_Color(CHILD::GAUGEBG, UI_GRAY_MEDIUM);
 	Set_Color(CHILD::GAUGE, UI_SWITCH_YELLOW);
 	Set_Color(CHILD::ICONBG, UI_GRAY_MEDIUM);
 	Set_Color(CHILD::ICON, UI_SWITCH_YELLOW);
 	Set_Color(CHILD::SPACE, UI_WHITE);
-	Set_Alive(CHILD::OUTLINE, false);
-}
-
-void CUI_SwitchAction::ApplyUnavailableVisual()
-{
-	Set_Color(CHILD::BG, UI_GRAY_LIGHT);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK); 
-	Set_Color(CHILD::GAUGE, UI_GRAY_LIGHTEST);
-	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
-	Set_Color(CHILD::ICON, UI_GRAY_DARK);
-	Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
 	Set_Alive(CHILD::OUTLINE, false);
 }
 
@@ -229,13 +196,6 @@ void CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
 void CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
 {
 	ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
-}
-
-_bool CUI_SwitchAction::Is_AnimFinished(CHILD child)
-{
-	_bool isFinished = {};
-	ForChild(child, [&isFinished](CUI_Object* ui) { isFinished = ui->Is_AnimFinished(); });
-	return isFinished;
 }
 
 CGameObject* CUI_SwitchAction::Create()

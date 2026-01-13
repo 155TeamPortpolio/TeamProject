@@ -27,21 +27,31 @@ CJaneDoe::CJaneDoe(const CJaneDoe& rhs)
 {
 }
 
+void CJaneDoe::ProcessPassion(_float fPassionGauge)
+{
+	m_fPassionGauge = fPassionGauge;
+}
+
+void CJaneDoe::ProcessPassionSkill(_bool bAvailable)
+{
+	m_bPassionSkillAvailable = bAvailable;
+}
+
 HRESULT CJaneDoe::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.model",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.model");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.json",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe_Meta.json");
+	pRcsMgr->Add_ResourcePath("JaneDoe.model",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.model");
+	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size03_JaneDoe.mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "JaneDoe.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "JaneDoe.mat");
 
 	return S_OK;
 }
@@ -54,8 +64,7 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	if (FAILED(Initialize_Stat()))
-		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -64,10 +73,10 @@ void CJaneDoe::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size03_JaneDoe.json");
+	m_pAnimator->LinkAnimate_Model("Test_Level", "JaneDoe.model");
+	m_pAnimator->Link_MetaData("Test_Level", "JaneDoe_Meta.json");
 
-	m_pAnimator->Set_MotionBone(16);
+	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
@@ -76,6 +85,9 @@ void CJaneDoe::Awake()
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);
+
+	Initialize_Stat();
+
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -209,12 +221,14 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
-	m_fSpecialGauge = Desc.SpecialAttack;
+	m_tGauge.Set_SpecialGauge(Desc.SpecialAttack);
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
+
+	m_iEvadeMax = 3;
 
 	return S_OK;
 }

@@ -29,7 +29,7 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
         m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 
     // 모드 변경 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
         {
             switch (desc.eMode)
             {
@@ -43,26 +43,17 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
         });
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::PRIMARY)
                 return;
 
-            switch (m_mode)
-            {
-            case MODE::ATTACK:
-                if (desc.eState == UI_ACTION_STATE::DISABLE)
-                    Set_AttackActive(false);
-                else if (desc.eState == UI_ACTION_STATE::ENABLE)
-                    Set_AttackActive(true);
-                break;
-            case MODE::INTERACT:
-                if (desc.eState == UI_ACTION_STATE::ENABLE)
-                    Set_InteractActive(false);
-                else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-                    Set_InteractActive(true);
-                break;
-            }
+            if(desc.eState == UI_ACTION_STATE::DISABLE)
+                Set_InteractState(INTERACT_STATE::DISABLE);
+            else if (desc.eState == UI_ACTION_STATE::ENABLE)
+                Set_InteractState(INTERACT_STATE::ENABLE);
+            else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+                Set_InteractState(INTERACT_STATE::AVAILABLE);
         });
 
 	return S_OK;
@@ -71,21 +62,21 @@ HRESULT CUI_PrimaryAction::Initialize(INIT_DESC* pArg)
 void CUI_PrimaryAction::Update(_float dt)
 {
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('L'))
     //{
     //    UI_ACTION_PRIMARY_DESC desc = {};
     //    desc.eMode = UI_ACTION_PRIMARY_MODE::ATTACK;
     //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('K'))
     //{
     //    UI_ACTION_PRIMARY_DESC desc = {};
     //    desc.eMode = UI_ACTION_PRIMARY_MODE::INTERACT;
     //    EventSystem()->Broadcast<UI_ACTION_PRIMARY_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;
@@ -93,7 +84,7 @@ void CUI_PrimaryAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('V'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;
@@ -101,7 +92,7 @@ void CUI_PrimaryAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('C'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('B'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::PRIMARY;
@@ -114,12 +105,12 @@ void CUI_PrimaryAction::Update(_float dt)
 
 void CUI_PrimaryAction::UI_Active(void* pArg)
 {
-    Set_AttackActive(true);
+    Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_PrimaryAction::UI_DeActive(void* pArg)
 {
-    Set_AttackActive(false);
+    Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
 void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
@@ -137,39 +128,70 @@ void CUI_PrimaryAction::Set_ActionMode(MODE eMode)
         Set_Animation(CHILD::INTERACT, 0);
 }
 
-void CUI_PrimaryAction::Set_AttackActive(_bool isActive)
+void CUI_PrimaryAction::Set_InteractState(INTERACT_STATE state)
 {
-    if (m_mode != MODE::ATTACK)
-        return;
+    m_interactState = state;
+    Refresh_Visual();
+}
 
-    if (isActive)
+void CUI_PrimaryAction::Refresh_Visual()
+{
+    if (m_interactState == INTERACT_STATE::DISABLE)
     {
-        Set_Color(CHILD::ATTACK_BG, UI_GRAY_DARKEST);
-        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_LIGHTEST);
-        Set_Color(CHILD::ATTACK_MOUSE, UI_WHITE);
+        Apply_DisableVisual();
+        return;
     }
-    else
+
+    if (m_interactState == INTERACT_STATE::AVAILABLE)
     {
+        Apply_AvailableVisual();
+        return;
+    }
+
+    Apply_EnableVisual();
+}
+
+void CUI_PrimaryAction::Apply_DisableVisual()
+{
+    switch (m_mode)
+    {
+    case MODE::ATTACK:
         Set_Color(CHILD::ATTACK_BG, UI_GRAY_MEDIUM);
         Set_Color(CHILD::ATTACK_ICON, UI_GRAY_DARK);
         Set_Color(CHILD::ATTACK_MOUSE, UI_TRANSPARENT);
+        break;
+    case MODE::INTERACT:
+        Set_Alive(CHILD::INTERACT_GRADIENT, false);
+        break;
     }
 }
 
-void CUI_PrimaryAction::Set_InteractActive(_bool isActive)
+void CUI_PrimaryAction::Apply_EnableVisual()
 {
-    if (m_mode != MODE::INTERACT)
-        return;
-
-    if (isActive)
+    switch (m_mode)
     {
+    case MODE::ATTACK:
+        Set_Color(CHILD::ATTACK_BG, UI_GRAY_DARKEST);
+        Set_Color(CHILD::ATTACK_ICON, UI_GRAY_LIGHTEST);
+        Set_Color(CHILD::ATTACK_MOUSE, UI_WHITE);
+        break;
+    case MODE::INTERACT:
+        Set_Alive(CHILD::INTERACT_GRADIENT, false);
+        break;
+    }
+}
+
+void CUI_PrimaryAction::Apply_AvailableVisual()
+{
+    switch (m_mode)
+    {
+    case MODE::ATTACK:
+        break;
+    case MODE::INTERACT:
         Set_Alive(CHILD::INTERACT_GRADIENT, true);
         Set_Animation(CHILD::INTERACT_GRADIENT, 0);
-    } 
-    else
-    {
-        Set_Alive(CHILD::INTERACT_GRADIENT, false);
-    } 
+        break;
+    }
 }
 
 void CUI_PrimaryAction::Set_Alive(CHILD child, _bool isAlive)

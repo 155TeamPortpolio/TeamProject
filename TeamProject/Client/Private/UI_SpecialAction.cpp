@@ -29,17 +29,27 @@ HRESULT CUI_SpecialAction::Initialize(INIT_DESC* pArg)
 	for (_int i = 0; i < ENUM(CHILD::END); ++i)
 		m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
 	
-	Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+	// 모드 변경 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_PRIMARY_DESC>([&](const UI_ACTION_PRIMARY_DESC& desc)
+		{
+			if (desc.eMode == UI_ACTION_PRIMARY_MODE::INTERACT)
+				Set_InteractState(INTERACT_STATE::DISABLE);
+			else
+				Set_InteractState(INTERACT_STATE::ENABLE);
+		});
+
+	// 액션 이벤트
+	Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
 		{
 			if (desc.eType != UI_ACTION_TYPE::SPECIAL)
 				return;
 
 			if (desc.eState == UI_ACTION_STATE::DISABLE)
-				Set_Enabled(false);
+				Set_InteractState(INTERACT_STATE::DISABLE);
 			else if (desc.eState == UI_ACTION_STATE::ENABLE)
-				Set_Enabled(true);
+				Set_InteractState(INTERACT_STATE::ENABLE);
 			else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-				Set_Available();
+				Set_InteractState(INTERACT_STATE::AVAILABLE);
 			else if (desc.eState == UI_ACTION_STATE::EXECUTING)
 				Execute();
 		});
@@ -87,55 +97,73 @@ void CUI_SpecialAction::Update(_float dt)
 
 void CUI_SpecialAction::UI_Active(void* pArg)
 {
-	Set_Enabled(true);
+	Set_InteractState(INTERACT_STATE::ENABLE);
 }
 
 void CUI_SpecialAction::UI_DeActive(void* pArg)
 {
-	Set_Enabled(false);
+	Set_InteractState(INTERACT_STATE::DISABLE);
 }
 
-void CUI_SpecialAction::Set_Enabled(_bool isEnabled)
+void CUI_SpecialAction::Set_InteractState(INTERACT_STATE state)
 {
-	m_isEnabled = isEnabled;
-
-	if (isEnabled)
-	{
-		Set_Color(CHILD::BG, UI_GRAY_DARKEST);
-		Set_Color(CHILD::ICON, UI_WHITE);
-		Set_Color(CHILD::E, UI_WHITE);
-	}
-	else
-	{
-		Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-		Set_Color(CHILD::ICON, UI_GRAY_LIGHT);
-		Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
-	}
-
-	Set_Alive(CHILD::ACTIVE, false);
-}
-
-void CUI_SpecialAction::Set_Available()
-{
-	if (!m_isEnabled)
-		return;
-
-	m_isAvailable = false;
-	Set_Alive(CHILD::ACTIVE, true);
-	Set_Alive(CHILD::MASK, false);
-	Set_Animation(CHILD::BLINK, 0);
+	m_interactState = state;
+	Refresh_Visual();
 }
 
 void CUI_SpecialAction::Execute()
 {
-	if (!m_isEnabled)
-		return;
+	//if (m_interactState != INTERACT_STATE::AVAILABLE)
+	//    return;
 
-	m_isAvailable = true;
+	m_interactState = INTERACT_STATE::AVAILABLE;
+	Refresh_Visual();
 	Set_Animation(CHILD::GROUP, 0);
 	Set_Animation(CHILD::UV, 0);
 	Set_Alive(CHILD::ACTIVE, false);
 	Set_Alive(CHILD::MASK, true);
+}
+
+void CUI_SpecialAction::Refresh_Visual()
+{
+	if (m_interactState == INTERACT_STATE::DISABLE)
+	{
+		Apply_DisableVisual();
+		return;
+	}
+
+	if (m_interactState == INTERACT_STATE::AVAILABLE)
+	{
+		Apply_AvailableVisual();
+		return;
+	}
+
+	Apply_EnableVisual();
+}
+
+void CUI_SpecialAction::Apply_DisableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+	Set_Color(CHILD::ICON, UI_GRAY_LIGHT);
+	Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
+	Set_Alive(CHILD::ACTIVE, false);
+}
+
+void CUI_SpecialAction::Apply_EnableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+	Set_Color(CHILD::ICON, UI_WHITE);
+	Set_Color(CHILD::E, UI_GRAY_LIGHTEST);
+	Set_Alive(CHILD::ACTIVE, false);
+}
+
+void CUI_SpecialAction::Apply_AvailableVisual()
+{
+	Set_Color(CHILD::BG, UI_GRAY_DARKEST);
+	Set_Color(CHILD::ICON, UI_WHITE);
+	Set_Color(CHILD::E, UI_WHITE);
+	Set_Alive(CHILD::ACTIVE, true);
+	Set_Alive(CHILD::MASK, false);
 	Set_Animation(CHILD::BLINK, 0);
 }
 

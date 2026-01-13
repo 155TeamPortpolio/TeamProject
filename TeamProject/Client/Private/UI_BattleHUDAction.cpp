@@ -23,7 +23,7 @@ HRESULT CUI_BattleHUDAction::Initialize(INIT_DESC* pArg)
     Ready_PartObjects();
 
     // 액션 이벤트
-    Get_Component<CEventListener>()->Add_Listner<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
         {
             if (desc.eType != UI_ACTION_TYPE::ALL)
                 return;
@@ -42,7 +42,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     __super::Update(dt);
 
     // 이벤트 테스트 코드
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('P'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;
@@ -50,7 +50,7 @@ void CUI_BattleHUDAction::Update(_float dt)
     //    EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
     //}
     //
-    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('N'))
+    //if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('O'))
     //{
     //    UI_ACTION_DESC desc = {};
     //    desc.eType = UI_ACTION_TYPE::ALL;
@@ -70,6 +70,7 @@ void CUI_BattleHUDAction::Ready_PartObjects()
     Attach_Child(strLevelKey, "Proto_GameObject_EvadeAction", "evade", &m_handles[ENUM(Child::EVADE)], m_vOffset);
     Attach_Child(strLevelKey, "Proto_GameObject_SpecialAction", "special", &m_handles[ENUM(Child::SPECIAL)], _float2(m_vOffset.x * 2.f, m_vOffset.y));
     Attach_Child(strLevelKey, "Proto_GameObject_SwitchAction", "switch", &m_handles[ENUM(Child::SWITCH)], _float2(m_vOffset.x * 3.f, m_vOffset.y));
+    Attach_Child(strLevelKey, "Proto_GameObject_UltimateAction", "ultimate", &m_handles[ENUM(Child::ULTIMATE)], _float2(m_vOffset.x * 3.f, 0.f));
 }
 
 void CUI_BattleHUDAction::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_HANDLE* pHandleOut, _float2 vOffset)

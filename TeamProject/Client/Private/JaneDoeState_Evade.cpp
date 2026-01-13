@@ -7,8 +7,6 @@
 
 void CJaneDoeState_Evade::Enter(CJaneDoe* pOwner)
 {
-    pOwner->Use_Evade();
-
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();

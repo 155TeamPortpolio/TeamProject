@@ -11,6 +11,7 @@
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
 #include "Sacrifice_Laser.h"
+#include "EffectContainer.h"
 
 /* States */
 #include "StateMachine.h"
@@ -92,38 +93,26 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
-	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
-	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
-
 	/* Child Object */
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-
-	{
-		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
-			.Build("Sacrifice_Hand");
-		pHand->Set_Alive(false);
-		m_iHandID = pObjectContainer->Add_Child(pHand, false);
-	}
-	
-	{
-		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Build("AttackSign");
-		pObjectContainer->Add_Child(pAttackSign, false);
-		pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
-	}
-
-	{
-		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
-			.Build("Sacrifice_Laser");
-		pObjectContainer->Add_Child(pLaser, false);
-		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
-	}
+	Create_Children();
 
 	return S_OK;
 }
 
 void CSacrifice::Awake()
 {
+	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
+	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
+	m_fRimLightPower = 2.f;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	for (const auto& instance : materialInstances)
+	{
+		pMaterial->Add_MaterialData(instance, "vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		pMaterial->Add_MaterialData(instance, "fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+	}
 }
 
 void CSacrifice::Priority_Update(_float dt)
@@ -140,22 +129,6 @@ void CSacrifice::Update(_float dt)
 
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	Get_Component<CCharacterController>()->Update(dt);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
-
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('7'))
-	{
-		//Get_Component<CAnimator3D>()->Change_Animation(1, "SacrificeBringer_Ani_P1_Hit_Shake")
-		//	.Loop(false)
-		//	.Speed(1.5f)
-		//	.LayerBlend(1.f, 1.f, 0.5f, EaseType::None)
-		//	.Apply();
-		//
-		//Get_Component<CAnimator3D>()->Change_Animation(2, "SacrificeBringer_Ani_P1_Hit_Shake")
-		//	.Loop(false)
-		//	.Speed(1.5f)
-		//	.LayerBlend(1.f, 1.f, 1.f, EaseType::None)
-		//	.Apply();
-	}
 }
 
 void CSacrifice::Late_Update(_float dt)
@@ -378,10 +351,36 @@ void CSacrifice::DeactiveLaser()
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
 }
 
-void CSacrifice::Active_AttackSign()
+void CSacrifice::Create_Children()
 {
-	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	static_cast<CAttackSign*>(pAttackSign)->Active();
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	Create_AttackSign("Bip001 Head");
+
+	{
+		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+			.Build("Sacrifice_Hand");
+		pHand->Set_Alive(false);
+		m_iHandID = pObjectContainer->Add_Child(pHand, false);
+	}
+
+	{
+		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+			.Build("Sacrifice_Laser");
+		pObjectContainer->Add_Child(pLaser, false);
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
+	}
+
+	{
+		auto pSpark = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_spark.json")
+			.Build("Sacrifice_Spark");
+		pObjectContainer->Add_Child(pSpark, false);
+		auto pSparkBoneFollower = pSpark->Add_Component<CBoneFollower>();
+		pSparkBoneFollower->Initialize(nullptr);
+		pSparkBoneFollower->Link_Bone(pAnimator, "Ctr_Limbs_03");
+	}
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

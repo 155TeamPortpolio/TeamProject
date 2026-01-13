@@ -12,11 +12,10 @@ void CCorinState_SwitchOut::Enter(CCorin* pOwner)
 
 void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
 {
-    if (m_fAnimProgress >= 0.2f)
-        pOwner->Update_DissolveProgress(dt);
+    if (m_fAnimProgress >= 0.3f)
+        pOwner->Update_DissolveProgress(dt * 5.f);
 
-    pOwner->Process_RootMotion(dt,
-        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+    pOwner->Process_RootMotion(-dt, ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
     if (m_fAnimProgress >= 0.6f)
