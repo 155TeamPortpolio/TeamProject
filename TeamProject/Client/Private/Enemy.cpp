@@ -146,7 +146,7 @@ void CEnemy::Create_AttackSign(string boneTag)
 	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, boneTag);
 }
 
-void CEnemy::Active_AttackSign()
+void CEnemy::Active_AttackSign(_bool parryEnable)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
 	static_cast<CAttackSign*>(pAttackSign)->Active();

@@ -79,7 +79,7 @@ public:
     // Attack Sign 객체 추가 및 부착 본 지정
     virtual void        Create_AttackSign(string boneTag);
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
-    virtual void        Active_AttackSign();
+    virtual void        Active_AttackSign(_bool parryEnable = true);
 
 protected:
 #pragma region BattleCollider
