@@ -124,6 +124,7 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
 	pResource->Add_ResourcePath("sacrifice_smoke_trail_cone.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail_cone.json");
 	pResource->Add_ResourcePath("sacrifice_orb.json", "../Bin/Resources/Effect/Data/sacrifice_orb.json");
+	pResource->Add_ResourcePath("sacrifice_smoke_slash.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash.json");
 
 	/* Textures */
 	pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -143,6 +144,8 @@ HRESULT CTestLevel::Awake()
 	pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
 	pResource->Add_ResourcePath("Sacrifice_Orb.model", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.model");
 	pResource->Add_ResourcePath("Sacrifice_Orb.mat", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.mat");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash/Sacrifice_Smoke_Slash.model");
+	pResource->Add_ResourcePath("Sacrifice_Smoke_Slash.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash/Sacrifice_Smoke_Slash.mat");
 	
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -252,7 +255,8 @@ void CTestLevel::Update()
 
 	if(InputDevice()->Key_Tap(VK_F5))
 	{
-		auto pOrb = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeOrb" })
+		auto pOrb = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
 			.Build("Orb");
 
 		ObjectManager()->Add_Object(pOrb, { "Test_Level","Effect_Layer" });

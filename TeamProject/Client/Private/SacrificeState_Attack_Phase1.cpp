@@ -166,9 +166,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack10_Phase1");
-	blackBoard.stateQueue.push_back("Attack11_Phase1");
-	blackBoard.stateQueue.push_back("Attack12_Phase1");
+	blackBoard.stateQueue.push_back("Attack03_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -224,6 +222,11 @@ void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 void CSacrificeState_Attack_01_Phase1::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_01_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	
 }
 
 void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
@@ -299,12 +302,36 @@ void CSacrificeState_Attack_03_Phase1::Exit(CSacrifice* pOwner)
 
 void CSacrificeState_Attack_03_Phase1::Update_Effects(CSacrifice* pOwner)
 {
+	auto pTransform = pOwner->Get_Component<CTransform>();
+	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
+
+	/* Smoke Slash */
+	if (IsCrossAnimProgress(0.157f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_smoke_slash.json")
+			.Build("SmokeSlash");
+
+		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
+
+		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		vWorldPosition.y += 2.f;
+		vWorldPosition += vRight * 0.5f;
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion::CreateFromYawPitchRoll(_vector3(0.f, XMConvertToRadians(90.f), 0.f));
+		worldQuaternion.Normalize();
+		worldQuaternion *= localQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(worldQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
+
 	/* Hit ground smoke */
 	if (IsCrossAnimProgress(0.18f))
 	{
-		auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-		auto pTransform = pOwner->Get_Component<CTransform>();
-
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Skn_Finger2_03");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
 
