@@ -33,15 +33,15 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.model",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.model");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe.mat");
-	pRcsMgr->Add_ResourcePath("Avatar_Female_Size03_JaneDoe.json",
-		"../Bin/Resources/Model/skeletal/JaneDoe/Avatar_Female_Size03_JaneDoe_Meta.json");
+	pRcsMgr->Add_ResourcePath("JaneDoe.model",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.model");
+	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Avatar_Female_Size03_JaneDoe.mat");
+	Get_Component<CModel>()->Link_Model("Test_Level", "JaneDoe.model");
+	Get_Component<CMaterial>()->Link_Material("Test_Level", "JaneDoe.mat");
 
 	return S_OK;
 }
@@ -64,10 +64,10 @@ void CJaneDoe::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Avatar_Female_Size03_JaneDoe.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size03_JaneDoe.json");
+	m_pAnimator->LinkAnimate_Model("Test_Level", "JaneDoe.model");
+	m_pAnimator->Link_MetaData("Test_Level", "JaneDoe_Meta.json");
 
-	m_pAnimator->Set_MotionBone(16);
+	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
 
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
@@ -209,7 +209,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
-	m_fSpecialGauge = Desc.SpecialAttack;
+	m_tGauge.Set_SpecialGauge(Desc.SpecialAttack);
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;

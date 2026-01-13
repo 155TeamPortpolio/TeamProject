@@ -62,7 +62,7 @@
             "pass": "Opaque",
             "animClips": [
                 {
-                    "duration": 0.4000000059604645,
+                    "duration": 0.10000000149011612,
                     "keyframes": [
                         {
                             "angle": 0.0,
@@ -100,7 +100,7 @@
                                 1.5,
                                 1.5
                             ],
-                            "time": 0.10000000149011612
+                            "time": 0.05000000074505806
                         },
                         {
                             "angle": 0.0,
@@ -119,7 +119,7 @@
                                 1.0,
                                 1.0
                             ],
-                            "time": 0.20000000298023224
+                            "time": 0.10000000149011612
                         }
                     ],
                     "loop": false,
@@ -294,7 +294,7 @@
                             0.5,
                             0.5
                         ],
-                        "radian": 1.5707963705062866
+                        "radian": 3.1415927410125732
                     },
                     "color": [
                         1.0,
@@ -305,7 +305,7 @@
                     "pass": "Opaque",
                     "animClips": [
                         {
-                            "duration": 1.2000000476837158,
+                            "duration": 0.800000011920929,
                             "keyframes": [
                                 {
                                     "angle": 0.0,
@@ -315,7 +315,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "easeType": 0,
+                                    "easeType": 2,
                                     "position": [
                                         0.0,
                                         0.0
@@ -362,10 +362,10 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 0.800000011920929
+                                    "time": 0.4000000059604645
                                 },
                                 {
-                                    "angle": 90.0,
+                                    "angle": 180.0,
                                     "color": [
                                         1.0,
                                         1.0,
@@ -381,7 +381,7 @@
                                         1.0,
                                         1.0
                                     ],
-                                    "time": 1.2000000476837158
+                                    "time": 0.6000000238418579
                                 }
                             ],
                             "loop": false,
@@ -529,7 +529,7 @@
                                                 1.0,
                                                 1.0
                                             ],
-                                            "time": 0.15000000596046448
+                                            "time": 0.10000000149011612
                                         },
                                         {
                                             "angle": 0.0,
@@ -548,7 +548,7 @@
                                                 1.0,
                                                 1.0
                                             ],
-                                            "time": 0.20000000298023224
+                                            "time": 0.30000001192092896
                                         },
                                         {
                                             "angle": 0.0,
@@ -557,25 +557,6 @@
                                                 0.0,
                                                 0.0,
                                                 1.0
-                                            ],
-                                            "easeType": 0,
-                                            "position": [
-                                                0.0,
-                                                0.0
-                                            ],
-                                            "scale": [
-                                                1.0,
-                                                1.0
-                                            ],
-                                            "time": 0.44999998807907104
-                                        },
-                                        {
-                                            "angle": 0.0,
-                                            "color": [
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                0.0
                                             ],
                                             "easeType": 0,
                                             "position": [
@@ -587,6 +568,25 @@
                                                 1.0
                                             ],
                                             "time": 0.5
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.6000000238418579
                                         }
                                     ],
                                     "loop": false,
@@ -629,7 +629,7 @@
                             "pass": "Opaque",
                             "animClips": [
                                 {
-                                    "duration": 1.0,
+                                    "duration": 0.30000001192092896,
                                     "keyframes": [
                                         {
                                             "angle": 0.0,
@@ -667,7 +667,7 @@
                                                 1.0,
                                                 1.0
                                             ],
-                                            "time": 0.10000000149011612
+                                            "time": 0.05000000074505806
                                         },
                                         {
                                             "angle": 0.0,
@@ -686,45 +686,64 @@
                                                 2.0,
                                                 2.0
                                             ],
+                                            "time": 0.10000000149011612
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.15000000596046448
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.800000011920929,
+                                                0.800000011920929
+                                            ],
+                                            "time": 0.1599999964237213
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
                                             "time": 0.20000000298023224
-                                        },
-                                        {
-                                            "angle": 0.0,
-                                            "color": [
-                                                1.0,
-                                                1.0,
-                                                1.0,
-                                                1.0
-                                            ],
-                                            "easeType": 0,
-                                            "position": [
-                                                0.0,
-                                                0.0
-                                            ],
-                                            "scale": [
-                                                1.0,
-                                                1.0
-                                            ],
-                                            "time": 0.30000001192092896
-                                        },
-                                        {
-                                            "angle": 0.0,
-                                            "color": [
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                1.0
-                                            ],
-                                            "easeType": 0,
-                                            "position": [
-                                                0.0,
-                                                0.0
-                                            ],
-                                            "scale": [
-                                                0.0,
-                                                0.0
-                                            ],
-                                            "time": 0.4000000059604645
                                         }
                                     ],
                                     "loop": false,
@@ -734,9 +753,561 @@
                             "children": [],
                             "typeTag": "Image",
                             "textureTag": "SkillButtonUlt.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "star1",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -21.5,
+                                    8.0
+                                ],
+                                "size": [
+                                    32.5,
+                                    32.5
+                                ],
+                                "scale": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.20000000298023224,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.05000000074505806
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.07000000029802322
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.12999999523162842
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.15000000596046448
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "clip0"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "SkillButtonUlt01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "star2",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    10.25,
+                                    19.25
+                                ],
+                                "size": [
+                                    26.0,
+                                    26.0
+                                ],
+                                "scale": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.30000001192092896,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.15000000596046448
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.17000000178813934
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.2199999988079071
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.25
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "clip0"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "SkillButtonUlt01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "star3",
+                            "transform": {
+                                "anchor": 9,
+                                "anchorOffset": [
+                                    6.0,
+                                    -29.0
+                                ],
+                                "size": [
+                                    49.5,
+                                    49.5
+                                ],
+                                "scale": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                0.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.3499999940395355,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.20000000298023224
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.2199999988079071
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.33000001311302185
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "time": 0.3499999940395355
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "clip0"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "SkillButtonUlt01.png"
                         }
                     ],
                     "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "blink",
+                    "transform": {
+                        "anchor": 4,
+                        "anchorOffset": [
+                            -36.0,
+                            0.0
+                        ],
+                        "size": [
+                            72.0,
+                            72.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        0.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [
+                        {
+                            "duration": 0.1599999964237213,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.03999999910593033
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.07999999821186066
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.11999999731779099
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        0.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.1599999964237213
+                                }
+                            ],
+                            "loop": false,
+                            "name": "clip0"
+                        }
+                    ],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "Circle72.png"
                 }
             ],
             "typeTag": "CanvasPanel"

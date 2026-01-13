@@ -19,3 +19,10 @@ void CCorinState_Idle::Enter(CCorin* pOwner)
         .Loop(true)
         .Apply();
 }
+
+void CCorinState_Idle::Update(CCorin* pOwner, _float dt)
+{
+    //pOwner->Process_RootMotion(dt,
+    //    ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+    //    ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}

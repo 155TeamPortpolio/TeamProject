@@ -75,6 +75,23 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	UI_ACTION_DESC desc{};
+	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
+	{
+		desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
+		desc.eState = UI_ACTION_STATE::ENABLE;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeCooldown() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eType = UI_ACTION_TYPE::EVADE;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+
+
 	_float CurHP = m_pCurrentCharacter->Get_HP();
 	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
 }
@@ -144,7 +161,7 @@ void CBattlePlayer::Update_Input(_float dt)
 
 	if (InputDevice()->Key_Down('T'))
 	{
-		// Å×½ºÆ® ÄÚµå
+		// ï¿½×½ï¿½Æ® ï¿½Úµï¿½
 	}
 }
 
@@ -178,12 +195,19 @@ void CBattlePlayer::Process_Attack()
 	}
 }
 
+void CBattlePlayer::Process_SpecialAttack()
+{
+}
+
 void CBattlePlayer::Process_Evade()
 {
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 	{
-		m_pCurrentCharacter->On_Evade();
-		m_pCurrentCharacter->Buffer_Evade();
+		if (m_pCurrentCharacter->Can_Evade())
+		{
+			m_pCurrentCharacter->On_Evade();
+			m_pCurrentCharacter->Buffer_Evade();
+		}
 	}
 }
 
@@ -297,8 +321,10 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 {
 	auto vRight = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
-	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition() 
-		+ vRight* 0.5 - m_vSwitchLook * 4;
+	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
+		+ XMVectorScale(vRight, 0.5f)
+		- XMVectorScale(m_vSwitchLook, 4.f)
+		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
 	m_pCurrentCharacter->On_SwitchOut();
 }

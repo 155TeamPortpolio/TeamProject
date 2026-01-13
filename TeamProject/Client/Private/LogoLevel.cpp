@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "LogoLevel.h"
 #include "GameInstance.h"
+#include "LevelMgr.h"
 
 /* UI */
 #include "UIDirector.h"
