@@ -70,13 +70,15 @@ public:
     _float Get_MaxHP() const { return m_fMaxHP; }
     _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
-    _float Get_EvadeTimer() const { return m_fEvadeTimer; }
-    _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
+
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
+
+    _float Get_EvadeTimer() const { return m_fEvadeTimer; }
+    _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
 
 
     void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
@@ -132,12 +134,14 @@ public:
 
 public:
     void     Rotate(_vector3 vDirection);
+
+    _bool    Is_OppositeInput() const;
+    _bool    Can_Parry() const;
+
     _bool    Can_Evade() const;
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
-    _bool    Is_OppositeInput() const;
-    _bool    Can_Parry() const;
 
 private:
     void    Update_Rotation(_float dt);
