@@ -74,7 +74,7 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
-	//pAnimator->Set_MotionBone(3); //Bip001
+	pAnimator->Set_MotionBone(3); //Bip001
 	pAnimator->Resize_Layer(3);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
@@ -351,29 +351,18 @@ void CSacrifice::DeactiveLaser()
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
 }
 
-void CSacrifice::Active_AttackSign()
-{
-	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	static_cast<CAttackSign*>(pAttackSign)->Active();
-}
-
 void CSacrifice::Create_Children()
 {
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	auto pAnimator = Get_Component<CAnimator3D>();
+
+	Create_AttackSign("Bip001 Head");
 
 	{
 		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
 			.Build("Sacrifice_Hand");
 		pHand->Set_Alive(false);
 		m_iHandID = pObjectContainer->Add_Child(pHand, false);
-	}
-
-	{
-		auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-			.Build("AttackSign");
-		pObjectContainer->Add_Child(pAttackSign, false);
-		pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Bip001 Head");
 	}
 
 	{

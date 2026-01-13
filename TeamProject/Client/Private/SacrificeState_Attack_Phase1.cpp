@@ -277,6 +277,8 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_03").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Active_AttackSign();
+
 }
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)

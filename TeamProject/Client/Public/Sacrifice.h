@@ -70,9 +70,6 @@ public:
     void ActiveLaser(_uint mode);
     void DeactiveLaser();
 
-    /* Effect */
-    void Active_AttackSign()override;
-
 private:
     void Create_Children();
     HRESULT Initialize_StateMachine();

@@ -145,7 +145,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float fDissolveMask = 1.f;
     
     vDiffuse = ApplySamplerMode(SamplerMode, Texcoord, DiffuseTexture);
-    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).a;
+    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).r;
     
     if (fDissolveMask < DissolveProgress)
         discard;
