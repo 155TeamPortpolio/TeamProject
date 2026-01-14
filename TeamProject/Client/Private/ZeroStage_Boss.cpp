@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ZeroStage_Boss.h"
+#include "MapLoader.h"
 
 CZeroStage_Boss::CZeroStage_Boss()
 {
@@ -24,6 +25,7 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 {
+
 	return S_OK;
 }
 

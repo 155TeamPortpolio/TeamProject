@@ -38,7 +38,12 @@ HRESULT CZero_Level::Render()
 	return S_OK;
 }
 
-HRESULT CZero_Level::ChangeStage(StageType nextStageType)
+void CZero_Level::PreLoad_Level()
+{
+	/*여기에 Add ResourcePath 넣기*/
+}
+
+HRESULT CZero_Level::ChangeStage(StageType nextStageType, _int StageID)
 {
 	if (m_Context.eStageType == nextStageType && m_Context.pNowStage)
 		return S_OK;
@@ -51,14 +56,10 @@ HRESULT CZero_Level::ChangeStage(StageType nextStageType)
 		return E_FAIL;
 
 	m_Context.eStageType = nextStageType;
+	m_Context.StageID = StageID;
 	m_Context.pNowStage = found->second;
 
 	return m_Context.pNowStage->Enter_Stage(m_Context);
-}
-
-void CZero_Level::PreLoad_Level()
-{
-	/*여기에 Add ResourcePath 넣기*/
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
@@ -74,12 +75,11 @@ CZero_Level* CZero_Level::Create(const string& LevelKey)
 
 void CZero_Level::Free()
 {
+	m_Context.pNowStage = nullptr;
+
 	for (auto& pair : m_StageContainer)
 		Safe_Release(pair.second);
 	m_StageContainer.clear();
-
-	Safe_Release(m_Context.pNowStage);
-	m_Context.pNowStage = nullptr;
 
 	__super::Free();
 	m_pGameInstance->DestroyInstance();

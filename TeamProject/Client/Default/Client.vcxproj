@@ -197,7 +197,6 @@
     <ClInclude Include="..\public\EnemyTriggerCollider.h" />
     <ClInclude Include="..\Public\Event_Struct.h" />
     <ClInclude Include="..\Public\GaugeUI.h" />
-    <ClInclude Include="..\Public\IStage.h" />
     <ClInclude Include="..\public\JaneDoeState_Attack.h" />
     <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
     <ClInclude Include="..\public\JaneDoeState_Dash.h" />
@@ -227,6 +226,7 @@
     <ClInclude Include="..\Public\Sacrifice_Orb.h" />
     <ClInclude Include="..\Public\Scott_Level.h" />
     <ClInclude Include="..\public\ServiceNpc.h" />
+    <ClInclude Include="..\Public\Stage.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
@@ -401,6 +401,7 @@
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp" />
     <ClCompile Include="..\Private\MainCity_Level.cpp" />
     <ClCompile Include="..\Private\Scott_Level.cpp" />
+    <ClCompile Include="..\Private\Stage.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
     <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />

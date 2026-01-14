@@ -13,6 +13,7 @@ public:
 	enum class StageType {Normal, Elite, Boss};
 	typedef struct tagStageContext {
 		StageType eStageType;
+		_int StageID = { -1 };
 		class CStage* pNowStage = { nullptr };
 	}StageContext;
 
@@ -29,7 +30,8 @@ public:
 public:
 	static void PreLoad_Level();
 	StageContext& Get_StageContext() { return m_Context; };
-	HRESULT ChangeStage(StageType nextStageType);
+	HRESULT ChangeStage(StageType nextStageType, _int StageID);
+
 private:
 	CGameInstance* m_pGameInstance = {nullptr};
 	unordered_map<StageType,class CStage*> m_StageContainer;
