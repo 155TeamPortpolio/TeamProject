@@ -10,18 +10,21 @@ class CUI_BattleHUD final : public CUI_Object
 		HP_BACK1, HP_BACK2, HP_BACK3,
 		HP_FRONT1, HP_FRONT2, HP_FRONT3,
 		SPECIAL1, SPECIAL2, SPECIAL3,
-		ULTIMATE1, ULTIMATE2, ULTIMATE3, 
+		ULTIMATE1, ULTIMATE2, ULTIMATE3,
 		CUR_HP_TEXT, MAX_HP_TEXT,
-		 
+
 		BOSS_ICON, BOSS_HP_BACK, BOSS_HP_FRONT, BOSS_GROGGY, BOSS_GROGGY_TEXT,
 		ACTION,
-		END };
+		END
+	};
 
 	inline static constexpr Child ICON_CHILD[] = { ICON1, ICON2, ICON3 };
 	inline static constexpr Child HPBACK_CHILD[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
 	inline static constexpr Child HPFRONT_CHILD[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
 	inline static constexpr Child SPECIAL_CHILD[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
 	inline static constexpr Child ULTIMATE_CHILD[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
+
+	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png" };
 
 private:
 	CUI_BattleHUD() {}
@@ -52,6 +55,7 @@ private:
 
 	void Set_Text(Child child, _float fNum);
 	void Set_FillAmount(Child child, _float fFillAmount);
+	void Set_IconTexture(Child child, const string& strTextureKey);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);

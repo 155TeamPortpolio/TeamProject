@@ -5,6 +5,7 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 #include "TextSlot.h"
+#include "Sprite2D.h"
 #include "GaugeUI.h" 
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
@@ -169,6 +170,7 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 {
     const _uint iIndex = ENUM(desc.eOwner);
 
+    Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
     Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
     Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.hp.fMaxValue);
     Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.hp.fMaxValue);
@@ -201,6 +203,18 @@ void CUI_BattleHUD::Set_FillAmount(Child child, _float fFillAmount)
                 return;
 
             pGauge->Set_FillAmount(fFillAmount);
+        });
+}
+
+void CUI_BattleHUD::Set_IconTexture(Child child, const string& strTextureKey)
+{
+    ForChild(child, [&](CUI_Object* ui)
+        {
+            auto pSprite = ui->Get_Component<CSprite2D>();
+            if (!pSprite)
+                return;
+
+            pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
         });
 }
 
