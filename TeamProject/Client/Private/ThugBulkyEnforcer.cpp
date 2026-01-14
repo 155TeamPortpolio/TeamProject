@@ -44,7 +44,6 @@ HRESULT CThugBulkyEnforcer::Initialize_Prototype()
 	Add_Component<CSkeletalModel>();
 	Add_Component<CMaterial>();
 	Add_Component<CCharacterController>();
-	//Add_Component<CObjectContainer>();
 
 	auto pResourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResourceMgr->Add_ResourcePath("Monster_ThugBulkyEnforcer.mat", "../Bin/Resources/Model/skeletal/Enemy/ThugBulkyEnforcer/Monster_ThugBulkyEnforcer.mat");
@@ -532,7 +531,7 @@ HRESULT CThugBulkyEnforcer::Ready_Rules()
 	// Target 감지 범위 (default = 5.f)
 	m_fDetectedRange = 5.f;
 
-	m_tHysteriesis.fEvadEnter = 2.f;
+	m_tHysteriesis.fEvadeEnter = 2.f;
 	m_tHysteriesis.fComboEnter = 3.f;
 	m_tHysteriesis.fComboExit = 4.f;
 	m_tHysteriesis.fChaseEnter = 7.f;
@@ -604,7 +603,7 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 					case 2:
 					case 3:
 					{
-						if (m_tTargetingInfo.fDistance <= m_tHysteriesis.fEvadEnter) {
+						if (m_tTargetingInfo.fDistance <= m_tHysteriesis.fEvadeEnter) {
 							m_pStateMachine->Set_Bool("Evade", true);
 							m_pStateMachine->Set_Trigger("Idle_To_Move");
 						}
@@ -632,7 +631,7 @@ void CThugBulkyEnforcer::ControlState(const _float dt)
 		}
 	}
 }
-
+  
 void CThugBulkyEnforcer::CheckDistanceFromPlayer()
 {
 	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
