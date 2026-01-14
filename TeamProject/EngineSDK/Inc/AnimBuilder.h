@@ -12,8 +12,8 @@ public:
         _float fDuration,
         EaseType eEaseType) {
 
-        m_fLayerWeight = fBlendWeight;
-        m_fTargetWeight = fTargetWeight;
+        m_fLayerWeight = clamp(fBlendWeight, 0.f, 1.f);
+        m_fTargetWeight = clamp(fTargetWeight, 0.f, 1.f);
         m_fWeightDuration = fDuration;
         m_eLayerEaseType = eEaseType;
 
@@ -26,19 +26,32 @@ public:
         return static_cast<T&>(*this);
     }
 
-    //Clip
-    T& Loop(_bool bLoop, _float fLoopEnd = 1.f) {
+    //애니매이션 반복 여부
+    T& Loop(_bool bLoop) {
         m_bLoop = bLoop;
-        m_fLoopEnd = fLoopEnd;
-
         return static_cast<T&>(*this);
     }
 
+    //즉시 애니매이션 속도
     T& Speed(_float fSpeed) {
         m_fSpeed = fSpeed;
         return static_cast<T&>(*this);
     }
 
+    //시작 비율 (0 ~ 1)
+    T& StartAt(_float fStart) {
+        m_fStartAt = clamp(fStart, 0.f, 1.f);
+        return static_cast<T&>(*this);
+    }
+
+    //끝 비율 (0 ~ 1)
+    T& EndAt(_float fEnd) {
+        m_fEndAt = clamp(fEnd, 0.f, 1.f);
+
+        return static_cast<T&>(*this);
+    }
+
+    // 시작 - 끝까지 몇초동안
     T& TransitionSpeed(_float fStartSpeed,
         _float fTargetSpeed,
         _float fDuration,
@@ -86,7 +99,9 @@ protected:
     EaseType m_eLayerEaseType = { EaseType::None };
     //반복
     _bool    m_bLoop = false;
-    _float   m_fLoopEnd = 1.f;
+    //시작, 끝
+    _float   m_fStartAt = { 0.f };
+    _float   m_fEndAt = { 1.f };
     //멈춤
     _bool    m_bPause = false;
     //회전보간 끄기
