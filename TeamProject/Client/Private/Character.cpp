@@ -188,6 +188,7 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
+	if (false == m_bCanMove)	return;
 	_bool prevResetMove = m_inputInfo.resetMove;  // ���� �� ���
 
 	m_inputInfo = inputInfo;
@@ -234,7 +235,8 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = true;
 	rigidDesc.bEnableGravity = false;
-	rigidDesc.bLockY = true;
+	rigidDesc.bLockX = false;
+	rigidDesc.bLockZ = true;
 
 	COLLIDER_DESC colliderDesc{};
 	colliderDesc.eType = pDesc->eColliderType;
@@ -277,6 +279,12 @@ void CCharacter::Rotate(_vector3 vDirection)
 	m_bIsRotating = true;
 }
 
+void CCharacter::Stop_Rotation()
+{
+	m_bIsRotating = false;
+	m_qTargetRot = m_pTransform->Get_QuaternionRotate();
+}
+
 
 _bool CCharacter::Can_Evade() const
 {
@@ -311,6 +319,18 @@ _bool CCharacter::Can_Ultimate()
 {
 	if (m_fCurrentDecibel == MAX_DECIBEL) return true;
 	return false;
+}
+
+void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
+{
+	string ColliderName = strName + "_AttackCollider";
+	
+	auto iter = m_AttackColliderIndex.find(ColliderName);
+	if (iter == m_AttackColliderIndex.end())	return;
+	auto pAttackCollider = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
+	if (nullptr == pAttackCollider)	return;
+
+	pAttackCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
 }
 
 _bool CCharacter::Is_OppositeInput() const

@@ -6,6 +6,7 @@
 
 void CCorinState_NormalAttack::Enter(CCorin* pOwner)
 {
+    pOwner->Lock_Move();
     m_iComboIndex = 0;
 
     if (!m_pSubStateMachine)
@@ -179,6 +180,8 @@ void CCorinState_Attack_End::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(arrEndAnims[iIndex])
         .Speed(1.2f)
         .Apply();
+
+    pOwner->Unlock_Move();
 }
 #pragma endregion
 

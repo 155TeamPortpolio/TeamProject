@@ -58,6 +58,7 @@ void CCorinState_Run_Loop::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
+        .EndAt(0.93f)
         .Apply();
 }
 
