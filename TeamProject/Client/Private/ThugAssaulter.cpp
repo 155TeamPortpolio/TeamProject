@@ -188,6 +188,17 @@ void CThugAssaulter::Render_GUI()
 			}
 			ImGui::TreePop();
 		}
+		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath")) {
+			if (ImGui::Button("Death Front"))
+				m_pStateMachine->Change_State("Death");
+			if (ImGui::Button("Death Back")) {
+				m_pStateMachine->Set_Bool("DeathBack", true);
+				m_pStateMachine->Change_State("Death");
+			}
+
+			ImGui::TreePop();
+		}
+
 		ImGui::TreePop();
 	}
 #pragma endregion
@@ -202,11 +213,9 @@ void CThugAssaulter::Render_GUI()
 	m_pStateMachine->Render_GUI();
 #pragma endregion
 
-	ImGui::PopID();
-}
 
-void CThugAssaulter::Active_AttackSign()
-{
+
+	ImGui::PopID();
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
@@ -333,6 +342,8 @@ void CThugAssaulter::Update_States(_float dt)
 		m_isIdle = false;
 	}
 	
+	CheckDistanceFromPlayer();
+	
 	//================================
 	ControlState(dt);
 	//================================
@@ -345,12 +356,31 @@ void CThugAssaulter::ControlState(const _float dt)
 
 		m_vIdleTime.y += dt;
 
-		if (m_vIdleTime.x <= m_vIdleTime.y) {
-
-			m_pStateMachine->Set_Trigger("Idle_To_Attack");
+		if (m_vIdleTime.x <= m_vIdleTime.y) 
+		{
+			if (true == m_pStateMachine->Get_Bool("Chase")) 
+				m_pStateMachine->Set_Trigger("Idle_To_Chase");
+			else if (true == m_pStateMachine->Get_Bool("Death"))
+				m_pStateMachine->Set_Trigger("Idle_To_Death");
+			else if ("Attack" != m_pStateMachine->Get_PrevStateName()) 
+				m_pStateMachine->Set_Trigger("Idle_To_Attack");
+			else
+				m_pStateMachine->Set_Trigger("Idle_To_Move");
 
 
 			m_vIdleTime.y = 0.f;
 		}
 	}
+}
+
+void CThugAssaulter::CheckDistanceFromPlayer()
+{
+	if ("Chase" != m_pStateMachine->Get_CurrentStateName() &&
+		m_tTargetingInfo.fDistance >= m_tHysteriesis.fChaseEnter)
+		m_pStateMachine->Set_Bool("Chase", true);
+
+
+	if (true == m_pStateMachine->Get_Bool("Chase") &&
+		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
+		m_pStateMachine->Set_Bool("Chase", false);
 }

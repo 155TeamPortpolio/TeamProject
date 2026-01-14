@@ -21,7 +21,6 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
-    void    Active_AttackSign() override;
 
 public:
     static CThugAssaulter* Create();
@@ -46,6 +45,7 @@ private:
     HRESULT Ready_Rules();
     void Update_States(const _float dt);
     void ControlState(const _float dt);
+    void CheckDistanceFromPlayer();
 
 private:
     CStateMachine<CThugAssaulter>* m_pStateMachine = { nullptr };

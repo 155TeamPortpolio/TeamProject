@@ -27,19 +27,31 @@ void CThugAssaulter_Move::Enter(CThugAssaulter* pOwner)
 		pOwner->GetStateMachine()->Set_Int("MovePattern", -1);
 	}
 	else {
-		if (pOwner->GetHysteriesis().fEvadeEnter >= pOwner->GetTargetingInfo().fDistance)
+		auto hysteriesis = pOwner->GetHysteriesis();
+		_float fDistance = pOwner->GetTargetingInfo().fDistance;
+		if (hysteriesis.fEvadeEnter >= fDistance)
 			iMovePatternIndex = MOVEINDEX::Walk_Back;
-
-
-
-
+		else if (hysteriesis.fComboExit <= fDistance)
+			iMovePatternIndex = MOVEINDEX::Walk_Front;
+		else
+			iMovePatternIndex = Helper::Get_Random_Int(3, 7);
 	}
 	ChangeMovePatternFromIndex(iMovePatternIndex);
-
 }
 
 void CThugAssaulter_Move::Update(CThugAssaulter* pOwner, _float dt)
 {
+	_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+		vRootBoneMoveDelta,
+		qRot,
+		dt);
+
+	__super::Update(pOwner, dt);
+
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Idle();
 }
 
 void CThugAssaulter_Move::Exit(CThugAssaulter* pOwner)
@@ -98,6 +110,8 @@ void CThugAssaulter_Move::ChangeMovePatternFromIndex(_int iMoveIndex)
 /*============================================================================*/
 void CThugAssaulter_Walk_Front::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_ThugAssaulter_Ani_Walk_F")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_Front::Update(CThugAssaulter* pOwner, _float dt)
@@ -111,6 +125,8 @@ void CThugAssaulter_Walk_Front::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_Back::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_ThugAssaulter_Ani_Walk_B")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_Back::Update(CThugAssaulter* pOwner, _float dt)
@@ -124,6 +140,8 @@ void CThugAssaulter_Walk_Back::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_Left::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_ThugAssaulter_Ani_Walk_L")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_Left::Update(CThugAssaulter* pOwner, _float dt)
@@ -137,6 +155,8 @@ void CThugAssaulter_Walk_Left::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_Right::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("Monster_ThugAssaulter_Ani_Walk_R")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_Right::Update(CThugAssaulter* pOwner, _float dt)
@@ -150,6 +170,8 @@ void CThugAssaulter_Walk_Right::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_FL_LFoot::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Walk_FL_LFoot")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_FL_LFoot::Update(CThugAssaulter* pOwner, _float dt)
@@ -163,6 +185,8 @@ void CThugAssaulter_Walk_FL_LFoot::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_FR_LFoot::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Walk_FR_LFoot")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_FR_LFoot::Update(CThugAssaulter* pOwner, _float dt)
@@ -176,6 +200,8 @@ void CThugAssaulter_Walk_FR_LFoot::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_LF_RFoot::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Walk_LF_RFoot")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_LF_RFoot::Update(CThugAssaulter* pOwner, _float dt)
@@ -189,6 +215,8 @@ void CThugAssaulter_Walk_LF_RFoot::Exit(CThugAssaulter* pOwner)
 /*============================================================================*/
 void CThugAssaulter_Walk_Evade::Enter(CThugAssaulter* pOwner)
 {
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Evade")
+		.Apply();
 }
 
 void CThugAssaulter_Walk_Evade::Update(CThugAssaulter* pOwner, _float dt)
