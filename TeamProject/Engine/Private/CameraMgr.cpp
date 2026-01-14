@@ -245,12 +245,12 @@ void CCameraMgr::Free()
     m_baseCamObj.Reset();
     m_shadowCamObj.Reset();
 
-    m_isBlending = false;
-    m_blendTime = 0.f;
+    m_isBlending    = false;
+    m_blendTime     = 0.f;
     m_blendDuration = 0.f;
     m_blendTargetObj.Reset();
-    m_outputPose = {};
+    m_outputPose    = {};
 
-    main = {};
+    main   = {};
     shadow = {};
 }
