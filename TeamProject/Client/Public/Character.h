@@ -15,6 +15,16 @@ class CStateMachine;
 class CCharacter abstract : public CGameObject
 {
 public:
+    typedef struct tagAttackColliderInitDesc {
+        string          tagName = "";   // AttackCollider 이름
+        string          tagBone = "";   // 붙일 뼈 이름
+        CAnimator3D*    pOwnerAnimator = { nullptr };
+        COLLIDER_TYPE   eColliderType = COLLIDER_TYPE::SPHERE;
+        _float3         vSize = { 1.f,1.f,1.f };		        // 사이즈 비율
+        _float3			vCenter = { 0.f, 0.f, 0.f };		    // Collider의 로컬 오프셋
+        _float3			vRotation = { 0.f, 0.f, 0.f };
+    }ATTACK_COLLIDER_DESC;
+
     struct InputInfo
     {
         _vector3 direction = {};
@@ -139,6 +149,7 @@ public:
     virtual void    On_Special() {}; // 개별 구현 
 
 public:
+    HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
     void     Rotate(_vector3 vDirection);
 
     _bool    Is_OppositeInput() const;
@@ -158,11 +169,11 @@ private:
     void    Update_Decibel(_float dt);
 
 protected:
-    CAnimator3D* m_pAnimator = { nullptr };
-    CCharacterController* m_pCCT = { nullptr };
-    string                m_strAnimName = "";   //*�ִϸ��̼� �����̸�*
-    string                m_strName = "";       //*ĳ���� �̸�*
-
+    CAnimator3D*                m_pAnimator = { nullptr };
+    CCharacterController*       m_pCCT = { nullptr };
+    string                      m_strAnimName = "";   // For Animator
+    string                      m_strName = "";       // 
+    unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };

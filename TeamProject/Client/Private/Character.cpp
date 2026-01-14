@@ -8,6 +8,9 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
+
+#include "CharacterAttackCollider.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
@@ -138,6 +141,8 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
@@ -148,6 +153,8 @@ void CCharacter::Update(_float dt)
 
 void CCharacter::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+
 	m_pCCT->Late_Update(dt);
 	m_bIsAttack = false;
 	m_bIsEvade = false;
@@ -212,6 +219,49 @@ void CCharacter::On_Ultimate()
 	desc.eState = UI_ACTION_STATE::EXECUTING;
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	m_fCurrentDecibel = 0.f;
+}
+
+HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
+{
+	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+
+	if (nullptr == pObjectContainer)	return E_FAIL;
+	if (nullptr == pDesc) return E_FAIL;
+	if (nullptr == pDesc->pOwnerAnimator) return E_FAIL;
+
+	string strLevel = LevelManager()->Get_NowLevelKey();
+
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+	rigidDesc.bLockY = true;
+
+	COLLIDER_DESC colliderDesc{};
+	colliderDesc.eType = pDesc->eColliderType;
+	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
+	colliderDesc.bAutoFit = false;
+	colliderDesc.vCenter = pDesc->vCenter;
+	colliderDesc.vSize = pDesc->vSize;
+	colliderDesc.vRotation = pDesc->vRotation;
+	colliderDesc.bTrigger = true;
+
+	string strAttackName = pDesc->tagName + "_AttackCollider";
+
+	CGameObject* pAttackCollider = Builder::Create_Object(
+		{ strLevel, "Proto_GameObject_CharacterAttackCollider" })
+		.RigidBody(rigidDesc)
+		.Collider(colliderDesc)
+		.Build(strAttackName);
+	if (nullptr == pAttackCollider)	return E_FAIL;
+
+	_int iAttackColliderIndex = { -1 };
+	iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);
+	pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator, pDesc->tagBone);
+
+	m_AttackColliderIndex.emplace(strAttackName, iAttackColliderIndex);
+
+	return S_OK;
 }
 
 void CCharacter::Rotate(_vector3 vDirection)

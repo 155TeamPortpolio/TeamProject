@@ -191,6 +191,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 
 void CCollider::Update(_float dt)
 {
+	// Only For MapTool
 	if (m_bMapTool)
 	{
 		Sync_Transform();
