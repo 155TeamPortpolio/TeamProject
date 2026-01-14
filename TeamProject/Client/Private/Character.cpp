@@ -13,8 +13,6 @@ CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
 	, m_fMaxHP(rhs.m_fMaxHP)
 	, m_fCurrentHP(rhs.m_fCurrentHP)
-	, m_fMaxEnergy(rhs.m_fMaxEnergy)
-	, m_fCurrentEnergy(rhs.m_fCurrentEnergy)
 	, m_fAttackPower(rhs.m_fAttackPower)
 	, m_fDefense(rhs.m_fDefense)
 	, m_fMoveSpeed(rhs.m_fMoveSpeed)
@@ -39,7 +37,7 @@ void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 	desc.eType = UI_STATUS_TYPE::HP;
 	desc.value.fCurValue = fHP;
 	desc.value.fMaxValue = m_fMaxHP;
-	EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
+	//EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
 
 	Set_HP(fHP);
 }
@@ -144,7 +142,8 @@ void CCharacter::Update(_float dt)
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
 	if (m_bIsRotating)	Update_Rotation(dt);
-	Update_Gauge(dt);
+	Update_Energy(dt);
+	Update_Decibel(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -249,6 +248,12 @@ _bool CCharacter::Use_EvadeBuffer()
 	return false;
 }
 
+_bool CCharacter::Can_Ultimate()
+{
+	if (m_fDecibel == MAX_DECIBEL)		return true;
+	return false;
+}
+
 _bool CCharacter::Is_OppositeInput() const
 {
 	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
@@ -308,14 +313,25 @@ void CCharacter::Update_Evade(_float dt)
 	}
 }
 
-void CCharacter::Update_Gauge(_float dt)
+void CCharacter::Update_Energy(_float dt)
 {
-	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
+	m_tEnergy.fPrevEnergy = m_tEnergy.fCurrentEnergy;
+	if (m_tEnergy.fCurrentEnergy >= MAX_ENERGY)
 	{
-		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
+		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 		return;
 	}
-	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt;
+	m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt;
+}
+
+void CCharacter::Update_Decibel(_float dt)
+{
+	if (m_fDecibel >= MAX_DECIBEL)
+	{
+		m_fDecibel = MAX_DECIBEL;
+		return;
+	}
+	m_fDecibel += dt * 1000.f;
 }
 
 void CCharacter::Free()

@@ -75,6 +75,7 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	/* Evade & EvadePerfect */
 	UI_ACTION_DESC desc{};
 	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
 	{
@@ -90,10 +91,19 @@ void CBattlePlayer::Update(_float dt)
 		desc.fFillAmount = 1.0f - m_pCurrentCharacter->Get_EvadeTimer() / 1.0f;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
+	
+	/* Energy */
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
 
-
-	_float CurHP = m_pCurrentCharacter->Get_HP();
-	m_pCurrentCharacter->Process_HP(CurHP - 0.1);
+	if (tEnergy.fCurrentEnergy > tEnergy.fSpecialEnergy &&
+		tEnergy.fPrevEnergy <= tEnergy.fSpecialEnergy)
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	
+	Update_Status();
 }
 
 void CBattlePlayer::Late_Update(_float dt)
@@ -158,6 +168,8 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Attack();
 	Process_Evade();
 	Process_Switch();
+	Process_Ultimate();
+	Process_Energy();
 
 	if (InputDevice()->Key_Down('T'))
 	{
@@ -223,6 +235,25 @@ void CBattlePlayer::Process_Switch()
 	}
 }
 
+void CBattlePlayer::Process_Ultimate()
+{
+	if (InputDevice()->Key_Tap('Q'))
+	{
+		if (m_pCurrentCharacter->Can_Ultimate())
+		{
+			m_pCurrentCharacter->On_Ultimate();
+		}
+	}
+}
+
+void CBattlePlayer::Process_Energy()
+{
+	if (InputDevice()->Key_Hold('E'))
+	{
+		m_pCurrentCharacter->On_Special();
+	}
+}
+
 _bool CBattlePlayer::Can_Switch() const
 {
 	if (m_fSwitchCooldown > 0.f) return false;
@@ -254,6 +285,26 @@ void CBattlePlayer::Update_Target()
 		}
 	}
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
+}
+
+void CBattlePlayer::Update_Status()
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
+		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
+		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	{
+		CCharacter* pCharacter = tempQueue.front().second;
+		tempQueue.pop();
+
+		UI_PLAYER_STATUS_DESC desc;
+		desc.eOwner = eOwner;
+		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
+		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
+		desc.ultimate = { pCharacter->Get_Decibel(), pCharacter->Get_MaxDecibel() };
+
+		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
+	}
 }
 
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()

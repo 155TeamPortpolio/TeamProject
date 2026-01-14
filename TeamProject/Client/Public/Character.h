@@ -20,7 +20,7 @@ public:
         _vector3 direction = {};
         _vector3 prevDirection = {};
         _float   bufferTimer = 0.f;
-        // Turnback ÆÇÁ¤¿ë Ãß°¡
+        // Turnback ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
         _int  prevMoveX = 0;
         _int  prevMoveZ = 0;
         _int  curMoveX = 0;
@@ -29,8 +29,8 @@ public:
     };
     enum class ROOTMOTION_MASK
     {
-        MOVE = 1 << 0,  // 0x01 - ·çÆ® ¸ğ¼Ç ÀÌµ¿ »ç¿ë
-        QUATERNION = 1 << 1,  // 0x02 - ·çÆ® ¸ğ¼Ç È¸Àü »ç¿ë
+        MOVE = 1 << 0,  // 0x01 - ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ï¿½
+        QUATERNION = 1 << 1,  // 0x02 - ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ È¸ï¿½ï¿½ ï¿½ï¿½ï¿½
     };
     struct ROOTMOTION_DESC
     {
@@ -41,15 +41,12 @@ public:
         _float fRotateSpeed = 10.f;
     };
 
-private:
-    struct GaugeDesc
+    struct EnergyDesc
     {
-        _float      fCurrentGauge = { 0.f };
-        _float      fGaugeWeight = { 1.f };
-        _float      fSpecialGauge = { 60.f };
-        void        Set_CurrentGauge(_float fGauge) { fCurrentGauge = fGauge; }
-        void        Set_GaugeWeight(_float fWeight) { fGaugeWeight = fWeight; }
-        void        Set_SpecialGauge(_float fGauge) { fSpecialGauge = fGauge; }
+        _float      fCurrentEnergy = { 0.f };
+        _float      fPrevEnergy = { 0.f };
+        _float      fEnergyWeight = { 1.f };
+        _float      fSpecialEnergy = { 60.f };
     };
 
 public:
@@ -61,46 +58,51 @@ protected:
     virtual ~CCharacter() DEFAULT;
 
 public:
-    // °ÔÀÌÁö ½Ã½ºÅÛ
-    const GaugeDesc& Get_GaugeDesc() const { return m_tGauge; }
-    void  Set_GaugeDesc(GaugeDesc desc) { m_tGauge = desc; }
+    // HP
+    _float  Get_HP() const { return m_fCurrentHP; }
+    _float  Get_MaxHP() const { return m_fMaxHP; }
+    void    Set_HP(_float fHp) { m_fCurrentHP = fHp; }
+    void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
+    // íŠ¹ìˆ˜ ìŠ¤í‚¬
+    const EnergyDesc& Get_EnergyDesc() const { return m_tEnergy; }
+    void    Set_EnergyDesc(EnergyDesc desc) { m_tEnergy = desc; }
+    void    Set_CurrentEnergy(_float fEnergy) { m_tEnergy.fCurrentEnergy = fEnergy; }
+    void    Set_EnergyWeight(_float fWeight) { m_tEnergy.fEnergyWeight = fWeight; }
+    void    Set_SpecialEnergy(_float fEnergy) { m_tEnergy.fSpecialEnergy = fEnergy; }
+    _float  Get_MaxEnergy() { return MAX_ENERGY; }
+    // ê¶ê·¹ê¸°
+    _float  Get_Decibel() const { return m_fDecibel; }
+    _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
+    void    Set_Decibel(_float fDecibel) { m_fDecibel = fDecibel; }
 
-    // »óÅÂ Á¢±Ù
-    _float Get_HP() const { return m_fCurrentHP; }
-    _float Get_MaxHP() const { return m_fMaxHP; }
-    _float Get_Energy() const { return m_fCurrentEnergy; }
     _float Get_Speed() const { return m_fMoveSpeed; }
 
+    // ï¿½ï¿½ï¿½ï¿½
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
-
     _float Get_EvadeTimer() const { return m_fEvadeTimer; }
     _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
+    _uint  Get_EvadeCount() const { return m_iEvadeCount; }
 
-
-    void   Set_HP(_float fHp) { m_fCurrentHP = fHp; }
-    void   Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
-    void   Set_Energy(_float fEnergy) { m_fCurrentEnergy = fEnergy; }
     void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
     void   Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
 
-
-    void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*ÀÌº¥Æ® ¹ö½º¸¦ º¸³»´Â ÇÔ¼ö Set_HP¸¦ ProcessHP ÇÔ¼ö ³»ºÎ¿¡¼­ È£Ãâ*
+    void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*ï¿½Ìºï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ Set_HPï¿½ï¿½ ProcessHP ï¿½Ô¼ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ï¿½ï¿½ È£ï¿½ï¿½*
 
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
     _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
     _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
     void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
     void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
-    
-    CAnimator3D*          Get_Animator() { return m_pAnimator; }
-    CCharacterController* Get_CCT() { return m_pCCT; }
-    const string&         Get_Name() const { return m_strAnimName; }
 
-    SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine¿¡¼­ °¡Á®°¥ switchtype*
+    CAnimator3D* Get_Animator() { return m_pAnimator; }
+    CCharacterController* Get_CCT() { return m_pCCT; }
+    const string& Get_Name() const { return m_strAnimName; }
+
+    SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachineï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
@@ -130,8 +132,10 @@ public:
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
-    virtual void    On_SwitchIn(SWITCH eType)   PURE;   //*½ºÀ§Ä¡ ÀÎ Äİ*
-    virtual void    On_SwitchOut()              PURE;   //*½ºÀ§Ä¡ ¾Æ¿ô Äİ*
+    virtual void    On_SwitchIn(SWITCH eType)   PURE;
+    virtual void    On_SwitchOut()              PURE;
+    virtual void    On_Ultimate() { m_fDecibel = 0.f; }
+    virtual void    On_Special() {}; // ê°œë³„ êµ¬í˜„ 
 
 public:
     void     Rotate(_vector3 vDirection);
@@ -144,57 +148,62 @@ public:
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
 
+    _bool    Can_Ultimate();
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
-    void    Update_Gauge(_float dt);
+    void    Update_Energy(_float dt);
+    void    Update_Decibel(_float dt);
 
 protected:
     CAnimator3D*          m_pAnimator = { nullptr };
     CCharacterController* m_pCCT = { nullptr };
-    string                m_strAnimName = "";   //*¾Ö´Ï¸ŞÀÌ¼Ç Àü¿ëÀÌ¸§*
-    string                m_strName = "";       //*Ä³¸¯ÅÍ ÀÌ¸§*
+    string                m_strAnimName = "";   //*ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½*
+    string                m_strName = "";       //*Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½Ì¸ï¿½*
 
-    // ½ºÅÈ
-    GaugeDesc   m_tGauge;
-    static  constexpr _float    MAX_SPECIALGAUGE = { 120.f };
-    
-
+    // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
-    _float          m_fMaxEnergy = { 100.f };
-    _float          m_fCurrentEnergy = { 0.f };
+    // íŠ¹ìˆ˜ ìŠ¤í‚¬
+    EnergyDesc   m_tEnergy = {};
+    static  constexpr _float    MAX_ENERGY = { 120.f };
+    // ê¶ê·¹ê¸°
+    _float          m_fDecibel = {};
+    static constexpr _float MAX_DECIBEL = { 3000 };
+
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
-    _uint           m_iCurrentLevel = { 1 };            //*Ä³¸¯ÅÍ ·¹º§*
-    // ÀÔ·Â
+    _uint           m_iCurrentLevel = { 1 };            //*Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½*
+
+    // ï¿½Ô·ï¿½
     InputInfo       m_inputInfo;
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
-    // È¸ÇÇ ½Ã½ºÅÛ
+    // È¸ï¿½ï¿½ ï¿½Ã½ï¿½ï¿½ï¿½
     _bool                   m_bEvadeBuffer = { false };
     _uint                   m_iEvadeMax = 2;
     _uint                   m_iEvadeCount = { 0 };
     _float                  m_fEvadeTimer = { 0.f };
     _float                  m_fEvadeCooldown = { 0.f };
     static constexpr _float EVADE_COOLDOWN = 1.f;
-    //*½ºÀ§Ä¡ ½Ã½ºÅÛ*
+    //*ï¿½ï¿½ï¿½ï¿½Ä¡ ï¿½Ã½ï¿½ï¿½ï¿½*
     SWITCH                  m_eSwitchType = SWITCH::END;
-    // È¸Àü
+    // È¸ï¿½ï¿½
     _quaternion     m_qCurrentRot = {};
     _quaternion     m_qTargetRot = {};
     _bool           m_bIsRotating = { false };
-    // ÆĞ¸µ
+    // ï¿½Ğ¸ï¿½
     unordered_set<CGameObject*>  m_ParryableTargets;
-    // Å×½ºÆ®¿ë
+    // ï¿½×½ï¿½Æ®ï¿½ï¿½
     _bool           m_bTest = { false };
-    //¼ÎÀÌ´õ
+    //ï¿½ï¿½ï¿½Ì´ï¿½
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
     _float      m_fRimLightPower = { 0.f };
     _float      m_fDissolveProgress = { 0.f };
-    _float      m_fDissolveTiling = { 4.f };
-    // ¸ó½ºÅÍ
+    _float      m_fDissolveTiling = { 10.f };
+    // ï¿½ï¿½ï¿½ï¿½
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
 
