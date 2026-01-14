@@ -120,19 +120,6 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
     m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
     m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
-
-    // 게이지 정보(소유자, 게이지 타입) 설정
-    for (const auto& bind : GaugeBindings)
-    {
-        auto& handle = m_handles[bind.eChild];
-        if (!handle.isValid())
-            continue;
-
-        if (auto pGauge = dynamic_cast<CGaugeUI*>(handle.Get()))
-        {
-            pGauge->Set_Status(bind.eOwner, bind.eType);
-        }
-    }
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)

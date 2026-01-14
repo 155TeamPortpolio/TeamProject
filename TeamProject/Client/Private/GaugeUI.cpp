@@ -11,17 +11,9 @@ void CGaugeUI::Set_FillAmount(_float fFillAmount)
     m_fFillAmount = clamp(fFillAmount, 0.f, 1.f);
 }
 
-void CGaugeUI::Set_Status(UI_STATUS_OWNER eOwner, UI_STATUS_TYPE eType)
-{
-    m_eOwner = eOwner;
-    m_eType = eType;
-}
-
 HRESULT CGaugeUI::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-
-    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -31,23 +23,6 @@ HRESULT CGaugeUI::Initialize(INIT_DESC* pArg)
     __super::Initialize(pArg);
 
     Get_Component<CSprite2D>()->Link_Shader(G_GlobalLevelKey, "VTX_UI.hlsl");
-    Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
-        { 
-            if(desc.eOwner == m_eOwner && 
-            desc.eType == m_eType)
-                Set_FillAmount(desc);
-
-            // ~초 뒤에 실행되게 해야함
-            //if (desc.type == GAUGE_TYPE::HP)
-            //{
-            //    GAUGE_DESC backDesc = {};
-            //
-            //    backDesc.owner = desc.owner;
-            //    backDesc.type = GAUGE_TYPE::HP_BACK;
-            //    backDesc.fFillAmount = desc.fFillAmount;
-            //    CGameInstance::GetInstance()->Get_EventSystem()->Broadcast<GAUGE_DESC>({ backDesc });
-            //} 
-        });
 
     return S_OK;
 }
