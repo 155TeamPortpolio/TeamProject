@@ -39,8 +39,8 @@ private:
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 
 private:
-	UI_STATUS_OWNER		m_eOwner = { UI_STATUS_OWNER::ROLE1 };
-	UI_STATUS_TYPE		m_eType = { UI_STATUS_TYPE::HP };
+	static constexpr UI_STATUS_OWNER	m_eOwner = UI_STATUS_OWNER::ROLE1;
+	static constexpr UI_STATUS_TYPE		m_eType = UI_STATUS_TYPE::HP;
 
 private:
 	void Ready_PartObjects();
