@@ -3,7 +3,7 @@
 typedef struct tagTextureSlotModule
 {
 	enum class SAMPLER_MODE : _uint { WRAP, CLAMP, END };
-	enum class MAIN_USAGE : _uint { AS_COLOR, AS_CHANNEL, AS_GRAYSCALE, END };
+	enum class MAIN_USAGE : _uint { AS_COLOR, AS_CHANNEL, END };
 	enum class CHANNEL_USAGE : _uint { NONE, SHAPE_MASK, EMISSION, DISTORTION, END };
 
 	SAMPLER_MODE eSamplerMode = SAMPLER_MODE::WRAP;
@@ -16,6 +16,8 @@ typedef struct tagTextureSlotModule
 	_uint iSamplerModeParam{};
 	_uint iMainUsageParam{};
 	_uint4 vChannelUsageParam{};
+	_uint iRGBMask{};
+	_uint iColorMode{};
 
 }TEXTURE_SLOT_MODULE;
 

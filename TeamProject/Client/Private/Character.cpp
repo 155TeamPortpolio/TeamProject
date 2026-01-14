@@ -181,10 +181,10 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	_bool prevResetMove = m_inputInfo.resetMove;  // ±âÁ¸ °ª ¹é¾÷
+	_bool prevResetMove = m_inputInfo.resetMove;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	m_inputInfo = inputInfo;
-	m_inputInfo.resetMove = prevResetMove;  // º¹¿ø
+	m_inputInfo.resetMove = prevResetMove;  // ï¿½ï¿½ï¿½ï¿½
 
 	if (inputInfo.direction.LengthSquared() > 0.01f)
 	{

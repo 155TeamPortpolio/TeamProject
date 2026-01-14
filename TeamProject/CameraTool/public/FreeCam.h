@@ -34,7 +34,7 @@ private:
 	_vector2          targetRotDeg   = {};
 	Quaternion        curRot         = Quaternion::Identity;
 	Quaternion        targetRot      = Quaternion::Identity;
-	_float            rotSmoothSpeed = 30.f;
+	_float            rotSmoothSpeed = 20.f;
 	_bool             controlEnabled = true;
 
 	CamMoveConstraint moveConstraint = CamMoveConstraint::Free;
