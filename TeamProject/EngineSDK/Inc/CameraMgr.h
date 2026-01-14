@@ -34,6 +34,10 @@ public:
     void     AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) override;
     void     ClearShake(_float fadeOutSec = 0.f)                                       override;
 
+public:
+    void     SetShake(CamShakeType type, _float strength = 1.f) override { m_shake.Set(type, strength); }
+    void     AddShake(CamShakeType type, _float strength = 1.f) override { m_shake.Add(type, strength); }
+
     Lens     Get_Lens()       const override;
     Lens     Get_ShadowLens() const override;
 
