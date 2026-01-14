@@ -52,7 +52,6 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "JaneDoe.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "JaneDoe.mat");
-
 	return S_OK;
 }
 
@@ -81,6 +80,7 @@ void CJaneDoe::Awake()
 
 	m_strAnimName = "Avatar_Female_Size03_JaneDoe_Ani_";
 	m_strName = "JaneDoe";
+	m_eCharacterName = CHARACTER::JaneDoe;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();

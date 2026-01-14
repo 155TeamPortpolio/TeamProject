@@ -118,7 +118,7 @@ private:
     vector<OBJECT_HANDLE> spaceRefCandidates{};
 
     function<void(Avatar)> onAvatarChanged{};
-    Avatar avatarUI = Avatar::Unagi;
+    Avatar avatarUI = Avatar::Corin;
 
 public:
     static CCamPanel* Create(GUI_CONTEXT* context);

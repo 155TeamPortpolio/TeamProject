@@ -1,6 +1,7 @@
 #pragma once
 
 #include "DebugCamData.h"
+#include "GameObject.h"
 
 NS_BEGIN(CameraTool)
 
