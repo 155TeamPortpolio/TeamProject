@@ -186,13 +186,13 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 		if (!m_NoiseTextureTag.empty())
 		{
 			auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
-			pMaterialInstance->Set_Param("DiffuseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
 		}
 		
-		if (!m_DiffuseTextureTag.empty())
+		if (!m_DissolveTextureTag.empty())
 		{
 			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
-			pMaterialInstance->Set_Param("DiffuseTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
 		}
 
 		m_SetMaterial = true;
