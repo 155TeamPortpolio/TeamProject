@@ -228,6 +228,7 @@
     <ClInclude Include="..\Public\Sacrifice_Orb.h" />
     <ClInclude Include="..\Public\Scott_Level.h" />
     <ClInclude Include="..\public\ServiceNpc.h" />
+    <ClInclude Include="..\Public\Stage.h" />
     <ClInclude Include="..\public\ThugAssaulter.h" />
     <ClInclude Include="..\public\ThugAssaulter_Attack.h" />
     <ClInclude Include="..\public\ThugAssaulter_Born.h" />
@@ -329,6 +330,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="framework.h" />
@@ -408,6 +410,7 @@
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp" />
     <ClCompile Include="..\Private\MainCity_Level.cpp" />
     <ClCompile Include="..\Private\Scott_Level.cpp" />
+    <ClCompile Include="..\Private\Stage.cpp" />
     <ClCompile Include="..\private\ThugAssaulter.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Attack.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Born.cpp" />
@@ -536,6 +539,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
     <ClCompile Include="Client.cpp" />
   </ItemGroup>

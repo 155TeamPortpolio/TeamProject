@@ -11,6 +11,8 @@
 #include "Zero_Level.h"
 
 #include "UIDirector.h"
+#include "DataBase.h"
+#include "BattleSystem.h"
 
 CMainApp::CMainApp()
 {
@@ -39,13 +41,15 @@ HRESULT CMainApp::Initialize()
 	
 	Set_Levels();
 
+	CDataBase::GetInstance()->CreateTable();
+	CBattleSystem::GetInstance(); //우선 생성만
+
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
-	
 	return S_OK;
 }
 
@@ -75,7 +79,7 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
