@@ -46,15 +46,15 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResource->Add_ResourcePath("SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.model");
-	pResource->Add_ResourcePath("SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.mat");
-	pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer_Meta.json");
+	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
+	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
+	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "SacrificeBringer.model");
+	pModel->Link_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "SacrificeBringer.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_SacrificeBringer.mat");
 
 	return S_OK;
 }
@@ -72,12 +72,12 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	//}
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
-	//pAnimator->Set_MotionBone(3); //Bip001
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
+	pAnimator->Set_MotionBone(3); //Bip001
 	pAnimator->Resize_Layer(3);
-	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
+	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
+	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
 

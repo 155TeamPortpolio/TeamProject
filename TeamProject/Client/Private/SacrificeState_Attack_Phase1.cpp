@@ -262,12 +262,39 @@ void CSacrificeState_Attack_02_Phase1::Update(CSacrifice* pOwner, _float dt)
 		pOwner->DeactiveSword();
 	}
 
+	Update_Effects(pOwner);
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_02_Phase1::Exit(CSacrifice* pOwner)
 {
+}
+
+void CSacrificeState_Attack_02_Phase1::Update_Effects(CSacrifice* pOwner)
+{
+	auto pTransform = pOwner->Get_Component<CTransform>();
+
+	if (IsCrossAnimProgress(0.05f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_sword_slash.json")
+			.Build("SwordSlash");
+
+		_vector3 vRight = pTransform->Dir(STATE::RIGHT);
+
+		_vector3 vWorldPosition = pTransform->Get_WorldPos();
+		vWorldPosition.y += 2.f;
+		_quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+		_quaternion localQuaternion = _quaternion(-0.07f, -0.04f, 0.19f, 0.98f);
+		localQuaternion *= worldQuaternion;
+
+		auto pEffectTransform = effect->Get_Component<CTransform>();
+		pEffectTransform->Set_Quaternion(localQuaternion);
+		pEffectTransform->Set_Pos(vWorldPosition);
+
+		ObjectManager()->Add_Object(effect, { pOwner->Get_Level(),"Effect_Layer" });
+	}
 }
 
 void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
