@@ -112,6 +112,7 @@ public:
     CAnimator3D* Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string& Get_Name() const { return m_strAnimName; }
+    const CHARACTER Get_CharacterName() const { return m_eCharacterName; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine���� ������ switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
@@ -173,6 +174,7 @@ protected:
     CCharacterController*       m_pCCT = { nullptr };
     string                      m_strAnimName = "";   // For Animator
     string                      m_strName = "";       // 
+    CHARACTER                   m_eCharacterName = { CHARACTER::JaneDoe };
     unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };

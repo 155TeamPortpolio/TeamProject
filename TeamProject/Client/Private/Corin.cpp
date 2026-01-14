@@ -42,7 +42,7 @@ HRESULT CCorin::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Corin.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Corin.mat");
-
+	m_eCharacterName = CHARACTER::Corin;
 	return S_OK;
 }
 

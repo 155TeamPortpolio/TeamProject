@@ -52,7 +52,7 @@ HRESULT CJaneDoe::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "JaneDoe.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "JaneDoe.mat");
-
+	m_eCharacterName = CHARACTER::JaneDoe;
 	return S_OK;
 }
 
