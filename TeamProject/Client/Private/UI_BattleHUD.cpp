@@ -20,6 +20,12 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    m_handles.resize(Child::END);
+
+    auto pRoot = Ready_Prefab();
+    if (!pRoot)
+        MSG_BOX("Failed to Create");
+
     // 이벤트 : UI_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         {
@@ -37,14 +43,6 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 
 void CUI_BattleHUD::Awake()
 {
-    auto pGameInstance = CGameInstance::GetInstance();
-
-    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-
-    auto pRoot = Ready_Prefab(strLevelKey);
-    if (!pRoot)
-        return;
-
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
@@ -54,9 +52,10 @@ void CUI_BattleHUD::Update(_float dt)
 {
 }
 
-CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
+CUI_Object* CUI_BattleHUD::Ready_Prefab()
 {
     auto pGameInstance = CGameInstance::GetInstance();
+    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 
     // Battle HUD 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
     CUI_Object* pRoot = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_CanvasPanel" })
@@ -103,7 +102,6 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     m_hRoot = pRoot->Get_Handle();
 
     // 자식 핸들 캐싱
-    m_handles.resize(Child::END);
     for (_int i = 0; i < 3; ++i)
     {
         m_handles[ICON_CHILD[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));

@@ -42,7 +42,7 @@ private:
 	vector<UI_HANDLE>	m_handles; 
 
 private:
-	CUI_Object* Ready_Prefab(const string& strLevelKey);
+	CUI_Object* Ready_Prefab();
 
 	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
 	void Cache_Handles(CUI_Object* pRoot);
