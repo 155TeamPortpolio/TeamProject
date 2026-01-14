@@ -6,6 +6,7 @@
 #include "MaterialInstance.h"
 #include "MaterialData.h"
 #include "Helper_Func.h"
+#include "Texture.h"
 
 CMeshNode_Edit::CMeshNode_Edit()
 	:CMeshNode()
@@ -37,6 +38,12 @@ HRESULT CMeshNode_Edit::Initialize(INIT_DESC* pArg)
 	m_InstanceName = "MeshNode";
 
 	return S_OK;
+}
+
+void CMeshNode_Edit::Post_EngineUpdate(_float dt)
+{
+	if (/*m_SetMesh && m_SetMaterial*/true)
+		__super::Post_EngineUpdate(dt);
 }
 
 void CMeshNode_Edit::Awake()
@@ -169,16 +176,24 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 			MSG_BOX("Link Failed - Material");
 
 		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
-		auto pMaterialData = pMaterialInstance->Get_MaterialData();
 
-		if(!m_DiffuseTextureTag.empty())
-			pMaterialData->Link_Texture(G_GlobalLevelKey, m_MaterialKey, TEXTURE_TYPE::DIFFUSE);
+		if (!m_DiffuseTextureTag.empty())
+		{
+			auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
+		}
 
-		if(!m_NoiseTextureTag.empty())
-			pMaterialData->Link_Texture(G_GlobalLevelKey, m_NoiseTextureTag, TEXTURE_TYPE::NOISE);
-
-		if(!m_DiffuseTextureTag.empty())
-			pMaterialData->Link_Texture(G_GlobalLevelKey, m_DissolveTextureTag, TEXTURE_TYPE::DISSOLVE);
+		if (!m_NoiseTextureTag.empty())
+		{
+			auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+		}
+		
+		if (!m_DiffuseTextureTag.empty())
+		{
+			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}
 
 		m_SetMaterial = true;
 	}
@@ -410,6 +425,13 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
+	if (ImGui::Button("Add Diffuse Texture"))
+		Add_Texture(TEXTURE_TYPE::DIFFUSE);
+	if (ImGui::Button("Add Noise Texture"))
+		Add_Texture(TEXTURE_TYPE::NOISE);
+	if (ImGui::Button("Add Dissolve Texture"))
+		Add_Texture(TEXTURE_TYPE::DISSOLVE);
+
 	if (ImGui::CollapsingHeader("Texture Slot Module"))
 	{
 		if (Helper::DrawEnumCombo("Sampler Mode", m_TextureSlotModule.eSamplerMode, 100.f))
@@ -483,7 +505,7 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	if (ImGui::CollapsingHeader("Dissolve Module"))
 	{
 		static _bool enableDissolve = false;
-		if (ImGui::Checkbox("Enable Noise", &enableDissolve))
+		if (ImGui::Checkbox("Enable Dissolve", &enableDissolve))
 			m_DissolveModule.fEnableDissolve = enableDissolve ? 1.f : 0.f;
 
 		Helper::DrawEnumCombo("Dissolve Ease Type", m_DissolveModule.eEaseType, 100.f);
@@ -506,5 +528,41 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 		ImGui::DragFloat("Noise Strength", &m_NoiseModule.fNoiseStrength);
 		ImGui::DragFloat("Noise Tilling", &m_NoiseModule.fNoiseTilling);
 		ImGui::DragFloat2("Noise UVSpeed", &m_NoiseModule.vNoiseUVSpeed.x);
+	}
+}
+
+void CMeshNode_Edit::Add_Texture(TEXTURE_TYPE type)
+{
+
+	if (!m_pContext->Textures.empty())
+	{
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+
+		switch (type)
+		{
+		case Engine::TEXTURE_TYPE::DIFFUSE:
+		{
+			m_DiffuseTextureTag = m_pContext->TextureTags[0];
+
+			auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
+			pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case Engine::TEXTURE_TYPE::NOISE:
+		{
+			m_NoiseTextureTag = m_pContext->TextureTags[0];
+
+			auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
+			pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		case Engine::TEXTURE_TYPE::DISSOLVE:
+		{
+			m_DissolveTextureTag = m_pContext->TextureTags[0];
+
+			auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
+			pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+		}break;
+		default:
+			break;
+		}
 	}
 }
