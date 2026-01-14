@@ -181,9 +181,6 @@ HRESULT CTestLevel::Awake()
 	Ready_ShadowCamera();
 	Ready_Npc();
 
-	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	m_pCamDirector->RequestSequence("Intro_4", 0.f, true, 0.5f);
-
 	return S_OK;
 }
 
@@ -222,7 +219,7 @@ void CTestLevel::Update()
 	}
 
 	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Intro_4", 0.f, true, 0.5f);
+		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
@@ -238,15 +235,6 @@ void CTestLevel::Update()
 
 		ObjectManager()->Add_Object(pLaser, { "Test_Level","Laser_Layer" });
 	}
-
-	if (InputDevice()->Key_Down(VK_F6))
-		CameraManager()->AddShake(2.0f, 7.0f, 0.03f, 0.12f);  // 강한히트1
-	if (InputDevice()->Key_Down(VK_F7))
-		CameraManager()->AddShake(0.35f, 32.0f, 0.05f, 0.08f); // 강한히트2
-	if (InputDevice()->Key_Down(VK_F8))
-		CameraManager()->AddShake(0.8f, 6.0f, 0.02f, 0.10f);   // 약한히트1
-	if (InputDevice()->Key_Down(VK_F9))
-		CameraManager()->AddShake(0.18f, 28.0f, 0.04f, 0.07f); // 약한히트2
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
