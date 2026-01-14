@@ -315,6 +315,7 @@ void CBattlePlayer::Update_Status()
 
 		UI_PLAYER_STATUS_DESC desc;
 		desc.eOwner = eOwner;
+		desc.eCharacter = pCharacter->Get_CharacterName();
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
 		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
