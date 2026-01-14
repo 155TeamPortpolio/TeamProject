@@ -2,9 +2,12 @@
 #include "MeshNode.h"
 #include "Helper_Func.h"
 #include "StaticModel.h"
+#include "GameInstance.h"
 #include "MaterialInstance.h"
 #include "Material.h"
 #include "MaterialData.h"
+#include "Texture.h"
+#include "ResourceMgr.h"
 
 CMeshNode::CMeshNode()
 	:CEffectNode()
@@ -99,19 +102,23 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
 	auto pMaterialData = pMaterialInstance->Get_MaterialData();
 
-	if (m_DiffuseTextureTag.empty())
+	if (!m_DiffuseTextureTag.empty())
 	{
-		MSG_BOX("Diffuse Texture Empty : MeshNode");
-		return E_FAIL;
+		auto pDiffuseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DiffuseTextureTag);
+		pMaterialInstance->Set_Param("DiffuseTexture", { pDiffuseTexture->Get_SRV(),"Texture2D",0 });
 	}
-	else
-		pMaterialData->Link_Texture(G_GlobalLevelKey, m_DiffuseTextureTag, TEXTURE_TYPE::DIFFUSE);
 
 	if (!m_NoiseTextureTag.empty())
-		pMaterialData->Link_Texture(G_GlobalLevelKey, m_NoiseTextureTag, TEXTURE_TYPE::NOISE);
+	{
+		auto pNoiseTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_NoiseTextureTag);
+		pMaterialInstance->Set_Param("NoiseTexture", { pNoiseTexture->Get_SRV(),"Texture2D",0 });
+	}
 
 	if (!m_DissolveTextureTag.empty())
-		pMaterialData->Link_Texture(G_GlobalLevelKey, m_DissolveTextureTag, TEXTURE_TYPE::DISSOLVE);
+	{
+		auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
+		pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
+	}
 
 	return S_OK;
 }
