@@ -74,6 +74,8 @@ void CBattlePlayer::Priority_Update(_float dt)
 
 void CBattlePlayer::Update(_float dt)
 {
+	// 배틀시스템에서 스케일값 0~1 을 받아와서 dt에 곱한다. => 의미가없어.
+
 	if (m_fSwitchCooldown > 0.f)
 	{
 		m_fSwitchCooldown -= dt;
@@ -81,8 +83,9 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
-	/* Evade & EvadePerfect */
 	UI_ACTION_DESC desc{};
+
+	/* Evade & EvadePerfect */
 	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
 	{
 		desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
@@ -242,14 +245,23 @@ void CBattlePlayer::Process_Evade()
 
 void CBattlePlayer::Process_Switch()
 {
+	/* ParryCount */
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::SWITCH;
+	desc.eState = Can_Switch() ? UI_ACTION_STATE::AVAILABLE : desc.eState = UI_ACTION_STATE::ENABLE;
+	desc.fFillAmount = m_iParryingCount;
 	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
 		if (Can_Switch())
 		{
+			desc.eState = UI_ACTION_STATE::EXECUTING;
 			SwitchCharacter();
+			--m_iParryingCount;
+			if (m_iParryingCount == 0) m_iParryingCount = 6;
 			m_fSwitchCooldown = SWITCH_COOLDOWN;
 		}
 	}
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
 void CBattlePlayer::Process_Ultimate()
