@@ -782,18 +782,18 @@ void CCamPanel::DrawTimeline()
             nearest = &keys[(size_t)hotIndex];
 
         ImGui::BeginTooltip();
-        ImGui::Text("t = %.1fs", hoverTime);
+        ImGui::Text("t = %.2fs", hoverTime);
 
         const float snapPx = 7.f;
         if (nearest && bestDx <= snapPx)
         {
             ImGui::Separator();
             ImGui::Text("Key #%03u", nearest->keyId);
-            ImGui::Text("Time : %.1fs", nearest->time);
-            ImGui::Text("Pos  : %.1f, %.1f, %.1f", nearest->pos.x, nearest->pos.y, nearest->pos.z);
-            ImGui::Text("Look : %.1f, %.1f, %.1f", nearest->look.x, nearest->look.y, nearest->look.z);
-            ImGui::Text("Roll : %.1f", nearest->roll);
-            ImGui::Text("FOV  : %.1f", nearest->fov);
+            ImGui::Text("Time : %.2fs", nearest->time);
+            ImGui::Text("Pos  : %.2f, %.2f, %.2f", nearest->pos.x, nearest->pos.y, nearest->pos.z);
+            ImGui::Text("Look : %.2f, %.2f, %.2f", nearest->look.x, nearest->look.y, nearest->look.z);
+            ImGui::Text("Roll : %.2f", nearest->roll);
+            ImGui::Text("FOV  : %.2f", nearest->fov);
         }
         ImGui::EndTooltip();
     }
@@ -1030,7 +1030,7 @@ void CCamPanel::DrawHiddenHandle()
 _bool CCamPanel::DrawConstraintBar()
 {
     bool changed = false;
-    const char* fmt = "%.1f";
+    const char* fmt = "%.2f";
 
     ImGui::PushID("MoveConstraintBar");
 
@@ -1117,7 +1117,7 @@ _bool CCamPanel::DrawOrbitTargetBar()
     if (state.moveConstraint != CamMoveConstraint::Orbit) return false;
 
     bool changed = false;
-    const char* fmt = "%.1f";
+    const char* fmt = "%.2f";
 
     ImGui::PushID("OrbitTargetBar");
 
