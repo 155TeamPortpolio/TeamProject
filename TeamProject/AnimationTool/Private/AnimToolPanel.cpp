@@ -67,6 +67,15 @@ void CAnimToolPanel::Update_Panel(_float dt)
 		}
 	}
 
+	if (m_pGameInstance->Get_InputDev()->Key_Tap('U')) {
+		if (nullptr != m_pSelectAnimator) {
+			m_pSelectAnimator->Change_Animation(66)
+				.Loop(true, 0.95f)
+				.UseFinalLocalPose(false)
+				.Apply();
+		}
+	}
+
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('O')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Delete_DB();
@@ -410,7 +419,7 @@ void CAnimToolPanel::Draw_TimelineUI(float duration, float& ioTime, const char* 
 		float hoverTime = local01 * endT;
 
 		ImGui::BeginTooltip();
-		ImGui::Text("t = %.2fs", m_pSelectAnimator->Get_AnimLayers()[0].fProgress);
+		ImGui::Text("t = %.2fs", hoverTime);
 		ImGui::EndTooltip();
 
 		dl->AddLine(ImVec2(barPos.x + barSize.x * local01, barPos.y), ImVec2(barPos.x + barSize.x * local01, barPos.y + barSize.y), colHot, 1.5f);

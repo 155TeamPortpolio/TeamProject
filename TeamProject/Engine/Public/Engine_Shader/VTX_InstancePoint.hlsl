@@ -9,7 +9,6 @@ Texture2D SkinnedMeshDepthTexture;
 uint Col;
 uint Row;
 uint ColorMode;
-uint RGBMask;
 
 struct VS_IN
 {
@@ -87,7 +86,7 @@ void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> triStream)
     float3 right = normalize(cross(worldUp, look));
     float3 up = normalize(cross(look, right));
     
-    float3 dir = normalize(-In[0].vVelocity);
+    float3 dir = normalize(In[0].vVelocity);
     float vx = dot(dir, right);
     float vy = dot(dir, up);
     
@@ -194,15 +193,10 @@ PS_OUT PS_MAIN(PS_IN In)
     float2 TexCoord = FrameMin + In.vTexcoord * FrameSize;
     
     float4 vColorDesc = DiffuseTexture.Sample(LinearSampler, TexCoord);
+    float fColorMask = max(vColorDesc.b, max(vColorDesc.r, vColorDesc.g));
     float4 vResult = ApplyColorMode(ColorMode, vColorDesc, In.vColor);
     float3 vColor = vResult.rgb;
-    float fAlpha = vResult.a;
-    
-    if(1 == RGBMask)
-    {
-        float fColorMask = max(vColorDesc.b, max(vColorDesc.r, vColorDesc.g));
-        fAlpha *= fColorMask;
-    }
+    float fAlpha = vResult.a * fColorMask;
 
     /*---------------------------------Soft Particle-------------------------------------*/ 
     float2 vDepthTexcoord;

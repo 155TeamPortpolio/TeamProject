@@ -36,7 +36,6 @@ HRESULT CEffectContainer_Edit::Initialize(INIT_DESC* pArg)
 	LoadMeshFromDirectory("../Bin/Resource/Mesh");
 	LoadMaterialFromDirectory("../Bin/Resource/Mesh");
 	m_InstanceName = "EffectContainer";
-
 	return S_OK;
 }
 
@@ -50,21 +49,7 @@ void CEffectContainer_Edit::Priority_Update(_float dt)
 
 void CEffectContainer_Edit::Update(_float dt)
 {
-    //__super::Update(dt);
-
-	if (m_IsLoop)
-		Get_Component<CObjectContainer>()->UpdateChild(dt);
-	else
-	{
-		m_fElapsedTime += dt;
-		if (m_fElapsedTime >= m_fDuration)
-		{
-			m_isAlive = false;
-			return;
-		}
-
-		Get_Component<CObjectContainer>()->UpdateChild(dt);
-	}
+    __super::Update(dt);
 }
 
 void CEffectContainer_Edit::Late_Update(_float dt)
