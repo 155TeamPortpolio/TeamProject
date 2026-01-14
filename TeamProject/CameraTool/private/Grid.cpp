@@ -17,8 +17,6 @@ HRESULT CGrid::Initialize_Prototype()
 	resMgr->Add_ResourcePath("TileCell.png", "../bin/Resources/TileCell.png");
 	resMgr->Add_ResourcePath("VTX_PlaneGrid.hlsl", "../bin/ShaderFiles/VTX_PlaneGrid.hlsl");
 
-	
-
 	return S_OK;
 }
 
@@ -35,7 +33,7 @@ HRESULT CGrid::Initialize(INIT_DESC* pArg)
 
 	_uint Index = {};
 	pMaterial->Insert_MaterialInstance(customInstance, &Index);
-	pModel->Set_RenderType(RENDER_PASS_TYPE::PRIORITY);
+	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_OPAQUE);
 	auto MaterialDat = customInstance->Get_MaterialData();
 	if (MaterialDat)
 		MaterialDat->Link_Shader(G_GlobalLevelKey, "VTX_PlaneGrid.hlsl");
