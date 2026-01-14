@@ -65,6 +65,47 @@ HRESULT CChannel::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrice
 	return S_OK;
 }
 
+void CChannel::SampleKeyFrameByProgress(_float TrackPosition, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans)
+{
+	_uint iCurrentKeyIndex = { m_iNumKeyFrames - 1 };
+	for (size_t i = 0; i < m_iNumKeyFrames; i++)
+	{
+		if (i > 0 && !m_KeyFrames[i].IsBefore(TrackPosition)) {
+			iCurrentKeyIndex = i - 1;
+			break;
+		}
+	}
+
+	_XMKeyFrame keyFrame = {};
+
+	KEYFRAME LastKeyframe = m_KeyFrames.back();
+	KEYFRAME firstKeyFrame = m_KeyFrames.front();
+	if (TrackPosition >= LastKeyframe.fTrackPosition) {
+		keyFrame.vScale = XMLoadFloat3(&LastKeyframe.vScale);
+		keyFrame.vRotation = XMLoadFloat4(&LastKeyframe.vRotation);
+		keyFrame.vTranslation = XMVectorSetW(XMLoadFloat3(&LastKeyframe.vTranslation), 1.0f);
+	}
+
+	else if (TrackPosition == 0) {
+		keyFrame.vScale = XMLoadFloat3(&firstKeyFrame.vScale);
+		keyFrame.vRotation = XMLoadFloat4(&firstKeyFrame.vRotation);
+		keyFrame.vTranslation = XMVectorSetW(XMLoadFloat3(&firstKeyFrame.vTranslation), 1.0f);
+	}
+
+	else {
+		keyFrame = m_KeyFrames[iCurrentKeyIndex].LerpKeyFram(m_KeyFrames[iCurrentKeyIndex + 1], TrackPosition);
+	}
+
+	if (pOutScale)
+		*pOutScale = keyFrame.vScale;
+
+	if (pOutQuat)
+		*pOutQuat = keyFrame.vRotation;
+
+	if (pOutTrans)
+		*pOutTrans = keyFrame.vTranslation;
+}
+
 void CChannel::Render_GUI()
 {
 	string key = "Channel : " + m_ChannelName + "(" + to_string(m_iBoneIndex) + ")";

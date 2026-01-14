@@ -17,12 +17,15 @@ private:
 public:
     CStateMachine<CJaneDoe>* Get_StateMachine() { return m_pStateMachine; }
 
-    void  SetPassion(_float fPassionGauge) { m_fPassionGauge = fPassionGauge; }
-    _bool IsPassion() const { return m_eCombatState == COMBATSTATE::PASSION; }
+    void  Set_Passion(_float fPassionGauge) { m_fPassionGauge = fPassionGauge; }
+    _bool Is_Passion() const { return m_eCombatState == COMBATSTATE::PASSION; }
+
+    void  Set_PassionSkill(_bool bAvailable) { m_bPassionSkillAvailable = bAvailable; }
+    _bool Has_PassionSkill() const { return m_bPassionSkillAvailable; }
 
 public:
-    void ProcessPassion(_float fPassionGauge);
-    void ProcessPassionSkill(_bool bAvailable);
+    void Process_Passion(_float fPassionGauge);
+    void Process_PassionSkill(_bool bAvailable);
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -36,6 +39,8 @@ public:
 public:
     virtual void    On_SwitchIn(SWITCH eType)  override;   //*스위치 인 콜*
     virtual void    On_SwitchOut()             override;   //*스위치 아웃 콜*
+    virtual void    On_Ultimate()              override;
+    virtual void    On_Special()               override;
 
 private:
     HRESULT Initialize_StateMachine();

@@ -90,6 +90,7 @@ public:
 
 };
 
+inline auto* GameInstance() { return CGameInstance::GetInstance(); }
 inline auto* GraphicDevice() { return CGameInstance::GetInstance()->Get_GraphicDev(); }
 inline auto* InputDevice() { return CGameInstance::GetInstance()->Get_InputDev(); }
 inline auto* AudioDevice() { return CGameInstance::GetInstance()->Get_AudioDev(); }

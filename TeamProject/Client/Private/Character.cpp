@@ -8,6 +8,9 @@
 #include "SkeletalModel.h"
 #include "Material.h"
 #include "ObjectContainer.h"
+#include "BoneFollower.h"
+
+#include "CharacterAttackCollider.h"
 
 CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
@@ -138,16 +141,20 @@ void CCharacter::Priority_Update(_float dt)
 
 void CCharacter::Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
+
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
 	Update_Evade(dt);
 	if (m_bIsRotating)	Update_Rotation(dt);
-	Update_Gauge(dt);
+	Update_Energy(dt);
 	Update_Decibel(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
+
 	m_pCCT->Late_Update(dt);
 	m_bIsAttack = false;
 	m_bIsEvade = false;
@@ -181,10 +188,10 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
-	_bool prevResetMove = m_inputInfo.resetMove;  // ±âÁ¸ °ª ¹é¾÷
+	_bool prevResetMove = m_inputInfo.resetMove;  // ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½
 
 	m_inputInfo = inputInfo;
-	m_inputInfo.resetMove = prevResetMove;  // º¹¿ø
+	m_inputInfo.resetMove = prevResetMove;  // ï¿½ï¿½ï¿½ï¿½
 
 	if (inputInfo.direction.LengthSquared() > 0.01f)
 	{
@@ -203,6 +210,58 @@ void CCharacter::On_Evade()
 {
 	if (!Can_Evade()) return;
 	m_bIsEvade = true;
+}
+
+void CCharacter::On_Ultimate()
+{
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	desc.eState = UI_ACTION_STATE::EXECUTING;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	m_fCurrentDecibel = 0.f;
+}
+
+HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
+{
+	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
+
+	if (nullptr == pObjectContainer)	return E_FAIL;
+	if (nullptr == pDesc) return E_FAIL;
+	if (nullptr == pDesc->pOwnerAnimator) return E_FAIL;
+
+	string strLevel = LevelManager()->Get_NowLevelKey();
+
+	RIGIDBODY_DESC rigidDesc{};
+	rigidDesc.isKinematic = true;
+	rigidDesc.bEnableGravity = false;
+	rigidDesc.bLockY = true;
+
+	COLLIDER_DESC colliderDesc{};
+	colliderDesc.eType = pDesc->eColliderType;
+	colliderDesc.eGroup = COLLISION_GROUP::PLAYER_ATTACK;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::MONSTER);
+	colliderDesc.bAutoFit = false;
+	colliderDesc.vCenter = pDesc->vCenter;
+	colliderDesc.vSize = pDesc->vSize;
+	colliderDesc.vRotation = pDesc->vRotation;
+	colliderDesc.bTrigger = true;
+
+	string strAttackName = pDesc->tagName + "_AttackCollider";
+
+	CGameObject* pAttackCollider = Builder::Create_Object(
+		{ strLevel, "Proto_GameObject_CharacterAttackCollider" })
+		.RigidBody(rigidDesc)
+		.Collider(colliderDesc)
+		.Build(strAttackName);
+	if (nullptr == pAttackCollider)	return E_FAIL;
+
+	_int iAttackColliderIndex = { -1 };
+	iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);
+	pAttackCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator, pDesc->tagBone);
+
+	m_AttackColliderIndex.emplace(strAttackName, iAttackColliderIndex);
+
+	return S_OK;
 }
 
 void CCharacter::Rotate(_vector3 vDirection)
@@ -245,6 +304,12 @@ _bool CCharacter::Use_EvadeBuffer()
 		m_bEvadeBuffer = false;
 		return true;
 	}
+	return false;
+}
+
+_bool CCharacter::Can_Ultimate()
+{
+	if (m_fCurrentDecibel == MAX_DECIBEL) return true;
 	return false;
 }
 
@@ -307,25 +372,26 @@ void CCharacter::Update_Evade(_float dt)
 	}
 }
 
-void CCharacter::Update_Gauge(_float dt)
+void CCharacter::Update_Energy(_float dt)
 {
-	m_tGauge.fPrevGauge = m_tGauge.fCurrentGauge;
-	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
+	m_tEnergy.fPrevEnergy = m_tEnergy.fCurrentEnergy;
+	if (m_tEnergy.fCurrentEnergy >= MAX_ENERGY)
 	{
-		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
+		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 		return;
 	}
-	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt * 10.f;
+	m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 100.f;
 }
 
 void CCharacter::Update_Decibel(_float dt)
 {
-	if (m_fDecibel >= MAX_DECIBEL)
+	m_fPrevDecibel = m_fCurrentDecibel;
+	if (m_fCurrentDecibel >= MAX_DECIBEL)
 	{
-		m_fDecibel = MAX_DECIBEL;
+		m_fCurrentDecibel = MAX_DECIBEL;
 		return;
 	}
-	m_fDecibel += dt;
+	m_fCurrentDecibel += dt * 750.f;
 }
 
 void CCharacter::Free()

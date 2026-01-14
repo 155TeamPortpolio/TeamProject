@@ -7,7 +7,7 @@
 void CJaneDoeState_BackStep::Enter(CJaneDoe* pOwner)
 {    
     pOwner->Use_Evade();
-    if (pOwner->IsPassion())
+    if (pOwner->Is_Passion())
     {
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back_03")
             .Speed(1.f)

@@ -23,7 +23,6 @@
 #include "CamLoader.h"
 
 /* MapData */
-#include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
@@ -51,6 +50,7 @@
 #include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
+#include "ThugAssaulter.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -74,14 +74,10 @@ CTestLevel::CTestLevel(const string& LevelKey)
 
 HRESULT CTestLevel::Initialize()
 {
-	m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
-	if (nullptr == m_pMapDataCloud)
-		return E_FAIL;
-
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
-	CDataBase::GetInstance()->CreateTable();
+
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 
@@ -195,6 +191,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -270,23 +267,10 @@ void CTestLevel::Update()
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-
-		/*CCT_DESC BulkyCCT;
-		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
-		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
-		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-		BulkyCCT.bAutoFit = false;
-		BulkyCCT.fHeight = 1.28f;
-		BulkyCCT.fRadius = 0.35f;
-		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//BulkyCCT.fBoundingMinY = -0.88f;
-		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
-		
-		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
-			.CharacterController(BulkyCCT)
-			.Build("ThugBulky");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });*/
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
+	}	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
 	}
 }
 
@@ -295,7 +279,7 @@ void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
 	//Map Loader Logic is going to Change
-	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, m_pMapDataCloud, AreaTag);
+	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
@@ -518,7 +502,6 @@ void CTestLevel::Free()
 	__super::Free();
 
 
-	Safe_Release(m_pMapDataCloud);
 	CBattleSystem::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
