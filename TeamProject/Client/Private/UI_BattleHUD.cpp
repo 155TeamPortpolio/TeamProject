@@ -125,73 +125,60 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
 
 void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
 {
-    switch (desc.eOwner)
+    const _float fRatio = desc.value.fCurValue / desc.value.fMaxValue;
+
+    // ===== BOSS ROLE =====
+    if (desc.eOwner == UI_STATUS_OWNER::BOSS)
     {
-    case UI_STATUS_OWNER::ROLE1:
         if (desc.eType == UI_STATUS_TYPE::HP)
         {
-            Set_FillAmount(Child::HP_FRONT1, desc.value.fCurValue / desc.value.fMaxValue);
-            Set_Text(Child::MAX_HP_TEXT, desc.value.fCurValue);
-        }
-        else if(desc.eType == UI_STATUS_TYPE::SPECIAL)
-            Set_FillAmount(Child::SPECIAL1, desc.value.fCurValue / desc.value.fMaxValue);
-        else if (desc.eType == UI_STATUS_TYPE::ULTIMATE)
-            Set_FillAmount(Child::ULTIMATE1, desc.value.fCurValue / desc.value.fMaxValue);
-        break;
-
-    case UI_STATUS_OWNER::ROLE2:
-        if (desc.eType == UI_STATUS_TYPE::HP)
-            Set_FillAmount(Child::HP_FRONT2, desc.value.fCurValue / desc.value.fMaxValue);
-        else if (desc.eType == UI_STATUS_TYPE::SPECIAL)
-            Set_FillAmount(Child::SPECIAL2, desc.value.fCurValue / desc.value.fMaxValue);
-        else if (desc.eType == UI_STATUS_TYPE::ULTIMATE)
-            Set_FillAmount(Child::ULTIMATE2, desc.value.fCurValue / desc.value.fMaxValue);
-        break;
-
-    case UI_STATUS_OWNER::ROLE3:
-        if (desc.eType == UI_STATUS_TYPE::HP)
-            Set_FillAmount(Child::HP_FRONT3, desc.value.fCurValue / desc.value.fMaxValue);
-        else if (desc.eType == UI_STATUS_TYPE::SPECIAL)
-            Set_FillAmount(Child::SPECIAL3, desc.value.fCurValue / desc.value.fMaxValue);
-        else if (desc.eType == UI_STATUS_TYPE::ULTIMATE)
-            Set_FillAmount(Child::ULTIMATE3, desc.value.fCurValue / desc.value.fMaxValue);
-        break;
-
-    case UI_STATUS_OWNER::BOSS:
-        if (desc.eType == UI_STATUS_TYPE::HP)
-        {
-            Set_FillAmount(Child::BOSS_HP_FRONT, desc.value.fCurValue / desc.value.fMaxValue);
+            Set_FillAmount(Child::BOSS_HP_FRONT, fRatio);
         }
         else if (desc.eType == UI_STATUS_TYPE::GROGGY)
         {
-            Set_FillAmount(Child::BOSS_GROGGY, desc.value.fCurValue / desc.value.fMaxValue);
+            Set_FillAmount(Child::BOSS_GROGGY, fRatio);
             Set_Text(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue);
         }
+        return;
+    } 
+
+    // ===== PLAYER ROLE =====
+    const _uint iIndex = ENUM(desc.eOwner);
+    Child target = Child::END;
+
+    switch (desc.eType)
+    {
+    case UI_STATUS_TYPE::HP:
+        target = HPFRONT_CHILD[iIndex];
+        if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
+            Set_Text(Child::MAX_HP_TEXT, desc.value.fCurValue);
+        break;
+
+    case UI_STATUS_TYPE::SPECIAL:
+        target = SPECIAL_CHILD[iIndex];
+        break;
+
+    case UI_STATUS_TYPE::ULTIMATE:
+        target = ULTIMATE_CHILD[iIndex];
         break;
     }
+
+    if (target != Child::END)
+        Set_FillAmount(target, fRatio);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 {
-    switch (desc.eOwner)
+    const _uint iIndex = ENUM(desc.eOwner);
+
+    Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.hp.fMaxValue);
+    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.hp.fMaxValue);
+
+    if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
-    case UI_STATUS_OWNER::ROLE1:
-        Set_FillAmount(Child::HP_FRONT1, desc.hp.fCurValue / desc.hp.fMaxValue);
-        Set_FillAmount(Child::SPECIAL1, desc.special.fCurValue / desc.special.fMaxValue);
-        Set_FillAmount(Child::ULTIMATE1, desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
         Set_Text(Child::CUR_HP_TEXT, desc.hp.fCurValue);
         Set_Text(Child::MAX_HP_TEXT, desc.hp.fMaxValue);
-        break;
-    case UI_STATUS_OWNER::ROLE2:
-        Set_FillAmount(Child::HP_FRONT2, desc.hp.fCurValue / desc.hp.fMaxValue);
-        Set_FillAmount(Child::SPECIAL2, desc.special.fCurValue / desc.special.fMaxValue);
-        Set_FillAmount(Child::ULTIMATE2, desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
-        break;
-    case UI_STATUS_OWNER::ROLE3:
-        Set_FillAmount(Child::HP_FRONT2, desc.hp.fCurValue / desc.hp.fMaxValue);
-        Set_FillAmount(Child::SPECIAL2, desc.special.fCurValue / desc.special.fMaxValue);
-        Set_FillAmount(Child::ULTIMATE2, desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
-        break;
     }
 }
 
