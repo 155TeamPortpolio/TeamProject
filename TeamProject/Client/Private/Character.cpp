@@ -205,6 +205,15 @@ void CCharacter::On_Evade()
 	m_bIsEvade = true;
 }
 
+void CCharacter::On_Ultimate()
+{
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	desc.eState = UI_ACTION_STATE::EXECUTING;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	m_fCurrentDecibel = 0.f;
+}
+
 void CCharacter::Rotate(_vector3 vDirection)
 {
 	_vector3 dir = vDirection;
@@ -250,7 +259,7 @@ _bool CCharacter::Use_EvadeBuffer()
 
 _bool CCharacter::Can_Ultimate()
 {
-	if (m_fDecibel == MAX_DECIBEL)		return true;
+	if (m_fCurrentDecibel == MAX_DECIBEL) return true;
 	return false;
 }
 
@@ -321,17 +330,18 @@ void CCharacter::Update_Energy(_float dt)
 		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 		return;
 	}
-	m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt;
+	m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 100.f;
 }
 
 void CCharacter::Update_Decibel(_float dt)
 {
-	if (m_fDecibel >= MAX_DECIBEL)
+	m_fPrevDecibel = m_fCurrentDecibel;
+	if (m_fCurrentDecibel >= MAX_DECIBEL)
 	{
-		m_fDecibel = MAX_DECIBEL;
+		m_fCurrentDecibel = MAX_DECIBEL;
 		return;
 	}
-	m_fDecibel += dt * 1000.f;
+	m_fCurrentDecibel += dt * 750.f;
 }
 
 void CCharacter::Free()
