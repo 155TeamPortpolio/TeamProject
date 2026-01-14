@@ -168,6 +168,8 @@ public:
 
     _bool    Can_Ultimate();
 
+    void     Active_AttackCollider(const string& strName, _bool bActive);
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);

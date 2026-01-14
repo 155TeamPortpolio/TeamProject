@@ -321,6 +321,18 @@ _bool CCharacter::Can_Ultimate()
 	return false;
 }
 
+void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
+{
+	string ColliderName = strName + "_AttackCollider";
+	
+	auto iter = m_AttackColliderIndex.find(ColliderName);
+	if (iter == m_AttackColliderIndex.end())	return;
+	auto pAttackCollider = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
+	if (nullptr == pAttackCollider)	return;
+
+	pAttackCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
+}
+
 _bool CCharacter::Is_OppositeInput() const
 {
 	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
