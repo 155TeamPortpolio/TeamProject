@@ -70,6 +70,7 @@ CTestLevel::CTestLevel(const string& LevelKey)
 	m_pCamDirector{ CCamDirector::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pCamDirector);
 }
 
 HRESULT CTestLevel::Initialize()
