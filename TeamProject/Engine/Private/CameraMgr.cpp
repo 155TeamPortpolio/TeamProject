@@ -84,7 +84,7 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     const Matrix view = cam->Get_ViewMatrix();
     const Matrix world = view.Invert();
 
-    pose.pos = world.Translation() + cam->Get_ViewOffset();
+    pose.pos = world.Translation();
 
     pose.rot = Quaternion::CreateFromRotationMatrix(world);
     pose.rot.Normalize();

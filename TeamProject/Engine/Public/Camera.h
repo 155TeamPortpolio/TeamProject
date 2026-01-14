@@ -38,10 +38,6 @@ public:
 				   
 	_bool          Lerp_FOV(_float dst, _float dt);
 
-public:
-	const Vector3& Get_ViewOffset() const           { return m_viewOffset; }
-	void           Set_ViewOffset(const Vector3& v) { m_viewOffset = v; }
-	void           Clear_ViewOffset()               { m_viewOffset = Vector3::Zero; }
 	virtual void   Render_GUI() override;
 
 private:
