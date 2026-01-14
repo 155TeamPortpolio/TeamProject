@@ -23,12 +23,6 @@
     "Test_Level": {
       "objects": [ 
         {
-          "prototypeTag": "Proto_GameObject_AccessSign",
-          "instanceName": "accessSignZero",
-          "prefabPath" : "accessSign_zero.json"
-        }
-        ,
-        {
           "prototypeTag": "Proto_GameObject_BattleHUD",
           "instanceName": "hud",
           "prefabPath" : ""

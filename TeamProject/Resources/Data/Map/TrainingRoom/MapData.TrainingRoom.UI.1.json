@@ -1,0 +1,35 @@
+{
+  "TagDataFormat": "UI",
+  "TagArea": "TrainingRoom",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 4,
+      "TagName": "PrototypeTag",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Proto_GameObject_AccessSign"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "AssetKey",
+      "defaultvalue": {
+        "type": "String",
+        "value": "accessSign_zero.json"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Offset",
+      "defaultvalue": {
+        "type": "Float3",
+        "value": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}

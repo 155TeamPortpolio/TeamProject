@@ -159,6 +159,10 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 
+	//==================== UI ===============
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Test_Level");
+
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
@@ -195,10 +199,6 @@ HRESULT CTestLevel::Awake()
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
-
-	//==================== UI ===============
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	Ready_TestObject();

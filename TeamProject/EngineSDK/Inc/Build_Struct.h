@@ -142,6 +142,7 @@ namespace Engine {
 		_float fRadian = {};
 		ANCHOR eAnchor = { ANCHOR::Left | ANCHOR::Top };
 		string UIAssetKey = {};
+		_float3 worldPos = {};
 		tagUIObjectDesc() DEFAULT;
 		virtual ~tagUIObjectDesc() DEFAULT;
 		tagUIObjectDesc& operator=(const tagUIObjectDesc& rhs) DEFAULT;

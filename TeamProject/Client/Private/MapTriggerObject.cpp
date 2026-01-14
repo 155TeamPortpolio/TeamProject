@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 
 #include "Collider.h"
+#include "MapLoader_Helper.h"
 
 
 
@@ -31,6 +32,39 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 
 
 	//Get_Component<CCollider>()->Set_Rotation
+
+	MAPOBJ_DESC* pObjDesc = static_cast<MAPOBJ_DESC*>(pArg);
+	
+	// ---------- UI ----------
+	auto iter = pObjDesc->SlotDataValues.find("UI");
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = {};
+		string TagAsset = {};
+		_float3 vOffset = {};
+		for (auto& tFieldData : iter->second) {
+			if (tFieldData.TagName == "PrototypeTag")
+			{
+				auto tabValuePrototypeTag = GetSlotValue<string>(tFieldData.defaultvalue);
+				PrototypeTag = *tabValuePrototypeTag;
+			}
+			else if (tFieldData.TagName == "AssetKey") {
+				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
+				TagAsset = *TagValueAssetKey;
+			}
+			else if (tFieldData.TagName == "Offset") {
+				auto vValueOffset = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vOffset = *vValueOffset;
+			}
+		}
+		_float3 vPos = {};
+		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+
+		auto ui = Builder::Create_UIObject({ pObjDesc->TagLevel, PrototypeTag })
+			.Asset(TagAsset)
+			.WorldPos(vPos + vOffset)
+			.Build("ui");
+		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(ui, pObjDesc->TagLevel);
+	}
 
 	return S_OK;
 }

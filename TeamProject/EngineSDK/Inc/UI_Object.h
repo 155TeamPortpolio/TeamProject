@@ -190,6 +190,9 @@ protected:
 	/*애니메이션 위치 오프셋 값으로 m_vAnchorOffset에 더해지는 값*/
 	_float2 m_vAnimPosition = {};
 
+	/*월드 좌표계에 고정된 UI의 기준 위치 (World-Space Anchor)*/
+	_float3 m_vWorldPos = {};
+
 public:
 	virtual void Free() override;
 };
