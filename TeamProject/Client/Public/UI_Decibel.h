@@ -40,7 +40,7 @@ private:
 
 private:
 	static constexpr UI_STATUS_OWNER	m_eOwner = UI_STATUS_OWNER::ROLE1;
-	static constexpr UI_STATUS_TYPE		m_eType = UI_STATUS_TYPE::HP;
+	static constexpr UI_STATUS_TYPE		m_eType = UI_STATUS_TYPE::SPECIAL;
 
 private:
 	void Ready_PartObjects();

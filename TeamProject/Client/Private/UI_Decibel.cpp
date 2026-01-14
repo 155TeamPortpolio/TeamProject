@@ -36,7 +36,7 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             if (desc.eOwner == m_eOwner)
-                Set_Decibel(desc.hp.fCurValue);
+                Set_Decibel(desc.special.fCurValue);
         });
 
     Ready_PartObjects();
