@@ -74,8 +74,6 @@ void CBattlePlayer::Priority_Update(_float dt)
 
 void CBattlePlayer::Update(_float dt)
 {
-	// 배틀시스템에서 스케일값 0~1 을 받아와서 dt에 곱한다. => 의미가없어.
-
 	if (m_fSwitchCooldown > 0.f)
 	{
 		m_fSwitchCooldown -= dt;
