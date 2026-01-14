@@ -25,7 +25,7 @@ void CJaneDoeState_RushAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("Rush03_Start");
     }
 
-    if (pOwner->IsPassion())
+    if (pOwner->Is_Passion())
     {
         m_pSubStateMachine->Set_DefaultState("Rush03_Start");
         m_pSubStateMachine->Get_State("Rush03_End")->Set_Tag("End");
