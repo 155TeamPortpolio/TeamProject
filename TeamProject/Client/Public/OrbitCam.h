@@ -102,7 +102,6 @@ private:
 
 private:
     OrbitPreset       preset = OrbitPreset::Field;
-    _bool             firstSnap = true;
     OBJECT_HANDLE     targetHandle{};
 
     Profile           profile{};

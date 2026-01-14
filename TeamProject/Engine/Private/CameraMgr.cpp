@@ -50,7 +50,7 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     m_baseCamObj = camObjHandle;
 
     if (!m_overrides.empty()) return;
-    //BeginBlendTo(m_baseCamObj, blendSec);
+    BeginBlendTo(m_baseCamObj, blendSec);
 }
 
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)

@@ -72,15 +72,24 @@ HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
     auto cc            = Add_Component<CCharacterController>();
-    auto eventListener = Add_Component<CEventListener>();
    
     SetPreset(preset);
     
+    pose.targetRotDeg = Vector2(0.f, profile.startPitchDeg);
     pose.curRotDeg = pose.targetRotDeg;
-    pose.curDist   = pose.targetDist;
 
-    m_profileInit     = profile;
-    m_inputInit       = input;
+    pose.targetDist = profile.startDistance;
+    pose.curDist = pose.targetDist;
+
+    pose.targetPivot = Vector3::Zero;
+    pose.curPivot = pose.targetPivot;
+
+    pose.pivotOverrideOffset = Vector3::Zero;
+
+    ClampTargets();
+
+    m_profileInit = profile;
+    m_inputInit = input;
     m_hasInitSnapshot = true;
 
     return S_OK;
@@ -112,14 +121,6 @@ void COrbitCam::SetTarget(CGameObject* obj)
 
     autoYawHoldTimer = profile.autoYawFollowDelay;
     hasPrevTargetFoot = false;
-
-    if (firstSnap)
-    {
-        pose.pivotOverrideOffset = Vector3::Zero;
-        SetTargetFrontView(obj, profile.startDistance, profile.startPitchDeg, profile.startHeightOffset);
-        firstSnap = false;
-        return;
-    }
 
     pose.pivotOverrideOffset = Vector3::Zero;
 
@@ -155,8 +156,6 @@ void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 
 void COrbitCam::SyncFromCurTransform()
 {
-    firstSnap = false;
-
     const Vector3 pivot = GetPivotTargetPos();
     pose.targetPivot = pivot;
     pose.curPivot = pivot;
@@ -184,7 +183,6 @@ void COrbitCam::SyncFromCurTransform()
     m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
-
 
 void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset)
 {
@@ -233,8 +231,6 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
 
 void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
 {
-    firstSnap = false;
-
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
