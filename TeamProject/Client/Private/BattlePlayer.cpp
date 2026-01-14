@@ -403,7 +403,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	auto vRight = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
-		+ XMVectorScale(vRight, 0.5f)
+		+ XMVectorScale(vRight, 0.3f)
 		- XMVectorScale(m_vSwitchLook, 4.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
