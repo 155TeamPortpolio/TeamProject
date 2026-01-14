@@ -256,7 +256,6 @@ OBJECT_HANDLE CGameObject::Get_Handle()
 		hObj.Layer = "";
 		hObj.Level = "";
 		hObj.hObjID = m_ObjectID;
-		hObj.Reset();
 		return hObj;
 	}
 

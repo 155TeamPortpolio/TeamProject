@@ -50,7 +50,7 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     m_baseCamObj = camObjHandle;
 
     if (!m_overrides.empty()) return;
-    BeginBlendTo(m_baseCamObj, blendSec);
+    //BeginBlendTo(m_baseCamObj, blendSec);
 }
 
 void CCameraMgr::SetShadowCamObj(OBJECT_HANDLE camObjHandle)
@@ -268,7 +268,9 @@ void CCameraMgr::Update(_float dt)
 
     ApplyShake(m_outputPose, dt);
     ApplyCache(main, m_outputPose);
-    UpdateShadowCache();
+
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
 
 Lens CCameraMgr::Get_Lens() const
