@@ -28,6 +28,8 @@
 #include "UI_SwitchAction.h"
 #include "UI_UltimateAction.h"
 
+#include "WorldUI_AccessSign.h"
+
 namespace fs = filesystem;
 using namespace Helper;
 
@@ -145,6 +147,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"SpecialAction",	&CUI_SpecialAction::Create	},
 		{"SwitchAction",	&CUI_SwitchAction::Create	},
 		{"UltimateAction",	&CUI_UltimateAction::Create	},
+		{"AccessSign",		&CWorldUI_AccessSign::Create},
 	};
 
 	for (const Entry& entry : entries)

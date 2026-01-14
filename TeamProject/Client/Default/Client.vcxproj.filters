@@ -631,6 +631,12 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch">
       <UniqueIdentifier>{d798bf56-f080-4a83-85b8-8b18fca9b929}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\AccessSign">
+      <UniqueIdentifier>{de422a31-2a16-4e22-bd63-03ae138d891c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\AccessSign\Zero">
+      <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1211,6 +1217,12 @@
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\WorldUI_Object.h">
+      <Filter>02. GameObject\UI\AccessSign</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\WorldUI_AccessSign.h">
+      <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1772,6 +1784,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\Stage.cpp">
       <Filter>01. Level\04. Zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WorldUI_Object.cpp">
+      <Filter>02. GameObject\UI\AccessSign</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WorldUI_AccessSign.cpp">
+      <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
