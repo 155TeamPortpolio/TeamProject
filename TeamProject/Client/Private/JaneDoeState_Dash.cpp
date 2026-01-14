@@ -8,7 +8,7 @@
 void CJaneDoeState_Dash::Enter(CJaneDoe* pOwner)
 {
     pOwner->Use_Evade();
-    if (pOwner->IsPassion())
+    if (pOwner->Is_Passion())
     {
         pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Front_03")
             .Speed(1.f)

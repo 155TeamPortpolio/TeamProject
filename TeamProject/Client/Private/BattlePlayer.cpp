@@ -264,7 +264,7 @@ void CBattlePlayer::Process_Ultimate()
 
 void CBattlePlayer::Process_Energy()
 {
-	if (InputDevice()->Key_Hold('E'))
+	if (InputDevice()->Key_Down('E'))
 	{
 		m_pCurrentCharacter->On_Special();
 	}

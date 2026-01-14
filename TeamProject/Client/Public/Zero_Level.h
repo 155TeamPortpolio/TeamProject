@@ -9,6 +9,14 @@ NS_BEGIN(Client)
 
 class CZero_Level : public CLevel
 {
+public:
+	enum class StageType {Normal, Elite, Boss};
+	typedef struct tagStageContext {
+		StageType eStageType;
+		_int StageID = { -1 };
+		class CStage* pNowStage = { nullptr };
+	}StageContext;
+
 private:
 	CZero_Level(const string& LevelKey);
 	virtual ~CZero_Level() DEFAULT;
@@ -21,9 +29,13 @@ public:
 
 public:
 	static void PreLoad_Level();
+	StageContext& Get_StageContext() { return m_Context; };
+	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
 private:
-	CGameInstance* m_pGameInstance{};
+	CGameInstance* m_pGameInstance = {nullptr};
+	unordered_map<StageType,class CStage*> m_StageContainer;
+	StageContext m_Context = {};
 
 public:
 	static CZero_Level* Create(const string& LevelKey);

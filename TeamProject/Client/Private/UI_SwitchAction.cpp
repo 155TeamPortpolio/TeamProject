@@ -60,6 +60,9 @@ HRESULT CUI_SwitchAction::Initialize(INIT_DESC* pArg)
 
 void CUI_SwitchAction::Update(_float dt)
 {
+	if (!m_isVisualInitialized)
+		m_isVisualInitialized = Apply_DisableVisual();
+
 	// 이벤트 테스트 코드
 	//if (CGameInstance::GetInstance()->Get_InputDev()->Key_Down('M'))
 	//{
@@ -151,16 +154,21 @@ void CUI_SwitchAction::Refresh_Visual()
 	Apply_EnableVisual();
 }
 
-void CUI_SwitchAction::Apply_DisableVisual()
+_bool CUI_SwitchAction::Apply_DisableVisual()
 {
-	Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-	Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
-	Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
-	Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
-	Set_Color(CHILD::ICON, UI_GRAY_DARK);
-	Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
-	Set_Alive(CHILD::OUTLINE, true);
+	_bool isApplied = {};
+
+	isApplied |= Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+	isApplied |= Set_Color(CHILD::GAUGEBG, UI_GRAY_DARK);
+	isApplied |= Set_Color(CHILD::GAUGE, UI_GRAY_DARK);
+	isApplied |= Set_Color(CHILD::ICONBG, UI_GRAY_DARK);
+	isApplied |= Set_Color(CHILD::ICON, UI_GRAY_DARK);
+	isApplied |= Set_Color(CHILD::SPACE, UI_GRAY_LIGHTEST);
+	isApplied |= Set_Alive(CHILD::OUTLINE, true);
+
+	return isApplied;
 }
+
 void CUI_SwitchAction::Apply_EnableVisual()
 {
 	Set_Color(CHILD::BG, UI_GRAY_LIGHT);
@@ -183,19 +191,19 @@ void CUI_SwitchAction::Apply_AvailableVisual()
 	Set_Alive(CHILD::OUTLINE, false);
 }
 
-void CUI_SwitchAction::Set_Alive(CHILD child, _bool isAlive)
+_bool CUI_SwitchAction::Set_Alive(CHILD child, _bool isAlive)
 {
-	ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
+	return ForChild(child, [isAlive](CUI_Object* ui) { ui->Set_Alive(isAlive); });
 }
 
-void CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
+_bool CUI_SwitchAction::Set_Animation(CHILD child, _int iIndex)
 {
-	ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
+	return ForChild(child, [iIndex](CUI_Object* ui) { ui->Set_Animation(iIndex); });
 }
 
-void CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
+_bool CUI_SwitchAction::Set_Color(CHILD child, _float4 vColor)
 {
-	ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
+	return ForChild(child, [vColor](CUI_Object* ui) { ui->Set_Color(vColor); });
 }
 
 CGameObject* CUI_SwitchAction::Create()

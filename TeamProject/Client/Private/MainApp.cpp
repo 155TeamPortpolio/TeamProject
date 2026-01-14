@@ -11,6 +11,8 @@
 #include "Zero_Level.h"
 
 #include "UIDirector.h"
+#include "DataBase.h"
+#include "BattleSystem.h"
 
 CMainApp::CMainApp()
 {
@@ -39,13 +41,15 @@ HRESULT CMainApp::Initialize()
 	
 	Set_Levels();
 
+	CDataBase::GetInstance()->CreateTable();
+	CBattleSystem::GetInstance(); //우선 생성만
+
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
-	
 	return S_OK;
 }
 

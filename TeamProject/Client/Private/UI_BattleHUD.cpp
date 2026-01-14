@@ -5,6 +5,7 @@
 #include "ObjectContainer.h"
 #include "EventListener.h"
 #include "TextSlot.h"
+#include "Sprite2D.h"
 #include "GaugeUI.h" 
 
 HRESULT CUI_BattleHUD::Initialize_Prototype()
@@ -20,12 +21,22 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
+    m_handles.resize(Child::END);
+
+    auto pRoot = Ready_Prefab();
+    if (!pRoot)
+        MSG_BOX("Failed to Create");
+
+    // 이벤트 : UI_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         {
-            if (desc.eType == UI_STATUS_TYPE::HP && desc.eOwner == UI_STATUS_OWNER::ROLE1)
-                Set_HPText(desc.value);
-            else if (desc.eType == UI_STATUS_TYPE::GROGGY && desc.eOwner == UI_STATUS_OWNER::BOSS)
-                Set_GroggyText(desc.value);
+            Set_Values(desc);
+        });
+
+    // 이벤트 : UI_PLAYER_STATUS_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
+        {
+            Set_Values(desc);
         });
 
     return S_OK;
@@ -33,14 +44,6 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 
 void CUI_BattleHUD::Awake()
 {
-    auto pGameInstance = CGameInstance::GetInstance();
-
-    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
-
-    auto pRoot = Ready_Prefab(strLevelKey);
-    if (!pRoot)
-        return;
-
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
@@ -50,9 +53,10 @@ void CUI_BattleHUD::Update(_float dt)
 {
 }
 
-CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
+CUI_Object* CUI_BattleHUD::Ready_Prefab()
 {
     auto pGameInstance = CGameInstance::GetInstance();
+    const string& strLevelKey = pGameInstance->Get_LevelMgr()->Get_NowLevelKey();
 
     // Battle HUD 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
     CUI_Object* pRoot = Builder::Create_UIObject({ strLevelKey, "Proto_GameObject_CanvasPanel" })
@@ -62,8 +66,8 @@ CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
     if (!pRoot)
         return nullptr;
 
-    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", PREFAB::ULTIMATE1, _float2(50.f, 136.f));
-    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_BattleHUDAction", "action", PREFAB::ACTION, _float2(1178.f, 655.f));
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_Decibel", "decibel", Child::ULTIMATE1, _float2(50.f, 136.f));
+    Add_PartObject(pRoot, strLevelKey, "Proto_GameObject_BattleHUDAction", "action", Child::ACTION, _float2(1178.f, 655.f));
 
     // 생성된 루트 UI를 uiMgr에 등록
     if (FAILED(pGameInstance->Get_UIMgr()->Add_UIObject(pRoot, strLevelKey)))
@@ -75,7 +79,7 @@ CUI_Object* CUI_BattleHUD::Ready_Prefab(const string& strLevelKey)
     return pRoot;
 }
 
-void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset)
+void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset)
 {
     CUI_Object* pObj = Builder::Create_UIObject({ strLevelKey, strPrototypeTag })
         .Offset(vOffset)
@@ -90,82 +94,128 @@ void CUI_BattleHUD::Add_PartObject(CUI_Object* pRoot, const string& strLevelKey,
     if (!handle.isValid())
         return;
 
-    m_hChildren[prefab] = handle;
-}
-
-void CUI_BattleHUD::Set_HPText(const UI_STATUS_VALUE& value)
-{
-    if (!m_hChildren[PREFAB::CUR_HP_TEXT].isValid() || !m_hChildren[PREFAB::MAX_HP_TEXT].isValid())
-        return;
-
-    Set_Text(PREFAB::CUR_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fCurValue))));
-    Set_Text(PREFAB::MAX_HP_TEXT, Helper::ConvertToWideString(to_string(static_cast<_int>(value.fMaxValue))));
-}
-
-void CUI_BattleHUD::Set_GroggyText(const UI_STATUS_VALUE& value)
-{
-    if (!m_hChildren[PREFAB::BOSS_GROGGY_TEXT].isValid())
-        return;
-
-    Set_Text(PREFAB::BOSS_GROGGY_TEXT, Helper::ConvertToWideString(to_string(value.fCurValue)));
+    m_handles[child] = handle;
 }
 
 void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
-{ 
+{
     // 루트 핸들 캐싱
     m_hRoot = pRoot->Get_Handle();
 
     // 자식 핸들 캐싱
-    m_hChildren.resize(PREFAB::END);
     for (_int i = 0; i < 3; ++i)
     {
-        m_hChildren[ICON_PREFABS[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));
-        m_hChildren[HPBACK_PREFABS[i]] = pRoot->Get_DescendantHandle("hpBack" + to_string(i + 1));
-        m_hChildren[HPFRONT_PREFABS[i]] = pRoot->Get_DescendantHandle("hpFront" + to_string(i + 1));
-        m_hChildren[SPECIAL_PREFABS[i]] = pRoot->Get_DescendantHandle("special" + to_string(i + 1));
-        m_hChildren[ULTIMATE_PREFABS[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
+        m_handles[ICON_CHILD[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));
+        m_handles[HPBACK_CHILD[i]] = pRoot->Get_DescendantHandle("hpBack" + to_string(i + 1));
+        m_handles[HPFRONT_CHILD[i]] = pRoot->Get_DescendantHandle("hpFront" + to_string(i + 1));
+        m_handles[SPECIAL_CHILD[i]] = pRoot->Get_DescendantHandle("special" + to_string(i + 1));
+        m_handles[ULTIMATE_CHILD[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
     }
 
-    m_hChildren[PREFAB::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
-    m_hChildren[PREFAB::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
+    m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
+    m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
 
-    m_hChildren[PREFAB::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
-    m_hChildren[PREFAB::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
-    m_hChildren[PREFAB::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
-    m_hChildren[PREFAB::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
-    m_hChildren[PREFAB::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
+    m_handles[Child::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
+    m_handles[Child::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
+    m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
+    m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
+    m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
+}
 
-    //m_hChildren[PREFAB::BTN_NORMAL] = ;
-    //m_hChildren[PREFAB::BTN_EVADE] = ;
-    //m_hChildren[PREFAB::BTN_SPECIAL] = ;
-    //m_hChildren[PREFAB::BTN_SWITCH] = ;
-    //m_hChildren[PREFAB::BTN_ULTIMATE] = ;
+void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
+{
+    const _float fRatio = desc.value.fCurValue / desc.value.fMaxValue;
 
-    // 게이지 정보(소유자, 게이지 타입) 설정
-    for(const auto& bind : GaugeBindings)
+    // ===== BOSS ROLE =====
+    if (desc.eOwner == UI_STATUS_OWNER::BOSS)
     {
-        auto& handle = m_hChildren[bind.ePrefab];
-        if (!handle.isValid())
-            continue;
-
-        if (auto pGauge = dynamic_cast<CGaugeUI*>(handle.Get()))
+        if (desc.eType == UI_STATUS_TYPE::HP)
         {
-            pGauge->Set_Status(bind.eOwner, bind.eType);
+            Set_FillAmount(Child::BOSS_HP_FRONT, fRatio);
         }
+        else if (desc.eType == UI_STATUS_TYPE::GROGGY)
+        {
+            Set_FillAmount(Child::BOSS_GROGGY, fRatio);
+            Set_Text(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue);
+        }
+        return;
+    } 
+
+    // ===== PLAYER ROLE =====
+    const _uint iIndex = ENUM(desc.eOwner);
+    Child target = Child::END;
+
+    switch (desc.eType)
+    {
+    case UI_STATUS_TYPE::HP:
+        target = HPFRONT_CHILD[iIndex];
+        if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
+            Set_Text(Child::MAX_HP_TEXT, desc.value.fCurValue);
+        break;
+
+    case UI_STATUS_TYPE::SPECIAL:
+        target = SPECIAL_CHILD[iIndex];
+        break;
+
+    case UI_STATUS_TYPE::ULTIMATE:
+        target = ULTIMATE_CHILD[iIndex];
+        break;
+    }
+
+    if (target != Child::END)
+        Set_FillAmount(target, fRatio);
+}
+
+void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
+{
+    const _uint iIndex = ENUM(desc.eOwner);
+
+    Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
+    Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.hp.fMaxValue);
+    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.hp.fMaxValue);
+
+    if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
+    {
+        Set_Text(Child::CUR_HP_TEXT, desc.hp.fCurValue);
+        Set_Text(Child::MAX_HP_TEXT, desc.hp.fMaxValue);
     }
 }
 
-void CUI_BattleHUD::Set_Text(PREFAB prefab, const wstring& strText)
+void CUI_BattleHUD::Set_Text(Child child, _float fNum)
 {
-    auto pObj = m_hChildren[ENUM(prefab)].Get();
-    if (!pObj)
-        return;
+    ForChild(child, [&](CUI_Object* ui) 
+        { 
+            auto pTextSlot = ui->Get_Component<CTextSlot>();
+            if (!pTextSlot)
+                return;
 
-    auto pTextSlot = pObj->Get_Component<CTextSlot>();
-    if (!pTextSlot)
-        return;
+            pTextSlot->Set_Text(Helper::ConvertToWideString(to_string(static_cast<_int>(fNum))));
+        });
+}
 
-    pTextSlot->Set_Text(strText);
+void CUI_BattleHUD::Set_FillAmount(Child child, _float fFillAmount)
+{
+    ForChild(child, [&](CUI_Object* ui)
+        {
+            auto pGauge = dynamic_cast<CGaugeUI*>(ui);
+            if (!pGauge)
+                return;
+
+            pGauge->Set_FillAmount(fFillAmount);
+        });
+}
+
+void CUI_BattleHUD::Set_IconTexture(Child child, const string& strTextureKey)
+{
+    ForChild(child, [&](CUI_Object* ui)
+        {
+            auto pSprite = ui->Get_Component<CSprite2D>();
+            if (!pSprite)
+                return;
+
+            pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+        });
 }
 
 CGameObject* CUI_BattleHUD::Create()
