@@ -31,11 +31,11 @@ typedef struct AnimationLayer {
     _bool               bWrapped = { false };
     _int                iRootBoneIndex = { -1 }; //루트 본 
     _vector3            vRootEndPos{};                          //그 클립의 제일마지막 루트위치
-    _quaternion         vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값
+    _vector4            vRootEndQuat{ _quaternion::Identity };  //그 클립의 제일마지막 루트회전값
     _vector3            vPrevRootPos{};                         //이전 프레임 위치
-    _quaternion         vPrevRootQuat{ _quaternion::Identity }; //이전 프레임 회전
+    _vector4            vPrevRootQuat{ _quaternion::Identity }; //이전 프레임 회전
     _vector3            vRootMoveDelta{};                       //이동값
-    _quaternion         vRootQuatDelta{ _quaternion::Identity };//회전값
+    _vector4            vRootQuatDelta{ _quaternion::Identity };//회전값
 
     //모션본 (애니매이션의 움직임을 담당하는 본)
     _int    iMotionBoneIndex = { -1 };
@@ -52,7 +52,6 @@ typedef struct AnimationLayer {
     _float  fAnimSpeed = { 1.f };
     _float  fAppliedAnimSpeed = { 1.f };
     _bool   bLoop = { false };
-    _float  fLoopEnd = { 1.f };             //루프를 다시 돌 마지막 진행도
     _bool   bisFinished = { true };
     //재생 속도관련
     EaseType ePlayEaseType = { EaseType::None };

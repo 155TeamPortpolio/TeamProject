@@ -27,10 +27,8 @@ public:
     }
 
     //Clip
-    T& Loop(_bool bLoop, _float fLoopEnd = 1.f) {
+    T& Loop(_bool bLoop) {
         m_bLoop = bLoop;
-        m_fLoopEnd = fLoopEnd;
-
         return static_cast<T&>(*this);
     }
 
@@ -86,7 +84,6 @@ protected:
     EaseType m_eLayerEaseType = { EaseType::None };
     //π›∫π
     _bool    m_bLoop = false;
-    _float   m_fLoopEnd = 1.f;
     //∏ÿ√„
     _bool    m_bPause = false;
     //»∏¿¸∫∏∞£ ≤Ù±‚
