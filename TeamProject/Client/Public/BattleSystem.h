@@ -8,6 +8,13 @@ NS_END
 NS_BEGIN(Client)
 class CBattlePlayer;
 
+typedef struct tagTimeScale {
+	_bool	isScaled = { false };
+	_float	fDuration = {};
+	_float	fCurPos = {};
+	_float	fScaleValue = { 1.f };
+}TIME_SCALE;
+
 class CBattleSystem final : public CBase
 {
 	DECLARE_SINGLETON(CBattleSystem)
@@ -33,6 +40,7 @@ public: //getter
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);
 	_int							GetPlayerParryingCount();
 
+
 public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
@@ -41,9 +49,12 @@ public: //setter
 	// UI에서 캐릭터 선택시 부를 함수
 	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
+	void	SetTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale);
 
 private:
+	void	Update_BattleInfo();
 	void	ClearBattleStage();
+	void	CheckTimeScale(const _float dt);
 
 private:
 	_bool	m_isActive = { false };
@@ -54,8 +65,10 @@ private:
 	unordered_map<BATTLE_OBJ_TYPE, vector<OBJECT_HANDLE>>	m_Handles;
 	// 매 업데이트때 1번씩 생성된 Battle 오브젝트의 정보를 담아둠
 	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;
+	// BATTLE_OBJ_TYPE 별로 타임 스케일
+	unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
 	// 배틀 플레이어
-	class CBattlePlayer*									m_pBattlePlayer;
+	class CBattlePlayer* m_pBattlePlayer = { nullptr };
 
 public:
 	virtual void Free() override;
