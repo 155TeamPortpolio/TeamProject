@@ -5,7 +5,7 @@
   "values": [
     {
       "iObjID": 5,
-      "TagName": "bCooking",
+      "TagName": "cCooking",
       "defaultvalue": {
         "type": "Bool",
         "value": true
@@ -13,7 +13,7 @@
     },
     {
       "iObjID": 7,
-      "TagName": "bCooking",
+      "TagName": "cCooking",
       "defaultvalue": {
         "type": "Bool",
         "value": true
@@ -21,15 +21,15 @@
     },
     {
       "iObjID": 8,
-      "TagName": "bCooking",
+      "TagName": "cCooking",
       "defaultvalue": {
         "type": "Bool",
         "value": true
       }
     },
     {
-      "iObjID": 9,
-      "TagName": "bCooking",
+      "iObjID": 10,
+      "TagName": "cCooking",
       "defaultvalue": {
         "type": "Bool",
         "value": true

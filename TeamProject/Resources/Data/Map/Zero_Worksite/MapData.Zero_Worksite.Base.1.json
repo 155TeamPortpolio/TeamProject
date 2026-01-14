@@ -11,7 +11,7 @@
           "TagModelResourceKey": "Stage_Zero_WorkSite_Bridgeout.model",
           "TagMaterialResourceKey": "Stage_Zero_WorkSite_Bridgeout.mat",
           "vRight": [
-            1.0,
+            0.9999967217445374,
             0.0,
             0.0,
             0.0
@@ -25,13 +25,13 @@
           "vLook": [
             0.0,
             0.0,
-            1.0,
+            0.9999967217445374,
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -40,27 +40,27 @@
           "TagModelResourceKey": "Stage_Zero_WorkSite_Buildingout.model",
           "TagMaterialResourceKey": "Stage_Zero_WorkSite_Buildingout.mat",
           "vRight": [
-            1.0,
+            -1.0,
             0.0,
-            0.0,
+            1.1920928955078125e-07,
             0.0
           ],
           "vUp": [
             0.0,
-            1.0,
+            0.9999985694885254,
             0.0,
             0.0
           ],
           "vLook": [
+            -1.1920911902052467e-07,
             0.0,
-            0.0,
-            1.0,
+            -0.9999985694885254,
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -87,9 +87,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -105,27 +105,27 @@
           ],
           "vUp": [
             0.0,
-            1.0,
+            0.9999969601631165,
             0.0,
             0.0
           ],
           "vLook": [
             0.0,
             0.0,
-            1.0,
+            0.9999969601631165,
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
         {
           "iObjID": 4,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Decalout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Decalout.mat",
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Vehicleout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Vehicleout.mat",
           "vRight": [
             1.0,
             0.0,
@@ -145,9 +145,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -174,9 +174,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -203,9 +203,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -232,9 +232,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
@@ -261,14 +261,43 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
         {
           "iObjID": 9,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_PathMeshout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_PathMeshout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 10,
           "TagModelResourceKey": "Stage_Zero_WorkSite_Propout.model",
           "TagMaterialResourceKey": "Stage_Zero_WorkSite_Propout.mat",
           "vRight": [
@@ -290,14 +319,43 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         },
         {
-          "iObjID": 10,
+          "iObjID": 11,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_SceneObjectStateWidgetRootout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 12,
           "TagModelResourceKey": "Stage_Zero_WorkSite_Stairout.model",
           "TagMaterialResourceKey": "Stage_Zero_WorkSite_Stairout.mat",
           "vRight": [
@@ -319,38 +377,9 @@
             0.0
           ],
           "vPos": [
-            0.0,
-            0.0,
-            0.0,
-            1.0
-          ]
-        },
-        {
-          "iObjID": 11,
-          "TagModelResourceKey": "Stage_Zero_WorkSite_Vehicleout.model",
-          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Vehicleout.mat",
-          "vRight": [
-            1.0,
-            0.0,
-            0.0,
-            0.0
-          ],
-          "vUp": [
-            0.0,
-            1.0,
-            0.0,
-            0.0
-          ],
-          "vLook": [
-            0.0,
-            0.0,
-            1.0,
-            0.0
-          ],
-          "vPos": [
-            0.0,
-            0.0,
-            0.0,
+            10.0,
+            -40.0,
+            10.0,
             1.0
           ]
         }
