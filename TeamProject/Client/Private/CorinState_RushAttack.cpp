@@ -4,6 +4,7 @@
 
 void CCorinState_RushAttack::Enter(CCorin* pOwner)
 {
+    pOwner->Lock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
@@ -63,4 +64,5 @@ void CCorinState_Rush_End::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_End")
         .Speed(2.f)
         .Apply();
+    pOwner->Unlock_Move();
 }

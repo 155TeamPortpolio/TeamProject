@@ -91,6 +91,10 @@ public:
     // ����
     _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    _bool  Can_Move() const { return m_bCanMove; }
+    void   Lock_Move() { m_bCanMove = false; }
+    void   Unlock_Move() { m_bCanMove = true; }
+
     _bool  Is_Attack() const { return m_bIsAttack; }
     _bool  Is_Evade() const { return m_bIsEvade; }
     _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
@@ -152,6 +156,7 @@ public:
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
     void     Rotate(_vector3 vDirection);
+    void     Stop_Rotation();
 
     _bool    Is_OppositeInput() const;
     _bool    Can_Parry() const;
@@ -193,6 +198,7 @@ protected:
     _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
     // �Է�
     InputInfo       m_inputInfo;
+    _bool           m_bCanMove = { true };
     _bool           m_bIsAttack = { false };
     _bool           m_bIsEvade = { false };
     // ȸ�� �ý���

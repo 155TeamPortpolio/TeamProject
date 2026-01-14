@@ -45,6 +45,7 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
         vLook.y = 0;
         vLook.Normalize();
         pOwner->Get_Component<CTransform>()->Set_Look(vLook);
+        pOwner->Rotate(vLook);
     }
     __super::Update(pOwner, dt);
 }

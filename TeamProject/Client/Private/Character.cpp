@@ -188,6 +188,7 @@ void CCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CCharacter::On_Move(const InputInfo& inputInfo)
 {
+	if (false == m_bCanMove)	return;
 	_bool prevResetMove = m_inputInfo.resetMove;  // ���� �� ���
 
 	m_inputInfo = inputInfo;
@@ -234,7 +235,8 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	RIGIDBODY_DESC rigidDesc{};
 	rigidDesc.isKinematic = true;
 	rigidDesc.bEnableGravity = false;
-	rigidDesc.bLockY = true;
+	rigidDesc.bLockX = false;
+	rigidDesc.bLockZ = true;
 
 	COLLIDER_DESC colliderDesc{};
 	colliderDesc.eType = pDesc->eColliderType;
@@ -275,6 +277,12 @@ void CCharacter::Rotate(_vector3 vDirection)
 	m_qTargetRot = _quaternion::CreateFromAxisAngle(_vector3::Up, yaw);
 	m_qCurrentRot = m_pTransform->Get_QuaternionRotate();
 	m_bIsRotating = true;
+}
+
+void CCharacter::Stop_Rotation()
+{
+	m_bIsRotating = false;
+	m_qTargetRot = m_pTransform->Get_QuaternionRotate();
 }
 
 
