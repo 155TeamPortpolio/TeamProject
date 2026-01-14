@@ -17,7 +17,7 @@ HRESULT CFirstLevel::Awake()
 
 	CGameObject* freeCam = Builder::Create_Object({"First_Level", "Proto_FreeCam"})
 		.Camera(aspect)
-		.Position({0.f, 3.f, -5.f})
+		.Position({0.f, 3.f, 5.f})
 		.Build("FreeCam");
 
 	CGameObject* demoModel = Builder::Create_Object({"First_Level", "Proto_Unagi"})

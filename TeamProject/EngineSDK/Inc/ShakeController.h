@@ -1,13 +1,21 @@
 #pragma once
 
 NS_BEGIN(Engine)
-struct CamPoseFrame;
+
+enum class CamShakeType 
+{
+    HitNormal, HitHeavy
+};
 
 class ShakeController
 {
 public:
     void Set(_float ampDeg, _float freq, _float sustainSec, _float fadeOutSec);
     void Add(_float ampDeg, _float freq, _float sustainSec, _float fadeOutSec);
+
+    void Set(CamShakeType type, _float strength = 1.f);
+    void Add(CamShakeType type, _float strength = 1.f);
+
     void Clear(_float fadeOutSec);
     void Apply(const Quaternion& camRot, _float dt, Vector3& outWorldPosDelta, Quaternion& outRotDelta);
     void Reset();
@@ -15,24 +23,31 @@ public:
 private:
     struct Instance
     {
-        _float amplitudeDeg{};
+        _float rotAmpDeg{};
+        _float posAmp{};
+
         _float frequency{};
         _float attackSec{};
         _float sustainSec{};
         _float decaySec{};
         _float elapsed{};
-        _float posAmp{};
-        _uint  seed{};
+
+        _float posFreqMul{};
+        _float rotPhase{};
+        _float posPhase{};
+
+        _float kickAmpDeg{};
+        _float kickFreq{};
+        _float kickAttackSec{};
+        _float kickDurationSec{};
+        _float kickDecaySec{};
+
+        _uint  seedRot{};
+        _uint  seedPos{};
     };
 
 private:
-    static _uint   HashU(_uint x);
-    static _float  Hash01(_uint x);
-    static _float  Smooth01(_float t);
-    static _float  ValueNoise1D(_uint seed, _float x);
-    static Vector3 Noise3(_uint seed, _float t);
-    static Vector3 FBM3(_uint seed, _float t);
-    static _float  Envelope(_float elapsed, _float attackSec, _float sustainSec, _float decaySec);
+    void AddLayer(_float rotAmpDeg, _float posAmp, _float freq, _float sustainSec, _float fadeOutSec, _float kickAmpDeg, _float kickFreq, _float kickDurationSec);
 
 private:
     vector<Instance> m_instances{};

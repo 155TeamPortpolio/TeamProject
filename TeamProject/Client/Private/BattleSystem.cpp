@@ -60,7 +60,7 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 
 	CCT_DESC MonsterCCT;
 	MonsterCCT.eGroup = COLLISION_GROUP::MONSTER;
-	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) + ENUM(COLLISION_GROUP::COMMON);
+	MonsterCCT.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::COMMON) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	MonsterCCT.bAutoFit = false;
 	MonsterCCT.fHeight = MonsterTableDesc.CCT_fHeight;
 	MonsterCCT.fRadius = MonsterTableDesc.CCT_fRadius;

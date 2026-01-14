@@ -27,15 +27,19 @@ CMainCity_Level::CMainCity_Level(const string& LevelKey)
 
 HRESULT CMainCity_Level::Initialize()
 {
-	//m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
-	if (nullptr == m_pMapDataCloud)
-		return E_FAIL;
-
 	return S_OK;
 }
 
 HRESULT CMainCity_Level::Awake()
 {
+	// ============ Camera ==================================================
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_MainCity_OrbitCam", COrbitCam::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_MainCity_ShadowCam", CShadowCam::Create());
+
+	//============== Map ============================
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+
 	//============== Map ============================
 	ReadyMap();
 	CUIDirector::GetInstance()->Load_LevelObjects("MainCity_Level");
@@ -57,14 +61,7 @@ HRESULT CMainCity_Level::Render()
 
 void CMainCity_Level::PreLoad_Level()
 {
-	// ============ Camera ==================================================
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam", COrbitCam::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
-
-	//============== Map ============================
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
-	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
-}
+	}
 
 void CMainCity_Level::ReadyMap()
 {
@@ -82,19 +79,20 @@ void CMainCity_Level::ReadyCamera()
 	CCT_DESC desc;
 	desc.eGroup = COLLISION_GROUP::CAMERA;
 
-	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(aspect)
-		.CharacterController(desc)
-		.Build("OrbitCam");
-
-	ObjectManager()->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
-	m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
-	m_pCamDirector->SetReturnCam(CamType::Orbit);
-	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
+	//		auto orbitCam = Builder::Create_Object({ "MainCity_Level", "Proto_MainCity_OrbitCam" })
+	//			.Camera(aspect)
+	//			.CharacterController(desc)
+	//			.Build("OrbitCam");
+	//		
+	//		ObjectManager()->Add_Object(orbitCam, { "MainCity_Level", "Camera_Layer" });
+	//		m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
+	//		m_pCamDirector->SetReturnCam(CamType::Orbit);
+	//		CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 }
 
 void CMainCity_Level::ReadyShadowCamera()
 {
+
 }
 
 CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)
