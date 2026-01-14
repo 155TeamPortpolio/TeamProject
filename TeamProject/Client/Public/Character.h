@@ -135,6 +135,7 @@ public:
     virtual void    On_Evade();
     virtual void    On_SwitchIn(SWITCH eType)   PURE;   //*����ġ �� ��*
     virtual void    On_SwitchOut()              PURE;   //*����ġ �ƿ� ��*
+    virtual void    On_Ultimate() { m_fDecibel = 0.f; };
 
 public:
     void     Rotate(_vector3 vDirection);
@@ -146,6 +147,8 @@ public:
     void     Use_Evade();
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
+
+    _bool    Can_Ultimate();
 
 private:
     void    Update_Rotation(_float dt);

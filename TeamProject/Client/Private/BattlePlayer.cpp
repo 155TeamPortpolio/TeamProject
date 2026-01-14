@@ -168,6 +168,7 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Attack();
 	Process_Evade();
 	Process_Switch();
+	Process_Ultimate();
 
 	if (InputDevice()->Key_Down('T'))
 	{
@@ -229,6 +230,17 @@ void CBattlePlayer::Process_Switch()
 		{
 			SwitchCharacter();
 			m_fSwitchCooldown = SWITCH_COOLDOWN;
+		}
+	}
+}
+
+void CBattlePlayer::Process_Ultimate()
+{
+	if (InputDevice()->Key_Tap('Q'))
+	{
+		if (m_pCurrentCharacter->Can_Ultimate())
+		{
+			m_pCurrentCharacter->On_Ultimate();
 		}
 	}
 }

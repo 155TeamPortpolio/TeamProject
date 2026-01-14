@@ -248,6 +248,12 @@ _bool CCharacter::Use_EvadeBuffer()
 	return false;
 }
 
+_bool CCharacter::Can_Ultimate()
+{
+	if (m_fDecibel == MAX_DECIBEL)		return true;
+	return false;
+}
+
 _bool CCharacter::Is_OppositeInput() const
 {
 	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
@@ -325,7 +331,7 @@ void CCharacter::Update_Decibel(_float dt)
 		m_fDecibel = MAX_DECIBEL;
 		return;
 	}
-	m_fDecibel += dt;
+	m_fDecibel += dt * 1000.f;
 }
 
 void CCharacter::Free()

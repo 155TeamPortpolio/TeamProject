@@ -71,6 +71,7 @@ private:
     void    Process_SpecialAttack();
     void    Process_Evade();
     void    Process_Switch();
+    void    Process_Ultimate();
     _bool   Can_Switch() const;
     void    Update_Target();
     void    Update_Status();
