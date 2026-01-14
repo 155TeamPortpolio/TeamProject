@@ -116,45 +116,57 @@ void CHierarchyPanel::ShowLevelList()
 		if (levelList[ID] == G_GlobalLevelKey)
 			return;
 		m_iSelectedLevel = ID;
-		m_pContext->pLevelManager->Request_ChangeLevel(levelList[m_iSelectedLevel]);
+		m_pContext->pLevelManager->Request_ChangeLevel(levelList[m_iSelectedLevel],true);
+		m_pContext->pSelectedLayer = nullptr;
+		m_pContext->pSelectedObject = nullptr;
+		m_iSelectedLayer = 0;
 		}
 	);
 	m_pContext->pSelectedLevel = m_pContext->pLevelManager->Get_CurrentLevel();
 }
-
 void CHierarchyPanel::ShowLayerList(const string& nowLevel)
 {
 	const auto& LayerMap = m_pContext->pObjectManager->Get_LevelLayer(nowLevel);
 	vector<string> layers;
 
 	for (auto& pair : LayerMap)
-		layers.push_back(pair.first);
+		if (pair.first != G_GlobalLevelKey) layers.push_back(pair.first);
 
 	if (layers.empty())
+	{
+		m_iSelectedLayer = 0;
+		m_pContext->pSelectedLayer = nullptr;
 		return;
+	}
 
-	if (layers[m_iSelectedLayer] == G_GlobalLevelKey) return;
+	if (m_iSelectedLayer < 0 || m_iSelectedLayer >= (int)layers.size())
+		m_iSelectedLayer = 0;
 
-	GuiUtil::ShowCombo(layers, m_iSelectedLayer, "LayerList", [&](_uint ID) {m_iSelectedLayer = ID; });
+	GuiUtil::ShowCombo(layers, m_iSelectedLayer, "LayerList", [&](_uint ID) { m_iSelectedLayer = ID; });
 
 	auto iter = LayerMap.find(layers[m_iSelectedLayer]);
-
 	if (iter != LayerMap.end())
 		m_pContext->pSelectedLayer = iter->second;
+	else
+		m_pContext->pSelectedLayer = nullptr;
 }
+
 
 void CHierarchyPanel::ShowObjectList()
 {
-	if (!m_pContext->pSelectedLayer) return;
-	auto& ObjectVector = m_pContext->pSelectedLayer->Get_AllObject();
-
-
-	string InstanceListHeader = "Instances ("  + to_string(ObjectVector.size()) + " )";
-	ImGui::SeparatorText(InstanceListHeader.c_str());
-
-	if (ObjectVector.empty())
+	if (m_pContext->pSelectedLayer == nullptr)
 		return;
 
+	CLayer* pLayer = m_pContext->pSelectedLayer;
+	auto& ObjectVector = pLayer->Get_AllObject();
+	
+	
+	string InstanceListHeader = "Instances ("  + to_string(ObjectVector.size()) + " )";
+	ImGui::SeparatorText(InstanceListHeader.c_str());
+	
+	if (ObjectVector.empty())
+		return;
+	
 	for (auto& Object : ObjectVector) {
 		if (!Object || !Object->Is_Root()) continue;
 		bool isSel = (m_pContext->pSelectedObject == Object);

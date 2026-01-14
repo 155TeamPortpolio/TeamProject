@@ -66,6 +66,9 @@ private:
     _bool   hasPrevTargetFoot = false;
 
 private:
+
+
+private:
     COrbitCam() {}
     COrbitCam(const COrbitCam& rhs) : CCamObject(rhs) {}
     virtual ~COrbitCam() = default;

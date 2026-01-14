@@ -3,6 +3,10 @@
 #include "GameObject.h"
 #include "CameraMgr.h"
 
+NS_BEGIN(Engine)
+class CGameInstance; class CLight;
+NS_END
+
 NS_BEGIN(Client)
 class CCamObject abstract : public CGameObject
 {

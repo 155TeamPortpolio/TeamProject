@@ -37,9 +37,6 @@ private:
     _uint m_iLaserMode{};
     _float m_fElapseTime{};
     _float m_fDuration = 0.1f;
-
-    /* Target Mode */
-    _float3 m_vTargetDir{};
 };
 
 NS_END

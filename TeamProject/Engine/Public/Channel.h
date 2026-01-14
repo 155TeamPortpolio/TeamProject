@@ -11,6 +11,7 @@ protected:
 public:
     HRESULT Initialize(ifstream& ifs);
     virtual HRESULT TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices, _float CurrentTrackPosition , _bool Loop);
+    virtual void SampleKeyFrameByProgress(_float Progress, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans);
 
 public:
     const string& Get_Name() { return m_ChannelName; }

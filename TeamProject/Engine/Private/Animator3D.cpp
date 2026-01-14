@@ -49,7 +49,7 @@ void CAnimator3D::LinkAnimate_Model(const string& LevelKey, const string& ModelK
 	m_TransformationMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_ManipulateMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 	m_CombinedMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
-	m_FinalMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
+	//m_FinalMatrices.resize(m_pData->Get_BoneCount(), IdentityMatrix);
 
 	for (size_t i = 0; i < m_pData->Get_BoneCount(); i++)
 	{
@@ -598,6 +598,7 @@ _float4x4 CAnimator3D::Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	return m_TransformationMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		return m_ManipulateMatrices[Index];
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			return m_CombinedMatrices[Index];
+	case Engine::CAnimator3D::BoneSpace::WORLD:				return m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix();
 	//case Engine::CAnimator3D::BoneSpace::FINAL:				return m_FinalMatrices[Index];
 	default:												return _float4x4();
 	}
@@ -629,6 +630,7 @@ _vector3 CAnimator3D::Get_BonePosition(BoneSpace eBoneSpace, AnimArg BoneArg)
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
+	case Engine::CAnimator3D::BoneSpace::WORLD:				mat = m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix(); break;
 	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
 	default:												return _vector3();
 	}
@@ -647,7 +649,8 @@ _quaternion CAnimator3D::Get_BoneQuaternion(BoneSpace eBoneSpace, AnimArg BoneAr
 	case Engine::CAnimator3D::BoneSpace::TRANSFORMATION:	mat = m_TransformationMatrices[Index];	break;
 	case Engine::CAnimator3D::BoneSpace::MANIPULATE:		mat = m_ManipulateMatrices[Index];		break;
 	case Engine::CAnimator3D::BoneSpace::COMBINED:			mat = m_CombinedMatrices[Index];		break;
-	//case Engine::CAnimator3D::BoneSpace::FINAL:				mat = m_FinalMatrices[Index];			break;
+	case Engine::CAnimator3D::BoneSpace::WORLD:				mat = m_CombinedMatrices[Index] * m_pOwner->Get_WorldMatrix(); break;
+	//case Engine::CAnimator3D::BoneSpace::FINAL:			mat = m_FinalMatrices[Index];			break;
 	default:												return _quaternion::Identity;
 	}
 
@@ -992,9 +995,13 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+		playSpeed, Layer.bLoop, Layer.fLoopEnd,
+		&Layer.bWrapped,
+		&Layer.bisFinished,
+		&Layer.fProgress,
+		m_EventBus);
 
-	//Reserved Speed
+	//Reserved Animation Speed
 	if (!Layer.ReservedSpeeds.empty() && Layer.fProgress > Layer.ReservedSpeeds.front().Start) {
 		auto Reserve = Layer.ReservedSpeeds.front();
 		Layer.fStartProgress = Reserve.Start;
@@ -1021,8 +1028,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector4 vCurRootQuat = R;
 
 			if (Layer.bWrapped) { //Roop 
-				_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]
-					->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+				 _vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
@@ -1139,13 +1145,21 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	if (Layer.bUpdate_PrevClip) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, nullptr, m_EventBus);
+			playSpeed, Layer.bLoop, Layer.fLoopEnd,
+			&Layer.bWrapped,
+			&Layer.bisFinished,
+			nullptr,
+			m_EventBus);
 	}
 
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
-			playSpeed, Layer.bLoop, &Layer.bWrapped, &Layer.bisFinished, &Layer.fProgress, m_EventBus);
+			playSpeed, Layer.bLoop, Layer.fLoopEnd,
+			&Layer.bWrapped,
+			&Layer.bisFinished,
+			&Layer.fProgress,
+			m_EventBus);
 	}
 
 	//Reserved Speed
@@ -1567,11 +1581,16 @@ void CAnimator3D::GUI_ShowLayerInfo()
 
 	ImGui::SetNextItemWidth(ImGui::GetContentRegionAvail().x);
 
-	int iDuration{};
+	_float fDuration{};
 	if (isExistClip(curLayer.iClipIndex))
-		iDuration = m_pAnimClips[curLayer.iClipIndex]->Get_Duration();
+		fDuration = m_pAnimClips[Get_CurAnimIndex()]->Get_Duration();
+	
+	_float fTrackPos;
+	(curLayer.bBlending)
+		? fTrackPos = curLayer.fBlendTrackPosition
+		: fTrackPos = curLayer.fCurrentTrackPosition;
 
-	ImGui::SliderFloat("##PlayBar", &curLayer.fCurrentTrackPosition, 0.f, iDuration);
+	ImGui::SliderFloat("##PlayBar", &fTrackPos, 0.f, fDuration);
 
 	ImGui::Text("Speed ");
 	ImGui::SameLine();
@@ -1579,6 +1598,11 @@ void CAnimator3D::GUI_ShowLayerInfo()
 	ImGui::DragFloat("##Speed", &curLayer.fAnimSpeed, 0.01f, 0.f, 10.f, "%.2f");
 	ImGui::SameLine();
 	ImGui::Text("Progress : %.2f", curLayer.fProgress);
+
+	ImGui::Text("PrevPos : X:%.2f Y:%.2f Z:%.2f", curLayer.vPrevRootPos.x,
+		curLayer.vPrevRootPos.y,
+		curLayer.vPrevRootPos.z);
+
 	ImGui::EndChild();
 }
 
@@ -1623,9 +1647,9 @@ void CAnimator3D::GUI_SelectAnim()
 
 		ImGui::PopID();
 	}
+
 	ImGui::EndChild();
 }
-
 
 void CAnimator3D::Update_IK(_float dt)
 {

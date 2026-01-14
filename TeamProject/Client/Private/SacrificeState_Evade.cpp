@@ -63,14 +63,8 @@ void CSacrificeState_Evade::Update(CSacrifice* pOwner, _float dt)
 			.Asset("hit_ground_smoke.json")
 			.Position(vPosition)
 			.Build("Smoke");
-		
-		auto pRockParticle = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-			.Asset("rock_particle.json")
-			.Position(vPosition)
-			.Build("Rock");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pEffect, { "Test_Level","Effect_Layer" });
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pRockParticle, { "Test_Level","Effect_Layer" });
 
 		m_IsSpawnEffect = true;
 	}

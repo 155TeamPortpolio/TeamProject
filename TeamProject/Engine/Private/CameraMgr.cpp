@@ -53,11 +53,6 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     BeginBlendTo(m_baseCamObj, blendSec);
 }
 
-void CCameraMgr::SetShadowCamObj(OBJECT_HANDLE camObjHandle)
-{
-    m_shadowCamObj = camObjHandle;
-}
-
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
 {
     const _uint handle = m_nextHandle++;
@@ -146,59 +141,18 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 
 void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 {
-    m_isBlending     = (blendSec > 0.f);
-    m_blendTime      = 0.f;
-    m_blendDuration  = blendSec;
-    m_blendFrom      = m_outputPose;
+    m_isBlending = (blendSec > 0.f);
+    m_blendTime = 0.f;
+    m_blendDuration = blendSec;
+    m_blendFrom = m_outputPose;
     m_blendTargetObj = targetObj;
 
     if (!m_isBlending)
-        m_outputPose = CapturePose(ResolveCam(m_blendTargetObj));
-}
-
-void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
-{
-    if (m_shakes.empty()) return;
-
-    _float yaw   = 0.f;
-    _float pitch = 0.f;
-    _float roll  = 0.f;
-
-    for (auto& s : m_shakes)
     {
-        s.elapsed += dt;
-
-        _float w = 1.f;
-        if (s.elapsed > s.duration)
-        {
-            if (s.fadeOutSec <= 0.f) w = 0.f;
-            else
-            {
-                const _float k = (s.elapsed - s.duration) / s.fadeOutSec;
-                w = 1.f - Math::Clamp01(k);
-            }
-        }
-
-        const _float rad    = DirectX::XMConvertToRadians(s.amplitudeDeg) * w;
-        const _float phaseT = s.elapsed * s.frequency * 6.28318530718f;
-
-        pitch += sinf(phaseT + s.phase.x) * rad;
-        yaw   += sinf(phaseT + s.phase.y) * rad;
-        roll  += sinf(phaseT + s.phase.z) * rad;
+        auto cam = ResolveCam(m_blendTargetObj);
+        if (cam)
+            m_outputPose = CapturePose(cam);
     }
-
-    Quaternion dq = Quaternion::CreateFromYawPitchRoll(yaw, pitch, roll);
-    dq.Normalize();
-
-    ioPose.rot = dq * ioPose.rot;
-    ioPose.rot.Normalize();
-
-    m_shakes.erase(remove_if(m_shakes.begin(), m_shakes.end(), [&](const ShakeInstance& s)
-        {
-            if (s.elapsed <= s.duration) return false;
-            if (s.fadeOutSec <= 0.f)     return true;
-            return (s.elapsed - s.duration) >= s.fadeOutSec;
-        }), m_shakes.end());
 }
 
 void CCameraMgr::UpdateShadowCache()
@@ -209,43 +163,24 @@ void CCameraMgr::UpdateShadowCache()
 
 void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    m_shakes.clear();
-    AddShake(ampDeg, freq, dur, fadeOutSec);
+    m_shake.Set(ampDeg, freq, dur, fadeOutSec);
 }
 
 void CCameraMgr::AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    ShakeInstance s{};
-    s.amplitudeDeg = ampDeg;
-    s.frequency    = freq;
-    s.duration     = dur;
-    s.fadeOutSec   = fadeOutSec;
-    s.elapsed      = 0.f;
-    s.phase        = Math::SeedPhase(m_shakeSeed);
-
-    m_shakes.push_back(s);
+    m_shake.Add(ampDeg, freq, dur, fadeOutSec);
 }
 
 void CCameraMgr::ClearShake(_float fadeOutSec)
 {
-    if (fadeOutSec <= 0.f)
-    {
-        m_shakes.clear();
-        return;
-    }
-
-    for (auto& s : m_shakes)
-    {
-        s.duration   = min(s.duration, s.elapsed);
-        s.fadeOutSec = fadeOutSec;
-    }
+    m_shake.Clear(fadeOutSec);
 }
 
 void CCameraMgr::Update(_float dt)
 {
     if (!m_baseCamObj.isValid()) return;
 
-    auto targetCam          = ResolveCam(GetActiveCamObj());
+    auto targetCam = ResolveCam(GetActiveCamObj());
     CamPoseFrame targetPose = CapturePose(targetCam);
 
     if (m_isBlending)
@@ -253,7 +188,7 @@ void CCameraMgr::Update(_float dt)
         m_blendTime += dt;
 
         const _float rawT = m_blendTime / m_blendDuration;
-        const _float t    = Math::ApplyEase(m_easeType, rawT);
+        const _float t = Math::ApplyEase(m_easeType, rawT);
 
         if (rawT >= 1.f)
         {
@@ -266,9 +201,18 @@ void CCameraMgr::Update(_float dt)
     else
         m_outputPose = targetPose;
 
-    ApplyShake(m_outputPose, dt);
+    Vector3 posDelta{};
+    Quaternion rotDelta = Quaternion::Identity;
+    m_shake.Apply(m_outputPose.rot, dt, posDelta, rotDelta);
+
+    m_outputPose.rot = rotDelta * m_outputPose.rot;
+    m_outputPose.rot.Normalize();
+    m_outputPose.pos += posDelta;
+
     ApplyCache(main, m_outputPose);
-    UpdateShadowCache();
+
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
 
 Lens CCameraMgr::Get_Lens() const
@@ -296,17 +240,17 @@ Lens CCameraMgr::Get_ShadowLens() const
 void CCameraMgr::Free()
 {
     m_overrides.clear();
-    m_shakes.clear();
+    m_shake.Reset();
 
     m_baseCamObj.Reset();
     m_shadowCamObj.Reset();
 
-    m_isBlending    = false;
-    m_blendTime     = 0.f;
+    m_isBlending = false;
+    m_blendTime = 0.f;
     m_blendDuration = 0.f;
     m_blendTargetObj.Reset();
-    m_outputPose    = {};
+    m_outputPose = {};
 
-    main   = {};
+    main = {};
     shadow = {};
 }

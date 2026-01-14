@@ -13,14 +13,7 @@ namespace Math
 	ENGINE_DLL _float   Lerp(_float x, _float y, _float t);
 	ENGINE_DLL _vector2 Lerp(_vector2 x, _vector2 y, _float t);
 
-	ENGINE_DLL _float     WrapDeg(_float deg);
-	ENGINE_DLL _float     QuatDot(const Quaternion& a, const Quaternion& b);
-	ENGINE_DLL Quaternion QuatNegate(const Quaternion& q);
-	ENGINE_DLL _uint      LcgStep(_uint& s);
-	ENGINE_DLL _float     Rand01(_uint& s);
-	ENGINE_DLL _float     SmoothStep01(_float t);
-	ENGINE_DLL _float     Clamp01(_float t);
-	ENGINE_DLL Vector3    SeedPhase(_uint& seed);
+	ENGINE_DLL _float WrapDeg(_float deg);
 	 
 	ENGINE_DLL _float   ApplyEase(EaseType type, _float t);
 

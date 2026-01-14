@@ -92,7 +92,6 @@ void CParticleNode_Edit::Play()
 
 	PARTICLE_NODE node{};
 
-	node.iRGBMaskMode = m_iRGBMaskMode;
 	node.iColorMode = ENUM(m_eColorMode);
 	node.isWorld = m_IsWorld;
 	node.isLoop = m_IsLoop;
@@ -131,10 +130,7 @@ void CParticleNode_Edit::Play()
 	node.vFrequency = m_vFrequency;
 	node.vScrollSpeed = m_vScrollSpeed;
 
-	auto pParticle = Get_Component<CParticleSystem>();
-	pParticle->SetParticleParams(node);
-	pParticle->Reset();
-	
+	Get_Component<CParticleSystem>()->SetParticleParams(node);
 }
 
 void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
@@ -142,7 +138,6 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
-	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
 	m_fDuration = json.value("duration", m_fDuration);
@@ -233,7 +228,6 @@ void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
 
-		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
 		{"delay_time",m_fDelayTime},
 		{"duration", m_fDuration},
@@ -339,7 +333,6 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	ImGui::DragFloat("Delay Time", &m_fDelayTime);
 	ImGui::DragFloat("Duration", &m_fDuration);
 
-	isDirty |= ImGui::DragInt("RGB Mask Mode", reinterpret_cast<_int*>(&m_iRGBMaskMode));
 	isDirty |= Helper::DrawEnumCombo("Color Mode", m_eColorMode, 100.f);
 	isDirty |= ImGui::Checkbox("Is World", &m_IsWorld);
 	isDirty |= ImGui::Checkbox("Is Loop", &m_IsLoop);
@@ -417,7 +410,6 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 	{
 		PARTICLE_NODE node{};
 
-		node.iRGBMaskMode = m_iRGBMaskMode;
 		node.SpawnShape = ENUM(m_eSpawnShape);
 		node.iColorMode = ENUM(m_eColorMode);
 		node.isWorld = m_IsWorld;
