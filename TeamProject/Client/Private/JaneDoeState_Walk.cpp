@@ -20,7 +20,7 @@ void CJaneDoeState_Walk::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
         m_pSubStateMachine->Register_Transition("Start", "Loop",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_GREATER, "", 0.93);
 
         m_pSubStateMachine->Register_Transition("Start", "End",
             CStateMachine<CJaneDoe>::CONDITION_BOOL_FALSE, "IsMove");
@@ -40,7 +40,7 @@ void CJaneDoeState_Walk::Update(CJaneDoe* pOwner, _float dt)
     if (m_pSubStateMachine->Get_CurrentStateName() == "Loop")
     {
         auto pLoop = m_pSubStateMachine->Get_CurrentState();
-        if (pLoop && pLoop->Is_AnimEnd())
+        if (pLoop && pLoop->Get_AnimProgress()>= 0.93)
         {
             auto pMoveState = Get_ParentState();
             if (pMoveState && pMoveState->Get_SubStateMachine())
@@ -53,7 +53,6 @@ void CJaneDoeState_Walk_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
         .Loop(false)
-        .Speed(1.2f)
         .Apply();
 }
 
@@ -66,7 +65,6 @@ void CJaneDoeState_Walk_Loop::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk")
         .Loop(false)
-        .Speed(1.2f)
         .Apply();
 }
 
