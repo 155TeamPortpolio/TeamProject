@@ -41,23 +41,26 @@ void CAnimationClip::Set_Events(vector<ANIM_EVENT>& Events)
 }
 
 _float CAnimationClip::TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
-	_float CurrentTrackPosition, _float dt, _bool isLoop, _float fLoopEnd,
+	_float CurrentTrackPosition, _float dt,
+	_bool isLoop, _float fEndAt, _float fStartAt,
 	_bool* isWarpped, _bool* isAnimEnd, _float* outProgress,
 	vector<EVENT_INST>& EventBus)
 {
 	_float RealTrackPosition = CurrentTrackPosition + dt * m_fTickPerSecond;
+	_float EndTime = m_fDuration * fEndAt;
+	*isAnimEnd = false;
 
 	if (isLoop) {
 		*isWarpped = false;
-		_float LoopEndTime = m_fDuration * fLoopEnd;
-		if (RealTrackPosition > LoopEndTime) {
-			RealTrackPosition -= LoopEndTime;
+		if (RealTrackPosition > EndTime) {
+			_float StartTime = fStartAt * m_fDuration;
+			RealTrackPosition -= EndTime - StartTime;
 			*isWarpped = true;
 		}
 	}
 	else {
-		if (RealTrackPosition > m_fDuration) {
-			RealTrackPosition = m_fDuration; 
+		if (RealTrackPosition > EndTime) {
+			RealTrackPosition = EndTime;
 			*isAnimEnd = true;
 		}
 	}
@@ -167,20 +170,28 @@ const KEYFRAME& CAnimationClip::Get_EndKeyFrameByBoneIndex(_uint BoneIndex) cons
 
 void CAnimationClip::Sample_KeyFrameByBoneName(const string& BoneName, const _float fProgress, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans) const
 {
-	for (auto Channel : m_Channels)
+	if (m_Channels.empty())
+		return;
+
+	for (auto Channel : m_Channels) {
 		if (BoneName == Channel->Get_Name()) {
 			Channel->SampleKeyFrameByProgress(fProgress, pOutScale, pOutQuat, pOutTrans);
 			return;
 		}
+	}
 }
 
 void CAnimationClip::Sample_KeyFrameByBoneIndex(_uint BoneIndex, const _float fProgress, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans) const
 {
-	for (auto Channel : m_Channels)
+	if (m_Channels.empty())
+		return;
+
+	for (auto Channel : m_Channels) {
 		if (BoneIndex == Channel->Get_BoneIndex()) {
 			Channel->SampleKeyFrameByProgress(fProgress, pOutScale, pOutQuat, pOutTrans);
 			return;
 		}
+	}
 }
 
 void CAnimationClip::Render_GUI()
