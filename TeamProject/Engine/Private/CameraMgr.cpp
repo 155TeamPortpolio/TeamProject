@@ -2,381 +2,221 @@
 #include "CameraMgr.h"
 #include "Camera.h"
 #include "GameObject.h"
+#include "Engine_Math.h"
+#include "GameInstance.h"
 
-namespace
+CGameObject* CCameraMgr::ResolveObj(OBJECT_HANDLE handle) const
 {
-    float QuatDot(const Quaternion& a, const Quaternion& b)
-    {
-        return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
-    }
-    Quaternion QuatNegate(const Quaternion& q)
-    {
-        return Quaternion(-q.x, -q.y, -q.z, -q.w);
-    }
-    _uint LcgStep(_uint& s)
-    {
-        s = s * 1664525u + 1013904223u;
-        return s;
-    }
-    float Rand01(_uint& s)
-    {
-        const _uint x = LcgStep(s) & 0x00FFFFFFu;
-        return (float)x / (float)0x01000000u;
-    }
-    float SmoothStep01(float t)
-    {
-        t = clamp(t, 0.f, 1.f);
-        return t * t * (3.f - 2.f * t);
-    }
+    return handle.isValid() ? ObjectManager()->Request_Object(handle) : nullptr;
 }
 
-void CCameraMgr::Set_MainCam(CCamera* camComp, _float blendSec)
+CCamera* CCameraMgr::ResolveCam(OBJECT_HANDLE handle) const
 {
-    Safe_Release(m_baseCam);
-    m_baseCam = camComp;
-    Safe_AddRef(m_baseCam);
-
-    if (m_overrides.empty())
-        BeginBlendTo(Get_ActiveCam(), blendSec);
+    return handle.isValid() ? ResolveObj(handle)->Get_Component<CCamera>() : nullptr;
 }
 
-void CCameraMgr::Set_ShadowCam(CCamera* camComp)
+CCamera* CCameraMgr::Get_BaseCam() const
 {
-    Safe_Release(m_shadowCam);
-    m_shadowCam = camComp;
-    Safe_AddRef(m_shadowCam);
+    return ResolveCam(m_baseCamObj);
 }
 
 CCamera* CCameraMgr::Get_ActiveCam() const
 {
-    if (!m_overrides.empty())
-        return m_overrides.back().cam;
-
-    return m_baseCam;
+    return ResolveCam(GetActiveCamObj());
 }
 
-_uint CCameraMgr::Push(CCamera* camComp, _float blendSec)
+CCamera* CCameraMgr::Get_ShadowCam() const
 {
-    OverrideEntry entry{};
-    entry.handle = m_nextHandle++;
-    entry.cam = camComp;
-
-    Safe_AddRef(entry.cam);
-    m_overrides.push_back(entry);
-
-    BeginBlendTo(Get_ActiveCam(), blendSec);
-    return entry.handle;
+    return ResolveCam(m_shadowCamObj);
 }
 
-_bool CCameraMgr::Pop(_uint handle, _float blendSec)
+void CCameraMgr::Set_MainCam(CCamera* pCamCom, _float blendSec)
 {
-    size_t idx = (size_t)-1;
-    for (size_t i = 0; i < m_overrides.size(); ++i)
-    {
-        if (m_overrides[i].handle == handle)
-        {
-            idx = i;
-            break;
-        }
-    }
+    SetMainCamObj(pCamCom->Get_OwnerHandle(), blendSec);
+}
 
-    if (idx == (size_t)-1) return false;
+void CCameraMgr::Set_ShadowCam(CCamera* pCamCom)
+{
+    SetShadowCamObj(pCamCom->Get_OwnerHandle());
+}
 
-    const bool wasTop = (idx + 1 == m_overrides.size());
+_uint CCameraMgr::Push(CCamera* camComp, _float blendTime)
+{
+    return PushCamObj(camComp->Get_OwnerHandle(), blendTime);
+}
 
-    Safe_Release(m_overrides[idx].cam);
-    m_overrides.erase(m_overrides.begin() + (ptrdiff_t)idx);
+void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
+{
+    m_baseCamObj = camObjHandle;
 
-    if (wasTop)
-        BeginBlendTo(Get_ActiveCam(), blendSec);
+    if (!m_overrides.empty()) return;
+    BeginBlendTo(m_baseCamObj, blendSec);
+}
 
+_uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
+{
+    const _uint handle = m_nextHandle++;
+    m_overrides.push_back({handle, camObjHandle});
+
+    BeginBlendTo(camObjHandle, blendSec);
+    return handle;
+}
+
+_bool CCameraMgr::Pop(_uint handle, _float blendTime)
+{
+    auto it = find_if(m_overrides.begin(), m_overrides.end(), [&](const OverrideEntry& e) { return e.handle == handle; });
+    m_overrides.erase(it);
+
+    BeginBlendTo(GetActiveCamObj(), blendTime);
     return true;
 }
 
-void CCameraMgr::Clear(_float blendSec)
+void CCameraMgr::Clear(_float blendTime)
 {
-    for (size_t i = 0; i < m_overrides.size(); ++i)
-        Safe_Release(m_overrides[i].cam);
-
     m_overrides.clear();
-    BeginBlendTo(Get_ActiveCam(), blendSec);
-}
-
-void CCameraMgr::SetShake(_float amplitudeDeg, _float frequency, _float duration, _float fadeOutSec)
-{
-    ClearShake();
-    AddShake(amplitudeDeg, frequency, duration, fadeOutSec);
-}
-
-void CCameraMgr::AddShake(_float amplitudeDeg, _float frequency, _float duration, _float fadeOutSec)
-{
-    ShakeInstance shakeInst{};
-    shakeInst.amplitudeDeg = amplitudeDeg;
-    shakeInst.frequency    = frequency;
-    shakeInst.duration     = duration;
-    shakeInst.fadeOutSec   = fadeOutSec;
-    shakeInst.elapsed      = 0.f;
-
-    shakeInst.phase.x = Rand01(m_shakeSeed) * XM_2PI;
-    shakeInst.phase.y = Rand01(m_shakeSeed) * XM_2PI;
-    shakeInst.phase.z = Rand01(m_shakeSeed) * XM_2PI;
-
-    m_shakes.push_back(shakeInst);
-}
-
-void CCameraMgr::ClearShake(_float fadeOutSec)
-{
-    if (fadeOutSec <= 0.f)
-    {
-        m_shakes.clear();
-        return;
-    }
-
-    for (size_t i = 0; i < m_shakes.size();)
-    {
-        auto& shake = m_shakes[i];
-
-        const float remain = shake.duration - shake.elapsed;
-        if (remain <= 0.f)
-        {
-            m_shakes.erase(m_shakes.begin() + (ptrdiff_t)i);
-            continue;
-        }
-
-        const float outSec = min(fadeOutSec, remain);
-        shake.fadeOutSec = outSec;
-        shake.duration = shake.elapsed + outSec;
-
-        ++i;
-    }
-}
-
-void CCameraMgr::Update(_float dt)
-{
-    if (!m_baseCam) return;
-
-    CamPoseFrame pose{};
-
-    if (m_isBlending)
-    {
-        m_blendTime += dt;
-
-        float t = clamp(m_blendTime / m_blendDuration, 0.f, 1.f);
-
-        if (m_easeType != EaseType::None)
-            t = clamp(Math::ApplyEase(m_easeType, t), 0.f, 1.f);
-
-        pose = BlendPose(m_blendFrom, CapturePose(m_blendTargetCam), t);
-
-        if (t >= 1.f)
-        {
-            m_isBlending = false;
-            Safe_Release(m_blendTargetCam);
-            m_blendTargetCam = nullptr;
-        }
-    }
-    else
-        pose = CapturePose(Get_ActiveCam());
-
-    ApplyShake(pose, dt);
-    ApplyOutputPose(pose);
-
-    UpdateShadowCache();
+    BeginBlendTo(m_baseCamObj, blendTime);
 }
 
 CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
 {
-    CamPoseFrame out{};
+    CamPoseFrame pose{};
 
-    CTransform* transform = cam->Get_Owner()->Get_Component<CTransform>();
-    Matrix world(transform->Get_WorldMatrix());
+    const Matrix view  = cam->Get_ViewMatrix();
+    const Matrix world = view.Invert();
 
-    Vector3 scale{}, trans{};
-    Quaternion rot = Quaternion::Identity;
+    pose.pos = world.Translation() + cam->Get_ViewOffset();
 
-    world.Decompose(scale, rot, trans);
-    rot.Normalize();
+    pose.rot = Quaternion::CreateFromRotationMatrix(world);
+    pose.rot.Normalize();
 
-    trans += cam->Get_ViewOffset();
+    pose.lens.projType = cam->Get_ProjType();
+    pose.lens.fov      = cam->Get_FOV();
+    pose.lens.nearZ    = cam->Get_Near();
+    pose.lens.farZ     = cam->Get_Far();
+    pose.lens.aspect   = cam->Get_Aspect();
 
-    out.pos           = trans;
-    out.rot           = rot;
-    out.lens.projType = cam->Get_ProjType();
-    out.lens.fov      = cam->Get_FOV();
-    out.lens.nearZ    = cam->Get_Near();
-    out.lens.farZ     = cam->Get_Far();
-    out.lens.aspect   = cam->Get_Aspect();
+    if (pose.lens.projType == CamProjType::Orthographic)
+        pose.lens.orthoHeight = cam->Get_OrthoSize() * 2.f;
 
-    if (out.lens.projType == CamProjType::Orthographic)
-    {
-        const Matrix proj = cam->Get_ProjMatrix();
-        out.lens.orthoHeight = 2.f / proj._22;
-    }
-
-    return out;
+    return pose;
 }
 
 CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamPoseFrame& b, _float t) const
 {
     CamPoseFrame out{};
 
-    out.pos = a.pos + (b.pos - a.pos) * t;
-
-    Quaternion qb = b.rot;
-    if (QuatDot(a.rot, qb) < 0.f)
-        qb = QuatNegate(qb);
-
-    out.rot = Quaternion::Slerp(a.rot, qb, t);
+    out.pos = Vector3::Lerp(a.pos, b.pos, t);
+    out.rot = Quaternion::Slerp(a.rot, b.rot, t);
     out.rot.Normalize();
 
-    out.lens.nearZ  = a.lens.nearZ  + (b.lens.nearZ  - a.lens.nearZ)  * t;
-    out.lens.farZ   = a.lens.farZ   + (b.lens.farZ   - a.lens.farZ)   * t;
-    out.lens.aspect = a.lens.aspect + (b.lens.aspect - a.lens.aspect) * t;
-
-    if (a.lens.projType == b.lens.projType)
-    {
-        out.lens.projType = a.lens.projType;
-
-        if (out.lens.projType == CamProjType::Perspective)
-            out.lens.fov = a.lens.fov + (b.lens.fov - a.lens.fov) * t;
-        else
-            out.lens.orthoHeight = a.lens.orthoHeight + (b.lens.orthoHeight - a.lens.orthoHeight) * t;
-    }
-    else
-    {
-        if (t < 1.f) out.lens = a.lens;
-        else         out.lens = b.lens;
-    }
+    out.lens             = b.lens;
+    out.lens.fov         = a.lens.fov         + (b.lens.fov         - a.lens.fov)         * t;
+    out.lens.nearZ       = a.lens.nearZ       + (b.lens.nearZ       - a.lens.nearZ)       * t;
+    out.lens.farZ        = a.lens.farZ        + (b.lens.farZ        - a.lens.farZ)        * t;
+    out.lens.aspect      = a.lens.aspect      + (b.lens.aspect      - a.lens.aspect)      * t;
+    out.lens.orthoHeight = a.lens.orthoHeight + (b.lens.orthoHeight - a.lens.orthoHeight) * t;
 
     return out;
 }
 
-void CCameraMgr::ApplyOutputPose(const CamPoseFrame& pose)
+void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 {
-    m_outputPose = pose;
+    const Matrix rotM  = Matrix::CreateFromQuaternion(pose.rot);
+    const Matrix trM   = Matrix::CreateTranslation(pose.pos);
+    const Matrix world = rotM * trM;
 
-    const Matrix world = Matrix::CreateFromQuaternion(pose.rot) * Matrix::CreateTranslation(pose.pos);
-
-    m_invView = world;
-    m_view    = world.Invert();
+    outCache.view = world.Invert();
 
     if (pose.lens.projType == CamProjType::Perspective)
-        m_proj = XMMatrixPerspectiveFovLH(XMConvertToRadians(pose.lens.fov), pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
+        outCache.proj = DirectX::XMMatrixPerspectiveFovLH(DirectX::XMConvertToRadians(pose.lens.fov), pose.lens.aspect, pose.lens.nearZ, pose.lens.farZ);
     else
-    {
-        const float height = pose.lens.orthoHeight;
-        const float width  = height * pose.lens.aspect;
-        m_proj = XMMatrixOrthographicLH(width, height, pose.lens.nearZ, pose.lens.farZ);
-    }
+        outCache.proj = DirectX::XMMatrixOrthographicLH(pose.lens.orthoHeight * pose.lens.aspect, pose.lens.orthoHeight, pose.lens.nearZ, pose.lens.farZ);
 
-    m_invProj = m_proj.Invert();
+    outCache.invView = outCache.view.Invert();
+    outCache.invProj = outCache.proj.Invert();
 
-    m_camPos = Vector4(pose.pos.x, pose.pos.y, pose.pos.z, 1.f);
-    m_activeFar = pose.lens.farZ;
+    outCache.pos  = {pose.pos.x, pose.pos.y, pose.pos.z, 1.f};
+    outCache.farZ = pose.lens.farZ;
 }
 
-void CCameraMgr::BeginBlendTo(CCamera* targetCam, _float blendSec)
+void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 {
-    Safe_Release(m_blendTargetCam);
-    m_blendTargetCam = {};
-
-    if (blendSec <= 0.f)
-    {
-        m_isBlending    = false;
-        m_blendTime     = 0.f;
-        m_blendDuration = 0.f;
-        ApplyOutputPose(CapturePose(targetCam));
-        return;
-    }
-
-    m_blendTargetCam = targetCam;
-    Safe_AddRef(m_blendTargetCam);
-
-    m_blendFrom     = GetCurOutputPose();
-    m_isBlending    = true;
-    m_blendTime     = 0.f;
+    m_isBlending = (blendSec > 0.f);
+    m_blendTime = 0.f;
     m_blendDuration = blendSec;
+    m_blendFrom = m_outputPose;
+    m_blendTargetObj = targetObj;
+
+    if (!m_isBlending)
+    {
+        auto cam = ResolveCam(m_blendTargetObj);
+        if (cam)
+            m_outputPose = CapturePose(cam);
+    }
 }
 
 void CCameraMgr::UpdateShadowCache()
 {
-    if (!m_shadowCam) return;
-
-    m_shadowView    = m_shadowCam->Get_ViewMatrix();
-    m_shadowProj    = m_shadowCam->Get_ProjMatrix();
-    m_shadowInvView = m_shadowView.Invert();
-    m_shadowInvProj = m_shadowProj.Invert();
-    m_shadowCamPos  = m_shadowCam->Get_Pos();
+    CamPoseFrame pose = CapturePose(ResolveCam(m_shadowCamObj));
+    ApplyCache(shadow, pose);
 }
 
-void CCameraMgr::ApplyShake(CamPoseFrame& ioPose, _float dt)
+void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    if (m_shakes.empty()) return;
+    m_shake.Set(ampDeg, freq, dur, fadeOutSec);
+}
 
-    float sumYawDeg   = 0.f;
-    float sumPitchDeg = 0.f;
-    float sumRollDeg  = 0.f;
+void CCameraMgr::AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
+{
+    m_shake.Add(ampDeg, freq, dur, fadeOutSec);
+}
 
-    for (size_t i = 0; i < m_shakes.size();)
+void CCameraMgr::ClearShake(_float fadeOutSec)
+{
+    m_shake.Clear(fadeOutSec);
+}
+
+void CCameraMgr::Update(_float dt)
+{
+    if (!m_baseCamObj.isValid()) return;
+
+    auto targetCam = ResolveCam(GetActiveCamObj());
+    CamPoseFrame targetPose = CapturePose(targetCam);
+
+    if (m_isBlending)
     {
-        auto& shake = m_shakes[i];
-        shake.elapsed += dt;
+        m_blendTime += dt;
 
-        if (shake.elapsed >= shake.duration)
+        const _float rawT = m_blendTime / m_blendDuration;
+        const _float t = Math::ApplyEase(m_easeType, rawT);
+
+        if (rawT >= 1.f)
         {
-            m_shakes.erase(m_shakes.begin() + (ptrdiff_t)i);
-            continue;
+            m_isBlending = false;
+            m_outputPose = targetPose;
         }
-
-        const float fadeInSec = min(0.05f, shake.duration * 0.2f);
-
-        float wIn = 1.f;
-        if (fadeInSec > 0.f) 
-            wIn = SmoothStep01(shake.elapsed / fadeInSec);
-
-        float fadeOutSec = shake.fadeOutSec;
-        if (fadeOutSec < 0.f) fadeOutSec = 0.f;
-        if (fadeOutSec > shake.duration) fadeOutSec = shake.duration;
-
-        float wOut = 1.f;
-        if (fadeOutSec > 0.f)
-        {
-            const float startFadeOut = shake.duration - fadeOutSec;
-            if (shake.elapsed >= startFadeOut)
-            {
-                const float u = (shake.elapsed - startFadeOut) / fadeOutSec;
-                wOut = 1.f - SmoothStep01(u);
-            }
-        }
-
-        const float w = wIn * wOut;
-
-        const float omega = shake.elapsed * shake.frequency * XM_2PI;
-        const float a = shake.amplitudeDeg * w;
-
-        sumPitchDeg += sinf(omega + shake.phase.x) * a;
-        sumYawDeg   += sinf(omega + shake.phase.y) * a;
-        sumRollDeg  += sinf(omega + shake.phase.z) * a;
-
-        ++i;
+        else
+            m_outputPose = BlendPose(m_blendFrom, targetPose, t);
     }
+    else
+        m_outputPose = targetPose;
 
-    if (sumYawDeg == 0.f && sumPitchDeg == 0.f && sumRollDeg == 0.f) return;
+    Vector3 posDelta{};
+    Quaternion rotDelta = Quaternion::Identity;
+    m_shake.Apply(m_outputPose.rot, dt, posDelta, rotDelta);
 
-    const float yawRad   = XMConvertToRadians(sumYawDeg);
-    const float pitchRad = XMConvertToRadians(sumPitchDeg);
-    const float rollRad  = XMConvertToRadians(sumRollDeg);
+    m_outputPose.rot = rotDelta * m_outputPose.rot;
+    m_outputPose.rot.Normalize();
+    m_outputPose.pos += posDelta;
 
-    const Quaternion qShake = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, rollRad);
+    ApplyCache(main, m_outputPose);
 
-    ioPose.rot = ioPose.rot * qShake;
-    ioPose.rot.Normalize();
+    if (m_shadowCamObj.isValid())
+        UpdateShadowCache();
 }
 
 Lens CCameraMgr::Get_Lens() const
 {
-    if (!m_baseCam) return {};
-
     Lens out{};
     out.fov    = m_outputPose.lens.fov;
     out.zNear  = m_outputPose.lens.nearZ;
@@ -387,27 +227,30 @@ Lens CCameraMgr::Get_Lens() const
 
 Lens CCameraMgr::Get_ShadowLens() const
 {
-    if (!m_shadowCam) return {};
+    auto cam = ResolveCam(m_shadowCamObj);
 
     Lens out{};
-    out.fov    = m_shadowCam->Get_FOV();
-    out.zNear  = m_shadowCam->Get_Near();
-    out.zFar   = m_shadowCam->Get_Far();
-    out.aspect = m_shadowCam->Get_Aspect();
+    out.fov    = cam->Get_FOV();
+    out.zNear  = cam->Get_Near();
+    out.zFar   = cam->Get_Far();
+    out.aspect = cam->Get_Aspect();
     return out;
 }
 
 void CCameraMgr::Free()
 {
-    m_isBlending = false;
-
-    for (size_t i = 0; i < m_overrides.size(); ++i)
-        Safe_Release(m_overrides[i].cam);
     m_overrides.clear();
+    m_shake.Reset();
 
-    Safe_Release(m_blendTargetCam);
-    Safe_Release(m_baseCam);
-    Safe_Release(m_shadowCam);
-    m_shakes.clear();
-    __super::Free();
+    m_baseCamObj.Reset();
+    m_shadowCamObj.Reset();
+
+    m_isBlending = false;
+    m_blendTime = 0.f;
+    m_blendDuration = 0.f;
+    m_blendTargetObj.Reset();
+    m_outputPose = {};
+
+    main = {};
+    shadow = {};
 }
