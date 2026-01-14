@@ -598,6 +598,9 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate">
       <UniqueIdentifier>{326635e2-7f00-483f-94bf-563eacfe15d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch">
+      <UniqueIdentifier>{d798bf56-f080-4a83-85b8-8b18fca9b929}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1139,6 +1142,9 @@
     <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_BranchAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1664,6 +1670,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_BranchAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

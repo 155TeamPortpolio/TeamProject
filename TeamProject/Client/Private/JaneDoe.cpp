@@ -227,9 +227,8 @@ HRESULT CJaneDoe::Initialize_Stat()
 	m_fMaxHP = LVDesc.MaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
-
-	m_iEvadeMax = 3;
-
+	
+	Set_EvadeMax(3);
 	return S_OK;
 }
 

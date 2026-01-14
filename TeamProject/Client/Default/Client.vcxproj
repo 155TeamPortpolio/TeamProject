@@ -199,6 +199,7 @@
     <ClInclude Include="..\Public\GaugeUI.h" />
     <ClInclude Include="..\public\JaneDoeState_Attack.h" />
     <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
+    <ClInclude Include="..\public\JaneDoeState_BranchAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Dash.h" />
     <ClInclude Include="..\public\JaneDoeState_Evade.h" />
     <ClInclude Include="..\public\JaneDoeState_ExAttack.h" />
@@ -393,6 +394,7 @@
     <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_BranchAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_UltimateAttack.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Orb.cpp" />
