@@ -1,12 +1,10 @@
 #pragma once
 
-#include "GameObject.h"
-
 NS_BEGIN(CameraTool)
 
-enum class Avatar { Unagi, QingYi, Corin, Belle, Alice, Astra, Burnice, Yixuan, Yuzuha };
+enum class Avatar { Corin };
 
-class CUnagi : public CGameObject
+class CUnagi final : public CGameObject
 {
 private:
     CUnagi() = default;
@@ -14,13 +12,13 @@ private:
     virtual ~CUnagi() = default;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-    void    Awake()                     override;
-    void    Priority_Update(_float dt)  override {}
-    void    Update(_float dt)           override;
-    void    Late_Update(_float dt)      override {}
-    void    Render_GUI()                override { __super::Render_GUI(); }
+    virtual HRESULT Initialize_Prototype()      override;
+    virtual HRESULT Initialize(INIT_DESC* pArg) override;
+    virtual void    Awake()                     override;
+    virtual void    Priority_Update(_float dt)  override {}
+    virtual void    Update(_float dt)           override;
+    virtual void    Late_Update(_float dt)      override {}
+    virtual void    Render_GUI()                override { __super::Render_GUI(); }
 
 public:
     void   ApplyAvatar(Avatar avatar);

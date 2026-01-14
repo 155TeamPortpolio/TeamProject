@@ -9,7 +9,6 @@
 #include "CameraTool_Enum.h"
 #include "CameraTool_Struct.h"
 
-#include "GameObject.h"
 #include "Camera.h"
 #include "Light.h"
 #include "CamObj.h"

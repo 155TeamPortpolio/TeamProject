@@ -588,6 +588,9 @@
     <ClInclude Include="..\Public\IInputService.h">
       <Filter>01. Utility\98. Services</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ShakeController.h">
+      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1230,6 +1233,9 @@
     <Filter Include="99. Defines\AnimationLayout">
       <UniqueIdentifier>{08d4aef7-fcc3-432b-a822-f966d04565ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Utility\07. CameraManager\ShakeController">
+      <UniqueIdentifier>{225219f8-d4c9-4dab-9fe7-4ae38e2de98b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1685,6 +1691,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\AnimBuilder.cpp">
       <Filter>01. Utility\04. Components\06. Animator3D\AnimBuilder</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ShakeController.cpp">
+      <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
