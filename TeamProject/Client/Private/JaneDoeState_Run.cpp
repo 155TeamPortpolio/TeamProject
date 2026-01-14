@@ -58,6 +58,7 @@ void CJaneDoeState_Run_Loop::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")
         .Loop(true)
+        .EndAt(0.93)
         .Apply();
 }
 
