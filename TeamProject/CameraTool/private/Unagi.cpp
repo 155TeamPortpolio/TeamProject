@@ -19,7 +19,7 @@ namespace
 	{
 		static const AvatarAssetDesc table[] =
 		{
-			{"Corin", "Corin"},
+			{"Unagi",   "Avatar_Female_Size02_Unagi"          },
 			//{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
 			//{"Corin",   "Avatar_Female_Size01_Corin"          },
 			//{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
@@ -35,7 +35,7 @@ namespace
 	fs::path GetPlayerBaseDir(Avatar v)
 	{
 		const auto& d = GetAvatarAssetDesc(v);
-		return fs::path("..") / "bin" / "Resources" / d.folder;
+		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder;
 	}
 }
 
@@ -46,6 +46,7 @@ HRESULT CUnagi::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
+	//Add_Component<CCharacterController>();
 	return S_OK;
 }
 
@@ -62,7 +63,7 @@ void CUnagi::Awake()
 
 void CUnagi::Update(_float dt)
 {
-	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	//Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CUnagi::ApplyAvatar(Avatar avatar)

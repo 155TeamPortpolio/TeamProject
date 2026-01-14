@@ -19,7 +19,7 @@ public:
     void    Late_Update(_float dt) override;
 
 public:
-    void Active();
+    void Active(_bool parryEnable = true);
 
 public:
     static CAttackSign* Create();
