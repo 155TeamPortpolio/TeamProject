@@ -154,6 +154,8 @@ void CJaneDoe::On_Ultimate()
 
 void CJaneDoe::On_Special()
 {
+	if (InputDevice()->Key_Tap('E') == false) return;
+
 	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
 	{
 		m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
