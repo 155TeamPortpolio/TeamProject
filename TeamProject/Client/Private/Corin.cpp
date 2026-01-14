@@ -42,7 +42,6 @@ HRESULT CCorin::Initialize_Prototype()
 
 	Get_Component<CModel>()->Link_Model("Test_Level", "Corin.model");
 	Get_Component<CMaterial>()->Link_Material("Test_Level", "Corin.mat");
-
 	return S_OK;
 }
 
@@ -70,6 +69,7 @@ void CCorin::Awake()
 	//*name change*
 	m_strAnimName = "Avatar_Female_Size01_Corin_Ani_";
 	m_strName = "Corin";
+	m_eCharacterName = CHARACTER::Corin;
 	m_pAnimator->Set_Animation(Get_Name() + "Idle")
 		.Loop(true)
 		.Apply();

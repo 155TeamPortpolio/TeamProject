@@ -15,6 +15,16 @@ class CStateMachine;
 class CCharacter abstract : public CGameObject
 {
 public:
+    typedef struct tagAttackColliderInitDesc {
+        string          tagName = "";   // AttackCollider 이름
+        string          tagBone = "";   // 붙일 뼈 이름
+        CAnimator3D*    pOwnerAnimator = { nullptr };
+        COLLIDER_TYPE   eColliderType = COLLIDER_TYPE::SPHERE;
+        _float3         vSize = { 1.f,1.f,1.f };		        // 사이즈 비율
+        _float3			vCenter = { 0.f, 0.f, 0.f };		    // Collider의 로컬 오프셋
+        _float3			vRotation = { 0.f, 0.f, 0.f };
+    }ATTACK_COLLIDER_DESC;
+
     struct InputInfo
     {
         _vector3 direction = {};
@@ -71,9 +81,10 @@ public:
     void    Set_SpecialEnergy(_float fEnergy) { m_tEnergy.fSpecialEnergy = fEnergy; }
     _float  Get_MaxEnergy() { return MAX_ENERGY; }
     // 궁극기
-    _float  Get_Decibel() const { return m_fDecibel; }
+    _float  Get_CurrentDecibel() const { return m_fCurrentDecibel; }
+    _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
-    void    Set_Decibel(_float fDecibel) { m_fDecibel = fDecibel; }
+    void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
 
     _float Get_Speed() const { return m_fMoveSpeed; }
 
@@ -101,6 +112,7 @@ public:
     CAnimator3D* Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string& Get_Name() const { return m_strAnimName; }
+    const CHARACTER Get_CharacterName() const { return m_eCharacterName; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine���� ������ switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
@@ -134,10 +146,11 @@ public:
     virtual void    On_Evade();
     virtual void    On_SwitchIn(SWITCH eType)   PURE;
     virtual void    On_SwitchOut()              PURE;
-    virtual void    On_Ultimate() { m_fDecibel = 0.f; }
+    virtual void    On_Ultimate();
     virtual void    On_Special() {}; // 개별 구현 
 
 public:
+    HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
     void     Rotate(_vector3 vDirection);
 
     _bool    Is_OppositeInput() const;
@@ -157,11 +170,12 @@ private:
     void    Update_Decibel(_float dt);
 
 protected:
-    CAnimator3D*          m_pAnimator = { nullptr };
-    CCharacterController* m_pCCT = { nullptr };
-    string                m_strAnimName = "";   //*�ִϸ��̼� �����̸�*
-    string                m_strName = "";       //*ĳ���� �̸�*
-
+    CAnimator3D*                m_pAnimator = { nullptr };
+    CCharacterController*       m_pCCT = { nullptr };
+    string                      m_strAnimName = "";   // For Animator
+    string                      m_strName = "";       // 
+    CHARACTER                   m_eCharacterName = { CHARACTER::JaneDoe };
+    unordered_map<string, _int> m_AttackColliderIndex;
     // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
@@ -169,7 +183,8 @@ protected:
     EnergyDesc   m_tEnergy = {};
     static  constexpr _float    MAX_ENERGY = { 120.f };
     // 궁극기
-    _float          m_fDecibel = {};
+    _float          m_fCurrentDecibel = {};
+    _float          m_fPrevDecibel = {};
     static constexpr _float MAX_DECIBEL = { 3000 };
 
     _float          m_fAttackPower = { 10.f };

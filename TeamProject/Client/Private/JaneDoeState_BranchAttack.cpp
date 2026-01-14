@@ -2,6 +2,8 @@
 #include "JaneDoeState_BranchAttack.h"
 #include "JaneDoe.h"
 
+#include "GameInstance.h"
+
 void CJaneDoeState_BranchAttack::Enter(CJaneDoe* pOwner)
 {
     if (!m_pSubStateMachine)
@@ -17,7 +19,7 @@ void CJaneDoeState_BranchAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Get_State("End")->Set_Tag("End");
 
         m_pSubStateMachine->Register_Transition("Start", "Release01",
-            CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Release");
         m_pSubStateMachine->Register_Transition("Release01", "End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
@@ -42,6 +44,16 @@ void CJaneDoeState_BranchAttack_Start::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Hold(MOUSE_BTN::LB) == false
+        || m_fAnimProgress >= 1.f)
+    {
+        IHState<CJaneDoe>* pAttackState = Get_ParentState();
+        if (pAttackState && pAttackState->Get_SubStateMachine())
+        {
+            pAttackState->Get_SubStateMachine()->Set_Trigger("Release");
+        }
+    }
 }
 
 void CJaneDoeState_BranchAttack_Loop::Enter(CJaneDoe* pOwner)
