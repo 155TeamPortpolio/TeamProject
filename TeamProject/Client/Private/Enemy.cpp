@@ -149,7 +149,15 @@ void CEnemy::Create_AttackSign(string boneTag)
 void CEnemy::Active_AttackSign(_bool parryEnable)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	static_cast<CAttackSign*>(pAttackSign)->Active();
+	
+	_bool IsReallyParryEnable = parryEnable;
+
+	if (true == parryEnable) {
+		if (BattleSystem()->GetPlayerParryingCount() <= 0)
+			IsReallyParryEnable = false;
+	}
+
+	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)

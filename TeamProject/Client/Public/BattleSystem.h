@@ -31,6 +31,7 @@ public: //getter
 	/* PLAYER, MONSTER, ENVOBJECT
 	* 현재 BattleSystem에 등록되어있는 오브젝트의 기본적인 정보 컨테이너를 복사반환함 */
 	vector<BATTLEOBJ_INFO>			CopyBattleObjects(BATTLE_OBJ_TYPE eType);
+	_int							GetPlayerParryingCount();
 
 public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
@@ -59,5 +60,8 @@ private:
 public:
 	virtual void Free() override;
 };
+
+inline CBattleSystem* BattleSystem() { return CBattleSystem::GetInstance(); }
+
 
 NS_END
