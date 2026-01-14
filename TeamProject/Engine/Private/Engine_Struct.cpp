@@ -47,7 +47,6 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
-	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.iColorMode = json.value("color_mode", node.iColorMode);
 	node.eType = json.value("effect_type", node.eType);
@@ -68,10 +67,6 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 	node.vStartLifeTime.y = json.at("start_life_time").at("y").get<_float>();
 	node.vStartSize.x = json.at("start_size").at("x").get<_float>();
 	node.vStartSize.y = json.at("start_size").at("y").get<_float>();
-
-	node.vCenter.x = json.at("center").at("x").get<_float>();
-	node.vCenter.y = json.at("center").at("y").get<_float>();
-	node.vCenter.z = json.at("center").at("z").get<_float>();
 
 	node.SpawnShape = json.value("spawn_shape", node.SpawnShape);
 	node.vHalfBox.x = json.at("half_box").at("x").get<_float>();
@@ -147,8 +142,6 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.Green = json.at("channel_usage").at("y").get<_uint>();
 	node.Blue = json.at("channel_usage").at("z").get<_uint>();
 	node.Alpha = json.at("channel_usage").at("w").get<_uint>();
-	node.iColorMode = json.value("color_mode", node.iColorMode);
-	node.iRGBMask = json.value("rgb_mask", node.iRGBMask);
 
 	/* Color */
 	node.ColorEaseType = json.value("color_ease_type", 0);

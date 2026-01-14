@@ -12,6 +12,14 @@ namespace Client {
 		variant<monostate, _int, _float, _bool, string, _float2, _float3, _float4> value;
 	};
 
+	typedef struct tagMapDataFilePacket {
+		string		TagDataFileKey = {};		// 파일 이름
+		string		TagDataFilePath = {};		// json 파일 경로
+		string		TagArea = {};				// 지형 이름
+		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
+		int			iVersion = { -1 };
+	}MapData_Path_Packet;
+
 	typedef struct tagMapObjectData {
 		_int		iObjID = { -1 };
 		std::string TagModelResourceKey = {};

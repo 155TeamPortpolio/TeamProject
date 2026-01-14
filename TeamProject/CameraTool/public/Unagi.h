@@ -4,7 +4,7 @@
 
 NS_BEGIN(CameraTool)
 
-enum class Avatar { Unagi, QingYi, Corin, Belle, Alice, Astra, Burnice, Yixuan, Yuzuha };
+enum class Avatar { Corin };
 
 class CUnagi : public CGameObject
 {

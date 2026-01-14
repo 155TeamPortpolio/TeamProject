@@ -37,12 +37,4 @@ namespace Client {
 		_float	Attack = {};
 		_float	Defend = {};
 	};
-
-	typedef struct tagMapDataFilePacket {
-		string		TagSlotFormat = {};			// Base, Physics, Effect, SlotA, SlotB ...
-		string		TagArea = {};				// 지형 이름
-		string		TagDataFileKey = {};		// 파일 이름
-		string		TagDataFilePath = {};		// json 파일 경로
-		int			iVersion = { -1 };
-	}MapData_Path_Packet;
 }
