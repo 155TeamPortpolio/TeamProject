@@ -1806,7 +1806,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     ImGui::SameLine();
 
     char summaryBuf[128];
-    sprintf_s(summaryBuf, "Keys: %d  |  End: %.1fs", (int)keys.size(), state.endTime);
+    sprintf_s(summaryBuf, "Keys: %d  |  End: %.2fs", (int)keys.size(), state.endTime);
 
     float rightX = ImGui::GetWindowContentRegionMax().x;
     float curX = ImGui::GetCursorPosX();
@@ -1976,12 +1976,12 @@ void CCamPanel::DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChange
                 ImGui::TableSetColumnIndex(1);
                 CellHit("##hit_time", rowHovered, rowClicked);
                 ImGui::AlignTextToFramePadding();
-                ImGui::Text("%.1fs", key.time);
+                ImGui::Text("%.2fs", key.time);
 
                 ImGui::TableSetColumnIndex(2);
                 CellHit("##hit_gap", rowHovered, rowClicked);
                 ImGui::AlignTextToFramePadding();
-                if ((size_t)i + 1 < keys.size()) ImGui::Text("%.1fs", keys[(size_t)i + 1].time - key.time);
+                if ((size_t)i + 1 < keys.size()) ImGui::Text("%.2fs", keys[(size_t)i + 1].time - key.time);
                 else ImGui::TextDisabled("-");
 
                 ImGui::TableSetColumnIndex(3);
@@ -2082,8 +2082,8 @@ void CCamPanel::DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny)
     constexpr float vecValueWidth = 80.f;
     constexpr float axisGap = 10.f;
 
-    const char* fmtScalar = "%.1f";
-    const char* fmtVec = "%.1f";
+    const char* fmtScalar = "%.2f";
+    const char* fmtVec = "%.2f";
 
     auto CountOverwriteAtTime = [&](float t, _uint exceptId) -> int
         {

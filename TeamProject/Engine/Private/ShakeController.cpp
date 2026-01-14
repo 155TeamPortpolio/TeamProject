@@ -228,7 +228,16 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
         const _float w = EnvelopeEased(s.elapsed, s.attackSec, s.sustainSec, s.decaySec);
         if (w <= 0.f) continue;
 
-        const _float baseT = s.elapsed * s.frequency;
+        const _bool isImpact = s.kickAmpDeg > 0.f && s.kickDurationSec > 0.f;
+
+        _float evalSec = s.elapsed;
+        if (isImpact)
+        {
+            const _float staccatoHz = 30.f;
+            evalSec = floorf(evalSec * staccatoHz) / staccatoHz;
+        }
+
+        const _float baseT = evalSec * s.frequency;
 
         const Vector3 nRot = FBM3(s.seedRot, baseT + s.rotPhase);
         const Vector3 nPos = FBM3(s.seedPos, baseT * s.posFreqMul + s.posPhase);
@@ -239,19 +248,22 @@ void ShakeController::Apply(const Quaternion& camRot, _float dt, Vector3& outWor
         const _float posAmp = s.posAmp * w;
         posAcc += nPos * posAmp;
 
-        if (s.kickAmpDeg > 0.f && s.kickDurationSec > 0.f)
+        if (isImpact)
         {
             const _float kw = KickWeight(s.elapsed, s.kickAttackSec, s.kickDurationSec, s.kickDecaySec);
             if (kw > 0.f)
             {
-                const _float kickRad = XMConvertToRadians(s.kickAmpDeg) * kw * cosf(s.elapsed * s.kickFreq * XM_2PI);
+                const _float kickSign = Hash01(s.seedRot ^ 0x68BC21EBu) < 0.5f ? -1.f : 1.f;
+                const _float kickRad = XMConvertToRadians(s.kickAmpDeg) * kw * kickSign;
+
                 rotAcc.x += kickRad;
-                rotAcc.z += kickRad * 0.22f;
+                rotAcc.y += kickRad * 0.18f;
+                rotAcc.z += kickRad * 0.10f;
             }
         }
     }
 
-    outRotDelta = Quaternion::CreateFromYawPitchRoll(rotAcc.y * 0.7f, rotAcc.x, rotAcc.z * 0.6f);
+    outRotDelta = Quaternion::CreateFromYawPitchRoll(rotAcc.y * 0.6f, rotAcc.x, rotAcc.z * 0.4f);
     outRotDelta.Normalize();
 
     const Matrix R = Matrix::CreateFromQuaternion(camRot);
