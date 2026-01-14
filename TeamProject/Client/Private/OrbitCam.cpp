@@ -294,19 +294,27 @@ void COrbitCam::Priority_Update(_float dt)
 
 void COrbitCam::UpdateInput(_float dt)
 {
-    if (!ImGui::GetIO().WantCaptureMouse)
-    {
-        const float dx = InputDevice()->Mouse_DeltaX();
-        const float dy = InputDevice()->Mouse_DeltaY();
+    if (ImGui::GetCurrentContext() && ImGui::GetIO().WantCaptureMouse) return;
+    if (GetForegroundWindow() != g_hWnd) return;
 
-        pose.targetRotDeg.x += dx * input.sensitivityX;
-        pose.targetRotDeg.y += dy * input.sensitivityY;
+    POINT p{};
+    GetCursorPos(&p);
+    ScreenToClient(g_hWnd, &p);
 
-        if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
+    RECT rc{};
+    GetClientRect(g_hWnd, &rc);
+    if (!PtInRect(&rc, p)) return;
 
-        const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
-        if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
-    }
+    const float dx = InputDevice()->Mouse_DeltaX();
+    const float dy = InputDevice()->Mouse_DeltaY();
+
+    pose.targetRotDeg.x += dx * input.sensitivityX;
+    pose.targetRotDeg.y += dy * input.sensitivityY;
+
+    if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
+
+    const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
+    if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
 }
 
 void COrbitCam::ClampTargets()
