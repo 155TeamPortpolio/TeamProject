@@ -14,6 +14,7 @@
 
 //character class
 #include "Character.h"
+#include "CharacterAttackCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
 
@@ -327,10 +328,12 @@ void CBattlePlayer::Update_Status()
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
-
 	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Corin", CCorin::Create())))
 		return E_FAIL;
 	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
+		return E_FAIL;
+
+	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
 	return S_OK;
 }
