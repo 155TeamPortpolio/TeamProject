@@ -59,6 +59,8 @@ void CUIDirector::Initialize()
 
 void CUIDirector::Load_LevelObjects(const string& levelKey)
 {
+	m_handles.clear();
+
 	m_levelKey = levelKey;
 	// 레벨에 프로토타입 등록
 	UILoader::Add_Prototype(levelKey);
