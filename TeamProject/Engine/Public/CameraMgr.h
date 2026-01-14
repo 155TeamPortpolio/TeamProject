@@ -2,6 +2,7 @@
 
 #include "ICameraService.h"
 #include "Camera.h"
+#include "ShakeController.h"
 
 NS_BEGIN(Engine)
 
@@ -73,34 +74,25 @@ private:
         Quaternion  rot = Quaternion::Identity;
         CamLens     lens{};
     };
-    struct ShakeInstance
-    {
-        _float  amplitudeDeg{};
-        _float  frequency{};
-        _float  duration{};
-        _float  fadeOutSec{};
-        _float  elapsed{};
-        Vector3 phase{};
-    };
     struct CamCache
     {
-        Matrix  view    = Matrix::Identity;
-        Matrix  proj    = Matrix::Identity;
+        Matrix  view = Matrix::Identity;
+        Matrix  proj = Matrix::Identity;
         Matrix  invView = Matrix::Identity;
         Matrix  invProj = Matrix::Identity;
-        Vector4 pos     = {0.f, 0.f, 0.f, 1.f};
-        _float  farZ    = 0.f;
+        Vector4 pos = {0.f, 0.f, 0.f, 1.f};
+        _float  farZ = 0.f;
     };
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 
 private:
     void         SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
-    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle);
+    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle) { m_shadowCamObj = camObjHandle; }
     _uint        PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
 
 private:
@@ -111,11 +103,11 @@ private:
     void         BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec);
 
     void         UpdateShadowCache();
-    void         ApplyShake(CamPoseFrame& ioPose, _float dt);
 
 private:
-    OBJECT_HANDLE m_baseCamObj{};
-    OBJECT_HANDLE m_shadowCamObj{};
+    OBJECT_HANDLE   m_baseCamObj{};
+    OBJECT_HANDLE   m_shadowCamObj{};
+    ShakeController m_shake{};
 
 private:
     vector<OverrideEntry> m_overrides{};
@@ -131,10 +123,6 @@ private:
 private:
     CamPoseFrame  m_outputPose{};
     EaseType      m_easeType = EaseType::OutSine;
-
-private:
-    vector<ShakeInstance> m_shakes{};
-    _uint                 m_shakeSeed = 1u;
 
 private:
     CamCache main{};

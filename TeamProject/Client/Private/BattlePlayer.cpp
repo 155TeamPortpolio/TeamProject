@@ -54,6 +54,11 @@ HRESULT CBattlePlayer::Initialize()
 	vector<CHARACTER> BattleCharacters = {CHARACTER::JaneDoe, CHARACTER::Corin};
 	SetBattleCharacters(BattleCharacters);
 
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	desc.eState = UI_ACTION_STATE::DISABLE;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc }); 
+
 	return S_OK;
 }
 
@@ -102,7 +107,18 @@ void CBattlePlayer::Update(_float dt)
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
-	
+
+	/* Ultimate */
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	_float fCurrent = m_pCurrentCharacter->Get_CurrentDecibel();
+	_float fPrev = m_pCurrentCharacter->Get_PrevDecibel();
+	if (fCurrent > m_pCurrentCharacter->Get_MaxDecibel() &&
+		fPrev <= m_pCurrentCharacter->Get_MaxDecibel())
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+
 	Update_Status();
 }
 
@@ -248,7 +264,7 @@ void CBattlePlayer::Process_Ultimate()
 
 void CBattlePlayer::Process_Energy()
 {
-	if (InputDevice()->Key_Hold('E'))
+	if (InputDevice()->Key_Down('E'))
 	{
 		m_pCurrentCharacter->On_Special();
 	}
@@ -301,7 +317,7 @@ void CBattlePlayer::Update_Status()
 		desc.eOwner = eOwner;
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
-		desc.ultimate = { pCharacter->Get_Decibel(), pCharacter->Get_MaxDecibel() };
+		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
 
 		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
 	}
