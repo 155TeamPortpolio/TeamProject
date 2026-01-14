@@ -109,11 +109,11 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
     out.rot = Quaternion::Slerp(a.rot, b.rot, t);
     out.rot.Normalize();
 
-    out.lens = b.lens;
-    out.lens.fov = a.lens.fov + (b.lens.fov - a.lens.fov) * t;
-    out.lens.nearZ = a.lens.nearZ + (b.lens.nearZ - a.lens.nearZ) * t;
-    out.lens.farZ = a.lens.farZ + (b.lens.farZ - a.lens.farZ) * t;
-    out.lens.aspect = a.lens.aspect + (b.lens.aspect - a.lens.aspect) * t;
+    out.lens             = b.lens;
+    out.lens.fov         = a.lens.fov         + (b.lens.fov         - a.lens.fov)         * t;
+    out.lens.nearZ       = a.lens.nearZ       + (b.lens.nearZ       - a.lens.nearZ)       * t;
+    out.lens.farZ        = a.lens.farZ        + (b.lens.farZ        - a.lens.farZ)        * t;
+    out.lens.aspect      = a.lens.aspect      + (b.lens.aspect      - a.lens.aspect)      * t;
     out.lens.orthoHeight = a.lens.orthoHeight + (b.lens.orthoHeight - a.lens.orthoHeight) * t;
 
     return out;
@@ -121,8 +121,8 @@ CCameraMgr::CamPoseFrame CCameraMgr::BlendPose(const CamPoseFrame& a, const CamP
 
 void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 {
-    const Matrix rotM = Matrix::CreateFromQuaternion(pose.rot);
-    const Matrix trM = Matrix::CreateTranslation(pose.pos);
+    const Matrix rotM  = Matrix::CreateFromQuaternion(pose.rot);
+    const Matrix trM   = Matrix::CreateTranslation(pose.pos);
     const Matrix world = rotM * trM;
 
     outCache.view = world.Invert();
@@ -141,10 +141,10 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 
 void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 {
-    m_isBlending = (blendSec > 0.f);
-    m_blendTime = 0.f;
-    m_blendDuration = blendSec;
-    m_blendFrom = m_outputPose;
+    m_isBlending     = (blendSec > 0.f);
+    m_blendTime      = 0.f;
+    m_blendDuration  = blendSec;
+    m_blendFrom      = m_outputPose;
     m_blendTargetObj = targetObj;
 
     if (!m_isBlending)
@@ -191,7 +191,7 @@ void CCameraMgr::Update(_float dt)
         m_blendTime += dt;
 
         const _float rawT = m_blendTime / m_blendDuration;
-        const _float t = Math::ApplyEase(m_easeType, rawT);
+        const _float t    = Math::ApplyEase(m_easeType, rawT);
 
         if (rawT >= 1.f)
         {
@@ -248,12 +248,12 @@ void CCameraMgr::Free()
     m_baseCamObj.Reset();
     m_shadowCamObj.Reset();
 
-    m_isBlending = false;
-    m_blendTime = 0.f;
+    m_isBlending    = false;
+    m_blendTime     = 0.f;
     m_blendDuration = 0.f;
     m_blendTargetObj.Reset();
-    m_outputPose = {};
+    m_outputPose    = {};
 
-    main = {};
+    main   = {};
     shadow = {};
 }

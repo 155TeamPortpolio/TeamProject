@@ -64,6 +64,14 @@ vector<BATTLEOBJ_INFO> CBattleSystem::CopyBattleObjects(BATTLE_OBJ_TYPE eType)
 	return m_BattleObjInfos[eType];
 }
 
+_int CBattleSystem::GetPlayerParryingCount()
+{
+	if (nullptr == m_pBattlePlayer)
+		return -1;
+
+	return m_pBattlePlayer->GetParryingCount();
+}
+
 void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos)
 {
 	MonsterCreationDesc MonsterTableDesc = CDataBase::GetInstance()->GetMonsterDesc(MonsterProtoTag);

@@ -710,6 +710,6 @@ void CSlotFieldGui::Free()
 {
     __super::Free();
 
-    Safe_Release(m_pMapToolCore);
+    //Safe_Release(m_pMapToolCore);
     Safe_Release(m_pGameInstance);
 }
