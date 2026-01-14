@@ -50,6 +50,7 @@
 #include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
+#include "ThugAssaulter.h"
 
 /*npc*/
 #include "OfficeMeow.h"
@@ -190,6 +191,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
@@ -265,23 +267,10 @@ void CTestLevel::Update()
 
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
-
-		/*CCT_DESC BulkyCCT;
-		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
-		BulkyCCT.iCollisionMask = 0xFFFFFFFF;
-		//BulkyCCT.iCollisionMask = 0xFFFFFFFF & ~ENUM(COLLISION_GROUP::COMMON);
-		BulkyCCT.bAutoFit = false;
-		BulkyCCT.fHeight = 1.28f;
-		BulkyCCT.fRadius = 0.35f;
-		BulkyCCT.eGroup = COLLISION_GROUP::MONSTER;
-		//BulkyCCT.fBoundingMinY = -0.88f;
-		BulkyCCT.vPos = { 0.f, 1.28f, -2.f };
-		
-		CGameObject* pThugBulkyEnforcer = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ThugBulkyEnforcer" })
-			.CharacterController(BulkyCCT)
-			.Build("ThugBulky");
-		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pThugBulkyEnforcer, { "Test_Level","Enemy_Layer" });*/
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
+	}	
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
 	}
 }
 
