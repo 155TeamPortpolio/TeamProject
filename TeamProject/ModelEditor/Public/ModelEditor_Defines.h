@@ -4,13 +4,10 @@
 
 
 namespace ModelEdit {
-	//static constexpr unsigned int g_iWinSizeX = 1280;
-	//static constexpr unsigned int g_iWinSizeY = 720;
-	static constexpr unsigned int g_iWinSizeX = 1600;
-	static constexpr unsigned int g_iWinSizeY = 900;
-	//static constexpr unsigned int g_iWinSizeX = 2560;
-	//static constexpr unsigned int g_iWinSizeY = 1360;
-	static constexpr unsigned int g_iMainFrame = 144;
+    inline unsigned int g_iWinSizeX = 2560;
+    inline unsigned int g_iWinSizeY = 1360;
+    static constexpr unsigned int g_iMainFrame = 144;
+    inline float aspect = 2560.f / 1360.f;
 }
 
 extern HWND g_hWnd;

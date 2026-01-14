@@ -5,23 +5,14 @@
 #include "CharacterController.h"
 
 void CJaneDoeState_BackStep::Enter(CJaneDoe* pOwner)
-{    
+{
     pOwner->Use_Evade();
-    if (pOwner->IsPassion())
-    {
-        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Evade_Back_03")
-            .Speed(1.f)
-            .Apply();
-    }
-    else
-    {
-        m_bEvadeType = !m_bEvadeType;
+    m_bEvadeType = !m_bEvadeType;
 
-        string strEvade = m_bEvadeType ? "Evade_Back_01" : "Evade_Back_02";
-        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + strEvade)
-            .Speed(1.f)
-            .Apply();
-    }
+    string strEvade = m_bEvadeType ? "Evade_Back_01" : "Evade_Back_02";
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + strEvade)
+        .Speed(1.f)
+        .Apply();
 }
 
 void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
@@ -40,7 +31,7 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
         return;
     }
 
-    if (m_fAnimProgress >= 0.12f)
+    if (m_fAnimProgress >= 0.3f)
     {
         if (pOwner->Can_Evade() && pOwner->Use_EvadeBuffer())
         {   // Idle -> Evade
