@@ -50,7 +50,7 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     m_baseCamObj = camObjHandle;
 
     if (!m_overrides.empty()) return;
-    BeginBlendTo(m_baseCamObj, blendSec);
+    //BeginBlendTo(m_baseCamObj, blendSec);
 }
 
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
@@ -141,10 +141,10 @@ void CCameraMgr::ApplyCache(CamCache& outCache, const CamPoseFrame& pose)
 
 void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 {
-    m_isBlending = (blendSec > 0.f);
-    m_blendTime = 0.f;
-    m_blendDuration = blendSec;
-    m_blendFrom = m_outputPose;
+    m_isBlending     = (blendSec > 0.f);
+    m_blendTime      = 0.f;
+    m_blendDuration  = blendSec;
+    m_blendFrom      = m_outputPose;
     m_blendTargetObj = targetObj;
 
     if (!m_isBlending)
