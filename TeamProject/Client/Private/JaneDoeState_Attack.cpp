@@ -5,6 +5,7 @@
 #include "JaneDoeState_RushAttack.h"
 #include "JaneDoeState_ExAttack.h"
 #include "JaneDoeState_UltimateAttack.h"
+#include "JaneDoeState_BranchAttack.h"
 #include "JaneDoe.h"
 
 #include "CharacterController.h"
@@ -19,11 +20,13 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Register_State("RushAttack", CJaneDoeState_RushAttack::Create());
         m_pSubStateMachine->Register_State("ExAttack", CJaneDoeState_ExAttack::Create());
         m_pSubStateMachine->Register_State("UltimateAttack", CJaneDoeState_UltimateAttack::Create());
+        m_pSubStateMachine->Register_State("BranchAttack", CJaneDoeState_BranchAttack::Create());
 
         m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
         m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
         m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
         m_pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
+        m_pSubStateMachine->Get_State("BranchAttack")->Set_Tag("BranchAttack");
 
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
@@ -41,6 +44,9 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         break;
     case 3:
         m_pSubStateMachine->Set_DefaultState("UltimateAttack");
+        break;
+    case 4:
+        m_pSubStateMachine->Set_DefaultState("BranchAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
