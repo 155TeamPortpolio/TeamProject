@@ -2,7 +2,6 @@
 
 #include "ICameraService.h"
 #include "Camera.h"
-#include "ShakeController.h"
 
 NS_BEGIN(Engine)
 
@@ -74,6 +73,15 @@ private:
         Quaternion  rot = Quaternion::Identity;
         CamLens     lens{};
     };
+    struct ShakeInstance
+    {
+        _float  amplitudeDeg{};
+        _float  frequency{};
+        _float  duration{};
+        _float  fadeOutSec{};
+        _float  elapsed{};
+        Vector3 phase{};
+    };
     struct CamCache
     {
         Matrix  view    = Matrix::Identity;
@@ -92,7 +100,7 @@ private:
 
 private:
     void         SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
-    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle) { m_shadowCamObj = camObjHandle; }
+    void         SetShadowCamObj(OBJECT_HANDLE camObjHandle);
     _uint        PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec);
 
 private:
@@ -103,11 +111,11 @@ private:
     void         BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec);
 
     void         UpdateShadowCache();
+    void         ApplyShake(CamPoseFrame& ioPose, _float dt);
 
 private:
-    OBJECT_HANDLE   m_baseCamObj{};
-    OBJECT_HANDLE   m_shadowCamObj{};
-    ShakeController m_shake{};
+    OBJECT_HANDLE m_baseCamObj{};
+    OBJECT_HANDLE m_shadowCamObj{};
 
 private:
     vector<OverrideEntry> m_overrides{};
@@ -123,6 +131,10 @@ private:
 private:
     CamPoseFrame  m_outputPose{};
     EaseType      m_easeType = EaseType::OutSine;
+
+private:
+    vector<ShakeInstance> m_shakes{};
+    _uint                 m_shakeSeed = 1u;
 
 private:
     CamCache main{};

@@ -35,9 +35,6 @@ private:
 	CGameInstance* m_pGameInstance{};
 	CCamDirector* m_pCamDirector{};
 
-	// 임시) 쓰레드풀 작업 후 개선 및 위치 이동예정 - 경인
-	class CMapDataCloud* m_pMapDataCloud = { nullptr };
-
 public:
 	static CTestLevel* Create(const string& LevelKey);
 	virtual void Free() override;
