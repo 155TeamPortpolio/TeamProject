@@ -37,14 +37,18 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	}
 	
-	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
 
+	
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 
 	/* Set Param */
 	{
+		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
+		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
+		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
+
 		/* Texture */
 		m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(pMeshNode->SamplerMode);
 		m_TextureSlotModule.eMainUsage = static_cast<TEXTURE_SLOT_MODULE::MAIN_USAGE>(pMeshNode->MainUsage);
@@ -76,13 +80,38 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_SpriteAnimationModule.iMaxFrameIndex = pMeshNode->iMaxFrameIndex;
 
 		/* Dissolve */
+		m_DissolveModule.fEnableDissolve = pMeshNode->fEnableDissolve;
 		m_DissolveModule.eEaseType = static_cast<EaseType>(pMeshNode->DissolveEase);
+		m_DissolveModule.fDissolveSoftness = pMeshNode->fDissolveSoftness;
 		m_DissolveModule.fStartProgress = pMeshNode->fDissolveStartProgress;
 		m_DissolveModule.fEndProgress = pMeshNode->fDissolveEndProgress;
 
 		/* Bloom */
 		m_BloomModule.fIntensity = pMeshNode->fBloomIntensity;
+
+		/* Noise */
+		m_NoiseModule.fEnableNoise = pMeshNode->fEnableNoise;
+		m_NoiseModule.fNoiseStrength = pMeshNode->fNoiseStrength;
+		m_NoiseModule.fNoiseTilling = pMeshNode->fNoiseTilling;
+		m_NoiseModule.vNoiseUVSpeed = pMeshNode->vNoiseUVSpeed;
 	}
+
+	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
+	auto pMaterialData = pMaterialInstance->Get_MaterialData();
+
+	if (m_DiffuseTextureTag.empty())
+	{
+		MSG_BOX("Diffuse Texture Empty : MeshNode");
+		return E_FAIL;
+	}
+	else
+		pMaterialData->Link_Texture(G_GlobalLevelKey, m_DiffuseTextureTag, TEXTURE_TYPE::DIFFUSE);
+
+	if (!m_NoiseTextureTag.empty())
+		pMaterialData->Link_Texture(G_GlobalLevelKey, m_NoiseTextureTag, TEXTURE_TYPE::NOISE);
+
+	if (!m_DissolveTextureTag.empty())
+		pMaterialData->Link_Texture(G_GlobalLevelKey, m_DissolveTextureTag, TEXTURE_TYPE::DISSOLVE);
 
 	return S_OK;
 }
@@ -202,6 +231,11 @@ void CMeshNode::Update_BloomModule(_float dt)
 
 }
 
+void CMeshNode::Update_NoiseModule(_float dt)
+{
+
+}
+
 void CMeshNode::Bind_Params()
 {
 	auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
@@ -227,11 +261,20 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("FrameIndex", { &m_SpriteAnimationModule.iCurrFrameIndex,"uint",sizeof(_uint) });
 
 	/* Dissolve */
+	pMaterialInstance->Set_Param("EnableDissolve", { &m_DissolveModule.fEnableDissolve,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("DissolveProgress", { &m_DissolveModule.fProgress,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("DissolveSoftness", { &m_DissolveModule.fDissolveSoftness,"float",sizeof(_float) });
 
 	/* Bloom */
 	pMaterialInstance->Set_Param("BloomThreshold", { &m_BloomModule.fThreshold,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("BloomSoftness", { &m_BloomModule.fSoftness,"float",sizeof(_float) });
 	pMaterialInstance->Set_Param("BloomIntensity", { &m_BloomModule.fIntensity,"float",sizeof(_float) });
+
+	/* Noise */
+	pMaterialInstance->Set_Param("EnableNoise", { &m_NoiseModule.fEnableNoise,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("NoiseStrength", { &m_NoiseModule.fNoiseStrength,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("NoiseTilling", { &m_NoiseModule.fNoiseTilling,"float",sizeof(_float) });
+	pMaterialInstance->Set_Param("NoiseUVSpeed", { &m_NoiseModule.vNoiseUVSpeed,"float2",sizeof(_float2) });
+	pMaterialInstance->Set_Param("ElapsedTime", { &m_fElpasedTime,"float",sizeof(_float) });
 
 }

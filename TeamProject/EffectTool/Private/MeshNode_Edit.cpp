@@ -95,6 +95,11 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_fDuration = json.value("duration", m_fDuration);
 	m_IsLoop = json.value("is_loop", m_IsLoop);
 
+	/* Texture Tags */
+	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
+	m_DissolveTextureTag = json.value("dissolve_texture_tag", "");
+	m_NoiseTextureTag = json.value("noise_texture_tag", "");
+
 	/* Texture Slot Module */
 	m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(json.value("sampler_mode", 0));
 	m_TextureSlotModule.eMainUsage = static_cast<TEXTURE_SLOT_MODULE::MAIN_USAGE>(json.value("main_usage", 0));
@@ -141,18 +146,39 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_SpriteAnimationModule.iMaxFrameIndex = json.value("max_frame_index", 1);
 
 	/* Dissolve Module */
+	m_DissolveModule.fEnableDissolve = json.value("enable_dissolve", 0.f);
 	m_DissolveModule.eEaseType = static_cast<EaseType>(json.value("dissolve_ease_type", 0));
+	m_DissolveModule.fDissolveSoftness = json.value("dissolve_softness", 0.f);
 	m_DissolveModule.fStartProgress = json.value("dissolve_start_progress", 1.f);
 	m_DissolveModule.fEndProgress = json.value("dissolve_end_progress", 1.f);
 
 	/* Bloom Module */
 	m_BloomModule.fIntensity = json.value("bloom_intensity", 1.f);
 
+	/* Noise Module */
+	m_NoiseModule.fEnableNoise = json.value("enable_noise", 0.f);
+	m_NoiseModule.fNoiseStrength = json.value("noise_strength", 0.f);
+	m_NoiseModule.fNoiseTilling = json.value("noise_tilling", 0.f);
+	m_NoiseModule.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
+	m_NoiseModule.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
+
 	{
 		m_SetMaterial = true;
 
 		if (FAILED(Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, m_MaterialKey)))
 			MSG_BOX("Link Failed - Material");
+
+		auto pMaterialInstance = Get_Component<CMaterial>()->Get_MaterialInstance(0);
+		auto pMaterialData = pMaterialInstance->Get_MaterialData();
+
+		if(!m_DiffuseTextureTag.empty())
+			pMaterialData->Link_Texture(G_GlobalLevelKey, m_MaterialKey, TEXTURE_TYPE::DIFFUSE);
+
+		if(!m_NoiseTextureTag.empty())
+			pMaterialData->Link_Texture(G_GlobalLevelKey, m_NoiseTextureTag, TEXTURE_TYPE::NOISE);
+
+		if(!m_DiffuseTextureTag.empty())
+			pMaterialData->Link_Texture(G_GlobalLevelKey, m_DissolveTextureTag, TEXTURE_TYPE::DISSOLVE);
 
 		m_SetMaterial = true;
 	}
@@ -176,6 +202,11 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"delay_time", m_fDelayTime},
 		{"duration", m_fDuration},
 		{"is_loop",m_IsLoop},
+
+		/* Texture Tag */
+		{"diffuse_texture_tag",m_DiffuseTextureTag},
+		{"dissolve_texture_tag",m_DissolveTextureTag},
+		{"noise_texture_tag",m_NoiseTextureTag},
 
 		/* Texture Module */
 		{"sampler_mode",m_TextureSlotModule.iSamplerModeParam},
@@ -217,12 +248,20 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"max_frame_index",m_SpriteAnimationModule.iMaxFrameIndex},
 
 		/* Dissolve */
+		{"enable_dissolve",m_DissolveModule.fEnableDissolve},
 		{"dissolve_ease_type",ENUM(m_DissolveModule.eEaseType)},
+		{"dissolve_softness",m_DissolveModule.fDissolveSoftness},
 		{"dissolve_start_progress",m_DissolveModule.fStartProgress},
 		{"dissolve_end_progress",m_DissolveModule.fEndProgress},
 
 		/* Bloom */
-		{"bloom_intensity",m_BloomModule.fIntensity}
+		{"bloom_intensity",m_BloomModule.fIntensity},
+
+		/* Noise */
+		{"enable_noise",m_NoiseModule.fEnableNoise},
+		{"noise_strength",m_NoiseModule.fNoiseStrength},
+		{"noise_tilling",m_NoiseModule.fNoiseTilling},
+		{"noise_uvspeed",{{"x",m_NoiseModule.vNoiseUVSpeed.x},{"y",m_NoiseModule.vNoiseUVSpeed.y}}}
 	};
 }
 
@@ -443,8 +482,12 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 	if (ImGui::CollapsingHeader("Dissolve Module"))
 	{
-		Helper::DrawEnumCombo("Dissolve Ease Type", m_DissolveModule.eEaseType, 100.f);
+		static _bool enableDissolve = false;
+		if (ImGui::Checkbox("Enable Noise", &enableDissolve))
+			m_DissolveModule.fEnableDissolve = enableDissolve ? 1.f : 0.f;
 
+		Helper::DrawEnumCombo("Dissolve Ease Type", m_DissolveModule.eEaseType, 100.f);
+		ImGui::DragFloat("Dissolve Softness", &m_DissolveModule.fDissolveSoftness);
 		ImGui::DragFloat("Start Progress", &m_DissolveModule.fStartProgress);
 		ImGui::DragFloat("End Progress", &m_DissolveModule.fEndProgress);
 	}
@@ -452,5 +495,16 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 	if (ImGui::CollapsingHeader("Bloom Module"))
 	{
 		ImGui::DragFloat("Bloom Intensity", &m_BloomModule.fIntensity);
+	}
+
+	if (ImGui::CollapsingHeader("Noise Module"))
+	{
+		static _bool enableNoise = false;
+		if (ImGui::Checkbox("Enable Noise", &enableNoise))
+			m_NoiseModule.fEnableNoise = enableNoise ? 1.f : 0.f;
+
+		ImGui::DragFloat("Noise Strength", &m_NoiseModule.fNoiseStrength);
+		ImGui::DragFloat("Noise Tilling", &m_NoiseModule.fNoiseTilling);
+		ImGui::DragFloat2("Noise UVSpeed", &m_NoiseModule.vNoiseUVSpeed.x);
 	}
 }
