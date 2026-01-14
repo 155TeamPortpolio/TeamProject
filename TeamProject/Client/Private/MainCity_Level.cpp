@@ -10,7 +10,6 @@
 #include "ShadowCam.h"
 
 /* MapData */
-#include "MapDataCloud.h"
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
@@ -28,7 +27,7 @@ CMainCity_Level::CMainCity_Level(const string& LevelKey)
 
 HRESULT CMainCity_Level::Initialize()
 {
-	m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
+	//m_pMapDataCloud = CMapDataCloud::Create("../Bin/Resources/MapData/Data/");
 	if (nullptr == m_pMapDataCloud)
 		return E_FAIL;
 
@@ -69,10 +68,10 @@ void CMainCity_Level::PreLoad_Level()
 
 void CMainCity_Level::ReadyMap()
 {
-	CMapLoader* pMapLoader = CMapLoader::Create(m_LevelKey, m_pMapDataCloud, "TrainingRoom");
-	if (nullptr == pMapLoader)
-		MSG_BOX("Failed to Load MapData!");
-	Safe_Release(pMapLoader);
+	//CMapLoader* pMapLoader = CMapLoader::Create(m_LevelKey, m_pMapDataCloud, "TrainingRoom");
+	//if (nullptr == pMapLoader)
+	//	MSG_BOX("Failed to Load MapData!");
+	//Safe_Release(pMapLoader);
 }
 
 void CMainCity_Level::ReadyCamera()

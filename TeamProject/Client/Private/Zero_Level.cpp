@@ -19,7 +19,7 @@ HRESULT CZero_Level::Initialize()
 
 	m_Context.eStageType = StageType::Boss;
 	m_Context.pNowStage = boss;
-
+	m_Context.pNowStage->Ready_Stage(m_Context);
 	return S_OK;
 }
 
