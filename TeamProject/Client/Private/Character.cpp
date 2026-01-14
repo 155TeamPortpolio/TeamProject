@@ -13,6 +13,8 @@ CCharacter::CCharacter(const CCharacter& rhs)
 	: CGameObject(rhs)
 	, m_fMaxHP(rhs.m_fMaxHP)
 	, m_fCurrentHP(rhs.m_fCurrentHP)
+	, m_fMaxEnergy(rhs.m_fMaxEnergy)
+	, m_fCurrentEnergy(rhs.m_fCurrentEnergy)
 	, m_fAttackPower(rhs.m_fAttackPower)
 	, m_fDefense(rhs.m_fDefense)
 	, m_fMoveSpeed(rhs.m_fMoveSpeed)
@@ -37,7 +39,7 @@ void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 	desc.eType = UI_STATUS_TYPE::HP;
 	desc.value.fCurValue = fHP;
 	desc.value.fMaxValue = m_fMaxHP;
-	//EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
+	EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
 
 	Set_HP(fHP);
 }
@@ -143,7 +145,6 @@ void CCharacter::Update(_float dt)
 	Update_Evade(dt);
 	if (m_bIsRotating)	Update_Rotation(dt);
 	Update_Gauge(dt);
-	Update_Decibel(dt);
 }
 
 void CCharacter::Late_Update(_float dt)
@@ -309,23 +310,12 @@ void CCharacter::Update_Evade(_float dt)
 
 void CCharacter::Update_Gauge(_float dt)
 {
-	m_tGauge.fPrevGauge = m_tGauge.fCurrentGauge;
 	if (m_tGauge.fCurrentGauge >= MAX_SPECIALGAUGE)
 	{
 		m_tGauge.fCurrentGauge = MAX_SPECIALGAUGE;
 		return;
 	}
-	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt * 10.f;
-}
-
-void CCharacter::Update_Decibel(_float dt)
-{
-	if (m_fDecibel >= MAX_DECIBEL)
-	{
-		m_fDecibel = MAX_DECIBEL;
-		return;
-	}
-	m_fDecibel += dt;
+	m_tGauge.fCurrentGauge += m_tGauge.fGaugeWeight * dt;
 }
 
 void CCharacter::Free()

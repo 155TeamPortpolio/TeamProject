@@ -82,7 +82,6 @@ HRESULT CThugBulkyEnforcer::Initialize(INIT_DESC* pArg)
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 
-
 	return S_OK;
 }
 
@@ -344,6 +343,12 @@ void CThugBulkyEnforcer::Render_GUI()
 	ImGui::PopID();
 }
 
+void CThugBulkyEnforcer::Active_AttackSign()
+{
+	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
+	static_cast<CAttackSign*>(pAttackSign)->Active();
+}
+
 CThugBulkyEnforcer* CThugBulkyEnforcer::Create()
 {
 	CThugBulkyEnforcer* instance = new CThugBulkyEnforcer();
@@ -409,12 +414,10 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 
 	// ================================================================================================
 
-
-	Create_AttackSign("Bip001 Head");
-	//auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-	//	.Build("AttackSign");
-	//pObjectContainer->Add_Child(pAttackSign, false);
-	//pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bip001 Head");
+	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
+		.Build("AttackSign");
+	pObjectContainer->Add_Child(pAttackSign, false);
+	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(Get_Component<CAnimator3D>(), "Bip001 Head");
 
 	return S_OK;
 }

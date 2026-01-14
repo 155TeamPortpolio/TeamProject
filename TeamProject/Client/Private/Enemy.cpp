@@ -3,12 +3,7 @@
 #include "GameInstance.h"
 #include "BattleSystem.h"
 
-/* Object */
-#include "AttackSign.h"
-
-/* Component */
 #include "ObjectContainer.h"
-#include "Animator3D.h"
 #include "BoneFollower.h"
 
 CEnemy::CEnemy()
@@ -133,23 +128,6 @@ void CEnemy::Render_GUI_ForTargetInfo()
 		ImGui::EndChild();
 	}
 	ImGui::PopID();
-}
-
-void CEnemy::Create_AttackSign(string boneTag)
-{
-	auto pObjectContainer = Get_Component<CObjectContainer>();
-	auto pAnimator = Get_Component<CAnimator3D>();
-
-	auto pAttackSign = Builder::Create_Object({ G_GlobalLevelKey,"Proto_GameObject_AttackSign" })
-		.Build("AttackSign");
-	pObjectContainer->Add_Child(pAttackSign, false);
-	pAttackSign->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, boneTag);
-}
-
-void CEnemy::Active_AttackSign(_bool parryEnable)
-{
-	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	static_cast<CAttackSign*>(pAttackSign)->Active();
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)

@@ -82,8 +82,6 @@ void CSacrifice_Laser::Priority_Update(_float dt)
 
 void CSacrifice_Laser::Update(_float dt)
 {
-	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
-
 	auto pEffectContainer = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	CEffectContainer::EFFECT_CONTAINER_CONTEXT& context = static_cast<CEffectContainer*>(pEffectContainer)->GetEffectContext();
 
@@ -107,7 +105,7 @@ void CSacrifice_Laser::Update(_float dt)
 		if (PhysicsSystem()->Raycast(rayDesc, output))
 			vPosition1 = output.vPoint;
 		else
-			vPosition1 = vPosition0 + vDir * 200.f;
+			vPosition1 = vPosition1 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
 		context.vLinePoint1 = vPosition1;
@@ -115,19 +113,48 @@ void CSacrifice_Laser::Update(_float dt)
 	case 1: /* Target */
 	{
 		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
+		_vector3 vPosition1{};
+		_vector3 vTargetPosition{};
+		_vector3 vDir{};
+
+		auto& battleInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
+		for (auto& info : battleInfos)
+		{
+			if (info.isOnField)
+			{
+				vTargetPosition = info.vPos;
+				vTargetPosition.y += 1.f;
+
+				vDir = vTargetPosition - vPosition0;
+				vDir.Normalize();
+				break;
+			}
+		}
+
+		/*PHYSICS_RAY rayDesc{};
+		PHYSICS_RAY_HIT output{};
+		rayDesc.vOrigin = vPosition0;
+		rayDesc.vDirection = vDir;
+		rayDesc.fMaxDistance = 200.f;
+
+		if (PhysicsSystem()->Raycast(rayDesc, output))
+			vPosition1 = output.vPoint;
+		else
+			vPosition1 = vPosition1 + vDir * 200.f;*/
 
 		context.vLinePoint0 = vPosition0;
-		context.vLinePoint1 = vPosition0 + m_vTargetDir * 200.f;
+		context.vLinePoint1 = vPosition0 + vDir * 200.f;
 
 	}break;
 	default:
 		break;
 	}
 
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
 	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
 	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
-	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
+	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
 	if (m_IsPendingDeactive)
 	{
@@ -147,29 +174,9 @@ void CSacrifice_Laser::Late_Update(_float dt)
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
 {
-	Get_Component<CBoneFollower>()->Sync_Transform(0.f, m_pTransform);
 	m_IsPendingDeactive = false;
 	m_isAlive = true;
 	m_iLaserMode = mode;
-
-	if (1 == m_iLaserMode)
-	{
-		_vector3 vTargetPos{};
-		auto& battleInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
-		for (auto& info : battleInfos)
-		{
-			if (info.isOnField)
-			{
-				vTargetPos = info.vPos;
-				vTargetPos.y += 1.f;
-				break;
-			}
-		}
-
-		_vector3 vDir = vTargetPos - _vector3(m_pTransform->Get_WorldPos());
-		vDir.Normalize();
-		m_vTargetDir = vDir;
-	}
 
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Laser");
 	static_cast<CEffectContainer*>(pLaser)->Play();
