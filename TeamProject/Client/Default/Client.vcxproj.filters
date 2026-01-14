@@ -592,6 +592,33 @@
     <Filter Include="01. Level\04. Zero\Stage_Boss">
       <UniqueIdentifier>{0311033b-83a6-4978-8774-ad77717efc65}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Normal Enemy">
+      <UniqueIdentifier>{59940dfa-0539-4aed-8091-bbfb2c81fd85}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter">
+      <UniqueIdentifier>{ead5c6a6-c6b3-4863-8252-1087ac356fe2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State">
+      <UniqueIdentifier>{363845a6-6a88-4924-8e1c-bd0a4a149b44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Attack">
+      <UniqueIdentifier>{abb524ed-2c1c-4ee3-a153-412d36dfcfa1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Idle">
+      <UniqueIdentifier>{21747306-27d7-4f7d-bde8-efd319a1a8a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Chase">
+      <UniqueIdentifier>{e6c6de73-02c6-42d7-8153-18e718d3a3f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Death">
+      <UniqueIdentifier>{84c88dc1-d0ca-435f-b169-c93e9d9b4d26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Move">
+      <UniqueIdentifier>{18837b31-1d54-4a22-b260-0568c769732d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Born">
+      <UniqueIdentifier>{7acebaff-3db4-49e9-bb04-e1cd603c6990}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex">
       <UniqueIdentifier>{06deeb01-99d7-4481-ad85-781283a743fe}</UniqueIdentifier>
     </Filter>
@@ -1136,11 +1163,44 @@
     <ClInclude Include="..\Public\Zero_Level.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EnemyNormal.h">
+      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Attack.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Attack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Idle.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Chase.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Chase</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Death.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Death</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Move.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Born.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Born</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Enemy_Struct.h">
+      <Filter>02. GameObject\Object\Enemy</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_ExAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex</Filter>
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ultimate</Filter>
+         </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Boss.h">
+      <Filter>01. Level\04. Zero\Stage_Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stage.h">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClInclude>
     <ClInclude Include="..\public\JaneDoeState_BranchAttack.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
@@ -1665,6 +1725,30 @@
     <ClCompile Include="..\Private\Zero_Level.cpp">
       <Filter>01. Level\04. Zero</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\EnemyNormal.cpp">
+      <Filter>02. GameObject\Object\Enemy\Normal Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Attack.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Attack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Idle.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Chase.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Chase</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Death.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Death</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Move.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ThugAssaulter_Born.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Born</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Ex</Filter>
     </ClCompile>
@@ -1673,6 +1757,12 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_BranchAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Attack\Branch</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ZeroStage_Boss.cpp">
+      <Filter>01. Level\04. Zero\Stage_Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stage.cpp">
+      <Filter>01. Level\04. Zero\Stage_Super</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
