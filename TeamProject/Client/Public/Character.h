@@ -176,7 +176,6 @@ protected:
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
-
     // �Է�
     InputInfo       m_inputInfo;
     _bool           m_bIsAttack = { false };

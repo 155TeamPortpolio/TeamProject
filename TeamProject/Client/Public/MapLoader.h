@@ -18,7 +18,7 @@ private:
 	virtual ~CMapLoader() = default;
 
 public:
-	HRESULT	Initialize(const string& TagLevel, class CMapDataCloud* pMapDataCloud, const string& TagArea);
+	HRESULT	Initialize(const string& TagLevel, const string& TagArea);
 	
 private:
 	void			Place_PlacedObjectFromLoadData(MapData_Object* pData);
@@ -43,7 +43,7 @@ private:
 
 
 public:
-	static CMapLoader* Create(const string& TagLevel, class CMapDataCloud* pMapDataCloud, const string& TagArea);
+	static CMapLoader* Create(const string& TagLevel, const string& TagArea);
 	virtual void Free() override;
 };
 

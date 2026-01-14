@@ -38,7 +38,6 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	}
 	
 	auto pMaterialInstance = pMaterial->Get_MaterialInstance(0);
-	pMaterialInstance->Override_Pass("UVAnimation");
 
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
@@ -53,6 +52,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_TextureSlotModule.eGreen = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Green);
 		m_TextureSlotModule.eBlue = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Blue);
 		m_TextureSlotModule.eAlpha = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(pMeshNode->Alpha);
+		m_TextureSlotModule.iColorMode = pMeshNode->iColorMode;
+		m_TextureSlotModule.iRGBMask = pMeshNode->iRGBMask;
 
 		/* Color */
 		m_ColorModule.eEaseType = static_cast<EaseType>(pMeshNode->ColorEaseType);
@@ -211,6 +212,8 @@ void CMeshNode::Bind_Params()
 	pMaterialInstance->Set_Param("SamplerMode", { &m_TextureSlotModule.iSamplerModeParam,"uint",sizeof(_uint)});
 	pMaterialInstance->Set_Param("MainUsage", { &m_TextureSlotModule.iMainUsageParam,"uint",sizeof(_uint)});
 	pMaterialInstance->Set_Param("ChannelUsage", { &m_TextureSlotModule.vChannelUsageParam,"uint4",sizeof(_uint4)});
+	pMaterialInstance->Set_Param("ColorMode", { &m_TextureSlotModule.iColorMode,"uint",sizeof(_uint)});
+	pMaterialInstance->Set_Param("RGBMask", { &m_TextureSlotModule.iRGBMask,"uint",sizeof(_uint) });
 
 	/* Color */
 	pMaterialInstance->Set_Param("vBaseColor", { &m_ColorModule.vCurrColor,"float4",sizeof(_float4) });
