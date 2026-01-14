@@ -6,14 +6,6 @@ NS_BEGIN(Client)
 template<typename Type>
 class CStateMachine;
 
-typedef struct tagHysteresis {
-    _float fEvadEnter{};
-    _float fComboEnter{};
-    _float fComboExit{};
-    _float fChaseEnter{};
-    _float fChaseExit{};
-}HYSTERIESIS;
-
 class CThugBulkyEnforcer final : public CEnemy
 {
 public:
