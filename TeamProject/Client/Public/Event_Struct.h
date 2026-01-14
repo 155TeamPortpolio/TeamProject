@@ -27,9 +27,11 @@ typedef struct tagUIStatusBulkDesc {
 /* UI로 전달되는 상태 정보를 정의하는 구조체 : player의 status 일괄 */
 typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_OWNER eOwner = {};
+	CHARACTER		eCharacter = {};
 	UI_STATUS_VALUE hp = {};
 	UI_STATUS_VALUE special = {};
 	UI_STATUS_VALUE ultimate = {};
+	// EX 관련 값 추가 필요
 }UI_PLAYER_STATUS_DESC;
 
 /* UI로 전달되는 캐릭터 순서를 정의하는 구조체 */
