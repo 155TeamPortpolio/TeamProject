@@ -92,12 +92,12 @@ void CBattlePlayer::Update(_float dt)
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	
-	/* Special Gauge */
+	/* Energy */
 	desc.eType = UI_ACTION_TYPE::SPECIAL;
-	CCharacter::GaugeDesc tGauge = m_pCurrentCharacter->Get_GaugeDesc();
+	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
 
-	if (tGauge.fCurrentGauge > tGauge.fSpecialGauge &&
-		tGauge.fPrevGauge <= tGauge.fSpecialGauge)
+	if (tEnergy.fCurrentEnergy > tEnergy.fSpecialEnergy &&
+		tEnergy.fPrevEnergy <= tEnergy.fSpecialEnergy)
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
@@ -168,6 +168,8 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Attack();
 	Process_Evade();
 	Process_Switch();
+	Process_Ultimate();
+	Process_Energy();
 
 	if (InputDevice()->Key_Down('T'))
 	{
@@ -233,6 +235,25 @@ void CBattlePlayer::Process_Switch()
 	}
 }
 
+void CBattlePlayer::Process_Ultimate()
+{
+	if (InputDevice()->Key_Tap('Q'))
+	{
+		if (m_pCurrentCharacter->Can_Ultimate())
+		{
+			m_pCurrentCharacter->On_Ultimate();
+		}
+	}
+}
+
+void CBattlePlayer::Process_Energy()
+{
+	if (InputDevice()->Key_Hold('E'))
+	{
+		m_pCurrentCharacter->On_Special();
+	}
+}
+
 _bool CBattlePlayer::Can_Switch() const
 {
 	if (m_fSwitchCooldown > 0.f) return false;
@@ -279,7 +300,7 @@ void CBattlePlayer::Update_Status()
 		UI_PLAYER_STATUS_DESC desc;
 		desc.eOwner = eOwner;
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
-		desc.special = { pCharacter->Get_GaugeDesc().fCurrentGauge, pCharacter->Get_MaxGauge() };
+		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
 		desc.ultimate = { pCharacter->Get_Decibel(), pCharacter->Get_MaxDecibel() };
 
 		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
