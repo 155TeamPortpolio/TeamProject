@@ -115,7 +115,7 @@ static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
     {
         data->second->workRect = monitorInfo.rcWork;
         data->second->found = true;
-        return FALSE; 
+        return FALSE;
     }
     curIdx++;
     return TRUE;
@@ -124,7 +124,7 @@ static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
 static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
 {
     MonitorPickResult result{};
-    pair<int, MonitorPickResult*> payload{ monitorIdx, &result };
+    pair<int, MonitorPickResult*> payload{monitorIdx, &result};
 
     EnumDisplayMonitors(nullptr, nullptr, EnumMonProc, (LPARAM)&payload);
     return result;
@@ -132,44 +132,51 @@ static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
 
 static RECT CalcWindowRectFromClientSize(int clientW, int clientH, DWORD style, DWORD exStyle)
 {
-    RECT rc{ 0, 0, clientW, clientH };
+    RECT rc{0, 0, clientW, clientH};
     AdjustWindowRectEx(&rc, style, FALSE, exStyle);
-    return rc; 
+    return rc;
 }
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
     g_Inst = hInstance;
 
+    HMONITOR hPrimary = MonitorFromPoint(POINT{0, 0}, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi{};
+    mi.cbSize = sizeof(mi);
+    GetMonitorInfo(hPrimary, &mi);
+
+    const int primaryW = mi.rcMonitor.right - mi.rcMonitor.left;
+
+    if (primaryW > 2500)
+    {
+        WinX = 2560;
+        WinY = 1360;
+    }
+    else
+    {
+        WinX = 1600;
+        WinY = 900;
+    }
+    aspect = static_cast<float>(WinX) / static_cast<float>(WinY);
+
     const DWORD style = WS_OVERLAPPEDWINDOW;
     const DWORD exStyle = 0;
 
-    // 1) 보조 모니터(두번째) work rect 얻기
-    //    - 0이면 첫 모니터, 1이면 두번째 모니터
     MonitorPickResult mon = GetWorkRectOfMonitorIndex(1);
-    if (!mon.found)
-    {
-        // 보조 모니터 없으면 첫 모니터로 폴백
-        mon = GetWorkRectOfMonitorIndex(0);
-    }
+    if (!mon.found) mon = GetWorkRectOfMonitorIndex(0);
 
-    // 2) 원하는 "클라이언트" 크기
     const int clientW = static_cast<int>(WinX);
     const int clientH = static_cast<int>(WinY);
 
-    // 3) 스타일을 반영해 창 전체 크기 계산
     RECT winRc = CalcWindowRectFromClientSize(clientW, clientH, style, exStyle);
     const int windowW = winRc.right - winRc.left;
     const int windowH = winRc.bottom - winRc.top;
 
-    // 4) work area 안에 좌상단 배치 (혹은 가운데 배치)
     const int x = mon.workRect.left;
     const int y = mon.workRect.top;
 
-    HWND hWnd = CreateWindowW(szWindowClass, szTitle, style,
-        x, y, windowW, windowH,
-        nullptr, nullptr, hInstance, nullptr);
-
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, style, x, y, windowW, windowH, nullptr, nullptr, hInstance, nullptr);
     if (!hWnd) return FALSE;
 
     ShowWindow(hWnd, nCmdShow);
@@ -180,8 +187,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    auto game = CGameInstance::GetInstance();
-    if (game->HandleMessage(hWnd, message, wParam, lParam))
+    if (CGameInstance::GetInstance()->HandleMessage(hWnd, message, wParam, lParam))
         return 0;
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
