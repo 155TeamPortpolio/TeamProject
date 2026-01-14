@@ -5,7 +5,7 @@ NS_BEGIN(Client)
 
 class CUI_BattleHUD final : public CUI_Object
 {
-	enum PREFAB { 
+	enum Child {
 		ICON1, ICON2, ICON3,
 		HP_BACK1, HP_BACK2, HP_BACK3,
 		HP_FRONT1, HP_FRONT2, HP_FRONT3,
@@ -18,16 +18,16 @@ class CUI_BattleHUD final : public CUI_Object
 		END };
 
 	struct tagGaugeBindDesc {
-		PREFAB			ePrefab;
+		Child			eChild;
 		UI_STATUS_OWNER	eOwner;
 		UI_STATUS_TYPE	eType;
 	};
 
-	inline static constexpr PREFAB ICON_PREFABS[] = { ICON1, ICON2, ICON3 };
-	inline static constexpr PREFAB HPBACK_PREFABS[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
-	inline static constexpr PREFAB HPFRONT_PREFABS[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
-	inline static constexpr PREFAB SPECIAL_PREFABS[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
-	inline static constexpr PREFAB ULTIMATE_PREFABS[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
+	inline static constexpr Child ICON_CHILD[] = { ICON1, ICON2, ICON3 };
+	inline static constexpr Child HPBACK_CHILD[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
+	inline static constexpr Child HPFRONT_CHILD[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
+	inline static constexpr Child SPECIAL_CHILD[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
+	inline static constexpr Child ULTIMATE_CHILD[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
 	inline static constexpr tagGaugeBindDesc GaugeBindings[] = {
 		{ HP_BACK1, UI_STATUS_OWNER::ROLE1, UI_STATUS_TYPE::HP_BACK },
 		{ HP_BACK2, UI_STATUS_OWNER::ROLE2, UI_STATUS_TYPE::HP_BACK },
@@ -65,19 +65,21 @@ public:
 
 private:
 	UI_HANDLE			m_hRoot;
-	vector<UI_HANDLE>	m_hChildren; 
+	vector<UI_HANDLE>	m_handles; 
 
 private:
 	CUI_Object* Ready_Prefab(const string& strLevelKey);
 
-	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, PREFAB prefab, _float2 vOffset = _float2());
-
-	void Set_HPText(const UI_STATUS_VALUE& value);
-	void Set_GroggyText(const UI_STATUS_VALUE& value);
-
+	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
 	void Cache_Handles(CUI_Object* pRoot);
 
-	void Set_Text(PREFAB prefab, const wstring& strText);
+	void Set_Values(UI_PLAYER_STATUS_DESC desc);
+
+	void Set_Text(Child child, const wstring& strText);
+	void Set_FillAmount(Child child, _float fFillAmount);
+
+	template<typename Func>
+	void ForChild(Child child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -86,3 +88,13 @@ public:
 };
 
 NS_END
+
+template<typename Func>
+inline void CUI_BattleHUD::ForChild(Child child, Func&& func)
+{
+	auto& handle = m_handles[ENUM(child)];
+	if (!handle.isValid())
+		return;
+
+	func(handle.Get());
+}
