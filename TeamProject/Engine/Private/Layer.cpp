@@ -38,6 +38,7 @@ HRESULT CLayer::Add_GameObject(CGameObject* pGameObject)
 
 void CLayer::Pre_EngineUpdate(_float dt)
 {
+	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
 		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Pre_EngineUpdate(dt);
@@ -46,7 +47,7 @@ void CLayer::Pre_EngineUpdate(_float dt)
 void CLayer::Post_EngineUpdate(_float dt)
 {
 	if (!m_isRender) return;
-
+	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
 		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Post_EngineUpdate(dt);
@@ -54,6 +55,7 @@ void CLayer::Post_EngineUpdate(_float dt)
 
 void CLayer::Priority_Update(_float dt)
 {
+	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
 		if (pGameObject && pGameObject ->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Priority_Update(dt);
@@ -61,6 +63,7 @@ void CLayer::Priority_Update(_float dt)
 
 void CLayer::Update(_float dt)
 {
+	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
 		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Update(dt);
@@ -68,6 +71,7 @@ void CLayer::Update(_float dt)
 
 void CLayer::Late_Update(_float dt)
 {
+	dt *= m_LayerTimeScale;
 	for (auto& pGameObject : m_GameObjects)
 		if (pGameObject && pGameObject->Is_Alive() && pGameObject->Is_Root())
 			pGameObject->Late_Update(dt);
