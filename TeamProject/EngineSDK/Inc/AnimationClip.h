@@ -18,7 +18,7 @@ public:
 	_float TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
-		_bool isLoop, _float fLoopEnd,
+		_bool isLoop,
 		_bool* isWarpped,
 		_bool* isAnimEnd,
 		_float* outProgress,
@@ -30,9 +30,6 @@ public:
 
 	void TranslateAnimateMatrixFromDurationNoEvent(vector<_float4x4>& transfomationMatrices,
 		_float Duration);
-
-	void SampleKayFrame(_int iBoneIndex, _float fProgress,
-		_vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutPos);
 
 public:
 	class CChannel* Find_ChannelByBoneName(const string& boneName);
@@ -47,9 +44,6 @@ public:
 	const KEYFRAME& Get_StartKeyFrameByBoneIndex(_uint BoneIndex) const;
 	const KEYFRAME& Get_EndKeyFrameByBoneName(const string& BoneName) const;
 	const KEYFRAME& Get_EndKeyFrameByBoneIndex(_uint BoneIndex) const;
-
-	void Sample_KeyFrameByBoneName(const string& BoneName, const _float fProgress, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans) const;
-	void Sample_KeyFrameByBoneIndex(_uint BoneIndex, const _float fProgress, _vector3* pOutScale, _quaternion* pOutQuat, _vector3* pOutTrans) const;
 
 public:
 	virtual void Render_GUI();

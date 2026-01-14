@@ -6,7 +6,7 @@
 #include "Helper_Func.h"
 #include "MapLoader_Helper.h"
 
-#include "MapDataCloud.h"
+#include "DataBase.h"
 #include "MapPlacedObject.h"
 
 CMapLoader::CMapLoader()
@@ -14,14 +14,13 @@ CMapLoader::CMapLoader()
 {
 }
 
-HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)
+HRESULT CMapLoader::Initialize(const string& TagLevel, const string& TagArea)
 {
-    if (nullptr == pMapDataCloud)
-        return E_FAIL;
-
     m_TagLevel = TagLevel;
 
-    auto pPackets = pMapDataCloud->Get_MapDataPacket(TagArea);
+    auto pPackets = CDataBase::GetInstance()->GetMapDataPacket(TagArea);
+    if (nullptr == pPackets)
+        return E_FAIL;
 
     _bool isFindBaseData = { false };
     for (auto& packet : *pPackets) {
@@ -40,9 +39,6 @@ HRESULT CMapLoader::Initialize(const string& TagLevel, CMapDataCloud* pMapDataCl
     auto iter = m_SlotFormatData.find("Collider");
     if (iter != m_SlotFormatData.end())
         m_hasColliderData = true;
-
-    
-
 
     for (auto& layerdata : m_MapBaseData.Layers) {
         // 레이어 태그 무결성 검사
@@ -247,11 +243,11 @@ _bool CMapLoader::isThereFormat(const string& TagSlotFormat)
     return true;
 }
 
-CMapLoader* CMapLoader::Create(const string& TagLevel, CMapDataCloud* pMapDataCloud, const string& TagArea)
+CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea)
 {
     CMapLoader* instance = new CMapLoader();
 
-    if (FAILED(instance->Initialize(TagLevel, pMapDataCloud, TagArea))) {
+    if (FAILED(instance->Initialize(TagLevel, TagArea))) {
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");

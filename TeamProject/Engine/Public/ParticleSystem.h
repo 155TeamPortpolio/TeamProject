@@ -184,6 +184,7 @@ private:
 	PARTICLE_NODE m_PendingChanged{};
 
 	/*Main Params*/
+	_uint m_iRGBMaskMode{};
 	PARTICLE_SPACE m_eParticleSpace = PARTICLE_SPACE::WORLD;
 	MODULE_MASK m_eModuelMask{};
 	COLOR_MODE m_eColorMode = COLOR_MODE::ADDITIVE;

@@ -18,6 +18,54 @@ ENGINE_DLL _float Math::WrapDeg(_float deg)
 	return deg;
 }
 
+ENGINE_DLL _float Math::QuatDot(const Quaternion& a, const Quaternion& b)
+{
+	return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
+}
+
+ENGINE_DLL Quaternion Math::QuatNegate(const Quaternion& q)
+{
+	return Quaternion(-q.x, -q.y, -q.z, -q.w);
+}
+
+ENGINE_DLL _uint Math::LcgStep(_uint& s)
+{
+	s = s * 1664525u + 1013904223u;
+	return s;
+}
+ENGINE_DLL _float Math::Rand01(_uint& s)
+{
+	const _uint x = LcgStep(s) & 0x00FFFFFFu;
+	return (float)x / (float)0x01000000u;
+}
+
+ENGINE_DLL _float Math::SmoothStep01(float t)
+{
+	t = clamp(t, 0.f, 1.f);
+	return t * t * (3.f - 2.f * t);
+}
+
+ENGINE_DLL _float Math::Clamp01(_float t)
+{
+	if (t < 0.f) return 0.f;
+	if (t > 1.f) return 1.f;
+	return t;
+}
+
+ENGINE_DLL Vector3 Math::SeedPhase(_uint& seed)
+{
+	seed = seed * 1664525u + 1013904223u;
+	const _float a = (seed & 1023u) * (6.28318530718f / 1023.f);
+
+	seed = seed * 1664525u + 1013904223u;
+	const _float b = (seed & 1023u) * (6.28318530718f / 1023.f);
+
+	seed = seed * 1664525u + 1013904223u;
+	const _float c = (seed & 1023u) * (6.28318530718f / 1023.f);
+
+	return {a, b, c};
+}
+
 ENGINE_DLL _float Math::ApplyEase(EaseType type, _float t)
 {
 	t = clamp(t, 0.f, 1.f);
