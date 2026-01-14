@@ -27,12 +27,12 @@ CJaneDoe::CJaneDoe(const CJaneDoe& rhs)
 {
 }
 
-void CJaneDoe::ProcessPassion(_float fPassionGauge)
+void CJaneDoe::Process_Passion(_float fPassionGauge)
 {
 	m_fPassionGauge = fPassionGauge;
 }
 
-void CJaneDoe::ProcessPassionSkill(_bool bAvailable)
+void CJaneDoe::Process_PassionSkill(_bool bAvailable)
 {
 	m_bPassionSkillAvailable = bAvailable;
 }
@@ -88,6 +88,8 @@ void CJaneDoe::Awake()
 
 	Initialize_Stat();
 
+	m_tEnergy.fCurrentEnergy = 120;
+
 }
 
 void CJaneDoe::Priority_Update(_float dt)
@@ -140,6 +142,26 @@ void CJaneDoe::On_SwitchIn(SWITCH eType)
 void CJaneDoe::On_SwitchOut()
 {
 	m_pStateMachine->Set_Trigger("SwitchOut");
+}
+
+void CJaneDoe::On_Ultimate()
+{
+	__super::On_Ultimate();
+
+	m_pStateMachine->Set_Int("AttackEntryMode", 3);
+	m_pStateMachine->Set_Trigger("Attack");
+}
+
+void CJaneDoe::On_Special()
+{
+	if (InputDevice()->Key_Tap('E') == false) return;
+
+	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
+	{
+		m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
+	}
+	m_pStateMachine->Set_Int("AttackEntryMode", 2);
+	m_pStateMachine->Set_Trigger("Attack");
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
@@ -221,15 +243,14 @@ HRESULT CJaneDoe::Initialize_Transitions()
 HRESULT CJaneDoe::Initialize_Stat()
 {
 	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
-	m_tEnergy.fCurrentEnergy = Desc.SpecialAttack;
+	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
 
 	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
 	m_fMaxHP = LVDesc.MaxHP;
 	m_fDefense = LVDesc.Defend;
 	m_fAttackPower = LVDesc.Attack;
-
-	m_iEvadeMax = 3;
-
+	
+	Set_EvadeMax(3);
 	return S_OK;
 }
 
