@@ -314,6 +314,65 @@ void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
 	}
 }
 
+void CObjectMgr::Set_LevelTimeScale(string LevelTag, _float scale)
+{
+	auto iter = m_Layers.find(LevelTag);
+	if (iter == m_Layers.end())
+		return;
+
+	auto Layer = iter->second;
+	if (Layer.empty())
+		return;
+
+	for (auto layer : Layer)
+	{
+		layer.second->Set_TimeScale(scale);
+	}
+}
+
+void CObjectMgr::Reset_LevelTimeScale(string LevelTag)
+{
+	auto iter = m_Layers.find(LevelTag);
+	if (iter == m_Layers.end())
+		return;
+
+	auto Layer = iter->second;
+	if (Layer.empty())
+		return;
+
+	for (auto layer : Layer)
+	{
+		layer.second->Reset_TimeScale();
+	}
+}
+
+void CObjectMgr::Set_LayerTimeScale(const LAYER_DESC& Layer, _float scale)
+{
+	CLayer* layerPtr = Get_Layer(Layer);
+	if (!layerPtr)
+		return;
+
+	layerPtr->Set_TimeScale(scale);
+}
+
+void CObjectMgr::Reset_LayerTimeScale(const LAYER_DESC& Layer)
+{
+	CLayer* layerPtr = Get_Layer(Layer);
+	if (!layerPtr)
+		return;
+
+	layerPtr->Reset_TimeScale();
+}
+
+_float CObjectMgr::Get_LayerTimeScale(const LAYER_DESC& Layer)
+{
+	CLayer* layerPtr = Get_Layer(Layer);
+	if (!layerPtr)
+		return 0.f;
+
+	return layerPtr->Get_TimeScale();
+}
+
 CObjectMgr* CObjectMgr::Create()
 {
 	CObjectMgr* pInstance = new CObjectMgr();
