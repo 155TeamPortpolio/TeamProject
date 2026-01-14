@@ -249,18 +249,18 @@ void CBattlePlayer::Process_Switch()
 	UI_ACTION_DESC desc;
 	desc.eType = UI_ACTION_TYPE::SWITCH;
 	desc.eState = Can_Switch() ? UI_ACTION_STATE::AVAILABLE : desc.eState = UI_ACTION_STATE::ENABLE;
-	desc.fFillAmount = m_iParryingCount;
 	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
 		if (Can_Switch())
 		{
 			desc.eState = UI_ACTION_STATE::EXECUTING;
 			SwitchCharacter();
-			--m_iParryingCount;
+			m_iParryingCount--;
 			if (m_iParryingCount == 0) m_iParryingCount = 6;
 			m_fSwitchCooldown = SWITCH_COOLDOWN;
 		}
 	}
+	desc.fFillAmount = m_iParryingCount / 6.f;
 	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
