@@ -22,10 +22,18 @@ HRESULT SetAnimBuild::Apply()
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 		Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+
+		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
+		if (Layer.fLoopEnd == 1.f) {
+			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fLoopEnd,
+				nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
+		}
 
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
@@ -74,13 +82,21 @@ HRESULT ChangeAnimBuild::Apply()
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
 		Layer.vPrevRootQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-		Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
-		Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
-			->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
-
+		//애니매이션 루프시 마지막 엔드프레임이 1인지 구분
+		if (Layer.fLoopEnd == 1.f) {
+			Layer.vRootEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+			Layer.vRootEndQuat = m_pOwner->m_pAnimClips[m_iClipIndex]
+				->Get_EndKeyFrameByBoneIndex(Layer.iRootBoneIndex).vRotation;
+		}
+		else {
+			m_pOwner->m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fLoopEnd,
+				nullptr, &Layer.vRootEndQuat, &Layer.vRootEndPos);
+		}
 		Layer.vMotionEndPos = m_pOwner->m_pAnimClips[m_iClipIndex]
 			->Get_EndKeyFrameByBoneIndex(Layer.iMotionBoneIndex).vTranslation;
+
+
 	}
 	//베이스 레이어가 아닐경우 레이어블랜드의 값을 이용함
 	else {
@@ -95,6 +111,7 @@ HRESULT ChangeAnimBuild::Apply()
 
 	//애니매이션 기본
 	Layer.bLoop = m_bLoop;
+	Layer.fLoopEnd = m_fLoopEnd;
 	Layer.fAnimSpeed = m_fSpeed;
 	Layer.bPause = m_bPause;
 

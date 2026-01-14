@@ -140,7 +140,7 @@ public:
 public: //»À °ü·Ã
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 
-    enum class BoneSpace { TRANSFORMATION, MANIPULATE, COMBINED };//, FINAL };
+    enum class BoneSpace { TRANSFORMATION, MANIPULATE, COMBINED , WORLD };//, FINAL };
 
     _float4x4 Get_BoneMatrix(BoneSpace eBoneSpace, AnimArg BoneArg);
     _float4x4* Get_BoneMatrixPtr(BoneSpace eBoneSpace, AnimArg BoneArg);
@@ -219,6 +219,9 @@ public:
 protected:
     void GUI_ShowLayerInfo();
     void GUI_SelectAnim();
+
+public:
+    void Render_BonePoint(_vector3 vPos, _float dotSize, ImU32 color);
 
 private: /* IKSolver */
     void Update_IK(_float dt);
