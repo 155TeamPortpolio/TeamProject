@@ -70,8 +70,9 @@ void CAnimToolPanel::Update_Panel(_float dt)
 	if (m_pGameInstance->Get_InputDev()->Key_Tap('U')) {
 		if (nullptr != m_pSelectAnimator) {
 			m_pSelectAnimator->Change_Animation(66)
-				.Loop(true, 0.95f)
-				.UseFinalLocalPose(false)
+				.Loop(false)
+				.StartAt(0.3f)
+				.EndAt(0.8f)
 				.Apply();
 		}
 	}
