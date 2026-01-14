@@ -95,7 +95,7 @@ void CBattleSystem::SetBattleCharacters(vector<CHARACTER> battleCharacters)
 	m_pBattlePlayer->SetBattleCharacters(battleCharacters);
 }
 
-void CBattleSystem::SetTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale)
+void CBattleSystem::StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale)
 {
 	// PLAYER, MONSTER 가 아닐때, 예외
 	if (ENUM(BATTLE_OBJ_TYPE::ENVOBJECT) <= ENUM(eObjType))
@@ -104,6 +104,10 @@ void CBattleSystem::SetTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _fl
 	// 값들이 음수일때, 예외
 	if (fDuration < 0.f || fScale < 0.f)
 		return;
+
+	string tagNowLevel = LevelManager()->Get_NowLevelKey();
+
+	ObjectManager()->Set_LayerTimeScale({ tagNowLevel , m_LayerTag[ENUM(eObjType)] }, fScale);
 
 	m_TimeScales[eObjType].isScaled = true;
 	m_TimeScales[eObjType].fCurPos = 0.f;
@@ -164,6 +168,7 @@ void CBattleSystem::CheckTimeScale(const _float dt)
 
 			if (TimeScale.fCurPos >= TimeScale.fDuration)
 			{
+				ObjectManager()->Reset_LayerTimeScale({ LevelManager()->Get_NowLevelKey(), m_LayerTag[ENUM(Pair.first)] });
 				TimeScale.isScaled = false;
 				TimeScale.fCurPos = 0.f;
 			}
