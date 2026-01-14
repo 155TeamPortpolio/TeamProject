@@ -9,13 +9,20 @@
 
 void CThugAssaulter_Idle::Enter(CThugAssaulter* pOwner)
 {
-	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Idle")
+	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_MainCity_Stand_Idle01")
 		.Loop(true)
 		.Apply();
 }
 
 void CThugAssaulter_Idle::Update(CThugAssaulter* pOwner, _float dt)
 {
+	//_vector3 vRootBoneMoveDelta = pOwner->Get_Component<CAnimator3D>()->Get_RootBoneMoveDelta();
+	//_quaternion qRot = pOwner->Get_Component<CTransform>()->Get_QuaternionRotate();
+	//pOwner->Get_Component<CCharacterController>()->Move_RootMotion(
+	//	vRootBoneMoveDelta,
+	//	qRot,
+	//	dt);
+
 }
 
 void CThugAssaulter_Idle::Exit(CThugAssaulter* pOwner)

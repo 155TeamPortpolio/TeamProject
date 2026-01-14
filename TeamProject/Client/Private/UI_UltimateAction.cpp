@@ -6,7 +6,7 @@
 #include "EventListener.h"
 #include "GaugeUI.h"
 
-const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "star3", "q" };
+const string CUI_UltimateAction::INSTANCENAMES[ENUM(CHILD::END)] = { "group1", "bg", "uv", "group2", "black", "star", "star1", "star2", "star3", "blink", "q" };
 
 HRESULT CUI_UltimateAction::Initialize_Prototype()
 {
@@ -43,10 +43,13 @@ HRESULT CUI_UltimateAction::Initialize(INIT_DESC* pArg)
 
             if (desc.eState == UI_ACTION_STATE::DISABLE)
                 Set_InteractState(INTERACT_STATE::DISABLE);
-            else if (desc.eState == UI_ACTION_STATE::ENABLE || desc.eState == UI_ACTION_STATE::AVAILABLE)
-                Execute();
+            else if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+                Execute(); 
             else if (desc.eState == UI_ACTION_STATE::EXECUTING)
+            {
                 Set_InteractState(INTERACT_STATE::DISABLE);
+                Set_Animation(CHILD::BLINK, 0);
+            } 
         });
 
     return S_OK;

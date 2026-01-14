@@ -19,7 +19,7 @@ namespace
 	{
 		static const AvatarAssetDesc table[] =
 		{
-			{"Unagi",   "Avatar_Female_Size02_Unagi"          },
+			{"Corin", "Corin"},
 			//{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
 			//{"Corin",   "Avatar_Female_Size01_Corin"          },
 			//{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
@@ -35,7 +35,7 @@ namespace
 	fs::path GetPlayerBaseDir(Avatar v)
 	{
 		const auto& d = GetAvatarAssetDesc(v);
-		return fs::path("..") / "bin" / "Resources" / "Model" / d.folder;
+		return fs::path("..") / "bin" / "Resources" / d.folder;
 	}
 }
 
@@ -46,7 +46,6 @@ HRESULT CUnagi::Initialize_Prototype()
 	Add_Component<CMaterial>();
 	Add_Component<CObjectContainer>();
 	Add_Component<CAnimator3D>();
-	//Add_Component<CCharacterController>();
 	return S_OK;
 }
 
@@ -63,7 +62,7 @@ void CUnagi::Awake()
 
 void CUnagi::Update(_float dt)
 {
-	//Get_Component<CAnimator3D>()->Update_Animation(dt);
+	Get_Component<CAnimator3D>()->Update_Animation(dt);
 }
 
 void CUnagi::ApplyAvatar(Avatar avatar)
@@ -71,18 +70,18 @@ void CUnagi::ApplyAvatar(Avatar avatar)
 	m_avatar = avatar;
 
 	const string levelName = "First_Level";
-	const auto&  desc      = GetAvatarAssetDesc(avatar);
-	const string fileName  = desc.fileName;
+	const auto& desc = GetAvatarAssetDesc(avatar);
+	const string fileName = desc.fileName;
 
 	const fs::path baseDir = GetPlayerBaseDir(avatar);
 
-	const string modelKey  = fileName + ".model";
-	const string matKey    = fileName + ".mat";
-	const string jsonKey   = fileName + "_Meta.json";
+	const string modelKey = fileName + ".model";
+	const string matKey = fileName + ".mat";
+	const string jsonKey = fileName + "_Meta.json";
 
 	const string modelPath = (baseDir / modelKey).string();
-	const string matPath   = (baseDir / matKey).string();
-	const string jsonPath  = (baseDir / jsonKey).string();
+	const string matPath = (baseDir / matKey).string();
+	const string jsonPath = (baseDir / jsonKey).string();
 
 	RES->Add_ResourcePath(modelKey, modelPath);
 	RES->Add_ResourcePath(matKey, matPath);

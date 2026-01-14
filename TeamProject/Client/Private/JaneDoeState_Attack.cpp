@@ -28,9 +28,11 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Get_State("UltimateAttack")->Set_Tag("UltimateAttack");
         m_pSubStateMachine->Get_State("BranchAttack")->Set_Tag("BranchAttack");
 
+        m_pSubStateMachine->Register_Transition("NormalAttack", "BranchAttack",
+            CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "Passion");
+
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
-
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("AttackEntryMode");
     pOwner->Get_StateMachine()->Set_Int("AttackEntryMode", 0);
 
@@ -52,11 +54,32 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
         break;
     }
+
+    m_fHoldTime = 0.f;
+
     __super::Enter(pOwner);
 }
 
 void CJaneDoeState_Attack::Update(CJaneDoe * pOwner, _float dt)
 {
+    if (true/*pOwner->Has_PassionSkill()*/)
+    {
+        if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Hold(MOUSE_BTN::LB))
+        {
+            m_fHoldTime += dt;
+            if (m_fHoldTime >= 0.3f)
+            {
+                m_pSubStateMachine->Set_Trigger("Passion");
+                m_fHoldTime = 0.f;
+                pOwner->Set_PassionSkill(false);
+            }
+        }
+        else
+        {
+            m_fHoldTime = 0.f;
+        }
+    }
+
     if (pOwner->Get_TargetHandle().isValid())
     {
         auto target = pOwner->Get_TargetHandle().Get();

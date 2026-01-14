@@ -20,6 +20,9 @@ public:
     void  Set_Passion(_float fPassionGauge) { m_fPassionGauge = fPassionGauge; }
     _bool Is_Passion() const { return m_eCombatState == COMBATSTATE::PASSION; }
 
+    void  Set_PassionSkill(_bool bAvailable) { m_bPassionSkillAvailable = bAvailable; }
+    _bool Has_PassionSkill() const { return m_bPassionSkillAvailable; }
+
 public:
     void Process_Passion(_float fPassionGauge);
     void Process_PassionSkill(_bool bAvailable);
