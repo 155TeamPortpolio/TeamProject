@@ -31,6 +31,7 @@ private:
 	UI_HANDLE		m_hChildren[ENUM(CHILD::END)];
 
 	INTERACT_STATE	m_interactState = { INTERACT_STATE::ENABLE };
+	_bool			m_isVisualInitialized = {};
 
 private:
 	void Set_InteractState(INTERACT_STATE state);
@@ -38,16 +39,16 @@ private:
 
 	void Refresh_Visual();			// 상태 변경시에만 호출
 
-	void Apply_DisableVisual();
+	_bool Apply_DisableVisual();
 	void Apply_EnableVisual();
 
-	void Set_Alive(CHILD child, _bool isAlive);
-	void Set_Color(CHILD child, _float4 vColor);
-	void Set_Animation(CHILD child, _int iIndex);
+	_bool Set_Alive(CHILD child, _bool isAlive);
+	_bool Set_Color(CHILD child, _float4 vColor);
+	_bool Set_Animation(CHILD child, _int iIndex);
 
 private:
 	template<typename Func>
-	void ForChild(CHILD child, Func&& func);
+	_bool ForChild(CHILD child, Func&& func);
 
 public:
 	static  CGameObject* Create();
@@ -58,11 +59,12 @@ public:
 NS_END
 
 template<typename Func>
-inline void CUI_UltimateAction::ForChild(CHILD child, Func&& func)
+inline _bool CUI_UltimateAction::ForChild(CHILD child, Func&& func)
 {
 	auto& handle = m_hChildren[ENUM(child)];
 	if (!handle.isValid())
-		return;
+		return false;
 
 	func(handle.Get());
+	return true;
 }
