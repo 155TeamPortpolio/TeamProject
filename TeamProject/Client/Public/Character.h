@@ -41,15 +41,12 @@ public:
         _float fRotateSpeed = 10.f;
     };
 
-    struct GaugeDesc
+    struct EnergyDesc
     {
-        _float      fCurrentGauge = { 0.f };
-        _float      fPrevGauge = { 0.f };
-        _float      fGaugeWeight = { 1.f };
-        _float      fSpecialGauge = { 60.f };
-        void        Set_CurrentGauge(_float fGauge) { fCurrentGauge = fGauge; }
-        void        Set_GaugeWeight(_float fWeight) { fGaugeWeight = fWeight; }
-        void        Set_SpecialGauge(_float fGauge) { fSpecialGauge = fGauge; }
+        _float      fCurrentEnergy = { 0.f };
+        _float      fPrevEnergy = { 0.f };
+        _float      fEnergyWeight = { 1.f };
+        _float      fSpecialEnergy = { 60.f };
     };
 
 public:
@@ -61,17 +58,19 @@ protected:
     virtual ~CCharacter() DEFAULT;
 
 public:
-    // ������ �ý���
-    const GaugeDesc& Get_GaugeDesc() const { return m_tGauge; }
-    void    Set_GaugeDesc(GaugeDesc desc) { m_tGauge = desc; }
-    _float  Get_MaxGauge() { return MAX_SPECIALGAUGE; }
-
-    // ����
+    // HP
     _float  Get_HP() const { return m_fCurrentHP; }
     _float  Get_MaxHP() const { return m_fMaxHP; }
     void    Set_HP(_float fHp) { m_fCurrentHP = fHp; }
     void    Set_MaxHP(_float fMaxHp) { m_fMaxHP = fMaxHp; }
-
+    // 특수 스킬
+    const EnergyDesc& Get_EnergyDesc() const { return m_tEnergy; }
+    void    Set_EnergyDesc(EnergyDesc desc) { m_tEnergy = desc; }
+    void    Set_CurrentEnergy(_float fEnergy) { m_tEnergy.fCurrentEnergy = fEnergy; }
+    void    Set_EnergyWeight(_float fWeight) { m_tEnergy.fEnergyWeight = fWeight; }
+    void    Set_SpecialEnergy(_float fEnergy) { m_tEnergy.fSpecialEnergy = fEnergy; }
+    _float  Get_MaxEnergy() { return MAX_ENERGY; }
+    // 궁극기
     _float  Get_Decibel() const { return m_fDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
     void    Set_Decibel(_float fDecibel) { m_fDecibel = fDecibel; }
@@ -98,10 +97,10 @@ public:
     _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
     void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
     void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
-    
-    CAnimator3D*          Get_Animator() { return m_pAnimator; }
+
+    CAnimator3D* Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
-    const string&         Get_Name() const { return m_strAnimName; }
+    const string& Get_Name() const { return m_strAnimName; }
 
     SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine���� ������ switchtype*
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
@@ -133,8 +132,10 @@ public:
     virtual void    On_Move(const InputInfo& inputInfo);
     virtual void    On_Attack();
     virtual void    On_Evade();
-    virtual void    On_SwitchIn(SWITCH eType)   PURE;   //*����ġ �� ��*
-    virtual void    On_SwitchOut()              PURE;   //*����ġ �ƿ� ��*
+    virtual void    On_SwitchIn(SWITCH eType)   PURE;
+    virtual void    On_SwitchOut()              PURE;
+    virtual void    On_Ultimate() { m_fDecibel = 0.f; }
+    virtual void    On_Special() {}; // 개별 구현 
 
 public:
     void     Rotate(_vector3 vDirection);
@@ -147,10 +148,12 @@ public:
     void     Buffer_Evade() { m_bEvadeBuffer = true; }
     _bool    Use_EvadeBuffer();
 
+    _bool    Can_Ultimate();
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
-    void    Update_Gauge(_float dt);
+    void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
 
 protected:
@@ -159,17 +162,21 @@ protected:
     string                m_strAnimName = "";   //*�ִϸ��̼� �����̸�*
     string                m_strName = "";       //*ĳ���� �̸�*
 
-    // ����
-    GaugeDesc   m_tGauge = {};
-    static  constexpr _float    MAX_SPECIALGAUGE = { 120.f };
+    // HP
     _float          m_fMaxHP = { 100.f };
     _float          m_fCurrentHP = { 100.f };
+    // 특수 스킬
+    EnergyDesc   m_tEnergy = {};
+    static  constexpr _float    MAX_ENERGY = { 120.f };
+    // 궁극기
+    _float          m_fDecibel = {};
+    static constexpr _float MAX_DECIBEL = { 3000 };
+
     _float          m_fAttackPower = { 10.f };
     _float          m_fDefense = { 5.f };
     _float          m_fMoveSpeed = { 1.f };
     _uint           m_iCurrentLevel = { 1 };            //*ĳ���� ����*
-    _float          m_fDecibel = {};
-    static constexpr _float MAX_DECIBEL = { 3000 };
+
     // �Է�
     InputInfo       m_inputInfo;
     _bool           m_bIsAttack = { false };
