@@ -130,12 +130,13 @@ void CUI_UltimateAction::Refresh_Visual()
 
 _bool CUI_UltimateAction::Apply_DisableVisual()
 {
-    _bool isChanged = { false };
+    _bool isApplied = { false };
 
-    isChanged |= Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
-    isChanged |= Set_Color(CHILD::Q, UI_GRAY_LIGHTEST);
-    isChanged |= Set_Alive(CHILD::UV, false);
-    return isChanged;
+    isApplied |= Set_Color(CHILD::BG, UI_GRAY_MEDIUM);
+    isApplied |= Set_Color(CHILD::Q, UI_GRAY_LIGHTEST);
+    isApplied |= Set_Alive(CHILD::UV, false);
+
+    return isApplied;
 }
 
 void CUI_UltimateAction::Apply_EnableVisual()
