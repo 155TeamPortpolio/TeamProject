@@ -57,6 +57,7 @@ public:
     OBJECT_HANDLE   GetCurCharacterHandle();
     HRESULT         SwitchCharacter(CHARACTER character = CHARACTER::END);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
+    _int            GetParryingCount() const { return m_iParryingCount; }
 
 public:
     HRESULT Initialize();
