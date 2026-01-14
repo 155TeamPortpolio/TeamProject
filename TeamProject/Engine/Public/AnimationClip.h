@@ -18,7 +18,7 @@ public:
 	_float TranslateAnimateMatrix(vector<_float4x4>& transfomationMatrices,
 		_float CurrentTrackPosition,
 		_float dt,
-		_bool isLoop, _float fLoopEnd,
+		_bool isLoop, _float fEndAt, _float fStartAt,
 		_bool* isWarpped,
 		_bool* isAnimEnd,
 		_float* outProgress,
