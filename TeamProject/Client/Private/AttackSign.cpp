@@ -77,7 +77,6 @@ void CAttackSign::Update(_float dt)
 			m_fElapsedTime += dt;
 			_float t = m_fElapsedTime / m_fDuration;
 		
-			m_fAlpha = Math::Lerp(1.f, 0.f, Math::EaseInQuad(t));
 			m_fWidth = Math::Lerp(300.f, static_cast<_float>(g_iWinSizeX), Math::EaseOutSine(t));
 			m_fHeight = Math::Lerp(40.f, 1.f, Math::EaseOutSine(t));
 		}
@@ -88,11 +87,19 @@ void CAttackSign::Late_Update(_float dt)
 {
 }
 
-void CAttackSign::Active()
+void CAttackSign::Active(_bool parryEnable)
 {
 	m_isAlive = true;
 	m_IsActive = true;
 	m_fElapsedTime = 0.f;
+
+	if (parryEnable)
+	{
+		//true로 들어오면 배틀 시스템을 통해 실제로 플레이어 쪽에서 패링이 가능한지 확인해야함
+		m_vColor = _float3(1.f, 0.4f, 0.f);
+	}
+	else
+		m_vColor = _float3(1.f, 0.f, 0.f);	//패링 불가능
 }
 
 CAttackSign* CAttackSign::Create()

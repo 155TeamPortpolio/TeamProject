@@ -102,6 +102,8 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureSlotModule.eGreen = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("y").get<_uint>());
 	m_TextureSlotModule.eBlue = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("z").get<_uint>());
 	m_TextureSlotModule.eAlpha = static_cast<TEXTURE_SLOT_MODULE::CHANNEL_USAGE>(json.at("channel_usage").at("w").get<_uint>());
+	m_TextureSlotModule.iColorMode = json.value("color_mode", 0);
+	m_TextureSlotModule.iRGBMask = json.value("rgb_mask", 0);
 
 	/* Color Module */
 	m_ColorModule.eEaseType = static_cast<EaseType>(json.value("color_ease_type", 0));
@@ -183,6 +185,8 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"y",m_TextureSlotModule.vChannelUsageParam.y},
 		{"z",m_TextureSlotModule.vChannelUsageParam.z},
 		{"w",m_TextureSlotModule.vChannelUsageParam.w}}},
+		{"color_mode",m_TextureSlotModule.iColorMode},
+		{"rgb_mask",m_TextureSlotModule.iRGBMask},
 
 		/* Color Module */
 		{"color_ease_type",ENUM(m_ColorModule.eEaseType)},
@@ -374,6 +378,15 @@ void CMeshNode_Edit::SetUp_MeshEffect()
 
 		if (Helper::DrawEnumCombo("Main Usage", m_TextureSlotModule.eMainUsage, 100.f))
 			m_TextureSlotModule.iMainUsageParam = ENUM(m_TextureSlotModule.iMainUsageParam);
+
+		if (TEXTURE_SLOT_MODULE::MAIN_USAGE::AS_COLOR == m_TextureSlotModule.eMainUsage)
+		{
+			static _bool useRGBMask = false;
+
+			ImGui::DragInt("Color Mode", reinterpret_cast<_int*>(&m_TextureSlotModule.iColorMode));
+			ImGui::Checkbox("RGB Mask", &useRGBMask);
+			m_TextureSlotModule.iRGBMask = useRGBMask ? 1 : 0;
+		}
 
 		if (Helper::DrawEnumCombo("Red", m_TextureSlotModule.eRed, 100.f))
 			m_TextureSlotModule.vChannelUsageParam.x = ENUM(m_TextureSlotModule.eRed);

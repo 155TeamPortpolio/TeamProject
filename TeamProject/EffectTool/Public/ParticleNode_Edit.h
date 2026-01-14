@@ -46,6 +46,7 @@ private:
     string m_TexturePath{};
 
     /*Main Params*/
+    _uint m_iRGBMaskMode{};
     CParticleSystem::SPAWN_SHAPE m_eSpawnShape{};
     CParticleSystem::COLOR_MODE m_eColorMode{};
     _bool m_IsWorld = true;

@@ -201,6 +201,7 @@
     <ClInclude Include="..\public\JaneDoeState_BackStep.h" />
     <ClInclude Include="..\public\JaneDoeState_Dash.h" />
     <ClInclude Include="..\public\JaneDoeState_Evade.h" />
+    <ClInclude Include="..\public\JaneDoeState_ExAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Idle.h" />
     <ClInclude Include="..\public\JaneDoeState_Move.h" />
     <ClInclude Include="..\public\JaneDoeState_NormalAttack.h" />
@@ -210,10 +211,10 @@
     <ClInclude Include="..\public\JaneDoeState_SwitchInExAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInParryAid.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchOut.h" />
+    <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\MainCity_Level.h" />
     <ClInclude Include="..\public\MapAnimObject.h" />
-    <ClInclude Include="..\public\MapInvisibleWall.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\public\OfficeMeowState_Idle.h" />
     <ClInclude Include="..\public\OfficeMeowState_Think.h" />
     <ClInclude Include="..\public\OfficeMeowState_Welcome.h" />
+    <ClInclude Include="..\Public\Sacrifice_Orb.h" />
     <ClInclude Include="..\Public\Scott_Level.h" />
     <ClInclude Include="..\public\ServiceNpc.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h" />
@@ -248,7 +250,6 @@
     <ClInclude Include="..\Public\LogoLevel.h" />
     <ClInclude Include="..\Public\MapData_Defines.h" />
     <ClInclude Include="..\Public\MapLoader_Helper.h" />
-    <ClInclude Include="..\public\MapDataCloud.h" />
     <ClInclude Include="..\Public\Miyabi.h" />
     <ClInclude Include="..\Public\MiyabiState_Attack.h" />
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h" />
@@ -392,6 +393,9 @@
     <ClCompile Include="..\Private\CorinState_SwitchInNormal.cpp" />
     <ClCompile Include="..\Private\CorinState_SwitchOut.cpp" />
     <ClCompile Include="..\Private\CorinState_Walk.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_ExAttack.cpp" />
+    <ClCompile Include="..\private\JaneDoeState_UltimateAttack.cpp" />
+    <ClCompile Include="..\Private\Sacrifice_Orb.cpp" />
     <ClCompile Include="..\Private\MainCity_Level.cpp" />
     <ClCompile Include="..\Private\Scott_Level.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
@@ -442,7 +446,6 @@
     <ClCompile Include="..\Private\LoadingLevel.cpp" />
     <ClCompile Include="..\Private\UI_Logo.cpp" />
     <ClCompile Include="..\Private\LogoLevel.cpp" />
-    <ClCompile Include="..\private\MapDataCloud.cpp" />
     <ClCompile Include="..\private\MaskUI.cpp" />
     <ClCompile Include="..\Private\Miyabi.cpp" />
     <ClCompile Include="..\Private\MiyabiState_Attack.cpp" />

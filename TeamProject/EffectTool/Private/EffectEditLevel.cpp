@@ -14,6 +14,7 @@
 #include "ParticleNode_Edit.h"
 #include "MeshNode_Edit.h"
 #include "TrailNode_Edit.h"
+#include "ToolModel.h"
 
 
 CEffectEditLevel::CEffectEditLevel(const string& LevelKey)
@@ -41,6 +42,7 @@ HRESULT CEffectEditLevel::Awake()
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_TrailNode", CTrailNode_Edit::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolLight", CToolLight::Create());
 	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolGrid", CToolGrid::Create());
+	pProto->Add_ProtoType("EffectEdit_Level", "Proto_GameObject_ToolModel", CToolModel::Create());
 
 	//pResource->Add_ResourcePath("test.json", "../Bin/Resource/Data/test.json");
 	//pResource->Load_EffectAsset(G_GlobalLevelKey, "test.json");
@@ -71,6 +73,9 @@ HRESULT CEffectEditLevel::Awake()
 	CGameObject* Effect3 = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_EffectContainer" })
 		.Build("EffectContainer");
 
+	CGameObject* Model = Builder::Create_Object({ "EffectEdit_Level","Proto_GameObject_ToolModel" })
+		.Build("Model");
+
 	LIGHT_INIT_DESC LightDesc{};
 	LightDesc.eType = LIGHT_TYPE::DIRECTIONAL;
 	LightDesc.vDiffuse = _float4{ 1.f,1.f,1.f,1.f };
@@ -83,6 +88,7 @@ HRESULT CEffectEditLevel::Awake()
 	pObjMgr->Add_Object(Effect, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect2, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Effect3, { "EffectEdit_Level","Edit_Layer" });
+	pObjMgr->Add_Object(Model, { "EffectEdit_Level","Edit_Layer" });
 	pObjMgr->Add_Object(Light, { "EffectEdit_Level","Light_Layer" });
 	pObjMgr->Add_Object(Camera, { "EffectEdit_Level","Camera_Layer" });
 

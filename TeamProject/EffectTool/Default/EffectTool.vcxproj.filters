@@ -49,6 +49,9 @@
     <Filter Include="02. Object\EffectContainer_Edit\EffectNode\TrailNode">
       <UniqueIdentifier>{bdd3d4d3-e76c-42f3-b79d-ebd85a239607}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. Object\ToolModel">
+      <UniqueIdentifier>{142b27c3-4f5f-4d76-9bb9-aad4f2c431b1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -144,6 +147,9 @@
     <ClInclude Include="..\Public\TrailNode_Edit.h">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ToolModel.h">
+      <Filter>02. Object\ToolModel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -220,6 +226,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\TrailNode_Edit.cpp">
       <Filter>02. Object\EffectContainer_Edit\EffectNode\TrailNode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ToolModel.cpp">
+      <Filter>02. Object\ToolModel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
