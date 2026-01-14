@@ -55,7 +55,7 @@ void CMapTriggerObject::Late_Update(_float dt)
 
 void CMapTriggerObject::OnTriggerEnter()
 {
-	MSG_BOX("ºÎµúÈû");
+	//MSG_BOX("ºÎµúÈû");
 }
 
 void CMapTriggerObject::OnTriggerExit()
@@ -64,7 +64,7 @@ void CMapTriggerObject::OnTriggerExit()
 
 void CMapTriggerObject::OnCollisionEnter()
 {
-	MSG_BOX("ÄÝ¸®Á¯µé¾î¿È");
+	//MSG_BOX("ÄÝ¸®Á¯µé¾î¿È");
 }
 
 void CMapTriggerObject::Export_ObjectData(void* pDesc)
