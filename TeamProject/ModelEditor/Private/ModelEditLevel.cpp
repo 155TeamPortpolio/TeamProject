@@ -22,11 +22,12 @@ HRESULT CModelEditLevel::Awake()
     IObjectService* pObjMgr = m_pGameInstance->Get_ObjectMgr();
     CGameObject* Camera = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_EditCamera" }).Camera({ (float)g_iWinSizeX / (float)g_iWinSizeY }).Position({ 0.f, 0.f, -5.f }).Build("Default_Camera");
     
-    m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
-    m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
 	auto Model = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_EditModel" }).Build("Parse Obj");
 	m_pGameInstance->Get_ObjectMgr()->Add_Object(Model, { "ModelEdit_Level","Model_Layer"});
 	pObjMgr->Add_Object(Camera, { "ModelEdit_Level", "Camera_Layer" });
+
+	m_pGameInstance->Get_CameraMgr()->Set_MainCam(Camera->Get_Component<CCamera>());
+	m_pGameInstance->Get_CameraMgr()->Set_ShadowCam(Camera->Get_Component<CCamera>());
 	return S_OK;
 }
 
