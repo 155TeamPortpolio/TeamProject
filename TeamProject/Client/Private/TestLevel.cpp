@@ -78,10 +78,9 @@ HRESULT CTestLevel::Initialize()
 	//if (FAILED(CBattleSystem::GetInstance()->LoadMonsterCreationTable("../../Resources/Data/MonsterTable/MonsterTable.csv")))
 	//	MSG_BOX("Failed to Load MonsterTable!");
 
-
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
-
+	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
 	return S_OK;
 }
 
@@ -370,6 +369,7 @@ void CTestLevel::Ready_TestObject()
 	// =====================TestCloud=========================
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestCloud", CTestCloud::Create());
 	auto testCloud = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestCloud" })
+		.Scale(_float3(2.f, 2.f, 2.f))
 		.Build("Test_Cloud");
 	
 	objMgr->Add_Object(testCloud, { "Test_Level", "Etc_Layer" });
