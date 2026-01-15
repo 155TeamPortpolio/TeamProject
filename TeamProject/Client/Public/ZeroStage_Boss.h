@@ -1,6 +1,13 @@
 #pragma once
 #include "Stage.h"
 
+NS_BEGIN(Engine)
+class CGameInstance;
+class CUI_Object;
+class IProtoService;
+class IObjectService;
+NS_END
+
 NS_BEGIN(Client)
 class CZeroStage_Boss :
     public CStage
@@ -20,6 +27,12 @@ public:
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
 
 private:
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
+	void Rake_MapResources();
+
+private:
+	class CGameInstance* m_pGameInstance{};
+	class CCamDirector* m_pCamDirector{};
 
 public:
 	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);

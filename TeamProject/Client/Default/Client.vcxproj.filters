@@ -643,6 +643,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Normal\ZeroStage_1_1">
+      <UniqueIdentifier>{31799f7e-c42c-4ec3-9e5e-e5a6f39f378c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="03. Utility\06. FieldSystem">
       <UniqueIdentifier>{8f93581d-d66b-4732-9c1c-97298cb6889a}</UniqueIdentifier>
     </Filter>
@@ -672,6 +675,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Plane\EnemyStatus">
       <UniqueIdentifier>{168323c4-d264-4f01-9868-adf2a0a0376d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
+      <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1258,6 +1264,9 @@
     <ClInclude Include="..\Public\UI_WorldToScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ZeroStage_1_1.h">
+      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClInclude>
@@ -1287,6 +1296,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_EnemyStatus.h">
       <Filter>02. GameObject\UI\02. 3D\Plane\EnemyStatus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Hit.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamDirectorData.h">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamTypes.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1852,7 +1870,9 @@
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\private\ZeroStage_1_1.cpp">
+      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
+    </ClCompile>
     <ClCompile Include="..\Private\FieldSystem.cpp">
       <Filter>03. Utility\06. FieldSystem</Filter>
     </ClCompile>
@@ -1879,6 +1899,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane\EnemyStatus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Hit.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>

@@ -139,6 +139,8 @@ void CCharacter::Priority_Update(_float dt)
 {
 	if (InputDevice()->Key_Tap('T'))
 		m_bTest = !m_bTest;
+	if (InputDevice()->Key_Tap('H'))
+		Take_Damage(DAMAGE_TYPE::NORMAL, 1.f);
 }
 
 void CCharacter::Update(_float dt)
@@ -174,6 +176,10 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 		m_ParryableTargets.insert(pOther);
+	}
+	else if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+	{
+		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
 	}
 	//MSG_BOX("OnTriggerEnter");
 }
@@ -228,9 +234,12 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 
-	if (nullptr == pObjectContainer)	return E_FAIL;
-	if (nullptr == pDesc) return E_FAIL;
-	if (nullptr == pDesc->pOwnerAnimator) return E_FAIL;
+	if (nullptr == pObjectContainer)	
+		return E_FAIL;
+	if (nullptr == pDesc) 
+		return E_FAIL;
+	if (nullptr == pDesc->pOwnerAnimator) 
+		return E_FAIL;
 
 	string strLevel = LevelManager()->Get_NowLevelKey();
 
@@ -253,11 +262,12 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	string strAttackName = pDesc->tagName + "_AttackCollider";
 
 	CGameObject* pAttackCollider = Builder::Create_Object(
-		{ strLevel, "Proto_GameObject_CharacterAttackCollider" })
+		{ G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider" })
 		.RigidBody(rigidDesc)
 		.Collider(colliderDesc)
 		.Build(strAttackName);
-	if (nullptr == pAttackCollider)	return E_FAIL;
+	if (nullptr == pAttackCollider)
+		return E_FAIL;
 
 	_int iAttackColliderIndex = { -1 };
 	iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);
@@ -362,6 +372,13 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 	return pCollider->Get_Component<CCollider>()->Get_CompActive();
 }
 
+void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
+{
+	if (Is_Invincible()) return;
+	m_fCurrentHP -= fDamage;
+	On_Hit(eType);
+}
+
 _bool CCharacter::Is_OppositeInput() const
 {
 	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
@@ -441,6 +458,12 @@ void CCharacter::Update_Decibel(_float dt)
 		return;
 	}
 	m_fCurrentDecibel += dt * 750.f;
+}
+
+void CCharacter::Update_Invincible(_float dt)
+{
+	if (m_fInvincibleTimer > 0.f)
+		m_fInvincibleTimer -= dt;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)

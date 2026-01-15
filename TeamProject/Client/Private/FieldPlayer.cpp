@@ -7,12 +7,13 @@
 #include "CharacterController.h"
 #include "StateMachine.h"
 
+#include "FieldSystem.h"
+
 #include "FieldCharacter.h"
 #include "Belle.h"
 
 #include "Camera.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
+
 
 CFieldPlayer::CFieldPlayer()
 {
@@ -23,12 +24,22 @@ OBJECT_HANDLE CFieldPlayer::Get_CurCharacterHandle()
 	return m_pCurrentCharacter->Get_Handle(); 
 }
 
+void CFieldPlayer::Active_Field()
+{
+	m_pCurrentCharacter->Active_Character();
+}
+
+void CFieldPlayer::DeActive_Field()
+{
+	m_pCurrentCharacter->DeActive_Character();
+}
+
 HRESULT CFieldPlayer::Initialize()
 {
 	Initialize_CharacterPrototype();
 	m_pCurrentCharacter = Create_Character();
 
-	//dynamic_cast<COrbitCam*>(CCamDirector::GetInstance()->GetCamHandle(CamType::Orbit).Get())->SetTarget(m_pCurrentCharacter);
+	CFieldSystem::GetInstance()->SetFieldPlayer(this);
 	return S_OK;
 }
 

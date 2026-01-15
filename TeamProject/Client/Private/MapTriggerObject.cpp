@@ -30,11 +30,9 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-
-	//Get_Component<CCollider>()->Set_Rotation
-
 	MAPOBJ_DESC* pObjDesc = static_cast<MAPOBJ_DESC*>(pArg);
 	
+	Ready_TriggerEvent(pObjDesc);
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
 
@@ -100,6 +98,7 @@ void CMapTriggerObject::Render_GUI()
 
 	ImGui::PopID();
 }
+
 
 void CMapTriggerObject::Ready_PlaneUI(const MAPOBJ_DESC* pObjDesc)
 {
@@ -185,6 +184,33 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 			.Build("meshUI");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "Layer_UI" });
+	}
+}
+
+void CMapTriggerObject::Ready_TriggerEvent(const MAPOBJ_DESC* pObjDesc)
+{
+	auto iter = pObjDesc->SlotDataValues.find("Trigger");
+
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = {};
+		string AssetKey = {};
+		_float3 vOffset = {};
+		for (auto& tFieldData : iter->second)
+		{
+			if (tFieldData.TagName == "EventType")
+			{
+				if (tFieldData.TagName == "Enter")
+					m_eEventType = MapTriggerType::ENTER;
+				else if (tFieldData.TagName == "Stay")
+					m_eEventType = MapTriggerType::STAY;
+				else if (tFieldData.TagName == "Exit")
+					m_eEventType = MapTriggerType::EXIT;
+				else if (tFieldData.TagName == "Interect")
+					m_eEventType = MapTriggerType::INTERECT;
+			}
+			else if (tFieldData.TagName == "EventTag")
+				m_EventTag = *GetSlotValue<string>(tFieldData.defaultvalue);
+		}
 	}
 }
 

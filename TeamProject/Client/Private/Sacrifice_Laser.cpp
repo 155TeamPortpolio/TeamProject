@@ -57,7 +57,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(1.f, 0.f, 0.f));
+	offsetMatrix.Translation(_vector3(0.5f, 0.1f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);
@@ -142,7 +142,13 @@ void CSacrifice_Laser::Update(_float dt)
 
 void CSacrifice_Laser::Late_Update(_float dt)
 {
-	for(auto& child : Get_Children());
+}
+
+void CSacrifice_Laser::Render_GUI()
+{
+	__super::Render_GUI();
+
+	ImGui::Text("Target Pos : %f,%f,%f", m_vTargetPos.x, m_vTargetPos.y, m_vTargetPos.z);
 }
 
 void CSacrifice_Laser::ActiveLaser(_uint mode)
@@ -160,13 +166,14 @@ void CSacrifice_Laser::ActiveLaser(_uint mode)
 		{
 			if (info.isOnField)
 			{
-				vTargetPos = info.vPos;
-				vTargetPos.y += 1.f;
+				m_vTargetPos = info.vPos;
+				m_vTargetPos.y += 1.f;
 				break;
 			}
 		}
 
-		_vector3 vDir = vTargetPos - _vector3(m_pTransform->Get_WorldPos());
+		_vector3 vDir = m_vTargetPos - _vector3(m_pTransform->Get_WorldPos());
+		vDir.y = 0.f;
 		vDir.Normalize();
 		m_vTargetDir = vDir;
 	}

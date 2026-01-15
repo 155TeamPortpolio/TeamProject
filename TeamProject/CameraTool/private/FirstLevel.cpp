@@ -47,10 +47,10 @@ HRESULT CFirstLevel::Awake()
 	auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceReference(objHandle);
-	camPanel->SetAvatarUI(Avatar::Corin);
+	camPanel->SetAvatarUI(Avatar::JaneDoe);
 
 	auto avatar = static_cast<CUnagi*>(demoModel);
-	avatar->ApplyAvatar(Avatar::Corin);
+	avatar->ApplyAvatar(Avatar::JaneDoe);
 
 	camPanel->SetOnAvatarChanged([avatar](Avatar p)
 		{

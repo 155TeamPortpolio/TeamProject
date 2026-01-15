@@ -15,6 +15,7 @@
 #include "CorinState_Evade.h"
 #include "CorinState_SwitchIn.h"
 #include "CorinState_SwitchOut.h"
+#include "CorinState_Hit.h"
 
 #include "FootIK.h"
 
@@ -40,8 +41,8 @@ HRESULT CCorin::Initialize_Prototype()
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin_Meta.json",
 		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Corin.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Corin.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
 	return S_OK;
 }
 
@@ -58,8 +59,8 @@ void CCorin::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Corin.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size01_Corin_Meta.json");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Corin.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size01_Corin_Meta.json");
 
 	//m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
@@ -159,6 +160,12 @@ void CCorin::On_Special()
 	}
 	//m_pStateMachine->Set_Int("AttackEntryMode", 2);
 	//m_pStateMachine->Set_Trigger("Attack");
+}
+
+void CCorin::On_Hit(DAMAGE_TYPE eType)
+{
+	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
+	m_pStateMachine->Set_Trigger("ToHit");
 }
 
 void CCorin::Update_States()
@@ -264,13 +271,9 @@ void CCorin::Process_EndState(const string& strCurrentState)
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
-	else if (strCurrentState == "SwitchIn")
+	else if (strCurrentState == "Hit")
 	{
-		//CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
-		//	m_pStateMachine->Get_CurrentState()
-		//	);
-		//if (!pSwitchIn)	return;
-		//IHState<CCorin>* pSwitchInType = 
+
 	}
 }
 
@@ -301,6 +304,7 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CCorinState_SwitchIn::Create());	//*SwitchIn*
 	m_pStateMachine->Register_State("SwitchOut", CCorinState_SwitchOut::Create());//*SwtichOut*
+	m_pStateMachine->Register_State("Hit", CCorinState_Hit::Create());
 
 	return S_OK;
 }
@@ -351,6 +355,13 @@ HRESULT CCorin::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	// Hit
+	m_pStateMachine->Register_AnyStateTransition("Hit",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToHit");
+
+	m_pStateMachine->Register_Transition("Hit", "Idle",
+		CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
