@@ -240,6 +240,7 @@ void CStateMachine<Type>::Update_AnimProgress()
 
 	m_pCurrentState->m_IsAnimProgressUpdate = false;	
 	_float fProgress = pAnimator->Get_CurAnimDuration();
+	if (pAnimator->isCurrentAnimEnd())	fProgress = 1.f;
 	Update_AnimProgress_Recursive(m_pCurrentState, fProgress);
 }
 

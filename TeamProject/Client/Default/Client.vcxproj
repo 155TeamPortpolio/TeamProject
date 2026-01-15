@@ -193,7 +193,6 @@
     <ClInclude Include="..\Public\CorinState_Walk.h" />
     <ClInclude Include="..\public\DataBase.h" />
     <ClInclude Include="..\Public\Enemy.h" />
-    <ClInclude Include="..\public\DebugCamTrace.h" />
     <ClInclude Include="..\public\EnemyAttackCollider.h" />
     <ClInclude Include="..\public\EnemyNormal.h" />
     <ClInclude Include="..\public\EnemyTriggerCollider.h" />
@@ -425,7 +424,6 @@
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
     <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
-    <ClCompile Include="..\private\DebugCamTrace.cpp" />
     <ClCompile Include="..\private\EnemyAttackCollider.cpp" />
     <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />

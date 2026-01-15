@@ -14,6 +14,7 @@
 
 //character class
 #include "Character.h"
+#include "CharacterAttackCollider.h"
 #include "Corin.h"
 #include "JaneDoe.h"
 
@@ -80,8 +81,9 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
-	/* Evade & EvadePerfect */
 	UI_ACTION_DESC desc{};
+
+	/* Evade & EvadePerfect */
 	if (m_pCurrentCharacter->Get_EvadeCooldown() > 0.f)
 	{
 		desc.eType = UI_ACTION_TYPE::EVADEPERFECT;
@@ -241,14 +243,23 @@ void CBattlePlayer::Process_Evade()
 
 void CBattlePlayer::Process_Switch()
 {
+	/* ParryCount */
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::SWITCH;
+	desc.eState = Can_Switch() ? UI_ACTION_STATE::AVAILABLE : desc.eState = UI_ACTION_STATE::ENABLE;
 	if (InputDevice()->Key_Tap(VK_SPACE))
 	{
 		if (Can_Switch())
 		{
+			desc.eState = UI_ACTION_STATE::EXECUTING;
 			SwitchCharacter();
+			m_iParryingCount--;
+			if (m_iParryingCount == 0) m_iParryingCount = 6;
 			m_fSwitchCooldown = SWITCH_COOLDOWN;
 		}
 	}
+	desc.fFillAmount = m_iParryingCount / 6.f;
+	EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 }
 
 void CBattlePlayer::Process_Ultimate()
@@ -327,10 +338,12 @@ void CBattlePlayer::Update_Status()
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
-
 	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Corin", CCorin::Create())))
 		return E_FAIL;
 	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
+		return E_FAIL;
+
+	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -391,7 +404,7 @@ void CBattlePlayer::NotifyCharacterSwitchOut()
 	m_vSwitchLook = m_pCurrentCharacter->Get_Component<CTransform>()->Dir(STATE::LOOK);
 	m_vSwitchPosition = m_pCurrentCharacter->Get_Component<CCharacterController>()->Get_FootPosition()
 		+ XMVectorScale(vRight, 0.5f)
-		- XMVectorScale(m_vSwitchLook, 4.f)
+		- XMVectorScale(m_vSwitchLook, 6.f)
 		+ XMVectorSet(0.f, 1.f, 0.f, 0.f);
 
 	m_pCurrentCharacter->On_SwitchOut();

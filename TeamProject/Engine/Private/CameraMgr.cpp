@@ -50,7 +50,7 @@ void CCameraMgr::SetMainCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
     m_baseCamObj = camObjHandle;
 
     if (!m_overrides.empty()) return;
-    //BeginBlendTo(m_baseCamObj, blendSec);
+    BeginBlendTo(m_baseCamObj, blendSec);
 }
 
 _uint CCameraMgr::PushCamObj(OBJECT_HANDLE camObjHandle, _float blendSec)
@@ -84,7 +84,7 @@ CCameraMgr::CamPoseFrame CCameraMgr::CapturePose(CCamera* cam) const
     const Matrix view = cam->Get_ViewMatrix();
     const Matrix world = view.Invert();
 
-    pose.pos = world.Translation() + cam->Get_ViewOffset();
+    pose.pos = world.Translation();
 
     pose.rot = Quaternion::CreateFromRotationMatrix(world);
     pose.rot.Normalize();

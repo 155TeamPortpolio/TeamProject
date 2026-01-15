@@ -2,7 +2,7 @@
 #include "IService.h"
 #include "Engine_Math.h"
 NS_BEGIN(Engine)
-class CCamera; struct Lens;
+class CCamera; struct Lens; enum class CamShakeType;
 
 class ENGINE_DLL ICameraService abstract : public IService
 {
@@ -30,6 +30,9 @@ public:
     virtual void SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec = 0.f) PURE;
     virtual void ClearShake(_float fadeOutSec = 0.f) PURE;
+
+    virtual void SetShake(CamShakeType type, _float strength = 1.f) PURE;
+    virtual void AddShake(CamShakeType type, _float strength = 1.f) PURE;
 
     virtual Lens Get_Lens() const PURE;
     virtual Lens Get_ShadowLens() const PURE;

@@ -53,6 +53,7 @@ void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
         .Loop(false)
+        .EndAt(0.93f)
         .Speed(1.2f)
         .Apply();
 }
@@ -66,6 +67,7 @@ void CCorinState_Walk_Loop::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk")
         .Loop(false)
+        .EndAt(0.93f)
         .Speed(1.2f)
         .Apply();
 }
