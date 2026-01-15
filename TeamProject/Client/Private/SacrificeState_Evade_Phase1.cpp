@@ -42,7 +42,7 @@ void CSacrificeState_Evade_Phase1::Register_States()
 void CSacrificeState_Evade_B_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_B").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_B").Loop(false).Speed(1.f).Apply();
 }
 
 void CSacrificeState_Evade_B_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -56,7 +56,7 @@ void CSacrificeState_Evade_B_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Evade_R_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_R").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_R").Loop(false).Speed(1.f).Apply();
 }
 
 void CSacrificeState_Evade_R_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -70,7 +70,7 @@ void CSacrificeState_Evade_R_Phase1::Exit(CSacrifice* pOwner)
 void CSacrificeState_Evade_L_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_L").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Evade_L").Loop(false).Speed(1.f).Apply();
 }
 
 void CSacrificeState_Evade_L_Phase1::Update(CSacrifice* pOwner, _float dt)
