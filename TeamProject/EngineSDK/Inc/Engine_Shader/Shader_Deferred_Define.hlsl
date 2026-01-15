@@ -132,30 +132,35 @@ Texture2D MeshBlurXTexture : register(t45);
 Texture2D EffectBloomFinalTexture : register(t46);
 Texture2D MeshBloomFinalTexture : register(t47);
 //===========
+//====FOG====
+Texture2D StaticDepthTexture : register(t48);
+Texture2D SkinnedDepthTexture : register(t49);
 
 //====HDR=====
 Texture2D HDRBrightTexture : register(t50);
 Texture2D HDRBlurXTexture : register(t51);
 Texture2D HDRBloomFinalTexture : register(t52);
+//===RADIAL===
+Texture2D RadialBloomTexture : register(t55);
 //============
-Texture2D SkinnedCombinedTexture : register(t53);
-Texture2D StaticCombinedTexture : register(t54);
-Texture2D UICombinedTexture : register(t55);
-Texture2D EffectCombinedTexture : register(t56);
+Texture2D SkinnedCombinedTexture : register(t60);
+Texture2D StaticCombinedTexture : register(t61);
+Texture2D UICombinedTexture : register(t62);
+Texture2D EffectCombinedTexture : register(t63);
 
-Texture2D FinalTexture : register(t56);
+Texture2D FinalTexture : register(t65);
 
 // 式式式式式式式式式式式式式  ETC 式式式式式式式式式式式式式
-Texture2DArray StaticShadowMapArray : register(t58);
-Texture2DArray SkinnedShadowMapArray : register(t59);
-Texture2D RampTexture : register(t60);
+Texture2DArray StaticShadowMapArray : register(t70);
+Texture2DArray SkinnedShadowMapArray : register(t71);
+Texture2D RampTexture : register(t72);
 
 // 式式式式式式式式式式式式式  SRV 式式式式式式式式式式式式式
-StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t65);
-StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t66);
+StructuredBuffer<BoneMatrix> g_BoneMatrices : register(t75);
+StructuredBuffer<TransfomMatrix> ObjectBufferArray : register(t76);
 
 // 式式式式式式式式式式式式式  Sprite 式式式式式式式式式式式式式
-Texture2D SpriteTexture : register(t70);
+Texture2D SpriteTexture : register(t80);
 
 
 // 式式式式式式式式式式式式式  Shadow 式式式式式式式式式式式式式

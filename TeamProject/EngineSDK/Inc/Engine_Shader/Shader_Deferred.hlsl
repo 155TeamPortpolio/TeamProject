@@ -2,9 +2,15 @@
 
 matrix g_WorldMatrix;
 
-float g_FogDensity;
-float4 g_FogColor;
-float g_Time;
+float   g_FogDensity;
+float4  g_FogColor;
+bool    g_FogUse;
+float   g_Time;
+
+float   g_RadialEaseT;
+float3  g_AddictiveColor;
+float   g_AddictiveStrength = 3.f;
+float2  g_RadialCenter;
 
 struct VS_IN
 {
@@ -56,10 +62,18 @@ struct PS_OUT_RESULT
 PS_OUT_RESULT PS_FOG(PS_IN In)
 {
     PS_OUT_RESULT Out;
-    
-    float4 vDepthDesc = DepthTexture.Sample(DefaultSampler, In.vTexcoord);
+
+    float4 vStaticDepthDesc = StaticDepthTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    if (g_FogUse == false)
+    {
+        Out.vResult = vScene;
+        return Out;
+    }
+    
+    float4 vDepthDesc = (vStaticDepthDesc.x > 0.0001f) ? vStaticDepthDesc : vSkinnedDepthDesc;
     float fViewZ = vDepthDesc.y * zFar;
     
     vector vWorldPos;
@@ -81,12 +95,7 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     fFogFactor = lerp(0.3f, 1.0f, fFogFactor);
     
     float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
-  
-    if (vDepthDesc.x >= 0.9999f)
-    {
-        vFoggedColor = vScene;
-    }
-    
+ 
     Out.vResult = vFoggedColor;
     
     return Out;
@@ -149,6 +158,31 @@ PS_OUT_RESULT PS_HDR_BLURV(PS_IN In)
     return Out;
 }
 
+PS_OUT_RESULT PS_RADIAL_BLUR(PS_IN In)
+{
+    PS_OUT_RESULT Out;
+    
+    float4 final = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    
+    float2 dir = In.vTexcoord - g_RadialCenter;
+    float dist = length(dir);
+    dir = normalize(dir);
+        
+    float3 result = float3(0, 0, 0);
+    float samples = 15.0f;
+    float strength = g_RadialEaseT * 0.15;
+        
+    for (float i = 0; i < samples; i++)
+    {
+        float offset = (i / samples) * strength * dist;
+        result += FinalTexture.Sample(DefaultSampler, In.vTexcoord - dir * offset).rgb;
+    }
+        
+    Out.vResult = float4(result / samples, final.a);
+
+    return Out;
+}
+
 PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
 {
     PS_OUT_RESULT Out;
@@ -198,111 +232,6 @@ PS_OUT_RESULT PS_DISTORTION_ADD(PS_IN In)
     return Out;
 }
 
-//PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
-//{
-//    PS_OUT_LIGHT Out;
-    
-//    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-//    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
-//    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-//    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-   
-//    float fSkin = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    
-//    float fViewZ = vDepthDesc.y * zFar;
-    
-//    vector vWorldPos;
-//    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-//    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-//    vWorldPos.z = vDepthDesc.x;
-//    vWorldPos.w = 1.f;
-    
-//    vWorldPos = vWorldPos * fViewZ;
-//    vWorldPos = mul(vWorldPos, matProjectionInverse);
-//    vWorldPos = mul(vWorldPos, matViewInverse);
-    
-//    float3 lightDir = normalize(vLightDir.xyz * -1);
-//    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
-
-//    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-    
-//    if (fSkin < 0.7f)
-//    {
-//        float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-//        float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
-//        float specular = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).b;
-
-//        float3 halfVec = normalize(viewDir + lightDir);
-//        float specBase = saturate(dot(worldNormal, halfVec));
-//        float specularPower = lerp(50.0f, 5.0f, roughness);
-//        specular = pow(specBase, specularPower) * specular;
-        
-//        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, 1.f);
-//        Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-//        Out.fLightInfo = float2(NdotL, specular);
-        
-//    }
-//    else
-//    {
-//        vector LightDesc = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord);
-//        float3 vLookVector = normalize(g_LookTexture.Sample(DefaultSampler, In.vTexcoord).xyz * 2.f - 1.f);
-        
-//        float3 headRight = normalize(cross(float3(0, 1, 0), vLookVector));
-
-//        float RdotL = dot(headRight, lightDir);
-//        float FdotL = dot(vLookVector, lightDir);
-        
-//        float faceShadow = LightDesc.r;
-//        float specularMask = LightDesc.g;
-    
-//        faceShadow *= saturate(-FdotL);
-//        float brightness = lerp(0.15f, 0.45f, faceShadow);
-
-//        Out.vLight = float4(vDiffuse.rgb * vLightDiffuse.rgb * brightness * vNormalDesc.a, 1.f);
-//        Out.fLightInfo = float2(brightness, 0);
-//    }
-//    return Out;
-//}
-
-//PS_OUT_LIGHT PS_MAIN_POINT(PS_IN In)
-//{
-//    PS_OUT_LIGHT Out;
-    
-//    vector vNormalDesc = g_NormalTexture.Sample(DefaultSampler, In.vTexcoord);
-//    float3 worldNormal = normalize(vNormalDesc.xyz * 2.f - 1.f);
-//    vector vDepthDesc = g_DepthTexture.Sample(DefaultSampler, In.vTexcoord);
-//    vector vDiffuse = g_DiffuseTexture.Sample(DefaultSampler, In.vTexcoord);
-    
-//    float roughness = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).r;
-//    float metalic = g_MetalicTexture.Sample(DefaultSampler, In.vTexcoord).g;
- 
-//    float fViewZ = vDepthDesc.y * zFar;
-    
-//    vector vWorldPos;
-    
-//    vWorldPos.x = In.vTexcoord.x * 2.f - 1.f;
-//    vWorldPos.y = In.vTexcoord.y * -2.f + 1.f;
-//    vWorldPos.z = vDepthDesc.x;
-//    vWorldPos.w = 1.f;
-    
-//    vWorldPos = vWorldPos * fViewZ;
-//    vWorldPos = mul(vWorldPos, matProjectionInverse);
-//    vWorldPos = mul(vWorldPos, matViewInverse);
-    
-//    float3 lightDir = normalize(vLightPos.xyz - vWorldPos.xyz);
-//    float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
-    
-//    float NdotL = dot(worldNormal, lightDir) * 0.5f + 0.5f;
-    
-//    float3 PBR = CalculatePointLight
-//    (vDiffuse.rgb, worldNormal, metalic, roughness, vWorldPos.xyz, viewDir, lightDir, vLightDiffuse.rgb,
-//    fLightIntensity, vLightPos.xyz, fLightRange, 1.0f);
-    
-//    Out.vLight = float4(PBR * vNormalDesc.a, 1.f);
-//    Out.fLightInfo = float2(NdotL, 0.f);
-    
-//    return Out;
-//}
 
 PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 {
@@ -327,13 +256,17 @@ PS_OUT_BACKBUFFER PS_MAIN_COMBINED(PS_IN In)
 float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
 {
     float4 scene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
+    float4 radialBloom = RadialBloomTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float3 hdrColor = scene.rgb;
+    float skinnedAlpha =  1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
+    float3 hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+    
     hdrColor += hdrBloom.rgb * 0.3;
     
-    float3 mapped = ACESFilm(hdrColor);
+    float3 mapped = ACESFilm(hdrColor) + radialBloom.rgb;
     
     float3 finalColor = ui.rgb + mapped * (1.f - ui.a);
 
@@ -371,6 +304,16 @@ technique11 DefaultTechnique
         VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_HDR_BLURV();
+    }
+
+    pass RADIAL
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_None, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        PixelShader = compile ps_5_0 PS_RADIAL_BLUR();
     }
 
     pass DISTORTION_ADD

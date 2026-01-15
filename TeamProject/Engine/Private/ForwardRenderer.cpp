@@ -30,8 +30,8 @@ HRESULT CForwardRenderer::Initialize(CTarget_Manager* pTargetManager, CPipeLine*
 	Ready_Target();
 	Ready_MRT();
 
-	m_pStaticRenderer = CStaticMeshRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 	m_pSkinnedRenderer = CSkinnedMeshRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
+	m_pStaticRenderer = CStaticMeshRenderer::Create(m_pDevice, m_pContext, m_pTargetManager, m_pPipeLine);
 
 	return S_OK;
 }
