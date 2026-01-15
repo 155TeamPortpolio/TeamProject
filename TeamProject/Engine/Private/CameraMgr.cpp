@@ -157,8 +157,11 @@ void CCameraMgr::BeginBlendTo(OBJECT_HANDLE targetObj, _float blendSec)
 
 void CCameraMgr::UpdateShadowCache()
 {
-    CamPoseFrame pose = CapturePose(ResolveCam(m_shadowCamObj));
-    ApplyCache(shadow, pose);
+    if (m_shadowCamObj.isValid())
+    {
+        CamPoseFrame pose = CapturePose(ResolveCam(m_shadowCamObj));
+        ApplyCache(shadow, pose);
+    }
 }
 
 void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)

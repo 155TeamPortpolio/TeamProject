@@ -428,6 +428,10 @@ namespace Engine
 		string ModelTag{};
 		string MaterialTag{};
 
+		string DiffuseTextureTag{};
+		string NoiseTextureTag{};
+		string DissolveTextureTag{};
+
 		/* Texture Slot */
 		_uint SamplerMode{};
 		_uint MainUsage{};
@@ -459,12 +463,20 @@ namespace Engine
 		_uint iMaxFrameIndex{ 1 };
 
 		/* Dissolve */
+		_float fEnableDissolve{};
 		_uint DissolveEase{};
+		_float fDissolveSoftness{};
 		_float fDissolveStartProgress{};
 		_float fDissolveEndProgress{};
 
 		/* Bloom */
 		_float fBloomIntensity{};
+
+		/* Noise */
+		_float fEnableNoise{};
+		_float fNoiseStrength{};
+		_float fNoiseTilling{};
+		_float2 vNoiseUVSpeed{};
 
 		static tagMeshNode FromJson(nlohmann::ordered_json& json);
 	}MESH_NODE;

@@ -237,7 +237,7 @@ void CEffectContainer_Edit::Export()
 
 void CEffectContainer_Edit::Play()
 {
-	if (ImGui::Button("Play"))
+	if (ImGui::Button("Play") || InputDevice()->Key_Tap('Z'))
 	{
 		m_isAlive = true;
 		m_fElapsedTime = 0.f;
