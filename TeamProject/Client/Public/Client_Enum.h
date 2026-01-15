@@ -15,7 +15,7 @@ namespace Client {
 	enum class UI_ACTION_PRIMARY_MODE { ATTACK, INTERACT };
 
 	enum class HIT_TYPE { ONCE, INTERVAL, COUNT };
-	enum class DAMAGE_TYPE {NORMAL, POWER, AIRBONE};
+	enum class DAMAGE_TYPE {NORMAL, HARD, AIRBORNE};
 }
 
 #endif

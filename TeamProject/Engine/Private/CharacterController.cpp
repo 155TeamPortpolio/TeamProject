@@ -5,6 +5,7 @@
 #include "DebugDraw.h"
 #include "StaticModel.h"
 #include "SkeletalModel.h"
+#include "Helper_Func.h"
 
 void CCharacterController::Set_Velocity(_fvector vVelocity)
 {
@@ -349,6 +350,8 @@ void CCharacterController::Render_GUI()
 
 		ImGui::Separator();
 		ImGui::Text("Colliding: %s", IsColliding() ? "True" : "False");
+		ImGui::Text("Collision Layer: %s", Helper::EnumToString(m_eGroup));
+		ImGui::Text("Collision Mask: %d", m_FilterData.word1);
 		ImGui::Text("Collision Count: %d", m_CurrentCollisions.size());
 
 		if (!m_CurrentCollisions.empty())

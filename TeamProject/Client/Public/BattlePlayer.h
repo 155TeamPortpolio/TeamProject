@@ -79,6 +79,9 @@ private:
     void    Update_Target();
     void    Update_Status();
 
+    void    Active_Battle();
+    void    DeActive_Battle();
+
 private:
     HRESULT      Initialize_CharacterPrototype();
     CGameObject* CreateBattleCharacter(CHARACTER character);

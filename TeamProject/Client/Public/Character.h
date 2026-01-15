@@ -127,6 +127,8 @@ public:
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
 
+    void    Active_Character();
+    void    DeActive_Character();
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));

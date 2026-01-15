@@ -10,6 +10,8 @@
 
 #include "DebugDraw.h"
 
+#include "Helper_Func.h"
+
 
 CCollider::CCollider()
 {
@@ -471,7 +473,7 @@ void CCollider::Render_GUI()
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
 		ImGui::Separator();
-		ImGui::Text("Collision Layer: %d", ENUM(m_eGroup));
+		ImGui::Text("Collision Layer: %s", Helper::EnumToString(m_eGroup));
 		ImGui::Text("Collision Mask: %d", m_iCollisionMask);
 
 		// For MapTool

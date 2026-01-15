@@ -45,6 +45,18 @@ void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
 	Set_HP(fHP);
 }
 
+void CCharacter::Active_Character()
+{
+	m_pCCT->Set_CompActive(true);
+	SetRenderLayer(RENDER_LAYER::Default);
+}
+
+void CCharacter::DeActive_Character()
+{
+	m_pCCT->Set_CompActive(false);
+	SetRenderLayer(RENDER_LAYER::None);
+}
+
 void CCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 {
 	auto pTransform = Get_Component<CTransform>();
