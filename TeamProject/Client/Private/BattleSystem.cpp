@@ -5,6 +5,7 @@
 #include "CharacterController.h"
 #include "BattlePlayer.h"
 #include "DataBase.h"
+#include "FieldSystem.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -28,6 +29,7 @@ void CBattleSystem::Update()
 
 	Update_BattleInfo();
 }
+
 
 OBJECT_HANDLE CBattleSystem::GetCurCharacterHandle() const
 {
