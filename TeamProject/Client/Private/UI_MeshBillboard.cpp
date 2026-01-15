@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "UI_MeshBillboard.h"
 
+#include "GameInstance.h"
 #include "StaticModel.h"
 #include "Material.h"
 
@@ -43,6 +44,9 @@ void CUI_MeshBillboard::Priority_Update(_float dt)
 
 void CUI_MeshBillboard::Update(_float dt)
 {
+	// Y축 고정 빌보드
+	_vector vCamPos = CGameInstance::GetInstance()->Get_CameraMgr()->Get_CameraPos();
+	m_pTransform->Set_Look(XMVector3Normalize(XMVectorSetY(vCamPos - m_pTransform->Get_Pos(), 0.f)));
 }
 
 void CUI_MeshBillboard::Late_Update(_float dt)
