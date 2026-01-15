@@ -5,8 +5,8 @@
 
 namespace CameraTool
 {
-    inline unsigned int WinX = 2560u;
-    inline unsigned int WinY = 1360u;
+    inline unsigned int WinX = 12560u;
+    inline unsigned int WinY = 11360u;
     static constexpr unsigned int FrameRate = 144u;
     inline float aspect = 2560.f / 1360.f;
 }

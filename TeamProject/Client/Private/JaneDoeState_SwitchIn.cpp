@@ -10,6 +10,7 @@
 
 void CJaneDoeState_SwitchIn::Enter(CJaneDoe* pOwner)
 {
+    pOwner->Unlock_Move();
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CJaneDoe>::Create();

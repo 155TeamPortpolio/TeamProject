@@ -58,6 +58,12 @@ private:
     _bool               m_isIdle = { false };
     _float2             m_vIdleTime = {};
 
+
+
+    // 배틀시스템 확인용 지워야함
+    _float              m_fTestScaleDuration = {};
+    _float              m_fTestScaleValue = {1.f};
+
 };
 
 NS_END
