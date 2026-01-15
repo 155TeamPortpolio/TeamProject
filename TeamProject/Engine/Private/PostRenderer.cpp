@@ -129,8 +129,12 @@ HRESULT CPostRenderer::Render_RadialBlur()
 	_float pingPongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
 	_float EaseT = Math::ApplyEase(EaseType::InOutSine, pingPongT);
 
+	_bool RadialUse = false;
+	if (m_fRadialDuration > 0.f) RadialUse = true;
+
 	m_pShader->Bind_Value("g_RadialEaseT", { &EaseT, "float", sizeof(_float) });
 	m_pShader->Bind_Value("g_RadialCenter", { &m_fRadialCenter, "float2", sizeof(_float2) });
+	m_pShader->Bind_Value("g_RadialUse", { &RadialUse, "bool", sizeof(_bool) });
 
 	ID3D11InputLayout* pLayout;
 	Get_BufferInputLayout(m_pVIBuffer, m_pShader, "RADIAL", &pLayout);
@@ -185,7 +189,10 @@ HRESULT CPostRenderer::Render_Final()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 
+	_bool bUseAddictive = (_vector3(m_vAddictiveColor).Length() > 0.0001f);
+
 	m_pShader->Bind_Value("g_AddictiveColor", { &m_vAddictiveColor, "float3", sizeof(_float3) });
+	m_pShader->Bind_Value("g_UseAddictiveColor", { &m_vAddictiveColor, "bool", sizeof(_bool) });
 
 	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
 	Bind_WorldMatrix();

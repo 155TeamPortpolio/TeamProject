@@ -10,7 +10,9 @@ float   g_Time;
 float   g_RadialEaseT;
 float3  g_AddictiveColor;
 float   g_AddictiveStrength = 3.f;
+float g_UseAddictiveColor = false;
 float2  g_RadialCenter;
+bool    g_RadialUse = false;
 
 struct VS_IN
 {
@@ -164,6 +166,12 @@ PS_OUT_RESULT PS_RADIAL_BLUR(PS_IN In)
     
     float4 final = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    if (g_RadialUse == false)
+    {
+        Out.vResult = final;
+        return Out;
+    }
+    
     float2 dir = In.vTexcoord - g_RadialCenter;
     float dist = length(dir);
     dir = normalize(dir);
@@ -260,9 +268,14 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     float4 hdrBloom = HDRBloomFinalTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 ui = UI2DTexture.Sample(DefaultSampler, In.vTexcoord);
     
-    float skinnedAlpha =  1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
-    float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
-    float3 hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+    float3 hdrColor = scene.rgb;
+    
+    if (g_UseAddictiveColor) 
+    {
+        float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+        float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;
+        hdrColor = lerp(scene.rgb, tinted, skinnedAlpha);
+    }
     
     hdrColor += hdrBloom.rgb * 0.3;
     

@@ -142,6 +142,7 @@ Texture2D HDRBlurXTexture : register(t51);
 Texture2D HDRBloomFinalTexture : register(t52);
 //===RADIAL===
 Texture2D RadialBloomTexture : register(t55);
+Texture2D FogTexture : register(t56);
 //============
 Texture2D SkinnedCombinedTexture : register(t60);
 Texture2D StaticCombinedTexture : register(t61);
