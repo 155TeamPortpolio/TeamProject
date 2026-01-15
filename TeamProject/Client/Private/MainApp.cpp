@@ -24,6 +24,9 @@
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
+/* UI */
+#include "UI_EnemyStatus.h"
+
 CMainApp::CMainApp()
 {
 }
@@ -129,5 +132,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+
+	/* UI */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 }
 

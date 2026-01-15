@@ -5,6 +5,12 @@ NS_BEGIN(Client)
 
 class CUI_EnemyStatus final : public CUI_WorldToScreen
 {
+public:
+	typedef struct tagEnemyStatusDesc : public UI_DESC {
+		const _float4x4* pParentWorld = { nullptr };
+		const _float4x4* pBoneLocal = { nullptr };
+	}ENEMYSTATUS_DESC;
+
 private:
 	CUI_EnemyStatus() {}
 	CUI_EnemyStatus(const CUI_EnemyStatus& rhs) : CUI_WorldToScreen(rhs) {}
@@ -18,6 +24,10 @@ public:
 	virtual void    Update(_float dt)			     override;
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
+
+private:
+	const _float4x4* m_pParentWorld = { nullptr };
+	const _float4x4* m_pBoneLocal = { nullptr };
 
 public:
 	static  CGameObject* Create();
