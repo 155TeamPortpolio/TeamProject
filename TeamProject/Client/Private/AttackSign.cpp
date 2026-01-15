@@ -34,6 +34,7 @@ HRESULT CAttackSign::Initialize(INIT_DESC* pArg)
 
 	auto pModel = Get_Component<CPointModel>();
 	pModel->Link_Model(G_GlobalLevelKey, "Engine_Default_Point");
+	pModel->ShadowCast(false);
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
 
 	auto pMaterial = Get_Component<CMaterial>();

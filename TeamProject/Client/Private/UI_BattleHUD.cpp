@@ -172,8 +172,8 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 
     Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
     Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
-    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.hp.fMaxValue);
-    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.hp.fMaxValue);
+    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
+    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
 
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {

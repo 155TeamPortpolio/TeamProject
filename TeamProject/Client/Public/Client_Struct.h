@@ -45,4 +45,14 @@ namespace Client {
 		string		TagDataFilePath = {};		// json 파일 경로
 		int			iVersion = { -1 };
 	}MapData_Path_Packet;
+
+	// 타격 정보
+	struct HitDesc
+	{
+		HIT_TYPE    eHitType = HIT_TYPE::ONCE;
+		DAMAGE_TYPE eDamageType = DAMAGE_TYPE::NORMAL;
+		_float      fDamage = 0.f;
+		_uint       iMaxCount = 1;
+		_float      fInterval = 0.f;
+	};
 }

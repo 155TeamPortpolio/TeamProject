@@ -129,13 +129,20 @@ void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
 
-    m_pScene->simulate(dt);
+    m_fAccumulator += dt;
+
+    while (m_fAccumulator >= m_fFixedTimeStep)
+    {
+        m_pScene->simulate(m_fFixedTimeStep);
+        m_pScene->fetchResults(true);
+        m_fAccumulator -= m_fFixedTimeStep;
+    }
 
 }
 
 void CPhysicsSystem::Late_Update(_float dt)
 {
-    m_pScene->fetchResults(true);
+    //m_pScene->fetchResults(true);
 }
 
 _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)

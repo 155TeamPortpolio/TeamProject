@@ -38,7 +38,7 @@ namespace Client
         _bool           isAttachBone = { true };                // 뼈에 붙이는지
         string          tagBone = "";                           // 뼈에 붙일때, 붙일 뼈의 이름
         CAnimator3D* pOwnerAnimator3D = { nullptr };           // 뼈에 붙일때, Owner의 애니메이터 포인터
-        COLLIDER_TYPE   eColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
+        COLLIDER_TYPE   eAttackColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
         _float			fSizeScale = 1.f;					    // 사이즈 비율
         _float3			vCenter = { 0.f, 0.f, 0.f };		    // Collider의 로컬 오프셋
         _float3			vRotation = { 0.f, 0.f, 0.f };
@@ -47,6 +47,7 @@ namespace Client
         Sphere : Radius(x),
         Capsule : Radius(x) / HalfHeight(y)*/
         _float3         vAttackSize = { 1.f, 1.f, 1.f };
+        COLLIDER_TYPE   eTriggerColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
         /* Parrying 및 회피용 콜라이더의 사이즈. Attack용보다 사이즈 크게 할 것
         Box: HalfExtents(x, y, z),
         Sphere : Radius(x),
@@ -54,4 +55,12 @@ namespace Client
         _float3         vTriggerSize = { 2.f, 2.f, 2.f };
     }BATTLE_COLLIDER_DESC;
 
+    typedef struct tagAutoPlayBattleCollider {
+        string      tagBattleCollider = "";
+        _bool       isAutoPlay = { false };
+        _float      fAttackColStartProgress = {};
+        _bool       isAttackColliderPlay = {false};
+        _float2     vAttackColLifeTime = {};
+        _bool       IsAttackColFinish() { return vAttackColLifeTime.x <= vAttackColLifeTime.y; }
+    }AUTO_BATTLECOL;
 }

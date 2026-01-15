@@ -44,6 +44,7 @@ HRESULT CEnemyAttackCollider::Initialize(INIT_DESC* pArg)
 
 void CEnemyAttackCollider::Awake()
 {
+	Get_Component<CCollider>()->Set_CompActive(false);
 }
 
 void CEnemyAttackCollider::Priority_Update(_float dt)
@@ -66,9 +67,20 @@ void CEnemyAttackCollider::Render_GUI()
 {
 	ImGui::PushID(this);
 
-	__super::Render_GUI();
-	ImGui::SeparatorText("Trigger Debug");
+	if (ImGui::TreeNode("Inspector##EnemyAttackColliderInspector"))
+	{
+		__super::Render_GUI();
+		ImGui::TreePop();
+	}
+	if (ImGui::TreeNode("Collider Check##EnemyAttackColliderColliderCheck"))
+	{
+		if (ImGui::Button("Show Collider")) {
+			auto pCollider = Get_Component<CCollider>();
+			pCollider->Set_CompActive(!pCollider->Get_CompActive());
+		}
 
+		ImGui::TreePop();
+	}
 	ImGui::PopID();
 }
 

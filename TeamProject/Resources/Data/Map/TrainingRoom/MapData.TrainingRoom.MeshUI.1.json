@@ -1,0 +1,47 @@
+{
+  "TagDataFormat": "MeshUI",
+  "TagArea": "TrainingRoom",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 4,
+      "TagName": "PrototypeTag",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Proto_GameObject_MeshBillboard"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "AssetKey",
+      "defaultvalue": {
+        "type": "String",
+        "value": "UI_3DBillboard_Zero"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Offset",
+      "defaultvalue": {
+        "type": "Float3",
+        "value": [
+          0.0,
+          2.0,
+          0.0
+        ]
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Scale",
+      "defaultvalue": {
+        "type": "Float3",
+        "value": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
+    }
+  ]
+}

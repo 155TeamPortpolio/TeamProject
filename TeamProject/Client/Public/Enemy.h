@@ -41,20 +41,27 @@ public:
     // 몬스터 공격 시 attack sign 이펙트 활성화 함수
     virtual void        Active_AttackSign(_bool parryEnable = true);
 
-protected:
 #pragma region BattleCollider
+public:
+    /* 트리거 콜라이더를 바로 키고,
+    AttackOffsetTime 뒤에 Attack 콜라이더를
+    AttackPlayTime만큼 키고
+    트리거와 Attack콜라이더를 종료함*/
+    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime);
+
+protected:
     HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc);
     void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is);
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
-
     void                ShowBattleColliderForCheck(_bool is);
+    void                CheckAutoBattlePlay(const _float dt);
 
     _bool               IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType);
 
     unordered_map<string, _int> m_BattleColliderChildrenIndex;
+    AUTO_BATTLECOL      m_tAutoBattleCol = {};
 
     // For.Debug
-    
 public:
     void                SetEnterAttackHit(_bool is) { m_isEnterAttackHit = is; }
     void                SetEnterTriggerHit(_bool is) { m_isEnterTriggerHit = is; }

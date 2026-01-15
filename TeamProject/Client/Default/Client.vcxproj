@@ -172,6 +172,7 @@
     <ClInclude Include="..\public\BelleState_Move.h" />
     <ClInclude Include="..\public\BelleState_Run.h" />
     <ClInclude Include="..\public\BelleState_Walk.h" />
+    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\public\CamLoader.h" />
     <ClInclude Include="..\public\CamObject.h" />
@@ -249,6 +250,8 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
+    <ClInclude Include="..\Public\UI_WorldToScreen.h" />
+    <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\UI_BattleHUDAction.h" />
     <ClInclude Include="..\Public\UI_Decibel.h" />
@@ -395,6 +398,7 @@
     <ClCompile Include="..\private\BelleState_Move.cpp" />
     <ClCompile Include="..\private\BelleState_Run.cpp" />
     <ClCompile Include="..\private\BelleState_Walk.cpp" />
+    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />
@@ -435,6 +439,8 @@
     <ClCompile Include="..\private\ThugAssaulter_Death.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Idle.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Move.cpp" />
+    <ClCompile Include="..\Private\UI_WorldToScreen.cpp" />
+    <ClCompile Include="..\Private\UI_IconLabel.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
     <ClCompile Include="..\private\DataBase.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />

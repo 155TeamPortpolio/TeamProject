@@ -25,7 +25,7 @@ void CZeroStage_Boss::Update()
 
 HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 {
-	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1 ");
+	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1");
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
 	Safe_Release(pMapLoader);
