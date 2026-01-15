@@ -175,6 +175,7 @@
     <ClInclude Include="..\Public\FieldCharacter.h" />
     <ClInclude Include="..\Public\FieldPlayer.h" />
     <ClInclude Include="..\Public\FieldSystem.h" />
+    <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\public\CamLoader.h" />
@@ -402,6 +403,7 @@
     <ClCompile Include="..\Private\FieldCharacter.cpp" />
     <ClCompile Include="..\Private\FieldPlayer.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp" />
+    <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />

@@ -29,6 +29,7 @@
 #include "UI_UltimateAction.h"
 
 #include "UI_IconLabel.h"
+#include "UI_EnemyStatus.h"
 
 namespace fs = filesystem;
 using namespace Helper;
@@ -149,6 +150,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"SwitchAction",	&CUI_SwitchAction::Create	},
 		{"UltimateAction",	&CUI_UltimateAction::Create	},
 		{"IconLabel",		&CUI_IconLabel::Create		},
+		{"EnemyStatus",		&CUI_EnemyStatus::Create	},
 	};
 
 	for (const Entry& entry : entries)
