@@ -3,7 +3,6 @@
 #include "GameInstance.h"
 #include "Layer.h"
 #include "Helper_Func.h"
-//#include "DebugCamTrace.h"
 
 void CCamPanel::Update_Panel(_float dt)
 {
