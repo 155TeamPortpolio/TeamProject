@@ -34,15 +34,17 @@ HRESULT CUI_DecibelDigits::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelDigits::Update(_float dt)
 {
+    Set_Color();
+
     _int iDecibel = static_cast<_int>(*m_pDecibel);
 
-    if (iDecibel == m_iPrevDecibel)
-        return;
+    if (iDecibel != m_iPrevDecibel)
+    {
+        m_iPrevDecibel = iDecibel;
 
-    m_iPrevDecibel = iDecibel;
-
-    Update_Digits(iDecibel);
-    Update_Layout();
+        Update_Digits(iDecibel);
+        Update_Layout();
+    }
 }
 
 void CUI_DecibelDigits::Ready_PartObjects()
@@ -66,6 +68,18 @@ void CUI_DecibelDigits::Ready_PartObjects()
     }
 }
 
+void CUI_DecibelDigits::Set_Color()
+{
+    for (_int i = 0; i < _countof(digitOrder); ++i)
+    {
+        auto pDigit = Get_Digit(digitOrder[i]);
+        if (!pDigit)
+            continue;
+
+        pDigit->Set_Color(*m_pColor);
+    }
+}
+
 void CUI_DecibelDigits::Update_Digits(_int iDecibel)
 {
     Set_Digit(Child::DIGIT_1000, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 3)));
@@ -73,14 +87,14 @@ void CUI_DecibelDigits::Update_Digits(_int iDecibel)
     Set_Digit(Child::DIGIT_10, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 1)));
     Set_Digit(Child::DIGIT_1, static_cast<DigitTexture>(Helper::Get_Digit(iDecibel, 0)));
 
-    for (_int i = 0; i < _countof(digitOrder); ++i)
-    {
-        auto pDigit = Get_Digit(digitOrder[i]);
-        if (!pDigit)
-            continue;
-        
-        pDigit->Set_Color(*m_pColor);
-    }
+    //for (_int i = 0; i < _countof(digitOrder); ++i)
+    //{
+    //    auto pDigit = Get_Digit(digitOrder[i]);
+    //    if (!pDigit)
+    //        continue;
+    //    
+    //    pDigit->Set_Color(*m_pColor);
+    //}
 }
 
 void CUI_DecibelDigits::Update_Layout()

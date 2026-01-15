@@ -35,7 +35,9 @@ private:
 private:
 	void Ready_PartObjects();
 	void Init_PtsObject(CUI_Object* pPts);
-	void Init_BgObject(CUI_Object* pBg, CUI_Object* pPts); 
+	void Init_BgObject(CUI_Object* pBg, CUI_Object* pPts);
+
+	void Set_Color();
 
 public:
 	static  CGameObject* Create();

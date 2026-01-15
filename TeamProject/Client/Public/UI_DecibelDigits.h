@@ -34,13 +34,11 @@ public:
 private:
 	const _float	m_fHeight = 32.f;
 	const _vector2	m_vPadding = { 10.f, 10.f }; 
+	_float			m_fDigitTotalWidth = {};
 
 	const _float*	m_pDecibel = { nullptr };
 	const _float4*	m_pColor = { nullptr };
-
 	_int			m_iPrevDecibel = {};
-
-	_float			m_fDigitTotalWidth = {};
 
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 
@@ -49,6 +47,8 @@ private:
 
 private:
 	void Ready_PartObjects();
+
+	void Set_Color();
 	void Update_Digits(_int iDecibel);
 	void Update_Layout(); 
 

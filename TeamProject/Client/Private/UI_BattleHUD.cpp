@@ -25,7 +25,7 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
 
     auto pRoot = Ready_Prefab();
     if (!pRoot)
-        MSG_BOX("Failed to Create");
+        MSG_BOX("Failed to Ready_Prefab : CUI_BattleHUD");
 
     // ¿Ã∫•∆Æ : UI_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
