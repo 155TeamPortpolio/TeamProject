@@ -282,7 +282,7 @@ void CObjectMgr::Prune_Queues_ByLevel(const string& levelTag)
 	auto IsSameLevel = [&](CGameObject* obj) -> bool
 		{
 			if (!obj) return false;
-			return obj->Get_Level() == levelTag; 
+			return obj->Get_Level() == levelTag;
 		};
 
 	{
@@ -371,6 +371,55 @@ _float CObjectMgr::Get_LayerTimeScale(const LAYER_DESC& Layer)
 		return 0.f;
 
 	return layerPtr->Get_TimeScale();
+}
+
+_bool CObjectMgr::Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle, _bool replaceIfExists)
+{
+	auto Handle = handle;
+	if (!Handle.isValid())
+		return false;
+
+	auto iter = m_globalHandleByKey.find(RememberKey);
+
+	if (iter != m_globalHandleByKey.end()) {
+		if (replaceIfExists) {
+			m_globalHandleByKey[RememberKey] = handle;
+			return true;
+		}
+		return false;
+	}
+	m_globalHandleByKey[RememberKey] = handle;
+	return true;
+
+}
+
+CGameObject* CObjectMgr::Find_Global(_uint KeyID)
+{
+	auto iter = m_globalHandleByKey.find(KeyID);
+	if (iter == m_globalHandleByKey.end())
+		return nullptr;
+
+	auto handle = iter->second;
+	if (handle.isValid()) {
+		return handle.Get();
+	}
+
+	return nullptr;
+}
+
+_bool CObjectMgr::Unregister_Global(_uint keyID)
+{
+	auto iter = m_globalHandleByKey.find(keyID);
+	if (iter == m_globalHandleByKey.end())
+		return false;
+
+	m_globalHandleByKey.erase(iter);
+	return true;
+}
+
+void CObjectMgr::Clear_Global()
+{
+	m_globalHandleByKey.clear();
 }
 
 CObjectMgr* CObjectMgr::Create()
