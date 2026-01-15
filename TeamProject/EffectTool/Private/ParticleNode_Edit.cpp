@@ -61,7 +61,8 @@ void CParticleNode_Edit::Priority_Update(_float dt)
 
 void CParticleNode_Edit::Update(_float dt)
 {
-	__super::Update(dt);
+	if(m_IsReady)
+		__super::Update(dt);
 }
 
 void CParticleNode_Edit::Late_Update(_float dt)
@@ -139,6 +140,8 @@ void CParticleNode_Edit::Play()
 
 void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 {
+	m_IsReady = true;
+
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
@@ -415,6 +418,8 @@ void CParticleNode_Edit::SetUp_ParticleEffect()
 
 	if (isDirty)
 	{
+		m_IsReady = true;
+
 		PARTICLE_NODE node{};
 
 		node.iRGBMaskMode = m_iRGBMaskMode;
