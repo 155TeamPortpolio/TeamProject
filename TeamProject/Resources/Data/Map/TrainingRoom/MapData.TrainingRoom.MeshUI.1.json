@@ -1,0 +1,27 @@
+{
+  "TagDataFormat": "MeshUI",
+  "TagArea": "TrainingRoom",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 4,
+      "TagName": "PrototypeTag",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Proto_GameObject_MeshBillboard"
+      }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Offset",
+      "defaultvalue": {
+        "type": "Float3",
+        "value": [
+          0.0,
+          1.0,
+          0.0
+        ]
+      }
+    }
+  ]
+}

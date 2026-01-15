@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CUI_3DBillboard : public CGameObject
+class CUI_MeshBillboard : public CGameObject
 {
 private:
-    CUI_3DBillboard();
-    CUI_3DBillboard(const CUI_3DBillboard& rhs);
-    virtual ~CUI_3DBillboard() DEFAULT;
+    CUI_MeshBillboard();
+    CUI_MeshBillboard(const CUI_MeshBillboard& rhs);
+    virtual ~CUI_MeshBillboard() DEFAULT;
 
 public:
     HRESULT Initialize_Prototype() override;

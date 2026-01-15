@@ -1,27 +1,27 @@
 #include "pch.h"
-#include "UI_3DBillboard.h"
+#include "UI_MeshBillboard.h"
 
 #include "StaticModel.h"
 #include "Material.h"
 
-CUI_3DBillboard::CUI_3DBillboard()
+CUI_MeshBillboard::CUI_MeshBillboard()
 	:CGameObject()
 {
 }
 
-CUI_3DBillboard::CUI_3DBillboard(const CUI_3DBillboard& rhs)
+CUI_MeshBillboard::CUI_MeshBillboard(const CUI_MeshBillboard& rhs)
 	:CGameObject(rhs)
 {
 }
 
-HRESULT CUI_3DBillboard::Initialize_Prototype()
+HRESULT CUI_MeshBillboard::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
 	return S_OK;
 }
 
-HRESULT CUI_3DBillboard::Initialize(INIT_DESC* pArg)
+HRESULT CUI_MeshBillboard::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
@@ -37,41 +37,41 @@ HRESULT CUI_3DBillboard::Initialize(INIT_DESC* pArg)
 	return S_OK;
 }
 
-void CUI_3DBillboard::Priority_Update(_float dt)
+void CUI_MeshBillboard::Priority_Update(_float dt)
 {
 }
 
-void CUI_3DBillboard::Update(_float dt)
+void CUI_MeshBillboard::Update(_float dt)
 {
 }
 
-void CUI_3DBillboard::Late_Update(_float dt)
+void CUI_MeshBillboard::Late_Update(_float dt)
 {
 }
 
-CGameObject* CUI_3DBillboard::Create()
+CGameObject* CUI_MeshBillboard::Create()
 {
-	CUI_3DBillboard* pInstance = new CUI_3DBillboard;
+	CUI_MeshBillboard* pInstance = new CUI_MeshBillboard;
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
-		MSG_BOX("Failed to Create : CUI_3DBillboard");
+		MSG_BOX("Failed to Create : CUI_MeshBillboard");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-CGameObject* CUI_3DBillboard::Clone(INIT_DESC* pArg)
+CGameObject* CUI_MeshBillboard::Clone(INIT_DESC* pArg)
 {
-	CUI_3DBillboard* pInstance = new CUI_3DBillboard;
+	CUI_MeshBillboard* pInstance = new CUI_MeshBillboard;
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Clone : CUI_3DBillboard");
+		MSG_BOX("Failed to Clone : CUI_MeshBillboard");
 		Safe_Release(pInstance);
 	}
 	return pInstance;
 }
 
-void CUI_3DBillboard::Free()
+void CUI_MeshBillboard::Free()
 {
 	__super::Free();
 }

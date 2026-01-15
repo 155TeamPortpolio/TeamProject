@@ -1226,7 +1226,7 @@
     <ClInclude Include="..\Public\WorldUI_AccessSign.h">
       <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_3DBillboard.h">
+    <ClInclude Include="..\Public\UI_MeshBillboard.h">
       <Filter>02. GameObject\UI\3D</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1797,7 +1797,7 @@
     <ClCompile Include="..\Private\WorldUI_AccessSign.cpp">
       <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_3DBillboard.cpp">
+    <ClCompile Include="..\Private\UI_MeshBillboard.cpp">
       <Filter>02. GameObject\UI\3D</Filter>
     </ClCompile>
   </ItemGroup>

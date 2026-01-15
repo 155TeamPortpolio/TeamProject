@@ -167,7 +167,7 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
-    <ClInclude Include="..\Public\UI_3DBillboard.h" />
+    <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\public\CamLoader.h" />
     <ClInclude Include="..\public\CamObject.h" />
@@ -387,7 +387,7 @@
     <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
-    <ClCompile Include="..\Private\UI_3DBillboard.cpp" />
+    <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
     <ClCompile Include="..\private\CamObject.cpp" />

@@ -35,36 +35,8 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 
 	MAPOBJ_DESC* pObjDesc = static_cast<MAPOBJ_DESC*>(pArg);
 	
-	// ---------- UI ----------
-	auto iter = pObjDesc->SlotDataValues.find("UI");
-	if (iter != pObjDesc->SlotDataValues.end()) {
-		string PrototypeTag = {};
-		string TagAsset = {};
-		_float3 vOffset = {};
-		for (auto& tFieldData : iter->second) {
-			if (tFieldData.TagName == "PrototypeTag")
-			{
-				auto tabValuePrototypeTag = GetSlotValue<string>(tFieldData.defaultvalue);
-				PrototypeTag = *tabValuePrototypeTag;
-			}
-			else if (tFieldData.TagName == "AssetKey") {
-				auto TagValueAssetKey = GetSlotValue<string>(tFieldData.defaultvalue);
-				TagAsset = *TagValueAssetKey;
-			}
-			else if (tFieldData.TagName == "Offset") {
-				auto vValueOffset = GetSlotValue<_float3>(tFieldData.defaultvalue);
-				vOffset = *vValueOffset;
-			}
-		}
-		_float3 vPos = {};
-		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
-
-		auto ui = Builder::Create_UIObject({ pObjDesc->TagLevel, PrototypeTag })
-			.Asset(TagAsset)
-			.WorldPos(vPos + vOffset)
-			.Build("ui");
-		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(ui, pObjDesc->TagLevel);
-	}
+	Ready_PlaneUI(pObjDesc);
+	Ready_MeshUI(pObjDesc);
 
 	return S_OK;
 }
@@ -127,6 +99,81 @@ void CMapTriggerObject::Render_GUI()
 
 
 	ImGui::PopID();
+}
+
+void CMapTriggerObject::Ready_PlaneUI(const MAPOBJ_DESC* pObjDesc)
+{
+	// ---------- Plane UI ----------
+	auto iter = pObjDesc->SlotDataValues.find("PlaneUI");
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = {};
+		string AssetKey = {};
+		_float3 vOffset = {};
+		for (auto& tFieldData : iter->second) 
+		{
+			if (tFieldData.TagName == "PrototypeTag")
+			{
+				auto tagValue = GetSlotValue<string>(tFieldData.defaultvalue);
+				PrototypeTag = *tagValue;
+			}
+			else if (tFieldData.TagName == "AssetKey") 
+			{
+				auto tagValue = GetSlotValue<string>(tFieldData.defaultvalue);
+				AssetKey = *tagValue;
+			}
+			else if (tFieldData.TagName == "Offset") 
+			{
+				auto tabValue = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vOffset = *tabValue;
+			}
+		}
+		_float3 vPos = {};
+		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+
+		auto pObj = Builder::Create_UIObject({ pObjDesc->TagLevel, PrototypeTag })
+			.Asset(AssetKey)
+			.WorldPos(vPos + vOffset)
+			.Build("planeUI");
+
+		CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pObj, pObjDesc->TagLevel);
+	}
+}
+
+void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
+{
+	// ---------- Mesh UI ----------
+	auto iter = pObjDesc->SlotDataValues.find("MeshUI");
+	if (iter != pObjDesc->SlotDataValues.end()) {
+		string PrototypeTag = {};
+		string AssetKey = {};
+		_float3 vOffset = {};
+		for (auto& tFieldData : iter->second) 
+		{
+			if (tFieldData.TagName == "PrototypeTag")
+			{
+				auto tagValue = GetSlotValue<string>(tFieldData.defaultvalue);
+				PrototypeTag = *tagValue;
+			}
+			else if (tFieldData.TagName == "AssetKey")
+			{
+				auto tagValue = GetSlotValue<string>(tFieldData.defaultvalue);
+				AssetKey = *tagValue;
+			}
+			else if (tFieldData.TagName == "Offset")
+			{
+				auto tabValue = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vOffset = *tabValue;
+			}
+		}
+		_float3 vPos = {};
+		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+
+		auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
+			.Position(vPos + vOffset)
+			.Build("meshUI");
+
+		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "Layer_UI" });
+	}
 }
 
 CMapTriggerObject* CMapTriggerObject::Create()
