@@ -2,19 +2,19 @@
 #include "Stage.h"
 
 NS_BEGIN(Engine)
-class CGameInstance;
-class CUI_Object;
+class CGameInstance; 
+class CUI_Object; 
 class IProtoService;
 class IObjectService;
 NS_END
 
 NS_BEGIN(Client)
-class CZeroStage_Boss :
-    public CStage
+class CZeroStage_1_1 :
+	public CStage
 {
 private:
-	CZeroStage_Boss();
-	~CZeroStage_Boss() DEFAULT;
+	CZeroStage_1_1();
+	~CZeroStage_1_1() DEFAULT;
 
 public:
 	virtual HRESULT Initialize(class CZero_Level* pOwnerLevel);
@@ -37,7 +37,7 @@ private:
 	class CCamDirector* m_pCamDirector{};
 
 public:
-	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);
+	static CZeroStage_1_1* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
 

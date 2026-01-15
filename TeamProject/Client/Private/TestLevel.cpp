@@ -234,6 +234,9 @@ void CTestLevel::Update()
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
 	}
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)

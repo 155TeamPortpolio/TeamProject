@@ -34,6 +34,12 @@ public:
 	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer,_float scale) PURE;
 	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) PURE;
 	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) PURE;
+
+
+	virtual _bool Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle, _bool replaceIfExists)PURE;
+	virtual class CGameObject* Find_Global(_uint KeyID)PURE;
+	virtual _bool Unregister_Global(_uint keyID)PURE;
+	virtual void Clear_Global()PURE;
 };
 
 NS_END
