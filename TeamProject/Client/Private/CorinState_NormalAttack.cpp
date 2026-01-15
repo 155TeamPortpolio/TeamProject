@@ -71,7 +71,9 @@ void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 void CCorinState_Attack_01::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_01")
-        .Speed(2.f)
+        .Speed(1.2f)
+        .ReserveSpeed(0.34f, 0.38f, 0.4f, EaseType::OutQuart)
+        .ReserveSpeed(0.44f, 0.52f, 1.2f, EaseType::InCubic)
         .Apply();
 }
 
@@ -80,6 +82,15 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.37f)
+    {
+        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 999, 0.f});
+    }
+    if (m_fAnimProgress >= 0.45f)
+    {
+        pOwner->End_AttackCollider("Saw");
+    }
 }
 
 void CCorinState_Attack_01::Exit(CCorin* pOwner)

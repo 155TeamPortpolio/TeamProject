@@ -137,6 +137,8 @@ void CCharacter::Awake()
 
 void CCharacter::Priority_Update(_float dt)
 {
+	if (InputDevice()->Key_Tap('T'))
+		m_bTest = !m_bTest;
 }
 
 void CCharacter::Update(_float dt)
@@ -323,14 +325,38 @@ _bool CCharacter::Can_Ultimate()
 
 void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
 {
-	string ColliderName = strName + "_AttackCollider";
-	
-	auto iter = m_AttackColliderIndex.find(ColliderName);
-	if (iter == m_AttackColliderIndex.end())	return;
-	auto pAttackCollider = Get_Component<CObjectContainer>()->Get_Children()[iter->second];
-	if (nullptr == pAttackCollider)	return;
+	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+	if (nullptr == pCollider)
+		return;
 
-	pAttackCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
+	pCollider->Get_Component<CCollider>()->Set_CompActive(bActive);
+}
+
+void CCharacter::Begin_AttackCollider(const string& strName, const HitDesc& hitdesc)
+{
+	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+	if (nullptr == pCollider)
+		return;
+
+	pCollider->Begin_Attack(hitdesc);
+}
+
+void CCharacter::End_AttackCollider(const string& strName)
+{
+	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+	if (nullptr == pCollider)
+		return;
+
+	pCollider->End_Attack();
+}
+
+_bool CCharacter::Is_Active_AttackCollider(const string& strName)
+{
+	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
+	if (nullptr == pCollider)
+		return false;
+
+	return pCollider->Get_Component<CCollider>()->Get_CompActive();
 }
 
 _bool CCharacter::Is_OppositeInput() const
@@ -412,6 +438,18 @@ void CCharacter::Update_Decibel(_float dt)
 		return;
 	}
 	m_fCurrentDecibel += dt * 750.f;
+}
+
+CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)
+{
+	string ColliderName = strName + "_AttackCollider";
+
+	auto iter = m_AttackColliderIndex.find(ColliderName);
+	if (iter == m_AttackColliderIndex.end())
+		return nullptr;
+
+	return static_cast<CCharacterAttackCollider*>(
+		Get_Component<CObjectContainer>()->Get_Children()[iter->second]);
 }
 
 void CCharacter::Free()
