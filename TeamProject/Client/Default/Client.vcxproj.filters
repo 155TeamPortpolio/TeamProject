@@ -1032,7 +1032,6 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Chase.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\AttackSign.h">
       <Filter>02. GameObject\Effect\AttackSign</Filter>
     </ClInclude>
@@ -1228,6 +1227,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_WorldToScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_BattleHUD.h">
+      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1616,7 +1618,6 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Chase.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Chase</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\private\ThugBulkyEnforcer_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Groggy</Filter>
     </ClCompile>
@@ -1796,6 +1797,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
