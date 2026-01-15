@@ -14,6 +14,10 @@
 #include "DataBase.h"
 #include "BattleSystem.h"
 #include "CamDirector.h"
+#include "OrbitCam.h"
+#include "FreeCam.h"
+#include "SequenceCam.h"
+#include "ShadowCam.h"
 
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
@@ -23,6 +27,8 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+
+
 
 CMainApp::CMainApp()
 {
@@ -122,6 +128,11 @@ void CMainApp::Initialize_GlobalPrototype()
 	/* Prototype Tag */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam", COrbitCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FreeCam", CFreeCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ShadowCam", CShadowCam::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());

@@ -16,18 +16,33 @@
 #include "CamPanel.h"
 #include "CamLoader.h"
 
+#include "Player.h"
+
+/* Enemy */
+#include "Sacrifice.h" 
+#include "SacrificeHand.h"
+#include "Sacrifice_Laser.h"
+#include "Sacrifice_Orb.h"
+
+
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey),
-	m_pGameInstance{ CGameInstance::GetInstance() }
+	m_pGameInstance{ CGameInstance::GetInstance() },
+	m_pCamDirector{CCamDirector::GetInstance()}
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pCamDirector);
 }
 
 HRESULT CZero_Level::Initialize()
 {
+	CBattleSystem::GetInstance()->SetActive(true);
+	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+
+	Rake_MapResources();
 	auto boss = CZeroStage_Boss::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
 
@@ -95,12 +110,81 @@ HRESULT CZero_Level::Initialize()
 
 HRESULT CZero_Level::Awake()
 {
+	/* Enemy */
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+
+	/* Player */
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_TestPlayer", CPlayer::Create());
+	auto Player = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_TestPlayer" })
+		.Build("Test_Player");
+
+	ObjectManager()->Add_Object(Player, { "Zero_Level","Model_Layer"});
+
+	Ready_Camera();
+	Ready_ShadowCamera();
+
+	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
+	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+
 	return S_OK;
 }
 
 void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
+
+	CBattleSystem::GetInstance()->Update();
+
+	static OBJECT_HANDLE prevPlayer{};
+
+	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
+	{
+		prevPlayer = curPlayer;
+
+		m_pCamDirector->SetSpaceRef(curPlayer);
+
+		auto orbitObj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
+	}
+
+	if (InputDevice()->Key_Down(VK_F1))
+	{
+		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+	}
+
+	if (InputDevice()->Key_Down(VK_F2))
+	{
+		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+
+		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
+		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
+
+		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+	}
+
+	if (InputDevice()->Key_Down(VK_F3))
+		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+
+	if (InputDevice()->Key_Tap(VK_F7))
+		CameraManager()->AddShake(CamShakeType::HitNormal);
+
+	if (InputDevice()->Key_Tap(VK_F8))
+		CameraManager()->AddShake(CamShakeType::HitHeavy);
+
+	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
+
+	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
+
+	if (InputDevice()->Key_Tap(VK_F4))
+	{
+		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
 }
 
 HRESULT CZero_Level::Render()
@@ -137,12 +221,12 @@ void CZero_Level::Ready_Camera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
-	auto seqCam = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_SequenceCam" })
+	auto seqCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_SequenceCam" })
 		.Camera(aspect)
 		.Position({ 0.f, 2.f, -5.f })
 		.Build("SequenceCam");
 
-	auto freeCam = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_FreeCam" })
+	auto freeCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_FreeCam" })
 		.Camera(aspect)
 		.Position({ 0.f, 2.f, -3.f })
 		.Build("FreeCam");
@@ -151,7 +235,7 @@ void CZero_Level::Ready_Camera()
 	desc.eGroup = COLLISION_GROUP::CAMERA;
 	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 
-	auto orbitCam = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_OrbitCam" })
+	auto orbitCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_OrbitCam" })
 		.Camera(aspect)
 		.CharacterController(desc)
 		.Build("OrbitCam");
@@ -174,6 +258,43 @@ void CZero_Level::Ready_Camera()
 	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
 }
 
+void CZero_Level::Ready_ShadowCamera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto shadowCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_ShadowCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 100.f, 30.f })
+		.Rotate({ 0.f, 0.f, 0.f })
+		.Build("ShadowCam");
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, { "Zero_Level", "Camera_Layer" });
+	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
+}
+
+void CZero_Level::Rake_MapResources()
+{
+	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
+	Helper::EnsureDirectoryExist(MapDataFolderPath);
+
+
+	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
+	{
+		if (entry.is_regular_file() && entry.path().extension() == ".model")
+		{
+			filesystem::path ModelPath = entry.path();
+			filesystem::path MaterialPath = ModelPath;
+			MaterialPath.replace_extension(".mat");
+
+
+			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
+			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
+
+		}
+	}
+}
+
 CZero_Level* CZero_Level::Create(const string& LevelKey)
 {
 	CZero_Level* instance = new CZero_Level(LevelKey);
@@ -194,5 +315,7 @@ void CZero_Level::Free()
 	m_StageContainer.clear();
 
 	__super::Free();
+	CBattleSystem::GetInstance()->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
+	m_pCamDirector->DestroyInstance();
 }

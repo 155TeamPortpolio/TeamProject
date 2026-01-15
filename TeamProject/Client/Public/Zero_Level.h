@@ -34,6 +34,8 @@ public:
 
 private:
 	void Ready_Camera();
+	void Ready_ShadowCamera();
+	void Rake_MapResources();
 
 private:
 	CGameInstance* m_pGameInstance = {nullptr};
