@@ -249,10 +249,10 @@ void CTestLevel::Update()
 	if (InputDevice()->Key_Down(VK_F3))
 		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
 
-	if (InputDevice()->Key_Tap(VK_F7))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 		CameraManager()->AddShake(CamShakeType::HitNormal);
 
-	if (InputDevice()->Key_Tap(VK_F8))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 		CameraManager()->AddShake(CamShakeType::HitHeavy);
 
 	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);

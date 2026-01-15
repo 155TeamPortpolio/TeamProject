@@ -163,12 +163,12 @@ void CCameraMgr::UpdateShadowCache()
 
 void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    m_shake.Set(ampDeg, freq, dur, fadeOutSec);
+    m_shake.Set(ampDeg, dur, fadeOutSec);
 }
 
 void CCameraMgr::AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    m_shake.Add(ampDeg, freq, dur, fadeOutSec);
+    m_shake.Add(ampDeg, dur, fadeOutSec);
 }
 
 void CCameraMgr::ClearShake(_float fadeOutSec)
