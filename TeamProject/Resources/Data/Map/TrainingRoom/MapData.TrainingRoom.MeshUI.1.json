@@ -13,12 +13,20 @@
     },
     {
       "iObjID": 4,
+      "TagName": "AssetKey",
+      "defaultvalue": {
+        "type": "String",
+        "value": "UI_3DBillboard_Zero"
+      }
+    },
+    {
+      "iObjID": 4,
       "TagName": "Offset",
       "defaultvalue": {
         "type": "Float3",
         "value": [
           0.0,
-          1.0,
+          2.0,
           0.0
         ]
       }

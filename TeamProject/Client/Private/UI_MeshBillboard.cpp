@@ -23,16 +23,16 @@ HRESULT CUI_MeshBillboard::Initialize_Prototype()
 
 HRESULT CUI_MeshBillboard::Initialize(INIT_DESC* pArg)
 {
-	__super::Initialize(pArg);
-
 	auto pModel = Add_Component<CStaticModel>();
 	auto pMaterial = Add_Component<CMaterial>();
 
-	pModel->Link_Model("Test_Level", "UI_3DBillboard_Zero.model");
+	__super::Initialize(pArg);	 
+
+	//pModel->Link_Model("Test_Level", "UI_3DBillboard_Zero.model");
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_3DUI);
 	pModel->ShadowCast(false);
 
-	pMaterial->Link_Material("Test_Level", "UI_3DBillboard_Zero.mat");
+	//pMaterial->Link_Material("Test_Level", "UI_3DBillboard_Zero.mat");
 
 	return S_OK;
 }

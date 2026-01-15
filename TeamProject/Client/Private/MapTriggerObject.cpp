@@ -168,8 +168,13 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 		_float3 vPos = {};
 		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
 
+		MODEL_INIT_DESC modelDesc =  MODEL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".model");
+		MATERIAL_INIT_DESC matDesc = MATERIAL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".mat");
+
 		auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
 			.Position(vPos + vOffset)
+			.Model_Link(modelDesc, MESH_TYPE::NONANIM)
+			.Material_Link(matDesc)
 			.Build("meshUI");
 
 		CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "Layer_UI" });
