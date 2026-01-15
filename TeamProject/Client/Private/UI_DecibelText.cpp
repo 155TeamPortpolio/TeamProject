@@ -6,7 +6,7 @@
 #include "Sprite2D.h"
 #include "TextSlot.h"
 
-const wstring CUI_DecibelText::TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)] = { L"", L"UPROAR", L"ÄÞº¸", L"±ØÇÑÈ¸ÇÇ" };
+const wstring CUI_DecibelText::TEXT_CONTENTS[ENUM(CUI_Decibel::State::END)] = { L"", L"UPROAR", L"Blasting", L"Maximum" };
 
 HRESULT CUI_DecibelText::Initialize_Prototype()
 {
