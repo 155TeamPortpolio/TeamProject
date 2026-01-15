@@ -45,6 +45,11 @@ public:
 public:
 	static CThugAssaulter_Attack2* Create() { return new CThugAssaulter_Attack2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool		m_isFirstAttack = { false };
+	_bool		m_isSecondAttack = { false };
+
 };
 
 class CThugAssaulter_Attack3 : public IBaseState<CThugAssaulter>
@@ -57,6 +62,9 @@ public:
 public:
 	static CThugAssaulter_Attack3* Create() { return new CThugAssaulter_Attack3(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_isFirstAttack = { false };
 };
 
 class CThugAssaulter_Attack4 : public IBaseState<CThugAssaulter>

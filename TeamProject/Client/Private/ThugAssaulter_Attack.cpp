@@ -82,7 +82,8 @@ void CThugAssaulter_Attack1::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_01")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Weapon", 0.17f, 0.02f);
 }
 
 void CThugAssaulter_Attack1::Update(CThugAssaulter* pOwner, _float dt)
@@ -104,7 +105,10 @@ void CThugAssaulter_Attack2::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_02")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Weapon", 0.2f, 0.03f);
+	m_isFirstAttack = false;
+	m_isSecondAttack = false;
 }
 
 void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
@@ -115,6 +119,21 @@ void CThugAssaulter_Attack2::Update(CThugAssaulter* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	if (false == m_isFirstAttack &&
+		m_fAnimProgress > 0.24) {
+		pOwner->SetAutoPlayBattleCollider("Weapon", 0.31f, 0.03f);
+		m_isFirstAttack = true;
+	}
+
+	if (true == m_isFirstAttack &&
+		false == m_isSecondAttack &&
+		m_fAnimProgress > 0.24) {
+		pOwner->SetAutoPlayBattleCollider("Weapon", 0.47f, 0.02f);
+		m_isSecondAttack = true;
+	}
+
+
 }
 
 void CThugAssaulter_Attack2::Exit(CThugAssaulter* pOwner)
@@ -126,7 +145,9 @@ void CThugAssaulter_Attack3::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_03")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Weapon", 0.25f, 0.05f);
+	m_isFirstAttack = false;
 }
 
 void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
@@ -137,6 +158,12 @@ void CThugAssaulter_Attack3::Update(CThugAssaulter* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
+
+	if (false == m_isFirstAttack &&
+		m_fAnimProgress > 0.35) {
+		pOwner->SetAutoPlayBattleCollider("Weapon", 0.42f, 0.03f);
+		m_isFirstAttack = true;
+	}
 }
 
 void CThugAssaulter_Attack3::Exit(CThugAssaulter* pOwner)
@@ -148,7 +175,8 @@ void CThugAssaulter_Attack4::Enter(CThugAssaulter* pOwner)
 {
 	pOwner->Get_Component<CAnimator3D>()->Change_Animation("ThugAssaulter_Ani_Attack_04")
 		.Apply();
-	//pOwner->Active_AttackSign();
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Weapon", 0.23f, 0.35f);
 }
 
 void CThugAssaulter_Attack4::Update(CThugAssaulter* pOwner, _float dt)

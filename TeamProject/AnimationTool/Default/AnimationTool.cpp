@@ -60,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _bool Break = false;
     const float step = 1.f / g_iMainFrame;
     while (true) {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
+          while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
             if (msg.message == WM_QUIT) {
                 Break = true;
             }

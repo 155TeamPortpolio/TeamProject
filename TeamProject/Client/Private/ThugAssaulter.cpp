@@ -278,6 +278,8 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
 
+	Create_AttackSign("Bip001 Head");
+
 	return S_OK;
 }
 
@@ -400,7 +402,7 @@ void CThugAssaulter::Update_States(_float dt)
 		m_isIdle = false;
 	}
 	
-	CheckDistanceFromPlayer();
+ 	CheckDistanceFromPlayer();
 	
 	//================================
 	ControlState(dt);
