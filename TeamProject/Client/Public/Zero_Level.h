@@ -6,7 +6,7 @@ class CGameInstance;
 NS_END
 
 NS_BEGIN(Client)
-
+class CCamDirector;
 class CZero_Level : public CLevel
 {
 public:
@@ -33,9 +33,13 @@ public:
 	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
 private:
+	void Ready_Camera();
+
+private:
 	CGameInstance* m_pGameInstance = {nullptr};
 	unordered_map<StageType,class CStage*> m_StageContainer;
 	StageContext m_Context = {};
+	CCamDirector* m_pCamDirector = { nullptr };
 
 public:
 	static CZero_Level* Create(const string& LevelKey);
