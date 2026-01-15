@@ -6,6 +6,7 @@ NS_BEGIN(Engine)
 class ENGINE_DLL CGameObjectBuilder
 {
 public:
+public:
     CGameObjectBuilder(const CLONE_DESC& cloneDesc);
     ~CGameObjectBuilder();
 public:
@@ -25,7 +26,8 @@ public:
    //CGameObjectBuilder& Sphere_Collider(const SPHERE_COLLIDER_DESC& desc);
 
     CGameObjectBuilder& Set_Parent(const PARENT_DESC& parent);
-
+    CGameObjectBuilder& Model_Link(const MODEL_INIT_DESC& pArg, MESH_TYPE eType);
+    CGameObjectBuilder& Material_Link(const MATERIAL_INIT_DESC& pArg);
 
     CGameObjectBuilder& Add_ObjDesc(GAMEOBJECT_DESC* pArg);
     /*동적 생성 아님*/
