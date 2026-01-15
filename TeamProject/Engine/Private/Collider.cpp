@@ -318,6 +318,32 @@ void CCollider::Set_RestOffset(_float fOffset)
 	}
 }
 
+void CCollider::Set_CollisionMask(_uint iMask)
+{
+	m_iCollisionMask = iMask;
+
+	if (m_pShape)
+	{
+		PxFilterData filterData = m_pShape->getSimulationFilterData();
+		filterData.word1 = iMask;
+		m_pShape->setSimulationFilterData(filterData);
+		m_pShape->setQueryFilterData(filterData);
+	}
+}
+
+void CCollider::Set_CollisionGroup(COLLISION_GROUP eGroup)
+{
+	m_eGroup = eGroup;
+
+	if (m_pShape)
+	{
+		PxFilterData filterData = m_pShape->getSimulationFilterData();
+		filterData.word0 = ENUM(eGroup);
+		m_pShape->setSimulationFilterData(filterData);
+		m_pShape->setQueryFilterData(filterData);
+	}
+}
+
 void CCollider::Update_LocalPose()
 {
 	if (!m_pShape) return;
@@ -451,7 +477,7 @@ void CCollider::Render_GUI()
 
 	ImGui::SeparatorText("Collider");
 
-	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 350), true))
+	if (ImGui::BeginChild("##ColliderChild", ImVec2(0, 450), true))
 	{
 		ImGui::Text("Type: %s", m_eType == COLLIDER_TYPE::BOX ? "Box" :
 			m_eType == COLLIDER_TYPE::SPHERE ? "Sphere" : "Capsule");
@@ -473,8 +499,40 @@ void CCollider::Render_GUI()
 		ImGui::Text("Material: %s", m_strMaterialTag.c_str());
 
 		ImGui::Separator();
-		ImGui::Text("Collision Layer: %s", Helper::EnumToString(m_eGroup));
-		ImGui::Text("Collision Mask: %d", m_iCollisionMask);
+
+		ImGui::Text("Collision Group:");
+		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA" };
+		const COLLISION_GROUP groupValues[] = {
+			COLLISION_GROUP::COMMON,
+			COLLISION_GROUP::PLAYER,
+			COLLISION_GROUP::MONSTER,
+			COLLISION_GROUP::PLAYER_ATTACK,
+			COLLISION_GROUP::MONSTER_ATTACK,
+			COLLISION_GROUP::MONSTER_PARRY,
+			COLLISION_GROUP::CAMERA
+		};
+
+		_int iCurrentGroup = 0;
+		for (_int i = 0; i < 7; ++i)
+		{
+			if (m_eGroup == groupValues[i])
+			{
+				iCurrentGroup = i;
+				break;
+			}
+		}
+
+		if (ImGui::Combo("##CollisionGroup", &iCurrentGroup, groupNames, 7))
+		{
+			Set_CollisionGroup(groupValues[iCurrentGroup]);
+		}
+
+		// 충돌 마스크 편집
+		_uint iMask = m_iCollisionMask;
+		if (CollisionHelper::RenderCollisionMaskEditor("Collision Mask (Collides With)", iMask))
+		{
+			Set_CollisionMask(iMask);
+		}
 
 		// For MapTool
 		if (m_pStaticActor && !m_pAttachedRigidBody)
