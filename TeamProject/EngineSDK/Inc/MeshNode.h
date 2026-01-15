@@ -35,10 +35,14 @@ protected:
     void Update_SpriteAnimationModule(_float dt);
     void Update_DissolveModule(_float dt);
     void Update_BloomModule(_float dt);
+    void Update_NoiseModule(_float dt);
     void Bind_Params();
 
     /*Default Params*/
     _float m_fProgress{};  //전체 진행도
+    string m_DiffuseTextureTag{};
+    string m_DissolveTextureTag{};
+    string m_NoiseTextureTag{};
 
     /*-----Modules-----*/
     TEXTURE_SLOT_MODULE m_TextureSlotModule{};
@@ -48,6 +52,7 @@ protected:
     SPRITE_ANIMATION_MODULE m_SpriteAnimationModule{};
     DISSOLVE_MODULE m_DissolveModule{};
     BLOOM_MODULE m_BloomModule{};
+    NOISE_MODULE m_NoiseModule{};
 
 };
 NS_END

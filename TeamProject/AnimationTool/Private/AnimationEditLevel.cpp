@@ -37,7 +37,7 @@ HRESULT CAnimationEditLevel::Awake()
 	desc.fFov = 60.f;
 
 	CGameObject* Camera = Builder::Create_Object({ "AnimationEdit_Level" ,"Proto_GameObject_EditCamera" })
-		.Camera(desc)
+		.Camera(desc) 
 		.Position({ 0,3,-3 })
 		.Build("Main_Camera");
 

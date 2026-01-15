@@ -70,9 +70,19 @@ float BloomSoftness;
 float BloomIntensity;
 
 /*Dissolve Params*/
+float EnableDissolve;
 float DissolveProgress;
+float DissolveSoftness;
 
 /*Distortion Params*/
+
+
+/*Noise Params*/
+float EnableNoise;
+float NoiseStrength;
+float NoiseTiling;
+float2 NoiseUVSpeed;
+float ElapsedTime;
 
 struct VS_IN
 {
@@ -141,14 +151,25 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     float2 Texcoord = CalculateFrameIndex(Col, Row, FrameIndex, In.vTexcoord);
     Texcoord += UVOffset;
     
+    /* Noise */
+    float2 vNoiseTexcoord = In.vTexcoord * NoiseTiling + ElapsedTime * NoiseUVSpeed;
+    float2 vNoise = ApplySamplerMode(SamplerMode, vNoiseTexcoord, NoiseTexture).rg * 2.f - 1.f;
+    Texcoord += vNoise * NoiseStrength * EnableNoise;
+    
+    /* Diffuse */
     vector vDiffuse = vector(1.f, 1.f, 1.f, 1.f);
+    vDiffuse = ApplySamplerMode(SamplerMode, Texcoord, DiffuseTexture);   
+ 
+    /* Dissolve */
     float fDissolveMask = 1.f;
+    float fDissolveSoftness = max(DissolveSoftness, 1e-5);
     
-    vDiffuse = ApplySamplerMode(SamplerMode, Texcoord, DiffuseTexture);
-    fDissolveMask = ApplySamplerMode(SamplerMode, Texcoord, DissolveTexture).r;
+    fDissolveMask = ApplySamplerMode(SamplerMode, In.vTexcoord, DissolveTexture).r;
+    float fDissolveAlpha = smoothstep(DissolveProgress - fDissolveSoftness, DissolveProgress + fDissolveSoftness, fDissolveMask);
+    fDissolveAlpha = lerp(1.f, fDissolveAlpha, EnableDissolve);
     
-    if (fDissolveMask < DissolveProgress)
-        discard;
+    //if (fDissolveMask < DissolveProgress)
+    //    discard;
     
     float4 vResult = float4(1.f, 1.f, 1.f, 1.f);
     
@@ -183,7 +204,7 @@ PS_OUT PS_MAIN_DEFAULT(PS_IN In)
     }
     
     float3 vColor = vResult.rgb;
-    float fAlpha = vResult.a;
+    float fAlpha = vResult.a * fDissolveAlpha;
     
     /* 깊이 기반 가중치 생성 */
     float fLinearZ = In.vViewPosition.z;

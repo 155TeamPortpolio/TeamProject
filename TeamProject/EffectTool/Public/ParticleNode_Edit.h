@@ -42,6 +42,7 @@ private:
     void AddTextures();
     void SetUp_ParticleEffect();
 
+    _bool m_IsReady = false;
     string m_TextureKey{};
     string m_TexturePath{};
 

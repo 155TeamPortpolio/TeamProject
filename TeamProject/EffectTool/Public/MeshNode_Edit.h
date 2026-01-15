@@ -19,6 +19,7 @@ private:
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
+    void Post_EngineUpdate(_float dt) override;
     void Awake() override;
     void Priority_Update(_float dt) override;
     void Update(_float dt) override;
@@ -42,6 +43,7 @@ private:
     void SetMesh();
     _bool ChangeEaseType(EaseType& ioValue, EaseType shownValue);
     void SetUp_MeshEffect();
+    void Add_Texture(TEXTURE_TYPE type);
 
     string m_ModelKey{};
     string m_MaterialKey{};

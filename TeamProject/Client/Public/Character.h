@@ -169,6 +169,9 @@ public:
     _bool    Can_Ultimate();
 
     void     Active_AttackCollider(const string& strName, _bool bActive);
+    void     Begin_AttackCollider(const string& strName, const HitDesc& hitdesc);
+    void     End_AttackCollider(const string& strName);
+    _bool    Is_Active_AttackCollider(const string& strName);
 
 private:
     void    Update_Rotation(_float dt);
@@ -176,6 +179,7 @@ private:
     void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
 
+    class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 protected:
     CAnimator3D*                m_pAnimator = { nullptr };
     CCharacterController*       m_pCCT = { nullptr };

@@ -56,6 +56,8 @@ typedef struct tagSpriteAnimationModule
 typedef struct tagDissolveModule
 {
 	EaseType eEaseType = EaseType::None;
+	_float fEnableDissolve{};
+	_float fDissolveSoftness{};
 	_float fStartProgress{};
 	_float fEndProgress{};
 	_float fProgress{};
@@ -70,7 +72,10 @@ typedef struct tagBloomModule
 
 typedef struct tagNoiseModule
 {
-
+	_float fEnableNoise{};
+	_float fNoiseStrength{};
+	_float fNoiseTilling{};
+	_float2 vNoiseUVSpeed{};
 }NOISE_MODULE;
 
 typedef struct tagDistortionModule
