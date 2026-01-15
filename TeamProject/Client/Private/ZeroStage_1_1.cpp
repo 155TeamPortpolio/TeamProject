@@ -3,10 +3,59 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 
+#include "TestMap.h"
+#include "TestObject.h"
+#include "TestFloor.h"
+#include "RigidBody.h"
+#include "CharacterController.h"
+
+#include "BattleSystem.h"
+#include "DataBase.h"
+
+// Camera
+#include "Camera.h"
+#include "FreeCam.h"
+#include "CamDirector.h"
+#include "OrbitCam.h"
+#include "ShadowCam.h"
+#include "SequenceCam.h"
+#include "CamPanel.h"
+#include "CamLoader.h"
+
 /* MapData */
 #include "MapLoader.h"
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
+
+/* Effect */
+#include "MeshNode.h"
+#include "SpriteNode.h"
+#include "ParticleNode.h"
+#include "TrailNode.h"
+#include "EffectContainer.h"
+#include "AttackSign.h"
+
+/* Character */
+#include "Miyabi.h"
+#include "Anbi.h"
+#include "Corin.h"
+#include "JaneDoe.h"
+#include "Player.h"
+
+/* Enemy */
+#include "Sacrifice.h" 
+#include "SacrificeHand.h"
+#include "Sacrifice_Laser.h"
+#include "Sacrifice_Orb.h"
+#include "ThugBulkyEnforcer.h"
+#include "EnemyAttackCollider.h"
+#include "EnemyTriggerCollider.h"
+#include "ThugAssaulter.h"
+
+/* UI */
+#include "UIDirector.h"
+#include "UI_MeshBillboard.h"
+
 
 
 CZeroStage_1_1::CZeroStage_1_1()
@@ -17,6 +66,8 @@ HRESULT CZeroStage_1_1::Initialize(CZero_Level* pOwnerLevel)
 {
 	if (!pOwnerLevel)
 		return E_FAIL;
+
+	CBattleSystem::GetInstance()->SetActive(true);
 
 	return S_OK;
 }
@@ -37,8 +88,10 @@ void CZeroStage_1_1::Update()
 HRESULT CZeroStage_1_1::Ready_Stage(CZero_Level::StageContext& context)
 {
 	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1");
+
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
+
 	Safe_Release(pMapLoader);
 	return S_OK;
 }
@@ -87,6 +140,60 @@ void CZeroStage_1_1::Rake_MapResources()
 	}
 }
 
+void CZeroStage_1_1::Ready_Camera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto seqCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 2.f, -5.f })
+		.Build("SequenceCam");
+
+	auto freeCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_FreeCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 2.f, -3.f })
+		.Build("FreeCam");
+
+	CCT_DESC desc;
+	desc.eGroup = COLLISION_GROUP::CAMERA;
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+
+	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
+		.Camera(aspect)
+		.CharacterController(desc)
+		.Build("OrbitCam");
+
+	ObjectManager()->Add_Object(seqCam, { "Test_Level", "Camera_Layer" });
+	ObjectManager()->Add_Object(freeCam, { "Test_Level", "Camera_Layer" });
+	ObjectManager()->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
+
+	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Free, freeCam->Get_Handle());
+	m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
+
+	m_pCamDirector->SetReturnCam(CamType::Orbit);
+
+	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
+
+	CamLoader::Load();
+
+	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
+}
+
+void CZeroStage_1_1::Ready_ShadowCamera()
+{
+	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
+
+	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
+		.Camera(aspect)
+		.Position({ 0.f, 100.f, 30.f })
+		.Rotate({ 0.f, 0.f, 0.f })
+		.Build("ShadowCam");
+
+	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, { "Test_Level", "Camera_Layer" });
+	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
+}
 
 CZeroStage_1_1* CZeroStage_1_1::Create(CZero_Level* pOwnerLevel)
 {

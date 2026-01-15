@@ -1,6 +1,13 @@
 #pragma once
 #include "Stage.h"
 
+NS_BEGIN(Engine)
+class CGameInstance; 
+class CUI_Object; 
+class IProtoService;
+class IObjectService;
+NS_END
+
 NS_BEGIN(Client)
 class CZeroStage_1_1 :
 	public CStage
@@ -22,6 +29,12 @@ public:
 private:
 	void Ready_Map(const string& LevelTag, const string& AreaTag);
 	void Rake_MapResources();
+	void Ready_Camera();
+	void Ready_ShadowCamera();
+
+private:
+	class CGameInstance* m_pGameInstance{};
+	class CCamDirector* m_pCamDirector{};
 
 public:
 	static CZeroStage_1_1* Create(class CZero_Level* pOwnerLevel);

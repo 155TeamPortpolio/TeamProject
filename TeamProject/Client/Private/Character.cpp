@@ -228,9 +228,12 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 {
 	CObjectContainer* pObjectContainer = Get_Component<CObjectContainer>();
 
-	if (nullptr == pObjectContainer)	return E_FAIL;
-	if (nullptr == pDesc) return E_FAIL;
-	if (nullptr == pDesc->pOwnerAnimator) return E_FAIL;
+	if (nullptr == pObjectContainer)	
+		return E_FAIL;
+	if (nullptr == pDesc) 
+		return E_FAIL;
+	if (nullptr == pDesc->pOwnerAnimator) 
+		return E_FAIL;
 
 	string strLevel = LevelManager()->Get_NowLevelKey();
 
@@ -253,11 +256,12 @@ HRESULT CCharacter::Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc)
 	string strAttackName = pDesc->tagName + "_AttackCollider";
 
 	CGameObject* pAttackCollider = Builder::Create_Object(
-		{ strLevel, "Proto_GameObject_CharacterAttackCollider" })
+		{ G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider" })
 		.RigidBody(rigidDesc)
 		.Collider(colliderDesc)
 		.Build(strAttackName);
-	if (nullptr == pAttackCollider)	return E_FAIL;
+	if (nullptr == pAttackCollider)
+		return E_FAIL;
 
 	_int iAttackColliderIndex = { -1 };
 	iAttackColliderIndex = pObjectContainer->Add_Child(pAttackCollider, false);

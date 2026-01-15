@@ -338,12 +338,11 @@ void CBattlePlayer::Update_Status()
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Corin", CCorin::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Corin", CCorin::Create())))
 		return E_FAIL;
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
 		return E_FAIL;
-
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -365,20 +364,20 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	{
 	case CHARACTER::JaneDoe:
 	{
-		auto JaneDoe = Builder::Create_Object({ "Test_Level", "Proto_GameObject_JaneDoe" })
+		auto JaneDoe = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_JaneDoe"})
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("JaneDoe");
-		ObjectManager()->Add_Object(JaneDoe, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(JaneDoe, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
 		return JaneDoe;
 	}
 	case CHARACTER::Corin:
 	{
-		auto Corin = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Corin" })
+		auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("Corin");
-		ObjectManager()->Add_Object(Corin, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(Corin, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
 		return Corin;
 	}
 	}
