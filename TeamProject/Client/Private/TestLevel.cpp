@@ -160,6 +160,7 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 
 	//============== Map ============================
+	//Ready_Map("Test_Level", "Zero_Worksite");
 	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
@@ -352,8 +353,8 @@ void CTestLevel::Ready_Camera()
 
 	m_pCamDirector->SetReturnCam(CamType::Orbit);
 
-	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
+	//const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
+	//static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
 
 	CamLoader::Load();
 
