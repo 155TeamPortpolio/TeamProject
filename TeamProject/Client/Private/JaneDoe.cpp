@@ -50,8 +50,8 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "JaneDoe.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "JaneDoe.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoe.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
 	return S_OK;
 }
 
@@ -72,8 +72,8 @@ void CJaneDoe::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "JaneDoe.model");
-	m_pAnimator->Link_MetaData("Test_Level", "JaneDoe_Meta.json");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoe.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
 
 	//m_pAnimator->Set_MotionBone(262);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);

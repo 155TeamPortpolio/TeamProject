@@ -44,10 +44,6 @@
 #include "Player.h"
 
 /* Enemy */
-#include "Sacrifice.h" 
-#include "SacrificeHand.h"
-#include "Sacrifice_Laser.h"
-#include "Sacrifice_Orb.h"
 #include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
@@ -93,10 +89,10 @@ HRESULT CTestLevel::Awake()
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
 	// ============ Camera ==================================================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
 	// =========================================================================
 
 	//============== Test =================================
@@ -146,10 +142,6 @@ HRESULT CTestLevel::Awake()
 
 
 	/* Enemy */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
@@ -236,6 +228,9 @@ void CTestLevel::Update()
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
 	}
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
+	}
 }
 
 void CTestLevel::Ready_Map(const string& LevelTag, const string& AreaTag)
@@ -276,12 +271,12 @@ void CTestLevel::Ready_Camera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
-	auto seqCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
+	auto seqCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_SequenceCam"})
 		.Camera(aspect)
 		.Position({0.f, 2.f, -5.f})
 		.Build("SequenceCam");
 
-	auto freeCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_FreeCam"})
+	auto freeCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_FreeCam"})
 		.Camera(aspect)
 		.Position({0.f, 2.f, -3.f})
 		.Build("FreeCam");
@@ -290,7 +285,7 @@ void CTestLevel::Ready_Camera()
 	desc.eGroup         = COLLISION_GROUP::CAMERA;
 	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 
-	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
+	auto orbitCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
 		.Camera(aspect)
 		.CharacterController(desc)
 		.Build("OrbitCam");
@@ -318,7 +313,7 @@ void CTestLevel::Ready_ShadowCamera()
 {
 	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
 
-	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
+	auto shadowCam = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_ShadowCam" })
 		.Camera(aspect)
 		.Position({ 0.f, 100.f, 30.f })
 		.Rotate({0.f, 0.f, 0.f})
