@@ -279,8 +279,8 @@ void CThugBulkyEnforcer_Attack1::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign(); 
 
-	// Battle Trigger 켜기
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
+	//0.18 / 0.23
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18, 0.05f);
 }
 
 void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -293,20 +293,6 @@ void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	//0.18 / 0.23
-
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.18f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.23f) 
-		pOwner->FinishWeaponCollider();
-	
-
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.47f) ||
@@ -330,8 +316,8 @@ void CThugBulkyEnforcer_Attack2::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
-	// Battle Trigger 켜기
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::LEFT);
+	// 0.25 / 0.30
+	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25, 0.05f);
 }
 
 void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -342,17 +328,6 @@ void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	// 0.25 / 0.30
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.25f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::LEFT);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.3f)
-		pOwner->FinishWeaponCollider();
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.65f)
@@ -378,9 +353,8 @@ void CThugBulkyEnforcer_Attack3::Enter(CThugBulkyEnforcer* pOwner)
 	pOwner->Active_AttackSign();
 	m_isSecondAttack = false;
 
-	// Battle Trigger 켜기
-	//pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::KNEE);
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
+	// 0.20 / 0.23
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.2f, 0.03f);
 }
 
 void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -392,41 +366,15 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		qRot,
 		dt);
 
-	// 0.20 / 0.23
-
-	// ============== 첫번째 공격 (플라잉 니킥) ========================
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.20f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
-		//pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::KNEE);
-
-	// Battle Attack & Trigger Collider 끄기 
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.23f) {
-		pOwner->FinishWeaponCollider();
-	}
 
 	// 두번째 공격 시작 이펙트 및 trigger 켜기
 	if (false == m_isSecondAttack && m_fAnimProgress > 0.22f) {
 		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 		pOwner->Active_AttackSign();
-		pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
+		// 0.30 / 0.33
+		pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.3f, 0.03f);
 		m_isSecondAttack = true;
 	}
-
-	// 0.30 / 0.33
-	// ============== 두번째 공격 (양손 내려찍기) ========================
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.30f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
-	//pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::KNEE);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.33f)
-		pOwner->FinishWeaponCollider();
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.45f)
@@ -450,8 +398,8 @@ void CThugBulkyEnforcer_Attack4::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
-	// Battle Trigger 켜기
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
+	// 0.18 / 0.25
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18f, 0.07f);
 }
 
 void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -462,17 +410,6 @@ void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-
-	// 0.18 / 0.25
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.18f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.25f)
-		pOwner->FinishWeaponCollider();
 
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.59f)
@@ -497,9 +434,8 @@ void CThugBulkyEnforcer_Attack5_1::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
-	// Battle Trigger 켜기
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::LEFT);
-
+	// 0.23 /0.27
+	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.23f, 0.04f);
 }
 
 void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -511,17 +447,7 @@ void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		qRot,
 		dt);
 
-	// 0.23 /0.27
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.23f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::LEFT);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.27f)
-		pOwner->FinishWeaponCollider();
-
+	
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.47f)
 	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.47f) ||
@@ -545,8 +471,10 @@ void CThugBulkyEnforcer_Attack5_2::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
-	// Battle Trigger 켜기
-	pOwner->TurnOnTriggerCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
+	// 0.16/0.19
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.16f, 0.03f);
+
+	m_isFinishFirst = false;
 }
 
 void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -557,30 +485,16 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 		vRootBoneMoveDelta,
 		qRot,
 		dt);
-	// 0.16/0.19
-	// ================= 첫번째 오른손 훅 ======================
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.16f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
 
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.19f)
-		pOwner->FinishWeaponCollider();
-
-	// 0.27/0.30
 	// ================= 두번째 왼손 어퍼 (공격 전 이펙트 없음) ======================
-	// Battle Attack Collider 켜기
-	if (false == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.27f)
-		pOwner->TurnOnAttackCollider(CThugBulkyEnforcer::BATTLE_PART::RIGHT);
-
-	// Battle Attack & Trigger Collider 끄기
-	if (true == pOwner->IsBattleAttackColliderOn() &&
-		m_fAnimProgress >= 0.3f)
-		pOwner->FinishWeaponCollider();
 	
+	if (false == m_isFinishFirst &&
+		m_fAnimProgress >= 0.27f) {
+		// 0.27/0.30
+		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.27f, 0.03f);
+		m_isFinishFirst = true;
+	}
+
 	ATTACK_BLACK_BOARD& blackboard = pOwner->GetBlackBoard();
 	//if (m_fAnimProgress >= 0.5f)
 	if ((false == blackboard.isEnd && m_fAnimProgress >= 0.65f) ||

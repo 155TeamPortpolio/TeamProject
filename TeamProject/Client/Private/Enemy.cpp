@@ -40,6 +40,7 @@ HRESULT CEnemy::Initialize(INIT_DESC* pArg)
 void CEnemy::Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
+	CheckAutoBattlePlay(dt);
 
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
@@ -165,7 +166,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	//_bool           isAttachBone = { true };                // 뼈에 붙이는지
 	//string          tagBone = "";                           // 뼈에 붙일때, 붙일 뼈의 이름
 	//CAnimator3D* pOwnerAnimator3D = { nullptr };           // 뼈에 붙일때, Owner의 애니메이터 포인터
-	//COLLIDER_TYPE   eColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
+	//COLLIDER_TYPE   eAttackColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
 	///* 실제 Hit처리될 Attack용 콜라이더의 사이즈
 	//Box: HalfExtents(x, y, z),
 	//Sphere : Radius(x),
@@ -201,7 +202,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	AttackcolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	AttackcolliderDesc.bTrigger = true;
 	AttackcolliderDesc.bAutoFit = false;
-	AttackcolliderDesc.eType = pDesc->eColliderType;
+	AttackcolliderDesc.eType = pDesc->eAttackColliderType;
 	AttackcolliderDesc.vSize = pDesc->vAttackSize;
 	AttackcolliderDesc.fSizeScale = pDesc->fSizeScale;
 	AttackcolliderDesc.vCenter = pDesc->vCenter;
@@ -232,10 +233,10 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 #pragma region TriggerCollider
 	COLLIDER_DESC TriggercolliderDesc = {};
 	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	TriggercolliderDesc.bTrigger = true;
 	TriggercolliderDesc.bAutoFit = false;
-	TriggercolliderDesc.eType = pDesc->eColliderType;
+	TriggercolliderDesc.eType = pDesc->eTriggerColliderType;
 	TriggercolliderDesc.vSize = pDesc->vTriggerSize;
 	TriggercolliderDesc.fSizeScale = pDesc->fSizeScale;
 	TriggercolliderDesc.vCenter = pDesc->vCenter;
@@ -309,6 +310,17 @@ void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
 }
 
+void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime)
+{
+	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true);
+
+	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
+	m_tAutoBattleCol.isAutoPlay = true;
+	m_tAutoBattleCol.isAttackColliderPlay = false;
+	m_tAutoBattleCol.fAttackColStartProgress = fAttackOffsetTime;
+	m_tAutoBattleCol.vAttackColLifeTime = { fAttackPlayTime, 0.f };
+}
+
 void CEnemy::ShowBattleColliderForCheck(_bool is)
 {
 	auto pContainerCom = Get_Component<CObjectContainer>();
@@ -320,6 +332,36 @@ void CEnemy::ShowBattleColliderForCheck(_bool is)
 
 			pColliderObject->Get_Component<CCollider>()->Set_CompActive(is);
 		}
+}
+
+void CEnemy::CheckAutoBattlePlay(const _float dt)
+{
+	if (false == m_tAutoBattleCol.isAutoPlay)
+		return;
+
+	auto pAnimator3D = Get_Component<CAnimator3D>();
+	if (false == m_tAutoBattleCol.isAttackColliderPlay) 
+	{	
+		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration()) 
+		{ 
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false);
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true);
+
+			m_tAutoBattleCol.isAttackColliderPlay = true;
+		}
+	}
+	else
+	{
+		m_tAutoBattleCol.vAttackColLifeTime.y = pAnimator3D->Get_CurAnimDuration() - m_tAutoBattleCol.fAttackColStartProgress;
+
+		if (true == m_tAutoBattleCol.IsAttackColFinish())
+			{
+			FinishBattleColliderObject(m_tAutoBattleCol.tagBattleCollider);
+			m_tAutoBattleCol.vAttackColLifeTime.y = 0.f;
+			m_tAutoBattleCol.isAttackColliderPlay = false;
+			m_tAutoBattleCol.isAutoPlay = false;
+		}
+	}
 }
 
 _bool CEnemy::IsAliveBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType)

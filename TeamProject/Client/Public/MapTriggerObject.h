@@ -27,6 +27,10 @@ public:
 public:
     void Render_GUI() override;
 
+private:
+    void Ready_PlaneUI(const MAPOBJ_DESC* pObjDesc);
+    void Ready_MeshUI(const MAPOBJ_DESC* pObjDesc);
+
 public:
     static CMapTriggerObject* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;

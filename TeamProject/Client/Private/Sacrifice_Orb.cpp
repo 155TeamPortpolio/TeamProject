@@ -34,15 +34,17 @@ HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
-	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pRigidBody = Get_Component<CRigidBody>();
+	pRigidBody->Set_Kinematic(true);
 	 
 	auto pOrb = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 		.Asset("sacrifice_orb.json")
 		.Build("Sacrifice_Orb");
 
+	auto pObjectContainer = Get_Component<CObjectContainer>();
 	pObjectContainer->Add_Child(pOrb);
 
-	m_fSpeed = 10.f;
+	m_fSpeed = 70.f;
 	return S_OK;
 }
 
@@ -63,10 +65,9 @@ void CSacrifice_Orb::Update(_float dt)
 
 		auto& battleInfos = battle->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
 		_vector3 vCurrPosition = m_pTransform->Get_WorldPos();
-		_vector3 vNextPosition{};
 
 		_vector3 vCurrDir = m_pTransform->Dir(STATE::LOOK);
-		_vector3 vTargetDir{ 0.f,0.f,1.f };
+		_vector3 vTargetDir{};
 
 		for (auto& info : battleInfos)
 		{
@@ -78,14 +79,12 @@ void CSacrifice_Orb::Update(_float dt)
 		}
 
 		vTargetDir = vTargetPos - vCurrPosition;
-		//vTargetDir.y = 0.f;
+		vTargetDir.y = 0.f;
 		vTargetDir.Normalize();
 
 		vTargetDir = _vector3::Lerp(vCurrDir, vTargetDir, dt * 30.f);
-		vNextPosition = vCurrPosition + (m_fSpeed * vTargetDir * dt);
-
 		m_pTransform->Set_Look(vTargetDir);
-		pRigidBody->Set_Velocity(vTargetDir * m_fSpeed);
+		m_pTransform->Translate(vTargetDir * m_fSpeed * dt);
 	}
 
 	auto pObjectContainer = Get_Component<CObjectContainer>();

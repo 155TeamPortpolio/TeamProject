@@ -5,6 +5,7 @@
 #include "DebugDraw.h"
 #include "StaticModel.h"
 #include "SkeletalModel.h"
+#include "Helper_Func.h"
 
 void CCharacterController::Set_Velocity(_fvector vVelocity)
 {
@@ -228,7 +229,7 @@ void CCharacterController::Render_GUI()
 
 	ImGui::SeparatorText("CharacterController");
 
-	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 200), true))
+	if (ImGui::BeginChild("##CCTInfo", ImVec2(0, 350), true))
 	{
 		ImGui::Text("Grounded: %s", m_bGrounded ? "True" : "False");
 
@@ -345,6 +346,41 @@ void CCharacterController::Render_GUI()
 			{
 				m_vVelocity = _float3(0.f, 0.f, 0.f);
 			}
+		}
+
+		ImGui::Separator();
+		ImGui::Text("Collision Group:");
+		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA" };
+		const COLLISION_GROUP groupValues[] = {
+			COLLISION_GROUP::COMMON,
+			COLLISION_GROUP::PLAYER,
+			COLLISION_GROUP::MONSTER,
+			COLLISION_GROUP::PLAYER_ATTACK,
+			COLLISION_GROUP::MONSTER_ATTACK,
+			COLLISION_GROUP::MONSTER_PARRY,
+			COLLISION_GROUP::CAMERA
+		};
+
+		_int iCurrentGroup = 0;
+		for (_int i = 0; i < 7; ++i)
+		{
+			if (m_eGroup == groupValues[i])
+			{
+				iCurrentGroup = i;
+				break;
+			}
+		}
+
+		if (ImGui::Combo("##CollisionGroup", &iCurrentGroup, groupNames, 7))
+		{
+			Set_CollisionGroup(groupValues[iCurrentGroup]);
+		}
+
+		// 충돌 마스크 편집
+		_uint iMask = m_FilterData.word1;
+		if (CollisionHelper::RenderCollisionMaskEditor("Collision Mask (Collides With)", iMask))
+		{
+			Set_CollisionMask(iMask);
 		}
 
 		ImGui::Separator();

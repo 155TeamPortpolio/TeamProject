@@ -28,6 +28,8 @@
 #include "UI_SwitchAction.h"
 #include "UI_UltimateAction.h"
 
+#include "UI_IconLabel.h"
+
 namespace fs = filesystem;
 using namespace Helper;
 
@@ -113,6 +115,7 @@ void UILoader::Add_ResourcePath()
 	const string jsonRoot = "../../Resources/Data/UI";
 
 	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
+	ScanDirectory(uiRoot + "/Model", { ".dds", ".mat", ".model"});
 	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
 }
@@ -145,6 +148,7 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"SpecialAction",	&CUI_SpecialAction::Create	},
 		{"SwitchAction",	&CUI_SwitchAction::Create	},
 		{"UltimateAction",	&CUI_UltimateAction::Create	},
+		{"IconLabel",		&CUI_IconLabel::Create		},
 	};
 
 	for (const Entry& entry : entries)

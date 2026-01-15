@@ -264,6 +264,22 @@ void CThugAssaulter::Render_GUI()
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 {
+	BATTLE_COLLIDER_DESC WeaponDesc = {};
+
+	WeaponDesc.tagName = "Weapon";
+	WeaponDesc.isAttachBone = true;
+	WeaponDesc.tagBone = "Bip_ThugAssaulter_Weapon";
+	WeaponDesc.pOwnerAnimator3D = Get_Component<CAnimator3D>();
+	WeaponDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+	WeaponDesc.vCenter = { 0.f, 0.f,-0.7f };
+	WeaponDesc.vAttackSize = { 0.15f, 0.15f, 1.1f };
+	WeaponDesc.vTriggerSize = { 2.f,0.f,0.f };
+
+	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
+		return E_FAIL;
+
+	Create_AttackSign("Bip001 Head");
+
 	return S_OK;
 }
 
@@ -386,7 +402,7 @@ void CThugAssaulter::Update_States(_float dt)
 		m_isIdle = false;
 	}
 	
-	CheckDistanceFromPlayer();
+ 	CheckDistanceFromPlayer();
 	
 	//================================
 	ControlState(dt);

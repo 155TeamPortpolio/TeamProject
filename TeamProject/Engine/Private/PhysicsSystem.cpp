@@ -142,7 +142,7 @@ void CPhysicsSystem::Update(_float dt)
 
 void CPhysicsSystem::Late_Update(_float dt)
 {
-    m_pScene->fetchResults(true);
+    //m_pScene->fetchResults(true);
 }
 
 _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)

@@ -4,6 +4,8 @@
 #include "Target_Manager.h"
 #include "RenderPass.h"
 #include "GameInstance.h"
+#include "Shader.h"
+#include "PipeLine.h"
 #include "RenderTarget.h"
 
 CUIRenderer::CUIRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -28,6 +30,8 @@ HRESULT CUIRenderer::Render_3D(UI3DPass* pUI3DPass)
 {
 	ID3D11DepthStencilView* pDeferredDSV =
 		m_pTargetManager->Get_MTR_DSV("MRT_Deferred_Skinned");
+
+	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());
 
 	if (FAILED(m_pTargetManager->Begin_MRT("MRT_3DUI", 0xff, pDeferredDSV, false))) return E_FAIL;
 	pUI3DPass->Execute(m_pContext, this);

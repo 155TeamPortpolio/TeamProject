@@ -115,3 +115,9 @@ CUIObjcetBuilder& CUIObjcetBuilder::Add_UIDesc(UI_DESC* pArg)
 	m_pObjDesc = pArg;
 	return *this;
 }
+
+CUIObjcetBuilder& CUIObjcetBuilder::WorldPos(const _float3 worldPos)
+{
+	m_pObjDesc->worldPos = worldPos;
+	return *this;
+}
