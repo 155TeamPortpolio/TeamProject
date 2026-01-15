@@ -67,15 +67,13 @@ void CCharacterAttackCollider::Render_GUI()
 
 void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
-	//MSG_BOX("Damage On Enter");
-	////auto pCollidable = pOther->Get_Component<ICollidable>();
-	////if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
-	////	return;
-	//if (!Try_Hit(pOther))
-	//	return;
-
-	//// 데미지 주는 코드
-	//// -> Take Damage =>
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
+		return;
+	if (!Try_Hit(pOther))
+		return;
+	// MSG_BOX("Damage On Enter");
+	// 데미지 주는 코드
 }
 
 void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
@@ -85,7 +83,7 @@ void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
 		return;
 	if (!Try_Hit(pOther))
 		return;
-	MSG_BOX("Damage On Stay");
+	// MSG_BOX("Damage On Stay");
 	// 데미지 주는 코드
 }
 

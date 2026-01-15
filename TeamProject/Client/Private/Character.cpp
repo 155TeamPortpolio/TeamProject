@@ -334,6 +334,9 @@ void CCharacter::Active_AttackCollider(const string& strName, _bool bActive)
 
 void CCharacter::Begin_AttackCollider(const string& strName, const HitDesc& hitdesc)
 {
+	if (Is_Active_AttackCollider(strName))
+		return;
+
 	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
 	if (nullptr == pCollider)
 		return;

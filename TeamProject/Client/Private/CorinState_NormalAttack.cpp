@@ -72,8 +72,8 @@ void CCorinState_Attack_01::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_01")
         .Speed(1.2f)
-        .ReserveSpeed(0.34f, 0.38f, 0.4f, EaseType::OutQuart)
-        .ReserveSpeed(0.44f, 0.52f, 1.2f, EaseType::InCubic)
+        .ReserveSpeed(0.37f, 0.45f, 0.4f, EaseType::OutQuart)
+        .ReserveSpeed(0.45f, 0.5f, 1.2f, EaseType::Linear)
         .Apply();
 }
 
@@ -85,7 +85,7 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.37f)
     {
-        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 999, 0.f});
+        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f});
     }
     if (m_fAnimProgress >= 0.45f)
     {
@@ -101,7 +101,9 @@ void CCorinState_Attack_01::Exit(CCorin* pOwner)
 void CCorinState_Attack_02::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_02")
-        .Speed(2.f)
+        .Speed(1.5f)
+        .ReserveSpeed(0.25f, 0.35f, 0.4f, EaseType::OutQuart)
+        .ReserveSpeed(0.35f, 0.40f, 1.5f, EaseType::Linear)
         .Apply();
 }
 
@@ -110,6 +112,15 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.25f)
+    {
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f });
+    }
+    if (m_fAnimProgress >= 0.35f)
+    {
+        pOwner->End_AttackCollider("Saw");
+    }
 }
 
 void CCorinState_Attack_02::Exit(CCorin* pOwner)
@@ -121,6 +132,7 @@ void CCorinState_Attack_03::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_03")
         .Speed(1.5f)
+        .ReserveSpeed(0.5f, 1.f, 0.55f, EaseType::OutQuart)
         .Apply();
 }
 
@@ -129,6 +141,15 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.5f)
+    {
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.15f });
+    }
+    if (m_fAnimProgress >= 0.99f)
+    {
+        pOwner->End_AttackCollider("Saw");
+    }
 }
 
 void CCorinState_Attack_03::Exit(CCorin* pOwner)
@@ -139,7 +160,9 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_04")
-        .Speed(2.f)
+        .Speed(1.f)
+        .ReserveSpeed(0.22f, 0.46f, 0.55f, EaseType::OutQuart)
+        .ReserveSpeed(0.46f, 0.51f, 1.f, EaseType::Linear)
         .Apply();
 }
 
@@ -148,6 +171,15 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.22f)
+    {
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f });
+    }
+    if (m_fAnimProgress >= 0.46f)
+    {
+        pOwner->End_AttackCollider("Saw");
+    }
 }
 
 void CCorinState_Attack_04::Exit(CCorin* pOwner)
@@ -159,6 +191,7 @@ void CCorinState_Attack_05::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_05")
         .Speed(1.5f)
+        .ReserveSpeed(0.4f, 1.f, 0.5f, EaseType::OutQuart)
         .Apply();
 }
 
@@ -167,6 +200,14 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+    if (m_fAnimProgress >= 0.4f)
+    {
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.15f });
+    }
+    if (m_fAnimProgress >= 0.99f)
+    {
+        pOwner->End_AttackCollider("Saw");
+    }
 }
 
 void CCorinState_Attack_05::Exit(CCorin* pOwner)
