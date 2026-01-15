@@ -24,7 +24,7 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    // �̺�Ʈ : UI_STATUS_DESC
+    // �̺�Ʈ : UI_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
         {
             if (desc.eOwner == m_eOwner &&
@@ -32,7 +32,7 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
                 Set_Decibel(desc.value.fCurValue);
         });
 
-    // �̺�Ʈ : UI_PLAYER_STATUS_DESC
+    // �̺�Ʈ : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             if (desc.eOwner == m_eOwner)
@@ -46,17 +46,6 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 
 void CUI_Decibel::Update(_float dt)
 {
-    if (!m_initLayout)
-    {
-        Set_Decibel(0);
-        m_initLayout = true;
-    }
-
-    //auto pGameInstance = CGameInstance::GetInstance();
-    //auto pCameraMgr = pGameInstance->Get_CameraMgr();
-    //_float2 vSize = pGameInstance->Get_ClientSize();
-    //Helper::WorldToScreen(_float3(), m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, vSize.x, vSize.y));
-
     _float fLerpAmount = min(1.f, dt * m_fColorLerpSpeed);
     XMStoreFloat4(&m_vColor, XMVectorLerp(XMLoadFloat4(&m_vColor), XMLoadFloat4(&m_vTargetColor), fLerpAmount));
 

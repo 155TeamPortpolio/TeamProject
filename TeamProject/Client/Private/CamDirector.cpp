@@ -63,35 +63,22 @@ void CCamDirector::Update(_float dt)
 
 _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec)
 {
-	if (m_playing.active)
-		StopAll(blendOutSec);
+	if (m_playing.active) StopAll(blendOutSec);
 
 	auto& entry = m_seqs.at(key);
 
-	auto seqObj    = GetSeqObj();
+	auto seqObj = GetSeqObj();
 	auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
-	auto seqCam    = seqObj->Get_Component<CCamera>();
+	auto seqCam = seqObj->Get_Component<CCamera>();
 
 	seqPlayer->SetSequence(&entry.seqDesc);
 
-	if (entry.seqDesc.space == CamSpace::Local)
-		seqPlayer->SetSpaceReference(m_spaceRefHandle);
-	else
-		seqPlayer->ClearSpaceReference();
+	if (entry.seqDesc.space == CamSpace::Local) seqPlayer->SetSpaceReference(m_spaceRefHandle);
+	else seqPlayer->ClearSpaceReference();
 
 	seqPlayer->SetApplyEnabled(true);
 
-	if (resetTime)
-		seqPlayer->SetTime(0.f);
-
-	if (entry.seqDesc.space == CamSpace::Local)
-	{
-		auto refObj = ObjectManager()->Request_Object(m_spaceRefHandle);
-		auto cc = refObj->Get_Component<CCharacterController>();
-		seqCam->Set_ViewOffset({0.f, -cc->Get_HalfSize() * 0.25f, 0.f});
-	}
-	else
-		seqCam->Clear_ViewOffset();
+	if (resetTime) seqPlayer->SetTime(0.f);
 
 	const _uint handle = CameraManager()->Push(seqCam, blendInSec);
 
@@ -103,16 +90,14 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
 	m_playing.blendInRemain = blendInSec;
 
 	m_playing.returnCamType = m_defaultReturnCamType;
-	if (m_defaultReturnCamType != CamType::None)
-		m_playing.returnCamHandle = GetCamHandle(m_defaultReturnCamType);
+	if (m_defaultReturnCamType != CamType::None) m_playing.returnCamHandle = GetCamHandle(m_defaultReturnCamType);
 
-	if (m_playing.pendingStart)
-		seqPlayer->Pause();
-	else
-		seqPlayer->Play();
+	if (m_playing.pendingStart) seqPlayer->Pause();
+	else seqPlayer->Play();
 
 	return handle;
 }
+
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
@@ -122,34 +107,27 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
 	Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
 	outRot.Normalize();
 
-	auto seqObj    = GetSeqObj();
+	auto seqObj = GetSeqObj();
 	auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
-	auto seqCam    = seqObj->Get_Component<CCamera>();
 
 	seqPlayer->SetApplyEnabled(false);
 	seqPlayer->Stop(false);
 
-	if (resetTime)
-		seqPlayer->SetTime(0.f);
+	if (resetTime) seqPlayer->SetTime(0.f);
 
 	if (m_playing.returnCamType != CamType::None)
 	{
 		auto returnObj = ObjectManager()->Request_Object(m_playing.returnCamHandle);
-		const Vector3 viewOffset = seqCam->Get_ViewOffset();
 
 		if (m_playing.returnCamType == CamType::Orbit)
-		{
-			returnObj->Get_Component<CCamera>()->Set_ViewOffset(viewOffset);
-
-			const Vector3 ownerPos = outPos - viewOffset;
-			static_cast<COrbitCam*>(returnObj)->SnapFromCamPose(ownerPos, outRot);
-		}
+			static_cast<COrbitCam*>(returnObj)->SnapFromCamPose(outPos, outRot);
 	}
 
 	const _bool ok = CameraManager()->Pop(handle, blendOutSec);
 	m_playing = {};
 	return ok;
 }
+
 
 void CCamDirector::StopAll(_float blendOutSec)
 {

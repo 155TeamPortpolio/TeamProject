@@ -113,44 +113,99 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
     return RegisterClassExW(&wcex);
 }
 
-BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+struct MonitorPickResult
 {
-    g_hInstance = hInstance; // 인스턴스 핸들을 전역 변수에 저장합니다.
-    RECT rc{ 0, 0, ModelEdit::g_iWinSizeX, ModelEdit::g_iWinSizeY };
+    RECT workRect{};
+    bool found = false;
+};
 
-    AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+static BOOL CALLBACK EnumMonProc(HMONITOR hMon, HDC, LPRECT, LPARAM userData)
+{
+    auto* data = reinterpret_cast<pair<int, MonitorPickResult*>*>(userData);
 
-    HWND hWnd = CreateWindowW(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, 0,
-        rc.right - rc.left,
-        rc.bottom - rc.top, nullptr, nullptr, hInstance, nullptr);
+    MONITORINFO monitorInfo{};
+    monitorInfo.cbSize = sizeof(monitorInfo);
+    if (!GetMonitorInfo(hMon, &monitorInfo))
+        return TRUE;
 
-    if (!hWnd)
+    static int curIdx = 0;
+
+    if (curIdx == data->first)
     {
-        DWORD err = GetLastError();
-
-        wchar_t buf[256];
-        swprintf_s(buf, L"CreateWindowW 실패. GetLastError = %u", err);
-        MessageBoxW(nullptr, buf, L"Error", MB_OK);
-
+        data->second->workRect = monitorInfo.rcWork;
+        data->second->found = true;
         return FALSE;
     }
+    curIdx++;
+    return TRUE;
+}
 
+static MonitorPickResult GetWorkRectOfMonitorIndex(int monitorIdx)
+{
+    MonitorPickResult result{};
+    pair<int, MonitorPickResult*> payload{monitorIdx, &result};
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+    EnumDisplayMonitors(nullptr, nullptr, EnumMonProc, (LPARAM)&payload);
+    return result;
+}
 
-   g_hWnd = hWnd;
-   return TRUE;
+static RECT CalcWindowRectFromClientSize(int clientW, int clientH, DWORD style, DWORD exStyle)
+{
+    RECT rc{0, 0, clientW, clientH};
+    AdjustWindowRectEx(&rc, style, FALSE, exStyle);
+    return rc;
+}
+
+BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
+{
+    g_hInstance = hInstance;
+
+    HMONITOR hPrimary = MonitorFromPoint(POINT{0, 0}, MONITOR_DEFAULTTOPRIMARY);
+    MONITORINFO mi{};
+    mi.cbSize = sizeof(mi);
+    GetMonitorInfo(hPrimary, &mi);
+
+    const int primaryW = mi.rcMonitor.right - mi.rcMonitor.left;
+
+    if (primaryW > 2500)
+    {
+        g_iWinSizeX = 2560;
+        g_iWinSizeY = 1360;
+    }
+    else
+    {
+        g_iWinSizeX = 1600;
+        g_iWinSizeY = 900;
+    }
+
+    const DWORD style = WS_OVERLAPPEDWINDOW;
+    const DWORD exStyle = 0;
+
+    MonitorPickResult mon = GetWorkRectOfMonitorIndex(1);
+    if (!mon.found) mon = GetWorkRectOfMonitorIndex(0);
+
+    const int clientW = static_cast<int>(g_iWinSizeX);
+    const int clientH = static_cast<int>(g_iWinSizeY);
+
+    RECT winRc = CalcWindowRectFromClientSize(clientW, clientH, style, exStyle);
+    const int windowW = winRc.right - winRc.left;
+    const int windowH = winRc.bottom - winRc.top;
+
+    const int x = mon.workRect.left;
+    const int y = mon.workRect.top;
+
+    HWND hWnd = CreateWindowW(szWindowClass, szTitle, style, x, y, windowW, windowH, nullptr, nullptr, hInstance, nullptr);
+    if (!hWnd) return FALSE;
+
+    ShowWindow(hWnd, nCmdShow);
+    UpdateWindow(hWnd);
+    g_hWnd = hWnd;
+    return TRUE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    CGameInstance* pEngine = CGameInstance::GetInstance();
-
-    if (pEngine->HandleMessage(hWnd, message, wParam, lParam))
-        return 0; //엔진에서 메시지 처리함.
-
+    if (CGameInstance::GetInstance()->HandleMessage(hWnd, message, wParam, lParam))
+        return 0;
     return DefWindowProc(hWnd, message, wParam, lParam);
 }
-

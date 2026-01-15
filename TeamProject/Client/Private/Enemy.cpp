@@ -149,7 +149,15 @@ void CEnemy::Create_AttackSign(string boneTag)
 void CEnemy::Active_AttackSign(_bool parryEnable)
 {
 	auto pAttackSign = Get_Component<CObjectContainer>()->Find_ObjectByName("AttackSign");
-	static_cast<CAttackSign*>(pAttackSign)->Active();
+	
+	_bool IsReallyParryEnable = parryEnable;
+
+	if (true == parryEnable) {
+		if (BattleSystem()->GetPlayerParryingCount() <= 0)
+			IsReallyParryEnable = false;
+	}
+
+	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
@@ -190,7 +198,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 #pragma region AttackCollider
 	COLLIDER_DESC AttackcolliderDesc = {};
 	AttackcolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
-	AttackcolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	AttackcolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	AttackcolliderDesc.bTrigger = true;
 	AttackcolliderDesc.bAutoFit = false;
 	AttackcolliderDesc.eType = pDesc->eColliderType;

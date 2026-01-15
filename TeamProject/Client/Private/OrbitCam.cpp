@@ -5,57 +5,7 @@
 #include "Character.h"
 #include "GUIUtil.h"
 #include "Helper_Func.h"
-
 #include "EventListener.h"
-
-namespace
-{
-    using Profile = COrbitCam::Profile;
-
-    Profile FieldPreset()
-    {
-        Profile p{};
-        p.minDist = 1.f;
-        p.maxDist = 5.5f;
-
-        p.rotSmoothSpeed = 22.f;
-        p.distSmoothSpeed = 22.f;
-        p.pivotSmoothSpeed = 18.f;
-
-        p.offsetY = 0.f;
-
-        p.startDistance = 4.2f;
-        p.startPitchDeg = -18.f;
-        p.startHeightOffset = 0.65f;
-
-        return p;
-    }
-
-    Profile BattlePreset()
-    {
-        Profile p{};
-        p.minDist = 1.f;
-        p.maxDist = 6.0f;
-
-        p.rotSmoothSpeed = 16.f;
-        p.distSmoothSpeed = 16.f;
-        p.pivotSmoothSpeed = 14.f;
-
-        p.offsetY = 0.f;
-
-        p.startDistance = 4.8f;
-        p.startPitchDeg = -20.f;
-        p.startHeightOffset = 0.85f;
-
-        return p;
-    }
-
-    Profile GetPreset(OrbitPreset preset)
-    {
-        if (preset == OrbitPreset::Field) return FieldPreset();
-        return BattlePreset();
-    }
-}
 
 void COrbitCam::Awake()
 {
@@ -71,18 +21,20 @@ void COrbitCam::Awake()
 HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
-    auto cc            = Add_Component<CCharacterController>();
-    auto eventListener = Add_Component<CEventListener>();
-   
-    SetPreset(preset);
-    
+    Add_Component<CCharacterController>();
+
+    pose.targetRotDeg = Vector2(0.f, profile.startPitchDeg);
     pose.curRotDeg = pose.targetRotDeg;
-    pose.curDist   = pose.targetDist;
 
-    m_profileInit     = profile;
-    m_inputInit       = input;
-    m_hasInitSnapshot = true;
+    pose.targetDist = profile.startDistance;
+    pose.curDist = pose.targetDist;
 
+    pose.targetPivot = Vector3::Zero;
+    pose.curPivot = pose.targetPivot;
+
+    pose.pivotOverrideOffset = Vector3::Zero;
+
+    ClampTargets();
     return S_OK;
 }
 
@@ -92,59 +44,37 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetPreset(OrbitPreset nextPreset)
-{
-    preset = nextPreset;
-    profile = GetPreset(preset);
-
-    ClampTargets();
-
-    pose.targetRotDeg = pose.curRotDeg;
-    pose.targetDist   = pose.curDist;
-    pose.targetPivot  = pose.curPivot;
-}
-
 void COrbitCam::SetTarget(CGameObject* obj)
 {
     const float keepTargetDist = pose.targetDist;
-
-    targetHandle = obj->Get_Handle();
+    const _bool hadTarget = targetHandle.isValid();
 
     autoYawHoldTimer = profile.autoYawFollowDelay;
     hasPrevTargetFoot = false;
 
-    if (firstSnap)
+    if (!hadTarget)
     {
+        targetHandle = obj->Get_Handle();
+        targetSwitch = {};
         pose.pivotOverrideOffset = Vector3::Zero;
         SetTargetFrontView(obj, profile.startDistance, profile.startPitchDeg, profile.startHeightOffset);
-        firstSnap = false;
         return;
     }
 
-    pose.pivotOverrideOffset = Vector3::Zero;
+    const Vector3 holdPivotWorld = pose.curPivot;
 
-    const Vector3 pivot = GetPivotTargetPos();
-    pose.targetPivot = pivot;
-    pose.curPivot = pivot;
+    targetHandle = obj->Get_Handle();
+
+    targetSwitch.active = true;
+    targetSwitch.elapsed = 0.f;
+    targetSwitch.holdPivotWorld = holdPivotWorld;
 
     pose.targetRotDeg = pose.curRotDeg;
 
     pose.targetDist = clamp(keepTargetDist, profile.minDist, profile.maxDist);
     pose.curDist = clamp(pose.curDist, profile.minDist, profile.maxDist);
 
-    const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
-    const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
-    const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
-
-    const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
-    const Vector3 camPos = pivot + backDir * pose.curDist;
-
-    auto cc = Get_Component<CCharacterController>();
-    cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
-
-    const PxExtendedVec3& c = cc->Get_Controller()->getPosition();
-    m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
-    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+    ClampTargets();
 }
 
 
@@ -155,8 +85,6 @@ void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 
 void COrbitCam::SyncFromCurTransform()
 {
-    firstSnap = false;
-
     const Vector3 pivot = GetPivotTargetPos();
     pose.targetPivot = pivot;
     pose.curPivot = pivot;
@@ -184,7 +112,6 @@ void COrbitCam::SyncFromCurTransform()
     m_pTransform->Set_WorldPos(XMVectorSet((float)c.x, (float)c.y, (float)c.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
-
 
 void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset)
 {
@@ -233,8 +160,6 @@ void COrbitCam::SetTargetFrontView(CGameObject* obj, float distance, float pitch
 
 void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
 {
-    firstSnap = false;
-
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
@@ -283,6 +208,8 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
 
 void COrbitCam::Priority_Update(_float dt)
 {
+    UpdateTargetSwitch(dt);
+
     pose.targetPivot = GetPivotTargetPos();
     
     UpdateInput(dt);
@@ -302,7 +229,8 @@ void COrbitCam::UpdateInput(_float dt)
         pose.targetRotDeg.x += dx * input.sensitivityX;
         pose.targetRotDeg.y += dy * input.sensitivityY;
 
-        if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
+        if (dx != 0.f || dy != 0.f) 
+            autoYawHoldTimer = profile.autoYawFollowDelay;
 
         const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
         if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
@@ -332,14 +260,7 @@ void COrbitCam::SmoothStates(_float dt)
 
 Vector3 COrbitCam::GetPivotTargetPos() const
 {
-    auto obj = ObjectManager()->Request_Object(targetHandle);
-    auto cc = obj->Get_Component<CCharacterController>();
-
-    const Vector4 foot4 = cc->Get_FootPosition();
-    const Vector3 foot{foot4.x, foot4.y, foot4.z};
-
-    const Vector3 basePivot = foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + profile.offsetY, 0.f);
-
+    const Vector3 basePivot = GetBasePivotTargetPos(targetHandle);
     return basePivot + pose.pivotOverrideOffset;
 }
  
@@ -367,7 +288,7 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     const Vector3 curPos((float)c0.x, (float)c0.y, (float)c0.z);
 
     const Vector3 disp = desiredPos - curPos;
-    cc->Move_Displacement(XMVectorSet(disp.x, disp.y, disp.z, 0.f), dt);
+    cc->Move_Displacement(Vector4(disp.x, disp.y, disp.z, 0.f), dt);
 
     const PxExtendedVec3& c1 = cc->Get_Controller()->getPosition();
     const Vector3 newPos((float)c1.x, (float)c1.y, (float)c1.z);
@@ -384,10 +305,9 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     delta = clamp(delta, -maxStep, maxStep);
     pose.curDist += delta;
 
-    m_pTransform->Set_WorldPos(XMVectorSet((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
+    m_pTransform->Set_WorldPos(Vector4((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
-
 
 void COrbitCam::UpdateAutoYawFollow(_float dt)
 {
@@ -450,6 +370,40 @@ Vector3 COrbitCam::GetTargetFootPos() const
     return Vector3(foot4.x, foot4.y, foot4.z);
 }
 
+Vector3 COrbitCam::GetBasePivotTargetPos(OBJECT_HANDLE handle) const
+{
+    auto obj = ObjectManager()->Request_Object(handle);
+    auto cc = obj->Get_Component<CCharacterController>();
+
+    const Vector4 foot4 = cc->Get_FootPosition();
+    const Vector3 foot{foot4.x, foot4.y, foot4.z};
+
+    return foot + Vector3(0.f, cc->Get_HalfSize() * 1.5f + profile.offsetY, 0.f);
+}
+
+void COrbitCam::UpdateTargetSwitch(_float dt)
+{
+    if (!targetSwitch.active) return;
+
+    targetSwitch.elapsed += dt;
+
+    float t = targetSwitch.elapsed / profile.targetSwitchBlendSec;
+    if (t >= 1.f)
+    {
+        targetSwitch.active = false;
+        pose.pivotOverrideOffset = Vector3::Zero;
+        return;
+    }
+
+    t = clamp(t, 0.f, 1.f);
+    t = Math::ApplyEase(profile.targetSwitchEase, t);
+
+    const Vector3 basePivotNow = GetBasePivotTargetPos(targetHandle);
+    const Vector3 keepOffsetNow = targetSwitch.holdPivotWorld - basePivotNow;
+
+    pose.pivotOverrideOffset = Vector3::Lerp(keepOffsetNow, Vector3::Zero, t);
+}
+
 COrbitCam* COrbitCam::Create()
 {
     auto inst = new COrbitCam();
@@ -470,137 +424,4 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
         Safe_Release(inst);
     }
     return inst;
-}
-
-void COrbitCam::Render_GUI()
-{
-    __super::Render_GUI();
-
-    if (!m_hasInitSnapshot)
-    {
-        m_profileInit = profile;
-        m_inputInit = input;
-        m_hasInitSnapshot = true;
-    }
-
-    ImGui::SeparatorText("OrbitCam");
-
-    {
-        GuiUtil::BeginTwoColTable("##OrbitPresetTable");
-
-        GuiUtil::RowLabel("Preset");
-        const char* presetNames[] = {"Field", "Battle"};
-        int presetIdx = (preset == OrbitPreset::Field) ? 0 : 1;
-        if (ImGui::Combo("##Preset", &presetIdx, presetNames, 2))
-        {
-            OrbitPreset nextPreset = (presetIdx == 0) ? OrbitPreset::Field : OrbitPreset::Battle;
-            SetPreset(nextPreset);
-        }
-
-        GuiUtil::EndTwoColTable();
-    }
-
-    ImGui::Separator();
-
-    if (ImGui::CollapsingHeader("Profile", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        GuiUtil::BeginTwoColTable("##OrbitProfileTable");
-
-        GuiUtil::DrawFloatRow("MinDist", "##MinDist", &profile.minDist, m_profileInit.minDist, 0.01f, 0.f, 100.f, "%.3f");
-        GuiUtil::DrawFloatRow("MaxDist", "##MaxDist", &profile.maxDist, m_profileInit.maxDist, 0.01f, 0.f, 100.f, "%.3f");
-        GuiUtil::DrawFloatRow("PitchMin", "##PitchMin", &profile.pitchMin, m_profileInit.pitchMin, 0.1f, -89.f, 89.f, "%.2f");
-        GuiUtil::DrawFloatRow("PitchMax", "##PitchMax", &profile.pitchMax, m_profileInit.pitchMax, 0.1f, -89.f, 89.f, "%.2f");
-        GuiUtil::DrawFloatRow("RotSmooth", "##RotSmooth", &profile.rotSmoothSpeed, m_profileInit.rotSmoothSpeed, 0.1f, 0.f, 200.f, "%.2f");
-        GuiUtil::DrawFloatRow("DistSmooth", "##DistSmooth", &profile.distSmoothSpeed, m_profileInit.distSmoothSpeed, 0.1f, 0.f, 200.f, "%.2f");
-        GuiUtil::DrawFloatRow("PivotSmooth", "##PivotSmooth", &profile.pivotSmoothSpeed, m_profileInit.pivotSmoothSpeed, 0.1f, 0.f, 200.f, "%.2f");
-        GuiUtil::DrawFloatRow("OffsetY", "##OffsetY", &profile.offsetY, m_profileInit.offsetY, 0.01f, -10.f, 10.f, "%.3f");
-
-        GuiUtil::EndTwoColTable();
-
-        ImGui::Spacing();
-        ImGui::SeparatorText("Pitch Auto Zoom");
-
-        {
-            GuiUtil::BeginTwoColTable("##OrbitAutoZoomTable");
-
-            GuiUtil::DrawBoolRow("UsePitchAutoZoom", "##UsePitchAutoZoom", &profile.usePitchAutoZoom, m_profileInit.usePitchAutoZoom);
-
-            ImGui::BeginDisabled(!profile.usePitchAutoZoom);
-            GuiUtil::DrawFloatRow("AutoZoomMax", "##AutoZoomMax", &profile.pitchAutoZoomMax, m_profileInit.pitchAutoZoomMax, 0.01f, -10.f, 10.f, "%.3f");
-            GuiUtil::DrawFloatRow("StartN", "##AutoZoomStartN", &profile.pitchAutoZoomStartN, m_profileInit.pitchAutoZoomStartN, 0.01f, 0.f, 1.f, "%.3f");
-            GuiUtil::DrawFloatRow("Smooth", "##AutoZoomSmooth", &profile.pitchAutoZoomSmooth, m_profileInit.pitchAutoZoomSmooth, 0.1f, 0.f, 200.f, "%.2f");
-            ImGui::EndDisabled();
-
-            GuiUtil::EndTwoColTable();
-        }
-
-        ImGui::Spacing();
-        ImGui::SeparatorText("Start Pose");
-
-        {
-            GuiUtil::BeginTwoColTable("##OrbitStartPoseTable");
-
-            GuiUtil::DrawFloatRow("StartDist", "##StartDist", &profile.startDistance, m_profileInit.startDistance, 0.01f, 0.f, 100.f, "%.3f");
-            GuiUtil::DrawFloatRow("StartPitch", "##StartPitch", &profile.startPitchDeg, m_profileInit.startPitchDeg, 0.1f, -89.f, 89.f, "%.2f");
-            GuiUtil::DrawFloatRow("StartHeight", "##StartHeight", &profile.startHeightOffset, m_profileInit.startHeightOffset, 0.01f, -10.f, 10.f, "%.3f");
-
-            GuiUtil::EndTwoColTable();
-        }
-
-        ImGui::Spacing();
-        ImGui::SeparatorText("Auto Yaw Follow");
-
-        {
-            GuiUtil::BeginTwoColTable("##OrbitAutoYawTable");
-
-            GuiUtil::DrawBoolRow("UseAutoYawFollow", "##UseAutoYawFollow", &profile.useAutoYawFollow, m_profileInit.useAutoYawFollow);
-
-            ImGui::BeginDisabled(!profile.useAutoYawFollow);
-            GuiUtil::DrawFloatRow("FollowSpeed", "##FollowSpeed", &profile.autoYawFollowSpeed, m_profileInit.autoYawFollowSpeed, 0.01f, 0.f, 20.f, "%.3f");
-            GuiUtil::DrawFloatRow("Delay", "##FollowDelay", &profile.autoYawFollowDelay, m_profileInit.autoYawFollowDelay, 0.01f, 0.f, 10.f, "%.3f");
-            ImGui::EndDisabled();
-
-            GuiUtil::EndTwoColTable();
-        }
-
-        ClampTargets();
-
-        if (ImGui::Button("Reset Profile"))
-        {
-            profile = m_profileInit;
-            ClampTargets();
-        }
-    }
-
-    if (ImGui::CollapsingHeader("Input", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        GuiUtil::BeginTwoColTable("##OrbitInputTable");
-
-        GuiUtil::DrawFloatRow("SensitivityX", "##SensX", &input.sensitivityX, m_inputInit.sensitivityX, 0.001f, 0.f, 10.f, "%.4f");
-        GuiUtil::DrawFloatRow("SensitivityY", "##SensY", &input.sensitivityY, m_inputInit.sensitivityY, 0.001f, 0.f, 10.f, "%.4f");
-        GuiUtil::DrawFloatRow("ZoomSpeed", "##ZoomSpeed", &input.zoomSpeed, m_inputInit.zoomSpeed, 0.01f, 0.f, 50.f, "%.3f");
-
-        GuiUtil::EndTwoColTable();
-
-        if (ImGui::Button("Reset Input"))
-            input = m_inputInit;
-    }
-
-    if (ImGui::CollapsingHeader("State", ImGuiTreeNodeFlags_DefaultOpen))
-    {
-        ImGui::Text("Active: %s", (Get_Component<CCamera>() == CameraManager()->Get_ActiveCam()) ? "YES" : "NO");
-        ImGui::Text("TargetRotDeg: (%.2f, %.2f)", pose.targetRotDeg.x, pose.targetRotDeg.y);
-        ImGui::Text("CurRotDeg:    (%.2f, %.2f)", pose.curRotDeg.x, pose.curRotDeg.y);
-        ImGui::Text("TargetDist:   %.3f", pose.targetDist);
-        ImGui::Text("CurDist:      %.3f", pose.curDist);
-        ImGui::Text("Pivot:        (%.3f, %.3f, %.3f)", pose.curPivot.x, pose.curPivot.y, pose.curPivot.z);
-
-        if (ImGui::Button("Sync From Cur Transform"))
-            SyncFromCurTransform();
-
-        ImGui::SameLine();
-
-        if (ImGui::Button("Clear Pivot Override"))
-            pose.pivotOverrideOffset = Vector3::Zero;
-    }
 }

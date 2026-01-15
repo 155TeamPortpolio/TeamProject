@@ -116,6 +116,7 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 
 	for (auto& pair : m_Components)
 	{
+		/*惑加 林绰 模备甸篮 力寇*/
 		if (pair.first == type_index(typeid(CTransform))) continue;
 		if (pair.first == type_index(typeid(CModel))) continue;
 		if (pair.first == type_index(typeid(CRigidBody))) continue;

@@ -15,8 +15,9 @@
 #include "CharacterController.h"
 
 #include "Child.h"
-
-
+#include "StaticModel.h"
+#include "SkeletalModel.h"
+#include "Material.h"
 CGameObjectBuilder::CGameObjectBuilder(const CLONE_DESC& _cloneDesc)
 	:m_pGameInstance(CGameInstance::GetInstance())
 {
@@ -176,6 +177,26 @@ CGameObjectBuilder& CGameObjectBuilder::Set_Parent(const PARENT_DESC& parent)
 {
 	PARENT_DESC* parentDesc = new PARENT_DESC(parent);
 	m_CompDesc.emplace(type_index(typeid(CChild)), parentDesc);
+	return *this;
+}
+
+CGameObjectBuilder& CGameObjectBuilder::Model_Link(const MODEL_INIT_DESC& pArg, MESH_TYPE eType)
+{
+	MODEL_INIT_DESC* ModelDesc = new MODEL_INIT_DESC(pArg);
+	if (eType == MESH_TYPE::ANIM) {
+		m_CompDesc.emplace(type_index(typeid(CSkeletalModel)), ModelDesc);
+
+	}
+	else {
+		m_CompDesc.emplace(type_index(typeid(CStaticModel)), ModelDesc);
+	}
+	return *this;
+}
+	
+CGameObjectBuilder& CGameObjectBuilder::Material_Link(const MATERIAL_INIT_DESC& pArg)
+{
+	MATERIAL_INIT_DESC* MaterialDesc = new MATERIAL_INIT_DESC(pArg);
+	m_CompDesc.emplace(type_index(typeid(CMaterial)), MaterialDesc);
 	return *this;
 }
 

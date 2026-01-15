@@ -50,9 +50,10 @@ typedef struct AnimationLayer {
     _float  fCurrentTrackPosition = {};
     _float  fProgress = { 0.f };
     _float  fAnimSpeed = { 1.f };
-    _float  fAppliedAnimSpeed = { 1.f };
+    _float  fAppliedAnimSpeed = { 1.f }; //속도 변환하는 변수용
     _bool   bLoop = { false };
-    _float  fLoopEnd = { 1.f };             //루프를 다시 돌 마지막 진행도
+    _float  fEndAt = { 1.f };   //애니매이션  끝날 위치 
+    _float  fStartAt = { 1.f }; //애니매이션 시작위치
     _bool   bisFinished = { true };
     //재생 속도관련
     EaseType ePlayEaseType = { EaseType::None };

@@ -71,6 +71,7 @@ CTestLevel::CTestLevel(const string& LevelKey)
 	m_pCamDirector{ CCamDirector::GetInstance() }
 {
 	Safe_AddRef(m_pGameInstance);
+	Safe_AddRef(m_pCamDirector);
 }
 
 HRESULT CTestLevel::Initialize()
@@ -211,6 +212,9 @@ HRESULT CTestLevel::Awake()
 	Ready_ShadowCamera();
 	Ready_Npc();
 
+	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
+	m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+
 	return S_OK;
 }
 
@@ -249,7 +253,15 @@ void CTestLevel::Update()
 	}
 
 	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Intro_3", 0.f, true, 0.5f);
+		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+
+	if (InputDevice()->Key_Tap(VK_F7))
+		CameraManager()->AddShake(CamShakeType::HitNormal);
+
+	if (InputDevice()->Key_Tap(VK_F8))
+		CameraManager()->AddShake(CamShakeType::HitHeavy);
+
+	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
 
 	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
@@ -329,7 +341,7 @@ void CTestLevel::Ready_Camera()
 		.Build("FreeCam");
 
 	CCT_DESC desc;
-	desc.eGroup = COLLISION_GROUP::CAMERA;
+	desc.eGroup         = COLLISION_GROUP::CAMERA;
 	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 
 	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})

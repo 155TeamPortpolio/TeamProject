@@ -34,11 +34,18 @@ public:
 public:
 	virtual class CGameObject* Request_Object(const OBJECT_HANDLE& handle) override;
 	virtual class CGameObject* Acquire(const CLONE_DESC& desc) override;
+
 private:
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object);
 	 void Add_Object_Recursive(CLayer* pLayer, class CGameObject* object,string LevelTag);
 	 void Prune_Queues_ByLevel(const string& levelTag);
 
+public:
+	virtual void Set_LevelTimeScale(string LevelTag, _float scale) override;
+	virtual void Reset_LevelTimeScale(string LevelTag) override;
+	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer, _float scale) override;
+	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) override;
+	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) override;
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	class CObjectPool* m_pObjectPool = { nullptr };

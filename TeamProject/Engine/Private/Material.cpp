@@ -24,6 +24,10 @@ HRESULT CMaterial::Initialize_Prototype()
 
 HRESULT CMaterial::Initialize(COMPONENT_DESC* pArg)
 {
+	if (pArg != nullptr) {
+		auto desc = static_cast<MATERIAL_INIT_DESC*>(pArg);
+		Link_Material(desc->LevelKey, desc->MaterialKey);
+	}
 	return S_OK;
 }
 

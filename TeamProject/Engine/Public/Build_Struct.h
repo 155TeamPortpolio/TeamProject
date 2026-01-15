@@ -127,6 +127,21 @@ namespace Engine {
 		virtual ~tagSetParentDesc() DEFAULT;
 	}PARENT_DESC;
 
+	typedef struct tagModelInitDesc : public COMPONENT_DESC
+	{
+		string LevelKey = {};
+		string ModelKey = {};
+		tagModelInitDesc(const string& levelKey, const string& modelKey) :LevelKey(levelKey), ModelKey(modelKey) {};
+		virtual ~tagModelInitDesc() DEFAULT;
+	}MODEL_INIT_DESC;
+	typedef struct tagMaterialInitDesc : public COMPONENT_DESC
+	{
+		string LevelKey = {};
+		string MaterialKey = {};
+		tagMaterialInitDesc(const string& levelKey, const string& materialKey) :LevelKey(levelKey), MaterialKey(materialKey) {};
+		virtual ~tagMaterialInitDesc() DEFAULT;
+	}MATERIAL_INIT_DESC;
+
 	/*Object Clone Desc*/
 	typedef struct tagGameObjectDesc : public INIT_DESC {
 		string InstanceName = "";

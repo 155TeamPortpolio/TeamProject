@@ -118,9 +118,6 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice_Hand\State">
       <UniqueIdentifier>{a7a195e0-0693-4efe-b00e-6aa09c326087}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Camera\98. DebugCamTrace">
-      <UniqueIdentifier>{bd77c447-5ba4-4e69-8012-4af5e725f4c4}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Attack\Phase1">
       <UniqueIdentifier>{964c7637-0a29-4115-a3ab-e67539825dbc}</UniqueIdentifier>
     </Filter>
@@ -810,9 +807,6 @@
     <ClInclude Include="..\public\CamLoader.h">
       <Filter>03. Utility\02. CamLoader</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\DebugCamTrace.h">
-      <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\MiyabiState_ChargeAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge</Filter>
     </ClInclude>
@@ -1387,9 +1381,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\SacrificeHand.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice_Hand</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\DebugCamTrace.cpp">
-      <Filter>02. GameObject\Camera\98. DebugCamTrace</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\MiyabiState_ChargeAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Miyabi\State\Attack\Charge</Filter>

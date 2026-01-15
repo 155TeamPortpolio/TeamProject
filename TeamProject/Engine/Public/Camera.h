@@ -18,30 +18,26 @@ public:
 	HRESULT Initialize(COMPONENT_DESC* pArg) override;
 
 public:
-	Matrix        Get_ViewMatrix()  const;
-	Matrix        Get_ProjMatrix()  const;			
-	_vector       Get_Pos()         const;
-	_float        Get_FOV()         const { return m_lens.fov;    }
-	_float        Get_Near()        const { return m_lens.zNear;  }
-	_float        Get_Far()         const { return m_lens.zFar;   }
-	_float        Get_Aspect()      const { return m_lens.aspect; }
-	CamProjType   Get_ProjType()    const { return m_projType;    }
-	OBJECT_HANDLE Get_OwnerHandle() const { return m_pOwner->Get_Handle(); }
-	_float        Get_OrthoSize()   const { return m_orthoSize; }
+	Matrix         Get_ViewMatrix()  const;
+	Matrix         Get_ProjMatrix()  const;			
+	_vector        Get_Pos()         const;
+	_float         Get_FOV()         const { return m_lens.fov;    }
+	_float         Get_Near()        const { return m_lens.zNear;  }
+	_float         Get_Far()         const { return m_lens.zFar;   }
+	_float         Get_Aspect()      const { return m_lens.aspect; }
+	CamProjType    Get_ProjType()    const { return m_projType;    }
+	OBJECT_HANDLE  Get_OwnerHandle() const { return m_pOwner->Get_Handle(); }
+	_float         Get_OrthoSize()   const { return m_orthoSize; }
 
-	void        Set_FOV(_float fov)                { m_lens.fov    = fov;      }
-	void        Set_Far(_float zFar)               { m_lens.zFar   = zFar;     }
-	void        Set_Near(_float zNear)             { m_lens.zNear  = zNear;    }
-	void        Set_Aspect(_float aspect)          { m_lens.aspect = aspect;   }
-	void        Set_ProjType(CamProjType projType) { m_projType    = projType; }
-	void        Set_Lens(_float fov, _float aspect, _float zNear, _float zFar);
+	void           Set_FOV(_float fov)                { m_lens.fov    = fov;      }
+	void           Set_Far(_float zFar)               { m_lens.zFar   = zFar;     }
+	void           Set_Near(_float zNear)             { m_lens.zNear  = zNear;    }
+	void           Set_Aspect(_float aspect)          { m_lens.aspect = aspect;   }
+	void           Set_ProjType(CamProjType projType) { m_projType    = projType; }
+	void           Set_Lens(_float fov, _float aspect, _float zNear, _float zFar);
+				   
+	_bool          Lerp_FOV(_float dst, _float dt);
 
-	_bool       Lerp_FOV(_float dst, _float dt);
-
-public:
-	const Vector3& Get_ViewOffset() const           { return m_viewOffset; }
-	void           Set_ViewOffset(const Vector3& v) { m_viewOffset = v; }
-	void           Clear_ViewOffset()               { m_viewOffset = Vector3::Zero; }
 	virtual void   Render_GUI() override;
 
 private:
