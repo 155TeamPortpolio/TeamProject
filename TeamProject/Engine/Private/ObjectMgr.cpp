@@ -382,10 +382,16 @@ _bool CObjectMgr::Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle
 	auto iter = m_globalHandleByKey.find(RememberKey);
 
 	if (iter != m_globalHandleByKey.end()) {
-		if (replaceIfExists) {
+		if (!iter->second.isValid()) { //유효하지 않은 핸들 기억
 			m_globalHandleByKey[RememberKey] = handle;
 			return true;
 		}
+
+		if (replaceIfExists) {//대체 허용
+			m_globalHandleByKey[RememberKey] = handle;
+			return true;
+		}
+
 		return false;
 	}
 	m_globalHandleByKey[RememberKey] = handle;
