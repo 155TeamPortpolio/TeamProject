@@ -38,6 +38,7 @@ void CUI_DecibelKanji::Update(_float dt)
     if (*m_pState != m_iPrevState)
     {
         m_iPrevState = *m_pState;
+
         Set_Kanji(static_cast<CUI_Decibel::State>(*m_pState));
     } 
 }

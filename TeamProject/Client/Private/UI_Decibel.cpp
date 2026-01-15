@@ -46,12 +46,6 @@ HRESULT CUI_Decibel::Initialize(INIT_DESC* pArg)
 
 void CUI_Decibel::Update(_float dt)
 {
-    if (!m_initLayout)
-    {
-        Set_Decibel(0);
-        m_initLayout = true;
-    }
-
     _float fLerpAmount = min(1.f, dt * m_fColorLerpSpeed);
     XMStoreFloat4(&m_vColor, XMVectorLerp(XMLoadFloat4(&m_vColor), XMLoadFloat4(&m_vTargetColor), fLerpAmount));
 
