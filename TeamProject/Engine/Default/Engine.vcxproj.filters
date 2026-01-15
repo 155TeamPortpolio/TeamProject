@@ -1779,9 +1779,6 @@
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\Shader_PostProcess.hlsl">
-      <Filter>98. BasicShader\Deferred</Filter>
-    </FxCompile>
     <FxCompile Include="..\Public\Engine_Shader\Shader_Deferred_Define.hlsl">
       <Filter>98. BasicShader\Deferred</Filter>
     </FxCompile>
