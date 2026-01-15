@@ -637,6 +637,9 @@
     <Filter Include="02. GameObject\UI\AccessSign\Zero">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\3D">
+      <UniqueIdentifier>{ab649337-9f37-4c26-81e7-aab8c2b78b5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1223,6 +1226,9 @@
     <ClInclude Include="..\Public\WorldUI_AccessSign.h">
       <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_3DBillboard.h">
+      <Filter>02. GameObject\UI\3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1790,6 +1796,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\WorldUI_AccessSign.cpp">
       <Filter>02. GameObject\UI\AccessSign\Zero</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_3DBillboard.cpp">
+      <Filter>02. GameObject\UI\3D</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

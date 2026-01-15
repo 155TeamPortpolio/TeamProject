@@ -115,6 +115,7 @@ void UILoader::Add_ResourcePath()
 	const string jsonRoot = "../../Resources/Data/UI";
 
 	ScanDirectory(uiRoot + "/Image", {".dds", ".png"});
+	ScanDirectory(uiRoot + "/Model", { ".dds", ".mat", ".model"});
 	ScanDirectory(jsonRoot, {".json"});
 	RegisterFonts(uiRoot + "/Font");
 }
