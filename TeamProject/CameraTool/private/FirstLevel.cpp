@@ -21,7 +21,7 @@ HRESULT CFirstLevel::Awake()
 		.Build("FreeCam");
 
 	CGameObject* demoModel = Builder::Create_Object({"First_Level", "Proto_Unagi"})
-		.Scale({1.f, 1.f, 1.f})
+		//.Scale({100.f, 100.f, 100.f})
 		.Build("Unagi");
 
 	CGameObject* demoGrid = Builder::Create_Object({"First_Level", "Proto_Grid"})
