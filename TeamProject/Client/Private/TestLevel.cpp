@@ -156,7 +156,9 @@ HRESULT CTestLevel::Awake()
 	Ready_Npc();
 
 	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+
+	//m_pGameInstance->Set_EngineTimeScale(0.8f);
 
 	return S_OK;
 }
@@ -195,14 +197,18 @@ void CTestLevel::Update()
 		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
 	}
 
-	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+	if (InputDevice()->Key_Tap(VK_F3))
+		m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+
+	if (InputDevice()->Key_Down('Q'))
+		m_pCamDirector->RequestSequence("Ultimate/Jane_Ultimate");
 
 	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 		CameraManager()->AddShake(CamShakeType::HitNormal);
 
-	if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
-		CameraManager()->AddShake(CamShakeType::HitHeavy);
+	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+		//CameraManager()->AddShake(CamShakeType::HitHeavy);
+	
 
 	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
 
@@ -220,7 +226,7 @@ void CTestLevel::Update()
 		
 		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
 	}
-
+	
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });

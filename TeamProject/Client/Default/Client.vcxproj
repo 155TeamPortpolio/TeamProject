@@ -168,6 +168,7 @@
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
+    <ClInclude Include="..\Public\CamDirectorData.h" />
     <ClInclude Include="..\public\CamLoader.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
@@ -218,6 +219,7 @@
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\MainCity_Level.h" />
     <ClInclude Include="..\public\MapAnimObject.h" />
+    <ClInclude Include="..\Public\OrbitCamTypes.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />

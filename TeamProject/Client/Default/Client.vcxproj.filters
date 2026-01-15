@@ -1205,6 +1205,12 @@
     <ClInclude Include="..\Public\Stage.h">
       <Filter>01. Level\04. Zero</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamTypes.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CamDirectorData.h">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
