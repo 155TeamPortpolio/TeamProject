@@ -105,7 +105,6 @@ HRESULT CScott_Level::Awake()
 
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
-	Ready_ShadowCamera();
 
 	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
 	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
@@ -160,61 +159,6 @@ void CScott_Level::Rake_MapResources()
 
 		}
 	}
-}
-
-void CScott_Level::Ready_Camera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto seqCam = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_SequenceCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("SequenceCam");
-
-	auto freeCam = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_FreeCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 2.f, -3.f })
-		.Build("FreeCam");
-
-	CCT_DESC desc;
-	desc.eGroup = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
-
-	auto orbitCam = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(aspect)
-		.CharacterController(desc)
-		.Build("OrbitCam");
-
-	ObjectManager()->Add_Object(seqCam, { "Scott_Level", "Camera_Layer" });
-	ObjectManager()->Add_Object(freeCam, { "Scott_Level", "Camera_Layer" });
-	ObjectManager()->Add_Object(orbitCam, { "Scott_Level", "Camera_Layer" });
-
-	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Free, freeCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
-
-	m_pCamDirector->SetReturnCam(CamType::Orbit);
-
-	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
-
-	CamLoader::Load();
-
-	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-}
-
-void CScott_Level::Ready_ShadowCamera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto shadowCam = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_ShadowCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 100.f, 30.f })
-		.Rotate({ 0.f, 0.f, 0.f })
-		.Build("ShadowCam");
-
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, { "Scott_Level", "Camera_Layer" });
-	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
 }
 
 CScott_Level* CScott_Level::Create(const string& LevelKey)

@@ -19,7 +19,8 @@ namespace
 	{
 		static const AvatarAssetDesc table[] =
 		{
-			{"Corin", "Corin"},
+			{"Corin",   "Corin"},
+			{"JaneDoe", "JaneDoe"}
 			//{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
 			//{"Corin",   "Avatar_Female_Size01_Corin"          },
 			//{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
