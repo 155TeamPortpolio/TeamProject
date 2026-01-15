@@ -44,7 +44,7 @@ HRESULT CPrototypeMgr::Add_ProtoType(const string& LevelTag, const string& proto
 	if (pData) {
 #ifdef _DEBUG
 
-		MSG_BOX("There is alreay same Tag : CPrototypeMgr");
+		//MSG_BOX("There is alreay same Tag : CPrototypeMgr");
 #endif // _DEBUG
 
 		return E_FAIL;

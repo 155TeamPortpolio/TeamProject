@@ -36,13 +36,13 @@ private:
 
 	const _uint*	m_pState = { nullptr };
 	const _float4*	m_pColor = { nullptr };
-
 	_uint			m_iPrevState = { 999 };
 
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 
 private:
 	void Ready_PartObjects();
+
 	void Set_Color();
 	void Set_Kanji(CUI_Decibel::State texture); 
 

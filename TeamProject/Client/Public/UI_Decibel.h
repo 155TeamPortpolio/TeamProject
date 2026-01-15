@@ -25,8 +25,6 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	_bool			m_initLayout = {};
-
 	_float			m_fDecibel = {};
 	_uint			m_iState = {};
 

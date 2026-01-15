@@ -111,7 +111,7 @@ void CMapLoader::Place_PlacedObjectFromLoadData(MapData_Object* pData)
         vRot = QuaternionToEuler(vRotQ);
 
 
-    CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapPlacedObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapPlacedObject" })
         .Add_ObjDesc(Desc)
         .Scale(vScl)
         .Rotate(vRot)
@@ -153,7 +153,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
                           XMConvertToRadians(pData->vLook[1]),
                           XMConvertToRadians(pData->vLook[2]) };
 
-    CGameObject* pStaticObject = Builder::Create_Object({ m_TagLevel ,"Proto_GameObject_MapTriggerObject" })
+    CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
         .Collider(ColDesc)
         .Position({ pData->vPos[0], pData->vPos[1], pData->vPos[2] })
         .Build(pData->TagModelResourceKey);

@@ -777,7 +777,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_Shaders.emplace("VTX_Trail.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/VTX_Trail.hlsl", "VTX_Trail.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_Deferred.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred.hlsl", "Shader_Deferred.hlsl"));
 	m_Resources[0].m_Shaders.emplace("Shader_PostProcess.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_PostProcess.hlsl", "Shader_PostProcess.hlsl"));
-	m_Resources[0].m_Shaders.emplace("Shader_WeightOIT.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_WeightOIT.hlsl", "Shader_WeightOIT.hlsl"));
+	m_Resources[0].m_Shaders.emplace("Shader_Deferred_Effect.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/Shader_Deferred_Effect.hlsl", "Shader_Deferred_Effect.hlsl"));
 
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Spawn.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Spawn.hlsl", "CS_Particle_Spawn.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_Particle_Basic.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_Particle_Basic.hlsl", "CS_Particle_Basic.hlsl"));

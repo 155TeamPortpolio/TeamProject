@@ -28,8 +28,7 @@ HRESULT CUI_DecibelPts::Initialize(INIT_DESC* pArg)
 
 void CUI_DecibelPts::Update(_float dt)
 {
-    if (m_hPts.isValid())
-        m_hPts.Get()->Set_Color(*m_pColor);
+    Set_Color();
 }
 
 void CUI_DecibelPts::Ready_PartObjects()
@@ -73,6 +72,12 @@ void CUI_DecibelPts::Init_BgObject(CUI_Object* pBg, CUI_Object* pPts)
     pBg->Set_Size({ pSize.x + m_vPadding.x * 2.f, pSize.y + m_vPadding.y * 2.f });
     pBg->Set_Color(Helper::HexToColor("#000000"));
     Set_Size(pBg->Get_PxSize());
+}
+
+void CUI_DecibelPts::Set_Color()
+{
+    if (m_hPts.isValid())
+        m_hPts.Get()->Set_Color(*m_pColor);
 }
 
 CGameObject* CUI_DecibelPts::Create()

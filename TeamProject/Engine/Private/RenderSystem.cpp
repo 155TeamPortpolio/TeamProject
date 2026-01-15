@@ -12,7 +12,6 @@
 #include "Texture.h"
 #include "VIBuffer.h"
 #include "RenderTarget.h"
-#include "Helper_Func.h"
 #include "EffectRenderer.h"
 #include "UIRenderer.h"
 #include "PostRenderer.h"
@@ -85,6 +84,7 @@ HRESULT CRenderSystem::Render()
 
 	m_pPost->Render_Fog();
 	m_pPost->Render_HDRBloom();
+	m_pPost->Render_RadialBlur();
 	m_pForward->Render_Bloom();
 	//m_pPost->Render_Distortion();
 	m_pPost->Render_Final();
@@ -112,6 +112,7 @@ void CRenderSystem::Set_FogDesc(FOG_DESC desc)
 void CRenderSystem::Update(_float dt)
 {
 	m_pForward->Update(dt);
+	m_pPost->Update(dt);
 }
 
 CRenderer* CRenderSystem::GetRenderer(RENDERER_TYPE eType)
@@ -149,6 +150,22 @@ void CRenderSystem::Apply_Noise(vector<string> strNames, _float duration)
 {
 	m_pPost->Apply_Noise(strNames, duration);
 }
+
+void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
+{
+	m_pPost->Apply_RadialBlur(duration, center);
+}
+
+void CRenderSystem::Register_AddictiveColor(_float3* pColor)
+{
+	m_pPost->Register_AddictiveColor(pColor);
+}
+
+void CRenderSystem::UnRegister_AddictiveColor()
+{
+	m_pPost->UnRegister_AddictiveColor();
+}
+
 
 #ifdef _USING_GUI
 void CRenderSystem::Render_GUI()
