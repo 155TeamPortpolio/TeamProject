@@ -41,6 +41,10 @@ public: //getter
 	_int							GetPlayerParryingCount();
 
 
+	/* 테스트용! 금방 지울예정 - 경인 */
+	unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>* GetTimeScales() { return &m_TimeScales; }
+
+
 public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
@@ -49,7 +53,7 @@ public: //setter
 	// UI에서 캐릭터 선택시 부를 함수
 	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
-	void	SetTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale);
+	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale);
 
 private:
 	void	Update_BattleInfo();
@@ -67,6 +71,9 @@ private:
 	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;
 	// BATTLE_OBJ_TYPE 별로 타임 스케일
 	unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
+
+	const _char* m_LayerTag[2] = { "Model_Layer", "Enemy_Layer" };
+
 	// 배틀 플레이어
 	class CBattlePlayer* m_pBattlePlayer = { nullptr };
 
