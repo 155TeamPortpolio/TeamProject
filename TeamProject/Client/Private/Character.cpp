@@ -33,18 +33,6 @@ void CCharacter::Reset_DissolveProgress()
 	SetRenderLayer(RENDER_LAYER::None);
 }
 
-void CCharacter::Process_HP(_float fHP, UI_STATUS_OWNER owner)
-{
-	UI_STATUS_DESC desc = {};
-	desc.eOwner = owner;
-	desc.eType = UI_STATUS_TYPE::HP;
-	desc.value.fCurValue = fHP;
-	desc.value.fMaxValue = m_fMaxHP;
-	//EventSystem()->Broadcast<UI_STATUS_DESC>({desc});
-
-	Set_HP(fHP);
-}
-
 void CCharacter::Active_Character()
 {
 	m_pCCT->Set_CompActive(true);
