@@ -6,62 +6,13 @@
 #include "GameInstance.h"
 #include "OrbitCam.h"
 #include "GameObject.h"
+#include "FreeCam.h"
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
 CGameObject* CCamDirector::GetCamObj(CamType type) const
 {
     return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
-}
-
-CGameObject* CCamDirector::GetSeqObj() const
-{
-    return GetCamObj(CamType::Sequence);
-}
-
-CGameObject* CCamDirector::GetOrbitObj() const
-{
-    return GetCamObj(CamType::Orbit);
-}
-
-void CCamDirector::SetCam(CamType type, OBJECT_HANDLE handle)
-{
-    m_camHandles[ENUM(type)] = handle;
-}
-
-void CCamDirector::SetSpaceRef(OBJECT_HANDLE handle)
-{
-    m_spaceRefHandle = handle;
-}
-
-void CCamDirector::SetReturnCam(CamType type)
-{
-    m_returnCamType = type;
-}
-
-void CCamDirector::ClearReturnCam()
-{
-    m_returnCamType = CamType::None;
-}
-
-void CCamDirector::ClearCam(CamType type)
-{
-    m_camHandles[ENUM(type)].Reset();
-}
-
-OBJECT_HANDLE CCamDirector::GetCamHandle(CamType type) const
-{
-    return m_camHandles[ENUM(type)];
-}
-
-COrbitCam* CCamDirector::GetOrbitCam() const
-{
-    return static_cast<COrbitCam*>(GetOrbitObj());
-}
-
-CSequenceCam* CCamDirector::GetSeqCam() const
-{
-    return static_cast<CSequenceCam*>(GetSeqObj());
 }
 
 _bool CCamDirector::Register(const string& key, const filesystem::path& path)

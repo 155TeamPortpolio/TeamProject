@@ -33,8 +33,6 @@ public:
 	HRESULT ChangeStage(StageType nextStageType, _int StageID);
 
 private:
-	void Ready_Camera();
-	void Ready_ShadowCamera();
 	void Rake_MapResources();
 
 private:

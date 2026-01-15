@@ -246,6 +246,7 @@ void COrbitCam::RestoreSnapshot(const OrbitCamSnapshot& s)
 
 void COrbitCam::Priority_Update(_float dt)
 {
+    if (!targetHandle.isValid()) return;
     UpdateTargetSwitch(dt);
 
     pose.targetPivot = GetPivotTargetPos();

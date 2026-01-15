@@ -140,61 +140,6 @@ void CZeroStage_1_1::Rake_MapResources()
 	}
 }
 
-void CZeroStage_1_1::Ready_Camera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto seqCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_SequenceCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 2.f, -5.f })
-		.Build("SequenceCam");
-
-	auto freeCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_FreeCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 2.f, -3.f })
-		.Build("FreeCam");
-
-	CCT_DESC desc;
-	desc.eGroup = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
-
-	auto orbitCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_OrbitCam" })
-		.Camera(aspect)
-		.CharacterController(desc)
-		.Build("OrbitCam");
-
-	ObjectManager()->Add_Object(seqCam, { "Test_Level", "Camera_Layer" });
-	ObjectManager()->Add_Object(freeCam, { "Test_Level", "Camera_Layer" });
-	ObjectManager()->Add_Object(orbitCam, { "Test_Level", "Camera_Layer" });
-
-	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Free, freeCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
-
-	m_pCamDirector->SetReturnCam(CamType::Orbit);
-
-	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
-
-	CamLoader::Load();
-
-	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-}
-
-void CZeroStage_1_1::Ready_ShadowCamera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 100.f, 30.f })
-		.Rotate({ 0.f, 0.f, 0.f })
-		.Build("ShadowCam");
-
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, { "Test_Level", "Camera_Layer" });
-	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
-}
-
 CZeroStage_1_1* CZeroStage_1_1::Create(CZero_Level* pOwnerLevel)
 {
 	CZeroStage_1_1* pInstance = new CZeroStage_1_1();

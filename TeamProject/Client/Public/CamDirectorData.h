@@ -1,13 +1,14 @@
 #pragma once
 
-#include "OrbitCamTypes.h"
+#include "OrbitCam.h"
+#include "FreeCam.h"
+#include "SequenceCam.h"
 
 NS_BEGIN(Engine)
 class CCamSequencePlayer;
 NS_END
 
 NS_BEGIN(Client)
-class CSequenceCam; class COrbitCam; 
 
 enum class CamType { None, Free, Orbit, Sequence, End };
 enum class CamReturnMode { None, SnapToEnd, RestorePrev };

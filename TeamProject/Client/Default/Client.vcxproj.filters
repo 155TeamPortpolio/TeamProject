@@ -1288,6 +1288,12 @@
     <ClInclude Include="..\Public\BelleState_Walk.h">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CamDirectorData.h">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamTypes.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
