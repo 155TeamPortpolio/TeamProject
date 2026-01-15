@@ -404,7 +404,7 @@ HRESULT CThugBulkyEnforcer::Ready_Children(INIT_DESC* pArg)
 	if (FAILED(AttachBattleColliderObject(&WeaponRDesc)))
 		return E_FAIL;
 
-	ShowBattleColliderForCheck(m_isShowBattleColliderObject);
+	//ShowBattleColliderForCheck(m_isShowBattleColliderObject);
 
 	// ================================================================================================
 

@@ -9,8 +9,8 @@ class CMapLoader final : public CBase
 public:
 	enum class MAPOBJ_TYPE {PLACED, TRIGGER, END};
 
-	using ObjFields			= vector<FIELD_DATA>;								// 한 데이터 묶음(ObjID, 변수명, 값)
-	using ObjFieldMap		= unordered_map<int, ObjFields>;				// ObjID별로 매핑된 데이터 묶음
+	using ObjFields			= vector<FIELD_DATA>;					// 한 데이터 묶음(ObjID, 변수명, 값)
+	using ObjFieldMap		= unordered_map<int, ObjFields>;		// ObjID별로 매핑된 데이터 묶음
 	using SlotFormatData	= unordered_map<string, ObjFieldMap>;	// slotFormat별로 매핑된 데이터 묶음
 
 private:
