@@ -22,6 +22,10 @@ public:
 	static void PreLoad_Level();
 
 private:
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
+	void Rake_MapResources();
+
+private:
 	CGameInstance* m_pGameInstance{};
 
 public:

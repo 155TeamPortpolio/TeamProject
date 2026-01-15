@@ -167,6 +167,7 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
+    <ClInclude Include="..\public\EventTrigger.h" />
     <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\public\CamLoader.h" />
@@ -334,6 +335,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
     <ClInclude Include="Client.h" />
@@ -386,6 +388,7 @@
     <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
+    <ClCompile Include="..\private\EventTrigger.cpp" />
     <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
@@ -547,6 +550,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
     <ClCompile Include="Client.cpp" />

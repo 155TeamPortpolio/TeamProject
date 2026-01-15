@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "ZeroStage_Boss.h"
+#include "ZeroStage_1_1.h"
 #include "Helper_Func.h"
 #include "GameInstance.h"
 
@@ -9,11 +9,11 @@
 #include "MapTriggerObject.h"
 
 
-CZeroStage_Boss::CZeroStage_Boss()
+CZeroStage_1_1::CZeroStage_1_1()
 {
 }
 
-HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
+HRESULT CZeroStage_1_1::Initialize(CZero_Level* pOwnerLevel)
 {
 	if (!pOwnerLevel)
 		return E_FAIL;
@@ -21,20 +21,20 @@ HRESULT CZeroStage_Boss::Initialize(CZero_Level* pOwnerLevel)
 	return S_OK;
 }
 
-HRESULT CZeroStage_Boss::Awake()
+HRESULT CZeroStage_1_1::Awake()
 {
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "Zero_Boss1");
+	Ready_Map("Test_Level", "Zero_1_1");
 
 	return S_OK;
 }
 
-void CZeroStage_Boss::Update()
+void CZeroStage_1_1::Update()
 {
 }
 
-HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_1_1::Ready_Stage(CZero_Level::StageContext& context)
 {
 	CMapLoader* pMapLoader = CMapLoader::Create("Zero_Level", "Zero_Boss1");
 	if (nullptr == pMapLoader)
@@ -43,18 +43,18 @@ HRESULT CZeroStage_Boss::Ready_Stage(CZero_Level::StageContext& context)
 	return S_OK;
 }
 
-HRESULT CZeroStage_Boss::Enter_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_1_1::Enter_Stage(CZero_Level::StageContext& context)
 {
-	
+
 	return S_OK;
 }
 
-HRESULT CZeroStage_Boss::Exit_Stage(CZero_Level::StageContext& context)
+HRESULT CZeroStage_1_1::Exit_Stage(CZero_Level::StageContext& context)
 {
 	return S_OK;
 }
 
-void CZeroStage_Boss::Ready_Map(const string& LevelTag, const string& AreaTag)
+void CZeroStage_1_1::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
@@ -65,7 +65,7 @@ void CZeroStage_Boss::Ready_Map(const string& LevelTag, const string& AreaTag)
 	Safe_Release(pMapLoader);
 }
 
-void CZeroStage_Boss::Rake_MapResources()
+void CZeroStage_1_1::Rake_MapResources()
 {
 	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
 	Helper::EnsureDirectoryExist(MapDataFolderPath);
@@ -88,9 +88,9 @@ void CZeroStage_Boss::Rake_MapResources()
 }
 
 
-CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)
+CZeroStage_1_1* CZeroStage_1_1::Create(CZero_Level* pOwnerLevel)
 {
-	CZeroStage_Boss* pInstance = new CZeroStage_Boss();
+	CZeroStage_1_1* pInstance = new CZeroStage_1_1();
 	if (FAILED(pInstance->Initialize(pOwnerLevel)))
 	{
 		Safe_Release(pInstance);
@@ -99,7 +99,7 @@ CZeroStage_Boss* CZeroStage_Boss::Create( CZero_Level* pOwnerLevel)
 	return pInstance;
 }
 
-void CZeroStage_Boss::Free()
+void CZeroStage_1_1::Free()
 {
 	__super::Free();
 }

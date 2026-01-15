@@ -643,6 +643,12 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\MapObject\02. MapTriggerObject\EventTrigger">
+      <UniqueIdentifier>{63d9d4bd-740d-46e6-8d6d-0fa394939ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. Level\04. Zero\Stage_Normal\ZeroStage_1_1">
+      <UniqueIdentifier>{31799f7e-c42c-4ec3-9e5e-e5a6f39f378c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1229,6 +1235,12 @@
     <ClInclude Include="..\Public\UI_WorldToScreen.h">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\EventTrigger.h">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject\EventTrigger</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\ZeroStage_1_1.h">
+      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1796,6 +1808,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp">
       <Filter>02. GameObject\UI\02. 3D\Plane</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\EventTrigger.cpp">
+      <Filter>02. GameObject\MapObject\02. MapTriggerObject\EventTrigger</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\ZeroStage_1_1.cpp">
+      <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

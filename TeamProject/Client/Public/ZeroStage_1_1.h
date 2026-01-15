@@ -2,12 +2,12 @@
 #include "Stage.h"
 
 NS_BEGIN(Client)
-class CZeroStage_Boss :
-    public CStage
+class CZeroStage_1_1 :
+	public CStage
 {
 private:
-	CZeroStage_Boss();
-	~CZeroStage_Boss() DEFAULT;
+	CZeroStage_1_1();
+	~CZeroStage_1_1() DEFAULT;
 
 public:
 	virtual HRESULT Initialize(class CZero_Level* pOwnerLevel);
@@ -24,7 +24,7 @@ private:
 	void Rake_MapResources();
 
 public:
-	static CZeroStage_Boss* Create(class CZero_Level* pOwnerLevel);
+	static CZeroStage_1_1* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
 };
 
