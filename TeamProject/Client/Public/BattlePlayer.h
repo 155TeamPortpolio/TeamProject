@@ -59,6 +59,9 @@ public:
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
     _int            GetParryingCount() const { return m_iParryingCount; }
 
+    void            Active_Battle();
+    void            DeActive_Battle();
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);
@@ -78,9 +81,6 @@ private:
     _bool   Can_Switch() const;
     void    Update_Target();
     void    Update_Status();
-
-    void    Active_Battle();
-    void    DeActive_Battle();
 
 private:
     HRESULT      Initialize_CharacterPrototype();

@@ -45,6 +45,7 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
+	pModel->ShadowCast(false);
 
 	/* Set Param */
 	{

@@ -52,6 +52,9 @@ private:
 public:
     OBJECT_HANDLE Get_CurCharacterHandle();
 
+    void    Active_Field();
+    void    DeActive_Field();
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);

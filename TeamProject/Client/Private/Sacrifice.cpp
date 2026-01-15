@@ -1,17 +1,23 @@
 #include "pch.h"
 #include "Sacrifice.h"
 #include "GameInstance.h"
+#include "ResourceMgr.h"
+#include "Helper_Func.h"
+#include "Texture.h"
+
+/* Object */
+#include "SacrificeHand.h"
+#include "Sacrifice_Laser.h"
+#include "EffectContainer.h"
+
+/* Component */
+#include "CharacterController.h"
+#include "SkeletalModel.h"
 #include "Material.h"
 #include "Animator3D.h"
-#include "SkeletalModel.h"
-#include "CharacterController.h"
-#include "Helper_Func.h"
-#include "SacrificeHand.h"
 #include "ObjectContainer.h"
 #include "MaterialInstance.h"
 #include "BoneFollower.h"
-#include "Sacrifice_Laser.h"
-#include "EffectContainer.h"
 
 /* States */
 #include "StateMachine.h"
@@ -81,6 +87,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
 		pResource->Add_ResourcePath("sacrifice_axe_slash.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash.json");
 		pResource->Add_ResourcePath("sacrifice_rush_trail.json", "../Bin/Resources/Effect/Data/sacrifice_rush_trail.json");
+		pResource->Add_ResourcePath("sacrifice_axe_slash2.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash2.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
@@ -98,8 +105,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
 		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
 		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
-		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
-		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_03.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_03.png");
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
 
 		/* Models */
@@ -127,17 +133,10 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	auto pMaterial = Get_Component<CMaterial>();
-	auto& materialInstances = pMaterial->Get_MaterialInstances();
-	//for (auto& instance : materialInstances)
-	//{
-	//	instance->Set_Blended(true);
-	//	instance->Override_Pass("Blend");
-	//}
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
-	//pAnimator->Set_MotionBone(3); //Bip001
 	//pAnimator->Resize_Layer(3);
 	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
@@ -171,10 +170,15 @@ void CSacrifice::Awake()
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+
 	for (const auto& instance : materialInstances)
 	{
-		pMaterial->Add_MaterialData(instance, "vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		pMaterial->Add_MaterialData(instance, "fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		instance->Set_Param("vRimLightColor", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveTilling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 }
 
@@ -422,14 +426,14 @@ void CSacrifice::Create_Children()
 	Create_AttackSign("Bip001_Head");
 
 	{
-		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
+		auto pHand = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeHand" })
 			.Build("Sacrifice_Hand");
 		pHand->Set_Alive(false);
 		m_iHandID = pObjectContainer->Add_Child(pHand, false);
 	}
 
 	{
-		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
+		auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeLaser" })
 			.Build("Sacrifice_Laser");
 		pObjectContainer->Add_Child(pLaser, false);
 		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_Eye6_05");

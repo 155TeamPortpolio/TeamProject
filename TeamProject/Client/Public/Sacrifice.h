@@ -12,7 +12,7 @@ class CSacrifice final :
 public:
     enum class PHASE { PHASE1, PHASE2, END };
     enum class PARTS { ICE, WEAPON_SWORD, WEAPON_AXE, WEAPON_WHIP, END };
-
+    enum class DISSOLVE_STATE { DISAPPEAR, APPEAR, NONE, END };
 private:
     CSacrifice();
     CSacrifice(const CSacrifice& rhg);
@@ -77,6 +77,10 @@ private:
     HRESULT Initialize_Transitions();
     void Update_States(_float dt);
 
+    /* Dissolve */
+    void Set_DissolveState(DISSOLVE_STATE state);
+    void Update_Dissolve(_float dt);
+
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
     vector<_uint> m_PartMeshIndices;
@@ -92,10 +96,16 @@ private:
     _bool m_IsOverDrive = false; /* Only Use Phase2 */
     _bool m_IsOverDriveCharged = false;
 
-    _float3 m_vRimLightColor{};
-    _float m_fRimLightPower{};
-
     _uint m_iHandID{};
 
+    /* Material Params */
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
+    _float m_fDissolveProgress{};
+    _float m_fDissolveTilling{};
+
+    _float m_fDissolveDuration{};
+    _float m_fDissolveElapsedTime{};
+    DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 };
 NS_END

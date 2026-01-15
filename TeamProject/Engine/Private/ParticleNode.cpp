@@ -33,6 +33,7 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 	CParticleSystem* pParticle = Get_Component<CParticleSystem>();
 	pParticle->Initialize(nullptr);
 	pParticle->Link_Model(G_GlobalLevelKey, "Engine_Default_InstancePoint");
+	pParticle->ShadowCast(false);
 
 	ID3D11Device* pDevice = CGameInstance::GetInstance()->Get_Device();
 	CMaterial* pMaterial = Get_Component<CMaterial>();

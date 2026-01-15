@@ -41,8 +41,8 @@ HRESULT CCorin::Initialize_Prototype()
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size01_Corin_Meta.json",
 		"../Bin/Resources/Model/skeletal/Corin/Avatar_Female_Size01_Corin_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Corin.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Corin.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Corin.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Corin.mat");
 	return S_OK;
 }
 
@@ -59,8 +59,8 @@ void CCorin::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model("Test_Level", "Corin.model");
-	m_pAnimator->Link_MetaData("Test_Level", "Avatar_Female_Size01_Corin_Meta.json");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Corin.model");
+	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "Avatar_Female_Size01_Corin_Meta.json");
 
 	//m_pAnimator->Set_MotionBone(12);
 	m_pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
