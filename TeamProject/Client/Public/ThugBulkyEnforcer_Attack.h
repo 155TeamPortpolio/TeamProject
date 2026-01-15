@@ -107,6 +107,9 @@ public:
 public:
 	static CThugBulkyEnforcer_Attack5_2* Create() { return new CThugBulkyEnforcer_Attack5_2(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	_bool m_isFinishFirst = { false };
 };
 
 // 왼쪽 대각선으로 이동하며 위빙
