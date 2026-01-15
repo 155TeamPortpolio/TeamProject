@@ -1294,6 +1294,12 @@
     <ClInclude Include="..\Public\CorinState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CamDirectorData.h">
+      <Filter>02. GameObject\Camera\99. CamDirector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\OrbitCamTypes.h">
+      <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1888,7 +1894,7 @@
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
