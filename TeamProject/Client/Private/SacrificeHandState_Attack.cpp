@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "SacrificeHandState_Attack.h"
+#include "GameInstance.h"
 #include "SacrificeHand.h"
 #include "Sacrifice.h"
 #include "Child.h"
+#include "EffectContainer.h"
 
 void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 {
@@ -126,10 +128,26 @@ void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_01_Phase1::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_Attack_01_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.17f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_smoke_trail.json")
+			.Build("HandSmokeTrail");
+
+		static_cast<CEffectContainer*>(effect)->AttachBone(pOwner->Get_Component<CAnimator3D>(), "Eye01_A1");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
@@ -156,10 +174,26 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_02_Phase1::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_Attack_02_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.12f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_smoke_trail.json")
+			.Build("HandSmokeTrail");
+
+		static_cast<CEffectContainer*>(effect)->AttachBone(pOwner->Get_Component<CAnimator3D>(), "Eye01_A1");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
@@ -194,10 +228,27 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_03_Phase1::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_Attack_03_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.1f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_WorldPos();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_ground_up.json")
+			.Position(vWorldPosition)
+			.Build("HandGroundUp");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_Attack_04_Phase2::Enter(CSacrificeHand* pOwner)

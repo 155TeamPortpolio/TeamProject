@@ -30,8 +30,7 @@ HRESULT CSacrificeHand::Initialize_Prototype()
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.model");
 	pResource->Add_ResourcePath("Monster_SacrificeBringerHand.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand.mat");
-	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
-	pResource->Add_ResourcePath("SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/SacrificeBringerHand_Meta.json");
+	pResource->Add_ResourcePath("Monster_SacrificeBringerHand_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Hand/Monster_SacrificeBringerHand_Meta.json");
 
 	return S_OK;
 }
@@ -48,7 +47,7 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringerHand.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringerHand_Meta.json");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringerHand_Meta.json");
 
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;

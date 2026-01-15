@@ -73,6 +73,8 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("sacrifice_orb.json", "../Bin/Resources/Effect/Data/sacrifice_orb.json");
 		pResource->Add_ResourcePath("sacrifice_smoke_slash.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash.json");
 		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
+		pResource->Add_ResourcePath("sacrifice_hand_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_hand_smoke_trail.json");
+		pResource->Add_ResourcePath("sacrifice_hand_ground_up.json", "../Bin/Resources/Effect/Data/sacrifice_hand_ground_up.json");
 
 		/* Textures */
 		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");

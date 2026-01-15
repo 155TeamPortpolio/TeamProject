@@ -69,6 +69,10 @@ public:
     /* Laser */
     void ActiveLaser(_uint mode);
     void DeactiveLaser();
+    
+    /* Dissolve */
+    void Set_DissolveState(DISSOLVE_STATE state, _float duration);
+    void Update_Dissolve(_float dt);
 
 private:
     void Create_Children();
@@ -76,10 +80,6 @@ private:
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     void Update_States(_float dt);
-
-    /* Dissolve */
-    void Set_DissolveState(DISSOLVE_STATE state);
-    void Update_Dissolve(_float dt);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
@@ -104,6 +104,7 @@ private:
     _float m_fDissolveProgress{};
     _float m_fDissolveTilling{};
 
+    _bool m_IsOnDissolve = false;
     _float m_fDissolveDuration{};
     _float m_fDissolveElapsedTime{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;

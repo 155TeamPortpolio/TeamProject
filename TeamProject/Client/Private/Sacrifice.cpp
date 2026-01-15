@@ -158,6 +158,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	/* Child Object */
 	Create_Children();
 
+	m_fDissolveTilling = 5.f;
+
 	return S_OK;
 }
 
@@ -176,9 +178,9 @@ void CSacrifice::Awake()
 	{
 		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
 		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
-		instance->Set_Param("vRimLightColor", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
-		instance->Set_Param("fDissolveTilling", { &m_fDissolveTilling,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
 }
 
@@ -416,6 +418,39 @@ void CSacrifice::DeactiveLaser()
 {
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
+}
+
+void CSacrifice::Set_DissolveState(DISSOLVE_STATE state, _float duration)
+{
+	m_eDissolveState = state;
+	m_fDissolveDuration = duration;
+	m_fDissolveElapsedTime = 0.f;
+	m_fDissolveProgress = 0.f;
+}
+
+void CSacrifice::Update_Dissolve(_float dt)
+{
+	if (m_fDissolveElapsedTime < m_fDissolveDuration)
+	{
+		m_fDissolveElapsedTime += dt;
+		_float t = m_fDissolveElapsedTime / m_fDissolveDuration;
+
+		switch (m_eDissolveState)
+		{
+		case Client::CSacrifice::DISSOLVE_STATE::DISAPPEAR:
+		{
+			m_fDissolveProgress = t;
+		}break;
+		case Client::CSacrifice::DISSOLVE_STATE::APPEAR:
+		{
+			m_fDissolveProgress = 1.f - t;
+		}break;
+		case Client::CSacrifice::DISSOLVE_STATE::NONE:
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void CSacrifice::Create_Children()

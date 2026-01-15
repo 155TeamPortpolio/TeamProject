@@ -166,10 +166,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
-	blackBoard.stateQueue.push_back("Attack02_Phase1");
-	blackBoard.stateQueue.push_back("Attack08_Phase1");
-	blackBoard.stateQueue.push_back("Attack03_Phase1");
+	blackBoard.stateQueue.push_back("Attack10_Phase1");
+	blackBoard.stateQueue.push_back("Attack11_Phase1");
+	blackBoard.stateQueue.push_back("Attack12_Phase1");
+	blackBoard.stateQueue.push_back("Arm_Recover");
 
 	blackBoard.isRequestNext = true;
 }
@@ -918,8 +918,22 @@ void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
+		{
 			blackBoard.isRequestNext = true;
+			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
+		}
 	}
+
+	if (IsCrossAnimProgress(0.4f))
+		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
+
+	if (IsCrossAnimProgress(0.6f))
+	{
+		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.2f);
+		pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
+	}
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeState_Attack_Roar_Phase1::Exit(CSacrifice* pOwner)

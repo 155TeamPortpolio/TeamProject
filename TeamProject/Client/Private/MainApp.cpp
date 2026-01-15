@@ -98,7 +98,7 @@ void CMainApp::Set_Levels() //레벨 등록 함수 ->등록 끝내면
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Zero_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
