@@ -140,6 +140,10 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.fDuration = json.value("duration", node.fDuration);
 	node.isLoop = json.value("is_loop", node.isLoop);
 
+	node.DiffuseTextureTag = json.value("diffuse_texture_tag", "");
+	node.NoiseTextureTag = json.value("noise_texture_tag", "");
+	node.DissolveTextureTag = json.value("dissolve_texture_tag", "");
+
 	/* Texture */
 	node.SamplerMode = json.value("sampler_mode", 0);
 	node.MainUsage = json.value("main_usage", 0);
@@ -187,12 +191,21 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.iMaxFrameIndex = json.value("max_frame_index", node.iMaxFrameIndex);
 
 	/* Dissolve */
+	node.fEnableDissolve = json.value("enable_dissolve", 0.f);
 	node.DissolveEase = json.value("dissolve_ease_type", node.DissolveEase);
+	node.fDissolveSoftness = json.value("dissolve_softness", 0.f);
 	node.fDissolveStartProgress = json.value("dissolve_start_progress", node.fDissolveStartProgress);
 	node.fDissolveEndProgress = json.value("dissolve_end_progress", node.fDissolveEndProgress);
 
 	/* Bloom */
 	node.fBloomIntensity = json.value("bloom_intensity", 0.f);
+
+	/* Noise */
+	node.fEnableNoise = json.value("enable_noise", 0.f);
+	node.fNoiseStrength = json.value("noise_strength", 0.f);
+	node.fNoiseTilling = json.value("noise_tilling", 0.f);
+	node.vNoiseUVSpeed.x = json.at("noise_uvspeed").at("x").get<_float>();
+	node.vNoiseUVSpeed.y = json.at("noise_uvspeed").at("y").get<_float>();
 
 	return node;
 }

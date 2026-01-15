@@ -111,6 +111,13 @@ namespace Engine
 		TWO_BONE,
 		FOOT_IK,
 	};
+
+	enum class EaseType
+	{
+		None, Linear, InOutSine, OutCubic, InOutCubic, OutSine, InOutQuad, InSine, InCubic, InQuad, InCirc, InOutCirc, OutCirc, OutQuad,
+		InQuart, InQuint, InOutQuart, OutQuart, InOutQuint, OutQuint, InOutExpo, OutExpo, InExpo, OutBack, InOutBack, InBack,
+		OutElastic, InOutElastic, InElastic, OutBounce, InOutBounce, InBounce,
+	};
 }
 #endif // Engine_Enum_h__
 
