@@ -26,6 +26,24 @@ public:
     virtual void    OnTriggerExit(CGameObject* pOther) override;
 
 public:
+    void Begin_Attack(const HitDesc& hitdesc);
+    void End_Attack();
+
+private:
+    _bool   Try_Hit(CGameObject* pTarget);
+
+private:
+    struct HitRecord
+    {
+        _uint  iHitCount = {};
+        _float fLastHitTime = {};
+    };
+    unordered_map<CGameObject*, HitRecord> m_HitRecords;
+    HitDesc m_tHitDesc{};
+    _float  m_fTimer = {};
+
+
+public:
     static CCharacterAttackCollider* Create();
     CGameObject* Clone(INIT_DESC* pArg) override;
     virtual void Free() override;
