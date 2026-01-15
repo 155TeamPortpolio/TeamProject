@@ -15,6 +15,15 @@
 #include "BattleSystem.h"
 #include "CamDirector.h"
 
+#include "MapPlacedObject.h"
+#include "MapTriggerObject.h"
+#include "SpriteNode.h"
+#include "MeshNode.h"
+#include "TrailNode.h"
+#include "ParticleNode.h"
+#include "EffectContainer.h"
+#include "AttackSign.h"
+
 CMainApp::CMainApp()
 {
 }
@@ -47,6 +56,9 @@ HRESULT CMainApp::Initialize()
 	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
+
+	/* 전역적으로 사용할 프로토 타입 객체 등록 */
+	Initialize_GlobalPrototype();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
@@ -103,5 +115,19 @@ void CMainApp::Free()
 	CUIDirector::GetInstance()->DestroyInstance();
 	CCamDirector::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();
+}
+
+void CMainApp::Initialize_GlobalPrototype()
+{
+	/* Prototype Tag */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
 }
 

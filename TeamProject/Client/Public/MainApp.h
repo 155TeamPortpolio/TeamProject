@@ -27,5 +27,8 @@ private:
 public:
 	static CMainApp* Create();
 	virtual void Free() override;
+
+private:
+	void Initialize_GlobalPrototype();
 };
 
