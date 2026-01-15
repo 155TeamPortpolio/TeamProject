@@ -1855,9 +1855,6 @@
     <ClCompile Include="..\private\ZeroStage_1_1.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp">
       <Filter>03. Utility\06. FieldSystem</Filter>
@@ -1882,6 +1879,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BelleState_Run.cpp">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
