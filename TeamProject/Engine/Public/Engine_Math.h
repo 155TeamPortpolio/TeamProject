@@ -1,11 +1,5 @@
 #pragma once
-
-enum class EaseType
-{
-	None, Linear, InOutSine, OutCubic, InOutCubic, OutSine, InOutQuad, InSine, InCubic, InQuad, InCirc, InOutCirc, OutCirc, OutQuad,
-	InQuart, InQuint, InOutQuart, OutQuart, InOutQuint, OutQuint, InOutExpo, OutExpo, InExpo, OutBack, InOutBack, InBack,
-	OutElastic, InOutElastic, InElastic, OutBounce, InOutBounce, InBounce,
-};
+#include "Engine_Defines.h"
 
 namespace Math
 {
