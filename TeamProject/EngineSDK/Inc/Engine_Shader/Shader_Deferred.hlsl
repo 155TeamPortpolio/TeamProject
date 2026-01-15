@@ -10,7 +10,7 @@ float   g_Time;
 float   g_RadialEaseT;
 float3  g_AddictiveColor;
 float   g_AddictiveStrength = 3.f;
-float g_UseAddictiveColor = false;
+bool   g_UseAddictiveColor = false;
 float2  g_RadialCenter;
 bool    g_RadialUse = false;
 
@@ -270,7 +270,7 @@ float4 PS_MAIN_FINAL(PS_IN In) : SV_Target
     
     float3 hdrColor = scene.rgb;
     
-    if (g_UseAddictiveColor) 
+    if (g_UseAddictiveColor)
     {
         float skinnedAlpha = 1 - SkinnedCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
         float3 tinted = scene.rgb + scene.rgb * g_AddictiveColor * g_AddictiveStrength;

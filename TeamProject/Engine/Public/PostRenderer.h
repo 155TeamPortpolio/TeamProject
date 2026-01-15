@@ -25,8 +25,10 @@ public:
     void    Apply_Noise(vector<string> strNames, _float duration);
 
     void    Apply_RadialBlur(_float duration,  _float2 center = _float2(0.5,0.5));
-    void    Add_AddictiveColor(_float3 color);
-    void    Reset_AddictiveColor();
+    void    Set_AddictiveColor(_float3* color);
+
+    void Register_AddictiveColor(_float3* pColor);
+    void UnRegister_AddictiveColor();
 
 public:
     void Update(_float dt);
@@ -53,7 +55,7 @@ private:
     //*ºí·¯*
     _float              m_fRadialDuration = 0.f;
     _float              m_fRadialTotalDuration = 0.f;
-    _float3             m_vAddictiveColor = _float3(0.f, 0.f, 0.f); //_float3(0.1, 0.54, 0.58)
+    _float3*            m_pAddictiveColor = nullptr; //_float3(0.1, 0.54, 0.58)
     _float2             m_fRadialCenter = _float2(0.5, 0.5);
 
     _float              m_fScreenWidth;

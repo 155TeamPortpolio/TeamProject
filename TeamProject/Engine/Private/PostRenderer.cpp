@@ -189,11 +189,18 @@ HRESULT CPostRenderer::Render_Final()
 
 	m_pTargetManager->Bind_Target("Target_Combined_SkinnedMesh", m_pShader, "SkinnedCombinedTexture");
 
-	_bool bUseAddictive = (_vector3(m_vAddictiveColor).Length() > 0.0001f);
+	if (m_pAddictiveColor != nullptr)
+	{
+		_bool bUseAddictive = _vector3(*m_pAddictiveColor).Length() > 0.01f;
 
-	m_pShader->Bind_Value("g_AddictiveColor", { &m_vAddictiveColor, "float3", sizeof(_float3) });
-	m_pShader->Bind_Value("g_UseAddictiveColor", { &m_vAddictiveColor, "bool", sizeof(_bool) });
-
+		m_pShader->Bind_Value("g_UseAddictiveColor", { &bUseAddictive, "bool", sizeof(_bool) });
+		m_pShader->Bind_Value("g_AddictiveColor", { m_pAddictiveColor, "float3", sizeof(_float3) });
+	}
+	else
+	{
+		_bool bUseAddictive = false;
+		m_pShader->Bind_Value("g_UseAddictiveColor", { &bUseAddictive, "bool", sizeof(_bool) });
+	}
 	if (FAILED(Bind_NoiseTexture())) return E_FAIL;
 	Bind_WorldMatrix();
 
@@ -232,14 +239,19 @@ void CPostRenderer::Apply_RadialBlur(_float duration, _float2 center)
 	m_fRadialCenter = center;
 }
 
-void CPostRenderer::Add_AddictiveColor(_float3 color)
+void CPostRenderer::Set_AddictiveColor(_float3* color)
 {
-	m_vAddictiveColor = color;
+	m_pAddictiveColor = color;
 }
 
-void CPostRenderer::Reset_AddictiveColor()
+void CPostRenderer::Register_AddictiveColor(_float3* pColor)
 {
-	m_vAddictiveColor = _float3(0.f, 0.f, 0.f);
+	m_pAddictiveColor = pColor;
+}
+
+void CPostRenderer::UnRegister_AddictiveColor()
+{
+	m_pAddictiveColor = nullptr;
 }
 
 void CPostRenderer::Update(_float dt)

@@ -37,8 +37,8 @@ public:
 	virtual void Apply_Noise(vector<string> strNames, _float duration) override;
 
 	virtual void Apply_RadialBlur(_float duration, _float2 center = _float2(0.5, 0.5)) override;
-	virtual void Add_AddictiveColor(_float3 color) override;
-	virtual void Reset_AddictiveColor()			   override;
+	virtual void Register_AddictiveColor(_float3* pColor) override;
+	virtual void UnRegister_AddictiveColor() override;
 
 public:
 	virtual _bool GetOn() const  override{ return IsOn; }

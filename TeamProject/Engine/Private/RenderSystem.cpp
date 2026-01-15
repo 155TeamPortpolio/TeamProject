@@ -156,15 +156,16 @@ void CRenderSystem::Apply_RadialBlur(_float duration, _float2 center)
 	m_pPost->Apply_RadialBlur(duration, center);
 }
 
-void CRenderSystem::Add_AddictiveColor(_float3 color)
+void CRenderSystem::Register_AddictiveColor(_float3* pColor)
 {
-	m_pPost->Add_AddictiveColor(color);
+	m_pPost->Register_AddictiveColor(pColor);
 }
 
-void CRenderSystem::Reset_AddictiveColor()
+void CRenderSystem::UnRegister_AddictiveColor()
 {
-	m_pPost->Reset_AddictiveColor();
+	m_pPost->UnRegister_AddictiveColor();
 }
+
 
 #ifdef _USING_GUI
 void CRenderSystem::Render_GUI()

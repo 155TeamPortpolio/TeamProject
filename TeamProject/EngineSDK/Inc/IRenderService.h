@@ -35,8 +35,8 @@ public:
     virtual void Apply_Noise(vector<string> strNames, _float duration) PURE;
 
     virtual void Apply_RadialBlur(_float duration, _float2 center = _float2(0.5, 0.5)) PURE;
-    virtual void Add_AddictiveColor(_float3 color) PURE;
-    virtual void Reset_AddictiveColor()            PURE;
+    virtual void Register_AddictiveColor(_float3* pColor)   PURE;
+    virtual void UnRegister_AddictiveColor()                PURE;
 
 public:
     virtual class CPipeLine* Get_Pipeline()PURE;
