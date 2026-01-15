@@ -370,6 +370,7 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 
 void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
 {
+	if (Is_Invincible()) return;
 	m_fCurrentHP -= fDamage;
 	On_Hit(eType);
 }
@@ -453,6 +454,12 @@ void CCharacter::Update_Decibel(_float dt)
 		return;
 	}
 	m_fCurrentDecibel += dt * 750.f;
+}
+
+void CCharacter::Update_Invincible(_float dt)
+{
+	if (m_fInvincibleTimer > 0.f)
+		m_fInvincibleTimer -= dt;
 }
 
 CCharacterAttackCollider* CCharacter::Find_AttackCollider(const string& strName)

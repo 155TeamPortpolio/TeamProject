@@ -164,6 +164,7 @@ void CCorin::On_Special()
 
 void CCorin::On_Hit(DAMAGE_TYPE eType)
 {
+	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
 	m_pStateMachine->Set_Trigger("ToHit");
 }
 

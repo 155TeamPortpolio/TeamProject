@@ -173,11 +173,19 @@ public:
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
     _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
 
+    _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
+    // 상태머신용 - 명시적 제어
+    void Push_Invincible() { ++m_iInvincibleCount; }
+    void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
+    // 일시적 무적 - 회피 무적프레임 등
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
     void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
+    void    Update_Invincible(_float dt);
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 protected:
@@ -234,6 +242,9 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+    // 무적
+    _int    m_iInvincibleCount = { 0 };
+    _float  m_fInvincibleTimer = { 0.f };
 
 
 public:

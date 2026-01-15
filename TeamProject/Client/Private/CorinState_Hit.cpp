@@ -7,6 +7,7 @@
 
 void CCorinState_Hit::Enter(CCorin* pOwner)
 {
+	pOwner->Push_Invincible();
 	pOwner->Lock_Move();
 	pOwner->Stop_Rotation();
 
@@ -63,6 +64,7 @@ void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 void CCorinState_Hit::Exit(CCorin* pOwner)
 {
 	pOwner->Unlock_Move();
+	pOwner->Pop_Invincible();
 }
 
 void CCorin_HitNormal::Enter(CCorin* pOwner)
@@ -71,7 +73,7 @@ void CCorin_HitNormal::Enter(CCorin* pOwner)
 	strAnim += pOwner->Get_StateMachine()->Get_Bool("IsBehind") ? "Hit_L_Back" : "Hit_L_Front";
 	pOwner->Get_Animator()->Change_Animation(strAnim)
 		.Speed(1.5f)
-		.EndAt(0.9f)
+		.EndAt(0.8f)
 		.Apply();
 }
 
