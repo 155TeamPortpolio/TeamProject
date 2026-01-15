@@ -27,7 +27,10 @@ HRESULT CSkeletalModel::Initialize_Prototype()
 
 HRESULT CSkeletalModel::Initialize(COMPONENT_DESC* pArg)
 {
-
+	if (pArg != nullptr) {
+		auto desc = static_cast<MODEL_INIT_DESC*>(pArg);
+		Link_Model(desc->LevelKey, desc->ModelKey);
+	}
 	return S_OK;
 }
 
