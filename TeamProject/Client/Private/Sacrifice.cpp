@@ -113,7 +113,7 @@ HRESULT CSacrifice::Initialize_Prototype()
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
-		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.mat");
+		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.model");
 		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.mat", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.mat");
 
 	}
