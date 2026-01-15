@@ -440,8 +440,16 @@ void CCollisionSystem::Process_Contact(const PxContactPairHeader& pairHeader, co
 		}
 		else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_PERSISTS)
 		{
-			currentA.insert(pColB);
-			currentB.insert(pColA);
+			if (currentA.find(pColB) == currentA.end())
+			{
+				currentA.insert(pColB);
+				pColA->OnCollisionEnter(pColB);
+			}
+			if (currentB.find(pColA) == currentB.end())
+			{
+				currentB.insert(pColA);
+				pColB->OnCollisionEnter(pColA);
+			}
 		}
 		else if (cp.events & PxPairFlag::eNOTIFY_TOUCH_LOST)
 		{

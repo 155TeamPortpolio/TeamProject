@@ -673,6 +673,9 @@
     <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk">
       <UniqueIdentifier>{849e28c6-ac11-4fb5-8b94-313fc924c227}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
+      <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1288,6 +1291,9 @@
     <ClInclude Include="..\Public\BelleState_Walk.h">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_Hit.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1880,6 +1886,9 @@
     <ClCompile Include="..\Private\BelleState_Run.cpp">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\CorinState_Hit.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
+	</ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
