@@ -382,6 +382,64 @@
             10.0,
             1.0
           ]
+        },
+        {
+          "iObjID": 13,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Wallout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Wallout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
+        },
+        {
+          "iObjID": 14,
+          "TagModelResourceKey": "Stage_Zero_WorkSite_Doorout.model",
+          "TagMaterialResourceKey": "Stage_Zero_WorkSite_Doorout.mat",
+          "vRight": [
+            1.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            0.0,
+            1.0,
+            0.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            1.0,
+            0.0
+          ],
+          "vPos": [
+            10.0,
+            -40.0,
+            10.0,
+            1.0
+          ]
         }
       ]
     }
