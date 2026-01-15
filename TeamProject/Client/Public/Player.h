@@ -14,7 +14,7 @@ private:
     virtual ~CPlayer() DEFAULT;
 
 public:
-    void    Set_PlayerType(PLAYER ePlayer) { m_ePlayerType = ePlayer; }
+    void    Set_PlayerType(PLAYER ePlayer);
     PLAYER  Get_PlayerType() const { return m_ePlayerType; }
 
 public:

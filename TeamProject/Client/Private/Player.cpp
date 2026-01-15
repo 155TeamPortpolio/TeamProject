@@ -12,6 +12,22 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
+void CPlayer::Set_PlayerType(PLAYER ePlayer)
+{
+	m_ePlayerType = ePlayer;
+
+	if (m_ePlayerType == PLAYER::BATTLE)
+	{
+		m_pBattlePlayer->Active_Battle();
+		m_pFieldPlayer->DeActive_Field();
+	}
+	else
+	{
+		m_pBattlePlayer->DeActive_Battle();
+		m_pFieldPlayer->Active_Field();
+	}
+}
+
 HRESULT CPlayer::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
@@ -25,6 +41,8 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 
 	m_pBattlePlayer = CBattlePlayer::Create();
 	m_pFieldPlayer = CFieldPlayer::Create();
+
+	Set_PlayerType(m_ePlayerType);
 
 	return S_OK;
 }
