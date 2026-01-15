@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 #include "DataBase.h"
 
 // Camera
@@ -43,10 +44,6 @@
 #include "Player.h"
 
 /* Enemy */
-#include "Sacrifice.h" 
-#include "SacrificeHand.h"
-#include "Sacrifice_Laser.h"
-#include "Sacrifice_Orb.h"
 #include "ThugBulkyEnforcer.h"
 #include "EnemyAttackCollider.h"
 #include "EnemyTriggerCollider.h"
@@ -91,13 +88,6 @@ HRESULT CTestLevel::Awake()
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
-	// ============ Camera ==================================================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_OrbitCam",    COrbitCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_FreeCam",     CFreeCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
-	// =========================================================================
-
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
@@ -120,6 +110,7 @@ HRESULT CTestLevel::Awake()
 
 	
 	//============== Map ============================
+	//Ready_Map("Test_Level", "Zero_Worksite");
 	Ready_Map("Test_Level", "TrainingRoom");
 
 	/* Miyabi */
@@ -144,25 +135,23 @@ HRESULT CTestLevel::Awake()
 
 
 	/* Enemy */
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Sacrifice", CSacrifice::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugBulkyEnforcer", CThugBulkyEnforcer::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
 	// --------------------------- Camera -------------------------------------------------
-	Ready_Camera();
+	const OBJECT_HANDLE curPlayer = CFieldSystem::GetInstance()->GetCurCharacterHandle();
+	m_pCamDirector->SetTarget(curPlayer);
 
 	//====================Test=================
 	Ready_TestObject();
-	Ready_ShadowCamera();
 	Ready_Npc();
 
 	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+
+	//m_pGameInstance->Set_EngineTimeScale(0.8f);
 
 	return S_OK;
 }
@@ -170,45 +159,39 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-
+	
 	static OBJECT_HANDLE prevPlayer{};
-
+	
 	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-
+	
 	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
 	{
 		prevPlayer = curPlayer;
-
 		m_pCamDirector->SetSpaceRef(curPlayer);
-
-		auto orbitObj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
-		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
+		m_pCamDirector->SetTarget(curPlayer);
 	}
 
 	if (InputDevice()->Key_Down(VK_F1))
-	{
-		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
-		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
-	}
+		CameraManager()->Set_MainCam(m_pCamDirector->GetFreeCamComp(), 0.5f);
 
 	if (InputDevice()->Key_Down(VK_F2))
 	{
-		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-
-		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
-		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
-
-		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
+		m_pCamDirector->SetTarget(CBattleSystem::GetInstance()->GetCurCharacterHandle());
+		CameraManager()->Set_MainCam(m_pCamDirector->GetOrbitCamComp(), 0.5f);
 	}
 
-	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
+	if (InputDevice()->Key_Tap(VK_F3))
+		m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
-	if (InputDevice()->Key_Tap(VK_F7))
+	if (InputDevice()->Key_Down('Q'))
+		m_pCamDirector->RequestSequence("Ultimate/Jane_Ultimate");
+
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
 		CameraManager()->AddShake(CamShakeType::HitNormal);
 
-	if (InputDevice()->Key_Tap(VK_F8))
-		CameraManager()->AddShake(CamShakeType::HitHeavy);
+	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
+		//CameraManager()->AddShake(CamShakeType::HitHeavy);
+	
 
 	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
 
@@ -226,13 +209,16 @@ void CTestLevel::Update()
 		
 		ObjectManager()->Add_Object(rushTrail, { "Test_Level","Effect_Layer" });
 	}
-
+	
 	// [`] 
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_OEM_3)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugBulkyEnforcer", { -0.18f, 0.f,1.59f });
 	}	
 	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F6)) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -0.18f, 0.f,5.f });
+	}
+
+	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap(VK_F7)) {
 	}
 }
 
@@ -268,61 +254,6 @@ void CTestLevel::Rake_MapResources()
 
 		}
 	}
-}
-
-void CTestLevel::Ready_Camera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto seqCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_SequenceCam"})
-		.Camera(aspect)
-		.Position({0.f, 2.f, -5.f})
-		.Build("SequenceCam");
-
-	auto freeCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_FreeCam"})
-		.Camera(aspect)
-		.Position({0.f, 2.f, -3.f})
-		.Build("FreeCam");
-
-	CCT_DESC desc;
-	desc.eGroup         = COLLISION_GROUP::CAMERA;
-	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
-
-	auto orbitCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_OrbitCam"})
-		.Camera(aspect)
-		.CharacterController(desc)
-		.Build("OrbitCam");
-
-	ObjectManager()->Add_Object(seqCam,   {"Test_Level", "Camera_Layer"});
-	ObjectManager()->Add_Object(freeCam,  {"Test_Level", "Camera_Layer"});
-	ObjectManager()->Add_Object(orbitCam, {"Test_Level", "Camera_Layer"});
-
-	m_pCamDirector->SetCam(CamType::Sequence, seqCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Free,     freeCam->Get_Handle());
-	m_pCamDirector->SetCam(CamType::Orbit,    orbitCam->Get_Handle());
-
-	m_pCamDirector->SetReturnCam(CamType::Orbit);
-
-	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
-
-	CamLoader::Load();
-
-	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-}
-
-void CTestLevel::Ready_ShadowCamera()
-{
-	constexpr _float aspect = (_float)g_iWinSizeX / g_iWinSizeY;
-
-	auto shadowCam = Builder::Create_Object({ "Test_Level", "Proto_GameObject_ShadowCam" })
-		.Camera(aspect)
-		.Position({ 0.f, 100.f, 30.f })
-		.Rotate({0.f, 0.f, 0.f})
-		.Build("ShadowCam");
-
-	CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(shadowCam, {"Test_Level", "Camera_Layer"});
-	CGameInstance::GetInstance()->Get_CameraMgr()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Ready_TestObject()

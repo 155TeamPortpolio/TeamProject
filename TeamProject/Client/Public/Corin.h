@@ -27,6 +27,8 @@ public:
     virtual void        On_SwitchOut()             override;   //*스위치 아웃 콜*
     virtual void        On_Ultimate()              override;
     virtual void        On_Special()               override;
+    virtual void        On_Hit(DAMAGE_TYPE eType)  override;
+
 private:
     HRESULT     Initialize_StateMachine();
     HRESULT     Initialize_States();

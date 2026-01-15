@@ -43,8 +43,6 @@ HRESULT CMainCity_Level::Awake()
 	//============== Map ============================
 	ReadyMap();
 	CUIDirector::GetInstance()->Load_LevelObjects("MainCity_Level");
-	ReadyCamera();
-	ReadyShadowCamera();
 	return S_OK;
 }
 
@@ -69,30 +67,6 @@ void CMainCity_Level::ReadyMap()
 	//if (nullptr == pMapLoader)
 	//	MSG_BOX("Failed to Load MapData!");
 	//Safe_Release(pMapLoader);
-}
-
-void CMainCity_Level::ReadyCamera()
-{
-	_float2 clientSize = GameInstance()->Get_ClientSize();
-	_float aspect =clientSize.x / clientSize.y;
-
-	CCT_DESC desc;
-	desc.eGroup = COLLISION_GROUP::CAMERA;
-
-	//		auto orbitCam = Builder::Create_Object({ "MainCity_Level", "Proto_MainCity_OrbitCam" })
-	//			.Camera(aspect)
-	//			.CharacterController(desc)
-	//			.Build("OrbitCam");
-	//		
-	//		ObjectManager()->Add_Object(orbitCam, { "MainCity_Level", "Camera_Layer" });
-	//		m_pCamDirector->SetCam(CamType::Orbit, orbitCam->Get_Handle());
-	//		m_pCamDirector->SetReturnCam(CamType::Orbit);
-	//		CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
-}
-
-void CMainCity_Level::ReadyShadowCamera()
-{
-
 }
 
 CMainCity_Level* CMainCity_Level::Create(const string& LevelKey)

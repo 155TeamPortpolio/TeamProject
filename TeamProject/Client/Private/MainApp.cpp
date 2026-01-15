@@ -13,7 +13,14 @@
 #include "UIDirector.h"
 #include "DataBase.h"
 #include "BattleSystem.h"
+
+// Camera
 #include "CamDirector.h"
+#include "OrbitCam.h"
+#include "FreeCam.h"
+#include "SequenceCam.h"
+#include "ShadowCam.h"
+#include "CamLoader.h"
 
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
@@ -23,6 +30,8 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
+
+
 
 CMainApp::CMainApp()
 {
@@ -59,6 +68,8 @@ HRESULT CMainApp::Initialize()
 
 	/* 전역적으로 사용할 프로토 타입 객체 등록 */
 	Initialize_GlobalPrototype();
+	
+	Create_GlobalCamObjs();
 
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
@@ -123,11 +134,70 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam", COrbitCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FreeCam", CFreeCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SequenceCam", CSequenceCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ShadowCam", CShadowCam::Create());
+
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshNode", CMeshNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+}
+
+void CMainApp::Create_GlobalCamObjs()
+{
+	auto& camDirector = *CCamDirector::GetInstance();
+
+	constexpr _float aspect = static_cast<_float>(g_iWinSizeX) / static_cast<_float>(g_iWinSizeY);
+	const string camLayer   = "Camera_Layer";
+
+	auto seqCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_SequenceCam"})
+		.Camera(aspect)
+		.Position({0.f, 2.f, -5.f})
+		.Build("SequenceCam");
+
+	auto freeCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_FreeCam"})
+		.Camera(aspect)
+		.Position({0.f, 2.f, -3.f})
+		.Build("FreeCam");
+
+	CCT_DESC desc;
+	desc.eGroup = COLLISION_GROUP::CAMERA;
+	desc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+
+	auto orbitCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_OrbitCam"})
+		.Camera(aspect)
+		.CharacterController(desc)
+		.Build("OrbitCam");
+
+	auto shadowCam = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_ShadowCam"})
+		.Camera(aspect)
+		.Position({0.f, 100.f, 30.f})
+		.Rotate({0.f, 0.f, 0.f})
+		.Build("ShadowCam");
+
+	ObjectManager()->Add_Object(seqCam,    {G_GlobalLevelKey, camLayer});
+	ObjectManager()->Add_Object(freeCam,   {G_GlobalLevelKey, camLayer});
+	ObjectManager()->Add_Object(orbitCam,  {G_GlobalLevelKey, camLayer});
+	ObjectManager()->Add_Object(shadowCam, {G_GlobalLevelKey, camLayer});
+
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::FreeCam),   freeCam->Get_Handle(),   true);
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::OrbitCam),  orbitCam->Get_Handle(),  true);
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::SeqCam)  ,  seqCam->Get_Handle(),    true);
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::ShadowCam), shadowCam->Get_Handle(), true);
+
+	camDirector.SetCam(CamType::Sequence, seqCam->Get_Handle());
+	camDirector.SetCam(CamType::Free,     freeCam->Get_Handle());
+	camDirector.SetCam(CamType::Orbit,    orbitCam->Get_Handle());
+
+	camDirector.SetReturnCam(CamType::Orbit);
+
+	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());
+	CameraManager()->Set_ShadowCam(shadowCam->Get_Component<CCamera>());
+
+	CamLoader::Load();
 }
 

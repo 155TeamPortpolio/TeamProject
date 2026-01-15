@@ -68,6 +68,10 @@ protected:
     virtual ~CCharacter() DEFAULT;
 
 public:
+    CAnimator3D* Get_Animator() { return m_pAnimator; }
+    CCharacterController* Get_CCT() { return m_pCCT; }
+    const string& Get_Name() const { return m_strAnimName; }
+    const CHARACTER Get_CharacterName() const { return m_eCharacterName; }
     // HP
     _float  Get_HP() const { return m_fCurrentHP; }
     _float  Get_MaxHP() const { return m_fMaxHP; }
@@ -85,40 +89,27 @@ public:
     _float  Get_PrevDecibel() const { return m_fPrevDecibel; }
     _float  Get_MaxDecibel() const { return MAX_DECIBEL; }
     void    Set_Decibel(_float fDecibel) { m_fCurrentDecibel = fDecibel; }
-
-    _float Get_Speed() const { return m_fMoveSpeed; }
-
-    // ����
-    _bool  Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
-    _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
-    _bool  Can_Move() const { return m_bCanMove; }
-    void   Lock_Move() { m_bCanMove = false; }
-    void   Unlock_Move() { m_bCanMove = true; }
-
-    _bool  Is_Attack() const { return m_bIsAttack; }
-    _bool  Is_Evade() const { return m_bIsEvade; }
-    _bool  Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
-    _float Get_EvadeTimer() const { return m_fEvadeTimer; }
-    _float Get_EvadeCooldown() const { return m_fEvadeCooldown; }
-    _uint  Get_EvadeCount() const { return m_iEvadeCount; }
-
-    void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
-    void   Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
-
-    void   Process_HP(_float fHP, UI_STATUS_OWNER ower = UI_STATUS_OWNER::ROLE1); //*�̺�Ʈ ������ ������ �Լ� Set_HP�� ProcessHP �Լ� ���ο��� ȣ��*
-
+    // 움직임
     _vector3    Get_InputDir() const { return m_inputInfo.direction; }
     _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
     _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
     void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
     void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
+    _bool       Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
+    _bool       Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    _bool       Can_Move() const { return m_bCanMove; }
+    void        Lock_Move() { m_bCanMove = false; }
+    void        Unlock_Move() { m_bCanMove = true; }
+    // 상태
+    _bool       Is_Attack() const { return m_bIsAttack; }
+    _bool       Is_Evade() const { return m_bIsEvade; }
+    _bool       Is_Input() const { return m_bIsAttack || Is_Move() || m_bIsEvade; }
+    _float      Get_EvadeTimer() const { return m_fEvadeTimer; }
+    _float      Get_EvadeCooldown() const { return m_fEvadeCooldown; }
+    _uint       Get_EvadeCount() const { return m_iEvadeCount; }
+    void        Set_EvadeMax(_uint iMax) { m_iEvadeMax = iMax; }
 
-    CAnimator3D* Get_Animator() { return m_pAnimator; }
-    CCharacterController* Get_CCT() { return m_pCCT; }
-    const string& Get_Name() const { return m_strAnimName; }
-    const CHARACTER Get_CharacterName() const { return m_eCharacterName; }
-
-    SWITCH      Get_Switch() const { return m_eSwitchType; } //*statemachine���� ������ switchtype*
+    SWITCH      Get_Switch() const { return m_eSwitchType; }
     void        Set_Switch(SWITCH eType) { m_eSwitchType = eType; }
 
     void        Update_DissolveProgress(_float dt); /*dissolve*/
@@ -127,6 +118,11 @@ public:
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
 
+    void    Active_Character();
+    void    DeActive_Character();
+
+    void   Set_Speed(_float fSpeed) { m_fMoveSpeed = fSpeed; }
+    _float Get_Speed() const { return m_fMoveSpeed; }
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);
     void Process_RootMotion(_float dt, _uint iModeMask = ENUM(ROOTMOTION_MASK::MOVE));
@@ -152,6 +148,7 @@ public:
     virtual void    On_SwitchOut()              PURE;
     virtual void    On_Ultimate();
     virtual void    On_Special() {}; // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
@@ -173,11 +170,22 @@ public:
     void     End_AttackCollider(const string& strName);
     _bool    Is_Active_AttackCollider(const string& strName);
 
+    void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
+    _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
+
+    _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
+    // 상태머신용 - 명시적 제어
+    void Push_Invincible() { ++m_iInvincibleCount; }
+    void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
+    // 일시적 무적 - 회피 무적프레임 등
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
     void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
+    void    Update_Invincible(_float dt);
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 protected:
@@ -222,6 +230,8 @@ protected:
     _bool           m_bIsRotating = { false };
     // �и�
     unordered_set<CGameObject*>  m_ParryableTargets;
+    // 피격 위치
+    _vector3    m_vTargetPos = {};
     // �׽�Ʈ��
     _bool           m_bTest = { false };
     //���̴�
@@ -232,6 +242,10 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+    // 무적
+    _int    m_iInvincibleCount = { 0 };
+    _float  m_fInvincibleTimer = { 0.f };
+
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

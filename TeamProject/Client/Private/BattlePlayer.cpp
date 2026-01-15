@@ -335,15 +335,34 @@ void CBattlePlayer::Update_Status()
 	}
 }
 
+void CBattlePlayer::Active_Battle()
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+	CCharacter* pCharacter = tempQueue.front().second;
+	pCharacter->Active_Character();
+}
+
+void CBattlePlayer::DeActive_Battle()
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
+		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
+		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	{
+		CCharacter* pCharacter = tempQueue.front().second;
+		tempQueue.pop();
+		pCharacter->DeActive_Character();
+	}
+}
+
 HRESULT CBattlePlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Corin", CCorin::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Corin", CCorin::Create())))
 		return E_FAIL;
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_JaneDoe", CJaneDoe::Create())))
 		return E_FAIL;
-
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_CharacterAttackCollider", CCharacterAttackCollider::Create())))
 		return E_FAIL;
 	return S_OK;
 }
@@ -365,20 +384,20 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	{
 	case CHARACTER::JaneDoe:
 	{
-		auto JaneDoe = Builder::Create_Object({ "Test_Level", "Proto_GameObject_JaneDoe" })
+		auto JaneDoe = Builder::Create_Object({ G_GlobalLevelKey , "Proto_GameObject_JaneDoe"})
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("JaneDoe");
-		ObjectManager()->Add_Object(JaneDoe, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(JaneDoe, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
 		return JaneDoe;
 	}
 	case CHARACTER::Corin:
 	{
-		auto Corin = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Corin" })
+		auto Corin = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Corin" })
 			.Position(_float3(3.f, 0.f, 0.f))
 			.CharacterController(characterCCT)
 			.Build("Corin");
-		ObjectManager()->Add_Object(Corin, { "Test_Level", "Model_Layer" });
+		ObjectManager()->Add_Object(Corin, { LevelManager()->Get_NowLevelKey(), "Model_Layer" });
 		return Corin;
 	}
 	}
@@ -396,6 +415,24 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
 	}
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
+	/* Energy */
+	UI_ACTION_DESC desc;
+	desc.eType = UI_ACTION_TYPE::SPECIAL;
+	CCharacter::EnergyDesc tEnergy = m_pCurrentCharacter->Get_EnergyDesc();
+	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	/* Ultimate */
+	desc.eType = UI_ACTION_TYPE::ULTIMATE;
+	_float fCurrent = m_pCurrentCharacter->Get_CurrentDecibel();
+	if (fCurrent >= m_pCurrentCharacter->Get_MaxDecibel())
+	{
+		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+
 }
 
 void CBattlePlayer::NotifyCharacterSwitchOut()

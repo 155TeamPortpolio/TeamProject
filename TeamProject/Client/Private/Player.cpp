@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include "BattlePlayer.h"
+#include "FieldPlayer.h"
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
@@ -9,6 +10,22 @@
 CPlayer::CPlayer(const CPlayer& rhs)
 	:CGameObject(rhs)
 {
+}
+
+void CPlayer::Set_PlayerType(PLAYER ePlayer)
+{
+	m_ePlayerType = ePlayer;
+
+	if (m_ePlayerType == PLAYER::BATTLE)
+	{
+		m_pBattlePlayer->Active_Battle();
+		m_pFieldPlayer->DeActive_Field();
+	}
+	else
+	{
+		m_pBattlePlayer->DeActive_Battle();
+		m_pFieldPlayer->Active_Field();
+	}
 }
 
 HRESULT CPlayer::Initialize_Prototype()
@@ -23,6 +40,9 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	m_pBattlePlayer = CBattlePlayer::Create();
+	m_pFieldPlayer = CFieldPlayer::Create();
+
+	Set_PlayerType(m_ePlayerType);
 
 	return S_OK;
 }
@@ -33,17 +53,20 @@ void CPlayer::Awake()
 
 void CPlayer::Priority_Update(_float dt)
 {
-	m_pBattlePlayer->Priority_Update(dt);
+	if(m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Priority_Update(dt);
+	else m_pFieldPlayer->Priority_Update(dt);
 }
 
 void CPlayer::Update(_float dt)
 {
-	m_pBattlePlayer->Update(dt);
+	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Update(dt);
+	else m_pFieldPlayer->Update(dt);
 }
 
 void CPlayer::Late_Update(_float dt)
 {
-	m_pBattlePlayer->Late_Update(dt);
+	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Late_Update(dt);
+	else m_pFieldPlayer->Late_Update(dt);
 }
 
 void CPlayer::Render_GUI()
