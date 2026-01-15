@@ -77,9 +77,16 @@ void CUIDirector::Load_LevelObjects(const string& levelKey)
 	{
 		const string protoTag = obj["prototypeTag"];
 		const string instName = obj["instanceName"];
+		const string prefabPath = obj["prefabPath"];
 
-		CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
-			.Build(instName);
+		//CUI_Object* pObj = Builder::Create_UIObject({ levelKey, protoTag })
+		//	.Build(instName);
+
+		auto builder = Builder::Create_UIObject({ levelKey, protoTag });
+		if (!prefabPath.empty())
+			builder.Asset(prefabPath);
+
+		CUI_Object* pObj = builder.Build(instName);
 
 		if (!pObj)
 		{

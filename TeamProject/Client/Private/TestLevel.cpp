@@ -60,6 +60,7 @@
 
 /* UI */
 #include "UIDirector.h"
+#include "UI_MeshBillboard.h"
 
 /* ShaderTest */
 #include "TestCloud.h"
@@ -107,7 +108,16 @@ HRESULT CTestLevel::Awake()
 		.Build("Test_Player");
 
 	objMgr->Add_Object(Player, { "Test_Level", "Model_Layer" });
-	//============== Map ============================
+
+	//==================== UI ===============
+	auto uiDirector = CUIDirector::GetInstance();
+	uiDirector->Load_LevelObjects("Test_Level");
+
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
+	//auto pBillboard = Builder::Create_Object({ "Test_Level", "Proto_GameObject_3DBillboard" })
+	//	.Build("Test_Billboard");
+	//objMgr->Add_Object(pBillboard, { "Test_Level", "UI_Layer" });
+
 	
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
@@ -145,10 +155,6 @@ HRESULT CTestLevel::Awake()
 
 	// --------------------------- Camera -------------------------------------------------
 	Ready_Camera();
-
-	//==================== UI ===============
-	auto uiDirector = CUIDirector::GetInstance();
-	uiDirector->Load_LevelObjects("Test_Level");
 
 	//====================Test=================
 	Ready_TestObject();
