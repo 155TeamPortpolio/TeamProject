@@ -2,7 +2,10 @@
 #include "Level.h"
 
 NS_BEGIN(Engine)
-class CGameInstance; 
+class CGameInstance;
+class CUI_Object;
+class IProtoService;
+class IObjectService;
 NS_END
 
 NS_BEGIN(Client)
@@ -22,7 +25,14 @@ public:
 	static void PreLoad_Level();
 
 private:
-	CGameInstance* m_pGameInstance{};
+	void Ready_Map(const string& LevelTag, const string& AreaTag);
+	void Rake_MapResources();
+	void Ready_Camera();
+	void Ready_ShadowCamera();
+
+private:
+	class CGameInstance* m_pGameInstance{};
+	class CCamDirector* m_pCamDirector{};
 
 public:
 	static CScott_Level* Create(const string& LevelKey);
