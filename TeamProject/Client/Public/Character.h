@@ -148,6 +148,7 @@ public:
     virtual void    On_SwitchOut()              PURE;
     virtual void    On_Ultimate();
     virtual void    On_Special() {}; // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
@@ -168,6 +169,9 @@ public:
     void     Begin_AttackCollider(const string& strName, const HitDesc& hitdesc);
     void     End_AttackCollider(const string& strName);
     _bool    Is_Active_AttackCollider(const string& strName);
+
+    void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
+    _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
 
 private:
     void    Update_Rotation(_float dt);
@@ -218,6 +222,8 @@ protected:
     _bool           m_bIsRotating = { false };
     // �и�
     unordered_set<CGameObject*>  m_ParryableTargets;
+    // 피격 위치
+    _vector3    m_vTargetPos = {};
     // �׽�Ʈ��
     _bool           m_bTest = { false };
     //���̴�
@@ -228,6 +234,7 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

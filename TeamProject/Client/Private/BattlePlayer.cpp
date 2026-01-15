@@ -338,14 +338,8 @@ void CBattlePlayer::Update_Status()
 void CBattlePlayer::Active_Battle()
 {
 	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
-	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
-		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
-		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
-	{
-		CCharacter* pCharacter = tempQueue.front().second;
-		tempQueue.pop();
-		pCharacter->Active_Character();
-	}
+	CCharacter* pCharacter = tempQueue.front().second;
+	pCharacter->Active_Character();
 }
 
 void CBattlePlayer::DeActive_Battle()

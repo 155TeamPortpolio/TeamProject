@@ -139,6 +139,8 @@ void CCharacter::Priority_Update(_float dt)
 {
 	if (InputDevice()->Key_Tap('T'))
 		m_bTest = !m_bTest;
+	if (InputDevice()->Key_Tap('H'))
+		Take_Damage(DAMAGE_TYPE::NORMAL, 1.f);
 }
 
 void CCharacter::Update(_float dt)
@@ -174,6 +176,10 @@ void CCharacter::OnTriggerEnter(CGameObject* pOther)
 	if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
 		m_ParryableTargets.insert(pOther);
+	}
+	else if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+	{
+		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
 	}
 	//MSG_BOX("OnTriggerEnter");
 }
@@ -360,6 +366,12 @@ _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 		return false;
 
 	return pCollider->Get_Component<CCollider>()->Get_CompActive();
+}
+
+void CCharacter::Take_Damage(DAMAGE_TYPE eType, _float fDamage)
+{
+	m_fCurrentHP -= fDamage;
+	On_Hit(eType);
 }
 
 _bool CCharacter::Is_OppositeInput() const

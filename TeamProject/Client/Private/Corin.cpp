@@ -15,6 +15,7 @@
 #include "CorinState_Evade.h"
 #include "CorinState_SwitchIn.h"
 #include "CorinState_SwitchOut.h"
+#include "CorinState_Hit.h"
 
 #include "FootIK.h"
 
@@ -161,6 +162,11 @@ void CCorin::On_Special()
 	//m_pStateMachine->Set_Trigger("Attack");
 }
 
+void CCorin::On_Hit(DAMAGE_TYPE eType)
+{
+	m_pStateMachine->Set_Trigger("ToHit");
+}
+
 void CCorin::Update_States()
 {
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
@@ -264,13 +270,9 @@ void CCorin::Process_EndState(const string& strCurrentState)
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
-	else if (strCurrentState == "SwitchIn")
+	else if (strCurrentState == "Hit")
 	{
-		//CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
-		//	m_pStateMachine->Get_CurrentState()
-		//	);
-		//if (!pSwitchIn)	return;
-		//IHState<CCorin>* pSwitchInType = 
+
 	}
 }
 
@@ -301,6 +303,7 @@ HRESULT CCorin::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CCorinState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CCorinState_SwitchIn::Create());	//*SwitchIn*
 	m_pStateMachine->Register_State("SwitchOut", CCorinState_SwitchOut::Create());//*SwtichOut*
+	m_pStateMachine->Register_State("Hit", CCorinState_Hit::Create());
 
 	return S_OK;
 }
@@ -351,6 +354,13 @@ HRESULT CCorin::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
+
+	// Hit
+	m_pStateMachine->Register_AnyStateTransition("Hit",
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToHit");
+
+	m_pStateMachine->Register_Transition("Hit", "Idle",
+		CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
 	return S_OK;
 }
