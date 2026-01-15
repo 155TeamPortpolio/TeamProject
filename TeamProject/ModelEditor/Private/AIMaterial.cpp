@@ -116,10 +116,35 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 		ImGui::EndCombo();
 	}
 
-	if (ImGui::Button("Add MaterialData")) {
+	if (ImGui::Button("Add Materia(One)")) {
 		MaterialTabOpened = !MaterialTabOpened;
 	}
+	ImGui::SameLine(0.f,5.f);
+	if (ImGui::Button("Add Material(Set)")) {
+		string path = Helper::OpenFile_Dialogue();
+		if (!path.empty())
+		{
+			string fileName = std::filesystem::path(path).filename().string();
 
+			auto* rm = CGameInstance::GetInstance()->Get_ResourceMgr();
+			rm->Add_ResourcePath(fileName, path);
+
+			CTexture* pTexture = rm->Load_Texture(G_GlobalLevelKey, fileName);
+			if (!pTexture)
+			{
+				ImGui::TextUnformatted("Failed to load texture.");
+			}
+			else
+			{
+				Safe_AddRef(pTexture);
+				m_Textures[TEXTURE_TYPE::DIFFUSE].push_back(pTexture);
+				if (textureTypes.empty())
+					textureTypes.push_back((_uint)TEXTURE_TYPE::DIFFUSE);
+
+				AddByDiffuse(fileName, path);
+			}
+		}
+	}
 	if (MaterialTabOpened)
 		Render_MaterialAdd();
 
@@ -166,8 +191,9 @@ HRESULT CAIMaterial::LoadByAssimp(const std::string& fileDirectory, const aiMate
 			fs::path full = p.is_absolute() ? p : (baseDir / p);
 			full = full.lexically_normal();
 
-			if (!fs::exists(full))
+			if (!fs::exists(full)) {
 				continue;
+			}
 
 			string filePath = full.string();
 			string textureKey = full.filename().string();
@@ -202,25 +228,83 @@ void CAIMaterial::ReCheck_Material(const string& fileDirectory)
 		{
 			stem.erase(stem.size() - oldSuffix.size()); 
 		}
-		//Unagi_Body_Map1_D
+
 		Add_ReTexture(fileDirectory, stem, "_N",TEXTURE_TYPE::NORMALS);
 		Add_ReTexture(fileDirectory, stem, "_M",TEXTURE_TYPE::METALNESS);
 		Add_ReTexture(fileDirectory, stem, "_A",TEXTURE_TYPE::AMBIENT);
 	}
 }
 
+_bool CAIMaterial::EndsWith(const string& text, const string& suffix)
+{
+	if (text.size() < suffix.size())
+		return false;
+	return equal(suffix.rbegin(), suffix.rend(), text.rbegin());
+}
+
+ _bool CAIMaterial::MakeSiblingNameFromDiffuse(
+	const string& diffuseFileName,
+	const char replaceSuffixChar,
+	string& outSiblingFileName)
+{
+	filesystem::path diffusePath(diffuseFileName);
+	string stem = diffusePath.stem().string();      
+	string ext = diffusePath.extension().string(); 
+	
+	if (!EndsWith(stem, "_D"))
+		return false;
+
+	stem.pop_back(); 
+	stem.push_back(replaceSuffixChar); 
+
+	outSiblingFileName = stem + ext; 
+	return true;
+}
+void CAIMaterial::AddByDiffuse(const string& DiffuseName, const string& fullpath)
+{
+	filesystem::path diffusePath(fullpath);
+	filesystem::path folderPath = diffusePath.parent_path();
+
+	const char siblingSuffixChars[] = { 'N', 'A', 'M' };
+	auto* resourceMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
+
+	for (char suffixChar : siblingSuffixChars)
+	{
+		string siblingFileName;
+		if (!MakeSiblingNameFromDiffuse(DiffuseName, suffixChar, siblingFileName))
+			continue;
+
+		filesystem::path siblingFullPath = folderPath / siblingFileName;
+		if (!filesystem::exists(siblingFullPath))
+			continue;
+
+		resourceMgr->Add_ResourcePath(siblingFileName, siblingFullPath.string());
+
+		CTexture* siblingTexture = resourceMgr->Load_Texture(G_GlobalLevelKey, siblingFileName);
+		if (!siblingTexture)
+			continue;
+
+		Safe_AddRef(siblingTexture);
+
+		TEXTURE_TYPE textureType = TextureTypeFromSuffixChar(suffixChar);
+
+		m_Textures[textureType].push_back(siblingTexture);
+
+		_bool ContainsType = find(textureTypes.begin(), textureTypes.end(), (_uint)textureType) != textureTypes.end();
+		if (!ContainsType)
+			textureTypes.push_back((_uint)textureType);
+	}
+}
+
+
 void CAIMaterial::Render_MaterialAdd()
 {
 	ImGui::Begin("Add_Texture", nullptr, 0);
-
-	// fallback 타입 목록 (프로젝트 enum에 맞춰 채워)
 	static const TEXTURE_TYPE kFallbackTypes[] = {
 		TEXTURE_TYPE::DIFFUSE,
 	};
 
-	// 콤보에 사용할 "타입 소스" 결정
 	const bool useFallback = textureTypes.empty();
-
 	int count = useFallback ? (int)(sizeof(kFallbackTypes) / sizeof(kFallbackTypes[0]))
 		: (int)textureTypes.size();
 
@@ -231,20 +315,17 @@ void CAIMaterial::Render_MaterialAdd()
 		return;
 	}
 
-	// 인덱스 가드
 	if (m_currentTextureTypeIndex < 0 || m_currentTextureTypeIndex >= count)
 		m_currentTextureTypeIndex = 0;
 
-	// 현재 선택 타입 얻기
 	TEXTURE_TYPE selectedType = TEXTURE_TYPE::DIFFUSE;
 	if (useFallback)
 		selectedType = kFallbackTypes[m_currentTextureTypeIndex];
 	else
 		selectedType = static_cast<TEXTURE_TYPE>(textureTypes[m_currentTextureTypeIndex]);
 
-	std::string strTextureType = ConvertToConstant(selectedType);
+	string strTextureType = ConvertToConstant(selectedType);
 
-	// 콤보
 	if (ImGui::BeginCombo("##textureTypes", strTextureType.c_str()))
 	{
 		for (int i = 0; i < count; ++i)
@@ -284,9 +365,6 @@ void CAIMaterial::Render_MaterialAdd()
 			{
 				Safe_AddRef(pTexture);
 				m_Textures[selectedType].push_back(pTexture);
-
-				// 선택: textureTypes가 비어있으면 이번에 선택한 타입을 등록해두고 싶다면
-				// (다음부터는 fallback 말고 실제 리스트로 운영)
 				if (textureTypes.empty())
 					textureTypes.push_back((_uint)selectedType);
 			}
@@ -296,6 +374,16 @@ void CAIMaterial::Render_MaterialAdd()
 	ImGui::End();
 }
 
+TEXTURE_TYPE CAIMaterial::TextureTypeFromSuffixChar(char suffixChar)
+{
+	switch (suffixChar)
+	{
+	case 'N': return TEXTURE_TYPE::NORMALS;
+	case 'A': return TEXTURE_TYPE::AMBIENT;
+	case 'M': return TEXTURE_TYPE::METALNESS;
+	default:  return TEXTURE_TYPE::DIFFUSE;
+	}
+}
 void CAIMaterial::Add_AdditionalTexture(const string& fileDirectory, const string& preFix, const string& typeAdd, TEXTURE_TYPE type)
 {
 	// 접두사 제거
