@@ -32,11 +32,12 @@ private:
 
 public:
     /* Getter */
-    CStateMachine<CThugAssaulter>*      GetStateMachine() const { return m_pStateMachine; }
-    const HYSTERIESIS&                  GetHysteriesis() const { return m_tHysteriesis; }
+    CStateMachine<CThugAssaulter>*  GetStateMachine() const { return m_pStateMachine; }
+    const HYSTERIESIS&              GetHysteriesis() const { return m_tHysteriesis; }
 
     /* Setter */
-    void                                Idle() { m_isIdle = true; }
+    void                            Idle() { m_isIdle = true; }
+    virtual void                    TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
 
 private:
     HRESULT Initialize_StateMachine();
@@ -46,6 +47,7 @@ private:
     void Update_States(const _float dt);
     void ControlState(const _float dt);
     void CheckDistanceFromPlayer();
+    void ProcessDamage(DAMAGE_TYPE eDamageType);
 
 private:
     CStateMachine<CThugAssaulter>* m_pStateMachine = { nullptr };

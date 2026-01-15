@@ -643,6 +643,9 @@
     <Filter Include="02. GameObject\UI\02. 3D\Plane\IconLabel">
       <UniqueIdentifier>{3e2a37e2-c5e9-4d9d-b5ff-033ee76f6b0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy">
+      <UniqueIdentifier>{77154f48-3ac1-4475-8c76-d190607033f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1231,6 +1234,9 @@
     <ClInclude Include="..\Public\UI_BattleHUD.h">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\ThugAssaulter_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1624,9 +1630,6 @@
     <ClCompile Include="..\private\ThugBulkyEnforcer_Death.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
     </ClCompile>
@@ -1800,6 +1803,10 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

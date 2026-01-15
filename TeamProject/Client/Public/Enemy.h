@@ -25,32 +25,43 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
-public:
-    BATTLEOBJ_INFO*     GetCharacterOnField();
-    TARGETING_INFO&     GetTargetingInfo() { return m_tTargetingInfo; }
+public: 
+    /* Getter */
+    // 현재 플레이 중인 캐릭터의 정보를 반환
+    BATTLEOBJ_INFO*         GetCharacterOnField();
+    // 현재 플레이 중인 캐릭터와의 거리정보를 반환
+    TARGETING_INFO&         GetTargetingInfo() { return m_tTargetingInfo; }
+    // 몬스터의 Status 구조체를 반환
+    MONSTER_STATUS          GetStatus() { return m_tStatus; }
+    // 몬스터의 Status 구조체 포인터를 반환
+    const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
+    // Groggy 상태 반환
+    _bool                   IsGroggy() const { return m_isGroggy; }
+
+    /* Setter*/
+    // 몬스터 공격 시 attack sign 이펙트 활성화 함수
+    virtual void        Active_AttackSign(_bool parryEnable = true);
+    // 플레이어 무기에서 몬스터한테 데미지 입힐 때 호출 될 함수
+    virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) {};
+    /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
+    AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
+    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime);
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
     void                ComputeTargetingInfo();
     // Target(Player->Character)이 있을 때, Target의 정보와 Target으로 부터의 정보 GUI에 렌더
     void                Render_GUI_ForTargetInfo();
-
-public:
     // Attack Sign 객체 추가 및 부착 본 지정
     virtual void        Create_AttackSign(string boneTag);
-    // 몬스터 공격 시 attack sign 이펙트 활성화 함수
-    virtual void        Active_AttackSign(_bool parryEnable = true);
+    // BattleCollider 객체 추가
+    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc);
+    // Groggy 수치 관리
+    void                ManageGroggy(const _float dt);
+
 
 #pragma region BattleCollider
-public:
-    /* 트리거 콜라이더를 바로 키고,
-    AttackOffsetTime 뒤에 Attack 콜라이더를
-    AttackPlayTime만큼 키고
-    트리거와 Attack콜라이더를 종료함*/
-    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime);
-
 protected:
-    HRESULT             AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc);
     void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is);
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
@@ -79,6 +90,12 @@ protected:
     TARGETING_INFO          m_tTargetingInfo = {};
     // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
     _float                  m_fDetectedRange = { 5.f };    
+    // 몬스터 스테이터스
+    MONSTER_STATUS          m_tStatus = {};
+    /* Groggy */
+    _bool                   m_isGroggy = { false };
+    _float                  m_fGroggyDecreaseTime = {};
+
  
 protected: 
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

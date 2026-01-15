@@ -41,6 +41,7 @@ void CEnemy::Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	CheckAutoBattlePlay(dt);
+	ManageGroggy(dt);
 
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
@@ -265,6 +266,32 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 #pragma endregion	
 
 	return S_OK;
+}
+
+void CEnemy::ManageGroggy(const _float dt)
+{
+	if (false == m_isGroggy && 100 <= m_tStatus.iGroggyValue) 
+	{
+		m_tStatus.iGroggyValue = 100;
+		m_isGroggy = true;
+	}
+
+	if (true == m_isGroggy) 
+	{
+		m_fGroggyDecreaseTime += dt;
+
+		if (0.1f <= m_fGroggyDecreaseTime) 
+		{
+			--m_tStatus.iGroggyValue;
+			m_fGroggyDecreaseTime = 0.f;
+		}
+
+		if (0 > m_tStatus.iGroggyValue) 
+		{
+			m_tStatus.iGroggyValue = 0;
+			m_isGroggy = false;
+		}
+	}
 }
 
 void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is)
