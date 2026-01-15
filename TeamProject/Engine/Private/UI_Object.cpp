@@ -17,6 +17,7 @@ CUI_Object::CUI_Object(const CUI_Object& rhs) : CGameObject(rhs)
     m_vScale        = rhs.m_vScale;
     m_fRadian       = rhs.m_fRadian;
     m_vPivot        = rhs.m_vPivot;
+    m_vWorldPos     = rhs.m_vWorldPos;
 }
 
 HRESULT CUI_Object::Initialize_Prototype()
@@ -41,6 +42,7 @@ HRESULT CUI_Object::Initialize(INIT_DESC* pArg)
         m_vSize         = uiDesc->Size;
         m_fRadian       = uiDesc->fRadian;
         m_eAnchor       = uiDesc->eAnchor;
+        m_vWorldPos     = uiDesc->worldPos;
         Update_UITransform();
      }
     return S_OK;

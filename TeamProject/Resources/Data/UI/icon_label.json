@@ -1,0 +1,286 @@
+{
+    "alive": true,
+    "instanceName": "icon_label",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            140.0,
+            20.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.5,
+            0.5
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "arrowLeft",
+            "transform": {
+                "anchor": 1,
+                "anchorOffset": [
+                    12.666666030883789,
+                    0.0
+                ],
+                "size": [
+                    25.333332061767578,
+                    20.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": -1.5707963705062866
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": -90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": -90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                8.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.4000000059604645
+                        },
+                        {
+                            "angle": -90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.800000011920929
+                        }
+                    ],
+                    "loop": true,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "IconGuideArrow02.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "arrowRight",
+            "transform": {
+                "anchor": 2,
+                "anchorOffset": [
+                    -12.666666030883789,
+                    -9.0
+                ],
+                "size": [
+                    25.333332061767578,
+                    20.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.05000000074505806
+                ],
+                "radian": 1.5707963705062866
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 1.0,
+                    "keyframes": [
+                        {
+                            "angle": 90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                -8.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.4000000059604645
+                        },
+                        {
+                            "angle": 90.0,
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.800000011920929
+                        }
+                    ],
+                    "loop": true,
+                    "name": "clip1"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "IconGuideArrow02.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "label",
+            "transform": {
+                "anchor": 4,
+                "anchorOffset": [
+                    -0.8000144958496094,
+                    11.349329948425293
+                ],
+                "size": [
+                    72.39997100830078,
+                    22.698659896850586
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Text",
+            "text": {
+                "content": "제로 공동",
+                "fontTag": "NanumSquareNeo.spritefont",
+                "fontScale": 0.39999985694885254,
+                "outlined": true,
+                "outlineThickness": 1.2000000476837158,
+                "outlineColor": [
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "shear": [
+                    0.0,
+                    0.0
+                ]
+            }
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
