@@ -10,6 +10,7 @@
 #include "CharacterController.h"
 
 #include "BattleSystem.h"
+#include "FieldSystem.h"
 #include "DataBase.h"
 
 // Camera
@@ -171,17 +172,17 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-
+	
 	static OBJECT_HANDLE prevPlayer{};
-
+	
 	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-
+	
 	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
 	{
 		prevPlayer = curPlayer;
-
+	
 		m_pCamDirector->SetSpaceRef(curPlayer);
-
+	
 		auto orbitObj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
 		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
 	}
@@ -306,7 +307,8 @@ void CTestLevel::Ready_Camera()
 
 	//const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
 	//static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
-
+	const OBJECT_HANDLE curPlayer = CFieldSystem::GetInstance()->GetCurCharacterHandle();
+	static_cast<COrbitCam*>(orbitCam)->SetTarget(curPlayer);
 	CamLoader::Load();
 
 	CameraManager()->Set_MainCam(orbitCam->Get_Component<CCamera>());

@@ -49,9 +49,10 @@ public:
     CAnimator3D* Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string& Get_AnimName() const { return m_strAnimName; }
-
 public:
     _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    void    Active_Character();
+    void    DeActive_Character();
 
 public:
     void Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc);

@@ -24,6 +24,16 @@ OBJECT_HANDLE CFieldPlayer::Get_CurCharacterHandle()
 	return m_pCurrentCharacter->Get_Handle(); 
 }
 
+void CFieldPlayer::Active_Field()
+{
+	m_pCurrentCharacter->Active_Character();
+}
+
+void CFieldPlayer::DeActive_Field()
+{
+	m_pCurrentCharacter->DeActive_Character();
+}
+
 HRESULT CFieldPlayer::Initialize()
 {
 	Initialize_CharacterPrototype();

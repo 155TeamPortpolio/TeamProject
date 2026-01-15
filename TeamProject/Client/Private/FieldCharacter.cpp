@@ -15,6 +15,18 @@ CFieldCharacter::CFieldCharacter(const CFieldCharacter& rhs)
 {
 }
 
+void CFieldCharacter::Active_Character()
+{
+	m_pCCT->Set_CompActive(true);
+	SetRenderLayer(RENDER_LAYER::Default);
+}
+
+void CFieldCharacter::DeActive_Character()
+{
+	m_pCCT->Set_CompActive(false);
+	SetRenderLayer(RENDER_LAYER::None);
+}
+
 void CFieldCharacter::Process_RootMotion(_float dt, const ROOTMOTION_DESC& desc)
 {
 	auto pTransform = Get_Component<CTransform>();
