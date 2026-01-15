@@ -13,6 +13,7 @@
 #include "UIDirector.h"
 #include "DataBase.h"
 #include "BattleSystem.h"
+#include "CamDirector.h"
 
 CMainApp::CMainApp()
 {
@@ -43,7 +44,7 @@ HRESULT CMainApp::Initialize()
 
 	CDataBase::GetInstance()->CreateTable();
 	CBattleSystem::GetInstance(); //우선 생성만
-
+	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
@@ -100,5 +101,7 @@ void CMainApp::Free()
 	m_pGameInstance->Release_Engine();
 	m_pGameInstance->DestroyInstance();
 	CUIDirector::GetInstance()->DestroyInstance();
+	CCamDirector::GetInstance()->DestroyInstance();
+	CDataBase::GetInstance()->DestroyInstance();
 }
 

@@ -19,10 +19,10 @@ HRESULT CAIMaterial::Initialize(const aiMaterial* pAIMaterial, const string& fil
 	string parentFolder = filesystem::path(fileDirectory).parent_path().string();
 	string ParentName = filesystem::path(parentFolder).filename().string();
 
-	Add_AdditionalTexture(fileDirectory, "MAT_", "_N.png", TEXTURE_TYPE::NORMALS);
-	Add_AdditionalTexture(fileDirectory, "MAT_", "_M.png", TEXTURE_TYPE::METALNESS);
-	Add_AdditionalTexture(fileDirectory, "MAT_", "_A.png", TEXTURE_TYPE::AMBIENT);
-	Add_AdditionalTexture(fileDirectory, "MAT_", "_D.png", TEXTURE_TYPE::DIFFUSE);
+	Add_AdditionalTexture(fileDirectory, "", "Map_N.png", TEXTURE_TYPE::NORMALS);
+	Add_AdditionalTexture(fileDirectory, "", "Map_M.png", TEXTURE_TYPE::METALNESS);
+	Add_AdditionalTexture(fileDirectory, "", "Map_A.png", TEXTURE_TYPE::AMBIENT);
+	Add_AdditionalTexture(fileDirectory, "", "Map_D.png", TEXTURE_TYPE::DIFFUSE);
 	LoadByAssimp(fileDirectory, pAIMaterial);
 
 	m_passConstant = "Opaque";
@@ -99,6 +99,8 @@ void CAIMaterial::Render_GUI(vector<_uint>& TextureIndexes)
 			}
 		}
 	}
+	ImGui::SameLine();
+	ImGui::Text(m_MaterialKey.c_str());
 	if (ImGui::BeginCombo(string("##shaderPass").c_str(), passes[m_currentPassIndex].c_str())) {
 		for (int i = 0; i < passes.size(); ++i) {
 			bool isSelected = (i == m_currentPassIndex);

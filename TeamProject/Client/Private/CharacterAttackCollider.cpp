@@ -46,6 +46,9 @@ void CCharacterAttackCollider::Priority_Update(_float dt)
 
 void CCharacterAttackCollider::Update(_float dt)
 {
+	Get_Component<CBoneFollower>()->Sync_Transform(dt, m_pTransform);
+	Get_Component<CRigidBody>()->Set_GlobalPos(m_pTransform->Get_Pos(), m_pTransform->Get_QuaternionRotate());
+	Get_Component<CCollider>()->Update(dt);
 }
 
 void CCharacterAttackCollider::Late_Update(_float dt)
@@ -60,6 +63,7 @@ void CCharacterAttackCollider::Render_GUI()
 
 void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
 {
+	//MSG_BOX("Ãæµ¹¤»¤»!");
 }
 
 void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)

@@ -27,6 +27,13 @@ public:
 	virtual void Clear(const string& LevelTag)PURE;
 	virtual HRESULT Sync_To_Level()PURE;
 
+
+	virtual void Set_LevelTimeScale(string LevelTag,_float scale) PURE;
+	virtual void Reset_LevelTimeScale(string LevelTag) PURE;
+
+	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer,_float scale) PURE;
+	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) PURE;
+	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) PURE;
 };
 
 NS_END

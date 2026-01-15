@@ -26,6 +26,7 @@ HRESULT CRectModel::Initialize_Prototype()
 
 HRESULT CRectModel::Initialize(COMPONENT_DESC* pArg)
 {
+	
 	return S_OK;
 }
 

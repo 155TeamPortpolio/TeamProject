@@ -995,7 +995,7 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 	//Update TrackPos
 	Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 		Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-		playSpeed, Layer.bLoop, Layer.fLoopEnd,
+		playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
 		&Layer.bWrapped,
 		&Layer.bisFinished,
 		&Layer.fProgress,
@@ -1028,7 +1028,11 @@ void CAnimator3D::Animation_Run(ANIM_LAYER& Layer, _float dt)
 			_vector4 vCurRootQuat = R;
 
 			if (Layer.bWrapped) { //Roop 
-				 _vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+				_vector3 vStartPos;
+				if (Layer.fStartAt == 0.f)
+					vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+				else
+					m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
 
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
@@ -1145,7 +1149,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	if (Layer.bUpdate_PrevClip) {
 		Layer.fCurrentTrackPosition = nowClip->TranslateAnimateMatrix(
 			Layer.LocalMatrices, Layer.fCurrentTrackPosition,
-			playSpeed, Layer.bLoop, Layer.fLoopEnd,
+			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
 			&Layer.bWrapped,
 			&Layer.bisFinished,
 			nullptr,
@@ -1155,7 +1159,7 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 	if (Layer.bUpdate_NewClip) {
 		Layer.fBlendTrackPosition = nextClip->TranslateAnimateMatrix(
 			Layer.BlendMatrices, Layer.fBlendTrackPosition,
-			playSpeed, Layer.bLoop, Layer.fLoopEnd,
+			playSpeed, Layer.bLoop, Layer.fEndAt, Layer.fStartAt,
 			&Layer.bWrapped,
 			&Layer.bisFinished,
 			&Layer.fProgress,
@@ -1189,8 +1193,12 @@ void CAnimator3D::Animation_Convert(ANIM_LAYER& Layer, _float dt)
 			Vector4 vCurRootQuat = R;
 
 			if (Layer.bWrapped) { //Roop 
-				_vector3 vStartPos = m_pAnimClips[Layer.iClipIndex]
-					->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+				_vector3 vStartPos;
+				if (Layer.fStartAt == 0.f)
+					vStartPos = m_pAnimClips[Layer.iClipIndex]->Get_StartKeyFrameByBoneIndex(Layer.iRootBoneIndex).vTranslation;
+				else
+					m_pAnimClips[Layer.iClipIndex]->Sample_KeyFrameByBoneIndex(Layer.iRootBoneIndex, Layer.fStartAt, nullptr, nullptr, &vStartPos);
+
 
 				Layer.vRootMoveDelta = (Layer.vRootEndPos - Layer.vPrevRootPos) + (vCurRootPos - vStartPos);
 				Layer.bWrapped = false;
