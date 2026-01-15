@@ -164,6 +164,7 @@ void CMapLoader::Place_TriggerObjectFromLoadData(MapData_Object* pData)
     }
 
     CGameObject* pStaticObject = Builder::Create_Object({ G_GlobalLevelKey ,"Proto_GameObject_MapTriggerObject" })
+        .Add_ObjDesc(Desc)
         .Collider(ColDesc)
         .Position({ pData->vPos[0], pData->vPos[1], pData->vPos[2] })
         .Build(pData->TagModelResourceKey);
