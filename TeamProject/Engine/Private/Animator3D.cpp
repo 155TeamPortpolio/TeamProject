@@ -580,7 +580,7 @@ vector<_float4x4> CAnimator3D::Get_BoneMatrices(_uint meshIndex)
 
 	for (size_t i = 0; i < m_CombinedMatrices.size(); ++i)
 	{
-		_smatrix final = m_FinalMatrices[i];
+		_smatrix final = m_CombinedMatrices[i];
 		_smatrix offset = m_pData->Get_Offset(meshIndex, i);
 
 		result.push_back(offset * final);

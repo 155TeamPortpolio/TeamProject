@@ -2,6 +2,7 @@
 #include "Player.h"
 
 #include "BattlePlayer.h"
+#include "FieldPlayer.h"
 
 #include "GameInstance.h"
 #include "BattleSystem.h"
@@ -23,6 +24,7 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 	__super::Initialize(pArg);
 
 	m_pBattlePlayer = CBattlePlayer::Create();
+	m_pFieldPlayer = CFieldPlayer::Create();
 
 	return S_OK;
 }
@@ -33,17 +35,20 @@ void CPlayer::Awake()
 
 void CPlayer::Priority_Update(_float dt)
 {
-	m_pBattlePlayer->Priority_Update(dt);
+	if(m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Priority_Update(dt);
+	else m_pFieldPlayer->Priority_Update(dt);
 }
 
 void CPlayer::Update(_float dt)
 {
-	m_pBattlePlayer->Update(dt);
+	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Update(dt);
+	else m_pFieldPlayer->Update(dt);
 }
 
 void CPlayer::Late_Update(_float dt)
 {
-	m_pBattlePlayer->Late_Update(dt);
+	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Late_Update(dt);
+	else m_pFieldPlayer->Late_Update(dt);
 }
 
 void CPlayer::Render_GUI()
