@@ -129,7 +129,14 @@ void CPhysicsSystem::Update(_float dt)
 {
     if (!m_pScene) return;
 
-    m_pScene->simulate(dt);
+    m_fAccumulator += dt;
+
+    while (m_fAccumulator >= m_fFixedTimeStep)
+    {
+        m_pScene->simulate(m_fFixedTimeStep);
+        m_pScene->fetchResults(true);
+        m_fAccumulator -= m_fFixedTimeStep;
+    }
 
 }
 
