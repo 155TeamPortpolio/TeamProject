@@ -46,15 +46,78 @@ HRESULT CSacrifice::Initialize_Prototype()
 	Add_Component<CCharacterController>();
 
 	auto pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pResource->Add_ResourcePath("Monster_SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.model");
-	pResource->Add_ResourcePath("Monster_SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer.mat");
-	pResource->Add_ResourcePath("Monster_SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/Monster_SacrificeBringer_Meta.json");
+	pResource->Add_ResourcePath("SacrificeBringer.model", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.model");
+	pResource->Add_ResourcePath("SacrificeBringer.mat", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer.mat");
+	pResource->Add_ResourcePath("SacrificeBringer_Meta.json", "../Bin/Resources/Model/skeletal/Enemy/Sacrifice/Body/SacrificeBringer_Meta.json");
 
 	auto pModel = Get_Component<CSkeletalModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
+	pModel->Link_Model(G_GlobalLevelKey, "SacrificeBringer.model");
 
 	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Monster_SacrificeBringer.mat");
+	pMaterial->Link_Material(G_GlobalLevelKey, "SacrificeBringer.mat");
+
+	/* Pre load 활성화 전까지 잠시 여기서 생성 */
+	{
+		//==================== Effect =======================
+
+		auto pResource = ResourceManager();
+
+		/* Assets */
+		pResource->Add_ResourcePath("test_particle.json", "../Bin/Resources/Effect/Data/test_particle.json");
+		pResource->Add_ResourcePath("spawn_smoke.json", "../Bin/Resources/Effect/Data/spawn_smoke.json");
+		pResource->Add_ResourcePath("fog.json", "../Bin/Resources/Effect/Data/fog.json");
+		pResource->Add_ResourcePath("hit_ground_smoke.json", "../Bin/Resources/Effect/Data/hit_ground_smoke.json");
+		pResource->Add_ResourcePath("hit_ground_smoke_strong.json", "../Bin/Resources/Effect/Data/hit_ground_smoke_strong.json");
+		pResource->Add_ResourcePath("core.json", "../Bin/Resources/Effect/Data/core.json");
+		pResource->Add_ResourcePath("rock_particle.json", "../Bin/Resources/Effect/Data/rock_particle.json");
+		pResource->Add_ResourcePath("sacrifice_spark.json", "../Bin/Resources/Effect/Data/sacrifice_spark.json");
+		pResource->Add_ResourcePath("sacrifice_hit_ground_flare.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare.json");
+		pResource->Add_ResourcePath("sacrifice_hit_ground_flare_smoke.json", "../Bin/Resources/Effect/Data/sacrifice_hit_ground_flare_smoke.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_trail.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_trail_cone.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_trail_cone.json");
+		pResource->Add_ResourcePath("sacrifice_orb.json", "../Bin/Resources/Effect/Data/sacrifice_orb.json");
+		pResource->Add_ResourcePath("sacrifice_smoke_slash.json", "../Bin/Resources/Effect/Data/sacrifice_smoke_slash.json");
+		pResource->Add_ResourcePath("sacrifice_sword_slash.json", "../Bin/Resources/Effect/Data/sacrifice_sword_slash.json");
+		pResource->Add_ResourcePath("sacrifice_axe_slash.json", "../Bin/Resources/Effect/Data/sacrifice_axe_slash.json");
+		pResource->Add_ResourcePath("sacrifice_rush_trail.json", "../Bin/Resources/Effect/Data/sacrifice_rush_trail.json");
+
+		/* Textures */
+		pResource->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
+		pResource->Add_ResourcePath("Eff_Particle_044.png", "../Bin/Resources/Effect/Texture/Eff_Particle_044.png");
+		pResource->Add_ResourcePath("Eff_Smoke_046_LB_01.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_046_LB_01.png");
+		pResource->Add_ResourcePath("Eff_Smoke_218.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_218.png");
+		pResource->Add_ResourcePath("Eff_Smoke_006.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_006.png");
+		pResource->Add_ResourcePath("rock0.png", "../Bin/Resources/Effect/Texture/rock0.png");
+		pResource->Add_ResourcePath("lightning10.png", "../Bin/Resources/Effect/Texture/lightning10.png");
+		pResource->Add_ResourcePath("lightning7.png", "../Bin/Resources/Effect/Texture/lightning7.png");
+		pResource->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
+		pResource->Add_ResourcePath("Eff_Burn_LYX_28.png", "../Bin/Resources/Effect/Texture/Eff_Burn_LYX_28.png");
+		pResource->Add_ResourcePath("Eff_Smoke_259.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_259.png");
+		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
+		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
+		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		pResource->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+
+		/* Models */
+		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
+		pResource->Add_ResourcePath("Smoke_Cone2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.mat");
+		pResource->Add_ResourcePath("Sacrifice_Orb.model", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.model");
+		pResource->Add_ResourcePath("Sacrifice_Orb.mat", "../Bin/Resources/Effect/Model/Sacrifice_Orb/Sacrifice_Orb.mat");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.model");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash5.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash5/Sacrifice_Smoke_Slash5.mat");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.model");
+		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
+		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
+		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
+		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.model", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.model");
+		pResource->Add_ResourcePath("Sacrifice_Axe_Slash.mat", "../Bin/Resources/Effect/Model/Sacrifice_Axe_Slash/Sacrifice_Axe_Slash.mat");
+
+	}
+
 
 	return S_OK;
 }
@@ -72,12 +135,12 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	//}
 
 	auto pAnimator = Get_Component<CAnimator3D>();
-	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "Monster_SacrificeBringer.model");
-	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_SacrificeBringer_Meta.json");
-	pAnimator->Set_MotionBone(3); //Bip001
-	pAnimator->Resize_Layer(3);
-	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
+	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
+	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
+	//pAnimator->Set_MotionBone(3); //Bip001
+	//pAnimator->Resize_Layer(3);
+	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
+	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
 
@@ -87,9 +150,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pModel = Get_Component<CSkeletalModel>();
 	m_PartMeshIndices.resize(ENUM(PARTS::END));
 	m_PartMeshIndices[ENUM(PARTS::ICE)] = 7;
-	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 11;
-	m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)] = 12;
-	m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)] = 13;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_AXE)] = 8;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_SWORD)] = 9;
+	m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)] = 10;
 	for (_uint i = 0; i < m_PartMeshIndices.size(); ++i)
 		pModel->SetDrawable(m_PartMeshIndices[i], false);
 
@@ -356,7 +419,7 @@ void CSacrifice::Create_Children()
 	auto pObjectContainer = Get_Component<CObjectContainer>();
 	auto pAnimator = Get_Component<CAnimator3D>();
 
-	Create_AttackSign("Bip001 Head");
+	Create_AttackSign("Bip001_Head");
 
 	{
 		auto pHand = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeHand" })
@@ -369,7 +432,7 @@ void CSacrifice::Create_Children()
 		auto pLaser = Builder::Create_Object({ "Test_Level","Proto_GameObject_SacrificeLaser" })
 			.Build("Sacrifice_Laser");
 		pObjectContainer->Add_Child(pLaser, false);
-		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "LaserBeamInitPoint");
+		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_Eye6_05");
 	}
 
 	{

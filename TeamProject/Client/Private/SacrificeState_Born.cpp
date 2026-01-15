@@ -34,7 +34,7 @@ void CSacrificeState_Born_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("SacrificeBringer_Ani_P1_Born")
-		.Speed(1.2f)
+		.Speed(1.f)
 		.Loop(false)
 		.Apply();
 

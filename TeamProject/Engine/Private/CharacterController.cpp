@@ -130,6 +130,7 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setContactOffset(pDesc->fContactOffset);
 	pShape->setRestOffset(pDesc->fRestOffset);
 
+	m_eGroup = pDesc->eGroup;
 	PxFilterData filterData;
 	filterData.word0 = ENUM(pDesc->eGroup);
 	filterData.word1 = pDesc->iCollisionMask;
@@ -569,6 +570,7 @@ void CCharacterController::Set_CollisionMask(_uint iMask)
 
 void CCharacterController::Set_CollisionGroup(COLLISION_GROUP eGroup)
 {
+	m_eGroup = eGroup;
 	m_FilterData.word0 = ENUM(eGroup);
 
 	PxShape* pShape;

@@ -46,7 +46,13 @@ void CBoneFollower::Sync_Transform(_float dt, CTransform* pTransform)
 	//_float4x4 boneMatrix = m_pMasterAnimator->Get_BoneCombinedMatrix(FollowingBone);
 	_float4x4 boneMatrix = m_pMasterAnimator->Get_BoneMatrix(CAnimator3D::BoneSpace::COMBINED, FollowingBone);
 
-    _matrix matBone = XMLoadFloat4x4(&boneMatrix);
+	_vector S, R, T;
+	XMMatrixDecompose(&S, &R, &T, XMLoadFloat4x4(&boneMatrix));
+	_matrix rotationMatrix = XMMatrixRotationQuaternion(R);
+	_matrix translationMatrix = XMMatrixTranslationFromVector(T);
+
+
+    _matrix matBone = rotationMatrix*translationMatrix;
 
 	_float4x4* masterMatrix = m_pMasterTransform->Get_WorldMatrix_Ptr();
     _matrix matMasterWorld = XMLoadFloat4x4(masterMatrix);
