@@ -4,6 +4,8 @@
 #include "Helper_Func.h"
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
+#include "MapPlacedObject.h"
+#include "MapTriggerObject.h"
 
 CZero_Level::CZero_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -40,6 +42,10 @@ HRESULT CZero_Level::Render()
 
 void CZero_Level::PreLoad_Level()
 {
+	/* Prototype Tag */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+
 	/*여기에 Add ResourcePath 넣기*/
 }
 

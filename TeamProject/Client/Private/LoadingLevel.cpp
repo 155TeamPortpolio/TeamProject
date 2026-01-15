@@ -2,6 +2,7 @@
 #include "LoadingLevel.h"
 #include "GameInstance.h"
 #include "Helper_Func.h"
+#include "Zero_Level.h"
 
 /* UI */
 #include "UIDirector.h"
@@ -26,7 +27,7 @@ HRESULT CLoadingLevel::Awake()
 
 	auto transDesc = CGameInstance::GetInstance()->Get_LevelMgr()->Get_TransitionDesc();
 	m_NextLevel=transDesc.nextLevelKey;
-	//PreLoadLevel();
+	PreLoadLevel();
 	return S_OK;
 }
 
@@ -109,6 +110,9 @@ void CLoadingLevel::PreLoadLevel()
 			queuePerType.second.pop();
 		}
 	}
+
+	if ("Zero_Level" == m_NextLevel)
+		CZero_Level::PreLoad_Level();
 }
 
 

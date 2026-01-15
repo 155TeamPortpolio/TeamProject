@@ -164,9 +164,7 @@ HRESULT CTestLevel::Awake()
 
 	objMgr->Add_Object(Player, { "Test_Level", "Model_Layer" });
 	//============== Map ============================
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
-
+	
 	//============== Map ============================
 	Ready_Map("Test_Level", "TrainingRoom");
 
