@@ -138,6 +138,29 @@ void CCorin::On_SwitchOut()
 	m_pStateMachine->Set_Trigger("SwitchOut");
 }
 
+void CCorin::On_Ultimate()
+{
+	__super::On_Ultimate();
+	//m_pStateMachine->Set_Int("AttackEntryMode", 3);
+	//m_pStateMachine->Set_Trigger("Attack");
+}
+
+void CCorin::On_Special()
+{
+	if (InputDevice()->Key_Tap('E') == false) return;
+
+	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
+	{
+		UI_ACTION_DESC desc;
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+		m_tEnergy.fCurrentEnergy -= 100.f;
+	}
+	//m_pStateMachine->Set_Int("AttackEntryMode", 2);
+	//m_pStateMachine->Set_Trigger("Attack");
+}
+
 void CCorin::Update_States()
 {
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());

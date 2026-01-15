@@ -72,6 +72,7 @@ void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
 		return;
 	if (!Try_Hit(pOther))
 		return;
+	
 	// MSG_BOX("Damage On Enter");
 	// 데미지 주는 코드
 }
@@ -83,6 +84,7 @@ void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
 		return;
 	if (!Try_Hit(pOther))
 		return;
+
 	// MSG_BOX("Damage On Stay");
 	// 데미지 주는 코드
 }

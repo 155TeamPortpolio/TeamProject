@@ -21,7 +21,7 @@ public:
         return m_pStaticActor;
     }
     PxShape*        Get_Shape() { return m_pShape; }
-    _bool           IsTrigger() const { return m_bTrigger; }
+    _bool           Is_Trigger() const { return m_bTrigger; }
     COLLIDER_TYPE   Get_Type() const { return m_eType; }
     _float3         Get_Center() const { return m_vCenter; }
     _float3         Get_Size() const { return m_vSize; }
@@ -57,6 +57,8 @@ public:
     void            Set_Trigger(_bool bTrigger);
     void            Set_ContactOffset(_float fOffset);  // 충돌계산시작 버퍼 구간 : 크면 허공충돌, 작으면 터널링/겹침
     void            Set_RestOffset(_float fOffset);     // 정지했을때 서로 유지하려는 거리 : 양수일때 바깥충돌, 음수일때 안쪽충돌
+    void            Set_CollisionMask(_uint iMask);
+    void            Set_CollisionGroup(COLLISION_GROUP eGroup);
 
 private:
     void            Update_LocalPose();
