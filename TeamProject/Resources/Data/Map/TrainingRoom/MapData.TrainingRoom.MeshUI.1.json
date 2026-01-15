@@ -30,6 +30,18 @@
           0.0
         ]
       }
+    },
+    {
+      "iObjID": 4,
+      "TagName": "Scale",
+      "defaultvalue": {
+        "type": "Float3",
+        "value": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      }
     }
   ]
 }

@@ -147,6 +147,7 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 		string PrototypeTag = {};
 		string AssetKey = {};
 		_float3 vOffset = {};
+		_float3 vScale = { 1.f, 1.f, 1.f };
 		for (auto& tFieldData : iter->second) 
 		{
 			if (tFieldData.TagName == "PrototypeTag")
@@ -164,6 +165,11 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 				auto tabValue = GetSlotValue<_float3>(tFieldData.defaultvalue);
 				vOffset = *tabValue;
 			}
+			else if (tFieldData.TagName == "Scale")
+			{
+				auto tabValue = GetSlotValue<_float3>(tFieldData.defaultvalue);
+				vScale = *tabValue;
+			}
 		}
 		_float3 vPos = {};
 		XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
@@ -173,6 +179,7 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 
 		auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
 			.Position(vPos + vOffset)
+			.Scale(vScale)
 			.Model_Link(modelDesc, MESH_TYPE::NONANIM)
 			.Material_Link(matDesc)
 			.Build("meshUI");
