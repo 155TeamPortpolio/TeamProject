@@ -51,3 +51,91 @@ public:
 };
 
 NS_END
+
+
+namespace CollisionHelper
+{
+    // 충돌 그룹 이름 배열
+    inline const char* GetCollisionGroupName(COLLISION_GROUP eGroup)
+    {
+        switch (eGroup)
+        {
+        case COLLISION_GROUP::COMMON:        return "COMMON";
+        case COLLISION_GROUP::PLAYER:        return "PLAYER";
+        case COLLISION_GROUP::MONSTER:       return "MONSTER";
+        case COLLISION_GROUP::PLAYER_ATTACK: return "PLAYER_ATTACK";
+        case COLLISION_GROUP::MONSTER_ATTACK:return "MONSTER_ATTACK";
+        case COLLISION_GROUP::MONSTER_PARRY: return "MONSTER_PARRY";
+        case COLLISION_GROUP::CAMERA:        return "CAMERA";
+        default:                             return "UNKNOWN";
+        }
+    }
+
+    // 충돌 마스크 GUI 렌더링
+    inline _bool RenderCollisionMaskEditor(const char* label, _uint& iMask)
+    {
+        _bool bChanged = false;
+
+        if (ImGui::TreeNode(label))
+        {
+            const COLLISION_GROUP groups[] = {
+                COLLISION_GROUP::COMMON,
+                COLLISION_GROUP::PLAYER,
+                COLLISION_GROUP::MONSTER,
+                COLLISION_GROUP::PLAYER_ATTACK,
+                COLLISION_GROUP::MONSTER_ATTACK,
+                COLLISION_GROUP::MONSTER_PARRY,
+                COLLISION_GROUP::CAMERA
+            };
+
+            for (auto eGroup : groups)
+            {
+                _uint bit = ENUM(eGroup);
+                _bool bEnabled = (iMask & bit) != 0;
+
+                if (ImGui::Checkbox(GetCollisionGroupName(eGroup), &bEnabled))
+                {
+                    if (bEnabled)
+                        iMask |= bit;
+                    else
+                        iMask &= ~bit;
+                    bChanged = true;
+                }
+            }
+
+            ImGui::TreePop();
+        }
+
+        return bChanged;
+    }
+
+    // 충돌 마스크 읽기 전용 표시
+    inline void RenderCollisionMaskReadOnly(const char* label, _uint iMask)
+    {
+        if (ImGui::TreeNode(label))
+        {
+            const COLLISION_GROUP groups[] = {
+                COLLISION_GROUP::COMMON,
+                COLLISION_GROUP::PLAYER,
+                COLLISION_GROUP::MONSTER,
+                COLLISION_GROUP::PLAYER_ATTACK,
+                COLLISION_GROUP::MONSTER_ATTACK,
+                COLLISION_GROUP::MONSTER_PARRY,
+                COLLISION_GROUP::CAMERA
+            };
+
+            for (auto eGroup : groups)
+            {
+                _uint bit = ENUM(eGroup);
+                _bool bEnabled = (iMask & bit) != 0;
+
+                if (bEnabled)
+                    ImGui::TextColored(ImVec4(0.2f, 1.f, 0.2f, 1.f), "[O] %s", GetCollisionGroupName(eGroup));
+                else
+                    ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1.f), "[X] %s", GetCollisionGroupName(eGroup));
+            }
+
+            ImGui::TreePop();
+        }
+    }
+}

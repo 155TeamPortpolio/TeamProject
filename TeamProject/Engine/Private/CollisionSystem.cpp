@@ -160,7 +160,7 @@ void CCollisionSystem::Render_GUI()
 			{
 				iColliderCount++;
 				CCollider* pCol = static_cast<CCollider*>(slot.pCollidable);
-				if (pCol->IsTrigger()) iTriggerCount++;
+				if (pCol->Is_Trigger()) iTriggerCount++;
 			}
 			else if (dynamic_cast<CCharacterController*>(slot.pCollidable))
 			{
@@ -177,12 +177,124 @@ void CCollisionSystem::Render_GUI()
 
 	ImGui::Separator();
 
+	// 충돌 그룹별 통계
+	if (ImGui::CollapsingHeader("Group Statistics"))
+	{
+		const COLLISION_GROUP groups[] = {
+			COLLISION_GROUP::COMMON,
+			COLLISION_GROUP::PLAYER,
+			COLLISION_GROUP::MONSTER,
+			COLLISION_GROUP::PLAYER_ATTACK,
+			COLLISION_GROUP::MONSTER_ATTACK,
+			COLLISION_GROUP::MONSTER_PARRY,
+			COLLISION_GROUP::CAMERA
+		};
+
+		for (auto eGroup : groups)
+		{
+			_uint iGroupCount = 0;
+			_uint iGroupColliding = 0;
+
+			for (const auto& slot : m_Collidables)
+			{
+				if (!slot.IsActive()) continue;
+				if (slot.pCollidable->Get_Group() == eGroup)
+				{
+					iGroupCount++;
+					if (slot.pCollidable->IsColliding())
+						iGroupColliding++;
+				}
+			}
+
+			ImGui::Text("%s: %d (Colliding: %d)",
+				CollisionHelper::GetCollisionGroupName(eGroup), iGroupCount, iGroupColliding);
+		}
+	}
+
+	// 충돌 매트릭스 시각화
+	if (ImGui::CollapsingHeader("Collision Matrix"))
+	{
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Active Collision Pairs:");
+
+		unordered_set<pair<string, string>, PairHash> displayedPairs;
+
+		for (const auto& slot : m_Collidables)
+		{
+			if (!slot.IsActive()) continue;
+
+			auto& current = slot.pCollidable->Get_CurrentCollisions();
+			for (auto pOther : current)
+			{
+				if (!pOther || !pOther->Get_Owner()) continue;
+
+				string nameA = slot.pCollidable->Get_Owner()->Get_InstanceName();
+				string nameB = pOther->Get_Owner()->Get_InstanceName();
+
+				if (nameA > nameB) swap(nameA, nameB);
+
+				auto pairKey = make_pair(nameA, nameB);
+				if (displayedPairs.find(pairKey) == displayedPairs.end())
+				{
+					displayedPairs.insert(pairKey);
+
+					CCollider* pColA = dynamic_cast<CCollider*>(slot.pCollidable);
+					CCollider* pColB = dynamic_cast<CCollider*>(pOther);
+
+					const char* typeA = pColA ? (pColA->Is_Trigger() ? "TRG" : "COL") : "CCT";
+					const char* typeB = pColB ? (pColB->Is_Trigger() ? "TRG" : "COL") : "CCT";
+
+					ImGui::BulletText("[%s]%s <-> [%s]%s",
+						typeA, nameA.c_str(), typeB, nameB.c_str());
+				}
+			}
+		}
+
+		if (displayedPairs.empty())
+		{
+			ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "No active collisions");
+		}
+	}
+
+	// 충돌 이벤트 로그
+	if (ImGui::CollapsingHeader("Collision Event Log"))
+	{
+		ImGui::Checkbox("Enable Logging", &m_bEventLogging);
+
+		if (ImGui::Button("Clear Log"))
+		{
+			m_CollisionLog.clear();
+		}
+
+		ImGui::SameLine();
+		ImGui::Text("Events: %d", m_CollisionLog.size());
+
+		if (ImGui::BeginChild("##EventLog", ImVec2(0, 150), true))
+		{
+			for (auto it = m_CollisionLog.rbegin(); it != m_CollisionLog.rend(); ++it)
+			{
+				ImGui::TextWrapped("%s", it->c_str());
+			}
+		}
+		ImGui::EndChild();
+	}
+
+	// Collidable List
 	if (ImGui::CollapsingHeader("Collidable List"))
 	{
+		static char searchBuf[128] = "";
+		ImGui::InputText("Search", searchBuf, 128);
+
 		for (size_t i = 0; i < m_Collidables.size(); ++i)
 		{
 			auto& slot = m_Collidables[i];
 			if (!slot.pCollidable) continue;
+
+			string ownerName = slot.pCollidable->Get_Owner() ?
+				slot.pCollidable->Get_Owner()->Get_InstanceName() : "No Owner";
+
+			if (strlen(searchBuf) > 0 &&
+				ownerName.find(searchBuf) == string::npos)
+				continue;
 
 			ImGui::PushID(i);
 
@@ -199,34 +311,31 @@ void CCollisionSystem::Render_GUI()
 			if (dynamic_cast<CCollider*>(slot.pCollidable))
 			{
 				CCollider* pCol = static_cast<CCollider*>(slot.pCollidable);
-				typePrefix = pCol->IsTrigger() ? "[TRG]" : "[COL]";
+				typePrefix = pCol->Is_Trigger() ? "[TRG]" : "[COL]";
 			}
 			else if (dynamic_cast<CCharacterController*>(slot.pCollidable))
 			{
 				typePrefix = "[CCT]";
 			}
 
-			string ownerName = slot.pCollidable->Get_Owner() ?
-				slot.pCollidable->Get_Owner()->Get_InstanceName() : "No Owner";
-
 			if (slot.eState == COLLIDABLE_SLOT::STATE::DEAD)
 			{
-				ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "%s [DEAD] %s (Gen:%d)",
-					typePrefix, ownerName.c_str(), slot.iGeneration);
+				ImGui::TextColored(ImVec4(0.5f, 0.5f, 0.5f, 1), "%s [DEAD] %s",
+					typePrefix, ownerName.c_str());
 			}
 			else if (slot.eState == COLLIDABLE_SLOT::STATE::INACTIVE)
 			{
-				ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.f, 1), "%s [INACTIVE] %s (Gen:%d)",
-					typePrefix, ownerName.c_str(), slot.iGeneration);
+				ImGui::TextColored(ImVec4(0.7f, 0.7f, 0.f, 1), "%s [INACTIVE] %s",
+					typePrefix, ownerName.c_str());
 			}
 			else if (slot.pCollidable->IsColliding())
 			{
-				ImGui::TextColored(ImVec4(1, 0, 0, 1), "%s [HIT] %s (Gen:%d)",
-					typePrefix, ownerName.c_str(), slot.iGeneration);
+				ImGui::TextColored(ImVec4(1, 0, 0, 1), "%s [HIT] %s",
+					typePrefix, ownerName.c_str());
 			}
 			else
 			{
-				ImGui::Text("%s %s (Gen:%d)", typePrefix, ownerName.c_str(), slot.iGeneration);
+				ImGui::Text("%s %s", typePrefix, ownerName.c_str());
 			}
 
 			ImGui::PopID();
@@ -468,7 +577,7 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 
 	// Trigger 처리
 	CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-	if (pCollider && pCollider->IsTrigger())
+	if (pCollider && pCollider->Is_Trigger())
 	{
 		auto& cctCurrent = pCCT->Get_CurrentCollisions();
 		auto& cctPrevious = pCCT->Get_PreviousCollisions();
@@ -663,7 +772,7 @@ void CCollisionSystem::Process_CollisionEvents()
 			if (!otherSlot.IsActive() || current.find(pOther) == current.end())
 			{
 				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->IsTrigger())
+				if (pCollider && pCollider->Is_Trigger())
 				{
 					pCollidable->OnTriggerExit(pOther);
 				}
@@ -705,7 +814,7 @@ void CCollisionSystem::Process_CollisionEvents()
 			if (previous.find(pOther) != previous.end())
 			{
 				CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
-				if (pCollider && pCollider->IsTrigger())
+				if (pCollider && pCollider->Is_Trigger())
 				{
 					// 트리거는 여기서 Stay 처리 (TOUCH_PERSISTS 미지원)
 					pCollidable->OnTriggerStay(pOther);
@@ -734,7 +843,7 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 	if (auto pCollider = dynamic_cast<CCollider*>(pCollidable))
 	{
 		pActor = pCollider->Get_PxActor();
-		bIsTrigger = pCollider->IsTrigger();
+		bIsTrigger = pCollider->Is_Trigger();
 	}
 	else if (auto pCCT = dynamic_cast<CCharacterController*>(pCollidable))
 	{
@@ -796,7 +905,7 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 				// 내가 트리거라면 -> 누구든 들어오면 Enter
 				// 내가 CCT라면 -> 상대가 트리거일 때만 Enter (일반 벽이랑은 물리 충돌 하니까 제외)
 				CCollider* pOtherCol = dynamic_cast<CCollider*>(pOtherCollidable);
-				_bool bOtherIsTrigger = (pOtherCol && pOtherCol->IsTrigger());
+				_bool bOtherIsTrigger = (pOtherCol && pOtherCol->Is_Trigger());
 
 				if (!bIsTrigger && !bOtherIsTrigger) continue; // 둘 다 일반 콜라이더면 패스
 
@@ -831,7 +940,7 @@ void CCollisionSystem::Stay_TriggerCollisions()
 		if (!slot.IsActive()) continue;
 
 		CCollider* pCollider = dynamic_cast<CCollider*>(slot.pCollidable);
-		if (!pCollider || !pCollider->IsTrigger()) continue;
+		if (!pCollider || !pCollider->Is_Trigger()) continue;
 
 		// 트리거의 Current 목록
 		auto& triggerCurrent = pCollider->Get_CurrentCollisions();
@@ -864,8 +973,8 @@ void CCollisionSystem::Exit_TriggerCollisions(ICollidable* pCollidable)
 		CCollider* pThisCol = dynamic_cast<CCollider*>(pCollidable);
 		CCollider* pOtherCol = dynamic_cast<CCollider*>(pOther);
 
-		_bool bThisTrigger = (pThisCol && pThisCol->IsTrigger());
-		_bool bOtherTrigger = (pOtherCol && pOtherCol->IsTrigger());
+		_bool bThisTrigger = (pThisCol && pThisCol->Is_Trigger());
+		_bool bOtherTrigger = (pOtherCol && pOtherCol->Is_Trigger());
 
 		// 양방향 Exit 호출
 		if (bThisTrigger)
@@ -1032,6 +1141,16 @@ void CCollisionSystem::UnRegisterCollidable(ICollidable* pCollidable, _int Index
 			m_Collidables[idx].eState = COLLIDABLE_SLOT::STATE::DEAD;
 		}
 	}
+}
+
+void CCollisionSystem::Log_CollisionEvent(const string& strEvent)
+{
+	if (!m_bEventLogging) return;
+
+	if (m_CollisionLog.size() > 100)
+		m_CollisionLog.erase(m_CollisionLog.begin());
+
+	m_CollisionLog.push_back(strEvent);
 }
 
 //#ifdef _DEBUG

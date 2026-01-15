@@ -102,9 +102,10 @@ private:
 public:
     virtual _int RegisterCollidable(class ICollidable* pCollidable, _int Index) override;
     virtual void UnRegisterCollidable(class ICollidable* pCollidable, _int Index) override;
+    virtual void Log_CollisionEvent(const string& strEvent) override;
+
 // #ifdef _DEBUG
     virtual void Render_Debug() override;
-
 private:
     ID3D11InputLayout* m_pInputLayout = { nullptr };
     BasicEffect* m_pEffect = { nullptr };
@@ -118,6 +119,16 @@ private:
     CPhysXEventCallback*        m_pPhysXCallback = { nullptr }; 
     CCCTHitCallback*            m_pCCTCallback = { nullptr };
     vector<COLLIDABLE_SLOT>     m_Collidables;
+
+    // ¿Ã∫•∆Æ ∑Œ±Î
+    _bool          m_bEventLogging = false;
+    vector<string> m_CollisionLog;
+    // PairHash for unordered_set
+    struct PairHash {
+        size_t operator()(const pair<string, string>& p) const {
+            return hash<string>()(p.first) ^ (hash<string>()(p.second) << 1);
+        }
+    };
 
 #ifdef USE_MULTITHREAD_PHYSICS
     mutable recursive_mutex     m_SlotMutex;
