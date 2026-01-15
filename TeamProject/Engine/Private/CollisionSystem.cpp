@@ -82,6 +82,7 @@ void CCollisionSystem::Update(_float dt)
 
 	for (auto& slot : m_Collidables)
 	{
+		if (slot.eState == COLLIDABLE_SLOT::STATE::DEAD) continue;
 		if (!slot.pCollidable) continue;
 		if (slot.pCollidable->Get_CompActive())
 		{
@@ -119,10 +120,10 @@ void CCollisionSystem::Late_Update(_float dt)
 #ifdef USE_MULTITHREAD_PHYSICS
 	lock_guard<recursive_mutex> lock(m_SlotMutex);
 #endif
+	Clean_DeadSlots();
 	Stay_TriggerCollisions();
 	Process_CollisionEvents();
 	Remove_DeactiveSlots();
-	Clean_DeadSlots();
 }
 
 void CCollisionSystem::Render_GUI()
