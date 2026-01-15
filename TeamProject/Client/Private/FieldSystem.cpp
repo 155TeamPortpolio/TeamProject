@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "FieldSystem.h"
 #include "FieldPlayer.h"
+#include "GameObject.h"
 
 IMPLEMENT_SINGLETON(CFieldSystem)
 

@@ -646,6 +646,30 @@
     <Filter Include="03. Utility\06. FieldSystem">
       <UniqueIdentifier>{8f93581d-d66b-4732-9c1c-97298cb6889a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldPlayer">
+      <UniqueIdentifier>{193802ca-37b3-4ec0-87fc-ec787fbb8906}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter">
+      <UniqueIdentifier>{3593d9b7-f068-4394-8ec4-1ecae61f2efc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle">
+      <UniqueIdentifier>{5d73e964-0b66-4e2a-8872-6e1c5402cca5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State">
+      <UniqueIdentifier>{10925a33-7e87-4777-8248-761381306ff9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Idle">
+      <UniqueIdentifier>{f954bb31-1057-453e-92c1-c82bae635606}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Move">
+      <UniqueIdentifier>{ac344222-e84e-4594-b2f1-e46814cdbd7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run">
+      <UniqueIdentifier>{b9e7510f-ede1-4333-800c-7579b79bd730}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk">
+      <UniqueIdentifier>{849e28c6-ac11-4fb5-8b94-313fc924c227}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1237,6 +1261,27 @@
     <ClInclude Include="..\Public\FieldSystem.h">
       <Filter>03. Utility\06. FieldSystem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FieldPlayer.h">
+      <Filter>02. GameObject\Object\Player\FieldPlayer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\FieldCharacter.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Belle.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BelleState_Move.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BelleState_Run.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BelleState_Idle.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Idle</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BelleState_Walk.h">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1807,6 +1852,27 @@
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp">
       <Filter>03. Utility\06. FieldSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FieldPlayer.cpp">
+      <Filter>02. GameObject\Object\Player\FieldPlayer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FieldCharacter.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Belle.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BelleState_Idle.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Idle</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BelleState_Move.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BelleState_Walk.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BelleState_Run.cpp">
+      <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
