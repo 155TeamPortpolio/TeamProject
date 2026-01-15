@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "WorldUI_Object.h"
+#include "UI_WorldToScreen.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
-HRESULT CWorldUI_Object::Initialize_Prototype()
+HRESULT CUI_WorldToScreen::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
@@ -13,21 +13,21 @@ HRESULT CWorldUI_Object::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CWorldUI_Object::Initialize(INIT_DESC* pArg)
+HRESULT CUI_WorldToScreen::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
 
 	return S_OK;
 }
 
-void CWorldUI_Object::Update(_float dt)
+void CUI_WorldToScreen::Update(_float dt)
 { 
     Update_WorldToScreen();     
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CWorldUI_Object::Update_WorldToScreen()
+void CUI_WorldToScreen::Update_WorldToScreen()
 {
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
     _float3 vPos = m_vWorldPos;

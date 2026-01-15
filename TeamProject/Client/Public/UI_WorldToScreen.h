@@ -3,12 +3,12 @@
 
 NS_BEGIN(Client)
 
-class CWorldUI_Object abstract : public CUI_Object
+class CUI_WorldToScreen abstract : public CUI_Object
 {
 protected:
-	CWorldUI_Object() {}
-	CWorldUI_Object(const CWorldUI_Object& rhs) : CUI_Object(rhs) {}
-	virtual ~CWorldUI_Object() DEFAULT;
+	CUI_WorldToScreen() {}
+	CUI_WorldToScreen(const CUI_WorldToScreen& rhs) : CUI_Object(rhs) {}
+	virtual ~CUI_WorldToScreen() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;

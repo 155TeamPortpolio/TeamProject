@@ -1,17 +1,17 @@
 #include "pch.h"
-#include "WorldUI_AccessSign.h"
+#include "UI_IconLabel.h"
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
 
-HRESULT CWorldUI_AccessSign::Initialize_Prototype()
+HRESULT CUI_IconLabel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
     return S_OK;
 }
 
-HRESULT CWorldUI_AccessSign::Initialize(INIT_DESC* pArg)
+HRESULT CUI_IconLabel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
     
@@ -22,28 +22,28 @@ HRESULT CWorldUI_AccessSign::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void CWorldUI_AccessSign::Update(_float dt)
+void CUI_IconLabel::Update(_float dt)
 {
     __super::Update(dt);
 }
 
-CGameObject* CWorldUI_AccessSign::Create()
+CGameObject* CUI_IconLabel::Create()
 {
-    CWorldUI_AccessSign* pInstance = new CWorldUI_AccessSign();
+    CUI_IconLabel* pInstance = new CUI_IconLabel();
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Create : CUI_AccessSignZero");
+        MSG_BOX("Failed to Create : CUI_IconLabel");
         Safe_Release(pInstance);
     }
     return pInstance;
 }
 
-CGameObject* CWorldUI_AccessSign::Clone(INIT_DESC* pArg)
+CGameObject* CUI_IconLabel::Clone(INIT_DESC* pArg)
 {
-    CWorldUI_AccessSign* pInstance = new CWorldUI_AccessSign(*this);
+    CUI_IconLabel* pInstance = new CUI_IconLabel(*this);
     if (FAILED(pInstance->Initialize(pArg)))
     {
-        MSG_BOX("Failed to Clone : CWorldUI_AccessSign");
+        MSG_BOX("Failed to Clone : CUI_IconLabel");
         Safe_Release(pInstance);
     }
     return pInstance;

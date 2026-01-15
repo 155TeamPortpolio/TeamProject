@@ -1,14 +1,14 @@
 #pragma once
-#include "WorldUI_Object.h"
+#include "UI_WorldToScreen.h"
 
 NS_BEGIN(Client)
 
-class CWorldUI_AccessSign final : public CWorldUI_Object
+class CUI_IconLabel final : public CUI_WorldToScreen
 {
 private:
-	CWorldUI_AccessSign() {}
-	CWorldUI_AccessSign(const CWorldUI_AccessSign& rhs) : CWorldUI_Object(rhs) {}
-	virtual ~CWorldUI_AccessSign() DEFAULT;
+	CUI_IconLabel() {}
+	CUI_IconLabel(const CUI_IconLabel& rhs) : CUI_WorldToScreen(rhs) {}
+	virtual ~CUI_IconLabel() DEFAULT;
 
 public:
 	virtual HRESULT Initialize_Prototype()           override;
