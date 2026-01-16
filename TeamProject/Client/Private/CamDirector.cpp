@@ -39,6 +39,14 @@ void CCamDirector::UnRegister(const string& key)
     m_seqs.erase(key);
 }
 
+void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
+{
+    if (!targetHandle.isValid()) return;
+
+    GetOrbitCam()->SetTarget(targetHandle);
+    SetSpaceRef(targetHandle);
+}
+
 void CCamDirector::Update(_float dt)
 {
     UpdateInput();
@@ -202,8 +210,10 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         {
             auto orbit = static_cast<COrbitCam*>(returnObj);
 
-            if (m_playing.returnMode == CamReturnMode::SnapToEnd) orbit->SnapFromCamPose(outPos, outRot);
-            else if (m_playing.returnMode == CamReturnMode::RestorePrev) orbit->RestoreSnapshot(m_playing.prevOrbit);
+            if (m_playing.returnMode == CamReturnMode::SnapToEnd)
+                orbit->SnapFromCamPose(outPos, outRot);
+            else if (m_playing.returnMode == CamReturnMode::RestorePrev)
+                orbit->RestoreSnapshot(m_playing.prevOrbit);
         }
     }
 

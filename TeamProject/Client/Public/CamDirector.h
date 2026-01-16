@@ -30,8 +30,9 @@ public:
     CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
+    CPlayer*      GetPlayer() const;
 
-    void          SetTarget(OBJECT_HANDLE targetHandle) { GetOrbitCam()->SetTarget(targetHandle); }
+    void          SetTarget(OBJECT_HANDLE targetHandle);
 
 public:
     _bool         Register(const string& key, const filesystem::path& path);
@@ -48,7 +49,6 @@ public:
     void          Update(_float dt);
 
 private:
-    CPlayer*      GetPlayer() const;
     void          UpdatePlayer();
     void          UpdateInput();
 

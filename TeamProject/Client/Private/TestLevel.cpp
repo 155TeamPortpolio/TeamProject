@@ -143,7 +143,8 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
 }
@@ -151,9 +152,6 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-
-	const _float dt = m_pGameInstance->Get_EngineDeltaTime();
-	m_pCamDirector->Update(dt);
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
@@ -352,10 +350,8 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
-
-
-	CBattleSystem::GetInstance()->DestroyInstance();
-	CDataBase::GetInstance()->DestroyInstance();
+	//CBattleSystem::GetInstance()->DestroyInstance();
+	//CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();

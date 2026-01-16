@@ -132,9 +132,6 @@ void CZero_Level::Update()
 
 	CBattleSystem::GetInstance()->Update();
 
-	const _float dt = m_pGameInstance->Get_EngineDeltaTime();
-	m_pCamDirector->Update(dt);
-
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
