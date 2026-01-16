@@ -79,6 +79,9 @@ HRESULT CTestLevel::Initialize()
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+	
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 	return S_OK;
 }
 
@@ -93,11 +96,6 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestMap", CTestMap::Create());
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlayer", CPlayer::Create());
-	auto Player = Builder::Create_Object({ "Test_Level", "Proto_GameObject_TestPlayer" })
-		.Build("Test_Player");
-
-	objMgr->Add_Object(Player, { "Test_Level", "Model_Layer" });
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
@@ -141,15 +139,15 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
 	// --------------------------- Camera -------------------------------------------------
-	const OBJECT_HANDLE curPlayer = CFieldSystem::GetInstance()->GetCurCharacterHandle();
+	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
 	m_pCamDirector->SetTarget(curPlayer);
 
 	//====================Test=================
 	Ready_TestObject();
 	Ready_Npc();
 
-	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
+	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	//m_pGameInstance->Set_EngineTimeScale(0.8f);
 
@@ -400,4 +398,5 @@ void CTestLevel::Free()
 	CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
+	m_pPlayer->Clear_Characters();
 }

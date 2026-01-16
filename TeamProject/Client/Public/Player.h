@@ -14,6 +14,10 @@ private:
     virtual ~CPlayer() DEFAULT;
 
 public:
+    OBJECT_HANDLE Get_CurCharacterHandle();
+    HRESULT Clear_Characters();
+
+public:
     void    Set_PlayerType(PLAYER ePlayer);
     PLAYER  Get_PlayerType() const { return m_ePlayerType; }
 
@@ -27,14 +31,11 @@ public:
     virtual void    Render_GUI() override;
 
 private:
-    void Update_KeyInput();
-
-private:
     class CFieldPlayer*   m_pFieldPlayer = nullptr;
     class CBattlePlayer*  m_pBattlePlayer = nullptr;
 
 private:
-    PLAYER                m_ePlayerType = PLAYER::BATTLE;
+    PLAYER                m_ePlayerType = PLAYER::END;
 
 public:
     static CPlayer* Create();
