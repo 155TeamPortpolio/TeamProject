@@ -39,6 +39,17 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
             Set_Values(desc);
         });
 
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::ULTIMATE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+            {
+
+            }
+        });
+
     return S_OK;
 }
 
@@ -105,11 +116,14 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     // 자식 핸들 캐싱
     for (_int i = 0; i < 3; ++i)
     {
+        m_handles[ROLE_CHILD[i]] = pRoot->Get_DescendantHandle("role" + to_string(i + 1));
         m_handles[ICON_CHILD[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));
         m_handles[HPBACK_CHILD[i]] = pRoot->Get_DescendantHandle("hpBack" + to_string(i + 1));
         m_handles[HPFRONT_CHILD[i]] = pRoot->Get_DescendantHandle("hpFront" + to_string(i + 1));
         m_handles[SPECIAL_CHILD[i]] = pRoot->Get_DescendantHandle("special" + to_string(i + 1));
+        m_handles[SPECIALARROW_CHILD[i]] = pRoot->Get_DescendantHandle("specialArrow" + to_string(i + 1));
         m_handles[ULTIMATE_CHILD[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
+        m_handles[ULTIMATEICON_CHILD[i]] = pRoot->Get_DescendantHandle("ultimateIcon" + to_string(i + 1));
     }
 
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
@@ -155,6 +169,8 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
 
     case UI_STATUS_TYPE::SPECIAL:
         target = SPECIAL_CHILD[iIndex];
+        if(desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
+            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
         break;
 
     case UI_STATUS_TYPE::ULTIMATE:
@@ -170,10 +186,13 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 {
     const _uint iIndex = ENUM(desc.eOwner);
 
-    Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
+    Set_Texture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
     Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
     Set_GaugeFill(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
-    Set_GaugeFill(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
+
+    _float fUltimateRatio = desc.ultimate.fCurValue / desc.ultimate.fMaxValue;
+    Set_GaugeFill(ULTIMATE_CHILD[iIndex], fUltimateRatio);
+    Set_UltimateIcon(iIndex, fUltimateRatio);
 
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
@@ -182,9 +201,71 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     }
 }
 
+void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
+{
+    if (iIndex == 0)
+        return;
+
+    _bool isAlive = (fRatio >= 1.f);
+
+    if (isAlive && !Is_Alive(ULTIMATEICON_CHILD[iIndex]))
+    {
+        Set_Alive(ULTIMATEICON_CHILD[iIndex], true);
+        Set_Animation(ULTIMATEICON_CHILD[iIndex], 0); 
+    }
+    else if(!isAlive && Is_Alive(ULTIMATEICON_CHILD[iIndex]))
+        Set_Alive(ULTIMATEICON_CHILD[iIndex], false);
+}
+
+_bool CUI_BattleHUD::Is_Alive(Child child)
+{
+    _bool isAlive = {};
+
+    ForChild(child, [&isAlive](CUI_Object* ui) {
+        isAlive = ui->Is_Alive();
+        });
+    return isAlive;
+}
+
+void CUI_BattleHUD::Set_Alive(Child child, _bool isAlive)
+{
+    ForChild(child, [isAlive](CUI_Object* ui) {
+        ui->Set_Alive(isAlive);
+        });
+}
+
+void CUI_BattleHUD::Set_Animation(Child child, _int iIndex)
+{
+    ForChild(child, [iIndex](CUI_Object* ui) {
+        ui->Set_Animation(iIndex);
+        });
+}
+
+void CUI_BattleHUD::Set_Texture(Child child, const string& strTextureKey)
+{
+    ForChild(child, [&](CUI_Object* ui) {
+        auto pSprite = ui->Get_Component<CSprite2D>();
+        if (!pSprite)
+            return;
+
+        pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+        });
+}
+
+void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
+{
+    ForChild(child, [fFillAmount](CUI_Object* ui) {
+        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
+        if (!pGauge)
+            return;
+
+        pGauge->Set_FillAmount(fFillAmount);
+        });
+}
+
 void CUI_BattleHUD::Set_NumberText(Child child, _float fNum, _int iWidth)
 {
-    ForChild(child, [&](CUI_Object* ui)         {
+    ForChild(child, [fNum, iWidth](CUI_Object* ui)         {
         auto pTextSlot = ui->Get_Component<CTextSlot>();
         if (!pTextSlot)
             return;
@@ -192,28 +273,6 @@ void CUI_BattleHUD::Set_NumberText(Child child, _float fNum, _int iWidth)
         wchar_t buf[32];
         Helper::Format_FixedZeroPad(buf, _countof(buf), static_cast<_int>(fNum), iWidth);
         pTextSlot->Set_Text(buf);
-        });
-}
-
-void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
-{
-    ForChild(child, [&](CUI_Object* ui)        {
-            auto pGauge = dynamic_cast<CGaugeUI*>(ui);
-            if (!pGauge)
-                return;
-
-            pGauge->Set_FillAmount(fFillAmount);
-        });
-}
-
-void CUI_BattleHUD::Set_IconTexture(Child child, const string& strTextureKey)
-{
-    ForChild(child, [&](CUI_Object* ui)        {
-            auto pSprite = ui->Get_Component<CSprite2D>();
-            if (!pSprite)
-                return;
-
-            pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
         });
 }
 
