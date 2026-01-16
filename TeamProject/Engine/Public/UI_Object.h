@@ -74,6 +74,7 @@ public:
 	void Set_LeftTop(_float2 desiredLT) {}
 	void Set_Anchor(ANCHOR eAnchor) { m_eAnchor = eAnchor; }
 	void Set_AnchorOffset(_float2 vOffset) { m_vAnchorOffset = vOffset; }
+	void Set_AnchorOffsetX(_float fOffset) { m_vAnchorOffset.x = fOffset; }
 	void Set_Color(_float4 vColor) { m_vColor = vColor; }
 	void Rotate_Left(_float _radian) { m_fRadian += _radian; }
 	/*Get Size*/

@@ -8,19 +8,29 @@ NS_END
 NS_BEGIN(Client)
 class CBattlePlayer;
 
-typedef struct tagTimeScale {
+typedef struct tagTimeScale 
+{
 	_bool	isScaled = { false };
 	_float	fDuration = {};
 	_float	fCurPos = {};
 	_float	fScaleValue = { 1.f };
 }TIME_SCALE;
 
+typedef struct tagBattleVFX 
+{
+	_bool	isVFX = { false };
+	_float	fDuration = {};
+	_float	fCurrentPos = {};
+	_float3 vLerpColor = {};
+	EaseType eEaseType = {};
+}BATTLE_VFX;
+
 class CBattleSystem final : public CBase
 {
 	DECLARE_SINGLETON(CBattleSystem)
 public:
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
-
+	enum class BATTLE_VFX_TYPE { EVADE                                                                             };
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -54,6 +64,7 @@ public: //setter
 	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale);
+	void	StartShaderVFX(_float fDuration);
 
 private:
 	void	Update_BattleInfo();
@@ -71,6 +82,8 @@ private:
 	unordered_map<BATTLE_OBJ_TYPE, vector<BATTLEOBJ_INFO>>	m_BattleObjInfos;
 	// BATTLE_OBJ_TYPE 별로 타임 스케일
 	unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
+	// 쉐이더 효과
+	//unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
 
 	const _char* m_LayerTag[2] = { "Model_Layer", "Enemy_Layer" };
 

@@ -39,6 +39,17 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
             Set_Values(desc);
         });
 
+    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+        {
+            if (desc.eType != UI_ACTION_TYPE::ULTIMATE)
+                return;
+
+            if (desc.eState == UI_ACTION_STATE::AVAILABLE)
+            {
+
+            }
+        });
+
     return S_OK;
 }
 
@@ -105,11 +116,14 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     // 자식 핸들 캐싱
     for (_int i = 0; i < 3; ++i)
     {
+        m_handles[ROLE_CHILD[i]] = pRoot->Get_DescendantHandle("role" + to_string(i + 1));
         m_handles[ICON_CHILD[i]] = pRoot->Get_DescendantHandle("icon" + to_string(i + 1));
         m_handles[HPBACK_CHILD[i]] = pRoot->Get_DescendantHandle("hpBack" + to_string(i + 1));
         m_handles[HPFRONT_CHILD[i]] = pRoot->Get_DescendantHandle("hpFront" + to_string(i + 1));
         m_handles[SPECIAL_CHILD[i]] = pRoot->Get_DescendantHandle("special" + to_string(i + 1));
+        m_handles[SPECIALARROW_CHILD[i]] = pRoot->Get_DescendantHandle("specialArrow" + to_string(i + 1));
         m_handles[ULTIMATE_CHILD[i]] = pRoot->Get_DescendantHandle("ultimate" + to_string(i + 1));
+        m_handles[ULTIMATEICON_CHILD[i]] = pRoot->Get_DescendantHandle("ultimateIcon" + to_string(i + 1));
     }
 
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
@@ -131,12 +145,12 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
     {
         if (desc.eType == UI_STATUS_TYPE::HP)
         {
-            Set_FillAmount(Child::BOSS_HP_FRONT, fRatio);
+            Set_GaugeFill(Child::BOSS_HP_FRONT, fRatio);
         }
         else if (desc.eType == UI_STATUS_TYPE::GROGGY)
         {
-            Set_FillAmount(Child::BOSS_GROGGY, fRatio);
-            Set_Text(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue);
+            Set_GaugeFill(Child::BOSS_GROGGY, fRatio);
+            Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue, m_iBossHPWidth);
         }
         return;
     } 
@@ -150,7 +164,7 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
     case UI_STATUS_TYPE::HP:
         target = HPFRONT_CHILD[iIndex];
         if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
-            Set_Text(Child::MAX_HP_TEXT, desc.value.fCurValue);
+            Set_NumberText(Child::MAX_HP_TEXT, desc.value.fCurValue, m_iPlayerHPWidth);
         break;
 
     case UI_STATUS_TYPE::SPECIAL:
@@ -159,62 +173,145 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
 
     case UI_STATUS_TYPE::ULTIMATE:
         target = ULTIMATE_CHILD[iIndex];
+        if (desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
+            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
         break;
     }
 
     if (target != Child::END)
-        Set_FillAmount(target, fRatio);
+        Set_GaugeFill(target, fRatio);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 {
     const _uint iIndex = ENUM(desc.eOwner);
 
-    Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
-    Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
-    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
-    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
+    // Icon
+    Set_Texture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
 
+    // HP
+    Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+
+    // Special
+    _float fSpecialRatio = desc.special.fCurValue / desc.special.fMaxValue;
+    _float fSpecialThresRatio = desc.specialThreshold / desc.special.fMaxValue;
+    Set_GaugeFill(SPECIAL_CHILD[iIndex], fSpecialRatio);
+    Set_Special(iIndex, fSpecialRatio, fSpecialThresRatio);
+
+    // Ultimate
+    _float fUltimateRatio = desc.ultimate.fCurValue / desc.ultimate.fMaxValue;
+    Set_GaugeFill(ULTIMATE_CHILD[iIndex], fUltimateRatio);
+    Set_UltimateIcon(iIndex, fUltimateRatio);
+
+    // HP Text
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
-        Set_Text(Child::CUR_HP_TEXT, desc.hp.fCurValue);
-        Set_Text(Child::MAX_HP_TEXT, desc.hp.fMaxValue);
+        Set_NumberText(Child::CUR_HP_TEXT, desc.hp.fCurValue, m_iPlayerHPWidth);
+        Set_NumberText(Child::MAX_HP_TEXT, desc.hp.fMaxValue, m_iPlayerHPWidth);
     }
 }
 
-void CUI_BattleHUD::Set_Text(Child child, _float fNum)
+void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
 {
-    ForChild(child, [&](CUI_Object* ui) 
-        { 
-            auto pTextSlot = ui->Get_Component<CTextSlot>();
-            if (!pTextSlot)
-                return;
+    if (0 > iIndex || iIndex > 2)
+        return;
 
-            pTextSlot->Set_Text(Helper::ConvertToWideString(to_string(static_cast<_int>(fNum))));
+    // special gauge, 기준점 색깔 변경
+    if (fRatio >= fThresRatio)
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
+        Set_Color(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
+    }
+    else
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
+        Set_Color(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
+    }
+
+    // special 기준점 위치 변경
+    ForChild(SPECIALARROW_CHILD[iIndex], [&](CUI_Object* ui) {
+        ui->Set_AnchorOffsetX(fThresRatio * SPECIAL_THRESHOLD[iIndex]);
         });
 }
 
-void CUI_BattleHUD::Set_FillAmount(Child child, _float fFillAmount)
+void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
 {
-    ForChild(child, [&](CUI_Object* ui)
-        {
-            auto pGauge = dynamic_cast<CGaugeUI*>(ui);
-            if (!pGauge)
-                return;
+    if (0 >= iIndex || iIndex > 2)
+        return;
 
-            pGauge->Set_FillAmount(fFillAmount);
+    _bool isAlive = (fRatio >= 1.f);
+    if (isAlive && !Is_Alive(ULTIMATEICON_CHILD[iIndex]))
+    {
+        Set_Alive(ULTIMATEICON_CHILD[iIndex], true);
+        Set_Animation(ULTIMATEICON_CHILD[iIndex], 0); 
+    }
+    else if(!isAlive && Is_Alive(ULTIMATEICON_CHILD[iIndex]))
+        Set_Alive(ULTIMATEICON_CHILD[iIndex], false);
+}
+
+_bool CUI_BattleHUD::Is_Alive(Child child)
+{
+    _bool isAlive = {};
+
+    ForChild(child, [&isAlive](CUI_Object* ui) {
+        isAlive = ui->Is_Alive();
+        });
+    return isAlive;
+}
+
+void CUI_BattleHUD::Set_Alive(Child child, _bool isAlive)
+{
+    ForChild(child, [isAlive](CUI_Object* ui) {
+        ui->Set_Alive(isAlive);
         });
 }
 
-void CUI_BattleHUD::Set_IconTexture(Child child, const string& strTextureKey)
+void CUI_BattleHUD::Set_Color(Child child, _float4 vColor)
 {
-    ForChild(child, [&](CUI_Object* ui)
-        {
-            auto pSprite = ui->Get_Component<CSprite2D>();
-            if (!pSprite)
-                return;
+    ForChild(child, [vColor](CUI_Object* ui) {
+        ui->Set_Color(vColor);
+        });
+}
 
-            pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+void CUI_BattleHUD::Set_Animation(Child child, _int iIndex)
+{
+    ForChild(child, [iIndex](CUI_Object* ui) {
+        ui->Set_Animation(iIndex);
+        });
+}
+
+void CUI_BattleHUD::Set_Texture(Child child, const string& strTextureKey)
+{
+    ForChild(child, [&](CUI_Object* ui) {
+        auto pSprite = ui->Get_Component<CSprite2D>();
+        if (!pSprite)
+            return;
+
+        pSprite->Change_Texture(0, G_GlobalLevelKey, strTextureKey);
+        });
+}
+
+void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
+{
+    ForChild(child, [fFillAmount](CUI_Object* ui) {
+        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
+        if (!pGauge)
+            return;
+
+        pGauge->Set_FillAmount(fFillAmount);
+        });
+}
+
+void CUI_BattleHUD::Set_NumberText(Child child, _float fNum, _int iWidth)
+{
+    ForChild(child, [fNum, iWidth](CUI_Object* ui)         {
+        auto pTextSlot = ui->Get_Component<CTextSlot>();
+        if (!pTextSlot)
+            return;
+
+        wchar_t buf[32];
+        Helper::Format_FixedZeroPad(buf, _countof(buf), static_cast<_int>(fNum), iWidth);
+        pTextSlot->Set_Text(buf);
         });
 }
 

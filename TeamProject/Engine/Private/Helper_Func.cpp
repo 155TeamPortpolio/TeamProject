@@ -673,6 +673,11 @@ ENGINE_DLL string Helper::WideToUtf8(const wchar_t* wideText)
 	return utf8;
 }
 
+ENGINE_DLL void Helper::Format_FixedZeroPad(wchar_t* outBuf, size_t bufCount, _int value, _int width)
+{
+	swprintf_s(outBuf, bufCount, L"%0*d", width, value);
+}
+
 // -------------------------------------------------------------------------------------------------
 
 ENGINE_DLL bool Helper::DrawEaseComboPopup(EaseType& ioValue, EaseType shownValue)
