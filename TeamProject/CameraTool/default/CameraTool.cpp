@@ -36,29 +36,29 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,_In_opt_ HINSTANCE hPrevInstance,
     if (!mainApp)
         return FALSE;
 
-    MSG msg;
-    ZeroMemory(&msg, sizeof(MSG));
+    MSG msg{};
 
     _float      fTimeAcc = {};
     _bool Break = false;
     const float step = 1.f / FrameRate;
-    while (true) {
-        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-            if (msg.message == WM_QUIT) {
+    while (true)
+    {
+        while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) 
+        {
+            if (msg.message == WM_QUIT) 
                 Break = true;
-            }
 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-        if (Break) {
+        if (Break) 
             break;
-        }
 
         timer->Update_Timer("Frame_Timer");
         fTimeAcc += timer->Get_RawDeltaTime("Frame_Timer");
 
-        if (fTimeAcc >= step) {
+        if (fTimeAcc >= step)
+        {
             gameInstance->Update_EngineTimer();
             _float dt = gameInstance->Get_EngineDeltaTime();
             mainApp->Update(dt);

@@ -12,7 +12,8 @@ namespace Client
         string currentStateTag{};
     }ATTACK_BLACK_BOARD;
 
-    typedef struct tagHysteresis {
+    typedef struct tagHysteresis 
+    {
         _float fEvadeEnter{};
         _float fComboEnter{};
         _float fComboExit{};
@@ -21,7 +22,8 @@ namespace Client
     }HYSTERIESIS;
 
     // 플레이어와 몬스터 사이의 정보를 담은 구조체
-    typedef struct tagTargetingSpatialInfo {
+    typedef struct tagTargetingSpatialInfo 
+    {
         _vector3    vSelfPos;
         _vector3    vTargetPos;
         _vector3    vDirSelfLook;
@@ -32,8 +34,9 @@ namespace Client
         _bool       isDetected = false; // Enemy-m_fDetectedRange 범위 안에 감지가 되면 true
     }TARGETING_INFO;
 
-    // Bone에 붙일 
-    typedef struct tagBattleColliderInitDesc {
+    
+    typedef struct tagBattleColliderInitDesc 
+    {
         string          tagName = "";                           // 등록될 Collider오브젝트 이름
         _bool           isAttachBone = { true };                // 뼈에 붙이는지
         string          tagBone = "";                           // 뼈에 붙일때, 붙일 뼈의 이름
@@ -55,7 +58,8 @@ namespace Client
         _float3         vTriggerSize = { 2.f, 2.f, 2.f };
     }BATTLE_COLLIDER_DESC;
 
-    typedef struct tagAutoPlayBattleCollider {
+    typedef struct tagAutoPlayBattleCollider 
+    {
         string      tagBattleCollider = "";
         _bool       isAutoPlay = { false };
         _float      fAttackColStartProgress = {};
@@ -63,4 +67,10 @@ namespace Client
         _float2     vAttackColLifeTime = {};
         _bool       IsAttackColFinish() { return vAttackColLifeTime.x <= vAttackColLifeTime.y; }
     }AUTO_BATTLECOL;
+
+    typedef struct tagMonsterStatus 
+    {
+        _float        iHP = {};
+        _int        iGroggyValue = {};
+    }MONSTER_STATUS;
 }

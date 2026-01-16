@@ -70,27 +70,6 @@ private:
     void                       FlipKeys_Yaw180();
 
 private:
-    struct KeyframeListUIState
-    {
-        _uint pendingDeleteKeyId = 0;
-
-        string lastFileError{};
-        bool requestOpenFileErrorPopup = false;
-
-        char prefabNameBuf[128] = "DebugSequence";
-        const CamSequenceDesc* lastSeqPtr = nullptr;
-        bool nameEditing = false;
-    };
-
-    struct KeyframeEditorUIState
-    {
-        _uint pendingTimeSelectedId = 0;
-        float pendingTimeValue = 0.f;
-        int   pendingOverwriteCount = 0;
-        bool  requestOpenTimeCollisionPopup = false;
-    };
-
-private:
     void   DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChangedAny);
     void   DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioChangedAny);
     void   DrawKeyframeList_Table(vector<CamKeyFrame>& keys, bool& ioChangedAny);
@@ -105,6 +84,13 @@ private:
 private:
     void   DrawKeyframeEditor_SelectedKeyTable(bool& ioChangedAny);
     void   DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit);
+
+private:
+    void   DrawAutoLoadPopup();
+    void   LoadToolSettings();
+    void   SaveToolSettings();
+    void   AutoLoadSequenceIfSet();
+    bool   LoadSequenceFromPath(const string& anyPath);
 
 private:
     CamSequenceDesc       debugSequence{};

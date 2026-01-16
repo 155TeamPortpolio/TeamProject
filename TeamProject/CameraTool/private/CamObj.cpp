@@ -27,8 +27,3 @@ HRESULT CCamObj::Initialize(INIT_DESC* arg)
 
 	return S_OK;
 }
-
-void CCamObj::Free()
-{
-	__super::Free();
-}

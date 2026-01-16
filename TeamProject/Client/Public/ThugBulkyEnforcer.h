@@ -37,7 +37,6 @@ public:
     ATTACK_BLACK_BOARD& GetBlackBoard() { return m_tAttackBlackBoard; }
     HYSTERIESIS& GetHysteriesis() { return m_tHysteriesis; }
     _int                                GetAttackHistoryFront() { return m_AttackHistory.front(); }
-    _int                                GetGroggyValue() { return m_iGroggyValue; }
     _bool                               IsBattleTriggerColliderOn() { return m_isBattleTriggerOn; }
     _bool                               IsBattleAttackColliderOn() { return m_isBattleAttackOn; }
 
@@ -49,6 +48,7 @@ public:
     void                                FinishWeaponCollider();
     void                                SetBattleTriggerColliderOn(_bool is) { m_isBattleTriggerOn = is; }
     void                                SetBattleAttackColliderOn(_bool is) { m_isBattleAttackOn = is; }
+    virtual void                        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) override;
 
 private:
     HRESULT Initialize_StateMachine();
@@ -60,7 +60,6 @@ private:
     void CheckDistanceFromPlayer();
     void RotateToPlayer(const _float dt);
     void ManageAttackHistory();
-    void ManageGroggy(const _float dt);
 
 private:
     CStateMachine<CThugBulkyEnforcer>* m_pStateMachine = { nullptr };
@@ -86,8 +85,8 @@ private:
     _float              m_fRotateSpeed = {};
 
     /*For.Groggy*/
-    _int                m_iGroggyValue = {};
-    _float              m_fGroggyDecreaseTime = {};
+    //_int                m_iGroggyValue = {};
+    //_float              m_fGroggyDecreaseTime = {};
 };
 
 NS_END
