@@ -7,6 +7,7 @@
 #include "OrbitCam.h"
 #include "GameObject.h"
 #include "FreeCam.h"
+#include "Player.h"
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
@@ -38,8 +39,19 @@ void CCamDirector::UnRegister(const string& key)
     m_seqs.erase(key);
 }
 
+void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
+{
+    if (!targetHandle.isValid()) return;
+
+    GetOrbitCam()->SetTarget(targetHandle);
+    SetSpaceRef(targetHandle);
+}
+
 void CCamDirector::Update(_float dt)
 {
+    UpdateInput();
+    UpdatePlayer();
+
     if (!m_playing.active) return;
 
     auto seqPlayer = GetSeqObj()->Get_Component<CCamSequencePlayer>();
@@ -58,7 +70,57 @@ void CCamDirector::Update(_float dt)
 
     seqPlayer->Update(dt);
 
-    if (!seqPlayer->IsPlaying()) StopAll(m_playing.defaultBlendOutSec);
+    if (!seqPlayer->IsPlaying()) 
+        StopAll(m_playing.defaultBlendOutSec);
+}
+
+CPlayer* CCamDirector::GetPlayer() const
+{
+    return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+}
+
+void CCamDirector::UpdateInput()
+{
+    if (InputDevice()->Key_Tap(VK_F1))
+        CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
+
+    if (InputDevice()->Key_Tap(VK_F2))
+        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+
+    if (InputDevice()->Key_Tap(VK_F3))
+        RequestSequence("Intro/Jane_Intro");
+}
+
+void CCamDirector::UpdatePlayer()
+{
+    auto player = GetPlayer();
+
+    const _int type = ENUM(player->Get_PlayerType());
+    OBJECT_HANDLE focus = player->Get_CurCharacterHandle();
+
+    if (type == ENUM(CPlayer::PLAYER::END) || !focus.isValid())
+    {
+        if (m_focusHandle.isValid())
+            GetOrbitCam()->ClearTarget();
+        m_focusHandle.Reset();
+        m_focusType = type;
+        return;
+    }
+
+    if (type != m_focusType)
+    {
+        m_focusType = type;
+    }
+
+    if (type != m_focusType)
+        m_focusType = type;
+
+    if (!m_focusHandle.isValid() || focus.hObjID != m_focusHandle.hObjID)
+    {
+        m_focusHandle = focus;
+        GetOrbitCam()->SetTarget(m_focusHandle);
+        SetSpaceRef(m_focusHandle);
+    }
 }
 
 _uint CCamDirector::RequestSequence(const string& key)
@@ -148,8 +210,10 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         {
             auto orbit = static_cast<COrbitCam*>(returnObj);
 
-            if (m_playing.returnMode == CamReturnMode::SnapToEnd) orbit->SnapFromCamPose(outPos, outRot);
-            else if (m_playing.returnMode == CamReturnMode::RestorePrev) orbit->RestoreSnapshot(m_playing.prevOrbit);
+            if (m_playing.returnMode == CamReturnMode::SnapToEnd)
+                orbit->SnapFromCamPose(outPos, outRot);
+            else if (m_playing.returnMode == CamReturnMode::RestorePrev)
+                orbit->RestoreSnapshot(m_playing.prevOrbit);
         }
     }
 

@@ -81,8 +81,9 @@ HRESULT CMainApp::Initialize()
 void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
-}
 
+	CCamDirector::GetInstance()->Update(dt);
+}
 
 HRESULT CMainApp::Render()
 {
