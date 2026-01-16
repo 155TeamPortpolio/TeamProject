@@ -460,8 +460,15 @@ void CCharacter::Update_Energy(_float dt)
 		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 		return;
 	}
+	if (m_tEnergy.fCurrentEnergy < 0.f)
+	{
+		m_tEnergy.fCurrentEnergy = 0.f;
+	}
 	if (InputDevice()->Key_Down('P'))
 		m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
+	if (InputDevice()->Key_Down('M'))
+		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
+
 	//m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
 }
 

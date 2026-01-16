@@ -28,10 +28,17 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
 
         m_pSubStateMachine->Set_DefaultState("Start");
     }
-
+    // 강화 상태 판정
     auto tDesc = pOwner->Get_EnergyDesc();
     _bool bEnhanced = tDesc.fCurrentEnergy >= tDesc.fSpecialEnergy;
     m_pSubStateMachine->Set_Bool("Enhanced", bEnhanced);
+    // current, special 변경
+    if (bEnhanced)
+    {
+        pOwner->Set_CurrentEnergy(tDesc.fCurrentEnergy - 20.f);
+        pOwner->Set_SpecialEnergy(20.f);
+    }
+    //초기화
     m_pSubStateMachine->Set_Bool("ExFinished", false);
 
     __super::Enter(pOwner);
@@ -49,7 +56,24 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
             m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
         m_pSubStateMachine->Set_Trigger("ToExplode");
     }
+    // 강화 상태에서 에너지 떨어지면 종료
+    if (m_pSubStateMachine->Get_Bool("Enhanced"))
+    {
+        if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+        {
+            m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+            m_pSubStateMachine->Set_Trigger("ToExplode");
+        }
+    }
     __super::Update(pOwner, dt);
+}
+
+void CCorinState_ExAttack::Exit(CCorin* pOwner)
+{
+    if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
+    {
+        pOwner->Set_SpecialEnergy(80.f);
+    }
 }
 
 void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
@@ -80,24 +104,42 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
 {
     if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
+    {
         pOwner->Unlock_Move();
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_03_Loop")
-        .Loop(true)
-        .Speed(1.f)
-        .Apply();
+        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_03_Loop")
+            .Loop(true)
+            .Speed(1.f)
+            .Apply();
+    }
+    else
+    {
+        pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_03_Loop")
+            .Loop(false)
+            .Speed(1.f)
+            .Apply();
+    }
 }
 
 void CCorinState_ExAttack_Loop::Update(CCorin* pOwner, _float dt)
 {
-    _bool bEnhanced = Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced");
+    auto pSubStateMachine = Get_ParentState()->Get_SubStateMachine();
+    _bool bEnhanced = pSubStateMachine->Get_Bool("Enhanced");
     if (pOwner->Is_Move_Buffer() && bEnhanced)
     {
-        Get_ParentState()->Get_SubStateMachine()->Set_Trigger("ToWalk");
+        pSubStateMachine->Set_Trigger("ToWalk");
+    }
+    if (!bEnhanced && Is_AnimEnd())
+    {
+        pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
+        pSubStateMachine->Set_Trigger("ToExplode");
     }
 
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    auto desc = pOwner->Get_EnergyDesc();
+    pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
 }
 
 void CCorinState_ExAttack_Loop_Walk::Enter(CCorin* pOwner)
@@ -110,6 +152,9 @@ void CCorinState_ExAttack_Loop_Walk::Enter(CCorin* pOwner)
 void CCorinState_ExAttack_Loop_Walk::Update(CCorin* pOwner, _float dt)
 {
     pOwner->Process_RootMotion(dt);
+
+    auto desc = pOwner->Get_EnergyDesc();
+    pOwner->Set_CurrentEnergy(desc.fCurrentEnergy - desc.fEnergyWeight * dt);
 }
 
 void CCorinState_ExAttack_Loop_Walk::Exit(CCorin* pOwner)
@@ -119,11 +164,16 @@ void CCorinState_ExAttack_Loop_Walk::Exit(CCorin* pOwner)
 
 void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
 {
-    Get_ParentState()->Get_SubStateMachine()->Set_Bool("ExFinished", true);
+    auto pSubStateMachine = Get_ParentState()->Get_SubStateMachine();
+    pSubStateMachine->Set_Bool("ExFinished", true);
+    // 강화 상태일때 20소모
+    if (pSubStateMachine->Get_Bool("Enhanced"))
+    {
+        pOwner->Set_CurrentEnergy(pOwner->Get_EnergyDesc().fCurrentEnergy - 20.f);
+    }
     auto pAnimator = pOwner->Get_Animator();
     string strAnimName = pOwner->Get_Name();
 
-    auto pSubStateMachine = Get_ParentState()->Get_SubStateMachine();
     _int iEntryMode = pSubStateMachine->Get_Int("ExplodeEntryMode");
     pSubStateMachine->Set_Int("ExplodeEntryMode", 0);
 
