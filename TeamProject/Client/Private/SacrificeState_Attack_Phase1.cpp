@@ -51,7 +51,6 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
 	{
 		_uint iRandIndex = Helper::Get_Random_Int(0, 1);
-		iRandIndex = 1;
 		if (0 == iRandIndex)
 			pOwner->Idle();
 		else
@@ -94,7 +93,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 
 	blackBoard.stateQueue.clear();
 
-	if (targetInfo.fDistance < 5.f)
+	if (targetInfo.fDistance < 8.f)
 	{
 		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetDir = targetInfo.vDirToTarget;
@@ -164,12 +163,6 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			break;
 		}
 	}
-
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack10_Phase1");
-	blackBoard.stateQueue.push_back("Attack11_Phase1");
-	blackBoard.stateQueue.push_back("Attack12_Phase1");
-	blackBoard.stateQueue.push_back("Arm_Recover");
 
 	blackBoard.isRequestNext = true;
 }

@@ -148,6 +148,9 @@ public:
 	static CSacrificeState_Attack_Charge_Loop_Phase2* Create() { return new CSacrificeState_Attack_Charge_Loop_Phase2(); }
 	virtual void Free() override { __super::Free(); }
 
+private:
+	_bool m_IsStartDissolve = false;
+	_bool m_IsEndDissolve = false;
 };
 
 class CSacrificeState_Attack_Charge_U_Start_Phase2 : public IHState<CSacrifice>

@@ -40,7 +40,7 @@ CZero_Level::CZero_Level(const string& LevelKey)
 HRESULT CZero_Level::Initialize()
 {
 	CBattleSystem::GetInstance()->SetActive(true);
-	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
+	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
 
 	Rake_MapResources();
 	auto boss = CZeroStage_Boss::Create(this);

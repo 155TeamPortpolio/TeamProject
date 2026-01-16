@@ -332,11 +332,13 @@ void CSacrifice::Phase1Attack()
 	_vector3 vCurrPosition = m_pTransform->Get_Pos();
 	_vector3 vTargetPosition = m_tTargetingInfo.vTargetPos;
 	pHandTransform->Set_Pos(vCurrPosition);
-	pHandTransform->LookAt(vTargetPosition);
+	_vector3 vDir = vTargetPosition - vCurrPosition;
+	vDir.y = 0.f;
+	vDir.Normalize();
+	pHandTransform->Set_Look(vDir);
 
 	_vector3 vHandLook = pHandTransform->Dir(STATE::LOOK);
 	_vector3 vPosition = vTargetPosition - vHandLook * 8.f;
-	vPosition.y -= 1.f;
 
 	pHandTransform->Set_Pos(vPosition);
 }
@@ -420,6 +422,33 @@ void CSacrifice::DeactiveLaser()
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
 }
 
+void CSacrifice::ActiveEyeLaser()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pLaser0 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser0");
+	static_cast<CSacrifice_Laser*>(pLaser0)->ActiveLaser(2);
+
+	auto pLaser1 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser1");
+	static_cast<CSacrifice_Laser*>(pLaser1)->ActiveLaser(2);
+
+	auto pLaser2 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2");
+	static_cast<CSacrifice_Laser*>(pLaser2)->ActiveLaser(2);
+}
+
+void CSacrifice::DeactiveEyeLaser()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	auto pLaser0 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser0");
+	static_cast<CSacrifice_Laser*>(pLaser0)->DeactiveLaser();
+
+	auto pLaser1 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser1");
+	static_cast<CSacrifice_Laser*>(pLaser1)->DeactiveLaser();
+
+	auto pLaser2 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2");
+	static_cast<CSacrifice_Laser*>(pLaser2)->DeactiveLaser();
+}
 void CSacrifice::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 {
 	m_eDissolveState = state;
@@ -460,6 +489,7 @@ void CSacrifice::Create_Children()
 
 	Create_AttackSign("Bip001_Head");
 
+	/* Hand */
 	{
 		auto pHand = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeHand" })
 			.Build("Sacrifice_Hand");
@@ -467,6 +497,7 @@ void CSacrifice::Create_Children()
 		m_iHandID = pObjectContainer->Add_Child(pHand, false);
 	}
 
+	/* Hand Laser */
 	{
 		auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeLaser" })
 			.Build("Sacrifice_Laser");
@@ -474,6 +505,27 @@ void CSacrifice::Create_Children()
 		pLaser->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_Eye6_05");
 	}
 
+	/* Eye Laser */
+	{
+		_smatrix offsetMatrix = _smatrix::Identity;
+		offsetMatrix.Translation(_vector3(-0.8f, -0.2f, 0.f));
+
+		for (_uint i = 0; i < 3; ++i)
+		{
+			string instanceTag = "Sacrifice_Eye_Laser" + to_string(i);
+
+			auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeLaser" })
+				.Build(instanceTag);
+			pObjectContainer->Add_Child(pLaser, false);
+			pLaser->Get_Component<CBoneFollower>()->Set_Offset(offsetMatrix);
+		}
+
+		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser0")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_01_1");
+		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser1")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_02_1");
+		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_03_1");
+	}
+
+	/* Spark Effect */
 	{
 		auto pSpark = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_spark.json")

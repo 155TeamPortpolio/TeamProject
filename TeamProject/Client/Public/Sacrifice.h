@@ -69,6 +69,8 @@ public:
     /* Laser */
     void ActiveLaser(_uint mode);
     void DeactiveLaser();
+    void ActiveEyeLaser();
+    void DeactiveEyeLaser();
     
     /* Dissolve */
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);

@@ -145,13 +145,20 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
+	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+
 	blackBoard.isRequestNext = true;
 }
 
 void CSacrificeState_Attack_01_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_01").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_01").Loop(false).Speed(1.2f).Apply();
 
 	pOwner->Active_AttackSign();
 
@@ -187,7 +194,7 @@ void CSacrificeState_Attack_01_Phase2::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_02_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_02").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_02").Loop(false).Speed(1.2f).Apply();
 
 	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
@@ -215,7 +222,7 @@ void CSacrificeState_Attack_02_Phase2::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_03_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_03").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_03").Loop(false).Speed(1.f).Apply();
 
 	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
@@ -439,6 +446,9 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Charge_Loop").Loop(true).Speed(1.4f).Apply();
+
+	m_IsStartDissolve = false;
+	m_IsEndDissolve = false;
 }
 
 void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -452,14 +462,31 @@ void CSacrificeState_Attack_Charge_Loop_Phase2::Update(CSacrifice* pOwner, _floa
 	}
 	else
 	{
+		if (!m_IsStartDissolve && m_fStateTime >= 0.4f)
+		{
+			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
+			m_IsStartDissolve = true;
+		}
+
+		if (!m_IsEndDissolve && m_fStateTime >= 0.7f)
+		{
+			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.3f);
+			pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
+			m_IsEndDissolve = true;
+		}
+
 		if (m_fStateTime >= 1.5f)
 		{
 			blackBoard.isChainOpen = true;
 			if (!blackBoard.stateQueue.empty())
+			{
 				blackBoard.isRequestNext = true;
+				pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
+			}
 		}
 	}
 
+	pOwner->Update_Dissolve(dt);
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 }
@@ -492,6 +519,9 @@ void CSacrificeState_Attack_Charge_U_Start_Phase2::Update(CSacrifice* pOwner, _f
 				blackBoard.isRequestNext = true;
 		}
 	}
+
+	if (IsCrossAnimProgress(0.7f))
+		pOwner->ActiveEyeLaser();
 }
 
 void CSacrificeState_Attack_Charge_U_Start_Phase2::Exit(CSacrifice* pOwner)
@@ -502,6 +532,7 @@ void CSacrificeState_Attack_Charge_U_Loop_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("Monster_SacrificeBringer_Ani_P2_Charge_U_Loop").Loop(true).Speed(1.4f).Apply();
+
 }
 
 void CSacrificeState_Attack_Charge_U_Loop_Phase2::Update(CSacrifice* pOwner, _float dt)
@@ -536,6 +567,9 @@ void CSacrificeState_Attack_Charge_U_End_Phase2::Update(CSacrifice* pOwner, _flo
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (IsCrossAnimProgress(0.01f))
+		pOwner->DeactiveEyeLaser();
 }
 
 void CSacrificeState_Attack_Charge_U_End_Phase2::Exit(CSacrifice* pOwner)

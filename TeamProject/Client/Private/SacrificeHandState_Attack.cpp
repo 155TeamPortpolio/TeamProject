@@ -113,7 +113,7 @@ void CSacrificeHandState_Attack::BuildPattern(CSacrificeHand* pOwner)
 void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 
 	pOwner->SetVisable(true);
 }
@@ -138,7 +138,7 @@ void CSacrificeHandState_Attack_01_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_01_Phase1::Update_Effects(CSacrificeHand* pOwner)
 {
-	if (IsCrossAnimProgress(0.17f))
+	if (IsCrossAnimProgress(0.12f))
 	{
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_hand_smoke_trail.json")
@@ -153,7 +153,7 @@ void CSacrificeHandState_Attack_01_Phase1::Update_Effects(CSacrificeHand* pOwner
 void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
 
 	m_IsActiveHand = true;
 }
@@ -168,7 +168,7 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		m_IsActiveHand = false;
 	}
 
-	if (m_fAnimProgress >= 0.4)
+	if (m_fAnimProgress >= 0.3)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -184,7 +184,7 @@ void CSacrificeHandState_Attack_02_Phase1::Exit(CSacrificeHand* pOwner)
 
 void CSacrificeHandState_Attack_02_Phase1::Update_Effects(CSacrificeHand* pOwner)
 {
-	if (IsCrossAnimProgress(0.12f))
+	if (IsCrossAnimProgress(0.1f))
 	{
 		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("sacrifice_hand_smoke_trail.json")
@@ -199,15 +199,19 @@ void CSacrificeHandState_Attack_02_Phase1::Update_Effects(CSacrificeHand* pOwner
 void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.2f).Apply();
 
 	auto pTrasform = pOwner->Get_Component<CTransform>();
 	CSacrifice* pParent = static_cast<CSacrifice*>(pOwner->Get_Component<CChild>()->Get_Parent());
 
+	_vector3 vCurrPosition = pTrasform->Get_WorldPos();
 	_vector3 vTargetPosition = pParent->GetTargetingInfo().vTargetPos;
-	pTrasform->LookAt(vTargetPosition);
-	_vector3 vLook = pTrasform->Dir(STATE::LOOK);
-	pTrasform->Set_Pos(vTargetPosition - vLook * 16.f);
+	_vector3 vDir = vTargetPosition - vCurrPosition;
+	vDir.y = 0.f;
+	vDir.Normalize();
+
+	pTrasform->Set_Look(vDir);
+	pTrasform->Set_Pos(vTargetPosition - vDir * 16.f);
 
 	m_IsActiveHand = false;
 }
