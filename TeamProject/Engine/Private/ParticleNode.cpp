@@ -56,6 +56,12 @@ HRESULT CParticleNode::Initialize(INIT_DESC* pArg)
 	if (m_IsLoop)
 		m_IsEffectActive = true;
 
+	_vector3 vPosition = pParticleNode->vOffsetPosition;
+	_quaternion vQuaternion = pParticleNode->vOffsetQuaternion;
+
+	m_pTransform->Set_Pos(vPosition);
+	m_pTransform->Set_Quaternion(vQuaternion);
+
 	return S_OK;
 }
 

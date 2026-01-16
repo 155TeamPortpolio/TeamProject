@@ -95,12 +95,17 @@ void CMeshNode_Edit::Play()
 
 void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 {
+
 	m_ModelKey = json.value("model_key", m_ModelKey);
 	m_MaterialKey = json.value("material_key", m_MaterialKey);
 
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
 	m_fDuration = json.value("duration", m_fDuration);
 	m_IsLoop = json.value("is_loop", m_IsLoop);
+
+	/* Offset Transform */
+	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
+	auto vOffsetQuaternion = json.value("offset_quaternion",json::array({0.f,0.f,0.f,1.f}));
 
 	/* Texture Tags */
 	m_DiffuseTextureTag = json.value("diffuse_texture_tag", "");
@@ -204,10 +209,19 @@ void CMeshNode_Edit::Import(nlohmann::ordered_json& json)
 
 		m_SetMesh = true;
 	}
+
+	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
+	_quaternion vQuaternion(vOffsetQuaternion[0], vOffsetQuaternion[1], vOffsetQuaternion[2], vOffsetQuaternion[3]);
+
+	m_pTransform->Set_Pos(vPosition);
+	m_pTransform->Set_Quaternion(vQuaternion);
 }
 
 void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 {
+	_vector3 vOffsetPosition = m_pTransform->Get_Pos();
+	_vector4 vOffsetQuaternion = m_pTransform->Get_QuaternionRotate();
+
 	json =
 	{
 		{"effect_type", static_cast<_uint>(EFFECT_TYPE::MESH)},
@@ -222,6 +236,10 @@ void CMeshNode_Edit::Export(nlohmann::ordered_json& json)
 		{"diffuse_texture_tag",m_DiffuseTextureTag},
 		{"dissolve_texture_tag",m_DissolveTextureTag},
 		{"noise_texture_tag",m_NoiseTextureTag},
+
+		/* Offset Transform */
+		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
+		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetPosition.z,vOffsetQuaternion.w})},
 
 		/* Texture Module */
 		{"sampler_mode",m_TextureSlotModule.iSamplerModeParam},
