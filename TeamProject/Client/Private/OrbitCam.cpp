@@ -48,8 +48,6 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
-    if (!handle.isValid()) return;
-
     autoYawHoldTimer = profile.autoYawFollowDelay;
     hasPrevTargetFoot = false;
 

@@ -9,7 +9,7 @@ class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
 private:
-    CCamDirector() {}
+    CCamDirector();
     virtual ~CCamDirector() = default;
 
 public:
@@ -53,6 +53,9 @@ private:
     void          UpdateInput();
 
 private:
+    ICameraService&         camMgr;
+    IObjectService&         objMgr;
+
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
