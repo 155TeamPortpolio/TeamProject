@@ -19,6 +19,7 @@ public:
 	void	SetFieldPlayer(class CFieldPlayer* pFieldPlayer);
 	OBJECT_HANDLE					GetCurCharacterHandle() const;
 
+	/*여기서 대화를 진행하고 / 미니맵을 진행*/
 private:
 	_bool	m_isActive = { false }; 
 	class CFieldPlayer* m_pFieldPlayer = { nullptr };

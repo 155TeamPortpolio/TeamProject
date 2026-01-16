@@ -478,6 +478,23 @@ HRESULT CGameObject::Make_3DUIPacket(OPAQUE_PACKET packet)
 	return S_OK;
 }
 
+_float CGameObject::Calculate_LinearDepth(MINMAX_BOX box)
+{
+	_vector3 vCenter = _vector3(box.vMax)+_vector3(box.vMin) * 0.5f;
+	_vector4 camPos4 = CameraManager()->Get_CameraPos();
+	_vector3 camPos{ camPos4.x, camPos4.y, camPos4.z }; 
+	_vector3 toCenter = vCenter - camPos;
+
+	auto view = CameraManager()->Get_ViewMatrix();
+	//camForward.Normalize();
+	_float depth = toCenter.Dot(camForward);
+
+	// 카메라 뒤면 0으로 클램프 (원하면 그대로 리턴해도 됨)
+	if (depth < 0.f) depth = 0.f;
+	return depth;
+	return _float();
+}
+
 
 void CGameObject::Free()
 {
