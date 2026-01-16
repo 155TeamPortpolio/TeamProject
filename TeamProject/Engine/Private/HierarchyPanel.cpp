@@ -124,13 +124,20 @@ void CHierarchyPanel::ShowLevelList()
 	);
 	m_pContext->pSelectedLevel = m_pContext->pLevelManager->Get_CurrentLevel();
 }
+
 void CHierarchyPanel::ShowLayerList(const string& nowLevel)
 {
-	const auto& LayerMap = m_pContext->pObjectManager->Get_LevelLayer(nowLevel);
-	vector<string> layers;
+	const auto& layerMap = m_pContext->pObjectManager->Get_LevelLayer(nowLevel);
+	const auto& globalLayerMap = m_pContext->pObjectManager->Get_LevelLayer(G_GlobalLevelKey);
 
-	for (auto& pair : LayerMap)
-		if (pair.first != G_GlobalLevelKey) layers.push_back(pair.first);
+	vector<string> layers;
+	layers.reserve(layerMap.size() + globalLayerMap.size());
+
+	for (const auto& pair : globalLayerMap)
+		 layers.push_back(pair.first + "_Global");
+
+	for (const auto& pair : layerMap)
+		layers.push_back(pair.first );
 
 	if (layers.empty())
 	{
@@ -142,14 +149,32 @@ void CHierarchyPanel::ShowLayerList(const string& nowLevel)
 	if (m_iSelectedLayer < 0 || m_iSelectedLayer >= (int)layers.size())
 		m_iSelectedLayer = 0;
 
-	GuiUtil::ShowCombo(layers, m_iSelectedLayer, "LayerList", [&](_uint ID) { m_iSelectedLayer = ID; });
+	GuiUtil::ShowCombo(layers, m_iSelectedLayer, "LayerList",
+		[&](_uint selectedIndex) { m_iSelectedLayer = (int)selectedIndex; });
 
-	auto iter = LayerMap.find(layers[m_iSelectedLayer]);
-	if (iter != LayerMap.end())
-		m_pContext->pSelectedLayer = iter->second;
+	const string& selected = layers[m_iSelectedLayer];
+
+	// "_Global" 접미사면 원래 레이어명으로 되돌림
+	string baseKey = selected;
+	constexpr const char* globalSuffix = "_Global";
+	constexpr size_t globalSuffixLen = 7;
+
+	if (baseKey.size() >= globalSuffixLen &&
+		baseKey.compare(baseKey.size() - globalSuffixLen, globalSuffixLen, globalSuffix) == 0)
+	{
+		baseKey.erase(baseKey.size() - globalSuffixLen);
+	}
+
+	// 레벨 레이어 OR 글로벌 레이어
+	auto levelIterator = layerMap.find(baseKey);
+	auto globalIterator = globalLayerMap.find(baseKey);
+
+	if (levelIterator != layerMap.end() || globalIterator != globalLayerMap.end())
+		m_pContext->pSelectedLayer = (levelIterator != layerMap.end()) ? levelIterator->second : globalIterator->second;
 	else
 		m_pContext->pSelectedLayer = nullptr;
 }
+
 
 
 void CHierarchyPanel::ShowObjectList()
