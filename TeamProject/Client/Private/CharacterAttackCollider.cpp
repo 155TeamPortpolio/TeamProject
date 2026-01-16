@@ -75,6 +75,10 @@ void CCharacterAttackCollider::OnCollisionEnter(CGameObject* pOther)
 	
 	// MSG_BOX("Damage On Enter");
 	// 데미지 주는 코드
+	// 여기에 안들어와요
+	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
+	if (nullptr != pEnemy)
+		pEnemy->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
 }
 
 void CCharacterAttackCollider::OnCollisionStay(CGameObject* pOther)
@@ -95,6 +99,17 @@ void CCharacterAttackCollider::OnCollisionExit(CGameObject* pOther)
 
 void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 {
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::MONSTER))
+		return;
+	if (!Try_Hit(pOther))
+		return;
+
+	// MSG_BOX("Damage On Enter");
+	// 데미지 주는 코드
+	auto pEnemy = dynamic_cast<CEnemy*>(pOther);
+	if (nullptr != pEnemy)
+		pEnemy->TakeDamage(DAMAGE_TYPE::NORMAL, 10);
 }
 
 void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)

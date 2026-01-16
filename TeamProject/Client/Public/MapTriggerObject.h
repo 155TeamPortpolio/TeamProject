@@ -3,7 +3,7 @@
 
 NS_BEGIN(Client)
 class CMapTriggerObject :
-    public CMapObject
+    public CMapObject 
 {
 private:
     enum class MapTriggerType { ENTER, STAY, EXIT, INTERECT, END };

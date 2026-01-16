@@ -279,8 +279,13 @@ void CThugBulkyEnforcer_Attack1::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign(); 
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
+
 	//0.18 / 0.23
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18, 0.05f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18, 0.05f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -316,8 +321,13 @@ void CThugBulkyEnforcer_Attack2::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
+
 	// 0.25 / 0.30
-	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25, 0.05f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.25, 0.05f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack2::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -353,8 +363,13 @@ void CThugBulkyEnforcer_Attack3::Enter(CThugBulkyEnforcer* pOwner)
 	pOwner->Active_AttackSign();
 	m_isSecondAttack = false;
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
+
 	// 0.20 / 0.23
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.2f, 0.03f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.2f, 0.03f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -371,8 +386,13 @@ void CThugBulkyEnforcer_Attack3::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	if (false == m_isSecondAttack && m_fAnimProgress > 0.22f) {
 		pOwner->CaptureRotateDir(pOwner->GetTargetingInfo().vDirToTarget, 10.f);
 		pOwner->Active_AttackSign();
+	
+		HitDesc hitdesc = {};
+		hitdesc.eDamageType = DAMAGE_TYPE::HARD;
+		hitdesc.eHitType = HIT_TYPE::ONCE;
+		hitdesc.fDamage = 10.f;
 		// 0.30 / 0.33
-		pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.3f, 0.03f);
+		pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.3f, 0.03f, hitdesc);
 		m_isSecondAttack = true;
 	}
 
@@ -398,8 +418,13 @@ void CThugBulkyEnforcer_Attack4::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::HARD;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
+
 	// 0.18 / 0.25
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18f, 0.07f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.18f, 0.07f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack4::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -434,8 +459,13 @@ void CThugBulkyEnforcer_Attack5_1::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
+
 	// 0.23 /0.27
-	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.23f, 0.04f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.23f, 0.04f, hitdesc);
 }
 
 void CThugBulkyEnforcer_Attack5_1::Update(CThugBulkyEnforcer* pOwner, _float dt)
@@ -471,8 +501,12 @@ void CThugBulkyEnforcer_Attack5_2::Enter(CThugBulkyEnforcer* pOwner)
 		.Apply();
 	pOwner->Active_AttackSign();
 
+	HitDesc hitdesc = {};
+	hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+	hitdesc.eHitType = HIT_TYPE::ONCE;
+	hitdesc.fDamage = 10.f;
 	// 0.16/0.19
-	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.16f, 0.03f);
+	pOwner->SetAutoPlayBattleCollider("Weapon_R", 0.16f, 0.03f, hitdesc);
 
 	m_isFinishFirst = false;
 }
@@ -490,8 +524,14 @@ void CThugBulkyEnforcer_Attack5_2::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	
 	if (false == m_isFinishFirst &&
 		m_fAnimProgress >= 0.27f) {
+		
+		HitDesc hitdesc = {};
+		hitdesc.eDamageType = DAMAGE_TYPE::NORMAL;
+		hitdesc.eHitType = HIT_TYPE::ONCE;
+		hitdesc.fDamage = 10.f;
+
 		// 0.27/0.30
-		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.27f, 0.03f);
+		pOwner->SetAutoPlayBattleCollider("Weapon_L", 0.27f, 0.03f, hitdesc);
 		m_isFinishFirst = true;
 	}
 
