@@ -91,7 +91,7 @@ private:
     void         NotifyCharacterSwitchIn();
     void         NotifyCharacterSwitchOut();
 
-private:
+public:
     queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
     class CCharacter*                               m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>                           m_CharacterHandles{};

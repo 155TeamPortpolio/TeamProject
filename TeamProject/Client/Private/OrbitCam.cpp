@@ -24,6 +24,7 @@ HRESULT COrbitCam::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
     Add_Component<CCharacterController>();
+    Add_Component<CEventListener>();
 
     pose.targetRotDeg = Vector2(0.f, profile.startPitchDeg);
     pose.curRotDeg = pose.targetRotDeg;
@@ -43,6 +44,8 @@ HRESULT COrbitCam::Initialize_Prototype()
 HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+
+
     return S_OK;
 }
 
@@ -242,15 +245,94 @@ void COrbitCam::RestoreSnapshot(const OrbitCamSnapshot& s)
     m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
 }
 
+void COrbitCam::SetLockOn(OBJECT_HANDLE handle)
+{
+    lockOn.active = true;
+    lockOn.handle = handle;
+
+    autoYawHoldTimer  = 0.f;
+    hasPrevTargetFoot = false;
+
+    const Vector3 playerPivot = GetBasePivotTargetPos(targetHandle);
+    const Vector3 targetPivot = GetBasePivotTargetPos(lockOn.handle);
+
+    Vector3 flat = targetPivot - playerPivot;
+    flat.y = 0.f;
+
+    const float len = flat.Length();
+    if (len == 0.f) return;
+
+    flat /= len;
+
+    const float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
+    pose.targetRotDeg.x = desiredYawDeg;
+    pose.curRotDeg.x = desiredYawDeg;
+}
+
+void COrbitCam::ClearLockOn()
+{
+    lockOn = {};
+}
+
+void COrbitCam::UpdateLockOn(_float dt)
+{
+    const Vector3 playerPivot = GetBasePivotTargetPos(targetHandle);
+    const Vector3 targetPivot = GetBasePivotTargetPos(lockOn.handle);
+
+    Vector3 flat = targetPivot - playerPivot;
+    flat.y = 0.f;
+
+    const float len = flat.Length();
+    if (len == 0.f) return;
+
+    flat /= len;
+
+    const float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
+    const float deltaYawDeg = Math::WrapDeg(desiredYawDeg - pose.targetRotDeg.x);
+
+    float a = 1.f - expf(-profile.lockOnYawSpeed * dt);
+    a = clamp(a, 0.f, 1.f);
+
+    pose.targetRotDeg.x += deltaYawDeg * a;
+
+    if (profile.lockOnAutoZoom)
+    {
+        const float wanted = profile.startDistance + len * profile.lockOnAutoZoomFactor;
+        const float clamped = clamp(wanted, profile.minDist, profile.maxDist);
+        if (pose.targetDist < clamped) pose.targetDist = clamped;
+    }
+}
+
+Vector3 COrbitCam::GetLockOnFocusPos() const
+{
+    const Vector3 playerPivot = GetBasePivotTargetPos(targetHandle);
+    const Vector3 targetPivot = GetBasePivotTargetPos(lockOn.handle);
+
+    const float dist = (targetPivot - playerPivot).Length();
+
+    float t = dist / (dist + profile.lockOnFocusDist);
+    t = clamp(t, 0.f, 1.f);
+
+    const float focusT = profile.lockOnFocusNear + (profile.lockOnFocusFar - profile.lockOnFocusNear) * t;
+
+    return Vector3::Lerp(playerPivot, targetPivot, focusT);
+}
+
 void COrbitCam::Priority_Update(_float dt)
 {
     if (!targetHandle.isValid()) return;
+
     UpdateTargetSwitch(dt);
 
     pose.targetPivot = GetPivotTargetPos();
-    
+
     UpdateInput(dt);
-    UpdateAutoYawFollow(dt);
+
+    if (lockOn.active)
+        UpdateLockOn(dt);
+    else
+        UpdateAutoYawFollow(dt);
+
     ClampTargets();
     SmoothStates(dt);
     ApplyOrbitPose(dt);
@@ -265,7 +347,7 @@ void COrbitCam::UpdateInput(_float dt)
     const float dx = InputDevice()->Mouse_DeltaX();
     const float dy = InputDevice()->Mouse_DeltaY();
 
-    pose.targetRotDeg.x += dx * input.sensitivityX;
+    if (!lockOn.active) pose.targetRotDeg.x += dx * input.sensitivityX;
     pose.targetRotDeg.y += dy * input.sensitivityY;
 
     if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
@@ -342,8 +424,10 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     delta = clamp(delta, -maxStep, maxStep);
     pose.curDist += delta;
 
+    const Vector3 lookAt = lockOn.active ? GetLockOnFocusPos() : pivot;
+
     m_pTransform->Set_WorldPos(Vector4((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
-    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+    m_pTransform->LookAt(Vector4(lookAt.x, lookAt.y, lookAt.z, 1.f));
 }
 
 void COrbitCam::UpdateAutoYawFollow(_float dt)
@@ -834,4 +918,3 @@ void COrbitCam::Render_GUI()
         ImGui::PopID();
     }
 }
-

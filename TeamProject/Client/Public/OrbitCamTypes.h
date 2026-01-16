@@ -47,6 +47,21 @@ struct OrbitCamProfile
 
     _float   targetSwitchBlendSec = 1.f;
     EaseType targetSwitchEase = EaseType::OutCubic;
+
+    _float lockOnYawSpeed = 22.f;
+
+    _float lockOnFocusNear = 0.35f;
+    _float lockOnFocusFar = 0.70f;
+    _float lockOnFocusDist = 2.5f;
+
+    _bool  lockOnAutoZoom = true;
+    _float lockOnAutoZoomFactor = 0.35f;
+};
+
+struct OrbitCamLockOnState
+{
+    _bool         active = false;
+    OBJECT_HANDLE handle{};
 };
 
 struct OrbitCamTargetSwitchState

@@ -33,6 +33,13 @@ public:
     void    CaptureSnapshot(OrbitCamSnapshot& out) const;
     void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
 
+    void    SetLockOn(OBJECT_HANDLE handle);
+    void    ClearLockOn();
+
+private:
+    void    UpdateLockOn(_float dt);
+    Vector3 GetLockOnFocusPos() const;
+
 private:
     void    UpdateInput(_float dt);
     void    ClampTargets();
@@ -50,6 +57,7 @@ private:
     void    UpdateTargetSwitch(_float dt);
 
 private:
+    OrbitCamLockOnState       lockOn{};
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
     OrbitCamTargetSwitchState targetSwitch{};

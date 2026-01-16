@@ -80,6 +80,11 @@ CPlayer* CCamDirector::GetPlayer() const
     return static_cast<CPlayer*>(objMgr.Find_Global(ENUM(GLOBAL_ID::Player)));
 }
 
+OBJECT_HANDLE CCamDirector::GetCharacterHandle() const
+{
+    return GetPlayer()->Get_CurCharacterHandle();
+}
+
 void CCamDirector::UpdateInput()
 {
     if (InputDevice()->Key_Tap(VK_F1))
