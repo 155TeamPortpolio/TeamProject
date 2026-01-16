@@ -168,6 +168,7 @@ public:
     void     Active_AttackCollider(const string& strName, _bool bActive);
     void     Begin_AttackCollider(const string& strName, const HitDesc& hitdesc);
     void     End_AttackCollider(const string& strName);
+    void     End_AllAttackColliders();
     _bool    Is_Active_AttackCollider(const string& strName);
 
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
@@ -188,6 +189,7 @@ private:
     void    Update_Invincible(_float dt);
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
+
 protected:
     CAnimator3D*                m_pAnimator = { nullptr };
     CCharacterController*       m_pCCT = { nullptr };

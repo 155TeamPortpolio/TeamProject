@@ -377,6 +377,16 @@ void CCharacter::End_AttackCollider(const string& strName)
 	pCollider->End_Attack();
 }
 
+void CCharacter::End_AllAttackColliders()
+{
+	for (auto Collider : m_AttackColliderIndex)
+	{
+		CCharacterAttackCollider* pCollider = Find_AttackCollider(Collider.first);
+		if (nullptr == pCollider)	continue;
+		pCollider->End_Attack();
+	}
+}
+
 _bool CCharacter::Is_Active_AttackCollider(const string& strName)
 {
 	CCharacterAttackCollider* pCollider = Find_AttackCollider(strName);
