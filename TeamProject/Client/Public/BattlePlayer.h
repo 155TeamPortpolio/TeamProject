@@ -62,6 +62,8 @@ public:
     void            Active_Battle();
     void            DeActive_Battle();
 
+    HRESULT         ClearCharacters();
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);
