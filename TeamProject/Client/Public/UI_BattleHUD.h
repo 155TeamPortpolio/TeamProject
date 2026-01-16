@@ -45,6 +45,10 @@ private:
 	vector<UI_HANDLE>	m_handles; 
 
 private:
+	const _int			m_iPlayerHPWidth = 5;
+	const _int			m_iBossHPWidth = 2;
+
+private:
 	CUI_Object* Ready_Prefab();
 
 	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
@@ -53,8 +57,8 @@ private:
 	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 
-	void Set_Text(Child child, _float fNum);
-	void Set_FillAmount(Child child, _float fFillAmount);
+	void Set_NumberText(Child child, _float fValue, _int iWidth);
+	void Set_GaugeFill(Child child, _float fFillAmount);
 	void Set_IconTexture(Child child, const string& strTextureKey);
 
 	template<typename Func>

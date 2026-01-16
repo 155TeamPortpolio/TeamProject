@@ -131,12 +131,12 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
     {
         if (desc.eType == UI_STATUS_TYPE::HP)
         {
-            Set_FillAmount(Child::BOSS_HP_FRONT, fRatio);
+            Set_GaugeFill(Child::BOSS_HP_FRONT, fRatio);
         }
         else if (desc.eType == UI_STATUS_TYPE::GROGGY)
         {
-            Set_FillAmount(Child::BOSS_GROGGY, fRatio);
-            Set_Text(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue);
+            Set_GaugeFill(Child::BOSS_GROGGY, fRatio);
+            Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue, m_iBossHPWidth);
         }
         return;
     } 
@@ -150,7 +150,7 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
     case UI_STATUS_TYPE::HP:
         target = HPFRONT_CHILD[iIndex];
         if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
-            Set_Text(Child::MAX_HP_TEXT, desc.value.fCurValue);
+            Set_NumberText(Child::MAX_HP_TEXT, desc.value.fCurValue, m_iPlayerHPWidth);
         break;
 
     case UI_STATUS_TYPE::SPECIAL:
@@ -163,7 +163,7 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
     }
 
     if (target != Child::END)
-        Set_FillAmount(target, fRatio);
+        Set_GaugeFill(target, fRatio);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -171,33 +171,33 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     const _uint iIndex = ENUM(desc.eOwner);
 
     Set_IconTexture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
-    Set_FillAmount(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
-    Set_FillAmount(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
-    Set_FillAmount(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
+    Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+    Set_GaugeFill(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
+    Set_GaugeFill(ULTIMATE_CHILD[iIndex], desc.ultimate.fCurValue / desc.ultimate.fMaxValue);
 
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
-        Set_Text(Child::CUR_HP_TEXT, desc.hp.fCurValue);
-        Set_Text(Child::MAX_HP_TEXT, desc.hp.fMaxValue);
+        Set_NumberText(Child::CUR_HP_TEXT, desc.hp.fCurValue, m_iPlayerHPWidth);
+        Set_NumberText(Child::MAX_HP_TEXT, desc.hp.fMaxValue, m_iPlayerHPWidth);
     }
 }
 
-void CUI_BattleHUD::Set_Text(Child child, _float fNum)
+void CUI_BattleHUD::Set_NumberText(Child child, _float fNum, _int iWidth)
 {
-    ForChild(child, [&](CUI_Object* ui) 
-        { 
-            auto pTextSlot = ui->Get_Component<CTextSlot>();
-            if (!pTextSlot)
-                return;
+    ForChild(child, [&](CUI_Object* ui)         {
+        auto pTextSlot = ui->Get_Component<CTextSlot>();
+        if (!pTextSlot)
+            return;
 
-            pTextSlot->Set_Text(Helper::ConvertToWideString(to_string(static_cast<_int>(fNum))));
+        wchar_t buf[32];
+        Helper::Format_FixedZeroPad(buf, _countof(buf), static_cast<_int>(fNum), iWidth);
+        pTextSlot->Set_Text(buf);
         });
 }
 
-void CUI_BattleHUD::Set_FillAmount(Child child, _float fFillAmount)
+void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
 {
-    ForChild(child, [&](CUI_Object* ui)
-        {
+    ForChild(child, [&](CUI_Object* ui)        {
             auto pGauge = dynamic_cast<CGaugeUI*>(ui);
             if (!pGauge)
                 return;
@@ -208,8 +208,7 @@ void CUI_BattleHUD::Set_FillAmount(Child child, _float fFillAmount)
 
 void CUI_BattleHUD::Set_IconTexture(Child child, const string& strTextureKey)
 {
-    ForChild(child, [&](CUI_Object* ui)
-        {
+    ForChild(child, [&](CUI_Object* ui)        {
             auto pSprite = ui->Get_Component<CSprite2D>();
             if (!pSprite)
                 return;
