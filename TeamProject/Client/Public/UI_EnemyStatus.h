@@ -39,8 +39,9 @@ private:
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 
 private:
-	void Set_HP(_float fFillAmount);
-	void Set_Groggy(_float fFillAmount);
+	void Set_WorldPosition();
+
+	void Set_GroggyText(_int iGroggy);
 
 	void Set_Gauge(Child child, _float fFillAmount);
 

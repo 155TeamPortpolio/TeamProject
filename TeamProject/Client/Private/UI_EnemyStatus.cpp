@@ -38,32 +38,33 @@ void CUI_EnemyStatus::Update(_float dt)
 {
     __super::Update(dt);
 
-    if (!m_pParentWorld || !m_pBoneLocal)
-        return;
-    
-    Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
-    Vector3 vPosition = matWorld.Translation();
-    
-    Update_WorldToScreen(vPosition);
+    Set_WorldPosition();
+
+    //Set_Gauge(Child::HP_GUAGE, fFillAmount);
+    //Set_Gauge(Child::GROGGY_GAUGE, fFillAmount);  // 그로기 맥스는 무조건 100
+    //Set_GroggyText();
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
-void CUI_EnemyStatus::Set_HP(_float fFillAmount)
+void CUI_EnemyStatus::Set_WorldPosition()
 {
-    Set_Gauge(Child::HP_GUAGE, fFillAmount);
+    if (!m_pParentWorld || !m_pBoneLocal)
+        return;
+
+    Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
+    Update_WorldToScreen(matWorld.Translation());
 }
 
-void CUI_EnemyStatus::Set_Groggy(_float fFillAmount)
+void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
 {
-    Set_Gauge(Child::GROGGY_GAUGE, fFillAmount);
-
     ForChild(Child::GROGGY_TEXT, [&](CUI_Object* ui) {
         auto pTextSlot = ui->Get_Component<CTextSlot>();
         if (!pTextSlot)
             return;
 
         wchar_t buf[32];
-        swprintf_s(buf, _countof(buf), L"%02d", static_cast<_int>(fFillAmount) % 100);
+        swprintf_s(buf, _countof(buf), L"%02d", iGroggy % 100);
         pTextSlot->Set_Text(buf);
         });
 }
