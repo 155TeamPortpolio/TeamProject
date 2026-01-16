@@ -19,7 +19,7 @@ CFieldPlayer::CFieldPlayer()
 {
 }
 
-OBJECT_HANDLE CFieldPlayer::Get_CurCharacterHandle()
+OBJECT_HANDLE CFieldPlayer::GetCurCharacterHandle()
 {
 	return m_pCurrentCharacter->Get_Handle(); 
 }
@@ -45,6 +45,9 @@ HRESULT CFieldPlayer::Initialize()
 
 void CFieldPlayer::Priority_Update(_float dt)
 {
+	if (m_pCurrentCharacter == nullptr)
+		return;
+
 	Update_Input(dt);
 }
 
@@ -85,6 +88,12 @@ CFieldCharacter* CFieldPlayer::Create_Character()
 	ObjectManager()->Add_Object(Belle, { "Test_Level", "Model_Layer" });
 
 	return dynamic_cast<CFieldCharacter*>(Belle);
+}
+
+HRESULT CFieldPlayer::Clear_Character()
+{
+	m_pCurrentCharacter = nullptr;
+	return S_OK;
 }
 
 void CFieldPlayer::Update_Input(_float dt)
@@ -167,11 +176,6 @@ void CFieldPlayer::Process_Movement(_float dt)
 CFieldPlayer* CFieldPlayer::Create()
 {
 	CFieldPlayer* Instance = new CFieldPlayer();
-	if (FAILED(Instance->Initialize()))
-	{
-		Safe_Release(Instance);
-		return nullptr;
-	}
 	return Instance;
 }
 

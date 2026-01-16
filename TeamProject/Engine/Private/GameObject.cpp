@@ -337,6 +337,7 @@ HRESULT CGameObject::Make_OpaquePacket()
 		if (!packet.pModel->isDrawable(i)) continue;
 		packet.DrawIndex = i;
 		packet.MaterialIndex = packet.pModel->Get_MaterialIndex(i);
+		packet.fLinearZ = Calculate_LinearDepth(packet.pModel->Get_LocalBoundingBox());
 
 		if (packet.pMaterial->Get_MaterialInstance(packet.MaterialIndex)->IsBlened()) {
 			Make_BlendedPacket(packet);
@@ -476,6 +477,32 @@ HRESULT CGameObject::Make_3DUIPacket(OPAQUE_PACKET packet)
 {
 	CGameInstance::GetInstance()->Get_RenderSystem()->Submit_UI3D(packet);
 	return S_OK;
+}
+
+_float CGameObject::Calculate_LinearDepth(const MINMAX_BOX& box)
+{
+	_vector3 centerLocal = (_vector3(box.vMin) + _vector3(box.vMax)) * 0.5f;
+	const _float4x4* worldPtr = m_pTransform->Get_WorldMatrix_Ptr(); 
+	_matrix world = XMLoadFloat4x4(worldPtr);
+
+	_vector centerLocal4 = XMVectorSet(centerLocal.x, centerLocal.y, centerLocal.z, 1.0f);
+	_vector centerWorld4 = XMVector4Transform(centerLocal4, world);
+
+	_vector3 centerWorld;
+	XMStoreFloat3(reinterpret_cast<_float3*>(&centerWorld), centerWorld4);
+
+	_vector4 camPos4 = CameraManager()->Get_CameraPos();
+	_vector3 camPos{ camPos4.x, camPos4.y, camPos4.z };
+
+	_vector4 forward4 = CameraManager()->GetForward();
+	_vector3 forward{ forward4.x, forward4.y, forward4.z };
+	forward.Normalize();
+
+	_vector3 toCenter = centerWorld - camPos;
+	_float depth = toCenter.Dot(forward);
+
+	if (depth < 0.f) depth = 0.f;
+	return depth;
 }
 
 

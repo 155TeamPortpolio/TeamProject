@@ -50,10 +50,12 @@ private:
     virtual ~CFieldPlayer() DEFAULT;
 
 public:
-    OBJECT_HANDLE Get_CurCharacterHandle();
+    OBJECT_HANDLE         GetCurCharacterHandle();
 
-    void    Active_Field();
-    void    DeActive_Field();
+    void                  Active_Field();
+    void                  DeActive_Field();
+
+    HRESULT               Clear_Character();
 
 public:
     HRESULT Initialize();
@@ -64,6 +66,7 @@ public:
 private:
     HRESULT                     Initialize_CharacterPrototype();
     class CFieldCharacter*      Create_Character();
+
 
     void    Update_Input(_float dt);
     void    Process_Movement(_float dt);

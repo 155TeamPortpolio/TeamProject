@@ -240,6 +240,16 @@ Lens CCameraMgr::Get_ShadowLens() const
     return out;
 }
 
+Vector4 CCameraMgr::GetForward() const
+{
+    return GetActiveCamObj().Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+}
+
+Vector4 CCameraMgr::GetRight() const
+{
+    return GetActiveCamObj().Get()->Get_Component<CTransform>()->Dir(STATE::RIGHT);
+}
+
 void CCameraMgr::Free()
 {
     m_overrides.clear();

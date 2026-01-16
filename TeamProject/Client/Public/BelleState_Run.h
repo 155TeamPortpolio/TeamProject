@@ -16,6 +16,7 @@ public:
     static CBelleState_Run* Create() { return new CBelleState_Run(); }
     virtual void Free() override { __super::Free(); }
 };
+
 class CBelleState_Run_Loop : public IBaseState<CBelle>
 {
 public:

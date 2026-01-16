@@ -30,5 +30,3 @@
 #define RES    CGameInstance::GetInstance()->Get_ResourceMgr()
 #define DEVICE CGameInstance::GetInstance()->Get_Device()
 #define DC     CGameInstance::GetInstance()->Get_Context()
-
-namespace fs = filesystem;

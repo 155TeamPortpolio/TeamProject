@@ -74,6 +74,9 @@ HRESULT CScott_Level::Initialize()
 
 HRESULT CScott_Level::Awake()
 {
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
@@ -90,18 +93,13 @@ HRESULT CScott_Level::Awake()
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestModel", CTestObject::Create());
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestMap", CTestMap::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestPlayer", CPlayer::Create());
-	auto Player = Builder::Create_Object({ "Scott_Level", "Proto_GameObject_TestPlayer" })
-		.Build("Test_Player");
-
-	objMgr->Add_Object(Player, { "Scott_Level", "Model_Layer" });
 
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
 
 	//============== Map ============================
-	Ready_Map("Scott_Level", "TrainingRoom");
+	Ready_Map("Scott_Level", "Zero_Worksite");
 
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
@@ -179,4 +177,5 @@ void CScott_Level::Free()
 	CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
+	m_pPlayer->Clear_Characters();
 }

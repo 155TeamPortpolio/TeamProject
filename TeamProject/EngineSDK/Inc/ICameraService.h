@@ -50,6 +50,9 @@ public:
     virtual const _float  Get_ShadowFar() PURE;
     virtual const Matrix* Get_InversedShadowViewMatrix() PURE;
     virtual const Matrix* Get_InversedShadowProjMatrix() PURE;
+
+    virtual Vector4 GetForward() const PURE;
+    virtual Vector4 GetRight() const PURE;
 };
 
 NS_END
