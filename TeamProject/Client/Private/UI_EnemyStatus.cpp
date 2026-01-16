@@ -42,7 +42,7 @@ void CUI_EnemyStatus::Update(_float dt)
 
     //Set_Gauge(Child::HP_GUAGE, fFillAmount);
     //Set_Gauge(Child::GROGGY_GAUGE, fFillAmount);  // 그로기 맥스는 무조건 100
-    //Set_GroggyText();
+    //Set_GroggyText(5);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
@@ -66,6 +66,9 @@ void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
         wchar_t buf[32];
         swprintf_s(buf, _countof(buf), L"%02d", iGroggy % 100);
         pTextSlot->Set_Text(buf);
+
+        _float4 vColor = (iGroggy == 0) ? UI_GRAY_LIGHT : _float4(0.9960f, 0.6549f, 0.0039f, 1.f);
+        pTextSlot->Set_Color(vColor);
         });
 }
 
