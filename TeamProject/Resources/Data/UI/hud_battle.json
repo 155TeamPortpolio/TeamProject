@@ -154,865 +154,12 @@
             "animClips": [],
             "children": [
                 {
-                    "alive": true,
-                    "instanceName": "bg",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -735.0,
-                            -46.0
-                        ],
-                        "size": [
-                            735.0,
-                            52.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "RoleBg.png"
-                },
-                {
-                    "alive": true,
-                    "instanceName": "pauseBg",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -728.0,
-                            -40.0
-                        ],
-                        "size": [
-                            47.74193572998047,
-                            40.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.4627451002597809,
-                        0.4627451002597809,
-                        0.4627451002597809,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "IconPauseBtnBG.png"
-                },
-                {
-                    "alive": true,
-                    "instanceName": "pause",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -720.0,
-                            -36.0
-                        ],
-                        "size": [
-                            30.80000114440918,
-                            28.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [],
-                    "typeTag": "Image",
-                    "textureTag": "IconPauseBtn.png"
-                },
-                {
-                    "alive": true,
-                    "instanceName": "role1",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -688.0,
-                            -42.0
-                        ],
-                        "size": [
-                            376.0,
-                            42.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "alive": true,
-                            "instanceName": "icon1",
-                            "transform": {
-                                "anchor": 5,
-                                "anchorOffset": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    115.3125,
-                                    41.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "IconRoleGeneral10.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpBg",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -261.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    261.0,
-                                    23.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "RoleHPBg01.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpBack1",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -261.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    261.0,
-                                    23.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPBg01.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.7099999785423279,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpFront1",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -261.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    261.0,
-                                    23.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPFill01.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.41999998688697815,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "specialBg",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -160.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    156.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "RoleHPFill03.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "special1",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -160.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    156.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.438567578792572,
-                                0.8030887842178345,
-                                0.2573604881763458,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPFill03.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.5899999737739563,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "curHpText",
-                            "transform": {
-                                "anchor": 5,
-                                "anchorOffset": [
-                                    104.0,
-                                    28.0
-                                ],
-                                "size": [
-                                    32.09999084472656,
-                                    15.612496376037598
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Text",
-                            "text": {
-                                "content": "19155",
-                                "fontTag": "Impact.spritefont",
-                                "fontScale": 0.2999999225139618,
-                                "outlined": false,
-                                "outlineThickness": 1.0,
-                                "outlineColor": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "shear": [
-                                    -0.4000000059604645,
-                                    0.0
-                                ]
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "text",
-                            "transform": {
-                                "anchor": 5,
-                                "anchorOffset": [
-                                    142.0,
-                                    28.0
-                                ],
-                                "size": [
-                                    7.199997901916504,
-                                    15.612496376037598
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Text",
-                            "text": {
-                                "content": "/",
-                                "fontTag": "Impact.spritefont",
-                                "fontScale": 0.2999999225139618,
-                                "outlined": false,
-                                "outlineThickness": 1.0,
-                                "outlineColor": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "shear": [
-                                    -0.20000000298023224,
-                                    0.0
-                                ]
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "maxHpText",
-                            "transform": {
-                                "anchor": 5,
-                                "anchorOffset": [
-                                    146.0,
-                                    28.0
-                                ],
-                                "size": [
-                                    32.09999084472656,
-                                    15.612496376037598
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Text",
-                            "text": {
-                                "content": "19155",
-                                "fontTag": "Impact.spritefont",
-                                "fontScale": 0.2999999225139618,
-                                "outlined": false,
-                                "outlineThickness": 1.0,
-                                "outlineColor": [
-                                    0.0,
-                                    0.0,
-                                    0.0,
-                                    1.0
-                                ],
-                                "shear": [
-                                    -0.4000000059604645,
-                                    0.0
-                                ]
-                            }
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "alive": true,
-                    "instanceName": "role2",
-                    "transform": {
-                        "anchor": 10,
-                        "anchorOffset": [
-                            -314.0,
-                            -42.0
-                        ],
-                        "size": [
-                            154.0,
-                            23.0
-                        ],
-                        "scale": [
-                            1.0,
-                            1.0
-                        ],
-                        "pivot": [
-                            0.0,
-                            0.0
-                        ],
-                        "radian": 0.0
-                    },
-                    "color": [
-                        1.0,
-                        1.0,
-                        1.0,
-                        1.0
-                    ],
-                    "pass": "Opaque",
-                    "animClips": [],
-                    "children": [
-                        {
-                            "alive": true,
-                            "instanceName": "icon2",
-                            "transform": {
-                                "anchor": 5,
-                                "anchorOffset": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    68.0,
-                                    24.177778244018555
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "IconRoleGeneral13.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpBg",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -82.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    82.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "RoleHPBg02.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpBack2",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -82.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    82.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPBg02.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.7799999713897705,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "hpFront2",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -82.0,
-                                    0.0
-                                ],
-                                "size": [
-                                    82.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                1.0,
-                                1.0,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPFill02.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.6700000166893005,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "ultimateBg",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -88.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    27.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "RoleHPBg02.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "ultimate2",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -88.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    27.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                1.0,
-                                0.8571428656578064,
-                                0.0,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPBg02.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 0.4300000071525574,
-                                "radial": false
-                            }
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "specialBg",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -55.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    48.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                0.2823529541492462,
-                                1.0
-                            ],
-                            "pass": "Opaque",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "RoleHPBg02.png"
-                        },
-                        {
-                            "alive": true,
-                            "instanceName": "special2",
-                            "transform": {
-                                "anchor": 6,
-                                "anchorOffset": [
-                                    -55.0,
-                                    15.0
-                                ],
-                                "size": [
-                                    48.0,
-                                    9.0
-                                ],
-                                "scale": [
-                                    1.0,
-                                    1.0
-                                ],
-                                "pivot": [
-                                    0.0,
-                                    0.0
-                                ],
-                                "radian": 0.0
-                            },
-                            "color": [
-                                0.9223177433013916,
-                                0.5065667033195496,
-                                0.9305019378662109,
-                                1.0
-                            ],
-                            "pass": "LinearFill",
-                            "animClips": [],
-                            "children": [],
-                            "typeTag": "Gauge",
-                            "textureTag": "RoleHPBg02.png",
-                            "gauge": {
-                                "direction": 0.0,
-                                "fillAmount": 1.0,
-                                "radial": false
-                            }
-                        }
-                    ],
-                    "typeTag": "CanvasPanel"
-                },
-                {
-                    "alive": true,
+                    "alive": false,
                     "instanceName": "role3",
                     "transform": {
                         "anchor": 10,
                         "anchorOffset": [
-                            -162.0,
+                            -156.0,
                             -42.0
                         ],
                         "size": [
@@ -1038,6 +185,41 @@
                     "pass": "Opaque",
                     "animClips": [],
                     "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg3",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -90.0,
+                                    -15.0
+                                ],
+                                "size": [
+                                    175.0,
+                                    35.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleBg02.png"
+                        },
                         {
                             "alive": true,
                             "instanceName": "icon3",
@@ -1264,6 +446,125 @@
                             }
                         },
                         {
+                            "alive": false,
+                            "instanceName": "ultimateIcon3",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    2.0,
+                                    8.0
+                                ],
+                                "size": [
+                                    18.0,
+                                    18.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.20000000298023224,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.05000000074505806
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.399999976158142,
+                                                1.399999976158142
+                                            ],
+                                            "time": 0.10000000149011612
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.20000000298023224
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "clip0"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "SkillButtonUlt.png"
+                        },
+                        {
                             "alive": true,
                             "instanceName": "specialBg",
                             "transform": {
@@ -1337,9 +638,1226 @@
                                 "fillAmount": 1.0,
                                 "radial": false
                             }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "CanvasPanel",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -60.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    58.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [
+                                {
+                                    "alive": true,
+                                    "instanceName": "specialArrow3",
+                                    "transform": {
+                                        "anchor": 1,
+                                        "anchorOffset": [
+                                            0.0,
+                                            -6.666666507720947
+                                        ],
+                                        "size": [
+                                            10.0,
+                                            13.333333015441895
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Arrow.png"
+                                }
+                            ],
+                            "typeTag": "CanvasPanel"
                         }
                     ],
                     "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "role2",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -312.0,
+                            -42.0
+                        ],
+                        "size": [
+                            154.0,
+                            23.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg2",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -90.0,
+                                    -15.583000183105469
+                                ],
+                                "size": [
+                                    175.0,
+                                    35.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleBg02.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "icon2",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    68.0,
+                                    24.177778244018555
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconRoleGeneral13.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpBg",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -82.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    82.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPBg02.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpBack2",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -82.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    82.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPBg02.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.7799999713897705,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpFront2",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -82.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    82.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPFill02.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.6700000166893005,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "ultimateBg",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -88.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    27.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPBg02.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "ultimate2",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -88.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    27.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                0.8571428656578064,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPBg02.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.4300000071525574,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": false,
+                            "instanceName": "ultimateIcon2",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    3.0,
+                                    8.0
+                                ],
+                                "size": [
+                                    18.0,
+                                    18.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.20000000298023224,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.05000000074505806
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.399999976158142,
+                                                1.399999976158142
+                                            ],
+                                            "time": 0.10000000149011612
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                0.0,
+                                                0.0,
+                                                0.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.20000000298023224
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "clip0"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "SkillButtonUlt.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "specialBg",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -55.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    48.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPBg02.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "special2",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -55.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    48.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.9223177433013916,
+                                0.5065667033195496,
+                                0.9305019378662109,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPBg02.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 1.0,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "CanvasPanel",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -60.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    58.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [
+                                {
+                                    "alive": true,
+                                    "instanceName": "specialArrow2",
+                                    "transform": {
+                                        "anchor": 1,
+                                        "anchorOffset": [
+                                            0.0,
+                                            -6.666666507720947
+                                        ],
+                                        "size": [
+                                            10.0,
+                                            13.333333015441895
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Arrow.png"
+                                }
+                            ],
+                            "typeTag": "CanvasPanel"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "role1",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -688.0,
+                            -42.0
+                        ],
+                        "size": [
+                            376.0,
+                            42.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg1",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -235.0,
+                                    -25.0
+                                ],
+                                "size": [
+                                    430.0,
+                                    52.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleBg01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "icon1",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    115.3125,
+                                    41.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconRoleGeneral10.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpBg",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -261.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    261.0,
+                                    23.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPBg01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpBack1",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -261.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    261.0,
+                                    23.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPBg01.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.7099999785423279,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpFront1",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -261.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    261.0,
+                                    23.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPFill01.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.41999998688697815,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "curHpText",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    104.0,
+                                    28.0
+                                ],
+                                "size": [
+                                    32.09999084472656,
+                                    15.612496376037598
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "19155",
+                                "fontTag": "Impact.spritefont",
+                                "fontScale": 0.2999999225139618,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    -0.4000000059604645,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "text",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    142.0,
+                                    28.0
+                                ],
+                                "size": [
+                                    7.199997901916504,
+                                    15.612496376037598
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "/",
+                                "fontTag": "Impact.spritefont",
+                                "fontScale": 0.2999999225139618,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    -0.20000000298023224,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "maxHpText",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    146.0,
+                                    28.0
+                                ],
+                                "size": [
+                                    32.09999084472656,
+                                    15.612496376037598
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "19155",
+                                "fontTag": "Impact.spritefont",
+                                "fontScale": 0.2999999225139618,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    -0.4000000059604645,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "specialBg",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -160.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    150.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                0.2823529541492462,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPFill03.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "special1",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -160.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    150.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.9215686321258545,
+                                0.5058823823928833,
+                                0.929411768913269,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPFill03.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 0.5899999737739563,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "CanvasPanel",
+                            "transform": {
+                                "anchor": 6,
+                                "anchorOffset": [
+                                    -165.0,
+                                    15.0
+                                ],
+                                "size": [
+                                    160.0,
+                                    9.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [
+                                {
+                                    "alive": true,
+                                    "instanceName": "specialArrow1",
+                                    "transform": {
+                                        "anchor": 1,
+                                        "anchorOffset": [
+                                            0.0,
+                                            -6.666666507720947
+                                        ],
+                                        "size": [
+                                            10.0,
+                                            13.333333015441895
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.0,
+                                            0.0
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Arrow.png"
+                                }
+                            ],
+                            "typeTag": "CanvasPanel"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "pauseBg",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -728.0,
+                            -40.0
+                        ],
+                        "size": [
+                            47.74193572998047,
+                            40.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.4627451002597809,
+                        0.4627451002597809,
+                        0.4627451002597809,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconPauseBtnBG.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "pause",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -719.0,
+                            -35.0
+                        ],
+                        "size": [
+                            30.80000114440918,
+                            28.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.0,
+                        0.0,
+                        0.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "IconPauseBtn.png"
                 }
             ],
             "typeTag": "CanvasPanel"

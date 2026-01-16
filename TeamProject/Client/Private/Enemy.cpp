@@ -183,6 +183,7 @@ void CEnemy::Create_EnemyStatus(string boneTag)
 	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
 	pDesc->pParentWorld = pParentWorld;
 	pDesc->pBoneLocal = pBoneLocal;
+	pDesc->pMonsterStatus = &m_tStatus;
 
 	// EnemyStatus UI »ý¼º
 	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
