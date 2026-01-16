@@ -153,11 +153,13 @@ inline T* CGameObject::Add_Component(Args && ...args)
 		m_Components.insert({ type_index(typeid(CModel)), comp });
 		Safe_AddRef(comp);
 	}
-	//if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
-	//{
-	//	m_Components.insert({ type_index(typeid(CCollider)), comp });
-	//	Safe_AddRef(comp);
-	//}
+
+	if constexpr (is_base_of_v<ICollidable, T>)
+	{
+		m_Components.insert({ type_index(typeid(ICollidable)), comp });
+		Safe_AddRef(comp);
+	}
+
 	return comp;
 }
 
@@ -182,14 +184,14 @@ inline HRESULT CGameObject::Remove_Component()
 			Safe_Release(iter->second);
 			m_Components.erase(type_index(typeid(CModel)));
 		}
-		//if constexpr (is_base_of_v<CCollider, T>) //충돌체 특수 처리
-		//{
-		//	Safe_Release(iter->second);
-		//	m_Components.erase(type_index(typeid(CCollider)));
-		//}
+		if constexpr (is_base_of_v<ICollidable, T>)
+		{
+			Safe_Release(iter->second);
+			m_Components.erase(type_index(typeid(ICollidable)));
+		}
 		Safe_Release(iter->second);
 		m_Components.erase(iter);
-			return S_OK;
+		return S_OK;
 	}
 	else {
 		return E_FAIL;

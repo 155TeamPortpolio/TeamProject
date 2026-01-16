@@ -189,9 +189,19 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Ultimate();
 	Process_Energy();
 
-	if (InputDevice()->Key_Down('T'))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB))
 	{
-		// �׽�Ʈ �ڵ�
+		m_bLockOn = !m_bLockOn;
+		if (m_TargetHandle.isValid())
+		{
+			if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+				< TARGET_MAXDISTANCE)
+				return;
+		}
+		TARGET_LOCK_DESC desc;
+		desc.bLock = m_bLockOn;
+		desc.tHandle = m_TargetHandle;
+		EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
 	}
 }
 
@@ -327,6 +337,7 @@ void CBattlePlayer::Update_Status()
 		desc.eCharacter = pCharacter->Get_CharacterName();
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
+		desc.specialThreshold = pCharacter->Get_EnergyDesc().fSpecialEnergy;
 		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
 
 		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
@@ -429,6 +440,11 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eState = UI_ACTION_STATE::ENABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	/* Ultimate */

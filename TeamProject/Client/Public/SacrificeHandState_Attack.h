@@ -31,6 +31,9 @@ public:
 public:
 	static CSacrificeHandState_Attack_01_Phase1* Create() { return new CSacrificeHandState_Attack_01_Phase1(); }
 	virtual void Free() override { __super::Free(); }
+
+private:
+	void Update_Effects(CSacrificeHand* pOwner);
 };
 
 class CSacrificeHandState_Attack_02_Phase1 : public IHState<CSacrificeHand>
@@ -45,6 +48,8 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CSacrificeHand* pOwner);
+
 	_bool m_IsActiveHand = false;
 };
 
@@ -60,6 +65,8 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Effects(CSacrificeHand* pOwner);
+
 	_bool m_IsActiveHand = false;
 };
 

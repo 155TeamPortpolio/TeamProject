@@ -55,7 +55,7 @@ public:
     {
         _float      fCurrentEnergy = { 0.f };
         _float      fPrevEnergy = { 0.f };
-        _float      fEnergyWeight = { 1.f };
+        _float      fEnergyWeight = { 10.f };
         _float      fSpecialEnergy = { 60.f };
     };
 
@@ -118,6 +118,7 @@ public:
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
 
+
     void    Active_Character();
     void    DeActive_Character();
 
@@ -168,6 +169,7 @@ public:
     void     Active_AttackCollider(const string& strName, _bool bActive);
     void     Begin_AttackCollider(const string& strName, const HitDesc& hitdesc);
     void     End_AttackCollider(const string& strName);
+    void     End_AllAttackColliders();
     _bool    Is_Active_AttackCollider(const string& strName);
 
     void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
@@ -178,7 +180,7 @@ public:
     void Push_Invincible() { ++m_iInvincibleCount; }
     void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     // 일시적 무적 - 회피 무적프레임 등
-    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; m_ParryableTargets.clear(); }
 
 private:
     void    Update_Rotation(_float dt);
@@ -188,6 +190,7 @@ private:
     void    Update_Invincible(_float dt);
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
+
 protected:
     CAnimator3D*                m_pAnimator = { nullptr };
     CCharacterController*       m_pCCT = { nullptr };
@@ -242,6 +245,7 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+    _bool                         m_bLockOn = { false };
     // 무적
     _int    m_iInvincibleCount = { 0 };
     _float  m_fInvincibleTimer = { 0.f };

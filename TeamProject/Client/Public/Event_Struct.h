@@ -59,4 +59,12 @@ typedef struct tagUIActionPrimaryDesc {
 }UI_ACTION_PRIMARY_DESC;
 #pragma endregion
 
+#pragma region TargetLockOn
+typedef struct tagTargetLockDesc {
+	_bool	bLock = false;
+	OBJECT_HANDLE	tHandle{};
+}TARGET_LOCK_DESC;
+
+#pragma endregion
+
 NS_END

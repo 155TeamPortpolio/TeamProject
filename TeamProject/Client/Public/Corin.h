@@ -33,6 +33,7 @@ private:
     HRESULT     Initialize_StateMachine();
     HRESULT     Initialize_States();
     HRESULT     Initialize_Transitions();
+    HRESULT     Initialize_Stat();
     HRESULT     Initialize_Weapon();
 
 private:
