@@ -48,11 +48,19 @@ public:
     void          Update(_float dt);
 
 private:
+    CPlayer* GetPlayer() const;
+    void     UpdatePlayer();
+    void     UpdateInput();
+
+private:
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
     OBJECT_HANDLE           m_spaceRefHandle{};
     CamType                 m_returnCamType = CamType::None;
+
+    OBJECT_HANDLE           m_focusHandle{};
+    _int                    m_focusType = -1;
 };
 
 NS_END
