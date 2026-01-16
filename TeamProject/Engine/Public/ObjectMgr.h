@@ -46,6 +46,13 @@ public:
 	virtual void Set_LayerTimeScale(const LAYER_DESC& Layer, _float scale) override;
 	virtual void Reset_LayerTimeScale(const LAYER_DESC& Layer) override;
 	virtual _float Get_LayerTimeScale(const LAYER_DESC& Layer) override;
+
+public:
+	virtual _bool Remember_Global(_uint RememberKey, const OBJECT_HANDLE& handle, _bool replaceIfExists);
+	virtual class CGameObject* Find_Global(_uint KeyID);
+	virtual _bool Unregister_Global(_uint keyID);
+	virtual void Clear_Global();
+
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	class CObjectPool* m_pObjectPool = { nullptr };
@@ -57,6 +64,9 @@ private:
 
 	vector<CGameObject*> m_ReleaseObjs;
 	unordered_set<_uint> m_ReleaseIDs;
+
+	unordered_map<_uint, OBJECT_HANDLE> m_globalHandleByKey;
+
 public:
 	static CObjectMgr* Create();
 	virtual void Free() override;

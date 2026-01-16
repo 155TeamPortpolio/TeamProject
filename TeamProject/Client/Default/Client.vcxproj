@@ -172,11 +172,14 @@
     <ClInclude Include="..\Public\BelleState_Move.h" />
     <ClInclude Include="..\Public\BelleState_Run.h" />
     <ClInclude Include="..\Public\BelleState_Walk.h" />
+    <ClInclude Include="..\Public\CorinState_Hit.h" />
     <ClInclude Include="..\Public\FieldCharacter.h" />
     <ClInclude Include="..\Public\FieldPlayer.h" />
     <ClInclude Include="..\Public\FieldSystem.h" />
+    <ClInclude Include="..\Public\UI_EnemyStatus.h" />
     <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
+    <ClInclude Include="..\Public\CamDirectorData.h" />
     <ClInclude Include="..\public\CamLoader.h" />
     <ClInclude Include="..\public\CamObject.h" />
     <ClInclude Include="..\public\CamDirector.h" />
@@ -227,6 +230,7 @@
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\MainCity_Level.h" />
     <ClInclude Include="..\public\MapAnimObject.h" />
+    <ClInclude Include="..\Public\OrbitCamTypes.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInNormal.h" />
@@ -342,6 +346,7 @@
     <ClInclude Include="..\Public\UI_UltimateAction.h" />
     <ClInclude Include="..\Public\UVAnimationUI.h" />
     <ClInclude Include="..\public\JaneDoe.h" />
+    <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
     <ClInclude Include="Client.h" />
@@ -399,9 +404,11 @@
     <ClCompile Include="..\Private\BelleState_Move.cpp" />
     <ClCompile Include="..\Private\BelleState_Run.cpp" />
     <ClCompile Include="..\Private\BelleState_Walk.cpp" />
+    <ClCompile Include="..\Private\CorinState_Hit.cpp" />
     <ClCompile Include="..\Private\FieldCharacter.cpp" />
     <ClCompile Include="..\Private\FieldPlayer.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp" />
+    <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
     <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />
@@ -563,6 +570,7 @@
     <ClCompile Include="..\Private\UI_UltimateAction.cpp" />
     <ClCompile Include="..\Private\UVAnimationUI.cpp" />
     <ClCompile Include="..\private\JaneDoe.cpp" />
+    <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
     <ClCompile Include="Client.cpp" />

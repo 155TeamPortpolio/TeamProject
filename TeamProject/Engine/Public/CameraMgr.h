@@ -90,7 +90,7 @@ private:
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 

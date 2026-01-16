@@ -148,6 +148,7 @@ public:
     virtual void    On_SwitchOut()              PURE;
     virtual void    On_Ultimate();
     virtual void    On_Special() {}; // 개별 구현 
+    virtual void    On_Hit(DAMAGE_TYPE eType) {}; // 개별 구현
 
 public:
     HRESULT  Attach_AttackCollider(ATTACK_COLLIDER_DESC* pDesc);
@@ -169,11 +170,22 @@ public:
     void     End_AttackCollider(const string& strName);
     _bool    Is_Active_AttackCollider(const string& strName);
 
+    void     Take_Damage(DAMAGE_TYPE eType, _float fDamage);
+    _vector3 Get_HitTargetPos() const { return m_vTargetPos; }
+
+    _bool Is_Invincible() const { return m_iInvincibleCount > 0 || m_fInvincibleTimer > 0.f; }
+    // 상태머신용 - 명시적 제어
+    void Push_Invincible() { ++m_iInvincibleCount; }
+    void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
+    // 일시적 무적 - 회피 무적프레임 등
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+
 private:
     void    Update_Rotation(_float dt);
     void    Update_Evade(_float dt);
     void    Update_Energy(_float dt);
     void    Update_Decibel(_float dt);
+    void    Update_Invincible(_float dt);
 
     class CCharacterAttackCollider* Find_AttackCollider(const string& strName);
 protected:
@@ -218,7 +230,9 @@ protected:
     _bool           m_bIsRotating = { false };
     // �и�
     unordered_set<CGameObject*>  m_ParryableTargets;
-    // �׽�Ʈ��  
+    // 피격 위치
+    _vector3    m_vTargetPos = {};
+    // �׽�Ʈ��
     _bool           m_bTest = { false };
     //���̴�
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
@@ -228,6 +242,10 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+    // 무적
+    _int    m_iInvincibleCount = { 0 };
+    _float  m_fInvincibleTimer = { 0.f };
+
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;

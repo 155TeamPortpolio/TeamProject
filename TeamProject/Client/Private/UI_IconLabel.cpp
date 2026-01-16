@@ -8,6 +8,8 @@ HRESULT CUI_IconLabel::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
+    Add_Component<CObjectContainer>();
+
     return S_OK;
 }
 
@@ -24,7 +26,11 @@ HRESULT CUI_IconLabel::Initialize(INIT_DESC* pArg)
 
 void CUI_IconLabel::Update(_float dt)
 {
+    Update_WorldToScreen(m_vWorldPos);
+
     __super::Update(dt);
+
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 CGameObject* CUI_IconLabel::Create()

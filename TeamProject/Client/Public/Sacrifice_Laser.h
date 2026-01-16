@@ -22,6 +22,7 @@ public:
     void    Priority_Update(_float dt) override;
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
+    void Render_GUI() override;
 
 public:
     void ActiveLaser(_uint mode);
@@ -40,6 +41,7 @@ private:
 
     /* Target Mode */
     _float3 m_vTargetDir{};
+    _float3 m_vTargetPos{};
 };
 
 NS_END
