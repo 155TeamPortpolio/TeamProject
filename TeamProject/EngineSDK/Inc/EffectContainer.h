@@ -28,7 +28,7 @@ public:
 public:
 	EFFECT_CONTAINER_CONTEXT& GetEffectContext();
 	void SetLinePoints(_float3 point0, _float3 point1);
-	void AttachBone(class CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix);
+	void AttachBone(class CAnimator3D* pAnimator, const string& boneTag, _fmatrix offsetMatrix = _smatrix::Identity);
 
 public:
 	void Play();

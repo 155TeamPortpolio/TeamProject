@@ -40,8 +40,6 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 	}
 	
-
-	
 	CStaticModel* pModel = Get_Component<CStaticModel>();
 	pModel->Link_Model(G_GlobalLevelKey, pMeshNode->ModelTag);
 	pModel->Set_RenderType(RENDER_PASS_TYPE::RENDER_EFFECT);
@@ -52,6 +50,12 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		m_DiffuseTextureTag = pMeshNode->DiffuseTextureTag;
 		m_NoiseTextureTag = pMeshNode->NoiseTextureTag;
 		m_DissolveTextureTag = pMeshNode->DissolveTextureTag;
+
+		/* Offset Transform */
+		_vector3 vPosition = pMeshNode->vOffsetPosition;
+		_quaternion vQuaternion = pMeshNode->vOffsetQuaternion;
+		m_pTransform->Set_Pos(vPosition);
+		m_pTransform->Set_Quaternion(vQuaternion);
 
 		/* Texture */
 		m_TextureSlotModule.eSamplerMode = static_cast<TEXTURE_SLOT_MODULE::SAMPLER_MODE>(pMeshNode->SamplerMode);
@@ -120,6 +124,8 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		auto pDissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, m_DissolveTextureTag);
 		pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
 	}
+
+
 
 	return S_OK;
 }

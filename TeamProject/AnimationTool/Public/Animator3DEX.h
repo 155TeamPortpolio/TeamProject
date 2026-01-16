@@ -23,6 +23,7 @@ public:
 public:
     virtual void Render_GUI() override;
     virtual void Update_Animation(_float fTrackPosition) override;
+    Matrix Get_PreTransform() { return m_PreTransform; }
 
 public:
     vector<CAnimationClip*>* Get_Clips();

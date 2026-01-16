@@ -81,6 +81,13 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	if (m_fLockOnCooldown > 0.f)
+	{
+		m_fLockOnCooldown -= dt;
+		if (m_fLockOnCooldown <= 0.f)
+			m_fLockOnCooldown = 0.f;
+	}
+
 	UI_ACTION_DESC desc{};
 
 	/* Evade & EvadePerfect */
@@ -189,9 +196,17 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Ultimate();
 	Process_Energy();
 
-	if (InputDevice()->Key_Down('T'))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
 	{
-		// �׽�Ʈ �ڵ�
+		m_bLockOn = !m_bLockOn;
+		m_fLockOnCooldown = LOCKON_COOLDOWN;
+
+		if (!m_TargetHandle.isValid()) return;
+
+		TARGET_LOCK_DESC desc;
+		desc.bLock = m_bLockOn;
+		desc.tHandle = m_TargetHandle;
+		EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
 	}
 }
 
