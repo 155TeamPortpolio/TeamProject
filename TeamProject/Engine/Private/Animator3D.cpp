@@ -1538,6 +1538,9 @@ void CAnimator3D::Render_GUI()
 
 void CAnimator3D::GUI_ShowLayerInfo()
 {
+	if (m_AnimLayers.empty())
+		return;
+
 	ImGui::BeginChild("##Animator Layer", ImVec2{ 0, 100.f }, true);
 	// ───────── Layer / Loop
 	ImGui::Text("Layer");
