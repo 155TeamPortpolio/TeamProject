@@ -42,16 +42,11 @@ void CShadowCam::Update(_float dt)
 	transform->LookAt(XMVectorSet(0.f, 0.f, 0.f, 1.f));
 
 	_vector LightDir = transform->Dir(STATE::LOOK);
-	LIGHT_DESC desc{};
-	desc.vLightPosition  = {};
-	desc.fLightRange     = {};
-	desc.fLightIntensity = 1.f;
-	XMStoreFloat4(&desc.vLightDirection, LightDir);
-	desc.vLightDiffuse   = { 1.0f,  1.0f, 1.0f, 1.0f };
-	desc.vLightAmbient   = { 1.0f,  1.0f, 1.0f, 1.0f };
-	desc.vLightSpecular  = { 1.0f,  1.0f, 1.0f, 1.0f };
-	Get_Component<CLight>()->Set_Desc(desc, LIGHT_TYPE::DIRECTIONAL);
+	auto Desc = Get_Component<CLight>()->SnapShot_Desc();
+	XMStoreFloat4(&Desc.vLightDirection, LightDir);
+	Get_Component<CLight>()->Set_Desc(Desc, LIGHT_TYPE::DIRECTIONAL);
 }
+
 CShadowCam* CShadowCam::Create()
 {
 	CShadowCam* Instance = new CShadowCam();
