@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "BattleSystem.h"
 #include "CorinState_Evade.h"
 #include "Corin.h"
 
@@ -7,6 +8,14 @@
 
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
+    if (pOwner->Can_Parry())
+    {
+        BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER,
+            1.5f, 0.5f);
+        pOwner->Set_InvincibleTimer(1.5f);
+    }
+
+
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();

@@ -264,7 +264,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 
 #pragma region TriggerCollider
 	COLLIDER_DESC TriggercolliderDesc = {};
-	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
 	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	TriggercolliderDesc.bTrigger = true;
 	TriggercolliderDesc.bAutoFit = false;

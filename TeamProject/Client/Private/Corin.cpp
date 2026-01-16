@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Corin.h"
 #include "GameInstance.h"
+#include "BattleSystem.h"
 
 #include "Material.h"
 
@@ -127,6 +128,9 @@ void CCorin::Render_GUI()
 		m_pStateMachine->Render_GUI();
 
 	}
+	ImGui::Separator();
+	ImGui::Text("Parrable Object %d", m_ParryableTargets.size());
+
 }
 
 void CCorin::On_SwitchIn(SWITCH eType)

@@ -139,8 +139,6 @@ void CCharacter::Priority_Update(_float dt)
 {
 	if (InputDevice()->Key_Tap('T'))
 		m_bTest = !m_bTest;
-	if (InputDevice()->Key_Tap('H'))
-		Take_Damage(DAMAGE_TYPE::NORMAL, 1.f);
 }
 
 void CCharacter::Update(_float dt)
@@ -172,21 +170,37 @@ void CCharacter::OnCollisionExit(CGameObject* pOther)
 
 void CCharacter::OnTriggerEnter(CGameObject* pOther)
 {
-	CCollider* pCollider = pOther->Get_Component<CCollider>();
-	if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
+	if (Is_Invincible())	return;
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
+	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
 	{
+
 		m_ParryableTargets.insert(pOther);
+		CollisionSystem()->Log_CollisionEvent("Insert");
 	}
-	else if (pCollider->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
 	{
 		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
 	}
-	//MSG_BOX("OnTriggerEnter");
 }
 
-void CCharacter::OnTriggerStay(CGameObject* pOher)
+void CCharacter::OnTriggerStay(CGameObject* pOther)
 {
-	//MSG_BOX("OnTriggerStay");
+	if (Is_Invincible())	return;
+	ICollidable* pCollidable = pOther->Get_Component<ICollidable>();
+	if (!pCollidable) return;
+	CollisionSystem()->Log_CollisionEvent(Helper::EnumToString(pCollidable->Get_Group()));
+	if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_PARRY)
+	{
+		m_ParryableTargets.insert(pOther);
+		CollisionSystem()->Log_CollisionEvent("Insert");
+	}
+	else if (pCollidable->Get_Group() == COLLISION_GROUP::MONSTER_ATTACK)
+	{
+		m_vTargetPos = pOther->Get_Component<CTransform>()->Dir(STATE::POSITION);
+	}
 }
 
 void CCharacter::OnTriggerExit(CGameObject* pOther)
