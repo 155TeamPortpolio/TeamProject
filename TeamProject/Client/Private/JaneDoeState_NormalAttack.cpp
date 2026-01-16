@@ -62,6 +62,44 @@ void CJaneDoeState_NormalAttack::Update(CJaneDoe* pOwner, _float dt)
     if (CGameInstance::GetInstance()->Get_InputDev()->Mouse_Tap(MOUSE_BTN::LB))
         m_pSubStateMachine->Set_Trigger("NextCombo");
 
+    for (const auto& Event : pOwner->Get_Component<CAnimator3D>()->Get_EventBus())
+    {
+        if (Event.Type != CLIP_EVENT_TYPE::NOTIFY) continue;
+
+        if (Event.Tag == "LHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_L", {HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,30), 0, 0});
+        }
+        else if (Event.Tag == "LHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_L");
+        }
+        else if (Event.Tag == "RHandStart")
+        {
+            pOwner->Begin_AttackCollider("HandWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(10,30), 0, 0 });
+        }
+        else if (Event.Tag == "RHandEnd")
+        {
+            pOwner->End_AttackCollider("HandWeapon_R");
+        }
+        else if (Event.Tag == "LFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_L", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0, 0 });
+        }
+        else if (Event.Tag == "LFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_L");
+        }
+        else if (Event.Tag == "RFootStart")
+        {
+            pOwner->Begin_AttackCollider("FootWeapon_R", { HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, Helper::Get_Random_Float(20,40), 0, 0 });
+        }
+        else if (Event.Tag == "RFootEnd")
+        {
+            pOwner->End_AttackCollider("FootWeapon_R");
+        }
+    }
+
     __super::Update(pOwner, dt);
 }
 

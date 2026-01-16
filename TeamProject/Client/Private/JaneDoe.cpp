@@ -294,6 +294,26 @@ HRESULT CJaneDoe::Initialize_Weapon()
 	if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
 		return E_FAIL;
 
+	ATTACK_COLLIDER_DESC BootsL_WeaponDesc;
+	BootsL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
+	BootsL_WeaponDesc.tagName = "FootWeapon_L";
+	BootsL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+
+	if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
+		return E_FAIL;
+
+	ATTACK_COLLIDER_DESC BootsR_WeaponDesc;
+	BootsR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
+	BootsR_WeaponDesc.tagName = "FootWeapon_R";
+	BootsR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+
+	if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
