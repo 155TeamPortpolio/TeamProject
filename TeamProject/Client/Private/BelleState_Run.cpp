@@ -61,15 +61,15 @@ void CBelleState_Run_Loop::Enter(CBelle* pOwner)
 
 void CBelleState_Run_Loop::Update(CBelle* pOwner, _float dt)
 {
-   //if (pOwner->Is_OppositeInput())
-   //{
-   //    IHState<CBelle>* pRunState = Get_ParentState();
-   //    if (pRunState && pRunState->Get_SubStateMachine())
-   //    {
-   //        pRunState->Get_SubStateMachine()->Set_Trigger("ToTurnback");
-   //        return;
-   //    }
-   //}
+   if (pOwner->Is_OppositeInput())
+   {
+       IHState<CBelle>* pRunState = Get_ParentState();
+       if (pRunState && pRunState->Get_SubStateMachine())
+       {
+           pRunState->Get_SubStateMachine()->Set_Trigger("ToTurnback");
+           return;
+       }
+   }
     pOwner->Process_RootMotion(dt);
 }
 
@@ -82,6 +82,7 @@ void CBelleState_Run_Turnback::Enter(CBelle* pOwner)
 
 void CBelleState_Run_Turnback::Update(CBelle* pOwner, _float dt)
 {
+    pOwner->Process_RootMotion(dt);
 }
 
 void CBelleState_Run_End::Enter(CBelle* pOwner)

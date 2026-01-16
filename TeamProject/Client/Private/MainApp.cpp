@@ -30,7 +30,7 @@
 #include "ParticleNode.h"
 #include "EffectContainer.h"
 #include "AttackSign.h"
-
+#include "Player.h"
 /* UI */
 #include "UI_EnemyStatus.h"
 
@@ -69,7 +69,7 @@ HRESULT CMainApp::Initialize()
 
 	/* ���������� ����� ������ Ÿ�� ��ü ��� */
 	Initialize_GlobalPrototype();
-	
+	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
 
 	#ifdef  _USING_GUI
@@ -135,10 +135,11 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
 
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam", COrbitCam::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FreeCam", CFreeCam::Create());
+	// Camera
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam",    COrbitCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_FreeCam",     CFreeCam::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SequenceCam", CSequenceCam::Create());
-	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ShadowCam", CShadowCam::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ShadowCam",   CShadowCam::Create());
 
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_SpriteNode", CSpriteNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_ParticleNode", CParticleNode::Create());
@@ -147,6 +148,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
 
+	/*Player*/
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 }
@@ -205,3 +208,11 @@ void CMainApp::Create_GlobalCamObjs()
 	CamLoader::Load();
 }
 
+void CMainApp::Create_GlobalPlayer()
+{
+	auto Player = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Player" })
+		.Build("Player");
+	ObjectManager()->Add_Object(Player, { G_GlobalLevelKey, "Player_Layer" });
+
+	ObjectManager()->Remember_Global(ENUM(GLOBAL_ID::Player), Player->Get_Handle(), false);
+}

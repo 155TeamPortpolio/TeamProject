@@ -161,7 +161,7 @@ void CThugBulkyEnforcer::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_vDirToLookCapture.x, m_vDirToLookCapture.y, m_vDirToLookCapture.z);
-		ImGui::Text("Groggy Value : %d", m_iGroggyValue);
+		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 
 		ImGui::BeginDisabled(true);
 		ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
@@ -271,7 +271,7 @@ void CThugBulkyEnforcer::Render_GUI()
 		if (ImGui::TreeNode("Hit & Groggy##ThugBulkyEnforcerTestHitAndGroggy")) {
 			
 			if (ImGui::Button("Increase Groggy value 30"))
-				m_iGroggyValue += 30;
+				m_tStatus.iGroggyValue += 30;
 			if (ImGui::Button("Hit")) {
 				if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
 					//for (size_t i = 9; i < 10; i++)
@@ -319,17 +319,17 @@ void CThugBulkyEnforcer::Render_GUI()
 		}
 		if (ImGui::Button("Weapon_L_AttackCollider")) 
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK,
-				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK));
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK), {});
 		if (ImGui::Button("Weapon_R_AttackCollider")) 
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK,
-				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK));
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK), {});
 	
 		if (ImGui::Button("Weapon_L_TriggerCollider")) 
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER,
-				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER));
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER), {});
 		if (ImGui::Button("Weapon_R_TriggerCollider")) 
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER,
-				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER));
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER), {});
 		ImGui::TreePop();
 	}
 #pragma endregion
@@ -428,9 +428,9 @@ void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
 void CThugBulkyEnforcer::TurnOnAttackCollider(BATTLE_PART ePart)
 {
 	if (BATTLE_PART::LEFT == ePart)
-		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true);
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true, {});
 	else if (BATTLE_PART::RIGHT == ePart)
-		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true);
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true, {});
 	//else if (BATTLE_PART::KNEE == ePart)
 	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::ATTACK, true); 
 
@@ -441,9 +441,9 @@ void CThugBulkyEnforcer::TurnOnAttackCollider(BATTLE_PART ePart)
 void CThugBulkyEnforcer::TurnOnTriggerCollider(BATTLE_PART ePart)
 {
 	if (BATTLE_PART::LEFT == ePart)
-		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true);
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true, {});
 	else if (BATTLE_PART::RIGHT == ePart)
-		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true);
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true, {});
 	//else if (BATTLE_PART::KNEE == ePart)
 	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::TRIGGER, true); 
 
@@ -457,6 +457,11 @@ void CThugBulkyEnforcer::FinishWeaponCollider()
 
 	m_isBattleAttackOn = false;
 	m_isBattleTriggerOn = false;
+}
+
+void CThugBulkyEnforcer::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+
 }
 
 /* For.State Machine */
@@ -564,7 +569,8 @@ void CThugBulkyEnforcer::Update_States(_float dt)
 
 void CThugBulkyEnforcer::ControlState(const _float dt)
 {
-	if (100 == m_iGroggyValue) {
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() &&
+		true == m_isGroggy) {
 		m_pStateMachine->Change_State("Groggy");
 	}
 
@@ -674,20 +680,4 @@ void CThugBulkyEnforcer::ManageAttackHistory()
 		m_AttackHistory.pop_back();
 }
 
-void CThugBulkyEnforcer::ManageGroggy(const _float dt)
-{
-	if (100 < m_iGroggyValue)
-		m_iGroggyValue = 100;
 
-	if ("Groggy" == m_pStateMachine->Get_CurrentStateName()) {
-		m_fGroggyDecreaseTime += dt;
-
-		if (0.1f <= m_fGroggyDecreaseTime) {
-			--m_iGroggyValue;
-			m_fGroggyDecreaseTime = 0.f;
-		}
-
-		if (0 > m_iGroggyValue)
-			m_iGroggyValue = 0;
-	}
-}

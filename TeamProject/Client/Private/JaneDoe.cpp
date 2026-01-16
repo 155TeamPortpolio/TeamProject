@@ -63,7 +63,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-
+	if (FAILED(Initialize_Weapon()))	   
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -251,6 +252,20 @@ HRESULT CJaneDoe::Initialize_Stat()
 	m_fAttackPower = LVDesc.Attack;
 	
 	Set_EvadeMax(3);
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Weapon()
+{
+	//ATTACK_COLLIDER_DESC desc;
+	//desc.eColliderType = COLLIDER_TYPE::BOX;
+	//desc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	//desc.tagBone = "Weapon_saw";
+	//desc.tagName = "Saw";
+	//desc.vSize = { 0.5f, 0.5f, 0.05f };
+	//
+	//if (FAILED(Attach_AttackCollider(&desc)))	return E_FAIL;
+
 	return S_OK;
 }
 

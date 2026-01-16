@@ -46,5 +46,27 @@ struct PanelUIState
     float expandedH = 400.f;
     float slideY    = 0.f;
 };
+struct KeyframeListUIState
+{
+    _uint pendingDeleteKeyId = 0;
+
+    string lastFileError{};
+    bool requestOpenFileErrorPopup = false;
+
+    char prefabNameBuf[128] = "DebugSequence";
+    const CamSequenceDesc* lastSeqPtr = nullptr;
+    bool nameEditing = false;
+
+    string lastLoadedPath{};
+    char   autoLoadPathBuf[260] = "";
+    bool   didAutoLoadOnce = false;
+};
+struct KeyframeEditorUIState
+{
+    _uint pendingTimeSelectedId = 0;
+    float pendingTimeValue = 0.f;
+    int   pendingOverwriteCount = 0;
+    bool  requestOpenTimeCollisionPopup = false;
+};
 
 NS_END
