@@ -96,6 +96,7 @@ private:
     class CCharacter*                               m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>                           m_CharacterHandles{};
     OBJECT_HANDLE                                   m_TargetHandle;
+    _bool                                           m_bLockOn = { false };
 
     InputState   m_input;
     _uint        m_iParryingCount = 6;
