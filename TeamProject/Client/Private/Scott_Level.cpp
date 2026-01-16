@@ -103,10 +103,6 @@ HRESULT CScott_Level::Awake()
 
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
-
-	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
-
 	return S_OK;
 }
 

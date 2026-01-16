@@ -123,9 +123,6 @@ HRESULT CZero_Level::Awake()
 
 	ObjectManager()->Add_Object(Player, { "Zero_Level","Model_Layer"});
 
-	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
-
 	return S_OK;
 }
 
@@ -135,48 +132,8 @@ void CZero_Level::Update()
 
 	CBattleSystem::GetInstance()->Update();
 
-	static OBJECT_HANDLE prevPlayer{};
-
-	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-
-	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
-	{
-		prevPlayer = curPlayer;
-
-		m_pCamDirector->SetSpaceRef(curPlayer);
-
-		auto orbitObj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
-		static_cast<COrbitCam*>(orbitObj)->SetTarget(curPlayer);
-	}
-
-	if (InputDevice()->Key_Down(VK_F1))
-	{
-		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Free));
-		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
-	}
-
-	if (InputDevice()->Key_Down(VK_F2))
-	{
-		const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-
-		auto obj = ObjectManager()->Request_Object(m_pCamDirector->GetCamHandle(CamType::Orbit));
-		static_cast<COrbitCam*>(obj)->SetTarget(curPlayer);
-
-		CameraManager()->Set_MainCam(obj->Get_Component<CCamera>(), 0.5f);
-	}
-
-	if (InputDevice()->Key_Down(VK_F3))
-		m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
-
-	if (InputDevice()->Key_Tap(VK_F7))
-		CameraManager()->AddShake(CamShakeType::HitNormal);
-
-	if (InputDevice()->Key_Tap(VK_F8))
-		CameraManager()->AddShake(CamShakeType::HitHeavy);
-
-	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
-
-	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
+	const _float dt = m_pGameInstance->Get_EngineDeltaTime();
+	m_pCamDirector->Update(dt);
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{

@@ -48,9 +48,9 @@ public:
     void          Update(_float dt);
 
 private:
-    CPlayer* GetPlayer() const;
-    void     UpdatePlayer();
-    void     UpdateInput();
+    CPlayer*      GetPlayer() const;
+    void          UpdatePlayer();
+    void          UpdateInput();
 
 private:
     CamDirectorSeqMap       m_seqs{};
