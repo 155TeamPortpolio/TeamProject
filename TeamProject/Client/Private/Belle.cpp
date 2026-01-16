@@ -33,8 +33,8 @@ HRESULT CBelle::Initialize_Prototype()
 	pRcsMgr->Add_ResourcePath("Avatar_Female_Size02_Belle_Suibianguan_Meta.json",
 		"../Bin/Resources/Model/skeletal/FieldCharacter/Belle/Avatar_Female_Size02_Belle_Suibianguan_Meta.json");
 
-	Get_Component<CModel>()->Link_Model("Test_Level", "Belle.model");
-	Get_Component<CMaterial>()->Link_Material("Test_Level", "Belle.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "Belle.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "Belle.mat");
 	return S_OK;
 }
 
