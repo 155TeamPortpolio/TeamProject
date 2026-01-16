@@ -169,12 +169,12 @@ void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
 
     case UI_STATUS_TYPE::SPECIAL:
         target = SPECIAL_CHILD[iIndex];
-        if(desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
-            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
         break;
 
     case UI_STATUS_TYPE::ULTIMATE:
         target = ULTIMATE_CHILD[iIndex];
+        if (desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
+            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
         break;
     }
 
@@ -194,19 +194,9 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 
     // Special
     _float fSpecialRatio = desc.special.fCurValue / desc.special.fMaxValue;
-    _float fSpecialThreRatio = desc.specialThreshold / desc.special.fMaxValue;
+    _float fSpecialThresRatio = desc.specialThreshold / desc.special.fMaxValue;
     Set_GaugeFill(SPECIAL_CHILD[iIndex], fSpecialRatio);
-    if (fSpecialRatio >= fSpecialThreRatio)
-    {
-        Set_Color(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
-        Set_Color(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
-    } 
-    else
-    {
-        Set_Color(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
-        Set_Color(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
-    } 
-    Set_Special(iIndex, fSpecialThreRatio); 
+    Set_Special(iIndex, fSpecialRatio, fSpecialThresRatio);
 
     // Ultimate
     _float fUltimateRatio = desc.ultimate.fCurValue / desc.ultimate.fMaxValue;
@@ -221,13 +211,26 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     }
 }
 
-void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio)
+void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
 {
     if (0 > iIndex || iIndex > 2)
         return;
 
+    // special gauge, 기준점 색깔 변경
+    if (fRatio >= fThresRatio)
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
+        Set_Color(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
+    }
+    else
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
+        Set_Color(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
+    }
+
+    // special 기준점 위치 변경
     ForChild(SPECIALARROW_CHILD[iIndex], [&](CUI_Object* ui) {
-        ui->Set_AnchorOffsetX(fRatio * SPECIAL_THRESHOLD[iIndex]);
+        ui->Set_AnchorOffsetX(fThresRatio * SPECIAL_THRESHOLD[iIndex]);
         });
 }
 

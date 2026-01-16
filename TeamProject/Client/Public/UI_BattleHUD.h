@@ -66,7 +66,7 @@ private:
 	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 
-	void Set_Special(_int iIndex, _float fRatio);
+	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
 	
 	_bool Is_Alive(Child child);
