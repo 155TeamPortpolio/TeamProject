@@ -19,6 +19,8 @@
 
 #include "FootIK.h"
 
+#include "DataBase.h"
+
 CCorin::CCorin()
 {
 }
@@ -84,6 +86,8 @@ void CCorin::Awake()
 	//ikDesc.bDynamicPoleVector = false;  // ²ô±â
 	//ikDesc.vPoleVector = _vector3(0.f, 1.f, 0.f);  // °íÁ¤
 	//m_pAnimator->Initialize_FootIK(&ikDesc);
+
+	Initialize_Stat();
 }
 
 void CCorin::Priority_Update(_float dt)
@@ -156,10 +160,9 @@ void CCorin::On_Special()
 		desc.eType = UI_ACTION_TYPE::SPECIAL;
 		desc.eState = UI_ACTION_STATE::EXECUTING;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
-		m_tEnergy.fCurrentEnergy -= 100.f;
 	}
-	//m_pStateMachine->Set_Int("AttackEntryMode", 2);
-	//m_pStateMachine->Set_Trigger("Attack");
+	m_pStateMachine->Set_Int("AttackEntryMode", 2);
+	m_pStateMachine->Set_Trigger("Attack");
 }
 
 void CCorin::On_Hit(DAMAGE_TYPE eType)
@@ -363,6 +366,20 @@ HRESULT CCorin::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("Hit", "Idle",
 		CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 
+	return S_OK;
+}
+
+HRESULT CCorin::Initialize_Stat()
+{
+	auto Desc = CDataBase::GetInstance()->GetPlayerDesc(m_strName);
+	m_tEnergy.fSpecialEnergy = Desc.SpecialAttack;
+
+	auto LVDesc = CDataBase::GetInstance()->GetLevelDesc(m_iCurrentLevel);
+	m_fMaxHP = LVDesc.MaxHP;
+	m_fDefense = LVDesc.Defend;
+	m_fAttackPower = LVDesc.Attack;
+
+	Set_EvadeMax(2);
 	return S_OK;
 }
 

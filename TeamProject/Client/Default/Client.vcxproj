@@ -172,6 +172,7 @@
     <ClInclude Include="..\Public\BelleState_Move.h" />
     <ClInclude Include="..\Public\BelleState_Run.h" />
     <ClInclude Include="..\Public\BelleState_Walk.h" />
+    <ClInclude Include="..\Public\CorinState_ExAttack.h" />
     <ClInclude Include="..\Public\CorinState_Hit.h" />
     <ClInclude Include="..\Public\FieldCharacter.h" />
     <ClInclude Include="..\Public\FieldPlayer.h" />
@@ -404,6 +405,7 @@
     <ClCompile Include="..\Private\BelleState_Move.cpp" />
     <ClCompile Include="..\Private\BelleState_Run.cpp" />
     <ClCompile Include="..\Private\BelleState_Walk.cpp" />
+    <ClCompile Include="..\Private\CorinState_ExAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_Hit.cpp" />
     <ClCompile Include="..\Private\FieldCharacter.cpp" />
     <ClCompile Include="..\Private\FieldPlayer.cpp" />

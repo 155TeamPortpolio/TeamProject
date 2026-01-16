@@ -446,7 +446,9 @@ void CCharacter::Update_Energy(_float dt)
 		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 		return;
 	}
-	m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
+	if (InputDevice()->Key_Down('P'))
+		m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
+	//m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
 }
 
 void CCharacter::Update_Decibel(_float dt)
