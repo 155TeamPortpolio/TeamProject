@@ -186,14 +186,34 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
 {
     const _uint iIndex = ENUM(desc.eOwner);
 
+    // Icon
     Set_Texture(ICON_CHILD[iIndex], ICONTEXTURES[ENUM(desc.eCharacter)]);
-    Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
-    Set_GaugeFill(SPECIAL_CHILD[iIndex], desc.special.fCurValue / desc.special.fMaxValue);
 
+    // HP
+    Set_GaugeFill(HPFRONT_CHILD[iIndex], desc.hp.fCurValue / desc.hp.fMaxValue);
+
+    // Special
+    _float fSpecialRatio = desc.special.fCurValue / desc.special.fMaxValue;
+    _float fSpecialThreRatio = desc.specialThreshold / desc.special.fMaxValue;
+    Set_GaugeFill(SPECIAL_CHILD[iIndex], fSpecialRatio);
+    if (fSpecialRatio >= fSpecialThreRatio)
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], Helper::HexToColor("#FBC3D6"));
+        Set_Color(SPECIALARROW_CHILD[iIndex], Helper::HexToColor("#FF0607"));
+    } 
+    else
+    {
+        Set_Color(SPECIAL_CHILD[iIndex], UI_GRAY_LIGHTEST);
+        Set_Color(SPECIALARROW_CHILD[iIndex], UI_GRAY_LIGHTEST);
+    } 
+    Set_Special(iIndex, fSpecialThreRatio); 
+
+    // Ultimate
     _float fUltimateRatio = desc.ultimate.fCurValue / desc.ultimate.fMaxValue;
     Set_GaugeFill(ULTIMATE_CHILD[iIndex], fUltimateRatio);
     Set_UltimateIcon(iIndex, fUltimateRatio);
 
+    // HP Text
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
         Set_NumberText(Child::CUR_HP_TEXT, desc.hp.fCurValue, m_iPlayerHPWidth);
@@ -201,13 +221,22 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     }
 }
 
+void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio)
+{
+    if (0 > iIndex || iIndex > 2)
+        return;
+
+    ForChild(SPECIALARROW_CHILD[iIndex], [&](CUI_Object* ui) {
+        ui->Set_AnchorOffsetX(fRatio * SPECIAL_THRESHOLD[iIndex]);
+        });
+}
+
 void CUI_BattleHUD::Set_UltimateIcon(_int iIndex, _float fRatio)
 {
-    if (iIndex == 0)
+    if (0 >= iIndex || iIndex > 2)
         return;
 
     _bool isAlive = (fRatio >= 1.f);
-
     if (isAlive && !Is_Alive(ULTIMATEICON_CHILD[iIndex]))
     {
         Set_Alive(ULTIMATEICON_CHILD[iIndex], true);
@@ -231,6 +260,13 @@ void CUI_BattleHUD::Set_Alive(Child child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) {
         ui->Set_Alive(isAlive);
+        });
+}
+
+void CUI_BattleHUD::Set_Color(Child child, _float4 vColor)
+{
+    ForChild(child, [vColor](CUI_Object* ui) {
+        ui->Set_Color(vColor);
         });
 }
 

@@ -645,11 +645,11 @@
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
-                                    -55.0,
+                                    -60.0,
                                     15.0
                                 ],
                                 "size": [
-                                    48.0,
+                                    58.0,
                                     9.0
                                 ],
                                 "scale": [
@@ -1204,11 +1204,11 @@
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
-                                    -55.0,
+                                    -60.0,
                                     15.0
                                 ],
                                 "size": [
-                                    48.0,
+                                    58.0,
                                     9.0
                                 ],
                                 "scale": [
@@ -1722,11 +1722,11 @@
                             "transform": {
                                 "anchor": 6,
                                 "anchorOffset": [
-                                    -160.0,
+                                    -165.0,
                                     15.0
                                 ],
                                 "size": [
-                                    150.0,
+                                    160.0,
                                     9.0
                                 ],
                                 "scale": [

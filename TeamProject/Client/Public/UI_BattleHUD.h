@@ -26,6 +26,7 @@ class CUI_BattleHUD final : public CUI_Object
 	inline static constexpr Child HPBACK_CHILD[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
 	inline static constexpr Child HPFRONT_CHILD[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
 	inline static constexpr Child SPECIAL_CHILD[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
+	inline static constexpr _float SPECIAL_THRESHOLD[] = { 150.f, 48.f, 48.f };
 	inline static constexpr Child SPECIALARROW_CHILD[] = { SPECIALARROW1, SPECIALARROW2, SPECIALARROW3 };
 	inline static constexpr Child ULTIMATE_CHILD[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
 	inline static constexpr Child ULTIMATEICON_CHILD[] = { ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3 };
@@ -51,7 +52,7 @@ private:
 	vector<UI_HANDLE>	m_handles; 
 
 	_bool				m_isUltimate[3] = {};
-
+	// 150 48
 private:
 	const _int			m_iPlayerHPWidth = 5;
 	const _int			m_iBossHPWidth = 2;
@@ -65,10 +66,12 @@ private:
 	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 
+	void Set_Special(_int iIndex, _float fRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
-
+	
 	_bool Is_Alive(Child child);
 	void Set_Alive(Child child, _bool isAlive);
+	void Set_Color(Child child, _float4 vColor);
 	void Set_Animation(Child child, _int iIndex);
 	void Set_Texture(Child child, const string& strTextureKey); 
 	void Set_GaugeFill(Child child, _float fFillAmount);
