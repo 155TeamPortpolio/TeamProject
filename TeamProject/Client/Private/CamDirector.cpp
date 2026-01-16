@@ -11,9 +11,11 @@
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
+CCamDirector::CCamDirector() : camMgr(*CameraManager()), objMgr(*ObjectManager()) {}
+
 CGameObject* CCamDirector::GetCamObj(CamType type) const
 {
-    return ObjectManager()->Request_Object(m_camHandles[ENUM(type)]);
+    return objMgr.Request_Object(m_camHandles[ENUM(type)]);
 }
 
 _bool CCamDirector::Register(const string& key, const filesystem::path& path)
@@ -42,7 +44,6 @@ void CCamDirector::UnRegister(const string& key)
 void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
 {
     if (!targetHandle.isValid()) return;
-
     GetOrbitCam()->SetTarget(targetHandle);
     SetSpaceRef(targetHandle);
 }
@@ -76,19 +77,22 @@ void CCamDirector::Update(_float dt)
 
 CPlayer* CCamDirector::GetPlayer() const
 {
-    return static_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+    return static_cast<CPlayer*>(objMgr.Find_Global(ENUM(GLOBAL_ID::Player)));
 }
 
 void CCamDirector::UpdateInput()
 {
     if (InputDevice()->Key_Tap(VK_F1))
-        CameraManager()->Set_MainCam(GetFreeCamComp(), 0.5f);
+        camMgr.Set_MainCam(GetFreeCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F2))
-        CameraManager()->Set_MainCam(GetOrbitCamComp(), 0.5f);
+        camMgr.Set_MainCam(GetOrbitCamComp(), 0.5f);
 
     if (InputDevice()->Key_Tap(VK_F3))
         RequestSequence("Intro/Jane_Intro");
+
+    if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+        camMgr.AddShake(CamShakeType::HitNormal);
 }
 
 void CCamDirector::UpdatePlayer()
@@ -118,7 +122,7 @@ void CCamDirector::UpdatePlayer()
     if (!m_focusHandle.isValid() || focus.hObjID != m_focusHandle.hObjID)
     {
         m_focusHandle = focus;
-        GetOrbitCam()->SetTarget(m_focusHandle);
+        SetTarget(m_focusHandle);
         SetSpaceRef(m_focusHandle);
     }
 }
@@ -165,7 +169,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
     if (req.resetTime) seqPlayer->SetTime(0.f);
 
-    const _uint handle = CameraManager()->Push(seqCam, req.blendInSec);
+    const _uint handle = camMgr.Push(seqCam, req.blendInSec);
 
     m_playing.handle = handle;
     m_playing.key = key;
@@ -188,7 +192,7 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
 
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
-    const Matrix outWorld = *CameraManager()->Get_InversedViewMatrix();
+    const Matrix outWorld = *camMgr.Get_InversedViewMatrix();
 
     Vector3 outPos = outWorld.Translation();
     Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
@@ -217,7 +221,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
         }
     }
 
-    const _bool ok = CameraManager()->Pop(handle, blendOutSec);
+    const _bool ok = camMgr.Pop(handle, blendOutSec);
     m_playing = {};
     return ok;
 }

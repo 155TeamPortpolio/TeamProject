@@ -161,6 +161,10 @@ void CJaneDoe::On_Special()
 	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
 	{
 		m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
+		UI_ACTION_DESC desc;
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	m_pStateMachine->Set_Int("AttackEntryMode", 2);
 	m_pStateMachine->Set_Trigger("Attack");
