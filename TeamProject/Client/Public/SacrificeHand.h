@@ -10,6 +10,7 @@ class CSacrificeHand :
     public CEnemy
 {
 public:
+    enum class DISSOLVE_STATE { APPEAR, DISAPPEAR, NONE, END };
     enum class PATTERN { PHASE1, PHASE2, OVER_DRIVE_START, OVER_DRIVE_ATTACK01, OVER_DRIVE_ATTACK02, OVER_DRIVE_ATTACK03, END };
 
     typedef struct tagSacrificeHandBlackBoard : public ATTACK_BLACK_BOARD
@@ -47,6 +48,11 @@ public:
 
     void Idle();
 
+    /* Dissolve */
+    void Set_DissolveState(DISSOLVE_STATE state, _float duration);
+    DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
+    void Update_Dissolve(_float dt);
+
 private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
@@ -55,5 +61,16 @@ private:
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };
     SACRIFICE_HAND_BLACK_BOARD m_AttackBlackBoard{};
+
+    /* Material Params */
+    _float3 m_vRimLightColor{};
+    _float m_fRimLightPower{};
+    _float m_fDissolveProgress{};
+    _float m_fDissolveTilling{};
+
+    _bool m_IsOnDissolve = false;
+    _float m_fDissolveDuration{};
+    _float m_fDissolveElapsedTime{};
+    DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 };
 NS_END

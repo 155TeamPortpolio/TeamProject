@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "SacrificeHandState_Attack.h"
+#include "GameInstance.h"
 #include "SacrificeHand.h"
 #include "Sacrifice.h"
 #include "Child.h"
+#include "EffectContainer.h"
 
 void CSacrificeHandState_Attack::Enter(CSacrificeHand* pOwner)
 {
@@ -111,8 +113,9 @@ void CSacrificeHandState_Attack::BuildPattern(CSacrificeHand* pOwner)
 void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
 
@@ -126,16 +129,33 @@ void CSacrificeHandState_Attack_01_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_01_Phase1::Exit(CSacrificeHand* pOwner)
 {
 }
 
+void CSacrificeHandState_Attack_01_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.12f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_smoke_trail.json")
+			.Build("HandSmokeTrail");
+
+		static_cast<CEffectContainer*>(effect)->AttachBone(pOwner->Get_Component<CAnimator3D>(), "Eye01_A1");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
+}
+
 void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
 
 	m_IsActiveHand = true;
 }
@@ -150,31 +170,56 @@ void CSacrificeHandState_Attack_02_Phase1::Update(CSacrificeHand* pOwner, _float
 		m_IsActiveHand = false;
 	}
 
-	if (m_fAnimProgress >= 0.4)
+	if (m_fAnimProgress >= 0.3)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (IsCrossAnimProgress(0.15f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_02_Phase1::Exit(CSacrificeHand* pOwner)
 {
 }
 
+void CSacrificeHandState_Attack_02_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.1f))
+	{
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_smoke_trail.json")
+			.Build("HandSmokeTrail");
+
+		static_cast<CEffectContainer*>(effect)->AttachBone(pOwner->Get_Component<CAnimator3D>(), "Eye01_A1");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
+}
+
 void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.4f).Apply();
+	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_12").Loop(false).Speed(1.2f).Apply();
 
 	auto pTrasform = pOwner->Get_Component<CTransform>();
 	CSacrifice* pParent = static_cast<CSacrifice*>(pOwner->Get_Component<CChild>()->Get_Parent());
 
+	_vector3 vCurrPosition = pTrasform->Get_WorldPos();
 	_vector3 vTargetPosition = pParent->GetTargetingInfo().vTargetPos;
-	pTrasform->LookAt(vTargetPosition);
-	_vector3 vLook = pTrasform->Dir(STATE::LOOK);
-	pTrasform->Set_Pos(vTargetPosition - vLook * 16.f);
+	_vector3 vDir = vTargetPosition - vCurrPosition;
+	vDir.y = 0.f;
+	vDir.Normalize();
 
+	pTrasform->Set_Look(vDir);
+	pTrasform->Set_Pos(vTargetPosition - vDir * 16.f);
+
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	m_IsActiveHand = false;
 }
 
@@ -194,10 +239,31 @@ void CSacrificeHandState_Attack_03_Phase1::Update(CSacrificeHand* pOwner, _float
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+	if (IsCrossAnimProgress(0.55f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
+	Update_Effects(pOwner);
 }
 
 void CSacrificeHandState_Attack_03_Phase1::Exit(CSacrificeHand* pOwner)
 {
+}
+
+void CSacrificeHandState_Attack_03_Phase1::Update_Effects(CSacrificeHand* pOwner)
+{
+	if (IsCrossAnimProgress(0.1f))
+	{
+		_vector3 vWorldPosition = pOwner->Get_WorldPos();
+
+		auto effect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("sacrifice_hand_ground_up.json")
+			.Position(vWorldPosition)
+			.Build("HandGroundUp");
+
+		ObjectManager()->Add_Object(effect, { "Zero_Level","Effect_Layer" });
+	}
 }
 
 void CSacrificeHandState_Attack_04_Phase2::Enter(CSacrificeHand* pOwner)
@@ -205,6 +271,7 @@ void CSacrificeHandState_Attack_04_Phase2::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_Attack_04").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	pOwner->SetVisable(true);
 }
 
@@ -232,6 +299,7 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Enter(CSacrificeHand* p
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringerHand_Ani_P2_OverDrive_Charge_Start_New").Loop(false).Speed(1.2f).Apply();
 
+
 	pOwner->SetVisable(true);
 }
 
@@ -246,6 +314,8 @@ void CSacrificeHandState_OverDrive_Release_Start_Phase2::Update(CSacrificeHand* 
 		if (!blackBoard.stateQueue.empty())
 			blackBoard.isRequestNext = true;
 	}
+
+
 }
 
 void CSacrificeHandState_OverDrive_Release_Start_Phase2::Exit(CSacrificeHand* pOwner)
@@ -302,6 +372,7 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
 
@@ -318,6 +389,11 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Update(CSacrificeHan
 
 		pOwner->SetVisable(false);
 	}
+
+	if (IsCrossAnimProgress(0.85f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Exit(CSacrificeHand* pOwner)
@@ -329,6 +405,7 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
 
@@ -345,6 +422,11 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Update(CSacrificeHan
 
 		pOwner->SetVisable(false);
 	}
+
+	if (IsCrossAnimProgress(0.85f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Exit(CSacrificeHand* pOwner)
@@ -356,6 +438,7 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack03").Loop(false).Speed(1.2f).Apply();
 
+	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
 
@@ -372,6 +455,11 @@ void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Update(CSacrificeHan
 
 		pOwner->SetVisable(false);
 	}
+
+	if (IsCrossAnimProgress(0.85f))
+		pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::DISAPPEAR, 0.1f);
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeHandState_OverDrive_Release_Attack03_Phase2::Exit(CSacrificeHand* pOwner)
