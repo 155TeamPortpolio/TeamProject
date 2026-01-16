@@ -44,7 +44,14 @@ HRESULT COrbitCam::Initialize_Prototype()
 HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
+    auto event = Get_Component<CEventListener>();
 
+    event->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc) 
+        {
+            if (!desc.tHandle.isValid()) return;
+            if (desc.bLock == true)  SetLockOn(desc.tHandle);
+            else                     ClearLockOn();
+        });
 
     return S_OK;
 }
@@ -83,6 +90,13 @@ void COrbitCam::SetTarget(OBJECT_HANDLE handle)
     pose.curDist = clamp(pose.curDist, profile.minDist, profile.maxDist);
 
     ClampTargets();
+}
+
+void COrbitCam::ClearTarget()
+{
+    targetHandle.Reset();
+    lockOn      = {};
+    lockOnBlend = {};
 }
 
 void COrbitCam::SyncFromCurTransform()
@@ -212,6 +226,8 @@ void COrbitCam::CaptureSnapshot(OrbitCamSnapshot& out) const
 {
     out.pose = pose;
     out.targetSwitch = targetSwitch;
+    out.lockOn = lockOn;
+    out.lockOnBlend = lockOnBlend;
     out.autoYawHoldTimer = autoYawHoldTimer;
     out.prevTargetFoot = prevTargetFoot;
     out.hasPrevTargetFoot = hasPrevTargetFoot;
@@ -221,6 +237,8 @@ void COrbitCam::CaptureSnapshot(OrbitCamSnapshot& out) const
 void COrbitCam::RestoreSnapshot(const OrbitCamSnapshot& s)
 {
     targetHandle = s.targetHandle;
+    lockOn = s.lockOn;
+    lockOnBlend = s.lockOnBlend;
     pose = s.pose;
     targetSwitch = s.targetSwitch;
     autoYawHoldTimer = s.autoYawHoldTimer;
@@ -241,41 +259,52 @@ void COrbitCam::RestoreSnapshot(const OrbitCamSnapshot& s)
     auto cc = Get_Component<CCharacterController>();
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
+    const float w = GetLockOnWeight();
+
+    Vector3 lookAt = pivot;
+    if (w > 0.f) lookAt = Vector3::Lerp(pivot, GetLockOnFocusPos(), w);
+
     m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
-    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+    m_pTransform->LookAt(Vector4(lookAt.x, lookAt.y, lookAt.z, 1.f));
 }
 
 void COrbitCam::SetLockOn(OBJECT_HANDLE handle)
 {
-    lockOn.active = true;
+    if (!lockOn.active)
+    {
+        lockOn.active = true;
+        lockOn.handle = handle;
+        lockOn.savedTargetDist = pose.targetDist;
+
+        StartLockOnBlend(true);
+        return;
+    }
+
+    if (handle.hObjID == lockOn.handle.hObjID) return;
+
     lockOn.handle = handle;
-
-    autoYawHoldTimer  = 0.f;
-    hasPrevTargetFoot = false;
-
-    const Vector3 playerPivot = GetBasePivotTargetPos(targetHandle);
-    const Vector3 targetPivot = GetBasePivotTargetPos(lockOn.handle);
-
-    Vector3 flat = targetPivot - playerPivot;
-    flat.y = 0.f;
-
-    const float len = flat.Length();
-    if (len == 0.f) return;
-
-    flat /= len;
-
-    const float desiredYawDeg = XMConvertToDegrees(atan2f(flat.x, flat.z));
-    pose.targetRotDeg.x = desiredYawDeg;
-    pose.curRotDeg.x = desiredYawDeg;
 }
 
 void COrbitCam::ClearLockOn()
 {
-    lockOn = {};
+    if (!lockOn.active && !lockOnBlend.active) return;
+
+    pose.targetDist = clamp(lockOn.savedTargetDist, profile.minDist, profile.maxDist);
+
+    if (!lockOnBlend.active)
+    {
+        StartLockOnBlend(false);
+        return;
+    }
+
+    if (lockOnBlend.entering) StartLockOnBlend(false);
 }
 
 void COrbitCam::UpdateLockOn(_float dt)
 {
+    const float w = GetLockOnWeight();
+    if (w <= 0.f) return;
+
     const Vector3 playerPivot = GetBasePivotTargetPos(targetHandle);
     const Vector3 targetPivot = GetBasePivotTargetPos(lockOn.handle);
 
@@ -293,13 +322,14 @@ void COrbitCam::UpdateLockOn(_float dt)
     float a = 1.f - expf(-profile.lockOnYawSpeed * dt);
     a = clamp(a, 0.f, 1.f);
 
-    pose.targetRotDeg.x += deltaYawDeg * a;
+    pose.targetRotDeg.x += deltaYawDeg * a * w;
 
     if (profile.lockOnAutoZoom)
     {
         const float wanted = profile.startDistance + len * profile.lockOnAutoZoomFactor;
-        const float clamped = clamp(wanted, profile.minDist, profile.maxDist);
-        if (pose.targetDist < clamped) pose.targetDist = clamped;
+        const float clampedDist = clamp(wanted, profile.minDist, profile.maxDist);
+
+        if (pose.targetDist < clampedDist) pose.targetDist = pose.targetDist + (clampedDist - pose.targetDist) * w;
     }
 }
 
@@ -318,6 +348,63 @@ Vector3 COrbitCam::GetLockOnFocusPos() const
     return Vector3::Lerp(playerPivot, targetPivot, focusT);
 }
 
+void COrbitCam::StartLockOnBlend(_bool entering)
+{
+    lockOnBlend.active = true;
+    lockOnBlend.entering = entering;
+    lockOnBlend.elapsed = 0.f;
+
+    if (entering)
+    {
+        lockOnBlend.duration = profile.lockOnBlendInSec;
+        lockOnBlend.ease = profile.lockOnBlendInEase;
+        lockOnBlend.weight = 0.f;
+        autoYawHoldTimer = 0.f;
+    }
+    else
+    {
+        lockOnBlend.duration = profile.lockOnBlendOutSec;
+        lockOnBlend.ease = profile.lockOnBlendOutEase;
+        lockOnBlend.weight = 1.f;
+        autoYawHoldTimer = profile.autoYawFollowDelay;
+    }
+}
+
+void COrbitCam::UpdateLockOnBlend(_float dt)
+{
+    if (!lockOnBlend.active)
+    {
+        if (lockOn.active) lockOnBlend.weight = 1.f;
+        else lockOnBlend.weight = 0.f;
+        return;
+    }
+
+    lockOnBlend.elapsed += dt;
+
+    float t = lockOnBlend.elapsed / lockOnBlend.duration;
+    if (t >= 1.f)
+    {
+        lockOnBlend.active = false;
+
+        if (lockOnBlend.entering)
+        {
+            lockOnBlend.weight = 1.f;
+        }
+        else
+        {
+            lockOnBlend.weight = 0.f;
+            lockOn = {};
+        }
+        return;
+    }
+
+    t = clamp(t, 0.f, 1.f);
+    const float e = Math::ApplyEase(lockOnBlend.ease, t);
+
+    if (lockOnBlend.entering) lockOnBlend.weight = e;
+    else lockOnBlend.weight = 1.f - e;
+}
+
 void COrbitCam::Priority_Update(_float dt)
 {
     if (!targetHandle.isValid()) return;
@@ -326,12 +413,13 @@ void COrbitCam::Priority_Update(_float dt)
 
     pose.targetPivot = GetPivotTargetPos();
 
+    UpdateLockOnBlend(dt);
     UpdateInput(dt);
 
-    if (lockOn.active)
-        UpdateLockOn(dt);
-    else
-        UpdateAutoYawFollow(dt);
+    const float w = GetLockOnWeight();
+
+    if (w > 0.f) UpdateLockOn(dt);
+    else UpdateAutoYawFollow(dt);
 
     ClampTargets();
     SmoothStates(dt);
@@ -347,7 +435,9 @@ void COrbitCam::UpdateInput(_float dt)
     const float dx = InputDevice()->Mouse_DeltaX();
     const float dy = InputDevice()->Mouse_DeltaY();
 
-    if (!lockOn.active) pose.targetRotDeg.x += dx * input.sensitivityX;
+    const float w = GetLockOnWeight();
+
+    if (w <= 0.f) pose.targetRotDeg.x += dx * input.sensitivityX;
     pose.targetRotDeg.y += dy * input.sensitivityY;
 
     if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
@@ -424,7 +514,10 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     delta = clamp(delta, -maxStep, maxStep);
     pose.curDist += delta;
 
-    const Vector3 lookAt = lockOn.active ? GetLockOnFocusPos() : pivot;
+    const float w = GetLockOnWeight();
+
+    Vector3 lookAt = pivot;
+    if (w > 0.f) lookAt = Vector3::Lerp(pivot, GetLockOnFocusPos(), w);
 
     m_pTransform->Set_WorldPos(Vector4((float)c1.x, (float)c1.y, (float)c1.z, 1.f));
     m_pTransform->LookAt(Vector4(lookAt.x, lookAt.y, lookAt.z, 1.f));

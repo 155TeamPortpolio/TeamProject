@@ -24,7 +24,7 @@ public:
 
 public:
     void    SetTarget(OBJECT_HANDLE handle);
-    void    ClearTarget() { targetHandle.Reset(); }
+    void    ClearTarget();
 
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
@@ -39,6 +39,9 @@ public:
 private:
     void    UpdateLockOn(_float dt);
     Vector3 GetLockOnFocusPos() const;
+    void    StartLockOnBlend(_bool entering);
+    void    UpdateLockOnBlend(_float dt);
+    _float  GetLockOnWeight() const { return lockOnBlend.weight; }
 
 private:
     void    UpdateInput(_float dt);
@@ -61,6 +64,7 @@ private:
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
     OrbitCamTargetSwitchState targetSwitch{};
+    OrbitCamLockOnBlendState  lockOnBlend{};
     Profile                   profile{};
                               
     _float                    autoYawHoldTimer = 0.f;

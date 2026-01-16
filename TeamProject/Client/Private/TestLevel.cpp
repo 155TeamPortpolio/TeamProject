@@ -145,8 +145,8 @@ HRESULT CTestLevel::Awake()
 
 	//m_pGameInstance->Set_EngineTimeScale(1.5f);
 
-	//m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	m_pCamDirector->SetCurTarget();
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
 }

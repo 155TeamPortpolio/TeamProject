@@ -28,9 +28,9 @@ struct OrbitCamProfile
     _float pitchMin = -30.f;
     _float pitchMax = 40.f;
 
-    _float rotSmoothSpeed   = 16.f;
-    _float distSmoothSpeed  = 16.f;
-    _float pivotSmoothSpeed = 14.f;
+    _float rotSmoothSpeed   = 12.f;
+    _float distSmoothSpeed  = 12.f;
+    _float pivotSmoothSpeed = 10.f;
 
     _float offsetY = 0.f;
 
@@ -56,12 +56,18 @@ struct OrbitCamProfile
 
     _bool  lockOnAutoZoom = true;
     _float lockOnAutoZoomFactor = 0.35f;
+
+    _float   lockOnBlendInSec = 0.5f;
+    _float   lockOnBlendOutSec = 0.5f;
+    EaseType lockOnBlendInEase = EaseType::InOutSine;
+    EaseType lockOnBlendOutEase = EaseType::InOutSine;
 };
 
 struct OrbitCamLockOnState
 {
     _bool         active = false;
     OBJECT_HANDLE handle{};
+    _float        savedTargetDist = 0.f;
 };
 
 struct OrbitCamTargetSwitchState
@@ -71,10 +77,22 @@ struct OrbitCamTargetSwitchState
     Vector3 holdPivotWorld{};
 };
 
+struct OrbitCamLockOnBlendState
+{
+    _bool    active = false;
+    _bool    entering = true;
+    _float   elapsed = 0.f;
+    _float   duration = 0.f;
+    EaseType ease = EaseType::InOutSine;
+    _float   weight = 0.f;
+};
+
 struct OrbitCamSnapshot
 {
     OrbitCamPoseState         pose{};
     OrbitCamTargetSwitchState targetSwitch{};
+    OrbitCamLockOnState       lockOn{};
+    OrbitCamLockOnBlendState  lockOnBlend{};
     _float                    autoYawHoldTimer = 0.f;
     Vector3                   prevTargetFoot{};
     _bool                     hasPrevTargetFoot = false;
