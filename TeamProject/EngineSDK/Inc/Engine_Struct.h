@@ -372,6 +372,9 @@ namespace Engine
 		string TextureKey{};
 		string TexturePath{};
 
+		_float3 vOffsetPosition{};
+		_float4 vOffsetQuaternion{};
+
 		//_bool isLoop = false; 부모 구조체에서 루프 제어함
 		_uint iRGBMaskMode{};
 		_uint iModuleMask{};
@@ -431,6 +434,9 @@ namespace Engine
 		string DiffuseTextureTag{};
 		string NoiseTextureTag{};
 		string DissolveTextureTag{};
+
+		_float3 vOffsetPosition{};
+		_float4 vOffsetQuaternion{};
 
 		/* Texture Slot */
 		_uint SamplerMode{};
