@@ -60,6 +60,9 @@ protected:
     void                ManageGroggy(const _float dt);
 
 
+    // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
+    virtual void        Create_EnemyStatus(string boneTag);
+
 #pragma region BattleCollider
 protected:
     void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc & hitdesc);
