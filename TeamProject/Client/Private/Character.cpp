@@ -469,7 +469,7 @@ void CCharacter::Update_Energy(_float dt)
 	if (InputDevice()->Key_Down('M'))
 		m_tEnergy.fCurrentEnergy = MAX_ENERGY;
 
-	//m_tEnergy.fCurrentEnergy += m_tEnergy.fEnergyWeight * dt * 10.f;
+	m_tEnergy.fCurrentEnergy += dt;
 }
 
 void CCharacter::Update_Decibel(_float dt)

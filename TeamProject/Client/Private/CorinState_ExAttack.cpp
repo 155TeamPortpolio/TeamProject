@@ -70,10 +70,6 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
-    if (Get_ParentState()->Get_SubStateMachine()->Get_Bool("Enhanced"))
-    {
-        pOwner->Set_SpecialEnergy(80.f);
-    }
 }
 
 void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)
@@ -189,6 +185,7 @@ void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
         break;
     }
     pSubStateMachine->Set_Int("EndEntryMode", iEntryMode);
+    pOwner->Set_SpecialEnergy(80.f);
 }
 
 void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)

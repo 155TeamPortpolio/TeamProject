@@ -55,7 +55,7 @@ public:
     {
         _float      fCurrentEnergy = { 0.f };
         _float      fPrevEnergy = { 0.f };
-        _float      fEnergyWeight = { 1.f };
+        _float      fEnergyWeight = { 10.f };
         _float      fSpecialEnergy = { 60.f };
     };
 
