@@ -691,6 +691,12 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Hit">
       <UniqueIdentifier>{bd89193b-a932-4e90-abda-3a4bff8cb617}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable">
+      <UniqueIdentifier>{196f5788-8586-4eb4-8224-8d7762629947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\Portal">
+      <UniqueIdentifier>{af8fd851-810f-475c-814f-9032f6562f43}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1330,6 +1336,12 @@
     <ClInclude Include="..\public\JaneDoeState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Interactable.h">
+      <Filter>02. GameObject\Object\Interactable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Portal.h">
+      <Filter>02. GameObject\Object\Interactable\Portal</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1939,9 +1951,15 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
-     </ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interactable.cpp">
+      <Filter>02. GameObject\Object\Interactable</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Portal.cpp">
+      <Filter>02. GameObject\Object\Interactable\Portal</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

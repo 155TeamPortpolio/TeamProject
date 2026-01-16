@@ -167,7 +167,9 @@
     <ClInclude Include="..\public\BangBooPayState_Idle.h" />
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
+    <ClInclude Include="..\public\Interactable.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
+    <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
     <ClInclude Include="..\Public\BelleState_Idle.h" />
@@ -403,7 +405,9 @@
     <ClCompile Include="..\private\BangBooPayState_Idle.cpp" />
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
+    <ClCompile Include="..\private\Interactable.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
+    <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />
     <ClCompile Include="..\Private\Belle.cpp" />
     <ClCompile Include="..\Private\BelleState_Idle.cpp" />
