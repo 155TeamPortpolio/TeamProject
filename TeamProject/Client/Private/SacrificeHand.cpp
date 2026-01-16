@@ -1,8 +1,13 @@
 #include "pch.h"
 #include "SacrificeHand.h"
 #include "GameInstance.h"
+#include "Texture.h"
+
+/* Component */
 #include "SkeletalModel.h"
 #include "Material.h"
+#include "MaterialInstance.h"
+#include "MaterialData.h"
 #include "Animator3D.h"
 
 /* State */
@@ -57,8 +62,20 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 
 void CSacrificeHand::Awake()
 {
-	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.7f, 0.0), 0.6f);
-	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
+	m_fDissolveTilling = 5.f;
+
+	auto pMaterial = Get_Component<CMaterial>();
+	auto& materialInstances = pMaterial->Get_MaterialInstances();
+	auto dissolveTexture = ResourceManager()->Load_Texture(G_GlobalLevelKey, "Dissolve.png");
+
+	for (const auto& instance : materialInstances)
+	{
+		instance->Set_Param("NoiseTexture", { dissolveTexture->Get_SRV(),"Texture2D",0 });
+		instance->Set_Param("vRimLightColor", { &m_vRimLightColor,"float3",sizeof(_float3) });
+		instance->Set_Param("fRimLightPower", { &m_fRimLightPower,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
+		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
+	}
 }
 
 void CSacrificeHand::Priority_Update(_float dt)
@@ -67,8 +84,8 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
-	m_pStateMachine->Update(dt);
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
+	m_pStateMachine->Update(dt);
 }
 
 void CSacrificeHand::Late_Update(_float dt)
@@ -183,6 +200,53 @@ void CSacrificeHand::Idle()
 {
 	m_pStateMachine->Change_State("Idle");
 	SetVisable(false);
+}
+
+void CSacrificeHand::Set_DissolveState(DISSOLVE_STATE state, _float duration)
+{
+	m_eDissolveState = state;
+	m_fDissolveDuration = duration;
+	m_fDissolveElapsedTime = 0.f;
+
+	if (DISSOLVE_STATE::APPEAR == state)
+		m_fDissolveProgress = 1.f;
+	else
+		m_fDissolveProgress = 0.f;
+}
+
+void CSacrificeHand::Update_Dissolve(_float dt)
+{
+	if (m_fDissolveDuration > 0.f)
+	{
+		if (m_fDissolveElapsedTime < m_fDissolveDuration)
+		{
+			m_fDissolveElapsedTime += dt;
+			_float t = m_fDissolveElapsedTime / m_fDissolveDuration;
+
+			switch (m_eDissolveState)
+			{
+			case Client::CSacrificeHand::DISSOLVE_STATE::DISAPPEAR:
+			{
+				m_fDissolveProgress = t;
+			}break;
+			case Client::CSacrificeHand::DISSOLVE_STATE::APPEAR:
+			{
+				m_fDissolveProgress = 1.f - t;
+			}break;
+			case Client::CSacrificeHand::DISSOLVE_STATE::NONE:
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			if (DISSOLVE_STATE::DISAPPEAR == m_eDissolveState)
+				m_fDissolveProgress = 1.01f;
+			else
+				m_fDissolveProgress = 0.f;
+		}
+	}
 }
 
 HRESULT CSacrificeHand::Initialize_StateMachine()

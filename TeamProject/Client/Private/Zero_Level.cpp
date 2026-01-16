@@ -5,6 +5,7 @@
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
 #include "BattleSystem.h"
+#include "EffectContainer.h"
 
 // Camera
 #include "Camera.h"
@@ -92,6 +93,7 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
 		pResource->Add_ResourcePath("Eff_Noise_243_YZ_01.png", "../Bin/Resources/Effect/Texture/Eff_Noise_243_YZ_01.png");
 		pResource->Add_ResourcePath("Eff_Smoke_113.png", "../Bin/Resources/Effect/Texture/Eff_Smoke_113.png");
+		pResource->Add_ResourcePath("smoke0.png", "../Bin/Resources/Effect/Texture/smoke0.png");
 
 		/* Models */
 		pResource->Add_ResourcePath("Smoke_Cone2.model", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Trail/Smoke_Cone2.model");
@@ -104,6 +106,8 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Sacrifice_Smoke_Slash6.mat", "../Bin/Resources/Effect/Model/Sacrifice_Smoke_Slash6/Sacrifice_Smoke_Slash6.mat");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.model", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.model");
 		pResource->Add_ResourcePath("Sacrifice_Sword_Slash2.mat", "../Bin/Resources/Effect/Model/Sacrifice_Sword_Slash2/Sacrifice_Sword_Slash2.mat");
+		pResource->Add_ResourcePath("Circle0.mat", "../Bin/Resources/Effect/Model/Circle0/Circle0.mat");
+		pResource->Add_ResourcePath("Circle0.model", "../Bin/Resources/Effect/Model/Circle0/Circle0.model");
 
 	}
 	
@@ -119,11 +123,11 @@ HRESULT CZero_Level::Awake()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
 
 	/* Player */
-	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_TestPlayer", CPlayer::Create());
-	auto Player = Builder::Create_Object({ "Zero_Level", "Proto_GameObject_TestPlayer" })
+	auto Player = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Player" })
 		.Build("Test_Player");
 
 	ObjectManager()->Add_Object(Player, { "Zero_Level","Model_Layer"});
+	static_cast<CPlayer*>(Player)->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
 	m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
 	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
@@ -183,6 +187,15 @@ void CZero_Level::Update()
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
+	}
+	if (InputDevice()->Key_Tap(VK_F5))
+	{
+		//vBonePosition.y -= 0.2f;
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("hit_ground_smoke_strong.json")
+			.Build("Smoke");
+
+		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
 	}
 }
 

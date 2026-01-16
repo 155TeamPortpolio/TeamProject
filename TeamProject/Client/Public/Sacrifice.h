@@ -74,10 +74,12 @@ public:
     
     /* Dissolve */
     void Set_DissolveState(DISSOLVE_STATE state, _float duration);
+    DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
 
 private:
     void Create_Children();
+    void Create_Colliders();
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();

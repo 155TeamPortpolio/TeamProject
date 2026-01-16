@@ -117,6 +117,11 @@ public:
 	virtual void Free() override { __super::Free(); }
 
 private:
+	void Update_Weapons(CSacrifice* pOwner);
+	void Update_Move(CSacrifice* pOwner, _float dt);
+	void Update_Effects(CSacrifice* pOwner);
+
+private:
 	_bool m_IsAttackStart = false;
 	_bool m_IsAttackEnd = false;	
 	_bool m_IsJumpStart = false;
@@ -280,10 +285,6 @@ public:
 public:
 	static CSacrificeState_OverDrive_Release_Attack03_Phase2* Create(){ return new CSacrificeState_OverDrive_Release_Attack03_Phase2(); }
 	virtual void Free() override { __super::Free(); }
-
-private:
-	_bool m_IsHandSpawn = false;
-
 };
 
 NS_END

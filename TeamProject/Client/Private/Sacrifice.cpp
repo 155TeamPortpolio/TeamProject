@@ -158,17 +158,15 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	/* Child Object */
 	Create_Children();
 
-	m_fDissolveTilling = 5.f;
 
 	return S_OK;
 }
 
 void CSacrifice::Awake()
 {
-	//Get_Component<CMaterial>()->Set_RimLightInfo(_float3(1.f, 0.1f, 0.0), 0.3f);
-	//CGameInstance::GetInstance()->Get_RenderSystem()->SetRimLightMode(RIMLIGHT::OUTLINE);
 	m_vRimLightColor = _float3(1.f, 0.2f, 0.f);
 	m_fRimLightPower = 2.f;
+	m_fDissolveTilling = 5.f;
 
 	auto pMaterial = Get_Component<CMaterial>();
 	auto& materialInstances = pMaterial->Get_MaterialInstances();
@@ -480,6 +478,13 @@ void CSacrifice::Update_Dissolve(_float dt)
 			break;
 		}
 	}
+	else
+	{
+		if (DISSOLVE_STATE::DISAPPEAR == m_eDissolveState)
+			m_fDissolveProgress = 1.01f;
+		else
+			m_fDissolveProgress = 0.f;
+	}
 }
 
 void CSacrifice::Create_Children()
@@ -535,6 +540,11 @@ void CSacrifice::Create_Children()
 		pSparkBoneFollower->Initialize(nullptr);
 		pSparkBoneFollower->Link_Bone(pAnimator, "Ctr_Limbs_03");
 	}
+}
+
+void CSacrifice::Create_Colliders()
+{
+
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

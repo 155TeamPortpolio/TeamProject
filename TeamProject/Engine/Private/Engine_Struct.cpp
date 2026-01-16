@@ -47,6 +47,12 @@ PARTICLE_NODE Engine::tagParticleNode::FromJson(nlohmann::ordered_json& json)
 {
 	PARTICLE_NODE node{};
 
+	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
+	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
+
+	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
+	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
+
 	node.iRGBMaskMode = json.value("rgb_mask", node.iRGBMaskMode);
 	node.iModuleMask = json.value("module_mask", node.iModuleMask);
 	node.iColorMode = json.value("color_mode", node.iColorMode);
@@ -143,6 +149,12 @@ MESH_NODE Engine::tagMeshNode::FromJson(nlohmann::ordered_json& json)
 	node.DiffuseTextureTag = json.value("diffuse_texture_tag", "");
 	node.NoiseTextureTag = json.value("noise_texture_tag", "");
 	node.DissolveTextureTag = json.value("dissolve_texture_tag", "");
+
+	auto offsetPostion = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
+	auto offsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
+
+	node.vOffsetPosition = _float3(offsetPostion[0], offsetPostion[1], offsetPostion[2]);
+	node.vOffsetQuaternion = _float4(offsetQuaternion[0], offsetQuaternion[1], offsetQuaternion[2], offsetQuaternion[3]);
 
 	/* Texture */
 	node.SamplerMode = json.value("sampler_mode", 0);

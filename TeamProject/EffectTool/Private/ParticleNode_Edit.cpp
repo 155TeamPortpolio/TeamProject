@@ -145,6 +145,10 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 	m_TextureKey = json.value("texture_key", m_TextureKey);
 	m_TexturePath = json.value("texture_path", m_TexturePath);
 
+	/* Offset Transform */
+	auto vOffsetPosition = json.value("offset_position", json::array({ 0.f,0.f,0.f }));
+	auto vOffsetQuaternion = json.value("offset_quaternion", json::array({ 0.f,0.f,0.f,1.f }));
+
 	m_iRGBMaskMode = json.value("rgb_mask", m_iRGBMaskMode);
 	m_eColorMode = static_cast<CParticleSystem::COLOR_MODE>(json.at("color_mode").get<_uint>());
 	m_fDelayTime = json.value("delay_time", m_fDelayTime);
@@ -226,15 +230,27 @@ void CParticleNode_Edit::Import(nlohmann::ordered_json& json)
 		Get_Component<CMaterial>()->Get_MaterialInstance(0)->ChangeTexture(TEXTURE_TYPE::DIFFUSE, 0);
 	}
 
+	_vector3 vPosition(vOffsetPosition[0], vOffsetPosition[1], vOffsetPosition[2]);
+	_quaternion vQuaternion(vOffsetQuaternion[0], vOffsetQuaternion[1], vOffsetQuaternion[2], vOffsetQuaternion[3]);
+
+	m_pTransform->Set_Pos(vPosition);
+	m_pTransform->Set_Quaternion(vQuaternion);
 }
 
 void CParticleNode_Edit::Export(nlohmann::ordered_json& json)
 {
+	_vector3 vOffsetPosition = m_pTransform->Get_Pos();
+	_vector4 vOffsetQuaternion = m_pTransform->Get_QuaternionRotate();
+
 	json =
 	{
 		{"effect_type", ENUM(EFFECT_TYPE::PARTICLE)},
 		{"texture_key", m_TextureKey},
 		{"texture_path",m_TexturePath},
+
+		/* Offset Transform */
+		{"offset_position",json::array({vOffsetPosition.x,vOffsetPosition.y,vOffsetPosition.z})},
+		{"offset_quaternion",json::array({vOffsetQuaternion.x,vOffsetQuaternion.y,vOffsetPosition.z,vOffsetQuaternion.w})},
 
 		{"rgb_mask",m_iRGBMaskMode},
 		{"color_mode",ENUM(m_eColorMode)},
