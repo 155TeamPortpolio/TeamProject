@@ -10,6 +10,8 @@ void CJaneDoeState_Idle::Enter(CJaneDoe* pOwner)
     _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("IdleEntryMode");
     pOwner->Get_StateMachine()->Set_Int("IdleEntryMode", 0);
 
+    pOwner->End_AllAttackColliders();
+
     if (iEntryMode == 1)
     {
         pOwner->Get_StateMachine()->Set_Trigger("Evade");
