@@ -151,6 +151,13 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
+	blackBoard.stateQueue.clear(); 
+	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+
 	blackBoard.isRequestNext = true;
 }
 
@@ -250,7 +257,7 @@ void CSacrificeState_Attack_03_Phase2::Exit(CSacrifice* pOwner)
 void CSacrificeState_Attack_04_Phase2::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
-	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack04").Loop(false).Speed(1.2f).Apply();
+	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack04").Loop(false).Speed(1.f).Apply();
 
 	m_IsHandSpawn = false;
 }

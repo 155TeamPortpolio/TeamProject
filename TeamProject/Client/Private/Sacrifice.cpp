@@ -158,6 +158,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	/* Child Object */
 	Create_Children();
 
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -513,7 +515,7 @@ void CSacrifice::Create_Children()
 	/* Eye Laser */
 	{
 		_smatrix offsetMatrix = _smatrix::Identity;
-		offsetMatrix.Translation(_vector3(-0.8f, -0.2f, 0.f));
+		offsetMatrix.Translation(_vector3(-0.8f, 0.2f, 0.f));
 
 		for (_uint i = 0; i < 3; ++i)
 		{
@@ -542,9 +544,78 @@ void CSacrifice::Create_Children()
 	}
 }
 
-void CSacrifice::Create_Colliders()
+HRESULT CSacrifice::Create_Colliders()
 {
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
 
+	/* Right Arm */
+	{
+		BATTLE_COLLIDER_DESC RightArmDesc{};
+	
+		RightArmDesc.tagName = "Right_Arm";
+		RightArmDesc.isAttachBone = true;
+		RightArmDesc.tagBone = "Skn_R_Hand";
+		RightArmDesc.pOwnerAnimator3D = pAnimator;
+		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
+		RightArmDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+	
+		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))
+			return E_FAIL;
+	}
+	
+	/* Sword */
+	{
+		BATTLE_COLLIDER_DESC SwordDesc{};
+	
+		SwordDesc.tagName = "Sword";
+		SwordDesc.isAttachBone = true;
+		SwordDesc.tagBone = "Ctr_Wpn_02";
+		SwordDesc.pOwnerAnimator3D = pAnimator;
+		SwordDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
+		SwordDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+	
+		if (FAILED(AttachBattleColliderObject(&SwordDesc)))
+			return E_FAIL;
+	}
+	
+	/* Axe */
+	{
+		BATTLE_COLLIDER_DESC AxeDesc{};
+	
+		AxeDesc.tagName = "Axe";
+		AxeDesc.isAttachBone = true;
+		AxeDesc.tagBone = "Ctr_Wpn_03";
+		AxeDesc.pOwnerAnimator3D = pAnimator;
+		AxeDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
+		AxeDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+	
+		if (FAILED(AttachBattleColliderObject(&AxeDesc)))
+			return E_FAIL;
+	}
+
+	/* Whip */
+	{
+		BATTLE_COLLIDER_DESC WhipDesc{};
+
+		WhipDesc.tagName = "Whip";
+		WhipDesc.isAttachBone = true;
+		WhipDesc.tagBone = "Skn_Wpn1_06";
+		WhipDesc.pOwnerAnimator3D = pAnimator;
+		WhipDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
+		WhipDesc.vTriggerSize = _float3{ 3.f,3.f,3.f };
+
+		if (FAILED(AttachBattleColliderObject(&WhipDesc)))
+			return E_FAIL;
+	}
+
+	static HitDesc desc{};
+	SetAutoPlayBattleCollider("Whip", 0.1f, 50000.f, desc);
+	SetAutoPlayBattleCollider("Sword", 0.1f, 50000.f, desc);
+	SetAutoPlayBattleCollider("Axe", 0.1f, 50000.f, desc);
+	SetAutoPlayBattleCollider("Right_Arm", 0.1f, 50000.f, desc);
+
+	return S_OK;
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

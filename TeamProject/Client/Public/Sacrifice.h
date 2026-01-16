@@ -79,7 +79,7 @@ public:
 
 private:
     void Create_Children();
-    void Create_Colliders();
+    HRESULT Create_Colliders();
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();

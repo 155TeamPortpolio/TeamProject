@@ -57,7 +57,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.5f, 0.1f, 0.f));
+	offsetMatrix.Translation(_vector3(0.5f, 0.2f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);
@@ -99,7 +99,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::PLAYER);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
@@ -131,7 +131,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::PLAYER);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
