@@ -16,6 +16,7 @@
 #include "JaneDoeState_SwitchIn.h"
 #include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
+#include "JaneDoeState_Hit.h"
 #include "JaneDoeState_Evade.h"
 
 CJaneDoe::CJaneDoe()
@@ -165,6 +166,12 @@ void CJaneDoe::On_Special()
 	m_pStateMachine->Set_Trigger("Attack");
 }
 
+void CJaneDoe::On_Hit(DAMAGE_TYPE eType)
+{
+	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
+	m_pStateMachine->Set_Trigger("ToHit");
+}
+
 HRESULT CJaneDoe::Initialize_StateMachine()
 {
 	m_pStateMachine = CStateMachine<CJaneDoe>::Create();
@@ -191,6 +198,7 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());	//*SwitchIn*
 	m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());//*SwtichOut*
+	m_pStateMachine->Register_State("Hit", CJaneDoeState_Hit::Create());
 
 	return S_OK;
 }
@@ -238,6 +246,13 @@ HRESULT CJaneDoe::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_AnyStateTransition("Hit",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
+
+	m_pStateMachine->Register_Transition("Hit", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
 	return S_OK;
 }
 
@@ -257,14 +272,27 @@ HRESULT CJaneDoe::Initialize_Stat()
 
 HRESULT CJaneDoe::Initialize_Weapon()
 {
-	//ATTACK_COLLIDER_DESC desc;
-	//desc.eColliderType = COLLIDER_TYPE::BOX;
-	//desc.pOwnerAnimator = Get_Component<CAnimator3D>();
-	//desc.tagBone = "Weapon_saw";
-	//desc.tagName = "Saw";
-	//desc.vSize = { 0.5f, 0.5f, 0.05f };
-	//
-	//if (FAILED(Attach_AttackCollider(&desc)))	return E_FAIL;
+	ATTACK_COLLIDER_DESC HandL_WeaponDesc;
+	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	HandL_WeaponDesc.tagBone = "Ctr_L_HandWpn_F";
+	HandL_WeaponDesc.tagName = "HandWeapon_L";
+	HandL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	HandL_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+	
+	if (FAILED(Attach_AttackCollider(&HandL_WeaponDesc)))
+		return E_FAIL;
+
+	ATTACK_COLLIDER_DESC HandR_WeaponDesc;
+	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	HandR_WeaponDesc.tagBone = "Ctr_R_HandWpn_F";
+	HandR_WeaponDesc.tagName = "HandWeapon_R";
+	HandR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	HandR_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+
+	if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
+		return E_FAIL;
 
 	return S_OK;
 }
