@@ -10,6 +10,7 @@
 #include "InspectorPanel.h"
 #include "GuizmoPanel.h"
 #include "DebugBonePanel.h"
+#include "EnvPanel.h"
 
 extern IMGUI_IMPL_API LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);                // Use ImGui::GetCurrentContext()
 
@@ -125,6 +126,7 @@ void CGUISystem::Set_Panel()
 	m_Panels.push_back(m_pHierachyPanel);
 	m_Panels.push_back(CInspectorPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(CGuizmoPanel::Create(&m_tGuiContext));
+	m_Panels.push_back(CEnvPanel::Create(&m_tGuiContext));
 	m_Panels.push_back(m_pBonePanel);
 }
 void CGUISystem::Set_Bone(_int boneIndex)
@@ -135,7 +137,7 @@ void CGUISystem::Set_Bone(_int boneIndex)
 void CGUISystem::Render_Frame()
 {
 	ImGuiIO& io = ImGui::GetIO();
-	ImGui::SetNextWindowPos(ImVec2(500, 5), ImGuiCond_Always);
+	ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
 	ImGui::Begin("FPSWindow", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
@@ -240,8 +242,13 @@ void CGUISystem::Test()
 
 void CGUISystem::Render_DebugBtn()
 {
-	ImGui::SetNextWindowPos(ImVec2(750, 5), ImGuiCond_Always);
-	ImGui::Begin("##Render_Debug_View",nullptr,ImGuiWindowFlags_NoDecoration);
+	ImGui::Begin("##Render_Debug_View",nullptr, ImGuiWindowFlags_NoTitleBar |
+		ImGuiWindowFlags_NoResize |
+		ImGuiWindowFlags_NoMove |
+		ImGuiWindowFlags_NoScrollbar |
+		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground |
+		ImGuiWindowFlags_AlwaysAutoResize);
 	if (ImGui::Button("RenderDebug")) {
 		_bool NowCond = CGameInstance::GetInstance()->Get_RenderSystem()->GetOn();
 		CGameInstance::GetInstance()->Get_RenderSystem()->SetOn(!NowCond);
@@ -251,13 +258,14 @@ void CGUISystem::Render_DebugBtn()
 
 void CGUISystem::Render_CollisionBtn()
 {
-	ImGui::SetNextWindowPos(ImVec2(300, 5), ImGuiCond_Always);
-	ImGui::Begin("Collision", nullptr,
+	ImGui::SetNextWindowPos(ImVec2(400, 5), ImGuiCond_Always);
+	ImGui::Begin("##Collision", nullptr,
 		ImGuiWindowFlags_NoTitleBar |
 		ImGuiWindowFlags_NoResize |
 		ImGuiWindowFlags_NoMove |
 		ImGuiWindowFlags_NoScrollbar |
 		ImGuiWindowFlags_NoSavedSettings |
+		ImGuiWindowFlags_NoBackground|
 		ImGuiWindowFlags_AlwaysAutoResize);
 
 	_bool Render = CGameInstance::GetInstance()->Get_CollisionSystem()->Get_Render();

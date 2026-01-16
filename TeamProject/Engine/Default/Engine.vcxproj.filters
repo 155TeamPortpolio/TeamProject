@@ -591,6 +591,9 @@
     <ClInclude Include="..\Public\CameraMgr.h">
       <Filter>01. Utility\07. CameraManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\EnvPanel.h">
+      <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <!-- Filter Definitions -->
@@ -1236,6 +1239,9 @@
     <Filter Include="01. Utility\07. CameraManager\ShakeController">
       <UniqueIdentifier>{225219f8-d4c9-4dab-9fe7-4ae38e2de98b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00. System\02. Gui\GUI_Panel\EnvPanel">
+      <UniqueIdentifier>{8b442149-c628-41be-8ecc-533ff36b2e28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <!-- ClCompile 항목들 - 중복 제거 버전 -->
@@ -1694,6 +1700,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ShakeController.cpp">
       <Filter>01. Utility\07. CameraManager\ShakeController</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\EnvPanel.cpp">
+      <Filter>00. System\02. Gui\GUI_Panel\EnvPanel</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
