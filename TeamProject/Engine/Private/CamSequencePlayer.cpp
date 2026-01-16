@@ -11,11 +11,6 @@
 
 namespace
 {
-#define OBJ CGameInstance::GetInstance()->Get_ObjectMgr()
-}
-
-namespace
-{
     float WrapLoopTime(float t, float dur)
     {
         float x = fmodf(t, dur);
@@ -173,7 +168,7 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
 {
     if (target.seq && target.seq->space == CamSpace::Local)
     {
-        auto refObj = OBJ->Request_Object(apply.spaceRefHandle);
+        auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
         auto refTf  = refObj->Get_Component<CTransform>();
 
         Matrix refWorld = Matrix(refTf->Get_WorldMatrix());

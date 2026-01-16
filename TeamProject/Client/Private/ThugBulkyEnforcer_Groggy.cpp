@@ -1,11 +1,10 @@
 #include "pch.h"
-#include "ThugBulkyEnforcer_Attack.h"
+#include "ThugBulkyEnforcer_Groggy.h"
 #include "ThugBulkyEnforcer.h"
 #include "Helper_Func.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
-#include "ThugBulkyEnforcer_Groggy.h"
 
 void CThugBulkyEnforcer_Groggy::Enter(CThugBulkyEnforcer* pOwner)
 {
@@ -31,7 +30,7 @@ void CThugBulkyEnforcer_Groggy::Update(CThugBulkyEnforcer* pOwner, _float dt)
 	__super::Update(pOwner, dt);
 
 	if ("StunLoop" == m_pSubStateMachine->Get_CurrentStateName() &&
-		0 >= pOwner->GetGroggyValue()) {
+		0 >= pOwner->GetStatus().iGroggyValue) {
 		m_pSubStateMachine->Set_Trigger("Loop_To_End");
 	}
 
@@ -55,6 +54,10 @@ void CThugBulkyEnforcer_Groggy::Register_Transitions()
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_ANIMATION_END);
 	m_pSubStateMachine->Register_Transition("StunStartBack", "StunLoop",
 		CStateMachine<CThugBulkyEnforcer>::CONDITION_ANIMATION_END);
+	m_pSubStateMachine->Register_Transition("StunLoop", "StunEnd",
+		CStateMachine<CThugBulkyEnforcer>::CONDITION_TRIGGER, "Loop_To_End");
+
+
 }
 
 /*============================================================================*/
