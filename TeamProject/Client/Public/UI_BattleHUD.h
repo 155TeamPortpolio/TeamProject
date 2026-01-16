@@ -6,11 +6,14 @@ NS_BEGIN(Client)
 class CUI_BattleHUD final : public CUI_Object
 {
 	enum Child {
+		ROLE1, ROLE2, ROLE3, 
 		ICON1, ICON2, ICON3,
 		HP_BACK1, HP_BACK2, HP_BACK3,
 		HP_FRONT1, HP_FRONT2, HP_FRONT3,
 		SPECIAL1, SPECIAL2, SPECIAL3,
+		SPECIALARROW1, SPECIALARROW2, SPECIALARROW3,
 		ULTIMATE1, ULTIMATE2, ULTIMATE3,
+		ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3,
 		CUR_HP_TEXT, MAX_HP_TEXT,
 
 		BOSS_ICON, BOSS_HP_BACK, BOSS_HP_FRONT, BOSS_GROGGY, BOSS_GROGGY_TEXT,
@@ -18,11 +21,15 @@ class CUI_BattleHUD final : public CUI_Object
 		END
 	};
 
+	inline static constexpr Child ROLE_CHILD[] = { ROLE1, ROLE2, ROLE3 };
 	inline static constexpr Child ICON_CHILD[] = { ICON1, ICON2, ICON3 };
 	inline static constexpr Child HPBACK_CHILD[] = { HP_BACK1, HP_BACK2, HP_BACK3 };
 	inline static constexpr Child HPFRONT_CHILD[] = { HP_FRONT1, HP_FRONT2, HP_FRONT3 };
 	inline static constexpr Child SPECIAL_CHILD[] = { SPECIAL1, SPECIAL2, SPECIAL3 };
+	inline static constexpr _float SPECIAL_THRESHOLD[] = { 150.f, 48.f, 48.f };
+	inline static constexpr Child SPECIALARROW_CHILD[] = { SPECIALARROW1, SPECIALARROW2, SPECIALARROW3 };
 	inline static constexpr Child ULTIMATE_CHILD[] = { ULTIMATE1, ULTIMATE2, ULTIMATE3 };
+	inline static constexpr Child ULTIMATEICON_CHILD[] = { ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3 };
 
 	inline static const string ICONTEXTURES[ENUM(CHARACTER::END)] = { "IconRoleGeneral24.png", "IconRoleGeneral09.png" };
 
@@ -44,6 +51,12 @@ private:
 	UI_HANDLE			m_hRoot;
 	vector<UI_HANDLE>	m_handles; 
 
+	_bool				m_isUltimate[3] = {};
+	// 150 48
+private:
+	const _int			m_iPlayerHPWidth = 5;
+	const _int			m_iBossHPWidth = 2;
+
 private:
 	CUI_Object* Ready_Prefab();
 
@@ -53,9 +66,16 @@ private:
 	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 
-	void Set_Text(Child child, _float fNum);
-	void Set_FillAmount(Child child, _float fFillAmount);
-	void Set_IconTexture(Child child, const string& strTextureKey);
+	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
+	void Set_UltimateIcon(_int iIndex, _float fRatio);
+	
+	_bool Is_Alive(Child child);
+	void Set_Alive(Child child, _bool isAlive);
+	void Set_Color(Child child, _float4 vColor);
+	void Set_Animation(Child child, _int iIndex);
+	void Set_Texture(Child child, const string& strTextureKey); 
+	void Set_GaugeFill(Child child, _float fFillAmount);
+	void Set_NumberText(Child child, _float fValue, _int iWidth);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);
