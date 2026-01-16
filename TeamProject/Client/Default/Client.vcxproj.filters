@@ -1927,9 +1927,6 @@
     <ClCompile Include="..\Private\CorinState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
@@ -1942,6 +1939,9 @@
     </ClCompile>
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
+     </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
