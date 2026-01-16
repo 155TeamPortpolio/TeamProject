@@ -19,6 +19,7 @@ private:
 	void ShowLayerList(const string& nowLevel);
 	void ShowObjectList();
 	void ShowUIObjectList();
+	void ShowGlobalObject();
 	_bool ToggleButton(const char* str_id, bool* v);
 	vector<string> ConvertObjectNameList(class CLayer* layer);
 
