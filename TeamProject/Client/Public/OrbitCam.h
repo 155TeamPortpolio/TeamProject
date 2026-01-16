@@ -23,7 +23,6 @@ public:
     void    Render_GUI()                override;
 
 public:
-    void    SetTarget(CGameObject* obj);
     void    SetTarget(OBJECT_HANDLE handle);
     void    ClearTarget() { targetHandle.Reset(); }
 

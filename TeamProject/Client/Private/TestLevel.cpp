@@ -139,18 +139,12 @@ HRESULT CTestLevel::Awake()
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_ThugAssaulter", CThugAssaulter::Create());
 
-	// --------------------------- Camera -------------------------------------------------
-	const OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	m_pCamDirector->SetTarget(curPlayer);
-
 	//====================Test=================
 	Ready_TestObject();
 	Ready_Npc();
 
-	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
-
-	//m_pGameInstance->Set_EngineTimeScale(0.8f);
+	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
+	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
 }
@@ -158,43 +152,6 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-	
-	static OBJECT_HANDLE prevPlayer{};
-	
-	OBJECT_HANDLE curPlayer = CBattleSystem::GetInstance()->GetCurCharacterHandle();
-	
-	if (curPlayer.isValid() && curPlayer.Get() != prevPlayer.Get())
-	{
-		prevPlayer = curPlayer;
-		m_pCamDirector->SetSpaceRef(curPlayer);
-		m_pCamDirector->SetTarget(curPlayer);
-	}
-
-	if (InputDevice()->Key_Down(VK_F1))
-		CameraManager()->Set_MainCam(m_pCamDirector->GetFreeCamComp(), 0.5f);
-
-	if (InputDevice()->Key_Down(VK_F2))
-	{
-		m_pCamDirector->SetTarget(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-		CameraManager()->Set_MainCam(m_pCamDirector->GetOrbitCamComp(), 0.5f);
-	}
-
-	if (InputDevice()->Key_Tap(VK_F3))
-		m_pCamDirector->RequestSequence("Intro/Jane_Intro");
-
-	//if (InputDevice()->Key_Down('Q'))
-	//	m_pCamDirector->RequestSequence("Ultimate/Jane_Ultimate");
-
-	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
-	//	CameraManager()->AddShake(CamShakeType::HitNormal);
-
-	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
-		//CameraManager()->AddShake(CamShakeType::HitHeavy);
-	
-
-	//	m_pCamDirector->RequestSequence("Jane_Intro_2", 0.f, true, 0.5f);
-
-	m_pCamDirector->Update(m_pGameInstance->Get_EngineDeltaTime());
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{
@@ -393,10 +350,8 @@ CTestLevel* CTestLevel::Create(const string& LevelKey)
 void CTestLevel::Free()
 {
 	__super::Free();
-
-
-	CBattleSystem::GetInstance()->DestroyInstance();
-	CDataBase::GetInstance()->DestroyInstance();
+	//CBattleSystem::GetInstance()->DestroyInstance();
+	//CDataBase::GetInstance()->DestroyInstance();
 	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
