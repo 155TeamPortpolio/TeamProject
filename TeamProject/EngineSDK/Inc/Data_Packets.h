@@ -36,10 +36,11 @@ namespace Engine {
 	/*������ ��Ŷ*/
 	typedef struct DrawOpaquePacket : BASE_PACKET {
 		_bool bSkinning = { false }; /*�׷��� ���� �ִ�?*/
-
+		_float fLinearZ = {};
 		_uint DrawIndex = {};		/*���° �޽� �׸��µ�?*/
 		_uint MaterialIndex = {};/*�� �޽ô� �����µ�*/
 		_uint SkinningOffset = {};
+		
 		_vector LookVector = {};
 
 		class CModel* pModel = { nullptr };

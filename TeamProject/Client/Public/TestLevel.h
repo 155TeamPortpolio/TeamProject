@@ -5,7 +5,7 @@ class CGameInstance; class CUI_Object; class IProtoService; class IObjectService
 NS_END
 
 NS_BEGIN(Client)
-class CCamDirector; class COrbitCam;
+class CCamDirector; class COrbitCam; class CPlayer;
 
 class CTestLevel : public CLevel
 {
@@ -29,8 +29,9 @@ public:
 	static void PreLoad_Level();
 
 private:
-	CGameInstance* m_pGameInstance{};
-	CCamDirector* m_pCamDirector{};
+	CGameInstance*	m_pGameInstance{};
+	CCamDirector*	m_pCamDirector{};
+	CPlayer*		m_pPlayer{};
 
 public:
 	static CTestLevel* Create(const string& LevelKey);

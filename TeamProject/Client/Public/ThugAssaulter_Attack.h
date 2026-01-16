@@ -49,6 +49,7 @@ public:
 private:
 	_bool		m_isFirstAttack = { false };
 	_bool		m_isSecondAttack = { false };
+	HitDesc		m_tHitDesc = {};
 
 };
 
@@ -65,6 +66,7 @@ public:
 
 private:
 	_bool m_isFirstAttack = { false };
+	HitDesc m_tHitDesc = {};
 };
 
 class CThugAssaulter_Attack4 : public IBaseState<CThugAssaulter>

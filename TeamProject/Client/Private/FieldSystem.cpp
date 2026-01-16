@@ -34,7 +34,7 @@ void CFieldSystem::SetFieldPlayer(CFieldPlayer* pFieldPlayer)
 OBJECT_HANDLE CFieldSystem::GetCurCharacterHandle() const
 {
 	if (m_pFieldPlayer)
-		return m_pFieldPlayer->Get_CurCharacterHandle();
+		return m_pFieldPlayer->GetCurCharacterHandle();
 	else
 		return OBJECT_HANDLE();
 }

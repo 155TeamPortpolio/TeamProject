@@ -1,5 +1,6 @@
 #pragma once
 #include "UI_WorldToScreen.h"
+#include "Enemy_Struct.h"
 
 NS_BEGIN(Client)
 
@@ -9,6 +10,7 @@ public:
 	typedef struct tagEnemyStatusDesc : public UI_DESC {
 		const _float4x4* pParentWorld = { nullptr };
 		const _float4x4* pBoneLocal = { nullptr };
+		const MONSTER_STATUS* pMonsterStatus = { nullptr };
 	}ENEMYSTATUS_DESC;
 
 private:
@@ -32,6 +34,7 @@ public:
 private:
 	const _float4x4* m_pParentWorld = { nullptr };
 	const _float4x4* m_pBoneLocal = { nullptr };
+	const MONSTER_STATUS* m_pMonsterStatus = { nullptr };
 
 	UI_HANDLE		m_handles[ENUM(Child::END)];
 

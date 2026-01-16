@@ -117,6 +117,18 @@ void CBattleSystem::StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _
 	m_TimeScales[eObjType].fScaleValue = fScale;
 }
 
+void CBattleSystem::StartShaderVFX(_float fDuration)
+{
+	// 처음에
+	//RenderSystem()->Apply_RadialBlur(fDuration);
+	//RenderSystem()->Register_AddictiveColor(&m_vLerpColor);
+	//여기서 m_vLerpColor를 멤버변수로 가지고 업데이트때 색상을 보간주든 해서 효과를 부여.
+	//끝날때
+	//RenderSystem()->UnRegister_AddictiveColor();
+
+
+}
+
 void CBattleSystem::Update_BattleInfo()
 {
 	for (_int i = 0; i < static_cast<_int>(BATTLE_OBJ_TYPE::END); ++i) {

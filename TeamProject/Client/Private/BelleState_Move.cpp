@@ -21,23 +21,7 @@ void CBelleState_Move::Enter(CBelle* pOwner)
         m_pSubStateMachine->Set_DefaultState("Walk");
     }
 
-    _int iEntryMode = pOwner->Get_StateMachine()->Get_Int("MoveEntryMode");
-    pOwner->Get_StateMachine()->Set_Int("MoveEntryMode", 0);
-
-    switch (iEntryMode)
-    {
-    case 2:
-        m_pSubStateMachine->Set_DefaultState("Run");
-        m_pSubStateMachine->Set_Int("RunEntryMode", 0);
-        break;
-    case 1:
-        m_pSubStateMachine->Set_DefaultState("Run");
-        m_pSubStateMachine->Set_Int("RunEntryMode", 1);
-        break;
-    default:
-        m_pSubStateMachine->Set_DefaultState("Walk");
-        break;
-    }
+    m_pSubStateMachine->Set_DefaultState("Walk");
 
     __super::Enter(pOwner);
 }

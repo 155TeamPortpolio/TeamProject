@@ -105,6 +105,8 @@ private:
 	HRESULT Make_EffectPacket(OPAQUE_PACKET packet);
 	HRESULT Make_3DUIPacket(OPAQUE_PACKET packet);
 
+private:
+	_float Calculate_LinearDepth(const MINMAX_BOX& box);
 protected:
 	_bool m_isRootObject = { true };
 	_uint m_ObjectID = {};

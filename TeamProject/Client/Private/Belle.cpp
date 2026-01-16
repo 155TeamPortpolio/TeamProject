@@ -58,7 +58,7 @@ void CBelle::Awake()
 	m_strAnimName = "Avatar_Female_Size02_Belle_";
 	m_strName = "Belle";
 
-	m_pAnimator->Set_Animation(Get_AnimName() + "Idle")
+	m_pAnimator->Set_Animation(Get_AnimName() + "Ani_MainCity_Idle")
 		.Loop(true)
 		.Apply();
 	m_pCCT->Set_GravityEnabled(true);

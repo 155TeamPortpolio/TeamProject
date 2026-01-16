@@ -1,8 +1,6 @@
-#include "CamPanel.h"
-#include "CamPanel.h"
-#include "CamPanel.h"
 #include "pch.h"
 #include "CamPanel.h"
+
 #include "CamPanelUtil.h"
 #include "GUIUtil.h"
 #include "Helper_Func.h"
@@ -10,9 +8,27 @@
 using namespace CamPanelUtil;
 using namespace GuiUtil;
 using namespace Helper;
+namespace fs = filesystem;
 
 namespace
 {
+    filesystem::path GetCamToolSettingsPath()
+    {
+        return filesystem::path("..") / "bin" / "Resources" / "Data" / "Camera" / "_CamToolSettings.txt";
+    }
+
+    string NormalizeCamPathForLoad(const string& raw)
+    {
+        if (raw.empty()) return {};
+
+        filesystem::path p = filesystem::path(raw);
+
+        if (p.extension().string() != ".cam")
+            p += ".cam";
+
+        filesystem::path abs = filesystem::absolute(p).lexically_normal();
+        return abs.string();
+    }
     Matrix GetRefRT(OBJECT_HANDLE h)
     {
         auto obj = OBJ->Request_Object(h);
@@ -86,13 +102,16 @@ namespace
 
 void CCamPanel::Init()
 {
-    debugSequence.name         = "DebugSequence";
-    debugSequence.projType     = CamProjType::Perspective;
+    debugSequence.name = "DebugSequence";
+    debugSequence.projType = CamProjType::Perspective;
     debugSequence.playbackMode = CamPlaybackMode::Once;
 
     target.sequence = &debugSequence;
     state.recording = true;
-    state.playing   = false;
+    state.playing = false;
+
+    LoadToolSettings();
+    AutoLoadSequenceIfSet();
 }
 
 void CCamPanel::Update_Panel(_float dt)
@@ -440,14 +459,18 @@ void CCamPanel::DrawCamSelector()
 
     bool changedAny = false;
 
-    auto HandleEqual = [](const OBJECT_HANDLE& a, const OBJECT_HANDLE& b) -> bool
+    auto HandleEqual = [](OBJECT_HANDLE a, OBJECT_HANDLE b) -> bool
         {
             return a.hObjID == b.hObjID && a.Level == b.Level && a.Layer == b.Layer;
         };
 
-    auto MakeHandleLabel = [](const OBJECT_HANDLE& h) -> string
+    auto MakeHandleLabel = [](OBJECT_HANDLE h) -> string
         {
+            if (!h.isValid()) return "(None)";
+
             auto obj = OBJ->Request_Object(h);
+            if (!obj) return "(Missing)";
+
             const string& name = obj->Get_InstanceName();
 
             string s;
@@ -533,15 +556,27 @@ void CCamPanel::DrawCamSelector()
 
         if (Helper::DrawEnumCombo("##space", target.sequence->space, shown, 120.f))
         {
-            ConvertKeysSpace(target.sequence->keyframes, prevSpace, target.sequence->space, target.spaceRefHandle);
+            if (target.sequence->space == CamSpace::Local && !target.spaceRefHandle.isValid() && !spaceRefCandidates.empty())
+                target.spaceRefHandle = spaceRefCandidates[0];
 
-            if (target.player)
+            if (target.sequence->space == CamSpace::Local && !target.spaceRefHandle.isValid())
             {
-                if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
-                else target.player->ClearSpaceReference();
+                keyListUI.lastFileError = "Local Space needs Ref";
+                keyListUI.requestOpenFileErrorPopup = true;
+                target.sequence->space = prevSpace;
             }
+            else
+            {
+                ConvertKeysSpace(target.sequence->keyframes, prevSpace, target.sequence->space, target.spaceRefHandle);
 
-            changedAny = true;
+                if (target.player)
+                {
+                    if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
+                    else target.player->ClearSpaceReference();
+                }
+
+                changedAny = true;
+            }
         }
     }
 
@@ -560,18 +595,21 @@ void CCamPanel::DrawCamSelector()
         ImGui::SetNextItemWidth(260.f);
         if (ImGui::BeginCombo("##space_ref", previewRef.c_str()))
         {
-            for (const OBJECT_HANDLE& h : spaceRefCandidates)
+            for (OBJECT_HANDLE h : spaceRefCandidates)
             {
                 const string item = MakeHandleLabel(h);
                 const bool selected = HandleEqual(h, target.spaceRefHandle);
 
                 if (ImGui::Selectable(item.c_str(), selected))
                 {
-                    const OBJECT_HANDLE oldRef = target.spaceRefHandle;
-                    const OBJECT_HANDLE newRef = h;
+                    OBJECT_HANDLE oldRef = target.spaceRefHandle;
+                    OBJECT_HANDLE newRef = h;
 
-                    ConvertKeysSpace(target.sequence->keyframes, CamSpace::Local, CamSpace::World, oldRef);
-                    ConvertKeysSpace(target.sequence->keyframes, CamSpace::World, CamSpace::Local, newRef);
+                    if (oldRef.isValid())
+                    {
+                        ConvertKeysSpace(target.sequence->keyframes, CamSpace::Local, CamSpace::World, oldRef);
+                        ConvertKeysSpace(target.sequence->keyframes, CamSpace::World, CamSpace::Local, newRef);
+                    }
 
                     target.spaceRefHandle = newRef;
 
@@ -590,7 +628,6 @@ void CCamPanel::DrawCamSelector()
 
     if (changedAny) PostEdit_SequenceChanged();
 }
-
 
 void CCamPanel::DrawKeyframeList()
 {
@@ -1201,6 +1238,15 @@ void CCamPanel::SetSpaceReference(OBJECT_HANDLE handle)
 void CCamPanel::SetSpaceRefCandidates(initializer_list<OBJECT_HANDLE> handles)
 {
     spaceRefCandidates.assign(handles.begin(), handles.end());
+
+    if (!target.spaceRefHandle.isValid() && !spaceRefCandidates.empty())
+        target.spaceRefHandle = spaceRefCandidates[0];
+
+    if (target.player && target.sequence)
+    {
+        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
+        else target.player->ClearSpaceReference();
+    }
 }
 
 void CCamPanel::RecalcEndTimeFromKeys()
@@ -1639,43 +1685,7 @@ void CCamPanel::DoLoadSequence()
     string picked = Helper::OpenFile_Dialogue();
     if (picked.empty()) return;
 
-    if (filesystem::path(picked).extension().string() != ".cam")
-    {
-        keyListUI.lastFileError = "File extension must be .cam";
-        keyListUI.requestOpenFileErrorPopup = true;
-        return;
-    }
-
-    CamSequenceDesc loaded{};
-    string err;
-
-    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
-    {
-        keyListUI.lastFileError = err;
-        keyListUI.requestOpenFileErrorPopup = true;
-        return;
-    }
-
-    *target.sequence = move(loaded);
-
-    _uint maxId = 0;
-    for (size_t i = 0; i < target.sequence->keyframes.size(); ++i)
-        maxId = max(maxId, target.sequence->keyframes[i].keyId);
-    target.nextKeyId = maxId + 1;
-
-    state.selectedKeyIdx = target.sequence->keyframes.empty() ? -1 : 0;
-    state.playing = false;
-
-    SyncNameBufFromSeq();
-
-    if (HasValidSelection())
-        SyncEditorFromSelection();
-
-    if (target.player)
-    {
-        target.player->Invalidate();
-        if (!state.recording) target.player->SetTime(state.curTime);
-    }
+    LoadSequenceFromPath(picked);
 }
 
 void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChangedAny)
@@ -1772,6 +1782,13 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
     if (ImGui::Button("Load", btnSize))
         DoLoadSequence();
 
+    ImGui::SameLine();
+
+    if (ImGui::Button("Auto", btnSize))
+        ImGui::OpenPopup("CamSeq_AutoLoad");
+
+    DrawAutoLoadPopup();
+
     const ConfirmResult saveEmptyR = DrawConfirmPopupModal("CamSeq_Save_EmptyConfirm", nullptr,
         {u8"키프레임이 0개입니다.", u8"그래도 저장할까요?"}, u8"저장", u8"취소", 120.f);
 
@@ -1815,6 +1832,7 @@ void CCamPanel::DrawKeyframeList_TopBar(vector<CamKeyFrame>& keys, bool& ioChang
 
     ImGui::TextDisabled("%s", summaryBuf);
 }
+
 
 void CCamPanel::DrawKeyframeList_HeaderArea(vector<CamKeyFrame>& keys, bool& ioChangedAny)
 {
@@ -2414,6 +2432,149 @@ void CCamPanel::DrawKeyframeEditor_OrbitArc(bool& ioChangedOrbit)
     ImGui::SameLine();
     if (DrawEnumCombo("##oa_radius", d.radiusMode, 160.f)) ioChangedOrbit = true;
 }
+
+void CCamPanel::DrawAutoLoadPopup()
+{
+    if (!ImGui::BeginPopup("CamSeq_AutoLoad"))
+        return;
+
+    ImGui::TextDisabled(u8"Auto Load Path");
+    ImGui::Separator();
+
+    ImGui::TextUnformatted(u8"Path");
+    ImGui::SameLine();
+    ImGui::SetNextItemWidth(520.f);
+    ImGui::InputText("##autoload_path", keyListUI.autoLoadPathBuf, IM_ARRAYSIZE(keyListUI.autoLoadPathBuf));
+
+    ImGui::Spacing();
+
+    if (ImGui::Button("Use Last Loaded", ImVec2(160.f, 0.f)))
+    {
+        if (!keyListUI.lastLoadedPath.empty())
+            strncpy_s(keyListUI.autoLoadPathBuf, keyListUI.lastLoadedPath.c_str(), _TRUNCATE);
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Save Auto", ImVec2(120.f, 0.f)))
+        SaveToolSettings();
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Clear", ImVec2(100.f, 0.f)))
+    {
+        keyListUI.autoLoadPathBuf[0] = 0;
+        SaveToolSettings();
+    }
+
+    ImGui::SameLine();
+
+    if (ImGui::Button("Load Now", ImVec2(120.f, 0.f)))
+    {
+        if (LoadSequenceFromPath(string(keyListUI.autoLoadPathBuf)))
+            SaveToolSettings();
+    }
+
+    ImGui::Separator();
+    ImGui::TextDisabled(u8"- .cam 확장자 생략 가능");
+    ImGui::TextDisabled(u8"- 비어있으면 다음 실행 때 자동 로드 안 함");
+
+    ImGui::EndPopup();
+}
+
+void CCamPanel::LoadToolSettings()
+{
+    const filesystem::path p = GetCamToolSettingsPath();
+
+    ifstream in(p);
+    if (!in.is_open()) return;
+
+    string line;
+    getline(in, line);
+
+    if (line.size() >= IM_ARRAYSIZE(keyListUI.autoLoadPathBuf))
+        line.resize(IM_ARRAYSIZE(keyListUI.autoLoadPathBuf) - 1);
+
+    strncpy_s(keyListUI.autoLoadPathBuf, line.c_str(), _TRUNCATE);
+}
+
+void CCamPanel::SaveToolSettings()
+{
+    const filesystem::path p = GetCamToolSettingsPath();
+    filesystem::create_directories(p.parent_path());
+
+    ofstream out(p, ios::trunc);
+    if (!out.is_open()) return;
+
+    out << keyListUI.autoLoadPathBuf;
+}
+
+void CCamPanel::AutoLoadSequenceIfSet()
+{
+    if (keyListUI.didAutoLoadOnce) return;
+
+    keyListUI.didAutoLoadOnce = true;
+
+    const string raw = keyListUI.autoLoadPathBuf;
+    if (raw.empty()) return;
+
+    LoadSequenceFromPath(raw);
+}
+
+bool CCamPanel::LoadSequenceFromPath(const string& anyPath)
+{
+    keyListUI.lastFileError.clear();
+
+    const string picked = NormalizeCamPathForLoad(anyPath);
+    if (picked.empty()) return false;
+
+    string err;
+    if (!ValidateCamPath(picked, err))
+    {
+        keyListUI.lastFileError = err;
+        keyListUI.requestOpenFileErrorPopup = true;
+        return false;
+    }
+
+    CamSequenceDesc loaded{};
+    if (!CamUtil::Load(filesystem::path(picked), loaded, &err))
+    {
+        keyListUI.lastFileError = err;
+        keyListUI.requestOpenFileErrorPopup = true;
+        return false;
+    }
+
+    *target.sequence = move(loaded);
+
+    if (target.sequence->space == CamSpace::Local && !target.spaceRefHandle.isValid() && !spaceRefCandidates.empty())
+        target.spaceRefHandle = spaceRefCandidates[0];
+
+    _uint maxId = 0;
+    for (size_t i = 0; i < target.sequence->keyframes.size(); ++i)
+        maxId = max(maxId, target.sequence->keyframes[i].keyId);
+    target.nextKeyId = maxId + 1;
+
+    state.selectedKeyIdx = target.sequence->keyframes.empty() ? -1 : 0;
+    state.playing = false;
+
+    SyncNameBufFromSeq();
+
+    if (HasValidSelection())
+        SyncEditorFromSelection();
+
+    if (target.player)
+    {
+        if (target.sequence->space == CamSpace::Local) target.player->SetSpaceReference(target.spaceRefHandle);
+        else target.player->ClearSpaceReference();
+
+        target.player->Invalidate();
+        if (!state.recording) target.player->SetTime(state.curTime);
+    }
+
+    keyListUI.lastLoadedPath = picked;
+    return true;
+}
+
 
 CCamPanel* CCamPanel::Create(GUI_CONTEXT* context)
 {
