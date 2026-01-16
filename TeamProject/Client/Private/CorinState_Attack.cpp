@@ -3,6 +3,7 @@
 #include "CorinState_Attack.h"
 #include "CorinState_NormalAttack.h"
 #include "CorinState_RushAttack.h"
+#include "CorinState_ExAttack.h"
 #include "Corin.h"
 
 #include "CharacterController.h"
@@ -14,9 +15,11 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
         m_pSubStateMachine->Register_State("NormalAttack", CCorinState_NormalAttack::Create());
         m_pSubStateMachine->Register_State("RushAttack", CCorinState_RushAttack::Create());
+        m_pSubStateMachine->Register_State("ExAttack", CCorinState_ExAttack::Create());
 
         m_pSubStateMachine->Get_State("NormalAttack")->Set_Tag("NormalAttack");
         m_pSubStateMachine->Get_State("RushAttack")->Set_Tag("RushAttack");
+        m_pSubStateMachine->Get_State("ExAttack")->Set_Tag("ExAttack");
 
         m_pSubStateMachine->Set_DefaultState("NormalAttack");
     }
@@ -28,6 +31,9 @@ void CCorinState_Attack::Enter(CCorin* pOwner)
     {
     case 1:
         m_pSubStateMachine->Set_DefaultState("RushAttack");
+        break;
+    case 2:
+        m_pSubStateMachine->Set_DefaultState("ExAttack");
         break;
     default:
         m_pSubStateMachine->Set_DefaultState("NormalAttack");

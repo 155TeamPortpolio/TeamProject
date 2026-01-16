@@ -55,7 +55,7 @@ public:
     {
         _float      fCurrentEnergy = { 0.f };
         _float      fPrevEnergy = { 0.f };
-        _float      fEnergyWeight = { 1.f };
+        _float      fEnergyWeight = { 10.f };
         _float      fSpecialEnergy = { 60.f };
     };
 
@@ -178,7 +178,7 @@ public:
     void Push_Invincible() { ++m_iInvincibleCount; }
     void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     // 일시적 무적 - 회피 무적프레임 등
-    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; m_ParryableTargets.clear(); }
 
 private:
     void    Update_Rotation(_float dt);
