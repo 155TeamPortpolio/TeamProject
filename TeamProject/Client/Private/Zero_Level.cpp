@@ -123,11 +123,8 @@ HRESULT CZero_Level::Awake()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
 
 	/* Player */
-	auto Player = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Player" })
-		.Build("Test_Player");
-
-	ObjectManager()->Add_Object(Player, { "Zero_Level","Model_Layer"});
-	static_cast<CPlayer*>(Player)->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+	auto pPlayer = CCamDirector::GetInstance()->GetPlayer();
+	pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
 
 	return S_OK;
 }
