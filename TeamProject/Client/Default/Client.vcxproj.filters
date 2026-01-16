@@ -696,6 +696,9 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
+      <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1341,6 +1344,9 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_MeshPyramid.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1962,6 +1968,9 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_MeshPyramid.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
