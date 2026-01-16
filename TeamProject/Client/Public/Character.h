@@ -118,6 +118,7 @@ public:
     OBJECT_HANDLE       Get_TargetHandle() { return m_TargetHandle; };
     void                Set_TargetHandle(OBJECT_HANDLE targetHandle) { m_TargetHandle = targetHandle; };
 
+
     void    Active_Character();
     void    DeActive_Character();
 
@@ -244,6 +245,7 @@ protected:
     // ����
     OBJECT_HANDLE                 m_TargetHandle;
     static constexpr _float TURNBACK_ANGLE_THRESHOLD = 100.f;
+    _bool                         m_bLockOn = { false };
     // 무적
     _int    m_iInvincibleCount = { 0 };
     _float  m_fInvincibleTimer = { 0.f };

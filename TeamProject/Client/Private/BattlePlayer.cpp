@@ -189,9 +189,19 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Ultimate();
 	Process_Energy();
 
-	if (InputDevice()->Key_Down('T'))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB))
 	{
-		// �׽�Ʈ �ڵ�
+		m_bLockOn = !m_bLockOn;
+		if (m_TargetHandle.isValid())
+		{
+			if ((m_TargetHandle.Get()->Get_WorldPos() - m_pCurrentCharacter->Get_WorldPos()).Length()
+				< TARGET_MAXDISTANCE)
+				return;
+		}
+		TARGET_LOCK_DESC desc;
+		desc.bLock = m_bLockOn;
+		desc.tHandle = m_TargetHandle;
+		EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
 	}
 }
 
