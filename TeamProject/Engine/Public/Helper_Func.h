@@ -61,6 +61,8 @@ namespace Helper
 	ENGINE_DLL _vector4 HexToColor(const string& hex);
 	ENGINE_DLL string VK_ToString(_int vk);
 	ENGINE_DLL string WideToUtf8(const wchar_t* wideText);
+	/*정수를 지정한 자릿수(width)로, 값이 없는 숫자는 0으로 채워서 고정 폭 문자열로 포맷*/
+	ENGINE_DLL void Format_FixedZeroPad(wchar_t* outBuf, size_t bufCount, _int value, _int width);
 
 }
 
