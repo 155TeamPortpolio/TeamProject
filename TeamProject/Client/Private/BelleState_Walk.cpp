@@ -22,6 +22,9 @@ void CBelleState_Walk::Enter(CBelle* pOwner)
         m_pSubStateMachine->Register_Transition("Loop", "End",
             CStateMachine<CBelle>::CONDITION_BOOL_FALSE, "IsMove");
 
+        m_pSubStateMachine->Register_Transition("End", "Start",
+            CStateMachine<CBelle>::CONDITION_BOOL_TRUE, "IsMove");
+
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
@@ -29,23 +32,13 @@ void CBelleState_Walk::Enter(CBelle* pOwner)
 
 void CBelleState_Walk::Update(CBelle* pOwner, _float dt)
 {
-    __super::Update(pOwner, dt);
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
-    if (m_pSubStateMachine->Get_CurrentStateName() == "Loop")
-    {
-        auto pLoop = m_pSubStateMachine->Get_CurrentState();
-        if (pLoop && pLoop->Get_AnimProgress() >= 0.93)
-        {
-            auto pMoveState = Get_ParentState();
-            if (pMoveState && pMoveState->Get_SubStateMachine())
-                pMoveState->Get_SubStateMachine()->Set_Trigger("ToRun");
-        }
-    }
+    __super::Update(pOwner, dt);
 }
 
 void CBelleState_Walk_Start::Enter(CBelle* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Suibianguan_Ani_MainCity_Walk_Start")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Ani_MainCity_Run_Start")
         .Loop(false)
         .Apply();
 }
@@ -57,7 +50,7 @@ void CBelleState_Walk_Start::Update(CBelle* pOwner, _float dt)
 
 void CBelleState_Walk_Loop::Enter(CBelle* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Suibianguan_Ani_MainCity_Walk_Loop")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Ani_MainCity_Run_Loop")
         .Loop(true)
         .Apply();
 }
@@ -69,7 +62,17 @@ void CBelleState_Walk_Loop::Update(CBelle* pOwner, _float dt)
 
 void CBelleState_Walk_End::Enter(CBelle* pOwner)
 {
-    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Suibianguan_Ani_MainCity_Walk_End_L")
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Ani_MainCity_Run_End_R")
         .Loop(false)
         .Apply();
+}
+
+void CBelleState_Walk_End::Update(CBelle* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt);
+
+    if (m_fAnimProgress >= 0.23f)
+    {
+        pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
+    }
 }

@@ -45,7 +45,7 @@ class CBelleState_Walk_End : public IBaseState<CBelle>
 {
 public:
     virtual void Enter(CBelle* pOwner) override;
-    virtual void Update(CBelle* pOwner, _float dt) override {}
+    virtual void Update(CBelle* pOwner, _float dt) override;
     virtual void Exit(CBelle* pOwner) override {}
 
 public:

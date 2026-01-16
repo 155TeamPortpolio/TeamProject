@@ -27,9 +27,6 @@ public:
     virtual void    Render_GUI() override;
 
 private:
-    void Update_KeyInput();
-
-private:
     class CFieldPlayer*   m_pFieldPlayer = nullptr;
     class CBattlePlayer*  m_pBattlePlayer = nullptr;
 

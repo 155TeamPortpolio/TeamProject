@@ -49,8 +49,21 @@ public:
     CAnimator3D* Get_Animator() { return m_pAnimator; }
     CCharacterController* Get_CCT() { return m_pCCT; }
     const string& Get_AnimName() const { return m_strAnimName; }
+
 public:
-    _bool  Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    _vector3    Get_InputDir() const { return m_inputInfo.direction; }
+    _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
+    _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
+    void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
+    void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
+    _bool       Is_Move() const { return m_inputInfo.direction.LengthSquared() > 0.01f; }
+    _bool       Is_Move_Buffer() const { return m_inputInfo.direction.LengthSquared() > 0.01f || m_inputInfo.bufferTimer > 0.f; }
+    _bool       Is_OppositeInput() const;
+    _bool       Can_Move() const { return m_bCanMove; }
+    void        Lock_Move() { m_bCanMove = false; }
+    void        Unlock_Move() { m_bCanMove = true; }
+
+public:
     void    Active_Character();
     void    DeActive_Character();
 
@@ -74,13 +87,6 @@ public:
 public:
     virtual void    On_Move(const InputInfo& inputInfo);
 
-public:
-    _vector3    Get_InputDir() const { return m_inputInfo.direction; }
-    _vector3    Get_PrevInputDir() const { return m_inputInfo.prevDirection; }
-    _bool       Get_InputReset() const { return m_inputInfo.resetMove; }
-    void        Reset_InputBuffer() { m_inputInfo.bufferTimer = 0.f; }
-    void        Set_ResetMove(_bool bReset) { m_inputInfo.resetMove = bReset; }
-
 private:
     void            Update_Rotation(_float dt);
     void            Rotate(_vector3 vDirection);
@@ -97,7 +103,7 @@ protected:
     _bool                       m_bIsRotating = { false };
     _bool                       m_bCanMove = { true };
     InputInfo                   m_inputInfo;
-
+    static constexpr _float     TURNBACK_ANGLE_THRESHOLD = 100.f;
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;

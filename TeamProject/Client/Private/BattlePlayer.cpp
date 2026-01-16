@@ -197,8 +197,6 @@ void CBattlePlayer::Update_Input(_float dt)
 
 void CBattlePlayer::Process_Movement(_float dt)
 {
-	//if ("Attack" == dynamic_cast<CJaneDoe*>(m_pCurrentCharacter)->Get_StateMachine()->Get_CurrentStateName())
-	//	return;
 	CCharacter::InputInfo inputInfo;
 	inputInfo.direction = m_input.direction;
 	inputInfo.prevDirection = m_input.prevDirection;

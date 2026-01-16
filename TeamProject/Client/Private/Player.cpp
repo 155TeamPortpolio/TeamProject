@@ -73,11 +73,6 @@ void CPlayer::Render_GUI()
 {
 }
 
-void CPlayer::Update_KeyInput()
-{
-	//InputDevice()->
-}
-
 CPlayer* CPlayer::Create()
 {
 	CPlayer* Instance = new CPlayer();

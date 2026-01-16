@@ -45,6 +45,9 @@ HRESULT CFieldPlayer::Initialize()
 
 void CFieldPlayer::Priority_Update(_float dt)
 {
+	if (m_pCurrentCharacter == nullptr)
+		return;
+
 	Update_Input(dt);
 }
 

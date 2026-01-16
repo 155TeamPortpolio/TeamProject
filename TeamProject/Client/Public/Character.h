@@ -218,7 +218,7 @@ protected:
     _bool           m_bIsRotating = { false };
     // �и�
     unordered_set<CGameObject*>  m_ParryableTargets;
-    // �׽�Ʈ��
+    // �׽�Ʈ��  
     _bool           m_bTest = { false };
     //���̴�
     _float3     m_vRimLightColor = _float3(0.f, 0.f, 0.f);
