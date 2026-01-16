@@ -32,10 +32,6 @@ HRESULT CMainCity_Level::Initialize()
 
 HRESULT CMainCity_Level::Awake()
 {
-	// ============ Camera ==================================================
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_MainCity_OrbitCam", COrbitCam::Create());
-	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_MainCity_ShadowCam", CShadowCam::Create());
-
 	//============== Map ============================
 	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType("MainCity_Level", "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());

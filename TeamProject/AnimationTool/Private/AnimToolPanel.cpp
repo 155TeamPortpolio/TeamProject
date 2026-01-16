@@ -649,7 +649,7 @@ void CAnimToolPanel::Save_Event()
 	string ClipKey = m_AnimClip[0].ClipTag.substr(0, pos) + "_Meta.json";
 
 	string MetaPath = m_pGameInstance->Get_ResourceMgr()->Get_ResourcePath(ClipKey);
-	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, MetaPath);
+	Helper::SaveJson<vector<ANIM_CLIP>>(m_AnimClip, m_SaveMetaFilePath);
 }
 
 ImU32 CAnimToolPanel::GetEventColor(CLIP_EVENT_TYPE eType)

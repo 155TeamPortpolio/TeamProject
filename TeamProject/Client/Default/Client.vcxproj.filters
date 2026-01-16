@@ -688,6 +688,9 @@
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
       <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Hit">
+      <UniqueIdentifier>{bd89193b-a932-4e90-abda-3a4bff8cb617}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1324,6 +1327,9 @@
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Hit.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1931,6 +1937,9 @@
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
     </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
+     </ClCompile>
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>

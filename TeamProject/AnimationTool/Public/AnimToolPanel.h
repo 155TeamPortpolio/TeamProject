@@ -54,6 +54,7 @@ private:
 //Func
 public:
     void Setting_NewClip();
+    void Setting_MetaFilePath(const string& FilePath) { m_SaveMetaFilePath = FilePath; };
 
 private:
     void Reset_Panel();
@@ -90,7 +91,7 @@ private: //Create Clip
 private: //Create MetaData
     unordered_map<string, vector<ANIM_CLIP>> m_Meta;
     unordered_map<string, string> m_Paths;
-
+    string m_SaveMetaFilePath{};
 public:
     static CBasePanel* Create(GUI_CONTEXT* context);
     virtual void Free() override;
