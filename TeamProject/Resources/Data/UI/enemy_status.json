@@ -1,0 +1,626 @@
+{
+    "alive": true,
+    "instanceName": "enemy_status",
+    "transform": {
+        "anchor": 5,
+        "anchorOffset": [
+            0.0,
+            0.0
+        ],
+        "size": [
+            264.0,
+            147.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            1.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "line",
+            "transform": {
+                "anchor": 9,
+                "anchorOffset": [
+                    0.0,
+                    -108.0
+                ],
+                "size": [
+                    90.0,
+                    108.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "MonsterInfoLine.png"
+        },
+        {
+            "alive": true,
+            "instanceName": "group",
+            "transform": {
+                "anchor": 6,
+                "anchorOffset": [
+                    -172.0,
+                    0.0
+                ],
+                "size": [
+                    172.0,
+                    40.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "group1",
+                    "transform": {
+                        "anchor": 9,
+                        "anchorOffset": [
+                            0.0,
+                            -22.0
+                        ],
+                        "size": [
+                            120.0,
+                            22.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    121.5238037109375,
+                                    22.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MonsterBg.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpBg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -52.25,
+                                    -7.833000183105469
+                                ],
+                                "size": [
+                                    87.0,
+                                    14.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.800000011920929,
+                                0.10196078568696976,
+                                0.10196078568696976,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MonsterHPBg01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "hpGauge",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -52.25,
+                                    -7.833000183105469
+                                ],
+                                "size": [
+                                    87.0,
+                                    14.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "MonsterHP01.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 1.0,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "groggyBg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -24.0,
+                                    -0.8330000042915344
+                                ],
+                                "size": [
+                                    54.0,
+                                    6.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.29019609093666077,
+                                0.29411765933036804,
+                                0.2862745225429535,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "RoleHPBg02.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "groggyGauge",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -24.0,
+                                    -0.8330000042915344
+                                ],
+                                "size": [
+                                    54.0,
+                                    6.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.9960784316062927,
+                                0.6627451181411743,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "LinearFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "RoleHPBg02.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 1.0,
+                                "radial": false
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "groggyText",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    24.0,
+                                    -1.5
+                                ],
+                                "size": [
+                                    20.699993133544922,
+                                    23.418743133544922
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.9960784316062927,
+                                0.6549019813537598,
+                                0.003921568859368563,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "73",
+                                "fontTag": "Impact.spritefont",
+                                "fontScale": 0.4499998688697815,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    -0.6000000238418579,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "group2",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -51.0,
+                            -40.0
+                        ],
+                        "size": [
+                            51.0,
+                            40.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -26.33333396911621,
+                                    -20.0
+                                ],
+                                "size": [
+                                    52.66666793823242,
+                                    40.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MonsterInfoWeakBG.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "attributeGaugeBg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -11.0,
+                                    -16.0
+                                ],
+                                "size": [
+                                    32.0,
+                                    32.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.43921568989753723,
+                                0.2235294133424759,
+                                0.3019607961177826,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle72.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "attributeGauge",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -11.0,
+                                    -16.0
+                                ],
+                                "size": [
+                                    32.0,
+                                    32.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.9137254953384399,
+                                0.0313725508749485,
+                                0.3764705955982208,
+                                1.0
+                            ],
+                            "pass": "RadialFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "Circle72.png",
+                            "gauge": {
+                                "direction": 1.0,
+                                "fillAmount": 0.5799999833106995,
+                                "radial": true
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "attributeIconBg",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -7.0,
+                                    -12.0
+                                ],
+                                "size": [
+                                    24.0,
+                                    24.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.4156862795352936,
+                                0.0,
+                                0.14509804546833038,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle72.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "attributeIcon",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -7.0,
+                                    -12.0
+                                ],
+                                "size": [
+                                    24.0,
+                                    24.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconDungeonBuffEther.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "attributeEffect",
+                            "transform": {
+                                "anchor": 9,
+                                "anchorOffset": [
+                                    4.0,
+                                    -13.0
+                                ],
+                                "size": [
+                                    11.0,
+                                    10.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.3450980484485626,
+                                0.3294117748737335,
+                                0.3333333432674408,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconTriangle.png"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
