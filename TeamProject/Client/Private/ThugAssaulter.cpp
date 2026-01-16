@@ -21,6 +21,7 @@
 #include "ThugAssaulter_Chase.h"
 #include "ThugAssaulter_Death.h"
 #include "ThugAssaulter_Move.h"
+#include "ThugAssaulter_Groggy.h"
 
 #include "AttackSign.h"
 
@@ -66,11 +67,10 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "ThugAssaulter.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "Monster_ThugAssaulter_Meta.json");
-	//pAnimator->Set_MotionBone(3);	//Bip001
 	pAnimator->Set_ExtractMotionboneMovement(AXIS::X | AXIS::Z);
-	//pAnimator->Resize_Layer(2);
+	pAnimator->Resize_Layer(2);
 	//for (size_t i = 1; i < 2; i++)
-	//	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, i);
+	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
 
 	if (FAILED(Ready_Children(pArg)))
 		return E_FAIL;
@@ -80,6 +80,8 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+	// 임시
+	m_tStatus.iHP = 100;
 
 	return S_OK;
 }
@@ -148,13 +150,12 @@ void CThugAssaulter::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
+		ImGui::Text("HP : %d", (_int)m_tStatus.iHP);
+		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 
 		ImGui::BeginDisabled(true);
 		//ImGui::Checkbox(u8"isLookPlayer", &m_isLookPlayer);
-		//ImGui::Checkbox(u8"Hit용 트리거 활성화", &m_isBattleAttackOn);
-		//ImGui::Checkbox(u8"회피용 트리거 활성화", &m_isBattleTriggerOn);
-		//ImGui::Checkbox(u8"Hit중", &m_isEnterAttackHit);
-		//ImGui::Checkbox(u8"회피 및 패링 가능", &m_isEnterTriggerHit);
+		ImGui::Checkbox("IsGroggy", &m_isGroggy);
 		ImGui::EndDisabled();
 
 		ImGui::EndChild();
@@ -169,32 +170,67 @@ void CThugAssaulter::Render_GUI()
 	if (ImGui::TreeNode("Test State##ThugAssaulterCheckState")) {
 		//ImGui::BeginChild("State##ThugBulkyEnforcerStatus", ImVec2{ 0, childHeight }, true);
 
-		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack")) {
-			if (ImGui::Button(u8"1. Attack01")) {
+		if (ImGui::TreeNode("AttackState##ThugAssaulterTestState_Attack")) 
+		{
+			if (ImGui::Button(u8"1. Attack01")) 
+			{
 				m_pStateMachine->Set_Int("AttackPattern", 1);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"2. Attack02")) {
+			if (ImGui::Button(u8"2. Attack02")) 
+			{
 				m_pStateMachine->Set_Int("AttackPattern", 2);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"3. Attack03")) {
+			if (ImGui::Button(u8"3. Attack03")) 
+			{
 				m_pStateMachine->Set_Int("AttackPattern", 3);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
-			if (ImGui::Button(u8"4. Attack04")) {
+			if (ImGui::Button(u8"4. Attack04")) 
+			{
 				m_pStateMachine->Set_Int("AttackPattern", 4);
 				m_pStateMachine->Set_Trigger("Idle_To_Attack");
 			}
 			ImGui::TreePop();
 		}
-		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath")) {
+		if (ImGui::TreeNode("Death##ThugAssaulterTestDeath")) 
+		{
 			if (ImGui::Button("Death Front"))
 				m_pStateMachine->Change_State("Death");
-			if (ImGui::Button("Death Back")) {
+
+			if (ImGui::Button("Death Back")) 
+			{
 				m_pStateMachine->Set_Bool("DeathBack", true);
 				m_pStateMachine->Change_State("Death");
 			}
+
+			ImGui::TreePop();
+		}
+		if (ImGui::TreeNode("Groggy&Hit##ThugAssaulterTestGroggy&Hit")) 
+		{
+			if (ImGui::Button("Increase Groggy value 30"))
+				m_tStatus.iGroggyValue += 30;
+
+			if (ImGui::Button("Hit"))
+			{
+				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
+				//if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
+				//{
+				//	Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Knock")
+				//		.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+				//		.Loop(false)
+				//		.Apply();
+				//}
+				//else
+				//{
+				//	Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
+				//		.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+				//		.Loop(false)
+				//		.Apply();
+				//}
+			}
+
 
 			ImGui::TreePop();
 		}
@@ -252,9 +288,6 @@ void CThugAssaulter::Render_GUI()
 		if (ImGui::Button("Monster TimeScale"))
 			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue);
 		
-		
-
-
 		ImGui::EndChild();
 		ImGui::TreePop();
 	}
@@ -278,7 +311,8 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 	if (FAILED(AttachBattleColliderObject(&WeaponDesc)))
 		return E_FAIL;
 
-	Create_AttackSign("Bip001 Head");
+	Create_AttackSign("Bip001_Head");
+	Create_EnemyStatus("Bip001_Spine2");
 
 	return S_OK;
 }
@@ -316,6 +350,58 @@ void CThugAssaulter::Free()
 	Safe_Release(m_pStateMachine);
 }
 
+void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+	if (0 >= m_tStatus.iHP)
+		return;
+
+
+ 	switch (eDamageType)
+	{
+	case Client::DAMAGE_TYPE::NORMAL:
+	{
+
+		break;
+	}
+	case Client::DAMAGE_TYPE::HARD:
+	{
+
+		break;
+	}
+	case Client::DAMAGE_TYPE::AIRBORNE:
+	{
+
+		break;
+	}
+	}
+
+	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
+	{
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Knock")
+			.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+			.Loop(false)
+			.Apply();
+		
+		m_tStatus.iHP -= fDamage * 1.5f;
+	}
+	else
+	{
+		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
+			.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+			.Loop(false)
+			.Apply();
+
+		m_tStatus.iHP -= fDamage;
+		m_tStatus.iGroggyValue += 16;
+	}
+
+	//m_tStatus.iHP -= fDamage;
+	
+
+
+
+}
+
 /* For.State Machine */
 HRESULT CThugAssaulter::Initialize_StateMachine()
 {
@@ -349,6 +435,7 @@ HRESULT CThugAssaulter::Initialize_States()
 	m_pStateMachine->Register_State("Move", CThugAssaulter_Move::Create());
 	m_pStateMachine->Register_State("Chase", CThugAssaulter_Chase::Create());
 	m_pStateMachine->Register_State("Death", CThugAssaulter_Death::Create());
+	m_pStateMachine->Register_State("Groggy", CThugAssaulter_Groggy::Create());
 
 	return S_OK;
 }
@@ -369,6 +456,9 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 	
 	m_pStateMachine->Register_Transition("Idle", "Death",
 		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Death");
+
+	m_pStateMachine->Register_Transition("Idle", "Groggy",
+		CStateMachine<CThugAssaulter>::CONDITION_TRIGGER, "Idle_To_Groggy");
 
 	return S_OK;
 }
@@ -411,8 +501,18 @@ void CThugAssaulter::Update_States(_float dt)
 
 void CThugAssaulter::ControlState(const _float dt)
 {
+	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+		0 >= m_tStatus.iHP )
+		m_pStateMachine->Change_State("Death");
+
+	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() &&
+		true == m_isGroggy) 
+		m_pStateMachine->Change_State("Groggy");
+	
+
 	if (true == m_isAutoPatternPlay &&
-		"Idle" == m_pStateMachine->Get_CurrentStateName()) {
+		"Idle" == m_pStateMachine->Get_CurrentStateName()) 
+	{
 
 		m_vIdleTime.y += dt;
 
@@ -443,4 +543,29 @@ void CThugAssaulter::CheckDistanceFromPlayer()
 	if (true == m_pStateMachine->Get_Bool("Chase") &&
 		m_tTargetingInfo.fDistance <= m_tHysteriesis.fChaseExit)
 		m_pStateMachine->Set_Bool("Chase", false);
+}
+
+void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
+{
+	switch (eDamageType)
+	{
+	case Client::DAMAGE_TYPE::NORMAL:
+	{
+		
+		break;
+	}
+	case Client::DAMAGE_TYPE::HARD:
+	{
+
+		break;
+	}
+	case Client::DAMAGE_TYPE::AIRBORNE:
+	{
+
+		break;
+	}
+	default:
+		break;
+	}
+
 }

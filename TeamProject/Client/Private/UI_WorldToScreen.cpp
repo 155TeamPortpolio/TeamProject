@@ -8,8 +8,6 @@ HRESULT CUI_WorldToScreen::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-    Add_Component<CObjectContainer>();
-
 	return S_OK;
 }
 
@@ -21,18 +19,15 @@ HRESULT CUI_WorldToScreen::Initialize(INIT_DESC* pArg)
 }
 
 void CUI_WorldToScreen::Update(_float dt)
-{ 
-    Update_WorldToScreen();     
-
-    Get_Component<CObjectContainer>()->UpdateChild(dt);
+{   
+    __super::Update(dt);
 }
 
-void CUI_WorldToScreen::Update_WorldToScreen()
+void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
 {
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
-    _float3 vPos = m_vWorldPos;
 
-    Helper::WorldToScreen(vPos, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
+    Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
 
     //_float fNearDist = 5.f;
     //_float fFarDist = 6.f;

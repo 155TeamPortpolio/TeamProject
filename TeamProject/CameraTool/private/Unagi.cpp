@@ -7,27 +7,24 @@
 
 #include "ObjectContainer.h"
 
+namespace fs = filesystem;
+
 namespace
 {
 	struct AvatarAssetDesc
 	{
 		const char* folder;
 		const char* fileName;
+		_float      modelScale;
+		const char* idleClip;
 	};
 
 	const AvatarAssetDesc& GetAvatarAssetDesc(Avatar v)
 	{
 		static const AvatarAssetDesc table[] =
 		{
-			{"Corin", "Corin"},
-			//{"Qingyi",  "Avatar_Female_Size01_QingYi"         },
-			//{"Corin",   "Avatar_Female_Size01_Corin"          },
-			//{"Belle",   "Avatar_Female_Size02_Belle_MainCity" },
-			//{"Alice",   "Avatar_Female_Size02_Alice"          },
-			//{"Astra",   "Avatar_Female_Size03_Astra"          },
-			//{"Burnice", "Avatar_Female_Size02_Burnice"        },
-			//{"Yixuan",  "Avatar_Female_Size03_YiXuan"         },
-			//{"Yuzuha",  "Avatar_Female_Size02_Yuzuha"         },
+			{"Corin",   "Corin",   1.f, "Avatar_Female_Size01_Corin_Ani_Idle"},
+			{"JaneDoe", "JaneDoe", 1.f, "Avatar_Female_Size03_JaneDoe_Ani_Idle"}
 		};
 		return table[(int)v];
 	};
@@ -87,10 +84,18 @@ void CUnagi::ApplyAvatar(Avatar avatar)
 	RES->Add_ResourcePath(matKey, matPath);
 	RES->Add_ResourcePath(jsonKey, jsonPath);
 
+	Get_Component<CTransform>()->Scale(Vector3{desc.modelScale, desc.modelScale, desc.modelScale});
+
+	auto anim = Get_Component<CAnimator3D>();
+
 	Get_Component<CModel>()->Link_Model(levelName, modelKey);
 	Get_Component<CMaterial>()->Link_Material(levelName, matKey);
-	Get_Component<CAnimator3D>()->LinkAnimate_Model(levelName, modelKey);
-	Get_Component<CAnimator3D>()->Link_MetaData(levelName, jsonKey);
+	anim->LinkAnimate_Model(levelName, modelKey);
+	anim->Link_MetaData(levelName, jsonKey);
+
+	anim->Set_Pause(false, 0);
+	anim->Set_Animation(0, string(desc.idleClip)).Loop(true).Apply();
+	anim->Update_Animation(0.f);
 }
 
 CUnagi* CUnagi::Create()

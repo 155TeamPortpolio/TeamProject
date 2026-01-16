@@ -121,6 +121,7 @@ void CFieldCharacter::Update(_float dt)
 	//Get_Component<CObjectContainer>()->UpdateChild(dt);
 	m_pAnimator->Update_Animation(dt);
 	m_pCCT->Update(dt);
+	if (m_bIsRotating)	Update_Rotation(dt);
 }
 
 void CFieldCharacter::Late_Update(_float dt)
@@ -146,7 +147,8 @@ void CFieldCharacter::OnTriggerExit(CGameObject* pOther)
 
 void CFieldCharacter::On_Move(const InputInfo& inputInfo)
 {
-	if (false == m_bCanMove)	return;
+	if (false == m_bCanMove)	
+		return;
 	_bool prevResetMove = m_inputInfo.resetMove; 
 
 	m_inputInfo = inputInfo;
@@ -158,6 +160,22 @@ void CFieldCharacter::On_Move(const InputInfo& inputInfo)
 		dir.Normalize();
 		Rotate(dir);
 	}
+}
+
+_bool CFieldCharacter::Is_OppositeInput() const
+{
+	if (m_inputInfo.curMoveX == 0 && m_inputInfo.curMoveZ == 0) return false;
+	if (m_inputInfo.prevMoveX == 0 && m_inputInfo.prevMoveZ == 0) return false;
+
+	_vector2 vPrev((_float)m_inputInfo.prevMoveX, (_float)m_inputInfo.prevMoveZ);
+	_vector2 vCur((_float)m_inputInfo.curMoveX, (_float)m_inputInfo.curMoveZ);
+	vPrev.Normalize();
+	vCur.Normalize();
+
+	_float fDot = vPrev.Dot(vCur);
+	_float fAngle = XMConvertToDegrees(acosf(fDot));
+
+	return fAngle >= TURNBACK_ANGLE_THRESHOLD;
 }
 
 void CFieldCharacter::Update_Rotation(_float dt)

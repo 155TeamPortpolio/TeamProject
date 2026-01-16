@@ -1,71 +1,14 @@
 #pragma once
 
 #include "CamObject.h"
+#include "OrbitCamTypes.h"
 
 NS_BEGIN(Client)
 
 class COrbitCam final : public CCamObject
 {
-    struct PoseState
-    {
-        Vector2 targetRotDeg{};
-        Vector2 curRotDeg{};
-
-        _float  targetDist{};
-        _float  curDist{};
-
-        Vector3 targetPivot{};
-        Vector3 curPivot{};
-
-        Vector3 pivotOverrideOffset{};
-    };
-    struct InputState
-    {
-        _float sensitivityX = 0.12f;
-        _float sensitivityY = 0.08f;
-        _float zoomSpeed = 1.0f;
-    };
-
 public:
-    struct Profile
-    {
-        _float minDist = 1.f;
-        _float maxDist = 6.f;
-
-        _float pitchMin = -30.f;
-        _float pitchMax = 40.f;
-
-        _float rotSmoothSpeed = 16.f;
-        _float distSmoothSpeed = 16.f;
-        _float pivotSmoothSpeed = 14.f;
-
-        _float offsetY = 0.f;
-
-        _float startDistance = 4.8f;
-        _float startPitchDeg = -20.f;
-        _float startHeightOffset = 0.85f;
-
-        _bool  useAutoYawFollow = true;
-        _float autoYawFollowSpeed = 0.4f;
-        _float autoYawFollowDelay = 0.6f;
-
-        _float collisionZoomInSpeed = 12.f;
-        _float collisionZoomOutSpeed = 6.f;
-
-        _float   targetSwitchBlendSec = 2.f;
-        EaseType targetSwitchEase = EaseType::OutCubic;
-    };
-    struct TargetSwitchState
-    {
-        _bool   active  = false;
-        _float  elapsed = 0.f;
-        Vector3 holdPivotWorld{};
-    };
-
-private:
-    _float  autoYawHoldTimer = 0.f;
-    Vector3 prevTargetFoot{};
-    _bool   hasPrevTargetFoot = false;
+    using Profile = OrbitCamProfile;
 
 private:
     COrbitCam() {}
@@ -73,10 +16,11 @@ private:
     virtual ~COrbitCam() = default;
 
 public:
-    virtual HRESULT Initialize_Prototype()      override;
-    virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Awake()                     override;
-    virtual void    Priority_Update(_float dt)  override;
+    HRESULT Initialize_Prototype()      override;
+    HRESULT Initialize(INIT_DESC* pArg) override;
+    void    Awake()                     override;
+    void    Priority_Update(_float dt)  override;
+    void    Render_GUI()                override;
 
 public:
     void    SetTarget(CGameObject* obj);
@@ -86,6 +30,9 @@ public:
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
     void    SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot);
+
+    void    CaptureSnapshot(OrbitCamSnapshot& out) const;
+    void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
 
 private:
     void    UpdateInput(_float dt);
@@ -104,16 +51,20 @@ private:
     void    UpdateTargetSwitch(_float dt);
 
 private:
-    OBJECT_HANDLE    targetHandle{};
+    OrbitCamPoseState         pose{};
+    OrbitCamInputState        input{};
+    OrbitCamTargetSwitchState targetSwitch{};
+    Profile                   profile{};
+                              
+    _float                    autoYawHoldTimer = 0.f;
+    Vector3                   prevTargetFoot{};
+    _bool                     hasPrevTargetFoot = false;
 
-    Profile           profile{};
-    PoseState         pose{};
-    InputState        input{};
-    TargetSwitchState targetSwitch{};
+    OBJECT_HANDLE             targetHandle{};
 
 public:
     static  COrbitCam* Create();
-    virtual CGameObject* Clone(INIT_DESC* pArg) override;
+    CGameObject* Clone(INIT_DESC* pArg) override;
 };
 
 NS_END

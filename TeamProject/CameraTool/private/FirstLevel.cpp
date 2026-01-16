@@ -21,7 +21,7 @@ HRESULT CFirstLevel::Awake()
 		.Build("FreeCam");
 
 	CGameObject* demoModel = Builder::Create_Object({"First_Level", "Proto_Unagi"})
-		.Scale({1.f, 1.f, 1.f})
+		//.Scale({100.f, 100.f, 100.f})
 		.Build("Unagi");
 
 	CGameObject* demoGrid = Builder::Create_Object({"First_Level", "Proto_Grid"})
@@ -47,10 +47,10 @@ HRESULT CFirstLevel::Awake()
 	auto camPanel = CCamPanel::Create(GUI->Get_Context());
 	camPanel->SetCaptureTarget(static_cast<CCamObj*>(freeCam));
 	camPanel->SetSpaceReference(objHandle);
-	camPanel->SetAvatarUI(Avatar::Corin);
+	camPanel->SetAvatarUI(Avatar::JaneDoe);
 
 	auto avatar = static_cast<CUnagi*>(demoModel);
-	avatar->ApplyAvatar(Avatar::Corin);
+	avatar->ApplyAvatar(Avatar::JaneDoe);
 
 	camPanel->SetOnAvatarChanged([avatar](Avatar p)
 		{
@@ -59,6 +59,12 @@ HRESULT CFirstLevel::Awake()
 
 	GUI->Register_Panel(camPanel);
 	return S_OK;
+}
+
+void CFirstLevel::Update()
+{
+	if(InputDevice()->Key_Tap('Q'))
+		exit(0);
 }
 
 CFirstLevel* CFirstLevel::Create(const string& key)

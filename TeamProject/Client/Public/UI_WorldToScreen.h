@@ -19,8 +19,8 @@ public:
 	virtual void    Late_Update(_float dt)           override { __super::Late_Update(dt); }
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
-private:
-	void Update_WorldToScreen();
+protected:
+	void Update_WorldToScreen(_float3 vPosition);
 
 public:
 	virtual void Free() { __super::Free(); }

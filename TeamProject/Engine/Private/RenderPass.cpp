@@ -72,37 +72,35 @@ void RenderPass::Free()
 
 #pragma region STATICMESH_OPAQUE_PASS
 void StaticOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRenderer)
-{/*�̰� ���������� ���̴��� �� �־��ִ� ����*/
+{
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*���� ���̴�, ���� ��Ƽ����, ���� �𵨳��� ���� */
-	sort(m_Packets.begin(), m_Packets.end(),
-		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
-			return a.GetKey() < b.GetKey();
-		});
+	vector<OPAQUE_PACKET> frustums;
+	frustums.reserve(m_Packets.size());
 
-	/*��Ŷ�� ��� ������ ����*/
-	if (m_Packets.empty())
-		return;
-
-	/*��� ���� �� SRV ����*/
 	pPipeLine->Begin_ObjectBuffer(pContext);
 
-	vector<OPAQUE_PACKET> frustums;
 	for (auto& packet : m_Packets)
 	{
-		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex), XMLoadFloat4x4(packet.pWorldMatrix)))
+		if (!pPipeLine->isVisible(packet.pModel->Get_MeshBoundingBox(packet.DrawIndex),
+			XMLoadFloat4x4(packet.pWorldMatrix)))
 			continue;
-		_uint TransformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
-		packet.TransformIndex = TransformIndex;
+
+		_uint transformIndex = pPipeLine->Write_ObjectData(*packet.pWorldMatrix);
+		packet.TransformIndex = transformIndex;
 		frustums.push_back(packet);
 	}
 
 	pPipeLine->End_ObjectBuffer(pContext);
 
+	sort(frustums.begin(), frustums.end(),
+		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
+			return leftPacket.fLinearZ < rightPacket.fLinearZ;
+		});
+
 	m_VisiblePackets = pPipeLine->OcculsionCulling(frustums);
-	/*��ο��� ����*/
+
 	for (auto& packet : m_VisiblePackets)
 	{
 		if (packet.pMaterial->Get_Shader(packet.MaterialIndex) != pCurShader) {
@@ -137,10 +135,9 @@ void SkinnedOpaquePass::Execute(ID3D11DeviceContext* pContext, CRenderer* pRende
 	CPipeLine* pPipeLine = m_pRenderSystem->Get_Pipeline();
 	pCurShader = { nullptr };
 
-	/*���� ���̴�, ���� ��Ƽ����, ���� �𵨳��� ���� */
 	sort(m_Packets.begin(), m_Packets.end(),
-		[](const OPAQUE_PACKET& a, const OPAQUE_PACKET& b) {
-			return a.GetKey() < b.GetKey();
+		[](const OPAQUE_PACKET& leftPacket, const OPAQUE_PACKET& rightPacket) {
+			return leftPacket.fLinearZ < rightPacket.fLinearZ;
 		});
 
 	/*��Ŷ�� ��� ������ ����*/

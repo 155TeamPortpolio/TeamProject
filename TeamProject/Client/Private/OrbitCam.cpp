@@ -14,8 +14,10 @@ void COrbitCam::Awake()
     cc->Resize(0.2f, 0.2f);
     cc->Set_GravityEnabled(false);
     cc->Set_StepOffset(0.f);
-    cc->Set_SlopeLimit(0.f);
-    cc->Set_MinMoveDist(0.01f);
+    cc->Set_SlopeLimit(89.f);
+    cc->Set_MinMoveDist(0.001f);
+    cc->Set_ContactOffset(0.001f);
+    cc->Set_RestOffset(0.f);
 }
 
 HRESULT COrbitCam::Initialize_Prototype()
@@ -76,7 +78,6 @@ void COrbitCam::SetTarget(CGameObject* obj)
 
     ClampTargets();
 }
-
 
 void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
@@ -206,8 +207,46 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     m_pTransform->LookAt(Vector4(desiredPivot.x, desiredPivot.y, desiredPivot.z, 1.f));
 }
 
+void COrbitCam::CaptureSnapshot(OrbitCamSnapshot& out) const
+{
+    out.pose = pose;
+    out.targetSwitch = targetSwitch;
+    out.autoYawHoldTimer = autoYawHoldTimer;
+    out.prevTargetFoot = prevTargetFoot;
+    out.hasPrevTargetFoot = hasPrevTargetFoot;
+    out.targetHandle = targetHandle;
+}
+
+void COrbitCam::RestoreSnapshot(const OrbitCamSnapshot& s)
+{
+    targetHandle = s.targetHandle;
+    pose = s.pose;
+    targetSwitch = s.targetSwitch;
+    autoYawHoldTimer = s.autoYawHoldTimer;
+    prevTargetFoot = s.prevTargetFoot;
+    hasPrevTargetFoot = s.hasPrevTargetFoot;
+
+    const Vector3 pivot = GetPivotTargetPos();
+    pose.targetPivot = pivot;
+    pose.curPivot = pivot;
+
+    const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
+    const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
+    const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+    const Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+    const Vector3 camPos = pivot + backDir * pose.curDist;
+
+    auto cc = Get_Component<CCharacterController>();
+    cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
+
+    m_pTransform->Set_WorldPos(Vector4(camPos.x, camPos.y, camPos.z, 1.f));
+    m_pTransform->LookAt(Vector4(pivot.x, pivot.y, pivot.z, 1.f));
+}
+
 void COrbitCam::Priority_Update(_float dt)
 {
+    if (!targetHandle.isValid()) return;
     UpdateTargetSwitch(dt);
 
     pose.targetPivot = GetPivotTargetPos();
@@ -221,20 +260,20 @@ void COrbitCam::Priority_Update(_float dt)
 
 void COrbitCam::UpdateInput(_float dt)
 {
-    if (!ImGui::GetIO().WantCaptureMouse)
-    {
-        const float dx = InputDevice()->Mouse_DeltaX();
-        const float dy = InputDevice()->Mouse_DeltaY();
+    auto& io = ImGui::GetIO();
 
-        pose.targetRotDeg.x += dx * input.sensitivityX;
-        pose.targetRotDeg.y += dy * input.sensitivityY;
+    if (io.WantCaptureMouse || ImGui::IsAnyItemActive() || ImGui::IsAnyItemHovered()) return;
 
-        if (dx != 0.f || dy != 0.f) 
-            autoYawHoldTimer = profile.autoYawFollowDelay;
+    const float dx = InputDevice()->Mouse_DeltaX();
+    const float dy = InputDevice()->Mouse_DeltaY();
 
-        const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
-        if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
-    }
+    pose.targetRotDeg.x += dx * input.sensitivityX;
+    pose.targetRotDeg.y += dy * input.sensitivityY;
+
+    if (dx != 0.f || dy != 0.f) autoYawHoldTimer = profile.autoYawFollowDelay;
+
+    const float wheel = InputDevice()->Mouse_DeltaW() * 0.5f;
+    if (wheel != 0.f) pose.targetDist -= wheel * input.zoomSpeed;
 }
 
 void COrbitCam::ClampTargets()
@@ -293,7 +332,7 @@ void COrbitCam::ApplyOrbitPose(_float dt)
     const PxExtendedVec3& c1 = cc->Get_Controller()->getPosition();
     const Vector3 newPos((float)c1.x, (float)c1.y, (float)c1.z);
 
-    float actualDist = (pivot - newPos).Length();
+    float actualDist = (newPos - pivot).Dot(backDir);
     actualDist = clamp(actualDist, profile.minDist, profile.maxDist);
 
     float delta = actualDist - pose.curDist;
@@ -425,3 +464,376 @@ CGameObject* COrbitCam::Clone(INIT_DESC* pArg)
     }
     return inst;
 }
+
+void COrbitCam::Render_GUI()
+{
+    __super::Render_GUI();
+
+    if (!ImGui::CollapsingHeader("OrbitCam Debug", ImGuiTreeNodeFlags_DefaultOpen)) return;
+
+    auto& io = ImGui::GetIO();
+
+    struct TrackedValue
+    {
+        int   kind = 0;
+        int   count = 0;
+        int   i = 0;
+        float f[4]{};
+    };
+
+    static unordered_map<ImGuiID, TrackedValue> s_prev{};
+    static unordered_map<ImGuiID, float>        s_hot{};
+
+    for (auto it = s_hot.begin(); it != s_hot.end();)
+    {
+        it->second -= io.DeltaTime;
+        if (it->second <= 0.f) it = s_hot.erase(it);
+        else ++it;
+    }
+
+    auto Mark = [&](ImGuiID id, const TrackedValue& cur)
+        {
+            auto it = s_prev.find(id);
+            _bool diff = false;
+
+            if (it == s_prev.end()) diff = true;
+            else
+            {
+                const TrackedValue& p = it->second;
+                if (p.kind != cur.kind || p.count != cur.count || p.i != cur.i) diff = true;
+                else
+                {
+                    for (int k = 0; k < 4; ++k)
+                        if (p.f[k] != cur.f[k]) { diff = true; break; }
+                }
+            }
+
+            if (diff)
+            {
+                s_prev[id] = cur;
+                s_hot[id] = 0.25f;
+            }
+        };
+
+    auto IsHot = [&](ImGuiID id) { return s_hot.find(id) != s_hot.end(); };
+
+    auto TextRight = [&](const char* text)
+        {
+            const float w = ImGui::CalcTextSize(text).x;
+            const float avail = ImGui::GetContentRegionAvail().x;
+            const float pad = (avail > w) ? (avail - w) : 0.f;
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + pad);
+            ImGui::TextUnformatted(text);
+        };
+
+    auto BeginTable3 = [&](const char* id)
+        {
+            return ImGui::BeginTable(id, 3,
+                ImGuiTableFlags_RowBg |
+                ImGuiTableFlags_BordersOuterH |
+                ImGuiTableFlags_BordersInnerV |
+                ImGuiTableFlags_SizingStretchProp);
+        };
+
+    auto SetupTable3 = [&]()
+        {
+            ImGui::TableSetupColumn("Key", ImGuiTableColumnFlags_WidthStretch, 0.48f);
+            ImGui::TableSetupColumn("Value", ImGuiTableColumnFlags_WidthStretch, 0.27f);
+            ImGui::TableSetupColumn("Edit", ImGuiTableColumnFlags_WidthStretch, 0.25f);
+            ImGui::TableHeadersRow();
+        };
+
+    auto RowLabel = [&](const char* label)
+        {
+            ImGui::TableNextRow();
+            ImGui::TableSetColumnIndex(0);
+            ImGui::TextUnformatted(label);
+        };
+
+    auto RowValueText = [&](ImGuiID id, const char* valueText)
+        {
+            ImGui::TableSetColumnIndex(1);
+
+            const _bool hot = IsHot(id);
+            if (hot) ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(1.f, 0.2f, 0.2f, 1.f));
+            TextRight(valueText);
+            if (hot) ImGui::PopStyleColor();
+        };
+
+    auto RowEmptyEdit = [&]()
+        {
+            ImGui::TableSetColumnIndex(2);
+            ImGui::TextUnformatted("");
+        };
+
+    auto MakeId = [&](const char* label) { return ImGui::GetID(label); };
+
+    auto RowBool = [&](const char* label, _bool v)
+        {
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 1;
+            cur.i = v ? 1 : 0;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, v ? "Yes" : "No");
+            RowEmptyEdit();
+        };
+
+    auto RowFloat = [&](const char* label, float v, const char* fmt)
+        {
+            char buf[128]{};
+            sprintf_s(buf, fmt, v);
+
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 2;
+            cur.count = 1;
+            cur.f[0] = v;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, buf);
+            RowEmptyEdit();
+        };
+
+    auto RowVec2 = [&](const char* label, const Vector2& v, const char* fmt)
+        {
+            char buf[128]{};
+            sprintf_s(buf, fmt, v.x, v.y);
+
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 3;
+            cur.count = 2;
+            cur.f[0] = v.x;
+            cur.f[1] = v.y;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, buf);
+            RowEmptyEdit();
+        };
+
+    auto RowVec3 = [&](const char* label, const Vector3& v, const char* fmt)
+        {
+            char buf[128]{};
+            sprintf_s(buf, fmt, v.x, v.y, v.z);
+
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 4;
+            cur.count = 3;
+            cur.f[0] = v.x;
+            cur.f[1] = v.y;
+            cur.f[2] = v.z;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, buf);
+            RowEmptyEdit();
+        };
+
+    auto RowFloatEdit = [&](const char* label, float* v, float speed, float vmin, float vmax, const char* fmt)
+        {
+            char buf[128]{};
+            sprintf_s(buf, fmt, *v);
+
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 2;
+            cur.count = 1;
+            cur.f[0] = *v;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, buf);
+
+            ImGui::TableSetColumnIndex(2);
+            ImGui::PushID(label);
+            ImGui::SetNextItemWidth(-FLT_MIN);
+            ImGui::DragFloat("##edit", v, speed, vmin, vmax, fmt);
+            ImGui::PopID();
+        };
+
+    auto RowBoolEdit = [&](const char* label, _bool* v)
+        {
+            const ImGuiID id = MakeId(label);
+            TrackedValue cur{};
+            cur.kind = 1;
+            cur.i = *v ? 1 : 0;
+            Mark(id, cur);
+
+            RowLabel(label);
+            RowValueText(id, *v ? "Yes" : "No");
+
+            ImGui::TableSetColumnIndex(2);
+            ImGui::PushID(label);
+            ImGui::Checkbox("##edit", v);
+            ImGui::PopID();
+        };
+
+    if (ImGui::CollapsingHeader("Status", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushID("Status");
+        if (BeginTable3("##OrbitCam_Status"))
+        {
+            SetupTable3();
+            RowBool("Target Valid", targetHandle.isValid());
+            RowFloat("AutoYaw HoldTimer", autoYawHoldTimer, "%.3f");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("Pose", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushID("Pose");
+        if (BeginTable3("##OrbitCam_Pose"))
+        {
+            SetupTable3();
+            RowVec2("RotDeg Cur (Yaw,Pitch)", pose.curRotDeg, "(%.3f, %.3f)");
+            RowVec2("RotDeg Target (Yaw,Pitch)", pose.targetRotDeg, "(%.3f, %.3f)");
+            RowFloat("Dist Cur", pose.curDist, "%.4f");
+            RowFloat("Dist Target", pose.targetDist, "%.4f");
+            RowVec3("Pivot Cur", pose.curPivot, "(%.3f, %.3f, %.3f)");
+            RowVec3("Pivot Target", pose.targetPivot, "(%.3f, %.3f, %.3f)");
+            RowVec3("Pivot Offset", pose.pivotOverrideOffset, "(%.3f, %.3f, %.3f)");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("Input (Editable)", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushID("Input");
+        if (BeginTable3("##OrbitCam_Input"))
+        {
+            SetupTable3();
+            RowFloatEdit("Sensitivity X", &input.sensitivityX, 0.001f, 0.f, 10.f, "%.3f");
+            RowFloatEdit("Sensitivity Y", &input.sensitivityY, 0.001f, 0.f, 10.f, "%.3f");
+            RowFloatEdit("Zoom Speed", &input.zoomSpeed, 0.01f, 0.f, 50.f, "%.3f");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("Profile (Editable)", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushID("Profile");
+        if (BeginTable3("##OrbitCam_Profile"))
+        {
+            SetupTable3();
+
+            RowFloatEdit("Min Dist", &profile.minDist, 0.01f, 0.f, 50.f, "%.3f");
+            RowFloatEdit("Max Dist", &profile.maxDist, 0.01f, 0.f, 50.f, "%.3f");
+
+            RowFloatEdit("Pitch Min", &profile.pitchMin, 0.1f, -89.f, 89.f, "%.2f");
+            RowFloatEdit("Pitch Max", &profile.pitchMax, 0.1f, -89.f, 89.f, "%.2f");
+
+            RowFloatEdit("Smooth Rot", &profile.rotSmoothSpeed, 0.1f, 0.f, 100.f, "%.2f");
+            RowFloatEdit("Smooth Dist", &profile.distSmoothSpeed, 0.1f, 0.f, 100.f, "%.2f");
+            RowFloatEdit("Smooth Pivot", &profile.pivotSmoothSpeed, 0.1f, 0.f, 100.f, "%.2f");
+
+            RowFloatEdit("Offset Y", &profile.offsetY, 0.01f, -10.f, 10.f, "%.3f");
+
+            RowBoolEdit("Use AutoYaw Follow", &profile.useAutoYawFollow);
+            RowFloatEdit("AutoYaw Follow Speed", &profile.autoYawFollowSpeed, 0.01f, 0.f, 50.f, "%.3f");
+            RowFloatEdit("AutoYaw Follow Delay", &profile.autoYawFollowDelay, 0.01f, 0.f, 10.f, "%.3f");
+
+            RowFloatEdit("Collision Zoom In Speed", &profile.collisionZoomInSpeed, 0.1f, 0.f, 100.f, "%.2f");
+            RowFloatEdit("Collision Zoom Out Speed", &profile.collisionZoomOutSpeed, 0.1f, 0.f, 100.f, "%.2f");
+
+            RowFloatEdit("Target Switch Blend Sec", &profile.targetSwitchBlendSec, 0.01f, 0.01f, 10.f, "%.3f");
+
+            ImGui::EndTable();
+        }
+
+        ImGui::Text("Target Switch Ease: %d", (_int)profile.targetSwitchEase);
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("CCT", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        auto cc = Get_Component<CCharacterController>();
+        const PxExtendedVec3& cpos = cc->Get_Controller()->getPosition();
+        const PxExtendedVec3& fpos = cc->Get_Controller()->getFootPosition();
+
+        const Vector3 camPos((float)cpos.x, (float)cpos.y, (float)cpos.z);
+        const Vector3 footPos((float)fpos.x, (float)fpos.y, (float)fpos.z);
+
+        const _float3 vel0 = cc->Get_Velocity();
+        const Vector3 vel(vel0.x, vel0.y, vel0.z);
+
+        ImGui::PushID("CCT");
+        if (BeginTable3("##OrbitCam_CCT"))
+        {
+            SetupTable3();
+            RowVec3("Pos", camPos, "(%.3f, %.3f, %.3f)");
+            RowVec3("Foot", footPos, "(%.3f, %.3f, %.3f)");
+            RowBool("Grounded", cc->Is_Grounded());
+            RowVec3("Vel", vel, "(%.3f, %.3f, %.3f)");
+            RowFloat("MinMoveDist", cc->Get_MinMoveDist(), "%.6f");
+            RowFloat("ContactOffset", cc->Get_ContactOffset(), "%.6f");
+            RowFloat("RestOffset", cc->Get_RestOffset(), "%.6f");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("Orbit Metrics", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        auto cc = Get_Component<CCharacterController>();
+        const PxExtendedVec3& cpos = cc->Get_Controller()->getPosition();
+        const Vector3 camPos((float)cpos.x, (float)cpos.y, (float)cpos.z);
+
+        const Vector3 pivot = GetPivotPos();
+
+        const float yawRad = XMConvertToRadians(pose.curRotDeg.x);
+        const float pitchRad = XMConvertToRadians(pose.curRotDeg.y);
+        const Quaternion q = Quaternion::CreateFromYawPitchRoll(yawRad, pitchRad, 0.f);
+
+        Vector3 backDir = Vector3::Transform(Vector3(0.f, 0.f, -1.f), q);
+        backDir.Normalize();
+
+        const float distLen = (pivot - camPos).Length();
+        const float distProj = (camPos - pivot).Dot(backDir);
+        const float distErr = distLen - distProj;
+
+        const Vector3 desiredPos = pivot + backDir * pose.curDist;
+        const Vector3 toDesired = desiredPos - camPos;
+
+        ImGui::PushID("Metrics");
+        if (BeginTable3("##OrbitCam_Metrics"))
+        {
+            SetupTable3();
+            RowVec3("Pivot", pivot, "(%.3f, %.3f, %.3f)");
+            RowVec3("BackDir", backDir, "(%.3f, %.3f, %.3f)");
+            RowFloat("Dist Cur", pose.curDist, "%.4f");
+            RowFloat("Dist Len", distLen, "%.4f");
+            RowFloat("Dist Proj", distProj, "%.4f");
+            RowFloat("Len - Proj", distErr, "%.6f");
+            RowVec3("DesiredPos", desiredPos, "(%.3f, %.3f, %.3f)");
+            RowVec3("ToDesired", toDesired, "(%.3f, %.3f, %.3f)");
+            RowFloat("ToDesired Len", toDesired.Length(), "%.4f");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+
+    if (ImGui::CollapsingHeader("Target Switch", ImGuiTreeNodeFlags_DefaultOpen))
+    {
+        ImGui::PushID("TargetSwitch");
+        if (BeginTable3("##OrbitCam_TargetSwitch"))
+        {
+            SetupTable3();
+            RowBool("Active", targetSwitch.active);
+            RowFloat("Elapsed", targetSwitch.elapsed, "%.3f");
+            RowVec3("HoldPivot", targetSwitch.holdPivotWorld, "(%.3f, %.3f, %.3f)");
+            ImGui::EndTable();
+        }
+        ImGui::PopID();
+    }
+}
+

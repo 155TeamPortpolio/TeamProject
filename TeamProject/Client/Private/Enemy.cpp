@@ -5,6 +5,8 @@
 
 /* Object */
 #include "AttackSign.h"
+#include "UI_EnemyStatus.h"
+#include "EnemyAttackCollider.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -41,6 +43,7 @@ void CEnemy::Update(_float dt)
 {
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 	CheckAutoBattlePlay(dt);
+	ManageGroggy(dt);
 
 	m_PlayerCharacterInfos.clear();
 	m_PlayerCharacterInfos = CBattleSystem::GetInstance()->GetBattleObjects(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER);
@@ -161,6 +164,35 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
+void CEnemy::Create_EnemyStatus(string boneTag)
+{
+	// 월드 행렬 포인터 
+	if (!m_pTransform)
+		return;
+
+	const _float4x4* pParentWorld = m_pTransform->Get_WorldMatrix_Ptr();
+	if (!pParentWorld)
+		return;
+
+	// 본 로컬 행렬 포인터
+	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
+	if (!pBoneLocal)
+		return; 
+
+	// ENEMYSTATUS_DESC 생성
+	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
+	pDesc->pParentWorld = pParentWorld;
+	pDesc->pBoneLocal = pBoneLocal;
+
+	// EnemyStatus UI 생성
+	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
+		.Add_UIDesc(pDesc)
+		.Build("EnemyStatus");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+}
+
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 {
 	//_bool           isAttachBone = { true };                // 뼈에 붙이는지
@@ -267,7 +299,33 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 	return S_OK;
 }
 
-void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is)
+void CEnemy::ManageGroggy(const _float dt)
+{
+	if (false == m_isGroggy && 100 <= m_tStatus.iGroggyValue) 
+	{
+		m_tStatus.iGroggyValue = 100;
+		m_isGroggy = true;
+	}
+
+	if (true == m_isGroggy) 
+	{
+		m_fGroggyDecreaseTime += dt;
+
+		if (0.1f <= m_fGroggyDecreaseTime) 
+		{
+			--m_tStatus.iGroggyValue;
+			m_fGroggyDecreaseTime = 0.f;
+		}
+
+		if (0 > m_tStatus.iGroggyValue) 
+		{
+			m_tStatus.iGroggyValue = 0;
+			m_isGroggy = false;
+		}
+	}
+}
+
+void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
 {
 	string tagBattleCol = tagBattleColliderObject;
 
@@ -284,6 +342,13 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 	if (nullptr == pBattleCol)
 		return;
 
+	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
+	{
+		if (true == is)
+			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->Begin_Attack(hitdesc);
+		else
+			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->End_Attack();
+	}
 	pBattleCol->Get_Component<CCollider>()->Set_CompActive(is);
 }
 
@@ -306,13 +371,14 @@ void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 		nullptr == children[iterTrigger->second])
 		return;
 
+	dynamic_cast<CEnemyAttackCollider*>(children[iterAttack->second])->End_Attack();
 	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
 	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
 }
 
-void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime)
+void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc)
 {
-	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true);
+	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
 
 	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
 	m_tAutoBattleCol.isAutoPlay = true;
@@ -344,8 +410,8 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 	{	
 		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration()) 
 		{ 
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false);
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true);
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, {});
 
 			m_tAutoBattleCol.isAttackColliderPlay = true;
 		}

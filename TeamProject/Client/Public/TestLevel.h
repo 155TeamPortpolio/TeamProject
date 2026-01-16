@@ -5,7 +5,7 @@ class CGameInstance; class CUI_Object; class IProtoService; class IObjectService
 NS_END
 
 NS_BEGIN(Client)
-class CCamDirector; class COrbitCam;
+class CCamDirector; class COrbitCam; class CPlayer;
 
 class CTestLevel : public CLevel
 {
@@ -22,18 +22,16 @@ public:
 private:
     void Ready_Map(const string& LevelTag, const string& AreaTag);
     void Rake_MapResources();
-    void Ready_Camera();
-    void Ready_ShadowCamera();
     void Ready_TestObject();
 	void Ready_Npc();
-
 
 public:
 	static void PreLoad_Level();
 
 private:
-	CGameInstance* m_pGameInstance{};
-	CCamDirector* m_pCamDirector{};
+	CGameInstance*	m_pGameInstance{};
+	CCamDirector*	m_pCamDirector{};
+	CPlayer*		m_pPlayer{};
 
 public:
 	static CTestLevel* Create(const string& LevelKey);

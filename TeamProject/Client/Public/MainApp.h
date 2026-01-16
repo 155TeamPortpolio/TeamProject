@@ -30,5 +30,7 @@ public:
 
 private:
 	void Initialize_GlobalPrototype();
+	void Create_GlobalCamObjs();
+	void Create_GlobalPlayer();
 };
 

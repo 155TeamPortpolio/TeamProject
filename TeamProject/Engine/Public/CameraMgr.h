@@ -56,6 +56,9 @@ public:
     const Matrix* Get_InversedShadowViewMatrix() override { return &shadow.invView; }
     const Matrix* Get_InversedShadowProjMatrix() override { return &shadow.invProj; }
 
+    Vector4 GetForward() const override;
+    Vector4 GetRight()   const override;
+
 private:
     struct OverrideEntry
     {
@@ -90,7 +93,7 @@ private:
 
 private:
     CGameObject* ResolveObj(OBJECT_HANDLE handle) const;
-    CCamera* ResolveCam(OBJECT_HANDLE handle) const;
+    CCamera*     ResolveCam(OBJECT_HANDLE handle) const;
 
     OBJECT_HANDLE GetActiveCamObj() const { return m_overrides.empty() ? m_baseCamObj : m_overrides.back().camObj; }
 

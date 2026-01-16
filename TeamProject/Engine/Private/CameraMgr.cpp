@@ -166,12 +166,12 @@ void CCameraMgr::UpdateShadowCache()
 
 void CCameraMgr::SetShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    m_shake.Set(ampDeg, freq, dur, fadeOutSec);
+    m_shake.Set(ampDeg, dur, fadeOutSec);
 }
 
 void CCameraMgr::AddShake(_float ampDeg, _float freq, _float dur, _float fadeOutSec)
 {
-    m_shake.Add(ampDeg, freq, dur, fadeOutSec);
+    m_shake.Add(ampDeg, dur, fadeOutSec);
 }
 
 void CCameraMgr::ClearShake(_float fadeOutSec)
@@ -238,6 +238,16 @@ Lens CCameraMgr::Get_ShadowLens() const
     out.zFar   = cam->Get_Far();
     out.aspect = cam->Get_Aspect();
     return out;
+}
+
+Vector4 CCameraMgr::GetForward() const
+{
+    return GetActiveCamObj().Get()->Get_Component<CTransform>()->Dir(STATE::LOOK);
+}
+
+Vector4 CCameraMgr::GetRight() const
+{
+    return GetActiveCamObj().Get()->Get_Component<CTransform>()->Dir(STATE::RIGHT);
 }
 
 void CCameraMgr::Free()

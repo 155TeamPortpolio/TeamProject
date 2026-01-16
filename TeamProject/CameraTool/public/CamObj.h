@@ -30,7 +30,6 @@ public:
 
 public:
     virtual CGameObject* Clone(INIT_DESC* pArg) override PURE;
-    virtual void Free() override;
 };
 
 NS_END

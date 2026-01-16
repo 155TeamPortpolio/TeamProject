@@ -27,12 +27,11 @@ public:
 private:
 	void Ready_Map(const string& LevelTag, const string& AreaTag);
 	void Rake_MapResources();
-	void Ready_Camera();
-	void Ready_ShadowCamera();
 
 private:
-	class CGameInstance* m_pGameInstance{};
-	class CCamDirector* m_pCamDirector{};
+	class CGameInstance*	m_pGameInstance{};
+	class CCamDirector*		m_pCamDirector{};
+	class CPlayer*			m_pPlayer{};
 
 public:
 	static CScott_Level* Create(const string& LevelKey);
