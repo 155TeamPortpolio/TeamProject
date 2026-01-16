@@ -9,7 +9,7 @@ class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
 private:
-    CCamDirector() {}
+    CCamDirector();
     virtual ~CCamDirector() = default;
 
 public:
@@ -30,8 +30,9 @@ public:
     CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
+    CPlayer*      GetPlayer() const;
 
-    void          SetTarget(OBJECT_HANDLE targetHandle) { GetOrbitCam()->SetTarget(targetHandle); }
+    void          SetTarget(OBJECT_HANDLE targetHandle);
 
 public:
     _bool         Register(const string& key, const filesystem::path& path);
@@ -48,11 +49,21 @@ public:
     void          Update(_float dt);
 
 private:
+    void          UpdatePlayer();
+    void          UpdateInput();
+
+private:
+    ICameraService&         camMgr;
+    IObjectService&         objMgr;
+
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
     OBJECT_HANDLE           m_spaceRefHandle{};
     CamType                 m_returnCamType = CamType::None;
+
+    OBJECT_HANDLE           m_focusHandle{};
+    _int                    m_focusType = -1;
 };
 
 NS_END

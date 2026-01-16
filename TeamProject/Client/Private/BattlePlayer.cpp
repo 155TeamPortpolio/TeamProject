@@ -264,10 +264,10 @@ void CBattlePlayer::Process_Ultimate()
 {
 	if (InputDevice()->Key_Tap('Q'))
 	{
-		if (m_pCurrentCharacter->Can_Ultimate())
-		{
+		//if (m_pCurrentCharacter->Can_Ultimate())
+		//{
 			m_pCurrentCharacter->On_Ultimate();
-		}
+		//}
 	}
 }
 
@@ -327,6 +327,7 @@ void CBattlePlayer::Update_Status()
 		desc.eCharacter = pCharacter->Get_CharacterName();
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
+		desc.specialThreshold = pCharacter->Get_EnergyDesc().fSpecialEnergy;
 		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
 
 		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
@@ -429,6 +430,11 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eState = UI_ACTION_STATE::ENABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	/* Ultimate */

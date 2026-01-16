@@ -262,6 +262,7 @@ CMapLoader* CMapLoader::Create(const string& TagLevel, const string& TagArea)
         Safe_Release(instance);
         instance = nullptr;
         MSG_BOX("Failed to Create : CMapLoader");
+       
     }
 
     return instance;

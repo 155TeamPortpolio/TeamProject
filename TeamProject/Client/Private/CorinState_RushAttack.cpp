@@ -34,14 +34,7 @@ void CCorinState_Rush_Start::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
         .Speed(2.f)
         .Apply();
-    if (m_fAnimProgress >= 0.12f)
-    {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.f });
-    }
-    if (m_fAnimProgress >= 0.95f)
-    {
-        pOwner->End_AttackCollider("Saw");
-    }
+    pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.f });
 }
 
 void CCorinState_Rush_Start::Update(CCorin* pOwner, _float dt)
@@ -55,6 +48,7 @@ void CCorinState_Rush_Start::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Rush_Explode::Enter(CCorin* pOwner)
 {
+    pOwner->End_AttackCollider("Saw");
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_Explode")
         .Speed(2.f)
         .Apply();

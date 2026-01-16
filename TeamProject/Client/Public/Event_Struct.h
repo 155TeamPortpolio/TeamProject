@@ -31,6 +31,7 @@ typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_VALUE hp = {};
 	UI_STATUS_VALUE special = {};
 	UI_STATUS_VALUE ultimate = {};
+	_float specialThreshold = {};
 	// EX 관련 값 추가 필요
 }UI_PLAYER_STATUS_DESC;
 

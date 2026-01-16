@@ -81,13 +81,6 @@ HRESULT CScott_Level::Awake()
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
-	// ============ Camera ==================================================
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_OrbitCam", COrbitCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
-	// =========================================================================
-
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestModel", CTestObject::Create());
@@ -102,10 +95,6 @@ HRESULT CScott_Level::Awake()
 	Ready_Map("Scott_Level", "Zero_Worksite");
 
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
-
-
-	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
 
 	return S_OK;
 }

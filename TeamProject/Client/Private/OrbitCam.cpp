@@ -46,26 +46,29 @@ HRESULT COrbitCam::Initialize(INIT_DESC* pArg)
     return S_OK;
 }
 
-void COrbitCam::SetTarget(CGameObject* obj)
+void COrbitCam::SetTarget(OBJECT_HANDLE handle)
 {
-    const float keepTargetDist = pose.targetDist;
-    const _bool hadTarget = targetHandle.isValid();
-
     autoYawHoldTimer = profile.autoYawFollowDelay;
     hasPrevTargetFoot = false;
 
-    if (!hadTarget)
+    const float keepTargetDist = pose.targetDist;
+
+    if (!targetHandle.isValid())
     {
-        targetHandle = obj->Get_Handle();
+        targetHandle = handle;
         targetSwitch = {};
         pose.pivotOverrideOffset = Vector3::Zero;
+
+        auto obj = ObjectManager()->Request_Object(handle);
         SetTargetFrontView(obj, profile.startDistance, profile.startPitchDeg, profile.startHeightOffset);
         return;
     }
 
+    if (handle.hObjID == targetHandle.hObjID) return;
+
     const Vector3 holdPivotWorld = pose.curPivot;
 
-    targetHandle = obj->Get_Handle();
+    targetHandle = handle;
 
     targetSwitch.active = true;
     targetSwitch.elapsed = 0.f;
@@ -77,11 +80,6 @@ void COrbitCam::SetTarget(CGameObject* obj)
     pose.curDist = clamp(pose.curDist, profile.minDist, profile.maxDist);
 
     ClampTargets();
-}
-
-void COrbitCam::SetTarget(OBJECT_HANDLE handle)
-{
-    SetTarget(ObjectManager()->Request_Object(handle));
 }
 
 void COrbitCam::SyncFromCurTransform()

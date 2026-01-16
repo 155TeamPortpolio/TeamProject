@@ -49,9 +49,9 @@ void CTimer::Update_Timer()
 _float CTimer::Get_DeltaTime(_bool raw)
 {
 	if (!raw)
-		return min(m_fScaledDeltaTime* m_fTimeScale, 0.033);
+		return min(m_fScaledDeltaTime, 0.033);
 	else
-		return m_fScaledDeltaTime* m_fTimeScale;
+		return m_fScaledDeltaTime;
 }
 
 _float CTimer::Get_TotalTime()

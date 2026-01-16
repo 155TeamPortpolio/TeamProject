@@ -19,6 +19,7 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     ENEMYSTATUS_DESC* pDesc = static_cast<ENEMYSTATUS_DESC*>(pArg);
     m_pParentWorld = pDesc->pParentWorld;
     m_pBoneLocal = pDesc->pBoneLocal;
+    m_pMonsterStatus = pDesc->pMonsterStatus;
 
     __super::Initialize(pArg);
 

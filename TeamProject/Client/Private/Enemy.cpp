@@ -183,6 +183,7 @@ void CEnemy::Create_EnemyStatus(string boneTag)
 	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
 	pDesc->pParentWorld = pParentWorld;
 	pDesc->pBoneLocal = pBoneLocal;
+	pDesc->pMonsterStatus = &m_tStatus;
 
 	// EnemyStatus UI »ý¼º
 	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
@@ -264,7 +265,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 
 #pragma region TriggerCollider
 	COLLIDER_DESC TriggercolliderDesc = {};
-	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	TriggercolliderDesc.eGroup = COLLISION_GROUP::MONSTER_PARRY;
 	TriggercolliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER) | ENUM(COLLISION_GROUP::PLAYER_ATTACK);
 	TriggercolliderDesc.bTrigger = true;
 	TriggercolliderDesc.bAutoFit = false;
