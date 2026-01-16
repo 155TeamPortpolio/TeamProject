@@ -79,14 +79,15 @@ HRESULT CTestLevel::Initialize()
 	// It will be changed soooooon
 	CBattleSystem::GetInstance()->SetActive(true);
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
-	
-	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
-	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+
 	return S_OK;
 }
 
 HRESULT CTestLevel::Awake()
 {
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::BATTLE);
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
