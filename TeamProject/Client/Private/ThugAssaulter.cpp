@@ -351,22 +351,23 @@ void CThugAssaulter::Free()
 
 void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
-	//ProcessDamage(eDamageType);
+	if (0 >= m_tStatus.iHP)
+		return;
 
 
-	switch (eDamageType)
+ 	switch (eDamageType)
 	{
 	case Client::DAMAGE_TYPE::NORMAL:
 	{
 
 		break;
 	}
-	case Client::DAMAGE_TYPE::POWER:
+	case Client::DAMAGE_TYPE::HARD:
 	{
 
 		break;
 	}
-	case Client::DAMAGE_TYPE::AIRBONE:
+	case Client::DAMAGE_TYPE::AIRBORNE:
 	{
 
 		break;
@@ -552,12 +553,12 @@ void CThugAssaulter::ProcessDamage(DAMAGE_TYPE eDamageType)
 		
 		break;
 	}
-	case Client::DAMAGE_TYPE::POWER:
+	case Client::DAMAGE_TYPE::HARD:
 	{
 
 		break;
 	}
-	case Client::DAMAGE_TYPE::AIRBONE:
+	case Client::DAMAGE_TYPE::AIRBORNE:
 	{
 
 		break;

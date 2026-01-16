@@ -319,17 +319,17 @@ void CThugBulkyEnforcer::Render_GUI()
 		}
 		if (ImGui::Button("Weapon_L_AttackCollider")) 
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK,
-				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK));
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK), {});
 		if (ImGui::Button("Weapon_R_AttackCollider")) 
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK,
-				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK));
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK), {});
 	
 		if (ImGui::Button("Weapon_L_TriggerCollider")) 
 			SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER,
-				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER));
+				!IsAliveBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER), {});
 		if (ImGui::Button("Weapon_R_TriggerCollider")) 
 			SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER,
-				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER));
+				!IsAliveBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER), {});
 		ImGui::TreePop();
 	}
 #pragma endregion
@@ -428,9 +428,9 @@ void CThugBulkyEnforcer::CaptureRotateDir(_float3 vTargetDir, _float fSpeed)
 void CThugBulkyEnforcer::TurnOnAttackCollider(BATTLE_PART ePart)
 {
 	if (BATTLE_PART::LEFT == ePart)
-		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true);
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::ATTACK, true, {});
 	else if (BATTLE_PART::RIGHT == ePart)
-		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true);
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::ATTACK, true, {});
 	//else if (BATTLE_PART::KNEE == ePart)
 	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::ATTACK, true); 
 
@@ -441,9 +441,9 @@ void CThugBulkyEnforcer::TurnOnAttackCollider(BATTLE_PART ePart)
 void CThugBulkyEnforcer::TurnOnTriggerCollider(BATTLE_PART ePart)
 {
 	if (BATTLE_PART::LEFT == ePart)
-		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true);
+		SetBattleColliderObject("Weapon_L", BATTLE_COLTYPE::TRIGGER, true, {});
 	else if (BATTLE_PART::RIGHT == ePart)
-		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true);
+		SetBattleColliderObject("Weapon_R", BATTLE_COLTYPE::TRIGGER, true, {});
 	//else if (BATTLE_PART::KNEE == ePart)
 	//	SetBattleColliderObject("Knee", BATTLE_COLTYPE::TRIGGER, true); 
 

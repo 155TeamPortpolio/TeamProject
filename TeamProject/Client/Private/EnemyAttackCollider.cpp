@@ -4,13 +4,13 @@
 #include "Helper_Func.h"
 #include "GameInstance.h"
 
-#include "Enemy.h"
-
 /* Component */
 #include "RigidBody.h"
 #include "Collider.h"
 #include "BoneFollower.h"
 #include "Child.h"
+
+#include "Character.h"
 
 CEnemyAttackCollider::CEnemyAttackCollider()
 	: CGameObject()
@@ -98,13 +98,79 @@ void CEnemyAttackCollider::OnCollisionExit(CGameObject* pOther)
 
 void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
 {
-	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterAttackHit(true);
+	auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
+		return;
+	if (!Try_Hit(pOther))
+		return;
+
+	// 데미지 주는 코드
+	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+	if (nullptr != pEnemy)
+		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
+}
+
+void CEnemyAttackCollider::OnTriggerStay(CGameObject* pOther)
+{
+		auto pCollidable = pOther->Get_Component<ICollidable>();
+	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
+		return;
+	if (!Try_Hit(pOther))
+		return;
+
+	// 데미지 주는 코드
+	auto pEnemy = dynamic_cast<CCharacter*>(pOther);
+	if (nullptr != pEnemy)
+		pEnemy->Take_Damage(DAMAGE_TYPE::NORMAL, 10);
 }
 
 void CEnemyAttackCollider::OnTriggerExit(CGameObject* pOther)
 {
-	static_cast<CEnemy*>(Get_Component<CChild>()->Get_Parent())->SetEnterAttackHit(false);
 }
+
+void CEnemyAttackCollider::Begin_Attack(const HitDesc& hitdesc)
+{
+	m_tHitDesc = hitdesc;
+	m_fTimer = 0.f;
+	m_HitRecords.clear();
+	Get_Component<CCollider>()->Set_CompActive(true);
+}
+
+void CEnemyAttackCollider::End_Attack()
+{
+	m_HitRecords.clear();
+	Get_Component<CCollider>()->Set_CompActive(false);
+}
+
+_bool CEnemyAttackCollider::Try_Hit(CGameObject* pTarget)
+{
+	HitRecord& record = m_HitRecords[pTarget];
+
+	switch (m_tHitDesc.eHitType)
+	{
+	case HIT_TYPE::ONCE:
+		if (record.iHitCount >= 1)
+			return false;
+		break;
+
+	case HIT_TYPE::INTERVAL:
+		if (m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
+			return false;
+		break;
+
+	case HIT_TYPE::COUNT:
+		if (record.iHitCount >= m_tHitDesc.iMaxCount)
+			return false;
+		if (record.iHitCount > 0 && m_fTimer - record.fLastHitTime < m_tHitDesc.fInterval)
+			return false;
+		break;
+	}
+
+	record.iHitCount++;
+	record.fLastHitTime = m_fTimer;
+	return true;
+}
+
 
 CEnemyAttackCollider* CEnemyAttackCollider::Create()
 {

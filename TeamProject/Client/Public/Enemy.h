@@ -45,7 +45,7 @@ public:
     virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) {};
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
-    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime);
+    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc & hitDesc);
 
 protected:
     // Target(Player->Character)과의 거리 정보 계산
@@ -62,7 +62,7 @@ protected:
 
 #pragma region BattleCollider
 protected:
-    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is);
+    void                SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc & hitdesc);
     void                FinishBattleColliderObject(const string& tagBattleColliderObject);
     void                ShowBattleColliderForCheck(_bool is);
     void                CheckAutoBattlePlay(const _float dt);

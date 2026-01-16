@@ -5,6 +5,7 @@
 
 /* Object */
 #include "AttackSign.h"
+#include "EnemyAttackCollider.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -294,7 +295,7 @@ void CEnemy::ManageGroggy(const _float dt)
 	}
 }
 
-void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is)
+void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
 {
 	string tagBattleCol = tagBattleColliderObject;
 
@@ -311,6 +312,13 @@ void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATT
 	if (nullptr == pBattleCol)
 		return;
 
+	if (BATTLE_COLTYPE::ATTACK == eBattleColliderType)
+	{
+		if (true == is)
+			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->Begin_Attack(hitdesc);
+		else
+			dynamic_cast<CEnemyAttackCollider*>(pBattleCol)->End_Attack();
+	}
 	pBattleCol->Get_Component<CCollider>()->Set_CompActive(is);
 }
 
@@ -333,13 +341,14 @@ void CEnemy::FinishBattleColliderObject(const string& tagBattleColliderObject)
 		nullptr == children[iterTrigger->second])
 		return;
 
+	dynamic_cast<CEnemyAttackCollider*>(children[iterAttack->second])->End_Attack();
 	children[iterAttack->second]->Get_Component<CCollider>()->Set_CompActive(false);
 	children[iterTrigger->second]->Get_Component<CCollider>()->Set_CompActive(false);
 }
 
-void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime)
+void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc)
 {
-	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true);
+	SetBattleColliderObject(tagBattleCollider, BATTLE_COLTYPE::TRIGGER, true, hitDesc);
 
 	m_tAutoBattleCol.tagBattleCollider = tagBattleCollider;
 	m_tAutoBattleCol.isAutoPlay = true;
@@ -371,8 +380,8 @@ void CEnemy::CheckAutoBattlePlay(const _float dt)
 	{	
 		if (m_tAutoBattleCol.fAttackColStartProgress <= pAnimator3D->Get_CurAnimDuration()) 
 		{ 
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false);
-			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true);
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::TRIGGER, false, {});
+			SetBattleColliderObject(m_tAutoBattleCol.tagBattleCollider, BATTLE_COLTYPE::ATTACK, true, {});
 
 			m_tAutoBattleCol.isAttackColliderPlay = true;
 		}
