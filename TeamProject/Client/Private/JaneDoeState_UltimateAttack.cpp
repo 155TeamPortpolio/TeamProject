@@ -2,6 +2,8 @@
 #include "JaneDoeState_UltimateAttack.h"
 #include "JaneDoe.h"
 
+#include "CamDirector.h"
+
 void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
 {
     if (!m_pSubStateMachine)
@@ -22,6 +24,8 @@ void CJaneDoeState_UltimateAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Set_DefaultState("Start");
     }
     __super::Enter(pOwner);
+
+    CCamDirector::GetInstance()->RequestSequence("Ultimate/Jane_Ultimate");
 }
 
 void CJaneDoeState_UltimateAttack::Update(CJaneDoe* pOwner, _float dt)

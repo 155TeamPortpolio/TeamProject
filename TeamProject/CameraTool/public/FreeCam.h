@@ -29,7 +29,7 @@ private:
 	void    SyncRotation();
 
 private:
-	_float            moveSpeed      = 5.f;
+	_float            moveSpeed      = 1.f;
 	_float            sensitivity    = 0.5f;
 	_vector2          targetRotDeg   = {};
 	Quaternion        curRot         = Quaternion::Identity;
