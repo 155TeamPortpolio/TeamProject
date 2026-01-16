@@ -673,6 +673,9 @@
     <Filter Include="02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk">
       <UniqueIdentifier>{849e28c6-ac11-4fb5-8b94-313fc924c227}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Plane\EnemyStatus">
+      <UniqueIdentifier>{168323c4-d264-4f01-9868-adf2a0a0376d}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
       <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
     </Filter>
@@ -1291,6 +1294,9 @@
     <ClInclude Include="..\Public\BelleState_Walk.h">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Walk</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_EnemyStatus.h">
+      <Filter>02. GameObject\UI\02. 3D\Plane\EnemyStatus</Filter>
+    </ClInclude>
     <ClInclude Include="..\Public\CorinState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>
     </ClInclude>
@@ -1867,7 +1873,6 @@
     <ClCompile Include="..\private\ZeroStage_1_1.cpp">
       <Filter>01. Level\04. Zero\Stage_Normal\ZeroStage_1_1</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
     <ClCompile Include="..\Private\FieldSystem.cpp">
       <Filter>03. Utility\06. FieldSystem</Filter>
     </ClCompile>
@@ -1891,6 +1896,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\BelleState_Run.cpp">
       <Filter>02. GameObject\Object\Player\FieldCharacter\Belle\State\Move\Run</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_EnemyStatus.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Plane\EnemyStatus</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\CorinState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Hit</Filter>

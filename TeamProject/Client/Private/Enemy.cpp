@@ -5,6 +5,7 @@
 
 /* Object */
 #include "AttackSign.h"
+#include "UI_EnemyStatus.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -159,6 +160,35 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	}
 
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
+}
+
+void CEnemy::Create_EnemyStatus(string boneTag)
+{
+	// 월드 행렬 포인터 
+	if (!m_pTransform)
+		return;
+
+	const _float4x4* pParentWorld = m_pTransform->Get_WorldMatrix_Ptr();
+	if (!pParentWorld)
+		return;
+
+	// 본 로컬 행렬 포인터
+	const _float4x4* pBoneLocal = Get_Component<CAnimator3D>()->Get_BoneMatrixPtr(CAnimator3D::BoneSpace::COMBINED, boneTag);
+	if (!pBoneLocal)
+		return; 
+
+	// ENEMYSTATUS_DESC 생성
+	CUI_EnemyStatus::ENEMYSTATUS_DESC* pDesc = new CUI_EnemyStatus::ENEMYSTATUS_DESC;
+	pDesc->pParentWorld = pParentWorld;
+	pDesc->pBoneLocal = pBoneLocal;
+
+	// EnemyStatus UI 생성
+	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })
+		.Add_UIDesc(pDesc)
+		.Build("EnemyStatus");
+
+	// UI Mgr에 등록
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)

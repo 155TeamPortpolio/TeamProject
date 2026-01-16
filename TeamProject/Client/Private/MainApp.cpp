@@ -31,7 +31,8 @@
 #include "EffectContainer.h"
 #include "AttackSign.h"
 
-
+/* UI */
+#include "UI_EnemyStatus.h"
 
 CMainApp::CMainApp()
 {
@@ -61,12 +62,12 @@ HRESULT CMainApp::Initialize()
 	Set_Levels();
 
 	CDataBase::GetInstance()->CreateTable();
-	CBattleSystem::GetInstance(); //¿ì¼± »ý¼º¸¸
+	CBattleSystem::GetInstance(); //ï¿½ì¼± ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	CDataBase::GetInstance();
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Initialize();
 
-	/* Àü¿ªÀûÀ¸·Î »ç¿ëÇÒ ÇÁ·ÎÅä Å¸ÀÔ °´Ã¼ µî·Ï */
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½ï¿½ ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ */
 	Initialize_GlobalPrototype();
 	
 	Create_GlobalCamObjs();
@@ -92,7 +93,7 @@ HRESULT CMainApp::Render()
 	return S_OK;
 }
 
-void CMainApp::Set_Levels() //·¹º§ µî·Ï ÇÔ¼ö ->µî·Ï ³¡³»¸é
+void CMainApp::Set_Levels() //ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ ->ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 {
 	LevelManager()->Register_Level("Test_Level", []()->CLevel* {return CTestLevel::Create("Test_Level"); });
 	LevelManager()->Register_Level("Logo_Level", []()->CLevel* {return CLogoLevel::Create("Logo_Level"); });
@@ -146,6 +147,9 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_TrailNode", CTrailNode::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EffectContainer", CEffectContainer::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_AttackSign", CAttackSign::Create());
+
+	/* UI */
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()
