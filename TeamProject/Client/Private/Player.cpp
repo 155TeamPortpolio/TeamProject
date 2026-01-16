@@ -12,19 +12,41 @@ CPlayer::CPlayer(const CPlayer& rhs)
 {
 }
 
+OBJECT_HANDLE CPlayer::Get_CurCharacterHandle()
+{
+	if (m_ePlayerType == PLAYER::BATTLE)
+		return m_pBattlePlayer->GetCurCharacterHandle();
+
+	else if (m_ePlayerType == PLAYER::FIELD)
+		return m_pFieldPlayer->GetCurCharacterHandle();
+
+	return OBJECT_HANDLE{};
+}
+
+HRESULT CPlayer::Clear_Characters()
+{
+	if (m_ePlayerType == PLAYER::BATTLE)
+		m_pBattlePlayer->ClearCharacters();
+
+	else if (m_ePlayerType == PLAYER::FIELD)
+		m_pFieldPlayer->Clear_Character();
+
+	m_ePlayerType = PLAYER::END;
+
+	return S_OK;
+}
+
 void CPlayer::Set_PlayerType(PLAYER ePlayer)
 {
 	m_ePlayerType = ePlayer;
 
 	if (m_ePlayerType == PLAYER::BATTLE)
 	{
-		m_pBattlePlayer->Active_Battle();
-		m_pFieldPlayer->DeActive_Field();
+		m_pBattlePlayer->Initialize();
 	}
 	else
 	{
-		m_pBattlePlayer->DeActive_Battle();
-		m_pFieldPlayer->Active_Field();
+		m_pFieldPlayer->Initialize();
 	}
 }
 
@@ -42,8 +64,6 @@ HRESULT CPlayer::Initialize(INIT_DESC* pArg)
 	m_pBattlePlayer = CBattlePlayer::Create();
 	m_pFieldPlayer = CFieldPlayer::Create();
 
-	Set_PlayerType(m_ePlayerType);
-
 	return S_OK;
 }
 
@@ -53,18 +73,24 @@ void CPlayer::Awake()
 
 void CPlayer::Priority_Update(_float dt)
 {
+	if (m_ePlayerType == PLAYER::END) return;
+
 	if(m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Priority_Update(dt);
 	else m_pFieldPlayer->Priority_Update(dt);
 }
 
 void CPlayer::Update(_float dt)
 {
+	if (m_ePlayerType == PLAYER::END) return;
+
 	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Update(dt);
 	else m_pFieldPlayer->Update(dt);
 }
 
 void CPlayer::Late_Update(_float dt)
 {
+	if (m_ePlayerType == PLAYER::END) return;
+
 	if (m_ePlayerType == PLAYER::BATTLE) m_pBattlePlayer->Late_Update(dt);
 	else m_pFieldPlayer->Late_Update(dt);
 }
@@ -98,5 +124,6 @@ CGameObject* CPlayer::Clone(INIT_DESC* pArg)
 void CPlayer::Free()
 {
 	Safe_Release(m_pBattlePlayer);
+	Safe_Release(m_pFieldPlayer);
 	__super::Free();
 }

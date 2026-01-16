@@ -402,6 +402,15 @@ CGameObject* CBattlePlayer::CreateBattleCharacter(CHARACTER character)
 	return nullptr;
 }
 
+HRESULT CBattlePlayer::ClearCharacters()
+{
+	while (!m_BattleCharacters.empty()) 
+	{
+		m_BattleCharacters.pop();
+	}
+	return S_OK;
+}
+
 void CBattlePlayer::NotifyCharacterSwitchIn()
 {
 	m_pCurrentCharacter->Get_Component<CCharacterController>()->Set_Position(m_vSwitchPosition);
@@ -475,11 +484,6 @@ HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 CBattlePlayer* CBattlePlayer::Create()
 {
 	CBattlePlayer* Instance = new CBattlePlayer();
-	if (FAILED(Instance->Initialize()))
-	{
-		Safe_Release(Instance);
-		return nullptr;
-	}
 	return Instance;
 }
 
