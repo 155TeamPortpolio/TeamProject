@@ -10,7 +10,7 @@ public:
 
 private:
     CPlayer() {}
-    CPlayer(const CPlayer& rhs);
+    CPlayer(const CPlayer& rhs); 
     virtual ~CPlayer() DEFAULT;
 
 public:

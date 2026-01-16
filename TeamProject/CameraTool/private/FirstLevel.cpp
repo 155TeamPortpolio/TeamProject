@@ -61,6 +61,12 @@ HRESULT CFirstLevel::Awake()
 	return S_OK;
 }
 
+void CFirstLevel::Update()
+{
+	if(InputDevice()->Key_Tap('Q'))
+		exit(0);
+}
+
 CFirstLevel* CFirstLevel::Create(const string& key)
 {
 	auto inst = new CFirstLevel(key);

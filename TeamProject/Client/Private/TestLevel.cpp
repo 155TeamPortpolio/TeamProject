@@ -186,8 +186,8 @@ void CTestLevel::Update()
 	//if (InputDevice()->Key_Down('Q'))
 	//	m_pCamDirector->RequestSequence("Ultimate/Jane_Ultimate");
 
-	if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
-		CameraManager()->AddShake(CamShakeType::HitNormal);
+	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+	//	CameraManager()->AddShake(CamShakeType::HitNormal);
 
 	//if (InputDevice()->Mouse_Tap(MOUSE_BTN::RB))
 		//CameraManager()->AddShake(CamShakeType::HitHeavy);

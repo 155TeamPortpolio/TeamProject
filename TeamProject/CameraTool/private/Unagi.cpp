@@ -7,6 +7,8 @@
 
 #include "ObjectContainer.h"
 
+namespace fs = filesystem;
+
 namespace
 {
 	struct AvatarAssetDesc
@@ -22,7 +24,7 @@ namespace
 		static const AvatarAssetDesc table[] =
 		{
 			{"Corin",   "Corin",   1.f, "Avatar_Female_Size01_Corin_Ani_Idle"},
-			{"JaneDoe", "JaneDoe", 1.f, "Avatar_Female_Size03_JaneDoe_Cam_SwitchIn_Attack_Ex_Start"}
+			{"JaneDoe", "JaneDoe", 1.f, "Avatar_Female_Size03_JaneDoe_Ani_Idle"}
 		};
 		return table[(int)v];
 	};
