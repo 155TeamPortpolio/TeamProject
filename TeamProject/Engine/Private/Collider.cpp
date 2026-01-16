@@ -501,7 +501,7 @@ void CCollider::Render_GUI()
 		ImGui::Separator();
 
 		ImGui::Text("Collision Group:");
-		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA" };
+		const char* groupNames[] = { "COMMON", "PLAYER", "MONSTER", "PLAYER_ATTACK", "MONSTER_ATTACK", "MONSTER_PARRY", "CAMERA", "INTERACABLE"};
 		const COLLISION_GROUP groupValues[] = {
 			COLLISION_GROUP::COMMON,
 			COLLISION_GROUP::PLAYER,
@@ -509,7 +509,8 @@ void CCollider::Render_GUI()
 			COLLISION_GROUP::PLAYER_ATTACK,
 			COLLISION_GROUP::MONSTER_ATTACK,
 			COLLISION_GROUP::MONSTER_PARRY,
-			COLLISION_GROUP::CAMERA
+			COLLISION_GROUP::CAMERA,
+			COLLISION_GROUP::INTERACABLE
 		};
 
 		_int iCurrentGroup = 0;
