@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "SacrificeState_Groggy.h"
 #include "Sacrifice.h"
+#include "SacrificeState_Groggy_Phase1.h"
+#include "SacrificeState_Groggy_Phase2.h"
 
 void CSacrificeState_Groggy::Enter(CSacrifice* pOwner)
 {
@@ -9,8 +11,8 @@ void CSacrificeState_Groggy::Enter(CSacrifice* pOwner)
 		m_pSubStateMachine = CStateMachine<CSacrifice>::Create();
 
 		/* States */
-		//m_pSubStateMachine->Register_State("Phase1", CSacrificeState_Groggy_Phase1::Create());
-		//m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Groggy_Phase2::Create());
+		m_pSubStateMachine->Register_State("Phase1",CSacrificeState_Groggy_Phase1::Create());
+		m_pSubStateMachine->Register_State("Phase2", CSacrificeState_Groggy_Phase2::Create());
 
 		__super::Enter(pOwner);
 	}
@@ -33,32 +35,9 @@ void CSacrificeState_Groggy::Enter(CSacrifice* pOwner)
 
 void CSacrificeState_Groggy::Update(CSacrifice* pOwner, _float dt)
 {
+	__super::Update(pOwner, dt);
 }
 
 void CSacrificeState_Groggy::Exit(CSacrifice* pOwner)
-{
-}
-
-void CSacrificeState_Groggy_Phase1::Enter(CSacrifice* pOwner)
-{
-}
-
-void CSacrificeState_Groggy_Phase1::Update(CSacrifice* pOwner, _float dt)
-{
-}
-
-void CSacrificeState_Groggy_Phase1::Exit(CSacrifice* pOwner)
-{
-}
-
-void CSacrificeState_Groggy_Phase2::Enter(CSacrifice* pOwner)
-{
-}
-
-void CSacrificeState_Groggy_Phase2::Update(CSacrifice* pOwner, _float dt)
-{
-}
-
-void CSacrificeState_Groggy_Phase2::Exit(CSacrifice* pOwner)
 {
 }

@@ -709,6 +709,12 @@
     <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy">
       <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1">
+      <UniqueIdentifier>{4cf40d05-c921-4e36-a3d2-8fd32437073f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2">
+      <UniqueIdentifier>{39d34e5c-e90f-42e5-8ab2-9a7718897258}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1365,6 +1371,12 @@
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase1.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Groggy_Phase2.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1993,6 +2005,12 @@
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase1.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase1</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Groggy_Phase2.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy\Phase2</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
