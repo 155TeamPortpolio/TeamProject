@@ -5,8 +5,6 @@
 #include "Collider.h"
 #include "MapLoader_Helper.h"
 
-
-
 CMapTriggerObject::CMapTriggerObject()
 	: CMapObject()
 {
