@@ -63,7 +63,6 @@ private:
 	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
 	void Cache_Handles(CUI_Object* pRoot);
 
-	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 	void Set_Values(UI_BOSS_STATUS_DESC desc);
 

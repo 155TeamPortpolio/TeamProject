@@ -11,19 +11,6 @@ typedef struct tagUIStatusValue {
 	_float			fMaxValue = {};
 }UI_STATUS_VALUE;
 
-/* UI로 전달되는 상태 정보를 정의하는 구조체 : status type 마다 개별적으로 */
-typedef struct tagUIStatusDesc {
-	UI_STATUS_OWNER	eOwner = {};
-	UI_STATUS_TYPE	eType = {};
-	UI_STATUS_VALUE	value = {};
-}UI_STATUS_DESC;
-
-/* UI로 전달되는 상태 정보를 정의하는 구조체 : status 일괄 */
-typedef struct tagUIStatusBulkDesc {
-	UI_STATUS_OWNER eOwner = {};
-	vector<pair<UI_STATUS_TYPE, UI_STATUS_VALUE>> statusValues;
-}UI_STATUS_BULK_DESC;
-
 /* UI로 전달되는 상태 정보를 정의하는 구조체 : player의 status 일괄 */
 typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_OWNER eOwner = {};

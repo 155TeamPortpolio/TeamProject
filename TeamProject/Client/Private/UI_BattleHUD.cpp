@@ -54,14 +54,14 @@ void CUI_BattleHUD::Awake()
 void CUI_BattleHUD::Update(_float dt)
 {
     // boss몬스터 이벤트 테스트
-    //if (InputDevice()->Key_Down('P'))
-    //{
-    //    UI_BOSS_STATUS_DESC desc = {};
-    //    desc.hp.fCurValue = 50.f;
-    //    desc.hp.fMaxValue = 100.f;
-    //    desc.iGroggy = 5;
-    //    EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
-    //}
+    if (InputDevice()->Key_Down('P'))
+    {
+        UI_BOSS_STATUS_DESC desc = {};
+        desc.hp.fCurValue = 50.f;
+        desc.hp.fMaxValue = 100.f;
+        desc.iGroggy = 5;
+        EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
+    }
 }
 
 CUI_Object* CUI_BattleHUD::Ready_Prefab()
@@ -135,52 +135,6 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
     m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
     m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
-}
-
-void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
-{
-    const _float fRatio = desc.value.fCurValue / desc.value.fMaxValue;
-
-    // ===== BOSS ROLE =====
-    if (desc.eOwner == UI_STATUS_OWNER::BOSS)
-    {
-        if (desc.eType == UI_STATUS_TYPE::HP)
-        {
-            Set_GaugeFill(Child::BOSS_HP_FRONT, fRatio);
-        }
-        else if (desc.eType == UI_STATUS_TYPE::GROGGY)
-        {
-            Set_GaugeFill(Child::BOSS_GROGGY, fRatio);
-            Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue, m_iBossHPWidth);
-        }
-        return;
-    } 
-
-    // ===== PLAYER ROLE =====
-    const _uint iIndex = ENUM(desc.eOwner);
-    Child target = Child::END;
-
-    switch (desc.eType)
-    {
-    case UI_STATUS_TYPE::HP:
-        target = HPFRONT_CHILD[iIndex];
-        if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
-            Set_NumberText(Child::MAX_HP_TEXT, desc.value.fCurValue, m_iPlayerHPWidth);
-        break;
-
-    case UI_STATUS_TYPE::SPECIAL:
-        target = SPECIAL_CHILD[iIndex];
-        break;
-
-    case UI_STATUS_TYPE::ULTIMATE:
-        target = ULTIMATE_CHILD[iIndex];
-        if (desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
-            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
-        break;
-    }
-
-    if (target != Child::END)
-        Set_GaugeFill(target, fRatio);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
