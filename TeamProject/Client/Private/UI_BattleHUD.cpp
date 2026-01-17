@@ -54,14 +54,14 @@ void CUI_BattleHUD::Awake()
 void CUI_BattleHUD::Update(_float dt)
 {
     // boss몬스터 이벤트 테스트
-    if (InputDevice()->Key_Down('P'))
-    {
-        UI_BOSS_STATUS_DESC desc = {};
-        desc.hp.fCurValue = 50.f;
-        desc.hp.fMaxValue = 100.f;
-        desc.iGroggy = 5;
-        EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
-    }
+    //if (InputDevice()->Key_Down('P'))
+    //{
+    //    UI_BOSS_STATUS_DESC desc = {};
+    //    desc.hp.fCurValue = 50.f;
+    //    desc.hp.fMaxValue = 100.f;
+    //    desc.iGroggy = 5;
+    //    EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
+    //}
 }
 
 CUI_Object* CUI_BattleHUD::Ready_Prefab()
