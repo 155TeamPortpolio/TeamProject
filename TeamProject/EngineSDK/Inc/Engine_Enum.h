@@ -24,6 +24,7 @@ namespace Engine
 		MONSTER_ATTACK = 1<<4,
 		MONSTER_PARRY = 1<<5,
 		CAMERA = 1<<6,
+		INTERACABLE = 1<<7,
 		END = 1<<31 
 	};
 	enum class SOUND_GROUP { BGM, SFX, UI, TALK, ENV,END };
@@ -118,6 +119,9 @@ namespace Engine
 		InQuart, InQuint, InOutQuart, OutQuart, InOutQuint, OutQuint, InOutExpo, OutExpo, InExpo, OutBack, InOutBack, InBack,
 		OutElastic, InOutElastic, InElastic, OutBounce, InOutBounce, InBounce,
 	};
+
+	enum class AlphaCheckLevel { None = 0, Fast = 1, Hint = 2, Precise = 3 };
+
 }
 #endif // Engine_Enum_h__
 

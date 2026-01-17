@@ -97,6 +97,7 @@ void CEnemyAttackCollider::OnCollisionExit(CGameObject* pOther)
 }
 
 void CEnemyAttackCollider::OnTriggerEnter(CGameObject* pOther)
+
 {
 	auto pCollidable = pOther->Get_Component<ICollidable>();
 	if (pCollidable && (pCollidable->Get_Group() != COLLISION_GROUP::PLAYER))
