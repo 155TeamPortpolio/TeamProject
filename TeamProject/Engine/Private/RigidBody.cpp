@@ -85,8 +85,12 @@ HRESULT CRigidBody::Initialize(COMPONENT_DESC* pArg)
 	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Y, m_bLockY);
 	m_pActor->setRigidDynamicLockFlag(PxRigidDynamicLockFlag::eLOCK_ANGULAR_Z, m_bLockZ);
 	m_pActor->setSolverIterationCounts(8, 4);
-	m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
-	m_pActor->setMinCCDAdvanceCoefficient(0.15f);
+	if (!m_bKinematic)
+	{
+		m_pActor->setRigidBodyFlag(PxRigidBodyFlag::eENABLE_CCD, true);
+		m_pActor->setMinCCDAdvanceCoefficient(0.15f);
+	}
+
 	m_pActor->setMaxDepenetrationVelocity(1.0f);
 
 	m_pActor->setActorFlag(PxActorFlag::eSEND_SLEEP_NOTIFIES, true);

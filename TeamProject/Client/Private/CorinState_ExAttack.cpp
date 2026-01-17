@@ -46,23 +46,23 @@ void CCorinState_ExAttack::Enter(CCorin* pOwner)
 
 void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 {
-    if (!m_pSubStateMachine->Get_Bool("ExFinished") && !InputDevice()->Key_Down('E'))
+    if (!m_pSubStateMachine->Get_Bool("ExFinished"))
     {
-        if (m_pSubStateMachine->Get_Bool("Enhanced"))
+        if (!InputDevice()->Key_Down('E'))
         {
-            m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
-        }
-        else
-            m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
-        m_pSubStateMachine->Set_Trigger("ToExplode");
-    }
-    // 강화 상태에서 에너지 떨어지면 종료
-    if (m_pSubStateMachine->Get_Bool("Enhanced"))
-    {
-        if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
-        {
-            m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+            if (m_pSubStateMachine->Get_Bool("Enhanced"))
+                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+            else
+                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 1);
             m_pSubStateMachine->Set_Trigger("ToExplode");
+        }
+        else if (m_pSubStateMachine->Get_Bool("Enhanced"))
+        {
+            if (pOwner->Get_EnergyDesc().fCurrentEnergy <= pOwner->Get_EnergyDesc().fSpecialEnergy)
+            {
+                m_pSubStateMachine->Set_Int("ExplodeEntryMode", 2);
+                m_pSubStateMachine->Set_Trigger("ToExplode");
+            }
         }
     }
     __super::Update(pOwner, dt);
@@ -160,6 +160,7 @@ void CCorinState_ExAttack_Loop_Walk::Exit(CCorin* pOwner)
 
 void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
 {
+    pOwner->Set_SpecialEnergy(80.f);
     auto pSubStateMachine = Get_ParentState()->Get_SubStateMachine();
     pSubStateMachine->Set_Bool("ExFinished", true);
     // 강화 상태일때 20소모
@@ -177,15 +178,16 @@ void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
     {
     case 1:
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_01_Explode")
+            .Loop(false)
             .Apply();
         break;
     case 2:
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02_Explode")
+            .Loop(false)
             .Apply();
         break;
     }
     pSubStateMachine->Set_Int("EndEntryMode", iEntryMode);
-    pOwner->Set_SpecialEnergy(80.f);
 }
 
 void CCorinState_ExAttack_Explode::Update(CCorin* pOwner, _float dt)
@@ -208,10 +210,12 @@ void CCorinState_ExAttack_End::Enter(CCorin* pOwner)
     {
     case 1:
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_01_End")
+            .Speed(1.5f)
             .Apply();
         break;
     case 2:
         pAnimator->Change_Animation(strAnimName + "Attack_Branch_02_End")
+            .Speed(1.5f)
             .Apply();
         break;
     }

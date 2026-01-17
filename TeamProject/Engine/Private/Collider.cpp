@@ -41,6 +41,7 @@ HRESULT CCollider::Initialize(COMPONENT_DESC* pArg)
 	m_pAttachedRigidBody = m_pOwner->Get_Component<CRigidBody>();
 
 	if (!pArg) return S_OK;
+
 	COLLIDER_DESC* pDesc = static_cast<COLLIDER_DESC*>(pArg);
 
 	if (pDesc->bAutoFit && !pDesc->bCooking)

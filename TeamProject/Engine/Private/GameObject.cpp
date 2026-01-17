@@ -181,6 +181,7 @@ void CGameObject::Render_GUI()
 	for (auto& pair : m_Components) {
 		if (pair.first == type_index(typeid(CTransform))) continue;
 		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
 		pair.second->Render_GUI();
 	}
 }
