@@ -65,6 +65,7 @@ private:
 
 	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
+	void Set_Values(UI_BOSS_STATUS_DESC desc);
 
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
@@ -75,7 +76,7 @@ private:
 	void Set_Animation(Child child, _int iIndex);
 	void Set_Texture(Child child, const string& strTextureKey); 
 	void Set_GaugeFill(Child child, _float fFillAmount);
-	void Set_NumberText(Child child, _float fValue, _int iWidth);
+	void Set_NumberText(Child child, _int iNum, _int iWidth);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);
