@@ -164,7 +164,7 @@ void CEnemy::Active_AttackSign(_bool parryEnable)
 	static_cast<CAttackSign*>(pAttackSign)->Active(IsReallyParryEnable);
 }
 
-void CEnemy::Create_EnemyStatus(string boneTag)
+void CEnemy::Create_UIEnemyStatus(string boneTag)
 {
 	// 월드 행렬 포인터 
 	if (!m_pTransform)

@@ -21,6 +21,7 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
     virtual void OnTriggerEnter() override;
+
     virtual void OnTriggerExit() override;
     virtual void OnCollisionEnter() override;
 

@@ -16,6 +16,11 @@ CBattleSystem::CBattleSystem()
 		auto eType = static_cast<BATTLE_OBJ_TYPE>(i);
 		m_BattleObjInfos.emplace(eType, vector<BATTLEOBJ_INFO>{});
 	}
+
+	m_BattleVFX.resize(ENUM(BATTLE_VFX_TYPE::END), {});
+	m_BattleVFX[ENUM(BATTLE_VFX_TYPE::EVADE)].fVFXDuration = 5.f;
+	//m_BattleVFX[ENUM(BATTLE_VFX_TYPE::EVADE)].fLerpTimeRatio = 0.3f;
+
 }
 
 void CBattleSystem::Update()
@@ -115,9 +120,10 @@ void CBattleSystem::StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _
 	m_TimeScales[eObjType].fCurPos = 0.f;
 	m_TimeScales[eObjType].fDuration = fDuration;
 	m_TimeScales[eObjType].fScaleValue = fScale;
+
 }
 
-void CBattleSystem::StartShaderVFX(_float fDuration)
+void CBattleSystem::StartShaderVFX(BATTLE_VFX_TYPE eVFXType, _float fDuration)
 {
 	// 처음에
 	//RenderSystem()->Apply_RadialBlur(fDuration);
@@ -125,7 +131,19 @@ void CBattleSystem::StartShaderVFX(_float fDuration)
 	//여기서 m_vLerpColor를 멤버변수로 가지고 업데이트때 색상을 보간주든 해서 효과를 부여.
 	//끝날때
 	//RenderSystem()->UnRegister_AddictiveColor();
+	
+	if (true == m_BattleVFX[ENUM(eVFXType)].isRunning)
+		return;
 
+	//StartTimeScale(BATTLE_OBJ_TYPE::PLAYER)
+	
+
+
+
+
+
+
+	m_BattleVFX[ENUM(eVFXType)].isRunning = true;
 
 }
 
@@ -187,6 +205,60 @@ void CBattleSystem::CheckTimeScale(const _float dt)
 				TimeScale.fCurPos = 0.f;
 			}
 		}
+	}
+}
+
+void CBattleSystem::CheckVFX(const _float dt)
+{
+	for (size_t i = 0; i < ENUM(BATTLE_VFX_TYPE::END); i++)
+	{
+		if (false == m_BattleVFX[i].isRunning)
+			continue;
+
+		ComputeVFXValue(dt,i);
+
+	}
+
+
+}
+
+void CBattleSystem::ComputeVFXValue(const _float dt, _uint iVFXIndex)
+{
+	BATTLE_VFX_TYPE eType = static_cast<BATTLE_VFX_TYPE>(iVFXIndex);
+
+	m_BattleVFX[iVFXIndex].fVFXCurrentPos += dt;
+
+	_float fRatio = m_BattleVFX[iVFXIndex].GetVFXTimeRatio();
+
+	if (fRatio > 0.99f)
+	{
+		RenderSystem()->UnRegister_AddictiveColor();
+		m_BattleVFX[iVFXIndex].fVFXCurrentPos = {};
+		m_BattleVFX[iVFXIndex].isRunning = false;
+
+	}
+
+
+	switch (eType)
+	{
+	case Client::CBattleSystem::BATTLE_VFX_TYPE::EVADE:
+	{
+		_float normalizedT = 1 - fRatio;
+		_float pingpongT = (normalizedT < 0.5f) ? (normalizedT * 2.f) : (2.f - normalizedT * 2.f);
+		_float EaseT = Math::ApplyEase(EaseType::InOutSine, pingpongT);
+
+		_float3 vTarget = { 0.1, 0.54, 0.58 };
+
+		_vector vZero = XMVectorZero();
+		_vector	vTargetColor = XMLoadFloat3(&vTarget);
+		_float3 vLerpColor{};
+		XMStoreFloat3(&vLerpColor, XMVectorLerp(vZero, vTargetColor, EaseT));
+
+		RenderSystem()->Register_AddictiveColor(&vLerpColor);
+
+
+		break;
+	}
 	}
 }
 
