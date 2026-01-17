@@ -1809,6 +1809,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_AlphaInspect.hlsl">
+      <Filter>98. BasicShader\Compute Shader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

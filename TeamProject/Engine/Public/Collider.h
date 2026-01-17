@@ -75,7 +75,6 @@ private:
     PxTriangleMesh*             m_pTriangleMesh = { nullptr };  // ÄíÅ·µÈ ¸Þ½¬
     _bool                       m_bCooked = { false };      // ÄíÅ· ¿©ºÎ
     COLLIDER_TYPE               m_eType = {};
-    COLLISION_GROUP             m_eGroup = { COLLISION_GROUP::COMMON };
     _uint                       m_iCollisionMask = { 0xFFFFFFFF };
     _float3                     m_vCenter = {};
     _float3                     m_vSize = {};

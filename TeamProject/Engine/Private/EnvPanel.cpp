@@ -162,16 +162,18 @@ void CEnvPanel::Render_FogDesc()
     ImGui::Indent(4.0f);
 
     bool localDirty = false;
-    m_cachedeFog = m_fogSnapShot;
     EditFogDescUI(m_fogSnapShot, localDirty);
 
-    // 값이 바뀌었으면 바로 Set 하거나, Apply 버튼에서 Set 하거나 선택
     if (localDirty)
         m_FogDirty = true;
 
-     if (m_FogDirty && ImGui::Button("Apply Fog")) { RenderSystem()->Set_FogDesc(m_fogSnapShot); m_FogDirty=false; }
+     if (m_FogDirty && ImGui::Button("Apply Fog")) 
+     { RenderSystem()->Set_FogDesc(m_fogSnapShot); m_FogDirty=false; }
      ImGui::SameLine();
-     if (m_FogDirty && ImGui::Button("Revert Fog")) { m_fogSnapShot = m_cachedeFog; m_FogDirty=false; }
+     if (m_FogDirty && ImGui::Button("Reset Fog")) 
+     {
+         m_fogSnapShot = {}; m_FogDirty = false;
+     }
     ImGui::Unindent(4.0f);
 }
 
@@ -233,6 +235,7 @@ void CEnvPanel::Render_FogDesc()
 
     return changed;
 }
+
 CEnvPanel* CEnvPanel::Create(GUI_CONTEXT* context)
 {
 	CEnvPanel* instance = new CEnvPanel(context);

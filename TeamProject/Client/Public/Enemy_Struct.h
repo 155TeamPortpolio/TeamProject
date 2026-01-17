@@ -40,7 +40,7 @@ namespace Client
         string          tagName = "";                           // 등록될 Collider오브젝트 이름
         _bool           isAttachBone = { true };                // 뼈에 붙이는지
         string          tagBone = "";                           // 뼈에 붙일때, 붙일 뼈의 이름
-        CAnimator3D* pOwnerAnimator3D = { nullptr };           // 뼈에 붙일때, Owner의 애니메이터 포인터
+        CAnimator3D*    pOwnerAnimator3D = { nullptr };           // 뼈에 붙일때, Owner의 애니메이터 포인터
         COLLIDER_TYPE   eAttackColliderType = COLLIDER_TYPE::SPHERE;  // BOX, SPHERE, CAPSULE
         _float			fSizeScale = 1.f;					    // 사이즈 비율
         _float3			vCenter = { 0.f, 0.f, 0.f };		    // Collider의 로컬 오프셋
@@ -70,7 +70,8 @@ namespace Client
 
     typedef struct tagMonsterStatus 
     {
-        _float        iHP = {};
+        _float      iMaxHP = { 100.f };
+        _float      iNowHP = iMaxHP;
         _int        iGroggyValue = {};
     }MONSTER_STATUS;
 }

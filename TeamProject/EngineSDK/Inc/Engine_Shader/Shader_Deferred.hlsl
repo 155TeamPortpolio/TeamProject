@@ -69,6 +69,8 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     float4 vSkinnedDepthDesc = SkinnedDepthTexture.Sample(DefaultSampler, In.vTexcoord);
     float4 vScene = FinalTexture.Sample(DefaultSampler, In.vTexcoord);
     
+    float effectAlpha = 1 - EffectCombinedTexture.Sample(DefaultSampler, In.vTexcoord).a;
+    
     if (g_FogUse == false)
     {
         Out.vResult = vScene;
@@ -98,7 +100,7 @@ PS_OUT_RESULT PS_FOG(PS_IN In)
     
     float4 vFoggedColor = lerp(g_FogColor, vScene, fFogFactor);
  
-    Out.vResult = vFoggedColor;
+    Out.vResult = lerp(vScene, vFoggedColor, effectAlpha);
     
     return Out;
 }

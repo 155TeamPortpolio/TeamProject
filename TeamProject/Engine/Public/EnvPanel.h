@@ -26,7 +26,6 @@ private:
 
 	_bool m_FogDirty = false;
 	FOG_DESC m_fogSnapShot = {};
-	FOG_DESC m_cachedeFog = {};
 
 public:
 	static CEnvPanel* Create(GUI_CONTEXT* context);

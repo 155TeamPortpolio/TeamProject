@@ -146,6 +146,15 @@ _bool CMaterialInstance::isValid()
 	return m_pMaterialData->Has_Texture(TEXTURE_TYPE::DIFFUSE);
 }
 
+void CMaterialInstance::SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string &pass)
+{
+	_uint index= m_TextureIndexs[ENUM(TEXTURE_TYPE::DIFFUSE)];
+	_bool isAlpha = m_pMaterialData->Has_NonOpaque(TEXTURE_TYPE::DIFFUSE, index, level);
+	m_IsBlended= isAlpha;
+	if (isAlpha)
+		override_Pass = pass;
+}
+
 void CMaterialInstance::Render_GUI()
 {
 	m_pMaterialData->Render_GUI(m_TextureIndexs);
