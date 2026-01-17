@@ -1863,8 +1863,8 @@
             "typeTag": "CanvasPanel"
         },
         {
-            "alive": true,
-            "instanceName": "bossHp",
+            "alive": false,
+            "instanceName": "boss",
             "transform": {
                 "anchor": 6,
                 "anchorOffset": [

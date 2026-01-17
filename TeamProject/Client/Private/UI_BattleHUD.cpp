@@ -27,27 +27,16 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
     if (!pRoot)
         MSG_BOX("Failed to Ready_Prefab : CUI_BattleHUD");
 
-    // 이벤트 : UI_STATUS_DESC
-    Get_Component<CEventListener>()->Add_Listener<UI_STATUS_DESC>([&](const UI_STATUS_DESC& desc)
-        {
-            Set_Values(desc);
-        });
-
     // 이벤트 : UI_PLAYER_STATUS_DESC
     Get_Component<CEventListener>()->Add_Listener<UI_PLAYER_STATUS_DESC>([&](const UI_PLAYER_STATUS_DESC& desc)
         {
             Set_Values(desc);
         });
 
-    Get_Component<CEventListener>()->Add_Listener<UI_ACTION_DESC>([&](const UI_ACTION_DESC& desc)
+    // 이벤트 : UI_BOSS_STATUS_DESC
+    Get_Component<CEventListener>()->Add_Listener<UI_BOSS_STATUS_DESC>([&](const UI_BOSS_STATUS_DESC& desc)
         {
-            if (desc.eType != UI_ACTION_TYPE::ULTIMATE)
-                return;
-
-            if (desc.eState == UI_ACTION_STATE::AVAILABLE)
-            {
-
-            }
+            Set_Values(desc);
         });
 
     return S_OK;
@@ -58,10 +47,21 @@ void CUI_BattleHUD::Awake()
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
+
+    //Set_Alive(Child::BOSS, true);
 }
 
 void CUI_BattleHUD::Update(_float dt)
 {
+    // boss몬스터 이벤트 테스트
+    //if (InputDevice()->Key_Down('P'))
+    //{
+    //    UI_BOSS_STATUS_DESC desc = {};
+    //    desc.hp.fCurValue = 50.f;
+    //    desc.hp.fMaxValue = 100.f;
+    //    desc.iGroggy = 5;
+    //    EventSystem()->Broadcast<UI_BOSS_STATUS_DESC>({ desc });
+    //}
 }
 
 CUI_Object* CUI_BattleHUD::Ready_Prefab()
@@ -129,57 +129,12 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
     m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
 
+    m_handles[Child::BOSS] = pRoot->Get_DescendantHandle("boss");
     m_handles[Child::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
     m_handles[Child::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
     m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
     m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
     m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
-}
-
-void CUI_BattleHUD::Set_Values(UI_STATUS_DESC desc)
-{
-    const _float fRatio = desc.value.fCurValue / desc.value.fMaxValue;
-
-    // ===== BOSS ROLE =====
-    if (desc.eOwner == UI_STATUS_OWNER::BOSS)
-    {
-        if (desc.eType == UI_STATUS_TYPE::HP)
-        {
-            Set_GaugeFill(Child::BOSS_HP_FRONT, fRatio);
-        }
-        else if (desc.eType == UI_STATUS_TYPE::GROGGY)
-        {
-            Set_GaugeFill(Child::BOSS_GROGGY, fRatio);
-            Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.value.fCurValue, m_iBossHPWidth);
-        }
-        return;
-    } 
-
-    // ===== PLAYER ROLE =====
-    const _uint iIndex = ENUM(desc.eOwner);
-    Child target = Child::END;
-
-    switch (desc.eType)
-    {
-    case UI_STATUS_TYPE::HP:
-        target = HPFRONT_CHILD[iIndex];
-        if(desc.eOwner == UI_STATUS_OWNER::ROLE1)
-            Set_NumberText(Child::MAX_HP_TEXT, desc.value.fCurValue, m_iPlayerHPWidth);
-        break;
-
-    case UI_STATUS_TYPE::SPECIAL:
-        target = SPECIAL_CHILD[iIndex];
-        break;
-
-    case UI_STATUS_TYPE::ULTIMATE:
-        target = ULTIMATE_CHILD[iIndex];
-        if (desc.eOwner == UI_STATUS_OWNER::ROLE2 || desc.eOwner == UI_STATUS_OWNER::ROLE3)
-            Set_UltimateIcon(iIndex, desc.value.fCurValue / desc.value.fMaxValue);
-        break;
-    }
-
-    if (target != Child::END)
-        Set_GaugeFill(target, fRatio);
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -206,9 +161,16 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
     // HP Text
     if (desc.eOwner == UI_STATUS_OWNER::ROLE1)
     {
-        Set_NumberText(Child::CUR_HP_TEXT, desc.hp.fCurValue, m_iPlayerHPWidth);
-        Set_NumberText(Child::MAX_HP_TEXT, desc.hp.fMaxValue, m_iPlayerHPWidth);
+        Set_NumberText(Child::CUR_HP_TEXT, static_cast<_int>(desc.hp.fCurValue), m_iPlayerHPWidth);
+        Set_NumberText(Child::MAX_HP_TEXT, static_cast<_int>(desc.hp.fMaxValue), m_iPlayerHPWidth);
     }
+}
+
+void CUI_BattleHUD::Set_Values(UI_BOSS_STATUS_DESC desc)
+{ 
+    Set_GaugeFill(Child::BOSS_HP_FRONT, desc.hp.fCurValue / max(desc.hp.fMaxValue, 1.f));
+    Set_GaugeFill(Child::BOSS_GROGGY, desc.iGroggy / 100.f);
+    Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.iGroggy, 2);
 }
 
 void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
@@ -302,15 +264,15 @@ void CUI_BattleHUD::Set_GaugeFill(Child child, _float fFillAmount)
         });
 }
 
-void CUI_BattleHUD::Set_NumberText(Child child, _float fNum, _int iWidth)
+void CUI_BattleHUD::Set_NumberText(Child child, _int iNum, _int iWidth)
 {
-    ForChild(child, [fNum, iWidth](CUI_Object* ui)         {
+    ForChild(child, [iNum, iWidth](CUI_Object* ui)         {
         auto pTextSlot = ui->Get_Component<CTextSlot>();
         if (!pTextSlot)
             return;
 
         wchar_t buf[32];
-        Helper::Format_FixedZeroPad(buf, _countof(buf), static_cast<_int>(fNum), iWidth);
+        Helper::Format_FixedZeroPad(buf, _countof(buf), iNum, iWidth);
         pTextSlot->Set_Text(buf);
         });
 }
