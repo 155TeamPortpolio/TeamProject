@@ -58,6 +58,7 @@ public:
     HRESULT         SwitchCharacter(CHARACTER character = CHARACTER::END);
     void            SetBattleCharacters(vector<CHARACTER> battleCharacters);
     _int            GetParryingCount() const { return m_iParryingCount; }
+    OBJECT_HANDLE   GetTargetHandle() const { return m_TargetHandle; }
 
     void            Active_Battle();
     void            DeActive_Battle();
@@ -95,7 +96,11 @@ private:
     queue<std::pair<string, class CCharacter*>>     m_BattleCharacters;
     class CCharacter*                               m_pCurrentCharacter = nullptr;
     vector<OBJECT_HANDLE>                           m_CharacterHandles{};
-    OBJECT_HANDLE                                   m_TargetHandle;
+    
+    OBJECT_HANDLE       m_TargetHandle;
+    _bool               m_bLockOn = { false };
+    _float              m_fLockOnCooldown = {};
+    static constexpr _float LOCKON_COOLDOWN = 0.3f;
 
     InputState   m_input;
     _uint        m_iParryingCount = 6;

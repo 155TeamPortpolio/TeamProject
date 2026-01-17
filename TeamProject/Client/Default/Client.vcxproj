@@ -168,6 +168,7 @@
     <ClInclude Include="..\public\BattlePlayer.h" />
     <ClInclude Include="..\public\BattleSystem.h" />
     <ClInclude Include="..\public\Interactable.h" />
+    <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
@@ -176,6 +177,7 @@
     <ClInclude Include="..\Public\BelleState_Move.h" />
     <ClInclude Include="..\Public\BelleState_Run.h" />
     <ClInclude Include="..\Public\BelleState_Walk.h" />
+    <ClInclude Include="..\Public\CorinState_ExAttack.h" />
     <ClInclude Include="..\Public\CorinState_Hit.h" />
     <ClInclude Include="..\Public\FieldCharacter.h" />
     <ClInclude Include="..\Public\FieldPlayer.h" />
@@ -261,6 +263,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
+    <ClInclude Include="..\public\UI_MeshPyramid.h" />
     <ClInclude Include="..\Public\UI_WorldToScreen.h" />
     <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
@@ -406,6 +409,7 @@
     <ClCompile Include="..\private\BattlePlayer.cpp" />
     <ClCompile Include="..\private\BattleSystem.cpp" />
     <ClCompile Include="..\private\Interactable.cpp" />
+    <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp" />
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp" />
     <ClCompile Include="..\private\Portal.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp" />
@@ -414,6 +418,7 @@
     <ClCompile Include="..\Private\BelleState_Move.cpp" />
     <ClCompile Include="..\Private\BelleState_Run.cpp" />
     <ClCompile Include="..\Private\BelleState_Walk.cpp" />
+    <ClCompile Include="..\Private\CorinState_ExAttack.cpp" />
     <ClCompile Include="..\Private\CorinState_Hit.cpp" />
     <ClCompile Include="..\Private\FieldCharacter.cpp" />
     <ClCompile Include="..\Private\FieldPlayer.cpp" />
@@ -460,6 +465,7 @@
     <ClCompile Include="..\private\ThugAssaulter_Death.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Idle.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Move.cpp" />
+    <ClCompile Include="..\private\UI_MeshPyramid.cpp" />
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp" />
     <ClCompile Include="..\Private\UI_IconLabel.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />

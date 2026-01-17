@@ -33,6 +33,7 @@
 #include "Player.h"
 /* UI */
 #include "UI_EnemyStatus.h"
+#include "UI_MeshPyramid.h"
 
 CMainApp::CMainApp()
 {
@@ -81,7 +82,7 @@ HRESULT CMainApp::Initialize()
 void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
-
+	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
 }
 
@@ -153,6 +154,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Player", CPlayer::Create());
 	/* UI */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()

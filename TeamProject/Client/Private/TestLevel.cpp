@@ -151,7 +151,7 @@ HRESULT CTestLevel::Awake()
 	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
 
 	auto handle = m_pPlayer->Get_CurCharacterHandle();
-
+	m_pCamDirector->SetCurTarget();
 	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
@@ -160,6 +160,8 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
+
+
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{

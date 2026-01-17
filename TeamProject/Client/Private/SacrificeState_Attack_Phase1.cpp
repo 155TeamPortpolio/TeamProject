@@ -51,7 +51,6 @@ void CSacrificeState_Attack_Phase1::Update(CSacrifice* pOwner, _float dt)
 	if (blackBoard.isChainOpen && blackBoard.stateQueue.empty())
 	{
 		_uint iRandIndex = Helper::Get_Random_Int(0, 1);
-		iRandIndex = 1;
 		if (0 == iRandIndex)
 			pOwner->Idle();
 		else
@@ -94,7 +93,7 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 
 	blackBoard.stateQueue.clear();
 
-	if (targetInfo.fDistance < 5.f)
+	if (targetInfo.fDistance < 8.f)
 	{
 		_vector3 vLook = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetDir = targetInfo.vDirToTarget;
@@ -105,8 +104,8 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 		else
 		{
-			_uint iRandIndex = Helper::Get_Random_Int(0, 3);
-			//iRandIndex = 1;
+			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
+			iRandIndex = 0;
 			switch (iRandIndex)
 			{
 			case 0:
@@ -131,6 +130,11 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 			{	
 				blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
 				blackBoard.stateQueue.push_back("Attack06_Phase1");
+			}break;
+			case 4:
+			{	
+				blackBoard.stateQueue.push_back("Attack01_Phase1");
+				blackBoard.stateQueue.push_back("Attack02_Phase1");
 			}break;
 			default:
 				break;
@@ -166,10 +170,12 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
+	blackBoard.stateQueue.push_back("Attack10_Phase1");
+	blackBoard.stateQueue.push_back("Attack11_Phase1");
+	blackBoard.stateQueue.push_back("Attack12_Phase1");
 	blackBoard.stateQueue.push_back("Attack07_Phase1");
 	blackBoard.stateQueue.push_back("Attack02_Phase1");
 	blackBoard.stateQueue.push_back("Attack08_Phase1");
-	blackBoard.stateQueue.push_back("Attack03_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
@@ -180,6 +186,7 @@ void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Arm_Recover").Loop(false).Speed(1.f).Apply();
 
 	pAnimator->Get_EventBus();
+	pOwner->Active_AttackSign();
 }
 
 void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -189,7 +196,7 @@ void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
 	pOwner->RotateToTarget(dt, 10.f);
 	pOwner->MoveByRootMotion(dt);
 
-	if (m_fAnimProgress >= 0.6f)
+	if (m_fAnimProgress >= 0.4f)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
@@ -729,7 +736,7 @@ void CSacrificeState_Attack_08_Phase1::Update_Effects(CSacrifice* pOwner)
 
 		_vector3 vBonePosition = pAnimator->Get_BonePosition(CAnimator3D::BoneSpace::COMBINED, "Bip001 L Hand");
 		vBonePosition = _vector3::Transform(vBonePosition, pTransform->Get_WorldMatrix());
-		vBonePosition.y -= 0.2f;
+		//vBonePosition.y -= 0.2f;
 		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
 			.Asset("hit_ground_smoke_strong.json")
 			.Position(vBonePosition)
@@ -763,8 +770,6 @@ void CSacrificeState_Attack_08_Phase1::Update_Move(CSacrifice* pOwner, _float dt
 	auto pCCT = pOwner->Get_Component<CCharacterController>();
 	if (!m_IsJumpStart && m_fAnimProgress >= 0.2f)
 	{
-		pOwner->Active_AttackSign();
-
 		_vector3 vCurrDir = pOwner->Get_Component<CTransform>()->Dir(STATE::LOOK);
 		_vector3 vTargetPos = pOwner->GetTargetingInfo().vTargetPos;
 		m_vSecondTargetPosition = vTargetPos - vCurrDir * 2.f;
@@ -918,8 +923,23 @@ void CSacrificeState_Attack_Roar_Phase1::Update(CSacrifice* pOwner, _float dt)
 	{
 		blackBoard.isChainOpen = true;
 		if (!blackBoard.stateQueue.empty())
+		{
 			blackBoard.isRequestNext = true;
+			pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::NONE, 0.f);
+		}
 	}
+
+	if (IsCrossAnimProgress(0.4f))
+		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::DISAPPEAR, 0.3f);
+
+	if (IsCrossAnimProgress(0.6f))
+	{
+		pOwner->Set_DissolveState(CSacrifice::DISSOLVE_STATE::APPEAR, 0.2f);
+		pOwner->Get_Component<CCharacterController>()->Set_Position(_vector3(-2.f, 1.f, 21.f));
+
+	}
+
+	pOwner->Update_Dissolve(dt);
 }
 
 void CSacrificeState_Attack_Roar_Phase1::Exit(CSacrifice* pOwner)
