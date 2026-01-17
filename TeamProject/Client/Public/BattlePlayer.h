@@ -70,6 +70,7 @@ public:
     void Priority_Update(_float dt);
     void Update(_float dt);
     void Late_Update(_float dt);
+    void Render_GUI();
 
 private:
     void    Update_Input(_float dt);

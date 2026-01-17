@@ -135,6 +135,11 @@ void CBattlePlayer::Late_Update(_float dt)
 {
 }
 
+void CBattlePlayer::Render_GUI()
+{
+	ImGui::Text("CurrentCharacter Invisible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
+}
+
 void CBattlePlayer::Update_Input(_float dt)
 {
 	m_input.prevDirection = m_input.direction;

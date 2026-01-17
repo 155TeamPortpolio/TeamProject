@@ -97,6 +97,10 @@ void CPlayer::Late_Update(_float dt)
 
 void CPlayer::Render_GUI()
 {
+	if (m_pBattlePlayer)
+	{
+		m_pBattlePlayer->Render_GUI();
+	}
 }
 
 CPlayer* CPlayer::Create()
