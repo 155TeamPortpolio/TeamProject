@@ -105,7 +105,10 @@ void CSacrifice_Laser::Update(_float dt)
 		rayDesc.fMaxDistance = 200.f;
 
 		if (PhysicsSystem()->Raycast(rayDesc, output))
+		{
 			vPosition1 = output.vPoint;
+			string name = output.pHitObject->Get_InstanceName();
+		}
 		else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
