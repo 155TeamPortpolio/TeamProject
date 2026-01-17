@@ -8,21 +8,30 @@ NS_END
 NS_BEGIN(Client)
 class CBattlePlayer;
 
+// TimeScale 실행 시 시간관리용(저장용X)
 typedef struct tagTimeScale 
 {
 	_bool	isScaled = { false };
 	_float	fDuration = {};
 	_float	fCurPos = {};
+	_float	fLerpTimeRatio = {};
 	_float	fScaleValue = { 1.f };
 }TIME_SCALE;
 
 typedef struct tagBattleVFX 
 {
-	_bool	isVFX = { false };
-	_float	fDuration = {};
-	_float	fCurrentPos = {};
-	_float3 vLerpColor = {};
-	EaseType eEaseType = {};
+	_bool	isRunning = { false };
+	_float	fVFXDuration = {};
+	_float	fVFXCurrentPos = {};
+
+	_float	fPlayerTimeScaleDuration = {};
+	_float	fPlayerTimeScaleValue = {};
+	_float	fMonsterTimeScaleDuration = {};
+	_float	fMonsterTimeScaleValue = {};
+	_float	fEffectTimeScaleDuration = {};
+	_float	fEffectTimeScaleValue = {};
+
+	_float	GetVFXTimeRatio() { return fVFXCurrentPos / fVFXDuration; }
 }BATTLE_VFX;
 
 class CBattleSystem final : public CBase
@@ -30,7 +39,7 @@ class CBattleSystem final : public CBase
 	DECLARE_SINGLETON(CBattleSystem)
 public:
 	enum class BATTLE_OBJ_TYPE { PLAYER, MONSTER, ENVOBJECT, END };
-	enum class BATTLE_VFX_TYPE { EVADE                                                                             };
+	enum class BATTLE_VFX_TYPE { EVADE , END};
 private:
 	CBattleSystem();
 	virtual ~CBattleSystem() = default;
@@ -64,12 +73,14 @@ public: //setter
 	void	SetBattleCharacters(vector<CHARACTER> battleCharacters);
 	void	SetBattlePlayer(class CBattlePlayer* pBattlePlayer) { m_pBattlePlayer = pBattlePlayer; }
 	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale);
-	void	StartShaderVFX(_float fDuration);
+	void	StartShaderVFX(BATTLE_VFX_TYPE eVFXType, _float fDuration);
 
 private:
 	void	Update_BattleInfo();
 	void	ClearBattleStage();
 	void	CheckTimeScale(const _float dt);
+	void	CheckVFX(const _float dt);
+	void	ComputeVFXValue(const _float dt, _uint iVFXIndex);
 
 private:
 	_bool	m_isActive = { false };
@@ -83,7 +94,7 @@ private:
 	// BATTLE_OBJ_TYPE 별로 타임 스케일
 	unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
 	// 쉐이더 효과
-	//unordered_map<BATTLE_OBJ_TYPE, TIME_SCALE>				m_TimeScales;
+	vector<BATTLE_VFX>										m_BattleVFX;
 
 	const _char* m_LayerTag[2] = { "Model_Layer", "Enemy_Layer" };
 

@@ -101,7 +101,7 @@ HRESULT CPostRenderer::Render_Distortion()
 {
 	//{
 	//	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
-	//
+	// 
 	//	m_pTargetManager->Bind_Target("Target_Distortion", m_pShader,"g_DistortionTexture" );
 	//	m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
 	//
@@ -154,6 +154,7 @@ HRESULT CPostRenderer::Render_Fog()
 
 	m_pTargetManager->Bind_Target("Target_Static_Depth", m_pShader, "StaticDepthTexture");
 	m_pTargetManager->Bind_Target("Target_Skinned_Depth", m_pShader, "SkinnedDepthTexture");
+	m_pTargetManager->Bind_Target("Target_Combined_Effect", m_pShader, "EffectCombinedTexture");
 	m_pTargetManager->Bind_Target("Target_Final", m_pShader, "FinalTexture");
 
 	m_pShader->SetConstantBuffer("FrameBuffer", m_pPipeLine->Get_FrameBuffer());

@@ -82,7 +82,7 @@ HRESULT CMainApp::Initialize()
 void CMainApp::Update(const float dt)
 {
 	m_pGameInstance->Update_Engine(dt);
-
+	CBattleSystem::GetInstance()->Update();
 	CCamDirector::GetInstance()->Update(dt);
 }
 

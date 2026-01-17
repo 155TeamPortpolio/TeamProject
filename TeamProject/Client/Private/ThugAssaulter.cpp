@@ -81,7 +81,7 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	// 임시 확인용
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
 	// 임시
-	m_tStatus.iHP = 100;
+	m_tStatus.iNowHP = 100;
 
 	return S_OK;
 }
@@ -150,7 +150,7 @@ void CThugAssaulter::Render_GUI()
 		ImGui::Text("AnimName : %s", Get_Component<CAnimator3D>()->Get_CurAnimName().c_str());
 		ImGui::Text("SelfDir: %.2f, %.2f, %.2f", m_tTargetingInfo.vDirSelfLook.x, m_tTargetingInfo.vDirSelfLook.y, m_tTargetingInfo.vDirSelfLook.z);
 		ImGui::Text("CaptureDir: %.2f, %.2f, %.2f", m_tRotDir.vDirToLookCapture.x, m_tRotDir.vDirToLookCapture.y, m_tRotDir.vDirToLookCapture.z);
-		ImGui::Text("HP : %d", (_int)m_tStatus.iHP);
+		ImGui::Text("HP : %d", (_int)m_tStatus.iNowHP);
 		ImGui::Text("Groggy Value : %d", m_tStatus.iGroggyValue);
 
 		ImGui::BeginDisabled(true);
@@ -312,7 +312,7 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Create_AttackSign("Bip001_Head");
-	Create_EnemyStatus("Bip001_Spine2");
+	Create_UIEnemyStatus("Bip001_Spine2");
 
 	return S_OK;
 }
@@ -352,7 +352,7 @@ void CThugAssaulter::Free()
 
 void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
-	if (0 >= m_tStatus.iHP)
+	if (0 >= m_tStatus.iNowHP)
 		return;
 
 
@@ -382,7 +382,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 		
-		m_tStatus.iHP -= fDamage * 1.5f;
+		m_tStatus.iNowHP -= fDamage * 1.5f;
 	}
 	else
 	{
@@ -391,11 +391,11 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 			.Loop(false)
 			.Apply();
 
-		m_tStatus.iHP -= fDamage;
+		m_tStatus.iNowHP -= fDamage;
 		m_tStatus.iGroggyValue += 16;
 	}
 
-	//m_tStatus.iHP -= fDamage;
+	//m_tStatus.iNowHP -= fDamage;
 	
 
 
@@ -502,7 +502,7 @@ void CThugAssaulter::Update_States(_float dt)
 void CThugAssaulter::ControlState(const _float dt)
 {
 	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
-		0 >= m_tStatus.iHP )
+		0 >= m_tStatus.iNowHP )
 		m_pStateMachine->Change_State("Death");
 
 	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() &&

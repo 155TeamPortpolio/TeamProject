@@ -3,13 +3,17 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
-#include "Child.h"
+#include "EventListener.h"
+
+#include "GaugeUI.h"
+#include "TextSlot.h"
 
 HRESULT CUI_EnemyStatus::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -20,6 +24,7 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     m_pParentWorld = pDesc->pParentWorld;
     m_pBoneLocal = pDesc->pBoneLocal;
     m_pMonsterStatus = pDesc->pMonsterStatus;
+    m_tOwnerHandle = pDesc->tOwnerHandle;
 
     __super::Initialize(pArg);
 
@@ -27,24 +32,95 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     const string& filePath = pResourceMgr->Get_ResourcePath("enemy_status.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
+    for (_int i = 0; i < ENUM(Child::END); ++i)
+        m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
+
+    Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
+        {
+            Set_TargetLock(desc);
+        });
 
     return S_OK;
 }
 
 void CUI_EnemyStatus::Update(_float dt)
-{ 
-    if (!m_pParentWorld || !m_pBoneLocal)
-        return;
-    
-    Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
-    
-    _float3 vPosition = { matWorld.m[3][0], matWorld.m[3][1], matWorld.m[3][2] };
-    
-    Update_WorldToScreen(vPosition);
-     
+{
     __super::Update(dt);
 
+    Set_WorldPosition();
+
+    //Set_Gauge(Child::HP_GUAGE, fFillAmount);
+    //Set_Gauge(Child::GROGGY_GAUGE, fFillAmount);  // 그로기 맥스는 무조건 100
+    //Set_GroggyText(5);
+
     Get_Component<CObjectContainer>()->UpdateChild(dt);
+}
+
+void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
+{
+    if (!m_tOwnerHandle.isValid() || !desc.tHandle.isValid())
+        return;
+
+    if (m_tOwnerHandle.Get() != desc.tHandle.Get())
+    {
+        Set_Alive(Child::LOCKON, false);
+        return;
+    }
+
+    const _bool bLock = desc.bLock;
+    Set_Alive(Child::LOCKON, bLock);
+    if (bLock)
+        Set_Animation(Child::LOCKON, 0);
+}
+
+void CUI_EnemyStatus::Set_WorldPosition()
+{
+    if (!m_pParentWorld || !m_pBoneLocal)
+        return;
+
+    Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
+    Update_WorldToScreen(matWorld.Translation());
+}
+
+void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)
+{
+    ForChild(child, [isAlive](CUI_Object* ui) {
+        ui->Set_Alive(isAlive);
+        });
+}
+
+void CUI_EnemyStatus::Set_Animation(Child child, _int iIndex)
+{
+    ForChild(child, [iIndex](CUI_Object* ui) {
+        ui->Set_Animation(iIndex);
+        });
+}
+
+void CUI_EnemyStatus::Set_Gauge(Child child, _float fFillAmount)
+{
+    ForChild(child, [&](CUI_Object* ui) {
+        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
+        if (!pGauge)
+            return;
+
+        pGauge->Set_FillAmount(fFillAmount);
+        });
+}
+
+void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
+{
+    ForChild(Child::GROGGY_TEXT, [&](CUI_Object* ui) {
+        auto pTextSlot = ui->Get_Component<CTextSlot>();
+        if (!pTextSlot)
+            return;
+
+        wchar_t buf[32];
+        Helper::Format_FixedZeroPad(buf, _countof(buf), iGroggy, 2);
+        pTextSlot->Set_Text(buf);
+
+        _float4 vColor = (iGroggy == 0) ? UI_GRAY_LIGHT : _float4(0.9960f, 0.6627f, 0.f, 1.f);
+        pTextSlot->Set_Color(vColor);
+        });
 }
 
 CGameObject* CUI_EnemyStatus::Create()
