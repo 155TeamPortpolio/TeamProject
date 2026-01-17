@@ -93,6 +93,8 @@ private:
     void    Clean_DeadSlots();
     _bool   Is_SlotActive(_int iIndex) const;
 
+    _bool Check_CollisionMask(ICollidable* pA, ICollidable* pB) const;
+
     ICollidable* Get_Collidable_Actor(PxRigidActor* pActor);
     ICollidable* Get_Collidable_Shape(PxShape* pShape, PxRigidActor* pActor);
 

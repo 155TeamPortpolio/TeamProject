@@ -151,6 +151,7 @@ void CCharacter::Update(_float dt)
 	if (m_bIsRotating)	Update_Rotation(dt);
 	Update_Energy(dt);
 	Update_Decibel(dt);
+	Update_Invincible(dt);
 }
 
 void CCharacter::Late_Update(_float dt)

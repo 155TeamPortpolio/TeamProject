@@ -584,6 +584,10 @@ void CCollisionSystem::Process_CCT_ShapeHit(const PxControllerShapeHit& hit)
 		return;
 	}
 
+	// 충돌 마스크 검사
+	if (!Check_CollisionMask(pCCT, pOther))
+		return;
+
 	// Trigger 처리
 	CCollider* pCollider = dynamic_cast<CCollider*>(pOther);
 	if (pCollider && pCollider->Is_Trigger())
@@ -697,6 +701,10 @@ void CCollisionSystem::Process_CCT_ControllerHit(const PxControllersHit& hit)
 	{
 		return;
 	}
+
+	// 충돌 마스크 검사
+	if (!Check_CollisionMask(pCCT1, pCCT2))
+		return;
 
 	auto& current1 = pCCT1->Get_CurrentCollisions();
 	auto& current2 = pCCT2->Get_CurrentCollisions();
@@ -1066,6 +1074,16 @@ _bool CCollisionSystem::Is_SlotActive(_int iIndex) const
 	return slot.IsActive() &&
 		slot.pCollidable &&
 		slot.pCollidable->Get_CompActive();
+}
+
+_bool CCollisionSystem::Check_CollisionMask(ICollidable* pA, ICollidable* pB) const
+{
+	_uint groupA = ENUM(pA->Get_Group());
+	_uint groupB = ENUM(pB->Get_Group());
+	_uint maskA = pA->Get_CollisionMask();
+	_uint maskB = pB->Get_CollisionMask();
+
+	return (maskA & groupB) != 0 && (maskB & groupA) != 0;
 }
 
 ICollidable* CCollisionSystem::Get_Collidable_Actor(PxRigidActor* pActor)

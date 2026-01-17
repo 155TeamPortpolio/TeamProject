@@ -132,6 +132,8 @@ HRESULT CCharacterController::Initialize(COMPONENT_DESC* pArg)
 	pShape->setRestOffset(pDesc->fRestOffset);
 
 	m_eGroup = pDesc->eGroup;
+	m_iCollisionMask = pDesc->iCollisionMask;
+
 	PxFilterData filterData;
 	filterData.word0 = ENUM(pDesc->eGroup);
 	filterData.word1 = pDesc->iCollisionMask;
@@ -593,6 +595,7 @@ void CCharacterController::Stop_Movement()
 
 void CCharacterController::Set_CollisionMask(_uint iMask)
 {
+	m_iCollisionMask = iMask;  // 부모 멤버 동기화
 	m_FilterData.word1 = iMask;
 
 	PxShape* pShape;

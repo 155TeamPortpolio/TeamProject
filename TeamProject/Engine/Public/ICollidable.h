@@ -38,14 +38,19 @@ public:
 	_int  Get_SlotIndex() const { return m_iSlotIndex; }
 	_uint Get_SlotGeneration() const { return m_iSlotGeneration; }
 
-	COLLISION_GROUP Get_Group() const { return m_eGroup; }
+    COLLISION_GROUP Get_Group() const { return m_eGroup; }
+    _uint Get_CollisionMask() const { return m_iCollisionMask; }
+    virtual void Set_CollisionGroup(COLLISION_GROUP eGroup) PURE;
+    virtual void Set_CollisionMask(_uint iMask) PURE;
 
 protected:
 	unordered_set<ICollidable*> m_CurrentCollisions;
 	unordered_set<ICollidable*> m_PreviousCollisions;
 	_int  m_iSlotIndex = { -1 };
 	_uint m_iSlotGeneration = { 0 };
-	COLLISION_GROUP m_eGroup = { COLLISION_GROUP::COMMON };
+    COLLISION_GROUP m_eGroup = { COLLISION_GROUP::COMMON };
+    _uint m_iCollisionMask = { 0xFFFFFFFF };
+
 public:
 	virtual void Free() override { __super::Free(); }
 };
