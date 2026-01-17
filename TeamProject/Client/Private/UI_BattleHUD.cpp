@@ -48,7 +48,7 @@ void CUI_BattleHUD::Awake()
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
 
-    Set_Alive(Child::BOSS, true);
+    //Set_Alive(Child::BOSS, true);
 }
 
 void CUI_BattleHUD::Update(_float dt)
