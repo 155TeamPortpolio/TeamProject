@@ -55,6 +55,11 @@ void CJaneDoeState_BranchAttack::Update(CJaneDoe* pOwner, _float dt)
     }
 }
 
+void CJaneDoeState_BranchAttack::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_BranchAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Branch_01")

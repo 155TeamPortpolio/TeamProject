@@ -36,6 +36,7 @@ void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
 void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
 {
     pOwner->Pop_Invincible();
+    __super::Exit(pOwner);
 }
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)

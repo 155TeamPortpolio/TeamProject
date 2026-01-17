@@ -93,3 +93,8 @@ void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
     __super::Update(pOwner, dt);
 }
 
+void CJaneDoeState_Attack::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+

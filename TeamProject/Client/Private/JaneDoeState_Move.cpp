@@ -48,3 +48,8 @@ void CJaneDoeState_Move::Update(CJaneDoe* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 }
+
+void CJaneDoeState_Move::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}

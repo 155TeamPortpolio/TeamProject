@@ -70,6 +70,7 @@ void CCorinState_ExAttack::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_ExAttack::Exit(CCorin* pOwner)
 {
+    __super::Exit(pOwner);
 }
 
 void CCorinState_ExAttack_Start::Enter(CCorin* pOwner)

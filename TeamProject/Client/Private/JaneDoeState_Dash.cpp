@@ -66,3 +66,8 @@ void CJaneDoeState_Dash::Update(CJaneDoe* pOwner, _float dt)
         pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
     }
 }
+
+void CJaneDoeState_Dash::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
