@@ -1359,11 +1359,11 @@
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
-      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
-  	</ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1986,11 +1986,13 @@
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
-      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
-  	</ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\Interactable.cpp" />
+    <ClCompile Include="..\private\Portal.cpp" />
+    <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
