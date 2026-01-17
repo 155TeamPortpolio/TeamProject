@@ -62,6 +62,7 @@ public:
     _bool       Can_Move() const { return m_bCanMove; }
     void        Lock_Move() { m_bCanMove = false; }
     void        Unlock_Move() { m_bCanMove = true; }
+    void        Rotate(_vector3 vDirection);
 
 public:
     void    Active_Character();
@@ -89,7 +90,6 @@ public:
 
 private:
     void            Update_Rotation(_float dt);
-    void            Rotate(_vector3 vDirection);
     void            Stop_Rotation();
 
 protected:
