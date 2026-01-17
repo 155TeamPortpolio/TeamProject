@@ -2,7 +2,6 @@
 
 float3 color     = float3(1.f, 1.f, 1.f);
 float  alpha     = 1.f;
-float  alphaTest = -1.f;
 
 struct VS_IN
 {
@@ -107,7 +106,8 @@ technique11 DefaultTechnique
     pass Opaque
     {
         SetRasterizerState(RS_Default);
-        SetDepthStencilState(DSS_None, 0);
+
+        SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
         VertexShader = compile vs_5_0 VS_MAIN();

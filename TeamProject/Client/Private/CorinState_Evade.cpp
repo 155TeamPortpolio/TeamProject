@@ -12,7 +12,7 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     {
         BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER,
             1.5f, 0.5f);
-        BattleSystem()->StartShaderVFX(CBattleSystem::BATTLE_VFX_TYPE::EVADE, 1.5f);
+        //BattleSystem()->StartShaderVFX(CBattleSystem::BATTLE_VFX_TYPE::EVADE, 1.5f);
         pOwner->Set_InvincibleTimer(1.5f);
     }
 

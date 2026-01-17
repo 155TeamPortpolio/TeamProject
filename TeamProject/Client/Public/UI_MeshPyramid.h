@@ -25,9 +25,8 @@ private:
 private:
     Vector3 color       = {1.f, 1.f, 1.f};
     _float  alpha       = 0.f;
-    _float  alphaTest   = 0.f;
-    _float  fadeInDur   = 0.5f;
-    _float  fadeOutDur  = 0.5f;
+    _float  fadeInDur   = 1.f;
+    _float  fadeOutDur  = 1.f;
     _float  fadeT       = 0.f;
     _float  alertBlinkT = 0.f;
 
