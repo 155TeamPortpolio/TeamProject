@@ -1110,7 +1110,6 @@
     <ClInclude Include="..\public\DataBase.h">
       <Filter>03. Utility\05. DataBase</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\Sacrifice_Laser</Filter>
     </ClInclude>
@@ -1119,9 +1118,6 @@
     </ClInclude>
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h">
       <Filter>02. GameObject\Object\Enemy\ThugBulkyEnforcer\State\Death</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\UI_BattleHUD.h">
-      <Filter>02. GameObject\UI\BattleHUD</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Client_Enum.h">
       <Filter>99. Defines</Filter>
@@ -1358,7 +1354,7 @@
       <Filter>02. GameObject\Object\Interactable\Portal</Filter>
     </ClInclude>
     <ClInclude Include="..\public\UI_MeshPyramid.h">
-      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>\
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
@@ -1366,9 +1362,6 @@
     <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
   	</ClInclude>
-    <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
-      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\SacrificeState_Groggy.h">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
     </ClInclude>
@@ -1987,9 +1980,6 @@
     <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
-      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\UI_MeshPyramid.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
     </ClCompile>
@@ -1999,9 +1989,6 @@
     <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
   	</ClCompile>
-    <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
-      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\SacrificeState_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
     </ClCompile>
