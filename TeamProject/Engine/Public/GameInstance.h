@@ -17,6 +17,7 @@ public:
 	void Update_Engine(_float dt);
 	void Release_Engine();
 	class CLevel* Get_CurrentLevel();
+
 public:
 	void Notify_LevelSet();
 	void Clear_LevelResource(const string& levelKey);

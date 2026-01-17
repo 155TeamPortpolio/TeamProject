@@ -235,6 +235,7 @@ void CEnvPanel::Render_FogDesc()
 
     return changed;
 }
+
 CEnvPanel* CEnvPanel::Create(GUI_CONTEXT* context)
 {
 	CEnvPanel* instance = new CEnvPanel(context);

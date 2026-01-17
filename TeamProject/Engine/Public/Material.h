@@ -34,7 +34,7 @@ public:
     _bool isValid(_uint index);
 
 public:
-    void SetBlend_if(const string& includedWord);
+    //void SetBlendHasAlpha();
 
 public:
     virtual void Render_GUI() override;
