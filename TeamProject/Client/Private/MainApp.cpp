@@ -126,6 +126,7 @@ void CMainApp::Free()
 	__super::Free();
 	m_pGameInstance->Release_Engine();
 	m_pGameInstance->DestroyInstance();
+	CBattleSystem::GetInstance()->DestroyInstance();
 	CUIDirector::GetInstance()->DestroyInstance();
 	CCamDirector::GetInstance()->DestroyInstance();
 	CDataBase::GetInstance()->DestroyInstance();

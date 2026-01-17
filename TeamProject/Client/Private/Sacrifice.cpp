@@ -137,9 +137,9 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	auto pAnimator = Get_Component<CAnimator3D>();
 	pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "SacrificeBringer.model");
 	pAnimator->Link_MetaData(G_GlobalLevelKey, "SacrificeBringer_Meta.json");
-	//pAnimator->Resize_Layer(3);
-	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
-	//pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
+	pAnimator->Resize_Layer(3);
+	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 1);
+	pAnimator->Set_LayerType(ANIM_LAYER_STATE::ADDITIVE, 2);
 
 	auto pCCT = Get_Component<CCharacterController>();
 
@@ -248,7 +248,10 @@ void CSacrifice::Free()
 
 void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 {
-
+	Get_Component<CAnimator3D>()->Set_Animation(1, "SacrificeBringer_Ani_P1_Hit_Stay")
+		.LayerBlend(0.8f, 0.f, 0.1f, EaseType::InQuint)
+		.Loop(false)
+		.Apply();
 }
 
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)

@@ -105,7 +105,6 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		else
 		{
 			_uint iRandIndex = Helper::Get_Random_Int(0, 4);
-			iRandIndex = 0;
 			switch (iRandIndex)
 			{
 			case 0:
@@ -169,10 +168,10 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
-	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack06_Phase1");
-	blackBoard.stateQueue.push_back("Attack06_Phase1");
-	blackBoard.stateQueue.push_back("Attack06_Phase1");
+	//blackBoard.stateQueue.clear();
+	//blackBoard.stateQueue.push_back("Attack06_Phase1");
+	//blackBoard.stateQueue.push_back("Attack06_Phase1");
+	//blackBoard.stateQueue.push_back("Attack06_Phase1");
 
 	blackBoard.isRequestNext = true;
 }
