@@ -6,9 +6,6 @@ class CMapTriggerObject :
     public CMapObject 
 {
 private:
-    enum class MapTriggerType { ENTER, STAY, EXIT, INTERECT, END };
-
-private:
     CMapTriggerObject();
     CMapTriggerObject(const CMapTriggerObject& rhs);
     virtual ~CMapTriggerObject() DEFAULT;
@@ -32,11 +29,7 @@ public:
 private:
     void Ready_PlaneUI(const MAPOBJ_DESC* pObjDesc);
     void Ready_MeshUI(const MAPOBJ_DESC* pObjDesc);
-    void Ready_TriggerEvent(const MAPOBJ_DESC* pObjDesc);
-
-private:
-    MapTriggerType  m_eEventType{};
-    string          m_EventTag{};
+    void Ready_Interactable(const MAPOBJ_DESC* pObjDesc);
 
 public:
     static CMapTriggerObject* Create();

@@ -1,9 +1,12 @@
 #include "pch.h"
 #include "Interactable.h"
+#include "GameInstance.h"
 
 CInteractable::CInteractable()
 	: CGameObject()
+	, m_pGameInstance{ CGameInstance::GetInstance() }
 {
+	Safe_AddRef(m_pGameInstance);
 }
 
 CInteractable::CInteractable(const CInteractable& rhs)
@@ -18,14 +21,13 @@ HRESULT CInteractable::Initialize_Prototype()
 
 	Add_Component<CCollider>();
 	Add_Component<CCollider>()->Set_CollisionGroup(COLLISION_GROUP::INTERACABLE);
-	Get_Component<CCollider>()->Set_Trigger(true);
 
 	return S_OK;
 }
 
 HRESULT CInteractable::Initialize(INIT_DESC* pArg)
 {
-	if (FAILED(__super::Initialize_Prototype()))
+	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	return S_OK;
@@ -34,4 +36,5 @@ HRESULT CInteractable::Initialize(INIT_DESC* pArg)
 void CInteractable::Free()
 {
 	__super::Free();
+	Safe_Release(m_pGameInstance);
 }

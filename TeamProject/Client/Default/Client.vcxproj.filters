@@ -697,6 +697,9 @@
     <Filter Include="02. GameObject\Object\Interactable\Portal">
       <UniqueIdentifier>{af8fd851-810f-475c-814f-9032f6562f43}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Map">
+      <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">

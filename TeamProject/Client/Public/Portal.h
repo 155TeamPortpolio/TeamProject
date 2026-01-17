@@ -6,24 +6,29 @@ NS_BEGIN(Client)
 class CPortal final :
     public CInteractable
 {
+public:
+    typedef struct tagPortalDesc : public Engine::GAMEOBJECT_DESC {
+        string NextNameTag{};
+    }PORTAL_DESC;
+
 protected:
     CPortal();
     CPortal(const CPortal& rhs);
     virtual ~CPortal() DEFAULT;
 
 public:
-    const string& Get_AnimName() const { return m_strAnimName; }
-
-public:
     virtual HRESULT Initialize_Prototype()      override;
     virtual HRESULT Initialize(INIT_DESC* pArg) override;
-    virtual void    Priority_Update(_float dt)  override {};
-    virtual void    Update(_float dt)           override {};
-    virtual void    Late_Update(_float dt)      override {};
+    void            Awake() override;
+    virtual void    Priority_Update(_float dt)  override;
+    virtual void    Update(_float dt)           override;
+    virtual void    Late_Update(_float dt)      override;
 
-    virtual void    OnTriggerEnter(CGameObject* pOther) override {};
-    virtual void    OnTriggerStay(CGameObject* pOher)   override {};
-    virtual void    OnTriggerExit(CGameObject* pOther)  override {};
+    virtual void    OnTriggerEnter(CGameObject* pOther) override;
+    virtual void    OnTriggerStay(CGameObject* pOher)   override;
+    virtual void    OnTriggerExit(CGameObject* pOther)  override;
+
+    virtual void    Interact() override;
 
 protected:
     string m_NextLevelTag{};

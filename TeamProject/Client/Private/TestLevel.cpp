@@ -59,6 +59,9 @@
 #include "UIDirector.h"
 #include "UI_MeshBillboard.h"
 
+/* Interactable */
+#include "Portal.h"
+
 /* ShaderTest */
 #include "TestCloud.h"
 
@@ -107,6 +110,8 @@ HRESULT CTestLevel::Awake()
 	//	.Build("Test_Billboard");
 	//objMgr->Add_Object(pBillboard, { "Test_Level", "UI_Layer" });
 
+	//==================== Interactable ===============
+	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Portal", CPortal::Create());
 	
 	//============== Map ============================
 	//Ready_Map("Test_Level", "Zero_Worksite");
@@ -144,6 +149,9 @@ HRESULT CTestLevel::Awake()
 	Ready_Npc();
 
 	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
+
+	auto handle = m_pPlayer->Get_CurCharacterHandle();
+
 	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;

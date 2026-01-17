@@ -442,6 +442,40 @@
           ]
         }
       ]
+    },
+    {
+      "TagLayer": "TriggerObject_Layer",
+      "Objects": [
+        {
+          "iObjID": 15,
+          "TagModelResourceKey": "Trigger_Object4",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            3.5,
+            1.5,
+            1.2999999523162842,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            5.089061737060547,
+            -4.25,
+            8.7024507522583,
+            0.0
+          ]
+        }
+      ]
     }
   ]
 }

@@ -73,7 +73,7 @@ HRESULT CZeroStage_Boss::Awake()
 {
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "Zero_Boss1");
+	Ready_Map("ZeroStage_Boss", "Zero_Boss1");
 
 	return S_OK;
 }
