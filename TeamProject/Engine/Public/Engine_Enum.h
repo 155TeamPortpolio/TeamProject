@@ -118,6 +118,9 @@ namespace Engine
 		InQuart, InQuint, InOutQuart, OutQuart, InOutQuint, OutQuint, InOutExpo, OutExpo, InExpo, OutBack, InOutBack, InBack,
 		OutElastic, InOutElastic, InElastic, OutBounce, InOutBounce, InBounce,
 	};
+
+	enum class AlphaCheckLevel { None = 0, Fast = 1, Hint = 2, Precise = 3 };
+
 }
 #endif // Engine_Enum_h__
 

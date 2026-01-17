@@ -141,6 +141,14 @@ _bool CMaterial::isValid(_uint index)
 	return m_MaterialInstances[index]->isValid();
 }
 
+void CMaterial::SetBlendHasAlpha(AlphaCheckLevel checkLevel)
+{
+	for (auto instance : m_MaterialInstances)
+	{
+		instance->SetBlendIf_AlphaDiffuse(checkLevel);
+	}
+}
+
 CMaterial* CMaterial::Create()
 {
 	CMaterial* instance = new CMaterial;

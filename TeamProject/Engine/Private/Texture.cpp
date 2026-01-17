@@ -110,9 +110,9 @@ void CTexture::Render_GUI(_float Width)
 	ImGui::Text(m_TextureKey.c_str());
 }
 
-_bool CTexture::AlphaCheck(TestLevel level)
+_bool CTexture::AlphaCheck(AlphaCheckLevel level)
 {
-    if (m_AlphaDesc.eLevel >= level)
+    if (ENUM(m_AlphaDesc.eLevel) >= ENUM(level))
         return m_AlphaDesc.hasNonOpaque;
 
     _uint mipIndex = ChooseMipForAlpha(level);
@@ -178,7 +178,7 @@ _bool CTexture::AlphaCheck(TestLevel level)
     return m_AlphaDesc.hasNonOpaque;
 }
 
-_uint CTexture::ChooseMipForAlpha(TestLevel level)
+_uint CTexture::ChooseMipForAlpha(AlphaCheckLevel level)
 {
     const _uint mipCount = m_Desc.MipLevels;
     if (mipCount == 0)
@@ -186,10 +186,10 @@ _uint CTexture::ChooseMipForAlpha(TestLevel level)
 
     const _uint lastMipIndex = mipCount - 1;
 
-    if (level == TestLevel::Precise)
+    if (level == AlphaCheckLevel::Precise)
         return 0;
 
-    if (level == TestLevel::Fast)
+    if (level == AlphaCheckLevel::Fast)
         return lastMipIndex;
 
     const uint64_t pixelCount = uint64_t(m_TextureSize.x) * uint64_t(m_TextureSize.y);

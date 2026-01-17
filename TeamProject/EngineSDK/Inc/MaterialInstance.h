@@ -39,8 +39,10 @@ public:
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
 
+	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level);
 public:
 	virtual void Render_GUI();
+
 private:
 	void ClearDynamicSlotsBound(CShader* materialShader);
 

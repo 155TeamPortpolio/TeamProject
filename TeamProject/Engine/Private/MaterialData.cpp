@@ -97,6 +97,20 @@ _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 	return !m_Textures[eType].empty();
 }
 
+_bool CMaterialData::Has_NonOpaque(TEXTURE_TYPE eType, _uint Index, AlphaCheckLevel level)
+{
+	if (m_Textures[eType].empty())
+		return false;
+	if (m_Textures[eType].size() <= Index)
+		return false;
+	if (m_Textures[eType][Index] == nullptr)
+		return false;
+
+	auto texture = m_Textures[eType][Index];
+
+	return texture->AlphaCheck(level);
+}
+
 void CMaterialData::Render_GUI()
 {
 	if (m_Textures.empty())
