@@ -1806,6 +1806,9 @@
     <FxCompile Include="..\Public\Engine_Shader\VTX_Trail.hlsl">
       <Filter>98. BasicShader</Filter>
     </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\VTX_UIMesh.hlsl">
+      <Filter>98. BasicShader</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />

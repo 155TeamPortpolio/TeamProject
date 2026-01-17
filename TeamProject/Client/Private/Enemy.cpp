@@ -7,6 +7,7 @@
 #include "AttackSign.h"
 #include "UI_EnemyStatus.h"
 #include "EnemyAttackCollider.h"
+#include "UI_MeshPyramid.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -192,6 +193,14 @@ void CEnemy::Create_EnemyStatus(string boneTag)
 
 	// UI Mgr¿¡ µî·Ï
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+}
+
+void CEnemy::Create_MeshPyramid()
+{
+	auto meshPyramid = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_MeshPyramid"})
+		.Build("MeshPyramid");
+
+	Get_Component<CObjectContainer>()->Add_Child(meshPyramid, false);
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)

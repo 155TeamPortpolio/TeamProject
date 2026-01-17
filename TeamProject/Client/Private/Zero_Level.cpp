@@ -112,8 +112,6 @@ HRESULT CZero_Level::Initialize()
 		pResource->Add_ResourcePath("Circle0.model", "../Bin/Resources/Effect/Model/Circle0/Circle0.model");
 
 	}
-
-	Ready_3DUI();
 	
 	return S_OK;
 }
@@ -205,15 +203,6 @@ void CZero_Level::Rake_MapResources()
 
 		}
 	}
-}
-
-void CZero_Level::Ready_3DUI()
-{
-	auto meshPyramid = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_MeshPyramid"})
-		.Scale({0.1f, 0.2f, 0.1f})
-		.Build("MeshPyramid");
-
-	ObjectManager()->Add_Object(meshPyramid, {"Zero_Level", "3DUI_Layer"});
 }
 
 CZero_Level* CZero_Level::Create(const string& LevelKey)
