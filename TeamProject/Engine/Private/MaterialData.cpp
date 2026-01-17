@@ -94,7 +94,22 @@ HRESULT CMaterialData::Set_MaterialConstantBuffer(ID3D11Buffer* pCBuffer)
 
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 {
-	return !m_Textures[eType].empty();
+	auto it = m_Textures.find(eType);
+	return (it != m_Textures.end() && !it->second.empty());
+}
+
+_bool CMaterialData::Has_NonOpaque(TEXTURE_TYPE eType, _uint Index, AlphaCheckLevel level)
+{
+	if (m_Textures[eType].empty())
+		return false;
+	if (m_Textures[eType].size() <= Index)
+		return false;
+	if (m_Textures[eType][Index] == nullptr)
+		return false;
+
+	auto texture = m_Textures[eType][Index];
+
+	return texture->AlphaCheck(level);
 }
 
 void CMaterialData::Render_GUI()
