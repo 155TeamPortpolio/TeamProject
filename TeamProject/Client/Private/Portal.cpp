@@ -54,6 +54,7 @@ void CPortal::Priority_Update(_float dt)
 void CPortal::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
+	Interact();
 }
 
 void CPortal::Late_Update(_float dt)
@@ -74,7 +75,7 @@ void CPortal::OnTriggerEnter(CGameObject* pOther)
 
 void CPortal::OnTriggerStay(CGameObject* pOher)
 {
-	Interact();
+	
 }
 
 void CPortal::OnTriggerExit(CGameObject* pOther)
