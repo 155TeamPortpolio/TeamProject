@@ -193,6 +193,8 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 
 	// UI Mgr¿¡ µî·Ï
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
+
+	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
@@ -387,6 +389,21 @@ void CEnemy::SetAutoPlayBattleCollider(const string& tagBattleCollider, _float f
 	m_tAutoBattleCol.isAttackColliderPlay = false;
 	m_tAutoBattleCol.fAttackColStartProgress = fAttackOffsetTime;
 	m_tAutoBattleCol.vAttackColLifeTime = { fAttackPlayTime, 0.f };
+}
+
+void CEnemy::Death()
+{
+	if (BattleSystem()->ExitBattleObject(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, this->Get_Handle()))
+	{
+		ObjectManager()->Remove_Object(this);
+		auto pSelectedObject = GUISystem()->Get_Context()->pSelectedObject;
+		if (nullptr != pSelectedObject &&
+			this == pSelectedObject)
+			GUISystem()->Get_Context()->pSelectedObject = nullptr;
+		
+		if (true == m_hUIEnemyStatus.isValid())
+			UIManager()->Remove_UIObject(m_hUIEnemyStatus.Get());
+	}
 }
 
 void CEnemy::ShowBattleColliderForCheck(_bool is)
