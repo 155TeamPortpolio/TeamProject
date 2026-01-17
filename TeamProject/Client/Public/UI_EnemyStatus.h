@@ -4,6 +4,15 @@
 
 NS_BEGIN(Client)
 
+// ===============================
+// CUI_EnemyStatus
+// 몬스터 머리 위에 표시되는 상태 UI
+// - HP / Groggy 게이지
+// - Groggy 수치 텍스트
+// - 타겟 락온 표시
+// - 월드 위치 → 스크린 좌표 변환
+// ===============================
+
 class CUI_EnemyStatus final : public CUI_WorldToScreen
 {
 public:
