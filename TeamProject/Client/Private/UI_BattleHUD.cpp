@@ -58,6 +58,8 @@ void CUI_BattleHUD::Awake()
     // 루트 UI의 0번 애니메이션 재생 (FadeIn)
     if (m_hRoot.isValid())
         m_hRoot.Get()->Set_Animation(0);
+
+    //Set_Alive(Child::BOSS, true);
 }
 
 void CUI_BattleHUD::Update(_float dt)
@@ -129,6 +131,7 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
     m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
 
+    m_handles[Child::BOSS] = pRoot->Get_DescendantHandle("boss");
     m_handles[Child::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
     m_handles[Child::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
     m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
