@@ -137,7 +137,7 @@ void CBattlePlayer::Late_Update(_float dt)
 
 void CBattlePlayer::Render_GUI()
 {
-	ImGui::Text("CurrentCharacter Invisible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
+	ImGui::Text("Can Parry : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
 }
 
 void CBattlePlayer::Update_Input(_float dt)
@@ -438,11 +438,7 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	m_pCurrentCharacter->Get_Component<CTransform>()->Set_Look(m_vSwitchLook);
 	m_pCurrentCharacter->Set_TargetHandle(m_TargetHandle);
 
-	if (m_pCurrentCharacter->Can_Parry())
-	{
-		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-	}
-	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
+#pragma region UI
 	/* Energy */
 	UI_ACTION_DESC desc;
 	desc.eType = UI_ACTION_TYPE::SPECIAL;
@@ -465,7 +461,14 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
+#pragma endregion
 
+	if (m_pCurrentCharacter->Can_Parry())
+	{
+		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+		return;
+	}
+	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
 void CBattlePlayer::NotifyCharacterSwitchOut()
@@ -489,6 +492,8 @@ void CBattlePlayer::RotateCharacterQueue()
 
 HRESULT CBattlePlayer::SwitchCharacter(CHARACTER character)
 {
+	_bool bExtreme = false;
+	bExtreme = m_pCurrentCharacter->Can_Parry();
 	NotifyCharacterSwitchOut();
 	if (character == CHARACTER::END)
 	{

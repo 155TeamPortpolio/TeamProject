@@ -367,9 +367,6 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Attack">
       <UniqueIdentifier>{8755a55d-a018-43f5-b708-c909154bdd2c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ExAttack">
-      <UniqueIdentifier>{179f59ca-f54a-4ba2-b82d-47b3b92b18f0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\Normal">
       <UniqueIdentifier>{d7c0714a-11fa-43dc-a7e6-4c109a0c3ef8}</UniqueIdentifier>
     </Filter>
@@ -696,7 +693,7 @@
     </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
       <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
     </Filter>
@@ -1344,9 +1341,12 @@
     </ClInclude>
     <ClInclude Include="..\public\UI_MeshPyramid.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\CorinState_SwitchInParryAid.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1968,9 +1968,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_MeshPyramid.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-	</ClCompile>
+    </ClCompile>
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\CorinState_SwitchInParryAid.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Switch\SwitchIn\ParryAid</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
