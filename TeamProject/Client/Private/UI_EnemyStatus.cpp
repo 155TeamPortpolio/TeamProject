@@ -115,10 +115,10 @@ void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
             return;
 
         wchar_t buf[32];
-        swprintf_s(buf, _countof(buf), L"%02d", iGroggy % 100);
+        Helper::Format_FixedZeroPad(buf, _countof(buf), iGroggy, 2);
         pTextSlot->Set_Text(buf);
 
-        _float4 vColor = (iGroggy == 0) ? UI_GRAY_LIGHT : _float4(0.9960f, 0.6549f, 0.0039f, 1.f);
+        _float4 vColor = (iGroggy == 0) ? UI_GRAY_LIGHT : _float4(0.9960f, 0.6627f, 0.f, 1.f);
         pTextSlot->Set_Color(vColor);
         });
 }
