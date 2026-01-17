@@ -115,6 +115,9 @@ void CSacrificeHandState_Attack_01_Phase1::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("SacrificeBringerHand_Ani_P1_Attack_10").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
+
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -157,6 +160,8 @@ void CSacrificeHandState_Attack_02_Phase1::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_P1_Attack_11").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
 	m_IsActiveHand = true;
 }
 
@@ -219,6 +224,10 @@ void CSacrificeHandState_Attack_03_Phase1::Enter(CSacrificeHand* pOwner)
 	pTrasform->Set_Look(vDir);
 	pTrasform->Set_Pos(vTargetPosition - vDir * 16.f);
 
+
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
+
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	m_IsActiveHand = false;
 }
@@ -271,6 +280,8 @@ void CSacrificeHandState_Attack_04_Phase2::Enter(CSacrificeHand* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringerHand_Ani_Attack_04").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Hand", 0.f, 0.6f, hitDesc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::NONE, 0.f);
 	pOwner->SetVisable(true);
 }
@@ -372,6 +383,8 @@ void CSacrificeHandState_OverDrive_Release_Attack01_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack01").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc desc{};
+	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.7f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }
@@ -405,6 +418,8 @@ void CSacrificeHandState_OverDrive_Release_Attack02_Phase2::Enter(CSacrificeHand
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Set_Animation("Monster_SacrificeBringer_Ani_P2_OverDrive_Release_Attack02").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc desc{};
+	pOwner->SetAutoPlayBattleCollider("Hand_Sword", 0.f, 0.9f, desc);
 	pOwner->Set_DissolveState(CSacrificeHand::DISSOLVE_STATE::APPEAR, 0.1f);
 	pOwner->SetVisable(true);
 }

@@ -158,6 +158,8 @@ HRESULT CSacrifice::Initialize(INIT_DESC* pArg)
 	/* Child Object */
 	Create_Children();
 
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -242,6 +244,11 @@ void CSacrifice::Free()
 	__super::Free();
 
 	Safe_Release(m_pStateMachine);
+}
+
+void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+
 }
 
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
@@ -412,12 +419,18 @@ void CSacrifice::ActiveLaser(_uint mode)
 {
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->ActiveLaser(mode);
+	
+	HitDesc desc{};
+	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::ATTACK, true, desc);
+	SetBattleColliderObject("Hand_Laser", BATTLE_COLTYPE::TRIGGER, true, desc);
 }
 
 void CSacrifice::DeactiveLaser()
 {
 	auto pLaser = Get_Component<CObjectContainer>()->Find_ObjectByName("Sacrifice_Laser");
 	static_cast<CSacrifice_Laser*>(pLaser)->DeactiveLaser();
+
+	FinishBattleColliderObject("Hand_Laser");
 }
 
 void CSacrifice::ActiveEyeLaser()
@@ -432,6 +445,17 @@ void CSacrifice::ActiveEyeLaser()
 
 	auto pLaser2 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2");
 	static_cast<CSacrifice_Laser*>(pLaser2)->ActiveLaser(2);
+
+	HitDesc desc{};
+
+	SetBattleColliderObject("Eye_Laser0", BATTLE_COLTYPE::ATTACK, true, desc);
+	SetBattleColliderObject("Eye_Laser0", BATTLE_COLTYPE::TRIGGER, true, desc);
+
+	SetBattleColliderObject("Eye_Laser1", BATTLE_COLTYPE::ATTACK, true, desc);
+	SetBattleColliderObject("Eye_Laser1", BATTLE_COLTYPE::TRIGGER, true, desc);
+
+	SetBattleColliderObject("Eye_Laser2", BATTLE_COLTYPE::ATTACK, true, desc);
+	SetBattleColliderObject("Eye_Laser2", BATTLE_COLTYPE::TRIGGER, true, desc);
 }
 
 void CSacrifice::DeactiveEyeLaser()
@@ -446,6 +470,10 @@ void CSacrifice::DeactiveEyeLaser()
 
 	auto pLaser2 = pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2");
 	static_cast<CSacrifice_Laser*>(pLaser2)->DeactiveLaser();
+
+	FinishBattleColliderObject("Eye_Laser0");
+	FinishBattleColliderObject("Eye_Laser1");
+	FinishBattleColliderObject("Eye_Laser2");
 }
 void CSacrifice::Set_DissolveState(DISSOLVE_STATE state, _float duration)
 {
@@ -513,18 +541,19 @@ void CSacrifice::Create_Children()
 	/* Eye Laser */
 	{
 		_smatrix offsetMatrix = _smatrix::Identity;
-		offsetMatrix.Translation(_vector3(-0.8f, -0.2f, 0.f));
-
+		offsetMatrix.Translation(_vector3(-0.8f, 0.2f, 0.f));
+	
 		for (_uint i = 0; i < 3; ++i)
 		{
 			string instanceTag = "Sacrifice_Eye_Laser" + to_string(i);
-
+	
 			auto pLaser = Builder::Create_Object({ "Zero_Level","Proto_GameObject_SacrificeLaser" })
 				.Build(instanceTag);
+	
 			pObjectContainer->Add_Child(pLaser, false);
 			pLaser->Get_Component<CBoneFollower>()->Set_Offset(offsetMatrix);
 		}
-
+	
 		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser0")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_01_1");
 		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser1")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_02_1");
 		pObjectContainer->Find_ObjectByName("Sacrifice_Eye_Laser2")->Get_Component<CBoneFollower>()->Link_Bone(pAnimator, "Ctr_WpnEye_03_1");
@@ -542,9 +571,146 @@ void CSacrifice::Create_Children()
 	}
 }
 
-void CSacrifice::Create_Colliders()
+HRESULT CSacrifice::Create_Colliders()
 {
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+	auto pAnimator = Get_Component<CAnimator3D>();
 
+	/* Right Arm */
+	{
+		BATTLE_COLLIDER_DESC RightArmDesc{};
+	
+		RightArmDesc.tagName = "Right_Arm";
+		RightArmDesc.isAttachBone = true;
+		RightArmDesc.tagBone = "Skn_R_Hand";
+		RightArmDesc.pOwnerAnimator3D = pAnimator;
+		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
+		RightArmDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
+	
+		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))
+			return E_FAIL;
+	}
+	
+	/* Sword */
+	{
+		BATTLE_COLLIDER_DESC SwordDesc{};
+	
+		SwordDesc.tagName = "Sword";
+		SwordDesc.isAttachBone = true;
+		SwordDesc.tagBone = "Ctr_Wpn_02";
+		SwordDesc.vCenter = _float3{ 0.7f,0.f,0.f };
+		SwordDesc.pOwnerAnimator3D = pAnimator;
+		SwordDesc.vAttackSize = _float3{ 2.f,2.f,2.f };
+		SwordDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
+	
+		if (FAILED(AttachBattleColliderObject(&SwordDesc)))
+			return E_FAIL;
+	}
+	
+	/* Axe */
+	{
+		BATTLE_COLLIDER_DESC AxeDesc{};
+	
+		AxeDesc.tagName = "Axe";
+		AxeDesc.isAttachBone = true;
+		AxeDesc.tagBone = "Ctr_Wpn_03";
+		AxeDesc.pOwnerAnimator3D = pAnimator;
+		AxeDesc.vCenter = _float3{ 1.f,0.f,0.f };
+		AxeDesc.vAttackSize = _float3{ 2.f,2.f,2.f };
+		AxeDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
+	
+		if (FAILED(AttachBattleColliderObject(&AxeDesc)))
+			return E_FAIL;
+	}
+
+	/* Whip */
+	{
+		BATTLE_COLLIDER_DESC WhipDesc{};
+
+		WhipDesc.tagName = "Whip";
+		WhipDesc.isAttachBone = true;
+		WhipDesc.tagBone = "Skn_Wpn1_06";
+		WhipDesc.pOwnerAnimator3D = pAnimator;
+		WhipDesc.vAttackSize = _float3{ 2.f,2.f,2.f };
+		WhipDesc.vTriggerSize = _float3{ 5.f,5.f,5.f };
+
+		if (FAILED(AttachBattleColliderObject(&WhipDesc)))
+			return E_FAIL;
+	}
+
+	/* Hand Laser */
+	{
+		BATTLE_COLLIDER_DESC HandLaserDesc{};
+
+		HandLaserDesc.tagName = "Hand_Laser";
+		HandLaserDesc.isAttachBone = true;
+		HandLaserDesc.tagBone = "Ctr_Eye6_05";
+		HandLaserDesc.pOwnerAnimator3D = pAnimator;
+		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.vCenter = _float3{ 16.f,0.f,0.f };
+		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+			return E_FAIL;
+	}
+
+	/* Eye Laser0 */
+	{
+		BATTLE_COLLIDER_DESC HandLaserDesc{};
+
+		HandLaserDesc.tagName = "Eye_Laser0";
+		HandLaserDesc.isAttachBone = true;
+		HandLaserDesc.tagBone = "Ctr_WpnEye_01_1";
+		HandLaserDesc.pOwnerAnimator3D = pAnimator;
+		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+			return E_FAIL;
+	}
+	
+	/* Eye Laser1 */
+	{
+		BATTLE_COLLIDER_DESC HandLaserDesc{};
+
+		HandLaserDesc.tagName = "Eye_Laser1";
+		HandLaserDesc.isAttachBone = true;
+		HandLaserDesc.tagBone = "Ctr_WpnEye_02_1";
+		HandLaserDesc.pOwnerAnimator3D = pAnimator;
+		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+			return E_FAIL;
+	}
+	
+	/* Eye Laser2 */
+	{
+		BATTLE_COLLIDER_DESC HandLaserDesc{};
+
+		HandLaserDesc.tagName = "Eye_Laser2";
+		HandLaserDesc.isAttachBone = true;
+		HandLaserDesc.tagBone = "Ctr_WpnEye_03_1";
+		HandLaserDesc.pOwnerAnimator3D = pAnimator;
+		HandLaserDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandLaserDesc.vCenter = _float3{ -16.f,0.f,0.f };
+		HandLaserDesc.vAttackSize = _float3{ 32.f,2.f,2.f };
+		HandLaserDesc.vTriggerSize = _float3{ 32.f,4.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandLaserDesc)))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 HRESULT CSacrifice::Initialize_StateMachine()

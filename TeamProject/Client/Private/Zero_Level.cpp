@@ -26,6 +26,8 @@
 #include "SacrificeHand.h"
 #include "Sacrifice_Laser.h"
 #include "Sacrifice_Orb.h"
+#include "EnemyAttackCollider.h"
+#include "EnemyTriggerCollider.h"
 
 
 #include "MapPlacedObject.h"
@@ -125,6 +127,9 @@ HRESULT CZero_Level::Awake()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeHand", CSacrificeHand::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeLaser", CSacrifice_Laser::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_SacrificeOrb", CSacrifice_Orb::Create());
+
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyAttackCollider", CEnemyAttackCollider::Create());
+	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 
 	/* Player */
 	auto pPlayer = CCamDirector::GetInstance()->GetPlayer();

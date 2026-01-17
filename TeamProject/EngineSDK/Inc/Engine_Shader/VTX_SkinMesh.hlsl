@@ -270,10 +270,6 @@ struct PS_OUT_SHADOW
 
 void PS_MAIN_SHADOW(PS_IN_SHDOW In)
 {
-    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
-    
-    if (fNoise < fDissolveProgress)
-        discard;
 }
 
 technique11 DefaultTechnique
