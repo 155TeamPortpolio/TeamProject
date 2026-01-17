@@ -6,6 +6,8 @@
 
 void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 {
+    pOwner->Push_Invincible();
+
     if (!m_pSubStateMachine)
     {
         m_pSubStateMachine = CStateMachine<CCorin>::Create();
@@ -29,6 +31,11 @@ void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
 void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+}
+
+void CCorinState_UltimateAttack::Exit(CCorin* pOwner)
+{
+    pOwner->Pop_Invincible();
 }
 
 void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
