@@ -20,6 +20,9 @@ public:
     void Set_SkyColor(_float3 newSkyColor);    //하늘 색 변경
     void Set_CloudInfo(_float3 newSkyColor, _float3 newCloudColor); //둘다 변경
 
+    _float3 Get_CloudColor() const { return m_vCloudColor; }  //구름 색 Get
+    _float3 Get_SkyColor() const { return m_vSkyColor; };    //하늘 색 Get
+
 public:
     HRESULT Initialize_Prototype() override;
     HRESULT Initialize(INIT_DESC* pArg) override;
@@ -28,14 +31,13 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+public:
+    void Render_GUI() override;
 private:
     //** 하늘 색 잠시 수정 금지 **
     _float3 m_vSkyColor = _float3(0.12f, 0.25f, 0.35f);
     _float3 m_vCloudColor = _float3(1.0f, 1.0f, 1.0f);
     _float m_fAccTime = 0.f;
-
-    //============ShaderTest================
-    //vector<CTexture*> NoiseTextures;
 
 public:
     static CTestCloud* Create();

@@ -4,6 +4,15 @@
 
 NS_BEGIN(Client)
 
+// ===============================
+// CUI_EnemyStatus
+// 몬스터 머리 위에 표시되는 상태 UI
+// - HP / Groggy 게이지
+// - Groggy 수치 텍스트
+// - 타겟 락온 표시
+// - 월드 위치 → 스크린 좌표 변환
+// ===============================
+
 class CUI_EnemyStatus final : public CUI_WorldToScreen
 {
 public:
@@ -39,6 +48,8 @@ private:
 	const _float4x4*		m_pBoneLocal = { nullptr };
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
 	OBJECT_HANDLE			m_tOwnerHandle = {};
+
+	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
 private:
 	void Set_TargetLock(TARGET_LOCK_DESC& desc);

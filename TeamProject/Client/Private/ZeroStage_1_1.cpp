@@ -76,7 +76,7 @@ HRESULT CZeroStage_1_1::Awake()
 {
 
 	//============== Map ============================
-	Ready_Map("Test_Level", "Zero_1_1");
+	Ready_Map("ZeroStage_1_1", "Zero_1_1");
 
 	return S_OK;
 }

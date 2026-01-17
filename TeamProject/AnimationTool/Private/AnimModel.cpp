@@ -215,8 +215,11 @@ void CAnimModel::Load_ModelOnce()
 					return;
 			}
 			else {
-				if (baseName != stem)
-					return;
+				if (baseName != stem) {
+					size_t pos = baseName.find(stem);
+					if (pos == string::npos)
+						return;
+				}
 			}
 		}
 

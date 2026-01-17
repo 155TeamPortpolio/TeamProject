@@ -1,0 +1,15 @@
+{
+  "TagDataFormat": "Portal",
+  "TagArea": "TrainingRoom",
+  "iVersion": 1,
+  "values": [
+    {
+      "iObjID": 4,
+      "TagName": "NextLevel",
+      "defaultvalue": {
+        "type": "String",
+        "value": "Scott_Level"
+      }
+    }
+  ]
+}

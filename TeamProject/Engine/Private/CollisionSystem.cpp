@@ -187,7 +187,8 @@ void CCollisionSystem::Render_GUI()
 			COLLISION_GROUP::PLAYER_ATTACK,
 			COLLISION_GROUP::MONSTER_ATTACK,
 			COLLISION_GROUP::MONSTER_PARRY,
-			COLLISION_GROUP::CAMERA
+			COLLISION_GROUP::CAMERA,
+			COLLISION_GROUP::INTERACABLE
 		};
 
 		for (auto eGroup : groups)
@@ -844,29 +845,33 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 {
 	if (!pCollidable) return;
 
-	// Actor 가져오기 (CCollider 또는 CCT)
 	PxRigidActor* pActor = nullptr;
 	_bool bIsTrigger = false;
+	PxShape* pMyShape = nullptr;
 
 	if (auto pCollider = dynamic_cast<CCollider*>(pCollidable))
 	{
 		pActor = pCollider->Get_PxActor();
 		bIsTrigger = pCollider->Is_Trigger();
+		pMyShape = pCollider->Get_Shape();
 	}
 	else if (auto pCCT = dynamic_cast<CCharacterController*>(pCollidable))
 	{
 		pActor = pCCT->Get_PxActor();
-		bIsTrigger = false; // CCT
+		bIsTrigger = false;
 	}
 
 	if (!pActor) return;
-
-	// CCT와 트리거검사 : 일반Collider는 Persist로 대응
 	if (!bIsTrigger && !dynamic_cast<CCharacterController*>(pCollidable))
 		return;
 
 	PxScene* pScene = pActor->getScene();
 	if (!pScene) return;
+
+	// 내 필터 데이터 가져오기
+	PxFilterData myFilter;
+	if (pMyShape)
+		myFilter = pMyShape->getSimulationFilterData();
 
 	PxShape* shapes[16];
 	PxU32 nShapes = pActor->getShapes(shapes, 16);
@@ -875,8 +880,6 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 		PxShape* pShape = shapes[i];
 		if (!pShape) continue;
 
-		// 트리거가 활성화된 경우: 트리거 쉐이프만 검사
-		// CCT가 활성화된 경우: CCT 쉐이프(보통 Trigger flag 없음)로 검사
 		if (bIsTrigger && !(pShape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE))
 			continue;
 
@@ -899,9 +902,23 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 
 				if (pOtherActor == pActor) continue;
 
-				// 형변환
 				PxRigidActor* pOtherRigidActor = pOtherActor->is<PxRigidActor>();
 				if (!pOtherRigidActor) continue;
+
+				// 필터 검사 추가
+				if (pOtherShape && pMyShape)
+				{
+					PxFilterData otherFilter = pOtherShape->getSimulationFilterData();
+
+					_uint myGroup = myFilter.word0;
+					_uint myMask = myFilter.word1;
+					_uint otherGroup = otherFilter.word0;
+					_uint otherMask = otherFilter.word1;
+
+					// 양방향 필터 검사
+					if ((myMask & otherGroup) == 0 || (otherMask & myGroup) == 0)
+						continue;  // 필터에 의해 충돌 무시
+				}
 
 				ICollidable* pOtherCollidable = Get_Collidable_Shape(pOtherShape, pOtherRigidActor);
 				if (!pOtherCollidable) continue;
@@ -909,26 +926,19 @@ void CCollisionSystem::Check_Initial_Overlap(ICollidable* pCollidable)
 				_int idxOther = pOtherCollidable->Get_SlotIndex();
 				if (!Is_SlotActive(idxOther)) continue;
 
-				// 상대방이 트리거인지 확인
-				// 내가 트리거라면 -> 누구든 들어오면 Enter
-				// 내가 CCT라면 -> 상대가 트리거일 때만 Enter (일반 벽이랑은 물리 충돌 하니까 제외)
 				CCollider* pOtherCol = dynamic_cast<CCollider*>(pOtherCollidable);
 				_bool bOtherIsTrigger = (pOtherCol && pOtherCol->Is_Trigger());
 
-				if (!bIsTrigger && !bOtherIsTrigger) continue; // 둘 다 일반 콜라이더면 패스
+				if (!bIsTrigger && !bOtherIsTrigger) continue;
 
-				// 강제 Enter 처리
 				auto& current = pCollidable->Get_CurrentCollisions();
 				if (current.find(pOtherCollidable) == current.end())
 				{
-					// 로직상 Trigger Enter 호출
 					if (bIsTrigger) pCollidable->OnTriggerEnter(pOtherCollidable);
-					else pCollidable->OnCollisionEnter(pOtherCollidable); // 상대가 트리거면 TriggerEnter로 유도됨
+					else pCollidable->OnCollisionEnter(pOtherCollidable);
 
-					// 리스트 등록
 					current.insert(pOtherCollidable);
 
-					// 상대방 처리
 					auto& otherCurrent = pOtherCollidable->Get_CurrentCollisions();
 					if (otherCurrent.find(pCollidable) == otherCurrent.end())
 					{
