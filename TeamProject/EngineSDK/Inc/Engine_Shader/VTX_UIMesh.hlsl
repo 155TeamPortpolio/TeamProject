@@ -65,11 +65,7 @@ PS_OUT PS_MAIN(PS_IN In)
     PS_OUT Out;
 
     float4 tex = DiffuseTexture.Sample(LinearClampSampler, In.vTexcoord);
-
-    if (alphaTest >= 0.f)
-        clip(tex.a - alphaTest);
-    else
-        clip(tex.a - 0.2f);
+    clip(tex.a - 0.05f);
 
     float4 outCol = float4(color, tex.a * alpha);
 
@@ -106,27 +102,6 @@ PS_OUT PS_MAIN(PS_IN In)
     return Out;
 }
 
-
-struct VS_OUT_SHADOW
-{
-    float4 vPosition : SV_POSITION;
-};
-
-VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
-{
-    VS_OUT_SHADOW Out;
-
-    float3 worldPos = mul(float4(In.vPosition, 1.f), ObjectBufferArray[TransformIndex].Transform).xyz;
-    float4 lightSpacePos = mul(float4(worldPos, 1.f), matStaticLightViewProj[iCurrentCascade]);
-
-    Out.vPosition = lightSpacePos;
-    return Out;
-}
-
-void PS_MAIN_SHADOW(float4 vPosition : SV_POSITION)
-{
-}
-
 technique11 DefaultTechnique
 {
     pass Opaque
@@ -139,15 +114,14 @@ technique11 DefaultTechnique
         GeometryShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
     }
-
-    pass Shadow
+    pass Blended
     {
-        SetRasterizerState(RS_Shadow);
+        SetRasterizerState(RS_Default);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-        VertexShader = compile vs_5_0 VS_MAIN_SHADOW();
+        VertexShader = compile vs_5_0 VS_MAIN();
         GeometryShader = NULL;
-        PixelShader = compile ps_5_0 PS_MAIN_SHADOW();
+        PixelShader = compile ps_5_0 PS_MAIN();
     }
 }

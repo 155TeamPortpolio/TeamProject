@@ -312,7 +312,6 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Create_AttackSign("Bip001_Head");
-	Create_EnemyStatus("Bip001_Spine2");
 	Create_MeshPyramid();
 	Create_UIEnemyStatus("Bip001_Spine2");
 

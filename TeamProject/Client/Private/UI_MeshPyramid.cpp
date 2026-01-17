@@ -12,6 +12,7 @@
 #include "BattleSystem.h"
 #include "BattlePlayer.h"
 #include "Player.h"
+#include "MaterialInstance.h"
 
 HRESULT CUI_MeshPyramid::Initialize_Prototype()
 {
@@ -33,9 +34,9 @@ HRESULT CUI_MeshPyramid::Initialize(INIT_DESC* arg)
     auto mtrlInsts = mtrl->Get_MaterialInstances();
     for (auto& inst : mtrlInsts)
     {
-        mtrl->Add_MaterialData(inst, "alpha",     {&alpha,     "float",  sizeof(_float)});
-        mtrl->Add_MaterialData(inst, "color",     {&color,     "float3", sizeof(_float3)});
-        mtrl->Add_MaterialData(inst, "alphaTest", {&alphaTest, "float",  sizeof(_float)});
+        inst->Set_Param("alpha",     {&alpha,     "float",  sizeof(_float)});
+        inst->Set_Param("color",     {&color,     "float3", sizeof(_float3)});
+        inst->Set_Param("alphaTest", {&alphaTest, "float",  sizeof(_float)});
     }
 
     m_pTransform->Scale({0.05f, 0.1f, 0.05f});
