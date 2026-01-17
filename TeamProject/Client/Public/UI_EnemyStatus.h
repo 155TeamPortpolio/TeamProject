@@ -11,11 +11,12 @@ public:
 		const _float4x4* pParentWorld = { nullptr };
 		const _float4x4* pBoneLocal = { nullptr };
 		const MONSTER_STATUS* pMonsterStatus = { nullptr };
+		OBJECT_HANDLE tOwnerHandle = {};
 	}ENEMYSTATUS_DESC;
 
 private:
-	enum class Child { ROOT, HP_GUAGE, GROGGY_GAUGE, GROGGY_TEXT, END };
-	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "enemy_status", "hpGauge", "groggyGauge", "groggyText" };
+	enum class Child { ROOT, LOCKON, HP_GUAGE, GROGGY_GAUGE, GROGGY_TEXT, END };
+	inline static const string INSTANCENAMES[ENUM(Child::END)] = { "enemy_status", "lockOn", "hpGauge", "groggyGauge", "groggyText" };
 
 private:
 	CUI_EnemyStatus() {}
@@ -32,19 +33,23 @@ public:
 	virtual void    Render_GUI()                     override { __super::Render_GUI(); }
 
 private:
-	const _float4x4* m_pParentWorld = { nullptr };
-	const _float4x4* m_pBoneLocal = { nullptr };
-	const MONSTER_STATUS* m_pMonsterStatus = { nullptr };
+	UI_HANDLE				m_handles[ENUM(Child::END)];
 
-	UI_HANDLE		m_handles[ENUM(Child::END)];
+	const _float4x4*		m_pParentWorld = { nullptr };
+	const _float4x4*		m_pBoneLocal = { nullptr };
+	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
+	OBJECT_HANDLE			m_tOwnerHandle = {};
 
 private:
+	void Set_TargetLock(TARGET_LOCK_DESC& desc);
+
 	void Set_WorldPosition();
 
-	void Set_GroggyText(_int iGroggy);
-
+	void Set_Alive(Child child, _bool isAlive);
+	void Set_Animation(Child child, _int iIndex);
 	void Set_Gauge(Child child, _float fFillAmount);
-
+	void Set_GroggyText(_int iGroggy); 
+	 
 private:
 	template<typename Func>
 	void ForChild(Child child, Func&& func);

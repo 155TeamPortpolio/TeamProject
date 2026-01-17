@@ -184,6 +184,7 @@ void CEnemy::Create_EnemyStatus(string boneTag)
 	pDesc->pParentWorld = pParentWorld;
 	pDesc->pBoneLocal = pBoneLocal;
 	pDesc->pMonsterStatus = &m_tStatus;
+	pDesc->tOwnerHandle = Get_Handle();
 
 	// EnemyStatus UI »ý¼º
 	auto pEnemyStatus = Builder::Create_UIObject({ G_GlobalLevelKey,"Proto_GameObject_EnemyStatus" })

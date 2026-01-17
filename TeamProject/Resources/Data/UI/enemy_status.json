@@ -66,6 +66,106 @@
             "textureTag": "MonsterInfoLine.png"
         },
         {
+            "alive": false,
+            "instanceName": "lockOn",
+            "transform": {
+                "anchor": 9,
+                "anchorOffset": [
+                    6.25,
+                    -6.25
+                ],
+                "size": [
+                    24.0,
+                    24.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.5,
+                    0.5
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                0.9960784316062927,
+                0.6627451181411743,
+                0.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [
+                {
+                    "duration": 0.30000001192092896,
+                    "keyframes": [
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                0.9960784316062927,
+                                0.6627451181411743,
+                                0.0,
+                                0.0
+                            ],
+                            "easeType": 5,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                16.0,
+                                16.0
+                            ],
+                            "time": 0.0
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                0.9960784316062927,
+                                0.6627451181411743,
+                                0.0,
+                                0.19607843458652496
+                            ],
+                            "easeType": 7,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                0.0,
+                                0.0
+                            ],
+                            "time": 0.20000000298023224
+                        },
+                        {
+                            "angle": 0.0,
+                            "color": [
+                                0.9960784316062927,
+                                0.6627451181411743,
+                                0.0,
+                                1.0
+                            ],
+                            "easeType": 0,
+                            "position": [
+                                0.0,
+                                0.0
+                            ],
+                            "scale": [
+                                1.0,
+                                1.0
+                            ],
+                            "time": 0.30000001192092896
+                        }
+                    ],
+                    "loop": false,
+                    "name": "clip0"
+                }
+            ],
+            "children": [],
+            "typeTag": "Image",
+            "textureTag": "BtnOutline.png"
+        },
+        {
             "alive": true,
             "instanceName": "group",
             "transform": {

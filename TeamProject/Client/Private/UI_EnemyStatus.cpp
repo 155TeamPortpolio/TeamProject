@@ -3,6 +3,8 @@
 
 #include "GameInstance.h"
 #include "ObjectContainer.h"
+#include "EventListener.h"
+
 #include "GaugeUI.h"
 #include "TextSlot.h"
 
@@ -11,6 +13,7 @@ HRESULT CUI_EnemyStatus::Initialize_Prototype()
     __super::Initialize_Prototype();
 
     Add_Component<CObjectContainer>();
+    Add_Component<CEventListener>();
 
     return S_OK;
 }
@@ -21,6 +24,7 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     m_pParentWorld = pDesc->pParentWorld;
     m_pBoneLocal = pDesc->pBoneLocal;
     m_pMonsterStatus = pDesc->pMonsterStatus;
+    m_tOwnerHandle = pDesc->tOwnerHandle;
 
     __super::Initialize(pArg);
 
@@ -30,6 +34,11 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
 
     for (_int i = 0; i < ENUM(Child::END); ++i)
         m_handles[i] = Get_DescendantHandle(INSTANCENAMES[i]);
+
+    Get_Component<CEventListener>()->Add_Listener<TARGET_LOCK_DESC>([&](TARGET_LOCK_DESC desc)
+        {
+            Set_TargetLock(desc);
+        });
 
     return S_OK;
 }
@@ -47,6 +56,23 @@ void CUI_EnemyStatus::Update(_float dt)
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
+void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
+{
+    if (!m_tOwnerHandle.isValid() || !desc.tHandle.isValid())
+        return;
+
+    if (m_tOwnerHandle.Get() != desc.tHandle.Get())
+    {
+        Set_Alive(Child::LOCKON, false);
+        return;
+    }
+
+    const _bool bLock = desc.bLock;
+    Set_Alive(Child::LOCKON, bLock);
+    if (bLock)
+        Set_Animation(Child::LOCKON, 0);
+}
+
 void CUI_EnemyStatus::Set_WorldPosition()
 {
     if (!m_pParentWorld || !m_pBoneLocal)
@@ -54,6 +80,31 @@ void CUI_EnemyStatus::Set_WorldPosition()
 
     Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
     Update_WorldToScreen(matWorld.Translation());
+}
+
+void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)
+{
+    ForChild(child, [isAlive](CUI_Object* ui) {
+        ui->Set_Alive(isAlive);
+        });
+}
+
+void CUI_EnemyStatus::Set_Animation(Child child, _int iIndex)
+{
+    ForChild(child, [iIndex](CUI_Object* ui) {
+        ui->Set_Animation(iIndex);
+        });
+}
+
+void CUI_EnemyStatus::Set_Gauge(Child child, _float fFillAmount)
+{
+    ForChild(child, [&](CUI_Object* ui) {
+        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
+        if (!pGauge)
+            return;
+
+        pGauge->Set_FillAmount(fFillAmount);
+        });
 }
 
 void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
@@ -69,17 +120,6 @@ void CUI_EnemyStatus::Set_GroggyText(_int iGroggy)
 
         _float4 vColor = (iGroggy == 0) ? UI_GRAY_LIGHT : _float4(0.9960f, 0.6549f, 0.0039f, 1.f);
         pTextSlot->Set_Color(vColor);
-        });
-}
-
-void CUI_EnemyStatus::Set_Gauge(Child child, _float fFillAmount)
-{
-    ForChild(child, [&](CUI_Object* ui) {
-        auto pGauge = dynamic_cast<CGaugeUI*>(ui);
-        if (!pGauge)
-            return;
-
-        pGauge->Set_FillAmount(fFillAmount);
         });
 }
 
