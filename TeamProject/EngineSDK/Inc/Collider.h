@@ -57,8 +57,8 @@ public:
     void            Set_Trigger(_bool bTrigger);
     void            Set_ContactOffset(_float fOffset);  // 충돌계산시작 버퍼 구간 : 크면 허공충돌, 작으면 터널링/겹침
     void            Set_RestOffset(_float fOffset);     // 정지했을때 서로 유지하려는 거리 : 양수일때 바깥충돌, 음수일때 안쪽충돌
-    void            Set_CollisionMask(_uint iMask);
-    void            Set_CollisionGroup(COLLISION_GROUP eGroup);
+    void            Set_CollisionMask(_uint iMask) override;
+    void            Set_CollisionGroup(COLLISION_GROUP eGroup)override;
 
 private:
     void            Update_LocalPose();
@@ -75,7 +75,7 @@ private:
     PxTriangleMesh*             m_pTriangleMesh = { nullptr };  // 쿠킹된 메쉬
     _bool                       m_bCooked = { false };      // 쿠킹 여부
     COLLIDER_TYPE               m_eType = {};
-    _uint                       m_iCollisionMask = { 0xFFFFFFFF };
+
     _float3                     m_vCenter = {};
     _float3                     m_vSize = {};
     _float3                     m_vRotation = {};
