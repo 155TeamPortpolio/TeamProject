@@ -40,6 +40,8 @@ private:
 	const MONSTER_STATUS*	m_pMonsterStatus = { nullptr };
 	OBJECT_HANDLE			m_tOwnerHandle = {};
 
+	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
+
 private:
 	void Set_TargetLock(TARGET_LOCK_DESC& desc);
 

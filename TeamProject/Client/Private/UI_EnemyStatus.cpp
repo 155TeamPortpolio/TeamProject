@@ -27,9 +27,8 @@ HRESULT CUI_EnemyStatus::Initialize(INIT_DESC* pArg)
     m_tOwnerHandle = pDesc->tOwnerHandle;
 
     __super::Initialize(pArg);
-
-    auto pResourceMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
-    const string& filePath = pResourceMgr->Get_ResourcePath("enemy_status.json");
+    
+    const string& filePath = ResourceManager()->Get_ResourcePath("enemy_status.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
     for (_int i = 0; i < ENUM(Child::END); ++i)
@@ -49,9 +48,9 @@ void CUI_EnemyStatus::Update(_float dt)
 
     Set_WorldPosition();
 
-    //Set_Gauge(Child::HP_GUAGE, fFillAmount);
-    //Set_Gauge(Child::GROGGY_GAUGE, fFillAmount);  // 그로기 맥스는 무조건 100
-    //Set_GroggyText(5);
+    Set_Gauge(Child::HP_GUAGE, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
+    Set_Gauge(Child::GROGGY_GAUGE, m_pMonsterStatus->iGroggyValue / m_fGroggyMax); 
+    Set_GroggyText(m_pMonsterStatus->iGroggyValue);
 
     Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
