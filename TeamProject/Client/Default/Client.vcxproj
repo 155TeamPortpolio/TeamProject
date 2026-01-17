@@ -172,6 +172,7 @@
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Hit.h" />
     <ClInclude Include="..\Public\SacrificeState_Groggy.h" />
+    <ClInclude Include="..\Public\MapInvisibleWall.h" />
     <ClInclude Include="..\public\Portal.h" />
     <ClInclude Include="..\public\ThugAssaulter_Groggy.h" />
     <ClInclude Include="..\Public\Belle.h" />
@@ -239,7 +240,6 @@
     <ClInclude Include="..\public\JaneDoeState_UltimateAttack.h" />
     <ClInclude Include="..\public\JaneDoeState_Walk.h" />
     <ClInclude Include="..\Public\MainCity_Level.h" />
-    <ClInclude Include="..\public\MapAnimObject.h" />
     <ClInclude Include="..\Public\OrbitCamTypes.h" />
     <ClInclude Include="..\Public\Sacrifice_Laser.h" />
     <ClInclude Include="..\public\JaneDoeState_SwitchInAttack.h" />
@@ -479,7 +479,6 @@
     <ClCompile Include="..\private\EnemyTriggerCollider.cpp" />
     <ClCompile Include="..\Private\GaugeUI.cpp" />
     <ClCompile Include="..\Private\ImageUI.cpp" />
-    <ClCompile Include="..\Private\MapAnimObject.cpp" />
     <ClCompile Include="..\Private\MapInvisibleWall.cpp" />
     <ClCompile Include="..\Private\Sacrifice_Laser.cpp" />
     <ClCompile Include="..\private\JaneDoeState_SwitchIn.cpp" />

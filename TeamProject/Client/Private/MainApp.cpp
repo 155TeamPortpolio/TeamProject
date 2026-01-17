@@ -24,6 +24,8 @@
 
 #include "MapPlacedObject.h"
 #include "MapTriggerObject.h"
+#include "MapInvisibleWall.h"
+
 #include "SpriteNode.h"
 #include "MeshNode.h"
 #include "TrailNode.h"
@@ -106,7 +108,7 @@ void CMainApp::Set_Levels() //���� ��� �Լ� ->��� ��
 
 	LevelManager()->Set_LoadingLevel("Loading_Level");
 	m_pGameInstance->Notify_LevelSet(); 
-	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Test_Level",true); 
+	m_pGameInstance->Get_LevelMgr()->Request_ChangeLevel("Scott_Level",true); 
 } 
 
 CMainApp* CMainApp::Create()
@@ -137,6 +139,7 @@ void CMainApp::Initialize_GlobalPrototype()
 	/* Prototype Tag */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapPlacedObject", CMapPlacedObject::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapTriggerObject", CMapTriggerObject::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MapInvisibleWall", CMapInvisibleWall::Create());
 
 	// Camera
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_OrbitCam",    COrbitCam::Create());
