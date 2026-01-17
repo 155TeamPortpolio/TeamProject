@@ -52,7 +52,6 @@ void CUI_EnemyStatus::Update(_float dt)
 
     // 몬스터 본 위치 기준으로 UI 위치 갱신
     Set_WorldPosition();
-
     // HP / Groggy 게이지 갱신
     Set_Gauge(Child::HP_GUAGE, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
     Set_Gauge(Child::GROGGY_GAUGE, m_pMonsterStatus->iGroggyValue / m_fGroggyMax); 
@@ -91,6 +90,8 @@ void CUI_EnemyStatus::Set_WorldPosition()
 
     Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
     Update_WorldToScreen(matWorld.Translation());
+    m_Zpriority = matWorld.Translation().z;
+
 }
 
 void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)

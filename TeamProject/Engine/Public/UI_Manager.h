@@ -31,6 +31,7 @@ private:
 private:
 	class CGameInstance* m_pGameInstance = { nullptr };
 	unordered_map<string, UIobjects> m_UIObjects;
+	UIobjects m_SortedUIObjects;
 	vector<CUI_Object*> DeleteUIs;
 	string m_nowLevelKey = {};
 public:
