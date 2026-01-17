@@ -65,11 +65,8 @@ void CUI_EnemyStatus::Update(_float dt)
 
 void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
 {
-    if (!m_tOwnerHandle.isValid() || !desc.tHandle.isValid())
-        return;
-
     // 다른 몬스터에 대한 이벤트면 락온 비활성화
-    if (m_tOwnerHandle.Get() != desc.tHandle.Get())
+    if (m_tOwnerHandle != desc.tHandle)
     {
         Set_Alive(Child::LOCKON, false);
         return;
