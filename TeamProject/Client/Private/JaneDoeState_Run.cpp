@@ -54,6 +54,11 @@ void CJaneDoeState_Run::Update(CJaneDoe* pOwner, _float dt)
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
 }
 
+void CJaneDoeState_Run::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_Run_Loop::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Run")

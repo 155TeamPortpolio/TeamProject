@@ -98,6 +98,7 @@ public: //getter
 public: //setter
 	void	SetActive(_bool is) { m_isActive = is; }
 	void	SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPos);
+	_bool	ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject);
 	// 플레이어(캐릭터들) 로직 정해지기 전까지 임시
 	void	SetPlayer(vector<OBJECT_HANDLE> hPlayers);
 	// UI에서 캐릭터 선택시 부를 함수
@@ -109,6 +110,7 @@ public: //setter
 	// 아래 함수들은 추후에 private로 넘길 예정
 	void	StartTimeScale(BATTLE_OBJ_TYPE eObjType, _float fDuration, _float fScale, _float fStartLerpTime = 0.f, _float fEndLerpTime = 0.f);
 	void	StartShaderVFX(BATTLE_VFX_TYPE eVFXType);
+
 
 private:
 	void	Update_BattleInfo();

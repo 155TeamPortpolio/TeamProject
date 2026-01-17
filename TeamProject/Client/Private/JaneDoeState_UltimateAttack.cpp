@@ -33,6 +33,11 @@ void CJaneDoeState_UltimateAttack::Update(CJaneDoe* pOwner, _float dt)
     __super::Update(pOwner, dt);
 }
 
+void CJaneDoeState_UltimateAttack::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_UltimateAttack_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")

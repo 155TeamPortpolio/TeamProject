@@ -65,6 +65,7 @@ void CCorinState_Hit::Exit(CCorin* pOwner)
 {
 	pOwner->Unlock_Move();
 	pOwner->Pop_Invincible();
+	__super::Exit(pOwner);
 }
 
 void CCorin_HitNormal::Enter(CCorin* pOwner)

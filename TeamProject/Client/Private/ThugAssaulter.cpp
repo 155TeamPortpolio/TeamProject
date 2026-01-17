@@ -213,23 +213,11 @@ void CThugAssaulter::Render_GUI()
 				m_tStatus.iGroggyValue += 30;
 
 			if (ImGui::Button("Hit"))
-			{
 				TakeDamage(DAMAGE_TYPE::NORMAL, 20.f);
-				//if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
-				//{
-				//	Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Knock")
-				//		.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
-				//		.Loop(false)
-				//		.Apply();
-				//}
-				//else
-				//{
-				//	Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
-				//		.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
-				//		.Loop(false)
-				//		.Apply();
-				//}
-			}
+		
+			if (ImGui::Button("Execute"))
+				m_tStatus.iNowHP -= m_tStatus.iMaxHP;
+
 
 
 			ImGui::TreePop();
@@ -302,6 +290,14 @@ void CThugAssaulter::Render_GUI()
 	}
 
 	ImGui::PopID();
+}
+
+void CThugAssaulter::OnPooledAcquire(INIT_DESC* pArg)
+{
+}
+
+void CThugAssaulter::OnPooledRelease()
+{
 }
 
 HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)

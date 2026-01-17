@@ -38,6 +38,11 @@ void CBelleState_Run::Update(CBelle* pOwner, _float dt)
     m_pSubStateMachine->Set_Bool("IsMove", pOwner->Is_Move_Buffer());
 }
 
+void CBelleState_Run::Exit(CBelle* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CBelleState_Run_Start::Enter(CBelle* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Ani_MainCity_Run_Start")
