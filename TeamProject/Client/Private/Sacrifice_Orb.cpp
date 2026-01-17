@@ -2,6 +2,8 @@
 #include "Sacrifice_Orb.h"
 #include "BattleSystem.h"
 #include "Helper_Func.h"
+#include "GameInstance.h"
+#include "ObjectMgr.h"
 
 /* Object */
 #include "EffectContainer.h"
@@ -33,6 +35,19 @@ HRESULT CSacrifice_Orb::Initialize_Prototype()
 HRESULT CSacrifice_Orb::Initialize(INIT_DESC* pArg)
 {
 	__super::Initialize(pArg);
+
+	COLLIDER_DESC colliderDesc = {};
+	colliderDesc.eGroup = COLLISION_GROUP::MONSTER_ATTACK;
+	colliderDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+	colliderDesc.bTrigger = true;
+	colliderDesc.bAutoFit = false;
+	colliderDesc.eType = COLLIDER_TYPE::SPHERE;
+	colliderDesc.vSize = _float3{ 2.f,2.f,2.f };
+	colliderDesc.fSizeScale = 1.f;
+	colliderDesc.vCenter = _float3{ 0.f,0.f,0.f };
+	colliderDesc.vRotation = _float3{ 0.f,0.f,0.f };
+
+	auto pCollider = Get_Component<CCollider>()->Initialize(&colliderDesc);
 
 	auto pRigidBody = Get_Component<CRigidBody>();
 	pRigidBody->Set_Kinematic(true);
@@ -107,9 +122,9 @@ void CSacrifice_Orb::Render_GUI()
 	ImGui::Text("pos %f,%f,%f", velo.x, velo.y, velo.z);
 }
 
-void CSacrifice_Orb::OnCollisionEnter(CGameObject* pOther)
+void CSacrifice_Orb::OnTriggerEnter(CGameObject* pOther)
 {
-
+	ObjectManager()->Remove_Object(this);
 }
 
 CSacrifice_Orb* CSacrifice_Orb::Create()

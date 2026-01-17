@@ -104,9 +104,9 @@ void CSacrifice_Laser::Update(_float dt)
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
 
-		//if (PhysicsSystem()->Raycast(rayDesc, output))
-		//	vPosition1 = output.vPoint;
-		//else
+		if (PhysicsSystem()->Raycast(rayDesc, output))
+			vPosition1 = output.vPoint;
+		else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
@@ -136,9 +136,9 @@ void CSacrifice_Laser::Update(_float dt)
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
 
-		//if (PhysicsSystem()->Raycast(rayDesc, output))
-		//	vPosition1 = output.vPoint;
-		//else
+		if (PhysicsSystem()->Raycast(rayDesc, output))
+			vPosition1 = output.vPoint;
+		else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;

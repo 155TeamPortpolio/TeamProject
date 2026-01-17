@@ -246,6 +246,11 @@ void CSacrifice::Free()
 	Safe_Release(m_pStateMachine);
 }
 
+void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
+{
+
+}
+
 void CSacrifice::RotateToTarget(_float dt, _float rotateSpeed)
 {
 	_vector3 vPosition = m_pTransform->Get_Pos();

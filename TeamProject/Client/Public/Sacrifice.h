@@ -33,6 +33,9 @@ public:
     virtual void Free() override;
 
 public:
+    void TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage);
+
+public:
     /* For State Machine */
     void RotateToTarget(_float dt, _float rotateSpeed);
     void MoveByRootMotion(_float dt, _float moveScale = 1.f);
@@ -112,5 +115,9 @@ private:
     _float m_fDissolveDuration{};
     _float m_fDissolveElapsedTime{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
+
+    /* Battle Params */
+    _bool m_OnHit = false;
+    _float m_fHitDuration{};
 };
 NS_END
