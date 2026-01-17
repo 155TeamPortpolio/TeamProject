@@ -95,6 +95,16 @@ void CBattleSystem::SpawnMosnter(const string& MonsterProtoTag, _float3 vSpawnPo
 	m_Handles[BATTLE_OBJ_TYPE::MONSTER].push_back(pMonster->Get_Handle());
 }
 
+_bool CBattleSystem::ExitBattleObject(BATTLE_OBJ_TYPE eObjType, OBJECT_HANDLE hObject)
+{
+	auto iter = find(m_Handles[eObjType].begin(), m_Handles[eObjType].end(), hObject);
+	if (iter == m_Handles[eObjType].end())
+		return false;
+
+	m_Handles[eObjType].erase(iter);
+	return true;
+}
+
 void CBattleSystem::SetPlayer(vector<OBJECT_HANDLE> hPlayers)
 {
 	for (auto& hPlayer : hPlayers)

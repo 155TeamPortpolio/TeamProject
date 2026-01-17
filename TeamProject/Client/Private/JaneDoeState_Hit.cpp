@@ -62,6 +62,7 @@ void CJaneDoeState_Hit::Exit(CJaneDoe* pOwner)
 {
 	pOwner->Unlock_Move();
 	pOwner->Pop_Invincible();
+	__super::Exit(pOwner);
 }
 
 void CJaneDoe_HitNormal::Enter(CJaneDoe* pOwner)

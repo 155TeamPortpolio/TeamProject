@@ -10,7 +10,7 @@ class CBelleState_Walk :
 public:
     virtual void Enter(CBelle* pOwner) override;
     virtual void Update(CBelle* pOwner, _float dt) override;
-    virtual void Exit(CBelle* pOwner) override {}
+    virtual void Exit(CBelle* pOwner) override;
 
 public:
     void Set_LastFoot(string str) { m_LastFoot = str; }

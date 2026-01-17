@@ -61,6 +61,8 @@ void CThugAssaulter_Death_Front::Enter(CThugAssaulter* pOwner)
 
 void CThugAssaulter_Death_Front::Update(CThugAssaulter* pOwner, _float dt)
 {
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Death();
 }
 
 void CThugAssaulter_Death_Front::Exit(CThugAssaulter* pOwner)
@@ -76,6 +78,8 @@ void CThugAssaulter_Death_Back::Enter(CThugAssaulter* pOwner)
 
 void CThugAssaulter_Death_Back::Update(CThugAssaulter* pOwner, _float dt)
 {
+	if (m_fAnimProgress > 0.99f)
+		pOwner->Death();
 }
 
 void CThugAssaulter_Death_Back::Exit(CThugAssaulter* pOwner)

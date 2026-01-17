@@ -37,6 +37,11 @@ void CCorinState_SwitchInParryAid::Update(CCorin* pOwner, _float dt)
     }
 }
 
+void CCorinState_SwitchInParryAid::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CCorinState_SwitchInParryAid_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")

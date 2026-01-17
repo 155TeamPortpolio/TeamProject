@@ -10,7 +10,7 @@ class CJaneDoeState_UltimateAttack :
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override {};
+    virtual void Exit(CJaneDoe* pOwner) override;
 
 public:
     static CJaneDoeState_UltimateAttack* Create() { return new CJaneDoeState_UltimateAttack(); }

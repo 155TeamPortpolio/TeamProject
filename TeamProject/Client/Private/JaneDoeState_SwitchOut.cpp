@@ -26,3 +26,8 @@ void CJaneDoeState_SwitchOut::Update(CJaneDoe* pOwner, _float dt)
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }
+
+void CJaneDoeState_SwitchOut::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}

@@ -59,4 +59,5 @@ void CJaneDoeState_Evade::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_Evade::Exit(CJaneDoe* pOwner)
 {
+    __super::Exit(pOwner);
 }

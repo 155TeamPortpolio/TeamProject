@@ -34,6 +34,11 @@ void CCorinState_SwitchInAttack::Update(CCorin* pOwner, _float dt)
     }
 }
 
+void CCorinState_SwitchInAttack::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CCorinState_SwitchInAttack_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_02")
