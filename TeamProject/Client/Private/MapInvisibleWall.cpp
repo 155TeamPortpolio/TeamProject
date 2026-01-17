@@ -65,7 +65,13 @@ void CMapInvisibleWall::Export_ObjectData(void* pDesc)
 
 void CMapInvisibleWall::Render_GUI()
 {
+	ImGui::PushID(this);
+
+	__super::Render_GUI();
+
+	ImGui::PopID();
 }
+
 
 CMapInvisibleWall* CMapInvisibleWall::Create()
 {
