@@ -52,7 +52,7 @@ namespace Client {
 		HIT_TYPE    eHitType = HIT_TYPE::ONCE;
 		DAMAGE_TYPE eDamageType = DAMAGE_TYPE::NORMAL;
 		_float      fDamage = 0.f;
-		_uint       iMaxCount = 1;
 		_float      fInterval = 0.f;
+		_uint       iMaxCount = 1;
 	};
 }
