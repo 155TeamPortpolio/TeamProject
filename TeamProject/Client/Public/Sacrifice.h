@@ -117,7 +117,6 @@ private:
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;
 
     /* Battle Params */
-    _bool m_OnHit = false;
-    _float m_fHitDuration{};
+    _bool m_IsHitBlendable = false;
 };
 NS_END
