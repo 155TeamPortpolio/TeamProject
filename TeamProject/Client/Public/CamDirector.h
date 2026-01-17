@@ -16,6 +16,8 @@ public:
     void          SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
     void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
+    void          SetTarget(OBJECT_HANDLE targetHandle);
+    void          SetCurTarget();
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -30,9 +32,7 @@ public:
     CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
-    CPlayer*      GetPlayer() const;
-
-    void          SetTarget(OBJECT_HANDLE targetHandle);
+    CPlayer*      GetPlayer()                const;
 
 public:
     _bool         Register(const string& key, const filesystem::path& path);
@@ -65,5 +65,7 @@ private:
     OBJECT_HANDLE           m_focusHandle{};
     _int                    m_focusType = -1;
 };
+
+inline CCamDirector& CamDirector() { return *CCamDirector::GetInstance(); }
 
 NS_END

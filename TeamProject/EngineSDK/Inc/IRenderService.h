@@ -30,7 +30,8 @@ public:
 public:
     virtual class CRenderer* GetRenderer(RENDERER_TYPE eType = RENDERER_TYPE::FORWARD) PURE;
     virtual void Set_FogDesc(FOG_DESC desc)PURE;
-    
+    virtual _bool Get_FogDesc(FOG_DESC& outResult) PURE;
+
     virtual void Add_NoiseTexture(string strName, class CTexture* noiseTexture) PURE;
     virtual void Apply_Noise(vector<string> strNames, _float duration) PURE;
 

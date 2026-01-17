@@ -1,13 +1,18 @@
 #include "pch.h"
 #include "CamDirector.h"
-#include "CamSequencePlayer.h"
-#include "SequenceCam.h"
-#include "CharacterController.h"
 #include "GameInstance.h"
-#include "OrbitCam.h"
 #include "GameObject.h"
+// Camera
+#include "SequenceCam.h"
+#include "OrbitCam.h"
 #include "FreeCam.h"
+// Component
+#include "CharacterController.h"
+#include "CamSequencePlayer.h"
+// Player
 #include "Player.h"
+#include "BattlePlayer.h"
+#include "BattleSystem.h"
 
 IMPLEMENT_SINGLETON(CCamDirector)
 
@@ -46,6 +51,13 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
     if (!targetHandle.isValid()) return;
     GetOrbitCam()->SetTarget(targetHandle);
     SetSpaceRef(targetHandle);
+}
+
+void CCamDirector::SetCurTarget()
+{
+    auto handle = GetPlayer()->Get_CurCharacterHandle();
+    if (handle.isValid())
+        SetTarget(handle);
 }
 
 void CCamDirector::Update(_float dt)
@@ -91,8 +103,8 @@ void CCamDirector::UpdateInput()
     if (InputDevice()->Key_Tap(VK_F3))
         RequestSequence("Intro/Jane_Intro");
 
-    if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
-        camMgr.AddShake(CamShakeType::HitNormal);
+    //if (InputDevice()->Mouse_Tap(MOUSE_BTN::LB))
+    //    camMgr.AddShake(CamShakeType::HitNormal);
 }
 
 void CCamDirector::UpdatePlayer()
