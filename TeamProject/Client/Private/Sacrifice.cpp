@@ -558,7 +558,7 @@ HRESULT CSacrifice::Create_Colliders()
 		RightArmDesc.tagBone = "Skn_R_Hand";
 		RightArmDesc.pOwnerAnimator3D = pAnimator;
 		RightArmDesc.vAttackSize = _float3{1.f,1.f,1.f};
-		RightArmDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+		RightArmDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&RightArmDesc)))
 			return E_FAIL;
@@ -571,9 +571,10 @@ HRESULT CSacrifice::Create_Colliders()
 		SwordDesc.tagName = "Sword";
 		SwordDesc.isAttachBone = true;
 		SwordDesc.tagBone = "Ctr_Wpn_02";
+		SwordDesc.vCenter = _float3{ 0.7f,0.f,0.f };
 		SwordDesc.pOwnerAnimator3D = pAnimator;
 		SwordDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
-		SwordDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+		SwordDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&SwordDesc)))
 			return E_FAIL;
@@ -588,7 +589,7 @@ HRESULT CSacrifice::Create_Colliders()
 		AxeDesc.tagBone = "Ctr_Wpn_03";
 		AxeDesc.pOwnerAnimator3D = pAnimator;
 		AxeDesc.vAttackSize = _float3{ 1.f,1.f,1.f };
-		AxeDesc.vTriggerSize = _float3{ 2.f,2.f,2.f };
+		AxeDesc.vTriggerSize = _float3{ 3.f,2.f,3.f };
 	
 		if (FAILED(AttachBattleColliderObject(&AxeDesc)))
 			return E_FAIL;
