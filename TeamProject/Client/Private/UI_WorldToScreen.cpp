@@ -26,8 +26,9 @@ void CUI_WorldToScreen::Update(_float dt)
 void CUI_WorldToScreen::Update_WorldToScreen(_float3 vPosition)
 {
     auto pCameraMgr = CGameInstance::GetInstance()->Get_CameraMgr();
-
+    
     Helper::WorldToScreen(vPosition, m_vAnchorOffset, *pCameraMgr->Get_ViewMatrix(), *pCameraMgr->Get_ProjMatrix(), _float4(0.f, 0.f, m_WinSize.x, m_WinSize.y));
+    m_Zpriority = vPosition.z;
 
     //_float fNearDist = 5.f;
     //_float fFarDist = 6.f;

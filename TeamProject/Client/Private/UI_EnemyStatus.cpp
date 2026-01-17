@@ -90,8 +90,6 @@ void CUI_EnemyStatus::Set_WorldPosition()
 
     Matrix matWorld = *m_pBoneLocal * *m_pParentWorld;
     Update_WorldToScreen(matWorld.Translation());
-    m_Zpriority = matWorld.Translation().z;
-
 }
 
 void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)
