@@ -21,6 +21,8 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
     virtual void Render_GUI() override;
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) override;
+    virtual void OnPooledRelease() override;
 
 public:
     static CThugAssaulter* Create();
