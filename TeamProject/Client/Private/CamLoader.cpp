@@ -54,8 +54,6 @@ namespace
 
     void LoadFolder(const fs::path& folder)
     {
-        auto& director = *CCamDirector::GetInstance();
-
         if (!fs::exists(folder) || !fs::is_directory(folder)) return;
 
         for (const auto& it : fs::recursive_directory_iterator(folder))
@@ -71,7 +69,7 @@ namespace
             const string key = rel.generic_string();
             const CamSequenceRequestDesc req = ResolveDefaultReq(key);
 
-            director.Register(key, path, req);
+            CamDirector().Register(key, path, req);
         }
     }
 }

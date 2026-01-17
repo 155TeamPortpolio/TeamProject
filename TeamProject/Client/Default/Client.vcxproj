@@ -261,6 +261,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Death.h" />
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
+    <ClInclude Include="..\public\UI_MeshPyramid.h" />
     <ClInclude Include="..\Public\UI_WorldToScreen.h" />
     <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
@@ -460,6 +461,7 @@
     <ClCompile Include="..\private\ThugAssaulter_Death.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Idle.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_Move.cpp" />
+    <ClCompile Include="..\private\UI_MeshPyramid.cpp" />
     <ClCompile Include="..\Private\UI_WorldToScreen.cpp" />
     <ClCompile Include="..\Private\UI_IconLabel.cpp" />
     <ClCompile Include="..\Private\UI_BattleHUDAction.cpp" />
