@@ -23,7 +23,6 @@ public:
     void Render_GUI() override;
 
 private:
-    _bool    m_bCollided{};
     _vector2 m_vFenceOffset{};
     _vector2 m_vImageSize{};
     

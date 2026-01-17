@@ -69,11 +69,12 @@ void CPortal::OnTriggerEnter(CGameObject* pOther)
 	m_bIsInteractable = true;
 
 	//상호작용버튼 만들기전 임시 닿으면실행
-	Interact();
+
 }
 
 void CPortal::OnTriggerStay(CGameObject* pOher)
 {
+	Interact();
 }
 
 void CPortal::OnTriggerExit(CGameObject* pOther)
@@ -89,9 +90,11 @@ void CPortal::Interact()
 {
 	if (!m_bIsInteractable)
 		return;
-
-	LevelManager()->Set_LoadingLevel("Loading_Level");
-	LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+	
+	if (InputDevice()->Key_Down('F')) {
+		LevelManager()->Set_LoadingLevel("Loading_Level");
+		LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+	}
 }
 
 CPortal* CPortal::Create()

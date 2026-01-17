@@ -1,4 +1,4 @@
-           {
+{
   "TagDataFormat": "Base",
   "TagArea": "Zero_Worksite",
   "iVersion": 1,
@@ -448,7 +448,7 @@
       "Objects": [
         {
           "iObjID": 15,
-          "TagModelResourceKey": "Trigger_Object4",
+          "TagModelResourceKey": "Portal",
           "TagMaterialResourceKey": "BOX",
           "vRight": [
             0.0,
@@ -477,7 +477,7 @@
         },
         {
           "iObjID": 16,
-          "TagModelResourceKey": "Trigger_Object0",
+          "TagModelResourceKey": "Invwall",
           "TagMaterialResourceKey": "BOX",
           "vRight": [
             0.0,
@@ -501,6 +501,35 @@
             -0.6180643439292908,
             -3.431605577468872,
             12.920454978942871,
+            0.0
+          ]
+        },
+        {
+          "iObjID": 17,
+          "TagModelResourceKey": "SpawnPoint",
+          "TagMaterialResourceKey": "BOX",
+          "vRight": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vUp": [
+            1.0,
+            1.0,
+            1.0,
+            0.0
+          ],
+          "vLook": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "vPos": [
+            -0.12362861633300781,
+            -3.785,
+            -5.950034141540527,
             0.0
           ]
         }

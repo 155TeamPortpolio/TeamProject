@@ -8,6 +8,9 @@
 //포탈을 알고있어야 만드는디
 #include "Portal.h"
 #include "MapInvisibleWall.h"
+#include "Player.h"
+#include "CharacterController.h"
+#include "CamDirector.h"
 
 CMapTriggerObject::CMapTriggerObject()
 	: CMapObject()
@@ -38,6 +41,7 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_MeshUI(pObjDesc);
 	Ready_Interactable(pObjDesc);
 	Ready_InvwalI(pObjDesc);
+	Ready_PlayerPos(pObjDesc);
 
 	return S_OK;
 }
@@ -274,7 +278,21 @@ void CMapTriggerObject::Ready_InvwalI(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 	}
 }
 
+void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
+{
+	auto iter = pObjDesc->SlotDataValues.find("SpawnPoint");
+
+	if (iter != pObjDesc->SlotDataValues.end()) {
+
+		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+		auto character = player->Get_CurCharacterHandle().Get();
+
+		character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
+	}
+}
+
 CMapTriggerObject* CMapTriggerObject::Create()
+
 {
 	CMapTriggerObject* instance = new CMapTriggerObject();
 	if (FAILED(instance->Initialize_Prototype()))
