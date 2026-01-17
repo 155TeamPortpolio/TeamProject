@@ -63,6 +63,7 @@ void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
         //.Speed(2.f)
+        .EndAt(0.85f)
         .Apply();
 }
 

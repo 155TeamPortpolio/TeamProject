@@ -257,7 +257,7 @@ void CThugAssaulter::Render_GUI()
 
 		for (_uint i = 0; i < ENUM(CBattleSystem::BATTLE_OBJ_TYPE::ENVOBJECT); i++)
 		{
-			auto tTimeScale = (*pTimeScales)[static_cast<CBattleSystem::BATTLE_OBJ_TYPE>(i)];
+			auto tTimeScale = (*pTimeScales)[i];
 
 			if (i == 0)
 				ImGui::Text("TagLayer : PLAYER");
@@ -271,8 +271,8 @@ void CThugAssaulter::Render_GUI()
 			ImGui::Text("Current Pos : %.2f", tTimeScale.fCurPos);
 
 			ImGui::BeginDisabled(true);
-			string tagCheckBox = "IsScaled##" + to_string(i) + "Checkbox";
-			ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isScaled);
+			string tagCheckBox = "isRunning##" + to_string(i) + "Checkbox";
+			ImGui::Checkbox(tagCheckBox.c_str(), &tTimeScale.isRunning);
 			string tagSlide = to_string(i) + "##Playback";
 			ImGui::SliderFloat(tagSlide.c_str(), &tTimeScale.fCurPos, 0.f, tTimeScale.fDuration, "");
 			ImGui::EndDisabled();
@@ -282,11 +282,11 @@ void CThugAssaulter::Render_GUI()
 		ImGui::DragFloat("Scale Duration##scaleDuration", &m_fTestScaleDuration, 0.1f);
 		
 		if (ImGui::Button("Player TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue);
+			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
 		
 		ImGui::SameLine(0.f, 10.f);
 		if (ImGui::Button("Monster TimeScale"))
-			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue);
+			BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::MONSTER, m_fTestScaleDuration, m_fTestScaleValue, 0.f, 0.f);
 		
 		ImGui::EndChild();
 		ImGui::TreePop();

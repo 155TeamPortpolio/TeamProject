@@ -11,6 +11,8 @@ void CCorinState_SwitchInAttack::Enter(CCorin* pOwner)
         m_pSubStateMachine->Register_State("Start", CCorinState_SwitchInAttack_Start::Create());
         m_pSubStateMachine->Register_State("End", CCorinState_SwitchInAttack_End::Create());
 
+        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+
         m_pSubStateMachine->Register_Transition("Start", "End",
             CStateMachine<CCorin>::CONDITION_ANIMATION_END);
 

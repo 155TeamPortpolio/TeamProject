@@ -6,7 +6,9 @@ NS_BEGIN(Engine)
 class CRaycastFilterCallback : public PxQueryFilterCallback
 {
 public:
-    CRaycastFilterCallback(_uint iMask) : m_iTargetMask(iMask) {}
+    CRaycastFilterCallback(_uint iMask, _bool bQueryTrigger = false)
+        : m_iTargetMask(iMask), m_bQueryTrigger(bQueryTrigger) {
+    }
 
     virtual PxQueryHitType::Enum preFilter(
         const PxFilterData& filterData,
@@ -14,20 +16,20 @@ public:
         const PxRigidActor* actor,
         PxHitFlags& queryFlags) override
     {
-        // shape의 그룹이 레이의 마스크에 포함되는지 확인
         PxU32 shapeGroup = filterData.word0;
 
         if ((m_iTargetMask & shapeGroup) == 0)
-            return PxQueryHitType::eNONE;  // 무시
-
-        if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
-            return PxQueryHitType::eNONE;  // 트리거 무시
+            return PxQueryHitType::eNONE;
 
         // 트리거 처리
         if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
-            return PxQueryHitType::eTOUCH;  // 트리거는 Touch
+        {
+            if (!m_bQueryTrigger)
+                return PxQueryHitType::eNONE;  // 트리거 무시
+            return PxQueryHitType::eTOUCH;
+        }
 
-        return PxQueryHitType::eBLOCK;  // 일반 충돌은 Block
+        return PxQueryHitType::eBLOCK;
     }
 
     virtual PxQueryHitType::Enum postFilter(
@@ -36,8 +38,10 @@ public:
     {
         return PxQueryHitType::eNONE;
     }
+
 private:
     _uint m_iTargetMask;
+    _bool m_bQueryTrigger;
 };
 
 class CPhysicsSystem final : public IPhysicsService
