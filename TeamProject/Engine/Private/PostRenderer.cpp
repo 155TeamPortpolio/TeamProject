@@ -101,7 +101,7 @@ HRESULT CPostRenderer::Render_Distortion()
 {
 	//{
 	//	if (FAILED(m_pTargetManager->Begin_MRT("MRT_Distortion_Add"))) return E_FAIL;
-	//
+	// 
 	//	m_pTargetManager->Bind_Target("Target_Distortion", m_pShader,"g_DistortionTexture" );
 	//	m_pShader->Bind_Value("g_DistortionNoiseTexture", { m_pDistortionNoiseTexture, "Texture2D", 0 });
 	//

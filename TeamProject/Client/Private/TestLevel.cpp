@@ -156,7 +156,7 @@ HRESULT CTestLevel::Awake()
 
 void CTestLevel::Update()
 {
-	CBattleSystem::GetInstance()->Update();
+	//CBattleSystem::GetInstance()->Update();
 	
 	static OBJECT_HANDLE prevPlayer{};
 	

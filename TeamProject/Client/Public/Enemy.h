@@ -61,7 +61,7 @@ protected:
 
 
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
-    virtual void        Create_EnemyStatus(string boneTag);
+    virtual void        Create_UIEnemyStatus(string boneTag);
 
 #pragma region BattleCollider
 protected:
