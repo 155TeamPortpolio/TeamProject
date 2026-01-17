@@ -44,15 +44,15 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("JaneDoe.model",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.model");
-	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
+	pRcsMgr->Add_ResourcePath("JaneDoeModel.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.mat");
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
-	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoe.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoeModel.mat");
 	return S_OK;
 }
 
@@ -74,7 +74,7 @@ void CJaneDoe::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoe.model");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
 
 	//m_pAnimator->Set_MotionBone(262);
@@ -304,7 +304,7 @@ HRESULT CJaneDoe::Initialize_Weapon()
 	BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
 	BootsL_WeaponDesc.tagName = "FootWeapon_L";
 	BootsL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-
+	BootsL_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
 	if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
 		return E_FAIL;
 
@@ -314,9 +314,12 @@ HRESULT CJaneDoe::Initialize_Weapon()
 	BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
 	BootsR_WeaponDesc.tagName = "FootWeapon_R";
 	BootsR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
-
+	BootsR_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
 	if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
 		return E_FAIL;
+
+	Active_AttackCollider("FootWeapon_L", true);
+	Active_AttackCollider("FootWeapon_R", true);
 
 	return S_OK;
 }
