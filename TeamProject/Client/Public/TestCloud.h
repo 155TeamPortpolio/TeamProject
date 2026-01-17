@@ -28,6 +28,8 @@ public:
     void Update(_float dt) override;
     void Late_Update(_float dt) override;
 
+public:
+    void Render_GUI() override;
 private:
     //** 하늘 색 잠시 수정 금지 **
     _float3 m_vSkyColor = _float3(0.12f, 0.25f, 0.35f);
