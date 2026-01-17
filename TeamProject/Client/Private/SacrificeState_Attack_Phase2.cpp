@@ -151,12 +151,12 @@ void CSacrificeState_Attack_Phase2::BuildPattern(CSacrifice* pOwner)
 		}
 	}
 
-	blackBoard.stateQueue.clear(); 
-	blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
-	blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
+	//blackBoard.stateQueue.clear(); 
+	//blackBoard.stateQueue.push_back("Attack_Charge_Start_Phase2");
+	//blackBoard.stateQueue.push_back("Attack_Charge_Loop_Phase2");
+	//blackBoard.stateQueue.push_back("Attack_Charge_U_Start_Phase2");
+	//blackBoard.stateQueue.push_back("Attack_Charge_U_Loop_Phase2");
+	//blackBoard.stateQueue.push_back("Attack_Charge_U_End_Phase2");
 
 	blackBoard.isRequestNext = true;
 }
@@ -166,6 +166,8 @@ void CSacrificeState_Attack_01_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_01").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc desc{};
+	pOwner->SetAutoPlayBattleCollider("Whip", 0.f, 0.3f, desc);
 	pOwner->Active_AttackSign();
 
 	m_IsAttackStart = false;
@@ -202,6 +204,8 @@ void CSacrificeState_Attack_02_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_02").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Whip", 0.f, 0.3f, hitDesc);
 	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
 }
@@ -230,6 +234,8 @@ void CSacrificeState_Attack_03_Phase2::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P2_Attack_03").Loop(false).Speed(1.f).Apply();
 
+	HitDesc desc{};
+	pOwner->SetAutoPlayBattleCollider("Whip", 0.f, 0.2f, desc);
 	pOwner->Active_AttackSign();
 	pOwner->ActiveWhip();
 }

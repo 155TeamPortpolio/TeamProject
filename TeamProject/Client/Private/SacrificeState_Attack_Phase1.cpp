@@ -170,11 +170,11 @@ void CSacrificeState_Attack_Phase1::BuildPattern(CSacrifice* pOwner)
 	}
 
 	blackBoard.stateQueue.clear();
-	blackBoard.stateQueue.push_back("Attack10_Phase1");
-	blackBoard.stateQueue.push_back("Attack11_Phase1");
-	blackBoard.stateQueue.push_back("Attack12_Phase1");
-	blackBoard.stateQueue.push_back("Attack07_Phase1");
-	blackBoard.stateQueue.push_back("Attack02_Phase1");
+	blackBoard.stateQueue.push_back("Attack_Roar_Phase1");
+	blackBoard.stateQueue.push_back("Attack06_Phase1");
+	blackBoard.stateQueue.push_back("Attack06_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
+	blackBoard.stateQueue.push_back("Attack08_Phase1");
 	blackBoard.stateQueue.push_back("Attack08_Phase1");
 
 	blackBoard.isRequestNext = true;
@@ -527,33 +527,33 @@ void CSacrificeState_Attack_06_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_06").Loop(true).Speed(1.f).Apply();
-
+	
 }
 
 void CSacrificeState_Attack_06_Phase1::Update(CSacrifice* pOwner, _float dt)
 {
-	if (m_fAnimProgress > 0.2f && m_fAnimProgress <= 0.65f)
-	{
-		auto pTransform = pOwner->Get_Component<CTransform>();
-		_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
-		pTransform->Add_Quaternion(vRot);
-	}
-
-	if (IsCrossAnimProgress(0.18f))
-		pOwner->ActiveLaser(0);
-
-	if (IsCrossAnimProgress(0.65f))
-		pOwner->DeactiveLaser();
-
-	ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
-	if (m_fAnimProgress >= 0.9f)
-	{
-		blackBoard.isChainOpen = true;
-		if (!blackBoard.stateQueue.empty())
-			blackBoard.isRequestNext = true;
-	}
-
-	pOwner->MoveByRootMotion(dt);
+	 if (m_fAnimProgress > 0.2f && m_fAnimProgress <= 0.65f)
+	 {
+	 	auto pTransform = pOwner->Get_Component<CTransform>();
+	 	_quaternion vRot = _quaternion::CreateFromYawPitchRoll(XMConvertToRadians(180.f) * dt, 0.f, 0.f);
+	 	pTransform->Add_Quaternion(vRot);
+	 }
+	 
+	 if (IsCrossAnimProgress(0.18f))
+	 	pOwner->ActiveLaser(0);
+	 
+	 if (IsCrossAnimProgress(0.65f))
+	 	pOwner->DeactiveLaser();
+	 
+	 ATTACK_BLACK_BOARD& blackBoard = pOwner->GetBlackBoard();
+	 if (m_fAnimProgress >= 0.9f)
+	 {
+	 	blackBoard.isChainOpen = true;
+	 	if (!blackBoard.stateQueue.empty())
+	 		blackBoard.isRequestNext = true;
+	 }
+	 
+	 pOwner->MoveByRootMotion(dt);
 }
 
 void CSacrificeState_Attack_06_Phase1::Exit(CSacrifice* pOwner)

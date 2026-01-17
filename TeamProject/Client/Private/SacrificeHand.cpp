@@ -304,5 +304,23 @@ HRESULT CSacrificeHand::Create_Colliders()
 			return E_FAIL;
 	}
 
+	/* Hand Sword */
+	{
+		BATTLE_COLLIDER_DESC HandSwordDesc{};
+
+		HandSwordDesc.tagName = "Hand_Sword";
+		HandSwordDesc.isAttachBone = true;
+		HandSwordDesc.tagBone = "Ctr_HSword";
+		HandSwordDesc.pOwnerAnimator3D = pAnimator;
+		HandSwordDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandSwordDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandSwordDesc.vCenter = _float3{ 19.5f,0.f,0.f };
+		HandSwordDesc.vAttackSize = _float3{ 34.f,3.f,4.f };
+		HandSwordDesc.vTriggerSize = _float3{ 34.f,6.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandSwordDesc)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }

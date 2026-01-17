@@ -36,7 +36,6 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
 	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 
-
 	return S_OK;
 }
 
@@ -78,6 +77,7 @@ void CSacrifice_Laser::Awake()
 
 void CSacrifice_Laser::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Update(_float dt)
@@ -99,14 +99,14 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::PLAYER);
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
 
-		if (PhysicsSystem()->Raycast(rayDesc, output))
-			vPosition1 = output.vPoint;
-		else
+		//if (PhysicsSystem()->Raycast(rayDesc, output))
+		//	vPosition1 = output.vPoint;
+		//else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
@@ -131,14 +131,14 @@ void CSacrifice_Laser::Update(_float dt)
 
 		PHYSICS_RAY rayDesc{};
 		PHYSICS_RAY_HIT output{};
-		rayDesc.iCollisionMask -= ENUM(COLLISION_GROUP::PLAYER);
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
 		rayDesc.vOrigin = vPosition0;
 		rayDesc.vDirection = vDir;
 		rayDesc.fMaxDistance = 200.f;
 
-		if (PhysicsSystem()->Raycast(rayDesc, output))
-			vPosition1 = output.vPoint;
-		else
+		//if (PhysicsSystem()->Raycast(rayDesc, output))
+		//	vPosition1 = output.vPoint;
+		//else
 			vPosition1 = vPosition0 + vDir * 200.f;
 
 		context.vLinePoint0 = vPosition0;
@@ -151,7 +151,6 @@ void CSacrifice_Laser::Update(_float dt)
 	auto pLaserHitPoint = Get_Component<CObjectContainer>()->Find_ObjectByName("LaserHitPoint");
 	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
-
 
 	if (m_IsPendingDeactive)
 	{
@@ -166,6 +165,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 void CSacrifice_Laser::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Render_GUI()
