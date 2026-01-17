@@ -65,26 +65,7 @@ void CUI_MeshPyramid::Update(_float dt)
 
     alpha = Math::ApplyEase(EaseType::InOutSine, fadeT);
 
-    const Vector3 kGray = {0.38f, 0.38f, 0.38f};
-    const Vector3 kRed = {1.00f, 0.12f, 0.12f};
-
-    const _bool isAlert = IsAlert();
-
-    if (isAlert)
-    {
-        const _float blinkSec = 0.18f;
-
-        alertBlinkT += dt;
-        while (alertBlinkT >= blinkSec * 2.f) alertBlinkT -= blinkSec * 2.f;
-
-        const _bool flash = alertBlinkT < blinkSec;
-        color = flash ? kRed : kGray;
-    }
-    else
-    {
-        alertBlinkT = 0.f;
-        color = kGray;
-    }
+    color = {0.38f, 0.38f, 0.38f};
 
     auto parentObj = Get_Component<CChild>()->Get_Parent();
 
@@ -125,7 +106,6 @@ void CUI_MeshPyramid::Update(_float dt)
 
     tf->Set_Quaternion(XMVectorSet(q.x, q.y, q.z, q.w));
 }
-
 
 _bool CUI_MeshPyramid::IsOnScreen(_float marginPx)
 {
