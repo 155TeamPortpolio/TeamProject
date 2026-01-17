@@ -619,10 +619,7 @@ exit /b 0</Command>
       <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Release|x64'">CS_MAIN</EntryPointName>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
     </FxCompile>
-    <FxCompile Include="..\Public\Engine_Shader\CS_AlphaInspect.hlsl">
-      <EntryPointName Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">CS_MAIN</EntryPointName>
-      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
-    </FxCompile>
+    <FxCompile Include="..\Public\Engine_Shader\CS_AlphaInspect.hlsl" />
     <FxCompile Include="..\Public\Engine_Shader\CS_HiZ_Reduce.hlsl">
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Compute</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Compute</ShaderType>
