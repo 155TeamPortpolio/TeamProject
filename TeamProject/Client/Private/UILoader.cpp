@@ -30,6 +30,10 @@
 
 #include "UI_FieldHUD.h"
 
+#include "UI_BossHUD.h"
+
+#include "UI_IconLabel.h"
+
 namespace fs = filesystem;
 using namespace Helper;
 
@@ -152,6 +156,10 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"UltimateAction",	&CUI_UltimateAction::Create	},
 
 		{"FieldHUD",		&CUI_FieldHUD::Create		},
+
+		{"BossHUD",			&CUI_BossHUD::Create		},
+
+		{"IconLabel",		&CUI_IconLabel::Create		},
 	};
 
 	for (const Entry& entry : entries)

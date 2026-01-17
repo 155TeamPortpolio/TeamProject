@@ -4,9 +4,10 @@
 #include "BattleSystem.h"
 
 /* Object */
-#include "AttackSign.h"
-#include "UI_EnemyStatus.h"
+#include "AttackSign.h" 
 #include "EnemyAttackCollider.h"
+#include "UI_EnemyStatus.h"
+#include "UI_BossHUD.h"
 
 /* Component */
 #include "ObjectContainer.h"
@@ -195,6 +196,21 @@ void CEnemy::Create_UIEnemyStatus(string boneTag)
 	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
 
 	m_hUIEnemyStatus = pEnemyStatus->Get_Handle();
+}
+
+void CEnemy::Create_UIBossHUD()
+{
+	// BOSS_HUD_DESC 积己
+	CUI_BossHUD::BOSS_HUD_DESC* pDesc = new CUI_BossHUD::BOSS_HUD_DESC;
+	pDesc->pMonsterStatus = &m_tStatus;
+
+	// BossHUD UI 积己
+	auto pEnemyStatus = Builder::Create_UIObject({ LevelManager()->Get_NowLevelKey(),"Proto_GameObject_BossHUD"})
+		.Add_UIDesc(pDesc)
+		.Build("bossHUD");
+
+	// UI Mgr俊 殿废
+	CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pEnemyStatus, CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey());
 }
 
 HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)

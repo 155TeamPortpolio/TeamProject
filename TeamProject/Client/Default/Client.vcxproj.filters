@@ -712,6 +712,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Battle\Action\Ultimate">
       <UniqueIdentifier>{0482ff2d-216c-4a8a-aa1b-5293b6620271}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\UI\01. 2D\HUD_Boss">
+      <UniqueIdentifier>{08e52f74-1069-4a36-8336-1e2e4192678c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1373,6 +1376,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_MeshPyramidData.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+          </ClInclude>
+    <ClInclude Include="..\Public\UI_BossHUD.h">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2005,6 +2011,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_FieldHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Field</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BossHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
