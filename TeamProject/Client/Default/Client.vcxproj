@@ -267,6 +267,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
     <ClInclude Include="..\public\UI_MeshPyramid.h" />
+    <ClInclude Include="..\Public\UI_MeshPyramidData.h" />
     <ClInclude Include="..\Public\UI_WorldToScreen.h" />
     <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />

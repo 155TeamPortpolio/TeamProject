@@ -1,6 +1,6 @@
 #pragma once
 
-#include "GameObject.h"
+#include "UI_MeshPyramidData.h"
 
 NS_BEGIN(Client)
 
@@ -17,6 +17,17 @@ public:
     void    Priority_Update(_float dt)  override {}
     void    Update(_float dt)           override;
     void    Late_Update(_float dt)      override {}
+    
+private:
+    _bool   IsOnScreen(_float marginPx);
+    void    UpdateFade(_float dt);
+    Vector3 UpdateAlertBlink(_float dt);
+    void    ApplyColorAlpha(const Vector3& baseColor);
+    void    UpdateFollow(_float dt);
+
+private:
+    UI_MeshPyramidConfig  cfg{};
+    UI_MeshPyramidRuntime rt{};
 
 public:
     static CGameObject* Create();
