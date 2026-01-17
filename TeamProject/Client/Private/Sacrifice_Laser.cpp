@@ -120,6 +120,30 @@ void CSacrifice_Laser::Update(_float dt)
 		context.vLinePoint1 = vPosition0 + m_vTargetDir * 200.f;
 
 	}break;
+	case 2: /* Look */
+	{
+		_vector3 vPosition0 = m_pTransform->Get_WorldPos();
+		_vector3 vPosition1{};
+		_vector3 vDir = m_pTransform->Dir(STATE::RIGHT);
+		vDir.y = 0.f;
+		vDir.Normalize();
+		vDir *= -1.f;
+
+		PHYSICS_RAY rayDesc{};
+		PHYSICS_RAY_HIT output{};
+		rayDesc.iCollisionMask = ENUM(COLLISION_GROUP::COMMON);
+		rayDesc.vOrigin = vPosition0;
+		rayDesc.vDirection = vDir;
+		rayDesc.fMaxDistance = 200.f;
+
+		if (PhysicsSystem()->Raycast(rayDesc, output))
+			vPosition1 = output.vPoint;
+		else
+			vPosition1 = vPosition0 + vDir * 200.f;
+
+		context.vLinePoint0 = vPosition0;
+		context.vLinePoint1 = vPosition1;
+	}break;
 	default:
 		break;
 	}

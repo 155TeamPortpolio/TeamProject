@@ -48,9 +48,9 @@ CGameObject::CGameObject(const CGameObject& rhs)
 
 		if (pair.first == type_index(typeid(CModel)))
 			continue;
-		/*
-		if (pair.first == type_index(typeid(CCollider)))
-			continue;*/
+
+		if (pair.first == type_index(typeid(ICollidable)))
+			continue;
 
 		else {
 			CComponent* comp = pair.second->Clone();
@@ -62,10 +62,10 @@ CGameObject::CGameObject(const CGameObject& rhs)
 				Safe_AddRef(comp);
 			}
 
-			//if (dynamic_cast<CCollider*>(comp)) {
-			//	m_Components.emplace(type_index(typeid(CCollider)), comp);
-			//	Safe_AddRef(comp);
-			//}
+			if (dynamic_cast<ICollidable*>(comp)) {
+				m_Components.emplace(type_index(typeid(ICollidable)), comp);
+				Safe_AddRef(comp);
+			}
 		}
 	}
 
@@ -119,6 +119,7 @@ HRESULT CGameObject::Initialize(INIT_DESC* pArg)
 		/*惑加 林绰 模备甸篮 力寇*/
 		if (pair.first == type_index(typeid(CTransform))) continue;
 		if (pair.first == type_index(typeid(CModel))) continue;
+		if (pair.first == type_index(typeid(ICollidable))) continue;
 		if (pair.first == type_index(typeid(CRigidBody))) continue;
 
 		auto iter = obj->CompDesc.find(pair.first);

@@ -230,7 +230,7 @@ PS_OUT PS_DEBUG(PS_IN In)
 struct VS_OUT_SHADOW
 {
     float4 vPosition : SV_POSITION;
-   // float4 vProjPos : TEXCOORD0;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
@@ -251,6 +251,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
     float4 lightSpacePos = mul(float4(worldPos, 1.f), matSkinnedLightViewProj[iCurrentCascade]);
     
     Out.vPosition = lightSpacePos;
+    Out.vTexcoord = In.vTexcoord;
    // Out.vProjPos = Out.vPosition;
     
     return Out;
@@ -259,7 +260,7 @@ VS_OUT_SHADOW VS_MAIN_SHADOW(VS_IN In)
 struct PS_IN_SHDOW
 {
     float4 vPosition : SV_POSITION;
-    //float4 vProjPos : TEXCOORD0;
+    float2 vTexcoord : TEXCOORD0;
 };
 
 struct PS_OUT_SHADOW
@@ -269,7 +270,10 @@ struct PS_OUT_SHADOW
 
 void PS_MAIN_SHADOW(PS_IN_SHDOW In)
 {
-
+    float fNoise = NoiseTexture.Sample(LinearSampler, In.vTexcoord * fDissolveTiling).r;
+    
+    if (fNoise < fDissolveProgress)
+        discard;
 }
 
 technique11 DefaultTechnique

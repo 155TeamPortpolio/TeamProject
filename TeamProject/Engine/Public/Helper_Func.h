@@ -54,6 +54,8 @@ namespace Helper
 	ENGINE_DLL _bool EnsureDirectoryExist(const filesystem::path& dir);
 	ENGINE_DLL _bool ContainsCaseInsensitive(const string& text, const string& pattern);
 	ENGINE_DLL _bool WorldToScreen(const _float3& worldPos,_float2& outScreen,const _float4x4& view,const _float4x4& proj,const _float4& viewportXYWH);
+	ENGINE_DLL _bool ScreenToWorldRay(const _float2& screenPos, _float3& outRayOrigin, _float3& outRayDir, const _float4x4& view, const _float4x4& proj, const _float4& viewportXYWH);
+	ENGINE_DLL _bool ScreenToWorldPoint(const _float2& screenPos, float depth01, _float3& outWorldPos, const _float4x4& view, const _float4x4& proj, const _float4& viewportXYWH);
 
 	/*주어진 값 (value)에서 지정한 자리(place) 의 숫자를 반환. place : 0이면 1의자리, 1이면 10의 자리, 2면 100의 자리 ...*/
 	ENGINE_DLL _uint Get_Digit(_int value, _int place);
@@ -61,6 +63,8 @@ namespace Helper
 	ENGINE_DLL _vector4 HexToColor(const string& hex);
 	ENGINE_DLL string VK_ToString(_int vk);
 	ENGINE_DLL string WideToUtf8(const wchar_t* wideText);
+	/*정수를 지정한 자릿수(width)로, 값이 없는 숫자는 0으로 채워서 고정 폭 문자열로 포맷*/
+	ENGINE_DLL void Format_FixedZeroPad(wchar_t* outBuf, size_t bufCount, _int value, _int width);
 
 }
 

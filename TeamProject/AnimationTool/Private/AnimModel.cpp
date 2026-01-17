@@ -245,6 +245,8 @@ void CAnimModel::Load_ModelOnce()
 	auto ResMgr = m_pGameInstance->Get_ResourceMgr();
 
 	string Model, Material, Meta;
+	string MetaFilePath{};
+
 	for (const auto& path : files)
 	{
 		string ext = std::filesystem::path(path).extension().string();
@@ -263,6 +265,7 @@ void CAnimModel::Load_ModelOnce()
 		else if (".json" == ext) {
 			if (SUCCEEDED(CGameInstance::GetInstance()->Get_ResourceMgr()->Add_ResourcePath(name, path))) {
 				Meta = name;
+				MetaFilePath = path;
 			}
 		}
 	}
@@ -284,7 +287,7 @@ void CAnimModel::Load_ModelOnce()
 	pInstance->Link_MetaData("AnimationEdit_Level", Meta);
 
 	m_pAnimToolPanel->Setting_NewClip();
-
+	m_pAnimToolPanel->Setting_MetaFilePath(MetaFilePath);
 }
 
 void CAnimModel::Load_Resource()

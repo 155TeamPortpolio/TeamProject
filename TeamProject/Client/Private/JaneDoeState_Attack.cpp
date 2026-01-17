@@ -60,7 +60,7 @@ void CJaneDoeState_Attack::Enter(CJaneDoe* pOwner)
     __super::Enter(pOwner);
 }
 
-void CJaneDoeState_Attack::Update(CJaneDoe * pOwner, _float dt)
+void CJaneDoeState_Attack::Update(CJaneDoe* pOwner, _float dt)
 {
     if (true/*pOwner->Has_PassionSkill()*/)
     {

@@ -68,25 +68,18 @@ HRESULT CScott_Level::Initialize()
 {
 	CBattleSystem::GetInstance()->SetActive(true);
 	RenderSystem()->Set_FogDesc({ _float4(0.12f, 0.25f, 0.35f, 1.0f),0.f, 0.f, 0.005f, true });
-	
-	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
-	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
 
 	return S_OK;
 }
 
 HRESULT CScott_Level::Awake()
 {
+	m_pPlayer = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
+	m_pPlayer->Set_PlayerType(CPlayer::PLAYER::FIELD);
+
 	IProtoService* pProto = CGameInstance::GetInstance()->Get_PrototypeMgr();
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
-
-	// ============ Camera ==================================================
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_OrbitCam", COrbitCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_FreeCam", CFreeCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_SequenceCam", CSequenceCam::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_ShadowCam", CShadowCam::Create());
-	// =========================================================================
 
 	//============== Test =================================
 	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
@@ -102,10 +95,6 @@ HRESULT CScott_Level::Awake()
 	Ready_Map("Scott_Level", "Zero_Worksite");
 
 	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
-
-
-	//m_pCamDirector->SetSpaceRef(CBattleSystem::GetInstance()->GetCurCharacterHandle());
-	//m_pCamDirector->RequestSequence("Jane_Intro", 0.f, true, 0.5f);
 
 	return S_OK;
 }

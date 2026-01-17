@@ -81,6 +81,13 @@ void CBattlePlayer::Update(_float dt)
 			m_fSwitchCooldown = 0.f;
 	}
 
+	if (m_fLockOnCooldown > 0.f)
+	{
+		m_fLockOnCooldown -= dt;
+		if (m_fLockOnCooldown <= 0.f)
+			m_fLockOnCooldown = 0.f;
+	}
+
 	UI_ACTION_DESC desc{};
 
 	/* Evade & EvadePerfect */
@@ -189,9 +196,17 @@ void CBattlePlayer::Update_Input(_float dt)
 	Process_Ultimate();
 	Process_Energy();
 
-	if (InputDevice()->Key_Down('T'))
+	if (InputDevice()->Mouse_Tap(MOUSE_BTN::MB) && m_fLockOnCooldown <= 0.f)
 	{
-		// �׽�Ʈ �ڵ�
+		m_bLockOn = !m_bLockOn;
+		m_fLockOnCooldown = LOCKON_COOLDOWN;
+
+		if (!m_TargetHandle.isValid()) return;
+
+		TARGET_LOCK_DESC desc;
+		desc.bLock = m_bLockOn;
+		desc.tHandle = m_TargetHandle;
+		EventSystem()->Broadcast<TARGET_LOCK_DESC>({ desc });
 	}
 }
 
@@ -264,10 +279,10 @@ void CBattlePlayer::Process_Ultimate()
 {
 	if (InputDevice()->Key_Tap('Q'))
 	{
-		if (m_pCurrentCharacter->Can_Ultimate())
-		{
+		//if (m_pCurrentCharacter->Can_Ultimate())
+		//{
 			m_pCurrentCharacter->On_Ultimate();
-		}
+		//}
 	}
 }
 
@@ -327,6 +342,7 @@ void CBattlePlayer::Update_Status()
 		desc.eCharacter = pCharacter->Get_CharacterName();
 		desc.hp = { pCharacter->Get_HP() , pCharacter->Get_MaxHP()};
 		desc.special = { pCharacter->Get_EnergyDesc().fCurrentEnergy, pCharacter->Get_MaxEnergy() };
+		desc.specialThreshold = pCharacter->Get_EnergyDesc().fSpecialEnergy;
 		desc.ultimate = { pCharacter->Get_CurrentDecibel(), pCharacter->Get_MaxDecibel() };
 
 		EventSystem()->Broadcast<UI_PLAYER_STATUS_DESC>({ desc });
@@ -429,6 +445,11 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	if (tEnergy.fCurrentEnergy >= tEnergy.fSpecialEnergy)
 	{
 		desc.eState = UI_ACTION_STATE::AVAILABLE;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
+	}
+	else
+	{
+		desc.eState = UI_ACTION_STATE::ENABLE;
 		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	/* Ultimate */

@@ -31,6 +31,7 @@ typedef struct tagUIPlayerStatusDesc {
 	UI_STATUS_VALUE hp = {};
 	UI_STATUS_VALUE special = {};
 	UI_STATUS_VALUE ultimate = {};
+	_float specialThreshold = {};
 	// EX 관련 값 추가 필요
 }UI_PLAYER_STATUS_DESC;
 
@@ -56,6 +57,14 @@ typedef struct tagUIActionDesc {
 typedef struct tagUIActionPrimaryDesc {
 	UI_ACTION_PRIMARY_MODE eMode = {};		// 현재 primary의 액션 모드 (attack, interact)
 }UI_ACTION_PRIMARY_DESC;
+#pragma endregion
+
+#pragma region TargetLockOn
+typedef struct tagTargetLockDesc {
+	_bool	bLock = false;
+	OBJECT_HANDLE	tHandle{};
+}TARGET_LOCK_DESC;
+
 #pragma endregion
 
 NS_END

@@ -9,13 +9,15 @@ class CCamDirector final : public CBase
 {
     DECLARE_SINGLETON(CCamDirector)
 private:
-    CCamDirector() {}
+    CCamDirector();
     virtual ~CCamDirector() = default;
 
 public:
     void          SetCam(CamType type, OBJECT_HANDLE handle) { m_camHandles[ENUM(type)] = handle; }
     void          SetSpaceRef(OBJECT_HANDLE handle)          { m_spaceRefHandle         = handle; }
     void          SetReturnCam(CamType type)                 { m_returnCamType          = type;   }
+    void          SetTarget(OBJECT_HANDLE targetHandle);
+    void          SetCurTarget();
 
     OBJECT_HANDLE GetCamHandle(CamType type) const { return m_camHandles[ENUM(type)];                }
     COrbitCam*    GetOrbitCam()              const { return static_cast<COrbitCam*>(GetOrbitObj());  }
@@ -30,8 +32,7 @@ public:
     CCamera*      GetFreeCamComp()           const { return GetFreeCam()->Get_Component<CCamera>();  }
     CCamera*      GetSeqCamComp()            const { return GetSeqCam()->Get_Component<CCamera>();   }
     CCamera*      GetOrbitCamComp()          const { return GetOrbitCam()->Get_Component<CCamera>(); }
-
-    void          SetTarget(OBJECT_HANDLE targetHandle) { GetOrbitCam()->SetTarget(targetHandle); }
+    CPlayer*      GetPlayer()                const;
 
 public:
     _bool         Register(const string& key, const filesystem::path& path);
@@ -48,11 +49,23 @@ public:
     void          Update(_float dt);
 
 private:
+    void          UpdatePlayer();
+    void          UpdateInput();
+
+private:
+    ICameraService&         camMgr;
+    IObjectService&         objMgr;
+
     CamDirectorSeqMap       m_seqs{};
     CamDirectorPlayingState m_playing{};
     CamDirectorCamHandles   m_camHandles{};
     OBJECT_HANDLE           m_spaceRefHandle{};
     CamType                 m_returnCamType = CamType::None;
+
+    OBJECT_HANDLE           m_focusHandle{};
+    _int                    m_focusType = -1;
 };
+
+inline CCamDirector& CamDirector() { return *CCamDirector::GetInstance(); }
 
 NS_END

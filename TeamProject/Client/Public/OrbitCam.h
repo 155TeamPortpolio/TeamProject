@@ -23,9 +23,8 @@ public:
     void    Render_GUI()                override;
 
 public:
-    void    SetTarget(CGameObject* obj);
     void    SetTarget(OBJECT_HANDLE handle);
-    void    ClearTarget() { targetHandle.Reset(); }
+    void    ClearTarget();
 
     void    SyncFromCurTransform();
     void    SetTargetFrontView(CGameObject* obj, float distance, float pitchDeg, float heightOffset);
@@ -33,6 +32,16 @@ public:
 
     void    CaptureSnapshot(OrbitCamSnapshot& out) const;
     void    RestoreSnapshot(const OrbitCamSnapshot& snapshot);
+
+    void    SetLockOn(OBJECT_HANDLE handle);
+    void    ClearLockOn();
+
+private:
+    void    UpdateLockOn(_float dt);
+    Vector3 GetLockOnFocusPos() const;
+    void    StartLockOnBlend(_bool entering);
+    void    UpdateLockOnBlend(_float dt);
+    _float  GetLockOnWeight() const { return lockOnBlend.weight; }
 
 private:
     void    UpdateInput(_float dt);
@@ -51,9 +60,11 @@ private:
     void    UpdateTargetSwitch(_float dt);
 
 private:
+    OrbitCamLockOnState       lockOn{};
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
     OrbitCamTargetSwitchState targetSwitch{};
+    OrbitCamLockOnBlendState  lockOnBlend{};
     Profile                   profile{};
                               
     _float                    autoYawHoldTimer = 0.f;

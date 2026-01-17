@@ -580,6 +580,82 @@ ENGINE_DLL _bool Helper::WorldToScreen(const _float3& worldPos, _float2& outScre
 	outScreen.y = viewportXYWH.y + (-ndcY * 0.5f + 0.5f) * viewportXYWH.w;
 	return true;
 }
+ENGINE_DLL _bool Helper::ScreenToWorldRay(
+	const _float2& screenPos,
+	_float3& outRayOrigin,
+	_float3& outRayDir,
+	const _float4x4& view,
+	const _float4x4& proj,
+	const _float4& viewportXYWH)
+{
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+
+	// 역행렬
+	_matrix invView = XMMatrixInverse(nullptr, viewMat);
+	_matrix invProj = XMMatrixInverse(nullptr, projMat);
+
+	// Screen -> NDC
+	float ndcX = ((screenPos.x - viewportXYWH.x) / viewportXYWH.z) * 2.0f - 1.0f;
+	float ndcY = -(((screenPos.y - viewportXYWH.y) / viewportXYWH.w) * 2.0f - 1.0f);
+
+	// NDC -> View space (near/far)
+	// D3D: z in [0,1]
+	_vector nearClip = XMVectorSet(ndcX, ndcY, 0.0f, 1.0f);
+	_vector farClip = XMVectorSet(ndcX, ndcY, 1.0f, 1.0f);
+
+	_vector nearView = XMVector4Transform(nearClip, invProj);
+	_vector farView = XMVector4Transform(farClip, invProj);
+
+	float nearW = XMVectorGetW(nearView);
+	float farW = XMVectorGetW(farView);
+	if (fabsf(nearW) < 1e-6f || fabsf(farW) < 1e-6f)
+		return false;
+
+	nearView /= nearW;
+	farView /= farW;
+
+	// View -> World
+	_vector nearWorld = XMVector3TransformCoord(nearView, invView);
+	_vector farWorld = XMVector3TransformCoord(farView, invView);
+
+	_vector rayDir = XMVector3Normalize(farWorld - nearWorld);
+
+	outRayOrigin = _float3(XMVectorGetX(nearWorld), XMVectorGetY(nearWorld), XMVectorGetZ(nearWorld));
+	outRayDir = _float3(XMVectorGetX(rayDir), XMVectorGetY(rayDir), XMVectorGetZ(rayDir));
+	return true;
+}
+
+ENGINE_DLL _bool Helper::ScreenToWorldPoint(
+	const _float2& screenPos,
+	float depth01,
+	_float3& outWorldPos,
+	const _float4x4& view,
+	const _float4x4& proj,
+	const _float4& viewportXYWH)
+{
+	// depth01: D3D 기준 [0..1] (0=near, 1=far)
+	_matrix viewMat = XMLoadFloat4x4(&view);
+	_matrix projMat = XMLoadFloat4x4(&proj);
+	_matrix invView = XMMatrixInverse(nullptr, viewMat);
+	_matrix invProj = XMMatrixInverse(nullptr, projMat);
+
+	float ndcX = ((screenPos.x - viewportXYWH.x) / viewportXYWH.z) * 2.0f - 1.0f;
+	float ndcY = -(((screenPos.y - viewportXYWH.y) / viewportXYWH.w) * 2.0f - 1.0f);
+
+	_vector clip = XMVectorSet(ndcX, ndcY, depth01, 1.0f);
+
+	_vector viewPos = XMVector4Transform(clip, invProj);
+	float viewW = XMVectorGetW(viewPos);
+	if (fabsf(viewW) < 1e-6f)
+		return false;
+	viewPos /= viewW;
+
+	_vector worldPos = XMVector3TransformCoord(viewPos, invView);
+
+	outWorldPos = _float3(XMVectorGetX(worldPos), XMVectorGetY(worldPos), XMVectorGetZ(worldPos));
+	return true;
+}
 
 ENGINE_DLL _uint Helper::Get_Digit(_int value, _int place)
 {
@@ -671,6 +747,11 @@ ENGINE_DLL string Helper::WideToUtf8(const wchar_t* wideText)
 		nullptr, nullptr);
 
 	return utf8;
+}
+
+ENGINE_DLL void Helper::Format_FixedZeroPad(wchar_t* outBuf, size_t bufCount, _int value, _int width)
+{
+	swprintf_s(outBuf, bufCount, L"%0*d", width, value);
 }
 
 // -------------------------------------------------------------------------------------------------

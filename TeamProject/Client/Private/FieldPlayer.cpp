@@ -62,7 +62,7 @@ void CFieldPlayer::Late_Update(_float dt)
 HRESULT CFieldPlayer::Initialize_CharacterPrototype()
 {
 	auto pProto = PrototypeManager();
-	if (FAILED(pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Belle", CBelle::Create())))
+	if (FAILED(pProto->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_Belle", CBelle::Create())))
 		return E_FAIL;
 
 	return S_OK;
@@ -81,11 +81,11 @@ CFieldCharacter* CFieldPlayer::Create_Character()
 	//characterCCT.fBoundingMinY = -0.88f;
 	characterCCT.vPos = { 0.f, 1.5f, 0.f };
 
-	auto Belle = Builder::Create_Object({ "Test_Level", "Proto_GameObject_Belle" })
+	auto Belle = Builder::Create_Object({ G_GlobalLevelKey, "Proto_GameObject_Belle" })
 		.Position(_float3(3.f, 37.f, 0.f))
 		.CharacterController(characterCCT)
 		.Build("Belle");
-	ObjectManager()->Add_Object(Belle, { "Test_Level", "Model_Layer" });
+	ObjectManager()->Add_Object(Belle, {LevelManager()->Get_NowLevelKey(), "Model_Layer"});
 
 	return dynamic_cast<CFieldCharacter*>(Belle);
 }

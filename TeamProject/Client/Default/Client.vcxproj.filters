@@ -682,11 +682,23 @@
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Hit">
       <UniqueIdentifier>{3b693345-701c-445b-bd6d-d4b327e101f1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ex">
+      <UniqueIdentifier>{a9950fa8-5297-46a6-a3df-8f280c177142}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack">
       <UniqueIdentifier>{21be2d5e-07b3-4f61-925b-50159b231242}</UniqueIdentifier>
     </Filter>
     <Filter Include="02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne">
       <UniqueIdentifier>{3d2e029f-4d71-43ec-b8b7-23a2b2d37ade}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Hit">
+      <UniqueIdentifier>{bd89193b-a932-4e90-abda-3a4bff8cb617}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
+      <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
+	</Filter>
+    <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
+      <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1318,11 +1330,23 @@
     <ClInclude Include="..\Public\OrbitCamTypes.h">
       <Filter>02. GameObject\Camera\04. OrbitCam</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\CorinState_ExAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ex</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitKnockBack</Filter>
     </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\JaneDoeState_Hit.h">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\UI_MeshPyramid.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+	</ClInclude>
+    <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1924,7 +1948,9 @@
     <ClCompile Include="..\Private\UI_BattleHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_BattleHUD.cpp" />
+    <ClCompile Include="..\Private\CorinState_ExAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ex</Filter>
+    </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Groggy.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Groggy</Filter>
     </ClCompile>
@@ -1933,6 +1959,18 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\HitAirborne</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\JaneDoeState_Hit.cpp">
+      <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_BattleHUD.cpp">
+      <Filter>02. GameObject\UI\01. 2D\BattleHUD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\UI_MeshPyramid.cpp">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+	</ClCompile>
+    <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
+      <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

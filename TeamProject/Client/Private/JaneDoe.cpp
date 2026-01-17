@@ -16,6 +16,7 @@
 #include "JaneDoeState_SwitchIn.h"
 #include "JaneDoeState_SwitchOut.h"
 #include "JaneDoeState_NormalAttack.h"
+#include "JaneDoeState_Hit.h"
 #include "JaneDoeState_Evade.h"
 
 CJaneDoe::CJaneDoe()
@@ -43,15 +44,15 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		return E_FAIL;
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
-	pRcsMgr->Add_ResourcePath("JaneDoe.model",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.model");
-	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
+	pRcsMgr->Add_ResourcePath("JaneDoeModel.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.mat");
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
-	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoe.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
+	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoeModel.mat");
 	return S_OK;
 }
 
@@ -63,7 +64,8 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-
+	if (FAILED(Initialize_Weapon()))	   
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -72,7 +74,7 @@ void CJaneDoe::Awake()
 {
 	__super::Awake();
 
-	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoe.model");
+	m_pAnimator->LinkAnimate_Model(G_GlobalLevelKey, "JaneDoeModel.model");
 	m_pAnimator->Link_MetaData(G_GlobalLevelKey, "JaneDoe_Meta.json");
 
 	//m_pAnimator->Set_MotionBone(262);
@@ -159,9 +161,19 @@ void CJaneDoe::On_Special()
 	if (m_tEnergy.fCurrentEnergy >= m_tEnergy.fSpecialEnergy)
 	{
 		m_tEnergy.fCurrentEnergy -= m_tEnergy.fSpecialEnergy;
+		UI_ACTION_DESC desc;
+		desc.eType = UI_ACTION_TYPE::SPECIAL;
+		desc.eState = UI_ACTION_STATE::EXECUTING;
+		EventSystem()->Broadcast<UI_ACTION_DESC>({ desc });
 	}
 	m_pStateMachine->Set_Int("AttackEntryMode", 2);
 	m_pStateMachine->Set_Trigger("Attack");
+}
+
+void CJaneDoe::On_Hit(DAMAGE_TYPE eType)
+{
+	m_pStateMachine->Set_Int("HitEntryMode", ENUM(eType));
+	m_pStateMachine->Set_Trigger("ToHit");
 }
 
 HRESULT CJaneDoe::Initialize_StateMachine()
@@ -190,6 +202,7 @@ HRESULT CJaneDoe::Initialize_States()
 	m_pStateMachine->Register_State("Evade", CJaneDoeState_Evade::Create());
 	m_pStateMachine->Register_State("SwitchIn", CJaneDoeState_SwitchIn::Create());	//*SwitchIn*
 	m_pStateMachine->Register_State("SwitchOut", CJaneDoeState_SwitchOut::Create());//*SwtichOut*
+	m_pStateMachine->Register_State("Hit", CJaneDoeState_Hit::Create());
 
 	return S_OK;
 }
@@ -237,6 +250,13 @@ HRESULT CJaneDoe::Initialize_Transitions()
 
 	m_pStateMachine->Register_Transition("SwitchOut", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
+
+	m_pStateMachine->Register_AnyStateTransition("Hit",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
+
+	m_pStateMachine->Register_Transition("Hit", "Idle",
+		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+
 	return S_OK;
 }
 
@@ -251,6 +271,56 @@ HRESULT CJaneDoe::Initialize_Stat()
 	m_fAttackPower = LVDesc.Attack;
 	
 	Set_EvadeMax(3);
+	return S_OK;
+}
+
+HRESULT CJaneDoe::Initialize_Weapon()
+{
+	ATTACK_COLLIDER_DESC HandL_WeaponDesc;
+	HandL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	HandL_WeaponDesc.tagBone = "Ctr_L_HandWpn_F";
+	HandL_WeaponDesc.tagName = "HandWeapon_L";
+	HandL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	HandL_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+	
+	if (FAILED(Attach_AttackCollider(&HandL_WeaponDesc)))
+		return E_FAIL;
+
+	ATTACK_COLLIDER_DESC HandR_WeaponDesc;
+	HandR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	HandR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	HandR_WeaponDesc.tagBone = "Ctr_R_HandWpn_F";
+	HandR_WeaponDesc.tagName = "HandWeapon_R";
+	HandR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	HandR_WeaponDesc.vCenter = { 0.1f, 0.f, 0.f };
+
+	if (FAILED(Attach_AttackCollider(&HandR_WeaponDesc)))
+		return E_FAIL;
+
+	ATTACK_COLLIDER_DESC BootsL_WeaponDesc;
+	BootsL_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsL_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	BootsL_WeaponDesc.tagBone = "Ctr_L_BootsWpn_01";
+	BootsL_WeaponDesc.tagName = "FootWeapon_L";
+	BootsL_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	BootsL_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
+	if (FAILED(Attach_AttackCollider(&BootsL_WeaponDesc)))
+		return E_FAIL;
+
+	ATTACK_COLLIDER_DESC BootsR_WeaponDesc;
+	BootsR_WeaponDesc.eColliderType = COLLIDER_TYPE::BOX;
+	BootsR_WeaponDesc.pOwnerAnimator = Get_Component<CAnimator3D>();
+	BootsR_WeaponDesc.tagBone = "Ctr_R_BootsWpn_01";
+	BootsR_WeaponDesc.tagName = "FootWeapon_R";
+	BootsR_WeaponDesc.vSize = { 0.3f, 0.1f, 0.1f };
+	BootsR_WeaponDesc.vCenter = { 0.3f, 0.f, 0.f };
+	if (FAILED(Attach_AttackCollider(&BootsR_WeaponDesc)))
+		return E_FAIL;
+
+	Active_AttackCollider("FootWeapon_L", true);
+	Active_AttackCollider("FootWeapon_R", true);
+
 	return S_OK;
 }
 

@@ -69,17 +69,21 @@ public:
     /* Laser */
     void ActiveLaser(_uint mode);
     void DeactiveLaser();
+    void ActiveEyeLaser();
+    void DeactiveEyeLaser();
+    
+    /* Dissolve */
+    void Set_DissolveState(DISSOLVE_STATE state, _float duration);
+    DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
+    void Update_Dissolve(_float dt);
 
 private:
     void Create_Children();
+    void Create_Colliders();
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
     void Update_States(_float dt);
-
-    /* Dissolve */
-    void Set_DissolveState(DISSOLVE_STATE state);
-    void Update_Dissolve(_float dt);
 
 private:
     CStateMachine<CSacrifice>* m_pStateMachine{};
@@ -104,6 +108,7 @@ private:
     _float m_fDissolveProgress{};
     _float m_fDissolveTilling{};
 
+    _bool m_IsOnDissolve = false;
     _float m_fDissolveDuration{};
     _float m_fDissolveElapsedTime{};
     DISSOLVE_STATE m_eDissolveState = DISSOLVE_STATE::NONE;

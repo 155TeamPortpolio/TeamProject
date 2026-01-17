@@ -1,0 +1,74 @@
+#include "pch.h"
+#include "CorinState_UltimateAttack.h"
+#include "Corin.h"
+
+#include "CamDirector.h"
+
+void CCorinState_UltimateAttack::Enter(CCorin* pOwner)
+{
+    if (!m_pSubStateMachine)
+    {
+        m_pSubStateMachine = CStateMachine<CCorin>::Create();
+
+        m_pSubStateMachine->Register_State("Start", CCorinState_UltimateAttack_Start::Create());
+        m_pSubStateMachine->Register_State("Loop", CCorinState_UltimateAttack_Loop::Create());
+        m_pSubStateMachine->Register_State("End", CCorinState_UltimateAttack_End::Create());
+
+        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+
+        m_pSubStateMachine->Register_Transition("Start", "Loop",
+            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+        m_pSubStateMachine->Register_Transition("Loop", "End",
+            CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+
+        m_pSubStateMachine->Set_DefaultState("Start");
+    }
+    __super::Enter(pOwner);
+}
+
+void CCorinState_UltimateAttack::Update(CCorin* pOwner, _float dt)
+{
+    __super::Update(pOwner, dt);
+}
+
+void CCorinState_UltimateAttack_Start::Enter(CCorin* pOwner)
+{
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_Start")
+        //.Speed(2.f)
+        .Apply();
+}
+
+void CCorinState_UltimateAttack_Start::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_UltimateAttack_Loop::Enter(CCorin* pOwner)
+{
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex")
+        //.Speed(2.f)
+        .Apply();
+}
+
+void CCorinState_UltimateAttack_Loop::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
+
+void CCorinState_UltimateAttack_End::Enter(CCorin* pOwner)
+{
+    pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "SwitchIn_Attack_Ex_End")
+        //.Speed(2.f)
+        .Apply();
+}
+
+void CCorinState_UltimateAttack_End::Update(CCorin* pOwner, _float dt)
+{
+    pOwner->Process_RootMotion(dt,
+        ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
+        ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+}
