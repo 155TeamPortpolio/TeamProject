@@ -28,6 +28,8 @@
 #include "UI_SwitchAction.h"
 #include "UI_UltimateAction.h"
 
+#include "UI_FieldHUD.h"
+
 #include "UI_IconLabel.h"
 
 namespace fs = filesystem;
@@ -134,8 +136,10 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"Text",            &CTextUI::Create            },
 		{"UVAnimation",     &CUVAnimationUI::Create     },
 		{"Mask",			&CMaskUI::Create			},
+
 		{"Logo",			&CUI_Logo::Create			},
 		{"Loading",			&CUI_Loading::Create		},
+
 		{"BattleHUD",		&CUI_BattleHUD::Create		},
 		{"Decibel",			&CUI_Decibel::Create		},
 		{"DecibelKanji",	&CUI_DecibelKanji::Create	},
@@ -148,6 +152,9 @@ void UILoader::Add_Prototype(const string& levelKey)
 		{"SpecialAction",	&CUI_SpecialAction::Create	},
 		{"SwitchAction",	&CUI_SwitchAction::Create	},
 		{"UltimateAction",	&CUI_UltimateAction::Create	},
+
+		{"FieldHUD",		&CUI_FieldHUD::Create		},
+
 		{"IconLabel",		&CUI_IconLabel::Create		},
 	};
 

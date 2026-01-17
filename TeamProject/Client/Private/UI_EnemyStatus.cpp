@@ -52,7 +52,6 @@ void CUI_EnemyStatus::Update(_float dt)
 
     // 몬스터 본 위치 기준으로 UI 위치 갱신
     Set_WorldPosition();
-
     // HP / Groggy 게이지 갱신
     Set_Gauge(Child::HP_GUAGE, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
     Set_Gauge(Child::GROGGY_GAUGE, m_pMonsterStatus->iGroggyValue / m_fGroggyMax); 
@@ -66,11 +65,8 @@ void CUI_EnemyStatus::Update(_float dt)
 
 void CUI_EnemyStatus::Set_TargetLock(TARGET_LOCK_DESC& desc)
 {
-    if (!m_tOwnerHandle.isValid() || !desc.tHandle.isValid())
-        return;
-
     // 다른 몬스터에 대한 이벤트면 락온 비활성화
-    if (m_tOwnerHandle.Get() != desc.tHandle.Get())
+    if (m_tOwnerHandle != desc.tHandle)
     {
         Set_Alive(Child::LOCKON, false);
         return;

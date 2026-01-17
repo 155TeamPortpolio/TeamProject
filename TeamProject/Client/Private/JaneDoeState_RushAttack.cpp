@@ -87,6 +87,11 @@ void CJaneDoeState_RushAttack::Update(CJaneDoe* pOwner, _float dt)
     }
 }
 
+void CJaneDoeState_RushAttack::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_Rush01_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush_01")

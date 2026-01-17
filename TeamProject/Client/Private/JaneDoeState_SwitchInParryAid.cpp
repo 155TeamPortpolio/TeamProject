@@ -37,6 +37,11 @@ void CJaneDoeState_SwitchInParryAid::Update(CJaneDoe* pOwner, _float dt)
     }
 }
 
+void CJaneDoeState_SwitchInParryAid::Exit(CJaneDoe* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CJaneDoeState_SwitchInParryAid_Start::Enter(CJaneDoe* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_ParryAid_Start")

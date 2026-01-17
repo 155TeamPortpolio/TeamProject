@@ -48,3 +48,8 @@ void CCorinState_Move::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 }
+
+void CCorinState_Move::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
