@@ -187,6 +187,7 @@
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
+    <ClInclude Include="..\Public\UI_FieldHUD.h" />
     <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CamDirectorData.h" />
@@ -430,6 +431,7 @@
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitKnockBack.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
+    <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
     <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />

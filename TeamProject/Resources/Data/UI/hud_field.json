@@ -1,0 +1,2647 @@
+{
+    "alive": true,
+    "instanceName": "hud_field",
+    "transform": {
+        "anchor": 0,
+        "anchorOffset": [
+            -800.0,
+            -450.0
+        ],
+        "size": [
+            1600.0,
+            900.0
+        ],
+        "scale": [
+            1.0,
+            1.0
+        ],
+        "pivot": [
+            0.0,
+            0.0
+        ],
+        "radian": 0.0
+    },
+    "color": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+    ],
+    "pass": "Opaque",
+    "animClips": [],
+    "children": [
+        {
+            "alive": true,
+            "instanceName": "menu",
+            "transform": {
+                "anchor": 5,
+                "anchorOffset": [
+                    0.0,
+                    0.0
+                ],
+                "size": [
+                    278.0,
+                    98.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "Image",
+                    "transform": {
+                        "anchor": 10,
+                        "anchorOffset": [
+                            -225.0,
+                            -72.5
+                        ],
+                        "size": [
+                            225.0,
+                            72.5
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Image",
+                    "textureTag": "MenuBg.png"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "Text",
+                    "transform": {
+                        "anchor": 0,
+                        "anchorOffset": [
+                            36.0,
+                            -0.5
+                        ],
+                        "size": [
+                            69.99998474121094,
+                            28.373327255249023
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        0.6941176652908325,
+                        0.6941176652908325,
+                        0.6941176652908325,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [],
+                    "typeTag": "Text",
+                    "text": {
+                        "content": "행동 중",
+                        "fontTag": "NanumSquareNeo.spritefont",
+                        "fontScale": 0.49999988079071045,
+                        "outlined": true,
+                        "outlineThickness": 2.0,
+                        "outlineColor": [
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "shear": [
+                            0.0,
+                            0.0
+                        ]
+                    }
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "utility",
+            "transform": {
+                "anchor": 6,
+                "anchorOffset": [
+                    -477.0,
+                    0.0
+                ],
+                "size": [
+                    439.0,
+                    123.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "CanvasPanel",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -400.0,
+                            0.0
+                        ],
+                        "size": [
+                            80.0,
+                            123.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -45.0,
+                                    -22.5
+                                ],
+                                "size": [
+                                    90.0,
+                                    45.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconRoleBtnOutline.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -42.5,
+                                    -20.0
+                                ],
+                                "size": [
+                                    85.0,
+                                    40.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconRoleBtn.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -14.5,
+                                    -30.0
+                                ],
+                                "size": [
+                                    29.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Text",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -8.0,
+                                    -24.5
+                                ],
+                                "size": [
+                                    13.999994277954102,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "C",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "CanvasPanel",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -320.0,
+                            0.0
+                        ],
+                        "size": [
+                            80.0,
+                            123.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -30.0,
+                                    -21.25
+                                ],
+                                "size": [
+                                    60.0,
+                                    42.5
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconActivityOutline.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -26.823530197143555,
+                                    -19.0
+                                ],
+                                "size": [
+                                    53.64706039428711,
+                                    38.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconActivityBtn.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -15.0,
+                                    -30.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Text",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -11.0,
+                                    -24.5
+                                ],
+                                "size": [
+                                    18.19999122619629,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "F1",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "CanvasPanel",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -240.0,
+                            0.0
+                        ],
+                        "size": [
+                            80.0,
+                            123.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -26.875,
+                                    -26.875
+                                ],
+                                "size": [
+                                    53.75,
+                                    53.75
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconHandBookBtnOutline.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -22.5,
+                                    -22.5
+                                ],
+                                "size": [
+                                    45.0,
+                                    45.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconHandBookBtn.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -15.0,
+                                    -30.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Text",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -12.0,
+                                    -24.5
+                                ],
+                                "size": [
+                                    21.69999122619629,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "F2",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "CanvasPanel",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -160.0,
+                            0.0
+                        ],
+                        "size": [
+                            80.0,
+                            123.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -30.0,
+                                    -28.75
+                                ],
+                                "size": [
+                                    60.0,
+                                    57.5
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconBPBtnOutline.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -26.25,
+                                    -25.0
+                                ],
+                                "size": [
+                                    52.5,
+                                    50.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconBPBtn.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -15.0,
+                                    -30.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Text",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -13.0,
+                                    -23.5
+                                ],
+                                "size": [
+                                    22.049989700317383,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "F3",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "CanvasPanel",
+                    "transform": {
+                        "anchor": 6,
+                        "anchorOffset": [
+                            -80.0,
+                            0.0
+                        ],
+                        "size": [
+                            80.0,
+                            123.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -31.25,
+                                    -27.5
+                                ],
+                                "size": [
+                                    62.5,
+                                    55.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconGashaponBtnOutline.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -27.5,
+                                    -24.6875
+                                ],
+                                "size": [
+                                    55.0,
+                                    49.375
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "IconGashaponBtn.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -15.0,
+                                    -30.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Text",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -12.0,
+                                    -23.5
+                                ],
+                                "size": [
+                                    22.39999008178711,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "F4",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Mask",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -20.0,
+                                    -11.069999694824219
+                                ],
+                                "size": [
+                                    40.0,
+                                    22.139999389648438
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "UI_StencilWrite",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Mask",
+                            "maskTextureKey": "IconGashaponBtnMask.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "UVAnimation",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    -41.666664123535156,
+                                    -13.164999961853027
+                                ],
+                                "size": [
+                                    83.33332824707031,
+                                    26.329999923706055
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "UVAnimation_StencilTest",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "UVAnimation",
+                            "textureTag": "Gradient_Rainbow.png",
+                            "uvAnimation": {
+                                "uvOffsetSpeed": [
+                                    0.0,
+                                    0.4000000059604645
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        },
+        {
+            "alive": true,
+            "instanceName": "action",
+            "transform": {
+                "anchor": 10,
+                "anchorOffset": [
+                    -422.0,
+                    -128.0
+                ],
+                "size": [
+                    422.0,
+                    128.0
+                ],
+                "scale": [
+                    1.0,
+                    1.0
+                ],
+                "pivot": [
+                    0.0,
+                    0.0
+                ],
+                "radian": 0.0
+            },
+            "color": [
+                1.0,
+                1.0,
+                1.0,
+                1.0
+            ],
+            "pass": "Opaque",
+            "animClips": [],
+            "children": [
+                {
+                    "alive": true,
+                    "instanceName": "hud_battle_primaryAction",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            0.0,
+                            0.0
+                        ],
+                        "size": [
+                            72.0,
+                            108.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "interact",
+                            "transform": {
+                                "anchor": 0,
+                                "anchorOffset": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    72.0,
+                                    108.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [
+                                {
+                                    "duration": 0.4000000059604645,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 7,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 5,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.100000023841858,
+                                                1.100000023841858
+                                            ],
+                                            "time": 0.20000000298023224
+                                        },
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.4000000059604645
+                                        }
+                                    ],
+                                    "loop": false,
+                                    "name": "startInteract"
+                                }
+                            ],
+                            "children": [
+                                {
+                                    "alive": true,
+                                    "instanceName": "interactBg",
+                                    "transform": {
+                                        "anchor": 4,
+                                        "anchorOffset": [
+                                            0.0,
+                                            36.0
+                                        ],
+                                        "size": [
+                                            72.0,
+                                            72.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.0,
+                                        0.0,
+                                        0.0,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Circle72.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "mask",
+                                    "transform": {
+                                        "anchor": 4,
+                                        "anchorOffset": [
+                                            0.0,
+                                            36.0
+                                        ],
+                                        "size": [
+                                            54.0,
+                                            54.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "pass": "UI_StencilWrite",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Mask",
+                                    "maskTextureKey": "BtnCommon.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "image",
+                                    "transform": {
+                                        "anchor": 4,
+                                        "anchorOffset": [
+                                            0.0,
+                                            36.0
+                                        ],
+                                        "size": [
+                                            72.0,
+                                            72.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.7142857313156128,
+                                        0.7142857313156128,
+                                        0.7142857313156128,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque_StencilTest",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Circle72.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "gradientF",
+                                    "transform": {
+                                        "anchor": 4,
+                                        "anchorOffset": [
+                                            0.0,
+                                            36.0
+                                        ],
+                                        "size": [
+                                            72.0,
+                                            72.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque_StencilTest",
+                                    "animClips": [
+                                        {
+                                            "duration": 0.5,
+                                            "keyframes": [
+                                                {
+                                                    "angle": 0.0,
+                                                    "color": [
+                                                        1.0,
+                                                        1.0,
+                                                        1.0,
+                                                        1.0
+                                                    ],
+                                                    "easeType": 0,
+                                                    "position": [
+                                                        0.0,
+                                                        0.0
+                                                    ],
+                                                    "scale": [
+                                                        1.0,
+                                                        1.0
+                                                    ],
+                                                    "time": 0.0
+                                                },
+                                                {
+                                                    "angle": 180.0,
+                                                    "color": [
+                                                        1.0,
+                                                        1.0,
+                                                        1.0,
+                                                        1.0
+                                                    ],
+                                                    "easeType": 0,
+                                                    "position": [
+                                                        0.0,
+                                                        0.0
+                                                    ],
+                                                    "scale": [
+                                                        1.0,
+                                                        1.0
+                                                    ],
+                                                    "time": 0.5
+                                                }
+                                            ],
+                                            "loop": true,
+                                            "name": "rotate"
+                                        }
+                                    ],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "Eff_SkillUp_27.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "outline",
+                                    "transform": {
+                                        "anchor": 4,
+                                        "anchorOffset": [
+                                            0.0,
+                                            36.0
+                                        ],
+                                        "size": [
+                                            72.0,
+                                            72.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "SkillBtnAOutline.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "interactKey",
+                                    "transform": {
+                                        "anchor": 8,
+                                        "anchorOffset": [
+                                            0.0,
+                                            -15.0
+                                        ],
+                                        "size": [
+                                            30.0,
+                                            30.0
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Image",
+                                    "textureTag": "KeyboardIcon.png"
+                                },
+                                {
+                                    "alive": true,
+                                    "instanceName": "f",
+                                    "transform": {
+                                        "anchor": 8,
+                                        "anchorOffset": [
+                                            -0.22500276565551758,
+                                            -15.569336891174316
+                                        ],
+                                        "size": [
+                                            11.549994468688965,
+                                            19.861326217651367
+                                        ],
+                                        "scale": [
+                                            1.0,
+                                            1.0
+                                        ],
+                                        "pivot": [
+                                            0.5,
+                                            0.5
+                                        ],
+                                        "radian": 0.0
+                                    },
+                                    "color": [
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        0.5882353186607361,
+                                        1.0
+                                    ],
+                                    "pass": "Opaque",
+                                    "animClips": [],
+                                    "children": [],
+                                    "typeTag": "Text",
+                                    "text": {
+                                        "content": "F",
+                                        "fontTag": "NanumSquareNeo.spritefont",
+                                        "fontScale": 0.3499998450279236,
+                                        "outlined": false,
+                                        "outlineThickness": 1.0,
+                                        "outlineColor": [
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0
+                                        ],
+                                        "shear": [
+                                            0.0,
+                                            0.0
+                                        ]
+                                    }
+                                }
+                            ],
+                            "typeTag": "CanvasPanel"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "hud_battle_evadeAction",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            90.0,
+                            0.0
+                        ],
+                        "size": [
+                            72.0,
+                            108.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "bg",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -36.0,
+                                    0.0
+                                ],
+                                "size": [
+                                    72.0,
+                                    72.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.027450980618596077,
+                                0.027450980618596077,
+                                0.027450980618596077,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle72.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "gaugeBg",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -31.0,
+                                    5.0
+                                ],
+                                "size": [
+                                    62.0,
+                                    62.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.1411764770746231,
+                                0.1411764770746231,
+                                0.14901961386203766,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "BtnCircle.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "image",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -24.185565948486328,
+                                    13.0
+                                ],
+                                "size": [
+                                    48.371131896972656,
+                                    46.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.1411764770746231,
+                                0.1411764770746231,
+                                0.14901961386203766,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "BtnEvade.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "gauge",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -31.0,
+                                    5.0
+                                ],
+                                "size": [
+                                    62.0,
+                                    62.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "RadialFill",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Gauge",
+                            "textureTag": "SkillBtnD.png",
+                            "gauge": {
+                                "direction": 1.0,
+                                "fillAmount": 1.0,
+                                "radial": true
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "icon",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -25.237112045288086,
+                                    12.199999809265137
+                                ],
+                                "size": [
+                                    50.47422409057617,
+                                    48.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "BtnEvade.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "text",
+                            "transform": {
+                                "anchor": 5,
+                                "anchorOffset": [
+                                    11.899999618530273,
+                                    19.5
+                                ],
+                                "size": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.5499998927116394,
+                                "outlined": true,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "image",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -13.269230842590332,
+                                    -30.0
+                                ],
+                                "size": [
+                                    26.538461685180664,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MouseRIconBlack.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "mouse",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -13.269230842590332,
+                                    -30.0
+                                ],
+                                "size": [
+                                    26.538461685180664,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "MouseRIcon.png"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "interact",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            180.0,
+                            0.0
+                        ],
+                        "size": [
+                            72.0,
+                            108.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [
+                        {
+                            "duration": 0.4000000059604645,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 7,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 5,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.100000023841858,
+                                        1.100000023841858
+                                    ],
+                                    "time": 0.20000000298023224
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                }
+                            ],
+                            "loop": false,
+                            "name": "startInteract"
+                        }
+                    ],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "interactBg",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    0.0,
+                                    36.0
+                                ],
+                                "size": [
+                                    72.0,
+                                    72.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle72.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "mask",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -30.0,
+                                    6.0
+                                ],
+                                "size": [
+                                    60.0,
+                                    60.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "UI_StencilWrite",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Mask",
+                            "maskTextureKey": "BtnInterKnot01.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "gradientJ",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -31.0,
+                                    5.0
+                                ],
+                                "size": [
+                                    62.0,
+                                    62.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": -3.1415927410125732
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque_StencilTest",
+                            "animClips": [
+                                {
+                                    "duration": 2.0,
+                                    "keyframes": [
+                                        {
+                                            "angle": 0.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 0.0
+                                        },
+                                        {
+                                            "angle": 90.0,
+                                            "color": [
+                                                0.5096524953842163,
+                                                0.5096524953842163,
+                                                0.5096524953842163,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 1.0
+                                        },
+                                        {
+                                            "angle": 180.0,
+                                            "color": [
+                                                1.0,
+                                                1.0,
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "easeType": 0,
+                                            "position": [
+                                                0.0,
+                                                0.0
+                                            ],
+                                            "scale": [
+                                                1.0,
+                                                1.0
+                                            ],
+                                            "time": 2.0
+                                        }
+                                    ],
+                                    "loop": true,
+                                    "name": "rotate"
+                                }
+                            ],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Eff_SkillUp_27.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "interactKey",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    0.0,
+                                    -15.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "f",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -2.0,
+                                    -15.569336891174316
+                                ],
+                                "size": [
+                                    8.749996185302734,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "J",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                },
+                {
+                    "alive": true,
+                    "instanceName": "interact",
+                    "transform": {
+                        "anchor": 5,
+                        "anchorOffset": [
+                            270.0,
+                            0.0
+                        ],
+                        "size": [
+                            72.0,
+                            108.0
+                        ],
+                        "scale": [
+                            1.0,
+                            1.0
+                        ],
+                        "pivot": [
+                            0.0,
+                            0.0
+                        ],
+                        "radian": 0.0
+                    },
+                    "color": [
+                        1.0,
+                        1.0,
+                        1.0,
+                        1.0
+                    ],
+                    "pass": "Opaque",
+                    "animClips": [
+                        {
+                            "duration": 0.4000000059604645,
+                            "keyframes": [
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 7,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.0
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 5,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.100000023841858,
+                                        1.100000023841858
+                                    ],
+                                    "time": 0.20000000298023224
+                                },
+                                {
+                                    "angle": 0.0,
+                                    "color": [
+                                        1.0,
+                                        1.0,
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "easeType": 0,
+                                    "position": [
+                                        0.0,
+                                        0.0
+                                    ],
+                                    "scale": [
+                                        1.0,
+                                        1.0
+                                    ],
+                                    "time": 0.4000000059604645
+                                }
+                            ],
+                            "loop": false,
+                            "name": "startInteract"
+                        }
+                    ],
+                    "children": [
+                        {
+                            "alive": true,
+                            "instanceName": "interactBg",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    0.0,
+                                    36.0
+                                ],
+                                "size": [
+                                    72.0,
+                                    72.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.0,
+                                0.0,
+                                0.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "Circle72.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "interactKey",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    0.0,
+                                    -15.0
+                                ],
+                                "size": [
+                                    30.0,
+                                    30.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                1.0,
+                                1.0,
+                                1.0,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "KeyboardIcon.png"
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "f",
+                            "transform": {
+                                "anchor": 8,
+                                "anchorOffset": [
+                                    -1.0,
+                                    -15.569336891174316
+                                ],
+                                "size": [
+                                    14.349993705749512,
+                                    19.861326217651367
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.5,
+                                    0.5
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Text",
+                            "text": {
+                                "content": "Q",
+                                "fontTag": "NanumSquareNeo.spritefont",
+                                "fontScale": 0.3499998450279236,
+                                "outlined": false,
+                                "outlineThickness": 1.0,
+                                "outlineColor": [
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "shear": [
+                                    0.0,
+                                    0.0
+                                ]
+                            }
+                        },
+                        {
+                            "alive": true,
+                            "instanceName": "Image",
+                            "transform": {
+                                "anchor": 4,
+                                "anchorOffset": [
+                                    -31.0,
+                                    5.0
+                                ],
+                                "size": [
+                                    62.0,
+                                    62.0
+                                ],
+                                "scale": [
+                                    1.0,
+                                    1.0
+                                ],
+                                "pivot": [
+                                    0.0,
+                                    0.0
+                                ],
+                                "radian": 0.0
+                            },
+                            "color": [
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                0.5882353186607361,
+                                1.0
+                            ],
+                            "pass": "Opaque",
+                            "animClips": [],
+                            "children": [],
+                            "typeTag": "Image",
+                            "textureTag": "BtnMessage01.png"
+                        }
+                    ],
+                    "typeTag": "CanvasPanel"
+                }
+            ],
+            "typeTag": "CanvasPanel"
+        }
+    ],
+    "typeTag": "CanvasPanel"
+}
