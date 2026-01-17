@@ -250,33 +250,39 @@ void CSacrifice::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 	if (0 >= m_tStatus.iNowHP)
 		return;
 
-	if (m_IsHitBlendable)
+	if (m_IsHitable)
 	{
 		if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 		{
-			if (m_eCurrPhase == PHASE::PHASE1)
+			if (m_IsHitBlendable)
 			{
-				Get_Component<CAnimator3D>()->Set_Animation(1, "Monster_SacrificeBringer_Ani_P1_Debuff_Stun_Shake")
-					.LayerBlend(0.8f, 0.5f, 0.2f, EaseType::InQuint)
-					.Loop(false)
-					.Apply();
-			}
-			else
-			{
-				Get_Component<CAnimator3D>()->Set_Animation(1, "Monster_SacrificeBringer_Ani_P2_Debuff_Stun_Shake")
-					.LayerBlend(0.8f, 0.5f, 0.2f, EaseType::InQuint)
-					.Loop(false)
-					.Apply();
+				if (m_eCurrPhase == PHASE::PHASE1)
+				{
+					Get_Component<CAnimator3D>()->Set_Animation(1, "Monster_SacrificeBringer_Ani_P1_Debuff_Stun_Shake")
+						.LayerBlend(0.8f, 0.5f, 0.2f, EaseType::InQuint)
+						.Loop(false)
+						.Apply();
+				}
+				else
+				{
+					Get_Component<CAnimator3D>()->Set_Animation(1, "Monster_SacrificeBringer_Ani_P2_Debuff_Stun_Shake")
+						.LayerBlend(0.8f, 0.5f, 0.2f, EaseType::InQuint)
+						.Loop(false)
+						.Apply();
+				}
 			}
 
 			m_tStatus.iNowHP -= fDamage * 1.5f;
 		}
 		else
 		{
-			Get_Component<CAnimator3D>()->Set_Animation(1, "SacrificeBringer_Ani_P1_Hit_Stay")
-				.LayerBlend(0.8f, 0.f, 0.1f, EaseType::InQuint)
-				.Loop(false)
-				.Apply();
+			if (m_IsHitBlendable)
+			{
+				Get_Component<CAnimator3D>()->Set_Animation(1, "SacrificeBringer_Ani_P1_Hit_Stay")
+					.LayerBlend(0.8f, 0.f, 0.1f, EaseType::InQuint)
+					.Loop(false)
+					.Apply();
+			}
 
 			m_tStatus.iNowHP -= fDamage;
 			m_tStatus.iGroggyValue += 16;
@@ -344,6 +350,13 @@ void CSacrifice::DeactiveWhip()
 	Get_Component<CSkeletalModel>()->SetDrawable(m_PartMeshIndices[ENUM(PARTS::WEAPON_WHIP)], false);
 }
 
+void CSacrifice::SetOverDrive(_bool overdrive)
+{
+	m_IsOverDrive = overdrive;
+	if (!m_IsOverDrive)
+		m_fOverDriveElapsedTime = 0.f;
+}
+
 void CSacrifice::Idle()
 {
 	m_RequestIdle = true;
@@ -358,6 +371,13 @@ void CSacrifice::ChangePhase()
 {
 	if (PHASE::PHASE1 == m_eCurrPhase)
 		m_pStateMachine->Change_State("ChangePhase");
+}
+
+void CSacrifice::ChangePhase_SetUp()
+{
+	m_tStatus.iMaxHP = 100.f;
+	m_tStatus.iNowHP = m_tStatus.iMaxHP;
+	m_tStatus.iGroggyValue = 0;
 }
 
 void CSacrifice::Phase1Attack()
@@ -792,8 +812,10 @@ HRESULT CSacrifice::Initialize_Transitions()
 		CStateMachine<CSacrifice>::CONDITION_TRIGGER, "Idle_To_Walk");
 
 	/* From Death */
-	m_pStateMachine->Register_Transition("Death", "ChangePhase",
-		CStateMachine<CSacrifice>::CONDITION_ANIMATION_END);
+	vector<CStateMachine<CSacrifice>::CONDITION_INFO> conditions;
+	conditions.push_back({ CStateMachine<CSacrifice>::CONDITION_ANIMATION_END });
+	conditions.push_back({ CStateMachine<CSacrifice>::CONDITION_TRIGGER,"Change_Phase"});
+	m_pStateMachine->Register_Transition("Death", "ChangePhase",conditions);
 
 	/* From Change Phase */
 	m_pStateMachine->Register_Transition("ChangePhase", "Idle",
@@ -818,11 +840,15 @@ void CSacrifice::Update_States(_float dt)
 		m_RequestIdle = false;
 	}
 
-	if (CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('P'))
-		m_pStateMachine->Change_State("Death");
+	if (InputDevice()->Key_Tap('P'))
+		m_tStatus.iNowHP = 0.f;
 
-	if (PHASE::PHASE2 == m_eCurrPhase && CGameInstance::GetInstance()->Get_InputDev()->Key_Tap('O'))
-		m_IsOverDrive = true;
+	if (PHASE::PHASE2 == m_eCurrPhase && !m_IsOverDrive)
+	{
+		m_fOverDriveElapsedTime += dt;
+		if (m_fOverDriveElapsedTime >= m_fOverDriveDuration)
+			m_IsOverDrive = true;
+	}
 
 	/* Idle */
 	if ("Idle" == m_pStateMachine->Get_CurrentStateName())
@@ -843,4 +869,13 @@ void CSacrifice::Update_States(_float dt)
 		}
 	}
 
+	/* Death */
+	if ("Death" != m_pStateMachine->Get_CurrentStateName() && "ChangePhase" != m_pStateMachine->Get_CurrentStateName() && m_tStatus.iNowHP <= 0.f)
+	{
+		m_pStateMachine->Change_State("Death");
+		m_pStateMachine->Reset_Trigger("Change_Phase");
+
+		if (PHASE::PHASE1 == m_eCurrPhase)
+			m_pStateMachine->Set_Trigger("Change_Phase");
+	}
 }
