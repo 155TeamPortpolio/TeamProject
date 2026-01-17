@@ -65,4 +65,5 @@ void CCorinState_Attack::Update(CCorin* pOwner, _float dt)
 void CCorinState_Attack::Exit(CCorin* pOwner)
 {
     pOwner->Unlock_Move();
+    __super::Exit(pOwner);
 }

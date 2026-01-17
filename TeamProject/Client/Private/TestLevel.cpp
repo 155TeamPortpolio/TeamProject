@@ -57,7 +57,6 @@
 
 /* UI */
 #include "UIDirector.h"
-#include "UI_MeshBillboard.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -104,11 +103,6 @@ HRESULT CTestLevel::Awake()
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Test_Level");
-
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
-	//auto pBillboard = Builder::Create_Object({ "Test_Level", "Proto_GameObject_3DBillboard" })
-	//	.Build("Test_Billboard");
-	//objMgr->Add_Object(pBillboard, { "Test_Level", "UI_Layer" });
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Portal", CPortal::Create());

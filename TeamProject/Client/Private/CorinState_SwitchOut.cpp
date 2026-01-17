@@ -26,3 +26,8 @@ void CCorinState_SwitchOut::Update(CCorin* pOwner, _float dt)
         pOwner->Get_StateMachine()->Set_Trigger("ToIdle");
     }
 }
+
+void CCorinState_SwitchOut::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}

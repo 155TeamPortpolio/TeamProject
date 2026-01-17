@@ -8,3 +8,8 @@ void CBelleState_Idle::Enter(CBelle* pOwner)
         .Loop(true)
         .Apply();
 }
+
+void CBelleState_Idle::Exit(CBelle* pOwner)
+{
+    __super::Exit(pOwner);
+}

@@ -73,4 +73,5 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 void CCorinState_Evade::Exit(CCorin* pOwner)
 {
     pOwner->Pop_Invincible();
+    __super::Exit(pOwner);
 }

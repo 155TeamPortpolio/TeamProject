@@ -63,8 +63,7 @@ void CUI_Manager::Post_EngineUpdate(_float dt)
 	if (itLevel == m_UIObjects.end())
 		return;
 
-	for (auto* uiObj : itLevel->second)
-		if (uiObj && uiObj->Is_Root())
+	for (auto* uiObj : m_SortedUIObjects)
 			uiObj->Post_EngineUpdate(dt);
 }
 
@@ -279,12 +278,23 @@ CUI_Object* CUI_Manager::Request_UIObject(const UI_HANDLE& handle)
 
 void CUI_Manager::Sort_UI()
 {
-	//for (auto& pair : m_UIObjects) {
-	//	sort(pair.second.begin(), pair.second.end(),
-	//		[&](CUI_Object* a, CUI_Object* b) {
-	//			return a->Get_Priority() < b->Get_Priority();
-	//		});
-	//}
+	m_SortedUIObjects.clear();
+	m_SortedUIObjects.reserve(256);
+
+	for (auto& pair : m_UIObjects)
+	{
+		for (CUI_Object* ui : pair.second)
+		{
+			if (ui && ui->Is_Root())
+				m_SortedUIObjects.push_back(ui);
+		}
+	}
+
+	std::stable_sort(m_SortedUIObjects.begin(), m_SortedUIObjects.end(),
+		[]( CUI_Object* left,  CUI_Object* right)
+		{
+			return left->Get_ZPriority() > right->Get_ZPriority();
+		});
 }
 
 CUI_Manager* CUI_Manager::Create()

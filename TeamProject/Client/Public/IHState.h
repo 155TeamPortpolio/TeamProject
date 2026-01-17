@@ -20,7 +20,7 @@ public:
 public:
     virtual void    Enter(Type* pOwner) override;
     virtual void    Update(Type* pOwner, _float dt) override;
-    virtual void    Exit(Type* pOwner) override {}
+    virtual void    Exit(Type* pOwner) override;
 
 public:
     virtual _bool   Is_EndState() const;
@@ -66,6 +66,17 @@ void IHState<Type>::Update(Type* pOwner, _float dt)
 {
     if (m_pSubStateMachine)
         m_pSubStateMachine->Update(dt);
+}
+
+template<typename Type>
+void IHState<Type>::Exit(Type* pOwner)
+{
+    if (m_pSubStateMachine)
+    {
+        IBaseState<Type>* pSubCurrent = m_pSubStateMachine->Get_CurrentState();
+        if (pSubCurrent)
+            pSubCurrent->Exit(pOwner);
+    }
 }
 
 template<typename Type>

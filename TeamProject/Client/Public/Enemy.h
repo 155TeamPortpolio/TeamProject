@@ -25,6 +25,10 @@ public:
     virtual void    Update(_float dt) override;
     virtual void    Late_Update(_float dt) override;
 
+    virtual void OnPooledAcquire(INIT_DESC* pArg = nullptr) {}	// 풀에서 꺼낼 때
+    virtual void OnPooledRelease() {}							// 풀로 돌아갈 때
+
+
 public: 
     /* Getter */
     // 현재 플레이 중인 캐릭터의 정보를 반환
@@ -47,6 +51,8 @@ public:
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
     void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc & hitDesc);
 
+    void                Death();
+
 protected:
     // Target(Player->Character)과의 거리 정보 계산
     void                ComputeTargetingInfo();
@@ -59,9 +65,11 @@ protected:
     // Groggy 수치 관리
     void                ManageGroggy(const _float dt);
 
+    void                Create_MeshPyramid();
 
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);
+    virtual void        Create_UIBossHUD();
 
 #pragma region BattleCollider
 protected:
@@ -87,6 +95,8 @@ protected:
 #pragma endregion
 
 protected:
+    UI_HANDLE               m_hUIEnemyStatus = {};
+
     // BattleSystem으로 부터 얻어온 Character정보
     vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos; 
     // Target(Player-Character)이 있을 때, Target 사이의 정보 구조체

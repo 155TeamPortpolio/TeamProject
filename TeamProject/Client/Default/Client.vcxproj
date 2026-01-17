@@ -188,7 +188,9 @@
     <ClInclude Include="..\Public\FieldSystem.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitAirborne.h" />
     <ClInclude Include="..\public\ThugAssaulter_HitKnockBack.h" />
+    <ClInclude Include="..\Public\UI_BossHUD.h" />
     <ClInclude Include="..\Public\UI_EnemyStatus.h" />
+    <ClInclude Include="..\Public\UI_FieldHUD.h" />
     <ClInclude Include="..\Public\UI_MeshBillboard.h" />
     <ClInclude Include="..\Public\ButtonUI.h" />
     <ClInclude Include="..\Public\CamDirectorData.h" />
@@ -268,6 +270,7 @@
     <ClInclude Include="..\public\ThugBulkyEnforcer_Groggy.h" />
     <ClInclude Include="..\Public\UIDesign_Macro.h" />
     <ClInclude Include="..\public\UI_MeshPyramid.h" />
+    <ClInclude Include="..\Public\UI_MeshPyramidData.h" />
     <ClInclude Include="..\Public\UI_WorldToScreen.h" />
     <ClInclude Include="..\Public\UI_IconLabel.h" />
     <ClInclude Include="..\Public\UI_BattleHUD.h" />
@@ -433,7 +436,9 @@
     <ClCompile Include="..\Private\FieldSystem.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitAirborne.cpp" />
     <ClCompile Include="..\private\ThugAssaulter_HitKnockBack.cpp" />
+    <ClCompile Include="..\Private\UI_BossHUD.cpp" />
     <ClCompile Include="..\Private\UI_EnemyStatus.cpp" />
+    <ClCompile Include="..\Private\UI_FieldHUD.cpp" />
     <ClCompile Include="..\Private\UI_MeshBillboard.cpp" />
     <ClCompile Include="..\Private\ButtonUI.cpp" />
     <ClCompile Include="..\Private\CamLoader.cpp" />

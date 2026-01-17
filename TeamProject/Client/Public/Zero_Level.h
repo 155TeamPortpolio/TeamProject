@@ -34,7 +34,6 @@ public:
 
 private:
 	void Rake_MapResources();
-	void Ready_3DUI();
 
 private:
 	CGameInstance* m_pGameInstance = {nullptr};

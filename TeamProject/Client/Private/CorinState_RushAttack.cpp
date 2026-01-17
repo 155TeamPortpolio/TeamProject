@@ -29,6 +29,11 @@ void CCorinState_RushAttack::Update(CCorin* pOwner, _float dt)
     __super::Update(pOwner, dt);
 }
 
+void CCorinState_RushAttack::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CCorinState_Rush_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
