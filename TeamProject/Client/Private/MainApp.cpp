@@ -34,6 +34,9 @@
 /* UI */
 #include "UI_EnemyStatus.h"
 #include "UI_MeshPyramid.h"
+#include "UI_MeshBillboard.h"
+
+#include "UI_IconLabel.h" 
 
 CMainApp::CMainApp()
 {
@@ -156,6 +159,8 @@ void CMainApp::Initialize_GlobalPrototype()
 	/* UI */
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_EnemyStatus", CUI_EnemyStatus::Create());
 	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshPyramid", CUI_MeshPyramid::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
+	PrototypeManager()->Add_ProtoType(G_GlobalLevelKey, "Proto_GameObject_IconLabel", CUI_IconLabel::Create());
 }
 
 void CMainApp::Create_GlobalCamObjs()
