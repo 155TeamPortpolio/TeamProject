@@ -80,6 +80,8 @@ public:
     DISSOLVE_STATE Get_DissolveState()const { return m_eDissolveState; }
     void Update_Dissolve(_float dt);
 
+    void Set_HitBlendable(_bool hitBlend) { m_IsHitBlendable = hitBlend; }
+
 private:
     void Create_Children();
     HRESULT Create_Colliders();
