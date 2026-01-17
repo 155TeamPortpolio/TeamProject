@@ -117,8 +117,8 @@ public:
 	void Set_OnSystem(const string& Level, _int systemIndex) { m_LevelTag = Level; m_SystemIndex = systemIndex; }
 	_int Get_SystemIndex() { return m_SystemIndex; }
 	string Get_SystemLevel() { return m_LevelTag; }
-	_uint Get_Priority() { return m_iPriority; };
-	void Set_Priority(_uint priority) { m_iPriority = priority; }
+	_float Get_ZPriority() { return m_Zpriority; };
+	void Set_ZPriority(_float priority) { m_Zpriority = priority; }
 
 public:
 	void Set_Clickable(_bool isClickable) { m_isClickable = isClickable; }
@@ -166,7 +166,7 @@ protected:
 	_float2 m_vPivot= {};
 
 	_float m_fRadian = {};
-	_uint m_iPriority = {UINT_MAX};
+	_float m_Zpriority = {0.f};
 
 	_int m_SystemIndex = {-1}; /* 유아이 매니저에서 배정한 벡터의 인덱스*/
 

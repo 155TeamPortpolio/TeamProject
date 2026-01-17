@@ -1,4 +1,4 @@
-#pragma once
+ #pragma once
 #include "UI_Object.h"
 
 NS_BEGIN(Client)
