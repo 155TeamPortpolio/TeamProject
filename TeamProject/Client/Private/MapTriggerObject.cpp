@@ -5,6 +5,9 @@
 #include "Collider.h"
 #include "MapLoader_Helper.h"
 
+//포탈을 알고있어야 만드는디
+#include "Portal.h"
+
 CMapTriggerObject::CMapTriggerObject()
 	: CMapObject()
 {
@@ -30,9 +33,9 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 
 	MAPOBJ_DESC* pObjDesc = static_cast<MAPOBJ_DESC*>(pArg);
 	
-	Ready_TriggerEvent(pObjDesc);
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
+	Ready_Interactable(pObjDesc);
 
 	return S_OK;
 }
@@ -173,7 +176,7 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 
 		MODEL_INIT_DESC modelDesc =  MODEL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".model");
 		MATERIAL_INIT_DESC matDesc = MATERIAL_INIT_DESC(G_GlobalLevelKey, AssetKey + ".mat");
-
+		
 		auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
 			.Position(vPos + vOffset)
 			.Scale(vScale)
@@ -185,29 +188,44 @@ void CMapTriggerObject::Ready_MeshUI(const MAPOBJ_DESC* pObjDesc)
 	}
 }
 
-void CMapTriggerObject::Ready_TriggerEvent(const MAPOBJ_DESC* pObjDesc)
+void CMapTriggerObject::Ready_Interactable(const MAPOBJ_DESC* pObjDesc)
 {
-	auto iter = pObjDesc->SlotDataValues.find("Trigger");
+	auto iter = pObjDesc->SlotDataValues.find("Portal");
 
 	if (iter != pObjDesc->SlotDataValues.end()) {
-		string PrototypeTag = {};
-		string AssetKey = {};
-		_float3 vOffset = {};
+		string PrototypeTag = "Proto_GameObject_Portal";
+		
 		for (auto& tFieldData : iter->second)
 		{
-			if (tFieldData.TagName == "EventType")
+			if (tFieldData.TagName == "NextLevel")
 			{
-				if (tFieldData.TagName == "Enter")
-					m_eEventType = MapTriggerType::ENTER;
-				else if (tFieldData.TagName == "Stay")
-					m_eEventType = MapTriggerType::STAY;
-				else if (tFieldData.TagName == "Exit")
-					m_eEventType = MapTriggerType::EXIT;
-				else if (tFieldData.TagName == "Interect")
-					m_eEventType = MapTriggerType::INTERECT;
+				_float3 vPos = {};
+				XMStoreFloat3(&vPos, m_pTransform->Get_Pos());
+				_vector3 vScale = m_pTransform->Get_Scale();
+
+				string NextLevelTag = *GetSlotValue<string>(tFieldData.defaultvalue);
+
+				CPortal::PORTAL_DESC* pPortalDesc = new CPortal::PORTAL_DESC;
+				pPortalDesc->InstanceName = "Portal" + NextLevelTag;
+				pPortalDesc->NextNameTag = NextLevelTag;
+
+				COLLIDER_DESC ColDesc = {};
+				ColDesc.iCollisionMask = ENUM(COLLISION_GROUP::PLAYER);
+				ColDesc.eType = Get_Component<CCollider>()->Get_Type();
+				ColDesc.bTrigger = true; // 충돌 박스 생성하는 트리거
+				ColDesc.vCenter = Get_Component<CCollider>()->Get_Center();
+				ColDesc.vSize = Get_Component<CCollider>()->Get_Size();
+				ColDesc.vRotation = Get_Component<CCollider>()->Get_Rotation();
+
+				auto pObj = Builder::Create_Object({ pObjDesc->TagLevel, PrototypeTag })
+					.Add_ObjDesc(pPortalDesc)
+					.Position(vPos)
+					.Collider(ColDesc)
+					.Scale(vScale)
+					.Build("Portal");
+
+				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
 			}
-			else if (tFieldData.TagName == "EventTag")
-				m_EventTag = *GetSlotValue<string>(tFieldData.defaultvalue);
 		}
 	}
 }
