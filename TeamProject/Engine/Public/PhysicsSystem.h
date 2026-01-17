@@ -20,6 +20,9 @@ public:
         if ((m_iTargetMask & shapeGroup) == 0)
             return PxQueryHitType::eNONE;  // 무시
 
+        if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
+            return PxQueryHitType::eNONE;  // 트리거 무시
+
         // 트리거 처리
         if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
             return PxQueryHitType::eTOUCH;  // 트리거는 Touch

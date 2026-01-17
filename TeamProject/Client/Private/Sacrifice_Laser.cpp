@@ -36,7 +36,6 @@ HRESULT CSacrifice_Laser::Initialize_Prototype()
 	ResourceManager()->Add_ResourcePath("Eff_Flare_085.png", "../Bin/Resources/Effect/Texture/Eff_Flare_085.png");
 	ResourceManager()->Add_ResourcePath("Flare_UU_02.png", "../Bin/Resources/Effect/Texture/Flare_UU_02.png");
 
-
 	return S_OK;
 }
 
@@ -57,7 +56,7 @@ HRESULT CSacrifice_Laser::Initialize(INIT_DESC* pArg)
 		.Build("LaserHitPoint");
 
 	_smatrix offsetMatrix = _smatrix::Identity;
-	offsetMatrix.Translation(_vector3(0.5f, 0.1f, 0.f));
+	offsetMatrix.Translation(_vector3(0.5f, 0.2f, 0.f));
 
 	auto pBoneFollower = Get_Component<CBoneFollower>();
 	pBoneFollower->Set_Offset(offsetMatrix);
@@ -78,6 +77,7 @@ void CSacrifice_Laser::Awake()
 
 void CSacrifice_Laser::Priority_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Priority_UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Update(_float dt)
@@ -152,7 +152,6 @@ void CSacrifice_Laser::Update(_float dt)
 	pLaserHitPoint->Get_Component<CTransform>()->Set_Pos(context.vLinePoint1);
 	Get_Component<CObjectContainer>()->UpdateChild(dt);
 
-
 	if (m_IsPendingDeactive)
 	{
 		m_fElapseTime += dt;
@@ -166,6 +165,7 @@ void CSacrifice_Laser::Update(_float dt)
 
 void CSacrifice_Laser::Late_Update(_float dt)
 {
+	Get_Component<CObjectContainer>()->Late_UpdateChild(dt);
 }
 
 void CSacrifice_Laser::Render_GUI()

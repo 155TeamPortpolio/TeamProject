@@ -57,6 +57,7 @@ private:
     HRESULT Initialize_StateMachine();
     HRESULT Initialize_States();
     HRESULT Initialize_Transitions();
+    HRESULT Create_Colliders();
 
 private:
     CStateMachine<CSacrificeHand>* m_pStateMachine = { nullptr };

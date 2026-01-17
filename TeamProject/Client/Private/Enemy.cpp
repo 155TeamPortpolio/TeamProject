@@ -302,7 +302,7 @@ HRESULT CEnemy::AttachBattleColliderObject(BATTLE_COLLIDER_DESC* pDesc)
 		pTriggerCollider->Get_Component<CBoneFollower>()->Link_Bone(pDesc->pOwnerAnimator3D, pDesc->tagBone);
 	}
 	else
-		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pAttackCollider, true);
+		iTriggerColliderChildIndex = pObjectContainer->Add_Child(pTriggerCollider, true);
 
 	m_BattleColliderChildrenIndex.emplace(tagTriggerInstance, iTriggerColliderChildIndex);
 #pragma endregion	
