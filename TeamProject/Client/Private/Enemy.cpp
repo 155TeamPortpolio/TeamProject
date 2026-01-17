@@ -329,6 +329,14 @@ void CEnemy::ManageGroggy(const _float dt)
 	}
 }
 
+void CEnemy::Create_MeshPyramid()
+{
+	auto meshPyramid = Builder::Create_Object({G_GlobalLevelKey, "Proto_GameObject_MeshPyramid"})
+		.Build("MeshPyramid");
+
+	Get_Component<CObjectContainer>()->Add_Child(meshPyramid);
+}
+
 void CEnemy::SetBattleColliderObject(const string& tagBattleColliderObject, BATTLE_COLTYPE eBattleColliderType, _bool is, const HitDesc& hitdesc = {})
 {
 	string tagBattleCol = tagBattleColliderObject;

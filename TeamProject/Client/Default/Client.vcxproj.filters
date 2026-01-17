@@ -1371,6 +1371,9 @@
     <ClInclude Include="..\Public\UI_FieldHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Field</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_MeshPyramidData.h">
+      <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
