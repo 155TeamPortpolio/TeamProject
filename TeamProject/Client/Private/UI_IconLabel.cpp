@@ -16,9 +16,8 @@ HRESULT CUI_IconLabel::Initialize_Prototype()
 HRESULT CUI_IconLabel::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
-    
-    auto pResourceMgr = CGameInstance::GetInstance()->GetInstance()->Get_ResourceMgr();
-    const string& filePath = pResourceMgr->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey);
+
+    const string& filePath = ResourceManager()->Get_ResourcePath(static_cast<UI_DESC*>(pArg)->UIAssetKey);
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
     return S_OK;
