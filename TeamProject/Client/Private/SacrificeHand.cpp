@@ -303,8 +303,6 @@ HRESULT CSacrificeHand::Create_Colliders()
 		if (FAILED(AttachBattleColliderObject(&HandDesc)))
 			return E_FAIL;
 	}
-	static HitDesc desc{};
-	SetAutoPlayBattleCollider("Hand", 0.1f, 50000.f, desc);
 
 	return S_OK;
 }

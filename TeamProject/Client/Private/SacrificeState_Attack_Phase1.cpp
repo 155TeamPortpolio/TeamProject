@@ -185,8 +185,6 @@ void CSacrificeState_ArmRecover_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Arm_Recover").Loop(false).Speed(1.f).Apply();
 
-	pAnimator->Get_EventBus();
-	pOwner->Active_AttackSign();
 }
 
 void CSacrificeState_ArmRecover_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -213,6 +211,10 @@ void CSacrificeState_Attack_01_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_01").Loop(false).Speed(1.2f).Apply();
+
+	HitDesc hitDesc{};
+	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.2f, 0.6f, hitDesc);
 }
 
 void CSacrificeState_Attack_01_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -244,7 +246,9 @@ void CSacrificeState_Attack_02_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_02").Loop(false).Speed(1.f).Apply();
 	
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Sword", 0.f, 0.1f, hitDesc);
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -315,8 +319,9 @@ void CSacrificeState_Attack_03_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_03").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
-
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.1f, 0.2f, hitDesc);
 }
 
 void CSacrificeState_Attack_03_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -402,7 +407,9 @@ void CSacrificeState_Attack_04_1_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_04_1").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.2f, 0.5f, hitDesc);
 }
 
 void CSacrificeState_Attack_04_1_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -558,7 +565,9 @@ void CSacrificeState_Attack_07_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_07").Loop(false).Speed(1.2f).Apply();
 
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Sword", 0.f, 0.5f, hitDesc);
 }
 
 void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
@@ -582,7 +591,7 @@ void CSacrificeState_Attack_07_Phase1::Update(CSacrifice* pOwner, _float dt)
 
 	if (m_fAnimProgress < 0.3f)
 		pOwner->RotateToTarget(dt, 20.f);
-	pOwner->MoveByRootMotion(dt, 1.2f);
+	pOwner->MoveByRootMotion(dt, 1.5f);
 }
 
 void CSacrificeState_Attack_07_Phase1::Exit(CSacrifice* pOwner)
@@ -631,7 +640,9 @@ void CSacrificeState_Attack_08_Phase1::Enter(CSacrifice* pOwner)
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_08").Loop(false).Speed(1.f).Apply();
 
+	HitDesc hitDesc{};
 	pOwner->Active_AttackSign();
+	pOwner->SetAutoPlayBattleCollider("Axe", 0.f, 0.4f, hitDesc);
 
 	m_IsAttackStart = false;
 	m_IsAttackEnd = false;
@@ -887,6 +898,9 @@ void CSacrificeState_Attack_Turn_Phase1::Enter(CSacrifice* pOwner)
 {
 	auto pAnimator = pOwner->Get_Component<CAnimator3D>();
 	pAnimator->Change_Animation("SacrificeBringer_Ani_P1_Attack_Turn").Loop(false).Speed(1.2f).Apply();
+
+	HitDesc hitDesc{};
+	pOwner->SetAutoPlayBattleCollider("Right_Arm", 0.2f, 0.4f, hitDesc);
 }
 
 void CSacrificeState_Attack_Turn_Phase1::Update(CSacrifice* pOwner, _float dt)
