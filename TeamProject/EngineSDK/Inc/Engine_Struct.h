@@ -535,7 +535,13 @@ namespace Engine
 		class CGameObject* Get();
 		void Delete();
 		_bool operator==(const tagObjectHandle& rhs) {
-			return hObjID == rhs.hObjID;
+			if (isValid())
+				return hObjID == rhs.hObjID;
+			else
+				return false;
+		}
+		_bool operator !=(const tagObjectHandle& rhs) {
+			return hObjID != rhs.hObjID;
 		}
 		tagObjectHandle& operator= (const tagObjectHandle& rhs) {
 			Level = rhs.Level;

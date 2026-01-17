@@ -13,6 +13,7 @@ private:
 
 public:
     void Set_FogDesc(FOG_DESC desc) { fogDesc = desc; };
+    FOG_DESC Get_FogDesc() { return fogDesc; };
 
 public:
     HRESULT Render_HDRBloom();
