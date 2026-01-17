@@ -105,6 +105,7 @@ void CJaneDoeState_NormalAttack::Update(CJaneDoe* pOwner, _float dt)
 
 void CJaneDoeState_NormalAttack::Exit(CJaneDoe* pOwner)
 {
+    __super::Exit(pOwner);
 }
 
 

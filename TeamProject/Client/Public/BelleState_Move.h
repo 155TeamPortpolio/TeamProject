@@ -13,7 +13,7 @@ public:
 public:
 	virtual void  Enter(CBelle* pOwner) override;
 	virtual void  Update(CBelle* pOwner, _float dt) override;
-	virtual void  Exit(CBelle* pOwner) override {}
+	virtual void  Exit(CBelle* pOwner) override;
 
 public:
 	static CBelleState_Move* Create() { return new CBelleState_Move(); }

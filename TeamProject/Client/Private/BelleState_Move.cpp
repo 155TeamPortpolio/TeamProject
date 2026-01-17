@@ -30,3 +30,8 @@ void CBelleState_Move::Update(CBelle* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
 }
+
+void CBelleState_Move::Exit(CBelle* pOwner)
+{
+    __super::Exit(pOwner);
+}

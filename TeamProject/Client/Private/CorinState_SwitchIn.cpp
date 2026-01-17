@@ -70,4 +70,5 @@ void CCorinState_SwitchIn::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_SwitchIn::Exit(CCorin* pOwner)
 {
+    __super::Exit(pOwner);
 }

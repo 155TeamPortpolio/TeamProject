@@ -37,6 +37,11 @@ void CBelleState_Walk::Update(CBelle* pOwner, _float dt)
     __super::Update(pOwner, dt);
 }
 
+void CBelleState_Walk::Exit(CBelle* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CBelleState_Walk_Start::Enter(CBelle* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_AnimName() + "Suibianguan_Ani_MainCity_Walk_Start")

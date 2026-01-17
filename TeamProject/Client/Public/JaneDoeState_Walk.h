@@ -9,7 +9,7 @@ class CJaneDoeState_Walk final : public IHState<CJaneDoe>
 public:
     virtual void Enter(CJaneDoe* pOwner) override;
     virtual void Update(CJaneDoe* pOwner, _float dt) override;
-    virtual void Exit(CJaneDoe* pOwner) override {}
+    virtual void Exit(CJaneDoe* pOwner) override;
 
 public:
     static CJaneDoeState_Walk* Create() { return new CJaneDoeState_Walk(); }

@@ -47,3 +47,8 @@ void CCorinState_SwitchInNormal::Update(CCorin* pOwner, _float dt)
         pSwitch->Get_SubStateMachine()->Set_Trigger("Complete");
     }
 }
+
+void CCorinState_SwitchInNormal::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}

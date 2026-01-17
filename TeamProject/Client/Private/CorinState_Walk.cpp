@@ -49,6 +49,11 @@ void CCorinState_Walk::Update(CCorin* pOwner, _float dt)
     }
 }
 
+void CCorinState_Walk::Exit(CCorin* pOwner)
+{
+    __super::Exit(pOwner);
+}
+
 void CCorinState_Walk_Start::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Walk_Start")
