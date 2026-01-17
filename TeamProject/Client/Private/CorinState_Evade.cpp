@@ -11,7 +11,7 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     if (pOwner->Can_Parry())
     {
         BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER,
-            1.5f, 0.5f);
+            1.5f, 0.5f, 0.f, 0.f);
         //BattleSystem()->StartShaderVFX(1.5f);
         pOwner->Set_InvincibleTimer(1.5f);
     }
