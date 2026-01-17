@@ -8,7 +8,6 @@ class ENGINE_DLL CTexture final : public CBase
 		_uint2 textureSize;
 		_uint  mipIndex;
 		_float epsilon;
-		_uint  padding0;
 	};
 	struct AlphaGlobalGPU
 	{

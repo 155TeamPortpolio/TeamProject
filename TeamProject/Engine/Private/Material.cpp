@@ -141,11 +141,11 @@ _bool CMaterial::isValid(_uint index)
 	return m_MaterialInstances[index]->isValid();
 }
 
-void CMaterial::SetBlendHasAlpha(AlphaCheckLevel checkLevel)
+void CMaterial::SetBlendHasAlpha(AlphaCheckLevel checkLevel , const string& BlendPass)
 {
 	for (auto instance : m_MaterialInstances)
 	{
-		instance->SetBlendIf_AlphaDiffuse(checkLevel);
+		instance->SetBlendIf_AlphaDiffuse(checkLevel, BlendPass);
 	}
 }
 

@@ -227,6 +227,8 @@ void CTexture::CalcDispatchGroups(_uint mipWidth, _uint mipHeight, _uint& outGro
 
 HRESULT CTexture::CreateAlphaGlobalBuffers(ID3D11Device* device, AlphaGlobalGPU& outGpu)
 {
+    m_AlphaGlobal.Release();
+
     const _uint elementCount = 1;
     const _uint stride = sizeof(_uint);
     const _uint byteWidth = elementCount * stride;
@@ -260,14 +262,6 @@ HRESULT CTexture::CreateAlphaGlobalBuffers(ID3D11Device* device, AlphaGlobalGPU&
 
     hr = device->CreateBuffer(&staging, nullptr, &outGpu.stagingBuffer);
 
-    if (!m_pAlphaInspectCB)
-    {
-        D3D11_BUFFER_DESC cbDesc = {};
-        cbDesc.ByteWidth = sizeof(CB_ALPHA_INSPECT);
-        cbDesc.Usage = D3D11_USAGE_DEFAULT;
-        cbDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-        device->CreateBuffer(&cbDesc, nullptr, &m_pAlphaInspectCB);
-    }
     return hr;
 }
 

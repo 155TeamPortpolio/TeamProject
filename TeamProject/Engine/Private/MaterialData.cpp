@@ -94,7 +94,8 @@ HRESULT CMaterialData::Set_MaterialConstantBuffer(ID3D11Buffer* pCBuffer)
 
 _bool CMaterialData::Has_Texture(TEXTURE_TYPE eType)
 {
-	return !m_Textures[eType].empty();
+	auto it = m_Textures.find(eType);
+	return (it != m_Textures.end() && !it->second.empty());
 }
 
 _bool CMaterialData::Has_NonOpaque(TEXTURE_TYPE eType, _uint Index, AlphaCheckLevel level)

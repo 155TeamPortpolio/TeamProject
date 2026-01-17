@@ -34,7 +34,7 @@ public:
     _bool isValid(_uint index);
 
 public:
-    void SetBlendHasAlpha(AlphaCheckLevel checkLevel);
+    void SetBlendHasAlpha(AlphaCheckLevel checkLevel, const string& BlendPass);
 
 public:
     virtual void Render_GUI() override;

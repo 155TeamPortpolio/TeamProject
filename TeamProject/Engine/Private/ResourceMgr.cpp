@@ -787,7 +787,7 @@ void CResourceMgr::Load_InitialResource()
 	m_Resources[0].m_ComputeShaders.emplace("CS_HiZ_Copy.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_HiZ_Copy.hlsl", "CS_HiZ_Copy.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_HiZ_Reduce.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_HiZ_Reduce.hlsl", "CS_HiZ_Reduce.hlsl"));
 	m_Resources[0].m_ComputeShaders.emplace("CS_OcclusionCull.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_OcclusionCull.hlsl", "CS_OcclusionCull.hlsl"));
-	m_Resources[0].m_Shaders.emplace("CS_AlphaInspect.hlsl", CShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_AlphaInspect.hlsl", "CS_AlphaInspect.hlsl"));
+	m_Resources[0].m_ComputeShaders.emplace("CS_AlphaInspect.hlsl", CComputeShader::Create(m_pDevice, "../Bin/ShaderFiles/CS_AlphaInspect.hlsl", "CS_AlphaInspect.hlsl"));
 
 	/*Default*/
 	m_Resources[0].m_ModelDatas.emplace("Default.model", CModelData::Create("../../DefaultSource/Default.model", m_pDevice));

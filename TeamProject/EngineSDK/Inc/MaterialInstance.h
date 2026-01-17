@@ -39,7 +39,7 @@ public:
 	_bool IsUseOutLine() { return m_IsUseOutLine; }
 	_bool isValid();
 
-	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level);
+	void SetBlendIf_AlphaDiffuse(AlphaCheckLevel level, const string& pass);
 public:
 	virtual void Render_GUI();
 
