@@ -95,6 +95,13 @@ void CCorinState_ExAttack_Start::Update(CCorin* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
+
+    if (m_fAnimProgress >= 0.4f)
+        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::ONCE, DAMAGE_TYPE::NORMAL, 1.f});
+    if (m_fAnimProgress >= 0.5f)
+        pOwner->End_AttackCollider("Saw");
+    if (m_fAnimProgress >= 0.55f)
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::INTERVAL, DAMAGE_TYPE::NORMAL, 1.f, 0.01f, 1 });
 }
 
 void CCorinState_ExAttack_Loop::Enter(CCorin* pOwner)
@@ -160,6 +167,7 @@ void CCorinState_ExAttack_Loop_Walk::Exit(CCorin* pOwner)
 
 void CCorinState_ExAttack_Explode::Enter(CCorin* pOwner)
 {
+    pOwner->End_AttackCollider("Saw");
     pOwner->Set_SpecialEnergy(80.f);
     auto pSubStateMachine = Get_ParentState()->Get_SubStateMachine();
     pSubStateMachine->Set_Bool("ExFinished", true);
