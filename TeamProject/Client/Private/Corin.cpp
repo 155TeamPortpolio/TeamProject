@@ -150,8 +150,8 @@ void CCorin::On_SwitchOut()
 void CCorin::On_Ultimate()
 {
 	__super::On_Ultimate();
-	//m_pStateMachine->Set_Int("AttackEntryMode", 3);
-	//m_pStateMachine->Set_Trigger("Attack");
+	m_pStateMachine->Set_Int("AttackEntryMode", 3);
+	m_pStateMachine->Set_Trigger("Attack");
 }
 
 void CCorin::On_Special()

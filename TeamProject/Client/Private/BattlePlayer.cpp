@@ -284,10 +284,10 @@ void CBattlePlayer::Process_Ultimate()
 {
 	if (InputDevice()->Key_Tap('Q'))
 	{
-		//if (m_pCurrentCharacter->Can_Ultimate())
-		//{
+		if (m_pCurrentCharacter->Can_Ultimate())
+		{
 			m_pCurrentCharacter->On_Ultimate();
-		//}
+		}
 	}
 }
 
