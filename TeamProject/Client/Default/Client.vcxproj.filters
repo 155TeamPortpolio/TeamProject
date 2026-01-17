@@ -694,11 +694,23 @@
     <Filter Include="02. GameObject\Object\Player\Character\JaneDoe\State\Hit">
       <UniqueIdentifier>{bd89193b-a932-4e90-abda-3a4bff8cb617}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Object\Interactable">
+      <UniqueIdentifier>{196f5788-8586-4eb4-8224-8d7762629947}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Interactable\Portal">
+      <UniqueIdentifier>{af8fd851-810f-475c-814f-9032f6562f43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Map">
+      <UniqueIdentifier>{d1149f0e-c9f3-45bd-89e7-df5876021132}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid">
       <UniqueIdentifier>{24b1d39d-8f09-4dfa-9e14-05a0d492a803}</UniqueIdentifier>
-	</Filter>
+    </Filter>
     <Filter Include="02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate">
       <UniqueIdentifier>{d8c05f91-7f1a-489f-a675-4a4178a2694d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\Object\Enemy\Sacrifice\State\Groggy">
+      <UniqueIdentifier>{fe64c87d-b23d-4725-bdd1-3b9d2c8dbbbd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1342,11 +1354,20 @@
     <ClInclude Include="..\public\JaneDoeState_Hit.h">
       <Filter>02. GameObject\Object\Player\Character\JaneDoe\State\Hit</Filter>
     </ClInclude>
+    <ClInclude Include="..\public\Interactable.h">
+      <Filter>02. GameObject\Object\Interactable</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\Portal.h">
+      <Filter>02. GameObject\Object\Interactable\Portal</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\UI_MeshPyramid.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-	</ClInclude>
+  	</ClInclude>
     <ClInclude Include="..\Public\CorinState_UltimateAttack.h">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SacrificeState_Groggy.h">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1968,9 +1989,12 @@
     </ClCompile>
     <ClCompile Include="..\private\UI_MeshPyramid.cpp">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-	</ClCompile>
+  	</ClCompile>
     <ClCompile Include="..\Private\CorinState_UltimateAttack.cpp">
       <Filter>02. GameObject\Object\Player\Character\Corin\State\Attack\Ultimate</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SacrificeState_Groggy.cpp">
+      <Filter>02. GameObject\Object\Enemy\Sacrifice\State\Groggy</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

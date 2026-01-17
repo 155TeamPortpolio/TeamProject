@@ -57,6 +57,9 @@ HRESULT CSacrificeHand::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
+	if (FAILED(Create_Colliders()))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -84,6 +87,8 @@ void CSacrificeHand::Priority_Update(_float dt)
 
 void CSacrificeHand::Update(_float dt)
 {
+	__super::Update(dt);
+
 	Get_Component<CAnimator3D>()->Update_Animation(dt);
 	m_pStateMachine->Update(dt);
 }
@@ -277,5 +282,45 @@ HRESULT CSacrificeHand::Initialize_States()
 
 HRESULT CSacrificeHand::Initialize_Transitions()
 {
+	return S_OK;
+}
+
+HRESULT CSacrificeHand::Create_Colliders()
+{
+	auto pAnimator = Get_Component<CAnimator3D>();
+
+	/* Hand */
+	{
+		BATTLE_COLLIDER_DESC HandDesc{};
+
+		HandDesc.tagName = "Hand";
+		HandDesc.isAttachBone = true;
+		HandDesc.tagBone = "Eye01_A1";
+		HandDesc.pOwnerAnimator3D = pAnimator;
+		HandDesc.vAttackSize = _float3{ 3.f,3.f,3.f };
+		HandDesc.vTriggerSize = _float3{ 5.f,5.f,5.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandDesc)))
+			return E_FAIL;
+	}
+
+	/* Hand Sword */
+	{
+		BATTLE_COLLIDER_DESC HandSwordDesc{};
+
+		HandSwordDesc.tagName = "Hand_Sword";
+		HandSwordDesc.isAttachBone = true;
+		HandSwordDesc.tagBone = "Ctr_HSword";
+		HandSwordDesc.pOwnerAnimator3D = pAnimator;
+		HandSwordDesc.eAttackColliderType = COLLIDER_TYPE::BOX;
+		HandSwordDesc.eTriggerColliderType = COLLIDER_TYPE::BOX;
+		HandSwordDesc.vCenter = _float3{ 19.5f,0.f,0.f };
+		HandSwordDesc.vAttackSize = _float3{ 34.f,3.f,4.f };
+		HandSwordDesc.vTriggerSize = _float3{ 34.f,6.f,4.f };
+
+		if (FAILED(AttachBattleColliderObject(&HandSwordDesc)))
+			return E_FAIL;
+	}
+
 	return S_OK;
 }

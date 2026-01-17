@@ -390,7 +390,7 @@ HRESULT CCorin::Initialize_Stat()
 HRESULT CCorin::Initialize_Weapon()
 {
 	ATTACK_COLLIDER_DESC desc;
-	desc.eColliderType = COLLIDER_TYPE::BOX;
+	desc.eColliderType = COLLIDER_TYPE::SPHERE;
 	desc.pOwnerAnimator = Get_Component<CAnimator3D>();
 	desc.tagBone = "Weapon_saw";
 	desc.tagName = "Saw";

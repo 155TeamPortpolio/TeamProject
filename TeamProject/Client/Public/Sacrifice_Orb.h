@@ -17,10 +17,10 @@ public:
     void    Update(_float dt) override;
     void    Late_Update(_float dt) override;
 
-
     void Render_GUI()override;
+
 public:
-    void OnCollisionEnter(CGameObject* pOther) override;
+    void OnTriggerEnter(CGameObject* pOther) override;
 
 public:
     static CSacrifice_Orb* Create();

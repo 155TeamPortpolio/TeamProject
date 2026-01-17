@@ -12,20 +12,8 @@
 #include "BattleSystem.h"
 #include "DataBase.h"
 
-// Camera
-#include "Camera.h"
-#include "FreeCam.h"
-#include "CamDirector.h"
-#include "OrbitCam.h"
-#include "ShadowCam.h"
-#include "SequenceCam.h"
-#include "CamPanel.h"
-#include "CamLoader.h"
-
 /* MapData */
 #include "MapLoader.h"
-#include "MapPlacedObject.h"
-#include "MapTriggerObject.h"
 
 /* Effect */
 #include "MeshNode.h"
@@ -36,26 +24,16 @@
 #include "AttackSign.h"
 
 /* Character */
-#include "Miyabi.h"
-#include "Anbi.h"
-#include "Corin.h"
-#include "JaneDoe.h"
 #include "Player.h"
 
 /* Enemy */
-#include "Sacrifice.h" 
-#include "SacrificeHand.h"
-#include "Sacrifice_Laser.h"
-#include "Sacrifice_Orb.h"
-#include "ThugBulkyEnforcer.h"
-#include "EnemyAttackCollider.h"
-#include "EnemyTriggerCollider.h"
-#include "ThugAssaulter.h"
 
 /* UI */
 #include "UIDirector.h"
 #include "UI_MeshBillboard.h"
 
+/* Interactable */
+#include "Portal.h"
 
 CScott_Level::CScott_Level(const string& LevelKey)
 	:CLevel(LevelKey),
@@ -81,20 +59,15 @@ HRESULT CScott_Level::Awake()
 	IResourceService* pResource = CGameInstance::GetInstance()->Get_ResourceMgr();
 	auto objMgr = m_pGameInstance->Get_ObjectMgr();
 
-	//============== Test =================================
-	//pProto->Add_ProtoType("Test_Level", "Proto_GameObject_TestPlane", CTestPlane::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestModel", CTestObject::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestFloor", CTestFloor::Create());
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_TestMap", CTestMap::Create());
-
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Scott_Level");
 
+	//==================== Interactable ===============
+	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_Portal", CPortal::Create());
+
 	//============== Map ============================
 	Ready_Map("Scott_Level", "Zero_Worksite");
-
-	pProto->Add_ProtoType("Scott_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
 
 	return S_OK;
 }
@@ -118,10 +91,12 @@ void CScott_Level::Ready_Map(const string& LevelTag, const string& AreaTag)
 {
 	//// Ready MapObject key and path to ResourceMgr 
 	Rake_MapResources();
+
 	//Map Loader Logic is going to Change
 	CMapLoader* pMapLoader = CMapLoader::Create(LevelTag, AreaTag);
 	if (nullptr == pMapLoader)
 		MSG_BOX("Failed to Load MapData!");
+
 	Safe_Release(pMapLoader);
 }
 
@@ -129,7 +104,6 @@ void CScott_Level::Rake_MapResources()
 {
 	filesystem::path MapDataFolderPath = "../Bin/Resources/MapData/Model/";
 	Helper::EnsureDirectoryExist(MapDataFolderPath);
-
 
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	for (const auto& entry : filesystem::recursive_directory_iterator(MapDataFolderPath))
@@ -140,10 +114,8 @@ void CScott_Level::Rake_MapResources()
 			filesystem::path MaterialPath = ModelPath;
 			MaterialPath.replace_extension(".mat");
 
-
 			pRcsMgr->Add_ResourcePath(ModelPath.filename().string(), ModelPath.string());
 			pRcsMgr->Add_ResourcePath(MaterialPath.filename().string(), MaterialPath.string());
-
 		}
 	}
 }
@@ -163,8 +135,6 @@ void CScott_Level::Free()
 {
 	__super::Free();
 	CBattleSystem::GetInstance()->DestroyInstance();
-	CDataBase::GetInstance()->DestroyInstance();
-	m_pCamDirector->DestroyInstance();
 	m_pGameInstance->DestroyInstance();
 	m_pPlayer->Clear_Characters();
 }

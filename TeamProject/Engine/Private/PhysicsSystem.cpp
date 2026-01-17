@@ -152,7 +152,7 @@ _bool CPhysicsSystem::Raycast(const PHYSICS_RAY& desc, PHYSICS_RAY_HIT& outHit)
     PxVec3 origin(desc.vOrigin.x, desc.vOrigin.y, desc.vOrigin.z);
     PxVec3 direction(desc.vDirection.x, desc.vDirection.y, desc.vDirection.z);
     direction.normalize();
-
+    
     PxRaycastBuffer hit;
     PxQueryFilterData filterData;
     filterData.flags = PxQueryFlag::eSTATIC | PxQueryFlag::eDYNAMIC;

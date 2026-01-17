@@ -106,6 +106,43 @@ void CTestCloud::Late_Update(_float dt)
 {
 }
 
+void CTestCloud::Render_GUI()
+{
+	float skyColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
+	float cloudColor[3] = { m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z };
+	ImGui::SeparatorText("Sky Color");
+	if (ImGui::ColorEdit3("Sky Color", skyColor,
+		ImGuiColorEditFlags_Float |
+		ImGuiColorEditFlags_DisplayRGB |
+		ImGuiColorEditFlags_InputRGB))
+	{
+		m_vSkyColor.x = skyColor[0];
+		m_vSkyColor.y = skyColor[1];
+		m_vSkyColor.z = skyColor[2];
+	}
+
+	if (ImGui::ColorEdit3("Cloud Color", cloudColor,
+		ImGuiColorEditFlags_Float |
+		ImGuiColorEditFlags_DisplayRGB |
+		ImGuiColorEditFlags_InputRGB))
+	{
+		m_vCloudColor.x = cloudColor[0];
+		m_vCloudColor.y = cloudColor[1];
+		m_vCloudColor.z = cloudColor[2];
+	}
+
+	// 미리보기(작은 컬러칩)
+	ImGui::SameLine();
+	ImGui::ColorButton("##SkyPreview",
+		ImVec4(m_vSkyColor.x, m_vSkyColor.y, m_vSkyColor.z, 1.0f),
+		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
+
+	ImGui::SameLine();
+	ImGui::ColorButton("##CloudPreview",
+		ImVec4(m_vCloudColor.x, m_vCloudColor.y, m_vCloudColor.z, 1.0f),
+		ImGuiColorEditFlags_NoTooltip, ImVec2(18, 18));
+}
+
 CTestCloud* CTestCloud::Create()
 {
 	CTestCloud* Instance = new CTestCloud();
