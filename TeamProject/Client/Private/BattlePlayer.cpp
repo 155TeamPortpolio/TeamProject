@@ -138,6 +138,7 @@ void CBattlePlayer::Late_Update(_float dt)
 void CBattlePlayer::Render_GUI()
 {
 	ImGui::Text("Can Parry : %s", m_pCurrentCharacter->Can_Parry() ? "TRUE" : "FALSE");
+	ImGui::Text("Is Invicible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
 }
 
 void CBattlePlayer::Update_Input(_float dt)
