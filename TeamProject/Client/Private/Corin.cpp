@@ -302,7 +302,7 @@ void CCorin::Process_EndState(const string& strCurrentState)
 
 		IHState<CCorin>* pHitType = dynamic_cast<IHState<CCorin>*>(
 			pHit->Get_SubStateMachine()->Get_CurrentState());
-		if (pHitType && pHitType->Is_EndState())
+		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
 		{
 			IBaseState<CCorin>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
