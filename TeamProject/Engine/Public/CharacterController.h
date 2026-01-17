@@ -71,7 +71,6 @@ public:
     _float          Get_Radius() const { return m_fRadius; }
     _float          Get_MaxSpeed() const { return m_fMaxSpeed; }
     void            Set_Gravity(_float fGravity) { m_fGravity = fGravity; }
-    _uint           Get_CollisionMask() const { return m_FilterData.word1; }
 
 public:
     virtual HRESULT Initialize_Prototype() override;
@@ -130,8 +129,8 @@ public:
 
     _float          Get_HalfSize()  const { return m_fHeight * 0.5f + m_fRadius * 0.5f; }
 
-    void            Set_CollisionMask(_uint iMask);
-    void            Set_CollisionGroup(COLLISION_GROUP eGroup);
+    void            Set_CollisionMask(_uint iMask) override;
+    void            Set_CollisionGroup(COLLISION_GROUP eGroup) override;
 
 private:
     void            Move(_fvector vDisplacement, _float dt);

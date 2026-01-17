@@ -150,8 +150,8 @@ void CCorin::On_SwitchOut()
 void CCorin::On_Ultimate()
 {
 	__super::On_Ultimate();
-	//m_pStateMachine->Set_Int("AttackEntryMode", 3);
-	//m_pStateMachine->Set_Trigger("Attack");
+	m_pStateMachine->Set_Int("AttackEntryMode", 3);
+	m_pStateMachine->Set_Trigger("Attack");
 }
 
 void CCorin::On_Special()
@@ -278,9 +278,37 @@ void CCorin::Process_EndState(const string& strCurrentState)
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
+	else if (strCurrentState == "SwitchIn")
+	{
+		CCorinState_SwitchIn* pSwitchIn = static_cast<CCorinState_SwitchIn*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pSwitchIn) return;
+
+		IHState<CCorin>* pSwitchInType = dynamic_cast<IHState<CCorin>*>(
+			pSwitchIn->Get_SubStateMachine()->Get_CurrentState());
+		if (pSwitchInType && pSwitchInType->Is_EndState())
+		{
+			IBaseState<CCorin>* pEnd = pSwitchInType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
+	}
 	else if (strCurrentState == "Hit")
 	{
+		CCorinState_Hit* pHit = static_cast<CCorinState_Hit*>(
+			m_pStateMachine->Get_CurrentState());
+		if (!pHit) return;
 
+		IHState<CCorin>* pHitType = dynamic_cast<IHState<CCorin>*>(
+			pHit->Get_SubStateMachine()->Get_CurrentState());
+		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
+		{
+			IBaseState<CCorin>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
+			if (m_bIsEvade) return;
+			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+				m_pStateMachine->Set_Trigger("ToIdle");
+		}
 	}
 }
 

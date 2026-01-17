@@ -11,6 +11,8 @@ void CJaneDoeState_SwitchInAttack::Enter(CJaneDoe* pOwner)
         m_pSubStateMachine->Register_State("Start", CJaneDoeState_SwitchInAttack_Start::Create());
         m_pSubStateMachine->Register_State("End", CJaneDoeState_SwitchInAttack_End::Create());
 
+        m_pSubStateMachine->Get_State("End")->Set_Tag("End");
+
         m_pSubStateMachine->Register_Transition("Start", "End",
             CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
 
