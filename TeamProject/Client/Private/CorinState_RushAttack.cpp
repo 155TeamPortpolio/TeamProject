@@ -34,7 +34,7 @@ void CCorinState_Rush_Start::Enter(CCorin* pOwner)
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Rush")
         .Speed(2.f)
         .Apply();
-    pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.f });
+    pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f, 7 });
 }
 
 void CCorinState_Rush_Start::Update(CCorin* pOwner, _float dt)

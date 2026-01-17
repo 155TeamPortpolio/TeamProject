@@ -14,7 +14,9 @@ HRESULT CComputeShader::Initialize(ID3D11Device* pDevice, const string& filePath
 
 	if (eState == Cached) {
 		if (FAILED(Compile_From_CSO(pDevice, wPath))) {
-			return E_FAIL;
+			if (FAILED(Compile_From_HLSL(pDevice, wPath))) {
+				return E_FAIL;
+			}
 		}
 	}
 	else {

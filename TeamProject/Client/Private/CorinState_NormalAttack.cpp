@@ -85,7 +85,7 @@ void CCorinState_Attack_01::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.37f)
     {
-        pOwner->Begin_AttackCollider("Saw", {HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f});
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f,4 });
     }
     if (m_fAnimProgress >= 0.45f)
     {
@@ -115,7 +115,7 @@ void CCorinState_Attack_02::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.25f)
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f,0.f, 4 });
     }
     if (m_fAnimProgress >= 0.35f)
     {
@@ -144,7 +144,7 @@ void CCorinState_Attack_03::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.5f)
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.15f });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 7 });
     }
     if (m_fAnimProgress >= 0.99f)
     {
@@ -174,7 +174,7 @@ void CCorinState_Attack_04::Update(CCorin* pOwner, _float dt)
 
     if (m_fAnimProgress >= 0.22f)
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 4, 0.f });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.f, 4 });
     }
     if (m_fAnimProgress >= 0.46f)
     {
@@ -202,7 +202,7 @@ void CCorinState_Attack_05::Update(CCorin* pOwner, _float dt)
         ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
     if (m_fAnimProgress >= 0.4f)
     {
-        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 7, 0.15f });
+        pOwner->Begin_AttackCollider("Saw", { HIT_TYPE::COUNT, DAMAGE_TYPE::NORMAL, 1.f, 0.15f, 7 });
     }
     if (m_fAnimProgress >= 0.99f)
     {

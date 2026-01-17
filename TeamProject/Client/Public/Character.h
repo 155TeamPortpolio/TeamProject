@@ -180,7 +180,7 @@ public:
     void Push_Invincible() { ++m_iInvincibleCount; }
     void Pop_Invincible() { if (m_iInvincibleCount > 0) --m_iInvincibleCount; }
     // 일시적 무적 - 회피 무적프레임 등
-    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; m_ParryableTargets.clear(); }
+    void Set_InvincibleTimer(_float fDuration) { m_fInvincibleTimer = fDuration; }
 
 private:
     void    Update_Rotation(_float dt);

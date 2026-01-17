@@ -387,7 +387,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 	if ("Groggy" == m_pStateMachine->Get_CurrentStateName())
 	{
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Knock")
-			.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
 		
@@ -396,7 +396,7 @@ void CThugAssaulter::TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage)
 	else
 	{
 		Get_Component<CAnimator3D>()->Set_Animation(1, "ThugAssaulter_Ani_Hit_Stay")
-			.LayerBlend(1.f, 0.5f, 1.f, EaseType::Linear)
+			.LayerBlend(1.f, 0.f, 1.f, EaseType::Linear)
 			.Loop(false)
 			.Apply();
 
@@ -514,7 +514,8 @@ void CThugAssaulter::ControlState(const _float dt)
 		0 >= m_tStatus.iNowHP )
 		m_pStateMachine->Change_State("Death");
 
-	if ("Groggy" != m_pStateMachine->Get_CurrentStateName() &&
+	if ("Death" != m_pStateMachine->Get_CurrentStateName() &&
+		"Groggy" != m_pStateMachine->Get_CurrentStateName() &&
 		true == m_isGroggy) 
 		m_pStateMachine->Change_State("Groggy");
 	

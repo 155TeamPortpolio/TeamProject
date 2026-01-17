@@ -8,14 +8,7 @@
 
 void CCorinState_Evade::Enter(CCorin* pOwner)
 {
-    if (pOwner->Can_Parry())
-    {
-        BattleSystem()->StartTimeScale(CBattleSystem::BATTLE_OBJ_TYPE::PLAYER,
-            1.5f, 0.5f);
-        //BattleSystem()->StartShaderVFX(CBattleSystem::BATTLE_VFX_TYPE::EVADE, 1.5f);
-        pOwner->Set_InvincibleTimer(1.5f);
-    }
-
+    pOwner->Push_Invincible();
 
     if (!m_pSubStateMachine)
     {
@@ -32,6 +25,7 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
     else
         m_pSubStateMachine->Set_DefaultState("Backstep");
     
+    m_pSubStateMachine->Set_Bool("Extreme", false);
 
     __super::Enter(pOwner);
 }
@@ -39,6 +33,15 @@ void CCorinState_Evade::Enter(CCorin* pOwner)
 void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 {
     __super::Update(pOwner, dt);
+
+    if (m_fAnimProgress >= 0.1f)
+    {
+        if (pOwner->Can_Parry() && !m_pSubStateMachine->Get_Bool("Extreme"))
+        {
+            BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
+            m_pSubStateMachine->Set_Bool("Extreme", true);
+        }
+    }
 
     if (m_pSubStateMachine->Get_Trigger("Complete"))
     {
@@ -69,4 +72,5 @@ void CCorinState_Evade::Update(CCorin* pOwner, _float dt)
 
 void CCorinState_Evade::Exit(CCorin* pOwner)
 {
+    pOwner->Pop_Invincible();
 }

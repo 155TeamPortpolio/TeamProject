@@ -19,6 +19,9 @@ CAttackSign::CAttackSign(const CAttackSign& rhs)
 
 HRESULT CAttackSign::Initialize_Prototype()
 {
+	
+	ResourceManager()->Add_ResourcePath("attack_sign.png", "../Bin/Resources/Effect/Texture/attack_sign.png");
+
 	__super::Initialize_Prototype();
 	Add_Component<CPointModel>();
 	Add_Component<CMaterial>();
