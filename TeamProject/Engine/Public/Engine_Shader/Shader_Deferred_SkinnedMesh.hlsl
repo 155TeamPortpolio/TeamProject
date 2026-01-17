@@ -233,22 +233,26 @@ PS_OUT_LIGHT PS_MAIN_DIRECTIONAL(PS_IN In)
     {
         float3 viewDir = normalize(vCamPosition.xyz - vWorldPos.xyz);
 
-        float NdotL = saturate(dot(worldNormal, lightDir)) /* * 0.5f + 0.5f*/;
-
+        float NdotL = dot(worldNormal, lightDir);
+        float saturateNdotL = saturate(NdotL) /* * 0.5f + 0.5f*/;
+        float halfLambert = NdotL * 0.5 + 0.5;
+    
+        float toon = smoothstep(0.55, 0.65, halfLambert);
+        toon = lerp(0.6, 1.0, toon); 
+        
         float3 halfVec = normalize(viewDir + lightDir);
         float specBase = saturate(dot(worldNormal, halfVec));
         float specularPower = lerp(50.0f, 5.0f, roughness);
         specular = pow(specBase, specularPower) * specular;
-        float shadow = CalculateShadow(vWorldPos, fViewZ, worldNormal, lightDir, In.vTexcoord);
-  
-        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, shadow);
+
+        float3 PBR = CalculateDirectionalLight(vDiffuse.rgb, worldNormal, metalic, roughness, viewDir, lightDir, vLightDiffuse.rgb, fLightIntensity, toon);
     
         float alpha = 0.f;
         if (length(vDiffuse.rgb) > 0.f)
             alpha = 1.f;
         
         Out.vLight = float4(PBR * vNormalDesc.a, alpha);
-        Out.vLightInfo = float4(NdotL, specular, shadow, 0.f);
+        Out.vLightInfo = float4(saturateNdotL, specular, toon, 0.f);
         return Out;
     }
     else

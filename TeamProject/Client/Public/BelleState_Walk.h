@@ -13,6 +13,13 @@ public:
     virtual void Exit(CBelle* pOwner) override {}
 
 public:
+    void Set_LastFoot(string str) { m_LastFoot = str; }
+    string Get_LastFoot() { return m_LastFoot; }
+
+private:
+    string m_LastFoot = "R";
+
+public:
     static CBelleState_Walk* Create() { return new CBelleState_Walk(); }
     virtual void Free() override { __super::Free(); }
 };
@@ -52,4 +59,5 @@ public:
     static CBelleState_Walk_End* Create() { return new CBelleState_Walk_End(); }
     virtual void Free() override { __super::Free(); }
 };
+
 NS_END
