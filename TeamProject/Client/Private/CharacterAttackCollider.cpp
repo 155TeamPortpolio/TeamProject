@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "CharacterAttackCollider.h"
 
+#include "BattleSystem.h"
+#include "BattlePlayer.h"
+
 #include "RigidBody.h"
 #include "Collider.h"
 #include "BoneFollower.h"
@@ -91,6 +94,7 @@ void CCharacterAttackCollider::OnTriggerEnter(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 	}
 }
 
@@ -106,6 +110,7 @@ void CCharacterAttackCollider::OnTriggerStay(CGameObject* pOther)
 	if (nullptr != pEnemy)
 	{
 		pEnemy->TakeDamage(m_tHitDesc.eDamageType, m_tHitDesc.fDamage);
+		BattleSystem()->GetBattlePlayer()->Add_Gauge(10.f, 100.f);
 	}
 }
 

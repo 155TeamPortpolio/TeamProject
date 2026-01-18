@@ -141,6 +141,34 @@ void CBattlePlayer::Render_GUI()
 	ImGui::Text("Is Invicible : %s", m_pCurrentCharacter->Is_Invincible() ? "TRUE" : "FALSE");
 }
 
+void CBattlePlayer::Add_Gauge(_float fEnergy, _float fDecibel)
+{
+	queue<std::pair<string, CCharacter*>> tempQueue = m_BattleCharacters;
+
+	for (UI_STATUS_OWNER eOwner = UI_STATUS_OWNER::ROLE1;
+		eOwner <= UI_STATUS_OWNER::ROLE3 && !tempQueue.empty();
+		eOwner = static_cast<UI_STATUS_OWNER>(ENUM(eOwner) + 1))
+	{
+		CCharacter* pCharacter = tempQueue.front().second;
+		tempQueue.pop();
+
+		CCharacter::EnergyDesc tEnergy = pCharacter->Get_EnergyDesc();
+
+		if (eOwner == UI_STATUS_OWNER::ROLE1)
+		{
+			tEnergy.fCurrentEnergy += fEnergy;
+			pCharacter->Set_Decibel(pCharacter->Get_CurrentDecibel() + fDecibel);
+		}
+		else
+		{
+			tEnergy.fCurrentEnergy += fEnergy * 0.1f;
+			pCharacter->Set_Decibel(pCharacter->Get_CurrentDecibel() + fDecibel * 0.1f);
+		}
+
+		pCharacter->Set_CurrentEnergy(tEnergy.fCurrentEnergy);
+	}
+}
+
 void CBattlePlayer::Update_Input(_float dt)
 {
 	m_input.prevDirection = m_input.direction;
