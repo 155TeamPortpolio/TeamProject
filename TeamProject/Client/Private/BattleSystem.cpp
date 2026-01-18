@@ -6,6 +6,7 @@
 #include "BattlePlayer.h"
 #include "DataBase.h"
 #include "FieldSystem.h"
+#include "Enemy.h"
 
 IMPLEMENT_SINGLETON(CBattleSystem)
 
@@ -198,6 +199,39 @@ void CBattleSystem::StartShaderVFX(BATTLE_VFX_TYPE eVFXType)
 
 	RenderSystem()->Apply_RadialBlur(tVFX.fBlurDuration);
 	RenderSystem()->Register_AddictiveColor(&m_BattleVFX.vLerpColor);
+}
+
+void CBattleSystem::TakeAreaDamage(const _float3& vCenter, _float fRadius, const HitDesc& hitDesc)
+{
+	_float fRadiusSq = fRadius * fRadius;
+
+	for (auto& info : m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER])
+	{
+		_float3 vDiff = info.vPos - vCenter;
+		_float fDistSq = vDiff.x * vDiff.x + vDiff.y * vDiff.y + vDiff.z * vDiff.z;
+
+		if (fDistSq > fRadiusSq)
+			continue;
+
+		auto pEnemy = dynamic_cast<CEnemy*>(info.hObject.Get());
+		if (pEnemy)
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+	}
+}
+
+void CBattleSystem::TakeAllDamage(const HitDesc& hitDesc)
+{
+	for (auto& handle : m_Handles[BATTLE_OBJ_TYPE::MONSTER])
+	{
+		if (!handle.isValid())
+			continue;
+
+		auto pEnemy = dynamic_cast<CEnemy*>(handle.Get());
+		if (pEnemy)
+		{
+			pEnemy->TakeDamage(hitDesc.eDamageType, hitDesc.fDamage);
+		}
+	}
 }
 
 void CBattleSystem::Update_BattleInfo()
