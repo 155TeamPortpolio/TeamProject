@@ -136,7 +136,8 @@ public:
     void Add_Event(CLIP_EVENT_TYPE EventType, string EventTag);
     void Clear_Events();
 
-    
+    Matrix Get_PreTransform() { return m_PreTransform; }
+
 public: //»À °ü·Ã
     vector<_float4x4> Get_BoneMatrices(_uint meshIndex);
 

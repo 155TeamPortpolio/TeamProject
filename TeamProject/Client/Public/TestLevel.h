@@ -24,6 +24,7 @@ private:
     void Rake_MapResources();
     void Ready_TestObject();
 	void Ready_Npc();
+	void Ready_Camera();
 
 public:
 	static void PreLoad_Level();

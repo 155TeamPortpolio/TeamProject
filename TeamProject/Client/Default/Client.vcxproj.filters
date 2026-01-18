@@ -715,6 +715,9 @@
     <Filter Include="02. GameObject\UI\01. 2D\HUD_Boss">
       <UniqueIdentifier>{08e52f74-1069-4a36-8336-1e2e4192678c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\Camera\06. AnimCam">
+      <UniqueIdentifier>{8197db79-d2a4-4bb3-8512-a62a3b3b9ac7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1376,9 +1379,12 @@
     </ClInclude>
     <ClInclude Include="..\Public\UI_MeshPyramidData.h">
       <Filter>02. GameObject\UI\02. 3D\Mesh\UI_MeshPyramid</Filter>
-          </ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Public\UI_BossHUD.h">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\public\AnimCam.h">
+      <Filter>02. GameObject\Camera\06. AnimCam</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2014,6 +2020,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\UI_BossHUD.cpp">
       <Filter>02. GameObject\UI\01. 2D\HUD_Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\private\AnimCam.cpp">
+      <Filter>02. GameObject\Camera\06. AnimCam</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

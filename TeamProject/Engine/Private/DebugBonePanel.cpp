@@ -145,7 +145,8 @@ void CDebugBonePanel::Render_GUI()
 		if (-1 != m_iSelectedBone) {
 			if (CAnimator3D* pAnimator = pTarget->Get_Component<CAnimator3D>()) {
 				const _float4x4& nowTrans = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::COMBINED)[m_iSelectedBone];
-
+				const _float4x4& localTrans = pAnimator->Get_BoneMatrices(CAnimator3D::BoneSpace::TRANSFORMATION)[m_iSelectedBone];
+				
 				ImGui::SeparatorText("Bone Matrix (Combined)");
 				ImGui::BeginChild("##MatView", ImVec2(0, 110), true);
 
@@ -153,36 +154,14 @@ void CDebugBonePanel::Render_GUI()
 				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._21, nowTrans._22, nowTrans._23, nowTrans._24);
 				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._31, nowTrans._32, nowTrans._33, nowTrans._34);
 				ImGui::Text("% .4f % .4f % .4f % .4f", nowTrans._41, nowTrans._42, nowTrans._43, nowTrans._44);
-
-				//MotionDelta
-				_vector4 MoveTrans = pAnimator->Get_MotionBoneDelta();
-				_vector3 move(MoveTrans.x, MoveTrans.y, MoveTrans.z);
-				_vector3 dir = move;
-				dir.Normalize();
-
-				ImGui::Separator();
-				ImGui::Text("MoveBone Movement");
-				ImGui::Text("% .4f % .4f % .4f % .4f", MoveTrans.x, MoveTrans.y, MoveTrans.z, MoveTrans.w);
-				ImGui::Text("MoveBone Direction");
-				ImGui::Text("% .4f % .4f % .4f ", dir.x, dir.y, dir.z);
-
-				//RootDelta
-				_vector3 RootTrans = pAnimator->Get_RootBoneMoveDelta();
-				Quaternion RootQuat = pAnimator->Get_RootBoneQuatDelta();
-				_float RootMoveAmount = XMVectorGetX(XMVector3Length(RootTrans));
-				_vector3 RootMove(RootTrans.x, RootTrans.y, RootTrans.z);
-				_vector3 RootDir = RootMove;
-				_vector3 RootEuler = RootQuat.ToEuler();
-
-				ImGui::Separator();
-				ImGui::Text("RootBone Movement");
-				ImGui::Text("% .4f % .4f % .4f | % .4f ", RootTrans.x, RootTrans.y, RootTrans.z, RootMoveAmount);
-				ImGui::Text("RootBone Rotaion");
-				ImGui::Text("% .4f % .4f % .4f", RootEuler.x, RootEuler.y, RootEuler.z);
-				ImGui::Text("RootBone Direction");
-				ImGui::Text("% .4f % .4f % .4f ", RootDir.x, RootDir.y, RootDir.z);
-
+				
+				ImGui::SeparatorText("Bone Matrix (Transformation)");
+				ImGui::Text("% .4f % .4f % .4f % .4f", localTrans._11, localTrans._12, localTrans._13, localTrans._14);
+				ImGui::Text("% .4f % .4f % .4f % .4f", localTrans._21, localTrans._22, localTrans._23, localTrans._24);
+				ImGui::Text("% .4f % .4f % .4f % .4f", localTrans._31, localTrans._32, localTrans._33, localTrans._34);
+				ImGui::Text("% .4f % .4f % .4f % .4f", localTrans._41, localTrans._42, localTrans._43, localTrans._44);
 				ImGui::EndChild();
+
 			}
 			else if (pSkeletalModel) {
 				const _float4x4& nowTrans = pSkeletalModel->Get_BoneMatrices()[m_iSelectedBone];

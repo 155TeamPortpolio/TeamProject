@@ -4,8 +4,12 @@
 
 HRESULT CCamera::Initialize(COMPONENT_DESC* pArg)
 {
+	if (pArg == nullptr) {
+		Set_Lens(60.f, 1600.f/900.f, 0.1f, 500.f);
+		return S_OK;
+	}
 	CAMERA_DESC* cam = static_cast<CAMERA_DESC*>(pArg);
-	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar);
+	Set_Lens(cam->fFov, cam->fAspect, cam->fNear, cam->fFar); 
 	return S_OK;
 }
 

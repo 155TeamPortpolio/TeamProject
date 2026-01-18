@@ -22,6 +22,7 @@
 #include "SequenceCam.h"
 #include "CamPanel.h"
 #include "CamLoader.h"
+#include "AnimCam.h"
 
 /* MapData */
 #include "MapLoader.h"
@@ -141,14 +142,27 @@ HRESULT CTestLevel::Awake()
 	//====================Test=================
 	Ready_TestObject();
 	Ready_Npc();
+	Ready_Camera();
 
-	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
-
-	auto handle = m_pPlayer->Get_CurCharacterHandle();
-	m_pCamDirector->SetCurTarget();
-	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	//m_pCamDirector->SetCurTarget();
+	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
 	return S_OK;
+}
+
+void CTestLevel::Ready_Camera()
+{
+	PrototypeManager()->Add_ProtoType("Test_Level", "Proto_GameObject_AnimCam", CAnimCam::Create());
+
+	auto animCam = Builder::Create_Object({"Test_Level", "Proto_GameObject_AnimCam"})
+		.Camera(1600.f / 900.f)
+		.Build("AnimCam");
+
+	ObjectManager()->Add_Object(animCam, {"Test_Level", "Camera_Layer"});
+
+	static_cast<CAnimCam*>(animCam)->SetTarget(CamDirector().GetPlayer()->Get_CurCharacterHandle());
+
+	CameraManager()->Set_MainCam(animCam->Get_Component<CCamera>());
 }
 
 void CTestLevel::Update()

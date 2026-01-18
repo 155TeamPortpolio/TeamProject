@@ -9,10 +9,10 @@ NS_BEGIN(Engine)
 
 struct Lens
 {
-    _float fov{};
-    _float zNear{};
-    _float zFar{};
-    _float aspect{};
+    _float fov = 60.f;
+    _float zNear = 0.1f;
+    _float zFar = 1000.f;
+    _float aspect = 1600.f / 900.f;
 };
 
 namespace CamUtil
