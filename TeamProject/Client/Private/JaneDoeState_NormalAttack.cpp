@@ -355,6 +355,8 @@ void CJaneDoeState_Attack_05::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
 }
 
 void CJaneDoeState_Attack_05::Exit(CJaneDoe* pOwner)
@@ -362,6 +364,31 @@ void CJaneDoeState_Attack_05::Exit(CJaneDoe* pOwner)
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(4);
 }
 
+void CJaneDoeState_Attack_05::Update_Effects(CJaneDoe* pOwner)
+{
+    /* Wide Slash */
+    if (IsCrossAnimProgress(0.1f))
+    {
+        auto pTransform = pOwner->Get_Component<CTransform>();
+
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
+        _smatrix worldMatrix = pTransform->Get_WorldMatrix();
+        _vector3 vWorldPosition = _vector3::Transform(_vector3(0.f, 0.f, 1.6f), worldMatrix);
+
+        _quaternion localQuaternion = _quaternion(-0.23f, 0.67f, 0.66f, 0.24f);
+        _quaternion worldQuaternion = pTransform->Get_QuaternionRotate();
+        localQuaternion *= worldQuaternion;
+
+        auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Wide_Slash");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_WorldPos(vWorldPosition);
+        pEffectTransform->Set_WorldQuaternion(localQuaternion);
+
+        static_cast<CEffectContainer*>(effect)->Play();
+    }
+}
 
 void CJaneDoeState_Attack_06::Enter(CJaneDoe* pOwner)
 {
@@ -376,11 +403,55 @@ void CJaneDoeState_Attack_06::Update(CJaneDoe* pOwner, _float dt)
     pOwner->Process_RootMotion(dt,
         ENUM(CJaneDoe::ROOTMOTION_MASK::MOVE) |
         ENUM(CJaneDoe::ROOTMOTION_MASK::QUATERNION));
+
+    Update_Effects(pOwner);
 }
 
 void CJaneDoeState_Attack_06::Exit(CJaneDoe* pOwner)
 {
     static_cast<CJaneDoeState_NormalAttack*>(m_pParentState)->Set_ComboIndex(5);
+}
+
+void CJaneDoeState_Attack_06::Update_Effects(CJaneDoe* pOwner)
+{
+    /* Slash1 */
+    if (IsCrossAnimProgress(0.16f))
+    {
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
+        auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash0");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_Pos(_vector3(0.3f, 1.1f, 0.1f));
+        pEffectTransform->Set_Quaternion(_quaternion(0.52f, -0.4f, -0.31f, 0.69f));
+        static_cast<CEffectContainer*>(effect)->Play();
+    }
+    
+    /* Slash1 */
+    if (IsCrossAnimProgress(0.26f))
+    {
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
+        auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash1");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_Pos(_vector3(-0.6f, 2.1f, -0.3f));
+        pEffectTransform->Set_Quaternion(_quaternion(0.48f, 0.15f, -0.51f, 0.7f));
+        static_cast<CEffectContainer*>(effect)->Play();
+    }
+
+    /* Slash2 */
+    if (IsCrossAnimProgress(0.4f))
+    {
+        auto pObjectContainer = pOwner->Get_Component<CObjectContainer>();
+
+        auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash2");
+        auto pEffectTransform = effect->Get_Component<CTransform>();
+
+        pEffectTransform->Set_Pos(_vector3(0.f, 2.3f, -0.2f));
+        pEffectTransform->Set_Quaternion(_quaternion(0.76f, -0.22f, -0.25f, 0.55f));
+        static_cast<CEffectContainer*>(effect)->Play();
+    }
 }
 
 void CJaneDoeState_Attack_End::Enter(CJaneDoe* pOwner)

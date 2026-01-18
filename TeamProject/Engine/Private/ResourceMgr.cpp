@@ -559,6 +559,8 @@ EFFECT_ASSET CResourceMgr::Load_EffectAsset(const string& levelTag, const string
 
 	string filePath = MakePath(effectTag);
 	ifstream file(filePath);
+	if (!file.is_open())
+		return EFFECT_ASSET{};
 
 	ordered_json EffectData = json::parse(file);
 	EFFECT_ASSET Effect = EFFECT_ASSET::FromJson(EffectData);

@@ -61,6 +61,7 @@ HRESULT CJaneDoe::Initialize_Prototype()
 		/* Asset */
 		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
 		ResourceManager()->Add_ResourcePath("janedoe_normal2_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal2_slash.json");
+		ResourceManager()->Add_ResourcePath("janedoe_normal3_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal3_slash.json");
 
 		/* Texture */
 		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
@@ -419,6 +420,15 @@ HRESULT CJaneDoe::Initialize_Effects()
 			.Build("JaneDoe_Cross_Slash");
 
 		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Wide Slash */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal3_slash.json")
+			.Build("JaneDoe_Wide_Slash");
+
+		pObjectContainer->Add_Child(pEffect, false);
 	}
 
 	return S_OK;
