@@ -115,11 +115,7 @@ PS_OUT PS_DEBUG(PS_IN In)
     PS_OUT Out;
     
     vector vMtrlDiffuse = DiffuseTexture.Sample(LinearSampler, In.vTexcoord);
-    
-    if (vMtrlDiffuse.a < 0.2)
-    {
-        vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
-    }
+     vMtrlDiffuse = float4(In.vTexcoord, 1, 1);
   
     vector vNormalDesc = NormalTexture.Sample(DefaultSampler, In.vTexcoord);
     float3 vNormal;
@@ -198,7 +194,7 @@ technique11 DefaultTechnique
     }
     pass Debug
     {
-        SetRasterizerState(RS_Default);
+        SetRasterizerState(RS_NoCull);
         SetDepthStencilState(DSS_Default, 0);
         SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
         VertexShader = compile vs_5_0 VS_MAIN();

@@ -15,8 +15,6 @@ class CUI_BattleHUD final : public CUI_Object
 		ULTIMATE1, ULTIMATE2, ULTIMATE3,
 		ULTIMATEICON1, ULTIMATEICON2, ULTIMATEICON3,
 		CUR_HP_TEXT, MAX_HP_TEXT,
-
-		BOSS_ICON, BOSS_HP_BACK, BOSS_HP_FRONT, BOSS_GROGGY, BOSS_GROGGY_TEXT,
 		ACTION,
 		END
 	};
@@ -63,7 +61,6 @@ private:
 	void Add_PartObject(CUI_Object* pRoot, const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, Child child, _float2 vOffset = _float2());
 	void Cache_Handles(CUI_Object* pRoot);
 
-	void Set_Values(UI_STATUS_DESC desc);
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
 
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
@@ -75,7 +72,7 @@ private:
 	void Set_Animation(Child child, _int iIndex);
 	void Set_Texture(Child child, const string& strTextureKey); 
 	void Set_GaugeFill(Child child, _float fFillAmount);
-	void Set_NumberText(Child child, _float fValue, _int iWidth);
+	void Set_NumberText(Child child, _int iNum, _int iWidth);
 
 	template<typename Func>
 	void ForChild(Child child, Func&& func);

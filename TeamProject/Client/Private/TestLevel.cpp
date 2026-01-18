@@ -57,7 +57,6 @@
 
 /* UI */
 #include "UIDirector.h"
-#include "UI_MeshBillboard.h"
 
 /* Interactable */
 #include "Portal.h"
@@ -68,7 +67,7 @@
 CTestLevel::CTestLevel(const string& LevelKey)
 	:CLevel(LevelKey),
 	m_pGameInstance{ CGameInstance::GetInstance() },
-	m_pCamDirector{ CCamDirector::GetInstance() }
+	m_pCamDirector{ CCamDirector::GetInstance() } 
 {
 	Safe_AddRef(m_pGameInstance);
 	Safe_AddRef(m_pCamDirector);
@@ -104,11 +103,6 @@ HRESULT CTestLevel::Awake()
 	//==================== UI ===============
 	auto uiDirector = CUIDirector::GetInstance();
 	uiDirector->Load_LevelObjects("Test_Level");
-
-	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_MeshBillboard", CUI_MeshBillboard::Create());
-	//auto pBillboard = Builder::Create_Object({ "Test_Level", "Proto_GameObject_3DBillboard" })
-	//	.Build("Test_Billboard");
-	//objMgr->Add_Object(pBillboard, { "Test_Level", "UI_Layer" });
 
 	//==================== Interactable ===============
 	pProto->Add_ProtoType("Test_Level", "Proto_GameObject_Portal", CPortal::Create());
@@ -148,11 +142,10 @@ HRESULT CTestLevel::Awake()
 	Ready_TestObject();
 	Ready_Npc();
 
-	m_pCamDirector->SetTarget(m_pPlayer->Get_CurCharacterHandle());
+	//m_pCamDirector->SetCurTarget();
+	//m_pCamDirector->RequestSequence("Intro/Jane_Intro");
 
-	auto handle = m_pPlayer->Get_CurCharacterHandle();
-	m_pCamDirector->SetCurTarget();
-	m_pCamDirector->RequestSequence("Intro/Jane_Intro");
+	//GameInstance()->Set_EngineTimeScale(0.33f);
 
 	return S_OK;
 }
@@ -160,8 +153,6 @@ HRESULT CTestLevel::Awake()
 void CTestLevel::Update()
 {
 	CBattleSystem::GetInstance()->Update();
-
-
 
 	if (InputDevice()->Key_Tap(VK_F4))
 	{

@@ -1,6 +1,8 @@
 #pragma once
 
-NS_BEGIN(Engine)
+#include "OrbitLockOnData.h"
+
+NS_BEGIN(Client)
 
 struct OrbitCamPoseState
 {
@@ -17,7 +19,7 @@ struct OrbitCamInputState
 {
     _float sensitivityX = 0.12f;
     _float sensitivityY = 0.08f;
-    _float zoomSpeed    = 1.0f;
+    _float zoomSpeed = 1.0f;
 };
 
 struct OrbitCamProfile
@@ -28,8 +30,8 @@ struct OrbitCamProfile
     _float pitchMin = -30.f;
     _float pitchMax = 40.f;
 
-    _float rotSmoothSpeed   = 12.f;
-    _float distSmoothSpeed  = 12.f;
+    _float rotSmoothSpeed = 12.f;
+    _float distSmoothSpeed = 12.f;
     _float pivotSmoothSpeed = 10.f;
 
     _float offsetY = 0.f;
@@ -42,7 +44,7 @@ struct OrbitCamProfile
     _float autoYawFollowSpeed = 0.4f;
     _float autoYawFollowDelay = 0.6f;
 
-    _float collisionZoomInSpeed  = 12.f;
+    _float collisionZoomInSpeed = 12.f;
     _float collisionZoomOutSpeed = 6.f;
 
     _float   targetSwitchBlendSec = 1.f;
@@ -63,36 +65,18 @@ struct OrbitCamProfile
     EaseType lockOnBlendOutEase = EaseType::InOutSine;
 };
 
-struct OrbitCamLockOnState
-{
-    _bool         active = false;
-    OBJECT_HANDLE handle{};
-    _float        savedTargetDist = 0.f;
-};
-
 struct OrbitCamTargetSwitchState
 {
-    _bool   active  = false;
+    _bool   active = false;
     _float  elapsed = 0.f;
     Vector3 holdPivotWorld{};
-};
-
-struct OrbitCamLockOnBlendState
-{
-    _bool    active = false;
-    _bool    entering = true;
-    _float   elapsed = 0.f;
-    _float   duration = 0.f;
-    EaseType ease = EaseType::InOutSine;
-    _float   weight = 0.f;
 };
 
 struct OrbitCamSnapshot
 {
     OrbitCamPoseState         pose{};
     OrbitCamTargetSwitchState targetSwitch{};
-    OrbitCamLockOnState       lockOn{};
-    OrbitCamLockOnBlendState  lockOnBlend{};
+    OrbitLockOnSnapshot       lockOn{};
     _float                    autoYawHoldTimer = 0.f;
     Vector3                   prevTargetFoot{};
     _bool                     hasPrevTargetFoot = false;

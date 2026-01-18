@@ -8,11 +8,11 @@ NS_END
 
 NS_BEGIN(Client)
 
-class CEnemy abstract:
+class CEnemy abstract :
     public CGameObject
 {
 public:
-    enum class BATTLE_COLTYPE{ ATTACK, TRIGGER };
+    enum class BATTLE_COLTYPE { ATTACK, TRIGGER };
 protected:
     CEnemy();
     CEnemy(const CEnemy& rhg);
@@ -29,16 +29,16 @@ public:
     virtual void OnPooledRelease() {}							// 풀로 돌아갈 때
 
 
-public: 
+public:
     /* Getter */
     // 현재 플레이 중인 캐릭터의 정보를 반환
-    BATTLEOBJ_INFO*         GetCharacterOnField();
+    BATTLEOBJ_INFO* GetCharacterOnField();
     // 현재 플레이 중인 캐릭터와의 거리정보를 반환
-    TARGETING_INFO&         GetTargetingInfo() { return m_tTargetingInfo; }
+    TARGETING_INFO& GetTargetingInfo() { return m_tTargetingInfo; }
     // 몬스터의 Status 구조체를 반환
     MONSTER_STATUS          GetStatus() { return m_tStatus; }
     // 몬스터의 Status 구조체 포인터를 반환
-    const MONSTER_STATUS*   GetStatusPtr() const { return &m_tStatus; }
+    const MONSTER_STATUS* GetStatusPtr() const { return &m_tStatus; }
     // Groggy 상태 반환
     _bool                   IsGroggy() const { return m_isGroggy; }
     // 공격중인지 상태 반환
@@ -51,7 +51,7 @@ public:
     virtual void        TakeDamage(DAMAGE_TYPE eDamageType, _float fDamage) {};
     /* 트리거 콜라이더를 바로 키고, AttackOffsetTime 뒤에 Attack 콜라이더를
     AttackPlayTime만큼 키고 트리거와 Attack콜라이더를 종료함*/
-    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc & hitDesc);
+    void                SetAutoPlayBattleCollider(const string& tagBattleCollider, _float fAttackOffsetTime, _float fAttackPlayTime, const HitDesc& hitDesc);
     /* 몬스터가 죽는 시퀀스가 다 끝나고 호출할 것. */
     void                Death();
     void                SetOnAttack(_bool is) { m_isOnAttack = is; }
@@ -68,9 +68,10 @@ protected:
     // Groggy 수치 관리
     void                ManageGroggy(const _float dt);
 
-
     // Enemy Status 객체 추가 및 월드 행렬, 본 로컬 행렬 포인터로 전달
     virtual void        Create_UIEnemyStatus(string boneTag);
+    virtual void        Create_UIBossHUD();
+    void                Create_MeshPyramid();
 
 #pragma region BattleCollider
 protected:
@@ -99,21 +100,21 @@ protected:
     UI_HANDLE               m_hUIEnemyStatus = {};
 
     // BattleSystem으로 부터 얻어온 Character정보
-    vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos; 
+    vector<BATTLEOBJ_INFO>  m_PlayerCharacterInfos;
     // Target(Player-Character)이 있을 때, Target 사이의 정보 구조체
     TARGETING_INFO          m_tTargetingInfo = {};
     // 플레이어를 감지하는 사거리 범위(공격용 사거리 혹은 추격용으로 사용)
-    _float                  m_fDetectedRange = { 5.f };    
+    _float                  m_fDetectedRange = { 5.f };
     // 몬스터 스테이터스
     MONSTER_STATUS          m_tStatus = {};
     /* Groggy */
     _bool                   m_isGroggy = { false };
     _float                  m_fGroggyDecreaseTime = {};
-    
+
     _bool                   m_isOnAttack = { false };
 
- 
-protected: 
+
+protected:
     virtual CGameObject* Clone(INIT_DESC* pArg) PURE;
     virtual void Free() override;
 };

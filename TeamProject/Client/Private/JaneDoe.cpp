@@ -2,12 +2,14 @@
 #include "JaneDoe.h"
 #include "GameInstance.h"
 #include "DataBase.h"
+#include "EffectContainer.h"
 
 #include "Material.h"
 #include "MaterialInstance.h"
 
 #include "Animator3D.h"
 #include "CharacterController.h"
+#include "ObjectContainer.h"
 
 #include "StateMachine.h"
 #include "JaneDoeState_Idle.h"
@@ -46,13 +48,27 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
-	pRcsMgr->Add_ResourcePath("JaneDoeModel.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoeModel.mat");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
+
+	/* 이펙트 리소스 임시 로드 */
+	{
+		/* Asset */
+		ResourceManager()->Add_ResourcePath("janedoe_normal1_slash.json", "../Bin/Resources/Effect/Data/JaneDoe/janedoe_normal1_slash.json");
+
+		/* Texture */
+		ResourceManager()->Add_ResourcePath("Eff_MeleeTrail_078_YZ_05.png", "../Bin/Resources/Effect/Texture/Eff_MeleeTrail_078_YZ_05.png");
+		ResourceManager()->Add_ResourcePath("Dissolve.png", "../Bin/Resources/Effect/Texture/Dissolve.png");
+
+		/* Model */
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.model", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.model");
+		ResourceManager()->Add_ResourcePath("JaneDoe_Slash0.mat", "../Bin/Resources/Effect/Model/JaneDoe_Slash0/JaneDoe_Slash0.mat");
+	}
 	return S_OK;
 }
 
@@ -65,6 +81,9 @@ HRESULT CJaneDoe::Initialize(INIT_DESC* pArg)
 		return E_FAIL;
 
 	if (FAILED(Initialize_Weapon()))	   
+		return E_FAIL;
+
+	if (FAILED(Initialize_Effects()))
 		return E_FAIL;
 
 	return S_OK;
@@ -244,6 +263,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToMove");
+
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
@@ -255,7 +277,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
-		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
@@ -324,6 +346,31 @@ HRESULT CJaneDoe::Initialize_Weapon()
 	return S_OK;
 }
 
+HRESULT CJaneDoe::Initialize_Effects()
+{
+	auto pObjectContainer = Get_Component<CObjectContainer>();
+
+	/* Normal Slash0 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash0");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	/* Normal Slash1 */
+	{
+		auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
+			.Asset("janedoe_normal1_slash.json")
+			.Build("JaneDoe_Normal_Slash1");
+
+		pObjectContainer->Add_Child(pEffect);
+	}
+
+	return S_OK;
+}
+
 void CJaneDoe::Update_States()
 {
 	m_pStateMachine->Set_Bool("IsMove", Is_Move_Buffer());
@@ -387,6 +434,7 @@ void CJaneDoe::Process_AttackInput(const string& strCurrentState)
 		if (pNormal && pNormal->Get_SubStateMachine())
 			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
 	}
+
 }
 
 void CJaneDoe::Process_EndState(const string& strCurrentState)
@@ -443,15 +491,13 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 	{
 		CJaneDoeState_Hit* pHit = static_cast<CJaneDoeState_Hit*>(
 			m_pStateMachine->Get_CurrentState());
-		if (!pHit) return;
+		if (!pHit || !pHit->Get_SubStateMachine()) return;
 
-		IHState<CJaneDoe>* pHitType = dynamic_cast<IHState<CJaneDoe>*>(
-			pHit->Get_SubStateMachine()->Get_CurrentState());
+		IBaseState<CJaneDoe>* pHitType = pHit->Get_SubStateMachine()->Get_CurrentState();
 		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
 		{
-			IBaseState<CJaneDoe>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+			if (Is_Input() || pHitType->Is_AnimEnd())
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}

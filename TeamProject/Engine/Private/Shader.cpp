@@ -415,6 +415,7 @@ CShader* CShader::Create(ID3D11Device* pDevice, const string& filePath, const st
 	CShader* instance = new CShader();
 	if (FAILED(instance->Initialize(pDevice, filePath))) {
 		MessageBoxA(nullptr, filePath.c_str(), "CShader Create error", MB_OK);
+		__debugbreak();
 		Safe_Release(instance);
 	}
 	if(instance)

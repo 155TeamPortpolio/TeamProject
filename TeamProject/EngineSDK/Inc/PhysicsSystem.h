@@ -16,8 +16,11 @@ public:
         const PxRigidActor* actor,
         PxHitFlags& queryFlags) override
     {
-        PxU32 shapeGroup = filterData.word0;
+        // shape에서 직접 QueryFilterData 가져오기
+        PxFilterData shapeFilter = shape->getQueryFilterData();
+        PxU32 shapeGroup = shapeFilter.word0;
 
+        // 마스크 검사
         if ((m_iTargetMask & shapeGroup) == 0)
             return PxQueryHitType::eNONE;
 
@@ -25,7 +28,7 @@ public:
         if (shape->getFlags() & PxShapeFlag::eTRIGGER_SHAPE)
         {
             if (!m_bQueryTrigger)
-                return PxQueryHitType::eNONE;  // 트리거 무시
+                return PxQueryHitType::eNONE;
             return PxQueryHitType::eTOUCH;
         }
 

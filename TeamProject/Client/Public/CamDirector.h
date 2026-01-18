@@ -43,7 +43,8 @@ public:
     _uint         RequestSequence(const string& key);
     _uint         RequestSequence(const string& key, const CamSequenceRequestDesc& req);
     _uint         RequestSequence(const string& key, _float blendInSec, _bool resetTime, _float blendOutSec);
-                  
+    
+    _bool         IsPlaying() const;
     _bool         StopRequest(_uint handle, _float blendOutSec = 0.25f, _bool resetTime = true);
     void          StopAll(_float blendOutSec = 0.25f);
     void          Update(_float dt);
@@ -51,6 +52,7 @@ public:
 private:
     void          UpdatePlayer();
     void          UpdateInput();
+    void          AbortSequenceToOrbit(_bool resetTime);
 
 private:
     ICameraService&         camMgr;
@@ -66,6 +68,6 @@ private:
     _int                    m_focusType = -1;
 };
 
-inline CCamDirector& CamDirector() { return *CCamDirector::GetInstance(); }
+inline auto& CamDirector() { return *CCamDirector::GetInstance(); }
 
 NS_END

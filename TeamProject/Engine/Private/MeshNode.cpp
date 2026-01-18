@@ -125,8 +125,6 @@ HRESULT CMeshNode::Initialize(INIT_DESC* pArg)
 		pMaterialInstance->Set_Param("DissolveTexture", { pDissolveTexture->Get_SRV(),"Texture2D",0 });
 	}
 
-
-
 	return S_OK;
 }
 
@@ -161,6 +159,14 @@ void CMeshNode::Late_Update(_float dt)
 {
 }
 
+void CMeshNode::Play()
+{
+	m_isAlive = true;
+	m_IsEffectActive = true;
+	m_fElpasedTime = 0.f;
+	Reset();
+}
+
 CMeshNode* CMeshNode::Create()
 {
 	CMeshNode* instance = new CMeshNode();
@@ -188,6 +194,15 @@ CGameObject* CMeshNode::Clone(INIT_DESC* pArg)
 void CMeshNode::Free()
 {
 	__super::Free();
+}
+
+void CMeshNode::Reset()
+{
+	m_ColorModule.vCurrColor = m_ColorModule.vStartColor;
+	m_pTransform->Scale(m_ScaleModule.vStartScale);
+	m_UVAnimaitonModule.vCurrUVOffset = m_UVAnimaitonModule.vStartUVOffset;
+	m_SpriteAnimationModule.iCurrFrameIndex = 0;
+	m_DissolveModule.fProgress = 0.f;
 }
 
 void CMeshNode::Update_TextureSlotModule(_float dt)

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CamObject.h"
-#include "OrbitCamTypes.h"
+#include "OrbitLockOnController.h"
 
 NS_BEGIN(Client)
 
@@ -37,13 +37,6 @@ public:
     void    ClearLockOn();
 
 private:
-    void    UpdateLockOn(_float dt);
-    Vector3 GetLockOnFocusPos() const;
-    void    StartLockOnBlend(_bool entering);
-    void    UpdateLockOnBlend(_float dt);
-    _float  GetLockOnWeight() const { return lockOnBlend.weight; }
-
-private:
     void    UpdateInput(_float dt);
     void    ClampTargets();
     void    SmoothStates(_float dt);
@@ -51,7 +44,7 @@ private:
     Vector3 GetPivotPos()       const { return pose.curPivot; }
     Vector3 GetPivotTargetPos() const;
     float   GetEffectiveDist()  const;
-    void    ApplyOrbitPose(_float dt);
+    void    ApplyOrbitPose(_float dt, const OrbitLockOnEvalResult& lockRes);
 
     void    UpdateAutoYawFollow(_float dt);
     Vector3 GetTargetFootPos() const;
@@ -60,13 +53,13 @@ private:
     void    UpdateTargetSwitch(_float dt);
 
 private:
-    OrbitCamLockOnState       lockOn{};
     OrbitCamPoseState         pose{};
     OrbitCamInputState        input{};
     OrbitCamTargetSwitchState targetSwitch{};
-    OrbitCamLockOnBlendState  lockOnBlend{};
     Profile                   profile{};
-                              
+
+    COrbitLockOnController    lockOnCtrl{};
+
     _float                    autoYawHoldTimer = 0.f;
     Vector3                   prevTargetFoot{};
     _bool                     hasPrevTargetFoot = false;

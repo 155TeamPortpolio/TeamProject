@@ -20,14 +20,6 @@ HRESULT CPortal::Initialize_Prototype()
 	if (FAILED(__super::Initialize_Prototype()))
 		return E_FAIL;
 
-	Add_Component<CStaticModel>();
-	Add_Component<CMaterial>();
-
-	auto pModel = Get_Component<CStaticModel>();
-	pModel->Link_Model(G_GlobalLevelKey, "Default.model");
-	auto pMaterial = Get_Component<CMaterial>();
-	pMaterial->Link_Material(G_GlobalLevelKey, "Default.mat");
-
 	return S_OK;
 }
 
@@ -54,6 +46,7 @@ void CPortal::Priority_Update(_float dt)
 void CPortal::Update(_float dt)
 {
 	Get_Component<CCollider>()->Update(dt);
+	Interact();
 }
 
 void CPortal::Late_Update(_float dt)
@@ -69,11 +62,12 @@ void CPortal::OnTriggerEnter(CGameObject* pOther)
 	m_bIsInteractable = true;
 
 	//상호작용버튼 만들기전 임시 닿으면실행
-	Interact();
+
 }
 
 void CPortal::OnTriggerStay(CGameObject* pOher)
 {
+	
 }
 
 void CPortal::OnTriggerExit(CGameObject* pOther)
@@ -89,9 +83,11 @@ void CPortal::Interact()
 {
 	if (!m_bIsInteractable)
 		return;
-
-	LevelManager()->Set_LoadingLevel("Loading_Level");
-	LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+	
+	if (InputDevice()->Key_Down('F')) {
+		LevelManager()->Set_LoadingLevel("Loading_Level");
+		LevelManager()->Request_ChangeLevel(m_NextLevelTag, true);
+	}
 }
 
 CPortal* CPortal::Create()

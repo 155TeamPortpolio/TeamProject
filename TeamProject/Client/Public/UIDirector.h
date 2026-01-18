@@ -15,12 +15,6 @@ private:
 	virtual ~CUIDirector() = default;
 
 public:
-	/* 일괄로 전달된 상태 데이터를 개별 UI 상태 이벤트로 브로드캐스트 */
-	void Set_BulkStatus(const vector<UI_STATUS_BULK_DESC>& bulkStatus);
-	/* 플레이어의 모든 상태(HP, Special, Ultimate)를 개별 UI 상태 이벤트로 브로드캐스트 */
-	void Set_PlayerStatus(const vector<UI_PLAYER_STATUS_DESC>& playerStatus);
-
-public:
 	/* 모든 레벨에 필요한 공통 데이터 등록 */
 	void Initialize();
 	/* 레벨별로 필요한 프로토타입, 게임 오브젝트 등록 */

@@ -8,6 +8,8 @@ HRESULT CUI_Loading::Initialize_Prototype()
 {
     __super::Initialize_Prototype();
 
+    Add_Component<CObjectContainer>();
+
     return S_OK;
 }
 
@@ -15,60 +17,45 @@ HRESULT CUI_Loading::Initialize(INIT_DESC* pArg)
 {
     __super::Initialize(pArg);
 
-    return S_OK;
-}
-
-void CUI_Loading::Awake()
-{
     const string& strNextLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NextLevel();
     string fileName = {};
-
+    
     // 다음레벨에 따라 로드할 json 파일 이름 분기처리
     if (strNextLevelKey == "City_Level")
         fileName = "loading_city";
-    else if (strNextLevelKey == "Hollow_Level")
+    else if (strNextLevelKey == "Zero_Level")
         fileName = "loading_hollow";
     else
         fileName = "loading_default";
 
-    //fileName = "loading_default";
-
-    // Loading 프리팹 (json) 로드 후 UI 트리 루트(CanvasPanel) 생성
-    string strCurrentLevel = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
-    CUI_Object* pRoot = Builder::Create_UIObject({ strCurrentLevel, "Proto_GameObject_CanvasPanel" })
-        .Asset(fileName + ".json")
-        .Build("prefab");
-
-    if (!pRoot)
-        return;
-
-    // 생성된 루트 UI를 uiMgr에 등록
-    CGameInstance::GetInstance()->Get_UIMgr()->Add_UIObject(pRoot, strCurrentLevel);
-
-    // UI 트리 기준으로 주요 핸들 캐싱 (root / chidlren)
-    CacheHandle(pRoot);
+    //fileName = "loading_default"; //테스트 코드
      
-    // 루트 UI의 0번 애니메이션 재생 (FadeIn)
-    if (m_hRoot.isValid())
-        m_hRoot.Get()->Set_Animation(0);
+    // JSON 기반 UI 구성 로드
+    const string& filePath = ResourceManager()->Get_ResourcePath(fileName + ".json");
+    Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
-    // now loading의 0번 애니메이션 재생 (각도 움직임)
-    if (m_hChildren[PREFAB::NOW_LOADING].isValid())
-        m_hChildren[PREFAB::NOW_LOADING].Get()->Set_Animation(0);
+    // 자식(fade) 자식의 0번 애니메이션 재생 (FadeIn)
+    if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("fade"))
+        if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
+            pUI->Set_Animation(0);
+
+    // 자식(now loading)의 0번 애니메이션 재생 (각도 움직임)
+    if (auto pObj = Get_Component<CObjectContainer>()->Find_Descendant("nowLoading"))
+        if (auto pUI = dynamic_cast<CUI_Object*>(pObj))
+            pUI->Set_Animation(0);
+
+    return S_OK;
+}
+
+void CUI_Loading::Awake()
+{  
 }
 
 void CUI_Loading::Update(_float dt)
 {
-}
+    __super::Update(dt);
 
-void CUI_Loading::CacheHandle(CUI_Object* pRoot)
-{
-    // 루트 핸들 캐싱
-    m_hRoot = pRoot->Get_Handle();
-
-    // 자식 핸들 캐싱
-    m_hChildren.resize(PREFAB::END);
-    m_hChildren[PREFAB::NOW_LOADING] = pRoot->Get_DescendantHandle("nowLoading");
+    Get_Component<CObjectContainer>()->UpdateChild(dt);
 }
 
 CGameObject* CUI_Loading::Create()

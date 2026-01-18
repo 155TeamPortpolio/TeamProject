@@ -28,9 +28,6 @@ private:
 	_float m_fFillAmount = 1.f;
 	_float m_fDirection  = 1.f;
 
-private:
-	void Set_FillAmount(const UI_STATUS_DESC& desc);
-
 public:
 	static  CGameObject* Create();
 	virtual CGameObject* Clone(INIT_DESC* pArg = {}) override;
