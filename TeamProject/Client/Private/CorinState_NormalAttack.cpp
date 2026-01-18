@@ -72,9 +72,9 @@ void CCorinState_NormalAttack::Exit(CCorin* pOwner)
 void CCorinState_Attack_01::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_01")
-        .Speed(1.2f)
+        .Speed(1.5f)
         .ReserveSpeed(0.37f, 0.45f, 0.4f, EaseType::OutQuart)
-        .ReserveSpeed(0.45f, 0.5f, 1.2f, EaseType::Linear)
+        .ReserveSpeed(0.45f, 0.5f, 1.5f, EaseType::Linear)
         .Apply();
 }
 
@@ -161,9 +161,9 @@ void CCorinState_Attack_03::Exit(CCorin* pOwner)
 void CCorinState_Attack_04::Enter(CCorin* pOwner)
 {
     pOwner->Get_Animator()->Change_Animation(pOwner->Get_Name() + "Attack_Normal_04")
-        .Speed(1.f)
+        .Speed(1.5f)
         .ReserveSpeed(0.22f, 0.46f, 0.55f, EaseType::OutQuart)
-        .ReserveSpeed(0.46f, 0.51f, 1.f, EaseType::Linear)
+        .ReserveSpeed(0.46f, 0.51f, 1.5f, EaseType::Linear)
         .Apply();
 }
 
