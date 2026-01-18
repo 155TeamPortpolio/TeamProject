@@ -297,7 +297,7 @@ void CJaneDoeState_Attack_04::Update_Effects(CJaneDoe* pOwner)
         auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash1");
         auto pEffectTransform = effect->Get_Component<CTransform>();
 
-        pEffectTransform->Set_Pos(_vector3(0.f, 1.5f, -0.5f));
+        pEffectTransform->Set_Pos(_vector3(0.f, 1.6f, -0.5f));
         pEffectTransform->Set_Quaternion(_quaternion(0.7f, 0.25f, -0.3f, 0.57f));
         static_cast<CEffectContainer*>(effect)->Play();
     }
@@ -310,7 +310,7 @@ void CJaneDoeState_Attack_04::Update_Effects(CJaneDoe* pOwner)
         auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash2");
         auto pEffectTransform = effect->Get_Component<CTransform>();
 
-        pEffectTransform->Set_Pos(_vector3(0.f, 1.3f, 0.f));
+        pEffectTransform->Set_Pos(_vector3(0.f, 1.5f, 0.f));
         pEffectTransform->Set_Quaternion(_quaternion(0.67f, -0.05f, -0.05f, 0.74f));
         static_cast<CEffectContainer*>(effect)->Play();
     }
@@ -323,7 +323,7 @@ void CJaneDoeState_Attack_04::Update_Effects(CJaneDoe* pOwner)
         auto effect = pObjectContainer->Find_ObjectByName("JaneDoe_Normal_Slash3");
         auto pEffectTransform = effect->Get_Component<CTransform>();
 
-        pEffectTransform->Set_Pos(_vector3(0.f, 1.3f, 0.f));
+        pEffectTransform->Set_Pos(_vector3(0.f, 1.5f, 0.f));
         pEffectTransform->Set_Quaternion(_quaternion(-0.04f, 0.74f, -0.67f, 0.02f));
         static_cast<CEffectContainer*>(effect)->Play();
     }
