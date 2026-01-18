@@ -1404,8 +1404,14 @@
     <ClInclude Include="..\Public\MapInvisibleWall.h">
       <Filter>02. GameObject\MapObject\03. MapInvisibleWall</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Normal.h">
+      <Filter>01. Level\04. Zero\Stage_Normal</Filter>
+    </ClInclude>
     <ClInclude Include="..\public\ThugAssaulter_Hit.h">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ZeroStage_Elite.h">
+      <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -2059,6 +2065,9 @@
     </ClCompile>
     <ClCompile Include="..\private\ThugAssaulter_Hit.cpp">
       <Filter>02. GameObject\Object\Enemy\ThugAssaulter\State\Hit</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ZeroStage_Elite.cpp">
+      <Filter>01. Level\04. Zero\Stage_Elite</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

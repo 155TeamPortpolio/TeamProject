@@ -367,6 +367,7 @@
     <ClInclude Include="..\Public\ZeroPortal.h" />
     <ClInclude Include="..\public\ZeroStage_1_1.h" />
     <ClInclude Include="..\Public\ZeroStage_Boss.h" />
+    <ClInclude Include="..\Public\ZeroStage_Elite.h" />
     <ClInclude Include="..\Public\ZeroStage_Normal.h" />
     <ClInclude Include="..\Public\Zero_Level.h" />
     <ClInclude Include="Client.h" />
@@ -608,6 +609,7 @@
     <ClCompile Include="..\Private\ZeroPortal.cpp" />
     <ClCompile Include="..\private\ZeroStage_1_1.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Boss.cpp" />
+    <ClCompile Include="..\Private\ZeroStage_Elite.cpp" />
     <ClCompile Include="..\Private\ZeroStage_Normal.cpp" />
     <ClCompile Include="..\Private\Zero_Level.cpp" />
     <ClCompile Include="Client.cpp" />
