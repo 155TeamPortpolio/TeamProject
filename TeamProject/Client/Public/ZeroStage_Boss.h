@@ -27,10 +27,6 @@ public:
 	virtual HRESULT Exit_Stage(CZero_Level::StageContext& context)override;
 
 private:
-	void Ready_Map(const string& LevelTag, const string& AreaTag);
-	void Rake_MapResources();
-
-private:
 	class CGameInstance* m_pGameInstance{};
 	class CCamDirector* m_pCamDirector{};
 

@@ -6,6 +6,8 @@ class CStage :
     public CBase
 {
 protected:
+	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro};
+protected:
     CStage();
     ~CStage() DEFAULT;
 
@@ -23,7 +25,7 @@ protected:
 
 protected:
 	class CZero_Level* m_pOwnerLevel = { nullptr };
-
+	StageState m_eStageStage = {StageState::None };
 public:
     virtual void Free();
 };

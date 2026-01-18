@@ -181,6 +181,8 @@ void CSacrifice::Awake()
 		instance->Set_Param("fDissolveProgress", { &m_fDissolveProgress,"float",sizeof(_float) });
 		instance->Set_Param("fDissolveTiling", { &m_fDissolveTilling,"float",sizeof(_float) });
 	}
+
+	Create_UIBossHUD();
 }
 
 void CSacrifice::Priority_Update(_float dt)

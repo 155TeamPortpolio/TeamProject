@@ -150,7 +150,7 @@ const string& CLevelMgr::Get_NowLevelKey()
     if (m_pCurrentLevel)
         return m_pCurrentLevel->Get_Key();
     else
-        return m_LoadingLevelKey;
+        return m_TransDesc.nextLevelKey;
 }
 
 #pragma endregion
