@@ -78,11 +78,12 @@ HRESULT CThugAssaulter::Initialize(INIT_DESC* pArg)
 	if (FAILED(Initialize_StateMachine()))
 		return E_FAIL;
 
-	// ÀÓ½Ã È®ÀÎ¿ë
+	// ï¿½Ó½ï¿½ È®ï¿½Î¿ï¿½
 	CGameInstance::GetInstance()->Get_GUISystem()->Get_Context()->pSelectedObject = this;
+	// ï¿½Ó½ï¿½
 
 	Create_MeshPyramid();
-	// ÀÓ½Ã
+	// ï¿½Ó½ï¿½
 	m_tStatus.iNowHP = 100;
 
 	return S_OK;
@@ -136,7 +137,7 @@ void CThugAssaulter::Render_GUI()
 	ImGui::BeginChild("##ThugAssaulterStatus", ImVec2{ 0, childHeight }, true);
 	ImGui::Text("Current State : %s", m_pStateMachine->Get_CurrentStateName().c_str());
 
-	// bool º¯¼ö È®ÀÎ¿ë(¼öÁ¤ ºÒ°¡)
+	// bool ï¿½ï¿½ï¿½ï¿½ È®ï¿½Î¿ï¿½(ï¿½ï¿½ï¿½ï¿½ ï¿½Ò°ï¿½)
 	ImGui::BeginDisabled(true);
 	ImGui::EndDisabled();
 
@@ -239,17 +240,8 @@ void CThugAssaulter::Render_GUI()
 	m_pStateMachine->Render_GUI();
 #pragma endregion
 
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck")) 
-	{
-		if (ImGui::Button(u8"È¸ÇÇ È¿°ú##BattleSystemVFXEvade"))
-			BattleSystem()->StartGimmick(BATTLE_VFX_TYPE::EVADE);
-		
-
-		ImGui::TreePop();
-	}
-	// BattleSystem ½Ã°£ È®ÀÎ¿ë
-	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck")) 
-	{
+	// BattleSystem ï¿½Ã°ï¿½ È®ï¿½Î¿ï¿½
+	if (ImGui::TreeNode("BattleSystem TimeScale Check##TimeScaleCheck")) {
 		ImGui::BeginChild("##BattleSystemTimeScaleCheck", ImVec2{ 0, childHeight + textLineHeight * 15.f }, true);
 
 		auto pTimeScales = BattleSystem()->GetTimeScales();
@@ -319,6 +311,7 @@ HRESULT CThugAssaulter::Ready_Children(INIT_DESC* pArg)
 		return E_FAIL;
 
 	Create_AttackSign("Bip001_Head");
+	Create_MeshPyramid();
 	Create_UIEnemyStatus("Bip001_Spine2");
 
 	return S_OK;
@@ -472,10 +465,10 @@ HRESULT CThugAssaulter::Initialize_Transitions()
 
 HRESULT CThugAssaulter::Ready_Rules()
 {
-	// x = Idle¿¡¼­ ´ÙÀ½ »óÅÂ·Î ³Ñ¾î°¡´Â ÄðÅ¸ÀÓ, y = dt ´õÇÑ Å¸ÀÌ¸Ó¿ë
+	// x = Idleï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½Ñ¾î°¡ï¿½ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½, y = dt ï¿½ï¿½ï¿½ï¿½ Å¸ï¿½Ì¸Ó¿ï¿½
 	m_vIdleTime = { 1.f, 0.f };
 	
-	//// Target °¨Áö ¹üÀ§ (default = 5.f)
+	//// Target ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (default = 5.f)
 	//m_fDetectedRange = 5.f;
 	
 	m_tHysteriesis.fEvadeEnter = 2.f;

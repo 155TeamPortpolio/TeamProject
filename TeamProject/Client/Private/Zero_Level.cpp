@@ -54,10 +54,12 @@ HRESULT CZero_Level::Initialize()
 	auto boss = CZeroStage_Boss::Create(this);
 	m_StageContainer.emplace(StageType::Boss, boss);
 
-	m_Context.eStageType = StageType::Boss;
-	m_Context.pNowStage = boss;
-	m_Context.pNowStage->Ready_Stage(m_Context);
+	//m_Context.eStageType = StageType::Boss;
+	//m_Context.pNowStage = boss;
+	//
 
+	ChangeStage(StageType::Boss, 0);
+m_Context.pNowStage->Ready_Stage(m_Context);
 	/* Pre load Ȱ��ȭ ������ ��� ���⼭ ���� */
 	{
 		//==================== Effect =======================

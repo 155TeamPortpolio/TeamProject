@@ -1,6 +1,6 @@
 #pragma once
 
-#include "UI_MeshPyramidData.h"
+#include "GameObject.h"
 
 NS_BEGIN(Client)
 
@@ -12,22 +12,23 @@ private:
     virtual ~CUI_MeshPyramid() DEFAULT;
 
 public:
-    HRESULT Initialize_Prototype()      override;
-    HRESULT Initialize(INIT_DESC* pArg) override;
-    void    Priority_Update(_float dt)  override {}
-    void    Update(_float dt)           override;
-    void    Late_Update(_float dt)      override {}
-    
-private:
-    _bool   IsOnScreen(_float marginPx);
-    void    UpdateFade(_float dt);
-    Vector3 UpdateAlertBlink(_float dt);
-    void    ApplyColorAlpha(const Vector3& baseColor);
-    void    UpdateFollow(_float dt);
+    HRESULT Initialize_Prototype()     override;
+    HRESULT Initialize(INIT_DESC* arg) override;
+    void    Priority_Update(_float dt) override {}
+    void    Update(_float dt)          override;
+    void    Late_Update(_float dt)     override {}
 
 private:
-    UI_MeshPyramidConfig  cfg{};
-    UI_MeshPyramidRuntime rt{};
+    _bool   IsOnScreen(_float marginPx = 0.f);
+    _bool   IsAlert();
+
+private:
+    Vector3 color       = {1.f, 1.f, 1.f};
+    _float  alpha       = 0.f;
+    _float  fadeInDur   = 1.f;
+    _float  fadeOutDur  = 1.f;
+    _float  fadeT       = 0.f;
+    _float  alertBlinkT = 0.f;
 
 public:
     static CGameObject* Create();
