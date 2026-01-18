@@ -30,7 +30,6 @@ HRESULT CLoadingLevel::Awake()
 	//PreLoadLevel();
 	return S_OK;
 }
-
 void CLoadingLevel::Update()
 {
 	/*쓰레드에게 미리 넣어둔 요청 큐를 펌핑 하는 작업 - 로드한다는 뜻!*/
@@ -45,6 +44,7 @@ void CLoadingLevel::Update()
 	{
 		LevelManager()->Notify_LoadComplete();
 	}
+
 }
 
 HRESULT CLoadingLevel::Render()
@@ -163,6 +163,5 @@ CLoadingLevel* CLoadingLevel::Create(const string& LevelKey)
 void CLoadingLevel::Free()
 {
 	__super::Free();
-
 	m_pGameInstance->DestroyInstance();
 }

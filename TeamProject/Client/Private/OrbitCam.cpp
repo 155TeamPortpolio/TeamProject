@@ -180,6 +180,8 @@ void COrbitCam::SnapFromCamPose(const Vector3& camPos, const Quaternion& camRot)
     cc->Set_Position(XMVectorSet(camPos.x, camPos.y, camPos.z, 1.f));
 
     auto obj = ObjectManager()->Request_Object(targetHandle);
+    if (!obj)
+        return;
     auto targetCC = obj->Get_Component<CCharacterController>();
 
     const Vector4 foot4 = targetCC->Get_FootPosition();

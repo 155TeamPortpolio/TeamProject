@@ -298,15 +298,13 @@ void CCorin::Process_EndState(const string& strCurrentState)
 	{
 		CCorinState_Hit* pHit = static_cast<CCorinState_Hit*>(
 			m_pStateMachine->Get_CurrentState());
-		if (!pHit) return;
+		if (!pHit || !pHit->Get_SubStateMachine()) return;
 
-		IHState<CCorin>* pHitType = dynamic_cast<IHState<CCorin>*>(
-			pHit->Get_SubStateMachine()->Get_CurrentState());
+		IBaseState<CCorin>* pHitType = pHit->Get_SubStateMachine()->Get_CurrentState();
 		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
 		{
-			IBaseState<CCorin>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+			if (Is_Input() || pHitType->Is_AnimEnd())
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}
@@ -396,7 +394,7 @@ HRESULT CCorin::Initialize_Transitions()
 		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToHit");
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
-		CStateMachine<CCorin>::CONDITION_ANIMATION_END);
+		CStateMachine<CCorin>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }

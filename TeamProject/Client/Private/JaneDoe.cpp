@@ -48,13 +48,13 @@ HRESULT CJaneDoe::Initialize_Prototype()
 	auto pRcsMgr = CGameInstance::GetInstance()->Get_ResourceMgr();
 	pRcsMgr->Add_ResourcePath("JaneDoeModel.model",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.model");
-	pRcsMgr->Add_ResourcePath("JaneDoeModel.mat",
-		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoeModel.mat");
+	pRcsMgr->Add_ResourcePath("JaneDoe.mat",
+		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe.mat");
 	pRcsMgr->Add_ResourcePath("JaneDoe_Meta.json",
 		"../Bin/Resources/Model/skeletal/JaneDoe/JaneDoe_Meta.json");
 
 	Get_Component<CModel>()->Link_Model(G_GlobalLevelKey, "JaneDoeModel.model");
-	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoeModel.mat");
+	Get_Component<CMaterial>()->Link_Material(G_GlobalLevelKey, "JaneDoe.mat");
 
 	/* 이펙트 리소스 임시 로드 */
 	{
@@ -263,6 +263,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToMove");
+
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
@@ -274,7 +277,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
-		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
@@ -431,6 +434,7 @@ void CJaneDoe::Process_AttackInput(const string& strCurrentState)
 		if (pNormal && pNormal->Get_SubStateMachine())
 			pNormal->Get_SubStateMachine()->Set_Trigger("NextCombo");
 	}
+
 }
 
 void CJaneDoe::Process_EndState(const string& strCurrentState)
@@ -487,15 +491,13 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 	{
 		CJaneDoeState_Hit* pHit = static_cast<CJaneDoeState_Hit*>(
 			m_pStateMachine->Get_CurrentState());
-		if (!pHit) return;
+		if (!pHit || !pHit->Get_SubStateMachine()) return;
 
-		IHState<CJaneDoe>* pHitType = dynamic_cast<IHState<CJaneDoe>*>(
-			pHit->Get_SubStateMachine()->Get_CurrentState());
+		IBaseState<CJaneDoe>* pHitType = pHit->Get_SubStateMachine()->Get_CurrentState();
 		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
 		{
-			IBaseState<CJaneDoe>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+			if (Is_Input() || pHitType->Is_AnimEnd())
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}

@@ -169,6 +169,9 @@ void CCamSequencePlayer::ApplyPose(const CamPose& pose)
     if (target.seq && target.seq->space == CamSpace::Local)
     {
         auto refObj = ObjectManager()->Request_Object(apply.spaceRefHandle);
+        if (!refObj)
+            return;
+
         auto refTf  = refObj->Get_Component<CTransform>();
 
         Matrix refWorld = Matrix(refTf->Get_WorldMatrix());

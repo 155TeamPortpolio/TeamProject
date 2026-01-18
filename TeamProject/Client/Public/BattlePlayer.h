@@ -65,6 +65,9 @@ public:
 
     HRESULT         ClearCharacters();
 
+    void            Lock_Input() { m_bLockInput = true; }
+    void            UnLock_Input() { m_bLockInput = false; }
+
 public:
     HRESULT Initialize();
     void Priority_Update(_float dt);
@@ -83,6 +86,7 @@ private:
     void    Process_Energy();
 
     _bool   Can_Switch() const;
+    _bool   Can_Input() const { return !m_bLockInput; }
     void    Update_Target();
     void    Update_Status();
 
@@ -109,6 +113,8 @@ private:
     _float       m_fSwitchCooldown = { 0.f };
     _vector4     m_vSwitchPosition = XMVectorSet(0.f, 0.f, 0.f, 1.f);
     _vector4     m_vSwitchLook = XMVectorSet(0.f, 0.f, 0.f, 0.f);
+
+    _bool        m_bLockInput = false;
 
     static constexpr _float KEY_BUFFER_TIME = 0.1f;
     static constexpr _float SWITCH_COOLDOWN = 1.f;
