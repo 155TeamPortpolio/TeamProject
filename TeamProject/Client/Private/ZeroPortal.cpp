@@ -57,6 +57,7 @@ HRESULT CZeroPortal::Initialize(INIT_DESC* pArg)
 
 	Get_Component<CEventListener>()->Add_Listener<STAGE_CHANGED_DESC>([&](STAGE_CHANGED_DESC desc)
 		{
+			m_pTargetStage = desc.pStage;
 			m_eRenderLayer = RENDER_LAYER::Default;
 		});
 
@@ -86,7 +87,7 @@ void CZeroPortal::Update(_float dt)
 	Get_Component<CCollider>()->Update(dt);
 
 	if (m_bIsInteractable) {
-		m_pTransform->AddScale({ sinf(m_Time),sinf(m_Time)*2,dt});
+		//m_pTransform->AddScale({ sinf(XMConvertToRadians(m_Time)),sinf(XMConvertToRadians(m_Time))*2,dt});
 		Interact();
 	}
 }
@@ -123,8 +124,9 @@ void CZeroPortal::Interact()
 	if (!m_bIsInteractable)
 		return;
 
-	if (InputDevice()->Key_Down('F')) {
+	if (InputDevice()->Key_Tap('F')) {
 		m_pTargetStage->StageChangeOn(CZero_Level::StageType::Boss, 0);
+		m_bIsInteractable = false;
 	}
 }
 

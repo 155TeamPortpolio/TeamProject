@@ -12,6 +12,7 @@ class CZero_Level : public CLevel
 public:
 	enum class StageType {Normal, Elite, Boss};
 	typedef struct tagStageContext {
+		_bool isFirstIn = {};
 		StageType eStageType;
 		_int StageID = { -1 };
 		class CStage* pNowStage = { nullptr };

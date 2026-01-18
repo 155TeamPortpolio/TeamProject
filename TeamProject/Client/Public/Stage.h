@@ -6,7 +6,7 @@ class CStage :
     public CBase
 {
 protected:
-	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro};
+	enum class StageState {None,Entrance,BattleStart,BattleEnd,Outro,End};
 protected:
     CStage();
     ~CStage() DEFAULT;

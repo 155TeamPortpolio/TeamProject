@@ -9,6 +9,7 @@
 #include "Stage.h"
 #include "ZeroStage_Boss.h"
 #include "ZeroStage_Normal.h"
+#include "ZeroStage_Elite.h"
 
 // Camera
 #include "Camera.h"
@@ -65,12 +66,14 @@ HRESULT CZero_Level::Initialize()
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_EnemyTriggerCollider", CEnemyTriggerCollider::Create());
 	PrototypeManager()->Add_ProtoType("Zero_Level", "Proto_GameObject_ZeroPortal", CZeroPortal::Create());
 	RenderSystem()->Set_FogDesc({ _float4(0.08f, 0.02f, 0.02f, 1.0f),0.f, 0.f, 0.02f, true });
-	auto boss = CZeroStage_Boss::Create(this);
-	auto normal = CZeroStage_Normal::Create(this);
-	m_StageContainer.emplace(StageType::Boss, boss);
-	m_StageContainer.emplace(StageType::Normal, normal);
 
-	ChangeStage(StageType::Normal, 1);
+	m_StageContainer.emplace(StageType::Boss, CZeroStage_Boss::Create(this));
+	m_StageContainer.emplace(StageType::Normal, CZeroStage_Normal::Create(this));
+	m_StageContainer.emplace(StageType::Elite, CZeroStage_Elite::Create(this));
+
+	//m_Context.isFirstIn = true;
+	ChangeStage(StageType::Boss, 1);
+	m_Context.isFirstIn = false;
 	m_Context.pNowStage->Ready_Stage(m_Context);
 
 	{
@@ -137,12 +140,8 @@ HRESULT CZero_Level::Awake()
 {
 	/* Enemy */
 	/* Player */
-
 	if (!m_Context.hPlayer.isValid())
 		return E_FAIL;
-
-	ChangeStage(StageType::Normal, 0);
-
 	return S_OK;
 }
 
@@ -150,18 +149,10 @@ void CZero_Level::Update()
 {
 	m_Context.pNowStage->Update();
 
-	//if (InputDevice()->Key_Tap(VK_F4))
-	//{
-	//	CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_Sacrifice", { 0.f, 0.5f,0.f });
-	//}
-	////if (InputDevice()->Key_Tap(VK_F5))
-	//{
-	//	auto pEffect = Builder::Create_EffectContainer({ G_GlobalLevelKey,"Proto_GameObject_EffectContainer" })
-	//		.Asset("hit_ground_smoke_strong.json")
-	//		.Build("Smoke");
-	//
-	//	ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
-	//}
+	if (InputDevice()->Key_Tap(VK_F4))
+	{
+		ChangeStage(StageType::Boss, 0);
+	}
 
 }
 
