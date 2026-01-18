@@ -33,12 +33,6 @@ HRESULT CUI_BattleHUD::Initialize(INIT_DESC* pArg)
             Set_Values(desc);
         });
 
-    // ¿Ã∫•∆Æ : UI_BOSS_STATUS_DESC
-    Get_Component<CEventListener>()->Add_Listener<UI_BOSS_STATUS_DESC>([&](const UI_BOSS_STATUS_DESC& desc)
-        {
-            Set_Values(desc);
-        });
-
     return S_OK;
 }
 
@@ -128,13 +122,6 @@ void CUI_BattleHUD::Cache_Handles(CUI_Object* pRoot)
 
     m_handles[Child::CUR_HP_TEXT] = pRoot->Get_DescendantHandle("curHpText");
     m_handles[Child::MAX_HP_TEXT] = pRoot->Get_DescendantHandle("maxHpText");
-
-    m_handles[Child::BOSS] = pRoot->Get_DescendantHandle("boss");
-    m_handles[Child::BOSS_ICON] = pRoot->Get_DescendantHandle("bossIcon");
-    m_handles[Child::BOSS_HP_BACK] = pRoot->Get_DescendantHandle("bossHpBack");
-    m_handles[Child::BOSS_HP_FRONT] = pRoot->Get_DescendantHandle("bossHpFront");
-    m_handles[Child::BOSS_GROGGY] = pRoot->Get_DescendantHandle("bossGroggy");
-    m_handles[Child::BOSS_GROGGY_TEXT] = pRoot->Get_DescendantHandle("bossGroggyText");
 }
 
 void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
@@ -164,13 +151,6 @@ void CUI_BattleHUD::Set_Values(UI_PLAYER_STATUS_DESC desc)
         Set_NumberText(Child::CUR_HP_TEXT, static_cast<_int>(desc.hp.fCurValue), m_iPlayerHPWidth);
         Set_NumberText(Child::MAX_HP_TEXT, static_cast<_int>(desc.hp.fMaxValue), m_iPlayerHPWidth);
     }
-}
-
-void CUI_BattleHUD::Set_Values(UI_BOSS_STATUS_DESC desc)
-{ 
-    Set_GaugeFill(Child::BOSS_HP_FRONT, desc.hp.fCurValue / max(desc.hp.fMaxValue, 1.f));
-    Set_GaugeFill(Child::BOSS_GROGGY, desc.iGroggy / 100.f);
-    Set_NumberText(Child::BOSS_GROGGY_TEXT, desc.iGroggy, 2);
 }
 
 void CUI_BattleHUD::Set_Special(_int iIndex, _float fRatio, _float fThresRatio)
