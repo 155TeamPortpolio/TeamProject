@@ -263,6 +263,9 @@ HRESULT CJaneDoe::Initialize_Transitions()
 	m_pStateMachine->Register_Transition("SwitchIn", "Idle",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
+	m_pStateMachine->Register_Transition("SwitchIn", "Move",
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToMove");
+
 	// SwitchOut
 	m_pStateMachine->Register_AnyStateTransition("SwitchOut",
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "SwitchOut");
@@ -274,7 +277,7 @@ HRESULT CJaneDoe::Initialize_Transitions()
 		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToHit");
 
 	m_pStateMachine->Register_Transition("Hit", "Idle",
-		CStateMachine<CJaneDoe>::CONDITION_ANIMATION_END);
+		CStateMachine<CJaneDoe>::CONDITION_TRIGGER, "ToIdle");
 
 	return S_OK;
 }
@@ -488,15 +491,13 @@ void CJaneDoe::Process_EndState(const string& strCurrentState)
 	{
 		CJaneDoeState_Hit* pHit = static_cast<CJaneDoeState_Hit*>(
 			m_pStateMachine->Get_CurrentState());
-		if (!pHit) return;
+		if (!pHit || !pHit->Get_SubStateMachine()) return;
 
-		IHState<CJaneDoe>* pHitType = dynamic_cast<IHState<CJaneDoe>*>(
-			pHit->Get_SubStateMachine()->Get_CurrentState());
+		IBaseState<CJaneDoe>* pHitType = pHit->Get_SubStateMachine()->Get_CurrentState();
 		if (pHitType && pHitType->Get_AnimProgress() > 0.3f)
 		{
-			IBaseState<CJaneDoe>* pEnd = pHitType->Get_SubStateMachine()->Get_CurrentState();
 			if (m_bIsEvade) return;
-			if (pEnd && (Is_Input() || pEnd->Is_AnimEnd()))
+			if (Is_Input() || pHitType->Is_AnimEnd())
 				m_pStateMachine->Set_Trigger("ToIdle");
 		}
 	}

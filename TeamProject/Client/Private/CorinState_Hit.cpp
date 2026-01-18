@@ -58,6 +58,9 @@ void CCorinState_Hit::Update(CCorin* pOwner, _float dt)
 		ENUM(CCorin::ROOTMOTION_MASK::MOVE) |
 		ENUM(CCorin::ROOTMOTION_MASK::QUATERNION));
 
+	if (m_pSubStateMachine->Get_CurrentState()->Get_AnimProgress() > 0.3f)
+		pOwner->Unlock_Move();
+
 	__super::Update(pOwner, dt);
 }
 
