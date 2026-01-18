@@ -22,12 +22,6 @@ typedef struct tagUIPlayerStatusDesc {
 	// EX 관련 값 추가 필요
 }UI_PLAYER_STATUS_DESC;
 
-/* UI로 전달되는 상태 정보를 정의하는 구조체 : boss의 status 일괄 */
-typedef struct tagUIBossStatusDesc {
-	UI_STATUS_VALUE hp = {};
-	_int iGroggy = {};
-}UI_BOSS_STATUS_DESC;
-
 /* UI로 전달되는 캐릭터 순서를 정의하는 구조체 */
 typedef struct tagUICharacterOrder {
 	_uint				iCount = {};

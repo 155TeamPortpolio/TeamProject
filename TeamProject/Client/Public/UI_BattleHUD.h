@@ -64,7 +64,6 @@ private:
 	void Cache_Handles(CUI_Object* pRoot);
 
 	void Set_Values(UI_PLAYER_STATUS_DESC desc);
-	void Set_Values(UI_BOSS_STATUS_DESC desc);
 
 	void Set_Special(_int iIndex, _float fRatio, _float fThresRatio);
 	void Set_UltimateIcon(_int iIndex, _float fRatio);
