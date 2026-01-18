@@ -17,4 +17,6 @@ void CSacrificeState_ChangePhase::Update(CSacrifice* pOwner, _float dt)
 void CSacrificeState_ChangePhase::Exit(CSacrifice* pOwner)
 {
 	pOwner->SetPhase(CSacrifice::PHASE::PHASE2);
+	pOwner->ChangePhase_SetUp();
+	pOwner->Set_Hitable(true);
 }

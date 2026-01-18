@@ -1,10 +1,18 @@
 #pragma once
-#include "IBaseState.h"
+#include "IHState.h"
 
 NS_BEGIN(Client)
 class CSacrifice;
-class CSacrificeState_Groggy : IBaseState<CSacrifice>
+class CSacrificeState_Groggy : public IHState<CSacrifice>
 {
+public:
+	virtual void Enter(CSacrifice* pOwner) override;
+	virtual void Update(CSacrifice* pOwner, _float dt) override;
+	virtual void Exit(CSacrifice* pOwner) override;
+
+public:
+	static CSacrificeState_Groggy* Create() { return new CSacrificeState_Groggy(); }
+	virtual void Free() override { __super::Free(); }
 
 };
 NS_END

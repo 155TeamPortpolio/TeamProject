@@ -34,6 +34,10 @@ public:
 public:
     static CJaneDoeState_Attack_01* Create() { return new CJaneDoeState_Attack_01(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_02 : public IBaseState<CJaneDoe>
@@ -46,6 +50,10 @@ public:
 public:
     static CJaneDoeState_Attack_02* Create() { return new CJaneDoeState_Attack_02(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_03 : public IBaseState<CJaneDoe>
@@ -58,6 +66,10 @@ public:
 public:
     static CJaneDoeState_Attack_03* Create() { return new CJaneDoeState_Attack_03(); }
     virtual void Free() override { __super::Free(); }
+
+private:
+    void Update_Effects(CJaneDoe* pOwner);
+
 };
 
 class CJaneDoeState_Attack_04 : public IBaseState<CJaneDoe>
