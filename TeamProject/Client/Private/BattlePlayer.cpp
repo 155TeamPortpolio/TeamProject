@@ -464,11 +464,11 @@ void CBattlePlayer::NotifyCharacterSwitchIn()
 	}
 #pragma endregion
 
-	if (m_pCurrentCharacter->Can_Parry())
-	{
-		m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
-		return;
-	}
+	//if (m_pCurrentCharacter->Can_Parry())
+	//{
+	//	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::PARRYAID);
+	//	return;
+	//}
 	m_pCurrentCharacter->On_SwitchIn(CCharacter::SWITCH::NORMAL);
 }
 
