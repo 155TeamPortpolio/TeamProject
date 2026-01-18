@@ -50,7 +50,7 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
         }
     }
 
-    if (m_fAnimProgress >= 0.5f)
+    if (m_fAnimProgress >= 0.3f)
     {   // Run
         if (pOwner->Is_Move())
         {
@@ -65,9 +65,4 @@ void CJaneDoeState_BackStep::Update(CJaneDoe* pOwner, _float dt)
         pEvade->Get_SubStateMachine()->Set_Int("ExitMode", 0);
         pEvade->Get_SubStateMachine()->Set_Trigger("Complete");
     }
-}
-
-void CJaneDoeState_BackStep::Exit(CJaneDoe* pOwner)
-{
-    __super::Exit(pOwner);
 }
