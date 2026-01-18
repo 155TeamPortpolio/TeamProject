@@ -40,6 +40,7 @@ HRESULT CMapTriggerObject::Initialize(INIT_DESC* pArg)
 	Ready_PlaneUI(pObjDesc);
 	Ready_MeshUI(pObjDesc);
 	Ready_Interactable(pObjDesc);
+	Ready_ZeroPortal(pObjDesc);
 	Ready_InvwalI(pObjDesc);
 	Ready_PlayerPos(pObjDesc);
 
@@ -232,15 +233,7 @@ void CMapTriggerObject::Ready_Interactable(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 					//.Scale(pObjDesc->vUp)
 					.Build("Portal");
 
-				string ZeroPrototypeTag = "Proto_GameObject_ZeroPortal";
-				auto pZeroObj = Builder::Create_Object({ pObjDesc->TagLevel, ZeroPrototypeTag })
-					.Position(vPos)
-					.Collider(ColDesc)
-					//.Scale(pObjDesc->vUp)
-					.Build("ZeroPortal");
-
 				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
-				CGameInstance::GetInstance()->Get_ObjectMgr()->Add_Object(pZeroObj, { pObjDesc->TagLevel, "InteractableObject_Layer" });
 			}
 		}
 	}
@@ -331,8 +324,7 @@ void CMapTriggerObject::Ready_PlayerPos(const MAP_TRIGGEROBJ_DESC* pObjDesc)
 
 		auto player = dynamic_cast<CPlayer*>(ObjectManager()->Find_Global(ENUM(GLOBAL_ID::Player)));
 		auto character = player->Get_CurCharacterHandle().Get();
-		
-		if(character)
+		if (character)
 			character->Get_Component<CCharacterController>()->Set_Position(m_pTransform->Get_Pos());
 	}
 }

@@ -53,7 +53,7 @@ void CCamDirector::SetTarget(OBJECT_HANDLE targetHandle)
     SetSpaceRef(targetHandle);
 }
 
-void CCamDirector::SetCurTarget()
+void CCamDirector::AutoTarget()
 {
     auto handle = GetPlayer()->Get_CurCharacterHandle();
     if (handle.isValid())
@@ -67,7 +67,7 @@ void CCamDirector::Update(_float dt)
 
     if (!m_playing.active) return;
 
-    auto seqPlayer = GetSeqObj()->Get_Component<CCamSequencePlayer>();
+    auto seqPlayer = GetSeqPlayer();
 
     if (seqPlayer->GetSequence()->space == CamSpace::Local && !m_spaceRefHandle.isValid())
     {
@@ -100,6 +100,9 @@ CPlayer* CCamDirector::GetPlayer() const
 
 void CCamDirector::UpdateInput()
 {
+    if (!IsPlaying("Intro/Jane_Intro") && InputDevice()->Key_Tap('Y'))
+        exit(0);
+
     if (InputDevice()->Key_Tap(VK_F1))
         camMgr.Set_MainCam(GetFreeCamComp(), 0.5f);
 
@@ -115,8 +118,7 @@ void CCamDirector::UpdateInput()
 
 void CCamDirector::AbortSequenceToOrbit(_bool resetTime)
 {
-    auto seqObj = GetSeqObj();
-    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+    auto seqPlayer = GetSeqPlayer();
 
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);
@@ -172,6 +174,15 @@ _uint CCamDirector::RequestSequence(const string& key, _float blendInSec, _bool 
     return RequestSequence(key, req);
 }
 
+_bool CCamDirector::IsPlaying(const string& key) const
+{
+    if (!m_playing.active)      return false;
+    if (m_playing.key != key)   return false;
+    if (m_playing.pendingStart) return true;
+
+    return GetSeqObj()->Get_Component<CCamSequencePlayer>()->IsPlaying();
+}
+
 _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestDesc& req)
 {
     if (m_playing.active) StopAll(req.blendOutSec);
@@ -187,9 +198,8 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     if (req.returnMode == CamReturnMode::RestorePrev && resolvedReturnCamType == CamType::Orbit)
         GetOrbitCam()->CaptureSnapshot(m_playing.prevOrbit);
 
-    auto seqObj = GetSeqObj();
-    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
-    auto seqCam = seqObj->Get_Component<CCamera>();
+    auto seqPlayer = GetSeqPlayer();
+    auto seqCam    = GetSeqCamComp();
 
     seqPlayer->SetSequence(&entry.seqDesc);
 
@@ -221,11 +231,6 @@ _uint CCamDirector::RequestSequence(const string& key, const CamSequenceRequestD
     return handle;
 }
 
-_bool CCamDirector::IsPlaying() const
-{
-    GetSeqCam()->IsPlaying();
-}
-
 _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTime)
 {
     const Matrix outWorld = *camMgr.Get_InversedViewMatrix();
@@ -234,8 +239,7 @@ _bool CCamDirector::StopRequest(_uint handle, _float blendOutSec, _bool resetTim
     Quaternion outRot = Quaternion::CreateFromRotationMatrix(outWorld);
     outRot.Normalize();
 
-    auto seqObj = GetSeqObj();
-    auto seqPlayer = seqObj->Get_Component<CCamSequencePlayer>();
+    auto seqPlayer = GetSeqPlayer();
 
     seqPlayer->SetApplyEnabled(false);
     seqPlayer->Stop(false);
