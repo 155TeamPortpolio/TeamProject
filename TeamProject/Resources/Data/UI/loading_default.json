@@ -1,4 +1,5 @@
 {
+    "alive": true,
     "instanceName": "loading_default",
     "transform": {
         "anchor": 5,
@@ -24,10 +25,9 @@
         1.0,
         1.0,
         1.0,
-        1.0
+        0.0
     ],
     "pass": "Opaque",
-    "useMask": false,
     "animClips": [
         {
             "duration": 0.5,
@@ -122,6 +122,7 @@
     ],
     "children": [
         {
+            "alive": true,
             "instanceName": "nowLoading",
             "transform": {
                 "anchor": 10,
@@ -150,7 +151,6 @@
                 1.0
             ],
             "pass": "Opaque",
-            "useMask": false,
             "animClips": [
                 {
                     "duration": 0.30000001192092896,
@@ -238,7 +238,8 @@
             ],
             "children": [
                 {
-                    "instanceName": "nowLoading",
+                    "alive": true,
+                    "instanceName": "Image",
                     "transform": {
                         "anchor": 9,
                         "anchorOffset": [
@@ -266,14 +267,14 @@
                         1.0
                     ],
                     "pass": "Opaque",
-                    "useMask": false,
                     "animClips": [],
                     "children": [],
                     "typeTag": "Image",
                     "textureTag": "LoadingText.png"
                 },
                 {
-                    "instanceName": "run",
+                    "alive": true,
+                    "instanceName": "Image",
                     "transform": {
                         "anchor": 10,
                         "anchorOffset": [
@@ -301,7 +302,6 @@
                         1.0
                     ],
                     "pass": "SpriteAnimation",
-                    "useMask": false,
                     "animClips": [],
                     "children": [],
                     "typeTag": "SpriteAnimation",

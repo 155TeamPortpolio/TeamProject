@@ -1,5 +1,6 @@
 {
-    "instanceName": "logo_hoyoverse",
+    "alive": true,
+    "instanceName": "logo",
     "transform": {
         "anchor": 5,
         "anchorOffset": [
@@ -24,10 +25,9 @@
         1.0,
         1.0,
         1.0,
-        1.0
+        0.0
     ],
     "pass": "Opaque",
-    "useMask": false,
     "animClips": [
         {
             "duration": 0.5,
@@ -122,6 +122,7 @@
     ],
     "children": [
         {
+            "alive": true,
             "instanceName": "logo",
             "transform": {
                 "anchor": 0,
@@ -150,7 +151,6 @@
                 1.0
             ],
             "pass": "Opaque",
-            "useMask": false,
             "animClips": [],
             "children": [],
             "typeTag": "Image",

@@ -21,13 +21,14 @@ HRESULT CUI_Logo::Initialize(INIT_DESC* pArg)
     const string& filePath = ResourceManager()->Get_ResourcePath("logo.json");
     Load(Helper::LoadJson<nlohmann::ordered_json>(filePath));
 
+    // 0번 애니메이션 재생 (FadeIn)
+    Set_Animation(0);
+
     return S_OK;
 }
 
 void CUI_Logo::Awake()
-{
-    // 0번 애니메이션 재생 (FadeIn)
-    Set_Animation(0);
+{ 
 }
 
 void CUI_Logo::Update(_float dt)
