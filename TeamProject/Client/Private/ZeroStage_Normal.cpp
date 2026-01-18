@@ -4,6 +4,7 @@
 #include "BattleSystem.h"
 #include "CamDirector.h"
 #include "GameInstance.h"
+#include "Layer.h"
 
 CZeroStage_Normal::CZeroStage_Normal()
 {
@@ -42,9 +43,13 @@ void CZeroStage_Normal::Update()
 	default:
 		break;
 	}
-	if (InputDevice()->Key_Tap(VK_F5))
+	if (InputDevice()->Key_Tap(VK_F4))
 	{
 		m_pOwnerLevel->ChangeStage(CZero_Level::StageType::Boss, 0);
+	}
+	if (InputDevice()->Key_Tap(VK_F5))
+	{
+		m_isSequenceEnd = true;
 	}
 }
 
@@ -66,13 +71,13 @@ HRESULT CZeroStage_Normal::Enter_Stage(CZero_Level::StageContext& context)
 
 HRESULT CZeroStage_Normal::Exit_Stage(CZero_Level::StageContext& context)
 {
+	ObjectManager()->Get_Layer({ "Zero_Level","PlacedObject_Layer" })->Clear_Layer();
 	return S_OK;
 }
 
 void CZeroStage_Normal::Intro()
 {
-	_bool isSequenceEnd = {};
-	if (isSequenceEnd) {
+	if (m_isSequenceEnd) {
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -13.f, -5.f,34.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -1.f, 5.f,38.f });
 		CBattleSystem::GetInstance()->SpawnMosnter("Proto_GameObject_ThugAssaulter", { -12.f, 5.f,34.f });

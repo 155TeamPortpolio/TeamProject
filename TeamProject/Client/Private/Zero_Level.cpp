@@ -162,6 +162,7 @@ void CZero_Level::Update()
 
 		ObjectManager()->Add_Object(pEffect, { "Zero_Level","Effect_Layer" });
 	}
+
 }
 
 HRESULT CZero_Level::Render()

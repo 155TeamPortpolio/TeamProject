@@ -22,6 +22,7 @@ private:
 	void Battle(); 
 private:
 	OBJECT_HANDLE m_PlayerHandle = {};
+	_bool m_isSequenceEnd = {};
 public:
 	static CZeroStage_Normal* Create(class CZero_Level* pOwnerLevel);
 	virtual void Free();
