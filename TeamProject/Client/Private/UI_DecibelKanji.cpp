@@ -55,7 +55,7 @@ void CUI_DecibelKanji::Ready_PartObjects()
 
         if (i == ENUM(Child::BG))
         {
-            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBg00.png");
+            pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, "CombatBgKanji.png");
             pObj->Set_Color(Helper::HexToColor("#000000"));
         }
 
@@ -86,7 +86,7 @@ void CUI_DecibelKanji::Set_KanjiTexture(string textureKey)
     auto pObj = m_handles[ENUM(Child::KANJI)].Get();
     pObj->Get_Component<CSprite2D>()->Change_Texture(0, G_GlobalLevelKey, textureKey);
     pObj->Set_Size(_float2(m_fHeight * pObj->Get_Component<CSprite2D>()->Get_AspectRatio(), m_fHeight));
-    pObj->Set_AnchorOffset(m_vPadding);
+    pObj->Set_AnchorOffset(_float2(m_vPadding.x * 0.9f, m_vPadding.y)); // (m_vPadding);//dlatlfh!
 }
 
 void CUI_DecibelKanji::Set_Layout()

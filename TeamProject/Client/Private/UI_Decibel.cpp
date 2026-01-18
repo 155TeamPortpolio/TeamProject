@@ -46,7 +46,11 @@ void CUI_Decibel::Update(_float dt)
 
 void CUI_Decibel::Ready_PartObjects()
 {
-    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();
+    const string& strLevelKey = CGameInstance::GetInstance()->Get_LevelMgr()->Get_NowLevelKey();\
+
+    CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
+    pPts->pColor = &m_vColor;
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, &m_handles[ENUM(Child::PTS)]);
 
     CUI_DecibelKanji::KANJI_DESC* pKanji = new CUI_DecibelKanji::KANJI_DESC;
     pKanji->pState = &m_iState;
@@ -56,11 +60,7 @@ void CUI_Decibel::Ready_PartObjects()
     CUI_DecibelDigits::DIGITS_DESC* pDigits = new CUI_DecibelDigits::DIGITS_DESC;
     pDigits->pDecibel = &m_fDecibel;
     pDigits->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, &m_handles[ENUM(Child::DIGITS)]);
-
-    CUI_DecibelPts::PTS_DESC* pPts = new CUI_DecibelPts::PTS_DESC;
-    pPts->pColor = &m_vColor;
-    Attach_Child(strLevelKey, "Proto_GameObject_DecibelPts", "decibelPts", pPts, &m_handles[ENUM(Child::PTS)]);
+    Attach_Child(strLevelKey, "Proto_GameObject_DecibelDigits", "decibelDigits", pDigits, &m_handles[ENUM(Child::DIGITS)]);     
 
     CUI_DecibelText::TEXT_DESC* pText = new CUI_DecibelText::TEXT_DESC;
     pText->pState = & m_iState;
@@ -112,9 +112,9 @@ void CUI_Decibel::Layout()
     _float2 vPtsSize = m_handles[ENUM(Child::PTS)].Get()->Get_PxSize();
     _float2 vTextsSize = m_handles[ENUM(Child::TEXTS)].Get()->Get_PxSize();
 
-    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, 0.f));
-    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.9f, vDigitsSize.y - vPtsSize.y));
-    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.9f, vKanjiSize.y - vTextsSize.y));
+    m_handles[ENUM(Child::DIGITS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.8f, 0.f));
+    m_handles[ENUM(Child::PTS)].Get()->Set_AnchorOffset(_float2((vKanjiSize.x + vDigitsSize.x) * 0.82f, vDigitsSize.y - vPtsSize.y));
+    m_handles[ENUM(Child::TEXTS)].Get()->Set_AnchorOffset(_float2(vKanjiSize.x * 0.78f, vKanjiSize.y - vTextsSize.y));
 }
 
 void CUI_Decibel::Attach_Child(const string& strLevelKey, const string& strPrototypeTag, const string& strInstanceName, UI_DESC* pDesc, UI_HANDLE* pHandleOut)
