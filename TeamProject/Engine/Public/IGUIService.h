@@ -21,6 +21,7 @@ public:
     virtual _bool UsingUI()PURE;
     virtual void Set_UIMode() PURE;
     virtual void Set_Bone(_int boneIndex)PURE;
+    virtual void Set_GUIActive(_bool active)PURE;
 };
 
 NS_END
