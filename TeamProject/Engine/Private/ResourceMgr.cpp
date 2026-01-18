@@ -733,6 +733,8 @@ void CResourceMgr::Load_InitialResource()
 	Add_ResourcePath("VTX_Mesh.hlsl", "../Bin/ShaderFiles/VTX_Mesh.hlsl");
 	Add_ResourcePath("VTX_NorTex.hlsl", "../Bin/ShaderFiles/VTX_NorTex.hlsl");
 	Add_ResourcePath("VTX_SkinMesh.hlsl", "../Bin/ShaderFiles/VTX_SkinMesh.hlsl");
+	Add_ResourcePath("VTX_Character.hlsl", "../Bin/ShaderFiles/VTX_Character.hlsl");
+	Add_ResourcePath("VTX_Enemy.hlsl", "../Bin/ShaderFiles/VTX_Enemy.hlsl");
 	Add_ResourcePath("VTX_UI.hlsl", "../Bin/ShaderFiles/VTX_UI.hlsl");
 	Add_ResourcePath("VTX_UIMesh.hlsl", "../Bin/ShaderFiles/VTX_UIMesh.hlsl");
 	Add_ResourcePath("VTX_Debug.hlsl", "../Bin/ShaderFiles/VTX_Debug.hlsl");
