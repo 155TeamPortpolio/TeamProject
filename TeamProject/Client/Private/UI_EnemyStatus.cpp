@@ -103,7 +103,7 @@ void CUI_EnemyStatus::Update_HPBackGauge(_float fRatio, _float dt)
         m_hpBack.fTargetRatio = fRatio;
         m_hpBack.fDelayTimer = 0.f;
         m_hpBack.isDelay = true;
-        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+        m_isBlinking = true;
     }
 
     // Delay Ã³¸®
@@ -111,16 +111,40 @@ void CUI_EnemyStatus::Update_HPBackGauge(_float fRatio, _float dt)
     {
         m_hpBack.fDelayTimer += dt;
         if (m_hpBack.fDelayTimer < m_hpBack.fDelayTime)
+        {
+            //Apply_Blink(fRatio, dt);  // µô·¹ÀÌ ¶§µµ ±ôºýÀÌ°Ô ÇÒÁö °í¹Î Áß
             return;
+        }
 
         m_hpBack.isDelay = false;
-        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_LIGHT);
     }
 
     // º¸°£
     _float t = dt * HPBACK_LERP_SPEED;
     m_hpBack.fCurRatio = Math::Lerp(m_hpBack.fCurRatio, m_hpBack.fTargetRatio, t);
     Set_GaugeFill(Child::GAUGE_HP_BACK, m_hpBack.fCurRatio);
+
+    // ±ôºýÀÓ Á¾·á Á¶°Ç
+    if (fabs(m_hpBack.fCurRatio - m_hpBack.fTargetRatio) < 0.001f)
+    {
+        m_hpBack.fCurRatio = m_hpBack.fTargetRatio;
+        m_isBlinking = false;
+        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+    }
+
+    // ±ôºýÀÓ Àû¿ë
+    if (m_isBlinking)
+        Apply_Blink(fRatio, dt);
+}
+
+void CUI_EnemyStatus::Apply_Blink(_float fRatio, _float dt)
+{
+    _float fBlinkSpeed = Math::Lerp(BLINK_SPEED_MAX, BLINK_SPEED_MIN, fRatio);
+    m_fBlinkAcc += dt * fBlinkSpeed;
+
+    _float t = (sinf(m_fBlinkAcc) * 0.5f) + 0.5f; // 0 ~ 1
+    Vector4 vColor = Vector4::Lerp(Vector4(UI_HPBACK_DARK), Vector4(UI_HPBACK_LIGHT), t);
+    Set_Color(Child::GAUGE_HP_BACK, vColor);
 }
 
 void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)

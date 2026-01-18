@@ -56,7 +56,7 @@ private:
 	_bool					m_isBlinking = {};
 	_float					m_fBlinkAcc = {};
 	static constexpr _float BLINK_SPEED_MIN = 10.f;
-	static constexpr _float BLINK_SPEED_MAX = 50.f;
+	static constexpr _float BLINK_SPEED_MAX = 40.f;
 
 	const _float			m_fGroggyMax = { 100.f };	// 그로기 맥스는 무조건 100
 
@@ -66,6 +66,7 @@ private:
 	void Set_WorldPosition();
 
 	void Update_HPBackGauge(_float fRatio, _float dt);
+	void Apply_Blink(_float fRatio, _float dt);
 
 	void Set_Alive(Child child, _bool isAlive);
 	void Set_Color(Child child, _float4 vColor);
