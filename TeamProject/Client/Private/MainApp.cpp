@@ -76,8 +76,7 @@ HRESULT CMainApp::Initialize()
 	Initialize_GlobalPrototype();
 	Create_GlobalPlayer();
 	Create_GlobalCamObjs();
-
-
+	
 	#ifdef  _USING_GUI
 		ImGui::SetCurrentContext(m_pGameInstance->Get_GUISystem()->GetEngineImGuiContext());
 	#endif //  _USING_GUI
