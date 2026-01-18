@@ -288,9 +288,9 @@
                                 "radian": 0.0
                             },
                             "color": [
-                                0.800000011920929,
-                                0.10196078568696976,
-                                0.10196078568696976,
+                                0.29019609093666077,
+                                0.29411765933036804,
+                                0.2862745225429535,
                                 1.0
                             ],
                             "pass": "Opaque",
@@ -328,15 +328,20 @@
                                 0.125490203499794,
                                 1.0
                             ],
-                            "pass": "Opaque",
+                            "pass": "LinearFill",
                             "animClips": [],
                             "children": [],
-                            "typeTag": "Image",
-                            "textureTag": "MonsterHPBg01.png"
+                            "typeTag": "Gauge",
+                            "textureTag": "MonsterHPBg01.png",
+                            "gauge": {
+                                "direction": 0.0,
+                                "fillAmount": 1.0,
+                                "radial": false
+                            }
                         },
                         {
                             "alive": true,
-                            "instanceName": "hpGauge",
+                            "instanceName": "hpFront",
                             "transform": {
                                 "anchor": 0,
                                 "anchorOffset": [
@@ -411,7 +416,7 @@
                         },
                         {
                             "alive": true,
-                            "instanceName": "groggyGauge",
+                            "instanceName": "groggy",
                             "transform": {
                                 "anchor": 0,
                                 "anchorOffset": [

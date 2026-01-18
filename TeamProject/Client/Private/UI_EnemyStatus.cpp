@@ -52,9 +52,21 @@ void CUI_EnemyStatus::Update(_float dt)
 
     // 몬스터 본 위치 기준으로 UI 위치 갱신
     Set_WorldPosition();
+
+    Update_HPBackGauge(dt);
+
     // HP / Groggy 게이지 갱신
-    Set_Gauge(Child::HP_GUAGE, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
-    Set_Gauge(Child::GROGGY_GAUGE, m_pMonsterStatus->iGroggyValue / m_fGroggyMax); 
+    _float fRatio = m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f);
+    Set_GaugeFill(Child::GAUGE_HP_FRONT, m_pMonsterStatus->iNowHP / max(m_pMonsterStatus->iMaxHP, 1.f));
+    if (fabs(fRatio - m_hpBack.fTargetRatio) > (HPBACK_DELTA / m_pMonsterStatus->iMaxHP))    // hp 변화량이 HPBACK_DELTA를 넘었을 때
+    {
+        m_hpBack.fTargetRatio = fRatio;
+        m_hpBack.fDelayTimer = 0.f;
+        m_hpBack.isDelay = true;
+        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_DARK);
+    }
+
+    Set_GaugeFill(Child::GAUGE_GROGGY, m_pMonsterStatus->iGroggyValue / m_fGroggyMax);
 
     // Groggy 텍스트 갱신
     Set_GroggyText(m_pMonsterStatus->iGroggyValue);
@@ -89,10 +101,35 @@ void CUI_EnemyStatus::Set_WorldPosition()
     Update_WorldToScreen(matWorld.Translation());
 }
 
+void CUI_EnemyStatus::Update_HPBackGauge(_float dt)
+{
+    if (m_hpBack.isDelay)
+    {
+        m_hpBack.fDelayTimer += dt;
+
+        if (m_hpBack.fDelayTimer < m_hpBack.fDelayTime)
+            return;
+
+        m_hpBack.isDelay = false;
+        Set_Color(Child::GAUGE_HP_BACK, UI_HPBACK_LIGHT);
+    }
+
+    _float t = dt * HPBACK_LERP_SPEED;
+    m_hpBack.fCurRatio = Math::Lerp(m_hpBack.fCurRatio, m_hpBack.fTargetRatio, t);
+    Set_GaugeFill(Child::GAUGE_HP_BACK, m_hpBack.fCurRatio);
+}
+
 void CUI_EnemyStatus::Set_Alive(Child child, _bool isAlive)
 {
     ForChild(child, [isAlive](CUI_Object* ui) {
         ui->Set_Alive(isAlive);
+        });
+}
+
+void CUI_EnemyStatus::Set_Color(Child child, _float4 vColor)
+{
+    ForChild(child, [vColor](CUI_Object* ui) {
+        ui->Set_Color(vColor);
         });
 }
 
@@ -103,7 +140,7 @@ void CUI_EnemyStatus::Set_Animation(Child child, _int iIndex)
         });
 }
 
-void CUI_EnemyStatus::Set_Gauge(Child child, _float fFillAmount)
+void CUI_EnemyStatus::Set_GaugeFill(Child child, _float fFillAmount)
 {
     ForChild(child, [&](CUI_Object* ui) {
         auto pGauge = dynamic_cast<CGaugeUI*>(ui);
