@@ -112,7 +112,8 @@ public: //setter
 	void	StartShaderVFX(BATTLE_VFX_TYPE eVFXType);
 
 public:
-	_bool isMonsterCleared() { return m_BattleObjInfos[BATTLE_OBJ_TYPE::MONSTER].empty();l }
+	_bool isMonsterCleared();
+
 private:
 	void	Update_BattleInfo();
 	void	ClearBattleStage();

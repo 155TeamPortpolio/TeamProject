@@ -95,6 +95,7 @@ void CZeroStage_Normal::Battle()
 	_bool isBattleEnd = CBattleSystem::GetInstance()->isMonsterCleared();
 	if (isBattleEnd) {
 		m_eStageStage = StageState::BattleEnd;
+		//CBattleSystem::GetInstance().
 	}
 
 }
